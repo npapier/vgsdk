@@ -16,7 +16,7 @@ namespace basic
 
 
 ImageInfo::ImageInfo(	
-					const int32		width, const int32 height,
+					const uint32	width, const uint32 height,
 					const Format	format,
 					const Type		type,
 					const uint8		*pixels )
@@ -36,8 +36,8 @@ ImageInfo::ImageInfo( const IImage& iimage )
 
 
 void ImageInfo::set(
-					const int32		width,
-					const int32		height,
+					const uint32	width,
+					const uint32	height,
 					const Format	format,
 					const Type		type,
 					const uint8		*pixels	)
@@ -64,16 +64,36 @@ void ImageInfo::set( const IImage& iimage )
 
 
 
-int32 ImageInfo::components( void )
+uint32 ImageInfo::components()
 { 
 	return( computeNumComponents( format() ) );
 }
 
 
 
-const int32 ImageInfo::components( void ) const
+const uint32 ImageInfo::components() const
 { 
 	return( computeNumComponents( format() ) );
+}
+
+
+
+uint8* ImageInfo::editPixels()
+{
+	assert( !m_edit );
+	
+	m_edit = true;
+	
+	return ( m_pixels ); 
+}
+
+
+
+void ImageInfo::editPixelsDone()
+{
+	assert( m_edit );
+	
+	m_edit = false;
 }
 
 

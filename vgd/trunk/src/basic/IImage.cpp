@@ -30,9 +30,9 @@ const bool IImage::isEmpty() const
 
 
 
-const int32 IImage::computeNumComponents( const Format format ) const
+const uint32 IImage::computeNumComponents( const Format format ) const
 {
-	int32 components;
+	uint32 components;
 	
 	switch ( format )
 	{
@@ -60,6 +60,7 @@ const int32 IImage::computeNumComponents( const Format format ) const
 			
 		default:
 			assert( false && "Unknown format." );
+			components = 0;
 	}
 	
 	return ( components );

@@ -6,11 +6,10 @@
 #ifndef _VGD_BASIC_IMAGE_H
 #define _VGD_BASIC_IMAGE_H
 
-#include "vgd/vgd.hpp"
-
 #include <string>
 #include <IL/il.h>
 
+#include "vgd/vgd.hpp"
 #include "vgd/basic/IImage.hpp"
 
 
@@ -67,8 +66,8 @@ struct VGD_API Image : public IImage
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
 	 */
-	Image(		const int32		components,
-					const int32		width, const int32 height,
+	Image(		const uint32	components,
+					const uint32	width, const uint32 height,
 					const Format	format,
 					const Type		type,
 					const uint8*	pixels );
@@ -84,8 +83,8 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @todo add param color
 	 */
-	Image(		const int32		components,
-					const int32		width, const int32 height,
+	Image(		const uint32	components,
+					const uint32	width, const uint32 height,
 					const Format	format,
 					const Type		type );
 					
@@ -96,7 +95,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @param iimage			IImage
 	 */
-	Image(		const IImage& iimage );
+	Image( const IImage& iimage );
 
 	/**
 	 * @brief Copy constructor.
@@ -150,8 +149,8 @@ struct VGD_API Image : public IImage
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
 	 */
-	bool	create(	const int32		components, 
-						const int32		width, const int32 height,
+	bool	create(	const uint32	components, 
+						const uint32	width, const uint32 height,
 						const Format	format,
 						const Type		type,
 						const uint8*	pixels );
@@ -165,8 +164,8 @@ struct VGD_API Image : public IImage
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 */
-	bool	create(	const int32		components, 
-						const int32		width, const int32 height,
+	bool	create(	const uint32	components, 
+						const uint32	width, const uint32 height,
 						const Format	format,
 						const Type		type );
 
@@ -223,21 +222,21 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @return		number of color components.
 	 */
-	const int32		components() const;
+	const uint32	components() const;
 
 	/**
 	 * @brief Returns the width of the image.
 	 * 
 	 * @return 		width of image.
 	 */
-	const int32		width() const;
+	const uint32	width() const;
 
 	/**
 	 * @brief Returns the height of the image.
 	 * 
 	 * @return		height of image.
 	 */
-	const int32		height() const;
+	const uint32	height() const;
 
 	/**
 	 * @brief Returns the format of the pixel data.
@@ -314,9 +313,9 @@ private:
 	 */
 	ILuint	m_iluintImgID;
 	
-	int32		m_components;
-	int32		m_width;
-	int32		m_height;
+	uint32	m_components;
+	uint32	m_width;
+	uint32	m_height;
 	Format	m_format;
 	Type		m_type;
 	bool		m_edit;

@@ -6,10 +6,9 @@
 #ifndef _VGD_BASIC_IMAGEINFO_H
 #define _VGD_BASIC_IMAGEINFO_H
 
-#include "vgd/vgd.hpp"
-
 #include <string>
 
+#include "vgd/vgd.hpp"
 #include "vgd/basic/IImage.hpp"
 
 
@@ -45,8 +44,8 @@ struct VGD_API ImageInfo : public IImage
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
 	 */
-	ImageInfo(	const int32		width			= 0,
-					const int32		height		= 0,
+	ImageInfo(	const uint32	width			= 0,
+					const uint32	height		= 0,
 					const Format	format		= NO_FORMAT,
 					const Type		type			= NO_TYPE,
 					const uint8		*pixels		= 0 );
@@ -74,7 +73,7 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return		number of color components.
 	 */
-	int32				components();
+	uint32			components();
 
 	/**
 	 * @brief Returns the number of color components.
@@ -83,35 +82,35 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return		number of color components.
 	 */	
-	const int32		components() const;
+	const uint32	components() const;
 
 	/**
 	 * @brief Returns the width of the image.
 	 * 
 	 * @return 		width of image.
 	 */
-	int32&			width()					{ return ( m_width ); }
+	uint32&			width()					{ return ( m_width ); }
 	
 	/**
 	 * @brief Returns the width of the image.
 	 * 
 	 * @return 		width of image.
 	 */	
-	const int32		width() const			{ return ( m_width ); }
+	const uint32	width() const			{ return ( m_width ); }
 
 	/**
 	 * @brief Returns the height of the image.
 	 * 
 	 * @return		height of image.
 	 */
-	int32&			height()					{ return ( m_height ); }
+	uint32&			height()					{ return ( m_height ); }
 	
 	/**
 	 * @brief Returns the height of the image.
 	 * 
 	 * @return		height of image.
 	 */	
-	const int32		height() const			{ return ( m_height ); }
+	const uint32	height() const			{ return ( m_height ); }
 
 	/**
 	 * @brief Returns the format of the pixel data.
@@ -153,12 +152,12 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return a pointer to the image data in memory.
 	 */
-	uint8*			editPixels()			{ assert( !m_edit );		m_edit = true;		return ( m_pixels ); }
+	uint8*			editPixels();
 
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().
 	 */	
-	void				editPixelsDone()		{ assert( m_edit );		m_edit = false;	}
+	void				editPixelsDone();
 	
 	/**
 	 * @brief Returns the pixel data pointer.
@@ -176,8 +175,8 @@ struct VGD_API ImageInfo : public IImage
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
 	 */
-	void			set(	const int32		width			= 0,
-							const int32		height		= 0,
+	void			set(	const uint32	width			= 0,
+							const uint32	height		= 0,
 							const Format	format		= NO_FORMAT,
 							const Type		type			= NO_TYPE,
 							const uint8		*pixels		= 0 );
@@ -197,8 +196,8 @@ protected:
 	 * @name Image informations.
 	 */
 	//@{
-	int32			m_width;
-	int32			m_height;
+	uint32		m_width;
+	uint32		m_height;
 
 	Format		m_format;
 	Type			m_type;

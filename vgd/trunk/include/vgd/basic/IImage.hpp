@@ -22,8 +22,8 @@ namespace basic
  * @brief Abstract interface for image (1, 2 or 3 dimensions).
  * 
  * @todo Layers (like 3d images).
- * @todo complete support of different Type.
- * @todo format: COLOR_INDEX image.
+ * @todo Complete support of different Type.
+ * @todo Format: COLOR_INDEX image.
  * @todo LUMINANCE8_ALPHA8 and others.
  * 
  * @ingroup g_images
@@ -79,7 +79,7 @@ struct VGD_API IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	virtual const int32	components() const=0;
+	virtual const uint32	components() const=0;
 
 	/**
 	 * @brief Returns the width of the image.
@@ -88,7 +88,7 @@ struct VGD_API IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	virtual const int32	width() const=0;
+	virtual const uint32	width() const=0;
 
 	/**
 	 * @brief Returns the height of the image.
@@ -97,7 +97,7 @@ struct VGD_API IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	virtual const int32	height() const=0;
+	virtual const uint32	height() const=0;
 	
 	/**
 	 * @brief Returns the format of the pixel data.
@@ -135,7 +135,7 @@ struct VGD_API IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	virtual uint8*			editPixels( void )=0;
+	virtual uint8*			editPixels()=0;
 	
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().
@@ -147,13 +147,13 @@ struct VGD_API IImage
 	 * 
 	 * @return		true if there is no image in this class (i.e. width()==height()==0), false otherwise.
 	 */
-	virtual const bool		isEmpty() const;	
+	virtual const bool	isEmpty() const;
 	//@}
 	
 	/**
 	 * @brief Compute the number of component for image with the specified format.
 	 */
-	const int32		computeNumComponents( const Format format ) const;
+	const uint32			computeNumComponents( const Format format ) const;
 };
 
 

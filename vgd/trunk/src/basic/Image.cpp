@@ -57,8 +57,8 @@ Image::Image( std::string strFilename ) :
 
 
 
-Image::Image(	const int32		components,
-					const int32		width, const int32 height,
+Image::Image(	const uint32	components,
+					const uint32	width, const uint32 height,
 					const Format	format,
 					const Type		type,
 					const uint8*	pixels ) :
@@ -85,8 +85,8 @@ Image::Image(	const int32		components,
 
 
 
-Image::Image(	const int32		components,
-					const int32		width, const int32 height,
+Image::Image(	const uint32	components,
+					const uint32	width, const uint32 height,
 					const Format	format,
 					const Type		type ) :
 	m_iluintImgID(0)
@@ -165,7 +165,7 @@ Image::~Image()
 
 
 
-void Image::destroy( void )
+void Image::destroy()
 {
 	if ( m_iluintImgID != 0 )
 	{
@@ -217,8 +217,8 @@ bool Image::load( std::string strFilename )
 
 
 
-bool Image::create(	const int32		components, 
-							const int32		width, const int32 height,
+bool Image::create(	const uint32	components, 
+							const uint32	width, const uint32 height,
 							const Format	format,
 							const Type		type,
 							const uint8*	pixels )
@@ -232,14 +232,15 @@ bool Image::create(	const int32		components,
 	bind();
 
 	// Loads the image specified by File into the ImgId image.
-	const ILvoid *cpixels = reinterpret_cast<const ILvoid* >(pixels);
-	
+	const ILvoid *cpixels = reinterpret_cast<const ILvoid*>(pixels);
+
+	assert( type == UINT8 );
 	ilTexImage(
 		width, height, 1,
-		components,
+		static_cast<ILubyte>(components),
 		convertMy2IL(format),
 		IL_UNSIGNED_BYTE,
-		const_cast< ILvoid * >( cpixels ) // FIXME strange message at compile time on Win32 with VC++
+		const_cast<ILvoid*>( cpixels )
 		);
 
 	if ( reportILError() )
@@ -256,8 +257,8 @@ bool Image::create(	const int32		components,
 
 
 
-bool Image::create(	const int32		components, 
-							const int32		width, const int32 height,
+bool Image::create(	const uint32	components, 
+							const uint32	width, const uint32 height,
 							const Format	format,
 							const Type		type )
 {
@@ -271,9 +272,10 @@ bool Image::create(	const int32		components,
 
 	// Loads the image specified by File into the ImgId image.
 	
+	assert( type == UINT8 );	
 	ilTexImage(
 		width, height, 1,
-		components,
+		static_cast<ILubyte>(components),
 		convertMy2IL(format),
 		IL_UNSIGNED_BYTE,
 		0 
@@ -339,21 +341,21 @@ bool Image::convertTo( const Format format )
 
 
 
-const int32 Image::components() const
+const uint32 Image::components() const
 {
 	return ( m_components );
 }
 
 
 
-const int32 Image::width() const
+const uint32 Image::width() const
 {
 	return ( m_width );
 }
 
 
 
-const int32 Image::height() const
+const uint32 Image::height() const
 {
 	return ( m_height );
 }
@@ -469,7 +471,7 @@ bool Image::reportILError() const
 
 Image::Format Image::convertIL2My( ILint format ) const
 {
-	Format f = NO_FORMAT;
+	Format f;
 
 	switch ( format )
 	{
@@ -499,6 +501,7 @@ Image::Format Image::convertIL2My( ILint format ) const
 
 		default:
 			assert(false && "Unsupported format");
+			f = NO_FORMAT;
 	}
 
 	return ( f );
@@ -538,6 +541,7 @@ ILint Image::convertMy2IL( Image::Format format ) const
 
 		default:
 			assert(false && "Unsupported format");
+			ilformat = IL_RGB;
 	}
 
 	return ( ilformat );
