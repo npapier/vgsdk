@@ -5,8 +5,6 @@
 
 #include "vge/engine/Engine.hpp"
 
-//#include <boost/utility.hpp>
-
 #include <vgDebug/Global.hpp>
 
 #include "vge/handler/Handler.hpp"
@@ -327,6 +325,13 @@ void Engine::resetMatrices()
 
 	getGeometricalMatrix().resize( 1 );
 	getGeometricalMatrix().setMatrixStackSizeHint( 8 );
+}
+
+
+
+bool Engine::addField( vgd::field::AbstractField* pField )
+{
+	return ( vgd::field::FieldManager::addField( pField ) );
 }
 
 

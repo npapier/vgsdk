@@ -497,6 +497,12 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 
+	// change visibility of this method inherited from vgd::field::FieldManager.
+	bool addField( vgd::field::AbstractField* pField );
+	// FIXME todo removeField.
+
+
+
 protected:
 	/**
 	 * @brief Reset the state passed in parameter.
