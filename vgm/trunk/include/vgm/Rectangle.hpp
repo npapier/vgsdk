@@ -37,7 +37,7 @@ struct VGM_API Rectangle2i
 	/**
 	 * @brief Constructor.
 	 */
-	Rectangle2i( int32 x, int32 y, int32 width, int32 height ) :
+	Rectangle2i( const int32 x, const int32 y, const int32 width, const int32 height ) :
 		m_x(x),
 		m_y(y),
 		m_width(width),
@@ -51,6 +51,15 @@ struct VGM_API Rectangle2i
 	 * @name Accessor methods.
 	 */
 	//@{
+	
+	void				set( const int32 x, const int32 y, const int32 width, const int32 height )
+	{
+		m_x		= x;
+		m_y		= y;
+		m_width	= width;
+		m_height	= height;
+	}
+		
 	int32&			x( void )		{ return ( m_x ); }
 	const int32&	x( void ) const { return ( m_x ); }
 
