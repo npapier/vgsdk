@@ -15,13 +15,20 @@ namespace event
 {
 	
 	
-KeyboardButtonEvent::KeyboardButtonEvent( Source *source, State state )
-: ButtonEvent( source, state )
+KeyboardButtonEvent::KeyboardButtonEvent( Source *source, State state, Key k )
+: ButtonEvent( source, state ),
+  key( k )
 {}
 
 
 KeyboardButtonEvent::~KeyboardButtonEvent()
 {}
+
+
+KeyboardButtonEvent::Key KeyboardButtonEvent::getKey() const
+{
+	return this->key;
+}
 
 
 } // namespace event
