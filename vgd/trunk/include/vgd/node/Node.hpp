@@ -130,6 +130,16 @@ typedef std::vector< vgd::node::Node* >				PNodeVector;
  */
 typedef std::vector< vgd::Shp<vgd::node::Node> >	NodeVector;
 
+/**
+ * @brief Set of node pointers.
+ */
+typedef std::set< vgd::node::Node* >					PNodeSet;
+
+/**
+ * @brief Set of nodes.
+ */
+typedef std::set< vgd::Shp<vgd::node::Node> >		NodeSet;
+
 
 
 /**
