@@ -5,11 +5,11 @@
 
 #include "vgeGL/handler/painter/TextureMatrixTransform.hpp"
 
+#include <glo/Texture.hpp>
 #include <vgd/node/TextureMatrixTransform.hpp>
 #include <vge/service/Painter.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
-#include "vgeGL/rc/Texture.hpp"
 
 
 
@@ -90,7 +90,7 @@ void TextureMatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node
 			pGLEngine->getTextureMatrix().getTop( indexMultiAttribute ) 
 			);
 
-	vgeGL::rc::Texture::active( GL_TEXTURE0_ARB + indexMultiAttribute );
+	glo::Texture::active( GL_TEXTURE0_ARB + indexMultiAttribute );
 	glMatrixMode( GL_TEXTURE );
 
 	// Update OpenGL.

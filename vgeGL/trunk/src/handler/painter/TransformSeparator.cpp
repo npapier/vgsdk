@@ -5,12 +5,13 @@
 
 #include "vgeGL/handler/painter/TransformSeparator.hpp"
 
+#include <glo/Texture.hpp>
 #include <vgd/node/TransformSeparator.hpp>
 #include <vge/service/Painter.hpp>
 #include <vge/service/ProcessEvent.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
-#include "vgeGL/rc/Texture.hpp"
+
 
 
 namespace vgeGL
@@ -90,7 +91,7 @@ void TransformSeparator::unapply ( vge::engine::Engine* pEngine, vgd::node::Node
 					);
 		
 			// Update OpenGL
-			vgeGL::rc::Texture::active( GL_TEXTURE0_ARB + i );
+			glo::Texture::active( GL_TEXTURE0_ARB + i );
 			glMatrixMode( GL_TEXTURE );
 			glLoadMatrixf( reinterpret_cast<const float*>( matrix.getValue() ) );
 		}

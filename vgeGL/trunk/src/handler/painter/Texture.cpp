@@ -10,7 +10,6 @@
 #include <vgm/Vector.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
-#include "vgeGL/rc/Texture.hpp"
 
 
 
