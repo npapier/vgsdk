@@ -37,7 +37,7 @@ struct EditorRO
 	/**
 	 * @brief Create an editor without an associated field.
 	 */	
-	EditorRO( void ) :
+	EditorRO() :
 		m_pField(0)
 	{}
 	
@@ -65,7 +65,7 @@ struct EditorRO
 	/**
 	 * @brief Release the lock on the field.
 	 */
-	~EditorRO( void )
+	~EditorRO()
 	{
 		release();
 	}
@@ -90,6 +90,10 @@ struct EditorRO
 	{
 		if ( this != &rField )
 		{
+			if ( m_pField != rField.m_pField )
+			{
+				release();
+			}
 			copy(rField);
 		}
 		
@@ -140,7 +144,7 @@ private:
 	void copy( const EditorRO& rField )
 	{
 		// Transfert owner ship.
-		m_pField				= rField.m_pField;
+		m_pField												= rField.m_pField;
 		const_cast< EditorRO& >(rField).m_pField	= 0;
 	}
 

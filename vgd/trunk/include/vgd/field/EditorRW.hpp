@@ -37,7 +37,7 @@ struct EditorRW
 	/**
 	 * @brief Create an editor without an associated field.
 	 */
-	EditorRW( void ) :
+	EditorRW() :
 		m_pField(0)
 	{}
 
@@ -63,7 +63,7 @@ struct EditorRW
 	/**
 	 * @brief Release the lock on the field.
 	 */
-	~EditorRW( void )
+	~EditorRW()
 	{
 		release();
 	}
@@ -89,6 +89,10 @@ struct EditorRW
 	{
 		if ( this != &rField )
 		{
+			if ( m_pField != rField.m_pField )
+			{
+				release();
+			}
 			copy(rField);
 		}
 		
@@ -103,9 +107,14 @@ struct EditorRW
 	 */
 	//@{
 
-	T& operator*() const		{ return ( *m_pField ); }
-	T* operator->() const	{ return ( m_pField ); }
-	T* get() const				{ return ( m_pField ); }
+	const T& operator*() const		{ return ( *m_pField ); }
+	const T* operator->() const	{ return ( m_pField ); }
+	const T* get() const				{ return ( m_pField ); }	
+	
+	T& operator*() 					{ return ( *m_pField ); }
+	T* operator->()					{ return ( m_pField ); }
+	T* get()								{ return ( m_pField ); }
+
 	//@}
 	
 	
@@ -139,7 +148,7 @@ private:
 	void copy( const EditorRW& rField )
 	{
 		// Transfert owner ship.
-		m_pField		= rField.m_pField;
+		m_pField											= rField.m_pField;
 		const_cast<EditorRW&>(rField).m_pField	= 0;
 	}
 
