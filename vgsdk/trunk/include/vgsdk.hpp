@@ -2,13 +2,13 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGSDK_VGSDK_H
 #define _VGSDK_VGSDK_H
 
 #include <Virtuals/Type.h>
-
-
+#include <assert.h>
 
 #ifdef _WIN32
 
