@@ -25,6 +25,11 @@ namespace event
 struct VGD_API ButtonStateSet : public EventVisitor
 {
 	/**
+	 * @brief Virtual destructor.
+	 */
+	virtual ~ButtonStateSet() {}
+
+	/**
 	 * @name Visitor DP
 	 */
 	//@{
