@@ -73,7 +73,6 @@ struct VGD_API Kit : public Node, public IBoundingBox
 	 * @todo Not really read-only ? same bug in others nodes ?
 	 */
 	const RootValueType		getRoot() const;
-
 protected:
 	/**
 	 * @brief Sets the root of node.

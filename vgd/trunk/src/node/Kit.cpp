@@ -57,7 +57,15 @@ bool Kit::computeBoundingBox( const vgm::MatrixR& transformation /* not used */)
 	bool	bInvalidateParents;
 
 	vgd::Shp< vgd::node::Group > pRoot( getRoot() );
+	if ( pRoot.get() == 0 )
+	{
+		// no sub-scene graph in this Kit.
+		// validate the bounding box (empty one).
+		invalidateBoundingBox( false );
 		
+		return ( false );
+	}
+
 	// update transformation
 	if ( m_transformation != pRoot->getTransformation() )
 	{

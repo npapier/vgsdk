@@ -7,6 +7,9 @@
 
 #include <limits>
 #include "vgd/field/TAccessors.hpp"
+#include "vgd/node/Group.hpp"
+#include "vgd/node/MatrixTransform.hpp"
+
 
 
 
@@ -16,14 +19,17 @@ namespace vgd
 namespace node
 {
 
+
+
 Dragger::Dragger( const std::string nodeName ) :
-	vgd::node::MatrixTransform( nodeName ),
+	vgd::node::Kit( nodeName ),
 	m_startingPoint(std::numeric_limits<float>::max(), std::numeric_limits<float>::max() )
 {
 	// Add field
-	addField( new FActivateType(getFActivate()) );
+	addField( new FListenerType(getFListener()) );
 	addField( new FSurroundType(getFSurround()) );
-	addField( new FStateType(getFState()) );
+	addField( new FCurrentStateType(getFCurrentState()) );
+	addField( new FBindingsType(getFBindings()) );	
 
 	// Link(s)
 	link( getDFNode() );
@@ -33,33 +39,46 @@ Dragger::Dragger( const std::string nodeName ) :
 
 void Dragger::setToDefaults()
 {
-	MatrixTransform::setToDefaults();
+	Kit::setToDefaults();
+	
+	// Initialize Kit.root (construct sub scene graph).
+	using vgd::node::Group;
+	using vgd::node::MatrixTransform;
 
-	setActivate( true );
+	vgd::Shp< Group >					pGroup( Group::create("dragger.group") );
+	vgd::Shp< MatrixTransform >	pMatrixTransform( MatrixTransform::create("dragger.group.matrixTransform") );
+
+	setRoot( pGroup );
+		
+	pGroup->addChild( pMatrixTransform );
+	
+	//
+	setListener( true );
 	//setSurround()
-	setState( 0 );
+	setCurrentState( Dragger::DRAGGER_DEFAULT );
+	setBindingsToDefaults();
 }
 
 
 
 void Dragger::setOptionalsToDefaults()
 {
-	MatrixTransform::setOptionalsToDefaults();
+	Kit::setOptionalsToDefaults();
 }
 
 
 
-// ACTIVATE
-const Dragger::ActivateValueType Dragger::getActivate() const
+// LISTENER
+const Dragger::ListenerValueType Dragger::getListener() const
 {
-	return ( getFieldRO<FActivateType>(getFActivate())->getValue() );
+	return ( getFieldRO<FListenerType>(getFListener())->getValue() );
 }
 
 
 
-void Dragger::setActivate( const ActivateValueType value )
+void Dragger::setListener( const ListenerValueType value )
 {
-	getFieldRW<FActivateType>(getFActivate())->setValue( value );
+	getFieldRW<FListenerType>(getFListener())->setValue( value );
 }
 
 
@@ -80,23 +99,47 @@ void Dragger::setSurround( const SurroundValueType value )
 
 
 // STATE
-const Dragger::StateValueType Dragger::getState() const
+const Dragger::CurrentStateValueType Dragger::getCurrentState() const
 {
-	return ( getFieldRO<FStateType>(getFState())->getValue() );
+	return ( getFieldRO<FCurrentStateType>(getFCurrentState())->getValue() );
 }
 
 
 
-void Dragger::setState( const StateValueType value )
+void Dragger::setCurrentState( const CurrentStateValueType value )
 {
-	getFieldRW<FStateType>(getFState())->setValue( value );
+	getFieldRW<FCurrentStateType>(getFCurrentState())->setValue( value );
 }
 
 
 
-const std::string Dragger::getFActivate()
+// BINDINGS
+bool Dragger::getBindings( const BindingsParameterType param, BindingsValueType& value ) const
 {
-	return ( "f_activate" );
+	return ( 
+		vgd::field::getParameterValue< BindingsParameterType, BindingsValueType >( this, getFBindings(), param, value )
+		);
+}
+
+
+
+void Dragger::setBindings( const BindingsParameterType param, BindingsValueType value )
+{
+	vgd::field::setParameterValue< BindingsParameterType, BindingsValueType >( this, getFBindings(), param, value );
+}
+
+
+
+void Dragger::eraseBindings( const BindingsParameterType param )
+{
+	vgd::field::eraseParameterValue< BindingsParameterType, BindingsValueType >( this, getFBindings(), param );
+}
+
+
+
+const std::string Dragger::getFListener()
+{
+	return ( "f_listener" );
 }
 
 
@@ -108,9 +151,16 @@ const std::string Dragger::getFSurround()
 
 
 
-const std::string Dragger::getFState()
+const std::string Dragger::getFCurrentState()
 {
-	return ( "f_state" );
+	return ( "f_currentState" );
+}
+
+
+
+const std::string Dragger::getFBindings()
+{
+	return ( "f_bindings" );
 }
 
 
@@ -132,6 +182,33 @@ void Dragger::setStartingPoint( const vgm::Vec2f& startingPoint )
 bool Dragger::isStartingPoint() const
 {
 	return ( m_startingPoint == vgm::Vec2f( std::numeric_limits<float>::max(), std::numeric_limits<float>::max() ) );
+}
+
+
+
+const vgm::MatrixR& Dragger::getMatrix() const
+{
+	const vgm::MatrixR& matrix( getMatrixTransform()->getMatrix() );
+	
+	return ( matrix );
+}
+
+
+
+void Dragger::setMatrix( const vgm::MatrixR& matrix )
+{
+	getMatrixTransform()->setMatrix( matrix );
+}
+
+
+
+vgd::Shp< vgd::node::MatrixTransform > Dragger::getMatrixTransform() const
+{
+	using vgd::node::MatrixTransform;
+	
+	vgd::Shp< MatrixTransform > pMatrixTransform = getRoot()->getChild<vgd::node::MatrixTransform>(0);
+	
+	return ( pMatrixTransform );
 }
 
 
