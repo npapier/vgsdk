@@ -42,6 +42,11 @@ struct TMultiField : public AbstractField
 	//@{
 	
 	/**
+	 * @brief A type that represents the data type stored in a vector.
+	 */
+	typedef T value_type;
+
+	/**
 	 * @brief Constant iterator for this container.
 	 */
 	typedef typename std::vector<T>::const_iterator				const_iterator;
@@ -50,6 +55,7 @@ struct TMultiField : public AbstractField
 	 * @brief Iterator for this container.
 	 */	
 	typedef typename std::vector<T>::iterator						iterator;
+	
 	//@}
 	
 	

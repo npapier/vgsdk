@@ -27,6 +27,20 @@ template < typename T >
 struct TSingleField : public AbstractField
 {
 	/**
+	 * @name Typedefs.
+	 */
+	//@{
+		
+	/**
+	 * @brief A type that represents the data type stored in this class.
+	 */
+	typedef T value_type;
+	
+	//@}
+
+
+
+	/**
 	 * @name Constructor.
 	 */
 	//@{

@@ -35,7 +35,7 @@ namespace field
  * 
  * @todo Add documentation directly in this class.
  */
-template< typename KeyType, typename ValueType >
+template< typename KeyType, typename DataType >
 struct TPairAssociativeField : public AbstractField
 {
 	/**
@@ -44,14 +44,29 @@ struct TPairAssociativeField : public AbstractField
 	//@{
 	
 	/**
+	 * @brief A type that describes the sort key object that constitutes each element of the map.
+	 */
+	typedef KeyType key_type;
+	
+	/**
+	 * @brief A type that represents the data type stored in a map.
+	 */
+	typedef DataType mapped_type;
+
+	/**
+	 * @brief A type that represents the type of object stored as an element in a map.
+	 */
+	typedef std::pair< const KeyType, DataType > value_type;
+	
+	/**
 	 * @brief Constant iterator for this container.
 	 */
-	typedef typename std::map<KeyType, ValueType>::const_iterator		const_iterator;
+	typedef typename std::map<KeyType, DataType>::const_iterator		const_iterator;
 
 	/**
 	 * @brief Iterator for this container.
 	 */	
-	typedef typename std::map<KeyType, ValueType>::iterator				iterator;
+	typedef typename std::map<KeyType, DataType>::iterator				iterator;
 	//@}
 
 
@@ -107,7 +122,7 @@ struct TPairAssociativeField : public AbstractField
 	 * 
 	 * @return A reference to the data value of the inserted or pre-existing element.
 	 */
-	ValueType& operator[]( const KeyType& key )
+	DataType& operator[]( const KeyType& key )
 	{
 		assert( checkRW() );
 		
@@ -190,7 +205,7 @@ struct TPairAssociativeField : public AbstractField
 	 */
 	//@{
 	
-	void  swap   ( TPairAssociativeField< KeyType, ValueType > other )
+	void  swap   ( TPairAssociativeField< KeyType, DataType > other )
 	{
 		assert( checkRW() );
 		assert( other.checkRW() );
@@ -244,7 +259,7 @@ private:
 	/**
 	 * @brief Map that contains all (key,value) pairs for this field.
 	 */
-	std::map< KeyType, ValueType >		m_map;
+	std::map< KeyType, DataType >		m_map;
 
 	//@}
 };

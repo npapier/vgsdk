@@ -44,6 +44,16 @@ struct TSingleAssociativeField : public AbstractField
 	//@{
 	
 	/**
+	 * @brief A type that describes an object stored as an element of a set in its capacity as sort key.
+	 */
+	typedef KeyType key_type;
+	
+	/**
+	 * @brief A type that describes an object stored as an element of a set in its capacity as a value.
+	 */
+	typedef KeyType value_type;
+
+	/**
 	 * @brief Constant iterator for this container.
 	 */
 	typedef typename std::set<KeyType>::const_iterator		const_iterator;
@@ -52,6 +62,7 @@ struct TSingleAssociativeField : public AbstractField
 	 * @brief Iterator for this container.
 	 */	
 	typedef typename std::set<KeyType>::iterator				iterator;
+
 	//@}
 
 
