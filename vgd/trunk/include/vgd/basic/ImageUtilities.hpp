@@ -20,6 +20,8 @@ namespace basic
 
 /**
  * @brief Defines name of different plans in a 3D image.
+ * 
+ * @ingroup g_images
  */
 typedef enum {
 	AXIAL_PLAN = 0,
@@ -30,6 +32,8 @@ typedef enum {
 
 /**
  * @brief Collection of methods to apply on images.
+ * 
+ * @ingroup g_images
  */
 struct VGD_API ImageUtilities
 {
