@@ -9,6 +9,7 @@
 #define _VGD_EVENT_KEYBOARD_HPP
 
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/Device.hpp"
 
 
@@ -22,9 +23,8 @@ namespace event
 /**
  * @brief	Defines the interface for event sources that are keyboards.
  */
-class Keyboard : public Device
+struct VGD_API Keyboard : public Device
 {
-public:
 	/**
 	 * @brief	Destructor.
 	 */

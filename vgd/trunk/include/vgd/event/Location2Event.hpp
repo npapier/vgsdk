@@ -9,6 +9,7 @@
 #define _VGD_EVENT_LOCATION2EVENT_HPP
 
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
 #include <vgm/Vector.hpp>
 
@@ -23,10 +24,8 @@ namespace event
 /**
  * @brief	Defines the event class for location notifications.
  */
-class Location2Event : public Event
+struct VGD_API Location2Event : public Event
 {
-public:
-
 	/**
 	 * @brief	Defines the location vector type.
 	 */

@@ -9,6 +9,7 @@
 #define _VGD_EVENT_DEVICE_HPP
 
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/Source.hpp"
 
 
@@ -21,9 +22,8 @@ namespace event
 /**
  * @brief	Defines the interface for event sources that are input devices.
  */
-class Device : public Source
+struct VGD_API Device : public Source
 {
-public:
 	/**
 	 * @brief	Destructor.
 	 */

@@ -7,15 +7,17 @@
 #ifndef _VGD_EVENT_LISTENER_HPP
 #define _VGD_EVENT_LISTENER_HPP
 
+
 #include "vgd/Shp.hpp"
+#include "vgd/vgd.hpp"
+#include "vgd/event/Event.hpp"
+
 
 namespace vgd
 {
 	
 namespace event
 {
-	
-class Event;
 	
 /**
  * @brief	Defines the abstract interface for objects that can receive events.
@@ -25,7 +27,7 @@ class Event;
  * 
  * @see	::vgd::event::source
  */
-class Listener
+struct VGD_API Listener
 {
 public:
 	/**
@@ -33,7 +35,7 @@ public:
 	 * 
 	 * @param	event	a shared pointer to the raised event
 	 */
-	virtual void onEvent( vgd::Shp<Event> event ) = 0;
+	virtual void onEvent( vgd::Shp<vgd::event::Event> event ) = 0;
 };
 	
 } // namespace event

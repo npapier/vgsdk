@@ -7,6 +7,10 @@
 #ifndef _VGD_EVENT_EVENT_HPP
 #define _VGD_EVENT_EVENT_HPP
 
+
+#include "vgd/vgd.hpp"
+
+
 namespace vgd
 {
 	
@@ -28,10 +32,8 @@ class Source;
  * 
  * This class defines the generic interface for all events.
  */
-class Event
+struct VGD_API Event
 {
-public:
-
 	/**
 	 * @brief	Constructor.
 	 * 
@@ -58,8 +60,9 @@ private:
 	Source *pSource;
 };
 
+
 } // namespace event
 	
 } // namespace vgd
 
-#endif // _VGD_EVENT_EVENT_H
+#endif // _VGD_EVENT_EVENT_HPP

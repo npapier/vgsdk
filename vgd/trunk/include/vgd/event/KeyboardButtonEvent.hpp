@@ -8,6 +8,7 @@
 #define _VGD_EVENT_KEYBOARDBUTTONEVENT_H
 
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/ButtonEvent.hpp"
 
 
@@ -20,7 +21,7 @@ namespace event
 /**
  * @brief	Implements a keyboard button event class.
  */
-class KeyboardButtonEvent : public ButtonEvent
+struct VGD_API KeyboardButtonEvent : public ButtonEvent
 {
 public:
 	/**

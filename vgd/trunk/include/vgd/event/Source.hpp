@@ -7,8 +7,11 @@
 #ifndef _VGD_EVENT_SOURCE_HPP
 #define _VGD_EVENT_SOURCE_HPP
 
+
 #include <set>
 #include "vgd/Shp.hpp"
+#include "vgd/vgd.hpp"
+
 
 namespace vgd
 {
@@ -24,10 +27,8 @@ class Listener;
  * 
  * @todo	Improve the listener reference by using smart or weak pointers.
  */
-class Source
+struct VGD_API Source
 {
-public:
-	
 	/**
 	 * @brief	Destructor.
 	 */
@@ -62,7 +63,7 @@ protected:
 	 * 
 	 * @param	event	a shared pointer to the event to fire
 	 */
-	void fireEvent( Shp<Event> event );
+	void fireEvent( vgd::Shp<vgd::event::Event> event );
 	
 private:
 

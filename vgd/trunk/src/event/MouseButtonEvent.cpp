@@ -15,13 +15,20 @@ namespace event
 {
 	
 	
-MouseButtonEvent::MouseButtonEvent( Source *source, State state )
-: ButtonEvent( source, state )
+MouseButtonEvent::MouseButtonEvent( Source *source, State state, Button btn )
+: ButtonEvent( source, state ),
+  button( btn )
 {}
 
 
 MouseButtonEvent::~MouseButtonEvent()
 {}
+
+
+MouseButtonEvent::Button MouseButtonEvent::getButton() const
+{
+	return this->button;
+}
 
 
 } // namespace event

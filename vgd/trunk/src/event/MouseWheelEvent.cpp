@@ -5,7 +5,7 @@
 // Author Guillaume Brocker
 
 
-#include "vgd/event/ButtonEvent.hpp"
+#include "vgd/event/MouseWheelEvent.hpp"
 
 
 namespace vgd
@@ -15,22 +15,25 @@ namespace event
 {
 	
 	
-ButtonEvent::ButtonEvent( Source *source, State state )
+MouseWheelEvent::MouseWheelEvent( Source *source, Axis a, int d )
 : Event( source ),
-  state( state )
+  axis( a ),
+  delta( d )
 {}
 
 
-ButtonEvent::~ButtonEvent()
-{}
-
-
-ButtonEvent::State ButtonEvent::getState() const
+MouseWheelEvent::Axis MouseWheelEvent::getAxis() const
 {
-	return this->state;
+	return this->axis;
+}
+
+
+int MouseWheelEvent::getDelta() const
+{
+	return this->delta;
 }
 
 
 } // namespace event
 
-} // namespace event
+} // namespace vgd

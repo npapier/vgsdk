@@ -8,6 +8,7 @@
 #define _VGD_EVENT_BUTTONEVENT_H
 
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
 
 
@@ -21,13 +22,12 @@ namespace event
 /**
  * @brief	Implements a button event class.
  */
-class ButtonEvent : public Event
+struct VGD_API ButtonEvent : public Event
 {
-public:
 	/**
 	 * @brief	Defines all possible states for a button.
 	 */
-	enum State { UP, DOWN, UNKOWN };
+	enum State { DOWN, UP, DCLICK };
 	
 	/**
 	 * @brief	Constructor

@@ -8,6 +8,7 @@
 #define _VGD_EVENT_MOUSEBUTTONEVENT_H
 
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/ButtonEvent.hpp"
 
 
@@ -20,21 +21,39 @@ namespace event
 /**
  * @brief	Implements a keyboard button event class.
  */
-class MouseButtonEvent : public ButtonEvent
+struct VGD_API MouseButtonEvent : public ButtonEvent
 {
-public:
+	/**
+	 * @brief	Defines all possible button on a mouse.
+	 */
+	enum Button { BUTTON_1, BUTTON_2, BUTTON_3	};
+	
 	/**
 	 * @brief	Constructor
 	 * 
 	 * @param	source	a pointer to the source fo the event
 	 * @param	state	a button state
+	 * @param	button	a mouse button
 	 */
-	MouseButtonEvent( Source *source, State state );
+	MouseButtonEvent( Source *source, State state, Button button );
 	
 	/**
 	 * @brief	Destructor
 	 */
 	virtual ~MouseButtonEvent();
+	
+	/**
+	 * @brief	Retrieves the mouse button.
+	 * 
+	 * @return	a mouse button
+	 */
+	Button getButton() const;
+	
+private:
+	/**
+	 * @brief	a mouse button
+	 */
+	Button button;
 };
 
 
