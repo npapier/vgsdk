@@ -153,7 +153,7 @@ struct VGD_API FieldManager : public IFieldObserver
 	 * @return The type of the specified field if sucessful, otherwise a type_info on class \c NotFound (if the field 
 	 * named strFieldName is not founded).
 	 */
-	const type_info& getFieldType( const std::string strFieldName ) const
+	const std::type_info& getFieldType( const std::string strFieldName ) const
 	{
 		MapField::const_iterator iField;
 		iField = m_fields.find( strFieldName );
