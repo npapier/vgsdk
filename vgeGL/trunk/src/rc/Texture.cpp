@@ -3,4 +3,4 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#include "vgeGL/rc/Texture.hpp"
+//#include "vgeGL/rc/Texture.hpp"
