@@ -913,7 +913,7 @@ void MatrixR::transpose( void )
 //
 bool MatrixR::LUDecomposition( int32 index[4], float& d )
 {
-	int32	imax;
+	int32	imax = 0;
 	float	big, dum, sum, temp;
 	float	vv[4];
 #ifdef DEBUGGING

@@ -442,7 +442,7 @@ bool Line::intersect( const Vec3f& v0, const Vec3f& v1, const Vec3f& v2,
 
 	Vec2f	diff0, diff1, diff2;
 	bool	isInter = false;
-	float	alpha, beta;
+	float	alpha = 0.f, beta;
 
 	diff0[0] = intersection0 - v0[axis0];
 	diff0[1] = intersection1 - v0[axis1];
