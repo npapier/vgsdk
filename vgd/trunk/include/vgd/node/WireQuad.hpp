@@ -3,12 +3,12 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_NODE_QUAD_H
-#define _VGD_NODE_QUAD_H
+#ifndef _VGD_NODE_WIREQUAD_H
+#define _VGD_NODE_WIREQUAD_H
 
 #include "vgd/vgd.hpp"
 
-#include "vgd/node/VertexShape.hpp"
+#include "vgd/node/WireShape.hpp"
 
 
 
@@ -21,23 +21,22 @@ namespace node
 
 
 /**
- * @brief Define a simple quadrilateral.
+ * @brief Define a simple wireframe quadrilateral.
  * 
- * A specialized version of vertex shape to easily instanciate a quadrilateral shape.
+ * A specialized version of vertex shape to easily instanciate a quadrilateral shape drawn in wireframe.
  * 
  * This shape is :
  * \li centered around the origin (0,0,0).
  * \li in the (x,y) plan (i.e. z=0).
  * \li width and height of this quadrilateral are both 1.
  * \li the normal is equal to (0, 0, 1).
- * \li could optionally have texture coordinates (see initializeTex() for more details).
  *
  * @ingroup g_nodes
  * @ingroup g_shapeNodes
  */
-struct VGD_API Quad : public vgd::node::VertexShape
+struct VGD_API WireQuad : public vgd::node::WireShape
 {
-	META_NODE_HPP( Quad );
+	META_NODE_HPP( WireQuad );
 
 
 	/**
@@ -55,16 +54,6 @@ struct VGD_API Quad : public vgd::node::VertexShape
 	 */
 	void initializeGeometry( const float width = 1.f, const float height = 1.f );
 
-	/**
-	 * @brief Initialize texture coordinates and bindings for all specified textures units.
-	 * 
-	 * @param numTexunits	number of desired texture coordinates and bindings
-	 * @param bSameOrigin	true generate texture coordinates to applied the texel (0,0) to the vertex (0,0), false to 
-	 * 							applied the texel (0,0) to the vertex (0,1). 
-	 * 							In other words, it permits to apply an horizontal flip on the texture image.
-	 */
-	void initializeTexUnits( const int32 numTexUnits = 1, const bool bSameOrigin = true );
-	
 	//@}
 
 protected:
@@ -76,7 +65,7 @@ protected:
 	/**
 	 * @brief Default constructor.
 	 */
-	Quad( const std::string nodeName );
+	WireQuad( const std::string nodeName );
 
 	void	setToDefaults( void );
 
@@ -91,4 +80,4 @@ protected:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_QUAD_H
+#endif //#ifndef _VGD_NODE_WIREQUAD_H

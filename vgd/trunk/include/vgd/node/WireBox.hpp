@@ -3,12 +3,12 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_NODE_BOX_H
-#define _VGD_NODE_BOX_H
+#ifndef _VGD_NODE_WIREBOX_H
+#define _VGD_NODE_WIREBOX_H
 
 #include "vgd/vgd.hpp"
 
-#include "vgd/node/VertexShape.hpp"
+#include "vgd/node/WireShape.hpp"
 
 
 
@@ -21,9 +21,9 @@ namespace node
 
 
 /**
- * @brief Define a 3d box.
+ * @brief Define a 3d wireframe box.
  * 
- * A specialized version of vertex shape to easily instanciate a 3D box.
+ * A specialized version of vertex shape to easily instanciate a 3D wireframe box.
  * Boxes represent a rectangular 3D volume. The egdes of a box are parallel to the three main axes.
  * 
  * By default, the box is builded :
@@ -32,15 +32,12 @@ namespace node
  * \li unit length.
  * \li any normals generated point away from the center of box.
  *
- * @todo method initializeTexUnits() (li could optionally have texture coordinates (see initializeTex() 
- * for more details)).
- * 
  * @ingroup g_nodes
  * @ingroup g_shapeNodes
  */
-struct VGD_API Box : public vgd::node::VertexShape
+struct VGD_API WireBox : public vgd::node::WireShape
 {
-	META_NODE_HPP( Box );
+	META_NODE_HPP( WireBox );
 
 
 	/**
@@ -55,11 +52,6 @@ struct VGD_API Box : public vgd::node::VertexShape
 	 */
 	void initializeGeometry();
 	
-	/**
-	 * brief Initialize texture coordinates and bindings for all specified textures units.
-	 */
-	//void initializeTexUnits( const int32 numTexUnits = 1 );
-	
 	//@}
 
 protected:
@@ -71,7 +63,7 @@ protected:
 	/**
 	 * @brief Default constructor.
 	 */
-	Box( const std::string nodeName );
+	WireBox( const std::string nodeName );
 
 	void	setToDefaults( void );
 	
@@ -86,4 +78,4 @@ protected:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_BOX_H
+#endif //#ifndef _VGD_NODE_WIREBOX_H
