@@ -332,6 +332,7 @@ struct VGD_API Layers : public vgd::node::Kit
 	 * @brief Scan the whole image and set alpha value of each pixel to \c alpha.
 	 * 
 	 * @pre image.format() == RGBA
+	 * @pre image.type() == UINT8
 	 * @pre 0 <= alpha <= 1
 	 * 
 	 * @param image		image to scan.
@@ -345,6 +346,7 @@ struct VGD_API Layers : public vgd::node::Kit
 	 * Sets alpha value of each pixel to \c alpha only if pixel color is != (0,0,0), otherwise sets alpha value to zero.
 	 * 
 	 * @pre image.format() == RGBA
+	 * @pre image.type() == UINT8
 	 * @pre 0 <= alpha <= 1
 	 * 
 	 * @param image		image to scan.

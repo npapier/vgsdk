@@ -104,11 +104,8 @@ void Layers::createLayers( const int32 num, const float width, const float heigh
 	// Create sub scene graph.
 	
 	// switch
-	vgd::Shp< vgd::node::Switch > pSwitch;
-	pSwitch = vgd::node::Switch::create("layers.subgraph.switch");
+	vgd::Shp< vgd::node::Switch > pSwitch ( vgd::node::Switch::create("layers.subgraph.switch") );
 	
-	addChild( pSwitch );
-
 	// Proxy geometry : QUAD
 	vgd::Shp< vgd::node::Quad > quad( vgd::node::Quad::create("layers.subgraph.quad") );
 
@@ -134,6 +131,8 @@ void Layers::createLayers( const int32 num, const float width, const float heigh
 		
 		pSwitch->addChild( pTex );
 	}
+	
+	setRoot( pSwitch );	
 }
 
 
@@ -243,6 +242,7 @@ const Layers::ComposeOperatorValueType	Layers::gethComposeOperator( const int32 
 void Layers::setAlpha( vgd::Shp< vgd::basic::IImage > image, const float alpha )
 {
 	assert( image->format() == vgd::basic::IImage::RGBA );
+	assert( image->type() == vgd::basic::IImage::UINT8 );
 	
 	assert( alpha >= 0.f );
 	assert( alpha <= 1.f );
@@ -252,7 +252,7 @@ void Layers::setAlpha( vgd::Shp< vgd::basic::IImage > image, const float alpha )
 	ui8Alpha	= static_cast< uint8 >( alpha * 255.f );
 
 	// scan image
-	uint8*		iPixel = image->editPixels();
+	uint8*		iPixel = static_cast<uint8*>(image->editPixels());
 	for(	uint8	*iEnd = iPixel + image->width()*image->height()*4;
 			iPixel != iEnd;
 			iPixel++ )
@@ -268,6 +268,7 @@ void Layers::setAlpha( vgd::Shp< vgd::basic::IImage > image, const float alpha )
 void Layers::setAlphaIfNotBlack( vgd::Shp< vgd::basic::IImage > image, const float alpha )
 {
 	assert( image->format() == vgd::basic::IImage::RGBA );
+	assert( image->type() == vgd::basic::IImage::UINT8 );	
 		
 	assert( alpha >= 0.f );
 	assert( alpha <= 1.f );
@@ -276,7 +277,7 @@ void Layers::setAlphaIfNotBlack( vgd::Shp< vgd::basic::IImage > image, const flo
 	ui8Alpha	= static_cast< uint8 >( alpha * 255.f );
 
 	// scan image
-	uint8*		iPixel = image->editPixels();
+	uint8*		iPixel = static_cast<uint8*>(image->editPixels());
 	for(	uint8	*iEnd = iPixel + image->width()*image->height()*4;
 			iPixel != iEnd;
 			iPixel++ )
