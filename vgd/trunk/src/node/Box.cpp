@@ -51,8 +51,8 @@ void Box::initializeGeometry()
 
 	// VERTEX
 	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex			= getFVertexRW();
-	const float fSize= 1.f;
-	vertex->resize( 0 );
+	const float fSize= 0.5f;
+	vertex->clear();
 	vertex->reserve( 24 );
 	
 	// front
@@ -93,7 +93,7 @@ void Box::initializeGeometry()
 	
 	// VERTEX INDEX
 	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex		= getFVertexIndexRW();
-	vertexIndex->resize( 0 );
+	vertexIndex->clear();
 	vertexIndex->reserve( 24 );
 
 	// front	
@@ -135,7 +135,7 @@ void Box::initializeGeometry()
 	// PRIMITIVE
 	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getFPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::QUADS, 0, vertexIndex->size() );
-	primitive->resize( 0 );
+	primitive->clear();
 	primitive->push_back( prim );
 	
 	vertex.release();
@@ -144,7 +144,7 @@ void Box::initializeGeometry()
 		
 	// NORMAL
 	vgd::field::EditorRW< vgd::field::MFVec3f >	normal			= getFNormalRW();	
-	normal->resize(0);
+	normal->clear();
 	normal->reserve(24);
 	
 	// front
@@ -200,7 +200,7 @@ void Box::initializeGeometry()
 		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getFTexCoordRW( i ) );
 		
 		// TEX COORD
-		texCoord->resize( 0 );
+		texCoord->clear();
 		texCoord->reserve( 4 );
 	
 		texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );

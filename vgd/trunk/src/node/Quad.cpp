@@ -51,7 +51,7 @@ void Quad::initializeGeometry( const float width, const float height )
 	const float fSizeX = 0.5f * width;
 	const float fSizeY = 0.5f * height;
 	
-	vertex->resize( 0 );
+	vertex->clear();
 	vertex->reserve( 4 );
 	vertex->push_back( vgm::Vec3f(-fSizeX,	-fSizeY, 0.f) );
 	vertex->push_back( vgm::Vec3f(fSizeX,	-fSizeY, 0.f) );
@@ -60,7 +60,7 @@ void Quad::initializeGeometry( const float width, const float height )
 	
 	// VERTEX INDEX
 	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex		= getFVertexIndexRW();	
-	vertexIndex->resize( 0 );
+	vertexIndex->clear();
 	vertexIndex->reserve( 4 );
 	vertexIndex->push_back(0);
 	vertexIndex->push_back(1);
@@ -70,7 +70,7 @@ void Quad::initializeGeometry( const float width, const float height )
 	// PRIMITIVE
 	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getFPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::QUADS, 0, vertexIndex->size() );
-	primitive->resize( 0 );
+	primitive->clear();
 	primitive->push_back( prim );
 	
 	vertex.release();
@@ -79,7 +79,7 @@ void Quad::initializeGeometry( const float width, const float height )
 		
 	// NORMAL
 	vgd::field::EditorRW< vgd::field::MFVec3f >	normal			= getFNormalRW();	
-	normal->resize(0);
+	normal->clear();
 	normal->reserve(4);
 	normal->push_back( vgm::Vec3f(0.f, 0.f, 1.f ) );
 	normal->push_back( vgm::Vec3f(0.f, 0.f, 1.f ) );
@@ -91,7 +91,7 @@ void Quad::initializeGeometry( const float width, const float height )
 
 
 
-void Quad::initializeTexUnits( const int32 numTexUnits )
+void Quad::initializeTexUnits( const int32 numTexUnits, const bool bSameOrigin )
 {
 	createTexUnits( 2, 0, numTexUnits );
 	
@@ -102,13 +102,23 @@ void Quad::initializeTexUnits( const int32 numTexUnits )
 		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getFTexCoordRW<vgd::field::MFVec2f>( i ) );
 		
 		// TEX COORD
-		texCoord->resize( 0 );
+		texCoord->clear();
 		texCoord->reserve( 4 );
-	
-		texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
-		texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
-		texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
-		texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );
+		
+		if ( bSameOrigin )
+		{
+			texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );
+			texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
+			texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
+			texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
+		}
+		else
+		{
+			texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
+			texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
+			texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
+			texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );
+		}
 		
 		setTexCoordBinding( i, vgd::node::BIND_PER_VERTEX );
 	}
