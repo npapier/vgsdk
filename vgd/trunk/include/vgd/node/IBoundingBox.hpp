@@ -24,6 +24,11 @@ namespace node
 struct VGD_API IBoundingBox
 {
 	/**
+	 * @brief Virtual destructor.
+	 */
+	virtual ~IBoundingBox();
+	
+	/**
 	 * @brief Compute the bounding box an set the associated transformation matrix.
 	 *
 	 * @remarks You should only compute/update the bounding box if necessary.

@@ -15,6 +15,12 @@ namespace node
 
 
 
+IBoundingBox::~IBoundingBox()
+{
+}
+
+
+
 const vgm::Box3f& IBoundingBox::getBoundingBox() const
 {
 	assert( isBoundingBoxValid() );
