@@ -181,13 +181,16 @@ Vec3f Line::getClosestPoint( const Vec3f& point ) const
 
 bool Line::intersect( const Box3f& box, Vec3f& enter, Vec3f& exit ) const
 {
-	if (box.isEmpty())		return false;
+	if (box.isEmpty())
+	{
+		return false;
+	}
 
 	const Vec3f	&pos = getPosition(), &dir = getDirection();
 	const Vec3f	&max = box.getMax(), &min = box.getMin();
 	Vec3f		points[8], inter, bary;
 	Plane		plane;
-	int			i, v0, v1, v2;
+	int		i, v0, v1, v2;
 	bool		front = false, valid, validIntersection = false;
 
 	//
@@ -203,7 +206,10 @@ bool Line::intersect( const Box3f& box, Vec3f& enter, Vec3f& exit ) const
 	float	dist2 = diff.dot(diff);
 	float	radi2 = (max - min).dot(max - min) * 0.25f;
 
-	if (dist2 > radi2)		return false;
+	if (dist2 > radi2)
+	{
+		return false;
+	}
 
 	// set up the eight coords of the corners of the box
 	for(i = 0; i < 8; i++)
@@ -235,10 +241,16 @@ bool Line::intersect( const Box3f& box, Vec3f& enter, Vec3f& exit ) const
 
 		case 10: v0 = 2; v1 = 7; v2 = 3; break;		// +y
 		case 11: v0 = 2; v1 = 6; v2 = 7; break;
+
+		default:
+			assert(false && "Must never happened");
+			v0 = v1 = v2 = 0; // to remove a warning.
 		}
 
-		if ((valid = intersect(points[v0], points[v1], points[v2],
-					   inter, bary, front)) == true) 
+		valid = intersect(	points[v0], points[v1], points[v2],
+									inter, bary, front);
+
+		if ( valid )
 		{
 			if	(front) 
 			{
