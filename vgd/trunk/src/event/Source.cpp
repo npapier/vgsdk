@@ -34,7 +34,7 @@ void Source::detachEventListener( Listener *listener )
 }
 
 
-void Source::fireEvent( Shp<Event> event ) const
+void Source::fireEvent( Shp<Event> event )
 {
 	ListenerContainer::iterator	iterator;
 	for( iterator = this->listeners.begin(); iterator != this->listeners.end(); iterator++ )

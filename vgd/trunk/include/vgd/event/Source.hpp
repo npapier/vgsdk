@@ -62,7 +62,7 @@ protected:
 	 * 
 	 * @param	event	a shared pointer to the event to fire
 	 */
-	void fireEvent( Shp<Event> event ) const;
+	void fireEvent( Shp<Event> event );
 	
 private:
 
