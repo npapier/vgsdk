@@ -13,13 +13,16 @@
 namespace vgDebug
 {
 
-
-
 /**
  * @brief Defines interface for logging facilities.
  */
 struct VGDEBUG_API ILogging
 {
+	/**
+	 * @brief Virtual destructor.
+	 */
+	virtual ~ILogging();
+	
 	/**
 	 * @name Logging facilities methods.
 	 */

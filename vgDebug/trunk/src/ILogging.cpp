@@ -4,3 +4,14 @@
 // Author Nicolas Papier
 
 #include "vgDebug/ILogging.hpp"
+
+
+
+namespace vgDebug
+{
+	
+ILogging::~ILogging()
+{
+}
+
+} // namespace vgDebug
