@@ -163,7 +163,7 @@ namespace internal
     depth_first_search(g, vis, color, *vertices(g).first);
   }
 
-  /*namespace detail {
+  namespace detail {
     template <class ColorMap>
     struct dfs_dispatch {
 
