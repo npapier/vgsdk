@@ -6,16 +6,16 @@
 #ifndef _VGD_FIELD_FIELDMANAGER_H
 #define _VGD_FIELD_FIELDMANAGER_H
 
-#include "vgd/vgd.hpp"
-
 #include <typeinfo>
 
+#include "vgd/vgd.hpp"
 #include "vgd/Shp.hpp"
 #include "vgd/field/AbstractField.hpp"
 #include "vgd/field/EditorRO.hpp"
 #include "vgd/field/EditorRW.hpp"
 #include "vgd/field/IFieldObserver.hpp"
 #include "vgd/field/detail/FieldsToDirtyFlags.hpp"
+
 
 
 namespace vgd
@@ -63,7 +63,7 @@ struct VGD_API FieldManager : public IFieldObserver
 	/**
 	 * @brief Destructor.
 	 */
-	~FieldManager();
+	virtual ~FieldManager();
 	//@}
 
 
