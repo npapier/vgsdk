@@ -6,6 +6,8 @@
 
 #include "vgd/event/KeyboardButtonEvent.hpp"
 
+#include "vgd/event/ButtonStateSet.hpp"
+
 
 namespace vgd
 {
@@ -14,9 +16,8 @@ namespace event
 {
 	
 	
-KeyboardButtonEvent::KeyboardButtonEvent( Source *source, State state, Key k )
-: ButtonEvent( source, state ),
-  key( k )
+KeyboardButtonEvent::KeyboardButtonEvent( Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state) :
+	ButtonEvent( source, buttonStates, buttonID, state )
 {}
 
 
@@ -24,9 +25,9 @@ KeyboardButtonEvent::~KeyboardButtonEvent()
 {}
 
 
-KeyboardButtonEvent::Key KeyboardButtonEvent::getKey() const
+void KeyboardButtonEvent::accept( vgd::event::EventVisitor& eventVisitor )
 {
-	return this->key;
+	eventVisitor.apply( this );
 }
 
 

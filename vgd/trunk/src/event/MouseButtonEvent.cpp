@@ -4,8 +4,9 @@
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-
 #include "vgd/event/MouseButtonEvent.hpp"
+
+#include "vgd/event/ButtonStateSet.hpp"
 
 
 namespace vgd
@@ -15,9 +16,9 @@ namespace event
 {
 	
 	
-MouseButtonEvent::MouseButtonEvent( Source *source, State state, Button btn )
-: ButtonEvent( source, state ),
-  button( btn )
+MouseButtonEvent::MouseButtonEvent( Source *source, const ButtonStateSet& buttonStates, 
+												const int32 buttonID, const State state ) :
+	ButtonEvent( source, buttonStates, buttonID, state )
 {}
 
 
@@ -25,12 +26,12 @@ MouseButtonEvent::~MouseButtonEvent()
 {}
 
 
-MouseButtonEvent::Button MouseButtonEvent::getButton() const
+void MouseButtonEvent::accept( vgd::event::EventVisitor& eventVisitor )
 {
-	return this->button;
+	eventVisitor.apply( this );
 }
 
 
 } // namespace event
 
-} // namespace event
+} // namespace vgd

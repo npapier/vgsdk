@@ -4,7 +4,6 @@
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-
 #include "vgd/event/ButtonEvent.hpp"
 
 
@@ -15,9 +14,10 @@ namespace event
 {
 	
 	
-ButtonEvent::ButtonEvent( Source *source, State state )
-: Event( source ),
-  state( state )
+ButtonEvent::ButtonEvent( Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state ) :
+	Event			(	source, buttonStates	),
+	m_buttonID	(	buttonID	),
+	m_state		(	state		)
 {}
 
 
@@ -25,10 +25,17 @@ ButtonEvent::~ButtonEvent()
 {}
 
 
-ButtonEvent::State ButtonEvent::getState() const
+const int32 ButtonEvent::getButtonID() const
 {
-	return this->state;
+	return m_buttonID;
 }
+
+
+const ButtonEvent::State ButtonEvent::getState() const
+{
+	return m_state;
+}
+
 
 
 } // namespace event

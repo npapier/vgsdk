@@ -11,13 +11,14 @@
 
 namespace vgd
 {
+
 namespace event
 {
 	
 	
-Location2Event::Location2Event(	Source * source, const Location& location, const Location& previousLocation,
+Location2Event::Location2Event(	Source * source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation,
 											const Size& size )
-: Event( source ),
+: Event( source, buttonStates ),
   m_location( location ),
   m_previous( previousLocation ),
   m_size( size )

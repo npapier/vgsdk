@@ -6,6 +6,7 @@
 
 #include "vgd/event/Event.hpp"
 
+
 namespace vgd
 {
 	
@@ -13,16 +14,31 @@ namespace event
 {
 	
 	
-Event::Event( Source *source )
-: pSource(source)
+Event::Event( Source *source, const ButtonStateSet& buttonStates ) : 
+	m_pSource(source),
+	m_buttonStates(buttonStates)
 {}
+
 
 Event::~Event()
 {}
 
+
 Source* Event::getSource() const
 {
-	return this->pSource;
+	return m_pSource;
+}
+
+
+const ButtonStateSet& Event::getButtonStates() const
+{
+	return m_buttonStates;
+}
+
+
+bool Event::isButtonDown( const int32 idButton ) const
+{
+	return ( m_buttonStates.isDown( idButton ) );
 }
 
 

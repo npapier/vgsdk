@@ -15,8 +15,8 @@ namespace event
 {
 	
 	
-MouseWheelEvent::MouseWheelEvent( Source *source, Axis a, int32 d )
-: Event( source ),
+MouseWheelEvent::MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis a, int32 d )
+: Event( source, buttonStates ),
   axis( a ),
   delta( d )
 {}
