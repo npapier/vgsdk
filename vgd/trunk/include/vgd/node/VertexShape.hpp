@@ -1,0 +1,803 @@
+// VGSDK - Copyright (C) 2004, IRCAD.
+// Distributed under the terms of the GNU Library General Public License (LGPL)
+// as published by the Free Software Foundation.
+// Author Nicolas Papier
+
+#ifndef _VGD_NODE_VERTEXSHAPE_H
+#define _VGD_NODE_VERTEXSHAPE_H
+
+#include "vgd/vgd.hpp"
+
+#include <vgm/Box.hpp>
+
+#include "vgd/field/Binding.hpp"
+#include "vgd/field/Float.hpp"
+#include "vgd/field/Integer.hpp"
+#include "vgd/field/Primitive.hpp"
+#include "vgd/field/Vector.hpp"
+
+#include "vgd/node/Shape.hpp"
+
+
+
+namespace vgd
+{
+
+namespace node
+{
+
+
+
+/**
+ * @brief Base class for all vertex-based shape (geometry) nodes.
+ * 
+ * Summary of capabilities :
+ * - encapsulation of geometry/material specification.
+ * - bounding box.
+ * - applying transformation (matrix, translation and rotation) on vertices and normals.
+ *
+ *
+ * New field added by this node :
+ * 
+ * - fields that defined the geometry :
+ * 	- MFVec3f \c		vertex 		= empty\n
+ * 	- MFPrimitive \c	primitive	= empty\n
+ * 	- MFUint32 \c		vertexIndex	= empty\n
+ * 
+ * - fields used by the lighting equation or by materials.
+ * 	- MFVec3f \c normal				= empty\n
+ * 	- MFVec4f \c color4				= empty\n
+ * 	- MFVec4f \c secondaryColor4	= empty\n
+ * 	- MFVec2f \c texCoord			= empty\n
+ * 		texCoord is a "dynamic field", see createTexUnits()...
+ * 	- MFUint8 \c edgeFlag			= empty\n
+ * 
+ * - fields for bindings :
+ * 	- SFBinding \c normalBinding 				= BIND_OFF\n
+ * 	- SFBinding \c color4Binding				= BIND_OFF\n
+ * 	- SFBinding \c secondaryColor4Binding	= BIND_OFF\n
+ * 	- SFBinding \c texCoordBinding			= BIND_OFF\n
+ * 		texCoordBinding is a "dynamic field", see createTexUnits()...
+ * 	- SFBinding \c edgeFlagBinding			= BIND_OFF\n
+ * 
+ * @remarks BIND_OFF, BIND_PER_VERTEX could be used, other not.
+ * 
+ * 
+ * @remarks Depends on vgd::node::DrawStyle.hpp.
+ * 
+ * @todo Color/SecondaryColor3, ColorIndex, FogCoordinates.
+ * 
+ * @todo generateTexCoords that Calculates either spherical, cylindrical, or planar two-dimensional texture coordinates into texture unit tu.
+ * 
+ * @todo SetToDefault() that call a FieldManager method that called clear() on each field(on multifield).
+ * 
+ * @todo Add a lighter version of this class(with less field, or add field at run-time) and a templated one(for using int16...).
+ * 
+ * @ingroup g_nodes
+ * @ingroup g_shapeNodes
+ * @ingroup g_texturingNodes
+ */
+struct VGD_API VertexShape : public vgd::node::Shape
+{
+	META_NODE_HPP( VertexShape );
+
+
+
+	/**
+	 * @name Algo/Trian support.
+	 */
+	//@{
+
+	/**
+	 * @brief Computes mesh normals (one normal per vertex)
+	 */
+	void			computeNormals();
+	//@}
+
+
+
+	/**
+	 * @name Bounding box.
+	 */
+	//@{
+
+	/**
+	 * @brief Compute the bounding box.
+	 *
+	 * @remarks It computes the bounding box using only the vertex field (the vertexIndex field is not used, if there is 
+	 * unused vertex, then the bounding box could be less accurate).
+	 *
+	 * @remarks Compute only if bounding box dirty flag is invalidate (i.e. Mesh has changed).
+	 *
+	 * @return true if bounding box has been computed, false if bounding box has been already valid or simply transformed
+	 * by the matrix \c transformation.
+	 */
+	bool computeBoundingBox( const vgm::MatrixR& transformation );
+
+	bool isBoundingBoxValid() const;
+
+	/**
+	 * @brief Compute the bounding box.
+	 * 
+	 * The bounding box is compute using vertex and vertexIndex field. So a unused vertex don't modify the bounding box.
+	 * This is slower than the simple computeBoundingBox() but always accurate.
+	 * 
+	 * @remarks Compute only if bounding box dirty flag is invalidate (but be carefull bounding box dirty flag is only 
+	 * invalidate if a vertex has changed and NOT vertex index !!!).
+	 * 
+	 * @remarks Compute only if bounding box dirty flag is invalidate (i.e. Mesh has changed).
+	 *
+	 * @return true if bounding box has been computed, false if bounding box has been already valid or simply transformed
+	 * by the matrix \c transformation.
+	 */
+	bool smartComputeBoundingBox( const vgm::MatrixR& transformation );
+	
+	void invalidateBoundingBox( bool bInvalidate = true );
+	//@}
+
+
+
+	/**
+	 * @name Actions on VertexShape.
+	 */
+	//@{
+	
+	/**
+	 * @brief Transform all vertices and normals by the given matrix.
+	 * 
+	 * The transformed vertices are computed by multiplying each vertex(row vector) by the matrix.
+	 * The transformed normals are computed by multiplying each normal(row vector) by the matrix and renormalize it if
+	 * specified by method parameter \c normalize.
+	 * 
+	 * @param matrix		this matrix is used to transform vertices.
+	 * @param normalize	true to activate the normalization of transformed normals, false to disable this normalization.
+	 */
+	void transform( const vgm::MatrixR& matrix, const bool normalize = true );
+
+	/**
+	 * @brief Transform all vertices by the given translation vector.
+	 * 
+	 * @param translation	this vector is used to translate vertices.
+	 */
+	void transform( const vgm::Vec3f translation );
+
+	/**
+	 * @brief Transform all vertices by the given rotation.
+	 * 
+	 * @param rotation		this rotation is used to transform vertices.
+	 */
+	void transform( const vgm::Rotation rotation );
+	//@}
+
+
+
+
+
+
+	/**
+	 * @name Accessors to field vertex.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c vertex field.
+	 */	
+	typedef vgd::field::MFVec3f	FVertexType;
+		
+	/**
+	 * @brief Typedef for the \c vertex value.
+	 */
+	typedef vgm::Vec3f				VertexValueType;
+
+	vgd::field::EditorRO< FVertexType >		getFVertexRO() const;
+	vgd::field::EditorRW< FVertexType >		getFVertexRW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field normal.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c normal field.
+	 */	
+	typedef vgd::field::MFVec3f	FNormalType;
+		
+	/**
+	 * @brief Typedef for the \c normal value.
+	 */
+	typedef vgm::Vec3f				NormalValueType;
+
+	vgd::field::EditorRO< FNormalType >		getFNormalRO() const;
+	vgd::field::EditorRW< FNormalType >		getFNormalRW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field color4.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c color4 field.
+	 */	
+	typedef vgd::field::MFVec4f	FColor4Type;
+		
+	/**
+	 * @brief Typedef for the \c color4 value.
+	 */
+	typedef vgm::Vec4f				Color4ValueType;
+
+	vgd::field::EditorRO< FColor4Type >		getFColor4RO() const;
+	vgd::field::EditorRW< FColor4Type >		getFColor4RW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field secondaryColor4.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c secondaryColor4 field.
+	 */	
+	typedef vgd::field::MFVec4f	FSecondaryColor4Type;
+		
+	/**
+	 * @brief Typedef for the \c secondaryColor4 value.
+	 */
+	typedef vgm::Vec4f				SecondaryColor4ValueType;
+
+	vgd::field::EditorRO< FSecondaryColor4Type >		getFSecondaryColor4RO() const;
+	vgd::field::EditorRW< FSecondaryColor4Type >		getFSecondaryColor4RW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field texCoord*.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c texCoord field.
+	 */	
+	typedef vgd::field::MFFloat	FTexCoord1fType;
+	
+	/**
+	 * @brief Typedef for the \c texCoord field.
+	 */	
+	typedef vgd::field::MFVec2f	FTexCoord2fType;
+		
+	/**
+	 * @brief Typedef for the \c texCoord field.
+	 */	
+	typedef vgd::field::MFVec3f	FTexCoord3fType;
+	
+	/**
+	 * @brief Typedef for the \c texCoord field.
+	 */	
+	typedef vgd::field::MFVec4f	FTexCoord4fType;	
+		
+	/**
+	 * @brief Typedef for the \c texCoord value.
+	 */
+	typedef float						TexCoord1fValueType;
+	
+	/**
+	 * @brief Typedef for the \c texCoord value.
+	 */
+	typedef vgm::Vec2f				TexCoord2fValueType;
+	
+	/**
+	 * @brief Typedef for the \c texCoord value.
+	 */
+	typedef vgm::Vec3f				TexCoord3fValueType;
+	
+	/**
+	 * @brief Typedef for the \c texCoord value.
+	 */
+	typedef vgm::Vec4f				TexCoord4fValueType;
+	
+	/**
+	 * @brief Returns the dimension of the i-th \c texCoord field.
+	 * 
+	 * @param index		zero-base index for the \c texCoord field.
+	 * 
+	 * @return The dimension of the texture coordinates for the i-th \c texCoord field (zero is returned if there is no
+	 * texture coordinate for the specified field).
+	 * 
+	 * @remarks Expected values are 0, 1, 2, 3 and 4.
+	 */
+	int8	getTexCoordDim( const int32 index ) const;
+
+
+
+	/**
+	 * @brief Accessor to \c texCoord field.
+	 * 
+	 * @param index		zero-base index for the \c texCoord field.
+	 */
+	template< typename FTexCoordType >
+	vgd::field::EditorRO< FTexCoordType > getFTexCoordRO( const int32 index = 0 ) const
+	{
+		return ( getFieldRO< FTexCoordType >(getFTexCoord( index )) );
+	}
+
+	/**
+	 * @brief Accessor to \c texCoord field.
+	 * 
+	 * @param index		zero-base index for the \c texCoord field.
+	 */
+	template< typename FTexCoordType >
+	vgd::field::EditorRW< FTexCoordType > getFTexCoordRW( const int32 index = 0 )
+	{
+		return ( getFieldRW< FTexCoordType >(getFTexCoord( index )) );
+	}
+
+	/**
+	 * @brief Call this method to create dynamically one or more \c texCoord and \c texCoordBinding fields with the 
+	 * specified dimensions (for the coordinate).
+	 * 
+	 * \c texCoord fields should have preferably contiguous index. If not, only the first block (starting from index 0) 
+	 * of contiguous \c texCoord would be used.
+	 * A field \c texCoord with an index of \c i is used with the texture (Texture2D, Texture3D...) that has a multi 
+	 * attribute index of \c i.
+	 * 
+	 * @param texCoordDimension	dimension of the texture coordinate (1, 2, 3 or 4).
+	 * @param index					zero-base index for the \c texCoord field.
+	 * @param num						number of contiguous fields.
+	 * 
+	 * @remarks Call this method before any access to texture coordinate or binding related methods with a specific 
+	 * index.
+	 * 
+	 * @remarks Texture coordinates and bindings, initialized by this method, must not be already created.
+	 */
+	void createTexUnits( const int8 texCoordDimension = 2, const int32 index = 0, const int32 num = 1 );
+
+private:
+
+	/**
+	 * @brief Call this method to create dynamically one or more \c texCoord and \c texCoordBinding fields with the 
+	 * specified \c fieldType and for all the desired textures units.
+	 * 
+	 * @param index					zero-base index for the \c texCoord field.
+	 * @param num						number of contiguous fields.
+	 */
+	template< typename fieldType >
+	void createTexUnits( const int32 index, const int32 num );
+
+public:
+
+	/**
+	 * @brief Call this method to remove dynamically one \c or more texCoord and \c texCoordBinding fields.
+	 * 
+	 * @param index					zero-base index for the \c texCoord field.
+	 * @param num						number of contiguous fields.
+	 * 
+	 * @remarks Texture coordinates and bindings, initialized by this method, must be already created.
+	 */
+	void removeTexUnits( const int32 index = 0, const int32 num = 1 );
+
+	/**
+	 * @brief Returns the number of texture units actually used by this node.
+	 * 
+	 * Returns only the number of texture units of the first block (starting from index 0) of contiguous \c texCoord.
+	 * 
+	 * @return The number of texture units.
+	 * 
+	 * @remarks This method is relatively slow.
+	 */
+	const int32	getNumTexUnits() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field edgeFlag.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c edgeFlag field.
+	 */	
+	typedef vgd::field::MFUInt8	FEdgeFlagType;
+		
+	/**
+	 * @brief Typedef for the \c edgeFlag value.
+	 */
+	typedef uint8						EdgeFlagValueType;
+
+	vgd::field::EditorRO< FEdgeFlagType >		getFEdgeFlagRO() const;
+	vgd::field::EditorRW< FEdgeFlagType >		getFEdgeFlagRW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field primitive.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c primitive field.
+	 */	
+	typedef vgd::field::MFPrimitive	FPrimitiveType;
+		
+	/**
+	 * @brief Typedef for the \c primitive value.
+	 */
+	typedef vgd::node::Primitive		PrimitiveValueType;
+
+	vgd::field::EditorRO< FPrimitiveType >		getFPrimitiveRO() const;
+	vgd::field::EditorRW< FPrimitiveType >		getFPrimitiveRW();
+
+	//@}
+
+
+
+
+	/**
+	 * @name Accessors to field vertexIndex.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c vertexIndex field.
+	 */	
+	typedef vgd::field::MFUInt32		FVertexIndexType;
+		
+	/**
+	 * @brief Typedef for the \c vertexIndex value.
+	 */
+	typedef uint32							VertexIndexValueType;
+
+	vgd::field::EditorRO< FVertexIndexType >		getFVertexIndexRO() const;
+	vgd::field::EditorRW< FVertexIndexType >		getFVertexIndexRW();
+
+	//@}
+
+
+
+
+
+
+	/**
+	 * @name Accessors to field normalBinding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c normalBinding field.
+	 */	
+	typedef vgd::field::SFBinding		FNormalBindingType;
+		
+	/**
+	 * @brief Typedef for the \c normalBinding value.
+	 */
+	typedef vgd::node::Binding			NormalBindingValueType;
+
+	const vgd::node::Binding	getNormalBinding() const;
+	void 								setNormalBinding( const vgd::node::Binding );
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field color4Binding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c color4Binding field.
+	 */	
+	typedef vgd::field::SFBinding		FColor4BindingType;
+		
+	/**
+	 * @brief Typedef for the \c color4Binding value.
+	 */
+	typedef vgd::node::Binding			Color4BindingValueType;
+
+	const vgd::node::Binding	getColor4Binding() const;
+	void 								setColor4Binding( const vgd::node::Binding );
+	//@}
+	
+
+
+	/**
+	 * @name Accessors to field secondaryColor4Binding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c secondaryColor4Binding field.
+	 */	
+	typedef vgd::field::SFBinding		FSecondaryColor4BindingType;
+		
+	/**
+	 * @brief Typedef for the \c secondaryColor4Binding value.
+	 */
+	typedef vgd::node::Binding			SecondaryColor4BindingValueType;
+
+	const vgd::node::Binding	getSecondaryColor4Binding() const;
+	void 								setSecondaryColor4Binding( const vgd::node::Binding );
+
+	//@}
+
+	
+	
+	/**
+	 * @name Accessors to field texCoordBinding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c texCoordBinding field.
+	 */	
+	typedef vgd::field::SFBinding		FTexCoordBindingType;
+		
+	/**
+	 * @brief Typedef for the \c texCoordBinding value.
+	 */
+	typedef vgd::node::Binding			TexCoordBindingValueType;
+
+	const vgd::node::Binding	getTexCoordBinding( const int32 texUnit ) const;
+	void 								setTexCoordBinding( const int32 texUnit, const vgd::node::Binding );
+
+	//@}
+	
+	
+	
+	/**
+	 * @name Accessors to field edgeFlagBinding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c edgeFlagBinding field.
+	 */	
+	typedef vgd::field::SFBinding		FEdgeFlagBindingType;
+		
+	/**
+	 * @brief Typedef for the \c edgeFlagBinding value.
+	 */
+	typedef vgd::node::Binding			EdgeFlagBindingValueType;
+
+	const vgd::node::Binding	getEdgeFlagBinding() const;
+	void 								setEdgeFlagBinding( const vgd::node::Binding );
+
+	//@}
+
+
+
+	/**
+	 * 
+	 * \code 
+	 * 
+	 * Differents versions to gain read-only(RO) or read-write(RW) field access :
+	 *
+	 * \li read-only access		: vgd::field::EditorRO< vgd::field::MFVec3f > vertices = getFVertexRO();
+	 * \li read-write access	: vgd::field::EditorRW< vgd::field::MFVec3f > vertices = getFVertexRW();
+	 * 
+	 * \li read-only access		: vgd::field::EditorRO< vgd::node::VertexShape::FVertexType > vertices = getFVertexRO();
+	 * \li read-write access	: vgd::field::EditorRW< vgd::node::VertexShape::FVertexType > vertices = getFVertexRW();
+	 * 
+	 * \li read-only access		: vgd::field::EditorRO<vgd::field::MFVec3f> vertices = 
+	 * getFieldRO<vgd::field::MFVec3f>(getFVertex());
+	 * \li read-write access	: vgd::field::EditorRW<vgd::field::MFVec3f> vertices = 
+	 * getFieldRW<vgd::field::MFVec3f>(getFVertex());
+	 *
+	 * \endcode
+	 * 
+	 * @remarks Idem for all others fields(especially for bindings).
+	 */
+
+
+
+protected:
+	/**
+	 * @name Constructor.
+	 */
+	//@{
+	
+	/**
+	 * @brief Default constructor.
+	 */
+	VertexShape( const std::string nodeName );
+
+	void	setToDefaults( void );
+	
+	void	setOptionalsToDefaults();
+
+	//@}
+
+
+	/**
+	 * @brief Invalidate bounding box dirty flag for each parents of this node.
+	 */
+	void invalidateParentsBoundingBoxDirtyFlag();
+
+
+
+public:
+	/**
+	 * @name Fields names enumeration.
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the name of field \c vertex.
+	 * 
+	 * @return the name of field \c vertex.
+	 */
+	static const std::string getFVertex( void );
+
+	/**
+	 * @brief Returns the name of field \c normal.
+	 * 
+	 * @return the name of field \c normal.
+	 */
+	static const std::string getFNormal( void );
+
+//	/**
+//	 * @brief Returns the name of field \c color3.
+//	 * 
+//	 * @return the name of field \c color3.
+//	 */
+//	static const std::string getFColor3( void );
+
+	/**
+	 * @brief Returns the name of field \c color4.
+	 * 
+	 * @return the name of field \c color4.
+	 */
+	static const std::string getFColor4( void );
+
+//	/**
+//	 * @brief Returns the name of field \c secondary \c color3.
+//	 * 
+//	 * @return the name of field \c secondary \c color3.
+//	 */
+//	static const std::string getFSecondaryColor3( void );
+
+	/**
+	 * @brief Returns the name of field \c secondary \c colors4.
+	 * 
+	 * @return the name of field \c secondary \c colors4.
+	 */
+	static const std::string getFSecondaryColor4( void );
+
+//	/**
+//	 * @brief Returns the name of field \c fog coordinates.
+//	 * 
+//	 * @return the name of field \c fog \c coordinates.
+//	 */
+//	static const std::string getFFogCoord( void );
+
+	/**
+	 * @brief Returns the name of field \c texture \c coordinates \c of \c the \c specified \c texture \c unit.
+	 * 
+	 * @return the name of field \c texture \c coordinates \c of \c the \c specified \c texture \c unit.
+	 */
+	static const std::string getFTexCoord( const int32 textureUnit );
+
+	/**
+	 * @brief Returns the name of field \c edge \c flag.
+	 * 
+	 * @return the name of field \c edge \c flag.
+	 */
+	static const std::string getFEdgeFlag( void );
+	
+	/**
+	 * @brief Returns the name of field \c primitive.
+	 * 
+	 * @return the name of field \c primitive.
+	 */
+	static const std::string getFPrimitive( void );
+
+
+
+	/**
+	 * @brief Returns the name of field \c vertex \c index.
+	 * 
+	 * @return the name of field \c vertex \c index.
+	 */
+	static const std::string getFVertexIndex( void );
+
+
+
+	/**
+	 * @brief Returns the name of field \c normal \c binding.
+	 * 
+	 * @return the name of field \c normal \c binding.
+	 */
+	static const std::string getFNormalBinding( void );
+
+//	/**
+//	 * @brief Returns the name of field \c color3 \c binding.
+//	 * 
+//	 * @return the name of field \c color3 \c binding.
+//	 */
+//	static const std::string getFColor3Binding( void );
+
+	/**
+	 * @brief Returns the name of field \c color4 \c binding.
+	 * 
+	 * @return the name of field \c color4 \c binding.
+	 */
+	static const std::string getFColor4Binding( void );
+
+//	/**
+//	 * @brief Returns the name of field \c secondary \c color3 \c binding.
+//	 * 
+//	 * @return the name of field \c \c secondary \c color3.
+//	 */
+//	static const std::string getFSecondaryColor3Binding( void );
+
+	/**
+	 * @brief Returns the name of field \c secondary \c colors4 \c binding.
+	 * 
+	 * @return the name of field \c secondary \c colors4 \c binding.
+	 */
+	static const std::string getFSecondaryColor4Binding( void );
+
+//	/**
+//	 * @brief Returns the name of field \c fog \c coordinates \c binding.
+//	 * 
+//	 * @return the name of field \c fog \c coordinates \c binding.
+//	 */
+//	static const std::string getFFogCoordBinding( void );
+
+	/**
+	 * @brief Returns the name of field \c texture \c coordinates \c of \c the \c specified \c texture \c unit \c binding.
+	 * 
+	 * @return the name of field \c texture \c coordinates \c of \c the \c specified \c texture \c unit \c binding.
+	 */
+	static const std::string getFTexCoordBinding( const int32 textureUnit );
+
+	/**
+	 * @brief Returns the name of field \c edge \c flag \c binding.
+	 * 
+	 * @return the name of field \c edge \c flag \c binding.
+	 */
+	static const std::string getFEdgeFlagBinding( void );
+	
+	//@}
+
+
+
+	/**
+	 * @name Dirty flags enumeration.
+	 */
+	//@{
+
+	/**
+	 * @brief Returns name of dirty flag that is invalidate when bounding box is invalidate and must be recomputed.
+	 */
+	static const std::string getDFBoundingBox( void );
+	
+	//@}
+
+
+
+private:
+
+	int32			m_numTexUnits;
+};
+
+
+
+} // namespace node
+
+} // namespace vgd
+
+#endif // #ifndef _VGD_NODE_VERTEXSHAPE_H
