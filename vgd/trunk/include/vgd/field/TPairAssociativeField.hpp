@@ -82,7 +82,7 @@ struct TPairAssociativeField : public AbstractField
 	{
 		assert( checkRO() );
 
-		return ( m_map.size() );
+		return ( static_cast<int32>(m_map.size()) );
 	}
 
 
@@ -171,7 +171,7 @@ struct TPairAssociativeField : public AbstractField
 	{
 		assert( checkRW() );
 		
-		return ( m_map.erase( key ) );
+		return ( static_cast<int32>(m_map.erase( key )) );
 	}
 
 
@@ -214,7 +214,7 @@ struct TPairAssociativeField : public AbstractField
 	{
 		assert( checkRO() );
 		
-		return ( m_map.count( key ) );
+		return ( static_cast<int32>(m_map.count( key )) );
 	}
 	
 	iterator find ( const KeyType& key )

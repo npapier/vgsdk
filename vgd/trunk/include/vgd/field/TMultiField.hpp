@@ -98,7 +98,7 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRO() );
 
-		return ( m_vectorMF.size() );
+		return ( static_cast<int32>(m_vectorMF.size()) );
 	}
 
 
@@ -107,7 +107,7 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRO() );
 				
-		return ( m_vectorMF.capacity() );
+		return ( static_cast<uint32>(m_vectorMF.capacity()) );
 	}
 
 	
@@ -419,11 +419,11 @@ struct TMultiField : public AbstractField
 		{
 			if ( (*vectorIter) == rItem )
 			{
-				return ( i32Index );
+				return ( static_cast<int32>(i32Index) );
 			}
 		}
 		
-		return ( -1 );
+		return ( static_cast<int32>(-1) );
 	}
 	//@}
 
