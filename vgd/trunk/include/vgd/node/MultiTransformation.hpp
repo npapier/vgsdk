@@ -29,6 +29,8 @@ namespace node
  * - SFBool \c composeTransformation = true\n
  * 	Determines if composition with current transformation matrix is enable or disable.
  * 	Sets to true if composition of matrix is enabled, false if not.
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API MultiTransformation : public vgd::node::MultiAttribute
 {

@@ -38,6 +38,8 @@ namespace node
  * @remarks The maximum number of lights is equal at least to 8 in OpenGL and DirectX. Feel free to use up to 8 lights.
  *
  * @todo SoSFColor color, SoSFFloat 	intensity.
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API Light : public vgd::node::MultiAttribute
 {

@@ -26,6 +26,12 @@
  * 
  * @ingroup g_vgd
  */
+
+/**
+ * @defgroup g_abstractNodes Abstract nodes
+ * 
+ * @ingroup g_nodes
+ */
  
 /**
  * @defgroup g_groupNodes Group nodes.

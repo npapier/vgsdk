@@ -22,6 +22,8 @@ namespace node
 
 /**
  * @brief Abstract class for all attribute classes.
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API Attribute : public vgd::node::Node
 {

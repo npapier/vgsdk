@@ -22,6 +22,8 @@ namespace node
 
 /**
  * @brief Abstract base class for all projection transformation nodes.
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API ProjectionTransformation : public SingleTransformation
 {

@@ -22,6 +22,8 @@ namespace node
 
 /**
  * @brief Abstract base class for all geometric transformation nodes.
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API GeometricalTransformation : public SingleTransformation
 {

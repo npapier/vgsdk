@@ -120,6 +120,7 @@ namespace node
  * 
  * @todo Add documentation about used OpenGL extensions (like GL_ARB_texture_env_combine, GL_texture_env_crossbar).
  * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API Texture : public vgd::node::MultiAttribute
 {

@@ -31,6 +31,8 @@ namespace node
  * 
  * - SFInt8 \c multiAttributeIndex = 0\n
  * 	Zero-based index apply to this attribute. Default value for this field is zero.
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API MultiAttribute : public vgd::node::Attribute
 {

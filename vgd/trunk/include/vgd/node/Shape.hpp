@@ -24,6 +24,8 @@ namespace node
 
 /**
  * @brief Abstract base class for all shape nodes.
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API Shape : public vgd::node::Node, public vgd::node::IBoundingBox
 {
