@@ -31,6 +31,8 @@ namespace node
  * invalidated. Be careful.
  * 
  * @todo SwapChild().
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API IGroup
 {
