@@ -26,6 +26,8 @@ bool ByDirtyFlag::operator () ( const vgd::Shp< vgd::node::Node > node ) const
 	return ( pDirtyFlag->isDirty() );
 }
 
+
+
 } // namespace predicate
 
 } // namespace visitor

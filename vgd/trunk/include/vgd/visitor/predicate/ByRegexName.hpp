@@ -6,10 +6,11 @@
 #ifndef _VGD_VISITOR_PREDICATE_BYREGEXNAME_H
 #define _VGD_VISITOR_PREDICATE_BYREGEXNAME_H
 
-#include "vgd/vgd.hpp"
-
 #include <boost/regex.hpp>
+
+#include "vgd/vgd.hpp"
 #include "vgd/node/Node.hpp"
+
 
 
 

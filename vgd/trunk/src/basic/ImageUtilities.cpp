@@ -18,7 +18,7 @@ namespace basic
 
 
 vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::basic::IImage > pImage, 
-																					const PlanNameType plan,
+																					const SliceType slice,
 																					const uint32 position )
 {
 	using vgd::basic::Image;
@@ -37,9 +37,9 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 	vgd::Shp< Image > pNewImage;
 	uint8*				outputPixel;
 	
-	switch ( plan )
+	switch ( slice )
 	{
-		case AXIAL_PLAN:
+		case AXIAL_SLICE:
 		{
 			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
 																	pImage->width(), pImage->height(), 1,
@@ -76,7 +76,7 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 		break;
 		
 		
-		case FRONTAL_PLAN:
+		case FRONTAL_SLICE:
 		{
 			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
 																	pImage->width(), pImage->depth(), 1,
@@ -118,7 +118,7 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 		break;
 
 
-		case SAGITTAL_PLAN:
+		case SAGITTAL_SLICE:
 		{
 			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
 																	pImage->depth(), pImage->height(), 1,
@@ -159,7 +159,7 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 		break;
 
 		default:
-			assert( false && "Unknown type of plan." );
+			assert( false && "Unknown type of slice." );
 	}
 	
 	return ( pNewImage );
