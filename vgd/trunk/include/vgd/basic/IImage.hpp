@@ -21,9 +21,10 @@ namespace basic
 /**
  * @brief Abstract interface for image (1, 2 or 3 dimensions).
  * 
+ * @todo Format: COLOR_INDEX image.
+ * 
  * @todo Layers (like 3d images).
  * @todo Complete support of different Type.
- * @todo Format: COLOR_INDEX image.
  * @todo LUMINANCE8_ALPHA8 and others.
  * 
  * @ingroup g_images
@@ -49,13 +50,14 @@ struct VGD_API IImage
 	typedef enum {
 		NO_TYPE = 0,
 		//BOOL	= 1,
-		UINT8/*,
+		UINT8,
 		INT8,
 		UINT16,
 		INT16,
 		UINT32,
 		INT32,
-		FLOAT*/
+		FLOAT,
+		DOUBLE
 	} Type;
 
 	/**
@@ -114,8 +116,6 @@ struct VGD_API IImage
 	 * @return		type of the pixel data.
 	 * 
 	 * @remarks		If image is not defined, must return NO_TYPE.
-	 * 
-	 * @remarks type of data is always UBYTE = UNSIGNED_BYTE.
 	 */
 	virtual const Type	type() const=0;
 
@@ -126,7 +126,7 @@ struct VGD_API IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	virtual const uint8*	pixels() const=0;
+	virtual const void*	pixels() const=0;
 
 	/**
 	 * @brief Returns a pointer to the image data in memory.
@@ -135,7 +135,7 @@ struct VGD_API IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	virtual uint8*			editPixels()=0;
+	virtual void*			editPixels()=0;
 	
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().

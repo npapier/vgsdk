@@ -48,7 +48,7 @@ struct VGD_API ImageInfo : public IImage
 					const uint32	height		= 0,
 					const Format	format		= NO_FORMAT,
 					const Type		type			= NO_TYPE,
-					const uint8		*pixels		= 0 );
+					const void*		pixels		= 0 );
 
 	/**
 	 * @brief Set all informations about an image.
@@ -138,33 +138,33 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return		type of the pixel data.
 	 */
-	const Type	type() const				{ return ( m_type ); }
+	const Type		type() const			{ return ( m_type ); }
 	
 	/**
 	 * @brief Returns a pointer to the image data in memory.
 	 * 
 	 * @return a pointer to the image data in memory.
 	 */
-	const uint8*	pixels( void ) const	{ return ( m_pixels ); }
+	const void*		pixels() const			{ return ( m_pixels ); }
 
 	/**
 	 * @brief Returns a pointer to the image data in memory.
 	 * 
 	 * @return a pointer to the image data in memory.
 	 */
-	uint8*			editPixels();
+	void*			editPixels();
 
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().
 	 */	
-	void				editPixelsDone();
+	void			editPixelsDone();
 	
 	/**
 	 * @brief Returns the pixel data pointer.
 	 * 
 	 * @return A reference on the pixel data pointer.
 	 */
-	uint8*&			pixelData()				{ return ( m_pixels ); }
+	void*&		pixelData()				{ return ( m_pixels ); }
 
 	/**
 	 * @brief Set all informations about an image.
@@ -179,7 +179,7 @@ struct VGD_API ImageInfo : public IImage
 							const uint32	height		= 0,
 							const Format	format		= NO_FORMAT,
 							const Type		type			= NO_TYPE,
-							const uint8		*pixels		= 0 );
+							const void*		pixels		= 0 );
 
 	/**
 	 * @brief Set all informations about an image.
@@ -202,7 +202,7 @@ protected:
 	Format		m_format;
 	Type			m_type;
 	
-	uint8			*m_pixels;
+	void*			m_pixels;
 	
 	bool			m_edit;
 	//@}

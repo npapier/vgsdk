@@ -29,8 +29,6 @@ namespace basic
  * @sa http://openil.sourceforge.net/
  *
  * @todo Support 3d images.
- * @todo Support other image format FLOAT, USHORT, UINT...
- * 
  * @todo use exception for error handling.
  *
  * @ingroup g_images
@@ -70,7 +68,7 @@ struct VGD_API Image : public IImage
 					const uint32	width, const uint32 height,
 					const Format	format,
 					const Type		type,
-					const uint8*	pixels );
+					const void*		pixels );
 
 	/**
 	 * @brief Image contructor : Create a new image.
@@ -153,7 +151,7 @@ struct VGD_API Image : public IImage
 						const uint32	width, const uint32 height,
 						const Format	format,
 						const Type		type,
-						const uint8*	pixels );
+						const void*		pixels );
 
 	/**
 	 * @brief Create a new image.
@@ -199,13 +197,14 @@ struct VGD_API Image : public IImage
 	//@{
 
 	/**
-	 * @brief Convert the current image to another format.
+	 * @brief Convert image to another type/format of image.
 	 * 
-	 * @param format		destination format of image(except LUMINANCE_ALPHA).
+	 * @param format		desired format of the converted image
+	 * @param type			desired type of the converted image
 	 * 
-	 * @todo Documentation of what is done by convert exactly(see DevIL).
+	 * @todo Documentation of what is done exactly by convert (see DevIL).
 	 */
-	bool	convertTo( const Format format );
+	bool	convertTo( const Format format, const Type type );
 	//@}
 
 
@@ -257,7 +256,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @return a pointer to the image data in memory.
 	 */
-	const uint8*	pixels() const;
+	const void*		pixels() const;
 
 	/**
 	 * @brief Returns a pointer to the image data in memory.
@@ -266,7 +265,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @remarks Call editPixelsDone() when you have finished editing pixels.
 	 */
-	uint8*			editPixels();
+	void*				editPixels();
 	
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().
@@ -295,8 +294,11 @@ private:
 
 	bool		reportILError() const;
 
-	Format	convertIL2My	( ILint format	) const;
-	ILint		convertMy2IL	( Format format	) const;
+	Format	convertILFormat2My( ILenum format	) const;
+	ILenum	convertMyFormat2IL( Format format	) const;
+	
+	Type		convertILType2My( ILenum type	) const;
+	ILenum	convertMyType2IL( Type myType ) const;
 	
 	void		resetInformations	();
 	void		updateInformations();

@@ -61,7 +61,7 @@ Image::Image(	const uint32	components,
 					const uint32	width, const uint32 height,
 					const Format	format,
 					const Type		type,
-					const uint8*	pixels ) :
+					const void*		pixels ) :
 	m_iluintImgID(0)
 {
 	if ( m_firstInstance )
@@ -203,7 +203,7 @@ bool Image::load( std::string strFilename )
 		if ( IL_COLOR_INDEX == ilGetInteger( IL_IMAGE_FORMAT ) )
 		{
 			vgDebug::get().logDebug("Image::load: Convert from COLOR INDEX mode to RGBA image %s.", strFilename.c_str() );
-			convertTo( RGBA );
+			convertTo( RGBA, convertILType2My(ilGetInteger(IL_IMAGE_TYPE)) );
 		}
 		
 		updateInformations();
@@ -221,7 +221,7 @@ bool Image::create(	const uint32	components,
 							const uint32	width, const uint32 height,
 							const Format	format,
 							const Type		type,
-							const uint8*	pixels )
+							const void*		pixels )
 {
 	destroy();
 
@@ -234,12 +234,11 @@ bool Image::create(	const uint32	components,
 	// Loads the image specified by File into the ImgId image.
 	const ILvoid *cpixels = reinterpret_cast<const ILvoid*>(pixels);
 
-	assert( type == UINT8 );
 	ilTexImage(
 		width, height, 1,
 		static_cast<ILubyte>(components),
-		convertMy2IL(format),
-		IL_UNSIGNED_BYTE,
+		convertMyFormat2IL(format),
+		convertMyType2IL(type),
 		const_cast<ILvoid*>( cpixels )
 		);
 
@@ -272,13 +271,12 @@ bool Image::create(	const uint32	components,
 
 	// Loads the image specified by File into the ImgId image.
 	
-	assert( type == UINT8 );	
 	ilTexImage(
 		width, height, 1,
 		static_cast<ILubyte>(components),
-		convertMy2IL(format),
-		IL_UNSIGNED_BYTE,
-		0 
+		convertMyFormat2IL(format),
+		convertMyType2IL(type),
+		0
 		);
 
 	if ( reportILError() )
@@ -328,13 +326,11 @@ bool Image::save( const std::string filename ) const
 
 
 
-bool Image::convertTo( const Format format )
+bool Image::convertTo( const Format format, const Type type )
 {
-	assert( format != LUMINANCE_ALPHA );
-
 	bind();
 	
-	ilConvertImage( convertMy2IL(format), IL_UNSIGNED_BYTE );
+	ilConvertImage( convertMyFormat2IL(format), convertMyType2IL(type) );
 
 	return ( !reportILError() );
 }
@@ -376,7 +372,7 @@ const Image::Type Image::type() const
 
 
 
-const uint8* Image::pixels() const
+const void* Image::pixels() const
 {
 	bind();
 
@@ -385,7 +381,7 @@ const uint8* Image::pixels() const
 
 
 
-uint8* Image::editPixels()
+void* Image::editPixels()
 {
 	assert( !m_edit && "Image already edited." );
 
@@ -469,7 +465,7 @@ bool Image::reportILError() const
 
 
 
-Image::Format Image::convertIL2My( ILint format ) const
+Image::Format Image::convertILFormat2My( ILenum format ) const
 {
 	Format f;
 
@@ -509,9 +505,9 @@ Image::Format Image::convertIL2My( ILint format ) const
 
 
 
-ILint Image::convertMy2IL( Image::Format format ) const
+ILenum Image::convertMyFormat2IL( Format format ) const
 {
-	ILint ilformat;
+	ILenum ilformat;
 	
 	switch ( format )
 	{
@@ -549,6 +545,103 @@ ILint Image::convertMy2IL( Image::Format format ) const
 
 
 
+Image::Type Image::convertILType2My( ILenum myType ) const
+{
+	Type type;
+	
+	switch ( myType )
+	{
+		case IL_UNSIGNED_BYTE:
+			type = UINT8;
+			break;
+
+		case IL_BYTE:
+			type = INT8;
+			break;
+
+		case IL_UNSIGNED_SHORT:
+			type = UINT16;
+			break;
+
+		case IL_SHORT:
+			type = INT16;
+			break;
+		
+		case IL_UNSIGNED_INT:
+			type = UINT32;
+			break;
+		
+		case IL_INT:
+			type = INT32;
+			break;
+					
+		case IL_FLOAT:
+			type = FLOAT;
+			break;
+
+		case IL_DOUBLE:
+			type = DOUBLE;
+			break;
+
+		default:
+			assert(false && "Unsupported type");
+			type = NO_TYPE;
+	}
+	
+	return ( type );
+}
+
+
+
+ILenum Image::convertMyType2IL( Type myType ) const
+{
+	ILenum type;
+	
+	switch ( myType )
+	{
+		case UINT8:
+			type = IL_UNSIGNED_BYTE;
+			break;
+
+		case INT8:
+			type = IL_BYTE;
+			break;
+
+		case UINT16:
+			type = IL_UNSIGNED_SHORT;
+			break;
+
+		case INT16:
+			type = IL_SHORT;
+			break;
+		
+		case UINT32:
+			type = IL_UNSIGNED_INT;
+			break;
+		
+		case INT32:
+			type = IL_INT;
+			break;
+					
+		case FLOAT:
+			type = IL_FLOAT;
+			break;
+
+		case DOUBLE:
+			type = IL_DOUBLE;
+			break;
+
+		case NO_TYPE:		
+		default:
+			assert(false && "Unsupported type");
+			type = IL_UNSIGNED_BYTE;
+	}
+	
+	return ( type );
+}
+
+
+
 void Image::resetInformations()
 {
 	m_components	= m_width = m_height = 0;
@@ -566,9 +659,8 @@ void Image::updateInformations()
 	m_components	= ilGetInteger( IL_IMAGE_BYTES_PER_PIXEL );
 	m_width			= ilGetInteger( IL_IMAGE_WIDTH );	
 	m_height			= ilGetInteger( IL_IMAGE_HEIGHT );
-	m_format			= convertIL2My( ilGetInteger( IL_IMAGE_FORMAT ) );
-	assert( ilGetInteger( IL_IMAGE_TYPE ) == IL_UNSIGNED_BYTE );
-	m_type			= UINT8;
+	m_format			= convertILFormat2My( ilGetInteger( IL_IMAGE_FORMAT ) );
+	m_type			= convertILType2My( ilGetInteger( IL_IMAGE_TYPE ) );
 	
 	reportILError();
 }

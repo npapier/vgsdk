@@ -19,7 +19,7 @@ ImageInfo::ImageInfo(
 					const uint32	width, const uint32 height,
 					const Format	format,
 					const Type		type,
-					const uint8		*pixels )
+					const void*		pixels )
 {
 	set( 	width, height,
 			format, type,
@@ -40,13 +40,13 @@ void ImageInfo::set(
 					const uint32	height,
 					const Format	format,
 					const Type		type,
-					const uint8		*pixels	)
+					const void*		pixels	)
 {
 	m_width			= width;
 	m_height			= height;
 	m_format			= format;
 	m_type			= type;
-	m_pixels			= const_cast<uint8*>(pixels);
+	m_pixels			= const_cast<void*>(pixels);
 	m_edit			= false;
 }
 
@@ -58,7 +58,7 @@ void ImageInfo::set( const IImage& iimage )
 	m_height			= iimage.height();
 	m_format			= iimage.format();
 	m_type			= iimage.type();
-	m_pixels			= const_cast<uint8*>(iimage.pixels());
+	m_pixels			= const_cast<void*>(iimage.pixels());
 	m_edit			= false;
 }
 
@@ -78,7 +78,7 @@ const uint32 ImageInfo::components() const
 
 
 
-uint8* ImageInfo::editPixels()
+void* ImageInfo::editPixels()
 {
 	assert( !m_edit );
 	
