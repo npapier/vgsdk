@@ -274,103 +274,103 @@ bool Box3f::intersect( const Box3f& bb ) const
 
 
 
-//
-// View-volume culling: axis-aligned bounding box against view volume,
-// given as Model/View/Projection matrix.
-//
-//
-// Inputs:
-//    MVP:       Matrix from object to NDC space
-//                 (model/view/projection)
-// Inputs/Outputs:
-//    cullBits:  Keeps track of which planes we need to test against.
-//               Has three bits, for X, Y and Z.  If cullBits is 0,
-//               then the bounding box is completely inside the view
-//               and no further cull tests need be done for things
-//               inside the bounding box.  Zero bits in cullBits mean
-//               the bounding box is completely between the
-//               left/right, top/bottom, or near/far clipping planes.
-// Outputs:
-//    bool:    TRUE if bbox is completely outside view volume
-//               defined by MVP.
-//
-
-//
-// How:
-//
-// An axis-aligned bounding box is the set of all points P,
-// Pmin < P < Pmax.  We're interested in finding out whether or not
-// any of those points P are clipped after being transformed through
-// MVP (transformed into clip space).
-//
-// A transformed point P'[x,y,z,w] is inside the view if [x,y,z] are
-// all between -w and w.  Otherwise the point is outside the view.
-//
-// Instead of testing individual points, we want to treat the range of
-// points P.  We want to know if:  All points P are clipped (in which
-// case the cull test succeeds), all points P are NOT clipped (in
-// which case they are completely inside the view volume and no more
-// cull tests need be done for objects inside P), or some points are
-// clipped and some aren't.
-//
-// P transformed into clip space is a 4-dimensional solid, P'.  To
-// speed things up, this algorithm finds the 4-dimensional,
-// axis-aligned bounding box of that solid and figures out whether or
-// not that bounding box intersects any of the sides of the view
-// volume.  In the 4D space with axes x,y,z,w, the view volume planes
-// are the planes x=w, x=-w, y=w, y=-w, z=w, z=-w.
-//
-// This is all easier to think about if we think about each of the X,
-// Y, Z axes in clip space independently; worrying only about the X
-// axis for a moment:
-//
-// The idea is to find the minimum and maximum possible X,W
-// coordinates of P'.  If all of the points in the
-// [(Xmin,Xmax),(Wmin,Wmax)] range satisfy -|W| < X < |W| (|W| is
-// absolute value of W), then the original bounding box P is
-// completely inside the X-axis (left/right) clipping planes of the
-// view volume.  In (x,w) space, a point (x,w) is clipped depending on
-// which quadrant it is in:
-//
-//    x=-w       x=w
-//      \   Q0   /
-//       \  IN  /
-//        \    /
-//         \  /
-// Q1       \/  Q2
-// CLIPPED  /\  CLIPPED    
-//         /  \ 
-//        /    \ 
-//       /  Q3  \ 
-//      / CLIPPED\ 
-//
-// If the axis-aligned box [(Xmin,Xmax),(Wmin,Wmax)] lies entirely in
-// Q0, then it is entirely inside the X-axis clipping planes (IN
-// case).  If it is not in Q0 at all, then it is clipped (OUT).  If it
-// straddles Q0 and some other quadrant, the bounding box intersects
-// the clipping planes (STRADDLE).  The 4 corners of the bounding box
-// are tested first using bitwise tests on their quadrant numbers; if
-// they determine the case is STRADDLE then a more refined test is
-// done on the 8 points of the original bounding box.
-// The test isn't perfect-- a bounding box that straddles both Q1 and
-// Q2 may be incorrectly classified as STRADDLE; however, those cases
-// are rare and the cases that are incorrectly classified will likely
-// be culled when testing against the other clipping planes (these
-// cases are cases where the bounding box is near the eye).
-// 
-// Finding [(Xmin,Xmax),(Wmin,Wmax)] is easy.  Consider Xmin.  It is
-// the smallest X coordinate when all of the points in the range
-// Pmin,Pmax are transformed by MVP; written out:
-//     X = P[0]*M[0][0] + P[1]*M[1][0] + P[2]*M[2][0] + M[3][0]
-// X will be minimized when each of the terms is minimized.  If the
-// matrix entry for the term is positive, then the term is minimized
-// by choosing Pmin; if the matrix entry is negative, the term is
-// minimized by choosing Pmax.  Three 'if' test will let us calculate
-// the transformed Xmin.  Xmax can be calculated similarly.
-// 
-// Testing for IN/OUT/STRADDLE for the Y and Z coordinates is done
-// exactly the same way.
-//
+/**
+ * @brief View-volume culling
+ * 
+ * View-volume culling: axis-aligned bounding box against view volume,
+ * given as Model/View/Projection matrix.
+ * Inputs:
+ *    MVP:       Matrix from object to NDC space
+ *                 (model/view/projection)
+ * Inputs/Outputs:
+ *    cullBits:  Keeps track of which planes we need to test against.
+ *               Has three bits, for X, Y and Z.  If cullBits is 0,
+ *               then the bounding box is completely inside the view
+ *               and no further cull tests need be done for things
+ *               inside the bounding box.  Zero bits in cullBits mean
+ *               the bounding box is completely between the
+ *               left/right, top/bottom, or near/far clipping planes.
+ * Outputs:
+ *    bool:    TRUE if bbox is completely outside view volume
+ *               defined by MVP.
+ *
+ *
+ *
+ * How:
+ *
+ * An axis-aligned bounding box is the set of all points P,
+ * Pmin < P < Pmax.  We're interested in finding out whether or not
+ * any of those points P are clipped after being transformed through
+ * MVP (transformed into clip space).
+ *
+ * A transformed point P'[x,y,z,w] is inside the view if [x,y,z] are
+ * all between -w and w.  Otherwise the point is outside the view.
+ *
+ * Instead of testing individual points, we want to treat the range of
+ * points P.  We want to know if:  All points P are clipped (in which
+ * case the cull test succeeds), all points P are NOT clipped (in
+ * which case they are completely inside the view volume and no more
+ * cull tests need be done for objects inside P), or some points are
+ * clipped and some aren't.
+ *
+ * P transformed into clip space is a 4-dimensional solid, P'.  To
+ * speed things up, this algorithm finds the 4-dimensional,
+ * axis-aligned bounding box of that solid and figures out whether or
+ * not that bounding box intersects any of the sides of the view
+ * volume.  In the 4D space with axes x,y,z,w, the view volume planes
+ * are the planes x=w, x=-w, y=w, y=-w, z=w, z=-w.
+ *
+ * This is all easier to think about if we think about each of the X,
+ * Y, Z axes in clip space independently; worrying only about the X
+ * axis for a moment:
+ *
+ * The idea is to find the minimum and maximum possible X,W
+ * coordinates of P'.  If all of the points in the
+ * [(Xmin,Xmax),(Wmin,Wmax)] range satisfy -|W| < X < |W| (|W| is
+ * absolute value of W), then the original bounding box P is
+ * completely inside the X-axis (left/right) clipping planes of the
+ * view volume.  In (x,w) space, a point (x,w) is clipped depending on
+ * which quadrant it is in:
+ *
+ *    x=-w       x=w
+ *      \   Q0   /
+ *       \  IN  /
+ *        \    /
+ *         \  /
+ * Q1       \/  Q2
+ * CLIPPED  /\  CLIPPED    
+ *         /  \ 
+ *        /    \ 
+ *       /  Q3  \ 
+ *      / CLIPPED\ 
+ *
+ * If the axis-aligned box [(Xmin,Xmax),(Wmin,Wmax)] lies entirely in
+ * Q0, then it is entirely inside the X-axis clipping planes (IN
+ * case).  If it is not in Q0 at all, then it is clipped (OUT).  If it
+ * straddles Q0 and some other quadrant, the bounding box intersects
+ * the clipping planes (STRADDLE).  The 4 corners of the bounding box
+ * are tested first using bitwise tests on their quadrant numbers; if
+ * they determine the case is STRADDLE then a more refined test is
+ * done on the 8 points of the original bounding box.
+ * The test isn't perfect-- a bounding box that straddles both Q1 and
+ * Q2 may be incorrectly classified as STRADDLE; however, those cases
+ * are rare and the cases that are incorrectly classified will likely
+ * be culled when testing against the other clipping planes (these
+ * cases are cases where the bounding box is near the eye).
+ * 
+ * Finding [(Xmin,Xmax),(Wmin,Wmax)] is easy.  Consider Xmin.  It is
+ * the smallest X coordinate when all of the points in the range
+ * Pmin,Pmax are transformed by MVP; written out:
+ *     X = P[0]*M[0][0] + P[1]*M[1][0] + P[2]*M[2][0] + M[3][0]
+ * X will be minimized when each of the terms is minimized.  If the
+ * matrix entry for the term is positive, then the term is minimized
+ * by choosing Pmin; if the matrix entry is negative, the term is
+ * minimized by choosing Pmax.  Three 'if' test will let us calculate
+ * the transformed Xmin.  Xmax can be calculated similarly.
+ * 
+ * Testing for IN/OUT/STRADDLE for the Y and Z coordinates is done
+ * exactly the same way.
+ */
 bool Box3f::outside(const MatrixR& MVP, int32& cullBits) const
 {
 	float Wmax = minExtreme(m_max, m_min, MVP, 3);
