@@ -51,6 +51,7 @@
 #define _VGM_MATRIX_H
 
 #include "vgm/vgm.hpp"
+#include "vgm/Rectangle.hpp"
 #include "vgm/Rotation.hpp"
 #include "vgm/Vector.hpp"
 
@@ -76,16 +77,17 @@ typedef double	RawMatrixd[4][4];
  *
  * The matrices are stored in <b>row-major order</b> (unlike <b>column-major order</b> for OpenGL).
  * But all matrices, created by this class, are the transposed of the OpenGL version.
- * So you can use it directly in OpenGL :)
+ * So you can use it directly in OpenGL, but be careful with the order of composition (use left matrix multiplication
+ * contrary to OpenGL).
  * 
  * @warning Matrix is not initialized by all constructors.
- *
- * @todo make a n*n version.
  *
  * @todo More C++ friendly ( operator * (vec, matrix) )..., 	void print( FILE *fp ) const;
  * @todo template for float, double.
  * @todo remove #ifdef DEBUGGING ?
- * @todo More C++ friendly(in this class ex: remove #define, improve identity()).
+ * @todo More C++ friendly(in this class ex: remove #define, improve setIdentity()).
+ * 
+ * @todo make a n*n version.
  * 
  * @ingroup LinearAlgebra
  */
@@ -101,7 +103,7 @@ struct VGM_API MatrixR
 	 *
 	 * @warning Matrix is not initialized.
 	 */
-	MatrixR( void );
+	MatrixR();
 
 	/**
 	 * @brief Constructor given all 16 elements in row-major order.
@@ -116,12 +118,28 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Constructor from a 4x4 array of elements.
 	 */
-	MatrixR( const RawMatrix& m );
+	explicit MatrixR( const RawMatrix& m );
+
+	/**
+	 * @brief Constructor from a 4x4 array of elements.
+	 */
+	explicit MatrixR( const RawMatrixd& m );
+
+	/**
+	 * @brief Constructor from an array of 16 elements.
+	 */
+	explicit MatrixR( const float* m );
+	
+	/**
+	 * @brief Constructor from an array of 16 elements.
+	 */
+	explicit MatrixR( const double* m );
 
 	/**
 	 * @brief Copy constructor.
 	 */
 	MatrixR( const MatrixR& m );
+	
 	//@}
 
 
@@ -141,6 +159,16 @@ struct VGM_API MatrixR
 	 * @brief Sets value from 4x4 array of elements.
 	 */
 	void					setValue( const RawMatrixd m );
+	
+	/**
+	 * @brief Sets value from an array of 16 elements.
+	 */
+	void					setValue( const float* m );
+	
+	/**
+	 * @brief Sets value from an array of 16 elements.
+	 */
+	void					setValue( const double* m );
 
 	/**
 	 * @brief Returns 4x4 array of elements.
@@ -151,16 +179,26 @@ struct VGM_API MatrixR
 	 * @brief Returns 4x4 array of elements.
 	 */
 	void					getValue( RawMatrixd m ) const;
+	
+	/**
+	 * @brief Returns an array of 16 elements.
+	 */
+	void					getValue( float *m ) const;
+
+	/**
+	 * @brief Returns an array of 16 elements.
+	 */
+	void					getValue( double *m ) const;
+	
+	/**
+	 * @brief Returns 4x4 array of elements.
+	 */
+	const RawMatrix&	getValue() const;
 
 	/**
 	 * @brief Returns 4x4 array of elements.
 	 */
-	const RawMatrix&	getValue( void ) const;
-
-	/**
-	 * @brief Returns 4x4 array of elements.
-	 */
-	RawMatrix&			getValue( void );
+	RawMatrix&			getValue();
 
 	/**
 	 * @brief Make it look like a usual matrix (so you can do m[3][2], returns element in 3th row and 2th column).
@@ -193,18 +231,19 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Sets matrix to be identity.
 	 */
-	void					identity( void );
+	void					setIdentity();
 
 	/**
 	 * @brief Returns an identity matrix 
 	 */
-	static MatrixR		getIdentity( void );
+	static MatrixR		getIdentity();
 
 	/**
 	 * @brief Check if this matrix is identity.
 	 */
-	bool					isIdentity( void ) const;
+	bool					isIdentity() const;
 	//@}
+
 
 
 	/**
@@ -216,6 +255,11 @@ struct VGM_API MatrixR
 	 * @brief Sets matrix to rotate by given rotation.
 	 */
 	void	setRotate( const Rotation& q );
+	
+	/**
+	 * @brief Left multiply the current matrix by the given rotation matrix.
+	 */
+	void rotate( const Rotation& q );
 
 	/**
 	 * @brief Sets matrix to scale by given uniform factor.
@@ -223,18 +267,32 @@ struct VGM_API MatrixR
 	void	setScale( const float s );
 
 	/**
+	 * @brief Left multiply the current matrix by the given scale matrix.
+	 */
+	void scale( const float s );
+	
+	/**
 	 * @brief Sets matrix to scale by given vector.
 	 */
 	void	setScale( const Vec3f& s );
+	
+	/**
+	 * @brief Left multiply the current matrix by the given scale matrix.
+	 */
+	void scale( const Vec3f& s );
 
 	/**
 	 * @brief Sets matrix to translate by given vector.
 	 */
 	void	setTranslate( const Vec3f& t );
+	
+	/**
+	 * @brief Left multiply the current matrix by the given translation matrix.
+	 */
+	void	translate( const Vec3f& t );
 
 	/**
-	 * @brief Composes the matrix based on a translation, rotation, scale,
-	 * orientation for scale, and center.
+	 * @brief Set the matrix with a translation, rotation, scale, orientation for scale, and center.
 	 *
 	 * The "center" is the center point for scaling and rotation.
 	 * The "scaleOrientation" chooses the primary axes for the scale.
@@ -282,6 +340,16 @@ struct VGM_API MatrixR
 		 float left, float right,
 		 float bottom, float top,
 		 float zNear, float zFar );
+		 
+	/**
+	 * @brief Left multiply the current matrix by the given frustum matrix.
+	 * 
+	 * @sa setFrustum()
+	 */
+	void	frustum(
+		 float left, float right,
+		 float bottom, float top,
+		 float zNear, float zFar );
 
 	/**
 	 * @brief Set matrix to orthographic matrix.
@@ -299,6 +367,16 @@ struct VGM_API MatrixR
 		 float left, float right,
 		 float bottom, float top,
 		 float zNear = -1, float zFar = 1 );
+		 
+	/**
+	 * @brief Left multiply the current matrix by the given orthographic matrix.
+	 * 
+	 * @sa setOrtho()
+	 */
+	void	ortho(
+		 float left, float right,
+		 float bottom, float top,
+		 float zNear = -1, float zFar = 1 );
 
 	/**
 	 * @brief Set matrix to perspective matrix.
@@ -313,7 +391,14 @@ struct VGM_API MatrixR
 	 * 
 	 * The matrix is exactly the same as the one sets by the GLU function \c gluPerspective.
 	 */
-	void setPerspective( float fovy, float aspect, float zNear, float zFar);
+	void setPerspective( float fovy, float aspect, float zNear, float zFar );
+
+	/**
+	 * @brief Left multiply the current matrix by the given perspective matrix.
+	 * 
+	 * @sa setPerspective()
+	 */
+	void	perspective( float fovy, float aspect, float zNear, float zFar );
 
 	/**
 	 * @brief Set matrix to a viewing transformation.
@@ -334,7 +419,36 @@ struct VGM_API MatrixR
 	 */
 	void setLookAt(	float eyex, float eyey, float eyez,
 							float centerx, float centery, float centerz,
-							float upx, float upy, float upz);
+							float upx, float upy, float upz );
+
+	/**
+	 * @brief Left multiply the current matrix by the given "lookAt" matrix.
+	 * 
+	 * @sa setLookAt()
+	 */
+	void	lookAt(	float eyex, float eyey, float eyez,
+						float centerx, float centery, float centerz,
+						float upx, float upy, float upz );
+
+	/**
+	 * @brief Set matrix to a picking region.
+	 * 
+	 * The pick function creates a projection matrix you can use to restrict drawing to a small region of the viewport.
+	 * 
+	 * @param x				the center of a picking region in window coordinates
+	 * @param y				the center of a picking region in window coordinates
+	 * @param width		the width of the picking region in window coordinates
+	 * @param height		the height of the picking region in window coordinates
+	 * @param viewport	the viewport
+	 */
+	void setPick( float x, float y, float width, float height, vgm::Rectangle2i viewport );
+	
+	/**
+	 * @brief Left multiply the current matrix by the given "picking region" matrix.
+	 * 
+	 * @sa setPick()
+	 */
+	void	pick( float x, float y, float width, float height, vgm::Rectangle2i viewport );
 	//@}
 
 
@@ -366,12 +480,12 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Returns determinant of upper-left 3x3 submatrix.
 	 */
-	float	det3( void ) const;
+	float	det3() const;
 
 	/**
 	 * @brief Returns determinant of entire matrix.
 	 */
-	float	det4( void ) const;
+	float	det4() const;
 	//@}
 
 
@@ -409,24 +523,24 @@ struct VGM_API MatrixR
 	 *
 	 * Results are undefined for singular matrices.  Uses LU decomposition.
 	 */
-	MatrixR			getInverse( void ) const;
+	MatrixR			getInverse() const;
 
 	/**
 	 * @brief Inverse the matrix.
 	 *
 	 * Results are undefined for singular matrices.  Uses LU decomposition.
 	 */
-	void				inverse( void );
+	void				inverse();
 
 	/**
 	 * @brief Returns transpose of matrix.
 	 */
-	MatrixR			getTranspose( void ) const;
+	MatrixR			getTranspose() const;
 
 	/**
 	 * @brief Transpose the matrix.
 	 */
-	void				transpose( void );
+	void				transpose();
 
 	/**
 	 * @brief Perform in-place LU decomposition of matrix.
@@ -505,7 +619,7 @@ struct VGM_API MatrixR
 
 
 	/**
-	 * @name Affectation methods.
+	 * @name Assignement methods.
 	 */
 	//@{
 

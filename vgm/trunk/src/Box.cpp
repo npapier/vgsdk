@@ -703,8 +703,8 @@ int32 Box3f::findQuadrant( float x, float y, float z,
 
 XfBox3f::XfBox3f( void )
 {
-	xform.identity();
-	xformInv.identity();
+	xform.setIdentity();
+	xformInv.setIdentity();
 	makeEmpty();
 }
 
@@ -713,8 +713,8 @@ XfBox3f::XfBox3f( void )
 XfBox3f::XfBox3f( float xmin, float ymin, float zmin,
 				  float xmax, float ymax, float zmax )
 {
-	xform.identity();
-	xformInv.identity();
+	xform.setIdentity();
+	xformInv.setIdentity();
 	setBounds( 
 		Vec3f(xmin, ymin, zmin),
 		Vec3f(xmax, ymax, zmax) );
@@ -724,8 +724,8 @@ XfBox3f::XfBox3f( float xmin, float ymin, float zmin,
 
 XfBox3f::XfBox3f( const Vec3f& min, const Vec3f& max )
 {
-	xform.identity();
-	xformInv.identity();
+	xform.setIdentity();
+	xformInv.setIdentity();
 	setBounds(min, max);
 }
 
@@ -733,8 +733,8 @@ XfBox3f::XfBox3f( const Vec3f& min, const Vec3f& max )
 
 XfBox3f::XfBox3f( const Box3f & box )
 {
-	xform.identity();
-	xformInv.identity();
+	xform.setIdentity();
+	xformInv.setIdentity();
 	*static_cast<Box3f*>(this) = box;
 }
 

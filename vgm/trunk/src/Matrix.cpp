@@ -64,13 +64,14 @@ namespace vgm
 // Handy absolute value macro:
 #define ABS(a)		((a) < 0.0 ? -(a) : (a))
 
-MatrixR::MatrixR( void )
+MatrixR::MatrixR()
 {
 }
 
 
 
-MatrixR::MatrixR(	float a11, float a12, float a13, float a14,
+MatrixR::MatrixR(	
+				float a11, float a12, float a13, float a14,
 				float a21, float a22, float a23, float a24,
 				float a31, float a32, float a33, float a34,
 				float a41, float a42, float a43, float a44 )
@@ -104,25 +105,28 @@ MatrixR::MatrixR(	float a11, float a12, float a13, float a14,
 
 MatrixR::MatrixR( const RawMatrix& m )
 {
-	matrix[0][0] = m[0][0];
-	matrix[0][1] = m[0][1];
-	matrix[0][2] = m[0][2];
-	matrix[0][3] = m[0][3];
+	setValue( m );
+}
 
-	matrix[1][0] = m[1][0];
-	matrix[1][1] = m[1][1];
-	matrix[1][2] = m[1][2];
-	matrix[1][3] = m[1][3];
 
-	matrix[2][0] = m[2][0];
-	matrix[2][1] = m[2][1];
-	matrix[2][2] = m[2][2];
-	matrix[2][3] = m[2][3];
 
-	matrix[3][0] = m[3][0];
-	matrix[3][1] = m[3][1];
-	matrix[3][2] = m[3][2];
-	matrix[3][3] = m[3][3];
+MatrixR::MatrixR( const RawMatrixd& m )
+{
+	setValue( m );
+}
+
+
+
+MatrixR::MatrixR( const float* m )
+{
+	setValue( m );
+}
+
+
+
+MatrixR::MatrixR( const double* m )
+{
+	setValue( m );
 }
 
 
@@ -184,6 +188,56 @@ void MatrixR::setValue( const RawMatrixd m )
 
 
 
+void MatrixR::setValue( const float* m )
+{
+	matrix[0][0] = m[0];
+	matrix[0][1] = m[1];
+	matrix[0][2] = m[2];
+	matrix[0][3] = m[3];
+
+	matrix[1][0] = m[4];
+	matrix[1][1] = m[5];
+	matrix[1][2] = m[6];
+	matrix[1][3] = m[7];
+
+	matrix[2][0] = m[8];
+	matrix[2][1] = m[9];
+	matrix[2][2] = m[10];
+	matrix[2][3] = m[11];
+
+	matrix[3][0] = m[12];
+	matrix[3][1] = m[13];
+	matrix[3][2] = m[14];
+	matrix[3][3] = m[15];
+}
+
+
+
+void MatrixR::setValue( const double* m )
+{
+	matrix[0][0] = static_cast<float>(m[0]);
+	matrix[0][1] = static_cast<float>(m[1]);
+	matrix[0][2] = static_cast<float>(m[2]);
+	matrix[0][3] = static_cast<float>(m[3]);
+
+	matrix[1][0] = static_cast<float>(m[4]);
+	matrix[1][1] = static_cast<float>(m[5]);
+	matrix[1][2] = static_cast<float>(m[6]);
+	matrix[1][3] = static_cast<float>(m[7]);
+
+	matrix[2][0] = static_cast<float>(m[8]);
+	matrix[2][1] = static_cast<float>(m[9]);
+	matrix[2][2] = static_cast<float>(m[10]);
+	matrix[2][3] = static_cast<float>(m[11]);
+
+	matrix[3][0] = static_cast<float>(m[12]);
+	matrix[3][1] = static_cast<float>(m[13]);
+	matrix[3][2] = static_cast<float>(m[14]);
+	matrix[3][3] = static_cast<float>(m[15]);
+}
+
+
+
 void MatrixR::getValue( RawMatrix m ) const
 {
 	m[0][0] = matrix[0][0];
@@ -234,14 +288,64 @@ void MatrixR::getValue( RawMatrixd m ) const
 
 
 
-const RawMatrix& MatrixR::getValue( void ) const
+void MatrixR::getValue( float *m ) const
+{
+	m[0] = matrix[0][0];
+	m[1] = matrix[0][1];
+	m[2] = matrix[0][2];
+	m[3] = matrix[0][3];
+
+	m[4] = matrix[1][0];
+	m[5] = matrix[1][1];
+	m[6] = matrix[1][2];
+	m[7] = matrix[1][3];
+
+	m[8]	= matrix[2][0];
+	m[9]	= matrix[2][1];
+	m[10] = matrix[2][2];
+	m[11] = matrix[2][3];
+
+	m[12] = matrix[3][0];
+	m[13] = matrix[3][1];
+	m[14] = matrix[3][2];
+	m[15] = matrix[3][3];
+}
+
+
+
+void MatrixR::getValue( double *m ) const
+{
+	m[0] = static_cast<double>(matrix[0][0]);
+	m[1] = static_cast<double>(matrix[0][1]);
+	m[2] = static_cast<double>(matrix[0][2]);
+	m[3] = static_cast<double>(matrix[0][3]);
+
+	m[4] = static_cast<double>(matrix[1][0]);
+	m[5] = static_cast<double>(matrix[1][1]);
+	m[6] = static_cast<double>(matrix[1][2]);
+	m[7] = static_cast<double>(matrix[1][3]);
+
+	m[8]	= static_cast<double>(matrix[2][0]);
+	m[9]	= static_cast<double>(matrix[2][1]);
+	m[10] = static_cast<double>(matrix[2][2]);
+	m[11] = static_cast<double>(matrix[2][3]);
+
+	m[12] = static_cast<double>(matrix[3][0]);
+	m[13] = static_cast<double>(matrix[3][1]);
+	m[14] = static_cast<double>(matrix[3][2]);
+	m[15] = static_cast<double>(matrix[3][3]);
+}
+
+
+
+const RawMatrix& MatrixR::getValue() const
 {
 	return matrix;
 }
 
 
 
-RawMatrix& MatrixR::getValue( void )
+RawMatrix& MatrixR::getValue()
 {
 	return matrix;
 }
@@ -276,7 +380,7 @@ const float& MatrixR::operator() ( const int32 column, const int32 row ) const
 
 
 
-void MatrixR::identity( void )
+void MatrixR::setIdentity()
 {
 	matrix[0][0] = 1.0;
 	matrix[0][1] = 0.0;
@@ -301,7 +405,7 @@ void MatrixR::identity( void )
 
 
 
-MatrixR MatrixR::getIdentity( void )
+MatrixR MatrixR::getIdentity()
 {
 	return MatrixR(
 		1.0, 0.0, 0.0, 0.0,
@@ -312,7 +416,7 @@ MatrixR MatrixR::getIdentity( void )
 
 
 
-bool MatrixR::isIdentity( void ) const
+bool MatrixR::isIdentity() const
 {
 	return ( 
 		(matrix[0][0] == 1.0) &&
@@ -342,6 +446,16 @@ void MatrixR::setRotate( const Rotation& rotation )
 
 
 
+void MatrixR::rotate( const Rotation& rotation )
+{
+	MatrixR matrix;
+	matrix.setRotate( rotation );
+	
+	multLeft( matrix );
+}
+
+
+
 void MatrixR::setScale( const float s )
 {
 	matrix[0][0] = s;
@@ -363,6 +477,16 @@ void MatrixR::setScale( const float s )
 	matrix[3][1] = 0.0;
 	matrix[3][2] = 0.0;
 	matrix[3][3] = 1.0;
+}
+
+
+
+void MatrixR::scale( const float s )
+{
+	MatrixR matrix;
+	matrix.setScale( s );
+	
+	multLeft( matrix );
 }
 
 
@@ -392,6 +516,16 @@ void MatrixR::setScale( const Vec3f& s )
 
 
 
+void MatrixR::scale( const Vec3f& s )
+{
+	MatrixR matrix;
+	matrix.setScale( s );
+	
+	multLeft( matrix );
+}
+
+
+
 void MatrixR::setTranslate( const Vec3f& t )
 {
 	matrix[0][0] = 1.0;
@@ -417,6 +551,16 @@ void MatrixR::setTranslate( const Vec3f& t )
 
 
 
+void MatrixR::translate( const Vec3f& t )
+{
+	MatrixR matrix;
+	matrix.setTranslate( t );
+
+	multLeft( matrix );
+}
+
+
+
 void MatrixR::setTransform(
 			const Vec3f&		translation,
 			const Rotation&	rotation,
@@ -428,7 +572,7 @@ void MatrixR::setTransform(
 	#define ROTATE(rot)			rot.getValue(m), multLeft(m)
 
 	MatrixR m;
-	identity();
+	setIdentity();
 
 	if ( translation != Vec3f(0,0,0) )		TRANSLATE(translation);
 
@@ -518,6 +662,19 @@ void MatrixR::setFrustum(
 
 
 
+void MatrixR::frustum(
+		 float left, float right,
+		 float bottom, float top,
+		 float zNear, float zFar )
+{
+	MatrixR matrix;
+	matrix.setFrustum( left, right, bottom, top, zNear, zFar );
+
+	multLeft( matrix );
+}
+
+
+
 void MatrixR::setOrtho(
 		 float left, float right,
 		 float bottom, float top,
@@ -545,7 +702,20 @@ void MatrixR::setOrtho(
 
 
 
-void MatrixR::setPerspective( float fovy, float aspect, float zNear, float zFar)
+void MatrixR::ortho(
+		 float left, float right,
+		 float bottom, float top,
+		 float zNear, float zFar )
+{
+	MatrixR matrix;
+	matrix.setOrtho( left, right, bottom, top, zNear, zFar );
+	
+	multLeft( matrix );
+}
+
+
+
+void MatrixR::setPerspective( float fovy, float aspect, float zNear, float zFar )
 {
 	float xmin, xmax, ymin, ymax;
 
@@ -555,6 +725,16 @@ void MatrixR::setPerspective( float fovy, float aspect, float zNear, float zFar)
 	xmax = ymax * aspect;
 
 	setFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
+}
+
+
+
+void MatrixR::perspective( float fovy, float aspect, float zNear, float zFar )
+{
+	MatrixR matrix;
+	matrix.setPerspective( fovy, aspect, zNear, zFar );
+	
+	multLeft( matrix );
 }
 
 
@@ -624,13 +804,55 @@ void MatrixR::setLookAt(	float eyex, float eyey, float eyez,
 	MatrixR translation;
 	translation.setTranslate( vgm::Vec3f(-eyex, -eyey, -eyez) );
 	
-	(*this) *= translation;
+	multLeft( translation );
 }
 
 
 
-float MatrixR::det3(const int32 r1, const int32 r2, const int32 r3,
-					const int32 c1, const int32 c2, const int32 c3) const
+void MatrixR::lookAt(	float eyex, float eyey, float eyez,
+								float centerx, float centery, float centerz,
+								float upx, float upy, float upz )
+{
+	MatrixR matrix;
+	matrix.setLookAt(	eyex, eyey, eyez, 
+							centerx, centery, centerz,
+							upx, upy, upz );
+	
+	multLeft( matrix );
+}
+
+
+
+void MatrixR::setPick( float x, float y, float width, float height, vgm::Rectangle2i viewport )
+{
+	float sx, sy;
+	float tx, ty;
+
+	sx = viewport.width() / width;
+	sy = viewport.height() / height;
+	tx = (viewport.width() + 2.f * (viewport.x() - x)) / width;
+	ty = (viewport.height() + 2.f * (viewport.y() - y)) / height;
+
+	matrix[0][0] = sx;		matrix[0][1] = 0.f;		matrix[0][2] = 0.f;		matrix[0][3] = 0.f;
+	matrix[1][0] = 0.f;		matrix[1][1] = sy;		matrix[1][2] = 0.f;		matrix[1][3] = 0.f;
+	matrix[2][0] = 0.f;		matrix[2][1] = 0.f;		matrix[2][2] = 1.f;		matrix[2][3] = 0.f;
+	matrix[3][0] = tx;		matrix[3][1] = ty;		matrix[3][2] = 0.f;		matrix[3][3] = 1.f;
+}
+
+
+
+void MatrixR::pick( float x, float y, float width, float height, vgm::Rectangle2i viewport )
+{
+	MatrixR matrix;
+	matrix.setPick( x, y, width, height, viewport );
+
+	multLeft( matrix );
+}
+
+
+
+float MatrixR::det3(	const int32 r1, const int32 r2, const int32 r3,
+							const int32 c1, const int32 c2, const int32 c3) const
 {
 	return (
 		matrix[r1][c1] * matrix[r2][c2] * matrix[r3][c3] +
@@ -643,14 +865,14 @@ float MatrixR::det3(const int32 r1, const int32 r2, const int32 r3,
 
 
 
-float MatrixR::det3( void ) const
+float MatrixR::det3() const
 {
 	return det3(0, 1, 2, 0, 1, 2);
 }
 
 
 
-float MatrixR::det4( void ) const
+float MatrixR::det4() const
 {
 	return (
 		matrix[0][3] * det3(1, 2, 3, 0, 1, 2) +
@@ -781,7 +1003,7 @@ MatrixR vgm::operator *( const MatrixR& l, const MatrixR& r )
 //
 // Oh, yeah! Well, if the matrix is affine, there IS a better way.
 // So we call affine_inverse to see if we can get away with it...
-MatrixR MatrixR::getInverse( void ) const
+MatrixR MatrixR::getInverse() const
 {
 	// Trivial case
 	if ( isIdentity() )
@@ -872,7 +1094,7 @@ MatrixR MatrixR::getInverse( void ) const
 
 
 
-void MatrixR::inverse( void )
+void MatrixR::inverse()
 {
 	MatrixR matrixInverse = getInverse();
 	setValue( matrixInverse.matrix );
@@ -880,7 +1102,7 @@ void MatrixR::inverse( void )
 
 
 
-MatrixR MatrixR::getTranspose( void ) const
+MatrixR MatrixR::getTranspose() const
 {
 	return MatrixR(
 		matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0],
@@ -891,7 +1113,7 @@ MatrixR MatrixR::getTranspose( void ) const
 
 
 
-void MatrixR::transpose( void )
+void MatrixR::transpose()
 {
 	MatrixR matrixTranspose = getTranspose();
 	setValue( matrixTranspose.matrix );
@@ -1370,7 +1592,7 @@ bool MatrixR::factor(MatrixR& r, Vec3f& s, MatrixR& u, Vec3f& t,
 	Vec3f	evectors[3];
 
 	a = *this;
-	proj.identity();
+	proj.setIdentity();
 	scratch = 1.0;
 
 	for (i = 0; i < 3; i++)
@@ -1402,7 +1624,7 @@ bool MatrixR::factor(MatrixR& r, Vec3f& s, MatrixR& u, Vec3f& t,
 		 0.0, 0.0, 0.0, 1.0);
 
 	/* Compute s = sqrt(evalues), with sign. Set si = s-inverse */
-	si.identity();
+	si.setIdentity();
 	for (i = 0; i < 3; i++)
 	{
 		s[i] = static_cast< float >( det_sign ) * static_cast< float >( sqrt(evalues[i]) );
