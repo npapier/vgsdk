@@ -26,34 +26,29 @@ struct VGD_API MouseButtonEvent : public ButtonEvent
 	/**
 	 * @brief	Defines all possible button on a mouse.
 	 */
-	enum Button { BUTTON_1, BUTTON_2, BUTTON_3	};
-	
+	enum {
+		MOUSE_BUTTON_1 = 512, /*!< First mouse button */
+		MOUSE_BUTTON_2,
+		MOUSE_BUTTON_3
+	};
+
 	/**
 	 * @brief	Constructor
 	 * 
-	 * @param	source	a pointer to the source fo the event
-	 * @param	state	a button state
-	 * @param	button	a mouse button
+	 * @param	source			a pointer to the source fo the event
+	 * @param	buttonStates	a reference to the button state set
+	 * @param	buttonID			a mouse button
+	 * @param	state				a button state
 	 */
-	MouseButtonEvent( Source *source, State state, Button button );
+	MouseButtonEvent( Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state );
 	
 	/**
 	 * @brief	Destructor
 	 */
 	virtual ~MouseButtonEvent();
-	
-	/**
-	 * @brief	Retrieves the mouse button.
-	 * 
-	 * @return	a mouse button
-	 */
-	Button getButton() const;
-	
-private:
-	/**
-	 * @brief	a mouse button
-	 */
-	Button button;
+
+	// overridden method
+	void accept( vgd::event::EventVisitor& eventVisitor );
 };
 
 

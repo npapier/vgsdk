@@ -10,6 +10,8 @@
 
 #include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
+#include "vgd/event/EventVisitor.hpp"
+
 
 
 namespace vgd
@@ -18,9 +20,12 @@ namespace vgd
 namespace event
 {
 
+struct ButtonSet;
 	
 /**
  * @brief	Implements a button event class.
+ * 
+ * @remarks When writting derived classes, be careful with the button identifier that must be unique.
  */
 struct VGD_API ButtonEvent : public Event
 {
@@ -32,10 +37,12 @@ struct VGD_API ButtonEvent : public Event
 	/**
 	 * @brief	Constructor
 	 * 
-	 * @param	source	a pointer to the source fo the event
-	 * @param	state	a button state
+	 * @param	source			a pointer to the source of the event
+	 * @param	buttonStates	a reference to the button state set
+	 * @param	buttonID			a button identifier
+	 * @param	state				a button state
 	 */
-	ButtonEvent( Source *source, State state );
+	ButtonEvent( Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state );
 	
 	/**
 	 * @brief	Destructor
@@ -43,18 +50,38 @@ struct VGD_API ButtonEvent : public Event
 	virtual ~ButtonEvent();
 	
 	/**
+	 * @brief	Retrieves the identifier of the related button.
+	 * 
+	 * @return	a button identifier
+	 */
+	const int32 getButtonID() const;
+
+	/**
 	 * @brief	Retrieves the state of the related button.
 	 * 
 	 * @return	a button state
 	 */
-	State getState() const;
+	const State getState() const;
+
+	/**
+	 * @brief Implements the accept operation that takes a visitor as an argument (DP Visitor).
+	 * 
+	 * @param eventVisitor	a reference to a visitor
+	 */
+	virtual void accept( vgd::event::EventVisitor& eventVisitor )=0;
+	
 	
 private:
 
 	/**
 	 * @brief	The state of the related button.
 	 */
-	State state;
+	State m_state;
+	
+	/**
+	 * @brief	The identifier of the related button.
+	 */
+	int32	m_buttonID;
 };
 
 

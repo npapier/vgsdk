@@ -44,12 +44,13 @@ struct VGD_API Location2Event : public Event
 	 * @brief	Constructor.
 	 * 
 	 * @param	source				a pointer to event source
+	 * @param	buttonStates		a reference to the button state set
 	 * @param	location				a location to pass through the event
 	 * @param	previousLocation	the previous location. If there is no previous location, initialize each vector components
 	 * 									with std::numeric_limits<float>::max()
-	 * @param	size					the size of the 'canvas' where location2event occurs
+	 * @param	size					the size of the 'canvas' where Location2event occurs
 	 */
-	Location2Event( Source *source, const Location& location, const Location& previousLocation, const Size& size );
+	Location2Event( Source *source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation, const Size& size );
 	
 	/**
 	 * @brief	Destructor.
@@ -80,7 +81,7 @@ struct VGD_API Location2Event : public Event
 	const LocationDelta getDelta() const;
 	
 	/**
-	 * @brief	Retrieves the size passed through the event.
+	 * @brief	Retrieves the 'canvas size' passed through the event.
 	 * 
 	 * @return	a size
 	 */
@@ -89,17 +90,17 @@ struct VGD_API Location2Event : public Event
 private:
 
 	/**
-	 * The location passed through the event.
+	 * @brief The location passed through the event.
 	 */
 	const Location m_location;
 	
 	/**
-	 * The previous location passed through the event.
+	 * @brief The previous location passed through the event.
 	 */
 	const Location m_previous;	
 	
 	/**
-	 * The size passed through the event.
+	 * @brief The size passed through the event.
 	 */
 	const Size		m_size;	
 };

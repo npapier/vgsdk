@@ -32,11 +32,12 @@ struct VGD_API MouseWheelEvent : public Event
 	/**
 	 * @brief	Constructor
 	 * 
-	 * @param	source	a pointer to the event source
-	 * @param	axis	a wheel axis
-	 * @param	delta	a wheel rotation delta
+	 * @param	source			a pointer to the event source
+	 * @param	buttonStates	a reference to the button state set
+	 * @param	axis				a wheel axis
+	 * @param	delta				a wheel rotation delta
 	 */
-	MouseWheelEvent( Source *source, Axis axis, int32 delta );
+	MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis axis, int32 delta );
 	
 	/**
 	 * @brief	Retrieves the wheel axis.

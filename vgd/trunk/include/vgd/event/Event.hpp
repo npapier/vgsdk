@@ -9,6 +9,7 @@
 
 
 #include "vgd/vgd.hpp"
+#include "vgd/event/ButtonStateSet.hpp"
 
 
 namespace vgd
@@ -37,9 +38,10 @@ struct VGD_API Event
 	/**
 	 * @brief	Constructor.
 	 * 
-	 * @param	source	a pointer to the object that raise the event
+	 * @param	source			a pointer to the object that raise the event
+	 * @param	buttonStates	a reference to the button state set
 	 */
-	Event( Source *source );
+	Event( Source *source, const ButtonStateSet& buttonStates );
 	
 	/**
 	 * @brief	Destructor.
@@ -53,11 +55,34 @@ struct VGD_API Event
 	 */
 	Source* getSource() const;
 	
+	/**
+	 * @brief	Retrieves the button states.
+	 * 
+	 * @return	a reference to the button states
+	 */
+	const ButtonStateSet& getButtonStates() const;
+	
+	/**
+	 * @brief	Test if a button is down.
+	 * 
+	 * @param buttonID	a button identifier
+	 * 
+	 * @remarks The request is processed by the ButtonStateSet. It's a shortcut for getButtonStates().isDonw()
+	 */
+	bool isButtonDown( const int32 buttonID ) const;
+
+
+
 private:
 	/**
 	 * @brief	a pointer to the source of the event
 	 */
-	Source *pSource;
+	Source*			m_pSource;
+	
+	/**
+	 * @brief	a button state set
+	 */
+	ButtonStateSet	m_buttonStates;
 };
 
 
