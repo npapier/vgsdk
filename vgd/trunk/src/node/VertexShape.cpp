@@ -433,7 +433,7 @@ int8 VertexShape::getTexCoordDim( const int32 index ) const
 	// FIXME OPTME this could be optimize (see if (fieldType ... ) ).
 	int8	retVal;
 	
-	const type_info& fieldType(	getFieldType( getFTexCoord( index ) )	);
+	const std::type_info& fieldType(	getFieldType( getFTexCoord( index ) )	);
 
 	if ( fieldType != typeid( NotFound ) )
 	{
