@@ -15,6 +15,14 @@ namespace node
 
 
 
+IBoundingBox::IBoundingBox()
+{
+	//m_boundingBox.makeEmpty(); called by default constructor of Box3f.
+	m_transformation.setIdentity();
+}
+
+
+
 IBoundingBox::~IBoundingBox()
 {
 }
@@ -26,6 +34,37 @@ const vgm::Box3f& IBoundingBox::getBoundingBox() const
 	assert( isBoundingBoxValid() );
 
 	return ( m_boundingBox );
+}
+
+
+
+const vgm::MatrixR& IBoundingBox::getTransformation() const
+{
+	assert( isBoundingBoxValid() );
+	
+	return ( m_transformation );
+}
+
+
+
+void IBoundingBox::setBoundingBox( const vgm::Box3f& boundingBox )
+{
+	m_boundingBox = boundingBox;
+}
+
+
+
+void IBoundingBox::setTransformation( const vgm::MatrixR& transformation )
+{
+	m_transformation = transformation;
+}
+
+
+
+void IBoundingBox::reset()
+{
+	m_boundingBox.makeEmpty();
+	m_transformation.setIdentity();
 }
 
 
@@ -48,7 +87,6 @@ vgm::Box3f IBoundingBox::getProjectXfBoundingBox() const
 
 	return ( xfBox.project() );
 }
-
 
 
 
