@@ -58,7 +58,7 @@ Image::Image( std::string strFilename ) :
 
 
 Image::Image(	const uint32	components,
-					const uint32	width, const uint32 height,
+					const uint32	width, const uint32 height, const uint32 depth,
 					const Format	format,
 					const Type		type,
 					const void*		pixels ) :
@@ -78,7 +78,7 @@ Image::Image(	const uint32	components,
 	resetInformations();
 		
 	create(	components,
-				width, height,
+				width, height, depth,
 				format, type,
 				pixels );
 }
@@ -86,7 +86,7 @@ Image::Image(	const uint32	components,
 
 
 Image::Image(	const uint32	components,
-					const uint32	width, const uint32 height,
+					const uint32	width, const uint32 height, const uint32 depth,
 					const Format	format,
 					const Type		type ) :
 	m_iluintImgID(0)
@@ -105,7 +105,7 @@ Image::Image(	const uint32	components,
 	resetInformations();
 		
 	create(	components,
-				width, height,
+				width, height, depth,
 				format, type 
 				);
 }
@@ -129,7 +129,7 @@ Image::Image( const IImage& image ) :
 	resetInformations();
 		
 	create(	image.components(),
-				image.width(), image.height(),
+				image.width(), image.height(), image.depth(),
 				image.format(), image.type(),
 				image.pixels() );
 }
@@ -189,7 +189,7 @@ bool Image::load( std::string strFilename )
 
 	vgDebug::get().logDebug("Image::load: Start reading image %s.", strFilename.c_str() );
 	
-	// Loads the image specified by File into the ImgId image.
+	// Loads the image specified by strFilename into the ImgId image.
 	if ( ilLoadImage( const_cast<char*>( strFilename.c_str() ) ) == IL_FALSE )
 	{
 		reportILError();
@@ -218,7 +218,7 @@ bool Image::load( std::string strFilename )
 
 
 bool Image::create(	const uint32	components, 
-							const uint32	width, const uint32 height,
+							const uint32	width, const uint32 height, const uint32 depth,
 							const Format	format,
 							const Type		type,
 							const void*		pixels )
@@ -231,11 +231,11 @@ bool Image::create(	const uint32	components,
 	// Bind this image name.
 	bind();
 
-	// Loads the image specified by File into the ImgId image.
+	//
 	const ILvoid *cpixels = reinterpret_cast<const ILvoid*>(pixels);
 
 	ilTexImage(
-		width, height, 1,
+		width, height, depth,
 		static_cast<ILubyte>(components),
 		convertMyFormat2IL(format),
 		convertMyType2IL(type),
@@ -257,7 +257,7 @@ bool Image::create(	const uint32	components,
 
 
 bool Image::create(	const uint32	components, 
-							const uint32	width, const uint32 height,
+							const uint32	width, const uint32 height, const uint32 depth,
 							const Format	format,
 							const Type		type )
 {
@@ -269,10 +269,10 @@ bool Image::create(	const uint32	components,
 	// Bind this image name.
 	bind();
 
-	// Loads the image specified by File into the ImgId image.
+	//
 	
 	ilTexImage(
-		width, height, 1,
+		width, height, depth,
 		static_cast<ILubyte>(components),
 		convertMyFormat2IL(format),
 		convertMyType2IL(type),
@@ -299,7 +299,7 @@ bool Image::create( const IImage& image )
 	
 	bRetVal = create(	
 					image.components(),
-					image.width(), image.height(),
+					image.width(), image.height(), image.depth(),
 					image.format(), image.type(),
 					image.pixels() );
 					
@@ -331,6 +331,8 @@ bool Image::convertTo( const Format format, const Type type )
 	bind();
 	
 	ilConvertImage( convertMyFormat2IL(format), convertMyType2IL(type) );
+	
+	updateInformations();
 
 	return ( !reportILError() );
 }
@@ -354,6 +356,13 @@ const uint32 Image::width() const
 const uint32 Image::height() const
 {
 	return ( m_height );
+}
+
+
+
+const uint32 Image::depth() const
+{
+	return ( m_depth );
 }
 
 
@@ -644,7 +653,7 @@ ILenum Image::convertMyType2IL( Type myType ) const
 
 void Image::resetInformations()
 {
-	m_components	= m_width = m_height = 0;
+	m_components	= m_width = m_height = m_depth = 0;
 	m_format			= NO_FORMAT;
 	m_type			= NO_TYPE;
 	m_edit			= false;
@@ -659,6 +668,7 @@ void Image::updateInformations()
 	m_components	= ilGetInteger( IL_IMAGE_BYTES_PER_PIXEL );
 	m_width			= ilGetInteger( IL_IMAGE_WIDTH );	
 	m_height			= ilGetInteger( IL_IMAGE_HEIGHT );
+	m_depth			= ilGetInteger( IL_IMAGE_DEPTH );	
 	m_format			= convertILFormat2My( ilGetInteger( IL_IMAGE_FORMAT ) );
 	m_type			= convertILType2My( ilGetInteger( IL_IMAGE_TYPE ) );
 	

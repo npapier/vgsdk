@@ -34,18 +34,20 @@ struct VGD_API ImageInfo : public IImage
 	 * @name Constructors and destructor.
 	 */
 	//@{
-		
+
 	/**
 	 * @brief Constructor setting all informations about an image.
 	 * 
 	 * @param width			width of the image.
 	 * @param height			height of the image.
+	 * @param depth			depth of the image.
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
 	 */
 	ImageInfo(	const uint32	width			= 0,
 					const uint32	height		= 0,
+					const uint32	depth			= 0,
 					const Format	format		= NO_FORMAT,
 					const Type		type			= NO_TYPE,
 					const void*		pixels		= 0 );
@@ -113,6 +115,20 @@ struct VGD_API ImageInfo : public IImage
 	const uint32	height() const			{ return ( m_height ); }
 
 	/**
+	 * @brief Returns the depth of the image.
+	 * 
+	 * @return		depth of image.
+	 */
+	uint32&			depth()					{ return ( m_depth ); }
+	
+	/**
+	 * @brief Returns the depth of the image.
+	 * 
+	 * @return		depth of image.
+	 */	
+	const uint32	depth() const			{ return ( m_depth ); }
+
+	/**
 	 * @brief Returns the format of the pixel data.
 	 * 
 	 * @return		format of the pixel data.
@@ -171,12 +187,14 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @param width			width of the image.
 	 * @param height			height of the image.
+	 * @param depth			depth of the image.
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
 	 */
 	void			set(	const uint32	width			= 0,
 							const uint32	height		= 0,
+							const uint32	depth			= 0,
 							const Format	format		= NO_FORMAT,
 							const Type		type			= NO_TYPE,
 							const void*		pixels		= 0 );
@@ -198,6 +216,7 @@ protected:
 	//@{
 	uint32		m_width;
 	uint32		m_height;
+	uint32		m_depth;
 
 	Format		m_format;
 	Type			m_type;

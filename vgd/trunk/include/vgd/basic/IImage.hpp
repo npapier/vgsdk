@@ -23,9 +23,7 @@ namespace basic
  * 
  * @todo Format: COLOR_INDEX image.
  * 
- * @todo Layers (like 3d images).
- * @todo Complete support of different Type.
- * @todo LUMINANCE8_ALPHA8 and others.
+ * @todo LUMINANCE8_ALPHA8 and others ?
  * 
  * @ingroup g_images
  */
@@ -100,7 +98,16 @@ struct VGD_API IImage
 	 * @remarks		If image is not defined, must return 0.
 	 */
 	virtual const uint32	height() const=0;
-	
+
+	/**
+	 * @brief Returns the depth of the image.
+	 * 
+	 * @return		depth of image.
+	 * 
+	 * @remarks		If image is not defined, must return 0.
+	 */
+	virtual const uint32	depth() const=0;
+
 	/**
 	 * @brief Returns the format of the pixel data.
 	 * 
@@ -145,7 +152,7 @@ struct VGD_API IImage
 	/**
 	 * @brief Test if this class store an image.
 	 * 
-	 * @return		true if there is no image in this class (i.e. width()==height()==0), false otherwise.
+	 * @return		true if there is no image in this class (i.e. width()==height()==depth()==0), false otherwise.
 	 */
 	virtual const bool	isEmpty() const;
 	//@}

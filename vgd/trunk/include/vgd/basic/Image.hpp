@@ -28,7 +28,6 @@ namespace basic
  * @remarks This class use the DevIL image library inside.
  * @sa http://openil.sourceforge.net/
  *
- * @todo Support 3d images.
  * @todo use exception for error handling.
  *
  * @ingroup g_images
@@ -60,12 +59,13 @@ struct VGD_API Image : public IImage
 	 * @param components		number of color components.
 	 * @param width			width of the image.
 	 * @param height			height of the image.
+	 * @param depth			depth of the image.
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
 	 */
 	Image(		const uint32	components,
-					const uint32	width, const uint32 height,
+					const uint32	width, const uint32 height, const uint32 depth,
 					const Format	format,
 					const Type		type,
 					const void*		pixels );
@@ -76,13 +76,14 @@ struct VGD_API Image : public IImage
 	 * @param components		number of color components.
 	 * @param width			width of the image.
 	 * @param height			height of the image.
+	 * @param depth			depth of the image.
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * 
 	 * @todo add param color
 	 */
 	Image(		const uint32	components,
-					const uint32	width, const uint32 height,
+					const uint32	width, const uint32 height, const uint32 depth,
 					const Format	format,
 					const Type		type );
 					
@@ -143,12 +144,13 @@ struct VGD_API Image : public IImage
 	 * @param components		number of color components.
 	 * @param width			width of the image.
 	 * @param height			height of the image.
+	 * @param depth			depth of the image.
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
 	 */
 	bool	create(	const uint32	components, 
-						const uint32	width, const uint32 height,
+						const uint32	width, const uint32 height, const uint32 depth,
 						const Format	format,
 						const Type		type,
 						const void*		pixels );
@@ -159,11 +161,12 @@ struct VGD_API Image : public IImage
 	 * @param components		number of color components.
 	 * @param width			width of the image.
 	 * @param height			height of the image.
+	 * @param depth			depth of the image.
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 */
 	bool	create(	const uint32	components, 
-						const uint32	width, const uint32 height,
+						const uint32	width, const uint32 height, const uint32 depth,
 						const Format	format,
 						const Type		type );
 
@@ -238,6 +241,13 @@ struct VGD_API Image : public IImage
 	const uint32	height() const;
 
 	/**
+	 * @brief Returns the depth of the image.
+	 * 
+	 * @return		depth of image.
+	 */
+	const uint32	depth() const;
+	
+	/**
 	 * @brief Returns the format of the pixel data.
 	 * 
 	 * @return		format of the pixel data.
@@ -311,13 +321,14 @@ private:
 	//@{
 
 	/**
-	 * id for image library, 0 otherwise(no image specified or not yet loaded).
+	 * @brief id for image library, 0 otherwise(no image specified or not yet loaded).
 	 */
 	ILuint	m_iluintImgID;
 	
 	uint32	m_components;
 	uint32	m_width;
 	uint32	m_height;
+	uint32	m_depth;	
 	Format	m_format;
 	Type		m_type;
 	bool		m_edit;

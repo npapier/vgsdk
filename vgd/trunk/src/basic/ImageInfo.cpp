@@ -16,12 +16,12 @@ namespace basic
 
 
 ImageInfo::ImageInfo(	
-					const uint32	width, const uint32 height,
+					const uint32	width, const uint32 height, const uint32 depth,
 					const Format	format,
 					const Type		type,
 					const void*		pixels )
 {
-	set( 	width, height,
+	set( 	width, height, depth,
 			format, type,
 			pixels );
 }
@@ -38,12 +38,14 @@ ImageInfo::ImageInfo( const IImage& iimage )
 void ImageInfo::set(
 					const uint32	width,
 					const uint32	height,
+					const uint32	depth,					
 					const Format	format,
 					const Type		type,
 					const void*		pixels	)
 {
 	m_width			= width;
 	m_height			= height;
+	m_depth			= depth;
 	m_format			= format;
 	m_type			= type;
 	m_pixels			= const_cast<void*>(pixels);
@@ -56,6 +58,7 @@ void ImageInfo::set( const IImage& iimage )
 {
 	m_width			= iimage.width();
 	m_height			= iimage.height();
+	m_depth			= iimage.depth();	
 	m_format			= iimage.format();
 	m_type			= iimage.type();
 	m_pixels			= const_cast<void*>(iimage.pixels());
