@@ -8,6 +8,8 @@
 
 #include "vgd/vgd.hpp"
 
+#include <typeinfo>
+
 #include "vgd/Shp.hpp"
 #include "vgd/field/AbstractField.hpp"
 #include "vgd/field/EditorRO.hpp"
