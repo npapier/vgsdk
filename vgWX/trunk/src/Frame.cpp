@@ -17,7 +17,7 @@ namespace vgWX
 
 
 BEGIN_EVENT_TABLE( Frame, wxFrame )
-	EVT_CLOSE( Frame::OnClose )
+//	EVT_CLOSE( Frame::OnClose )
 END_EVENT_TABLE()
 
 
