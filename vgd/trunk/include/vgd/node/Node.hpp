@@ -35,6 +35,7 @@
  * \li Group nodes (like Group, Separator, Switch, MultiSwitch...).
  * \li Shape nodes (like VertexShape, TriSet...).
  * \li Attribute nodes (like Transformation, Light, FrameBuffer...).
+ * \li Kit nodes (like Dragger, Layers...).
  * 
  * \sa g_nodes for more details.
  */
@@ -156,6 +157,8 @@ typedef std::set< vgd::Shp<vgd::node::Node> >		NodeSet;
  * 
  * @remarks A node contains some fields managed by a vgd::field::FieldManager.
  * @remarks Constructor is in protected section for limiting the possibility to instanciate a node directly.
+ * 
+ * @ingroup g_abstractNodes
  */
 struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 {
@@ -219,6 +222,12 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
  	 * @remark For more explanation see IGroup::getEnabledChildren().
 	 */
 	virtual void	getEnabledParents( NodeList& parents, const bool bGetEnabled = true) const;
+
+	/**
+	 * @brief Invalidate bounding box dirty flag for each parents of this node.
+	 */
+	void invalidateParentsBoundingBoxDirtyFlag();
+	
 	//@}
 
 

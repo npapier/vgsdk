@@ -5,6 +5,8 @@
 
 #include "vgd/node/Node.hpp"
 
+#include "vgd/node/Group.hpp"
+
 
 
 namespace vgd
@@ -74,6 +76,30 @@ int32 Node::getNumParents( void ) const
 void Node::getEnabledParents( NodeList& parents, const bool bGetEnabled ) const
 {
 	graph().getEnabledParents( this, parents, bGetEnabled );
+}
+
+
+
+void Node::invalidateParentsBoundingBoxDirtyFlag() 
+{
+	NodeList parents;
+	
+	getEnabledParents( parents );
+	
+	// for each node.
+	for(	NodeList::iterator	i	= parents.begin(),
+										ie	= parents.end();
+			i != ie;
+			++i
+		)
+	{
+		// Parent nodes are always group node.
+		assert( (*i)->isAKindOf< vgd::node::Group >() );
+		
+		vgd::Shp< vgd::node::Group > group( vgd::dynamic_pointer_cast< vgd::node::Group >( *i ) );
+
+		group->invalidateBoundingBox();
+	}
 }
 
 

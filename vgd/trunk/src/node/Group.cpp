@@ -44,8 +44,8 @@ void Group::setToDefaults( void )
 {
 	Node::setToDefaults();
 
-	// internals.	
-	m_transformation.setIdentity();
+	// IBoundingBox
+	reset();
 }
 
 
@@ -199,32 +199,6 @@ void Group::getEnabledChildren( NodeList& children, const bool bGetEnabled ) con
 void Group::updateGraph( void )
 {
 	getDirtyFlag(getDFChildren())->validate();
-}
-
-
-
-void Group::invalidateParentsBoundingBoxDirtyFlag() 
-{
-	NodeList parents;
-	
-	getEnabledParents( parents );
-	
-	// for each node.
-	for(	NodeList::iterator	i	= parents.begin(),
-										ie	= parents.end();
-			i != ie;
-			++i
-		)
-	{
-		// Parent nodes are always group node.
-		assert( (*i)->isAKindOf< vgd::node::Group >() );
-		
-		vgd::Shp< vgd::node::Group > group( 
-			vgd::dynamic_pointer_cast< vgd::node::Group >( *i )
-				);
-
-		group->invalidateBoundingBox();
-	}
 }
 
 

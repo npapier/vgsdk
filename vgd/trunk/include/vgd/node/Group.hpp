@@ -36,6 +36,8 @@ namespace node
  * 
  * All child nodes are traversing.
  * 
+ * @todo getFChildren(), getFSelectedChildren()
+ * 
  * @ingroup g_nodes
  * @ingroup g_groupNodes
  */
@@ -214,13 +216,6 @@ protected:
 	void	setOptionalsToDefaults();	
 
 	//@}
-
-
-
-	/**
-	 * @brief Invalidate bounding box dirty flag for each parents of this node.
-	 */
-	void invalidateParentsBoundingBoxDirtyFlag();
 
 
 
