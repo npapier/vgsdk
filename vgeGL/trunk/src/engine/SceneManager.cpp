@@ -6,8 +6,8 @@
 #include "vgeGL/engine/SceneManager.hpp"
 
 #include <vgDebug/Global.hpp>
-#include <vgeGL/Technique/Main.hpp>
-#include <vgeGL/Technique/ProcessEvent.hpp>
+#include <vgeGL/technique/Main.hpp>
+#include <vgeGL/technique/ProcessEvent.hpp>
 
 
 
