@@ -27,6 +27,9 @@ namespace node
  * 
  * IGroup is a node that contains an ordered list of child nodes. For more details see vgd::node::Group.
  * 
+ * @remarks In Group class and derived, when a child node is inserted or removed, all indices after this one are 
+ * invalidated. Be careful.
+ * 
  * @todo SwapChild().
  */
 struct VGD_API IGroup
