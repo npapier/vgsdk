@@ -17,6 +17,8 @@ namespace vgd
 namespace graph
 {
 
+
+
 Graph::Graph( void ) :
 //	m_graph
 	m_vertexNamePropertyMap(	get(boost::vertex_name, bglGraph())	),
@@ -36,7 +38,7 @@ void Graph::addNode( vgd::Shp<vgd::node::Node> node )
 void Graph::removeNode( vgd::node::Node* pNode )
 {
 	clear_vertex( pNode->vertexDescriptor(), bglGraph() );
-	// remove_vertex( pNode->vertexDescriptor(), bglGraph() ); FIXME
+	// remove_vertex( pNode->vertexDescriptor(), bglGraph() ); FIXME ???
 }
 
 
@@ -45,7 +47,7 @@ void Graph::addEdge( vgd::node::Node* pSourceNode, vgd::node::Node* pTargetNode 
 {
 	assert( bgl_isOutEdgesPacked( pSourceNode->vertexDescriptor() ) );
 
-	int32 edgeNameValue = out_degree( pSourceNode->vertexDescriptor(), bglGraph() );
+	int32 edgeNameValue = static_cast<int32>( out_degree( pSourceNode->vertexDescriptor(), bglGraph() ) );
 
 	add_edge(	pSourceNode->vertexDescriptor(), pTargetNode->vertexDescriptor(),
 					detail::EdgeProperty(detail::EdgeName(edgeNameValue)), bglGraph() );
@@ -88,8 +90,6 @@ void Graph::removeEdges( vgd::node::Node* pSourceNode )
 	//	true_edge_predicate<bglGraphTraits::edge_descriptor> predicate;
 	//	remove_out_edge_if(pSourceNode->vertexDescriptor(), predicate, bglGraph());
 	
-	const detail::VertexNamePropertyMap&	vertexNamePM = getVertexNamePropertyMap();
-
 	//
 	typedef std::list< detail::bglGraphTraits::vertex_descriptor > ListVD;
 
@@ -186,7 +186,7 @@ void Graph::getEnabledChildren(	const vgd::node::Node* pSourceNode, std::list< v
 
 const uint32 Graph::getNumChildren( const vgd::node::Node* pSourceNode ) const
 {
-	const uint32 retVal = out_degree( pSourceNode->vertexDescriptor(), bglGraph() );
+	const uint32 retVal = static_cast<uint32>( out_degree( pSourceNode->vertexDescriptor(), bglGraph() ) );
 
 	return ( retVal );
 }
@@ -237,7 +237,7 @@ void Graph::getEnabledParents(	const vgd::node::Node* pTargetNode,
 
 const uint32 Graph::getNumParents( const vgd::node::Node* pTargetNode ) const
 {
-	const uint32 retVal = in_degree( pTargetNode->vertexDescriptor(), bglGraph() );
+	const uint32 retVal = static_cast<uint32>( in_degree( pTargetNode->vertexDescriptor(), bglGraph() ) );
 
 	return ( retVal );
 }
@@ -353,7 +353,7 @@ const detail::bglGraph&	Graph::bglGraph( void ) const
 
 bool Graph::bgl_isOutEdgesPacked( detail::bglGraphTraits::vertex_descriptor vertexDescriptor ) const
 {
-	int32								i32I;
+	int32													i32I;
 	detail::bglGraphTraits::out_edge_iterator	out_i;
 	detail::bglGraphTraits::out_edge_iterator	out_end;
 
@@ -378,7 +378,7 @@ void Graph::bgl_packOutEdges( detail::bglGraphTraits::vertex_descriptor vertexDe
 {
 	assert( !bgl_isOutEdgesPacked(vertexDescriptor) && "already packed");
 
-	uint32							ui32I;
+	uint32												ui32I;
 	detail::bglGraphTraits::out_edge_iterator	out_i;
 	detail::bglGraphTraits::out_edge_iterator	out_end;
 
@@ -400,7 +400,7 @@ void Graph::bgl_makePlaceInOutEdges	( detail::bglGraphTraits::vertex_descriptor 
 	assert( bgl_isOutEdgesPacked(vertexDescriptor) && "OutEdges not packed" );
 	assert( edgeNameValue < out_degree(vertexDescriptor, bglGraph()) );
 
-	uint32							ui32I;
+	uint32												ui32I;
 	detail::bglGraphTraits::out_edge_iterator	out_i;
 	detail::bglGraphTraits::out_edge_iterator	out_end;
 
@@ -436,43 +436,39 @@ std::pair< detail::bglGraphTraits::vertex_descriptor, bool > Graph::bgl_removeOu
 	std::pair< detail::bglGraphTraits::vertex_descriptor, bool >	retVal;
 	retVal.second = false;
 
-	uint32									ui32I;
+	uint32													ui32I;
 	detail::bglGraphTraits::out_edge_iterator		out_i;
 	detail::bglGraphTraits::out_edge_iterator		out_end;
 
 	for(	ui32I = 0, tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
 			out_i != out_end;
-			++out_i, ui32I++ )
+			++out_i, ++ui32I )
 	{
 		if ( ui32I == edgeNameValue )
 		{
 			// found out_edge to remove.
 			retVal.first	= target( *out_i, bglGraph() ); // vertex descriptor of child.
 			retVal.second	= true;
-
-			// remove out_edge
-			remove_edge( *out_i, bglGraph() );
 			
+			detail::bglGraphTraits::out_edge_iterator		out_toRemove( out_i );
+			
+			// 
 			if ( bAutoRepack )
 			{
-				break;
+				detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
+			
+				for(	++out_i;
+						out_i != out_end;
+						++out_i/*, ui32I++*/ )
+				{
+					edgeNamePM[ *out_i ].value() -= 1;
+				}
 			}
-			else
-			{
-				return ( retVal );
-			}
+			
+			// remove out_edge
+			remove_edge( *out_toRemove, bglGraph() );
+			break;
 		}
-	}
-
-	assert( out_i != out_end && "edgeNameValue not found" );
-
-	detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
-
-	for(	;
-			out_i != out_end;
-			++out_i/*, ui32I++*/ )
-	{
-		edgeNamePM[ *out_i ].value() -= 1;
 	}
 	
 	return ( retVal );
@@ -548,7 +544,7 @@ std::pair< detail::bglGraphTraits::edge_descriptor, bool > Graph::bgl_findOutEdg
 		if ( target(*out_i, bglGraph()) == vertexDescriptorTarget )
 		{
 			// Found vertexDescritorTarget => found outEdge.
-			retVal.first = *out_i;
+			retVal.first	= *out_i;
 			retVal.second	= true;
 			
 			return ( retVal );
@@ -557,6 +553,8 @@ std::pair< detail::bglGraphTraits::edge_descriptor, bool > Graph::bgl_findOutEdg
 	
 	return ( retVal );
 }
+
+
 
 } // namespace graph
 
