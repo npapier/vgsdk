@@ -8,8 +8,8 @@
 #define _VGD_EVENT_LISTENER_HPP
 
 
-#include "vgd/Shp.hpp"
 #include "vgd/vgd.hpp"
+#include "vgd/Shp.hpp"
 #include "vgd/event/Event.hpp"
 
 
@@ -29,7 +29,6 @@ namespace event
  */
 struct VGD_API Listener
 {
-public:
 	/**
 	 * @brief	Notifies the listener about the raise of an event.
 	 * 

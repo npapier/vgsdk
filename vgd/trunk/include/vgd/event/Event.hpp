@@ -17,7 +17,7 @@ namespace vgd
 namespace event
 {
 	
-class Source;
+struct Source;
 	
 /** 
  * @namespace vgd::event

@@ -36,7 +36,7 @@ struct VGD_API MouseWheelEvent : public Event
 	 * @param	axis	a wheel axis
 	 * @param	delta	a wheel rotation delta
 	 */
-	MouseWheelEvent( Source *source, Axis axis, int delta );
+	MouseWheelEvent( Source *source, Axis axis, int32 delta );
 	
 	/**
 	 * @brief	Retrieves the wheel axis.
@@ -50,7 +50,7 @@ struct VGD_API MouseWheelEvent : public Event
 	 * 
 	 * @return	a signed integer representing the wheel rotation delta
 	 */
-	int getDelta() const;
+	int32 getDelta() const;
 	
 private:
 
@@ -62,7 +62,7 @@ private:
 	/**
 	 * @brief	The rotation delta.
 	 */
-	int delta;
+	int32 delta;
 };
 	
 	

@@ -6,9 +6,12 @@
 #ifndef _VGD_FIELD_ACCESSORS_H
 #define _VGD_FIELD_ACCESSORS_H
 
-#include "vgd/vgd.hpp"
-
 #include <string>
+
+#include "vgd/vgd.hpp"
+#include "vgd/field/TPairAssociativeField.hpp"
+#include "vgd/field/EditorRO.hpp"
+#include "vgd/field/EditorRW.hpp"
 
 namespace vgd
 {
@@ -17,10 +20,6 @@ namespace vgd
 		struct Node;
 	}
 }
-
-#include "vgd/field/TPairAssociativeField.hpp"
-#include "vgd/field/EditorRO.hpp"
-#include "vgd/field/EditorRW.hpp"
 
 
 

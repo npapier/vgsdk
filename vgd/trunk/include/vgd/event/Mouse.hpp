@@ -25,7 +25,6 @@ namespace event
  */
 struct VGD_API Mouse : public Device
 {
-public:
 	/**
 	 * @brief	Destructor.
 	 */

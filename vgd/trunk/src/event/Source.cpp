@@ -4,8 +4,10 @@
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-#include "vgd/event/Listener.hpp"
 #include "vgd/event/Source.hpp"
+
+#include "vgd/event/Listener.hpp"
+
 
 namespace vgd
 {
@@ -36,10 +38,11 @@ void Source::detachEventListener( Listener *listener )
 
 void Source::fireEvent( vgd::Shp<vgd::event::Event> event )
 {
-	ListenerContainer::iterator	iterator;
-	for( iterator = this->listeners.begin(); iterator != this->listeners.end(); iterator++ )
+	for(	ListenerContainer::iterator i = this->listeners.begin();
+			i != this->listeners.end();
+			++i )
 	{
-		Listener *listener = *iterator;
+		Listener *listener = *i;
 		listener->onEvent( event );
 	}
 }

@@ -19,8 +19,8 @@ namespace vgd
 namespace event
 {
 	
-class Event;
-class Listener;
+struct Event;
+struct Listener;
 	
 /**
  * @brief	Defines the abstract class for event sources.
@@ -75,7 +75,7 @@ private:
 	/**
 	 * @brief	Contains all attached listeners.
 	 */
-	ListenerContainer listeners;	 	
+	ListenerContainer	listeners;	 	
 };
 
 } // namespace event

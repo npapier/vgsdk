@@ -15,7 +15,7 @@ namespace event
 {
 	
 	
-MouseWheelEvent::MouseWheelEvent( Source *source, Axis a, int d )
+MouseWheelEvent::MouseWheelEvent( Source *source, Axis a, int32 d )
 : Event( source ),
   axis( a ),
   delta( d )
@@ -28,7 +28,7 @@ MouseWheelEvent::Axis MouseWheelEvent::getAxis() const
 }
 
 
-int MouseWheelEvent::getDelta() const
+int32 MouseWheelEvent::getDelta() const
 {
 	return this->delta;
 }

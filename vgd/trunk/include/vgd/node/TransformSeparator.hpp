@@ -45,6 +45,7 @@ namespace node
  * 
  * @ingroup g_nodes
  * @ingroup g_groupNodes
+ * @ingroup g_transformationNodes
  */
 struct VGD_API TransformSeparator : public vgd::node::Group
 {
