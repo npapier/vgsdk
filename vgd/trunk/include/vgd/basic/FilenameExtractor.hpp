@@ -6,9 +6,8 @@
 #ifndef _VGD_BASIC_FILENAMEEXTRACTOR_H
 #define _VGD_BASIC_FILENAMEEXTRACTOR_H
 
-#include "vgd/vgd.hpp"
-
 #include <string>
+#include "vgd/vgd.hpp"
 
 
 

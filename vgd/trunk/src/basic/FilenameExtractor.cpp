@@ -18,11 +18,9 @@ namespace basic
 FilenameExtractor::FilenameExtractor( std::string pathFilename ) :
 	m_pathFilename( pathFilename )
 {
-	for(
-			int32 index = m_pathFilename.find('\\');
+	for(	std::string::size_type index = m_pathFilename.find('\\');
 			index != std::string::npos;
-			index = m_pathFilename.find('\\')
-		)
+			index = m_pathFilename.find('\\') )
 	{
 		m_pathFilename[index] = '/';
 	}
@@ -32,12 +30,16 @@ FilenameExtractor::FilenameExtractor( std::string pathFilename ) :
 
 std::string FilenameExtractor::getExtension() const
 {
-	int			index;
-	std::string	extension;
+	std::string::size_type	index;
+	std::string					extension;
 	
-	index			= m_pathFilename.rfind('.');
-	extension	= m_pathFilename.substr( index, m_pathFilename.size() - index );
+	index	= m_pathFilename.rfind('.');
 	
+	if ( index != std::string::npos )
+	{
+		extension	= m_pathFilename.substr( index, m_pathFilename.size() - index );
+	}
+
 	return ( extension );
 }
 
@@ -45,11 +47,15 @@ std::string FilenameExtractor::getExtension() const
 
 std::string FilenameExtractor::getFilename() const
 {
-	int			index;
-	std::string	filename;
+	std::string::size_type	index;
+	std::string					filename;
 	
 	index 	= m_pathFilename.rfind('/');
-	filename = m_pathFilename.substr( index+1, m_pathFilename.size() - (index+1) );
+	
+	if ( index != std::string::npos )
+	{
+		filename = m_pathFilename.substr( index+1, m_pathFilename.size() - (index+1) );
+	}
 
 	return ( filename );
 }
@@ -58,8 +64,8 @@ std::string FilenameExtractor::getFilename() const
 
 std::string FilenameExtractor::getPath() const
 {
-	int			index;
-	std::string	path;
+	std::string::size_type	index;
+	std::string					path;
 	
 	index 	= m_pathFilename.rfind('/');
 	
