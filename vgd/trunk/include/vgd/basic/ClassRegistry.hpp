@@ -85,7 +85,7 @@ struct ClassRegistry
 			if ( index == -1 ) // class index not yet initialized.
 			{
 				// Initialize class index.
-				index = baseClassType::getClassRegistry().getNumRegistered()-1;
+				index = static_cast< int32 >(baseClassType::getClassRegistry().getNumRegistered()) - 1;
 			}
 			/*else nothing to do (register the same class multiples times is useful for vgd::node::MultiAttribute.
 			{
@@ -130,9 +130,9 @@ struct ClassRegistry
 	 * 
 	 * @return Number of registered classes.
 	 */
-	int32				getNumRegistered( void ) const
+	uint32				getNumRegistered( void ) const
 	{
-		return ( m_classes.size() );
+		return ( static_cast<uint32>( m_classes.size() ) );
 	}
 
 

@@ -7,7 +7,6 @@
 #define _VGD_FIELD_TSINGLEFIELD_H
 
 #include "vgd/vgd.hpp"
-
 #include "vgd/field/AbstractField.hpp"
 
 
@@ -56,14 +55,14 @@ struct TSingleField : public AbstractField
 		m_item = rItem;
 	}
 
-	const T& getValue ( void ) const
+	const T& getValue () const
 	{
 		assert( checkRO() );
     	
     	return ( m_item );
 	}
 
-	T&       getValue ( void )
+	T&       getValue ()
 	{
 		assert( checkRW() );
     	

@@ -26,15 +26,13 @@ struct IFieldObserver;
 /**
  * @brief Abstract class for all single-value fields and multiple-valued fields.
  *
- * This class could be observed by zero to several IFieldObserver(typically FieldManager),
- * for automatic invalidation of flags(like render flag).
+ * This class could be observed by zero to several IFieldObserver(typically FieldManager), for automatic invalidation of
+ * flags(like render flag).
  * 
- * @remarks Implements DP subject/observer(this class is a subject, observer is 
- * IFieldObserver).
+ * @remarks Implements DP subject/observer(this class is a subject, observer is IFieldObserver).
  * 
  * @remarks Not DefaultConstructible and
- * @todo ??????????????????????Assignable ????????????????????????????????????????????????
- *
+ * @todo Assignable ?
  * @todo Serialize.
  */
 struct VGD_API AbstractField : public vgd::basic::NamedObject
@@ -53,8 +51,10 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 
 	/**
 	 * @brief Virtual destructor.
+	 * 
+	 * @todo notify( DESTROY );
 	 */
-	virtual ~AbstractField( void );
+	virtual ~AbstractField();
 	//@}
 
 
@@ -69,14 +69,14 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 * 
 	 * @return list of observers.
 	 */
-	std::list< IFieldObserver* >&			getObservers( void )		{ return ( m_listObservers ); }
+	std::list< IFieldObserver* >&			getObservers()		{ return ( m_listObservers ); }
 
 	/**
 	 * @brief Returns observers list.
 	 * 
 	 * @return list of observers.
 	 */
-	const std::list< IFieldObserver* >&	getObservers( void ) const	{ return ( m_listObservers ); }
+	const std::list< IFieldObserver* >&	getObservers() const	{ return ( m_listObservers ); }
 
 	/**
 	 * @brief Check if pFieldObserver is already in observers list.
@@ -102,7 +102,7 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	/**
 	 * @brief Detach all observers.
 	 */
-	void	detach( void );
+	void	detach();
 
 	/**
 	 * @brief Send a notification of an event to all observers.
@@ -123,7 +123,7 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 * 
 	 * @return true if this subject is observed by at least one object.
 	 */
-	bool	isSubject( void ) const;
+	bool	isSubject() const;
 	//@}
 
 
@@ -138,21 +138,21 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 * 
      * @todo  mutex for being MT-safe.
      */
-    bool startEditingRO( void ) const;
+    bool startEditingRO() const;
 
     /**
 	 * @brief Mark this field to be currently edit in read-write mode.
 	 * 
      * @todo  mutex for being MT-safe.
      */
-    bool startEditingRW( void ) const;
+    bool startEditingRW() const;
 
     /**
 	 * @brief Mark this field to be currently not edit.
 	 * 
      * @todo  mutex for being MT-safe.
      */
-    bool finishEditing( void ) const;
+    bool finishEditing() const;
 
     /**
 	 * @brief Returns editing state of this field.
@@ -186,7 +186,7 @@ protected:
 	/**
 	 * @brief Checks if editing mode is compatible with a read-only access.
 	 */
-	bool checkRO( void ) const
+	bool checkRO() const
 	{
 		return ( !isSameEditingMode(NONE) );
 	}
@@ -194,7 +194,7 @@ protected:
 	/**
 	 * @brief Checks if editing mode is compatible with a read-write access.
 	 */
-	bool checkRW( void ) const
+	bool checkRW() const
 	{
 		return ( isSameEditingMode(RW) );
 	}

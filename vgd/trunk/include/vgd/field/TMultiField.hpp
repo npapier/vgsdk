@@ -6,10 +6,9 @@
 #ifndef _VGD_FIELD_TMULTIFIELD_H
 #define _VGD_FIELD_TMULTIFIELD_H
 
-#include "vgd/vgd.hpp"
-
 #include <vector>
 
+#include "vgd/vgd.hpp"
 #include "vgd/field/AbstractField.hpp"
 
 
@@ -94,16 +93,16 @@ struct TMultiField : public AbstractField
 
 
 
-	const int32		size	( void ) const
+	const uint32		size	() const
 	{
 		assert( checkRO() );
 
-		return ( static_cast<int32>(m_vectorMF.size()) );
+		return ( static_cast<uint32>(m_vectorMF.size()) );
 	}
 
 
 
-	const uint32	capacity( void ) const
+	const uint32	capacity() const
 	{
 		assert( checkRO() );
 				
@@ -112,13 +111,12 @@ struct TMultiField : public AbstractField
 
 	
 
-	const bool		empty	( void ) const
+	const bool		empty	() const
 	{
 		assert( checkRO() );
 
 		return ( size() == 0 );
 	}
-	
 	//@}
 
 
@@ -130,29 +128,29 @@ struct TMultiField : public AbstractField
 	 */
 	//@{
 
-	const T&	operator[] ( const int32 i32Index ) const
+	const T&	operator[] ( const uint32 index ) const
 	{
 		assert( checkRO() );
 
-		assert( isIndexValid( i32Index ) );
+		assert( isIndexValid( index ) );
 
-		return ( m_vectorMF[i32Index] );
+		return ( m_vectorMF[index] );
 	}
 
 
 
-	T&			operator[] ( const int32 i32Index )
+	T&			operator[] ( const uint32 index )
 	{
 		assert( checkRW() );
 
-		assert( isIndexValid( i32Index ) );
+		assert( isIndexValid( index ) );
 
-		return ( m_vectorMF[i32Index] );
+		return ( m_vectorMF[index] );
 	}
 
 
 
-	const T&	front( void ) const
+	const T&	front() const
 	{
 		assert( checkRO() );
 
@@ -163,7 +161,7 @@ struct TMultiField : public AbstractField
 
 
 
-	T&			front( void )
+	T&			front()
 	{
 		assert( checkRW() );
 
@@ -174,7 +172,7 @@ struct TMultiField : public AbstractField
 
 
 
-	const T&	back( void ) const
+	const T&	back() const
 	{
 		assert( checkRO() );
 
@@ -185,7 +183,7 @@ struct TMultiField : public AbstractField
 
 
 
-	T&			back( void )
+	T&			back()
 	{
 		assert( checkRW() );
 
@@ -277,7 +275,7 @@ struct TMultiField : public AbstractField
 
 		for(	typename std::vector< T >::const_iterator iter = rMFToAppend.begin();
 				iter != rMFToAppend.end();
-				iter++
+				++iter
 			)
 		{
 			m_vectorMF.push_back( rItem );
@@ -295,15 +293,15 @@ struct TMultiField : public AbstractField
 	 */
 	//@{
 	
-	void  insert ( const int32 i32Index, const T& rItem )
+	void  insert ( const uint32 index, const T& rItem )
 	{
 		assert( checkRW() );
 
-		assert( isIndexValid( i32Index ) );
+		assert( isIndexValid( index ) );
 
-		typename std::vector<T>::iterator iter = m_vectorMF.begin() + i32Index;
+		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
 
-		m_vectorMF.insert( iter, _rItem );
+		m_vectorMF.insert( iter, rItem );
 	}
 
 	//@}
@@ -317,20 +315,20 @@ struct TMultiField : public AbstractField
 	 */
 	//@{
 	
-	void	erase( const int32 i32Index )
+	void	erase( const uint32 index )
 	{
 		assert( checkRW() );
 
-		assert( isIndexValid( i32Index ) );
+		assert( isIndexValid( index ) );
 
-		typename std::vector<T>::iterator iter = m_vectorMF.begin() + i32Index;
+		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
 
 		m_vectorMF.erase( iter );
 	}
 
 
 
-	void	pop_back( void )
+	void	pop_back()
 	{
 		assert( checkRW() );
 
@@ -341,22 +339,22 @@ struct TMultiField : public AbstractField
 
 
 
-	void  erase( const int32 i32IndexStart, const int32 i32IndexEnd )
+	void  erase( const uint32 indexStart, const uint32 indexEnd )
 	{
 		assert( checkRW() );
 
-		assert( isIndexValid( i32IndexStart ) );
-		assert( isIndexValid( i32IndexEnd ) );
+		assert( isIndexValid( indexStart ) );
+		assert( isIndexValid( indexEnd ) );
 
-		typename std::vector<T>::iterator iterStart = m_vectorMF.begin() + i32Index;
-		typename std::vector<T>::iterator iterEnd   = m_vectorMF.begin() + i32End;
+		typename std::vector<T>::iterator iterStart = m_vectorMF.begin() + indexStart;
+		typename std::vector<T>::iterator iterEnd   = m_vectorMF.begin() + indexEnd;
 
 		m_vectorMF.erase( iterStart, iterEnd );
 	}
 
 
 
-	void  clear( void )
+	void  clear()
 	{
 		assert( checkRW() );
 
@@ -372,17 +370,17 @@ struct TMultiField : public AbstractField
 	 */
 	//@{
 	
-	void  swap   ( const int32 i32IndexItem1, const int32 i32IndexItem2 )
+	void  swap   ( const uint32 indexItem1, const uint32 indexItem2 )
 	{
 		assert( checkRW() );
 
-		assert( isIndexValid( i32IndexItem1 ) );
-		assert( isIndexValid( i32IndexItem2 ) );
+		assert( isIndexValid( indexItem1 ) );
+		assert( isIndexValid( indexItem2 ) );
 
-		T *pTmp = m_vectorMF[i32IndexItem1];
+		T *pTmp = m_vectorMF[indexItem1];
 		
-		m_vectorMF[i32IndexItem1] = m_vectorMF[i32IndexItem2];
-		m_vectorMF[i32IndexItem2] = pTmp;
+		m_vectorMF[indexItem1] = m_vectorMF[indexItem2];
+		m_vectorMF[indexItem2] = pTmp;
 	}
 
 
@@ -406,24 +404,24 @@ struct TMultiField : public AbstractField
 	/**
 	 * @brief Find an item.
 	 * 
-	 * @param rItem	an item.
-	 * @return Index of item (0 to size()-1), or -1 if not found.
+	 * @param	rItem	an item.
+	 * @return	Index of item (0 to size()-1), or size() if not found.
 	 */
-	const int32 find( const T& rItem ) const
+	const uint32 find( const T& rItem ) const
 	{
 		assert( checkRO() );
 
-		int32 i32Index = 0;
+		uint32 index = 0;
 		typename std::vector< T >::const_iterator vectorIter;
-		for( vectorIter=m_vectorMF.begin(); (vectorIter != m_vectorMF.end()); vectorIter++, i32Index++ )
+		for( vectorIter=m_vectorMF.begin(); (vectorIter != m_vectorMF.end()); ++vectorIter, ++index )
 		{
 			if ( (*vectorIter) == rItem )
 			{
-				return ( static_cast<int32>(i32Index) );
+				return ( index );
 			}
 		}
 		
-		return ( static_cast<int32>(-1) );
+		return ( size() );
 	}
 	//@}
 
@@ -448,12 +446,12 @@ private:
 	/**
 	 * @brief Test if an index is valid ( >=0 and < size() ).
 	 */
-	const bool isIndexValid( const int32 i32Index ) const
+	const bool isIndexValid( const uint32 index ) const
 	{
 		assert( checkRO() );
 
-		return (	( 0 <= i32Index		) &&
-					( i32Index < size()	)
+		return (	( 0 <= index		) &&
+					( index < size()	)
 				);
 	}
 };

@@ -6,10 +6,9 @@
 #ifndef _VGD_FIELD_TSINGLEASSOCIATIVEFIELD_H
 #define _VGD_FIELD_TSINGLEASSOCIATIVEFIELD_H
 
-#include "vgd/vgd.hpp"
-
 #include <set>
 
+#include "vgd/vgd.hpp"
 #include "vgd/field/AbstractField.hpp"
 
 
@@ -26,8 +25,8 @@ namespace field
  *
  * @brief Template class for single associative field.
  *
- * A single associative field is a container where the values of the elements contained are unique and serve as the key values according to which the data is automatically ordered.
- * All values must have the same type.
+ * A single associative field is a container where the values of the elements contained are unique and serve as the key 
+ * values according to which the data is automatically ordered. All values must have the same type.
  * It's simply an encapsulated std::set from STL.
  *
  * @remarks \c Assignable, but \c Not \c DefaultConstructible.
@@ -78,16 +77,16 @@ struct TSingleAssociativeField : public AbstractField
 	 */
 	//@{
 
-	const int32		size	( void ) const
+	const uint32	size() const
 	{
 		assert( checkRO() );
 
-		return ( m_set.size() );
+		return ( static_cast<uint32>(m_set.size()) );
 	}
 
 
 
-	const bool		empty	( void ) const
+	const bool		empty	() const
 	{
 		assert( checkRO() );
 
@@ -162,15 +161,15 @@ struct TSingleAssociativeField : public AbstractField
 	 * 
 	 * @return the number of elements that have been removed.
 	 */
-	int32 erase( const KeyType& key )
+	uint32 erase( const KeyType& key )
 	{
 		assert( checkRW() );
 		
-		return ( m_set.erase( key ) );
+		return ( static_cast<uint32>(m_set.erase( key )) );
 	}
 
 
-	void  clear( void )
+	void  clear()
 	{
 		assert( checkRW() );
 
@@ -205,11 +204,11 @@ struct TSingleAssociativeField : public AbstractField
 	/**
 	 * @brief Returns the number of elements whose key matches a parameter-specified key.
 	 */
-	int32 count( const KeyType& key ) const
+	uint32 count( const KeyType& key ) const
 	{
 		assert( checkRO() );
 		
-		return ( m_set.count( key ) );
+		return ( static_cast<uint32>(m_set.count( key )) );
 	}
 	
 	iterator find ( const KeyType& key )

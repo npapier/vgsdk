@@ -26,9 +26,9 @@ AbstractField::AbstractField( const std::string& strFieldName ) :
 
 
 
-AbstractField::~AbstractField( void )
+AbstractField::~AbstractField()
 {
-	//notify( DESTROY );
+	//notify( DESTROY ); ??? FIXME
 
 	assert( m_editingMode == NONE );
 }
@@ -52,7 +52,7 @@ void AbstractField::attach( IFieldObserver* pObserver )
 	assert( m_editingMode == NONE );
 	assert( !findObserver(pObserver) );
 
-    getObservers().push_back( pObserver );
+	getObservers().push_back( pObserver );
 }
 
 
@@ -67,7 +67,7 @@ void AbstractField::detach( IFieldObserver* pObserver )
 
 
 
-void AbstractField::detach( void )
+void AbstractField::detach()
 {
 	assert( m_editingMode == NONE );	
 	getObservers().clear();
@@ -104,16 +104,16 @@ void AbstractField::sendNotify( const Event& event ) const
 
 
 
-bool AbstractField::isSubject( void ) const
+bool AbstractField::isSubject() const
 {
 	assert( m_editingMode == NONE );
 
-    return ( getObservers().size() > 0 );
+	return ( getObservers().size() > 0 );
 }
 
 
 
-bool AbstractField::startEditingRO( void ) const
+bool AbstractField::startEditingRO() const
 {
 	switch ( m_editingMode )
 	{
@@ -133,7 +133,7 @@ bool AbstractField::startEditingRO( void ) const
 
 
 
-bool AbstractField::startEditingRW( void ) const
+bool AbstractField::startEditingRW() const
 {
 	switch ( m_editingMode )
 	{
@@ -153,7 +153,7 @@ bool AbstractField::startEditingRW( void ) const
 
 
 
-bool AbstractField::finishEditing( void ) const
+bool AbstractField::finishEditing() const
 {
 	switch ( m_editingMode )
 	{

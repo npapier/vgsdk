@@ -6,17 +6,16 @@
 #ifndef _VGD_FIELD_TPAIRASSOCIATIVEFIELD_H
 #define _VGD_FIELD_TPAIRASSOCIATIVEFIELD_H
 
-#include "vgd/vgd.hpp"
-
 #include <map>
 
+#include "vgd/vgd.hpp"
 #include "vgd/field/AbstractField.hpp"
 
 
 
 namespace vgd
 {
-	
+
 namespace field
 {
 
@@ -26,8 +25,8 @@ namespace field
  *
  * @brief Template class for pair associative field.
  * 
- * A pair associative field is a container where each element is a pair that has both a data value and a sort key. The value of the 
- * key is unique and is used to order the data automatically. All values must have the same type.
+ * A pair associative field is a container where each element is a pair that has both a data value and a sort key. The 
+ * value of the key is unique and is used to order the data automatically. All values must have the same type.
  * It's simply an encapsulated std::map from STL.
  *
  * @remarks \c Assignable, but \c Not \c DefaultConstructible.
@@ -78,16 +77,16 @@ struct TPairAssociativeField : public AbstractField
 	 */
 	//@{
 
-	const int32		size	( void ) const
+	const uint32		size	() const
 	{
 		assert( checkRO() );
 
-		return ( static_cast<int32>(m_map.size()) );
+		return ( static_cast<uint32>(m_map.size()) );
 	}
 
 
 
-	const bool		empty	( void ) const
+	const bool		empty	() const
 	{
 		assert( checkRO() );
 
@@ -167,15 +166,15 @@ struct TPairAssociativeField : public AbstractField
 	 * 
 	 * @return the number of elements that have been removed.
 	 */
-	int32 erase( const KeyType& key )
+	uint32 erase( const KeyType& key )
 	{
 		assert( checkRW() );
 		
-		return ( static_cast<int32>(m_map.erase( key )) );
+		return ( static_cast<uint32>(m_map.erase( key )) );
 	}
 
 
-	void  clear( void )
+	void  clear()
 	{
 		assert( checkRW() );
 
@@ -210,11 +209,11 @@ struct TPairAssociativeField : public AbstractField
 	/**
 	 * @brief Returns the number of elements whose key matches a parameter-specified key.
 	 */
-	int32 count( const KeyType& key ) const
+	uint32 count( const KeyType& key ) const
 	{
 		assert( checkRO() );
 		
-		return ( static_cast<int32>(m_map.count( key )) );
+		return ( static_cast<uint32>(m_map.count( key )) );
 	}
 	
 	iterator find ( const KeyType& key )
