@@ -37,7 +37,7 @@ void MatrixTransform::setToDefaults( void )
 
 	//
 	vgm::MatrixR identity;
-	identity.identity();
+	identity.setIdentity();
 	
 	setMatrix( identity );
 }

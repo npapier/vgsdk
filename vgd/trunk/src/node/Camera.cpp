@@ -40,7 +40,7 @@ void Camera::setToDefaults( void )
 	ProjectionTransformation::setToDefaults();
 
 	vgm::MatrixR identity;
-	identity.identity();
+	identity.setIdentity();
 	
 	setMatrix( identity );
 }

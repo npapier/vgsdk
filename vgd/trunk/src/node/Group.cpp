@@ -45,7 +45,7 @@ void Group::setToDefaults( void )
 	Node::setToDefaults();
 
 	// internals.	
-	m_transformation.identity();
+	m_transformation.setIdentity();
 }
 
 
