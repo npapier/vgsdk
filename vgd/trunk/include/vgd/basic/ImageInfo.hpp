@@ -44,13 +44,15 @@ struct VGD_API ImageInfo : public IImage
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
+	 * @param voxelSize		size of a voxel
 	 */
-	ImageInfo(	const uint32	width			= 0,
-					const uint32	height		= 0,
-					const uint32	depth			= 0,
-					const Format	format		= NO_FORMAT,
-					const Type		type			= NO_TYPE,
-					const void*		pixels		= 0 );
+	ImageInfo(	const uint32		width			= 0,
+					const uint32		height		= 0,
+					const uint32		depth			= 0,
+					const Format		format		= NO_FORMAT,
+					const Type			type			= NO_TYPE,
+					const void*			pixels		= 0,
+					const vgm::Vec3f	voxelSize	= vgm::Vec3f(1.f, 1.f, 1.f)	);
 
 	/**
 	 * @brief Set all informations about an image.
@@ -155,7 +157,7 @@ struct VGD_API ImageInfo : public IImage
 	 * @return		type of the pixel data.
 	 */
 	const Type		type() const			{ return ( m_type ); }
-	
+
 	/**
 	 * @brief Returns a pointer to the image data in memory.
 	 * 
@@ -183,6 +185,20 @@ struct VGD_API ImageInfo : public IImage
 	void*&		pixelData()				{ return ( m_pixels ); }
 
 	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	vgm::Vec3f&			voxelSize();
+
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	const vgm::Vec3f	voxelSize() const;
+
+	/**
 	 * @brief Set all informations about an image.
 	 * 
 	 * @param width			width of the image.
@@ -191,13 +207,15 @@ struct VGD_API ImageInfo : public IImage
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
+	 * @param voxelSize		a 3d vector with the voxel size for each dimension.
 	 */
-	void			set(	const uint32	width			= 0,
-							const uint32	height		= 0,
-							const uint32	depth			= 0,
-							const Format	format		= NO_FORMAT,
-							const Type		type			= NO_TYPE,
-							const void*		pixels		= 0 );
+	void			set(	const uint32		width			= 0,
+							const uint32		height		= 0,
+							const uint32		depth			= 0,
+							const Format		format		= NO_FORMAT,
+							const Type			type			= NO_TYPE,
+							const void*			pixels		= 0,
+							const vgm::Vec3f	voxelSize	= vgm::Vec3f(1.f, 1.f, 1.f) );
 
 	/**
 	 * @brief Set all informations about an image.
@@ -222,6 +240,8 @@ protected:
 	Type			m_type;
 	
 	void*			m_pixels;
+	
+	vgm::Vec3f	m_voxelSize;
 	
 	bool			m_edit;
 	//@}

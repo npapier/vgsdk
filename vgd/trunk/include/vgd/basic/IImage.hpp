@@ -6,6 +6,7 @@
 #ifndef _VGD_BASIC_IIMAGE_H
 #define _VGD_BASIC_IIMAGE_H
 
+#include <vgm/Vector.hpp>
 #include "vgd/vgd.hpp"
 
 
@@ -125,7 +126,7 @@ struct VGD_API IImage
 	 * @remarks		If image is not defined, must return NO_TYPE.
 	 */
 	virtual const Type	type() const=0;
-
+	
 	/**
 	 * @brief Returns a pointer to the image data in memory.
 	 * 
@@ -149,6 +150,13 @@ struct VGD_API IImage
 	 */
 	virtual void			editPixelsDone()=0;
 	
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	virtual const vgm::Vec3f	voxelSize() const=0;
+
 	/**
 	 * @brief Test if this class store an image.
 	 * 

@@ -63,12 +63,14 @@ struct VGD_API Image : public IImage
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
+	 * @param voxelSize		size of a voxel
 	 */
-	Image(		const uint32	components,
-					const uint32	width, const uint32 height, const uint32 depth,
-					const Format	format,
-					const Type		type,
-					const void*		pixels );
+	Image(		const uint32		components,
+					const uint32		width, const uint32 height, const uint32 depth,
+					const Format		format,
+					const Type			type,
+					const void*			pixels,
+					const vgm::Vec3f	voxelSize	= vgm::Vec3f(1.f, 1.f, 1.f)	);
 
 	/**
 	 * @brief Image contructor : Create a new image.
@@ -79,13 +81,15 @@ struct VGD_API Image : public IImage
 	 * @param depth			depth of the image.
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
+	 * @param voxelSize		size of a voxel
 	 * 
 	 * @todo add param color
 	 */
-	Image(		const uint32	components,
-					const uint32	width, const uint32 height, const uint32 depth,
-					const Format	format,
-					const Type		type );
+	Image(		const uint32		components,
+					const uint32		width, const uint32 height, const uint32 depth,
+					const Format		format,
+					const Type			type,
+					const vgm::Vec3f	voxelSize	= vgm::Vec3f(1.f, 1.f, 1.f)	);
 					
 	/**
 	 * @brief Image contructor from an IImage.
@@ -148,12 +152,14 @@ struct VGD_API Image : public IImage
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
+	 * @param voxelSize		size of a voxel
 	 */
-	bool	create(	const uint32	components, 
-						const uint32	width, const uint32 height, const uint32 depth,
-						const Format	format,
-						const Type		type,
-						const void*		pixels );
+	bool	create(	const uint32		components, 
+						const uint32		width, const uint32 height, const uint32 depth,
+						const Format		format,
+						const Type			type,
+						const void*			pixels,
+						const vgm::Vec3f	voxelSize	= vgm::Vec3f(1.f, 1.f, 1.f)	);
 
 	/**
 	 * @brief Create a new image.
@@ -164,11 +170,13 @@ struct VGD_API Image : public IImage
 	 * @param depth			depth of the image.
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
+	 * @param voxelSize		size of a voxel
 	 */
-	bool	create(	const uint32	components, 
-						const uint32	width, const uint32 height, const uint32 depth,
-						const Format	format,
-						const Type		type );
+	bool	create(	const uint32		components, 
+						const uint32		width, const uint32 height, const uint32 depth,
+						const Format		format,
+						const Type			type,
+						const vgm::Vec3f	voxelSize	= vgm::Vec3f(1.f, 1.f, 1.f)	);
 
 	/**
 	 * @brief Create an image from an IImage.
@@ -281,6 +289,20 @@ struct VGD_API Image : public IImage
 	 * @brief Commit all pixels modifications after calling editPixels().
 	 */
 	void 				editPixelsDone();
+	
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	vgm::Vec3f&			voxelSize();
+
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	const vgm::Vec3f	voxelSize() const;
 	//@}
 
 
@@ -323,15 +345,17 @@ private:
 	/**
 	 * @brief id for image library, 0 otherwise(no image specified or not yet loaded).
 	 */
-	ILuint	m_iluintImgID;
+	ILuint		m_iluintImgID;
 	
-	uint32	m_components;
-	uint32	m_width;
-	uint32	m_height;
-	uint32	m_depth;	
-	Format	m_format;
-	Type		m_type;
-	bool		m_edit;
+	uint32		m_components;
+	uint32		m_width;
+	uint32		m_height;
+	uint32		m_depth;	
+	Format		m_format;
+	Type			m_type;
+	vgm::Vec3f	m_voxelSize;
+
+	bool			m_edit;
 	//@}
 	
 	/**

@@ -57,11 +57,12 @@ Image::Image( std::string strFilename ) :
 
 
 
-Image::Image(	const uint32	components,
-					const uint32	width, const uint32 height, const uint32 depth,
-					const Format	format,
-					const Type		type,
-					const void*		pixels ) :
+Image::Image(	const uint32		components,
+					const uint32		width, const uint32 height, const uint32 depth,
+					const Format		format,
+					const Type			type,
+					const void*			pixels,
+					const vgm::Vec3f	voxelSize ) :
 	m_iluintImgID(0)
 {
 	if ( m_firstInstance )
@@ -80,15 +81,17 @@ Image::Image(	const uint32	components,
 	create(	components,
 				width, height, depth,
 				format, type,
-				pixels );
+				pixels,
+				voxelSize );
 }
 
 
 
-Image::Image(	const uint32	components,
-					const uint32	width, const uint32 height, const uint32 depth,
-					const Format	format,
-					const Type		type ) :
+Image::Image(	const uint32		components,
+					const uint32		width, const uint32 height, const uint32 depth,
+					const Format		format,
+					const Type			type,
+					const vgm::Vec3f	voxelSize ) :
 	m_iluintImgID(0)
 {
 	if ( m_firstInstance )
@@ -106,7 +109,8 @@ Image::Image(	const uint32	components,
 		
 	create(	components,
 				width, height, depth,
-				format, type 
+				format, type,
+				voxelSize
 				);
 }
 
@@ -131,7 +135,8 @@ Image::Image( const IImage& image ) :
 	create(	image.components(),
 				image.width(), image.height(), image.depth(),
 				image.format(), image.type(),
-				image.pixels() );
+				image.pixels(),
+				image.voxelSize() );
 }
 
 
@@ -217,11 +222,12 @@ bool Image::load( std::string strFilename )
 
 
 
-bool Image::create(	const uint32	components, 
-							const uint32	width, const uint32 height, const uint32 depth,
-							const Format	format,
-							const Type		type,
-							const void*		pixels )
+bool Image::create(	const uint32		components, 
+							const uint32		width, const uint32 height, const uint32 depth,
+							const Format		format,
+							const Type			type,
+							const void*			pixels,
+							const vgm::Vec3f	voxelSize )
 {
 	destroy();
 
@@ -249,6 +255,8 @@ bool Image::create(	const uint32	components,
 	}
 	else
 	{
+		m_voxelSize = voxelSize;
+
 		updateInformations();
 		return ( true );
 	}
@@ -256,10 +264,11 @@ bool Image::create(	const uint32	components,
 
 
 
-bool Image::create(	const uint32	components, 
-							const uint32	width, const uint32 height, const uint32 depth,
-							const Format	format,
-							const Type		type )
+bool Image::create(	const uint32		components, 
+							const uint32		width, const uint32 height, const uint32 depth,
+							const Format		format,
+							const Type			type,
+							const vgm::Vec3f	voxelSize )
 {
 	destroy();
 
@@ -286,6 +295,8 @@ bool Image::create(	const uint32	components,
 	}
 	else
 	{
+		m_voxelSize = voxelSize;
+		
 		updateInformations();
 		return ( true );
 	}
@@ -301,8 +312,9 @@ bool Image::create( const IImage& image )
 					image.components(),
 					image.width(), image.height(), image.depth(),
 					image.format(), image.type(),
-					image.pixels() );
-					
+					image.pixels(),
+					image.voxelSize() );
+
 	return ( bRetVal );
 }
 
@@ -411,11 +423,29 @@ void Image::editPixelsDone()
 
 
 
+vgm::Vec3f& Image::voxelSize()
+{
+	return ( m_voxelSize );
+}
+
+
+
+const vgm::Vec3f Image::voxelSize() const
+{
+	return ( m_voxelSize );
+}
+
+
+
 void Image::copy( const Image& src )
 {
 	src.bind();
 
-	m_iluintImgID = ilCloneCurImage();
+	m_iluintImgID	= ilCloneCurImage();
+	
+	m_voxelSize		= src.m_voxelSize;
+	
+	m_edit			= false;	
 	
 	reportILError();
 }
@@ -656,6 +686,9 @@ void Image::resetInformations()
 	m_components	= m_width = m_height = m_depth = 0;
 	m_format			= NO_FORMAT;
 	m_type			= NO_TYPE;
+	
+	m_voxelSize		= vgm::Vec3f( 1.f, 1.f, 1.f );
+	
 	m_edit			= false;
 }
 
@@ -671,6 +704,9 @@ void Image::updateInformations()
 	m_depth			= ilGetInteger( IL_IMAGE_DEPTH );	
 	m_format			= convertILFormat2My( ilGetInteger( IL_IMAGE_FORMAT ) );
 	m_type			= convertILType2My( ilGetInteger( IL_IMAGE_TYPE ) );
+	
+	// m_voxelSize nothing to do
+	// m_edit		nothing to do
 	
 	reportILError();
 }
