@@ -61,15 +61,14 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 	// setCounterClockWiseFlag( false ); FIXME
 
 	// read vertices
-	vertex->resize(0);
+	vertex->clear();
 	vertex->reserve(i32NumVertices);
 
 	for (int32 i=0; i<i32NumVertices; i++)
 	{
-		float x,y,z;
-		fp >> x;
-		fp >> y;
-		fp >> z;
+		float x, y, z;
+		fp >> x >> y >> z;
+		
 		vertex->push_back( vgm::Vec3f(x,y,z) );
 	}
 
@@ -79,8 +78,8 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 
 	// reserve memory for edges.
 	// and neighbours FIXME
-	vertexIndex->resize(0);
-	vertexIndex->reserve(3*i32NumTriangles);		
+	vertexIndex->clear();
+	vertexIndex->reserve(3*i32NumTriangles);
 	// FIXME m_vNeighbours.reserve(3*i32NumTriangles);
 
 	if ( bCCW )
@@ -93,9 +92,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 			int32 lEdge2;
 			int32 lEdge3;				
 	
-			fp >> lEdge1;
-			fp >> lEdge2;
-			fp >> lEdge3;
+			fp >> lEdge1 >> lEdge2 >> lEdge3;
 	
 			vertexIndex->push_back(lEdge1);
 			vertexIndex->push_back(lEdge2);				
@@ -106,9 +103,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 			int32 lNeighbour2;
 			int32 lNeighbour3;				
 	
-			fp >> lNeighbour1;
-			fp >> lNeighbour2;
-			fp >> lNeighbour3;
+			fp >> lNeighbour1 >> lNeighbour2 >> lNeighbour3;
 
 			//m_vNeighbours.push_back(lNeighbour1);
 			//m_vNeighbours.push_back(lNeighbour2);
@@ -125,9 +120,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 			int32 lEdge2;
 			int32 lEdge3;				
 	
-			fp >> lEdge1;
-			fp >> lEdge2;
-			fp >> lEdge3;
+			fp >> lEdge1 >> lEdge2 >> lEdge3;
 	
 			vertexIndex->push_back(lEdge3);
 			vertexIndex->push_back(lEdge2);				
@@ -138,9 +131,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 			int32 lNeighbour2;
 			int32 lNeighbour3;				
 	
-			fp >> lNeighbour1;
-			fp >> lNeighbour2;
-			fp >> lNeighbour3;
+			fp >> lNeighbour1 >> lNeighbour2 >> lNeighbour3;
 			//m_vNeighbours.push_back(lNeighbour3);
 			//m_vNeighbours.push_back(lNeighbour2);
 			//m_vNeighbours.push_back(lNeighbour1);
@@ -154,7 +145,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 
 	// primitive
 	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getFPrimitiveRW();
-	primitive->resize(0);
+	primitive->clear();
 
 	vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );
 	primitive->push_back( prim );
@@ -364,17 +355,21 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 		m_fp >> name >> real;
 		assert( name == "specularLevel" );
 		
-		material->setShininess( real );
+		// FIXME
+		if ( real != 0.f )
+		{
+			material->setShininess( real / 10.f );
+		}
 		
 		m_fp >> name >> real;
 		assert( name == "glossiness" );
 		// FIXME not used.
 
-		// opacity
+		// transparency
 		m_fp >> name >> real;
-		assert( name == "opacity" );
+		assert( name == "transparency" );
 		
-		material->setTransparency( 1.f - real );
+		material->setTransparency( real );
 
 		loadTextureMaps( container );
 	}
@@ -460,7 +455,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		m_fp >> name;
 		assert( name == "texTiling" );
 
-		//		
+		//
 		m_fp >> name;
 		
 		if ( name == "uWrap" )
@@ -532,17 +527,15 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		// setCounterClockWiseFlag( false ); FIXME
 
 		// read vertices
-		vertex->resize(0);
+		vertex->clear();
 		vertex->reserve( vertexSize );
 	
 		for (	int i=0;
 				i < vertexSize;
 				++i)
 		{
-			float x,y,z;
-			m_fp >> x;
-			m_fp >> y;
-			m_fp >> z;
+			float x, y, z;
+			m_fp >> x >> y >> z;
 			vertex->push_back( vgm::Vec3f(x,y,z) );
 		}
 		
@@ -562,17 +555,15 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		vgd::field::EditorRW< vgd::field::MFVec3f >	normal = vertexShape->getFNormalRW();
 
 		// read normals
-		normal->resize(0);
+		normal->clear();
 		normal->reserve( normalSize );
 	
 		for (	int i=0; 
 				i < normalSize;
 				++i )
 		{
-			float x,y,z;
-			m_fp >> x;
-			m_fp >> y;
-			m_fp >> z;
+			float x, y, z;
+			m_fp >> x >> y >> z;
 			normal->push_back( vgm::Vec3f(x,y,z).getNormalized() ); // ?????????????????????????????? FIXME
 		}
 		
@@ -597,16 +588,15 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord = vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( 0 );
 
 		// read texCoords
-		texCoord->resize(0);
+		texCoord->clear();
 		texCoord->reserve( texCoordSize );
 	
 		for (	int i=0; 
 				i < texCoordSize;
 				++i )
 		{
-			float x,y;
-			m_fp >> x;
-			m_fp >> y;
+			float x, y;
+			m_fp >> x >> y;
 			texCoord->push_back( vgm::Vec2f(x,y) );
 		}
 		
@@ -628,7 +618,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		// reserve memory for edges.
 		// and neighbours FIXME
 		vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex	= vertexShape->getFVertexIndexRW();	
-		vertexIndex->resize(0);
+		vertexIndex->clear();
 		vertexIndex->reserve( 3*i32NumTriangles );
 	
 		// read indices of faces
@@ -641,9 +631,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 			int32 lEdge2;
 			int32 lEdge3;				
 	
-			m_fp >> lEdge1;
-			m_fp >> lEdge2;
-			m_fp >> lEdge3;
+			m_fp >> lEdge1 >> lEdge2 >> lEdge3;
 	
 			vertexIndex->push_back(lEdge1);
 			vertexIndex->push_back(lEdge2);				
@@ -654,7 +642,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 	
 		// primitive
 		vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getFPrimitiveRW();
-		primitive->resize(0);
+		primitive->clear();
 
 		vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );
 		primitive->push_back( prim );
