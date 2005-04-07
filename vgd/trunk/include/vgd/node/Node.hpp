@@ -376,7 +376,7 @@ private:
 	/**
 	 * @brief boost vertex descriptor for this node.
 	 */
-	vgd::graph::detail::bglGraphTraits::vertex_descriptor	m_vertexDescriptor;	
+	vgd::graph::detail::bglGraphTraits::vertex_descriptor	m_vertexDescriptor;
 
 	//@}
 };

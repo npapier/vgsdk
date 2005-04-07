@@ -141,6 +141,9 @@ const std::string Node::getDFNode( void )
 
 vgd::graph::Graph& Node::graph( void )
 {
+	// Graph data
+	static vgd::graph::Graph m_graph;
+
 	return ( m_graph );
 }
 
@@ -166,10 +169,6 @@ vgd::basic::ClassRegistry< vgd::node::Node >& Node::getClassRegistry( void )
 
 	return ( nodeRegistry );
 }
-
-
-
-vgd::graph::Graph Node::m_graph;
 
 
 
