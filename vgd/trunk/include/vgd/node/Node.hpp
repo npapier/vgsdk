@@ -369,19 +369,15 @@ protected:
 private:
 	
 	/**
-	 * @name Graph data.
+	 * @name Graph typedef.
 	 */
 	//@{
 	
-    /**
-     * @brief Graph.
-     */
-	static vgd::graph::Graph								m_graph;
-
 	/**
 	 * @brief boost vertex descriptor for this node.
 	 */
 	vgd::graph::detail::bglGraphTraits::vertex_descriptor	m_vertexDescriptor;	
+
 	//@}
 };
 
