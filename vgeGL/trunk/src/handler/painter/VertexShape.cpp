@@ -409,7 +409,7 @@ void VertexShape::apply ( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 
 
-void VertexShape::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void VertexShape::unapply ( vge::engine::Engine* , vgd::node::Node* )
 {
 }
 
@@ -729,9 +729,9 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 
 
-void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pVertexShape,
+void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVertexShape,
 									const vgd::node::Primitive& primitive,
-									const vgeGL::engine::VertexArrayMethod& method )
+									const vgeGL::engine::VertexArrayMethod& /*method*/ )
 {
 	vgd::field::EditorRO< vgd::field::MFVec3f >	normal;
 	vgd::field::EditorRO< vgd::field::MFVec4f >	color4;
@@ -903,16 +903,14 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 
 	// *** Step 2 : RENDERING ***
-	
+
 	assert( primitive.getType() != vgd::node::Primitive::NONE );
 	GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
-	
-	const int32 i32Max = primitive.getIndex() + primitive.getNumIndices();
 
 	vertexIndex	= pVertexShape->getFVertexIndexRO();	
 	pArray		= reinterpret_cast< const GLvoid* >( &(*vertexIndex)[primitive.getIndex()] );
 	
-	glDrawElements( primitiveType, i32Max, GL_UNSIGNED_INT, pArray );
+	glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 
 
 
@@ -972,7 +970,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 
 void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pVertexShape,
-											const vgeGL::engine::VertexArrayDisplayListMethod& method )
+											const vgeGL::engine::VertexArrayDisplayListMethod& /*method*/ )
 {
 	// USE DISPLAY LIST
 	vgeGL::rc::applyUsingDisplayList< vgd::node::VertexShape, VertexShape, vgeGL::engine::VertexArrayMethod >( 
@@ -1357,14 +1355,14 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 
 
-void VertexShape::drawBoundingBox( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode )
+void VertexShape::drawBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexShape *pCastedNode )
 {
 	drawBox3f( pCastedNode->getBoundingBox() );
 }
 
 
 
-void VertexShape::drawXfBoundingBox( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode )
+void VertexShape::drawXfBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexShape *pCastedNode )
 {
 	glMatrixMode( GL_MODELVIEW );
 	glPushMatrix();
