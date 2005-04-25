@@ -19,7 +19,11 @@ namespace node
 
 
 /**
- * @brief Abstraction of a 3d geometrical primitive (like triangle, triangle strip, polygon...).
+ * @brief A sequence of 3d geometrical primitive (like triangle, triangle strip, polygon...).
+ * 
+ * It use getNumIndices() sequential elements from the field \c vertexIndex in the current Shape starting at index
+ * given by getIndex() to construct a sequence of the same geometrical primitive.
+ * The type of primitive is selected with setType() method.
  */
 struct VGD_API Primitive
 {
@@ -31,7 +35,7 @@ struct VGD_API Primitive
 	/**
 	 * @brief Geometrical primitives.
 	 * 
-	 * @remarks Be careful, the elements of this enumeration are ordered(see vgeGL::handler::VertexShapePainter).
+	 * @remarks Be careful, the elements of this enumeration are ordered(see vgeGL::handler::painter::VertexShape).
 	 */
 	typedef enum {
 		
@@ -73,7 +77,7 @@ struct VGD_API Primitive
 	/**
 	 * @brief Sets the type of primitive.
 	 *
-	 * @param type : type of primitive.
+	 * @param type		type of primitive.
 	 */
 	void       setType( const Type type );
 
@@ -88,14 +92,14 @@ struct VGD_API Primitive
 	/**
 	 * @brief Sets the starting index of the primitives.
 	 * 
-	 * @param index	starting index of the primitives in the vertex table.
+	 * @param index	starting index of the primitives in the field getFVertexIndex().
 	 */
 	void        setIndex( const int32 index );
 
 	/**
 	 * @brief Gets the starting index of the primitives.
 	 * 
-	 * @return			starting index of the primitives in the field getFVertex().
+	 * @return			starting index of the primitives in the field getFVertexIndex().
 	 */
 	const int32 getIndex() const;
 
