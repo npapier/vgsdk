@@ -183,7 +183,8 @@ void Logging::logTrace( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogTrace( szFormat, marker );
+	// wxVLogTrace( szFormat, marker ); FIXME modified interface in wx2.5 and superior.
+	wxVLogDebug( szFormat, marker );
 
 	va_end( marker );
 
