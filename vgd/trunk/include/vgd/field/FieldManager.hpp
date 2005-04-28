@@ -114,7 +114,7 @@ struct VGD_API FieldManager : public IFieldObserver
 	 * @return true if the specified field exist and has the desired type, false otherwise.
 	 */
 	template< typename fieldType >
-	bool		isField( const std::string strFieldName ) const
+	bool		isFieldAndType( const std::string strFieldName ) const
 	{
 		MapField::const_iterator iField;
 		iField = m_fields.find( strFieldName );
