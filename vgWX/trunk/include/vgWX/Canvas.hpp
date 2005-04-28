@@ -6,12 +6,18 @@
 #ifndef _VGWX_CANVAS_H
 #define _VGWX_CANVAS_H
 
-#include <wx/defs.h>
-#include <wx/glcanvas.h>
+#include <wx/wx.h>
 
 #include <vgeGL/engine/SceneManager.hpp>
 
+#include <wx/glcanvas.h>	// this header file include GL.h like vgeGL/engine/SceneManager.hpp and gle.hpp, but on 
+									// MacOSX it doesn't take the /usr/X11R6/include/GL/gl.h one, so typedef on OpenGL 
+									// extensions are not defined !!!
+
+
 #include "vgWX/vgWX.hpp"
+
+
 
 class wxMenu;
 

@@ -333,7 +333,7 @@ void Canvas::OnPaint( /*const*/ wxPaintEvent& event )
 {
 	// This is a dummy, to avoid an endless succession of paint messages.
 	// OnPaint handlers must always create a wxPaintDC.
-	::wxPaintDC dc(this);
+	// ::wxPaintDC dc(this);
 
 	//
 	if ( !enableVGSDK() )
