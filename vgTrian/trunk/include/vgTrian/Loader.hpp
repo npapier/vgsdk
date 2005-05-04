@@ -22,6 +22,9 @@ namespace vgTrian
 
 
 
+/**
+ * @todo remove char* and use std::string instead
+ */
 struct VGTRIAN_API Loader
 {
 	/**

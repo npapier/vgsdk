@@ -414,7 +414,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 			);
 
 		tex->setIImage( image );
-		tex->setMultiAttributeIndex( i );
+		tex->setMultiAttributeIndex( (int8)i );
 
 		// default value.
 		tex->setFilter( vgd::node::Texture2D::MIN_FILTER, vgd::node::Texture2D::LINEAR );
