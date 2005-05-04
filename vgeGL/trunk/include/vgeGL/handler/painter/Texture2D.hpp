@@ -49,23 +49,22 @@ struct VGEGL_API Texture2D : public vgeGL::handler::painter::Texture
 {
 	META_HANDLER_HPP( Texture2D );
 
-	//const vge::service::List			getServices	() const;
-	const TargetVector					getTargets()	const;
+	const TargetVector	getTargets()	const;
 
-	void	apply				( vge::engine::Engine*, vgd::node::Node* );
-	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
+	void						apply		( vge::engine::Engine*, vgd::node::Node* );
+	void						unapply	( vge::engine::Engine*, vgd::node::Node* );
 	
 	void	setToDefaults	();
 	
 	/**
 	 * @brief Create the texture2D and initialize it.
 	 */
-	void	create		( vgeGL::engine::Engine*, vgd::node::Texture2D*, vgeGL::rc::Texture2D* );
+	void	synchronize	( vgeGL::engine::Engine*, vgd::node::Texture2D*, vgeGL::rc::Texture2D* );
 	
 	/**
 	 * @brief Use a texture initialize by create().
 	 */
-	void	use			( vgeGL::engine::Engine*, vgd::node::Texture2D*, vgeGL::rc::Texture2D* );	
+	void	bind			( vgeGL::engine::Engine*, vgd::node::Texture2D*, vgeGL::rc::Texture2D* );	
 };
 
 

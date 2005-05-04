@@ -6,13 +6,11 @@
 #include "vgeGL/handler/painter/Texture2D.hpp"
 
 #include <vgd/basic/Image.hpp>
-#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Texture2D.hpp>
-#include <vge/rc/Manager.hpp>
 #include <vge/service/Painter.hpp>
 #include <vgm/Utilities.hpp>
 
-#include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/rc/TSyncAndBindHelper.hpp"
 #include "vgeGL/rc/Texture2D.hpp"
 
 
@@ -50,78 +48,13 @@ void Texture2D::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::Texture2D* >(pNode) != 0 );
 	vgd::node::Texture2D *pCastedNode = static_cast< vgd::node::Texture2D* >(pNode);
 
-	vge::rc::Manager& rGLManager = pGLEngine->getGLManager();
-
-	// ****** Render ******
-	vgd::field::DirtyFlag	*pDFNode;
-	vgd::field::DirtyFlag	*pDFIImage;
-	vge::rc::IResource 		*pResource;
-	vgeGL::rc::Texture2D		*pCastedResource;
-
-	// get dirty flag of node
-	pDFNode		= pCastedNode->getDirtyFlag( pCastedNode->getDFNode() );
-	pDFIImage	= pCastedNode->getDirtyFlag( pCastedNode->getDFIImage() );
-
-	// lookup the resource.
-	pResource			= rGLManager.getAbstract( pNode );
-	pCastedResource	= dynamic_cast< vgeGL::rc::Texture2D* >(pResource);
-	
-	if (	( pCastedResource == 0 ) &&
-			( pResource != 0) )
-	{
-		// There is a resource, but not of the expected type.
-		// Dynamic change of handler ?
-		// or node that must be process differently (static, dynamic for VertexShape).
-		rGLManager.remove( pNode );
-
-		pResource			= 0;
-	}
-
-	assert(	(pResource==0 && pCastedResource==0) ||
-				(pResource!=0 && pCastedResource!=0)
-				 );
-
-	// What to do ?
-	if ( pDFIImage->isDirty() )
-	{
-		// Node is invalidated.
-		if ( pCastedResource == 0 )
-		{
-			// No resource (this is the first evaluation), create it.
-			pCastedResource = new vgeGL::rc::Texture2D();
-			rGLManager.add( pNode, pCastedResource );
-		}
-		// else have founded an associated resource, recycle it in create().
-
-		// update resource.
-		create( pGLEngine, pCastedNode, pCastedResource );
-		use( pGLEngine, pCastedNode, pCastedResource );
-		
-		// validate.
-		pDFIImage->validate();
-		pDFNode->validate();
-	}
-	else
-	{
-		// No change in node.
-		if ( pCastedResource != 0 )
-		{
-			// Founded an associated resource.
-			
-			// render
-			use( pGLEngine, pCastedNode, pCastedResource );
-		}
-		else
-		{
-			// No resource, but already validate !!!
-			assert( false && "No resource, but already validate !!!" );
-		}
-	}
+	vgeGL::rc::applyUsingSyncAndBind< vgd::node::Texture2D, vgeGL::handler::painter::Texture2D, vgeGL::rc::Texture2D >(
+		pGLEngine, pCastedNode, this );
 }
 
 
 
-void Texture2D::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void Texture2D::unapply ( vge::engine::Engine* , vgd::node::Node* )
 {
 }
 
@@ -139,9 +72,17 @@ void Texture2D::setToDefaults()
  * 
  * @todo ARB NPOT extension
  */
-void Texture2D::create(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *pNode,
-								vgeGL::rc::Texture2D *pResource )
+void Texture2D::synchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *pNode,
+										vgeGL::rc::Texture2D *pResource )
 {
+	// Dirty flag for IImage
+	vgd::field::DirtyFlag*	pDFIImage = pNode->getDirtyFlag( pNode->getDFIImage() );
+	
+	if ( pDFIImage->isValid() )
+	{
+		return;
+	}
+
 	// Get IImage
 	bool										isDefined;
 	vgd::Shp< vgd::basic::IImage >	pIImage;
@@ -203,8 +144,6 @@ void Texture2D::create(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *
 		}
 	}
 	
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // ?????????????????????????????? FIXME
-
 	// Create texture2D
 	bool		bResize = false;
 	
@@ -305,7 +244,7 @@ void Texture2D::create(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *
 		}
 	}
 
-	// Update texture (with recale or not).
+	// Update texture (with rescale or not).
 	if ( bResize )
 	{
 		// RESCALE IMAGE
@@ -357,11 +296,13 @@ void Texture2D::create(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *
 				pPixels
 				);
 	}
+	
+	pDFIImage->validate();
 }
 
 
 
-void Texture2D::use(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *pNode,
+void Texture2D::bind(vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *pNode,
 							vgeGL::rc::Texture2D *pResource  )
 {
 	// get IImage
