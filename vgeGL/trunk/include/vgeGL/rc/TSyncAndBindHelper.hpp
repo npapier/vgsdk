@@ -75,8 +75,8 @@ void applyUsingSyncAndBind(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 		// else have founded an associated resource, recycle it in synchronize().
 
 		// update resource.
-		synchronize( pGLEngine, pNode, pCastedResource );
-		bind( pGLEngine, pNode, pCastedResource );
+		pHandler->synchronize( pGLEngine, pNode, pCastedResource );
+		pHandler->bind( pGLEngine, pNode, pCastedResource );
 		
 		// validate.
 		pDFNode->validate();
@@ -87,7 +87,7 @@ void applyUsingSyncAndBind(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 		if ( pCastedResource != 0 )
 		{
 			// Founded an associated resource and use it.
-			bind( pGLEngine, pNode, pCastedResource );
+			pHandler->bind( pGLEngine, pNode, pCastedResource );
 		}
 		else
 		{
