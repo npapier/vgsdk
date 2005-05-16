@@ -14,6 +14,29 @@ namespace event
 
 
 
+template<>
+void updateModifiersOfGlobalButtonStates<wxMouseEvent>( wxMouseEvent& event )
+{
+	using vgd::event::KeyboardButtonEvent;	
+	using vgd::event::MouseButtonEvent;
+	using vgd::event::detail::GlobalButtonStateSet;
+
+	// clean all
+	GlobalButtonStateSet::clear();
+		
+	// Keyboard
+	GlobalButtonStateSet::update( KeyboardButtonEvent::KEY_CONTROL,event.ControlDown() );
+	GlobalButtonStateSet::update( KeyboardButtonEvent::KEY_SHIFT,	event.ShiftDown() );
+	GlobalButtonStateSet::update( KeyboardButtonEvent::KEY_ALT,		event.AltDown() );
+	
+	// Mouse
+	GlobalButtonStateSet::update( MouseButtonEvent::MOUSE_BUTTON_1, event.LeftIsDown() );
+	GlobalButtonStateSet::update( MouseButtonEvent::MOUSE_BUTTON_2, event.MiddleIsDown() );
+	GlobalButtonStateSet::update( MouseButtonEvent::MOUSE_BUTTON_3, event.RightIsDown() );
+}
+
+
+
 } // namespace vgWX
 
 } // namespace event

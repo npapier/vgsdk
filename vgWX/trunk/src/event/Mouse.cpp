@@ -49,7 +49,7 @@ void Mouse::onLeftDoubleClick( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_1, false );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_1, false );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	
@@ -68,7 +68,7 @@ void Mouse::onLeftDown( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_1, true );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_1, true );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	
@@ -87,7 +87,7 @@ void Mouse::onLeftUp( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_1, false );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_1, false );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	
@@ -106,7 +106,7 @@ void Mouse::onMiddleDoubleClick( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_2, false );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_2, false );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	
@@ -125,7 +125,7 @@ void Mouse::onMiddleDown( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_2, true );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_2, true );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	
@@ -144,7 +144,7 @@ void Mouse::onMiddleUp( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_2, false );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_2, false );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	
@@ -163,7 +163,7 @@ void Mouse::onRightDoubleClick( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_3, false );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_3, false );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	
@@ -182,7 +182,7 @@ void Mouse::onRightDown( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_3, true );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_3, true );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	
@@ -201,7 +201,7 @@ void Mouse::onRightUp( wxMouseEvent& event )
 {
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
-	vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_3, false );
+	//vgd::event::detail::GlobalButtonStateSet::update( vgd::event::MouseButtonEvent::MOUSE_BUTTON_3, false );
 		
 	vgd::event::MouseButtonEvent *mouseButtonEvent;
 	

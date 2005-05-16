@@ -9,6 +9,8 @@
 #include <vgd/event/ButtonStateSet.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
+#include <vgd/event/MouseButtonEvent.hpp>
+#include <wx/window.h>
 
 #include "vgWX/vgWX.hpp"
 
@@ -51,12 +53,17 @@ void updateModifiersOfGlobalButtonStates( wxEventType& event )
 	using vgd::event::KeyboardButtonEvent;
 	using vgd::event::detail::GlobalButtonStateSet;
 	
+	// Keyboard
 	GlobalButtonStateSet::update( KeyboardButtonEvent::KEY_CONTROL, event.ControlDown() );
-
 	GlobalButtonStateSet::update( KeyboardButtonEvent::KEY_SHIFT, event.ShiftDown() );
-	
 	GlobalButtonStateSet::update( KeyboardButtonEvent::KEY_ALT, event.AltDown() );
 }
+
+
+
+template<>
+void updateModifiersOfGlobalButtonStates<wxMouseEvent>( wxMouseEvent& event );
+
 
 
 } // namespace event
