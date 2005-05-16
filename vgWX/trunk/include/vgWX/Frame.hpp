@@ -37,8 +37,6 @@ public:
 	 */
 	Frame(	wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos = wxDefaultPosition, 
 				const wxSize& size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE, const wxString& name = _T("vgWX::Frame"));
-
-	// void OnClose( wxCloseEvent& event );
 };
 
 

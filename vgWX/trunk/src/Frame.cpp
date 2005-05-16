@@ -17,7 +17,6 @@ namespace vgWX
 
 
 BEGIN_EVENT_TABLE( Frame, wxFrame )
-//	EVT_CLOSE( Frame::OnClose )
 END_EVENT_TABLE()
 
 
@@ -41,13 +40,6 @@ Frame::Frame(	wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	
 	SetAutoLayout( true );
 }
-
-
-
-//void Frame::OnClose( wxCloseEvent& event )
-//{
-//	Destroy();
-//}
 
 
 
