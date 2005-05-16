@@ -67,15 +67,20 @@ struct VGD_API ButtonStateSet : public EventVisitor
 	bool isDown( const int32 idButton ) const;
 
 	/**
-	 * @brief Sets a button down.
+	 * @brief Sets the button state to down.
 	 */
 	void setDown( const int32 idButton );
 
 	/**
-	 * @brief Sets a button up.
+	 * @brief Sets the button state to up.
 	 */
 	void setUp( const int32 idButton );
 	
+	/**
+	 * @brief Sets the state of all buttons to up.
+	 */
+	void setUp();
+
 	//@}
 
 

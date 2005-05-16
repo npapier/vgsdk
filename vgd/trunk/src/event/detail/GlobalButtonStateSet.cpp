@@ -24,6 +24,13 @@ const vgd::event::ButtonStateSet& GlobalButtonStateSet::get()
 
 
 
+void GlobalButtonStateSet::clear()
+{
+	m_states.setUp();
+}
+
+
+
 void GlobalButtonStateSet::update( const int32 buttonID, const bool isDown )
 {
 	if ( isDown )

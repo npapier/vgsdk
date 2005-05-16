@@ -71,6 +71,13 @@ void ButtonStateSet::setUp( const int32 idButton )
 
 
 
+void ButtonStateSet::setUp()
+{
+	m_down.clear();
+}
+
+
+
 bool ButtonStateSet::operator ==( const ButtonStateSet& other ) const
 {
 	return ( m_down == other.m_down );

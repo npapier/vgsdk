@@ -34,7 +34,14 @@ struct VGD_API GlobalButtonStateSet
 	 * @return	a reference to the global button states
 	 */
 	static const vgd::event::ButtonStateSet& get();
-	
+
+	/**
+	 * @brief	Clear the global button states.
+	 * 
+	 * @remarks Call get().setUp().
+	 */
+	static void clear();
+
 	/**
 	 * @brief Update the global button states.
 	 * 
