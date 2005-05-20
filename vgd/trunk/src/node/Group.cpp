@@ -69,7 +69,9 @@ void Group::addChild( vgd::Shp<vgd::node::Node> node )
 
 void Group::insertChild	( vgd::Shp<Node> node, const int32 newChildIndex )
 {
-	assert( checkChildIndex(newChildIndex) && "index is out of range." );
+	assert( 	newChildIndex == 0 ||
+				(newChildIndex>0 && newChildIndex<getNumChildren()) &&
+				"Wrong index." );
 
 	graph().addEdge( this, node.get(), newChildIndex );
 	
@@ -126,6 +128,8 @@ void Group::removeChild( const int32 childIndex )
 bool Group::removeChild( vgd::Shp<Node> childToRemove )
 {
 	int32 index = findChild( childToRemove );
+
+	assert( index >= 0 && "vgd::Group::removeChild(): Unexpected value returned by findChild()." );
 	
 	if ( index < getNumChildren() )
 	{

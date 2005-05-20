@@ -60,7 +60,9 @@ void Graph::addEdge( vgd::node::Node* pSourceNode, vgd::node::Node* pTargetNode 
 void Graph::addEdge( vgd::node::Node* pSourceNode, vgd::node::Node* pTargetNode, const uint32 edgeNameValue )
 {
 	assert( bgl_isOutEdgesPacked( pSourceNode->vertexDescriptor() ) );
-	assert( edgeNameValue < out_degree( pSourceNode->vertexDescriptor(), bglGraph() ) );
+	assert(	edgeNameValue == 0 ||
+				(edgeNameValue > 0 && edgeNameValue < out_degree( pSourceNode->vertexDescriptor(), bglGraph() ))
+				);
 	
 	bgl_makePlaceInOutEdges( pSourceNode->vertexDescriptor(), edgeNameValue );
 
@@ -398,7 +400,9 @@ void Graph::bgl_makePlaceInOutEdges	( detail::bglGraphTraits::vertex_descriptor 
 	const uint32 edgeNameValue )
 {
 	assert( bgl_isOutEdgesPacked(vertexDescriptor) && "OutEdges not packed" );
-	assert( edgeNameValue < out_degree(vertexDescriptor, bglGraph()) );
+	assert(	edgeNameValue == 0 ||
+				(edgeNameValue > 0 && edgeNameValue < out_degree(vertexDescriptor, bglGraph()))
+			);
 
 	uint32												ui32I;
 	detail::bglGraphTraits::out_edge_iterator	out_i;
@@ -413,8 +417,6 @@ void Graph::bgl_makePlaceInOutEdges	( detail::bglGraphTraits::vertex_descriptor 
 			break;
 		}
 	}
-
-	assert( out_i != out_end && "edgeNameValue not found" );
 
 	detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
 	for(	;
