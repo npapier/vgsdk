@@ -269,8 +269,11 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 	retVal.first = true;
 	
 	vgDebug::get().logDebug("vgTrian::loadTrian2: load %s done", pathFilename );	
-	vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );		
-	
+	vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );
+
+	//close file
+	m_fp.close();
+
 	return ( retVal );
 }
 
