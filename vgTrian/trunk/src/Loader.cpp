@@ -188,7 +188,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 	// open file
 	m_fp.open(pathFilename, std::ios::in);
 
-	if (!m_fp.good())
+	if (!m_fp.is_open())
 	{
 		vgDebug::get().logDebug("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
 		vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );		
@@ -272,6 +272,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 	vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );
 
 	//close file
+	m_fp.clear();
 	m_fp.close();
 
 	return ( retVal );
