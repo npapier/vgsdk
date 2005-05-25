@@ -13,3 +13,4 @@ full-install release-install dist-clean clean all:
 	@cd ../vgeGL;		make $@;	echo;echo
 	@cd ../vgWX;		make $@;	echo;echo
 	@cd ../vgnf;		make $@;	echo;echo
+	@cd ../vgsdk;		make $@;	echo;echo
