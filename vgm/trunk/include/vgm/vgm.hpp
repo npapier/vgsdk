@@ -40,7 +40,7 @@
  * @ingroup vgmGroup
  */ 
 
-#include <vgsdk/vgsdk.hpp>
+#include <Virtuals/Type.h>
 
 #ifdef _WIN32
 
