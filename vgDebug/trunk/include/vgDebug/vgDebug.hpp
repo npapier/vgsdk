@@ -6,7 +6,7 @@
 #ifndef _VGDEBUG_H
 #define _VGDEBUG_H
 
-#include <vgsdk/vgsdk.hpp>
+#include <Virtuals/Type.h>
 
 #ifdef _WIN32
 
