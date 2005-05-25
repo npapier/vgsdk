@@ -14,7 +14,7 @@
  * \b vgTrian is open source (LGPL).
  */
 
-#include <vgsdk/vgsdk.hpp>
+#include <Virtuals/Type.h>
 
 #ifdef _WIN32
 
