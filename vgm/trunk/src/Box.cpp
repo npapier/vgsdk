@@ -59,7 +59,7 @@ namespace vgm
 
 
 // *** Box3f ***
-Box3f::Box3f( void )
+Box3f::Box3f()
 {
 	makeEmpty(); 
 }
@@ -83,41 +83,41 @@ Box3f::Box3f(const Vec3f& min, const Vec3f& max)
 
 
 
-Box3f::~Box3f( void )
+Box3f::~Box3f()
 {
 }
 
 
 
-const Vec3f& Box3f::getMin( void ) const
-{
-	return m_min;
-}
-
-
-
-Vec3f& Box3f::getMin( void )
+const Vec3f& Box3f::getMin() const
 {
 	return m_min;
 }
 
 
 
-const Vec3f& Box3f::getMax( void ) const 
+Vec3f& Box3f::getMin()
+{
+	return m_min;
+}
+
+
+
+const Vec3f& Box3f::getMax() const 
 {
 	return m_max;
 }
 
 
 
-Vec3f& Box3f::getMax( void )
+Vec3f& Box3f::getMax()
 {
 	return m_max;
 }
 
 
 
-Vec3f Box3f::getCenter( void ) const
+Vec3f Box3f::getCenter() const
 {
 	return Vec3f(
 		0.5f * (m_min[0] + m_max[0]),
@@ -145,7 +145,17 @@ void Box3f::getSize( float& sizeX, float& sizeY, float& sizeZ) const
 
 
 
-void Box3f::makeEmpty( void )
+vgm::Vec3f Box3f::getSize() const
+{
+	return ( vgm::Vec3f(	m_max[0] - m_min[0],
+								m_max[1] - m_min[1],
+								m_max[2] - m_min[2] )
+			);
+}
+
+
+
+void Box3f::makeEmpty()
 {
 	float floatMax = std::numeric_limits<float>::max();
 
@@ -155,7 +165,7 @@ void Box3f::makeEmpty( void )
 
 
 
-bool Box3f::isEmpty( void ) const
+bool Box3f::isEmpty() const
 {
 	return m_max[0] < m_min[0];
 }
@@ -602,13 +612,13 @@ Vec3f Box3f::getClosestPoint( const Vec3f& point )
 
 
 
-bool Box3f::hasVolume( void ) const
+bool Box3f::hasVolume() const
 {
 	return (m_max[0] > m_min[0] && m_max[1] > m_min[1] && m_max[2] > m_min[2] );
 }
 
 
-float Box3f::getVolume( void ) const
+float Box3f::getVolume() const
 {
 	if ( isEmpty() )	return 0.0;
 
@@ -701,7 +711,7 @@ int32 Box3f::findQuadrant( float x, float y, float z,
 
 // XfBox3f.
 
-XfBox3f::XfBox3f( void )
+XfBox3f::XfBox3f()
 {
 	xform.setIdentity();
 	xformInv.setIdentity();
@@ -740,13 +750,13 @@ XfBox3f::XfBox3f( const Box3f & box )
 
 
 
-XfBox3f::~XfBox3f( void )
+XfBox3f::~XfBox3f()
 {
 }
 
 
 
-Vec3f XfBox3f::getCenter( void ) const
+Vec3f XfBox3f::getCenter() const
 {
 	Vec3f	p;
 
@@ -772,7 +782,14 @@ void XfBox3f::getSize( float& sizeX, float& sizeY, float& sizeZ) const
 
 
 
-void XfBox3f::makeEmpty( void )
+vgm::Vec3f XfBox3f::getSize() const
+{
+	return ( Box3f::getSize() );
+}
+
+
+
+void XfBox3f::makeEmpty()
 {
 	Box3f::makeEmpty();
 }
@@ -850,14 +867,14 @@ void XfBox3f::setTransform( const MatrixR& m )
 
 
 
-const MatrixR& XfBox3f::getTransform( void ) const
+const MatrixR& XfBox3f::getTransform() const
 {
 	return xform;
 }
 
 
 
-const MatrixR& XfBox3f::getInverse( void ) const
+const MatrixR& XfBox3f::getInverse() const
 {
 	return xformInv;
 }
@@ -1021,7 +1038,7 @@ bool XfBox3f::hasVolume() const
 
 
 
-float XfBox3f::getVolume( void ) const
+float XfBox3f::getVolume() const
 {
 	if ( isEmpty() )	return 0.0;
 
@@ -1043,7 +1060,7 @@ void XfBox3f::getSpan(	const Vec3f &direction,
 
 
 
-Box3f XfBox3f::project( void ) const
+Box3f XfBox3f::project() const
 {
 	Box3f	box( getMin(), getMax() );
 	box.transform( xform );

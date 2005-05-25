@@ -96,7 +96,7 @@ struct VGM_API Box3f
 	 *
 	 * Default constructor leaves box totally empty.
 	 */
-	Box3f( void );
+	Box3f();
 
 	/**
 	 * @brief Constructor for a 3D float box.given bounds.
@@ -118,7 +118,7 @@ struct VGM_API Box3f
 	/**
 	 * @brief Destructor.
 	 */
-	~Box3f( void );
+	~Box3f();
 	//@}
 
 
@@ -132,28 +132,28 @@ struct VGM_API Box3f
 	 *
 	 * The minimum point is the corner of the box with the lowest X, Y, and Z values.
 	 */
-	const Vec3f&	getMin( void ) const;
+	const Vec3f&	getMin() const;
 
 	/**
 	 * @brief Returns the min point.
 	 *
 	 * The minimum point is the corner of the box with the lowest X, Y, and Z values.
 	 */
-	Vec3f&			getMin( void );
+	Vec3f&			getMin();
 	
 	/**
 	 * @brief Returns the max point.
 	 *
 	 * The maximum point is the corner of the box with the highest X, Y, and Z values.
 	 */
-	const Vec3f&	getMax( void ) const;
+	const Vec3f&	getMax() const;
 
 	/**
 	 * @brief Returns the max point.
 	 *
 	 * The maximum point is the corner of the box with the highest X, Y, and Z values.
 	 */
-	Vec3f&			getMax( void );
+	Vec3f&			getMax();
 	//@}
 
 
@@ -165,7 +165,7 @@ struct VGM_API Box3f
 	/**
 	 * @brief Returns the center of a box.
 	 */
-	Vec3f	getCenter( void ) const;
+	Vec3f	getCenter() const;
 
 	/**
 	 * @brief Returns origin (minimum point) of box.
@@ -178,13 +178,18 @@ struct VGM_API Box3f
 	 * @brief Returns size of box.
 	 */
 	void	getSize( float& sizeX, float& sizeY, float& sizeZ) const;
+	
+	/**
+	 * @brief Returns size of box.
+	 */
+	vgm::Vec3f getSize() const;
 
 	/**
 	 * @brief Sets Box3f to contain nothing.
 	 *
 	 * Makes an empty box.
 	 */
-	void	makeEmpty( void );
+	void	makeEmpty();
 
 	/**
 	 * @brief Checks if the box is empty (degenerate).
@@ -195,7 +200,7 @@ struct VGM_API Box3f
 	 * they are degenerate at all.  All member functions preserve this
 	 * invariant.
 	 */
-	bool isEmpty( void ) const;
+	bool isEmpty() const;
 	//@}
 
 
@@ -345,14 +350,14 @@ struct VGM_API Box3f
 	 * @return Returns \c true if all three dimensions of the box have positive size,
 	 * and \c false otherwise.
 	 */
-	bool	hasVolume( void ) const;
+	bool	hasVolume() const;
 
 	/**
 	 * @brief Gives the volume of the box (0 for an empty box).
 	 *
 	 * @return Returns the volume of the box.
 	 */
-	float	getVolume( void ) const;
+	float	getVolume() const;
 	//@}
 
 
@@ -432,9 +437,9 @@ struct VGM_API XfBox3f : private Box3f
 	//@{
 
 	/**
-	 * @copydoc Box3f::Box3f(void)
+	 * @copydoc Box3f::Box3f()
 	 */
-	XfBox3f	( void );
+	XfBox3f	();
 
 	/**
 	 * @copydoc Box3f::Box3f(float,float,float,float,float,float)
@@ -455,7 +460,7 @@ struct VGM_API XfBox3f : private Box3f
 	/**
 	 * @brief Destructor.
 	 */
-	~XfBox3f( void );
+	~XfBox3f();
 	//@}
 
 
@@ -464,15 +469,17 @@ struct VGM_API XfBox3f : private Box3f
 	 */
 	//@{
 
-	Vec3f	getCenter	( void ) const;
+	Vec3f	getCenter	() const;
 
 	void	getOrigin	( float& originX, float& originY, float&originZ) const;
 
 	void	getSize		( float& sizeX, float& sizeY, float& sizeZ) const;
 
-	void	makeEmpty	( void );
+	vgm::Vec3f getSize() const;
 
-	bool	isEmpty		( void ) const;
+	void	makeEmpty	();
+
+	bool	isEmpty		() const;
 	//@}
 
 
@@ -512,12 +519,12 @@ struct VGM_API XfBox3f : private Box3f
 	/**
 	 * @brief Get the transformation on the box.
 	 */
-	const MatrixR&	getTransform( void ) const;
+	const MatrixR&	getTransform() const;
 
 	/**
 	 * @brief Get the inverse transformation on the box.
 	 */
-	const MatrixR&	getInverse( void ) const;
+	const MatrixR&	getInverse() const;
 	//@}
 
 
@@ -583,9 +590,9 @@ struct VGM_API XfBox3f : private Box3f
 	 */
 	//@{
 
-	bool	hasVolume( void ) const;
+	bool	hasVolume() const;
 
-	float	getVolume( void ) const;
+	float	getVolume() const;
 	//@}
 
 
@@ -599,7 +606,7 @@ struct VGM_API XfBox3f : private Box3f
 	/**
 	 * @brief Projects an XfBox3f to an Box3f.
 	 */
-	Box3f	project( void ) const;
+	Box3f	project() const;
 	//@}
 
 
@@ -625,10 +632,10 @@ private:
 	 * @name These are incorrect for XfBox3f, so we hide them.
 	 */
 	//@{
-	const Vec3f&	getMin( void ) const	{ return Box3f::getMin(); }
-	Vec3f&			getMin( void )			{ return Box3f::getMin(); }
-	const Vec3f&	getMax( void ) const	{ return Box3f::getMax(); }
-	Vec3f&			getMax( void )			{ return Box3f::getMax(); }
+	const Vec3f&	getMin() const	{ return Box3f::getMin(); }
+	Vec3f&			getMin()			{ return Box3f::getMin(); }
+	const Vec3f&	getMax() const	{ return Box3f::getMax(); }
+	Vec3f&			getMax()			{ return Box3f::getMax(); }
 	//@}
 
 	/**
