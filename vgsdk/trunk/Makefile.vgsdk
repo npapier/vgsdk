@@ -3,13 +3,13 @@ SHELL=/bin/bash
 full-install release-install dist-clean clean all:
 	@### Core components ###
 	@cd ../vgDebug;	make $@;	echo;echo
-	@cd ../vgm;		make $@;	echo;echo
-	@cd ../vgd;		make $@;	echo;echo
-	@cd ../vgAlg;	make $@;	echo;echo
+	@cd ../vgm;			make $@;	echo;echo
+	@cd ../vgd;			make $@;	echo;echo
+	@cd ../vgAlg;		make $@;	echo;echo
 	@cd ../vgTrian;	make $@;	echo;echo
-	@cd ../vge;		make $@;	echo;echo
-#	@cd addon/gle;	make $@;	echo;echo
-#	@cd addon/glo;	make $@;	echo;echo
-	@cd ../vgeGL;	make $@;	echo;echo
-	@cd ../vgWX;	make $@;	echo;echo
-	@cd ../vgnf;	make $@;	echo;echo
+	@cd ../vge;			make $@;	echo;echo
+	@cd ../gle;			make $@;	echo;echo
+	@cd ../glo;			make $@;	echo;echo
+	@cd ../vgeGL;		make $@;	echo;echo
+	@cd ../vgWX;		make $@;	echo;echo
+	@cd ../vgnf;		make $@;	echo;echo

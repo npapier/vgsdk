@@ -8,27 +8,6 @@
 #define _VGSDK_VGSDK_H
 
 #include <Virtuals/Type.h>
-#include <assert.h>
-
-#ifdef _WIN32
-
-	#if _MSC_VER > 1000
-	#pragma once
-	#pragma warning (disable:4251)// need a dll interface
-	//#pragma warning (disable:4244)
-	//#pragma warning (disable:4305)
-	#endif // _MSC_VER > 1000
-
-#else
-
-#endif
-
-#ifndef M_PI
-#define M_PI       3.1415926535897931160E0
-#define M_PI_2     1.5707963267948965580E0  
-#endif
-
-
 
 /** 
  * @namespace vgsdk
@@ -38,5 +17,19 @@
  * \b vgsdk is a cross-platform C++/OpenGL library for the real-time visualization of 3d worlds.
  * \b vgsdk is open source (LGPL).
  */
+
+#ifdef _WIN32
+
+   #ifdef VGSDK_EXPORTS
+   #define VGSDK_API	__declspec(dllexport)
+   #else
+   #define VGSDK_API	__declspec(dllimport)
+   #endif
+
+#else
+
+    #define VGSDK_API
+
+#endif
 
 #endif // #ifndef _VGSDK_VGSDK_H
