@@ -14,7 +14,7 @@
  * \b vgeGL is open source (LGPL).
  */
 
-#include <vgsdk/vgsdk.hpp>
+#include <Virtuals/Type.h>
 
 
 
