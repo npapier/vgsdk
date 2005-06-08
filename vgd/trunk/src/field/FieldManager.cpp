@@ -107,10 +107,10 @@ bool FieldManager::addField( AbstractField* pField )
 	// STEP 1 : Add field to field container.
 	std::pair< MapField::iterator, bool> retVal;
 
+	vgd::Shp<AbstractField> shpField(pField);
+
 	retVal = m_fields.insert(
-		std::pair< std::string, vgd::Shp<AbstractField> >(
-			pField->name(), 
-			vgd::Shp<AbstractField>(pField) )
+		std::pair< std::string, vgd::Shp<AbstractField> >( pField->name(), shpField )
 		);
 
 	if ( retVal.second == false )
