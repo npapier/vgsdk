@@ -49,7 +49,7 @@ void Transform::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 
 
-void Transform::unapply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
+void Transform::unapply( vge::engine::Engine *, vgd::node::Node * )
 {
 	// nothing to do
 }

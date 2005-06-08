@@ -58,19 +58,19 @@ struct VGE_API HandlerRegistry
 	 * 
 	 * @return A string with all registered handlers name separated by space.
 	 */
-	std::string		get( void ) const;
+	std::string		get() const;
 
 	/**
 	 * @brief Returns the number of registered handlers.
 	 *
 	 * @return number of registered handlers.
 	 */
-	int32				getNumRegistered( void ) const;
+	uint32			getNumRegistered() const;
 	
 	/**
 	 * @brief Gets a pair with a begin and end iterator on the handlers map.
 	 */
-	std::pair< HandlersSet::iterator, HandlersSet::iterator > getIterators( void );
+	std::pair< HandlersSet::iterator, HandlersSet::iterator > getIterators();
 
 
 

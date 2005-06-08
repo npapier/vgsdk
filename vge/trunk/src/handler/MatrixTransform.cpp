@@ -41,7 +41,7 @@ void MatrixTransform::apply( vge::engine::Engine *pEngine, vgd::node::MatrixTran
 
 
 
-void MatrixTransform::unapply( vge::engine::Engine *pEngine, vgd::node::MatrixTransform *pNode )
+void MatrixTransform::unapply( vge::engine::Engine *, vgd::node::MatrixTransform * )
 {
 }
 

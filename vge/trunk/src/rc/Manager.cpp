@@ -65,7 +65,7 @@ bool Manager::remove( vgd::node::Node *pNode )
 
 
 
-void Manager::	clear()
+void Manager::clear()
 {
 	for(	ResourcesMap::iterator	i = m_resources.begin();
 			i != m_resources.end();
@@ -101,7 +101,7 @@ IResource* Manager::getAbstract( vgd::node::Node *pNode )
 
 
 
-int32 Manager::getNum( void ) const
+uint32 Manager::getNum() const
 {
 	return ( m_resources.size() );
 }
@@ -109,7 +109,7 @@ int32 Manager::getNum( void ) const
 
 
 std::pair< Manager::ResourcesMap::const_iterator, Manager::ResourcesMap::const_iterator >
-	Manager::getIterators( void )
+	Manager::getIterators()
 {
 	return ( 
 		std::pair< Manager::ResourcesMap::const_iterator, Manager::ResourcesMap::const_iterator >(

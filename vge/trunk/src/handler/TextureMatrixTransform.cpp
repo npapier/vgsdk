@@ -43,7 +43,7 @@ void TextureMatrixTransform::apply( vge::engine::Engine* pEngine, vgd::node::Tex
 
 
 
-void TextureMatrixTransform::unapply( vge::engine::Engine* pEngine, vgd::node::TextureMatrixTransform *pNode )
+void TextureMatrixTransform::unapply( vge::engine::Engine* , vgd::node::TextureMatrixTransform * )
 {
 }
 

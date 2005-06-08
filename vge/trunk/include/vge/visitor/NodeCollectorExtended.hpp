@@ -109,7 +109,7 @@ struct NodeCollectorExtended : public vgd::visitor::Traverse<Visitors>
 	 */
 	//@{
 	template< typename Vertex , typename Graph >
-	void discover_vertex( Vertex u, const Graph& g )
+	void discover_vertex( Vertex u, const Graph& /*g*/ )
 	{
 		vgd::Shp< vgd::node::Node > pNode = getNode(u);
 
@@ -138,7 +138,7 @@ struct NodeCollectorExtended : public vgd::visitor::Traverse<Visitors>
 	}
 
 	template <class Vertex, class Graph>
-	void finish_vertex(Vertex u, const Graph& g)
+	void finish_vertex(Vertex u, const Graph& /*g*/)
 	{
 		vgd::Shp< vgd::node::Node > pNode = getNode(u);
 		

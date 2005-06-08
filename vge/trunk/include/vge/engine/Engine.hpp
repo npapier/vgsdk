@@ -339,13 +339,12 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	template< typename nodeType >
 	NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 )
 	{
-		State& 				topState			( m_state.back() );
+		State& 				topState			(	m_state.back()							);
 		
-		const int32 		nodeClassIndex (nodeType::getClassIndexStatic());
-		MultiState&			multiState		( topState[nodeClassIndex] );
+		const int32 		nodeClassIndex (	nodeType::getClassIndexStatic()	);
+		MultiState&			multiState		(	topState[nodeClassIndex]			);
 
-		MultiState::iterator iter;
-		iter = multiState.find( multiAttributeIndex );
+		MultiState::iterator iter( multiState.find( multiAttributeIndex ) );
 		
 		if ( iter != multiState.end() )
 		{

@@ -45,14 +45,14 @@ const Handler::TargetVector Group::getTargets()	const
 
 
 
-void Group::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
+void Group::apply( vge::engine::Engine *, vgd::node::Node * )
 {
 	// Nothing to do.
 }
 
 
 
-void Group::unapply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
+void Group::unapply( vge::engine::Engine *, vgd::node::Node *pNode )
 {
 	// All children have already been traversed. Update now the bounding box of this group.
 	assert( dynamic_cast< vgd::node::Group* >(pNode) != 0 );

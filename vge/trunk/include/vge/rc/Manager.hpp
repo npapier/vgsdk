@@ -161,12 +161,12 @@ struct VGE_API Manager
 	 *
 	 * @return number of resource objects.
 	 */
-	int32			getNum( void ) const;
+	uint32			getNum() const;
 
 	/**
 	 * @brief Gets a pair with a begin and end iterator on the resources map.
 	 */
-	std::pair< ResourcesMap::const_iterator, ResourcesMap::const_iterator > getIterators( void );
+	std::pair< ResourcesMap::const_iterator, ResourcesMap::const_iterator > getIterators();
 	
 	//@}
 

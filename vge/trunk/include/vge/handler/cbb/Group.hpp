@@ -30,7 +30,6 @@ struct VGE_API Group : public ComputeBoundingBox
 {
 	META_HANDLER_HPP( Group );
 		
-	//const vge::service::List		getServices()	const;
 	const TargetVector				getTargets()	const;
 
 	void	apply		( vge::engine::Engine*, vgd::node::Node* );

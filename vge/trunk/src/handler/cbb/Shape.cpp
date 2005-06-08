@@ -62,7 +62,7 @@ void Shape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 
 
-void Shape::unapply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
+void Shape::unapply( vge::engine::Engine *, vgd::node::Node * )
 {
 	// Nothing to do.
 }

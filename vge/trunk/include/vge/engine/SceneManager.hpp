@@ -9,6 +9,7 @@
 #include <fstream>
 #include <vgd/node/Group.hpp>
 #include <vgd/visitor/FindFirst.hpp>
+#include <vgd/visitor/predicate/ByKindOfType.hpp>
 #include <vgd/visitor/predicate/ByType.hpp>
 #include "vge/vge.hpp"
 #include "vge/engine/Engine.hpp"
@@ -29,7 +30,7 @@ namespace engine
  *
  * - Manage a scene graph :
  * 	- Set/get root node.
- * 	- Search nodes in the scene graph.
+ * 	- Search nodes in the scene graph with some predicates.
  * - Compute/update all bounding box in the scene graph.
  * - Write the graphviz graph of the scene graph with writeGraphviz(). This is very useful to show the scene graph
  * 	topology, the name and the type of each node in the scene graph.
@@ -37,6 +38,8 @@ namespace engine
  * 
  * @remarks \c Paint service is only available in vgeGL. So paint/resize/bench don't do the whole work.
  * Theses methods are specialized to be completed in vgeGL::engine::SceneManager.
+ * 
+ * @todo method find<>( root ) that take the root of the search.
  */
 struct VGE_API SceneManager
 {
@@ -105,6 +108,27 @@ struct VGE_API SceneManager
 	}
 
 	/**
+	 * @brief Search the first node of type \c nodeType.
+	 * 
+	 * @return The desired node or a smart pointer to null.
+	 */
+	template< typename nodeType >
+	vgd::Shp< nodeType > findFirstByKindOfType()
+	{
+		vgd::Shp< nodeType >										retVal;
+
+		std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
+		result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByKindOfType< nodeType >() );
+		
+		if ( result.first )
+		{
+			retVal = vgd::dynamic_pointer_cast< nodeType >(result.second);
+		}
+		
+		return ( retVal );
+	}
+
+	/**
 	 * @brief Search the first node with name that match a string.
 	 * 
 	 * @param name		string to search in node names.
@@ -121,6 +145,15 @@ struct VGE_API SceneManager
 	 * @return The desired node or a smart pointer to null.
 	 */
 	vgd::Shp< vgd::node::Node > findFirstByRegex( const std::string regexName );
+	
+	/**
+	 * @brief Search the first node with shared pointer (vgd::Shp()) that match a reference.
+	 * 
+	 * @param reference		reference to search.
+	 * 
+	 * @return The desired node or a smart pointer to null.
+	 */
+	vgd::Shp< vgd::node::Node > findFirstByReference( const vgd::node::Node* reference );	
 	//@}
 
 
@@ -150,7 +183,7 @@ struct VGE_API SceneManager
 	 * @brief Compute/update bounding boxes.
 	 * 
 	 * If pCollectorExt equals zero, then the internal node collector is update with all nodes from scene graph.
-	 * Otherwise the node founded in node collector passed in parameter are used to update/compute bounding boxes.
+	 * Otherwise nodes founded in node collector passed in parameter are used to update/compute bounding boxes.
 	 * 
 	 * @param pCollectorExt		the node collector to used or 0 if internal node collector should be used.
 	 */

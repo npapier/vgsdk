@@ -29,7 +29,7 @@ bool HandlerRegistry::add( Handler *pHandler )
 
 
 
-std::string HandlerRegistry::get( void ) const
+std::string HandlerRegistry::get() const
 {
 	std::stringstream strStream;
 	
@@ -46,15 +46,15 @@ std::string HandlerRegistry::get( void ) const
 
 
 
-int32 HandlerRegistry::getNumRegistered( void ) const
+uint32 HandlerRegistry::getNumRegistered() const
 {
-	return ( m_handlers.size() );
+	return ( static_cast<uint32>(m_handlers.size()) );
 }
 
 
 
 std::pair< HandlerRegistry::HandlersSet::iterator, HandlerRegistry::HandlersSet::iterator >
-	HandlerRegistry::getIterators( void )
+	HandlerRegistry::getIterators()
 {
 	return ( 
 		std::pair< HandlerRegistry::HandlersSet::iterator, HandlerRegistry::HandlersSet::iterator >(

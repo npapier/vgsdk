@@ -49,7 +49,7 @@ void MatrixTransform::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNod
 
 
 
-void MatrixTransform::unapply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
+void MatrixTransform::unapply( vge::engine::Engine *, vgd::node::Node * )
 {
 	// nothing to do
 }

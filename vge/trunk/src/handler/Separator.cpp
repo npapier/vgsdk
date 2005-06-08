@@ -22,7 +22,7 @@ namespace handler
 /**
  * @todo Check overflow in stack.
  */
-void Separator::apply ( vge::engine::Engine* pEngine, vgd::node::Separator *pNode )
+void Separator::apply ( vge::engine::Engine* pEngine, vgd::node::Separator * )
 {
 	//vge::TransformSeparator::apply( pEngine, pNode ); FIXME REMOVE ME
 
@@ -33,7 +33,7 @@ void Separator::apply ( vge::engine::Engine* pEngine, vgd::node::Separator *pNod
 
 
 
-void Separator::unapply ( vge::engine::Engine* pEngine, vgd::node::Separator* pNode )
+void Separator::unapply ( vge::engine::Engine* pEngine, vgd::node::Separator* )
 {
 	//vge::TransformSeparator::unapply( pEngine, pNode ); FIXME REMOVE ME
 

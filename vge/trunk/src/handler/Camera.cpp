@@ -41,7 +41,7 @@ void Camera::apply( vge::engine::Engine *pEngine, vgd::node::Camera *pNode )
 
 
 
-void Camera::unapply( vge::engine::Engine *pEngine, vgd::node::Camera *pNode )
+void Camera::unapply( vge::engine::Engine *, vgd::node::Camera * )
 {
 }
 

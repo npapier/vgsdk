@@ -6,6 +6,7 @@
 #include "vge/engine/SceneManager.hpp"
 
 #include <vgd/visitor/predicate/ByName.hpp>
+#include <vgd/visitor/predicate/ByReference.hpp>
 #include <vgd/visitor/predicate/ByRegexName.hpp>
 #include <vge/technique/ComputeBoundingBox.hpp>
 
@@ -88,6 +89,22 @@ vgd::Shp< vgd::node::Node > SceneManager::findFirstByRegex( const std::string re
 
 
 
+vgd::Shp< vgd::node::Node > SceneManager::findFirstByReference( const vgd::node::Node* reference )
+{
+	vgd::Shp< vgd::node::Node >							retVal;
+
+	std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
+	result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByReference(reference) );
+	
+	if ( result.first )
+	{
+		retVal = result.second;
+	}
+	
+	return ( retVal );
+}
+
+
 
 void SceneManager::setBoundingBoxUpdate( const bool bEachRedraw )
 {
@@ -106,11 +123,12 @@ bool SceneManager::getBoundingBoxUpdate() const
 void SceneManager::computeBoundingBox( vge::visitor::NodeCollectorExtended<> *pCollectorExt )
 {
 	vge::technique::ComputeBoundingBox computeBB;
-	
+
+	m_engine->resetEval();
+
 	if ( pCollectorExt == 0 )
 	{
 		m_collectorExt.reset();
-		
 		m_root->traverse( m_collectorExt );
 		
 		computeBB.apply( m_engine.get(), m_collectorExt.getTraverseElements() );
@@ -153,7 +171,7 @@ void SceneManager::bench( const int32 frame )
 
 
 
-void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
+void SceneManager::paint( const vgm::Vec2i, const bool bUpdateBoundingBox )
 {
 	// collector
 	m_collectorExt.reset();
@@ -169,7 +187,7 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 
 
-void SceneManager::resize( const vgm::Vec2i size )
+void SceneManager::resize( const vgm::Vec2i )
 {
 }
 
