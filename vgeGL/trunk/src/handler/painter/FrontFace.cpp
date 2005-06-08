@@ -25,17 +25,9 @@ namespace handler
 namespace painter
 {
 
+
+
 META_HANDLER_CPP( FrontFace );
-
-
-
-/*const vge::service::List FrontFace::getServices() const
-{
-	vge::service::List list;
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
-
-	return ( list );
-}*/
 
 
 
@@ -53,18 +45,18 @@ const vge::handler::Handler::TargetVector FrontFace::getTargets() const
 
 void FrontFace::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
+//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
 
-	assert( dynamic_cast< vgd::node::FrontFace* >(pNode) != 0 );
-	vgd::node::FrontFace *pCastedNode = static_cast< vgd::node::FrontFace* >(pNode);
+//	assert( dynamic_cast< vgd::node::FrontFace* >(pNode) != 0 );
+//	vgd::node::FrontFace *pCastedNode = static_cast< vgd::node::FrontFace* >(pNode);
 	
 	vgeGL::rc::applyUsingDisplayList< vgd::node::FrontFace, FrontFace >( pEngine, pNode, this );
 }
 
 
 
-void FrontFace::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void FrontFace::unapply ( vge::engine::Engine*, vgd::node::Node* )
 {
 }
 
@@ -76,7 +68,7 @@ void FrontFace::setToDefaults()
 
 
 
-void FrontFace::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::FrontFace *pNode )
+void FrontFace::paint( vgeGL::engine::Engine *, vgd::node::FrontFace *pNode )
 {
 	// ORIENTATION
 	bool														bDefined;

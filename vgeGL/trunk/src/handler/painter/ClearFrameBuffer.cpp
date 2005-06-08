@@ -26,15 +26,6 @@ META_HANDLER_CPP( ClearFrameBuffer );
 
 
 
-/*const vge::service::List ClearFrameBuffer::getServices() const
-{
-	vge::service::List list;
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
-
-	return ( list );
-}*/
-
-
 const vge::handler::Handler::TargetVector ClearFrameBuffer::getTargets() const
 {
 	vge::handler::Handler::TargetVector	targets;
@@ -53,7 +44,7 @@ void ClearFrameBuffer::apply ( vge::engine::Engine *pEngine, vgd::node::Node *pN
 
 
 
-void ClearFrameBuffer::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void ClearFrameBuffer::unapply ( vge::engine::Engine*, vgd::node::Node* )
 {
 }
 
@@ -67,7 +58,7 @@ void ClearFrameBuffer::setToDefaults()
 
 
 
-void ClearFrameBuffer::paint ( vgeGL::engine::Engine *pEngine, vgd::node::ClearFrameBuffer *pFrameBuffer )
+void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuffer *pFrameBuffer )
 {
 	// CLEAR COLOR
 	vgm::Vec4f	clearValue;

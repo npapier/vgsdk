@@ -28,16 +28,6 @@ META_HANDLER_CPP( TextureMatrixTransform );
 
 
 
-/*const vge::service::List TextureMatrixTransform::getServices() const
-{
-	vge::service::List list;
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
-
-	return ( list );
-}*/
-
-
-
 const vge::handler::Handler::TargetVector TextureMatrixTransform::getTargets() const
 {
 	vge::handler::Handler::TargetVector targets;
@@ -64,7 +54,7 @@ void TextureMatrixTransform::apply ( vge::engine::Engine* pEngine, vgd::node::No
 
 
 
-void TextureMatrixTransform::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void TextureMatrixTransform::unapply ( vge::engine::Engine* , vgd::node::Node* )
 {
 }
 

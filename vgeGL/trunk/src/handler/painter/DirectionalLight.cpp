@@ -26,16 +26,6 @@ META_HANDLER_CPP( DirectionalLight );
 
 
 
-/*const vge::service::List DirectionalLight::getServices() const
-{
-	vge::service::List list;
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
-
-	return ( list );
-}*/
-
-
-
 const vge::handler::Handler::TargetVector DirectionalLight::getTargets() const
 {
 	vge::handler::Handler::TargetVector targets;
@@ -54,7 +44,7 @@ void DirectionalLight::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pN
 
 
 
-void DirectionalLight::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void DirectionalLight::unapply ( vge::engine::Engine*, vgd::node::Node* )
 {
 }
 

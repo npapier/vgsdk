@@ -54,7 +54,6 @@ struct VGEGL_API TextureMatrixTransform :
 {
 	META_HANDLER_HPP( TextureMatrixTransform );
 
-	//const vge::service::List			getServices	() const;
 	const TargetVector					getTargets()	const;
 
 	void	apply				( vge::engine::Engine*, vgd::node::Node* );

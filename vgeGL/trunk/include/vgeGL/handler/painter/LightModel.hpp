@@ -51,7 +51,6 @@ struct VGEGL_API LightModel : public vge::handler::painter::SingleAttribute
 {
 	META_HANDLER_HPP( LightModel  );
 
-	//const vge::service::List			getServices	() const;
 	const TargetVector					getTargets()	const;
 
 	void	apply				( vge::engine::Engine*, vgd::node::Node* );

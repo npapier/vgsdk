@@ -47,7 +47,7 @@ void Depth::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 
 
-void Depth::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void Depth::unapply ( vge::engine::Engine*, vgd::node::Node* )
 {
 }
 
@@ -62,7 +62,7 @@ void Depth::setToDefaults()
 
 
 
-void Depth::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Depth *pNode )
+void Depth::paint( vgeGL::engine::Engine *, vgd::node::Depth *pNode )
 {
 	bool	bDefined;
 

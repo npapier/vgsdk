@@ -41,13 +41,14 @@ namespace painter
 
 /**
  * @brief Send render commands for the DrawStyle node
+ * 
+ * @todo this handler do nothing. Remove it.
  */
 struct VGEGL_API DrawStyle : public vge::handler::painter::SingleAttribute
 {
 	META_HANDLER_HPP( DrawStyle  );
 
-	//const vge::service::List			getServices	() const;
-	const TargetVector					getTargets()	const;
+	const TargetVector		getTargets()	const;
 
 
 	void	apply				( vge::engine::Engine*, vgd::node::Node* );

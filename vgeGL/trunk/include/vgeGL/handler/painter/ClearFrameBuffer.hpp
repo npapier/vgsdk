@@ -51,7 +51,6 @@ struct VGEGL_API ClearFrameBuffer : public vge::handler::painter::SingleAttribut
 {
 	META_HANDLER_HPP( ClearFrameBuffer );
 
-	//const vge::service::List			getServices	() const;
 	const TargetVector					getTargets()	const;
 
 	void	apply		( vge::engine::Engine*, vgd::node::Node* );

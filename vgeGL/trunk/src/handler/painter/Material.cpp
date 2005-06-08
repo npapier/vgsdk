@@ -26,16 +26,6 @@ META_HANDLER_CPP( Material );
 
 
 
-/*const vge::service::List Material::getServices() const
-{
-	vge::service::List list;
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
-
-	return ( list );
-}*/
-
-
-
 const vge::handler::Handler::TargetVector Material::getTargets() const
 {
 	vge::handler::Handler::TargetVector targets;
@@ -54,7 +44,7 @@ void Material::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 
 
-void Material::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void Material::unapply ( vge::engine::Engine* , vgd::node::Node*  )
 {
 }
 
@@ -81,7 +71,7 @@ void Material::setToDefaults()
 
 
 
-void Material::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Material *pMaterial )
+void Material::paint( vgeGL::engine::Engine *, vgd::node::Material *pMaterial )
 {
 	float			transparency;	
 	

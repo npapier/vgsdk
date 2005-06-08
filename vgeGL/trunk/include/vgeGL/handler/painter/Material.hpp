@@ -53,7 +53,6 @@ struct VGEGL_API Material : public vge::handler::painter::SingleAttribute
 {
 	META_HANDLER_HPP( Material  );
 
-	//const vge::service::List			getServices	() const;
 	const TargetVector					getTargets()	const;
 
 	void	apply		( vge::engine::Engine*, vgd::node::Node* );

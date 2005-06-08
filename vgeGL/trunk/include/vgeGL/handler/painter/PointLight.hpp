@@ -50,7 +50,6 @@ struct VGEGL_API PointLight : public vgeGL::handler::painter::Light
 {
 	META_HANDLER_HPP( PointLight );
 
-	//const vge::service::List			getServices	() const;
 	const TargetVector					getTargets()	const;
 
 	void	apply		( vge::engine::Engine*, vgd::node::Node* );

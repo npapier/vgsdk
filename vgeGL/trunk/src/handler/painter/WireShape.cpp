@@ -43,13 +43,10 @@ const vge::handler::Handler::TargetVector WireShape::getTargets() const
 
 void WireShape::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
-
 	//
 	bool			bDefined;
 	vgm::Vec3f	diffuseColor;
-	bDefined = pGLEngine->getStateStackTop< 
+	bDefined = pEngine->getStateStackTop< 
 						vgd::node::Material,
 						vgd::node::Material::ColorParameterType,
 						vgd::node::Material::ColorValueType >(
@@ -79,7 +76,7 @@ void WireShape::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 
 
-void WireShape::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void WireShape::unapply ( vge::engine::Engine* , vgd::node::Node* )
 {
 }
 

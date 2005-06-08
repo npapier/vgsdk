@@ -39,15 +39,13 @@ const vge::handler::Handler::TargetVector DrawStyle::getTargets() const
 
 
 
-void DrawStyle::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
+void DrawStyle::apply ( vge::engine::Engine* , vgd::node::Node * )
 {
-	//assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-	//assert( dynamic_cast< vgd::node::DrawStyle* >(pNode) != 0 );
 }
 
 
 
-void DrawStyle::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void DrawStyle::unapply ( vge::engine::Engine* , vgd::node::Node* )
 {
 }
 

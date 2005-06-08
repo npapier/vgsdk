@@ -33,6 +33,7 @@ META_HANDLER_CPP( Transform );
 const vge::service::List Transform::getServices() const
 {
 	vge::service::List list;
+	
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::ProcessEvent) );
 
@@ -67,7 +68,7 @@ void Transform::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 
 
-void Transform::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void Transform::unapply ( vge::engine::Engine* , vgd::node::Node* )
 {
 }
 
@@ -82,7 +83,7 @@ void Transform::setToDefaults()
 
 
 
-void Transform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Transform *pNode )
+void Transform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Transform * )
 {
 	// GEOMETRICAL MATRIX
 	// Get the transformation.

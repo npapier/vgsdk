@@ -31,6 +31,7 @@ META_HANDLER_CPP( Separator );
 const vge::service::List Separator::getServices() const
 {
 	vge::service::List list;
+	
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::ProcessEvent) );
 
@@ -55,9 +56,6 @@ const vge::handler::Handler::TargetVector Separator::getTargets() const
  */
 void Separator::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
-
 	assert( dynamic_cast< vgd::node::Separator* >(pNode) != 0 );
 	vgd::node::Separator *pCastedNode = static_cast< vgd::node::Separator* >(pNode);
 
@@ -75,9 +73,6 @@ void Separator::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 void Separator::unapply ( vge::engine::Engine* pEngine, vgd::node::Node* pNode )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
-
 	assert( dynamic_cast< vgd::node::Separator* >(pNode) != 0 );
 	vgd::node::Separator *pCastedNode = static_cast< vgd::node::Separator* >(pNode);
 

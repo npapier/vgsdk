@@ -26,16 +26,6 @@ META_HANDLER_CPP( PointLight );
 
 
 
-/*const vge::service::List PointLight::getServices() const
-{
-	vge::service::List list;
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
-
-	return ( list );
-}*/
-
-
-
 const vge::handler::Handler::TargetVector PointLight::getTargets() const
 {
 	vge::handler::Handler::TargetVector targets;
@@ -54,7 +44,7 @@ void PointLight::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 
 
-void PointLight::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void PointLight::unapply ( vge::engine::Engine* , vgd::node::Node* )
 {
 }
 

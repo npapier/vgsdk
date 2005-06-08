@@ -29,16 +29,6 @@ META_HANDLER_CPP( LightModel );
 
 
 
-/*const vge::service::List LightModel::getServices() const
-{
-	vge::service::List list;
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
-
-	return ( list );
-}*/
-
-
-
 const vge::handler::Handler::TargetVector LightModel::getTargets() const
 {
 	TargetVector targets;
@@ -53,18 +43,12 @@ const vge::handler::Handler::TargetVector LightModel::getTargets() const
 
 void LightModel::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
-
-	//assert( dynamic_cast< vgd::node::LightModel* >(pNode) != 0 );
-	//vgd::node::LightModel *pCastedNode = static_cast< vgd::node::LightModel* >(pNode);
-	
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( pEngine, pNode, this );
 }
 
 
 
-void LightModel::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void LightModel::unapply ( vge::engine::Engine* , vgd::node::Node*  )
 {
 }
 
@@ -76,7 +60,7 @@ void LightModel::setToDefaults()
 
 
 
-void LightModel::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LightModel *pNode )
+void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 {
 	bool	bDefined;
 	

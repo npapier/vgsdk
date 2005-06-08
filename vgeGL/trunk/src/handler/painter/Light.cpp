@@ -27,7 +27,7 @@ namespace painter
 
 
 
-void Light::paint( vgeGL::engine::Engine *pEngine, vgd::node::Light *pLight )
+void Light::paint( vgeGL::engine::Engine *, vgd::node::Light *pLight )
 {
 	bool bDefined;
 	bool value;
