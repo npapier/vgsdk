@@ -31,7 +31,7 @@ const bool IImage::isEmpty() const
 
 
 
-const uint32 IImage::computeNumComponents( const Format format ) const
+const uint32 IImage::computeNumComponents( const Format format )
 {
 	uint32 components;
 	
@@ -42,6 +42,7 @@ const uint32 IImage::computeNumComponents( const Format format ) const
 			break;
 			
 		case LUMINANCE:
+		case COLOR_INDEX:
 			components = 1;
 			break;		
 		

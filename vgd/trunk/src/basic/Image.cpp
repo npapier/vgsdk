@@ -61,10 +61,11 @@ Image::Image(	const uint32		components,
 					const uint32		width, const uint32 height, const uint32 depth,
 					const Format		format,
 					const Type			type,
-					const void*			pixels,
-					const vgm::Vec3f	voxelSize ) :
+					const void*			pixels ) :
 	m_iluintImgID(0)
 {
+	assert( format != COLOR_INDEX );
+		
 	if ( m_firstInstance )
 	{
 		// This is the first instance of this class.
@@ -81,8 +82,7 @@ Image::Image(	const uint32		components,
 	create(	components,
 				width, height, depth,
 				format, type,
-				pixels,
-				voxelSize );
+				pixels );
 }
 
 
@@ -90,10 +90,11 @@ Image::Image(	const uint32		components,
 Image::Image(	const uint32		components,
 					const uint32		width, const uint32 height, const uint32 depth,
 					const Format		format,
-					const Type			type,
-					const vgm::Vec3f	voxelSize ) :
+					const Type			type 	) :
 	m_iluintImgID(0)
 {
+	assert( format != COLOR_INDEX );
+		
 	if ( m_firstInstance )
 	{
 		// This is the first instance of this class.
@@ -109,9 +110,7 @@ Image::Image(	const uint32		components,
 		
 	create(	components,
 				width, height, depth,
-				format, type,
-				voxelSize
-				);
+				format, type );
 }
 
 
@@ -119,6 +118,8 @@ Image::Image(	const uint32		components,
 Image::Image( const IImage& image ) :
 	m_iluintImgID(0)
 {
+	assert( image.format() != COLOR_INDEX );
+	
 	if ( m_firstInstance )
 	{
 		// This is the first instance of this class.
@@ -131,12 +132,13 @@ Image::Image( const IImage& image ) :
 	}
 	
 	resetInformations();
-		
+
 	create(	image.components(),
 				image.width(), image.height(), image.depth(),
 				image.format(), image.type(),
-				image.pixels(),
-				image.voxelSize() );
+				image.pixels() );
+	
+	voxelSize() = image.voxelSize();
 }
 
 
@@ -144,7 +146,6 @@ Image::Image( const IImage& image ) :
 Image::Image( const Image& src )
 {
 	copy(src);
-	updateInformations();
 }
 
 
@@ -155,7 +156,6 @@ Image& Image::operator = ( const Image& src )
 	{
 		destroy();
 		copy( src );
-		updateInformations();
 	}
 	
 	return ( *this );
@@ -205,12 +205,6 @@ bool Image::load( std::string strFilename )
 	}
 	else
 	{
-		if ( IL_COLOR_INDEX == ilGetInteger( IL_IMAGE_FORMAT ) )
-		{
-			vgDebug::get().logDebug("Image::load: Convert from COLOR INDEX mode to RGBA image %s.", strFilename.c_str() );
-			convertTo( RGBA, convertILType2My(ilGetInteger(IL_IMAGE_TYPE)) );
-		}
-		
 		updateInformations();
 		
 		vgDebug::get().logDebug("Image::load: Finish reading image %s (%i x %i).",
@@ -226,9 +220,10 @@ bool Image::create(	const uint32		components,
 							const uint32		width, const uint32 height, const uint32 depth,
 							const Format		format,
 							const Type			type,
-							const void*			pixels,
-							const vgm::Vec3f	voxelSize )
+							const void*			pixels )
 {
+	assert( format != COLOR_INDEX );
+	
 	destroy();
 
 	// Create a new image name.
@@ -255,7 +250,7 @@ bool Image::create(	const uint32		components,
 	}
 	else
 	{
-		m_voxelSize = voxelSize;
+		m_voxelSize.setValue( 1.f, 1.f, 1.f );
 
 		updateInformations();
 		return ( true );
@@ -267,9 +262,10 @@ bool Image::create(	const uint32		components,
 bool Image::create(	const uint32		components, 
 							const uint32		width, const uint32 height, const uint32 depth,
 							const Format		format,
-							const Type			type,
-							const vgm::Vec3f	voxelSize )
+							const Type			type )
 {
+	assert( format != COLOR_INDEX );
+		
 	destroy();
 
 	// Create a new image name.
@@ -295,7 +291,7 @@ bool Image::create(	const uint32		components,
 	}
 	else
 	{
-		m_voxelSize = voxelSize;
+		m_voxelSize.setValue( 1.f, 1.f, 1.f );
 		
 		updateInformations();
 		return ( true );
@@ -306,14 +302,15 @@ bool Image::create(	const uint32		components,
 
 bool Image::create( const IImage& image )
 {
+	assert( image.format() != COLOR_INDEX );	
+
 	bool bRetVal;
 	
 	bRetVal = create(	
 					image.components(),
 					image.width(), image.height(), image.depth(),
 					image.format(), image.type(),
-					image.pixels(),
-					image.voxelSize() );
+					image.pixels() );
 
 	return ( bRetVal );
 }
@@ -423,6 +420,98 @@ void Image::editPixelsDone()
 
 
 
+const uint32 Image::paletteSize() const
+{
+	bind();
+
+	uint32 size = ilGetInteger( IL_PALETTE_NUM_COLS );
+	
+	return ( size );
+}
+
+
+
+const Image::Format Image::paletteFormat() const
+{
+	bind();
+	
+	uint32 palFormat = ilGetInteger( IL_PALETTE_TYPE );
+	
+	return ( convertILPalFormat2My( palFormat ) );
+}
+
+
+
+const Image::Type	Image::paletteType() const
+{
+	return ( UINT8 );
+}
+
+
+
+const void* Image::palettePixels() const
+{
+	bind();
+
+	return ( ilGetPalette() );
+}
+
+
+
+void* Image::paletteEditPixels()
+{
+	assert( !m_edit && "Image already edited." );
+
+	bind();
+	m_edit = true;
+
+	return ( ilGetPalette() );
+}
+
+
+
+void Image::paletteEditPixelsDone()
+{
+	assert( m_edit && "Image not currently edited" );
+
+	m_edit = false;
+}
+
+
+
+void Image::setPalette( const void *palette, uint32 size, const Format format )
+{
+	assert( !m_edit && "Image already edited." );
+
+	bind();
+
+	ILenum ilFormat = convertMyFormat2ILPal( format );
+	
+	// FIXME: should use ilSetSharedPal, but missing in include file !
+	ilRegisterPal(	const_cast<ILubyte*>( static_cast<const ILubyte*>(palette)),
+						size, ilFormat );
+
+	reportILError();
+
+	updateInformations();
+}
+
+
+
+vgd::Shp< Image > Image::getPaletteImage() const
+{
+	bind();
+
+	Image *pImage = new Image(	1,
+										paletteSize(), 1, 1, 
+										paletteFormat(), paletteType(),
+										palettePixels() );
+										
+	return ( vgd::Shp< Image >( pImage ) );
+}
+
+
+
 vgm::Vec3f& Image::voxelSize()
 {
 	return ( m_voxelSize );
@@ -437,15 +526,22 @@ const vgm::Vec3f Image::voxelSize() const
 
 
 
+const bool Image::isVoxelSizeSupported() const
+{
+	return ( true );
+}
+
+
+
 void Image::copy( const Image& src )
 {
 	src.bind();
 
 	m_iluintImgID	= ilCloneCurImage();
-	
+	updateInformations();
+
+	m_edit			= false;
 	m_voxelSize		= src.m_voxelSize;
-	
-	m_edit			= false;	
 	
 	reportILError();
 }
@@ -533,6 +629,10 @@ Image::Format Image::convertILFormat2My( ILenum format ) const
 		case IL_LUMINANCE_ALPHA:
 			f = LUMINANCE_ALPHA;
 			break;
+		
+		case IL_COLOR_INDEX:
+			f = COLOR_INDEX;
+			break;
 
 		default:
 			assert(false && "Unsupported format");
@@ -544,6 +644,44 @@ Image::Format Image::convertILFormat2My( ILenum format ) const
 
 
 
+Image::Format Image::convertILPalFormat2My( ILenum format ) const
+{
+	Format retVal;
+	
+	switch ( format )
+	{
+		case IL_PAL_RGB24:
+			retVal = RGB;
+			break;
+
+		case IL_PAL_RGBA32:
+			retVal = RGBA;
+			break;
+
+		case IL_PAL_BGR24:
+			retVal = BGR;
+			break;
+			
+		case IL_PAL_BGRA32:
+			retVal = BGRA;
+			break;
+
+		case IL_PAL_NONE:
+			retVal = NO_FORMAT;
+			break;
+
+		case IL_PAL_RGB32:
+		case IL_PAL_BGR32:
+		default:		
+			assert(false && "Unsupported palette format");
+			retVal = NO_FORMAT;
+	}
+
+	return ( retVal );
+}
+
+
+	
 ILenum Image::convertMyFormat2IL( Format format ) const
 {
 	ILenum ilformat;
@@ -573,12 +711,51 @@ ILenum Image::convertMyFormat2IL( Format format ) const
 		case LUMINANCE_ALPHA:
 			ilformat = IL_LUMINANCE_ALPHA;
 			break;
+			
+		case COLOR_INDEX:
+			ilformat = IL_COLOR_INDEX;
+			break;
 
 		default:
 			assert(false && "Unsupported format");
 			ilformat = IL_RGB;
 	}
 
+	return ( ilformat );
+}
+
+
+
+ILenum Image::convertMyFormat2ILPal( Format format	) const
+{
+	ILenum ilformat;
+	
+	switch ( format )
+	{
+		case RGB:
+			ilformat = IL_PAL_RGB24;
+			break;
+
+		case RGBA:
+			ilformat = IL_PAL_RGBA32;
+			break;
+
+		case BGR:
+			ilformat = IL_PAL_BGR24;
+			break;
+
+		case BGRA:
+			ilformat = IL_PAL_BGRA32;
+			break;
+
+		case LUMINANCE:
+		case LUMINANCE_ALPHA:
+		case COLOR_INDEX:
+		default:
+			assert(false && "Unsupported format");
+			ilformat = IL_PAL_RGBA32;
+	}
+	
 	return ( ilformat );
 }
 
@@ -686,10 +863,10 @@ void Image::resetInformations()
 	m_components	= m_width = m_height = m_depth = 0;
 	m_format			= NO_FORMAT;
 	m_type			= NO_TYPE;
-	
-	m_voxelSize		= vgm::Vec3f( 1.f, 1.f, 1.f );
-	
+
 	m_edit			= false;
+		
+	m_voxelSize		= vgm::Vec3f( 1.f, 1.f, 1.f );
 }
 
 
@@ -705,9 +882,9 @@ void Image::updateInformations()
 	m_format			= convertILFormat2My( ilGetInteger( IL_IMAGE_FORMAT ) );
 	m_type			= convertILType2My( ilGetInteger( IL_IMAGE_TYPE ) );
 	
-	// m_voxelSize nothing to do
 	// m_edit		nothing to do
-	
+	// m_voxelSize nothing to do
+		
 	reportILError();
 }
 

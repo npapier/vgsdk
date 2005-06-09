@@ -17,9 +17,9 @@ namespace basic
 
 
 
-vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::basic::IImage > pImage, 
-																					const SliceType slice,
-																					const uint32 position )
+vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*		pImage,
+																				const SliceType	slice,
+																				const uint32		position )
 {
 	using vgd::basic::Image;
 	using vgd::basic::IImage;
@@ -36,6 +36,16 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 
 	vgd::Shp< Image > pNewImage;
 	uint8*				outputPixel;
+	Image::Format		outputFormat;
+	
+	if ( pImage->format() == Image::COLOR_INDEX )
+	{
+		outputFormat = Image::LUMINANCE;
+	}
+	else
+	{
+		outputFormat = pImage->format();
+	}
 	
 	switch ( slice )
 	{
@@ -43,7 +53,7 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 		{
 			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
 																	pImage->width(), pImage->height(), 1,
-																	pImage->format(), pImage->type(),
+																	outputFormat, pImage->type(),
 																	0 )
 												);
 
@@ -80,7 +90,7 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 		{
 			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
 																	pImage->width(), pImage->depth(), 1,
-																	pImage->format(), pImage->type(),
+																	outputFormat, pImage->type(),
 																	0 )
 													);
 
@@ -122,7 +132,7 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 		{
 			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
 																	pImage->depth(), pImage->height(), 1,
-																	pImage->format(), pImage->type(),
+																	outputFormat, pImage->type(),
 																	0 )
 													);
 
@@ -136,8 +146,8 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 
 			//
 			const int32 stepI = sizeOfComponents * pImage->width() * pImage->height();
-			const int32 stepJ = -stepI * pImage->depth() + pImage->width()*sizeOfComponents;
-			
+			const int32 stepJ = (-stepI * pImage->depth()) + pImage->width()*sizeOfComponents;
+
 			for(	uint32 j=0, jMax = pImage->height();
 					j < jMax;
 					++j )
@@ -167,7 +177,7 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractImage2D(	vgd::Shp< vgd::bas
 
 
 
-void ImageUtilities::setAlpha( vgd::Shp< vgd::basic::IImage > pImage, const float alpha )
+void ImageUtilities::setAlpha( vgd::basic::IImage *pImage, const float alpha )
 {
 	using vgd::basic::IImage;
 	
@@ -223,7 +233,7 @@ void ImageUtilities::setAlpha( vgd::Shp< vgd::basic::IImage > pImage, const floa
 
 
 
-void ImageUtilities::setAlphaIfNotBlack( vgd::Shp< vgd::basic::IImage > pImage, const float alpha )
+void ImageUtilities::setAlphaIfNotBlack( vgd::basic::IImage *pImage, const float alpha )
 {
 	assert(	(pImage->format() == IImage::RGBA) ||
 				(pImage->format() == IImage::BGRA) ||
@@ -291,6 +301,170 @@ void ImageUtilities::setAlphaIfNotBlack( vgd::Shp< vgd::basic::IImage > pImage, 
 		default:
 			assert( false && "Internal error" );
 	}		
+}
+
+
+
+void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
+												const int32 interval1, const int32 interval2,
+												const PaletteFunctionType fun1, const float alpha1,
+												const PaletteFunctionType fun2, const float alpha2,
+												const PaletteFunctionType fun3, const float alpha3,
+												uint8 *pPalette )
+{
+	if ( interval1-1 >= minValue )
+	{
+		setupPalette(	minValue, maxValue,
+							minValue, interval1-1,
+							fun1, alpha1,
+							pPalette );
+	}
+
+	if ( interval2-1 >= interval1 )
+	{
+		setupPalette(	minValue, maxValue,
+							interval1, interval2-1,
+							fun2, alpha2,
+							pPalette );
+	}
+	
+	if ( maxValue >= interval2 )
+	{
+		setupPalette(	minValue, maxValue,
+							interval2, maxValue,
+							fun3, alpha3,
+							pPalette );
+	}
+}
+
+
+
+void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
+												const int32 beginInterval, const int32 endInterval,
+												const PaletteFunctionType function,
+												const float fAlpha,
+												uint8 *pPalette )
+{
+	const float		fMin		= static_cast<float>(minValue);
+	const float		fMax		= static_cast<float>(maxValue);
+	const float		fBegin	= static_cast<const float>(beginInterval);
+	const float		fEnd		= static_cast<const float>(endInterval);
+
+	assert( beginInterval >= minValue && beginInterval <= maxValue );
+	assert( endInterval >= minValue && endInterval <= maxValue );
+	
+	assert( 0.f <= fAlpha && fAlpha <= 1.f );
+	assert( pPalette != 0 );
+
+	int32	i		= beginInterval*4;
+	int32 iEnd	= endInterval*4;
+	uint8	color	= 0;
+	uint8 alpha = static_cast<uint8>( fAlpha * 255.f );
+
+	//
+	switch ( function )
+	{
+		case BLACK_TO_WHITE:
+		{
+			float a = (fMax - fMin ) / (fEnd - fBegin);
+			float b = fMin - a * fBegin;				// fMin = a * fBegin + b
+
+			while ( i <= iEnd )
+			{
+				// y = ax + b
+				// FIXME: optme this expression could be simplified and compute by only addition.
+				color = static_cast<uint8>( a*(static_cast<float>(i/4)) + b );
+				
+				pPalette[i] = color;
+				++i;
+				
+				pPalette[i] = color;
+				++i;
+				
+				pPalette[i] = color;
+				++i;
+				
+				pPalette[i] = alpha;
+				++i;
+			}
+
+			break;
+		}
+		
+
+		case WHITE_TO_BLACK:
+		{
+			float a = (fMin - fMax ) / (fEnd - fBegin);
+			float b = fMax - a * fBegin;				// fMax = a * fBegin + b
+
+			while ( i <= iEnd )
+			{
+				// y = ax + b
+				// FIXME: optme this expression could be simplified and compute by only addition.
+				color = static_cast<uint8>( a*(static_cast<float>(i/4)) + b );
+				
+				pPalette[i] = color;
+				++i;
+				
+				pPalette[i] = color;
+				++i;
+				
+				pPalette[i] = color;
+				++i;
+				
+				pPalette[i] = alpha;
+				++i;
+			}
+
+			break;
+		}
+	
+
+		case BLACK:
+		{
+			while ( i <= iEnd )
+			{
+				pPalette[i] = 0;
+				++i;
+				
+				pPalette[i] = 0;
+				++i;
+				
+				pPalette[i] = 0;
+				++i;
+				
+				pPalette[i] = alpha;
+				++i;
+			}
+			
+			break;
+		}
+		
+
+		case WHITE:
+		{
+			while ( i <= iEnd )
+			{
+				pPalette[i] = 255;
+				++i;
+				
+				pPalette[i] = 255;
+				++i;
+				
+				pPalette[i] = 255;
+				++i;
+				
+				pPalette[i] = alpha;
+				++i;
+			}
+			
+			break;
+		}
+		
+
+		default:
+		assert( false && "Unexpected palette function." );
+	}
 }
 
 

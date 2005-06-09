@@ -3,7 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#include "vgd/node/Texture2D.hpp"
+#include "vgd/node/Texture1D.hpp"
 
 #include "vgd/field/TAccessors.hpp"
 
@@ -17,11 +17,11 @@ namespace node
 
 
 
-META_NODE_CPP( Texture2D );
+META_NODE_CPP( Texture1D );
 
 
 
-Texture2D::Texture2D( const std::string nodeName ) :
+Texture1D::Texture1D( const std::string nodeName ) :
 	vgd::node::Texture( nodeName )
 {
 	// Add field
@@ -37,21 +37,21 @@ Texture2D::Texture2D( const std::string nodeName ) :
 
 
 
-void Texture2D::setToDefaults( void )
+void Texture1D::setToDefaults( void )
 {
 	Texture::setToDefaults();
 }
 
 
 
-void Texture2D::setOptionalsToDefaults()
+void Texture1D::setOptionalsToDefaults()
 {
 	Texture::setOptionalsToDefaults();
 }
 
 
 
-bool Texture2D::getIImage( vgd::Shp< vgd::basic::IImage >& value ) const
+bool Texture1D::getIImage( vgd::Shp< vgd::basic::IImage >& value ) const
 {
 	return ( 
 		vgd::field::getParameterValue< IImageParameterType, IImageValueType >( this, getFIImage(), IIMAGE, value )
@@ -60,37 +60,37 @@ bool Texture2D::getIImage( vgd::Shp< vgd::basic::IImage >& value ) const
 
 
 
-void Texture2D::setIImage( vgd::Shp< vgd::basic::IImage > value )
+void Texture1D::setIImage( vgd::Shp< vgd::basic::IImage > value )
 {
 	vgd::field::setParameterValue< IImageParameterType, IImageValueType >( this, getFIImage(), IIMAGE, value );
 }
 
 
 
-void Texture2D::eraseIImage()
+void Texture1D::eraseIImage()
 {
 	vgd::field::eraseParameterValue< IImageParameterType, IImageValueType >( this, getFIImage(), IIMAGE );
 }
 
 
 
-const std::string Texture2D::getFIImage( void )
+const std::string Texture1D::getFIImage( void )
 {
 	return ( "f_iimage" );
 }
 
 
 
-const std::string Texture2D::getDFIImage()
+const std::string Texture1D::getDFIImage()
 {
 	return ( "df_iimage" );
 }
 
 
 
-const uint32 Texture2D::gethTextureDimension() const
+const uint32 Texture1D::gethTextureDimension() const
 {
-	return ( 2 );
+	return ( 1 );
 }
 
 

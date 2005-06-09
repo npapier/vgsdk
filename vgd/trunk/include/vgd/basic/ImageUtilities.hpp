@@ -54,11 +54,14 @@ struct VGD_API ImageUtilities
 	 * @param position	position of the slice
 	 * @return	a reference on the desired extracted image or a reference on an empty image if extraction is not possible
 	 * 
+	 * @remarks if pImage->format() == COLOR_INDEX, then the extracted image format is LUMINANCE and does'nt contain 
+	 * the palette.
+	 * 
 	 * @todo Remove precondition on pImage->type()
 	 */
-	static vgd::Shp< Image > extractImage2D(	vgd::Shp< IImage > pImage, 
-															const SliceType slice,
-															const uint32 position );
+	static vgd::Shp< Image > extractSlice(	const IImage*		pImage,
+														const SliceType	slice,
+														const uint32		position );
 
 	/**
 	 * @name Useful scanning image methods.
@@ -75,7 +78,7 @@ struct VGD_API ImageUtilities
 	 * @param pImage		image to scan.
 	 * @param alpha		alpha value to assign.
 	 */
-	static void	setAlpha( vgd::Shp< IImage > pImage, const float alpha = 1.f );
+	static void	setAlpha( IImage *pImage, const float alpha = 1.f );
 
 	/**
 	 * @brief Scan the whole image and modify alpha value of each pixel.
@@ -89,7 +92,42 @@ struct VGD_API ImageUtilities
 	 * @param pImage		image to scan.
 	 * @param alpha		alpha value to assign.
 	 */
-	static void	setAlphaIfNotBlack( vgd::Shp< IImage > pImage, const float alpha = 1.f );
+	static void	setAlphaIfNotBlack( IImage *pImage, const float alpha = 1.f );
+
+	/**
+	 * @brief The different functions used to initialize palette.
+	 */
+	enum PaletteFunctionType {
+		BLACK_TO_WHITE,
+		WHITE_TO_BLACK,
+		BLACK,
+		WHITE
+	};
+
+	/**
+	 * @brief Initialize palette.
+	 * 
+	 * @todo template version
+	 * @todo Comments
+	 */
+	static void setupPalette(	const int32 minValue, const int32 maxValue,
+										const int32 interval1, const int32 interval2,
+										const PaletteFunctionType fun1, const float alpha1,
+										const PaletteFunctionType fun2, const float alpha2,
+										const PaletteFunctionType fun3, const float alpha3,
+										uint8 *pPalette );
+
+	/**
+	 * @pre beginInterval >= minValue && beginInterval <= maxValue
+	 * @pre endInterval >= minValue && endInterval <= maxValue
+	 * @pre 0 <= alpha <= 1
+	 * @pre pPalette is a valid reference on a palette (!= 0).
+	 */
+	static void setupPalette(	const int32 minValue, const int32 maxValue,
+										const int32 beginInterval, const int32 endInterval,
+										const PaletteFunctionType function,
+										const float fAlpha,
+										uint8 *pPalette );
 	//@}
 };
 

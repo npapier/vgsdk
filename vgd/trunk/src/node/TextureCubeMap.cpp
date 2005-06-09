@@ -78,6 +78,13 @@ const std::string TextureCubeMap::getFIImages( void )
 
 
 
+const uint32 TextureCubeMap::gethTextureDimension() const
+{
+	return ( 6 );
+}
+
+
+
 } // namespace node
 
 } // namespace vgd

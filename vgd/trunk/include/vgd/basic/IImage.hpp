@@ -22,9 +22,7 @@ namespace basic
 /**
  * @brief Abstract interface for image (1, 2 or 3 dimensions).
  * 
- * @todo Format: COLOR_INDEX image.
- * 
- * @todo LUMINANCE8_ALPHA8 and others ?
+ * @todo type.BOOL and LUMINANCE8_ALPHA8...
  * 
  * @ingroup g_images
  */
@@ -40,9 +38,10 @@ struct VGD_API IImage
 		BGR,
 		BGRA,
 		LUMINANCE,
-		LUMINANCE_ALPHA
+		LUMINANCE_ALPHA,
+		COLOR_INDEX
 	} Format;
-	
+
 	/**
 	 * @brief Type of image.
 	 */
@@ -67,7 +66,7 @@ struct VGD_API IImage
 
 
 	/**
-	 * @name Accessor to image.
+	 * @name Image accessors
 	 */
 	//@{
 
@@ -151,24 +150,96 @@ struct VGD_API IImage
 	virtual void			editPixelsDone()=0;
 	
 	/**
-	 * @brief Returns the size of a voxel.
-	 * 
-	 * @return		a 3d vector with the voxel size for each dimension.
-	 */
-	virtual const vgm::Vec3f	voxelSize() const=0;
-
-	/**
 	 * @brief Test if this class store an image.
 	 * 
 	 * @return		true if there is no image in this class (i.e. width()==height()==depth()==0), false otherwise.
 	 */
 	virtual const bool	isEmpty() const;
-	//@}
 	
 	/**
 	 * @brief Compute the number of component for image with the specified format.
 	 */
-	const uint32			computeNumComponents( const Format format ) const;
+	static const uint32	computeNumComponents( const Format format );
+	//@}
+	
+
+
+	/**
+	 * @name Palette accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the size of palette.
+	 * 
+	 * @return 		size of palette.
+	 * 
+	 * @remarks		If palette is not defined, must return 0.
+	 */
+	virtual const uint32	paletteSize() const=0;
+
+	/**
+	 * @brief Returns the format of the palette.
+	 * 
+	 * @return		format of the palette.
+	 * 
+	 * @remarks		If palette is not defined, must return NONE.
+	 */
+	virtual const Format	paletteFormat() const=0;
+
+	/**
+	 * @brief Returns the type of the palette.
+	 * 
+	 * @return		type of the palette.
+	 * 
+	 * @remarks		If image is not defined, must return NO_TYPE.
+	 */
+	virtual const Type	paletteType() const=0;
+	
+	/**
+	 * @brief Returns a pointer to the palette data in memory.
+	 * 
+	 * @return		a pointer to the palette data in memory.
+	 * 
+	 * @remarks		If palette is not defined, must return 0.
+	 */
+	virtual const void*	palettePixels() const=0;
+
+	/**
+	 * @brief Returns a pointer to the palette in memory.
+	 * 
+	 * @return		a pointer to the palette in memory.
+	 * 
+	 * @remarks		If image is not defined, must return 0.
+	 */
+	virtual void*			paletteEditPixels()=0;
+	
+	/**
+	 * @brief Commit all pixels modifications in palette after calling paletteEditPixels().
+	 */
+	virtual void			paletteEditPixelsDone()=0;	
+	//@}
+	
+	
+	/**
+	 * @name Voxel size accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	virtual const vgm::Vec3f	voxelSize() const=0;
+	
+	/**
+	 * @brief Returns if voxelSize is supported.
+	 * 
+	 * @return		true if supported, false otherwise.
+	 */
+	virtual const bool			isVoxelSizeSupported() const=0;
+	//@}
 };
 
 

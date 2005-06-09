@@ -124,6 +124,11 @@ struct VGD_API TextureCubeMap : public vgd::node::Texture
 	
 	
 	
+	// overridden method
+	const uint32 gethTextureDimension() const;
+
+
+
 protected:
 	/**
 	 * @name Constructor.

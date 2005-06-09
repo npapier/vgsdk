@@ -44,15 +44,21 @@ struct VGD_API ImageInfo : public IImage
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
-	 * @param voxelSize		size of a voxel
+	 * 
+	 * @post paletteSize()			== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()			== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
+	 * 
+	 * @post voxelSize()				== vgm::Vec3f(1.f, 1.f, 1.f)
 	 */
 	ImageInfo(	const uint32		width			= 0,
 					const uint32		height		= 0,
 					const uint32		depth			= 0,
 					const Format		format		= NO_FORMAT,
 					const Type			type			= NO_TYPE,
-					const void*			pixels		= 0,
-					const vgm::Vec3f	voxelSize	= vgm::Vec3f(1.f, 1.f, 1.f)	);
+					const void*			pixels		= 0 );
 
 	/**
 	 * @brief Set all informations about an image.
@@ -66,18 +72,9 @@ struct VGD_API ImageInfo : public IImage
 
 
 	/**
-	 * @name Accessors methods.
+	 * @name Image accessors
 	 */
 	//@{
-
-	/**
-	 * @brief Returns the number of color components.
-	 * 
-	 * Typical values are 1, 2, 3, 4.
-	 * 
-	 * @return		number of color components.
-	 */
-	uint32			components();
 
 	/**
 	 * @brief Returns the number of color components.
@@ -170,12 +167,12 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return a pointer to the image data in memory.
 	 */
-	void*			editPixels();
+	void*				editPixels();
 
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().
 	 */	
-	void			editPixelsDone();
+	void				editPixelsDone();
 	
 	/**
 	 * @brief Returns the pixel data pointer.
@@ -183,20 +180,6 @@ struct VGD_API ImageInfo : public IImage
 	 * @return A reference on the pixel data pointer.
 	 */
 	void*&		pixelData()				{ return ( m_pixels ); }
-
-	/**
-	 * @brief Returns the size of a voxel.
-	 * 
-	 * @return		a 3d vector with the voxel size for each dimension.
-	 */
-	vgm::Vec3f&			voxelSize();
-
-	/**
-	 * @brief Returns the size of a voxel.
-	 * 
-	 * @return		a 3d vector with the voxel size for each dimension.
-	 */
-	const vgm::Vec3f	voxelSize() const;
 
 	/**
 	 * @brief Set all informations about an image.
@@ -207,15 +190,13 @@ struct VGD_API ImageInfo : public IImage
 	 * @param format			format of the pixel data.
 	 * @param type				type of the pixel data.
 	 * @param pixels			pointer to the image data in memory.
-	 * @param voxelSize		a 3d vector with the voxel size for each dimension.
 	 */
 	void			set(	const uint32		width			= 0,
 							const uint32		height		= 0,
 							const uint32		depth			= 0,
 							const Format		format		= NO_FORMAT,
 							const Type			type			= NO_TYPE,
-							const void*			pixels		= 0,
-							const vgm::Vec3f	voxelSize	= vgm::Vec3f(1.f, 1.f, 1.f) );
+							const void*			pixels		= 0 );
 
 	/**
 	 * @brief Set all informations about an image.
@@ -223,13 +204,126 @@ struct VGD_API ImageInfo : public IImage
 	 * @param iimage		image where informations where retrives.
 	 */
 	void 			set( const IImage& iimage );
+
 	//@}
 
+
+	/**
+	 * @name Palette accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the size of palette.
+	 * 
+	 * @return 		size of palette.
+	 * 
+	 * @remarks		If palette is not defined, must return 0.
+	 */
+	uint32&	paletteSize() { return ( m_paletteSize ); }
+	
+	/**
+	 * @brief Returns the size of palette.
+	 * 
+	 * @return 		size of palette.
+	 * 
+	 * @remarks		If palette is not defined, must return 0.
+	 */
+	const uint32	paletteSize() const { return ( m_paletteSize ); }
+
+	/**
+	 * @brief Returns the format of the palette.
+	 * 
+	 * @return		format of the palette.
+	 * 
+	 * @remarks		If palette is not defined, must return NONE.
+	 */
+	Format&	paletteFormat() { return ( m_paletteFormat ); }
+		
+	/**
+	 * @brief Returns the format of the palette.
+	 * 
+	 * @return		format of the palette.
+	 * 
+	 * @remarks		If palette is not defined, must return NONE.
+	 */
+	const Format	paletteFormat() const { return ( m_paletteFormat ); }
+
+	/**
+	 * @brief Returns the type of the palette.
+	 * 
+	 * @return		type of the palette.
+	 * 
+	 * @remarks		If image is not defined, must return NO_TYPE.
+	 */
+	Type&	paletteType() { return ( m_paletteType ); }
+	
+	/**
+	 * @brief Returns the type of the palette.
+	 * 
+	 * @return		type of the palette.
+	 * 
+	 * @remarks		If image is not defined, must return NO_TYPE.
+	 */
+	const Type	paletteType() const	{ return ( m_paletteType ); }
+	
+	/**
+	 * @brief Returns a pointer to the palette data in memory.
+	 * 
+	 * @return		a pointer to the palette data in memory.
+	 * 
+	 * @remarks		If palette is not defined, must return 0.
+	 */
+	const void*	palettePixels() const { return ( m_palettePixels ); }
+
+	/**
+	 * @brief Returns a pointer to the palette in memory.
+	 * 
+	 * @return		a pointer to the palette in memory.
+	 * 
+	 * @remarks		If image is not defined, must return 0.
+	 */
+	void*			paletteEditPixels();
+	
+	/**
+	 * @brief Commit all pixels modifications in palette after calling paletteEditPixels().
+	 */
+	void			paletteEditPixelsDone();	
+	//@}
+
+
+	/**
+	 * @name Voxel size accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	vgm::Vec3f&				voxelSize();
+
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	const vgm::Vec3f		voxelSize() const;
+	
+	/**
+	 * @brief Returns if voxelSize is supported.
+	 * 
+	 * @return		true if supported, false otherwise.
+	 */
+	const bool	isVoxelSizeSupported() const;
+
+	//@}
 
 
 protected:
 	/**
-	 * @name Image informations.
+	 * @name Image informations
 	 */
 	//@{
 	uint32		m_width;
@@ -240,11 +334,28 @@ protected:
 	Type			m_type;
 	
 	void*			m_pixels;
-	
-	vgm::Vec3f	m_voxelSize;
-	
+
 	bool			m_edit;
 	//@}
+	
+	/**
+	 * @name Palette informations
+	 */
+	//@{
+	uint32		m_paletteSize;
+
+	Format		m_paletteFormat;
+	Type			m_paletteType;
+	
+	void*			m_palettePixels;
+	
+	bool			m_paletteEdit;
+	//@}
+	
+	/**
+	 * @brief Voxel size informations.
+	 */
+	vgm::Vec3f	m_voxelSize;	
 };
 
 

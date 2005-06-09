@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_NODE_TEXTURE2D_H
-#define _VGD_NODE_TEXTURE2D_H
+#ifndef _VGD_NODE_TEXTURE1D_H
+#define _VGD_NODE_TEXTURE1D_H
 
 #include "vgd/vgd.hpp"
 
@@ -30,17 +30,20 @@ namespace node
  * New field added by this node :
  * 
  * - SFIImage \c [iimage]\n
- * 		Determines the source of data used to created the texture.
- * 		You can set multiple times this field, but only if all images have the same format.
+ * 		Determines the source of data used to created the texture. Must be a 1d image 
+ * 		(iimage.height() == iimage.depth() == 0).
+ * 
+ * 
+ * @todo You can set multiple times this field, but only if all images have the same format. 
  * 		The data and size of the image can changed, but that's all.
  * 
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes
  * @ingroup g_texturingNodes
  */
-struct VGD_API Texture2D : public vgd::node::Texture
+struct VGD_API Texture1D : public vgd::node::Texture
 {
-	META_NODE_HPP( Texture2D );
+	META_NODE_HPP( Texture1D );
 
 
 
@@ -78,7 +81,7 @@ struct VGD_API Texture2D : public vgd::node::Texture
 	 * Create a texture from the iimage interface to an image stored in memory (with ImageInfo) or from a 
 	 * file (with Image).
 	 * 
-	 * @param image		reference to a 2d image.
+	 * @param image		reference to a 1d image.
 	 *
 	 * @remarks Be carefull, data referenced by image informations must be available when texture is update.
 	 */	 
@@ -117,15 +120,15 @@ struct VGD_API Texture2D : public vgd::node::Texture
 	 */
 	static const std::string getDFIImage();
 
-	//@}
+	//@}		
 	
 	
-	
+
 	// overridden method
 	const uint32 gethTextureDimension() const;
-	
-	
-	
+
+
+
 protected:
 	/**
 	 * @name Constructor.
@@ -135,7 +138,7 @@ protected:
 	/**
 	 * @brief Default constructor.
 	 */
-	Texture2D( const std::string nodeName );
+	Texture1D( const std::string nodeName );
 
 	void	setToDefaults( void );
 
@@ -150,4 +153,4 @@ protected:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_TEXTURE2D_H
+#endif //#ifndef _VGD_NODE_TEXTURE1D_H

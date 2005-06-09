@@ -725,6 +725,21 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 
+	/**
+	 * @name High-level accessors
+	 */
+	//@{
+	
+	/**
+	 * @brief Returns the dimension of this texture node.
+	 * 
+	 * @return dimension of this texture node
+	 */
+	virtual const uint32 gethTextureDimension() const=0;
+	
+	//@}
+
+
 protected:
 	/**
 	 * @name Constructor.
