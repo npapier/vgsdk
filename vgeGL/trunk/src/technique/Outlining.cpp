@@ -59,7 +59,7 @@ void Outlining::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseEleme
 	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
 	prepareEval();
-	pEngine->resetEval();
+	//pEngine->resetEval();
 
 	// First pass : Render the mesh into the stencil buffer (=>fill stencil buffer).
 	beginPass();

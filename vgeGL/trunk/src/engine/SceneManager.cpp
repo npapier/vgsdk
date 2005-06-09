@@ -40,12 +40,13 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	::vge::engine::SceneManager::paint( size, bUpdateBoundingBox );
 
 	vgeGL::technique::Main main;
+	getEngine()->resetEval();
 	main.apply( getEngine().get(), getNodeCollector().getTraverseElements() );
 }
 
 
 
-void SceneManager::resize( const vgm::Vec2i size )
+void SceneManager::resize( const vgm::Vec2i )
 {
 }
 
@@ -54,6 +55,8 @@ void SceneManager::resize( const vgm::Vec2i size )
 void SceneManager::onEvent( vgd::Shp<vgd::event::Event> event )
 {
 	vgeGL::technique::ProcessEvent processEvent;
+	
+	getEngine()->resetEval();	
 	processEvent.apply( getEngine().get(), getNodeCollector().getTraverseElements(), event );
 
 	//vgDebug::get().logDebug("SceneManager::onEvent:%s", typeid(*event.get()).name() );

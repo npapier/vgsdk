@@ -31,7 +31,7 @@ void ProcessEvent::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseEl
 	vgd::Shp< vge::service::Service > processEvent = vge::service::ProcessEvent::create();
 
 	prepareEval();
-	pEngine->resetEval();
+	//pEngine->resetEval();
 
 	// Initialize engine with technique parameters.
 	if ( !pEngine->isField( getFProcessEvent() ) )
@@ -54,20 +54,7 @@ void ProcessEvent::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseEl
 			i != iEnd;
 			++i )
 	{
-		if ( (i->first)->isAKindOf< vgd::node::Dragger >() )
-		{
-			const vgd::node::Dragger *const pDragger = dynamic_cast< const vgd::node::Dragger* >(i->first);
-			
-			if ( pDragger->getListener() )
-			{
-				pEngine->evaluate( processEvent, i->first, i->second );
-			}
-			// else nothing to do, because the dragger.listener field is false.
-		}
-		else
-		{
-			pEngine->evaluate( processEvent, i->first, i->second );
-		}
+		pEngine->evaluate( processEvent, i->first, i->second );
 	}
 
 	glPopAttrib();

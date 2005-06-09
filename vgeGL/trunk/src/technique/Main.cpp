@@ -27,7 +27,7 @@ void Main::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVec
 	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
 	prepareEval();
-	pEngine->resetEval();
+	//pEngine->resetEval();
 
 	// First pass : draw opaque shape.
 	beginPass();

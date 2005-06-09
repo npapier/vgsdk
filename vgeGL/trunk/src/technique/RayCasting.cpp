@@ -152,7 +152,7 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
 	prepareEval();
-	pEngine->resetEval();
+	//pEngine->resetEval();
 
 	// First pass : draw all shape.
 	beginPass();
