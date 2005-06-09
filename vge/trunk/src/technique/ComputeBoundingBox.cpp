@@ -24,7 +24,7 @@ void ComputeBoundingBox::apply(	vge::engine::Engine *pEngine, vge::visitor::Trav
 
 	prepareEval();
 	
-	pEngine->resetEval();
+	//pEngine->resetEval();
 
 	beginPass();
 
