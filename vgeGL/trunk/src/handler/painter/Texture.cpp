@@ -30,7 +30,7 @@ void Texture::setToDefaults()
 
 
 
-void Texture::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 							glo::Texture *pResource )
 {
 	// WRAP
@@ -252,6 +252,7 @@ GLenum Texture::convertMyFormat2GL( vgd::basic::IImage::Format format ) const
 			break;
 
 		case vgd::basic::IImage::LUMINANCE:
+		case vgd::basic::IImage::COLOR_INDEX:
 			glformat = GL_LUMINANCE;
 			break;
 			

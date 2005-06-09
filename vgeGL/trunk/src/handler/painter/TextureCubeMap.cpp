@@ -135,7 +135,7 @@ void TextureCubeMap::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNod
 
 
 
-void TextureCubeMap::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
+void TextureCubeMap::unapply ( vge::engine::Engine* , vgd::node::Node* )
 {
 }
 
