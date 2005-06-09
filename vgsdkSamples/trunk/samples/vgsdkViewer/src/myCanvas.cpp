@@ -150,6 +150,7 @@ wxMenu *myCanvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
 	getRoot()->traverse( getNodeCollector() );
 
 	vgeGL::technique::RayCasting raycasting;
+	getEngine()->resetEval();	
 	raycasting.apply(	getEngine().get(), getNodeCollector().getTraverseElements(),
 							xMouse, yMouse );
 
