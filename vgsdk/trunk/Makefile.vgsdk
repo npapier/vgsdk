@@ -2,6 +2,7 @@ SHELL=/bin/bash
 
 full-install release-install dist-clean clean all:
 	@### Core components ###
+	@cd ../Virtuals;	make $@;	echo;echo
 	@cd ../vgDebug;	make $@;	echo;echo
 	@cd ../vgm;			make $@;	echo;echo
 	@cd ../vgd;			make $@;	echo;echo
