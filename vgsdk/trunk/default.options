@@ -1,0 +1,4 @@
+type			= 'shared'
+postfix		= '0-3'
+deps			= ['Virtuals', 'vgDebug', 'vgm', 'vgd', 'vgAlg', 'vgTrian', 'vge', 'gle', 'glo', 'vgeGL', 'vgWX',
+					'vgnf' ]
