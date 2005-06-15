@@ -56,6 +56,9 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * @brief Construct a Canvas with its own OpenGL context.
 	 * 
 	 * @param	pParent		A pointer to the parent window.
+	 * 
+	 * @pre	getCanvasCount() == 0
+	 * @post	getCanvasCount() == 1
 	 */
 	Canvas(	wxWindow *parent, 
 				const wxString& name = _T("vgsdkCanvas"),
@@ -68,6 +71,8 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * @brief Construct a Canvas with its own OpenGL context, but that share OpenGL objects with another(s) Canvas.
 	 * 
 	 * @param	pParent		A pointer to the parent window.
+	 * 
+	 * @pre	getCanvasCount() >= 1
 	 */
 	Canvas(	wxWindow *parent,
 				Canvas *pSharedCanvas,
@@ -207,6 +212,14 @@ private:
 	 * @name Members for OpenGL/gle/vgeGL initialization.
 	 */
 	//@{
+	
+	/**
+	 * @brief Returns the number of instance of this class.
+	 * 
+	 * @return the canvas count
+	 */
+	uint32 getCanvasCount() const;
+
 protected:
 	/**
 	 * @brief Activate the OpenGL rendering context and initialize vgsdk (gle and vgeGL) if needed.
@@ -217,6 +230,11 @@ protected:
 	 */
 	bool			enableVGSDK();
 private:
+	/**
+	 * @brief Instance count of this class.
+	 */
+	static uint32					m_canvasCount;
+
 	/**
 	 * @brief Default OpenGL attributes for VGSDK.
 	 */

@@ -49,6 +49,7 @@ Canvas::Canvas(wxWindow *parent,
 					(gl_attrib != 0) ? gl_attrib : m_vgsdk_attrib ),
 	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 
+	//m_canvasCount
 	//m_vgsdk_attrib
 
 	//m_gleLog
@@ -58,6 +59,9 @@ Canvas::Canvas(wxWindow *parent,
 
 	m_isContextualMenuEnabled	(	false			)
 {
+	assert( getCanvasCount() == 0 && "This is not the first canvas." );
+	
+	++m_canvasCount;
 }
 
 
@@ -83,21 +87,32 @@ Canvas::Canvas(	wxWindow *parent,
 
 	m_isContextualMenuEnabled	(	false			)
 {
+	assert( getCanvasCount() >= 1 && "This is the first canvas." );
+
+	++m_canvasCount;
 }
 
 
 
 Canvas::~Canvas()
 {
-	//
-	if ( enableVGSDK() )
+	assert( m_canvasCount > 0 );
+	
+	--m_canvasCount;
+
+	if ( m_canvasCount == 0 )
 	{
-		getGLEngine()->getGLManager().clear();
+		// Last canvas is about to be destroy => destroy OpenGL objects.
+		if ( enableVGSDK() )
+		{
+			getGLEngine()->getGLManager().clear();
+		}
+		else
+		{
+			assert( false && "OpenGL context could not be made current. So OpenGL objects could not be released properly." );
+		}
 	}
-	else
-	{
-		assert( false && "OpenGL context could not be made current. So OpenGL objects could not be released properly." );
-	}
+	//else Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
 }
 
 
@@ -643,6 +658,13 @@ void Canvas::OnCtxMenu( wxCommandEvent& event )
 
 
 
+uint32 Canvas::getCanvasCount() const
+{
+	return ( m_canvasCount );
+}
+
+
+
 bool Canvas::enableVGSDK()
 {
 	// Activate OpenGL context.
@@ -690,8 +712,7 @@ bool Canvas::enableVGSDK()
 
 
 
-bool	Canvas::m_bGlobalInitializedVGSDK = false;
-
+uint32 Canvas::m_canvasCount = 0;
 
 
 int	Canvas::m_vgsdk_attrib[] = {
@@ -701,6 +722,8 @@ int	Canvas::m_vgsdk_attrib[] = {
 			WX_GL_STENCIL_SIZE, 8,
 			0 };
 
+
+bool	Canvas::m_bGlobalInitializedVGSDK = false;
 
 
 } // namespace vgWX
