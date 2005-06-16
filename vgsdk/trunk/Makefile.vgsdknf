@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+
+checkout:
+	svn co http://dev-srv:8080/svn/SrcLib/vgnf/trunk ../vgnf
+
+full-install release-install dist-clean clean all:
+	@cd ../vgnf;		make $@;	echo;echo
