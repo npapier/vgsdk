@@ -237,11 +237,12 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 				++currentGLName;
 				m_pNodes->push_back( i->first );
 			
-				// this is a kit, nothing to be done (evaluate() is not called).
+				pEngine->evaluate( paint, i->first, i->second );
 			}
 			else
 			{
-				// this is a kit, nothing to be done (evaluate() is not called).
+				pEngine->evaluate( paint, i->first, i->second );
+				
 				glPopName();
 			}
 		}
