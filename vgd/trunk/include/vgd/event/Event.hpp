@@ -61,7 +61,7 @@ struct VGD_API Event
 	 * @return	a reference to the button states
 	 */
 	const ButtonStateSet& getButtonStates() const;
-	
+
 	/**
 	 * @brief	Test if a button is down.
 	 * 
@@ -70,6 +70,15 @@ struct VGD_API Event
 	 * @remarks The request is processed by the ButtonStateSet. It's a shortcut for getButtonStates().isDonw()
 	 */
 	bool isButtonDown( const int32 buttonID ) const;
+
+
+
+	/**
+	 * @brief Implements the accept operation that takes a visitor as an argument (DP Visitor).
+	 * 
+	 * @param eventVisitor	a reference to a visitor
+	 */
+	virtual void accept( vgd::event::EventVisitor& eventVisitor )=0;
 
 
 

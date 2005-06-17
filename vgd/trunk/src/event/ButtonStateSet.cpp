@@ -47,6 +47,27 @@ void ButtonStateSet::apply( const vgd::event::MouseButtonEvent *pMouseButtonEven
 
 
 
+void ButtonStateSet::apply( const vgd::event::Location2Event *  )
+{
+	// nothing to do.
+}
+
+
+
+void ButtonStateSet::apply( const vgd::event::Motion3Event * )
+{
+	// nothing to do.
+}
+
+
+
+void ButtonStateSet::apply( const vgd::event::MouseWheelEvent * )
+{
+	// nothing to do.
+}
+
+
+
 bool ButtonStateSet::isDown( const int32 idButton ) const
 {
 	ButtonIDSet::const_iterator iter;

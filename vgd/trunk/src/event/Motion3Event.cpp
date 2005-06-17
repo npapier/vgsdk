@@ -45,6 +45,12 @@ const Motion3Event::Size& Motion3Event::getSize() const
 }
 
 
+void Motion3Event::accept( vgd::event::EventVisitor& eventVisitor )
+{
+	eventVisitor.apply( this );
+}
+
+
 } // namespace event
 
 } // namespace vgd

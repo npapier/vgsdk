@@ -63,14 +63,8 @@ struct VGD_API ButtonEvent : public Event
 	 */
 	const State getState() const;
 
-	/**
-	 * @brief Implements the accept operation that takes a visitor as an argument (DP Visitor).
-	 * 
-	 * @param eventVisitor	a reference to a visitor
-	 */
-	virtual void accept( vgd::event::EventVisitor& eventVisitor )=0;
-	
-	
+
+
 private:
 
 	/**

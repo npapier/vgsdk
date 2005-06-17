@@ -87,6 +87,11 @@ struct VGD_API Location2Event : public Event
 	 */
 	const Size& getSize() const;
 	
+	
+	// overridden method
+	void accept( vgd::event::EventVisitor& eventVisitor );	
+
+
 private:
 
 	/**

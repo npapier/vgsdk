@@ -17,7 +17,11 @@ namespace event
 {
 	
 struct KeyboardButtonEvent;
+struct Location2Event;
 struct MouseButtonEvent;
+struct Motion3Event;
+struct MouseWheelEvent;
+
 
 /**
  * @brief Visitor interface for Event classes
@@ -25,7 +29,10 @@ struct MouseButtonEvent;
 struct VGD_API EventVisitor
 {
 	virtual void apply( const vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent	)=0;
-	virtual void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent 		)=0;
+	virtual void apply( const vgd::event::Location2Event			*pLocation2Event 			)=0;
+	virtual void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent		)=0;
+	virtual void apply( const vgd::event::Motion3Event				*pMotion3Event				)=0;
+	virtual void apply( const vgd::event::MouseWheelEvent			*pMouseWheelEvent			)=0;
 };
 
 

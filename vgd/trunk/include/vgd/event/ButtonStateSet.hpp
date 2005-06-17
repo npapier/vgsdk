@@ -30,7 +30,7 @@ struct VGD_API ButtonStateSet : public EventVisitor
 	virtual ~ButtonStateSet() {}
 
 	/**
-	 * @name Visitor DP
+	 * @name Visitor DP (see EventVisitor).
 	 */
 	//@{
 
@@ -51,7 +51,11 @@ struct VGD_API ButtonStateSet : public EventVisitor
 	 * @pre pMouseButtonEvent != 0
 	 */
 	void apply( const vgd::event::MouseButtonEvent *pMouseButtonEvent );
-	
+
+	void apply( const vgd::event::Location2Event			*pLocation2Event 			);
+	void apply( const vgd::event::Motion3Event			*pMotion3Event				);
+	void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent			);
+
 	//@}
 
 

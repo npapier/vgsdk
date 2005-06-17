@@ -76,7 +76,12 @@ struct VGD_API Motion3Event : public Event
 	 * @return	a size
 	 */
 	const Size& getSize() const;
-	
+
+
+	// overridden method
+	void accept( vgd::event::EventVisitor& eventVisitor );	
+
+
 private:
 
 	/**

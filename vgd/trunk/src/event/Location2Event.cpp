@@ -61,6 +61,12 @@ const Location2Event::Size& Location2Event::getSize() const
 }
 
 
+void Location2Event::accept( vgd::event::EventVisitor& eventVisitor )
+{
+	eventVisitor.apply( this );
+}
+
+
 } // namespace event
 
 } // namespace vgd

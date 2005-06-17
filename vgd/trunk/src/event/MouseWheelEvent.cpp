@@ -34,6 +34,12 @@ int32 MouseWheelEvent::getDelta() const
 }
 
 
+void MouseWheelEvent::accept( vgd::event::EventVisitor& eventVisitor )
+{
+	eventVisitor.apply( this );
+}
+
+
 } // namespace event
 
 } // namespace vgd

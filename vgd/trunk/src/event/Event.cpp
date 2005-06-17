@@ -42,6 +42,7 @@ bool Event::isButtonDown( const int32 idButton ) const
 }
 
 
+
 } // namespace event
 
 } // namespace vgd

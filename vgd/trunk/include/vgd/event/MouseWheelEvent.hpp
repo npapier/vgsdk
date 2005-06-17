@@ -52,6 +52,10 @@ struct VGD_API MouseWheelEvent : public Event
 	 * @return	a signed integer representing the wheel rotation delta
 	 */
 	int32 getDelta() const;
+
+
+	// overridden method
+	void accept( vgd::event::EventVisitor& eventVisitor );
 	
 private:
 
