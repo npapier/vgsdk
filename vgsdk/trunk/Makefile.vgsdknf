@@ -1,7 +1,8 @@
-SHELL=/bin/bash
+full-install release-install all clean release debug world dist-clean info :
+	@cd ../vgnf;		make $@;	echo;echo
 
 checkout:
 	svn co http://dev-srv:8080/svn/SrcLib/vgnf/trunk ../vgnf
 
-full-install release-install dist-clean clean all:
-	@cd ../vgnf;		make $@;	echo;echo
+update diff:
+	@cd ../vgnf;	svn $@;	echo;echo;
