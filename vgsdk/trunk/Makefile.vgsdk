@@ -1,5 +1,5 @@
 full-install release-install all clean release debug world dist-clean info :
-	@cd ../Virtuals;	make $@;	echo;echo
+	@cd ../vgBase;		make $@;	echo;echo
 	@cd ../vgDebug;	make $@;	echo;echo
 	@cd ../vgm;			make $@;	echo;echo
 	@cd ../vgd;			make $@;	echo;echo
@@ -13,7 +13,7 @@ full-install release-install all clean release debug world dist-clean info :
 	@cd ../vgsdk;		make $@;	echo;echo
 
 checkout:
-	svn co http://dev-srv:8080/svn/SrcLib/Virtuals/trunk ../Virtuals
+	svn co http://dev-srv:8080/svn/SrcLib/vgBase/trunk ../vgBase
 	svn co http://dev-srv:8080/svn/SrcLib/vgDebug/trunk ../vgDebug
 	svn co http://dev-srv:8080/svn/SrcLib/vgm/trunk ../vgm
 	svn co http://dev-srv:8080/svn/SrcLib/vgd/trunk ../vgd
@@ -27,7 +27,7 @@ checkout:
 	#svn co http://dev-srv:8080/svn/SrcLib/vgsdk/trunk vgsdk => already done (this makefile comes from vgsdk project).
 
 update diff:
-	@cd ../Virtuals;	svn $@;	echo;echo;
+	@cd ../vgBase;		svn $@;	echo;echo;
 	@cd ../vgDebug;	svn $@;	echo;echo;
 	@cd ../vgm;			svn $@;	echo;echo;
 	@cd ../vgd;			svn $@;	echo;echo;
