@@ -124,7 +124,7 @@
  * @brief Virtuals Graphical Data
  */
 
-#include <Virtuals/Type.h>
+#include <vgBase/Type.hpp>
 
 #ifdef _WIN32
 
