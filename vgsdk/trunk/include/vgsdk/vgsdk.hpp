@@ -6,7 +6,7 @@
 #ifndef _VGSDK_VGSDK_H
 #define _VGSDK_VGSDK_H
 
-#include <Virtuals/Type.h>
+#include <vgBase/Type.hpp>
 
 /** 
  * @namespace vgsdk
