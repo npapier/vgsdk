@@ -14,7 +14,7 @@
  * \b vge is open source (LGPL).
  */
 
-#include <Virtuals/Type.h>
+#include <vgBase/Type.hpp>
 
 
 
