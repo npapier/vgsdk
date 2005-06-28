@@ -12,7 +12,11 @@
 	// need a dll interface (Un classe de base ou une structure doit être déclarée avec 
 	// le mot clé __declspec(dllexport) pour qu'une fonction d'une classe dérivée soit exportée)
 	#pragma warning (disable:4251)
-	
+
+	// Spécification d'exception C++ ignorée sauf pour indiquer qu'une fonction n'est pas 
+	// __declspec(nothrow)
+	#pragma warning (disable:4290)
+
 	// The following line prevents from this file to be included several times by the compiler with
 	// Visual C++. This makes compiling quicker, but must not be used when your file content may
 	// change depending on some macro definitions. In the general case, leave these lines as they are.
@@ -34,5 +38,5 @@ typedef unsigned char		uint8;
 typedef short					int16;
 typedef unsigned short		uint16;
 
-typedef int						int32;
-typedef unsigned int			uint32;
+typedef long					int32;
+typedef unsigned long		uint32;
