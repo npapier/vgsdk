@@ -24,7 +24,7 @@
  * vgWX is a collection of classes or widgets that simplify the creation of 3D window designed to be used with VGL.
  */
 
-#include <Virtuals/Type.h>
+#include <vgBase/Type.hpp>
 
 #ifdef _WIN32
 
