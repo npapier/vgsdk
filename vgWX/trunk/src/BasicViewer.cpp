@@ -174,52 +174,51 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	computeSceneBoundingBox( box, center, max );
 	
 	vgm::MatrixR matrix;	
+
+	// Get additionnal informations.
+	float width, height, depth;
 	
 	if ( !box.isEmpty() )
 	{
-		// Get additionnal informations.
-		float width, height, depth;
 		box.getSize( width, height, depth );
-	
-		// setup maxDepth, minDepth and fovy
-		float	minDepth;
-		float	maxDepth;
-	
-		maxDepth	= 10.f * max;
-		minDepth = max / 2048.f; // r = 2048 in r = far/near.
-	
-		//
-		switch ( getCameraType() )
-		{
-			case CAMERA_PERSPECTIVE:
-				matrix.setPerspective(
-								45.f,
-								static_cast<float>(size[0])/static_cast<float>(size[1]),
-								minDepth,
-								maxDepth
-								);
-				break;
-	
-			case CAMERA_ORTHOGRAPHIC:
-				matrix.setOrtho(
-								-width / 2.f,
-								width / 2.f,
-								
-								-height / 2.f,
-								height / 2.f,
-								
-								minDepth,
-								maxDepth
-								);
-				break;
-	
-			default:
-				assert( false && "Unknwon camera type." );
-		}
 	}
 	else
 	{
-		matrix.setIdentity();
+		width = height = depth = 999.f;
+
+		max = 999.f;
+	}
+
+	float	minDepth = max / 2048.f; // r = 2048 in r = far/near.
+	float	maxDepth = 12.f * max;
+
+	//
+	switch ( getCameraType() )
+	{
+		case CAMERA_PERSPECTIVE:
+			matrix.setPerspective(
+							45.f,
+							static_cast<float>(size[0])/static_cast<float>(size[1]),
+							minDepth,
+							maxDepth
+							);
+			break;
+
+		case CAMERA_ORTHOGRAPHIC:
+			matrix.setOrtho(
+							-width / 2.f,
+							width / 2.f,
+							
+							-height / 2.f,
+							height / 2.f,
+							
+							minDepth,
+							maxDepth
+							);
+			break;
+
+		default:
+			assert( false && "Unknwon camera type." );
 	}
 	
 	m_camera->setMatrix( matrix );
