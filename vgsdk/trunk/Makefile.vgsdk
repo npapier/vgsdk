@@ -1,3 +1,5 @@
+VERSION=0.3
+
 full-install release-install all clean release debug world dist-clean info :
 	@cd ../vgBase;		make $@;	echo;echo
 	@cd ../vgDebug;	make $@;	echo;echo
@@ -39,3 +41,30 @@ update diff:
 	@cd ../vgeGL;		svn $@;	echo;echo;
 	@cd ../vgWX;		svn $@;	echo;echo;
 	@cd ../vgsdk;		svn $@;	echo;echo;
+tags:
+	# itself
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgsdk/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgsdk/trunk http://dev-srv:8080/svn/SrcLib/vgsdk/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	# libs
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgBase/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgBase/trunk http://dev-srv:8080/svn/SrcLib/vgBase/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgDebug/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgDebug/trunk http://dev-srv:8080/svn/SrcLib/vgDebug/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgm/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgm/trunk http://dev-srv:8080/svn/SrcLib/vgm/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgd/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgd/trunk http://dev-srv:8080/svn/SrcLib/vgd/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgAlg/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgAlg/trunk http://dev-srv:8080/svn/SrcLib/vgAlg/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"	
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgTrian/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgTrian/trunk http://dev-srv:8080/svn/SrcLib/vgTrian/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vge/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vge/trunk http://dev-srv:8080/svn/SrcLib/vge/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/gle/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/gle/trunk http://dev-srv:8080/svn/SrcLib/gle/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/glo/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/glo/trunk http://dev-srv:8080/svn/SrcLib/glo/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"	
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgeGL/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgeGL/trunk http://dev-srv:8080/svn/SrcLib/vgeGL/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgWX/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgWX/trunk http://dev-srv:8080/svn/SrcLib/vgWX/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"	
