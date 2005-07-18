@@ -106,7 +106,7 @@ vgd::Shp< vgd::node::TransformDragger > BasicManipulator::getSceneTransformation
 void BasicManipulator::viewAll()
 {
 	// Reset scene transformation.
-	getSceneTransformation()->setToDefaults();
+	getSceneTransformation()->setTransformationToDefaults();
 
 	//
 	BasicViewer::viewAll();
