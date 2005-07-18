@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_H
-#define _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_H
+#ifndef _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_H
+#define _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_H
 
 #include "vgeGL/handler/processEvent/Dragger.hpp"
 #include "vgeGL/handler/processEvent/ProcessEvent.hpp"
@@ -22,14 +22,14 @@ namespace processEvent
 {
 
 /**
- * @brief Process event for a vgd::node::TransformDragger.
+ * @brief Process event for a vgd::node::Scale1Dragger.
  */
-struct VGEGL_API TransformDragger :	public vgeGL::handler::processEvent::ProcessEvent,
-												public vgeGL::handler::processEvent::Dragger
+struct VGEGL_API Scale1Dragger :	public vgeGL::handler::processEvent::ProcessEvent,
+											public vgeGL::handler::processEvent::Dragger
 {
-	META_HANDLER_HPP( TransformDragger );
+	META_HANDLER_HPP( Scale1Dragger );
 
-	const TargetVector				getTargets()	const;
+	const TargetVector getTargets()	const;
 	
 	void	apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode );
 	void	unapply( vge::engine::Engine *pEngine, vgd::node::Node *pNode );
@@ -48,4 +48,4 @@ struct VGEGL_API TransformDragger :	public vgeGL::handler::processEvent::Process
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_H
+#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_H

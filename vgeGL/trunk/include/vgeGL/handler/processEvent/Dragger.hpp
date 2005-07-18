@@ -8,17 +8,13 @@
 
 #include <vgd/Shp.hpp>
 #include <vgd/event/Event.hpp>
+#include <vgd/event/EventVisitor.hpp>
 #include <vgm/Vector.hpp>
 
 #include "vgeGL/vgeGL.hpp"
 
 namespace vgd
 {
-	namespace event
-	{
-		struct KeyboardButtonEvent;
-	}
-	
 	namespace node
 	{
 		struct Dragger;
@@ -37,6 +33,7 @@ namespace vge
 
 namespace vgeGL
 {
+
 	namespace engine
 	{
 		struct Engine;
@@ -53,17 +50,25 @@ namespace processEvent
 /**
  * @brief Abstract class for handlers of Dragger nodes.
  */
-struct VGEGL_API Dragger
+struct VGEGL_API Dragger : public vgd::event::EventVisitor
 {
 	/**
-	 * @brief Returns a reference on the event stored in engine
+	 * @name Interface of EventVisitor.
 	 * 
-	 * @param pEngine		engine that contains the current event
-	 * 
-	 * @return a reference on the current event
+	 * The five following methods done nothing, but must be overriden by derived Dragger to perform action.
 	 */
-	vgd::Shp< vgd::event::Event > getEvent( vge::engine::Engine *pEngine );
+	//@{
+
+	void apply( const vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent);
+	void apply( const vgd::event::Location2Event			*pLocation2Event 		);
+	void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent	);
+	void apply( const vgd::event::Motion3Event			*pMotion3Event			);
+	void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent		);
 	
+	//@}
+
+
+
 	/**
 	 * @brief Converts keyboard arrow key into a vector.
 	 * 
@@ -82,6 +87,8 @@ struct VGEGL_API Dragger
 	 * @brief Output to logDebug() informations contains in event.
 	 * 
 	 * @param event	an event
+	 * 
+	 * @todo process vgd::event::Motion3Event
 	 */
 	void logDebug( vgd::Shp< vgd::event::Event > event );
 	
@@ -99,6 +106,44 @@ struct VGEGL_API Dragger
 	 */
 	const bool ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEngine, vgd::node::Dragger *pDragger,
 			vgm::Vec3f& oLeftToRightO, vgm::Vec3f& oUpToDownO, vgm::Vec3f& oNearToFarO );
+
+	/**
+	 * @brief Must be called by derived handler at the beginning of apply().
+	 * 
+	 * Update m_pGLEngine, m_pDragger, m_pEvent and update Dragger.currentState field.
+	 */
+	void preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pDragger );
+
+	/**
+	 * @brief Must be called by derived handler after preApply() and before postApply()
+	 * 
+	 * This method use the EventVisitor interface to process the incoming event.
+	 */
+	void apply();
+	
+	/**
+	 * @brief Must be called by derived handler at the end of apply().
+	 * 
+	 * Update Dragger.setMatrix() if needeed and validate pDragger->DF(node).
+	 */
+	void postApply();
+
+
+
+protected:
+	vgeGL::engine::Engine	*m_pGLEngine;
+	vgd::node::Dragger		*m_pDragger;
+
+	/**
+	 * @brief Returns a reference on the event stored in engine
+	 * 
+	 * @param pEngine		engine that contains the current event
+	 * 
+	 * @return a reference on the current event
+	 */
+	vgd::Shp< vgd::event::Event > getEvent( vge::engine::Engine *pEngine );
+
+	vgd::Shp< vgd::event::Event > m_pEvent;
 };
 
 

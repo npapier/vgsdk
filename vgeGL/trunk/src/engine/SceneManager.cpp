@@ -8,6 +8,7 @@
 #include <vgDebug/Global.hpp>
 #include <vgeGL/technique/Main.hpp>
 #include <vgeGL/technique/ProcessEvent.hpp>
+#include <vgeGL/technique/RayCasting.hpp>
 
 
 
@@ -60,6 +61,29 @@ void SceneManager::onEvent( vgd::Shp<vgd::event::Event> event )
 	processEvent.apply( getEngine().get(), getNodeCollector().getTraverseElements(), event );
 
 	//vgDebug::get().logDebug("SceneManager::onEvent:%s", typeid(*event.get()).name() );
+}
+
+
+
+vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
+{
+	// CAST A RAY
+	getNodeCollector().reset();
+	getRoot()->traverse( getNodeCollector() );
+
+	vgeGL::technique::RayCasting raycasting;
+	getEngine()->resetEval();
+	raycasting.apply(	getEngine().get(), getNodeCollector().getTraverseElements(),
+							x, y );
+
+	if ( raycasting.getHitsSize() == 0 )
+	{
+		return ( 0 );
+	}
+	else
+	{
+		return ( raycasting.getNearestHitNode() );
+	}
 }
 
 

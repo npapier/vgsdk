@@ -8,6 +8,7 @@
 #include <vgDebug/Global.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/Location2Event.hpp>
+#include <vgd/event/Motion3Event.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vgd/event/MouseWheelEvent.hpp>
 #include <vgd/node/Dragger.hpp>
@@ -28,18 +29,32 @@ namespace processEvent
 
 
 
-vgd::Shp< vgd::event::Event > Dragger::getEvent( vge::engine::Engine *pEngine )
+void Dragger::apply( const vgd::event::KeyboardButtonEvent * )
 {
-	using vgeGL::technique::ProcessEvent;
-	
-	assert( pEngine->isField( ProcessEvent::getFProcessEvent() ) );
-	
-	vgd::field::EditorRO< ProcessEvent::FProcessEventType > eventInEngine =
-		pEngine->getFieldRO< ProcessEvent::FProcessEventType >( ProcessEvent::getFProcessEvent() );
+}
 
-	vgd::Shp< vgd::event::Event > event = eventInEngine->getValue();
-	
-	return ( event );
+
+
+void Dragger::apply( const vgd::event::Location2Event * )
+{
+}
+
+
+
+void Dragger::apply( const vgd::event::MouseButtonEvent * )
+{
+}
+
+
+
+void Dragger::apply( const vgd::event::Motion3Event * )
+{
+}
+
+
+
+void Dragger::apply( const vgd::event::MouseWheelEvent * )
+{
 }
 
 
@@ -270,6 +285,87 @@ const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEn
 		static_cast<float>(vec3dNearToFarO[2]) );
 	
 	return ( bRetVal );
+}
+
+
+
+void Dragger::preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pDragger )
+{
+	// Update internal attribute (to give access to them from EventVisitor methods).
+	m_pGLEngine = pGLEngine;
+	m_pDragger	= pDragger;
+
+	// Gets event stored in Engine.
+	m_pEvent = getEvent( pGLEngine );
+	assert( m_pEvent.get() != 0 );
+
+	// Process event
+	// Change Dragger.currentState.
+	using vgd::field::EditorRO;
+	using vgd::node::Dragger;
+	
+	const vgd::event::ButtonStateSet& bss = m_pEvent->getButtonStates();
+	
+	EditorRO< Dragger::FBindingsType > editorBindingsRO(
+		pDragger->template getFieldRO<Dragger::FBindingsType>(pDragger->getFBindings()) );
+
+	for (	Dragger::FBindingsType::const_iterator	iBindings		= editorBindingsRO->begin(),
+																iEndBindings	= editorBindingsRO->end();
+																
+			iBindings != iEndBindings;
+			++iBindings )
+	{
+		const Dragger::FBindingsType::value_type& elt = *iBindings;
+		
+		if ( elt.second == bss )
+		{
+			pDragger->setCurrentState( elt.first );
+			break;
+		}
+	}
+}
+
+
+
+void Dragger::apply()
+{
+	if ( m_pDragger->getListener() )
+	{
+		m_pEvent->accept( *this );
+	}
+	// else nothing to do, because the dragger.listener field is false.
+}
+
+
+	
+void Dragger::postApply()
+{
+	vgd::field::DirtyFlag *pDF = m_pDragger->getDirtyFlag( m_pDragger->getDFNode() );
+	assert( pDF != 0 );
+	
+	if ( pDF->isDirty() )
+	{
+		vgm::MatrixR matrix = m_pDragger->computeMatrixFromFields();
+		m_pDragger->setMatrix( matrix );
+		pDF->validate();
+	}
+	//else nothing to do
+}
+
+
+
+vgd::Shp< vgd::event::Event > Dragger::getEvent( vge::engine::Engine *pEngine )
+{
+	using vgeGL::technique::ProcessEvent;
+	
+	assert( pEngine->isField( ProcessEvent::getFProcessEvent() ) );
+	
+	vgd::field::EditorRO< ProcessEvent::FProcessEventType > eventInEngine =
+		pEngine->getFieldRO< ProcessEvent::FProcessEventType >( ProcessEvent::getFProcessEvent() );
+
+	vgd::Shp< vgd::event::Event > event = eventInEngine->getValue();
+	
+	return ( event );
 }
 
 

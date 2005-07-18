@@ -5,9 +5,12 @@
 
 #include "vgeGL/handler/painter/VertexShape.hpp"
 
+#include <glo/GLSLShader.hpp>
+#include <glo/Texture.hpp>
 #include <vgd/node/Box.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/Quad.hpp>
+#include <vgd/node/Texture.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgd/node/VertexShape.hpp>
 
@@ -248,27 +251,61 @@ void VertexShape::apply ( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			glPopAttrib();			
 			break;
 		}
-					
+
 		case vgd::node::DrawStyle::NEIGHBOUR: // FIXME
 		case vgd::node::DrawStyle::SMOOTH:
+		
 			// FIXME OPTME
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
+			//glPushAttrib( GL_ALL_ATTRIB_BITS );
+
+			// FIXME move to engine.
+			// POLYGON_MODE
+			GLint polygonMode[2];
+			glGetIntegerv( GL_POLYGON_MODE, polygonMode );
+
+			bool	bRestorePolygonMode;
+			if (	(polygonMode[0] != GL_FILL) ||
+					(polygonMode[1] != GL_FILL) )
+			{
+				glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+				bRestorePolygonMode = true;
+			}
+			else
+			{ 
+				bRestorePolygonMode = false;
+			}
 			
-//			GLint polygonMode;
-//???		glGetIntegerv( GL_POLYGON_MODE, &polygonMode ???);
-
-//			GLint shadeModel;
-//			glGetIntegerv( GL_SHADE_MODEL, &shadeModel );
-
-			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-			glShadeModel( GL_SMOOTH );
+			// SHADE_MODEL
+			GLint shadeModel;
+			glGetIntegerv( GL_SHADE_MODEL, &shadeModel );
+			
+			bool bRestoreShadeModel;
+			if ( shadeModel != GL_SMOOTH )
+			{
+				bRestoreShadeModel = true;
+				glShadeModel( GL_SMOOTH );
+			}
+			else
+			{
+				bRestoreShadeModel = false;
+			}
 
 			paint( pGLEngine, pCastedNode, method );
 			
-			//glShadeModel( shadeModel );
+			//
+			if ( bRestoreShadeModel )
+			{
+				glShadeModel( shadeModel );
+			}
+			
+			if ( bRestorePolygonMode )
+			{
+				glPolygonMode( GL_FRONT, polygonMode[0] );
+				glPolygonMode( GL_BACK, polygonMode[1] );				
+			}
 
 			// FIXME OPTME
-			glPopAttrib();			
+			//glPopAttrib();			
 			break;
 
 		default:
@@ -363,11 +400,19 @@ void VertexShape::apply ( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 																								bbValue );
 	assert( bDefined );
 
-	if ( bDefined )
+	if ( bbValue != vgd::node::DrawStyle::NONE )
 	{
 		// FIXME optimize me
 		glPushAttrib( GL_ALL_ATTRIB_BITS );
+		
+		glo::GLSLShader::useFixedPaths();
+
 		glDisable( GL_LIGHTING );
+		
+		glDisable( GL_TEXTURE_1D );
+		glDisable( GL_TEXTURE_2D );
+		
+		glLineWidth( 2.f );
 		// END FIXME
 
 		switch ( bbValue )
@@ -761,15 +806,15 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 		glEdgeFlagPointer( 0, pArray );
 		glEnableClientState( GL_EDGE_FLAG_ARRAY );
 	}
-	
+
 	// TEX COORD
-	int32 numTexUnits = pVertexShape->getNumTexUnits();
+	int32 numTexUnits = pVertexShape->getNumTexUnits();										// FIXME: optme
 	
 	if ( numTexUnits >= 1 )
 	{
-		for(	int32 i = numTexUnits-1;
-				i >= 0;
-				--i )
+		for(	int32 unit = numTexUnits-1;
+				unit >= 0;
+				--unit )
 		{
 // FIXME see Texture2D handler
 //	// scaleFactors
@@ -789,20 +834,29 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 //	// apply scale to vgeGL.
 //	glMatrixMode( GL_TEXTURE );
 //	glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
-			
-			gleGetCurrent()->glClientActiveTexture( GL_TEXTURE0_ARB + i );
-			
-			if ( pVertexShape->getTexCoordBinding( i ) == vgd::node::BIND_PER_VERTEX )
+
+			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
 			{
-				int32 dimTexCoord;
-				dimTexCoord	= pVertexShape->getTexCoordDim( i );
+/*				// TODO: could only search vgd::node::Texture2D, not abstract node....
+				// gets the texture node and ressource															FIXME : not always correct.
+				vgd::node::Texture *pTexture = pGLEngine->template getStateStackTop<vgd::node::Texture>( unit );
+				assert( pTexture != 0 && "Internal error." );
+				glo::Texture *pTextureGLO = pGLEngine->getGLManager().template get< glo::Texture >( pTexture );
+				assert( pTextureGLO != 0 && "Internal error." );
+
+				glo::Texture::active( unit );
+				pTextureGLO->enable();*/
+
+				//
+				gleGetCurrent()->glClientActiveTexture( GL_TEXTURE0_ARB + unit );				
+				int32 dimTexCoord = pVertexShape->getTexCoordDim( unit );
 				
 				switch ( dimTexCoord )
 				{
 					case 2:
 					{
 						vgd::field::EditorRO< vgd::field::MFVec2f >	texCoord;
-						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec2f >( i );
+						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec2f >( unit );
 						pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
 						glTexCoordPointer( 2, GL_FLOAT, 0, pArray );
 						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -812,7 +866,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 					case 3:
 					{
 						vgd::field::EditorRO< vgd::field::MFVec3f >	texCoord;
-						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec3f >( i );
+						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec3f >( unit );
 						pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
 						glTexCoordPointer( 3, GL_FLOAT, 0, pArray );
 						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -822,7 +876,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 					case 1:
 					{
 						vgd::field::EditorRO< vgd::field::MFFloat >	texCoord;
-						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFFloat >( i );
+						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFFloat >( unit );
 						pArray = static_cast< const GLvoid* >( &(*texCoord)[0] );
 						glTexCoordPointer( 1, GL_FLOAT, 0, pArray );
 						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -832,7 +886,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 					case 4:
 					{
 						vgd::field::EditorRO< vgd::field::MFVec4f >	texCoord;
-						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec4f >( i );
+						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec4f >( unit );
 						pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
 						glTexCoordPointer( 4, GL_FLOAT, 0, pArray );
 						glEnableClientState( GL_TEXTURE_COORD_ARRAY );

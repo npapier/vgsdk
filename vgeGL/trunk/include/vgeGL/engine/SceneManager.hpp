@@ -119,6 +119,24 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 
 	/**
+	 * @name Ray casting.
+	 */
+	//@{
+
+	/**
+	 * @brief Cast a ray under mouse pointer.
+	 * 
+	 * @param x  x-coordinate of the mouse pointer
+	 * @param y  y-coordinate of the mouse pointer
+	 * 
+	 * @return the nearest node or a null reference.
+	 */
+	vgd::node::Node* castRay( const int32 x, const int32 y );
+	//@}
+	
+	
+	
+	/**
 	 * @name Accessors to some vgsdk objects.
 	 */
 	//@{
