@@ -5,8 +5,8 @@
 
 #include "vge/handler/cbb/Kits.hpp"
 
-#include <vgd/node/Layers.hpp>
-//#include <vgd/node/TrackballDragger.hpp>
+#include <vgd/node/NullDragger.hpp>
+#include <vgd/node/Scale1Dragger.hpp>
 #include <vgd/node/TransformDragger.hpp>
 
 
@@ -30,10 +30,11 @@ const Handler::TargetVector Kits::getTargets() const
 {
 	TargetVector targets;
 
-	targets.reserve( 2 );	
-	targets.push_back( vgd::node::Layers::getClassIndexStatic() );	
-	//targets.push_back( vgd::node::TrackballDragger::getClassIndexStatic() );	
-	targets.push_back( vgd::node::TransformDragger::getClassIndexStatic() );		
+	targets.reserve( 3 );
+
+	targets.push_back( vgd::node::NullDragger::getClassIndexStatic() );	
+	targets.push_back( vgd::node::Scale1Dragger::getClassIndexStatic() );		
+	targets.push_back( vgd::node::TransformDragger::getClassIndexStatic() );
 	
 	return ( targets );
 }
@@ -42,7 +43,10 @@ const Handler::TargetVector Kits::getTargets() const
 
 void Kits::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 {
-	// nothing to do
+	assert( dynamic_cast< vgd::node::Kit* >(pNode) != 0 );
+	vgd::node::Kit *pKit = static_cast< vgd::node::Kit* >(pNode);
+
+	vge::handler::Kit::apply( pEngine, pKit );
 }
 
 

@@ -21,8 +21,25 @@ namespace handler
 
 
 
-void Kit::apply( vge::engine::Engine *pEngine, vgd::node::Kit *pNode )
+void Kit::apply( vge::engine::Engine *, vgd::node::Kit *pKit )
 {
+	// the 'BoundingBox' dirty flag of kit must be invalidated in some cases (dependency to its internal scene graph).
+
+	vgd::Shp< vgd::node::Group > pRoot( pKit->getRoot() );
+	if ( pRoot.get() == 0 )
+	{
+		// no sub-scene graph in this Kit.
+		
+		return;
+	}
+	
+	bool bValid = pRoot->isBoundingBoxValid();
+	
+	if ( !bValid )
+	{
+		pKit->invalidateBoundingBox();
+	}
+
 	// nothing to do
 	
 	// old version:
@@ -41,7 +58,7 @@ void Kit::apply( vge::engine::Engine *pEngine, vgd::node::Kit *pNode )
 
 
 
-void Kit::unapply( vge::engine::Engine *pEngine, vgd::node::Kit *pNode )
+void Kit::unapply( vge::engine::Engine *, vgd::node::Kit *pNode )
 {
 	vgm::MatrixR dummy;
 	pNode->computeBoundingBox( dummy );	
