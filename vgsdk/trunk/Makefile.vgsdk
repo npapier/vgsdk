@@ -1,18 +1,18 @@
 VERSION=0.3
 
 full-install release-install all clean release debug world dist-clean info :
-	@cd ../vgBase;		make $@;	echo;echo
-	@cd ../vgDebug;	make $@;	echo;echo
-	@cd ../vgm;			make $@;	echo;echo
-	@cd ../vgd;			make $@;	echo;echo
-	@cd ../vgAlg;		make $@;	echo;echo
-	@cd ../vgTrian;	make $@;	echo;echo
-	@cd ../vge;			make $@;	echo;echo
-	@cd ../gle;			make $@;	echo;echo
-	@cd ../glo;			make $@;	echo;echo
-	@cd ../vgeGL;		make $@;	echo;echo
-	@cd ../vgWX;		make $@;	echo;echo
-	@cd ../vgsdk;		make $@;	echo;echo
+	cd ../vgBase;		make $@;	echo;echo
+	cd ../vgDebug;	make $@;	echo;echo
+	cd ../vgm;			make $@;	echo;echo
+	cd ../vgd;			make $@;	echo;echo
+	cd ../vgAlg;		make $@;	echo;echo
+	cd ../vgTrian;	make $@;	echo;echo
+	cd ../vge;			make $@;	echo;echo
+	cd ../gle;			make $@;	echo;echo
+	cd ../glo;			make $@;	echo;echo
+	cd ../vgeGL;		make $@;	echo;echo
+	cd ../vgWX;		make $@;	echo;echo
+	cd ../vgsdk;		make $@;	echo;echo
 
 checkout:
 	svn co http://dev-srv:8080/svn/SrcLib/vgBase/trunk ../vgBase
@@ -29,18 +29,19 @@ checkout:
 	#svn co http://dev-srv:8080/svn/SrcLib/vgsdk/trunk vgsdk => already done (this makefile comes from vgsdk project).
 
 update diff:
-	@cd ../vgBase;		svn $@;	echo;echo;
-	@cd ../vgDebug;	svn $@;	echo;echo;
-	@cd ../vgm;			svn $@;	echo;echo;
-	@cd ../vgd;			svn $@;	echo;echo;
-	@cd ../vgAlg;		svn $@;	echo;echo;
-	@cd ../vgTrian;	svn $@;	echo;echo;
-	@cd ../vge;			svn $@;	echo;echo;
-	@cd ../gle;			svn $@;	echo;echo;
-	@cd ../glo;			svn $@;	echo;echo;
-	@cd ../vgeGL;		svn $@;	echo;echo;
-	@cd ../vgWX;		svn $@;	echo;echo;
-	@cd ../vgsdk;		svn $@;	echo;echo;
+	cd ../vgBase;		svn $@;	echo;echo;
+	cd ../vgDebug;	svn $@;	echo;echo;
+	cd ../vgm;			svn $@;	echo;echo;
+	cd ../vgd;			svn $@;	echo;echo;
+	cd ../vgAlg;		svn $@;	echo;echo;
+	cd ../vgTrian;	svn $@;	echo;echo;
+	cd ../vge;			svn $@;	echo;echo;
+	cd ../gle;			svn $@;	echo;echo;
+	cd ../glo;			svn $@;	echo;echo;
+	cd ../vgeGL;		svn $@;	echo;echo;
+	cd ../vgWX;		svn $@;	echo;echo;
+	cd ../vgsdk;		svn $@;	echo;echo;
+
 tags:
 	# itself
 	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgsdk/tags/ --message "Release $(VERSION)"

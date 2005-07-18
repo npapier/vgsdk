@@ -1,13 +1,14 @@
 VERSION=0.3
 
 full-install release-install all clean release debug world dist-clean info :
-	@cd ../vgnf;		make $@;	echo;echo
+	cd ../vgnf;		make $@;	echo;echo
 
 checkout:
 	svn co http://dev-srv:8080/svn/SrcLib/vgnf/trunk ../vgnf
 
 update diff:
-	@cd ../vgnf;	svn $@;	echo;echo;
+	cd ../vgnf;	svn $@;	echo;echo;
+
 tags:
 	# itself
 	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgnf/tags/ --message "Release $(VERSION)"
