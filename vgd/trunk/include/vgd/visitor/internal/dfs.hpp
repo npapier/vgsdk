@@ -3,7 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-// This file is a modified version of depth_first_search.hpp(founded in boost).
+// This file is a modified version of depth_first_search.hpp (founded in boost 1.31).
+// Comment:	depth_first_search.hpp from boost 1.32 is almost the same.
 // ADD 1:	could stop the traverse to the first DAG(see visitForest()).
 // ADD 2:	could traverse only edges with EdgeName.enable() sets to true(see useEdgeName()).
 // ADD 3:	call depth_first_search() for forward_or_cross_edge.

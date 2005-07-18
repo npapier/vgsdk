@@ -3,15 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_FIELD_H
-#define _VGD_FIELD_H
-
-#include "vgd/vgd.hpp"
-
-
-
-namespace vgd
-{
+#ifndef _VGD_FIELD_HPP
+#define _VGD_FIELD_HPP
 
 /** 
  * @namespace vgd::field
@@ -26,8 +19,4 @@ namespace vgd
  *
  */
 
-
-
-} // namespace vgd
-
-#endif //#ifndef _VGD_FIELD_H
+#endif //#ifndef _VGD_FIELD_HPP

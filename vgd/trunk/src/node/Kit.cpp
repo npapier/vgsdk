@@ -60,7 +60,8 @@ bool Kit::computeBoundingBox( const vgm::MatrixR& transformation /* not used */)
 	if ( pRoot.get() == 0 )
 	{
 		// no sub-scene graph in this Kit.
-		// validate the bounding box (empty one).
+		
+		// validate the bounding box (empty one), could already be validate.
 		invalidateBoundingBox( false );
 		
 		return ( false );
@@ -81,17 +82,18 @@ bool Kit::computeBoundingBox( const vgm::MatrixR& transformation /* not used */)
 	}
 
 	// STEP 2: update bounding box.
-	if ( !isBoundingBoxValid() )
+	assert( pRoot->isBoundingBoxValid() && "Unexpected invalid bounding box in root sub scene graph in a kit." );
+
+	if ( m_boundingBox != pRoot->getBoundingBox() )
 	{
 		bInvalidateParents	= true;
 		bRetVal					= true;
 
 		// compute bb
 		setBoundingBox( pRoot->getBoundingBox() );
-
-		//
-		invalidateBoundingBox( false );
 	}
+	
+	invalidateBoundingBox( false );
 
 	//
 	if ( bInvalidateParents )

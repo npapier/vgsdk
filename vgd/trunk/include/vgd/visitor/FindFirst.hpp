@@ -42,7 +42,7 @@ namespace visitor
  * result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByName("lightSwitcher") );
  * if ( result.first )
  * {
- * 	// Founded.
+ * 	// Found
  * 	// use result.second
  * }
  * else

@@ -15,7 +15,7 @@
 #include "vgd/field/Integer.hpp"
 #include "vgd/field/Primitive.hpp"
 #include "vgd/field/Vector.hpp"
-
+#include "vgd/itf/ITransformation.hpp"
 #include "vgd/node/Shape.hpp"
 
 
@@ -77,7 +77,7 @@ namespace node
  * @ingroup g_shapeNodes
  * @ingroup g_texturingNodes
  */
-struct VGD_API VertexShape : public vgd::node::Shape
+struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node::Shape
 {
 	META_NODE_HPP( VertexShape );
 
@@ -141,36 +141,13 @@ struct VGD_API VertexShape : public vgd::node::Shape
 	 * @name Actions on VertexShape.
 	 */
 	//@{
-	
-	/**
-	 * @brief Transform all vertices and normals by the given matrix.
-	 * 
-	 * The transformed vertices are computed by multiplying each vertex(row vector) by the matrix.
-	 * The transformed normals are computed by multiplying each normal(row vector) by the matrix and renormalize it if
-	 * specified by method parameter \c normalize.
-	 * 
-	 * @param matrix		this matrix is used to transform vertices.
-	 * @param normalize	true to activate the normalization of transformed normals, false to disable this normalization.
-	 */
+
 	void transform( const vgm::MatrixR& matrix, const bool normalize = true );
 
-	/**
-	 * @brief Transform all vertices by the given translation vector.
-	 * 
-	 * @param translation	this vector is used to translate vertices.
-	 */
 	void transform( const vgm::Vec3f translation );
 
-	/**
-	 * @brief Transform all vertices by the given rotation.
-	 * 
-	 * @param rotation		this rotation is used to transform vertices.
-	 */
 	void transform( const vgm::Rotation rotation );
 	//@}
-
-
-
 
 
 

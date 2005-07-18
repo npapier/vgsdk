@@ -43,6 +43,9 @@ struct VGD_API Kit : public Node, public IBoundingBox
 	 */
 	//@{
 
+	/**
+	 * @remarks getRoot() scene graph must already have compute all its bounding boxes before calling this method.
+	 */
 	bool computeBoundingBox( const vgm::MatrixR& transformation /* not used */ );
 
 	bool isBoundingBoxValid() const;

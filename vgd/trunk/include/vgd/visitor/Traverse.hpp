@@ -67,7 +67,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	//@{
 	
 	template< typename Vertex , typename Graph >
-	void discover_vertex( Vertex u, const Graph& g ) const
+	void discover_vertex( Vertex /*u*/, const Graph& /*g*/ ) const
 	{
 		//vgd::Shp< vgd::node::Node > node = getNode(u);
 		//std::cout << node->getName()  << " ";
@@ -140,7 +140,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 * @brief FIXME : Optimize me(only one time ?)
 	 */
     template <class Vertex, class Graph>
-    void initialize_vertex(Vertex u, const Graph& g) 
+    void initialize_vertex(Vertex u, const Graph& /*g*/) 
     {
 		vgd::Shp< vgd::node::Group > group = dynamic_pointer_cast< vgd::node::Group >(getNode(u));
 		
@@ -160,7 +160,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 * @remarks Never overload it.
 	 */
     template <class Edge, class Graph>
-    void examine_edge(Edge e, const Graph& g)
+    void examine_edge(Edge e, const Graph& /*g*/)
     {
     	if ( useEdgeName() )
     	{
@@ -184,7 +184,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 * @remarks Never overload it.
 	 */
 	template< typename Edge, typename Graph >
-	void back_edge(Edge e, const Graph& )
+	void back_edge(Edge /*e*/, const Graph& /*g*/)
 	{
 		throw HasCycle();
 	}

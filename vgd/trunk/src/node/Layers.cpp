@@ -10,6 +10,7 @@
 #include "vgd/field/TAccessors.hpp"
 #include "vgd/node/Quad.hpp"
 #include "vgd/node/Switch.hpp"
+#include "vgd/node/Texture1D.hpp"
 #include "vgd/node/Texture2D.hpp"
 
 
@@ -44,7 +45,7 @@ void Layers::setToDefaults( void )
 	
 	// Proxy geometry : QUAD
 	vgd::Shp< vgd::node::Quad > quad( vgd::node::Quad::create("layers.subgraph.quad") );
-
+  
 	quad->initializeGeometry( 1.f, 1.f );
 	quad->initializeTexUnits( 1 );
 	
@@ -71,14 +72,16 @@ void Layers::createLayers( const int32 num )
 
 	// Finish the creation of the sub scene graph.
 	
-	// texture2D
+	// texture
 	vgd::Shp< vgd::node::Texture2D > pTex;
+	vgd::Shp< vgd::node::Texture1D > pColorTable;
 	
 	for(	int32 i = index;
 			i < iMax;
 			++i )
 	{
-		pTex = vgd::node::Texture2D::create( "layers.subgraph.tex" );
+		// texture2D
+		pTex = vgd::node::Texture2D::create( "layers.subgraph.tex2D" );
 	
 		pTex->setWrap( vgd::node::Texture2D::WRAP_S, vgd::node::Texture2D::ONCE );
 		pTex->setWrap( vgd::node::Texture2D::WRAP_T, vgd::node::Texture2D::ONCE );
@@ -87,6 +90,18 @@ void Layers::createLayers( const int32 num )
 		pTex->setFilter( vgd::node::Texture2D::MAG_FILTER, vgd::node::Texture2D::NEAREST );
 		
 		getSwitch()->addChild( pTex );
+		
+		// texture1D
+		pColorTable = vgd::node::Texture1D::create( "layers.subgraph.tex1D" );
+		pColorTable->setMultiAttributeIndex( 1 );
+	
+		pColorTable->setWrap( vgd::node::Texture1D::WRAP_S, vgd::node::Texture1D::ONCE );
+		pColorTable->setWrap( vgd::node::Texture1D::WRAP_T, vgd::node::Texture1D::ONCE );
+	
+		pColorTable->setFilter( vgd::node::Texture1D::MIN_FILTER, vgd::node::Texture1D::NEAREST );
+		pColorTable->setFilter( vgd::node::Texture1D::MAG_FILTER, vgd::node::Texture1D::NEAREST );
+		
+		getSwitch()->addChild( pColorTable );		
 	}
 }
 
@@ -109,6 +124,53 @@ void Layers::transform( const vgm::MatrixR& matrix, const bool normalize )
 void Layers::transform( const vgm::Vec3f translation )
 {
 	getQuad()->transform( translation );
+}
+
+
+
+// IBoundingBox interface
+bool Layers::computeBoundingBox( const vgm::MatrixR& transformation )
+{
+	// STEP 1: compute quad bounding box.
+	bool	bRetVal;
+	bool	bInvalidateParents;
+	
+	vgd::Shp< vgd::node::Quad > pQuad( getQuad() );
+	pQuad->computeBoundingBox( transformation );
+	
+	// STEP 2: update transformation
+	if ( m_transformation != pQuad->getTransformation() )
+	{
+		bInvalidateParents	= true;
+		bRetVal					= true;
+
+		setTransformation( pQuad->getTransformation() );
+	}
+	else
+	{
+		bInvalidateParents	= false;
+		bRetVal					= false;
+	}
+
+	// STEP 3: update bounding box.
+	if ( m_boundingBox != pQuad->getBoundingBox() )
+	{
+		bInvalidateParents	= true;
+		bRetVal					= true;
+
+		// compute bb
+		setBoundingBox( pQuad->getBoundingBox() );
+	}
+	
+	invalidateBoundingBox( false );
+
+	//
+	if ( bInvalidateParents )
+	{
+		invalidateParentsBoundingBoxDirtyFlag();
+	}
+	
+	return ( bRetVal );
 }
 
 

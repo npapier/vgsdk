@@ -18,7 +18,7 @@ namespace vgd
 /**
  * @brief A derived version of shared_ptr class template.
  * 
- * @remarks Writen to work with boost version 1.30.2 and 1.31.0
+ * @remarks Writen to work with boost version 1.30.2, 1.31.0 and 1.32.0
  * 
  * @sa http://www.boost.org/libs/smart_ptr/shared_ptr.htm
  * 

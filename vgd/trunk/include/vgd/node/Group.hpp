@@ -72,7 +72,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	/**
 	 * @brief Returns pointer to child node with the given index.
 	 *
-	 * A more user friendly method for getting a child than getChild().
+	 * A more user friendly method for getting a child than getAbstractChild().
 	 * 
 	 * @remark An assert occurs when internal dynamic_pointer_cast fails.
 	 *

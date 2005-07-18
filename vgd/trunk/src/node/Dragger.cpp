@@ -8,6 +8,7 @@
 #include <limits>
 #include "vgd/field/TAccessors.hpp"
 #include "vgd/node/Group.hpp"
+#include "vgd/node/WireBox.hpp"
 #include "vgd/node/MatrixTransform.hpp"
 
 
@@ -22,13 +23,11 @@ namespace node
 
 
 Dragger::Dragger( const std::string nodeName ) :
-	vgd::node::Kit( nodeName ),
+	vgd::node::IDragger( nodeName ),
 	m_startingPoint(std::numeric_limits<float>::max(), std::numeric_limits<float>::max() )
 {
 	// Add field
-	addField( new FListenerType(getFListener()) );
-	addField( new FSurroundType(getFSurround()) );
-	addField( new FCurrentStateType(getFCurrentState()) );
+	addField( new FFeedbackType(getFFeedback()) );	
 	addField( new FBindingsType(getFBindings()) );	
 
 	// Link(s)
@@ -39,76 +38,92 @@ Dragger::Dragger( const std::string nodeName ) :
 
 void Dragger::setToDefaults()
 {
-	Kit::setToDefaults();
+	IDragger::setToDefaults();
 	
-	// Initialize Kit.root (construct sub scene graph).
+	// Initialize dragger.root (construct sub scene graph).
 	using vgd::node::Group;
 	using vgd::node::MatrixTransform;
+	using vgd::node::SurroundScale;	
+	using vgd::node::TransformSeparator;
 
-	vgd::Shp< Group >					pGroup( Group::create("dragger.group") );
-	vgd::Shp< MatrixTransform >	pMatrixTransform( MatrixTransform::create("dragger.group.matrixTransform") );
+	// sg
+	vgd::Shp< Group >						pGroup( Group::create("dragger.group") );
+
+	vgd::Shp< MatrixTransform >		pMatrixTransform( MatrixTransform::create("dragger.group.matrixTransform") );
+
+	// feedback sg
+	vgd::Shp< TransformSeparator >pTransformSeparator( TransformSeparator::create("dragger.group.transformSeparator") );
+	
+	vgd::Shp< SurroundScale >		pSurroundScale( SurroundScale::create("dragger.group.transformSeparator.surroundScale") );
+	pSurroundScale->setComposeTransformation( false );
+
+	vgd::Shp< Switch >				pSwitch( Switch::create("dragger.group.transformSeparator.switch") );
 
 	setRoot( pGroup );
-		
 	pGroup->addChild( pMatrixTransform );
+	pGroup->addChild( pTransformSeparator );
+	pTransformSeparator->addChild( pSurroundScale );
+	pTransformSeparator->addChild( pSwitch );
+
+	// init. fields
+	setFeedback( false );
 	
 	//
-	setListener( true );
-	//setSurround()
-	setCurrentState( Dragger::DRAGGER_DEFAULT );
 	setBindingsToDefaults();
+	setTransformationToDefaults();
 }
 
 
 
 void Dragger::setOptionalsToDefaults()
 {
-	Kit::setOptionalsToDefaults();
+	IDragger::setOptionalsToDefaults();
 }
 
 
 
-// LISTENER
-const Dragger::ListenerValueType Dragger::getListener() const
+// FEEDBACK
+const Dragger::FeedbackValueType Dragger::getFeedback() const
 {
-	return ( getFieldRO<FListenerType>(getFListener())->getValue() );
+	return ( getFieldRO<FFeedbackType>(getFFeedback())->getValue() );
 }
 
 
 
-void Dragger::setListener( const ListenerValueType value )
+void Dragger::setFeedback( const FeedbackValueType value )
 {
-	getFieldRW<FListenerType>(getFListener())->setValue( value );
+	getFieldRW<FFeedbackType>(getFFeedback())->setValue( value );
 }
 
 
 
 // SURROUND
-const Dragger::SurroundValueType Dragger::getSurround() const
-{
-	return ( getFieldRO<FSurroundType>(getFSurround())->getValue() );
-}
-
-
-
 void Dragger::setSurround( const SurroundValueType value )
 {
-	getFieldRW<FSurroundType>(getFSurround())->setValue( value );
+	IDragger::setSurround( value );
+	
+	// update surround node.
+	getSurroundNode()->setSurround( value );
 }
 
 
 
 // STATE
-const Dragger::CurrentStateValueType Dragger::getCurrentState() const
-{
-	return ( getFieldRO<FCurrentStateType>(getFCurrentState())->getValue() );
-}
-
-
-
 void Dragger::setCurrentState( const CurrentStateValueType value )
 {
-	getFieldRW<FCurrentStateType>(getFCurrentState())->setValue( value );
+	IDragger::setCurrentState( value );
+
+	// update visual feedback
+	if ( getFeedback() )
+	{
+		// switch to the feedback sub-scene graph		
+		getFeedbackSwitchNode()->setWhichChild( value );
+	}
+	else
+	{
+		// disable visual feedback
+		getFeedbackSwitchNode()->setWhichChild( vgd::node::Switch::SWITCH_NONE );
+	}
 }
 
 
@@ -137,23 +152,9 @@ void Dragger::eraseBindings( const BindingsParameterType param )
 
 
 
-const std::string Dragger::getFListener()
+const std::string Dragger::getFFeedback()
 {
-	return ( "f_listener" );
-}
-
-
-
-const std::string Dragger::getFSurround()
-{
-	return ( "f_surround" );
-}
-
-
-
-const std::string Dragger::getFCurrentState()
-{
-	return ( "f_currentState" );
+	return ( "f_feedback" );
 }
 
 
@@ -188,7 +189,7 @@ bool Dragger::isStartingPoint() const
 
 const vgm::MatrixR& Dragger::getMatrix() const
 {
-	const vgm::MatrixR& matrix( getMatrixTransform()->getMatrix() );
+	const vgm::MatrixR& matrix( getMatrixTransformNode()->getMatrix() );
 	
 	return ( matrix );
 }
@@ -197,18 +198,80 @@ const vgm::MatrixR& Dragger::getMatrix() const
 
 void Dragger::setMatrix( const vgm::MatrixR& matrix )
 {
-	getMatrixTransform()->setMatrix( matrix );
+	getMatrixTransformNode()->setMatrix( matrix );
 }
 
 
 
-vgd::Shp< vgd::node::MatrixTransform > Dragger::getMatrixTransform() const
+vgd::Shp< vgd::node::MatrixTransform > Dragger::getMatrixTransformNode() const
 {
 	using vgd::node::MatrixTransform;
 	
 	vgd::Shp< MatrixTransform > pMatrixTransform = getRoot()->getChild<vgd::node::MatrixTransform>(0);
 	
 	return ( pMatrixTransform );
+}
+
+
+
+vgd::Shp< vgd::node::SurroundScale > Dragger::getSurroundNode() const
+{
+	using vgd::node::SurroundScale;
+	
+	vgd::Shp< vgd::node::TransformSeparator > pTransformSeparator = getRoot()->getChild<vgd::node::TransformSeparator>(1);
+	
+	vgd::Shp< SurroundScale > pSurroundScale = pTransformSeparator->getChild<vgd::node::SurroundScale>(0);
+
+	return ( pSurroundScale );
+}
+
+
+
+vgd::Shp< vgd::node::Switch > Dragger::getFeedbackSwitchNode() const
+{
+	using vgd::node::Switch;
+	
+	vgd::Shp< vgd::node::TransformSeparator > pTransformSeparator = getRoot()->getChild<vgd::node::TransformSeparator>(1);
+	
+	vgd::Shp< Switch > pSwitch = pTransformSeparator->getChild<vgd::node::Switch>(1);
+
+	return ( pSwitch );
+}
+
+
+
+void Dragger::setupNullFeedback( const uint32 numberOfState )
+{
+	vgd::Shp< vgd::node::Switch > pFeedbackSwitch = getFeedbackSwitchNode();
+	
+	pFeedbackSwitch->removeAllChildren();
+	
+	vgd::Shp< vgd::node::Group> pGroup = vgd::node::Group::create("");
+
+	for(	uint32	i = 0;
+			i < numberOfState;
+			++i )
+	{
+		pFeedbackSwitch->addChild( pGroup );
+	}
+}
+
+
+
+void Dragger::setupBoundingBoxFeedback( const uint32 numberOfState )
+{
+	vgd::Shp< vgd::node::Switch > pFeedbackSwitch = getFeedbackSwitchNode();
+	
+	pFeedbackSwitch->removeAllChildren();
+	
+	vgd::Shp< vgd::node::WireBox >	pWireBox	= vgd::node::WireBox::create("");
+	
+	for(	uint32	i = 0;
+			i < numberOfState;
+			++i )
+	{
+		pFeedbackSwitch->addChild( pWireBox );
+	}
 }
 
 

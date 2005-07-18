@@ -43,10 +43,8 @@ void TransformDragger::setToDefaults( void )
 	Dragger::setToDefaults();
 	setCurrentState( TRANSFORMDRAGGER_DEFAULT );
 
-	//
-	setCenter				( vgm::Vec3f(0.f, 0.f, 0.f) );
-	setRotation				( vgm::Rotation::getIdentity() );
-	setTranslation			( vgm::Vec3f(0.f, 0.f, 0.f) );
+	// Add feedback scene-graph.
+	setBoundingBoxFeedback();
 }
 
 
@@ -58,6 +56,15 @@ void TransformDragger::setOptionalsToDefaults()
 
 
 
+void TransformDragger::setTransformationToDefaults()
+{
+	setCenter				( vgm::Vec3f(0.f, 0.f, 0.f) );
+	setRotation				( vgm::Rotation::getIdentity() );
+	setTranslation			( vgm::Vec3f(0.f, 0.f, 0.f) );
+}
+
+
+	
 void TransformDragger::setBindingsToDefaults()
 {
 	// .bindings
@@ -134,6 +141,20 @@ void TransformDragger::setBindingsToDefaults2()
 	bssRotationZ.setDown( MouseButtonEvent::MOUSE_BUTTON_2 );	
 	//setBindings( ROTATION_Z, bssRotationZ );
 	setBindings( ROTATION_Z_ACTIVE, bssRotationZ );
+}
+
+
+
+void TransformDragger::setNullFeedback()
+{
+	setupNullFeedback( 9 );
+}
+
+
+
+void TransformDragger::setBoundingBoxFeedback()
+{
+	setupBoundingBoxFeedback( 9 );
 }
 
 

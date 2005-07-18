@@ -91,10 +91,26 @@ struct VGD_API Layers : public vgd::node::ILayers
 	 * @copydoc VertexShape::transform(const vgm::Vec3f);
 	 */	
 	void transform( const vgm::Vec3f translation );	
-	
+
 	//@}
 
 
+
+	/**
+	 * @name Bounding box.
+	 */
+	//@{
+
+	/**
+	 * @remarks This method is overridden, because the sub scene graph of the Layers node
+	 * is not used like others (the paint service is done partially with C++/OpenGL code and evaluation
+	 * of node, so the sub scene graph is used only like a hidden repository).
+	 */
+	bool computeBoundingBox( const vgm::MatrixR& transformation );
+
+	//@}
+	
+	
 
 protected:
 	/**

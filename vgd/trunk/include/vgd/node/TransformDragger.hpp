@@ -152,7 +152,7 @@ struct VGD_API TransformDragger : public vgd::node::Dragger
 
 
 	/**
-	 * @name High level accessors.
+	 * @name Overridden method.
 	 */
 	//@{
 	
@@ -207,6 +207,8 @@ struct VGD_API TransformDragger : public vgd::node::Dragger
 	 */
 	void	setToDefaults( void );
 	
+	void	setTransformationToDefaults();
+
 	/**
 	 * @brief Using CTRL + SHIFT + Mouse (1 button).
 	 * 
@@ -220,6 +222,16 @@ struct VGD_API TransformDragger : public vgd::node::Dragger
 	 * @todo Complete documentation.
 	 */
 	void setBindingsToDefaults2();
+	
+	/**
+	 * @brief Disable all visual feedback.
+	 */
+	void setNullFeedback();
+	
+	/**
+	 * @brief Enable visual feedback (with bounding box surrounding \c surround sub scene graph).
+	 */
+	void setBoundingBoxFeedback();
 
 protected:
 	void	setOptionalsToDefaults();

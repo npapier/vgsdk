@@ -3,17 +3,17 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_NODE_DRAGGER_H
-#define _VGD_NODE_DRAGGER_H
+#ifndef _VGD_NODE_DRAGGER_HPP
+#define _VGD_NODE_DRAGGER_HPP
 
 #include <vgm/Matrix.hpp>
 
 #include "vgd/vgd.hpp"
 #include "vgd/event/ButtonStateSet.hpp"
-#include "vgd/field/Bool.hpp"
-#include "vgd/field/Integer.hpp"
-#include "vgd/field/Node.hpp"
-#include "vgd/node/Kit.hpp"
+#include "vgd/node/IDragger.hpp"
+#include "vgd/node/SurroundScale.hpp"
+#include "vgd/node/Switch.hpp"
+#include "vgd/node/TransformSeparator.hpp"
 
 
 
@@ -26,33 +26,17 @@ namespace node
 struct MatrixTransform;
 
 /**
- * @brief Base class for all draggers.
- * 
- * @todo FIXME : UPDATE DOC ??? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * 
- * BEGIN FIXME
- * Draggers is a mechanism used to interact with elements in 3D by using devices like mouse and keyboard (see 
- * vgd::event::Source). Scaling, rotating or translating geometry or other instances in the scene 
- * (like Light sources) could be done.
+ * @brief Base class for all single draggers.
  * 
  * It holds the current motion matrix and offers lots of convenience methods to build from for it's subclasses.
  * The motion matrix is used to modify the geometrical matrix during traversal (like vgd::node::MatrixTransform), and 
  * is applied to all subsequent nodes in the traverse order like usual.
  * All draggers should update the motion matrix during dragging.
- * END FIXME
- * 
+ *
  * New field added by this node :
  * 
- * - SFBool \c listener = true\n
- * 	If listener is true, then all events received by this node are processed, otherwise events are just ignored.
- * 
- * - SFNode \c surround = vgd::Shp<vgd::node::Node>(0)\n
- * 	Sets the node that contains the moving shape(s) that must be surrounded. The node must implement a 
- * 	vgd::node::IBoundingBox interface (like a Group or a Shape).
- *
- * - SFInt32 \c currentState	= DRAGGER_DEFAULT\n
- * 	Holds the current state of the dragger. Use it to modify the behavior of the dragger. See classes derived from 
- * 	Dragger for more informations.
+ * - SFBool \c feedback = false\n
+ * 	If \c feedback is true, then the visual feedback is enabled.
  * 
  * - PAF<int32, ButtonStateSet > \c bindings = See classes derived from Dragger for more informations.\n
  * 	A dragger is a state machine (see field \c currentState). It's current state changed when buttons are pressed.
@@ -62,113 +46,50 @@ struct MatrixTransform;
  * 	
  * @ingroup g_abstractNodes
  *
+ * @todo Accessors to change the feedback geometry for a specific state.
+ * @todo Manipulator to hide Dragger usage.
+ * 
  * @todo viewVolume, Projector, viewport.
  * @todo Grab event.
- * @todo bounding box
  * @todo set/get:MinGesture
  * @todo protected: - PAF< string, int8 > states = empty\n
  * 		A state is labeled by a name and an identifier (from 0 to n in the order of the creation of the state).
  * 		This field defines the associations between a state name and its identifier.
  */
-struct VGD_API Dragger : public vgd::node::Kit
+struct VGD_API Dragger : public vgd::node::IDragger
 {
 	/**
-	 * @name Accessors to field listener.
+	 * @name Accessors to field feedback.
 	 */
 	//@{
 
 	/**
-	 * @brief Typedef for the \c listener field.
+	 * @brief Typedef for the \c feedback field.
 	 */	
-	typedef vgd::field::SFBool FListenerType;
+	typedef vgd::field::SFBool FFeedbackType;
 		
 	/**
-	 * @brief Typedef for the \c listener value.
+	 * @brief Typedef for the \c feedback value.
 	 */
-	typedef bool ListenerValueType;
+	typedef bool FeedbackValueType;
 	
 	/**
-	 * @brief Gets the listener of node.
+	 * @brief Gets the feedback of node.
 	 */
-	const ListenerValueType		getListener() const;
+	const FeedbackValueType		getFeedback() const;
 
 	/**
-	 * @brief Sets the listener of node.
+	 * @brief Sets the feedback of node.
 	 * 
 	 */
-	void								setListener( const ListenerValueType value );
-
+	void								setFeedback( const FeedbackValueType value );
 	//@}
 
 
-
-	/**
-	 * @name Accessors to field surround.
-	 */
-	//@{
-
-	/**
-	 * @brief Typedef for the \c surround field.
-	 */	
-	typedef vgd::field::SFNode FSurroundType;
-		
-	/**
-	 * @brief Typedef for the \c surround value.
-	 */
-	typedef vgd::Shp< vgd::node::Node > SurroundValueType;
-	
-	/**
-	 * @brief Gets the surround of node.
-	 */
-	const SurroundValueType		getSurround() const;
-
-	/**
-	 * @brief Sets the surround of node.
-	 * 
-	 */
-	void								setSurround( const SurroundValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field currentState.
-	 */
-	//@{
-
-	/**
-	 * @brief Typedef for the \c currentState field.
-	 */	
-	typedef vgd::field::SFInt32 FCurrentStateType;
-	
-	/**
-	 * @brief Enumeration of the different states of this dragger.
-	 */
-	enum {
-		NONE = 0,
-		DRAGGER_DEFAULT = NONE
-	};
-		
-	/**
-	 * @brief Typedef for the \c currentState value.
-	 */
-	typedef int32 CurrentStateValueType;
-	
-	/**
-	 * @brief Gets the currentState of node.
-	 */
-	const CurrentStateValueType	getCurrentState() const;
-
-	/**
-	 * @brief Sets the currentState of node.
-	 * 
-	 */
-	void									setCurrentState( const CurrentStateValueType value );
-
-	//@}
-
-
+	// field state
+	// overrides
+	void setCurrentState( const CurrentStateValueType value );
+	void setSurround( const SurroundValueType value );
 
 	/**
 	 * @name Accessors to field bindings.
@@ -204,42 +125,6 @@ struct VGD_API Dragger : public vgd::node::Kit
 	 * @brief Erase the bindings value.
 	 */
 	void 			eraseBindings( const BindingsParameterType param );
-	//@}
-
-
-
-	/**
-	 * @name Fields names enumeration.
-	 */
-	//@{
-
-	/**
-	 * @brief Returns the name of field \c listener.
-	 * 
-	 * @return the name of field \c listener.
-	 */
-	static const std::string getFListener();
-	
-	/**
-	 * @brief Returns the name of field \c surround.
-	 * 
-	 * @return the name of field \c surround.
-	 */
-	static const std::string getFSurround();
-	
-	/**
-	 * @brief Returns the name of field \c state.
-	 * 
-	 * @return the name of field \c state.
-	 */
-	static const std::string getFCurrentState();
-	
-	/**
-	 * @brief Returns the name of field \c bindings.
-	 * 
-	 * @return the name of field \c bindings.
-	 */
-	static const std::string getFBindings();	
 	//@}
 
 
@@ -288,15 +173,38 @@ struct VGD_API Dragger : public vgd::node::Kit
 	 * 
 	 * @remarks Use by derived class to update the node returned by getMatrixTransform().
 	 */
-	void setMatrix( const vgm::MatrixR& matrix );	
+	void setMatrix( const vgm::MatrixR& matrix );
 
 	//@}
 
 
+
+	/**
+	 * @name Pure virtual methods.
+	 */
+	//@{
+	
+	/**
+	 * @brief Compute the geometric 3D transformation of this node from the fields.
+	 * 
+	 * @return the transformation matrix.
+	 */
+	virtual vgm::MatrixR			computeMatrixFromFields() const=0;
+
+	//@}
+		
+		
+	
 	/**
 	 * @name Initialization methods.
 	 */
 	//@{
+
+	/**
+	 * @brief Set or reset the 3D geometric transformation of the dragger to its default state
+	 * (by setting all fields used to compute this transformation).
+	 */
+	virtual void setTransformationToDefaults()=0;
 	
 	/**
 	 * @brief Set or reset \c bindings field to its default state.
@@ -305,6 +213,29 @@ struct VGD_API Dragger : public vgd::node::Kit
 
 	//@}
 
+
+
+	/**
+	 * @name Fields names enumeration.
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the name of field \c feedback.
+	 * 
+	 * @return the name of field \c feedback.
+	 */
+	static const std::string getFFeedback();	
+	
+	/**
+	 * @brief Returns the name of field \c bindings.
+	 * 
+	 * @return the name of field \c bindings.
+	 */
+	static const std::string getFBindings();	
+	//@}
+	
+	
 
 protected:
 	/**
@@ -335,11 +266,33 @@ protected:
 	 * 
 	 * @return a MatrixTransform node.
 	 */
-	vgd::Shp< vgd::node::MatrixTransform > getMatrixTransform() const;
+	vgd::Shp< vgd::node::MatrixTransform > getMatrixTransformNode() const;
+
+	/**
+	 * @brief Gets the surround node.
+	 * 
+	 * @return a surround node.
+	 */
+	vgd::Shp< vgd::node::SurroundScale > getSurroundNode() const;
 	
+	/**
+	 * @brief Gets the switch node that contains all feedback sub-scene graph.
+	 * 
+	 * @return a switch node.
+	 */
+	vgd::Shp< vgd::node::Switch > getFeedbackSwitchNode() const;
 	//@}
 
+protected:
+	/**
+	 * @name Feedback helpers.
+	 */
+	//@{
+	
+	void setupNullFeedback( const uint32 numberOfState );
 
+	void setupBoundingBoxFeedback( const uint32 numberOfState );
+	//@}
 
 private:
 
@@ -358,4 +311,4 @@ private:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_DRAGGER_H
+#endif //#ifndef _VGD_NODE_DRAGGER_HPP
