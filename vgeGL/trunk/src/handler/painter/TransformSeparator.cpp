@@ -61,6 +61,9 @@ void TransformSeparator::apply ( vge::engine::Engine* pEngine, vgd::node::Node *
 
 	// Push.
 	vge::handler::TransformSeparator::apply( pEngine, pCastedNode );
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 }
 
 

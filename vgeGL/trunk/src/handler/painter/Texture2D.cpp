@@ -347,6 +347,9 @@ void Texture2D::bind(vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *pNo
 	glMatrixMode( GL_TEXTURE );
 	glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
 	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
+	
 	
 	
 	

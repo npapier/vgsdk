@@ -296,7 +296,7 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 		pGLEngine->getTextureMatrix().push(1);		
 		pGLEngine->getTextureMatrix().push(2);
 
-		// udpate TEXTURE1D
+		// udpate TEXTURE2D
 		if ( pTex2D.get() != 0 )
 		{
 			// update TEXTURE2D
@@ -424,6 +424,9 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 	} // end for each layer
 	
 	glo::GLSLShader::useFixedPaths();
+	
+	// Validate node
+	pLayers->getDirtyFlag(pLayers->getDFNode())->validate();
 }
 
 

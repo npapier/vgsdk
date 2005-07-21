@@ -48,6 +48,8 @@
 //	applyUsingSyncAndBind< vgd::node::Program, vgeGL::handler::painter::Program, vgeGL::rc::GLSLShader >( 
 //			pGLEngine, pCastedNode, this 
 //			);
+	// Validate node
+	//	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 //}
 //
 //

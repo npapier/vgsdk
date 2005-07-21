@@ -83,7 +83,7 @@ void Transform::setToDefaults()
 
 
 
-void Transform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Transform * )
+void Transform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Transform *pNode )
 {
 	// GEOMETRICAL MATRIX
 	// Get the transformation.
@@ -95,6 +95,9 @@ void Transform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Transform * 
 
 	// Update OpenGL.
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();		
 	
 // OpenGL version
 //	glMatrixMode( GL_MODELVIEW );

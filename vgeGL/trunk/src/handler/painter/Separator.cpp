@@ -67,6 +67,9 @@ void Separator::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	//
 	// vge::handler::TransformSeparator::apply( pEngine, pCastedNode );  FIXME REMOVEME
 	vge::handler::Separator::apply( pEngine, pCastedNode );
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 }
 
 

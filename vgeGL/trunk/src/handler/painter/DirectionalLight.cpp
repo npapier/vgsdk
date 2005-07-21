@@ -77,13 +77,16 @@ void DirectionalLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::Direc
 	{
 		// use direction field
 		vgm::Vec4f positionGL(
-				-direction[0], -direction[1], -direction[2], // direction of light
-				0.f 														// directional light
+				-direction[0], -direction[1], -direction[2],	// direction of light
+				0.f 											// directional light
 				);
 
 		// direction of light is set by GL_POSITION for directional light
 		glLightfv( lightGL, GL_POSITION, positionGL.getValue() );
 	}
+	
+	// Validate node
+	pDirectionalLight->getDirtyFlag(pDirectionalLight->getDFNode())->validate();	
 }
 
 

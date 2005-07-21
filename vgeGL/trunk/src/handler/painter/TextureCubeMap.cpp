@@ -307,6 +307,9 @@ void TextureCubeMap::use(	vgeGL::engine::Engine *pGLEngine, vgd::node::TextureCu
 
 	Texture::paint( pGLEngine, pNode, pResource );
 	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
+	
 	// else nothing
 	
 	

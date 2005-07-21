@@ -81,7 +81,7 @@ void MatrixTransform::setToDefaults()
 
 
 
-void MatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node::MatrixTransform * )
+void MatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node::MatrixTransform *pNode )
 {
 	// GEOMETRICAL MATRIX
 	// Get the transformation.
@@ -93,6 +93,9 @@ void MatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node::Matri
 
 	// Update OpenGL.
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 }
 
 

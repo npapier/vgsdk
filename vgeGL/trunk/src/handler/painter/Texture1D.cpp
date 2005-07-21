@@ -317,6 +317,9 @@ void Texture1D::bind(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture1D *pN
 	// apply scale to vgeGL.
 	glMatrixMode( GL_TEXTURE );
 	glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 }
 
 

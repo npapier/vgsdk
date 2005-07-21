@@ -81,6 +81,9 @@ void PointLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::PointLight 
 
 		glLightfv( lightGL, GL_POSITION, positionGL.getValue() );
 	}
+	
+	// Validate node
+	pPointLight->getDirtyFlag(pPointLight->getDFNode())->validate();	
 }
 
 

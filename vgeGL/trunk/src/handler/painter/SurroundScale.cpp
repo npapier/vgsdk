@@ -83,7 +83,7 @@ void SurroundScale::setToDefaults()
 
 
 
-void SurroundScale::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SurroundScale * )
+void SurroundScale::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SurroundScale *pNode )
 {
 	// GEOMETRICAL MATRIX
 	// Get the transformation.
@@ -95,6 +95,9 @@ void SurroundScale::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Surround
 
 	// Update OpenGL.
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 }
 
 

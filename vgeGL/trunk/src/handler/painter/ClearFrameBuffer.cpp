@@ -116,6 +116,9 @@ void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuf
 	}
 	
 	glClear( clearMaskGL );
+	
+	// Validate node
+	pFrameBuffer->getDirtyFlag(pFrameBuffer->getDFNode())->validate();
 }
 
 

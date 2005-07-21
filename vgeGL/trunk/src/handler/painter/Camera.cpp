@@ -130,6 +130,9 @@ void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
 	{
 		glDisable( GL_SCISSOR_TEST );
 	}
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
 

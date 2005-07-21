@@ -131,6 +131,9 @@ void Material::paint( vgeGL::engine::Engine *, vgd::node::Material *pMaterial )
 		color4.setValue( color3[0], color3[1], color3[2], transparency );
 		glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, color4.getValue() );
 	}
+	
+	// Validate node
+	pMaterial->getDirtyFlag(pMaterial->getDFNode())->validate();
 }
 
 

@@ -124,6 +124,9 @@ void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 	{
 		glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, twosidedValue ? GL_TRUE : GL_FALSE );
 	}
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
 

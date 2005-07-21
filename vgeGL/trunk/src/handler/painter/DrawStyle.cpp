@@ -39,8 +39,10 @@ const vge::handler::Handler::TargetVector DrawStyle::getTargets() const
 
 
 
-void DrawStyle::apply ( vge::engine::Engine* , vgd::node::Node * )
+void DrawStyle::apply ( vge::engine::Engine* , vgd::node::Node *pNode )
 {
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 }
 
 

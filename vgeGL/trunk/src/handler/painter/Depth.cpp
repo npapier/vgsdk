@@ -83,6 +83,9 @@ void Depth::paint( vgeGL::engine::Engine *, vgd::node::Depth *pNode )
 	{
 		glDepthMask( mask == vgd::node::Depth::RW );
 	}
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 }
 
 

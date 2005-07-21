@@ -450,6 +450,9 @@ void VertexShape::apply ( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 //	{
 //		glEnable( GL_LIGHTING );
 //	}	
+
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
 

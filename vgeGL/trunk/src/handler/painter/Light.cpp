@@ -45,6 +45,9 @@ void Light::paint( vgeGL::engine::Engine *, vgd::node::Light *pLight )
 			glDisable( GL_LIGHT0 + pLight->getMultiAttributeIndex() );
 		}
 	}
+	
+	// Validate node
+	pLight->getDirtyFlag(pLight->getDFNode())->validate();
 }
 
 

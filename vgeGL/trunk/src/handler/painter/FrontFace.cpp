@@ -80,6 +80,9 @@ void FrontFace::paint( vgeGL::engine::Engine *, vgd::node::FrontFace *pNode )
 	{
 		glFrontFace( (value == vgd::node::FrontFace::CCW) ? GL_CCW : GL_CW );
 	}
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();		
 }
 
 

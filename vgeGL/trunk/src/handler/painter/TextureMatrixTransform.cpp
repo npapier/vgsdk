@@ -85,6 +85,9 @@ void TextureMatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node
 
 	// Update OpenGL.
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
+	
+	// Validate node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
 }
 
 
