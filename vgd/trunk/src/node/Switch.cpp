@@ -29,6 +29,8 @@ Switch::Switch( const std::string nodeName ) :
 
 	// Links
 	link( getFWhichChild(), getDFChildrenSelection() );
+	link( getFWhichChild(), getDFBoundingBox() );
+	link( getDFNode() );
 }
 
 
@@ -60,13 +62,17 @@ void Switch::setWhichChild( const int8 whichChild )
 {
 	getFieldRW<vgd::field::SFInt8>(getFWhichChild())->setValue( whichChild );
 	
-	//updateGraph(); FIXME could not be done here because graph() could be not created.
+	updateGraph();
 }
 
 
 
 void Switch::updateGraph( void )
 {
+#ifdef _DEBUG
+	std::string name = getName();
+#endif
+
 	bool bChildren				= getDirtyFlag(getDFChildren())->isDirty();
 	bool bChildrenSelection		= getDirtyFlag(getDFChildrenSelection())->isDirty();
 
@@ -95,6 +101,7 @@ void Switch::updateGraph( void )
 		}
 		getDirtyFlag(getDFChildren())->validate();
 		getDirtyFlag(getDFChildrenSelection())->validate();
+		getDirtyFlag(getDFNode())->validate();
 	}
 	// else nothing
 }

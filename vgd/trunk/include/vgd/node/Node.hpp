@@ -101,10 +101,10 @@ struct Factory
 	vgd::Shp< nodeType > create( const std::string nodeName )
 	{
 		vgd::Shp< nodeType > node( new nodeType(nodeName) );
-		node->setToDefaults();
-
 		node->graph().addNode( node );
 		
+		node->setToDefaults();
+
 		return ( node );
 	}
 };

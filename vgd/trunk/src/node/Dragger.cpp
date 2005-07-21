@@ -113,16 +113,22 @@ void Dragger::setCurrentState( const CurrentStateValueType value )
 {
 	IDragger::setCurrentState( value );
 
-	// update visual feedback
+	// update visual feedback if needed
 	if ( getFeedback() )
 	{
-		// switch to the feedback sub-scene graph		
-		getFeedbackSwitchNode()->setWhichChild( value );
+		// switch to the feedback sub-scene graph if needed
+		if ( getFeedbackSwitchNode()->getWhichChild() != value )
+		{
+			getFeedbackSwitchNode()->setWhichChild( value );
+		}
 	}
 	else
 	{
 		// disable visual feedback
-		getFeedbackSwitchNode()->setWhichChild( vgd::node::Switch::SWITCH_NONE );
+		if ( getFeedbackSwitchNode()->getWhichChild() != vgd::node::Switch::SWITCH_NONE )
+		{
+			getFeedbackSwitchNode()->setWhichChild( vgd::node::Switch::SWITCH_NONE );
+		}
 	}
 }
 

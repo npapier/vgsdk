@@ -63,6 +63,7 @@ void Group::addChild( vgd::Shp<vgd::node::Node> node )
 
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
+	getDirtyFlag(getDFNode())->dirty();
 }
 
 
@@ -76,7 +77,8 @@ void Group::insertChild	( vgd::Shp<Node> node, const int32 newChildIndex )
 	graph().addEdge( this, node.get(), newChildIndex );
 	
 	getDirtyFlag(getDFChildren())->dirty();
-	getDirtyFlag(getDFBoundingBox())->dirty();	
+	getDirtyFlag(getDFBoundingBox())->dirty();
+	getDirtyFlag(getDFNode())->dirty();
 }
 
 
@@ -92,7 +94,8 @@ void Group::replaceChild( vgd::Shp<Node> newChild, const int32 index )
 	graph().addEdge( this, newChild.get(), index );
 	
 	getDirtyFlag(getDFChildren())->dirty();
-	getDirtyFlag(getDFBoundingBox())->dirty();	
+	getDirtyFlag(getDFBoundingBox())->dirty();
+	getDirtyFlag(getDFNode())->dirty();
 }
 
 
@@ -120,7 +123,8 @@ void Group::removeChild( const int32 childIndex )
 		);
 		
 	getDirtyFlag(getDFChildren())->dirty();
-	getDirtyFlag(getDFBoundingBox())->dirty();	
+	getDirtyFlag(getDFBoundingBox())->dirty();
+	getDirtyFlag(getDFNode())->dirty();
 }
 
 
@@ -151,7 +155,8 @@ void Group::removeAllChildren( void )
 	graph().removeEdges( this );
 	
 	getDirtyFlag(getDFChildren())->dirty();
-	getDirtyFlag(getDFBoundingBox())->dirty();	
+	getDirtyFlag(getDFBoundingBox())->dirty();
+	getDirtyFlag(getDFNode())->dirty();
 }
 
 
@@ -203,6 +208,8 @@ void Group::getEnabledChildren( NodeList& children, const bool bGetEnabled ) con
 void Group::updateGraph( void )
 {
 	getDirtyFlag(getDFChildren())->validate();
+	getDirtyFlag(getDFChildrenSelection())->validate();
+	getDirtyFlag(getDFNode())->validate();
 }
 
 

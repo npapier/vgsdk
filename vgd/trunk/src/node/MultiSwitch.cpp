@@ -31,6 +31,8 @@ MultiSwitch::MultiSwitch( const std::string nodeName ) :
 	// Links
 	link( getFWhichChild(), getDFChildrenSelection() );
 	link( getFChosenChild(), getDFChildrenSelection() );
+	
+	link( getDFNode() );	
 }
 
 
@@ -162,6 +164,7 @@ void MultiSwitch::updateGraph( void )
 		}
 		getDirtyFlag(getDFChildren())->validate();
 		getDirtyFlag(getDFChildrenSelection())->validate();
+		getDirtyFlag(getDFNode())->validate();		
 	}
 	// else nothing
 }
