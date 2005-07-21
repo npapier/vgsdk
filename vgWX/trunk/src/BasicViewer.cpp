@@ -28,10 +28,10 @@ BasicViewer::BasicViewer(
 
 	Canvas( parent, name, pos, size, style, gl_attrib, id ),
 
-	m_setup(					vgd::node::Group::create("SETUP") ),
+	m_setup(				vgd::node::Group::create("SETUP") ),
 	m_camera(				vgd::node::Camera::create("CAMERA") ),
 	m_viewTransform(		vgd::node::MatrixTransform::create("VIEW_TRANSFORM") ),
-	m_scene(					vgd::node::Group::create("SCENE") ),
+	m_scene(				vgd::node::Group::create("SCENE") ),
 	
 	m_cameraType( CAMERA_DEFAULT )
 {
@@ -60,10 +60,10 @@ BasicViewer::BasicViewer(
 
 	Canvas( parent, pSharedCanvas, name, pos, size, style, gl_attrib, id ),
 
-	m_setup(					vgd::node::Group::create("SETUP") ),
+	m_setup(				vgd::node::Group::create("SETUP") ),
 	m_camera(				vgd::node::Camera::create("CAMERA") ),
 	m_viewTransform(		vgd::node::MatrixTransform::create("VIEW_TRANSFORM") ),
-	m_scene(					vgd::node::Group::create("SCENE") ),
+	m_scene(				vgd::node::Group::create("SCENE") ),
 	
 	m_cameraType( CAMERA_DEFAULT )
 {
@@ -97,6 +97,11 @@ const BasicViewer::CameraType BasicViewer::getCameraType() const
 
 void BasicViewer::viewAll()
 {
+	if ( !enableVGSDK() )
+	{
+		return;
+	}
+
 	// Compute bounding box and some informations
 	vgm::Box3f	box;
 	vgm::Vec3f	center;

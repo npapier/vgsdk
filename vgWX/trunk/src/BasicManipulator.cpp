@@ -129,17 +129,16 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 
 	BasicViewer::onEvent( event );
 	
-	//Refresh(); ????????????????????????
-	
 	// must schedule a refresh of the window ?
 	std::pair< bool, vgd::Shp< vgd::node::Node > > retVal;
 
 	retVal = vgd::visitor::findFirst(	getRoot(),
-													vgd::visitor::predicate::ByDirtyFlag() );
+										vgd::visitor::predicate::ByDirtyFlag() );
 
 	if ( retVal.first )
 	{
 		vgDebug::get().logDebug("%s\n", retVal.second->getName().c_str() );
+
 		Refresh();
 	}
 }
