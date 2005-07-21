@@ -295,6 +295,13 @@ void Dragger::preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pD
 	m_pGLEngine = pGLEngine;
 	m_pDragger	= pDragger;
 
+	// Check dragger.listener field
+	if ( !m_pDragger->getListener() )
+	{
+		// nothing to do
+		return;
+	}
+
 	// Gets event stored in Engine.
 	m_pEvent = getEvent( pGLEngine );
 	assert( m_pEvent.get() != 0 );
@@ -319,8 +326,12 @@ void Dragger::preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pD
 		
 		if ( elt.second == bss )
 		{
-			pDragger->setCurrentState( elt.first );
-			break;
+			// Update current state if and only if its value has changed.
+			if ( pDragger->getCurrentState() != elt.first )
+			{
+				pDragger->setCurrentState( elt.first );
+				break;
+			}
 		}
 	}
 }
@@ -347,7 +358,7 @@ void Dragger::postApply()
 	{
 		vgm::MatrixR matrix = m_pDragger->computeMatrixFromFields();
 		m_pDragger->setMatrix( matrix );
-		pDF->validate();
+		//pDF->validate(); validation is done only during paint().
 	}
 	//else nothing to do
 }
