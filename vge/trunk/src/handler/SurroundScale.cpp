@@ -70,11 +70,18 @@ void SurroundScale::apply( vge::engine::Engine *pEngine, vgd::node::SurroundScal
 	   
 		// Step 3 : Compute the transformation.
 		const vgm::Box3f& box	= pSurroundedGroup->getBoundingBox();
-		vgm::Vec3f boxSize		= box.getSize();
-		vgm::Vec3f boxCenter		= box.getCenter();
-
-		matrix.setTranslate( boxCenter );
-		matrix.scale( boxSize );
+		if ( !box.isEmpty() )
+		{
+			vgm::Vec3f boxSize		= box.getSize();
+			vgm::Vec3f boxCenter	= box.getCenter();
+	
+			matrix.setTranslate( boxCenter );
+			matrix.scale( boxSize );
+		}
+		else
+		{
+			matrix.setIdentity();			
+		}
 	}
 	else if ( pSurrounded.get() != 0 )
 	{
