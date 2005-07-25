@@ -33,21 +33,17 @@ namespace engine
  * 
  * @todo Rework on attach() and setToDefaults().
  * 
- * @todo Initialization of multiAttribute is not very smart...
+ * @todo Initialization of multiAttribute nodes is not very smart...
  */
 struct VGEGL_API Engine : public vge::engine::Engine
 {
 	/**
-	 * @name Constructor/Destructor.
+	 * @name Constructor like.
 	 */
 	//@{
-
-	/**
-	 * @brief Constructor.
-	 * 
-	 */
-	Engine();
-
+	
+	// Overridden
+	void reset();
 	//@}
 
 
@@ -72,8 +68,27 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	/**
 	 * @brief Gets the OpenGL objects manager.
 	 */
-	vge::rc::Manager&		getGLManager();
+	vge::rc::Manager&	getGLManager();
 	//@}
+	
+	
+	
+	/**
+	 * @name OpenGL context management methods
+	 * 
+	 * @todo setGLContextCurrent();
+	 */
+	//@{
+
+	/**
+	 * @brief Tests if there is a current OpenGL context.
+	 * 
+	 * @return true if there is a current OpenGL context, false if not.
+	 */
+	virtual const bool	isGLContextCurrent() const { return ( false ); }
+
+	//@}
+
 
 
 	// overridden method
@@ -108,10 +123,12 @@ protected:
 	 * The number of duplication for a kind of multi attribute is generally given by getMaxLights(), getMaxTexUnits()...
 	 * in the OpenGL implementations specifics capabilities section.
 	 * 
+	 * @return true if registry has been populate, false if not.
+	 * 
 	 * @todo A better method (generic and that work even for new kind of node) to know the max number of multi attribute
 	 * nodes of each type.
 	 */
-	void populateNodeRegistry();
+	bool populateNodeRegistry();
 
 
 
@@ -124,7 +141,7 @@ private:
 	/**
 	 * @brief Used to know if this instance is the first one or not (for doiing some initializations).
 	 */
-	static bool						m_firstInstance;	
+	static bool					m_firstInstance;	
 };
 
 

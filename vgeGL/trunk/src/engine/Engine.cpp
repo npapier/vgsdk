@@ -23,18 +23,18 @@ namespace engine
 
 
 
-Engine::Engine()
+void Engine::reset()
 {
 	if ( m_firstInstance )
 	{
 		// This is the first instance of this class.
 
-		// Do some initialization.
-		populateNodeRegistry();
-		
-		// Don't do the same for any others instances.
-		m_firstInstance = false;
+		// Do some initialization
+		// and don't do the same for any others instances if populateNodeRegistry returns true
+		m_firstInstance = !populateNodeRegistry();
 	}
+
+	::vge::engine::Engine::reset();
 }
 
 
@@ -80,6 +80,11 @@ void Engine::resetMatrices()
 	vge::engine::Engine::resetMatrices();
 	
 	// STEP 2 : update OpenGL
+	if ( !isGLContextCurrent() )
+	{
+		// FIXME not very smart.
+		return;
+	}
 	
 	// MODELVIEW
 	assert( getGeometricalMatrix().size() == 1 );
@@ -160,26 +165,35 @@ void Engine::getViewport( vgm::Rectangle2i& viewport ) const
 
 
 
-void Engine::populateNodeRegistry()
+bool Engine::populateNodeRegistry()
 {
-	// DirectionalLight
-	for(	int8	i		= 1,
-					iMax	= static_cast< int8 >(getMaxLights());
-			i < iMax;
-			++i )
+	if ( isGLContextCurrent() )
 	{
-		vgd::basic::RegisterNode< vgd::node::DirectionalLight >	registerNode( i );
+		// DirectionalLight
+		for(	int8	i		= 1,
+						iMax	= static_cast< int8 >(getMaxLights());
+				i < iMax;
+				++i )
+		{
+			vgd::basic::RegisterNode< vgd::node::DirectionalLight >	registerNode( i );
+		}
+	
+		// TextureMatrixTransform, Texture2D, TextureCubeMap
+		for(	int8	i		= 1,
+						iMax	= static_cast< int8 >(getMaxTexUnits());
+				i < iMax;
+				++i )
+		{
+			vgd::basic::RegisterNode< vgd::node::Texture2D >				registerNode1( i );
+			vgd::basic::RegisterNode< vgd::node::TextureMatrixTransform >	registerNode2( i );
+			vgd::basic::RegisterNode< vgd::node::TextureCubeMap>			registerNode3( i );		
+		}
+		
+		return ( true );
 	}
-
-	// TextureMatrixTransform, Texture2D, TextureCubeMap
-	for(	int8	i		= 1,
-					iMax	= static_cast< int8 >(getMaxTexUnits());
-			i < iMax;
-			++i )
+	else
 	{
-		vgd::basic::RegisterNode< vgd::node::Texture2D >					registerNode1( i );
-		vgd::basic::RegisterNode< vgd::node::TextureMatrixTransform >	registerNode2( i );
-		vgd::basic::RegisterNode< vgd::node::TextureCubeMap>				registerNode3( i );		
+		return ( false );
 	}
 }
 
@@ -187,7 +201,7 @@ void Engine::populateNodeRegistry()
 
 vge::rc::Manager	Engine::m_glManager;
 
-bool					Engine::m_firstInstance				= true;
+bool				Engine::m_firstInstance				= true;
 
 
 
