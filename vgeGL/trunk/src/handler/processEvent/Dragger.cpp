@@ -316,8 +316,11 @@ void Dragger::preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pD
 	EditorRO< Dragger::FBindingsType > editorBindingsRO(
 		pDragger->template getFieldRO<Dragger::FBindingsType>(pDragger->getFBindings()) );
 
+	// sets founded to true when button states of incoming event is equal to a binding from bindings field.
+	bool founded = false;
+	
 	for (	Dragger::FBindingsType::const_iterator	iBindings		= editorBindingsRO->begin(),
-																iEndBindings	= editorBindingsRO->end();
+													iEndBindings	= editorBindingsRO->end();
 																
 			iBindings != iEndBindings;
 			++iBindings )
@@ -326,12 +329,22 @@ void Dragger::preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pD
 		
 		if ( elt.second == bss )
 		{
-			// Update current state if and only if its value has changed.
+				// Update current state if and only if its value has changed.
 			if ( pDragger->getCurrentState() != elt.first )
 			{
 				pDragger->setCurrentState( elt.first );
-				break;
 			}
+			
+			founded = true;
+			break;			
+		}
+	}
+	
+	if ( !founded )
+	{
+		if ( pDragger->getCurrentState() != Dragger::IDRAGGER_DEFAULT )
+		{
+			pDragger->setCurrentState( Dragger::IDRAGGER_DEFAULT );
 		}
 	}
 }
