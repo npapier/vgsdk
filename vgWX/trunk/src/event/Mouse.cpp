@@ -25,16 +25,16 @@ namespace event
 {
 	
 BEGIN_EVENT_TABLE(Mouse, wxEvtHandler)
-	EVT_LEFT_DCLICK	(Mouse::onLeftDoubleClick	)
+	EVT_LEFT_DCLICK		(Mouse::onLeftDoubleClick	)
 	EVT_LEFT_DOWN		(Mouse::onLeftDown			)
-	EVT_LEFT_UP			(Mouse::onLeftUp				)
-	EVT_MIDDLE_DCLICK	(Mouse::onMiddleDoubleClick)
-	EVT_MIDDLE_DOWN	(Mouse::onMiddleDown			)
+	EVT_LEFT_UP			(Mouse::onLeftUp			)
+	EVT_MIDDLE_DCLICK	(Mouse::onMiddleDoubleClick	)
+	EVT_MIDDLE_DOWN		(Mouse::onMiddleDown		)
 	EVT_MIDDLE_UP		(Mouse::onMiddleUp			)
 	EVT_RIGHT_DCLICK	(Mouse::onRightDoubleClick	)
 	EVT_RIGHT_DOWN		(Mouse::onRightDown			)
-	EVT_RIGHT_UP		(Mouse::onRightUp				)
-	EVT_MOTION			(Mouse::onMotion				)
+	EVT_RIGHT_UP		(Mouse::onRightUp			)
+	EVT_MOTION			(Mouse::onMotion			)
 	EVT_MOUSEWHEEL		(Mouse::onWheel				)
 END_EVENT_TABLE()
 	

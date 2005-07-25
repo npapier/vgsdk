@@ -171,6 +171,9 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 
 
 	/**
+	 * @brief This sets the window to receive keyboard input.
+	 */
+	/**
 	 * @name wxWidgets events processing methods.
 	 */
 	//@{
@@ -204,6 +207,23 @@ private:
 	 * @brief Handles wxMenuEvent.
 	 */
 	void OnCtxMenu			( wxCommandEvent& event );
+
+
+
+	/**
+	 * @brief Handles @c EVT_ENTER_WINDOW.
+	 */
+	//void OnEnterWindow		( wxMouseEvent& event );
+
+	/**
+	 * @brief Handles @c EVT_KILL_FOCUS.
+	 */
+	//void OnKillFocus( wxFocusEvent& event );
+
+	/**
+	 * @brief Handle @c EVT_SET_FOCUS.
+	 */
+	//void OnSetFocus( wxFocusEvent& event );
 	//@}
 
 

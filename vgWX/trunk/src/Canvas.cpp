@@ -28,12 +28,15 @@ std::ofstream Canvas::m_gleLog("gle.txt");
 BEGIN_EVENT_TABLE( Canvas, wxGLCanvas )
 
 	EVT_PAINT				( Canvas::OnPaint					)
-	EVT_SIZE					( Canvas::OnSize					)
-   EVT_ERASE_BACKGROUND	( Canvas::OnEraseBackground	)
+	EVT_SIZE				( Canvas::OnSize					)
+	EVT_ERASE_BACKGROUND	( Canvas::OnEraseBackground			)
    
-   EVT_MOUSE_EVENTS		( Canvas::OnMouseEvent	)
-   EVT_MENU_RANGE			( wxID_HIGHEST + 1024, wxID_HIGHEST + 2048, Canvas::OnCtxMenu )
+	EVT_MOUSE_EVENTS		( Canvas::OnMouseEvent	)
+	EVT_MENU_RANGE			( wxID_HIGHEST + 1024, wxID_HIGHEST + 2048, Canvas::OnCtxMenu )
 
+	//EVT_ENTER_WINDOW		( Canvas::OnEnterWindow )
+	//EVT_KILL_FOCUS		( Canvas::OnKillFocus	)
+	//EVT_SET_FOCUS			( Canvas::OnSetFocus	)
 END_EVENT_TABLE()
 
 
@@ -655,6 +658,39 @@ void Canvas::OnCtxMenu( wxCommandEvent& event )
 	
 	Refresh();	
 }
+
+
+
+//void Canvas::OnEnterWindow( wxMouseEvent& event )
+//{
+//	//SetFocus();
+//		
+//	event.Skip();
+//}
+
+
+
+//void Canvas::OnKillFocus( wxFocusEvent& event )
+//{
+//	/*if ( HasCapture() )
+//	{
+//		ReleaseMouse();
+//	}*/
+//		
+//	event.Skip();
+//}
+
+
+
+//void Canvas::OnSetFocus( wxFocusEvent& event )
+//{
+////	if ( HasCapture() == false )
+////	{
+////		CaptureMouse();
+////	}
+//		
+//	event.Skip();
+//}
 
 
 
