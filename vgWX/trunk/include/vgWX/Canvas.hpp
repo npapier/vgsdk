@@ -11,8 +11,8 @@
 #include <vgeGL/engine/SceneManager.hpp>
 
 #include <wx/glcanvas.h>	// this header file include GL.h like vgeGL/engine/SceneManager.hpp and gle.hpp, but on 
-									// MacOSX it doesn't take the /usr/X11R6/include/GL/gl.h one, so typedef on OpenGL 
-									// extensions are not defined !!!
+							// MacOSX it doesn't take the /usr/X11R6/include/GL/gl.h one, so typedef on OpenGL 
+							// extensions are not defined !!!
 
 
 #include "vgWX/vgWX.hpp"
@@ -61,11 +61,11 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * @post	getCanvasCount() == 1
 	 */
 	Canvas(	wxWindow *parent, 
-				const wxString& name = _T("vgsdkCanvas"),
-				const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-				long style = 0,
-				int* gl_attrib = NULL,
-				const wxWindowID id = -1 );
+			const wxString& name = _T("vgsdkCanvas"),
+			const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+			long style = 0,
+			int* gl_attrib = NULL,
+			const wxWindowID id = -1 );
 				
 	/**
 	 * @brief Construct a Canvas with its own OpenGL context, but that share OpenGL objects with another(s) Canvas.
@@ -75,12 +75,12 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * @pre	getCanvasCount() >= 1
 	 */
 	Canvas(	wxWindow *parent,
-				Canvas *pSharedCanvas,
-				const wxString& name = _T("vgsdkCanvas"),
-				const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-				long style = 0,
-				int* gl_attrib = NULL,
-				const wxWindowID id = -1 );
+			Canvas *pSharedCanvas,
+			const wxString& name = _T("vgsdkCanvas"),
+			const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+			long style = 0,
+			int* gl_attrib = NULL,
+			const wxWindowID id = -1 );
 	
 	/**
 	 * @brief Destructor.
@@ -88,7 +88,12 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	virtual ~Canvas();
 	//@}
 
-	
+
+
+	// overridden method
+	const bool	isGLContextCurrent() const;
+
+
 
 	/**
 	 * @name Contextual menu methods.
@@ -253,15 +258,15 @@ private:
 	/**
 	 * @brief Instance count of this class.
 	 */
-	static uint32					m_canvasCount;
+	static uint32				m_canvasCount;
 
 	/**
 	 * @brief Default OpenGL attributes for VGSDK.
 	 */
-	static int						m_vgsdk_attrib[];
+	static int					m_vgsdk_attrib[];
 	
 	// FIXME ???
-	static std::ofstream			m_gleLog;
+	static std::ofstream		m_gleLog;
 
 	/**
 	 * @brief gle main object to be able to access OpenGL extensions.
@@ -273,12 +278,12 @@ private:
 	 * 
 	 * @todo FIXME : remove me : only here because Sharing OGL context is not really done (only OGL objects are shared).
 	 */
-	static bool						m_bGlobalInitializedVGSDK;
+	static bool					m_bGlobalInitializedVGSDK;
 
 	/**
 	 * @brief Boolean value set if initializeVGSDK() has already been called for this instance of Canvas.
 	 */
-	bool								m_bLocalInitializedVGSDK;
+	bool						m_bLocalInitializedVGSDK;
 
 	//@}
 
@@ -289,7 +294,7 @@ private:
 	 */
 	//@{
 	
-	bool								m_isContextualMenuEnabled;
+	bool						m_isContextualMenuEnabled;
 
 	//@}	
 };

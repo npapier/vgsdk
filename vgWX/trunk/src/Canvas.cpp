@@ -41,57 +41,65 @@ END_EVENT_TABLE()
 
 
 
-Canvas::Canvas(wxWindow *parent,
-					const wxString& name,
-					const wxPoint& pos, const wxSize& size,
-					long style,					
-					int* gl_attrib,
-					const wxWindowID id ) :
+Canvas::Canvas(	wxWindow *parent,
+				const wxString& name,
+				const wxPoint& pos, const wxSize& size,
+				long style,					
+				int* gl_attrib,
+				const wxWindowID id ) :
 					
 	wxGLCanvas( parent, id, pos, size, style, name, 
-					(gl_attrib != 0) ? gl_attrib : m_vgsdk_attrib ),
+				(gl_attrib != 0) ? gl_attrib : m_vgsdk_attrib ),
 	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 
 	//m_canvasCount
 	//m_vgsdk_attrib
 
 	//m_gleLog
-	m_gleContext					(	&m_gleLog	),
+	m_gleContext				(	&m_gleLog	),
 
-	m_bLocalInitializedVGSDK	(	false			),
+	m_bLocalInitializedVGSDK	(	false		),
 
-	m_isContextualMenuEnabled	(	false			)
+	m_isContextualMenuEnabled	(	false		)
 {
+	// Initialize the vgeGL::engine::Engine() if possible...
+	// because on linux, OpenGL context could not be made current any times...
+	getGLEngine()->reset();
+
+	//
 	assert( getCanvasCount() == 0 && "This is not the first canvas." );
-	
 	++m_canvasCount;
 }
 
 
 
 Canvas::Canvas(	wxWindow *parent,
-						Canvas *pSharedCanvas,
-						const wxString& name,
-						const wxPoint& pos, const wxSize& size,
-						long style,
-						int* gl_attrib,
-						const wxWindowID id ) :
+				Canvas *pSharedCanvas,
+				const wxString& name,
+				const wxPoint& pos, const wxSize& size,
+				long style,
+				int* gl_attrib,
+				const wxWindowID id ) :
 				
 	wxGLCanvas( parent, pSharedCanvas, id, pos, size, style, name,
-					(gl_attrib != 0) ? gl_attrib : m_vgsdk_attrib ),
+				(gl_attrib != 0) ? gl_attrib : m_vgsdk_attrib ),
 	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 
 	//m_vgsdk_attrib
 
 	//m_gleLog
-	m_gleContext					(	&m_gleLog	),
+	m_gleContext				(	&m_gleLog	),
 
-	m_bLocalInitializedVGSDK	(	false			),
+	m_bLocalInitializedVGSDK	(	false		),
 
-	m_isContextualMenuEnabled	(	false			)
+	m_isContextualMenuEnabled	(	false		)
 {
+	// Initialize the vgeGL::engine::Engine() if possible...
+	// because on linux, OpenGL context could not be made current any times...
+	getGLEngine()->reset();
+	
+	//
 	assert( getCanvasCount() >= 1 && "This is the first canvas." );
-
 	++m_canvasCount;
 }
 
@@ -116,6 +124,15 @@ Canvas::~Canvas()
 		}
 	}
 	//else Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
+}
+
+
+
+const bool Canvas::isGLContextCurrent() const
+{
+	// Test if OpenGL context is current
+	// FIXME: founded a smarter method to test if OpenGL is current.
+	return ( m_gleContext.getExtensions().size() != 0 );
 }
 
 
@@ -706,11 +723,10 @@ bool Canvas::enableVGSDK()
 	// Activate OpenGL context.
 	SetCurrent();
 
-	// Test if OpenGL context is current
-	// FIXME: founded a smarter method to test if OpenGL is current.
-	if ( m_gleContext.getExtensions().size() == 0 )
+	// Test if OpenGL context is current	
+	if ( !isGLContextCurrent() )
 	{
-		return false;
+		return ( false );
 	}
 
 	// Initialize VGSDK if needed.
