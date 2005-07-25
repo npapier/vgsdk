@@ -9,6 +9,7 @@
 #include "vgd/event/MouseButtonEvent.hpp"
 
 
+
 namespace vgd
 {
 	
@@ -68,6 +69,13 @@ void ButtonStateSet::apply( const vgd::event::MouseWheelEvent * )
 
 
 
+bool ButtonStateSet::isDown() const
+{
+	return ( m_down.size() >= 1 );
+}
+
+
+
 bool ButtonStateSet::isDown( const int32 idButton ) const
 {
 	ButtonIDSet::const_iterator iter;
@@ -95,6 +103,13 @@ void ButtonStateSet::setUp( const int32 idButton )
 void ButtonStateSet::setUp()
 {
 	m_down.clear();
+}
+
+
+
+uint32 ButtonStateSet::getNumDown() const
+{
+	return ( m_down.size() );
 }
 
 

@@ -287,6 +287,45 @@ struct TMultiField : public AbstractField
 			m_vectorMF.push_back( rItem );
 		}
 	}
+
+	/**
+	 * @brief Add elements from range [begin,end[ of a vector.
+	 *
+	 * @param begin		position of the first element in the range of elements to be added.
+	 * @param end		Position of the first element beyond the range of elements to be added. 
+	 */
+	void	push_back(	const typename std::vector<T>::const_iterator begin,
+						const typename std::vector<T>::const_iterator end )
+	{
+		assert( checkRW() );
+
+		for(	typename std::vector< T >::const_iterator iter = begin;
+				iter != end;
+				++iter )
+		{
+			push_back( *iter );
+		}
+	}
+
+	/**
+	 * @brief Add elements from range [begin,end[ of a vector.
+	 *
+	 * @param begin		position of the first element in the range of elements to be added.
+	 * @param end		Position of the first element beyond the range of elements to be added. 
+	 */
+	template< typename U >
+	void	push_back(	const typename std::vector<U>::const_iterator begin,
+						const typename std::vector<U>::const_iterator end )
+	{
+		assert( checkRW() );
+
+		for(	typename std::vector< U >::const_iterator iter = begin;
+				iter != end;
+				++iter )
+		{
+			push_back( static_cast< const T >(*iter) );
+		}
+	}
 	
 	//@}
 

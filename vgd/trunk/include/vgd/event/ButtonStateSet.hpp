@@ -52,7 +52,7 @@ struct VGD_API ButtonStateSet : public EventVisitor
 	 */
 	void apply( const vgd::event::MouseButtonEvent *pMouseButtonEvent );
 
-	void apply( const vgd::event::Location2Event			*pLocation2Event 			);
+	void apply( const vgd::event::Location2Event		*pLocation2Event 			);
 	void apply( const vgd::event::Motion3Event			*pMotion3Event				);
 	void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent			);
 
@@ -65,6 +65,11 @@ struct VGD_API ButtonStateSet : public EventVisitor
 	 */
 	//@{
 	
+	/**
+	 * @brief Tells if at least one button is down.
+	 */
+	bool isDown() const;
+		
 	/**
 	 * @brief Tells if a button is down.
 	 */
@@ -84,6 +89,13 @@ struct VGD_API ButtonStateSet : public EventVisitor
 	 * @brief Sets the state of all buttons to up.
 	 */
 	void setUp();
+	
+	/**
+	 * @brief Returns the number of buttons that are in the down state.
+	 * 
+	 * @return number of buttons.
+	 */
+	uint32 getNumDown() const;
 
 	//@}
 

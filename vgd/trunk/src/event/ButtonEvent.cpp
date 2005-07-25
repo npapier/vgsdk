@@ -15,7 +15,7 @@ namespace event
 	
 	
 ButtonEvent::ButtonEvent( Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state ) :
-	Event			(	source, buttonStates	),
+	Event		(	source, buttonStates	),
 	m_buttonID	(	buttonID	),
 	m_state		(	state		)
 {}

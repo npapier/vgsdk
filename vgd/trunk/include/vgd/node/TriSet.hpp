@@ -54,7 +54,7 @@ struct VGD_API TriSet : public vgd::node::VertexShape
 	/**
 	 * @brief Typedef for the \c neighbours parameter value.
 	 */
-	typedef vgm::Rectangle2i NeighboursValueType;
+	typedef int32 NeighboursValueType;
 
 	/**
 	 * @brief Typedef for the \c neighbours field.
