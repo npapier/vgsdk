@@ -74,13 +74,22 @@ vge::rc::Manager& Engine::getGLManager()
 
 
 
+const bool Engine::isGLContextCurrent() const
+{
+	// FIXME: founded a smarter method to test if OpenGL is current.
+	const GLubyte *pString = glGetString(GL_EXTENSIONS);
+	return ( pString != 0 );
+}
+
+
+	
 void Engine::resetMatrices()
 {
 	// STEP 1 : call method from vge::engine::Engine
 	vge::engine::Engine::resetMatrices();
 	
 	// STEP 2 : update OpenGL
-	if ( !isGLContextCurrent() )
+	if ( /*!isGLContextCurrent() &&*/ gleGetCurrent() == 0 )
 	{
 		// FIXME not very smart.
 		return;

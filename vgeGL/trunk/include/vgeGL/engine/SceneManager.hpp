@@ -135,6 +135,24 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	//@}
 	
 	
+
+	/**
+	 * @name OpenGL context management methods
+	 * 
+	 * @todo setGLContextCurrent();
+	 */
+	//@{
+
+	/**
+	 * @brief Tests if there is a current OpenGL context.
+	 * 
+	 * @return true if there is a current OpenGL context, false if not.
+	 */
+	const bool	isGLContextCurrent() const;
+
+	//@}
+
+
 	
 	/**
 	 * @name Accessors to some vgsdk objects.
@@ -146,7 +164,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * 
 	 * @return the vge engine.
 	 */
-	vgd::Shp< vgeGL::engine::Engine >			getGLEngine();
+	vgd::Shp< vgeGL::engine::Engine >		getGLEngine();
 	
 	//@}
 
@@ -162,7 +180,7 @@ protected:
 	/**
 	 * @brief Boolean value set if initialize() has already been called.
 	 */
-	bool												m_bCallInitialize;
+	bool									m_bCallInitialize;
 	
 	/**
 	 * @brief Main evaluation engine.

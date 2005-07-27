@@ -85,7 +85,7 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	 * 
 	 * @return true if there is a current OpenGL context, false if not.
 	 */
-	virtual const bool	isGLContextCurrent() const { return ( false ); }
+	const bool	isGLContextCurrent() const;
 
 	//@}
 

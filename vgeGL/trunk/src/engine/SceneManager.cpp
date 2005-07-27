@@ -22,8 +22,8 @@ namespace engine
 
 SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > pEngine ) :
 	::vge::engine::SceneManager	(	pEngine	),
-	m_GLEngine							(	pEngine	),
-	m_bCallInitialize					(	false		)
+	m_GLEngine					(	pEngine	),
+	m_bCallInitialize			(	false		)
 {
 }
 
@@ -73,8 +73,7 @@ vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 
 	vgeGL::technique::RayCasting raycasting;
 	getEngine()->resetEval();
-	raycasting.apply(	getEngine().get(), getNodeCollector().getTraverseElements(),
-							x, y );
+	raycasting.apply(	getEngine().get(), getNodeCollector().getTraverseElements(), x, y );
 
 	if ( raycasting.getHitsSize() == 0 )
 	{
@@ -84,6 +83,13 @@ vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 	{
 		return ( raycasting.getNearestHitNode() );
 	}
+}
+
+
+
+const bool SceneManager::isGLContextCurrent() const
+{
+	return ( m_GLEngine->isGLContextCurrent() );
 }
 
 
