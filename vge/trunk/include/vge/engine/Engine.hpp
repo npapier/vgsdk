@@ -475,7 +475,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * 
 	 * @todo More documentation.
 	 */
-	void resetMatrices();
+	virtual void resetMatrices();
 
 	/**
 	 * @brief Returns the projection matrix stacks.
@@ -527,12 +527,12 @@ protected:
 	 * 
  	 * Index by services.
 	 */
-	typedef std::vector< DispatchRow >										DispatchMatrix;
+	typedef std::vector< DispatchRow >								DispatchMatrix;
 
 	/**
 	 * @brief Table of boolean.
 	 */
-	typedef std::vector< bool >												BooleanVector;
+	typedef std::vector< bool >										BooleanVector;
 	//@}
 
 
