@@ -5,7 +5,6 @@
 
 #include "vgWX/BasicManipulator.hpp"
 
-#include <vgd/visitor/predicate/ByDirtyFlag.hpp>
 #include <vgm/Utilities.hpp>
 #include <vgDebug/Global.hpp>
 
@@ -116,6 +115,9 @@ void BasicManipulator::viewAll()
 	center = getScene()->getBoundingBox().getCenter();
 	
 	getSceneTransformation()->setCenter( center );
+	// FIXME must be automatic
+	vgm::MatrixR matrix = getSceneTransformation()->computeMatrixFromFields();
+	getSceneTransformation()->setMatrix( matrix );
 }
 
 
@@ -128,19 +130,9 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 	}
 
 	BasicViewer::onEvent( event );
-	
-	// must schedule a refresh of the window ?
-	std::pair< bool, vgd::Shp< vgd::node::Node > > retVal;
 
-	retVal = vgd::visitor::findFirst(	getRoot(),
-										vgd::visitor::predicate::ByDirtyFlag() );
-
-	if ( retVal.first )
-	{
-		vgDebug::get().logDebug("%s\n", retVal.second->getName().c_str() );
-
-		Refresh();
-	}
+	// FIXME should be modified at runtime (ASYNCHRONOUS/SYNCHRONOUS)
+	refresh( REFRESH_IF_NEEDED, ASYNCHRONOUS );
 }
 
 
@@ -156,7 +148,7 @@ void BasicManipulator::OnChar( wxKeyEvent& event )
 		Refresh();
 	}
 	else if (	(event.KeyCode() == 'b') ||
-					(event.KeyCode() == 'B')
+				(event.KeyCode() == 'B')
 				)
 	{
 		if ( event.KeyCode() == 'b' )
@@ -169,7 +161,7 @@ void BasicManipulator::OnChar( wxKeyEvent& event )
 		}
 		
 		// Refresh view.
-		Refresh();		
+		Refresh();
 	}
 
 	event.Skip();

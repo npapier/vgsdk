@@ -26,7 +26,6 @@ class wxMenu;
 namespace vgWX
 {
 
-
 /**
  * @brief A basic canvas for displaying vgsdk graphics.
  * 
@@ -90,11 +89,6 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 
 
 
-	// overridden method
-	const bool	isGLContextCurrent() const;
-
-
-
 	/**
 	 * @name Contextual menu methods.
 	 */
@@ -143,7 +137,7 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 		wxID_CTX_LIGHTMODEL_MODEL_STANDARD_PER_PIXEL,
 
 		//wxID_CTX_LIGHTMODEL_AMBIENT
-		
+
 		wxID_CTX_LIGHTMODEL_VIEWER,
 		
 		wxID_CTX_LIGHTMODEL_TWOSIDED
@@ -170,7 +164,43 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * @param yMouse		y-coordinate for mouse
 	 */
 	virtual wxMenu *createContextualMenu( const int32 xMouse, const int32 yMouse ) /*const*/;
+	//@}
 
+
+
+	/**
+	 * @name Repaint management
+	 */
+	//@{
+	
+	/**
+	 * @brief Type of refresh.
+	 */
+	enum RefreshType {
+		REFRESH_FORCE,
+		REFRESH_IF_NEEDED
+	};
+	
+	/**
+	 * @brief Wait behavior of refresh.
+	 */
+	enum WaitType {
+		SYNCHRONOUS,
+		ASYNCHRONOUS
+	};
+	
+	/**
+	 * @brief Repaint the window.
+	 * 
+	 * @param force		set to REFRESH_FORCE to force the repaint even if no changes have been made in the scene graph,
+	 * 					or to REFRESH_IF_NEEDED to repaint only when at least one change in the scene graph has occured.
+	 * @param sync		set to SYNCHRONOUS to wait the end of the repaint before returning from this method, or
+	 * 					to ASYNCHRONOUS to post a paint message to the window and returning without beiing blocked.
+	 * 
+	 * @pre wait == ASYNCHRONOUS
+	 * @todo Support of wait parameter.
+	 */
+	void refresh( const RefreshType type = REFRESH_IF_NEEDED, const WaitType wait = ASYNCHRONOUS );
 	//@}
 
 

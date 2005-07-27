@@ -14,6 +14,7 @@
 #include <vgDebug/Global.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/LightModel.hpp>
+#include <vgd/visitor/predicate/ByDirtyFlag.hpp>
 
 
 
@@ -124,15 +125,6 @@ Canvas::~Canvas()
 		}
 	}
 	//else Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
-}
-
-
-
-const bool Canvas::isGLContextCurrent() const
-{
-	// Test if OpenGL context is current
-	// FIXME: founded a smarter method to test if OpenGL is current.
-	return ( m_gleContext.getExtensions().size() != 0 );
 }
 
 
@@ -360,6 +352,37 @@ wxMenu *Canvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
 	ctxMenu->Append( wxID_CTX_LIGHTMODEL_MODEL, _T("Lighting model"), subMenu );	
 
 	return ( ctxMenu );
+}
+
+
+
+void Canvas::refresh( const RefreshType type, const WaitType wait )
+{
+	assert( wait == ASYNCHRONOUS && "Other wait mode not yet supported" );
+
+	if ( type == REFRESH_IF_NEEDED )
+	{
+		// must schedule a refresh of the window ?
+		std::pair< bool, vgd::Shp< vgd::node::Node > > retVal;
+		retVal = vgd::visitor::findFirst( getRoot(), vgd::visitor::predicate::ByDirtyFlag() );
+
+		if ( retVal.first )
+		{
+			// refresh must be done.
+
+			// useful for debugging wrong dirty flags
+			// vgDebug::get().logDebug("%s\n", retVal.second->getName().c_str() );
+
+			Refresh();
+		}
+		// else refresh not needed
+	}
+	else
+	{
+		assert( type == REFRESH_FORCE && "Internal error: Unexpected value" );
+		
+		Refresh();
+	}
 }
 
 
