@@ -243,15 +243,22 @@ void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCo
 	Canvas::computeBoundingBox( pCollectorExt );
 
 	box		= getScene()->getBoundingBox();
-	center	= box.getCenter();
 
-	float width;
-	float height;
-	float depth;
-	box.getSize( width, height, depth );
-	
-	max		= width > height ? width : height;
-	max		= max > depth ? max : depth;
+	if ( box.isEmpty() )
+	{
+		center.setValue( 0.f, 0.f, 0.f );
+		max = 0;
+	}
+	else
+	{
+		center	= box.getCenter();
+
+		float width, height, depth;
+		box.getSize( width, height, depth );
+		
+		max		= width > height ? width : height;
+		max		= max > depth ? max : depth;
+	}
 }
 
 
