@@ -111,10 +111,13 @@ void BasicManipulator::viewAll()
 	BasicViewer::viewAll();
 	
 	// Sets the center of scene transformation.
-	vgm::Vec3f center;
-	center = getScene()->getBoundingBox().getCenter();
-	
-	getSceneTransformation()->setCenter( center );
+	if ( getScene()->isBoundingBoxValid() )
+	{
+		vgm::Vec3f center( getScene()->getBoundingBox().getCenter() );
+		getSceneTransformation()->setCenter( center );
+	}
+	//else nothing to do
+
 	// FIXME must be automatic
 	vgm::MatrixR matrix = getSceneTransformation()->computeMatrixFromFields();
 	getSceneTransformation()->setMatrix( matrix );
