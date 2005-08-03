@@ -1,18 +1,18 @@
 VERSION=0.3
 
 full-install release-install all clean release debug world dist-clean info :
-	cd ../vgBase;		make $@;	echo;echo
-	cd ../vgDebug;	make $@;	echo;echo
-	cd ../vgm;			make $@;	echo;echo
-	cd ../vgd;			make $@;	echo;echo
-	cd ../vgAlg;		make $@;	echo;echo
-	cd ../vgTrian;	make $@;	echo;echo
-	cd ../vge;			make $@;	echo;echo
-	cd ../gle;			make $@;	echo;echo
-	cd ../glo;			make $@;	echo;echo
-	cd ../vgeGL;		make $@;	echo;echo
-	cd ../vgWX;		make $@;	echo;echo
-	cd ../vgsdk;		make $@;	echo;echo
+	cd ../vgBase;		make '$@';
+	cd ../vgDebug;		make '$@';
+	cd ../vgm;			make '$@';
+	cd ../vgd;			make '$@';
+	cd ../vgAlg;		make '$@';
+	cd ../vgTrian;		make '$@';
+	cd ../vge;			make '$@';
+#	cd ../gle;			make '$@';
+#	cd ../glo;			make '$@';
+	cd ../vgeGL;		make '$@';
+	cd ../vgWX;			make '$@';
+	cd ../vgsdk;		make '$@';
 
 checkout:
 	svn co http://dev-srv:8080/svn/SrcLib/vgBase/trunk ../vgBase
@@ -22,25 +22,25 @@ checkout:
 	svn co http://dev-srv:8080/svn/SrcLib/vgAlg/trunk ../vgAlg
 	svn co http://dev-srv:8080/svn/SrcLib/vgTrian/trunk ../vgTrian
 	svn co http://dev-srv:8080/svn/SrcLib/vge/trunk ../vge
-	svn co http://svn.gna.org/svn/gle/gle/trunk ../gle
-	svn co http://svn.gna.org/svn/gle/glo/trunk ../glo
+#	svn co http://svn.gna.org/svn/gle/gle/trunk ../gle
+#	svn co http://svn.gna.org/svn/gle/glo/trunk ../glo
 	svn co http://dev-srv:8080/svn/SrcLib/vgeGL/trunk ../vgeGL
 	svn co http://dev-srv:8080/svn/SrcLib/vgWX/trunk ../vgWX
 	#svn co http://dev-srv:8080/svn/SrcLib/vgsdk/trunk vgsdk => already done (this makefile comes from vgsdk project).
 
 update diff:
-	cd ../vgBase;		svn $@;	echo;echo;
-	cd ../vgDebug;	svn $@;	echo;echo;
-	cd ../vgm;			svn $@;	echo;echo;
-	cd ../vgd;			svn $@;	echo;echo;
-	cd ../vgAlg;		svn $@;	echo;echo;
-	cd ../vgTrian;	svn $@;	echo;echo;
-	cd ../vge;			svn $@;	echo;echo;
-	cd ../gle;			svn $@;	echo;echo;
-	cd ../glo;			svn $@;	echo;echo;
-	cd ../vgeGL;		svn $@;	echo;echo;
-	cd ../vgWX;		svn $@;	echo;echo;
-	cd ../vgsdk;		svn $@;	echo;echo;
+	cd ../vgBase;		svn '$@';
+	cd ../vgDebug;		svn '$@';
+	cd ../vgm;			svn '$@';
+	cd ../vgd;			svn '$@';
+	cd ../vgAlg;		svn '$@';
+	cd ../vgTrian;		svn '$@';
+	cd ../vge;			svn '$@';
+#	cd ../gle;			svn '$@';
+#	cd ../glo;			svn '$@';
+	cd ../vgeGL;		svn '$@';
+	cd ../vgWX;			svn '$@';
+	cd ../vgsdk;		svn '$@';
 
 tags:
 	# itself
