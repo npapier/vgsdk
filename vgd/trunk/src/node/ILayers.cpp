@@ -201,8 +201,6 @@ const int32 ILayers::gethFirstIImage() const throw()
 		}
 	}
 	
-	assert( i == getNumLayers() );
-	
 	return ( -1 );
 }
 	
