@@ -272,7 +272,7 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 
 
 
-			case Layers::MODULATE:
+//			case Layers::MODULATE:
 //				if ( dirtyFlagImage->isDirty() || bScissorHasChanged )								FIXME: todo
 //				{
 //					pTex2D->setIImage( pIImage );
