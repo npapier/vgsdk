@@ -179,7 +179,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 		REPLACE,
 		INTERPOLATE,
 		SCISSOR,
-		MODULATE,
+		//MODULATE,					FIXME no more supported.
 		
 		COMPOSE_FUNCTION_DEFAULT = COMPOSE_FUNCTION_NONE
 
@@ -191,7 +191,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	struct ComposeOperator
 	{
 		ComposeOperator(	const ComposeFunctionType function = COMPOSE_FUNCTION_DEFAULT, 
-								bool mask = false, float alpha = 0.5f ) :
+							bool mask = false, float alpha = 0.5f ) :
 			m_function	( function ),
 			m_mask		( mask ),
 			m_alpha		( alpha )
@@ -209,8 +209,8 @@ struct VGD_API ILayers : public vgd::node::Kit
 
 		private:
 			ComposeFunctionType		m_function;
-			bool							m_mask;
-			float 						m_alpha;
+			bool					m_mask;
+			float 					m_alpha;
 	};
 
 	typedef ComposeOperator ComposeOperatorValueType;
@@ -252,7 +252,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * 
 	 * @pre		0 <= index < getNumLayers()
 	 * 
-	 * @param	index			zero-base index for the layer.
+	 * @param	index		zero-base index for the layer.
 	 * @param	iimage		the image.
 	 */
 	void sethIImage( const int32 index, vgd::Shp< vgd::basic::IImage > iimage );
@@ -263,7 +263,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @pre		0 <= index < getNumLayers()
 	 * 
 	 * @param index		zero-base index for the layer.
-	 * @return 				the image used by the specified layer.
+	 * @return 			the image used by the specified layer.
 	 * 
 	 * @remark A read/write access occurs when calling this method (like getFIImageRW()). You can use the returned
 	 * reference to change the image.
@@ -276,9 +276,16 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @pre		0 <= index < getNumLayers()
 	 * 
 	 * @param index		zero-base index for the layer.
-	 * @return 				the image used by the specified layer.
+	 * @return 			the image used by the specified layer.
 	 */
 	const vgd::Shp< vgd::basic::IImage > gethIImage( const int32 index ) const;
+
+	/**
+	 * @brief	Retrives the index of the first non empty layer.
+	 * 
+	 * @return Returns index of the first non empty layer, otherwise -1 is returned.
+	 */
+	const int32 gethFirstIImage() const throw();
 
 	/**
 	 * @brief Returns the image size used by the specified layer.
@@ -286,7 +293,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @pre		0 <= index < getNumLayers()
 	 * 
 	 * @param index		zero-base index for the layer.
-	 * @return 				the image size used by the specified layer.
+	 * @return 			the image size used by the specified layer.
 	 */
 	const vgm::Vec3i gethIImageSize3i( const int32 index ) const;
 	
@@ -296,7 +303,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @pre		0 <= index < getNumLayers()
 	 * 
 	 * @param index		zero-base index for the layer.
-	 * @return 				the image size used by the specified layer.
+	 * @return 			the image size used by the specified layer.
 	 */
 	const vgm::Vec3f gethIImageSize3f( const int32 index ) const;
 	
@@ -316,7 +323,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @pre		0 <= index < getNumLayers()
 	 * 
 	 * @param index		zero-base index for the layer.
-	 * @return				the compose operator value.
+	 * @return			the compose operator value.
 	 */
 	const ComposeOperatorValueType	gethComposeOperator( const int32 index ) const;
 	//@}
@@ -333,7 +340,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * 
 	 * @pre		0 <= index < getNumLayers()
 	 * 
-	 * @param index					zero-base index for the field.
+	 * @param index		zero-base index for the field.
 	 * 
 	 * @return the name of field \c iimage*.
 	 */
@@ -344,7 +351,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * 
 	 * @pre		0 <= index < getNumLayers()
 	 * 
-	 * @param index					zero-base index for the field.
+	 * @param index		zero-base index for the field.
 	 * 
 	 * @return the name of field \c composeOperator*.
 	 */
@@ -364,7 +371,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * 
 	 * @pre		0 <= index < getNumLayers()
 	 * 
-	 * @param index					zero-base index for the field.
+	 * @param index		zero-base index for the field.
 	 */
 	static const std::string getDFIImage( const int32 index );
 

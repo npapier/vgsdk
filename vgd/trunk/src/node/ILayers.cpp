@@ -186,6 +186,28 @@ const vgd::Shp< vgd::basic::IImage > ILayers::gethIImage( const int32 index ) co
 
 
 
+const int32 ILayers::gethFirstIImage() const throw()
+{
+	for(	int32	i	= 0,
+					iEnd= getNumLayers();
+			i != iEnd;
+			++i )
+	{
+		vgd::Shp< vgd::basic::IImage > image( gethIImage(i) );
+		
+		if ( image != 0 )
+		{
+			return i;
+		}
+	}
+	
+	assert( i == getNumLayers() );
+	
+	return ( -1 );
+}
+	
+
+	
 const vgm::Vec3i ILayers::gethIImageSize3i( const int32 index ) const
 {
 	assert( index >= 0 && "Invalid index." );
