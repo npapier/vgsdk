@@ -196,14 +196,15 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * 					or to REFRESH_IF_NEEDED to repaint only when at least one change in the scene graph has occured.
 	 * @param sync		set to SYNCHRONOUS to wait the end of the repaint before returning from this method, or
 	 * 					to ASYNCHRONOUS to post a paint message to the window and returning without beiing blocked.
-	 * 
-	 * @pre wait == ASYNCHRONOUS
-	 * @todo Support of wait parameter.
 	 */
 	void refresh( const RefreshType type = REFRESH_IF_NEEDED, const WaitType wait = ASYNCHRONOUS );
 	//@}
 
 
+
+protected:
+	// Overrides
+	void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
 
 	/**
 	 * @brief This sets the window to receive keyboard input.

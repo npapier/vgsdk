@@ -358,8 +358,8 @@ wxMenu *Canvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
 
 void Canvas::refresh( const RefreshType type, const WaitType wait )
 {
-	assert( wait == ASYNCHRONOUS && "Other wait mode not yet supported" );
-
+	vgm::Vec2i	v2iSize( GetSize().GetWidth(), GetSize().GetHeight() );
+	
 	if ( type == REFRESH_IF_NEEDED )
 	{
 		// must schedule a refresh of the window ?
@@ -373,26 +373,35 @@ void Canvas::refresh( const RefreshType type, const WaitType wait )
 			// useful for debugging wrong dirty flags
 			// vgDebug::get().logDebug("%s\n", retVal.second->getName().c_str() );
 
-			Refresh();
+			if ( wait == ASYNCHRONOUS )
+			{
+				Refresh();
+			}
+			else
+			{
+				paint( v2iSize, getBoundingBoxUpdate() );				
+			}
 		}
 		// else refresh not needed
 	}
 	else
 	{
-		assert( type == REFRESH_FORCE && "Internal error: Unexpected value" );
-		
-		Refresh();
+		if ( wait == ASYNCHRONOUS )
+		{
+			Refresh();
+		}
+		else
+		{
+			paint( v2iSize, getBoundingBoxUpdate() );				
+		}
+
 	}
 }
 
 
 
-void Canvas::OnPaint( /*const*/ wxPaintEvent& event )
+void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
-	// This is a dummy, to avoid an endless succession of paint messages.
-	// OnPaint handlers must always create a wxPaintDC.
-	::wxPaintDC dc(this);
-
 	//
 	if ( !enableVGSDK() )
 	{
@@ -420,7 +429,7 @@ void Canvas::OnPaint( /*const*/ wxPaintEvent& event )
 	{
 		gleGetCurrent()->reportGLErrors();
 	
-		paint( v2iSize, getBoundingBoxUpdate() );
+		::vgeGL::engine::SceneManager::paint( v2iSize, getBoundingBoxUpdate() );
 
 		gleGetCurrent()->reportGLErrors();
 	
@@ -432,6 +441,19 @@ void Canvas::OnPaint( /*const*/ wxPaintEvent& event )
 	
 	// Reset the number of frame to render next time to 1.
 	setNumberOfFrames( 1 );
+}
+
+
+
+void Canvas::OnPaint( /*const*/ wxPaintEvent& event )
+{
+	// This is a dummy, to avoid an endless succession of paint messages.
+	// OnPaint handlers must always create a wxPaintDC.
+	::wxPaintDC dc(this);
+
+	//
+	vgm::Vec2i	v2iSize( GetSize().GetWidth(), GetSize().GetHeight() );
+	paint( v2iSize, getBoundingBoxUpdate() );
 }
 
 
