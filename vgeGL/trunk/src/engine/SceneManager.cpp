@@ -6,9 +6,10 @@
 #include "vgeGL/engine/SceneManager.hpp"
 
 #include <vgDebug/Global.hpp>
-#include <vgeGL/technique/Main.hpp>
-#include <vgeGL/technique/ProcessEvent.hpp>
-#include <vgeGL/technique/RayCasting.hpp>
+
+#include "vgeGL/event/DefaultEventProcessor.hpp"
+#include "vgeGL/technique/Main.hpp"
+#include "vgeGL/technique/RayCasting.hpp"
 
 
 
@@ -23,8 +24,14 @@ namespace engine
 SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > pEngine ) :
 	::vge::engine::SceneManager	(	pEngine	),
 	m_GLEngine					(	pEngine	),
-	m_bCallInitialize			(	false		)
+	m_bCallInitialize			(	false	)
 {
+	using ::vgeGL::event::IEventProcessor;
+	using ::vgeGL::event::DefaultEventProcessor;
+
+	vgd::Shp< IEventProcessor > eventProcessor( new DefaultEventProcessor(this) );
+	
+	insertEventProcessor( eventProcessor );
 }
 
 
@@ -55,12 +62,58 @@ void SceneManager::resize( const vgm::Vec2i )
 
 void SceneManager::onEvent( vgd::Shp<vgd::event::Event> event )
 {
-	vgeGL::technique::ProcessEvent processEvent;
-	
-	getEngine()->resetEval();	
-	processEvent.apply( getEngine().get(), getNodeCollector().getTraverseElements(), event );
+	for(	EventProcessorContainer::iterator	i	= m_eventProcessors.begin(),
+												iEnd= m_eventProcessors.end();
+			i != iEnd;
+			++i )
+	{
+		vgd::Shp< vgeGL::event::IEventProcessor > iEventProcessor = *i;
+		
+		bool stop = iEventProcessor->onEvent( event );
+		if ( stop )
+		{
+			break;
+		}
+	}
+}
 
-	//vgDebug::get().logDebug("SceneManager::onEvent:%s", typeid(*event.get()).name() );
+
+
+void SceneManager::insertEventProcessor(	vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor,
+											const uint32 index )
+{
+	assert( index <= getNumEventProcessors() && "Invalid index.");
+	
+	EventProcessorContainer::iterator iter = m_eventProcessors.begin() + index;
+	
+	m_eventProcessors.insert( iter, eventProcessor );
+}
+
+
+
+void SceneManager::removeEventProcessor( const uint32 index )
+{
+	assert( index < getNumEventProcessors() && "Invalid index.");
+		
+	EventProcessorContainer::iterator iter = m_eventProcessors.begin() + index;
+	
+	m_eventProcessors.erase( iter );
+}
+
+
+
+vgd::Shp< ::vgeGL::event::IEventProcessor > SceneManager::getEventProcessor( const uint32 index  ) const
+{
+	assert( index < getNumEventProcessors() && "Invalid index.");
+	
+	return ( m_eventProcessors[index] );
+}
+
+
+
+const uint32 SceneManager::getNumEventProcessors() const
+{
+	return ( m_eventProcessors.size() );
 }
 
 

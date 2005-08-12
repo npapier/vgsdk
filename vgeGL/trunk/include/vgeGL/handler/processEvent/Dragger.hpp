@@ -59,9 +59,9 @@ struct VGEGL_API Dragger : public vgd::event::EventVisitor
 	 */
 	//@{
 
-	void apply( const vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent);
-	void apply( const vgd::event::Location2Event			*pLocation2Event 		);
-	void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent	);
+	void apply( const vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent	);
+	void apply( const vgd::event::Location2Event		*pLocation2Event 		);
+	void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent		);
 	void apply( const vgd::event::Motion3Event			*pMotion3Event			);
 	void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent		);
 	

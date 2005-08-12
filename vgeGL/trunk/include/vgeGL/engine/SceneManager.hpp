@@ -10,6 +10,7 @@
 #include <vge/engine/SceneManager.hpp>
 #include "vgeGL/vgeGL.hpp"
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/event/IEventProcessor.hpp"
 
 
 
@@ -33,7 +34,7 @@ namespace engine
  * 	- The second method, named \c resize is called by the vgWX::Canvas::OnSize(), should at least configure the 
  * 		camera node. By default nothing is done in it, because there is no vgd::node::Camera in the scene graph.
  * 		But if you derived this class and add a Camera node, you should write this piece of code.
- * - Event handling (listen and process events).
+ * - Event handling (listen and process events with event processors).
  */
 struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::Listener
 {
@@ -73,7 +74,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * 
 	 * This method is called when a window's contents needs to be repainted.
 	 * 
-	 * @param size						the size of the window.
+	 * @param size					the size of the window.
 	 * @param bUpdateBoundingBox	true to update bounding box in the scene graph, false to do nothing.
 	 */
 	 virtual void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
@@ -99,7 +100,6 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	  * @endcode
 	  */
 	virtual void resize( const vgm::Vec2i size );
-	
 	//@}
 
 
@@ -108,12 +108,50 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @name Events.
 	 */
 	//@{
-	
+
 	/**
-	 * @brief Process the given event by using service ProcessEvent on the scene graph
+	 * @brief Called when a new event occurs (@see vgd::event::Listener)
+	 * 
+	 * and use installed instances of IEventProcessor to process all incoming events.
+	 * 
+	 * @param event		event to process
 	 */
 	void onEvent( vgd::Shp<vgd::event::Event> event );
+
+	/**
+	 * @brief Installs a new event processor.
+	 * 
+	 * @param eventProcessor		event processor to install.
+	 * @param index					the position where the event processor must be inserted.
+	 * 
+	 * @pre index <= getNumEventProcessors()
+	 */
+	void insertEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor, const uint32 index = 0 );
 	
+	/**
+	 * @brief Removes an event processor.
+	 * 
+	 * @param index					the position of the event processor to be removed.
+	 * 
+	 * @pre index < getNumEventProcessors()
+	 */
+	void removeEventProcessor( const uint32 index = 0 );
+
+	/**
+	 * @brief Retrives an event processor.
+	 * 
+	 * @param index					the position of the event processor to get.
+	 * 
+	 * @pre index < getNumEventProcessors()
+	 */
+	vgd::Shp< ::vgeGL::event::IEventProcessor > getEventProcessor( const uint32 index = 0 ) const;
+
+	/**
+	 * @brief Retrives the number of event processors.
+	 * 
+	 * @return the number of event processors.
+	 */
+	const uint32 getNumEventProcessors() const;
 	//@}
 
 
@@ -186,7 +224,17 @@ protected:
 	 * @brief Main evaluation engine.
 	 */
 	vgd::Shp< vgeGL::engine::Engine >		m_GLEngine;	
+
+
+	/**
+	 * @brief Typedef for event processor container.
+	 */
+	typedef std::vector< vgd::Shp< ::vgeGL::event::IEventProcessor > > EventProcessorContainer;
 	
+	/**
+	 * @brief Event processor container.
+	 */
+	EventProcessorContainer	m_eventProcessors;
 	//@}
 };
 
