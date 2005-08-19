@@ -6,6 +6,8 @@
 #ifndef _VGD_BASIC_IMAGEUTILITIES_H
 #define _VGD_BASIC_IMAGEUTILITIES_H
 
+#include <utility>
+
 #include "vgd/vgd.hpp"
 #include "vgd/Shp.hpp"
 #include "vgd/basic/Image.hpp"
@@ -34,9 +36,23 @@ typedef enum {
  * @brief Collection of methods to apply on images.
  * 
  * @ingroup g_images
+ * 
+ * @todo setAlpha() and setAlphaIfNotBlack() don't traverse the whole image (depth is not used !!!)
  */
 struct VGD_API ImageUtilities
 {
+	/**
+	 * @brief Compute the minimum and maximum intensity values for the given image.
+	 * 
+	 * @pre pImage->format() == LUMINANCE
+	 * @pre pImage->type() == IImage::UINT8
+	 * 
+	 * @param pImage	3d image where slice is extract
+	 * 
+	 * @todo remove precondition on type() 
+	 */
+	static std::pair< float, float > computeMinMax( const IImage* pImage );
+	
 	/**
 	 * @brief Extract a slice (2d image) from a 3d image.
 	 * 
@@ -49,7 +65,7 @@ struct VGD_API ImageUtilities
 	 * @pre if slice == FRONTAL_SLICE then 0 <= position < pImage->height()
 	 * @pre if slice == SAGITTAL_SLICE then 0 <= position < pImage->width()
 	 *
-	 * @param pImage		3d image where slice is extract
+	 * @param pImage	3d image where slice is extract
 	 * @param slice		name of slice to must be extract
 	 * @param position	position of the slice
 	 * @return	a reference on the desired extracted image or a reference on an empty image if extraction is not possible
@@ -59,9 +75,9 @@ struct VGD_API ImageUtilities
 	 * 
 	 * @todo Remove precondition on pImage->type()
 	 */
-	static vgd::Shp< Image > extractSlice(	const IImage*		pImage,
-														const SliceType	slice,
-														const uint32		position );
+	static vgd::Shp< Image > extractSlice(	const IImage*	pImage,
+											const SliceType	slice,
+											const uint32	position );
 
 	/**
 	 * @name Useful scanning image methods.
@@ -75,7 +91,7 @@ struct VGD_API ImageUtilities
 	 * @pre pImage->type() == UINT8
 	 * @pre 0 <= alpha <= 1
 	 * 
-	 * @param pImage		image to scan.
+	 * @param pImage	image to scan.
 	 * @param alpha		alpha value to assign.
 	 */
 	static void	setAlpha( IImage *pImage, const float alpha = 1.f );
@@ -89,7 +105,7 @@ struct VGD_API ImageUtilities
 	 * @pre pImage->type() == UINT8
 	 * @pre 0 <= alpha <= 1
 	 * 
-	 * @param pImage		image to scan.
+	 * @param pImage	image to scan.
 	 * @param alpha		alpha value to assign.
 	 */
 	static void	setAlphaIfNotBlack( IImage *pImage, const float alpha = 1.f );
@@ -111,11 +127,11 @@ struct VGD_API ImageUtilities
 	 * @todo Comments
 	 */
 	static void setupPalette(	const int32 minValue, const int32 maxValue,
-										const int32 interval1, const int32 interval2,
-										const PaletteFunctionType fun1, const float alpha1,
-										const PaletteFunctionType fun2, const float alpha2,
-										const PaletteFunctionType fun3, const float alpha3,
-										uint8 *pPalette );
+								const int32 interval1, const int32 interval2,
+								const PaletteFunctionType fun1, const float alpha1,
+								const PaletteFunctionType fun2, const float alpha2,
+								const PaletteFunctionType fun3, const float alpha3,
+								uint8 *pPalette );
 
 	/**
 	 * @pre beginInterval >= minValue && beginInterval <= maxValue
@@ -124,10 +140,10 @@ struct VGD_API ImageUtilities
 	 * @pre pPalette is a valid reference on a palette (!= 0).
 	 */
 	static void setupPalette(	const int32 minValue, const int32 maxValue,
-										const int32 beginInterval, const int32 endInterval,
-										const PaletteFunctionType function,
-										const float fAlpha,
-										uint8 *pPalette );
+								const int32 beginInterval, const int32 endInterval,
+								const PaletteFunctionType function,
+								const float fAlpha,
+								uint8 *pPalette );
 	//@}
 };
 

@@ -6,6 +6,7 @@
 #include "vgd/basic/ImageUtilities.hpp"
 
 #include <cstring>
+#include <limits>
 
 
 
@@ -17,6 +18,42 @@ namespace basic
 
 
 
+std::pair< float, float > ImageUtilities::computeMinMax( const IImage* pImage )
+{
+	using vgd::basic::IImage;
+	
+	assert( pImage->format() == IImage::LUMINANCE );
+	assert( pImage->type() == IImage::UINT8 );			// FIXME
+	
+	int32			sizeOfComponents	= sizeof(uint8);
+
+	std::pair< float, float > retVal( std::numeric_limits<float>::max(), std::numeric_limits<float>::min() );
+
+	// scan image
+	const uint8* iPixel = static_cast<const uint8*>(pImage->pixels());
+	for(	const uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth();
+			iPixel != iEnd;
+			iPixel++ )
+	{
+		uint8 value		= (*iPixel);
+		float fValue	= static_cast<float>(value);
+		
+		if ( fValue < retVal.first )
+		{
+			retVal.first = value;
+		}
+		else if ( fValue > retVal.second )
+		{
+			retVal.second = value;
+		}
+		// else do nothing
+	}
+
+	return ( retVal );
+}
+
+
+		
 vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*		pImage,
 																				const SliceType	slice,
 																				const uint32		position )
@@ -31,8 +68,8 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*		pImag
 	assert( pImage->depth() > 0 );
 
 	const uint8*	inputPixel			= static_cast<const uint8*>(pImage->pixels());
-	int32				components			= pImage->components();
-	int32				sizeOfComponents	= sizeof(uint8) * components;
+	int32			components			= pImage->components();
+	int32			sizeOfComponents	= sizeof(uint8) * components;
 
 	vgd::Shp< Image > pNewImage;
 	uint8*				outputPixel;
@@ -182,16 +219,15 @@ void ImageUtilities::setAlpha( vgd::basic::IImage *pImage, const float alpha )
 	using vgd::basic::IImage;
 	
 	assert(	(pImage->format() == IImage::RGBA) ||
-				(pImage->format() == IImage::BGRA) ||
-				(pImage->format() == IImage::LUMINANCE_ALPHA) );
+			(pImage->format() == IImage::BGRA) ||
+			(pImage->format() == IImage::LUMINANCE_ALPHA) );
 
 	assert( pImage->type() == IImage::UINT8 );
 	
 	assert( alpha >= 0.f );
 	assert( alpha <= 1.f );
 
-	uint8	ui8Alpha;
-	ui8Alpha	= static_cast< uint8 >( alpha * 255.f );
+	uint8	ui8Alpha = static_cast< uint8 >( alpha * 255.f );
 
 	switch ( pImage->format() )
 	{
@@ -236,8 +272,8 @@ void ImageUtilities::setAlpha( vgd::basic::IImage *pImage, const float alpha )
 void ImageUtilities::setAlphaIfNotBlack( vgd::basic::IImage *pImage, const float alpha )
 {
 	assert(	(pImage->format() == IImage::RGBA) ||
-				(pImage->format() == IImage::BGRA) ||
-				(pImage->format() == IImage::LUMINANCE_ALPHA) );
+			(pImage->format() == IImage::BGRA) ||
+			(pImage->format() == IImage::LUMINANCE_ALPHA) );
 
 	assert( pImage->type() == vgd::basic::IImage::UINT8 );	
 		
