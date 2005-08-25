@@ -8,7 +8,6 @@
 
 #include <limits>
 #include <vgd/Shp.hpp>
-#include <vgd/event/Location2Event.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vgd/event/MouseWheelEvent.hpp>
 
@@ -57,7 +56,10 @@ void Mouse::onLeftDoubleClick( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_1,
-		vgd::event::MouseButtonEvent::DCLICK );
+		vgd::event::MouseButtonEvent::DCLICK,
+		getLocation(event),
+		getSize(event)
+		 );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();
@@ -76,7 +78,9 @@ void Mouse::onLeftDown( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_1,
-		vgd::event::MouseButtonEvent::DOWN );
+		vgd::event::MouseButtonEvent::DOWN,
+		getLocation(event),
+		getSize(event) );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();
@@ -95,7 +99,9 @@ void Mouse::onLeftUp( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_1,
-		vgd::event::MouseButtonEvent::UP );
+		vgd::event::MouseButtonEvent::UP,
+		getLocation(event),
+		getSize(event) );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();	
@@ -114,7 +120,9 @@ void Mouse::onMiddleDoubleClick( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_2,
-		vgd::event::MouseButtonEvent::DCLICK );
+		vgd::event::MouseButtonEvent::DCLICK,
+		getLocation(event),
+		getSize(event) );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();	
@@ -133,7 +141,9 @@ void Mouse::onMiddleDown( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_2,
-		vgd::event::MouseButtonEvent::DOWN );
+		vgd::event::MouseButtonEvent::DOWN,
+		getLocation(event),
+		getSize(event) );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();
@@ -152,7 +162,9 @@ void Mouse::onMiddleUp( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_2,
-		vgd::event::MouseButtonEvent::UP );
+		vgd::event::MouseButtonEvent::UP,
+		getLocation(event),
+		getSize(event) );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();
@@ -171,7 +183,9 @@ void Mouse::onRightDoubleClick( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_3,
-		vgd::event::MouseButtonEvent::DCLICK );
+		vgd::event::MouseButtonEvent::DCLICK,
+		getLocation(event),
+		getSize(event) );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();	
@@ -190,7 +204,9 @@ void Mouse::onRightDown( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_3,
-		vgd::event::MouseButtonEvent::DOWN );
+		vgd::event::MouseButtonEvent::DOWN,
+		getLocation(event),
+		getSize(event) );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();	
@@ -209,7 +225,9 @@ void Mouse::onRightUp( wxMouseEvent& event )
 		this,
 		vgd::event::detail::GlobalButtonStateSet::get(),
 		vgd::event::MouseButtonEvent::MOUSE_BUTTON_3,
-		vgd::event::MouseButtonEvent::UP );
+		vgd::event::MouseButtonEvent::UP,
+		getLocation(event),
+		getSize(event) );
 	this->fireEvent(vgd::Shp<vgd::event::Event>(mouseButtonEvent));
 
 	event.Skip();
@@ -221,24 +239,13 @@ void Mouse::onMotion( wxMouseEvent& event )
 	// Update global button states
 	updateModifiersOfGlobalButtonStates( event );
 		
-	// Size
-	wxWindow *pWindow = dynamic_cast<wxWindow*>(event.GetEventObject());
-	assert( pWindow != 0 );
-
-	vgd::event::Location2Event::Size	size;
-	size[0]	= static_cast<float>(pWindow->GetClientSize().GetWidth());
-	size[1]	= static_cast<float>(pWindow->GetClientSize().GetHeight());
-
-	// Location
-	vgd::event::Location2Event::Location	location;
-	location[0] = static_cast<float>(event.GetX());
-	location[1] = size[1] - static_cast<float>(event.GetY());
+	vgd::event::Location2Event::Location location = getLocation(event);
 	
 	this->fireEvent(
 		vgd::Shp<vgd::event::Event>(
 			new vgd::event::Location2Event(this, 
 				vgd::event::detail::GlobalButtonStateSet::get(),
-				location, m_previousMousePosition, size )
+				location, m_previousMousePosition, getSize(event) )
 		)
 	);
 	
@@ -266,6 +273,35 @@ void Mouse::onWheel( wxMouseEvent& event )
 	);
 
 	event.Skip();	
+}
+
+
+
+vgd::event::Location2Event::Size Mouse::getSize( wxMouseEvent& event ) const
+{
+	// Size
+	wxWindow *pWindow = dynamic_cast<wxWindow*>(event.GetEventObject());
+	assert( pWindow != 0 );
+
+	vgd::event::Location2Event::Size	size;
+	size[0]	= static_cast<float>(pWindow->GetClientSize().GetWidth());
+	size[1]	= static_cast<float>(pWindow->GetClientSize().GetHeight());
+	
+	return ( size );
+}
+
+
+vgd::event::Location2Event::Location Mouse::getLocation( wxMouseEvent& event ) const
+{
+	// Location
+	wxWindow *pWindow = dynamic_cast<wxWindow*>(event.GetEventObject());
+	assert( pWindow != 0 );
+		
+	vgd::event::Location2Event::Location	location;
+	location[0] = static_cast<float>(event.GetX());
+	location[1] = static_cast<float>(pWindow->GetClientSize().GetHeight()) - static_cast<float>(event.GetY());
+
+	return ( location );
 }
 
 
