@@ -22,7 +22,7 @@ std::pair< float, float > ImageUtilities::computeMinMax( const IImage* pImage )
 {
 	using vgd::basic::IImage;
 	
-	assert( pImage->format() == IImage::LUMINANCE );
+	assert( pImage->format() == IImage::LUMINANCE );	// FIXME
 	assert( pImage->type() == IImage::UINT8 );			// FIXME
 	
 	int32			sizeOfComponents	= sizeof(uint8);
@@ -54,9 +54,9 @@ std::pair< float, float > ImageUtilities::computeMinMax( const IImage* pImage )
 
 
 		
-vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*		pImage,
-																				const SliceType	slice,
-																				const uint32		position )
+vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*	pImage,
+															const SliceType	slice,
+															const uint32	position )
 {
 	using vgd::basic::Image;
 	using vgd::basic::IImage;
@@ -71,7 +71,7 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*		pImag
 	int32			components			= pImage->components();
 	int32			sizeOfComponents	= sizeof(uint8) * components;
 
-	vgd::Shp< Image > pNewImage;
+	vgd::Shp< Image >	pNewImage;
 	uint8*				outputPixel;
 	Image::Format		outputFormat;
 	
@@ -88,10 +88,10 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*		pImag
 	{
 		case AXIAL_SLICE:
 		{
-			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
-																	pImage->width(), pImage->height(), 1,
-																	outputFormat, pImage->type(),
-																	0 )
+			pNewImage = vgd::Shp< Image >( new Image(	pImage->components(),
+														pImage->width(), pImage->height(), 1,
+														outputFormat, pImage->type(),
+														0 )
 												);
 
 			outputPixel = static_cast<uint8*>(pNewImage->editPixels());
@@ -125,10 +125,10 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*		pImag
 		
 		case FRONTAL_SLICE:
 		{
-			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
-																	pImage->width(), pImage->depth(), 1,
-																	outputFormat, pImage->type(),
-																	0 )
+			pNewImage = vgd::Shp< Image >( new Image(	pImage->components(),
+														pImage->width(), pImage->depth(), 1,
+														outputFormat, pImage->type(),
+														0 )
 													);
 
 			outputPixel = static_cast<uint8*>(pNewImage->editPixels());
@@ -167,10 +167,10 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*		pImag
 
 		case SAGITTAL_SLICE:
 		{
-			pNewImage = vgd::Shp< Image >( new Image( pImage->components(),
-																	pImage->depth(), pImage->height(), 1,
-																	outputFormat, pImage->type(),
-																	0 )
+			pNewImage = vgd::Shp< Image >( new Image(	pImage->components(),
+														pImage->depth(), pImage->height(), 1,
+														outputFormat, pImage->type(),
+														0 )
 													);
 
 			outputPixel = static_cast<uint8*>(pNewImage->editPixels());
@@ -236,7 +236,7 @@ void ImageUtilities::setAlpha( vgd::basic::IImage *pImage, const float alpha )
 		{
 			// scan image
 			uint8* iPixel = static_cast<uint8*>(pImage->editPixels());
-			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*4;
+			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*4;
 					iPixel != iEnd;
 					iPixel++ )
 			{
@@ -251,7 +251,7 @@ void ImageUtilities::setAlpha( vgd::basic::IImage *pImage, const float alpha )
 		{
 			// scan image
 			uint8* iPixel = static_cast<uint8*>(pImage->editPixels());
-			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*2;
+			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*2;
 					iPixel != iEnd;
 					iPixel++ )
 			{
@@ -290,7 +290,7 @@ void ImageUtilities::setAlphaIfNotBlack( vgd::basic::IImage *pImage, const float
 		{	
 			// scan image
 			uint8*		iPixel = static_cast<uint8*>(pImage->editPixels());
-			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*4;
+			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*4;
 					iPixel != iEnd;
 					iPixel++ )
 			{
@@ -315,7 +315,7 @@ void ImageUtilities::setAlphaIfNotBlack( vgd::basic::IImage *pImage, const float
 		{
 			// scan image
 			uint8*		iPixel = static_cast<uint8*>(pImage->editPixels());
-			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*2;
+			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*2;
 					iPixel != iEnd;
 					iPixel++ )
 			{
@@ -342,49 +342,49 @@ void ImageUtilities::setAlphaIfNotBlack( vgd::basic::IImage *pImage, const float
 
 
 void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
-												const int32 interval1, const int32 interval2,
-												const PaletteFunctionType fun1, const float alpha1,
-												const PaletteFunctionType fun2, const float alpha2,
-												const PaletteFunctionType fun3, const float alpha3,
-												uint8 *pPalette )
+									const int32 interval1, const int32 interval2,
+									const PaletteFunctionType fun1, const float alpha1,
+									const PaletteFunctionType fun2, const float alpha2,
+									const PaletteFunctionType fun3, const float alpha3,
+									uint8 *pPalette )
 {
 	if ( interval1-1 >= minValue )
 	{
 		setupPalette(	minValue, maxValue,
-							minValue, interval1-1,
-							fun1, alpha1,
-							pPalette );
+						minValue, interval1-1,
+						fun1, alpha1,
+						pPalette );
 	}
 
 	if ( interval2-1 >= interval1 )
 	{
 		setupPalette(	minValue, maxValue,
-							interval1, interval2-1,
-							fun2, alpha2,
-							pPalette );
+						interval1, interval2-1,
+						fun2, alpha2,
+						pPalette );
 	}
 	
 	if ( maxValue >= interval2 )
 	{
 		setupPalette(	minValue, maxValue,
-							interval2, maxValue,
-							fun3, alpha3,
-							pPalette );
+						interval2, maxValue,
+						fun3, alpha3,
+						pPalette );
 	}
 }
 
 
 
 void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
-												const int32 beginInterval, const int32 endInterval,
-												const PaletteFunctionType function,
-												const float fAlpha,
-												uint8 *pPalette )
+									const int32 beginInterval, const int32 endInterval,
+									const PaletteFunctionType function,
+									const float fAlpha,
+									uint8 *pPalette )
 {
-	const float		fMin		= static_cast<float>(minValue);
-	const float		fMax		= static_cast<float>(maxValue);
+	const float		fMin	= static_cast<float>(minValue);
+	const float		fMax	= static_cast<float>(maxValue);
 	const float		fBegin	= static_cast<const float>(beginInterval);
-	const float		fEnd		= static_cast<const float>(endInterval);
+	const float		fEnd	= static_cast<const float>(endInterval);
 
 	assert( beginInterval >= minValue && beginInterval <= maxValue );
 	assert( endInterval >= minValue && endInterval <= maxValue );

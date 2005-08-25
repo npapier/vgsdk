@@ -36,8 +36,6 @@ typedef enum {
  * @brief Collection of methods to apply on images.
  * 
  * @ingroup g_images
- * 
- * @todo setAlpha() and setAlphaIfNotBlack() don't traverse the whole image (depth is not used !!!)
  */
 struct VGD_API ImageUtilities
 {
@@ -49,7 +47,7 @@ struct VGD_API ImageUtilities
 	 * 
 	 * @param pImage	3d image where slice is extract
 	 * 
-	 * @todo remove precondition on type() 
+	 * @todo remove precondition on type() and format ?
 	 */
 	static std::pair< float, float > computeMinMax( const IImage* pImage );
 	

@@ -17,22 +17,15 @@ namespace event
 	
 	
 Location2Event::Location2Event(	Source * source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation,
-											const Size& size )
-: Event( source, buttonStates ),
-  m_location( location ),
-  m_previous( previousLocation ),
-  m_size( size )
+								const Size& size )
+:	Location2( location, size),
+	Event( source, buttonStates ),
+	m_previous( previousLocation )
 {}
 
 
 Location2Event::~Location2Event()
 {}
-
-
-const Location2Event::Location& Location2Event::getLocation() const
-{
-	return this->m_location;
-}
 
 
 const Location2Event::Location& Location2Event::getPreviousLocation() const
@@ -52,12 +45,6 @@ const Location2Event::LocationDelta Location2Event::getDelta() const
 		LocationDelta delta = this->m_location - this->m_previous;
 		return ( delta );
 	}
-}
-
-
-const Location2Event::Size& Location2Event::getSize() const
-{
-	return this->m_size;
 }
 
 

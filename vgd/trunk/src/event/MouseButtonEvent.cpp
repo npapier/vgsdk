@@ -17,7 +17,9 @@ namespace event
 	
 	
 MouseButtonEvent::MouseButtonEvent( Source *source, const ButtonStateSet& buttonStates, 
-												const int32 buttonID, const State state ) :
+									const int32 buttonID, const State state,
+									const Location& location, const Size& size )
+:	Location2( location, size),					
 	ButtonEvent( source, buttonStates, buttonID, state )
 {}
 

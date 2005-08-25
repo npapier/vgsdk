@@ -10,6 +10,7 @@
 
 #include "vgd/vgd.hpp"
 #include "vgd/event/ButtonEvent.hpp"
+#include "vgd/event/Location2.hpp"
 
 
 namespace vgd
@@ -21,7 +22,7 @@ namespace event
 /**
  * @brief	Implements a keyboard button event class.
  */
-struct VGD_API MouseButtonEvent : public ButtonEvent
+struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 {
 	/**
 	 * @brief	Defines all possible button on a mouse.
@@ -37,10 +38,13 @@ struct VGD_API MouseButtonEvent : public ButtonEvent
 	 * 
 	 * @param	source			a pointer to the source fo the event
 	 * @param	buttonStates	a reference to the button state set
-	 * @param	buttonID			a mouse button
-	 * @param	state				a button state
+	 * @param	buttonID		a mouse button
+	 * @param	state			a button state
+	 * @param	location		a location to pass through the event
+	 * @param	size			the size of the 'canvas' where Location2event occurs
 	 */
-	MouseButtonEvent( Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state );
+	MouseButtonEvent(	Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state,
+						const Location& location, const Size& size );
 	
 	/**
 	 * @brief	Destructor

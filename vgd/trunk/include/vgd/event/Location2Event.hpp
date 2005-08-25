@@ -11,6 +11,7 @@
 
 #include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
+#include "vgd/event/Location2.hpp"
 
 
 namespace vgd
@@ -23,32 +24,22 @@ namespace event
 /**
  * @brief	Defines the event class for location notifications.
  */
-struct VGD_API Location2Event : public Event
+struct VGD_API Location2Event : public Location2, public Event
 {
-	/**
-	 * @brief	Defines the location vector type.
-	 */
-	typedef vgm::Vec2f Location;
-
 	/**
 	 * @brief	Defines the difference of two location type.
 	 */
 	typedef vgm::Vec2f LocationDelta;
-		
-	/**
-	 * @brief	Defines the canvas size type.
-	 */
-	typedef vgm::Vec2f Size;
 
 	/**
 	 * @brief	Constructor.
 	 * 
 	 * @param	source				a pointer to event source
 	 * @param	buttonStates		a reference to the button state set
-	 * @param	location				a location to pass through the event
+	 * @param	location			a location to pass through the event
 	 * @param	previousLocation	the previous location. If there is no previous location, initialize each vector components
-	 * 									with std::numeric_limits<float>::max()
-	 * @param	size					the size of the 'canvas' where Location2event occurs
+	 * 								with std::numeric_limits<float>::max()
+	 * @param	size				the size of the 'canvas' where Location2event occurs
 	 */
 	Location2Event( Source *source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation, const Size& size );
 	
@@ -56,13 +47,6 @@ struct VGD_API Location2Event : public Event
 	 * @brief	Destructor.
 	 */
 	virtual ~Location2Event();
-	
-	/**
-	 * @brief	Retrieves the location passed through the event.
-	 * 
-	 * @return	a location
-	 */
-	const Location& getLocation() const;
 	
 	/**
 	 * @brief	Retrives the previous location
@@ -80,14 +64,7 @@ struct VGD_API Location2Event : public Event
 	 */
 	const LocationDelta getDelta() const;
 	
-	/**
-	 * @brief	Retrieves the 'canvas size' passed through the event.
-	 * 
-	 * @return	a size
-	 */
-	const Size& getSize() const;
-	
-	
+
 	// overridden method
 	void accept( vgd::event::EventVisitor& eventVisitor );	
 
@@ -95,19 +72,9 @@ struct VGD_API Location2Event : public Event
 private:
 
 	/**
-	 * @brief The location passed through the event.
-	 */
-	const Location m_location;
-	
-	/**
 	 * @brief The previous location passed through the event.
 	 */
 	const Location m_previous;	
-	
-	/**
-	 * @brief The size passed through the event.
-	 */
-	const Size		m_size;	
 };
 
 

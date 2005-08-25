@@ -33,9 +33,9 @@ namespace node
  * New fields added by this node :
  *
  * - SFMatrixR				\c matrix		= identity\n
- * 	Determines the projection matrix.
+ *		Determines the projection matrix.
  * - PAFRectangle2i		\c	[viewport]	= (0,0,1600,200).\n
- * 	Determines the viewport.
+ *		Determines the viewport.
  * - PAFRectangle2i		\c	[scissor]	= empty (i.e. scissor test is disabled).\n
  *		Determines the scissor box (it is automatically enabled if this field is defined, otherwise it is disabled ).
  * 
@@ -57,12 +57,12 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Typedef for the \c matrix field.
 	 */
-	typedef vgd::field::SFMatrixR FMatrixType;
+	typedef vgd::field::SFMatrixR	FMatrixType;
 
 	/**
 	 * @brief Typedef for the \c matrix field value.
 	 */
-	typedef vgm::MatrixR				MatrixValueType;
+	typedef vgm::MatrixR			MatrixValueType;
 
 	/**
 	 * @brief Gets the projection transformation.
@@ -72,7 +72,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Sets the projection transformation.
 	 */
-	void						setMatrix( const vgm::MatrixR& projection );
+	void				setMatrix( const vgm::MatrixR& projection );
 	
 	//@}
 
@@ -188,6 +188,24 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	//@}
 
 
+
+	/**
+	 * @name High-level methods
+	 * 
+	 * @todo viewAll()
+	 */
+	//@{
+
+	/**
+	 * @brief Apply the viewport transformation (as defined in OpenGL specification) to a vertex.
+	 * 
+	 * @param vertex	vertex to transform
+	 * @return vertex transformed
+	 * 
+	 * @pre getViewport(...) == true
+	 */	
+	vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
+	//@}
 
 protected:
 	/**
