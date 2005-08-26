@@ -80,7 +80,7 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 	using vgd::node::Texture1D;
 	using vgd::node::Texture2D;
 	
-	vgd::Shp< vgd::node::Switch >				pSwitch;
+	vgd::Shp< vgd::node::Switch >			pSwitch;
 	vgd::Shp< vgd::node::Quad >				pQuad;
 	std::vector< vgd::Shp< Texture2D > >	textures2D;
 	std::vector< vgd::Shp< Texture1D > >	textures1D;
@@ -131,18 +131,18 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 	// STEP 2 : For each layer
 	vgd::Shp< vge::service::Painter >	painter(vge::service::Painter::create());
 
-	bool											bScissorHasChanged = false;
+	bool								bScissorHasChanged = false;
 	vgd::Shp< vgd::basic::IImage >		pScissor;
-	vgd::Shp< Texture2D >					pTex2DForScissor;
+	vgd::Shp< Texture2D >				pTex2DForScissor;
 	
-	bool											bFirstPass = true;
+	bool								bFirstPass = true;
 
 	for(	int32 pass = 0;
 			pass < numLayers;
 			++pass )
 	{
 		// *** gets informations on this layer. ***
-		vgd::Shp< IImage >					pIImage				= pLayers->getFIImageRO( pass )->getValue();
+		vgd::Shp< IImage >				pIImage				= pLayers->getFIImageRO( pass )->getValue();
 		
 		if (	(pIImage.get() == 0) ||
 				(pIImage->isEmpty()) )
@@ -338,7 +338,7 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 		// ALPHA
 		GLboolean	alphaTest;
 		GLint			alphaFunc, alphaRef;
-		glGetBooleanv( GL_ALPHA_TEST,			&alphaTest );
+		glGetBooleanv( GL_ALPHA_TEST,		&alphaTest );
 		glGetIntegerv( GL_ALPHA_TEST_FUNC,	&alphaFunc );
 		glGetIntegerv( GL_ALPHA_TEST_REF,	&alphaRef );
 
@@ -352,7 +352,7 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 		GLboolean	depthMask;
 		GLint			depthFunc;
 		glGetBooleanv( GL_DEPTH_WRITEMASK,	&depthMask );
-		glGetIntegerv( GL_DEPTH_FUNC,			&depthFunc );
+		glGetIntegerv( GL_DEPTH_FUNC,		&depthFunc );
 		
 		// configure pass
 		if ( bFirstPass )
@@ -436,8 +436,8 @@ void Layers::applyScissorMask( vgd::Shp< vgd::basic::IImage > pScissor, vgd::Shp
 	using vgd::basic::IImage;
 	
 	assert(	(pScissor->format() == IImage::RGBA) ||
-				(pScissor->format() == IImage::BGRA) ||
-				(pScissor->format() == IImage::LUMINANCE_ALPHA) );
+			(pScissor->format() == IImage::BGRA) ||
+			(pScissor->format() == IImage::LUMINANCE_ALPHA) );
 
 	assert( pScissor->format() == pImage->format() );
 	
@@ -596,11 +596,11 @@ void main(void) \
 
 bool Layers::m_shadersAlreadyInitialized = false;
 
-glo::GLSLShader *Layers::m_pReplaceShader						= 0;
+glo::GLSLShader *Layers::m_pReplaceShader					= 0;
 glo::GLSLShader *Layers::m_pPaletteReplaceShader			= 0;
 
 glo::GLSLShader *Layers::m_pScissorReplaceShader			= 0;
-glo::GLSLShader *Layers::m_pScissorPaletteReplaceShader	= 0;
+glo::GLSLShader *Layers::m_pScissorPaletteReplaceShader		= 0;
 
 } // namespace painter
 

@@ -206,10 +206,10 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 				// compute pick matrix
 				vgm::MatrixR pickMatrix;
 				vgm::Rectangle2i viewport(	m_oglViewport[0], m_oglViewport[1],
-													m_oglViewport[2], m_oglViewport[3] );
+											m_oglViewport[2], m_oglViewport[3] );
 	
 				pickMatrix.setPick(	static_cast<float>(m_x), static_cast<float>(m_oglViewport[3] - m_y),
-											1., 1., viewport );
+									1., 1., viewport );
 				
 				// update engine
 				vgm::MatrixR& current( pEngine->getProjectionMatrix().getTop() );

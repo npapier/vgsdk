@@ -102,6 +102,49 @@ void SceneManager::removeEventProcessor( const uint32 index )
 
 
 
+const bool SceneManager::removeEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor )
+{
+	int32 index = findEventProcessor( eventProcessor );
+	
+	if ( index != -1 )
+	{
+		// Founded
+		removeEventProcessor( index );
+		
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+
+int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const
+{
+	int32 retVal = 0;
+	
+	for(	EventProcessorContainer::const_iterator	i	= m_eventProcessors.begin(),
+													iEnd= m_eventProcessors.end();
+			i != iEnd;
+			++i )
+	{
+		ElementOfEventProcessorContainer currentEventProcessor = *i;
+		
+		if ( currentEventProcessor == eventProcessor )
+		{
+			return ( retVal);
+		}
+		
+		++retVal;
+	}
+	
+	return ( -1 );
+}
+
+
+
 vgd::Shp< ::vgeGL::event::IEventProcessor > SceneManager::getEventProcessor( const uint32 index  ) const
 {
 	assert( index < getNumEventProcessors() && "Invalid index.");

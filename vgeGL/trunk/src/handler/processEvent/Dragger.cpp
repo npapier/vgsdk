@@ -108,10 +108,10 @@ void Dragger::logDebug( vgd::Shp< vgd::event::Event > event )
 	using vgd::event::Location2Event;
 	using vgd::event::MouseWheelEvent;
 	
-	vgd::event::KeyboardButtonEvent	*keyboardButtonEvent	= dynamic_cast<KeyboardButtonEvent*>(event.get());
-	MouseButtonEvent						*mouseButtonEvent		= dynamic_cast<MouseButtonEvent*>(event.get());
-	Location2Event							*location2Event		= dynamic_cast<Location2Event*>(event.get());
-	MouseWheelEvent						*mouseWheelEvent		= dynamic_cast<MouseWheelEvent*>(event.get());
+	vgd::event::KeyboardButtonEvent	*keyboardButtonEvent= dynamic_cast<KeyboardButtonEvent*>(event.get());
+	MouseButtonEvent				*mouseButtonEvent	= dynamic_cast<MouseButtonEvent*>(event.get());
+	Location2Event					*location2Event		= dynamic_cast<Location2Event*>(event.get());
+	MouseWheelEvent					*mouseWheelEvent	= dynamic_cast<MouseWheelEvent*>(event.get());
 	
 	if( keyboardButtonEvent != 0 )
 	{

@@ -136,6 +136,22 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @pre index < getNumEventProcessors()
 	 */
 	void removeEventProcessor( const uint32 index = 0 );
+	
+	/**
+	 * @brief Removes an event processor.
+	 * 
+	 * @param eventProcessor		event processor to remove
+	 * 
+	 * @return true if event processor has been founded and removed, otherwise false.
+	 */
+	const bool removeEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor );
+
+	/**
+	 * @brief Finds index of given event processor.
+	 * 
+	 * @return returns -1 if not found, otherwise returns a value between 0 and getNumEventProcessor()-1.
+	 */
+	int32 findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const;
 
 	/**
 	 * @brief Retrives an event processor.
@@ -229,7 +245,8 @@ protected:
 	/**
 	 * @brief Typedef for event processor container.
 	 */
-	typedef std::vector< vgd::Shp< ::vgeGL::event::IEventProcessor > > EventProcessorContainer;
+	typedef vgd::Shp< ::vgeGL::event::IEventProcessor > ElementOfEventProcessorContainer;
+	typedef std::vector< ElementOfEventProcessorContainer > EventProcessorContainer;
 	
 	/**
 	 * @brief Event processor container.
