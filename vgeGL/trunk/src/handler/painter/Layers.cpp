@@ -289,7 +289,14 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 				assert( false && "Unknown ComposeOperator function." );
 		}
 
-		//glPushAttrib( GL_ALL_ATTRIB_BITS );				// FIXME : OPTME minimize number of push/pop and on what attributes
+		// FIXME must be done for all texunits.
+		// push TEXTURE_xD
+//		GLboolean	isTexture1D, isTexture2D;
+//		glGetBooleanv( GL_TEXTURE_1D, &isTexture1D );
+//		glGetBooleanv( GL_TEXTURE_2D, &isTexture2D );
+		
+		// FIXME
+		glPushAttrib( GL_ALL_ATTRIB_BITS );				// FIXME : OPTME minimize number of push/pop and on what attributes
 		
 		//pGLEngine->getTextureMatrix().pushAll();
 		pGLEngine->getTextureMatrix().push(0);
@@ -335,24 +342,24 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 		// Enable/disable opengl part for the mask.
 		bool bMask = composeOperator.hasMask() || (pScissor.get() != 0);
 
-		// ALPHA
-		GLboolean	alphaTest;
-		GLint			alphaFunc, alphaRef;
-		glGetBooleanv( GL_ALPHA_TEST,		&alphaTest );
-		glGetIntegerv( GL_ALPHA_TEST_FUNC,	&alphaFunc );
-		glGetIntegerv( GL_ALPHA_TEST_REF,	&alphaRef );
-
-		if ( bMask )
-		{
-			glEnable( GL_ALPHA_TEST );
-			glAlphaFunc( GL_NOTEQUAL, 0.f );
-		}
-
-		// DEPTH
-		GLboolean	depthMask;
-		GLint			depthFunc;
-		glGetBooleanv( GL_DEPTH_WRITEMASK,	&depthMask );
-		glGetIntegerv( GL_DEPTH_FUNC,		&depthFunc );
+//		// push ALPHA
+//		GLboolean	alphaTest;
+//		GLint		alphaFunc, alphaRef;
+//		glGetBooleanv( GL_ALPHA_TEST,		&alphaTest );
+//		glGetIntegerv( GL_ALPHA_TEST_FUNC,	&alphaFunc );
+//		glGetIntegerv( GL_ALPHA_TEST_REF,	&alphaRef );
+//
+//		if ( bMask )
+//		{
+//			glEnable( GL_ALPHA_TEST );
+//			glAlphaFunc( GL_NOTEQUAL, 0.f );
+//		}
+//
+//		// push DEPTH
+//		GLboolean	depthMask;
+//		GLint		depthFunc;
+//		glGetBooleanv( GL_DEPTH_WRITEMASK,	&depthMask );
+//		glGetIntegerv( GL_DEPTH_FUNC,		&depthFunc );
 		
 		// configure pass
 		if ( bFirstPass )
@@ -368,13 +375,13 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 			glDepthFunc( GL_EQUAL );
 		}
 
-		// BLEND
-		GLboolean	blendEnabled;
-		GLint			blendSrc, blendDst;
-
-		glGetBooleanv( GL_BLEND,		&blendEnabled );
-		glGetIntegerv( GL_BLEND_SRC,	&blendSrc );
-		glGetIntegerv( GL_BLEND_DST,	&blendDst );
+//		// push BLEND
+//		GLboolean	blendEnabled;
+//		GLint		blendSrc, blendDst;
+//
+//		glGetBooleanv( GL_BLEND,		&blendEnabled );
+//		glGetIntegerv( GL_BLEND_SRC,	&blendSrc );
+//		glGetIntegerv( GL_BLEND_DST,	&blendDst );
 		
 		// configure opengl state.
 		if ( composeOperator.getFunction() == Layers::INTERPOLATE )
@@ -391,36 +398,55 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 		pGLEngine->getTextureMatrix().pop(2);
 		//pGLEngine->getTextureMatrix().popAll();
 
-		// restore
-		// Restore alpha
-		if ( alphaTest )
-		{
-			glEnable( GL_ALPHA_TEST );
-		}
-		else
-		{
-			glDisable( GL_ALPHA_TEST );
-		}
+//		// pop TEXTURE_xD
+//		if ( isTexture1D )
+//		{
+//			glEnable( GL_TEXTURE_1D );
+//		}
+//		else
+//		{
+//			glDisable( GL_TEXTURE_1D );
+//		}
+//
+//		if ( isTexture2D )
+//		{
+//			glEnable( GL_TEXTURE_2D );
+//		}
+//		else
+//		{
+//			glDisable( GL_TEXTURE_2D );
+//		}
+//
+//		// pop ALPHA
+//		if ( alphaTest )
+//		{
+//			glEnable( GL_ALPHA_TEST );
+//		}
+//		else
+//		{
+//			glDisable( GL_ALPHA_TEST );
+//		}
+//		
+//		glAlphaFunc( alphaFunc, alphaRef );
+//		
+//		// pop DEPTH
+//		glDepthMask( depthMask );
+//		glDepthFunc( depthFunc );
+//
+//		// Pop BLEND
+//		if ( blendEnabled )
+//		{
+//			glEnable( GL_BLEND );
+//		}
+//		else
+//		{
+//			glDisable( GL_BLEND );
+//		}
+//
+//		glBlendFunc( blendSrc, blendDst );
 		
-		glAlphaFunc( alphaFunc, alphaRef );
-		
-		// Restore depth
-		glDepthMask( depthMask );
-		glDepthFunc( depthFunc );
-
-		// Restore blend
-		if ( blendEnabled )
-		{
-			glEnable( GL_BLEND );
-		}
-		else
-		{
-			glDisable( GL_BLEND );
-		}
-
-		glBlendFunc( blendSrc, blendDst );
-		
-		//glPopAttrib();																												// FIXME optme
+		// FIXME
+		glPopAttrib();																												// FIXME optme
 	} // end for each layer
 	
 	glo::GLSLShader::useFixedPaths();
