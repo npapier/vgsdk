@@ -154,6 +154,34 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	int32 findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const;
 
 	/**
+	 * @brief Finds index for the first event processor of the given type or that inherits of the given type.
+	 * 
+	 * @return returns -1 if not found, otherwise returns a value between 0 and getNumEventProcessor()-1.
+	 */
+	template < typename typeOfEventProcessor >
+	int32 findEventProcessor() const
+	{
+		int32 retVal = 0;
+		
+		for(	EventProcessorContainer::const_iterator	i	= m_eventProcessors.begin(),
+														iEnd= m_eventProcessors.end();
+				i != iEnd;
+				++i )
+		{
+			ElementOfEventProcessorContainer currentEventProcessor = *i;
+			
+			if ( vgd::dynamic_pointer_cast< typeOfEventProcessor >(currentEventProcessor) != 0 )
+			{
+				return ( retVal);
+			}
+			
+			++retVal;
+		}
+		
+		return ( -1 );
+	}
+
+	/**
 	 * @brief Retrives an event processor.
 	 * 
 	 * @param index					the position of the event processor to get.
