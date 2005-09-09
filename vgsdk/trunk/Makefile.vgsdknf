@@ -2,14 +2,20 @@ VERSION=0.3
 
 full-install release-install all clean release debug world dist-clean info :
 	cd ../vgnf;		make '$@';
+	cd ../Mesher;	make '$@';
 
 checkout:
 	svn co http://dev-srv:8080/svn/SrcLib/vgnf/trunk ../vgnf
+	svn co http://dev-srv:8080/svn/SrcLib/Mesher/trunk ../Mesher
 
 update diff:
 	cd ../vgnf;	svn '$@';
+	cd ../Mesher;	svn '$@';
 
 tags:
 	# itself
 	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgnf/tags/ --message "Release $(VERSION)"
 	svn copy http://dev-srv:8080/svn/SrcLib/vgnf/trunk http://dev-srv:8080/svn/SrcLib/vgnf/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
+	# libs
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/Mesher/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/Mesher/trunk http://dev-srv:8080/svn/SrcLib/Mesher/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
