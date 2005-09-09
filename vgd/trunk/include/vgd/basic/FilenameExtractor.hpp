@@ -36,7 +36,12 @@ struct VGD_API FilenameExtractor
 	/**
 	 * @brief Extract the filename with his extension.
 	 */
-	std::string getFilename() const;	
+	std::string getFilename() const;
+	
+	/**
+	 * @brief Extract the filename without his extension.
+	 */
+	std::string getFilenameWithoutExtension() const;
 	
 	/**
 	 * @brief Extract the path to the file.

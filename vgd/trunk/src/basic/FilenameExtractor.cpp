@@ -31,7 +31,7 @@ FilenameExtractor::FilenameExtractor( std::string pathFilename ) :
 std::string FilenameExtractor::getExtension() const
 {
 	std::string::size_type	index;
-	std::string					extension;
+	std::string				extension;
 	
 	index	= m_pathFilename.rfind('.');
 	
@@ -48,7 +48,7 @@ std::string FilenameExtractor::getExtension() const
 std::string FilenameExtractor::getFilename() const
 {
 	std::string::size_type	index;
-	std::string					filename;
+	std::string				filename;
 	
 	index 	= m_pathFilename.rfind('/');
 	
@@ -58,6 +58,26 @@ std::string FilenameExtractor::getFilename() const
 	}
 
 	return ( filename );
+}
+
+
+
+std::string FilenameExtractor::getFilenameWithoutExtension() const
+{
+	std::string extension;
+	
+	std::string				filename	= getFilename();
+	std::string::size_type	index		= filename.rfind('.');
+		
+	if ( index != std::string::npos )
+	{
+		if ( index > 0 )
+		{
+			extension	= filename.substr( 0, index );
+		}
+	}
+
+	return ( extension );
 }
 
 

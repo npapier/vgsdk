@@ -53,6 +53,8 @@ struct VGD_API IGroup
 
 	/**
 	 * @brief Replaces child with given index with new child.
+	 * 
+	 * @pre newChildIndex>=0 and newChildIndex<=getNumChildren()
 	 */
 	virtual void	replaceChild( vgd::Shp<Node> newChild, const int32 index )=0;
 	

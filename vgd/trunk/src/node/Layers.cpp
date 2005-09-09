@@ -142,21 +142,21 @@ bool Layers::computeBoundingBox( const vgm::MatrixR& transformation )
 	if ( m_transformation != pQuad->getTransformation() )
 	{
 		bInvalidateParents	= true;
-		bRetVal					= true;
+		bRetVal				= true;
 
 		setTransformation( pQuad->getTransformation() );
 	}
 	else
 	{
 		bInvalidateParents	= false;
-		bRetVal					= false;
+		bRetVal				= false;
 	}
 
 	// STEP 3: update bounding box.
 	if ( m_boundingBox != pQuad->getBoundingBox() )
 	{
 		bInvalidateParents	= true;
-		bRetVal					= true;
+		bRetVal				= true;
 
 		// compute bb
 		setBoundingBox( pQuad->getBoundingBox() );

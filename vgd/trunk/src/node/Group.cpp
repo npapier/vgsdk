@@ -70,11 +70,16 @@ void Group::addChild( vgd::Shp<vgd::node::Node> node )
 
 void Group::insertChild	( vgd::Shp<Node> node, const int32 newChildIndex )
 {
-	assert( 	newChildIndex == 0 ||
-				(newChildIndex>0 && newChildIndex<getNumChildren()) &&
-				"Wrong index." );
+	assert(		(newChildIndex>=0 && newChildIndex<=getNumChildren()) && "Wrong index." );
 
-	graph().addEdge( this, node.get(), newChildIndex );
+	if ( newChildIndex == getNumChildren() )
+	{
+		graph().addEdge( this, node.get() );
+	}
+	else
+	{
+		graph().addEdge( this, node.get(), newChildIndex );
+	}
 	
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
@@ -87,11 +92,14 @@ void Group::replaceChild( vgd::Shp<Node> newChild, const int32 index )
 {
 	assert( checkChildIndex(index) && "index is out of range." );
 
-	graph().removeEdge( this, index,
-		false // no repacking
-		);
+	removeChild( index );
+	insertChild( newChild, index );
 
-	graph().addEdge( this, newChild.get(), index );
+//	graph().removeEdge( this, index,
+//		false // no repacking
+//		);
+//
+//	graph().addEdge( this, newChild.get(), index );
 	
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
