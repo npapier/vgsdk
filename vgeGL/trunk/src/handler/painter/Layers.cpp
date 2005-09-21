@@ -188,8 +188,8 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 						
 						assert( pIImage->paletteSize() > 0 );
 						ImageInfo *pImagePalette = new ImageInfo(	pIImage->paletteSize(), 1, 1,
-																				pIImage->paletteFormat(), pIImage->paletteType(),
-																				pIImage->palettePixels() );
+																	pIImage->paletteFormat(), pIImage->paletteType(),
+																	pIImage->palettePixels() );
 
 						pTex1D->setIImage( vgd::Shp< ImageInfo >(pImagePalette) );
 						
@@ -348,13 +348,13 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 //		glGetBooleanv( GL_ALPHA_TEST,		&alphaTest );
 //		glGetIntegerv( GL_ALPHA_TEST_FUNC,	&alphaFunc );
 //		glGetIntegerv( GL_ALPHA_TEST_REF,	&alphaRef );
-//
-//		if ( bMask )
-//		{
-//			glEnable( GL_ALPHA_TEST );
-//			glAlphaFunc( GL_NOTEQUAL, 0.f );
-//		}
-//
+
+		if ( bMask )
+		{
+			glEnable( GL_ALPHA_TEST );
+			glAlphaFunc( GL_NOTEQUAL, 0.f );
+		}
+
 //		// push DEPTH
 //		GLboolean	depthMask;
 //		GLint		depthFunc;

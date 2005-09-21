@@ -172,7 +172,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 			
 			if ( vgd::dynamic_pointer_cast< typeOfEventProcessor >(currentEventProcessor) != 0 )
 			{
-				return ( retVal);
+				return ( retVal );
 			}
 			
 			++retVal;
