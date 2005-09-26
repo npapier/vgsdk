@@ -6,12 +6,10 @@
 #ifndef _VGD_BASIC_IMAGEUTILITIES_H
 #define _VGD_BASIC_IMAGEUTILITIES_H
 
-#include <utility>
-
 #include "vgd/vgd.hpp"
 #include "vgd/Shp.hpp"
 #include "vgd/basic/Image.hpp"
-
+#include "vgd/basic/MinMax.hpp"
 
 
 namespace vgd
@@ -42,14 +40,27 @@ struct VGD_API ImageUtilities
 	/**
 	 * @brief Compute the minimum and maximum intensity values for the given image.
 	 * 
-	 * @pre pImage->format() == LUMINANCE
+	 * @pre pImage->format() == LUMINANCE or COLOR_INDEX
 	 * @pre pImage->type() == IImage::UINT8
 	 * 
 	 * @param pImage	3d image where slice is extract
 	 * 
-	 * @todo remove precondition on type() and format ?
+	 * @remarks Be careful, for image in COLOR_INDEX the minimum and maximum are computed for the indices
+	 * and not the colors.
+	 * 
+	 * @todo remove precondition on type().
 	 */
-	static std::pair< float, float > computeMinMax( const IImage* pImage );
+	static const MinMax computeMinMax( const IImage* pImage );
+
+	/**
+	 * @brief Helpers
+	 * 
+	 * @see computeMinMax(const IImage*)
+	 */
+	static const MinMax computeMinMax( const vgd::Shp< IImage > image)
+	{
+		return ( computeMinMax(image.get()) );
+	}
 	
 	/**
 	 * @brief Extract a slice (2d image) from a 3d image.

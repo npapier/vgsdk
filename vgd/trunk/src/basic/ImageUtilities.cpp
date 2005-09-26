@@ -6,7 +6,6 @@
 #include "vgd/basic/ImageUtilities.hpp"
 
 #include <cstring>
-#include <limits>
 
 
 
@@ -18,16 +17,18 @@ namespace basic
 
 
 
-std::pair< float, float > ImageUtilities::computeMinMax( const IImage* pImage )
+const MinMax ImageUtilities::computeMinMax( const IImage* pImage )
 {
 	using vgd::basic::IImage;
 	
-	assert( pImage->format() == IImage::LUMINANCE );	// FIXME
+	assert(	(pImage->format() == IImage::LUMINANCE) ||
+			(pImage->format() == IImage::COLOR_INDEX) );
+
 	assert( pImage->type() == IImage::UINT8 );			// FIXME
 	
-	int32			sizeOfComponents	= sizeof(uint8);
-
-	std::pair< float, float > retVal( std::numeric_limits<float>::max(), std::numeric_limits<float>::min() );
+	int32	sizeOfComponents	= sizeof(uint8);
+	
+	MinMax minMax;
 
 	// scan image
 	const uint8* iPixel = static_cast<const uint8*>(pImage->pixels());
@@ -38,18 +39,18 @@ std::pair< float, float > ImageUtilities::computeMinMax( const IImage* pImage )
 		uint8 value		= (*iPixel);
 		float fValue	= static_cast<float>(value);
 		
-		if ( fValue < retVal.first )
+		if ( fValue < minMax.getMin() )
 		{
-			retVal.first = value;
+			minMax.setMin( value );
 		}
-		else if ( fValue > retVal.second )
+		else if ( fValue > minMax.getMax() )
 		{
-			retVal.second = value;
+			minMax.setMax( value );
 		}
 		// else do nothing
 	}
 
-	return ( retVal );
+	return ( minMax );
 }
 
 
