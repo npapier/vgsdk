@@ -25,13 +25,12 @@ const MinMax ImageUtilities::computeMinMax( const IImage* pImage )
 			(pImage->format() == IImage::COLOR_INDEX) );
 
 	assert( pImage->type() == IImage::UINT8 );			// FIXME
-	
 	int32	sizeOfComponents	= sizeof(uint8);
 	
-	MinMax minMax;
-
 	// scan image
-	const uint8* iPixel = static_cast<const uint8*>(pImage->pixels());
+	const uint8*	iPixel( static_cast<const uint8*>(pImage->pixels())					);
+	MinMax			minMax(	static_cast<float>(*iPixel), static_cast<float>(*iPixel)	);
+
 	for(	const uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth();
 			iPixel != iEnd;
 			iPixel++ )
