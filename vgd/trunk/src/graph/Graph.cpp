@@ -147,6 +147,8 @@ vgd::Shp<vgd::node::Node> Graph::getChild( const vgd::node::Node* pSourceNode, c
 
 void Graph::getChildren( const vgd::node::Node* pSourceNode, std::list< vgd::Shp<vgd::node::Node> >& outChildren ) const
 {
+	assert( bgl_isOutEdgesPacked(pSourceNode->vertexDescriptor()) && "OutEdges not packed" );
+
 	const detail::VertexNamePropertyMap&	vertexNamePM = getVertexNamePropertyMap();
 
 	detail::bglGraphTraits::out_edge_iterator		out_i, out_end;
@@ -401,10 +403,9 @@ void Graph::bgl_makePlaceInOutEdges	( detail::bglGraphTraits::vertex_descriptor 
 {
 	assert( bgl_isOutEdgesPacked(vertexDescriptor) && "OutEdges not packed" );
 	assert(	edgeNameValue == 0 ||
-				(edgeNameValue > 0 && edgeNameValue < out_degree(vertexDescriptor, bglGraph()))
-			);
+			(edgeNameValue > 0 && edgeNameValue < out_degree(vertexDescriptor, bglGraph()))	);
 
-	uint32												ui32I;
+	uint32										ui32I;
 	detail::bglGraphTraits::out_edge_iterator	out_i;
 	detail::bglGraphTraits::out_edge_iterator	out_end;
 
@@ -418,12 +419,14 @@ void Graph::bgl_makePlaceInOutEdges	( detail::bglGraphTraits::vertex_descriptor 
 		}
 	}
 
+	assert(	(out_i != out_end && "edgeNameValue not found") ||
+			(out_i == out_end && (ui32I == 0) && (edgeNameValue == 0)) );
+
 	detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
-	for(	;
-			out_i != out_end;
-			++out_i/*, ui32I++*/ )
+	while ( out_i != out_end )
 	{
 		edgeNamePM[ *out_i ].value() += 1;
+		++out_i; // ui32I++
 	}
 }
 
@@ -465,14 +468,21 @@ std::pair< detail::bglGraphTraits::vertex_descriptor, bool > Graph::bgl_removeOu
 				{
 					edgeNamePM[ *out_i ].value() -= 1;
 				}
+				
+				// remove out_edge
+				remove_edge( out_toRemove, bglGraph() );				
+				
+				assert( bgl_isOutEdgesPacked(vertexDescriptor) && "OutEdges not packed" );				
 			}
-			
-			// remove out_edge
-			remove_edge( *out_toRemove, bglGraph() );
+			else
+			{
+				// remove out_edge
+				remove_edge( *out_toRemove, bglGraph() );
+			}
 			break;
 		}
 	}
-	
+
 	return ( retVal );
 }
 
