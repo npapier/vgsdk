@@ -98,7 +98,7 @@ void Engine::resetMatrices()
 	// MODELVIEW
 	assert( getGeometricalMatrix().size() == 1 );
 	
-	vgm::MatrixR& 		current(	getGeometricalMatrix().getTop() );
+	vgm::MatrixR& 	current(	getGeometricalMatrix().getTop() );
 
 	glMatrixMode( GL_MODELVIEW );
 
@@ -114,7 +114,7 @@ void Engine::resetMatrices()
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
 	
 	// TEXTURE
-	for(	int32 index	= 0,
+	for(	int32	index	= 0,
 					iMax	= getTextureMatrix().size();
 			index < iMax;
 			++index )
@@ -156,7 +156,19 @@ int32 Engine::getMaxTexUnits() const
 int32 Engine::getMaxTexSize() const
 {
 	GLint	maxTexSize;
+	
 	glGetIntegerv( GL_MAX_TEXTURE_SIZE, &maxTexSize );
+	
+	return ( maxTexSize );
+}
+
+
+
+int32 Engine::getMax3DTexSize() const
+{
+	GLint	maxTexSize;
+	
+	glGetIntegerv( GL_MAX_3D_TEXTURE_SIZE, &maxTexSize );
 	
 	return ( maxTexSize );
 }
@@ -195,7 +207,7 @@ bool Engine::populateNodeRegistry()
 		{
 			vgd::basic::RegisterNode< vgd::node::Texture2D >				registerNode1( i );
 			vgd::basic::RegisterNode< vgd::node::TextureMatrixTransform >	registerNode2( i );
-			vgd::basic::RegisterNode< vgd::node::TextureCubeMap>			registerNode3( i );		
+			//vgd::basic::RegisterNode< vgd::node::TextureCubeMap>			registerNode3( i );		
 		}
 		
 		return ( true );
