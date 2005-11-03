@@ -8,7 +8,7 @@
 #include <vgDebug/Global.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/Texture2D.hpp>
-#include <vgd/node/TextureCubeMap.hpp>
+//#include <vgd/node/TextureCubeMap.hpp>
 #include <vgd/node/TextureMatrixTransform.hpp>
 #include <vge/handler/Handler.hpp>
 #include <vge/handler/HandlerRegistry.hpp>
