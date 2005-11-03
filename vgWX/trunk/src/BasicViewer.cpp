@@ -105,7 +105,7 @@ void BasicViewer::viewAll()
 	// Compute bounding box and some informations
 	vgm::Box3f	box;
 	vgm::Vec3f	center;
-	float			max;
+	float		max;
 
 	computeSceneBoundingBox( box, center, max );
 	
@@ -129,7 +129,8 @@ void BasicViewer::viewAll()
 	// Compute and setup the camera type and frustum.
 	vgm::Vec2i	v2iSize( GetSize().GetWidth(), GetSize().GetHeight() );
 
-	if ( !v2iSize.isNull() )
+	if (	(v2iSize[0] != 0) &&
+			(v2iSize[1] != 0)	)
 	{
 		resize( v2iSize );
 	}
@@ -171,10 +172,16 @@ vgd::Shp< vgd::node::Group > BasicViewer::getScene()
 
 void BasicViewer::resize( const vgm::Vec2i size )
 {
+	if (	(size[0] == 0) || (size[1] == 0)	)
+	{
+		// Degenerated window, nothing to do
+		return;
+	}
+
 	// Compute bounding box and some informations
 	vgm::Box3f	box;
 	vgm::Vec3f	center;
-	float			max;
+	float		max;
 
 	computeSceneBoundingBox( box, center, max );
 	

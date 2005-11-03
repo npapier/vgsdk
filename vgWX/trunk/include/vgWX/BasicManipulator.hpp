@@ -104,17 +104,17 @@ struct VGWX_API BasicManipulator : public BasicViewer
 	
 	
 	/**
-	 * @name Overrided methods.
+	 * @name Overriden methods.
 	 */
 	//@{
 
 	/**
-	 * @brief Overrided method.
+	 * @brief Overriden method.
 	 */
 	void viewAll();
 	
 	/**
-	 * @brief Overrided method.
+	 * @brief Overriden method.
 	 */
 	void onEvent( vgd::Shp<vgd::event::Event> event );
 	//@}
