@@ -231,7 +231,7 @@ struct VGE_API SceneManager
 	/**
 	 * @brief Called to update the bounding box.
 	 * 
-	 * @param size						the size of the window.
+	 * @param size					the size of the window.
 	 * @param bUpdateBoundingBox	true to update bounding box in the scene graph, false to do nothing.
 	 */
 	virtual void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
