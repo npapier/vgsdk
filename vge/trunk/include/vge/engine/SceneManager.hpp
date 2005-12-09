@@ -291,7 +291,7 @@ private:
 	/**
 	 * @brief Root node of scene graph.
 	 */
-	vgd::Shp< vgd::node::Group >				m_root;
+	vgd::Shp< vgd::node::Group >			m_root;
 	
 	/**
 	 * @brief Main evaluation engine.
@@ -306,12 +306,12 @@ private:
 	/**
 	 * @brief true to update bounding box at each redraw, false if not.
 	 */
-	bool 												m_updateBoundingBox;
+	bool 									m_updateBoundingBox;
 	
 	/**
 	 * @brief Number of frames to render during the next OnPaint().
 	 */
-	uint32											m_numberOfFrames;
+	uint32									m_numberOfFrames;
 	//@}
 };
 
