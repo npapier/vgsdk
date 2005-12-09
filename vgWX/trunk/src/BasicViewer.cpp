@@ -138,6 +138,9 @@ void BasicViewer::viewAll()
 
 	// Setup the scene position.
 	m_viewTransform->setMatrix( matrix );
+	
+	// compute/update bounding box for the whole scene graph.
+	Canvas::computeBoundingBox( 0 );
 }
 
 
@@ -243,8 +246,8 @@ void BasicViewer::resize( const vgm::Vec2i size )
 
 
 void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCollectorExt, 
-													vgm::Box3f& box, vgm::Vec3f& center,
-													float& max )
+										vgm::Box3f& box, vgm::Vec3f& center,
+										float& max )
 {
 	// compute/update bounding box for the whole scene graph.
 	Canvas::computeBoundingBox( pCollectorExt );
@@ -270,15 +273,14 @@ void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCo
 
 
 
-void BasicViewer::computeSceneBoundingBox(	vgm::Box3f& box, vgm::Vec3f& center,
-															float& max )
+void BasicViewer::computeSceneBoundingBox(	vgm::Box3f& box, vgm::Vec3f& center, float& max )
 {
 	vge::visitor::NodeCollectorExtended<> collectorExt;
 	getScene()->traverse( collectorExt );
 	
 	computeBoundingBox(	&collectorExt,
-								box, center,
-								max );
+						box, center,
+						max );
 }
 
 
