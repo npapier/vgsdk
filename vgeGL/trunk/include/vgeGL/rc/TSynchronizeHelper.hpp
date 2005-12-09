@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_RC_TSYNCANDBINDHELPER_H
-#define _VGEGL_RC_TSYNCANDBINDHELPER_H
+#ifndef _VGEGL_RC_TSYNCHRONIZEHELPER_H
+#define _VGEGL_RC_TSYNCHRONIZEHELPER_H
 
 #include <vgd/field/DirtyFlag.hpp>
 #include <vge/rc/Manager.hpp>
@@ -26,26 +26,20 @@ namespace rc
  *
  * @remarks The handlerType must implements :
  * - void synchronize	( vgeGL::engine::Engine* pGLEngine, nodeType* pNode, GLResourceType* pGLResource );
- * - void bind				( vgeGL::engine::Engine* pGLEngine, nodeType* pNode, GLResourceType* pGLResource );
  */
 template< typename nodeType, typename handlerType, typename GLResourceType >
-void applyUsingSyncAndBind(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
-										handlerType*				pHandler
-									 )
+void applyUsingSynchronize(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
+							handlerType*			pHandler )
 {
 	// get the resource manager
-	vge::rc::Manager&			rGLManager	= pGLEngine->getGLManager();
+	vge::rc::Manager&		rGLManager	= pGLEngine->getGLManager();
 
 	// get dirty flag of node
 	vgd::field::DirtyFlag*	pDFNode		= pNode->getDirtyFlag( pNode->getDFNode() );
 
 	// get associated resource
-	vge::rc::IResource 		*pResource;
-	GLResourceType				*pCastedResource;
-
-	// lookup the resource.
-	pResource			= rGLManager.getAbstract( pNode );
-	pCastedResource	= dynamic_cast< GLResourceType* >(pResource);
+	vge::rc::IResource 		*pResource			= rGLManager.getAbstract( pNode );
+	GLResourceType			*pCastedResource	= dynamic_cast< GLResourceType* >(pResource);
 	
 	if (	( pCastedResource == 0 ) &&
 			( pResource != 0) )
@@ -59,8 +53,7 @@ void applyUsingSyncAndBind(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 	}
 
 	assert(	(pResource==0 && pCastedResource==0) ||
-				(pResource!=0 && pCastedResource!=0)
-				 );
+			(pResource!=0 && pCastedResource!=0)	);
 
 	// What to do ?
 	if ( pDFNode->isDirty() )
@@ -74,9 +67,8 @@ void applyUsingSyncAndBind(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 		}
 		// else have founded an associated resource, recycle it in synchronize().
 
-		// update resource.
+		// updates resource.
 		pHandler->synchronize( pGLEngine, pNode, pCastedResource );
-		pHandler->bind( pGLEngine, pNode, pCastedResource );
 		
 		// validate.
 		pDFNode->validate();
@@ -86,8 +78,8 @@ void applyUsingSyncAndBind(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 		// No change in node.
 		if ( pCastedResource != 0 )
 		{
-			// Founded an associated resource and use it.
-			pHandler->bind( pGLEngine, pNode, pCastedResource );
+			// updates resource.
+			pHandler->synchronize( pGLEngine, pNode, pCastedResource );
 		}
 		else
 		{
@@ -103,4 +95,4 @@ void applyUsingSyncAndBind(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_RC_TSYNCANDBINDHELPER_H
+#endif //#ifndef _VGEGL_RC_TSYNCHRONIZEHELPER_H

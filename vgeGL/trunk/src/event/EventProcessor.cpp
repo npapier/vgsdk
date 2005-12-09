@@ -13,9 +13,12 @@ namespace vgeGL
 namespace event
 {
 
+
+
 EventProcessor::EventProcessor( ::vgeGL::engine::SceneManager *sceneManager ) :
 	m_sceneManager( sceneManager )
 {
+	assert( sceneManager != 0 );
 }
 
 

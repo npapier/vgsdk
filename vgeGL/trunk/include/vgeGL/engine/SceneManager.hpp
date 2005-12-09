@@ -11,6 +11,7 @@
 #include "vgeGL/vgeGL.hpp"
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/event/IEventProcessor.hpp"
+#include "vgeGL/technique/RayCasting.hpp"
 
 
 
@@ -35,11 +36,12 @@ namespace engine
  * 		camera node. By default nothing is done in it, because there is no vgd::node::Camera in the scene graph.
  * 		But if you derived this class and add a Camera node, you should write this piece of code.
  * - Event handling (listen and process events with event processors).
+ * - Casts ray under the mouse cursor.
  */
 struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::Listener
 {
 	/**
-	 * @name Constructors/Destructor.
+	 * @name Constructors/Destructor
 	 */
 	//@{
 	
@@ -55,7 +57,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 	
 	/**
-	 * @name Rendering methods.
+	 * @name Rendering methods
 	 */
 	//@{
 
@@ -105,7 +107,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 
 	/**
-	 * @name Events.
+	 * @name Events
 	 */
 	//@{
 
@@ -127,16 +129,62 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @pre index <= getNumEventProcessors()
 	 */
 	void insertEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor, const uint32 index = 0 );
+
+	/**
+	 * @brief Installs a new event processor after the first encountered event processor of the given type or that 
+	 * inherits of the given type.
+	 * 
+	 * If the event processor, named typeOfEventProcessor, is not founded, then the insertion is done at the end of the 
+	 * container.
+	 * 
+	 * @param eventProcessor		event processor to install.
+	 */
+	template< typename typeOfEventProcessor >
+	void insertAfterEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor )
+	{
+		const int32 index = findEventProcessor< typeOfEventProcessor >();
+		
+		if ( index == -1 )
+		{
+			pushBackEventProcessor( eventProcessor );
+		}
+		else
+		{
+			insertEventProcessor( eventProcessor, index );
+		}
+	}
+		
+		
+		
+	/**
+	 * @brief Installs a new event processor
+	 * 
+	 * Installs a new event processor at the end of the event processors container.
+	 * 
+	 * @param eventProcessor		event processor to install.
+	 * 
+	 * @pre index <= getNumEventProcessors()
+	 */
+	void pushBackEventProcessor(vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor);
 	
 	/**
 	 * @brief Removes an event processor.
 	 * 
-	 * @param index					the position of the event processor to be removed.
+	 * @param index		the position of the event processor to be removed.
 	 * 
 	 * @pre index < getNumEventProcessors()
 	 */
 	void removeEventProcessor( const uint32 index = 0 );
 	
+	/**
+	 * @brief Removes an event processor.
+	 * 
+	 * Removes the event processor at the end of the event processors container.
+	 * 
+	 * @pre getNumEventProcessors() >= 1
+	 */
+	void popBackEventProcessor();
+
 	/**
 	 * @brief Removes an event processor.
 	 * 
@@ -151,7 +199,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * 
 	 * @return returns -1 if not found, otherwise returns a value between 0 and getNumEventProcessor()-1.
 	 */
-	int32 findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const;
+	const int32 findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const;
 
 	/**
 	 * @brief Finds index for the first event processor of the given type or that inherits of the given type.
@@ -159,7 +207,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @return returns -1 if not found, otherwise returns a value between 0 and getNumEventProcessor()-1.
 	 */
 	template < typename typeOfEventProcessor >
-	int32 findEventProcessor() const
+	const int32 findEventProcessor() const
 	{
 		int32 retVal = 0;
 		
@@ -189,6 +237,19 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @pre index < getNumEventProcessors()
 	 */
 	vgd::Shp< ::vgeGL::event::IEventProcessor > getEventProcessor( const uint32 index = 0 ) const;
+	
+	/**
+	 * @brief Retrives an event processor.
+	 * 
+	 * @param index					the position of the event processor to get.
+	 * 
+	 * @pre index < getNumEventProcessors()
+	 */
+	template< typename typeOfEventProcessor >
+	vgd::Shp< typeOfEventProcessor > getEventProcessor( const uint32 index = 0 ) const
+	{
+		return ( vgd::dynamic_pointer_cast< typeOfEventProcessor >( getEventProcessor(index) ) );
+	}
 
 	/**
 	 * @brief Retrives the number of event processors.
@@ -201,9 +262,21 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 
 	/**
-	 * @name Ray casting.
+	 * @name Ray casting
 	 */
 	//@{
+
+	/**
+	 * @brief Cast a ray under mouse pointer.
+	 * 
+	 * @param x  x-coordinate of the mouse pointer
+	 * @param y  y-coordinate of the mouse pointer
+	 * 
+	 * @return the nearest hit or a null reference.
+	 * 
+	 * @remarks The returned hit reference is valid until the next ray casting.
+	 */
+	const vgeGL::basic::Hit* castRayForHit( const int32 x, const int32 y );
 
 	/**
 	 * @brief Cast a ray under mouse pointer.
@@ -214,6 +287,13 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @return the nearest node or a null reference.
 	 */
 	vgd::node::Node* castRay( const int32 x, const int32 y );
+	
+	/**
+	 * @brief Returns a reference on the ray casting technique.
+	 * 
+	 * This reference could be used to access to the result of the last ray casting.
+	 */
+	const vgeGL::technique::RayCasting& getRayCastingTechnique() const;
 	//@}
 	
 	
@@ -237,7 +317,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 	
 	/**
-	 * @name Accessors to some vgsdk objects.
+	 * @name Accessors to some vgsdk objects
 	 */
 	//@{
 
@@ -255,7 +335,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 protected:
 
 	/**
-	 * @name Private data.
+	 * @name Private data
 	 */
 	//@{
 
@@ -267,14 +347,22 @@ protected:
 	/**
 	 * @brief Main evaluation engine.
 	 */
-	vgd::Shp< vgeGL::engine::Engine >		m_GLEngine;	
+	vgd::Shp< vgeGL::engine::Engine >		m_GLEngine;
+
 
 
 	/**
+	 * @brief An instance of raycasting technique.
+	 */
+	vgeGL::technique::RayCasting			m_rayCasting;
+	
+	
+	
+	/**
 	 * @brief Typedef for event processor container.
 	 */
-	typedef vgd::Shp< ::vgeGL::event::IEventProcessor > ElementOfEventProcessorContainer;
-	typedef std::vector< ElementOfEventProcessorContainer > EventProcessorContainer;
+	typedef vgd::Shp< ::vgeGL::event::IEventProcessor >		ElementOfEventProcessorContainer;
+	typedef std::vector< ElementOfEventProcessorContainer >	EventProcessorContainer;
 	
 	/**
 	 * @brief Event processor container.

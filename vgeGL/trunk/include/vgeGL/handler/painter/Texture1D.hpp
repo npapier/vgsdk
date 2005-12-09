@@ -41,9 +41,6 @@ namespace painter
 
 /**
  * @brief Send render commands for the Texture1D node
- * 
- * @todo If there is modification in vgd::node::Texture, the entire texture resource is update (image, param, filter, 
- * env...). That must be optimized.
  */
 struct VGEGL_API Texture1D : public vgeGL::handler::painter::Texture
 {
@@ -51,20 +48,20 @@ struct VGEGL_API Texture1D : public vgeGL::handler::painter::Texture
 
 	const TargetVector	getTargets()	const;
 
-	void	apply				( vge::engine::Engine*, vgd::node::Node* );
-	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
+	void	apply	( vge::engine::Engine*, vgd::node::Node* );
+	void	unapply	( vge::engine::Engine*, vgd::node::Node* );
 	
-	void	setToDefaults	();
-	
-	/**
-	 * @brief Create the Texture1D and initialize it.
-	 */
+	void	setToDefaults();
+
 	void	synchronize	( vgeGL::engine::Engine*, vgd::node::Texture1D*, vgeGL::rc::Texture1D* );
-	
+
+private:	
 	/**
-	 * @brief Use a texture initialize by create().
+	 * @todo Must be generalized for n-dimensional texture ?
+	 * @todo ARB NPOT extension
 	 */
-	void	bind			( vgeGL::engine::Engine*, vgd::node::Texture1D*, vgeGL::rc::Texture1D* );	
+	void texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture1D *pNode,
+						vgeGL::rc::Texture1D *pResource );
 };
 
 

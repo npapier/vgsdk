@@ -21,11 +21,31 @@ namespace event
 
 /**
  * @brief Interface to process an incoming event.
- * 
- * @todo enable(bool), isEnabled()
  */
 struct VGEGL_API IEventProcessor
 {
+	/**
+	 * @name Constructor/destructor
+	 * 
+	 */
+	//@{
+	
+	/**
+	 * @brief Default constructor
+	 * 
+	 * @post isEnabled() == true
+	 */
+	IEventProcessor();
+	
+	/**
+	 * @brief Destructor
+	 */
+	virtual ~IEventProcessor();
+	
+	//@}
+	
+	
+	
 	/**
 	 * @brief Method call to process the incoming event.
 	 * 
@@ -34,7 +54,37 @@ struct VGEGL_API IEventProcessor
 	 * @return true to stop processing (by any following IEventProcessor), false if processing must continue.
 	 */
 	virtual const bool onEvent( vgd::Shp<vgd::event::Event> event )=0;
+
+
+
+	/**
+	 * @name Accessors
+	 */
+	//@{
+	
+	/**
+	 * @brief Tests if this event processor is enabled or not.
+	 * 
+	 * @return true if enabled, false otherwise.
+	 */
+	const bool isEnabled() const { return m_isEnabled; }
+	
+	/**
+	 * @brief Sets if this event processor is enabled or not.
+	 */
+	void setEnabled( const bool isEnabled = true ) { m_isEnabled = isEnabled; }
+	
+	//@}
+	
+	
+private:
+
+	/**
+	 * @brief True if this event processor is enabled, false otherwise.
+	 */
+	bool m_isEnabled;
 };
+
 
 } // namespace event
 

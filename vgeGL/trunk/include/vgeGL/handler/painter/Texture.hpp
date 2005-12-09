@@ -18,6 +18,11 @@ namespace glo
 
 namespace vgd
 {
+	namespace field
+	{
+		struct DirtyFlag;
+	}
+	
 	namespace node
 	{
 		struct Texture;
@@ -52,29 +57,63 @@ namespace painter
 /**
  * @brief Send render commands for the Texture node
  * 
+ * @todo Shared more source code between Texture1D, 2D... (see TexturexD::synchronize(), TexturexD::texSubImage())
+ * @todo Support Texture1D resize (for ONCE parameters)
  * @todo Optimize convertMy*2GL() using a table.
  */
 struct VGEGL_API Texture : public vge::handler::painter::MultiAttribute
 {
-	void	setToDefaults	();
-	
-	void	paint				( vgeGL::engine::Engine*, vgd::node::Texture*, glo::Texture* );
+	void	setToDefaults();
 
+	void	paint( vgeGL::engine::Engine*, vgd::node::Texture*, glo::Texture* );
 
-
-protected:
 	/**
 	 * @brief Convert IImage format to the OpenGL equivalent format.
 	 */
-	GLenum convertMyFormat2GL( vgd::basic::IImage::Format format ) const;
+	static GLenum convertMyFormat2GL( vgd::basic::IImage::Format format );
 	
 	/**
 	 * @brief Convert IImage type to the OpenGL equivalent type.
 	 */
-	GLenum convertMyType2GL( vgd::basic::IImage::Type type ) const;
+	static GLenum convertMyType2GL( vgd::basic::IImage::Type type );
+	
+	
+protected:
+	/**
+	 * @name Data initialized by preSynchronize()
+	 */
+	//@{
 
+	vgd::field::DirtyFlag*			m_pDFIImages;
+	bool							m_isImageDefined;
+	vgd::Shp< vgd::basic::IImage >	m_pIImage;
+	
+	// the following attributes are only initialized if preSynchronize has returned false
+	vgm::Vec3i	m_imageSize;
+	vgm::Vec3i	m_imageSizePOT;
+	
+	int32	m_components;
+	GLenum	m_format;
+	GLenum	m_type;
 
+	vgm::Vec3i	m_texSize;
+	bool		m_bResize;
+	//@}
 
+	/**
+	 * @brief Switch to the specified tex unit and creates rc/tex
+	 * 
+	 * @return true when image/texture are synchronized, false if not.
+	 * 
+	 * @todo takes care of texture and image format...
+	 */
+	const bool preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+								::glo::Texture *pTexture );
+								
+	void synchronizeParameters(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+								::glo::Texture *pTexture );
+								
+private:
 	static GLenum	m_wrapParameter[];
 	static GLint	m_wrapValue[];
 	
@@ -91,8 +130,8 @@ protected:
 	
 	static GLenum	m_operandParameter[];
 	static GLint	m_operandValue[];
-	
-	static GLenum	m_scaleParameter[];
+
+	static GLenum	m_scaleParameter[];								
 };
 
 

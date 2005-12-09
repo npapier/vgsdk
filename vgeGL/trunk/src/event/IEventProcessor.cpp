@@ -4,3 +4,29 @@
 // Author Nicolas Papier
 
 #include "vgeGL/event/IEventProcessor.hpp"
+
+
+
+namespace vgeGL
+{
+	
+namespace event
+{
+
+
+IEventProcessor::IEventProcessor()
+:	m_isEnabled( true )
+{
+}
+
+
+
+IEventProcessor::~IEventProcessor()
+{
+}
+
+
+
+} //namespace event
+
+} // namespace vgeGL

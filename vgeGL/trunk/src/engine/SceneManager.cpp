@@ -91,6 +91,13 @@ void SceneManager::insertEventProcessor(	vgd::Shp< ::vgeGL::event::IEventProcess
 
 
 
+void SceneManager::pushBackEventProcessor(vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor)
+{
+	insertEventProcessor( eventProcessor, getNumEventProcessors() );
+}
+
+
+	
 void SceneManager::removeEventProcessor( const uint32 index )
 {
 	assert( index < getNumEventProcessors() && "Invalid index.");
@@ -98,6 +105,15 @@ void SceneManager::removeEventProcessor( const uint32 index )
 	EventProcessorContainer::iterator iter = m_eventProcessors.begin() + index;
 	
 	m_eventProcessors.erase( iter );
+}
+
+
+
+void SceneManager::popBackEventProcessor()
+{
+	assert( getNumEventProcessors() >= 1 && "Empty event processor containers" );
+
+	removeEventProcessor( getNumEventProcessors()-1 );
 }
 
 
@@ -121,7 +137,7 @@ const bool SceneManager::removeEventProcessor( vgd::Shp< ::vgeGL::event::IEventP
 
 
 
-int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const
+const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const
 {
 	int32 retVal = 0;
 	
@@ -148,7 +164,7 @@ int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcesso
 vgd::Shp< ::vgeGL::event::IEventProcessor > SceneManager::getEventProcessor( const uint32 index  ) const
 {
 	assert( index < getNumEventProcessors() && "Invalid index.");
-	
+
 	return ( m_eventProcessors[index] );
 }
 
@@ -161,24 +177,46 @@ const uint32 SceneManager::getNumEventProcessors() const
 
 
 
-vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
+const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32 y )
 {
 	// CAST A RAY
 	getNodeCollector().reset();
 	getRoot()->traverse( getNodeCollector() );
 
-	vgeGL::technique::RayCasting raycasting;
 	getEngine()->resetEval();
-	raycasting.apply(	getEngine().get(), getNodeCollector().getTraverseElements(), x, y );
+	m_rayCasting.apply(	getEngine().get(), getNodeCollector().getTraverseElements(), x, y );
 
-	if ( raycasting.getHitsSize() == 0 )
+	if ( m_rayCasting.getHitsSize() == 0 )
 	{
-		return ( 0 );
+		return 0;
 	}
 	else
 	{
-		return ( raycasting.getNearestHitNode() );
+		return &m_rayCasting.getNearestHit();
 	}
+}
+
+
+
+vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
+{
+	const vgeGL::basic::Hit* hit = castRayForHit( x, y );
+	
+	if ( hit == 0 )
+	{
+		return 0;
+	}
+	else
+	{
+		return m_rayCasting.getNearestHitNode();
+	}
+}
+
+
+
+const vgeGL::technique::RayCasting& SceneManager::getRayCastingTechnique() const
+{
+	return ( m_rayCasting );
 }
 
 

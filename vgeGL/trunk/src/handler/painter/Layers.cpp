@@ -10,6 +10,7 @@
 #include <vgd/node/Switch.hpp>
 #include <vgd/node/Texture1D.hpp>
 #include <vgd/node/Texture2D.hpp>
+#include <vgd/node/TextureMatrixTransform.hpp>
 #include <vge/service/Painter.hpp>
 
 #include "vgeGL/rc/TDisplayListHelper.hpp"
@@ -49,9 +50,9 @@ void Layers::apply( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 	assert( dynamic_cast< vgd::node::Layers* >(pNode) != 0 );
 	vgd::node::Layers *pLayers = static_cast< vgd::node::Layers* >(pNode);
-	
-	initializeShaders();
 
+	initializeShaders();
+		
 	paint( pGLEngine, pLayers );
 
 	// at this time, it could not be compiled in a display list.
@@ -79,251 +80,135 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 	using vgd::node::Layers;
 	using vgd::node::Texture1D;
 	using vgd::node::Texture2D;
-	
-	vgd::Shp< vgd::node::Switch >			pSwitch;
-	vgd::Shp< vgd::node::Quad >				pQuad;
-	std::vector< vgd::Shp< Texture2D > >	textures2D;
-	std::vector< vgd::Shp< Texture1D > >	textures1D;
-	
-	// Step 1 : initialization
-	if ( pLayers->getRoot().get() == 0 )
-	{
-		return;
-	}
-	
-	if ( (pLayers->getRoot())->getNumChildren() == 0 )
+
+	// STEP 1 : initialization pSwitch, pQuad & numLayers
+	assert( pLayers->getRoot() != 0 );
+	if ( pLayers->getRoot()->getNumChildren() <= 1 )
 	{
 		// layers not initialized (never call Layers::createLayers(...)).
 		return;
 	}
 
 	// get nodes.
-	pSwitch	= vgd::dynamic_pointer_cast<vgd::node::Switch>(pLayers->getRoot());
-	if (	pSwitch.get() == 0 )
-	{
-		assert( false && "vgeGL::handler::painter::Layers internal error" );
-		return;
-	}
+	vgd::Shp< vgd::node::Switch >	pSwitch( vgd::dynamic_pointer_cast<vgd::node::Switch>(pLayers->getRoot()) );
+	assert( pSwitch != 0 && "vgeGL::handler::painter::Layers internal error" );
 
-	pQuad		= pSwitch->getChild< vgd::node::Quad >(0);
-	assert( pQuad.get() && "vgeGL::handler::painter::Layers internal error" );
+	vgd::Shp< vgd::node::Quad >		pQuad(	pSwitch->getChild< vgd::node::Quad >(0) );
+	assert( pQuad && "vgeGL::handler::painter::Layers internal error" );
 
-	const int32 numLayers = (pSwitch->getNumChildren() - 1) /2;
+	const int32 numLayers = (pSwitch->getNumChildren() - 2) / 2;
 	assert( numLayers == pLayers->getNumLayers() );
-	textures1D.reserve( numLayers );
-	textures2D.reserve( numLayers );
 	
-	for(	int32	i = 1;
-			i != 2*numLayers+1;
-			++i )
-	{
-		vgd::Shp< Texture2D > pTex2D( pSwitch->getChild< Texture2D >(i) );
-		assert( pTex2D.get() != 0 && "vgeGL::handler::painter::Layers internal error" );
-		textures2D.push_back( pTex2D );
-		
-		++i;
+	// STEP 2 : texture transformation
+	using vgd::node::TextureMatrixTransform;
+	
+	vgd::Shp< TextureMatrixTransform > pTexMatrixTransform = pSwitch->getChild< TextureMatrixTransform >(1);
 
-		vgd::Shp< Texture1D > pTex1D( pSwitch->getChild< Texture1D >(i) );
-		assert( pTex1D.get() != 0 && "vgeGL::handler::painter::Layers internal error" );
-		textures1D.push_back( pTex1D );
+	vgd::field::DirtyFlag*	dfTransformation= pLayers->getDirtyFlag( pLayers->getDFTransformation() );
+
+	if ( dfTransformation->isDirty() )
+	{
+		vgm::MatrixR matrix = pLayers->gethMatrix();
+		
+		pTexMatrixTransform->setMatrix( matrix );
+
+		dfTransformation->validate();
 	}
 
-	// STEP 2 : For each layer
-	vgd::Shp< vge::service::Painter >	painter(vge::service::Painter::create());
-
-	bool								bScissorHasChanged = false;
+	// STEP 2bis : For each layer
+	bool								bFirstPass = true;
 	vgd::Shp< vgd::basic::IImage >		pScissor;
 	vgd::Shp< Texture2D >				pTex2DForScissor;
-	
-	bool								bFirstPass = true;
 
 	for(	int32 pass = 0;
 			pass < numLayers;
 			++pass )
 	{
 		// *** gets informations on this layer. ***
-		vgd::Shp< IImage >				pIImage				= pLayers->getFIImageRO( pass )->getValue();
 		
-		if (	(pIImage.get() == 0) ||
+		// IMAGE
+		vgd::Shp< IImage >	pIImage	= pLayers->getFIImageRO( pass )->getValue();
+		
+		if (	(pIImage == 0) ||
 				(pIImage->isEmpty()) )
 		{
 			// nothing to do, no or empty image.
 			continue;
 		}
 		
+		// COMPOSE_OPERATOR
 		Layers::ComposeOperatorValueType	composeOperator	= pLayers->gethComposeOperator( pass );
 		
-		//
 		if (composeOperator.getFunction() == Layers::COMPOSE_FUNCTION_NONE)
 		{
 			// there is an image, but don't draw it.
 			continue;
 		}
 
-		vgd::field::DirtyFlag *				dirtyFlagImage		= pLayers->getDirtyFlag( pLayers->getDFIImage(pass) );
+		// INTERNAL
+		vgd::field::DirtyFlag*	dirtyFlagImage( pLayers->getDirtyFlag( pLayers->getDFIImage(pass) ) );
+		vgd::Shp< Texture2D >	pTex2D( pSwitch->getChild< Texture2D >(2*pass+2) );
+		vgd::Shp< Texture1D >	pTex1D( pSwitch->getChild< Texture1D >(2*pass+3) );
+		assert( pTex1D != 0 );
+		assert( pTex2D != 0 );
 
-		// *** configure texture, blend stage, alpha stage, depth stage and shaders ***
-		vgd::Shp< Texture2D > pTex2D;
-		vgd::Shp< Texture1D > pTex1D;
-		
-		switch ( composeOperator.getFunction() )
+		// Configure dirtyFlagImage, pTex*
+		// ouput pScissor and pTex2DForScissor
+		const bool isAScissorPass = configure(	pIImage, composeOperator,
+												dirtyFlagImage, pTex2D, pTex1D,
+												pScissor, pTex2DForScissor );
+
+		if ( isAScissorPass )
 		{
-			//case Layers::COMPOSE_FUNCTION_NONE:
-			//nothing to do, because this case was already catch.
-
-			case Layers::REPLACE:
-			case Layers::INTERPOLATE:
-			{
-				if ( pIImage->format() == IImage::COLOR_INDEX )
-				{
-					pTex2D = textures2D[pass];
-					pTex1D = textures1D[pass];
-					
-					pTex2D->setMultiAttributeIndex(0);
-					pTex1D->setMultiAttributeIndex(1);
-
-					if ( dirtyFlagImage->isDirty() )
-					{
-						pTex2D->setIImage( pIImage );
-						
-						assert( pIImage->paletteSize() > 0 );
-						ImageInfo *pImagePalette = new ImageInfo(	pIImage->paletteSize(), 1, 1,
-																	pIImage->paletteFormat(), pIImage->paletteType(),
-																	pIImage->palettePixels() );
-
-						pTex1D->setIImage( vgd::Shp< ImageInfo >(pImagePalette) );
-						
-						dirtyFlagImage->validate();
-					}
-					//else nothing to do
-
-					// REPLACE/INTERPOLATE shared the same shader.
-					if ( pScissor.get() != 0 )
-					{
-						m_pScissorPaletteReplaceShader->use();
-						m_pScissorPaletteReplaceShader->setUniform1i( "imageMap", 0 );
-						m_pScissorPaletteReplaceShader->setUniform1i( "paletteMap", 1 );
-						m_pScissorPaletteReplaceShader->setUniform1i( "scissorMap", 2 );
-					}
-					else
-					{
-						m_pPaletteReplaceShader->use();
-						m_pPaletteReplaceShader->setUniform1i( "imageMap", 0 );
-						m_pPaletteReplaceShader->setUniform1i( "paletteMap", 1 );
-					}
-				}
-				else
-				{
-					pTex2D = textures2D[pass];
-					pTex2D->setMultiAttributeIndex(0);
-					
-					if ( dirtyFlagImage->isDirty() )
-					{
-						pTex2D->setIImage( pIImage );
-						dirtyFlagImage->validate();
-					}
-					//else nothing to do
-					
-					// REPLACE/INTERPOLATE share the shader.
-					if ( pScissor.get() != 0 )
-					{
-						m_pScissorReplaceShader->use();
-						m_pScissorReplaceShader->setUniform1i( "imageMap", 0 );
-						m_pScissorReplaceShader->setUniform1i( "scissorMap", 1 );
-					}
-					else
-					{
-						m_pReplaceShader->use();
-						m_pReplaceShader->setUniform1i( "imageMap", 0 );
-					}
-				}
-				
-				break;
-			}
-
-
-
-			case Layers::SCISSOR:
-			{
-				if ( pIImage->format() == IImage::COLOR_INDEX )
-				{
-					assert( false && "Scissor layer could not have a palette." );
-				}
-				else
-				{
-					pTex2D = textures2D[pass];
-					
-					if ( dirtyFlagImage->isDirty() )
-					{
-						pTex2D->setIImage( pIImage );
-						dirtyFlagImage->validate();
-						
-						bScissorHasChanged = true;
-					}
-					//else nothing to do
-
-					pTex2DForScissor = pTex2D;
-					pScissor = pIImage;
-					
-					continue;
-				}
-				break;
-			}
-
-
-
-//			case Layers::MODULATE:
-//				if ( dirtyFlagImage->isDirty() || bScissorHasChanged )								FIXME: todo
-//				{
-//					pTex2D->setIImage( pIImage );
-//					dirtyFlagImage->validate();
-//				}
-//				//else nothing to do
-//				
-//				pTex2D->setFunction( vgd::node::Texture::FUN_REPLACE );
-//				glEnable( GL_BLEND );
-//				glBlendFunc( GL_ZERO, GL_SRC_COLOR );
-//				break;
-
-			default:
-				assert( false && "Unknown ComposeOperator function." );
+			// current pass is on a SCISSOR, no more work must be done.
+			continue;
 		}
 
-		// FIXME must be done for all texunits.
-		// push TEXTURE_xD
-//		GLboolean	isTexture1D, isTexture2D;
-//		glGetBooleanv( GL_TEXTURE_1D, &isTexture1D );
-//		glGetBooleanv( GL_TEXTURE_2D, &isTexture2D );
-		
+		// *** configure texture, blend stage, alpha stage, depth stage and shaders ***
+		configureShaders(	pIImage, dirtyFlagImage,
+							composeOperator,
+							pScissor, pTex2DForScissor );
+							
 		// FIXME
 		glPushAttrib( GL_ALL_ATTRIB_BITS );				// FIXME : OPTME minimize number of push/pop and on what attributes
 		
+		// configure glstate
+		configureGLState( bFirstPass, composeOperator, pScissor );
+				
+		// UPDATE TEXTURE
 		//pGLEngine->getTextureMatrix().pushAll();
+		// FIXME i do this because texture with options ONCE change the texture matrix and never restore it !!!
 		pGLEngine->getTextureMatrix().push(0);
 		pGLEngine->getTextureMatrix().push(1);		
 		pGLEngine->getTextureMatrix().push(2);
+		
+		vgd::Shp< vgd::basic::IImage > iimage;
+		bool imageInTex2D = pTex2D->getIImage( iimage );
+		bool imageInTex1D = pTex1D->getIImage( iimage ); 
 
-		// udpate TEXTURE2D
-		if ( pTex2D.get() != 0 )
+		// painter
+		vgd::Shp< vge::service::Painter >	painter(vge::service::Painter::create());
+
+		if ( imageInTex1D )
 		{
-			// update TEXTURE2D
-			// FIXME i do this because texture with options ONCE change the texture matrix and never restore it !!!
-			//pGLEngine->getTextureMatrix().push(0);
+			pGLEngine->evaluate( painter, pTex1D.get(), true );
+		}
+
+		if ( imageInTex2D )
+		{
 			pGLEngine->evaluate( painter, pTex2D.get(), true );
-			//pGLEngine->getTextureMatrix().pop(0);
+
+			// FIXME optme only evaluate it one time ? and only if != identity ?
+			pGLEngine->evaluate( painter, pTexMatrixTransform.get(), true );
+			assert( pTex2D->getMultiAttributeIndex() == pTexMatrixTransform->getMultiAttributeIndex() );
 		}
 		
-		// udpate TEXTURE1D
-		if ( pTex1D.get() != 0 )
+		if ( pScissor != 0 )
 		{
-			//pGLEngine->getTextureMatrix().push(1);		
-			pGLEngine->evaluate( painter, pTex1D.get(), true );
-			//pGLEngine->getTextureMatrix().pop(1);
-		}
-
-		if ( pScissor.get() != 0 )
-		{
-			assert(pTex2DForScissor.get() != 0 );
+			// FIXME OPTME could be done only the first time ?
+			
+			// A scissor is current.
+			assert( pTex2DForScissor != 0 );
 						
 			if ( pIImage->format() == IImage::COLOR_INDEX )
 			{
@@ -333,62 +218,11 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 			{
 				pTex2DForScissor->setMultiAttributeIndex(1);
 			}
-				
-			//pGLEngine->getTextureMatrix().pushAll();					
+
 			pGLEngine->evaluate( painter, pTex2DForScissor.get(), true );
-			//pGLEngine->getTextureMatrix().popAll();
 		}
 
-		// Enable/disable opengl part for the mask.
-		bool bMask = composeOperator.hasMask() || (pScissor.get() != 0);
 
-//		// push ALPHA
-//		GLboolean	alphaTest;
-//		GLint		alphaFunc, alphaRef;
-//		glGetBooleanv( GL_ALPHA_TEST,		&alphaTest );
-//		glGetIntegerv( GL_ALPHA_TEST_FUNC,	&alphaFunc );
-//		glGetIntegerv( GL_ALPHA_TEST_REF,	&alphaRef );
-
-		if ( bMask )
-		{
-			glEnable( GL_ALPHA_TEST );
-			glAlphaFunc( GL_NOTEQUAL, 0.f );
-		}
-
-//		// push DEPTH
-//		GLboolean	depthMask;
-//		GLint		depthFunc;
-//		glGetBooleanv( GL_DEPTH_WRITEMASK,	&depthMask );
-//		glGetIntegerv( GL_DEPTH_FUNC,		&depthFunc );
-		
-		// configure pass
-		if ( bFirstPass )
-		{
-			// this is the first pass
-			glDepthMask( GL_TRUE );
-			bFirstPass = false;
-		}
-		else
-		{
-			// this is not the first pass.
-			glDepthMask( GL_FALSE );
-			glDepthFunc( GL_EQUAL );
-		}
-
-//		// push BLEND
-//		GLboolean	blendEnabled;
-//		GLint		blendSrc, blendDst;
-//
-//		glGetBooleanv( GL_BLEND,		&blendEnabled );
-//		glGetIntegerv( GL_BLEND_SRC,	&blendSrc );
-//		glGetIntegerv( GL_BLEND_DST,	&blendDst );
-		
-		// configure opengl state.
-		if ( composeOperator.getFunction() == Layers::INTERPOLATE )
-		{
-			glEnable( GL_BLEND );
-			glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-		}
 
 		// draw proxy geometry.
 		pGLEngine->evaluate( painter, pQuad.get(), true );
@@ -397,53 +231,6 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 		pGLEngine->getTextureMatrix().pop(1);		
 		pGLEngine->getTextureMatrix().pop(2);
 		//pGLEngine->getTextureMatrix().popAll();
-
-//		// pop TEXTURE_xD
-//		if ( isTexture1D )
-//		{
-//			glEnable( GL_TEXTURE_1D );
-//		}
-//		else
-//		{
-//			glDisable( GL_TEXTURE_1D );
-//		}
-//
-//		if ( isTexture2D )
-//		{
-//			glEnable( GL_TEXTURE_2D );
-//		}
-//		else
-//		{
-//			glDisable( GL_TEXTURE_2D );
-//		}
-//
-//		// pop ALPHA
-//		if ( alphaTest )
-//		{
-//			glEnable( GL_ALPHA_TEST );
-//		}
-//		else
-//		{
-//			glDisable( GL_ALPHA_TEST );
-//		}
-//		
-//		glAlphaFunc( alphaFunc, alphaRef );
-//		
-//		// pop DEPTH
-//		glDepthMask( depthMask );
-//		glDepthFunc( depthFunc );
-//
-//		// Pop BLEND
-//		if ( blendEnabled )
-//		{
-//			glEnable( GL_BLEND );
-//		}
-//		else
-//		{
-//			glDisable( GL_BLEND );
-//		}
-//
-//		glBlendFunc( blendSrc, blendDst );
 		
 		// FIXME
 		glPopAttrib();																												// FIXME optme
@@ -453,6 +240,188 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 	
 	// Validate node
 	pLayers->getDirtyFlag(pLayers->getDFNode())->validate();
+}
+
+
+
+const bool Layers::configure(	vgd::Shp< vgd::basic::IImage > pIImage,
+								vgd::node::Layers::ComposeOperatorValueType composeOperator,
+								vgd::field::DirtyFlag*	dirtyFlagImage,
+								vgd::Shp< vgd::node::Texture2D > pTex2D, vgd::Shp< vgd::node::Texture1D >	pTex1D,
+								vgd::Shp< vgd::basic::IImage >& pScissor, vgd::Shp< vgd::node::Texture2D >& pTex2DForScissor )
+{
+	using vgd::basic::ImageInfo;
+	using vgd::node::Layers;
+	
+	bool isAScissorPass = false;
+
+	switch ( composeOperator.getFunction() )
+	{
+		//case Layers::COMPOSE_FUNCTION_NONE:
+		//nothing to do, because this case was already catch.
+
+		case Layers::REPLACE:
+		case Layers::INTERPOLATE:
+		{
+			if ( pIImage->format() == ImageInfo::COLOR_INDEX )
+			{
+				if ( dirtyFlagImage->isDirty() )
+				{
+					pTex2D->setMultiAttributeIndex(0);
+					pTex2D->setIImage( pIImage );
+					
+					assert( pIImage->paletteSize() > 0 );
+					ImageInfo *pImagePalette = new ImageInfo(	pIImage->paletteSize(), 1, 1,
+																pIImage->paletteFormat(), pIImage->paletteType(),
+																pIImage->palettePixels() );
+
+					pTex1D->setMultiAttributeIndex(1);
+					pTex1D->setIImage( vgd::Shp< ImageInfo >(pImagePalette) );
+					
+					dirtyFlagImage->validate();
+				}
+				//else nothing to do
+			}
+			else
+			{
+				if ( dirtyFlagImage->isDirty() )
+				{
+					pTex2D->setMultiAttributeIndex(0);
+					pTex2D->setIImage( pIImage );
+					dirtyFlagImage->validate();
+				}
+				//else nothing to do
+			}
+			break;
+		}
+
+
+		case Layers::SCISSOR:
+		{
+			if ( pIImage->format() == ImageInfo::COLOR_INDEX )
+			{
+				assert( false && "Scissor layer could not have a palette." );									// FIXME
+			}
+			else
+			{
+				if ( dirtyFlagImage->isDirty() )
+				{
+					pTex2D->setIImage( pIImage );
+					dirtyFlagImage->validate();
+				}
+				//else nothing to do
+
+				pTex2DForScissor	= pTex2D;
+				pScissor			= pIImage;
+
+				isAScissorPass = true;
+			}
+		}
+		break;
+
+		default:
+			assert( false && "Unknown ComposeOperator function." );
+	}
+	
+	return ( isAScissorPass );
+}
+
+
+
+void Layers::configureShaders(	vgd::Shp< vgd::basic::IImage > pIImage, vgd::field::DirtyFlag*	dirtyFlagImage,
+								vgd::node::Layers::ComposeOperatorValueType composeOperator,
+								vgd::Shp< vgd::basic::IImage >& pScissor, vgd::Shp< vgd::node::Texture2D >& pTex2DForScissor )
+{
+	using vgd::basic::IImage;
+	using vgd::basic::ImageInfo;	
+	using vgd::node::Layers;
+	
+	switch ( composeOperator.getFunction() )
+	{
+		//case Layers::COMPOSE_FUNCTION_NONE:
+		//nothing to do, because this case was already catch.
+
+		case Layers::REPLACE:
+		case Layers::INTERPOLATE:
+		{
+			if ( pIImage->format() == IImage::COLOR_INDEX )
+			{
+				// REPLACE/INTERPOLATE shared the same shader.
+				if ( pScissor != 0 )
+				{
+					m_pScissorPaletteReplaceShader->use();
+					m_pScissorPaletteReplaceShader->setUniform1i( "imageMap", 0 );
+					m_pScissorPaletteReplaceShader->setUniform1i( "paletteMap", 1 );
+					m_pScissorPaletteReplaceShader->setUniform1i( "scissorMap", 2 );
+				}
+				else
+				{
+					m_pPaletteReplaceShader->use();
+					m_pPaletteReplaceShader->setUniform1i( "imageMap", 0 );
+					m_pPaletteReplaceShader->setUniform1i( "paletteMap", 1 );
+				}
+			}
+			else
+			{
+				// REPLACE/INTERPOLATE share the shader.
+				if ( pScissor != 0 )
+				{
+					m_pScissorReplaceShader->use();
+					m_pScissorReplaceShader->setUniform1i( "imageMap", 0 );
+					m_pScissorReplaceShader->setUniform1i( "scissorMap", 1 );
+				}
+				else
+				{
+					m_pReplaceShader->use();
+					m_pReplaceShader->setUniform1i( "imageMap", 0 );
+				}
+			}
+			
+			break;
+		}
+
+//		case Layers::SCISSOR:
+
+		default:
+			assert( false && "Unknown ComposeOperator function." );
+	}
+}
+
+
+
+void Layers::configureGLState(	bool& bFirstPass,
+								vgd::node::Layers::ComposeOperatorValueType composeOperator,
+								vgd::Shp< vgd::basic::IImage > pScissor )
+{
+	// Enable/disable opengl part for the mask.
+	bool bMask = composeOperator.hasMask() || (pScissor.get() != 0);
+		
+	if ( bMask )
+	{
+		glEnable( GL_ALPHA_TEST );
+		glAlphaFunc( GL_NOTEQUAL, 0.f );
+	}
+
+	// configure pass
+	if ( bFirstPass )
+	{
+		// this is the first pass
+		glDepthMask( GL_TRUE );
+		bFirstPass = false;
+	}
+	else
+	{
+		// this is not the first pass.
+		glDepthMask( GL_FALSE );
+		glDepthFunc( GL_EQUAL );
+	}
+
+	// configure opengl state.
+	if ( composeOperator.getFunction() == vgd::node::Layers::INTERPOLATE )
+	{
+		glEnable( GL_BLEND );
+		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	}
 }
 
 
@@ -620,6 +589,35 @@ void main(void) \
 
 
 
+void Layers::destroyShaders()
+{
+	if ( m_pReplaceShader != 0 )
+	{
+		delete m_pReplaceShader;
+		m_pReplaceShader = 0;
+	}
+
+	if ( m_pPaletteReplaceShader != 0 )
+	{
+		delete m_pPaletteReplaceShader;
+		m_pPaletteReplaceShader = 0;		
+	}
+
+	if ( m_pScissorReplaceShader != 0 )
+	{
+		delete m_pScissorReplaceShader;
+		m_pScissorReplaceShader = 0;		
+	}
+
+	if ( m_pScissorPaletteReplaceShader != 0 )
+	{
+		delete m_pScissorPaletteReplaceShader;
+		m_pScissorPaletteReplaceShader = 0;		
+	}
+}
+
+
+
 bool Layers::m_shadersAlreadyInitialized = false;
 
 glo::GLSLShader *Layers::m_pReplaceShader					= 0;
@@ -627,6 +625,113 @@ glo::GLSLShader *Layers::m_pPaletteReplaceShader			= 0;
 
 glo::GLSLShader *Layers::m_pScissorReplaceShader			= 0;
 glo::GLSLShader *Layers::m_pScissorPaletteReplaceShader		= 0;
+
+
+//			case Layers::MODULATE:
+//				if ( dirtyFlagImage->isDirty() || bScissorHasChanged )								FIXME: todo
+//				{
+//					pTex2D->setIImage( pIImage );
+//					dirtyFlagImage->validate();
+//				}
+//				//else nothing to do
+//				
+//				pTex2D->setFunction( vgd::node::Texture::FUN_REPLACE );
+//				glEnable( GL_BLEND );
+//				glBlendFunc( GL_ZERO, GL_SRC_COLOR );
+//				break;
+
+
+
+
+
+
+
+		// FIXME must be done for all texunits.
+		// push TEXTURE_xD
+//		GLboolean	isTexture1D, isTexture2D;
+//		glGetBooleanv( GL_TEXTURE_1D, &isTexture1D );
+//		glGetBooleanv( GL_TEXTURE_2D, &isTexture2D );
+
+//		// push ALPHA
+//		GLboolean	alphaTest;
+//		GLint		alphaFunc, alphaRef;
+//		glGetBooleanv( GL_ALPHA_TEST,		&alphaTest );
+//		glGetIntegerv( GL_ALPHA_TEST_FUNC,	&alphaFunc );
+//		glGetIntegerv( GL_ALPHA_TEST_REF,	&alphaRef );
+
+//		// push DEPTH
+//		GLboolean	depthMask;
+//		GLint		depthFunc;
+//		glGetBooleanv( GL_DEPTH_WRITEMASK,	&depthMask );
+//		glGetIntegerv( GL_DEPTH_FUNC,		&depthFunc );
+
+//		// push BLEND
+//		GLboolean	blendEnabled;
+//		GLint		blendSrc, blendDst;
+//
+//		glGetBooleanv( GL_BLEND,		&blendEnabled );
+//		glGetIntegerv( GL_BLEND_SRC,	&blendSrc );
+//		glGetIntegerv( GL_BLEND_DST,	&blendDst );
+
+
+
+
+//		// pop TEXTURE_xD
+//		if ( isTexture1D )
+//		{
+//			glEnable( GL_TEXTURE_1D );
+//		}
+//		else
+//		{
+//			glDisable( GL_TEXTURE_1D );
+//		}
+//
+//		if ( isTexture2D )
+//		{
+//			glEnable( GL_TEXTURE_2D );
+//		}
+//		else
+//		{
+//			glDisable( GL_TEXTURE_2D );
+//		}
+//
+//		// pop ALPHA
+//		if ( alphaTest )
+//		{
+//			glEnable( GL_ALPHA_TEST );
+//		}
+//		else
+//		{
+//			glDisable( GL_ALPHA_TEST );
+//		}
+//		
+//		glAlphaFunc( alphaFunc, alphaRef );
+//		
+//		// pop DEPTH
+//		glDepthMask( depthMask );
+//		glDepthFunc( depthFunc );
+//
+//		// Pop BLEND
+//		if ( blendEnabled )
+//		{
+//			glEnable( GL_BLEND );
+//		}
+//		else
+//		{
+//			glDisable( GL_BLEND );
+//		}
+//
+//		glBlendFunc( blendSrc, blendDst );
+
+
+
+
+
+
+
+
+
+
 
 } // namespace painter
 

@@ -41,9 +41,6 @@ namespace painter
 
 /**
  * @brief Send render commands for the Texture2D node
- * 
- * @todo If there is modification in vgd::node::Texture, the entire texture resource is update (image, param, filter, 
- * env...). That must be optimized.
  */
 struct VGEGL_API Texture2D : public vgeGL::handler::painter::Texture
 {
@@ -51,20 +48,24 @@ struct VGEGL_API Texture2D : public vgeGL::handler::painter::Texture
 
 	const TargetVector	getTargets()	const;
 
-	void						apply		( vge::engine::Engine*, vgd::node::Node* );
-	void						unapply	( vge::engine::Engine*, vgd::node::Node* );
+	void	apply	( vge::engine::Engine*, vgd::node::Node* );
+	void	unapply	( vge::engine::Engine*, vgd::node::Node* );
 	
 	void	setToDefaults	();
-	
+
 	/**
-	 * @brief Create the texture2D and initialize it.
+	 * @brief Creates/updates the texture2D and updates parameters.
 	 */
 	void	synchronize	( vgeGL::engine::Engine*, vgd::node::Texture2D*, vgeGL::rc::Texture2D* );
-	
+
+
+private:
 	/**
-	 * @brief Use a texture initialize by create().
+	 * @todo Must be generalized for n-dimensional texture ?
+	 * @todo ARB NPOT extension
 	 */
-	void	bind			( vgeGL::engine::Engine*, vgd::node::Texture2D*, vgeGL::rc::Texture2D* );	
+	void texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture2D *pNode,
+						vgeGL::rc::Texture2D *pResource );
 };
 
 

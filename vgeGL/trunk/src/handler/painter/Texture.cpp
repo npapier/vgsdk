@@ -7,6 +7,7 @@
 
 #include <glo/Texture.hpp>
 #include <vgd/node/Texture.hpp>
+#include <vgm/Utilities.hpp>
 #include <vgm/Vector.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
@@ -30,16 +31,15 @@ void Texture::setToDefaults()
 
 
 
-void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
-							glo::Texture *pResource )
+void Texture::paint(vgeGL::engine::Engine *, vgd::node::Texture *pNode, glo::Texture *pResource )
 {
-	// WRAP
-	vgd::field::EditorRO< vgd::node::Texture::FWrapType > wrap;
-
-	wrap	=	pNode->getFieldRO<vgd::node::Texture::FWrapType>(pNode->getFWrap());
+	using vgd::node::Texture;
 	
-	vgd::node::Texture::FWrapType::const_iterator wrapIter;
-	vgd::node::Texture::FWrapType::const_iterator wrapEnd;
+	// WRAP
+	vgd::field::EditorRO< Texture::FWrapType > wrap = pNode->getFieldRO<Texture::FWrapType>(pNode->getFWrap());
+	
+	Texture::FWrapType::const_iterator wrapIter;
+	Texture::FWrapType::const_iterator wrapEnd;
 	
 	for(	wrapIter = wrap->begin(),
 			wrapEnd	= wrap->end();
@@ -57,12 +57,10 @@ void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 	wrap.release();
 	
 	// FILTER
-	vgd::field::EditorRO< vgd::node::Texture::FFilterType > filter;
-
-	filter	=	pNode->getFieldRO<vgd::node::Texture::FFilterType>(pNode->getFFilter());
+	vgd::field::EditorRO< Texture::FFilterType > filter = pNode->getFieldRO<Texture::FFilterType>(pNode->getFFilter());
 	
-	vgd::node::Texture::FFilterType::const_iterator filterIter;
-	vgd::node::Texture::FFilterType::const_iterator filterEnd;
+	Texture::FFilterType::const_iterator filterIter;
+	Texture::FFilterType::const_iterator filterEnd;
 	
 	for(	filterIter = filter->begin(),
 			filterEnd	= filter->end();
@@ -80,10 +78,8 @@ void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 	filter.release();
 	
 	// MIPMAP
-	bool bDefined;
 	bool bMipmap;
-	
-	bDefined = pNode->getMipmap( bMipmap );
+	bool bDefined = pNode->getMipmap( bMipmap );
 	
 	if ( bDefined )
 	{
@@ -112,12 +108,10 @@ void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 	}
 	
 	// FUNCTION
-	vgd::field::EditorRO< vgd::node::Texture::FFunctionType > function;
-
-	function	=	pNode->getFieldRO<vgd::node::Texture::FFunctionType>(pNode->getFFunction());
+	vgd::field::EditorRO< Texture::FFunctionType > function = pNode->getFieldRO<Texture::FFunctionType>(pNode->getFFunction());
 	
-	vgd::node::Texture::FFunctionType::const_iterator functionIter;
-	vgd::node::Texture::FFunctionType::const_iterator functionEnd;
+	Texture::FFunctionType::const_iterator functionIter;
+	Texture::FFunctionType::const_iterator functionEnd;
 	
 	for(	functionIter = function->begin(),
 			functionEnd	= function->end();
@@ -135,12 +129,10 @@ void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 	function.release();
 	
 	// COMBINE
-	vgd::field::EditorRO< vgd::node::Texture::FCombineType > combine;
-
-	combine	=	pNode->getFieldRO<vgd::node::Texture::FCombineType>(pNode->getFCombine());
+	vgd::field::EditorRO< Texture::FCombineType > combine = pNode->getFieldRO<Texture::FCombineType>(pNode->getFCombine());
 	
-	vgd::node::Texture::FCombineType::const_iterator combineIter;
-	vgd::node::Texture::FCombineType::const_iterator combineEnd;
+	Texture::FCombineType::const_iterator combineIter;
+	Texture::FCombineType::const_iterator combineEnd;
 	
 	for(	combineIter = combine->begin(),
 			combineEnd	= combine->end();
@@ -158,12 +150,10 @@ void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 	combine.release();
 	
 	// SOURCE
-	vgd::field::EditorRO< vgd::node::Texture::FSourceType > source;
-
-	source	=	pNode->getFieldRO<vgd::node::Texture::FSourceType>(pNode->getFSource());
+	vgd::field::EditorRO< Texture::FSourceType > source = pNode->getFieldRO<Texture::FSourceType>(pNode->getFSource());
 	
-	vgd::node::Texture::FSourceType::const_iterator sourceIter;
-	vgd::node::Texture::FSourceType::const_iterator sourceEnd;
+	Texture::FSourceType::const_iterator sourceIter;
+	Texture::FSourceType::const_iterator sourceEnd;
 	
 	for(	sourceIter = source->begin(),
 			sourceEnd	= source->end();
@@ -181,12 +171,10 @@ void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 	source.release();
 
 	// OPERAND
-	vgd::field::EditorRO< vgd::node::Texture::FOperandType > operand;
-
-	operand	=	pNode->getFieldRO<vgd::node::Texture::FOperandType>(pNode->getFOperand());
+	vgd::field::EditorRO< Texture::FOperandType > operand = pNode->getFieldRO<Texture::FOperandType>(pNode->getFOperand());
 	
-	vgd::node::Texture::FOperandType::const_iterator operandIter;
-	vgd::node::Texture::FOperandType::const_iterator operandEnd;
+	Texture::FOperandType::const_iterator operandIter;
+	Texture::FOperandType::const_iterator operandEnd;
 	
 	for(	operandIter = operand->begin(),
 			operandEnd	= operand->end();
@@ -204,12 +192,10 @@ void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 	operand.release();
 
 	// SCALE
-	vgd::field::EditorRO< vgd::node::Texture::FScaleType > scale;
-
-	scale	=	pNode->getFieldRO<vgd::node::Texture::FScaleType>(pNode->getFScale());
+	vgd::field::EditorRO< Texture::FScaleType > scale = pNode->getFieldRO<Texture::FScaleType>(pNode->getFScale());
 	
-	vgd::node::Texture::FScaleType::const_iterator scaleIter;
-	vgd::node::Texture::FScaleType::const_iterator scaleEnd;
+	Texture::FScaleType::const_iterator scaleIter;
+	Texture::FScaleType::const_iterator scaleEnd;
 	
 	for(	scaleIter = scale->begin(),
 			scaleEnd	= scale->end();
@@ -229,7 +215,267 @@ void Texture::paint(	vgeGL::engine::Engine *, vgd::node::Texture *pNode,
 
 
 
-GLenum Texture::convertMyFormat2GL( vgd::basic::IImage::Format format ) const
+const bool Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+									::glo::Texture *pTexture )
+{
+	// activate the desired texture unit.
+	pTexture->active( GL_TEXTURE0_ARB + pNode->getMultiAttributeIndex() );
+
+	// Tests if 'iimage' field is valid ?
+	m_pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
+	
+	if ( m_pDFIImages->isValid() )
+	{
+		// Nothing to do, because texture is already created and synchronized.
+		return true;
+	}
+
+	// gets IImage
+	m_isImageDefined = pNode->getIImages( vgd::node::Texture::DEFAULT_IIMAGES, m_pIImage );
+	
+	if ( !m_isImageDefined )
+	{
+		// Nothing to do, because iimage is not defined.
+		return true;
+	}
+
+	// updates imageSize and imageSizePOT.
+	m_imageSize[0]	= m_pIImage->width();
+	m_imageSize[1]	= m_pIImage->height();
+	m_imageSize[2]	= m_pIImage->depth();
+	
+	const int32 textureDimension = pNode->gethTextureDimension();
+	assert( textureDimension == 1 || textureDimension == 2 || textureDimension == 3 );
+
+	m_imageSizePOT[0] = vgm::Utilities::nextPower2( m_imageSize[0] );
+	m_imageSizePOT[1] = vgm::Utilities::nextPower2( m_imageSize[1] );
+	m_imageSizePOT[2] = vgm::Utilities::nextPower2( m_imageSize[2] );
+
+	m_components	= m_pIImage->components();
+	m_format		= convertMyFormat2GL( m_pIImage->format() );
+	m_type			= convertMyType2GL( m_pIImage->type() );
+	
+	// Creates or recycles glo::Texture* ?
+	bool m_bUseGLTexImage;
+
+	if ( pTexture->isEmpty() )
+	{
+		// creates
+		pTexture->generate();
+		pTexture->bind();
+		
+		m_bUseGLTexImage = true;
+	}
+	else
+	{
+		// recycles
+		pTexture->bind();
+		
+		pTexture->getSize( m_texSize[0], m_texSize[1], m_texSize[2] );
+
+		// FIXME take care of texture and image format.
+		m_bUseGLTexImage = false;
+		
+		switch ( textureDimension )
+		{
+			case 3:
+				// same size (at least) between already initialized texture and m_imageSizePOT, so reuses texture.
+				m_bUseGLTexImage = m_bUseGLTexImage || (m_imageSizePOT[2] > m_texSize[2]);
+
+			case 2:
+				m_bUseGLTexImage = m_bUseGLTexImage || (m_imageSizePOT[1] > m_texSize[1]);
+				
+			case 1:
+				m_bUseGLTexImage = m_bUseGLTexImage || (m_imageSizePOT[0] > m_texSize[0]);			
+				break;
+		
+			default:
+				assert( false && "Unsupported texture dimension (!= 1,2,3)" );
+		}
+	}
+	
+	// creates n-dimensionnal texture (glTexImageXD)
+	if ( m_bUseGLTexImage )
+	{
+		// border
+		vgm::Vec4f	borderValue;
+		bool		bHasBorder = pNode->getBorder( borderValue );
+		
+		int32		borderSize = bHasBorder ? 2 : 0;
+
+		// size
+		assert( textureDimension == 1 || textureDimension == 2 || textureDimension == 3 );
+		
+		GLint maxTexSize;
+		
+		if ( textureDimension == 3 )
+		{
+			maxTexSize = pGLEngine->getMax3DTexSize();
+		}
+		else
+		{
+			maxTexSize = pGLEngine->getMaxTexSize();
+		}
+
+		// image exceed max texture size ?
+		switch ( textureDimension )
+		{
+			case 3:
+				if ( m_imageSizePOT[2] > maxTexSize )
+				{
+					m_texSize[2]	= maxTexSize;
+					m_bResize		= true;
+				}
+				else
+				{
+					m_texSize[2]	= m_imageSizePOT[2];
+					m_bResize		= false;
+				}
+
+			case 2:
+				if ( m_imageSizePOT[1] > maxTexSize )
+				{
+					m_texSize[1]	= maxTexSize;
+					m_bResize		= true;
+				}
+				else
+				{
+					m_texSize[1]	= m_imageSizePOT[1];
+					m_bResize		= false;					
+				}
+
+			case 1:
+				if ( m_imageSizePOT[0] > maxTexSize )
+				{
+					m_texSize[0]	= maxTexSize;
+					m_bResize		= true;
+				}
+				else
+				{
+					m_texSize[0]	= m_imageSizePOT[0];
+					m_bResize		= false;		
+				}
+				break;
+		
+			default:
+				m_texSize[0] = m_texSize[1] = m_texSize[2] = 0;
+				assert( false && "Unsupported texture dimension (!= 1,2,3)" );
+		}
+	
+		// Specifies texture image
+		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+		
+		if ( textureDimension == 1 )
+		{
+			glTexImage1D( GL_TEXTURE_1D,
+					0,
+					m_components,
+					m_texSize[0] + borderSize,
+					bHasBorder ? 1 : 0,
+					m_format,
+					m_type,
+					0
+					);
+		}
+		else if ( textureDimension == 2 )
+		{
+			glTexImage2D( GL_TEXTURE_2D,
+					0,
+					m_components,
+					m_texSize[0] + borderSize, m_texSize[1] + borderSize,
+					bHasBorder ? 1 : 0,
+					m_format,
+					m_type,
+					0
+					);
+		}
+		else
+		{
+			assert( textureDimension == 3 && "Unsupported texture dimension (!= 1,2,3)" );
+			
+			glTexImage3D( GL_TEXTURE_3D,
+				0,
+				m_components,
+				m_texSize[0] + borderSize, m_texSize[1] + borderSize, m_texSize[2] + borderSize,
+				bHasBorder ? 1 : 0,
+				m_format,
+				m_type,
+				0 );
+		}
+	}
+	
+	return ( false );
+}
+
+
+
+void Texture::synchronizeParameters(vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+									::glo::Texture *pTexture )
+{
+	if ( m_isImageDefined )
+	{
+		// bind texture to the texture unit.
+		pTexture->bind();
+	
+		// enable texturing.							// FIXME should be done in VertexShape ? (for beiing done once).
+		pTexture->enable();
+	}
+
+	// TEXTURE PARAMETERS
+	vgd::field::DirtyFlag* pDFParameters = pNode->getDirtyFlag( pNode->getDFParameters() );	
+
+	if ( pDFParameters->isDirty() )
+	{
+		// Apply texture parameters.
+		paint( pGLEngine, pNode, pTexture );
+		
+		// Validate DF
+		pDFParameters->validate();
+	}
+	// else nothing to do
+
+	
+	
+	// TEXTURE SCALE (see scaleFactors)
+	// FIXME scale factors could be better done in VertexShape ?
+	vgm::Vec3f scaleFactors;
+	pTexture->getScaleFactors( scaleFactors[0], scaleFactors[1], scaleFactors[2] );
+	
+	if ( scaleFactors != vgm::Vec3f(1.f, 1.f, 1.f) )
+	{
+		// apply scale to vge.
+		vgm::MatrixR& textureMatrix(
+			pGLEngine->getTextureMatrix().getTop( pNode->getMultiAttributeIndex() )
+				);
+
+		const bool isIdentity = textureMatrix.isIdentity();
+		
+		if ( isIdentity )
+		{
+			textureMatrix.setScale( scaleFactors );
+		}
+		else
+		{
+			// FIXME use textureMatrix.scale()
+			vgm::MatrixR scaleMatrix;
+			scaleMatrix.setScale( scaleFactors );
+
+			textureMatrix = scaleMatrix * textureMatrix;
+		}
+		
+		// apply scale to vgeGL.
+		glMatrixMode( GL_TEXTURE );
+		glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
+	}
+	
+	// Validate node
+	vgd::field::DirtyFlag* pDFNode = pNode->getDirtyFlag( pNode->getDFNode() );	
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
+}
+
+
+
+GLenum Texture::convertMyFormat2GL( vgd::basic::IImage::Format format )
 {
 	GLenum glformat;
 	
@@ -270,7 +516,7 @@ GLenum Texture::convertMyFormat2GL( vgd::basic::IImage::Format format ) const
 
 
 
-GLenum Texture::convertMyType2GL( vgd::basic::IImage::Type type ) const
+GLenum Texture::convertMyType2GL( vgd::basic::IImage::Type type )
 {
 	GLenum gltype;
 	
@@ -328,10 +574,10 @@ GLint Texture::m_wrapValue[] = {
 
 	GL_REPEAT,
 	GL_CLAMP,
-	GL_CLAMP_TO_EDGE,		// GL 1.2
+	GL_CLAMP_TO_EDGE,	// GL 1.2
 	GL_CLAMP_TO_BORDER,	// GL 1.3
 	GL_MIRRORED_REPEAT,	// GL 1.4
-	GL_CLAMP,				// ONCE
+	GL_CLAMP_TO_BORDER,	// ONCE
 };
 
 

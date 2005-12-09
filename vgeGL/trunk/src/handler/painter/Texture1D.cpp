@@ -8,9 +8,8 @@
 #include <vgd/basic/Image.hpp>
 #include <vgd/node/Texture1D.hpp>
 #include <vge/service/Painter.hpp>
-#include <vgm/Utilities.hpp>
 
-#include "vgeGL/rc/TSyncAndBindHelper.hpp"
+#include "vgeGL/rc/TSynchronizeHelper.hpp"
 #include "vgeGL/rc/Texture1D.hpp"
 
 
@@ -48,7 +47,7 @@ void Texture1D::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::Texture1D* >(pNode) != 0 );
 	vgd::node::Texture1D *pCastedNode = static_cast< vgd::node::Texture1D* >(pNode);
 
-	vgeGL::rc::applyUsingSyncAndBind< vgd::node::Texture1D, vgeGL::handler::painter::Texture1D, vgeGL::rc::Texture1D >(
+	vgeGL::rc::applyUsingSynchronize< vgd::node::Texture1D, vgeGL::handler::painter::Texture1D, vgeGL::rc::Texture1D >(
 		pGLEngine, pCastedNode, this );
 }
 
@@ -66,159 +65,74 @@ void Texture1D::setToDefaults()
 
 
 
-/**
- * @todo take care of texture and image format...
- * @todo move to Texture for beiing reused by TextureCube.
- * 
- * @todo ARB NPOT extension
- */
 void Texture1D::synchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture1D *pNode,
-										vgeGL::rc::Texture1D *pResource )
+								vgeGL::rc::Texture1D *pResource )
 {
-	// Dirty flag for IImage
-	vgd::field::DirtyFlag*	pDFIImage = pNode->getDirtyFlag( pNode->getDFIImage() );
+	// Switch to the specified tex unit and creates rc/tex
+	const bool bImageAndTextureSynchronized = preSynchronize( pGLEngine, pNode, pResource );
 	
-	if ( pDFIImage->isValid() )
+	if ( !bImageAndTextureSynchronized )
 	{
-		return;
-	}
-
-	// Get IImage
-	bool										isDefined;
-	vgd::Shp< vgd::basic::IImage >	pIImage;
-
-	isDefined = pNode->getIImage( pIImage );
-	
-	// Nothing to do if iimage is not defined.
-	if ( !isDefined )
-	{
-		return;
-	}
-
-	// activate the texture unit.
-	pResource->active( GL_TEXTURE0_ARB + pNode->getMultiAttributeIndex() );
-	
-	// Create or recycle resource.
-	int32	imageSize	= pIImage->width();
-	int32 imagePOT		= vgm::Utilities::nextPower2( imageSize );
-
-	int32		components	= pIImage->components();
-	GLenum	format		= convertMyFormat2GL(	pIImage->format()	);
-	GLenum	type			= convertMyType2GL(		pIImage->type()	);
-
-	// Check if create(glTexImage) or update(glTexSubImage).
-	bool				bUseGLTexImage;
-	int32				texSize;
-
-	if ( pResource->isEmpty() )
-	{
-		// create
-		pResource->generate();
-		pResource->bind();
-		
-		bUseGLTexImage = true;
-	}
-	else
-	{
-		pResource->bind();
-		
-		texSize = pResource->getSize();
-		
-		// FIXME take care of texture and image format.
-		if (	texSize >= imagePOT	)
-		{
-			// same size (at least) between already initialized texture and imagePOT (power of two), recycle(update) texture.
-			bUseGLTexImage = false;
-		}
-		else
-		{
-			bUseGLTexImage = true;
-		}
+		// Updates texture image
+		texSubImage( pGLEngine, pNode, pResource );
 	}
 	
-	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+	// Updates texture parameters
+	synchronizeParameters( pGLEngine, pNode, pResource );
 	
-	// Create Texture1D
-	bool		bResize = false;
-	
-	if ( bUseGLTexImage )
-	{
-		// border
-		bool			bHasBorder;
-		vgm::Vec4f	borderValue;
-		int32			borderSize;	
-		
-		bHasBorder	= pNode->getBorder( borderValue );
-		borderSize = bHasBorder ? 2 : 0;
+	assert( pNode->getDirtyFlag(pNode->getDFIImages())->isValid() );
+	assert( pNode->getDirtyFlag(pNode->getDFParameters())->isValid() );
+	assert( pNode->getDirtyFlag(pNode->getDFNode())->isValid() );
+}
 
-		// size
-		GLint	maxTexSize	= pGLEngine->getMaxTexSize();
 
-		// image exceed max texture size ?
-		if ( imagePOT > maxTexSize )
-		{
-			texSize	= maxTexSize;
-			bResize	= true;
-		}
-		else
-		{
-			texSize = imagePOT;
-		}
-	
-		glTexImage1D( GL_TEXTURE_1D,
-				0,
-				components,
-				texSize + borderSize,
-				bHasBorder ? 1 : 0,
-				format,
-				type,
-				0
-				);
-	}
+
+void Texture1D::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture1D *pNode,
+								vgeGL::rc::Texture1D *pResource )
+{
+	using vgd::node::Texture;
+	using vgd::node::Texture1D;
 	
 	// Rescale image if necessary (boolean value already set if image is too big).
 	// Check others cases, that depends to non power of two texture size and wrapping values.
-	if ( !bResize )
-	{
-		// check only if not already set.
-		vgd::node::Texture::WrapValueType wrapSValue;
-		
-		isDefined = pGLEngine->getStateStackTop< 
-							vgd::node::Texture1D,
-							vgd::node::Texture1D::WrapParameterType,
-							vgd::node::Texture1D::WrapValueType >(
-																					vgd::node::Texture1D::getFWrap(),
-																					vgd::node::Texture1D::WRAP_S,
-																					wrapSValue,
-																					pNode->getMultiAttributeIndex() );
-		assert( isDefined );
-							
-		if (	wrapSValue == vgd::node::Texture::ONCE	)
-		{
-			// never resize if wrap*=ONCE.
-			
-			// apply a scale to texCoord.
-		
-			// compute scale factors.
-			pResource->setScaleFactors(
-							static_cast<float>(imageSize)/static_cast<float>(texSize),
-							1.f,
-							1.f );
-		}
-		else
-		{
-			// possible resize if needed (NPOT)
-			if ( texSize != imageSize )
-			{
-				bResize = true;
-			}
-		}
-	}
+//	if ( !m_bResize )
+//	{
+//		// check only if not already set.
+//		Texture::WrapValueType wrapSValue;
+//		
+//		bool isDefined = pGLEngine->getStateStackTop< Texture1D, Texture1D::WrapParameterType, Texture1D::WrapValueType >(
+//																	Texture1D::getFWrap(),
+//																	Texture1D::WRAP_S,
+//																	wrapSValue,
+//																	pNode->getMultiAttributeIndex() );
+//		assert( isDefined );
+//							
+//		if ( wrapSValue == Texture::ONCE )
+//		{
+//			// never resize if wrap*=ONCE.
+//			
+//			// apply a scale to texCoord.
+//		
+//			// compute scale factors.
+//			pResource->setScaleFactors(
+//							static_cast<float>(m_imageSize[0])/static_cast<float>(m_texSize[0]),
+//							1.f,
+//							1.f );
+//		}
+//		else
+//		{
+//			// possible resize if needed (NPOT)
+//			if ( m_texSize[0] != m_imageSize[0] )
+//			{
+//				m_bResize = true;
+//			}
+//		}
+//	}
 
 	// Update texture (with rescale or not).
-	assert( !bResize && "Resize texture1D is not yet implemented" );
+	assert( !m_bResize && "Resize texture1D is not yet implemented" );
 	
-//	if ( bResize )
+//	if ( m_bResize )
 //	{
 //		// RESCALE IMAGE
 //		vgDebug::get().logDebug("Texture1D: Performance warning : Image (%i, %i) used as texture is resized (%i,%i)",
@@ -258,68 +172,19 @@ void Texture1D::synchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Textur
 //	else
 //	{
 		// DON'T RESCALE IMAGE
-		const void*	pPixels	= pIImage->pixels();
+		const void*	pPixels	= m_pIImage->pixels();
 
 		glTexSubImage1D( GL_TEXTURE_1D,
 				0,				// level
 				0,				// offset
-				imageSize,
-				format,
-				type,
+				m_imageSize[0],
+				m_format,
+				m_type,
 				pPixels
 				);
 //	}
 
-	pDFIImage->validate();
-}
-
-
-
-void Texture1D::bind(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture1D *pNode,
-								vgeGL::rc::Texture1D *pResource  )
-{
-	// get IImage
-	bool										isDefined;
-	vgd::Shp< vgd::basic::IImage >	pIImage;
-	
-	isDefined = pNode->getIImage( pIImage );
-
-	//
-	if ( isDefined )
-	{
-		// active the texture unit.
-		pResource->active( GL_TEXTURE0_ARB + pNode->getMultiAttributeIndex() );
-		
-		// bind texture to the texture unit.
-		pResource->bind();
-		
-		// enable texturing.								// FIXME should be done in VertexShape (for beiing done once).
-		pResource->enable();
-	}
-
-	Texture::paint( pGLEngine, pNode, pResource ); // FIXME
-
-	// FIXME scale factors could be better done in VertexShape.
-	// scaleFactors
-	vgm::Vec3f scaleFactors;
-	pResource->getScaleFactors( scaleFactors[0], scaleFactors[1], scaleFactors[2] );
-	
-	vgm::MatrixR scaleMatrix;
-	scaleMatrix.setScale( scaleFactors );
-
-	// apply scale to vge.
-	vgm::MatrixR& textureMatrix(
-		pGLEngine->getTextureMatrix().getTop( pNode->getMultiAttributeIndex() )
-			);
-
-	textureMatrix = scaleMatrix * textureMatrix;
-	
-	// apply scale to vgeGL.
-	glMatrixMode( GL_TEXTURE );
-	glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
-	
-	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
+	m_pDFIImages->validate();
 }
 
 

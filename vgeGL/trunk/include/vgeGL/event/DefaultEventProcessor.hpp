@@ -14,13 +14,9 @@
 namespace vgeGL
 {
 
-namespace engine
-{
-	struct SceneManager;
-}	
-
 namespace event
 {
+
 
 /**
  * @brief Process an incoming event by using service ProcessEvent on the scene graph.
@@ -33,12 +29,15 @@ struct VGEGL_API DefaultEventProcessor : public EventProcessor
 	 * @brief Constructor.
 	 * 
 	 * @param sceneManager	the linked scene manager.
+	 * 
+	 * @pre sceneManager != 0
 	 */
 	DefaultEventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
 	
 	// Overrides
 	const bool onEvent( vgd::Shp<vgd::event::Event> event );
 };
+
 
 } // namespace event
 

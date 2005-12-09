@@ -23,23 +23,43 @@ namespace event
 {
 
 /**
- * @brief Event processor with a reference on a scene manager.
+ * @brief Event processor with a reference on the scene manager.
  */
 struct VGEGL_API EventProcessor : public IEventProcessor
 {
 	/**
+	 * @name Constructor
+	 */
+	//@{
+	
+	/**
 	 * @brief Constructor.
 	 * 
 	 * @param sceneManager	the linked scene manager.
+	 * 
+	 * @pre sceneManager != 0
 	 */
 	EventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
 	
+	//@}
+
+
 protected:
+
 	/**
-	 * @brief A reference on a scene manager.
+	 * @brief Returns the reference on the linked scene manager.
+	 * 
+	 * @return the reference on the linked scene manager.
+	 */
+	::vgeGL::engine::SceneManager *getSceneManager() const { return m_sceneManager; }
+
+private:
+	/**
+	 * @brief The reference on the scene manager.
 	 */
 	::vgeGL::engine::SceneManager *m_sceneManager;
 };
+
 
 } // namespace event
 
