@@ -142,12 +142,12 @@ struct VGD_API IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	virtual void*			editPixels()=0;
+	virtual void*		editPixels()=0;
 	
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().
 	 */
-	virtual void			editPixelsDone()=0;
+	virtual void		editPixelsDone()=0;
 	
 	/**
 	 * @brief Test if this class store an image.
@@ -212,12 +212,12 @@ struct VGD_API IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	virtual void*			paletteEditPixels()=0;
+	virtual void*		paletteEditPixels()=0;
 	
 	/**
 	 * @brief Commit all pixels modifications in palette after calling paletteEditPixels().
 	 */
-	virtual void			paletteEditPixelsDone()=0;	
+	virtual void		paletteEditPixelsDone()=0;	
 	//@}
 	
 	
@@ -240,6 +240,28 @@ struct VGD_API IImage
 	 */
 	virtual const bool			isVoxelSizeSupported() const=0;
 	//@}
+	
+	
+	
+	/**
+	 * @brief Computes offset from coordinates.
+	 * 
+	 * @param x		x-coordinate
+	 * @param y		y-coordinate
+	 * @param z		z-coordinate
+	 * 
+	 * @return the computed offset
+	 */
+	const uint32 computeOffset( const uint32 x, const uint32 y, const uint32 z );
+	
+	/**
+	 * @brief Computes offset from coordinates.
+	 * 
+	 * @param position	coordinates
+	 * 
+	 * @return the computed offset
+	 */	
+	const uint32 computeOffset( const vgm::Vec3i position );
 };
 
 

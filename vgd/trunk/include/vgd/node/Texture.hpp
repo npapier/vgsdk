@@ -9,6 +9,7 @@
 #include "vgd/vgd.hpp"
 
 #include <vgm/Vector.hpp>
+#include "vgd/basic/IImage.hpp"
 #include "vgd/field/TPairAssociativeField.hpp"
 
 #include "vgd/node/MultiAttribute.hpp"
@@ -29,10 +30,12 @@ namespace node
  * This node defines texture parameters (wrapping, filters, mipmapping, border, environnement color and 
  * function/combine).
  * 
+ * @remarks You MUST define at least the \c wrap, \c filter and \c function fields.
+ * 
  * New field added by this node :
  * 
  * - PAFInt32 \c wrap
- * 	- [WRAP_S]\n
+ *  - [WRAP_S]\n
  * 		Choose one value among :
  * 			- REPEAT (default)
  * 			- CLAMP
@@ -88,7 +91,7 @@ namespace node
  * - PAFInt32 operand
  * 	- [RGB0]\n
  * 		Choose a value among SRC_COLOR, ONE_MINUS_SRC_COLOR, SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
- *		- [RGB1]\n
+ *	- [RGB1]\n
  * 		Choose a value among SRC_COLOR, ONE_MINUS_SRC_COLOR, SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
  * 	- [RGB2]\n
  * 		Choose a value among SRC_COLOR, ONE_MINUS_SRC_COLOR, SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
@@ -105,6 +108,10 @@ namespace node
  * 	- [ALPHA_SCALE]\n
  *			Choose a value among 1.0, 2.0 or 4.0.
  * 
+ * - PAFImage \c [images]
+ * 		Generic repository of images used to specify texture images. Don't use this field unless knowing exactly what
+ * 		you do.
+ *
  * @remarks When you evaluate scene graph with vgeGL, there are two constraints that you should keep in mind :
  * 	- When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage(to 
  * 		the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull. 
@@ -116,8 +123,6 @@ namespace node
  * 	- If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two 
  * 		dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.
  * 
- * @remarks You should define at least the \c wrap, \c filter and \c function fields.
- * 
  * @todo Add documentation about used OpenGL extensions (like GL_ARB_texture_env_combine, GL_texture_env_crossbar).
  * 
  * @ingroup g_abstractNodes
@@ -125,6 +130,53 @@ namespace node
 struct VGD_API Texture : public vgd::node::MultiAttribute
 {
 	//META_NODE_HPP( Texture );
+
+
+
+	/**
+	 * @name Accessors to field iimages.
+	 */
+	//@{
+
+	/**
+	 * @brief Enumeration of the \c iimages parameters.
+	 */
+	typedef enum
+	{
+		IIMAGE_1 = 1,
+		IIMAGE_2,
+		IIMAGE_3,
+		IIMAGE_4,
+		IIMAGE_5,
+		IIMAGE_6,
+		DEFAULT_IIMAGES = IIMAGE_1
+	} IImagesParameterType;
+
+	/**
+	 * @brief Typedef for the \c iimages value.
+	 */
+	typedef vgd::Shp< vgd::basic::IImage > IImagesValueType;
+
+	/**
+	 * @brief Typedef for the \c iimages field.
+	 */	
+	typedef vgd::field::TPairAssociativeField< IImagesParameterType, IImagesValueType > FIImagesType;
+
+	/**
+	 * @brief Gets the iimages value.
+	 */
+	bool			getIImages( const IImagesParameterType param, IImagesValueType& value ) const;
+
+	/**
+	 * @brief Sets the iimages value.
+	 */
+	void 			setIImages( const IImagesParameterType param, IImagesValueType value );
+	
+	/**
+	 * @brief Erase the iimages value.
+	 */
+	void 			eraseIImages( const IImagesParameterType param );
+	//@}
 
 
 
@@ -652,6 +704,13 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	//@{
 
 	/**
+	 * @brief Returns the name of field \c iimages.
+	 * 
+	 * @return the name of field \c iimages.
+	 */
+	static const std::string getFIImages( void );
+
+	/**
 	 * @brief Returns the name of field \c wrap.
 	 * 
 	 * @return the name of field \c wrap.
@@ -722,6 +781,25 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	static const std::string getFScale( void );
 
 	//@}
+
+
+
+	/**
+	 * @name Dirty flags enumeration.
+	 */
+	//@{
+
+	/**
+	 * @brief Returns name of dirty flag that is invalidate when at least one image has changed.
+	 */
+	static const std::string getDFIImages();
+
+	/**
+	 * @brief Returns name of dirty flag that is invalidate when texture parameters changed.
+	 */
+	static const std::string getDFParameters();
+
+	//@}		
 
 
 

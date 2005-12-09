@@ -12,6 +12,7 @@
 #include "vgd/node/Switch.hpp"
 #include "vgd/node/Texture1D.hpp"
 #include "vgd/node/Texture2D.hpp"
+#include "vgd/node/TextureMatrixTransform.hpp"
 
 
 
@@ -46,12 +47,13 @@ void Layers::setToDefaults( void )
 	// Proxy geometry : QUAD
 	vgd::Shp< vgd::node::Quad > quad( vgd::node::Quad::create("layers.subgraph.quad") );
   
-	quad->initializeGeometry( 1.f, 1.f );
-	quad->initializeTexUnits( 1 );
-	
 	pSwitch->addChild( quad );
-	
 	setRoot( pSwitch );
+	
+	//
+	getQuad()->initializeGeometry( 1.f, 1.f );
+	
+	getQuad()->initializeTexUnits(); //1, origin, ccw
 }
 
 
@@ -68,40 +70,50 @@ void Layers::createLayers( const int32 num )
 	ILayers::createLayers( num );
 	
 	const int32	index = 0;
-	int32			iMax = index + num;
+	int32		iMax = index + num;
 
 	// Finish the creation of the sub scene graph.
 	
+	// texture transformation
+	using vgd::node::TextureMatrixTransform;
+	
+	vgd::Shp< TextureMatrixTransform >	pTexMatrixTransform;
+	pTexMatrixTransform = TextureMatrixTransform::create("layers.subgraph.texMatrixTransform");
+	getSwitch()->addChild( pTexMatrixTransform );
+	
 	// texture
-	vgd::Shp< vgd::node::Texture2D > pTex;
-	vgd::Shp< vgd::node::Texture1D > pColorTable;
+	using vgd::node::Texture1D;
+	using vgd::node::Texture2D;
+	
+	vgd::Shp< Texture2D >				pTex;
+	vgd::Shp< Texture1D >				pColorTable;
 	
 	for(	int32 i = index;
 			i < iMax;
 			++i )
 	{
 		// texture2D
-		pTex = vgd::node::Texture2D::create( "layers.subgraph.tex2D" );
+		pTex = Texture2D::create( "layers.subgraph.tex2D" );
 	
-		pTex->setWrap( vgd::node::Texture2D::WRAP_S, vgd::node::Texture2D::ONCE );
-		pTex->setWrap( vgd::node::Texture2D::WRAP_T, vgd::node::Texture2D::ONCE );
+		pTex->setWrap( Texture2D::WRAP_S, Texture2D::ONCE );
+		pTex->setWrap( Texture2D::WRAP_T, Texture2D::ONCE );
 	
-		pTex->setFilter( vgd::node::Texture2D::MIN_FILTER, vgd::node::Texture2D::NEAREST );
-		pTex->setFilter( vgd::node::Texture2D::MAG_FILTER, vgd::node::Texture2D::NEAREST );
+		pTex->setFilter( Texture2D::MIN_FILTER, Texture2D::NEAREST );
+		pTex->setFilter( Texture2D::MAG_FILTER, Texture2D::NEAREST );
 		
 		getSwitch()->addChild( pTex );
 		
 		// texture1D
-		pColorTable = vgd::node::Texture1D::create( "layers.subgraph.tex1D" );
+		pColorTable = Texture1D::create( "layers.subgraph.tex1D" );
 		pColorTable->setMultiAttributeIndex( 1 );
 	
-		pColorTable->setWrap( vgd::node::Texture1D::WRAP_S, vgd::node::Texture1D::ONCE );
-		pColorTable->setWrap( vgd::node::Texture1D::WRAP_T, vgd::node::Texture1D::ONCE );
+		pColorTable->setWrap( Texture1D::WRAP_S, Texture1D::ONCE );
+		pColorTable->setWrap( Texture1D::WRAP_T, Texture1D::ONCE );
 	
-		pColorTable->setFilter( vgd::node::Texture1D::MIN_FILTER, vgd::node::Texture1D::NEAREST );
-		pColorTable->setFilter( vgd::node::Texture1D::MAG_FILTER, vgd::node::Texture1D::NEAREST );
+		pColorTable->setFilter( Texture1D::MIN_FILTER, Texture1D::NEAREST );
+		pColorTable->setFilter( Texture1D::MAG_FILTER, Texture1D::NEAREST );
 		
-		getSwitch()->addChild( pColorTable );		
+		getSwitch()->addChild( pColorTable );
 	}
 }
 
@@ -110,6 +122,13 @@ void Layers::createLayers( const int32 num )
 void Layers::resetGeometry()
 {
 	getQuad()->initializeGeometry( 1.f, 1.f );
+}
+
+
+
+void Layers::resetTextureCoordinates( const vgd::node::Quad::Corner origin, const bool ccw )
+{
+	getQuad()->resetTextureCoordinates(1, origin, ccw);
 }
 
 
@@ -171,6 +190,26 @@ bool Layers::computeBoundingBox( const vgm::MatrixR& transformation )
 	}
 	
 	return ( bRetVal );
+}
+
+
+
+vgm::MatrixR Layers::gethMatrix() const
+{
+	vgm::Vec3f translation = -getTranslation();
+	
+	assert( translation[2] == 0.f );
+	
+	vgm::Vec3f scaleFactor = getScaleFactor();
+	scaleFactor[0] = 1.f/scaleFactor[0];
+	scaleFactor[1] = 1.f/scaleFactor[1];
+	assert( scaleFactor[2] == 1.f );
+
+	vgm::MatrixR matrix;
+	matrix.setTranslate( translation );
+	matrix.scale( scaleFactor );
+	
+	return ( matrix );
 }
 
 

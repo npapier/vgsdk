@@ -25,6 +25,8 @@ Texture::Texture( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Add field
+	addField( new FIImagesType(getFIImages()) );
+		
 	addField( new FWrapType(getFWrap()) );
 	addField( new FFilterType(getFFilter()) );
 	addField( new FMipmapType(getFMipmap()) );
@@ -37,7 +39,26 @@ Texture::Texture( const std::string nodeName ) :
 	addField( new FOperandType(getFOperand()) );
 	addField( new FScaleType(getFScale()) );
 
+	// Add dirty flags
+	addDirtyFlag( getDFIImages() );
+	
+	addDirtyFlag( getDFParameters() );
+	
 	// Link(s)
+	link( getFIImages(),	getDFIImages() );
+		
+	link( getFWrap(),		getDFParameters() );
+	link( getFFilter(),		getDFParameters() );
+	link( getFMipmap(),		getDFParameters() );
+	link( getFBorder(),		getDFParameters() );
+	link( getFEnvColor(),	getDFParameters() );
+	
+	link( getFFunction(),	getDFParameters() );
+	link( getFCombine(),	getDFParameters() );
+	link( getFSource(),		getDFParameters() );
+	link( getFOperand(),	getDFParameters() );
+	link( getFScale(),		getDFParameters() );									
+
 	link( getDFNode() );	
 }
 
@@ -68,6 +89,30 @@ void Texture::setOptionalsToDefaults()
 	setEnvColor( vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
 
 	setFunction( DEFAULT_FUN );
+}
+
+
+
+// IIMAGES
+bool Texture::getIImages( const IImagesParameterType param, IImagesValueType& value ) const
+{
+	return ( 
+		vgd::field::getParameterValue< IImagesParameterType, IImagesValueType >( this, getFIImages(), param, value )
+		);
+}
+
+
+
+void Texture::setIImages( const IImagesParameterType param, IImagesValueType value )
+{
+	vgd::field::setParameterValue< IImagesParameterType, IImagesValueType >( this, getFIImages(), param, value );
+}
+
+
+
+void Texture::eraseIImages( const IImagesParameterType param )
+{
+	vgd::field::eraseParameterValue< IImagesParameterType, IImagesValueType >( this, getFIImages(), param );
 }
 
 
@@ -312,6 +357,10 @@ void Texture::eraseScale( const ScaleParameterType param )
 
 
 
+const std::string Texture::getFIImages( void )
+{
+	return ( "f_iimages" );
+}
 
 
 
@@ -381,6 +430,20 @@ const std::string Texture::getFOperand( void )
 const std::string Texture::getFScale( void )
 {
 	return ( "f_scale" );
+}
+
+
+
+const std::string Texture::getDFIImages()
+{
+	return ( "df_iimages" );
+}
+
+
+
+const std::string Texture::getDFParameters()
+{
+	return ( "df_parameters" );
 }
 
 

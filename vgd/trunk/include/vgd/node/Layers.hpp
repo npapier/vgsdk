@@ -7,6 +7,7 @@
 #define _VGD_NODE_LAYERS_H
 
 #include "vgd/node/ILayers.hpp"
+#include "vgd/node/Quad.hpp"
 #include "vgd/vgd.hpp"
 
 
@@ -41,23 +42,28 @@ struct Switch;
  * 
  * See vgd::node::ILayers
  * 
+ * Fields modified by this node :
+ * - SFVec3f	\c translation		= (0 0 0)\n
+ * 		Sets the translation to apply on each 2D slice extracted (from layers).
+ * 		Z coordinate of this translation (x,y,z) must always be zero.
+ * - SFVec3f	\c scaleFactor 		= (1 1 1)\n
+ * 		Sets the scale factors to apply on each 2D slice extracted (from layers).
+ * 		Z factor of this scale (x,y,z) must always be one.
+ * 
  * @bug	when a scissor composite operator is changed to another one. All following images must be invalidate.
- * @todo [MUST BE DONE] Palette texture (very useful for “fênetrage” and decrease the memory requirements).
  * @todo BOTTLENECK: SCISSOR is partially done in software !!!
  * @todo [MUST BE DONE] Allow transformation to be applied to each layer.
- * 
  * @todo Hints about usage on image (STATIC and DYNAMIC).
  * @todo Mipmapping (useful only for STATIC images).
  * @todo Texture compression.
  * @todo Use multitexturing and more... (rendering speed).
  * @todo Computing the resulting image (useful in 3D mode to not recompute Layers for each new frame).
- * @todo Add support for grayscale and boolean image (RGBA is very memory hungry).
+ * @todo Add support for boolean image (RGBA is very memory hungry).
  * @todo Support image that are not stored contiguously in memory (this is the case for inrimage).
  * @todo Allow dynamic modification for the number of layer in a vgd::node::Layers.
  * @todo Support images with differents sizes.
  * @todo Polish the current implementation
  * @todo Add an UNSCISSOR composite operator to disable scissor.
- * @todo “Fênetrage” is not done by the Layers node.
  * @todo Destruction of field (removeLayers())
  * 
  * @ingroup g_nodes
@@ -83,6 +89,15 @@ struct VGD_API Layers : public vgd::node::ILayers
 	void resetGeometry();
 	
 	/**
+	 * @brief Reset the texture coordinates of this node to its initial state.
+	 * 
+	 * @param origin	see vgd::node::Quad::initializeTexUnits() method for more details.
+	 * @param ccw		see vgd::node::Quad::initializeTexUnits() method for more details.
+	 */
+	void resetTextureCoordinates(	const vgd::node::Quad::Corner origin = vgd::node::Quad::BOTTOM_LEFT,
+									const bool ccw = true );
+
+	/**
 	 * @copydoc VertexShape::transform(const vgm::MatrixR&,const bool);
 	 */
 	void transform( const vgm::MatrixR& matrix, const bool normalize = true );
@@ -104,10 +119,26 @@ struct VGD_API Layers : public vgd::node::ILayers
 	/**
 	 * @remarks This method is overridden, because the sub scene graph of the Layers node
 	 * is not used like others (the paint service is done partially with C++/OpenGL code and evaluation
-	 * of node, so the sub scene graph is used only like a hidden repository).
+	 * of node, so the sub scene graph is used only like an hidden repository).
 	 */
 	bool computeBoundingBox( const vgm::MatrixR& transformation );
 
+	//@}
+
+
+
+	/**
+	 * @name High level accessors
+	 */
+	//@{	
+
+	/**
+	 * @brief Compute the transformation of this node
+	 * 
+	 * @return the transformation matrix
+	 */
+	vgm::MatrixR			gethMatrix() const;
+	
 	//@}
 	
 	
@@ -131,7 +162,7 @@ protected:
 	
 private:
 	vgd::Shp< vgd::node::Switch>	getSwitch();
-	vgd::Shp< vgd::node::Quad >	getQuad();
+	vgd::Shp< vgd::node::Quad >		getQuad();
 };
 
 

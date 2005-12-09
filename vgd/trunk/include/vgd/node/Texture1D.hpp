@@ -8,7 +8,6 @@
 
 #include "vgd/vgd.hpp"
 
-#include "vgd/basic/IImage.hpp"
 #include "vgd/node/Texture.hpp"
 
 
@@ -30,11 +29,9 @@ namespace node
  * New field added by this node :
  * 
  * - SFIImage \c [iimage]\n
- * 		Determines the source of data used to created the texture. Must be a 1d image 
+ * 		Determines the source of data used to created the texture. Must be a 1d image
  * 		(iimage.height() == iimage.depth() == 0).
- * 
- * 
- * @todo You can set multiple times this field, but only if all images have the same format. 
+ * 		You can set multiple times this field, but only if all images have the same format.
  * 		The data and size of the image can changed, but that's all.
  * 
  * @ingroup g_nodes
@@ -55,10 +52,7 @@ struct VGD_API Texture1D : public vgd::node::Texture
 	/**
 	 * @brief Enumeration of the \c iimage parameter.
 	 */
-	typedef enum
-	{
-		IIMAGE = 1
-	} IImageParameterType;
+	typedef IImagesParameterType IImageParameterType;
 
 	/**
 	 * @brief Typedef for the \c iimage parameter value.
@@ -94,35 +88,6 @@ struct VGD_API Texture1D : public vgd::node::Texture
 	//@}
 
 
-
-	/**
-	 * @name Fields names enumeration.
-	 */
-	//@{
-	
-	/**
-	 * @brief Returns the name of field \c iimage.
-	 * 
-	 * @return the name of field \c iimage.
-	 */
-	static const std::string getFIImage( void );
-	//@}
-	
-	
-	
-	/**
-	 * @name Dirty flags enumeration.
-	 */
-	//@{
-
-	/**
-	 * @brief Returns name of dirty flag that is invalidate when the image changed.
-	 */
-	static const std::string getDFIImage();
-
-	//@}		
-	
-	
 
 	// overridden method
 	const uint32 gethTextureDimension() const;

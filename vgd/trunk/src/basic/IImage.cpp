@@ -70,6 +70,22 @@ const uint32 IImage::computeNumComponents( const Format format )
 
 
 
+const uint32 IImage::computeOffset( const uint32 x, const uint32 y, const uint32 z )
+{
+	const uint32	offset	= x + width() * ( y + height() * z );
+
+	return offset;
+}
+
+
+
+const uint32 IImage::computeOffset( const vgm::Vec3i position )
+{
+	return computeOffset( position[0], position[1], position[2] );
+}
+
+
+
 } // namespace basic
 
 } // namespace vgd

@@ -24,15 +24,6 @@ META_NODE_CPP( Texture1D );
 Texture1D::Texture1D( const std::string nodeName ) :
 	vgd::node::Texture( nodeName )
 {
-	// Add field
-	addField( new FIImageType(getFIImage()) );
-	
-	// Add dirty flag
-	addDirtyFlag( getDFIImage() );
-	
-	// Link(s)
-	link( getFIImage(), getDFIImage() );
-	link( getFIImage(), getDFNode() );
 }
 
 
@@ -53,37 +44,21 @@ void Texture1D::setOptionalsToDefaults()
 
 bool Texture1D::getIImage( vgd::Shp< vgd::basic::IImage >& value ) const
 {
-	return ( 
-		vgd::field::getParameterValue< IImageParameterType, IImageValueType >( this, getFIImage(), IIMAGE, value )
-		);
+	return ( getIImages( DEFAULT_IIMAGES, value ) );
 }
 
 
 
 void Texture1D::setIImage( vgd::Shp< vgd::basic::IImage > value )
 {
-	vgd::field::setParameterValue< IImageParameterType, IImageValueType >( this, getFIImage(), IIMAGE, value );
+	setIImages( DEFAULT_IIMAGES, value );
 }
 
 
 
 void Texture1D::eraseIImage()
 {
-	vgd::field::eraseParameterValue< IImageParameterType, IImageValueType >( this, getFIImage(), IIMAGE );
-}
-
-
-
-const std::string Texture1D::getFIImage( void )
-{
-	return ( "f_iimage" );
-}
-
-
-
-const std::string Texture1D::getDFIImage()
-{
-	return ( "df_iimage" );
+	eraseIImages( DEFAULT_IIMAGES );
 }
 
 

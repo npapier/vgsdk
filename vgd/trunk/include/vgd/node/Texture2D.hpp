@@ -8,7 +8,6 @@
 
 #include "vgd/vgd.hpp"
 
-#include "vgd/basic/IImage.hpp"
 #include "vgd/node/Texture.hpp"
 
 
@@ -52,10 +51,7 @@ struct VGD_API Texture2D : public vgd::node::Texture
 	/**
 	 * @brief Enumeration of the \c iimage parameter.
 	 */
-	typedef enum
-	{
-		IIMAGE = 1
-	} IImageParameterType;
+	typedef IImagesParameterType IImageParameterType;
 
 	/**
 	 * @brief Typedef for the \c iimage parameter value.
@@ -92,35 +88,6 @@ struct VGD_API Texture2D : public vgd::node::Texture
 
 
 
-	/**
-	 * @name Fields names enumeration.
-	 */
-	//@{
-	
-	/**
-	 * @brief Returns the name of field \c iimage.
-	 * 
-	 * @return the name of field \c iimage.
-	 */
-	static const std::string getFIImage( void );
-	//@}
-	
-	
-	
-	/**
-	 * @name Dirty flags enumeration.
-	 */
-	//@{
-
-	/**
-	 * @brief Returns name of dirty flag that is invalidate when the image changed.
-	 */
-	static const std::string getDFIImage();
-
-	//@}
-	
-	
-	
 	// overridden method
 	const uint32 gethTextureDimension() const;
 	

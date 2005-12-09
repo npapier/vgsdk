@@ -42,7 +42,7 @@ void Transform::setToDefaults( void )
 	GeometricalTransformation::setToDefaults();
 
 	setCenter				( vgm::Vec3f(0.f, 0.f, 0.f) );
-	setScaleOrientation	( vgm::Rotation::getIdentity() );
+	setScaleOrientation		( vgm::Rotation::getIdentity() );
 	setScaleFactor			( vgm::Vec3f(1.f, 1.f, 1.f) );
 	setRotation				( vgm::Rotation::getIdentity() );
 	setTranslation			( vgm::Vec3f(0.f, 0.f, 0.f) );
@@ -154,10 +154,10 @@ void Transform::sethMatrix( const vgm::MatrixR& matrix, const vgm::Vec3f& center
 	matrix.getTransform( translation, rotation, scaleFactor, scaleOrientation, center );
 	
 	setTranslation(		translation );
-	setRotation(			rotation );
+	setRotation(		rotation );
 	setScaleFactor(		scaleFactor );
-	setScaleOrientation(	scaleOrientation );
-	setCenter(				center );
+	setScaleOrientation(scaleOrientation );
+	setCenter(			center );
 }
 
 

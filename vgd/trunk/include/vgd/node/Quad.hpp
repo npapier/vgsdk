@@ -31,6 +31,8 @@ namespace node
  * \li width and height of this quadrilateral are both 1.
  * \li the normal is equal to (0, 0, 1).
  * \li could optionally have texture coordinates (see initializeTex() for more details).
+ * 
+ * @remarks Vertices are pulled to GPU in counter-clockwise mode and the first vertex is the BOTTOM_LEFT corner.
  *
  * @ingroup g_nodes
  * @ingroup g_shapeNodes
@@ -49,23 +51,55 @@ struct VGD_API Quad : public vgd::node::VertexShape
 	 * @brief Initialize the geometry of the vertex shape.
 	 * 
 	 * @param width		width of the quad.
-	 * @param height		height of the quad.
+	 * @param height	height of the quad.
 	 * 
 	 * @remarks Called automatically during node creation.
 	 */
 	void initializeGeometry( const float width = 1.f, const float height = 1.f );
 
 	/**
+	 * @brief The four corners of the quad.
+	 */
+	enum Corner {
+		BOTTOM_LEFT,
+		BOTTOM_RIGHT,
+		TOP_RIGHT,
+		TOP_LEFT
+	};
+
+	/**
 	 * @brief Initialize texture coordinates and bindings for all specified textures units.
 	 * 
 	 * @param numTexunits	number of desired texture coordinates and bindings
-	 * @param bSameOrigin	true generate texture coordinates to applied the texel (0,0) to the vertex (0,0), false to 
-	 * 							applied the texel (0,0) to the vertex (0,1). 
-	 * 							In other words, it permits to apply an horizontal flip on the texture image.
+	 * @param origin		defines the origin of the texture coordinates.
+	 * @param ccw			true to pull texture coordinates into the GPU in counter-clockwise mode, false to pull them
+	 * 						in clockwise mode.
+	 * 
+	 * @remarks The parameter, named \c origin, permits to apply four different rotations (0, 90, 180, 270 degree) on the
+	 * texture image.
+	 * @remarks The parameter, named \c ccw, permits to flip the texture image.
+	 * 
+	 * @remarks This method could only be called one time.
 	 */
-	void initializeTexUnits( const int32 numTexUnits = 1, const bool bSameOrigin = true );
-	
+	void initializeTexUnits( const int32 numTexUnits = 1, const Corner origin = BOTTOM_LEFT, const bool ccw = true );
+
+	/**
+	 * @brief Reset the texture coordinates and bindings for all specified textures units.
+	 * 
+	 * @param numTexunits	number of desired texture coordinates and bindings
+	 * @param origin		defines the origin of the texture coordinates.
+	 * @param ccw			true to pull texture coordinates into the GPU in counter-clockwise mode, false to pull them
+	 * 						in clockwise mode.
+	 * 
+	 * @remarks The parameter, named \c origin, permits to apply four different rotations (0, 90, 180, 270 degree) on the
+	 * texture image.
+	 * @remarks The parameter, named \c ccw, permits to flip the texture image.
+	 * 
+	 * @pre initializeTexUnits() must have been called before.
+	 */
+	void resetTextureCoordinates( const int32 numTexUnits = 1, const Corner origin = BOTTOM_LEFT, const bool ccw = true );
 	//@}
+
 
 protected:
 	/**

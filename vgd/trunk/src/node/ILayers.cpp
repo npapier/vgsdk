@@ -21,6 +21,18 @@ namespace node
 ILayers::ILayers( const std::string nodeName ) :
 	vgd::node::Kit( nodeName )
 {
+	// Add field
+	addField( new FScaleFactorType(getFScaleFactor()) );
+	addField( new FTranslationType(getFTranslation()) );
+
+	// Add dirty flags
+	addDirtyFlag( getDFTransformation() );
+	
+	// Link
+	link( getFScaleFactor(),	getDFTransformation() );
+	link( getFTranslation(),	getDFTransformation() );
+
+	link( getDFNode() );
 }
 
 
@@ -28,6 +40,9 @@ ILayers::ILayers( const std::string nodeName ) :
 void ILayers::setToDefaults( void )
 {
 	Kit::setToDefaults();
+	
+	setScaleFactor			( vgm::Vec3f(1.f, 1.f, 1.f) );
+	setTranslation			( vgm::Vec3f(0.f, 0.f, 0.f) );
 }
 
 
@@ -39,6 +54,34 @@ void ILayers::setOptionalsToDefaults()
 
 
 	
+const vgm::Vec3f ILayers::getScaleFactor( void ) const
+{
+	return ( getFieldRO<FScaleFactorType>(getFScaleFactor())->getValue() );
+}
+
+
+
+void ILayers::setScaleFactor( const vgm::Vec3f scaleFactor )
+{
+	getFieldRW<FScaleFactorType>(getFScaleFactor())->setValue( scaleFactor );
+}
+
+
+
+const vgm::Vec3f ILayers::getTranslation( void ) const
+{
+	return ( getFieldRO<FTranslationType>(getFTranslation())->getValue() );
+}
+
+
+
+void ILayers::setTranslation( const vgm::Vec3f translation )
+{
+	getFieldRW<FTranslationType>(getFTranslation())->setValue( translation );
+}
+
+
+
 void ILayers::createLayers( const int32 num )
 {
 	const int32 index = 0;
@@ -147,6 +190,20 @@ vgd::field::EditorRW< vgd::node::ILayers::FComposeOperatorType > ILayers::getFCo
 	assert( index < getNumLayers() && "Invalid index." );
 		
 	return ( getFieldRW< FComposeOperatorType >(getFComposeOperator( index )) );
+}
+
+
+
+const std::string ILayers::getFScaleFactor( void )
+{
+	return ( "f_scaleFactor" );
+}
+
+
+
+const std::string ILayers::getFTranslation( void )
+{
+	return ( "f_translation" );
 }
 
 
@@ -303,6 +360,13 @@ const std::string ILayers::getDFIImage( const int32 index )
 	strStream << "df_iimage" << index << std::ends;
 
 	return ( strStream.str() );	
+}
+
+
+
+const std::string ILayers::getDFTransformation()
+{
+	return ( "df_transformation" );
 }
 
 

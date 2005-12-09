@@ -8,6 +8,7 @@
 
 #include "vgd/field/Image.hpp"
 #include "vgd/field/TSingleField.hpp"
+#include "vgd/field/Vector.hpp"
 #include "vgd/node/Kit.hpp"
 #include "vgd/vgd.hpp"
 
@@ -63,6 +64,7 @@ namespace node
  * 
  *	- MODULATE\n
  * 	Multiplies the source image with the framebuffer with the following formulas Cd = Cs*Cd and Ad = As*Ad
+ *  Currently not available.
  *
  * When you compose two images, each components (R,G,B and A) of the resulting pixels values are clamped to the 
  * range [0,255].
@@ -72,9 +74,12 @@ namespace node
  * @par Masking.
  * 
  * SCISSOR is useful to simulate a mask that is applied to more than one image (use it for that).
- * But a mask could also be applyed on a single image. Simply set the \c mask field in ComposeOperator to true. After 
- * that each pixel from the source image with a value equal to (0,0,0) is considered in the mask (i.e. not drawn), 
- * all others are outside the mask (i.e. drawn).
+ * But a mask could also be applied on a single image. Simply set the \c mask field in ComposeOperator to true. 
+ * After that each pixel from the source image (not in COLOR_INDEX mode) with a value equal to (0,0,0) is considered in 
+ * the mask (i.e. not drawn), all others are outside the mask (i.e. drawn). 
+ * This rule is slightly different for images in COLOR_INDEX mode. After that each pixel from the source image 
+ * (in COLOR_INDEX mode) with an alpha value equal to zero is considered in the mask (i.e. not drawn), all others are 
+ * outside the mask (i.e. drawn).
  * Masking functionnalities are available at two levels : with a scissor image and with the alpha channel of each image.
  * When both are used at the same time, the rule is simple. Scissor image can only add pixels to the mask.
  * If a pixel belongs to the mask at the scissor image, it's is never drawn whetever the alpha channel value in the 
@@ -92,7 +97,12 @@ namespace node
  * 	- mask = false\n
  * 		true if a mask is activate during compositing, false if not.
  * 	- alpha = 0.5f\n
- * 		Alpha value used only by INTERPOLATE.
+ * 		Alpha value used only by INTERPOLATE and only for images not in COLOR_INDEX mode.
+ * 
+ * - SFVec3f	\c translation		= (0 0 0)\n
+ * 		Sets the translation applied to all layers.
+ * - SFVec3f	\c scaleFactor 		= (1 1 1)\n
+ * 		Sets the scale factors applied to all layers.
  * 
  * @todo addLayers(), clearLayers()...
  * 
@@ -136,7 +146,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	/**
 	 * @brief Typedef for the \c iimage* field.
 	 */	
-	typedef vgd::field::SFIImage				FIImageType;
+	typedef vgd::field::SFIImage			FIImageType;
 
 	/**
 	 * @brief Typedef for the \c iimage* value.
@@ -204,13 +214,14 @@ struct VGD_API ILayers : public vgd::node::Kit
 		bool						hasMask() const					{ return ( m_mask ); } 
 		void						setMask( const bool mask )		{ m_mask = mask; }
 
-		float						getAlpha() const		{ return ( m_alpha ); }
-		void						setAlpha( const float value ) { m_alpha = value; } 
+		float						getAlpha() const				{ return ( m_alpha ); }
+		void						setAlpha( const float value )	{ m_alpha = value; } 
 
 		private:
-			ComposeFunctionType		m_function;
-			bool					m_mask;
-			float 					m_alpha;
+		
+		ComposeFunctionType		m_function;
+		bool					m_mask;
+		float 					m_alpha;
 	};
 
 	typedef ComposeOperator ComposeOperatorValueType;
@@ -238,6 +249,64 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 */
 	vgd::field::EditorRW< FComposeOperatorType > getFComposeOperatorRW( const int32 index = 0 );
 
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field translation.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c translation field.
+	 */	
+	typedef vgd::field::SFVec3f	FTranslationType;
+		
+	/**
+	 * @brief Typedef for the \c translation value.
+	 */
+	typedef vgm::Vec3f			TranslationValueType;
+
+	/**
+	 * @brief Gets the translation vector.
+	 */
+	const vgm::Vec3f		getTranslation( void ) const;
+
+	/**
+	 * @brief Sets the translation vector.
+	 */
+	void					setTranslation( const vgm::Vec3f translation );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field scaleFactor.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c scaleFactor field.
+	 */	
+	typedef vgd::field::SFVec3f	FScaleFactorType;
+		
+	/**
+	 * @brief Typedef for the \c scaleFactor value.
+	 */
+	typedef vgm::Vec3f			ScaleFactorValueType;
+	
+	/**
+	 * @brief Gets the scale factors.
+	 */
+	const vgm::Vec3f		getScaleFactor( void ) const;
+
+	/**
+	 * @brief Sets the scale factors.
+	 */
+	void					setScaleFactor( const vgm::Vec3f scaleFactor );
+	
 	//@}
 
 
@@ -326,6 +395,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @return			the compose operator value.
 	 */
 	const ComposeOperatorValueType	gethComposeOperator( const int32 index ) const;
+
 	//@}
 
 
@@ -357,6 +427,20 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 */
 	static const std::string getFComposeOperator( const int32 index );
 
+	/**
+	 * @brief Returns the name of field \c scaleFactor.
+	 * 
+	 * @return the name of field \c scaleFactor.
+	 */
+	static const std::string getFScaleFactor( void );
+
+	/**
+	 * @brief Returns the name of field \c translation.
+	 * 
+	 * @return the name of field \c translation.
+	 */
+	static const std::string getFTranslation( void );
+
 	//@}
 
 	
@@ -374,6 +458,11 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @param index		zero-base index for the field.
 	 */
 	static const std::string getDFIImage( const int32 index );
+
+	/**
+	 * @brief Returns name of dirty flag that is invalidate when transformation changed.
+	 */
+	static const std::string getDFTransformation();
 
 	//@}
 

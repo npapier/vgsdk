@@ -33,11 +33,11 @@ namespace node
  * 
  * New field added by this node :
  * 
- * - SFVec3f		\c translation			= (0 0 0)\n
+ * - SFVec3f		\c translation		= (0 0 0)\n
  * - SFRotation	\c rotation 			= (0 0 1 0)\n
  * - SFVec3f		\c scaleFactor 		= (1 1 1)\n
- * - SFRotation	\c scaleOrientation	= (0 0 1 0)\n
- * - SFVec3f		\c center 				= (0 0 0)\n
+ * - SFRotation	\c scaleOrientation		= (0 0 1 0)\n
+ * - SFVec3f		\c center 			= (0 0 0)\n
  *
  * This node is very similar to the Transform node in VRML 97.
  * 
@@ -78,7 +78,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Sets the origin for scale and rotation.
 	 */
-	void						setCenter( const vgm::Vec3f center );
+	void					setCenter( const vgm::Vec3f center );
 	//@}
 
 
@@ -96,7 +96,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Typedef for the \c scaleOrientation value.
 	 */
-	typedef vgm::Rotation				ScaleOrientationValueType;
+	typedef vgm::Rotation			ScaleOrientationValueType;
 	
 	/**
 	 * @brief Gets the rotational orientation for scale.
@@ -106,7 +106,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Sets the rotational orientation for scale.
 	 */
-	void						setScaleOrientation( const vgm::Rotation scaleOrientation );
+	void				setScaleOrientation( const vgm::Rotation scaleOrientation );
 	
 	//@}
 
@@ -125,7 +125,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Typedef for the \c scaleFactor value.
 	 */
-	typedef vgm::Vec3f				ScaleFactorValueType;
+	typedef vgm::Vec3f			ScaleFactorValueType;
 	
 	/**
 	 * @brief Gets the scale factors.
@@ -135,7 +135,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Sets the scale factors.
 	 */
-	void						setScaleFactor( const vgm::Vec3f scaleFactor );
+	void					setScaleFactor( const vgm::Vec3f scaleFactor );
 	
 	//@}
 
@@ -154,7 +154,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Typedef for the \c rotation value.
 	 */
-	typedef vgm::Rotation				RotationValueType;
+	typedef vgm::Rotation			RotationValueType;
 
 	/**
 	 * @brief Gets the rotation specification.
@@ -164,7 +164,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Sets the rotation specification.
 	 */
-	void						setRotation( const vgm::Rotation rotation );
+	void				setRotation( const vgm::Rotation rotation );
 
 	//@}
 
@@ -183,7 +183,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Typedef for the \c translation value.
 	 */
-	typedef vgm::Vec3f				TranslationValueType;
+	typedef vgm::Vec3f			TranslationValueType;
 
 	/**
 	 * @brief Gets the translation vector.
@@ -193,7 +193,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Sets the translation vector.
 	 */
-	void						setTranslation( const vgm::Vec3f translation );
+	void					setTranslation( const vgm::Vec3f translation );
 
 	//@}
 
@@ -219,7 +219,7 @@ struct VGD_API Transform : public vgd::node::GeometricalTransformation
 	 * @param	matrix		the transformation matrix.
 	 * @param	center		center point for rotation and scaling, which is optional as the last parameter
 	 */
-	void 						sethMatrix( const vgm::MatrixR& matrix, const vgm::Vec3f& center = vgm::Vec3f(0.f, 0.f, 0.f) );	 
+	void 					sethMatrix( const vgm::MatrixR& matrix, const vgm::Vec3f& center = vgm::Vec3f(0.f, 0.f, 0.f) );	 
 	//@}
 	
 	
