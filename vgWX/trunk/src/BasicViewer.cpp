@@ -138,9 +138,6 @@ void BasicViewer::viewAll()
 
 	// Setup the scene position.
 	m_viewTransform->setMatrix( matrix );
-	
-	// compute/update bounding box for the whole scene graph.
-	Canvas::computeBoundingBox( 0 );
 }
 
 

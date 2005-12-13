@@ -117,6 +117,9 @@ void BasicManipulator::viewAll()
 		getSceneTransformation()->setCenter( center );
 	}
 	//else nothing to do
+	
+	// compute/update bounding box for the whole scene graph.
+	Canvas::computeBoundingBox( 0 );
 
 	// FIXME must be automatic
 	vgm::MatrixR matrix = getSceneTransformation()->computeMatrixFromFields();
