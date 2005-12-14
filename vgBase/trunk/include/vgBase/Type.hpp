@@ -31,12 +31,12 @@
 #ifdef __STDC__
 	typedef signed char		int8;
 #else
-	typedef char				int8;
+	typedef char			int8;
 #endif
 typedef unsigned char		uint8;
 
-typedef short					int16;
+typedef short				int16;
 typedef unsigned short		uint16;
 
-typedef long					int32;
+typedef long				int32;
 typedef unsigned long		uint32;
