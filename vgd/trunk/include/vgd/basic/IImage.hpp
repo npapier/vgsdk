@@ -244,6 +244,11 @@ struct VGD_API IImage
 	
 	
 	/**
+	 * @name Offset helpers
+	 */
+	//@{
+	
+	/**
 	 * @brief Computes offset from coordinates.
 	 * 
 	 * @param x		x-coordinate
@@ -262,6 +267,24 @@ struct VGD_API IImage
 	 * @return the computed offset
 	 */	
 	const uint32 computeOffset( const vgm::Vec3i position );
+	
+	/**
+	 * @brief Computes maximum offset in the image.
+	 * 
+	 * @return the maximum offset
+	 */
+	const uint32 computeMaximumOffset() const;
+	
+	/**
+	 * @brief Computes coordinates from offset.
+	 * 
+	 * @param offset		the offset
+	 * 
+	 * @return the computed coordinates
+	 */
+	const vgm::Vec3i computeCoordinates( const uint32 offset ) const;
+	
+	//@}
 };
 
 

@@ -86,6 +86,31 @@ const uint32 IImage::computeOffset( const vgm::Vec3i position )
 
 
 
+const uint32 IImage::computeMaximumOffset() const
+{
+	return width()*height()*depth();
+}
+
+
+
+const vgm::Vec3i IImage::computeCoordinates( const uint32 offset ) const
+{
+	vgm::Vec3i retVal;
+	
+	const int32 axialSliceSize = width()*height();
+	
+	retVal[2]			= offset / axialSliceSize;
+	
+	const int32 remain	= offset - retVal[2]*axialSliceSize;
+	retVal[1]			= remain / width();
+	
+	retVal[0]			= remain - retVal[1]*width();
+
+	return retVal;
+}
+
+
+
 } // namespace basic
 
 } // namespace vgd
