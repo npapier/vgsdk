@@ -102,6 +102,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	  * @endcode
 	  */
 	virtual void resize( const vgm::Vec2i size );
+
 	//@}
 
 
@@ -131,16 +132,18 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	void insertEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor, const uint32 index = 0 );
 
 	/**
-	 * @brief Installs a new event processor after the first encountered event processor of the given type or that 
-	 * inherits of the given type.
+	 * @brief Installs a new event processor at a position relative to the the first encountered event processor of the 
+	 * given type or that inherits of the given type.
 	 * 
 	 * If the event processor, named typeOfEventProcessor, is not founded, then the insertion is done at the end of the 
 	 * container.
 	 * 
-	 * @param eventProcessor		event processor to install.
+	 * @pre the position where insertion would occurred must be valid
+	 * @param eventProcessor		event processor to install
+	 * @param offset				the relative position
 	 */
 	template< typename typeOfEventProcessor >
-	void insertAfterEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor )
+	void insertRelativeEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor, const int32 offset = 0 )
 	{
 		const int32 index = findEventProcessor< typeOfEventProcessor >();
 		
@@ -150,22 +153,18 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 		}
 		else
 		{
-			insertEventProcessor( eventProcessor, index );
+			insertEventProcessor( eventProcessor, index + offset );
 		}
 	}
-		
-		
-		
+
 	/**
 	 * @brief Installs a new event processor
 	 * 
 	 * Installs a new event processor at the end of the event processors container.
 	 * 
 	 * @param eventProcessor		event processor to install.
-	 * 
-	 * @pre index <= getNumEventProcessors()
 	 */
-	void pushBackEventProcessor(vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor);
+	void pushBackEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor );
 	
 	/**
 	 * @brief Removes an event processor.
@@ -175,6 +174,33 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @pre index < getNumEventProcessors()
 	 */
 	void removeEventProcessor( const uint32 index = 0 );
+
+	/**
+	 * @brief Removes an event processor at a position relative to the the first encountered event processor of the 
+	 * given type or that inherits of the given type.
+	 * 
+	 * If the event processor, named typeOfEventProcessor, is not founded, then nothing is done.
+	 * 
+	 * @pre the position where removal would occurred must be valid
+	 * @param offset				the relative position
+	 * @return true if event processor has been founded and removed, otherwise false.
+	 */
+	template< typename typeOfEventProcessor >
+	const bool removeRelativeEventProcessor( const int32 offset = 0 )
+	{
+		const int32 index = findEventProcessor< typeOfEventProcessor >();
+		
+		if ( index !=  -1 )
+		{
+			removeEventProcessor( index + offset );
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	
 	/**
 	 * @brief Removes an event processor.
@@ -232,7 +258,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	/**
 	 * @brief Retrives an event processor.
 	 * 
-	 * @param index					the position of the event processor to get.
+	 * @param index		the position of the event processor to get
 	 * 
 	 * @pre index < getNumEventProcessors()
 	 */
@@ -241,7 +267,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	/**
 	 * @brief Retrives an event processor.
 	 * 
-	 * @param index					the position of the event processor to get.
+	 * @param index		the position of the event processor to get
 	 * 
 	 * @pre index < getNumEventProcessors()
 	 */
@@ -257,6 +283,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @return the number of event processors.
 	 */
 	const uint32 getNumEventProcessors() const;
+
 	//@}
 
 

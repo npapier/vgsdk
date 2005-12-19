@@ -69,10 +69,14 @@ void SceneManager::onEvent( vgd::Shp<vgd::event::Event> event )
 	{
 		vgd::Shp< vgeGL::event::IEventProcessor > iEventProcessor = *i;
 		
-		bool stop = iEventProcessor->onEvent( event );
-		if ( stop )
+		if ( iEventProcessor->isEnabled() )
 		{
-			break;
+			const bool stop = iEventProcessor->onEvent( event );
+	
+			if ( stop )
+			{
+				break;
+			}
 		}
 	}
 }
@@ -93,7 +97,7 @@ void SceneManager::insertEventProcessor(	vgd::Shp< ::vgeGL::event::IEventProcess
 
 void SceneManager::pushBackEventProcessor(vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor)
 {
-	insertEventProcessor( eventProcessor, getNumEventProcessors() );
+	m_eventProcessors.push_back( eventProcessor );
 }
 
 
@@ -113,7 +117,7 @@ void SceneManager::popBackEventProcessor()
 {
 	assert( getNumEventProcessors() >= 1 && "Empty event processor containers" );
 
-	removeEventProcessor( getNumEventProcessors()-1 );
+	m_eventProcessors.pop_back();
 }
 
 
@@ -150,7 +154,7 @@ const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventPr
 		
 		if ( currentEventProcessor == eventProcessor )
 		{
-			return ( retVal);
+			return retVal;
 		}
 		
 		++retVal;
