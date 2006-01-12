@@ -39,11 +39,11 @@ struct VGD_API ImageInfo : public IImage
 	 * @brief Constructor setting all informations about an image.
 	 * 
 	 * @param width			width of the image.
-	 * @param height			height of the image.
+	 * @param height		height of the image.
 	 * @param depth			depth of the image.
-	 * @param format			format of the pixel data.
-	 * @param type				type of the pixel data.
-	 * @param pixels			pointer to the image data in memory.
+	 * @param format		format of the pixel data.
+	 * @param type			type of the pixel data.
+	 * @param pixels		pointer to the image data in memory.
 	 * 
 	 * @post paletteSize()			== 0
 	 * @post paletteFormat()		== NO_FORMAT
@@ -51,14 +51,14 @@ struct VGD_API ImageInfo : public IImage
 	 * @post palettePixels()		== 0
 	 * @post paletteEditPixels()	== 0
 	 * 
-	 * @post voxelSize()				== vgm::Vec3f(1.f, 1.f, 1.f)
+	 * @post voxelSize() == vgm::Vec3f(1.f, 1.f, 1.f)
 	 */
-	ImageInfo(	const uint32		width			= 0,
-					const uint32		height		= 0,
-					const uint32		depth			= 0,
-					const Format		format		= NO_FORMAT,
-					const Type			type			= NO_TYPE,
-					const void*			pixels		= 0 );
+	ImageInfo(	const uint32	width		= 0,
+				const uint32	height		= 0,
+				const uint32	depth		= 0,
+				const Format	format		= NO_FORMAT,
+				const Type		type		= NO_TYPE,
+				const void*		pixels		= 0 );
 
 	/**
 	 * @brief Set all informations about an image.
@@ -104,7 +104,7 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return		height of image.
 	 */
-	uint32&			height()					{ return ( m_height ); }
+	uint32&			height()				{ return ( m_height ); }
 	
 	/**
 	 * @brief Returns the height of the image.
@@ -132,7 +132,7 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return		format of the pixel data.
 	 */
-	Format&			format()					{ return ( m_format ); }
+	Format&			format()				{ return ( m_format ); }
 	
 	/**
 	 * @brief Returns the format of the pixel data.
@@ -146,7 +146,7 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return		type of the pixel data.
 	 */
-	Type&				type()					{ return ( m_type ); }
+	Type&				type()				{ return ( m_type ); }
 	
 	/**
 	 * @brief Returns the type of the pixel data.
@@ -167,35 +167,35 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return a pointer to the image data in memory.
 	 */
-	void*				editPixels();
+	void*			editPixels();
 
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().
 	 */	
-	void				editPixelsDone();
+	void			editPixelsDone();
 	
 	/**
 	 * @brief Returns the pixel data pointer.
 	 * 
 	 * @return A reference on the pixel data pointer.
 	 */
-	void*&		pixelData()				{ return ( m_pixels ); }
+	void*&			pixelData()				{ return ( m_pixels ); }
 
 	/**
 	 * @brief Set all informations about an image.
 	 * 
 	 * @param width			width of the image.
-	 * @param height			height of the image.
+	 * @param height		height of the image.
 	 * @param depth			depth of the image.
-	 * @param format			format of the pixel data.
-	 * @param type				type of the pixel data.
-	 * @param pixels			pointer to the image data in memory.
+	 * @param format		format of the pixel data.
+	 * @param type			type of the pixel data.
+	 * @param pixels		pointer to the image data in memory.
 	 */
-	void			set(	const uint32		width			= 0,
+	void			set(	const uint32		width		= 0,
 							const uint32		height		= 0,
-							const uint32		depth			= 0,
+							const uint32		depth		= 0,
 							const Format		format		= NO_FORMAT,
-							const Type			type			= NO_TYPE,
+							const Type			type		= NO_TYPE,
 							const void*			pixels		= 0 );
 
 	/**
@@ -256,7 +256,7 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @remarks		If image is not defined, must return NO_TYPE.
 	 */
-	Type&	paletteType() { return ( m_paletteType ); }
+	Type&		paletteType() { return ( m_paletteType ); }
 	
 	/**
 	 * @brief Returns the type of the palette.
@@ -283,12 +283,12 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @remarks		If image is not defined, must return 0.
 	 */
-	void*			paletteEditPixels();
+	void*		paletteEditPixels();
 	
 	/**
 	 * @brief Commit all pixels modifications in palette after calling paletteEditPixels().
 	 */
-	void			paletteEditPixelsDone();	
+	void		paletteEditPixelsDone();	
 	//@}
 
 
@@ -316,7 +316,7 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return		true if supported, false otherwise.
 	 */
-	const bool	isVoxelSizeSupported() const;
+	const bool				isVoxelSizeSupported() const;
 
 	//@}
 
@@ -326,16 +326,18 @@ protected:
 	 * @name Image informations
 	 */
 	//@{
+
 	uint32		m_width;
 	uint32		m_height;
 	uint32		m_depth;
 
 	Format		m_format;
-	Type			m_type;
+	uint8		m_components;
+	Type		m_type;
 	
-	void*			m_pixels;
+	void*		m_pixels;
 
-	bool			m_edit;
+	bool		m_edit;
 	//@}
 	
 	/**
@@ -345,11 +347,11 @@ protected:
 	uint32		m_paletteSize;
 
 	Format		m_paletteFormat;
-	Type			m_paletteType;
+	Type		m_paletteType;
 	
-	void*			m_palettePixels;
+	void*		m_palettePixels;
 	
-	bool			m_paletteEdit;
+	bool		m_paletteEdit;
 	//@}
 	
 	/**

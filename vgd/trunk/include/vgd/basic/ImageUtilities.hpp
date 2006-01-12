@@ -41,7 +41,7 @@ struct VGD_API ImageUtilities
 	 * @brief Compute the minimum and maximum intensity values for the given image.
 	 * 
 	 * @pre pImage->format() == LUMINANCE or COLOR_INDEX
-	 * @pre pImage->type() == IImage::UINT8
+	 * @pre pImage->type() == IImage::UINT8, or IImage::INT16
 	 * 
 	 * @param pImage	3d image where slice is extract
 	 * 
@@ -62,6 +62,23 @@ struct VGD_API ImageUtilities
 		return ( computeMinMax(image.get()) );
 	}
 	
+	/**
+	 * @brief Creates an image by converting the specified image into the given type.
+	 * 
+	 * @param	srcImage	the image to use as source
+	 * @param	dstType		the type of the newly created image
+	 * @param	minMax		a valid (min,max) of the image used during the convertion phase.
+	 * 						Or an invalid (min,max) if it must be computed by this method.
+	 * 
+	 * @return	a shared pointer to the created image or an empty image if convertion is not possible.
+	 * 
+	 * @pre	image->format() == IImage::LUMINANCE
+	 * @pre image->components() == 1
+	 * @pre image->type() == IImage::UINT8, or IImage::INT16
+	 * @pre dstType == IImage::UINT8
+	 */
+	static vgd::Shp< Image > createImage( const vgd::Shp< IImage> image, const IImage::Type dstType, MinMax& minMax );
+
 	/**
 	 * @brief Extract a slice (2d image) from a 3d image.
 	 * 

@@ -15,13 +15,11 @@ namespace basic
 
 
 
-ImageInfo::ImageInfo(	
-					const uint32		width, const uint32 height, const uint32 depth,
-					const Format		format,
-					const Type			type,
-					const void*			pixels
-					 ) :
-	m_paletteSize(0),
+ImageInfo::ImageInfo(	const uint32	width, const uint32 height, const uint32 depth,
+						const Format	format,
+						const Type		type,
+						const void*		pixels )
+:	m_paletteSize(0),
 	m_paletteFormat(NO_FORMAT),
 	m_paletteType(NO_TYPE),
 	m_palettePixels(0),
@@ -44,7 +42,7 @@ ImageInfo::ImageInfo( const IImage& iimage )
 
 const uint32 ImageInfo::components() const
 { 
-	return( computeNumComponents( format() ) );
+	return m_components;
 }
 
 
@@ -69,20 +67,20 @@ void ImageInfo::editPixelsDone()
 
 
 
-void ImageInfo::set(
-					const uint32		width,
-					const uint32		height,
-					const uint32		depth,					
-					const Format		format,
-					const Type			type,
-					const void*			pixels )
+void ImageInfo::set(	const uint32		width,
+						const uint32		height,
+						const uint32		depth,					
+						const Format		format,
+						const Type			type,
+						const void*			pixels )
 {
 	m_width			= width;
-	m_height			= height;
+	m_height		= height;
 	m_depth			= depth;
-	m_format			= format;
+	m_format		= format;
+	m_components	= static_cast<uint8>(computeNumComponents(format));
 	m_type			= type;
-	m_pixels			= const_cast<void*>(pixels);
+	m_pixels		= const_cast<void*>(pixels);
 	m_edit			= false;
 }
 
@@ -91,20 +89,21 @@ void ImageInfo::set(
 void ImageInfo::set( const IImage& iimage )
 {
 	m_width			= iimage.width();
-	m_height			= iimage.height();
+	m_height		= iimage.height();
 	m_depth			= iimage.depth();	
-	m_format			= iimage.format();
+	m_format		= iimage.format();
+	m_components	= static_cast<uint8>(iimage.components());
 	m_type			= iimage.type();
-	m_pixels			= const_cast<void*>(iimage.pixels());
+	m_pixels		= const_cast<void*>(iimage.pixels());
 	m_edit			= false;
 	
-	m_paletteSize		= iimage.paletteSize();
+	m_paletteSize	= iimage.paletteSize();
 	m_paletteFormat	= iimage.paletteFormat();
-	m_paletteType		= iimage.paletteType();
+	m_paletteType	= iimage.paletteType();
 	m_palettePixels	= const_cast<void*>(iimage.palettePixels());
-	m_paletteEdit		= false;
+	m_paletteEdit	= false;
 	
-	m_voxelSize			= iimage.voxelSize();
+	m_voxelSize		= iimage.voxelSize();
 }
 
 

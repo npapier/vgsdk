@@ -6,6 +6,9 @@
 #include "vgd/basic/ImageUtilities.hpp"
 
 #include <cstring>
+#include <limits>
+
+#include "vgm/Utilities.hpp"
 
 
 
@@ -24,36 +27,157 @@ const MinMax ImageUtilities::computeMinMax( const IImage* pImage )
 	assert(	(pImage->format() == IImage::LUMINANCE) ||
 			(pImage->format() == IImage::COLOR_INDEX) );
 
-	assert( pImage->type() == IImage::UINT8 );			// FIXME
-	int32	sizeOfComponents	= sizeof(uint8);
+	MinMax minMax;
 	
-	// scan image
-	const uint8*	iPixel( static_cast<const uint8*>(pImage->pixels())					);
-	MinMax			minMax(	static_cast<float>(*iPixel), static_cast<float>(*iPixel)	);
-
-	for(	const uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth();
-			iPixel != iEnd;
-			iPixel++ )
+	switch ( pImage->type() )
 	{
-		uint8 value		= (*iPixel);
-		float fValue	= static_cast<float>(value);
+		case IImage::UINT8:
+		{
+			// scan image
+			const uint8 *iPixel( static_cast<const uint8*>(pImage->pixels()) );
+			minMax.set( static_cast<float>(*iPixel), static_cast<float>(*iPixel) );
+
+			for(	const uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth();
+					iPixel != iEnd;
+					iPixel++ )
+			{
+				uint8 value		= (*iPixel);
+				float fValue	= static_cast<float>(value);
+				
+				if ( fValue < minMax.getMin() )
+				{
+					minMax.setMin( value );
+				}
+				else if ( fValue > minMax.getMax() )
+				{
+					minMax.setMax( value );
+				}
+				// else do nothing
+			}
+		}
+		break;
+
+		case IImage::INT16:
+		{
+			// scan image
+			const int16 *iPixel( static_cast<const int16*>(pImage->pixels()) );
+			minMax.set( static_cast<float>(*iPixel), static_cast<float>(*iPixel) );
+
+			for(	const int16 *iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth();
+					iPixel != iEnd;
+					iPixel++ )
+			{
+				int16 value		= (*iPixel);
+				float fValue	= static_cast<float>(value);
+				
+				if ( fValue < minMax.getMin() )
+				{
+					minMax.setMin( value );
+				}
+				else if ( fValue > minMax.getMax() )
+				{
+					minMax.setMax( value );
+				}
+				// else do nothing
+			}
+		}
+		break;
 		
-		if ( fValue < minMax.getMin() )
-		{
-			minMax.setMin( value );
-		}
-		else if ( fValue > minMax.getMax() )
-		{
-			minMax.setMax( value );
-		}
-		// else do nothing
+		default:
+			assert( false && "Unsupported image type" );
 	}
 
 	return ( minMax );
 }
 
 
+
+vgd::Shp< Image > ImageUtilities::createImage(	const vgd::Shp< IImage> srcImage, 
+												const IImage::Type dstType,
+												MinMax& minMax )
+{
+	// srcImage
+	assert( srcImage->format() == IImage::LUMINANCE );
+	assert( srcImage->components() == 1 );
+	assert(	(srcImage->type() == IImage::UINT8) ||
+			(srcImage->type() == IImage::INT16)	);
+
+	// dstImage
+	assert( dstType == IImage::UINT8 );
+
+	// Process min-max
+	if ( minMax.isValid() == false )
+	{
+		minMax = ImageUtilities::computeMinMax( srcImage );
+	}
+	
+	assert( minMax.isValid() );
+
+	// Creates the new srcImage
+	Shp< Image > dstImage( new Image(	srcImage->components(),
+										srcImage->width(), srcImage->height(), srcImage->depth(),
+										srcImage->format(), dstType ) );
+							
+	typedef uint8 DstPixelType;
+	DstPixelType *iDstPixel = static_cast<DstPixelType*>(dstImage->editPixels());
+
+	// y = a*x + b
+	const DstPixelType newMin = std::numeric_limits<DstPixelType>::min();
+	const DstPixelType newMax = std::numeric_limits<DstPixelType>::max();
+
+	const float a = static_cast<float>( newMax - newMin ) / minMax.getDelta();
+	const float b = newMin - a*minMax.getMin();
+
+	// Scans the source image and assigns to the destination image each converted pixel...
+	switch ( srcImage->type() )
+	{
+		case IImage::UINT8:
+		{
+			typedef uint8 SrcPixelType;
+			const SrcPixelType *iSrcPixel = static_cast<const SrcPixelType*>(srcImage->pixels());
+			
+			// @todo FIXME IImage::copyPixels()
+			std::memcpy( iDstPixel, iSrcPixel, srcImage->computeMaximumOffset() );
+		}
+		break;
+
+		case IImage::INT16:
+		{
+			typedef int16 SrcPixelType;
+
+			const SrcPixelType *iSrcPixel = static_cast<const SrcPixelType*>(srcImage->pixels());
+
+			for(	const SrcPixelType *iEndSrcPixel = iSrcPixel + srcImage->computeNumberOfPixels();
+					iSrcPixel != iEndSrcPixel;
+					++iSrcPixel )
+			{
+				const SrcPixelType	color		= *iSrcPixel;
+				const float			fNewColor	= a*static_cast<float>(color) + b;
+				const DstPixelType	newColor	= static_cast<const DstPixelType>( fNewColor );
+				
+				// @todo FIXME IImage::adaptPixels()
+				// @todo FIXME opt lookup table
+				(*iDstPixel) = newColor;
+				
+				++iDstPixel;
+			}
+		}
+		break;
 		
+		default:
+			dstImage.reset();
+	}
+	
+	if ( dstImage != 0 )
+	{
+		dstImage->editPixelsDone();
+	}
+	
+	return dstImage;
+}
+
+
+
 vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*	pImage,
 															const SliceType	slice,
 															const uint32	position )
@@ -348,29 +472,26 @@ void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
 									const PaletteFunctionType fun3, const float alpha3,
 									uint8 *pPalette )
 {
-	if ( interval1-1 >= minValue )
+	if ( interval1 > minValue )
 	{
 		setupPalette(	minValue, maxValue,
-						minValue, interval1-1,
+						minValue, interval1,
 						fun1, alpha1,
 						pPalette );
 	}
-
-	if ( interval2-1 >= interval1 )
-	{
-		setupPalette(	minValue, maxValue,
-						interval1, interval2-1,
-						fun2, alpha2,
-						pPalette );
-	}
 	
-	if ( maxValue >= interval2 )
+	if ( interval2 < maxValue )
 	{
 		setupPalette(	minValue, maxValue,
 						interval2, maxValue,
 						fun3, alpha3,
 						pPalette );
 	}
+	
+	setupPalette(	minValue, maxValue,
+					interval1, interval2,
+					fun2, alpha2,
+					pPalette );
 }
 
 
@@ -383,8 +504,8 @@ void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
 {
 	const float		fMin	= static_cast<float>(minValue);
 	const float		fMax	= static_cast<float>(maxValue);
-	const float		fBegin	= static_cast<const float>(beginInterval);
-	const float		fEnd	= static_cast<const float>(endInterval);
+	const float		fBegin	= static_cast<float>(beginInterval);
+	const float		fEnd	= static_cast<float>(endInterval);
 
 	assert( beginInterval >= minValue && beginInterval <= maxValue );
 	assert( endInterval >= minValue && endInterval <= maxValue );
@@ -393,23 +514,46 @@ void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
 	assert( pPalette != 0 );
 
 	int32	i		= beginInterval*4;
-	int32 iEnd	= endInterval*4;
+	int32	iEnd	= endInterval*4;
 	uint8	color	= 0;
-	uint8 alpha = static_cast<uint8>( fAlpha * 255.f );
-
+	uint8	alpha	= static_cast<uint8>( fAlpha * 255.f );
+	
+	PaletteFunctionType newFunction;
+	
+	if ( fBegin == fEnd )
+	{
+		if ( function == BLACK_TO_WHITE )
+		{
+			newFunction = WHITE;
+		}
+		else if ( function == WHITE_TO_BLACK )
+		{
+			newFunction = BLACK;
+		}
+		else
+		{
+			newFunction = function;
+		}
+	}
+	else
+	{
+		newFunction = function;
+	}
+	
 	//
-	switch ( function )
+	switch ( newFunction )
 	{
 		case BLACK_TO_WHITE:
 		{
-			float a = (fMax - fMin ) / (fEnd - fBegin);
-			float b = fMin - a * fBegin;				// fMin = a * fBegin + b
+			assert( fBegin != fEnd );
 
+			float a, b;
+			vgm::Utilities::linearInterpolation( fBegin, fMin, fEnd, fMax, a, b );
+			
 			while ( i <= iEnd )
 			{
-				// y = ax + b
 				// FIXME: optme this expression could be simplified and compute by only addition.
-				color = static_cast<uint8>( a*(static_cast<float>(i/4)) + b );
+				color = static_cast<uint8>( vgm::Utilities::linearInterpolation( a, b, static_cast<float>(i/4) ) );
 				
 				pPalette[i] = color;
 				++i;
@@ -430,14 +574,15 @@ void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
 
 		case WHITE_TO_BLACK:
 		{
-			float a = (fMin - fMax ) / (fEnd - fBegin);
-			float b = fMax - a * fBegin;				// fMax = a * fBegin + b
+			assert( fBegin != fEnd );
+			
+			float a, b;
+			vgm::Utilities::linearInterpolation( fBegin, fMax, fEnd, fMin, a, b );
 
 			while ( i <= iEnd )
 			{
-				// y = ax + b
 				// FIXME: optme this expression could be simplified and compute by only addition.
-				color = static_cast<uint8>( a*(static_cast<float>(i/4)) + b );
+				color = static_cast<uint8>( vgm::Utilities::linearInterpolation( a, b, static_cast<float>(i/4) ) );
 				
 				pPalette[i] = color;
 				++i;

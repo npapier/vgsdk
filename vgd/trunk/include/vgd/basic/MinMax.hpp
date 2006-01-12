@@ -28,58 +28,80 @@ struct VGD_API MinMax
 	 * 
 	 * @post isValid() == false
 	 */
-	MinMax()
-	 :	m_min( std::numeric_limits<float>::max() ),
-		m_max( std::numeric_limits<float>::min() )
-	{}
+	MinMax();
 
 	/**
 	 * @brief Constructor
+	 * 
+	 * @pre min <= max
 	 */
-	MinMax( const float min, const float max )
-	 :	m_min( min ),
-		m_max( max )
-	{}
+	MinMax( const float min, const float max );
 
 	/**
 	 * @brief Returns if the (min,max) pair is valid
 	 * 
 	 * @return true if valid, false otherwise.
 	 */
-	const bool isValid() const
-	{
-		return (	(m_min != std::numeric_limits<float>::max()) &&
-					(m_max != std::numeric_limits<float>::min())	);
-	}
+	const bool isValid() const;
+
+	/**
+	 * @brief Invalidates the (min,max) pair
+	 * 
+	 * @post isValid() == false
+	 */
+	void invalidate();
 
 	/**
 	 * @brief Gets the minimum.
 	 * 
 	 * @return the minimum value
 	 */
-	const float getMin() const { return ( m_min ); }
+	const float getMin() const;
 	
 	/**
 	 * @brief Sets the minimum.
 	 * 
 	 * @param minimum	the minimum value
+	 * 
+	 * @pre min <= getMax()
 	 */
-	void setMin( const float min ) { m_min = min; }
+	void setMin( const float min );
 
 	/**
 	 * @brief Gets the maximum.
 	 * 
 	 * @return the maximum value
 	 */
-	const float getMax() const { return ( m_max ); }
+	const float getMax() const;
 
 	/**
 	 * @brief Sets the maximum.
 	 * 
 	 * @param maximum	the maximum value
+	 * 
+	 * @pre getMin() <= max
 	 */
-	void setMax( const float max ) { m_max = max; }
+	void setMax( const float max );
 	
+	/**
+	 * @brief Sets the minimum and maximum values.
+	 * 
+	 * @param minimum	the minimum value
+	 * @param maximum	the maximum value
+	 * 
+	 * @pre min <= max
+	 */
+	void set( const float min, const float max );
+	 
+	/**
+	 * @brief Returns the difference between maximum and minimum.
+	 * 
+	 * @pre isValid()
+	 * 
+	 * @return the difference between maximum and minimum
+	 */
+	const float getDelta() const;
+
 private:
 	float m_min;
 	float m_max;

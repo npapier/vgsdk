@@ -6,6 +6,7 @@
 #ifndef _VGD_BASIC_IIMAGE_H
 #define _VGD_BASIC_IIMAGE_H
 
+#include <utility>
 #include <vgm/Vector.hpp>
 #include "vgd/vgd.hpp"
 
@@ -145,23 +146,35 @@ struct VGD_API IImage
 	virtual void*		editPixels()=0;
 	
 	/**
-	 * @brief Commit all pixels modifications after calling editPixels().
+	 * @brief Commits all pixels modifications after calling editPixels().
 	 */
 	virtual void		editPixelsDone()=0;
 	
 	/**
-	 * @brief Test if this class store an image.
+	 * @brief Tests if this class store an image.
 	 * 
 	 * @return		true if there is no image in this class (i.e. width()==height()==depth()==0), false otherwise.
 	 */
 	virtual const bool	isEmpty() const;
+
+	/**
+	 * @brief Computes the size of one pixel
+	 * 
+	 * @remarks The size of one pixel depends of format() and type() of the image.
+	 * 
+	 * @return The size of one pixel in bytes
+	 */
+	const uint32 sizeOfPixel() const;
 	
 	/**
-	 * @brief Compute the number of component for image with the specified format.
+	 * @brief Computes the whole number of pixels in the image.
+	 * 
+	 * @return the whole number of pixels in the image
 	 */
-	static const uint32	computeNumComponents( const Format format );
+	const uint32 computeNumberOfPixels() const;
+
 	//@}
-	
+
 
 
 	/**
@@ -239,10 +252,45 @@ struct VGD_API IImage
 	 * @return		true if supported, false otherwise.
 	 */
 	virtual const bool			isVoxelSizeSupported() const=0;
+
 	//@}
-	
-	
-	
+
+
+
+	/**
+	 * @name Helpers
+	 */
+	//@{
+
+	/**
+	 * @brief Computes the number of components for image with the specified format.
+	 * 
+	 * @return the number of component
+	 * 
+	 * @todo Should be optimized by replacing switch with a lookup table.
+	 */
+	static const uint32	computeNumComponents( const Format format );
+
+	/**
+	 * @brief Computes the size of one element of \c type
+	 * 
+	 * @return the size of one element of \c type
+	 * 
+	 * @todo Should be optimized by replacing the switch with a lookup table.
+	 */
+	static const uint32 computeSizeOfType( const Type type );
+
+	/**
+	 * @brief Computes the minimum and maximum values allowed by the given type.
+	 * 
+	 * @return a pair with the minimum and the maximum values
+	 */
+	static const std::pair< double, double > getRange( const Type type );
+
+	//@}
+
+
+
 	/**
 	 * @name Offset helpers
 	 */
