@@ -89,7 +89,7 @@ struct Vector
 	/**
 	 * @brief Constructor with value affectation from array of n components.
 	 */
-	Vector( const T* v );
+	explicit Vector( const T* v );
 
 	/**
 	 * @brief Copy constructor.
