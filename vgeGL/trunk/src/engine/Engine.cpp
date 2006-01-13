@@ -25,22 +25,35 @@ namespace engine
 
 void Engine::reset()
 {
+	if ( isGLContextCurrent() == false )
+	{
+		return;
+	}
+
 	if ( m_firstInstance )
 	{
 		// This is the first instance of this class.
 
 		// Do some initialization
 		// and don't do the same for any others instances if populateNodeRegistry returns true
-		m_firstInstance = !populateNodeRegistry();
+		m_firstInstance = (populateNodeRegistry() == false);
 	}
 
-	::vge::engine::Engine::reset();
+	if ( m_firstInstance == false )
+	{
+		::vge::engine::Engine::reset();
+	}
 }
 
 
 
 void Engine::setToDefaults()
 {
+	if ( isGLContextCurrent() == false )
+	{
+		return;
+	}
+
 	// GLOBAL INITIALIZATION
 	glEnable( GL_LIGHTING );
 	glEnable( GL_DEPTH_TEST );
@@ -85,6 +98,11 @@ const bool Engine::isGLContextCurrent() const
 	
 void Engine::resetMatrices()
 {
+	if ( isGLContextCurrent() == false )
+	{
+		return;
+	}
+	
 	// STEP 1 : call method from vge::engine::Engine
 	vge::engine::Engine::resetMatrices();
 	
