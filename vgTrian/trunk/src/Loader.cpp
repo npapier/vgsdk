@@ -373,7 +373,7 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 		m_fp >> name >> real;
 		assert( name == "transparency" );
 		
-		material->setTransparency( real );
+		material->setTransparency( 1.f - real );
 
 		loadTextureMaps( container );
 	}
