@@ -21,6 +21,13 @@ namespace engine
 
 
 
+Engine::Engine()
+{
+	reset();
+}
+
+
+
 void Engine::reset()
 {
 	// Handlers
@@ -44,9 +51,9 @@ void Engine::resetEval()
 
 
 void Engine::evaluate(	const vgd::Shp< vge::service::Service >service,
-								vgd::node::Node *pNode, 
-								const bool isPreTraverse,
-								const bool bTrace )
+						vgd::node::Node *pNode, 
+						const bool isPreTraverse,
+						const bool bTrace )
 {
 	const int32 indexService( service->getClassIndex() );
 	const int32 indexNode	( pNode->getClassIndex() );
@@ -107,7 +114,7 @@ void Engine::clearHandlers()
 	vgd::basic::ClassRegistry<vgd::node::Node>&	nodeRegistry(	vgd::node::Node::getClassRegistry() );
 	
 	for(	DispatchMatrix::iterator	i	= m_dispatch.begin(),
-												ie	= m_dispatch.end();
+										ie	= m_dispatch.end();
 			i != ie;
 			++i )
 	{
@@ -208,6 +215,9 @@ void Engine::disregard()
 
 
 
+
+
+
 void Engine::resetStateStack()
 {
 	clearStateStack();
@@ -244,9 +254,6 @@ void Engine::initializeStateStack()
 		setStateStackTop( node.get() );
 	}
 }
-
-
-
 
 
 
@@ -315,6 +322,9 @@ bool Engine::popStateStack()
 
 
 
+
+
+
 void Engine::resetMatrices()
 {
 	getProjectionMatrix().resize(	1 );
@@ -326,6 +336,34 @@ void Engine::resetMatrices()
 	getGeometricalMatrix().resize( 1 );
 	getGeometricalMatrix().setMatrixStackSizeHint( 8 );
 }
+
+
+
+MultiMatrixStack& Engine::getProjectionMatrix()
+{
+	return ( m_projections ); 
+}
+
+
+
+MultiMatrixStack& Engine::getGeometricalMatrix()
+{
+	return ( m_geometricals );
+}
+
+
+	
+MultiMatrixStack& Engine::getTextureMatrix()
+{
+	return ( m_textures );
+}
+
+
+
+int32 Engine::getMaxTexUnits() const
+{ 
+	return 0;
+};
 
 
 

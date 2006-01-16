@@ -88,7 +88,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	typedef std::map<		int32, NodeList	>		MultiState;
 
-	typedef std::pair<	int32, NodeList	>		MultiStatePair;
+	typedef std::pair<	int32, NodeList	>			MultiStatePair;
 
 	/**
 	 * @brief Table(indexed by node index) of MultiStateStack.
@@ -102,7 +102,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * 
 	 * @remark Useful to implement quickly the Separator node.
 	 */
-	typedef std::vector< State >						StateStack;
+	typedef std::vector< State >					StateStack;
 
 	//@}
 
@@ -112,6 +112,11 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @name Constructor like.
 	 */
 	//@{
+	
+	/**
+	 * @brief Default constructor
+	 */
+	Engine();
 	
 	/**
 	 * @brief Reset handlers, state stack and matrix stacks (texture, projection and geometrical).
@@ -135,12 +140,12 @@ struct VGE_API Engine : public vgd::field::FieldManager
 //	/**
 //	 * @brief Evaluation of scene graph.
 //	 * 
-//	 * @param service			Service to use during evaluation (Painter...).
+//	 * @param service		Service to use during evaluation (Painter...).
 //	 * @param collector		Visitor that has collect all traversing informations.
 //	 */
 //	template< typename Visitors >
 //	void evaluate(	const vgd::Shp< vge::service::Service > service,
-//						vge::visitor::NodeCollectorExtended<Visitors>& collector	)
+//					vge::visitor::NodeCollectorExtended<Visitors>& collector	)
 //	{
 //		const typename std::vector< typename vge::visitor::NodeCollectorExtended<Visitors>::TraverseElement >& nodes
 //				= collector.getNodes();
@@ -170,17 +175,10 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @param	bTrace			true if the evaluation of the node must be stored in the engine state, false if not.
 	 */
 	void evaluate(	const vgd::Shp< vge::service::Service > service,
-						vgd::node::Node* pNode, 
-						const bool isPreTraverse,
-						const bool bTrace = true );
+					vgd::node::Node* pNode, 
+					const bool isPreTraverse,
+					const bool bTrace = true );
 // FIXME ???
-//public:
-//	/**
-//	 * @brief Evaluation of a complete state.
-//	 */
-//	void evaluateWithoutTrace( const vgd::Shp< vge::service::Service > service,
-//										State&	state, const bool isPreTraverse );
-
 //	/**
 //	 * @brief Evaluation of the state being at the top of the evaluation stack.
 //	 */
@@ -441,29 +439,6 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	//@}
 
 
-	/**
-	 * @name Implementations specifics capabilities.
-	 */
-	//@{
-	
-	/**
-	 * @brief Returns the maximum number of lights.
-	 */
-	virtual int32 getMaxLights() const = 0;
-	
-	/**
-	 * @brief Returns the maximum number of texture units.
-	 */
-	virtual int32 getMaxTexUnits() const = 0;
-
-	/**
-	 * @brief Returns the maximum texture size.
-	 */
-	virtual int32 getMaxTexSize() const = 0;
-	
-	//@}
-
-
 
 	/**
 	 * @name Methods to manage stacks for each matrix type (projection, geometrical and texture).
@@ -480,25 +455,55 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	/**
 	 * @brief Returns the projection matrix stacks.
 	 */
-	MultiMatrixStack&	getProjectionMatrix() { return ( m_projections ); }
+	MultiMatrixStack&	getProjectionMatrix();
 	
 	/**
 	 * @brief Returns the geometrical matrix stacks.
 	 */
-	MultiMatrixStack&	getGeometricalMatrix() { return ( m_geometricals ); }
+	MultiMatrixStack&	getGeometricalMatrix();
 	
 	/**
 	 * @brief Returns the texture matrix stacks.
 	 */
-	MultiMatrixStack&	getTextureMatrix() { return ( m_textures ); }
+	MultiMatrixStack&	getTextureMatrix();
 
 	//@}
 
 
 
+	/**
+	 * @name Implementations specifics capabilities.
+	 */
+	//@{
+	
+	/**
+	 * @brief Returns the maximum number of lights.
+	 */
+	virtual int32 getMaxLights() const = 0;
+	
+	/**
+	 * @brief Returns the maximum number of texture units.
+	 */
+	virtual int32 getMaxTexUnits() const;
+
+	/**
+	 * @brief Returns the maximum 1D/2D texture image dimension.
+	 */
+	virtual int32 getMaxTexSize() const = 0;
+	
+	/**
+	 * @brief Returns the maximum 3D texture image dimension.
+	 */
+	virtual int32 getMax3DTexSize() const = 0;
+	
+	//@}
+
+
+
+
 	// change visibility of this method inherited from vgd::field::FieldManager.
 	bool addField( vgd::field::AbstractField* pField );
-	// FIXME todo removeField.
+	// @todo FIXME removeField().
 
 
 
