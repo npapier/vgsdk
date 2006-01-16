@@ -63,11 +63,6 @@ Canvas::Canvas(	wxWindow *parent,
 
 	m_isContextualMenuEnabled	(	false		)
 {
-	// Initialize the vgeGL::engine::Engine() if possible...
-	// because on linux, OpenGL context could not be made current any times...
-	getGLEngine()->reset();
-
-	//
 	assert( getCanvasCount() == 0 && "This is not the first canvas." );
 	++m_canvasCount;
 }
@@ -95,11 +90,6 @@ Canvas::Canvas(	wxWindow *parent,
 
 	m_isContextualMenuEnabled	(	false		)
 {
-	// Initialize the vgeGL::engine::Engine() if possible...
-	// because on linux, OpenGL context could not be made current any times...
-	getGLEngine()->reset();
-	
-	//
 	assert( getCanvasCount() >= 1 && "This is the first canvas." );
 	++m_canvasCount;
 }
@@ -821,6 +811,7 @@ int	Canvas::m_vgsdk_attrib[] = {
 
 
 bool	Canvas::m_bGlobalInitializedVGSDK = false;
+
 
 
 } // namespace vgWX
