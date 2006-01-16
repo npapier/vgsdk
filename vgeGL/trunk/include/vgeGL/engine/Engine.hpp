@@ -44,6 +44,7 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	
 	// Overridden
 	void reset();
+
 	//@}
 
 
@@ -103,14 +104,8 @@ struct VGEGL_API Engine : public vge::engine::Engine
 
 	int32 getMaxTexUnits() const;
 	
-	/**
-	 * @brief Returns the maximum 1D/2D texture image dimension.
-	 */
 	int32 getMaxTexSize() const;
 
-	/**
-	 * @brief Returns the maximum 3D texture image dimension.
-	 */
 	int32 getMax3DTexSize() const;
 
 	//@}
