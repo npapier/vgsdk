@@ -113,10 +113,15 @@ vgd::Shp< Image > ImageUtilities::createImage(	const vgd::Shp< IImage> srcImage,
 	
 	assert( minMax.isValid() );
 
-	// Creates the new srcImage
+	// Creates the new image
 	Shp< Image > dstImage( new Image(	srcImage->components(),
 										srcImage->width(), srcImage->height(), srcImage->depth(),
 										srcImage->format(), dstType ) );
+										
+	if ( srcImage->isVoxelSizeSupported() )
+	{
+		dstImage->voxelSize() = srcImage->voxelSize();
+	}
 							
 	typedef uint8 DstPixelType;
 	DstPixelType *iDstPixel = static_cast<DstPixelType*>(dstImage->editPixels());
