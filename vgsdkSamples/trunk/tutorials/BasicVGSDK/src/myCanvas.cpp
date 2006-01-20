@@ -37,24 +37,33 @@ myCanvas::myCanvas(
 
 void myCanvas::initialize()
 {
+	using vgd::node::ClearFrameBuffer;
+	using vgd::node::DirectionalLight;
+	using vgd::node::VertexShape;
+	
 	// STEP 1: OpenGL buffers must be initialized.
 	// clears the color and depth buffer
-	vgd::Shp< vgd::node::ClearFrameBuffer > clearFrameBuffer = vgd::node::ClearFrameBuffer::create("clearFrameBuffer");
+	vgd::Shp< ClearFrameBuffer > clearFrameBuffer = ClearFrameBuffer::create("clearFrameBuffer");
 	// specifies clear values for the color buffer. black is the default color.
-	//clearFrameBuffer->setClear( vgd::node::ClearFrameBuffer::COLOR, vgm::Vec4f( 1.f, 0.f, 0.f, 0.f) );
+	//clearFrameBuffer->setClear( ClearFrameBuffer::COLOR, vgm::Vec4f( 1.f, 0.f, 0.f, 0.f) );
 	
-	// STEP 2: adding a light.
+	// STEP 2: adding two lights
 	// create and swith on a directional light.
-	vgd::Shp< vgd::node::DirectionalLight > light1 = vgd::node::DirectionalLight::create("light1");
+	vgd::Shp< DirectionalLight > light1 = DirectionalLight::create("light1");
 	light1->setOn( true );
 	// Sets its direction.
 	light1->setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
+
+	vgd::Shp< DirectionalLight > light2 = DirectionalLight::create("light2");
+	light2->setMultiAttributeIndex(1);
+	light2->setOn( true );
+	light2->setDirection( vgm::Vec3f(0.f, 0.f, 1.f) );
 
 	// STEP 3: adding a shape/mesh.
 
 	// load file liver.trian
 	vgTrian::Loader loader;
-	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > retVal;
+	std::pair< bool, vgd::Shp< VertexShape > > retVal;
 
 	retVal = loader.loadTrian( "liver.trian" );
 	
@@ -65,7 +74,7 @@ void myCanvas::initialize()
 	}
 
 	// trian file does not contain normal table, so they must be computed.
-	vgd::Shp< vgd::node::VertexShape > vertexShape( retVal.second );
+	vgd::Shp< VertexShape > vertexShape( retVal.second );
 	vertexShape->computeNormals();
 
 	// STEP 4: adding nodes to the scene graph.
@@ -77,6 +86,7 @@ void myCanvas::initialize()
 	// add clearFrameBuffer and light to the setup node.
 	getSetup()->addChild( clearFrameBuffer );
 	getSetup()->addChild( light1 );
+	getSetup()->addChild( light2 );	
 
 	// add the mesh to the scene
 	getScene()->addChild( vertexShape );
