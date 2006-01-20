@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+
+full-install release-install dist-clean clean all:
+	@### Samples ###
+	@cd ../vgsdkSamples/tutorials/BasicGL;		make $@;	echo;echo
+	@cd ../vgsdkSamples/tutorials/BasicVGSDK;	make $@;	echo;echo
+	@cd ../vgsdkSamples/samples/vgsdkViewer;	make $@;	echo;echo
