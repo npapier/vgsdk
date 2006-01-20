@@ -1,0 +1,4 @@
+LIB		=	['vgd_0-3','vgDebug_0-3','vgm_0-3']
+USE		=	['boost']
+TYPE		=	'shared'
+POSTFIX	=	'_0-3'
