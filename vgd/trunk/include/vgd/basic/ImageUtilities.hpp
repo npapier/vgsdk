@@ -57,10 +57,7 @@ struct VGD_API ImageUtilities
 	 * 
 	 * @see computeMinMax(const IImage*)
 	 */
-	static const MinMax computeMinMax( const vgd::Shp< IImage > image)
-	{
-		return ( computeMinMax(image.get()) );
-	}
+	static const MinMax computeMinMax( const vgd::Shp< IImage > image );
 	
 	/**
 	 * @brief Creates an image by converting the specified image into the given type.
@@ -101,9 +98,7 @@ struct VGD_API ImageUtilities
 	 * 
 	 * @todo Remove precondition on pImage->type()
 	 */
-	static vgd::Shp< Image > extractSlice(	const IImage*	pImage,
-											const SliceType	slice,
-											const uint32	position );
+	static vgd::Shp< Image > extractSlice(	const IImage*	pImage, const SliceType	slice, const uint32	position );
 
 	/**
 	 * @name Useful scanning image methods.
@@ -140,12 +135,12 @@ struct VGD_API ImageUtilities
 	 * @brief The different functions used to initialize palette.
 	 */
 	enum PaletteFunctionType {
+		BLACK,		
 		BLACK_TO_WHITE,
 		WHITE_TO_BLACK,
-		BLACK,
 		WHITE
 	};
-
+	
 	/**
 	 * @brief Initialize palette.
 	 * 

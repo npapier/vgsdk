@@ -92,6 +92,13 @@ const MinMax ImageUtilities::computeMinMax( const IImage* pImage )
 
 
 
+const MinMax ImageUtilities::computeMinMax( const vgd::Shp< IImage > image ) 
+{ 
+	return ( computeMinMax(image.get()) );
+}
+
+
+
 vgd::Shp< Image > ImageUtilities::createImage(	const vgd::Shp< IImage> srcImage, 
 												const IImage::Type dstType,
 												MinMax& minMax )
