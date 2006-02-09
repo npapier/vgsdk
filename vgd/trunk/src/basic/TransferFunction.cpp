@@ -63,7 +63,7 @@ const uint32 TransferFunction::getNumPoints() const
 }
 
 
-void TransferFunction::getLookupTable( int32& inputBegin, int32& inputEnd, std::vector< int32 > lut )
+void TransferFunction::getLookupTable( int32& inputBegin, int32& inputEnd, std::vector< int32 >& lut )
 {
 	assert( getNumPoints() >= 2 );
 

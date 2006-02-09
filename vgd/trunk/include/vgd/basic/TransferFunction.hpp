@@ -133,7 +133,7 @@ struct VGD_API TransferFunction
 	 * @pre getNumPoints() >= 2
 	 * @pre lut.size() == 0
 	 */
-	void getLookupTable( int32& inputBegin, int32& inputEnd, std::vector< int32 > lut );
+	void getLookupTable( int32& inputBegin, int32& inputEnd, std::vector< int32 >& lut );
 
 	//@}
 
