@@ -12,12 +12,12 @@
 #include "vgd/vgd.hpp"
 
 
-
 namespace vgd
 {
 
 namespace basic
 {
+
 
 /**
  * @brief Defines a transfer function with a type and a set of points.
@@ -34,9 +34,9 @@ struct VGD_API TransferFunction
 	 */
 	enum Type
 	{
-		IDENTITY,
-		TABLE,
-		//DISCRETE,
+		IDENTITY,	/*!<The identity is the function defined by ouput = input.*/
+		TABLE,		/*!<The table function is defined by the points which provides informations in order to identify n interpolation ranges.*/
+		DISCRETE,	/*!<The discrete function is defined by the points in order to identify a step function consisting of n steps.*/
 		//LINEAR,
 		//GAMMA
 	};
@@ -133,7 +133,8 @@ struct VGD_API TransferFunction
 	 * @pre getNumPoints() >= 2
 	 * @pre lut.size() == 0
 	 */
-	void getLookupTable( int32& inputBegin, int32& inputEnd, std::vector< int32 >& lut );
+	template< typename T >
+	void getLookupTable( T& inputBegin, T& inputEnd, std::vector< T >& lut );
 
 	//@}
 
@@ -159,9 +160,10 @@ private:
 };
 
 
-
 } // namespace basic
 
 } // namespace vgd
+
+#include "vgd/basic/TransferFunction.hxx"
 
 #endif //#ifndef _VGD_BSC_TRANSFERFUNCTION_H
