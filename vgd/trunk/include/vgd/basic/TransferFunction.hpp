@@ -126,15 +126,16 @@ struct VGD_API TransferFunction
 	/**
 	 * @brief Generates a lookup table.
 	 * 
-	 * @param inputBegin	the first input value of the lookup table
-	 * @param inputEnd		the last input value of the lookup table
-	 * @param lut			an empty container that would be filled by the LUT
+	 * @param lutInputBegin		the first input value of the lookup table
+	 * @param lutInputEnd		the last input value of the lookup table
+	 * @param lut				an empty container that would be filled by the LUT
 	 * 
 	 * @pre getNumPoints() >= 2
 	 * @pre lut.size() == 0
+	 * @pre The x-coordinates of the two extrem points must be differents.
 	 */
 	template< typename T >
-	void getLookupTable( T& inputBegin, T& inputEnd, std::vector< T >& lut );
+	void getLookupTable( T& lutInputBegin, T& lutInputEnd, std::vector< T >& lut );
 
 	//@}
 

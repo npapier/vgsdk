@@ -4,6 +4,7 @@
 // Author Nicolas Papier
 
 #include <cmath>
+#include <limits>
 #include <vgm/Utilities.hpp>
 
 
@@ -15,7 +16,7 @@ namespace basic
 
 
 template< typename T >
-void TransferFunction::getLookupTable( T& inputBegin, T& inputEnd, std::vector< T >& lut )
+void TransferFunction::getLookupTable( T& lutInputBegin, T& lutInputEnd, std::vector< T >& lut )
 {
 	assert( getNumPoints() >= 2 );
 
@@ -23,19 +24,25 @@ void TransferFunction::getLookupTable( T& inputBegin, T& inputEnd, std::vector< 
 	
 	PointsContainer::const_iterator iterCurrent = m_points.begin();
 	PointsContainer::const_iterator iterEnd		= m_points.end();
+	
+	float inputBegin	= std::floor(iterCurrent->first);
+	float inputEnd		= std::floor(m_points.rbegin()->first);
 
-	inputBegin	= static_cast<T>( std::floor(iterCurrent->first) );
-	inputEnd	= static_cast<T>( std::floor(m_points.rbegin()->first) );
+	lutInputBegin		= static_cast<T>( inputBegin );
+	lutInputEnd			= static_cast<T>( inputEnd );
+
+	assert( inputBegin >= std::numeric_limits<T>::min() && "The minimum finite value for the template parameter is too big." );
+	assert( inputEnd <= std::numeric_limits<T>::max() && "The maximum finite value for the template parameter is too small." );
 
 	assert( inputBegin <= inputEnd );
 
-	lut.reserve( inputEnd - inputBegin + static_cast<T>(1) );
+	lut.reserve( lutInputEnd - lutInputBegin + 1 );
 
 	switch ( m_type )
 	{
 		case IDENTITY:
 		{
-			T inputCurrent = inputBegin;
+			float inputCurrent = inputBegin;
 			
 			while ( inputCurrent <= inputEnd )
 			{
@@ -52,7 +59,7 @@ void TransferFunction::getLookupTable( T& inputBegin, T& inputEnd, std::vector< 
 			float output0	= iterCurrent->second;
 			
 			lut.push_back( static_cast<T>(output0) );
-			T inputCurrent = static_cast<T>(input0) + static_cast<T>(1);
+			float inputCurrent = input0 + 1;
 
 			++iterCurrent;
 			
@@ -66,8 +73,8 @@ void TransferFunction::getLookupTable( T& inputBegin, T& inputEnd, std::vector< 
 
 				while ( inputCurrent <= input1 )
 				{
-					const float output = vgm::Utilities::linearInterpolation( a, b, static_cast<float>(inputCurrent) );
-					
+					const float output = vgm::Utilities::linearInterpolation( a, b, inputCurrent );
+
 					lut.push_back( static_cast<T>(output) );
 					
 					++inputCurrent;
@@ -87,14 +94,14 @@ void TransferFunction::getLookupTable( T& inputBegin, T& inputEnd, std::vector< 
 			float input0	= iterCurrent->first;
 			float output0	= iterCurrent->second;
 
-			T inputCurrent = static_cast<T>(input0) + static_cast<T>(1);
+			float inputCurrent = input0 + 1;
 			++iterCurrent;
 			
 			while ( iterCurrent != iterEnd )
 			{
 				const T output = static_cast<T>(output0);
 			
-				lut.push_back( static_cast<T>(output) );
+				lut.push_back( output );
 				
 				const float input1	= iterCurrent->first;
 				const float output1	= iterCurrent->second;
