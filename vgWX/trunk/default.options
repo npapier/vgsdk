@@ -1,5 +1,5 @@
-type			= 'shared'
-postfix		= '0-3'
-uses			= ['boost', 'glu', 'opengl', 'wxgl2-4']
-libs			= ['gle 0-3', 'vgd 0-3', 'vgDebug 0-3', 'vge 0-3', 'vgeGL 0-3', 'vgm 0-3']
-#deps			= ['Virtuals']
+type		= 'shared'
+postfix		= '0-4'
+uses		= ['boost', 'glu', 'opengl', 'wxgl2-4']
+libs		= ['gle 0-3', 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgeGL 0-4', 'vgm 0-4']
+#deps		= ['Virtuals']
