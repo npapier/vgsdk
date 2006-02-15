@@ -12,7 +12,7 @@ namespace vgsdk
 
 std::string getVersion()
 {
-	return ( std::string("0.3") );
+	return ( std::string("0.4") );
 }
 
 } // namespace vgsdk
