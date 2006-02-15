@@ -56,7 +56,7 @@ void TransferFunction::removePoints()
 
 const uint32 TransferFunction::getNumPoints() const
 {
-	return m_points.size();
+	return static_cast<uint32>(m_points.size());
 }
 
 
