@@ -1,2 +1,2 @@
 TYPE	= 'shared'
-POSTFIX	= '-0_3'
+VERSION = '0-4'
