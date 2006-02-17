@@ -1,5 +1,5 @@
 USE		=	['boost','openil']
 LIB		=	['vgDebug_0-4','vgm_0-4']
 TYPE	=	'shared'
-POSTFIX	=	'_0-4'
+VERSION =	'0-4'
 #TEST	=	'yes'
