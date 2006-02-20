@@ -54,7 +54,7 @@ void Logging::logFatalError( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogFatalError( szFormat, marker );
+	wxVLogFatalError( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 
@@ -70,7 +70,7 @@ void Logging::logError( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogError( szFormat, marker );
+	wxVLogError( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 
@@ -86,7 +86,7 @@ void Logging::logWarning( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogWarning( szFormat, marker );
+	wxVLogWarning( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 
@@ -102,7 +102,7 @@ void Logging::logMessage( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogMessage( szFormat, marker );
+	wxVLogMessage( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 
@@ -118,7 +118,7 @@ void Logging::logVerbose( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogVerbose( szFormat, marker );
+	wxVLogVerbose( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 	
@@ -134,7 +134,7 @@ void Logging::logStatus( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogStatus( szFormat, marker );
+	wxVLogStatus( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 
@@ -150,7 +150,7 @@ void Logging::logSysError( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogSysError( szFormat, marker );
+	wxVLogSysError( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 
@@ -167,7 +167,7 @@ void Logging::logDebug( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	wxVLogDebug( szFormat, marker );
+	wxVLogDebug( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 
@@ -183,8 +183,8 @@ void Logging::logTrace( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	// wxVLogTrace( szFormat, marker ); FIXME modified interface in wx2.5 and superior.
-	wxVLogDebug( szFormat, marker );
+	// wxVLogTrace( wxConvertMB2WX(szFormat), marker ); FIXME modified interface in wx2.5 and superior.
+	wxVLogDebug( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
 
