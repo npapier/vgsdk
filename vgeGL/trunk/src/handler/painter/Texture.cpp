@@ -577,7 +577,7 @@ GLint Texture::m_wrapValue[] = {
 	GL_CLAMP_TO_EDGE,	// GL 1.2
 	GL_CLAMP_TO_BORDER,	// GL 1.3
 	GL_MIRRORED_REPEAT,	// GL 1.4
-	GL_CLAMP_TO_BORDER,	// ONCE
+	GL_CLAMP,			// ONCE @todo FIXME Should be GL_CLAMP_TO_BORDER, but this prevent the maximum intensity texel to be rendered !!!
 };
 
 
