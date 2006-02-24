@@ -111,7 +111,7 @@ struct VGWX_API BasicManipulator : public BasicViewer
 	/**
 	 * @brief Overriden method.
 	 */
-	void viewAll();
+	void viewAll( const CameraDistanceHints cameraDistance = CAMERA_DISTANCE_HINTS_DEFAULT );
 	
 	/**
 	 * @brief Overriden method.

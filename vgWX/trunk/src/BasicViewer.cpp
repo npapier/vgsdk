@@ -95,7 +95,7 @@ const BasicViewer::CameraType BasicViewer::getCameraType() const
 
 
 
-void BasicViewer::viewAll()
+void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 {
 	if ( !enableVGSDK() )
 	{
@@ -114,7 +114,9 @@ void BasicViewer::viewAll()
 	if ( !box.isEmpty() )
 	{	
 		// Compute the scene position and orientation.
-		vgm::Vec3f		posCam( center + vgm::Vec3f(0.f, 0.f, (0.5f + 1.25f) * max) );						// viewAll( NEAR ); FIXME
+		const float distanceCoeff = compute( cameraDistance );
+
+		vgm::Vec3f		posCam( center + vgm::Vec3f(0.f, 0.f, (0.5f + 1.f + distanceCoeff) * max) );
 	
 		matrix.setLookAt(
 			posCam[0], posCam[1], posCam[2],
@@ -185,8 +187,6 @@ void BasicViewer::resize( const vgm::Vec2i size )
 
 	computeSceneBoundingBox( box, center, max );
 	
-	vgm::MatrixR matrix;	
-
 	// Get additionnal informations.
 	float width, height, depth;
 	
@@ -205,29 +205,88 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	float	maxDepth = 12.f * max;
 
 	//
+	if ( height == 0.f )
+	{
+		return;
+	}
+
+	const float sceneAspectRatio	= width/height;	
+	const float windowAspectRatio	= static_cast<float>(size[0])/static_cast<float>(size[1]);
+
+	vgm::MatrixR matrix;
+	
 	switch ( getCameraType() )
 	{
 		case CAMERA_PERSPECTIVE:
 			matrix.setPerspective(
 							45.f,
-							static_cast<float>(size[0])/static_cast<float>(size[1]),
+							windowAspectRatio,
 							minDepth,
 							maxDepth
 							);
 			break;
 
 		case CAMERA_ORTHOGRAPHIC:
-			matrix.setOrtho(
-							-width / 2.f,
-							width / 2.f,
-							
-							-height / 2.f,
-							height / 2.f,
-							
-							minDepth,
-							maxDepth
-							);
+		{
+			if ( windowAspectRatio < sceneAspectRatio )
+			{
+				matrix.setOrtho(
+								-width / 2.f,
+								width / 2.f,
+								
+								-width / 2.f / windowAspectRatio,
+								width / 2.f / windowAspectRatio,
+								
+								minDepth,
+								maxDepth
+								);
+			}
+			else
+			{
+				matrix.setOrtho(
+								-height / 2.f * windowAspectRatio,
+								height / 2.f * windowAspectRatio,
+								
+								-height / 2.f,
+								height / 2.f,
+								
+								minDepth,
+								maxDepth
+								);
+			}
 			break;
+		}
+		
+//		{
+//			if ( width > height )
+//			{
+//				matrix.setOrtho(
+//								-width / 2.f,
+//								width / 2.f,
+//								
+//								-width / 2.f / windowAspectRatio,
+//								width / 2.f / windowAspectRatio,
+//								
+//								minDepth,
+//								maxDepth
+//								);
+//			}
+//			else
+//			{
+//				matrix.setOrtho(
+//								-height / 2.f * windowAspectRatio,
+//								height / 2.f * windowAspectRatio,
+//								
+//								-height / 2.f,
+//								height / 2.f,
+//								
+//								minDepth,
+//								maxDepth
+//								);
+//			}
+//
+//			break;
+//		}
 
 		default:
 			assert( false && "Unknwon camera type." );
@@ -235,9 +294,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	
 	m_camera->setMatrix( matrix );
 	
-	m_camera->setViewport(
-		vgm::Rectangle2i( 0, 0, size[0], size[1] )
-		);
+	m_camera->setViewport( vgm::Rectangle2i( 0, 0, size[0], size[1] ) );
 }
 
 
@@ -282,4 +339,28 @@ void BasicViewer::computeSceneBoundingBox(	vgm::Box3f& box, vgm::Vec3f& center, 
 
 
 
+const float BasicViewer::compute( const CameraDistanceHints cameraDistance )
+{
+	float retVal;
+	
+	switch( cameraDistance )
+	{
+		case CLOSE:
+			retVal = 0.f;
+			break;
+			
+		case CENTER:
+			retVal = 0.25f;
+			break;
+	
+		default:
+			retVal = 0.f;
+			assert( false && "Unexpected CameraDistanceHints." );
+	}
+	
+	return retVal;
+}
+
+
+		
 } // namespace vgWX

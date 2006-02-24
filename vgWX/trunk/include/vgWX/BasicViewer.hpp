@@ -55,7 +55,7 @@ struct VGWX_API BasicViewer : public Canvas
 	 * 
 	 * @param	pParent	A pointer to the parent window.
 	 */
-	BasicViewer(wxWindow *parent,
+	BasicViewer(	wxWindow *parent,
 					const wxString& name = _T("BasicViewer"),
 					const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
 					long style = 0,
@@ -67,7 +67,7 @@ struct VGWX_API BasicViewer : public Canvas
 	 * 
 	 * @param	pParent	A pointer to the parent window.
 	 */
-	BasicViewer(wxWindow *parent,
+	BasicViewer(	wxWindow *parent,
 					Canvas *pSharedCanvas,
 					const wxString& name = _T("BasicViewer"),
 					const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
@@ -79,28 +79,27 @@ struct VGWX_API BasicViewer : public Canvas
 
 
 	/**
-	 * @name Accessors to the camera.
+	 * @name Accessors to the camera
 	 */
 	//@{
 	
 	/**
 	 * @brief The different type of camera type.
 	 */
-	typedef enum {
+	enum CameraType {
 		
 		CAMERA_PERSPECTIVE,
 		CAMERA_ORTHOGRAPHIC,
-		
+
 		CAMERA_DEFAULT = CAMERA_PERSPECTIVE
-		
-	} CameraType;
+	};
 
 	/**
 	 * @brief Sets the desired camera type.
 	 * 
 	 * @param typeOfCamera		the type of the camera. Could be CAMERA_PERSPECTIVE, CAMERA_OTHOGRAPHIC or CAMERA_DEFAULT.
 	 */
-	void 					setCameraType( const CameraType typeOfCamera );
+	void 				setCameraType( const CameraType typeOfCamera );
 	
 	
 	/**
@@ -109,13 +108,22 @@ struct VGWX_API BasicViewer : public Canvas
 	 * @return the camera type.
 	 */
 	const CameraType	getCameraType() const;
+	
+	/**
+	 * @brief Camera position hints
+	 */
+	enum CameraDistanceHints
+	{
+		CLOSE,
+		CENTER,
+		//FAR,
+		CAMERA_DISTANCE_HINTS_DEFAULT = CENTER
+	};
 
 	/**
 	 * @brief Changes the camera position and frustum to view the entire scene.
-	 * 
-	 * @todo Add options for initial position of camera (NEAR, FAR...).
 	 */
-	void viewAll();
+	void viewAll( const CameraDistanceHints cameraDistance = CAMERA_DISTANCE_HINTS_DEFAULT );
 
 	/**
 	 * @brief Returns the setup node.
@@ -148,7 +156,7 @@ struct VGWX_API BasicViewer : public Canvas
 
 
 	/**
-	 * @name Rendering methods.
+	 * @name Rendering methods
 	 */
 	//@{
 	 
@@ -168,8 +176,8 @@ protected:
 	 * @param max		the maximum of width, height and depth of the box.
 	 */
 	void computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCollectorExt,
-										vgm::Box3f& box, vgm::Vec3f& center,
-										float& max );
+								vgm::Box3f& box, vgm::Vec3f& center,
+								float& max );
 
 	/**
 	 * @brief Compute bounding box starting on the group node named SCENE.
@@ -179,22 +187,27 @@ protected:
 	 * @param max		the maximum of width, height and depth of the box.
 	 */
 	void computeSceneBoundingBox(	vgm::Box3f& box, vgm::Vec3f& center,
-											float& max );		
+									float& max );		
 
 
 
 private:
 	//DECLARE_EVENT_TABLE();
-	
+
+	/**
+	 * @brief Computes a value used to set the camera position in the scene
+	 */
+	const float compute( const CameraDistanceHints cameraDistance );
+
 	/**
 	 * @brief A reference on the setup group node.
 	 */
-	vgd::Shp< vgd::node::Group >					m_setup;
+	vgd::Shp< vgd::node::Group >				m_setup;
 	
 	/**
 	 * @brief A reference on the camera.
 	 */
-	vgd::Shp< vgd::node::Camera >					m_camera;
+	vgd::Shp< vgd::node::Camera >				m_camera;
 
 	/**
 	 * @brief A reference on the view transformation.
@@ -204,7 +217,7 @@ private:
 	/**
 	 * @brief A reference on the scene group node.
 	 */
-	vgd::Shp< vgd::node::Group >					m_scene;
+	vgd::Shp< vgd::node::Group >				m_scene;
 	
 	
 
@@ -213,7 +226,7 @@ private:
 	/**
 	 * @brief The camera type that should be used.
 	 */
-	CameraType											m_cameraType;
+	CameraType									m_cameraType;
 };
 
 

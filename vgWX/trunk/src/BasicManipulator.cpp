@@ -102,13 +102,13 @@ vgd::Shp< vgd::node::TransformDragger > BasicManipulator::getSceneTransformation
 
 
 
-void BasicManipulator::viewAll()
+void BasicManipulator::viewAll( const CameraDistanceHints cameraDistance )
 {
 	// Reset scene transformation.
 	getSceneTransformation()->setTransformationToDefaults();
 
 	//
-	BasicViewer::viewAll();
+	BasicViewer::viewAll( cameraDistance );
 	
 	// Sets the center of scene transformation.
 	if ( getScene()->isBoundingBoxValid() )
