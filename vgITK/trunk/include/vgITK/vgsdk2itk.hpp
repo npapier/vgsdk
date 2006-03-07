@@ -10,6 +10,7 @@
 #include <vgd/Shp.hpp>
 
 #include "vgITK/vgITK.hpp"
+#include "vgITK/Failed.hpp"
 
 namespace vgd
 {
@@ -23,8 +24,6 @@ namespace vgd
 
 namespace vgITK
 {
-
-struct Failed;
 
 typedef itk::Image< uint8, 3 >	ItkImageLuminanceUINT8Type;
 typedef itk::Image< int8, 3 >	ItkImageLuminanceINT8Type;

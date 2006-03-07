@@ -24,23 +24,23 @@ typename ItkImageType::Pointer convertIImage2ItkImage( vgd::Shp< vgd::basic::IIm
 {
 	assert( iimage != 0 );
 
-	ItkImageType::Pointer dstImage = ItkImageType::New();
+	typename ItkImageType::Pointer dstImage = ItkImageType::New();
 	
 	// Create the region for the ITK image
-	ItkImageType::SizeType size;
+	typename ItkImageType::SizeType size;
 	size[0] = iimage->width();
 	size[1] = iimage->height();
 	size[2] = iimage->depth();
-	ItkImageType::RegionType const region(size);
+	typename ItkImageType::RegionType const region(size);
 	dstImage->SetRegions(region);
 	
 	// Get a pointer to the voxels in the IImage
-	ItkImageType::PixelType* voxels = reinterpret_cast<ItkImageType::PixelType*>(iimage->editPixels());
+	typename ItkImageType::PixelType* voxels = reinterpret_cast<typename ItkImageType::PixelType*>(iimage->editPixels());
 	iimage->editPixelsDone();
 
 	// Assign the pointer to the ITK image container
-	itk::ImportImageContainer<uint32, ItkImageType::PixelType>::Pointer container;
-	container = itk::ImportImageContainer<uint32, ItkImageType::PixelType>::New();
+	typename itk::ImportImageContainer<uint32, typename ItkImageType::PixelType>::Pointer container;
+	container = itk::ImportImageContainer<uint32, typename ItkImageType::PixelType>::New();
 
 	container->SetImportPointer(voxels, iimage->computeNumberOfPixels(), false);
 
