@@ -12,6 +12,7 @@ full-install release-install all clean release debug world dist-clean info :
 #	cd ../glo;			make '$@';
 	cd ../vgeGL;		make '$@';
 	cd ../vgWX;			make '$@';
+	cd ../vgITK;		make '$@';
 	cd ../vgsdk;		make '$@';
 
 checkout:
@@ -26,6 +27,7 @@ checkout:
 #	svn co http://svn.gna.org/svn/gle/glo/trunk ../glo
 	svn co http://dev-srv:8080/svn/SrcLib/vgeGL/trunk ../vgeGL
 	svn co http://dev-srv:8080/svn/SrcLib/vgWX/trunk ../vgWX
+	svn co http://dev-srv:8080/svn/SrcLib/vgITK/trunk ../vgITK
 	#svn co http://dev-srv:8080/svn/SrcLib/vgsdk/trunk vgsdk => already done (this makefile comes from vgsdk project).
 
 update diff:
@@ -40,6 +42,7 @@ update diff:
 #	cd ../glo;			svn '$@';
 	cd ../vgeGL;		svn '$@';
 	cd ../vgWX;			svn '$@';
+	cd ../vgITK;		svn '$@';
 	cd ../vgsdk;		svn '$@';
 
 tags:
@@ -65,3 +68,5 @@ tags:
 	svn copy http://dev-srv:8080/svn/SrcLib/vgeGL/trunk http://dev-srv:8080/svn/SrcLib/vgeGL/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
 	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgWX/tags/ --message "Release $(VERSION)"
 	svn copy http://dev-srv:8080/svn/SrcLib/vgWX/trunk http://dev-srv:8080/svn/SrcLib/vgWX/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"	
+	- svn mkdir http://dev-srv:8080/svn/SrcLib/vgITK/tags/ --message "Release $(VERSION)"
+	svn copy http://dev-srv:8080/svn/SrcLib/vgITK/trunk http://dev-srv:8080/svn/SrcLib/vgITK/tags/tdvpm_$(VERSION) --message "Release $(VERSION)"
