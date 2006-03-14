@@ -314,7 +314,7 @@ void Dragger::preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pD
 	const vgd::event::ButtonStateSet& bss = m_pEvent->getButtonStates();
 	
 	EditorRO< Dragger::FBindingsType > editorBindingsRO(
-		pDragger->template getFieldRO<Dragger::FBindingsType>(pDragger->getFBindings()) );
+		pDragger->getFieldRO<Dragger::FBindingsType>(pDragger->getFBindings()) );
 
 	// sets founded to true when button states of incoming event is equal to a binding from bindings field.
 	bool founded = false;
