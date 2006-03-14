@@ -42,6 +42,181 @@ const uint32 IImage::sizeOfPixel() const
 
 
 
+const float IImage::getPixel1( const vgm::Vec3i position ) const
+{
+	assert( components() == 1 );
+
+	const uint32 offset = computeOffset( position );
+	
+	return getPixel1(offset);
+}
+
+
+
+const float IImage::getPixel1( const uint32 offset ) const
+{
+	assert( components() == 1 );
+
+	float retVal;
+	
+	switch ( type() )
+	{
+		case UINT8:
+		{
+			const uint8 *pixel = static_cast<const uint8*>(pixels());
+			retVal = static_cast<float>(pixel[offset]);
+			break;
+		}
+
+		case INT8:
+		{
+			const int8 *pixel = static_cast<const int8*>(pixels());
+			retVal = static_cast<float>(pixel[offset]);
+			break;
+		}
+
+		case UINT16:
+		{
+			const uint16 *pixel = static_cast<const uint16*>(pixels());
+			retVal = static_cast<float>(pixel[offset]);
+			break;
+		}
+
+		case INT16:
+		{
+			const int16 *pixel = static_cast<const int16*>(pixels());
+			retVal = static_cast<float>(pixel[offset]);
+			break;
+		}
+
+		case UINT32:
+		{
+			const uint32 *pixel = static_cast<const uint32*>(pixels());
+			retVal = static_cast<float>(pixel[offset]);
+			break;
+		}
+	
+		case INT32:
+		{
+			const int32 *pixel = static_cast<const int32*>(pixels());
+			retVal = static_cast<float>(pixel[offset]);
+			break;
+		}
+
+		case FLOAT:
+		{
+			const float *pixel = static_cast<const float*>(pixels());
+			retVal = pixel[offset];
+			break;
+		}
+
+		case DOUBLE:
+		{
+			const double *pixel = static_cast<const double*>(pixels());
+			retVal = static_cast<float>(pixel[offset]);
+			break;
+		}
+
+		case NO_TYPE:
+		//case BOOL:
+		default:
+			assert( false && "Unknown type" );
+			retVal = std::numeric_limits<float>::max();
+	}
+	
+	return retVal;
+}
+
+
+
+void IImage::setPixel1( const vgm::Vec3i position, const float color )
+{
+	assert( components() == 1 );
+
+	const uint32 offset = computeOffset( position );
+	
+	setPixel1(offset, color);
+}
+
+
+
+void IImage::setPixel1( const uint32 offset, const float color )
+{
+	switch ( type() )
+	{
+		case UINT8:
+		{
+			uint8 *pixel = static_cast<uint8*>(editPixels());
+			pixel[offset] = static_cast<uint8>(color);
+			editPixelsDone();
+			break;
+		}
+
+		case INT8:
+		{
+			int8 *pixel = static_cast<int8*>(editPixels());
+			pixel[offset] = static_cast<int8>(color);
+			editPixelsDone();
+			break;
+		}
+
+		case UINT16:
+		{
+			uint16 *pixel = static_cast<uint16*>(editPixels());
+			pixel[offset] = static_cast<uint16>(color);
+			editPixelsDone();
+			break;
+		}
+
+		case INT16:
+		{
+			int16 *pixel = static_cast<int16*>(editPixels());
+			pixel[offset] = static_cast<int16>(color);
+			editPixelsDone();
+			break;
+		}
+
+		case UINT32:
+		{
+			uint32 *pixel = static_cast<uint32*>(editPixels());
+			pixel[offset] = static_cast<uint32>(color);
+			editPixelsDone();
+			break;
+		}
+		
+		case INT32:
+		{
+			int32 *pixel = static_cast<int32*>(editPixels());
+			pixel[offset] = static_cast<int32>(color);
+			editPixelsDone();
+			break;
+		}
+
+		case FLOAT:
+		{
+			float *pixel = static_cast<float*>(editPixels());
+			pixel[offset] = static_cast<float>(color);
+			editPixelsDone();
+			break;
+		}
+
+		case DOUBLE:
+		{
+			double *pixel = static_cast<double*>(editPixels());
+			pixel[offset] = static_cast<double>(color);
+			editPixelsDone();
+			break;
+		}
+
+		case NO_TYPE:
+		//case BOOL:
+		default:
+			assert( false && "Unknown type" );
+	}
+}
+
+
+
 const uint32 IImage::computeNumberOfPixels() const
 {
 	return width()*height()*depth();
@@ -196,17 +371,25 @@ const std::pair< double, double > IImage::getRange( const Type type )
 
 
 
-const uint32 IImage::computeOffset( const uint32 x, const uint32 y, const uint32 z )
+const uint32 IImage::computeOffset( const uint32 x, const uint32 y, const uint32 z ) const
 {
-	const uint32 offset	= x + width() * ( y + height() * z );
+	assert( x < width() );
+	assert( y < height() );
+	assert( z < depth() );
+
+	const uint32 numPixels	= x + width() * ( y + height() * z );
 	
-	return offset*sizeOfPixel();
+	return numPixels*sizeOfPixel();
 }
 
 
 
-const uint32 IImage::computeOffset( const vgm::Vec3i position )
+const uint32 IImage::computeOffset( const vgm::Vec3i position ) const
 {
+	assert( position[0] < width() );
+	assert( position[1] < height() );
+	assert( position[2] < depth() );
+
 	return computeOffset( position[0], position[1], position[2] );
 }
 
@@ -214,7 +397,9 @@ const uint32 IImage::computeOffset( const vgm::Vec3i position )
 
 const uint32 IImage::computeMaximumOffset() const
 {
-	return width()*height()*depth()*sizeOfPixel();
+	uint32 sizeofPixel = sizeOfPixel();
+
+	return width()*height()*depth()*sizeofPixel;
 }
 
 
@@ -233,7 +418,16 @@ const vgm::Vec3i IImage::computeCoordinates( const uint32 offset ) const
 	retVal[1]			= remain / (width()*sizeOfPixel);
 	
 	retVal[0]			= remain - retVal[1]*(width()*sizeOfPixel);
+	
+	assert( 0 <= retVal[0] );
+	assert( retVal[0] < width() );
 
+	assert( 0 <= retVal[1] );
+	assert( retVal[1] < height() );
+	
+	assert( 0 <= retVal[2] );
+	assert( retVal[2] < depth() );
+	
 	return retVal;
 }
 

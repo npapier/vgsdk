@@ -47,9 +47,9 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @post components()			== 0
 	 * @post isEmpty()				== true
-	 * @post format()					== NO_FORMAT
+	 * @post format()				== NO_FORMAT
 	 * @post type()					== NO_TYPE
-	 * @post pixels()					== 0
+	 * @post pixels()				== 0
 	 * @post editPixels()			== 0
 	 * 
 	 * @post paletteSize()			== 0
@@ -58,7 +58,7 @@ struct VGD_API Image : public IImage
 	 * @post palettePixels()		== 0
 	 * @post paletteEditPixels()	== 0
 	 * 
-	 * @post voxelSize()				== vgm::Vec3f(1.f, 1.f, 1.f)
+	 * @post voxelSize()			== vgm::Vec3f(1.f, 1.f, 1.f)
 	 */
 	Image();
 
@@ -67,7 +67,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @param strFilename		filename of image to load.
 	 * 
-	 * @post voxelSize()				== vgm::Vec3f(1.f, 1.f, 1.f)
+	 * @post voxelSize()	== vgm::Vec3f(1.f, 1.f, 1.f)
 	 */
 	Image( std::string strFilename );
 
@@ -76,40 +76,40 @@ struct VGD_API Image : public IImage
 	 * 
 	 * The image data is copied.
 	 * 
-	 * @param components		number of color components.
+	 * @param components	number of color components.
 	 * @param width			width of the image.
-	 * @param height			height of the image.
+	 * @param height		height of the image.
 	 * @param depth			depth of the image.
-	 * @param format			format of the pixel data.
-	 * @param type				type of the pixel data.
-	 * @param pixels			pointer to the image data in memory.
+	 * @param format		format of the pixel data.
+	 * @param type			type of the pixel data.
+	 * @param pixels		pointer to the image data in memory.
 	 * 
 	 * @pre format != COLOR_INDEX
 	 */
 	Image(		const uint32		components,
-					const uint32		width, const uint32 height, const uint32 depth,
-					const Format		format,
-					const Type			type,
-					const void*			pixels );
+				const uint32		width, const uint32 height, const uint32 depth,
+				const Format		format,
+				const Type			type,
+				const void*			pixels );
 
 	/**
 	 * @brief Image contructor : Create a new image.
 	 * 
-	 * @param components		number of color components.
+	 * @param components	number of color components.
 	 * @param width			width of the image.
-	 * @param height			height of the image.
+	 * @param height		height of the image.
 	 * @param depth			depth of the image.
-	 * @param format			format of the pixel data.
-	 * @param type				type of the pixel data.
+	 * @param format		format of the pixel data.
+	 * @param type			type of the pixel data.
 	 * 
 	 * @pre format != COLOR_INDEX
 	 * 
 	 * @todo add param color
 	 */
 	Image(		const uint32		components,
-					const uint32		width, const uint32 height, const uint32 depth,
-					const Format		format,
-					const Type			type	);
+				const uint32		width, const uint32 height, const uint32 depth,
+				const Format		format,
+				const Type			type	);
 
 	/**
 	 * @brief Image contructor from an IImage.
@@ -166,38 +166,38 @@ struct VGD_API Image : public IImage
 	 * 
 	 * Create a copy of the specified image.
 	 * 
-	 * @param components		number of color components.
+	 * @param components	number of color components.
 	 * @param width			width of the image.
-	 * @param height			height of the image.
+	 * @param height		height of the image.
 	 * @param depth			depth of the image.
-	 * @param format			format of the pixel data.
-	 * @param type				type of the pixel data.
-	 * @param pixels			pointer to the image data in memory.
+	 * @param format		format of the pixel data.
+	 * @param type			type of the pixel data.
+	 * @param pixels		pointer to the image data in memory.
 	 * 
 	 * @pre format != COLOR_INDEX
 	 */
 	bool	create(	const uint32		components, 
-						const uint32		width, const uint32 height, const uint32 depth,
-						const Format		format,
-						const Type			type,
-						const void*			pixels );
+					const uint32		width, const uint32 height, const uint32 depth,
+					const Format		format,
+					const Type			type,
+					const void*			pixels );
 
 	/**
 	 * @brief Create a new image.
 	 * 
-	 * @param components		number of color components.
+	 * @param components	number of color components.
 	 * @param width			width of the image.
-	 * @param height			height of the image.
+	 * @param height		height of the image.
 	 * @param depth			depth of the image.
-	 * @param format			format of the pixel data.
-	 * @param type				type of the pixel data.
+	 * @param format		format of the pixel data.
+	 * @param type			type of the pixel data.
 	 * 
 	 * @pre format != COLOR_INDEX
 	 */
 	bool	create(	const uint32		components, 
-						const uint32		width, const uint32 height, const uint32 depth,
-						const Format		format,
-						const Type			type	);
+					const uint32		width, const uint32 height, const uint32 depth,
+					const Format		format,
+					const Type			type	);
 
 	/**
 	 * @brief Create an image from an IImage.
@@ -306,12 +306,12 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @remarks Call editPixelsDone() when you have finished editing pixels.
 	 */
-	void*				editPixels();
+	void*			editPixels();
 	
 	/**
 	 * @brief Commit all pixels modifications after calling editPixels().
 	 */
-	void 				editPixelsDone();
+	void 			editPixelsDone();
 	//@}
 
 
@@ -346,7 +346,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @remarks		If image is not defined, must return NO_TYPE.
 	 */
-	const Type	paletteType() const;
+	const Type		paletteType() const;
 	
 	/**
 	 * @brief Returns a pointer to the palette data in memory.
@@ -355,7 +355,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @remarks		If palette is not defined, must return 0.
 	 */
-	const void*	palettePixels() const;
+	const void*		palettePixels() const;
 
 	/**
 	 * @brief Returns a pointer to the palette in memory.
@@ -380,7 +380,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @pre format==RGB or format==RGBA or format==BGR or format==BGRA
 	 */
-	void					setPalette( const void *palette, uint32 size, const Format format );
+	void			setPalette( const void *palette, uint32 size, const Format format );
 
 	/**
 	 * @brief Create an image with the palette.
@@ -437,9 +437,9 @@ private:
 	/**
 	 * @brief Must be called before using DevIL methods on an image.
 	 */
-	bool		bind() const;
+	bool	bind() const;
 
-	bool		reportILError() const;
+	bool	reportILError() const;
 
 	Format	convertILFormat2My( ILenum format	) const;
 	Format	convertILPalFormat2My( ILenum format	) const;
@@ -447,11 +447,11 @@ private:
 	ILenum	convertMyFormat2IL( Format format	) const;
 	ILenum	convertMyFormat2ILPal( Format format	) const;
 	
-	Type		convertILType2My( ILenum type	) const;
+	Type	convertILType2My( ILenum type	) const;
 	ILenum	convertMyType2IL( Type myType ) const;
 	
-	void		resetInformations	();
-	void		updateInformations();
+	void	resetInformations	();
+	void	updateInformations();
 	//@}
 
 
@@ -470,9 +470,9 @@ private:
 	uint32		m_height;
 	uint32		m_depth;	
 	Format		m_format;
-	Type			m_type;
+	Type		m_type;
 
-	bool			m_edit;
+	bool		m_edit;
 	//@}
 
 	/**

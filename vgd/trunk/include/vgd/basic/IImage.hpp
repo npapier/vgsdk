@@ -174,6 +174,61 @@ struct VGD_API IImage
 	const uint32 computeNumberOfPixels() const;
 
 	//@}
+	
+	
+	/**
+	 * @name Pixel accessors
+	 * 
+	 * @remarks These methods are not very fast. Use a PixelEditorRO/RW classes for faster accesses.
+	 * 
+	 * @todo PixelEditorRO/RW classes
+	 */
+	//@{
+
+	/**
+	 * @brief Gets a pixel color.
+	 * 
+	 * @param position	coordinates of pixel
+	 * 
+	 * @return color of pixel
+	 * 
+	 * @pre components() == 1
+	 * @pre computeOffset(position) <= computeMaximumOffset()
+	 */
+	const float getPixel1( const vgm::Vec3i position ) const;
+
+	/**
+	 * @brief Gets a pixel color.
+	 * 
+	 * @param offset	the offset
+	 * 
+	 * @return color of pixel
+	 * 
+	 * @pre components() == 1
+	 */
+	const float getPixel1( const uint32 offset ) const;
+
+	/**
+	 * @brief Sets a pixel color.
+	 * 
+	 * @param position	coordinates of pixel
+	 * @param color		color of pixel
+	 * 
+	 * @remarks The color is static casted (@sa type() ).
+	 */
+	void setPixel1( const vgm::Vec3i position, const float color );
+
+	/**
+	 * @brief Sets a pixel color.
+	 * 
+	 * @param offset		the offset
+	 * @param color		color of pixel
+	 * 
+	 * @remarks The color is static casted (@sa type() ).
+	 */
+	void setPixel1( const uint32 offset, const float color );
+	
+	//@}
 
 
 
@@ -303,19 +358,27 @@ struct VGD_API IImage
 	 * @param y		y-coordinate
 	 * @param z		z-coordinate
 	 * 
+	 * @pre x < width()
+	 * @pre y < height()
+	 * @pre z < depth()
+	 * 
 	 * @return the computed offset
 	 */
-	const uint32 computeOffset( const uint32 x, const uint32 y, const uint32 z );
+	const uint32 computeOffset( const uint32 x, const uint32 y, const uint32 z ) const;
 	
 	/**
 	 * @brief Computes offset from coordinates.
 	 * 
 	 * @param position	coordinates
 	 * 
+	 * @pre position[0] < width()
+	 * @pre position[1] < height()
+	 * @pre position[2] < depth()
+	 * 
 	 * @return the computed offset
 	 */	
-	const uint32 computeOffset( const vgm::Vec3i position );
-	
+	const uint32 computeOffset( const vgm::Vec3i position ) const;
+
 	/**
 	 * @brief Computes maximum offset in the image.
 	 * 
@@ -329,6 +392,10 @@ struct VGD_API IImage
 	 * @param offset		the offset
 	 * 
 	 * @return the computed coordinates
+	 * 
+	 * @post if return value = coord, then	0 <= coord[0] < width() and
+	 * 										0 <= coord[1] < height() and
+	 * 										0 <= coord[2] < depth()
 	 */
 	const vgm::Vec3i computeCoordinates( const uint32 offset ) const;
 	
