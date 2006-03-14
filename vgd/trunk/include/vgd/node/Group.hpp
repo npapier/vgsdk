@@ -49,25 +49,24 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	 * @name IGroup interface and getChild().
 	 */
 	//@{
-	void					addChild				( vgd::Shp<Node> node );
-	void					insertChild			( vgd::Shp<Node> node, const int32 newChildIndex = 0 );
+	void			addChild			( vgd::Shp<Node> node );
+	void			insertChild			( vgd::Shp<Node> node, const int32 newChildIndex = 0 );
 
-	void					replaceChild		( vgd::Shp<Node> newChild, const int32 index );
-	void					replaceChild		( vgd::Shp<Node> oldChild, vgd::Shp<Node> newChild );
+	void			replaceChild		( vgd::Shp<Node> newChild, const int32 index );
+	void			replaceChild		( vgd::Shp<Node> oldChild, vgd::Shp<Node> newChild );
 
-	void					removeChild			( const int32 childIndex );
-	bool					removeChild			( vgd::Shp<Node> childToRemove );	
-	void					removeAllChildren	( void );
+	void			removeChild			( const int32 childIndex );
+	bool			removeChild			( vgd::Shp<Node> childToRemove );	
+	void			removeAllChildren	( void );
 
-	bool					containsChild		( const vgd::Shp<Node> node ) const;
-	int32					findChild			( const vgd::Shp<Node> node ) const;
+	bool			containsChild		( const vgd::Shp<Node> node ) const;
+	int32			findChild			( const vgd::Shp<Node> node ) const;
 
-	vgd::Shp<Node>		getAbstractChild	( const int32 index );
-	void					getChildren			( NodeList& children) const;
-	void					getEnabledChildren( NodeList& children, const bool bGetEnabled /*= true*/) const;
-	int32					getNumChildren		( void ) const;
+	vgd::Shp<Node>	getAbstractChild	( const int32 index );
+	void			getChildren			( NodeList& children) const;
+	void			getEnabledChildren	( NodeList& children, const bool bGetEnabled /*= true*/) const;
+	int32			getNumChildren		( void ) const;
 
-	void					updateGraph			( void );
 
 	/**
 	 * @brief Returns pointer to child node with the given index.
@@ -227,6 +226,10 @@ protected:
 	bool	checkChildIndex( const int32 index ) const;
 	
 	//@}
+	
+	
+	// Overriden
+	void updateGraph( void );
 };
 
 

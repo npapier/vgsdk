@@ -66,24 +66,14 @@ struct VGD_API Switch : public Group
 	/**
 	 * @brief Gets the value of \c whichChild field.
 	 */
-	const int8	getWhichChild( void ) const;
+	const int32	getWhichChild( void ) const;
 
 	/**
 	 * @brief Sets the value of \c whichChild field.
 	 * 
 	 * @param whichChild : Index of the child to traverse, or one of SWITCH_ALL, SWITCH_NONE or SWITCH_DEFAULT.
 	 */
-	void			setWhichChild( const int8 whichChild );
-	//@}
-
-
-
-	/**
-	 * @name IGroup interface.
-	 */
-	//@{
-	void	updateGraph	( void );
-
+	void		setWhichChild( const int32 whichChild );
 	//@}
 
 
@@ -117,6 +107,9 @@ protected:
 	 */
 	static const std::string getFWhichChild(void);
 	//@}
+	
+	// Overriden
+	void updateGraph( void );
 };
 
 

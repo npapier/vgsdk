@@ -25,12 +25,12 @@ MultiSwitch::MultiSwitch( const std::string nodeName ) :
 	Group(nodeName)
 {
 	// Add fields
-	addField( new vgd::field::SFInt8(	getFWhichChild())	);
+	addField( new vgd::field::SFInt32(	getFWhichChild())	);
 	addField( new vgd::field::MFInt32(	getFChosenChild())	);
 
 	// Links
-	link( getFWhichChild(), getDFChildrenSelection() );
-	link( getFChosenChild(), getDFChildrenSelection() );
+	link( getFWhichChild(),		getDFChildrenSelection() );
+	link( getFChosenChild(),	getDFChildrenSelection() );
 	
 	link( getDFNode() );	
 }
@@ -54,16 +54,18 @@ void MultiSwitch::setOptionalsToDefaults()
 
 
 
-const int8 MultiSwitch::getWhichChild( void ) const
+const int32 MultiSwitch::getWhichChild( void ) const
 {
-	return ( getFieldRO<vgd::field::SFInt8>(getFWhichChild())->getValue() );
+	return ( getFieldRO<vgd::field::SFInt32>(getFWhichChild())->getValue() );
 }
 
 
 
-void MultiSwitch::setWhichChild( const int8 whichChild )
+void MultiSwitch::setWhichChild( const int32 whichChild )
 {
-	getFieldRW<vgd::field::SFInt8>(getFWhichChild())->setValue( whichChild );
+	getFieldRW<vgd::field::SFInt32>(getFWhichChild())->setValue( whichChild );
+	
+	updateGraph();
 }
 
 
@@ -87,6 +89,8 @@ void MultiSwitch::addToChosenChild( const int32 index )
 	{
 		vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
 		chosenChild->push_back( index );
+		
+		updateGraph();
 	}
 }
 
@@ -103,6 +107,8 @@ void MultiSwitch::removeFromChosenChild( const int32 index )
 	{
 		// Found index in chosenChild
 		chosenChild->erase( indexChosenChild );
+		
+		updateGraph();
 	}
 	// not found, nothing to be done.
 }
@@ -114,18 +120,20 @@ void MultiSwitch::removeAllFromChosenChild( void )
 	vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
 	
 	chosenChild->clear();
+	
+	updateGraph();	
 }
 
 
 
-void MultiSwitch::updateGraph( void )
+void MultiSwitch::updateGraph()
 {
 	bool bChildren				= getDirtyFlag(getDFChildren())->isDirty();
 	bool bChildrenSelection		= getDirtyFlag(getDFChildrenSelection())->isDirty();
 
 	if ( bChildren || bChildrenSelection )
 	{
-		const int8 whichChild = getFieldRO<vgd::field::SFInt8>(getFWhichChild())->getValue();
+		const int32 whichChild = getFieldRO<vgd::field::SFInt32>(getFWhichChild())->getValue();
 		switch (whichChild)
 		{
 			
@@ -141,7 +149,10 @@ void MultiSwitch::updateGraph( void )
 					getFieldRO<vgd::field::MFInt32>(getFChosenChild());
 
 				// Convert MultiField to a set, and check index.
-				for(int32 i=0; i<chosenChild->size(); i++)
+				for(	int32	i		= 0,
+								iMax	= static_cast<int32>(chosenChild->size());
+						i < iMax;
+						i++ )
 				{
 					const int32 indexTmp = (*chosenChild)[i]; // FIXME : optme.
 					assert( checkChildIndex( indexTmp ) && "index is out of range." );
@@ -162,6 +173,7 @@ void MultiSwitch::updateGraph( void )
 				assert( false && "unkwown value for MultiSwitch." );
 				return;
 		}
+		
 		getDirtyFlag(getDFChildren())->validate();
 		getDirtyFlag(getDFChildrenSelection())->validate();
 		getDirtyFlag(getDFNode())->validate();		

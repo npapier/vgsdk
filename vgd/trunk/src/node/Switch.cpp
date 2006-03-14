@@ -25,11 +25,12 @@ Switch::Switch( const std::string nodeName ) :
 	Group(nodeName)
 {
 	// Add field
-	addField( new vgd::field::SFInt8(getFWhichChild()) );
+	addField( new vgd::field::SFInt32(getFWhichChild()) );
 
 	// Links
 	link( getFWhichChild(), getDFChildrenSelection() );
 	link( getFWhichChild(), getDFBoundingBox() );
+	
 	link( getDFNode() );
 }
 
@@ -51,16 +52,16 @@ void Switch::setOptionalsToDefaults()
 
 
 
-const int8 Switch::getWhichChild( void ) const
+const int32 Switch::getWhichChild( void ) const
 {
-	return ( getFieldRO<vgd::field::SFInt8>(getFWhichChild())->getValue() );
+	return ( getFieldRO<vgd::field::SFInt32>(getFWhichChild())->getValue() );
 }
 
 
 
-void Switch::setWhichChild( const int8 whichChild )
+void Switch::setWhichChild( const int32 whichChild )
 {
-	getFieldRW<vgd::field::SFInt8>(getFWhichChild())->setValue( whichChild );
+	getFieldRW<vgd::field::SFInt32>(getFWhichChild())->setValue( whichChild );
 	
 	updateGraph();
 }
@@ -78,7 +79,7 @@ void Switch::updateGraph( void )
 
 	if ( bChildren || bChildrenSelection )
 	{
-		const int8 whichChild = getFieldRO<vgd::field::SFInt8>(getFWhichChild())->getValue();
+		const int32 whichChild = getFieldRO<vgd::field::SFInt32>(getFWhichChild())->getValue();
 		switch (whichChild)
 		{
 			case SWITCH_ALL:
@@ -94,7 +95,7 @@ void Switch::updateGraph( void )
 				assert( checkChildIndex(whichChild) && "index is out of range." );
 				
 				std::set< int32 > setIndex;
-				setIndex.insert( static_cast< int32 >(whichChild) );
+				setIndex.insert( whichChild );
 				
 				graph().setEdges( this, setIndex, true );
 			}

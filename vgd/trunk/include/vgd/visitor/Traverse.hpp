@@ -137,24 +137,6 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 */
 
 	/**
-	 * @brief FIXME : Optimize me(only one time ?)
-	 */
-    template <class Vertex, class Graph>
-    void initialize_vertex(Vertex u, const Graph& /*g*/) 
-    {
-		vgd::Shp< vgd::node::Group > group = dynamic_pointer_cast< vgd::node::Group >(getNode(u));
-		
-		if ( group.get() != 0 )
-		{
-			// This is a group node.
-			group->updateGraph();
-		}
-		// else nothing
-    }
-
-
-
-	/**
 	 * @brief Enable or disable the visit of target(u).
 	 * 
 	 * @remarks Never overload it.

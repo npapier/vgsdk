@@ -99,6 +99,9 @@ const MinMax ImageUtilities::computeMinMax( const vgd::Shp< IImage > image )
 
 
 
+/**
+ * @todo OPTME For 16 bits images containing only values inside (0, 255), don't interpolate values.
+ */
 vgd::Shp< Image > ImageUtilities::createImage(	const vgd::Shp< IImage> srcImage, 
 												const IImage::Type dstType,
 												MinMax& minMax )

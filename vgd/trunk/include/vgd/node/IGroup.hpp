@@ -120,12 +120,12 @@ struct VGD_API IGroup
 	 * 
 	 * @param children	append children at the end of this list.
 	 */
-	virtual void				getChildren( NodeList& children ) const=0;
+	virtual void			getChildren( NodeList& children ) const=0;
 
 	/**
 	 * @brief Returns number of children.
 	 */
-	virtual int32				getNumChildren( void ) const=0;
+	virtual int32			getNumChildren( void ) const=0;
 
 	/**
 	 * @brief Returns only enabled or disabled children.
@@ -136,11 +136,11 @@ struct VGD_API IGroup
  	 * @remark An enabled child is a child that is mark to be traversed (all for Group, all or one or none for
  	 * Switch). An disabled children is a child that is mark to be not traversed.
 	 */
-	virtual void				getEnabledChildren( NodeList& children, const bool bGetEnabled = true) const=0;
+	virtual void			getEnabledChildren( NodeList& children, const bool bGetEnabled = true) const=0;
 	//@}
 
 
-
+protected:
 	/**
 	 * @name Update the bgl graph.
 	 */

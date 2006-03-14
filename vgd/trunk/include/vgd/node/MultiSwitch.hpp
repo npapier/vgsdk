@@ -68,14 +68,14 @@ struct VGD_API MultiSwitch : public Group
 	/**
 	 * @brief Gets the value of \c whichChild field.
 	 */
-	const int8	getWhichChild		( void ) const;
+	const int32	getWhichChild		( void ) const;
 
 	/**
 	 * @brief Sets the value of \c whichChild field.
 	 * 
 	 * @param whichChild : one of MULTI_SWITCH_OFF, MULTI_SWITCH_ON, MULTI_SWITCH_ALL or MULTI_SWITCH_DEFAULT.
 	 */
-	void			setWhichChild		( const int8 whichChild );
+	void		setWhichChild		( const int32 whichChild );
 
 
 	/**
@@ -85,7 +85,7 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @return true if this child is in the set of children to traverse, false otherwise.
 	 */
-	bool			isChildChoosen		( const int32 index ) const;
+	bool		isChildChoosen		( const int32 index ) const;
 
 	/**
 	 * @brief Adds a new child to the set of children to traverse.
@@ -94,7 +94,7 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @remark A chosen child is never insert more than once.
 	 */
-	void			addToChosenChild	( const int32 index );
+	void		addToChosenChild	( const int32 index );
 
 	/**
 	 * @brief Removes a child from the set of children to traverse.
@@ -103,22 +103,12 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @remark Removed only if already inserted, if not inserted nothing is done.
 	 */	
-	void			removeFromChosenChild	( const int32 index );
+	void		removeFromChosenChild( const int32 index );
 
 	/**
 	 * @brief Removes all from the set of children to traverse.
 	 */
-	void			removeAllFromChosenChild	( void );
-
-	//@}
-
-
-
-	/**
-	 * @name IGroup interface.
-	 */
-	//@{
-	void	updateGraph	( void );
+	void		removeAllFromChosenChild( void );
 
 	//@}
 
@@ -159,6 +149,9 @@ protected:
 	static const std::string getFChosenChild( void );
 
 	//@}
+	
+	// Overriden
+	void updateGraph( void );
 };
 
 

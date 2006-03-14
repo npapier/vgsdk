@@ -29,10 +29,8 @@ Group::Group( const std::string nodeName ) :
 	addDirtyFlag(getDFBoundingBox());
 	
 	// Links.
-	
-	// DFBoundingBox()				???? FIXME
-	//link( getFChildren(), getDFBoundingBox() );
-	//link( getFChildrenSelection(), getDFBoundingBox() );
+	//link( getFChildren(),				getDFBoundingBox() );
+	//link( getFChildrenSelection(),	getDFBoundingBox() );
 
 	//
 	link( getDFNode() );
@@ -46,6 +44,8 @@ void Group::setToDefaults( void )
 
 	// IBoundingBox
 	reset();
+	
+	Group::updateGraph();
 }
 
 
@@ -64,13 +64,15 @@ void Group::addChild( vgd::Shp<vgd::node::Node> node )
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
+	
+	updateGraph();	
 }
 
 
 
 void Group::insertChild	( vgd::Shp<Node> node, const int32 newChildIndex )
 {
-	assert(		(newChildIndex>=0 && newChildIndex<=getNumChildren()) && "Wrong index." );
+	assert(	(newChildIndex>=0 && newChildIndex<=getNumChildren()) && "Wrong index." );
 
 	if ( newChildIndex == getNumChildren() )
 	{
@@ -84,6 +86,8 @@ void Group::insertChild	( vgd::Shp<Node> node, const int32 newChildIndex )
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
+	
+	updateGraph();	
 }
 
 
@@ -104,6 +108,8 @@ void Group::replaceChild( vgd::Shp<Node> newChild, const int32 index )
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
+	
+	updateGraph();	
 }
 
 
@@ -133,6 +139,8 @@ void Group::removeChild( const int32 childIndex )
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
+	
+	updateGraph();	
 }
 
 
@@ -165,6 +173,8 @@ void Group::removeAllChildren( void )
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
+	
+	updateGraph();	
 }
 
 
@@ -237,7 +247,7 @@ bool Group::computeBoundingBox( const vgm::MatrixR& transformation /* not used *
 	bool	bInvalidateParents;
 	
 	bInvalidateParents	= false;
-	bRetVal					= false;
+	bRetVal				= false;
 	
 	// update transformation
 	// nothing to do.
@@ -249,7 +259,7 @@ bool Group::computeBoundingBox( const vgm::MatrixR& transformation /* not used *
 	if ( pDirtyFlag->isDirty() )
 	{
 		bInvalidateParents	= true;
-		bRetVal					= true;
+		bRetVal				= true;
 		
 		// compute bb		
 		
@@ -266,8 +276,7 @@ bool Group::computeBoundingBox( const vgm::MatrixR& transformation /* not used *
 				
 				++i )
 		{
-			vgd::Shp< vgd::node::IBoundingBox > ibb(	
-				vgd::dynamic_pointer_cast< vgd::node::IBoundingBox >( *i ) );
+			vgd::Shp< vgd::node::IBoundingBox > ibb( vgd::dynamic_pointer_cast< vgd::node::IBoundingBox >( *i ) );
 				
 			if ( ibb.get() == 0 )
 			{
@@ -347,10 +356,8 @@ const std::string Group::getDFBoundingBox( void )
 
 bool Group::checkChildIndex( const int32 index ) const
 {
-	return (
-				(index>=0) &&
-				(index<getNumChildren())
-		);
+	return (	(index>=0) &&
+				(index<getNumChildren())	);
 }
 
 
