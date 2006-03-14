@@ -18,6 +18,7 @@
 #include "vgd/field/FieldManager.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/graph/Graph.hpp"
+//#include "vgd/graph/detail/Graph.hpp" FIXME
 
 
 
@@ -44,6 +45,11 @@
 
 namespace vgd
 {
+
+//namespace graph
+//{
+//	struct Graph;
+//} FIXME
 
 namespace node
 {

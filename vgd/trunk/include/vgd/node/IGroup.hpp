@@ -37,6 +37,11 @@ namespace node
 struct VGD_API IGroup
 {
 	/**
+	 * @brief Virtual destructor
+	 */
+	virtual ~IGroup();
+	
+	/**
 	 * @name Insert/remove/replace accessor methods.
 	 */
 	//@{

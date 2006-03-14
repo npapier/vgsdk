@@ -262,9 +262,10 @@ struct VGD_API Graph : public Graphviz
 	 * @brief Performs a traverse(like a depth first visit).
 	 * 
 	 * @todo Manage exceptions (like hasCycle()).
+	 * @todo Move to visitor::Traverse (to be able to remove typename NodeType template parameter ?
 	 */
-	template< typename DFSVisitor >
-	void traverse( const vgd::node::Node* pSourceNode, DFSVisitor& visitor )
+	template< typename DFSVisitor, typename NodeType >
+	void traverse( const NodeType* pSourceNode, DFSVisitor& visitor )
 	{
 		try
 		{

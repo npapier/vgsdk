@@ -8,6 +8,7 @@
 
 #include "vgd/vgd.hpp"
 
+#include <iostream>
 #include <string>
 
 #include "vgd/node/IGroup.hpp"

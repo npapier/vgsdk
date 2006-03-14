@@ -5,6 +5,7 @@
 
 #include "vgd/node/Node.hpp"
 
+// #include "vgd/graph/Graph.hpp" FIXME
 #include "vgd/node/Group.hpp"
 
 

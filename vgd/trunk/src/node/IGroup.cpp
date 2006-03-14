@@ -4,3 +4,21 @@
 // Author Nicolas Papier
 
 #include "vgd/node/IGroup.hpp"
+
+
+
+namespace vgd
+{
+
+namespace node
+{
+
+
+IGroup::~IGroup()
+{
+}
+
+
+} // namespace node
+
+} // namespace vgd

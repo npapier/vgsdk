@@ -408,16 +408,16 @@ const vgm::Vec3i IImage::computeCoordinates( const uint32 offset ) const
 {
 	vgm::Vec3i retVal;
 	
-	const uint32	sizeOfPixel( sizeOfPixel() );
+	const uint32	cachedSizeOfPixel( sizeOfPixel() );
 	
-	const int32		axialSliceSize( width()*height()*sizeOfPixel );
+	const int32		axialSliceSize( width()*height()*cachedSizeOfPixel );
 	
 	retVal[2]			= offset / axialSliceSize;
 	
 	const int32 remain	= offset - retVal[2]*axialSliceSize;
-	retVal[1]			= remain / (width()*sizeOfPixel);
+	retVal[1]			= remain / (width()*cachedSizeOfPixel);
 	
-	retVal[0]			= remain - retVal[1]*(width()*sizeOfPixel);
+	retVal[0]			= remain - retVal[1]*(width()*cachedSizeOfPixel);
 	
 	assert( 0 <= retVal[0] );
 	assert( retVal[0] < width() );
