@@ -152,8 +152,14 @@ struct VGM_API Plane
 	 * @brief Intersect line and plane, returning true if there is an intersection
 	 * false if line is parallel to plane.
 	 */
-	bool	intersect( const Line& l,
-					   Vec3f& intersection) const;
+	bool	intersect( const Line& l, Vec3f& intersection) const;
+					   
+	/**
+	 * @brief Returns the vector from intersection of three planes.
+	 * 
+	 * @return the intersection point
+	 */
+	const Vec3f intersect( Plane& p0, Plane& p1, Plane& p2) const;
 
 	/**
 	 * @brief Returns true if the given point is within the half-space

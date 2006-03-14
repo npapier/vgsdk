@@ -986,7 +986,7 @@ MatrixR& MatrixR::operator *=( const MatrixR& m )
 
 
 
-MatrixR vgm::operator *( const MatrixR& l, const MatrixR& r )
+MatrixR operator *( const MatrixR& l, const MatrixR& r )
 {
 	MatrixR m = l;
 

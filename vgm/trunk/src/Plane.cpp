@@ -157,6 +157,91 @@ bool Plane::intersect( const Line& l, Vec3f& intersection ) const
 
 
 
+const Vec3f Plane::intersect( Plane& p0, Plane& p1, Plane& p2) const
+{
+	Vec3f vec;
+
+#define DELTA 1e-6	
+#define DET3(m) (( 			\
+    m[0][0] * m[1][1] * m[2][2]	\
+  + m[0][1] * m[1][2] * m[2][0]	\
+  + m[0][2] * m[1][0] * m[2][1]	\
+  - m[2][0] * m[1][1] * m[0][2]	\
+  - m[2][1] * m[1][2] * m[0][0]	\
+  - m[2][2] * m[1][0] * m[0][1]))
+
+	float	v[3], del, mx[3][3], mi[3][3];
+	
+	// create 3x3 matrix of normal coefficients
+	mx[0][0] = p0.getNormal()[0];
+	mx[0][1] = p0.getNormal()[1];
+	mx[0][2] = p0.getNormal()[2];
+	mx[1][0] = p1.getNormal()[0];
+	mx[1][1] = p1.getNormal()[1];
+	mx[1][2] = p1.getNormal()[2];
+	mx[2][0] = p2.getNormal()[0];
+	mx[2][1] = p2.getNormal()[1];
+	mx[2][2] = p2.getNormal()[2];
+
+	// find determinant of matrix to use for divisor
+	del = DET3(mx);
+
+	//    printf("mx = %10.5f %10.5f %10.5f\n", mx[0][0], mx[0][1], mx[0][2]);
+	//    printf("     %10.5f %10.5f %10.5f\n", mx[1][0], mx[1][1], mx[1][2]);
+	//    printf("     %10.5f %10.5f %10.5f\n", mx[2][0], mx[2][1], mx[2][2]);
+	if (del > -DELTA && del < DELTA)
+	{	
+		// if singular, just set to the origin
+		vec[0] = 0;
+		vec[1] = 0;
+		vec[2] = 0;
+	}
+	else 
+	{
+		v[0] = p0.getDistanceFromOrigin();
+		v[1] = p1.getDistanceFromOrigin();
+		v[2] = p2.getDistanceFromOrigin();
+		
+		//	printf("v = %10.5f\n    %10.5f\n    %10.5f\n", v[0], v[1], v[2]);
+
+		mi[0][0] = v[0]; mi[0][1] = mx[0][1]; mi[0][2] = mx[0][2];
+		mi[1][0] = v[1]; mi[1][1] = mx[1][1]; mi[1][2] = mx[1][2];
+		mi[2][0] = v[2]; mi[2][1] = mx[2][1]; mi[2][2] = mx[2][2];
+		
+		//	printf("mi = %10.5f %10.5f %10.5f\n", mi[0][0], mi[0][1], mi[0][2]);
+		//	printf("     %10.5f %10.5f %10.5f\n", mi[1][0], mi[1][1], mi[1][2]);
+		//	printf("     %10.5f %10.5f %10.5f\n", mi[2][0], mi[2][1], mi[2][2]);
+		
+		vec[0] = DET3(mi) / del;
+		mi[0][0] = mx[0][0]; mi[0][1] = v[0]; mi[0][2] = mx[0][2];
+		mi[1][0] = mx[1][0]; mi[1][1] = v[1]; mi[1][2] = mx[1][2];
+		mi[2][0] = mx[2][0]; mi[2][1] = v[2]; mi[2][2] = mx[2][2];
+		
+		//	printf("mi = %10.5f %10.5f %10.5f\n", mi[0][0], mi[0][1], mi[0][2]);
+		//	printf("     %10.5f %10.5f %10.5f\n", mi[1][0], mi[1][1], mi[1][2]);
+		//	printf("     %10.5f %10.5f %10.5f\n", mi[2][0], mi[2][1], mi[2][2]);
+		
+		vec[1] = DET3(mi) / del;
+		mi[0][0] = mx[0][0]; mi[0][1] = mx[0][1]; mi[0][2] = v[0];
+		mi[1][0] = mx[1][0]; mi[1][1] = mx[1][1]; mi[1][2] = v[1];
+		mi[2][0] = mx[2][0]; mi[2][1] = mx[2][1]; mi[2][2] = v[2];
+		
+		//	printf("mi = %10.5f %10.5f %10.5f\n", mi[0][0], mi[0][1], mi[0][2]);
+		//	printf("     %10.5f %10.5f %10.5f\n", mi[1][0], mi[1][1], mi[1][2]);
+		//	printf("     %10.5f %10.5f %10.5f\n", mi[2][0], mi[2][1], mi[2][2]);
+
+		vec[2] = DET3(mi) / del;
+	}
+	//printf("%10.5f %10.5f %10.5f\n", vec[0], vec[1], vec[2]);
+	
+	return vec;
+
+#undef DET3
+#undef DELTA
+}
+
+
+
 bool Plane::isInHalfSpace( const Vec3f& point ) const
 {
 	// Multiply point by plane equation coefficients, compare distances

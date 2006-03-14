@@ -59,9 +59,6 @@
 namespace vgm
 {
 
-struct Plane;
-
-
 /**
  * @brief Vector of N components of type T.
  * 
@@ -135,13 +132,6 @@ struct Vector
 		m_tCoord[1] = c2;
 		m_tCoord[2] = c3;
 	}
-
-	/**
-	 * @brief Constructor that creates vector from intersection of three planes.
-	 * 
- 	 * @remarks only if dimension is equal to 3.
-	 */
-	Vector( Plane& p0, Plane& p1, Plane& p2);
 
 	/**
  	 * @brief Constructor from 4 components.
