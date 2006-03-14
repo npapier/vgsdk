@@ -12,14 +12,7 @@
 #include "vgd/field/TPairAssociativeField.hpp"
 #include "vgd/field/EditorRO.hpp"
 #include "vgd/field/EditorRW.hpp"
-
-namespace vgd
-{
-	namespace node
-	{
-		struct Node;
-	}
-}
+#include "vgd/node/Node.hpp"
 
 
 

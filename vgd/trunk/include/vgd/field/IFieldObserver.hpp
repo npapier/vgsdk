@@ -26,6 +26,11 @@ namespace field
 struct VGD_API IFieldObserver
 {
 	/**
+	 * @brief Virtual destructor
+	 */
+	virtual ~IFieldObserver() {}
+
+	/**
 	 * @brief Receive a notification from a field (the subject in DP Observer).
 	 * 
 	 * @remarks Implements the Observer updating interface.

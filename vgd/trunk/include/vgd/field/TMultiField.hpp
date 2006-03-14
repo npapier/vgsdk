@@ -284,6 +284,7 @@ struct TMultiField : public AbstractField
 				++iter
 			)
 		{
+			const T& rItem = *iter;
 			m_vectorMF.push_back( rItem );
 		}
 	}
