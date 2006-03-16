@@ -1,3 +1,3 @@
-USE		= ['wx2-4']
+USE		= ['wx2-6']
 TYPE	= 'shared'
 VERSION = '0-4'
