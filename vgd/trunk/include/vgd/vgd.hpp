@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_VGD_H
-#define _VGD_VGD_H
+#ifndef _VGD_VGD_HPP
+#define _VGD_VGD_HPP
 
 /**
  * @defgroup g_vgd Virtuals Graphical Data
@@ -17,6 +17,12 @@
 
 /**
  * @defgroup g_images Images
+ * 
+ * @ingroup g_vgd
+ */
+
+/**
+ * @defgroup g_shp Shp (shared pointer)
  * 
  * @ingroup g_vgd
  */
@@ -142,4 +148,4 @@
 
 
 
-#endif //#ifndef _VGD_VGD_H
+#endif //#ifndef _VGD_VGD_HPP
