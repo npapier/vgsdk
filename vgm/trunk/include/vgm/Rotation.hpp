@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,8 +47,8 @@
  * Author(s)		:	Nick Thompson, David Mott, Howard Look.
  */
 
-#ifndef _VGM_ROTATION_H
-#define _VGM_ROTATION_H
+#ifndef _VGM_ROTATION_HPP
+#define _VGM_ROTATION_HPP
 
 #include "vgm/vgm.hpp"
 #include "vgm/Vector.hpp"
@@ -307,4 +307,4 @@ private:
 
 } // namespace vgm
 
-#endif // #ifndef _VGM_ROTATION_H
+#endif // #ifndef _VGM_ROTATION_HPP

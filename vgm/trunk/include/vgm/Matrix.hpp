@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,8 +47,8 @@
  * Author(s)		:	Nick Thompson, David Mott, Howard Look.
  */
 
-#ifndef _VGM_MATRIX_H
-#define _VGM_MATRIX_H
+#ifndef _VGM_MATRIX_HPP
+#define _VGM_MATRIX_HPP
 
 #include "vgm/vgm.hpp"
 #include "vgm/Rectangle.hpp"
@@ -686,4 +686,4 @@ private:
 
 } // namespace vgm
 
-#endif // _VGM_MATRIX_H
+#endif // _VGM_MATRIX_HPP

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,8 +47,8 @@
  * Author(s)		:	Nick Thompson, David Mott, Howard Look.
  */
 
-#ifndef _VGM_VECTOR_H
-#define _VGM_VECTOR_H
+#ifndef _VGM_VECTOR_HPP
+#define _VGM_VECTOR_HPP
 
 #include <cmath>
 
@@ -550,4 +550,4 @@ typedef Vector<	int32, 4 > Vec4i;
 
 } // namespace vgm
 
-#endif // #ifndef _VGM_VECTOR_H
+#endif // #ifndef _VGM_VECTOR_HPP
