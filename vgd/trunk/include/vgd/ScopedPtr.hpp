@@ -38,12 +38,12 @@ private:
 public:
 	typedef T element_type;
 
-	explicit ScopedPtr(T * p = 0): boost::scoped_ptr(p) // never throws
+	explicit ScopedPtr(T * p = 0): boost::scoped_ptr<T>(p) // never throws
 	{}
 
 #ifndef BOOST_NO_AUTO_PTR
 
-	explicit ScopedPtr(std::auto_ptr<T> p): boost::scoped_ptr(p) // never throws
+	explicit ScopedPtr(std::auto_ptr<T> p): boost::scoped_ptr<T>(p) // never throws
 	{}
 
 #endif

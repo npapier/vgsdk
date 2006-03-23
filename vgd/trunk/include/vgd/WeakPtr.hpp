@@ -25,17 +25,17 @@ template<class T> struct WeakPtr : public boost::weak_ptr<T>
 {
 	typedef T element_type;
 
-	WeakPtr(): boost::weak_ptr() // never throws in 1.30+
+	WeakPtr(): boost::weak_ptr<T>() // never throws in 1.30+
 	{}
 
 	// Generated copy constructor, assignment, destructor are fine.
 
 	template<class Y>
-	WeakPtr(boost::weak_ptr<Y> const & r): boost::weak_ptr(r) // never throws
+	WeakPtr(boost::weak_ptr<Y> const & r): boost::weak_ptr<T>(r) // never throws
 	{}
 
 	template<class Y>
-	WeakPtr(boost::shared_ptr<Y> const & r): boost::weak_ptr(r) // never throws
+	WeakPtr(boost::shared_ptr<Y> const & r): boost::weak_ptr<T>(r) // never throws
 	{}
 
 //#if !defined(BOOST_MSVC) || (BOOST_MSVC > 1200)

@@ -30,12 +30,12 @@ struct EnableShpFromThis : public boost::enable_shared_from_this<T>
 {
 	Shp<T> ShpFromThis()
 	{
-		return shared_from_this();
+		return boost::enable_shared_from_this<T>::shared_from_this();
 	}
 
 	Shp<T const> ShpFromThis() const
 	{
-		return shared_from_this();
+		return boost::enable_shared_from_this<T>::shared_from_this();
 	}
 };
 
