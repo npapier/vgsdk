@@ -1,3 +1,3 @@
-full-install release-install all clean release debug world dist-clean info checkout update diff tags:
+full-install release-install all clean release debug world dist-clean info checkout checkout_tags update diff tags:
 	make -f Makefile.vgsdkfree	'$@'
 	make -f Makefile.vgsdknf	'$@'
