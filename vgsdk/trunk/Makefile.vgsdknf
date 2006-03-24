@@ -1,12 +1,17 @@
-VERSION=0.4
+VERSION=1.0
+REVISION=
 
 full-install release-install all clean release debug world dist-clean info :
 	cd ../vgnf;		make '$@';
 	cd ../Mesher;	make '$@';
 
+checkout_tags:
+	svn co http://dev-srv:8080/svn/SrcLib/vgnf/tags/tdvpm_$(VERSION) ../vgnf
+	svn co http://dev-srv:8080/svn/SrcLib/Mesher/tags/tdvpm_$(VERSION) ../Mesher
+
 checkout:
-	svn co http://dev-srv:8080/svn/SrcLib/vgnf/trunk ../vgnf
-	svn co http://dev-srv:8080/svn/SrcLib/Mesher/trunk ../Mesher
+	svn $(REVISION) co http://dev-srv:8080/svn/SrcLib/vgnf/trunk ../vgnf
+	svn $(REVISION) co http://dev-srv:8080/svn/SrcLib/Mesher/trunk ../Mesher
 
 update diff:
 	cd ../vgnf;	svn '$@';
