@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGWX_EVENT_HELPERS_H
-#define _VGWX_EVENT_HELPERS_H
+#ifndef _VGWX_EVENT_HELPERS_HPP
+#define _VGWX_EVENT_HELPERS_HPP
 
 #include <vgd/event/ButtonStateSet.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
@@ -70,4 +70,4 @@ void updateModifiersOfGlobalButtonStates<wxMouseEvent>( wxMouseEvent& event );
 
 } // namespace vgWX
 
-#endif //#ifndef _VGWX_EVENT_HELPERS_H
+#endif //#ifndef _VGWX_EVENT_HELPERS_HPP
