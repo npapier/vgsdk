@@ -1,15 +1,15 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_H
-#define _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_H
-
-#include "vgeGL/vgeGL.hpp"
+#ifndef _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_HPP
+#define _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_HPP
 
 #include <vge/handler/painter/Shape.hpp>
-#include <vgm/Box.hpp>
+
+#include "vgeGL/engine/Settings.hpp"
+#include "vgeGL/vgeGL.hpp"
 
 namespace vgd
 {
@@ -20,19 +20,20 @@ namespace vgd
 	}
 }
 
+namespace vgm
+{
+	struct Box3f;
+}
+
 namespace vgeGL
 {
+
 	namespace engine
 	{
 		struct Engine;
 	}
-	
-	namespace rc
-	{
-		struct VertexBufferObject;
-	}
+
 }
-#include "vgeGL/engine/Settings.hpp"
 
 
 
@@ -56,35 +57,38 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 {
 	META_HANDLER_HPP( VertexShape );
 
-	//const vge::service::List			getServices	() const;
-	const TargetVector					getTargets()	const;
+	const TargetVector getTargets()	const;
 
-	void	apply				( vge::engine::Engine*, vgd::node::Node* );
+	void apply( vge::engine::Engine*, vgd::node::Node* );
 	
-	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
+	void unapply( vge::engine::Engine*, vgd::node::Node* );
 
-	void	setToDefaults	();
-
-
-	
-	// IMMEDIATE MODE
-	/**
-	 * @brief Render all primitives in immediate mode.
-	 */
-	//void	paint						( vgeGL::engine::Engine*, vgd::node::VertexShape* );
-	
-	/**
-	 * @brief Render one primitive in immediate mode.
-	 */
-	//void	paint						( vgeGL::engine::Engine*, vgd::node::VertexShape*, const vgd::node::Primitive& );
+	void setToDefaults();
 
 
 
-	// DISPLAY LIST
-	/**
-	 * @brief Render all primitives in display lists (immediate mode encapsulate in a display list).
-	 */
-	//void	paintDisplayList		( vgeGL::engine::Engine*, vgd::node::VertexShape* );
+	void paintMethodChooser( vgeGL::engine::Engine*, vgd::node::VertexShape* );
+
+
+
+//	// IMMEDIATE MODE
+//	/**
+//	 * @brief Render all primitives in immediate mode.
+//	 */
+//	void	paint( vgeGL::engine::Engine*, vgd::node::VertexShape* );
+//	
+//	/**
+//	 * @brief Render one primitive in immediate mode.
+//	 */
+//	void	paint( vgeGL::engine::Engine*, vgd::node::VertexShape*, const vgd::node::Primitive& );
+
+
+
+//	// DISPLAY LIST
+//	/**
+//	 * @brief Render all primitives in display lists (immediate mode encapsulate in a display list).
+//	 */
+//	void	paintDisplayList( vgeGL::engine::Engine*, vgd::node::VertexShape* );
 
 
 
@@ -92,12 +96,11 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	/**
 	 * @brief Render all primitives with vertex array.
 	 */
-	void	paint				(	vgeGL::engine::Engine*, vgd::node::VertexShape*,
-									const vgeGL::engine::VertexArrayMethod& );
+	void	paint(	vgeGL::engine::Engine*, vgd::node::VertexShape*, 
+					const vgeGL::engine::VertexArrayMethod& );
 
-	void	paint				(	vgeGL::engine::Engine*, vgd::node::VertexShape*,
-									const vgd::node::Primitive&,
-									const vgeGL::engine::VertexArrayMethod& );
+	void	paint(	vgeGL::engine::Engine*, vgd::node::VertexShape*, const vgd::node::Primitive&, 
+					const vgeGL::engine::VertexArrayMethod& );
 
 
 
@@ -105,35 +108,34 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	/**
 	 * @brief Render all primitives in display list (vertex array encapsulate in a display list).
 	 */
-	void	paint				(	vgeGL::engine::Engine*, vgd::node::VertexShape*,
-									const vgeGL::engine::VertexArrayDisplayListMethod& );
+	void	paint(	vgeGL::engine::Engine*, vgd::node::VertexShape*,
+					const vgeGL::engine::VertexArrayDisplayListMethod& );
 
 
 
-	// VERTEX ARRAY IN VBO
-	/**
-	 * @brief Render all primitives with vertex array.
-	 * 
-	 * @param pVBO		zero to use plain VertexArray,
-	 * 					not zero to use VertexBufferObject.
-	 * 
-	 * @remarks If VertexBufferObject is empty (pVBO->isEmpty()), than paintVertexArray() generate and initialize VBO,
-	 * otherwise paintVertexArray() use only VBO contains by VertexBufferObject.
-	 */
-//	void	paintVBOVertexArray		(	vgeGL::engine::Engine*, vgd::node::VertexShape*, 
-//												vgeGL::rc::VertexBufferObject* pVBO = 0);
-
-	/**
-	 * @brief Render one primitive with vertex array.
-	 */
-//	void	paintVBOVertexArray		(	vgeGL::engine::Engine *pEngine, vgd::node::VertexShape *pVertexShape,
-//												const vgd::node::Primitive& primitive,
-//												vgeGL::rc::VertexBufferObject* pVBO = 0 );
-
-	/**
-	 * @brief Render all primitives with VBO (Vertex Buffer Object).
-	 */
-//	void	paintVBO					( vgeGL::engine::Engine*, vgd::node::VertexShape* );											
+//	// VERTEX ARRAY IN VBO
+//	/**
+//	 * @brief Render all primitives with vertex array.
+//	 * 
+//	 * @param pVBO		zero to use plain VertexArray,
+//	 * 					not zero to use VertexBufferObject.
+//	 * 
+//	 * @remarks If VertexBufferObject is empty (pVBO->isEmpty()), than paintVertexArray() generate and initialize VBO,
+//	 * otherwise paintVertexArray() use only VBO contains by VertexBufferObject.
+//	 */
+//	void	paintVBOVertexArray(	vgeGL::engine::Engine*, vgd::node::VertexShape*, 
+//									vgeGL::rc::VertexBufferObject* pVBO = 0);
+//
+//	/**
+//	 * @brief Render one primitive with vertex array.
+//	 */
+//	void	paintVBOVertexArray(	vgeGL::engine::Engine *pEngine, vgd::node::VertexShape *pVertexShape,
+//									const vgd::node::Primitive& primitive, vgeGL::rc::VertexBufferObject* pVBO = 0 );
+//
+//	/**
+//	 * @brief Render all primitives with VBO (Vertex Buffer Object).
+//	 */
+//	void	paintVBO( vgeGL::engine::Engine*, vgd::node::VertexShape* );
 
 
 
@@ -142,7 +144,7 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	 */
 	//@{
 
-	void 	drawBoundingBox	( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
+	void 	drawBoundingBox		( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
 	void 	drawXfBoundingBox	( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
 
 	void	drawBox3f	( const vgm::Box3f& box );
@@ -172,4 +174,4 @@ protected:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_HPP
