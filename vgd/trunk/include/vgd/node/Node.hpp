@@ -1,16 +1,17 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_NODE_NODE_H
-#define _VGD_NODE_NODE_H
+#ifndef _VGD_NODE_NODE_HPP
+#define _VGD_NODE_NODE_HPP
 
 #include "vgd/vgd.hpp"
 
 #include <vector>
 
 #include "vgd/Shp.hpp"
+#include "vgd/EnableShpFromThis.hpp"
 #include "vgd/basic/ClassRegistry.hpp"
 #include "vgd/basic/IndexableClass.hpp"
 #include "vgd/basic/Object.hpp"
@@ -120,7 +121,7 @@ struct Factory
 /**
  * @brief List of node pointers.
  */
-typedef std::list< vgd::node::Node* >					PNodeList;
+typedef std::list< vgd::node::Node* >				PNodeList;
 
 /**
  * @brief List of nodes (useful for children list).
@@ -140,7 +141,7 @@ typedef std::vector< vgd::Shp<vgd::node::Node> >	NodeVector;
 /**
  * @brief Set of node pointers.
  */
-typedef std::set< vgd::node::Node* >					PNodeSet;
+typedef std::set< vgd::node::Node* >				PNodeSet;
 
 /**
  * @brief Set of nodes.
@@ -166,7 +167,7 @@ typedef std::set< vgd::Shp<vgd::node::Node> >		NodeSet;
  * 
  * @ingroup g_abstractNodes
  */
-struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
+struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager, public vgd::EnableShpFromThis<Node>
 {
 	// META_NODE_HPP( Node ); abstract class.
 	
@@ -197,7 +198,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	/**
 	 * @brief Virtual default destructor.
 	 */
-	virtual ~Node( void );
+	virtual ~Node();
 	//@}
 
 
@@ -217,7 +218,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	/**
 	 * @brief Returns the number of parents.
 	 */
-	int32	getNumParents( void ) const;
+	int32	getNumParents() const;
 
 	/**
 	 * @brief Returns only enabled or disabled parents nodes.
@@ -250,19 +251,19 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	/**
 	 * @brief Typedef for the \c name value.
 	 */
-	typedef std::string 				NameValueType;
+	typedef std::string 			NameValueType;
 	
 	/**
 	 * @brief Gets the name of node.
 	 */
-	const std::string		getName( void ) const;
+	const std::string	getName( void ) const;
 
 	/**
 	 * @brief Sets the name of node.
 	 * 
 	 * @param strNodeName	name of node.
 	 */
-	void						setName( const std::string strNodeName );
+	void				setName( const std::string strNodeName );
 
 	//@}
 
@@ -295,7 +296,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	 * 
 	 * @return the name of field \c name.
 	 */
-	static const std::string getFName( void );
+	static const std::string getFName();
 
 	//@}
 	
@@ -309,7 +310,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	/**
 	 * @brief Returns name of dirty flag that is invalidate when a modification is done in any fields.
 	 */
-	static const std::string getDFNode( void );
+	static const std::string getDFNode();
 
 	//@}
 
@@ -350,7 +351,7 @@ protected:
 	/**
 	 * @brief Accessor to graph.
 	 */
-	static vgd::graph::Graph&	graph( void );
+	static vgd::graph::Graph&	graph();
 
 	/**
 	 * @brief vgd::graph::Graph must have an access to vertex_descriptor.
@@ -393,4 +394,4 @@ private:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_ANODE_H
+#endif //#ifndef _VGD_NODE_NODE_HPP

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -37,9 +37,9 @@ void VertexShape::computeNormals()
 	int32 i;
 	int32 j=0;
 
-	vgd::field::EditorRO< vgd::field::MFVec3f >	vertices		= getFVertexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices		= getFVertexRO();
 	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= getFVertexIndexRO();
-	vgd::field::EditorRW< vgd::field::MFVec3f >	normals		= getFNormalRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >		normals		= getFNormalRW();
 
 	normals->resize(0);
 	normals->reserve(numVertices);
@@ -93,7 +93,7 @@ void VertexShape::invalidateParentsBoundingBoxDirtyFlag()
 	
 	// for each node.
 	for(	NodeList::iterator	i	= parents.begin(),
-										ie	= parents.end();
+								ie	= parents.end();
 			i != ie;
 			++i
 		)
@@ -128,14 +128,14 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 	if ( m_transformation != transformation )
 	{
 		bInvalidateParents	= true;
-		bRetVal					= true;
+		bRetVal				= true;
 
-		m_transformation		= transformation;
+		m_transformation	= transformation;
 	}
 	else
 	{
 		bInvalidateParents	= false;
-		bRetVal					= false;
+		bRetVal				= false;
 	}
 
 	// STEP 2: update bounding box.
@@ -145,7 +145,7 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 	if ( pDirtyFlag->isDirty() )
 	{
 		bInvalidateParents	= true;
-		bRetVal					= true;
+		bRetVal				= true;
 
 		// compute bb
 		vgd::field::EditorRO< FVertexType > vertex;
@@ -153,8 +153,8 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 
 		m_boundingBox.makeEmpty();
 
-		for(	FVertexType::const_iterator	i	= vertex->begin(),
-														ie	= vertex->end();
+		for(	FVertexType::const_iterator	i	=	vertex->begin(),
+											ie	= vertex->end();
 				i != ie;
 				i++ )
 		{
@@ -204,7 +204,7 @@ bool VertexShape::smartComputeBoundingBox( const vgm::MatrixR& transformation )
 		m_boundingBox.makeEmpty();
 		
 		for(	FVertexIndexType::const_iterator	i	= index->begin(),
-															ie	= index->end();
+													ie	= index->end();
 				i != ie;
 				i++ )
 		{
@@ -241,7 +241,7 @@ void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 
 	// Transform each vertex.
 	for(	FVertexType::iterator	i	= vertex->begin(),
-											ie	= vertex->end();
+									ie	= vertex->end();
 			i != ie;
 			i++ )
 	{
@@ -252,7 +252,7 @@ void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 	if ( normalize )
 	{
 		for(	FNormalType::iterator	i	= normal->begin(),
-												ie	= normal->end();
+										ie	= normal->end();
 				i != ie;
 				i++ )
 		{
@@ -263,7 +263,7 @@ void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 	else
 	{
 		for(	FNormalType::iterator	i	= normal->begin(),
-												ie	= normal->end();
+										ie	= normal->end();
 				i != ie;
 				i++ )
 		{
@@ -280,7 +280,7 @@ void VertexShape::transform( const vgm::Vec3f translation )
 
 	// Transform each vertex.
 	for(	FVertexType::iterator	i	= vertex->begin(),
-											ie	= vertex->end();
+									ie	= vertex->end();
 			i != ie;
 			i++ )
 	{
@@ -296,7 +296,7 @@ void VertexShape::transform( const vgm::Rotation rotation )
 
 	// Transform each vertex.
 	for(	FVertexType::iterator	i	= vertex->begin(),
-											ie	= vertex->end();
+									ie	= vertex->end();
 			i != ie;
 			i++ )
 	{
@@ -330,6 +330,9 @@ VertexShape::VertexShape( const std::string nodeName ) :
 	addField( new FSecondaryColor4BindingType(getFSecondaryColor4Binding()) );
 	
 	addField( new FEdgeFlagBindingType(getFEdgeFlagBinding()) );
+	
+	// deformable field.
+	addField( new FDeformableHintType(getFDeformableHint()) );
 
 	// Add dirty flags.
 	addDirtyFlag(getDFBoundingBox());
@@ -353,6 +356,11 @@ void VertexShape::setToDefaults( void )
 	setColor4Binding( 				vgd::node::BIND_OFF );
 	setSecondaryColor4Binding(		vgd::node::BIND_OFF );
 	setEdgeFlagBinding(				vgd::node::BIND_OFF );
+	
+	setDeformableHint( DEFAULT_DEFORMABLE_HINT );
+	
+	// Invalidates m_numTexUnits
+	m_numTexUnits = -1;
 }
 
 
@@ -538,6 +546,9 @@ void VertexShape::createTexUnits( const int32 index, const int32 num )
 	{
 		setTexCoordBinding( i32, vgd::node::BIND_OFF );
 	}
+	
+	// Invalidates m_numTexUnits
+	m_numTexUnits = -1;
 }
 
 
@@ -568,21 +579,31 @@ void VertexShape::removeTexUnits( const int32 index, const int32 num )
 	}
 	
 	// Links are removed automatically by the fieldManager.
+	
+	// Invalidates m_numTexUnits
+	m_numTexUnits = -1;
 }
 
 
 
 const int32	VertexShape::getNumTexUnits() const
 {
-	int32 i32 = 0;
-	while ( isField( getFTexCoord(i32) ) )
+	if ( m_numTexUnits == -1 )
 	{
-		assert( isField( getFTexCoordBinding(i32) ) );
+		// m_numTexUnits is invalid, computes it.
+		int32 i32 = 0;
+		while ( isField( getFTexCoord(i32) ) )
+		{
+			assert( isField( getFTexCoordBinding(i32) ) );
+			
+			++i32;
+		}
 		
-		++i32;
+	 	// Validates m_numTexUnits.
+		m_numTexUnits = i32;
 	}
 	
-	return ( i32 );
+	return m_numTexUnits;
 }
 
 
@@ -709,6 +730,21 @@ const vgd::node::Binding VertexShape::getEdgeFlagBinding() const
 void VertexShape::setEdgeFlagBinding( const vgd::node::Binding binding )
 {
 	return ( getFieldRW< FEdgeFlagBindingType >(getFEdgeFlagBinding())->setValue( binding ) );
+}
+
+
+
+// DEFORMABLE HINT
+const VertexShape::DeformableHintValueType VertexShape::getDeformableHint() const
+{
+	return ( getFieldRO<FDeformableHintType>(getFDeformableHint())->getValue() );
+}
+
+
+
+void VertexShape::setDeformableHint( const DeformableHintValueType value )
+{
+	getFieldRW<FDeformableHintType>(getFDeformableHint())->setValue( value );
 }
 
 
@@ -855,6 +891,13 @@ const std::string VertexShape::getFTexCoordBinding( const int32 textureUnit )
 const std::string VertexShape::getFEdgeFlagBinding( void )
 {
 	return ( "f_edgeFlagBinding" );
+}
+
+
+
+const std::string VertexShape::getFDeformableHint( void )
+{
+	return ( "f_deformableHint" );
 }
 
 

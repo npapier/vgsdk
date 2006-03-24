@@ -1,16 +1,17 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_NODE_VERTEXSHAPE_H
-#define _VGD_NODE_VERTEXSHAPE_H
+#ifndef _VGD_NODE_VERTEXSHAPE_HPP
+#define _VGD_NODE_VERTEXSHAPE_HPP
 
 #include "vgd/vgd.hpp"
 
 #include <vgm/Box.hpp>
 
 #include "vgd/field/Binding.hpp"
+#include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
 #include "vgd/field/Integer.hpp"
 #include "vgd/field/Primitive.hpp"
@@ -53,24 +54,39 @@ namespace node
  * 	- MFUint8 \c edgeFlag			= empty\n
  * 
  * - fields for bindings :
- * 	- SFBinding \c normalBinding 				= BIND_OFF\n
- * 	- SFBinding \c color4Binding				= BIND_OFF\n
+ * 	- SFBinding \c normalBinding 			= BIND_OFF\n
+ * 	- SFBinding \c color4Binding			= BIND_OFF\n
  * 	- SFBinding \c secondaryColor4Binding	= BIND_OFF\n
  * 	- SFBinding \c texCoordBinding			= BIND_OFF\n
  * 		texCoordBinding is a "dynamic field", see createTexUnits()...
  * 	- SFBinding \c edgeFlagBinding			= BIND_OFF\n
  * 
+ * - SFInt32 \c deformableHint = STATIC\n
+ * 		Specifies a symbolic constant indicating the usage of this shape. 
+ * 		Choose one value among STATIC, DYNAMIC and STREAM.
+ * 
  * @remarks BIND_OFF, BIND_PER_VERTEX could be used, other not.
- * 
- * 
  * @remarks Depends on vgd::node::DrawStyle.hpp.
  * 
+ * 
+ * Differents versions to gain read-only(RO) or read-write(RW) field access :
+ *
+ * \li read-only access		: vgd::field::EditorRO< vgd::field::MFVec3f > vertices = getFVertexRO();
+ * \li read-write access	: vgd::field::EditorRW< vgd::field::MFVec3f > vertices = getFVertexRW();
+ * 
+ * \li read-only access		: vgd::field::EditorRO< vgd::node::VertexShape::FVertexType > vertices = getFVertexRO();
+ * \li read-write access	: vgd::field::EditorRW< vgd::node::VertexShape::FVertexType > vertices = getFVertexRW();
+ * 
+ * \li read-only access		: vgd::field::EditorRO<vgd::field::MFVec3f> vertices = 
+ * getFieldRO<vgd::field::MFVec3f>(getFVertex());
+ * \li read-write access	: vgd::field::EditorRW<vgd::field::MFVec3f> vertices = 
+ * getFieldRW<vgd::field::MFVec3f>(getFVertex());
+ * @remarks Idem for all others fields(especially for bindings).
+ * 
+ * 
  * @todo Color/SecondaryColor3, ColorIndex, FogCoordinates.
- * 
  * @todo generateTexCoords that Calculates either spherical, cylindrical, or planar two-dimensional texture coordinates into texture unit tu.
- * 
  * @todo SetToDefault() that call a FieldManager method that called clear() on each field(on multifield).
- * 
  * @todo Add a lighter version of this class(with less field, or add field at run-time) and a templated one(for using int16...).
  * 
  * @ingroup g_nodes
@@ -164,7 +180,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	/**
 	 * @brief Typedef for the \c vertex value.
 	 */
-	typedef vgm::Vec3f				VertexValueType;
+	typedef vgm::Vec3f			VertexValueType;
 
 	vgd::field::EditorRO< FVertexType >		getFVertexRO() const;
 	vgd::field::EditorRW< FVertexType >		getFVertexRW();
@@ -186,7 +202,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	/**
 	 * @brief Typedef for the \c normal value.
 	 */
-	typedef vgm::Vec3f				NormalValueType;
+	typedef vgm::Vec3f			NormalValueType;
 
 	vgd::field::EditorRO< FNormalType >		getFNormalRO() const;
 	vgd::field::EditorRW< FNormalType >		getFNormalRW();
@@ -208,7 +224,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	/**
 	 * @brief Typedef for the \c color4 value.
 	 */
-	typedef vgm::Vec4f				Color4ValueType;
+	typedef vgm::Vec4f			Color4ValueType;
 
 	vgd::field::EditorRO< FColor4Type >		getFColor4RO() const;
 	vgd::field::EditorRW< FColor4Type >		getFColor4RW();
@@ -230,7 +246,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	/**
 	 * @brief Typedef for the \c secondaryColor4 value.
 	 */
-	typedef vgm::Vec4f				SecondaryColor4ValueType;
+	typedef vgm::Vec4f			SecondaryColor4ValueType;
 
 	vgd::field::EditorRO< FSecondaryColor4Type >		getFSecondaryColor4RO() const;
 	vgd::field::EditorRW< FSecondaryColor4Type >		getFSecondaryColor4RW();
@@ -267,22 +283,22 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	/**
 	 * @brief Typedef for the \c texCoord value.
 	 */
-	typedef float						TexCoord1fValueType;
+	typedef float				TexCoord1fValueType;
 	
 	/**
 	 * @brief Typedef for the \c texCoord value.
 	 */
-	typedef vgm::Vec2f				TexCoord2fValueType;
+	typedef vgm::Vec2f			TexCoord2fValueType;
 	
 	/**
 	 * @brief Typedef for the \c texCoord value.
 	 */
-	typedef vgm::Vec3f				TexCoord3fValueType;
+	typedef vgm::Vec3f			TexCoord3fValueType;
 	
 	/**
 	 * @brief Typedef for the \c texCoord value.
 	 */
-	typedef vgm::Vec4f				TexCoord4fValueType;
+	typedef vgm::Vec4f			TexCoord4fValueType;
 	
 	/**
 	 * @brief Returns the dimension of the i-th \c texCoord field.
@@ -347,7 +363,7 @@ private:
 	 * specified \c fieldType and for all the desired textures units.
 	 * 
 	 * @param index					zero-base index for the \c texCoord field.
-	 * @param num						number of contiguous fields.
+	 * @param num					number of contiguous fields.
 	 */
 	template< typename fieldType >
 	void createTexUnits( const int32 index, const int32 num );
@@ -358,7 +374,7 @@ public:
 	 * @brief Call this method to remove dynamically one \c or more texCoord and \c texCoordBinding fields.
 	 * 
 	 * @param index					zero-base index for the \c texCoord field.
-	 * @param num						number of contiguous fields.
+	 * @param num					number of contiguous fields.
 	 * 
 	 * @remarks Texture coordinates and bindings, initialized by this method, must be already created.
 	 */
@@ -391,7 +407,7 @@ public:
 	/**
 	 * @brief Typedef for the \c edgeFlag value.
 	 */
-	typedef uint8						EdgeFlagValueType;
+	typedef uint8				EdgeFlagValueType;
 
 	vgd::field::EditorRO< FEdgeFlagType >		getFEdgeFlagRO() const;
 	vgd::field::EditorRW< FEdgeFlagType >		getFEdgeFlagRW();
@@ -413,7 +429,7 @@ public:
 	/**
 	 * @brief Typedef for the \c primitive value.
 	 */
-	typedef vgd::node::Primitive		PrimitiveValueType;
+	typedef vgd::node::Primitive	PrimitiveValueType;
 
 	vgd::field::EditorRO< FPrimitiveType >		getFPrimitiveRO() const;
 	vgd::field::EditorRW< FPrimitiveType >		getFPrimitiveRW();
@@ -436,7 +452,7 @@ public:
 	/**
 	 * @brief Typedef for the \c vertexIndex value.
 	 */
-	typedef uint32							VertexIndexValueType;
+	typedef uint32						VertexIndexValueType;
 
 	vgd::field::EditorRO< FVertexIndexType >		getFVertexIndexRO() const;
 	vgd::field::EditorRW< FVertexIndexType >		getFVertexIndexRW();
@@ -464,7 +480,7 @@ public:
 	typedef vgd::node::Binding			NormalBindingValueType;
 
 	const vgd::node::Binding	getNormalBinding() const;
-	void 								setNormalBinding( const vgd::node::Binding );
+	void 						setNormalBinding( const vgd::node::Binding );
 	//@}
 
 
@@ -485,7 +501,7 @@ public:
 	typedef vgd::node::Binding			Color4BindingValueType;
 
 	const vgd::node::Binding	getColor4Binding() const;
-	void 								setColor4Binding( const vgd::node::Binding );
+	void 						setColor4Binding( const vgd::node::Binding );
 	//@}
 	
 
@@ -506,7 +522,7 @@ public:
 	typedef vgd::node::Binding			SecondaryColor4BindingValueType;
 
 	const vgd::node::Binding	getSecondaryColor4Binding() const;
-	void 								setSecondaryColor4Binding( const vgd::node::Binding );
+	void 						setSecondaryColor4Binding( const vgd::node::Binding );
 
 	//@}
 
@@ -528,7 +544,7 @@ public:
 	typedef vgd::node::Binding			TexCoordBindingValueType;
 
 	const vgd::node::Binding	getTexCoordBinding( const int32 texUnit ) const;
-	void 								setTexCoordBinding( const int32 texUnit, const vgd::node::Binding );
+	void 						setTexCoordBinding( const int32 texUnit, const vgd::node::Binding );
 
 	//@}
 	
@@ -550,34 +566,49 @@ public:
 	typedef vgd::node::Binding			EdgeFlagBindingValueType;
 
 	const vgd::node::Binding	getEdgeFlagBinding() const;
-	void 								setEdgeFlagBinding( const vgd::node::Binding );
+	void 						setEdgeFlagBinding( const vgd::node::Binding );
 
 	//@}
 
 
+	/**
+	 * @name Accessors to field deformableHint
+	 */
+	//@{
 
 	/**
-	 * 
-	 * \code 
-	 * 
-	 * Differents versions to gain read-only(RO) or read-write(RW) field access :
-	 *
-	 * \li read-only access		: vgd::field::EditorRO< vgd::field::MFVec3f > vertices = getFVertexRO();
-	 * \li read-write access	: vgd::field::EditorRW< vgd::field::MFVec3f > vertices = getFVertexRW();
-	 * 
-	 * \li read-only access		: vgd::field::EditorRO< vgd::node::VertexShape::FVertexType > vertices = getFVertexRO();
-	 * \li read-write access	: vgd::field::EditorRW< vgd::node::VertexShape::FVertexType > vertices = getFVertexRW();
-	 * 
-	 * \li read-only access		: vgd::field::EditorRO<vgd::field::MFVec3f> vertices = 
-	 * getFieldRO<vgd::field::MFVec3f>(getFVertex());
-	 * \li read-write access	: vgd::field::EditorRW<vgd::field::MFVec3f> vertices = 
-	 * getFieldRW<vgd::field::MFVec3f>(getFVertex());
-	 *
-	 * \endcode
-	 * 
-	 * @remarks Idem for all others fields(especially for bindings).
-	 */
+	 * @brief Typedef for the \c deformableHint field.
+	 */	
+	typedef vgd::field::SFEnum FDeformableHintType;
 
+	/**
+	 * @brief Typedef for the \c deformableHint value.
+	 */
+	enum
+	{
+		STATIC = 1,		/*!< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once. */
+		DYNAMIC,		/*!< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every 
+						few frames. */
+		STREAM,			/*!< STREAM assumed to be a 1-to-1 update-to-draw. Means the geometry is specified for each 
+						frame.	*/
+		DEFAULT_DEFORMABLE_HINT = STATIC
+	};
+	
+	typedef vgd::field::EnumType DeformableHintValueType;
+
+	/**
+	 * @brief Gets the deformableHint of node.
+	 */
+	const DeformableHintValueType	getDeformableHint() const;
+
+	/**
+	 * @brief Sets the deformableHint of node.
+	 * 
+	 */
+	void setDeformableHint( const DeformableHintValueType value );
+
+	//@}
+	
 
 
 protected:
@@ -748,6 +779,13 @@ public:
 	 */
 	static const std::string getFEdgeFlagBinding( void );
 	
+	/**
+	 * @brief Returns the name of field \c deformableHint.
+	 * 
+	 * @return the name of field \c deformableHint.
+	 */
+	static const std::string getFDeformableHint();
+	
 	//@}
 
 
@@ -768,7 +806,12 @@ public:
 
 private:
 
-	int32			m_numTexUnits;
+	/**
+	 * @brief Number of texture unit fields
+	 * 
+	 * @remarks Sets to -1 if the number of texture units fields must be computed.
+	 */
+	mutable int32	m_numTexUnits;
 };
 
 
@@ -777,4 +820,4 @@ private:
 
 } // namespace vgd
 
-#endif // #ifndef _VGD_NODE_VERTEXSHAPE_H
+#endif // #ifndef _VGD_NODE_VERTEXSHAPE_HPP
