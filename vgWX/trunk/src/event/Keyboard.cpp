@@ -7,6 +7,7 @@
 #include "vgWX/event/Keyboard.hpp"
 
 #include <vgd/event/KeyboardButtonEvent.hpp>
+#include <vgd/Shp.hpp>
 #include "vgWX/event/Helpers.hpp"
 
 
