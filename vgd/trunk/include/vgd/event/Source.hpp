@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Guillaume Brocker & Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,20 +7,27 @@
 #ifndef _VGD_EVENT_SOURCE_HPP
 #define _VGD_EVENT_SOURCE_HPP
 
-
 #include <set>
-#include "vgd/Shp.hpp"
 #include "vgd/vgd.hpp"
+
+namespace vgd
+{
+	template<class T> struct Shp;	
+
+	namespace event
+	{
+		struct Event;
+		struct Listener;
+	}
+}
+
 
 
 namespace vgd
 {
-	
+
 namespace event
 {
-	
-struct Event;
-struct Listener;
 	
 /**
  * @brief	Defines the abstract class for event sources.
@@ -78,8 +85,10 @@ private:
 	ListenerContainer	listeners;	 	
 };
 
+
+
 } // namespace event
 
 } // namespace vgd
 
-#endif // _VGD_EVENT_SOURCE_H
+#endif // _VGD_EVENT_SOURCE_HPP

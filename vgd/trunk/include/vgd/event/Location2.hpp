@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,7 +17,8 @@ namespace vgd
 namespace event
 {
 	
-	
+
+
 /**
  * @brief	Defines the class for location in 2D.
  */
@@ -65,13 +66,14 @@ protected:
 	/**
 	 * @brief The location passed through the event.
 	 */
-	const Location m_location;
+	Location	m_location;
 
 	/**
 	 * @brief The size passed through the event.
 	 */
-	const Size		m_size;	
+	Size		m_size;	
 };
+
 
 
 } // namespace event

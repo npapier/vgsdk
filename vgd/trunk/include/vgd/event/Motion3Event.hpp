@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -13,11 +13,13 @@
 #include "vgd/event/Event.hpp"
 
 
+
 namespace vgd
 {
 
 namespace event
 {
+
 	
 	
 /**
@@ -87,17 +89,17 @@ private:
 	/**
 	 * @brief The translation passed through the event.
 	 */
-	const Translation	m_translation;
+	Translation		m_translation;
 	
 	/**
 	 * @brief The rotation passed through the event.
 	 */
-	const Rotation		m_rotation;
+	Rotation		m_rotation;
 	
 	/**
 	 * The size passed through the event.
 	 */
-	const Size		m_size;	
+	Size			m_size;	
 };
 
 

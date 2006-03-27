@@ -1,16 +1,16 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-#ifndef _VGD_EVENT_MOUSEBUTTONEVENT_H
-#define _VGD_EVENT_MOUSEBUTTONEVENT_H
-
+#ifndef _VGD_EVENT_MOUSEBUTTONEVENT_HPP
+#define _VGD_EVENT_MOUSEBUTTONEVENT_HPP
 
 #include "vgd/vgd.hpp"
 #include "vgd/event/ButtonEvent.hpp"
 #include "vgd/event/Location2.hpp"
+
 
 
 namespace vgd
@@ -18,7 +18,7 @@ namespace vgd
 	
 namespace event
 {
-	
+
 /**
  * @brief	Implements a keyboard button event class.
  */
@@ -56,8 +56,9 @@ struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 };
 
 
+
 } // namespace event
 
 } // namespace vgd
 
-#endif // #ifndef _VGD_EVENT_MOUSEBUTTONEVENT_H
+#endif // #ifndef _VGD_EVENT_MOUSEBUTTONEVENT_HPP

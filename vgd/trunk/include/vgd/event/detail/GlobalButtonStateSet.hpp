@@ -1,13 +1,13 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_EVENT_DETAIL_GLOBALBUTTONSTATESET_H
-#define _VGD_EVENT_DETAIL_GLOBALBUTTONSTATESET_H
+#ifndef _VGD_EVENT_DETAIL_GLOBALBUTTONSTATESET_HPP
+#define _VGD_EVENT_DETAIL_GLOBALBUTTONSTATESET_HPP
 
-#include "vgd/vgd.hpp"
 #include "vgd/event/ButtonStateSet.hpp"
+#include "vgd/vgd.hpp"
 
 
 
@@ -58,10 +58,12 @@ private:
 	static vgd::event::ButtonStateSet	m_states;
 };
 
+
+
 } // namespace detail
 
 } // namespace event
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_EVENT_DETAIL_GLOBALBUTTONSTATESET_H
+#endif //#ifndef _VGD_EVENT_DETAIL_GLOBALBUTTONSTATESET_HPP

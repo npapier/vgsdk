@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Guillaume Brocker & Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,8 @@
 #include "vgd/event/Source.hpp"
 
 #include "vgd/event/Listener.hpp"
+#include "vgd/Shp.hpp"
+
 
 
 namespace vgd
@@ -15,6 +17,7 @@ namespace vgd
 namespace event
 {
 	
+
 	
 Source::Source()
 {}
@@ -46,6 +49,7 @@ void Source::fireEvent( vgd::Shp<vgd::event::Event> event )
 		listener->onEvent( event );
 	}
 }
+
 
 
 } // namespace event

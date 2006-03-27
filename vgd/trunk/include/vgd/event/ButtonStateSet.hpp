@@ -1,21 +1,24 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_EVENT_BUTTONSTATESET_H
-#define _VGD_EVENT_BUTTONSTATESET_H
+#ifndef _VGD_EVENT_BUTTONSTATESET_HPP
+#define _VGD_EVENT_BUTTONSTATESET_HPP
 
 #include <set>
+#include "vgd/event/EventVisitor.hpp"
 #include "vgd/vgd.hpp"
 
-#include "vgd/event/EventVisitor.hpp"
+
 
 namespace vgd
 {
 	
 namespace event
 {
+
+
 
 /**
  * @brief List of buttons in the DOWN state.
@@ -138,4 +141,4 @@ protected:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_EVENT_BUTTONSTATESET_H
+#endif //#ifndef _VGD_EVENT_BUTTONSTATESET_HPP

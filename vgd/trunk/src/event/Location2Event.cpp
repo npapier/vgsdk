@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,12 +9,14 @@
 #include <limits>
 
 
+
 namespace vgd
 {
 
 namespace event
 {
 	
+
 	
 Location2Event::Location2Event(	Source * source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation,
 								const Size& size )
@@ -52,6 +54,7 @@ void Location2Event::accept( vgd::event::EventVisitor& eventVisitor )
 {
 	eventVisitor.apply( this );
 }
+
 
 
 } // namespace event

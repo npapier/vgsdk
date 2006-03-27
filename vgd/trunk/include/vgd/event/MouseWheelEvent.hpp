@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,9 +7,9 @@
 #ifndef _VGD_EVENT_MOUSEWHEELEVENT_HPP
 #define _VGD_EVENT_MOUSEWHEELEVENT_HPP
 
-
 #include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
+
 
 
 namespace vgd
@@ -18,7 +18,8 @@ namespace vgd
 namespace event
 {
 	
-	
+
+
 /**
  * @brief	Defines a mouse wheel event.
  */
@@ -44,14 +45,14 @@ struct VGD_API MouseWheelEvent : public Event
 	 * 
 	 * @return	a wheel axis
 	 */
-	Axis getAxis() const; 
+	const Axis getAxis() const; 
 	
 	/**
 	 * @brief	Retrieves the wheel rotation delta.
 	 * 
 	 * @return	a signed integer representing the wheel rotation delta
 	 */
-	int32 getDelta() const;
+	const int32 getDelta() const;
 
 
 	// overridden method
