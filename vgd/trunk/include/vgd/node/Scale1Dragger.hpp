@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_NODE_SCALE1DRAGGER_H
-#define _VGD_NODE_SCALE1DRAGGER_H
+#ifndef _VGD_NODE_SCALE1DRAGGER_HPP
+#define _VGD_NODE_SCALE1DRAGGER_HPP
 
 #include "vgd/vgd.hpp"
 
@@ -177,4 +177,4 @@ protected:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_SCALE1DRAGGER_H
+#endif //#ifndef _VGD_NODE_SCALE1DRAGGER_HPP

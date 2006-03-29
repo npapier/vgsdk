@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_VISITOR_FINDFIRST_H
-#define _VGD_VISITOR_FINDFIRST_H
+#ifndef _VGD_VISITOR_FINDFIRST_HPP
+#define _VGD_VISITOR_FINDFIRST_HPP
 
 #include "vgd/vgd.hpp"
 
@@ -163,4 +163,4 @@ std::pair< bool, vgd::Shp< vgd::node::Node > > findFirst( vgd::Shp< vgd::node::G
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_VISITOR_FINDFIRST_H
+#endif //#ifndef _VGD_VISITOR_FINDFIRST_HPP

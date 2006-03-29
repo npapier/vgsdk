@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_BSC_TRANSFERFUNCTION_H
-#define _VGD_BSC_TRANSFERFUNCTION_H
+#ifndef _VGD_BSC_TRANSFERFUNCTION_HPP
+#define _VGD_BSC_TRANSFERFUNCTION_HPP
 
 #include <map>
 #include <vector>
@@ -167,4 +167,4 @@ private:
 
 #include "vgd/basic/TransferFunction.hxx"
 
-#endif //#ifndef _VGD_BSC_TRANSFERFUNCTION_H
+#endif //#ifndef _VGD_BSC_TRANSFERFUNCTION_HPP

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,8 +9,8 @@
 // ADD 2:	could traverse only edges with EdgeName.enable() sets to true(see useEdgeName()).
 // ADD 3:	call depth_first_search() for forward_or_cross_edge.
 
-#ifndef _VGD_VISITOR_INTERNAL_DFS_H
-#define _VGD_VISITOR_INTERNAL_DFS_H
+#ifndef _VGD_VISITOR_INTERNAL_DFS_HPP
+#define _VGD_VISITOR_INTERNAL_DFS_HPP
 
 #include "vgd/vgd.hpp"
 
@@ -293,4 +293,4 @@ namespace internal
 
 } // namespace vgd				// end: modification for vgsdk
 
-#endif //#ifndef _VGD_VISITOR_INTERNAL_DFS_H
+#endif //#ifndef _VGD_VISITOR_INTERNAL_DFS_HPP
