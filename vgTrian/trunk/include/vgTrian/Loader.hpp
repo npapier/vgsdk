@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGTRIAN_LOADER_H
-#define _VGTRIAN_LOADER_H
+#ifndef _VGTRIAN_LOADER_HPP
+#define _VGTRIAN_LOADER_HPP
 
 #include "vgTrian/vgTrian.hpp"
 
@@ -87,4 +87,4 @@ private:
 
 } // namespace vgTrian
 
-#endif //#ifndef _VGTRIAN_LOADER_H
+#endif //#ifndef _VGTRIAN_LOADER_HPP

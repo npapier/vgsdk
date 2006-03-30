@@ -1,16 +1,17 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgTrian/Loader.hpp"
 
+#include <vgDebug/Global.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/basic/Image.hpp>
 #include <vgd/node/Primitive.hpp>
 #include <vgd/node/Texture2D.hpp>
 #include <vgd/node/TextureMatrixTransform.hpp>
-#include <vgDebug/Global.hpp>
+
 
 
 namespace vgTrian
