@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGBASE_VGBASE_H
-#define _VGBASE_VGBASE_H
+#ifndef _VGBASE_VGBASE_HPP
+#define _VGBASE_VGBASE_HPP
 
 /** 
  * @namespace vgBase
@@ -13,9 +13,6 @@
  *
  * \b vgBase is open source (LGPL).
  */
-
-
-#include <vgBase/Type.hpp>
 
 //#ifdef _WIN32
 //
@@ -31,4 +28,4 @@
 //
 //#endif
 
-#endif // #ifndef _VGBASE_VGBASE_H
+#endif // #ifndef _VGBASE_VGBASE_HPP
