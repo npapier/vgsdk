@@ -1,11 +1,12 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _BASICGL_GLCANVAS_H
-#define _BASICGL_GLCANVAS_H
+#ifndef _BASICGL_GLCANVAS_HPP
+#define _BASICGL_GLCANVAS_HPP
 
+#include <wx/wx.h>
 #include <wx/defs.h>
 #include <wx/glcanvas.h>
 
@@ -53,4 +54,4 @@ private:
 
 } // namespace basicGL
 
-#endif // #ifndef _BASICGL_GLCANVAS_H
+#endif // #ifndef _BASICGL_GLCANVAS_HPP
