@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -32,8 +32,8 @@ namespace vgsdkViewer
 
 
 
-BEGIN_EVENT_TABLE( myCanvas, vgWX::BasicManipulator )
-	EVT_CHAR    				( myCanvas::OnChar			)
+BEGIN_EVENT_TABLE(	myCanvas, vgWX::BasicManipulator	)
+	EVT_CHAR	(	myCanvas::OnChar					)
 END_EVENT_TABLE()
 
 
