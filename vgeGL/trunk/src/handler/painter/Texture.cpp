@@ -393,7 +393,7 @@ const bool Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node:
 		{
 			assert( textureDimension == 3 && "Unsupported texture dimension (!= 1,2,3)" );
 			
-			glTexImage3D( GL_TEXTURE_3D,
+			gleGetCurrent()->glTexImage3D( GL_TEXTURE_3D,
 				0,
 				m_components,
 				m_texSize[0] + borderSize, m_texSize[1] + borderSize, m_texSize[2] + borderSize,

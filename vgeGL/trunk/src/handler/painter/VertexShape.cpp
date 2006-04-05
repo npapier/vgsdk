@@ -755,7 +755,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 	vertexIndex	= pVertexShape->getFVertexIndexRO();
 	pArray		= reinterpret_cast< const GLvoid* >( &(*vertexIndex)[primitive.getIndex()] );
 	
-	glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+	gleGetCurrent()->glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 	// or glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 
 
