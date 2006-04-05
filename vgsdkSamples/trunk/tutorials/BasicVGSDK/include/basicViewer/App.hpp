@@ -1,13 +1,13 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _BASICVIEWER_APP_H
-#define _BASICVIEWER_APP_H
+#ifndef _BASICVIEWER_APP_HPP
+#define _BASICVIEWER_APP_HPP
 
 #include <wx/defs.h>
-#include <wx/glcanvas.h>
+#include <wx/app.h>
 
 
 
@@ -19,7 +19,7 @@ namespace basicViewer
 /**
  * @brief The application class.
  */
-class App : public wxGLApp
+class App : public wxApp
 {
 	DECLARE_EVENT_TABLE();
 
@@ -32,4 +32,4 @@ public:
 
 } // namespace basicViewer
 
-#endif // #ifndef _BASICVIEWER_APP_H
+#endif // #ifndef _BASICVIEWER_APP_HPP
