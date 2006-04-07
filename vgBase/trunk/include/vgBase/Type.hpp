@@ -10,11 +10,15 @@
 	
 		// The Visual C++ debugger doesn't know string larger than 255 char. STL often creates large
 		// symbol. The following line cancels warning created by Visual.
-		#pragma warning (disable : 4786)
+		#pragma warning (disable:4786)
 	
 		// need a dll interface (Un classe de base ou une structure doit être déclarée avec 
 		// le mot clé __declspec(dllexport) pour qu'une fonction d'une classe dérivée soit exportée)
 		#pragma warning (disable:4251)
+		
+		// interface non-dll classkey 'identificateur' utilisée comme base d'une interface dll classkey 'identificateur'
+		// Une classe exportée a été dérivée depuis une classe qui n'a pas été exportée.
+		#pragma warning (disable:4275)
 	
 		// Spécification d'exception C++ ignorée sauf pour indiquer qu'une fonction n'est pas 
 		// __declspec(nothrow)
