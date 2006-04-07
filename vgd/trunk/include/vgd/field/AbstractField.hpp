@@ -32,7 +32,9 @@ struct IFieldObserver;
  * @remarks Implements DP subject/observer(this class is a subject, observer is IFieldObserver).
  * 
  * @remarks Not DefaultConstructible and
+ * 
  * @todo Assignable ?
+ * @todo void receiveNotify( const Event& );
  * @todo Serialize.
  */
 struct VGD_API AbstractField : public vgd::basic::NamedObject
@@ -109,14 +111,14 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 */
 	void	sendNotify( const Event& ) const;
 
-	/**
-	 * @brief Receive a notification.
-	 *
-	 * @todo Receive a notification.
-	 * @todo Complete code if event is receive(for example if FieldContainer
-	 * is destroyed).
-	 */
-	//void	receiveNotify( const Event& );
+//	/**
+//	 * brief Receive a notification.
+//	 *
+//	 * todo Receive a notification.
+//	 * todo Complete code if event is receive(for example if FieldContainer
+//	 * is destroyed).
+//	 */
+//	//void	receiveNotify( const Event& );
 
 	/**
 	 * @brief Test if the number of observers is not zero.

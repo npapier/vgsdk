@@ -58,10 +58,10 @@ Image::Image( std::string strFilename ) :
 
 
 Image::Image(	const uint32		components,
-					const uint32		width, const uint32 height, const uint32 depth,
-					const Format		format,
-					const Type			type,
-					const void*			pixels ) :
+				const uint32		width, const uint32 height, const uint32 depth,
+				const Format		format,
+				const Type			type,
+				const void*			pixels ) :
 	m_iluintImgID(0)
 {
 	assert( format != COLOR_INDEX );
@@ -80,17 +80,17 @@ Image::Image(	const uint32		components,
 	resetInformations();
 		
 	create(	components,
-				width, height, depth,
-				format, type,
-				pixels );
+			width, height, depth,
+			format, type,
+			pixels );
 }
 
 
 
 Image::Image(	const uint32		components,
-					const uint32		width, const uint32 height, const uint32 depth,
-					const Format		format,
-					const Type			type 	) :
+				const uint32		width, const uint32 height, const uint32 depth,
+				const Format		format,
+				const Type			type 	) :
 	m_iluintImgID(0)
 {
 	assert( format != COLOR_INDEX );
@@ -109,8 +109,8 @@ Image::Image(	const uint32		components,
 	resetInformations();
 		
 	create(	components,
-				width, height, depth,
-				format, type );
+			width, height, depth,
+			format, type );
 }
 
 
@@ -134,9 +134,9 @@ Image::Image( const IImage& image ) :
 	resetInformations();
 
 	create(	image.components(),
-				image.width(), image.height(), image.depth(),
-				image.format(), image.type(),
-				image.pixels() );
+			image.width(), image.height(), image.depth(),
+			image.format(), image.type(),
+			image.pixels() );
 	
 	voxelSize() = image.voxelSize();
 }
@@ -208,7 +208,7 @@ bool Image::load( std::string strFilename )
 		updateInformations();
 		
 		vgDebug::get().logDebug("Image::load: Finish reading image %s (%i x %i).",
-			strFilename.c_str(), width(), height() );		
+								strFilename.c_str(), width(), height() );		
 
 		return ( true );
 	}
@@ -217,10 +217,10 @@ bool Image::load( std::string strFilename )
 
 
 bool Image::create(	const uint32		components, 
-							const uint32		width, const uint32 height, const uint32 depth,
-							const Format		format,
-							const Type			type,
-							const void*			pixels )
+					const uint32		width, const uint32 height, const uint32 depth,
+					const Format		format,
+					const Type			type,
+					const void*			pixels )
 {
 	assert( format != COLOR_INDEX );
 	
@@ -260,9 +260,9 @@ bool Image::create(	const uint32		components,
 
 
 bool Image::create(	const uint32		components, 
-							const uint32		width, const uint32 height, const uint32 depth,
-							const Format		format,
-							const Type			type )
+					const uint32		width, const uint32 height, const uint32 depth,
+					const Format		format,
+					const Type			type )
 {
 	assert( format != COLOR_INDEX );
 		
@@ -489,7 +489,7 @@ void Image::setPalette( const void *palette, uint32 size, const Format format )
 	
 	// FIXME: should use ilSetSharedPal, but missing in include file !
 	ilRegisterPal(	const_cast<ILubyte*>( static_cast<const ILubyte*>(palette)),
-						size, ilFormat );
+					size, ilFormat );
 
 	reportILError();
 
@@ -503,9 +503,9 @@ vgd::Shp< Image > Image::getPaletteImage() const
 	bind();
 
 	Image *pImage = new Image(	1,
-										paletteSize(), 1, 1, 
-										paletteFormat(), paletteType(),
-										palettePixels() );
+								paletteSize(), 1, 1, 
+								paletteFormat(), paletteType(),
+								palettePixels() );
 										
 	return ( vgd::Shp< Image >( pImage ) );
 }
@@ -861,7 +861,7 @@ ILenum Image::convertMyType2IL( Type myType ) const
 void Image::resetInformations()
 {
 	m_components	= m_width = m_height = m_depth = 0;
-	m_format			= NO_FORMAT;
+	m_format		= NO_FORMAT;
 	m_type			= NO_TYPE;
 
 	m_edit			= false;
@@ -877,9 +877,9 @@ void Image::updateInformations()
 
 	m_components	= ilGetInteger( IL_IMAGE_BYTES_PER_PIXEL );
 	m_width			= ilGetInteger( IL_IMAGE_WIDTH );	
-	m_height			= ilGetInteger( IL_IMAGE_HEIGHT );
+	m_height		= ilGetInteger( IL_IMAGE_HEIGHT );
 	m_depth			= ilGetInteger( IL_IMAGE_DEPTH );	
-	m_format			= convertILFormat2My( ilGetInteger( IL_IMAGE_FORMAT ) );
+	m_format		= convertILFormat2My( ilGetInteger( IL_IMAGE_FORMAT ) );
 	m_type			= convertILType2My( ilGetInteger( IL_IMAGE_TYPE ) );
 	
 	// m_edit		nothing to do

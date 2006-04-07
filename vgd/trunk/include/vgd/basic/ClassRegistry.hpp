@@ -6,14 +6,13 @@
 #ifndef _VGD_BASIC_CLASSREGISTRY_HPP
 #define _VGD_BASIC_CLASSREGISTRY_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <set>
 #include <string>
 #include <sstream>
 #include <utility>
 
 #include "vgd/Shp.hpp"
+#include "vgd/vgd.hpp"
 
 namespace vgd
 {
@@ -82,9 +81,10 @@ struct ClassRegistry
 			// STEP 2: Initialization of class index.
 			int32& index = classType::getClassIndexStatic();
 
-			if ( index == -1 ) // class index not yet initialized.
+			if ( index == -1 )
 			{
-				// Initialize class index.
+				// class index not yet initialized.
+				// => Initialize class index.
 				index = static_cast< int32 >(baseClassType::getClassRegistry().getNumRegistered()) - 1;
 			}
 			/*else nothing to do (register the same class multiples times is useful for vgd::node::MultiAttribute.
@@ -130,7 +130,7 @@ struct ClassRegistry
 	 * 
 	 * @return Number of registered classes.
 	 */
-	uint32				getNumRegistered( void ) const
+	uint32			getNumRegistered( void ) const
 	{
 		return ( static_cast<uint32>( m_classes.size() ) );
 	}

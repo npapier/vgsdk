@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,6 +9,7 @@
 #include <vgm/Matrix.hpp>
 #include <vgm/Rotation.hpp>
 #include <vgm/Vector.hpp>
+
 #include "vgd/vgd.hpp"
 
 
@@ -19,11 +20,18 @@ namespace vgd
 namespace itf
 {
 
+
+
 /**
  * @brief Interface to transform vertices and normals of a shape node.
  */
 struct VGD_API ITransformation
 {
+	/**
+	 * @brief Virtual destructor.
+	 */
+	virtual ~ITransformation();
+
 	/**
 	 * @brief Transform all vertices and normals by the given matrix.
 	 * 
@@ -51,6 +59,7 @@ struct VGD_API ITransformation
 	virtual void transform( const vgm::Rotation rotation )=0;
 	//@}
 };
+
 
 
 } // namespace itf

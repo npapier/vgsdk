@@ -50,7 +50,7 @@ void Kit::setOptionalsToDefaults()
 
 
 // IBoundingBox interface
-bool Kit::computeBoundingBox( const vgm::MatrixR& transformation /* not used */)
+bool Kit::computeBoundingBox( const vgm::MatrixR& /* transformation */ )
 {
 	// STEP 1: init. and check matrix transformation.
 	bool	bRetVal;

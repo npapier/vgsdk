@@ -6,12 +6,12 @@
 #ifndef _VGD_BASIC_IMAGE_HPP
 #define _VGD_BASIC_IMAGE_HPP
 
-#include <string>
 #include <IL/il.h>
+#include <string>
 
+#include "vgd/basic/IImage.hpp"
 #include "vgd/Shp.hpp"
 #include "vgd/vgd.hpp"
-#include "vgd/basic/IImage.hpp"
 
 
 

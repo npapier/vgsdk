@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,6 +9,7 @@
 #include <vgm/Matrix.hpp>
 #include <vgm/Rotation.hpp>
 #include <vgm/Vector.hpp>
+
 #include "vgd/vgd.hpp"
 
 
@@ -28,6 +29,11 @@ namespace itf
  */
 struct VGD_API IVolatileTransformation
 {
+	/**
+	 * @brief Virtual destructor
+	 */
+	virtual ~IVolatileTransformation();
+
 	/**
 	 * @brief Add a new transformation given by the matrix.
 	 * 

@@ -105,7 +105,7 @@ void Scale1Dragger::setBoundingBoxAndAxisFeedback()
 	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = pLine->getFVertexRW();
 	vertex->reserve( 2 );
 
-	vertex->push_back( vgm::Vec3f(-0.5 - 0.2f, 0.f, 0.f)	);
+	vertex->push_back( vgm::Vec3f(-0.5f - 0.2f, 0.f, 0.f));
 	vertex->push_back( vgm::Vec3f(0.5f + 0.2f, 0.f, 0.f) );
 
 	// VERTEX INDEX
