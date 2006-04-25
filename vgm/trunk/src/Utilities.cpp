@@ -41,14 +41,17 @@ const float Utilities::linearInterpolation( const float x1, const float y1, cons
 {
 	assert( x2-x1 != 0 );
 	
+	// @todo Ensure changes are correct.
+	// Changed local variable type from float to double due to a lack of precision.
+
 	// y = a*x + b
-	const float a = (y2 - y1) / (x2 - x1);
+	const double a = (y2 - y1) / (x2 - x1);
 	
-	const float b = y1 - a*x1;
+	const double b = y1 - a*x1;
 	
-	const float y = a*x+b;
+	const double y = a*x+b;
 	
-	return y;
+	return (float) y;
 }
 
 
