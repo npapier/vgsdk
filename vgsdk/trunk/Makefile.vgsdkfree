@@ -1,4 +1,4 @@
-VERSION=1.0
+VERSION=1.1
 REVISION=
 
 full-install release-install all clean release debug world dist-clean info :
