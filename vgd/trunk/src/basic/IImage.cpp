@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -33,11 +33,42 @@ const bool IImage::isEmpty() const
 
 
 
-const uint32 IImage::sizeOfPixel() const
+const vgm::Vec3i IImage::computeMaximumPosition() const
 {
-	const uint32 sizeOfType = computeSizeOfType(type());
+	const vgm::Vec3i size( width(), height(), depth() );
 	
-	return components() * sizeOfType;
+	return size;
+}
+
+
+
+const vgm::Vec3i IImage::getSize() const
+{
+	return computeMaximumPosition();
+}
+
+
+
+const uint32 IImage::computeNumberOfPixels() const
+{
+	return width()*height()*depth();
+}
+
+
+
+const uint32 IImage::computeMaximumIndex() const
+{
+	return computeNumberOfPixels();
+}
+
+
+
+const uint32 IImage::computeMaximumOffset() const
+{
+	const uint32 numberOfPixels	= computeNumberOfPixels();
+	const uint32 sizeofPixel	= sizeOfPixel();
+
+	return numberOfPixels*sizeofPixel;
 }
 
 
@@ -45,17 +76,19 @@ const uint32 IImage::sizeOfPixel() const
 const float IImage::getPixel1( const vgm::Vec3i position ) const
 {
 	assert( components() == 1 );
+	assert( isValid(position) );
 
-	const uint32 offset = computeOffset( position );
-	
-	return getPixel1(offset);
+	const uint32 index = computeIndex( position );
+
+	return getPixel1(index);
 }
 
 
 
-const float IImage::getPixel1( const uint32 offset ) const
+const float IImage::getPixel1( const uint32 index ) const
 {
 	assert( components() == 1 );
+	assert( isValid(index) );
 
 	float retVal;
 	
@@ -64,56 +97,56 @@ const float IImage::getPixel1( const uint32 offset ) const
 		case UINT8:
 		{
 			const uint8 *pixel = static_cast<const uint8*>(pixels());
-			retVal = static_cast<float>(pixel[offset]);
+			retVal = static_cast<float>(pixel[index]);
 			break;
 		}
 
 		case INT8:
 		{
 			const int8 *pixel = static_cast<const int8*>(pixels());
-			retVal = static_cast<float>(pixel[offset]);
+			retVal = static_cast<float>(pixel[index]);
 			break;
 		}
 
 		case UINT16:
 		{
 			const uint16 *pixel = static_cast<const uint16*>(pixels());
-			retVal = static_cast<float>(pixel[offset]);
+			retVal = static_cast<float>(pixel[index]);
 			break;
 		}
 
 		case INT16:
 		{
 			const int16 *pixel = static_cast<const int16*>(pixels());
-			retVal = static_cast<float>(pixel[offset]);
+			retVal = static_cast<float>(pixel[index]);
 			break;
 		}
 
 		case UINT32:
 		{
 			const uint32 *pixel = static_cast<const uint32*>(pixels());
-			retVal = static_cast<float>(pixel[offset]);
+			retVal = static_cast<float>(pixel[index]);
 			break;
 		}
 	
 		case INT32:
 		{
 			const int32 *pixel = static_cast<const int32*>(pixels());
-			retVal = static_cast<float>(pixel[offset]);
+			retVal = static_cast<float>(pixel[index]);
 			break;
 		}
 
 		case FLOAT:
 		{
 			const float *pixel = static_cast<const float*>(pixels());
-			retVal = pixel[offset];
+			retVal = pixel[index];
 			break;
 		}
 
 		case DOUBLE:
 		{
 			const double *pixel = static_cast<const double*>(pixels());
-			retVal = static_cast<float>(pixel[offset]);
+			retVal = static_cast<float>(pixel[index]);
 			break;
 		}
 
@@ -132,22 +165,26 @@ const float IImage::getPixel1( const uint32 offset ) const
 void IImage::setPixel1( const vgm::Vec3i position, const float color )
 {
 	assert( components() == 1 );
+	assert( isValid(position) );
 
-	const uint32 offset = computeOffset( position );
-	
-	setPixel1(offset, color);
+	const uint32 index = computeIndex( position );
+
+	setPixel1(index, color);
 }
 
 
 
-void IImage::setPixel1( const uint32 offset, const float color )
+void IImage::setPixel1( const uint32 index, const float color )
 {
+	assert( components() == 1 );
+	assert( isValid(index) );
+
 	switch ( type() )
 	{
 		case UINT8:
 		{
 			uint8 *pixel = static_cast<uint8*>(editPixels());
-			pixel[offset] = static_cast<uint8>(color);
+			pixel[index] = static_cast<uint8>(color);
 			editPixelsDone();
 			break;
 		}
@@ -155,7 +192,7 @@ void IImage::setPixel1( const uint32 offset, const float color )
 		case INT8:
 		{
 			int8 *pixel = static_cast<int8*>(editPixels());
-			pixel[offset] = static_cast<int8>(color);
+			pixel[index] = static_cast<int8>(color);
 			editPixelsDone();
 			break;
 		}
@@ -163,7 +200,7 @@ void IImage::setPixel1( const uint32 offset, const float color )
 		case UINT16:
 		{
 			uint16 *pixel = static_cast<uint16*>(editPixels());
-			pixel[offset] = static_cast<uint16>(color);
+			pixel[index] = static_cast<uint16>(color);
 			editPixelsDone();
 			break;
 		}
@@ -171,7 +208,7 @@ void IImage::setPixel1( const uint32 offset, const float color )
 		case INT16:
 		{
 			int16 *pixel = static_cast<int16*>(editPixels());
-			pixel[offset] = static_cast<int16>(color);
+			pixel[index] = static_cast<int16>(color);
 			editPixelsDone();
 			break;
 		}
@@ -179,7 +216,7 @@ void IImage::setPixel1( const uint32 offset, const float color )
 		case UINT32:
 		{
 			uint32 *pixel = static_cast<uint32*>(editPixels());
-			pixel[offset] = static_cast<uint32>(color);
+			pixel[index] = static_cast<uint32>(color);
 			editPixelsDone();
 			break;
 		}
@@ -187,7 +224,7 @@ void IImage::setPixel1( const uint32 offset, const float color )
 		case INT32:
 		{
 			int32 *pixel = static_cast<int32*>(editPixels());
-			pixel[offset] = static_cast<int32>(color);
+			pixel[index] = static_cast<int32>(color);
 			editPixelsDone();
 			break;
 		}
@@ -195,7 +232,7 @@ void IImage::setPixel1( const uint32 offset, const float color )
 		case FLOAT:
 		{
 			float *pixel = static_cast<float*>(editPixels());
-			pixel[offset] = static_cast<float>(color);
+			pixel[index] = static_cast<float>(color);
 			editPixelsDone();
 			break;
 		}
@@ -203,7 +240,7 @@ void IImage::setPixel1( const uint32 offset, const float color )
 		case DOUBLE:
 		{
 			double *pixel = static_cast<double*>(editPixels());
-			pixel[offset] = static_cast<double>(color);
+			pixel[index] = static_cast<double>(color);
 			editPixelsDone();
 			break;
 		}
@@ -217,9 +254,16 @@ void IImage::setPixel1( const uint32 offset, const float color )
 
 
 
-const uint32 IImage::computeNumberOfPixels() const
+const bool IImage::isValid( const vgm::Vec3i position ) const
 {
-	return width()*height()*depth();
+	const bool retVal =	(0 <= position[0]) &&
+						(position[0] < static_cast<uint32>(width())) &&
+						(0 <= position[1]) &&
+						(position[1] < static_cast<uint32>(height())) &&
+						(0 <= position[2]) &&
+						(position[2] < static_cast<uint32>(depth()));
+	
+	return retVal;
 }
 
 
@@ -371,62 +415,134 @@ const std::pair< double, double > IImage::getRange( const Type type )
 
 
 
+const uint32 IImage::computeIndex( const uint32 x, const uint32 y, const uint32 z ) const
+{
+	assert( x < width() );
+	assert( y < height() );
+	assert( z < depth() );
+
+	const uint32 index = x + width() * ( y + height() * z );
+
+	return index;
+}
+
+
+
+const uint32 IImage::computeIndex( const vgm::Vec3i position ) const
+{
+	assert( isValid(position) );
+
+	const uint32 index = computeIndex( position[0], position[1], position[2] );
+
+	return index;
+}
+
+
+
+const vgm::Vec3i IImage::computePosition( const uint32 index ) const
+{
+	vgm::Vec3i retVal;
+	
+	const int32		axialSliceSize( width()*height() );
+	
+	retVal[2]			= index / axialSliceSize;
+	
+	const int32 remain	= index - retVal[2]*axialSliceSize;
+	retVal[1]			= remain / width();
+	
+	retVal[0]			= remain - retVal[1]*width();
+	
+	assert( isValid(retVal) );
+	
+	return retVal;
+}
+
+
+
+const bool IImage::isValid( const uint32 index ) const
+{
+	const bool retVal = index < computeMaximumIndex();
+	
+	return retVal;
+}
+
+
+
+const uint32 IImage::sizeOfPixel() const
+{
+	const uint32 sizeOfType = computeSizeOfType(type());
+	
+	return components() * sizeOfType;
+}
+
+
+
 const uint32 IImage::computeOffset( const uint32 x, const uint32 y, const uint32 z ) const
 {
 	assert( x < width() );
 	assert( y < height() );
 	assert( z < depth() );
 
-	const uint32 numPixels	= x + width() * ( y + height() * z );
+	const uint32 index = computeIndex(x, y, z);
 	
-	return numPixels*sizeOfPixel();
+	return index*sizeOfPixel();
 }
 
 
 
 const uint32 IImage::computeOffset( const vgm::Vec3i position ) const
 {
-	assert( position[0] < width() );
-	assert( position[1] < height() );
-	assert( position[2] < depth() );
+	assert( isValid(position) );
+	
+	const uint32 offset = computeOffset( position[0], position[1], position[2] );
 
-	return computeOffset( position[0], position[1], position[2] );
+	return offset;
 }
 
 
 
-const uint32 IImage::computeMaximumOffset() const
+const uint32 IImage::computeOffset( const uint32 index ) const
 {
-	uint32 sizeofPixel = sizeOfPixel();
+	assert( isValid(index) );
 
-	return width()*height()*depth()*sizeofPixel;
+	const uint32 sizeofPixel = sizeOfPixel();	
+
+	return index*sizeofPixel;
 }
 
 
 
-const vgm::Vec3i IImage::computeCoordinates( const uint32 offset ) const
+const vgm::Vec3i IImage::computePositionFromOffset( const uint32 offset ) const
 {
-	vgm::Vec3i retVal;
+	assert( isOffsetValid(offset) );
 	
-	const uint32	cachedSizeOfPixel( sizeOfPixel() );
+	const uint32 index = computeIndexFromOffset(offset);
 	
-	const int32		axialSliceSize( width()*height()*cachedSizeOfPixel );
+	const vgm::Vec3i retVal = computePosition( index );
 	
-	retVal[2]			= offset / axialSliceSize;
+	assert( isValid(retVal) );
 	
-	const int32 remain	= offset - retVal[2]*axialSliceSize;
-	retVal[1]			= remain / (width()*cachedSizeOfPixel);
-	
-	retVal[0]			= remain - retVal[1]*(width()*cachedSizeOfPixel);
-	
-	assert( 0 <= retVal[0] );
-	assert( retVal[0] < width() );
+	return retVal;
+}
 
-	assert( 0 <= retVal[1] );
-	assert( retVal[1] < height() );
+
+
+const uint32 IImage::computeIndexFromOffset( const uint32 offset ) const
+{
+	assert( isOffsetValid(offset) );
 	
-	assert( 0 <= retVal[2] );
-	assert( retVal[2] < depth() );
+	const uint32 sizeofPixel = sizeOfPixel();
+	assert( sizeofPixel > 0 );	
+
+	return offset/sizeofPixel;
+}
+
+
+
+const bool IImage::isOffsetValid( const uint32 offset ) const
+{
+	const bool retVal =	(0 <= offset) &&
+						(offset < computeMaximumOffset());
 	
 	return retVal;
 }

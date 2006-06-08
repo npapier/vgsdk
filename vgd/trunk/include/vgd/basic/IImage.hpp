@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 
 #include <utility>
 #include <vgm/Vector.hpp>
+
 #include "vgd/vgd.hpp"
 
 
@@ -156,84 +157,136 @@ struct VGD_API IImage
 	 * @return		true if there is no image in this class (i.e. width()==height()==depth()==0), false otherwise.
 	 */
 	virtual const bool	isEmpty() const;
-
-	/**
-	 * @brief Computes the size of one pixel
-	 * 
-	 * @remarks The size of one pixel depends of format() and type() of the image.
-	 * 
-	 * @return The size of one pixel in bytes
-	 */
-	const uint32 sizeOfPixel() const;
 	
+	/**
+	 * @brief Retrives the position of the last pixel in the image.
+	 * 
+	 * @return the position of the last pixel in the image
+	 * 
+	 * @remarks computeMaximumPosition() == getSize()
+	 */
+	const vgm::Vec3i computeMaximumPosition() const;
+	
+	/**
+	 * @brief Retrives the size of the image.
+	 * 
+	 * @return the size of the image.
+	 * 
+	 * @remarks computeMaximumPosition() == getSize()
+	 */
+	const vgm::Vec3i getSize() const;
+
 	/**
 	 * @brief Computes the whole number of pixels in the image.
 	 * 
 	 * @return the whole number of pixels in the image
+	 * 
+	 * @remarks computeMaximumIndex() == computeNumberOfPixels()
 	 */
 	const uint32 computeNumberOfPixels() const;
 
+	/**
+	 * @brief Computes the maximum index in the image.
+	 * 
+	 * @return the maximum index in the image.
+	 * 
+	 * @remarks computeMaximumIndex() == computeNumberOfPixels()
+	 */
+	const uint32 computeMaximumIndex() const;
+	
+	/**
+	 * @brief Computes maximum offset in the image.
+	 * 
+	 * @return the maximum offset
+	 */
+	const uint32 computeMaximumOffset() const;
+
 	//@}
 	
+
 	
 	/**
 	 * @name Pixel accessors
 	 * 
-	 * @remarks These methods are not very fast. Use a PixelEditorRO/RW classes for faster accesses.
+	 * @remarks These methods are relatively slow and should not be used in situations where high-performance access
+	 * is required. Use a PixelEditorRO/RW classes for efficient pixel accesses.
 	 * 
 	 * @todo PixelEditorRO/RW classes
 	 */
 	//@{
 
 	/**
-	 * @brief Gets a pixel color.
+	 * @brief Gets the color of a pixel.
 	 * 
-	 * @param position	coordinates of pixel
+	 * @param position		coordinates of the pixel
 	 * 
-	 * @return color of pixel
+	 * @return color of a pixel
 	 * 
 	 * @pre components() == 1
-	 * @pre computeOffset(position) <= computeMaximumOffset()
+	 * @pre isValid( position )
 	 */
 	const float getPixel1( const vgm::Vec3i position ) const;
 
 	/**
-	 * @brief Gets a pixel color.
+	 * @brief Gets the color of a pixel.
 	 * 
-	 * @param offset	the offset
+	 * @param index		index of the pixel
 	 * 
-	 * @return color of pixel
+	 * @return color of a pixel
 	 * 
 	 * @pre components() == 1
+	 * @pre isValid( index )
 	 */
-	const float getPixel1( const uint32 offset ) const;
+	const float getPixel1( const uint32 index ) const;
 
 	/**
-	 * @brief Sets a pixel color.
+	 * @brief Sets the color of a pixel.
 	 * 
-	 * @param position	coordinates of pixel
-	 * @param color		color of pixel
+	 * @param position	coordinates of the pixel
+	 * @param color		color of the pixel
 	 * 
-	 * @remarks The color is static casted (@sa type() ).
+	 * @pre components() == 1
+	 * @pre isValid( position )
+	 * 
+	 * @remarks The color is static casted to the type of the image (@sa type() ).
 	 */
 	void setPixel1( const vgm::Vec3i position, const float color );
 
 	/**
-	 * @brief Sets a pixel color.
+	 * @brief Sets the color of a pixel.
 	 * 
-	 * @param offset		the offset
-	 * @param color		color of pixel
+	 * @param index		index of the pixel
+	 * @param color		color of the pixel
 	 * 
-	 * @remarks The color is static casted (@sa type() ).
+	 * @pre components() == 1
+	 * @pre isValid( index )
+	 * 
+	 * @remarks The color is static casted to the type of the image (@sa type() ).
 	 */
-	void setPixel1( const uint32 offset, const float color );
-	
+	void setPixel1( const uint32 index, const float color );
+
+	/**
+	 * @brief Checks if the given position is valid
+	 * 
+	 * @param position 	the coordinates
+	 * 
+	 * @return true if the given position is valid, false otherwise.
+	 * 
+	 * Note that the given position is valid, if and only if :
+	 * - 0 <= position[0] < width() and
+	 * - 0 <= position[1] < height() and
+	 * - 0 <= position[2] < depth()
+	 */
+	const bool isValid( const vgm::Vec3i position ) const;
+
 	//@}
 
 
 
 	/**
 	 * @name Palette accessors
+	 * 
+	 * @todo Palette Pixel accessors
 	 */
 	//@{
 
@@ -285,10 +338,12 @@ struct VGD_API IImage
 	/**
 	 * @brief Commit all pixels modifications in palette after calling paletteEditPixels().
 	 */
-	virtual void		paletteEditPixelsDone()=0;	
+	virtual void		paletteEditPixelsDone()=0;
+
 	//@}
-	
-	
+
+
+
 	/**
 	 * @name Voxel size accessors
 	 */
@@ -347,9 +402,74 @@ struct VGD_API IImage
 
 
 	/**
+	 * @name Index helpers
+	 */
+	//@{
+	
+	/**
+	 * @brief Computes index from coordinates.
+	 * 
+	 * @param x		x-coordinate
+	 * @param y		y-coordinate
+	 * @param z		z-coordinate
+	 * 
+	 * @pre x < width()
+	 * @pre y < height()
+	 * @pre z < depth()
+	 * 
+	 * @return the computed index
+	 */
+	const uint32 computeIndex( const uint32 x, const uint32 y, const uint32 z ) const;
+
+	/**
+	 * @brief Computes index from coordinates.
+	 * 
+	 * @param position	(x,y,z) coordinates
+	 * 
+	 * @pre isValid(position)
+	 * 
+	 * @return the computed index
+	 */
+	const uint32 computeIndex( const vgm::Vec3i position ) const;
+	
+	/**
+	 * @brief Computes the coordinates from an index.
+	 * 
+	 * @param index		the index
+	 * 
+	 * @return the computed coordinates
+	 * 
+	 * @post if return value = coord, then	isValid(coord) is true
+	 */
+	const vgm::Vec3i computePosition( const uint32 index ) const;
+
+	/**
+	 * @brief Checks if the given index is valid
+	 * 
+	 * @param index		the index
+	 * 
+	 * @return true if the given index is valid, false otherwise.
+	 * Note that the given index is valid, if and only if offset < computeMaximumIndex()
+	 */
+	const bool isValid( const uint32 index ) const;
+	
+	//@}
+	
+	
+	
+	/**
 	 * @name Offset helpers
 	 */
 	//@{
+
+	/**
+	 * @brief Computes the size of one pixel.
+	 * 
+	 * @remarks The size of one pixel depends of format() and type() of the image.
+	 * 
+	 * @return The size of one pixel in bytes
+	 */
+	const uint32 sizeOfPixel() const;
 	
 	/**
 	 * @brief Computes offset from coordinates.
@@ -365,40 +485,64 @@ struct VGD_API IImage
 	 * @return the computed offset
 	 */
 	const uint32 computeOffset( const uint32 x, const uint32 y, const uint32 z ) const;
-	
+
 	/**
 	 * @brief Computes offset from coordinates.
 	 * 
 	 * @param position	coordinates
 	 * 
-	 * @pre position[0] < width()
-	 * @pre position[1] < height()
-	 * @pre position[2] < depth()
+	 * @pre isValid(position)
 	 * 
 	 * @return the computed offset
-	 */	
+	 */
 	const uint32 computeOffset( const vgm::Vec3i position ) const;
 
 	/**
-	 * @brief Computes maximum offset in the image.
+	 * @brief Computes offset from index.
 	 * 
-	 * @return the maximum offset
+	 * @param index		the index
+	 * 
+	 * @pre isValid(index)
+	 * 
+	 * @return the offset
 	 */
-	const uint32 computeMaximumOffset() const;
-	
+	const uint32 computeOffset( const uint32 index ) const;
+
 	/**
-	 * @brief Computes coordinates from offset.
+	 * @brief Computes the pixel position from an offset.
 	 * 
 	 * @param offset		the offset
 	 * 
-	 * @return the computed coordinates
-	 * 
-	 * @post if return value = coord, then	0 <= coord[0] < width() and
-	 * 										0 <= coord[1] < height() and
-	 * 										0 <= coord[2] < depth()
+	 * @return the computed pixel position
+	 *
+	 * @pre isOffsetValid( offset )
+	 *  
+	 * @post if return value = position, then isValid(position) must be true.
 	 */
-	const vgm::Vec3i computeCoordinates( const uint32 offset ) const;
+	const vgm::Vec3i computePositionFromOffset( const uint32 offset ) const;
 	
+	/**
+	 * @brief Computes index from offset.
+	 * 
+	 * @param offset	the offset
+	 * 
+	 * @pre isOffsetValid(offset)
+	 * @pre sizeOfPixel() > 0
+	 * 
+	 * @return the index
+	 */
+	const uint32 computeIndexFromOffset( const uint32 offset ) const;	
+
+	/**
+	 * @brief Checks if the given offset is valid
+	 * 
+	 * @param offset		the offset
+	 * 
+	 * @return true if the given offset is valid, false otherwise.
+	 * Note that the given offset is valid, if and only if 0 <= offset < computeMaximumOffset()
+	 */
+	const bool isOffsetValid( const uint32 offset ) const;
+
 	//@}
 };
 
