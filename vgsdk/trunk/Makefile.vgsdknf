@@ -1,7 +1,7 @@
 VERSION=1.1
 REVISION=
 
-full-install release-install all clean release debug world dist-clean info :
+all install dep dist-all dist-clean clean help dep-all world allConfig info leaktracer mpatrol full debug release debug-install full-install release-install boundchecker unittest dsp doc tar msi printvar:
 	cd ../vgnf;		make '$@';
 	cd ../Mesher;	make '$@';
 
