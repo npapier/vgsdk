@@ -16,6 +16,35 @@ namespace vgm
 
 
 /**
+ * @name Rounding functions
+ */
+//@{
+
+/**
+ * @brief Rounds to integral value
+ * 
+ * @param inputValue	input value that must be rounded
+ * 
+ * @return the integral value nearest to inputValue rounding half-way cases away from zero, regardless of the current 
+ * rounding direction.
+ */
+VGM_API const double round( const double inputValue );
+
+/**
+ * @brief Rounds to integral value
+ * 
+ * @param inputValue	input value that must be rounded
+ * 
+ * @return the integral value nearest to inputValue rounding half-way cases away from zero, regardless of the current 
+ * rounding direction.
+ */
+VGM_API const float roundf( const float inputValue );
+
+//@}
+
+
+
+/**
  * @brief Some useful utility methods.
  * 
  * @ingroup vgmGroup
