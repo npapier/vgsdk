@@ -9,8 +9,8 @@ all install dep dist-all dist-clean clean help dep-all world allConfig info leak
 	cd ../vgAlg;		make '$@';
 	cd ../vgTrian;		make '$@';
 	cd ../vge;			make '$@';
-	cd ../gle;			make '$@';
-	cd ../glo;			make '$@';
+#	cd ../gle;			make '$@';
+#	cd ../glo;			make '$@';
 	cd ../vgeGL;		make '$@';
 	cd ../vgWX;			make '$@';
 	cd ../vgITK;		make '$@';
@@ -24,8 +24,6 @@ checkout_tags:
 	svn co http://dev-srv:8080/svn/SrcLib/vgAlg/tags/tdvpm_$(VERSION) ../vgAlg
 	svn co http://dev-srv:8080/svn/SrcLib/vgTrian/tags/tdvpm_$(VERSION) ../vgTrian
 	svn co http://dev-srv:8080/svn/SrcLib/vge/tags/tdvpm_$(VERSION) ../vge
-	svn co http://svn.gna.org/svn/gle/gle/tags/tdvpm_$(VERSION) ../gle
-	svn co http://svn.gna.org/svn/gle/glo/tags/tdvpm_$(VERSION) ../glo
 	svn co http://dev-srv:8080/svn/SrcLib/vgeGL/tags/tdvpm_$(VERSION) ../vgeGL
 	svn co http://dev-srv:8080/svn/SrcLib/vgWX/tags/tdvpm_$(VERSION) ../vgWX
 	svn co http://dev-srv:8080/svn/SrcLib/vgITK/tags/tdvpm_$(VERSION) ../vgITK
@@ -39,8 +37,8 @@ checkout:
 	svn $(REVISION) co http://dev-srv:8080/svn/SrcLib/vgAlg/trunk ../vgAlg
 	svn $(REVISION) co http://dev-srv:8080/svn/SrcLib/vgTrian/trunk ../vgTrian
 	svn $(REVISION) co http://dev-srv:8080/svn/SrcLib/vge/trunk ../vge
-	svn $(REVISION) co http://svn.gna.org/svn/gle/gle/trunk ../gle
-	svn $(REVISION) co http://svn.gna.org/svn/gle/glo/trunk ../glo
+#	svn $(REVISION) co http://svn.gna.org/svn/gle/gle/trunk ../gle
+#	svn $(REVISION) co http://svn.gna.org/svn/gle/glo/trunk ../glo
 	svn $(REVISION) co http://dev-srv:8080/svn/SrcLib/vgeGL/trunk ../vgeGL
 	svn $(REVISION) co http://dev-srv:8080/svn/SrcLib/vgWX/trunk ../vgWX
 	svn $(REVISION) co http://dev-srv:8080/svn/SrcLib/vgITK/trunk ../vgITK
@@ -54,8 +52,8 @@ update diff:
 	cd ../vgAlg;		svn '$@';
 	cd ../vgTrian;		svn '$@';
 	cd ../vge;			svn '$@';
-	cd ../gle;			svn '$@';
-	cd ../glo;			svn '$@';
+#	cd ../gle;			svn '$@';
+#	cd ../glo;			svn '$@';
 	cd ../vgeGL;		svn '$@';
 	cd ../vgWX;			svn '$@';
 	cd ../vgITK;		svn '$@';
