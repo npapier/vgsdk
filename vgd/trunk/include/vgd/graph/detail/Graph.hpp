@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,15 +6,14 @@
 #ifndef _VGD_GRAPH_DETAIL_GRAPH_HPP
 #define _VGD_GRAPH_DETAIL_GRAPH_HPP
 
-#include "vgd/vgd.hpp"
-
-#include <functional>
-
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/properties.hpp>
+#include <functional>
 
 #include "vgd/Shp.hpp"
+#include "vgd/WeakPtr.hpp"
+#include "vgd/vgd.hpp"
 
 namespace vgd
 {
@@ -96,7 +95,7 @@ namespace detail
 /**
  * @brief Edge name for DAG.
  * 
- * Edge name are used to order edge and store enable/disable state.
+ * Edge name are used to order edge, store enable/disable state and shared pointer on the child node.
  * 
  * @remarks \b Assignable and not DefaultConstructible.
  * 
@@ -107,54 +106,69 @@ struct VGD_API EdgeName
 	/**
 	 * @brief Constructor.
 	 * 
-	 * @param value		number used to order edge.
-	 * @param isEnable	true if edge is enable, false otherwise(used during traversing).
+	 * @param child		a shared pointer on the child node (the target in edge)
+	 * @param value		number used to order edge
+	 * @param isEnable	true if edge is enable, false otherwise(used during traversing)
 	 */
-	EdgeName( const int32 value = -1, const bool isEnable = true ) : // ???? -1 ???? FIXME
-		m_value		(value),
-		m_isEnable	(isEnable)
-	{
-	}
+	EdgeName(	vgd::Shp< vgd::node::Node > child = vgd::Shp<vgd::node::Node>(), const int32 value = -1,
+				const bool isEnable = true );
+
+	/**
+	 * @brief	Gets the child node.
+	 */
+	vgd::Shp<vgd::node::Node>& child();
+
+	/**
+	 * @brief	Gets the child node.
+	 */	
+	const vgd::Shp<vgd::node::Node>& child() const;
 
 	/**
 	 * @brief	Gets the number used to order edge.
 	 */
-	int32&			value( void ) 			{ return ( m_value ); }
+	int32&			value();
 
 	/**
 	 * @brief	Gets the number used to order edge.
 	 */	
-	const int32		value( void ) const		{ return ( m_value ); }
+	const int32		value() const;
 	
 	/**
 	 * @brief	Gets the enable/disable state of edge.
 	 */
-	bool&				enable( void )			{ return ( m_isEnable ); }
+	bool&			enable();
 	
 	/**
 	 * @brief	Gets the enable/disable state of edge.
 	 */
-	const bool		enable( void ) const	{ return ( m_isEnable ); }
+	const bool		enable() const;
 	
 	/**
 	 * @brief	Reverses the enable/disable state of edge.
 	 */
-	void				negate( void )			{ m_isEnable = !m_isEnable; }
+	void			negate();
 
 	/**
 	 * @brief operator < used for ordering edge.
 	 */
-	const bool		operator < ( const EdgeName& edge ) const
-	{
-		return ( m_value < edge.value() );
-	}
+	const bool		operator < ( const EdgeName& edge ) const;
+
 
 private:
 
 	/**
-	 * @brief Value that store a number used for ordering edge and a bool if edge is enabled/disabled.
+	 * @brief A shared pointer on the child node.
+	 */
+	vgd::Shp< vgd::node::Node >	m_child;
+
+	/**
+	 * @brief Value that store a number used for ordering edge.
 	 */
 	int32		m_value;
+	
+	/**
+	 * @brief A boolean value sets to true if edge is enabled (false if disabled).
+	 */
 	bool		m_isEnable;
 };
 
@@ -163,27 +177,27 @@ private:
 /**
  * @brief Vertex name used to store reference to node.
  */
-typedef boost::property<boost::vertex_name_t,	vgd::Shp<vgd::node::Node> >	VertexProperty;
+typedef boost::property<boost::vertex_name_t,	vgd::WeakPtr<vgd::node::Node> >	VertexProperty;
 
 /**
  * @brief Edge name used to store edge ordering and enable/disable state.
  */
-typedef boost::property<boost::edge_name_t,		EdgeName	>							EdgeProperty;
+typedef boost::property<boost::edge_name_t,		EdgeName	>					EdgeProperty;
 
 /**
  * @brief bglGraph store all vgd DAG(directed acyclic graph with edge ordered).
  */
 typedef boost::adjacency_list<	
 								ordered_set_by_nameS,	// edge ordered
-								boost::vecS,				// vertex_descriptor must never be invalidated ???????????????????? listS FIXME
+								boost::vecS,			// vertex_descriptor must never be invalidated (listS ? FIXME)
 								boost::bidirectionalS,	// for beiing able to get parents
 								VertexProperty,			// vertex descriptor to Node
-								EdgeProperty				// ordered in edge and enable|disable edge
+								EdgeProperty			// ordered in edge and enable|disable edge
 									>		bglGraph;
 
 typedef boost::graph_traits<bglGraph>	bglGraphTraits;
 
-typedef boost::property_map<bglGraph, boost::vertex_name_t>::type		VertexNamePropertyMap;
+typedef boost::property_map<bglGraph, boost::vertex_name_t>::type	VertexNamePropertyMap;
 typedef boost::property_map<bglGraph, boost::edge_name_t>::type		EdgeNamePropertyMap;
 //@}
 

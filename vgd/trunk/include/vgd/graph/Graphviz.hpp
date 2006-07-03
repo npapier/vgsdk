@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,9 +6,9 @@
 #ifndef _VGD_GRAPH_GRAPHVIZ_HPP
 #define _VGD_GRAPH_GRAPHVIZ_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <iostream>
+
+#include "vgd/vgd.hpp"
 
 
 
@@ -17,6 +17,8 @@ namespace vgd
 	
 namespace graph
 {
+
+
 
 struct VGD_API Graphviz
 {
@@ -35,7 +37,9 @@ struct VGD_API Graphviz
 		template <class VertexOrEdge>
 		void operator()(std::ostream& out, const VertexOrEdge& v) const 
 		{
-			out << "[label=\"" << typeid(*m_name[v].get()).name() << ", " << m_name[v]->getName() << "\"]";
+			vgd::Shp< vgd::node::Node > node( m_name[v] );
+
+			out << "[label=\"" << typeid(*node.get()).name() << ", " << node->getName() << "\"]";
 		}
 	private:
 		Name m_name;
@@ -83,6 +87,8 @@ struct VGD_API Graphviz
 	}
 	//@}
 };
+
+
 
 } // namespace graph
 

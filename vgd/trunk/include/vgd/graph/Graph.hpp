@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,10 +6,9 @@
 #ifndef _VGD_GRAPH_GRAPH_HPP
 #define _VGD_GRAPH_GRAPH_HPP
 
-#include "vgd/vgd.hpp"
-
-#include "vgd/graph/Graphviz.hpp"
 #include "vgd/graph/detail/Graph.hpp"
+#include "vgd/graph/Graphviz.hpp"
+#include "vgd/vgd.hpp"
 #include "vgd/visitor/Exceptions.hpp"
 #include "vgd/visitor/internal/dfs.hpp"
 
@@ -18,6 +17,7 @@ namespace vgd
 	namespace node
 	{
 		struct Node;
+		typedef std::list< vgd::Shp<vgd::node::Node> > NodeList;
 	}
 }
 
@@ -40,7 +40,7 @@ namespace graph
 /**
  * @brief Graph interface.
  * 
- * Useful for global management of all DAG.
+ * Useful for global management of all scene graphes.
  *
  * @remarks \b DefaultConstructible and not Assignable.
  * 
@@ -51,20 +51,20 @@ namespace graph
 struct VGD_API Graph : public Graphviz
 {
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 	
 	/**
 	 * @brief Default constructor.
 	 */
-	Graph( void );
+	Graph();
 	//@}
 	
 	
 	
 	/**
-	 * @name Operations on graph.
+	 * @name Operations on graph
 	 */
 	//@{
 
@@ -73,14 +73,12 @@ struct VGD_API Graph : public Graphviz
 	 * 
 	 * @remarks Initialize vertex descriptor of the node.
 	 */
-	void	addNode		( vgd::Shp<vgd::node::Node> node );
+	void addNode( vgd::Shp< vgd::node::Node > node );
 
 	/**
 	 * @brief Removes the vertex of a node.
-	 * 
-	 * @remarks Remove all in and out edges for this node.
 	 */
-	void	removeNode	( vgd::node::Node* pNode );
+	void	removeNode( vgd::node::Node* pNode );
 
 
 	/**
@@ -88,25 +86,25 @@ struct VGD_API Graph : public Graphviz
 	 *
 	 * @remarks This edge is append to the end of the parent edge container.
 	 */
-	void	addEdge		( vgd::node::Node* pSourceNode, vgd::node::Node* pTargetNode );
+	void	addEdge( vgd::node::Node* pSourceNode, vgd::Shp< vgd::node::Node > targetNode );
 
 	/**
 	 * @brief Adds a new edge from source to target node.
 	 * 
 	 * @remarks This edge is append to the edgeNameValue index of the parent edge container.
 	 */
-	void	addEdge	( vgd::node::Node* pSourceNode, vgd::node::Node* pTargetNode, const uint32 edgeNameValue );
+	void	addEdge( vgd::node::Node* pSourceNode, vgd::Shp< vgd::node::Node > targetNode, const uint32 edgeNameValue );
 
 
 	/**
 	 * @brief Removes an edge from pSourceNode to target node label by edgeNameValue.
 	 * 
-	 * @param bRepack : if sets to true, edge labels are repacked.
+	 * @param bRepack	if sets to true, edge labels are repacked.
 	 */
 	void	removeEdge( vgd::node::Node* pSourceNode, const uint32 edgeNameValue, const bool bRepack  );
 
 	/**
-	 * @brief Removes all edges.
+	 * @brief Removes all edges from pSourceNode.
 	 */
 	void	removeEdges( vgd::node::Node* pSourceNode );
 	//@}
@@ -114,7 +112,7 @@ struct VGD_API Graph : public Graphviz
 	
 	
 	/**
-	 * @name Children accessors.
+	 * @name Children accessors
 	 */
 	//@{
 
@@ -126,11 +124,10 @@ struct VGD_API Graph : public Graphviz
 	/**
 	 * @brief Returns all children of a node.
 	 * 
-	 * @param pSourceNode	: parent of the children.
-	 * @param outChildren	: all children found for pSourceNode(append to the end).
+	 * @param pSourceNode	parent of the children.
+	 * @param outChildren	all children found for pSourceNode(append to the end)
 	 */
-	void				getChildren(	const vgd::node::Node* pSourceNode, 
-											std::list< vgd::Shp<vgd::node::Node> >& outChildren ) const;
+	void getChildren( const vgd::node::Node* pSourceNode, vgd::node::NodeList& outChildren ) const;
 
 	/**
 	 * @brief Returns all enabled or disabled children of a node.
@@ -139,14 +136,13 @@ struct VGD_API Graph : public Graphviz
 	 * @param outChildren	all children found for pSourceNode(append to the end).
 	 * @param bGetEnabled	true to get all enabled children, false to get all disabled children.
 	 */
-	void				getEnabledChildren(	const vgd::node::Node* pSourceNode, 
-													std::list< vgd::Shp<vgd::node::Node> >& outChildren,
-													const bool bGetEnabled = true ) const;
+	void getEnabledChildren(	const vgd::node::Node* pSourceNode, vgd::node::NodeList& outChildren,
+								const bool bGetEnabled = true ) const;
 
 	/**
 	 * @brief Returns number of children.
 	 *
-	 * @param pSourceNode	: parent of the children.
+	 * @param pSourceNode	parent of the children.
 	 * @return the number of children.
 	 */
 	const uint32	getNumChildren( const vgd::node::Node* pSourceNode ) const;
@@ -155,151 +151,138 @@ struct VGD_API Graph : public Graphviz
 	
 	
 	/**
-	 * @name Parents accessors.
+	 * @name Parents accessors
 	 */
 	//@{
 
 	/**
 	 * @brief Returns parents of a node.
 	 *
-	 * @param pTargetNode	: node.
-	 * @param outParents	: all parents founded for pTargetNode(append to the end).
+	 * @param pTargetNode	node
+	 * @param outParents	all parents founded for pTargetNode(append to the end).
 	 */
-	void				getParents( const vgd::node::Node* pTargetNode, 
-										std::list< vgd::Shp<vgd::node::Node> >& outParents ) const;
+	void	getParents( const vgd::node::Node* pTargetNode, vgd::node::NodeList& outParents ) const;
 
 	/**
 	 * @brief Returns all enabled or disabled parents of a node.
 	 * 
-	 * @param pTargetNode	node.
-	 * @param outParents		all parents found for pTargetNode(append to the end).
+	 * @param pTargetNode	node
+	 * @param outParents	all parents found for pTargetNode(append to the end).
 	 * @param bGetEnabled	true to get all enabled parents, false to get all disabled parents.
 	 */
-	void				getEnabledParents(	const vgd::node::Node* pTargetNode,
-													std::list< vgd::Shp<vgd::node::Node> >& outParents,
-													const bool bGetEnabled = true ) const;						
+	void	getEnabledParents(	const vgd::node::Node* pTargetNode, vgd::node::NodeList& outParents,
+								const bool bGetEnabled = true ) const;
 
 	/**
 	 * @brief Returns number of parents.
 	 *
-	 * @param pTargetNode		: node.
-	 * @return the number of parents.
+	 * @param pTargetNode	node
+	 * @return the number of parents
 	 */
-	const uint32		getNumParents( const vgd::node::Node* pTargetNode ) const;
+	const uint32	getNumParents( const vgd::node::Node* pTargetNode ) const;
 	//@}
 	
 	
 	
 	/**
-	 * @name Edges accessors.
+	 * @name Edges accessors
 	 */
 	//@{
-	
-	/**
-	 * @brief Enables/disables edge name state used during the traversing.
-	 * 
-	 * @param pSourceNode		: parent of the children.
-	 * @param isEnable			: true to enable the traverse of all children, false to disable the traverse of all 
-	 * children.
-	 * 
-	 * Sets all edgeName of out-edges() to enable or disable (=isEnable).
-	 */
-	void				setEdges( const vgd::node::Node* pSourceNode, bool isEnable );
 
 	/**
 	 * @brief Enables/disables edge name state used during the traversing.
 	 * 
-	 * @param pSourceNode		: parent of the children.
-	 * @param setEdgeNameValue	: set of edge name value(see EdgeName class).
-	 * @param bToEnable			: all edge name founded in the setEdgeNameValue are set to bToEnable, 
-	 * others are set to (not bToEnable).
+	 * @param pSourceNode	parent of the children
+	 * @param isEnable		true to enable the traverse of all children, false to disable the traverse of all children
 	 */
-	 void 			setEdges(	const vgd::node::Node* pSourceNode, 
-	 									const std::set< int32 >& setEdgeNameValue, bool bToEnable );
+	void setEdges( const vgd::node::Node* pSourceNode, const bool isEnable );
+
+	/**
+	 * @brief Enables/disables edge name state used during the traversing.
+	 * 
+	 * @param pSourceNode 		parent of the children
+	 * @param setEdgeNameValue	set of edge name value(see EdgeName class)
+	 * @param bToEnable			all edge name founded in the setEdgeNameValue are set to bToEnable, 
+	 * 							others are set to (not bToEnable).
+	 */
+	 void setEdges( const vgd::node::Node* pSourceNode, const std::set< int32 >& setEdgeNameValue, const bool bToEnable );
 
 	/**
 	 * @brief Negate the edge name state used during the traversing.
 	 * 
-	 * @param pSourceNode		: parent of the children.
+	 * @param pSourceNode	parent of the children
 	 */
-	void				setEdgesNegate( const vgd::node::Node* pSourceNode );
+	void setEdgesNegate( const vgd::node::Node* pSourceNode );
 	//@}
 
 
 
 	/**
-	 * @name Find accessors.
+	 * @name Find accessors
 	 */
 	//@{
 	
 	/**
 	 * @brief Search a specified node in children list of a node(pSourceNode).
 	 * 
-	 * @param pSourceNode	: starting point of the searching.
-	 * @param pNodeToFind	: node to find.
+	 * @param pSourceNode	starting point of the searching.
+	 * @param pNodeToFind	node to find.
 	 * @return true if founded, false otherwise.
 	 */
-	bool	containsChild( const vgd::node::Node* pSourceNode, const vgd::node::Node* pNodeToFind );
+	const bool containsChild( const vgd::node::Node* pSourceNode, const vgd::node::Node* pNodeToFind );
 
 	/**
 	 * @brief Search a specified node in children list of a node(pSourceNode).
 	 * 
-	 * @param pSourceNode	: starting point of the searching.
-	 * @param pNodeToFind	: node to find.
+	 * @param pSourceNode	starting point of the searching
+	 * @param pNodeToFind	node to find
 	 * @return a value between 0 and getNumChildren()-1 if found, if not found then return getNumChildren().
 	 */
-	int32	findChild( const vgd::node::Node* pSourceNode, const vgd::node::Node* pNodeToFind );
+	const int32 findChild( const vgd::node::Node* pSourceNode, const vgd::node::Node* pNodeToFind );
 	//@}
 
 
 
 	/**
-	 * @name Traverse/Evaluate scene graph.
+	 * @brief Alias on vertex descriptor.
+	 */
+	typedef detail::bglGraphTraits::vertex_descriptor	vertex_descriptor;
+	
+	/**
+	 * @brief Alias on edge descriptor.
+	 */
+	typedef detail::bglGraphTraits::edge_descriptor		edge_descriptor;
+
+
+
+	/**
+	 * @name Traverse/Evaluate scene graph
 	 */
 	//@{
 	
 	/**
-	 * @brief Performs a traverse(like a depth first visit).
+	 * @brief Performs a traverse (like a depth first visit).
 	 * 
 	 * @todo Manage exceptions (like hasCycle()).
-	 * @todo Move to visitor::Traverse (to be able to remove typename NodeType template parameter ?
 	 */
-	template< typename DFSVisitor, typename NodeType >
-	void traverse( const NodeType* pSourceNode, DFSVisitor& visitor )
+	template< typename DFSVisitor >
+	void traverse( vertex_descriptor startingNode, DFSVisitor& visitor )
 	{
-		try
-		{
+//		try
+//		{
 			// Colors
+			// @todo Could be optimize (don't reallocate this vector for each traverse call).
 			std::vector< boost::default_color_type > colors( num_vertices(bglGraph()) );
-			boost::default_color_type c = boost::white_color;
+			const boost::default_color_type c = boost::white_color;
 			
 			// Index Map
 			typedef boost::property_map<detail::bglGraph, boost::vertex_index_t>::type IndexMap;
 			IndexMap indexmap = boost::get(boost::vertex_index, bglGraph());
 
-
-
-			/*// obtain a property map for the vertex_index property
-			property<vertex_index_t, std::size_t>
-			boost::property_map<detail::bglGraph, boost::vertex_index_t>::type
-			index = get(vertex_index, G);
-
-			// initialize the vertex_index property values			
-			bglGraphTraits::vertex_iterator vi, vend;
-			bglGraphTraits::vertices_size_type cnt = 0;
-			for(boost::tie(vi,vend) = boost::vertices(bglGraph()); vi != vend; ++vi)
-			{
-				//vgd::Shp<vgd::node::Node>
-				//boost::put(indexmap, *vi, cnt);
-				cnt++;
-			} //see file:///D:/CommonLib/Include/boost-1.30.2/libs/graph/doc/faq.html ??? FIXME ?????????????????? 
-			*/
-		
 			// Initialize visitor
 			visitor.initialize(	&getVertexNamePropertyMap(), &getEdgeNamePropertyMap() );
 	
 			// Depth first search
-
 			vgd::visitor::internal::depth_first_search(
 				bglGraph(),
 				visitor,
@@ -309,23 +292,23 @@ struct VGD_API Graph : public Graphviz
 					indexmap,
 					c ),
 		
-				pSourceNode->vertexDescriptor()
+				startingNode
 			 );
-		}
-		catch (vgd::visitor::HasCycle)
-		{
-			assert( false );
-			// FIXME ???
+//		}
+//		catch (vgd::visitor::HasCycle e)
+//		{
+//			throw e;
+			// FIXME
 			//return ( true );
-		}
+//		}
 	}
-		
+
 	//@}
 
 
 
 	/**
-	 * @name Debugging methods.
+	 * @name Debugging methods
 	 */
 	//@{
 	
@@ -344,115 +327,125 @@ struct VGD_API Graph : public Graphviz
 	
 protected:
 	/**
-	 * @name Some useful methods for manipulating bgl graph.
+	 * @name Some useful methods for manipulating bgl graph
 	 */
 	//@{
 
 	/**
 	 * @brief Accessor to graph.
 	 */
-	detail::bglGraph&				bglGraph( void );
+	detail::bglGraph&			bglGraph();
 	
 	/**
 	 * @brief Accessor to graph.
 	 */
-	const detail::bglGraph&		bglGraph( void ) const;
+	const detail::bglGraph&		bglGraph() const;
 
 	/**
 	 * @brief Test if out_edges().value() of vertexDescriptor are a sequence (i.e. edgeName[i].value() = i for i>=0 && i<getNumChildren()).
 	 */
-	bool	bgl_isOutEdgesPacked	( detail::bglGraphTraits::vertex_descriptor vertexDescriptor ) const;
+	const bool bgl_isOutEdgesPacked	( vertex_descriptor vertexDescriptor ) const;
 
 	/**
 	 * @brief Pack out_edges().value() of vertexDescriptor(i.e. edgeName[i].value() = i for i>=0 && i<getNumChildren()).
 	 */
-	void	bgl_packOutEdges		( detail::bglGraphTraits::vertex_descriptor vertexDescriptor );
+	void	bgl_packOutEdges( vertex_descriptor vertexDescriptor );
 
 	/**
 	 * @brief Increase by one all out_edges().value() for childs of vertexDescriptor with edgeName.value() >= edgeNameValue.
 	 */
-	void	bgl_makePlaceInOutEdges	( detail::bglGraphTraits::vertex_descriptor vertexDescriptor, const uint32 edgeNameValue );
+	void	bgl_makePlaceInOutEdges	( vertex_descriptor vertexDescriptor, const uint32 edgeNameValue );
+
+	/**
+	 * @brief Removes all out-edges from vertex descriptor of the given node.
+	 */
+	void	bgl_removeAllOutEdges( vertex_descriptor vertexDescriptor );
 
 	/**
 	 * @brief Remove the out-edge with source specified by vertex descriptor and the \c edgeName label.
 	 * 
 	 * Edge labels are repacked if bAutoRepack is true.
 	 */
-	std::pair< detail::bglGraphTraits::vertex_descriptor, bool > bgl_removeOutEdge(
-		detail::bglGraphTraits::vertex_descriptor vertexDescriptor, 
-		const uint32 edgeNameValue,
-		const bool bAutoRepack = false );
+	std::pair< vertex_descriptor, bool > bgl_removeOutEdge(	vertex_descriptor vertexDescriptor,
+															const uint32 edgeNameValue, const bool bAutoRepack = false );
 
-	/**
-	 * @brief Remove the out-edge from source to target vertex descriptors(specified by vertex descriptor).
-	 * 
-	 * @todo add const bool bAutoRepack = false option.
-	 */
-	/*bool	bgl_removeOutEdge(
-		detail::bglGraphTraits::vertex_descriptor vertexDescriptorSource,
-		detail::bglGraphTraits::vertex_descriptor vertexDescriptorTarget );*/
+//	/**
+//	 * brief Remove the out-edge from source to target vertex descriptors(specified by vertex descriptor).
+//	 * 
+//	 * todo add const bool bAutoRepack = false option.
+//	 */
+//	bool	bgl_removeOutEdge( vertex_descriptor vertexDescriptorSource, vertex_descriptor vertexDescriptorTarget );
+// FIXME
 	//@}
 
 
 
 	/**
-	 * @name Searching methods on bgl graph.
+	 * @name Searching methods on bgl graph
 	 */
 	//@{
 
 	/**
 	 * @brief Find the out-edge from specified source vertex descriptor with the \c edgeName label.
 	 */
-	std::pair< detail::bglGraphTraits::edge_descriptor, bool >	bgl_findOutEdgeWithEdgeName(
-		detail::bglGraphTraits::vertex_descriptor vertexDescriptor, const uint32 edgeNameValue ) const;
+	std::pair< edge_descriptor, bool >	bgl_findOutEdgeWithEdgeName( vertex_descriptor source, const uint32 edgeNameValue ) const;
 
 	/**
 	 * @brief Find the out-edge from specified source to target vertex descriptors.
 	 */
-	std::pair< detail::bglGraphTraits::edge_descriptor, bool >	bgl_findOutEdge(
-		detail::bglGraphTraits::vertex_descriptor vertexDescriptorSource, 
-		detail::bglGraphTraits::vertex_descriptor vertexDescriptorTarget ) const;
+	std::pair< edge_descriptor, bool >	bgl_findOutEdge( vertex_descriptor source, vertex_descriptor target ) const;
 	//@}
 
 
 
 	/**
-	 * @name Accessor to property maps.
+	 * @name Accessor to property maps
 	 */
 	//@{
 	
 	/**
 	 * @brief Accessor to property map for vertex name.
 	 */
-	detail::VertexNamePropertyMap&			getVertexNamePropertyMap	( void )		{ return ( m_vertexNamePropertyMap ); }
+	detail::VertexNamePropertyMap&			getVertexNamePropertyMap();
 
 	/**
 	 * @brief Accessor to property map for vertex name.
 	 */
-	const detail::VertexNamePropertyMap&	getVertexNamePropertyMap	( void ) const 	{ return ( m_vertexNamePropertyMap ); }
+	const detail::VertexNamePropertyMap&	getVertexNamePropertyMap() const;
 		
 	/**
 	 * @brief Accessor to property map for edge name.
 	 */
-	detail::EdgeNamePropertyMap&				getEdgeNamePropertyMap		( void )		{ return ( m_edgeNamePropertyMap ); }
+	detail::EdgeNamePropertyMap&			getEdgeNamePropertyMap();
 
 	/**
 	 * @brief Accessor to property map for edge name.
 	 */
-	const detail::EdgeNamePropertyMap&		getEdgeNamePropertyMap		( void ) const 	{ return ( m_edgeNamePropertyMap ); }
+	const detail::EdgeNamePropertyMap&		getEdgeNamePropertyMap() const;
 	//@}
 
 
 
 private:
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
-	detail::bglGraph						m_graph;
+	detail::bglGraph				m_graph;
 	
-	detail::VertexNamePropertyMap		m_vertexNamePropertyMap;
+	detail::VertexNamePropertyMap	m_vertexNamePropertyMap;
 	detail::EdgeNamePropertyMap		m_edgeNamePropertyMap;
+
+	/**
+	 * @brief Type definition for container of vertex descriptors.
+	 */
+	typedef std::list< vertex_descriptor >	VertexDescriptorListType;
+	
+	/**
+	 * @brief Container of vertex descriptors no more associated to a node (because the node has been deleted).
+	 */
+	VertexDescriptorListType		m_freeVertexDescriptors;
+
 	//@}
 
 	/**
@@ -461,12 +454,14 @@ private:
 	template <typename edge_descriptor>
 	struct true_edge_predicate 
 	{
-		bool operator()( const edge_descriptor& e ) const 
+		const bool operator()( const edge_descriptor& e ) const 
 		{
-			return ( true );
+			return true;
 		}
 	};
 };
+
+
 
 } // namespace graph
 	
