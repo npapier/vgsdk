@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,8 +8,8 @@
 
 #include <vector>
 
-#include "vgd/vgd.hpp"
 #include "vgd/visitor/Traverse.hpp"
+#include "vgd/vgd.hpp"
 
 
 
@@ -42,7 +42,7 @@ struct NodeCollector : public Traverse<Visitors>
 	/**
 	 * @brief Default constructor.
 	 */
-	NodeCollector( bool bUseEdgeName = true, bool bVisitForest = false ) :
+	NodeCollector( const bool bUseEdgeName = true, const bool bVisitForest = false ) :
 		vgd::visitor::Traverse<Visitors>( bUseEdgeName, bVisitForest )
 	{
 		reset();
@@ -52,7 +52,7 @@ struct NodeCollector : public Traverse<Visitors>
 	/**
 	 * @brief Reset what it should in order to reuse this visitor.
 	 */
-	void	reset	()
+	void reset()
 	{
 		m_containerNodes.clear();
 	}
@@ -70,7 +70,7 @@ struct NodeCollector : public Traverse<Visitors>
 	 * 
 	 * The first node encountered is at the beginning of the vector.
 	 */
-	const vgd::node::PNodeList&	getNodes() const { return ( m_containerNodes ); }
+	const vgd::node::PNodeList&	getNodes() const { return m_containerNodes; }
 	
 	//@}
 
@@ -83,7 +83,7 @@ struct NodeCollector : public Traverse<Visitors>
 	template< typename Vertex , typename Graph >
 	void discover_vertex( Vertex u, const Graph& g ) /*const*/
 	{
-		vgd::Shp< vgd::node::Node > node = getNode(u);
+		vgd::Shp< vgd::node::Node > node( getNode(u) );
 		
 		m_containerNodes.push_back( node.get() );
 	}

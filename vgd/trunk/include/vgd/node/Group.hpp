@@ -117,7 +117,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	template< typename DFSVisitor >
 	void	traverse	( DFSVisitor& visitor ) const
 	{
-		graph().traverse( this, visitor );
+		graph().traverse( vertexDescriptor(), visitor );
 	}
 
 	//@}

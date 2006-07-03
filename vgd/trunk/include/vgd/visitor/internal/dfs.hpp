@@ -68,9 +68,9 @@ namespace internal
   template <class Visitor, class Graph>
   class DFSVisitorConcept {
 
-  DFSVisitorConcept() {} 							// modification for vgsdk
+  DFSVisitorConcept() {} 						// modification for vgsdk
 //  DFSVisitorConcept( DFS) {} 					// modification for vgsdk   
-															// to remove warnings (level 4) C4510 and C4610 under VS7.x.
+												// to remove warnings (level 4) C4510 and C4610 under VS7.x.
   public:
     void constraints() {
       //function_requires< CopyConstructibleConcept<Visitor> >();     modification for vgsdk    FIXME

@@ -5,7 +5,6 @@
 
 #include "vgd/node/Node.hpp"
 
-// #include "vgd/graph/Graph.hpp" FIXME
 #include "vgd/node/Group.hpp"
 
 
@@ -22,19 +21,25 @@ namespace node
 
 
 
+
 Node::~Node() 
 {
+	// Updates boost::graph
+	graph().removeNode( this );
+	
+	// Signal invocation
+	m_destructorSignal(this);
 }
 
 
 
-Node::Node( const std::string nodeName ) :
-	vgd::basic::Object()
+Node::Node( const std::string nodeName )
+:	vgd::basic::Object()
 {
-	// Add field
+	// Adds field
 	addField( new FNameType(getFName()) );
 	
-	// Add dirty flag
+	// Adds dirty flag
 	addDirtyFlag( getDFNode() );
 
 	// Default value : see setToDefaults().
@@ -42,6 +47,28 @@ Node::Node( const std::string nodeName ) :
 		
 	// Links
 	link( getDFNode() );
+}
+
+
+
+/**
+ * @todo Implements it
+ */
+Node::Node( const vgd::node::Node& )
+{
+	assert( false );
+}
+
+
+
+/**
+ * @todo Implements it
+ */
+vgd::node::Node& Node::operator =( const vgd::node::Node& )
+{
+	assert( false );
+		
+	return *this;
 }
 
 
@@ -140,26 +167,33 @@ const std::string Node::getDFNode()
 
 
 
+Node::ConnectionType Node::connect( SignalDestructorType::slot_function_type slot )
+{
+	return m_destructorSignal.connect( slot );
+}
+
+
+
 vgd::graph::Graph& Node::graph()
 {
 	// Graph data
 	static vgd::graph::Graph m_graph;
 
-	return ( m_graph );
+	return m_graph;
 }
 
 
 
-vgd::graph::detail::bglGraphTraits::vertex_descriptor& Node::vertexDescriptor( void )
+vgd::node::Node::vertex_descriptor& Node::vertexDescriptor()
 {
-	return ( m_vertexDescriptor );
+	return m_vertexDescriptor;
 }
 
 
 
-const vgd::graph::detail::bglGraphTraits::vertex_descriptor& Node::vertexDescriptor( void ) const
+const vgd::node::Node::vertex_descriptor& Node::vertexDescriptor() const
 {
-	return ( m_vertexDescriptor );
+	return m_vertexDescriptor;
 }
 
 
@@ -168,7 +202,7 @@ vgd::basic::ClassRegistry< vgd::node::Node >& Node::getClassRegistry( void )
 {
 	static vgd::basic::ClassRegistry< vgd::node::Node > nodeRegistry;
 
-	return ( nodeRegistry );
+	return nodeRegistry;
 }
 
 

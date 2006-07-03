@@ -1,9 +1,11 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/node/Group.hpp"
+
+#include "vgd/graph/Graph.hpp"
 
 
 
@@ -59,7 +61,7 @@ void Group::setOptionalsToDefaults()
 
 void Group::addChild( vgd::Shp<vgd::node::Node> node )
 {
-	graph().addEdge( this, node.get() );
+	graph().addEdge( this, node );
 
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
@@ -76,11 +78,11 @@ void Group::insertChild	( vgd::Shp<Node> node, const int32 newChildIndex )
 
 	if ( newChildIndex == getNumChildren() )
 	{
-		graph().addEdge( this, node.get() );
+		graph().addEdge( this, node );
 	}
 	else
 	{
-		graph().addEdge( this, node.get(), newChildIndex );
+		graph().addEdge( this, node, newChildIndex );
 	}
 	
 	getDirtyFlag(getDFChildren())->dirty();
@@ -240,7 +242,7 @@ void Group::updateGraph( void )
  * 
  * Parents nodes are invalidated when this node is invalid.
  */
-bool Group::computeBoundingBox( const vgm::MatrixR& transformation /* not used */)
+bool Group::computeBoundingBox( const vgm::MatrixR& /* transformation */)
 {
 	// STEP 1: init.
 	bool	bRetVal;

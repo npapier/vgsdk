@@ -6,6 +6,7 @@
 #include "vgd/node/Switch.hpp"
 
 #include "vgd/field/Integer.hpp"
+#include "vgd/graph/Graph.hpp"
 
 
 
@@ -70,9 +71,9 @@ void Switch::setWhichChild( const int32 whichChild )
 
 void Switch::updateGraph( void )
 {
-#ifdef _DEBUG
-	std::string name = getName();
-#endif
+//#ifdef _DEBUG
+//	std::string name = getName();
+//#endif
 
 	bool bChildren				= getDirtyFlag(getDFChildren())->isDirty();
 	bool bChildrenSelection		= getDirtyFlag(getDFChildrenSelection())->isDirty();

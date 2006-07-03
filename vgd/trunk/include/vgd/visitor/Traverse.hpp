@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,11 +6,12 @@
 #ifndef _VGD_VISITOR_TRAVERSE_HPP
 #define _VGD_VISITOR_TRAVERSE_HPP
 
-#include "vgd/vgd.hpp"
-
-#include "vgd/node/Group.hpp"
 #include "vgd/graph/detail/Graph.hpp"
+//#include "vgd/graph/Graph.hpp"			// @todo FIXME
+#include "vgd/node/Group.hpp"
+#include "vgd/visitor/Exceptions.hpp"
 #include "vgd/visitor/internal/dfs.hpp"
+#include "vgd/vgd.hpp"
 
 
 
@@ -33,16 +34,16 @@ template< typename Visitors = boost::null_visitor>
 struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 {
 	/**
-	 * @name Constructor/Initialization.
+	 * @name Constructor/Initialization
 	 */
 	//@{
 	
 	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 * 
 	 * @remarks This constructor should call reset(), where initialization are done.
 	 */
-	Traverse( bool bUseEdgeName = true, bool bVisitForest = false ) :
+	Traverse( const bool bUseEdgeName = true, const bool bVisitForest = false ) :
 		m_bUseEdgeName(	bUseEdgeName ),
 		m_bVisitForest(	bVisitForest )
 	{
@@ -55,7 +56,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 * @remarks Typically restore initial values of private data used during traversing(like node statistics for
 	 * vgd::visitor::Statistics class.
 	 */
-	void reset( void )
+	void reset()
 	{}
 	//@}
 
@@ -77,14 +78,14 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 
 
 	/**
-	 * @name Extended traverse accessors.
+	 * @name Extended traverse accessors
 	 */
 	//@{
 	
 	/**
 	 * @brief Returns the visit forest flag.
 	 */
-	bool visitForest( void ) const			{ return ( m_bVisitForest ); }
+	bool visitForest() const					{ return m_bVisitForest; }
 	
 	/**
 	 * @brief Sets the visit forest flag.
@@ -92,7 +93,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 * @param bVisitForest true to traverse a set of depth-first trees which together form the depth-first forest, 
 	 * false to travese only the first depth-first tree.
 	 */
-	void visitForest( bool bVisitForest )	{ m_bVisitForest = bVisitForest; }
+	void visitForest( const bool bVisitForest )	{ m_bVisitForest = bVisitForest; }
 
 	/**
 	 * @brief Returns the edge name usage.
@@ -100,7 +101,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 * @return bUseEdgeName false to traverse all children, true to activate the normal behavior of group node(traverse only
 	 * selected children).
 	 */
-	bool useEdgeName( void ) const			{ return ( m_bUseEdgeName ); }
+	const bool useEdgeName() const				{ return m_bUseEdgeName; }
 	
 	/**
 	 * @brief Sets the edge name usage.
@@ -108,22 +109,24 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 * @param bUseEdgeName false to traverse all children, true to activate the normal behavior of group node(traverse only
 	 * selected children).
 	 */
-	void useEdgeName( bool bUseEdgeName )	{ m_bUseEdgeName = bUseEdgeName; }
+	void useEdgeName(const bool bUseEdgeName )	{ m_bUseEdgeName = bUseEdgeName; }
 	//@}
 
 
 
 	/**
-	 * @name Helpers.
+	 * @name Helpers
 	 */
 	//@{
 	
 	/**
 	 * @brief Returns node from a vertex.
 	 */
-	vgd::Shp< vgd::node::Node >		getNode( vgd::graph::detail::bglGraphTraits::vertex_descriptor u ) const
-	{ 
-		return ( (*m_vertexNamePropertyMap)[u] ); 
+	vgd::Shp< vgd::node::Node > getNode( vgd::graph::detail::bglGraphTraits::vertex_descriptor u ) const
+	{
+		vgd::Shp< vgd::node::Node > node( (*m_vertexNamePropertyMap)[u] );
+
+		return node;
 	}
 
 	//@}
@@ -175,19 +178,19 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 
 
 	/**
-	 * @name Extended traverse accessors.
+	 * @name Extended traverse accessors
 	 */
 	//@{
 	
 	/**
 	 * @brief Returns if the current vertex must be visit(see dfs.hpp).
 	 */
-	bool visitVertex( void ) const			{ return ( m_bVisitVertex ); }
+	const bool visitVertex() const				{ return m_bVisitVertex; }
 
 	/**
 	 * @brief Sets if the current vertex must be visit(see dfs.hpp).
 	 */
-	void visitVertex( bool bVisitVertex )	{ m_bVisitVertex = bVisitVertex; }
+	void visitVertex( const bool bVisitVertex )	{ m_bVisitVertex = bVisitVertex; }
 	//@}
 
 
@@ -199,9 +202,9 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	/**
 	 * @brief Returns edgeName from an edge.
 	 */
-	vgd::graph::detail::EdgeName	getEdgeName( vgd::graph::detail::bglGraphTraits::edge_descriptor e ) const
+	vgd::graph::detail::EdgeName getEdgeName( vgd::graph::detail::bglGraphTraits::edge_descriptor e ) const
 	{ 
-		return ( (*m_edgeNamePropertyMap)[e] );
+		return (*m_edgeNamePropertyMap)[e];
 	}
 	//@}
 
@@ -213,7 +216,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 	 * @remarks Called by vgd::graph::Graph::traverse()
 	 */
 	void initialize(	vgd::graph::detail::VertexNamePropertyMap*	vertexNamePropertyMap,
-							vgd::graph::detail::EdgeNamePropertyMap*	edgeNamePropertyMap )
+						vgd::graph::detail::EdgeNamePropertyMap*	edgeNamePropertyMap )
 	{
 		m_vertexNamePropertyMap	= vertexNamePropertyMap;
 		m_edgeNamePropertyMap	= edgeNamePropertyMap;
@@ -223,7 +226,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 
 private:
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 	bool	m_bUseEdgeName;
@@ -232,7 +235,7 @@ private:
 
 
 	vgd::graph::detail::VertexNamePropertyMap*		m_vertexNamePropertyMap;
-	vgd::graph::detail::EdgeNamePropertyMap*			m_edgeNamePropertyMap;
+	vgd::graph::detail::EdgeNamePropertyMap*		m_edgeNamePropertyMap;
 
 	/**
 	 * @brief Temporary value used during traverse.

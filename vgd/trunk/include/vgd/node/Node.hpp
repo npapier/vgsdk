@@ -6,20 +6,38 @@
 #ifndef _VGD_NODE_NODE_HPP
 #define _VGD_NODE_NODE_HPP
 
-#include "vgd/vgd.hpp"
+// @todo FIXME pragma warning
+#pragma warning(push)
+#pragma warning(disable:4511 4512)
+#include <boost/signals.hpp>
+#pragma warning(pop)
 
 #include <vector>
 
-#include "vgd/Shp.hpp"
-#include "vgd/EnableShpFromThis.hpp"
 #include "vgd/basic/ClassRegistry.hpp"
 #include "vgd/basic/IndexableClass.hpp"
 #include "vgd/basic/Object.hpp"
 #include "vgd/basic/RegisterNode.hpp"
+#include "vgd/EnableShpFromThis.hpp"
 #include "vgd/field/FieldManager.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/graph/Graph.hpp"
-//#include "vgd/graph/detail/Graph.hpp" FIXME
+//#include "vgd/graph/detail/Graph.hpp" @todo FIXME
+#include "vgd/Shp.hpp"
+#include "vgd/vgd.hpp"
+
+namespace vgd
+{
+//	namespace graph
+//	{
+//		struct Graph;
+//	}
+
+	namespace node
+	{
+		struct Node;
+	}
+}
 
 
 
@@ -41,33 +59,23 @@
  * 
  * \sa g_nodes for more details.
  */
-
-
-
 namespace vgd
 {
 
-//namespace graph
-//{
-//	struct Graph;
-//} FIXME
-
 namespace node
 {
-
-struct Node;
 
 
 
 /**
  * @brief Meta helpers.
  */
-#define META_NODE_HPP( nodeType )	template< typename nodeType > friend struct vgd::node::Factory; \
- \
-/** @brief Node factory.Create a node with all fields sets to defaults values */ \
+#define META_NODE_HPP( nodeType )	/** \@brief Node factory\n
+* Create a node with all fields sets to defaults values */ \
 static vgd::Shp< nodeType > create( const std::string nodeName = "NoName" ); \
  \
-/** @brief Node factory. Create a node with all fields sets to defaults values (optionals fiels too).*/ \
+/** \@brief Node factory\n
+ *  Create a node with all fields sets to defaults values (optionals fiels too).*/ \
 static vgd::Shp< nodeType > createWhole( const std::string nodeName = "DefaultWhole" ); \
  \
 IMPLEMENT_INDEXABLE_CLASS_HPP( , nodeType ); \
@@ -79,42 +87,30 @@ static const vgd::basic::RegisterNode<nodeType> m_registrationInstance;
 /**
  * @brief Meta helpers.
  */
-#define META_NODE_CPP( nodeType ) vgd::Shp< nodeType > nodeType::create( const std::string nodeName ) \
+#define META_NODE_CPP( nodeType )	vgd::Shp< nodeType > nodeType::create( const std::string nodeName ) \
 { \
-	vgd::node::Factory< nodeType > nodeTypeFactory; \
-	return ( nodeTypeFactory.create(nodeName) ); \
+	vgd::Shp< nodeType > node( new nodeType(nodeName) ); \
+	\
+	/* Adds a vertex (i.e. a node) to boost::graph */ \
+	graph().addNode( node ); \
+	\
+	node->setToDefaults(); \
+	\
+	return node; \
 } \
  \
 vgd::Shp< nodeType > nodeType::createWhole( const std::string nodeName ) \
 { \
-	vgd::node::Factory< nodeType > nodeTypeFactory; \
-	vgd::Shp< nodeType > node( nodeTypeFactory.create(nodeName) ); \
+	vgd::Shp< nodeType > node = nodeType::create(nodeName); \
+	\
 	node->setOptionalsToDefaults(); \
-	return ( node ); \
+	\
+	return node; \
 } \
  \
 IMPLEMENT_INDEXABLE_CLASS_CPP( , nodeType ); \
  \
 const vgd::basic::RegisterNode<nodeType> nodeType::m_registrationInstance;
-
-
-
-/**
- * @brief Node factory class.
- */
-template< typename nodeType >
-struct Factory
-{
-	vgd::Shp< nodeType > create( const std::string nodeName )
-	{
-		vgd::Shp< nodeType > node( new nodeType(nodeName) );
-		node->graph().addNode( node );
-		
-		node->setToDefaults();
-
-		return ( node );
-	}
-};
 
 
 
@@ -177,7 +173,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	virtual int32& getClassIndex()=0;
 
 	/**
-	 * @name Repository for registered nodes.
+	 * @name Repository for registered nodes
 	 */
 	//@{
 
@@ -191,7 +187,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 
 
 	/**
-	 * @name Destructor.
+	 * @name Destructor
 	 */
 	//@{
 	
@@ -204,7 +200,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 
 
 	/**
-	 * @name Accessors to parents.
+	 * @name Accessors to parents
 	 */
 	//@{
 
@@ -240,7 +236,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 
 
 	/**
-	 * @name Accessors to field name.
+	 * @name Accessors to field name
 	 */
 
 	/**
@@ -270,7 +266,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 
 
 	/**
-	 * @name Accessors to field multiAttributeIndex.
+	 * @name Accessors to field multiAttributeIndex
 	 */
 	//@{
 
@@ -285,10 +281,10 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Fields names enumeration
 	 */
 	//@{
-	
+
 	/**
 	 * @brief Returns the name of field \c name.
 	 * 
@@ -301,9 +297,9 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	//@}
 	
 
-	
+
 	/**
-	 * @name Dirty flags enumeration.
+	 * @name Dirty flags enumeration
 	 */
 	//@{
 	
@@ -314,11 +310,39 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 
 	//@}
 
+
+
+	/**
+	 * @name Signals
+	 */
+	//@{
+
+	/**
+	 * @brief Alias on signal associated to the destructor of node (i.e. ~Node).
+	 */
+	typedef boost::signal<void (vgd::node::Node*) >	SignalDestructorType;
+
+	/**
+	 * @brief Alias on signal connection.
+	 */
+	typedef boost::signals::connection					ConnectionType;
+
+	/**
+	 * @brief Connects the signal (SignalDestructorType) to the incoming slot.
+	 * 
+	 * @param slot	incoming slot
+	 * 			
+	 * @return the connection object associated to the signal
+	 */
+	ConnectionType connect( SignalDestructorType::slot_function_type slot );
 	
+	//@}
+
+
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
@@ -344,7 +368,7 @@ protected:
 
 
 	/**
-	 * @name Graph accessors methods.
+	 * @name Graph accessors methods
 	 */
 	//@{
 
@@ -359,32 +383,60 @@ protected:
 	 * @todo Remove this.
 	 */
 	friend struct vgd::graph::Graph;
+	
+	/**
+	 * @brief Alias on vertex descriptor.
+	 */
+	typedef vgd::graph::detail::bglGraphTraits::vertex_descriptor		vertex_descriptor;
 
 	/**
 	 * @brief Accessor to vertex descriptor of this node.
 	 */
-	vgd::graph::detail::bglGraphTraits::vertex_descriptor&			vertexDescriptor( void );
+	vertex_descriptor&			vertexDescriptor();
 
 	/**
 	 * @brief Accessor to vertex descriptor of this node.
 	 */
-	const vgd::graph::detail::bglGraphTraits::vertex_descriptor&	vertexDescriptor( void ) const;
+	const vertex_descriptor&	vertexDescriptor() const;
 	//@}
 
 
 
 private:
-	
+
 	/**
-	 * @name Graph typedef.
+	 * @name Graph
 	 */
 	//@{
 	
 	/**
 	 * @brief boost vertex descriptor for this node.
 	 */
-	vgd::graph::detail::bglGraphTraits::vertex_descriptor	m_vertexDescriptor;
+	vertex_descriptor	m_vertexDescriptor;
 
+	//@}
+
+
+	/**
+	 * @name Signals
+	 */
+	//@{
+
+	/**
+	 * @brief Signal for destructor
+	 */
+	SignalDestructorType		m_destructorSignal;
+	
+protected:
+	/**
+	 * @brief Copy constructor
+	 */
+	Node( const vgd::node::Node& );
+	
+	/**
+	 * @brief Assignment operator
+	 */
+	Node& operator =( const vgd::node::Node& );
 	//@}
 };
 

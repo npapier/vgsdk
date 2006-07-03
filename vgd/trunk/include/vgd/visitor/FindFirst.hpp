@@ -6,11 +6,10 @@
 #ifndef _VGD_VISITOR_FINDFIRST_HPP
 #define _VGD_VISITOR_FINDFIRST_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <utility>
 
 #include "vgd/node/Group.hpp"
+#include "vgd/vgd.hpp"
 #include "vgd/visitor/Traverse.hpp"
 
 
