@@ -35,16 +35,28 @@ const bool IImage::isEmpty() const
 
 const vgm::Vec3i IImage::computeMaximumPosition() const
 {
-	const vgm::Vec3i size( width(), height(), depth() );
-	
-	return size;
+	return getSize3i();
 }
 
 
 
-const vgm::Vec3i IImage::getSize() const
+const vgm::Vec3i IImage::getSize3i() const
 {
-	return computeMaximumPosition();
+	const vgm::Vec3i size( width(), height(), depth() );
+	
+	return size;	
+}
+
+
+
+const vgm::Vec3f IImage::getSize3f() const
+{
+	const vgm::Vec3f size(
+		static_cast<float>( width() ),
+		static_cast<float>( height() ),
+		static_cast<float>( depth() ) );
+
+	return size;
 }
 
 

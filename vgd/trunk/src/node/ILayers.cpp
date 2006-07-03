@@ -1,10 +1,11 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/node/ILayers.hpp"
 
+#include <limits>
 #include <sstream>
 #include "vgd/field/TAccessors.hpp"
 
@@ -19,7 +20,9 @@ namespace node
 
 
 ILayers::ILayers( const std::string nodeName ) :
-	vgd::node::Kit( nodeName )
+	vgd::node::Kit		( nodeName	),
+	m_numLayers			( 0			),
+	m_firstImageIndex	( std::numeric_limits<int32>::max() )
 {
 	// Add field
 	addField( new FScaleFactorType(getFScaleFactor()) );
@@ -84,9 +87,12 @@ void ILayers::setTranslation( const vgm::Vec3f translation )
 
 void ILayers::createLayers( const int32 num )
 {
-	const int32 index = 0;
-	
 	assert( num >= 1 );
+	
+	// Stores the number of layers
+	m_numLayers = num;
+
+	const int32 index = 0;
 
 #ifdef _DEBUG
 	for(	int32 i = index;
@@ -99,7 +105,7 @@ void ILayers::createLayers( const int32 num )
 #endif
 
 	// Add fields.
-	int32	iMax = index + num;
+	const int32	iMax = index + num;
 	
 	for(	int32 i = index;
 			i < iMax;
@@ -141,15 +147,18 @@ void ILayers::createLayers( const int32 num )
 
 const int32	ILayers::getNumLayers() const
 {
-	int32 i = 0;
-	while ( isField( getFIImage(i) ) )
-	{
-		assert( isField( getFComposeOperator(i) ) );
-		
-		++i;
-	}
-	
-	return ( i );
+	return m_numLayers;
+
+// @todo remove me
+//	int32 i = 0;
+//	while ( isField( getFIImage(i) ) )
+//	{
+//		assert( isField( getFComposeOperator(i) ) );
+//		
+//		++i;
+//	}
+//
+//	return i;
 }
 
 
@@ -168,6 +177,9 @@ vgd::field::EditorRW< vgd::node::ILayers::FIImageType > ILayers::getFIImageRW( c
 {
 	assert( index >= 0 && "Invalid index." );
 	assert( index < getNumLayers() && "Invalid index." );
+	
+	// Invalidates first image index cache
+	m_firstImageIndex = std::numeric_limits<int32>::max();
 		
 	return ( getFieldRW< FIImageType >(getFIImage( index )) );
 }
@@ -243,39 +255,65 @@ const vgd::Shp< vgd::basic::IImage > ILayers::gethIImage( const int32 index ) co
 
 
 
-const int32 ILayers::gethFirstIImage() const throw()
+/**
+ * @todo Returns getNumLayers() instead -1
+ */
+const int32 ILayers::gethFirstIImage() const
 {
-	for(	int32	i	= 0,
-					iEnd= getNumLayers();
-			i != iEnd;
-			++i )
+	// Tests first image index computation cache
+	if ( m_firstImageIndex == std::numeric_limits<int32>::max() )
 	{
-		vgd::Shp< vgd::basic::IImage > image( gethIImage(i) );
-		
-		if ( image != 0 )
+		// First image index cache is invalid => compute it
+		for(	int32	i	= 0,
+						iEnd= getNumLayers();
+				i != iEnd;
+				++i )
 		{
-			return i;
+			vgd::Shp< vgd::basic::IImage > image( gethIImage(i) );
+			
+			if ( image != 0 )
+			{
+				// Found
+				m_firstImageIndex = i;
+				break;
+			}
+		}
+		
+		// Tests if not found after the loop
+		if ( m_firstImageIndex == std::numeric_limits<int32>::max() )
+		{
+			// not found
+			m_firstImageIndex = -1;
 		}
 	}
 	
-	return ( -1 );
+	// First image index cache is valid or has been computed
+	assert( m_firstImageIndex != std::numeric_limits<int32>::max() );
+	
+	return m_firstImageIndex;
 }
-	
 
+
+
+const bool ILayers::isEmpty() const
+{
+	const bool retVal = (gethFirstIImage() == -1);
 	
+	return retVal;
+}
+
+
+
 const vgm::Vec3i ILayers::gethIImageSize3i( const int32 index ) const
 {
 	assert( index >= 0 && "Invalid index." );
 	assert( index < getNumLayers() && "Invalid index." );
 		
 	vgd::field::EditorRO< FIImageType > iimageRO( getFIImageRO( index ) );
-
-	vgm::Vec3i retVal(
-		iimageRO->getValue()->width(),
-		iimageRO->getValue()->height(),
-		iimageRO->getValue()->depth() );
-
-	return ( retVal );
+	
+	const vgm::Vec3i retVal( iimageRO->getValue()->getSize3i() );
+	
+	return retVal;
 }
 
 
@@ -287,13 +325,46 @@ const vgm::Vec3f ILayers::gethIImageSize3f( const int32 index ) const
 		
 	vgd::field::EditorRO< FIImageType > iimageRO( getFIImageRO( index ) );
 
-	vgm::Vec3f retVal(
-		static_cast<float>(iimageRO->getValue()->width()),
-		static_cast<float>(iimageRO->getValue()->height()),
-		static_cast<float>(iimageRO->getValue()->depth())
-		);
+	vgm::Vec3f retVal( iimageRO->getValue()->getSize3f() );
 
-	return ( retVal );
+	return retVal;
+}
+
+
+
+const uint32 ILayers::gethSliceCount( const ::vgd::basic::SliceType sliceType ) const
+{
+	uint32 retVal;
+	
+	const int32 imageIndex( gethFirstIImage() );
+	
+	if ( imageIndex == -1 )
+	{
+		retVal = 0;
+	}
+	else
+	{
+		switch( sliceType )
+		{
+			case ::vgd::basic::AXIAL_SLICE:
+				retVal = gethIImageSize3i( imageIndex )[2];
+				break;
+				
+			case ::vgd::basic::FRONTAL_SLICE:
+				retVal = gethIImageSize3i( imageIndex )[1];
+				break;
+			
+			case ::vgd::basic::SAGITTAL_SLICE:
+				retVal = gethIImageSize3i( imageIndex )[0];
+				break;
+			
+			default:
+				assert( false && "Unknown type of slice." );
+				retVal = 0;
+		}
+	}
+	
+	return retVal;
 }
 
 

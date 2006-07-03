@@ -163,7 +163,7 @@ struct VGD_API IImage
 	 * 
 	 * @return the position of the last pixel in the image
 	 * 
-	 * @remarks computeMaximumPosition() == getSize()
+	 * @remarks computeMaximumPosition() == getSize3i()
 	 */
 	const vgm::Vec3i computeMaximumPosition() const;
 	
@@ -172,9 +172,16 @@ struct VGD_API IImage
 	 * 
 	 * @return the size of the image.
 	 * 
-	 * @remarks computeMaximumPosition() == getSize()
+	 * @remarks computeMaximumPosition() == getSize3i()
 	 */
-	const vgm::Vec3i getSize() const;
+	const vgm::Vec3i getSize3i() const;
+
+	/**
+	 * @brief Retrives the size of the image.
+	 * 
+	 * @return the size of the image.
+	 */
+	const vgm::Vec3f getSize3f() const;
 
 	/**
 	 * @brief Computes the whole number of pixels in the image.

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,6 +6,7 @@
 #ifndef _VGD_NODE_ILAYERS_HPP
 #define _VGD_NODE_ILAYERS_HPP
 
+#include "vgd/basic/ImageUtilities.hpp"
 #include "vgd/field/Image.hpp"
 #include "vgd/field/TSingleField.hpp"
 #include "vgd/field/Vector.hpp"
@@ -111,7 +112,7 @@ namespace node
 struct VGD_API ILayers : public vgd::node::Kit
 {
 	/**
-	 * @name Dynamic creation/destruction of layer.
+	 * @name Dynamic creation/destruction of layer
 	 */
 	//@{
 	
@@ -130,8 +131,6 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @brief Returns the number of layers actually used by this node.
 	 * 
 	 * @return The number of texture layers.
-	 * 
-	 * @remarks This method is relatively slow.
 	 */
 	const int32	getNumLayers() const;
 	//@}
@@ -139,7 +138,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 
 
 	/**
-	 * @name Accessors to field iimage*.
+	 * @name Accessors to field iimage*
 	 */
 	//@{
 
@@ -176,7 +175,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	
 
 	/**
-	 * @name Accessors to field composeOperator*.
+	 * @name Accessors to field composeOperator*
 	 */
 	//@{
 
@@ -189,7 +188,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 		REPLACE,
 		INTERPOLATE,
 		SCISSOR,
-		//MODULATE,					FIXME no more supported.
+		//MODULATE,					@todo no more supported.
 		
 		COMPOSE_FUNCTION_DEFAULT = COMPOSE_FUNCTION_NONE
 
@@ -254,7 +253,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 
 
 	/**
-	 * @name Accessors to field translation.
+	 * @name Accessors to field translation
 	 */
 	//@{
 
@@ -283,7 +282,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 
 
 	/**
-	 * @name Accessors to field scaleFactor.
+	 * @name Accessors to field scaleFactor
 	 */
 	//@{
 
@@ -312,7 +311,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 
 
 	/**
-	 * @name High level accessors to fields of this node.
+	 * @name High level accessors to fields of this node
 	 */
 	//@{
 
@@ -354,7 +353,14 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * 
 	 * @return Returns index of the first non empty layer, otherwise -1 is returned.
 	 */
-	const int32 gethFirstIImage() const throw();
+	const int32 gethFirstIImage() const;
+	
+	/**
+	 * @brief	Tests if all layers are empty.
+	 * 
+	 * @return true if all layers are empty, false if otherwise.
+	 */
+	const bool isEmpty() const;
 
 	/**
 	 * @brief Returns the image size used by the specified layer.
@@ -375,6 +381,15 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @return 			the image size used by the specified layer.
 	 */
 	const vgm::Vec3f gethIImageSize3f( const int32 index ) const;
+
+	/**
+	 * @brief	Retrieves the number of slices for the given slice type
+	 * 
+	 * @param	sliceType	a type of slices
+	 * 
+	 * @return	the number of slices
+	 */
+	const uint32 gethSliceCount( const ::vgd::basic::SliceType sliceType ) const;	
 	
 	/**
 	 * @brief Sets the compose operator used by the specified layer.
@@ -401,7 +416,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Fields names enumeration
 	 */
 	//@{
 	
@@ -446,7 +461,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	
 
 	/**
-	 * @name Dirty flags enumeration.
+	 * @name Dirty flags enumeration
 	 */
 	//@{
 
@@ -470,7 +485,7 @@ struct VGD_API ILayers : public vgd::node::Kit
 	
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
@@ -484,6 +499,18 @@ protected:
 	void	setOptionalsToDefaults();
 
 	//@}
+	
+private:
+
+	/**
+	 * @brief Number of layers
+	 */
+	int32			m_numLayers;
+	
+	/**
+	 * @brief	Index of the first image
+	 */
+	mutable int32	m_firstImageIndex;
 };
 
 
