@@ -1,17 +1,20 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_SERVICE_SERVICE_H
-#define _VGE_SERVICE_SERVICE_H
+#ifndef _VGE_SERVICE_SERVICE_HPP
+#define _VGE_SERVICE_SERVICE_HPP
 
 #include "vge/vge.hpp"
 
 #include <list>
-
-#include <vgd/Shp.hpp>
 #include <vgd/basic/ClassRegistry.hpp>
+
+namespace vgd
+{
+	template<class T> struct Shp;
+}
 
 
 
@@ -62,6 +65,11 @@ const vgd::basic::RegisterClass<serviceType> serviceType::m_registrationInstance
 struct VGE_API Service
 {
 	/**
+	 * @brief Virtual destructor
+	 */
+	virtual ~Service();
+
+	/**
 	 * @brief Returns the service registry (i.e. the registered services table).
 	 */
 	static vgd::basic::ClassRegistry< Service >&	getClassRegistry( void );
@@ -85,4 +93,4 @@ typedef std::list< vgd::Shp<vge::service::Service> >		List;
 
 } // namespace vge
 
-#endif //#ifndef _VGE_SERVICE_SERVICE_H
+#endif //#ifndef _VGE_SERVICE_SERVICE_HPP

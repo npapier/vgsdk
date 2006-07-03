@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_RC_IRESOURCE_H
-#define _VGE_RC_IRESOURCE_H
+#ifndef _VGE_RC_IRESOURCE_HPP
+#define _VGE_RC_IRESOURCE_HPP
 
 #include "vge/vge.hpp"
 
@@ -18,12 +18,12 @@ namespace rc
 
 
 
-struct VGE_API IResource
+struct IResource
 {
 	/**
-	 * @brief Virtual destructor.
+	 * @brief Virtual destructor
 	 */
-	virtual ~IResource() {}
+	VGE_API virtual ~IResource();
 };
 
 
@@ -32,4 +32,4 @@ struct VGE_API IResource
 
 } // namespace vge
 
-#endif //#ifndef _VGE_RC_IRESOURCE_H
+#endif //#ifndef _VGE_RC_IRESOURCE_HPP

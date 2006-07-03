@@ -17,7 +17,7 @@ namespace technique
 
 Technique::Technique() :
 	m_currentPass	(	0 		),
-	m_inPass			(	false )
+	m_inPass		(	false	)
 {
 }
 
@@ -143,9 +143,9 @@ void Technique::pop()
 
 
 
-void Technique::apply(	//const vgd::Shp< vge::service::Service > service, ???
-								vge::engine::Engine *pEngine, 
-								vge::visitor::TraverseElementVector* pTraverseElements )
+void Technique::apply(	//const vgd::Shp< vge::service::Service > service, FIXME
+						vge::engine::Engine * /*pEngine*/,
+						vge::visitor::TraverseElementVector* /*pTraverseElements*/ )
 {
 	assert( false );
 }
