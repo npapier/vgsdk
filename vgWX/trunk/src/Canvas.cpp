@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -21,7 +21,9 @@
 namespace vgWX
 {
 
-// FIXME ???
+/**
+ * @todo FIXME
+ */
 std::ofstream Canvas::m_gleLog("gle.txt");
 
 
@@ -38,6 +40,7 @@ BEGIN_EVENT_TABLE( Canvas, wxGLCanvas )
 	//EVT_ENTER_WINDOW		( Canvas::OnEnterWindow )
 	//EVT_KILL_FOCUS		( Canvas::OnKillFocus	)
 	//EVT_SET_FOCUS			( Canvas::OnSetFocus	)
+
 END_EVENT_TABLE()
 
 
@@ -435,6 +438,20 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 
 
+bool Canvas::Destroy()
+{
+	// Enables vgsdk
+	const bool retVal = enableVGSDK();
+	assert( retVal && "enableVGSDK() fails." );
+
+	// Cleans the scene graph
+	setRoot( vgd::Shp< vgd::node::Group >() );
+	
+	return wxGLCanvas::Destroy();
+}
+
+
+
 void Canvas::OnPaint( /*const*/ wxPaintEvent& event )
 {
 	// This is a dummy, to avoid an endless succession of paint messages.
@@ -746,9 +763,9 @@ void Canvas::OnCtxMenu( wxCommandEvent& event )
 
 
 
-uint32 Canvas::getCanvasCount() const
+const uint32 Canvas::getCanvasCount() const
 {
-	return ( m_canvasCount );
+	return m_canvasCount;
 }
 
 
@@ -794,7 +811,7 @@ bool Canvas::enableVGSDK()
 		m_bLocalInitializedVGSDK = true;
 	}
 
-	return ( true );
+	return true;
 }
 
 

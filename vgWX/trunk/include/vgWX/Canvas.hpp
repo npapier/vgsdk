@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -54,10 +54,10 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	/**
 	 * @brief Construct a Canvas with its own OpenGL context.
 	 * 
-	 * @param	pParent		A pointer to the parent window.
+	 * @param pParent	A pointer to the parent window.
 	 * 
 	 * @pre	getCanvasCount() == 0
-	 * @post	getCanvasCount() == 1
+	 * @post getCanvasCount() == 1
 	 */
 	Canvas(	wxWindow *parent, 
 			const wxString& name = _T("vgsdkCanvas"),
@@ -201,14 +201,14 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	//@}
 
 
+	// Overrides wxWidgets method
+	bool Destroy();
+
 
 protected:
 	// Overrides
 	void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
-
-	/**
-	 * @brief This sets the window to receive keyboard input.
-	 */
+	
 	/**
 	 * @name wxWidgets events processing methods.
 	 */
@@ -260,6 +260,7 @@ private:
 	 * @brief Handle @c EVT_SET_FOCUS.
 	 */
 	//void OnSetFocus( wxFocusEvent& event );
+
 	//@}
 
 
@@ -274,7 +275,7 @@ private:
 	 * 
 	 * @return the canvas count
 	 */
-	uint32 getCanvasCount() const;
+	const uint32 getCanvasCount() const;
 
 protected:
 	/**
