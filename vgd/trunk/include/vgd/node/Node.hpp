@@ -6,11 +6,19 @@
 #ifndef _VGD_NODE_NODE_HPP
 #define _VGD_NODE_NODE_HPP
 
+
 // @todo FIXME pragma warning
-#pragma warning(push)
-#pragma warning(disable:4511 4512)
+#ifdef WIN32
+	#pragma warning(push)
+	#pragma warning(disable:4511 4512)
+#endif
+
 #include <boost/signals.hpp>
+
+#ifdef WIN32
 #pragma warning(pop)
+#endif
+
 
 #include <vector>
 
@@ -22,7 +30,7 @@
 #include "vgd/field/FieldManager.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/graph/Graph.hpp"
-//#include "vgd/graph/detail/Graph.hpp" @todo FIXME
+//#include "vgd/graph/detail/Graph.hpp" //@todo FIXME
 #include "vgd/Shp.hpp"
 #include "vgd/vgd.hpp"
 

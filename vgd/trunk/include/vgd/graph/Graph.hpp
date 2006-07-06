@@ -6,9 +6,10 @@
 #ifndef _VGD_GRAPH_GRAPH_HPP
 #define _VGD_GRAPH_GRAPH_HPP
 
-#include "vgd/graph/detail/Graph.hpp"
-#include "vgd/graph/Graphviz.hpp"
+#include <iostream>
+
 #include "vgd/vgd.hpp"
+#include "vgd/graph/detail/Graph.hpp"
 #include "vgd/visitor/Exceptions.hpp"
 #include "vgd/visitor/internal/dfs.hpp"
 
@@ -44,11 +45,10 @@ namespace graph
  *
  * @remarks \b DefaultConstructible and not Assignable.
  * 
- * @todo clean this class and Graphviz class(add typedef for example).
  * @todo getEdges().
  * @todo Optimize graph manipulation and bench it(bench of property map, lazzy edgename packing).
  */
-struct VGD_API Graph : public Graphviz
+struct VGD_API Graph
 {
 	/**
 	 * @name Constructor
@@ -434,7 +434,7 @@ private:
 	detail::bglGraph				m_graph;
 	
 	detail::VertexNamePropertyMap	m_vertexNamePropertyMap;
-	detail::EdgeNamePropertyMap		m_edgeNamePropertyMap;
+	detail::EdgeNamePropertyMap	m_edgeNamePropertyMap;
 
 	/**
 	 * @brief Type definition for container of vertex descriptors.
