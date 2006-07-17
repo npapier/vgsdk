@@ -5,9 +5,11 @@
 
 #include "vge/handler/SurroundScale.hpp"
 
+//#include <vgd/graph/Graph.hpp> ///< @todo FIXME see ->traverse()
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Shape.hpp>
 #include <vgd/node/SurroundScale.hpp>
+
 #include "vge/engine/Engine.hpp"
 #include "vge/technique/ComputeBoundingBox.hpp"
 #include "vge/visitor/NodeCollectorExtended.hpp"
