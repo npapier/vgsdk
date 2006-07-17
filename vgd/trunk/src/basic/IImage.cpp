@@ -269,11 +269,11 @@ void IImage::setPixel1( const uint32 index, const float color )
 const bool IImage::isValid( const vgm::Vec3i position ) const
 {
 	const bool retVal =	(0 <= position[0]) &&
-						(position[0] < static_cast<uint32>(width())) &&
+						(position[0] < static_cast<int32>(width())) &&
 						(0 <= position[1]) &&
-						(position[1] < static_cast<uint32>(height())) &&
+						(position[1] < static_cast<int32>(height())) &&
 						(0 <= position[2]) &&
-						(position[2] < static_cast<uint32>(depth()));
+						(position[2] < static_cast<int32>(depth()));
 	
 	return retVal;
 }

@@ -6,33 +6,34 @@
 #ifndef _VGD_NODE_NODE_HPP
 #define _VGD_NODE_NODE_HPP
 
-
 // @todo FIXME pragma warning
 #ifdef WIN32
-	#pragma warning(push)
+//	#pragma warning(push)
 	#pragma warning(disable:4511 4512)
 #endif
 
 #include <boost/signals.hpp>
 
 #ifdef WIN32
-#pragma warning(pop)
+//	#pragma warning(pop)
 #endif
 
 
 #include <vector>
 
+#include "vgd/vgd.hpp"
+#include "vgd/EnableShpFromThis.hpp"
+#include "vgd/Shp.hpp"
 #include "vgd/basic/ClassRegistry.hpp"
 #include "vgd/basic/IndexableClass.hpp"
 #include "vgd/basic/Object.hpp"
 #include "vgd/basic/RegisterNode.hpp"
-#include "vgd/EnableShpFromThis.hpp"
 #include "vgd/field/FieldManager.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/graph/Graph.hpp"
 //#include "vgd/graph/detail/Graph.hpp" //@todo FIXME
-#include "vgd/Shp.hpp"
-#include "vgd/vgd.hpp"
+
+
 
 namespace vgd
 {
@@ -409,7 +410,6 @@ protected:
 	//@}
 
 
-
 private:
 
 	/**
@@ -423,6 +423,7 @@ private:
 	vertex_descriptor	m_vertexDescriptor;
 
 	//@}
+
 
 
 	/**

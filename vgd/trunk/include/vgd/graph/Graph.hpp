@@ -434,7 +434,7 @@ private:
 	detail::bglGraph				m_graph;
 	
 	detail::VertexNamePropertyMap	m_vertexNamePropertyMap;
-	detail::EdgeNamePropertyMap	m_edgeNamePropertyMap;
+	detail::EdgeNamePropertyMap		m_edgeNamePropertyMap;
 
 	/**
 	 * @brief Type definition for container of vertex descriptors.

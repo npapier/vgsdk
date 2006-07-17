@@ -11,9 +11,9 @@
 #include <boost/graph/properties.hpp>
 #include <functional>
 
+#include "vgd/vgd.hpp"
 #include "vgd/Shp.hpp"
 #include "vgd/WeakPtr.hpp"
-#include "vgd/vgd.hpp"
 
 namespace vgd
 {

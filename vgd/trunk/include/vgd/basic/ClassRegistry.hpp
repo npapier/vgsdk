@@ -11,8 +11,8 @@
 #include <sstream>
 #include <utility>
 
-#include "vgd/Shp.hpp"
 #include "vgd/vgd.hpp"
+#include "vgd/Shp.hpp"
 
 namespace vgd
 {
