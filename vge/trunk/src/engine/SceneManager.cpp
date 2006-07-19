@@ -21,24 +21,22 @@ namespace engine
 
 SceneManager::SceneManager( vgd::Shp< vge::engine::Engine > pEngine ) :
 	m_root					(	vgd::node::Group::create("ROOT") ),
-	m_engine					(	pEngine ),
+	m_engine				(	pEngine	),
 	//m_collectorExt
-	m_updateBoundingBox	( 	true ),
-	m_numberOfFrames		(	1 )	
-{
-}
+	m_updateBoundingBox		( 	true	),
+	m_numberOfFrames		(	1		)	
+{}
 
 
 
 SceneManager::~SceneManager()
-{
-}
+{}
 
 
 
 vgd::Shp< vgd::node::Group > SceneManager::getRoot()
 {
-	return ( m_root );
+	return m_root;
 }
 
 

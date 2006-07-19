@@ -316,7 +316,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * 
 	 * @return the number of elements in the stack.
 	 */
-	int32 sizeOfStateStack() const;
+	const uint32 sizeOfStateStack() const;
 
 	/**
 	 * @brief Sets a node to the top of the state stack.

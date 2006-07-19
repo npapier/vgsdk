@@ -191,8 +191,8 @@ void Engine::install( vgd::Shp< vge::handler::Handler > shpHandler )
 
 void Engine::regard()
 {
-	for(	int32		i		= 0,
-						iEnd	= m_regarded.size();
+	for(	uint32		i		= 0,
+						iEnd	= static_cast<uint32>(m_regarded.size());
 			i != iEnd;
 			++i )
 	{
@@ -204,8 +204,8 @@ void Engine::regard()
 
 void Engine::disregard()
 {
-	for(	int32		i		= 0,
-						iEnd	= m_regarded.size();
+	for(	uint32		i		= 0,
+						iEnd	= static_cast<uint32>(m_regarded.size());
 			i != iEnd;
 			++i )
 	{
@@ -273,9 +273,9 @@ bool Engine::isStateStackEmpty() const
 
 
 
-int32 Engine::sizeOfStateStack() const
+const uint32 Engine::sizeOfStateStack() const
 {
-	return ( m_state.size() );
+	return static_cast<uint32>(m_state.size());
 }
 
 
