@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/Separator.hpp"
 
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Separator.hpp>
 #include <vge/service/Painter.hpp>
 #include <vge/service/ProcessEvent.hpp>

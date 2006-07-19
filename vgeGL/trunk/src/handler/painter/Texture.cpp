@@ -6,6 +6,7 @@
 #include "vgeGL/handler/painter/Texture.hpp"
 
 #include <glo/Texture.hpp>
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Texture.hpp>
 #include <vgm/Utilities.hpp>
 #include <vgm/Vector.hpp>
@@ -470,7 +471,7 @@ void Texture::synchronizeParameters(vgeGL::engine::Engine *pGLEngine, vgd::node:
 	
 	// Validate node
 	vgd::field::DirtyFlag* pDFNode = pNode->getDirtyFlag( pNode->getDFNode() );	
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();
+	pDFNode->validate();
 }
 
 

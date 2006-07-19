@@ -33,13 +33,6 @@ struct VGEGL_API IInteraction : public EventProcessor, public vgd::event::EventV
 	 */
 	IInteraction( ::vgeGL::engine::SceneManager *sceneManager );
 
-
-
-protected:
-
-	// Overrides (from IEventProcessor)
-	const bool onEvent( vgd::Shp<vgd::event::Event> event );
-	
 	/**
 	 * @name Interface of EventVisitor
 	 * 
@@ -52,6 +45,9 @@ protected:
 	void apply( const vgd::event::Motion3Event			* /*pMotion3Event*/			) {}
 	void apply( const vgd::event::MouseWheelEvent		* /*pMouseWheelEvent*/		) {}
 	//@}
+
+private:	
+	const bool onEvent( vgd::Shp<vgd::event::Event> event ); ///< Overrides (from IEventProcessor)
 };
 
 

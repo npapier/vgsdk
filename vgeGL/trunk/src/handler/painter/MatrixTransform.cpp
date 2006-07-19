@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/MatrixTransform.hpp"
 
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/MatrixTransform.hpp>
 #include <vge/handler/MatrixTransform.hpp>
 #include <vge/service/Painter.hpp>

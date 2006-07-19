@@ -6,6 +6,7 @@
 #include "vgeGL/handler/painter/TextureMatrixTransform.hpp"
 
 #include <glo/Texture.hpp>
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/TextureMatrixTransform.hpp>
 #include <vge/service/Painter.hpp>
 

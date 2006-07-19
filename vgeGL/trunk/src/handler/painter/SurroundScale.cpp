@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/SurroundScale.hpp"
 
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/SurroundScale.hpp>
 #include <vge/handler/SurroundScale.hpp>
 #include <vge/service/Painter.hpp>

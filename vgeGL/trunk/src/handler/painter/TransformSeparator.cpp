@@ -6,6 +6,7 @@
 #include "vgeGL/handler/painter/TransformSeparator.hpp"
 
 #include <glo/Texture.hpp>
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/TransformSeparator.hpp>
 #include <vge/service/Painter.hpp>
 #include <vge/service/ProcessEvent.hpp>

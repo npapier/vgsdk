@@ -34,7 +34,7 @@ struct VGEGL_API DefaultEventProcessor : public EventProcessor
 	 */
 	DefaultEventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
 	
-	// Overrides
+	///< Overrides
 	const bool onEvent( vgd::Shp<vgd::event::Event> event );
 };
 

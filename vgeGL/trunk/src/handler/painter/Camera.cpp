@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/Camera.hpp"
 
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Camera.hpp>
 #include <vge/service/Painter.hpp>
 #include <vge/service/ProcessEvent.hpp>

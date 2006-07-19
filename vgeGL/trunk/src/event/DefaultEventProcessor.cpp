@@ -28,6 +28,9 @@ DefaultEventProcessor::DefaultEventProcessor( ::vgeGL::engine::SceneManager *sce
 
 const bool DefaultEventProcessor::onEvent( vgd::Shp<vgd::event::Event> event )
 {
+	// onEvent() is called only when isEnabled() returns true.
+	assert( isEnabled() );
+
 	vgeGL::technique::ProcessEvent processEvent;
 	
 	getSceneManager()->getEngine()->resetEval();	
@@ -37,8 +40,8 @@ const bool DefaultEventProcessor::onEvent( vgd::Shp<vgd::event::Event> event )
 		event );
 
 	//vgDebug::get().logDebug("SceneManager::onEvent:%s", typeid(*event.get()).name() );
-	
-	return ( false );
+
+	return false;	
 }
 
 

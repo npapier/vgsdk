@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/Transform.hpp"
 
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Transform.hpp>
 #include <vge/handler/Transform.hpp>
 #include <vge/service/Painter.hpp>

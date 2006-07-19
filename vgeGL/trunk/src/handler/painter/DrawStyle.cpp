@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/DrawStyle.hpp"
 
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vge/service/Painter.hpp>
 

@@ -113,11 +113,13 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	//@{
 
 	/**
-	 * @brief Called when a new event occurs (@see vgd::event::Listener)
+	 * @brief Called when a new event occurs
 	 * 
 	 * and use installed instances of IEventProcessor to process all incoming events.
 	 * 
 	 * @param event		event to process
+	 * 
+	 * @see vgd::event::Listener
 	 */
 	void onEvent( vgd::Shp<vgd::event::Event> event );
 

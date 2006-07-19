@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/Light.hpp"
 
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Light.hpp>
 #include <vge/service/Painter.hpp>
 

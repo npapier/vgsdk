@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/Kits.hpp"
 
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/NullDragger.hpp>
 #include <vgd/node/Scale1Dragger.hpp>
 #include <vgd/node/TransformDragger.hpp>

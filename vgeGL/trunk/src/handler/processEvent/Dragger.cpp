@@ -11,6 +11,7 @@
 #include <vgd/event/Motion3Event.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vgd/event/MouseWheelEvent.hpp>
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Dragger.hpp>
 #include <vgeGL/engine/Engine.hpp>
 

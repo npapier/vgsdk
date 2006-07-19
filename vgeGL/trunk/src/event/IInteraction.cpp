@@ -26,12 +26,12 @@ IInteraction::IInteraction( ::vgeGL::engine::SceneManager *sceneManager )
 
 const bool IInteraction::onEvent( vgd::Shp<vgd::event::Event> event )
 {
-	if ( isEnabled() )
-	{
-		event->accept( *this );	
-	}
+	// onEvent() is called only when isEnabled() returns true.
+	assert( isEnabled() );
+
+	event->accept( *this );	
 	
-	return ( false );
+	return false;
 }
 
 

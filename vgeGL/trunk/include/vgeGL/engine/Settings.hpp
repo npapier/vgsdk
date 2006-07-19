@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,14 @@
 
 #include "vgeGL/vgeGL.hpp"
 
+namespace vgd
+{
+	namespace node
+	{
+		struct VertexShape;
+	}
+}
+
 
 
 namespace vgeGL
@@ -16,18 +24,23 @@ namespace vgeGL
 namespace engine
 {
 
+	struct Engine;
 
 struct ProcessingMethod
-{};
+{
+	//virtual void paint( vgeGL::engine::Engine*, vgd::node::VertexShape* )=0;
+};
 	
 struct VertexProcessingMethod : public ProcessingMethod
 {};
 
 struct VertexArrayMethod : public VertexProcessingMethod
-{};
+{
+};
 
 struct VertexArrayDisplayListMethod : public VertexArrayMethod
-{};
+{
+};
 
 //
 //
