@@ -5,6 +5,8 @@
 
 #include "vgd/node/TextureMatrixTransform.hpp"
 
+#include "vgd/node/detail/Node.hpp"
+
 
 
 namespace vgd

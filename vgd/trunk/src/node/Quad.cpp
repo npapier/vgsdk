@@ -5,6 +5,8 @@
 
 #include "vgd/node/Quad.hpp"
 
+#include "vgd/node/detail/Node.hpp"
+
 
 
 namespace vgd

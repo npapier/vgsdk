@@ -5,7 +5,7 @@
 
 #include "vgd/node/TriSet.hpp"
 
-#include "vgd/field/TAccessors.hpp"
+#include "vgd/node/detail/Node.hpp"
 
 
 

@@ -7,12 +7,12 @@
 
 #include <sstream>
 
-#include "vgd/field/TAccessors.hpp"
 #include "vgd/node/Quad.hpp"
 #include "vgd/node/Switch.hpp"
 #include "vgd/node/Texture1D.hpp"
 #include "vgd/node/Texture2D.hpp"
 #include "vgd/node/TextureMatrixTransform.hpp"
+#include "vgd/node/detail/Node.hpp"
 
 
 

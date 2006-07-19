@@ -6,6 +6,7 @@
 #include "vgd/node/Node.hpp"
 
 #include "vgd/node/Group.hpp"
+#include "vgd/node/detail/Node.hpp"
 
 
 

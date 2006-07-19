@@ -5,6 +5,8 @@
 
 #include "vgd/visitor/predicate/ByDirtyFlag.hpp"
 
+#include "vgd/field/DirtyFlag.hpp"
+
 
 
 namespace vgd
@@ -23,7 +25,7 @@ bool ByDirtyFlag::operator () ( const vgd::Shp< vgd::node::Node > node ) const
 	const vgd::field::DirtyFlag *pDirtyFlag;
 	pDirtyFlag = node->getDirtyFlag( node->getDFNode() );
 
-	return ( pDirtyFlag->isDirty() );
+	return pDirtyFlag->isDirty();
 }
 
 

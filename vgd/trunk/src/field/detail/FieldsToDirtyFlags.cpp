@@ -1,9 +1,11 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/field/detail/FieldsToDirtyFlags.hpp"
+
+#include "vgd/field/DirtyFlag.hpp"
 
 
 
@@ -18,25 +20,24 @@ namespace detail
 
 
 
-FieldsToDirtyFlags::FieldsToDirtyFlags( void ) 
-{
-}
+FieldsToDirtyFlags::FieldsToDirtyFlags() 
+{}
 
 
 
-bool FieldsToDirtyFlags::add( const std::string strFieldName, const std::string strDirtyFlagName )
+const bool FieldsToDirtyFlags::add( const std::string strFieldName, const std::string strDirtyFlagName )
 {
 	SetDirtyFlagNames& rsetDirtyFlags = get( strFieldName );
 
 	std::pair< SetDirtyFlagNames::iterator, bool > retVal = 
 		rsetDirtyFlags.insert( strDirtyFlagName );
 		
-	return ( retVal.second );
+	return retVal.second;
 }
 
 
 
-bool FieldsToDirtyFlags::remove( const std::string strFieldName, const std::string strDirtyFlagName )
+const bool FieldsToDirtyFlags::remove( const std::string strFieldName, const std::string strDirtyFlagName )
 {
 	MapLinks::iterator iMapLinks = m_links.find( strFieldName );
 	
@@ -48,13 +49,13 @@ bool FieldsToDirtyFlags::remove( const std::string strFieldName, const std::stri
 	else
 	{
 		// Field not found.
-		return ( false );
+		return false;
 	}
 }
 
 
 
-bool FieldsToDirtyFlags::removeField( const std::string strFieldName )
+const bool FieldsToDirtyFlags::removeField( const std::string strFieldName )
 {
 	MapLinks::iterator iMapLinks = m_links.find( strFieldName );
 	
@@ -63,12 +64,12 @@ bool FieldsToDirtyFlags::removeField( const std::string strFieldName )
 		// Found the desired field.
 		iMapLinks->second.clear();
 		
-		return ( true );
+		return true;
 	}
 	else
 	{
 		// Field not found.
-		return ( false );
+		return false;
 	}
 }
 
@@ -84,21 +85,21 @@ std::pair< FieldsToDirtyFlags::SetDirtyFlagNames::iterator, FieldsToDirtyFlags::
 	retVal.first	= rsetDirtyFlags.begin();
 	retVal.second	= rsetDirtyFlags.end();
 	
-	return ( retVal );
+	return retVal;
 }
 
 
 
-int32 FieldsToDirtyFlags::getNumFields( void ) const
+const uint32 FieldsToDirtyFlags::getNumFields() const
 {
-	return ( m_links.size() );
+	return static_cast<uint32>( m_links.size() );
 }
 
 
 
-int32 FieldsToDirtyFlags::getNumLinkedDirtyFlags( const std::string strFieldName )
+const uint32 FieldsToDirtyFlags::getNumLinkedDirtyFlags( const std::string strFieldName )
 {
-	return ( get( strFieldName ).size() );
+	return static_cast<uint32>( get(strFieldName).size() );
 }
 
 
@@ -110,7 +111,7 @@ FieldsToDirtyFlags::SetDirtyFlagNames& FieldsToDirtyFlags::get( const std::strin
 	if ( iMapLinks != m_links.end() )
 	{
 		// Found the desired field.
-		return ( iMapLinks->second );
+		return iMapLinks->second;
 	}
 	else
 	{
@@ -119,7 +120,7 @@ FieldsToDirtyFlags::SetDirtyFlagNames& FieldsToDirtyFlags::get( const std::strin
 			m_links.insert( std::make_pair(strFieldName, SetDirtyFlagNames()) );
 
 		assert( retVal.second );
-		return ( retVal.first->second );
+		return retVal.first->second;
 	}
 }
 

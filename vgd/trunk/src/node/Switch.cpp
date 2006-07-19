@@ -6,7 +6,7 @@
 #include "vgd/node/Switch.hpp"
 
 #include "vgd/field/Integer.hpp"
-#include "vgd/graph/Graph.hpp"
+#include "vgd/node/detail/Node.hpp"
 
 
 

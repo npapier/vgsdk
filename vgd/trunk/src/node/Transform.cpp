@@ -7,6 +7,8 @@
 
 #include <vgm/Matrix.hpp>
 
+#include "vgd/node/detail/Node.hpp"
+
 
 
 namespace vgd

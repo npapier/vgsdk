@@ -9,8 +9,9 @@
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vgd/node/VertexShape.hpp>
 #include <vgd/node/WireBox.hpp>
-
 #include <vgm/Matrix.hpp>
+
+#include "vgd/node/detail/Node.hpp"
 
 
 

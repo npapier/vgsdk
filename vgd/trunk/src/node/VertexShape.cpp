@@ -7,8 +7,8 @@
 
 #include <sstream>
 
-#include "vgd/field/DirtyFlag.hpp"
 #include "vgd/node/Group.hpp"
+#include "vgd/node/detail/Node.hpp"
 
 
 

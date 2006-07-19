@@ -7,8 +7,9 @@
 
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
-
 #include <vgm/Matrix.hpp>
+
+#include "vgd/node/detail/Node.hpp"
 
 
 

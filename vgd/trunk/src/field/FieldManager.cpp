@@ -1,11 +1,16 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/field/FieldManager.hpp"
 
+#include <typeinfo>
 #include <boost/tuple/tuple.hpp>
+
+#include "vgd/Shp.hpp"
+#include "vgd/field/DirtyFlag.hpp"
+#include "vgd/field/Types.hpp"
 
 
 
@@ -50,28 +55,46 @@ FieldManager::~FieldManager()
 
 
 void FieldManager::destroy()
-{
-}
+{}
 
 
 
 /**
  * @todo Implement it.
  */
-void FieldManager::copy( const FieldManager& rSrc )
+void FieldManager::copy( const FieldManager& /*rSrc*/ )
 {
 	assert( false );
 }
 
 
 
-bool FieldManager::isField( const std::string strFieldName ) const
+const bool FieldManager::isField( const std::string strFieldName ) const
 {
 	MapField::const_iterator iField;
 	iField = m_fields.find( strFieldName );
 	
 	return ( iField != m_fields.end() );
-}	
+}
+
+
+
+const std::type_info& FieldManager::getFieldType( const std::string strFieldName ) const
+{
+	MapField::const_iterator iField;
+	iField = m_fields.find( strFieldName );
+
+	if ( iField != m_fields.end() )
+	{
+		// Found
+		return typeid( *(iField->second.get()) );
+	}
+	else
+	{
+		// Not found
+		return typeid( NotFound );
+	}
+}
 
 
 
@@ -102,7 +125,7 @@ std::pair< MapField::iterator, MapField::iterator >
 
 
 
-bool FieldManager::addField( AbstractField* pField )
+const bool FieldManager::addField( AbstractField* pField )
 {
 	// STEP 1 : Add field to field container.
 	std::pair< MapField::iterator, bool> retVal;
@@ -116,7 +139,7 @@ bool FieldManager::addField( AbstractField* pField )
 	if ( retVal.second == false )
 	{
 		assert( false && "Unable to add this field. Field name must be unique." );
-		return ( false );
+		return false;
 	}
 
 	// STEP 2 : Add link between field and field manager.
@@ -124,22 +147,22 @@ bool FieldManager::addField( AbstractField* pField )
 
 	pField->attach( this );
 
-	return ( retVal.second );
+	return retVal.second;
 }
 
 
 
-bool FieldManager::removeField( const std::string strFieldName )
+const bool FieldManager::removeField( const std::string strFieldName )
 {
 	assert( checkField( strFieldName ) && "Unknown field name." );
 
 	// STEP 1 : Find the field.
 	vgd::Shp<AbstractField>	shpAField = getField<AbstractField>( strFieldName );
 
-	if ( shpAField.get() == 0 )
+	if ( shpAField == 0 )
 	{
 		// Not found.
-		return ( false );
+		return false;
 	}
 
 	// STEP 2 : Remove link between field and field manager
@@ -147,13 +170,13 @@ bool FieldManager::removeField( const std::string strFieldName )
 	shpAField->detach( this );
 	
 	// STEP 3 : Remove field to field container.
-	int32 numRemovedElement = m_fields.erase( strFieldName );
+	uint32 numRemovedElement = static_cast<uint32>(m_fields.erase( strFieldName ));
 	assert( numRemovedElement == 1 );
 	
 	// STEP 4 : Remove links between this field and all dirty flags.
 	unlinkField( strFieldName );
 
-	return ( true );
+	return true;
 }
 
 
@@ -187,8 +210,7 @@ void FieldManager::updateFrom( const std::string strFieldName )
 	{
 		const std::string strDirtyFlag = *iter;
 		
-		MapDirtyFlag::iterator iDirtyFlag;
-		iDirtyFlag = m_dirtyFlags.find( strDirtyFlag );
+		MapDirtyFlag::iterator iDirtyFlag = m_dirtyFlags.find( strDirtyFlag );
 
 		if ( iDirtyFlag != m_dirtyFlags.end() )
 		{
@@ -199,78 +221,74 @@ void FieldManager::updateFrom( const std::string strFieldName )
 			assert( false && "Dirty flag not founded" );
 		}
 
-		iter++;
+		++iter;
 	}
 }
 
 
 
-bool FieldManager::link( const std::string strFieldName, const std::string strDirtyFlagName )
+const bool FieldManager::link( const std::string strFieldName, const std::string strDirtyFlagName )
 {
 	assert( checkField( strFieldName ) && "Unknown field name." );
 	assert( checkDirtyFlag( strDirtyFlagName ) && "Unknown dirty flag name." );
-
-	bool bRetVal;
 
 	// add link(in field manager) between field and dirty flag.
 	// so fieldManager know how to propagate update message from
 	// field(updateField method) to dirty flags.
 
-	bRetVal = m_fieldsToDirtyFlags.add( strFieldName, strDirtyFlagName );
+	bool bRetVal = m_fieldsToDirtyFlags.add( strFieldName, strDirtyFlagName );
 	//assert( bRetVal && "This link already exist." );
 
-	return ( bRetVal );
+	return bRetVal;
 }
 
 
 
-bool FieldManager::link( const std::string strDirtyFlagName )
+const bool FieldManager::link( const std::string strDirtyFlagName )
 {
 	assert( checkDirtyFlag( strDirtyFlagName ) && "Unknown dirty flag name." );
 	
 	bool bRetVal = true;
 
 	for(	MapField::const_iterator	i	= m_fields.begin(),
-												ie	= m_fields.end();
+										ie	= m_fields.end();
 			i != ie;
 			i++ )
 	{
 		bRetVal &= link( i->first, strDirtyFlagName );
 	}
 	
-	return ( bRetVal );
+	return bRetVal;
 }
 
 
 
-bool FieldManager::unlink( const std::string strFieldName, const std::string strDirtyFlagName )
+const bool FieldManager::unlink( const std::string strFieldName, const std::string strDirtyFlagName )
 {
 	assert( checkField( strFieldName ) && "Unknown field name." );
 	assert( checkDirtyFlag( strDirtyFlagName ) && "Unknown dirty flag name." );
 
 	// STEP 1 : Remove link(in field manager) between field and dirty flag.
-	bool bRetVal;
-	bRetVal = m_fieldsToDirtyFlags.remove( strFieldName, strDirtyFlagName );
+	bool bRetVal = m_fieldsToDirtyFlags.remove( strFieldName, strDirtyFlagName );
 	// assert( bRetVal && "nothing to unlinked, because link doesn't exist." );
 
-	return ( bRetVal );
+	return bRetVal;
 }
 
 
 
-bool FieldManager::unlinkField( const std::string strFieldName )
+const bool FieldManager::unlinkField( const std::string strFieldName )
 {
 	assert( checkField( strFieldName ) && "Unknown field name." );
 	
-	bool bRetVal;
-	bRetVal = m_fieldsToDirtyFlags.removeField( strFieldName );
+	bool bRetVal = m_fieldsToDirtyFlags.removeField( strFieldName );
 	
-	return ( bRetVal );
+	return bRetVal;
 }
 
 
 
-bool FieldManager::addDirtyFlag( const std::string& strFlagName )
+const bool FieldManager::addDirtyFlag( const std::string& strFlagName )
 {
 	std::pair< MapDirtyFlag::iterator, bool > retVal;
 	
@@ -278,7 +296,7 @@ bool FieldManager::addDirtyFlag( const std::string& strFlagName )
 		std::pair< std::string, DirtyFlag >(strFlagName, DirtyFlag(strFlagName) ) 
 		);
 
-	return ( retVal.second );
+	return retVal.second;
 }
 
 
@@ -297,8 +315,7 @@ bool FieldManager::addDirtyFlag( const std::string& strFlagName )
 
 DirtyFlag* FieldManager::getDirtyFlag( const std::string strDirtyFlagName )
 {
-	MapDirtyFlag::iterator iDirtyFlag;
-	iDirtyFlag = m_dirtyFlags.find( strDirtyFlagName );
+	MapDirtyFlag::iterator iDirtyFlag = m_dirtyFlags.find( strDirtyFlagName );
 
 	if ( iDirtyFlag != m_dirtyFlags.end() )
 	{
@@ -307,7 +324,7 @@ DirtyFlag* FieldManager::getDirtyFlag( const std::string strDirtyFlagName )
 	}
 	else
 	{
-		return ( 0 );
+		return 0;
 	}
 }
 
@@ -325,7 +342,7 @@ const DirtyFlag* FieldManager::getDirtyFlag( const std::string strDirtyFlagName 
 	}
 	else
 	{
-		return ( 0 );
+		return 0;
 	}
 }
 
@@ -355,7 +372,7 @@ std::pair< MapDirtyFlag::iterator, MapDirtyFlag::iterator >
 
 
 
-bool FieldManager::checkField( const std::string strFieldName ) const
+const bool FieldManager::checkField( const std::string strFieldName ) const
 {
 	MapField::const_iterator citer = m_fields.find( strFieldName );
 
@@ -364,10 +381,10 @@ bool FieldManager::checkField( const std::string strFieldName ) const
 
 
 
-bool FieldManager::checkDirtyFlag( const std::string strDirtyFlagName ) const
+const bool FieldManager::checkDirtyFlag( const std::string strDirtyFlagName ) const
 {
 	MapDirtyFlag::const_iterator citer = m_dirtyFlags.find( strDirtyFlagName );
-	
+
 	return ( citer != m_dirtyFlags.end() );
 }
 

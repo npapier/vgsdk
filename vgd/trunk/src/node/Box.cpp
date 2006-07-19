@@ -5,6 +5,8 @@
 
 #include "vgd/node/Box.hpp"
 
+#include "vgd/node/detail/Node.hpp"
+
 
 
 namespace vgd
