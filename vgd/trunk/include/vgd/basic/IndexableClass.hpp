@@ -6,7 +6,7 @@
 #ifndef _VGD_BASIC_INDEXABLECLASS_HPP
 #define _VGD_BASIC_INDEXABLECLASS_HPP
 
-#include "vgd/vgd.hpp"
+#include <vgBase/vgBase.hpp>
 
 
 
@@ -64,4 +64,3 @@ int32& className::getClassIndex() \
 } // namespace vgd
 
 #endif //#ifndef _VGD_BASIC_INDEXABLECLASS_HPP
-

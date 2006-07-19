@@ -18,6 +18,8 @@ namespace vgd
 namespace basic
 {
 
+
+
 /**
  * @brief Object with a name.
  * 
@@ -28,7 +30,7 @@ namespace basic
 struct VGD_API NamedObject
 {
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 	
@@ -41,7 +43,7 @@ struct VGD_API NamedObject
 	//@}
 
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 
@@ -64,13 +66,10 @@ struct VGD_API NamedObject
 private:
 
 	/**
-	 * @name Private data.
+	 * @name Private data
 	 */
 	//@{
-	/**
-	 * @brief The name.
-	 */
-	std::string m_strFlagName;
+	std::string m_strFlagName;	///< the name
 	//@}
 };
 

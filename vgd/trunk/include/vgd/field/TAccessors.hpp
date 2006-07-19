@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 
 #include <string>
 
-#include "vgd/vgd.hpp"
 #include "vgd/field/TPairAssociativeField.hpp"
 #include "vgd/field/EditorRO.hpp"
 #include "vgd/field/EditorRW.hpp"
@@ -28,7 +27,7 @@ namespace field
  */
 template< typename ParameterType, typename ValueType >
 bool getParameterValue(	const vgd::node::Node *pNode, const std::string fieldName,
-								const ParameterType param, ValueType& value )
+						const ParameterType param, ValueType& value )
 {
 	typedef vgd::field::TPairAssociativeField< ParameterType, ValueType > FieldType;
 
@@ -40,11 +39,11 @@ bool getParameterValue(	const vgd::node::Node *pNode, const std::string fieldNam
 	{
 		value = iter->second;
 
-		return ( true );
+		return true;
 	}
 	else
 	{
-		return ( false );
+		return false;
 	}
 }
 
@@ -55,7 +54,7 @@ bool getParameterValue(	const vgd::node::Node *pNode, const std::string fieldNam
  */
 template< typename ParameterType, typename ValueType >
 void setParameterValue(	vgd::node::Node *pNode, const std::string fieldName,
-								const ParameterType param, ValueType value )
+						const ParameterType param, ValueType value )
 {
 	typedef vgd::field::TPairAssociativeField< ParameterType, ValueType > FieldType;
 
@@ -71,7 +70,7 @@ void setParameterValue(	vgd::node::Node *pNode, const std::string fieldName,
  */
 template< typename ParameterType, typename ValueType >
 void eraseParameterValue(	vgd::node::Node *pNode, const std::string fieldName,
-									const ParameterType param )
+							const ParameterType param )
 {
 	typedef vgd::field::TPairAssociativeField< ParameterType, ValueType > FieldType;
 

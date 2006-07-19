@@ -1,12 +1,10 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #ifndef _VGD_FIELD_ABSTRACTFIELD_HPP
 #define _VGD_FIELD_ABSTRACTFIELD_HPP
-
-#include "vgd/vgd.hpp"
 
 #include <list>
 
@@ -20,8 +18,7 @@ namespace vgd
 
 namespace field
 {
-
-struct IFieldObserver;
+	struct	IFieldObserver;
 
 /**
  * @brief Abstract class for all single-value fields and multiple-valued fields.
@@ -40,14 +37,14 @@ struct IFieldObserver;
 struct VGD_API AbstractField : public vgd::basic::NamedObject
 {
 	/**
-	 * @name Constructor/destructor.
+	 * @name Constructor/destructor
 	 */
 	//@{
 	
 	/**
 	 * @brief Default constructor.
 	 * 
-	 * @param strFieldName		: name of field.
+	 * @param strFieldName		name of field.
 	 */
 	AbstractField( const std::string& strFieldName );
 
@@ -62,7 +59,7 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 
 
 	/** 
-	 * @name Design pattern Observer methods.
+	 * @name Design pattern Observer methods
 	 */
 	//@{
 	
@@ -71,21 +68,21 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 * 
 	 * @return list of observers.
 	 */
-	std::list< IFieldObserver* >&			getObservers()		{ return ( m_listObservers ); }
+	std::list< IFieldObserver* >&		getObservers();
 
 	/**
 	 * @brief Returns observers list.
 	 * 
 	 * @return list of observers.
 	 */
-	const std::list< IFieldObserver* >&	getObservers() const	{ return ( m_listObservers ); }
+	const std::list< IFieldObserver* >&	getObservers() const;
 
 	/**
 	 * @brief Check if pFieldObserver is already in observers list.
 	 * 
 	 * @return true if founded, false otherwise.
 	 */
-	bool	findObserver( IFieldObserver* pFieldObserver ) const;
+	const bool findObserver( IFieldObserver* pFieldObserver ) const;
 
 	/**
 	 * @brief Attach a new observer.
@@ -125,13 +122,13 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 * 
 	 * @return true if this subject is observed by at least one object.
 	 */
-	bool	isSubject() const;
+	const bool isSubject() const;
 	//@}
 
 
 
 	/** 
-	 * @name Editing methods.
+	 * @name Editing methods
 	 */
 	//@{
 
@@ -140,21 +137,21 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 * 
      * @todo  mutex for being MT-safe.
      */
-    bool startEditingRO() const;
+    const bool startEditingRO() const;
 
     /**
 	 * @brief Mark this field to be currently edit in read-write mode.
 	 * 
      * @todo  mutex for being MT-safe.
      */
-    bool startEditingRW() const;
+    const bool startEditingRW() const;
 
     /**
 	 * @brief Mark this field to be currently not edit.
 	 * 
      * @todo  mutex for being MT-safe.
      */
-    bool finishEditing() const;
+    const bool finishEditing() const;
 
     /**
 	 * @brief Returns editing state of this field.
@@ -163,13 +160,13 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 *
      * @todo  mutex for being MT-safe.
      */
-	bool isSameEditingMode( const EditingMode mode ) const;
+	const bool isSameEditingMode( const EditingMode mode ) const;
 	//@}
 
 
 
 	/**
-	 * @name Field actions.
+	 * @name Field actions
 	 */
 	//@{
 	
@@ -188,24 +185,18 @@ protected:
 	/**
 	 * @brief Checks if editing mode is compatible with a read-only access.
 	 */
-	bool checkRO() const
-	{
-		return ( !isSameEditingMode(NONE) );
-	}
+	const bool checkRO() const;
 
 	/**
 	 * @brief Checks if editing mode is compatible with a read-write access.
 	 */
-	bool checkRW() const
-	{
-		return ( isSameEditingMode(RW) );
-	}
+	const bool checkRW() const;
 
 
 
 private:
 	/**
-	 * @name Private data.
+	 * @name Private data
 	 */
 	//@{
 	
@@ -213,14 +204,14 @@ private:
 	 * @brief List of observers.
 	 */
 	typedef std::list< IFieldObserver* >	TListObserver;
-	TListObserver									m_listObservers;
+	TListObserver							m_listObservers;
 
 	/**
 	 * @brief Pseudo mutex.
 	 * 
 	 * @todo add a real mutex for MThreaded support.
 	 */
-	mutable EditingMode							m_editingMode;
+	mutable EditingMode						m_editingMode;
 	
 	//@}
 };

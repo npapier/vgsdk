@@ -6,10 +6,9 @@
 #ifndef _VGD_FIELD_STRING_HPP
 #define _VGD_FIELD_STRING_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <string>
 
+#include "vgd/vgd.hpp"
 #include "vgd/field/TSingleField.hpp"
 #include "vgd/field/TMultiField.hpp"
 #include "vgd/field/TSingleAssociativeField.hpp"
@@ -33,7 +32,7 @@ typedef TSingleField< std::string >					SFString;
 
 typedef TMultiField< std::string  >					MFString;
 
-typedef TSingleAssociativeField< std::string >	SAFString;
+typedef TSingleAssociativeField< std::string >		SAFString;
 
 // typedef TPairAssociativeField< std::string >		PAFString;
 //@}

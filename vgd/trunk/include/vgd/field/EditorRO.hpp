@@ -6,7 +6,7 @@
 #ifndef _VGD_FIELD_EDITORRO_HPP
 #define _VGD_FIELD_EDITORRO_HPP
 
-#include "vgd/vgd.hpp"
+#include <cassert>
 
 
 
@@ -52,7 +52,7 @@ struct EditorRO
 		{
 			bool bRetVal;
 			bRetVal = m_pField->startEditingRO();
-			assert(bRetVal);
+			assert( bRetVal );
 		}
 		else
 		{
@@ -108,9 +108,9 @@ struct EditorRO
 	 */
 	//@{
 
-	const T& operator*() const		{ return ( *m_pField ); }
+	const T& operator*() const	{ return ( *m_pField ); }
 	const T* operator->() const	{ return ( m_pField ); }
-	const T* get() const				{ return ( m_pField ); }
+	const T* get() const		{ return ( m_pField ); }
 	//@}
 
 
@@ -144,7 +144,7 @@ private:
 	void copy( const EditorRO& rField )
 	{
 		// Transfert owner ship.
-		m_pField												= rField.m_pField;
+		m_pField = rField.m_pField;
 		const_cast< EditorRO& >(rField).m_pField	= 0;
 	}
 

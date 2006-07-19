@@ -6,8 +6,6 @@
 #ifndef _VGD_FIELD_TYPES_HPP
 #define _VGD_FIELD_TYPES_HPP
 
-#include "vgd/vgd.hpp"
-
 
 
 namespace vgd
@@ -19,19 +17,21 @@ namespace field
 /**
  * @brief All editing mode.
  */
-typedef enum { 
+enum EditingMode 
+{ 
 	NONE,	/*!< no accesses. */
 	RO,		/*!< read-only acesses. */
 	RW		/*!< read-write acesses. */
-} EditingMode;
+};
 
 /**
  * @brief Event type(used by Observer design pattern).
  */
-typedef enum { 
-		DESTROY, 
-		UPDATE 
-} Event;	
+enum Event 
+{
+	DESTROY, 
+	UPDATE 
+};	
 
 
 

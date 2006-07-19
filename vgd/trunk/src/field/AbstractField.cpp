@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "vgd/field/IFieldObserver.hpp"
+#include "vgd/field/Types.hpp"
 
 
 
@@ -19,23 +20,37 @@ namespace field
 
 
 
-AbstractField::AbstractField( const std::string& strFieldName ) :
-	vgd::basic::NamedObject( strFieldName ),
-	m_editingMode	( NONE )
+AbstractField::AbstractField( const std::string& strFieldName )
+:	vgd::basic::NamedObject	( strFieldName	),
+	m_editingMode			( NONE			)
 {}
 
 
 
 AbstractField::~AbstractField()
 {
-	//notify( DESTROY ); ??? FIXME
+	//notify( DESTROY ); /// @todo FIXME
 
 	assert( m_editingMode == NONE );
 }
 
 
 
-bool AbstractField::findObserver( IFieldObserver *pFieldObserver ) const
+std::list< IFieldObserver* >& AbstractField::getObservers()
+{
+	return m_listObservers;
+}
+
+
+
+const std::list< IFieldObserver* >& AbstractField::getObservers() const
+{
+	return m_listObservers;
+}
+
+
+
+const bool AbstractField::findObserver( IFieldObserver *pFieldObserver ) const
 {
 	assert( m_editingMode == NONE );
 
@@ -69,7 +84,7 @@ void AbstractField::detach( IFieldObserver* pObserver )
 
 void AbstractField::detach()
 {
-	assert( m_editingMode == NONE );	
+	assert( m_editingMode == NONE );
 	getObservers().clear();
 }
 
@@ -85,9 +100,9 @@ void AbstractField::sendNotify( const Event& event ) const
         	i++ )
     {
     	IFieldObserver *pFieldObserver = *i;
-    	assert( *i != 0 );
+    	assert( pFieldObserver != 0 );
     	
-    	(*i)->updateField( *this, event );
+    	pFieldObserver->updateField( *this, event );
     }
 }
 
@@ -104,7 +119,7 @@ void AbstractField::sendNotify( const Event& event ) const
 
 
 
-bool AbstractField::isSubject() const
+const bool AbstractField::isSubject() const
 {
 	assert( m_editingMode == NONE );
 
@@ -113,73 +128,87 @@ bool AbstractField::isSubject() const
 
 
 
-bool AbstractField::startEditingRO() const
+const bool AbstractField::startEditingRO() const
 {
 	switch ( m_editingMode )
 	{
 		case NONE:
 		case RO:
 			m_editingMode = RO;
-			return ( true );
+			return true;
 
 		case RW:
-			return ( false );
+			return false;
 			
 		default:
 			assert( false && "Unknown case" );
-			return ( false );
+			return false;
 	}
 }
 
 
 
-bool AbstractField::startEditingRW() const
+const bool AbstractField::startEditingRW() const
 {
 	switch ( m_editingMode )
 	{
 		case NONE:
 			m_editingMode = RW;
-			return ( true );
+			return true;
 
 		case RO:
 		case RW:
-			return ( false );
+			return false;
 
 		default:
 			assert( false && "Unknown case" );
-			return ( false );
+			return false;
 	}
 }
 
 
 
-bool AbstractField::finishEditing() const
+const bool AbstractField::finishEditing() const
 {
 	switch ( m_editingMode )
 	{
 		case NONE:
-			return ( false );
+			return false;
 
 		case RO:
 			m_editingMode = NONE; // not true if multi threaded !!! FIXME
-			return ( true );
+			return true;
 
 		case RW:
 			m_editingMode = NONE; // not true if multi threaded !!! FIXME
 			sendNotify( UPDATE );
-			return ( true );
+			return true;
 
 		default:
 			assert( false && "Unknown case" );
-			return ( false );
+			return false;
 	}
 }
 
 
 
-bool AbstractField::isSameEditingMode( const EditingMode mode ) const
+const bool AbstractField::isSameEditingMode( const EditingMode mode ) const
 {
 	return ( m_editingMode == mode );
+}
+
+
+
+const bool AbstractField::checkRO() const
+{
+	return ( !isSameEditingMode(NONE) );
+}
+
+
+
+const bool AbstractField::checkRW() const
+{
+	return isSameEditingMode(RW);
 }
 
 

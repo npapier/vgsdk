@@ -6,12 +6,10 @@
 #ifndef _VGD_VISITOR_TRAVERSE_HPP
 #define _VGD_VISITOR_TRAVERSE_HPP
 
-#include "vgd/graph/detail/Graph.hpp"
-//#include "vgd/graph/Graph.hpp"			// @todo FIXME
+#include "vgd/graph/Graph.hpp"
 #include "vgd/node/Group.hpp"
 #include "vgd/visitor/Exceptions.hpp"
 #include "vgd/visitor/internal/dfs.hpp"
-#include "vgd/vgd.hpp"
 
 
 

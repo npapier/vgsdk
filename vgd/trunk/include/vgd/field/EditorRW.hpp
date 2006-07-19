@@ -6,7 +6,7 @@
 #ifndef _VGD_FIELD_EDITORRW_HPP
 #define _VGD_FIELD_EDITORRW_HPP
 
-#include "vgd/vgd.hpp"
+#include <cassert>
 
 
 
@@ -108,12 +108,12 @@ struct EditorRW
 	//@{
 
 	const T& operator*() const		{ return ( *m_pField ); }
-	const T* operator->() const	{ return ( m_pField ); }
-	const T* get() const				{ return ( m_pField ); }	
+	const T* operator->() const		{ return ( m_pField ); }
+	const T* get() const			{ return ( m_pField ); }	
 	
 	T& operator*() 					{ return ( *m_pField ); }
 	T* operator->()					{ return ( m_pField ); }
-	T* get()								{ return ( m_pField ); }
+	T* get()						{ return ( m_pField ); }
 
 	//@}
 	
@@ -148,7 +148,7 @@ private:
 	void copy( const EditorRW& rField )
 	{
 		// Transfert owner ship.
-		m_pField											= rField.m_pField;
+		m_pField = rField.m_pField;
 		const_cast<EditorRW&>(rField).m_pField	= 0;
 	}
 

@@ -7,8 +7,8 @@
 #define _VGD_BASIC_CLASSREGISTRY_HPP
 
 #include <set>
-#include <string>
 #include <sstream>
+#include <string>
 #include <utility>
 
 #include "vgd/vgd.hpp"
@@ -47,7 +47,7 @@ template< typename baseClassType >
 struct ClassRegistry
 {
 	/**
-	 * @name Typedefs.
+	 * @name Typedefs
 	 */
 	//@{
 	
@@ -67,7 +67,7 @@ struct ClassRegistry
 	 * @todo Check if the same class is inserted more than once, but it should never occurs.
 	 */
 	template< typename classType >
-	bool	add( vgd::Shp< classType > shpClass )
+	const bool add( vgd::Shp< classType > shpClass )
 	{
 		// STEP 1: register this class.
 		std::pair< typename ClassSet::iterator, bool > retVal;
@@ -90,17 +90,17 @@ struct ClassRegistry
 			/*else nothing to do (register the same class multiples times is useful for vgd::node::MultiAttribute.
 			{
 				assert( false && "This is a new class (not registered), but with a class index already initialized !!!");
-				return ( false );
+				return false;
 			}*/
 		}
 		else
 		{
 			assert( false && "This class is already registered ? This should never occurs. No more memory ? ");
 			
-			return ( false );
+			return false;
 		}
 
-		return ( retVal.second );
+		return retVal.second;
 	}
 
 	/**
@@ -108,7 +108,7 @@ struct ClassRegistry
 	 * 
 	 * @return A string with all registered classes names separated by space.
 	 */
-	std::string		get( void ) const
+	std::string		get() const
 	{
 		std::stringstream strStream;
 		
@@ -120,7 +120,7 @@ struct ClassRegistry
 		}
 		strStream << std::endl << std::ends;
 	
-		return ( std::string(strStream.str()) );
+		return std::string(strStream.str());
 	}
 
 	
@@ -130,9 +130,9 @@ struct ClassRegistry
 	 * 
 	 * @return Number of registered classes.
 	 */
-	uint32			getNumRegistered( void ) const
+	uint32			getNumRegistered() const
 	{
-		return ( static_cast<uint32>( m_classes.size() ) );
+		return static_cast<uint32>( m_classes.size() );
 	}
 
 

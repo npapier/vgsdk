@@ -1,12 +1,10 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #ifndef _VGD_FIELD_DIRTYFLAG_HPP
 #define _VGD_FIELD_DIRTYFLAG_HPP
-
-#include "vgd/vgd.hpp"
 
 #include <map>
 
@@ -34,28 +32,28 @@ namespace field
 struct VGD_API DirtyFlag : public vgd::basic::NamedObject
 {
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
 	/**
 	 * @brief Default constructor.
 	 *
-	 * @param strFlagName	: name of this flag.
-	 * @param bIsDirty		: initial state of this flag.
+	 * @param strFlagName	name of this flag.
+	 * @param bIsDirty		initial state of this flag.
 	 */
 	DirtyFlag( const std::string& strFlagName, const bool bIsDirty = true );
 
 	/**
 	 * @brief Destructor.
 	 */
-	~DirtyFlag( void );
+	~DirtyFlag();
 	//@}
 
 
 
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 
@@ -64,26 +62,26 @@ struct VGD_API DirtyFlag : public vgd::basic::NamedObject
 	 *
 	 * @return true if this flag is dirty, false otherwise.
 	 */
-	const bool	isDirty	( void ) const;
+	const bool	isDirty	() const;
 
 	/**
 	 * @brief Test this flag.
 	 *
 	 * @return true if this flag is valid, false otherwise.
 	 */
-	const bool	isValid	( void ) const;
+	const bool	isValid	() const;
 
 	/**
 	 * @brief Set this flag to dirty or valid.
 	 * 
-	 * @param setToDirty	: true if this flag must be set to dirty, false for validating it.
+	 * @param setToDirty	true if this flag must be set to dirty, false for validating it.
 	 */
-	void			dirty	( const bool setToDirty = true );
+	void		dirty	( const bool setToDirty = true );
 
 	/**
 	 * @brief Set this flag to valid or dirty.
 	 * 
-	 * @param setToValid	: true if this flag must be set to valid, false for invalidating(dirty) it.
+	 * @param setToValid	true if this flag must be set to valid, false for invalidating(dirty) it.
 	 */
 	void		validate( const bool setToValid = true );
 	//@}
@@ -91,20 +89,12 @@ struct VGD_API DirtyFlag : public vgd::basic::NamedObject
 private:
 
 	/** 
-	 * @name Private data.
+	 * @name Private data
 	 */
 	//@{
 	bool m_bIsDirty;
 	//@}
 };
-
-/**
- * @brief Typedef for the dirty flag container.
- * 
- * key of map		: name of DirtyFlag.
- * value of map	: DirtyFlag.
- */
-typedef std::map< std::string, DirtyFlag >		MapDirtyFlag;
 
 
 
@@ -113,4 +103,3 @@ typedef std::map< std::string, DirtyFlag >		MapDirtyFlag;
 } // namespace vgd
 
 #endif //#ifndef _VGD_FIELD_DIRTYFLAG_HPP
-

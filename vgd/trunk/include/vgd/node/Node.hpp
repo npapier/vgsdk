@@ -6,41 +6,35 @@
 #ifndef _VGD_NODE_NODE_HPP
 #define _VGD_NODE_NODE_HPP
 
-// @todo FIXME pragma warning
+///@todo pragma warning for signals.hpp
 #ifdef WIN32
-//	#pragma warning(push)
 	#pragma warning(disable:4511 4512)
 #endif
-
 #include <boost/signals.hpp>
-
-#ifdef WIN32
-//	#pragma warning(pop)
-#endif
-
 
 #include <vector>
 
-#include "vgd/vgd.hpp"
 #include "vgd/EnableShpFromThis.hpp"
-#include "vgd/Shp.hpp"
-#include "vgd/basic/ClassRegistry.hpp"
 #include "vgd/basic/IndexableClass.hpp"
 #include "vgd/basic/Object.hpp"
 #include "vgd/basic/RegisterNode.hpp"
 #include "vgd/field/FieldManager.hpp"
 #include "vgd/field/String.hpp"
-#include "vgd/graph/Graph.hpp"
-//#include "vgd/graph/detail/Graph.hpp" //@todo FIXME
-
-
+#include "vgd/graph/detail/Graph.hpp"
 
 namespace vgd
 {
-//	namespace graph
-//	{
-//		struct Graph;
-//	}
+	template<class T> struct Shp;
+	
+	namespace basic
+	{
+		template< typename baseClassType > struct ClassRegistry;
+	}
+
+	namespace graph
+	{
+		struct Graph;
+	}
 
 	namespace node
 	{
@@ -55,8 +49,8 @@ namespace vgd
  * 
  * @brief Major component of scene graph.
  *
- * A scene graph is a directed acyclic graph (DAG) that organizes and stores all of the data needed to render a 3D scene. All 
- * vertex data and state is stored in nodes in the graph.
+ * A scene graph is a directed acyclic graph (DAG) that organizes and stores all of the data needed to render a 3D scene. 
+ * All vertex data and state is stored in nodes in the graph.
  * 
  * Nodes are organize in a scene graph.
  * 
@@ -80,46 +74,16 @@ namespace node
  * @brief Meta helpers.
  */
 #define META_NODE_HPP( nodeType )	/** \@brief Node factory\n
-* Create a node with all fields sets to defaults values */ \
-static vgd::Shp< nodeType > create( const std::string nodeName = "NoName" ); \
- \
+* Create a node with all fields sets to defaults values */								\
+static vgd::Shp< nodeType > create( const std::string nodeName = "NoName" );			\
+																						\
 /** \@brief Node factory\n
- *  Create a node with all fields sets to defaults values (optionals fiels too).*/ \
-static vgd::Shp< nodeType > createWhole( const std::string nodeName = "DefaultWhole" ); \
- \
-IMPLEMENT_INDEXABLE_CLASS_HPP( , nodeType ); \
- \
+ *  Create a node with all fields sets to defaults values (optionals fiels too).*/		\
+static vgd::Shp< nodeType > createWhole( const std::string nodeName = "DefaultWhole" );	\
+																						\
+IMPLEMENT_INDEXABLE_CLASS_HPP( , nodeType );											\
+																						\
 static const vgd::basic::RegisterNode<nodeType> m_registrationInstance;
-
-
-
-/**
- * @brief Meta helpers.
- */
-#define META_NODE_CPP( nodeType )	vgd::Shp< nodeType > nodeType::create( const std::string nodeName ) \
-{ \
-	vgd::Shp< nodeType > node( new nodeType(nodeName) ); \
-	\
-	/* Adds a vertex (i.e. a node) to boost::graph */ \
-	graph().addNode( node ); \
-	\
-	node->setToDefaults(); \
-	\
-	return node; \
-} \
- \
-vgd::Shp< nodeType > nodeType::createWhole( const std::string nodeName ) \
-{ \
-	vgd::Shp< nodeType > node = nodeType::create(nodeName); \
-	\
-	node->setOptionalsToDefaults(); \
-	\
-	return node; \
-} \
- \
-IMPLEMENT_INDEXABLE_CLASS_CPP( , nodeType ); \
- \
-const vgd::basic::RegisterNode<nodeType> nodeType::m_registrationInstance;
 
 
 

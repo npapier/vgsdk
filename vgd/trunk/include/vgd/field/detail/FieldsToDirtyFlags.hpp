@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,12 +6,11 @@
 #ifndef _VGD_FIELD_DETAIL_FIELDSTODIRTYFLAGS_HPP
 #define _VGD_FIELD_DETAIL_FIELDSTODIRTYFLAGS_HPP
 
-#include "vgd/vgd.hpp"
-
+#include <map>
 #include <set>
 #include <utility>
 
-#include "vgd/field/DirtyFlag.hpp"
+#include "vgd/vgd.hpp"
 
 
 
@@ -38,7 +37,7 @@ namespace detail
 struct FieldsToDirtyFlags
 {
 	/**
-	 * @name Several typedefs.
+	 * @name Several typedefs
 	 */
 	//@{
 
@@ -51,20 +50,21 @@ struct FieldsToDirtyFlags
 
 
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
 	/**
 	 * @brief Default constructor.
 	 */
-	FieldsToDirtyFlags( void );
+	FieldsToDirtyFlags();
+
 	//@}
 
 
 
 	/**
-	 * @name Accessors for adding/deleting links.
+	 * @name Accessors for adding/deleting links
 	 * 
 	 * @todo remove( const std::string strDirtyFlagName );
 	 */
@@ -73,47 +73,47 @@ struct FieldsToDirtyFlags
 	/**
 	 * @brief Add a link between a field and a dirty flag.
 	 * 
-	 * @param strFieldName		: name of field.
-	 * @param strDirtyFlagName	: name of dirty flag.
+	 * @param strFieldName		name of field.
+	 * @param strDirtyFlagName	name of dirty flag.
 	 * 
 	 * @return true if link is successfully added, false otherwise.
 	 */
-	bool add( const std::string strFieldName, const std::string strDirtyFlagName );
+	const bool add( const std::string strFieldName, const std::string strDirtyFlagName );
 
 	/**
 	 * @brief Remove a link between a field and a dirty flag.
 	 * 
-	 * @param strFieldName		: name of field.
-	 * @param strDirtyFlagName	: name of dirty flag.
+	 * @param strFieldName		name of field.
+	 * @param strDirtyFlagName	name of dirty flag.
 	 * 
 	 * @return true if link is successfully removed, false if it does'nt exist.
 	 */
-	bool remove( const std::string strFieldName, const std::string strDirtyFlagName );
+	const bool remove( const std::string strFieldName, const std::string strDirtyFlagName );
 		
 	/**
 	 * @brief Remove all links for a field.
 	 * 
-	 * @param strFieldName		: name of field.
+	 * @param strFieldName		name of field.
 	 * 
 	 * @return true if all links are successfully removed, false if the field does'nt exist.
 	 */
-	bool removeField( const std::string strFieldName );
+	const bool removeField( const std::string strFieldName );
 	//@}
 
 
 	
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 	
 	/**
 	 * @brief Returns iterator on dirty flag names set link to the field.
 	 * 
-	 * @param strFieldName		: name of field.
+	 * @param strFieldName		name of field.
 	 * 
-	 * @return a pair with a begin iterator(the first element of the pair) and 
-	 * the end iterator(the second element of the pair).
+	 * @return a pair with a begin iterator(the first element of the pair) and the end 
+	 * iterator(the second element of the pair).
 	 */
 	std::pair< SetDirtyFlagNames::iterator, SetDirtyFlagNames::iterator >
 		getIterators( const std::string strFieldName );
@@ -123,42 +123,45 @@ struct FieldsToDirtyFlags
 	 * 
 	 * that are linked to dirty flag(s).
 	 */
-	int32		getNumFields( void ) const;
+	const uint32	getNumFields() const;
 	
 	/**
 	 * @brief Returns number of dirty flags linked to a field.
 	 * 
-	 * @param strFieldName : name of the field.
+	 * @param strFieldName	name of the field.
+	 * 
+	 * @return the number of dirty flags linked to the given field
 	 */
-	int32		getNumLinkedDirtyFlags( const std::string strFieldName );
-	
+	const uint32	getNumLinkedDirtyFlags( const std::string strFieldName );
+
+
 private:
 	
 	/**
 	 * @brief Returns the set of dirty flag names that is linked to a field.
 	 * 
-	 * @param strFieldName : name of the field.
+	 * @param strFieldName	name of the field.
 	 * 
 	 * @return References to the set of dirty flag names.
 	 * 
 	 * @remarks If the field named strFieldName is not link to any dirty flags,
 	 * an empty link is created automatically.
 	 */
-	SetDirtyFlagNames&			get( const std::string strFieldName );
+	SetDirtyFlagNames& get( const std::string strFieldName );
 	//@}
 
 
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 
 	/**
 	 * @brief Container of links between field and dirty flag(s).
 	 * 
-	 * string				: name of field.
-	 * SetDirtyFlagNames	: set of dirty flag names.
+	 * string				name of field.
+	 * SetDirtyFlagNames	set of dirty flag names.
 	 */
 	typedef std::map< std::string, SetDirtyFlagNames > MapLinks;
 

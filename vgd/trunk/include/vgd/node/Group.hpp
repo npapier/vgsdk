@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 
+#include "vgd/graph/Graph.hpp"
 #include "vgd/node/IGroup.hpp"
 #include "vgd/node/IBoundingBox.hpp"
 #include "vgd/node/Node.hpp"
