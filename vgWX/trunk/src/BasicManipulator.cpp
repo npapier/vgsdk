@@ -146,18 +146,18 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 void BasicManipulator::OnChar( wxKeyEvent& event )
 {
 	// VIEW ALL
-	if ( event.KeyCode() == 'v' )
+	if ( event.GetKeyCode() == 'v' )
 	{
 		viewAll();
 	
 		// Refresh view.
 		Refresh();
 	}
-	else if (	(event.KeyCode() == 'b') ||
-				(event.KeyCode() == 'B')
+	else if (	(event.GetKeyCode() == 'b') ||
+				(event.GetKeyCode() == 'B')
 				)
 	{
-		if ( event.KeyCode() == 'b' )
+		if ( event.GetKeyCode() == 'b' )
 		{
 			bench(20);
 		}
