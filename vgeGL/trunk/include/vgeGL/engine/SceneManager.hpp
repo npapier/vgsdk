@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -129,9 +129,9 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @param eventProcessor		event processor to install.
 	 * @param index					the position where the event processor must be inserted.
 	 * 
-	 * @pre index <= getNumEventProcessors()
+	 * @pre 0 <= index <= getNumEventProcessors()
 	 */
-	void insertEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor, const uint32 index = 0 );
+	void insertEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor, const int32 index = 0 );
 
 	/**
 	 * @brief Installs a new event processor at a position relative to the the first encountered event processor of the 
@@ -141,6 +141,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * container.
 	 * 
 	 * @pre the position where insertion would occurred must be valid
+	 * 
 	 * @param eventProcessor		event processor to install
 	 * @param offset				the relative position
 	 */
@@ -149,7 +150,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	{
 		const int32 index = findEventProcessor< typeOfEventProcessor >();
 		
-		if ( index == -1 )
+		if ( index == getNumEventProcessors() )
 		{
 			pushBackEventProcessor( eventProcessor );
 		}
@@ -167,15 +168,15 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @param eventProcessor		event processor to install.
 	 */
 	void pushBackEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor );
-	
+
 	/**
 	 * @brief Removes an event processor.
 	 * 
 	 * @param index		the position of the event processor to be removed.
 	 * 
-	 * @pre index < getNumEventProcessors()
+	 * @pre 0 <= index < getNumEventProcessors()
 	 */
-	void removeEventProcessor( const uint32 index = 0 );
+	void removeEventProcessor( const int32 index = 0 );
 
 	/**
 	 * @brief Removes an event processor at a position relative to the the first encountered event processor of the 
@@ -184,6 +185,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * If the event processor, named typeOfEventProcessor, is not founded, then nothing is done.
 	 * 
 	 * @pre the position where removal would occurred must be valid
+	 * 
 	 * @param offset				the relative position
 	 * @return true if event processor has been founded and removed, otherwise false.
 	 */
@@ -192,7 +194,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	{
 		const int32 index = findEventProcessor< typeOfEventProcessor >();
 		
-		if ( index !=  -1 )
+		if ( index != getNumEventProcessors() )
 		{
 			removeEventProcessor( index + offset );
 
@@ -203,7 +205,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 			return false;
 		}
 	}
-	
+
 	/**
 	 * @brief Removes an event processor.
 	 * 
@@ -221,18 +223,26 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @return true if event processor has been founded and removed, otherwise false.
 	 */
 	const bool removeEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor );
+	//const bool removeEventProcessor( ::vgeGL::event::IEventProcessor * eventProcessor ); ///< @todo
 
 	/**
 	 * @brief Finds index of given event processor.
 	 * 
-	 * @return returns -1 if not found, otherwise returns a value between 0 and getNumEventProcessor()-1.
+	 * @return returns getNumEventProcessors() if not found, otherwise returns a value 
+	 * between 0 and getNumEventProcessor()-1.
+	 */
+	const int32 findEventProcessor( ::vgeGL::event::IEventProcessor * eventProcessor ) const;
+
+	/**
+	 * @copydoc findEventProcessor(::vgeGL::event::IEventProcessor*)const
 	 */
 	const int32 findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const;
 
 	/**
 	 * @brief Finds index for the first event processor of the given type or that inherits of the given type.
 	 * 
-	 * @return returns -1 if not found, otherwise returns a value between 0 and getNumEventProcessor()-1.
+	 * @return returns getNumEventProcessors() if not found, otherwise returns a value 
+	 * between 0 and getNumEventProcessor()-1.
 	 */
 	template < typename typeOfEventProcessor >
 	const int32 findEventProcessor() const
@@ -248,13 +258,13 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 			
 			if ( vgd::dynamic_pointer_cast< typeOfEventProcessor >(currentEventProcessor) != 0 )
 			{
-				return ( retVal );
+				return retVal;
 			}
 			
 			++retVal;
 		}
 		
-		return ( -1 );
+		return getNumEventProcessors();
 	}
 
 	/**
@@ -262,19 +272,19 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * 
 	 * @param index		the position of the event processor to get
 	 * 
-	 * @pre index < getNumEventProcessors()
+	 * @pre 0 <= index < getNumEventProcessors()
 	 */
-	vgd::Shp< ::vgeGL::event::IEventProcessor > getEventProcessor( const uint32 index = 0 ) const;
+	vgd::Shp< ::vgeGL::event::IEventProcessor > getEventProcessor( const int32 index = 0 ) const;
 	
 	/**
 	 * @brief Retrives an event processor.
 	 * 
 	 * @param index		the position of the event processor to get
 	 * 
-	 * @pre index < getNumEventProcessors()
+	 * @pre 0 <= index < getNumEventProcessors()
 	 */
 	template< typename typeOfEventProcessor >
-	vgd::Shp< typeOfEventProcessor > getEventProcessor( const uint32 index = 0 ) const
+	vgd::Shp< typeOfEventProcessor > getEventProcessor( const int32 index = 0 ) const
 	{
 		return ( vgd::dynamic_pointer_cast< typeOfEventProcessor >( getEventProcessor(index) ) );
 	}
@@ -284,7 +294,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * 
 	 * @return the number of event processors.
 	 */
-	const uint32 getNumEventProcessors() const;
+	const int32 getNumEventProcessors() const;
 
 	//@}
 

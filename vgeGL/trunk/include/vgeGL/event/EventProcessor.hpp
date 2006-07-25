@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,18 +6,15 @@
 #ifndef _VGEGL_EVENT_EVENTPROCESSOR_H
 #define _VGEGL_EVENT_EVENTPROCESSOR_H
 
-#include "vgeGL/event/IEventProcessor.hpp"
 #include "vgeGL/vgeGL.hpp"
+#include "vgeGL/engine/SceneManager.hpp"
+#include "vgeGL/event/IEventProcessor.hpp"
+
 
 
 
 namespace vgeGL
 {
-
-namespace engine
-{
-	struct SceneManager;
-}	
 
 namespace event
 {
@@ -42,6 +39,36 @@ struct VGEGL_API EventProcessor : public IEventProcessor
 	EventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
 	
 	//@}
+
+
+
+	/**
+	 * @brief Search the first instance of typeOfEventProcessorToSearch class in event processor container of the 
+	 * scene manager.
+	 * 
+	 * @remarks Searching occurs only on the preceding event processors.
+	 * 
+	 * @return a shared pointer on the searched object or an empty shared pointer if it was not found.
+	 * 
+	 * @todo move this method to vgeGL::engine::SceneManager ?
+	 */
+	template < typename typeOfEventProcessorToSearch >
+	vgd::Shp< typeOfEventProcessorToSearch > findPreviousEventProcessor()
+	{
+		vgd::Shp< typeOfEventProcessorToSearch > retVal;
+
+		const int32 myIndex = getSceneManager()->findEventProcessor( this );
+		const int32 index	= getSceneManager()->template findEventProcessor< typeOfEventProcessorToSearch >();
+
+		if (	( index != getSceneManager()->getNumEventProcessors() )	&&	// found an event processor 
+																			// that fit the constraint
+				( index < myIndex )		)									// found the event processor before me
+		{
+			retVal = getSceneManager()->getEventProcessor< typeOfEventProcessorToSearch >( index );
+		}
+	
+		return retVal;
+	}
 
 
 protected:

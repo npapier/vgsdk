@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -30,7 +30,7 @@ SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > pEngine ) :
 	using ::vgeGL::event::DefaultEventProcessor;
 
 	vgd::Shp< IEventProcessor > eventProcessor( new DefaultEventProcessor(this) );
-	
+
 	insertEventProcessor( eventProcessor );
 }
 
@@ -55,8 +55,7 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 
 void SceneManager::resize( const vgm::Vec2i )
-{
-}
+{}
 
 
 
@@ -84,8 +83,9 @@ void SceneManager::onEvent( vgd::Shp<vgd::event::Event> event )
 
 
 void SceneManager::insertEventProcessor(	vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor,
-											const uint32 index )
+											const int32 index )
 {
+	assert( 0 <= index && "Invalid index.");	
 	assert( index <= getNumEventProcessors() && "Invalid index.");
 	
 	EventProcessorContainer::iterator iter = m_eventProcessors.begin() + index;
@@ -95,15 +95,16 @@ void SceneManager::insertEventProcessor(	vgd::Shp< ::vgeGL::event::IEventProcess
 
 
 
-void SceneManager::pushBackEventProcessor(vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor)
+void SceneManager::pushBackEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor )
 {
 	m_eventProcessors.push_back( eventProcessor );
 }
 
 
-	
-void SceneManager::removeEventProcessor( const uint32 index )
+
+void SceneManager::removeEventProcessor( const int32 index )
 {
+	assert( 0 <= index && "Invalid index.");
 	assert( index < getNumEventProcessors() && "Invalid index.");
 		
 	EventProcessorContainer::iterator iter = m_eventProcessors.begin() + index;
@@ -124,11 +125,11 @@ void SceneManager::popBackEventProcessor()
 
 const bool SceneManager::removeEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor )
 {
-	int32 index = findEventProcessor( eventProcessor );
+	const int32 index = findEventProcessor( eventProcessor );
 	
-	if ( index != -1 )
+	if ( index != getNumEventProcessors() )
 	{
-		// Founded
+		// Found
 		removeEventProcessor( index );
 		
 		return true;
@@ -141,7 +142,7 @@ const bool SceneManager::removeEventProcessor( vgd::Shp< ::vgeGL::event::IEventP
 
 
 
-const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const
+const int32 SceneManager::findEventProcessor( ::vgeGL::event::IEventProcessor *eventProcessor ) const
 {
 	int32 retVal = 0;
 	
@@ -152,7 +153,7 @@ const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventPr
 	{
 		ElementOfEventProcessorContainer currentEventProcessor = *i;
 		
-		if ( currentEventProcessor == eventProcessor )
+		if ( currentEventProcessor.get() == eventProcessor )
 		{
 			return retVal;
 		}
@@ -160,23 +161,33 @@ const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventPr
 		++retVal;
 	}
 	
-	return ( -1 );
+	return getNumEventProcessors();
 }
 
 
 
-vgd::Shp< ::vgeGL::event::IEventProcessor > SceneManager::getEventProcessor( const uint32 index  ) const
+const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const
 {
+	const int32 retVal = findEventProcessor( eventProcessor.get() );
+
+	return retVal;
+}
+
+
+
+vgd::Shp< ::vgeGL::event::IEventProcessor > SceneManager::getEventProcessor( const int32 index  ) const
+{
+	assert( 0 <= index && "Invalid index.");	
 	assert( index < getNumEventProcessors() && "Invalid index.");
 
-	return ( m_eventProcessors[index] );
+	return m_eventProcessors[index];
 }
 
 
 
-const uint32 SceneManager::getNumEventProcessors() const
+const int32 SceneManager::getNumEventProcessors() const
 {
-	return ( m_eventProcessors.size() );
+	return static_cast<int32>(m_eventProcessors.size());
 }
 
 
@@ -220,21 +231,21 @@ vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 
 const vgeGL::technique::RayCasting& SceneManager::getRayCastingTechnique() const
 {
-	return ( m_rayCasting );
+	return m_rayCasting;
 }
 
 
 
 const bool SceneManager::isGLContextCurrent() const
 {
-	return ( m_GLEngine->isGLContextCurrent() );
+	return m_GLEngine->isGLContextCurrent();
 }
 
 
 
 vgd::Shp< vgeGL::engine::Engine > SceneManager::getGLEngine()
 {
-	return ( m_GLEngine );
+	return m_GLEngine;
 }
 
 
