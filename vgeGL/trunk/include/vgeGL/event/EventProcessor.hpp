@@ -64,7 +64,7 @@ struct VGEGL_API EventProcessor : public IEventProcessor
 																			// that fit the constraint
 				( index < myIndex )		)									// found the event processor before me
 		{
-			retVal = getSceneManager()->getEventProcessor< typeOfEventProcessorToSearch >( index );
+			retVal = getSceneManager()->template getEventProcessor< typeOfEventProcessorToSearch >( index );
 		}
 	
 		return retVal;
