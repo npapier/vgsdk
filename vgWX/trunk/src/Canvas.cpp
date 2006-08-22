@@ -50,13 +50,13 @@ Canvas::Canvas(	wxWindow *parent,
 				const wxPoint& pos, const wxSize& size,
 				long style,					
 				int* gl_attrib,
-				const wxWindowID id ) :
-					
-	wxGLCanvas( parent, id, pos, size, style, name, 
+				const wxWindowID id )
+:	wxGLCanvas( parent, id, pos, size, style, name, 
 				(gl_attrib != 0) ? gl_attrib : m_vgsdk_attrib ),
 	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 
 	//m_canvasCount
+	m_sharedCanvas				(	0			),	
 	//m_vgsdk_attrib
 
 	//m_gleLog
@@ -78,12 +78,13 @@ Canvas::Canvas(	wxWindow *parent,
 				const wxPoint& pos, const wxSize& size,
 				long style,
 				int* gl_attrib,
-				const wxWindowID id ) :
-				
-	wxGLCanvas( parent, pSharedCanvas, id, pos, size, style, name,
+				const wxWindowID id )
+:	wxGLCanvas( parent, pSharedCanvas, id, pos, size, style, name,
 				(gl_attrib != 0) ? gl_attrib : m_vgsdk_attrib ),
 	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 
+	//m_canvasCount
+	m_sharedCanvas				(	pSharedCanvas),	
 	//m_vgsdk_attrib
 
 	//m_gleLog
@@ -141,6 +142,10 @@ wxMenu *Canvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
 	using namespace vgd::node;
 	
 	wxMenu *ctxMenu = new wxMenu;
+	
+	// Write scene graph
+	ctxMenu->Append( wxID_CTX_WRITEGRAPHWIZ, _T("Write scene graph into sceneGraph.dot") );
+	ctxMenu->AppendSeparator();
 
 	//
 	bool isDefined;
@@ -529,6 +534,11 @@ void Canvas::OnCtxMenu( wxCommandEvent& event )
 	
 	switch ( event.GetId() )
 	{
+		// writeGraphviz
+		case wxID_CTX_WRITEGRAPHWIZ:
+			writeGraphviz( false );
+			break;
+
 		// DrawStyle
 		case wxID_CTX_DRAWSTYLE_NONE:
 		case wxID_CTX_DRAWSTYLE_POINT:
@@ -770,6 +780,13 @@ const uint32 Canvas::getCanvasCount() const
 
 
 
+Canvas *Canvas::getSharedCanvas() const
+{
+	return m_sharedCanvas;
+}
+
+
+
 bool Canvas::enableVGSDK()
 {
 	// Activate OpenGL context.
@@ -800,6 +817,7 @@ bool Canvas::enableVGSDK()
 		getGLEngine()->reset();
 	
 		// FIXME
+		///@todo Remove setToDefaults().
 		getGLEngine()->setToDefaults(); //???????????????????????????????????????????????????????????????????? check if opengl is current.
 
 		// Theses two lines must go in setToDefaults()

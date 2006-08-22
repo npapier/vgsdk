@@ -37,8 +37,8 @@ namespace vgWX
  * 
  *  This class has some methods to :
  * 
- * - Provide a contextual menu to be able to change things like drawing style (vgd::node::DrawStyle), the lighting model 
- * 	(vgd::node::LightModel) and so on. It is disabled by default.
+ * - Provide a contextual menu to be able to write the scene graph in dot file and change things like drawing 
+ * 	style (vgd::node::DrawStyle), the lighting model (vgd::node::LightModel) and so on. It is disabled by default.
  * 
  * @todo Move contextual menu in another place.
  * 
@@ -102,6 +102,8 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	enum {
 		// DRAWSTYLE
 		wxID_CTX_DRAWSTYLE = wxID_HIGHEST + 1024,
+		
+		wxID_CTX_WRITEGRAPHWIZ,
 		
 		wxID_CTX_DRAWSTYLE_NONE,
 		wxID_CTX_DRAWSTYLE_POINT,
@@ -276,6 +278,14 @@ private:
 	 * @return the canvas count
 	 */
 	const uint32 getCanvasCount() const;
+	
+	/**
+	 * @brief Returns the shared canvas that have been used to initialize the current canvas.
+	 * 
+	 * @return	the shared canvas that have been used to initialize the current canvas or
+	 * 			null if the canvas has been construct without another one.
+	 */
+	Canvas * getSharedCanvas() const;
 
 protected:
 	/**
@@ -287,10 +297,17 @@ protected:
 	 */
 	bool			enableVGSDK();
 private:
+
 	/**
 	 * @brief Instance count of this class.
 	 */
 	static uint32				m_canvasCount;
+
+	/**
+	 * @brief	the shared canvas that have been used to initialize the current canvas or
+	 * 			null if the canvas has been construct without another one.
+	 */
+	Canvas *					m_sharedCanvas;
 
 	/**
 	 * @brief Default OpenGL attributes for VGSDK.
