@@ -1,2 +1,2 @@
-USE		= ['opengl','wx2-6','wxgl2-6']
+USE		= ['opengl','wx','wxgl']
 TYPE	= 'exec'
