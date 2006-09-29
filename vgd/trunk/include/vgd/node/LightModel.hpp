@@ -6,12 +6,11 @@
 #ifndef _VGD_NODE_LIGHTMODEL_HPP
 #define _VGD_NODE_LIGHTMODEL_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <vgm/Rectangle.hpp>
 #include <vgm/Vector.hpp>
-#include "vgd/field/TPairAssociativeField.hpp"
 
+#include "vgd/vgd.hpp"
+#include "vgd/field/TPairAssociativeField.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
 

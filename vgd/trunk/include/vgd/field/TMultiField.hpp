@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -37,7 +37,7 @@ template<typename T>
 struct TMultiField : public AbstractField
 {
 	/**
-	 * @name Typedefs.
+	 * @name Typedefs
 	 */
 	//@{
 	
@@ -61,7 +61,7 @@ struct TMultiField : public AbstractField
 	
 	
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
@@ -77,7 +77,7 @@ struct TMultiField : public AbstractField
 
 
 	/** 
-	 * @name Size methods.
+	 * @name Size methods
 	 */
 	//@{
 
@@ -128,7 +128,7 @@ struct TMultiField : public AbstractField
 
 
 	/**
-	 * @name Accessor to one value.
+	 * @name Accessor to one value
 	 * 
 	 * @todo at().
 	 */
@@ -203,7 +203,7 @@ struct TMultiField : public AbstractField
 
 
 	/**
-	 * @name Iterators.
+	 * @name Iterators
 	 */
 	//@{
 
@@ -241,22 +241,12 @@ struct TMultiField : public AbstractField
 	
 	
 	/** 
-	 * @name Accessor on multiple value.
-	 * 
-	 * @todo assign(), insert()
-	 */
-	//@{
-	//@}
-
-
-
-	/** 
-	 * @name Inserts element at the end.
+	 * @name Inserts element at the end
 	 */
 	//@{
 
 	/**
-	 * @brief Add an element to the end.
+	 * @brief Adds an element to the end.
 	 *
 	 * @param rItem : element to add.
 	 */
@@ -266,11 +256,9 @@ struct TMultiField : public AbstractField
 
 		m_vectorMF.push_back( rItem );
 	}
-
-
-
+	
 	/**
-	 * @brief Add all element from a multifield to the end.
+	 * @brief Adds all element from a multifield to the end.
 	 *
 	 * @param rMFToAppend : multi field to add.
 	 */
@@ -288,9 +276,9 @@ struct TMultiField : public AbstractField
 			m_vectorMF.push_back( rItem );
 		}
 	}
-
+	
 	/**
-	 * @brief Add elements from range [begin,end[ of a vector.
+	 * @brief Adds elements from range [begin,end[ of a vector.
 	 *
 	 * @param begin		position of the first element in the range of elements to be added.
 	 * @param end		Position of the first element beyond the range of elements to be added. 
@@ -309,7 +297,7 @@ struct TMultiField : public AbstractField
 	}
 
 	/**
-	 * @brief Add elements from range [begin,end[ of a vector.
+	 * @brief Adds elements from range [begin,end[ of a vector.
 	 *
 	 * @param begin		position of the first element in the range of elements to be added.
 	 * @param end		Position of the first element beyond the range of elements to be added. 
@@ -327,13 +315,34 @@ struct TMultiField : public AbstractField
 			push_back( static_cast< const T >(*iter) );
 		}
 	}
+
+	/**
+	 * @brief Adds all elements of a given vector to the end of the vector.
+	 * 
+	 * @param source	vector with element to push back.
+	 */
+	void	push_back( const typename std::vector<T> source )
+	{
+		push_back( source.begin(), source.end() );
+	}
+
+	/**
+	 * @brief Adds all elements of a given vector to the end of the vector.
+	 * 
+	 * @param source	vector with element to push back.
+	 */
+	template< typename U >
+	void	push_back( const typename std::vector<U> source )
+	{
+		push_back( source.begin(), source.end() );
+	}
 	
 	//@}
 
 
 
 	/** 
-	 * @name Inserts elements.
+	 * @name Inserts element(s)
 	 * 
 	 * @todo all insert methods.
 	 */
@@ -355,7 +364,7 @@ struct TMultiField : public AbstractField
 
 
 	/** 
-	 * @name Erase.
+	 * @name Erases element(s)
 	 * 
 	 * @todo pop_back
 	 */
@@ -412,7 +421,7 @@ struct TMultiField : public AbstractField
 
 
 	/** 
-	 * @name Swap.
+	 * @name Swap
 	 */
 	//@{
 	
@@ -443,12 +452,12 @@ struct TMultiField : public AbstractField
 
 
 	/** 
-	 * @name Find.
+	 * @name Searching
 	 */
 	//@{
 
 	/**
-	 * @brief Find an item.
+	 * @brief Finds an item.
 	 * 
 	 * @param	rItem	an item.
 	 * @return	Index of item (0 to size()-1), or size() if not found.
@@ -476,7 +485,7 @@ struct TMultiField : public AbstractField
 private:
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 
@@ -490,7 +499,7 @@ private:
 
 
 	/**
-	 * @brief Test if an index is valid ( >=0 and < size() ).
+	 * @brief Tests if an index is valid ( >=0 and < size() ).
 	 */
 	const bool isIndexValid( const uint32 index ) const
 	{
