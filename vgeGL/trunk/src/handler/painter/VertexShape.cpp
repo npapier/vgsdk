@@ -12,11 +12,13 @@
 // @todo Move DrawStyle stuff to drawStyle handler (FIXME)
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/Quad.hpp>
+#include <vgd/node/Sphere.hpp>
 #include <vgd/node/Texture.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgd/node/VertexShape.hpp>
 #include <vgm/Box.hpp>
 
+#include "vgeGL/handler/painter/DrawStyle.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -40,10 +42,11 @@ const vge::handler::Handler::TargetVector VertexShape::getTargets() const
 {
 	vge::handler::Handler::TargetVector targets;
 	
-	targets.reserve( 4 );
+	targets.reserve( 5 );
 
 	targets.push_back( vgd::node::Box::getClassIndexStatic() );
 	targets.push_back( vgd::node::Quad::getClassIndexStatic() );
+	targets.push_back( vgd::node::Sphere::getClassIndexStatic() );	
 	targets.push_back( vgd::node::TriSet::getClassIndexStatic() );	
 	targets.push_back( vgd::node::VertexShape::getClassIndexStatic() );
 
@@ -62,227 +65,10 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 	assert( dynamic_cast< vgd::node::VertexShape* >(pNode) != 0 );
 	vgd::node::VertexShape *pCastedNode = static_cast< vgd::node::VertexShape* >(pNode);
-	
-	// Render the VertexShape.
-	bool bDefined;
 
-	// @todo not the good place (FIXME).
-	// *** DRAWSTYLE.shape ***
-	vgd::node::DrawStyle::ShapeValueType shapeValue;
-
-	bDefined = pGLEngine->getStateStackTop<
-						vgd::node::DrawStyle,
-						vgd::node::DrawStyle::ShapeParameterType,
-						vgd::node::DrawStyle::ShapeValueType >(	vgd::node::DrawStyle::getFShape(),
-																vgd::node::DrawStyle::SHAPE,
-																shapeValue );
-	assert( bDefined );
-	
-	float vMat[4];
-	
-	switch ( shapeValue )
-	{
-		case vgd::node::DrawStyle::NONE:
-			break;
-
-		case vgd::node::DrawStyle::POINT:
-			// FIXME OPTME
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-			glPointSize( 4.0 );
-			glPolygonMode( GL_FRONT_AND_BACK, GL_POINT );
-
-			paintMethodChooser( pGLEngine, pCastedNode );
-
-			// FIXME OPTME
-			glPopAttrib();
-			break;
-
-		case vgd::node::DrawStyle::FLAT:
-			// FIXME OPTME
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glShadeModel(GL_FLAT);
-
-			paintMethodChooser( pGLEngine, pCastedNode );
-			
-			// FIXME OPTME
-			glPopAttrib();			
-			break;
-			
-		// see below for case SMOOTH:
-					
-		case vgd::node::DrawStyle::WIREFRAME:
-			// FIXME OPTME
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-		
-			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-			
-			paintMethodChooser( pGLEngine, pCastedNode );
-			
-			// FIXME OPTME
-			glPopAttrib();
-			break;
-					
-		case vgd::node::DrawStyle::HIDDEN_LINE:
-			// FIXME OPTME
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-	
-			//
-			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-			paintMethodChooser( pGLEngine, pCastedNode );
-
-			//
-			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-			glEnable( GL_POLYGON_OFFSET_FILL );
-			glPolygonOffset( 1.0f, 1.0f );
-
-			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
-
-			paintMethodChooser( pGLEngine, pCastedNode );
-			
-			glDisable(GL_POLYGON_OFFSET_FILL);
-			
-			// FIXME OPTME
-			glPopAttrib();
-			break;
-
-		case vgd::node::DrawStyle::FLAT_HIDDEN_LINE:
-		{
-			// FIXME OPTME
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-			//
-			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );			
-			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
-			
-			paintMethodChooser( pGLEngine, pCastedNode );
-			
-			glPopAttrib();
-			
-			//
-			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-			glShadeModel( GL_FLAT );
-			
-			glEnable( GL_POLYGON_OFFSET_FILL );
-			glPolygonOffset( 1.0, 1.0 );
-
-			paintMethodChooser( pGLEngine, pCastedNode );
-			
-			glDisable(GL_POLYGON_OFFSET_FILL);
-
-			// FIXME OPTME
-			glPopAttrib();			
-			break;
-		}
-
-		case vgd::node::DrawStyle::SMOOTH_HIDDEN_LINE:
-		{
-			// FIXME OPTME
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-			//
-			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );			
-			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
-			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
-			
-			paintMethodChooser( pGLEngine, pCastedNode );
-			
-			glPopAttrib();
-			
-			//
-			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-			glShadeModel( GL_SMOOTH );
-			
-			glEnable( GL_POLYGON_OFFSET_FILL );
-			glPolygonOffset( 1.0, 1.0 );
-
-			paintMethodChooser( pGLEngine, pCastedNode );
-			
-			glDisable(GL_POLYGON_OFFSET_FILL);
-
-			// FIXME OPTME
-			glPopAttrib();			
-			break;
-		}
-
-		case vgd::node::DrawStyle::NEIGHBOUR: // FIXME
-		case vgd::node::DrawStyle::SMOOTH:
-		
-			// FIXME OPTME
-			//glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-			// FIXME move to engine.
-			// POLYGON_MODE
-			GLint polygonMode[2];
-			glGetIntegerv( GL_POLYGON_MODE, polygonMode );
-
-			bool	bRestorePolygonMode;
-			if (	(polygonMode[0] != GL_FILL) ||
-					(polygonMode[1] != GL_FILL) )
-			{
-				glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-				bRestorePolygonMode = true;
-			}
-			else
-			{ 
-				bRestorePolygonMode = false;
-			}
-			
-			// SHADE_MODEL
-			GLint shadeModel;
-			glGetIntegerv( GL_SHADE_MODEL, &shadeModel );
-			
-			bool bRestoreShadeModel;
-			if ( shadeModel != GL_SMOOTH )
-			{
-				bRestoreShadeModel = true;
-				glShadeModel( GL_SMOOTH );
-			}
-			else
-			{
-				bRestoreShadeModel = false;
-			}
-
-			paintMethodChooser( pGLEngine, pCastedNode );
-			
-			//
-			if ( bRestoreShadeModel )
-			{
-				glShadeModel( shadeModel );
-			}
-			
-			if ( bRestorePolygonMode )
-			{
-				glPolygonMode( GL_FRONT, polygonMode[0] );
-				glPolygonMode( GL_BACK, polygonMode[1] );				
-			}
-
-			// FIXME OPTME
-			//glPopAttrib();			
-			break;
-
-		default:
-			assert( false && "Unknown DrawStyle.shape value." );
-	}
-
-
+	// Render the VertexShape
+	::vgeGL::handler::painter::DrawStyle::paintVertexShapeWithShapeProperty( pGLEngine, pCastedNode, this );
+	::vgeGL::handler::painter::DrawStyle::paintVertexShapeNormals( pGLEngine, pCastedNode, this );	
 
 //	// pre
 //	GLboolean bLightingState;
@@ -291,39 +77,11 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 //	glDisable( GL_LIGHTING );
 
 	// FIXME not the good place ?
-	// *** DRAWSTYLE.normalLength ***
-	//bool										bDefined;
-	vgd::node::DrawStyle::NormalLengthValueType	value;
-
-	bDefined = pGLEngine->getStateStackTop< 
-						vgd::node::DrawStyle, 
-						vgd::node::DrawStyle::NormalLengthParameterType,
-						vgd::node::DrawStyle::NormalLengthValueType >(	vgd::node::DrawStyle::getFNormalLength(),
-																		vgd::node::DrawStyle::NORMAL_LENGTH,
-																		value );
-	assert( bDefined );
-	if ( value != 0.f )
-	{
-		// FIXME optimize me
-		glPushAttrib( GL_ALL_ATTRIB_BITS );
-		
-		glDisable( GL_LIGHTING );
-		glColor3f( 1.f, 1.f, 1.f );
-		// END FIXME
-
-		drawNormals( pCastedNode, value );
-	
-		// FIXME OPTME	
-		glPopAttrib();
-	}
-
-
-	// FIXME not the good place ?
 	// *** DRAWSTYLE.showOrientation
 	//bool	bDefined;
 	bool	showOrientationValue;
 
-	bDefined = pGLEngine->getStateStackTop< 
+	bool	bDefined = pGLEngine->getStateStackTop< 
 						vgd::node::DrawStyle, 
 						vgd::node::DrawStyle::ShowOrientationParameterType,
 						vgd::node::DrawStyle::ShowOrientationValueType >(	vgd::node::DrawStyle::getFShowOrientation(),
@@ -350,7 +108,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		drawTriangleOrientation( pCastedNode );
 
 		//glDisable(GL_POLYGON_OFFSET_FILL);
-		// FIXME OPTME	
+		///@todo FIXME OPTME	
 		glPopAttrib();
 	}
 
@@ -409,7 +167,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				assert( false && "Unknown DrawStyle.boundingBox value." );
 		}
 		
-		// FIXME OPTME	
+		///@todo FIXME OPTME	
 		glPopAttrib();
 	}
 	
@@ -426,14 +184,12 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 
 void VertexShape::unapply ( vge::engine::Engine* , vgd::node::Node* )
-{
-}
+{}
 
 
 
 void VertexShape::setToDefaults()
-{
-}
+{}
 
 
 
@@ -699,6 +455,8 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 	{
 		if ( glext->isGL_EXT_secondary_color )
 		{
+			glEnable( GL_COLOR_MATERIAL );
+
 			secondaryColor4 = pVertexShape->getFSecondaryColor4RO();
 			
 			pArray = static_cast< const GLvoid* >( secondaryColor4->begin()->getValue() );
@@ -716,6 +474,8 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 	// COLOR4
 	if ( pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX )
 	{
+		glEnable( GL_COLOR_MATERIAL );
+
 		color4 = pVertexShape->getFColor4RO();
 		
 		pArray = static_cast< const GLvoid* >( color4->begin()->getValue() );
@@ -794,6 +554,8 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 		if ( glext->isGL_EXT_secondary_color )
 		{		
 			glDisableClientState( GL_SECONDARY_COLOR_ARRAY );
+			
+			glDisable( GL_COLOR_MATERIAL );
 		}
 	}	
 	
@@ -801,6 +563,8 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 	if ( pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX )
 	{
 		glDisableClientState( GL_COLOR_ARRAY );
+		
+		glDisable( GL_COLOR_MATERIAL );
 	}
 	
 	// NORMAL
@@ -844,7 +608,7 @@ void VertexShape::drawXfBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexS
 }
 
 
-
+// move to handler/operations.hpp.cpp
 void VertexShape::drawBox3f( const vgm::Box3f& box )
 {
 	float	width, height, depth;
@@ -1066,7 +830,9 @@ void VertexShape::drawTriangleOrientation( vgd::node::VertexShape *pCastedNode )
 
 
 
-// Be careful, the elements of this enumeration are ordered(see vgd::node::Primitive)
+/**
+ * Be careful, the elements of this enumeration are ordered(see vgd::node::Primitive)
+ */
 GLenum VertexShape::m_primTypeArray[] = {
 	0, //NONE,
 

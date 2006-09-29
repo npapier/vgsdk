@@ -1,20 +1,21 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_DRAWSTYLE_H
-#define _VGEGL_HANDLER_DRAWSTYLE_H
-
-#include "vgeGL/vgeGL.hpp"
+#ifndef _VGEGL_HANDLER_DRAWSTYLE_HPP
+#define _VGEGL_HANDLER_DRAWSTYLE_HPP
 
 #include <vge/handler/painter/SingleAttribute.hpp>
+
+#include "vgeGL/vgeGL.hpp"
 
 namespace vgd
 {
 	namespace node
 	{
 		struct DrawStyle;
+		struct VertexShape;
 	}
 }
 
@@ -37,12 +38,12 @@ namespace handler
 namespace painter
 {
 
-
+struct VertexShape;
 
 /**
  * @brief Send render commands for the DrawStyle node
  * 
- * @todo this handler do nothing. Remove it.
+ * @todo this handler do nothing. Remove it ( see macro META_... ).
  */
 struct VGEGL_API DrawStyle : public vge::handler::painter::SingleAttribute
 {
@@ -50,11 +51,21 @@ struct VGEGL_API DrawStyle : public vge::handler::painter::SingleAttribute
 
 	const TargetVector		getTargets()	const;
 
-
-	void	apply				( vge::engine::Engine*, vgd::node::Node* );
+	void	apply			( vge::engine::Engine*, vgd::node::Node* );
 	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
 	
 	void	setToDefaults	();
+
+	/**
+	 * @name Internal helpers
+	 */
+	//@{
+	static void paintVertexShapeWithShapeProperty(	vgeGL::engine::Engine *, vgd::node::VertexShape *,
+													vgeGL::handler::painter::VertexShape * );
+
+	static void paintVertexShapeNormals(vgeGL::engine::Engine *, vgd::node::VertexShape *,
+										vgeGL::handler::painter::VertexShape * );
+	//@}
 };
 
 
@@ -65,4 +76,4 @@ struct VGEGL_API DrawStyle : public vge::handler::painter::SingleAttribute
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_DRAWSTYLE_H
+#endif //#ifndef _VGEGL_HANDLER_DRAWSTYLE_HPP
