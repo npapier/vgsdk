@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 #include <vgd/node/Box.hpp>
 #include <vgd/node/Quad.hpp>
 #include <vgd/node/Shape.hpp>
+#include <vgd/node/Sphere.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgd/node/VertexShape.hpp>
 #include <vgd/node/WireBox.hpp>
@@ -37,15 +38,16 @@ const Handler::TargetVector Shape::getTargets()	const
 {
 	TargetVector targets;
 	
-	targets.reserve( 6 );
+	targets.reserve( 7 );
 	targets.push_back( vgd::node::Box::getClassIndexStatic() );
 	targets.push_back( vgd::node::Quad::getClassIndexStatic() );
-	targets.push_back( vgd::node::TriSet::getClassIndexStatic() );	
+	targets.push_back( vgd::node::Sphere::getClassIndexStatic() );
+	targets.push_back( vgd::node::TriSet::getClassIndexStatic() );
 	targets.push_back( vgd::node::VertexShape::getClassIndexStatic() );
 	targets.push_back( vgd::node::WireBox::getClassIndexStatic() );
 	targets.push_back( vgd::node::WireQuad::getClassIndexStatic() );
 	
-	return ( targets );
+	return targets;
 }
 
 
@@ -70,8 +72,7 @@ void Shape::unapply( vge::engine::Engine *, vgd::node::Node * )
 
 
 void Shape::setToDefaults()
-{
-}
+{}
 
 
 
