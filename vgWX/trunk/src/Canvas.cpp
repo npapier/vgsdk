@@ -108,7 +108,9 @@ Canvas::~Canvas()
 
 	if ( m_canvasCount == 0 )
 	{
-		// Last canvas is about to be destroy => destroy OpenGL objects.
+		// Last canvas is about to be destroy
+		
+		// Try to destroy OpenGL objects
 		if ( enableVGSDK() )
 		{
 			getGLEngine()->getGLManager().clear();
@@ -117,6 +119,9 @@ Canvas::~Canvas()
 		{
 			assert( false && "OpenGL context could not be made current. So OpenGL objects could not be released properly." );
 		}
+
+		// Global initialization of vgsdk must be redone for each "first canvas"
+		m_bGlobalInitializedVGSDK = false;
 	}
 	//else Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
 }
@@ -789,36 +794,47 @@ Canvas *Canvas::getSharedCanvas() const
 
 bool Canvas::enableVGSDK()
 {
-	// Activate OpenGL context.
+	// Activates OpenGL context
 	SetCurrent();
 
-	// Test if OpenGL context is current	
+	// Tests if the OpenGL context is current	
 	if ( !isGLContextCurrent() )
 	{
-		return ( false );
+		return false;
 	}
 
-	// Initialize VGSDK if needed.
+	// Initializes VGSDK if needed
+	// @todo remove that
 	if ( !m_bGlobalInitializedVGSDK )
 	{
 		// init. of OpenGL context already done and the OpenGL context is already current too.
-	
-		// init. gle
-		m_gleContext.initialize();
-
-		gleSetCurrent( &m_gleContext );
-		
 		m_bGlobalInitializedVGSDK = true;
 	}
-	
+
 	if ( !m_bLocalInitializedVGSDK )
 	{
-		// init. vgeGL	
+		// Initializes gle and sets it current
+		m_gleContext.initialize();
+		
+		gleSetCurrent( &m_gleContext );
+		
+		// Checks opengl requirements for vgsdk
+//		if ( m_gleContext.isGL_VERSION_1_5 == false )
+//		{
+//			vgDebug::get().logError("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
+//		}
+//		
+//		if ( m_gleContext.isGL_VERSION_2_0 == false )
+//		{
+//			vgDebug::get().logWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
+//		}
+
+		// Initializes vgeGL
 		getGLEngine()->reset();
-	
-		// FIXME
+
+		// FIXME	
 		///@todo Remove setToDefaults().
-		getGLEngine()->setToDefaults(); //???????????????????????????????????????????????????????????????????? check if opengl is current.
+		getGLEngine()->setToDefaults();
 
 		// Theses two lines must go in setToDefaults()
 		//vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
@@ -827,6 +843,12 @@ bool Canvas::enableVGSDK()
 		
 		//
 		m_bLocalInitializedVGSDK = true;
+	}
+
+	// gle must be made current (only if not yet)
+	if ( gleGetCurrent() != &m_gleContext )
+	{
+		gleSetCurrent( &m_gleContext );
 	}
 
 	return true;
