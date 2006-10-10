@@ -276,8 +276,10 @@ wxMenu *Canvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
 	}
 	
 	//
-	ctxMenu->Append( wxID_CTX_DRAWSTYLE, _T("Drawing style"), subMenu );	
-
+	if ( drawStyle != 0 )
+	{
+		ctxMenu->Append( wxID_CTX_DRAWSTYLE, _T("Drawing style"), subMenu );	
+	}
 
 	// LightModel
 	ctxMenu->AppendSeparator();
@@ -332,7 +334,7 @@ wxMenu *Canvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
 		
 		if ( isDefined )
 		{
-			ctxMenu->Check( wxID_CTX_LIGHTMODEL_VIEWER, viewerValue == LightModel::AT_EYE );
+			subMenu->Check( wxID_CTX_LIGHTMODEL_VIEWER, viewerValue == LightModel::AT_EYE );
 		}
 	}
 	
@@ -347,14 +349,17 @@ wxMenu *Canvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
 		
 		if ( isDefined )
 		{
-			ctxMenu->Check( wxID_CTX_LIGHTMODEL_TWOSIDED, twosidedValue );
+			subMenu->Check( wxID_CTX_LIGHTMODEL_TWOSIDED, twosidedValue );
 		}
 	}
 
-	//	
-	ctxMenu->Append( wxID_CTX_LIGHTMODEL_MODEL, _T("Lighting model"), subMenu );	
+	//
+	if ( lightModel != 0 )
+	{
+		ctxMenu->Append( wxID_CTX_LIGHTMODEL_MODEL, _T("Lighting model"), subMenu );	
+	}
 
-	return ( ctxMenu );
+	return ctxMenu;
 }
 
 

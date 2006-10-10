@@ -100,10 +100,10 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * Don't use the same. Identifier inside [wxID_HIGHEST + 1024,wxID_HIGHEST + 2048] are reserved.
 	 */
 	enum {
+		wxID_CTX_WRITEGRAPHWIZ  = wxID_HIGHEST + 1024,
+
 		// DRAWSTYLE
-		wxID_CTX_DRAWSTYLE = wxID_HIGHEST + 1024,
-		
-		wxID_CTX_WRITEGRAPHWIZ,
+		wxID_CTX_DRAWSTYLE,
 		
 		wxID_CTX_DRAWSTYLE_NONE,
 		wxID_CTX_DRAWSTYLE_POINT,
