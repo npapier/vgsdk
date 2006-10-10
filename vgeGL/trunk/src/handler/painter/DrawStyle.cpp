@@ -161,7 +161,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			//
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-			//glPushAttrib( GL_ALL_ATTRIB_BITS );
+			glPushAttrib( GL_ALL_ATTRIB_BITS );
 			float vMat[4];			
 			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );			
 			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,	vMat );
@@ -171,7 +171,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			
 			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
 			
-			//glPopAttrib();
+			glPopAttrib();
 			
 			//
 			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -196,8 +196,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			//
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-			//glPushAttrib( GL_ALL_ATTRIB_BITS );
-			
+			glPushAttrib( GL_ALL_ATTRIB_BITS );
 			float vMat[4];			
 			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );			
 			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,	vMat );
@@ -207,7 +206,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			
 			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
 			
-			//glPopAttrib();
+			glPopAttrib();
 			
 			//
 			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );

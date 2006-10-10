@@ -684,9 +684,18 @@ void VertexShape::drawNormals( vgd::node::VertexShape *pCastedNode, const float 
 	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= pCastedNode->getFVertexIndexRO();
 
 	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives( pCastedNode->getFPrimitiveRO() );
+	
+	if (	(pCastedNode->getNormalBinding() != vgd::node::BIND_PER_VERTEX) ||
+			(normal->size() != vertex->size()) )
+	{
+		// do nothing
+		return;
+	}
 
 	assert( pCastedNode->getNormalBinding() == vgd::node::BIND_PER_VERTEX );
 	assert( normal->size() > 0 );
+	assert( normal->size() == vertex->size() );
+	
 	
 	int32 i32IndexPrim=0;	
 	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
