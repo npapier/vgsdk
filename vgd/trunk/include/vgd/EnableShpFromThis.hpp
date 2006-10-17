@@ -28,12 +28,12 @@ template<class T> struct Shp;
 template<class T>
 struct EnableShpFromThis : public boost::enable_shared_from_this<T>
 {
-	Shp<T> ShpFromThis()
+	Shp<T> shpFromThis()
 	{
 		return boost::enable_shared_from_this<T>::shared_from_this();
 	}
 
-	Shp<T const> ShpFromThis() const
+	Shp<T const> shpFromThis() const
 	{
 		return boost::enable_shared_from_this<T>::shared_from_this();
 	}
