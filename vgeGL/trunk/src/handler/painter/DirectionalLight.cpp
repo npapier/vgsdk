@@ -53,8 +53,6 @@ void DirectionalLight::unapply ( vge::engine::Engine*, vgd::node::Node* )
 void DirectionalLight::setToDefaults()
 {
 	Light::setToDefaults();
-
-
 }
 
 
