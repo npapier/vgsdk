@@ -70,7 +70,7 @@ struct VGD_API Quad : public vgd::node::VertexShape
 	/**
 	 * @brief Initialize texture coordinates and bindings for all specified textures units.
 	 * 
-	 * @param numTexunits	number of desired texture coordinates and bindings
+	 * @param numTexUnits	number of desired texture coordinates and bindings
 	 * @param origin		defines the origin of the texture coordinates.
 	 * @param ccw			true to pull texture coordinates into the GPU in counter-clockwise mode, false to pull them
 	 * 						in clockwise mode.
@@ -86,7 +86,7 @@ struct VGD_API Quad : public vgd::node::VertexShape
 	/**
 	 * @brief Reset the texture coordinates and bindings for all specified textures units.
 	 * 
-	 * @param numTexunits	number of desired texture coordinates and bindings
+	 * @param numTexUnits	number of desired texture coordinates and bindings
 	 * @param origin		defines the origin of the texture coordinates.
 	 * @param ccw			true to pull texture coordinates into the GPU in counter-clockwise mode, false to pull them
 	 * 						in clockwise mode.

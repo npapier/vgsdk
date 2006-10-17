@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,10 +6,10 @@
 #ifndef _VGD_NODE_LIGHT_HPP
 #define _VGD_NODE_LIGHT_HPP
 
-#include "vgd/vgd.hpp"
-
-#include "vgd/field/TPairAssociativeField.hpp"
+#include "vgd/field/Bool.hpp"
+#include "vgd/field/Vector.hpp"
 #include "vgd/node/MultiAttribute.hpp"
+#include "vgd/vgd.hpp"
 
 
 
@@ -29,15 +29,24 @@ namespace node
  * style. Light sources are affected by the current transformation. A light node under a separator 
  * does not affect any objects outside that separator.
  * 
- * New field added by this node :
+ * New fields added by this node :
  * 
  * - PAFBool \c [on] = false\n
- * 	Determines whether the source is active or inactive. When inactive, the
- * 	source does not illuminate at all. Set to true to switch on the light, false to switch off the light.
+ * 	Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. 
+ *	Set to true to switch on the light, false to switch off the light.
+ * 
+ * - PAFVec4f \c color
+ * 	- [AMBIENT]		= (0 0 0 1)\n
+ * 		Ambient intensity of the light.
+ * 	- [DIFFUSE]		= (1 1 1 1)\n
+ *		Diffuse intensity of the light.
+ * 	- [SPECULAR]	= (1 1 1 1)\n
+ * 		Specular intensity of the light.
  * 
  * @remarks The maximum number of lights is equal at least to 8 in OpenGL and DirectX. Feel free to use up to 8 lights.
  *
- * @todo SoSFColor color, SoSFFloat 	intensity.
+ * @todo Support for attenuation
+ * @todo High-level method for changing intensity of color.*
  * 
  * @ingroup g_abstractNodes
  */
@@ -48,7 +57,7 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field on.
+	 * @name Accessors to field on
 	 */
 	//@{
 
@@ -89,7 +98,50 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Accessors to field color
+	 */
+	//@{
+
+	/**
+	 * @brief Enumeration of the \c color parameter.
+	 */
+	typedef enum
+	{
+		AMBIENT = 1,
+		DIFFUSE,
+		SPECULAR,
+	} ColorParameterType;
+
+	/**
+	 * @brief Typedef for the \c color parameter value.
+	 */
+	typedef vgm::Vec4f  ColorValueType;
+
+	/**
+	 * @brief Typedef for the \c color field.
+	 */	
+	typedef vgd::field::TPairAssociativeField< ColorParameterType, ColorValueType > FColorType;
+
+	/**
+	 * @brief Gets the \c color value.
+	 */
+	bool			getColor( const ColorParameterType param, ColorValueType& value ) const;
+
+	/**
+	 * @brief Sets the \c color value.
+	 */
+	void 			setColor( const ColorParameterType param, ColorValueType value );
+	
+	/**
+	 * @brief Erase the \c color value.
+	 */
+	void 			eraseColor( const ColorParameterType param );
+	//@}
+
+
+
+	/**
+	 * @name Fields names enumeration
 	 */
 	//@{
 	
@@ -98,14 +150,21 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	 * 
 	 * @return the name of field \c on.
 	 */
-	static const std::string getFOn( void );
+	static const std::string getFOn();
+	
+	/**
+	 * @brief Returns the name of field \c color.
+	 * 
+	 * @return the name of field \c color.
+	 */
+	static const std::string getFColor();	
 	//@}
 
 
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
@@ -127,4 +186,4 @@ protected:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_ALIGHT_HPP
+#endif //#ifndef _VGD_NODE_LIGHT_HPP

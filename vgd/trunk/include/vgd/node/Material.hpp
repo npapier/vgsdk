@@ -6,12 +6,11 @@
 #ifndef _VGD_NODE_MATERIAL_HPP
 #define _VGD_NODE_MATERIAL_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/field/Float.hpp"
 #include "vgd/field/Vector.hpp"
 #include "vgd/field/TPairAssociativeField.hpp"
 #include "vgd/node/SingleAttribute.hpp"
+#include "vgd/vgd.hpp"
 
 
 
@@ -183,21 +182,21 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 * 
 	 * @return the name of field \c color.
 	 */
-	static const std::string getFColor( void );
+	static const std::string getFColor();
 
 	/**
 	 * @brief Returns the name of field \c shininess.
 	 * 
 	 * @return the name of field \c shininess.
 	 */
-	static const std::string getFShininess( void );
+	static const std::string getFShininess();
 	
 	/**
 	 * @brief Returns the name of field \c transparency.
 	 * 
 	 * @return the name of field \c transparency.
 	 */
-	static const std::string getFTransparency( void );
+	static const std::string getFTransparency();
 	//@}
 
 	

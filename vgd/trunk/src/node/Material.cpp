@@ -122,21 +122,21 @@ void Material::setTransparency( float transparency )
 
 
 // FIELDS
-const std::string Material::getFColor( void )
+const std::string Material::getFColor()
 {
 	return ( "f_color" );
 }
 
 
 
-const std::string Material::getFShininess( void )
+const std::string Material::getFShininess()
 {
 	return ( "f_shininess" );
 }
 
 
 
-const std::string Material::getFTransparency( void )
+const std::string Material::getFTransparency()
 {
 	return ( "f_transparency" );
 }
