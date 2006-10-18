@@ -799,6 +799,12 @@ Canvas *Canvas::getSharedCanvas() const
 
 bool Canvas::enableVGSDK()
 {
+	// If parent window is hidden, OpenGL context could not be set current and an assert fails in SetCurrent() call.
+	if ( !GetParent()->IsShown() )
+	{
+		return false;
+	}
+
 	// Activates OpenGL context
 	SetCurrent();
 
