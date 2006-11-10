@@ -242,6 +242,20 @@ struct VGM_API MatrixR
 	 * @brief Check if this matrix is identity.
 	 */
 	bool					isIdentity() const;
+	
+	/**
+	 * @brief Invalidates the matrix.
+	 * 
+	 * @author Guillaume Brocker
+	 */
+	void setInvalid();
+	
+	/**
+	 * @brief Test if the matrix is invalid.
+	 * 
+	 * @author Guillaume Brocker
+	 */
+	const bool isInvalid() const;
 	//@}
 
 

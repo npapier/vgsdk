@@ -50,6 +50,7 @@
 #include "vgm/Matrix.hpp"
 
 #include <cmath>
+#include <limits>
 #include "vgm/Line.hpp"
 
 
@@ -435,6 +436,59 @@ bool MatrixR::isIdentity() const
 		(matrix[3][1] == 0.0) &&
 		(matrix[3][2] == 0.0) &&
 		(matrix[3][3] == 1.0) );
+}
+
+
+
+void MatrixR::setInvalid()
+{
+	const float fMax = std::numeric_limits< float >::max();
+	
+	matrix[0][0] = fMax;
+	matrix[0][1] = fMax;
+	matrix[0][2] = fMax;
+	matrix[0][3] = fMax;
+
+	matrix[1][0] = fMax;
+	matrix[1][1] = fMax;
+	matrix[1][2] = fMax;
+	matrix[1][3] = fMax;
+
+	matrix[2][0] = fMax;
+	matrix[2][1] = fMax;
+	matrix[2][2] = fMax;
+	matrix[2][3] = fMax;
+
+	matrix[3][0] = fMax;
+	matrix[3][1] = fMax;
+	matrix[3][2] = fMax;
+	matrix[3][3] = fMax;
+}
+
+
+	
+const bool MatrixR::isInvalid() const
+{
+	const float fMax = std::numeric_limits< float >::max();
+	
+	return ( 
+		(matrix[0][0] == fMax) ||
+		(matrix[0][1] == fMax) ||
+		(matrix[0][2] == fMax) ||
+		(matrix[0][3] == fMax) ||
+		(matrix[1][0] == fMax) ||
+		(matrix[1][1] == fMax) ||
+		(matrix[1][2] == fMax) ||
+		(matrix[1][3] == fMax) ||
+		(matrix[2][0] == fMax) ||
+		(matrix[2][1] == fMax) ||
+		(matrix[2][2] == fMax) ||
+		(matrix[2][3] == fMax) ||
+		(matrix[3][0] == fMax) ||
+		(matrix[3][1] == fMax) ||
+		(matrix[3][2] == fMax) ||
+		(matrix[3][3] == fMax) );
+	
 }
 
 

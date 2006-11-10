@@ -51,6 +51,7 @@
 #define _VGM_VECTOR_HPP
 
 #include <cmath>
+#include <limits>
 
 #include "vgm/vgm.hpp"
 
@@ -288,6 +289,20 @@ struct Vector
 	 * @brief Test if the vector is null.
 	 */
 	const bool	isNull( void ) const;
+	
+	/**
+	 * @brief Invalidates the vector.
+	 * 
+	 * @author	Guillaume Brocker
+	 */
+	void setInvalid( void );
+	
+	/**
+	 * @brief Test if the vector is invalid.
+	 * 
+	 * @author	Guillaume Brocker
+	 */
+	const bool isInvalid( void ) const;
 
 	/**
 	 * @brief Component-wise binary vector addition operators.

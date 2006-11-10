@@ -122,6 +122,34 @@ const bool Vector<T,N>::isNull( void ) const
 
 
 template< typename T, int32 N >
+void Vector<T,N>::setInvalid( void )
+{
+	const T tMax = std::numeric_limits< T >::max();
+	
+	for( int32 i = 0; i<N; i++)
+	{
+		m_tCoord[i] = tMax;
+	}
+}
+	
+
+
+template< typename T, int32 N >
+const bool Vector<T,N>::isInvalid( void ) const
+{
+	const T tMax	= std::numeric_limits< T >::max();
+	bool	invalid	= false;
+	
+	for (int32 i = 0; i<N && invalid==false; i++)	
+	{
+		invalid = (m_tCoord[i] == tMax);
+	}
+	return invalid;
+}
+
+
+
+template< typename T, int32 N >
 Vector<T,N> Vector<T,N>::operator+( const Vector& v ) const
 {
 	Vector res;
