@@ -131,6 +131,17 @@ void Vector<T,N>::setInvalid( void )
 		m_tCoord[i] = tMax;
 	}
 }
+
+
+
+template< typename T, int32 N >
+const Vector<T,N> Vector<T,N>::getInvalid()
+{
+	Vector<T,N>	vector;
+	
+	vector.setInvalid();
+	return vector;
+}
 	
 
 

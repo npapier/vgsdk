@@ -298,6 +298,11 @@ struct Vector
 	void setInvalid( void );
 	
 	/**
+	 * @brief Returns an invalid vector
+	 */
+	static const Vector getInvalid();
+	
+	/**
 	 * @brief Test if the vector is invalid.
 	 * 
 	 * @author	Guillaume Brocker

@@ -466,6 +466,16 @@ void MatrixR::setInvalid()
 }
 
 
+
+const MatrixR MatrixR::getInvalid()
+{
+	MatrixR	matrix;
+	
+	matrix.setInvalid();
+	return matrix;
+}
+
+
 	
 const bool MatrixR::isInvalid() const
 {

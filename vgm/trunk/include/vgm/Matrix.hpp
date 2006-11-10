@@ -251,6 +251,11 @@ struct VGM_API MatrixR
 	void setInvalid();
 	
 	/**
+	 * @brief Returns an invalid matrix
+	 */
+	static const MatrixR getInvalid();
+	
+	/**
 	 * @brief Test if the matrix is invalid.
 	 * 
 	 * @author Guillaume Brocker
