@@ -6,7 +6,7 @@
 #ifndef _VGM_OPERATIONS_HPP
 #define _VGM_OPERATIONS_HPP
 
-//#include "vgm/vgm.hpp"
+#include "vgm/vgm.hpp"
 
 #include <algorithm>
 
@@ -14,6 +14,105 @@
 
 namespace vgm
 {
+
+
+
+/**
+ * @brief Tolerance for floating-point
+ * 
+ * Epsilon value to specify some tolerance in IEEE floating-point representation of real numbers.
+ */
+template< typename T >
+struct Epsilon
+{};
+
+/**
+ * @brief Tolerance for floating-point
+ * 
+ * @copydoc Epsilon
+ */
+template<>
+struct Epsilon<float>
+{
+	/**
+	 * @brief Returns the epsilon value for float datatype.
+	 * 
+	 * @return epsilon value
+	 */
+	const float value() const
+	{
+		return 1.e-7f;
+	}
+};
+
+/**
+ * @brief Tolerance for floating-point
+ * 
+ * @copydoc Epsilon
+ */
+template<>
+struct Epsilon<double>
+{
+	/**
+	 * @brief Returns the epsilon value for double datatype.
+	 * 
+	 * @return epsilon value
+	 */	
+	const double value() const
+	{
+		return 1.e-10l;
+	}
+};
+
+
+
+/**
+ * @brief Returns the maximum of the parameters.
+ * 
+ * Compares three objects and returns the larger of the three.
+ * 
+ * @param first		the first object
+ * @param second	the second object
+ * @param third		the third object
+ * 
+ * @return the larger objet of the three.
+ */
+template< typename T >
+const T& max( const T first, const T second, const T third )
+{
+	const T firstMax	= std::max( first, second );
+	const T secondMax	= std::max( firstMax, third );
+	
+	return secondMax;
+}
+
+
+
+/**
+ * @name Rounding functions
+ */
+//@{
+
+/**
+ * @brief Rounds to integral value
+ * 
+ * @param inputValue	input value that must be rounded
+ * 
+ * @return the integral value nearest to inputValue rounding half-way cases away from zero, regardless of the current 
+ * rounding direction.
+ */
+VGM_API const double round( const double inputValue );
+
+VGM_API const float roundf( const float inputValue );
+
+//@}
+
+
+
+/**
+ * @name GLSL like built-in functions
+ */
+//@{
 
 /**
  * @brief Returns the clamped x
@@ -31,6 +130,8 @@ const T clamp( T x, T minVal, T maxVal )
 	
 	return retVal;
 }
+
+//@}
 
 
 

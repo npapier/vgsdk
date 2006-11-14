@@ -4,3 +4,26 @@
 // Author Nicolas Papier
 
 #include "vgm/operations.hpp"
+
+#include <cmath>
+
+
+
+namespace vgm
+{
+
+const double round( const double inputValue )
+{
+	return floor(inputValue + 0.5f);
+}
+
+
+
+const float roundf( const float inputValue )
+{
+	return floorf(inputValue + 0.5f);
+}
+
+
+
+} // namespace vgm
