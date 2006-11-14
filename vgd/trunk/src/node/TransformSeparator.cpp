@@ -66,7 +66,7 @@ void TransformSeparator::setMask( const int8 mask )
 
 const std::string TransformSeparator::getFMask( void )
 {
-	return ( "f_mask" );
+	return "f_mask";
 }
 
 

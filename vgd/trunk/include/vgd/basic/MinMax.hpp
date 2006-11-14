@@ -61,7 +61,7 @@ struct VGD_API MinMax
 	/**
 	 * @brief Sets the minimum.
 	 * 
-	 * @param minimum	the minimum value
+	 * @param min	the minimum value
 	 * 
 	 * @pre min <= getMax()
 	 */
@@ -77,7 +77,7 @@ struct VGD_API MinMax
 	/**
 	 * @brief Sets the maximum.
 	 * 
-	 * @param maximum	the maximum value
+	 * @param max	the maximum value
 	 * 
 	 * @pre getMin() <= max
 	 */
@@ -86,8 +86,8 @@ struct VGD_API MinMax
 	/**
 	 * @brief Sets the minimum and maximum values.
 	 * 
-	 * @param minimum	the minimum value
-	 * @param maximum	the maximum value
+	 * @param min	the minimum value
+	 * @param max	the maximum value
 	 * 
 	 * @pre min <= max
 	 */

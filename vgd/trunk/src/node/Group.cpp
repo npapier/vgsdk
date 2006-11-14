@@ -27,7 +27,7 @@ Group::Group( const std::string nodeName ) :
 	// Add dirty flags.
 	addDirtyFlag(getDFChildren());
 	addDirtyFlag(getDFChildrenSelection());
-	
+
 	addDirtyFlag(getDFBoundingBox());
 	
 	// Links.
@@ -338,20 +338,20 @@ void Group::writeGraphviz( std::ostream& out ) const
 
 const std::string Group::getDFChildren( void )
 {
-	return ( "df_children" );
+	return "df_children";
 }
 
 
 
 const std::string Group::getDFChildrenSelection( void )
 {
-	return ( "df_childrenSelection" );
+	return "df_childrenSelection";
 }
 
 
 const std::string Group::getDFBoundingBox( void )
 {
-	return ( "df_boundingBox" );
+	return "df_boundingBox";
 }
 
 
