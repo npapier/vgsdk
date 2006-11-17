@@ -78,7 +78,7 @@ struct Epsilon<double>
  * @return the larger objet of the three.
  */
 template< typename T >
-const T& max( const T first, const T second, const T third )
+const T max( const T first, const T second, const T third )
 {
 	const T firstMax	= std::max( first, second );
 	const T secondMax	= std::max( firstMax, third );
