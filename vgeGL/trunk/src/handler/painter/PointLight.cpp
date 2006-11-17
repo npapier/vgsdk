@@ -63,11 +63,11 @@ void PointLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::PointLight 
 	Light::paint( pGLEngine, pPointLight );
 
 	// render PointLight fields.
-	GLenum		lightGL;
+	GLenum		lightIndex;
 	bool		bDefined;
 	vgm::Vec3f	position;
 
-	lightGL	= GL_LIGHT0 + pPointLight->getMultiAttributeIndex();
+	lightIndex	= GL_LIGHT0 + pPointLight->getMultiAttributeIndex();
 	
 	bDefined		= pPointLight->getPosition( position );
 		
@@ -79,7 +79,7 @@ void PointLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::PointLight 
 				1.f 										// not a directional light
 				);
 
-		glLightfv( lightGL, GL_POSITION, positionGL.getValue() );
+		glLightfv( lightIndex, GL_POSITION, positionGL.getValue() );
 	}
 	
 	// Validate node

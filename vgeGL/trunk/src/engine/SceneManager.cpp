@@ -22,10 +22,12 @@ namespace engine
 
 
 SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > pEngine ) :
-	::vge::engine::SceneManager	(	pEngine	),
-	m_GLEngine					(	pEngine	),
-	m_bCallInitialize			(	false	)
+	::vge::engine::SceneManager	(	pEngine							),
+	m_GLEngine					(	pEngine							),
+	m_paintTechnique			(	new vgeGL::technique::Main()	),
+	m_bCallInitialize			(	false							)
 {
+	// Initializes event processor subsystem.
 	using ::vgeGL::event::IEventProcessor;
 	using ::vgeGL::event::DefaultEventProcessor;
 
@@ -45,11 +47,14 @@ void SceneManager::initialize()
 
 void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
+	// Calls paint() provided by vge
 	::vge::engine::SceneManager::paint( size, bUpdateBoundingBox );
+	
+	// vgeGL paint() implementation
+	vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
 
-	vgeGL::technique::Main main;
 	getEngine()->resetEval();
-	main.apply( getEngine().get(), getNodeCollector().getTraverseElements() );
+	paintTechnique->apply( getEngine().get(), getNodeCollector().getTraverseElements() );
 }
 
 
@@ -246,6 +251,20 @@ const bool SceneManager::isGLContextCurrent() const
 vgd::Shp< vgeGL::engine::Engine > SceneManager::getGLEngine()
 {
 	return m_GLEngine;
+}
+
+
+
+vgd::Shp< vgeGL::technique::Technique > SceneManager::getPaintTechnique() const
+{
+	return m_paintTechnique;
+}
+
+
+
+void SceneManager::setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique )
+{
+	m_paintTechnique = technique;
 }
 
 

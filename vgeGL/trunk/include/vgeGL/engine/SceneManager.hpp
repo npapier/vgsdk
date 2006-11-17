@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_ENGINE_SCENEMANAGER_H
-#define _VGEGL_ENGINE_SCENEMANAGER_H
+#ifndef _VGEGL_ENGINE_SCENEMANAGER_HPP
+#define _VGEGL_ENGINE_SCENEMANAGER_HPP
 
 #include <vgd/event/Listener.hpp>
 #include <vge/engine/SceneManager.hpp>
@@ -363,10 +363,26 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	/**
 	 * @brief Returns the main evaluation engine.
 	 * 
-	 * @return the vge engine.
+	 * @return the vgeGL engine.
 	 */
-	vgd::Shp< vgeGL::engine::Engine >		getGLEngine();
+	vgd::Shp< vgeGL::engine::Engine > getGLEngine();
+
+
+
+	/**
+	 * @brief Returns the current vgeGL technique used by paint method.
+	 * 
+	 * @return the current vgeGL technique used by paint method
+	 */
+	vgd::Shp< vgeGL::technique::Technique > getPaintTechnique() const;
 	
+	/**
+	 * @brief Sets the current vgeGL technique used by paint method.
+	 * 
+	 * @param technique		the current vgeGL technique that must be used by paint method.
+	 */
+	void setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique );
+
 	//@}
 
 	
@@ -379,24 +395,28 @@ protected:
 	//@{
 
 	/**
-	 * @brief Boolean value set if initialize() has already been called.
-	 */
-	bool									m_bCallInitialize;
-	
-	/**
 	 * @brief Main evaluation engine.
 	 */
 	vgd::Shp< vgeGL::engine::Engine >		m_GLEngine;
 
 
+	/**
+	 * @brief The current vgeGL technique that must be used by paint method.
+	 */
+	vgd::Shp< vgeGL::technique::Technique >	m_paintTechnique;
 
 	/**
 	 * @brief An instance of raycasting technique.
 	 */
 	vgeGL::technique::RayCasting			m_rayCasting;
-	
-	
-	
+
+
+	/**
+	 * @brief Boolean value set if initialize() has already been called.
+	 */
+	bool									m_bCallInitialize;
+
+
 	/**
 	 * @brief Typedef for event processor container.
 	 */
@@ -407,6 +427,7 @@ protected:
 	 * @brief Event processor container.
 	 */
 	EventProcessorContainer	m_eventProcessors;
+
 	//@}
 };
 
@@ -416,4 +437,4 @@ protected:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_ENGINE_SCENEMANAGER_H
+#endif //#ifndef _VGEGL_ENGINE_SCENEMANAGER_HPP

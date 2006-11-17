@@ -32,7 +32,7 @@ const vge::handler::Handler::TargetVector DirectionalLight::getTargets() const
 
 	targets.push_back( vgd::node::DirectionalLight::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
@@ -45,8 +45,7 @@ void DirectionalLight::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pN
 
 
 void DirectionalLight::unapply ( vge::engine::Engine*, vgd::node::Node* )
-{
-}
+{}
 
 
 
@@ -63,11 +62,11 @@ void DirectionalLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::Direc
 	Light::paint( pGLEngine, pDirectionalLight );
 
 	// render DirectionalLight fields.
-	GLenum lightGL;
+	GLenum lightIndex;
 	bool bDefined;
 	vgm::Vec3f direction;
 
-	lightGL	= GL_LIGHT0 + pDirectionalLight->getMultiAttributeIndex();
+	lightIndex	= GL_LIGHT0 + pDirectionalLight->getMultiAttributeIndex();
 	
 	bDefined		= pDirectionalLight->getDirection( direction );
 		
@@ -80,7 +79,7 @@ void DirectionalLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::Direc
 				);
 
 		// direction of light is set by GL_POSITION for directional light
-		glLightfv( lightGL, GL_POSITION, positionGL.getValue() );
+		glLightfv( lightIndex, GL_POSITION, positionGL.getValue() );
 	}
 	
 	// Validate node

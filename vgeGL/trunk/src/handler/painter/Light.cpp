@@ -83,12 +83,12 @@ void Light::setToDefaults()
 	{
 		// ON
 		glDisable( lightI );
-		
+
 		// COLOR
 		GLfloat color0[] = { 0.f, 0.f, 0.f, 1.f };
 		GLfloat color1[] = { 1.f, 1.f, 1.f, 1.f };
-		
-		glLightfv( lightI, GL_AMBIENT, color0 );		
+
+		glLightfv( lightI, GL_AMBIENT, color0 );
 		glLightfv( lightI, GL_DIFFUSE, color1 );
 		glLightfv( lightI, GL_SPECULAR, color1 );
 
@@ -96,14 +96,14 @@ void Light::setToDefaults()
 		vgm::Vec4f position( 0.f, 0.f, 1.f, 0.f );
 
 		glLightfv( lightI, GL_POSITION, position.getValue() );
-		
+
 		// DIRECTION
 		vgm::Vec3f direction( 0.f, 0.f, -1.f );
 
 		glLightfv( lightI, GL_SPOT_DIRECTION, direction.getValue() );
-		
+
 		// CUTOFFANGLE
-		const float cutOffAngle = 90.f;
+		const float cutOffAngle = 180.f;
 
 		glLightfv( lightI, GL_SPOT_CUTOFF, &cutOffAngle );
 

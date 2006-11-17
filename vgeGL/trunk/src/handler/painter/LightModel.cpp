@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/LightModel.hpp>
+#include <vgDebug/Global.hpp>
 #include <vge/rc/Manager.hpp>
 #include <vge/service/Painter.hpp>
 
@@ -36,7 +37,7 @@ const vge::handler::Handler::TargetVector LightModel::getTargets() const
 	targets.reserve( 1 );
 	targets.push_back( vgd::node::LightModel::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
@@ -49,20 +50,18 @@ void LightModel::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 
 void LightModel::unapply ( vge::engine::Engine* , vgd::node::Node*  )
-{
-}
+{}
 
 
 
 void LightModel::setToDefaults()
-{
-}
+{}
 
 
 
 void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 {
-	bool	bDefined;
+	bool bDefined;
 	
 	// MODEL
 	vgd::node::LightModel::ModelValueType	modelValue;
@@ -82,14 +81,15 @@ void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 				break;
 
 			case vgd::node::LightModel::STANDARD_PER_PIXEL:
-				assert( false && "Not yet implemented" );
+				// Fallback to standard per vertex
+				vgDebug::get().logDebug("Reverts to standard per vertex lighting without glsl.");
 				break;
-				
+
 			default:
 				assert( false && "Unknown LightModel.model value." );
 		}
 	}
-	
+
 	// AMBIENT
 	vgm::Vec4f	ambientValue;
 	bDefined = pNode->getAmbient( ambientValue );
