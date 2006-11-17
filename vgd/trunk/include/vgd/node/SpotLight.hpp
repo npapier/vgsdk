@@ -37,7 +37,7 @@ namespace node
  * - PAFVec3f	\c [direction] = (0 0 -1)\n
  * 	The direction (center axis of cone) of the light in homogeneous object coordinates.
  * 
- * - PAFFloat 	\c [cutOffAngle] = (90) \n
+ * - PAFFloat 	\c [cutOffAngle] = (180) \n
  * 	The angle (in degree) outside of which intensity is zero, measured from the center axis of the cone to an edge.
  * 	This value must be inside [0, 90] or be equal to 180 (like PointLight node).
  *
