@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -30,7 +30,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 	retVal.first	= false;
 
 	m_path			= extractor.getPath();
-	filename			= extractor.getFilename();
+	filename		= extractor.getFilename();
 	epathFilename	= extractor.getPathFilename();
 
 	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::node::VertexShape::create( epathFilename );
@@ -157,7 +157,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 	vgDebug::get().logDebug("vgTrian::loadTrian: load %s done.", pathFilename );
 	vgDebug::get().logStatus("vgTrian::loadTrian: load %s done.", pathFilename );	
 
-	return ( retVal );
+	return retVal;
 }
 
 
@@ -171,12 +171,9 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 	vgd::Shp< vgd::node::Group > group;
 
 	vgd::basic::FilenameExtractor extractor( pathFilename );
-	std::string							filename;
-	std::string							epathFilename;
-
-	m_path			= extractor.getPath();
-	filename			= extractor.getFilename();
-	epathFilename	= extractor.getPathFilename();
+	m_path						= extractor.getPath();
+	std::string filename		= extractor.getFilename();
+	std::string epathFilename	= extractor.getPathFilename();
 	
 	if ( m_path.length() == 0 )
 	{
@@ -210,7 +207,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 			(version.compare( "vglExporter100" ) != 0 )
 		) 
 	{
-		return ( retVal );
+		return retVal;
 	}
 	
 	// MATERIALS
@@ -257,7 +254,10 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 			}
 
 			vgd::Shp< vgd::node::VertexShape > vertexShape = loadMesh( meshName );
-			vertexShape->computeNormals();
+			if ( vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX )
+			{
+				vertexShape->computeNormals();
+			}
 		
 			group->addChild( vertexShape );
 		}
@@ -276,7 +276,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 	m_fp.clear();
 	m_fp.close();
 
-	return ( retVal );
+	return retVal;
 }
 
 
@@ -287,7 +287,7 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 	
 	// materialList x
 	std::string name;
-	int 			materialCount;
+	int32 materialCount;
 		
 	m_fp >> name;
 	if ( name != "materialList" )
@@ -359,16 +359,12 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 		float	real;
 		m_fp >> name >> real;
 		assert( name == "specularLevel" );
-		
-		// FIXME
-		if ( real != 0.f )
-		{
-			material->setShininess( real / 10.f );
-		}
+		// FIXME not used.
 		
 		m_fp >> name >> real;
 		assert( name == "glossiness" );
-		// FIXME not used.
+		
+		material->setShininess( real );
 
 		// transparency
 		m_fp >> name >> real;
@@ -406,7 +402,8 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		
 		// BITMAP TEXTURE
 		vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( name );
-		
+		tex->setMultiAttributeIndex( (int8)i );
+
 		// image Brkrun.JPG
 		std::string	filename;
 		m_fp >> name >> filename;
@@ -419,7 +416,6 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 			);
 
 		tex->setIImage( image );
-		tex->setMultiAttributeIndex( (int8)i );
 
 		// default value.
 		tex->setFilter( vgd::node::Texture2D::MIN_FILTER, vgd::node::Texture2D::LINEAR );
@@ -434,12 +430,15 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		m_fp >> matrix[1][0] >> matrix[1][1] >> matrix[1][2] >> matrix[1][3];		
 		m_fp >> matrix[2][0] >> matrix[2][1] >> matrix[2][2] >> matrix[2][3];
 		m_fp >> matrix[3][0] >> matrix[3][1] >> matrix[3][2] >> matrix[3][3];
-		
-		if ( !matrix.isIdentity() )
+				
+//		TransformSeparator  = texture
+		if ( true /*!matrix.isIdentity()*/ )
 		{
-			vgd::Shp< vgd::node::TextureMatrixTransform > texTransform;
-			texTransform = vgd::node::TextureMatrixTransform::create( filename );
-			
+			using vgd::node::TextureMatrixTransform;
+			vgd::Shp< TextureMatrixTransform > texTransform = TextureMatrixTransform::create( filename );
+
+			texTransform->setMultiAttributeIndex( (int8)i );
+			texTransform->setComposeTransformation( false );
 			texTransform->setMatrix( matrix );
 			
 			if ( i == 0 )																							// add only the first texture map ??? FIXME
@@ -450,7 +449,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		}
 		else
 		{
-			if ( i == 0 )																							// add only the first texture map ??? FIXME
+			if ( i == 0 )									// add only the first texture map ??? FIXME
 			{
 				group->addChild( tex );
 			}
@@ -499,12 +498,10 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		{
 			assert( false );
 		}		
-		
 
-		
 		// ???????????????????????????????????????????????? FIXME ??????????????????????????????????????????????
 		//tex->setFunction( vgd::node::Texture2D::FUN_REPLACE );
-		tex->setFunction( vgd::node::Texture2D::FUN_MODULATE );			
+		tex->setFunction( vgd::node::Texture2D::FUN_MODULATE );		
 	}
 }
 
@@ -569,7 +566,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		{
 			float x, y, z;
 			m_fp >> x >> y >> z;
-			normal->push_back( vgm::Vec3f(x,y,z).getNormalized() ); // ?????????????????????????????? FIXME
+			normal->push_back( vgm::Vec3f(x,y,z).getNormalized() );
 		}
 		
 		vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
@@ -655,7 +652,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 
 	// ???
 	
-	return ( vertexShape );
+	return vertexShape;
 }
 
 
@@ -678,7 +675,7 @@ vgd::Shp< vgd::node::Material > Loader::loadWireColor( std::string nodeName )
 	material->setColor( vgd::node::Material::DIFFUSE, color3 );
 	material->setTransparency( 1.f - opacity );
 	
-	return ( material );
+	return material;
 }
 
 
