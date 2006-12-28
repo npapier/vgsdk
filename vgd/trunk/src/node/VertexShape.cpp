@@ -141,8 +141,11 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 	// STEP 2: update bounding box.
 	vgd::field::DirtyFlag *pDirtyFlag = getDirtyFlag( getDFBoundingBox() );
 	assert( pDirtyFlag != 0 );
-	
-	if ( pDirtyFlag->isDirty() )
+
+	const BoundingBoxUpdatePolicyValueType bbUpdatePolicy = getBoundingBoxUpdatePolicy();
+
+	if (	(bbUpdatePolicy == AUTOMATIC && pDirtyFlag->isDirty()) ||
+			(bbUpdatePolicy == ONCE && pDirtyFlag->isDirty() && m_boundingBox.isEmpty())	)
 	{
 		bInvalidateParents	= true;
 		bRetVal				= true;
@@ -333,6 +336,9 @@ VertexShape::VertexShape( const std::string nodeName ) :
 	
 	// deformable field.
 	addField( new FDeformableHintType(getFDeformableHint()) );
+	
+	// bb policy
+	addField( new FBoundingBoxUpdatePolicyType(getFBoundingBoxUpdatePolicy()) );
 
 	// Add dirty flags.
 	addDirtyFlag(getDFBoundingBox());
@@ -358,6 +364,8 @@ void VertexShape::setToDefaults( void )
 	setEdgeFlagBinding(				vgd::node::BIND_OFF );
 	
 	setDeformableHint( DEFAULT_DEFORMABLE_HINT );
+	
+	setBoundingBoxUpdatePolicy( DEFAULT_BOUNDINGBOX_UPDATE_POLICY );
 	
 	// Invalidates m_numTexUnits
 	m_numTexUnits = -1;
@@ -749,51 +757,66 @@ void VertexShape::setDeformableHint( const DeformableHintValueType value )
 
 
 
+// BOUNDINGBOX UPDATE POLICY
+const VertexShape::BoundingBoxUpdatePolicyValueType VertexShape::getBoundingBoxUpdatePolicy() const
+{
+	return ( getFieldRO<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->getValue() );
+}
+
+
+
+void VertexShape::setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value )
+{
+	getFieldRW<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->setValue( value );
+}
+
+
+
 const std::string VertexShape::getFVertex( void )
 {
-	return ( "f_vertex" );
+	return "f_vertex";
 }
 
 
 
 const std::string VertexShape::getFNormal( void )
 {
-	return ( "f_normal" );
+	return "f_normal";
 }
 
 
 
 //const std::string VertexShape::getFColor3( void )
 //{
-//	return ( "f_color3" );
+//	return "f_color3";
 //}
 
 
 
 const std::string VertexShape::getFColor4( void )
 {
-	return ( "f_color4" );
+	return "f_color4";
 }
 
 
 
 //const std::string VertexShape::getFSecondaryColor3( void )
 //{
-//	return ( "f_secondary_color3" );
+//	return "f_secondary_color3";
 //}
 
 
 
 const std::string VertexShape::getFSecondaryColor4( void )
 {
-	return ( "f_secondaryColor4" );
+	return "f_secondaryColor4";
 }
 
 
 
 //const std::string VertexShape::getFFogCoord( void )
 //{
-//	return ( "f_fog_coord" );
+//	return "f_fog_coord";
 //}
 
 
@@ -810,14 +833,14 @@ const std::string VertexShape::getFTexCoord( const int32 textureUnit )
 
 const std::string VertexShape::getFEdgeFlag( void )
 {
-	return ( "f_edgeFlag" );
+	return "f_edgeFlag";
 }
 
 
 
 const std::string VertexShape::getFPrimitive( void )
 {
-	return ( "f_primitive" );
+	return "f_primitive";
 }
 
 
@@ -827,7 +850,7 @@ const std::string VertexShape::getFPrimitive( void )
 
 const std::string VertexShape::getFVertexIndex( void )
 {
-	return ( "f_vertexIndex" );
+	return "f_vertexIndex";
 }
 
 
@@ -837,42 +860,42 @@ const std::string VertexShape::getFVertexIndex( void )
 
 const std::string VertexShape::getFNormalBinding( void )
 {
-	return ( "f_normalBinding" );
+	return "f_normalBinding";
 }
 
 
 
 //const std::string VertexShape::getFColor3Binding( void )
 //{
-//	return ( "f_color3Binding" );
+//	return "f_color3Binding";
 //}
 
 
 
 const std::string VertexShape::getFColor4Binding( void )
 {
-	return ( "f_color4Binding" );
+	return "f_color4Binding";
 }
 
 
 
 //const std::string VertexShape::getFSecondaryColor3Binding( void )
 //{
-//	return ( "f_secondary_color3_binding" );
+//	return "f_secondary_color3_binding";
 //}
 
 
 
 const std::string VertexShape::getFSecondaryColor4Binding( void )
 {
-	return ( "f_secondaryColor4Binding" );
+	return "f_secondaryColor4Binding";
 }
 
 
 
 //const std::string VertexShape::getFFogCoordBinding( void )
 //{
-//	return ( "f_fog_coord_binding" );
+//	return "f_fog_coord_binding";
 //}
 
 
@@ -890,21 +913,28 @@ const std::string VertexShape::getFTexCoordBinding( const int32 textureUnit )
 
 const std::string VertexShape::getFEdgeFlagBinding( void )
 {
-	return ( "f_edgeFlagBinding" );
+	return "f_edgeFlagBinding";
 }
 
 
 
 const std::string VertexShape::getFDeformableHint( void )
 {
-	return ( "f_deformableHint" );
+	return "f_deformableHint";
+}
+
+
+
+const std::string VertexShape::getFBoundingBoxUpdatePolicy( void )
+{
+	return "f_boundingBoxUpdatePolicy";
 }
 
 
 
 const std::string VertexShape::getDFBoundingBox( void )
 {
-	return ( "df_boundingBox" );
+	return "df_boundingBox";
 }
 
 

@@ -61,9 +61,12 @@ namespace node
  * 		texCoordBinding is a "dynamic field", see createTexUnits()...
  * 	- SFBinding \c edgeFlagBinding			= BIND_OFF\n
  * 
- * - SFInt32 \c deformableHint = STATIC\n
+ * - SFEnum \c deformableHint = STATIC\n
  * 		Specifies a symbolic constant indicating the usage of this shape. 
  * 		Choose one value among STATIC, DYNAMIC and STREAM.
+ * 
+ * - SFEnum \c boundingBoxUpdatePolicy = AUTOMATIC\n
+ * 		Choose one value among AUTOMATIC or ONCE.
  * 
  * @remarks BIND_OFF, BIND_PER_VERTEX could be used, other not.
  * @remarks Depends on vgd::node::DrawStyle.hpp.
@@ -608,7 +611,47 @@ public:
 	void setDeformableHint( const DeformableHintValueType value );
 
 	//@}
-	
+
+
+
+	/**
+	 * @name Accessors to field boundingBoxUpdatePolicy
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c boundingBoxUpdatePolicy field.
+	 */	
+	typedef vgd::field::SFEnum FBoundingBoxUpdatePolicyType;
+
+	/**
+	 * @brief Typedef for the \c boundingBoxUpdatePolicy value.
+	 */
+	enum
+	{
+		AUTOMATIC = 1,	/*<! AUTOMATIC means that the bounding box of this vertex based shape would be automatically 
+						computed the first time and updated when field \c vertex is modified 
+						(see service ComputeBoundingBox in ::vge::service namespace). */
+		ONCE,			/*<! ONCE means the the bounding box of this vertex based shape would be automatically 
+						computed only the first time. After the responsibility of bounding box updating is yours. */
+		DEFAULT_BOUNDINGBOX_UPDATE_POLICY = AUTOMATIC
+	};
+
+	typedef vgd::field::EnumType BoundingBoxUpdatePolicyValueType;
+
+	/**
+	 * @brief Gets the boundingBoxUpdatePolicy of node.
+	 */
+	const BoundingBoxUpdatePolicyValueType	getBoundingBoxUpdatePolicy() const;
+
+	/**
+	 * @brief Sets the boundingBoxUpdatePolicy of node.
+	 * 
+	 */
+	void setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value );
+
+	//@}
+
 
 
 protected:
@@ -785,6 +828,13 @@ public:
 	 * @return the name of field \c deformableHint.
 	 */
 	static const std::string getFDeformableHint();
+	
+	/**
+	 * @brief Returns the name of field \c boundingBoxUpdatePolicy.
+	 * 
+	 * @return the name of field \c boundingBoxUpdatePolicy.
+	 */
+	static const std::string getFBoundingBoxUpdatePolicy();	
 	
 	//@}
 
