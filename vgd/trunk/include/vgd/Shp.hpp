@@ -82,6 +82,19 @@ struct Shp : public boost::shared_ptr<T>
 };
 
 
+
+/**
+ * @brief	Builds a shared pointer from the given pointer
+ *
+ * @relates Shp
+ */
+template<class T> Shp<T> makeShp( T * object )
+{
+	return Shp< T >( object );
+}
+
+
+
 /**
  * @relates Shp
  */
