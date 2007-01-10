@@ -122,7 +122,7 @@ struct VGWX_API BasicViewer : public Canvas
 	/**
 	 * @brief Changes the camera position and frustum to view the entire scene.
 	 */
-	void viewAll( const CameraDistanceHints cameraDistance = CAMERA_DISTANCE_HINTS_DEFAULT );
+	virtual void viewAll( const CameraDistanceHints cameraDistance = CAMERA_DISTANCE_HINTS_DEFAULT );
 
 	/**
 	 * @brief Returns the setup node.

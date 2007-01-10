@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,10 +16,7 @@ namespace vgWX
 
 
 BEGIN_EVENT_TABLE( BasicManipulator, Canvas )
-
-//   EVT_MOUSE_EVENTS			( BasicManipulator::OnMouseEvent	)
 	EVT_CHAR    				( BasicManipulator::OnChar			)
-
 END_EVENT_TABLE()
 
 
@@ -97,7 +94,7 @@ BasicManipulator::~BasicManipulator()
 
 vgd::Shp< vgd::node::TransformDragger > BasicManipulator::getSceneTransformation()
 {
-	return ( m_sceneTransform );
+	return m_sceneTransform;
 }
 
 
@@ -137,7 +134,6 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 
 	BasicViewer::onEvent( event );
 
-	// FIXME should be modified at runtime (ASYNCHRONOUS/SYNCHRONOUS)
 	refresh( REFRESH_IF_NEEDED, ASYNCHRONOUS );
 }
 
@@ -145,17 +141,8 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 
 void BasicManipulator::OnChar( wxKeyEvent& event )
 {
-	// VIEW ALL
-	if ( event.GetKeyCode() == 'v' )
-	{
-		viewAll();
-	
-		// Refresh view.
-		Refresh();
-	}
-	else if (	(event.GetKeyCode() == 'b') ||
-				(event.GetKeyCode() == 'B')
-				)
+	if (	(event.GetKeyCode() == 'b') ||
+			(event.GetKeyCode() == 'B')	)
 	{
 		if ( event.GetKeyCode() == 'b' )
 		{

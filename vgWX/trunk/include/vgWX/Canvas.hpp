@@ -40,8 +40,6 @@ namespace vgWX
  * - Provide a contextual menu to be able to write the scene graph in dot file and change things like drawing 
  * 	style (vgd::node::DrawStyle), the lighting model (vgd::node::LightModel) and so on. It is disabled by default.
  * 
- * @todo Move contextual menu in another place.
- * 
  * @ingroup g_vgWXGroup
  */
 struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
@@ -82,7 +80,7 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 			const wxWindowID id = -1 );
 	
 	/**
-	 * @brief Destructor.
+	 * @brief Default destructor
 	 */
 	virtual ~Canvas();
 	//@}
@@ -90,61 +88,10 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 
 
 	/**
-	 * @name Contextual menu methods.
+	 * @name Contextual menu methods
 	 */
 	//@{
 	
-	/**
-	 * @brief Identifier used by the default contextual menu.
-	 * 
-	 * Don't use the same. Identifier inside [wxID_HIGHEST + 1024,wxID_HIGHEST + 2048] are reserved.
-	 */
-	enum {
-		wxID_CTX_WRITEGRAPHWIZ  = wxID_HIGHEST + 1024,
-
-		// DRAWSTYLE
-		wxID_CTX_DRAWSTYLE,
-		
-		wxID_CTX_DRAWSTYLE_NONE,
-		wxID_CTX_DRAWSTYLE_POINT,
-		wxID_CTX_DRAWSTYLE_FLAT,
-		wxID_CTX_DRAWSTYLE_SMOOTH,
-		wxID_CTX_DRAWSTYLE_WIREFRAME,
-		wxID_CTX_DRAWSTYLE_HIDDEN_LINE,
-		wxID_CTX_DRAWSTYLE_FLAT_HIDDEN_LINE,
-		wxID_CTX_DRAWSTYLE_SMOOTH_HIDDEN_LINE,
-		wxID_CTX_DRAWSTYLE_NEIGHBOUR,
-
-		wxID_CTX_DRAWSTYLE_NORMALLENGTHNEGATIV,
-		wxID_CTX_DRAWSTYLE_NORMALLENGTHMINUS8,
-		wxID_CTX_DRAWSTYLE_NORMALLENGTHMINUS4,
-		wxID_CTX_DRAWSTYLE_NORMALLENGTH0,
-		wxID_CTX_DRAWSTYLE_NORMALLENGTH4,
-		wxID_CTX_DRAWSTYLE_NORMALLENGTH8,
-		wxID_CTX_DRAWSTYLE_NORMALLENGTHPOSITIV,
-		
-		wxID_CTX_DRAWSTYLE_SHOWORIENTATION,
-		
-		wxID_CTX_DRAWSTYLE_NO_BOUNDING_BOX,
-		wxID_CTX_DRAWSTYLE_OBJECT_SPACE,
-		wxID_CTX_DRAWSTYLE_AA_OBJECT_SPACE,
-		wxID_CTX_DRAWSTYLE_OBJECT_AND_AA_OBJECT_SPACE,
-
-		
-		// LIGHTMODEL
-		wxID_CTX_LIGHTMODEL_MODEL,
-		
-		wxID_CTX_LIGHTMODEL_MODEL_LIGHTING_OFF,
-		wxID_CTX_LIGHTMODEL_MODEL_STANDARD_PER_VERTEX,
-		wxID_CTX_LIGHTMODEL_MODEL_STANDARD_PER_PIXEL,
-
-		//wxID_CTX_LIGHTMODEL_AMBIENT
-
-		wxID_CTX_LIGHTMODEL_VIEWER,
-		
-		wxID_CTX_LIGHTMODEL_TWOSIDED
-	};
-
 	/**
 	 * @brief Enable/disable contextual menu (draw when user right-click with the mouse on the window area).
 	 * 
@@ -157,7 +104,7 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * 
 	 * @return true if contextual menu is enabled, false if it is disabled.
 	 */
-	bool isContextualMenuEnabled() const;
+	const bool isContextualMenuEnabled() const;
 	
 	/**
 	 * @brief Construct the contextual menu.
@@ -166,6 +113,7 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * @param yMouse		y-coordinate for mouse
 	 */
 	virtual wxMenu *createContextualMenu( const int32 xMouse, const int32 yMouse ) /*const*/;
+
 	//@}
 
 
@@ -268,7 +216,7 @@ private:
 
 
 	/**
-	 * @name Members for OpenGL/gle/vgeGL initialization.
+	 * @name Members for OpenGL/gle/vgeGL initialization
 	 */
 	//@{
 	
@@ -314,7 +262,9 @@ private:
 	 */
 	static int					m_vgsdk_attrib[];
 	
-	// FIXME ???
+	/**
+	 * @todo fixme
+	 */
 	static std::ofstream		m_gleLog;
 
 	/**
@@ -339,7 +289,7 @@ private:
 	
 	
 	/**
-	 * @name Members for GUI.
+	 * @name Members for GUI
 	 */
 	//@{
 	

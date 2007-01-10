@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -90,7 +90,7 @@ void BasicViewer::setCameraType( const CameraType typeOfCamera )
 
 const BasicViewer::CameraType BasicViewer::getCameraType() const
 {
-	return ( m_cameraType );
+	return m_cameraType;
 }
 
 
@@ -146,28 +146,28 @@ void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 
 vgd::Shp< vgd::node::Group > BasicViewer::getSetup()
 {
-	return ( m_setup );
+	return m_setup;
 }
 
 
 
 vgd::Shp< vgd::node::Camera > BasicViewer::getCamera()
 {
-	return ( m_camera );
+	return m_camera;
 }
 
 
 
 vgd::Shp< vgd::node::MatrixTransform > BasicViewer::getViewTransformation()
 {
-	return ( m_viewTransform );
+	return m_viewTransform;
 }
 
 
 
 vgd::Shp< vgd::node::Group > BasicViewer::getScene()
 {
-	return ( m_scene );
+	return m_scene;
 }
 
 
