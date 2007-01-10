@@ -472,29 +472,29 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
-	 * @name Implementations specifics capabilities.
+	 * @name Implementations specifics capabilities
 	 */
 	//@{
 	
 	/**
 	 * @brief Returns the maximum number of lights.
 	 */
-	virtual int32 getMaxLights() const = 0;
+	virtual const int32 getMaxLights() const = 0;
 	
 	/**
 	 * @brief Returns the maximum number of texture units.
 	 */
-	virtual int32 getMaxTexUnits() const;
+	virtual const int32 getMaxTexUnits() const;
 
 	/**
 	 * @brief Returns the maximum 1D/2D texture image dimension.
 	 */
-	virtual int32 getMaxTexSize() const = 0;
+	virtual const int32 getMaxTexSize() const = 0;
 	
 	/**
 	 * @brief Returns the maximum 3D texture image dimension.
 	 */
-	virtual int32 getMax3DTexSize() const = 0;
+	virtual const int32 getMax3DTexSize() const = 0;
 	
 	//@}
 

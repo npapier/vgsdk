@@ -360,7 +360,7 @@ MultiMatrixStack& Engine::getTextureMatrix()
 
 
 
-int32 Engine::getMaxTexUnits() const
+const int32 Engine::getMaxTexUnits() const
 { 
 	return 0;
 };
