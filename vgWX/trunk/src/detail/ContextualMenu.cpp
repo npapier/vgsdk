@@ -10,7 +10,7 @@
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgeGL/technique/Main.hpp>
-#include <vgeGL/technique/MainGLSL.hpp>
+//#include <vgeGL/technique/MainGLSL.hpp>
 
 #include "vgWX/BasicViewer.hpp"
 
@@ -315,10 +315,10 @@ void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event )
 
 		case wxID_CTX_LIGHTING_PROGRAMMABLE_PIPELINE:
 		{
-			using vgeGL::technique::MainGLSL;
+			/*using vgeGL::technique::MainGLSL;
 			
 			vgd::Shp< MainGLSL > glsl( new MainGLSL() );
-			canvas->setPaintTechnique( glsl );
+			canvas->setPaintTechnique( glsl );*/
 			break;
 		}
 			
