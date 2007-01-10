@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -30,6 +30,9 @@ void Engine::reset()
 		return;
 	}
 
+	// Reset cache
+	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = 0;
+
 	if ( m_firstInstance )
 	{
 		// This is the first instance of this class.
@@ -58,7 +61,21 @@ void Engine::setToDefaults()
 	glEnable( GL_LIGHTING );
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_NORMALIZE );
-	
+
+	if ( isGL_EXT_separate_specular_color() )
+	{
+		vgDebug::get().logDebug( "Engine: GL_EXT_separate_specular_color extension detected." );
+		vgDebug::get().logDebug( "Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SEPARATE_SPECULAR_COLOR" );
+		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR );
+	}
+	else
+	{
+		vgDebug::get().logDebug( "Engine: Warning : GL_EXT_separate_specular_color extension is detected" );
+		vgDebug::get().logDebug( "Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SINGLE_COLOR" );
+		vgDebug::get().logDebug( "Engine: Using both texture mapping and specular highlights would not be well supported." );
+		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR );
+	}
+
 	// For each handler in registry, do
 	vge::handler::HandlerRegistry&	handlerRegistry= vge::handler::Handler::getClassRegistry();
 	
@@ -73,9 +90,10 @@ void Engine::setToDefaults()
 	}
 	
 	//
-	vgDebug::get().logDebug( "GL_MAX_LIGHTS				= %i", getMaxLights() );
-	vgDebug::get().logDebug( "GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
-	vgDebug::get().logDebug( "GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
+	vgDebug::get().logDebug( "Engine:GL_MAX_LIGHTS				= %i", getMaxLights() );
+	vgDebug::get().logDebug( "Engine:GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
+	vgDebug::get().logDebug( "Engine:GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
+	vgDebug::get().logDebug( "Engine:GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );	
 }
 
 
@@ -149,46 +167,50 @@ void Engine::resetMatrices()
 
 
 
-int32 Engine::getMaxLights() const
+const int32 Engine::getMaxLights() const
 {
-	GLint	maxLights;
+	if ( m_maxLights == 0 )
+	{
+		glGetIntegerv(GL_MAX_LIGHTS, &m_maxLights );
+	}
 
-	glGetIntegerv(GL_MAX_LIGHTS, &maxLights );
-	
-	return ( maxLights );
+	return m_maxLights;
 }
 	
 	
 	
-int32 Engine::getMaxTexUnits() const
+const int32 Engine::getMaxTexUnits() const
 {
-	GLint maxTexUnits;
+	if ( m_maxTexUnits == 0 )
+	{
+		glGetIntegerv( GL_MAX_TEXTURE_UNITS, &m_maxTexUnits );
+	}
 
-	glGetIntegerv( GL_MAX_TEXTURE_UNITS, &maxTexUnits );
-
-	return ( maxTexUnits );
+	return m_maxTexUnits;
 }
 
 
 
-int32 Engine::getMaxTexSize() const
+const int32 Engine::getMaxTexSize() const
 {
-	GLint	maxTexSize;
-	
-	glGetIntegerv( GL_MAX_TEXTURE_SIZE, &maxTexSize );
-	
-	return ( maxTexSize );
+	if ( m_maxTexSize == 0 )
+	{
+		glGetIntegerv( GL_MAX_TEXTURE_SIZE, &m_maxTexSize );
+	}
+
+	return m_maxTexSize;
 }
 
 
 
-int32 Engine::getMax3DTexSize() const
+const int32 Engine::getMax3DTexSize() const
 {
-	GLint	maxTexSize;
+	if ( m_max3DTexSize == 0 )
+	{
+		glGetIntegerv( GL_MAX_3D_TEXTURE_SIZE, &m_max3DTexSize );
+	}
 	
-	glGetIntegerv( GL_MAX_3D_TEXTURE_SIZE, &maxTexSize );
-	
-	return ( maxTexSize );
+	return m_max3DTexSize;
 }
 
 

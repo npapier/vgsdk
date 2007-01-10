@@ -70,16 +70,16 @@ void Texture2D::synchronize(	vgeGL::engine::Engine*	pGLEngine, vgd::node::Textur
 {
 	// Switch to the specified tex unit and creates rc/tex
 	const bool bImageAndTextureSynchronized = preSynchronize( pGLEngine, pNode, pResource );
-	
+
+	// Updates texture parameters
+	synchronizeParameters( pGLEngine, pNode, pResource );
+
 	if ( !bImageAndTextureSynchronized )
 	{
 		// Updates texture image
 		texSubImage( pGLEngine, pNode, pResource );
 	}
-	
-	// Updates texture parameters
-	synchronizeParameters( pGLEngine, pNode, pResource );
-	
+
 	assert( pNode->getDirtyFlag(pNode->getDFIImages())->isValid() );
 	assert( pNode->getDirtyFlag(pNode->getDFParameters())->isValid() );
 	assert( pNode->getDirtyFlag(pNode->getDFNode())->isValid() );

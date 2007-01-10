@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_ENGINE_ENGINE_H
-#define _VGEGL_ENGINE_ENGINE_H
+#ifndef _VGEGL_ENGINE_ENGINE_HPP
+#define _VGEGL_ENGINE_ENGINE_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -100,13 +100,13 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	 */
 	//@{
 	
-	int32 getMaxLights() const;
+	const int32 getMaxLights() const;
 
-	int32 getMaxTexUnits() const;
+	const int32 getMaxTexUnits() const;
 	
-	int32 getMaxTexSize() const;
+	const int32 getMaxTexSize() const;
 
-	int32 getMax3DTexSize() const;
+	const int32 getMax3DTexSize() const;
 
 	//@}
 
@@ -138,6 +138,19 @@ protected:
 
 private:
 	/**
+	 * @name Cache implementations specifics capabilities
+	 */
+	//@{
+	mutable GLint	m_maxLights;
+
+	mutable GLint	m_maxTexUnits;
+	mutable GLint	m_maxTexSize;
+	mutable GLint	m_max3DTexSize;
+	//@}
+
+
+
+	/**
 	 * @brief Manager for all opengl objects.
 	 */
 	static vge::rc::Manager		m_glManager;
@@ -154,4 +167,4 @@ private:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_ENGINE_ENGINE_H
+#endif //#ifndef _VGEGL_ENGINE_ENGINE_HPP
