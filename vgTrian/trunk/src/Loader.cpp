@@ -418,9 +418,22 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		tex->setIImage( image );
 
 		// default value.
-		tex->setFilter( vgd::node::Texture2D::MIN_FILTER, vgd::node::Texture2D::LINEAR );
-		tex->setFilter( vgd::node::Texture2D::MAG_FILTER, vgd::node::Texture2D::LINEAR );
-		
+		using vgd::node::Texture2D;
+
+		if ( true /*isGL_SGIS_generate_mipmap()*/ )		/// @todo Available from OpenGL 1.4
+		{
+			vgDebug::get().logDebug("vgTrian::loadTrian2: Automatic mipmap generation (GL_SGIS_generate_mipmap detected)." );
+			tex->setMipmap( true );
+			tex->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR_MIPMAP_LINEAR );
+			tex->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
+		}
+		else
+		{
+			vgDebug::get().logDebug("vgTrian::loadTrian2: No automatic mipmap generation (GL_SGIS_generate_mipmap not detected)." );
+			tex->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
+			tex->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
+		}
+
 		// uvtrans 1 0 0 0   0 1 0 0   0 0 1 0   0 0 0 0
 		vgm::MatrixR	matrix;
 		
@@ -499,9 +512,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 			assert( false );
 		}		
 
-		// ???????????????????????????????????????????????? FIXME ??????????????????????????????????????????????
-		//tex->setFunction( vgd::node::Texture2D::FUN_REPLACE );
-		tex->setFunction( vgd::node::Texture2D::FUN_MODULATE );		
+		tex->setFunction( vgd::node::Texture2D::FUN_MODULATE );
 	}
 }
 
