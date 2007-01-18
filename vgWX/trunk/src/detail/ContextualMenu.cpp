@@ -50,10 +50,10 @@ wxMenu *createContextualMenu( Canvas * canvas )
 	subMenu = new wxMenu;
 
 	subMenu->AppendRadioItem(	wxID_CTX_LIGHTING_FIXED_PIPELINE,
-								"&Fixed pipeline", "vgsdk would use the fixed OpenGL pipeline" );
+								_T("&Fixed pipeline"), _T("vgsdk would use the fixed OpenGL pipeline") );
 
 	subMenu->AppendRadioItem(	wxID_CTX_LIGHTING_PROGRAMMABLE_PIPELINE,
-								"&Programmable pipeline", "vgsdk would use the programmable OpenGL pipeline (i.e. glsl)" );
+								_T("&Programmable pipeline"), _T("vgsdk would use the programmable OpenGL pipeline (i.e. glsl)") );
 	
 	using vgeGL::technique::Main;
 	
