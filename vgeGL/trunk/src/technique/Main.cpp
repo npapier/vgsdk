@@ -29,7 +29,12 @@ void Main::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVec
 	prepareEval();
 	//pEngine->resetEval();
 
-	// First pass : draw opaque shape.
+	// At startup, the transparency pass is disabled. It would be enabled during the opaque pass if at least one
+	// transparent shape is encountered.
+
+	bool mustDoTransparencyPass = false;
+	
+	// First pass : OPAQUE PASS (draw opaque shape)
 	beginPass();
 	glPushAttrib( GL_ALL_ATTRIB_BITS );
 
@@ -48,49 +53,11 @@ void Main::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVec
 				// object is opaque, draw it.
 				pEngine->evaluate( paint, i->first, i->second );
 			}
-			// nothing to do for transparent object.
-		}
-		else
-		{
-			pEngine->evaluate( paint, i->first, i->second );
-		}
-	}
-
-	glPopAttrib();
-	endPass();
-
-
-
-	// Second pass : draw transparent shape.
-	beginPass();
-	pEngine->disregardIfIsA< vgd::node::ClearFrameBuffer >();
-	pEngine->disregardIfIsAKindOf< vgd::node::Kit >(); ///< Nothing to do for nodekit in transparent pass. FIXME
-	glPushAttrib( GL_ALL_ATTRIB_BITS );
-	
-	pEngine->resetEval();
-	
-	for(	i = pTraverseElements->begin(), iEnd = pTraverseElements->end();
-			i != iEnd;
-			++i )
-	{
-		if ( (i->first)->isAKindOf< vgd::node::Shape >() )
-		{
-			vgd::node::Material *pMaterial( pEngine->getStateStackTop<vgd::node::Material>() );
-			assert( pMaterial != 0 );
-
-			if ( pMaterial->getTransparency() < 1.f )
+			else
 			{
-				// object is transparent, draw it.
-
-				// @todo opt me	
-				glPushAttrib( GL_ALL_ATTRIB_BITS );					
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-				glDepthMask(GL_FALSE);	
-				pEngine->evaluate( paint, i->first, i->second );
-				glPopAttrib();
+				mustDoTransparencyPass = true;
+				// nothing to do for transparent object.
 			}
-			// nothing to do for opaque object.
 		}
 		else
 		{
@@ -99,10 +66,55 @@ void Main::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVec
 	}
 
 	glPopAttrib();
-	pEngine->regardIfIsAKindOf< vgd::node::Kit >();		
-	pEngine->regardIfIsA< vgd::node::ClearFrameBuffer >();
-
 	endPass();
+
+
+
+	// Second pass : TRANSPARENT PASS (draw transparent shape).
+	if ( mustDoTransparencyPass )
+	{
+		beginPass();
+		pEngine->disregardIfIsA< vgd::node::ClearFrameBuffer >();
+		pEngine->disregardIfIsAKindOf< vgd::node::Kit >(); ///< Nothing to do for nodekit in transparent pass. FIXME
+		glPushAttrib( GL_ALL_ATTRIB_BITS );
+		
+		pEngine->resetEval();
+		
+		for(	i = pTraverseElements->begin(), iEnd = pTraverseElements->end();
+				i != iEnd;
+				++i )
+		{
+			if ( (i->first)->isAKindOf< vgd::node::Shape >() )
+			{
+				vgd::node::Material *pMaterial( pEngine->getStateStackTop<vgd::node::Material>() );
+				assert( pMaterial != 0 );
+	
+				if ( pMaterial->getTransparency() < 1.f )
+				{
+					// object is transparent, draw it.
+	
+					// @todo opt me	
+					glPushAttrib( GL_ALL_ATTRIB_BITS );					
+					glEnable(GL_BLEND);
+					glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+					glDepthMask(GL_FALSE);	
+					pEngine->evaluate( paint, i->first, i->second );
+					glPopAttrib();
+				}
+				// nothing to do for opaque object.
+			}
+			else
+			{
+				pEngine->evaluate( paint, i->first, i->second );
+			}
+		}
+	
+		glPopAttrib();
+		pEngine->regardIfIsAKindOf< vgd::node::Kit >();		
+		pEngine->regardIfIsA< vgd::node::ClearFrameBuffer >();
+	
+		endPass();
+	}
 	
 	//
 	finishEval();
