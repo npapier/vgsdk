@@ -353,6 +353,42 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*	pImage
 
 
 
+void ImageUtilities::setAlphaFromLuminance( vgd::basic::IImage *pImage, const float scale )
+{
+	using vgd::basic::IImage;
+	
+	assert(	pImage->format() == IImage::LUMINANCE_ALPHA );
+
+	
+	assert( pImage->type() == IImage::UINT8 );
+	switch ( pImage->format() )
+	{
+		case IImage::LUMINANCE_ALPHA:
+		{
+			// scan image
+			uint8* iPixel = static_cast<uint8*>(pImage->editPixels());
+			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*2;
+					iPixel != iEnd;
+					iPixel++ )
+			{
+				const uint8 luminance = (*iPixel);
+				const float fScaledLuminance = static_cast< float >( luminance ) * scale;
+				const float fClampedScaledLuminance = vgm::clamp( fScaledLuminance, 0.f, 255.f );
+			
+				++iPixel;
+				(*iPixel) = static_cast< uint8 >( fClampedScaledLuminance );
+			}
+			pImage->editPixelsDone();
+		}
+		break;
+		
+		default:
+			assert( false && "Internal error" );
+	}
+}
+
+
+
 void ImageUtilities::setAlpha( vgd::basic::IImage *pImage, const float alpha )
 {
 	using vgd::basic::IImage;

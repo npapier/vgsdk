@@ -126,7 +126,7 @@ void Layers::resetGeometry()
 
 
 
-void Layers::resetTextureCoordinates( const vgd::node::Quad::Corner origin, const bool ccw )
+void Layers::resetTextureCoordinates( const vgd::basic::Corner origin, const bool ccw )
 {
 	getQuad()->resetTextureCoordinates(1, origin, ccw);
 }

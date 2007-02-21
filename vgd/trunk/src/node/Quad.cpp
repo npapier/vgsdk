@@ -93,7 +93,7 @@ void Quad::initializeGeometry( const float width, const float height )
 
 
 
-void Quad::initializeTexUnits( const int32 numTexUnits, const Corner origin, const bool ccw )
+void Quad::initializeTexUnits( const int32 numTexUnits, const vgd::basic::Corner origin, const bool ccw )
 {
 	createTexUnits( 2, 0, numTexUnits );
 	
@@ -102,7 +102,7 @@ void Quad::initializeTexUnits( const int32 numTexUnits, const Corner origin, con
 
 
 
-void Quad::resetTextureCoordinates( const int32 numTexUnits, const Corner origin, const bool ccw )
+void Quad::resetTextureCoordinates( const int32 numTexUnits, const vgd::basic::Corner origin, const bool ccw )
 {
 	for(	int32 i = 0;
 			i < numTexUnits;
@@ -118,28 +118,28 @@ void Quad::resetTextureCoordinates( const int32 numTexUnits, const Corner origin
 		{
 			switch ( origin )
 			{
-				case BOTTOM_LEFT:
+				case vgd::basic::BOTTOM_LEFT:
 					texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );
 					texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
 					texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
 					break;
 	
-				case BOTTOM_RIGHT:
+				case vgd::basic::BOTTOM_RIGHT:
 					texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
 					texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );				
 					break;
 				
-				case TOP_RIGHT:
+				case vgd::basic::TOP_RIGHT:
 					texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );				
 					texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
 					break;
 				
-				case TOP_LEFT:
+				case vgd::basic::TOP_LEFT:
 					texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );				
 					texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
@@ -154,28 +154,28 @@ void Quad::resetTextureCoordinates( const int32 numTexUnits, const Corner origin
 		{
 			switch ( origin )
 			{
-				case BOTTOM_LEFT:
+				case vgd::basic::BOTTOM_LEFT:
 					texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );										
 					texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
 					break;
 	
-				case BOTTOM_RIGHT:
+				case vgd::basic::BOTTOM_RIGHT:
 					texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );				
 					texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );					
 					texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
 					break;
 				
-				case TOP_RIGHT:
+				case vgd::basic::TOP_RIGHT:
 					texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );
 					texCoord->push_back( vgm::Vec2f( 0.f, 0.f) );														
 					texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
 					break;
 				
-				case TOP_LEFT:
+				case vgd::basic::TOP_LEFT:
 					texCoord->push_back( vgm::Vec2f( 0.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 1.f, 1.f) );
 					texCoord->push_back( vgm::Vec2f( 1.f, 0.f) );										

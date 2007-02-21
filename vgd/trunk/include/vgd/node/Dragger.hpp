@@ -8,7 +8,6 @@
 
 #include <vgm/Matrix.hpp>
 
-#include "vgd/vgd.hpp"
 #include "vgd/event/ButtonStateSet.hpp"
 #include "vgd/node/IDragger.hpp"
 #include "vgd/node/SurroundScale.hpp"
@@ -59,7 +58,7 @@ struct MatrixTransform;
 struct VGD_API Dragger : public vgd::node::IDragger
 {
 	/**
-	 * @name Accessors to field feedback.
+	 * @name Accessors to field feedback
 	 */
 	//@{
 
@@ -92,7 +91,7 @@ struct VGD_API Dragger : public vgd::node::IDragger
 	void setSurround( const SurroundValueType value );
 
 	/**
-	 * @name Accessors to field bindings.
+	 * @name Accessors to field bindings
 	 */
 	//@{
 
@@ -130,7 +129,7 @@ struct VGD_API Dragger : public vgd::node::IDragger
 
 
 	/**
-	 * @name Accessors to some temporary datas.
+	 * @name Accessors to some temporary datas
 	 */
 	//@{
 	
@@ -154,7 +153,7 @@ struct VGD_API Dragger : public vgd::node::IDragger
 
 
 	/**
-	 * @name Helpers methods.
+	 * @name Helpers methods
 	 */
 	//@{
 	
@@ -180,7 +179,7 @@ struct VGD_API Dragger : public vgd::node::IDragger
 
 
 	/**
-	 * @name Pure virtual methods.
+	 * @name Pure virtual methods
 	 */
 	//@{
 	
@@ -196,7 +195,7 @@ struct VGD_API Dragger : public vgd::node::IDragger
 		
 	
 	/**
-	 * @name Initialization methods.
+	 * @name Initialization methods
 	 */
 	//@{
 
@@ -216,7 +215,7 @@ struct VGD_API Dragger : public vgd::node::IDragger
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Fields names enumeration
 	 */
 	//@{
 
@@ -239,7 +238,7 @@ struct VGD_API Dragger : public vgd::node::IDragger
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
@@ -257,7 +256,7 @@ protected:
 	
 	
 	/**
-	 * @name Internal helpers.
+	 * @name Internal helpers
 	 */
 	//@{
 	
@@ -285,7 +284,7 @@ protected:
 
 protected:
 	/**
-	 * @name Feedback helpers.
+	 * @name Feedback helpers
 	 */
 	//@{
 	

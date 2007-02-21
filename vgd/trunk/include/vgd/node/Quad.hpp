@@ -6,8 +6,7 @@
 #ifndef _VGD_NODE_QUAD_HPP
 #define _VGD_NODE_QUAD_HPP
 
-#include "vgd/vgd.hpp"
-
+#include "vgd/basic/Corner.hpp"
 #include "vgd/node/VertexShape.hpp"
 
 
@@ -43,7 +42,7 @@ struct VGD_API Quad : public vgd::node::VertexShape
 
 
 	/**
-	 * @name Initialization method.
+	 * @name Initialization method
 	 */
 	//@{
 	
@@ -56,16 +55,6 @@ struct VGD_API Quad : public vgd::node::VertexShape
 	 * @remarks Called automatically during node creation.
 	 */
 	void initializeGeometry( const float width = 1.f, const float height = 1.f );
-
-	/**
-	 * @brief The four corners of the quad.
-	 */
-	enum Corner {
-		BOTTOM_LEFT,
-		BOTTOM_RIGHT,
-		TOP_RIGHT,
-		TOP_LEFT
-	};
 
 	/**
 	 * @brief Initialize texture coordinates and bindings for all specified textures units.
@@ -81,7 +70,8 @@ struct VGD_API Quad : public vgd::node::VertexShape
 	 * 
 	 * @remarks This method could only be called one time.
 	 */
-	void initializeTexUnits( const int32 numTexUnits = 1, const Corner origin = BOTTOM_LEFT, const bool ccw = true );
+	void initializeTexUnits(	const int32 numTexUnits = 1, const vgd::basic::Corner origin = vgd::basic::BOTTOM_LEFT, 
+								const bool ccw = true );
 
 	/**
 	 * @brief Reset the texture coordinates and bindings for all specified textures units.
@@ -97,13 +87,15 @@ struct VGD_API Quad : public vgd::node::VertexShape
 	 * 
 	 * @pre initializeTexUnits() must have been called before.
 	 */
-	void resetTextureCoordinates( const int32 numTexUnits = 1, const Corner origin = BOTTOM_LEFT, const bool ccw = true );
+	void resetTextureCoordinates(	const int32 numTexUnits = 1, 
+									const vgd::basic::Corner origin = vgd::basic::BOTTOM_LEFT,
+									const bool ccw = true );
 	//@}
 
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 

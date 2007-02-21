@@ -6,7 +6,6 @@
 #ifndef _VGD_NODE_TRISET_HPP
 #define _VGD_NODE_TRISET_HPP
 
-#include "vgd/vgd.hpp"
 #include "vgd/node/VertexShape.hpp"
 
 
@@ -39,7 +38,7 @@ struct VGD_API TriSet : public vgd::node::VertexShape
 
 
 	/**
-	 * @name Accessors to field neighbours.
+	 * @name Accessors to field neighbours
 	 */
 	//@{
 
@@ -80,7 +79,7 @@ struct VGD_API TriSet : public vgd::node::VertexShape
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Fields names enumeration
 	 */
 	//@{
 	
@@ -95,7 +94,7 @@ struct VGD_API TriSet : public vgd::node::VertexShape
 	
 	
 	/**
-	 * @name Dirty flags enumeration.
+	 * @name Dirty flags enumeration
 	 */
 	//@{
 
@@ -109,7 +108,7 @@ struct VGD_API TriSet : public vgd::node::VertexShape
 	
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 

@@ -6,8 +6,6 @@
 #ifndef _VGD_NODE_WIREQUAD_HPP
 #define _VGD_NODE_WIREQUAD_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/node/WireShape.hpp"
 
 
@@ -40,7 +38,7 @@ struct VGD_API WireQuad : public vgd::node::WireShape
 
 
 	/**
-	 * @name Initialization method.
+	 * @name Initialization method
 	 */
 	//@{
 	
@@ -58,7 +56,7 @@ struct VGD_API WireQuad : public vgd::node::WireShape
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 

@@ -84,18 +84,6 @@ struct Shp : public boost::shared_ptr<T>
 
 
 /**
- * @brief	Builds a shared pointer from the given pointer
- *
- * @relates Shp
- */
-template<class T> Shp<T> makeShp( T * object )
-{
-	return Shp< T >( object );
-}
-
-
-
-/**
  * @relates Shp
  */
 template<class T, class U> inline bool operator==(Shp<T> const & a, Shp<U> const & b)
@@ -166,6 +154,18 @@ template<class T, class U> Shp<T> dynamic_pointer_cast(boost::shared_ptr<U> cons
 template<class T> inline T * getPointer(boost::shared_ptr<T> const & p)
 {
 	return boost::get_pointer(p);
+}
+
+
+
+/**
+ * @brief	Builds a shared pointer from the given pointer
+ *
+ * @relates Shp
+ */
+template<class T> Shp<T> makeShp( T * object )
+{
+	return Shp< T >( object );
 }
 
 

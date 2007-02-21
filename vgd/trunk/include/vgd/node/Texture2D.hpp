@@ -30,7 +30,7 @@ namespace node
  * 
  * - SFIImage \c [iimage]\n
  * 		Determines the source of data used to created the texture.
- * 		You can set multiple times this field, but only if all images have the same format.
+ * 		You can set multiple times this field, but only if all successive images have the same format.
  * 		The data and size of the image can changed, but that's all.
  * 
  * @ingroup g_nodes

@@ -28,6 +28,24 @@
  */
 
 /**
+ * @defgroup g_coordinatesSystem Coordinate Systems
+ * 
+ * @ingroup g_vgd
+ * 
+ * Coordinates system :
+ * 	- Object coordinates system :
+ * 	- Eye coordinates system :
+ * 	- Clip coordinates system :
+ * 	- Normalized device coordinates :
+ * 	- Window coordinates system :
+ *		The origin of this coordinates system is the bottom left corner of the window. Width and height are expressed in 
+ * 		pixels.
+ * 
+ * 	- Normalized window coordinates system :
+ * 		Width and height are expressed by a float within [0,1].
+ */
+
+/**
  * @defgroup g_nodes Nodes
  * 
  * @ingroup g_vgd

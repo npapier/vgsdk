@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -157,7 +157,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 
 
 	/**
-	 * @name Actions on VertexShape.
+	 * @name Actions on VertexShape
 	 */
 	//@{
 
@@ -171,7 +171,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 
 
 	/**
-	 * @name Accessors to field vertex.
+	 * @name Accessors to field vertex
 	 */
 	//@{
 

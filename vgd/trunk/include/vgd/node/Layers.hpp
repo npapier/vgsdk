@@ -8,7 +8,8 @@
 
 #include "vgd/node/ILayers.hpp"
 #include "vgd/node/Quad.hpp"
-#include "vgd/vgd.hpp"
+
+namespace vgd { namespace node { struct Switch; } }
 
 
 
@@ -17,9 +18,6 @@ namespace vgd
 
 namespace node
 {
-
-struct Quad;
-struct Switch;
 
 /**
  * @brief Layers definition node.
@@ -46,6 +44,7 @@ struct Switch;
  * - SFVec3f	\c translation		= (0 0 0)\n
  * 		Sets the translation to apply on each 2D slice extracted (from layers).
  * 		Z coordinate of this translation (x,y,z) must always be zero.
+ * 
  * - SFVec3f	\c scaleFactor 		= (1 1 1)\n
  * 		Sets the scale factors to apply on each 2D slice extracted (from layers).
  * 		Z factor of this scale (x,y,z) must always be one.
@@ -67,6 +66,7 @@ struct Switch;
  * @todo Destruction of field (removeLayers())
  * 
  * @ingroup g_nodes
+ * @ingroup g_shapeNodes
  * @ingroup g_nodekits
  */
 struct VGD_API Layers : public vgd::node::ILayers
@@ -79,7 +79,7 @@ struct VGD_API Layers : public vgd::node::ILayers
 
 
 	/**
-	 * @name Geometry accessors.
+	 * @name Geometry accessors
 	 */
 	//@{
 	
@@ -94,7 +94,7 @@ struct VGD_API Layers : public vgd::node::ILayers
 	 * @param origin	see vgd::node::Quad::initializeTexUnits() method for more details.
 	 * @param ccw		see vgd::node::Quad::initializeTexUnits() method for more details.
 	 */
-	void resetTextureCoordinates(	const vgd::node::Quad::Corner origin = vgd::node::Quad::BOTTOM_LEFT,
+	void resetTextureCoordinates(	const vgd::basic::Corner origin = vgd::basic::BOTTOM_LEFT,
 									const bool ccw = true );
 
 	/**
@@ -112,7 +112,7 @@ struct VGD_API Layers : public vgd::node::ILayers
 
 
 	/**
-	 * @name Bounding box.
+	 * @name Bounding box
 	 */
 	//@{
 
@@ -145,7 +145,7 @@ struct VGD_API Layers : public vgd::node::ILayers
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -296,6 +296,7 @@ void VertexShape::transform( const vgm::Vec3f translation )
 void VertexShape::transform( const vgm::Rotation rotation )
 {
 	vgd::field::EditorRW< FVertexType > vertex	= getFVertexRW();
+	vgd::field::EditorRW< FNormalType > normal	= getFNormalRW();
 
 	// Transform each vertex.
 	for(	FVertexType::iterator	i	= vertex->begin(),
@@ -304,6 +305,16 @@ void VertexShape::transform( const vgm::Rotation rotation )
 			i++ )
 	{
 		rotation.multVec( (*i), (*i) );
+	}
+
+	// Transform each normal.
+	for(	FNormalType::iterator	i	= normal->begin(),
+									ie	= normal->end();
+			i != ie;
+			i++ )
+	{
+		rotation.multVec( (*i), (*i) );
+		i->normalize();
 	}
 }
 

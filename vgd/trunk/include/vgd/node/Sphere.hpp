@@ -6,7 +6,6 @@
 #ifndef _VGD_NODE_SPHERE_HPP
 #define _VGD_NODE_SPHERE_HPP
 
-#include "vgd/vgd.hpp"
 #include "vgd/node/VertexShape.hpp"
 
 

@@ -6,6 +6,7 @@
 #ifndef _VGD_BASIC_IMAGEUTILITIES_HPP
 #define _VGD_BASIC_IMAGEUTILITIES_HPP
 
+#include <vgm/operations.hpp>
 #include "vgd/vgd.hpp"
 #include "vgd/Shp.hpp"
 #include "vgd/basic/Image.hpp"
@@ -104,6 +105,17 @@ struct VGD_API ImageUtilities
 	 * @name Useful scanning image methods.
 	 */
 	//@{
+
+	/**
+	 * @brief Scan the whole image and set alpha value of each pixel to the luminance value multiplied by a scale factor
+	 * 
+	 * @pre pImage->format() == LUMINANCE_ALPHA
+	 * @pre pImage->type() == UINT8
+	 * 
+	 * @param pImage	image to scan
+	 * @param scale		the luminance value is multiplied by a scale factor
+	 */
+	static void	setAlphaFromLuminance( IImage *pImage, const float scale = 1.f );
 	
 	/**
 	 * @brief Scan the whole image and set alpha value of each pixel to \c alpha.
@@ -115,7 +127,7 @@ struct VGD_API ImageUtilities
 	 * @param pImage	image to scan.
 	 * @param alpha		alpha value to assign.
 	 */
-	static void	setAlpha( IImage *pImage, const float alpha = 1.f );
+	static void	setAlpha( IImage *pImage, const float alpha = 1.f );	
 
 	/**
 	 * @brief Scan the whole image and modify alpha value of each pixel.

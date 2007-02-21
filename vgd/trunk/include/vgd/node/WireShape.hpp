@@ -6,8 +6,6 @@
 #ifndef _VGD_NODE_WIRESHAPE_HPP
 #define _VGD_NODE_WIRESHAPE_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/node/VertexShape.hpp"
 
 
@@ -29,7 +27,7 @@ struct VGD_API WireShape : public vgd::node::VertexShape
 {
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 

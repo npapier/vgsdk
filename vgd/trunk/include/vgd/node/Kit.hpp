@@ -68,7 +68,7 @@ struct VGD_API Kit : public Node, public IBoundingBox
 	/**
 	 * @brief Typedef for the \c root value.
 	 */
-	typedef vgd::Shp< vgd::node::Group >										RootValueType;
+	typedef vgd::Shp< vgd::node::Group >								RootValueType;
 	
 	/**
 	 * @brief Gets the root of node.

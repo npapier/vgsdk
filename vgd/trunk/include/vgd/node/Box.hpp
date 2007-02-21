@@ -6,8 +6,6 @@
 #ifndef _VGD_NODE_BOX_HPP
 #define _VGD_NODE_BOX_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/node/VertexShape.hpp"
 
 
@@ -44,7 +42,7 @@ struct VGD_API Box : public vgd::node::VertexShape
 
 
 	/**
-	 * @name Initialization method.
+	 * @name Initialization method
 	 */
 	//@{
 	
@@ -64,7 +62,7 @@ struct VGD_API Box : public vgd::node::VertexShape
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
