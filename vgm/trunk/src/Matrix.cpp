@@ -239,6 +239,26 @@ void MatrixR::setValue( const double* m )
 
 
 
+void MatrixR::setRow( const int32 row, const vgm::Vec4f value )
+{
+	matrix[row][0] = value[0];
+	matrix[row][1] = value[1];
+	matrix[row][2] = value[2];
+	matrix[row][3] = value[3];
+}
+
+
+
+void MatrixR::setColumn( const int32 column, const vgm::Vec4f value )
+{
+	matrix[0][column] = value[0];
+	matrix[1][column] = value[1];
+	matrix[2][column] = value[2];
+	matrix[3][column] = value[3];
+}
+
+
+
 void MatrixR::getValue( RawMatrix m ) const
 {
 	m[0][0] = matrix[0][0];
@@ -291,50 +311,68 @@ void MatrixR::getValue( RawMatrixd m ) const
 
 void MatrixR::getValue( float *m ) const
 {
-	m[0] = matrix[0][0];
-	m[1] = matrix[0][1];
-	m[2] = matrix[0][2];
-	m[3] = matrix[0][3];
+	m[0]	= matrix[0][0];
+	m[1]	= matrix[0][1];
+	m[2]	= matrix[0][2];
+	m[3]	= matrix[0][3];
 
-	m[4] = matrix[1][0];
-	m[5] = matrix[1][1];
-	m[6] = matrix[1][2];
-	m[7] = matrix[1][3];
+	m[4]	= matrix[1][0];
+	m[5]	= matrix[1][1];
+	m[6]	= matrix[1][2];
+	m[7]	= matrix[1][3];
 
 	m[8]	= matrix[2][0];
 	m[9]	= matrix[2][1];
-	m[10] = matrix[2][2];
-	m[11] = matrix[2][3];
+	m[10]	= matrix[2][2];
+	m[11]	= matrix[2][3];
 
-	m[12] = matrix[3][0];
-	m[13] = matrix[3][1];
-	m[14] = matrix[3][2];
-	m[15] = matrix[3][3];
+	m[12]	= matrix[3][0];
+	m[13]	= matrix[3][1];
+	m[14]	= matrix[3][2];
+	m[15]	= matrix[3][3];
 }
 
 
 
 void MatrixR::getValue( double *m ) const
 {
-	m[0] = static_cast<double>(matrix[0][0]);
-	m[1] = static_cast<double>(matrix[0][1]);
-	m[2] = static_cast<double>(matrix[0][2]);
-	m[3] = static_cast<double>(matrix[0][3]);
+	m[0]	= static_cast<double>(matrix[0][0]);
+	m[1]	= static_cast<double>(matrix[0][1]);
+	m[2]	= static_cast<double>(matrix[0][2]);
+	m[3]	= static_cast<double>(matrix[0][3]);
 
-	m[4] = static_cast<double>(matrix[1][0]);
-	m[5] = static_cast<double>(matrix[1][1]);
-	m[6] = static_cast<double>(matrix[1][2]);
-	m[7] = static_cast<double>(matrix[1][3]);
+	m[4]	= static_cast<double>(matrix[1][0]);
+	m[5]	= static_cast<double>(matrix[1][1]);
+	m[6]	= static_cast<double>(matrix[1][2]);
+	m[7]	= static_cast<double>(matrix[1][3]);
 
 	m[8]	= static_cast<double>(matrix[2][0]);
 	m[9]	= static_cast<double>(matrix[2][1]);
-	m[10] = static_cast<double>(matrix[2][2]);
-	m[11] = static_cast<double>(matrix[2][3]);
+	m[10]	= static_cast<double>(matrix[2][2]);
+	m[11]	= static_cast<double>(matrix[2][3]);
 
-	m[12] = static_cast<double>(matrix[3][0]);
-	m[13] = static_cast<double>(matrix[3][1]);
-	m[14] = static_cast<double>(matrix[3][2]);
-	m[15] = static_cast<double>(matrix[3][3]);
+	m[12]	= static_cast<double>(matrix[3][0]);
+	m[13]	= static_cast<double>(matrix[3][1]);
+	m[14]	= static_cast<double>(matrix[3][2]);
+	m[15]	= static_cast<double>(matrix[3][3]);
+}
+
+
+
+const vgm::Vec4f MatrixR::getRow( const int32 row )
+{
+	const vgm::Vec4f retVal( matrix[row][0], matrix[row][1], matrix[row][2], matrix[row][3] );
+	
+	return retVal;
+}
+
+
+
+const vgm::Vec4f MatrixR::getColumn( const int32 column )
+{
+	const vgm::Vec4f retVal( matrix[0][column], matrix[1][column], matrix[2][column], matrix[3][column] );
+	
+	return retVal;
 }
 
 
@@ -804,8 +842,8 @@ void MatrixR::perspective( float fovy, float aspect, float zNear, float zFar )
 
 
 void MatrixR::setLookAt(	float eyex, float eyey, float eyez,
-									float centerx, float centery, float centerz,
-									float upx, float upy, float upz)
+							float centerx, float centery, float centerz,
+							float upx, float upy, float upz)
 {
 	float x[3], y[3], z[3];
 	float mag;
@@ -873,16 +911,34 @@ void MatrixR::setLookAt(	float eyex, float eyey, float eyez,
 
 
 
+void MatrixR::setLookAt( const Vec3f eye, const Vec3f center, const Vec3f up )
+{
+	setLookAt(	eye[0], eye[1], eye[2],
+				center[0], center[1], center[2],
+				up[0], up[1], up[2] );
+}
+
+
+
 void MatrixR::lookAt(	float eyex, float eyey, float eyez,
-								float centerx, float centery, float centerz,
-								float upx, float upy, float upz )
+						float centerx, float centery, float centerz,
+						float upx, float upy, float upz )
 {
 	MatrixR matrix;
 	matrix.setLookAt(	eyex, eyey, eyez, 
-							centerx, centery, centerz,
-							upx, upy, upz );
+						centerx, centery, centerz,
+						upx, upy, upz );
 	
 	multLeft( matrix );
+}
+
+
+
+void MatrixR::lookAt( const Vec3f eye, const Vec3f center, const Vec3f up )
+{
+	lookAt(	eye[0], eye[1], eye[2],
+			center[0], center[1], center[2],
+			up[0], up[1], up[2] );
 }
 
 

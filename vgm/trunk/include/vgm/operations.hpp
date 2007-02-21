@@ -39,7 +39,7 @@ struct Epsilon<float>
 	 * 
 	 * @return epsilon value
 	 */
-	const float value() const
+	static const float value() //const
 	{
 		return 1.e-7f;
 	}
@@ -58,7 +58,7 @@ struct Epsilon<double>
 	 * 
 	 * @return epsilon value
 	 */	
-	const double value() const
+	static const double value() //const
 	{
 		return 1.e-10l;
 	}

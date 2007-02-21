@@ -94,7 +94,7 @@ typedef double	RawMatrixd[4][4];
 struct VGM_API MatrixR
 {
 	/**
-	 * @name Constructors and destructor.
+	 * @name Constructors and destructor
 	 */
 	//@{
 
@@ -144,7 +144,7 @@ struct VGM_API MatrixR
 
 
 	/**
-	 * @name Matrix accessors.
+	 * @name Matrix accessors
 	 *
 	 * The following methods return matrix values and other informations.
 	 */
@@ -153,43 +153,63 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Sets value from 4x4 array of elements.
 	 */
-	void					setValue( const RawMatrix m );
+	void setValue( const RawMatrix m );
 	
 	/**
 	 * @brief Sets value from 4x4 array of elements.
 	 */
-	void					setValue( const RawMatrixd m );
+	void setValue( const RawMatrixd m );
 	
 	/**
 	 * @brief Sets value from an array of 16 elements.
 	 */
-	void					setValue( const float* m );
+	void setValue( const float* m );
 	
 	/**
 	 * @brief Sets value from an array of 16 elements.
 	 */
-	void					setValue( const double* m );
+	void setValue( const double* m );
+	
+	/**
+	 * @brief Sets the row from a vector of 4 elements
+	 */
+	void setRow( const int32 row, const vgm::Vec4f value );
+	
+	/**
+	 * @brief Sets the column from a vector of 4 elements
+	 */
+	void setColumn( const int32 column, const vgm::Vec4f value );
 
 	/**
 	 * @brief Returns 4x4 array of elements.
 	 */
-	void					getValue( RawMatrix m ) const;
+	void getValue( RawMatrix m ) const;
 
 	/**
 	 * @brief Returns 4x4 array of elements.
 	 */
-	void					getValue( RawMatrixd m ) const;
+	void getValue( RawMatrixd m ) const;
 	
 	/**
 	 * @brief Returns an array of 16 elements.
 	 */
-	void					getValue( float *m ) const;
+	void getValue( float *m ) const;
 
 	/**
 	 * @brief Returns an array of 16 elements.
 	 */
-	void					getValue( double *m ) const;
-	
+	void getValue( double *m ) const;
+
+	/**
+	 * @brief Returns the desired row
+	 */
+	const vgm::Vec4f getRow( const int32 row );
+
+	/**
+	 * @brief Returns the desired column
+	 */
+	const vgm::Vec4f getColumn( const int32 column );
+
 	/**
 	 * @brief Returns 4x4 array of elements.
 	 */
@@ -236,7 +256,7 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Returns an identity matrix 
 	 */
-	static MatrixR		getIdentity();
+	static MatrixR			getIdentity();
 
 	/**
 	 * @brief Check if this matrix is identity.
@@ -266,14 +286,14 @@ struct VGM_API MatrixR
 
 
 	/**
-	 * @name Transformation accessors.
+	 * @name Transformation accessors
 	 */
 	//@{
 
 	/**
 	 * @brief Sets matrix to rotate by given rotation.
 	 */
-	void	setRotate( const Rotation& q );
+	void setRotate( const Rotation& q );
 	
 	/**
 	 * @brief Left multiply the current matrix by the given rotation matrix.
@@ -283,7 +303,7 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Sets matrix to scale by given uniform factor.
 	 */
-	void	setScale( const float s );
+	void setScale( const float s );
 
 	/**
 	 * @brief Left multiply the current matrix by the given scale matrix.
@@ -293,7 +313,7 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Sets matrix to scale by given vector.
 	 */
-	void	setScale( const Vec3f& s );
+	void setScale( const Vec3f& s );
 	
 	/**
 	 * @brief Left multiply the current matrix by the given scale matrix.
@@ -303,12 +323,12 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Sets matrix to translate by given vector.
 	 */
-	void	setTranslate( const Vec3f& t );
+	void setTranslate( const Vec3f& t );
 	
 	/**
 	 * @brief Left multiply the current matrix by the given translation matrix.
 	 */
-	void	translate( const Vec3f& t );
+	void translate( const Vec3f& t );
 
 	/**
 	 * @brief Set the matrix with a translation, rotation, scale, orientation for scale, and center.
@@ -437,8 +457,19 @@ struct VGM_API MatrixR
 	 * The matrix is exactly the same as the one sets by the GLU function \c gluLookAt.
 	 */
 	void setLookAt(	float eyex, float eyey, float eyez,
-							float centerx, float centery, float centerz,
-							float upx, float upy, float upz );
+					float centerx, float centery, float centerz,
+					float upx, float upy, float upz );
+
+	/**
+	 * @brief Set matrix to a viewing transformation.
+	 * 
+	 * @param eye		The position of the eye point
+	 * @param center	The position of the reference point
+	 * @param up		The direction of the up vector
+	 * 
+	 * The matrix is exactly the same as the one sets by the GLU function \c gluLookAt.
+	 */
+	void setLookAt( const Vec3f eye, const Vec3f center, const Vec3f up );
 
 	/**
 	 * @brief Left multiply the current matrix by the given "lookAt" matrix.
@@ -446,8 +477,15 @@ struct VGM_API MatrixR
 	 * @sa setLookAt()
 	 */
 	void	lookAt(	float eyex, float eyey, float eyez,
-						float centerx, float centery, float centerz,
-						float upx, float upy, float upz );
+					float centerx, float centery, float centerz,
+					float upx, float upy, float upz );
+
+	/**
+	 * @brief Left multiply the current matrix by the given "lookAt" matrix.
+	 * 
+	 * @sa lookAt()
+	 */
+	void lookAt( const Vec3f eye, const Vec3f center, const Vec3f up );
 
 	/**
 	 * @brief Set matrix to a picking region.

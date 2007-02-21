@@ -633,9 +633,9 @@ private:
 	 */
 	//@{
 	const Vec3f&	getMin() const	{ return Box3f::getMin(); }
-	Vec3f&			getMin()			{ return Box3f::getMin(); }
+	Vec3f&			getMin()		{ return Box3f::getMin(); }
 	const Vec3f&	getMax() const	{ return Box3f::getMax(); }
-	Vec3f&			getMax()			{ return Box3f::getMax(); }
+	Vec3f&			getMax()		{ return Box3f::getMax(); }
 	//@}
 
 	/**
