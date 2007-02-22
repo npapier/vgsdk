@@ -1,16 +1,15 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgeGL/technique/Main.hpp"
 
-#include <vgd/node/ClearFrameBuffer.hpp>
-#include <vgd/node/Kit.hpp>
-#include <vgd/node/Material.hpp>
-#include <vgd/node/Shape.hpp>
-#include <vge/engine/Engine.hpp>
+#include <vge/pass/ForEach.hpp>
 #include <vge/service/Painter.hpp>
+#include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/pass/Opaque.hpp"
+#include "vgeGL/pass/Transparent.hpp"
 
 
 
@@ -22,141 +21,35 @@ namespace technique
 
 
 
-void Main::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements )
+void Main::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
 	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
-	prepareEval();
-	//pEngine->resetEval();
+	prepareEval( engine, traverseElements );
+	engine->resetEval();
 
 	// At startup, the transparency pass is disabled. It would be enabled during the opaque pass if at least one
 	// transparent shape is encountered.
 
-	bool mustDoTransparencyPass = false;
-	
 	// First pass : OPAQUE PASS (draw opaque shape)
-	beginPass();
-	glPushAttrib( GL_ALL_ATTRIB_BITS );
+	using ::vgeGL::pass::Opaque;
+	vgd::Shp< Opaque > opaque( new Opaque() );
 
-	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
-	for(	i = pTraverseElements->begin(), iEnd = pTraverseElements->end();
-			i != iEnd;
-			++i )
-	{
-		if ( (i->first)->isAKindOf< vgd::node::Shape >() )
-		{
-			vgd::node::Material *pMaterial( pEngine->getStateStackTop<vgd::node::Material>() );
-			assert( pMaterial != 0 );
-
-			if ( pMaterial->getTransparency() == 1.f )
-			{
-				// object is opaque, draw it.
-				pEngine->evaluate( paint, i->first, i->second );
-			}
-			else
-			{
-				mustDoTransparencyPass = true;
-				// nothing to do for transparent object.
-			}
-		}
-		else
-		{
-			pEngine->evaluate( paint, i->first, i->second );
-		}
-	}
-
-	glPopAttrib();
-	endPass();
-
-
+	evaluatePass( opaque, paint );
 
 	// Second pass : TRANSPARENT PASS (draw transparent shape).
-	if ( mustDoTransparencyPass )
+	if ( opaque->mustDoTransparencyPass() )
 	{
-		beginPass();
-		pEngine->disregardIfIsA< vgd::node::ClearFrameBuffer >();
-		pEngine->disregardIfIsAKindOf< vgd::node::Kit >(); ///< Nothing to do for nodekit in transparent pass. FIXME
-		glPushAttrib( GL_ALL_ATTRIB_BITS );
+		using ::vgeGL::pass::Transparent;
 		
-		pEngine->resetEval();
-		
-		for(	i = pTraverseElements->begin(), iEnd = pTraverseElements->end();
-				i != iEnd;
-				++i )
-		{
-			if ( (i->first)->isAKindOf< vgd::node::Shape >() )
-			{
-				vgd::node::Material *pMaterial( pEngine->getStateStackTop<vgd::node::Material>() );
-				assert( pMaterial != 0 );
-	
-				if ( pMaterial->getTransparency() < 1.f )
-				{
-					// object is transparent, draw it.
-	
-					// @todo opt me	
-					glPushAttrib( GL_ALL_ATTRIB_BITS );					
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-					glDepthMask(GL_FALSE);	
-					pEngine->evaluate( paint, i->first, i->second );
-					glPopAttrib();
-				}
-				// nothing to do for opaque object.
-			}
-			else
-			{
-				pEngine->evaluate( paint, i->first, i->second );
-			}
-		}
-	
-		glPopAttrib();
-		pEngine->regardIfIsAKindOf< vgd::node::Kit >();		
-		pEngine->regardIfIsA< vgd::node::ClearFrameBuffer >();
-	
-		endPass();
+		evaluatePass( vgd::makeShp( new Transparent() ), paint );
 	}
-	
+
 	//
 	finishEval();
 }
 
 
-//
-//
-//
-//
-///*
-//BeginFirstPass(); reset*();
-//EndFirstPass();
-//For an active technique, this method is invoked after the traversal of the scene graph. The changes made in "preparePass()" should be undone here
-//
-//
-//
-//	engine();
-//	nodes();
-//	
-//	vge::engine::Engine&										m_engine;
-//	vge::visitor::NodeCollectorExtended<Visitors>&	m_collector
-//	
-//
-//
-//MainTechnique()
-//{
-//	reset();
-//	
-//	CollectNodes();
-//
-//	Begin();
-//	
-//	BeginFirstPass();
-//	for_each();
-//	EndFirstPass(); disregard();
-//
-//	BeginNextPass( push true); resetState(); resetMatrix();
-//	for_each();
-//	EndNextPass();
-//	
-//	End(); regard();
 
 
 

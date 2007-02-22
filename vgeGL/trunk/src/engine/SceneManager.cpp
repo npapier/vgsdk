@@ -1,12 +1,12 @@
-// VGSDK - Copyright (C) 2004, 2006, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgeGL/engine/SceneManager.hpp"
 
-#include <vgDebug/Global.hpp>
-
+#include <vge/service/Painter.hpp>
+#include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/event/DefaultEventProcessor.hpp"
 #include "vgeGL/technique/Main.hpp"
 #include "vgeGL/technique/RayCasting.hpp"
@@ -21,9 +21,9 @@ namespace engine
 
 
 
-SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > pEngine ) :
-	::vge::engine::SceneManager	(	pEngine							),
-	m_GLEngine					(	pEngine							),
+SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > engine ) :
+	::vge::engine::SceneManager	(	engine							),
+	m_GLEngine					(	engine							),
 	m_paintTechnique			(	new vgeGL::technique::Main()	),
 	m_bCallInitialize			(	false							)
 {
@@ -53,14 +53,43 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	// vgeGL paint() implementation
 	vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
 
-	getEngine()->resetEval();
-	paintTechnique->apply( getEngine().get(), getNodeCollector().getTraverseElements() );
+	getGLEngine()->resetEval();
+	paintTechnique->apply( getGLEngine().get(), getNodeCollector().getTraverseElements() );
+
+	// Layer plan (only overlay).
+	// @todo move nodes to scene graph.
+	using vgd::node::LayerPlan;
+	vgd::Shp< LayerPlan > layerPlan = getLayerPlan();
+
+	if ( layerPlan )
+	{
+		assert( layerPlan->getType() == LayerPlan::OVERLAY );
+
+		vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
+
+		getGLEngine()->evaluate( paint, layerPlan.get(), true );
+	}
+	// else nothing to do
 }
 
 
 
 void SceneManager::resize( const vgm::Vec2i )
 {}
+
+
+
+void SceneManager::setLayerPlan( vgd::Shp< vgd::node::LayerPlan > layerPlan )
+{
+	m_layerPlan = layerPlan;
+}
+
+
+
+vgd::Shp< vgd::node::LayerPlan >& SceneManager::getLayerPlan()
+{
+	return m_layerPlan;
+}
 
 
 
@@ -203,8 +232,8 @@ const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32
 	getNodeCollector().reset();
 	getRoot()->traverse( getNodeCollector() );
 
-	getEngine()->resetEval();
-	m_rayCasting.apply(	getEngine().get(), getNodeCollector().getTraverseElements(), x, y );
+	getGLEngine()->resetEval();
+	m_rayCasting.apply(	getGLEngine().get(), getNodeCollector().getTraverseElements(), x, y );
 
 	if ( m_rayCasting.getHitsSize() == 0 )
 	{

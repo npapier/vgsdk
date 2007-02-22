@@ -1,12 +1,11 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_TECHNIQUE_MAIN_H
-#define _VGEGL_TECHNIQUE_MAIN_H
+#ifndef _VGEGL_TECHNIQUE_MAIN_HPP
+#define _VGEGL_TECHNIQUE_MAIN_HPP
 
-#include "vgeGL/vgeGL.hpp"
 #include "vgeGL/technique/Technique.hpp"
 
 
@@ -19,9 +18,12 @@ namespace technique
 
 
 
-struct VGEGL_API Main : public Technique
+/**
+ * @brief The default technique to render opaque and transparent object.
+ */
+struct Main : public Technique
 {
-	void apply( vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements );
+	VGEGL_API void apply( vgeGL::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector * /*traverseElements*/ );
 };
 
 
@@ -30,4 +32,4 @@ struct VGEGL_API Main : public Technique
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_TECHNIQUE_MAIN_H
+#endif //#ifndef _VGEGL_TECHNIQUE_MAIN_HPP

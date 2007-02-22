@@ -236,7 +236,7 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 		glPopAttrib();																												// FIXME optme
 	} // end for each layer
 	
-	glo::GLSLShader::useFixedPaths();
+	glo::GLSLProgram::useFixedPaths();
 	
 	// Validate node
 	pLayers->getDirtyFlag(pLayers->getDFNode())->validate();
@@ -513,7 +513,7 @@ void Layers::initializeShaders()
 	}
 	
 	// ** REPLACE **
-	m_pReplaceShader			= new glo::GLSLShader();
+	m_pReplaceShader			= new glo::GLSLProgram();
 
 	const char *pReplace = "\
 uniform sampler2D imageMap; \
@@ -525,10 +525,10 @@ void main(void) \
 	gl_FragColor = imageColor; \
 }";
 
-	m_pReplaceShader->addShader( pReplace, glo::GLSLShader::FRAGMENT, true );
+	m_pReplaceShader->addShader( pReplace, glo::GLSLProgram::FRAGMENT, true );
 	
 	// ** PALETTE_REPLACE **
-	m_pPaletteReplaceShader	= new glo::GLSLShader();
+	m_pPaletteReplaceShader	= new glo::GLSLProgram();
 	
 	const char *pPaletteReplace = "\
 uniform sampler2D imageMap; \
@@ -542,10 +542,10 @@ void main(void) \
 	gl_FragColor = paletteColor; \
 }";
 
-	m_pPaletteReplaceShader->addShader( pPaletteReplace, glo::GLSLShader::FRAGMENT, true );
+	m_pPaletteReplaceShader->addShader( pPaletteReplace, glo::GLSLProgram::FRAGMENT, true );
 
 	// ** SCISSOR REPLACE **
-	m_pScissorReplaceShader			= new glo::GLSLShader();
+	m_pScissorReplaceShader			= new glo::GLSLProgram();
 
 	const char *pScissorReplace = "\
 uniform sampler2D imageMap; \
@@ -560,10 +560,10 @@ void main(void) \
 	gl_FragColor = vec4(imageColor.rgb, min(scissorColor.r, imageColor.a) ); \
 }";
 
-	m_pScissorReplaceShader->addShader( pScissorReplace, glo::GLSLShader::FRAGMENT, true );
+	m_pScissorReplaceShader->addShader( pScissorReplace, glo::GLSLProgram::FRAGMENT, true );
 
 	// ** SCISSOR PALETTE_REPLACE **
-	m_pScissorPaletteReplaceShader	= new glo::GLSLShader();
+	m_pScissorPaletteReplaceShader	= new glo::GLSLProgram();
 	
 	const char *pScissorPaletteReplace = "\
 uniform sampler2D imageMap; \
@@ -581,7 +581,7 @@ void main(void) \
 	gl_FragColor = vec4(paletteColor.rgb, min(scissorColor.r, paletteColor.a));\
 }";
 
-	m_pScissorPaletteReplaceShader->addShader( pScissorPaletteReplace, glo::GLSLShader::FRAGMENT, true );
+	m_pScissorPaletteReplaceShader->addShader( pScissorPaletteReplace, glo::GLSLProgram::FRAGMENT, true );
 
 	//
 	m_shadersAlreadyInitialized = true;
@@ -620,11 +620,11 @@ void Layers::destroyShaders()
 
 bool Layers::m_shadersAlreadyInitialized = false;
 
-glo::GLSLShader *Layers::m_pReplaceShader					= 0;
-glo::GLSLShader *Layers::m_pPaletteReplaceShader			= 0;
+glo::GLSLProgram *Layers::m_pReplaceShader					= 0;
+glo::GLSLProgram *Layers::m_pPaletteReplaceShader			= 0;
 
-glo::GLSLShader *Layers::m_pScissorReplaceShader			= 0;
-glo::GLSLShader *Layers::m_pScissorPaletteReplaceShader		= 0;
+glo::GLSLProgram *Layers::m_pScissorReplaceShader			= 0;
+glo::GLSLProgram *Layers::m_pScissorPaletteReplaceShader	= 0;
 
 
 //			case Layers::MODULATE:

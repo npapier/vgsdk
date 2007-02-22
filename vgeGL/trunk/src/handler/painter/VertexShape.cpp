@@ -5,7 +5,7 @@
 
 #include "vgeGL/handler/painter/VertexShape.hpp"
 
-#include <glo/GLSLShader.hpp>
+#include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
 // @todo Move Box stuff to Box handler (FIXME)
 #include <vgd/node/Box.hpp>
@@ -131,7 +131,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		// FIXME optimize me
 		glPushAttrib( GL_ALL_ATTRIB_BITS );
 		
-		glo::GLSLShader::useFixedPaths();
+		//::glo::GLSLProgram::useFixedPaths();																			??? FIXME
 
 		glDisable( GL_LIGHTING );
 		
@@ -259,7 +259,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 	// TEX COORD
 	assert(	(pVertexShape->getNumTexUnits() > 1 &&
-			gleGetCurrent()->isGL_ARB_multitexture && "MultiTexture not currently supported.") ||
+			isGL_ARB_multitexture() && "MultiTexture not currently supported.") ||
 			(pVertexShape->getNumTexUnits() <= 1) );
 
 	for(	int32 i=0;
@@ -303,7 +303,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 	int32 i32IndexPrim = 0;
 	for(	vgd::field::MFPrimitive::const_iterator	i	=	primitives->begin(),
-															ie	= primitives->end();
+													ie	= primitives->end();
 			i != ie;
 			++i, ++i32IndexPrim)
 	{
@@ -332,9 +332,6 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 
 	vgd::field::EditorRO< vgd::field::MFVec3f >		vertex;
 	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex;
-
-	// extensions.
-	gle::OpenGLExtensionsGen *glext = gleGetCurrent();
 
 	//
 	const GLvoid	*pArray;
@@ -384,7 +381,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 
 			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
 			{
-/*				// TODO: could only search vgd::node::Texture2D, not abstract node....
+/*				// @todo: could only search vgd::node::Texture2D, not abstract node....
 				// gets the texture node and ressource															FIXME : not always correct.
 				vgd::node::Texture *pTexture = pGLEngine->template getStateStackTop<vgd::node::Texture>( unit );
 				assert( pTexture != 0 && "Internal error." );
@@ -395,8 +392,8 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 				pTextureGLO->enable();*/
 
 				//
-				gleGetCurrent()->glClientActiveTexture( GL_TEXTURE0_ARB + unit );				
-				int32 dimTexCoord = pVertexShape->getTexCoordDim( unit );
+				glClientActiveTexture( GL_TEXTURE0_ARB + unit );				
+				const int32 dimTexCoord = pVertexShape->getTexCoordDim( unit );
 				
 				switch ( dimTexCoord )
 				{
@@ -453,7 +450,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 	// SECONDARY COLOR4
 	if ( pVertexShape->getSecondaryColor4Binding() == vgd::node::BIND_PER_VERTEX )
 	{
-		if ( glext->isGL_EXT_secondary_color )
+		if ( isGL_EXT_secondary_color() )
 		{
 			glEnable( GL_COLOR_MATERIAL );
 
@@ -461,7 +458,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 			
 			pArray = static_cast< const GLvoid* >( secondaryColor4->begin()->getValue() );
 			
-			glext->glSecondaryColorPointerEXT( 4, GL_FLOAT, 0, pArray );
+			glSecondaryColorPointerEXT( 4, GL_FLOAT, 0, pArray );
 			
 			glEnableClientState( GL_SECONDARY_COLOR_ARRAY );
 		}
@@ -510,12 +507,12 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 	// *** Step 2 : RENDERING ***
 
 	assert( primitive.getType() != vgd::node::Primitive::NONE );
-	GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
+	const GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
 
 	vertexIndex	= pVertexShape->getFVertexIndexRO();
 	pArray		= reinterpret_cast< const GLvoid* >( &(*vertexIndex)[primitive.getIndex()] );
 	
-	gleGetCurrent()->glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+	glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 	// or glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 
 
@@ -541,7 +538,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 		{	
 			if ( pVertexShape->getTexCoordBinding( i ) == vgd::node::BIND_PER_VERTEX )
 			{
-				gleGetCurrent()->glClientActiveTexture( GL_TEXTURE0_ARB + i );
+				glClientActiveTexture( GL_TEXTURE0_ARB + i );
 
 				glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 			}
@@ -551,7 +548,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 	// SECONDARY COLOR4
 	if ( pVertexShape->getSecondaryColor4Binding() == vgd::node::BIND_PER_VERTEX )
 	{
-		if ( glext->isGL_EXT_secondary_color )
+		if ( isGL_EXT_secondary_color() )
 		{		
 			glDisableClientState( GL_SECONDARY_COLOR_ARRAY );
 			

@@ -8,7 +8,7 @@
 
 #include "vgeGL/vgeGL.hpp"
 
-#include <glo/GLSLShader.hpp>
+#include <glo/GLSLProgram.hpp>
 #include <vgd/node/Layers.hpp>
 #include <vge/handler/painter/Group.hpp>
 
@@ -107,11 +107,11 @@ private:
 	void destroyShaders();
 
 	static bool				m_shadersAlreadyInitialized;
-	static glo::GLSLShader *m_pReplaceShader;
-	static glo::GLSLShader *m_pPaletteReplaceShader;
+	static glo::GLSLProgram *m_pReplaceShader;
+	static glo::GLSLProgram *m_pPaletteReplaceShader;
 
-	static glo::GLSLShader *m_pScissorReplaceShader;
-	static glo::GLSLShader *m_pScissorPaletteReplaceShader;
+	static glo::GLSLProgram *m_pScissorReplaceShader;
+	static glo::GLSLProgram *m_pScissorPaletteReplaceShader;
 };
 
 

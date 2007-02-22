@@ -1,12 +1,12 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_RC_GLSLSHADER_H
-#define _VGEGL_RC_GLSLSHADER_H
+#ifndef _VGEGL_RC_GLSLPROGRAM_HPP
+#define _VGEGL_RC_GLSLPROGRAM_HPP
 
-#include <glo/GLSLShader.hpp>
+#include <glo/GLSLProgram.hpp>
 #include <vge/rc/IResource.hpp>
 
 #include "vgeGL/vgeGL.hpp"
@@ -22,7 +22,7 @@ namespace rc
 /**
  * @brief Encapsulation of OpenGL Shading Language shaders
  */
-struct VGEGL_API GLSLShader : public vge::rc::IResource, public glo::GLSLShader
+struct VGEGL_API GLSLProgram : public vge::rc::IResource, public glo::GLSLProgram
 {
 };
 
@@ -32,4 +32,4 @@ struct VGEGL_API GLSLShader : public vge::rc::IResource, public glo::GLSLShader
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_RC_GLSLSHADER_H
+#endif //#ifndef _VGEGL_RC_GLSLPROGRAM_HPP

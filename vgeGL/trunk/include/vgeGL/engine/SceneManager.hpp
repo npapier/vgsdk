@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,9 +7,9 @@
 #define _VGEGL_ENGINE_SCENEMANAGER_HPP
 
 #include <vgd/event/Listener.hpp>
+#include <vgd/node/LayerPlan.hpp>
 #include <vge/engine/SceneManager.hpp>
-#include "vgeGL/vgeGL.hpp"
-#include "vgeGL/engine/Engine.hpp"
+
 #include "vgeGL/event/IEventProcessor.hpp"
 #include "vgeGL/technique/RayCasting.hpp"
 
@@ -17,7 +17,7 @@
 
 namespace vgeGL
 {
-	
+
 namespace engine
 {
 
@@ -37,6 +37,7 @@ namespace engine
  * 		But if you derived this class and add a Camera node, you should write this piece of code.
  * - Event handling (listen and process events with event processors).
  * - Casts ray under the mouse cursor.
+ * - Layer planes (overlay).
  */
 struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::Listener
 {
@@ -44,18 +45,18 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @name Constructors/Destructor
 	 */
 	//@{
-	
+
 	/**
 	 * @brief Constructor.
 	 * 
-	 * @param pEngine		reference on the engine that must be used by the scene manager.
+	 * @param engine		reference on the engine that must be used by the scene manager.
 	 */
-	SceneManager( vgd::Shp< vgeGL::engine::Engine > pEngine );
-	
+	SceneManager( vgd::Shp< vgeGL::engine::Engine > engine );
+
 	//@}
 
 
-	
+
 	/**
 	 * @name Rendering methods
 	 */
@@ -102,6 +103,31 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	  * @endcode
 	  */
 	virtual void resize( const vgm::Vec2i size );
+
+	//@}
+
+
+
+	/**
+	 * @name Layer planes
+	 * 
+	 * @todo More than one layer plane
+	 */
+	//@{
+
+	/**
+	 * @brief Sets the current layer plane
+	 * 
+	 * @param	layerPlane		the layer plane to install
+	 */
+	void setLayerPlan( vgd::Shp< vgd::node::LayerPlan > layerPlane );
+
+	/**
+	 * @brief Returns the current layer plane
+	 * 
+	 * @return the installed layer plane
+	 */
+	vgd::Shp< vgd::node::LayerPlan >& getLayerPlan();
 
 	//@}
 
@@ -366,8 +392,17 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @return the vgeGL engine.
 	 */
 	vgd::Shp< vgeGL::engine::Engine > getGLEngine();
-
-
+	
+	//@}
+	
+	
+	
+	/**
+	 * @name Accessors to technique used by paint()
+	 * 
+	 * Design Pattern \c Strategy
+	 */
+	//@{
 
 	/**
 	 * @brief Returns the current vgeGL technique used by paint method.
@@ -385,7 +420,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 	//@}
 
-	
+
 
 protected:
 
@@ -427,6 +462,11 @@ protected:
 	 * @brief Event processor container.
 	 */
 	EventProcessorContainer	m_eventProcessors;
+
+	/**
+	 * @brief Current layer plane
+	 */
+	vgd::Shp< vgd::node::LayerPlan > m_layerPlan;
 
 	//@}
 };

@@ -38,7 +38,14 @@ namespace engine
 struct VGEGL_API Engine : public vge::engine::Engine
 {
 	/**
-	 * @name Constructor like.
+	 * @brief Default constructor
+	 */
+	Engine();
+
+
+
+	/**
+	 * @name Constructor like
 	 */
 	//@{
 	
@@ -50,7 +57,7 @@ struct VGEGL_API Engine : public vge::engine::Engine
 
 
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 
@@ -96,7 +103,7 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	void resetMatrices();
 
 	/**
-	 * @name OpenGL implementations specifics capabilities.
+	 * @name OpenGL implementations specifics capabilities
 	 */
 	//@{
 	
@@ -112,11 +119,32 @@ struct VGEGL_API Engine : public vge::engine::Engine
 
 	
 	/**
+	 * @name OpenGL state accessors
+	 */
+	//@{
+
+	/**
 	 * @brief Returns current OpenGL viewport.
 	 * 
 	 * @param viewport	the output viewport
 	 */
 	void getViewport( vgm::Rectangle2i& viewport ) const;
+	
+	/**
+	 * @brief Returns the number of bitplanes in the depth buffer.
+	 * 
+	 * @return the number of bitplanes in the depth buffer
+	 */
+	const int32 getDepthBits() const;
+
+	/**
+	 * @brief Returns the depth texture format computed from the number of bitplanes in the depth buffer.
+	 * 
+	 * @return the desired depth texture format
+	 */
+	const GLenum getDepthTextureFormatFromDepthBits() const;
+
+	//@}
 
 
 
@@ -147,8 +175,6 @@ private:
 	mutable GLint	m_maxTexSize;
 	mutable GLint	m_max3DTexSize;
 	//@}
-
-
 
 	/**
 	 * @brief Manager for all opengl objects.

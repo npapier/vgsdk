@@ -1,14 +1,19 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_TECHNIQUE_TECHNIQUE_H
-#define _VGEGL_TECHNIQUE_TECHNIQUE_H
+#ifndef _VGEGL_TECHNIQUE_TECHNIQUE_HPP
+#define _VGEGL_TECHNIQUE_TECHNIQUE_HPP
 
 #include <vge/technique/Technique.hpp>
 
 #include "vgeGL/vgeGL.hpp"
+
+namespace vgeGL
+{
+	namespace engine { struct Engine; }
+}
 
 
 
@@ -23,9 +28,46 @@ namespace technique
 /**
  * @brief Base class for all technique using OpenGL.
  */
-struct VGEGL_API Technique : public vge::technique::Technique
+struct Technique : public vge::technique::Technique
 {
-	//virtual void beginPass();
+	/**
+	 * @brief Default constructor
+	 */
+	VGEGL_API Technique();
+
+	/**
+	 * @brief Must be overridden to implements the technique.
+	 * 
+	 * @param engine			engine used during evaluation
+	 * @param traverseElements	elements to evaluate
+	 */
+	VGEGL_API virtual void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
+
+
+
+protected:
+	/**
+	 * @copydoc ::vge::technique::Technique::prepareEval(vge::engine::Engine*, vge::visitor::TraverseElementVector*)
+	 */
+	VGEGL_API void prepareEval( vgeGL::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements );
+	
+	/**
+	 * @copydoc ::vge::technique::Technique::evaluatePass(vgd::Shp<vge::pass::Pass>, vgd::Shp<vge::service::Service>)
+	 */
+	VGEGL_API void evaluatePass( vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service );
+	
+
+	
+private:
+	VGEGL_API void prepareEval( vge::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector * /*traverseElements*/ );
+	VGEGL_API void apply(		vge::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector * /*traverseElements*/ );
+	
+	/**
+	 * @name Internal data
+	 */
+	//@{
+	vgeGL::engine::Engine	*				m_engine;
+	//@}	
 };
 
 
@@ -34,4 +76,4 @@ struct VGEGL_API Technique : public vge::technique::Technique
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_TECHNIQUE_TECHNIQUE_H
+#endif //#ifndef _VGEGL_TECHNIQUE_TECHNIQUE_HPP

@@ -232,11 +232,16 @@ const bool Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node:
 	}
 
 	// gets IImage
-	m_isImageDefined = pNode->getIImages( vgd::node::Texture::DEFAULT_IIMAGES, m_pIImage );
-	
+	const bool imageFieldDefined = 	pNode->getIImages( vgd::node::Texture::DEFAULT_IIMAGES, m_pIImage );
+
+	m_isImageDefined =	imageFieldDefined	&&
+						(m_pIImage != 0) &&
+						(!m_pIImage->isEmpty());
+
 	if ( !m_isImageDefined )
 	{
 		// Nothing to do, because iimage is not defined.
+		m_pDFIImages->validate();
 		return true;
 	}
 
@@ -394,7 +399,7 @@ const bool Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node:
 		{
 			assert( textureDimension == 3 && "Unsupported texture dimension (!= 1,2,3)" );
 			
-			gleGetCurrent()->glTexImage3D( GL_TEXTURE_3D,
+			glTexImage3D( GL_TEXTURE_3D,
 				0,
 				m_components,
 				m_texSize[0] + borderSize, m_texSize[1] + borderSize, m_texSize[2] + borderSize,
@@ -405,7 +410,7 @@ const bool Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node:
 		}
 	}
 	
-	return ( false );
+	return false;
 }
 
 

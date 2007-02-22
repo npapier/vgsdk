@@ -390,7 +390,7 @@ vgd::Shp< vgd::event::Event > Dragger::getEvent( vge::engine::Engine *pEngine )
 
 	vgd::Shp< vgd::event::Event > event = eventInEngine->getValue();
 	
-	return ( event );
+	return event;
 }
 
 

@@ -1,13 +1,14 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgeGL/technique/ProcessEvent.hpp"
 
-#include <vgd/node/Dragger.hpp>
-#include <vge/engine/Engine.hpp>
+#include <vge/pass/ForEach.hpp>
 #include <vge/service/ProcessEvent.hpp>
+
+#include "vgeGL/engine/Engine.hpp"
 
 
 
@@ -18,50 +19,60 @@ namespace technique
 {
 
 
-const std::string ProcessEvent::getFProcessEvent()
+
+void ProcessEvent::setEvent( vgd::Shp< vgd::event::Event > event )
 {
-	return ( "f_processEvent" );
+	m_event = event;
 }
 
 
 
-void ProcessEvent::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements,
-									vgd::Shp<vgd::event::Event> event )
+vgd::Shp< vgd::event::Event > ProcessEvent::getEvent() const
+{
+	return m_event;
+}
+
+
+
+void ProcessEvent::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
 	vgd::Shp< vge::service::Service > processEvent = vge::service::ProcessEvent::create();
 
-	prepareEval();
+	prepareEval( engine, traverseElements );
 	//pEngine->resetEval();
 
-	// Initialize engine with technique parameters.
-	if ( !pEngine->isField( getFProcessEvent() ) )
+	// Initialize engine with technique parameters
+	if ( !engine->isField( getFProcessEvent() ) )
 	{
-		pEngine->addField( new FProcessEventType( getFProcessEvent() ) );
+		engine->addField( new FProcessEventType( getFProcessEvent() ) );
 	}
 	
-	vgd::field::EditorRW< FProcessEventType > eventInEngine =
-			pEngine->getFieldRW< FProcessEventType >( getFProcessEvent() );
-			
-	eventInEngine->setValue( event );
+	using vgd::field::EditorRW;
+	EditorRW< FProcessEventType > eventInEngine = engine->getFieldRW< FProcessEventType >( getFProcessEvent() );
+
+	eventInEngine->setValue( getEvent() );
 	eventInEngine.release();
-	
-	// First pass
-	beginPass();
+
+	// The pass
+	// @todo Optme
 	glPushAttrib( GL_ALL_ATTRIB_BITS );
 
-	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
-	for(	i = pTraverseElements->begin(), iEnd = pTraverseElements->end();
-			i != iEnd;
-			++i )
-	{
-		pEngine->evaluate( processEvent, i->first, i->second );
-	}
+	evaluatePass(
+		::vgd::makeShp( new vge::pass::ForEach ),
+		processEvent );
 
+	// @todo Optme
 	glPopAttrib();
-	endPass();
-	
+
 	//
 	finishEval();
+}
+
+
+
+const std::string ProcessEvent::getFProcessEvent()
+{
+	return "f_processEvent";
 }
 
 

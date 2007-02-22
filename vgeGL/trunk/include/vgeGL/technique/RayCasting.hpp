@@ -1,12 +1,11 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_TECHNIQUE_RAYCASTING_H
-#define _VGEGL_TECHNIQUE_RAYCASTING_H
+#ifndef _VGEGL_TECHNIQUE_RAYCASTING_HPP
+#define _VGEGL_TECHNIQUE_RAYCASTING_HPP
 
-#include "vgeGL/vgeGL.hpp"
 #include "vgeGL/basic/Hit.hpp"
 #include "vgeGL/technique/Technique.hpp"
 
@@ -21,7 +20,7 @@ namespace technique
 
 
 /**
- * @brief Ray intersection with scene graphs.
+ * @brief Cast a ray through a scene graph.
  * 
  * The RayCasting technique does ray intersection with scene graphs.
  * It can be used to pass arbitrary rays through the scene for intersection detections or to cast ray under the mouse
@@ -31,7 +30,6 @@ namespace technique
  * @remarks RayCasting could be used on Kit, but on nested Kit ?
  * 
  * @todo Cast a ray throw the scene and not only under the mouse.
- * 
  * @todo More than one camera node in the scene graph is actually not supported.
  * @todo m_pSelectBuffer = new GLuint[4*1024]; => 1024*4 is an arbitrary buffer size.
  * @todo See FIXME in .cpp
@@ -58,32 +56,32 @@ struct VGEGL_API RayCasting : public Technique
 	 * 
 	 * Called by the destructor.
 	 */
-	void destroy();	
+	void destroy();
 	//@}
 
 
 
 	/**
-	 * @name Methods to cast ray.
+	 * @name Methods to cast ray
 	 */
 	//@{
 
 	/**
-	 * @brief Cast a ray under mouse pointer.
+	 * @brief Cast a ray under mouse pointer
 	 * 
-	 * @param pEngine					engine used to evaluate scene graph.
-	 * @param pTraverseElements	element of the scene graph to evaluate.
+	 * @param engine					engine used to evaluate scene graph.
+	 * @param traverseElements			element of the scene graph to evaluate
 	 * @param x							x-coordinate of the mouse pointer
 	 * @param y							y-coordinate of the mouse pointer
 	 */
-	void apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements,
-					const int32 x, const int32 y );
+	void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+				const int32 x, const int32 y );
 	//@}
 
 
 
 	/**
-	 * @name Accessor to the result of raycasting.
+	 * @name Accessor to the result of raycasting
 	 */
 	//@{
 
@@ -92,7 +90,7 @@ struct VGEGL_API RayCasting : public Technique
 	 * 
 	 * @return the number of hits.
 	 */
-	uint32 getHitsSize() const;
+	const uint32 getHitsSize() const;
 	
 	/**
 	 * @brief Returns the hits.
@@ -135,7 +133,7 @@ struct VGEGL_API RayCasting : public Technique
 
 
 protected:
-	void apply( vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements );
+	void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 
 	/**
 	 * @brief Copy constructor.
@@ -167,7 +165,7 @@ protected:
 	GLuint*	m_pSelectBuffer;
 	
 	// FIXME to remove and use more vgsdk friendly types.
-	GLint		m_oglViewport[4];
+	GLint	m_oglViewport[4];
 	double	m_matrixProjection[16];
 	double	m_matrixModelview[16];
 	// END FIXME
@@ -190,4 +188,4 @@ protected:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_TECHNIQUE_RAYCASTING_H
+#endif //#ifndef _VGEGL_TECHNIQUE_RAYCASTING_HPP

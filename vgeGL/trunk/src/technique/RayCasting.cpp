@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,7 +12,10 @@
 #include <vgd/node/Kit.hpp>
 #include <vgd/node/Shape.hpp>
 #include <vge/engine/Engine.hpp>
+#include <vge/pass/ForEach.hpp>
 #include <vge/service/Painter.hpp>
+
+#include "vgeGL/engine/Engine.hpp"
 
 
 
@@ -24,10 +27,10 @@ namespace technique
 
 
 
-RayCasting::RayCasting() :
-	m_x					(	-1	),
-	m_y					(	-1 ),
-	m_pSelectBuffer	(	0	)
+RayCasting::RayCasting() 
+:	m_x					(	-1	),
+	m_y					(	-1	),
+	m_pSelectBuffer		(	0	)
 	//m_oglViewport[4]
 	//m_matrixProjection[16];
 	//m_matrixModelview[16];
@@ -35,8 +38,7 @@ RayCasting::RayCasting() :
 	//m_pHits
 	//m_iterNearestHit
 	//m_iterFarthestHit
-{
-}
+{}
 
 
 
@@ -61,8 +63,8 @@ void RayCasting::destroy()
 
 
 
-void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements,
-								const int32 x, const int32 y )
+void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+						const int32 x, const int32 y )
 {
 	// store x and y.
 	m_x = x;
@@ -78,25 +80,25 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 	glSelectBuffer( m_selectBufferSize, m_pSelectBuffer );
 	glRenderMode( GL_SELECT );
 
-	apply( pEngine, pTraverseElements );
+	apply( engine, traverseElements );
 }
 
 
 
-uint32 RayCasting::getHitsSize() const
+const uint32 RayCasting::getHitsSize() const
 {
 	uint32 size;
 	
 	if ( m_pHits.get() != 0 )
 	{
-		size = m_pHits->size();
+		size = static_cast<uint32>(m_pHits->size());
 	}
 	else
 	{
 		size = 0;
 	}
 	
-	return ( size );
+	return size;
 }
 
 
@@ -105,7 +107,7 @@ const vgd::Shp< vgeGL::basic::HitList > RayCasting::getHits() const
 {
 	assert( getHitsSize() != 0 );
 	
-	return ( m_pHits );
+	return m_pHits;
 }
 
 
@@ -142,38 +144,43 @@ vgd::node::Node* RayCasting::getNearestHitNode() const
 		pNode = 0;
 	}
 	
-	return ( pNode );
+	return pNode;
 }
 
 
 
-void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements )
+void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
 	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
-	prepareEval();
-	//pEngine->resetEval();
+	prepareEval( engine, traverseElements );
+	engine->resetEval();
 
 	// First pass : draw all shape.
+	// @todo Creates a Pass class
 	beginPass();
+
+	engine->resetMatrices();
+	
+	engine->pushStateStack();			
 	glPushAttrib( GL_ALL_ATTRIB_BITS );
 
-	pEngine->disregard();
+	engine->disregard();
 	
-	pEngine->regardIfIsAKindOf<vgd::node::SingleTransformation>();
-	pEngine->regardIfIsA<vgd::node::DrawStyle>();
-	pEngine->regardIfIsA<vgd::node::FrontFace>();
+	engine->regardIfIsAKindOf<vgd::node::SingleTransformation>();
+	engine->regardIfIsA<vgd::node::DrawStyle>();
+	engine->regardIfIsA<vgd::node::FrontFace>();
 	
-	pEngine->regardIfIsAKindOf<vgd::node::Group>();
-	pEngine->regardIfIsAKindOf<vgd::node::Kit>();
-	pEngine->regardIfIsAKindOf<vgd::node::Shape>();
+	engine->regardIfIsAKindOf<vgd::node::Group>();
+	engine->regardIfIsAKindOf<vgd::node::Kit>();
+	engine->regardIfIsAKindOf<vgd::node::Shape>();
 
 	// Init.
 	bool	cameraAlreadyTraversed = false;
 
 	// Init. database.
 	m_pNodes = vgd::Shp< vgd::node::PNodeVector >( new vgd::node::PNodeVector );
-	m_pNodes->reserve( pTraverseElements->size()/2 );											// heuristic FIXME is the good one ?
+	m_pNodes->reserve( traverseElements->size()/2 );											// heuristic FIXME is the good one ?
 
 	// Init. opengl stack name.
 	GLuint currentGLName = 0;
@@ -181,7 +188,7 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 	glPushName( currentGLName );
 
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
-	for(	i = pTraverseElements->begin(), iEnd = pTraverseElements->end();
+	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
 			i != iEnd;
 			++i )
 	{
@@ -190,7 +197,7 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 			if ( i->second )
 			{
 				// preTraverse
-				pEngine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, i->first, i->second );
 			}
 			else
 			{
@@ -198,10 +205,10 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 				assert( !cameraAlreadyTraversed && "Multiple camera node not supported." );			// FIXME
 				cameraAlreadyTraversed = true;
 				
-				pEngine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, i->first, i->second );
 				
 				// getting some OpenGL informations : step 1
-				glGetIntegerv( GL_VIEWPORT, m_oglViewport );														// FIXME
+				glGetIntegerv( GL_VIEWPORT, m_oglViewport );										// FIXME
 				
 				// compute pick matrix
 				vgm::MatrixR pickMatrix;
@@ -212,7 +219,7 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 									1., 1., viewport );
 				
 				// update engine
-				vgm::MatrixR& current( pEngine->getProjectionMatrix().getTop() );
+				vgm::MatrixR& current( engine->getProjectionMatrix().getTop() );
 				
 				current = current * pickMatrix;
 
@@ -222,10 +229,10 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 				
 				// getting some OpenGL informations : step 2
 				glGetDoublev( GL_PROJECTION_MATRIX, m_matrixProjection );									// FIXME
-				glGetDoublev( GL_MODELVIEW_MATRIX,  m_matrixModelview );										// FIXME
+				glGetDoublev( GL_MODELVIEW_MATRIX,  m_matrixModelview );									// FIXME
 			}
 		}
-		else if ( (i->first)->isAKindOf< vgd::node::Kit >() )
+		else if ( (i->first)->isAKindOf< vgd::node::Kit >() )					// @todo Kit similar to Shape
 		{
 			if ( i->second )
 			{
@@ -237,11 +244,11 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 				++currentGLName;
 				m_pNodes->push_back( i->first );
 			
-				pEngine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, i->first, i->second );
 			}
 			else
 			{
-				pEngine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, i->first, i->second );
 				
 				glPopName();
 			}
@@ -257,20 +264,22 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 				m_pNodes->push_back( i->first );
 			
 				// this is a shape, draw it.
-				pEngine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, i->first, i->second );
 			}
 			else
 			{
-				pEngine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, i->first, i->second );
 			}
 		}
 		else
 		{
-			pEngine->evaluate( paint, i->first, i->second );
+			engine->evaluate( paint, i->first, i->second );
 		}
 	}
 
 	glPopAttrib();
+	engine->popStateStack();
+
 	endPass();
 
 	//
@@ -281,7 +290,8 @@ void RayCasting::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElem
 	fillHits( gluintHitsSize );
 
 	//
-	pEngine->regard();
+	engine->regard();
+
 	finishEval();
 
 	// Release memory.
@@ -299,11 +309,11 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 	m_pHits = vgd::Shp< vgeGL::basic::HitList >( new vgeGL::basic::HitList );
 
 	// Search the picking node in hits database
-	GLuint gluintZMin						= ~0;
+	GLuint gluintZMin				= ~0;
 	GLuint gluintZMinForNearest		= ~0;
-	GLuint gluintZMax						= 0;
-	GLuint gluintZMaxForFarthest		= 0;
-	int32  i32PickingName				= -1;
+	GLuint gluintZMax				= 0;
+	GLuint gluintZMaxForFarthest	= 0;
+	int32  i32PickingName			= -1;
 
 	double dX, dY, dZ;
 
@@ -329,12 +339,12 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 		hit.minDepthValue() = fDepth;
 
 		gluUnProject(	m_x, m_oglViewport[3]- m_y, fDepth,
-							m_matrixModelview, m_matrixProjection, m_oglViewport,
-							&dX, &dY, &dZ );															// FIXME
+						m_matrixModelview, m_matrixProjection, m_oglViewport,
+						&dX, &dY, &dZ );															// FIXME
 		
 		hit.nearestVertex() = vgm::Vec3f(	static_cast<float>(dX),
-														static_cast<float>(dY),
-														static_cast<float>(dZ) );
+											static_cast<float>(dY),
+											static_cast<float>(dZ) );
 		++ptr;
 
 		// max
@@ -345,12 +355,12 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 		hit.maxDepthValue() = fDepth;
 
 		gluUnProject(	m_x, m_oglViewport[3]- m_y, fDepth,
-							m_matrixModelview, m_matrixProjection, m_oglViewport,
-							&dX, &dY, &dZ );															// FIXME
+						m_matrixModelview, m_matrixProjection, m_oglViewport,
+						&dX, &dY, &dZ );															// FIXME
 
 		hit.farthestVertex() = vgm::Vec3f(	static_cast<float>(dX),
-														static_cast<float>(dY),
-														static_cast<float>(dZ) );
+											static_cast<float>(dY),
+											static_cast<float>(dZ) );
 		++ptr;
 		
 		// name
@@ -378,7 +388,7 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 		if ( gluintZMax > gluintZMaxForFarthest )
 		{
 			gluintZMaxForFarthest	= gluintZMax;
-			m_iterFarthestHit			= m_pHits->begin();
+			m_iterFarthestHit		= m_pHits->begin();
 		}
 	}
 }
@@ -395,7 +405,7 @@ vgd::node::Node* RayCasting::searchNodeFromPickingName( const uint32 pickingName
 
 
 const uint32 RayCasting::m_selectBufferSize = 4 * 1024;
-// FIXME TODO ???????????????????????????????????????????????????????????????????????????????
+// @todo FIXME ?????
 //    /**
 //     * Sets the ray for source to destination in world-space(along which to pick)
 //	 *

@@ -23,6 +23,11 @@ namespace engine
 
 
 
+Engine::Engine()
+{}
+
+
+
 void Engine::reset()
 {
 	if ( isGLContextCurrent() == false )
@@ -60,7 +65,18 @@ void Engine::setToDefaults()
 	// GLOBAL INITIALIZATION
 	glEnable( GL_LIGHTING );
 	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_NORMALIZE );
+	
+//	glEnable( GL_NORMALIZE );
+
+	if ( isGL_EXT_rescale_normal() )
+	{
+		vgDebug::get().logDebug( "Engine: GL_EXT_rescale_normal extension detected and used." );
+		glEnable( GL_RESCALE_NORMAL );  // gle: GL_EXT_rescale_normal
+	}
+	else
+	{
+		glEnable( GL_NORMALIZE );
+	}
 
 	if ( isGL_EXT_separate_specular_color() )
 	{
@@ -100,7 +116,7 @@ void Engine::setToDefaults()
 
 vge::rc::Manager& Engine::getGLManager()
 {
-	return ( m_glManager );
+	return m_glManager;
 }
 
 
@@ -157,7 +173,7 @@ void Engine::resetMatrices()
 	{
 		current = getTextureMatrix().getTop( index );
 		
-		gleGetCurrent()->glActiveTextureARB( GL_TEXTURE0_ARB + index );
+		glActiveTextureARB( GL_TEXTURE0_ARB + index );
 		
 		glMatrixMode( GL_TEXTURE );
 
@@ -220,8 +236,50 @@ void Engine::getViewport( vgm::Rectangle2i& viewport ) const
 	GLint viewportGL[4];
 	
 	glGetIntegerv( GL_VIEWPORT, viewportGL );
-	
+
 	viewport.set( viewportGL[0], viewportGL[1], viewportGL[2], viewportGL[3] );
+}
+
+
+
+const int32 Engine::getDepthBits() const
+{
+	GLint depthBits;
+	glGetIntegerv( GL_DEPTH_BITS, &depthBits );
+	
+	return depthBits;
+}
+
+
+
+const GLenum Engine::getDepthTextureFormatFromDepthBits() const
+{
+	GLenum retVal;
+
+	const int32 depthBits = getDepthBits();
+	
+	switch ( depthBits )
+	{
+		case 24:
+			retVal = GL_DEPTH_COMPONENT24_ARB;
+			break;
+
+		case 32:
+			retVal = GL_DEPTH_COMPONENT32_ARB;
+			break;
+
+		case 16:
+			retVal = GL_DEPTH_COMPONENT16_ARB;
+			break;
+
+		default:
+			vgDebug::get().logDebug( "Engine::getDepthTextureFormatFromDepthBits(): Performance warning : No matching between depth buffer bits and depth texture format." );
+			vgDebug::get().logDebug( "Engine::getDepthTextureFormatFromDepthBits(): Performance warning : Use GL_DEPTH_COMPONENT16_ARB" );
+			retVal = GL_DEPTH_COMPONENT16_ARB;
+			break;
+	}
+
+	return retVal;
 }
 
 

@@ -1,14 +1,14 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_TECHNIQUE_PROCESSEVENT_H
-#define _VGEGL_TECHNIQUE_PROCESSEVENT_H
+#ifndef _VGEGL_TECHNIQUE_PROCESSEVENT_HPP
+#define _VGEGL_TECHNIQUE_PROCESSEVENT_HPP
 
 #include <vgd/event/Event.hpp>
 #include <vgd/field/TSingleField.hpp>
-#include "vgeGL/vgeGL.hpp"
+
 #include "vgeGL/technique/Technique.hpp"
 
 
@@ -24,7 +24,39 @@ namespace technique
 struct VGEGL_API ProcessEvent : public Technique
 {
 	/**
-	 * @name Accessors to technique parameters.
+	 * @name Technique parameters
+	 */
+	//@{
+
+	/**
+	 * @brief Sets the event to dispatch
+	 * 
+	 * @param event		the incoming event
+	 */
+	void setEvent( vgd::Shp< vgd::event::Event > event );
+
+	/**
+	 * @brief Returns the event to dispatch
+	 * 
+	 * @return the event
+	 */
+	vgd::Shp< vgd::event::Event > getEvent() const;
+	//@}
+
+
+
+	/**
+	 * @brief Traverse scene graph and dispatch/process event.
+	 * 
+	 * @param engine			engine used during evaluation
+	 * @param traverseElements	elements to evaluate
+	 */
+	void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+
+
+
+	/**
+	 * @name Accessors to technique parameters stored in engine
 	 */
 	//@{
 	
@@ -44,15 +76,8 @@ struct VGEGL_API ProcessEvent : public Technique
 
 
 
-	/**
-	 * @brief Traverse scene graph and dispatch/process event.
-	 * 
-	 * @param pEngine					engine that must be used during evaluation
-	 * @param pTraverseElements	node to traverse
-	 * @param event					event to dispatch/process
-	 */
-	void apply( vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements,
-					vgd::Shp<vgd::event::Event> event );
+private:
+	vgd::Shp<vgd::event::Event> m_event;		///< The event to dispatch for processing
 };
 
 
@@ -61,4 +86,4 @@ struct VGEGL_API ProcessEvent : public Technique
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_TECHNIQUE_PROCESSEVENT_H
+#endif //#ifndef _VGEGL_TECHNIQUE_PROCESSEVENT_HPP

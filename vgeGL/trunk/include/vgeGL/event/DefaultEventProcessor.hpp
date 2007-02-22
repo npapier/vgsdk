@@ -3,11 +3,10 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_EVENT_DEFAULTEVENTPROCESSOR_H
-#define _VGEGL_EVENT_DEFAULTEVENTPROCESSOR_H
+#ifndef _VGEGL_EVENT_DEFAULTEVENTPROCESSOR_HPP
+#define _VGEGL_EVENT_DEFAULTEVENTPROCESSOR_HPP
 
 #include "vgeGL/event/EventProcessor.hpp"
-#include "vgeGL/vgeGL.hpp"
 
 
 
@@ -23,19 +22,18 @@ namespace event
  * 
  * This is the default event processor in vgsdk used to process event for draggers classes.
  */
-struct VGEGL_API DefaultEventProcessor : public EventProcessor
+struct DefaultEventProcessor : public EventProcessor
 {
 	/**
-	 * @brief Constructor.
+	 * @brief Constructor
 	 * 
 	 * @param sceneManager	the linked scene manager.
 	 * 
 	 * @pre sceneManager != 0
 	 */
-	DefaultEventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
+	VGEGL_API DefaultEventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
 	
-	///< Overrides
-	const bool onEvent( vgd::Shp<vgd::event::Event> event );
+	VGEGL_API const bool onEvent( vgd::Shp<vgd::event::Event> event ); ///< Overrides
 };
 
 
@@ -43,4 +41,4 @@ struct VGEGL_API DefaultEventProcessor : public EventProcessor
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_EVENT_DEFAULTEVENTPROCESSOR_H
+#endif //#ifndef _VGEGL_EVENT_DEFAULTEVENTPROCESSOR_HPP
