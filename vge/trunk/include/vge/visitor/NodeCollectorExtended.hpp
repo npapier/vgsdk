@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_VISITOR_NODECOLLECTOREXTENDED_H
-#define _VGE_VISITOR_NODECOLLECTOREXTENDED_H
+#ifndef _VGE_VISITOR_NODECOLLECTOREXTENDED_HPP
+#define _VGE_VISITOR_NODECOLLECTOREXTENDED_HPP
 
 #include <utility>
 #include <vector>
@@ -37,9 +37,42 @@ namespace visitor
 typedef std::pair< vgd::node::Node*, bool >	TraverseElement;
 
 /**
- * @brief All encountered traverse elements are stored by this structure.
+ * @brief All encountered traverse elements are stored by this structure
+ * 
+ * @todo cache system
+ * @todo Move to another file and improve interface (TraverseElement).
  */
-typedef std::vector< TraverseElement >			TraverseElementVector;
+struct TraverseElementVector
+{
+	typedef std::vector< TraverseElement >::iterator			iterator;
+	typedef std::vector< TraverseElement >::const_iterator		const_iterator;
+
+	void clear() { m_elements.clear(); }
+	void reserve( int size ) { m_elements.reserve( size ); }
+
+	int size() const { return static_cast<int>(m_elements.size()); }
+
+	void push_back( const TraverseElement& val ) { m_elements.push_back( val ); }
+
+	template< class InputIterator >
+	void insert( iterator where, InputIterator first, InputIterator last )
+	{
+		m_elements.insert(where, first, last);
+	}
+
+	iterator begin() { return m_elements.begin(); }
+	const_iterator begin() const { return m_elements.begin(); }
+	
+	iterator end() { return m_elements.end(); }
+	const_iterator end() const { return m_elements.end(); }
+
+	vgd::node::Node *getRoot() { m_elements.begin()->first; }
+
+
+private:
+	std::vector< TraverseElement > m_elements;
+//typedef std::vector< TraverseElement >			TraverseElementVector;
+};
 //@}
 
 
@@ -88,7 +121,7 @@ struct NodeCollectorExtended : public vgd::visitor::Traverse<Visitors>
 
 
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 	
@@ -99,13 +132,13 @@ struct NodeCollectorExtended : public vgd::visitor::Traverse<Visitors>
 	 */
 	const TraverseElementVector*	getTraverseElements() const	{ return ( &m_traverseElementContainer ); }
 	
-	TraverseElementVector*			getTraverseElements()			{ return ( &m_traverseElementContainer ); }	
+	TraverseElementVector*			getTraverseElements()		{ return ( &m_traverseElementContainer ); }	
 	//@}
 
 
 
 	/**
-	 * @name Visitor interface that could be overloaded.
+	 * @name Visitor interface that could be overloaded
 	 */
 	//@{
 	template< typename Vertex , typename Graph >
@@ -167,4 +200,4 @@ private:
 
 } // namespace vge
 
-#endif //#ifndef _VGE_VISITOR_NODECOLLECTOREXTENDED_H
+#endif //#ifndef _VGE_VISITOR_NODECOLLECTOREXTENDED_HPP

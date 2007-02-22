@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_ENGINE_ENGINE_H
-#define _VGE_ENGINE_ENGINE_H
+#ifndef _VGE_ENGINE_ENGINE_HPP
+#define _VGE_ENGINE_ENGINE_HPP
 
 #include <list>
 #include <set>
@@ -456,16 +456,41 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Returns the projection matrix stacks.
 	 */
 	MultiMatrixStack&	getProjectionMatrix();
-	
+
 	/**
 	 * @brief Returns the geometrical matrix stacks.
 	 */
 	MultiMatrixStack&	getGeometricalMatrix();
-	
+
 	/**
 	 * @brief Returns the texture matrix stacks.
 	 */
 	MultiMatrixStack&	getTextureMatrix();
+
+	//@}
+
+
+
+	/**
+	 * @name Drawing surface accessors
+	 * 
+	 * The drawing surface size is typically the window size.
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the drawing surface size
+	 * 
+	 * @return the drawing surface size in pixels
+	 */
+	const vgm::Vec2i getDrawingSurfaceSize() const;
+
+	/**
+	 * @brief Sets the drawing surface size
+	 * 
+	 * @param	drawingSurfaceSize		the drawing surface size 
+	 */
+	void setDrawingSurfaceSize( const vgm::Vec2i drawingSurfaceSize );
 
 	//@}
 
@@ -599,6 +624,8 @@ protected:
 	 * @brief Initial size for StateStack.
 	 */
 	static const int32					StateStack_SizeHint;
+	
+	vgm::Vec2i m_drawingSurfaceSize;		//< the drawing surface size (window size).	
 };
 
 
@@ -679,4 +706,4 @@ bool Engine::isRegardedIfIsA() const
 
 } // namespace vge
 
-#endif //#ifndef _VGE_ENGINE_ENGINE_H
+#endif //#ifndef _VGE_ENGINE_ENGINE_HPP

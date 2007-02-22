@@ -22,6 +22,7 @@ namespace engine
 
 
 Engine::Engine()
+:	m_drawingSurfaceSize(0, 0)
 {
 	reset();
 }
@@ -341,21 +342,35 @@ void Engine::resetMatrices()
 
 MultiMatrixStack& Engine::getProjectionMatrix()
 {
-	return ( m_projections ); 
+	return m_projections; 
 }
 
 
 
 MultiMatrixStack& Engine::getGeometricalMatrix()
 {
-	return ( m_geometricals );
+	return m_geometricals;
 }
 
 
-	
+
 MultiMatrixStack& Engine::getTextureMatrix()
 {
-	return ( m_textures );
+	return m_textures;
+}
+
+
+
+const vgm::Vec2i Engine::getDrawingSurfaceSize() const
+{
+	return m_drawingSurfaceSize;
+}
+
+
+
+void Engine::setDrawingSurfaceSize( const vgm::Vec2i drawingSurfaceSize )
+{
+	m_drawingSurfaceSize = drawingSurfaceSize;
 }
 
 

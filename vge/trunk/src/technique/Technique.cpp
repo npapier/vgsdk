@@ -1,9 +1,12 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, 2007, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vge/technique/Technique.hpp"
+
+//#include <vgd/Shp.hpp>
+#include <vge/pass/Pass.hpp>
 
 
 
@@ -15,17 +18,18 @@ namespace technique
 
 
 
-Technique::Technique() :
-	m_currentPass	(	0 		),
-	m_inPass		(	false	)
-{
-}
+Technique::Technique()
+:	m_currentPass	(	0 		),
+	m_inPass		(	false	),
+	
+	m_engine			(	0	),
+	m_traverseElements	(	0	)
+{}
 
 
 
 Technique::~Technique()
-{
-}
+{}
 
 
 
@@ -37,11 +41,14 @@ Technique::~Technique()
 
 
 
-void Technique::prepareEval()
+void Technique::prepareEval( vge::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements )
 {
 	assert( !m_inPass );
 
 	m_currentPass = 0;
+	
+	m_engine			= engine;
+	m_traverseElements	= traverseElements;
 }
 
 
@@ -50,6 +57,9 @@ void Technique::finishEval()
 {
 	assert( !m_inPass );
 	assert( m_currentPass > 0 && "No evaluation pass." );
+	
+	m_engine			= 0;
+	m_traverseElements	= 0;
 }
 
 
@@ -73,81 +83,37 @@ void Technique::endPass()
 
 
 
-uint32 Technique::currentPass() const
+const uint32 Technique::getCurrentPass() const
 {
-	return ( m_currentPass );
+	return m_currentPass;
 }
 
 
 
-/*template< typename Visitors >
-void Technique::push()
+const bool Technique::isInsideAPass() const
 {
-	assert( false ); // ???
+	return m_inPass;
 }
 
 
 
-void Technique::pop()
+void Technique::evaluatePass( vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service )
 {
-	assert( false );	// ???
-}*/
+	beginPass();
+
+	assert( m_engine != 0 );
+	assert( m_traverseElements != 0 );
+		
+	pass->apply( this, m_engine, getTraverseElements(), service );
+	
+	endPass();
+}
 
 
 
-//const vge::engine::Engine *Technique::engine() const
-//{
-//	return ( m_pEngine );
-//}
-//
-//
-//
-//vge::engine::Engine *Technique::engine()
-//{
-//	return ( m_pEngine );
-//}
-//
-//
-//
-//const vge::visitor::NodeCollectorExtended<Visitors> *Technique::collector() const
-//{
-//	return ( m_pCollector );
-//}
-//
-//
-//
-//vge::visitor::NodeCollectorExtended<Visitors> *Technique::collector()
-//{
-//	return ( m_pCollector );
-//}
-
-
-
-//void Technique::forEach( const vgd::Shp< vge::service::Service > service )
-//{
-//	const typename std::vector< typename vge::visitor::NodeCollectorExtended<Visitors>::TraverseElement >& nodes
-//			= collector().getNodes();
-//	
-//	typename std::vector< typename vge::visitor::NodeCollectorExtended<Visitors>::TraverseElement >::const_iterator i, iEnd;
-//	
-//	for(	i		= nodes.begin(),
-//			iEnd	= nodes.end();
-//			
-//			i != iEnd;
-//			
-//			++i )
-//	{
-//		engine()->evaluate( service, i->first, i->second );
-//	}
-//}
-
-
-
-void Technique::apply(	//const vgd::Shp< vge::service::Service > service, FIXME
-						vge::engine::Engine * /*pEngine*/,
-						vge::visitor::TraverseElementVector* /*pTraverseElements*/ )
+vge::visitor::TraverseElementVector	*Technique::getTraverseElements() const
 {
-	assert( false );
+	return m_traverseElements;
 }
 
 
@@ -155,3 +121,39 @@ void Technique::apply(	//const vgd::Shp< vge::service::Service > service, FIXME
 } // namespace technique
 
 } // namespace vge
+
+
+///*
+// @todo FIXME
+//BeginFirstPass(); reset*();
+//EndFirstPass();
+//For an active technique, this method is invoked after the traversal of the scene graph. The changes made in "preparePass()" should be undone here
+//
+//
+//
+//	engine();
+//	nodes();
+//	
+//	vge::engine::Engine&										m_engine;
+//	vge::visitor::NodeCollectorExtended<Visitors>&	m_collector
+//	
+//
+//
+//MainTechnique()
+//{
+//	reset();
+//	
+//	CollectNodes();
+//
+//	Begin();
+//	
+//	BeginFirstPass();
+//	for_each();
+//	EndFirstPass(); disregard();
+//
+//	BeginNextPass( push true); resetState(); resetMatrix();
+//	for_each();
+//	EndNextPass();
+//	
+//	End(); regard();
+

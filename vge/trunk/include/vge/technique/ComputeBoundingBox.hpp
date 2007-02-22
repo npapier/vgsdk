@@ -3,11 +3,11 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_TECHNIQUE_COMPUTEBOUNDINGBOX_H
-#define _VGE_TECHNIQUE_COMPUTEBOUNDINGBOX_H
+#ifndef _VGE_TECHNIQUE_COMPUTEBOUNDINGBOX_HPP
+#define _VGE_TECHNIQUE_COMPUTEBOUNDINGBOX_HPP
 
-#include "vge/vge.hpp"
 #include "vge/technique/Technique.hpp"
+#include "vge/vge.hpp"
 
 
 
@@ -22,9 +22,9 @@ namespace technique
 /**
  * @brief Technique to compute/update bounding box.
  */
-struct VGE_API ComputeBoundingBox : public Technique
+struct ComputeBoundingBox : public Technique
 {
-	virtual void apply( vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements );
+	VGE_API virtual void apply(	vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 };
 
 
@@ -33,4 +33,4 @@ struct VGE_API ComputeBoundingBox : public Technique
 
 } // namespace vge
 
-#endif //#ifndef _VGE_TECHNIQUE_COMPUTEBOUNDINGBOX_H
+#endif //#ifndef _VGE_TECHNIQUE_COMPUTEBOUNDINGBOX_HPP

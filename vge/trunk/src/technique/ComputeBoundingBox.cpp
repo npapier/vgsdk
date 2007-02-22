@@ -1,11 +1,11 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vge/technique/ComputeBoundingBox.hpp"
 
-#include "vge/engine/Engine.hpp"
+#include "vge/pass/ForEach.hpp"
 #include "vge/service/ComputeBoundingBox.hpp"
 
 
@@ -18,25 +18,15 @@ namespace technique
 
 
 
-void ComputeBoundingBox::apply(	vge::engine::Engine *pEngine, vge::visitor::TraverseElementVector* pTraverseElements )
+void ComputeBoundingBox::apply(	vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
 	vgd::Shp< vge::service::Service > cbb = vge::service::ComputeBoundingBox::create();
 
-	prepareEval();
-	
+	prepareEval( engine, traverseElements );
 	//pEngine->resetEval();
 
-	beginPass();
-
-	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
-	for(	i = pTraverseElements->begin(), iEnd = pTraverseElements->end();
-			i != iEnd;
-			++i )
-	{
-		pEngine->evaluate( cbb, i->first, i->second );
-	}
-	
-	endPass();
+	evaluatePass(	::vgd::makeShp( new vge::pass::ForEach ), 	
+					cbb );
 
 	finishEval();
 }

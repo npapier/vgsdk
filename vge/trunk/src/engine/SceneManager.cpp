@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,7 @@
 #include <vgd/visitor/predicate/ByName.hpp>
 #include <vgd/visitor/predicate/ByReference.hpp>
 #include <vgd/visitor/predicate/ByRegexName.hpp>
-#include <vge/technique/ComputeBoundingBox.hpp>
+#include "vge/technique/ComputeBoundingBox.hpp"
 
 
 
@@ -126,9 +126,8 @@ void SceneManager::computeBoundingBox( vge::visitor::NodeCollectorExtended<> *pC
 
 	if ( pCollectorExt == 0 )
 	{
-		m_collectorExt.reset();
-		m_root->traverse( m_collectorExt );
-		
+		updateNodeCollector();
+
 		computeBB.apply( m_engine.get(), m_collectorExt.getTraverseElements() );
 	}
 	else
@@ -169,11 +168,13 @@ void SceneManager::bench( const int32 frame )
 
 
 
-void SceneManager::paint( const vgm::Vec2i, const bool bUpdateBoundingBox )
+void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
+	// Update engine with size of window
+	getEngine()->setDrawingSurfaceSize( size );
+
 	// collector
-	m_collectorExt.reset();
-	m_root->traverse( m_collectorExt );
+	updateNodeCollector(); 	///< todo OPTME : Always update node collector ?
 
 	// compute bounding box.
 	if ( bUpdateBoundingBox )
@@ -185,29 +186,39 @@ void SceneManager::paint( const vgm::Vec2i, const bool bUpdateBoundingBox )
 
 
 
-void SceneManager::resize( const vgm::Vec2i )
+void SceneManager::resize( const vgm::Vec2i size )
 {
+	// Update engine with size of window
+	getEngine()->setDrawingSurfaceSize( size );
 }
 
 
 
 vgd::Shp< vge::engine::Engine > SceneManager::getEngine()
 {
-	return ( m_engine );
+	return m_engine;
 }
 
 
 
 vge::visitor::NodeCollectorExtended<>& SceneManager::getNodeCollector()
 {
-	return ( m_collectorExt );
+	return m_collectorExt;
+}
+
+
+
+void SceneManager::updateNodeCollector()
+{
+	m_collectorExt.reset();
+	m_root->traverse( m_collectorExt );
 }
 
 
 
 uint32 SceneManager::getNumberOfFrames() const
 {
-	return ( m_numberOfFrames );
+	return m_numberOfFrames;
 }
 
 

@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2006, IRCAD.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_ENGINE_SCENEMANAGER_H
-#define _VGE_ENGINE_SCENEMANAGER_H
+#ifndef _VGE_ENGINE_SCENEMANAGER_HPP
+#define _VGE_ENGINE_SCENEMANAGER_HPP
 
 #include <fstream>
 #include <vgd/node/Group.hpp>
@@ -94,7 +94,7 @@ struct VGE_API SceneManager
 	template< typename nodeType >
 	vgd::Shp< nodeType > findFirstByType()
 	{
-		vgd::Shp< nodeType >										retVal;
+		vgd::Shp< nodeType > retVal;
 
 		std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
 		result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByType< nodeType >() );
@@ -115,7 +115,7 @@ struct VGE_API SceneManager
 	template< typename nodeType >
 	vgd::Shp< nodeType > findFirstByKindOfType()
 	{
-		vgd::Shp< nodeType >										retVal;
+		vgd::Shp< nodeType > retVal;
 
 		std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
 		result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByKindOfType< nodeType >() );
@@ -267,6 +267,13 @@ struct VGE_API SceneManager
 	vge::visitor::NodeCollectorExtended<>&	getNodeCollector();
 	
 	/**
+	 * @brief Updates the node collector.
+	 * 
+	 * Traverses the scene graph and updates collected nodes.
+	 */
+	void updateNodeCollector();
+
+	/**
 	 * @brief Returns the number of frames that must be render.
 	 */
 	uint32	getNumberOfFrames() const;
@@ -276,7 +283,7 @@ struct VGE_API SceneManager
 	 * 
 	 * Number of frames to render during the next OnPaint(). This value is automatically reseted to 1 inside OnPaint().
 	 */
-	void		setNumberOfFrames( const uint32 numberOfFrames );
+	void	setNumberOfFrames( const uint32 numberOfFrames );
 	
 	//@}
 
@@ -321,4 +328,4 @@ private:
 
 } // namespace vge
 
-#endif //#ifndef _VGE_SCENEMANAGER_H
+#endif //#ifndef _VGE_SCENEMANAGER_HPP
