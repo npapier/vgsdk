@@ -11,6 +11,7 @@
 
 //#include <vgDebug/Global.hpp>
 #include <vgd/visitor/predicate/ByDirtyFlag.hpp>
+#include <vgeGL/engine/Engine.hpp>
 
 #include "vgWX/detail/ContextualMenu.hpp"
 
