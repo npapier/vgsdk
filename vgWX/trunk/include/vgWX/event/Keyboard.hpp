@@ -35,7 +35,7 @@ struct VGWX_API Keyboard : public wxEvtHandler, public vgd::event::Keyboard
 	
 protected:
 
-	DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE();
 	
 	/**
 	 * @brief	Handles a key down event.

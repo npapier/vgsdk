@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -13,7 +13,6 @@
 #include <wx/glcanvas.h>	// this header file include GL.h like vgeGL/engine/SceneManager.hpp and gle.hpp, but on 
 							// MacOSX it doesn't take the /usr/X11R6/include/GL/gl.h one, so typedef on OpenGL 
 							// extensions are not defined !!!
-
 
 #include "vgWX/vgWX.hpp"
 
@@ -52,7 +51,7 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	/**
 	 * @brief Construct a Canvas with its own OpenGL context.
 	 * 
-	 * @param pParent	A pointer to the parent window.
+	 * @param parent	A pointer to the parent window.
 	 * 
 	 * @pre	getCanvasCount() == 0
 	 * @post getCanvasCount() == 1
@@ -67,7 +66,7 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	/**
 	 * @brief Construct a Canvas with its own OpenGL context, but that share OpenGL objects with another(s) Canvas.
 	 * 
-	 * @param	pParent		A pointer to the parent window.
+	 * @param	parent		A pointer to the parent window.
 	 * 
 	 * @pre	getCanvasCount() >= 1
 	 */
@@ -83,6 +82,41 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * @brief Default destructor
 	 */
 	virtual ~Canvas();
+	//@}
+
+
+
+	/**
+	 * @name Repaint management
+	 */
+	//@{
+	
+	/**
+	 * @brief Type of refresh.
+	 */
+	enum RefreshType {
+		REFRESH_FORCE,
+		REFRESH_IF_NEEDED
+	};
+	
+	/**
+	 * @brief Wait behavior of refresh.
+	 */
+	enum WaitType {
+		SYNCHRONOUS,
+		ASYNCHRONOUS
+	};
+	
+	/**
+	 * @brief Repaints the window.
+	 * 
+	 * @param type		set to REFRESH_FORCE to force the repaint even if no changes have been made in the scene graph,
+	 * 					or to REFRESH_IF_NEEDED to repaint only when at least one change in the scene graph has occured.
+	 * @param wait		set to SYNCHRONOUS to wait the end of the repaint before returning from this method, or
+	 * 					to ASYNCHRONOUS to post a paint message to the window and returning without beiing blocked.
+	 */
+	void refresh( const RefreshType type = REFRESH_IF_NEEDED, const WaitType wait = ASYNCHRONOUS );
+
 	//@}
 
 
@@ -118,46 +152,14 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 
 
 
-	/**
-	 * @name Repaint management
-	 */
-	//@{
-	
-	/**
-	 * @brief Type of refresh.
-	 */
-	enum RefreshType {
-		REFRESH_FORCE,
-		REFRESH_IF_NEEDED
-	};
-	
-	/**
-	 * @brief Wait behavior of refresh.
-	 */
-	enum WaitType {
-		SYNCHRONOUS,
-		ASYNCHRONOUS
-	};
-	
-	/**
-	 * @brief Repaint the window.
-	 * 
-	 * @param force		set to REFRESH_FORCE to force the repaint even if no changes have been made in the scene graph,
-	 * 					or to REFRESH_IF_NEEDED to repaint only when at least one change in the scene graph has occured.
-	 * @param sync		set to SYNCHRONOUS to wait the end of the repaint before returning from this method, or
-	 * 					to ASYNCHRONOUS to post a paint message to the window and returning without beiing blocked.
-	 */
-	void refresh( const RefreshType type = REFRESH_IF_NEEDED, const WaitType wait = ASYNCHRONOUS );
-	//@}
+	// Overridden
+	void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
 
-
-	// Overrides wxWidgets method
-	bool Destroy();
 
 
 protected:
-	// Overrides
-	void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
+	// Overrides wxWidgets method
+	bool Destroy();
 	
 	/**
 	 * @name wxWidgets events processing methods.
@@ -286,8 +288,8 @@ private:
 
 	//@}
 
-	
-	
+
+
 	/**
 	 * @name Members for GUI
 	 */
@@ -295,7 +297,7 @@ private:
 	
 	bool						m_isContextualMenuEnabled;
 
-	//@}	
+	//@}
 };
 
 

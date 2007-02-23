@@ -52,7 +52,7 @@ struct VGWX_API BasicViewer : public Canvas
 	/**
 	 * @brief Construct a BasicViewer with its own OpenGL context.
 	 * 
-	 * @param	pParent	A pointer to the parent window.
+	 * @param	parent	A pointer to the parent window.
 	 */
 	BasicViewer(	wxWindow *parent,
 					const wxString& name = _T("BasicViewer"),
@@ -64,7 +64,7 @@ struct VGWX_API BasicViewer : public Canvas
 	/**
 	 * @brief Construct a BasicViewer with its own OpenGL context, but that share OpenGL objects with another(s) Canvas.
 	 * 
-	 * @param	pParent	A pointer to the parent window.
+	 * @param	parent	A pointer to the parent window.
 	 */
 	BasicViewer(	wxWindow *parent,
 					Canvas *pSharedCanvas,

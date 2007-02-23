@@ -54,7 +54,7 @@ struct VGWX_API BasicManipulator : public BasicViewer
 	/**
 	 * @brief Construct a BasicManipulator with its own OpenGL context.
 	 * 
-	 * @param	pParent	A pointer to the parent window.
+	 * @param	parent	A pointer to the parent window.
 	 */
 	BasicManipulator(
 					wxWindow *parent,
@@ -68,7 +68,7 @@ struct VGWX_API BasicManipulator : public BasicViewer
 	 * @brief Construct a BasicManipulator with its own OpenGL context, but that share OpenGL objects with another(s) 
 	 * Canvas.
 	 * 
-	 * @param	pParent		A pointer to the parent window.
+	 * @param	parent		A pointer to the parent window.
 	 */
 	BasicManipulator(
 					wxWindow *parent,

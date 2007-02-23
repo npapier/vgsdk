@@ -5,8 +5,6 @@
 
 #include "vgWX/Canvas.hpp"
 
-#include <wx/menu.h>
-
 #if !wxUSE_GLCANVAS
 #error Please set wxUSE_GLCANVAS to 1 in setup.h.
 #endif
@@ -187,9 +185,8 @@ void Canvas::refresh( const RefreshType type, const WaitType wait )
 		}
 		else
 		{
-			paint( v2iSize, getBoundingBoxUpdate() );				
+			paint( v2iSize, getBoundingBoxUpdate() );					// @todo don't work anytime (see OnPaint()).
 		}
-
 	}
 }
 
@@ -247,7 +244,7 @@ bool Canvas::Destroy()
 	assert( retVal && "enableVGSDK() fails." );
 
 	// Cleans the scene graph
-	setRoot( vgd::Shp< vgd::node::Group >() );
+	setRoot( vgd::node::Group::create("empty") );
 	
 	return wxGLCanvas::Destroy();
 }

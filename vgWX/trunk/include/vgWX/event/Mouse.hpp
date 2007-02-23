@@ -40,7 +40,7 @@ struct VGWX_API Mouse : public wxEvtHandler, public vgd::event::Mouse
 	
 protected:
 
-	DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE();
 	
 	/**
 	 * @brief	Handles a left mouse button double click event.
