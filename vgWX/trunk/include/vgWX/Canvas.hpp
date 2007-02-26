@@ -157,7 +157,6 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 
 
 
-protected:
 	// Overrides wxWidgets method
 	bool Destroy();
 	
@@ -165,10 +164,9 @@ protected:
 	 * @name wxWidgets events processing methods.
 	 */
 	//@{
-
+private:
 	DECLARE_EVENT_TABLE();
 
-private:	
 	/**
 	 * @brief Handles \c EVT_PAINT events.
 	 */
