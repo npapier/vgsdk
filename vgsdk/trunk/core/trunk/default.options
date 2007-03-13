@@ -1,0 +1,4 @@
+type		= 'shared'
+postfix		= '0-4'
+uses		= ['boost', 'openil']
+libs		= ['vgDebug 0-4', 'vgm 0-4']
