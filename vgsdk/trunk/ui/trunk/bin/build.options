@@ -1,0 +1,5 @@
+USE  	= ['boost','opengl','glu','wxgl','gle_0-3']
+LIB  	= ['vgd_0-4','vgDebug_0-4','vge_0-4','vgeGL_0-4','vgm_0-4']
+TYPE	= 'shared'
+VERSION = '0-4'
+
