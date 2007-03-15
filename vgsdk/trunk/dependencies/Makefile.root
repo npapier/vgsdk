@@ -1,0 +1,11 @@
+all install dep dist-all dist-clean clean help dep-all world publish allConfig info leaktracer mpatrol full debug release debug-install full-install release-install boundchecker coverage performance dp_full unittest dsp doc tar msi printvar:
+	cd gle;			make '$@';
+	cd glo;			make '$@';
+
+checkout:
+	svn $(REVISION) co http://svn.gna.org/svn/gle/gle/trunk gle
+	svn $(REVISION) co http://svn.gna.org/svn/gle/glo/trunk glo
+
+update diff:
+	cd gle;			svn '$@';
+	cd glo;			svn '$@';
