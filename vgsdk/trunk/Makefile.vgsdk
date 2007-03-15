@@ -1,3 +1,0 @@
-all install dep dist-all dist-clean clean help dep-all world allConfig info leaktracer mpatrol full debug release debug-install full-install release-install boundchecker unittest dsp doc tar msi printvar checkout checkout_tags update diff tags:
-	make -f Makefile.vgsdkfree	'$@'
-	cd ../vgsdkNonFree; make -f Makefile/Makefile '$@'
