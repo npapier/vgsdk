@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -34,7 +34,7 @@
 #include <cassert>
 #include <typeinfo>
 
-// FIXME: TODO test if sizeof( following types) must == 1 2 4...
+// @todo FIXME static assertion on sizeof( following types) must == 1 2 4...
 #ifdef __STDC__
 	typedef signed char		int8;
 #else
@@ -47,5 +47,10 @@ typedef unsigned short		uint16;
 
 typedef long				int32;
 typedef unsigned long		uint32;
+
+typedef long long			int64;
+
+//typedef int				int;
+typedef unsigned int		uint;
 
 #endif // #ifdef _VGBASE_TYPE_HPP
