@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "vgd/visitor/Traverse.hpp"
-#include "vgd/vgd.hpp"
 
 
 
@@ -35,12 +34,12 @@ template< typename Visitors = boost::null_visitor >
 struct NodeCollector : public Traverse<Visitors>
 {
 	/**
-	 * @name Constructor/Initialization.
+	 * @name Constructor/Initialization
 	 */
 	//@{
 	
 	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 */
 	NodeCollector( const bool bUseEdgeName = true, const bool bVisitForest = false ) :
 		vgd::visitor::Traverse<Visitors>( bUseEdgeName, bVisitForest )
@@ -61,7 +60,7 @@ struct NodeCollector : public Traverse<Visitors>
 
 
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 	
@@ -77,11 +76,11 @@ struct NodeCollector : public Traverse<Visitors>
 
 
 	/**
-	 * @name Visitor interface that could be overloaded.
+	 * @name Visitor interface that could be overloaded
 	 */
 	//@{
 	template< typename Vertex , typename Graph >
-	void discover_vertex( Vertex u, const Graph& g ) /*const*/
+	void discover_vertex( Vertex u, const Graph& /*g*/ ) /*const*/
 	{
 		vgd::Shp< vgd::node::Node > node( getNode(u) );
 		
@@ -95,7 +94,7 @@ protected:
 
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 	

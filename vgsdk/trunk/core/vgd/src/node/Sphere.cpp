@@ -54,7 +54,7 @@ namespace
 		assert( vertexIndexOri.size() % 3 == 0 );// triangles ?
 		// @todo Tests more accurately if shape is only composed by triangles
 
-		const uint32 numOfTrianglesOri = vertexIndexOri.size()/3;
+		const uint32 numOfTrianglesOri = static_cast<uint32>(vertexIndexOri.size()/3);
 
 		// For each triangle of the original shape, do
 		for( uint32 i = 0; i < numOfTrianglesOri; ++i )

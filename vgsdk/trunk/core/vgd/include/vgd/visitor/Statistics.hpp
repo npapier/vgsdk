@@ -6,8 +6,6 @@
 #ifndef _VGD_VISITOR_STATISTICS_HPP
 #define _VGD_VISITOR_STATISTICS_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <fstream>
 #include <map>
 
@@ -36,7 +34,7 @@ template< typename Visitors = boost::null_visitor >
 struct Statistics : public Traverse<Visitors>
 {
 	/**
-	 * @name Constructor/Initialization.
+	 * @name Constructor/Initialization
 	 */
 	//@{
 
@@ -51,9 +49,9 @@ struct Statistics : public Traverse<Visitors>
 
 
 
-	void	reset	( void )
+	void reset()
 	{
-		m_nodeCount		= 0;
+		m_nodeCount = 0;
 		
 		m_mapNodes.clear();
 	}	
@@ -62,7 +60,7 @@ struct Statistics : public Traverse<Visitors>
 	
 	
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 * 
 	 * @todo Add more accessors (like getTypes(), isIn(std::string nodeType), getNumOfInstance(std::string nodeType)...
 	 */
@@ -71,7 +69,7 @@ struct Statistics : public Traverse<Visitors>
 	/**
 	 * @brief Returns the total number of nodes.
 	 */
-	int32	getNodeCount( void ) const { return ( m_nodeCount ); }
+	const uint	getNodeCount() const { return ( m_nodeCount ); }
 	
 
 	/**
@@ -96,11 +94,11 @@ struct Statistics : public Traverse<Visitors>
 
 
 	/**
-	 * @name Visitor interface that could be overloaded.
+	 * @name Visitor interface that could be overloaded
 	 */
 	//@{
 	template< typename Vertex , typename Graph >
-	void discover_vertex( Vertex u, const Graph& g ) /*const*/
+	void discover_vertex( Vertex u, const Graph& /*g*/ ) /*const*/
 	{
 		vgd::Shp< vgd::node::Node > node = getNode(u);
 		
@@ -127,14 +125,14 @@ struct Statistics : public Traverse<Visitors>
 
 private:
 	/**
-	 * @name Typedefs.
+	 * @name Typedefs
 	 */
 	//@{
 
 	/**
 	 * @brief Associate each class name with number of instance of it.
 	 */
-	typedef std::map< std::string, int32 > NodeTypeMap;
+	typedef std::map< std::string, uint > NodeTypeMap;
 
 	/**
 	 * @brief Informations on one node type.
@@ -142,7 +140,7 @@ private:
 	 * \li std::string	: the node type name.
 	 * \li int32		: the number of times it is instanciated.
 	 */
-	typedef std::pair< std::string, int32 > NodeTypeValue;
+	typedef std::pair< std::string, uint > NodeTypeValue;
 	
 	/**
 	 * @brief Iterator for the container of NOdeTypeValue.
@@ -154,14 +152,14 @@ private:
 	 * @brief Returns a pair of iterator (std::pair<begin(), end()>) to iterate on the container of
 	 * NodeTypeValue.
 	 */
-	std::pair< NodeTypeIterator, NodeTypeIterator >	getNodeTypeIterators( void )
+	std::pair< NodeTypeIterator, NodeTypeIterator >	getNodeTypeIterators()
 	{
 		return ( std::pair< NodeTypeIterator, NodeTypeIterator >(m_mapNodes.begin(), m_mapNodes.end() ) );
 	}
 
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 
@@ -173,7 +171,7 @@ private:
 	/**
 	 * @brief Number of node.
 	 */
-	int32			m_nodeCount;
+	uint			m_nodeCount;
 	//@}
 };
 

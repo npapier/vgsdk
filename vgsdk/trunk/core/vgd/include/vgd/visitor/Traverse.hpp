@@ -61,16 +61,16 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
 
 
 	/**
-	 * @name Visitor interface that could be overloaded.
+	 * name Visitor interface that could be overloaded.
 	 */
 	//@{
 	
-	template< typename Vertex , typename Graph >
-	void discover_vertex( Vertex /*u*/, const Graph& /*g*/ ) const
-	{
-		//vgd::Shp< vgd::node::Node > node = getNode(u);
-		//std::cout << node->getName()  << " ";
-	}
+//	template< typename Vertex , typename Graph >
+//	void discover_vertex( Vertex /*u*/, const Graph& /*g*/ ) const
+//	{
+//		//vgd::Shp< vgd::node::Node > node = getNode(u);
+//		//std::cout << node->getName()  << " ";
+//	}
 	//@}
 
 
@@ -151,7 +151,7 @@ struct Traverse : public vgd::visitor::internal::dfs_visitor<Visitors>
     		
     		visitVertex( edgeName.enable() );
     	}
-    	/*else Do nothing, because it is done once in initialize().
+    	/*else do nothing, because it is done once in initialize().
     	{
     		visitVertex( true );
     	}*/

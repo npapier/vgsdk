@@ -6,8 +6,6 @@
 #ifndef _VGD_VISITOR_FIND_HPP
 #define _VGD_VISITOR_FIND_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/node/Group.hpp"
 #include "vgd/visitor/Traverse.hpp"
 
@@ -44,12 +42,12 @@ template< class Predicate, typename Visitors = boost::null_visitor  >
 struct Find : public Traverse<Visitors>
 {
 	/**
-	 * @name Constructor/Initialization.
+	 * @name Constructor/Initialization
 	 */
 	//@{
 	
 	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 */
 	Find( const Predicate& predicate, bool bUseEdgeName = true, bool bVisitForest = false ) :
 			vgd::visitor::Traverse<Visitors>( bUseEdgeName, bVisitForest ),
@@ -60,12 +58,9 @@ struct Find : public Traverse<Visitors>
 	}
 
 	/**
-	 * @brief Reset what it should in order to reuse this visitor.
-	 * 
-	 * @param numOfNodesHint : hint to specify the number of nodes that this visitor should encountered.
-	 * This permits to reserve a minimum length of storage for the container of visited node in order to reduce reallocation.
+	 * @brief Reset what it should in order to reuse this visitor
 	 */
-	void	reset	( const int32 numOfNodesHint = 512 )
+	void reset()
 	{
 		m_trueNodes->clear();
 	}
@@ -74,7 +69,7 @@ struct Find : public Traverse<Visitors>
 
 
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 	
@@ -96,11 +91,11 @@ struct Find : public Traverse<Visitors>
 
 	
 	/**
-	 * @name Visitor interface that could be overloaded.
+	 * @name Visitor interface that could be overloaded
 	 */
 	//@{
 	template< typename Vertex , typename Graph >
-	void discover_vertex( Vertex u, const Graph& g ) /*const*/
+	void discover_vertex( Vertex u, const Graph& /*g*/ ) /*const*/
 	{
 		vgd::Shp< vgd::node::Node > node = getNode(u);
 
@@ -116,13 +111,13 @@ struct Find : public Traverse<Visitors>
 private:
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 
 	vgd::Shp< vgd::node::NodeList >		m_trueNodes;
 	
-	const Predicate&							m_predicate;
+	const Predicate&					m_predicate;
 	//@}
 };
 

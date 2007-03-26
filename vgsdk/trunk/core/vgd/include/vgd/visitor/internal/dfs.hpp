@@ -12,8 +12,6 @@
 #ifndef _VGD_VISITOR_INTERNAL_DFS_HPP
 #define _VGD_VISITOR_INTERNAL_DFS_HPP
 
-#include "vgd/vgd.hpp"
-
 //
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.

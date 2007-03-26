@@ -6,9 +6,8 @@
 #ifndef _VGD_VISITOR_SORT_HPP
 #define _VGD_VISITOR_SORT_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <utility>
+
 #include "vgd/node/Group.hpp"
 //#include "vgd/node/Node.hpp"
 #include "vgd/visitor/Traverse.hpp"
@@ -64,22 +63,25 @@ struct Sort : public Traverse<Visitors>
 	}
 
 	/**
-	 * @brief Reset what it should in order to reuse this visitor.
+	 * @brief Resets what it should in order to reuse this visitor.
 	 * 
-	 * @param numOfNodesHint : hint to specify the number of nodes that this visitor should encountered.
+	 * @param numOfNodesHint	Hint to specify the number of nodes that this visitor should encountered
 	 * This permits to reserve a minimum length of storage for the container of visited node in order to reduce reallocation.
 	 */
-	void	reset	( const int32 numOfNodesHint = 512 )
+	void reset( const int32 numOfNodesHint = 512 )
 	{
 		m_trueNodes->clear();
+		m_trueNodes->reserve( numOfNodesHint );
+
 		m_falseNodes->clear();
+		m_falseNodes->reserve( numOfNodesHint );
 	}
 	//@}
 
 
 
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 	
@@ -88,38 +90,38 @@ struct Sort : public Traverse<Visitors>
 	 * 
 	 * The first node encountered is at the beginning of the vector.
 	 */
-	const vgd::node::NodeList&	getTrueNodes() const { return ( m_trueNodes.get() ); }
+	const vgd::node::NodeList&	getTrueNodes() const { return m_trueNodes.get(); }
 	
 	/**
 	 * @brief Returns the vector of nodes ordered by traversing order that cause the predicate to return false.
 	 * 
 	 * The first node encountered is at the beginning of the vector.
 	 */
-	const vgd::node::NodeList&	getFalseNodes() const { return ( m_falseNodes.get() ); }
+	const vgd::node::NodeList&	getFalseNodes() const { return m_falseNodes.get(); }
 	
 	/**
 	 * @brief Returns the vector of nodes ordered by traversing order that cause the predicate to return true.
 	 * 
 	 * The first node encountered is at the beginning of the vector.
 	 */
-	vgd::Shp< vgd::node::NodeList >	getShpTrueNodes() { return ( m_trueNodes ); }
+	vgd::Shp< vgd::node::NodeList >	getShpTrueNodes() { return m_trueNodes; }
 	
 	/**
 	 * @brief Returns the vector of nodes ordered by traversing order that cause the predicate to return false.
 	 * 
 	 * The first node encountered is at the beginning of the vector.
 	 */
-	vgd::Shp< vgd::node::NodeList >	getShpFalseNodes() { return ( m_falseNodes ); }	
+	vgd::Shp< vgd::node::NodeList >	getShpFalseNodes() { return m_falseNodes; }	
 	//@}
 	
 	
 	
 	/**
-	 * @name Visitor interface that could be overloaded.
+	 * @name Visitor interface that could be overloaded
 	 */
 	//@{
 	template< typename Vertex , typename Graph >
-	void discover_vertex( Vertex u, const Graph& g ) /*const*/
+	void discover_vertex( Vertex u, const Graph& /*g*/ ) /*const*/
 	{
 		vgd::Shp< vgd::node::Node > node = getNode(u);
 
@@ -139,14 +141,14 @@ struct Sort : public Traverse<Visitors>
 private:
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 
 	vgd::Shp< vgd::node::NodeList	>	m_trueNodes;
-	vgd::Shp< vgd::node::NodeList >	m_falseNodes;
+	vgd::Shp< vgd::node::NodeList >		m_falseNodes;
 	
-	const Predicate&						m_predicate;
+	const Predicate&					m_predicate;
 	//@}
 };
 

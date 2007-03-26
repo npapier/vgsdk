@@ -6,8 +6,6 @@
 #ifndef _VGD_VISITOR_HPP
 #define _VGD_VISITOR_HPP
 
-#include "vgd/vgd.hpp"
-
 /** 
  * @namespace vgd::visitor
  * 
@@ -16,9 +14,7 @@
  * The visitor concepts plays the same role in BGL as functors play in the STL.
  * Visitors allow the user to insert their own operations at various steps within a graph algorithm or a graph traversing.
  * 
- * This namespace contains a collection of classes to traverse, make statistics, collect node...
+ * This namespace contains a collection of classes to traverse, make statistics, collect nodes...
  */
-
-} // namespace vgd
 
 #endif //#ifndef _VGD_VISITOR_HPP
