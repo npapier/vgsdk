@@ -64,17 +64,11 @@ struct Sort : public Traverse<Visitors>
 
 	/**
 	 * @brief Resets what it should in order to reuse this visitor.
-	 * 
-	 * @param numOfNodesHint	Hint to specify the number of nodes that this visitor should encountered
-	 * This permits to reserve a minimum length of storage for the container of visited node in order to reduce reallocation.
 	 */
-	void reset( const int32 numOfNodesHint = 512 )
+	void reset()
 	{
 		m_trueNodes->clear();
-		m_trueNodes->reserve( numOfNodesHint );
-
 		m_falseNodes->clear();
-		m_falseNodes->reserve( numOfNodesHint );
 	}
 	//@}
 
