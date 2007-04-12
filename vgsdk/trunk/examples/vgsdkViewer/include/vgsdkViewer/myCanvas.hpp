@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,8 +6,8 @@
 #ifndef _VGSDKVIEWER_MYCANVAS_HPP
 #define _VGSDKVIEWER_MYCANVAS_HPP
 
+#include <wx/arrstr.h>
 #include <wx/defs.h>
-#include <wx/dnd.h>
 
 #include <vgWX/BasicManipulator.hpp>
 
@@ -25,22 +25,26 @@ class myCanvas : public vgWX::BasicManipulator
 public:
 
 	/**
-	 * @brief Constructor.
+	 * @brief Constructor
 	 *
-	 * @param	pParent		A pointer to the parent window.
+	 * @param	parent		a pointer to the parent window
 	 */
 	myCanvas(
 					wxWindow *parent,
-					const wxString& name = _T("BasicManipulator"),
+					const wxString& name = _T("myCanvas"),
 					const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
 					long style = 0,
 					int* gl_attrib = NULL,
 					const wxWindowID id = -1 );
-					
-	myCanvas(
-					wxWindow *parent,
+
+	/**
+	 * @brief Constructor
+	 *
+	 * @param	parent		a pointer to the parent window
+	 */					
+	myCanvas(		wxWindow *parent,
 					Canvas *pSharedCanvas,
-					const wxString& name = _T("BasicManipulator"),
+					const wxString& name = _T("myCanvas"),
 					const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
 					long style = 0,
 					int* gl_attrib = NULL,
@@ -49,54 +53,59 @@ public:
 
 
 	/**
-	 * @name Overrided methods.
+	 * @name Overrided methods
 	 */
 	//@{
 						
 	void initialize();
 
-	void OnChar			( wxKeyEvent& event );
+	/**
+	 * @todo Use wxAcceleratorTable
+	 */
+	void OnChar( wxKeyEvent& event );
 	
 	wxMenu *createContextualMenu( const int32 xMouse, const int32 yMouse ) /*const*/;
 
-	//void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
 	//@}
 
 
 
-
-
-
 	/**
-	 * @name Loading methods.
+	 * @name Scene management methods
 	 */
 	//@{
-	bool load( std::string pathfilename );
+
+	void		clearScene();
+
+	const bool	appendToScene( const wxString& pathfilename, const bool mustCallViewAll = true  );
+	const bool	appendToScene( wxArrayString pathfilenames, const bool mustCallViewAll = true );
+	const bool	reloadScene();
+
+	//@}
+
+
+
+private:
+	/**
+	 * @name Loading methods
+	 */
+	//@{
 	
-	bool loadTrian( std::string pathfilename );
-	bool loadTrian2( std::string pathfilename );
-	
-	void reload();	
+	const bool load( std::string pathfilename );
+
+	const bool loadTrian( std::string pathfilename );
+	const bool loadTrian2( std::string pathfilename );
+	const bool loadCollada( std::string pathfilename );
+
 	//@}
 
 	/**
-	 * @brief Files loaded.
+	 * @brief Files currently loaded
 	 */
-	std::vector< std::string >			m_filenames;
-};
-
-
-
-class DnDFile : public wxFileDropTarget
-{
-public:
-    DnDFile( myCanvas* pOwner );
-
-    virtual bool OnDropFiles(	wxCoord x, wxCoord y,
-                             	const wxArrayString& filenames);
-
-private:
-    myCanvas *m_pOwner;
+	wxArrayString m_filenames;
+	
+	// Forward type declaration
+	class DnDFile;
 };
 
 
