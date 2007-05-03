@@ -1,11 +1,13 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #ifndef _VGWX_BASICVIEWER_HPP
 #define _VGWX_BASICVIEWER_HPP
+
 #include <vgd/node/Camera.hpp>
+#include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/MatrixTransform.hpp>
 #include <wx/defs.h>
@@ -26,14 +28,17 @@ namespace vgWX
  * - set the camera type that will be used by the viewer (see Accessors in the camera section).
  * - adjust the camera position and frustum to be able to view the entire scene (see viewAll method).
  * - adjust camera when window is resized (see resize() method).
+ * - manage default lights
  * 
  * @remarks Camera behavior (mainly viewAll and resize methods ) can be overridden if the default behavior does'nt meet 
  * your needs.
  * 
  * The scene graph is divided in two parts. First child of the root is a group node, named \c SETUP, that contains some 
  * useful nodes to initialize the scene like :
- * \li The camera node is named \c CAMERA.
- * \li The view transformation is named \c VIEW_TRANSFORM.
+ * \li the camera node named \c CAMERA
+ * \li the optional default light group named \c LIGHTS
+ * \li the optional frame buffer clearing node named \c CLEAR
+ * \li the view transformation named \c VIEW_TRANSFORM.
  * 
  * The second child of the root is a group node, named \c SCENE that must contains the real scene (mesh, material...).
  *
@@ -151,6 +156,70 @@ struct VGWX_API BasicViewer : public Canvas
 	vgd::Shp< vgd::node::Group >	getScene();
 	
 	//@}
+	
+	
+	
+	/**
+	 * @name Frame buffer clearing control
+	 */
+	//@{
+	
+	/**
+	 * @brief	Creates the node to clear the frame buffer.
+	 * 
+	 * @remark	The frame buffer clearing node is only created once. Invoking
+	 * 			several times his method will always return the same node instance.
+	 * 
+	 * @return	a shared pointer to the created clear frame buffer node
+	 * 
+	 * @author	Guillaume Brocker
+	 */
+	vgd::Shp< vgd::node::ClearFrameBuffer > createClearFrameBuffer();
+	
+	/**
+	 * @brief	Destroyes the frame buffer clearing node
+	 */
+	void destroyClearFrameBuffer();
+	
+	/**
+	 * @brief	Retrieves the frame buffer clearing node.
+	 * 
+	 * @return	a shared pointer to the clear frame buffer node, can be empty when none
+	 */
+	vgd::Shp< vgd::node::ClearFrameBuffer > getClearFrameBuffer() const;
+	
+	//@}
+	
+	
+	
+	/**
+	 * @name Default lighthing control
+	 */
+	//@{
+	
+	/**
+	 * @brief	Creates default lights.
+	 * 
+	 * This creates two directionnal lights, one pointing the scene from the 
+	 * view point and one pointing the scene from the view point's opposite. These
+	 * lights are not moving with the scene.
+	 * 
+	 * @see		destroyDefaultLights
+	 * 
+	 * @author	Guillaume Brocker
+	 */
+	void createDefaultLights();
+	
+	/**
+	 * @brief	Detroyes default lights.
+	 * 
+	 * @see		createDefaultLights
+	 * 
+	 * @author	Guillaume Brocker
+	 */
+	void destroyDefaultLights();
+	
+	//@}
 
 
 
@@ -207,6 +276,16 @@ private:
 	 * @brief A reference on the camera.
 	 */
 	vgd::Shp< vgd::node::Camera >				m_camera;
+	
+	/**
+	 * @brief A reference on the default lights group
+	 */
+	vgd::Shp< vgd::node::Group >				m_lights;
+	
+	/**
+	 * @brief A reference on the frame buffer clearing node.
+	 */
+	vgd::Shp< vgd::node::ClearFrameBuffer >		m_clearFrameBuffer;
 
 	/**
 	 * @brief A reference on the view transformation.

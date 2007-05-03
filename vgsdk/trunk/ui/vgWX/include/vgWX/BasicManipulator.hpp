@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -38,6 +38,10 @@ namespace vgWX
  *		- Press keys 'b' or 'B' to render respectively to 20, 100 frames directly (usage: benchmarking).
  * 
  * - a new vgd::node::TransformDragger node in the \c setup group named TRANSFORMDRAGGER_SCENE.
+ * 
+ * - a default lighting
+ * 
+ * - a default frame buffer clearing node
  * 
  * @ingroup g_vgWXGroup
  * 

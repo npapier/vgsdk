@@ -141,7 +141,7 @@ const bool Canvas::isContextualMenuEnabled() const
 
 
 
-wxMenu *Canvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
+wxMenu *Canvas::createContextualMenu( const int32 /*xMouse*/, const int32 /*yMouse*/ )
 {
 	wxMenu *ctxMenu = detail::createContextualMenu( this );
 
@@ -215,14 +215,11 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		m_bCallInitialize = true;
 	}
 
-	//	
-	vgm::Vec2i	v2iSize( GetSize().GetWidth(), GetSize().GetHeight() );
-
 	while( getNumberOfFrames() > 0 )
 	{
 		gleGetCurrent()->reportGLErrors();
 	
-		::vgeGL::engine::SceneManager::paint( v2iSize, getBoundingBoxUpdate() );
+		::vgeGL::engine::SceneManager::paint( size, getBoundingBoxUpdate() );
 
 		gleGetCurrent()->reportGLErrors();
 	
@@ -252,7 +249,7 @@ bool Canvas::Destroy()
 
 
 
-void Canvas::OnPaint( /*const*/ wxPaintEvent& event )
+void Canvas::OnPaint( /*const*/ wxPaintEvent& /*event*/ )
 {
 	// This is a dummy, to avoid an endless succession of paint messages.
 	// OnPaint handlers must always create a wxPaintDC.
@@ -302,7 +299,7 @@ void Canvas::OnSize( /*const*/ wxSizeEvent& event )
 
 
 
-void Canvas::OnEraseBackground( wxEraseEvent& event )
+void Canvas::OnEraseBackground( wxEraseEvent& /*event*/ )
 {
     /* Do nothing, to avoid flashing on MSW */
 }

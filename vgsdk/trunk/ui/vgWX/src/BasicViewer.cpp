@@ -1,9 +1,12 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgWX/BasicViewer.hpp"
+
+#include <vgd/node/DirectionalLight.hpp>
 
 
 
@@ -168,6 +171,78 @@ vgd::Shp< vgd::node::MatrixTransform > BasicViewer::getViewTransformation()
 vgd::Shp< vgd::node::Group > BasicViewer::getScene()
 {
 	return m_scene;
+}
+
+
+
+vgd::Shp< vgd::node::ClearFrameBuffer > BasicViewer::createClearFrameBuffer()
+{
+	if( !m_clearFrameBuffer )
+	{
+		m_clearFrameBuffer = vgd::node::ClearFrameBuffer::create("CLEAR");
+		getSetup()->addChild( m_clearFrameBuffer );
+	}
+	return m_clearFrameBuffer;
+}
+
+
+
+void BasicViewer::destroyClearFrameBuffer()
+{
+	if( m_clearFrameBuffer )
+	{
+		getSetup()->removeChild( m_clearFrameBuffer );
+		m_clearFrameBuffer.reset();
+	}
+}
+
+
+
+vgd::Shp< vgd::node::ClearFrameBuffer > BasicViewer::getClearFrameBuffer() const
+{
+	return m_clearFrameBuffer;
+}
+
+
+
+void BasicViewer::createDefaultLights()
+{
+	if( !m_lights )
+	{
+		using vgd::node::DirectionalLight;
+		using vgd::node::Group;
+		
+		// Creates and swithes on the directional lights.
+		vgd::Shp< DirectionalLight > light1 = DirectionalLight::create("defaultLight1");
+		light1->setOn( true );
+		light1->setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
+	
+		vgd::Shp< DirectionalLight > light2 = DirectionalLight::create("defaultLight2");
+		light2->setMultiAttributeIndex( 1 );
+		light2->setOn( true );
+		light2->setDirection( vgm::Vec3f(0.f, 0.f, 1.f) );
+		
+		// Creates the group that will contain the lights.
+		m_lights = Group::create("LIGHTS");
+		m_lights->addChild( light1 );
+		m_lights->addChild( light2 );		
+		
+		// Inserts the default lights before the scene transform.
+		const int32	insertIndex = m_setup->findChild( m_viewTransform );
+		getSetup()->insertChild( m_lights, insertIndex );
+	}	
+}
+
+
+
+void BasicViewer::destroyDefaultLights()
+{
+	if( m_lights )
+	{
+		// Removes the default lights sub-graph and frees the sub-graph 
+		getSetup()->removeChild( m_lights );
+		m_lights.reset();
+	}
 }
 
 
