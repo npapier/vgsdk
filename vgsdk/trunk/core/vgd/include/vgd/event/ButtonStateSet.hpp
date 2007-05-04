@@ -24,6 +24,8 @@ namespace event
  * @brief List of buttons in the DOWN state.
  * 
  * Useful to trace the state of all buttons in the system or in at a specific time.
+ * 
+ * @todo Adds two constructors : the first one that take the single down button, the second one that take the list of down buttons. 
  */
 struct VGD_API ButtonStateSet : public EventVisitor
 {

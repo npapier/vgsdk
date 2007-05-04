@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -11,7 +11,6 @@
 
 #include "vgd/basic/IImage.hpp"
 #include "vgd/Shp.hpp"
-#include "vgd/vgd.hpp"
 
 
 
@@ -26,12 +25,17 @@ namespace basic
 /**
  * @brief Store an image.
  *
- * @remarks This class use the DevIL image library inside.
+ * @remarks This class use the OpenIL (i.e. DevIL image) library inside.
  * @sa http://openil.sourceforge.net/
  *
  * @todo Remove m_* that could be given by OpenIL.
  * 
- * @todo use exception for error handling ?
+ * @todo Adds mutex on OpenIL usage (see CFO contributions).
+ * @todo Removes duplicates parameters on constructor and create() methods (see parameters \c format and \c components).
+ * @todo Removes in version 0.5 deprecated methods. 
+ * @todo Adds observation on pixel editor accesses (editPixels()/editPixelsDone()...)
+ * 
+ * @todo Uses exception for error handling ?
  *
  * @ingroup g_images
  */
@@ -43,7 +47,7 @@ struct VGD_API Image : public IImage
 	//@{
 	
 	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 * 
 	 * @post components()			== 0
 	 * @post isEmpty()				== true
@@ -74,7 +78,25 @@ struct VGD_API Image : public IImage
 	/**
 	 * @brief Image contructor from memory.
 	 * 
-	 * The image data is copied.
+	 * If \c pixels parameter is not 0, then the image data is copied from memory.
+	 * Otherwise the image would only contain zero values.
+	 * 
+	 * @param width			width of the image.
+	 * @param height		height of the image.
+	 * @param depth			depth of the image.
+	 * @param format		format of the pixel data.
+	 * @param type			type of the pixel data.
+	 * @param pixels		pointer to the image data in memory.
+	 * 
+	 * @pre format != COLOR_INDEX
+	 */
+	Image(		const uint32	width, const uint32 height, const uint32 depth,
+				const Format	format,
+				const Type		type,
+				const void*		pixels = 0 );
+
+	/**
+	 * @brief Image contructor from memory.
 	 * 
 	 * @param components	number of color components.
 	 * @param width			width of the image.
@@ -85,6 +107,9 @@ struct VGD_API Image : public IImage
 	 * @param pixels		pointer to the image data in memory.
 	 * 
 	 * @pre format != COLOR_INDEX
+	 * @pre components == computeNumComponents( format )
+	 * 
+	 * @deprecated Use constructor without components parameters instead
 	 */
 	Image(		const uint32		components,
 				const uint32		width, const uint32 height, const uint32 depth,
@@ -93,7 +118,7 @@ struct VGD_API Image : public IImage
 				const void*			pixels );
 
 	/**
-	 * @brief Image contructor : Create a new image.
+	 * @brief Image contructor
 	 * 
 	 * @param components	number of color components.
 	 * @param width			width of the image.
@@ -103,6 +128,9 @@ struct VGD_API Image : public IImage
 	 * @param type			type of the pixel data.
 	 * 
 	 * @pre format != COLOR_INDEX
+	 * @pre components == computeNumComponents( format ) 
+	 * 
+	 * @deprecated Use constructor without components parameters instead 
 	 * 
 	 * @todo add param color
 	 */
@@ -156,10 +184,28 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @remarks The type of file is based on the file extension for all input/output operation on file.
 	 * 
-	 * @remarks All supported format of ImageLib(DevIL). 
-	 * Enumeration of supported format : mainly bmp, dds, jpg, psd, psp, raw, tga, tiff.
+	 * @remarks All supported format of OpenIL. Main supported format are : bmp, dds, ico, gif, jpg, png, psd, psp, raw, tga, tif.
 	 */
 	bool	load( std::string strFilename );
+
+	/**
+	 * @brief Create an image from memory.
+	 * 
+	 * If \c pixels parameter is not 0, then the image data is copied from memory.
+	 * Otherwise the image would only contain zero values.
+	 * 
+	 * @param width			width of the image.
+	 * @param height		height of the image.
+	 * @param depth			depth of the image.
+	 * @param format		format of the pixel data.
+	 * @param type			type of the pixel data.
+	 * @param pixels		pointer to the image data in memory.
+	 * 
+	 * @pre format != COLOR_INDEX
+	 */
+	bool	create(	const uint32	width, const uint32 height, const uint32 depth,
+					const Format	format, const Type	type,
+					const void*		pixels = 0 );
 
 	/**
 	 * @brief Create an image from memory.
@@ -175,6 +221,9 @@ struct VGD_API Image : public IImage
 	 * @param pixels		pointer to the image data in memory.
 	 * 
 	 * @pre format != COLOR_INDEX
+	 * @pre components == computeNumComponents( format )
+	 * 
+	 * @deprecated Use create() without components parameters instead  
 	 */
 	bool	create(	const uint32		components, 
 					const uint32		width, const uint32 height, const uint32 depth,
@@ -193,6 +242,9 @@ struct VGD_API Image : public IImage
 	 * @param type			type of the pixel data.
 	 * 
 	 * @pre format != COLOR_INDEX
+	 * @pre components == computeNumComponents( format )
+	 * 
+	 * @deprecated Use create() without components parameters instead  
 	 */
 	bool	create(	const uint32		components, 
 					const uint32		width, const uint32 height, const uint32 depth,
@@ -213,14 +265,14 @@ struct VGD_API Image : public IImage
 	/**
 	 * @brief Save the current image to a file.
 	 *
-	 * Enumeration of supported format : mainly bmp, dds, jpg, pcx, png, pnm, raw, tga, tiff.
+	 * @remarks All supported format of OpenIL. Main supported format are : bmp, dds, jpg, png, raw, tga, tif.
 	 */
-	bool	save( const std::string filename ) const;
+	bool save( const std::string filename ) const;
 	
 	/**
 	 * @brief Destroy image.
 	 */
-	void	destroy();
+	void destroy();
 	//@}
 
 
@@ -432,7 +484,7 @@ private:
 	/**
 	 * @brief Code of copy constructor.
 	 */
-	void		copy( const Image& src );
+	void	copy( const Image& src );
  
 	/**
 	 * @brief Must be called before using DevIL methods on an image.
@@ -441,34 +493,34 @@ private:
 
 	bool	reportILError() const;
 
-	Format	convertILFormat2My( ILenum format	) const;
+	Format	convertILFormat2My( ILenum format		) const;
 	Format	convertILPalFormat2My( ILenum format	) const;
 
-	ILenum	convertMyFormat2IL( Format format	) const;
+	ILenum	convertMyFormat2IL( Format format		) const;
 	ILenum	convertMyFormat2ILPal( Format format	) const;
 	
 	Type	convertILType2My( ILenum type	) const;
-	ILenum	convertMyType2IL( Type myType ) const;
+	ILenum	convertMyType2IL( Type myType	) const;
 	
-	void	resetInformations	();
+	void	resetInformations();
 	void	updateInformations();
 	//@}
 
 
 	/**
-	 * @name Image data and informations.
+	 * @name Image data and informations
 	 */
 	//@{
 
 	/**
-	 * @brief id for image library, 0 otherwise(no image specified or not yet loaded).
+	 * @brief id for image library, 0 otherwise (no image specified or not yet loaded).
 	 */
 	ILuint		m_iluintImgID;
-	
+
 	uint32		m_components;
 	uint32		m_width;
 	uint32		m_height;
-	uint32		m_depth;	
+	uint32		m_depth;
 	Format		m_format;
 	Type		m_type;
 

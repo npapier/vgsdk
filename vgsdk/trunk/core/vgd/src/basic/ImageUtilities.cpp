@@ -140,6 +140,7 @@ vgd::Shp< Image > ImageUtilities::createImage(	const vgd::Shp< IImage> srcImage,
 	const DstPixelType newMin = std::numeric_limits<DstPixelType>::min();
 	const DstPixelType newMax = std::numeric_limits<DstPixelType>::max();
 
+	///@todo Uses vgm::Utilities::linearInterpolation().
 	const float a = static_cast<float>( newMax - newMin ) / minMax.getDelta();
 	const float b = newMin - a*minMax.getMin();
 

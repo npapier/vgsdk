@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,8 +17,8 @@ namespace basic
 
 
 
-Image::Image() :
-	m_iluintImgID(0)
+Image::Image()
+:	m_iluintImgID(0)
 {
 	if ( m_firstInstance )
 	{
@@ -36,8 +36,8 @@ Image::Image() :
 
 
 
-Image::Image( std::string strFilename ) :
-	m_iluintImgID(0)
+Image::Image( std::string strFilename )
+:	m_iluintImgID(0)
 {
 	if ( m_firstInstance )
 	{
@@ -57,15 +57,45 @@ Image::Image( std::string strFilename ) :
 
 
 
+Image::Image(	const uint32	width, const uint32 height, const uint32 depth,
+				const Format	format,
+				const Type		type,
+				const void*		pixels )
+:	m_iluintImgID(0)
+{
+	assert( format != COLOR_INDEX );
+		
+	if ( m_firstInstance )
+	{
+		// This is the first instance of this class.
+
+		// Do some initialization.
+		ilInit();
+		
+		// Don't do the same for any others instances.
+		m_firstInstance = false;
+	}
+	
+	resetInformations();
+		
+	create(	computeNumComponents( format ),
+			width, height, depth,
+			format, type,
+			pixels );
+}
+
+
+
 Image::Image(	const uint32		components,
 				const uint32		width, const uint32 height, const uint32 depth,
 				const Format		format,
 				const Type			type,
-				const void*			pixels ) :
-	m_iluintImgID(0)
+				const void*			pixels ) 
+:	m_iluintImgID(0)
 {
 	assert( format != COLOR_INDEX );
-		
+	assert( components == computeNumComponents( format ) );
+
 	if ( m_firstInstance )
 	{
 		// This is the first instance of this class.
@@ -87,13 +117,14 @@ Image::Image(	const uint32		components,
 
 
 
-Image::Image(	const uint32		components,
-				const uint32		width, const uint32 height, const uint32 depth,
-				const Format		format,
-				const Type			type 	) :
-	m_iluintImgID(0)
+Image::Image(	const uint32	components,
+				const uint32	width, const uint32 height, const uint32 depth,
+				const Format	format,
+				const Type		type 	)
+:	m_iluintImgID(0)
 {
 	assert( format != COLOR_INDEX );
+	assert( components == computeNumComponents( format ) );	
 		
 	if ( m_firstInstance )
 	{
@@ -115,8 +146,8 @@ Image::Image(	const uint32		components,
 
 
 
-Image::Image( const IImage& image ) :
-	m_iluintImgID(0)
+Image::Image( const IImage& image )
+:	m_iluintImgID(0)
 {
 	assert( image.format() != COLOR_INDEX );
 	
@@ -216,6 +247,47 @@ bool Image::load( std::string strFilename )
 
 
 
+bool Image::create(	const uint32	width, const uint32 height, const uint32 depth,
+					const Format	format,	const Type	type,
+					const void*		pixels )
+{
+	assert( format != COLOR_INDEX );
+	
+	destroy();
+
+	// Create a new image name.
+	ilGenImages(1, &m_iluintImgID);
+
+	// Bind this image name.
+	bind();
+
+	//
+	const ILvoid *cpixels = reinterpret_cast<const ILvoid*>(pixels);
+
+	ilTexImage(
+		width, height, depth,
+		static_cast<ILubyte>(computeNumComponents(format)),
+		convertMyFormat2IL(format),
+		convertMyType2IL(type),
+		const_cast<ILvoid*>( cpixels )
+		);
+
+	if ( reportILError() )
+	{
+		destroy();
+		return false;
+	}
+	else
+	{
+		m_voxelSize.setValue( 1.f, 1.f, 1.f );
+
+		updateInformations();
+		return true;
+	}
+}
+
+
+
 bool Image::create(	const uint32		components, 
 					const uint32		width, const uint32 height, const uint32 depth,
 					const Format		format,
@@ -223,6 +295,7 @@ bool Image::create(	const uint32		components,
 					const void*			pixels )
 {
 	assert( format != COLOR_INDEX );
+	assert( components == computeNumComponents( format ) );	
 	
 	destroy();
 
@@ -265,6 +338,7 @@ bool Image::create(	const uint32		components,
 					const Type			type )
 {
 	assert( format != COLOR_INDEX );
+	assert( components == computeNumComponents( format ) );	
 		
 	destroy();
 
@@ -350,42 +424,45 @@ bool Image::convertTo( const Format format, const Type type )
 
 const uint32 Image::components() const
 {
-	return ( m_components );
+	return m_components;
 }
 
 
 
 const uint32 Image::width() const
 {
-	return ( m_width );
+	return m_width;
+	//return ilGetInteger( IL_IMAGE_WIDTH );
 }
 
 
 
 const uint32 Image::height() const
 {
-	return ( m_height );
+	return m_height;
+	//return ilGetInteger( IL_IMAGE_HEIGHT );
 }
 
 
 
 const uint32 Image::depth() const
 {
-	return ( m_depth );
+	return m_depth;
+	//return ilGetInteger( IL_IMAGE_DEPTH );
 }
 
 
 
 const Image::Format Image::format() const
 {
-	return ( m_format );
+	return m_format;
 }
 
 
 
 const Image::Type Image::type() const
 {
-	return ( m_type  );
+	return m_type;
 }
 
 
@@ -426,7 +503,7 @@ const uint32 Image::paletteSize() const
 
 	uint32 size = ilGetInteger( IL_PALETTE_NUM_COLS );
 	
-	return ( size );
+	return size;
 }
 
 
@@ -444,7 +521,7 @@ const Image::Format Image::paletteFormat() const
 
 const Image::Type	Image::paletteType() const
 {
-	return ( UINT8 );
+	return UINT8;
 }
 
 
@@ -514,21 +591,21 @@ vgd::Shp< Image > Image::getPaletteImage() const
 
 vgm::Vec3f& Image::voxelSize()
 {
-	return ( m_voxelSize );
+	return m_voxelSize;
 }
 
 
 
 const vgm::Vec3f Image::voxelSize() const
 {
-	return ( m_voxelSize );
+	return m_voxelSize;
 }
 
 
 
 const bool Image::isVoxelSizeSupported() const
 {
-	return ( true );
+	return true;
 }
 
 
@@ -594,7 +671,7 @@ bool Image::reportILError() const
 			vgDebug::get().logDebug("Image: Unknown error" );
 		}
 		
-		return ( true );
+		return true;
 	}
 }
 
@@ -639,7 +716,7 @@ Image::Format Image::convertILFormat2My( ILenum format ) const
 			f = NO_FORMAT;
 	}
 
-	return ( f );
+	return f;
 }
 
 
@@ -677,7 +754,7 @@ Image::Format Image::convertILPalFormat2My( ILenum format ) const
 			retVal = NO_FORMAT;
 	}
 
-	return ( retVal );
+	return retVal;
 }
 
 
@@ -721,7 +798,7 @@ ILenum Image::convertMyFormat2IL( Format format ) const
 			ilformat = IL_RGB;
 	}
 
-	return ( ilformat );
+	return ilformat;
 }
 
 
@@ -756,7 +833,7 @@ ILenum Image::convertMyFormat2ILPal( Format format	) const
 			ilformat = IL_PAL_RGBA32;
 	}
 	
-	return ( ilformat );
+	return ilformat;
 }
 
 
@@ -804,7 +881,7 @@ Image::Type Image::convertILType2My( ILenum myType ) const
 			type = NO_TYPE;
 	}
 	
-	return ( type );
+	return type;
 }
 
 
@@ -853,14 +930,17 @@ ILenum Image::convertMyType2IL( Type myType ) const
 			type = IL_UNSIGNED_BYTE;
 	}
 	
-	return ( type );
+	return type;
 }
 
 
 
 void Image::resetInformations()
 {
-	m_components	= m_width = m_height = m_depth = 0;
+	m_components	= 0;
+	m_width			= 0;
+	m_height		= 0;
+	m_depth			= 0;
 	m_format		= NO_FORMAT;
 	m_type			= NO_TYPE;
 
@@ -875,16 +955,19 @@ void Image::updateInformations()
 {
 	bind();
 
-	m_components	= ilGetInteger( IL_IMAGE_BYTES_PER_PIXEL );
-	m_width			= ilGetInteger( IL_IMAGE_WIDTH );	
+	//m_components
+	m_width			= ilGetInteger( IL_IMAGE_WIDTH );
 	m_height		= ilGetInteger( IL_IMAGE_HEIGHT );
-	m_depth			= ilGetInteger( IL_IMAGE_DEPTH );	
+	m_depth			= ilGetInteger( IL_IMAGE_DEPTH );
 	m_format		= convertILFormat2My( ilGetInteger( IL_IMAGE_FORMAT ) );
 	m_type			= convertILType2My( ilGetInteger( IL_IMAGE_TYPE ) );
-	
+
 	// m_edit		nothing to do
-	// m_voxelSize nothing to do
-		
+	// m_voxelSize	nothing to do
+
+	// m_format have been updated, m_components could be computed now
+	m_components	= computeNumComponents( m_format );
+
 	reportILError();
 }
 

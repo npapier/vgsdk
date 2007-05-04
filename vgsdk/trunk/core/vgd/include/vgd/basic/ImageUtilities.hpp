@@ -50,6 +50,7 @@ struct VGD_API ImageUtilities
 	 * and not the colors.
 	 * 
 	 * @todo remove precondition on type().
+	 * @todo remove preconditions (a template version ?) 
 	 */
 	static const MinMax computeMinMax( const IImage* pImage );
 
@@ -74,8 +75,10 @@ struct VGD_API ImageUtilities
 	 * @pre image->components() == 1
 	 * @pre image->type() == IImage::UINT8, or IImage::INT16
 	 * @pre dstType == IImage::UINT8
+	 * 
+	 * @todo remove preconditions (a template version ?)
 	 */
-	static vgd::Shp< Image > createImage( const vgd::Shp< IImage> image, const IImage::Type dstType, MinMax& minMax );
+	static vgd::Shp< Image > createImage( const vgd::Shp< IImage> srcImage, const IImage::Type dstType, MinMax& minMax );
 
 	/**
 	 * @brief Extract a slice (2d image) from a 3d image.
