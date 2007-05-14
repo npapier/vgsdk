@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+<head>
+	<title>vgSDK</title>
+	<link rel="stylesheet" type="text/css" href="styles/space/style.css" >
+	<link rel="contents" href="#contents" >
+	<meta name="description" content="vgsdl project official homepage" >
+	<meta name="keywords" content="vgsdk opengl rendering scenegraph" >
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
+</head>
+
+<body>
+	<div id="header">
+		<h1 id="title">vgSDK</h1>
+		<ul id="contents">
+			<li><a href="#overview">overview</a></li>
+			<li><a href="#details">details</a></li>
+			<li><a href="#download">download</a></li>
+			<li><a href="#getting-involved">getting&nbsp;involved</a></li>
+		</ul>
+	</div>
+
+
+	<h2 id="overview">Overview</h2>
+	
+	<p>vgSDK, a shortcut for Virtuals Graphical Software Development Kit,
+	consists of a set of cross-platform C++ libraries
+	which provides a complete framework for doing graphical related tasks.</p>
+
+	<p>This library is <a href="http://www.gnu.org/philosophy/free-sw.html">
+	free software</a>; you can redistribute it and/or
+	modify it under the terms of the 
+	<a href="http://www.gnu.org/copyleft/lgpl.html">GNU Lesser General Public</a>
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or any later version.</p>
+
+
+	<h2 id="details">Details</h2>
+	<div class="columns">
+	<div class="two-columns">
+		<p>Here is a raw description of vgsdk features and structure.</p>
+		
+		<h3 class="enlighted">Core Components</h3>
+		<ul>
+			<li><strong>vgBase</strong>: standard typedefs, definitions
+			and includes to deal with compiler or platform configurations issues</li>
+			<li><strong>vgM</strong>: some basic linear algebra and geometry</li>
+			<li><strong>vgd</strong>: the data repository stored in a scene graph</li>
+			<li><strong>vgDebug</strong> a simple logging system</li>
+		</ul>
+
+		<h3 class="enlighted">Algorithms</h3>
+		<ul>
+			<li><strong>vgAlg</strong>: a collection of algorithms that could be applied
+			on a node of the scene graph (compute topology from a triangle set)</li>
+		</ul>
+
+		<h3 class="enlighted">Images</h3>
+		<ul>
+			<li><strong>vgITK</strong></li>
+			<li><strong>OpenIL</strong>: image library encapsulated in vgd</li>
+			<li><strong>Planned</strong>: vgCairo, vgOpenIL, vgImageMagick</li>
+		</ul>
+
+		<h3 class="enlighted">Inputs &amp; Outputs</h3>
+		<ul>
+			<li><strong>vgTrian</strong>: .trian and .trian2 3D model loaders</li>
+			<li><strong>3DSMax</strong>: 7.x and 9.x importer/exporter</li>
+			<li><strong>Planned</strong>: vgCollada</li>
+		</ul>
+
+		<h3 class="enlighted">Engines</h3>
+		<ul>
+			<li><strong>vge</strong>: evaluation of scene graph</li>
+			<li><strong>vgeGL</strong>: evaluation/rendering of scene graph with OpenGL</li>
+		</ul>
+
+	</div>
+	<div class="two-columns">
+
+		<h3 class="enlighted">User Interface</h3>
+	        <ul>
+			<li><strong>vgWX</strong>: wxWidgets specialization for vgsdk</li>
+			<li><strong>Planned</strong>: gtk</li>
+		</ul>
+
+		<h3 class="enlighted">Contributions</h3>
+		<ul>
+			<li><strong>vgEgg</strong>: an incubator for external contributions</li>
+		</ul>
+
+
+		<h3 class="enlighted">Examples</h3>
+		<ul>
+			<li>Tutorials</li>
+			<li>vgsdkViewer</li>
+			<li>&hellip;</li>
+		</ul>
+
+		<h3 class="enlighted">External Dependencies</h3>
+		<ul>
+			<li><strong><a href="http://gna.org/projects/gle">gle</a></strong>: an OpenGL extension loader</li>
+			<li><strong><a href="http://gna.org/projects/gle">glo</a></strong>: an OpenGL objects library</li>
+			<li><strong><a href="http://www.boost.org/">boost</a></strong>: free peer-reviewed portable C++ source libraries</li>
+			<li><strong><a href="http://itk.org/">ITK</a></strong>: an image library</li>
+			<li><strong><a href="http://openil.sourceforge.net/">OpenIL</a></strong> an image library</li>
+			<li><strong><a href="http://www.opengl.org/">OpenGL</a></strong>: the cross-platform graphical API</li>
+			<li><strong><a href="http://www.wxwidgets.org/">wxWidgets</a></strong>: a cross-platform toolkits for user interfaces and more</li>
+			<li><strong><a href="http://sourceforge.net/projects/collada-dom">The COLLADA Document Object Model (DOM)</a></strong>: an API that provides a C++ object representation of a
+			COLLADA XML instance document</li>
+		</ul>
+
+
+	</div>
+	</div>
+
+
+	<h2 id="download">Download</h2>
+	<p>Not available yet&hellip;</p>
+	
+	<h2 id="getting-involved">Getting&nbsp;Involved</h2>
+	
+	<div class="columns">
+		<div class="two-columns">
+
+<!--
+			<h3 class="enlighted" id="mailing-lists">Mailing Lists</h3>
+			<p>For discussion about eclox, subscribe to the <a href="https://mail.gna.org/listinfo/eclox-users">user mailing list</a>
+			or browse the <a href="https://mail.gna.org/public/eclox-users/">online archives</a>.
+			For announces about eclox, subscribe to the <a href="https://mail.gna.org/listinfo/eclox-news">news mailing list</a>.</p>
+-->
+
+			<h3 class="enlighted" id="bugs-support">Bug Tracking &amp; Support Requests</h3>
+			<p>There are two online pages available for
+			<a href="https://gna.org/bugs/?group=vgsdk">bug reports</a>
+			and <a href="https://gna.org/support/?group=vgsdk">support requests</a>.</p>
+			<p>Submiters should not forget to supply a valid email address in order to receive updates.</p>
+			
+		</div>
+
+		<div class="two-columns">
+
+			<h3 class="enlighted" id="cvs">Project Details &amp; Revision Control</h3>
+			<p>The <a href="https://gna.org/projects/vgsdk">project page</a>
+			(hosted by <em><a href="http://gna.org">Gna!</a></em>)
+			holds detailed informations about developments.</p>
+			<p>Source code is not available yet&hellip;</p>
+<!--
+			<p>Source code of the software can be retrieved from the CVS repository.
+			The following command lets you retrieve the complete sources :</p>
+			<p><kbd>cvs -d :pserver:anonymous@cvs.gna.org:/cvs/eclox co eclox eclox.core eclox.core.doxygen eclox.ui eclox.help</kbd></p>
+-->
+			
+		</div>
+	</div>
+
+	<div id="footer">
+		<p><a href="http://gna.org"><img src="images/hostedbygna.png" alt="Hosted by Gna!"/></a></p>
+		<p><a href="http://validator.w3.org/check/referer">Optimized</a> for <a href="http://www.w3c.org">standards</a>.</p>
+	</div>
+</body>
+
+</html>
