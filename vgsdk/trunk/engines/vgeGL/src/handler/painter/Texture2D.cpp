@@ -5,6 +5,8 @@
 
 #include "vgeGL/handler/painter/Texture2D.hpp"
 
+#include <GL/glu.h>
+
 #include <vgd/basic/Image.hpp>
 #include <vgd/node/Texture2D.hpp>
 #include <vge/service/Painter.hpp>

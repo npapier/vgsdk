@@ -5,6 +5,8 @@
 
 #include "vgeGL/handler/processEvent/Dragger.hpp"
 
+#include <GL/glu.h>
+
 #include <vgDebug/Global.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/Location2Event.hpp>

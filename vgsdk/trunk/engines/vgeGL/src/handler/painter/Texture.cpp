@@ -367,47 +367,16 @@ const bool Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node:
 				m_texSize[0] = m_texSize[1] = m_texSize[2] = 0;
 				assert( false && "Unsupported texture dimension (!= 1,2,3)" );
 		}
-	
+
 		// Specifies texture image
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-		
-		if ( textureDimension == 1 )
-		{
-			glTexImage1D( GL_TEXTURE_1D,
-					0,
-					m_components,
-					m_texSize[0] + borderSize,
-					bHasBorder ? 1 : 0,
-					m_format,
-					m_type,
-					0
-					);
-		}
-		else if ( textureDimension == 2 )
-		{
-			glTexImage2D( GL_TEXTURE_2D,
-					0,
-					m_components,
-					m_texSize[0] + borderSize, m_texSize[1] + borderSize,
-					bHasBorder ? 1 : 0,
-					m_format,
-					m_type,
-					0
-					);
-		}
-		else
-		{
-			assert( textureDimension == 3 && "Unsupported texture dimension (!= 1,2,3)" );
-			
-			glTexImage3D( GL_TEXTURE_3D,
-				0,
-				m_components,
-				m_texSize[0] + borderSize, m_texSize[1] + borderSize, m_texSize[2] + borderSize,
-				bHasBorder ? 1 : 0,
-				m_format,
-				m_type,
-				0 );
-		}
+
+		pTexture->texImage(	0,
+							m_components,		// @todo internalFormat
+							m_texSize[0] + borderSize, m_texSize[1] + borderSize, m_texSize[2] + borderSize,
+							bHasBorder ? 1 : 0,
+							m_format,
+							m_type	);
 	}
 	
 	return false;

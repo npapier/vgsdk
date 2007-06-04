@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_VGEGL_H
-#define _VGEGL_VGEGL_H
+#ifndef _VGEGL_VGEGL_HPP
+#define _VGEGL_VGEGL_HPP
 
 /** 
  * @namespace vgeGL
@@ -17,11 +17,13 @@
 #include <vgBase/Type.hpp>
 
 
+#ifndef _VGEGL_DISABLED_GLE_
 
 #include <gle/Wrapper.hpp>
 #include <gle/WrapperGen.hpp>
 #include <gle/OpenGLExtensionsGen.hpp>
 
+#endif
 
 
 #ifdef _WIN32
@@ -40,4 +42,4 @@
 
 
 
-#endif //#ifndef _VGEGL_VGEGL_H
+#endif //#ifndef _VGEGL_VGEGL_HPP

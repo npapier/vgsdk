@@ -5,6 +5,8 @@
 
 #include "vgeGL/technique/RayCasting.hpp"
 
+#include <GL/glu.h>
+
 #include <vgd/node/Camera.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/FrontFace.hpp>
