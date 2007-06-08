@@ -66,7 +66,7 @@ struct TraverseElementVector
 	iterator end() { return m_elements.end(); }
 	const_iterator end() const { return m_elements.end(); }
 
-	vgd::node::Node *getRoot() { m_elements.begin()->first; }
+	vgd::node::Node *getRoot() { return (m_elements.begin()->first); }
 
 
 private:
@@ -114,7 +114,7 @@ struct NodeCollectorExtended : public vgd::visitor::Traverse<Visitors>
 	void	reset	( const int32 numOfNodesHint = 1024 )
 	{
 		m_traverseElementContainer.clear();
-		m_traverseElementContainer.reserve(numOfNodesHint);
+		m_traverseElementContainer.reserve( numOfNodesHint );
 	}
 	//@}
 
