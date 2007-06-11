@@ -1,4 +1,3 @@
-type		= 'shared'
-postfix		= '0-4'
-deps		= ['vgBase', 'vgDebug', 'vgm', 'vgd', 'vgAlg', 'vgTrian', 'vge', 'gle', 'glo', 'vgeGL', 'vgWX', 
-				'vgnf' ]
+type		= 'none'
+deps		= [	'dependencies', 'core', 'algorithms', 'io', 'engines', 'ui', 'images', 'contributions' ]
+### @todo examples...

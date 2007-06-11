@@ -1,3 +1,4 @@
 type		= 'shared'
-postfix		= '0-4'
-uses		= ['wx2-4']
+version		= '0-4'
+uses		= ['wx']
+deps		= ['../vgBase']
