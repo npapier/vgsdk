@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -503,7 +503,7 @@ typedef Vector<	double, 2 > Vec2d;
 /**
  * @brief 3D vector class used to store 3D vectors and points.
  *
- * This class is used throughout VGL for arguments and return values.
+ * This class is used throughout vgsdk for arguments and return values.
  * 
  * @ingroup LinearAlgebra
  */
@@ -526,7 +526,7 @@ typedef Vector<	float, 2 > Vec2f;
 /**
  * @brief 3D vector class used to store 3D vectors and points.
  *
- * This class is used throughout VGL for arguments and return values.
+ * This class is used throughout vgsdk for arguments and return values.
  * 
  * @ingroup LinearAlgebra
  */
@@ -549,7 +549,7 @@ typedef Vector<	int32, 2 > Vec2i;
 /**
  * @brief 3D vector class used to store 3D vectors and points.
  *
- * This class is used throughout VGL for arguments and return values.
+ * This class is used throughout vgsdk for arguments and return values.
  * 
  * @ingroup LinearAlgebra
  */
