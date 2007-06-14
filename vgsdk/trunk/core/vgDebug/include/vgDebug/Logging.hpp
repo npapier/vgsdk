@@ -6,6 +6,9 @@
 #ifndef _VGDEBUG_LOGGING_H
 #define _VGDEBUG_LOGGING_H
 
+#include <iostream>
+#include <fstream>
+
 #include "vgDebug/vgDebug.hpp"
 
 #include "vgDebug/ILogging.hpp"
@@ -46,28 +49,36 @@ struct VGDEBUG_API Logging : public ILogging
 	 */
 	//@{
 	void logFatalError	( const char *szFormat, ... ) const;
-	void logError			( const char *szFormat, ... ) const;
+	void logError		( const char *szFormat, ... ) const;
 	void logWarning		( const char *szFormat, ... ) const;
 	void logMessage		( const char *szFormat, ... ) const;
 
 	void logVerbose		( const char *szFormat, ... ) const;
-	void logStatus			( const char *szFormat, ... ) const;
+	void logStatus		( const char *szFormat, ... ) const;
 
-	void logSysError		( const char *szFormat, ... ) const;
+	void logSysError	( const char *szFormat, ... ) const;
 
-	void logDebug			( const char *szFormat, ... ) const;
-	void logTrace			( const char *szFormat, ... ) const;
+	void logDebug		( const char *szFormat, ... ) const;
+	void logTrace		( const char *szFormat, ... ) const;
 
-	void flush				() const;
+	void flush			() const;
 	//@}
-	
-	
-	
+
+
+
 private:
 	/**
 	 * @brief Keep a reference to the wxLogger mapped by this class.
 	 */
-	wxLog *m_pLogger;	
+	wxLog *m_pLogger;
+
+	static int m_instanceCount;
+
+	std::ofstream*	m_errFile;
+	std::streambuf*	m_cerrBuf;
+
+	std::ofstream*	m_outFile;
+	std::streambuf*	m_coutBuf;
 };
 
 

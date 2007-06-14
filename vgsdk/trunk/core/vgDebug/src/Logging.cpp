@@ -18,6 +18,26 @@ namespace vgDebug
 Logging::Logging() :
 	m_pLogger( new wxLogGui ) //wxLogChain(...) new wxLogGui() new wxLogStderr()
 {
+	if ( m_instanceCount == 0 )
+	{
+		// redirect cerr to cerr.txt file
+		m_errFile = new std::ofstream("cerr.txt");
+		std::streambuf* errBuf = m_errFile->rdbuf();
+
+		m_cerrBuf = std::cerr.rdbuf();
+		std::cerr.rdbuf(errBuf);
+		
+		// redirect cout to cout.txt file
+		m_outFile = new std::ofstream("cout.txt");
+		std::streambuf* outBuf = m_outFile->rdbuf();
+
+		m_coutBuf = std::cout.rdbuf();
+		std::cout.rdbuf(outBuf);
+	}
+
+	++m_instanceCount;
+
+	//
 	wxLog *pLogBak = wxLog::SetActiveTarget(m_pLogger);	
 	
 	logDebug("Create a new logger.");
@@ -29,6 +49,22 @@ Logging::Logging() :
 
 Logging::~Logging()
 {
+	if ( m_instanceCount == 1 )
+	{
+		// restores cerr and releases file
+		std::cerr.rdbuf(m_cerrBuf);
+
+		delete m_errFile;
+
+		// restore cout and release file
+		std::cout.rdbuf(m_coutBuf);
+
+		delete m_outFile;
+	}
+
+	--m_instanceCount;
+	
+	//
 	logDebug("Destroy a logger.");
 	
 	// Destroy logger.
@@ -201,6 +237,10 @@ void Logging::flush() const
 
 	wxLog::SetActiveTarget(pLogBak);
 }
+
+
+
+int Logging::m_instanceCount = 0;
 
 
 
