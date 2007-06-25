@@ -21,7 +21,7 @@ namespace pass
 /**
  * @brief A simple evaluation of each traverse elements.
  */
-struct ForEach : public Pass
+struct VGE_CLASS_API ForEach : public Pass
 {
 	VGE_API virtual void apply(	vge::technique::Technique * technique, vge::engine::Engine *engine, 
 								vge::visitor::TraverseElementVector* traverseElements,

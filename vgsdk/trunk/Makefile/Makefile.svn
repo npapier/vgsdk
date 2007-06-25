@@ -14,7 +14,7 @@ checkout:
 	# vgsdk
 	svn $(REVISION) co $(MY_SVNROOT)/SrcLib/vgsdk/trunk .
 
-update diff:
+update diff status:
 	# dependencies
 	cd dependencies;		make -f Makefile.root '$@';
 	# vgsdk

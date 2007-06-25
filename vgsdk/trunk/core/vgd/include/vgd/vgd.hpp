@@ -152,15 +152,28 @@
 
 #ifdef _WIN32
 
-   #ifdef VGD_EXPORTS
-   #define VGD_API	__declspec(dllexport)
-   #else
-   #define VGD_API	__declspec(dllimport)
-   #endif
+	#ifdef VGD_EXPORTS
+	#define VGD_API	__declspec(dllexport)
+	#else
+	#define VGD_API	__declspec(dllimport)
+	#endif
+
+	#define VGD_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGD_EXPORTS
+	#define VGD_API __attribute__ ((visibility("default")))
+	#define VGD_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGD_API __attribute__ ((visibility("hidden")))
+	#define VGD_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
 
 #else
 
-    #define VGD_API
+	#define VGD_API
+	#define VGD_CLASS_API
 
 #endif
 

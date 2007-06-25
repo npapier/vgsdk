@@ -28,18 +28,30 @@
 
 #ifdef _WIN32
 
-   #ifdef VGEGL_EXPORTS
-   #define VGEGL_API	__declspec(dllexport)
-   #else
-   #define VGEGL_API	__declspec(dllimport)
-   #endif
+	#ifdef VGEGL_EXPORTS
+	#define VGEGL_API	__declspec(dllexport)
+	#else
+	#define VGEGL_API	__declspec(dllimport)
+	#endif
+
+	#define VGEGL_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGEGL_EXPORTS
+	#define VGEGL_API __attribute__ ((visibility("default")))
+	#define VGEGL_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGEGL_API __attribute__ ((visibility("hidden")))
+	#define VGEGL_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
 
 #else
 
-    #define VGEGL_API
+	#define VGEGL_API
+	#define VGEGL_CLASS_API
 
 #endif
-
 
 
 #endif //#ifndef _VGEGL_VGEGL_HPP

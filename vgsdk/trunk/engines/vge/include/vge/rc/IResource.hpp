@@ -18,7 +18,7 @@ namespace rc
 
 
 
-struct IResource
+struct VGE_CLASS_API IResource
 {
 	/**
 	 * @brief Virtual destructor

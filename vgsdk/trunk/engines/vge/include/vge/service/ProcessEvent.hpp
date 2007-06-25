@@ -23,7 +23,7 @@ namespace service
 
 
 
-struct ProcessEvent : public Service
+struct VGE_CLASS_API ProcessEvent : public Service
 {
 	META_SERVICE_HPP( VGE_API, ProcessEvent );
 };

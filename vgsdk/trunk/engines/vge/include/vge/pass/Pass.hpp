@@ -36,7 +36,7 @@ namespace pass
 /**
  * @brief Pass describes a single pass of a technique evaluation strategy.
  */
-struct Pass
+struct VGE_CLASS_API Pass
 {
 	/**
 	 * @brief Virtual destructor

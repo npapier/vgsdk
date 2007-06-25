@@ -28,15 +28,28 @@
 
 #ifdef _WIN32
 
-   #ifdef VGWX_EXPORTS
-   #define VGWX_API	__declspec(dllexport)
-   #else
-   #define VGWX_API	__declspec(dllimport)
-   #endif
+	#ifdef VGWX_EXPORTS
+	#define VGWX_API	__declspec(dllexport)
+	#else
+	#define VGWX_API	__declspec(dllimport)
+	#endif
+
+	#define VGWX_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGWX_EXPORTS
+	#define VGWX_API __attribute__ ((visibility("default")))
+	#define VGWX_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGWX_API __attribute__ ((visibility("hidden")))
+	#define VGWX_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
 
 #else
 
-    #define VGWX_API
+	#define VGWX_API
+	#define VGWX_CLASS_API
 
 #endif
 

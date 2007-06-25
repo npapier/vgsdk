@@ -20,15 +20,28 @@
 
 #ifdef _WIN32
 
-   #ifdef VGITK_EXPORTS
-   #define VGITK_API	__declspec(dllexport)
-   #else
-   #define VGITK_API	__declspec(dllimport)
-   #endif
+	#ifdef VGITK_EXPORTS
+	#define VGITK_API	__declspec(dllexport)
+	#else
+	#define VGITK_API	__declspec(dllimport)
+	#endif
+
+	#define VGITK_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGITK_EXPORTS
+	#define VGITK_API __attribute__ ((visibility("default")))
+	#define VGITK_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGITK_API __attribute__ ((visibility("hidden")))
+	#define VGITK_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
 
 #else
 
-    #define VGITK_API
+	#define VGITK_API
+	#define VGITK_CLASS_API
 
 #endif
 

@@ -21,7 +21,7 @@ namespace technique
 /**
  * @brief The default technique to render opaque and transparent object.
  */
-struct Main : public Technique
+struct VGEGL_CLASS_API Main : public Technique
 {
 	VGEGL_API void apply( vgeGL::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector * /*traverseElements*/ );
 };

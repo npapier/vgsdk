@@ -44,15 +44,28 @@
 
 #ifdef _WIN32
 
-   #ifdef VGM_EXPORTS
-   #define VGM_API	__declspec(dllexport)
-   #else
-   #define VGM_API	__declspec(dllimport)
-   #endif
+	#ifdef VGM_EXPORTS
+	#define VGM_API	__declspec(dllexport)
+	#else
+	#define VGM_API	__declspec(dllimport)
+	#endif
+
+	#define VGM_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGM_EXPORTS
+	#define VGM_API __attribute__ ((visibility("default")))
+	#define VGM_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGM_API __attribute__ ((visibility("hidden")))
+	#define VGM_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
 
 #else
 
-    #define VGM_API
+	#define VGM_API
+	#define VGM_CLASS_API
 
 #endif
 

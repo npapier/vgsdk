@@ -6,6 +6,6 @@ checkout:
 	svn $(REVISION) co http://svn.gna.org/svn/gle/gle/trunk gle
 	svn $(REVISION) co http://svn.gna.org/svn/gle/glo/trunk glo
 
-update diff:
+update diff status:
 	cd gle;			svn '$@';
 	cd glo;			svn '$@';

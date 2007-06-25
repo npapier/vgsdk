@@ -23,7 +23,7 @@ namespace service
 
 
 
-struct Painter : public Service
+struct VGE_CLASS_API Painter : public Service
 {
 	META_SERVICE_HPP( VGE_API, Painter );
 };

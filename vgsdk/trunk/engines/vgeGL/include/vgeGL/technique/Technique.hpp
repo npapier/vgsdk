@@ -28,7 +28,7 @@ namespace technique
 /**
  * @brief Base class for all technique using OpenGL.
  */
-struct Technique : public vge::technique::Technique
+struct VGEGL_CLASS_API Technique : public vge::technique::Technique
 {
 	/**
 	 * @brief Default constructor

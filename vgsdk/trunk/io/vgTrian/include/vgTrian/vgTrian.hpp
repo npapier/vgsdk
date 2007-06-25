@@ -18,15 +18,28 @@
 
 #ifdef _WIN32
 
-   #ifdef VGTRIAN_EXPORTS
-   #define VGTRIAN_API	__declspec(dllexport)
-   #else
-   #define VGTRIAN_API	__declspec(dllimport)
-   #endif
+	#ifdef VGTRIAN_EXPORTS
+	#define VGTRIAN_API	__declspec(dllexport)
+	#else
+	#define VGTRIAN_API	__declspec(dllimport)
+	#endif
+
+	#define VGTRIAN_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGTRIAN_EXPORTS
+	#define VGTRIAN_API __attribute__ ((visibility("default")))
+	#define VGTRIAN_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGTRIAN_API __attribute__ ((visibility("hidden")))
+	#define VGTRIAN_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
 
 #else
 
-    #define VGTRIAN_API
+	#define VGTRIAN_API
+	#define VGTRIAN_CLASS_API
 
 #endif
 

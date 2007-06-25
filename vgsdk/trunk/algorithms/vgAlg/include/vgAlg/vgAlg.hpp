@@ -20,15 +20,28 @@
 
 #ifdef _WIN32
 
-   #ifdef VGALG_EXPORTS
-   #define VGALG_API	__declspec(dllexport)
-   #else
-   #define VGALG_API	__declspec(dllimport)
-   #endif
+	#ifdef VGALG_EXPORTS
+	#define VGALG_API	__declspec(dllexport)
+	#else
+	#define VGALG_API	__declspec(dllimport)
+	#endif
+
+	#define VGALG_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGALG_EXPORTS
+	#define VGALG_API __attribute__ ((visibility("default")))
+	#define VGALG_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGALG_API __attribute__ ((visibility("hidden")))
+	#define VGALG_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
 
 #else
 
-    #define VGALG_API
+	#define VGALG_API
+	#define VGALG_CLASS_API
 
 #endif
 

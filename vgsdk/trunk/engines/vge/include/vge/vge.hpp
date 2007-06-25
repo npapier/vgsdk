@@ -17,21 +17,32 @@
 #include <vgBase/Type.hpp>
 
 
-
 #ifdef _WIN32
 
-   #ifdef VGE_EXPORTS
-   #define VGE_API	__declspec(dllexport)
-   #else
-   #define VGE_API	__declspec(dllimport)
-   #endif
+	#ifdef VGE_EXPORTS
+	#define VGE_API __declspec(dllexport)
+	#else
+	#define VGE_API __declspec(dllimport)
+	#endif
+	
+	#define VGE_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGE_EXPORTS
+	#define VGE_API __attribute__ ((visibility("default")))
+	#define VGE_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGE_API __attribute__ ((visibility("hidden")))
+	#define VGE_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
 
 #else
 
 	#define VGE_API
+	#define VGE_CLASS_API
 
 #endif
-
 
 
 #endif //#ifndef _VGE_VGE_H
