@@ -134,6 +134,11 @@ h3#cvs
 	background-image: url("24/development.png");
 }
 
+h3#documentation
+{
+	background-image: url("24/books.png");
+}
+
 li.enlighted
 {
 	background-repeat: no-repeat;
