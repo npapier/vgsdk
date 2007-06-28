@@ -38,6 +38,7 @@ namespace vgWX
  * 
  * - Provide a contextual menu to be able to write the scene graph in dot file and change things like drawing 
  * 	style (vgd::node::DrawStyle), the lighting model (vgd::node::LightModel) and so on. It is disabled by default.
+ * - do some stuffs when the application becomes idle (see onIdle method)
  * 
  * @ingroup g_vgWXGroup
  */
@@ -143,10 +144,10 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	/**
 	 * @brief Construct the contextual menu.
 	 * 
-	 * @param xMouse		x-coordinate for mouse
-	 * @param yMouse		y-coordinate for mouse
+	 * @remarks A ray casting must have been done just before calling this method. So informations about ray casting
+	 * could be found from getRayCastingTechnique()
 	 */
-	virtual wxMenu *createContextualMenu( const int32 xMouse, const int32 yMouse ) /*const*/;
+	virtual wxMenu *createContextualMenu() const;
 
 	//@}
 
@@ -157,11 +158,22 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 
 
 
+	/**
+	 * @brief This method is called when the application becomes idle.
+	 * 
+	 * @return true to request more idle events (a continuous stream of idle events), false to receive only one idle event.
+	 * 
+	 * @todo vgd::node::IdleSensor
+	 */
+	virtual const bool onIdle();
+
+
+
 	// Overrides wxWidgets method
 	bool Destroy();
-	
+
 	/**
-	 * @name wxWidgets events processing methods.
+	 * @name wxWidgets events processing methods
 	 */
 	//@{
 private:
@@ -193,6 +205,13 @@ private:
 	 * @brief Handles wxMenuEvent.
 	 */
 	void OnCtxMenu			( wxCommandEvent& event );
+
+
+
+	/**
+	 * @brief Handles wxIdleEvent.
+	 */
+	void OnIdle( wxIdleEvent& event );
 
 
 

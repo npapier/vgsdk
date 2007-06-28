@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 #endif
 
 //#include <vgDebug/Global.hpp>
+#include <vgd/node/TriSet.hpp>
 #include <vgd/visitor/predicate/ByDirtyFlag.hpp>
 #include <vgeGL/engine/Engine.hpp>
 
@@ -35,6 +36,8 @@ BEGIN_EVENT_TABLE( Canvas, wxGLCanvas )
    
 	EVT_MOUSE_EVENTS		( Canvas::OnMouseEvent	)
 	EVT_MENU_RANGE			( wxID_HIGHEST + 1024, wxID_HIGHEST + 2048, Canvas::OnCtxMenu )
+	
+	EVT_IDLE				( Canvas::OnIdle					)
 
 	//EVT_ENTER_WINDOW		( Canvas::OnEnterWindow )
 	//EVT_KILL_FOCUS		( Canvas::OnKillFocus	)
@@ -113,6 +116,7 @@ Canvas::~Canvas()
 		if ( enableVGSDK() )
 		{
 			getGLEngine()->getGLManager().clear();
+			//getGLEngine()->getGLSLManager().clear();
 		}
 		else
 		{
@@ -141,9 +145,34 @@ const bool Canvas::isContextualMenuEnabled() const
 
 
 
-wxMenu *Canvas::createContextualMenu( const int32 /*xMouse*/, const int32 /*yMouse*/ )
+wxMenu *Canvas::createContextualMenu() const
 {
+	// Retrieves information from raycasting
+	const vgeGL::technique::RayCasting& rayCasting = getRayCastingTechnique();
+	vgd::node::Node * node = rayCasting.getNearestHitNode();
+
+	// Contextual menu creation
 	wxMenu *ctxMenu = detail::createContextualMenu( this );
+
+	if ( node != 0 )
+	{
+		wxMenu *subCtxMenu = detail::createContextualMenu(
+			this, vgd::dynamic_pointer_cast< vgd::node::TriSet >( node->shpFromThis() ) );
+	
+		if ( subCtxMenu->GetMenuItemCount() >  0 )
+		{
+			ctxMenu->AppendSeparator();
+			
+			std::string menuName = "Algorithms and io on triset : ";
+			menuName += node->getName();
+
+			ctxMenu->Append( detail::wxID_CTX_ALGORITHMS_AND_IO, wxConvertMB2WX(menuName.c_str()), subCtxMenu );
+		}
+		else
+		{
+			delete subCtxMenu;
+		}
+	}
 
 	return ctxMenu;
 }
@@ -235,6 +264,13 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 
 
+const bool Canvas::onIdle()
+{
+	return false;
+}
+
+
+
 bool Canvas::Destroy()
 {
 	// Enables vgsdk
@@ -243,7 +279,7 @@ bool Canvas::Destroy()
 
 	// Cleans the scene graph
 	setRoot( vgd::node::Group::create("empty") );
-	
+
 	return wxGLCanvas::Destroy();
 }
 
@@ -310,8 +346,11 @@ void Canvas::OnMouseEvent( wxMouseEvent& event )
 {
 	if ( isContextualMenuEnabled() && event.RightUp() )
 	{
-		wxMenu *ctxMenu = createContextualMenu( event.GetX(), event.GetY() );
-		
+		// Cast a ray
+		/*vgd::node::Node *nodeUnderMouse =*/castRay( event.GetX(), event.GetY() );
+
+		wxMenu *ctxMenu = createContextualMenu();
+
 		PopupMenu( ctxMenu, event.GetX(), event.GetY() );
 		
 		delete ctxMenu;
@@ -322,9 +361,29 @@ void Canvas::OnMouseEvent( wxMouseEvent& event )
 
 void Canvas::OnCtxMenu( wxCommandEvent& event )
 {
-	detail::processContextualMenuEvent( this, event );
+	// Retrieves information from raycasting
+	const vgeGL::technique::RayCasting& rayCasting = getRayCastingTechnique();
+	vgd::node::Node * node = rayCasting.getNearestHitNode();
 
+	// Processes event	
+	detail::processContextualMenuEvent( this, event );
+	
+	if ( node != 0 )
+	{	
+		detail::processContextualMenuEvent(	this, event,
+											vgd::dynamic_pointer_cast< vgd::node::TriSet >( node->shpFromThis() ) );
+	}
+
+	//
 	refresh();
+}
+
+
+
+void Canvas::OnIdle( wxIdleEvent& event )
+{
+	const bool requestMoreIdleEvent = onIdle();
+	event.RequestMore( requestMoreIdleEvent );
 }
 
 

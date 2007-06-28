@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,10 +7,14 @@
 
 #include <wx/menu.h>
 
+#include <vgAlg/node/TriSet.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/LightModel.hpp>
+#include <vgd/node/TriSet.hpp>
+#include <vgeGL/engine/Engine.hpp>
 #include <vgeGL/technique/Main.hpp>
 //#include <vgeGL/technique/MainGLSL.hpp>
+#include <vgTrian/Loader.hpp>
 
 #include "vgWX/BasicViewer.hpp"
 
@@ -23,7 +27,7 @@ namespace detail
 {
 
 
-wxMenu *createContextualMenu( Canvas * canvas )
+wxMenu *createContextualMenu( const Canvas * canvas )
 {
 	using namespace vgd::node;
 	
@@ -38,8 +42,20 @@ wxMenu *createContextualMenu( Canvas * canvas )
 	
 	ctxMenu->AppendSeparator();
 
+	/**@todo Uncomments this code 
+	// GLSL
+	subMenu = new wxMenu;
+
+	subMenu->AppendCheckItem( wxID_CTX_GLSL_ENABLE, _T("&GLSL usage enabled"), _T("vgsdk would use the Open(GL) (S)hading (L)anguage") ); 
+
+	subMenu->Check( wxID_CTX_GLSL_ENABLE, canvas->getGLEngine()->isGLSLEnabled() );
+
+	ctxMenu->Append( wxID_CTX_GLSL, _T("GLSL"), subMenu );
+
+	ctxMenu->AppendSeparator();	*/
+
 	// ViewAll
-	if ( dynamic_cast< vgWX::BasicViewer * >( canvas ) )
+	if ( dynamic_cast< const vgWX::BasicViewer * >( canvas ) )
 	{
 		ctxMenu->Append( wxID_CTX_VIEWALL, _T("&View all") );
 		
@@ -280,10 +296,35 @@ wxMenu *createContextualMenu( Canvas * canvas )
 
 
 
+wxMenu *createContextualMenu( const Canvas * canvas, vgd::Shp< vgd::node::VertexShape > shape )
+{
+	wxMenu *ctxMenu = new wxMenu;
+	
+	// ALGORITHMS & IO
+	using vgd::node::TriSet;
+
+	vgd::Shp< TriSet > triset = vgd::dynamic_pointer_cast< TriSet >( shape );
+
+	if ( triset )
+	{
+		ctxMenu->AppendCheckItem(	wxID_CTX_ALGORITHMS_INVERT_TRIANGLE_ORIENTATION,
+									_T("&Invert triangle orientation"),
+									_T("Invert triangle orientation of the selected shape.") );
+
+		ctxMenu->AppendCheckItem(	wxID_CTX_IO_SAVETRIAN,
+									_T("&Save triset.trian"),
+									_T("Save triangle shape into triset.trian file.") );				
+	}
+	
+	return ctxMenu;
+}
+
+
+
 void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event )
 {
 	using namespace vgd::node;
-	
+
 	switch ( event.GetId() )
 	{
 		// writeGraphviz
@@ -291,6 +332,16 @@ void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event )
 			canvas->writeGraphviz( false );
 			break;
 
+	/**@todo Uncomments this code
+		// GLSL
+		case wxID_CTX_GLSL_ENABLE:
+		{
+			const bool isGLSLEnabled = canvas->getGLEngine()->isGLSLEnabled();
+			
+			canvas->getGLEngine()->enableGLSL( !isGLSLEnabled );
+			break;
+		}
+*/
 		// ViewAll
 		case wxID_CTX_VIEWALL:
 		{
@@ -514,10 +565,45 @@ void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event )
 			break;
 		}
 	
-		// default:
+		//default:
 		// nothing to do
 	}
+
+	canvas->refresh();
+}
+
+
+
+void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event, vgd::Shp< vgd::node::VertexShape > shape )
+{
+	using vgd::node::TriSet;
+
+	vgd::Shp< TriSet > triset = vgd::dynamic_pointer_cast< TriSet >( shape );
 	
+	switch ( event.GetId() )
+	{
+		// ALGORITHMS
+		case wxID_CTX_ALGORITHMS_INVERT_TRIANGLE_ORIENTATION:
+			if ( triset )
+			{
+				vgAlg::node::invertTriangleOrientation( triset );
+				triset->computeNormals();
+			}
+			break;
+		
+		// IO
+		case wxID_CTX_IO_SAVETRIAN:
+			if ( triset )
+			{
+				vgTrian::Loader ioTrian;
+				ioTrian.saveTrian( triset, "triset.trian" );
+			}
+			break;
+
+		//default:
+		// nothing to do
+	}
+
 	canvas->refresh();
 }
 
