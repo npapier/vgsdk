@@ -1,6 +1,6 @@
-USE		=	['boost','openil','opengl','glu','glo_0-3','gle_0-3']
-DEF		=	['VGD_EXPORTS', 'VGEGL_EXPORTS']
-LIB		=	['vgd_0-4','vgDebug_0-4','vge_0-4','vgeGL_0-4','vgm_0-4']
+USE		=	[ 'boost', 'openil', 'opengl', 'glu', 'glo_0-3', 'gle_0-3' ]
+DEF		=	[ 'VGD_EXPORTS', 'VGEGL_EXPORTS' ]
+LIB		=	[ 'vgd_0-4', 'vgDebug_0-4', 'vge_0-4', 'vgeGL_0-4', 'vgm_0-4' ]
 TYPE	=	'shared'
 VERSION =	'0-4'
 import os
