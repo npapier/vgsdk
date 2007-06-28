@@ -1,12 +1,12 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, Sylvain Thery.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Sylvain Thery
 // Author Nicolas Papier
 // 23-12-2004 : Integration of MeshBase and MeshTopology from Sylvain Thery was done.
 
-#ifndef _VGALG_MESHBASE_H
-#define _VGALG_MESHBASE_H
+#ifndef _VGALG_MESHBASE_HPP
+#define _VGALG_MESHBASE_HPP
 
 #include <vector>
 #include <vgd/node/TriSet.hpp>
@@ -282,4 +282,4 @@ public:
 
 } // namespace vgAlg
 
-#endif //#ifndef _VGALG_MESHBASE_H
+#endif //#ifndef _VGALG_MESHBASE_HPP
