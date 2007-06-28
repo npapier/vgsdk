@@ -92,7 +92,7 @@ struct VGE_API SceneManager
 	 * @return The desired node or a smart pointer to null.
 	 */
 	template< typename nodeType >
-	vgd::Shp< nodeType > findFirstByType()
+	vgd::Shp< nodeType > findFirstByType() const
 	{
 		vgd::Shp< nodeType > retVal;
 
@@ -113,7 +113,7 @@ struct VGE_API SceneManager
 	 * @return The desired node or a smart pointer to null.
 	 */
 	template< typename nodeType >
-	vgd::Shp< nodeType > findFirstByKindOfType()
+	vgd::Shp< nodeType > findFirstByKindOfType() const
 	{
 		vgd::Shp< nodeType > retVal;
 
@@ -135,7 +135,7 @@ struct VGE_API SceneManager
 	 * 
 	 * @return The desired node or a smart pointer to null.
 	 */
-	vgd::Shp< vgd::node::Node > findFirstByName( const std::string name );
+	vgd::Shp< vgd::node::Node > findFirstByName( const std::string name ) const;
 	
 	/**
 	 * @brief Search the first node with name that match a regular expression.
@@ -144,7 +144,7 @@ struct VGE_API SceneManager
 	 * 
 	 * @return The desired node or a smart pointer to null.
 	 */
-	vgd::Shp< vgd::node::Node > findFirstByRegex( const std::string regexName );
+	vgd::Shp< vgd::node::Node > findFirstByRegex( const std::string regexName ) const;
 	
 	/**
 	 * @brief Search the first node with shared pointer (vgd::Shp()) that match a reference.
@@ -152,8 +152,10 @@ struct VGE_API SceneManager
 	 * @param reference		reference to search.
 	 * 
 	 * @return The desired node or a smart pointer to null.
+	 * 
+	 * @deprecated
 	 */
-	vgd::Shp< vgd::node::Node > findFirstByReference( const vgd::node::Node* reference );	
+	vgd::Shp< vgd::node::Node > findFirstByReference( const vgd::node::Node* reference ) const;	
 	//@}
 
 
@@ -194,7 +196,7 @@ struct VGE_API SceneManager
 
 
 	/**
-	 * @name Debug service.
+	 * @name Debug service
 	 */
 	//@{
 	

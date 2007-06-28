@@ -53,7 +53,7 @@ vgd::Shp< vgd::node::Group > SceneManager::setRoot( vgd::Shp< vgd::node::Group >
 
 
 
-vgd::Shp< vgd::node::Node > SceneManager::findFirstByName( const std::string name )
+vgd::Shp< vgd::node::Node > SceneManager::findFirstByName( const std::string name ) const
 {
 	vgd::Shp< vgd::node::Node >							retVal;
 
@@ -70,7 +70,7 @@ vgd::Shp< vgd::node::Node > SceneManager::findFirstByName( const std::string nam
 
 
 
-vgd::Shp< vgd::node::Node > SceneManager::findFirstByRegex( const std::string regexName )
+vgd::Shp< vgd::node::Node > SceneManager::findFirstByRegex( const std::string regexName ) const
 {
 	vgd::Shp< vgd::node::Node >							retVal;
 
@@ -87,7 +87,7 @@ vgd::Shp< vgd::node::Node > SceneManager::findFirstByRegex( const std::string re
 
 
 
-vgd::Shp< vgd::node::Node > SceneManager::findFirstByReference( const vgd::node::Node* reference )
+vgd::Shp< vgd::node::Node > SceneManager::findFirstByReference( const vgd::node::Node* reference ) const
 {
 	vgd::Shp< vgd::node::Node >							retVal;
 

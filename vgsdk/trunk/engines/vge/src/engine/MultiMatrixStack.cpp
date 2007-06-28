@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -36,9 +36,9 @@ void MultiMatrixStack::resize( const uint32 size )
 
 
 
-int32 MultiMatrixStack::size() const
+uint32 MultiMatrixStack::size() const
 {
-	return ( m_stacks.size() );
+	return static_cast<uint32>( m_stacks.size() );
 }
 
 
@@ -60,9 +60,9 @@ bool MultiMatrixStack::isEmpty( const int32 index ) const
 
 
 
-int32 MultiMatrixStack::sizeOf( const int32 index ) const
+uint32 MultiMatrixStack::sizeOf( const int32 index ) const
 {
-	return ( m_stacks[index].size() );
+	return static_cast<uint32>( m_stacks[index].size() );
 }
 
 
@@ -99,8 +99,8 @@ void MultiMatrixStack::push( const int32 index )
 
 void MultiMatrixStack::pushAll()
 {
-	for(	uint32	i		= 0,
-						iMax	= m_stacks.size();
+	for(	int32	i		= 0,
+					iMax	= m_stacks.size();
 			i < iMax;
 			++i )
 	{
@@ -129,8 +129,8 @@ bool MultiMatrixStack::popAll()
 {
 	bool bRetVal(	true	);
 
-	for(	uint32	i		= 0,
-						iMax	= m_stacks.size();
+	for(	int32	i		= 0,
+					iMax	= m_stacks.size();
 			i < iMax;
 			++i )
 	{

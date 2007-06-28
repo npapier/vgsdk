@@ -1,15 +1,14 @@
-// VGSDK - Copyright (C) 2004, IRCAD.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_ENGINE_MULTIMATRIXSTACK_H
-#define _VGE_ENGINE_MULTIMATRIXSTACK_H
-
-#include "vge/vge.hpp"
+#ifndef _VGE_ENGINE_MULTIMATRIXSTACK_HPP
+#define _VGE_ENGINE_MULTIMATRIXSTACK_HPP
 
 #include <vector>
 #include <vgm/Matrix.hpp>
+#include "vge/vge.hpp"
 
 
 
@@ -46,7 +45,7 @@ struct VGE_API MultiMatrixStack
 	/**
 	 * @brief Returns the number of matrix stacks
 	 */
-	int32	size() const;
+	uint32	size() const;
 
 	/**
 	 * @brief Resets completely the specified stack.
@@ -73,7 +72,7 @@ struct VGE_API MultiMatrixStack
 	 * 
 	 * @return the number of elements in the stack.
 	 */
-	int32 sizeOf( const int32 index = 0 ) const;
+	uint32 sizeOf( const int32 index = 0 ) const;
 
 	/**
 	 * @brief Sets the top of the stack.
@@ -165,4 +164,4 @@ private:
 
 } // namespace vge
 
-#endif //#ifndef _VGE_ENGINE_MULTIMATRIXSTACK_H
+#endif //#ifndef _VGE_ENGINE_MULTIMATRIXSTACK_HPP
