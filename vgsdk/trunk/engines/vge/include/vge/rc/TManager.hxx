@@ -84,7 +84,7 @@ const bool TManager< KeyType >::add( const KeyType& key, glo::IResource *resourc
 	assert( resource != 0 && "Null pointer" );
 
 	vgd::Shp< ResourceContainer > value( new ResourceContainer(resource) );
-	std::pair< ResourcesMap::iterator, bool > retVal = m_resources.insert( ResourcesValueType(key, value) );
+	std::pair< typename ResourcesMap::iterator, bool > retVal = m_resources.insert( ResourcesValueType(key, value) );
 
 	return retVal.second;
 }
@@ -94,7 +94,7 @@ const bool TManager< KeyType >::add( const KeyType& key, glo::IResource *resourc
 template< typename KeyType >
 const bool TManager< KeyType >::remove( const KeyType& key )
 {
-	ResourcesMap::iterator iter = m_resources.find( key );
+	typename ResourcesMap::iterator iter = m_resources.find( key );
 
 	if ( iter != m_resources.end() )
 	{
@@ -126,7 +126,7 @@ void TManager< KeyType >::clear()
 template< typename KeyType >
 glo::IResource* TManager< KeyType >::getAbstract( const KeyType& key )
 {
-	ResourcesMap::iterator iter = m_resources.find( key );
+	typename ResourcesMap::iterator iter = m_resources.find( key );
 
 	if ( iter != m_resources.end() )
 	{
