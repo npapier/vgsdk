@@ -122,9 +122,7 @@ struct VGEGL_API RayCasting : public Technique
 	/**
 	 * @brief Returns the first node from the nearest hit.
 	 * 
-	 * @pre getHitsSize() != 0
-	 * 
-	 * @return a reference to the node or 0 if no node is in the hit.
+	 * @return a reference to the node or 0 no hit have been generated.
 	 */
 	vgd::node::Node*	getNearestHitNode() const;
 

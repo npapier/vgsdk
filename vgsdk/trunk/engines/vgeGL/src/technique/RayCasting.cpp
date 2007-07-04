@@ -134,18 +134,27 @@ const vgeGL::basic::Hit& RayCasting::getFarthestHit() const
 
 vgd::node::Node* RayCasting::getNearestHitNode() const
 {
-	const vgeGL::basic::Hit& hit( getNearestHit() );
-	
 	vgd::node::Node *pNode;
-	if ( hit.stackNode().size() >= 1 )
+
+	if ( getHitsSize() > 0 )
 	{
-		pNode = *(hit.stackNode().begin());
+		const vgeGL::basic::Hit& hit( getNearestHit() );
+
+		if ( hit.stackNode().size() >= 1 )
+		{
+			pNode = *(hit.stackNode().begin());
+		}
+		else
+		{
+			assert( false && "The nearest hit have an empty node stack." ); 
+			pNode = 0;
+		}
 	}
 	else
 	{
 		pNode = 0;
 	}
-	
+
 	return pNode;
 }
 
