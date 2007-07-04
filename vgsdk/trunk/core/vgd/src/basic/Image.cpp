@@ -5,7 +5,10 @@
 
 #include "vgd/basic/Image.hpp"
 
+#include <boost/thread.hpp>
 #include <vgDebug/Global.hpp>
+
+#include "vgd/Shp.hpp"
 
 
 
@@ -15,22 +18,63 @@ namespace vgd
 namespace basic
 {
 
+namespace
+{
+	boost::recursive_mutex globalOpenILMutex; //< a mutex to protect accesses to OpenIL library (OpenIL is not reentrant).
+	
+/**
+ * @brief Global startup and shutdown of OpenIL library
+ */
+struct OpenILStartupManagement
+{
+	/**
+	 * @brief Default constructor that calls initializeOpenIL()
+	 */
+	OpenILStartupManagement()
+	{
+		initializeOpenIL();
+	}
+	
+	/**
+	 * @brief Default destructor that calls shutdownOpenIL()
+	 */
+	~OpenILStartupManagement()
+	{
+		shutdownOpenIL();
+	}
+
+	/**
+	 * @brief This method must be called prior to any use of OpenIL.
+	 */
+	static void initializeOpenIL()
+	{
+		vgDebug::get().logDebug("Image::OpenIL library initialization.");
+
+		// Do some initialization.
+		boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
+		ilInit();
+	}
+
+	/**
+	 * brief This method must be called at exit.
+	 */
+	static void shutdownOpenIL()
+	{
+		vgDebug::get().logDebug("Image::OpenIL library shutdown.");
+
+		ilShutDown();
+	}
+};
+
+	static OpenILStartupManagement openILStartupManagement; //< Global startup and shutdown of OpenIL library 
+}
+
 
 
 Image::Image()
 :	m_iluintImgID(0)
 {
-	if ( m_firstInstance )
-	{
-		// This is the first instance of this class.
-
-		// Do some initialization.
-		ilInit();
-		
-		// Don't do the same for any others instances.
-		m_firstInstance = false;
-	}
-
 	resetInformations();
 }
 
@@ -39,19 +83,8 @@ Image::Image()
 Image::Image( std::string strFilename )
 :	m_iluintImgID(0)
 {
-	if ( m_firstInstance )
-	{
-		// This is the first instance of this class.
-
-		// Do some initialization.
-		ilInit();
-		
-		// Don't do the same for any others instances.
-		m_firstInstance = false;
-	}
-	
 	resetInformations();
-	
+
 	load( strFilename );
 }
 
@@ -64,20 +97,9 @@ Image::Image(	const uint32	width, const uint32 height, const uint32 depth,
 :	m_iluintImgID(0)
 {
 	assert( format != COLOR_INDEX );
-		
-	if ( m_firstInstance )
-	{
-		// This is the first instance of this class.
 
-		// Do some initialization.
-		ilInit();
-		
-		// Don't do the same for any others instances.
-		m_firstInstance = false;
-	}
-	
 	resetInformations();
-		
+
 	create(	computeNumComponents( format ),
 			width, height, depth,
 			format, type,
@@ -96,19 +118,8 @@ Image::Image(	const uint32		components,
 	assert( format != COLOR_INDEX );
 	assert( components == computeNumComponents( format ) );
 
-	if ( m_firstInstance )
-	{
-		// This is the first instance of this class.
-
-		// Do some initialization.
-		ilInit();
-		
-		// Don't do the same for any others instances.
-		m_firstInstance = false;
-	}
-	
 	resetInformations();
-		
+
 	create(	components,
 			width, height, depth,
 			format, type,
@@ -126,17 +137,6 @@ Image::Image(	const uint32	components,
 	assert( format != COLOR_INDEX );
 	assert( components == computeNumComponents( format ) );	
 		
-	if ( m_firstInstance )
-	{
-		// This is the first instance of this class.
-
-		// Do some initialization.
-		ilInit();
-		
-		// Don't do the same for any others instances.
-		m_firstInstance = false;
-	}
-	
 	resetInformations();
 		
 	create(	components,
@@ -150,17 +150,6 @@ Image::Image( const IImage& image )
 :	m_iluintImgID(0)
 {
 	assert( image.format() != COLOR_INDEX );
-	
-	if ( m_firstInstance )
-	{
-		// This is the first instance of this class.
-
-		// Do some initialization.
-		ilInit();
-		
-		// Don't do the same for any others instances.
-		m_firstInstance = false;
-	}
 	
 	resetInformations();
 
@@ -205,6 +194,8 @@ void Image::destroy()
 {
 	if ( m_iluintImgID != 0 )
 	{
+		boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
 		ilDeleteImages(1, &m_iluintImgID);
 		m_iluintImgID	= 0;
 		resetInformations();
@@ -215,6 +206,8 @@ void Image::destroy()
 
 bool Image::load( std::string strFilename )
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
 	destroy();
 
 	// Create a new image name.
@@ -232,7 +225,7 @@ bool Image::load( std::string strFilename )
 		
 		destroy();
 
-		return ( false );
+		return false;
 	}
 	else
 	{
@@ -241,7 +234,7 @@ bool Image::load( std::string strFilename )
 		vgDebug::get().logDebug("Image::load: Finish reading image %s (%i x %i).",
 								strFilename.c_str(), width(), height() );		
 
-		return ( true );
+		return true;
 	}
 }
 
@@ -252,7 +245,9 @@ bool Image::create(	const uint32	width, const uint32 height, const uint32 depth,
 					const void*		pixels )
 {
 	assert( format != COLOR_INDEX );
-	
+
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
 	destroy();
 
 	// Create a new image name.
@@ -296,6 +291,8 @@ bool Image::create(	const uint32		components,
 {
 	assert( format != COLOR_INDEX );
 	assert( components == computeNumComponents( format ) );	
+
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
 	
 	destroy();
 
@@ -319,14 +316,14 @@ bool Image::create(	const uint32		components,
 	if ( reportILError() )
 	{
 		destroy();
-		return ( false );
+		return false;
 	}
 	else
 	{
 		m_voxelSize.setValue( 1.f, 1.f, 1.f );
 
 		updateInformations();
-		return ( true );
+		return true;
 	}
 }
 
@@ -339,6 +336,8 @@ bool Image::create(	const uint32		components,
 {
 	assert( format != COLOR_INDEX );
 	assert( components == computeNumComponents( format ) );	
+		
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
 		
 	destroy();
 
@@ -361,14 +360,14 @@ bool Image::create(	const uint32		components,
 	if ( reportILError() )
 	{
 		destroy();
-		return ( false );
+		return false;
 	}
 	else
 	{
 		m_voxelSize.setValue( 1.f, 1.f, 1.f );
 		
 		updateInformations();
-		return ( true );
+		return true;
 	}
 }
 
@@ -380,30 +379,31 @@ bool Image::create( const IImage& image )
 
 	bool bRetVal;
 	
-	bRetVal = create(	
-					image.components(),
-					image.width(), image.height(), image.depth(),
-					image.format(), image.type(),
-					image.pixels() );
+	bRetVal = create(	image.components(),
+						image.width(), image.height(), image.depth(),
+						image.format(), image.type(),
+						image.pixels() );
 
-	return ( bRetVal );
+	return bRetVal;
 }
 
 
 
 bool Image::save( const std::string filename ) const
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+	
 	bind();
 	
 	if ( IL_FALSE == ilSaveImage( const_cast< char* >(filename.c_str()) ) )
 	{
 		reportILError();
 		
-		return ( false );
+		return false;
 	}
 	else
 	{
-		return ( true );
+		return true;
 	}
 }
 
@@ -411,6 +411,8 @@ bool Image::save( const std::string filename ) const
 
 bool Image::convertTo( const Format format, const Type type )
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+	
 	bind();
 	
 	ilConvertImage( convertMyFormat2IL(format), convertMyType2IL(type) );
@@ -469,6 +471,8 @@ const Image::Type Image::type() const
 
 const void* Image::pixels() const
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+	
 	bind();
 
 	return ( ilGetData() );
@@ -479,6 +483,8 @@ const void* Image::pixels() const
 void* Image::editPixels()
 {
 	assert( !m_edit && "Image already edited." );
+	
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );	
 
 	bind();
 	m_edit = true;
@@ -499,6 +505,8 @@ void Image::editPixelsDone()
 
 const uint32 Image::paletteSize() const
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+	
 	bind();
 
 	uint32 size = ilGetInteger( IL_PALETTE_NUM_COLS );
@@ -510,6 +518,8 @@ const uint32 Image::paletteSize() const
 
 const Image::Format Image::paletteFormat() const
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+	
 	bind();
 	
 	uint32 palFormat = ilGetInteger( IL_PALETTE_TYPE );
@@ -519,7 +529,7 @@ const Image::Format Image::paletteFormat() const
 
 
 
-const Image::Type	Image::paletteType() const
+const Image::Type Image::paletteType() const
 {
 	return UINT8;
 }
@@ -528,6 +538,8 @@ const Image::Type	Image::paletteType() const
 
 const void* Image::palettePixels() const
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+	
 	bind();
 
 	return ( ilGetPalette() );
@@ -538,6 +550,8 @@ const void* Image::palettePixels() const
 void* Image::paletteEditPixels()
 {
 	assert( !m_edit && "Image already edited." );
+
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
 
 	bind();
 	m_edit = true;
@@ -560,6 +574,8 @@ void Image::setPalette( const void *palette, uint32 size, const Format format )
 {
 	assert( !m_edit && "Image already edited." );
 
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
 	bind();
 
 	ILenum ilFormat = convertMyFormat2ILPal( format );
@@ -577,14 +593,12 @@ void Image::setPalette( const void *palette, uint32 size, const Format format )
 
 vgd::Shp< Image > Image::getPaletteImage() const
 {
-	bind();
-
-	Image *pImage = new Image(	1,
-								paletteSize(), 1, 1, 
-								paletteFormat(), paletteType(),
-								palettePixels() );
+	vgd::Shp< Image > image( new Image(	1,
+										paletteSize(), 1, 1, 
+										paletteFormat(), paletteType(),
+										palettePixels() ) );
 										
-	return ( vgd::Shp< Image >( pImage ) );
+	return image;
 }
 
 
@@ -612,7 +626,11 @@ const bool Image::isVoxelSizeSupported() const
 
 void Image::copy( const Image& src )
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+	
 	src.bind();
+
+	assert( m_iluintImgID == 0 && "Try to copy on a non empty image" );
 
 	m_iluintImgID	= ilCloneCurImage();
 	updateInformations();
@@ -625,6 +643,9 @@ void Image::copy( const Image& src )
 
 
 
+/**
+ * @remarks Method not protected by the mutex
+ */
 bool Image::bind() const
 {
 	ilBindImage(m_iluintImgID);
@@ -634,6 +655,9 @@ bool Image::bind() const
 
 
 
+/**
+ * @remarks Method not protected by the mutex
+ */
 bool Image::reportILError() const
 {
 	ILenum error = ilGetError();
@@ -641,34 +665,34 @@ bool Image::reportILError() const
 	if ( error == IL_NO_ERROR )
 	{
 		//vgDebug::get().logTrace("Image: No error" );
-		return ( false );
+		return false;
 	}
 	else
 	{
 		switch ( error )
 		{
 			case IL_COULD_NOT_OPEN_FILE:
-			vgDebug::get().logDebug("Image: Could not open file" );
-			//TRACE("IL_COULD_NOT_OPEN_FILE : ");
-			break;
+				vgDebug::get().logDebug("Image: Could not open file" );
+				//TRACE("IL_COULD_NOT_OPEN_FILE : ");
+				break;
 
 			case IL_ILLEGAL_OPERATION:
-			vgDebug::get().logDebug("Image: Illegal operation" );
-			//TRACE("IL_ILLEGAL_OPERATION : ");
-			break;
+				vgDebug::get().logDebug("Image: Illegal operation" );
+				//TRACE("IL_ILLEGAL_OPERATION : ");
+				break;
 
 			case IL_INVALID_EXTENSION:
-			vgDebug::get().logDebug("Image: Invalid extension" );
-			//TRACE("IL_INVALID_EXTENSION : ");
-			break;
+				vgDebug::get().logDebug("Image: Invalid extension" );
+				//TRACE("IL_INVALID_EXTENSION : ");
+				break;
 
 			case IL_INVALID_PARAM:
-			vgDebug::get().logDebug("Image: Invalid param" );
-			//TRACE("IL_INVALID_PARAM : ");
-			break;
+				vgDebug::get().logDebug("Image: Invalid param" );
+				//TRACE("IL_INVALID_PARAM : ");
+				break;
 			
 			default:
-			vgDebug::get().logDebug("Image: Unknown error" );
+				vgDebug::get().logDebug("Image: Unknown error" );
 		}
 		
 		return true;
@@ -953,6 +977,8 @@ void Image::resetInformations()
 
 void Image::updateInformations()
 {
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+	
 	bind();
 
 	//m_components
@@ -973,10 +999,6 @@ void Image::updateInformations()
 
 
 
-bool Image::m_firstInstance	= true;
-
-
-
 } // namespace basic
-	
+
 } // namespace vgd

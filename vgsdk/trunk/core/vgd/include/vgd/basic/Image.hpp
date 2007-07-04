@@ -10,7 +10,8 @@
 #include <string>
 
 #include "vgd/basic/IImage.hpp"
-#include "vgd/Shp.hpp"
+
+namespace vgd { template<class T> struct Shp; }
 
 
 
@@ -28,15 +29,14 @@ namespace basic
  * @remarks This class use the OpenIL (i.e. DevIL image) library inside.
  * @sa http://openil.sourceforge.net/
  *
- * @todo Remove m_* that could be given by OpenIL.
- * 
- * @todo Adds mutex on OpenIL usage (see CFO contributions).
  * @todo Removes duplicates parameters on constructor and create() methods (see parameters \c format and \c components).
- * @todo Removes in version 0.5 deprecated methods. 
+ * @todo Removes in version 0.5 deprecated methods.
+ *  
  * @todo Adds observation on pixel editor accesses (editPixels()/editPixelsDone()...)
  * 
  * @todo Uses exception for error handling ?
- *
+ * @todo Remove m_* that could be given by OpenIL (not very interesting because of mutex to access OpenIL states)
+ * 
  * @ingroup g_images
  */
 struct VGD_API Image : public IImage
@@ -477,7 +477,7 @@ struct VGD_API Image : public IImage
 private:
 
 	/**
-	 * @name DevIL encapsulation methods.
+	 * @name DevIL encapsulation methods
 	 */
 	//@{
 
@@ -531,11 +531,6 @@ private:
 	 * @brief Voxel size informations.
 	 */
 	vgm::Vec3f	m_voxelSize;
-		
-	/**
-	 * @brief Used to know if this instance is the first one or not (for doiing some initializations).
-	 */
-	static bool	m_firstInstance;	
 };
 
 

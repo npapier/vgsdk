@@ -37,7 +37,7 @@ void VertexShape::computeNormals()
 	int32 i;
 	int32 j=0;
 
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices		= getFVertexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= getFVertexRO();
 	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= getFVertexIndexRO();
 	vgd::field::EditorRW< vgd::field::MFVec3f >		normals		= getFNormalRW();
 
@@ -63,9 +63,6 @@ void VertexShape::computeNormals()
 		v1 = (*vertices)[indexB] - (*vertices)[indexA];
 		v2 = (*vertices)[indexC] - (*vertices)[indexA];
 		faceNormal = v1.cross(v2);
-
-		// normalize it
-		faceNormal.normalize();
 
 		// add this face normal to each vertex normal
 		(*normals)[indexA]	+= faceNormal;
