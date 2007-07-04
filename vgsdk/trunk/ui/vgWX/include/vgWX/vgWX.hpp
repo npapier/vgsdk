@@ -21,7 +21,7 @@
  *
  * \b vgWX is open source (LGPL).
  * 
- * vgWX is a collection of classes or widgets that simplify the creation of 3D window designed to be used with VGL.
+ * vgWX is a collection of classes or widgets that simplify the creation of 3D window designed to be used with vgSDK.
  */
 
 #include <vgBase/Type.hpp>

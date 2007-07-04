@@ -3,10 +3,10 @@ USE		=	[	#'boost',
 				#'openil', 
 				#'opengl', 
 				'wx', 'wxgl',
-				'gle_0-3','glo_0-3'
 			]
 
 LIB		=	[	#'mesher_0-4', 'vgnf_0-4',
+				'gle_0-3', 'glo_0-3',
 				'vgBase_0-4', 'vgDebug_0-4', 'vgm_0-4', 'vgd_0-4',
 				#'vgAlg_0-4',
 				'vgTrian_0-4',
