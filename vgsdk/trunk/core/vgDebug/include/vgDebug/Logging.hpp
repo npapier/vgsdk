@@ -27,25 +27,26 @@ namespace vgDebug
 struct VGDEBUG_API Logging : public ILogging
 {
 	/**
-	 * @name Constructor/Destructor.
+	 * @name Constructor/Destructor
 	 */
 	//@{
 
 	/**
-	 * @brief Constructor.
+	 * @brief Constructor
 	 */
 	Logging();
 	
 	/**
-	 * @brief Destructor.
+	 * @brief Destructor
 	 */
 	~Logging();
+
 	//@}
 	
 	
 	
 	/**
-	 * @name Logging facilities methods.
+	 * @name Logging facilities methods
 	 */
 	//@{
 	void logFatalError	( const char *szFormat, ... ) const;

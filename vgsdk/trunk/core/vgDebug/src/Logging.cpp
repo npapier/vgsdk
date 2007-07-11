@@ -18,7 +18,7 @@ namespace vgDebug
 Logging::Logging() :
 	m_pLogger( new wxLogGui ) //wxLogChain(...) new wxLogGui() new wxLogStderr()
 {
-	if ( m_instanceCount == 0 )
+	/*if ( m_instanceCount == 0 )
 	{
 		// redirect cerr to cerr.txt file
 		m_errFile = new std::ofstream("cerr.txt");
@@ -33,7 +33,7 @@ Logging::Logging() :
 
 		m_coutBuf = std::cout.rdbuf();
 		std::cout.rdbuf(outBuf);
-	}
+	}*/
 
 	++m_instanceCount;
 
@@ -49,7 +49,7 @@ Logging::Logging() :
 
 Logging::~Logging()
 {
-	if ( m_instanceCount == 1 )
+	/*if ( m_instanceCount == 1 )
 	{
 		// restores cerr and releases file
 		std::cerr.rdbuf(m_cerrBuf);
@@ -60,7 +60,7 @@ Logging::~Logging()
 		std::cout.rdbuf(m_coutBuf);
 
 		delete m_outFile;
-	}
+	}*/
 
 	--m_instanceCount;
 	
@@ -219,7 +219,7 @@ void Logging::logTrace( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	// wxVLogTrace( wxConvertMB2WX(szFormat), marker ); FIXME modified interface in wx2.5 and superior.
+	// wxVLogTrace( wxConvertMB2WX(szFormat), marker ); @todo FIXME modified interface in wx2.5 and superior.
 	wxVLogDebug( wxConvertMB2WX(szFormat), marker );
 
 	va_end( marker );
