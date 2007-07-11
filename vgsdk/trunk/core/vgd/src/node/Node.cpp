@@ -117,7 +117,7 @@ void Node::invalidateParentsBoundingBoxDirtyFlag()
 	
 	// for each node.
 	for(	NodeList::iterator	i	= parents.begin(),
-										ie	= parents.end();
+								ie	= parents.end();
 			i != ie;
 			++i
 		)

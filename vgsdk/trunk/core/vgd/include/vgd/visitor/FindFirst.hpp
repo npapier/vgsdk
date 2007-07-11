@@ -8,7 +8,6 @@
 
 #include <utility>
 
-#include "vgd/node/Group.hpp"
 #include "vgd/visitor/Traverse.hpp"
 
 
@@ -123,34 +122,6 @@ private:
 	const Predicate&					m_predicate;
 	//@}
 };
-
-
-
-/**
- * @brief Traverse the graph starting on the specified node with the specified visitor to find the first node that 
- * returns true to the predicate.
- * 
- * @remark This method is an helper to simplify usage of traverse() with vgd::visitor::FindFirst.
- */
-template< class Predicate >
-std::pair< bool, vgd::Shp< vgd::node::Node > > findFirst( vgd::Shp< vgd::node::Group > group, const Predicate& predicate )
-{
-	vgd::visitor::FindFirst< Predicate >	find( predicate );
-	
-	bool	bFounded = false;
-
-	try
-	{
-		group->traverse( find );
-	}
-	catch ( vgd::visitor::DesiredStop )
-	{
-		// ok, found the first node.
-		bFounded = true;
-	}
-
-	return ( std::pair< bool, vgd::Shp< vgd::node::Node > >( bFounded, find.getShpNode() ) );
-}
 
 
 

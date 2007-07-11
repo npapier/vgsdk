@@ -31,9 +31,6 @@ namespace node
  * 
  * New fields added by this node :
  * 
- * - SFEnum \c type = (OVERLAY)\n
- * 		Sets the type of layer plan. Choose one value among OVERLAY or UNDERLAY.
- * 
  * - SFVec2f \c position = (0, 0)\n
  * 		Sets the position of the layer plan in normalized window coordinates system.
  * 		@see g_coordinatesSystem\n
@@ -59,41 +56,6 @@ namespace node
 struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 {
 	META_NODE_HPP( LayerPlan );
-
-
-
-	/**
-	 * @name Accessors to field type
-	 */
-	//@{
-
-	/**
-	 * @brief Typedef for the \c type value.
-	 */
-	enum TypeValueType
-	{
-		OVERLAY = 0,
-		UNDERLAY,
-		DEFAULT_TYPE = OVERLAY
-	};
-
-	/**
-	 * @brief Typedef for the \c type field.
-	 */	
-	typedef vgd::field::TSingleField< TypeValueType > FTypeType;
-
-	/**
-	 * @brief Gets the type of node.
-	 */
-	const TypeValueType	getType() const;
-
-	/**
-	 * @brief Sets the type of node.
-	 * 
-	 */
-	void				setType( const TypeValueType value );
-
-	//@}
 
 
 
@@ -190,13 +152,6 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	 * @name Fields names enumeration
 	 */
 	//@{
-	
-	/**
-	 * @brief Returns the name of field \c type.
-	 * 
-	 * @return the name of field \c type.
-	 */
-	static const std::string getFType();
 
 	/**
 	 * @brief Returns the name of field \c position.

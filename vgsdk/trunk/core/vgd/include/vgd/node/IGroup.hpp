@@ -42,7 +42,7 @@ struct VGD_API IGroup
 	virtual ~IGroup();
 	
 	/**
-	 * @name Insert/remove/replace accessor methods.
+	 * @name Insert/remove/replace accessor methods
 	 */
 	//@{
 
@@ -89,7 +89,7 @@ struct VGD_API IGroup
 	
 	
 	/**
-	 * @name Searching methods.
+	 * @name Searching methods
 	 */
 	//@{
 	
@@ -111,7 +111,7 @@ struct VGD_API IGroup
 
 
 	/**
-	 * @name Child accessor.
+	 * @name Child accessor
 	 */
 	//@{
 
@@ -147,7 +147,7 @@ struct VGD_API IGroup
 
 protected:
 	/**
-	 * @name Update the bgl graph.
+	 * @name Update the bgl graph
 	 */
 	//@{
 

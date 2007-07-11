@@ -7,7 +7,7 @@
 #define _VGD_VGD_HPP
 
 /**
- * @defgroup g_vgd Virtuals Graphical Data
+ * @defgroup g_vgd vgd
  * 
  * Virtuals Graphical Data is a collection of classes for describing 3d world.
  *

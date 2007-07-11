@@ -78,7 +78,7 @@ namespace node
 static vgd::Shp< nodeType > create( const std::string nodeName = "NoName" );			\
 																						\
 /** \@brief Node factory\n
- *  Create a node with all fields sets to defaults values (optionals fiels too).*/		\
+ *  Create a node with all fields sets to defaults values (optionals fields too).*/		\
 static vgd::Shp< nodeType > createWhole( const std::string nodeName = "DefaultWhole" );	\
 																						\
 IMPLEMENT_INDEXABLE_CLASS_HPP( , nodeType );											\

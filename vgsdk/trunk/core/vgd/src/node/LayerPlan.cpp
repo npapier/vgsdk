@@ -25,7 +25,6 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Add fields
-	addField( new FTypeType(getFType()) );
 	addField( new FPositionType(getFPosition()) );
 	addField( new FSizeType(getFSize()) );
 	addField( new FIImageType(getFIImage()) );
@@ -44,7 +43,6 @@ void LayerPlan::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
 	
-	setType( OVERLAY );
 	setPosition( vgm::Vec2f(0.f, 0.f) );
 	setSize( vgm::Vec2f(1.f, 1.f) );
 }
@@ -54,20 +52,6 @@ void LayerPlan::setToDefaults( void )
 void LayerPlan::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
-}
-
-
-
-const LayerPlan::TypeValueType LayerPlan::getType() const
-{
-	return ( getFieldRO<FTypeType>(getFType())->getValue() );
-}
-
-
-
-void LayerPlan::setType( const TypeValueType value )
-{
-	getFieldRW<FTypeType>(getFType())->setValue( value );
 }
 
 
@@ -110,13 +94,6 @@ const LayerPlan::IImageValueType LayerPlan::getIImage() const
 void LayerPlan::setIImage( const IImageValueType value )
 {
 	getFieldRW<FIImageType>(getFIImage())->setValue( value );
-}
-
-
-
-const std::string LayerPlan::getFType()
-{
-	return "f_type";
 }
 
 

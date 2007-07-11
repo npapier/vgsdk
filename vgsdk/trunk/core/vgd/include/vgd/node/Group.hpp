@@ -6,8 +6,6 @@
 #ifndef _VGD_NODE_GROUP_HPP
 #define _VGD_NODE_GROUP_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <iostream>
 #include <string>
 
@@ -15,6 +13,8 @@
 #include "vgd/node/IGroup.hpp"
 #include "vgd/node/IBoundingBox.hpp"
 #include "vgd/node/Node.hpp"
+#include "vgd/vgd.hpp"
+//#include "vgd/visitor/FindFirst.hpp"
 
 
 
@@ -48,7 +48,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	META_NODE_HPP( Group );
 
 	/**
-	 * @name IGroup interface and getChild().
+	 * @name IGroup interface and getChild()
 	 */
 	//@{
 	void			addChild			( vgd::Shp<Node> node );
@@ -99,14 +99,35 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 		vgd::Shp< nodeType > castedChild 	= vgd::dynamic_pointer_cast< nodeType >(child);
 		assert( castedChild.get() != 0 && "Wrong node type." );
 
-		return ( castedChild );
+		return castedChild;
 	}
+
+	/**
+	 * brief Finds the first node that matches the predicate.
+	 * 
+	 * This method traverses the scene graph from this group node and searches the first node that
+	 * cause the predicate to return true
+	 * 
+	 * param predicate		the predicate to test matching
+	 * 
+	 * return The first node that matches the predicate, or an empty shared pointer.
+	 */
+//	template< class Predicate >
+//	vgd::Shp< vgd::node::Node > findFirst( const Predicate& predicate )
+//	{
+//		vgd::visitor::FindFirst< Predicate > find( predicate );
+//		
+//		traverse( find );
+//		
+//		return find.getShpNode();
+//	}
+		
 	//@}
 
 
 
 	/**
-	 * @name Traverse scene graph.
+	 * @name Traverse scene graph
 	 */
 	//@{
 
@@ -126,7 +147,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 
 
 	/**
-	 * @name Bounding box.
+	 * @name Bounding box
 	 */
 	//@{
 
@@ -159,7 +180,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 
 
 	/**
-	 * @name Debugging methods.
+	 * @name Debugging methods
 	 */
 	//@{
 	
@@ -175,7 +196,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 
 
 	/**
-	 * @name Dirty flags enumeration.
+	 * @name Dirty flags enumeration
 	 */
 	//@{
 
@@ -200,7 +221,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 	
@@ -221,7 +242,7 @@ protected:
 
 
 	/**
-	 * @name Debug methods.
+	 * @name Debug methods
 	 */
 	//@{
 	
