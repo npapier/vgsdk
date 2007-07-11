@@ -9,6 +9,7 @@
 #include <fstream>
 #include <vgd/node/Group.hpp>
 #include <vgd/visitor/FindFirst.hpp>
+#include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByKindOfType.hpp>
 #include <vgd/visitor/predicate/ByType.hpp>
 #include "vge/vge.hpp"

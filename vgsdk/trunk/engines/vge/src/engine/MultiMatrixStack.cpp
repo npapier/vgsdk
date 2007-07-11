@@ -99,12 +99,12 @@ void MultiMatrixStack::push( const int32 index )
 
 void MultiMatrixStack::pushAll()
 {
-	for(	int32	i		= 0,
+	for(	uint32	i		= 0,
 					iMax	= m_stacks.size();
 			i < iMax;
 			++i )
 	{
-		push( i );
+		push( static_cast<int32>(i) );
 	}
 }
 
@@ -129,12 +129,12 @@ bool MultiMatrixStack::popAll()
 {
 	bool bRetVal(	true	);
 
-	for(	int32	i		= 0,
+	for(	uint32	i		= 0,
 					iMax	= m_stacks.size();
 			i < iMax;
 			++i )
 	{
-		bRetVal &= pop( i );
+		bRetVal &= pop( static_cast<int32>(i) );
 	}
 	
 	return ( bRetVal );

@@ -5,6 +5,7 @@
 
 #include "vge/engine/SceneManager.hpp"
 
+#include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByName.hpp>
 #include <vgd/visitor/predicate/ByReference.hpp>
 #include <vgd/visitor/predicate/ByRegexName.hpp>
