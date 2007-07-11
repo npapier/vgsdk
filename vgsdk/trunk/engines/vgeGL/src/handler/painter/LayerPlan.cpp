@@ -50,9 +50,6 @@ void LayerPlan::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::LayerPlan* >(pNode) != 0 );
 	vgd::node::LayerPlan *pCastedNode = static_cast< vgd::node::LayerPlan* >(pNode);
 
-	// At this time, Layer plan must be owned by vgeGL::engine::SceneManager
-	assert( pCastedNode->getNumParents() == 0 && "LayerPlan nodes are not allowed in scene graph" );
-
 	paint( pGLEngine, pCastedNode );
 	//vgeGL::rc::applyUsingDisplayList< vgd::node::LayerPlan, LayerPlan >( pEngine, pNode, this );
 }
@@ -71,8 +68,13 @@ void LayerPlan::setToDefaults()
 
 void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *layerPlan )
 {
-	// @todo FIXME
-	assert( layerPlan->getType() == vgd::node::LayerPlan::OVERLAY );
+	if (	(layerPlan->getIImage() == 0) ||													// no image
+			(	(layerPlan->getIImage() != 0) && layerPlan->getIImage()->isEmpty()	)			// empty image
+			)
+	{
+		// Nothing to do
+		return;
+	}
 
 	// Searchs resource
 	vge::rc::Manager&		rcManager	= pGLEngine->getGLManager();

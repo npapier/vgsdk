@@ -55,41 +55,12 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 	getGLEngine()->resetEval();
 	paintTechnique->apply( getGLEngine().get(), getNodeCollector().getTraverseElements() );
-
-	// Layer plan (only overlay).
-	// @todo move nodes to scene graph.
-	using vgd::node::LayerPlan;
-	vgd::Shp< LayerPlan > layerPlan = getLayerPlan();
-
-	if ( layerPlan )
-	{
-		assert( layerPlan->getType() == LayerPlan::OVERLAY );
-
-		vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
-
-		getGLEngine()->evaluate( paint, layerPlan.get(), true );
-	}
-	// else nothing to do
 }
 
 
 
 void SceneManager::resize( const vgm::Vec2i )
 {}
-
-
-
-void SceneManager::setLayerPlan( vgd::Shp< vgd::node::LayerPlan > layerPlan )
-{
-	m_layerPlan = layerPlan;
-}
-
-
-
-vgd::Shp< vgd::node::LayerPlan >& SceneManager::getLayerPlan()
-{
-	return m_layerPlan;
-}
 
 
 
@@ -278,6 +249,13 @@ const bool SceneManager::isGLContextCurrent() const
 
 
 vgd::Shp< vgeGL::engine::Engine > SceneManager::getGLEngine()
+{
+	return m_GLEngine;
+}
+
+
+
+vgd::Shp< vgeGL::engine::Engine > SceneManager::getGLEngine() const
 {
 	return m_GLEngine;
 }

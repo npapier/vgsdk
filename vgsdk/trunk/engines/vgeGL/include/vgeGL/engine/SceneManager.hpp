@@ -109,31 +109,6 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 
 	/**
-	 * @name Layer planes
-	 * 
-	 * @todo More than one layer plane
-	 */
-	//@{
-
-	/**
-	 * @brief Sets the current layer plane
-	 * 
-	 * @param	layerPlane		the layer plane to install
-	 */
-	void setLayerPlan( vgd::Shp< vgd::node::LayerPlan > layerPlane );
-
-	/**
-	 * @brief Returns the current layer plane
-	 * 
-	 * @return the installed layer plane
-	 */
-	vgd::Shp< vgd::node::LayerPlan >& getLayerPlan();
-
-	//@}
-
-
-
-	/**
 	 * @name Events
 	 */
 	//@{
@@ -392,6 +367,13 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @return the vgeGL engine.
 	 */
 	vgd::Shp< vgeGL::engine::Engine > getGLEngine();
+	
+	/**
+	 * @brief Returns the main evaluation engine.
+	 * 
+	 * @return the vgeGL engine.
+	 */
+	vgd::Shp< vgeGL::engine::Engine > getGLEngine() const;	
 	
 	//@}
 	
