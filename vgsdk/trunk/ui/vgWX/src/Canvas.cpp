@@ -11,6 +11,7 @@
 
 //#include <vgDebug/Global.hpp>
 #include <vgd/node/TriSet.hpp>
+#include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByDirtyFlag.hpp>
 #include <vgeGL/engine/Engine.hpp>
 
@@ -126,7 +127,7 @@ Canvas::~Canvas()
 		// Global initialization of vgsdk must be redone for each "first canvas"
 		m_bGlobalInitializedVGSDK = false;
 	}
-	//else Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
+	//else don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
 }
 
 
@@ -156,8 +157,7 @@ wxMenu *Canvas::createContextualMenu() const
 
 	if ( node != 0 )
 	{
-		wxMenu *subCtxMenu = detail::createContextualMenu(
-			this, vgd::dynamic_pointer_cast< vgd::node::TriSet >( node->shpFromThis() ) );
+		wxMenu *subCtxMenu = detail::createContextualMenu( this, node->shpFromThis() );
 	
 		if ( subCtxMenu->GetMenuItemCount() >  0 )
 		{
@@ -370,8 +370,7 @@ void Canvas::OnCtxMenu( wxCommandEvent& event )
 	
 	if ( node != 0 )
 	{	
-		detail::processContextualMenuEvent(	this, event,
-											vgd::dynamic_pointer_cast< vgd::node::TriSet >( node->shpFromThis() ) );
+		detail::processContextualMenuEvent(	this, event, node->shpFromThis() );
 	}
 
 	//

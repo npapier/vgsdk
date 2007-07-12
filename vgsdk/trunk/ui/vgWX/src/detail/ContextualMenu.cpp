@@ -9,8 +9,10 @@
 
 #include <vgAlg/node/TriSet.hpp>
 #include <vgd/node/DrawStyle.hpp>
+#include <vgd/node/Kit.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/TriSet.hpp>
+#include <vgd/visitor/predicate/ByKindOfType.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgeGL/technique/Main.hpp>
 //#include <vgeGL/technique/MainGLSL.hpp>
@@ -22,9 +24,56 @@
 
 namespace vgWX
 {
-	
+
 namespace detail
 {
+
+namespace
+{
+
+vgd::Shp< vgd::node::TriSet > extractTriSet( vgd::Shp< vgd::node::Node > shape )
+{
+	using vgd::node::Kit;
+	using vgd::node::TriSet;
+
+	vgd::Shp< TriSet > triset;
+
+	if ( shape->isAKindOf< Kit >() )
+	{
+		// Gets root node of kit
+		vgd::Shp< Kit > kit = vgd::dynamic_pointer_cast< Kit >( shape );
+		vgd::Shp< vgd::node::Group > root = kit->getRoot();
+
+		// Searches first triset node
+		vgd::visitor::predicate::ByKindOfType< TriSet > predicate;
+		
+		std::pair< bool, vgd::Shp< vgd::node::Node > > result;
+		
+		result = vgd::visitor::findFirst( root, predicate );
+		
+		if ( result.first )
+		{
+			triset = vgd::dynamic_pointer_cast< TriSet >( result.second );
+		}
+
+//		vgd::Shp< vgd::node::Node > result = root->findFirst( predicate );
+//	
+//		if ( result != 0 )
+//		{
+//			triset = vgd::dynamic_pointer_cast< TriSet >( result );
+//		}
+//		// else nothing to do
+	}
+	else
+	{
+		triset = vgd::dynamic_pointer_cast< TriSet >( shape );
+	}
+	
+	return triset;
+}
+
+}
+
 
 
 wxMenu *createContextualMenu( const Canvas * canvas )
@@ -296,14 +345,14 @@ wxMenu *createContextualMenu( const Canvas * canvas )
 
 
 
-wxMenu *createContextualMenu( const Canvas * canvas, vgd::Shp< vgd::node::VertexShape > shape )
+wxMenu *createContextualMenu( const Canvas * canvas, vgd::Shp< vgd::node::Node > shape )
 {
 	wxMenu *ctxMenu = new wxMenu;
 	
 	// ALGORITHMS & IO
 	using vgd::node::TriSet;
 
-	vgd::Shp< TriSet > triset = vgd::dynamic_pointer_cast< TriSet >( shape );
+	vgd::Shp< TriSet > triset = extractTriSet( shape );
 
 	if ( triset )
 	{
@@ -574,12 +623,12 @@ void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event )
 
 
 
-void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event, vgd::Shp< vgd::node::VertexShape > shape )
+void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event, vgd::Shp< vgd::node::Node > shape )
 {
 	using vgd::node::TriSet;
 
-	vgd::Shp< TriSet > triset = vgd::dynamic_pointer_cast< TriSet >( shape );
-	
+	vgd::Shp< TriSet > triset = extractTriSet( shape );
+
 	switch ( event.GetId() )
 	{
 		// ALGORITHMS

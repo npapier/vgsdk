@@ -15,7 +15,7 @@ class wxMenu;
 namespace vgd 
 {
 	template<class T> struct Shp; 
-	namespace node { struct VertexShape; }
+	namespace node { struct Node; }
 }
 
 namespace vgWX { struct Canvas; }
@@ -120,7 +120,7 @@ wxMenu *createContextualMenu( const Canvas * canvas );
  * @param canvas	the canvas
  * @param shape		the picked shape
  */
-wxMenu *createContextualMenu( const Canvas * canvas, vgd::Shp< vgd::node::VertexShape > shape );
+wxMenu *createContextualMenu( const Canvas * canvas, vgd::Shp< vgd::node::Node > shape );
 
 
 
@@ -141,7 +141,7 @@ void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event );
  * @param event		the event to process
  * @param shape		the picked shape 
  */
-void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event, vgd::Shp< vgd::node::VertexShape > shape );
+void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event, vgd::Shp< vgd::node::Node > shape );
 
 
 
