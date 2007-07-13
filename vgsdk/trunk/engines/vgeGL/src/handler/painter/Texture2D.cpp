@@ -67,20 +67,23 @@ void Texture2D::setToDefaults()
 
 
 
+/**
+ * @todo Fix bug for auto mipmapping ( synchronizeParameters() must be called before texSubImage() at least the mipmap stuff )
+ */
 void Texture2D::synchronize(	vgeGL::engine::Engine*	pGLEngine, vgd::node::Texture2D* pNode,
 								vgeGL::rc::Texture2D*	pResource )
 {
 	// Switch to the specified tex unit and creates rc/tex
 	const bool bImageAndTextureSynchronized = preSynchronize( pGLEngine, pNode, pResource );
 
-	// Updates texture parameters
-	synchronizeParameters( pGLEngine, pNode, pResource );
-
 	if ( !bImageAndTextureSynchronized )
 	{
 		// Updates texture image
 		texSubImage( pGLEngine, pNode, pResource );
 	}
+
+	// Updates texture parameters
+	synchronizeParameters( pGLEngine, pNode, pResource );
 
 	assert( pNode->getDirtyFlag(pNode->getDFIImages())->isValid() );
 	assert( pNode->getDirtyFlag(pNode->getDFParameters())->isValid() );
