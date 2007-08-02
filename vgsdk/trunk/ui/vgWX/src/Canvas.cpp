@@ -10,6 +10,7 @@
 #endif
 
 //#include <vgDebug/Global.hpp>
+#include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByDirtyFlag.hpp>
@@ -35,7 +36,7 @@ BEGIN_EVENT_TABLE( Canvas, wxGLCanvas )
 	EVT_SIZE				( Canvas::OnSize					)
 	EVT_ERASE_BACKGROUND	( Canvas::OnEraseBackground			)
    
-	EVT_MOUSE_EVENTS		( Canvas::OnMouseEvent	)
+	EVT_RIGHT_UP			( Canvas::OnRightUp					)
 	EVT_MENU_RANGE			( wxID_HIGHEST + 1024, wxID_HIGHEST + 2048, Canvas::OnCtxMenu )
 	
 	EVT_IDLE				( Canvas::OnIdle					)
@@ -342,9 +343,14 @@ void Canvas::OnEraseBackground( wxEraseEvent& /*event*/ )
 
 
 
-void Canvas::OnMouseEvent( wxMouseEvent& event )
+void Canvas::OnRightUp( wxMouseEvent& event )
 {
-	if ( isContextualMenuEnabled() && event.RightUp() )
+	assert( event.RightUp() );
+
+	using vgd::event::detail::GlobalButtonStateSet;
+
+	if (	isContextualMenuEnabled() &&
+			GlobalButtonStateSet::get().isDown() == false	)
 	{
 		// Cast a ray
 		/*vgd::node::Node *nodeUnderMouse =*/castRay( event.GetX(), event.GetY() );

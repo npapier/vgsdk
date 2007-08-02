@@ -197,14 +197,14 @@ private:
 
 
 	/**
-	 * @brief Handles \c EVT_MOUSE_EVENTS.
+	 * @brief Handles \c EVT_RIGHT_UP
 	 */
-	void OnMouseEvent		(wxMouseEvent& event);
+	void OnRightUp( wxMouseEvent& event );
 
 	/**
 	 * @brief Handles wxMenuEvent.
 	 */
-	void OnCtxMenu			( wxCommandEvent& event );
+	void OnCtxMenu( wxCommandEvent& event );
 
 
 
