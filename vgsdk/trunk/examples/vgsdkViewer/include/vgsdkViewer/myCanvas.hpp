@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -64,8 +64,6 @@ public:
 	 */
 	void OnChar( wxKeyEvent& event );
 	
-	wxMenu *createContextualMenu( const int32 xMouse, const int32 yMouse ) /*const*/;
-
 	//@}
 
 

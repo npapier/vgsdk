@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -13,8 +13,9 @@
 #include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/DrawStyle.hpp>
-#include <vgd/node/Material.hpp>
 #include <vgd/node/LightModel.hpp>
+#include <vgd/node/Material.hpp>
+#include <vgd/node/TriSet.hpp>
 #include <vgd/visitor/Find.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgeGL/technique/RayCasting.hpp>
@@ -97,6 +98,8 @@ myCanvas::myCanvas(
 void myCanvas::initialize()
 {
 	// SETUP
+	
+	/* no more needed
 	using vgd::node::ClearFrameBuffer;
 	vgd::Shp< ClearFrameBuffer > clearFrameBuffer = ClearFrameBuffer::create("clearFrameBuffer");
 
@@ -110,6 +113,7 @@ void myCanvas::initialize()
 	light2->setMultiAttributeIndex( 1 );
 	light2->setOn( true );
 	light2->setDirection( vgm::Vec3f(0.f, 0.f, 1.f) );
+	*/
 
 	// DRAWSTYLE & LIGHTMODEL
 	using vgd::node::DrawStyle;
@@ -117,6 +121,7 @@ void myCanvas::initialize()
 	vgd::Shp< DrawStyle > drawStyle = DrawStyle::create("DRAWSTYLE");
 	vgd::Shp< LightModel > lightModel = LightModel::create("LIGHTMODEL");
 
+	/* no more needed
 	// Adds clearFrameBuffer and lights to the setup node.
 	getSetup()->insertChild( clearFrameBuffer );
 
@@ -126,7 +131,8 @@ void myCanvas::initialize()
 	
 	// lights are moving with the scene
 	//getSetup()->addChild( light1 );
-	//getSetup()->addChild( light2 );	
+	//getSetup()->addChild( light2 );
+	*/
 
 	getSetup()->addChild( drawStyle );
 	getSetup()->addChild( lightModel );
@@ -148,39 +154,6 @@ void myCanvas::OnChar( wxKeyEvent& event )
 	{
 		event.Skip();
 	}
-}
-
-
-
-wxMenu *myCanvas::createContextualMenu( const int32 xMouse, const int32 yMouse )
-{
-	SetCurrent();
-		
-	//
-	wxMenu *ctxMenu;
-	ctxMenu = Canvas::createContextualMenu( xMouse, yMouse );
-	
-	// RayCasting
-	// collector
-	getNodeCollector().reset();
-	getRoot()->traverse( getNodeCollector() );
-
-	vgeGL::technique::RayCasting raycasting;
-	getGLEngine()->resetEval();
-	raycasting.apply(	getGLEngine().get(), getNodeCollector().getTraverseElements(),
-						xMouse, yMouse );
-
-	if ( raycasting.getHitsSize() > 0 )
-	{
-		vgd::node::Node *pNode( raycasting.getNearestHitNode() );
-		
-		if ( pNode != 0 )
-		{
-			ctxMenu->Prepend( wxID_LOWEST-1, pNode->getName().c_str() );
-		}
-	}
-	
-	return ctxMenu;
 }
 
 
@@ -336,9 +309,7 @@ const bool myCanvas::loadTrian( std::string pathfilename )
 {
 	// Load .trian
 	vgTrian::Loader loader;
-	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > retVal;
-
-	retVal = loader.loadTrian( pathfilename.c_str() );
+	std::pair< bool, vgd::Shp< vgd::node::TriSet > > retVal = loader.loadTrian( pathfilename );
 
 	if ( !retVal.first )
 	{
