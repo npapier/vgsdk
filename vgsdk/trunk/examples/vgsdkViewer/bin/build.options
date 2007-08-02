@@ -18,3 +18,4 @@ LIB		=	[	#'mesher_0-4', 'vgnf_0-4',
 			]
 
 TYPE	=	'exec'
+VERSION	=	'0-4'
