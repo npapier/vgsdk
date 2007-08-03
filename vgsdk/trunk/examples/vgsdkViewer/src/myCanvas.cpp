@@ -179,7 +179,7 @@ const bool myCanvas::appendToScene( const wxString& pathfilename, const bool mus
 	
 	refresh();
 
-	const bool retVal = load( pathfilename.mb_str() );
+	const bool retVal = load( std::string(wxConvertWX2MB(pathfilename)) );
 	
 	if ( retVal )
 	{
@@ -209,7 +209,7 @@ const bool myCanvas::appendToScene( wxArrayString pathfilenames, const bool must
 	
 	for ( size_t n = 0; n < nFiles; ++n ) 
 	{
-		const std::string pathfilename(pathfilenames[n].c_str());
+		const std::string pathfilename(wxConvertWX2MB(pathfilenames[n]));
 
 		const bool lRetVal = load( pathfilename );
 		

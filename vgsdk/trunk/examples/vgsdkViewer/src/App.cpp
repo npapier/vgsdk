@@ -72,31 +72,31 @@ bool App::OnInit()
 	// Creates file menu
 	wxMenu *fileMenu = new wxMenu;
 
-	fileMenu->Append(wxID_NEW, "&New	CTRL+N", "Creates a new scene" );
+	fileMenu->Append(wxID_NEW, _T("&New	CTRL+N"), _T("Creates a new scene") );
 	frame->Connect( wxID_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(App::OnFileNew), 0, this );
 
-	fileMenu->Append(wxID_OPEN, "&Open	CTRL+O", "Creates a new scene and adds 3d object(s) in the scene" );
+	fileMenu->Append(wxID_OPEN, _T("&Open	CTRL+O"), _T("Creates a new scene and adds 3d object(s) in the scene") );
 	frame->Connect( wxID_OPEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(App::OnFileOpen), 0, this );
 
-	fileMenu->Append(wxID_FILE_ADD, "&Add	CTRL+A", "Adds 3d object(s) in the scene" );
+	fileMenu->Append(wxID_FILE_ADD, _T("&Add	CTRL+A"), _T("Adds 3d object(s) in the scene") );
 	frame->Connect( wxID_FILE_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(App::OnFileAdd), 0, this );
 
-	fileMenu->Append(wxID_FILE_RELOAD, "&Reload	F5", "Reloads the scene" );
+	fileMenu->Append(wxID_FILE_RELOAD, _T("&Reload	F5"), _T("Reloads the scene") );
 	frame->Connect( wxID_FILE_RELOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(App::OnFileReload), 0, this );
 
-	fileMenu->Append(wxID_EXIT, "E&xit", "Quit vgsdkViewer" );
+	fileMenu->Append(wxID_EXIT, _T("E&xit"), _T("Quit vgsdkViewer") );
 	frame->Connect( wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(App::OnFileExit), 0, this );
 
 	// Creates help menu
 	wxMenu *helpMenu = new wxMenu;
-	helpMenu->Append(wxID_HELP, "&About", "About");
+	helpMenu->Append(wxID_HELP, _T("&About"), _T("About"));
 	frame->Connect( wxID_HELP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(App::OnHelpAbout), 0, this  );
 
 	// Makes a menubar	
 	wxMenuBar* menuBar = new wxMenuBar;
 
-	menuBar->Append(fileMenu, "&File");
-	menuBar->Append(helpMenu, "&Help");
+	menuBar->Append(fileMenu, _T("&File"));
+	menuBar->Append(helpMenu, _T("&Help"));
 
 	// Associate the menu bar with the frame
 	frame->SetMenuBar(menuBar);
@@ -126,7 +126,7 @@ bool App::OnInit()
 
 void App::OnInitCmdLine( wxCmdLineParser& parser )
 {
-	parser.AddParam(	"path and filename of file to load (.trian, .trian2 and .dae)",
+	parser.AddParam(	_T("path and filename of file to load (.trian, .trian2 and .dae)"),
 						wxCMD_LINE_VAL_STRING,
 						wxCMD_LINE_PARAM_OPTIONAL	);
 }
@@ -190,7 +190,7 @@ void App::OnFileExit( wxCommandEvent& /*event*/ )
 
 void App::OnHelpAbout( wxCommandEvent& /*event*/ )
 {
-	wxMessageBox("vgsdkViewer version 0.4 by Nicolas Papier", "About vgsdkViewer");
+	wxMessageBox(_T("vgsdkViewer version 0.4 by Nicolas Papier"), _T("About vgsdkViewer"));
 }
 
 
