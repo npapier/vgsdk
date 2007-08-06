@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_DEPTH_H
-#define _VGEGL_HANDLER_PAINTER_DEPTH_H
+#ifndef _VGEGL_HANDLER_PAINTER_DEPTH_HPP
+#define _VGEGL_HANDLER_PAINTER_DEPTH_HPP
 
 #include <vge/handler/painter/SingleAttribute.hpp>
 
@@ -72,4 +72,4 @@ private:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_DEPTH_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_DEPTH_HPP

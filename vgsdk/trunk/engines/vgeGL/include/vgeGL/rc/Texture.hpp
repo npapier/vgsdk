@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_RC_TEXTURE_H
-#define _VGEGL_RC_TEXTURE_H
+#ifndef _VGEGL_RC_TEXTURE_HPP
+#define _VGEGL_RC_TEXTURE_HPP
 
 //#include <glo/Texture.hpp>
 //#include <vge/rc/IResource.hpp>
@@ -32,4 +32,4 @@
 //
 //} // namespace vgeGL
 
-#endif //#ifndef _VGEGL_RC_TEXTURE_H
+#endif //#ifndef _VGEGL_RC_TEXTURE_HPP

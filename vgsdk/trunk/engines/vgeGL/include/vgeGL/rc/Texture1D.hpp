@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_RC_TEXTURE1D_H
-#define _VGEGL_RC_TEXTURE1D_H
+#ifndef _VGEGL_RC_TEXTURE1D_HPP
+#define _VGEGL_RC_TEXTURE1D_HPP
 
 #include <glo/Texture1D.hpp>
 #include <vge/rc/IResource.hpp>
@@ -31,4 +31,4 @@ struct VGEGL_API Texture1D : public vge::rc::IResource, public glo::Texture1D
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_RC_TEXTURE1D_H
+#endif //#ifndef _VGEGL_RC_TEXTURE1D_HPP

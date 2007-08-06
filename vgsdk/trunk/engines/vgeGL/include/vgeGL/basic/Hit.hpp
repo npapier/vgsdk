@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_BASIC_HIT_H
-#define _VGEGL_BASIC_HIT_H
+#ifndef _VGEGL_BASIC_HIT_HPP
+#define _VGEGL_BASIC_HIT_HPP
 
 #include <list>
 #include <vgd/node/Node.hpp>
@@ -169,4 +169,4 @@ typedef std::list< Hit > HitList;
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_BASIC_HIT_H
+#endif //#ifndef _VGEGL_BASIC_HIT_HPP

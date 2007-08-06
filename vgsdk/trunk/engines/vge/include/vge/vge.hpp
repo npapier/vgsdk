@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_VGE_H
-#define _VGE_VGE_H
+#ifndef _VGE_VGE_HPP
+#define _VGE_VGE_HPP
 
 /** 
  * @namespace vge
@@ -45,4 +45,4 @@
 #endif
 
 
-#endif //#ifndef _VGE_VGE_H
+#endif //#ifndef _VGE_VGE_HPP

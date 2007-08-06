@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_H
-#define _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_H
+#ifndef _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_HPP
+#define _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_HPP
 
 #include "vgeGL/handler/processEvent/Dragger.hpp"
 #include "vgeGL/handler/processEvent/ProcessEvent.hpp"
@@ -48,4 +48,4 @@ struct VGEGL_API TransformDragger :	public vgeGL::handler::processEvent::Process
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_H
+#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_TRANSFORMDRAGGER_HPP

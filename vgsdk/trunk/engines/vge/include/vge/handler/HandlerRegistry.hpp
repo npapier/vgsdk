@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_HANDLERREGISTRY_H
-#define _VGE_HANDLER_HANDLERREGISTRY_H
+#ifndef _VGE_HANDLER_HANDLERREGISTRY_HPP
+#define _VGE_HANDLER_HANDLERREGISTRY_HPP
 
 #include "vge/vge.hpp"
 
@@ -88,4 +88,4 @@ private:
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_HANDLERREGISTRY_H
+#endif //#ifndef _VGE_HANDLER_HANDLERREGISTRY_HPP

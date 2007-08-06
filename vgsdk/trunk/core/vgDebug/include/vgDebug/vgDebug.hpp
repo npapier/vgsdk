@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGDEBUG_H
-#define _VGDEBUG_H
+#ifndef _VGDEBUG_HPP
+#define _VGDEBUG_HPP
 
 #include <vgBase/Type.hpp>
 
@@ -45,4 +45,4 @@
  * \b vge is open source (LGPL).
  */
 
-#endif //#ifndef _VGDEBUG_H
+#endif //#ifndef _VGDEBUG_HPP

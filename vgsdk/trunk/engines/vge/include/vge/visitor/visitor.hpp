@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_VISITOR_VISITOR_H
-#define _VGE_VISITOR_VISITOR_H
+#ifndef _VGE_VISITOR_VISITOR_HPP
+#define _VGE_VISITOR_VISITOR_HPP
 
 /** 
  * @namespace vge::visitor
@@ -12,4 +12,4 @@
  * @brief Provide a specialized visitor for engine.
  */
 
-#endif //#ifndef _VGE_VISITOR_VISITOR_H
+#endif //#ifndef _VGE_VISITOR_VISITOR_HPP

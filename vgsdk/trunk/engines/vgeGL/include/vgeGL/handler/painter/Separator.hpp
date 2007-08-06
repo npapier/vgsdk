@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_SEPARATOR_H
-#define _VGEGL_HANDLER_PAINTER_SEPARATOR_H
+#ifndef _VGEGL_HANDLER_PAINTER_SEPARATOR_HPP
+#define _VGEGL_HANDLER_PAINTER_SEPARATOR_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -51,4 +51,4 @@ struct VGEGL_API Separator :
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_SEPARATOR_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_SEPARATOR_HPP

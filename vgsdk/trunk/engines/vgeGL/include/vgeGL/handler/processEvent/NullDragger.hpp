@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PROCESSEVENT_NULLDRAGGER_H
-#define _VGEGL_HANDLER_PROCESSEVENT_NULLDRAGGER_H
+#ifndef _VGEGL_HANDLER_PROCESSEVENT_NULLDRAGGER_HPP
+#define _VGEGL_HANDLER_PROCESSEVENT_NULLDRAGGER_HPP
 
 #include "vgeGL/handler/processEvent/Dragger.hpp"
 #include "vgeGL/handler/processEvent/ProcessEvent.hpp"
@@ -45,4 +45,4 @@ struct VGEGL_API NullDragger :	public vgeGL::handler::processEvent::ProcessEvent
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_NULLDRAGGER_H
+#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_NULLDRAGGER_HPP

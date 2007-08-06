@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_TEXTURE_H
-#define _VGEGL_HANDLER_PAINTER_TEXTURE_H
+#ifndef _VGEGL_HANDLER_PAINTER_TEXTURE_HPP
+#define _VGEGL_HANDLER_PAINTER_TEXTURE_HPP
 
 #include <vgd/basic/IImage.hpp>
 #include <vge/handler/painter/MultiAttribute.hpp>
@@ -142,4 +142,4 @@ private:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_TEXTURE_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_TEXTURE_HPP

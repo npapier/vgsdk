@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_CAMERA_H
-#define _VGEGL_HANDLER_PAINTER_CAMERA_H
+#ifndef _VGEGL_HANDLER_PAINTER_CAMERA_HPP
+#define _VGEGL_HANDLER_PAINTER_CAMERA_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -68,4 +68,4 @@ struct VGEGL_API Camera :
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_CAMERA_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_CAMERA_HPP

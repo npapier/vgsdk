@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGDEBUG_LOGGING_H
-#define _VGDEBUG_LOGGING_H
+#ifndef _VGDEBUG_LOGGING_HPP
+#define _VGDEBUG_LOGGING_HPP
 
 #include <iostream>
 #include <fstream>
@@ -86,4 +86,4 @@ private:
 
 } // namespace vgDebug
 
-#endif // #ifndef _VGDEBUG_LOGGING_H
+#endif // #ifndef _VGDEBUG_LOGGING_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_RC_RC_H
-#define _VGE_RC_RC_H
+#ifndef _VGE_RC_RC_HPP
+#define _VGE_RC_RC_HPP
 
 #include "vge/vge.hpp"
 
@@ -14,4 +14,4 @@
  * @brief Provides the framework for managing node/resource assocation during the evaluation.
  */
 
-#endif //#ifndef _VGE_RC_RC_H
+#endif //#ifndef _VGE_RC_RC_HPP

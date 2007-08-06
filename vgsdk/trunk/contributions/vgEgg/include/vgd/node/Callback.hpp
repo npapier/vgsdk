@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_NODE_CALLBACK_H
-#define _VGD_NODE_CALLBACK_H
+#ifndef _VGD_NODE_CALLBACK_HPP
+#define _VGD_NODE_CALLBACK_HPP
 
 #include <boost/function.hpp>
 
@@ -130,4 +130,4 @@ protected:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_CALLBACK_H
+#endif //#ifndef _VGD_NODE_CALLBACK_HPP

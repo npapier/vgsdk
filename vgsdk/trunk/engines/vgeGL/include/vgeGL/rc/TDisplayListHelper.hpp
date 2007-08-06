@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_RC_TDISPLAYLISTHELPER_H
-#define _VGEGL_RC_TDISPLAYLISTHELPER_H
+#ifndef _VGEGL_RC_TDISPLAYLISTHELPER_HPP
+#define _VGEGL_RC_TDISPLAYLISTHELPER_HPP
 
 #include <vgd/field/DirtyFlag.hpp>
 #include <vge/rc/Manager.hpp>
@@ -200,4 +200,4 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_RC_TDISPLAYLISTHELPER_H
+#endif //#ifndef _VGEGL_RC_TDISPLAYLISTHELPER_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_HANDLER_H
-#define _VGEGL_HANDLER_HANDLER_H
+#ifndef _VGEGL_HANDLER_HANDLER_HPP
+#define _VGEGL_HANDLER_HANDLER_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -14,4 +14,4 @@
  * @brief Handlers implements services for evaluating node using OpenGL.
  */
 
-#endif //#ifndef _VGEGL_HANDLER_HANDLER_H
+#endif //#ifndef _VGEGL_HANDLER_HANDLER_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGITK_VGSDK2ITK_H
-#define _VGITK_VGSDK2ITK_H
+#ifndef _VGITK_VGSDK2ITK_HPP
+#define _VGITK_VGSDK2ITK_HPP
 
 #include <itkImage.h>
 #include <vgd/Shp.hpp>
@@ -62,4 +62,4 @@ VGITK_API itk::ImageBase<3>::Pointer convertIImage2ItkImageBase( vgd::Shp< vgd::
 #include "vgITK/vgsdk2itk.hxx"
 
 
-#endif //#ifndef _VGITK_VGSDK2ITK_H
+#endif //#ifndef _VGITK_VGSDK2ITK_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_RC_BUTTONSTATESET_H
-#define _VGE_RC_BUTTONSTATESET_H
+#ifndef _VGE_RC_BUTTONSTATESET_HPP
+#define _VGE_RC_BUTTONSTATESET_HPP
 
 #include <vgd/event/ButtonStateSet.hpp>
 #include "vge/vge.hpp"
@@ -31,4 +31,4 @@ struct VGE_API ButtonStateSet : public IResource, vgd::event::ButtonStateSet
 
 } // namespace vge
 
-#endif //#ifndef _VGE_RC_BUTTONSTATESET_H
+#endif //#ifndef _VGE_RC_BUTTONSTATESET_HPP

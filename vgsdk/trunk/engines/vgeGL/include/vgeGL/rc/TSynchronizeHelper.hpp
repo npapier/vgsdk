@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_RC_TSYNCHRONIZEHELPER_H
-#define _VGEGL_RC_TSYNCHRONIZEHELPER_H
+#ifndef _VGEGL_RC_TSYNCHRONIZEHELPER_HPP
+#define _VGEGL_RC_TSYNCHRONIZEHELPER_HPP
 
 #include <vgd/field/DirtyFlag.hpp>
 #include <vge/rc/Manager.hpp>
@@ -95,4 +95,4 @@ void applyUsingSynchronize(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_RC_TSYNCHRONIZEHELPER_H
+#endif //#ifndef _VGEGL_RC_TSYNCHRONIZEHELPER_HPP

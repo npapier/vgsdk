@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGITK_FAILED_H
-#define _VGITK_FAILED_H
+#ifndef _VGITK_FAILED_HPP
+#define _VGITK_FAILED_HPP
 
 #include <exception>
 #include <string>
@@ -57,4 +57,4 @@ private:
 } // namespace vgITK
 
 
-#endif // #ifndef _VGITK_FAILED_H
+#endif // #ifndef _VGITK_FAILED_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_SERVICE_PAINTER_H
-#define _VGE_SERVICE_PAINTER_H
+#ifndef _VGE_SERVICE_PAINTER_HPP
+#define _VGE_SERVICE_PAINTER_HPP
 
 #include "vge/vge.hpp"
 
@@ -34,4 +34,4 @@ struct VGE_CLASS_API Painter : public Service
 
 } // namespace vge
 
-#endif //#ifndef _VGE_SERVICE_PAINTER_H
+#endif //#ifndef _VGE_SERVICE_PAINTER_HPP

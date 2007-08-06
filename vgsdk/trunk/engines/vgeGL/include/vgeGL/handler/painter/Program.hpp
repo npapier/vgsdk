@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_PROGRAM_H
-#define _VGEGL_HANDLER_PAINTER_PROGRAM_H
+#ifndef _VGEGL_HANDLER_PAINTER_PROGRAM_HPP
+#define _VGEGL_HANDLER_PAINTER_PROGRAM_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -63,4 +63,4 @@ struct VGEGL_API Program : public vge::handler::painter::MultiAttribute
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_PROGRAM_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_PROGRAM_HPP

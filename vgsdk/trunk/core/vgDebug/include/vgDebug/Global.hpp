@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGDEBUG_GLOBAL_H
-#define _VGDEBUG_GLOBAL_H
+#ifndef _VGDEBUG_GLOBAL_HPP
+#define _VGDEBUG_GLOBAL_HPP
 
 #include "vgDebug/vgDebug.hpp"
 
@@ -42,4 +42,4 @@ private:
 
 } // namespace vgDebug
 
-#endif //#ifndef _VGDEBUG_GLOBAL_H
+#endif //#ifndef _VGDEBUG_GLOBAL_HPP

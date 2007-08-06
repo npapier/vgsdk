@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_TEXTURE2D_H
-#define _VGEGL_HANDLER_PAINTER_TEXTURE2D_H
+#ifndef _VGEGL_HANDLER_PAINTER_TEXTURE2D_HPP
+#define _VGEGL_HANDLER_PAINTER_TEXTURE2D_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -76,4 +76,4 @@ private:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_TEXTURE2D_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_TEXTURE2D_HPP

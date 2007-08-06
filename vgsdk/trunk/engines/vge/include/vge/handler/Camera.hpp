@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_CAMERA_H
-#define _VGE_HANDLER_CAMERA_H
+#ifndef _VGE_HANDLER_CAMERA_HPP
+#define _VGE_HANDLER_CAMERA_HPP
 
 #include "vge/vge.hpp"
 
@@ -49,4 +49,4 @@ struct VGE_API Camera
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_CAMERA_H
+#endif //#ifndef _VGE_HANDLER_CAMERA_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_CBB_MATRIXTRANSFORM_H
-#define _VGE_HANDLER_CBB_MATRIXTRANSFORM_H
+#ifndef _VGE_HANDLER_CBB_MATRIXTRANSFORM_HPP
+#define _VGE_HANDLER_CBB_MATRIXTRANSFORM_HPP
 
 #include "vge/vge.hpp"
 
@@ -50,4 +50,4 @@ struct VGE_API MatrixTransform :
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_CBB_MATRIXTRANSFORM_H
+#endif //#ifndef _VGE_HANDLER_CBB_MATRIXTRANSFORM_HPP

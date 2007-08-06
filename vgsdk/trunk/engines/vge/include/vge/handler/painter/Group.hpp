@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_PAINTER_GROUP_H
-#define _VGE_HANDLER_PAINTER_GROUP_H
+#ifndef _VGE_HANDLER_PAINTER_GROUP_HPP
+#define _VGE_HANDLER_PAINTER_GROUP_HPP
 
 #include "vge/vge.hpp"
 
@@ -38,4 +38,4 @@ struct VGE_API Group : public Painter
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_PAINTER_GROUP_H
+#endif //#ifndef _VGE_HANDLER_PAINTER_GROUP_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PROCESSEVENT_PROCESSEVENT_H
-#define _VGEGL_HANDLER_PROCESSEVENT_PROCESSEVENT_H
+#ifndef _VGEGL_HANDLER_PROCESSEVENT_PROCESSEVENT_HPP
+#define _VGEGL_HANDLER_PROCESSEVENT_PROCESSEVENT_HPP
 
 #include <vge/handler/Handler.hpp>
 #include <vgDebug/Global.hpp>
@@ -40,4 +40,4 @@ struct VGEGL_API ProcessEvent : public vge::handler::Handler
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_PROCESSEVENT_H
+#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_PROCESSEVENT_HPP

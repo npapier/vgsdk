@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_CBB_SHAPE_H
-#define _VGE_HANDLER_CBB_SHAPE_H
+#ifndef _VGE_HANDLER_CBB_SHAPE_HPP
+#define _VGE_HANDLER_CBB_SHAPE_HPP
 
 #include "vge/vge.hpp"
 
@@ -47,4 +47,4 @@ struct VGE_API Shape : public ComputeBoundingBox
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_CBB_SHAPE_H
+#endif //#ifndef _VGE_HANDLER_CBB_SHAPE_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_TEXTUREMATRIXTRANSFORM_H
-#define _VGE_HANDLER_TEXTUREMATRIXTRANSFORM_H
+#ifndef _VGE_HANDLER_TEXTUREMATRIXTRANSFORM_HPP
+#define _VGE_HANDLER_TEXTUREMATRIXTRANSFORM_HPP
 
 #include "vge/vge.hpp"
 
@@ -49,4 +49,4 @@ struct VGE_API TextureMatrixTransform
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_TEXTUREMATRIXTRANSFORM_H
+#endif //#ifndef _VGE_HANDLER_TEXTUREMATRIXTRANSFORM_HPP

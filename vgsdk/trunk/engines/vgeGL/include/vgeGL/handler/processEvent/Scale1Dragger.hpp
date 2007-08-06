@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_H
-#define _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_H
+#ifndef _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_HPP
+#define _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_HPP
 
 #include "vgeGL/handler/processEvent/Dragger.hpp"
 #include "vgeGL/handler/processEvent/ProcessEvent.hpp"
@@ -48,4 +48,4 @@ struct VGEGL_API Scale1Dragger :	public vgeGL::handler::processEvent::ProcessEve
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_H
+#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_SCALE1DRAGGER_HPP

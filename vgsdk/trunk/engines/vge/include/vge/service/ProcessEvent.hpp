@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_SERVICE_PROCESSEVENT_H
-#define _VGE_SERVICE_PROCESSEVENT_H
+#ifndef _VGE_SERVICE_PROCESSEVENT_HPP
+#define _VGE_SERVICE_PROCESSEVENT_HPP
 
 #include "vge/vge.hpp"
 
@@ -34,4 +34,4 @@ struct VGE_CLASS_API ProcessEvent : public Service
 
 } // namespace vge
 
-#endif //#ifndef _VGE_SERVICE_PROCESSEVENT_H
+#endif //#ifndef _VGE_SERVICE_PROCESSEVENT_HPP

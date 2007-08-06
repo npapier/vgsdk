@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_SERVICE_COMPUTEBOUNDINGBOX_H
-#define _VGE_SERVICE_COMPUTEBOUNDINGBOX_H
+#ifndef _VGE_SERVICE_COMPUTEBOUNDINGBOX_HPP
+#define _VGE_SERVICE_COMPUTEBOUNDINGBOX_HPP
 
 #include "vge/vge.hpp"
 
@@ -34,4 +34,4 @@ struct ComputeBoundingBox : public Service
 
 } // namespace vge
 
-#endif //#ifndef _VGE_SERVICE_COMPUTEBOUNDINGBOX_H
+#endif //#ifndef _VGE_SERVICE_COMPUTEBOUNDINGBOX_HPP

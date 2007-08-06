@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_WIRESHAPE_H
-#define _VGEGL_HANDLER_PAINTER_WIRESHAPE_H
+#ifndef _VGEGL_HANDLER_PAINTER_WIRESHAPE_HPP
+#define _VGEGL_HANDLER_PAINTER_WIRESHAPE_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -46,4 +46,4 @@ struct VGEGL_API WireShape : public VertexShape
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_WIRESHAPE_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_WIRESHAPE_HPP

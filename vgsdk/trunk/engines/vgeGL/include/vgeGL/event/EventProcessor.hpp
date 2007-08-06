@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_EVENT_EVENTPROCESSOR_H
-#define _VGEGL_EVENT_EVENTPROCESSOR_H
+#ifndef _VGEGL_EVENT_EVENTPROCESSOR_HPP
+#define _VGEGL_EVENT_EVENTPROCESSOR_HPP
 
 #include "vgeGL/vgeGL.hpp"
 #include "vgeGL/engine/SceneManager.hpp"
@@ -92,4 +92,4 @@ private:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_EVENT_EVENTPROCESSOR_H
+#endif //#ifndef _VGEGL_EVENT_EVENTPROCESSOR_HPP

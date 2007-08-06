@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PROCESSEVENT_DRAGGER_H
-#define _VGEGL_HANDLER_PROCESSEVENT_DRAGGER_H
+#ifndef _VGEGL_HANDLER_PROCESSEVENT_DRAGGER_HPP
+#define _VGEGL_HANDLER_PROCESSEVENT_DRAGGER_HPP
 
 #include <vgd/Shp.hpp>
 #include <vgd/event/Event.hpp>
@@ -154,4 +154,4 @@ protected:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_DRAGGER_H
+#endif //#ifndef _VGEGL_HANDLER_PROCESSEVENT_DRAGGER_HPP

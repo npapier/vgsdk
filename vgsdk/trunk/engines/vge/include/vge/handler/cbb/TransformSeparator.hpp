@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_CBB_TRANSFORMSEPARATOR_H
-#define _VGE_HANDLER_CBB_TRANSFORMSEPARATOR_H
+#ifndef _VGE_HANDLER_CBB_TRANSFORMSEPARATOR_HPP
+#define _VGE_HANDLER_CBB_TRANSFORMSEPARATOR_HPP
 
 #include "vge/vge.hpp"
 
@@ -50,4 +50,4 @@ struct VGE_API TransformSeparator :
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_CBB_TRANSFORMSEPARATOR_H
+#endif //#ifndef _VGE_HANDLER_CBB_TRANSFORMSEPARATOR_HPP

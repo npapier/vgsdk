@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGITK_VGITK_H
-#define _VGITK_VGITK_H
+#ifndef _VGITK_VGITK_HPP
+#define _VGITK_VGITK_HPP
 
 /** 
  * @namespace vgITK
@@ -47,4 +47,4 @@
 
 
 
-#endif // #ifndef _VGITK_VGITK_H
+#endif // #ifndef _VGITK_VGITK_HPP

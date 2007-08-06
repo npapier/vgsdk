@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_REGISTERHANDLER_H
-#define _VGE_HANDLER_REGISTERHANDLER_H
+#ifndef _VGE_HANDLER_REGISTERHANDLER_HPP
+#define _VGE_HANDLER_REGISTERHANDLER_HPP
 
 #include "vge/vge.hpp"
 
@@ -47,4 +47,4 @@ struct RegisterHandler
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_REGISTERHANDLER_H
+#endif //#ifndef _VGE_HANDLER_REGISTERHANDLER_HPP

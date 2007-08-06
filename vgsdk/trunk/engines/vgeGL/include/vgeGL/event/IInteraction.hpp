@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_EVENT_IINTERACTION_H
-#define _VGEGL_EVENT_IINTERACTION_H
+#ifndef _VGEGL_EVENT_IINTERACTION_HPP
+#define _VGEGL_EVENT_IINTERACTION_HPP
 
 #include <vgd/event/EventVisitor.hpp>
 #include "vgeGL/event/EventProcessor.hpp"
@@ -56,4 +56,4 @@ private:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_EVENT_IINTERACTION_H
+#endif //#ifndef _VGEGL_EVENT_IINTERACTION_HPP

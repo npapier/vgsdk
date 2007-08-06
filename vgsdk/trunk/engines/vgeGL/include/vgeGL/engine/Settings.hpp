@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_ENGINE_SETTINGS_H
-#define _VGEGL_ENGINE_SETTINGS_H
+#ifndef _VGEGL_ENGINE_SETTINGS_HPP
+#define _VGEGL_ENGINE_SETTINGS_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -87,4 +87,4 @@ struct VertexArrayDisplayListMethod : public VertexArrayMethod
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_ENGINE_SETTINGS_H
+#endif //#ifndef _VGEGL_ENGINE_SETTINGS_HPP

@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_LIGHTMODEL_H
-#define _VGEGL_HANDLER_PAINTER_LIGHTMODEL_H
+#ifndef _VGEGL_HANDLER_PAINTER_LIGHTMODEL_HPP
+#define _VGEGL_HANDLER_PAINTER_LIGHTMODEL_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -69,4 +69,4 @@ struct VGEGL_API LightModel : public vge::handler::painter::SingleAttribute
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_LIGHTMODEL_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_LIGHTMODEL_HPP

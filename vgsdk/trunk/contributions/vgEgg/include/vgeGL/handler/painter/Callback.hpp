@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_CALLBACK_H
-#define _VGEGL_HANDLER_PAINTER_CALLBACK_H
+#ifndef _VGEGL_HANDLER_PAINTER_CALLBACK_HPP
+#define _VGEGL_HANDLER_PAINTER_CALLBACK_HPP
 
 #include <vge/handler/painter/SingleAttribute.hpp>
 
@@ -61,4 +61,4 @@ struct VGEGL_API Callback : public vge::handler::painter::SingleAttribute
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_CALLBACK_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_CALLBACK_HPP

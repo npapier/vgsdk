@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_HANDLER_PAINTER_ATTRIBUTE_H
-#define _VGE_HANDLER_PAINTER_ATTRIBUTE_H
+#ifndef _VGE_HANDLER_PAINTER_ATTRIBUTE_HPP
+#define _VGE_HANDLER_PAINTER_ATTRIBUTE_HPP
 
 #include "vge/vge.hpp"
 
@@ -36,4 +36,4 @@ struct VGE_API Attribute : public Painter
 
 } // namespace vge
 
-#endif //#ifndef _VGE_HANDLER_PAINTER_ATTRIBUTE_H
+#endif //#ifndef _VGE_HANDLER_PAINTER_ATTRIBUTE_HPP

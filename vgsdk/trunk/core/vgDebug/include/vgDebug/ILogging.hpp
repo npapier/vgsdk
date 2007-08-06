@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGDEBUG_ILOGGING_H
-#define _VGDEBUG_ILOGGING_H
+#ifndef _VGDEBUG_ILOGGING_HPP
+#define _VGDEBUG_ILOGGING_HPP
 
 #include "vgDebug/vgDebug.hpp"
 
@@ -48,4 +48,4 @@ struct VGDEBUG_API ILogging
 
 } // namespace vgDebug
 
-#endif // #ifndef _VGDEBUG_ILOGGING_H
+#endif // #ifndef _VGDEBUG_ILOGGING_HPP

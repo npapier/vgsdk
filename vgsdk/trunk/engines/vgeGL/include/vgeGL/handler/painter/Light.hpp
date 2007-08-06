@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_LIGHT_H
-#define _VGEGL_HANDLER_PAINTER_LIGHT_H
+#ifndef _VGEGL_HANDLER_PAINTER_LIGHT_HPP
+#define _VGEGL_HANDLER_PAINTER_LIGHT_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -60,4 +60,4 @@ protected:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_LIGHT_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_LIGHT_HPP

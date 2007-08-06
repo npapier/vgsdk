@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_HANDLER_PAINTER_SURROUNDSCALE_H
-#define _VGEGL_HANDLER_PAINTER_SURROUNDSCALE_H
+#ifndef _VGEGL_HANDLER_PAINTER_SURROUNDSCALE_HPP
+#define _VGEGL_HANDLER_PAINTER_SURROUNDSCALE_HPP
 
 #include "vgeGL/vgeGL.hpp"
 
@@ -68,4 +68,4 @@ struct VGEGL_API SurroundScale :
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_HANDLER_PAINTER_SURROUNDSCALE_H
+#endif //#ifndef _VGEGL_HANDLER_PAINTER_SURROUNDSCALE_HPP
