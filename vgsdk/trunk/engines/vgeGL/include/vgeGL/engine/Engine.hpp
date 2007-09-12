@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,11 +6,12 @@
 #ifndef _VGEGL_ENGINE_ENGINE_HPP
 #define _VGEGL_ENGINE_ENGINE_HPP
 
-#include "vgeGL/vgeGL.hpp"
-
 #include <vge/engine/Engine.hpp>
 #include <vge/rc/Manager.hpp>
 
+#include "vgeGL/vgeGL.hpp"
+
+namespace vgd { namespace node { struct Texture; } }
 
 
 
@@ -114,6 +115,8 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	const int32 getMaxTexSize() const;
 
 	const int32 getMax3DTexSize() const;
+	
+	const int32 getMaxCubeMapTexSize() const;
 
 	//@}
 
@@ -148,6 +151,24 @@ struct VGEGL_API Engine : public vge::engine::Engine
 
 
 
+	/**
+	 * @name OpenGL state modifiers
+	 *
+	 * @todo Same method as activeTexture() but for others OpenGL api => @todo template ?
+	 */
+	//@{
+
+	/**
+	 * @brief Activates the desired texture unit
+	 *
+	 * @param textureNode	the texture node (used to know which texture unit must be activated, i.e. getMultiAttributeIndex())
+	 */
+	void activeTexture( const vgd::node::Texture * textureNode );
+
+	//@}
+
+
+
 protected:
 	/**
 	 * @brief Populate the node registry with duplicate multi attribute nodes (with index>=1).
@@ -174,6 +195,7 @@ private:
 	mutable GLint	m_maxTexUnits;
 	mutable GLint	m_maxTexSize;
 	mutable GLint	m_max3DTexSize;
+	mutable GLint	m_maxCubeMapTexSize;
 	//@}
 
 	/**

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -31,6 +31,7 @@ Texture::Texture( const std::string nodeName ) :
 	addField( new FFilterType(getFFilter()) );
 	addField( new FMipmapType(getFMipmap()) );
 	addField( new FBorderType(getFBorder()) );
+	addField( new FBorderColorType(getFBorderColor()) );	
 	addField( new FEnvColorType(getFEnvColor()) );
 
 	addField( new FFunctionType(getFFunction()) );
@@ -41,25 +42,26 @@ Texture::Texture( const std::string nodeName ) :
 
 	// Add dirty flags
 	addDirtyFlag( getDFIImages() );
-	
 	addDirtyFlag( getDFParameters() );
-	
-	// Link(s)
+	addDirtyFlag( getDFEnvironmentParameters() );
+
+	// Links
 	link( getFIImages(),	getDFIImages() );
-		
+	link( getFBorder(),		getDFIImages() );
+
 	link( getFWrap(),		getDFParameters() );
 	link( getFFilter(),		getDFParameters() );
 	link( getFMipmap(),		getDFParameters() );
-	link( getFBorder(),		getDFParameters() );
-	link( getFEnvColor(),	getDFParameters() );
-	
-	link( getFFunction(),	getDFParameters() );
-	link( getFCombine(),	getDFParameters() );
-	link( getFSource(),		getDFParameters() );
-	link( getFOperand(),	getDFParameters() );
-	link( getFScale(),		getDFParameters() );									
+	link( getFBorderColor(),getDFParameters() );
 
-	link( getDFNode() );	
+	link( getFEnvColor(),	getDFEnvironmentParameters() );
+	link( getFFunction(),	getDFEnvironmentParameters() );
+	link( getFCombine(),	getDFEnvironmentParameters() );
+	link( getFSource(),		getDFEnvironmentParameters() );
+	link( getFOperand(),	getDFEnvironmentParameters() );
+	link( getFScale(),		getDFEnvironmentParameters() );									
+
+	link( getDFNode() );
 }
 
 
@@ -84,7 +86,8 @@ void Texture::setOptionalsToDefaults()
 
 	setMipmap( true );
 	
-	setBorder( vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
+	setBorder( false );
+	setBorderColor( vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
 	
 	setEnvColor( vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
 
@@ -209,6 +212,30 @@ void Texture::setBorder( BorderValueType value )
 void Texture::eraseBorder()
 {
 	vgd::field::eraseParameterValue< BorderParameterType, BorderValueType >( this, getFBorder(), BORDER );
+}
+
+
+
+// BORDER_COLOR
+bool Texture::getBorderColor( BorderColorValueType& value ) const
+{
+	return ( 
+		vgd::field::getParameterValue< BorderColorParameterType, BorderColorValueType >( this, getFBorderColor(), BORDER_COLOR, value )
+		);
+}
+
+
+
+void Texture::setBorderColor( BorderColorValueType value )
+{
+	vgd::field::setParameterValue< BorderColorParameterType, BorderColorValueType >( this, getFBorderColor(), BORDER_COLOR, value );
+}
+
+
+
+void Texture::eraseBorderColor()
+{
+	vgd::field::eraseParameterValue< BorderColorParameterType, BorderColorValueType >( this, getFBorderColor(), BORDER_COLOR );
 }
 
 
@@ -392,6 +419,13 @@ const std::string Texture::getFBorder( void )
 
 
 
+const std::string Texture::getFBorderColor( void )
+{
+	return ( "f_borderColor" );
+}
+
+
+
 const std::string Texture::getFEnvColor( void )
 {
 	return ( "f_envColor" );
@@ -444,6 +478,13 @@ const std::string Texture::getDFIImages()
 const std::string Texture::getDFParameters()
 {
 	return ( "df_parameters" );
+}
+
+
+
+const std::string Texture::getDFEnvironmentParameters()
+{
+	return ( "df_environmentParameters" );
 }
 
 

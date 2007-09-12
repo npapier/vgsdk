@@ -520,7 +520,11 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Returns the maximum 3D texture image dimension.
 	 */
 	virtual const int32 getMax3DTexSize() const = 0;
-	
+
+	/**
+	 * @brief Returns the maximum cube map texture image dimension.
+	 */
+	virtual const int32 getMaxCubeMapTexSize() const = 0;
 	//@}
 
 

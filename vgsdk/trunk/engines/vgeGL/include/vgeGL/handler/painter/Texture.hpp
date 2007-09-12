@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -11,35 +11,18 @@
 
 #include "vgeGL/vgeGL.hpp"
 
-namespace glo
-{
-	struct Texture;
-}
+namespace glo { struct Texture; }
 
 namespace vgd
 {
-	namespace field
-	{
-		struct DirtyFlag;
-	}
-	
-	namespace node
-	{
-		struct Texture;
-	}
+	namespace field	{ struct DirtyFlag; }
+	namespace node { struct Texture; }
 }
 
 namespace vgeGL
 {
-	namespace engine
-	{
-		struct Engine;
-	}
-	
-	namespace rc
-	{
-		struct Texture;
-	}
+	namespace engine { struct Engine; }
+	namespace rc { struct Texture; }
 }
 
 
@@ -55,64 +38,182 @@ namespace painter
 
 
 /**
- * @brief Send render commands for the Texture node
+ * @brief Send render commands for the Texture node.
  * 
- * @todo Shared more source code between Texture1D, 2D... (see TexturexD::synchronize(), TexturexD::texSubImage())
- * @todo Support Texture1D resize (for ONCE parameters)
  * @todo Optimize convertMy*2GL() using a table.
  */
 struct VGEGL_API Texture : public vge::handler::painter::MultiAttribute
 {
+protected:
+	/**
+	 * @brief Forward declaration
+	 */
+	struct TexInfo;
+
+public:
+
 	void	setToDefaults();
 
 	void	paint( vgeGL::engine::Engine*, vgd::node::Texture*, glo::Texture* );
 
 	/**
+	 * @brief Sends glTexParameter commands for the Texture node.
+	 */
+	void paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource );
+
+	/**
+	 * @brief Sends glTexEnv commands for the Texture node.
+	 */
+	void paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource );
+
+	/**
+	 * @brief
+	 */
+	void synchronize( vgeGL::engine::Engine* pGLEngine, vgd::node::Texture *pNode, glo::Texture * pResource );
+
+	/**
+	 * @brief
+	 */
+	void texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+						glo::Texture *pTexture,
+						TexInfo& texInfo );
+
+protected:
+
+	/**
+	 * @brief Definition of the different image state.
+	 */
+	enum State {
+		NOIIMAGE_VALIDATED,
+		IIMAGE_VALIDATED,
+		NEW_IIMAGE
+	};
+
+	/**
+	 * @brief Computes state of Texture.image field.
+	 *
+	 * @return the state of the Texture.image field (one value among NOIIMAGE_VALIDATED,  IIMAGE_VALIDATED or NEW_IIMAGE).
+	 */
+	State preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture *pTexture,
+							TexInfo& texInfo );
+
+
+
+	/**
+	 * @name Internal helpers
+	 */
+	//@{
+
+	/**
+	 * @brief Informations on texture map and texture parameters.
+	 */
+	struct TexInfo
+	{
+		TexInfo()
+		:	//iimage
+			//
+			borderSize			(	0		),
+			imageSize			(	0, 0, 0 ),
+			imageSizePOT		(	0, 0, 0 ),
+			texDimension		(	-1		),
+			internalFormat		(	0		),
+			format				(	0		),
+			type				(	0		),
+			texSize				(	0, 0, 0 ),
+			resizeForTex		(	false	)
+		{}
+
+		/**
+		 * @name preSynchronize
+		 */
+		//@{
+
+		vgd::Shp< vgd::basic::IImage >	iimage;		//!< the incoming image (from texture node)
+
+		//@}
+
+
+
+		/**
+		 * @name computeTexImageParams
+		 */
+		//@{
+			
+		GLint		borderSize;
+
+		vgm::Vec3i	imageSize;
+		vgm::Vec3i	imageSizePOT;
+
+		int			texDimension;
+
+		GLint		internalFormat;
+		GLenum		format;
+		GLenum		type;
+
+		vgm::Vec3i	texSize;
+		bool		resizeForTex;
+		//@}
+	};
+	//@}
+
+	/**
+	 * @brief Computes all texture informations needed for glTexImage function.
+	 */
+	void computeTexInfo( vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo );
+
+	/**
+	 * @brief Computes texture image parameters and fills TexInfo structure with theses parameters.
+	 *
+	 * @remarks This method takes care of POT/NPOT image (by using GL_ARB_texture_non_power_of_two or by resizing incoming image).
+	 */
+	void computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo );
+
+	/**
+	 * @brief Takes care of texture size limit.
+	 *
+	 * Tests if the incoming image must be resized, i.e. image size exceed maximum texture size.
+	 *
+	 * @todo Uses texture proxies.
+	 */
+	void clampTexImageSize( vgeGL::engine::Engine *pGLEngine, ::glo::Texture * pTexture, TexInfo& texInfo );
+
+	/**
+	 * @brief Tests if the computed texture parameters are compatblies with the currrent real texture.
+	 * 
+	 * @return true if compatible, false if not.
+	 */
+	const bool isTextureCompatible( vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, const TexInfo& texInfo );
+
+	/**
+	 * @brief Tests if computed texture size is compatible with the real texture size
+	 *
+	 * @return true if compatible, false if not.
+	 */
+	const bool isTextureSizeCompatible( ::glo::Texture * pTexture, const TexInfo& texInfo );
+
+	/**
+	 * @brief
+	 */
+	void synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+										::glo::Texture *pTexture );
+
+	/**
+	 * @name Helpers
+	 */
+	//@{
+
+	/**
 	 * @brief Convert IImage format to the OpenGL equivalent format.
 	 */
-	static GLenum convertMyFormat2GL( vgd::basic::IImage::Format format );
+	static GLenum convertMyFormat2GL( const vgd::basic::IImage::Format format );
 	
 	/**
 	 * @brief Convert IImage type to the OpenGL equivalent type.
 	 */
-	static GLenum convertMyType2GL( vgd::basic::IImage::Type type );
+	static GLenum convertMyType2GL( const vgd::basic::IImage::Type type );
 	
-	
-protected:
-	/**
-	 * @name Data initialized by preSynchronize()
-	 */
-	//@{
-
-	vgd::field::DirtyFlag*			m_pDFIImages;
-	bool							m_isImageDefined;
-	vgd::Shp< vgd::basic::IImage >	m_pIImage;
-	
-	// the following attributes are only initialized if preSynchronize has returned false
-	vgm::Vec3i	m_imageSize;
-	vgm::Vec3i	m_imageSizePOT;
-	
-	int32	m_components;
-	GLenum	m_format;
-	GLenum	m_type;
-
-	vgm::Vec3i	m_texSize;
-	bool		m_bResize;
 	//@}
 
-	/**
-	 * @brief Switch to the specified tex unit and creates rc/tex
-	 * 
-	 * @return true when image/texture are synchronized, false if not.
-	 * 
-	 * @todo takes care of texture and image format...
-	 */
-	const bool preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
-								::glo::Texture *pTexture );
-								
-	void synchronizeParameters(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
-								::glo::Texture *pTexture );
-								
 private:
 	static GLenum	m_wrapParameter[];
 	static GLint	m_wrapValue[];

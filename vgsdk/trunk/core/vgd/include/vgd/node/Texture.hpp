@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,12 +6,9 @@
 #ifndef _VGD_NODE_TEXTURE_HPP
 #define _VGD_NODE_TEXTURE_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <vgm/Vector.hpp>
 #include "vgd/basic/IImage.hpp"
 #include "vgd/field/TPairAssociativeField.hpp"
-
 #include "vgd/node/MultiAttribute.hpp"
 
 
@@ -27,7 +24,7 @@ namespace node
 /**
  * @brief Abstract texture mapping node
  * 
- * This node defines texture parameters (wrapping, filters, mipmapping, border, environnement color and 
+ * This node defines texture parameters (wrapping, filters, mipmapping, border, border color, environnement color and 
  * function/combine).
  * 
  * @remarks You MUST define at least the \c wrap, \c filter and \c function fields.
@@ -43,15 +40,13 @@ namespace node
  * 			- CLAMP_TO_BORDER
  * 			- MIRRORED_REPEAT
  * 			- ONCE ( don't set texture coordinates outside the interval [0.f, 1.f] ).
-
- * 	- [WRAP_T]\n
+ *  - [WRAP_T]\n
  * 		Choose one value among REPEAT (default), CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE.
  * 
- * 	- [WRAP_R]\n
+ * - [WRAP_R]\n
  * 		Choose one value among REPEAT (default), CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE.
  * 
  * - PAFInt32 \c filter
- * 
  * 	- [MIN_FILTER]\n
  * 		Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR,
  * 			LINEAR_MIPMAP_LINEAR.
@@ -61,7 +56,9 @@ namespace node
  * 
  * - PAFBool \c [mipmap] = true\n
  * 
- * - PAFVec4f \c [border] = (0,0,0,0)\n
+ * - PAFBool \c [border] = (false)\n
+ * 
+ * - PAFVec4f \c [borderColor] = (0,0,0,0)\n
  * 
  * - PAFVec4f \c [envColor] = (0,0,0,0)\n
  * 
@@ -134,7 +131,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field iimages.
+	 * @name Accessors to field iimages
 	 */
 	//@{
 
@@ -181,7 +178,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field wrap.
+	 * @name Accessors to field wrap
 	 */
 	//@{
 
@@ -235,7 +232,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field filter.
+	 * @name Accessors to field filter
 	 */
 	//@{
 
@@ -290,7 +287,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field mipmap.
+	 * @name Accessors to field mipmap
 	 */
 	//@{
 
@@ -331,7 +328,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field border.
+	 * @name Accessors to field border
 	 */
 	//@{
 
@@ -346,7 +343,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	/**
 	 * @brief Typedef for the \c border parameter value.
 	 */
-	typedef vgm::Vec4f BorderValueType;
+	typedef bool BorderValueType;
 
 	/**
 	 * @brief Typedef for the \c border field.
@@ -372,7 +369,48 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	
 	
 	/**
-	 * @name Accessors to field envColor.
+	 * @name Accessors to field borderColor
+	 */
+	//@{
+
+	/**
+	 * @brief Enumeration of the \c borderColor parameter.
+	 */
+	typedef enum
+	{
+		BORDER_COLOR = 0
+	} BorderColorParameterType;
+
+	/**
+	 * @brief Typedef for the \c borderColor parameter value.
+	 */
+	typedef vgm::Vec4f BorderColorValueType;
+
+	/**
+	 * @brief Typedef for the \c borderColor field.
+	 */	
+	typedef vgd::field::TPairAssociativeField< BorderColorParameterType, BorderColorValueType > FBorderColorType;
+
+	/**
+	 * @brief Gets the \c borderColor value.
+	 */
+	bool			getBorderColor( BorderColorValueType& value ) const;
+
+	/**
+	 * @brief Sets the \c borderColor value.
+	 */
+	void 			setBorderColor( BorderColorValueType value );
+	
+	/**
+	 * @brief Erase the \c borderColor value.
+	 */
+	void 			eraseBorderColor();
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field envColor
 	 */
 	//@{
 
@@ -413,7 +451,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field function.
+	 * @name Accessors to field function
 	 */
 	//@{
 
@@ -464,7 +502,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field combine.
+	 * @name Accessors to field combine
 	 */
 	//@{
 
@@ -516,7 +554,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field source.
+	 * @name Accessors to field source
 	 */
 	//@{
 
@@ -603,7 +641,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field operand.
+	 * @name Accessors to field operand
 	 */
 	//@{
 
@@ -657,7 +695,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field scale.
+	 * @name Accessors to field scale
 	 */
 	//@{
 
@@ -699,7 +737,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Fields names enumeration
 	 */
 	//@{
 
@@ -736,7 +774,14 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 * 
 	 * @return the name of field \c border.
 	 */
-	static const std::string getFBorder( void );	
+	static const std::string getFBorder( void );
+
+	/**
+	 * @brief Returns the name of field \c borderColor.
+	 * 
+	 * @return the name of field \c borderColor.
+	 */
+	static const std::string getFBorderColor( void );
 	
 	/**
 	 * @brief Returns the name of field \c envColor.
@@ -785,7 +830,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Dirty flags enumeration.
+	 * @name Dirty flags enumeration
 	 */
 	//@{
 
@@ -798,6 +843,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 * @brief Returns name of dirty flag that is invalidate when texture parameters changed.
 	 */
 	static const std::string getDFParameters();
+	
+	/**
+	 * @brief Returns name of dirty flag that is invalidate when texture environment parameters changed.
+	 */
+	static const std::string getDFEnvironmentParameters();
 
 	//@}		
 
@@ -820,7 +870,7 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 

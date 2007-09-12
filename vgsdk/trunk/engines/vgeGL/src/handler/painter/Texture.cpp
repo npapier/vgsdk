@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,10 +6,11 @@
 #include "vgeGL/handler/painter/Texture.hpp"
 
 #include <glo/Texture.hpp>
+#include <vgd/basic/Image.hpp>
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Texture.hpp>
-#include <vgm/Utilities.hpp>
-#include <vgm/Vector.hpp>
+#include <vgDebug/Global.hpp>
+#include <vgm/VectorOperations.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
 
@@ -27,12 +28,19 @@ namespace painter
 
 
 void Texture::setToDefaults()
+{}
+
+
+
+void Texture::paint(vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
 {
+	paintParams(	pEngine, pNode, pResource );
+	paintEnv(		pEngine, pNode, pResource );
 }
 
 
 
-void Texture::paint(vgeGL::engine::Engine *, vgd::node::Texture *pNode, glo::Texture *pResource )
+void Texture::paintParams(vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
 {
 	using vgd::node::Texture;
 	
@@ -44,9 +52,9 @@ void Texture::paint(vgeGL::engine::Engine *, vgd::node::Texture *pNode, glo::Tex
 	
 	for(	wrapIter = wrap->begin(),
 			wrapEnd	= wrap->end();
-			
+
 			wrapIter != wrapEnd;
-			
+
 			++wrapIter
 			)
 	{
@@ -77,29 +85,50 @@ void Texture::paint(vgeGL::engine::Engine *, vgd::node::Texture *pNode, glo::Tex
 				);
 	}	
 	filter.release();
-	
+
 	// MIPMAP
 	bool bMipmap;
 	bool bDefined = pNode->getMipmap( bMipmap );
-	
+
 	if ( bDefined )
 	{
-		pResource->parameter(
-			GL_GENERATE_MIPMAP, bMipmap );
+		if ( isGL_SGIS_generate_mipmap() )
+		{
+			#ifdef _DEBUG
+			vgDebug::get().logDebug("vgeGL.Texture: GL_SGIS_generate_mipmap detected and used.");
+			#endif
+
+			pResource->parameter(
+				GL_GENERATE_MIPMAP, bMipmap );
+		}
+		else
+		{
+			#ifdef _DEBUG
+			vgDebug::get().logDebug("vgeGL.Texture: GL_SGIS_generate_mipmap not detected, try software mipmap later.");
+			#endif
+		}
 	}
-	
-	// BORDER
+
+	// BORDER_COLOR
 	vgm::Vec4f v4;
-	bDefined = pNode->getBorder( v4 );
-	
+	bDefined = pNode->getBorderColor( v4 );
+
 	if ( bDefined )
 	{
 		pResource->parameter(
 			GL_TEXTURE_BORDER_COLOR, v4.getValue() );
 	}
+}
+
+
+
+void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
+{
+	using vgd::node::Texture;
 
 	// ENV_COLOR
-	bDefined = pNode->getEnvColor( v4 );
+	vgm::Vec4f v4;
+	bool bDefined = pNode->getEnvColor( v4 );
 	
 	if ( bDefined )
 	{
@@ -107,7 +136,7 @@ void Texture::paint(vgeGL::engine::Engine *, vgd::node::Texture *pNode, glo::Tex
 			GL_TEXTURE_ENV_COLOR,
 			v4.getValue() );
 	}
-	
+
 	// FUNCTION
 	vgd::field::EditorRO< Texture::FFunctionType > function = pNode->getFieldRO<Texture::FFunctionType>(pNode->getFFunction());
 	
@@ -216,241 +245,411 @@ void Texture::paint(vgeGL::engine::Engine *, vgd::node::Texture *pNode, glo::Tex
 
 
 
-const bool Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
-									::glo::Texture *pTexture )
+void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture * pNode,
+							::glo::Texture * pTexture )
 {
-	// activate the desired texture unit.
-	pTexture->active( GL_TEXTURE0_ARB + pNode->getMultiAttributeIndex() );
+	TexInfo	texInfo;
 
-	// Tests if 'iimage' field is valid ?
-	m_pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
-	
-	if ( m_pDFIImages->isValid() )
+	State	state = preSynchronize( pGLEngine, pNode, pTexture, texInfo );
+
+	if ( state  == NOIIMAGE_VALIDATED )
 	{
-		// Nothing to do, because texture is already created and synchronized.
-		return true;
+		// Disables texturing
+		pTexture->disable();
+		return;
 	}
-
-	// gets IImage
-	const bool imageFieldDefined = 	pNode->getIImages( vgd::node::Texture::DEFAULT_IIMAGES, m_pIImage );
-
-	m_isImageDefined =	imageFieldDefined	&&
-						(m_pIImage != 0) &&
-						(!m_pIImage->isEmpty());
-
-	if ( !m_isImageDefined )
+	else if ( state == IIMAGE_VALIDATED )
 	{
-		// Nothing to do, because iimage is not defined.
-		m_pDFIImages->validate();
-		return true;
-	}
+		// No synchronization, just uses the texture
 
-	// updates imageSize and imageSizePOT.
-	m_imageSize[0]	= m_pIImage->width();
-	m_imageSize[1]	= m_pIImage->height();
-	m_imageSize[2]	= m_pIImage->depth();
-	
-	const int32 textureDimension = pNode->gethTextureDimension();
-	assert( textureDimension == 1 || textureDimension == 2 || textureDimension == 3 );
+		// Activates the desired texture unit
+		pGLEngine->activeTexture( pNode );
 
-	m_imageSizePOT[0] = vgm::Utilities::nextPower2( m_imageSize[0] );
-	m_imageSizePOT[1] = vgm::Utilities::nextPower2( m_imageSize[1] );
-	m_imageSizePOT[2] = vgm::Utilities::nextPower2( m_imageSize[2] );
-
-	m_components	= m_pIImage->components();
-	m_format		= convertMyFormat2GL( m_pIImage->format() );
-	m_type			= convertMyType2GL( m_pIImage->type() );
-	
-	// Creates or recycles glo::Texture* ?
-	bool m_bUseGLTexImage;
-
-	if ( pTexture->isEmpty() )
-	{
-		// creates
-		pTexture->generate();
+		//Bbinds texture to the texture unit
 		pTexture->bind();
+	
+		// Enables texturing							//@todo FIXME should be done in VertexShape ? (for beiing done once)
+		pTexture->enable();
 		
-		m_bUseGLTexImage = true;
+		// Updates texture parameters ?
+		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );	
 	}
 	else
 	{
-		// recycles
+		assert( state == NEW_IIMAGE );
+
+		computeTexInfo( pGLEngine, pNode, pTexture, texInfo );
+
+		// Allocates texture object
+		bool newTexture = pTexture->isEmpty();
+
+		if ( newTexture )
+		{
+			// Creates texture object
+			pTexture->generate();
+		}
+		// else nothing to do texture already created
+
+		// Activates the desired texture unit
+		pGLEngine->activeTexture( pNode );
+
+		// Binds the texture object
 		pTexture->bind();
 		
-		pTexture->getSize( m_texSize[0], m_texSize[1], m_texSize[2] );
+		// Enables texturing							//@todo FIXME should be done in VertexShape ? (for beiing done once)
+		pTexture->enable();
 
-		// FIXME take care of texture and image format.
-		m_bUseGLTexImage = false;
-		
-		switch ( textureDimension )
+		const bool isCompatible = isTextureCompatible( pGLEngine, pNode, pTexture, texInfo );
+
+		// Creates n-dimensionnal texture
+		if ( newTexture || !isCompatible )
 		{
-			case 3:
-				// same size (at least) between already initialized texture and m_imageSizePOT, so reuses texture.
-				m_bUseGLTexImage = m_bUseGLTexImage || (m_imageSizePOT[2] > m_texSize[2]);
+			// Specifies texture image
+			glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 
-			case 2:
-				m_bUseGLTexImage = m_bUseGLTexImage || (m_imageSizePOT[1] > m_texSize[1]);
-				
-			case 1:
-				m_bUseGLTexImage = m_bUseGLTexImage || (m_imageSizePOT[0] > m_texSize[0]);			
-				break;
-		
-			default:
-				assert( false && "Unsupported texture dimension (!= 1,2,3)" );
+			// Specifies a texture image
+			// @todo Support of level-of-detail number
+			pTexture->texImage(	0,	 // level
+								texInfo.internalFormat,
+								texInfo.texSize[0] + texInfo.borderSize,
+								texInfo.texSize[1] + texInfo.borderSize,
+								texInfo.texSize[2] + texInfo.borderSize,
+								texInfo.borderSize,
+								texInfo.format,
+								texInfo.type	);
 		}
+		// else nothing to do
+		
+		// Updates texture parameters ?
+		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );		
+		
+		// Updates texture image
+		texSubImage( pGLEngine, pNode, pTexture, texInfo );		
 	}
-	
-	// creates n-dimensionnal texture (glTexImageXD)
-	if ( m_bUseGLTexImage )
-	{
-		// border
-		vgm::Vec4f	borderValue;
-		bool		bHasBorder = pNode->getBorder( borderValue );
-		
-		int32		borderSize = bHasBorder ? 2 : 0;
 
-		// size
-		assert( textureDimension == 1 || textureDimension == 2 || textureDimension == 3 );
-		
-		GLint maxTexSize;
-		
-		if ( textureDimension == 3 )
-		{
-			maxTexSize = pGLEngine->getMax3DTexSize();
-		}
-		else
-		{
-			maxTexSize = pGLEngine->getMaxTexSize();
-		}
+	// Validates node
+	vgd::field::DirtyFlag* pDFNode = pNode->getDirtyFlag( pNode->getDFNode() );
+	pDFNode->validate();
 
-		// image exceed max texture size ?
-		switch ( textureDimension )
-		{
-			case 3:
-				if ( m_imageSizePOT[2] > maxTexSize )
-				{
-					m_texSize[2]	= maxTexSize;
-					m_bResize		= true;
-				}
-				else
-				{
-					m_texSize[2]	= m_imageSizePOT[2];
-					m_bResize		= false;
-				}
-
-			case 2:
-				if ( m_imageSizePOT[1] > maxTexSize )
-				{
-					m_texSize[1]	= maxTexSize;
-					m_bResize		= true;
-				}
-				else
-				{
-					m_texSize[1]	= m_imageSizePOT[1];
-					m_bResize		= false;					
-				}
-
-			case 1:
-				if ( m_imageSizePOT[0] > maxTexSize )
-				{
-					m_texSize[0]	= maxTexSize;
-					m_bResize		= true;
-				}
-				else
-				{
-					m_texSize[0]	= m_imageSizePOT[0];
-					m_bResize		= false;		
-				}
-				break;
-		
-			default:
-				m_texSize[0] = m_texSize[1] = m_texSize[2] = 0;
-				assert( false && "Unsupported texture dimension (!= 1,2,3)" );
-		}
-
-		// Specifies texture image
-		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-
-		pTexture->texImage(	0,
-							m_components,		// @todo internalFormat
-							m_texSize[0] + borderSize, m_texSize[1] + borderSize, m_texSize[2] + borderSize,
-							bHasBorder ? 1 : 0,
-							m_format,
-							m_type	);
-	}
-	
-	return false;
+	assert( pNode->getDirtyFlag(pNode->getDFIImages())->isValid() );
+	assert( pNode->getDirtyFlag(pNode->getDFParameters())->isValid() );
+	assert( pNode->getDirtyFlag(pNode->getDFEnvironmentParameters())->isValid() );
+	assert( pDFNode->isValid() );
 }
 
 
 
-void Texture::synchronizeParameters(vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
-									::glo::Texture *pTexture )
+void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+							glo::Texture *pTexture,
+							TexInfo& texInfo )
 {
-	if ( m_isImageDefined )
+	using vgd::node::Texture;
+
+	// Tests if rescaling incoming image must be done and updates texture
+	if ( texInfo.resizeForTex )
 	{
-		// bind texture to the texture unit.
-		pTexture->bind();
-	
-		// enable texturing.							// FIXME should be done in VertexShape ? (for beiing done once).
-		pTexture->enable();
+		// RESCALE IMAGE
+		vgDebug::get().logDebug("vgeGL.Texture: Performance warning : Incoming image size %i %i %i used as texture is resized %i %i %i.",
+								texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2],
+								texInfo.texSize[0], texInfo.texSize[1], texInfo.texSize[2] );
+
+		// Creates a copy of the incoming image
+		using vgd::basic::Image;
+
+		Image newImage(	(*texInfo.iimage.get()) );
+		newImage.scale( texInfo.texSize, Image::FILTER_SCALE_MITCHELL /*Image::FILTER_SCALE_BOX */ );
+		//@todo options for lower-quality filter during rescaling
+		
+		const void * newPixels = newImage.pixels();
+		
+		pTexture->texSubImage(	0,			// level
+								0, 0, 0,	// offset
+								texInfo.texSize[0], texInfo.texSize[2], texInfo.texSize[2],
+								texInfo.format, texInfo.type,
+								newPixels );
+	}
+	else
+	{
+		// DON'T RESCALE IMAGE
+		const void*	pixels = texInfo.iimage->pixels();
+		
+		pTexture->texSubImage(	0,				// level
+								0, 0, 0, 		// offset
+								texInfo.texSize[0], texInfo.texSize[1], texInfo.texSize[2],
+								texInfo.format, texInfo.type, 
+								pixels );
 	}
 
+	vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
+	pDFIImages->validate();
+}
+
+
+
+Texture::State Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture *pTexture,
+										TexInfo& texInfo )
+{
+	// Creates the return value
+	State state;
+
+	// Tests if 'iimage' field is valid
+	vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
+
+	// Gets texture.iimage
+	const bool imageFieldDefined = 	pNode->getIImages( vgd::node::Texture::DEFAULT_IIMAGES, texInfo.iimage );
+
+	const bool noImage =	!imageFieldDefined				||
+							( texInfo.iimage == 0 )			||
+							( (texInfo.iimage != 0 ) && (texInfo.iimage->isEmpty()) );
+
+	// Computes current state
+	if ( pDFIImages->isValid() )
+	{
+		if ( noImage )
+		{
+			state = NOIIMAGE_VALIDATED;
+		}
+		else
+		{
+			state = IIMAGE_VALIDATED;
+		}
+	}
+	else
+	{
+		state = NEW_IIMAGE;
+	}
+	
+	return state;
+}
+
+
+
+void Texture::computeTexInfo( vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo )
+{
+	assert( texInfo.iimage != 0 );
+
+	computeTexImageParams(	pNode, pTexture, texInfo );
+	clampTexImageSize(		pGLEngine, pTexture, texInfo );
+}
+
+
+
+void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo )
+{
+	// Pre-conditions
+	assert( pNode != 0 );
+	assert( pTexture != 0 );
+
+	assert( texInfo.iimage != 0 );
+	assert( texInfo.iimage->isEmpty() == false );
+
+	// Alias on image
+	vgd::Shp< vgd::basic::IImage >& image = texInfo.iimage;
+
+	// Updates border property
+	bool		borderValue		= false;
+	const bool	isBorderDefined	= pNode->getBorder( borderValue );
+
+	texInfo.borderSize = borderValue ? 1 : 0;
+
+	// Updates image properties
+	texInfo.imageSize		= image->getSize3i();
+	texInfo.imageSizePOT	= vgm::nextPower2( texInfo.imageSize );
+	
+	// Computes texture dimension
+	texInfo.texDimension = pNode->gethTextureDimension();
+	assert( texInfo.texDimension == 1 || texInfo.texDimension == 2 || texInfo.texDimension == 3 );
+
+	// @todo chooseInternalFormat( m_pIImage->format(), m_pIImage->type(), texture->getHints() ).
+	texInfo.internalFormat	= static_cast< GLint >( image->components() );
+	texInfo.format			= convertMyFormat2GL( image->format() );
+	texInfo.type			= convertMyType2GL	( image->type()	);
+
+	// Takes care of POT/NPOT image (by using GL_ARB_texture_non_power_of_two or by resizing incoming image)
+	// @todo Support of GL_ARB_texture_rectangle
+	if ( texInfo.imageSize != texInfo.imageSizePOT )
+	{
+		// NPOT image
+		#ifdef _DEBUG
+		vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
+								texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
+		#endif
+
+		if ( isGL_ARB_texture_non_power_of_two() )
+		{
+			#ifdef _DEBUG
+			vgDebug::get().logDebug("vgeGL.Texture: GL_ARB_texture_non_power_of_two is supported and used.");
+			#endif
+			texInfo.texSize			= texInfo.imageSize;
+			texInfo.resizeForTex	= false;
+		}
+		else
+		{
+			#ifdef _DEBUG
+			vgDebug::get().logDebug("vgeGL.Texture: Incoming image must be resized.");
+			#endif
+
+			texInfo.texSize			= texInfo.imageSizePOT;
+			texInfo.resizeForTex	= true;
+		}
+	}
+	else
+	{
+		// POT image
+		#ifdef _DEBUG
+		vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (pot)",
+								texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
+		#endif
+
+		texInfo.texSize			= texInfo.imageSizePOT; //  texInfo.imageSize == texInfo.imageSizePOT
+		texInfo.resizeForTex	= false;
+	}
+}
+
+
+
+void Texture::clampTexImageSize( vgeGL::engine::Engine *pGLEngine, ::glo::Texture * pTexture, TexInfo& texInfo )
+{
+	// Computes texture size limit
+	GLint maxTexSize;
+
+	if ( texInfo.texDimension == 3 )
+	{
+		maxTexSize = pGLEngine->getMax3DTexSize();
+	}
+	else if ( texInfo.texDimension == 6 )
+	{
+		maxTexSize = pGLEngine->getMaxCubeMapTexSize();
+	}
+	else
+	{
+		assert( texInfo.texDimension == 1 || texInfo.texDimension == 2 );
+		maxTexSize = pGLEngine->getMaxTexSize();
+	}
+
+	// Computes the clamp
+	switch ( texInfo.texDimension )
+	{
+		case 3:
+			if ( texInfo.texSize[2] > maxTexSize )
+			{
+				texInfo.texSize[2]		= maxTexSize;
+				texInfo.resizeForTex	= true;
+			}
+			// else nothing to do
+
+		case 6:
+		case 2:
+			if ( texInfo.texSize[1] > maxTexSize )
+			{
+				texInfo.texSize[1]		= maxTexSize;
+				texInfo.resizeForTex	= true;
+			}
+			// else nothing to do
+
+		case 1:
+			if ( texInfo.texSize[0] > maxTexSize )
+			{
+				texInfo.texSize[0]		= maxTexSize;
+				texInfo.resizeForTex	= true;
+			}
+			// else nothing to do
+			break;
+
+		default:
+			texInfo.texSize.null();
+			vgDebug::get().logDebug("Texture: Unsupported texture dimension (!= 1, 2, 3, 6)");
+			assert( false && "Unsupported texture dimension (!= 1, 2, 3, 6)" );
+	}
+}
+
+
+
+const bool Texture::isTextureCompatible(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture,
+											const TexInfo& texInfo )
+{
+	const bool isTexSizeCompatible = isTextureSizeCompatible( pTexture, texInfo );
+	// @todo checks format, type and internalFormat
+
+	const bool isCompatible = isTexSizeCompatible;
+	
+	return isCompatible;
+}
+
+
+
+const bool Texture::isTextureSizeCompatible( ::glo::Texture * pTexture, const TexInfo& texInfo )
+{
+	// Retrieves texture size
+	vgm::Vec3i texSize;
+	const GLint texBorder = pTexture->getSize( texSize[0], texSize[1], texSize[2] );
+
+	bool isCompatible =	( texInfo.texSize == texSize ) &&
+						( texInfo.borderSize == texBorder );
+
+	return isCompatible;
+}
+
+
+
+void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+											::glo::Texture *pTexture )
+{
 	// TEXTURE PARAMETERS
 	vgd::field::DirtyFlag* pDFParameters = pNode->getDirtyFlag( pNode->getDFParameters() );	
 
 	if ( pDFParameters->isDirty() )
 	{
-		// Apply texture parameters.
-		paint( pGLEngine, pNode, pTexture );
-		
-		// Validate DF
+		// Activates the desired texture unit
+		pGLEngine->activeTexture( pNode );
+
+		// Apply texture parameters
+		paintParams( pGLEngine, pNode, pTexture );
+
+		// Validates DF
 		pDFParameters->validate();
 	}
 	// else nothing to do
 
-	
-	
-	// TEXTURE SCALE (see scaleFactors)
-	// FIXME scale factors could be better done in VertexShape ?
+	// TEXTURE ENVIRONMENT PARAMETERS
+	vgd::field::DirtyFlag* pDFEnvironmentParameters = pNode->getDirtyFlag( pNode->getDFEnvironmentParameters() );
+
+	if ( pDFEnvironmentParameters->isDirty() )
+	{
+		// Activates the desired texture unit
+		pGLEngine->activeTexture( pNode );
+
+		// Apply texture parameters
+		paintEnv( pGLEngine, pNode, pTexture );
+
+		// Validates DF
+		pDFEnvironmentParameters->validate();
+	}
+	// else nothing to do
+
+/*	// TEXTURE SCALE (see Scale factors in ::glo::Texture)
+	//@todo scale factors could be better done in VertexShape ?
 	vgm::Vec3f scaleFactors;
 	pTexture->getScaleFactors( scaleFactors[0], scaleFactors[1], scaleFactors[2] );
-	
+
 	if ( scaleFactors != vgm::Vec3f(1.f, 1.f, 1.f) )
 	{
-		// apply scale to vge.
-		vgm::MatrixR& textureMatrix(
-			pGLEngine->getTextureMatrix().getTop( pNode->getMultiAttributeIndex() )
-				);
+		// applies scale to vge
+		vgm::MatrixR& textureMatrix( pGLEngine->getTextureMatrix().getTop( pNode->getMultiAttributeIndex() ) );
 
-		const bool isIdentity = textureMatrix.isIdentity();
-		
-		if ( isIdentity )
-		{
-			textureMatrix.setScale( scaleFactors );
-		}
-		else
-		{
-			// FIXME use textureMatrix.scale()
-			vgm::MatrixR scaleMatrix;
-			scaleMatrix.setScale( scaleFactors );
+		textureMatrix.scale( scaleFactors );
 
-			textureMatrix = scaleMatrix * textureMatrix;
-		}
-		
-		// apply scale to vgeGL.
+		// applies scale to vgeGL
+		texInfo.activeTexture( pNode );
+
 		glMatrixMode( GL_TEXTURE );
 		glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
-	}
-	
-	// Validate node
-	vgd::field::DirtyFlag* pDFNode = pNode->getDirtyFlag( pNode->getDFNode() );	
-	pDFNode->validate();
+	}*/
 }
 
 
 
-GLenum Texture::convertMyFormat2GL( vgd::basic::IImage::Format format )
+GLenum Texture::convertMyFormat2GL( const vgd::basic::IImage::Format format )
 {
 	GLenum glformat;
 	
@@ -491,7 +690,7 @@ GLenum Texture::convertMyFormat2GL( vgd::basic::IImage::Format format )
 
 
 
-GLenum Texture::convertMyType2GL( vgd::basic::IImage::Type type )
+GLenum Texture::convertMyType2GL( const vgd::basic::IImage::Type type )
 {
 	GLenum gltype;
 	
@@ -703,6 +902,55 @@ GLenum Texture::m_scaleParameter[] = {
 	GL_ALPHA_SCALE
 
 };
+
+
+
+/* 	// Rescale image if necessary (boolean value already set if image is too big).
+	// Check others cases, that depends to non power of two texture size and wrapping values.
+	if ( !m_bResize )
+	{
+		// check only if not already set.
+		Texture::WrapValueType wrapSValue;
+		Texture::WrapValueType wrapTValue;
+		
+		bool isDefined = pGLEngine->getStateStackTop< Texture2D, Texture2D::WrapParameterType, Texture2D::WrapValueType >(
+																		Texture2D::getFWrap(),
+																		Texture2D::WRAP_S,
+																		wrapSValue,
+																		pNode->getMultiAttributeIndex() );
+		assert( isDefined );
+							
+		isDefined = pGLEngine->getStateStackTop< Texture2D,	Texture2D::WrapParameterType, Texture2D::WrapValueType >(
+																		Texture2D::getFWrap(),
+																		Texture2D::WRAP_T,
+																		wrapTValue,
+																		pNode->getMultiAttributeIndex() );
+		assert( isDefined );
+
+		if (	(wrapSValue == Texture::ONCE) &&
+				(wrapTValue == Texture::ONCE) )
+		{
+			// never resize if wrap*=ONCE.
+			
+			// apply a scale to texCoord.
+		
+			// compute scale factors.
+			pTexture->setScaleFactors(
+							static_cast<float>(m_imageSize[0])/static_cast<float>(m_texSize[0]),
+							static_cast<float>(m_imageSize[1])/static_cast<float>(m_texSize[1]),
+							1.f );
+		}
+		else
+		{
+			// possible resize if needed (NPOT)
+			if (	(m_texSize[0]	!= m_imageSize[0]) ||
+					(m_texSize[1]	!= m_imageSize[1]) )
+			{
+				m_bResize= true;
+			}
+		}
+	}
+ */
 
 
 

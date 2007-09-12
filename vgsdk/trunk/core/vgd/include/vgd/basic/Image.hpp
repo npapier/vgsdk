@@ -7,6 +7,7 @@
 #define _VGD_BASIC_IMAGE_HPP
 
 #include <IL/il.h>
+#include <IL/ilu.h>
 #include <string>
 
 #include "vgd/basic/IImage.hpp"
@@ -50,15 +51,15 @@ struct VGD_API Image : public IImage
 	 * @brief Default constructor
 	 * 
 	 * @post components()			== 0
-	 * @post isEmpty()				== true
-	 * @post format()				== NO_FORMAT
-	 * @post type()					== NO_TYPE
-	 * @post pixels()				== 0
+	 * @post isEmpty()			== true
+	 * @post format()			== NO_FORMAT
+	 * @post type()				== NO_TYPE
+	 * @post pixels()			== 0
 	 * @post editPixels()			== 0
 	 * 
 	 * @post paletteSize()			== 0
 	 * @post paletteFormat()		== NO_FORMAT
-	 * @post paletteType()			== NO_TYPE
+	 * @post paletteType()		== NO_TYPE
 	 * @post palettePixels()		== 0
 	 * @post paletteEditPixels()	== 0
 	 * 
@@ -290,7 +291,35 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @todo Documentation of what is done exactly by convert (see DevIL).
 	 */
-	bool	convertTo( const Format format, const Type type );
+	const bool convertTo( const Format format, const Type type );
+
+	/**
+	 * @brief Definition of filter available to scale image.
+	 */
+	enum Filter
+	{
+		FILTER_SCALE_NEAREST	= ILU_NEAREST,	//< lower-quality scaling filters
+		FILTER_SCALE_LINEAR		= ILU_LINEAR,	//< lower-quality scaling filters
+		FILTER_SCALE_BILINEAR	= ILU_BILINEAR,	//< lower-quality scaling filters
+
+		FILTER_SCALE_BOX		= ILU_SCALE_BOX,		//< higher-quality scaling filters and take longer to perform
+		FILTER_SCALE_MITCHELL	= ILU_SCALE_MITCHELL,	//< higher-quality scaling filters and take longer to perform
+		FILTER_SCALE_BELL		= ILU_SCALE_BELL,		//< higher-quality scaling filters and take longer to perform
+		FILTER_SCALE_BSPLINE	= ILU_SCALE_BSPLINE,	//< higher-quality scaling filters and take longer to perform
+		FILTER_SCALE_LANCZOS3	= ILU_SCALE_LANCZOS3,	//< higher-quality scaling filters and take longer to perform
+		FILTER_SCALE_TRIANGLE	= ILU_SCALE_TRIANGLE,	//< higher-quality scaling filters and take longer to perform
+	};
+
+	/**
+	 * @brief Scales the image to the new dimensions specified, shrinking or enlarging the image, depending on the image's original dimensions.
+	 *
+	 * @param size		the new dimension (width, height and depth)  of the image
+	 * @param filter		the filter to use during scaling
+	 *
+	 * @return true if rescale has been successful, false if not
+	 */
+	const bool scale( const vgm::Vec3i size, const Filter filter = FILTER_SCALE_BOX );
+
 	//@}
 
 
@@ -470,6 +499,24 @@ struct VGD_API Image : public IImage
 	 */
 	const bool	isVoxelSizeSupported() const;	
 
+	//@}
+
+
+
+	/**
+	 * @name OpenIL accessors
+	 *
+	 * @remarks OpenIL is not multi-thread safe. Be careful...
+	 */
+	//@{
+	
+	/**
+	 * @brief Returns the OpenIL name of image
+	 *
+	 * @return the name of the image
+	 */
+	ILuint getName();
+	
 	//@}
 
 

@@ -70,8 +70,10 @@ void applyUsingSynchronize(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 		// updates resource.
 		pHandler->synchronize( pGLEngine, pNode, pCastedResource );
 		
+		// @todo remove me, after making some tests
 		// validate.
-		pDFNode->validate();
+		assert( pDFNode->isValid() );
+		//pDFNode->validate();
 	}
 	else
 	{

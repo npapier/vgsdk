@@ -1,4 +1,4 @@
-USE		=	['boost','openil']
+USE		=	['boost','openil','openilu']
 LIB		=	['vgDebug_0-4','vgm_0-4']
 TYPE	=	'shared'
 VERSION =	'0-4'

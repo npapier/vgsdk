@@ -409,7 +409,7 @@ bool Image::save( const std::string filename ) const
 
 
 
-bool Image::convertTo( const Format format, const Type type )
+const bool Image::convertTo( const Format format, const Type type )
 {
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
 	
@@ -417,6 +417,22 @@ bool Image::convertTo( const Format format, const Type type )
 	
 	ilConvertImage( convertMyFormat2IL(format), convertMyType2IL(type) );
 	
+	updateInformations();
+
+	return ( !reportILError() );
+}
+
+
+
+const bool Image::scale( const vgm::Vec3i size, const Filter filter )
+{
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
+	bind();
+
+	iluImageParameter( ILU_FILTER, filter );
+	iluScale( size[0], size[1], size[2] );
+
 	updateInformations();
 
 	return ( !reportILError() );
@@ -620,6 +636,13 @@ const vgm::Vec3f Image::voxelSize() const
 const bool Image::isVoxelSizeSupported() const
 {
 	return true;
+}
+
+
+
+ILuint Image::getName()
+{
+	return m_iluintImgID;
 }
 
 
