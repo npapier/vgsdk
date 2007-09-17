@@ -1,7 +1,7 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
-// Author Nicolas Papier
+// Author Nicolas Papier, Guillaume Brocker
 
 #include "vgd/basic/ImageInfo.hpp"
 
@@ -42,7 +42,7 @@ ImageInfo::ImageInfo( const IImage& iimage )
 
 const uint32 ImageInfo::components() const
 { 
-	return m_components;
+	return computeNumComponents(m_format);
 }
 
 
@@ -78,7 +78,6 @@ void ImageInfo::set(	const uint32		width,
 	m_height		= height;
 	m_depth			= depth;
 	m_format		= format;
-	m_components	= static_cast<uint8>(computeNumComponents(format));
 	m_type			= type;
 	m_pixels		= const_cast<void*>(pixels);
 	m_edit			= false;
@@ -92,7 +91,6 @@ void ImageInfo::set( const IImage& iimage )
 	m_height		= iimage.height();
 	m_depth			= iimage.depth();	
 	m_format		= iimage.format();
-	m_components	= static_cast<uint8>(iimage.components());
 	m_type			= iimage.type();
 	m_pixels		= const_cast<void*>(iimage.pixels());
 	m_edit			= false;

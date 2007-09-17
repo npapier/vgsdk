@@ -1,14 +1,13 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
-// Author Nicolas Papier
+// Author Nicolas Papier, Guillaume Brocker
 
 #ifndef _VGD_BASIC_IMAGEINFO_HPP
 #define _VGD_BASIC_IMAGEINFO_HPP
 
 #include <string>
 
-#include "vgd/vgd.hpp"
 #include "vgd/basic/IImage.hpp"
 
 
@@ -332,7 +331,6 @@ protected:
 	uint32		m_depth;
 
 	Format		m_format;
-	uint8		m_components;
 	Type		m_type;
 	
 	void*		m_pixels;
