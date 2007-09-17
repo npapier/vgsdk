@@ -168,7 +168,9 @@ vgd::Shp< Image > ImageUtilities::createImage(	const vgd::Shp< IImage> srcImage,
 					++iSrcPixel )
 			{
 				const SrcPixelType	color		= *iSrcPixel;
-				const float			fNewColor	= a*static_cast<float>(color) + b;
+				const float			fNewColor	= vgm::clamp(	a*static_cast<float>(color) + b, 
+																static_cast< const float >( newMin ),
+																static_cast< const float >( newMax )	);
 				const DstPixelType	newColor	= static_cast<const DstPixelType>( fNewColor );
 				
 				// @todo FIXME IImage::adaptPixels()
