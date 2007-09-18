@@ -55,6 +55,8 @@ struct VGD_API MinMax
 	 * @brief Gets the minimum.
 	 * 
 	 * @return the minimum value
+	 * 
+	 * @pre	isValid()
 	 */
 	const float getMin() const;
 	
@@ -71,6 +73,8 @@ struct VGD_API MinMax
 	 * @brief Gets the maximum.
 	 * 
 	 * @return the maximum value
+	 * 
+	 * @pre	isValid()
 	 */
 	const float getMax() const;
 

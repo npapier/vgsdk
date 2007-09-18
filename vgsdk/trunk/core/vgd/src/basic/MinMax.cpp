@@ -41,6 +41,7 @@ void MinMax::invalidate()
 
 const float MinMax::getMin() const
 {
+	assert( isValid() );
 	return ( m_min );
 }
 
@@ -54,6 +55,7 @@ void MinMax::setMin( const float min )
 
 const float MinMax::getMax() const 
 { 
+	assert( isValid() );
 	return ( m_max ); 
 }
 
