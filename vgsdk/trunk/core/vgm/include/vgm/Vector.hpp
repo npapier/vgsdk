@@ -72,6 +72,9 @@ namespace vgm
 template< typename T, int32 N >
 struct Vector
 {
+	
+	typedef T value_type;	///< Defines an alias on the components type
+	
 	/**
 	 * @name Constructors ,destructor and assign operator.
 	 */
@@ -271,6 +274,14 @@ struct Vector
 		m_tCoord[1] = c2;
 		m_tCoord[2] = c3;
 		m_tCoord[3] = c4;
+	}
+	
+	/**
+	 * @brief	Retrieves the number of components.
+	 */
+	const uint32 getSize() const
+	{
+		return N;
 	}
 	//@}
 
