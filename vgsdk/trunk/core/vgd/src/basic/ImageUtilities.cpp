@@ -1,7 +1,7 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
-// Author Nicolas Papier
+// Author Nicolas Papier, Guillaume Brocker
 
 #include "vgd/basic/ImageUtilities.hpp"
 
@@ -24,70 +24,22 @@ const MinMax ImageUtilities::computeMinMax( const IImage* pImage )
 {
 	using vgd::basic::IImage;
 	
-	assert(	(pImage->format() == IImage::LUMINANCE) ||
+	assert(	(pImage->format() == IImage::LUMINANCE_ALPHA)	||
+			(pImage->format() == IImage::LUMINANCE)			||
 			(pImage->format() == IImage::COLOR_INDEX) );
 
-	MinMax minMax;
-	
-	switch ( pImage->type() )
+	switch( pImage->type() )
 	{
-		case IImage::UINT8:
-		{
-			// scan image
-			const uint8 *iPixel( static_cast<const uint8*>(pImage->pixels()) );
-			minMax.set( static_cast<float>(*iPixel), static_cast<float>(*iPixel) );
-
-			for(	const uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth();
-					iPixel != iEnd;
-					iPixel++ )
-			{
-				uint8 value		= (*iPixel);
-				float fValue	= static_cast<float>(value);
-				
-				if ( fValue < minMax.getMin() )
-				{
-					minMax.setMin( value );
-				}
-				else if ( fValue > minMax.getMax() )
-				{
-					minMax.setMax( value );
-				}
-				// else do nothing
-			}
-		}
-		break;
-
-		case IImage::INT16:
-		{
-			// scan image
-			const int16 *iPixel( static_cast<const int16*>(pImage->pixels()) );
-			minMax.set( static_cast<float>(*iPixel), static_cast<float>(*iPixel) );
-
-			for(	const int16 *iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth();
-					iPixel != iEnd;
-					iPixel++ )
-			{
-				int16 value		= (*iPixel);
-				float fValue	= static_cast<float>(value);
-				
-				if ( fValue < minMax.getMin() )
-				{
-					minMax.setMin( value );
-				}
-				else if ( fValue > minMax.getMax() )
-				{
-					minMax.setMax( value );
-				}
-				// else do nothing
-			}
-		}
-		break;
-		
-		default:
-			assert( false && "Unsupported image type" );
+	case Image::UINT8:	return doComputeMinMax<  uint8 >( pImage );
+	case Image::INT8:	return doComputeMinMax<   int8 >( pImage );
+	case Image::UINT16: return doComputeMinMax< uint16 >( pImage );
+	case Image::INT16:	return doComputeMinMax<  int16 >( pImage );
+	case Image::UINT32:	return doComputeMinMax< uint32 >( pImage );
+	case Image::INT32:	return doComputeMinMax<  int32 >( pImage );
+	case Image::FLOAT:	return doComputeMinMax<  float >( pImage );
+	case Image::DOUBLE:	return doComputeMinMax< double >( pImage );
+	default:			assert( false && "Unsupported image type." );
 	}
-
-	return ( minMax );
 }
 
 
@@ -201,157 +153,23 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*	pImage
 															const uint32	position )
 {
 	using vgd::basic::Image;
-	using vgd::basic::IImage;
-
-	assert( pImage->type() == IImage::UINT8 );
 
 	assert( pImage->width() > 0 );
 	assert( pImage->height() > 0 );
 	assert( pImage->depth() > 0 );
-
-	const uint8*	inputPixel			= static_cast<const uint8*>(pImage->pixels());
-	int32			components			= pImage->components();
-	int32			sizeOfComponents	= sizeof(uint8) * components;
-
-	vgd::Shp< Image >	pNewImage;
-	uint8*				outputPixel;
-	Image::Format		outputFormat;
 	
-	if ( pImage->format() == Image::COLOR_INDEX )
+	switch( pImage->type() )
 	{
-		outputFormat = Image::LUMINANCE;
+	case Image::UINT8:	return doExtractSlice<  uint8 >( pImage, slice, position );
+	case Image::INT8:	return doExtractSlice<   int8 >( pImage, slice, position );
+	case Image::UINT16: return doExtractSlice< uint16 >( pImage, slice, position );
+	case Image::INT16:	return doExtractSlice<  int16 >( pImage, slice, position );
+	case Image::UINT32:	return doExtractSlice< uint32 >( pImage, slice, position );
+	case Image::INT32:	return doExtractSlice<  int32 >( pImage, slice, position );
+	case Image::FLOAT:	return doExtractSlice<  float >( pImage, slice, position );
+	case Image::DOUBLE:	return doExtractSlice< double >( pImage, slice, position );
+	default:			assert( false && "Unsupported image type." );
 	}
-	else
-	{
-		outputFormat = pImage->format();
-	}
-	
-	switch ( slice )
-	{
-		case AXIAL_SLICE:
-		{
-			pNewImage = vgd::Shp< Image >( new Image(	pImage->components(),
-														pImage->width(), pImage->height(), 1,
-														outputFormat, pImage->type(),
-														0 )
-												);
-
-			outputPixel = static_cast<uint8*>(pNewImage->editPixels());
-			
-			// seek to initial position
-			assert( position >= 0 );
-			assert( position < pImage->depth() );
-			
-			inputPixel += position * (sizeOfComponents * pImage->width() * pImage->height());
-			
-			std::memcpy( outputPixel, inputPixel, sizeOfComponents * pImage->height() * pImage->width() );
-// non optimized version
-//			for(	uint32 j=0, jMax = pImage->height();
-//					j < jMax;
-//					++j )
-//			{
-//				for(	uint32 i=0, iMax=pImage->width();
-//						i < iMax;
-//						++i )
-//				{
-//					std::memcpy( outputPixel, inputPixel, sizeOfComponents );
-//					inputPixel += sizeOfComponents;
-//					outputPixel += sizeOfComponents;
-//				}
-//			}
-			
-			pNewImage->editPixelsDone();
-		}
-		break;
-		
-		
-		case FRONTAL_SLICE:
-		{
-			pNewImage = vgd::Shp< Image >( new Image(	pImage->components(),
-														pImage->width(), pImage->depth(), 1,
-														outputFormat, pImage->type(),
-														0 )
-													);
-
-			outputPixel = static_cast<uint8*>(pNewImage->editPixels());
-
-			// seek to initial position
-			assert( position >= 0 );
-			assert( position < pImage->height() );
-
-			inputPixel += position * (sizeOfComponents * pImage->width());
-
-			for(	uint32 j=0, jMax = pImage->depth();
-					j < jMax;
-					++j )
-			{
-				std::memcpy( outputPixel, inputPixel, sizeOfComponents * pImage->width() );
-				inputPixel	+= pImage->width() * sizeOfComponents;
-				outputPixel	+= pImage->width() * sizeOfComponents;
-								
-// non optimized version
-//				for(	uint32 i=0, iMax=pImage->width();
-//						i < iMax;
-//						++i )
-//				{
-//					std::memcpy( outputPixel, inputPixel, sizeOfComponents );
-//					inputPixel += sizeOfComponents;
-//					outputPixel += sizeOfComponents;
-//				}
-
-				inputPixel += sizeOfComponents * (	pImage->width() * (pImage->height()-1)		);
-			}
-			
-			pNewImage->editPixelsDone();
-		}
-		break;
-
-
-		case SAGITTAL_SLICE:
-		{
-			pNewImage = vgd::Shp< Image >( new Image(	pImage->components(),
-														pImage->depth(), pImage->height(), 1,
-														outputFormat, pImage->type(),
-														0 )
-													);
-
-			outputPixel = static_cast<uint8*>(pNewImage->editPixels());
-
-			// seek to initial position
-			assert( position >= 0 );
-			assert( position < pImage->width() );
-
-			inputPixel += position * sizeOfComponents;
-
-			//
-			const int32 stepI = sizeOfComponents * pImage->width() * pImage->height();
-			const int32 stepJ = (-stepI * pImage->depth()) + pImage->width()*sizeOfComponents;
-
-			for(	uint32 j=0, jMax = pImage->height();
-					j < jMax;
-					++j )
-			{
-				for(	uint32 i=0, iMax=pImage->depth();
-						i < iMax;
-						++i )
-				{
-					std::memcpy( outputPixel, inputPixel, sizeOfComponents );
-					inputPixel += stepI;
-					outputPixel += sizeOfComponents;
-				}
-
-				inputPixel += stepJ;
-			}
-			
-			pNewImage->editPixelsDone();
-		}
-		break;
-
-		default:
-			assert( false && "Unknown type of slice." );
-	}
-	
-	return ( pNewImage );
 }
 
 
@@ -400,48 +218,20 @@ void ImageUtilities::setAlpha( vgd::basic::IImage *pImage, const float alpha )
 			(pImage->format() == IImage::BGRA) ||
 			(pImage->format() == IImage::LUMINANCE_ALPHA) );
 
-	assert( pImage->type() == IImage::UINT8 );
-	
 	assert( alpha >= 0.f );
 	assert( alpha <= 1.f );
 
-	uint8	ui8Alpha = static_cast< uint8 >( alpha * 255.f );
-
-	switch ( pImage->format() )
+	switch( pImage->type() )
 	{
-		case IImage::RGBA:
-		case IImage::BGRA:
-		{
-			// scan image
-			uint8* iPixel = static_cast<uint8*>(pImage->editPixels());
-			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*4;
-					iPixel != iEnd;
-					iPixel++ )
-			{
-				iPixel += 3;
-				(*iPixel) = ui8Alpha;
-			}
-			pImage->editPixelsDone();
-		}
-		break;
-
-		case IImage::LUMINANCE_ALPHA:
-		{
-			// scan image
-			uint8* iPixel = static_cast<uint8*>(pImage->editPixels());
-			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*2;
-					iPixel != iEnd;
-					iPixel++ )
-			{
-				++iPixel;
-				(*iPixel) = ui8Alpha;
-			}
-			pImage->editPixelsDone();
-		}
-		break;
-		
-		default:
-			assert( false && "Internal error" );
+	case Image::UINT8:	doSetAlpha<  uint8 >( pImage, alpha ); break;
+	case Image::INT8:	doSetAlpha<   int8 >( pImage, alpha ); break;
+	case Image::UINT16: doSetAlpha< uint16 >( pImage, alpha ); break; 
+	case Image::INT16:	doSetAlpha<  int16 >( pImage, alpha ); break;
+	case Image::UINT32:	doSetAlpha< uint32 >( pImage, alpha ); break;
+	case Image::INT32:	doSetAlpha<  int32 >( pImage, alpha ); break;
+	case Image::FLOAT:	doSetAlpha<  float >( pImage, alpha ); break;
+	case Image::DOUBLE:	doSetAlpha< double >( pImage, alpha ); break;
+	default:			assert( false && "Unsupported image type." );
 	}
 }
 
@@ -449,72 +239,27 @@ void ImageUtilities::setAlpha( vgd::basic::IImage *pImage, const float alpha )
 
 void ImageUtilities::setAlphaIfNotBlack( vgd::basic::IImage *pImage, const float alpha )
 {
+	using vgd::basic::IImage;
+	
 	assert(	(pImage->format() == IImage::RGBA) ||
 			(pImage->format() == IImage::BGRA) ||
 			(pImage->format() == IImage::LUMINANCE_ALPHA) );
 
-	assert( pImage->type() == vgd::basic::IImage::UINT8 );	
-		
 	assert( alpha >= 0.f );
 	assert( alpha <= 1.f );
 
-	uint8	ui8Alpha;
-	ui8Alpha	= static_cast< uint8 >( alpha * 255.f );
-	
-	switch ( pImage->format() )
+	switch( pImage->type() )
 	{
-		case IImage::RGBA:
-		case IImage::BGRA:
-		{	
-			// scan image
-			uint8*		iPixel = static_cast<uint8*>(pImage->editPixels());
-			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*4;
-					iPixel != iEnd;
-					iPixel++ )
-			{
-				if (	(iPixel[0] == 0) &&
-						(iPixel[1] == 0) &&
-						(iPixel[2] == 0) )
-				{
-					iPixel		+=	3;								
-					(*iPixel)	=	0;
-				}
-				else
-				{
-					iPixel		+=	3;
-					(*iPixel)	=	ui8Alpha;
-				}	
-			}
-			pImage->editPixelsDone();
-		}
-		break;
-
-		case IImage::LUMINANCE_ALPHA:
-		{
-			// scan image
-			uint8*		iPixel = static_cast<uint8*>(pImage->editPixels());
-			for(	uint8	*iEnd = iPixel + pImage->width()*pImage->height()*pImage->depth()*2;
-					iPixel != iEnd;
-					iPixel++ )
-			{
-				if (iPixel[0] == 0)
-				{
-					++iPixel;
-					(*iPixel)	=	0;
-				}
-				else
-				{
-					++iPixel;
-					(*iPixel)	=	ui8Alpha;
-				}
-			}
-			pImage->editPixelsDone();
-		}
-		break;
-		
-		default:
-			assert( false && "Internal error" );
-	}		
+	case Image::UINT8:	doSetAlphaIfNotBlack< uint8  >( pImage, alpha ); break;
+	case Image::INT8:	doSetAlphaIfNotBlack< int8   >( pImage, alpha ); break;
+	case Image::UINT16: doSetAlphaIfNotBlack< uint16 >( pImage, alpha ); break; 
+	case Image::INT16:	doSetAlphaIfNotBlack< int16  >( pImage, alpha ); break;
+	case Image::UINT32:	doSetAlphaIfNotBlack< uint32 >( pImage, alpha ); break;
+	case Image::INT32:	doSetAlphaIfNotBlack< int32  >( pImage, alpha ); break;
+	case Image::FLOAT:	doSetAlphaIfNotBlack< float  >( pImage, alpha ); break;
+	case Image::DOUBLE:	doSetAlphaIfNotBlack< double >( pImage, alpha ); break;
+	default:			assert( false && "Unsupported image type." );
+	}
 }
 
 

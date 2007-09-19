@@ -1,16 +1,16 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
-// Author Nicolas Papier
+// Author Nicolas Papier, Guillaume Brocker
 
 #ifndef _VGD_BASIC_IMAGEUTILITIES_HPP
 #define _VGD_BASIC_IMAGEUTILITIES_HPP
 
 #include <vgm/operations.hpp>
-#include "vgd/vgd.hpp"
 #include "vgd/Shp.hpp"
 #include "vgd/basic/Image.hpp"
 #include "vgd/basic/MinMax.hpp"
+
 
 
 namespace vgd
@@ -41,16 +41,14 @@ struct VGD_API ImageUtilities
 	/**
 	 * @brief Compute the minimum and maximum intensity values for the given image.
 	 * 
-	 * @pre pImage->format() == LUMINANCE or COLOR_INDEX
-	 * @pre pImage->type() == IImage::UINT8, or IImage::INT16
+	 * @pre pImage->format() == LUMINANCE_ALPHA or LUMINANCE or COLOR_INDEX
 	 * 
-	 * @param pImage	3d image where slice is extract
+	 * @param pImage	3d image
 	 * 
-	 * @remarks Be careful, for image in COLOR_INDEX the minimum and maximum are computed for the indices
-	 * and not the colors.
+	 * @remark	Be careful, for image in COLOR_INDEX the minimum and maximum are computed for the indices
+	 *			and not the colors.
 	 * 
-	 * @todo remove precondition on type().
-	 * @todo remove preconditions (a template version ?) 
+	 * @remark	Alpha is not taken into account.
 	 */
 	static const MinMax computeMinMax( const IImage* pImage );
 
@@ -83,8 +81,6 @@ struct VGD_API ImageUtilities
 	/**
 	 * @brief Extract a slice (2d image) from a 3d image.
 	 * 
-	 * @pre pImage->type() == IImage::UINT8
-	 * 
 	 * @pre pImage->width() > 0
 	 * @pre pImage->height() > 0
 	 * @pre pImage->depth() > 0
@@ -99,10 +95,8 @@ struct VGD_API ImageUtilities
 	 * 
 	 * @remarks if pImage->format() == COLOR_INDEX, then the extracted image format is LUMINANCE and does'nt contain 
 	 * the palette.
-	 * 
-	 * @todo Remove precondition on pImage->type()
 	 */
-	static vgd::Shp< Image > extractSlice(	const IImage*	pImage, const SliceType	slice, const uint32	position );
+	static vgd::Shp< Image > extractSlice( const IImage* pImage, const SliceType	slice, const uint32	position );
 
 	/**
 	 * @name Useful scanning image methods.
@@ -124,7 +118,6 @@ struct VGD_API ImageUtilities
 	 * @brief Scan the whole image and set alpha value of each pixel to \c alpha.
 	 * 
 	 * @pre pImage->format() == RGBA or pImage->format() == BGRA or pImage->format() == LUMINANCE_ALPHA
-	 * @pre pImage->type() == UINT8
 	 * @pre 0 <= alpha <= 1
 	 * 
 	 * @param pImage	image to scan.
@@ -138,7 +131,6 @@ struct VGD_API ImageUtilities
 	 * Sets alpha value of each pixel to \c alpha only if pixel color is != (0,0,0), otherwise sets alpha value to zero.
 	 * 
 	 * @pre pImage->format() == RGBA or pImage->format() == BGRA or pImage->format() == LUMINANCE_ALPHA
-	 * @pre pImage->type() == UINT8
 	 * @pre 0 <= alpha <= 1
 	 * 
 	 * @param pImage	image to scan.
@@ -181,6 +173,55 @@ struct VGD_API ImageUtilities
 								const float fAlpha,
 								uint8 *pPalette );
 	//@}
+
+
+
+	/**
+	 * @brief	Converts the given alpha value into the given component type.
+	 * 
+	 * @param	alpha	an alpha value to convert
+	 * 
+	 * @return	the alpha representation in a given component type
+	 */
+	template< typename ComponentType >
+	static const ComponentType convertAlpha( const float alpha );
+
+
+
+private:
+
+	/**
+	 * @brief	Invoked by computeMinMax, performs the effective mix and max pixel value computation.
+	 * 
+	 * @see		computeMixMax
+	 */
+	template< typename ComponentType >
+	static const MinMax doComputeMinMax( const IImage* pImage );
+
+	/**
+	 * @brief	Invoked by extractSlice, performs the effective slice image extraction.
+	 * 
+	 * @see		extractSlice
+	 */
+	template< typename ComponentType >
+	static vgd::Shp< Image > doExtractSlice( const IImage*	pImage, const SliceType	slice, const uint32	position );
+	
+	/**
+	 * @brief	Invoked by setAlpha, performs the effective alpha layer value update.
+	 * 
+	 * @see		setAlpha
+	 */
+	template< typename ComponentType >
+	static void	doSetAlpha( IImage *pImage, const float alpha );	
+	
+	/**
+	 * @brief	Invoked by setAlphaIfNotBlack, performs the effective alpha layer value update.
+	 * 
+	 * @see		setAlphaIfNotBlack
+	 */
+	template< typename ComponentType >
+	static void	doSetAlphaIfNotBlack( IImage *pImage, const float alpha );	
+	 
 };
 
 
@@ -188,5 +229,11 @@ struct VGD_API ImageUtilities
 } // namespace basic
 
 } // namespace vgd
+
+
+
+#include "vgd/basic/ImageUtilities.hxx"
+
+
 
 #endif //#ifndef _VGD_BASIC_IMAGEUTILITIES_HPP
