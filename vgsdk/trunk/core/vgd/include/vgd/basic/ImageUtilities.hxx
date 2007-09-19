@@ -303,9 +303,13 @@ void ImageUtilities::doSetAlphaIfNotBlack( vgd::basic::IImage *pImage, const flo
 		bool isBlack = true;
 		for( uint32 i = 0; i != (components - 1); ++i )
 		{
-			isBlack &= (iPixel[i] == minValue);
+			if ( iPixel[i] != minValue )
+			{
+				isBlack = false;
+				break;
+			}
 		}
-		
+
 		// Assignes the alpha according if the pixel is black or not.
 		iPixel[components - 1] = (isBlack) ? minValue : alphaValue;
 		
