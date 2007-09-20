@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -483,4 +483,35 @@ bool Vector<T,N>::equals( const Vector& v, const float tolerance ) const
 	Vector	diff = *this - v;
 
 	return ( diff.dot(diff) <= tolerance );
+}
+
+
+
+template< typename Out, typename In, int32 InSize >
+const std::vector< Out > vector_cast( const ::vgm::Vector< In, InSize > & in )
+{
+	std::vector< Out >	out;
+	out.reserve( InSize );
+
+	for( int32 i = 0; i != InSize; ++i )
+	{
+		out.push_back( static_cast< Out >(in[i]) );
+	}
+
+	return out;
+}
+
+
+
+template< typename Out, int32 OutSize, typename In >
+const ::vgm::Vector< Out, OutSize > vector_cast( const std::vector< In > & in )
+{
+	::vgm::Vector< Out, OutSize >	out;
+
+	for( uint i = 0; i != OutSize && i != in.size(); ++i )
+	{
+		out[i] = static_cast< Out >( in[i] );
+	}
+
+	return out;
 }

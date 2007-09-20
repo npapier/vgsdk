@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -503,6 +503,63 @@ Vector<T,N> operator /( const T pScal, const Vector<T,N>& v );
  */
 template< typename T, int32 N >
 Vector<T,N> operator /( const Vector<T,N>& v, const T pScal );
+
+/**
+ * @brief Converts any vgm::Vector into a @c std::vector instance.
+ * 
+ * Copies and converts each element of the input vector into the output vector.
+ * As a result, the output vector will have as many elements as the input vector.
+ * 
+ * See usage example below.
+ * 
+@code
+const vgm::Vec3f   in( 0.1f, 0.2f, 0.3f );
+std::vector< int > out( vector_cast< int >(in) );
+@endcode
+ * 
+ * @relates Vector
+ * @ingroup LinearAlgebra
+ * 
+ * @author	Guillaume Brocker
+ */
+template< typename Out, typename In, int32 InSize >
+const std::vector< Out > vector_cast( const ::vgm::Vector< In, InSize > & in );
+
+/**
+ * @brief Converts any @c std::vector into a vgm::Vector instance.
+ * 
+ * Determines the range of elements that can be copied from the input
+ * vector into the output vector. The range's size will be the smallest
+ * size among the input and output vector sizes.
+ * 
+ * Than copies and converts each elements of the range from the input 
+ * vector into the output vector.
+ *  
+ * As a result, all output vector's elements will be assigned with
+ * a converted element of the output vector when the input vector's size
+ * is greater or equal to the output vector's size. Otherwise, some elements
+ * of the output vector will be left undetermined and that vector may be invalid.
+ * 
+ * See usage example below.
+ * 
+@code
+vgm::Vec3f         in(0.f, 0.f, 0.f);
+
+std::vector< int > out;
+out.resize(3);
+
+out = vector_cast< float, 3 >( in );
+@endcode
+ *
+ * @relates Vector
+ * @ingroup LinearAlgebra
+ *
+ * @author	Guillaume Brocker
+ */
+template< typename Out, int32 OutSize, typename In >
+const ::vgm::Vector< Out, OutSize > vector_cast( const std::vector< In > & in );
+
+
 
 /**
  * @brief 2d vector class used to store 2d vectors and points.
