@@ -510,11 +510,16 @@ Vector<T,N> operator /( const Vector<T,N>& v, const T pScal );
  * Copies and converts each element of the input vector into the output vector.
  * As a result, the output vector will have as many elements as the input vector.
  * 
- * See usage example below.
+ * See usage examples below.
  * 
 @code
 const vgm::Vec3f   in( 0.1f, 0.2f, 0.3f );
 std::vector< int > out( vector_cast< int >(in) );
+@endcode
+
+@code
+const vgm::Vec3i     in( 1, 2, 3 );
+std::vector< float > out( vector_cast< float >(in) );
 @endcode
  * 
  * @relates Vector
@@ -540,13 +545,16 @@ const std::vector< Out > vector_cast( const ::vgm::Vector< In, InSize > & in );
  * is greater or equal to the output vector's size. Otherwise, some elements
  * of the output vector will be left undetermined and that vector may be invalid.
  * 
- * See usage example below.
+ * See usage examples below.
  * 
 @code
-vgm::Vec3f         in(0.f, 0.f, 0.f);
-std::vector< int > out;
+std::vector< int > in;
+in.push_back( 1 );
+in.push_back( 2 );
+in.push_back( 3 );
 
-out = vector_cast< float, 3 >( in );
+vgm::Vec2f out2( vector_cast< float, 2 >( in ) );
+vgm::Vec3f out3( vector_cast< float, 3 >( in ) );
 @endcode
  *
  * @relates Vector
