@@ -544,9 +544,7 @@ const std::vector< Out > vector_cast( const ::vgm::Vector< In, InSize > & in );
  * 
 @code
 vgm::Vec3f         in(0.f, 0.f, 0.f);
-
 std::vector< int > out;
-out.resize(3);
 
 out = vector_cast< float, 3 >( in );
 @endcode

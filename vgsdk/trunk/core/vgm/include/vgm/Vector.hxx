@@ -490,12 +490,11 @@ bool Vector<T,N>::equals( const Vector& v, const float tolerance ) const
 template< typename Out, typename In, int32 InSize >
 const std::vector< Out > vector_cast( const ::vgm::Vector< In, InSize > & in )
 {
-	std::vector< Out >	out;
-	out.reserve( InSize );
+	std::vector< Out >	out( InSize );
 
 	for( int32 i = 0; i != InSize; ++i )
 	{
-		out.push_back( static_cast< Out >(in[i]) );
+		out[i] = static_cast< Out >( in[i] );
 	}
 
 	return out;
