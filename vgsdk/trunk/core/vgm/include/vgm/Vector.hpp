@@ -52,6 +52,7 @@
 
 #include <cmath>
 #include <limits>
+#include <vector>
 
 #include "vgm/vgm.hpp"
 
@@ -528,7 +529,7 @@ std::vector< float > out( vector_cast< float >(in) );
  * @author	Guillaume Brocker
  */
 template< typename Out, typename In, int32 InSize >
-const std::vector< Out > vector_cast( const ::vgm::Vector< In, InSize > & in );
+const std::vector< Out > vector_cast( const Vector< In, InSize > & in );
 
 /**
  * @brief Converts any @c std::vector into a vgm::Vector instance.
@@ -563,7 +564,7 @@ vgm::Vec3f out3( vector_cast< float, 3 >( in ) );
  * @author	Guillaume Brocker
  */
 template< typename Out, int32 OutSize, typename In >
-const ::vgm::Vector< Out, OutSize > vector_cast( const std::vector< In > & in );
+const Vector< Out, OutSize > vector_cast( const std::vector< In > & in );
 
 
 
