@@ -42,25 +42,15 @@ const ComponentType ImageUtilities::convertAlpha( const float alpha )
 
 
 
+// Specialization
 template<>
-const float ImageUtilities::convertAlpha< float >( const float alpha )
-{
-	assert( alpha >= 0.f );
-	assert( alpha <= 1.f );
-
-	return alpha;
-}
+const float ImageUtilities::convertAlpha< float >( const float alpha );
 
 
 
-template<>
-const double ImageUtilities::convertAlpha< double >( const float alpha )
-{
-	assert( alpha >= 0.f );
-	assert( alpha <= 1.f );
-
-	return alpha;
-}
+// Specialization
+template<>	
+const double ImageUtilities::convertAlpha< double >( const float alpha );
 
 
 

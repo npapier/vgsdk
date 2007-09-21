@@ -51,6 +51,28 @@ const MinMax ImageUtilities::computeMinMax( const vgd::Shp< IImage > image )
 
 
 
+template<>
+const float ImageUtilities::convertAlpha< float >( const float alpha )
+{
+	assert( alpha >= 0.f );
+	assert( alpha <= 1.f );
+
+	return alpha;
+}
+
+
+
+template<>
+const double ImageUtilities::convertAlpha< double >( const float alpha )
+{
+	assert( alpha >= 0.f );
+	assert( alpha <= 1.f );
+
+	return alpha;
+}
+
+
+
 /**
  * @todo OPTME For 16 bits images containing only values inside (0, 255), don't interpolate values.
  */
