@@ -513,10 +513,10 @@ vgd::Shp< vgd::basic::IImage > ILayers::extractSlice( const int32 layer, const v
 
 	// Retrieves the image editor and composition operator.	
 	vgd::field::EditorRO< FIImageType >	editorImageNegatoRO( getFIImageRO(layer) );
-	const Layers::ComposeOperator		composeOperator( gethComposeOperator(layer) );
+	const ComposeOperator			composeOperator( gethComposeOperator(layer) );
 
-	if (	(! editorImageNegatoRO->getValue()) ||									// no image
-			(composeOperator.getFunction() == Layers::COMPOSE_FUNCTION_NONE)	)	// image not used
+	if (	(! editorImageNegatoRO->getValue()) ||							// no image
+			(composeOperator.getFunction() == COMPOSE_FUNCTION_NONE)	)	// image not used
 	{
 		return vgd::Shp< vgd::basic::IImage >();
 	}

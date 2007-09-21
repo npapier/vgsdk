@@ -6,6 +6,10 @@
 #ifndef _VGD_BASIC_WINDOWING_HXX
 #define _VGD_BASIC_WINDOWING_HXX
 
+#include <vgd/basic/Image.hpp>
+#include <vgm/operations.hpp>
+#include <vgm/Utilities.hpp>
+
 
 
 namespace vgd

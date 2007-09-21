@@ -7,6 +7,7 @@
 #define _VGD_BASIC_ITRANSFERFUNCTION_HPP
 
 #include "vgd/vgd.hpp"
+#include "vgd/Shp.hpp"
 
 namespace vgd { namespace basic { struct IImage; } }
 

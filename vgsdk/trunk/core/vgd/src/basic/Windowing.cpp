@@ -6,6 +6,7 @@
 #include "vgd/basic/Windowing.hpp"
 
 #include <cassert>
+#include "vgd/basic/IImage.hpp"
 
 
 
