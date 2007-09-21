@@ -1,17 +1,17 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
-// Author Nicolas Papier
+// Author Nicolas Papier, Guillaume Brocker
 
 #ifndef _VGD_NODE_ILAYERS_HPP
 #define _VGD_NODE_ILAYERS_HPP
 
 #include "vgd/basic/ImageUtilities.hpp"
+#include "vgd/basic/ITransferFunction.hpp"
 #include "vgd/field/Image.hpp"
 #include "vgd/field/TSingleField.hpp"
 #include "vgd/field/Vector.hpp"
 #include "vgd/node/Kit.hpp"
-#include "vgd/vgd.hpp"
 
 
 
@@ -100,6 +100,9 @@ namespace node
  * 	- alpha = 0.5f\n
  * 		Alpha value used only by INTERPOLATE and only for images not in COLOR_INDEX mode.
  * 
+ * - TransferFunction \c transferFunction* = empty\n
+ *		Sets the transfer function for a specific layer.
+ * 
  * - SFVec3f	\c translation		= (0 0 0)\n
  * 		Sets the translation applied to all layers.
  * - SFVec3f	\c scaleFactor 		= (1 1 1)\n
@@ -119,7 +122,8 @@ struct VGD_API ILayers : public vgd::node::Kit
 	/**
 	 * @brief Create dynamically the specified number of layers.
 	 * 
-	 * Call this method to create dynamically one or more \c iimage and \c composeOperator fields.
+	 * Call this method to create dynamically one or more \c iimage, \c composeOperator 
+	 * and \c transferFunction fields.
 	 * 
 	 * @param num			number of layers.
 	 * 
@@ -247,6 +251,43 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @param index		zero-base index for the \c composeOperator* field.
 	 */
 	vgd::field::EditorRW< FComposeOperatorType > getFComposeOperatorRW( const int32 index = 0 );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field transferFunction*
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c transferFunction* field.
+	 */	
+	typedef vgd::field::TSingleField< vgd::Shp< vgd::basic::ITransferFunction > >	FTransferFunctionType;
+
+	/**
+	 * @brief Typedef for the \c transferFunction* value.
+	 */
+	typedef vgd::Shp< vgd::basic::ITransferFunction >	TransferFunctionValueType;
+	
+	/**
+	 * @brief Accessor to \c transferFunction* field.
+	 * 
+	 * @pre		0 <= index < getNumLayers()
+	 * 
+	 * @param index		zero-base index for the \c transferFunction* field.
+	 */
+	vgd::field::EditorRO< FTransferFunctionType > getFTransferFunctionRO( const int32 index = 0 ) const;
+
+	/**
+	 * @brief Accessor to \c transferFunction* field.
+	 * 
+	 * @pre		0 <= index < getNumLayers()
+	 * 
+	 * @param index		zero-base index for the \c transferFunction* field.
+	 */
+	vgd::field::EditorRW< FTransferFunctionType > getFTransferFunctionRW( const int32 index = 0 );
 
 	//@}
 
@@ -410,6 +451,26 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @return			the compose operator value.
 	 */
 	const ComposeOperatorValueType	gethComposeOperator( const int32 index ) const;
+	
+	/**
+	 * @brief Sets the transfer function used by the specified layer.
+	 * 
+	 * @pre		0 <= index < getNumLayers()
+	 * 
+	 * @param index				zero-base index for the layer.
+	 * @param transferFunction	the transfer function.
+	 */	
+	void sethTransferFunction( const int32 index, const TransferFunctionValueType& transferFunction );
+
+	/**
+	 * @brief Gets the transfer function used by the specified layer.
+	 * 
+	 * @pre		0 <= index < getNumLayers()
+	 * 
+	 * @param index		zero-base index for the layer.
+	 * @return			the transfer function value.
+	 */
+	const TransferFunctionValueType	gethTransferFunction( const int32 index ) const;
 
 	//@}
 
@@ -441,6 +502,17 @@ struct VGD_API ILayers : public vgd::node::Kit
 	 * @return the name of field \c composeOperator*.
 	 */
 	static const std::string getFComposeOperator( const int32 index );
+
+	/**
+	 * @brief Returns the name of field \c transferFunction*.
+	 * 
+	 * @pre		0 <= index < getNumLayers()
+	 * 
+	 * @param index		zero-base index for the field.
+	 * 
+	 * @return the name of field \c transferFunction*.
+	 */
+	static const std::string getFTransferFunction( const int32 index );
 
 	/**
 	 * @brief Returns the name of field \c scaleFactor.
@@ -499,6 +571,25 @@ protected:
 	void	setOptionalsToDefaults();
 
 	//@}
+	
+	
+	/**
+	 * @brief	Extract a given slice.
+	 * 
+	 * Additionnaly, the method checks if there is an image for the given layer
+	 * and if there is a composition operator for this layer.
+	 * 
+	 * @param	layer		the layer for which a slice must be extracted
+	 * @param	type		the type of the slice to extract
+	 * @param	position	the position of the slice to extract
+	 * 
+	 * @return	the extracted slice,
+	 * 			or an empty shared pointer if there is no image
+	 * 			or no composition operator
+	 * 
+	 * @pre	0 <=layer < getNumLayers()
+	 */
+	vgd::Shp< vgd::basic::IImage > extractSlice( const int32 layer, const vgd::basic::SliceType type, const uint32 position );
 	
 private:
 

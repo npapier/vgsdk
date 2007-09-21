@@ -1,12 +1,14 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
-// Author Nicolas Papier
+// Author Nicolas Papier, Guillaume Brocker
 
 #include "vgd/node/ILayers.hpp"
 
 #include <limits>
 #include <sstream>
+#include "vgd/basic/Image.hpp"
+#include "vgd/basic/ImageInfo.hpp"
 #include "vgd/field/TAccessors.hpp"
 
 
@@ -101,6 +103,7 @@ void ILayers::createLayers( const int32 num )
 	{
 		assert( !isField( getFIImage(i) ) );
 		assert( !isField( getFComposeOperator(i) ) );
+		assert( !isField( getFTransferFunction(i) ) );		
 	}
 #endif
 
@@ -113,6 +116,7 @@ void ILayers::createLayers( const int32 num )
 	{
 		addField( new FIImageType(getFIImage(i)) );
 		addField( new FComposeOperatorType(getFComposeOperator(i)) );
+		addField( new FTransferFunctionType(getFTransferFunction(i)) );		
 	}
 	
 	// Add dirty flags.
@@ -132,6 +136,7 @@ void ILayers::createLayers( const int32 num )
 		
 		link( getFIImage(i), getDFNode() );
 		link( getFComposeOperator(i), getDFNode() );
+		link( getFTransferFunction(i), getDFNode() );
 	}
 	
 	// Defaults value.
@@ -140,6 +145,7 @@ void ILayers::createLayers( const int32 num )
 			++i )
 	{
 		sethComposeOperator( index, ComposeOperatorValueType() );
+		sethTransferFunction( index, TransferFunctionValueType() );
 	}
 }
 
@@ -202,6 +208,26 @@ vgd::field::EditorRW< vgd::node::ILayers::FComposeOperatorType > ILayers::getFCo
 	assert( index < getNumLayers() && "Invalid index." );
 		
 	return ( getFieldRW< FComposeOperatorType >(getFComposeOperator( index )) );
+}
+
+
+
+vgd::field::EditorRO< vgd::node::ILayers::FTransferFunctionType > ILayers::getFTransferFunctionRO( const int32 index ) const
+{
+	assert( index >= 0 && "Invalid index." );
+	assert( index < getNumLayers() && "Invalid index." );
+
+	return ( getFieldRO< FTransferFunctionType >(getFTransferFunction( index )) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::ILayers::FTransferFunctionType > ILayers::getFTransferFunctionRW( const int32 index )
+{
+	assert( index >= 0 && "Invalid index." );
+	assert( index < getNumLayers() && "Invalid index." );
+	
+	return ( getFieldRW< FTransferFunctionType >(getFTransferFunction( index )) );
 }
 
 
@@ -393,6 +419,30 @@ const ILayers::ComposeOperatorValueType ILayers::gethComposeOperator( const int3
 
 
 
+void ILayers::sethTransferFunction( const int32 index, const TransferFunctionValueType& transferFunction )
+{
+	assert( index >= 0 && "Invalid index." );
+	assert( index < getNumLayers() && "Invalid index." );
+		
+	vgd::field::EditorRW< FTransferFunctionType > transferFunctionRW( getFTransferFunctionRW( index ) );
+
+	transferFunctionRW->setValue( transferFunction );
+}
+
+
+
+const ILayers::TransferFunctionValueType ILayers::gethTransferFunction( const int32 index ) const
+{
+	assert( index >= 0 && "Invalid index." );
+	assert( index < getNumLayers() && "Invalid index." );
+
+	vgd::field::EditorRO< FTransferFunctionType > transferFunctionRO( getFTransferFunctionRO( index ) );
+	
+	return ( transferFunctionRO->getValue() );
+}
+
+
+
 const std::string ILayers::getFIImage( const int32 index )
 {
 	assert( index >= 0 && "Invalid index." );
@@ -421,6 +471,20 @@ const std::string ILayers::getFComposeOperator( const int32 index )
 
 
 
+const std::string ILayers::getFTransferFunction( const int32 index )
+{
+	assert( index >= 0 && "Invalid index." );
+	//assert( index < getNumLayers() && "Invalid index." );
+
+	std::stringstream strStream;
+	
+	strStream << "f_transferFunction" << index << std::ends;
+	
+	return ( strStream.str() );
+}
+
+
+
 const std::string ILayers::getDFIImage( const int32 index )
 {
 	assert( index >= 0 && "Invalid index." );
@@ -437,7 +501,79 @@ const std::string ILayers::getDFIImage( const int32 index )
 
 const std::string ILayers::getDFTransformation()
 {
-	return ( "df_transformation" );
+	return "df_transformation";
+}
+
+
+
+vgd::Shp< vgd::basic::IImage > ILayers::extractSlice( const int32 layer, const vgd::basic::SliceType type, const uint32 position )
+{
+	assert( layer >= 0 );
+	assert( layer < getNumLayers() );
+
+	// Retrieves the image editor and composition operator.	
+	vgd::field::EditorRO< FIImageType >	editorImageNegatoRO( getFIImageRO(layer) );
+	const Layers::ComposeOperator		composeOperator( gethComposeOperator(layer) );
+
+	if (	(! editorImageNegatoRO->getValue()) ||									// no image
+			(composeOperator.getFunction() == Layers::COMPOSE_FUNCTION_NONE)	)	// image not used
+	{
+		return vgd::Shp< vgd::basic::IImage >();
+	}
+
+	// Extract the desired image from the image source
+	// FIXME: optme : remove extraction and share palette
+	using vgd::basic::Image;
+	using vgd::basic::IImage;	
+	using vgd::basic::ImageUtilities;	
+
+	vgd::basic::ImageInfo	imageInfo( *editorImageNegatoRO->getValue().get() );
+	vgd::Shp< Image >		input = ImageUtilities::extractSlice( &imageInfo, type, position );
+	vgd::Shp< IImage >		output;
+
+	if ( imageInfo.format() == vgd::basic::Image::COLOR_INDEX )
+	{
+		// PALETTE MODE
+		
+		// convert image (extractSlice never returns COLOR_INDEX image)
+		input->convertTo( vgd::basic::Image::COLOR_INDEX, input->type() );
+
+		input->setPalette(	imageInfo.palettePixels(),
+							imageInfo.paletteSize() * IImage::computeNumComponents( imageInfo.paletteFormat() ),
+							imageInfo.paletteFormat() );
+							
+		output = input;
+	}
+	else
+	{
+		const TransferFunctionValueType	transferFunction = gethTransferFunction( layer );
+
+		output = input;
+
+		if ( transferFunction )
+		{
+			// The transfer function is not empty, apply it to extracted slice
+			output = transferFunction->apply( output );
+
+			// LUMINANCE_ALPHA
+			assert( output->format() == IImage::LUMINANCE_ALPHA );
+			assert( output->type() == IImage::UINT8 );
+			// @todo LUMINANCE, RGB, RGBA, BGR, BGRA
+		}
+
+		// @todo modulateAlpha() 
+		if ( composeOperator.hasMask() )
+		{
+			ImageUtilities::setAlphaIfNotBlack( output.get(), composeOperator.getAlpha() );
+		}
+		else
+		{
+			ImageUtilities::setAlpha( output.get(), composeOperator.getAlpha() );
+		}
+	}
+	
+	// Job's done.
+	return output;
 }
 
 
