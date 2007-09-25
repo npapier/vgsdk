@@ -6,6 +6,7 @@
 #ifndef _VGD_BASIC_WINDOWING_HPP
 #define _VGD_BASIC_WINDOWING_HPP
 
+#include "vgd/vgd.hpp"
 #include "vgd/basic/ITransferFunction.hpp"
 
 
@@ -33,7 +34,7 @@ struct Windowing : public ITransferFunction
 	 * @param	min	the lowest intensity to show (0 by default)
 	 * @param	max	the highest intensity to show (255 by default)
 	 */
-	Windowing( const int min = 0, const int max = 255 );
+	VGD_API Windowing( const int min = 0, const int max = 255 );
 	
 	/**
 	 * @brief	Updates the output alpha.
@@ -42,7 +43,7 @@ struct Windowing : public ITransferFunction
 	 * @param	minMax	the alpha for inputs in the window
 	 * @param	high		the alpha for inputs above the upper window bound
 	 */
-	void setOutputAlpha( const uint8 low, const uint8 minMax, const uint8 high );
+	VGD_API void setOutputAlpha( const uint8 low, const uint8 minMax, const uint8 high );
 	
 	/**
 	 * @brief	Updates the output intensities.
@@ -52,7 +53,7 @@ struct Windowing : public ITransferFunction
 	 * @param	max		the output intensity for inputs at the upper window bound
 	 * @param	high		the output intensity for inputs above the upper window bound
 	 */
-	void setOutputIntensities( const uint8 low, const uint8 min, const uint8 max, const uint8 high );
+	VGD_API void setOutputIntensities( const uint8 low, const uint8 min, const uint8 max, const uint8 high );
 	
 	/**
 	 * @brief	Updates the position of the window.
@@ -62,13 +63,13 @@ struct Windowing : public ITransferFunction
 	 * 
 	 * @pre	min < max
 	 */
-	void setWindow( const int min, const int max );
+	VGD_API void setWindow( const int min, const int max );
 	
 	/**
 	 * @name	Overrides
 	 */
 	//@{
-	vgd::Shp< vgd::basic::IImage > apply( const vgd::Shp< vgd::basic::IImage > image ) const;
+	VGD_API vgd::Shp< vgd::basic::IImage > apply( const vgd::Shp< vgd::basic::IImage > image ) const;
 	//@}
 	
 private:
