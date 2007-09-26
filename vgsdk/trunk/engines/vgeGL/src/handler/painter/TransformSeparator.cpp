@@ -71,8 +71,8 @@ void TransformSeparator::apply ( vge::engine::Engine* pEngine, vgd::node::Node *
 
 void TransformSeparator::unapply ( vge::engine::Engine* pEngine, vgd::node::Node* pNode )
 {
-	//assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-	//vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
+	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
 
 	assert( dynamic_cast< vgd::node::TransformSeparator* >(pNode) != 0 );
 	vgd::node::TransformSeparator *pCastedNode = static_cast< vgd::node::TransformSeparator* >(pNode);
@@ -95,7 +95,7 @@ void TransformSeparator::unapply ( vge::engine::Engine* pEngine, vgd::node::Node
 					);
 		
 			// Update OpenGL
-			glo::Texture::active( GL_TEXTURE0_ARB + i );
+			pGLEngine->activeTexture( i );
 			glMatrixMode( GL_TEXTURE );
 			glLoadMatrixf( reinterpret_cast<const float*>( matrix.getValue() ) );
 		}

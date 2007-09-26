@@ -388,7 +388,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 				glo::Texture *pTextureGLO = pGLEngine->getGLManager().template get< glo::Texture >( pTexture );
 				assert( pTextureGLO != 0 && "Internal error." );
 
-				glo::Texture::active( unit );
+				pGLEngine->activeTexture( unit );
 				pTextureGLO->enable();*/
 
 				//

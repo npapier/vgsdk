@@ -81,7 +81,7 @@ void TextureMatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node
 			pGLEngine->getTextureMatrix().getTop( indexMultiAttribute ) 
 			);
 
-	glo::Texture::active( GL_TEXTURE0_ARB + indexMultiAttribute );
+	pGLEngine->activeTexture( indexMultiAttribute );
 	glMatrixMode( GL_TEXTURE );
 
 	// Update OpenGL.

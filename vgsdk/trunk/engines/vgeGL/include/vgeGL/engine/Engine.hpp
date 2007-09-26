@@ -154,9 +154,16 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	/**
 	 * @name OpenGL state modifiers
 	 *
-	 * @todo Same method as activeTexture() but for others OpenGL api => @todo template ?
+	 * @todo Same method as activeTexture() but for others OpenGL api => @todo template ? impact of glPush/glPop (attribs)
 	 */
 	//@{
+
+	/**
+	 * @brief Activates the desired texture unit
+	 *
+	 * @param desiredTextureUnit	the index of the texture unit that must be activated
+	 */
+	void activeTexture( const int desiredTextureUnit );
 
 	/**
 	 * @brief Activates the desired texture unit

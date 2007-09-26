@@ -175,7 +175,7 @@ void Engine::resetMatrices()
 	{
 		current = getTextureMatrix().getTop( index );
 		
-		glActiveTextureARB( GL_TEXTURE0_ARB + index );
+		activeTexture( index );
 		
 		glMatrixMode( GL_TEXTURE );
 
@@ -298,21 +298,45 @@ const GLenum Engine::getDepthTextureFormatFromDepthBits() const
 
 
 
-void Engine::activeTexture( const vgd::node::Texture * textureNode )
+void Engine::activeTexture( const int desiredTextureUnit )
 {
-	static int currentTextureUnit = 0;
+//	static int currentTextureUnit = 0;
 
-	const int desiredTextureUnit = textureNode->getMultiAttributeIndex();
+//#ifdef _DEBUG
+//	GLint glcurrentTextureUnit;
+//	glGetIntegerv( GL_ACTIVE_TEXTURE_ARB, &glcurrentTextureUnit );
+//	glcurrentTextureUnit -= GL_TEXTURE0_ARB;
+//
+//	if ( glcurrentTextureUnit != currentTextureUnit )
+//	{
+//		vgDebug::get().logDebug( "Unexpected current active texture unit." );
+//		
+//		// Repairs cache
+//		currentTextureUnit = glcurrentTextureUnit;
+//	}
+//	//assert( glcurrentTextureUnit == currentTextureUnit && "Unexpected current active texture unit." );
+//
+//#endif
 
-	if ( desiredTextureUnit != currentTextureUnit )
-	{
+	// @todo This code is disabled => see method comments about glPush/glPop*.
+//	if ( desiredTextureUnit != currentTextureUnit )
+//	{
 		// Activates the desired texture unit
 		::glo::Texture::active( GL_TEXTURE0_ARB + desiredTextureUnit );
 
-		// Fills the current texture unit cache
-		currentTextureUnit = desiredTextureUnit;
-	}
+//		// Fills the current texture unit cache
+//		currentTextureUnit = desiredTextureUnit;
+//	}
 	// else nothing to do, i.e. already done
+}
+
+
+
+void Engine::activeTexture( const vgd::node::Texture * textureNode )
+{
+	const int desiredTextureUnit = textureNode->getMultiAttributeIndex();
+	
+	activeTexture( desiredTextureUnit );
 }
 
 
