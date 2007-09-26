@@ -548,17 +548,20 @@ vgd::Shp< vgd::basic::IImage > ILayers::extractSlice( const int32 layer, const v
 	{
 		const TransferFunctionValueType	transferFunction = gethTransferFunction( layer );
 
-		output = input;
-
 		if ( transferFunction )
 		{
 			// The transfer function is not empty, apply it to extracted slice
-			output = transferFunction->apply( output );
+			output = transferFunction->apply( input );
 
 			// LUMINANCE_ALPHA
 			assert( output->format() == IImage::LUMINANCE_ALPHA );
 			assert( output->type() == IImage::UINT8 );
 			// @todo LUMINANCE, RGB, RGBA, BGR, BGRA
+		}
+		else
+		{
+			input->convertTo( IImage::LUMINANCE_ALPHA, input->type() );
+			output = input;
 		}
 
 		// @todo modulateAlpha() 
