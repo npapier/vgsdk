@@ -45,10 +45,14 @@ typename ItkImageType::Pointer convertIImage2ItkImage( vgd::Shp< vgd::basic::IIm
 	container->SetImportPointer(voxels, iimage->computeNumberOfPixels(), false /* memory not managed by itk */);
 
 	dstImage->SetPixelContainer(container);
-	
-	dstImage->GetSpacing(0) = iimage->voxelSize()[0];
-	dstImage->GetSpacing(1) = iimage->voxelSize()[1];
-	dstImage->GetSpacing(2) = iimage->voxelSize()[2];
+
+	// Assign voxel size to the itk image
+	ItkImageType::SpacingType spacing;
+	spacing[0] = iimage->voxelSize()[0];
+	spacing[1] = iimage->voxelSize()[1];
+	spacing[2] = iimage->voxelSize()[2];
+
+	dstImage->SetSpacing( spacing );
 
 	return dstImage;
 }
