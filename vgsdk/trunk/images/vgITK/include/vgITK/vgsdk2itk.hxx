@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,7 +12,7 @@ namespace vgITK
 {
 
 /**
- * @brief Converts an vgsdk image into an itk image.
+ * @brief Converts a vgsdk image into an itk image.
  * 
  * @remarks The image data is imported (no copy occurs). And the memory of the imaga data would not be freeing by the 
  * ITK image.
@@ -42,10 +42,14 @@ typename ItkImageType::Pointer convertIImage2ItkImage( vgd::Shp< vgd::basic::IIm
 	typename itk::ImportImageContainer<uint32, typename ItkImageType::PixelType>::Pointer container;
 	container = itk::ImportImageContainer<uint32, typename ItkImageType::PixelType>::New();
 
-	container->SetImportPointer(voxels, iimage->computeNumberOfPixels(), false);
+	container->SetImportPointer(voxels, iimage->computeNumberOfPixels(), false /* memory not managed by itk */);
 
 	dstImage->SetPixelContainer(container);
 	
+	dstImage->GetSpacing(0) = iimage->voxelSize()[0];
+	dstImage->GetSpacing(1) = iimage->voxelSize()[1];
+	dstImage->GetSpacing(2) = iimage->voxelSize()[2];
+
 	return dstImage;
 }
 

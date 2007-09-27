@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -11,7 +11,10 @@
  * 
  * @brief Virtuals Graphical ITK
  *
- * vgITK is a collection of method to convert vgd::basic::IImage to ITK image.
+ * vgITK is a collection of functions to :
+ * - create an itk image from a vgsdk image (see vgd::basic::IImage). The buffer is shared and owned by vgsdk.
+ * - create vgsdk image using an itk reader.
+ * - save vgsdk image using an itk writer.
  * 
  * \b vgITK is open source (LGPL).
  */

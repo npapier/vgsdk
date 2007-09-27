@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -22,7 +22,7 @@ itk::ImageBase<3>::Pointer convertIImage2ItkImageBase( vgd::Shp< vgd::basic::IIm
 
 	assert(	(iimage->format() == IImage::LUMINANCE) ||
 			(iimage->format() == IImage::COLOR_INDEX)	);
-	
+
 	itk::ImageBase<3>::Pointer retVal;
 	
 	switch ( iimage->type() )
@@ -50,11 +50,19 @@ itk::ImageBase<3>::Pointer convertIImage2ItkImageBase( vgd::Shp< vgd::basic::IIm
 		case IImage::INT32:
 			retVal = convertIImage2ItkImage< ItkImageLuminanceINT32Type >( iimage );
 			break;
-		
+
+		case IImage::FLOAT:
+			retVal = convertIImage2ItkImage< ItkImageLuminanceFLOATType >( iimage );
+			break;
+
+		case IImage::DOUBLE:
+			retVal = convertIImage2ItkImage< ItkImageLuminanceDOUBLEType >( iimage );
+			break;
+
 		default:
 			throw Failed("Unable to convert vgsdk iimage to itk image (unsupported iimage.type).");
 	}
-	
+
 	return retVal;
 }
 
