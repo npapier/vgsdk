@@ -5,17 +5,19 @@
 
 #include <vgd/basic/Image.hpp>
 
+#include "vgITK/Failed.hpp"
+
 
 namespace vgITK
 {
-	
+
 
 
 template< typename itkImageIOType >
 vgd::Shp< vgd::basic::Image > loadImage( const std::string & imagePath )
 {
 	// Creates the image io filter.
-	itkImageIOType::Pointer	imageIO = itkImageIOType::New();
+	typename itkImageIOType::Pointer	imageIO = itkImageIOType::New();
 	if( imageIO->CanReadFile(imagePath.c_str()) == false )
 	{
 		throw ::vgITK::Failed( imagePath + ": unable to read file (either missing or unsupported)." );
@@ -30,7 +32,7 @@ vgd::Shp< vgd::basic::Image > loadImage( const std::string & imagePath )
 	const uint		width	= imageIO->GetDimensions(0);
 	const uint		height	= imageIO->GetDimensions(1);
 	const uint		depth	= imageIO->GetDimensions(2);
-	
+
 	IImage::Type	type;
 	switch( imageIO->GetComponentType() )
 	{
@@ -47,12 +49,12 @@ vgd::Shp< vgd::basic::Image > loadImage( const std::string & imagePath )
 	}
 
 	IImage::Format	format;
-	switch( inrImageIO->GetPixelType() )
+	switch( imageIO->GetPixelType() )
 	{
 		case itkImageIOType::SCALAR:	format = IImage::LUMINANCE;	break;
 		case itkImageIOType::RGB:		format = IImage::RGB;		break;
 		case itkImageIOType::RGBA:		format = IImage::RGBA;		break;
-		
+
 		default: throw ::vgITK::Failed( imagePath + ": image has an unsupported pixel format." );
 	}
 

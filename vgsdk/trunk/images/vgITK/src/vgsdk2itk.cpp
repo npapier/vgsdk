@@ -14,17 +14,17 @@ namespace vgITK
 
 
 
-itk::ImageBase<3>::Pointer convertIImage2ItkImageBase( vgd::Shp< vgd::basic::IImage > iimage ) throw (::vgITK::Failed)
+itk::ImageBase<3>::Pointer convertIImage2ItkImageBase( vgd::Shp< vgd::basic::IImage > iimage )
 {
 	using vgd::basic::IImage;
-	
+
 	assert( iimage != 0 );
 
 	assert(	(iimage->format() == IImage::LUMINANCE) ||
 			(iimage->format() == IImage::COLOR_INDEX)	);
 
 	itk::ImageBase<3>::Pointer retVal;
-	
+
 	switch ( iimage->type() )
 	{
 		case IImage::UINT8:
