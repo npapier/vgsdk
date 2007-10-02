@@ -48,6 +48,8 @@ typedef itk::Image< double,	3	>	ItkImageLuminanceDOUBLEType;
  * typedef itk::Image< PixelType, 3> ItkImageType;
  * ItkImageType::Pointer convertedImage = dynamic_cast<ItkImageType*>(convertedImageBase.GetPointer());
  * @endverbatim
+ *
+ * @todo Adds support og iimage->format() == RGB, RGBA, (BGR and BGRA)
  */
 VGITK_API itk::ImageBase<3>::Pointer convertIImage2ItkImageBase( vgd::Shp< vgd::basic::IImage > iimage ) /* throw (::vgITK::Failed) */;
 

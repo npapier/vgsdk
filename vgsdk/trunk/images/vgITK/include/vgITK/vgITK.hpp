@@ -17,6 +17,8 @@
  * - save vgsdk image using an itk writer.
  * 
  * \b vgITK is open source (LGPL).
+ *
+ * @todo adds documentation to g_image (doxygen group)
  */
 
 #include <vgBase/Type.hpp>

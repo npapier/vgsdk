@@ -31,6 +31,8 @@ namespace vgITK
  * 
  * @remark	The following image types are supported : UINT8, INT8, UINT16, INT16, UINT32, INT32, FLOAT and DOUBLE.
  * @remark	The following image formats are supported : LUMINANCE, RGB and RGBA.
+ *
+ * @todo an helper function to instanciate loadImage<T>() with the good T using extension of the file.
  */
 template< typename itkImageIOType >
 vgd::Shp< vgd::basic::Image > loadImage( const std::string & imagePath ) /* throw ::vgITK::Failed() */;
