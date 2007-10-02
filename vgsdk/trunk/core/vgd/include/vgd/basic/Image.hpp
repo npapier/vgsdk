@@ -50,20 +50,20 @@ struct VGD_API Image : public IImage
 	/**
 	 * @brief Default constructor
 	 * 
-	 * @post components()			== 0
-	 * @post isEmpty()			== true
+	 * @post components()		== 0
+	 * @post isEmpty()		== true
 	 * @post format()			== NO_FORMAT
-	 * @post type()				== NO_TYPE
+	 * @post type()			== NO_TYPE
 	 * @post pixels()			== 0
-	 * @post editPixels()			== 0
+	 * @post editPixels()		== 0
 	 * 
-	 * @post paletteSize()			== 0
+	 * @post paletteSize()		== 0
 	 * @post paletteFormat()		== NO_FORMAT
 	 * @post paletteType()		== NO_TYPE
 	 * @post palettePixels()		== 0
 	 * @post paletteEditPixels()	== 0
 	 * 
-	 * @post voxelSize()			== vgm::Vec3f(1.f, 1.f, 1.f)
+	 * @post voxelSize()		== vgm::Vec3f(1.f, 1.f, 1.f)
 	 */
 	Image();
 
@@ -82,14 +82,18 @@ struct VGD_API Image : public IImage
 	 * If \c pixels parameter is not 0, then the image data is copied from memory.
 	 * Otherwise the image would only contain zero values.
 	 * 
-	 * @param width			width of the image.
+	 * @param width		width of the image.
 	 * @param height		height of the image.
-	 * @param depth			depth of the image.
+	 * @param depth		depth of the image.
 	 * @param format		format of the pixel data.
-	 * @param type			type of the pixel data.
+	 * @param type		type of the pixel data.
 	 * @param pixels		pointer to the image data in memory.
 	 * 
-	 * @pre format != COLOR_INDEX
+	 * @post paletteSize()		== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()		== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
 	 */
 	Image(		const uint32	width, const uint32 height, const uint32 depth,
 				const Format	format,
@@ -100,16 +104,21 @@ struct VGD_API Image : public IImage
 	 * @brief Image contructor from memory.
 	 * 
 	 * @param components	number of color components.
-	 * @param width			width of the image.
+	 * @param width		width of the image.
 	 * @param height		height of the image.
-	 * @param depth			depth of the image.
+	 * @param depth		depth of the image.
 	 * @param format		format of the pixel data.
-	 * @param type			type of the pixel data.
+	 * @param type		type of the pixel data.
 	 * @param pixels		pointer to the image data in memory.
 	 * 
-	 * @pre format != COLOR_INDEX
 	 * @pre components == computeNumComponents( format )
 	 * 
+	 * @post paletteSize()		== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()		== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
+	 *
 	 * @deprecated Use constructor without components parameters instead
 	 */
 	Image(		const uint32		components,
@@ -122,15 +131,20 @@ struct VGD_API Image : public IImage
 	 * @brief Image contructor
 	 * 
 	 * @param components	number of color components.
-	 * @param width			width of the image.
+	 * @param width		width of the image.
 	 * @param height		height of the image.
-	 * @param depth			depth of the image.
+	 * @param depth		depth of the image.
 	 * @param format		format of the pixel data.
-	 * @param type			type of the pixel data.
+	 * @param type		type of the pixel data.
 	 * 
-	 * @pre format != COLOR_INDEX
 	 * @pre components == computeNumComponents( format ) 
 	 * 
+	 * @post paletteSize()		== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()		== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
+	 *
 	 * @deprecated Use constructor without components parameters instead 
 	 * 
 	 * @todo add param color
@@ -147,7 +161,6 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @param iimage			IImage
 	 * 
-	 * @pre iimage.format() != COLOR_INDEX
 	 */
 	Image( const IImage& iimage );
 
@@ -195,14 +208,18 @@ struct VGD_API Image : public IImage
 	 * If \c pixels parameter is not 0, then the image data is copied from memory.
 	 * Otherwise the image would only contain zero values.
 	 * 
-	 * @param width			width of the image.
+	 * @param width		width of the image.
 	 * @param height		height of the image.
-	 * @param depth			depth of the image.
+	 * @param depth		depth of the image.
 	 * @param format		format of the pixel data.
-	 * @param type			type of the pixel data.
+	 * @param type		type of the pixel data.
 	 * @param pixels		pointer to the image data in memory.
 	 * 
-	 * @pre format != COLOR_INDEX
+	 * @post paletteSize()		== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()		== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
 	 */
 	bool	create(	const uint32	width, const uint32 height, const uint32 depth,
 					const Format	format, const Type	type,
@@ -214,16 +231,21 @@ struct VGD_API Image : public IImage
 	 * Create a copy of the specified image.
 	 * 
 	 * @param components	number of color components.
-	 * @param width			width of the image.
+	 * @param width		width of the image.
 	 * @param height		height of the image.
-	 * @param depth			depth of the image.
+	 * @param depth		depth of the image.
 	 * @param format		format of the pixel data.
-	 * @param type			type of the pixel data.
+	 * @param type		type of the pixel data.
 	 * @param pixels		pointer to the image data in memory.
 	 * 
-	 * @pre format != COLOR_INDEX
 	 * @pre components == computeNumComponents( format )
-	 * 
+	 *
+	 * @post paletteSize()		== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()		== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
+	 *
 	 * @deprecated Use create() without components parameters instead  
 	 */
 	bool	create(	const uint32		components, 
@@ -236,15 +258,20 @@ struct VGD_API Image : public IImage
 	 * @brief Create a new image.
 	 * 
 	 * @param components	number of color components.
-	 * @param width			width of the image.
+	 * @param width		width of the image.
 	 * @param height		height of the image.
-	 * @param depth			depth of the image.
+	 * @param depth		depth of the image.
 	 * @param format		format of the pixel data.
-	 * @param type			type of the pixel data.
+	 * @param type		type of the pixel data.
 	 * 
-	 * @pre format != COLOR_INDEX
 	 * @pre components == computeNumComponents( format )
 	 * 
+	 * @post paletteSize()		== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()		== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
+	 *
 	 * @deprecated Use create() without components parameters instead  
 	 */
 	bool	create(	const uint32		components, 
@@ -259,7 +286,6 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @param iimage			IImage
 	 * 
-	 * @pre format != COLOR_INDEX
 	 */
 	bool create( const IImage& iimage );
 
@@ -287,7 +313,7 @@ struct VGD_API Image : public IImage
 	 * @brief Convert image to another type/format of image.
 	 * 
 	 * @param format		desired format of the converted image
-	 * @param type			desired type of the converted image
+	 * @param type		desired type of the converted image
 	 * 
 	 * @todo Documentation of what is done exactly by convert (see DevIL).
 	 */
@@ -407,7 +433,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @return 		size of palette.
 	 * 
-	 * @remarks		If palette is not defined, must return 0.
+	 * @remarks	If palette is not defined, must return 0.
 	 */
 	const uint32	paletteSize() const;
 
@@ -416,7 +442,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @return		format of the palette.
 	 * 
-	 * @remarks		If palette is not defined, must return NONE.
+	 * @remarks	If palette is not defined, must return NO_FORMAT.
 	 */
 	const Format	paletteFormat() const;
 
@@ -425,7 +451,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @return		type of the palette.
 	 * 
-	 * @remarks		If image is not defined, must return NO_TYPE.
+	 * @remarks	If image is not defined, must return NO_TYPE.
 	 */
 	const Type		paletteType() const;
 	
@@ -434,7 +460,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @return		a pointer to the palette data in memory.
 	 * 
-	 * @remarks		If palette is not defined, must return 0.
+	 * @remarks	If palette is not defined, must return 0.
 	 */
 	const void*		palettePixels() const;
 
@@ -443,7 +469,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @return		a pointer to the palette in memory.
 	 * 
-	 * @remarks		If image is not defined, must return 0.
+	 * @remarks	If image is not defined, must return 0.
 	 */
 	void*			paletteEditPixels();
 	
@@ -456,7 +482,7 @@ struct VGD_API Image : public IImage
 	 * @brief Sets the palette.
 	 * 
 	 * @param palette		palette to copy to internal palette.
-	 * @param size			size of palette in bytes.
+	 * @param size		size of palette in bytes.
 	 * @param format		format of the palette.
 	 * 
 	 * @pre format==RGB or format==RGBA or format==BGR or format==BGRA
@@ -564,7 +590,6 @@ private:
 	 */
 	ILuint		m_iluintImgID;
 
-	uint32		m_components;
 	uint32		m_width;
 	uint32		m_height;
 	uint32		m_depth;

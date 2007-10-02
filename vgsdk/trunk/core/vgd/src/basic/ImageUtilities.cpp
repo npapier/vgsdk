@@ -40,6 +40,9 @@ const MinMax ImageUtilities::computeMinMax( const IImage* pImage )
 	case Image::DOUBLE:	return doComputeMinMax< double >( pImage );
 	default:			assert( false && "Unsupported image type." );
 	}
+	
+	const MinMax dummy;
+	return dummy;
 }
 
 
@@ -192,6 +195,9 @@ vgd::Shp< vgd::basic::Image > ImageUtilities::extractSlice(	const IImage*	pImage
 	case Image::DOUBLE:	return doExtractSlice< double >( pImage, slice, position );
 	default:			assert( false && "Unsupported image type." );
 	}
+	
+	vgd::Shp< vgd::basic::Image > image;
+	return image;
 }
 
 

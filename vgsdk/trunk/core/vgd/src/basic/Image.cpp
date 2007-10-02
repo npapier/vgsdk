@@ -96,8 +96,6 @@ Image::Image(	const uint32	width, const uint32 height, const uint32 depth,
 				const void*		pixels )
 :	m_iluintImgID(0)
 {
-	assert( format != COLOR_INDEX );
-
 	resetInformations();
 
 	create(	computeNumComponents( format ),
@@ -115,13 +113,11 @@ Image::Image(	const uint32		components,
 				const void*			pixels ) 
 :	m_iluintImgID(0)
 {
-	assert( format != COLOR_INDEX );
 	assert( components == computeNumComponents( format ) );
 
 	resetInformations();
 
-	create(	components,
-			width, height, depth,
+	create(	width, height, depth,
 			format, type,
 			pixels );
 }
@@ -134,13 +130,11 @@ Image::Image(	const uint32	components,
 				const Type		type 	)
 :	m_iluintImgID(0)
 {
-	assert( format != COLOR_INDEX );
 	assert( components == computeNumComponents( format ) );	
 		
 	resetInformations();
 		
-	create(	components,
-			width, height, depth,
+	create(	width, height, depth,
 			format, type );
 }
 
@@ -149,16 +143,10 @@ Image::Image(	const uint32	components,
 Image::Image( const IImage& image )
 :	m_iluintImgID(0)
 {
-	assert( image.format() != COLOR_INDEX );
-	
 	resetInformations();
 
-	create(	image.components(),
-			image.width(), image.height(), image.depth(),
-			image.format(), image.type(),
-			image.pixels() );
-	
-	voxelSize() = image.voxelSize();
+	const bool retVal = create(	image );
+	assert( retVal && "Error during image construction/copying." );
 }
 
 
@@ -177,7 +165,7 @@ Image& Image::operator = ( const Image& src )
 		destroy();
 		copy( src );
 	}
-	
+
 	return ( *this );
 }
 
@@ -244,8 +232,6 @@ bool Image::create(	const uint32	width, const uint32 height, const uint32 depth,
 					const Format	format,	const Type	type,
 					const void*		pixels )
 {
-	assert( format != COLOR_INDEX );
-
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
 
 	destroy();
@@ -289,7 +275,6 @@ bool Image::create(	const uint32		components,
 					const Type			type,
 					const void*			pixels )
 {
-	assert( format != COLOR_INDEX );
 	assert( components == computeNumComponents( format ) );	
 
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
@@ -334,7 +319,6 @@ bool Image::create(	const uint32		components,
 					const Format		format,
 					const Type			type )
 {
-	assert( format != COLOR_INDEX );
 	assert( components == computeNumComponents( format ) );	
 		
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
@@ -375,14 +359,25 @@ bool Image::create(	const uint32		components,
 
 bool Image::create( const IImage& image )
 {
-	assert( image.format() != COLOR_INDEX );	
-
 	bool bRetVal;
-	
-	bRetVal = create(	image.components(),
-						image.width(), image.height(), image.depth(),
+
+	bRetVal = create(	image.width(), image.height(), image.depth(),
 						image.format(), image.type(),
 						image.pixels() );
+
+	if ( !bRetVal )	return false;
+
+	if (	(image.format() == COLOR_INDEX) &&
+			(image.paletteFormat() != NO_FORMAT) )
+	{
+		setPalette(	image.palettePixels(),
+					image.paletteSize(),
+					image.paletteFormat() );
+	}
+
+	voxelSize() = image.voxelSize();
+
+	assert( bRetVal );
 
 	return bRetVal;
 }
@@ -442,7 +437,9 @@ const bool Image::scale( const vgm::Vec3i size, const Filter filter )
 
 const uint32 Image::components() const
 {
-	return m_components;
+	const uint32 components = computeNumComponents( m_format );
+
+	return components;
 }
 
 
@@ -594,7 +591,7 @@ void Image::setPalette( const void *palette, uint32 size, const Format format )
 
 	bind();
 
-	ILenum ilFormat = convertMyFormat2ILPal( format );
+	const ILenum ilFormat = convertMyFormat2ILPal( format );
 	
 	// FIXME: should use ilSetSharedPal, but missing in include file !
 	ilRegisterPal(	const_cast<ILubyte*>( static_cast<const ILubyte*>(palette)),
@@ -984,7 +981,6 @@ ILenum Image::convertMyType2IL( Type myType ) const
 
 void Image::resetInformations()
 {
-	m_components	= 0;
 	m_width			= 0;
 	m_height		= 0;
 	m_depth			= 0;
@@ -992,7 +988,7 @@ void Image::resetInformations()
 	m_type			= NO_TYPE;
 
 	m_edit			= false;
-		
+
 	m_voxelSize		= vgm::Vec3f( 1.f, 1.f, 1.f );
 }
 
@@ -1001,10 +997,9 @@ void Image::resetInformations()
 void Image::updateInformations()
 {
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
-	
+
 	bind();
 
-	//m_components
 	m_width			= ilGetInteger( IL_IMAGE_WIDTH );
 	m_height		= ilGetInteger( IL_IMAGE_HEIGHT );
 	m_depth			= ilGetInteger( IL_IMAGE_DEPTH );
@@ -1012,10 +1007,8 @@ void Image::updateInformations()
 	m_type			= convertILType2My( ilGetInteger( IL_IMAGE_TYPE ) );
 
 	// m_edit		nothing to do
-	// m_voxelSize	nothing to do
 
-	// m_format have been updated, m_components could be computed now
-	m_components	= computeNumComponents( m_format );
+	// m_voxelSize	nothing to do
 
 	reportILError();
 }
