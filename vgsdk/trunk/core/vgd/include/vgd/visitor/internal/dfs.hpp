@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -50,24 +50,26 @@
 #include <boost/graph/named_function_params.hpp>
 #include <vector>
 
-using namespace boost;								// begin: modification for vgsdk
+
 
 namespace vgd
 {
-	
+
 namespace visitor
 {
 
 namespace internal
 {
 
-//namespace boost {									// end: modification for vgsdk
+//using namespace boost;								// modification for vgsdk, but has been disabled (because the scope of this directive seems to be not weel respected by cl7.1)
+
+//namespace boost {									// modification for vgsdk
 
   template <class Visitor, class Graph>
   class DFSVisitorConcept {
-
+  
   DFSVisitorConcept() {} 						// modification for vgsdk
-//  DFSVisitorConcept( DFS) {} 					// modification for vgsdk   
+//  DFSVisitorConcept( DFS) {} 							// modification for vgsdk   
 												// to remove warnings (level 4) C4510 and C4610 under VS7.x.
   public:
     void constraints() {
@@ -84,8 +86,8 @@ namespace internal
   private:
     Visitor vis;
     Graph g;
-    typename graph_traits<Graph>::vertex_descriptor u;
-    typename graph_traits<Graph>::edge_descriptor e;
+    typename boost::graph_traits<Graph>::vertex_descriptor u;
+    typename boost::graph_traits<Graph>::edge_descriptor e;
   };
 
   namespace detail {
@@ -93,10 +95,12 @@ namespace internal
     template <class IncidenceGraph, class DFSVisitor, class ColorMap>
     void depth_first_visit_impl
       (const IncidenceGraph& g,
-       typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+       typename boost::graph_traits<IncidenceGraph>::vertex_descriptor u, 
        DFSVisitor& vis,  // pass-by-reference here, important!
        ColorMap color)
     {
+      using namespace boost;												// modification for vgsdk
+
       function_requires<IncidenceGraphConcept<IncidenceGraph> >();
       function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
       typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
@@ -132,9 +136,11 @@ namespace internal
   template <class VertexListGraph, class DFSVisitor, class ColorMap, 
             class Vertex>
   void
-  depth_first_search(const VertexListGraph& g, DFSVisitor& vis, ColorMap color,			// vgsdk modification(add ref to visitors)
+  depth_first_search(const VertexListGraph& g, DFSVisitor& vis, ColorMap color,		// vgsdk modification(add ref to visitors)
                      Vertex start_vertex)
   {
+    using namespace boost;															// modification for vgsdk
+
     function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
@@ -144,11 +150,11 @@ namespace internal
       put(color, *ui, Color::white());       vis.initialize_vertex(*ui, g);
     }
 
-    /*if (start_vertex != *vertices(g).first){*/ vis.start_vertex(start_vertex, g);		// vgsdk modification
+    /*if (start_vertex != *vertices(g).first){*/ vis.start_vertex(start_vertex, g);					// vgsdk modification
       detail::depth_first_visit_impl(g, start_vertex, vis, color);
     /*}*/																				// vgsdk modification
 
-	if ( vis.visitForest() ) 													// vgsdk: ADD 1
+	if ( vis.visitForest() ) 														// vgsdk: ADD 1
 	{
 	    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
 	      ColorValue u_color = get(color, *ui);
@@ -204,7 +210,7 @@ namespace internal
   } // namespace detail*/
   
 
-  template <class Visitors = null_visitor>
+  template <class Visitors = boost::null_visitor>
   class dfs_visitor {
   public:
     dfs_visitor() { }
@@ -212,35 +218,35 @@ namespace internal
 
     template <class Vertex, class Graph>
     void initialize_vertex(Vertex u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_initialize_vertex());      
+      invoke_visitors(m_vis, u, g, boost::on_initialize_vertex());      
     }
     template <class Vertex, class Graph>
     void start_vertex(Vertex u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_start_vertex());      
+      invoke_visitors(m_vis, u, g, boost::on_start_vertex());      
     }
     template <class Vertex, class Graph>
     void discover_vertex(Vertex u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_discover_vertex());      
+      invoke_visitors(m_vis, u, g, boost::on_discover_vertex());      
     }
     template <class Edge, class Graph>
     void examine_edge(Edge u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_examine_edge());
+      invoke_visitors(m_vis, u, g, boost::on_examine_edge());
     }
     template <class Edge, class Graph>
     void tree_edge(Edge u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_tree_edge());      
+      invoke_visitors(m_vis, u, g, boost::on_tree_edge());      
     }
     template <class Edge, class Graph>
     void back_edge(Edge u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_back_edge());
+      invoke_visitors(m_vis, u, g, boost::on_back_edge());
     }
     template <class Edge, class Graph>
     void forward_or_cross_edge(Edge u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_forward_or_cross_edge());
+      invoke_visitors(m_vis, u, g, boost::on_forward_or_cross_edge());
     }
     template <class Vertex, class Graph>
     void finish_vertex(Vertex u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_finish_vertex());      
+      invoke_visitors(m_vis, u, g, boost::on_finish_vertex());      
     }
   protected:
     Visitors m_vis;
@@ -276,7 +282,7 @@ namespace internal
   /*template <class IncidenceGraph, class DFSVisitor, class ColorMap>
   void depth_first_visit
     (const IncidenceGraph& g,
-     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+     typename boost::graph_traits<IncidenceGraph>::vertex_descriptor u, 
      DFSVisitor vis, ColorMap color)
   {
     detail::depth_first_visit_impl(g, u, vis, color);
