@@ -81,7 +81,7 @@ struct Statistics : public Traverse<Visitors>
 		
 		NodeTypeIterator iter, iter_end;
 
-		for(	tie( iter, iter_end ) = getNodeTypeIterators();
+		for(	boost::tie( iter, iter_end ) = getNodeTypeIterators();
 				iter != iter_end;
 				iter++
 			)
