@@ -9,7 +9,7 @@
 #error Please set wxUSE_GLCANVAS to 1 in setup.h.
 #endif
 
-//#include <vgDebug/Global.hpp>
+#include <vgDebug/Global.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgd/visitor/FindFirstHelper.hpp>
@@ -471,24 +471,13 @@ bool Canvas::enableVGSDK()
 		m_gleContext.clear();
 
 		m_gleContext.initialize();
-		
+
 		gleSetCurrent( &m_gleContext );
-		
-		// Checks opengl requirements for vgsdk
-//		if ( m_gleContext.isGL_VERSION_1_5 == false )
-//		{
-//			vgDebug::get().logError("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
-//		}
-//		
-//		if ( m_gleContext.isGL_VERSION_2_0 == false )
-//		{
-//			vgDebug::get().logWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
-//		}
 
 		// Initializes vgeGL
 		getGLEngine()->reset();
 
-		// FIXME	
+		// FIXME
 		///@todo Remove setToDefaults().
 		getGLEngine()->setToDefaults();
 
@@ -496,9 +485,21 @@ bool Canvas::enableVGSDK()
 		//vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 		//m_engine->evaluateTopStateWithoutTrace( paint, true /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
 		//m_engine->evaluateTopStateWithoutTrace( paint, false /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
-		
+
 		//
 		m_bLocalInitializedVGSDK = true;
+
+		// Checks OpenGL requirements for vgsdk
+		if ( m_gleContext.isGL_VERSION_1_5 == false )
+		{
+			vgDebug::get().logDebug("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
+			vgDebug::get().logError("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
+		}
+		else if ( m_gleContext.isGL_VERSION_2_0 == false )
+		{
+			vgDebug::get().logDebug("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
+			vgDebug::get().logWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
+		}
 	}
 
 	// gle must be made current (only if not yet)
