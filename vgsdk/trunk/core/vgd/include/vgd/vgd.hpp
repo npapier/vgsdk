@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,11 +7,11 @@
 #define _VGD_VGD_HPP
 
 /**
- * @defgroup g_vgd vgd
+ * @defgroup g_vgd vgd (Versatile Graphical Data)
  * 
- * Virtuals Graphical Data is a collection of classes for describing 3d world.
+ * vgd, a shortcut for Versatile Graphical Data, is a collection of classes for describing 3d world.
  *
- * vgD is open source (LGPL).
+ * vgd is open source (LGPL).
  */
 
 
@@ -56,41 +56,41 @@
  * 
  * @ingroup g_nodes
  */
- 
+
 /**
- * @defgroup g_groupNodes Group nodes.
+ * @defgroup g_groupNodes Group nodes
  * 
  * @ingroup g_nodes
  */
 
 /**
- * @defgroup g_shapeNodes Shape nodes.
+ * @defgroup g_shapeNodes Shape nodes
  * 
  * @ingroup g_nodes
  */
 
 /**
- * @defgroup g_attributeNodes Attribute nodes.
+ * @defgroup g_attributeNodes Attribute nodes
  * 
  * @ingroup g_nodes
  */
 
 /**
- * @defgroup g_singleAttributeNodes Single attribute nodes.
- * 
- * @ingroup g_attributeNodes
- * @ingroup g_nodes
- */
-
-/**
- * @defgroup g_multiAttributeNodes Multi attribute nodes.
+ * @defgroup g_singleAttributeNodes Single attribute nodes
  * 
  * @ingroup g_attributeNodes
  * @ingroup g_nodes
  */
 
 /**
- * @defgroup g_frameBufferNodes Frame Buffer Operations nodes.
+ * @defgroup g_multiAttributeNodes Multi attribute nodes
+ * 
+ * @ingroup g_attributeNodes
+ * @ingroup g_nodes
+ */
+
+/**
+ * @defgroup g_frameBufferNodes Frame Buffer Operations nodes
  * 
  * @ingroup g_nodes
  */
@@ -102,25 +102,25 @@
  */
 
 /**
- * @defgroup g_transformationNodes Transformation nodes.
+ * @defgroup g_transformationNodes Transformation nodes
  * 
  * @ingroup g_nodes
  */
 
 /**
- * @defgroup g_coloringAndLightingNodes Coloring and Lighting nodes.
+ * @defgroup g_coloringAndLightingNodes Coloring and Lighting nodes
  * 
  * @ingroup g_nodes
  */
 
 /**
- * @defgroup g_texturingNodes Texture mapping nodes.
+ * @defgroup g_texturingNodes Texture mapping nodes
  * 
  * @ingroup g_nodes
  */
 
 /**
- * @defgroup g_nodekits Node kits.
+ * @defgroup g_nodekits Node kits
  * 
  * @ingroup g_nodes
  */
@@ -145,7 +145,7 @@
 /** 
  * @namespace vgd
  * 
- * @brief Virtuals Graphical Data
+ * @brief Versatile Graphical Data
  */
 
 #include <vgBase/Type.hpp>
