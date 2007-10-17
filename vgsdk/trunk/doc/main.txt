@@ -63,7 +63,7 @@
  *
  * 
  * 
- * \b \c Powered \b \c by
+ * \b Powered \b by
  *
  * \image html gnu-head-sm.png
  * \image html c++boost.png
