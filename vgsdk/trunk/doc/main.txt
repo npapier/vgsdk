@@ -37,7 +37,7 @@
  * For Subversion information, downloads, bug tracking, feature requests, mailing list information and more, visit our
  * Savannah project page at http://dev-srv.ircad.fr/savannah/projects/vgsdk/
  *
- * Another source of informations could be the wiki at http://xwiki.ircad.fr/xwiki/bin/view/vgsdk/WebHome
+ * Another source of informations could be the wiki at https://intranet.ircad.fr:8443/xwiki/bin/view/vgsdk/
  * @endif
  * 
  *
