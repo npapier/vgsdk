@@ -103,7 +103,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 		rcRoot->getRoot()->addChild( quad );
 		
 		// setup rc		
-		quad->initializeTexUnits( 1, vgd::basic::TOP_LEFT, true /* ccw */ );
+		quad->initializeTexUnits( 1, vgd::basic::TOP_LEFT, false /* cw */ );
 		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
 		quad->transform( translateToOrigin );
 
@@ -171,7 +171,6 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	glLoadMatrixf( reinterpret_cast<const float*>( projection.getValue() ) );
 
 	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();
-
 	glViewport( 0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1] );
 
 	glDisable( GL_LIGHTING );
@@ -180,14 +179,13 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	pGLEngine->evaluate( paintService, texture2D.get(), true );
 
 	// draw proxy geometry
-	
 	glEnable( GL_ALPHA_TEST );
 	glAlphaFunc( GL_GREATER, 0.f );
 
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-	// alpha/blend. ?????????????????????????????????????????????????????????????????????????????????????????????????????
+	// alpha/blend
 	pGLEngine->evaluate( paintService, quad.get(), true );
 
 	glMatrixMode( GL_PROJECTION );
@@ -196,7 +194,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	glMatrixMode( GL_MODELVIEW );
 	glPopMatrix();
 
-	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), false );	
+	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), false );
 
 	// Validate node
 	pDF->validate();
