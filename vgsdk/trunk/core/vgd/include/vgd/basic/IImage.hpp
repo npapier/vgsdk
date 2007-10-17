@@ -115,7 +115,7 @@ struct VGD_API IImage
 	 * 
 	 * @return		format of the pixel data.
 	 * 
-	 * @remarks		If image is not defined, must return NONE.
+	 * @remarks		If image is not defined, must return NO_FORMAT.
 	 */
 	virtual const Format	format() const=0;
 
@@ -311,7 +311,7 @@ struct VGD_API IImage
 	 * 
 	 * @return		format of the palette.
 	 * 
-	 * @remarks		If palette is not defined, must return NONE.
+	 * @remarks		If palette is not defined, must return NO_FORMAT.
 	 */
 	virtual const Format	paletteFormat() const=0;
 

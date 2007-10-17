@@ -145,7 +145,7 @@ struct VGD_API ImageInfo : public IImage
 	 * 
 	 * @return		type of the pixel data.
 	 */
-	Type&				type()				{ return ( m_type ); }
+	Type&			type()					{ return ( m_type ); }
 	
 	/**
 	 * @brief Returns the type of the pixel data.
