@@ -356,15 +356,23 @@ void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture 
 		// Creates a copy of the incoming image
 		using vgd::basic::Image;
 
-		Image newImage(	(*texInfo.iimage.get()) );
+//		Image newImage(	(*texInfo.iimage.get()) );
+// or
+		vgd::Shp< vgd::basic::IImage > iimage = texInfo.iimage;
+		Image newImage(	iimage->width(), iimage->height(), iimage->depth(),
+						iimage->format() == Image::COLOR_INDEX ? Image::LUMINANCE : iimage->format(),
+						iimage->type(),
+						iimage->pixels() );
+
 		newImage.scale( texInfo.texSize, Image::FILTER_SCALE_MITCHELL /*Image::FILTER_SCALE_BOX */ );
 		//@todo options for lower-quality filter during rescaling
-		
+		//@todo use vgITK::Image to really support any image type
+
 		const void * newPixels = newImage.pixels();
 		
 		pTexture->texSubImage(	0,			// level
 								0, 0, 0,	// offset
-								texInfo.texSize[0], texInfo.texSize[2], texInfo.texSize[2],
+								texInfo.texSize[0], texInfo.texSize[1], texInfo.texSize[2],
 								texInfo.format, texInfo.type,
 								newPixels );
 	}
