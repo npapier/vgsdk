@@ -29,7 +29,7 @@ Windowing::Windowing( const int min, const int max )
 	m_highOutput	(   0 ),
 	m_highAlpha		(   0 )
 {
-	assert( m_min < m_max );
+	assert( m_min <= m_max );
 }
 
 
@@ -55,7 +55,7 @@ void Windowing::setOutputIntensities( const uint8 low, const uint8 min, const ui
 
 void Windowing::setWindow( const int min, const int max )
 {
-	assert( min < max );
+	assert( min <= max );
 	
 	m_min = min;
 	m_max = max;			

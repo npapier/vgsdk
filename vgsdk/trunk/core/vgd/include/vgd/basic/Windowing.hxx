@@ -25,6 +25,7 @@ vgd::Shp< vgd::basic::IImage > Windowing::doApply( const vgd::Shp< vgd::basic::I
 {
 	using vgd::basic::Image;
 	
+	assert( m_min <= m_max );
 	assert( input->format() == Image::LUMINANCE || input->format() == Image::LUMINANCE_ALPHA );
 	
 	typedef uint8 OutputType;
@@ -37,7 +38,10 @@ vgd::Shp< vgd::basic::IImage > Windowing::doApply( const vgd::Shp< vgd::basic::I
 	float		a;
 	float		b;
 	
-	vgm::Utilities::linearInterpolation( windowMin, m_minOutput, windowMax, m_maxOutput, a, b );			
+	if( windowMin != windowMax )
+	{
+		vgm::Utilities::linearInterpolation( windowMin, m_minOutput, windowMax, m_maxOutput, a, b );
+	}
 	
 	vgd::Shp< Image >	output( new Image(input->width(), input->height(), input->depth(), outputFormat, outputType) );
 	OutputType			* iOutput			= static_cast< OutputType * >( output->editPixels() );
@@ -60,6 +64,11 @@ vgd::Shp< vgd::basic::IImage > Windowing::doApply( const vgd::Shp< vgd::basic::I
 		{
 			iOutput[0] = m_highOutput;
 			iOutput[1] = m_highAlpha;
+		}
+		else if( currentIntensity == windowMin && currentIntensity == windowMax )
+		{
+			iOutput[0] = m_highOutput;
+			iOutput[1] = m_minMaxAlpha;
 		}
 		else
 		{
