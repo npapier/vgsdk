@@ -1,2 +1,3 @@
+vcsUse		= 'no'
 type		= 'none'
 deps		= [	'vgAlg' ]
