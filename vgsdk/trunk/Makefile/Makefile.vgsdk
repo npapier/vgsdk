@@ -16,6 +16,7 @@ all install dep dist-all dist-clean clean help dep-all world publish allConfig i
 	# ui
 	cd ui/vgWX;				make '$@';
 	# images
+#	cd images/vgCairo;		make '$@';
 	cd images/vgITK;		make '$@';
 	# contributions
 	cd contributions/vgEgg;	make '$@';
