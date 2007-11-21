@@ -135,22 +135,22 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
     /**
 	 * @brief Mark this field to be currently edit in read only mode.
 	 * 
-     * @todo  mutex for being MT-safe.
-     */
+	 * @todo  mutex for being MT-safe.
+	 */
     const bool startEditingRO() const;
 
     /**
 	 * @brief Mark this field to be currently edit in read-write mode.
 	 * 
-     * @todo  mutex for being MT-safe.
-     */
+	 * @todo  mutex for being MT-safe.
+	 */
     const bool startEditingRW() const;
 
     /**
 	 * @brief Mark this field to be currently not edit.
 	 * 
-     * @todo  mutex for being MT-safe.
-     */
+	 * @todo  mutex for being MT-safe.
+	 */
     const bool finishEditing() const;
 
     /**
@@ -158,8 +158,8 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 *
 	 * @return true if this field is currently edit in the mode passed in argument.
 	 *
-     * @todo  mutex for being MT-safe.
-     */
+	 * @todo  mutex for being MT-safe.
+	 */
 	const bool isSameEditingMode( const EditingMode mode ) const;
 	//@}
 
