@@ -7,6 +7,7 @@
 
 #include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/DirectionalLight.hpp>
+#include <vgd/node/TriSet.hpp>
 #include <vgTrian/Loader.hpp>
 
 
@@ -39,7 +40,7 @@ void myCanvas::initialize()
 {
 	using vgd::node::ClearFrameBuffer;
 	using vgd::node::DirectionalLight;
-	using vgd::node::VertexShape;
+	using vgd::node::TriSet;
 	
 	// STEP 1: OpenGL buffers must be initialized.
 	// clears the color and depth buffer
@@ -47,7 +48,9 @@ void myCanvas::initialize()
 	// specifies clear values for the color buffer. black is the default color.
 	//clearFrameBuffer->setClear( ClearFrameBuffer::COLOR, vgm::Vec4f( 1.f, 0.f, 0.f, 0.f) );
 	
-	// STEP 2: adding two lights
+	// STEP 2: Detroyes default lights and adds two lights
+	destroyDefaultLights();
+
 	// create and swith on a directional light.
 	vgd::Shp< DirectionalLight > light1 = DirectionalLight::create("light1");
 	light1->setOn( true );
@@ -63,9 +66,9 @@ void myCanvas::initialize()
 
 	// load file liver.trian
 	vgTrian::Loader loader;
-	std::pair< bool, vgd::Shp< VertexShape > > retVal;
+	std::pair< bool, vgd::Shp< TriSet > > retVal;
 
-	retVal = loader.loadTrian( "liver.trian" );
+	retVal = loader.loadTrian( std::string("liver.trian") );
 	
 	if ( !retVal.first )
 	{
@@ -74,8 +77,8 @@ void myCanvas::initialize()
 	}
 
 	// trian file does not contain normal table, so they must be computed.
-	vgd::Shp< VertexShape > vertexShape( retVal.second );
-	vertexShape->computeNormals();
+	vgd::Shp< TriSet > shape( retVal.second );
+	shape->computeNormals();
 
 	// STEP 4: adding nodes to the scene graph.
 	
@@ -89,7 +92,7 @@ void myCanvas::initialize()
 	getSetup()->addChild( light2 );	
 
 	// add the mesh to the scene
-	getScene()->addChild( vertexShape );
+	getScene()->addChild( shape );
 	
 	// STEP 5: Adjust the camera position and frustum to be able to view the entire scene 
 	viewAll();
