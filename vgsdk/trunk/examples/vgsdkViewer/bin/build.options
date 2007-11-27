@@ -1,4 +1,5 @@
 USE		=	[	#'boost',
+				#'cairo',
 				#'itk', 
 				#'openil', 
 				#'opengl', 
@@ -12,7 +13,7 @@ LIB		=	[	#'mesher_0-4', 'vgnf_0-4',
 				'vgTrian_0-4',
 				'vge_0-4','vgeGL_0-4',
 				'vgWX_0-4', 
-				#'vgITK_0-4',
+				#'vgCairo_0-4','vgITK_0-4',
 				#'vgEgg_0-4'
 				#'vgCollada_0-4'
 			]
