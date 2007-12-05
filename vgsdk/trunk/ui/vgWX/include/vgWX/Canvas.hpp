@@ -45,6 +45,36 @@ namespace vgWX
 struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 {
 	/**
+	 * @name gle log accessors
+	 */
+	//@{
+
+	enum GleLogSystem {
+		GLE_FILE,		//!< gle.txt file. This is the default log system.
+		GLE_COUT		//!< standard output
+	};
+
+	/**
+	 * @brief Sets the log system used by gle library.
+	 *
+	 * For additionnal information about the different log system, see GleLogSystem enumeration.
+	 *
+	 * @param logger		 specify the log system used to output gle informations about OpenGL context.
+	 */
+	static void setGleLogSystem( const GleLogSystem logger );
+
+	/**
+	 * @brief Gets the log system used by gle library.
+	 *
+	 * @return a value from GleLogSystem enumeration.
+	 */
+	static const GleLogSystem getGleLogSystem();
+	 
+	//@}
+
+
+
+	/**
 	 * @name Constructors/Destructor
 	 */
 	//@{
@@ -55,7 +85,7 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 	 * @param parent	A pointer to the parent window.
 	 * 
 	 * @pre	getCanvasCount() == 0
-	 * @post getCanvasCount() == 1
+	 * @post	getCanvasCount() == 1
 	 */
 	Canvas(	wxWindow *parent, 
 			const wxString& name = _T("vgsdkCanvas"),
@@ -280,12 +310,24 @@ private:
 	 * @brief Default OpenGL attributes for VGSDK.
 	 */
 	static int					m_vgsdk_attrib[];
-	
-	/**
-	 * @todo fixme
-	 */
-	static std::ofstream		m_gleLog;
 
+	/**
+	 * @brief A value from GleLogSystem enumeration to specify the log system used by gle library.
+	 */
+	static GleLogSystem			m_gleLogSystem;
+
+	/**
+	 * @brief The gle.txt file
+	 */
+	static std::ofstream		m_gleLogFile;
+
+	/**
+	 * @brief Returns the output stream associated to the gle log system.
+	 * 
+	 * @return the output stream
+	 */
+	static std::ostream* getGleOutputStream();
+	
 	/**
 	 * @brief gle main object to be able to access OpenGL extensions.
 	 */

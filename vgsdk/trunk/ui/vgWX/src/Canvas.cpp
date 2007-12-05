@@ -23,11 +23,6 @@
 namespace vgWX
 {
 
-/**
- * @todo FIXME
- */
-std::ofstream Canvas::m_gleLog("gle.txt");
-
 
 
 BEGIN_EVENT_TABLE( Canvas, wxGLCanvas )
@@ -42,10 +37,24 @@ BEGIN_EVENT_TABLE( Canvas, wxGLCanvas )
 	EVT_IDLE				( Canvas::OnIdle					)
 
 	//EVT_ENTER_WINDOW		( Canvas::OnEnterWindow )
-	//EVT_KILL_FOCUS		( Canvas::OnKillFocus	)
+	//EVT_KILL_FOCUS			( Canvas::OnKillFocus	)
 	//EVT_SET_FOCUS			( Canvas::OnSetFocus	)
 
 END_EVENT_TABLE()
+
+
+
+void Canvas::setGleLogSystem( const GleLogSystem logger )
+{
+	m_gleLogSystem = logger;
+}
+
+
+
+const Canvas::GleLogSystem Canvas::getGleLogSystem()
+{
+	return m_gleLogSystem;
+}
 
 
 
@@ -60,15 +69,16 @@ Canvas::Canvas(	wxWindow *parent,
 	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 
 	//m_canvasCount
-	m_sharedCanvas				(	0			),	
+	m_sharedCanvas				(	0						),	
 	//m_vgsdk_attrib
 
-	//m_gleLog
-	m_gleContext				(	&m_gleLog	),
+	// m_gleLogSystem
+	// m_gleLogFile
+	m_gleContext				(	getGleOutputStream()	),
 
-	m_bLocalInitializedVGSDK	(	false		),
+	m_bLocalInitializedVGSDK	(	false					),
 
-	m_isContextualMenuEnabled	(	false		)
+	m_isContextualMenuEnabled	(	false					)
 {
 	assert( getCanvasCount() == 0 && "This is not the first canvas." );
 	++m_canvasCount;
@@ -88,15 +98,16 @@ Canvas::Canvas(	wxWindow *parent,
 	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 
 	//m_canvasCount
-	m_sharedCanvas				(	pSharedCanvas),	
+	m_sharedCanvas				(	pSharedCanvas			),	
 	//m_vgsdk_attrib
 
-	//m_gleLog
-	m_gleContext				(	&m_gleLog	),
+	// m_gleLogSystem
+	// m_gleLogFile
+	m_gleContext				(	getGleOutputStream()	),
 
-	m_bLocalInitializedVGSDK	(	false		),
+	m_bLocalInitializedVGSDK	(	false					),
 
-	m_isContextualMenuEnabled	(	false		)
+	m_isContextualMenuEnabled	(	false					)
 {
 	assert( getCanvasCount() >= 1 && "This is the first canvas." );
 	++m_canvasCount;
@@ -516,6 +527,7 @@ bool Canvas::enableVGSDK()
 uint32 Canvas::m_canvasCount = 0;
 
 
+
 int	Canvas::m_vgsdk_attrib[] = {
 			WX_GL_RGBA,
 			WX_GL_DOUBLEBUFFER,
@@ -524,7 +536,43 @@ int	Canvas::m_vgsdk_attrib[] = {
 			0 };
 
 
-bool	Canvas::m_bGlobalInitializedVGSDK = false;
+
+Canvas::GleLogSystem Canvas::m_gleLogSystem = GLE_FILE;
+
+
+
+std::ofstream Canvas::m_gleLogFile;
+
+
+
+std::ostream* Canvas::getGleOutputStream()
+{
+	const GleLogSystem currentGleLogSystem = getGleLogSystem();
+
+	if ( currentGleLogSystem == GLE_FILE )
+	{
+		// Opens gle.txt if not already done
+		if ( m_gleLogFile.is_open() == false )
+		{
+			m_gleLogFile.open("gle.txt");
+		}
+		
+		return &m_gleLogFile;
+	}
+	else if ( currentGleLogSystem == GLE_COUT )
+	{
+		return &std::cout;
+	}
+	else
+	{
+		assert( false && "vgWX::Canvas: Unsupported gle log system." );
+		return &std::cout;
+	}
+}
+
+
+
+bool Canvas::m_bGlobalInitializedVGSDK = false;
 
 
 
