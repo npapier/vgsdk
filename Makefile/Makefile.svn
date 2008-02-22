@@ -1,0 +1,27 @@
+MY_SVNROOT = http://dev-srv:8080/svn
+
+# Framework for testing existence of some environment variables
+osVars := PRODUCT VERSION REVISION
+osVarExists = $(if $(findstring undefined,$(origin $(1))),$(error $(1):variable is not defined))
+
+checkOsVars:
+	@# Tests existence of some environment variables
+	$(foreach var,$(osVars),$(call osVarExists,$(var)))
+
+checkout:
+	# dependencies
+	cd dependencies;		make -f Makefile.root checkout
+	# vgsdk
+	svn $(REVISION) co $(MY_SVNROOT)/SrcLib/vgsdk/trunk .
+
+update diff status:
+	# dependencies
+	cd dependencies;		make -f Makefile.root '$@';
+	# vgsdk
+	svn '$@';
+
+checkout_tags: checkOsVars
+	svn co $(MY_SVNROOT)/SrcLib/vgsdk/tags/$(PRODUCT)_$(VERSION) .
+
+tags: checkOsVars
+	svn copy $(MY_SVNROOT)/SrcLib/vgsdk/trunk $(MY_SVNROOT)/SrcLib/vgsdk/tags/$(PRODUCT)_$(VERSION) --message "Release $(VERSION) of $(PRODUCT)"

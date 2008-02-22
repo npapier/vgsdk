@@ -1,0 +1,6 @@
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-4'
+uses		= [ 'cairo' ]
+libs		= [ 'vgd 0-4' ]
+deps		= [ '../../core' ]
