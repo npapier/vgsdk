@@ -1,5 +1,0 @@
-type		= 'shared'
-postfix		= '0-4'
-uses		= ['boost']
-libs		= ['vgd 0-4', 'vgDebug 0-4', 'vgm 0-4']
-#deps		= ['Virtuals']
