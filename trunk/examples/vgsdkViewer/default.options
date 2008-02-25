@@ -1,0 +1,22 @@
+vcsUse		= 'no'
+type		= 'exec'
+version		= '0-4'
+uses 		=	[	#'boost',
+					#'cairo',
+					#'itk', 
+					#'openil', 
+					#'opengl', 
+					'wx', 'wxgl',
+				]
+libs		=	[
+					'gle_0-3', 'glo_0-3',
+					'vgBase_0-4', 'vgDebug_0-4', 'vgm_0-4', 'vgd_0-4',
+					'vgAlg_0-4',
+					'vgTrian_0-4',
+					'vge_0-4','vgeGL_0-4',
+					'vgWX_0-4', 
+					#'vgCairo_0-4','vgITK_0-4',
+					#'vgEgg_0-4'
+					#'vgCollada_0-4'
+				]
+deps		= [ '../../../vgsdk' ]
