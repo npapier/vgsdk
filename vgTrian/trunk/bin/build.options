@@ -1,3 +1,0 @@
-LIB		=	['vgd_0-4','vgDebug_0-4','vgm_0-4']
-TYPE	=	'shared'
-VERSION =	'0-4'
