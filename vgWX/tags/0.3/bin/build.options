@@ -1,4 +1,0 @@
-USE  		= ['boost','opengl','glu','wxgl2-4']
-LIB  		= ['gle_0-3','vgd_0-3','vgDebug_0-3','vge_0-3','vgeGL_0-3','vgm_0-3']
-TYPE		= 'shared'
-POSTFIX	= '_0-3'
