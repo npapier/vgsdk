@@ -1,3 +1,0 @@
-type		= 'shared'
-version	= '0-4'
-deps		= ['vgBase']
