@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -34,10 +34,18 @@ namespace
 		template <class VertexOrEdge>
 		void operator()(std::ostream& out, const VertexOrEdge& v) const 
 		{
-			vgd::Shp< vgd::node::Node > node( m_name[v] );
-
-			out << "[label=\"" << typeid(*node.get()).name() << ", " << node->getName() << "\"]";
+			vgd::Shp< vgd::node::Node > node( m_name[v].lock() );
+			
+			if ( node )
+			{
+				out << "[label=\"" << typeid(*node.get()).name() << ", " << node->getName() << "\"]";
+			}
+			else
+			{
+				out << "[label=\"expired node\"]";
+			}
 		}
+
 	private:
 		Name m_name;
 	};
