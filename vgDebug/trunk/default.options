@@ -1,3 +1,0 @@
-type		= 'shared'
-postfix		= '0-4'
-uses		= ['wx2-4']
