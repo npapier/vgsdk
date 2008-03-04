@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006,2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGD_EVENT_LOCATION2_HPP
 #define _VGD_EVENT_LOCATION2_HPP
@@ -16,7 +17,7 @@ namespace vgd
 
 namespace event
 {
-	
+
 
 
 /**
@@ -25,53 +26,61 @@ namespace event
 struct VGD_API Location2
 {
 	/**
-	 * @brief	Defines the location vector type.
+	 * @name	Type Definitions
 	 */
-	typedef vgm::Vec2f Location;
+	//@{
+	typedef vgm::Vec2f Location;	///< Defines the location vector type.
+	typedef vgm::Vec2f Size;		///< Defines the canvas size type.
+	//@}
+
 
 	/**
-	 * @brief	Defines the canvas size type.
+	 * @name	Constructors & Destructor
 	 */
-	typedef vgm::Vec2f Size;
-
+	//@{
 	/**
 	 * @brief	Constructor.
-	 * 
-	 * @param	location			a location to pass through the event
-	 * @param	size				the size of the 'canvas' where Location2event occurs
+	 *
+	 * @param	location	a 2D location
+	 * @param	size		the size of the 'canvas' containing the location
 	 */
-	Location2( const Location& location, const Size& size );
-	
+	Location2( const Location& location, const Size & size );
+
+	/**
+	 * @brief	Constructor
+	 *
+	 * @param	x		the x coordinate of the location
+	 * @param	y		the y coordinate of the location
+	 * @param	size	the size of the 'canvas' containing the location
+	 */
+	Location2( const float x, const float y, const Size & size );
+
 	/**
 	 * @brief	Destructor.
 	 */
 	virtual ~Location2();
-	
-	/**
-	 * @brief	Retrieves the location passed through the event.
-	 * 
-	 * @return	a location
-	 */
-	const Location& getLocation() const;
-	
-	/**
-	 * @brief	Retrieves the 'canvas size' passed through the event.
-	 * 
-	 * @return	a size
-	 */
-	const Size& getSize() const;
-	
-	
-protected:
-	/**
-	 * @brief The location passed through the event.
-	 */
-	Location	m_location;
+	//@}
+
 
 	/**
-	 * @brief The size passed through the event.
+	 * @brief	Retrieves the location passed through the event.
+	 *
+	 * @return	a location
 	 */
-	Size		m_size;	
+	const Location & getLocation() const;
+
+	/**
+	 * @brief	Retrieves the 'canvas size' passed through the event.
+	 *
+	 * @return	a size
+	 */
+	const Size & getSize() const;
+
+
+protected:
+
+	Location	m_location;	///< Contains the location coordinates.
+	Size		m_size;		///< Contains the size of the surface containing the location.
 };
 
 
