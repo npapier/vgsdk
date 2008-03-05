@@ -4,29 +4,48 @@
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-#ifndef _VGDEBUG_LOGGING_HPP
-#define _VGDEBUG_LOGGING_HPP
+#ifndef _VGWX_LOGGING_HPP
+#define _VGWX_LOGGING_HPP
 
 #include <iostream>
 #include <fstream>
+#include <vgDebug/ILogging.hpp>
 
-#include "vgDebug/vgDebug.hpp"
+#include "vgWX/vgWX.hpp"
 
-#include "vgDebug/ILogging.hpp"
-
-
+class wxLog;
 
 
-namespace vgDebug
+
+namespace vgWX
 {
 
 
 
 /**
- * @brief Implements logging interface based on standard outputs.
+ * @brief Implements logging interface(to cerr) with wxWidgets.
  */
-struct VGDEBUG_API Logging : public ILogging
+struct VGWX_API Logging : public ::vgDebug::ILogging
 {
+	/**
+	 * @name Constructor/Destructor
+	 */
+	//@{
+
+	/**
+	 * @brief Constructor
+	 */
+	Logging();
+
+	/**
+	 * @brief Destructor
+	 */
+	~Logging();
+
+	//@}
+
+
+
 	/**
 	 * @name Logging facilities methods
 	 */
@@ -46,10 +65,26 @@ struct VGDEBUG_API Logging : public ILogging
 
 	void flush			() const;
 	//@}
+
+
+
+private:
+	/**
+	 * @brief Keep a reference to the wxLogger mapped by this class.
+	 */
+	wxLog *m_pLogger;
+
+	static int m_instanceCount;
+
+	std::ofstream*	m_errFile;
+	std::streambuf*	m_cerrBuf;
+
+	std::ofstream*	m_outFile;
+	std::streambuf*	m_coutBuf;
 };
 
 
 
-} // namespace vgDebug
+} // namespace vgWX
 
-#endif // #ifndef _VGDEBUG_LOGGING_HPP
+#endif // #ifndef _VGWX_LOGGING_HPP
