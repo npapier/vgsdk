@@ -1,9 +1,12 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgDebug/Global.hpp"
+
+#include "vgDebug/Logging.hpp"
 
 
 
@@ -19,14 +22,30 @@ ILogging& get()
 
 
 
-ILogging& Global::get()
+void set( boost::shared_ptr< ILogging > logger )
 {
-	return ( m_globalLogger );
+	vgDebug::Global::set( logger );
 }
 
 
 
-Logging Global::m_globalLogger;
+ILogging& Global::get()
+{
+	return ( *m_globalLogger );
+}
+
+
+
+void Global::set( boost::shared_ptr< ILogging > logger )
+{
+	assert( logger );
+
+	m_globalLogger = logger;
+}
+
+
+
+boost::shared_ptr< ILogging > Global::m_globalLogger( new Logging() );
 
 
 
