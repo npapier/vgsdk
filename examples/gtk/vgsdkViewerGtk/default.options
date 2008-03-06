@@ -1,0 +1,4 @@
+type		= 'exec'
+version		= '0-1'
+libs		= [ 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgeGL 0-4', 'vgGTK 0-4', 'vgTrian 0-4', 'vgUI 0-4' ]
+uses		= [ 'boost', 'gtkmm', 'opengl' ]
