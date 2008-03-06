@@ -58,6 +58,12 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType
 		setGlCapability( GTK_WIDGET(gobj()), glContext );
 	}
 
+	/**
+	 * @brief	Destructor
+	 */
+	virtual ~GenericCanvas()
+	{}
+
 
 	/**
 	 * @name	Overrides

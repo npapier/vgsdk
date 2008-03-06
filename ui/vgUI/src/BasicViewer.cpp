@@ -160,6 +160,13 @@ vgd::Shp< vgd::node::Group > BasicViewer::getScene()
 
 
 
+const vgd::Shp< vgd::node::Group > BasicViewer::getScene() const
+{
+	return m_scene;
+}
+
+
+
 vgd::Shp< vgd::node::ClearFrameBuffer > BasicViewer::createClearFrameBuffer()
 {
 	if( !m_clearFrameBuffer )

@@ -64,12 +64,10 @@ struct VGUI_API BasicViewer : public Canvas
 	//@}
 
 
-
 	/**
-	 * @name Accessors to the camera
+	 * @name Camera Accessors
 	 */
 	//@{
-
 	/**
 	 * @brief The different type of camera type.
 	 */
@@ -86,15 +84,21 @@ struct VGUI_API BasicViewer : public Canvas
 	 *
 	 * @param typeOfCamera		the type of the camera. Could be CAMERA_PERSPECTIVE, CAMERA_OTHOGRAPHIC or CAMERA_DEFAULT.
 	 */
-	void 				setCameraType( const CameraType typeOfCamera );
-
+	void setCameraType( const CameraType typeOfCamera );
 
 	/**
 	 * @brief Returns the current camera type used.
 	 *
 	 * @return the camera type.
 	 */
-	const CameraType	getCameraType() const;
+	const CameraType getCameraType() const;
+
+	/**
+	 * @brief Returns the camera node.
+	 *
+	 * @return the camera node.
+	 */
+	vgd::Shp< vgd::node::Camera > getCamera();
 
 	/**
 	 * @brief Camera position hints
@@ -111,42 +115,43 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @brief Changes the camera position and frustum to view the entire scene.
 	 */
 	virtual void viewAll( const CameraDistanceHints cameraDistance = CAMERA_DISTANCE_HINTS_DEFAULT );
+	//@}
 
+
+	/**
+	 * @name Other Accessors
+	 */
+	//@{
 	/**
 	 * @brief Returns the setup node.
 	 *
 	 * @return the setup node.
 	 */
-	vgd::Shp< vgd::node::Group >	getSetup();
-
-	/**
-	 * @brief Returns the camera node.
-	 *
-	 * @return the camera node.
-	 */
-	vgd::Shp< vgd::node::Camera >	getCamera();
+	vgd::Shp< vgd::node::Group > getSetup();
 
 	/**
 	 * @brief Returns the view transformation node.
 	 *
 	 * @return the view transformation node.
 	 */
-	vgd::Shp< vgd::node::MatrixTransform >	getViewTransformation();
+	vgd::Shp< vgd::node::MatrixTransform > getViewTransformation();
 
 	/**
 	 * @brief Returns scene group node.
 	 */
-	vgd::Shp< vgd::node::Group >	getScene();
+	vgd::Shp< vgd::node::Group > getScene();
 
+	/**
+	 * @brief Returns scene group node.
+	 */
+	const vgd::Shp< vgd::node::Group > getScene() const;
 	//@}
-
 
 
 	/**
 	 * @name Frame buffer clearing control
 	 */
 	//@{
-
 	/**
 	 * @brief	Creates the node to clear the frame buffer.
 	 *
@@ -170,16 +175,13 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @return	a shared pointer to the clear frame buffer node, can be empty when none
 	 */
 	vgd::Shp< vgd::node::ClearFrameBuffer > getClearFrameBuffer() const;
-
 	//@}
-
 
 
 	/**
 	 * @name Default lighthing control
 	 */
 	//@{
-
 	/**
 	 * @brief	Creates default lights.
 	 *
@@ -201,18 +203,14 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @author	Guillaume Brocker
 	 */
 	void destroyDefaultLights();
-
 	//@}
-
 
 
 	/**
 	 * @name Rendering methods
 	 */
 	//@{
-
 	void resize( const vgm::Vec2i size );
-
 	//@}
 
 
@@ -243,51 +241,19 @@ protected:
 
 
 private:
-	//DECLARE_EVENT_TABLE();
 
 	/**
 	 * @brief Computes a value used to set the camera position in the scene
 	 */
 	const float compute( const CameraDistanceHints cameraDistance );
 
-	/**
-	 * @brief A reference on the setup group node.
-	 */
-	vgd::Shp< vgd::node::Group >				m_setup;
-
-	/**
-	 * @brief A reference on the camera.
-	 */
-	vgd::Shp< vgd::node::Camera >				m_camera;
-
-	/**
-	 * @brief A reference on the default lights group
-	 */
-	vgd::Shp< vgd::node::Group >				m_lights;
-
-	/**
-	 * @brief A reference on the frame buffer clearing node.
-	 */
-	vgd::Shp< vgd::node::ClearFrameBuffer >		m_clearFrameBuffer;
-
-	/**
-	 * @brief A reference on the view transformation.
-	 */
-	vgd::Shp< vgd::node::MatrixTransform >		m_viewTransform;
-
-	/**
-	 * @brief A reference on the scene group node.
-	 */
-	vgd::Shp< vgd::node::Group >				m_scene;
-
-
-
-
-
-	/**
-	 * @brief The camera type that should be used.
-	 */
-	CameraType									m_cameraType;
+	vgd::Shp< vgd::node::Group > 			m_setup;			///< A reference on the setup group node.
+	vgd::Shp< vgd::node::Camera >			m_camera;			///< A reference on the camera.
+	vgd::Shp< vgd::node::Group > 			m_lights;			///< A reference on the default lights group
+	vgd::Shp< vgd::node::ClearFrameBuffer >	m_clearFrameBuffer;	///< A reference on the frame buffer clearing node.
+	vgd::Shp< vgd::node::MatrixTransform >	m_viewTransform;	///< A reference on the view transformation.
+	vgd::Shp< vgd::node::Group >			m_scene;			///< A reference on the scene group node.
+	CameraType								m_cameraType;		///< The camera type that should be used.
 };
 
 
