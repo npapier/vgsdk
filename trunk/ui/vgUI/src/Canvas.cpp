@@ -48,7 +48,7 @@ Canvas::Canvas()
 	// m_gleLogFile
 	m_gleContext				( getGleOutputStream()	),
 	m_bLocalInitializedVGSDK	( false					),
-	m_debugEvents				( true					)
+	m_debugEvents				( false					)
 {
 	assert( getCanvasCount() == 0 && "This is not the first canvas." );
 	++m_canvasCount;
