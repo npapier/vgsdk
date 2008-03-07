@@ -445,7 +445,7 @@ struct TMultiField : public AbstractField
 		assert( checkRW() );
 		assert( other.checkRW() );
 		    	
-		m_vectorMF.swap( other );
+		m_vectorMF.swap( other.m_vectorMF );
 	}
 	//@}
 
