@@ -439,6 +439,14 @@ struct TMultiField : public AbstractField
 	}
 
 
+	void  swap   ( std::vector<T>& other )
+	{
+		assert( checkRW() );
+
+		m_vectorMF.swap( other );
+	}
+
+
 
 	void swap( TMultiField<T>& other )
 	{
