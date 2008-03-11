@@ -6,6 +6,7 @@
 
 #include "vgd/event/detail/helpers.hpp"
 
+#include "vgd/event/JoystickButtonEvent.hpp"
 #include "vgd/event/KeyboardButtonEvent.hpp"
 #include "vgd/event/MouseButtonEvent.hpp"
 
@@ -152,8 +153,58 @@ const std::string toString( const int32 button )
 	case KeyboardButtonEvent::KEY_NUMPAD_DECIMAL:	return "Keyboard Button Numpad Decimal";
 	case KeyboardButtonEvent::KEY_NUMPAD_DIVIDE:	return "Keyboard Button Numpad Divide";
 
+
+	case JoystickButtonEvent::JOY_BUTTON_1:			return "Joystick Button 1";
+	case JoystickButtonEvent::JOY_BUTTON_2:			return "Joystick Button 2";
+	case JoystickButtonEvent::JOY_BUTTON_3:			return "Joystick Button 3";
+	case JoystickButtonEvent::JOY_BUTTON_4:			return "Joystick Button 4";
+	case JoystickButtonEvent::JOY_BUTTON_5:			return "Joystick Button 5";
+	case JoystickButtonEvent::JOY_BUTTON_6:			return "Joystick Button 6";
+	case JoystickButtonEvent::JOY_BUTTON_7:			return "Joystick Button 7";
+	case JoystickButtonEvent::JOY_BUTTON_8:			return "Joystick Button 8";
+	case JoystickButtonEvent::JOY_BUTTON_9:			return "Joystick Button 9";
+	case JoystickButtonEvent::JOY_BUTTON_10:		return "Joystick Button 10";
+	case JoystickButtonEvent::JOY_BUTTON_11:		return "Joystick Button 11";
+	case JoystickButtonEvent::JOY_BUTTON_12:		return "Joystick Button 12";
+	case JoystickButtonEvent::JOY_BUTTON_13:		return "Joystick Button 13";
+	case JoystickButtonEvent::JOY_BUTTON_14:		return "Joystick Button 14";
+	case JoystickButtonEvent::JOY_BUTTON_15:		return "Joystick Button 15";
+	case JoystickButtonEvent::JOY_BUTTON_16:		return "Joystick Button 16";
+	case JoystickButtonEvent::JOY_BUTTON_17:		return "Joystick Button 17";
+	case JoystickButtonEvent::JOY_BUTTON_18:		return "Joystick Button 18";
+	case JoystickButtonEvent::JOY_BUTTON_19:		return "Joystick Button 19";
+	case JoystickButtonEvent::JOY_BUTTON_20:		return "Joystick Button 20";
+	case JoystickButtonEvent::JOY_BUTTON_21:		return "Joystick Button 21";
+	case JoystickButtonEvent::JOY_BUTTON_22:		return "Joystick Button 22";
+	case JoystickButtonEvent::JOY_BUTTON_23:		return "Joystick Button 23";
+	case JoystickButtonEvent::JOY_BUTTON_24:		return "Joystick Button 24";
+	case JoystickButtonEvent::JOY_BUTTON_25:		return "Joystick Button 25";
+	case JoystickButtonEvent::JOY_BUTTON_26:		return "Joystick Button 26";
+	case JoystickButtonEvent::JOY_BUTTON_27:		return "Joystick Button 27";
+	case JoystickButtonEvent::JOY_BUTTON_28:		return "Joystick Button 28";
+	case JoystickButtonEvent::JOY_BUTTON_29:		return "Joystick Button 29";
+	case JoystickButtonEvent::JOY_BUTTON_30:		return "Joystick Button 30";
+	case JoystickButtonEvent::JOY_BUTTON_31:		return "Joystick Button 31";
+	case JoystickButtonEvent::JOY_BUTTON_32:		return "Joystick Button 32";
+
+
 	default:	return "Unknown Button";
 	}
+}
+
+
+
+const std::string toString( const HatEvent::State state )
+{
+	std::string	result;
+
+	if( state == HatEvent::CENTERED	)	result =  "Centered";
+	if( state &  HatEvent::UP		)	result += "Up ";
+	if( state &  HatEvent::RIGHT	)	result += "Right";
+	if( state &  HatEvent::DOWN		)	result += "Down ";
+	if( state &  HatEvent::LEFT		)	result += "Left";
+
+	return result;
 }
 
 

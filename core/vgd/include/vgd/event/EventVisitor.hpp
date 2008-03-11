@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGD_EVENT_EVENTVISITOR_HPP
 #define _VGD_EVENT_EVENTVISITOR_HPP
@@ -12,10 +13,13 @@
 
 namespace vgd
 {
-	
+
 namespace event
 {
-	
+
+struct AxisEvent;
+struct HatEvent;
+struct JoystickButtonEvent;
 struct KeyboardButtonEvent;
 struct Location2Event;
 struct MouseButtonEvent;
@@ -33,6 +37,9 @@ struct VGD_API EventVisitor
 	 */
 	virtual ~EventVisitor();
 
+	virtual void apply( const vgd::event::AxisEvent				*pAxisEvent				)=0;
+	virtual void apply( const vgd::event::HatEvent				*pHatEvent				)=0;
+	virtual void apply( const vgd::event::JoystickButtonEvent	*pJoystickButtonEvent	)=0;
 	virtual void apply( const vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent	)=0;
 	virtual void apply( const vgd::event::Location2Event		*pLocation2Event 		)=0;
 	virtual void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent		)=0;
