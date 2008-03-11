@@ -1,10 +1,12 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgd/event/ButtonStateSet.hpp"
 
+#include "vgd/event/JoystickButtonEvent.hpp"
 #include "vgd/event/KeyboardButtonEvent.hpp"
 #include "vgd/event/MouseButtonEvent.hpp"
 
@@ -12,16 +14,46 @@
 
 namespace vgd
 {
-	
+
 namespace event
 {
+
+
+
+void ButtonStateSet::apply( const vgd::event::AxisEvent *pAxisEvent )
+{
+	assert( pAxisEvent != 0 );
+}
+
+
+
+void ButtonStateSet::apply( const vgd::event::HatEvent *pHatEvent )
+{
+	assert( pHatEvent != 0 );
+}
+
+
+
+void ButtonStateSet::apply( const vgd::event::JoystickButtonEvent *pJoystickButtonEvent )
+{
+	assert( pJoystickButtonEvent != 0 );
+
+	if ( pJoystickButtonEvent->getState() == vgd::event::ButtonEvent::DOWN )
+	{
+		setDown( pJoystickButtonEvent->getButtonID() );
+	}
+	else if ( pJoystickButtonEvent->getState() == vgd::event::ButtonEvent::UP )
+	{
+		setUp( pJoystickButtonEvent->getButtonID() );
+	}
+}
 
 
 
 void ButtonStateSet::apply( const vgd::event::KeyboardButtonEvent *pKeyboardButtonEvent )
 {
 	assert( pKeyboardButtonEvent != 0 );
-	
+
 	if ( pKeyboardButtonEvent->getState() == vgd::event::ButtonEvent::DOWN )
 	{
 		setDown( pKeyboardButtonEvent->getButtonID() );
@@ -37,7 +69,7 @@ void ButtonStateSet::apply( const vgd::event::KeyboardButtonEvent *pKeyboardButt
 void ButtonStateSet::apply( const vgd::event::MouseButtonEvent *pMouseButtonEvent )
 {
 	assert( pMouseButtonEvent != 0 );
-	
+
 	if ( pMouseButtonEvent->getState() == vgd::event::ButtonEvent::DOWN )
 	{
 		setDown( pMouseButtonEvent->getButtonID() );
@@ -81,9 +113,9 @@ bool ButtonStateSet::isDown() const
 bool ButtonStateSet::isDown( const int32 idButton ) const
 {
 	ButtonIDSet::const_iterator iter;
-	
+
 	iter = m_down.find( idButton );
-	
+
 	return ( iter != m_down.end() );
 }
 
