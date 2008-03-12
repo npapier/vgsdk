@@ -18,6 +18,7 @@
 #include <vgeGL/technique/RayCasting.hpp>
 //#include <vgCollada/Reader.hpp>
 #include <vgDebug/Global.hpp>
+#include <vgObj/Loader.hpp>
 #include <vgTrian/Loader.hpp>
 
 
@@ -216,6 +217,10 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 	{
 		bRetVal = loadCollada( pathfilename );
 	}
+	else if( extension.compare( ".obj" ) == 0 )
+	{
+		bRetVal = loadObj( pathfilename );
+	}
 	else
 	{
 		bRetVal = false;
@@ -236,6 +241,44 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 // @todo	::wxEndBusyCursor();
 
 	return bRetVal;
+}
+
+
+
+const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
+{
+	// Load .DAE
+/*	vgCollada::Reader reader;
+	const bool retVal = reader.load( pathfilename.c_str() );*/
+
+	// Setup scene
+	// @todo
+	//getScene()->addChild( retVal.second );
+
+//	return retVal;
+	return false;
+}
+
+
+
+const bool myCanvas::loadObj( const Glib::ustring & pathfilename )
+{
+	// Load .obj
+	vgObj::Loader loader;
+	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > retVal;
+
+	retVal = loader.loadObj( pathfilename.c_str() );
+
+	if ( !retVal.first )
+	{
+		return false;
+	}
+
+	// Setup scene
+	getScene()->addChild( retVal.second );
+	//(retVal.second)->computeNormals();
+
+	return ( true );
 }
 
 
@@ -285,22 +328,6 @@ const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename )
 	getScene()->addChild( retVal.second );
 
 	return true;
-}
-
-
-
-const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
-{
-	// Load .DAE
-/*	vgCollada::Reader reader;
-	const bool retVal = reader.load( pathfilename.c_str() );*/
-
-	// Setup scene
-	// @todo
-	//getScene()->addChild( retVal.second );
-
-//	return retVal;
-	return false;
 }
 
 

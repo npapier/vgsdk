@@ -61,11 +61,13 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 	Gtk::FileFilter			allFilter;
 	Gtk::FileFilter			trianFilter;
 	Gtk::FileFilter			colladaFilter;
+	Gtk::FileFilter			objFilter;
 
 	allFilter.set_name( "All supported files" );
 	allFilter.add_pattern( "*.trian" );
 	allFilter.add_pattern( "*.trian2" );
 	allFilter.add_pattern( "*.DAE" );
+	allFilter.add_pattern( "*.obj" );
 
 	trianFilter.set_name( "Trian files (*.trian, *.trian2)" );
 	trianFilter.add_pattern( "*.trian" );
@@ -74,9 +76,13 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 	colladaFilter.set_name( "All collada files (*.DAE)" );
 	colladaFilter.add_pattern( "*.DAE" );
 
+	objFilter.set_name( "Wavefront objects (*.obj)" );
+	objFilter.add_pattern( "*.obj" );
+
 	chooser.add_filter( allFilter );
 	chooser.add_filter( trianFilter );
 	chooser.add_filter( colladaFilter );
+	chooser.add_filter( objFilter );
 	chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
 	chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
 	chooser.set_select_multiple( true );
