@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -15,17 +15,37 @@ namespace field
 {
 
 /**
- * @brief All editing mode.
+ * @name All editing mode
  */
-enum EditingMode 
-{ 
-	NONE,	/*!< no accesses. */
-	RO,		/*!< read-only acesses. */
-	RW		/*!< read-write acesses. */
-};
+//@{
 
 /**
- * @brief Event type(used by Observer design pattern).
+ * @brief Definition of access modes
+ */
+// enum AccessMode {
+	// NO,	///< no access
+	// RW,	///< read-write access
+	// RO		///< read-only access
+// };
+
+/**
+ * @brief Definition of editing modes
+ */
+enum EditingMode {
+	RW		= -1,
+	NONE	= 0,
+	RO		= 1
+};
+//const EditingMode RW		= -1;	/*!< read-write access */
+//const EditingMode NONE	= 0;	/*!< no access */
+//const EditingMode RO		= 1;	/*!< read-only access */
+
+//@}
+
+
+
+/**
+ * @brief Event type (used by Observer design pattern).
  */
 enum Event 
 {

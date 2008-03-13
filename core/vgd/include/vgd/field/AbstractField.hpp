@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -195,6 +195,22 @@ protected:
 
 
 private:
+
+	/**
+	 * @brief Increments editing mode by one.
+	 *
+	 * @pre & post m_editingMode >= NONE
+	 */
+	void incrementEditingMode() const;
+
+	/**
+	 * @brief Decrements editing mode by one.
+	 *
+	 * @pre m_editingMode > NONE (i.e. >=RO)
+	 * @post m_editingMode >= NONE
+	 */
+	void decrementEditingMode() const;
+
 	/**
 	 * @name Private data
 	 */
