@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -130,19 +130,17 @@ const bool AbstractField::isSubject() const
 
 const bool AbstractField::startEditingRO() const
 {
-	switch ( m_editingMode )
+	if ( m_editingMode == RW )
 	{
-		case NONE:
-		case RO:
-			m_editingMode = RO;
-			return true;
+		return false;
+	}
+	else
+	{
+		assert( m_editingMode >= NONE );
 
-		case RW:
-			return false;
-			
-		default:
-			assert( false && "Unknown case" );
-			return false;
+		incrementEditingMode();
+
+		return true;
 	}
 }
 
@@ -150,19 +148,14 @@ const bool AbstractField::startEditingRO() const
 
 const bool AbstractField::startEditingRW() const
 {
-	switch ( m_editingMode )
+	if ( m_editingMode == NONE )
 	{
-		case NONE:
-			m_editingMode = RW;
-			return true;
-
-		case RO:
-		case RW:
-			return false;
-
-		default:
-			assert( false && "Unknown case" );
-			return false;
+		m_editingMode = RW;
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
@@ -170,23 +163,27 @@ const bool AbstractField::startEditingRW() const
 
 const bool AbstractField::finishEditing() const
 {
-	switch ( m_editingMode )
+	if ( m_editingMode == RW )
 	{
-		case NONE:
-			return false;
+		m_editingMode = NONE;
 
-		case RO:
-			m_editingMode = NONE; // not true if multi threaded !!! FIXME
-			return true;
+		sendNotify( UPDATE );
 
-		case RW:
-			m_editingMode = NONE; // not true if multi threaded !!! FIXME
-			sendNotify( UPDATE );
-			return true;
+		return true;
+	}
+	else if ( m_editingMode >= RO )
+	{
+		decrementEditingMode();
 
-		default:
-			assert( false && "Unknown case" );
-			return false;
+		return true;
+	}
+	else
+	{
+		assert( m_editingMode == NONE );
+
+		assert( false && "Internal error. Must never occurs." );
+
+		return false;
 	}
 }
 
@@ -194,7 +191,10 @@ const bool AbstractField::finishEditing() const
 
 const bool AbstractField::isSameEditingMode( const EditingMode mode ) const
 {
-	return ( m_editingMode == mode );
+	const EditingMode thisEditingMode	= (m_editingMode >= RO) ? RO : m_editingMode;
+	const EditingMode givenEditingMode	= (mode >= RO) ? RO : mode;
+
+	return thisEditingMode == givenEditingMode;
 }
 
 
@@ -213,6 +213,30 @@ const bool AbstractField::checkRW() const
 
 
 
-} // namespace vgd
+void AbstractField::incrementEditingMode() const
+{
+	assert( m_editingMode >= NONE );
+
+	const int editingMode = static_cast<int>(m_editingMode) + 1;
+	m_editingMode = static_cast<EditingMode>( editingMode );
+
+	assert( m_editingMode >= NONE );
+}
+
+
+
+void AbstractField::decrementEditingMode() const
+{
+	assert( m_editingMode > NONE );
+
+	const int editingMode = static_cast<int>(m_editingMode) - 1;
+	m_editingMode = static_cast<EditingMode>( editingMode );
+
+	assert( m_editingMode >= NONE );
+}
+
+
 
 } // namespace field
+
+} // namespace vgd

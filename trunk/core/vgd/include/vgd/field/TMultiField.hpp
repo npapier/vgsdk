@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 
 #include <vector>
 
-#include "vgd/vgd.hpp"
 #include "vgd/field/AbstractField.hpp"
 
 
@@ -425,7 +424,7 @@ struct TMultiField : public AbstractField
 	 */
 	//@{
 	
-	void  swap   ( const uint32 indexItem1, const uint32 indexItem2 )
+	void swap( const uint32 indexItem1, const uint32 indexItem2 )
 	{
 		assert( checkRW() );
 
@@ -439,15 +438,6 @@ struct TMultiField : public AbstractField
 	}
 
 
-	void  swap   ( std::vector<T>& other )
-	{
-		assert( checkRW() );
-
-		m_vectorMF.swap( other );
-	}
-
-
-
 	void swap( TMultiField<T>& other )
 	{
 		assert( checkRW() );
@@ -455,6 +445,16 @@ struct TMultiField : public AbstractField
 		    	
 		m_vectorMF.swap( other.m_vectorMF );
 	}
+
+
+
+	void swap( std::vector<T>& other )
+	{
+		assert( checkRW() );
+
+		m_vectorMF.swap( other );
+	}
+
 	//@}
 
 
