@@ -21,7 +21,7 @@ void Logging::logFatalError( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	fprintf( stderr, "Fatal Error. " );
+	fprintf( stderr, "Fatal Error: " );
 	vfprintf( stderr, szFormat, marker );
 	fprintf( stderr, "\n" );
 
@@ -35,7 +35,7 @@ void Logging::logError( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	fprintf( stderr, "Error. " );
+	fprintf( stderr, "Error: " );
 	vfprintf( stderr, szFormat, marker );
 	fprintf( stderr, "\n" );
 
@@ -49,7 +49,7 @@ void Logging::logWarning( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	fprintf( stderr, "Warning. " );
+	fprintf( stderr, "Warning: " );
 	vfprintf( stderr, szFormat, marker );
 	fprintf( stderr, "\n" );
 
@@ -106,7 +106,7 @@ void Logging::logSysError( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	fprintf( stderr, "Sys Error. " );
+	fprintf( stderr, "Sys Error: " );
 	vfprintf( stderr, szFormat, marker );
 	fprintf( stderr, "\n" );
 
@@ -123,7 +123,7 @@ void Logging::logDebug( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	fprintf( stderr, "Debug. " );
+	fprintf( stderr, "Debug: " );
 	vfprintf( stderr, szFormat, marker );
 	fprintf( stderr, "\n" );
 
@@ -141,7 +141,7 @@ void Logging::logTrace( const char *szFormat, ... ) const
 	va_list marker;
 	va_start( marker, szFormat );
 
-	fprintf( stderr, "Trace. " );
+	fprintf( stderr, "Trace: " );
 	vfprintf( stderr, szFormat, marker );
 	fprintf( stderr, "\n" );
 
