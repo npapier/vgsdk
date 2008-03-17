@@ -21,16 +21,18 @@ namespace field
 
 
 /**
- *
  * @brief Template class for all multiple-valued fields.
- * 
+ *
+ * The TMultiField class is a template class that provides a dynamic array similar to std::vector.
+ * This is one of vgsdk generic container classes used by field.
+ * Items are stored in adjacent memory locations. Index-based accesses are fast.
+ *
  * @remarks \c Assignable, but \c Not \c DefaultConstructible.
  * 
- * @todo Check if interface is compatible with std::vector => At(). see stl::vector::at, Pop_back, assign, insert see stl::vector.
- * 
- * @todo automatic usage of agp memory(for NVidia and ATI). See allocator in stl.
- * @todo Resize() that could really decrease the size of the multifield.
- * @todo Add documentation directly in this class.
+ * @todo Checks compatibility and similarity with std::vector(at(). see stl::vector::at, pop_back, assign, insert).
+ * @todo Uses video memory automatically.
+ * @todo Resize() that could really decrease the size of the multi-field.
+ * @todo Adds documentation directly in this class.
  */
 template<typename T>
 struct TMultiField : public AbstractField
@@ -41,19 +43,37 @@ struct TMultiField : public AbstractField
 	//@{
 	
 	/**
-	 * @brief A type that represents the data type stored in a vector.
+	 * @brief A type that represents the data type stored in this container.
 	 */
 	typedef T value_type;
 
 	/**
-	 * @brief Constant iterator for this container.
+	 * @brief Constant iterator
+	 *
+	 * A random-access iterator that can read a const element.
 	 */
 	typedef typename std::vector<T>::const_iterator				const_iterator;
 
 	/**
-	 * @brief Iterator for this container.
+	 * @brief Iterator
+	 *
+	 * A random-access iterator that can read or modify any element.
 	 */	
-	typedef typename std::vector<T>::iterator						iterator;
+	typedef typename std::vector<T>::iterator					iterator;
+
+	/**
+	 * @brief Constant reverse iterator
+	 *
+	 * A random-access iterator that can read a const element.
+	 */
+	typedef typename std::vector<T>::const_reverse_iterator		const_reverse_iterator;
+
+	/**
+	 * @brief Reverse iterator
+	 *
+	 * A random-access iterator that can read or modify any element.
+	 */	
+	typedef typename std::vector<T>::reverse_iterator			reverse_iterator;
 	
 	//@}
 	
@@ -65,7 +85,7 @@ struct TMultiField : public AbstractField
 	//@{
 
 	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 */
 	TMultiField( const std::string strFieldName ) :
 		AbstractField( strFieldName )
@@ -80,7 +100,7 @@ struct TMultiField : public AbstractField
 	 */
 	//@{
 
-	void		reserve	( const uint32 ui32Size )
+	void reserve( const uint32 ui32Size )
 	{
 		assert( checkRW() );
 
@@ -89,7 +109,7 @@ struct TMultiField : public AbstractField
 
 
 
-	void		resize	( const uint32 ui32Size )
+	void resize( const uint32 ui32Size )
 	{
 		assert( checkRW() );
 
@@ -98,25 +118,25 @@ struct TMultiField : public AbstractField
 
 
 
-	const uint32		size	() const
+	const uint32 size() const
 	{
 		assert( checkRO() );
 
-		return ( static_cast<uint32>(m_vectorMF.size()) );
+		return static_cast<uint32>(m_vectorMF.size());
 	}
 
 
 
-	const uint32	capacity() const
+	const uint32 capacity() const
 	{
 		assert( checkRO() );
 				
-		return ( static_cast<uint32>(m_vectorMF.capacity()) );
+		return static_cast<uint32>(m_vectorMF.capacity());
 	}
 
 	
 
-	const bool		empty	() const
+	const bool empty() const
 	{
 		assert( checkRO() );
 
@@ -139,7 +159,7 @@ struct TMultiField : public AbstractField
 
 		assert( isIndexValid( index ) );
 
-		return ( m_vectorMF[index] );
+		return m_vectorMF[index];
 	}
 
 
@@ -150,51 +170,51 @@ struct TMultiField : public AbstractField
 
 		assert( isIndexValid( index ) );
 
-		return ( m_vectorMF[index] );
+		return m_vectorMF[index];
 	}
 
 
 
-	const T&	front() const
+	const T& front() const
 	{
 		assert( checkRO() );
 
 		assert( m_vectorMF.size() >= 1 );
-		
-		return ( m_vectorMF.front() );
+
+		return m_vectorMF.front();
 	}
 
 
 
-	T&			front()
+	T& front()
 	{
 		assert( checkRW() );
 
 		assert( m_vectorMF.size() >= 1 );
-		
-		return ( m_vectorMF.front() );
+
+		return m_vectorMF.front();
 	}
 
 
 
-	const T&	back() const
+	const T& back() const
 	{
 		assert( checkRO() );
 
 		assert( m_vectorMF.size() >= 1 );
-		
-		return ( m_vectorMF.back() );
+
+		return m_vectorMF.back();
 	}
 
 
 
-	T&			back()
+	T& back()
 	{
 		assert( checkRW() );
 
 		assert( m_vectorMF.size() >= 1 );
-		
-		return ( m_vectorMF.back() );
+
+		return m_vectorMF.back();
 	}
 
 	//@}
@@ -203,6 +223,9 @@ struct TMultiField : public AbstractField
 
 	/**
 	 * @name Iterators
+	 *
+	 * The following iterators are compatibles with stl iterators.
+	 * So for example, any \c stl algorithms could be applied to a multi-field.
 	 */
 	//@{
 
@@ -210,14 +233,14 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRO() );
 
-		return ( m_vectorMF.begin() );
+		return m_vectorMF.begin();
 	}
 	
-	iterator			begin()
+	iterator begin()
 	{
 		assert( checkRW() );
 		
-		return ( m_vectorMF.begin() );
+		return m_vectorMF.begin();
 	}
 
 
@@ -225,16 +248,46 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRO() );
 
-		return ( m_vectorMF.end() );
+		return m_vectorMF.end();
 	}
 	
-	iterator			end()
+	iterator end()
 	{
 		assert( checkRW() );
 		
-		return ( m_vectorMF.end() );
+		return m_vectorMF.end();
+	}
+
+
+
+	const_reverse_iterator rbegin() const
+	{
+		assert( checkRO() );
+
+		return m_vectorMF.rbegin();
 	}
 	
+	reverse_iterator rbegin()
+	{
+		assert( checkRW() );
+		
+		return m_vectorMF.rbegin();
+	}
+
+
+	const_reverse_iterator rend() const
+	{
+		assert( checkRO() );
+
+		return m_vectorMF.rend();
+	}
+	
+	reverse_iterator rend()
+	{
+		assert( checkRW() );
+		
+		return m_vectorMF.rend();
+	}
 	//@}
 	
 	
@@ -247,7 +300,7 @@ struct TMultiField : public AbstractField
 	/**
 	 * @brief Adds an element to the end.
 	 *
-	 * @param rItem : element to add.
+	 * @param rItem		element to add.
 	 */
 	void  push_back( const T& rItem )
 	{
@@ -255,55 +308,47 @@ struct TMultiField : public AbstractField
 
 		m_vectorMF.push_back( rItem );
 	}
-	
-	/**
-	 * @brief Adds all element from a multifield to the end.
-	 *
-	 * @param rMFToAppend : multi field to add.
-	 */
-	void	push_back( const TMultiField<T>& rMFToAppend )
-	{
-		assert( checkRW() );		
-		assert( !rMFToAppend.checkRW() );
 
-		for(	typename std::vector< T >::const_iterator iter = rMFToAppend.begin();
-				iter != rMFToAppend.end();
-				++iter
-			)
-		{
-			const T& rItem = *iter;
-			m_vectorMF.push_back( rItem );
-		}
-	}
-	
 	/**
-	 * @brief Adds elements from range [begin,end[ of a vector.
+	 * @brief Adds to the end of this container all element from a multifield.
 	 *
-	 * @param begin		position of the first element in the range of elements to be added.
-	 * @param end		Position of the first element beyond the range of elements to be added. 
+	 * @param other	the multi-field containing all elements to add
 	 */
-	void	push_back(	const typename std::vector<T>::const_iterator begin,
-						const typename std::vector<T>::const_iterator end )
+	void push_back( const TMultiField<T>& other )
+	{
+		assert( checkRW() );
+		assert( other.checkRO() );
+
+		m_vectorMF.insert( m_vectorMF.end(), other.m_vectorMF.begin(), other.m_vectorMF.end() );
+	}
+
+	/**
+	 * @brief Adds to the end of this container elements from range [begin,end[
+	 *
+	 * @param begin	the position of the first element in the range of elements to be copied.
+	 * @param end	the position of the first element beyond the range of elements to be copied.
+	 * 
+	 * @remarks Given iterators could be standard \c STL iterator or TMultiField iterators.
+	 */
+	void push_back(	const typename std::vector<T>::const_iterator begin,
+					const typename std::vector<T>::const_iterator end )
 	{
 		assert( checkRW() );
 
-		for(	typename std::vector< T >::const_iterator iter = begin;
-				iter != end;
-				++iter )
-		{
-			push_back( *iter );
-		}
+		m_vectorMF.insert( m_vectorMF.end(), begin, end );
 	}
 
 	/**
-	 * @brief Adds elements from range [begin,end[ of a vector.
+	 * @brief Adds to the end of this container elements from range [begin,end[
 	 *
-	 * @param begin		position of the first element in the range of elements to be added.
-	 * @param end		Position of the first element beyond the range of elements to be added. 
+	 * @param begin	the position of the first element in the range of elements to be copied.
+	 * @param end	the position of the first element beyond the range of elements to be copied.
+	 * 
+	 * @remarks Given iterators could be standard \c STL iterator or TMultiField iterators.
 	 */
 	template< typename U >
-	void	push_back(	const typename std::vector<U>::const_iterator begin,
-						const typename std::vector<U>::const_iterator end )
+	void push_back(	const typename std::vector<U>::const_iterator begin,
+					const typename std::vector<U>::const_iterator end )
 	{
 		assert( checkRW() );
 
@@ -316,38 +361,43 @@ struct TMultiField : public AbstractField
 	}
 
 	/**
-	 * @brief Adds all elements of a given vector to the end of the vector.
+	 * @brief Adds at the end of this container all elements of the given vector.
 	 * 
 	 * @param source	vector with element to push back.
 	 */
-	void	push_back( const typename std::vector<T> source )
+	void push_back( const typename std::vector<T> source )
 	{
 		push_back( source.begin(), source.end() );
 	}
 
 	/**
-	 * @brief Adds all elements of a given vector to the end of the vector.
-	 * 
+	 * @brief Adds at the end of this container all elements of the given vector.
+	 *
 	 * @param source	vector with element to push back.
 	 */
 	template< typename U >
-	void	push_back( const typename std::vector<U> source )
+	void push_back( const typename std::vector<U> source )
 	{
 		push_back( source.begin(), source.end() );
 	}
-	
 	//@}
 
 
 
-	/** 
+	/**
 	 * @name Inserts element(s)
 	 * 
-	 * @todo all insert methods.
+	 * @remarks Inserting or deleting elements in the middle of a vector requires linear time. Try to avoid them as possible.
 	 */
 	//@{
-	
-	void  insert ( const uint32 index, const T& rItem )
+
+	/**
+	 * @brief Inserts an element at a specified position.
+	 *
+	 * @param index		the zero-based position in the multi-field where the element is inserted
+	 * @param item		the new element to insert
+	 */
+	void insert( const uint32 index, const T& item )
 	{
 		assert( checkRW() );
 
@@ -355,24 +405,114 @@ struct TMultiField : public AbstractField
 
 		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
 
-		m_vectorMF.insert( iter, rItem );
+		m_vectorMF.insert( iter, item );
 	}
 
+	/**
+	 * @brief Inserts an element at a specified position.
+	 *
+	 * @param where	the position in the multi-field where the element is inserted
+	 * @param item		the new element to insert
+	 */
+	void insert( const const_iterator where, const T& item )
+	{
+		assert( checkRW() );
+
+		m_vectorMF.insert( where, item );
+	}
+
+	/**
+	 * @brief Inserts a number of elements at a specified position.
+	 *
+	 * @param index		the zero-based position in the multi-field where the element is inserted
+	 * @param count		the number of elements being inserted into the multi-field
+	 * @param item		the new element to insert
+	 */
+	void insert( const uint32 index, const uint32 count, const T& item )
+	{
+		assert( checkRW() );
+
+		assert( isIndexValid( index ) );
+
+		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
+
+		m_vectorMF.insert( iter, count, item );
+	}
+
+	/**
+	 * @brief Inserts an element at a specified position.
+	 *
+	 * @param where	the position in the multi-field where the element is inserted
+	 * @param count		the number of elements being inserted into the multi-field
+	 * @param item		the new element to insert
+	 */
+	void insert( const const_iterator where, const uint32 count, const T& item )
+	{
+		assert( checkRW() );
+
+		m_vectorMF.insert( where, count, item );
+	}
+
+	/**
+	 * @brief Inserts a range of elements at a specified position.
+	 *
+	 * @param index		the zero-based position in the multi-field where the element is inserted
+	 * @param begin		the position of the first element in the range of elements to be copied
+	 * @param end		the position of the first element beyond the range of elements to be copied
+	 *
+	 * @remarks Given iterators could be standard \c STL iterator or TMultiField iterators.
+	 */
+	void insert(	const uint32 index,
+					const typename std::vector<T>::const_iterator begin,
+					const typename std::vector<T>::const_iterator end )
+	{
+		assert( checkRW() );
+
+		assert( isIndexValid( index ) );
+
+		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
+
+		m_vectorMF.insert( iter, begin, end );
+	}
+
+	/**
+	 * @brief Inserts a range of elements at a specified position.
+	 *
+	 * @param where	the position in the multi-field where the element is inserted
+	 * @param begin		the position of the first element in the range of elements to be copied
+	 * @param end		the position of the first element beyond the range of elements to be copied
+	 *
+	 * @remarks Given iterators could be standard \c STL iterator or TMultiField iterators.
+	 */
+	void insert(	const const_iterator where,
+					const typename std::vector<T>::const_iterator begin,
+					const typename std::vector<T>::const_iterator end )
+	{
+		assert( checkRW() );
+
+		m_vectorMF.insert( where, begin, end );
+	}
 	//@}
 
 
 
-	/** 
+	/**
 	 * @name Erases element(s)
-	 * 
-	 * @todo pop_back
+	 *
+	 * @remarks Inserting or deleting elements in the middle of a vector requires linear time. Try to avoid them as possible.	 
 	 */
 	//@{
-	
-	void	erase( const uint32 index )
+
+	/**
+	 * @brief Removes an element.
+	 *
+	 * @param index		position of the element to be removed from the multi-field.
+	 */
+	void erase( const uint32 index )
 	{
 		assert( checkRW() );
 
+		assert( m_vectorMF.size() >= 1 );
 		assert( isIndexValid( index ) );
 
 		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
@@ -380,9 +520,21 @@ struct TMultiField : public AbstractField
 		m_vectorMF.erase( iter );
 	}
 
+	/**
+	 * @brief Removes an elements.
+	 *
+	 * @param where	position of the element to be removed from the multi-field.
+	 */
+	void erase( iterator where )
+	{
+		assert( checkRW() );
 
+		assert( m_vectorMF.size() >= 1 );
 
-	void	pop_back()
+		m_vectorMF.erase( where );
+	}
+
+	void pop_back()
 	{
 		assert( checkRW() );
 
@@ -393,12 +545,19 @@ struct TMultiField : public AbstractField
 
 
 
-	void  erase( const uint32 indexStart, const uint32 indexEnd )
+	/**
+	 * @brief Removes an element or a range of elements from specified positions.
+	 *
+	 * @param indexStart	position of the first element removed from the multi-field.
+	 * @param indexEnd	position just beyond the last element removed from the multi-field.
+	 */
+	void erase( const uint32 indexStart, const uint32 indexEnd )
 	{
 		assert( checkRW() );
 
 		assert( isIndexValid( indexStart ) );
-		assert( isIndexValid( indexEnd ) );
+		assert( isIndexValid( indexEnd ) || indexEnd == size() );
+		assert( indexStart < indexEnd );
 
 		typename std::vector<T>::iterator iterStart = m_vectorMF.begin() + indexStart;
 		typename std::vector<T>::iterator iterEnd   = m_vectorMF.begin() + indexEnd;
@@ -406,21 +565,39 @@ struct TMultiField : public AbstractField
 		m_vectorMF.erase( iterStart, iterEnd );
 	}
 
+	/**
+	 * @brief Removes an element or a range of elements from specified positions.
+	 *
+	 * @param begin	position of the first element removed from the multi-field.
+	 * @param end	position just beyond the last element removed from the multi-field.
+	 */
+	void erase( iterator begin, iterator end )
+	{
+		assert( checkRW() );
+
+		assert( begin < end );
+
+		m_vectorMF.erase( begin, end );
+	}
 
 
-	void  clear()
+
+	/**
+	 * @brief Erases the elements of the multi-field.
+	 */
+	void clear()
 	{
 		assert( checkRW() );
 
 		m_vectorMF.clear();
 	}
-    
+
 	//@}
 
 
 
 	/** 
-	 * @name Swap
+	 * @name Swapping methods
 	 */
 	//@{
 	
@@ -432,11 +609,10 @@ struct TMultiField : public AbstractField
 		assert( isIndexValid( indexItem2 ) );
 
 		T *pTmp = m_vectorMF[indexItem1];
-		
+
 		m_vectorMF[indexItem1] = m_vectorMF[indexItem2];
 		m_vectorMF[indexItem2] = pTmp;
 	}
-
 
 	void swap( TMultiField<T>& other )
 	{
@@ -445,8 +621,6 @@ struct TMultiField : public AbstractField
 		    	
 		m_vectorMF.swap( other.m_vectorMF );
 	}
-
-
 
 	void swap( std::vector<T>& other )
 	{
@@ -467,8 +641,8 @@ struct TMultiField : public AbstractField
 	/**
 	 * @brief Finds an item.
 	 * 
-	 * @param	rItem	an item.
-	 * @return	Index of item (0 to size()-1), or size() if not found.
+	 * @param rItem	an item.
+	 * @return zero-based index of item (0 to size()-1), or size() if not found.
 	 */
 	const uint32 find( const T& rItem ) const
 	{
@@ -480,11 +654,11 @@ struct TMultiField : public AbstractField
 		{
 			if ( (*vectorIter) == rItem )
 			{
-				return ( index );
+				return index;
 			}
 		}
 		
-		return ( size() );
+		return size();
 	}
 	//@}
 
@@ -498,10 +672,10 @@ private:
 	//@{
 
 	/**
-	 * @brief Vector that contains all values for this field.
+	 * @brief Vector that contains all values of this field.
 	 */
 	std::vector< T >	m_vectorMF;
-	
+
 	//@}
 
 

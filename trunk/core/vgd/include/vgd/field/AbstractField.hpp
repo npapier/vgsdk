@@ -184,11 +184,13 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 protected:
 	/**
 	 * @brief Checks if editing mode is compatible with a read-only access.
+	 * @todo the name of this method could be better self-explained.
 	 */
 	const bool checkRO() const;
 
 	/**
 	 * @brief Checks if editing mode is compatible with a read-write access.
+	 * @todo the name of this method could be better self-explained.
 	 */
 	const bool checkRW() const;
 
