@@ -7,13 +7,7 @@
 #ifndef _VGDEBUG_LOGGING_HPP
 #define _VGDEBUG_LOGGING_HPP
 
-#include <iostream>
-#include <fstream>
-
-#include "vgDebug/vgDebug.hpp"
-
 #include "vgDebug/ILogging.hpp"
-
 
 
 
