@@ -140,6 +140,50 @@ struct VGSDL_API Joystick : public ::vgd::event::Joystick
 	//@}
 
 
+	/**
+	 * @name	State Accessors
+	 */
+	//@{
+	/**
+	 * @brief	Retrieves the current value of the given axis, in the range [-1, 1].
+	 *
+	 * @param	axis	the axis index
+	 *
+	 * @return	the axis value
+	 *
+	 * @see		getAxisNumber, getAxisRaw
+	 */
+	const float getAxis( const int axis ) const;
+
+	/**
+	 * @brief	Retrieves the number of axes of the joystick
+	 *
+	 * @return	the number of axis
+	 */
+	const int getAxesNumber() const;
+
+	/**
+	 * @brief	Retrieves the raw axis value.
+	 *
+	 * @param	axis	the axis index
+	 *
+	 * @retrun	the raw axis value
+	 *
+	 * @see		getAxis, getAxisNumber
+	 */
+	const short getAxisRaw( const int axis ) const;
+	
+	/**
+	 * @brief	Retreives the state if a given button.
+	 * 
+	 * @param	button	the name of the button
+	 * 
+	 * @return	true if the given button is down
+	 */
+	const bool getButton( const Button button ) const;
+	//@}
+
+
 private:
 
 	/**

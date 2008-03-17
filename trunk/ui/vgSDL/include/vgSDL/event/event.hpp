@@ -31,6 +31,8 @@ namespace event
  * @remark	In order to receive SDL events, you must have called @c SDL_Init with
  * 			@c SDL_INIT_VIDEO and @c SDL_INIT_JOYSTICK flags. You also must have enabled
  * 			joystick events by calling @c SDL_JoystickEventState(SDL_ENABLE)
+ *
+ * @remark	The processed SDL event is removed from the event queue.
  */
 VGSDL_API const int processEvent();
 
@@ -47,6 +49,8 @@ VGSDL_API const int processEvent();
  * @remark	In order to receive SDL events, you must have called @c SDL_Init with
  * 			@c SDL_INIT_VIDEO and @c SDL_INIT_JOYSTICK flags. You also must have enabled
  * 			joystick events by calling @c SDL_JoystickEventState(SDL_ENABLE)
+ *
+ * @remark	The processed SDL events are removed from the event queue.
  */
 VGSDL_API const int processEvents( const int number = 10 );
 //@}
