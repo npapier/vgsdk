@@ -23,6 +23,24 @@ namespace vgSDL
 namespace event
 {
 
+namespace
+{
+
+	/**
+	 * @brief	Normalizes any given number in a real number between -1 and 1.
+	 *
+	 * @param	in	the input number to normalize
+	 *
+	 * @return	the normalized value
+	 */
+	template< typename Number >
+	const float normalize( const Number in )
+	{
+		return static_cast<float>(in) / ((in <= 0) ? -std::numeric_limits<Number>::min() : std::numeric_limits<Number>::max());
+	}
+
+}
+
 
 
 Joystick::JoyCollection	Joystick::m_joyCache;
@@ -69,7 +87,7 @@ void Joystick::handleEvent( const SDL_JoyAxisEvent & event )
 		using ::vgd::event::AxisEvent;
 		using ::vgd::event::detail::GlobalButtonStateSet;
 
-		const float value		= static_cast<float>(event.value) / ((event.value <= 0) ? -std::numeric_limits<short>::min() : std::numeric_limits<short>::max());
+		const float value		= normalize(event.value);
 		AxisEvent	* myEvent	= 0;
 
 		myEvent = new AxisEvent(
@@ -94,8 +112,8 @@ void Joystick::handleEvent( const SDL_JoyButtonEvent & event )
 		using ::vgd::event::detail::GlobalButtonStateSet;
 
 		const bool			isDown		= (event.state == SDL_PRESSED);
-		const int			buttonId	= JoystickButtonEvent::JOY_BUTTON_1 + event.button;
-		JoystickButtonEvent	* myEvent		= 0;
+		const int			buttonId	= BUTTON_1 + event.button;
+		JoystickButtonEvent	* myEvent	= 0;
 
 		GlobalButtonStateSet::update( buttonId, isDown );
 
@@ -175,6 +193,42 @@ const std::string Joystick::getName() const
 	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
 
 	return std::string( SDL_JoystickName(getIndex()) );
+}
+
+
+
+const float Joystick::getAxis( const int axis ) const
+{
+	assert( m_joystick != 0 );
+
+	return normalize( getAxisRaw(axis) );
+}
+
+
+
+const int Joystick::getAxesNumber() const
+{
+	assert( m_joystick != 0 );
+
+	return SDL_JoystickNumAxes( m_joystick );
+}
+
+
+
+const short Joystick::getAxisRaw( const int axis ) const
+{
+	assert( m_joystick != 0 );
+
+	return SDL_JoystickGetAxis(m_joystick, axis);
+}
+
+
+
+const bool Joystick::getButton( const Button button ) const
+{
+	assert( m_joystick != 0 );
+
+	return SDL_JoystickGetButton(m_joystick, button - BUTTON_1) == 1;
 }
 
 

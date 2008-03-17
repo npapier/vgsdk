@@ -32,6 +32,7 @@ struct MyListener : public vgd::event::Listener
 	{
 		using ::vgd::event::AxisEvent;
 		using ::vgd::event::HatEvent;
+		using ::vgd::event::Joystick;
 		using ::vgd::event::JoystickButtonEvent;
 
 		vgd::Shp< AxisEvent >			axisEvent		= vgd::dynamic_pointer_cast< AxisEvent >(event);
@@ -60,10 +61,10 @@ struct MyListener : public vgd::event::Listener
 
 			using ::vgd::event::detail::GlobalButtonStateSet;
 
-			combo =	GlobalButtonStateSet::get().isDown(JoystickButtonEvent::JOY_BUTTON_1) &&
-					GlobalButtonStateSet::get().isDown(JoystickButtonEvent::JOY_BUTTON_2) &&
-					GlobalButtonStateSet::get().isDown(JoystickButtonEvent::JOY_BUTTON_3) &&
-					GlobalButtonStateSet::get().isDown(JoystickButtonEvent::JOY_BUTTON_4);
+			combo =	GlobalButtonStateSet::get().isDown(Joystick::BUTTON_1) &&
+					GlobalButtonStateSet::get().isDown(Joystick::BUTTON_2) &&
+					GlobalButtonStateSet::get().isDown(Joystick::BUTTON_3) &&
+					GlobalButtonStateSet::get().isDown(Joystick::BUTTON_4);
 		}
 	}
 };
