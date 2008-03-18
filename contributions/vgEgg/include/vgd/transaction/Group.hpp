@@ -1,6 +1,7 @@
 #ifndef _VGD_TRANSACTION_GROUP_HPP
 #define _VGD_TRANSACTION_GROUP_HPP
 
+#include <vgd/vgd.hpp>
 #include <vgd/transaction/TransactionContainer.hpp>
 #include <vgd/WeakPtr.hpp>
 #include <vgd/Shp.hpp>
@@ -41,7 +42,7 @@ template <> struct TBind<node::Group> {
 /**
  * @brief Class for transactional Groups.
  */
-struct Group : public TransactionContainer {
+struct VGD_API Group : public TransactionContainer {
 	/**
 	 * @brief Creator.
 	 */
