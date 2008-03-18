@@ -20,7 +20,7 @@ struct VGD_API TransactionContainer : public Transaction {
 	/**
 	 * @brief Add a transaction.
 	 */
-	void push_back(vgd::Shp<Transaction> transaction);
+	void add_transaction(vgd::Shp<Transaction> transaction);
 protected:
 	/**
 	 * @brief The list of transactions.

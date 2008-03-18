@@ -46,8 +46,8 @@ namespace transaction {
 	 * Use template class TBind to bind a transactional field class to
 	 * its corresponding non transactional one.
 	 */
-	template <typename F> static vgd::Shp<typename TBind<F>::TField> createTransactionField(typename F* field){
-		return vgd::makeShp(new TBind<F>::TField(field));
+	template <typename F> static vgd::Shp<typename TBind<F>::TRANSACTION> createTransactionField(typename F* field){
+		return vgd::makeShp(new TBind<F>::TRANSACTION(field));
 	}
 protected:
 	/**

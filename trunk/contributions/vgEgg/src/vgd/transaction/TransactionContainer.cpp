@@ -12,7 +12,7 @@ namespace transaction {
 		m_tList.clear();
 	}
 
-	void TransactionContainer::push_back(vgd::Shp<Transaction> transaction){
+	void TransactionContainer::add_transaction(vgd::Shp<Transaction> transaction){
 		m_tList.push_back(transaction);
 	}
 
