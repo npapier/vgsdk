@@ -4,4 +4,4 @@ version		= '0-4'
 defines		= [ 'VGD_EXPORTS', 'VGEGL_EXPORTS', 'VGOBJ_EXPORTS' ]
 uses		= [ 'boost', 'openil', 'opengl', 'glu' ]
 libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgeGL 0-4', 'vgm 0-4' ]
-deps		= [ '../../core', '../../engines', '../../dependencies/gle', '../../dependencies/glo' ]
+#deps		= [ '../../core', '../../engines', '../../dependencies/gle', '../../dependencies/glo' ]

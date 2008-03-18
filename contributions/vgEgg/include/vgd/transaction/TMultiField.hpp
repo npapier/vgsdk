@@ -24,8 +24,9 @@ template <typename T> struct TMultiField;
  * Specialization for TMultiField.
  */
 template <typename V> struct TBind<field::TMultiField<V> > {
-	typedef TMultiField<V> TField;
+	typedef TMultiField<V> TRANSACTION;
 };
+
 /**
  * @brief template class for all multi field transaction.
  */

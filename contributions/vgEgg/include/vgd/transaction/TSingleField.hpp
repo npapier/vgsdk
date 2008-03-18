@@ -22,8 +22,11 @@ template <typename T> struct TSingleField;
  * Specialization for TMultiField.
  */
 template <typename V> struct TBind<field::TSingleField<V> > {
-	typedef TSingleField<V> TField;
+	typedef TSingleField<V> TRANSACTION;
 };
+
+template <typename V>	TSingleField<V> bind_with(field::TSingleField<V>*);
+
 
 /**
  * @brief template class for all single field transaction.
