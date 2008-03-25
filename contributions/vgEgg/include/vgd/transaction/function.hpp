@@ -30,9 +30,9 @@ protected:
 	/**
 	 * @brief Creator.
 	 */
-	function0(boost::function<T0 (void)> f){
-		m_f = f;
-	}
+	function0(boost::function<T0 (void)> f)
+	:	m_f( f )
+	{}
 	/**
 	 * @brief The function.
 	 */
@@ -59,10 +59,10 @@ protected:
 	/**
 	 * @brief Creator.
 	 */
-	function1(boost::function<T0 (T1)> f, T1 t1){
-		m_f = f;
-		m_t1 = t1;
-	}
+	function1(boost::function<T0 (T1)> f, T1 t1)
+	:	m_f( f ),
+		m_t1( t1 )
+	{}
 	/**
 	 * @brief The function.
 	 */
@@ -93,11 +93,11 @@ protected:
 	/**
 	 * @brief Creator.
 	 */
-	function2(boost::function<T0 (T1,T2)> f, T1 t1, T2 t2){
-		m_f = f;
-		m_t1 = t1;
-		m_t2 = t2;
-	}
+	function2(boost::function<T0 (T1,T2)> f, T1 t1, T2 t2)
+	:	m_f( f ),
+		m_t1( t1 ),
+		m_t2( t2 )
+	{}
 	/**
 	 * @brief The function.
 	 */
@@ -133,12 +133,12 @@ protected:
 	/**
 	 * @brief Creator.
 	 */
-		function3(boost::function<T0 (T1,T2,T3)> f, T1 t1, T2 t2, T3 t3){
-		m_f = f;
-		m_t1 = t1;
-		m_t2 = t2;
-		m_t3 = t3;
-	}
+	function3(boost::function<T0 (T1,T2,T3)> f, T1 t1, T2 t2, T3 t3)
+	:	m_f( f ),
+		m_t1( t1 ),
+		m_t2( t2 ),
+		m_t3( t3 )
+	{}
 	/**
 	 * @brief The function.
 	 */
