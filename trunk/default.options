@@ -1,5 +1,4 @@
 type		= 'none'
 version		= '0-4'
-deps		= [	'dependencies', 'core', 'algorithms', 'io', 'engines', 'ui', 'contributions' ]
-#deps		= [	'dependencies', 'core', 'algorithms', 'io', 'engines', 'ui', 'images', 'contributions' ]
+deps		= [	'dependencies', 'core', 'algorithms', 'io', 'images', 'engines', 'ui', 'contributions' ]
 ### @todo examples...
