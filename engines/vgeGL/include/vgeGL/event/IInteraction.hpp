@@ -36,9 +36,12 @@ struct VGEGL_API IInteraction : public EventProcessor, public vgd::event::EventV
 	/**
 	 * @name Interface of EventVisitor
 	 * 
-	 * The five following methods done nothing, but must be overriden by class to perform action.
+	 * The eight following methods done nothing, but must be overriden by class to perform action.
 	 */
 	//@{
+	void apply( const vgd::event::AxisEvent				* /*pAxisEvent*/			) {}
+	void apply( const vgd::event::HatEvent				* /*pHatEvent*/				) {}
+	void apply( const vgd::event::JoystickButtonEvent	* /*pJoystickButtonEvent*/	) {}
 	void apply( const vgd::event::KeyboardButtonEvent	* /*pKeyboardButtonEvent*/	) {}
 	void apply( const vgd::event::Location2Event		* /*pLocation2Event*/ 		) {}
 	void apply( const vgd::event::MouseButtonEvent		* /*pMouseButtonEvent*/		) {}
