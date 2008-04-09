@@ -53,6 +53,10 @@ struct TMultiField : public AbstractField {
 	 * @brief apply.
 	 */
 	void apply();
+	/**
+	 * @brief size.
+	 */
+	int size();
 protected:
 	/**
 	 * @brief The vector.
@@ -79,7 +83,9 @@ template <typename T> void TMultiField<T>::apply(){
 	e->swap(m_vectorMF);
 }
 
-
+template <typename T> int TMultiField<T>::size(){
+	return m_vectorMF.size();
+}
 } } // namespace vgd transaction
 
 #endif // _VGD_TRANSACTION_TMULTIFIELD_HPP
