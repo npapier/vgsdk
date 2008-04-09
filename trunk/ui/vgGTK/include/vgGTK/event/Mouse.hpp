@@ -11,6 +11,7 @@
 #include <vgd/event/Location2.hpp>
 #include <vgd/event/Mouse.hpp>
 
+#include <vgGTK/vgGTK.hpp>
 #include "vgGTK/event/SignalHandler.hpp"
 
 
@@ -29,7 +30,7 @@ namespace event
  * In order to generate events for the vgSDK objects,
  * you must connect an Mouse instance as a signal handler to a Gtk::Widget.
  */
-struct Mouse : public ::vgd::event::Mouse, public SignalHandler
+struct VGGTK_API Mouse : public ::vgd::event::Mouse, public SignalHandler
 {
 
 	/**

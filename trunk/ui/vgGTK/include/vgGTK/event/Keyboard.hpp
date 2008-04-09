@@ -24,7 +24,7 @@ namespace event
 /**
  * @brief	Implements a keyboard event device for GTK widgets.
  */
-struct Keyboard : public ::vgd::event::Keyboard, public SignalHandler
+struct VGGTK_API Keyboard : public ::vgd::event::Keyboard, public SignalHandler
 {
 
 	/**
