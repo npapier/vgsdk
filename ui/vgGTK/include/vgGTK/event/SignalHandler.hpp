@@ -8,7 +8,7 @@
 #define _VGGTK_EVENT_SIGNALHANDLER_HPP_
 
 #include <gtkmm/widget.h>
-
+#include <vgGTK/vgGTK.hpp>
 
 
 namespace vgGTK
@@ -23,7 +23,7 @@ namespace event
  * @brief	Provides the abstract implementation for GTK signal handling devices
  * 			with automatic signal callback connection lifetime management.
  */
-struct SignalHandler
+struct VGGTK_API SignalHandler
 {
 
 	/**
