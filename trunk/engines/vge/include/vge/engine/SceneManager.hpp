@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -35,7 +35,7 @@ namespace engine
  * - Compute/update all bounding box in the scene graph.
  * - Write the graphviz graph of the scene graph with writeGraphviz(). This is very useful to show the scene graph
  * 	topology, the name and the type of each node in the scene graph.
- * - paint()/resize() methods for doing rendering from the GUI (vgWX) and the method bench() for doing benchmarks.
+ * - paint()/resize() methods for doing rendering from the GUI (see vgUI and specialization like vgGTK) and the method bench() for doing benchmarks.
  * 
  * @remarks \c Paint service is only available in vgeGL. So paint/resize/bench don't do the whole work.
  * Theses methods are specialized to be completed in vgeGL::engine::SceneManager.
@@ -45,12 +45,12 @@ namespace engine
 struct VGE_API SceneManager
 {
 	/**
-	 * @name Constructors/Destructor.
+	 * @name Constructors/Destructor
 	 */
 	//@{
 	
 	/**
-	 * @brief Constructor.
+	 * @brief Constructor
 	 * 
 	 * @param pEngine		reference on the engine that must be used by the scene manager.
 	 * 
@@ -59,7 +59,7 @@ struct VGE_API SceneManager
 	SceneManager( vgd::Shp< vge::engine::Engine > pEngine );
 	
 	/**
-	 * @brief Destructor.
+	 * @brief Destructor
 	 */
 	virtual ~SceneManager();
 	//@}
@@ -67,7 +67,7 @@ struct VGE_API SceneManager
 
 
 	/**
-	 * @name Accessors to scene graph.
+	 * @name Accessors to scene graph
 	 */
 	//@{
 	
@@ -162,7 +162,7 @@ struct VGE_API SceneManager
 
 
 	/**
-	 * @name Accessors to bounding box computation and to the paint() behavior about bounding box computation.
+	 * @name Accessors to bounding box computation and to the paint() behavior about bounding box computation
 	 * 
 	 * @remark By default the bounding boxes in the scene graph are update before each redraw in the paint() method.
 	 */
@@ -218,7 +218,7 @@ struct VGE_API SceneManager
 
 
 	/**
-	 * @name Rendering methods.
+	 * @name Rendering methods
 	 */
 	//@{
 	
@@ -229,7 +229,7 @@ struct VGE_API SceneManager
 	 * 
 	 * @param frame		number of frame to render.
 	 */
-	virtual void bench( const int32 frame );
+	virtual void bench( const uint frame );
 	
 	/**
 	 * @brief Called to update the bounding box.
@@ -251,7 +251,7 @@ struct VGE_API SceneManager
 
 
 	/**
-	 * @name Accessors to some vgsdk objects.
+	 * @name Accessors to some vgsdk objects
 	 */
 	//@{
 
@@ -279,14 +279,14 @@ struct VGE_API SceneManager
 	/**
 	 * @brief Returns the number of frames that must be render.
 	 */
-	uint32	getNumberOfFrames() const;
+	uint	getNumberOfFrames() const;
 	
 	/**
 	 * @brief Sets the number of frames that must be render.
 	 * 
-	 * Number of frames to render during the next OnPaint(). This value is automatically reseted to 1 inside OnPaint().
+	 * Number of frames to render during the next paint(). This value is automatically reseted to 1 inside paint().
 	 */
-	void	setNumberOfFrames( const uint32 numberOfFrames );
+	void	setNumberOfFrames( const uint numberOfFrames );
 	
 	//@}
 
@@ -295,7 +295,7 @@ struct VGE_API SceneManager
 private:
 
 	/**
-	 * @name Datas.
+	 * @name Datas
 	 */
 	//@{
 	/**
@@ -321,7 +321,7 @@ private:
 	/**
 	 * @brief Number of frames to render during the next OnPaint().
 	 */
-	uint32									m_numberOfFrames;
+	uint									m_numberOfFrames;
 	//@}
 };
 

@@ -41,12 +41,12 @@ struct VGCAIRO_API ImageSurface : public ::vgd::basic::IImage
 	 * @brief Creates an image surface.
 	 *
 	 * @param width		width of the image
-	 * @param height		height of the image
+	 * @param height	height of the image
 	 * 
 	 * @post paletteSize()		== 0
-	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteFormat()	== NO_FORMAT
 	 * @post paletteType()		== NO_TYPE
-	 * @post palettePixels()		== 0
+	 * @post palettePixels()	== 0
 	 * @post paletteEditPixels()	== 0
 	 * 
 	 * @post voxelSize() == vgm::Vec3f(1.f, 1.f, 1.f)
@@ -59,9 +59,9 @@ struct VGCAIRO_API ImageSurface : public ::vgd::basic::IImage
 	 * @param filename	name of PNG to load
 	 * 
 	 * @post paletteSize()		== 0
-	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteFormat()	== NO_FORMAT
 	 * @post paletteType()		== NO_TYPE
-	 * @post palettePixels()		== 0
+	 * @post palettePixels()	== 0
 	 * @post paletteEditPixels()	== 0
 	 * 
 	 * @post voxelSize() == vgm::Vec3f(1.f, 1.f, 1.f)

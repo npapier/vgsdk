@@ -9,7 +9,7 @@
 /** 
  * @namespace vgWX
  * 
- * @brief (V)irtuals (G)raphical bindings for (wx)Widgets.
+ * @brief (V)ersatile (G)raphical bindings for (wx)Widgets.
  *
  * \b vgWX is open source (LGPL).
  */
@@ -17,7 +17,7 @@
 /**
  * @defgroup g_vgWXGroup vgWX
  * 
- * @brief (V)irtuals (G)raphical bindings for (wx)Widgets.
+ * @brief (V)ersatile (G)raphical bindings for (wx)Widgets.
  *
  * \b vgWX is open source (LGPL).
  * 

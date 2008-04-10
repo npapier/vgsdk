@@ -9,7 +9,7 @@
 /** 
  * @namespace vgCairo
  * 
- * @brief Versatile Graphical Cairo
+ * @brief (V)ersatile (G)raphical Cairo
  *
  * vgCairo contains an implementation of IImage abstract class using the cairo library (a powerful 2d graphics library).
  * 

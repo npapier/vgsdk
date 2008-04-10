@@ -9,7 +9,7 @@
 /** 
  * @namespace vgm
  * 
- * @brief Virtuals Graphical Mathematics
+ * @brief (V)ersatile (G)raphical (M)athematics
  *
  * Vgm is a collection of classes for doing basic linear algebra(matrix, vector and rotation...) and geometry
  * (line, box, plane...).
@@ -71,7 +71,7 @@
 
 #ifndef M_PI
 #define M_PI       3.1415926535897931160E0
-#define M_PI_2     1.5707963267948965580E0  
+#define M_PI_2     1.5707963267948965580E0
 #endif
 
 

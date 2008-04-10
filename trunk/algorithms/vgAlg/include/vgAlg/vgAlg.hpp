@@ -9,7 +9,7 @@
 /** 
  * @namespace vgAlg
  * 
- * @brief Virtuals Graphical Algorithms
+ * @brief (V)ersatile (G)raphical (Alg)orithms
  *
  * vgAlg is a collection of algorithms that could be applied on some vgd object.
  * 

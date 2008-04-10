@@ -9,12 +9,12 @@
 /** 
  * @namespace vgITK
  * 
- * @brief Virtuals Graphical ITK
+ * @brief (V)ersatile (G)raphical ITK
  *
  * vgITK is a collection of functions to :
  * - create an itk image from a vgsdk image (see vgd::basic::IImage). The buffer is shared and owned by vgsdk.
  * - create vgsdk image using an itk reader.
- * - save vgsdk image using an itk writer.
+ * @todo save vgsdk image using an itk writer.
  * 
  * \b vgITK is open source (LGPL).
  *
