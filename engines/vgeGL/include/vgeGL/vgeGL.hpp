@@ -9,7 +9,7 @@
 /** 
  * @namespace vgeGL
  * 
- * @brief Virtuals Graphical Evaluation with OpenGL
+ * @brief (V)ersatile (G)raphical (E)valuation with Open(GL)
  * 
  * \b vgeGL is open source (LGPL).
  */

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -162,7 +162,7 @@ void SceneManager::writeGraphviz( bool bGeneratePNG, std::ofstream *pofstream )
 
 
 
-void SceneManager::bench( const int32 frame )
+void SceneManager::bench( const uint frame )
 {
 	m_numberOfFrames = frame;
 }
@@ -217,14 +217,14 @@ void SceneManager::updateNodeCollector()
 
 
 
-uint32 SceneManager::getNumberOfFrames() const
+uint SceneManager::getNumberOfFrames() const
 {
 	return m_numberOfFrames;
 }
 
 
 
-void SceneManager::setNumberOfFrames( const uint32 numberOfFrames )
+void SceneManager::setNumberOfFrames( const uint numberOfFrames )
 {
 	m_numberOfFrames = numberOfFrames;
 }

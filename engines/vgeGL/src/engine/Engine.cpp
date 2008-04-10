@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -107,9 +107,9 @@ void Engine::setToDefaults()
 	}
 	
 	//
-	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_LIGHTS				= %i", getMaxLights() );
-	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_TEXTURE_UNITS			= %i", getMaxTexUnits() );
-	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_TEXTURE_SIZE			= %i", getMaxTexSize() );
+	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_LIGHTS			= %i", getMaxLights() );
+	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
+	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
 	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
 	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
 }

@@ -7,7 +7,7 @@
 #define _VGD_VGD_HPP
 
 /**
- * @defgroup g_vgd vgd (Versatile Graphical Data)
+ * @defgroup g_vgd vgd (V)ersatile (G)raphical (D)ata
  * 
  * vgd, a shortcut for Versatile Graphical Data, is a collection of classes for describing 3d world.
  *
@@ -145,7 +145,7 @@
 /** 
  * @namespace vgd
  * 
- * @brief Versatile Graphical Data
+ * @brief (V)ersatile (G)raphical (D)ata
  */
 
 #include <vgBase/Type.hpp>

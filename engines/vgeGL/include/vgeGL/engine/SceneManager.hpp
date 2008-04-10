@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,6 @@
 #define _VGEGL_ENGINE_SCENEMANAGER_HPP
 
 #include <vgd/event/Listener.hpp>
-#include <vgd/node/LayerPlan.hpp>
 #include <vge/engine/SceneManager.hpp>
 
 #include "vgeGL/event/IEventProcessor.hpp"
@@ -30,14 +29,13 @@ namespace engine
  * 
  * - To do your own setup (see initialize()).
  * - Specialized paint and resize rendering methods to link the rendering with the scene graph. 
- * 	- The first one, named \c paint is called by the vgWX::Canvas::OnPaint(), render the scene graph from the root 
+ * 	- The first one, named \c paint is called by gtkmm inside method on_expose_event()  or by wxWidgets inside method OnPaint(), render the scene graph from the root 
  * 		node and optionnally update all bounding box in the scene graph. 
- * 	- The second method, named \c resize is called by the vgWX::Canvas::OnSize(), should at least configure the 
+ * 	- The second method, named \c resize is called by gtkmm inside method on_configure_event() or by wxWidgets inside method OnSize(), should at least configure the 
  * 		camera node. By default nothing is done in it, because there is no vgd::node::Camera in the scene graph.
  * 		But if you derived this class and add a Camera node, you should write this piece of code.
  * - Event handling (listen and process events with event processors).
  * - Casts ray under the mouse cursor.
- * - Layer planes (overlay).
  */
 struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::Listener
 {
@@ -68,7 +66,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * For example, you can construct your scene graph.
 	 * 
 	 * @remarks This method is called automatically before the first rendering was done by paint()/resize(). All 
-	 * components needed for vgsdk are already initialized (components are OpenGL, gle and vge* modules...).
+	 * components needed for vgsdk are already initialized (components are OpenGL, glc/gle and vge* modules...).
 	 */
 	virtual void initialize();
 
@@ -444,11 +442,6 @@ protected:
 	 * @brief Event processor container.
 	 */
 	EventProcessorContainer	m_eventProcessors;
-
-	/**
-	 * @brief Current layer plane
-	 */
-	vgd::Shp< vgd::node::LayerPlan > m_layerPlan;
 
 	//@}
 };

@@ -9,7 +9,7 @@
 /** 
  * @namespace vge
  * 
- * @brief Virtuals Graphical Evaluation
+ * @brief (V)ersatile (G)raphical (E)valuation
  * 
  * \b vge is open source (LGPL).
  */

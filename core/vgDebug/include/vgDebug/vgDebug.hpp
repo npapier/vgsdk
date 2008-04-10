@@ -40,9 +40,9 @@
 /** 
  * @namespace vgDebug
  * 
- * @brief Virtuals Graphical Debug
+ * @brief (V)ersatile (G)raphical Debug
  * 
- * \b vge is open source (LGPL).
+ * \b vgDebug is open source (LGPL).
  */
 
 #endif //#ifndef _VGDEBUG_HPP
