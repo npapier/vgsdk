@@ -24,7 +24,7 @@ namespace vgUI
  *
  * - Use the vgeGL::engine::SceneManager to link GUI and the scene graph.
  * - Initialize OpenGL and its extensions (with gle) to being used by vgsdk.
- * - Report OpenGL errors before and after rendering (OnPaint/paint, OnSize/resize, initialize()).
+ * - Report OpenGL errors before and after rendering (paint and resize methods).
  *
  * @ingroup g_vgUIGroup
  */
@@ -66,7 +66,7 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	/**
 	 * @brief	Construct a Canvas with its own OpenGL context.
 	 *
-	 * @pre		getCanvasCount() == 0
+	 * @pre	getCanvasCount() == 0
 	 * @post	getCanvasCount() == 1
 	 */
 	Canvas();
@@ -155,6 +155,16 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	 */
 	const uint32 getCanvasCount() const;
 
+	/**
+	 * @brief Tests if OpenGL objects are shared with another(s) Canvas.
+	 *
+	 * @return true if OpenGL objects are shared, false otherwise.
+	 *
+	 * @remarks See constructors for sharing OpenGL objects.
+	 */
+	const bool isOpenGLObjectsShared() const;
+
+
 
 	/**
 	 * @name Refresh management
@@ -207,15 +217,32 @@ protected:
 	 */
 	virtual void sendRefresh() = 0;
 
+
 	/**
-	 * @brief Activate the OpenGL rendering context and initialize vgsdk (gle and vgeGL) if needed.
+	 * @brief Calls this method to creates the OpenGL context (if needed) and makes it current.
 	 *
-	 * @return true if vgsdk and OpenGL are enabled, false otherwise.
+	 * This method must return true if the OpenGL context is current or have been made current, false otherwise.
+	 */
+	virtual const bool startOpenGLContext() = 0;
+
+	/**
+	 * @brief Calls this method to delete the OpenGL context.
+	 */
+	virtual const bool shutdownOpenGLContext() = 0;
+
+
+	/**
+	 * @brief Calls this method before using vgsdk.
 	 *
-	 * @remarks OpenGL context must be already initialized.
+	 * @return true if vgsdk could be used. OpenGL, glc, gle, vge, vgeGL are ready to be used, false otherwise.
 	 */
 	const bool startVGSDK();
 
+	/**
+	 * @brief Calls this method when you no longer need vgsdk.
+	 *
+	 * @return true if vgsdk shutdown has been completed successfuly, false otherwise.
+	 */
 	const bool shutdownVGSDK();
 
 
@@ -240,11 +267,9 @@ private:
 	 */
 	static std::ostream* getGleOutputStream();
 
-
-	bool	m_bLocalInitializedVGSDK;	///< Boolean value set if initializeVGSDK() has already been called for this instance of Canvas.
-	bool	m_debugEvents;				///< Boolean value telling if events should be debugged or not.
-
-
+	const Canvas *	m_sharedCanvas;				///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
+	bool			m_bLocalInitializedVGSDK;	///< Boolean value set if initializeVGSDK() has already been called for this instance of Canvas.
+	bool			m_debugEvents;				///< Boolean value telling if events should be debugged or not.
 };
 
 

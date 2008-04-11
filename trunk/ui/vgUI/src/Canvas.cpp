@@ -47,6 +47,7 @@ Canvas::Canvas()
 	// m_gleLogSystem
 	// m_gleLogFile
 	m_gleContext				( getGleOutputStream()	),
+	m_sharedCanvas				( 0						),
 	m_bLocalInitializedVGSDK	( false					),
 	m_debugEvents				( false					)
 {
@@ -61,6 +62,7 @@ Canvas::Canvas(	const Canvas *sharedCanvas )
 	// m_gleLogSystem
 	// m_gleLogFile
 	m_gleContext				( getGleOutputStream()	),
+	m_sharedCanvas				( sharedCanvas			),
 	m_bLocalInitializedVGSDK	( false					),
 	m_debugEvents				( false					)
 {
@@ -191,6 +193,13 @@ const uint32 Canvas::getCanvasCount() const
 
 
 
+const bool Canvas::isOpenGLObjectsShared() const
+{
+	return m_sharedCanvas != 0;
+}
+
+
+
 void Canvas::refresh( const RefreshType type, const WaitType wait )
 {
 	if ( type == REFRESH_IF_NEEDED )
@@ -213,7 +222,6 @@ void Canvas::refresh( const RefreshType type, const WaitType wait )
 			else
 			{
 				doRefresh();
-				//paint( v2iSize, getBoundingBoxUpdate() );
 			}
 		}
 		// else refresh not needed
@@ -227,7 +235,6 @@ void Canvas::refresh( const RefreshType type, const WaitType wait )
 		else
 		{
 			doRefresh();
-			//paint( v2iSize, getBoundingBoxUpdate() );					// @todo don't work anytime (see OnPaint()).
 		}
 	}
 }
@@ -255,16 +262,19 @@ void Canvas::doInitialize()
 
 const bool Canvas::startVGSDK()
 {
+	if ( startOpenGLContext() == false )
+	{
+		// No current OpenGL context
+		vgDebug::get().logWarning("No current OpenGL context.");
+		vgDebug::get().logMessage("vgSDK startup aborted...\n");
+		return false;
+	}
+
 	assert( isCurrent() && "OpenGL context must have been set current." );
 
 	if ( !m_bLocalInitializedVGSDK )
 	{
-		// Initializes gle and sets it current
-		m_gleContext.clear();
-
-		m_gleContext.initialize();
-
-		gleSetCurrent( &m_gleContext );
+		vgDebug::get().logMessage("Start vgSDK...");
 
 		// Initializes vgeGL
 		getGLEngine()->reset();
@@ -279,24 +289,26 @@ const bool Canvas::startVGSDK()
 		//m_engine->evaluateTopStateWithoutTrace( paint, false /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
 
 		//
-		std::cout << "vgSDK startup completed.\n";
 		m_bLocalInitializedVGSDK = true;
 
 		// Checks OpenGL requirements for vgsdk
 		if ( m_gleContext.isGL_VERSION_1_5 == false )
 		{
-//			vgDebug::get().logDebug("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
+			vgDebug::get().logWarning("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
 //			vgDebug::get().logError("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
-
-			std::cout << "You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.\n";
 		}
 		else if ( m_gleContext.isGL_VERSION_2_0 == false )
 		{
-//			vgDebug::get().logDebug("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
+			vgDebug::get().logWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
 //			vgDebug::get().logWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
-
-			std::cout << "You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.\n";
 		}
+		else
+		{
+			assert( m_gleContext.isGL_VERSION_2_0 );
+			vgDebug::get().logMessage("You have the full requirements for vgsdk.");
+		}
+
+		vgDebug::get().logDebug("vgSDK startup completed.\n");
 	}
 
 	return true;
@@ -306,6 +318,24 @@ const bool Canvas::startVGSDK()
 
 const bool Canvas::shutdownVGSDK()
 {
+	vgDebug::get().logDebug("Shutdown vgSDK...");
+
+	if ( m_bLocalInitializedVGSDK == false )
+	{
+		vgDebug::get().logDebug/*logWarning*/("Method shutdownVGSDK() called before startVGSDK() !!!");
+		vgDebug::get().logDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+
+		return false;
+	}
+
+	if ( startOpenGLContext() == false )
+	{
+		// No current OpenGL context
+		vgDebug::get().logDebug/*logWarning*/("No current OpenGL context.");
+		vgDebug::get().logDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+		return false;
+	}
+
 	// Last canvas is about to be destroy
 	if ( m_canvasCount == 1 )
 	{
@@ -315,12 +345,16 @@ const bool Canvas::shutdownVGSDK()
 		getGLEngine()->getGLManager().clear();
 		//getGLEngine()->getGLSLManager().clear();
 
-		std::cout << "vgSDK shutdown completed.\n";
+		//
+		shutdownOpenGLContext();
+
+		vgDebug::get().logDebug("vgSDK shutdown completed.\n");
 		return true;
 	}
 	else
 	{
 		// Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
+		vgDebug::get().logDebug("vgSDK shutdown completed (delayed to the last canvas).\n");
 		return false;
 	}
 }
@@ -357,7 +391,7 @@ std::ostream* Canvas::getGleOutputStream()
 	}
 	else
 	{
-		assert( false && "vgWX::Canvas: Unsupported gle log system." );
+		assert( false && "vgUI::Canvas: Unsupported gle log system." );
 		return &std::cout;
 	}
 }
