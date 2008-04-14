@@ -1,5 +1,5 @@
-#ifndef _VGD_TRANSACTION_GROUP_HPP
-#define _VGD_TRANSACTION_GROUP_HPP
+#ifndef _VGD_TRANSACTION_NODE_GROUP_HPP
+#define _VGD_TRANSACTION_NODE_GROUP_HPP
 
 #include <vgd/vgd.hpp>
 #include <vgd/transaction/TransactionContainer.hpp>
@@ -22,21 +22,8 @@ namespace vgd
 {
 namespace transaction
 {
-
-	template <typename T> struct TBind;
-	struct Group;
-
-
-/**
- * @brief Class for the correspondancy between
- * transactional and non-transactional node.
- *
- * Specialization for TMultiField.
- */
-
-template <> struct TBind<node::Group> {
-	typedef Group TRANSACTION;
-};
+namespace node
+{
 
 
 /**
@@ -89,7 +76,7 @@ protected:
 };
 
 
-} } // namespace vgd transaction
+} } } // namespace vgd transaction node
 
 
-#endif // _VGD_TRANSACTION_GROUP_HPP
+#endif // _VGD_TRANSACTION_NODE_GROUP_HPP
