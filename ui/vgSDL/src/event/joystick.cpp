@@ -70,8 +70,11 @@ vgd::Shp< Joystick > Joystick::get( const int index )
 
 	if( ! result )
 	{
-		result.reset( new Joystick(index) );
-		m_joyCache[ index ] = result;
+		result = create(index);
+		if(result)
+		{
+			m_joyCache[ index ] = result;
+		}
 	}
 	return result;
 }
@@ -158,14 +161,28 @@ void Joystick::handleEvent( const SDL_JoyHatEvent & event )
 
 
 
-Joystick::Joystick( const int index )
-:	m_joystick( 0 )
+vgd::Shp<Joystick> Joystick::create( const int index )
 {
 	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
 
 	// Opens the joytsick.
-	m_joystick = SDL_JoystickOpen( index );
-	assert( m_joystick != 0 && "SDL joystick opening faled !" );
+	SDL_Joystick* joystick = SDL_JoystickOpen( index );
+	if(joystick != 0)
+	{
+		return vgd::makeShp(new Joystick(joystick));
+	}
+	else
+	{
+		return vgd::Shp<Joystick>();
+	}
+	//assert( m_joystick != 0 && "SDL joystick opening faled !" );
+}
+
+
+Joystick::Joystick( SDL_Joystick* joystick )
+:	m_joystick( joystick )
+{
+	assert(joystick!=0 && "Invalid joystick");
 }
 
 

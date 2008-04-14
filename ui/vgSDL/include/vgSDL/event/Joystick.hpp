@@ -187,6 +187,18 @@ struct VGSDL_API Joystick : public ::vgd::event::Joystick
 private:
 
 	/**
+	 * @brief	Factory
+	 *
+	 * This factory is reserved for private use since there can be only
+	 * joystick instance per identifier (thanks to the SDL architecture).
+	 * 
+	 * @return null if creation fail (due to the absence of joystick)
+	 * 
+	 * @param	index	the index of an attached joystick
+	 */
+	static vgd::Shp<Joystick > create( const int index );
+
+	/**
 	 * @brief	Constructor
 	 *
 	 * This constructor is reserved for private use since there can be only
@@ -194,7 +206,7 @@ private:
 	 *
 	 * @param	index	the index of an attached joystick
 	 */
-	Joystick( const int index );
+	Joystick( SDL_Joystick* joystick );
 
 
 	typedef std::vector< vgd::WeakPtr< Joystick >  >	JoyCollection;
