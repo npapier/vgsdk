@@ -10,7 +10,7 @@
 /**
  * @namespace vgGTK
  *
- * @brief	GTK-based specialization of vgUI.
+ * @brief	GTK-based specialization of vgUI and user interface building blocks.
  */
 
 #include <vgBase/Type.hpp>
