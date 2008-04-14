@@ -12,56 +12,75 @@
 #include <gtkmm/container.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/menuitem.h>
+#include <gtkmm/paned.h>
+#include <gtkmm/treeview.h>
 
 #include <vgDebug/Global.hpp>
 #include <vgGTK/Logging.hpp>
+#include <vgGTK/graph/Browser.hpp>
 
 #include "vgsdkViewerGtk/actions.hpp"
 #include "vgsdkViewerGtk/myCanvas.hpp"
 
 
 
-void fill( Gtk::Window * topLevel, Gtk::MenuBar & menuBar, vgsdkViewerGtk::myCanvas * canvas )
+Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLevel, vgsdkViewerGtk::myCanvas * canvas )
 {
-	using Gtk::AccelKey;
-	using Gtk::Menu;
-	using Gtk::Menu_Helpers::MenuElem;
-	using Gtk::Menu_Helpers::MenuList;
-	using Gtk::Menu_Helpers::SeparatorElem;
+	Glib::RefPtr< Gtk::ActionGroup >	actions = Gtk::ActionGroup::create();
 
-	// File menu creation.
-	Menu		* fileMenu = Gtk::manage( new Gtk::Menu() );
-	MenuList	& fileList = fileMenu->items();
+	actions->add( Gtk::Action::create("File", "_File")																														);
+	actions->add( Gtk::Action::create("New", Gtk::Stock::NEW),								sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileNew), topLevel, canvas)			);
+	actions->add( Gtk::Action::create("Open", Gtk::Stock::OPEN),							sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, true)	);
+	actions->add( Gtk::Action::create("Add", Gtk::Stock::ADD),								sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, false)	);
+	actions->add( Gtk::Action::create("Reload",	"Reload"),			Gtk::AccelKey("F5"),	sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileReload), canvas)					);
+	actions->add( Gtk::Action::create("ExportGraphviz", "Export Graphviz"),					sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileExportGraphviz), canvas)			);
+	actions->add( Gtk::Action::create("Quit", Gtk::Stock::QUIT),							sigc::ptr_fun(&vgsdkViewerGtk::fileExit)										);
 
-	fileList.push_back( MenuElem("_New...",  AccelKey("<control>N"), sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileNew), topLevel, canvas) ) );
-	fileList.push_back( MenuElem("_Open...", AccelKey("<control>O"), sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, true) ) );
-	fileList.push_back( MenuElem("_Add...",  AccelKey("<control>A"), sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, false) ) );
-	fileList.push_back( MenuElem("_Reload",  AccelKey("F5"),         sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileReload), canvas) ) );
-	fileList.push_back( SeparatorElem() );
-	fileList.push_back( MenuElem("E_xit...", AccelKey("<alt>X"),     sigc::ptr_fun(&vgsdkViewerGtk::fileExit) ) );
+	actions->add( Gtk::Action::create("View", "_View")																														);
+	actions->add( Gtk::Action::create("ViewAll", Gtk::Stock::ZOOM_FIT, "View _All"),		sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::viewAll), canvas)						);
 
+	actions->add( Gtk::Action::create("Help", "_Help")																														);
+	actions->add( Gtk::Action::create("About", Gtk::Stock::ABOUT),							sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::helpAbout), topLevel)					);
 
-	// View menu creation.
-	Menu		* viewMenu = Gtk::manage( new Gtk::Menu() );
-	MenuList	& viewList = viewMenu->items();
-
-	viewList.push_back( MenuElem("View _All", sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::viewAll), canvas)) );
-
-
-	// Help menu creation
-	Menu		* helpMenu = Gtk::manage( new Gtk::Menu() );
-	MenuList	& helpList = helpMenu->items();
-
-	helpList.push_back( MenuElem("About...", sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::helpAbout), topLevel)) );
-
-
-	// Fills the menu bar.
-	MenuList	& menuBarList = menuBar.items();
-
-	menuBarList.push_back( MenuElem("_File", *fileMenu) );
-	menuBarList.push_back( MenuElem("_View", *viewMenu) );
-	menuBarList.push_back( MenuElem("_Help", *helpMenu) );
+	return actions;
 }
+
+const Glib::ustring & createDefaultUI()
+{
+	static Glib::ustring	ui =
+		"<ui>"
+		"  <menubar name='DefaultMenuBar'>"
+		"    <menu action='File'>"
+		"      <menuitem action='New'/>"
+		"      <menuitem action='Open'/>"
+		"      <menuitem action='Add'/>"
+		"      <menuitem action='Reload'/>"
+		"      <separator/>"
+		"      <menuitem action='ExportGraphviz'/>"
+		"      <separator/>"
+		"      <menuitem action='Quit'/>"
+		"    </menu>"
+		"    <menu action='View'>"
+		"      <menuitem action='ViewAll'/>"
+		"    </menu>"
+		"    <menu action='Help'>"
+		"      <menuitem action='About'/>"
+		"    </menu>"
+		"  </menubar>"
+		"  <toolbar name='DefaultToolBar'>"
+		"    <toolitem action='New'/>"
+		"    <toolitem action='Open'/>"
+		"    <toolitem action='Add'/>"
+		"    <separator/>"
+		"    <toolitem action='ViewAll'/>"
+		"    <separator/>"
+		"    <toolitem action='About'/>"
+		"  </toolbar>"
+		"</ui>";
+
+	return ui;
+}
+
 
 
 int main( int argc, char ** argv )
@@ -75,25 +94,41 @@ int main( int argc, char ** argv )
 	// Set the human readable name of the application.
 	Glib::set_application_name("vgsdkViewerGtk");
 
-	std::cout << Glib::get_application_name() << std::endl;
-	std::cout << Glib::get_prgname() << std::endl;
 
 	// Creates the main mainWindow content.
 	Gtk::Window						window;
 	Gtk::VBox						vbox;
-	Gtk::MenuBar					menuBar;
+	Gtk::HPaned						hpaned;
+	vgGTK::graph::Browser			graphBrowser;
 	vgsdkViewerGtk::myCanvas		canvas;
 	Gtk::Statusbar					statusBar;
 
-	fill( &window, menuBar, &canvas );
 
+	// Creates the UI manager.
+	Glib::RefPtr<Gtk::UIManager>	uiManager = Gtk::UIManager::create();
+
+	uiManager->insert_action_group( createDefaultActionGroup(&window, &canvas) );
+	uiManager->add_ui_from_string( createDefaultUI() );
+
+
+	// Configures the main window.
 	window.set_title("vgsdkViewer GTK");
 	window.set_reallocate_redraws( true );
+
+
+	// Creates the main window content.
 	window.add( vbox );
-	vbox.pack_start( menuBar, false, true );
-	vbox.add( canvas );
+	vbox.pack_start( *uiManager->get_widget("/DefaultMenuBar"), false, true );
+	vbox.pack_start( *uiManager->get_widget("/DefaultToolBar"), false, true );
+	hpaned.pack1( graphBrowser, false, true );
+	hpaned.pack2( canvas, true, true );
+	vbox.add( hpaned );
 	vbox.pack_end( statusBar, false, true );
 	window.show_all();
+
+
+	// Gives the canvas' root node to the graph browser.
+	graphBrowser.setRoot( canvas.getRoot() );
 
 
 	// Activates drag and drop on the main window.
@@ -105,6 +140,7 @@ int main( int argc, char ** argv )
 
 	window.drag_dest_set( targetEntries, Gtk::DEST_DEFAULT_DROP );
 	window.signal_drag_data_received().connect( sigc::bind<0>(sigc::ptr_fun(&vgsdkViewerGtk::dragDataReceived), &canvas) );
+
 
 	// Installs our status bar log handler.
 	g_log_set_handler(

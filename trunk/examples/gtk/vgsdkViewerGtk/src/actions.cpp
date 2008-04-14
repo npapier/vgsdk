@@ -55,6 +55,14 @@ void fileNew( Gtk::Window * topLevel, myCanvas * canvas )
 }
 
 
+
+void fileExportGraphviz( myCanvas * canvas )
+{
+	canvas->writeGraphviz();
+}
+
+
+
 void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene )
 {
 	Gtk::FileChooserDialog	chooser( *topLevel, "Choose file(s)", Gtk::FILE_CHOOSER_ACTION_OPEN );
