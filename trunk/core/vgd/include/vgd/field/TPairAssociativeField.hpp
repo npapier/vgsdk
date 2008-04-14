@@ -210,6 +210,13 @@ struct TPairAssociativeField : public AbstractField
 		assert( checkRW() );
 		assert( other.checkRW() );
 		
+		m_map.swap( other.m_map );
+	}
+
+
+	void  swap   ( std::map< KeyType, DataType >& other )
+	{
+		assert( checkRW() );
 		m_map.swap( other );
 	}
 	//@}
