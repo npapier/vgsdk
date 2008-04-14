@@ -401,7 +401,7 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRW() );
 
-		assert( index==0 || isIndexValid( index-1 ) );
+		assert( isIndexValid(index) || index == size() );
 
 		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
 
@@ -432,7 +432,7 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRW() );
 
-		assert( index == 0 || isIndexValid( index -1 ) );
+		assert( isIndexValid(index) || index == size() );
 
 		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
 
@@ -468,7 +468,7 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRW() );
 
-		assert( index == 0 || isIndexValid( index ) );
+		assert( isIndexValid(index) || index == size() );
 
 		typename std::vector<T>::iterator iter = m_vectorMF.begin() + index;
 
