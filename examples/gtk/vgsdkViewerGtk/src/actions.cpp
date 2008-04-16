@@ -68,28 +68,32 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 	Gtk::FileChooserDialog	chooser( *topLevel, "Choose file(s)", Gtk::FILE_CHOOSER_ACTION_OPEN );
 	Gtk::FileFilter			allFilter;
 	Gtk::FileFilter			trianFilter;
-	Gtk::FileFilter			colladaFilter;
+// Not supported yet !
+//	Gtk::FileFilter			colladaFilter;
 	Gtk::FileFilter			objFilter;
 
 	allFilter.set_name( "All supported files" );
 	allFilter.add_pattern( "*.trian" );
 	allFilter.add_pattern( "*.trian2" );
-	allFilter.add_pattern( "*.DAE" );
+// Not supported yet !
+//	allFilter.add_pattern( "*.DAE" );
 	allFilter.add_pattern( "*.obj" );
 
 	trianFilter.set_name( "Trian files (*.trian, *.trian2)" );
 	trianFilter.add_pattern( "*.trian" );
 	trianFilter.add_pattern( "*.trian2" );
 
-	colladaFilter.set_name( "All collada files (*.DAE)" );
-	colladaFilter.add_pattern( "*.DAE" );
+// Not supported yet !
+//	colladaFilter.set_name( "All collada files (*.DAE)" );
+//	colladaFilter.add_pattern( "*.DAE" );
 
 	objFilter.set_name( "Wavefront objects (*.obj)" );
 	objFilter.add_pattern( "*.obj" );
 
 	chooser.add_filter( allFilter );
 	chooser.add_filter( trianFilter );
-	chooser.add_filter( colladaFilter );
+// Not supported yet !
+//	chooser.add_filter( colladaFilter );
 	chooser.add_filter( objFilter );
 	chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
 	chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
@@ -104,8 +108,24 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 			canvas->clearScene();
 		}
 
+
 		// Submits the choosen files to the canvas and refresh the whole thing.
-		canvas->appendToScene( chooser.get_filenames() );
+		const std::vector< Glib::ustring >	filenames = chooser.get_filenames();
+
+		for( std::vector< Glib::ustring >::const_iterator i = filenames.begin(); i != filenames.end(); ++i )
+		{
+			const Glib::ustring	filename = *i;
+			bool				success = false;
+
+			// Appends the model contained in the current file to the canvas' scene.
+			success = canvas->appendToScene( filename );
+
+			// On success, adds the current file to the recent history.
+			Gtk::RecentManager::get_default()->add_item( filename );
+		}
+
+
+		// Refreshes the canvas content.
 		canvas->refresh();
 	}
 }
@@ -115,6 +135,29 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 void fileReload( myCanvas * canvas )
 {
 	canvas->reloadScene();
+}
+
+
+
+void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas )
+{
+	bool				success = false;
+	const Glib::ustring	recentFile = recentChooser->get_current_uri();
+
+	// Removes any content of the scene and loads the given recent file.
+	canvas->clearScene();
+	success = canvas->appendToScene( recentFile );
+	canvas->refresh();
+
+	// According to the sucess, appends or removes the file from the default recent manager.
+	if( success )
+	{
+		Gtk::RecentManager::get_default()->add_item( recentFile );
+	}
+	else
+	{
+		Gtk::RecentManager::get_default()->remove_item( recentFile );
+	}
 }
 
 
@@ -136,7 +179,7 @@ void helpAbout( Gtk::Window * topLevel )
 
 	aboutDialog.set_transient_for( *topLevel );
 	aboutDialog.set_authors( authors );
-	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load and manipulate trian and trian2 meshes." );
+	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load meshes (obj, trian, trian2), manipulate them and browse the rendering scene graph." );
 	aboutDialog.set_copyright( "Copyright (C) 2008, Guillaume Brocker, Nicolas Papier and Digital trainers SAS." );
 	aboutDialog.set_license( "Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation." );
 	aboutDialog.set_website("http://home.gna.org/vgsdk");

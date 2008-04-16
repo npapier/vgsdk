@@ -10,6 +10,7 @@
 
 
 #include <gtkmm/window.h>
+#include <gtkmm/recentchooser.h>
 
 
 
@@ -60,6 +61,14 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
  * @param	canvas	a pointer to the a canvas to update
  */
 void fileReload( myCanvas * canvas );
+
+/**
+ * @brief	Implements an action that will load a file from the recent chooser menu.
+ *
+ * @param	recentChooser	a pointer to the recent chooser that triggered the action
+ * @param	canvas			a pointer to the canvas whose content is to update
+ */
+void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas );
 
 /**
  * @brief	Implements an action that will recenter the camera on the objects visible in the scene.
