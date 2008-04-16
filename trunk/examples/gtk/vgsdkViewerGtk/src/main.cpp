@@ -112,7 +112,7 @@ int main( int argc, char ** argv )
 
 
 	// Configures the main window.
-	window.set_title("vgsdkViewer GTK");
+	window.set_title("vgsdkViewer");
 	window.set_reallocate_redraws( true );
 
 
