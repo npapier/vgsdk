@@ -13,6 +13,8 @@
 #include <gtkmm/menu.h>
 #include <gtkmm/menuitem.h>
 #include <gtkmm/paned.h>
+#include <gtkmm/recentchoosermenu.h>
+#include <gtkmm/recentmanager.h>
 #include <gtkmm/treeview.h>
 
 #include <vgDebug/Global.hpp>
@@ -24,6 +26,17 @@
 
 
 
+
+bool myRecentFilter( const Gtk::RecentFilter::Info& filter_info )
+{
+	const Glib::ustring							applicationName	= Glib::get_application_name();
+	std::list< Glib::ustring >::const_iterator	found			= std::find( filter_info.applications.begin(), filter_info.applications.end(), applicationName );
+
+	return found != filter_info.applications.end();
+}
+
+
+
 Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLevel, vgsdkViewerGtk::myCanvas * canvas )
 {
 	Glib::RefPtr< Gtk::ActionGroup >	actions = Gtk::ActionGroup::create();
@@ -32,6 +45,7 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 	actions->add( Gtk::Action::create("New", Gtk::Stock::NEW),								sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileNew), topLevel, canvas)			);
 	actions->add( Gtk::Action::create("Open", Gtk::Stock::OPEN),							sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, true)	);
 	actions->add( Gtk::Action::create("Add", Gtk::Stock::ADD),								sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, false)	);
+	actions->add( Gtk::Action::create("Recent", "Recent Files")																												);
 	actions->add( Gtk::Action::create("Reload",	"Reload"),			Gtk::AccelKey("F5"),	sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileReload), canvas)					);
 	actions->add( Gtk::Action::create("ExportGraphviz", "Export Graphviz"),					sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileExportGraphviz), canvas)			);
 	actions->add( Gtk::Action::create("Quit", Gtk::Stock::QUIT),							sigc::ptr_fun(&vgsdkViewerGtk::fileExit)										);
@@ -54,6 +68,7 @@ const Glib::ustring & createDefaultUI()
 		"      <menuitem action='New'/>"
 		"      <menuitem action='Open'/>"
 		"      <menuitem action='Add'/>"
+		"      <menu action='Recent'/>"
 		"      <menuitem action='Reload'/>"
 		"      <separator/>"
 		"      <menuitem action='ExportGraphviz'/>"
@@ -92,7 +107,7 @@ int main( int argc, char ** argv )
 	vgDebug::set< vgGTK::Logging >();
 
 	// Set the human readable name of the application.
-	Glib::set_application_name("vgsdkViewerGtk");
+	Glib::set_application_name("vgsdkViewer");
 
 
 	// Creates the main mainWindow content.
@@ -109,6 +124,24 @@ int main( int argc, char ** argv )
 
 	uiManager->insert_action_group( createDefaultActionGroup(&window, &canvas) );
 	uiManager->add_ui_from_string( createDefaultUI() );
+
+
+	// Creates and appends the recent files sub-menu. The rencent items will be filtered
+	// to show only items added by this application. Also connect a signal handler to
+	// load a selected entry.
+// @todo	Why is the filtering not working ?
+//	Gtk::RecentFilter			recentFilter;
+	Gtk::RecentChooserMenu		recentChooserMenu( Gtk::RecentManager::get_default() );
+	Gtk::Widget					* recentWidget		= uiManager->get_widget("/DefaultMenuBar/File/Recent");
+	Gtk::MenuItem				* recentMenuItem	= dynamic_cast< Gtk::MenuItem * >( recentWidget );
+
+//	recentFilter.add_application( Glib::get_application_name() );
+//	recentChooserMenu.add_filter( recentFilter );
+//	recentChooserMenu.set_filter( recentFilter );
+	recentChooserMenu.set_sort_type( Gtk::RECENT_SORT_MRU );
+	recentChooserMenu.signal_item_activated().connect( sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileRecent), &recentChooserMenu, &canvas) );
+	recentMenuItem->set_submenu( recentChooserMenu );
+	recentMenuItem->property_visible() = true;
 
 
 	// Configures the main window.

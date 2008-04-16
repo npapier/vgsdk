@@ -20,6 +20,11 @@ namespace vgsdkViewerGtk
 
 /**
  * @brief	Implements a BasicManipulator with some content loading features.
+ *
+ * @todo	The file list management should get externalized to another object.
+ * 			This would allow to load an object, keep it somewhere in a lobby
+ * 			instead of having it directly appended to the scene. An usage example
+ * 			is the recent file loading.
  */
 struct myCanvas : public vgGTK::BasicManipulator
 {

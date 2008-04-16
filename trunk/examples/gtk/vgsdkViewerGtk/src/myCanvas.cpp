@@ -199,12 +199,16 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 
 	//
 
+
+	// Retrieves the extension of the given filename.
 	vgd::basic::FilenameExtractor	extractor( pathfilename.c_str() );
 	Glib::ustring					extension = extractor.getExtension();
 	bool							bRetVal;
 
 	extension = extension.lowercase();
 
+
+	// Invokes the right loader, depending on the found extension.
 	if ( extension.compare( ".trian" ) == 0 )
 	{
 		bRetVal = loadTrian( pathfilename );
@@ -228,12 +232,16 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 		vgDebug::get().logWarning( "Unknown file extension in %s.", pathfilename.c_str() );
 	}
 
+
+	// Perform post loading actions that depend on the result.
 	if ( bRetVal )
 	{
+		// Shows in the log that the file has been loaded.
 		vgDebug::get().logStatus( "File %s loaded.", pathfilename.c_str() );
 	}
 	else
 	{
+		// Shows in the log that something has gone wrong.
 		vgDebug::get().logWarning( "Unable to load file %s.", pathfilename.c_str() );
 	}
 
