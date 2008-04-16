@@ -137,7 +137,7 @@ void helpAbout( Gtk::Window * topLevel )
 	aboutDialog.set_transient_for( *topLevel );
 	aboutDialog.set_authors( authors );
 	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load and manipulate trian and trian2 meshes." );
-	aboutDialog.set_copyright( "Copyright (C) 2008, Guillaume Brocker, Nicolas Papier." );
+	aboutDialog.set_copyright( "Copyright (C) 2008, Guillaume Brocker, Nicolas Papier and Digital trainers SAS." );
 	aboutDialog.set_license( "Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation." );
 	aboutDialog.set_website("http://home.gna.org/vgsdk");
 	aboutDialog.set_wrap_license( true );
