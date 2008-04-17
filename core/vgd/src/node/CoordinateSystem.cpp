@@ -1,0 +1,109 @@
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// Distributed under the terms of the GNU Library General Public License (LGPL)
+// as published by the Free Software Foundation.
+// Author Nicolas Papier
+
+#include "vgd/node/CoordinateSystem.hpp"
+
+#include "vgd/node/detail/Node.hpp"
+
+
+
+namespace vgd
+{
+
+namespace node
+{
+
+
+
+META_NODE_CPP( CoordinateSystem );
+
+
+
+CoordinateSystem::CoordinateSystem( const std::string nodeName ) :
+	vgd::node::SingleAttribute( nodeName )
+{
+	// Add field
+	addField( new FMaskType(getFMask()) );
+	addField( new FMatrixType(getFMatrix()) );
+
+	// Link(s)
+	link( getFMask(), getDFNode() );
+	//link( getDFNode() );	
+}
+
+
+
+void CoordinateSystem::setToDefaults()
+{
+	SingleAttribute::setToDefaults();
+
+	setMask( DEFAULT_MASK );
+}
+
+
+
+void CoordinateSystem::setOptionalsToDefaults()
+{
+	SingleAttribute::setOptionalsToDefaults();
+}
+
+
+
+// MASK
+int8 CoordinateSystem::getMask() const
+{
+	return ( getFieldRO<FMaskType>(getFMask())->getValue() );
+}
+
+
+
+void CoordinateSystem::setMask( const int8 mask )
+{
+	getFieldRW<FMaskType>(getFMask())->setValue( mask );
+}
+
+
+
+// MATRIX
+bool CoordinateSystem::getMatrix( const MatrixParameterType param, MatrixValueType& value ) const
+{
+	return ( 
+		vgd::field::getParameterValue< MatrixParameterType, MatrixValueType >( this, getFMatrix(), param, value )
+		);
+}
+
+
+
+void CoordinateSystem::setMatrix( const MatrixParameterType param, MatrixValueType value )
+{
+	vgd::field::setParameterValue< MatrixParameterType, MatrixValueType >( this, getFMatrix(), param, value );
+}
+
+
+
+void CoordinateSystem::eraseMatrix( const MatrixParameterType param )
+{
+	vgd::field::eraseParameterValue< MatrixParameterType, MatrixValueType >( this, getFMatrix(), param );
+}
+
+
+
+const std::string CoordinateSystem::getFMask( void )
+{
+	return "f_mask";
+}
+
+
+
+const std::string CoordinateSystem::getFMatrix()
+{
+	return "f_matrix";
+}
+
+
+
+} // namespace node
+
+} // namespace vgd

@@ -39,7 +39,7 @@ namespace handler
  */
 struct VGE_API TransformSeparator
 {
-	void	apply		( vge::engine::Engine*, vgd::node::TransformSeparator* );
+	void	apply	( vge::engine::Engine*, vgd::node::TransformSeparator* );
 	void	unapply	( vge::engine::Engine*, vgd::node::TransformSeparator* );
 };
 

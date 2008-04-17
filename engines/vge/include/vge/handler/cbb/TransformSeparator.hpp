@@ -6,8 +6,6 @@
 #ifndef _VGE_HANDLER_CBB_TRANSFORMSEPARATOR_HPP
 #define _VGE_HANDLER_CBB_TRANSFORMSEPARATOR_HPP
 
-#include "vge/vge.hpp"
-
 #include "vge/handler/TransformSeparator.hpp"
 #include "vge/handler/cbb/Group.hpp"
 
@@ -25,7 +23,7 @@ namespace cbb
 
 
 /**
- * @brief Compute bounding box for a vgd::node::TransformSeparator.
+ * @brief Computes bounding box for a vgd::node::TransformSeparator.
  */
 struct VGE_API TransformSeparator :
 	public Group,
@@ -34,9 +32,9 @@ struct VGE_API TransformSeparator :
 	META_HANDLER_HPP( TransformSeparator );
 		
 	//const vge::service::List		getServices()	const;
-	const TargetVector				getTargets()	const;
+	const TargetVector		getTargets()	const;
 
-	void	apply		( vge::engine::Engine*, vgd::node::Node* );
+	void	apply	( vge::engine::Engine*, vgd::node::Node* );
 	void	unapply	( vge::engine::Engine*, vgd::node::Node* );
 
 	void	setToDefaults();

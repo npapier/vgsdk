@@ -33,7 +33,7 @@ namespace node
  * 
  * New fields added by this node :
  *
- * - int32 mask	= GEOMETRICAL_MATRIX_BIT\n
+ * - int8 \c mask = GEOMETRICAL_MATRIX_BIT\n
  * 		The \c mask is a bitwise OR operators of masks that indicate the type of matrix to be saved and 
  * restored.\n
  * The three masks are as follows : TEXTURE_MATRIX_BIT (for \c all texture matrix), PROJECTION_MATRIX_BIT and 
@@ -54,7 +54,7 @@ struct VGD_API TransformSeparator : public vgd::node::Group
 
 
 	/**
-	 * @name Accessors to field mask.
+	 * @name Accessors to field mask
 	 */
 	//@{
 	
@@ -91,7 +91,7 @@ struct VGD_API TransformSeparator : public vgd::node::Group
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Fields names enumeration
 	 */
 	//@{
 	
@@ -107,7 +107,7 @@ struct VGD_API TransformSeparator : public vgd::node::Group
 	
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
