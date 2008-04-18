@@ -6,10 +6,12 @@
 #ifndef _VGD_NODE_COORDINATESYSTEM_HPP
 #define _VGD_NODE_COORDINATESYSTEM_HPP
 
+#include <vgm/Matrix.hpp>
+#include <vgm/Rectangle.hpp>
+
 #include "vgd/field/Integer.hpp"
 #include "vgd/field/TPairAssociativeField.hpp"
 #include "vgd/node/SingleAttribute.hpp"
-#include <vgm/Matrix.hpp>
 
 
 
@@ -24,22 +26,30 @@ namespace node
 /**
  * @brief Coordinate system node
  * 
- * The coordinate system node keeps track of transformation matrices values (geometrical and projection).
- * These matrices are updated during scene graph traversing done to update bounding boxes (see vge::technique::ComputeBoundingBox). 
+ * The coordinate system node keeps track of transformation matrices values (geometrical and projection) and viewport value.
+ * These values are updated during scene graph traversing done to compute bounding boxes (see vge::technique::ComputeBoundingBox). 
  *
- * @remarks Sharing this node multiple times in a scene graph is possible although not recommanded. Because it will contain only the last (in traverse order) transformation matrices. 
+ * @remarks Sharing this node multiple times in a scene graph is possible although not recommanded. Because it will contain only the last (in traverse order) transformation matrices and viewport. 
  *
- * New field added by this node :
+ * New fields added by this node :
  *
- * - int8 \c mask = GEOMETRICAL_MATRIX_BIT\n
- * 		The \c mask is a bitwise OR operators of masks that indicate the type of matrix to keep track\n
- * The masks are as follows : PROJECTION_MATRIX_BIT and GEOMETRICAL_MATRIX_BIT.
+ * - int8 \c mask = GEOMETRICAL_MATRIX_MASK\n
+ * 		The \c mask is a bitwise OR operators of masks that indicate the value(s) to keep track.\n
+ * The symbolic mask constants are as follows :
+ *		- PROJECTION_MATRIX_MASK : the projection matrix. See \c matrix field of Camera.
+ *		- GEOMETRICAL_MATRIX_MASK : the geometrical matrix. See nodes inheriting from GeometricalTransformation.
+ *		- VIEWPORT_MASK : the viewport. See \c viewport field of Camera node.
+ *		- DEFAULT_MASK : the default value of the mask field.
+ *		- ALL_MASK : this special constant can be used to keep track of all values.
  *
- * - PAFMatrix \c matrix
- * 	- [GEOMETRICAL] \n
- * 		the geometrical transformation matrix.
+ * - PAFMatrix \c matrix\n
  * 	- [PROJECTION]\n
- *		the projection transformation matrix.
+ *		the projection matrix
+ * 	- [GEOMETRICAL] \n
+ * 		the geometrical matrix
+ *
+ * - PAFRectangle2i \c	[viewport]\n
+ *		the viewport
  * 
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
@@ -62,11 +72,12 @@ struct VGD_API CoordinateSystem : public vgd::node::SingleAttribute
 	 */
 	typedef enum
 	{
-		//TEXTURE_MATRIX_BIT		= 1<<0,			The texture matrix
-		PROJECTION_MATRIX_BIT	= 1<<1,			/*!< The projection matrix */
-		GEOMETRICAL_MATRIX_BIT	= 1<<2,			/*!< The geometrical matrix */
+		PROJECTION_MATRIX_MASK	= 1<<0,			///< the projection matrix
+		GEOMETRICAL_MATRIX_MASK	= 1<<1,			///< the geometrical matrix
+		VIEWPORT_MASK			= 1<<2,			///< the viewport
 
-		DEFAULT_MASK = GEOMETRICAL_MATRIX_BIT
+		DEFAULT_MASK			= GEOMETRICAL_MATRIX_MASK,
+		ALL_MASK				= PROJECTION_MATRIX_MASK | GEOMETRICAL_MATRIX_MASK | VIEWPORT_MASK
 	} MaskValue;
 	
 	/**
@@ -99,8 +110,8 @@ struct VGD_API CoordinateSystem : public vgd::node::SingleAttribute
 	 */
 	typedef enum
 	{
-		GEOMETRICAL		= 1,
-		PROJECTION
+		PROJECTION		= 1,
+		GEOMETRICAL
 	} MatrixParameterType;
 
 	/**
@@ -132,6 +143,47 @@ struct VGD_API CoordinateSystem : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field viewport
+	 */
+	//@{
+
+	/**
+	 * @brief Enumeration of the \c viewport parameter.
+	 */
+	typedef enum
+	{
+		VIEWPORT = 1
+	} ViewportParameterType;
+
+	/**
+	 * @brief Typedef for the \c viewport parameter value.
+	 */
+	typedef vgm::Rectangle2i ViewportValueType;
+
+	/**
+	 * @brief Typedef for the \c viewport field.
+	 */	
+	typedef vgd::field::TPairAssociativeField< ViewportParameterType, ViewportValueType > FViewportType;
+
+	/**
+	 * @brief Gets the \c viewport value.
+	 */
+	bool			getViewport( vgm::Rectangle2i& value ) const;
+
+	/**
+	 * @brief Sets the \c viewport value.
+	 */
+	void 			setViewport( vgm::Rectangle2i value );
+	
+	/**
+	 * @brief Erase the \c viewport value.
+	 */
+	void 			eraseViewport();
+	//@}
+
+
+
+	/**
 	 * @name Fields names enumeration
 	 */
 	//@{
@@ -149,6 +201,13 @@ struct VGD_API CoordinateSystem : public vgd::node::SingleAttribute
 	 * @return the name of field \c matrix.
 	 */
 	static const std::string getFMatrix();
+
+	/**
+	 * @brief Returns the name of field \c viewport.
+	 * 
+	 * @return the name of field \c viewport.
+	 */
+	static const std::string getFViewport( void );
 	//@}
 
 

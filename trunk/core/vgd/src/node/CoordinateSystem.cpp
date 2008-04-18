@@ -24,9 +24,10 @@ META_NODE_CPP( CoordinateSystem );
 CoordinateSystem::CoordinateSystem( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
-	// Add field
+	// Add fields
 	addField( new FMaskType(getFMask()) );
 	addField( new FMatrixType(getFMatrix()) );
+	addField( new FViewportType(getFViewport()) );
 
 	// Link(s)
 	link( getFMask(), getDFNode() );
@@ -90,6 +91,30 @@ void CoordinateSystem::eraseMatrix( const MatrixParameterType param )
 
 
 
+// VIEWPORT
+bool CoordinateSystem::getViewport( vgm::Rectangle2i& value ) const
+{
+	return ( 
+		vgd::field::getParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), VIEWPORT, value )
+		);
+}
+
+
+
+void CoordinateSystem::setViewport( vgm::Rectangle2i value )
+{
+	vgd::field::setParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), VIEWPORT, value );
+}
+
+
+
+void CoordinateSystem::eraseViewport()
+{
+	vgd::field::eraseParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), VIEWPORT );
+}
+
+
+
 const std::string CoordinateSystem::getFMask( void )
 {
 	return "f_mask";
@@ -100,6 +125,13 @@ const std::string CoordinateSystem::getFMask( void )
 const std::string CoordinateSystem::getFMatrix()
 {
 	return "f_matrix";
+}
+
+
+
+const std::string CoordinateSystem::getFViewport( void )
+{
+	return "f_viewport";
 }
 
 

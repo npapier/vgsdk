@@ -6,8 +6,6 @@
 #ifndef _VGD_NODE_CAMERA_HPP
 #define _VGD_NODE_CAMERA_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <vgm/Rectangle.hpp>
 
 #include "vgd/field/Matrix.hpp"
@@ -32,11 +30,11 @@ namespace node
  * 
  * New fields added by this node :
  *
- * - SFMatrixR				\c matrix		= identity\n
+ * - SFMatrixR			\c matrix		= identity\n
  *		Determines the projection matrix.
- * - PAFRectangle2i		\c	[viewport]	= (0,0,1600,200).\n
+ * - PAFRectangle2i		\c [viewport]	= (0,0,1600,200).\n
  *		Determines the viewport.
- * - PAFRectangle2i		\c	[scissor]	= empty (i.e. scissor test is disabled).\n
+ * - PAFRectangle2i		\c [scissor]	= empty (i.e. scissor test is disabled).\n
  *		Determines the scissor box (it is automatically enabled if this field is defined, otherwise it is disabled ).
  * 
  * @ingroup g_nodes
@@ -50,7 +48,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 	/**
-	 * @name Accessors to field matrix.
+	 * @name Accessors to field matrix
 	 */
 	//@{
 
@@ -79,7 +77,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 	/**
-	 * @name Accessors to field viewport.
+	 * @name Accessors to field viewport
 	 */
 	//@{
 
@@ -120,7 +118,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 	/**
-	 * @name Accessors to field scissor.
+	 * @name Accessors to field scissor
 	 */
 	//@{
 
@@ -161,7 +159,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Fields names enumeration
 	 */
 	//@{
 
@@ -220,7 +218,7 @@ protected:
 
 	void	setToDefaults( void );
 	
-	void	setOptionalsToDefaults();	
+	void	setOptionalsToDefaults();
 
 	//@}
 };

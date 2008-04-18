@@ -6,8 +6,6 @@
 #ifndef _VGD_FIELD_RECTANGLE_HPP
 #define _VGD_FIELD_RECTANGLE_HPP
 
-#include "vgd/vgd.hpp"
-
 #include <vgm/Rectangle.hpp>
 
 #include "vgd/field/TSingleField.hpp"
@@ -33,7 +31,7 @@ typedef TSingleField< vgm::Rectangle2i >					SFRectangle2i;
 
 typedef TMultiField< vgm::Rectangle2i  >					MFRectangle2i;
 
-typedef TSingleAssociativeField< vgm::Rectangle2i >	SAFRectangle2i;
+typedef TSingleAssociativeField< vgm::Rectangle2i >			SAFRectangle2i;
 
 // typedef TPairAssociativeField< vgm::Rectangle2i >		PAFRectangle2i;
 //@}

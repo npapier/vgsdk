@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 
 #include <list>
 #include <set>
-
 #include <boost/tuple/tuple.hpp>
 
 #include <vgd/Shp.hpp>
@@ -16,7 +15,6 @@
 #include <vgd/field/TAccessors.hpp>
 #include <vgd/node/Node.hpp>
 
-#include "vge/vge.hpp"
 #include "vge/engine/MultiMatrixStack.hpp"
 #include "vge/service/Service.hpp"
 #include "vge/visitor/NodeCollectorExtended.hpp"
@@ -34,7 +32,7 @@
 namespace vge
 {
 
-namespace handler
+namespace handler 
 {
 	struct Handler;
 }
@@ -335,11 +333,39 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @return Pointer on the desired node list or 0 if not founded.
 	 */
 	template< typename nodeType >
+	const NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 ) const
+	{
+		const State& 		topState		(	m_state.back()						);
+		
+		const int32 		nodeClassIndex	(	nodeType::getClassIndexStatic()		);
+		const MultiState&	multiState		(	topState[nodeClassIndex]			);
+
+		MultiState::const_iterator iter( multiState.find( multiAttributeIndex ) );
+		
+		if ( iter != multiState.end() )
+		{
+			// Found
+			return &(iter->second);
+		}
+		else
+		{
+			return static_cast< NodeList* >(0);
+		}
+	}
+
+	/**
+	 * @brief Gets the desired node list to the top of the state stack
+	 * 
+	 * selected by his type and his multi-attribute index.
+	 * 
+	 * @return Pointer on the desired node list or 0 if not founded.
+	 */
+	template< typename nodeType >
 	NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 )
 	{
-		State& 				topState			(	m_state.back()							);
+		State& 				topState		(	m_state.back()						);
 		
-		const int32 		nodeClassIndex (	nodeType::getClassIndexStatic()	);
+		const int32 		nodeClassIndex	(	nodeType::getClassIndexStatic()		);
 		MultiState&			multiState		(	topState[nodeClassIndex]			);
 
 		MultiState::iterator iter( multiState.find( multiAttributeIndex ) );
@@ -347,14 +373,14 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		if ( iter != multiState.end() )
 		{
 			// Found
-			return ( &(iter->second) );
+			return &(iter->second);
 		}
 		else
 		{
-			return ( static_cast< NodeList* >(0) );
+			return static_cast< NodeList* >(0);
 		}
 	}
-	
+
 	/**
 	 * @brief Gets the desired node to the top of the state stack
 	 * 
@@ -371,11 +397,11 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		
 		if ( pNodeList != 0 )
 		{
-			return ( dynamic_cast<nodeType*>(pNodeList->back()) );
+			return dynamic_cast<nodeType*>(pNodeList->back());
 		}
 		else
 		{
-			return ( 0 );
+			return 0;
 		}
 	}
 
@@ -392,18 +418,17 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	template< typename nodeType, typename ParameterType, typename ValueType >
 	bool getStateStackTop(	const std::string strFieldName,
-									const ParameterType param, ValueType& value,
-									int8 multiAttributeIndex = 0 )
+							const ParameterType param, ValueType& value,
+							int8 multiAttributeIndex = 0 ) const
 	{
 		bool					bDefined(	false	);
 
-		NodeList				*pNodeList;
-		pNodeList = getNodeListFromStateStackTop< nodeType >( multiAttributeIndex );
+		const NodeList *pNodeList = getNodeListFromStateStackTop< nodeType >( multiAttributeIndex );
 		
 		if ( pNodeList != 0 )
 		{
-			for( NodeList::reverse_iterator	i			= pNodeList->rbegin(),
-														iEnd		= pNodeList->rend();
+			for( NodeList::const_reverse_iterator	i			= pNodeList->rbegin(),
+													iEnd		= pNodeList->rend();
 					i != iEnd;
 					++i )
 			{
@@ -419,7 +444,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 			}
 		}
 		
-		return ( bDefined );
+		return bDefined;
 	}
 
 
@@ -491,6 +516,22 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @param	drawingSurfaceSize		the drawing surface size 
 	 */
 	void setDrawingSurfaceSize( const vgm::Vec2i drawingSurfaceSize );
+
+	//@}
+
+
+
+	/**
+	 * @name State accessors helpers
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the viewport
+	 * 
+	 * @return the value of \c viewport field for the last encountered Camera node with this field defined
+	 */
+	const vgm::Rectangle2i getViewport() const;
 
 	//@}
 
