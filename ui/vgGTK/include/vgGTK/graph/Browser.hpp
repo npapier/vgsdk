@@ -6,11 +6,13 @@
 #ifndef _VGGTK_GRAPH_BROWSER_HPP_
 #define _VGGTK_GRAPH_BROWSER_HPP_
 
+#include <set>
+
+#include <gtkmm/actiongroup.h>
 #include <gtkmm/box.h>
 #include <gtkmm/scrolledwindow.h>
-#include <gtkmm/toolbar.h>
-#include <gtkmm/toolbutton.h>
 #include <gtkmm/treeview.h>
+#include <gtkmm/uimanager.h>
 
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
@@ -49,17 +51,25 @@ struct VGGTK_API Browser : public Gtk::VBox
 
 private:
 
-	Gtk::Toolbar		m_toolbar;			///< The managed toolbar widget.
-	Gtk::ScrolledWindow	m_scrolled;			///< Contains the tree view.
-	Gtk::TreeView		m_treeView;			///< The managed treeview widget;
-	Gtk::ToolButton		m_refreshButton;	///< The refresh toolbar button.
-	TreeModelProvider	m_modelProvider;	///< The managed tree model provider.
+	typedef std::set< Glib::ustring > StringSet;	///< Defines a set of Glib::ustring.
+
+	static const Glib::ustring			m_uiDefinition;		///< Defines the user interfaces.
+	Glib::RefPtr< Gtk::ActionGroup >	m_actions;			///< Holds all actions of the user interface.
+	Glib::RefPtr< Gtk::UIManager >		m_uiManager;		///< Manages the user inteface toolbar and menus.
+	Gtk::ScrolledWindow					m_scrolled;			///< Contains the tree view.
+	Gtk::TreeView						m_treeView;			///< The managed treeview widget;
+	TreeModelProvider					m_modelProvider;	///< The managed tree model provider.
+	StringSet							m_expandedPaths;	///< Holds all expanded paths.
 
 	/**
 	 * @name	Signal Handlers
 	 */
 	//@{
-	void onRefresh();	///< Handles click on the refresh button.
+	void onButtonPressEvent( GdkEventButton * event );												///< Handles button clicks on the tree view.
+	void onExpandAll();																				///< Handles the action that will expand all the tree view sub-tree of the selection element.
+	void onFullRefresh();																			///< Handles the action that will perfrom a refresh of the whole tree.
+	void onRowCollapsed( const Gtk::TreeModel::iterator & i, const Gtk::TreeModel::Path & path );	///< Handles notification about a collapsing row.
+	void onRowExpanded( const Gtk::TreeModel::iterator & i, const Gtk::TreeModel::Path & path );	///< Handles notification about a expanding row.
 	//@}
 
 	/**
