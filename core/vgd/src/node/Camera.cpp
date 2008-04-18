@@ -119,21 +119,21 @@ void Camera::eraseScissor()
 
 const std::string Camera::getFMatrix( void )
 {
-	return ( "f_matrix" );
+	return "f_matrix";
 }
 
 
 
 const std::string Camera::getFViewport( void )
 {
-	return ( "f_viewport" );
+	return "f_viewport";
 }
 
 
 
 const std::string Camera::getFScissor( void )
 {
-	return ( "f_scissor" );
+	return "f_scissor";
 }
 
 

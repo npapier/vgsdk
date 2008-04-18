@@ -1,10 +1,11 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vge/engine/Engine.hpp"
 
+#include <vgd/node/Camera.hpp>
 #include <vgDebug/Global.hpp>
 
 #include "vge/handler/Handler.hpp"
@@ -371,6 +372,21 @@ const vgm::Vec2i Engine::getDrawingSurfaceSize() const
 void Engine::setDrawingSurfaceSize( const vgm::Vec2i drawingSurfaceSize )
 {
 	m_drawingSurfaceSize = drawingSurfaceSize;
+}
+
+
+
+const vgm::Rectangle2i Engine::getViewport() const
+{
+	vgm::Rectangle2i viewport;
+
+	using vgd::node::Camera;
+	const bool retVal = getStateStackTop< Camera, Camera::ViewportParameterType, Camera::ViewportValueType >(
+		Camera::getFViewport(), Camera::VIEWPORT,
+		viewport );
+	assert( retVal && "Internal error, because getStateStackTop<>() should never fail." );
+
+	return viewport;
 }
 
 

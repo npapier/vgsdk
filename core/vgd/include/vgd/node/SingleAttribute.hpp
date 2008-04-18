@@ -40,7 +40,7 @@ protected:
 	 */
 	SingleAttribute( const std::string nodeName );
 	
-	void	setToDefaults( void );	
+	void	setToDefaults( void );
 
 	void	setOptionalsToDefaults();
 

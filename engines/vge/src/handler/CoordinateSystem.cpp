@@ -25,7 +25,7 @@ void CoordinateSystem::apply ( vge::engine::Engine * engine, vgd::node::Coordina
 	const vgd::node::CoordinateSystem::FMaskType::value_type mask( node->getMask() );
 
 	// PROJECTION MATRIX
-	if ( mask & vgd::node::CoordinateSystem::PROJECTION_MATRIX_BIT )
+	if ( mask & vgd::node::CoordinateSystem::PROJECTION_MATRIX_MASK )
 	{
 		// Retrieves the desired matrix
 		const vgd::node::CoordinateSystem::MatrixValueType& matrix = engine->getProjectionMatrix().getTop();
@@ -35,13 +35,23 @@ void CoordinateSystem::apply ( vge::engine::Engine * engine, vgd::node::Coordina
 	}
 
 	// GEOMETRICAL MATRIX
-	if ( mask & vgd::node::CoordinateSystem::GEOMETRICAL_MATRIX_BIT )
+	if ( mask & vgd::node::CoordinateSystem::GEOMETRICAL_MATRIX_MASK )
 	{
 		// Retrieves the desired matrix
 		const vgd::node::CoordinateSystem::MatrixValueType& matrix = engine->getGeometricalMatrix().getTop();
 
 		// Sets the matrix in CoordinateSystem node
 		node->setMatrix( vgd::node::CoordinateSystem::GEOMETRICAL, matrix );
+	}
+
+	// VIEWPORT
+	if ( mask & vgd::node::CoordinateSystem::VIEWPORT_MASK )
+	{
+		// Retrives the viewport
+		const vgm::Rectangle2i& viewport = engine->getViewport();
+
+		// Sets the viewport in CoordinateSystem node
+		node->setViewport( viewport );
 	}
 }
 
