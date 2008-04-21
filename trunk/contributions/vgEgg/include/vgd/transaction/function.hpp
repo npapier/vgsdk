@@ -185,20 +185,20 @@ protected:
 	/**
 	 * @brief Template factory for member functions with no args.
 	 */
-	template <typename C,typename T0> vgd::Shp< function1< T0, C*> > createFunctionTransaction(C* object, T0 (C::*f)()){
-		return function1<T0, C*>::create(f,object);
+	template <typename B,typename C,typename T0> vgd::Shp< function1< T0, B*> > createFunctionTransaction(B* object, T0 (C::*f)()){
+		return function1<T0, B*>::create(f,object);
 	}
 	/**
 	 * @brief Template factory for member functions with one single arg.
 	 */
-	template <typename C,typename T0, typename T1, typename P1> vgd::Shp< function2< T0, C*, T1> > createFunctionTransaction(C* object, T0 (C::*f)(T1), P1 p1){
-		return function2<T0,C*,T1>::create(f,object,p1);
+	template <typename B,typename C,typename T0, typename T1, typename P1> vgd::Shp< function2< T0, B*, T1> > createFunctionTransaction(B* object, T0 (C::*f)(T1), P1 p1){
+		return function2<T0,B*,T1>::create(f,object,p1);
 	}
 	/**
 	 * @brief Template factory for member functions with two args.
 	 */
-	template <typename C,typename T0, typename T1, typename T2, typename P1, typename P2> vgd::Shp< function3< T0, C*, T1, T2> > createFunctionTransaction(C* object, T0 (C::*f)(T1, T2), P1 p1, P2 p2){
-		return function3<T0,C*,T1,T2>::create(f,object,p1,p2);
+	template <typename B,typename C,typename T0, typename T1, typename T2, typename P1, typename P2> vgd::Shp< function3< T0, B*, T1, T2> > createFunctionTransaction(B* object, T0 (C::*f)(T1, T2), P1 p1, P2 p2){
+		return function3<T0,B*,T1,T2>::create(f,object,p1,p2);
 	}
 
 
