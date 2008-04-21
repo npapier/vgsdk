@@ -1,12 +1,14 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006,2008 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
+// Author Guillaume Brocker
 // Author Nicolas Papier
 
 #ifndef _VGM_RECTANGLE_HPP
 #define _VGM_RECTANGLE_HPP
 
 #include "vgm/vgm.hpp"
+#include "vgm/Vector.hpp"
 
 
 
@@ -16,107 +18,149 @@ namespace vgm
 
 
 /**
- * @brief A very basic rectangle 2d class.
- * 
+ * @brief	A very basic rectangle 2d class.
+ *
+ * <tt>rectangle[0]</tt> and <tt>rectangle[1]</tt> hold respectively the @c x and @c y coordinates of the low-left corner.
+ * <tt>rectangle[2]</tt> and <tt>rectangle[3]</tt> hold respectively the width and the height of the rectangle.
+ *
+ * @see	Rectangle2i, Rectangle2f
+ *
  * @ingroup Geometry
  */
-struct VGM_API Rectangle2i
+template< typename T >
+struct Rectangle
 {
 	/**
-	 * @name Constructors.
+	 * @name Constructors
 	 */
 	//@{
 
 	/**
-	 * @brief Default constructor.
+	 * @brief	Default constructor.
 	 *
-	 * @remarks Nothing is initialized !!!
+	 * @remark	Beware, the rectangle is not initialized !
+	 *
+	 * @see		getInvalid
 	 */
-	Rectangle2i( void ) {}
+	Rectangle() {}
 
 	/**
-	 * @brief Constructor.
+	 * @brief Constructor
 	 */
-	Rectangle2i( const int32 x, const int32 y, const int32 width, const int32 height ) :
-		m_x(x),
-		m_y(y),
-		m_width(width),
-		m_height(height)
+	Rectangle( const T x, const T y, const T width, const T height )
+	: m_rectangle( x, y, width, height )
 	{}
 	//@}
 
 
-
 	/**
-	 * @name Accessor methods.
+	 * @name	Accessors
 	 */
 	//@{
-	
-	void				set( const int32 x, const int32 y, const int32 width, const int32 height )
+	void set( const T x, const T y, const T width, const T height )
 	{
-		m_x		= x;
-		m_y		= y;
-		m_width	= width;
-		m_height	= height;
+		m_rectangle.setValue( x, y, width, height );
 	}
-		
-	int32&			x( void )		{ return ( m_x ); }
-	const int32&	x( void ) const { return ( m_x ); }
 
-	int32&			y( void )		{ return ( m_y ); }
-	const int32&	y( void ) const { return ( m_y ); }
+	T&			x()				{ return m_rectangle[0]; }
+	const T&	x() const		{ return m_rectangle[0]; }
 
-	int32&			width( void )			{ return ( m_width ); }
-	const int32&	width( void ) const		{ return ( m_width ); }
+	T&			y()				{ return m_rectangle[1]; }
+	const T&	y() const 		{ return m_rectangle[1]; }
 
-	int32&			height( void )			{ return ( m_height ); }
-	const int32&	height( void ) const	{ return ( m_height ); }
+	T&			width()			{ return m_rectangle[2]; }
+	const T&	width() const	{ return m_rectangle[2]; }
+
+	T&			height()		{ return m_rectangle[3]; }
+	const T&	height() const	{ return m_rectangle[3]; }
+
+	T*			getValue()			{ return m_rectangle.getValue(); }
+	const T*	getValue() const	{ return m_rectangle.getValue(); }
+
+	T&			operator[]( const unsigned int i )			{ return m_rectangle[i]; }
+	const T&	operator[]( const unsigned int i ) const	{ return m_rectangle[i]; }
+	//@}
+
+	/**
+	 * @name	Validity
+	 */
+	//@{
+	/**
+	 * @brief	Tells if the rectangle has been set invalid.
+	 *
+	 * @return	true or false
+	 */
+	const bool isInvalid() const
+	{
+		return m_rectangle.isInvalid();
+	}
+
+	/**
+	 * @brief	Set the rectangle invalid.
+	 */
+	const bool setInvalid()
+	{
+		m_rectangle.setInvalid();
+	}
+
+	/**
+	 * @brief	Creates an invalid rectangle.
+	 *
+	 * @return	an invaild rectangle
+	 */
+	static const Rectangle getInvalid()
+	{
+		Rectangle	rectangle;
+
+		rectangle.setInvalid();
+		return rectangle;
+	}
 	//@}
 
 
-
 	/**
-	 * @brief Test if a point is in the rectangle.
+	 * @brief Tests if a point is in the rectangle.
 	 *
 	 * @param x : x coordinate of the point to test.
 	 * @param y : y coordinate of the point to test.
 	 * @return \c true if the point is inside, \c false if not.
 	 */
-	bool isPointIn( const int32 x, const int32 y ) const
+	const bool isPointIn( const T x, const T y ) const
 	{
-		assert( m_width		> 0 );
-		assert( m_height	> 0 );
+		assert( m_rectangle[2] > static_cast< T >( 0 ) );
+		assert( m_rectangle[3] > static_cast< T >( 0 ) );
 
-		if (	(x < m_x) || 
-				(x > m_x+m_width) )
+		if (	(x < m_rectangle[0]) ||
+				(x > m_rectangle[0]+m_rectangle[2]) )
 		{
-			return ( false );
+			return false;
 		}
 
-		if (	(y < m_y) ||
-				(y > m_y+m_height) )
+		if (	(y < m_rectangle[1]) ||
+				(y > m_rectangle[1]+m_rectangle[3]) )
 		{
-			return ( false );
+			return false;
 		}
 
-		return ( true );
+		return true;
 	}
 
 private:
 
 	/**
-	 * @name rectangle definition data.
+	 * @brief	Holds raw rectangle data.
 	 *
-	 * m_x, m_y : The lower-left corner of the rectangle, in pixels.
-	 * m_width, m_height : The width and height, respectively, of the rectangle.
+	 * <tt>m_rectangle[0]</tt> and <tt>m_rectangle[1]</tt> hold respectively the @c x and @c y coordinates of the low-left corner.
+	 * <tt>m_rectangle[2]</tt> and <tt>m_rectangle[3]</tt> hold respectively the width and the height of the rectangle.
 	 */
-	//@{
-	int32 m_x;
-	int32 m_y;
-	int32 m_width;
-	int32 m_height;
-	//@}
+	Vector< T, 4 >	m_rectangle;
 };
+
+
+
+typedef Rectangle< int >	Rectangle2i;	///< An unsigned integer based rectangle.
+typedef Rectangle< float >	Rectangle2f;	///< A float based rectangle.
+typedef Rectangle< double >	Rectangle2d;	///< A float based rectangle.
 
 
 
