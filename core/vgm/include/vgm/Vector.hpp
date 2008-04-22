@@ -295,7 +295,7 @@ struct Vector
 	/**
 	 * @brief Set the vector to null.
 	 */
-	void			null( void );
+	void		null( void );
 
 	/**
 	 * @brief Test if the vector is null.
