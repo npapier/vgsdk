@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006,2008 Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -7,7 +7,6 @@
 #ifndef _VGM_RECTANGLE_HPP
 #define _VGM_RECTANGLE_HPP
 
-#include "vgm/vgm.hpp"
 #include "vgm/Vector.hpp"
 
 
@@ -80,6 +79,32 @@ struct Rectangle
 	T&			operator[]( const unsigned int i )			{ return m_rectangle[i]; }
 	const T&	operator[]( const unsigned int i ) const	{ return m_rectangle[i]; }
 	//@}
+
+
+	/**
+	 * @name Comparison methods
+	 */
+	//@{
+
+	/**
+	 * @brief Equality comparison.
+	 */
+	bool			operator ==( const Rectangle& other ) const { return m_rectangle == other.m_rectangle; }
+
+	/**
+	 * @brief Difference comparison.
+	 */
+	bool			operator !=( const Rectangle& other ) const { return m_rectangle != other.m_rectangle; }
+
+	/**
+	 * @brief Equality comparison within given tolerance, for each component.
+	 */
+	bool			equals( const Rectangle& other, const float tolerance ) const
+	{ 
+		return m_rectangle.equals( other.m_rectangle, tolerance ); 
+	}
+	//@}
+
 
 	/**
 	 * @name	Validity
@@ -158,7 +183,7 @@ private:
 
 
 
-typedef Rectangle< int >	Rectangle2i;	///< An unsigned integer based rectangle.
+typedef Rectangle< int >	Rectangle2i;	///< An integer based rectangle.
 typedef Rectangle< float >	Rectangle2f;	///< A float based rectangle.
 typedef Rectangle< double >	Rectangle2d;	///< A float based rectangle.
 
