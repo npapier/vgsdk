@@ -26,13 +26,17 @@
 
 
 	<h2 id="overview">Overview</h2>
-	
+
+	<div id="ohloh-widget">
+	<script type="text/javascript" src="http://www.ohloh.net/projects/11645/widgets/project_partner_badge"></script>
+	</div>
+
 	<p>vgSDK, a shortcut for Versatile Graphical Software Development Kit,
 	consists of a set of cross-platform C++ libraries
 	which provides a complete framework for doing graphical related tasks.</p>
 
 	<p>This library is <a href="http://www.gnu.org/philosophy/free-sw.html">
-	free software</a>; you can redistribute it and/or modify it under the terms of the 
+	free software</a>; you can redistribute it and/or modify it under the terms of the
 	<a href="http://www.gnu.org/copyleft/lgpl.html">GNU Lesser General Public</a>
 	License as published by the Free Software Foundation; either version 2.1 of the License,
 	or any later version.</p>
@@ -71,10 +75,10 @@
 		<h3 class="enlighted">Inputs &amp; Outputs</h3>
 		<ul>
 			<li><strong>vgTrian</strong>: .trian and .trian2 3D model readers and .trian writer</li>
-			<li><strong>Autodesk/3DSMax</strong>: .trian importer/exporter and .trian2 exporter (for 
+			<li><strong>Autodesk/3DSMax</strong>: .trian importer/exporter and .trian2 exporter (for
 			version 7.x and 9.x)</li>
 			<li><strong>Planned</strong>: vgCollada</li>
-			<li>Images could be read and write using <strong>Images components</strong>. PNG is supported by vgCairo, 
+			<li>Images could be read and write using <strong>Images components</strong>. PNG is supported by vgCairo,
 			vgITK and vgOpenIL. DICOM, JPEG, VTK and TIFF are supported by ITK. For additionnal informations, see
 			the documentation of each component.</li>
 		</ul>
@@ -90,7 +94,7 @@
 
 		<h3 class="enlighted">User Interface</h3>
 		<ul>
-			<li><strong>vgWX(idgets)</strong>: several specialization of <a href="http://www.wxwidgets.org/">wxWidgets</a> 
+			<li><strong>vgWX(idgets)</strong>: several specialization of <a href="http://www.wxwidgets.org/">wxWidgets</a>
 			OpenGL canvas to provide vgsdk canvas, viewer and manipulator</li>
 			<li><strong>Planned</strong>: vgUI, vgGTK (or vgGTKmm) and vgSDL</li>
 		</ul>
@@ -105,7 +109,7 @@
 			<li><strong>Tutorials</strong>: BasicGL (simple wxWidgets OpenGL sample), BasicVGSDK (simple wxWidgets vgsdk
 			sample)</li>
 			<li><strong>vgsdkViewer</strong>: a simple viewer of .trian and .trian2 files</li>
-			<li><strong>Planned</strong>: a basic testing system to check coherency, non-regression and performance. 
+			<li><strong>Planned</strong>: a basic testing system to check coherency, non-regression and performance.
 			Each test could be used to fill an howto.
 			<li>&hellip;</li>
 		</ul>
@@ -113,15 +117,15 @@
 		<h3 class="enlighted">External dependencies</h3>
 		<ul>
 			<li><strong><a href="http://gna.org/projects/gle">gle</a></strong>: OpenGL extension loader</li>
-			<li><strong><a href="http://gna.org/projects/gle">glo</a></strong>: encapsulate OpenGL object into easy to 
+			<li><strong><a href="http://gna.org/projects/gle">glo</a></strong>: encapsulate OpenGL object into easy to
 			use classes</li>
 			<li><strong><a href="http://gna.org/projects/gle">sbf</a></strong>: a build system construct using
 			<a href="http://scons.org/">SCons</a></li>
-			<li><strong><a href="http://www.boost.org/">boost</a></strong>: free peer-reviewed portable C++ source 
+			<li><strong><a href="http://www.boost.org/">boost</a></strong>: free peer-reviewed portable C++ source
 			libraries</li>
 			<li><strong><a href="http://openil.sourceforge.net/">OpenIL</a></strong> a simple image library</li>
 			<li><strong><a href="http://cairographics.org/">cairo</a></strong> a 2D graphics library</li>
-			<li><strong><a href="http://itk.org/">ITK</a></strong>: a library providing data representation and 
+			<li><strong><a href="http://itk.org/">ITK</a></strong>: a library providing data representation and
 			algorithms for performing segmentation and registration</li>
 			<li><strong><a href="http://www.opengl.org/">OpenGL</a></strong>: the cross-platform graphical API</li>
 			<li><strong><a href="http://sourceforge.net/projects/collada-dom">The COLLADA Document Object Model (DOM)
@@ -136,9 +140,9 @@
 
 	<h2 id="download">Download</h2>
 	<p>Not available yet&hellip;</p>
-	
+
 	<h2 id="getting-involved">Getting&nbsp;Involved</h2>
-	
+
 	<div class="columns">
 		<div class="two-columns">
 
@@ -154,7 +158,7 @@
 			<a href="https://gna.org/bugs/?group=vgsdk">bug reports</a>
 			and <a href="https://gna.org/support/?group=vgsdk">support requests</a>.</p>
 			<p>Submiters should not forget to supply a valid email address in order to receive updates.</p>
-			
+
 		</div>
 
 		<div class="two-columns">
@@ -169,14 +173,14 @@
 			The following command lets you retrieve the complete sources :</p>
 			<p><kbd>cvs -d :pserver:anonymous@cvs.gna.org:/cvs/eclox co eclox eclox.core eclox.core.doxygen eclox.ui eclox.help</kbd></p>
 -->
-			
+
 			<h3 class="enlighted" id="documentation">Documentation</h3>
 			<ul>
 				<li><strong>Version 0.4 (HEAD)</strong>: <a
 				href="http://download.gna.org/vgsdk/documentation/HEAD/html/">browse online</a></li>
 			</ul>
 		</div>
-		
+
 	</div>
 
 	<div id="footer">

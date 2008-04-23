@@ -22,10 +22,10 @@ body
 {
 	margin: 0;
 	padding: 45px 0 0.3em 0.5em;
-	
+
 	font-size: 250%;
 	color: rgb(255,255,255);
-	
+
 	background-color: rgb(70,100,160);
 }
 
@@ -34,9 +34,9 @@ body
 	margin: 0;
 	margin: 0;
 	padding: 0.33em 0 0.33em 4em;
-	
+
 	background-color: rgb(120,150,200);
-	
+
 	border-bottom: 1px solid rgb(70,100,160);
 }
 
@@ -62,7 +62,12 @@ body
 	text-decoration: underline;
 }
 
-	
+#ohloh-widget
+{
+	float: right;
+}
+
+
 h1, h2, h3
 {
 	font-family: sans-serif;
@@ -77,7 +82,7 @@ h2
 	margin-top: 3em;
 	margin-left: -1em;
 	margin-right: -1em;
-	
+
 	clear: left;
 }
 
@@ -98,12 +103,12 @@ h3.enlighted
 {
 	background-image: url("24/packages.png");
 }*/
-	
+
 h3#screenshots
 {
 	background-image: url("24/screenshots.png");
 }
-	
+
 h3#update-site
 {
 	background-image: url("24/update.png");
