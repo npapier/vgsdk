@@ -125,13 +125,13 @@ bool Mouse::onScrollEvent( GdkEventScroll * event )
 
 
 	// Fires the notification .
-	vgd::event::MouseWheelEvent * mouseWheelEvent = 0;
-	int32						delta = 0;
+	vgd::event::MouseWheelEvent * 	mouseWheelEvent = 0;
+	int32							delta = 0;
 
 	switch( event->direction )
 	{
-	case GDK_SCROLL_UP:		delta = -50; break;
-	case GDK_SCROLL_DOWN:	delta = +50; break;
+	case GDK_SCROLL_UP:		delta = +50; break;
+	case GDK_SCROLL_DOWN:	delta = -50; break;
 	case GDK_SCROLL_LEFT:	/*nothing*/  break;
 	case GDK_SCROLL_RIGHT:	/*nothing*/  break;
 	}
