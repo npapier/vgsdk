@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -39,7 +39,7 @@ void ProcessEvent::apply( vgeGL::engine::Engine * engine, vge::visitor::Traverse
 	vgd::Shp< vge::service::Service > processEvent = vge::service::ProcessEvent::create();
 
 	prepareEval( engine, traverseElements );
-	//pEngine->resetEval();
+	engine->resetEval();
 
 	// Initialize engine with technique parameters
 	if ( !engine->isField( getFProcessEvent() ) )
