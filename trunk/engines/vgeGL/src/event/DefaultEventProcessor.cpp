@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -28,9 +28,6 @@ const bool DefaultEventProcessor::onEvent( vgd::Shp<vgd::event::Event> event )
 {
 	// onEvent() is called only when isEnabled() returns true.
 	assert( isEnabled() );
-
-	// @todo move resetEval() into Technique::prepareEval() ?
-	getSceneManager()->getEngine()->resetEval();
 
 	/// @todo OPTME : Always update node collector ?
 	getSceneManager()->updateNodeCollector();
