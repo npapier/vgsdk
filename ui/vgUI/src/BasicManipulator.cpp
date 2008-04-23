@@ -105,7 +105,7 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 
 	BasicViewer::onEvent( event );
 
-	refresh( REFRESH_IF_NEEDED, ASYNCHRONOUS );
+	refresh( REFRESH_IF_NEEDED, SYNCHRONOUS );
 }
 
 
