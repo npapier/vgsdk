@@ -1,6 +1,7 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
+// Author Guillaume Brocker
 // Author Nicolas Papier
 
 #ifndef _VGD_FIELD_FIELDMANAGER_HPP
@@ -18,7 +19,7 @@
 namespace vgd
 {
 	//template<class T> struct Shp;	///< @todo FIXME
-	
+
 	namespace field
 	{
 		struct DirtyFlag;
@@ -29,7 +30,7 @@ namespace vgd
 
 namespace vgd
 {
-	
+
 namespace field
 {
 
@@ -38,13 +39,13 @@ namespace field
 /**
  *
  * @brief Class that manage fields, dirty flags and the links between fields and dirty flags.
- * 
+ *
  * The FieldManager class is a base class for all classes that contain fields (like node and derived class for example).
  *
  * Used to have a central point for field management(enumeration, serialization, lock/unlock, dirty/validate).
  *
  * @remarks \b DefaultConstructible
- * 
+ *
  * @todo Iterators on dirty flags, fields.
  * @todo Improve UpdateField and UpdateFrom().
  * @todo Concept \b Assignable.
@@ -86,10 +87,27 @@ struct VGD_API FieldManager : public IFieldObserver
 	//@{
 
 	/**
+	 * @brief	Retrieves all field names and store them using the given output iterator.
+	 *
+	 * @remark	The output iterator's value type must be @c std::string.
+	 *
+	 * @param	output	an STL compliant output iterator
+	 */
+	template< typename OutputIterator >
+	void getFieldNames( OutputIterator & output ) const
+	{
+		MapField::const_iterator	i;
+		for( i = m_fields.begin(); i != m_fields.end(); ++i )
+		{
+			*output++ = i->first;
+		}
+	}
+
+	/**
 	 * @brief Returns the specified field in read-only access mode.
 	 *
 	 * @pre A field with strFieldName must exist(check with assert).
-	 * 
+	 *
 	 * @return A Editor that you can use like a C++ pointer on the field.
 	 */
 	template< typename T >
@@ -103,7 +121,7 @@ struct VGD_API FieldManager : public IFieldObserver
 	 * @brief Returns the specified field in read-write access mode.
 	 *
 	 * @return A Editor that you can use like a C++ pointer on the field.
-	 * 
+	 *
 	 * @remark If the desired field does'nt exist, it is automatically created.
 	 */
 	template< typename T >
@@ -112,10 +130,10 @@ struct VGD_API FieldManager : public IFieldObserver
 		EditorRW<T> fieldRW( getField<T>(strFieldName).get() );
 		return fieldRW;
 	}
-	
+
 	/**
 	 * @brief Returns if the specified field exist.
-	 * 
+	 *
 	 * @return true if the specified field exist, false otherwise.
 	 */
 	const bool isField( const std::string strFieldName ) const;
@@ -123,7 +141,7 @@ struct VGD_API FieldManager : public IFieldObserver
 ///@todo FIXME
 //	/**
 //	 * brief Test the type of the specified field.
-//	 * 
+//	 *
 //	 * return true if the specified field exist and has the desired type, false otherwise.
 //	 */
 //	template< typename fieldType >
@@ -131,7 +149,7 @@ struct VGD_API FieldManager : public IFieldObserver
 //	{
 //		MapField::const_iterator iField;
 //		iField = m_fields.find( strFieldName );
-//		
+//
 //		if ( iField != m_fields.end() )
 //		{
 //			// strFieldName is founded
@@ -160,8 +178,8 @@ struct VGD_API FieldManager : public IFieldObserver
 	 * @brief Returns the type of a specified field.
 	 *
 	 * @pre A field with strFieldName must exist(check with assert).
-	 * 
-	 * @return The type of the specified field if sucessful, otherwise a type_info on class \c NotFound (if the field 
+	 *
+	 * @return The type of the specified field if sucessful, otherwise a type_info on class \c NotFound (if the field
 	 * named strFieldName is not founded).
 	 */
 	const std::type_info& getFieldType( const std::string strFieldName ) const;
@@ -177,18 +195,18 @@ struct VGD_API FieldManager : public IFieldObserver
 
 	/**
 	 * @brief Returns specified dirty flag.
-	 * 
+	 *
 	 * @param	strDirtyFlagName	name of the dirty flag.
-	 * 
+	 *
 	 * @return A reference to the desired dirty flag or 0 if a flag with the strDirtyFlagName is not founded.
 	 */
 	DirtyFlag*			getDirtyFlag( const std::string strDirtyFlagName );
 
 	/**
 	 * @brief Returns specified dirty flag.
-	 * 
+	 *
 	 * @param	strDirtyFlagName	name of the dirty flag.
-	 * 
+	 *
 	 * @return A reference to the desired dirty flag or 0 if a flag with the strDirtyFlagName is not founded.
 	 */
 	const DirtyFlag*	getDirtyFlag( const std::string strDirtyFlagName ) const;
@@ -196,14 +214,14 @@ struct VGD_API FieldManager : public IFieldObserver
 ///@todo FIXME
 //	/**
 //	 * brief Dirty flag accessor.
-//	 * 
+//	 *
 //	 * return a pair with a begin iterator(the first element of the pair) and a end iterator(the second element of the pair).
 //	 */
 //	std::pair< MapDirtyFlag::const_iterator, MapDirtyFlag::const_iterator > getDirtyFlagsIterators( void ) const;
-//			
+//
 //	/**
 //	 * brief Dirty flag accessor.
-//	 * 
+//	 *
 //	 * return a pair with a begin iterator(the first element of the pair) and a end iterator(the second element of the pair).
 //	 */
 //	std::pair< MapDirtyFlag::iterator, MapDirtyFlag::iterator > getDirtyFlagsIterators( void );
@@ -217,18 +235,18 @@ protected:
 	 * @name Various typedefs
 	 */
 	//@{
-	
+
 	/**
 	 * @brief Typedef for the field container.
-	 * 
+	 *
 	 * string						: name of field.
 	 * vgd::Shp<AbstractField>	: reference to the field.
 	 */
 	typedef std::map< std::string, vgd::Shp<AbstractField>	>	MapField;
-	
+
 	/**
 	 * @brief Typedef for the dirty flag container.
-	 * 
+	 *
 	 * key of map		name of DirtyFlag
 	 * value of map		the dirty flag
 	 */
@@ -246,31 +264,31 @@ protected:
 ///@todo FIXME
 //	/**
 //	 * brief Returns field iterators.
-//	 * 
-//	 * return a pair with a begin iterator(the first element of the pair) and 
+//	 *
+//	 * return a pair with a begin iterator(the first element of the pair) and
 //	 * the end iterator(the second element of the pair).
-//	 * 
+//	 *
 //	 * todo not MT-safe(see getFieldRO()...)
 //	 */
 //	std::pair< MapField::const_iterator, MapField::const_iterator > getFieldIterators( void ) const;
 //
 //	/**
 //	 * brief Returns field iterators.
-//	 * 
-//	 * return a pair with a begin iterator(the first element of the pair) and 
+//	 *
+//	 * return a pair with a begin iterator(the first element of the pair) and
 //	 * the end iterator(the second element of the pair).
-//	 * 
+//	 *
 //	 * todo not MT-safe(see getFieldRO()...)
 //	 */
 //	std::pair< MapField::iterator, MapField::iterator > getFieldIterators( void );
-			
+
 	//@}
 
 
 
 	/**
 	 * @name Field management methods
-	 * 
+	 *
 	 * @todo clearField()
 	 * @todo cloneField()
 	 */
@@ -278,23 +296,23 @@ protected:
 
 	/**
 	 * @brief Add a new field.
-	 * 
+	 *
 	 * @pre Name of field must be unique in a field manager.
-	 * 
+	 *
 	 * @param pField		reference on the field to add.
-	 * 
-	 * @remarks After calling this method, the field passed in parameter is owned by the FieldManager. 
+	 *
+	 * @remarks After calling this method, the field passed in parameter is owned by the FieldManager.
 	 * So it is automatically deleted.
-	 * 
+	 *
 	 * @remarks This instance of FieldManager is attach to the field(as an IFieldObserver).
 	 */
 	const bool	addField( AbstractField* pField );
 
 	/**
 	 * @brief Remove a field.
-	 * 
+	 *
 	 * @pre Field must be in field manager.
-	 * 
+	 *
 	 * @param strFieldName	name of field.
 	 */
 	const bool	removeField( const std::string strFieldName );
@@ -307,7 +325,7 @@ protected:
 	 * @name Implementation of IFieldObserver
 	 */
 	//@{
-	
+
 	/**
 	 * @todo Replace Event by a c++ class ?
 	 */
@@ -328,49 +346,49 @@ protected:
 
 	/**
 	 * @brief Add a link between a field and a dirty flag.
-	 * 
+	 *
 	 * @pre	strFieldName must be a field name
 	 * @pre	strFirtyFlagName must be a dirty flag name.
-	 * 
+	 *
 	 * @param strFieldName		name of field.
 	 * @param strDirtyFlagName	name of dirty flag.
-	 * 
+	 *
 	 * @return true if link is successfully added, false otherwise.
 	 */
 	const bool link( const std::string strFieldName, const std::string strDirtyFlagName );
 
 	/**
 	 * @brief Add links between all fields currently in the fieldManager and a dirty flag.
-	 * 
+	 *
 	 * @pre		strFirtyFlagName must be a dirty flag name.
-	 * 
+	 *
 	 * @param 	strDirtyFlagName	name of dirty flag.
-	 * 
+	 *
 	 * @return true if all links have been successfully added, false otherwise.
 	 */
 	const bool link( const std::string strDirtyFlagName );
 
 	/**
 	 * @brief Remove a link between a field and a dirty flag.
-	 * 
+	 *
 	 * @pre	strFieldName must be a field name
 	 * @pre	strFirtyFlagName must be a dirty flag name.
-	 * 
+	 *
 	 * @param strFieldName		name of field.
 	 * @param strDirtyFlagName	name of dirty flag.
-	 * 
+	 *
 	 * @return true if link is successfully removed, false otherwise.
 	 */
 	const bool unlink( const std::string strFieldName, const std::string strDirtyFlagName );
 
 	/**
 	 * @brief Remove all links for a field.
-	 * 
+	 *
 	 * @pre	strFieldName must be a field name
 	 * @pre	strFirtyFlagName must be a dirty flag name.
-	 * 
+	 *
 	 * @param strFieldName	name of field.
-	 * 
+	 *
 	 * @return true if link is successfully removed, false otherwise.
 	 */
 	const bool unlinkField( const std::string strFieldName );
@@ -379,7 +397,7 @@ protected:
 
 
 
-	/** 
+	/**
 	 * @name Dirty flag management
 	 */
 	//@{
@@ -388,7 +406,7 @@ protected:
 	 * @brief Add a new dirty flag.
 	 *
 	 * @param	strFlagName		name of the flag.
-	 * 
+	 *
 	 * @return true if the flag is created, false if an error occurs(a flag already created with the same name).
 	 */
 	const bool	addDirtyFlag( const std::string& strFlagName );
@@ -396,13 +414,13 @@ protected:
 ///@todo FIXME
 //	/**
 //	 * brief Remove a dirty flag.
-//	 * 
+//	 *
 //	 * pre	strFirtyFlagName must be a dirty flag name.
-//	 * 
+//	 *
 //	 * param	strFlagName		name of the flag.
-//	 * 
+//	 *
 //	 * return true if the flag is removed sucessfully, false if an error occurs(no flag with this name).
-//	 * 
+//	 *
 //	 * todo Uncomment this if necessary.
 //	 * todo Remove link between field and dirty flag ?
 //	 */
@@ -418,18 +436,18 @@ protected:
 
 	/**
 	 * @brief Checks if the field manager contains a field with the given name.
-	 * 
+	 *
 	 * @param strFieldName		name of field.
-	 * 
+	 *
 	 * @return true if the field manager contains a field with the given name, false otherwise.
 	 */
 	const bool	checkField( const std::string strFieldName ) const;
 
 	/**
 	 * @brief Checks if the field manager contains a dirty flag with the given name.
-	 * 
+	 *
 	 * @param strDirtyFlagName		name of dirty flag.
-	 * 
+	 *
 	 * @return true if the field manager contains a dirty flag with the given name, false otherwise.
 	 */
 	const bool	checkDirtyFlag( const std::string strDirtyFlagName ) const;
@@ -444,15 +462,15 @@ private:
 	 * @brief Returns the specified field.
 	 *
 	 * @pre A field with strFieldName must exist(check with assert).
-	 * 
-	 * @return A shared pointer to the desired field if sucessful or  a shared pointer with a 
+	 *
+	 * @return A shared pointer to the desired field if sucessful or  a shared pointer with a
 	 * null reference(if the field named strFieldName is not founded).
 	 */
 	template < typename T >
 	const vgd::Shp< T > getField( const std::string strFieldName ) const
 	{
 		MapField::const_iterator iField = m_fields.find( strFieldName );
-	
+
 		if ( iField != m_fields.end() )
 		{
 			// Found
@@ -470,15 +488,15 @@ private:
 	 * @brief Returns specified field.
 	 *
 	 * @pre A field with strFieldName must exist(check with assert).
-	 * 
-	 * @return A shared pointer to the desired field if sucessful (it is created if not founded) or a shared pointer 
+	 *
+	 * @return A shared pointer to the desired field if sucessful (it is created if not founded) or a shared pointer
 	 * with a null reference (if the field named strFieldName is not founded and creation of a new desired field fails).
 	 */
 	template < typename T >
 	vgd::Shp< T > getField( const std::string strFieldName )
 	{
 		MapField::iterator iField = m_fields.find( strFieldName );
-	
+
 		if ( iField != m_fields.end() )
 		{
 			// Found
@@ -488,7 +506,7 @@ private:
 		{
 			// Not found
 			const bool bRetVal = addField( new T(strFieldName) );
-			
+
 			if ( bRetVal )
 			{
 				// Warning recusive call.
@@ -500,11 +518,11 @@ private:
 			}
 		}
 	}
-	
+
 	void destroy();
 
 	void copy( const FieldManager& rSrc );
-	
+
 	/**
 	 * @name Data
 	 */

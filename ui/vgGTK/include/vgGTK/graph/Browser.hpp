@@ -10,7 +10,7 @@
 
 #include <gtkmm/actiongroup.h>
 #include <gtkmm/box.h>
-#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/paned.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/uimanager.h>
 
@@ -18,6 +18,7 @@
 #include <vgd/node/Group.hpp>
 
 #include "vgGTK/vgGTK.hpp"
+#include "vgGTK/graph/FieldManagerEditor.hpp"
 #include "vgGTK/graph/TreeModelProvider.hpp"
 
 
@@ -53,13 +54,31 @@ private:
 
 	typedef std::set< Glib::ustring > StringSet;	///< Defines a set of Glib::ustring.
 
-	static const Glib::ustring			m_uiDefinition;		///< Defines the user interfaces.
+	/**
+	 * @name	User Interface Management
+	 */
+	//@{
 	Glib::RefPtr< Gtk::ActionGroup >	m_actions;			///< Holds all actions of the user interface.
 	Glib::RefPtr< Gtk::UIManager >		m_uiManager;		///< Manages the user inteface toolbar and menus.
-	Gtk::ScrolledWindow					m_scrolled;			///< Contains the tree view.
-	Gtk::TreeView						m_treeView;			///< The managed treeview widget;
+	//@}
+
+	/**
+	 * @name	Widgets
+	 */
+	//@{
+	Gtk::TreeView		m_treeView;	///< The treeview widget that shows the vgSDK graph.
+	Gtk::VPaned			m_vpaned;	///< Allows to configure size between the tree view and the field managed editor.
+	FieldManagerEditor	m_editor;	///< Allows to edit the fields of the selected node.
+	//@}
+
+	/**
+	 * @name	Misc
+	 */
+	//@{
+	static const Glib::ustring			m_uiDefinition;		///< Defines the user interfaces.
 	TreeModelProvider					m_modelProvider;	///< The managed tree model provider.
 	StringSet							m_expandedPaths;	///< Holds all expanded paths.
+	//@}
 
 	/**
 	 * @name	Signal Handlers
@@ -68,6 +87,7 @@ private:
 	void onButtonPressEvent( GdkEventButton * event );												///< Handles button clicks on the tree view.
 	void onExpandAll();																				///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onFullRefresh();																			///< Handles the action that will perfrom a refresh of the whole tree.
+	void onSelectionChanged();																		///< Handles notification about a selection change.
 	void onRowCollapsed( const Gtk::TreeModel::iterator & i, const Gtk::TreeModel::Path & path );	///< Handles notification about a collapsing row.
 	void onRowExpanded( const Gtk::TreeModel::iterator & i, const Gtk::TreeModel::Path & path );	///< Handles notification about a expanding row.
 	//@}
