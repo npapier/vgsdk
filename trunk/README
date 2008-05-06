@@ -11,8 +11,8 @@ http://download.gna.org/vgsdk/documentation/XXX/html/(replace XXX with the versi
 The NEWS file tersely lists features that are new in this release.
 
 Copyright(C) 2004-2007, Claire Baegert, James Ballantyne, Guillaume Brocker, Clement Forest, Johan Moreau, 
-Stephane Nicolau, Nicolas Papier and Sylvain Thery for their respective work.
-Copyright(C) 2004-2007, The R&D team of IRCAD (See http://www.ircad.org/)
+Stephane Nicolau, Nicolas Papier and Sylvain Thery for their respective work in the R&D team of IRCAD (See http://www.ircad.org/)
+Copyright(C) 2008, Pierre-Jean Bensoussan, Guillaume Brocker, Clement Forest and Nicolas Papier for their respective work in the R&D team of Digital trainers SAS (See http://www.digital-trainers.com/)
 If we've forgotten you in the above list, please contact us!
 
 This library is free software. You can redistribute it and/or modify it under the terms of the GNU Lesser General Public
