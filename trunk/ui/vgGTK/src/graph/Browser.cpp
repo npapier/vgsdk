@@ -8,6 +8,8 @@
 #include <iostream>
 #include <gtkmm/action.h>
 #include <gtkmm/cellrenderertext.h>
+#include <gtkmm/frame.h>
+#include <gtkmm/scrolledwindow.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
 
@@ -17,6 +19,29 @@ namespace vgGTK
 
 namespace graph
 {
+
+namespace
+{
+	/**
+	 * @brief	Helper that adds some other widgets for decoration arround a given widget.
+	 *
+	 * @param	widget	a reference to a widget
+	 *
+	 * @return	a pointer to the decoration widget, that is managed
+	 */
+	Gtk::Widget * addDecoration( Gtk::Widget & widget )
+	{
+		Gtk::ScrolledWindow	* scrolled	= Gtk::manage( new Gtk::ScrolledWindow() );
+		Gtk::Frame			* frame		= Gtk::manage( new Gtk::Frame() );
+
+		scrolled->add( widget );
+		scrolled->set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
+
+		frame->add( *scrolled );
+
+		return frame;
+	}
+}
 
 
 
@@ -55,11 +80,11 @@ Browser::Browser()
 
 
 	// Builds the widget hieararchy.
-	m_scrolled.add( m_treeView );
-	m_scrolled.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
+	m_vpaned.add1( *addDecoration(m_treeView) );
+	m_vpaned.add2( *addDecoration(m_editor) );
 
 	this->pack_start( *toolbar, Gtk::PACK_SHRINK );
-	this->add( m_scrolled );
+	this->add( m_vpaned );
 
 
 	// Configures the managed tree view to show the model build-up from a vgSDK graph.
@@ -91,6 +116,10 @@ Browser::Browser()
 	m_treeView.signal_button_press_event().connect_notify( sigc::mem_fun(this, &Browser::onButtonPressEvent) );
 	m_treeView.signal_row_collapsed().connect( sigc::mem_fun(this, &Browser::onRowCollapsed) );
 	m_treeView.signal_row_expanded().connect( sigc::mem_fun(this, &Browser::onRowExpanded) );
+
+
+	// Connects signal handlers on the tree view's selection
+	m_treeView.get_selection()->signal_changed().connect( sigc::mem_fun(this, &Browser::onSelectionChanged) );
 }
 
 
@@ -146,6 +175,25 @@ void Browser::onFullRefresh()
 		const Gtk::TreeModel::Path	path( *i );
 
 		m_treeView.expand_to_path( path );
+	}
+}
+
+
+
+void Browser::onSelectionChanged()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	Gtk::TreeModel::iterator			selected = selection->get_selected();
+
+	if( selected )
+	{
+		const Gtk::TreeModel::Row	& row = *selected;
+
+		m_editor.setFieldManager( row.get_value(m_modelProvider.getColumnRecord().m_nodeColumn) );
+	}
+	else
+	{
+		m_editor.clear();
 	}
 }
 
