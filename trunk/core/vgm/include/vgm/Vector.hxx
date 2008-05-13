@@ -1,18 +1,18 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N>::Vector( void )
 {
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N>::Vector( const T* v )
 {
 	setValue( v );
@@ -20,7 +20,7 @@ Vector<T,N>::Vector( const T* v )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N>::Vector( const Vector& v )
 {
 	setValue( v );
@@ -28,7 +28,7 @@ Vector<T,N>::Vector( const Vector& v )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N>& Vector<T,N>::operator=( const Vector& v )
 {
 	if ( this != &v )
@@ -41,23 +41,23 @@ Vector<T,N>& Vector<T,N>::operator=( const Vector& v )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 const T* Vector<T,N>::getValue( void ) const
 {
-	return ( m_tCoord );
+	return m_tCoord;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 T* Vector<T,N>::getValue( void )
 {
-	return ( m_tCoord );
+	return m_tCoord;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 void Vector<T,N>::setValue( const T* v )
 {
 	for (int32 i=0; i<N; i++)
@@ -68,7 +68,7 @@ void Vector<T,N>::setValue( const T* v )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 void Vector<T, N>::setValue( const Vector& v)
 {
 	for (int32 i=0; i<N; i++)
@@ -79,23 +79,23 @@ void Vector<T, N>::setValue( const Vector& v)
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 T& Vector<T, N>::operator []( int32 i )
 {
-	return ( m_tCoord[i] );
+	return m_tCoord[i];
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 const T& Vector<T, N>::operator []( int32 i ) const
 {
-	return ( m_tCoord[i] );
+	return m_tCoord[i];
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 void Vector<T,N>::null( void )
 {
 	for (int32 i =0; i<N; i++)
@@ -106,7 +106,7 @@ void Vector<T,N>::null( void )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 const bool Vector<T,N>::isNull( void ) const
 {
 	for (int32 i =0; i<N; i++)
@@ -121,7 +121,7 @@ const bool Vector<T,N>::isNull( void ) const
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 void Vector<T,N>::setInvalid( void )
 {
 	const T tMax = std::numeric_limits< T >::max();
@@ -134,7 +134,7 @@ void Vector<T,N>::setInvalid( void )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 const Vector<T,N> Vector<T,N>::getInvalid()
 {
 	Vector<T,N>	vector;
@@ -142,16 +142,16 @@ const Vector<T,N> Vector<T,N>::getInvalid()
 	vector.setInvalid();
 	return vector;
 }
-	
 
 
-template< typename T, int32 N >
+
+template< typename T, int N >
 const bool Vector<T,N>::isInvalid( void ) const
 {
 	const T tMax	= std::numeric_limits< T >::max();
 	bool	invalid	= false;
 	
-	for (int32 i = 0; i<N && invalid==false; i++)	
+	for (int32 i = 0; i<N && invalid==false; i++)
 	{
 		invalid = (m_tCoord[i] == tMax);
 	}
@@ -160,7 +160,7 @@ const bool Vector<T,N>::isInvalid( void ) const
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> Vector<T,N>::operator+( const Vector& v ) const
 {
 	Vector res;
@@ -174,7 +174,7 @@ Vector<T,N> Vector<T,N>::operator+( const Vector& v ) const
 
 
 
-template< typename T, int32 N>
+template< typename T, int N>
 Vector<T,N> Vector<T,N>::operator-( const Vector& v ) const
 {
 	Vector res;
@@ -188,7 +188,7 @@ Vector<T,N> Vector<T,N>::operator-( const Vector& v ) const
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> operator *( const Vector<T,N>& v, const T pScal )
 {
 	Vector<T,N> rv = v;
@@ -199,7 +199,7 @@ Vector<T,N> operator *( const Vector<T,N>& v, const T pScal )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> operator *( const T pScal, const Vector<T,N>& v )
 {
 	Vector<T,N> rv = v;
@@ -210,9 +210,7 @@ Vector<T,N> operator *( const T pScal, const Vector<T,N>& v )
 
 
 
-
-
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> operator /( const Vector<T,N>& v, const T pScal )
 {
 	Vector<T,N> rv = v;
@@ -223,7 +221,7 @@ Vector<T,N> operator /( const Vector<T,N>& v, const T pScal )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> operator /( const T pScal, const Vector<T,N>& v )
 {
 	Vector<T,N> rv = v;
@@ -234,7 +232,7 @@ Vector<T,N> operator /( const T pScal, const Vector<T,N>& v )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> Vector<T,N>::operator -( void ) const
 {
 	Vector v;
@@ -249,7 +247,7 @@ Vector<T,N> Vector<T,N>::operator -( void ) const
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 void Vector<T,N>::negate( void )
 {
 	for (int32 i =0; i<N; i++)
@@ -260,7 +258,7 @@ void Vector<T,N>::negate( void )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N>& Vector<T,N>::operator +=( const Vector& v )
 {
 	for (int32 i =0; i<N; i++)
@@ -268,12 +266,12 @@ Vector<T,N>& Vector<T,N>::operator +=( const Vector& v )
 		m_tCoord[i] += v.m_tCoord[i];
 	}
 
-	return ( *this );
+	return *this;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N>& Vector<T,N>::operator -=( const Vector& v )
 {
 	for (int32 i =0; i<N; i++)
@@ -281,12 +279,12 @@ Vector<T,N>& Vector<T,N>::operator -=( const Vector& v )
 		m_tCoord[i] -= v.m_tCoord[i];
 	}
 
-	return ( *this );
+	return *this;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N>& Vector<T,N>::operator *=( T d )
 {
 	for (int32 i =0; i<N; i++)
@@ -294,12 +292,12 @@ Vector<T,N>& Vector<T,N>::operator *=( T d )
 		m_tCoord[i] *= d;
 	}
 
-	return ( *this );
+	return *this;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N>& Vector<T,N>::operator /=( T d )
 {
 	assert( d != 0 );
@@ -309,12 +307,12 @@ Vector<T,N>& Vector<T,N>::operator /=( T d )
 		m_tCoord[i] /= d;
 	}
 
-	return ( *this );
+	return *this;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 T Vector<T,N>::getSqrLength( void ) const
 {
 	T total = 0;
@@ -329,46 +327,46 @@ T Vector<T,N>::getSqrLength( void ) const
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 T Vector<T,N>::getLength( void ) const
 {
 	double racine;
 
 	racine = sqrt( (double)getSqrLength() );
 
-	return ( static_cast< T >(racine) );
+	return static_cast< T >(racine);
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 T Vector<T,N>::normalize( void )
 {
-	T l = getLength();
+	const T length = getLength();
 
-	if ( l != 0.0 )
+	if ( length != static_cast<T>(0) )
 	{
-		*this /= l;
+		*this /= length;
 	}
 
-	return ( l );
+	return length;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> Vector<T,N>::getNormalized( void ) const
 {
 	Vector v = *this;
 
 	v.normalize();
 
-	return ( v );
+	return v;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 float Vector<T,N>::dot( const Vector& v ) const
 {
 	float retVal = 0.f;
@@ -378,12 +376,12 @@ float Vector<T,N>::dot( const Vector& v ) const
 		retVal += this->m_tCoord[i] * v.m_tCoord[i];
 	}
 	
-	return ( retVal );
+	return retVal;
 }
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> Vector<T,N>::getClosestAxis() const
 {
 	Vec3f	axis(0.0, 0.0, 0.0), bestAxis;
@@ -391,8 +389,8 @@ Vector<T,N> Vector<T,N>::getClosestAxis() const
 
 #define TEST_AXIS()						\
 	if ((d = dot(axis)) > max) {		\
-	max = d;							      \
-	bestAxis = axis;						\
+	max = d;							\
+	bestAxis = axis;					\
 	}
 
 	axis[0] = 1.0;	// +x axis
@@ -422,7 +420,7 @@ Vector<T,N> Vector<T,N>::getClosestAxis() const
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 void Vector<T,N>::projectOnSphere( const float radius )
 {
 	assert( N == 3 );
@@ -445,7 +443,7 @@ void Vector<T,N>::projectOnSphere( const float radius )
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 bool Vector<T,N>::operator==( const Vector& v2 ) const
 {
 	for (int32 i=0; i<N; i++)
@@ -461,9 +459,12 @@ bool Vector<T,N>::operator==( const Vector& v2 ) const
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 bool Vector<T,N>::operator!=( const Vector& v2 ) const
 {
+/*	const bool retVal = (*this) == v2;
+	return !retVal;*/
+
 	for (int32 i =0; i<N; i++)
 	{
 		if (v2.m_tCoord[i] != m_tCoord[i])
@@ -477,7 +478,7 @@ bool Vector<T,N>::operator!=( const Vector& v2 ) const
 
 
 
-template< typename T, int32 N >
+template< typename T, int N >
 bool Vector<T,N>::equals( const Vector& v, const float tolerance ) const
 {
 	Vector	diff = *this - v;
@@ -507,7 +508,24 @@ const Vector< Out, OutSize > vector_cast( const std::vector< In > & in )
 {
 	Vector< Out, OutSize >	out;
 
-	for( uint i = 0; i != OutSize && i != in.size(); ++i )
+	const uint minSize = std::min( OutSize, in.size() );
+
+	for( uint i = 0; i != minSize; ++i )
+	{
+		out[i] = static_cast< Out >( in[i] );
+	}
+
+	return out;
+}
+
+
+
+template< typename Out, /*int OutSize, */typename In, int InSize >
+const vgm::Vector< Out, InSize /*OutSize*/ > VectorCast( const Vector< In, InSize > & in )
+{
+	Vector< Out, InSize/*OutSize*/ > out;
+
+	for( int32 i = 0; i != InSize; ++i )
 	{
 		out[i] = static_cast< Out >( in[i] );
 	}
