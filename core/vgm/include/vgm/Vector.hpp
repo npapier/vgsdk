@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -50,6 +50,7 @@
 #ifndef _VGM_VECTOR_HPP
 #define _VGM_VECTOR_HPP
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -70,14 +71,13 @@ namespace vgm
  * 
  * @ingroup LinearAlgebra
  */
-template< typename T, int32 N >
+template< typename T, int N >
 struct Vector
 {
-	
 	typedef T value_type;	///< Defines an alias on the components type
 	
 	/**
-	 * @name Constructors ,destructor and assign operator.
+	 * @name Constructors ,destructor and assign operator
 	 */
 	//@{
 
@@ -157,7 +157,7 @@ struct Vector
 
 
 	/**
-	 * @name Vector accessors.
+	 * @name Vector accessors
 	 *
 	 * The following methods return and set vector values.
 	 */
@@ -280,9 +280,9 @@ struct Vector
 	/**
 	 * @brief	Retrieves the number of components.
 	 */
-	const uint32 getSize() const
+	const uint getSize() const
 	{
-		return N;
+		return static_cast<uint>(N);
 	}
 	//@}
 
@@ -301,7 +301,7 @@ struct Vector
 	 * @brief Test if the vector is null.
 	 */
 	const bool	isNull( void ) const;
-	
+
 	/**
 	 * @brief Invalidates the vector.
 	 * 
@@ -315,7 +315,7 @@ struct Vector
 	static const Vector getInvalid();
 	
 	/**
-	 * @brief Test if the vector is invalid.
+	 * @brief Tests if the vector is invalid.
 	 * 
 	 * @author	Guillaume Brocker
 	 */
@@ -412,7 +412,7 @@ struct Vector
 		v.m_tCoord[1] = m_tCoord[2]* rV.m_tCoord[0] -  m_tCoord[0]* rV.m_tCoord[2];
 		v.m_tCoord[2] = m_tCoord[0]* rV.m_tCoord[1] -  m_tCoord[1]* rV.m_tCoord[0];
 		
-		return ( v );
+		return v;
 	}
 
 
@@ -457,6 +457,8 @@ struct Vector
 	bool			equals( const Vector& v, const float tolerance ) const;
 	//@}
 
+
+
 protected:
 
 	/**
@@ -472,7 +474,7 @@ protected:
  * 
  * @ingroup LinearAlgebra
  */
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> operator *( const T pScal, const Vector<T,N>& v );
 
 /**
@@ -482,7 +484,7 @@ Vector<T,N> operator *( const T pScal, const Vector<T,N>& v );
  * 
  * @ingroup LinearAlgebra
  */
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> operator *( const Vector<T,N>& v, const T pScal );
 
 /**
@@ -492,7 +494,7 @@ Vector<T,N> operator *( const Vector<T,N>& v, const T pScal );
  * 
  * @ingroup LinearAlgebra
  */
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> operator /( const T pScal, const Vector<T,N>& v );
 
 /**
@@ -502,7 +504,7 @@ Vector<T,N> operator /( const T pScal, const Vector<T,N>& v );
  * 
  * @ingroup LinearAlgebra
  */
-template< typename T, int32 N >
+template< typename T, int N >
 Vector<T,N> operator /( const Vector<T,N>& v, const T pScal );
 
 /**
@@ -528,7 +530,7 @@ std::vector< float > out( vector_cast< float >(in) );
  * 
  * @author	Guillaume Brocker
  */
-template< typename Out, typename In, int32 InSize >
+template< typename Out, typename In, int InSize >
 const std::vector< Out > vector_cast( const Vector< In, InSize > & in );
 
 /**
@@ -563,8 +565,34 @@ vgm::Vec3f out3( vector_cast< float, 3 >( in ) );
  *
  * @author	Guillaume Brocker
  */
-template< typename Out, int32 OutSize, typename In >
+template< typename Out, int OutSize, typename In >
 const Vector< Out, OutSize > vector_cast( const std::vector< In > & in );
+
+
+
+/**
+ * @brief Converts any vgm::Vector into any vgm::Vector instance.
+ * 
+ * Copies and converts each element of the input vector into the output vector.
+ * As a result, the output vector will have as many elements as the input vector.
+ * 
+ * See usage examples below.
+ * 
+@code
+const vgm::Vec3f	in( 1.f, 2.f, 3.f );
+vgm::Vec3i			out( VectorCast< int >(in) );
+@endcode
+
+@code
+const vgm::Vec3i	in( 1, 2, 3 );
+vgm::Vec3f		out( VectorCast< float >(in) );
+@endcode
+ * 
+ * @relates Vector
+ * @ingroup LinearAlgebra
+ */
+template< typename Out/*, int OutSize*/, typename In, int InSize >
+const vgm::Vector< Out, InSize /*OutSize*/ > VectorCast( const Vector< In, InSize > & in );
 
 
 

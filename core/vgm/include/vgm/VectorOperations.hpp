@@ -25,7 +25,7 @@ namespace vgm
  *
  * @see nextPower2() function of vgm.
  */
-template< typename T, int32 N >
+template< typename T, int N >
 const Vector<T,N> nextPower2( const Vector<T,N> input )
 {
 	Vector<T,N> output;
