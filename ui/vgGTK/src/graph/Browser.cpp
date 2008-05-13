@@ -113,7 +113,7 @@ Browser::Browser()
 
 
 	// Connects several signal handlers on the tree view.
-	m_treeView.signal_button_press_event().connect_notify( sigc::mem_fun(this, &Browser::onButtonPressEvent) );
+	m_treeView.signal_button_release_event().connect_notify( sigc::mem_fun(this, &Browser::onButtonReleaseEvent) );
 	m_treeView.signal_row_collapsed().connect( sigc::mem_fun(this, &Browser::onRowCollapsed) );
 	m_treeView.signal_row_expanded().connect( sigc::mem_fun(this, &Browser::onRowExpanded) );
 
@@ -131,14 +131,21 @@ void Browser::setRoot( vgd::Shp< vgd::node::Group > root )
 
 
 
-void Browser::onButtonPressEvent( GdkEventButton * event )
+void Browser::onButtonReleaseEvent( GdkEventButton * event )
 {
 	if( event->button == 3 )
 	{
-		Gtk::Menu *	popupMenu = dynamic_cast< Gtk::Menu * >( m_uiManager->get_widget("/popup") );
-
-		Gtk::manage( popupMenu );
-		popupMenu->popup( event->button, event->time );
+		// Retrieves the selection and its path.
+		Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+		Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
+		
+		if( rowIterator )
+		{
+			Gtk::Menu *	popupMenu = dynamic_cast< Gtk::Menu * >( m_uiManager->get_widget("/popup") );
+	
+			Gtk::manage( popupMenu );
+			popupMenu->popup( event->button, event->time );			
+		}
 	}
 }
 
