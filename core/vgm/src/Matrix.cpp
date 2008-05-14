@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -796,9 +796,9 @@ void MatrixR::setOrtho(
 	ty = -(top+bottom) / (top-bottom);
 	tz = -(zFar+zNear) / (zFar-zNear);
 
-	matrix[0][0] = x;		matrix[0][1] = 0.f;		matrix[0][2] = 0.f;	matrix[0][3] = 0.f;
-	matrix[1][0] = 0.f;	matrix[1][1] = y;			matrix[1][2] = 0.f;  matrix[1][3] = 0.f;
-	matrix[2][0] = 0.f;	matrix[2][1] = 0.f;		matrix[2][2] = z;		matrix[2][3] = 0.f;
+	matrix[0][0] = x;	matrix[0][1] = 0.f;		matrix[0][2] = 0.f;	matrix[0][3] = 0.f;
+	matrix[1][0] = 0.f;	matrix[1][1] = y;		matrix[1][2] = 0.f;	matrix[1][3] = 0.f;
+	matrix[2][0] = 0.f;	matrix[2][1] = 0.f;		matrix[2][2] = z;	matrix[2][3] = 0.f;
 	matrix[3][0] = tx;	matrix[3][1] = ty;		matrix[3][2] = tz;	matrix[3][3] = 1.0f;
 }
 
@@ -821,7 +821,7 @@ void MatrixR::setPerspective( float fovy, float aspect, float zNear, float zFar 
 {
 	float xmin, xmax, ymin, ymax;
 
-	ymax = zNear * static_cast<float>( tan(fovy * M_PI / 360.f) );
+	ymax = zNear * static_cast<float>( tan(fovy * vgm::M_PI / 360.f) );
 	ymin = -ymax;
 	xmin = ymin * aspect;
 	xmax = ymax * aspect;

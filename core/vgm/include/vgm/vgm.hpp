@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -69,10 +69,11 @@
 
 #endif
 
-#ifndef M_PI
-#define M_PI       3.1415926535897931160E0
-#define M_PI_2     1.5707963267948965580E0
-#endif
+namespace vgm
+{
+	const double M_PI	= 3.1415926535897931160E0;
+	const double M_PI_2	= 1.5707963267948965580E0;
+}
 
 
 
