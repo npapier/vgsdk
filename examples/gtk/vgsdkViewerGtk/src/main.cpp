@@ -142,6 +142,10 @@ int main( int argc, char ** argv )
 	recentChooserMenu.signal_item_activated().connect( sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileRecent), &recentChooserMenu, &canvas) );
 	recentMenuItem->set_submenu( recentChooserMenu );
 	recentMenuItem->property_visible() = true;
+	
+	
+	// Configures the graph browser widget.
+	graphBrowser.set_size_request( 333, 0 );
 
 
 	// Configures the main window.
