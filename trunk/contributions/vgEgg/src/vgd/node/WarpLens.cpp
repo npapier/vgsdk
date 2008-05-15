@@ -26,7 +26,7 @@ std::pair< vgm::MatrixR, vgm::Rectangle2i > computeWarpLensParams(
 	const float height1f	= static_cast< float >( height );
 
 	vgm::MatrixR projection;
-	projection.setPerspective(	2.f * static_cast<float>(std::atan( (height1f/2.f)/-fc2 )) * 180.f / static_cast<float>(vgm::M_PI),
+	projection.setPerspective(	2.f * static_cast<float>(std::atan( (height1f/2.f)/-fc2 )) * 180.f / static_cast<float>(vgm::PI),
 								width1f/height1f * fc2/fc1,
 								nearPlane, farPlane );
 
