@@ -71,8 +71,8 @@
 
 namespace vgm
 {
-	const double M_PI	= 3.1415926535897931160E0;
-	const double M_PI_2	= 1.5707963267948965580E0;
+	const double PI		= 3.1415926535897931160E0;
+	const double PI_2	= 1.5707963267948965580E0;
 }
 
 
