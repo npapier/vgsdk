@@ -821,7 +821,7 @@ void MatrixR::setPerspective( float fovy, float aspect, float zNear, float zFar 
 {
 	float xmin, xmax, ymin, ymax;
 
-	ymax = zNear * static_cast<float>( tan(fovy * vgm::M_PI / 360.f) );
+	ymax = zNear * static_cast<float>( tan(fovy * vgm::PI / 360.f) );
 	ymin = -ymax;
 	xmin = ymin * aspect;
 	xmax = ymax * aspect;

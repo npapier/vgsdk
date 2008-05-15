@@ -25,14 +25,14 @@ int32 Utilities::nextPower2( const int32 num )
 
 float Utilities::deg2rad( const float deg )
 {
-	return ( static_cast< float >(deg * (M_PI / 180.f)) );
+	return ( static_cast< float >(deg * (vgm::PI / 180.f)) );
 }
 
 
 
 float Utilities::rad2deg( const float rad )
 {
-	return ( static_cast< float >(rad * (180.f / M_PI)) );
+	return ( static_cast< float >(rad * (180.f / vgm::PI)) );
 }
 
 
