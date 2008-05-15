@@ -30,7 +30,7 @@ namespace vgsdkViewerGtk
 
 myCanvas::myCanvas()
 {
-	set_size_request( 800, 600 );
+	set_size_request( 1024, 768 );
 
 	createDefaultLights();
  	createClearFrameBuffer();

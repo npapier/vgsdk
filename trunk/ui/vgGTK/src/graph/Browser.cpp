@@ -77,8 +77,8 @@ Browser::Browser()
 
 
 	// Builds the widget hieararchy.
-	m_vpaned.add1( *addDecoration(m_treeView) );
-	m_vpaned.add2( *addDecoration(m_editor) );
+	m_vpaned.pack1( *addDecoration(m_treeView) );
+	m_vpaned.pack2( *addDecoration(m_editor) );
 
 	this->pack_start( *toolbar, Gtk::PACK_SHRINK );
 	this->add( m_vpaned );
