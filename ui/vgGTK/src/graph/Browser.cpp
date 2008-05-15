@@ -8,7 +8,6 @@
 #include <iostream>
 #include <gtkmm/action.h>
 #include <gtkmm/cellrenderertext.h>
-#include <gtkmm/frame.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
@@ -32,14 +31,12 @@ namespace
 	Gtk::Widget * addDecoration( Gtk::Widget & widget )
 	{
 		Gtk::ScrolledWindow	* scrolled	= Gtk::manage( new Gtk::ScrolledWindow() );
-		Gtk::Frame			* frame		= Gtk::manage( new Gtk::Frame() );
-
+		
 		scrolled->add( widget );
+		scrolled->set_shadow_type( Gtk::SHADOW_IN );
 		scrolled->set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
 
-		frame->add( *scrolled );
-
-		return frame;
+		return scrolled;
 	}
 }
 
