@@ -41,20 +41,42 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 {
 	Glib::RefPtr< Gtk::ActionGroup >	actions = Gtk::ActionGroup::create();
 
-	actions->add( Gtk::Action::create("File", "_File")																														);
-	actions->add( Gtk::Action::create("New", Gtk::Stock::NEW),								sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileNew), topLevel, canvas)			);
-	actions->add( Gtk::Action::create("Open", Gtk::Stock::OPEN),							sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, true)	);
-	actions->add( Gtk::Action::create("Add", Gtk::Stock::ADD),								sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, false)	);
-	actions->add( Gtk::Action::create("Recent", "Recent Files")																												);
-	actions->add( Gtk::Action::create("Reload",	"Reload"),			Gtk::AccelKey("F5"),	sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileReload), canvas)					);
-	actions->add( Gtk::Action::create("ExportGraphviz", "Export Graphviz"),					sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileExportGraphviz), canvas)			);
-	actions->add( Gtk::Action::create("Quit", Gtk::Stock::QUIT),							sigc::ptr_fun(&vgsdkViewerGtk::fileExit)										);
+	actions->add( Gtk::Action::create("File", "_File") );
+	actions->add(
+			Gtk::Action::create("New", Gtk::Stock::NEW),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileNew), topLevel, canvas) );
+	actions->add(
+			Gtk::Action::create("Open", Gtk::Stock::OPEN),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, true) );
+	actions->add(
+			Gtk::Action::create("Add", Gtk::Stock::ADD),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileOpen), topLevel, canvas, false) );
+	actions->add(
+			Gtk::Action::create("Recent", "Recent Files") );
+	actions->add(
+			Gtk::Action::create("Reload", "Reload"),
+			Gtk::AccelKey("F5"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileReload), canvas) );
+	actions->add(
+			Gtk::Action::create("ExportGraphviz", "Export Graphviz"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileExportGraphviz), canvas) );
+	actions->add(
+			Gtk::Action::create("Quit", Gtk::Stock::QUIT),
+			sigc::ptr_fun(&vgsdkViewerGtk::fileExit) );
 
-	actions->add( Gtk::Action::create("View", "_View")																														);
-	actions->add( Gtk::Action::create("ViewAll", Gtk::Stock::ZOOM_FIT, "View _All"),		sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::viewAll), canvas)						);
+	actions->add( Gtk::Action::create("View", "_View") );
+	actions->add( 
+			Gtk::Action::create("ViewAll", Gtk::Stock::ZOOM_FIT, "View _All"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::viewAll), canvas) );
+	actions->add(
+			Gtk::Action::create("FullScreen", Gtk::Stock::FULLSCREEN, "Full Screen"),
+			Gtk::AccelKey("F11"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullScreen), canvas) );
 
-	actions->add( Gtk::Action::create("Help", "_Help")																														);
-	actions->add( Gtk::Action::create("About", Gtk::Stock::ABOUT),							sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::helpAbout), topLevel)					);
+	actions->add( Gtk::Action::create("Help", "_Help") );
+	actions->add(
+			Gtk::Action::create("About", Gtk::Stock::ABOUT),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::helpAbout), topLevel) );
 
 	return actions;
 }
@@ -77,6 +99,7 @@ const Glib::ustring & createDefaultUI()
 		"    </menu>"
 		"    <menu action='View'>"
 		"      <menuitem action='ViewAll'/>"
+		"      <menuitem action='FullScreen'/>"
 		"    </menu>"
 		"    <menu action='Help'>"
 		"      <menuitem action='About'/>"
@@ -88,6 +111,7 @@ const Glib::ustring & createDefaultUI()
 		"    <toolitem action='Add'/>"
 		"    <separator/>"
 		"    <toolitem action='ViewAll'/>"
+		"    <toolitem action='FullScreen'/>"
 		"    <separator/>"
 		"    <toolitem action='About'/>"
 		"  </toolbar>"
@@ -149,6 +173,7 @@ int main( int argc, char ** argv )
 
 
 	// Configures the main window.
+	window.add_accel_group( uiManager->get_accel_group() );
 	window.set_title("vgsdkViewer");
 	window.set_reallocate_redraws( true );
 
