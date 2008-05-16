@@ -71,6 +71,15 @@ void fileReload( myCanvas * canvas );
 void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas );
 
 /**
+ * @brief	Implements an action that shows the canvas in full screen
+ * 
+ * @param	canvas	a pointer to the canvas that must be displayed full screen.
+ * 
+ * @remark	The canvas is expected to be a direct child of the top level window.
+ */
+void fullScreen( myCanvas * canvas );
+
+/**
  * @brief	Implements an action that will recenter the camera on the objects visible in the scene.
  *
  * @param	canvas	a pointer to the a canvas to update

@@ -162,6 +162,53 @@ void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas )
 
 
 
+void fullScreen( myCanvas * canvas )
+{
+	// Remembers the current state.
+	static bool	isFullScreen = false;
+	
+	
+	// Retrieves the top level window.
+	Gtk::Container	* container				= canvas->get_toplevel();
+	Gtk::Window		* topLevel				= dynamic_cast< Gtk::Window * >( container );
+	
+	assert( topLevel != 0 );
+	
+	
+	// Stops refreshs.
+	topLevel->get_window()->freeze_updates();
+	
+	
+	// Configures the layout.
+	if( isFullScreen )
+	{
+		topLevel->get_child()->show_all();
+		topLevel->unmaximize();
+	}
+	else
+	{
+		topLevel->get_child()->hide_all();
+		topLevel->maximize();
+		
+		// We want to see the canvas. So we walk from the canvas to the top level window
+		// and show each.
+		for( Gtk::Widget * widget = canvas; widget != topLevel; widget = widget->get_parent() )
+		{
+			widget->show();
+		}
+	}
+	
+	
+	// Refresh the window again.
+	topLevel->get_window()->thaw_updates();	
+	
+	
+	// Updates the current state.
+	isFullScreen = ! isFullScreen;
+}
+
+
+
 void viewAll( myCanvas * canvas )
 {
 	canvas->viewAll();
