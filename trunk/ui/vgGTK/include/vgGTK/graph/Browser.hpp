@@ -58,8 +58,8 @@ private:
 	 * @name	User Interface Management
 	 */
 	//@{
-	Glib::RefPtr< Gtk::ActionGroup >	m_actions;			///< Holds all actions of the user interface.
-	Glib::RefPtr< Gtk::UIManager >		m_uiManager;		///< Manages the user inteface toolbar and menus.
+	Glib::RefPtr< Gtk::ActionGroup >	m_actions;		///< Holds all actions of the user interface.
+	Glib::RefPtr< Gtk::UIManager >		m_uiManager;	///< Manages the user inteface toolbar and menus.
 	//@}
 
 	/**
@@ -75,9 +75,8 @@ private:
 	 * @name	Misc
 	 */
 	//@{
-	static const Glib::ustring			m_uiDefinition;		///< Defines the user interfaces.
-	TreeModelProvider					m_modelProvider;	///< The managed tree model provider.
-	StringSet							m_expandedPaths;	///< Holds all expanded paths.
+	static const Glib::ustring	m_uiDefinition;		///< Defines the user interfaces.
+	TreeModelProvider			m_modelProvider;	///< The managed tree model provider.
 	//@}
 
 	/**
@@ -88,8 +87,6 @@ private:
 	void onExpandAll();																				///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onFullRefresh();																			///< Handles the action that will perfrom a refresh of the whole tree.
 	void onSelectionChanged();																		///< Handles notification about a selection change.
-	void onRowCollapsed( const Gtk::TreeModel::iterator & i, const Gtk::TreeModel::Path & path );	///< Handles notification about a collapsing row.
-	void onRowExpanded( const Gtk::TreeModel::iterator & i, const Gtk::TreeModel::Path & path );	///< Handles notification about a expanding row.
 	//@}
 
 	/**
