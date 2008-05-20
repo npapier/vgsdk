@@ -38,6 +38,102 @@ namespace
 
 		return scrolled;
 	}
+	
+	/**
+	 * @brief	Implements a backup of the selection of a Gtk::TreeView.
+	 */
+	struct SelectionBackup
+	{
+		/**
+		 * @brief	Constructor
+		 * 
+		 * Saves the selection of the given tree view.
+		 * 
+		 * @param	treeView	a tree view
+		 */
+		SelectionBackup( Gtk::TreeView & treeView )
+		{
+			treeView.get_selection()->selected_foreach_path( sigc::mem_fun(this, &SelectionBackup::storePath) );
+		}
+		
+		/**
+		 * @brief	Restores the saved selection to the given tree view
+		 */
+		void restore( Gtk::TreeView & treeView ) const
+		{
+			Glib::RefPtr< Gtk::TreeSelection >	selection = treeView.get_selection();
+			
+			selection->unselect_all();
+			for( Strings::const_iterator i = m_selectedPaths.begin(); i != m_selectedPaths.end(); ++i )
+			{
+				const Gtk::TreeModel::Path	path( *i );
+				
+//				treeView.expand_to_path( path );
+				selection->select( path );
+			}
+		}
+		
+	private:
+		
+		typedef std::vector< Glib::ustring > Strings;
+		
+		Strings	m_selectedPaths;	///< Holds the back up of selected paths.
+		
+		/**
+		 * @brief	Stores the given path.
+		 */
+		void storePath( const Gtk::TreeModel::Path & path )
+		{
+			m_selectedPaths.push_back( path.to_string() );
+		}
+	};
+
+	/**
+	 * @brief	Implements a backup of the expanded rows of a Gtk::TreeView.
+	 */
+	struct ExpandedRowsBackup
+	{
+		/**
+		 * @brief	Constructor
+		 * 
+		 * Saves the expanded rows of the given tree view.
+		 * 
+		 * @param	treeView	a tree view
+		 */
+		ExpandedRowsBackup( Gtk::TreeView & treeView )
+		{
+			treeView.map_expanded_rows( sigc::mem_fun(this, &ExpandedRowsBackup::storePath) );
+		}
+		
+		/**
+		 * @brief	Restores the saved selection to the given tree view
+		 */
+		void restore( Gtk::TreeView & treeView ) const
+		{
+			treeView.collapse_all();
+			
+			for( Strings::const_iterator i = m_expandedPath.begin(); i != m_expandedPath.end(); ++i )
+			{
+				const Gtk::TreeModel::Path	path( *i );
+				
+				treeView.expand_to_path( path );
+			}
+		}
+		
+	private:
+		
+		typedef std::vector< Glib::ustring > Strings;
+		
+		Strings	m_expandedPath;	///< Holds the back up of expanded paths.
+		
+		/**
+		 * @brief	Stores the given path.
+		 */
+		void storePath( Gtk::TreeView * treeView, const Gtk::TreeModel::Path & path )
+		{
+			m_expandedPath.push_back( path.to_string() );
+		}
+	};
 }
 
 
@@ -111,8 +207,6 @@ Browser::Browser()
 
 	// Connects several signal handlers on the tree view.
 	m_treeView.signal_button_release_event().connect_notify( sigc::mem_fun(this, &Browser::onButtonReleaseEvent) );
-	m_treeView.signal_row_collapsed().connect( sigc::mem_fun(this, &Browser::onRowCollapsed) );
-	m_treeView.signal_row_expanded().connect( sigc::mem_fun(this, &Browser::onRowExpanded) );
 
 
 	// Connects signal handlers on the tree view's selection
@@ -163,23 +257,16 @@ void Browser::onExpandAll()
 
 void Browser::onFullRefresh()
 {
-	// Saves expanded paths before the refresh.
-	const StringSet	pathsToExpand = m_expandedPaths;
-
+	// Saves selection and expanded rows.
+	const SelectionBackup		selectionBackup( m_treeView );
+	const ExpandedRowsBackup	expandedRowsBackup( m_treeView );
 
 	// Do the refresh.
-	m_expandedPaths.clear();
 	m_modelProvider.refresh();
 
-
-	// Restores old expanded paths.
-	StringSet::const_iterator i;
-	for( i = pathsToExpand.begin(); i != pathsToExpand.end(); ++i )
-	{
-		const Gtk::TreeModel::Path	path( *i );
-
-		m_treeView.expand_to_path( path );
-	}
+	// Restores the selection and the expanded rows.
+	expandedRowsBackup.restore( m_treeView );
+	selectionBackup.restore( m_treeView );
 }
 
 
@@ -199,46 +286,6 @@ void Browser::onSelectionChanged()
 	{
 		m_editor.clear();
 	}
-}
-
-
-
-void Browser::onRowCollapsed( const Gtk::TreeModel::iterator & iter, const Gtk::TreeModel::Path & path )
-{
-	// Retrieves the string representation of the given path.
-	const Glib::ustring	strPath( path.to_string() );
-
-
-	// Finds expanded sub-paths of the path begin collapsed.
-	StringSet					subPaths;
-	StringSet::const_iterator	i;
-	for( i = m_expandedPaths.begin(); i != m_expandedPaths.end(); ++i )
-	{
-		const Glib::ustring	strExpandedPath( *i );
-
-		if( strExpandedPath.find(strPath) != Glib::ustring::npos )
-		{
-			subPaths.insert( strExpandedPath );
-		}
-	}
-
-
-	// Removes all expanded sub-paths from the expanded paths.
-	for( i = subPaths.begin(); i != subPaths.end(); ++i )
-	{
-		m_expandedPaths.erase( *i );
-	}
-
-
-	// Removes the collapsed path.
-	m_expandedPaths.erase( strPath );
-}
-
-
-
-void Browser::onRowExpanded( const Gtk::TreeModel::iterator & i, const Gtk::TreeModel::Path & path )
-{
-	m_expandedPaths.insert( path.to_string() );
 }
 
 
