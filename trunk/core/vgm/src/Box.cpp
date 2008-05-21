@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -61,7 +61,7 @@ namespace vgm
 // *** Box3f ***
 Box3f::Box3f()
 {
-	makeEmpty(); 
+	makeEmpty();
 }
 
 
@@ -148,19 +148,63 @@ void Box3f::getSize( float& sizeX, float& sizeY, float& sizeZ) const
 vgm::Vec3f Box3f::getSize() const
 {
 	return ( vgm::Vec3f(	m_max[0] - m_min[0],
-								m_max[1] - m_min[1],
-								m_max[2] - m_min[2] )
+							m_max[1] - m_min[1],
+							m_max[2] - m_min[2] )
 			);
+}
+
+
+
+void Box3f::setInvalid( void )
+{
+	const float tMax		= std::numeric_limits< float >::max();
+	const float maxValue	= -tMax + 1.f;
+	const float minValue	= tMax - 1.f;
+
+	m_min.setValue( minValue, minValue, minValue );
+	m_max.setValue( maxValue, maxValue, maxValue );
+}
+
+
+
+const Box3f Box3f::getInvalid()
+{
+	Box3f retVal;
+
+	retVal.setInvalid();
+
+	return retVal;
+}
+
+
+
+const bool Box3f::isInvalid( void ) const
+{
+	const float tMax		= std::numeric_limits< float >::max();
+	const float maxValue	= -tMax + 1.f;
+	const float minValue	= tMax - 1.f;
+
+	bool retVal =	(m_min[0] == minValue) &&
+					(m_max[0] == maxValue);
+#ifdef _DEBUG
+	retVal =	retVal				&&
+				(m_min[1] == minValue)	&&
+				(m_min[2] == minValue)	&&
+				(m_max[1] == maxValue)	&&
+				(m_max[2] == maxValue);
+#endif
+
+	return retVal;
 }
 
 
 
 void Box3f::makeEmpty()
 {
-	float floatMax = std::numeric_limits<float>::max();
+	const float floatMax = std::numeric_limits<float>::max();
 
-	m_min.setValue(floatMax, floatMax, floatMax);
-	m_max.setValue(-floatMax, -floatMax, -floatMax);
+	m_min.setValue(floatMax,	floatMax,	floatMax);
+	m_max.setValue(-floatMax,	-floatMax,	-floatMax);
 }
 
 
@@ -785,6 +829,27 @@ void XfBox3f::getSize( float& sizeX, float& sizeY, float& sizeZ) const
 vgm::Vec3f XfBox3f::getSize() const
 {
 	return ( Box3f::getSize() );
+}
+
+
+
+void XfBox3f::setInvalid( void )
+{
+	Box3f::setInvalid();
+}
+
+
+
+const Box3f XfBox3f::getInvalid()
+{
+	return Box3f::getInvalid();
+}
+
+
+
+const bool XfBox3f::isInvalid( void ) const
+{
+	return Box3f::isInvalid();
 }
 
 
