@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -61,8 +61,6 @@ namespace vgm
 
 
 
-struct MatrixR;
-
 /**
  * @defgroup Boxes Boxes (2D/3D boxes).
  *
@@ -74,7 +72,7 @@ struct MatrixR;
 //@{
 
 /**
- * @brief 3d box class.
+ * @brief 3d box class
  *
  * A 3d box has planes parallel to the major axes and can therefore be specified by two points on
  * a diagonal.
@@ -83,11 +81,8 @@ struct MatrixR;
  */
 struct VGM_API Box3f
 {
-
-
-
 	/**
-	 * @name Constructors and destructor.
+	 * @name Constructors and destructor
 	 */
 	//@{
 
@@ -118,12 +113,12 @@ struct VGM_API Box3f
 	/**
 	 * @brief Destructor.
 	 */
-	~Box3f();
+	virtual ~Box3f();
 	//@}
 
 
 	/**
-	 * @name Returns the minimum and maximum points of the box.
+	 * @name Returns the minimum and maximum points of the box
 	 */
 	//@{
 
@@ -158,7 +153,7 @@ struct VGM_API Box3f
 
 
 	/**
-	 * @name Bounding box accessors.
+	 * @name Bounding box accessors
 	 */
 	//@{
 
@@ -185,11 +180,28 @@ struct VGM_API Box3f
 	vgm::Vec3f getSize() const;
 
 	/**
+	 * @brief Invalidates the box.
+	 *
+	 * @remarks This is a special state of empty box. So an invalid box is always empty, but an empty box is not always invalid.
+	 */
+	void setInvalid( void );
+
+	/**
+	 * @brief Returns an invalid box
+	 */
+	static const Box3f getInvalid();
+
+	/**
+	 * @brief Tests if the box is invalid.
+	 */
+	const bool isInvalid( void ) const;
+
+	/**
 	 * @brief Sets Box3f to contain nothing.
 	 *
 	 * Makes an empty box.
 	 */
-	void	makeEmpty();
+	void makeEmpty();
 
 	/**
 	 * @brief Checks if the box is empty (degenerate).
@@ -201,11 +213,12 @@ struct VGM_API Box3f
 	 * invariant.
 	 */
 	bool isEmpty() const;
+
 	//@}
 
 
 	/**
-	 * @name Bounds accessor methods.
+	 * @name Bounds accessor methods
 	 */
 	//@{
 
@@ -244,7 +257,7 @@ struct VGM_API Box3f
 
 
 	/**
-	 * @name Transformation accessors.
+	 * @name Transformation accessors
 	 */
 	//@{
 
@@ -264,7 +277,9 @@ struct VGM_API Box3f
 
 
 	/**
-	 * @name Extends this box (if necessary) to contain the specified object(point or other box).
+	 * @name Extends this box
+	 *
+	 *  Extends this box(if necessary) to contain the specified object(point or other box)
 	 */
 	//@{
 
@@ -281,7 +296,7 @@ struct VGM_API Box3f
 
 
 	/**
-	 * @name Intersection methods.
+	 * @name Intersection methods
 	 */
 	//@{
 
@@ -298,7 +313,7 @@ struct VGM_API Box3f
 
 
 	/**
-	 * @name Some useful computing methods.
+	 * @name Some useful computing methods
 	 */
 	//@{
 
@@ -340,7 +355,7 @@ struct VGM_API Box3f
 
 
 	/**
-	 * @name Volume accessors.
+	 * @name Volume accessors
 	 */
 	//@{
 
@@ -362,7 +377,7 @@ struct VGM_API Box3f
 
 
 	/**
-	 * @name Comparison methods.
+	 * @name Comparison methods
 	 */
 	//@{
 
@@ -380,7 +395,7 @@ struct VGM_API Box3f
 protected:
 
 	/**
-	 * @name Helper methods.
+	 * @name Helper methods
 	 */
 	//@{
 
@@ -404,12 +419,12 @@ protected:
 	/**
 	 * @brief Minimum point.
 	 */
-    Vec3f	m_min;
+	Vec3f	m_min;
 
 	/**
 	 * @brief Maximum point.
 	 */
-	Vec3f		m_max;
+	Vec3f	m_max;
 };
 
 
@@ -428,44 +443,41 @@ protected:
  */
 struct VGM_API XfBox3f : private Box3f
 {
-
-
-
 	/**
-	 * @name Constructors and destructor.
+	 * @name Constructors and destructor
 	 */
 	//@{
 
 	/**
 	 * @copydoc Box3f::Box3f()
 	 */
-	XfBox3f	();
+	XfBox3f();
 
 	/**
 	 * @copydoc Box3f::Box3f(float,float,float,float,float,float)
 	 */
-	XfBox3f	(	float xmin, float ymin, float zmin,
+	XfBox3f(	float xmin, float ymin, float zmin,
 				float xmax, float ymax, float zmax );
 
 	/**
 	 * @copydoc Box3f::Box3f(const Vec3f&,const Vec3f&)
 	 */
-	XfBox3f	( const Vec3f& min, const Vec3f& max );
+	XfBox3f( const Vec3f& min, const Vec3f& max );
 
 	/**
 	 * @brief Constructor given Box3f.
 	 */
-	XfBox3f	( const Box3f& box );
+	XfBox3f( const Box3f& box );
 
 	/**
-	 * @brief Destructor.
+	 * @brief Destructor
 	 */
 	~XfBox3f();
 	//@}
 
 
 	/**
-	 * @name Bounding box accessors.
+	 * @name Bounding box accessors
 	 */
 	//@{
 
@@ -477,14 +489,20 @@ struct VGM_API XfBox3f : private Box3f
 
 	vgm::Vec3f getSize() const;
 
-	void	makeEmpty	();
+	void setInvalid( void );
 
-	bool	isEmpty		() const;
+	static const Box3f getInvalid();
+
+	const bool isInvalid( void ) const;
+
+	void	makeEmpty();
+
+	bool	isEmpty() const;
 	//@}
 
 
 	/**
-	 * @name Bounds accessor methods.
+	 * @name Bounds accessor methods
 	 */
 	//@{
 
@@ -503,7 +521,7 @@ struct VGM_API XfBox3f : private Box3f
 
 
 	/**
-	 * @name Transformation accessors.
+	 * @name Transformation accessors
 	 */
 	//@{
 
@@ -529,7 +547,9 @@ struct VGM_API XfBox3f : private Box3f
 
 
 	/**
-	 * @name Extends this box (if necessary) to contain the specified object(point or other box).
+	 * @name Extends this box
+	 *
+	 * Extends this box (if necessary) to contain the specified object(point or other box)
 	 */
 	//@{
 
@@ -569,7 +589,7 @@ struct VGM_API XfBox3f : private Box3f
 
 
 	/**
-	 * @name Intersection methods.
+	 * @name Intersection methods
 	 */
 	//@{
 
@@ -586,7 +606,7 @@ struct VGM_API XfBox3f : private Box3f
 
 
 	/**
-	 * @name Volume accessors.
+	 * @name Volume accessors
 	 */
 	//@{
 
@@ -597,7 +617,7 @@ struct VGM_API XfBox3f : private Box3f
 
 
 	/**
-	 * @name Some useful computing methods.
+	 * @name Some useful computing methods
 	 */
 	//@{
 	void	getSpan( const Vec3f &direction,
@@ -611,7 +631,7 @@ struct VGM_API XfBox3f : private Box3f
 
 
 	/**
-	 * @name Comparison methods.
+	 * @name Comparison methods
 	 */
 	//@{
 
