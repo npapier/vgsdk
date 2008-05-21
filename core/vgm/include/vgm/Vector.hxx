@@ -520,12 +520,14 @@ const Vector< Out, OutSize > vector_cast( const std::vector< In > & in )
 
 
 
-template< typename Out, /*int OutSize, */typename In, int InSize >
-const vgm::Vector< Out, InSize /*OutSize*/ > VectorCast( const Vector< In, InSize > & in )
+template< typename Out, int OutSize, typename In, int InSize >
+const vgm::Vector< Out, OutSize > VectorCast( const Vector< In, InSize > & in )
 {
-	Vector< Out, InSize/*OutSize*/ > out;
+	vgm::Vector< Out, OutSize > out;
 
-	for( int32 i = 0; i != InSize; ++i )
+	const uint minSize = std::min( OutSize, InSize );
+
+	for( uint i = 0; i < minSize; ++i )
 	{
 		out[i] = static_cast< Out >( in[i] );
 	}
