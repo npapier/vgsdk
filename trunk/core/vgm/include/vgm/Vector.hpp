@@ -77,7 +77,7 @@ struct Vector
 	typedef T value_type;	///< Defines an alias on the components type
 	
 	/**
-	 * @name Constructors ,destructor and assign operator
+	 * @name Constructors, destructor and assign operator
 	 */
 	//@{
 
@@ -97,7 +97,69 @@ struct Vector
 	 * @brief Copy constructor.
 	 */
 	Vector( const Vector& v );
-	
+
+	/**
+	 * @brief Constructor from another Vector
+	 *
+	 * Determines the range of elements that can be copied from the input
+	 * vector into the new vector by using the smallest size among the 
+	 * input and new vector sizes.
+	 * 
+	 * Than copies and converts each elements of the range from the input 
+	 * vector into the new vector.
+	 *  
+	 * As a result, all new vector's elements will be assigned with
+	 * a converted element of the input vector when the input vector's size
+	 * is greater or equal to the new vector's size. Otherwise, some elements of the
+	 * new vector will be initialized to zero (See VectorCast for a more lazy initialization).
+	 *
+	 * See usage examples below.
+	 * 
+@code
+const vgm::Vec3f	in1( 1.f, 2.f, 3.f );
+vgm::Vec3i		out1( in1 );
+@endcode
+
+@code
+const vgm::Vec3i	in2( 1, 2, 3 );
+vgm::Vec3f		out2( in2 );
+@endcode
+
+@code
+const vgm::Vec3i	in3( 1, 2, 3 );
+vgm::Vec2f		out3( in3 );
+@endcode
+
+@code
+const vgm::Vec2f	in4( 1.f, 2.f );
+vgm::Vec3i		out4( in4 );
+@endcode
+
+@code
+const vgm::Vec3f	in5( 1.f, 2.f, 3.f );
+vgm::Vec2f		out5( in5 );
+vgm::Vec4f		out5b( in5 );
+@endcode
+	 *
+	 * @relates VectorCast
+	 * @ingroup LinearAlgebra
+	 */
+	template< typename InType, int InSize >
+	explicit Vector< T, N >( const Vector< InType, InSize > & v )
+	{
+		const uint minSize = std::min( N, InSize );
+
+		for( uint i = 0; i < minSize; ++i )
+		{
+			m_tCoord[i] = static_cast< T >( v[i] );
+		}
+
+		for( uint i = minSize; i < N; ++i )
+		{
+			m_tCoord[i] = static_cast< T >( 0 );
+		}
+	}
+
 	/**
 	 * @brief Assign operator.
 	 */
@@ -464,8 +526,10 @@ protected:
 	/**
 	 * @brief Storage for coordinates of vector.
 	 */
-	T		m_tCoord[N];
+	T m_tCoord[N];
 };
+
+
 
 /**
  * @brief Component-wise binary scalar multiplication operators.
@@ -537,16 +601,16 @@ const std::vector< Out > vector_cast( const Vector< In, InSize > & in );
  * @brief Converts any @c std::vector into a vgm::Vector instance.
  * 
  * Determines the range of elements that can be copied from the input
- * vector into the output vector. The range's size will be the smallest
- * size among the input and output vector sizes.
+ * vector into the output vector by using the smallest size among the 
+ * input and output vector sizes.
  * 
  * Than copies and converts each elements of the range from the input 
  * vector into the output vector.
  *  
  * As a result, all output vector's elements will be assigned with
- * a converted element of the output vector when the input vector's size
+ * a converted element of the input vector when the input vector's size
  * is greater or equal to the output vector's size. Otherwise, some elements
- * of the output vector will be left undetermined and that vector may be invalid.
+ * of the output vector will be left uninitialized and that vector may be invalid.
  * 
  * See usage examples below.
  * 
@@ -573,26 +637,44 @@ const Vector< Out, OutSize > vector_cast( const std::vector< In > & in );
 /**
  * @brief Converts any vgm::Vector into any vgm::Vector instance.
  * 
- * Copies and converts each element of the input vector into the output vector.
- * As a result, the output vector will have as many elements as the input vector.
- * 
+ * @see template< typename InType, int InSize > explicit Vector< T, N >( const Vector< InType, InSize >&)
+ *
  * See usage examples below.
  * 
 @code
-const vgm::Vec3f	in( 1.f, 2.f, 3.f );
-vgm::Vec3i			out( VectorCast< int >(in) );
+const vgm::Vec3f	in1( 1.f, 2.f, 3.f );
+vgm::Vec3i		out1( vgm::VectorCast< int, 3 >(in1) );
 @endcode
 
 @code
-const vgm::Vec3i	in( 1, 2, 3 );
-vgm::Vec3f		out( VectorCast< float >(in) );
+const vgm::Vec3i	in2( 1, 2, 3 );
+vgm::Vec3f		out2( vgm::VectorCast< float, 3 >(in2) );
 @endcode
+
+@code
+const vgm::Vec3i	in3( 1, 2, 3 );
+vgm::Vec2f		out3( vgm::VectorCast< float, 2 >(in3) );
+@endcode
+
+@code
+const vgm::Vec2f	in4( 1.f, 2.f );
+vgm::Vec3i		out4( vgm::VectorCast< int, 3 >(in4) );
+@endcode
+
+@code
+const vgm::Vec3f	in5( 1.f, 2.f, 3.f );
+vgm::Vec2f		out5( vgm::VectorCast< float, 2 >(in5) );
+vgm::Vec4f		out5b( vgm::VectorCast<float, 4>(in5) );
+
+Be careful, out5b[3] is undefined.
+@endcode
+
  * 
  * @relates Vector
  * @ingroup LinearAlgebra
  */
-template< typename Out/*, int OutSize*/, typename In, int InSize >
-const vgm::Vector< Out, InSize /*OutSize*/ > VectorCast( const Vector< In, InSize > & in );
+template< typename Out, int OutSize, typename In, int InSize >
+const vgm::Vector< Out, OutSize > VectorCast( const Vector< In, InSize > & in );
 
 
 
