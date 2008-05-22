@@ -8,9 +8,12 @@
 #include <iostream>
 #include <gtkmm/action.h>
 #include <gtkmm/cellrenderertext.h>
+#include <gtkmm/iconfactory.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
+
+#include "vgGTK/graph/icons/expand.xpm"
 
 
 namespace vgGTK
@@ -142,9 +145,10 @@ const Glib::ustring	Browser::m_uiDefinition =
 	"<ui>"
 	"  <toolbar>"
 	"    <toolitem action='FullRefresh'/>"
+	"    <toolitem action='ExpandAll'/>"
 	"  </toolbar>"
 	"  <popup>"
-	"    <menuitem action='ExpandAll'/>"
+	"    <menuitem action='ExpandSubTree'/>"
 	"  </popup>"
 	"</ui>";
 
@@ -154,8 +158,17 @@ Browser::Browser()
 :	m_actions( Gtk::ActionGroup::create() ),
 	m_uiManager( Gtk::UIManager::create() )
 {
+	// Creates the additionnal icons
+	const Gtk::StockID					expandID( Glib::ustring("vgGTK::graph::icons::expand") ); 
+	Glib::RefPtr< Gtk::IconFactory >	iconFactory = Gtk::IconFactory::create();
+	
+	iconFactory->add( expandID, Gtk::IconSet(Gdk::Pixbuf::create_from_xpm_data(expand_xpm)) );
+	iconFactory->add_default();
+	
+	
 	// Populates all user interface actions.
-	m_actions->add( Gtk::Action::create("ExpandAll", "Expand All"), sigc::mem_fun(this, &Browser::onExpandAll) );
+	m_actions->add( Gtk::Action::create("ExpandAll", expandID), sigc::mem_fun(this, &Browser::onExpandAll) );
+	m_actions->add( Gtk::Action::create("ExpandSubTree", "Expand"), sigc::mem_fun(this, &Browser::onExpandSubTree) );
 	m_actions->add( Gtk::Action::create("FullRefresh", Gtk::Stock::REFRESH), sigc::mem_fun(this, &Browser::onFullRefresh) );
 
 
@@ -243,6 +256,13 @@ void Browser::onButtonReleaseEvent( GdkEventButton * event )
 
 
 void Browser::onExpandAll()
+{
+	m_treeView.expand_all();
+}
+
+
+
+void Browser::onExpandSubTree()
 {
 	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
 	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
