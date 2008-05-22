@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -594,7 +594,7 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 		switchGroup->addChild( container );
 		
 		vgDebug::get().logDebug("vgTrian::loadTrian2: load material %s", matName.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: load material %s", matName.c_str() );		
+		//vgDebug::get().logStatus("vgTrian::loadTrian2: load material %s", matName.c_str() );
 
 		vgd::Shp< vgd::node::Material > material = vgd::node::Material::create( matName );
 		container->addChild( material );
@@ -670,14 +670,15 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		assert( name == "Bitmap" );
 		
 		// BITMAP TEXTURE
-		vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( name );
-		tex->setMultiAttributeIndex( (int8)i );
 
 		// image Brkrun.JPG
 		std::string	filename;
 		m_fp >> name >> filename;
 		assert( name == "image" );
-		
+
+		vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( filename );
+		tex->setMultiAttributeIndex( (int8)i );
+
 		vgDebug::get().logDebug("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 		//vgDebug::get().logStatus("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 		vgd::Shp< vgd::basic::Image > image( 
@@ -709,7 +710,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		m_fp >> name;
 		assert( name == "uvtrans" );
 		m_fp >> matrix[0][0] >> matrix[0][1] >> matrix[0][2] >> matrix[0][3];
-		m_fp >> matrix[1][0] >> matrix[1][1] >> matrix[1][2] >> matrix[1][3];		
+		m_fp >> matrix[1][0] >> matrix[1][1] >> matrix[1][2] >> matrix[1][3];
 		m_fp >> matrix[2][0] >> matrix[2][1] >> matrix[2][2] >> matrix[2][3];
 		m_fp >> matrix[3][0] >> matrix[3][1] >> matrix[3][2] >> matrix[3][3];
 				
