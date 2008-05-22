@@ -83,10 +83,11 @@ private:
 	 * @name	Signal Handlers
 	 */
 	//@{
-	void onButtonReleaseEvent( GdkEventButton * event );												///< Handles button clicks on the tree view.
-	void onExpandAll();																				///< Handles the action that will expand all the tree view sub-tree of the selection element.
-	void onFullRefresh();																			///< Handles the action that will perfrom a refresh of the whole tree.
-	void onSelectionChanged();																		///< Handles notification about a selection change.
+	void onButtonReleaseEvent( GdkEventButton * event );	///< Handles button clicks on the tree view.
+	void onExpandAll();										///< Handles the action that will expand all tree view content.
+	void onExpandSubTree();									///< Handles the action that will expand all the tree view sub-tree of the selection element.
+	void onFullRefresh();									///< Handles the action that will perfrom a refresh of the whole tree.
+	void onSelectionChanged();								///< Handles notification about a selection change.
 	//@}
 
 	/**
