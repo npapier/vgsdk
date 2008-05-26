@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,14 +8,13 @@
 
 #include <set>
 
-#include "vgd/vgd.hpp"
 #include "vgd/field/AbstractField.hpp"
 
 
 
 namespace vgd
 {
-	
+
 namespace field
 {
 
@@ -39,10 +38,10 @@ template< typename KeyType >
 struct TSingleAssociativeField : public AbstractField
 {
 	/**
-	 * @name Typedefs.
+	 * @name Typedefs
 	 */
 	//@{
-	
+
 	/**
 	 * @brief A type that describes an object stored as an element of a set in its capacity as sort key.
 	 */
@@ -68,13 +67,13 @@ struct TSingleAssociativeField : public AbstractField
 
 
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
-    /**
-     * @brief Default constructor.
-     */
+	/**
+	 * @brief Default constructor
+	 */
    TSingleAssociativeField( const std::string strFieldName ) :
 		AbstractField( strFieldName )
    {}
@@ -84,7 +83,7 @@ struct TSingleAssociativeField : public AbstractField
 
 
 	/** 
-	 * @name Size methods.
+	 * @name Size methods
 	 */
 	//@{
 
@@ -109,7 +108,7 @@ struct TSingleAssociativeField : public AbstractField
 
 
 	/**
-	 * @name Insert.
+	 * @name Insert
 	 */
 	//@{
 
@@ -125,7 +124,7 @@ struct TSingleAssociativeField : public AbstractField
 
 
 	/**
-	 * @name Iterators.
+	 * @name Iterators
 	 */
 	//@{
 
@@ -163,7 +162,7 @@ struct TSingleAssociativeField : public AbstractField
 	
 	
 	/** 
-	 * @name Erase.
+	 * @name Erase
 	 */
 	//@{
 	
@@ -192,15 +191,23 @@ struct TSingleAssociativeField : public AbstractField
 
 
 	/** 
-	 * @name Swap.
+	 * @name Swap methods
 	 */
 	//@{
 	
-	void  swap   ( TSingleAssociativeField< KeyType > other )
+	void swap( TSingleAssociativeField< KeyType > other )
 	{
 		assert( checkRW() );
 		assert( other.checkRW() );
 		
+		m_set.swap( other.m_set );
+	}
+
+
+	void swap( std::set< KeyType >& other )
+	{
+		assert( checkRW() );
+
 		m_set.swap( other );
 	}
 	//@}
@@ -208,7 +215,7 @@ struct TSingleAssociativeField : public AbstractField
 
 
 	/** 
-	 * @name Find.
+	 * @name Find
 	 */
 	//@{
 
@@ -243,7 +250,7 @@ struct TSingleAssociativeField : public AbstractField
 private:
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 
