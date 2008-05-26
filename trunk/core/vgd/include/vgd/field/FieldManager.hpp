@@ -11,6 +11,7 @@
 
 #include "vgd/Shp.hpp"
 #include "vgd/field/AbstractField.hpp"
+#include "vgd/field/DirtyFlag.hpp"
 #include "vgd/field/EditorRO.hpp"
 #include "vgd/field/EditorRW.hpp"
 #include "vgd/field/IFieldObserver.hpp"
@@ -53,7 +54,7 @@ namespace field
 struct VGD_API FieldManager : public IFieldObserver
 {
 	/**
-	 * @name Constructor/Copy/Assignement
+	 * @name Constructor, copy and assignement
 	 */
 	//@{
 
@@ -87,6 +88,78 @@ struct VGD_API FieldManager : public IFieldObserver
 	//@{
 
 	/**
+	 * @brief Returns the specified field in read-only access mode.
+	 *
+	 * @pre isField(strFieldName) must returned true
+	 *
+	 * @return An editor that you can use like a C++ pointer on the field.
+	 */
+	template< typename T >
+	EditorRO<T> getFieldRO( const std::string strFieldName ) const
+	{
+		EditorRO<T> fieldRO( getField<T>(strFieldName).get() );
+		return fieldRO;
+	}
+
+	/**
+	 * @brief Returns the specified field in read-write access mode.
+	 *
+	 * @return An editor that you can use like a C++ pointer on the field.
+	 *
+	 * @remark If the desired field does'nt exist, it is automatically created.
+	 */
+	template< typename T >
+	EditorRW<T> getFieldRW( const std::string strFieldName )
+	{
+		EditorRW<T> fieldRW( getField<T>(strFieldName).get() );
+		return fieldRW;
+	}
+
+	/**
+	 * @brief Tests if the specified field exist.
+	 *
+	 * @return Returns true if the specified field exist, false otherwise.
+	 */
+	const bool isField( const std::string strFieldName ) const;
+
+	/**
+	 * brief Tests if the specified field exist and has the desired type.
+	 *
+	 * @return Returns true if the specified field exist and has the desired type, false otherwise.
+	 */
+	template< typename fieldType >
+	const bool isFieldKindOf( const std::string strFieldName ) const
+	{
+		// Finds the field
+		const MapField::const_iterator iField = m_fields.find( strFieldName );
+
+		if ( iField != m_fields.end() )
+		{
+			// The field named with the desired name has been found
+			const vgd::Shp< fieldType > field = vgd::dynamic_pointer_cast< fieldType >( iField->second );
+
+			return field != 0;
+		}
+		else
+		{
+			// The field named with the desired name has NOT been found
+			return false;
+		}
+	}
+
+	/**
+	 * @brief Used by getFieldType()
+	 */
+	struct NotFound {};
+
+	/**
+	 * @brief Returns the type of a specified field.
+	 *
+	 * @return If the field exists, returns a type_info on the field, otherwise  returns a type_info on class \c NotFound
+	 */
+	const std::type_info& getFieldType( const std::string strFieldName ) const;
+
+	/**
 	 * @brief	Retrieves all field names and store them using the given output iterator.
 	 *
 	 * @remark	The output iterator's value type must be @c std::string.
@@ -102,88 +175,6 @@ struct VGD_API FieldManager : public IFieldObserver
 			*output++ = i->first;
 		}
 	}
-
-	/**
-	 * @brief Returns the specified field in read-only access mode.
-	 *
-	 * @pre A field with strFieldName must exist(check with assert).
-	 *
-	 * @return A Editor that you can use like a C++ pointer on the field.
-	 */
-	template< typename T >
-	EditorRO<T> getFieldRO( const std::string strFieldName ) const
-	{
-		EditorRO<T> fieldRO( getField<T>(strFieldName).get() );
-		return fieldRO;
-	}
-
-	/**
-	 * @brief Returns the specified field in read-write access mode.
-	 *
-	 * @return A Editor that you can use like a C++ pointer on the field.
-	 *
-	 * @remark If the desired field does'nt exist, it is automatically created.
-	 */
-	template< typename T >
-	EditorRW<T> getFieldRW( const std::string strFieldName )
-	{
-		EditorRW<T> fieldRW( getField<T>(strFieldName).get() );
-		return fieldRW;
-	}
-
-	/**
-	 * @brief Returns if the specified field exist.
-	 *
-	 * @return true if the specified field exist, false otherwise.
-	 */
-	const bool isField( const std::string strFieldName ) const;
-
-///@todo FIXME
-//	/**
-//	 * brief Test the type of the specified field.
-//	 *
-//	 * return true if the specified field exist and has the desired type, false otherwise.
-//	 */
-//	template< typename fieldType >
-//	bool		isFieldAndType( const std::string strFieldName ) const
-//	{
-//		MapField::const_iterator iField;
-//		iField = m_fields.find( strFieldName );
-//
-//		if ( iField != m_fields.end() )
-//		{
-//			// strFieldName is founded
-//			if ( dynamic_cast< fieldType >(iField->second.get()) )
-//			{
-//				return true;
-//			}
-//			else
-//			{
-//				return false;
-//			}
-//		}
-//		else
-//		{
-//			// strFieldName is not founded
-//			return false;
-//		}
-//	}
-
-	/**
-	 * @brief Use by getFieldType.
-	 */
-	struct NotFound {};
-
-	/**
-	 * @brief Returns the type of a specified field.
-	 *
-	 * @pre A field with strFieldName must exist(check with assert).
-	 *
-	 * @return The type of the specified field if sucessful, otherwise a type_info on class \c NotFound (if the field
-	 * named strFieldName is not founded).
-	 */
-	const std::type_info& getFieldType( const std::string strFieldName ) const;
-
 	//@}
 
 
@@ -211,20 +202,23 @@ struct VGD_API FieldManager : public IFieldObserver
 	 */
 	const DirtyFlag*	getDirtyFlag( const std::string strDirtyFlagName ) const;
 
-///@todo FIXME
-//	/**
-//	 * brief Dirty flag accessor.
-//	 *
-//	 * return a pair with a begin iterator(the first element of the pair) and a end iterator(the second element of the pair).
-//	 */
-//	std::pair< MapDirtyFlag::const_iterator, MapDirtyFlag::const_iterator > getDirtyFlagsIterators( void ) const;
-//
-//	/**
-//	 * brief Dirty flag accessor.
-//	 *
-//	 * return a pair with a begin iterator(the first element of the pair) and a end iterator(the second element of the pair).
-//	 */
-//	std::pair< MapDirtyFlag::iterator, MapDirtyFlag::iterator > getDirtyFlagsIterators( void );
+	/**
+	 * @brief	Retrieves all dirty flags names and store them using the given output iterator.
+	 *
+	 * @remark	The output iterator's value type must be @c std::string.
+	 *
+	 * @param	output	an STL compliant output iterator
+	 */
+	template< typename OutputIterator >
+	void getDirtyFlagNames( OutputIterator & output ) const
+	{
+		for(	MapDirtyFlag::const_iterator i = m_dirtyFlags.begin();
+				i != m_dirtyFlags.end(); 
+				++i )
+		{
+			*output++ = i->first;
+		}
+	}
 
 	//@}
 
@@ -250,7 +244,7 @@ protected:
 	 * key of map		name of DirtyFlag
 	 * value of map		the dirty flag
 	 */
-	typedef std::map< std::string, DirtyFlag >		MapDirtyFlag;
+	typedef std::map< std::string, DirtyFlag >					MapDirtyFlag;
 
 	//@}
 
@@ -461,7 +455,7 @@ private:
 	/**
 	 * @brief Returns the specified field.
 	 *
-	 * @pre A field with strFieldName must exist(check with assert).
+	 * @pre A field with strFieldName must exist (checked with assert).
 	 *
 	 * @return A shared pointer to the desired field if sucessful or  a shared pointer with a
 	 * null reference(if the field named strFieldName is not founded).
@@ -487,7 +481,7 @@ private:
 	/**
 	 * @brief Returns specified field.
 	 *
-	 * @pre A field with strFieldName must exist(check with assert).
+	 * @pre A field with strFieldName must exist(checked with assert).
 	 *
 	 * @return A shared pointer to the desired field if sucessful (it is created if not founded) or a shared pointer
 	 * with a null reference (if the field named strFieldName is not founded and creation of a new desired field fails).

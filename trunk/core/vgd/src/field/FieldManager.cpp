@@ -9,7 +9,6 @@
 #include <boost/tuple/tuple.hpp>
 
 #include "vgd/Shp.hpp"
-#include "vgd/field/DirtyFlag.hpp"
 #include "vgd/field/Types.hpp"
 
 
