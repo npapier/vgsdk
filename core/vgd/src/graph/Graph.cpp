@@ -334,13 +334,14 @@ void Graph::setEdges( const vgd::node::Node* pSourceNode, const bool isEnable )
 			out_i != out_end;
 			++out_i )
 	{
-		edgeNamePM[ *out_i ].enable() = isEnable;
+		detail::EdgeName& edgeName	= edgeNamePM[ *out_i ];
+		edgeName.enable() = isEnable;
 	}
 }
 
 
 
-void Graph::setEdges( const vgd::node::Node* pSourceNode, const std::set< int32 >& setEdgeNameValue, const bool bToEnable )
+void Graph::setEdges( const vgd::node::Node* pSourceNode, const std::set< int >& setEdgeNameValue, const bool bToEnable )
 {
 	const detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
 
@@ -349,16 +350,18 @@ void Graph::setEdges( const vgd::node::Node* pSourceNode, const std::set< int32 
 			out_i != out_end;
 			++out_i )
 	{
-		const int32 edgeNameValue = edgeNamePM[ *out_i ].value();
+		detail::EdgeName& edgeName	= edgeNamePM[ *out_i ];
+		const int edgeNameValue		= edgeName.value();
+
 		if ( setEdgeNameValue.find( edgeNameValue ) != setEdgeNameValue.end() )
 		{
-			// Founded current edge name value in setEdgeNameValue => set it to bToEnable.
-			edgeNamePM[ *out_i ].enable() = bToEnable;
+			// Found current edge name value in setEdgeNameValue => set it to bToEnable.
+			edgeName.enable() = bToEnable;
 		}
 		else
 		{
-			// Not founded
-			edgeNamePM[ *out_i ].enable() = !bToEnable;
+			// Not found
+			edgeName.enable() = !bToEnable;
 		}
 	}
 }
