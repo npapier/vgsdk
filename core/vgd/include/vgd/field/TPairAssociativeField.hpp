@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,8 +7,6 @@
 #define _VGD_FIELD_TPAIRASSOCIATIVEFIELD_HPP
 
 #include <map>
-
-#include "vgd/vgd.hpp"
 #include "vgd/field/AbstractField.hpp"
 
 
@@ -39,15 +37,15 @@ template< typename KeyType, typename DataType >
 struct TPairAssociativeField : public AbstractField
 {
 	/**
-	 * @name Typedefs.
+	 * @name Typedefs
 	 */
 	//@{
-	
+
 	/**
 	 * @brief A type that describes the sort key object that constitutes each element of the map.
 	 */
 	typedef KeyType key_type;
-	
+
 	/**
 	 * @brief A type that represents the data type stored in a map.
 	 */
@@ -57,7 +55,7 @@ struct TPairAssociativeField : public AbstractField
 	 * @brief A type that represents the type of object stored as an element in a map.
 	 */
 	typedef std::pair< const KeyType, DataType > value_type;
-	
+
 	/**
 	 * @brief Constant iterator for this container.
 	 */
@@ -72,7 +70,7 @@ struct TPairAssociativeField : public AbstractField
 
 
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
@@ -88,7 +86,7 @@ struct TPairAssociativeField : public AbstractField
 
 
 	/** 
-	 * @name Size methods.
+	 * @name Size methods
 	 */
 	//@{
 
@@ -113,7 +111,7 @@ struct TPairAssociativeField : public AbstractField
 
 
 	/**
-	 * @name Accessor to one value.
+	 * @name Accessor to one value
 	 */
 	//@{
 	
@@ -134,7 +132,7 @@ struct TPairAssociativeField : public AbstractField
 
 
 	/**
-	 * @name Iterators.
+	 * @name Iterators
 	 */
 	//@{
 
@@ -172,7 +170,7 @@ struct TPairAssociativeField : public AbstractField
 	
 	
 	/** 
-	 * @name Erase.
+	 * @name Erase
 	 */
 	//@{
 	
@@ -201,11 +199,11 @@ struct TPairAssociativeField : public AbstractField
 
 
 	/** 
-	 * @name Swap.
+	 * @name Swap methods
 	 */
 	//@{
-	
-	void  swap   ( TPairAssociativeField< KeyType, DataType > other )
+
+	void swap( TPairAssociativeField< KeyType, DataType > other )
 	{
 		assert( checkRW() );
 		assert( other.checkRW() );
@@ -217,6 +215,7 @@ struct TPairAssociativeField : public AbstractField
 	void  swap   ( std::map< KeyType, DataType >& other )
 	{
 		assert( checkRW() );
+
 		m_map.swap( other );
 	}
 	//@}
@@ -224,7 +223,7 @@ struct TPairAssociativeField : public AbstractField
 
 
 	/** 
-	 * @name Find.
+	 * @name Find
 	 */
 	//@{
 
@@ -259,7 +258,7 @@ struct TPairAssociativeField : public AbstractField
 private:
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 
