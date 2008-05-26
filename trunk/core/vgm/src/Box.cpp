@@ -158,8 +158,8 @@ vgm::Vec3f Box3f::getSize() const
 void Box3f::setInvalid( void )
 {
 	const float tMax		= std::numeric_limits< float >::max();
-	const float maxValue	= -tMax + 1.f;
-	const float minValue	= tMax - 1.f;
+	const float maxValue	= -tMax +	0.000001e+038f;
+	const float minValue	= tMax -	0.000001e+038f;
 
 	m_min.setValue( minValue, minValue, minValue );
 	m_max.setValue( maxValue, maxValue, maxValue );
@@ -181,8 +181,8 @@ const Box3f Box3f::getInvalid()
 const bool Box3f::isInvalid( void ) const
 {
 	const float tMax		= std::numeric_limits< float >::max();
-	const float maxValue	= -tMax + 1.f;
-	const float minValue	= tMax - 1.f;
+	const float maxValue	= -tMax +	0.000001e+038f;
+	const float minValue	= tMax -	0.000001e+038f;
 
 	bool retVal =	(m_min[0] == minValue) &&
 					(m_max[0] == maxValue);
