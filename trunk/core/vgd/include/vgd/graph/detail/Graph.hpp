@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -110,7 +110,7 @@ struct VGD_API EdgeName
 	 * @param value		number used to order edge
 	 * @param isEnable	true if edge is enable, false otherwise(used during traversing)
 	 */
-	EdgeName(	vgd::Shp< vgd::node::Node > child = vgd::Shp<vgd::node::Node>(), const int32 value = -1,
+	EdgeName(	vgd::Shp< vgd::node::Node > child = vgd::Shp<vgd::node::Node>(), const int value = -1,
 				const bool isEnable = true );
 
 	/**
@@ -126,12 +126,12 @@ struct VGD_API EdgeName
 	/**
 	 * @brief	Gets the number used to order edge.
 	 */
-	int32&			value();
+	int&			value();
 
 	/**
 	 * @brief	Gets the number used to order edge.
 	 */	
-	const int32		value() const;
+	const int		value() const;
 	
 	/**
 	 * @brief	Gets the enable/disable state of edge.
@@ -164,12 +164,12 @@ private:
 	/**
 	 * @brief Value that store a number used for ordering edge.
 	 */
-	int32		m_value;
+	int		m_value;
 	
 	/**
 	 * @brief A boolean value sets to true if edge is enabled (false if disabled).
 	 */
-	bool		m_isEnable;
+	bool	m_isEnable;
 };
 
 
@@ -189,7 +189,7 @@ typedef boost::property<boost::edge_name_t,		EdgeName	>					EdgeProperty;
  */
 typedef boost::adjacency_list<	
 								ordered_set_by_nameS,	// edge ordered
-								boost::vecS,			// vertex_descriptor must never be invalidated (listS ? FIXME)
+								boost::vecS,			// vertex_descriptor must never be invalidated
 								boost::bidirectionalS,	// for beiing able to get parents
 								VertexProperty,			// vertex descriptor to Node
 								EdgeProperty			// ordered in edge and enable|disable edge

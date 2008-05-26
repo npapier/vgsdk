@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -19,7 +19,7 @@ namespace detail
 
 
 
-EdgeName::EdgeName( vgd::Shp< vgd::node::Node > child, const int32 value, const bool isEnable )
+EdgeName::EdgeName( vgd::Shp< vgd::node::Node > child, const int value, const bool isEnable )
 :	m_child		(child),
 	m_value		(value),
 	m_isEnable	(isEnable)
@@ -41,14 +41,14 @@ const vgd::Shp<vgd::node::Node>& EdgeName::child() const
 
 
 
-int32& EdgeName::value()
+int& EdgeName::value()
 {
 	return m_value;
 }
 
 
 
-const int32 EdgeName::value() const
+const int EdgeName::value() const
 {
 	return m_value;
 }
@@ -87,5 +87,5 @@ const bool EdgeName::operator < ( const EdgeName& edge ) const
 } // namespace detail
 
 } // namespace graph
-	
+
 } // namespace vgd

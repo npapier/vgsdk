@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 
 #include <iostream>
 
-#include "vgd/vgd.hpp"
 #include "vgd/graph/detail/Graph.hpp"
 #include "vgd/visitor/Exceptions.hpp"
 #include "vgd/visitor/internal/dfs.hpp"
@@ -56,13 +55,13 @@ struct VGD_API Graph
 	//@{
 	
 	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 */
 	Graph();
 	//@}
-	
-	
-	
+
+
+
 	/**
 	 * @name Operations on graph
 	 */
@@ -205,7 +204,7 @@ struct VGD_API Graph
 	 * @param bToEnable			all edge name founded in the setEdgeNameValue are set to bToEnable, 
 	 * 							others are set to (not bToEnable).
 	 */
-	 void setEdges( const vgd::node::Node* pSourceNode, const std::set< int32 >& setEdgeNameValue, const bool bToEnable );
+	 void setEdges( const vgd::node::Node* pSourceNode, const std::set< int >& setEdgeNameValue, const bool bToEnable );
 
 	/**
 	 * @brief Negate the edge name state used during the traversing.
