@@ -2,12 +2,14 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #ifndef _VGIO_OPERATORS_HPP_
 #define _VGIO_OPERATORS_HPP_
 
 #include <ostream>
 
+#include <vgm/Box.hpp>
 #include <vgm/Matrix.hpp>
 #include <vgm/Vector.hpp>
 
@@ -15,11 +17,31 @@
 #include <vgd/field/TPairAssociativeField.hpp>
 #include <vgd/field/TSingleField.hpp>
 
+#include <vgd/node/Camera.hpp>
 #include <vgd/node/Light.hpp>
 #include <vgd/node/Material.hpp>
 
 #include "vgio/vgio.hpp"
 
+namespace vgd { namespace node { struct Group; } }
+
+
+
+/// @todo Adds toString methods
+
+
+
+namespace vgio
+{
+
+/**
+ * @brief Configures the ostream
+ *
+ * Sets boolalpha and precision of 3
+ */
+VGIO_API void configure( std::ostream & os );
+
+}
 
 
 
@@ -45,28 +67,123 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Materi
 
 
 /**
- * @brief	Writes into an output stream the given matrix.
+ * @brief	Writes into an output stream the field of type @c T managed by the given editor.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgm::MatrixR & matrix );
+template< typename T >
+std::ostream & operator << ( std::ostream & os, const vgd::field::EditorRO< T > & editor )
+{
+	vgio::configure(os);
+
+	os << *editor;
+
+	return os;
+}
 
 
 
 /**
- * @brief	Writes into an output stream the given vector.
+ * @brief	Writes into an output stream the field of type @c T managed by the given editor.
  */
-template< typename T, int N >
-std::ostream & operator << ( std::ostream & os, const vgm::Vector< T, N > & vector )
+template< typename T >
+std::ostream & operator << ( std::ostream & os, const vgd::field::EditorRW< T > & editor )
 {
-	os << "(";
-	for( unsigned int i = 0; i < vector.getSize(); ++i )
+	vgio::configure(os);
+
+	os << *editor;
+
+	return os;
+}
+
+
+
+/**
+ * @brief	Writes into an output stream the given multi-field.
+ */
+template< typename T >
+std::ostream & operator << ( std::ostream & os, const vgd::field::TMultiField< T > & field )
+{
+	if ( field.size() == 0 )
 	{
-		os << vector[i];
-		if( i != vector.getSize() - 1 )
+		os << "empty";
+	}
+	else
+	{
+		static const uint	limit = 3;
+		const uint			end = field.size() > limit ? limit : field.size();
+
+		for( uint i = 0; i != end; ++i )
 		{
-			os << ", ";
+			os << field[i];
+			if( i != end - 1 )
+			{
+				os << ", ";
+			}
+		}
+
+		if( field.size() > limit )
+		{
+			os << ", ...";
 		}
 	}
-	os << ")";
+
+	return os;
+}
+
+
+
+/**
+ * @brief	Writes into an output stream the given pair associative field.
+ */
+template< typename K, typename D >
+std::ostream & operator << ( std::ostream & os, const vgd::field::TPairAssociativeField< K, D > & field )
+{
+	if ( field.size() == 0 )
+	{
+		os << "empty";
+	}
+	else
+	{
+		vgd::field::TPairAssociativeField< K, D >::const_iterator	i;
+
+		for( i = field.begin(); i != field.end(); ++i )
+		{
+			if( i != field.begin() )
+			{
+				os << std::endl;
+			}
+			os << i->first << ": " << i->second;
+		}
+	}
+
+	return os;
+}
+
+
+
+/**
+ * @brief	Writes into an output stream the given single associative field.
+ */
+template< typename K >
+std::ostream & operator << ( std::ostream & os, const vgd::field::TSingleAssociativeField< K > & field )
+{
+	if ( field.size() == 0 )
+	{
+		os << "empty";
+	}
+	else
+	{
+		vgd::field::TSingleAssociativeField< K >::const_iterator	i;
+
+		for( i = field.begin(); i != field.end(); ++i )
+		{
+			if( i != field.begin() )
+			{
+				os << std::endl;
+			}
+			os << *i << " ";
+		}
+	}
+
 	return os;
 }
 
@@ -84,28 +201,55 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TSingleField< 
 
 
 
+/**
+ * @brief	Writes into an output stream the given node.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group > & node );
 
 /**
- * @brief	Writes into an output stream the given multi-field.
+ * @brief	Writes into an output stream the given node.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node > & node );
+
+
+
+
+
+
+/**
+ * @brief	Writes into an output stream the box.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgm::Box3f & box );
+
+
+
+/**
+ * @brief	Writes into an output stream the box.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgm::XfBox3f & box );
+
+
+
+/**
+ * @brief	Writes into an output stream the given matrix.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgm::MatrixR & matrix );
+
+
+
+/**
+ * @brief	Writes into an output stream the given rectangle.
  */
 template< typename T >
-std::ostream & operator << ( std::ostream & os, const vgd::field::TMultiField< T > & field )
+std::ostream & operator << ( std::ostream & os, const vgm::Rectangle< T > & rect )
 {
-	static const uint	limit = 3;
-	const uint			end = field.size() > limit ? limit : field.size();
-
-	for( uint i = 0; i != end; ++i )
+	if ( rect.isInvalid() )
 	{
-		os << field[i];
-		if( i != end - 1 )
-		{
-			os << ", ";
-		}
+		os << "invalid";
 	}
-
-	if( field.size() > limit )
+	else
 	{
-		os << ", ...";
+		os << "(" << rect[0] << ", " << rect[1] << ", " << rect[2] << ", " << rect[3] << ")";
 	}
 
 	return os;
@@ -114,37 +258,54 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TMultiField< T
 
 
 /**
- * @brief	Writes into an output stream the given pait associative field.
+ * @brief	Writes into an output stream the given rotation.
  */
-template< typename K, typename D >
-std::ostream & operator << ( std::ostream & os, const vgd::field::TPairAssociativeField< K, D > & field )
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgm::Rotation & rotation );
+
+
+
+/**
+ * @brief	Writes into an output stream the given vector.
+ */
+template< typename T, int N >
+std::ostream & operator << ( std::ostream & os, const vgm::Vector< T, N > & vector )
 {
-	using namespace vgd::field;
-
-	TPairAssociativeField< K, D >::const_iterator	i;
-
-	for( i = field.begin(); i != field.end(); ++i )
+	if ( vector.isInvalid() )
 	{
-		if( i != field.begin() )
-		{
-			os << std::endl;
-		}
-		os << i->first << ": " << i->second;
+		os << "invalid";
 	}
+	else if ( vector.isNull() )
+	{
+		os << "null";
+	}
+	else
+	{
+		os << "(";
+		for( uint i = 0; i < vector.getSize(); ++i )
+		{
+			os << vector[i];
+			if( i != vector.getSize() - 1 )
+			{
+				os << ", ";
+			}
+		}
+		os << ")";
+	}
+
 	return os;
 }
 
 
 
 /**
- * @brief	Writes into an output stream the field of type @c T managed by the given editor.
+ * @brief	Writes into an output stream the integer.
  */
-template< typename T >
-std::ostream & operator << ( std::ostream & os, const vgd::field::EditorRO< T > & editor )
-{
-	os << *editor;
-	return os;
-}
+VGIO_API std::ostream & operator << ( std::ostream & os, const int8 & integer );
+
+/**
+ * @brief	Writes into an output stream the integer.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const uint8 & integer );
 
 
 
