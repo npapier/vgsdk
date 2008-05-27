@@ -9,6 +9,7 @@
 #include <string>
 #include <vgd/field/FieldManager.hpp>
 
+namespace vgd { namespace node { struct IBoundingBox; } }
 
 
 
@@ -34,6 +35,7 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 
 
 
+const std::string toString( const vgd::node::IBoundingBox * ibb );
 
 
 
