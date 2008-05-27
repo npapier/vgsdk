@@ -248,7 +248,7 @@ void Browser::onButtonReleaseEvent( GdkEventButton * event )
 			Gtk::Menu *	popupMenu = dynamic_cast< Gtk::Menu * >( m_uiManager->get_widget("/popup") );
 	
 			Gtk::manage( popupMenu );
-			popupMenu->popup( event->button, event->time );			
+			popupMenu->popup( event->button, event->time );
 		}
 	}
 }
