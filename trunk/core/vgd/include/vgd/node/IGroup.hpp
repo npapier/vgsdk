@@ -1,12 +1,10 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #ifndef _VGD_NODE_IGROUP_HPP
 #define _VGD_NODE_IGROUP_HPP
-
-#include "vgd/vgd.hpp"
 
 #include <list>
 #include "vgd/Shp.hpp"
@@ -30,7 +28,7 @@ namespace node
  * @remarks In Group class and derived, when a child node is inserted or removed, all indices after this one are 
  * invalidated. Be careful.
  * 
- * @todo SwapChild().
+ * @todo swapChild()
  * 
  * @ingroup g_abstractNodes
  */
@@ -40,7 +38,7 @@ struct VGD_API IGroup
 	 * @brief Virtual destructor
 	 */
 	virtual ~IGroup();
-	
+
 	/**
 	 * @name Insert/remove/replace accessor methods
 	 */
@@ -54,25 +52,25 @@ struct VGD_API IGroup
 	/**
 	 * @brief Adds a child so that it becomes the one with the given index.
 	 */
-	virtual void	insertChild	( vgd::Shp<Node> node, const int32 newChildIndex =0 )=0;
+	virtual void	insertChild	( vgd::Shp<Node> node, const int newChildIndex = 0 )=0;
 
 	/**
 	 * @brief Replaces child with given index with new child.
 	 * 
 	 * @pre newChildIndex>=0 and newChildIndex<=getNumChildren()
 	 */
-	virtual void	replaceChild( vgd::Shp<Node> newChild, const int32 index )=0;
-	
+	virtual void	replaceChild( vgd::Shp<Node> newChild, const int index )=0;
+
 	/**
 	 * @brief Replaces child with another one.
 	 */
 	virtual void 	replaceChild( vgd::Shp<Node> oldChild, vgd::Shp<Node> newChild )=0;
-	
+
 	/**
 	 * @brief Removes child with given index from group.
 	 */
-	virtual void	removeChild	( const int32 childIndex )=0;
-	
+	virtual void	removeChild	( const int childIndex )=0;
+
 	/**
 	 * @brief Removes child.
 	 * 
@@ -86,8 +84,8 @@ struct VGD_API IGroup
 	virtual void	removeAllChildren( void )=0;
 	//@}
 
-	
-	
+
+
 	/**
 	 * @name Searching methods
 	 */
@@ -105,7 +103,7 @@ struct VGD_API IGroup
 	 * 
 	 * @return a value between 0 and getNumChildren()-1 if found, if not found then return getNumChildren()
 	 */
-	virtual int32	findChild( const vgd::Shp<Node> node ) const=0;
+	virtual int	findChild( const vgd::Shp<Node> node ) const=0;
 	//@}
 
 
@@ -118,7 +116,7 @@ struct VGD_API IGroup
 	/**
 	 * @brief Returns pointer to child node with the given index.
 	 */
-	virtual vgd::Shp<Node>	getAbstractChild( const int32 index )=0;
+	virtual vgd::Shp<Node>	getAbstractChild( const int index )=0;
 
 	/**
 	 * @brief Returns children.
@@ -130,13 +128,13 @@ struct VGD_API IGroup
 	/**
 	 * @brief Returns number of children.
 	 */
-	virtual int32			getNumChildren( void ) const=0;
+	virtual int				getNumChildren( void ) const=0;
 
 	/**
 	 * @brief Returns only enabled or disabled children.
 	 * 
-	 * @param children		: append children at the end of this list.
- 	 * @param bGetEnabled	: true to get all enabled children, false to get all disabled children.
+	 * @param children		append children at the end of this list.
+ 	 * @param bGetEnabled	true to get all enabled children, false to get all disabled children.
  	 * 
  	 * @remark An enabled child is a child that is mark to be traversed (all for Group, all or one or none for
  	 * Switch). An disabled children is a child that is mark to be not traversed.
@@ -147,18 +145,11 @@ struct VGD_API IGroup
 
 protected:
 	/**
-	 * @name Update the bgl graph
-	 */
-	//@{
-
-	/**
-	 * @internal Update bgl graph to reflect modifications in the children list and in the children selection list.
+	 * @internal Updates bgl graph to reflect modifications in the children list and in the children selection list.
 	 * 
 	 * @remarks At the end of this method, you should validate some dirty flag.
 	 */
 	virtual void	updateGraph( void )=0;
-
-	//@}
 };
 
 
