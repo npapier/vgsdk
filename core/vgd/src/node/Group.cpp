@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -31,7 +31,7 @@ Group::Group( const std::string nodeName ) :
 	addDirtyFlag(getDFBoundingBox());
 	
 	// Links.
-	//link( getFChildren(),				getDFBoundingBox() );
+	//link( getFChildren(),			getDFBoundingBox() );
 	//link( getFChildrenSelection(),	getDFBoundingBox() );
 
 	//
@@ -46,7 +46,7 @@ void Group::setToDefaults( void )
 
 	// IBoundingBox
 	reset();
-	
+
 	Group::updateGraph();
 }
 
@@ -66,13 +66,13 @@ void Group::addChild( vgd::Shp<vgd::node::Node> node )
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
-	
-	updateGraph();	
+
+	updateGraph();
 }
 
 
 
-void Group::insertChild	( vgd::Shp<Node> node, const int32 newChildIndex )
+void Group::insertChild( vgd::Shp<Node> node, const int newChildIndex )
 {
 	assert(	(newChildIndex>=0 && newChildIndex<=getNumChildren()) && "Wrong index." );
 
@@ -84,17 +84,17 @@ void Group::insertChild	( vgd::Shp<Node> node, const int32 newChildIndex )
 	{
 		graph().addEdge( this, node, newChildIndex );
 	}
-	
+
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
-	
-	updateGraph();	
+
+	updateGraph();
 }
 
 
 
-void Group::replaceChild( vgd::Shp<Node> newChild, const int32 index )
+void Group::replaceChild( vgd::Shp<Node> newChild, const int index )
 {
 	assert( checkChildIndex(index) && "index is out of range." );
 
@@ -106,19 +106,19 @@ void Group::replaceChild( vgd::Shp<Node> newChild, const int32 index )
 //		);
 //
 //	graph().addEdge( this, newChild.get(), index );
-	
-	getDirtyFlag(getDFChildren())->dirty();
-	getDirtyFlag(getDFBoundingBox())->dirty();
-	getDirtyFlag(getDFNode())->dirty();
-	
-	updateGraph();	
+
+	// getDirtyFlag(getDFChildren())->dirty();
+	// getDirtyFlag(getDFBoundingBox())->dirty();
+	// getDirtyFlag(getDFNode())->dirty();
+
+	// updateGraph();
 }
 
 
 
 void Group::replaceChild( vgd::Shp<Node> oldChild, vgd::Shp<Node> newChild )
 {
-	int32 index = findChild( oldChild );
+	const int index = findChild( oldChild );
 	
 	if ( index < getNumChildren() )
 	{
@@ -130,39 +130,39 @@ void Group::replaceChild( vgd::Shp<Node> oldChild, vgd::Shp<Node> newChild )
 
 
 
-void Group::removeChild( const int32 childIndex )
+void Group::removeChild( const int childIndex )
 {
 	assert( checkChildIndex(childIndex) && "index is out of range." );
 
 	graph().removeEdge( this, childIndex,
 		true // repacking
 		);
-		
+
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
-	
-	updateGraph();	
+
+	updateGraph();
 }
 
 
 
 bool Group::removeChild( vgd::Shp<Node> childToRemove )
 {
-	int32 index = findChild( childToRemove );
+	const int index = findChild( childToRemove );
 
 	assert( index >= 0 && "vgd::Group::removeChild(): Unexpected value returned by findChild()." );
-	
+
 	if ( index < getNumChildren() )
 	{
 		// Found childToRemove.
 		removeChild( index );
-		return ( true );
+		return true;
 	}
 	else
 	{
 		// childToRemove not found.	
-		return ( false );
+		return false;
 	}
 }
 
@@ -171,35 +171,35 @@ bool Group::removeChild( vgd::Shp<Node> childToRemove )
 void Group::removeAllChildren( void )
 {
 	graph().removeEdges( this );
-	
+
 	getDirtyFlag(getDFChildren())->dirty();
 	getDirtyFlag(getDFBoundingBox())->dirty();
 	getDirtyFlag(getDFNode())->dirty();
-	
-	updateGraph();	
+
+	updateGraph();
 }
 
 
 
 bool Group::containsChild( const vgd::Shp<Node> node ) const
 {
-	return ( graph().containsChild( this, node.get() ) );
+	return graph().containsChild( this, node.get() );
 }
 
 
 
-int32 Group::findChild( const vgd::Shp<Node> node ) const
+int Group::findChild( const vgd::Shp<Node> node ) const
 {
-	return ( graph().findChild( this, node.get() ) );
+	return graph().findChild( this, node.get() );
 }
 
 
 
-vgd::Shp<vgd::node::Node> Group::getAbstractChild( const int32 index )
+vgd::Shp<vgd::node::Node> Group::getAbstractChild( const int index )
 {
 	assert( checkChildIndex(index) && "index is out of range." );
 
-	return ( graph().getChild( this, index ) );
+	return graph().getChild( this, index );
 }
 
 
@@ -211,9 +211,9 @@ void Group::getChildren( NodeList& children) const
 
 
 
-int32 Group::getNumChildren( void ) const
+int Group::getNumChildren( void ) const
 {
-	return ( graph().getNumChildren( this ) );
+	return graph().getNumChildren( this );
 }
 
 
@@ -229,45 +229,43 @@ void Group::updateGraph( void )
 {
 	getDirtyFlag(getDFChildren())->validate();
 	getDirtyFlag(getDFChildrenSelection())->validate();
-	getDirtyFlag(getDFNode())->validate();
+	//getDirtyFlag(getDFBoundingBox())->validate();
+	//getDirtyFlag(getDFNode())->validate();
 }
 
 
 
 /**
- * Bounding box dirty flag is validate when calling this method.
+ * Bounding box dirty flag is validated when calling this method.
  * 
- * It could be invalidate by child (of VertexShape type) when using vge::service::ComputeBoundingBox service.
- * It is invalidate when RW access to fields named \c children or \c childrenSelection.
+ * It could be invalidated by VertexShape node of its sub-graph when using vge::service::ComputeBoundingBox service.
+ * It is invalidated when RW access to fields named \c children or \c childrenSelection.
  * 
  * Parents nodes are invalidated when this node is invalid.
  */
 bool Group::computeBoundingBox( const vgm::MatrixR& /* transformation */)
 {
 	// STEP 1: init.
-	bool	bRetVal;
-	bool	bInvalidateParents;
-	
-	bInvalidateParents	= false;
-	bRetVal				= false;
-	
-	// update transformation
+	bool	bRetVal					= false;
+	bool	bInvalidateParents		= false;
+
+	// Updates transformation
 	// nothing to do.
 	
-	// STEP 2: update bounding box.
+	// STEP 2: Updates bounding box.
 	vgd::field::DirtyFlag *pDirtyFlag = getDirtyFlag( getDFBoundingBox() );
 	assert( pDirtyFlag != 0 );
-	
+
 	if ( pDirtyFlag->isDirty() )
 	{
 		bInvalidateParents	= true;
 		bRetVal				= true;
+
+		// Computes bb
 		
-		// compute bb		
-		
-		// update bounding box
+		// Updates bounding box
 		m_boundingBox.makeEmpty();
-		
+
 		NodeList	children;
 		getEnabledChildren( children, true );
 
@@ -310,14 +308,14 @@ bool Group::computeBoundingBox( const vgm::MatrixR& /* transformation */)
 		invalidateParentsBoundingBoxDirtyFlag();
 	}
 	
-	return ( bRetVal );
+	return bRetVal;
 }
 
 
 
 bool Group::isBoundingBoxValid() const
 {
-	return ( getDirtyFlag( getDFBoundingBox() )->isValid() );
+	return getDirtyFlag( getDFBoundingBox() )->isValid();
 }
 
 
@@ -356,7 +354,7 @@ const std::string Group::getDFBoundingBox( void )
 
 
 
-bool Group::checkChildIndex( const int32 index ) const
+bool Group::checkChildIndex( const int index ) const
 {
 	return (	(index>=0) &&
 				(index<getNumChildren())	);

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -117,11 +117,11 @@ void VertexShape::invalidateParentsBoundingBoxDirtyFlag()
  */
 bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 {
-	// STEP 1: init. and check matrix transformation.
+	// STEP 1: init. and checks matrix transformation.
 	bool	bRetVal;
 	bool	bInvalidateParents;
 	
-	// update transformation
+	// updates transformation
 	if ( m_transformation != transformation )
 	{
 		bInvalidateParents	= true;
@@ -135,14 +135,14 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 		bRetVal				= false;
 	}
 
-	// STEP 2: update bounding box.
+	// STEP 2: updates bounding box.
 	vgd::field::DirtyFlag *pDirtyFlag = getDirtyFlag( getDFBoundingBox() );
 	assert( pDirtyFlag != 0 );
 
 	const BoundingBoxUpdatePolicyValueType bbUpdatePolicy = getBoundingBoxUpdatePolicy();
 
 	if (	(bbUpdatePolicy == AUTOMATIC && pDirtyFlag->isDirty()) ||
-			(bbUpdatePolicy == ONCE && pDirtyFlag->isDirty() && m_boundingBox.isEmpty())	)
+			(bbUpdatePolicy == ONCE && pDirtyFlag->isDirty() && m_boundingBox.isInvalid())	)
 	{
 		bInvalidateParents	= true;
 		bRetVal				= true;
@@ -153,25 +153,38 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 
 		m_boundingBox.makeEmpty();
 
-		for(	FVertexType::const_iterator	i	=	vertex->begin(),
+		for(	FVertexType::const_iterator	i	= vertex->begin(),
 											ie	= vertex->end();
 				i != ie;
 				i++ )
 		{
 			m_boundingBox.extendBy( *i );
 		}
-		
+
 		//
 		pDirtyFlag->validate();
 	}
-
+	else if ( bbUpdatePolicy == ONCE && pDirtyFlag->isDirty() )
+	{
+		pDirtyFlag->validate();
+	}
+	else
+	{
+#ifdef DEBUG
+		if ( pDirtyFlag->isDirty() )
+		{
+			assert( false && "Internal error." );
+			pDirtyFlag->validate();
+		}
+#endif
+	}
 
 	if ( bInvalidateParents )
 	{
 		invalidateParentsBoundingBoxDirtyFlag();
 	}
 	
-	return ( bRetVal );
+	return bRetVal;
 }
 
 
@@ -214,11 +227,11 @@ bool VertexShape::smartComputeBoundingBox( const vgm::MatrixR& transformation )
 
 		pDirtyFlag->validate();
 		
-		return ( true );
+		return true;
 	}
 	else
 	{
-		return ( false );
+		return false;
 	}
 }
 

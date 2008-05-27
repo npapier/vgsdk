@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -25,13 +25,13 @@ META_NODE_CPP( Switch );
 Switch::Switch( const std::string nodeName ) :
 	Group(nodeName)
 {
-	// Add field
+	// Adds field
 	addField( new vgd::field::SFInt32(getFWhichChild()) );
 
 	// Links
 	link( getFWhichChild(), getDFChildrenSelection() );
 	link( getFWhichChild(), getDFBoundingBox() );
-	
+
 	link( getDFNode() );
 }
 
@@ -53,17 +53,17 @@ void Switch::setOptionalsToDefaults()
 
 
 
-const int32 Switch::getWhichChild( void ) const
+const int Switch::getWhichChild( void ) const
 {
 	return ( getFieldRO<vgd::field::SFInt32>(getFWhichChild())->getValue() );
 }
 
 
 
-void Switch::setWhichChild( const int32 whichChild )
+void Switch::setWhichChild( const int whichChild )
 {
 	getFieldRW<vgd::field::SFInt32>(getFWhichChild())->setValue( whichChild );
-	
+
 	updateGraph();
 }
 
@@ -75,12 +75,13 @@ void Switch::updateGraph( void )
 //	std::string name = getName();
 //#endif
 
-	bool bChildren				= getDirtyFlag(getDFChildren())->isDirty();
-	bool bChildrenSelection		= getDirtyFlag(getDFChildrenSelection())->isDirty();
+	const bool bChildren			= getDirtyFlag(getDFChildren())->isDirty();
+	const bool bChildrenSelection	= getDirtyFlag(getDFChildrenSelection())->isDirty();
 
 	if ( bChildren || bChildrenSelection )
 	{
-		const int32 whichChild = getFieldRO<vgd::field::SFInt32>(getFWhichChild())->getValue();
+		const int whichChild = getFieldRO<vgd::field::SFInt32>(getFWhichChild())->getValue();
+
 		switch (whichChild)
 		{
 			case SWITCH_ALL:
@@ -93,17 +94,18 @@ void Switch::updateGraph( void )
 	
 			default:
 			{
-				assert( checkChildIndex(whichChild) && "index is out of range." );
-				
-				std::set< int32 > setIndex;
+				// assert( checkChildIndex(whichChild) && "index is out of range." ); @todo a warning in log
+
+				std::set< int > setIndex;
 				setIndex.insert( whichChild );
-				
+
 				graph().setEdges( this, setIndex, true );
 			}
 		}
+
+		// Validates dirty flags
 		getDirtyFlag(getDFChildren())->validate();
 		getDirtyFlag(getDFChildrenSelection())->validate();
-		getDirtyFlag(getDFNode())->validate();
 	}
 	// else nothing
 }
@@ -112,9 +114,9 @@ void Switch::updateGraph( void )
 
 const std::string Switch::getFWhichChild(void)
 {
-	return ( "f_whichChild" );
+	return "f_whichChild";
 }
-	
+
 
 
 } // namespace node
