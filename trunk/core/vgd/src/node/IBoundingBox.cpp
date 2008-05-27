@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,15 +17,14 @@ namespace node
 
 IBoundingBox::IBoundingBox()
 {
-	//m_boundingBox.makeEmpty(); called by default constructor of Box3f.
+	m_boundingBox.setInvalid();
 	m_transformation.setIdentity();
 }
 
 
 
 IBoundingBox::~IBoundingBox()
-{
-}
+{}
 
 
 
@@ -33,7 +32,7 @@ const vgm::Box3f& IBoundingBox::getBoundingBox() const
 {
 	assert( isBoundingBoxValid() );
 
-	return ( m_boundingBox );
+	return m_boundingBox;
 }
 
 
@@ -41,8 +40,8 @@ const vgm::Box3f& IBoundingBox::getBoundingBox() const
 const vgm::MatrixR& IBoundingBox::getTransformation() const
 {
 	assert( isBoundingBoxValid() );
-	
-	return ( m_transformation );
+
+	return m_transformation;
 }
 
 
@@ -63,7 +62,7 @@ void IBoundingBox::setTransformation( const vgm::MatrixR& transformation )
 
 void IBoundingBox::reset()
 {
-	m_boundingBox.makeEmpty();
+	m_boundingBox.setInvalid();
 	m_transformation.setIdentity();
 }
 
@@ -76,7 +75,7 @@ vgm::XfBox3f IBoundingBox::getXfBoundingBox() const
 	vgm::XfBox3f xfBox(m_boundingBox);
 	xfBox.setTransform( m_transformation );
 
-	return ( xfBox );
+	return xfBox;
 }
 
 
@@ -85,7 +84,7 @@ vgm::Box3f IBoundingBox::getProjectXfBoundingBox() const
 {
 	vgm::XfBox3f xfBox = getXfBoundingBox();
 
-	return ( xfBox.project() );
+	return xfBox.project();
 }
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,15 +6,13 @@
 #ifndef _VGD_NODE_SWITCH_HPP
 #define _VGD_NODE_SWITCH_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/node/Group.hpp"
 
 
 
 namespace vgd
 {
-	
+
 namespace node
 {
 
@@ -44,9 +42,9 @@ namespace node
 struct VGD_API Switch : public Group
 {
 	META_NODE_HPP( Switch );
-	
+
 	/**
-	 * @name Constants.
+	 * @name Constants
 	 */
 	//@{
 	enum {
@@ -59,46 +57,46 @@ struct VGD_API Switch : public Group
 
 
 	/**
-	 * @name Fields accessors.
+	 * @name Fields accessors
 	 */
 	//@{
 
 	/**
 	 * @brief Gets the value of \c whichChild field.
 	 */
-	const int32	getWhichChild( void ) const;
+	const int	getWhichChild( void ) const;
 
 	/**
 	 * @brief Sets the value of \c whichChild field.
 	 * 
 	 * @param whichChild : Index of the child to traverse, or one of SWITCH_ALL, SWITCH_NONE or SWITCH_DEFAULT.
 	 */
-	void		setWhichChild( const int32 whichChild );
+	void		setWhichChild( const int whichChild );
 	//@}
 
 
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
 	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 */
 	Switch( const std::string nodeName );
 
 	void	setToDefaults( void );
 	
-	void	setOptionalsToDefaults();	
+	void	setOptionalsToDefaults();
 
 	//@}
 
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Fields names enumeration
 	 */
 	//@{
 
@@ -107,7 +105,7 @@ protected:
 	 */
 	static const std::string getFWhichChild(void);
 	//@}
-	
+
 	// Overriden
 	void updateGraph( void );
 };

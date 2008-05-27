@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -25,15 +25,17 @@ META_NODE_CPP( MultiSwitch );
 MultiSwitch::MultiSwitch( const std::string nodeName ) :
 	Group(nodeName)
 {
-	// Add fields
+	// Adds fields
 	addField( new vgd::field::SFInt32(	getFWhichChild())	);
 	addField( new vgd::field::MFInt32(	getFChosenChild())	);
 
 	// Links
 	link( getFWhichChild(),		getDFChildrenSelection() );
+	link( getFWhichChild(),		getDFBoundingBox() );
 	link( getFChosenChild(),	getDFChildrenSelection() );
-	
-	link( getDFNode() );	
+	link( getFChosenChild(),	getDFBoundingBox() );
+
+	link( getDFNode() );
 }
 
 
@@ -65,7 +67,7 @@ const int32 MultiSwitch::getWhichChild( void ) const
 void MultiSwitch::setWhichChild( const int32 whichChild )
 {
 	getFieldRW<vgd::field::SFInt32>(getFWhichChild())->setValue( whichChild );
-	
+
 	updateGraph();
 }
 
@@ -74,9 +76,9 @@ void MultiSwitch::setWhichChild( const int32 whichChild )
 bool MultiSwitch::isChildChoosen( const int32 index ) const
 {
 	assert( checkChildIndex(index) && "index is out of range." );
-	
+
 	vgd::field::EditorRO<vgd::field::MFInt32> chosenChild = getFieldRO<vgd::field::MFInt32>(getFChosenChild());
-	
+
 	return ( chosenChild->find( index ) != -1 );
 }
 
@@ -90,7 +92,7 @@ void MultiSwitch::addToChosenChild( const int32 index )
 	{
 		vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
 		chosenChild->push_back( index );
-		
+
 		updateGraph();
 	}
 }
@@ -100,15 +102,15 @@ void MultiSwitch::addToChosenChild( const int32 index )
 void MultiSwitch::removeFromChosenChild( const int32 index )
 {
 	assert( checkChildIndex(index) && "index is out of range." );
-	
+
 	vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
-	int32 indexChosenChild = chosenChild->find( index );
-	
+	const int32 indexChosenChild = chosenChild->find( index );
+
 	if ( indexChosenChild != -1 )
 	{
 		// Found index in chosenChild
 		chosenChild->erase( indexChosenChild );
-		
+
 		updateGraph();
 	}
 	// not found, nothing to be done.
@@ -119,53 +121,53 @@ void MultiSwitch::removeFromChosenChild( const int32 index )
 void MultiSwitch::removeAllFromChosenChild( void )
 {
 	vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
-	
+
 	chosenChild->clear();
-	
-	updateGraph();	
+
+	updateGraph();
 }
 
 
 
 void MultiSwitch::updateGraph()
 {
-	bool bChildren				= getDirtyFlag(getDFChildren())->isDirty();
-	bool bChildrenSelection		= getDirtyFlag(getDFChildrenSelection())->isDirty();
+	const bool bChildren			= getDirtyFlag(getDFChildren())->isDirty();
+	const bool bChildrenSelection	= getDirtyFlag(getDFChildrenSelection())->isDirty();
 
 	if ( bChildren || bChildrenSelection )
 	{
 		const int32 whichChild = getFieldRO<vgd::field::SFInt32>(getFWhichChild())->getValue();
+
 		switch (whichChild)
 		{
-			
 			case MULTI_SWITCH_OFF:
 				graph().setEdges( this, false );
 				break;
 			
 			case MULTI_SWITCH_ON:
 			{
-				// FIXME: optimize.
-				std::set< int32 > setTmp;
+				// @todo optimize
+				std::set< int > setTmp;
 				vgd::field::EditorRO<vgd::field::MFInt32> chosenChild = 
 					getFieldRO<vgd::field::MFInt32>(getFChosenChild());
 
-				// Convert MultiField to a set, and check index.
+				// Converts MultiField to a set, and check index.
 				for(	int32	i		= 0,
 								iMax	= static_cast<int32>(chosenChild->size());
 						i < iMax;
 						i++ )
 				{
 					const int32 indexTmp = (*chosenChild)[i]; // FIXME : optme.
-					assert( checkChildIndex( indexTmp ) && "index is out of range." );
+					//assert( checkChildIndex( indexTmp ) && "index is out of range." ); @todo a warning in log
 
 					setTmp.insert( indexTmp );
 				}
-				
-				// Modify graph.
+
+				// Updates graph
 				graph().setEdges( this, setTmp, true/*enable*/ );
 			}
 			break;
-			
+
 			case MULTI_SWITCH_ALL:
 				graph().setEdges( this, true );
 				break;
@@ -174,10 +176,10 @@ void MultiSwitch::updateGraph()
 				assert( false && "unkwown value for MultiSwitch." );
 				return;
 		}
-		
+
+		// Validates dirty flags
 		getDirtyFlag(getDFChildren())->validate();
 		getDirtyFlag(getDFChildrenSelection())->validate();
-		getDirtyFlag(getDFNode())->validate();		
 	}
 	// else nothing
 }
@@ -186,14 +188,14 @@ void MultiSwitch::updateGraph()
 
 const std::string MultiSwitch::getFWhichChild( void )
 {
-	return ( "f_which_child" );
+	return "f_which_child";
 }
 
 
 
 const std::string MultiSwitch::getFChosenChild( void )
 {
-	return ( "f_chosen_child" );
+	return "f_chosen_child";
 }
 
 

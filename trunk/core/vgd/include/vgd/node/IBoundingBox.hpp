@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -15,7 +15,7 @@
 
 namespace vgd
 {
-	
+
 namespace node
 {
 
@@ -29,19 +29,19 @@ namespace node
 struct VGD_API IBoundingBox
 {
 	/**
-	 * @name Constructor/Destructor.
+	 * @name Constructor and destructor
 	 */
 	//@{
 	
 	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 * 
-	 * @post getBoundingBox().isEmpty() and getTransformation().isIdentity()
+	 * @post getBoundingBox().isInvalid() and getTransformation().isIdentity() returns true
 	 */
 	IBoundingBox();
-	
+
 	/**
-	 * @brief Virtual destructor.
+	 * @brief Virtual destructor
 	 */
 	virtual ~IBoundingBox();
 
@@ -50,15 +50,17 @@ struct VGD_API IBoundingBox
 
 
 	/**
-	 * @name Methods that must be implemented by derived classes.
+	 * @name Virtual pure methods
+	 *
+	 * Methods that must be implemented by derived classes.
 	 */
 	//@{
 
 	/**
-	 * @brief Upate the bounding box and its associated transformation matrix.
+	 * @brief Updates the bounding box and its associated transformation matrix.
 	 *
-	 * @remarks You should only compute/update the bounding box if necessary. Compute only if bounding box dirty flag 
-	 * is invalidate (i.e. Mesh has changed for Shape nodes, or for Group nodes when children have changed).
+	 * @remarks You should only compute/update the bounding box if needed. Computes only if bounding box dirty flag 
+	 * is invalid(i.e. Mesh has changed for Shape nodes, or for Group nodes when children have changed).
 	 *
 	 * @return true if bounding box has been computed, false if bounding box has been already valid or simply transformed
 	 * by the matrix \c transformation.
@@ -85,7 +87,7 @@ struct VGD_API IBoundingBox
 
 
 	/**
-	 * @name Bounding box accessors.
+	 * @name Bounding box accessors
 	 */
 	//@{
 	
@@ -137,13 +139,13 @@ struct VGD_API IBoundingBox
 	//@{
 
 	/**
-	 * @brief Get the bounding box transformed by the matrix.
+	 * @brief Gets the bounding box transformed by the matrix.
 	 * 
 	 * @pre isBoundingBoxValid() returns true.
 	 * 
 	 * @return the bounding box with the matrix transformation.
 	 * 
-	 * @remarks Use project() on the returned bounding box for getting the enlarged axis aligned bounding box that 
+	 * @remarks Uses project() on the returned bounding box for getting the enlarged axis aligned bounding box that 
 	 * contains the transformed bounding box.
 	 */
 	vgm::XfBox3f getXfBoundingBox() const;

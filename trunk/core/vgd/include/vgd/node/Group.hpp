@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -13,7 +13,6 @@
 #include "vgd/node/IGroup.hpp"
 #include "vgd/node/IBoundingBox.hpp"
 #include "vgd/node/Node.hpp"
-#include "vgd/vgd.hpp"
 //#include "vgd/visitor/FindFirst.hpp"
 
 
@@ -52,22 +51,23 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	 */
 	//@{
 	void			addChild			( vgd::Shp<Node> node );
-	void			insertChild			( vgd::Shp<Node> node, const int32 newChildIndex = 0 );
+	void			insertChild			( vgd::Shp<Node> node, const int newChildIndex = 0 );
 
-	void			replaceChild		( vgd::Shp<Node> newChild, const int32 index );
+	void			replaceChild		( vgd::Shp<Node> newChild, const int index );
 	void			replaceChild		( vgd::Shp<Node> oldChild, vgd::Shp<Node> newChild );
 
-	void			removeChild			( const int32 childIndex );
-	bool			removeChild			( vgd::Shp<Node> childToRemove );	
+	void			removeChild			( const int childIndex );
+	bool			removeChild			( vgd::Shp<Node> childToRemove );
 	void			removeAllChildren	( void );
 
 	bool			containsChild		( const vgd::Shp<Node> node ) const;
-	int32			findChild			( const vgd::Shp<Node> node ) const;
+	int				findChild			( const vgd::Shp<Node> node ) const;
 
-	vgd::Shp<Node>	getAbstractChild	( const int32 index );
+	vgd::Shp<Node>	getAbstractChild	( const int index );
 	void			getChildren			( NodeList& children) const;
-	void			getEnabledChildren	( NodeList& children, const bool bGetEnabled /*= true*/) const;
-	int32			getNumChildren		( void ) const;
+	void			getEnabledChildren	( NodeList& children, const bool bGetEnabled = true) const;
+	int				getNumChildren		( void ) const;
+	//@}
 
 
 	/**
@@ -92,17 +92,19 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	 * @endcode
 	 */
 	template< typename nodeType >
-	vgd::Shp< nodeType > getChild( const int32 index )
+	vgd::Shp< nodeType > getChild( const int index )
 	{
 		vgd::Shp< vgd::node::Node > child	= getAbstractChild( index );
-		
+
 		vgd::Shp< nodeType > castedChild 	= vgd::dynamic_pointer_cast< nodeType >(child);
 		assert( castedChild.get() != 0 && "Wrong node type." );
 
 		return castedChild;
 	}
 
+
 	/**
+	 * @todo
 	 * brief Finds the first node that matches the predicate.
 	 * 
 	 * This method traverses the scene graph from this group node and searches the first node that
@@ -122,7 +124,6 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 //		return find.getShpNode();
 //	}
 		
-	//@}
 
 
 
@@ -135,9 +136,10 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	 * @brief Traverse the graph starting on this node with the specified visitor.
 	 * 
 	 * @remark A traverse action is like a depth first visit.
+	 * @todo Removes the template.
 	 */
 	template< typename DFSVisitor >
-	void	traverse	( DFSVisitor& visitor ) const
+	void traverse( DFSVisitor& visitor ) const
 	{
 		graph().traverse( vertexDescriptor(), visitor );
 	}
@@ -152,14 +154,14 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	//@{
 
 	/**
-	 * @brief Compute the bounding box.
+	 * @brief Computes the bounding box.
 	 *
 	 * @pre all direct children of this node are valid.
 	 * 
 	 * @return true if bounding box has been computed, false if bounding box has been already valid or simply transformed
 	 * by the matrix \c transformation.
 	 * 
-	 * @remark Compute only if bounding box dirty flag is invalidate.
+	 * @remark Computes only if bounding box dirty flag is invalidate.
 	 *
 	 * @remark This bounding box is valid if and only if all direct children of this node are valid.
 	 * An invalid node at depth > 1 could exist when bounding box dirty flag is valid.
@@ -170,7 +172,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	bool computeBoundingBox( const vgm::MatrixR& transformation /* not used */ );
 
 	/***
-	 * @todo Returns a good value, only possible after some work on graph(getFChildrenSelection(), getFChildren() ).
+	 * @todo Returns a good value, only possible after some work on graph (getFChildrenSelection(), getFChildren() ).
 	 */
 	bool isBoundingBoxValid() const;
 
@@ -183,7 +185,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	 * @name Debugging methods
 	 */
 	//@{
-	
+
 	/**
 	 * @brief Write the scene graph in \c Graphviz format.
 	 * 
@@ -214,7 +216,7 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	 * @brief Returns name of dirty flag that is invalidate when bounding box is invalidate and must be recomputed.
 	 */
 	static const std::string getDFBoundingBox( void );
-	
+
 	//@}
 
 
@@ -224,18 +226,18 @@ protected:
 	 * @name Constructor
 	 */
 	//@{
-	
+
 	/**
 	 * @brief Constructor.
 	 */
 	Group( const std::string nodeName );
-	
+
 	/**
 	 * @brief Set fields and dirty flags to default values.
 	 */
 	void setToDefaults( void );
-	
-	void	setOptionalsToDefaults();	
+
+	void setOptionalsToDefaults();
 
 	//@}
 
@@ -245,20 +247,20 @@ protected:
 	 * @name Debug methods
 	 */
 	//@{
-	
-	bool	checkChildIndex( const int32 index ) const;
-	
+
+	bool	checkChildIndex( const int index ) const;
+
 	//@}
-	
-	
-	// Overriden
+
+
+	// Overridden
 	void updateGraph( void );
 };
 
 
 
 } // namespace node
-	
+
 } // namespace vgd
 
 #endif //#ifndef _VGD_NODE_GROUP_HPP
