@@ -24,7 +24,7 @@
 	#define	USE_GTKGLEXT
 
 	#include <gdk/gdkgl.h>
-	#include <gtk/gtkgl.h>	
+	#include <gtk/gtkgl.h>
 #endif
 
 
@@ -302,7 +302,7 @@ protected:
 		//vgDebug::get().logDebug("vgGTK::Canvas::on_configure_event");
 		
 		// vgsdk resize
-		vgm::Vec2i	v2iSize( event->width, event->height );
+		const vgm::Vec2i v2iSize( event->width, event->height );
 
 		if ( startVGSDK() )
 		{
@@ -321,7 +321,7 @@ protected:
 		//vgDebug::get().logDebug("vgGTK::Canvas::on_expose_event()");
 		
 		// vgsdk paint
-		vgm::Vec2i	v2iSize( event->area.width, event->area.height );
+		const vgm::Vec2i v2iSize( get_width(), get_height() );
 
 		if ( startVGSDK() )
 		{
