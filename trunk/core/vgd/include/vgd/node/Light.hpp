@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,7 +9,6 @@
 #include "vgd/field/Bool.hpp"
 #include "vgd/field/Vector.hpp"
 #include "vgd/node/MultiAttribute.hpp"
-#include "vgd/vgd.hpp"
 
 
 
@@ -77,7 +76,7 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	/**
 	 * @brief Typedef for the \c on field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< OnParameterType, OnValueType > FOnType;
+	typedef vgd::field::TPairAssociativeField< int /*OnParameterType*/, OnValueType > FOnType;
 
 	/**
 	 * @brief Gets the \c on value.
@@ -120,7 +119,7 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	/**
 	 * @brief Typedef for the \c color field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< ColorParameterType, ColorValueType > FColorType;
+	typedef vgd::field::TPairAssociativeField< int /*ColorParameterType*/, ColorValueType > FColorType;
 
 	/**
 	 * @brief Gets the \c color value.

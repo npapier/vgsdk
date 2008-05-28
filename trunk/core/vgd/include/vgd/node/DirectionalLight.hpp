@@ -1,12 +1,10 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #ifndef _VGD_NODE_DIRECTIONALLIGHT_HPP
 #define _VGD_NODE_DIRECTIONALLIGHT_HPP
-
-#include "vgd/vgd.hpp"
 
 #include <vgm/Vector.hpp>
 
@@ -63,7 +61,7 @@ struct VGD_API DirectionalLight : public vgd::node::Light
 	/**
 	 * @brief Typedef for the \c direction field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< DirectionParameterType, DirectionValueType > FDirectionType;
+	typedef vgd::field::TPairAssociativeField< int /*DirectionParameterType*/, DirectionValueType > FDirectionType;
 
 	/**
 	 * @brief Gets the \c direction value.

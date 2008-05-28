@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -54,7 +54,7 @@ void PointLight::setOptionalsToDefaults()
 bool PointLight::getPosition( PositionValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< PositionParameterType, PositionValueType >( this, getFPosition(), POSITION, value )
+		vgd::field::getParameterValue< int /*PositionParameterType*/, PositionValueType >( this, getFPosition(), POSITION, value )
 		);
 }
 
@@ -62,14 +62,14 @@ bool PointLight::getPosition( PositionValueType& value ) const
 
 void PointLight::setPosition( PositionValueType value )
 {
-	vgd::field::setParameterValue< PositionParameterType, PositionValueType >( this, getFPosition(), POSITION, value );
+	vgd::field::setParameterValue< int /*PositionParameterType*/, PositionValueType >( this, getFPosition(), POSITION, value );
 }
 
 
 
 void PointLight::erasePosition()
 {
-	vgd::field::eraseParameterValue< PositionParameterType, PositionValueType >( this, getFPosition(), POSITION );
+	vgd::field::eraseParameterValue< int /*PositionParameterType*/, PositionValueType >( this, getFPosition(), POSITION );
 }
 
 

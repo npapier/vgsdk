@@ -381,7 +381,7 @@ const vgm::Rectangle2i Engine::getViewport() const
 	vgm::Rectangle2i viewport;
 
 	using vgd::node::Camera;
-	const bool retVal = getStateStackTop< Camera, Camera::ViewportParameterType, Camera::ViewportValueType >(
+	const bool retVal = getStateStackTop< Camera, int/*Camera::ViewportParameterType*/, Camera::ViewportValueType >(
 		Camera::getFViewport(), Camera::VIEWPORT,
 		viewport );
 	assert( retVal && "Internal error, because getStateStackTop<>() should never fail." );

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -97,7 +97,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Typedef for the \c viewport field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< ViewportParameterType, ViewportValueType > FViewportType;
+	typedef vgd::field::TPairAssociativeField< int/*ViewportParameterType*/, ViewportValueType > FViewportType;
 
 	/**
 	 * @brief Gets the \c viewport value.
@@ -138,7 +138,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Typedef for the \c scissor field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< ScissorParameterType, ScissorValueType > FScissorType;
+	typedef vgd::field::TPairAssociativeField< int /*ScissorParameterType*/, ScissorValueType > FScissorType;
 
 	/**
 	 * @brief Gets the \c scissor value.

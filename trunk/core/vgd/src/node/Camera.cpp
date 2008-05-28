@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -74,7 +74,7 @@ void Camera::setMatrix( const vgm::MatrixR& projection )
 bool Camera::getViewport( vgm::Rectangle2i& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), VIEWPORT, value )
+		vgd::field::getParameterValue< int /*ViewportParameterType*/, ViewportValueType >( this, getFViewport(), VIEWPORT, value )
 		);
 }
 
@@ -82,14 +82,14 @@ bool Camera::getViewport( vgm::Rectangle2i& value ) const
 
 void Camera::setViewport( vgm::Rectangle2i value )
 {
-	vgd::field::setParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), VIEWPORT, value );
+	vgd::field::setParameterValue< int /*ViewportParameterType*/, ViewportValueType >( this, getFViewport(), VIEWPORT, value );
 }
 
 
 
 void Camera::eraseViewport()
 {
-	vgd::field::eraseParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), VIEWPORT );
+	vgd::field::eraseParameterValue< int /*ViewportParameterType*/, ViewportValueType >( this, getFViewport(), VIEWPORT );
 }
 
 
@@ -97,7 +97,7 @@ void Camera::eraseViewport()
 bool Camera::getScissor( vgm::Rectangle2i& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), SCISSOR, value )
+		vgd::field::getParameterValue<int /*ScissorParameterType*/, ScissorValueType >( this, getFScissor(), SCISSOR, value )
 		);
 }
 
@@ -105,14 +105,14 @@ bool Camera::getScissor( vgm::Rectangle2i& value ) const
 
 void Camera::setScissor( vgm::Rectangle2i value )
 {
-	vgd::field::setParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), SCISSOR, value );
+	vgd::field::setParameterValue<int /*ScissorParameterType*/, ScissorValueType >( this, getFScissor(), SCISSOR, value );
 }
 
 
 
 void Camera::eraseScissor()
 {
-	vgd::field::eraseParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), SCISSOR );
+	vgd::field::eraseParameterValue<int /*ScissorParameterType*/, ScissorValueType >( this, getFScissor(), SCISSOR );
 }
 
 

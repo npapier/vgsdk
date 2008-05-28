@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 
 #include "vgd/field/TPairAssociativeField.hpp"
 #include "vgd/node/PointLight.hpp"
-#include "vgd/vgd.hpp"
 
 
 
@@ -76,7 +75,7 @@ struct VGD_API SpotLight : public vgd::node::PointLight
 	/**
 	 * @brief Typedef for the \c direction field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< DirectionParameterType, DirectionValueType > FDirectionType;
+	typedef vgd::field::TPairAssociativeField< int /*DirectionParameterType*/, DirectionValueType > FDirectionType;
 
 	/**
 	 * @brief Gets the \c direction value.
@@ -117,7 +116,7 @@ struct VGD_API SpotLight : public vgd::node::PointLight
 	/**
 	 * @brief Typedef for the \c cutOffAngle field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< CutOffAngleParameterType, CutOffAngleValueType > FCutOffAngleType;
+	typedef vgd::field::TPairAssociativeField< int /*CutOffAngleParameterType*/, CutOffAngleValueType > FCutOffAngleType;
 
 	/**
 	 * @brief Gets the \c cutOffAngle value.
@@ -158,7 +157,7 @@ struct VGD_API SpotLight : public vgd::node::PointLight
 	/**
 	 * @brief Typedef for the \c dropOffRate field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< DropOffRateParameterType, DropOffRateValueType > FDropOffRateType;
+	typedef vgd::field::TPairAssociativeField< int /*DropOffRateParameterType*/, DropOffRateValueType > FDropOffRateType;
 
 	/**
 	 * @brief Gets the \c dropOffRate value.

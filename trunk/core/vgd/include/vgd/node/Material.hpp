@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -84,7 +84,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Typedef for the \c color field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< ColorParameterType, ColorValueType > FColorType;
+	typedef vgd::field::TPairAssociativeField< /*int */ColorParameterType, ColorValueType > FColorType;
 
 	/**
 	 * @brief Gets the \c color value.
@@ -125,7 +125,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Typedef for the \c shininess field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< ShininessParameterType, ShininessValueType > FShininessType;
+	typedef vgd::field::TPairAssociativeField< /*int */ShininessParameterType, ShininessValueType > FShininessType;
 
 	/**
 	 * @brief Gets the \c shininess value.
@@ -214,7 +214,7 @@ protected:
 
 	void	setToDefaults( void );
 	
-	void	setOptionalsToDefaults();	
+	void	setOptionalsToDefaults();
 
 	//@}
 };
