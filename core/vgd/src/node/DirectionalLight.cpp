@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -54,7 +54,7 @@ void DirectionalLight::setOptionalsToDefaults()
 bool DirectionalLight::getDirection( DirectionValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< DirectionParameterType, DirectionValueType >( this, getFDirection(), DIRECTION, value )
+		vgd::field::getParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION, value )
 		);
 }
 
@@ -62,21 +62,21 @@ bool DirectionalLight::getDirection( DirectionValueType& value ) const
 
 void DirectionalLight::setDirection( DirectionValueType value )
 {
-	vgd::field::setParameterValue< DirectionParameterType, DirectionValueType >( this, getFDirection(), DIRECTION, value );
+	vgd::field::setParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION, value );
 }
 
 
 
 void DirectionalLight::eraseDirection()
 {
-	vgd::field::eraseParameterValue< DirectionParameterType, DirectionValueType >( this, getFDirection(), DIRECTION );
+	vgd::field::eraseParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION );
 }
 
 
 
 const std::string DirectionalLight::getFDirection( void )
 {
-	return ( "f_direction" );
+	return "f_direction";
 }
 
 

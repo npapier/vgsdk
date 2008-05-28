@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -57,7 +57,7 @@ void SpotLight::setOptionalsToDefaults()
 bool SpotLight::getDirection( DirectionValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< DirectionParameterType, DirectionValueType >( this, getFDirection(), DIRECTION, value )
+		vgd::field::getParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION, value )
 		);
 }
 
@@ -65,14 +65,14 @@ bool SpotLight::getDirection( DirectionValueType& value ) const
 
 void SpotLight::setDirection( DirectionValueType value )
 {
-	vgd::field::setParameterValue< DirectionParameterType, DirectionValueType >( this, getFDirection(), DIRECTION, value );
+	vgd::field::setParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION, value );
 }
 
 
 
 void SpotLight::eraseDirection()
 {
-	vgd::field::eraseParameterValue< DirectionParameterType, DirectionValueType >( this, getFDirection(), DIRECTION );
+	vgd::field::eraseParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION );
 }
 
 
@@ -81,7 +81,7 @@ void SpotLight::eraseDirection()
 bool SpotLight::getCutOffAngle( CutOffAngleValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< CutOffAngleParameterType, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE, value )
+		vgd::field::getParameterValue< int /*CutOffAngleParameterType*/, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE, value )
 		);
 }
 
@@ -89,14 +89,14 @@ bool SpotLight::getCutOffAngle( CutOffAngleValueType& value ) const
 
 void SpotLight::setCutOffAngle( CutOffAngleValueType value )
 {
-	vgd::field::setParameterValue< CutOffAngleParameterType, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE, value );
+	vgd::field::setParameterValue< int /*CutOffAngleParameterType*/, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE, value );
 }
 
 
 
 void SpotLight::eraseCutOffAngle()
 {
-	vgd::field::eraseParameterValue< CutOffAngleParameterType, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE );
+	vgd::field::eraseParameterValue< int /*CutOffAngleParameterType*/, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE );
 }
 
 
@@ -105,7 +105,7 @@ void SpotLight::eraseCutOffAngle()
 bool SpotLight::getDropOffRate( DropOffRateValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< DropOffRateParameterType, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE, value )
+		vgd::field::getParameterValue< int /*DropOffRateParameterType*/, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE, value )
 		);
 }
 
@@ -113,14 +113,14 @@ bool SpotLight::getDropOffRate( DropOffRateValueType& value ) const
 
 void SpotLight::setDropOffRate( DropOffRateValueType value )
 {
-	vgd::field::setParameterValue< DropOffRateParameterType, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE, value );
+	vgd::field::setParameterValue< int /*DropOffRateParameterType*/, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE, value );
 }
 
 
 
 void SpotLight::eraseDropOffRate()
 {
-	vgd::field::eraseParameterValue< DropOffRateParameterType, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE );
+	vgd::field::eraseParameterValue< int /*DropOffRateParameterType*/, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE );
 }
 
 

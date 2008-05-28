@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 
 #include <vgm/Vector.hpp>
 
-#include "vgd/vgd.hpp"
 #include "vgd/node/Light.hpp"
 
 
@@ -64,7 +63,7 @@ struct VGD_API PointLight : public vgd::node::Light
 	/**
 	 * @brief Typedef for the \c position field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< PositionParameterType, PositionValueType > FPositionType;
+	typedef vgd::field::TPairAssociativeField< int /*PositionParameterType*/, PositionValueType > FPositionType;
 
 	/**
 	 * @brief Gets the \c position value.

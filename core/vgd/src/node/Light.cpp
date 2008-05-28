@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -58,7 +58,7 @@ void Light::setOptionalsToDefaults()
 bool Light::getOn( OnValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON, value )
+		vgd::field::getParameterValue< int /*OnParameterType*/, OnValueType >( this, getFOn(), ON, value )
 		);
 }
 
@@ -66,14 +66,14 @@ bool Light::getOn( OnValueType& value ) const
 
 void Light::setOn( OnValueType value )
 {
-	vgd::field::setParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON, value );
+	vgd::field::setParameterValue< int /*OnParameterType*/, OnValueType >( this, getFOn(), ON, value );
 }
 
 
 
 void Light::eraseOn()
 {
-	vgd::field::eraseParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON );
+	vgd::field::eraseParameterValue< int /*OnParameterType*/, OnValueType >( this, getFOn(), ON );
 }
 
 
@@ -82,7 +82,7 @@ void Light::eraseOn()
 bool Light::getColor( const ColorParameterType param, ColorValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< ColorParameterType, ColorValueType >( this, getFColor(), param, value )
+		vgd::field::getParameterValue< int /*ColorParameterType*/, ColorValueType >( this, getFColor(), param, value )
 		);
 }
 
@@ -90,14 +90,14 @@ bool Light::getColor( const ColorParameterType param, ColorValueType& value ) co
 
 void Light::setColor( const ColorParameterType param, ColorValueType value )
 {
-	vgd::field::setParameterValue< ColorParameterType, ColorValueType >( this, getFColor(), param, value );
+	vgd::field::setParameterValue< int /*ColorParameterType*/, ColorValueType >( this, getFColor(), param, value );
 }
 
 
 
 void Light::eraseColor( const ColorParameterType param )
 {
-	vgd::field::eraseParameterValue< ColorParameterType, ColorValueType >( this, getFColor(), param );
+	vgd::field::eraseParameterValue< int /*ColorParameterType*/, ColorValueType >( this, getFColor(), param );
 }
 
 

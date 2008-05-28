@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -62,7 +62,7 @@ void Material::setOptionalsToDefaults()
 bool Material::getColor( const ColorParameterType param, ColorValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< ColorParameterType, ColorValueType >( this, getFColor(), param, value )
+		vgd::field::getParameterValue< /*int */ColorParameterType, ColorValueType >( this, getFColor(), param, value )
 		);
 }
 
@@ -70,14 +70,14 @@ bool Material::getColor( const ColorParameterType param, ColorValueType& value )
 
 void Material::setColor( const ColorParameterType param, ColorValueType value )
 {
-	vgd::field::setParameterValue< ColorParameterType, ColorValueType >( this, getFColor(), param, value );
+	vgd::field::setParameterValue< /*int */ColorParameterType, ColorValueType >( this, getFColor(), param, value );
 }
 
 
 
 void Material::eraseColor( const ColorParameterType param )
 {
-	vgd::field::eraseParameterValue< ColorParameterType, ColorValueType >( this, getFColor(), param );
+	vgd::field::eraseParameterValue< /*int */ColorParameterType, ColorValueType >( this, getFColor(), param );
 }
 
 
@@ -86,7 +86,7 @@ void Material::eraseColor( const ColorParameterType param )
 bool Material::getShininess( ShininessValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< ShininessParameterType, ShininessValueType >( this, getFShininess(), SHININESS, value )
+		vgd::field::getParameterValue< /*int */ShininessParameterType, ShininessValueType >( this, getFShininess(), SHININESS, value )
 		);
 }
 
@@ -94,14 +94,14 @@ bool Material::getShininess( ShininessValueType& value ) const
 
 void Material::setShininess( ShininessValueType value )
 {
-	vgd::field::setParameterValue< ShininessParameterType, ShininessValueType >( this, getFShininess(), SHININESS, value );
+	vgd::field::setParameterValue< /*int */ShininessParameterType, ShininessValueType >( this, getFShininess(), SHININESS, value );
 }
 
 
 
 void Material::eraseShininess()
 {
-	vgd::field::eraseParameterValue< ShininessParameterType, ShininessValueType >( this, getFShininess(), SHININESS );
+	vgd::field::eraseParameterValue< /*int */ShininessParameterType, ShininessValueType >( this, getFShininess(), SHININESS );
 }
 
 
@@ -124,21 +124,21 @@ void Material::setTransparency( float transparency )
 // FIELDS
 const std::string Material::getFColor()
 {
-	return ( "f_color" );
+	return "f_color";
 }
 
 
 
 const std::string Material::getFShininess()
 {
-	return ( "f_shininess" );
+	return "f_shininess";
 }
 
 
 
 const std::string Material::getFTransparency()
 {
-	return ( "f_transparency" );
+	return "f_transparency";
 }
 
 
