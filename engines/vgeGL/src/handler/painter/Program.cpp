@@ -1,90 +1,130 @@
-//// VGSDK - Copyright (C) 2004, Nicolas Papier.
-//// Distributed under the terms of the GNU Library General Public License (LGPL)
-//// as published by the Free Software Foundation.
-//// Author Nicolas Papier
-//
-//#include "vgeGL/handler/painter/Program.hpp"
-//
-//#include <vgd/node/Program.hpp>
-//#include <vge/service/Painter.hpp>
-//#include "vgeGL/rc/GLSLShader.hpp"
-//#include "vgeGL/rc/TSyncAndBindHelper.hpp"
-//
-//
-//
-//namespace vgeGL
-//{
-//
-//namespace handler
-//{
-//
-//namespace painter
-//{
-//
-//META_HANDLER_CPP( Program );
-//
-//
-//
-//const vge::handler::Handler::TargetVector Program::getTargets() const
-//{
-//	TargetVector targets;
-//	
-//	targets.reserve( 1 );
-//	targets.push_back( vgd::node::Program::getClassIndexStatic() );
-//
-//	return ( targets );
-//}
-//
-//
-//
-//void Program::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
-//{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
-//
-//	assert( dynamic_cast< vgd::node::Program* >(pNode) != 0 );
-//	vgd::node::Program *pCastedNode = static_cast< vgd::node::Program* >(pNode);
-//
-//	applyUsingSyncAndBind< vgd::node::Program, vgeGL::handler::painter::Program, vgeGL::rc::GLSLShader >( 
-//			pGLEngine, pCastedNode, this 
-//			);
-	// Validate node
-	//	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
-//}
-//
-//
-//
-//void Program::unapply ( vge::engine::Engine* engine, vgd::node::Node* pNode )
-//{
-//}
-//
-//
-//
-//void Program::setToDefaults()
-//{
-//}
-//
-//
-//
-//void Program::synchronize( vgeGL::engine::Engine* pGLEngine, vgd::node::Program* pNode, vgeGL::rc::GLSLShader* pGLResource )
-//{
-//	if ( pGLResource->isEmpty() )
-//	{
-//	}
-//	else
-//	{
-//	}
-//}
-//
-//
-//
-//void Program::bind( vgeGL::engine::Engine* pGLEngine, vgd::node::Program* pNode, vgeGL::rc::GLSLShader* pGLResource )
-//{
-//}
-//
-//
-//} // namespace painter
-//
-//} // namespace handler
-//
-//} // namespace vgeGL
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// Distributed under the terms of the GNU Library General Public License (LGPL)
+// as published by the Free Software Foundation.
+// Author Nicolas Papier
+
+#include "vgeGL/handler/painter/Program.hpp"
+
+#include <vgd/node/Program.hpp>
+#include "vgeGL/rc/GLSLProgram.hpp"
+#include "vgeGL/rc/TSyncAndBindHelper.hpp"
+
+
+
+namespace vgeGL
+{
+
+namespace handler
+{
+
+namespace painter
+{
+
+
+
+META_HANDLER_CPP( Program );
+
+
+
+const vge::handler::Handler::TargetVector Program::getTargets() const
+{
+	TargetVector targets;
+
+	targets.push_back( vgd::node::Program::getClassIndexStatic() );
+
+	return targets;
+}
+
+
+
+void Program::apply( vge::engine::Engine * engine, vgd::node::Node * node )
+{
+	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+
+	assert( dynamic_cast< vgd::node::Program* >(node) != 0 );
+	vgd::node::Program *castedNode = static_cast< vgd::node::Program* >(node);
+
+	using vgeGL::rc::applyUsingSyncAndBind;
+	applyUsingSyncAndBind< vgd::node::Program, vgeGL::handler::painter::Program, vgeGL::rc::GLSLProgram >( 
+			glEngine, castedNode, this );
+
+	// Validates node
+	// assert( node->getDirtyFlag(node->getDFNode())->isValid() && "Node dirty flag not validated." ); not always true
+}
+
+
+
+void Program::unapply( vge::engine::Engine * /*engine*/, vgd::node::Node * /*node*/ )
+{
+}
+
+
+
+void Program::setToDefaults()
+{
+	glo::GLSLProgram::useFixedPaths();
+}
+
+
+
+void Program::bind( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGL::rc::GLSLProgram * resource )
+{
+	assert( resource != 0 );
+	// assert( !resource->isEmpty() );
+
+	resource->use();
+}
+
+
+
+void Program::synchronize( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * node, vgeGL::rc::GLSLProgram * resource )
+{
+	bool defined;
+	vgd::node::Program::ShaderValueType value;
+
+	// @todo Clears the resource
+
+	// VERTEX
+	defined = node->getShader( vgd::node::Program::VERTEX, value );
+
+	if ( defined )
+	{
+		resource->addShader( value.c_str(), glo::GLSLProgram::VERTEX, false );
+	}
+
+	// FRAGMENT
+	defined = node->getShader( vgd::node::Program::FRAGMENT, value );
+
+	if ( defined )
+	{
+		resource->addShader( value.c_str(), glo::GLSLProgram::FRAGMENT, false );
+	}
+
+	// GEOMETRY
+	defined = node->getShader( vgd::node::Program::GEOMETRY, value );
+
+	if ( defined )
+	{
+		resource->addShader( value.c_str(), glo::GLSLProgram::GEOMETRY, false );
+	}
+
+	// Link stage
+	const bool retVal = resource->link();
+
+	if ( retVal )
+	{
+		// Validates node dirty flag
+		vgd::field::DirtyFlag * nodeDF = node->getDirtyFlag( node->getDFNode() );
+		nodeDF->validate();
+	}
+	// else nothing to do. Don't validate df.
+}
+
+
+
+} // namespace painter
+
+} // namespace handler
+
+} // namespace vgeGL
