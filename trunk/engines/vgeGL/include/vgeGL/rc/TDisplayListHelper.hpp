@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -59,48 +59,48 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 	pResource		= rGLManager.getAbstract( pNode );
 	pDisplayList	= dynamic_cast< vgeGL::rc::DisplayList* >(pResource);
 
+	// @todo relax
 	assert(	(pResource==0 && pDisplayList==0) ||
-				(pResource!=0 && pDisplayList!=0)
+			(pResource!=0 && pDisplayList!=0)		// (pResource!=0 && (pDisplayList!=0||==0) ) => rc type could be changed for a node (display list <=> vbo)
 				 );
 	
 	// What to do ?
 	if ( pDF->isDirty() )
 	{
-		// Invalidate vertex shape.
+		// Node has been modified
 		if ( pDisplayList != 0 )
 		{
-			// Founded an associated resource, recycle it
+			// Found an associated resource, recycle it
 			pDisplayList->release();
 		}
 		else
 		{
-			// No resource (this is the first evaluation), create it.
+			// No resource (this is the first evaluation), creates a new one.
 			pDisplayList = new vgeGL::rc::DisplayList();
 			rGLManager.add( pNode, pDisplayList );
 		}
 
-		// update display lists.
+		// Updates display lists.
 		pDisplayList->begin();
-	
+
 		pHandler->paint( pGLEngine, pCastedNode );
 
-		bool bRetVal;
-		bRetVal = pDisplayList->next();
+		bool bRetVal = pDisplayList->next();
 		assert( !bRetVal );
-		
+
 		// render
 		pDisplayList->call();
-		
-		// validate vertex shape.
+
+		// Validates node.
 		pDF->validate();
 	}
 	else
 	{
-		// No change in vertex shape.
+		// No change in node.
 		if ( pDisplayList != 0 )
 		{
-			// Founded an associated resource.
-			
+			// Found an associated resource.
+
 			// render
 			pDisplayList->call();
 		}
@@ -116,7 +116,7 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 
 template< typename nodeType, typename handlerType, typename paintParamType >
 void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode,
-										handlerType	*pHandler
+							handlerType	*pHandler
 									 )
 {
 	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
