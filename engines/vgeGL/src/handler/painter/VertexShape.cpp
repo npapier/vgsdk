@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,6 +16,7 @@
 #include <vgd/node/Texture.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgd/node/VertexShape.hpp>
+#include <vgDebug/convenience.hpp>
 #include <vgm/Box.hpp>
 
 #include "vgeGL/handler/painter/DrawStyle.hpp"
@@ -41,13 +42,13 @@ META_HANDLER_CPP( VertexShape );
 const vge::handler::Handler::TargetVector VertexShape::getTargets() const
 {
 	vge::handler::Handler::TargetVector targets;
-	
+
 	targets.reserve( 5 );
 
 	targets.push_back( vgd::node::Box::getClassIndexStatic() );
 	targets.push_back( vgd::node::Quad::getClassIndexStatic() );
-	targets.push_back( vgd::node::Sphere::getClassIndexStatic() );	
-	targets.push_back( vgd::node::TriSet::getClassIndexStatic() );	
+	targets.push_back( vgd::node::Sphere::getClassIndexStatic() );
+	targets.push_back( vgd::node::TriSet::getClassIndexStatic() );
 	targets.push_back( vgd::node::VertexShape::getClassIndexStatic() );
 
 	return ( targets );
@@ -321,7 +322,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 
 
-void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVertexShape,
+void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape,
 							const vgd::node::Primitive& primitive,
 							const vgeGL::engine::VertexArrayMethod& /*method*/ )
 {
@@ -381,20 +382,24 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 
 			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
 			{
-/*				// @todo: could only search vgd::node::Texture2D, not abstract node....
-				// gets the texture node and ressource															FIXME : not always correct.
-				vgd::node::Texture *pTexture = pGLEngine->template getStateStackTop<vgd::node::Texture>( unit );
-				assert( pTexture != 0 && "Internal error." );
-				glo::Texture *pTextureGLO = pGLEngine->getGLManager().template get< glo::Texture >( pTexture );
-				assert( pTextureGLO != 0 && "Internal error." );
+				// Retrieves current texture object from engine
+				::glo::Texture * texture = pGLEngine->getTexture(unit);
 
-				pGLEngine->activeTexture( unit );
-				pTextureGLO->enable();*/
+				if ( texture != 0 )
+				{
+					pGLEngine->activeTexture( unit );
+					texture->enable();
+				}
+				else
+				{
+					vgLogDebug( "There are texture coordinates in this shape, but no texture !!! Skip this texture unit." );
+					break;
+				}
 
 				//
-				glClientActiveTexture( GL_TEXTURE0_ARB + unit );				
+				glClientActiveTexture( GL_TEXTURE0_ARB + unit );
 				const int32 dimTexCoord = pVertexShape->getTexCoordDim( unit );
-				
+
 				switch ( dimTexCoord )
 				{
 					case 2:
@@ -406,7 +411,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 						break;
 					}
-					
+
 					case 3:
 					{
 						vgd::field::EditorRO< vgd::field::MFVec3f >	texCoord;
@@ -416,7 +421,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 						break;
 					}
-	
+
 					case 1:
 					{
 						vgd::field::EditorRO< vgd::field::MFFloat >	texCoord;
@@ -426,7 +431,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 						break;
 					}
-	
+
 					case 4:
 					{
 						vgd::field::EditorRO< vgd::field::MFVec4f >	texCoord;
@@ -436,7 +441,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 						break;
 					}
-					
+
 					default:
 						assert( false && "Unexpected dimension for texCoord." );
 				} // switch
@@ -464,7 +469,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 		}
 		else
 		{
-			vgDebug::get().logError( "GL_EXT_secondary_color not supported" );
+			vgLogWarning( "GL_EXT_secondary_color not supported" );
 		}
 	}
 
@@ -526,25 +531,33 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 	}
 
 	// TEX COORD
-	if ( pVertexShape->getNumTexUnits() == 1 )
+	// @todo Optimizes numTexUnits == 1 case
+	if ( numTexUnits >= 1 )
 	{
-		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-	}
-	else
-	{
-		for(	int32 i=pVertexShape->getNumTexUnits()-1;
-				i>=0;
-				--i )
+		for(	int32 unit=pVertexShape->getNumTexUnits()-1;
+				unit>=0;
+				--unit )
 		{	
-			if ( pVertexShape->getTexCoordBinding( i ) == vgd::node::BIND_PER_VERTEX )
+			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
 			{
-				glClientActiveTexture( GL_TEXTURE0_ARB + i );
+				// Retrieves current texture object from engine
+				::glo::Texture * texture = pGLEngine->getTexture(unit);
+
+				if ( texture != 0 )
+				{
+					pGLEngine->activeTexture( unit );
+					texture->disable();
+				}
+				//else nothing to do (see arrays setup).
+
+				//
+				glClientActiveTexture( GL_TEXTURE0_ARB + unit );
 
 				glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 			}
 		}
 	}
-	
+
 	// SECONDARY COLOR4
 	if ( pVertexShape->getSecondaryColor4Binding() == vgd::node::BIND_PER_VERTEX )
 	{
@@ -555,7 +568,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 			glDisable( GL_COLOR_MATERIAL );
 		}
 	}	
-	
+
 	// COLOR4
 	if ( pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX )
 	{
@@ -563,13 +576,13 @@ void VertexShape::paint(	vgeGL::engine::Engine *, vgd::node::VertexShape *pVerte
 		
 		glDisable( GL_COLOR_MATERIAL );
 	}
-	
+
 	// NORMAL
 	if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
 	{
 		glDisableClientState( GL_NORMAL_ARRAY );
 	}
-	
+
 	// VERTEX
 	glDisableClientState( GL_VERTEX_ARRAY );	
 }
@@ -598,9 +611,9 @@ void VertexShape::drawXfBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexS
 	glMatrixMode( GL_MODELVIEW );
 	glPushMatrix();
 	glLoadIdentity();
-	
-	drawBox3f( pCastedNode->getProjectXfBoundingBox() );	
-	
+
+	drawBox3f( pCastedNode->getProjectXfBoundingBox() );
+
 	glPopMatrix();
 }
 
@@ -609,23 +622,23 @@ void VertexShape::drawXfBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexS
 void VertexShape::drawBox3f( const vgm::Box3f& box )
 {
 	float	width, height, depth;
-	box.getSize( width, height, depth );	
-	
+	box.getSize( width, height, depth );
+
 	vgm::Vec3f	frontUL, frontUR, frontDL, frontDR;
 	vgm::Vec3f	backUL, backUR, backDL, backDR;
-	
+
 	frontDL = box.getMin();
 	frontDR = frontDL + vgm::Vec3f( width, 0.f, 0.f );
-	
+
 	frontUL = frontDL + vgm::Vec3f( 0.f, height, 0.f );
 	frontUR = frontDR + vgm::Vec3f( 0.f, height, 0.f );
-	
+
 	backUR	= box.getMax();
 	backUL	= backUR + vgm::Vec3f( -width, 0.f, 0.f );
 	
 	backDR	= backUR + vgm::Vec3f( 0.f, -height, 0.f );
 	backDL	= backUL + vgm::Vec3f( 0.f, -height, 0.f );
-	
+
 	// front
 	glBegin( GL_LINE_STRIP );
 	
@@ -633,10 +646,10 @@ void VertexShape::drawBox3f( const vgm::Box3f& box )
 	glVertex3fv( frontDR.getValue() );
 	glVertex3fv( frontUR.getValue() );
 	glVertex3fv( frontUL.getValue() );
-	glVertex3fv( frontDL.getValue() );	
-	
+	glVertex3fv( frontDL.getValue() );
+
 	glEnd();
-	
+
 	// back
 	glBegin( GL_LINE_STRIP );
 
@@ -644,28 +657,28 @@ void VertexShape::drawBox3f( const vgm::Box3f& box )
 	glVertex3fv( backDR.getValue() );
 	glVertex3fv( backUR.getValue() );
 	glVertex3fv( backUL.getValue() );
-	glVertex3fv( backDL.getValue() );	
+	glVertex3fv( backDL.getValue() );
 	
 	glEnd();
 
 	// left
 	glBegin( GL_LINES );
-	
+
 	glVertex3fv( frontDL.getValue() );
 	glVertex3fv( backDL.getValue() );
 	glVertex3fv( frontUL.getValue() );
-	glVertex3fv( backUL.getValue() );	
-	
+	glVertex3fv( backUL.getValue() );
+
 	glEnd();
-	
+
 	// right
 	glBegin( GL_LINES );
-	
+
 	glVertex3fv( frontDR.getValue() );
 	glVertex3fv( backDR.getValue() );
 	glVertex3fv( frontUR.getValue() );
-	glVertex3fv( backUR.getValue() );	
-	
+	glVertex3fv( backUR.getValue() );
+
 	glEnd();
 }
 

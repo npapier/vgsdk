@@ -39,6 +39,9 @@ void Engine::reset()
 	// Reset cache
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
 
+	m_texture.clear();
+	m_texture.resize( getMaxTexUnits() );
+
 	if ( m_firstInstance )
 	{
 		// This is the first instance of this class.
@@ -337,6 +340,30 @@ void Engine::activeTexture( const vgd::node::Texture * textureNode )
 	const int desiredTextureUnit = textureNode->getMultiAttributeIndex();
 	
 	activeTexture( desiredTextureUnit );
+}
+
+
+
+::glo::Texture *Engine::getTexture( const int indexTexUnit )
+{
+	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
+	assert( indexTexUnit < getMaxTexUnits() && "Invalid texture unit index." );
+
+	return m_texture[indexTexUnit];
+}
+
+
+
+::glo::Texture *Engine::setTexture( const int indexTexUnit, ::glo::Texture * texture )
+{
+	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
+	assert( indexTexUnit < getMaxTexUnits() && "Invalid texture unit index." );
+
+	::glo::Texture * oldTexture = m_texture[indexTexUnit];
+
+	m_texture[indexTexUnit] = texture;
+
+	return oldTexture;
 }
 
 

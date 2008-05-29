@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -254,8 +254,11 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 
 	if ( state  == NOIIMAGE_VALIDATED )
 	{
-		// Disables texturing
-		pTexture->disable();
+		// Nothing to do
+
+		// // Disables texturing
+		// pTexture->disable();
+
 		return;
 	}
 	else if ( state == IIMAGE_VALIDATED )
@@ -265,14 +268,17 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 		// Activates the desired texture unit
 		pGLEngine->activeTexture( pNode );
 
-		//Bbinds texture to the texture unit
+		//Binds texture to the texture unit
 		pTexture->bind();
-	
-		// Enables texturing							//@todo FIXME should be done in VertexShape ? (for beiing done once)
-		pTexture->enable();
-		
+
+		// Texturing is enabled lazily in shape handlers.
+		//pTexture->enable();
+
+		// Updates engine state about texture
+		pGLEngine->setTexture( pNode->getMultiAttributeIndex(), pTexture );
+
 		// Updates texture parameters ?
-		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );	
+		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );
 	}
 	else
 	{
@@ -281,7 +287,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 		computeTexInfo( pGLEngine, pNode, pTexture, texInfo );
 
 		// Allocates texture object
-		bool newTexture = pTexture->isEmpty();
+		const bool newTexture = pTexture->isEmpty();
 
 		if ( newTexture )
 		{
@@ -295,9 +301,12 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 
 		// Binds the texture object
 		pTexture->bind();
-		
-		// Enables texturing							//@todo FIXME should be done in VertexShape ? (for beiing done once)
-		pTexture->enable();
+
+		// Texturing is enabled lazily in shape handlers.
+		//pTexture->enable();
+
+		// Updates engine state about texture
+		pGLEngine->setTexture( pNode->getMultiAttributeIndex(), pTexture );
 
 		const bool isCompatible = isTextureCompatible( pGLEngine, pNode, pTexture, texInfo );
 
@@ -319,12 +328,12 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 								texInfo.type	);
 		}
 		// else nothing to do
-		
+
 		// Updates texture parameters ?
-		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );		
-		
+		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );
+
 		// Updates texture image
-		texSubImage( pGLEngine, pNode, pTexture, texInfo );		
+		texSubImage( pGLEngine, pNode, pTexture, texInfo );
 	}
 
 	// Validates node
@@ -701,17 +710,17 @@ GLenum Texture::convertMyFormat2GL( const vgd::basic::IImage::Format format )
 GLenum Texture::convertMyType2GL( const vgd::basic::IImage::Type type )
 {
 	GLenum gltype;
-	
+
 	switch ( type )
 	{
 		case vgd::basic::IImage::UINT8:
 			gltype = GL_UNSIGNED_BYTE;
 			break;
-					
+
 		case vgd::basic::IImage::INT8:
 			gltype = GL_BYTE;
 			break;
-			
+
 		case vgd::basic::IImage::UINT16:
 			gltype = GL_UNSIGNED_SHORT;
 			break;
@@ -719,20 +728,20 @@ GLenum Texture::convertMyType2GL( const vgd::basic::IImage::Type type )
 		case vgd::basic::IImage::INT16:
 			gltype = GL_SHORT;
 			break;
-		
+
 		case vgd::basic::IImage::UINT32:
 			gltype = GL_UNSIGNED_INT;
 			break;
-		
+
 		case vgd::basic::IImage::INT32:
 			gltype = GL_INT;
 			break;
-		
+
 		case vgd::basic::IImage::FLOAT:
 			gltype = GL_FLOAT;
 			break;
 
-		case vgd::basic::IImage::NO_TYPE:		
+		case vgd::basic::IImage::NO_TYPE:
 		case vgd::basic::IImage::DOUBLE:
 		default:
 			assert(false && "Unknown or unsupported type.");
