@@ -75,23 +75,31 @@ void BasicManipulator::viewAll( const CameraDistanceHints cameraDistance )
 	// Reset scene transformation.
 	getSceneTransformation()->setTransformationToDefaults();
 
+	// FIXME must be automatic
+	vgm::MatrixR matrix = getSceneTransformation()->computeMatrixFromFields();
+	getSceneTransformation()->setMatrix( matrix );
+
 	//
 	BasicViewer::viewAll( cameraDistance );
 
 	// Sets the center of scene transformation.
-	if ( getScene()->isBoundingBoxValid() )
+	const vgm::Box3f& boxOfScene = getScene()->getBoundingBox();
+
+	if ( !boxOfScene.isEmpty() )
 	{
-		vgm::Vec3f center( getScene()->getBoundingBox().getCenter() );
+		const vgm::Vec3f center( boxOfScene.getCenter() );
 		getSceneTransformation()->setCenter( center );
 	}
 	//else nothing to do
 
-	// compute/update bounding box for the whole scene graph.
-	Canvas::computeBoundingBox( 0 );
+	// Computes/updates bounding box for the whole scene graph.
+	vgm::Box3f	box;
+	vgm::Vec3f	center;
+	float		max;
 
-	// FIXME must be automatic
-	vgm::MatrixR matrix = getSceneTransformation()->computeMatrixFromFields();
-	getSceneTransformation()->setMatrix( matrix );
+	computeSceneBoundingBox( box, center, max );
+/*
+	Canvas::computeBoundingBox( 0 );*/
 }
 
 

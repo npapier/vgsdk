@@ -7,6 +7,7 @@
 #include "vgUI/BasicViewer.hpp"
 
 #include <vgd/node/DirectionalLight.hpp>
+#include <vgm/operations.hpp>
 
 
 
@@ -90,6 +91,9 @@ void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 		return;
 	}
 
+	// Initializes VIEWTRANSFORM
+	m_viewTransform->setMatrix( vgm::MatrixR::getIdentity() );
+
 	// Compute bounding box and some informations
 	vgm::Box3f	box;
 	vgm::Vec3f	center;
@@ -104,7 +108,7 @@ void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 		// Compute the scene position and orientation.
 		const float distanceCoeff = compute( cameraDistance );
 
-		vgm::Vec3f		posCam( center + vgm::Vec3f(0.f, 0.f, (0.5f + 1.f + distanceCoeff) * max) );
+		const vgm::Vec3f		posCam( center + vgm::Vec3f(0.f, 0.f, (0.5f + 1.f + distanceCoeff) * max) );
 
 		matrix.setLookAt(
 			posCam[0], posCam[1], posCam[2],
@@ -117,14 +121,9 @@ void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 	}
 
 	// Compute and setup the camera type and frustum.
-	vgm::Vec2i	v2iSize = getEngine()->getDrawingSurfaceSize();
+	const vgm::Vec2i v2iSize = getEngine()->getDrawingSurfaceSize();
 
-	if (	(v2iSize[0] != 0) &&
-			(v2iSize[1] != 0)	)
-	{
-		resize( v2iSize );
-	}
-	//else viewAll() called before window creation => unable to do completely the job.
+	resize( v2iSize );
 
 	// Setup the scene position.
 	m_viewTransform->setMatrix( matrix );
@@ -241,11 +240,15 @@ void BasicViewer::destroyDefaultLights()
 
 void BasicViewer::resize( const vgm::Vec2i size )
 {
+	// Tests if window is degenerated
 	if (	(size[0] == 0) || (size[1] == 0)	)
 	{
 		// Degenerated window, nothing to do
 		return;
 	}
+
+	// Calls resize() provided by Canvas
+	::vgUI::Canvas::resize( size );
 
 	// Compute bounding box and some informations
 	vgm::Box3f	box;
@@ -373,7 +376,7 @@ void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCo
 	// compute/update bounding box for the whole scene graph.
 	Canvas::computeBoundingBox( pCollectorExt );
 
-	box		= getScene()->getBoundingBox();
+	box	= getScene()->getBoundingBox();
 
 	if ( box.isEmpty() )
 	{
@@ -387,8 +390,7 @@ void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCo
 		float width, height, depth;
 		box.getSize( width, height, depth );
 
-		max		= width > height ? width : height;
-		max		= max > depth ? max : depth;
+		max = vgm::max( width, height, depth );
 	}
 }
 
@@ -402,6 +404,9 @@ void BasicViewer::computeSceneBoundingBox(	vgm::Box3f& box, vgm::Vec3f& center, 
 	computeBoundingBox(	&collectorExt,
 						box, center,
 						max );
+/*	computeBoundingBox(	0,
+						box, center,
+						max );*/
 }
 
 
