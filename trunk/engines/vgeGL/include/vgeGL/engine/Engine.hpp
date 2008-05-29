@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -11,6 +11,7 @@
 
 #include "vgeGL/vgeGL.hpp"
 
+namespace glo { struct Texture; }
 namespace vgd { namespace node { struct Texture; } }
 
 
@@ -23,7 +24,7 @@ namespace vgd { namespace node { struct Texture; } }
  */
 namespace vgeGL
 {
-	
+
 namespace engine
 {
 
@@ -111,7 +112,7 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	const int32 getMaxLights() const;
 
 	const int32 getMaxTexUnits() const;
-	
+
 	const int32 getMaxTexSize() const;
 
 	const int32 getMax3DTexSize() const;
@@ -176,6 +177,27 @@ struct VGEGL_API Engine : public vge::engine::Engine
 
 
 
+	/**
+	 * @brief Retrieves texture object for the desired texture unit.
+	 *
+	 * @param indexTexUnit		the index of the texture unit
+	 *
+	 * @return The texture object for the given texture unit or a null pointer.
+	*/
+	::glo::Texture *getTexture( const int indexTexUnit = 0 );
+
+	/**
+	 * @brief Sets texture object for the given texture unit.
+	 *
+	 * @param indexTexUnit		the index of the texture unit
+	 * @param texture			the texture object
+	 *
+	 * @return The previous texture object for the given texture unit.
+	*/
+	::glo::Texture *setTexture( const int indexTexUnit, ::glo::Texture * texture );
+
+
+
 protected:
 	/**
 	 * @brief Populate the node registry with duplicate multi attribute nodes (with index>=1).
@@ -205,15 +227,17 @@ private:
 	mutable GLint	m_maxCubeMapTexSize;
 	//@}
 
+	std::vector< ::glo::Texture * > m_texture;	///< array of texture objects. The zero-based index selects the texture unit.
+
 	/**
 	 * @brief Manager for all opengl objects.
 	 */
 	static vge::rc::Manager		m_glManager;
-	
+
 	/**
 	 * @brief Used to know if this instance is the first one or not (for doiing some initializations).
 	 */
-	static bool					m_firstInstance;	
+	static bool					m_firstInstance;
 };
 
 

@@ -1,10 +1,11 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vge/technique/ComputeBoundingBox.hpp"
 
+//#include "vge/engine/Engine.hpp"
 #include "vge/pass/ForEach.hpp"
 #include "vge/service/ComputeBoundingBox.hpp"
 
@@ -23,9 +24,9 @@ void ComputeBoundingBox::apply(	vge::engine::Engine * engine, vge::visitor::Trav
 	vgd::Shp< vge::service::Service > cbb = vge::service::ComputeBoundingBox::create();
 
 	prepareEval( engine, traverseElements );
-	//pEngine->resetEval();
+	//engine->resetEval();
 
-	evaluatePass(	::vgd::makeShp( new vge::pass::ForEach ), 	
+	evaluatePass(	::vgd::makeShp( new vge::pass::ForEach ),
 					cbb );
 
 	finishEval();

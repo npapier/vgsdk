@@ -25,7 +25,7 @@ SceneManager::SceneManager( vgd::Shp< vge::engine::Engine > pEngine ) :
 	m_engine				(	pEngine	),
 	//m_collectorExt
 	m_updateBoundingBox		( 	true	),
-	m_numberOfFrames		(	1		)	
+	m_numberOfFrames		(	1		)
 {}
 
 
@@ -123,7 +123,7 @@ void SceneManager::computeBoundingBox( vge::visitor::NodeCollectorExtended<> *pC
 {
 	vge::technique::ComputeBoundingBox computeBB;
 
-	m_engine->resetEval();
+	m_engine->resetEval();	// @todo remove me
 
 	if ( pCollectorExt == 0 )
 	{
