@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -196,12 +196,13 @@ void TransformDragger::apply( const vgd::event::MouseWheelEvent *pMouseWheelEven
 {
 	using vgd::event::MouseWheelEvent;
 	using vgd::node::TransformDragger;
-		
+
 	assert( dynamic_cast< TransformDragger* >(m_pDragger) != 0 );
 	TransformDragger *pDragger = static_cast< TransformDragger* >(m_pDragger);
-	
-	//	
-	if ( pMouseWheelEvent->getAxis() == MouseWheelEvent::VERTICAL )
+
+	//
+	if (	(pMouseWheelEvent->getButtonStates().getNumDown() == 0) &&
+			(pMouseWheelEvent->getAxis() == MouseWheelEvent::VERTICAL)	)
 	{
 		if ( pMouseWheelEvent->getDelta() != 0.f )
 		{
@@ -209,15 +210,15 @@ void TransformDragger::apply( const vgd::event::MouseWheelEvent *pMouseWheelEven
 			vgm::Vec3f oLeftToRightO;
 			vgm::Vec3f oUpToDownO;
 			vgm::Vec3f oNearToFarO;
-			
+
 			bool bRetVal = ConvertVectorsFromWindowToObject( m_pGLEngine, pDragger, oLeftToRightO, oUpToDownO, oNearToFarO );
-	
+
 			if ( bRetVal )
-			{			
+			{
 				vgm::Vec3f translation;
-				
+
 				translation = oNearToFarO * static_cast<float>(pMouseWheelEvent->getDelta())/120.f / 50.f;
-				
+
 				pDragger->setTranslation( pDragger->getTranslation() + translation );
 			}
 			else
