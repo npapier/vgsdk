@@ -19,10 +19,10 @@
 
 #include <vgDebug/Global.hpp>
 #include <vgGTK/Logging.hpp>
-#include <vgGTK/graph/Browser.hpp>
 
 #include "vgsdkViewerGtk/actions.hpp"
 #include "vgsdkViewerGtk/myCanvas.hpp"
+#include "vgsdkViewerGtk/Notebook.hpp"
 
 
 
@@ -135,12 +135,12 @@ int main( int argc, char ** argv )
 
 
 	// Creates the main mainWindow content.
-	Gtk::Window						window;
-	Gtk::VBox						vbox;
-	Gtk::HPaned						hpaned;
-	vgGTK::graph::Browser			graphBrowser;
-	vgsdkViewerGtk::myCanvas		canvas;
-	Gtk::Statusbar					statusBar;
+	Gtk::Window					window;
+	Gtk::VBox					vbox;
+	Gtk::HPaned					hpaned;
+	vgsdkViewerGtk::Notebook	notebook;
+	vgsdkViewerGtk::myCanvas	canvas;
+	Gtk::Statusbar				statusBar;
 
 
 	// Creates the UI manager.
@@ -168,8 +168,9 @@ int main( int argc, char ** argv )
 	recentMenuItem->property_visible() = true;
 	
 	
-	// Configures the graph browser widget.
-	graphBrowser.set_size_request( 333, 0 );
+	// Configures the notebook widget.
+	notebook.set_border_width( 2 );
+	notebook.set_size_request( 333, 0 );
 
 
 	// Configures the main window.
@@ -182,15 +183,15 @@ int main( int argc, char ** argv )
 	window.add( vbox );
 	vbox.pack_start( *uiManager->get_widget("/DefaultMenuBar"), false, true );
 	vbox.pack_start( *uiManager->get_widget("/DefaultToolBar"), false, true );
-	hpaned.pack1( graphBrowser, false, true );
+	hpaned.pack1( notebook, false, true );
 	hpaned.pack2( canvas, true, true );
 	vbox.add( hpaned );
 	vbox.pack_end( statusBar, false, true );
 	window.show_all();
 
 
-	// Gives the canvas' root node to the graph browser.
-	graphBrowser.setRoot( canvas.getRoot() );
+	// Gives the canvas' root node to the notebook.
+	notebook.setCanvas( canvas );
 
 
 	// Activates drag and drop on the main window.
