@@ -58,25 +58,26 @@ private:
 	 * @name	User Interface Management
 	 */
 	//@{
-	Glib::RefPtr< Gtk::ActionGroup >	m_actions;		///< Holds all actions of the user interface.
-	Glib::RefPtr< Gtk::UIManager >		m_uiManager;	///< Manages the user inteface toolbar and menus.
+	static const Glib::ustring			m_uiDefinition;		///< Defines the user interfaces.
+	Glib::RefPtr< Gtk::ActionGroup >	m_actions;			///< Holds all actions of the user interface.
+	Glib::RefPtr< Gtk::UIManager >		m_uiManager;		///< Manages the user inteface toolbar and menus.
 	//@}
 
 	/**
 	 * @name	Widgets
 	 */
 	//@{
-	Gtk::TreeView		m_treeView;	///< The treeview widget that shows the vgSDK graph.
-	Gtk::VPaned			m_vpaned;	///< Allows to configure size between the tree view and the field managed editor.
-	FieldManagerEditor	m_editor;	///< Allows to edit the fields of the selected node.
+	Gtk::TreeView				m_treeView;			///< The treeview widget that shows the vgSDK graph.
+	Gtk::VPaned					m_vpaned;			///< Allows to configure size between the tree view and the field managed editor.
+	FieldManagerEditor			m_editor;			///< Allows to edit the fields of the selected node.
 	//@}
 
 	/**
 	 * @name	Misc
 	 */
 	//@{
-	static const Glib::ustring	m_uiDefinition;		///< Defines the user interfaces.
-	TreeModelProvider			m_modelProvider;	///< The managed tree model provider.
+	vgd::Shp< vgd::node::Group >	m_root;				///< References the root node.
+	TreeModelProvider				m_modelProvider;	///< The managed tree model provider.
 	//@}
 
 	/**
@@ -87,9 +88,10 @@ private:
 	void onExpandAll();										///< Handles the action that will expand all tree view content.
 	void onExpandSubTree();									///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onFullRefresh();									///< Handles the action that will perfrom a refresh of the whole tree.
+	void onSaveAs();										///< Handles the action that will allow the user to save the graph.
 	void onSelectionChanged();								///< Handles notification about a selection change.
 	//@}
-
+	
 	/**
 	 * @brief	Sets the attributs to a text cell renderer using the given model column to retrieve the right text.
 	 *

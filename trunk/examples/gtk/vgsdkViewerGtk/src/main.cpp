@@ -58,9 +58,6 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 			Gtk::AccelKey("F5"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileReload), canvas) );
 	actions->add(
-			Gtk::Action::create("ExportGraphviz", "Export Graphviz"),
-			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileExportGraphviz), canvas) );
-	actions->add(
 			Gtk::Action::create("Quit", Gtk::Stock::QUIT),
 			sigc::ptr_fun(&vgsdkViewerGtk::fileExit) );
 
@@ -92,8 +89,6 @@ const Glib::ustring & createDefaultUI()
 		"      <menuitem action='Add'/>"
 		"      <menu action='Recent'/>"
 		"      <menuitem action='Reload'/>"
-		"      <separator/>"
-		"      <menuitem action='ExportGraphviz'/>"
 		"      <separator/>"
 		"      <menuitem action='Quit'/>"
 		"    </menu>"

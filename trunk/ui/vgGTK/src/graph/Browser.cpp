@@ -5,13 +5,21 @@
 
 #include "vgGTK/graph/Browser.hpp"
 
+#include <cassert>
 #include <iostream>
+#include <fstream>
+
 #include <gtkmm/action.h>
 #include <gtkmm/cellrenderertext.h>
+#include <gtkmm/filechooserdialog.h>
 #include <gtkmm/iconfactory.h>
+#include <gtkmm/messagedialog.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
+
+#include <vgd/node/Group.hpp>
+#include <vgDebug/Global.hpp>
 
 #include "vgGTK/graph/icons/expand.xpm"
 
@@ -146,6 +154,8 @@ const Glib::ustring	Browser::m_uiDefinition =
 	"  <toolbar>"
 	"    <toolitem action='FullRefresh'/>"
 	"    <toolitem action='ExpandAll'/>"
+	"    <separator/>"
+	"    <toolitem action='SaveAs'/>"
 	"  </toolbar>"
 	"  <popup>"
 	"    <menuitem action='ExpandSubTree'/>"
@@ -166,10 +176,12 @@ Browser::Browser()
 	iconFactory->add_default();
 	
 	
-	// Populates all user interface actions.
+	// Populates all user interface actions and set it unsensitive.
 	m_actions->add( Gtk::Action::create("ExpandAll", expandID), sigc::mem_fun(this, &Browser::onExpandAll) );
 	m_actions->add( Gtk::Action::create("ExpandSubTree", "Expand"), sigc::mem_fun(this, &Browser::onExpandSubTree) );
 	m_actions->add( Gtk::Action::create("FullRefresh", Gtk::Stock::REFRESH), sigc::mem_fun(this, &Browser::onFullRefresh) );
+	m_actions->add( Gtk::Action::create("SaveAs", Gtk::Stock::SAVE_AS), sigc::mem_fun(this, &Browser::onSaveAs) );
+	m_actions->set_sensitive( false );
 
 
 	// Initializes the user interface manager.
@@ -230,7 +242,9 @@ Browser::Browser()
 
 void Browser::setRoot( vgd::Shp< vgd::node::Group > root )
 {
+	m_root = root;
 	m_modelProvider.setRoot( root );
+	m_actions->set_sensitive( root );
 }
 
 
@@ -287,6 +301,45 @@ void Browser::onFullRefresh()
 	// Restores the selection and the expanded rows.
 	expandedRowsBackup.restore( m_treeView );
 	selectionBackup.restore( m_treeView );
+}
+
+
+
+void Browser::onSaveAs()
+{
+	assert( m_root );
+	
+	
+	Gtk::Window				* topLevel = dynamic_cast< Gtk::Window * >(get_toplevel());
+	Gtk::FileChooserDialog	chooser( *topLevel, "Save Graph As", Gtk::FILE_CHOOSER_ACTION_SAVE );
+	Gtk::FileFilter			dotFilter;
+
+	dotFilter.set_name( "GraphViz (*.dot)" );
+	dotFilter.add_pattern( "*.dot" );
+
+	chooser.add_filter( dotFilter );
+	chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+	chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+	chooser.set_do_overwrite_confirmation( true );
+
+	const int result = chooser.run();
+	if( result == Gtk::RESPONSE_OK )
+	{
+		const Glib::ustring	filename( chooser.get_filename() );
+		std::ofstream		os( filename.c_str() );
+		
+		if( os.is_open() )
+		{
+			m_root->writeGraphviz( os );
+			vgDebug::get().logMessage( "Graph successfully saved to '%s'.", filename.c_str() );
+		}
+		else
+		{
+			Gtk::MessageDialog	messageDlg(*topLevel, "Unable to save graph.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+			
+			messageDlg.run();
+		}
+	}
 }
 
 

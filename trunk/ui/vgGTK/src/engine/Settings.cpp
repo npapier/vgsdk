@@ -31,7 +31,7 @@ Settings::Settings()
 	
 	
 	// Connects signal handlers.
-	benchButton->signal_activate().connect( sigc::mem_fun(this, &Settings::onBench) );
+	benchButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onBench) );
 	
 	
 	// Refresh child sensitiveness.

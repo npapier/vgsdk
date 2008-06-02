@@ -40,13 +40,6 @@ void fileExit();
 void fileNew( Gtk::Window * topLevel, myCanvas * canvas );
 
 /**
- * @brief	Exports the current scene graph in a graphviz file.
- *
- * @param	canvas	a pointer to the canvs containing the scene to export
- */
-void fileExportGraphviz( myCanvas * canvas );
-
-/**
  * @brief	Implements the file/open action
  *
  * @param	topLevel	a pointer to the top level window
