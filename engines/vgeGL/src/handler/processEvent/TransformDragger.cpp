@@ -36,9 +36,9 @@ META_HANDLER_CPP( TransformDragger );
 const vge::handler::Handler::TargetVector TransformDragger::getTargets() const
 {
 	TargetVector targets;
-	
+
 	targets.push_back( vgd::node::TransformDragger::getClassIndexStatic() );
-	
+
 	return ( targets );
 }
 
@@ -47,10 +47,10 @@ const vge::handler::Handler::TargetVector TransformDragger::getTargets() const
 void TransformDragger::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 {
 	using vgd::node::TransformDragger;
-		
+
 	assert( dynamic_cast< TransformDragger* >(pNode) != 0 );
 	TransformDragger *pDragger = static_cast< TransformDragger* >(pNode);
-	
+
 	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
 	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
 
@@ -77,10 +77,10 @@ void TransformDragger::setToDefaults()
 void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event )
 {
 	using vgd::node::TransformDragger;
-		
+
 	assert( dynamic_cast< TransformDragger* >(m_pDragger) != 0 );
 	TransformDragger *pDragger = static_cast< TransformDragger* >(m_pDragger);
-		
+
 	if ( pDragger->getCurrentState() == TransformDragger::ROTATION_XY_ACTIVE )
 	{
 		// FIXME: Dragger computeRotationXY();
@@ -100,13 +100,13 @@ void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event 
 		vgm::MatrixR&	currentGeometrical( m_pGLEngine->getGeometricalMatrix().getTop() );
 		vgm::MatrixR	invertedCurrentGeometrical(currentGeometrical);
 		invertedCurrentGeometrical.inverse();
-		
+
 		vgm::Vec3f	axis;
 		float		radians;
 		newRotW.getValue( axis, radians );
 
 		invertedCurrentGeometrical.multDirMatrix( axis, axis );
-					
+
 		vgm::Rotation newRotO;
 		newRotO.setValue( axis, radians );
 
@@ -116,28 +116,24 @@ void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event 
 	}
 	else if ( pDragger->getCurrentState() == TransformDragger::TRANSLATION_XY_ACTIVE )
 	{
-		// FIXME: Dragger ComputeTranslationXY();			
+		// FIXME: Dragger ComputeTranslationXY();	
 		vgm::Vec3f oLeftToRightO;
 		vgm::Vec3f oUpToDownO;
 		vgm::Vec3f oNearToFarO;
-		
-		bool bRetVal = ConvertVectorsFromWindowToObject( m_pGLEngine, pDragger, oLeftToRightO, oUpToDownO, oNearToFarO );
-		
+
+		const bool bRetVal = ConvertVectorsFromWindowToObject( m_pGLEngine, pDragger, oLeftToRightO, oUpToDownO, oNearToFarO );
+
 		if ( bRetVal )
 		{
 			vgd::event::Location2Event::LocationDelta	delta = pLocation2Event->getDelta();
-			vgd::event::Location2Event::Size			size	= pLocation2Event->getSize();				
-			
+			vgd::event::Location2Event::Size			size	= pLocation2Event->getSize();
+
 			vgm::Vec3f translation;
-			
+
 			translation =	(delta[0]/size[0]) * oLeftToRightO;
 			translation +=	(delta[1]/size[1]) * -oUpToDownO;
-			
+
 			pDragger->setTranslation( pDragger->getTranslation() + translation );
-		}
-		else
-		{
-			assert( false && "Internal error" );
 		}
 	}
 	else if ( pDragger->getCurrentState() == TransformDragger::TRANSLATION_Z_ACTIVE )
@@ -146,23 +142,19 @@ void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event 
 		vgm::Vec3f oLeftToRightO;
 		vgm::Vec3f oUpToDownO;
 		vgm::Vec3f oNearToFarO;
-		
-		bool bRetVal = ConvertVectorsFromWindowToObject( m_pGLEngine, pDragger, oLeftToRightO, oUpToDownO, oNearToFarO );
+
+		const bool bRetVal = ConvertVectorsFromWindowToObject( m_pGLEngine, pDragger, oLeftToRightO, oUpToDownO, oNearToFarO );
 
 		if ( bRetVal )
-		{			
+		{
 			vgd::event::Location2Event::LocationDelta	delta = pLocation2Event->getDelta();
 			vgd::event::Location2Event::Size			size	= pLocation2Event->getSize();
-			
+
 			vgm::Vec3f translation;
-			
+
 			translation = oNearToFarO * delta[1]/size[1] / 4.f;
-			
+
 			pDragger->setTranslation( pDragger->getTranslation() + translation );
-		}
-		else
-		{
-			assert( false && "Internal error" );
 		}
 	}
 	else if ( pDragger->getCurrentState() == TransformDragger::ROTATION_Z_ACTIVE )
@@ -170,20 +162,20 @@ void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event 
 		// FIXME: Dragger ComputeRotationZ();
 		vgd::event::Location2Event::LocationDelta	delta = pLocation2Event->getDelta();
 		vgd::event::Location2Event::Size			size	= pLocation2Event->getSize();
-		
-		// COMPUTE NEW ROTATION IN WORLD SPACE			
+
+		// COMPUTE NEW ROTATION IN WORLD SPACE	
 		vgm::Vec3f	axis(0.f, 0.f, 1.f );
 		float		angle;
-		
+
 		angle = vgm::Utilities::deg2rad( delta[0]/size[1] * 90.f );
-		
+
 		// UPDATE THE ROTATION TO BEEING IN OBJECT SPACE
 		vgm::MatrixR&	currentGeometrical( m_pGLEngine->getGeometricalMatrix().getTop() );
 		vgm::MatrixR	invertedCurrentGeometrical(currentGeometrical);
 		invertedCurrentGeometrical.inverse();
 
 		invertedCurrentGeometrical.multDirMatrix( axis, axis );
-		
+
 		//
 		pDragger->setRotation( pDragger->getRotation() * vgm::Rotation( axis, angle ) );
 	}
@@ -211,7 +203,7 @@ void TransformDragger::apply( const vgd::event::MouseWheelEvent *pMouseWheelEven
 			vgm::Vec3f oUpToDownO;
 			vgm::Vec3f oNearToFarO;
 
-			bool bRetVal = ConvertVectorsFromWindowToObject( m_pGLEngine, pDragger, oLeftToRightO, oUpToDownO, oNearToFarO );
+			const bool bRetVal = ConvertVectorsFromWindowToObject( m_pGLEngine, pDragger, oLeftToRightO, oUpToDownO, oNearToFarO );
 
 			if ( bRetVal )
 			{
@@ -220,10 +212,6 @@ void TransformDragger::apply( const vgd::event::MouseWheelEvent *pMouseWheelEven
 				translation = oNearToFarO * static_cast<float>(pMouseWheelEvent->getDelta())/120.f / 50.f;
 
 				pDragger->setTranslation( pDragger->getTranslation() + translation );
-			}
-			else
-			{
-				assert( false && "Internal error" );
 			}
 		}
 	}
