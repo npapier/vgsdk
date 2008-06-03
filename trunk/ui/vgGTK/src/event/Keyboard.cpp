@@ -56,7 +56,7 @@ bool Keyboard::onKeyEvent( GdkEventKey * event )
 
 
 	// Job's done.
-	return true;
+	return false;
 }
 
 
