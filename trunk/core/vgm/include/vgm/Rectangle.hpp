@@ -35,7 +35,7 @@ struct Rectangle
 	//@{
 
 	/**
-	 * @brief	Default constructor.
+	 * @brief	Default constructor
 	 *
 	 * @remark	Beware, the rectangle is not initialized !
 	 *
@@ -49,6 +49,20 @@ struct Rectangle
 	Rectangle( const T x, const T y, const T width, const T height )
 	: m_rectangle( x, y, width, height )
 	{}
+
+	/**
+	 * @brief Constructor from another rectangle.
+	 *
+	 * When both types don't match, then convertion occurs (static_cast).
+	 */
+	template< typename InType >
+	explicit Rectangle< T >( const Rectangle< InType > & v )
+	{
+		for( uint i = 0; i < 4; ++i )
+		{
+			m_rectangle[i] = static_cast< T >( v[i] );
+		}
+	}
 	//@}
 
 
@@ -123,7 +137,7 @@ struct Rectangle
 	/**
 	 * @brief	Set the rectangle invalid.
 	 */
-	const bool setInvalid()
+	void setInvalid()
 	{
 		m_rectangle.setInvalid();
 	}
@@ -136,8 +150,8 @@ struct Rectangle
 	static const Rectangle getInvalid()
 	{
 		Rectangle	rectangle;
-
 		rectangle.setInvalid();
+
 		return rectangle;
 	}
 	//@}
