@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -38,9 +38,14 @@
  * 	- Clip coordinates system :
  * 	- Normalized device coordinates :
  * 	- Window coordinates system :
- *		The origin of this coordinates system is the bottom left corner of the window. Width and height are expressed in 
- * 		pixels.
- * 
+  * The windows, in a graphical user interface, are a series of planes parallel to the surface of the monitor.
+ * The x-coordinate refers to the horizontal axis (left to right), the y-coordinate refers to the vertical axis (down to up) .
+ * The origin of this coordinates system is the bottom left corner of the window. Width and height are expressed in pixels.
+ *
+ *	- Window stack (or window z-ordering) :
+ * The z-coordinate refers to the axis perpendicular to the other two (backward to forward). 
+ * The z-order refers to the order of the windows along the z-axis. When two windows overlap, their z-order determines which one appears on top of the other.
+ *
  * 	- Normalized window coordinates system :
  * 		Width and height are expressed by a float within [0,1].
  */
