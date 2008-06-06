@@ -93,13 +93,7 @@ void BasicManipulator::viewAll( const CameraDistanceHints cameraDistance )
 	//else nothing to do
 
 	// Computes/updates bounding box for the whole scene graph.
-	vgm::Box3f	box;
-	vgm::Vec3f	center;
-	float		max;
-
-	computeSceneBoundingBox( box, center, max );
-/*
-	Canvas::computeBoundingBox( 0 );*/
+	Canvas::computeBoundingBox();
 }
 
 

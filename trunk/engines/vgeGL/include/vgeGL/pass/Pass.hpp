@@ -15,15 +15,9 @@
 namespace vgeGL
 {
 
-	namespace engine
-	{
-		struct Engine;
-	}
+namespace engine { 	struct Engine; 	}
 
-	namespace technique
-	{
-		struct Technique;
-	}
+namespace technique { struct Technique; }
 
 /**
  * @namespace vgeGL::pass

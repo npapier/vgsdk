@@ -214,16 +214,20 @@ const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEn
 	GLdouble dZCenterO;
 
 	// gluProject function maps object coordinates to window coordinates.
-	vgd::Shp< vgd::node::IBoundingBox > pBoundingBox =
-		vgd::dynamic_pointer_cast< vgd::node::IBoundingBox >( pDragger->getSurround() );
+	using vgd::node::IBoundingBox;
+	vgd::Shp< IBoundingBox > pBoundingBox = vgd::dynamic_pointer_cast< IBoundingBox >( pDragger->getSurround() );
 
 	if ( pBoundingBox.get() == 0 )
 	{
 		assert( false && "dragger.surround contains a reference to an object that don't implement IBoundingBox interface.");
-		return ( false );
+		return false;
+	}
+	else if ( pBoundingBox->getBoundingBox().isEmpty() )
+	{
+		return false;
 	}
 
-	vgm::Vec3f center = pBoundingBox->getBoundingBox().getCenter();
+	const vgm::Vec3f center = pBoundingBox->getBoundingBox().getCenter();
 
 	bool bRetVal;
 	bRetVal = gluProject(
@@ -306,7 +310,7 @@ const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEn
 		static_cast<float>(vec3dNearToFarO[1]),
 		static_cast<float>(vec3dNearToFarO[2]) );
 
-	return ( bRetVal );
+	return bRetVal;
 }
 
 

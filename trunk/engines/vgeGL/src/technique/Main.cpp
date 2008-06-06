@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -26,7 +26,6 @@ void Main::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementV
 	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
 	prepareEval( engine, traverseElements );
-	engine->resetEval();
 
 	// At startup, the transparency pass is disabled. It would be enabled during the opaque pass if at least one
 	// transparent shape is encountered.

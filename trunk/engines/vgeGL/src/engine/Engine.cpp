@@ -6,11 +6,11 @@
 #include "vgeGL/engine/Engine.hpp"
 
 #include <glo/Texture.hpp>
-#include <vgDebug/Global.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/Texture2D.hpp>
 //#include <vgd/node/TextureCubeMap.hpp>
 #include <vgd/node/TextureMatrixTransform.hpp>
+#include <vgDebug/convenience.hpp>
 #include <vge/handler/Handler.hpp>
 #include <vge/handler/HandlerRegistry.hpp>
 
@@ -74,7 +74,7 @@ void Engine::setToDefaults()
 
 	if ( isGL_EXT_rescale_normal() )
 	{
-		vgDebug::get().logDebug( "vgeGL.Engine: GL_EXT_rescale_normal extension detected and used." );
+		vgLogDebug( "vgeGL.Engine: GL_EXT_rescale_normal extension detected and used." );
 		glEnable( GL_RESCALE_NORMAL );  // gle: GL_EXT_rescale_normal
 	}
 	else
@@ -84,15 +84,15 @@ void Engine::setToDefaults()
 
 	if ( isGL_EXT_separate_specular_color() )
 	{
-		vgDebug::get().logDebug( "vgeGL.Engine: GL_EXT_separate_specular_color extension detected." );
-		vgDebug::get().logDebug( "vgeGL.Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SEPARATE_SPECULAR_COLOR" );
+		vgLogDebug( "vgeGL.Engine: GL_EXT_separate_specular_color extension detected." );
+		vgLogDebug( "vgeGL.Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SEPARATE_SPECULAR_COLOR" );
 		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR );
 	}
 	else
 	{
-		vgDebug::get().logDebug( "vgeGL.Engine: Warning : GL_EXT_separate_specular_color extension is detected" );
-		vgDebug::get().logDebug( "vgeGL.Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SINGLE_COLOR" );
-		vgDebug::get().logDebug( "vgeGL.Engine: Using both texture mapping and specular highlights would not be well supported." );
+		vgLogDebug( "vgeGL.Engine: Warning : GL_EXT_separate_specular_color extension is detected" );
+		vgLogDebug( "vgeGL.Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SINGLE_COLOR" );
+		vgLogDebug( "vgeGL.Engine: Using both texture mapping and specular highlights would not be well supported." );
 		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR );
 	}
 
@@ -110,11 +110,11 @@ void Engine::setToDefaults()
 	}
 	
 	//
-	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_LIGHTS			= %i", getMaxLights() );
-	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
-	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
-	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
-	vgDebug::get().logDebug( "vgeGL.Engine:GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_LIGHTS			= %i", getMaxLights() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE			= %i", getMaxTexSize() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
 }
 
 
@@ -290,8 +290,8 @@ const GLenum Engine::getDepthTextureFormatFromDepthBits() const
 			break;
 
 		default:
-			vgDebug::get().logDebug( "vgeGL.Engine:getDepthTextureFormatFromDepthBits(): Performance warning : No matching between depth buffer bits and depth texture format." );
-			vgDebug::get().logDebug( "vgeGL.Engine:getDepthTextureFormatFromDepthBits(): Performance warning : Use GL_DEPTH_COMPONENT16_ARB" );
+			vgLogDebug( "vgeGL.Engine:getDepthTextureFormatFromDepthBits(): Performance warning : No matching between depth buffer bits and depth texture format." );
+			vgLogDebug( "vgeGL.Engine:getDepthTextureFormatFromDepthBits(): Performance warning : Use GL_DEPTH_COMPONENT16_ARB" );
 			retVal = GL_DEPTH_COMPONENT16_ARB;
 			break;
 	}
@@ -312,7 +312,7 @@ void Engine::activeTexture( const int desiredTextureUnit )
 //
 //	if ( glcurrentTextureUnit != currentTextureUnit )
 //	{
-//		vgDebug::get().logDebug( "Unexpected current active texture unit." );
+//		vgLogDebug( "Unexpected current active texture unit." );
 //		
 //		// Repairs cache
 //		currentTextureUnit = glcurrentTextureUnit;

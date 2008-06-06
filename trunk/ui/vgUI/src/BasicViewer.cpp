@@ -398,15 +398,9 @@ void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCo
 
 void BasicViewer::computeSceneBoundingBox(	vgm::Box3f& box, vgm::Vec3f& center, float& max )
 {
-	vge::visitor::NodeCollectorExtended<> collectorExt;
-	getScene()->traverse( collectorExt );
-
-	computeBoundingBox(	&collectorExt,
+	computeBoundingBox(	0,
 						box, center,
 						max );
-/*	computeBoundingBox(	0,
-						box, center,
-						max );*/
 }
 
 

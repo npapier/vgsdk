@@ -12,7 +12,6 @@
 #include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByKindOfType.hpp>
 #include <vgd/visitor/predicate/ByType.hpp>
-#include "vge/vge.hpp"
 #include "vge/engine/Engine.hpp"
 #include "vge/visitor/NodeCollectorExtended.hpp"
 
@@ -57,7 +56,7 @@ struct VGE_API SceneManager
 	 * By default the root node of the scene graph, a vgd::node::Group, is created with no children and is name is \c ROOT.
 	 */
 	SceneManager( vgd::Shp< vge::engine::Engine > pEngine );
-	
+
 	/**
 	 * @brief Destructor
 	 */
@@ -70,22 +69,22 @@ struct VGE_API SceneManager
 	 * @name Accessors to scene graph
 	 */
 	//@{
-	
+
 	/**
 	 * @brief Returns the root node.
-	 * 
+	 *
 	 * @return the root node.
 	 */
-	vgd::Shp< vgd::node::Group >	getRoot();
-	
+	vgd::Shp< vgd::node::Group > getRoot();
+
 	/**
 	 * @brief Set the root node.
 	 * 
 	 * @param newRoot		the new root node.
 	 *
-	 * @return the old root node.
+	 * @return the previous root node.
 	 */
-	vgd::Shp< vgd::node::Group >	setRoot( vgd::Shp< vgd::node::Group > newRoot );
+	vgd::Shp< vgd::node::Group > setRoot( vgd::Shp< vgd::node::Group > newRoot );
 
 	/**
 	 * @brief Search the first node of type \c nodeType.
@@ -190,7 +189,7 @@ struct VGE_API SceneManager
 	 * 
 	 * @param pCollectorExt		the node collector to used or 0 if internal node collector should be used.
 	 */
-	void computeBoundingBox( vge::visitor::NodeCollectorExtended<> *pCollectorExt );
+	void computeBoundingBox( vge::visitor::NodeCollectorExtended<> * pCollectorExt = 0 );
 	
 	//@}
 
@@ -235,7 +234,7 @@ struct VGE_API SceneManager
 	 * @brief Called to update the bounding box.
 	 * 
 	 * @param size					the size of the window.
-	 * @param bUpdateBoundingBox	true to update bounding box in the scene graph, false to do nothing.
+	 * @param bUpdateBoundingBox		true to update bounding box in the scene graph, false to do nothing.
 	 */
 	virtual void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
 
@@ -261,7 +260,7 @@ struct VGE_API SceneManager
 	 * @return the vge engine.
 	 */
 	vgd::Shp< vge::engine::Engine >			getEngine();
-	
+
 	/**
 	 * @brief Returns the collector of node.
 	 *
