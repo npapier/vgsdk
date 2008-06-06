@@ -31,10 +31,10 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 					vgd::Shp< vge::service::Service > service )
 {
 	engine->resetMatrices();
-	
-	engine->pushStateStack();			
+
+	engine->pushStateStack();
 	glPushAttrib( GL_ALL_ATTRIB_BITS );
-	
+
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 
 	for(	i = traverseElements->begin(), iEnd = traverseElements->end();

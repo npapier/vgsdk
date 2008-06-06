@@ -49,10 +49,15 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
 	// Calls paint() provided by vge
 	::vge::engine::SceneManager::paint( size, bUpdateBoundingBox );
-	
-	// vgeGL paint() implementation
-	vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
 
+	// Updates node collector if not done by vge
+	if ( bUpdateBoundingBox == false )
+	{
+		updateNodeCollector();
+	}
+
+	// Renders scene
+	vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
 	getGLEngine()->resetEval();
 	paintTechnique->apply( getGLEngine().get(), getNodeCollector().getTraverseElements() );
 }
@@ -185,7 +190,7 @@ const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventPr
 
 vgd::Shp< ::vgeGL::event::IEventProcessor > SceneManager::getEventProcessor( const int32 index  ) const
 {
-	assert( 0 <= index && "Invalid index.");	
+	assert( 0 <= index && "Invalid index.");
 	assert( index < getNumEventProcessors() && "Invalid index.");
 
 	return m_eventProcessors[index];
@@ -203,8 +208,7 @@ const int32 SceneManager::getNumEventProcessors() const
 const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32 y )
 {
 	// CAST A RAY
-	getNodeCollector().reset();
-	getRoot()->traverse( getNodeCollector() );
+	updateNodeCollector();
 
 	getGLEngine()->resetEval();
 	m_rayCasting.apply(	getGLEngine().get(), getNodeCollector().getTraverseElements(), x, y );

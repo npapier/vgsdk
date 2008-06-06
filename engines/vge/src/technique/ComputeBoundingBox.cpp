@@ -5,7 +5,6 @@
 
 #include "vge/technique/ComputeBoundingBox.hpp"
 
-//#include "vge/engine/Engine.hpp"
 #include "vge/pass/ForEach.hpp"
 #include "vge/service/ComputeBoundingBox.hpp"
 
@@ -19,12 +18,11 @@ namespace technique
 
 
 
-void ComputeBoundingBox::apply(	vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+void ComputeBoundingBox::apply( vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
 	vgd::Shp< vge::service::Service > cbb = vge::service::ComputeBoundingBox::create();
 
 	prepareEval( engine, traverseElements );
-	//engine->resetEval();
 
 	evaluatePass(	::vgd::makeShp( new vge::pass::ForEach ),
 					cbb );

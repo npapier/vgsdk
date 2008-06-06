@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -33,6 +33,45 @@ Technique::~Technique()
 
 
 
+/*vgd::Shp< vgd::node::Group > Technique::getRoot() const
+{
+	return m_root;
+}
+
+
+
+vgd::Shp< vgd::node::Group > Technique::setRoot( vgd::Shp< vgd::node::Group > newRoot )
+{
+	vgd::Shp< vgd::node::Group > retVal = m_root;
+
+	m_root = newRoot;
+
+	return retVal;
+}*/
+
+
+
+/*vge::visitor::NodeCollectorExtended<>& Technique::getNodeCollector()
+{
+	return m_collectorExt;
+}*/
+
+
+
+// void Technique::apply( vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+// {
+	// // // 
+	// // m_collectorExt.reset();
+	// // getRoot()->traverse( m_collectorExt );
+
+	// //
+	// //prepareEval( engine, m_collectorExt->getTraverseElements() );
+
+	// prepareEval( engine, traverseElements );
+// }
+
+
+
 /*void Technique::resetEngine()
 {
 	engine()->resetStateStack();
@@ -46,7 +85,7 @@ void Technique::prepareEval( vge::engine::Engine *engine, vge::visitor::Traverse
 	assert( !m_inPass );
 
 	m_currentPass = 0;
-	
+
 	m_engine			= engine;
 	m_traverseElements	= traverseElements;
 }

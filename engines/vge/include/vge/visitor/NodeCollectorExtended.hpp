@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -18,12 +18,14 @@
 
 namespace vge
 {
-	
+
 namespace visitor
 {
 
+
+
 /**
- * @name Typedefs.
+ * @name Typedefs
  */
 //@{
 
@@ -47,6 +49,12 @@ struct TraverseElementVector
 	typedef std::vector< TraverseElement >::iterator			iterator;
 	typedef std::vector< TraverseElement >::const_iterator		const_iterator;
 
+	iterator begin() { return m_elements.begin(); }
+	const_iterator begin() const { return m_elements.begin(); }
+	
+	iterator end() { return m_elements.end(); }
+	const_iterator end() const { return m_elements.end(); }
+
 	void clear() { m_elements.clear(); }
 	void reserve( int size ) { m_elements.reserve( size ); }
 
@@ -60,18 +68,41 @@ struct TraverseElementVector
 		m_elements.insert(where, first, last);
 	}
 
-	iterator begin() { return m_elements.begin(); }
-	const_iterator begin() const { return m_elements.begin(); }
-	
-	iterator end() { return m_elements.end(); }
-	const_iterator end() const { return m_elements.end(); }
 
-	vgd::node::Node *getRoot() { return (m_elements.begin()->first); }
+
+	vgd::Shp< vgd::node::Group > getRoot()
+	{
+		using vgd::node::Group;
+		using vgd::node::Node;
+
+		Node *				rootNodePtr	= getAbstractRootPtr();
+		assert( rootNodePtr != 0 && "No root node." );
+
+		vgd::Shp< Node >	rootNode	= rootNodePtr->shpFromThis();
+		vgd::Shp< Group >	rootGroup	= vgd::dynamic_pointer_cast< Group >( rootNode );
+		assert( rootGroup != 0 && "Root node is not a Group." );
+
+		return rootGroup;
+	}
+
+	vgd::node::Group *getRootPtr()
+	{
+		using vgd::node::Group;
+		Group * root = dynamic_cast< Group * >( getAbstractRootPtr() );
+		assert( root != 0 && "Root node is not a Group." );
+
+		return root;
+	}
+
+
+	vgd::node::Node *getAbstractRootPtr()
+	{
+		return m_elements.begin()->first;
+	}
 
 
 private:
 	std::vector< TraverseElement > m_elements;
-//typedef std::vector< TraverseElement >			TraverseElementVector;
 };
 //@}
 
@@ -111,7 +142,7 @@ struct NodeCollectorExtended : public vgd::visitor::Traverse<Visitors>
 	 * @param numOfNodesHint : hint to specify the number of nodes that this visitor should encountered.
 	 * This permits to reserve a minimum length of storage for the container of visited node in order to reduce reallocation.
 	 */
-	void	reset	( const int32 numOfNodesHint = 1024 )
+	void reset( const int32 numOfNodesHint = 1024 )
 	{
 		m_traverseElementContainer.clear();
 		m_traverseElementContainer.reserve( numOfNodesHint );
@@ -185,7 +216,7 @@ private:
 
 
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 	

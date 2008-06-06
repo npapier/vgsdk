@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -69,16 +69,46 @@ struct VGE_API Technique
 	//@{
 
 	/**
-	 * @brief Constructor.
+	 * @brief Constructor
 	 */
 	Technique();
 
 	/**
-	 * @brief Virtual destructor.
+	 * @brief Virtual destructor
 	 */
 	virtual ~Technique();
 	//@}
 
+
+
+	// /**
+	 // * name Accessors to scene graph
+	 // */
+	// //{
+
+	// /**
+	 // * brief Returns the root node.
+	 // *
+	 // * return the root node.
+	 // */
+	// vgd::Shp< vgd::node::Group > getRoot() const;
+
+	// /**
+	 // * brief Set the root node.
+	 // * 
+	 // * param newRoot		the new root node.
+	 // *
+	 // * return the previous root node.
+	 // */
+	// vgd::Shp< vgd::node::Group > setRoot( vgd::Shp< vgd::node::Group > newRoot );
+	// //}
+
+	// /**
+	 // * brief Returns the collector of node.
+	 // *
+	 // * return the node collector.
+	 // */
+	// vge::visitor::NodeCollectorExtended<>&	getNodeCollector();
 
 
 	/**
@@ -87,8 +117,10 @@ struct VGE_API Technique
 	 * @param engine			engine used during evaluation
 	 * @param traverseElements	elements to evaluate
 	 */
-	virtual void apply(	vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
+	virtual void apply( vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
 
+	// @todo doc
+	//virtual void apply( vge::engine::Engine * engine );
 
 
 protected:
@@ -114,7 +146,7 @@ protected:
 	 * @post isInsideAPass() == false
 	 */
 	virtual void prepareEval( vge::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements );
-	
+
 	/**
 	 * @brief Initializes the technique to finish evaluation.
 	 * 
@@ -134,7 +166,7 @@ protected:
 	 * @post currentPass() = currentPass() + 1
 	 */
 	virtual void beginPass();
-	
+
 	/**
 	 * @brief Muse be called at the end of each new pass
 	 */
@@ -155,7 +187,7 @@ protected:
 	 * @return true if this technique is inside a pass, false otherwisE.
 	 */
 	const bool isInsideAPass() const;
-	
+
 	/**
 	 * @brief Evaluates a single pass
 	 * 
@@ -179,6 +211,10 @@ private:
 	bool									m_inPass;
 	
 	vge::engine::Engine	*					m_engine;
+//protected:
+	//vgd::Shp< vgd::node::Group >			m_root;				///< Scene graph root
+	//vge::visitor::NodeCollectorExtended<>	m_collectorExt;		///< Collector of nodes
+//private:
 	vge::visitor::TraverseElementVector	*	m_traverseElements;
 	//@}
 };

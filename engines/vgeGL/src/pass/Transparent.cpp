@@ -26,14 +26,14 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 							vgd::Shp< vge::service::Service > service )
 {
 	engine->resetMatrices();
-	
-	engine->pushStateStack();			
-	glPushAttrib( GL_ALL_ATTRIB_BITS );	
+
+	engine->pushStateStack();
+	glPushAttrib( GL_ALL_ATTRIB_BITS );
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-	glDepthMask(GL_FALSE);	
-			
+	glDepthMask(GL_FALSE);
+
 	engine->disregardIfIsA< vgd::node::ClearFrameBuffer >();
 	engine->disregardIfIsAKindOf< vgd::node::Kit >(); ///< Nothing to do for nodekit in transparent pass. FIXME ?
 
@@ -60,7 +60,7 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 		}
 	}
 
-	engine->regardIfIsAKindOf< vgd::node::Kit >();		
+	engine->regardIfIsAKindOf< vgd::node::Kit >();
 	engine->regardIfIsA< vgd::node::ClearFrameBuffer >();
 
 	glPopAttrib();

@@ -15,7 +15,7 @@
 
 namespace vge
 {
-	
+
 namespace engine
 {
 
@@ -45,28 +45,28 @@ vgd::Shp< vgd::node::Group > SceneManager::getRoot()
 vgd::Shp< vgd::node::Group > SceneManager::setRoot( vgd::Shp< vgd::node::Group > newRoot )
 {
 	vgd::Shp< vgd::node::Group > oldRoot;
-	
+
 	oldRoot = m_root;
 	m_root = newRoot;
-	
-	return ( m_root );
+
+	return m_root;
 }
 
 
 
 vgd::Shp< vgd::node::Node > SceneManager::findFirstByName( const std::string name ) const
 {
-	vgd::Shp< vgd::node::Node >							retVal;
+	vgd::Shp< vgd::node::Node >						retVal;
 
 	std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
 	result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByName(name) );
-	
+
 	if ( result.first )
 	{
 		retVal = result.second;
 	}
-	
-	return ( retVal );
+
+	return retVal;
 }
 
 
@@ -77,13 +77,13 @@ vgd::Shp< vgd::node::Node > SceneManager::findFirstByRegex( const std::string re
 
 	std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
 	result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByRegexName(regexName) );
-	
+
 	if ( result.first )
 	{
 		retVal = result.second;
 	}
-	
-	return ( retVal );
+
+	return retVal;
 }
 
 
@@ -94,13 +94,13 @@ vgd::Shp< vgd::node::Node > SceneManager::findFirstByReference( const vgd::node:
 
 	std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
 	result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByReference(reference) );
-	
+
 	if ( result.first )
 	{
 		retVal = result.second;
 	}
-	
-	return ( retVal );
+
+	return retVal;
 }
 
 
@@ -114,22 +114,21 @@ void SceneManager::setBoundingBoxUpdate( const bool bEachRedraw )
 
 bool SceneManager::getBoundingBoxUpdate() const
 {
-	return ( m_updateBoundingBox );
+	return m_updateBoundingBox;
 }
 
 
 
-void SceneManager::computeBoundingBox( vge::visitor::NodeCollectorExtended<> *pCollectorExt )
+void SceneManager::computeBoundingBox( vge::visitor::NodeCollectorExtended<> * pCollectorExt )
 {
 	vge::technique::ComputeBoundingBox computeBB;
-
-	m_engine->resetEval();	// @todo remove me
+	//computeBB.setRoot( getRoot() );
 
 	if ( pCollectorExt == 0 )
 	{
 		updateNodeCollector();
-
-		computeBB.apply( m_engine.get(), m_collectorExt.getTraverseElements() );
+		m_engine->resetEval();
+		computeBB.apply( m_engine.get(), getNodeCollector().getTraverseElements() );
 	}
 	else
 	{
@@ -171,17 +170,13 @@ void SceneManager::bench( const uint frame )
 
 void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
-	// Update engine with size of window
+	// Updates engine with size of window
 	getEngine()->setDrawingSurfaceSize( size );
 
-	// collector
-	updateNodeCollector(); 	///< todo OPTME : Always update node collector ?
-
-	// compute bounding box.
+	// Computes bounding box.
 	if ( bUpdateBoundingBox )
 	{
-		vge::technique::ComputeBoundingBox computeBB;
-		computeBB.apply( m_engine.get(), m_collectorExt.getTraverseElements() );
+		computeBoundingBox();
 	}
 }
 
@@ -189,7 +184,7 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 void SceneManager::resize( const vgm::Vec2i size )
 {
-	// Update engine with size of window
+	// Updates engine with size of window
 	getEngine()->setDrawingSurfaceSize( size );
 }
 
