@@ -80,8 +80,6 @@ void myCanvas::initialize()
 //	getSetup()->addChild( drawStyle );
 //	getSetup()->addChild( lightModel );
 
-	getSceneTransformation()->setBindingsToDefaults2();
-
 	// shape/mesh
 	//viewAll();
 }
