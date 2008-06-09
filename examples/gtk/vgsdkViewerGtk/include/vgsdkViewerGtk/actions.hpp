@@ -96,6 +96,16 @@ void helpAbout( Gtk::Window * topLevel );
 void dragDataReceived( myCanvas * canvas, const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time );
 
 /**
+ * @brief	Updates the manipulation bindings of the given canvas.
+ *
+ * Supported binding identifiers are @c 1 and @c 2.
+ *
+ * @param	canvas	a pointer to the canvas to update
+ * @param	binding	an integer identifiying a binding
+ */
+void settingManipulationBinding( myCanvas * canvas, const int binding );
+
+/**
  * @brief	Implements a log handler that pushes the message to a statusbar passed in the user data.
  */
 void statusbarLogHandler( const gchar *log_domain, GLogLevelFlags log_level, const gchar * message, gpointer user_data );

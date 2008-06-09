@@ -69,6 +69,15 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 			Gtk::Action::create("FullScreen", Gtk::Stock::FULLSCREEN, "Full Screen"),
 			Gtk::AccelKey("F11"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullScreen), canvas) );
+			
+	Gtk::RadioButtonGroup	manipulationBindingGroup;
+	actions->add( Gtk::Action::create("Settings", "_Settings") );
+	actions->add(
+			Gtk::RadioAction::create(manipulationBindingGroup, "MouseAndKeyboardManipulation", "Mouse & Keyboard Manipulation"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::settingManipulationBinding), canvas, 1) );
+	actions->add(
+			Gtk::RadioAction::create(manipulationBindingGroup, "MouseOnlyManipulation", "Mouse Only Manipuation"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::settingManipulationBinding), canvas, 2) );
 
 	actions->add( Gtk::Action::create("Help", "_Help") );
 	actions->add(
@@ -95,6 +104,10 @@ const Glib::ustring & createDefaultUI()
 		"    <menu action='View'>"
 		"      <menuitem action='ViewAll'/>"
 		"      <menuitem action='FullScreen'/>"
+		"    </menu>"
+		"    <menu action='Settings'>"
+		"      <menuitem action='MouseOnlyManipulation'/>"
+		"      <menuitem action='MouseAndKeyboardManipulation'/>"
 		"    </menu>"
 		"    <menu action='Help'>"
 		"      <menuitem action='About'/>"
@@ -183,6 +196,19 @@ int main( int argc, char ** argv )
 	vbox.add( hpaned );
 	vbox.pack_end( statusBar, false, true );
 	window.show_all();
+	
+	
+	// Activates the first manipulation binding action.
+	Glib::RefPtr< Gtk::Action >	manipulationBindingAction = uiManager->get_action("/DefaultMenuBar/Settings/MouseAndKeyboardManipulation");
+	
+	if( manipulationBindingAction )
+	{
+		manipulationBindingAction->activate();
+	}
+	else
+	{
+		vgDebug::get().logWarning("Unable to initialize manipulation bindings.");
+	}
 
 
 	// Gives the canvas' root node to the notebook.

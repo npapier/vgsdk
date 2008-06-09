@@ -209,6 +209,26 @@ void viewAll( myCanvas * canvas )
 
 
 
+void settingManipulationBinding( myCanvas * canvas, const int binding )
+{
+	switch( binding )
+	{
+	case 1:
+		canvas->getSceneTransformation()->setBindingsToDefaults();
+		break;
+		
+	case 2:
+		canvas->getSceneTransformation()->setBindingsToDefaults2();
+		break;
+		
+	default:
+		vgDebug::get().logWarning( "Invalid manipulation binding specified." );
+	}
+	
+}
+
+
+
 void helpAbout( Gtk::Window * topLevel )
 {
 	Gtk::AboutDialog				aboutDialog;
