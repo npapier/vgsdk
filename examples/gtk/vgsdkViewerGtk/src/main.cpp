@@ -23,6 +23,7 @@
 #include "vgsdkViewerGtk/actions.hpp"
 #include "vgsdkViewerGtk/myCanvas.hpp"
 #include "vgsdkViewerGtk/Notebook.hpp"
+#include "vgsdkViewerGtk/stock/stock.hpp"
 
 
 
@@ -69,6 +70,9 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 			Gtk::Action::create("FullScreen", Gtk::Stock::FULLSCREEN, "Full Screen"),
 			Gtk::AccelKey("F11"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullScreen), canvas) );
+	actions->add(
+			Gtk::ToggleAction::create("MultiView", vgsdkViewerGtk::stock::MULTI_VIEW, "Multi-View"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::multiView), canvas) );
 			
 	Gtk::RadioButtonGroup	manipulationBindingGroup;
 	actions->add( Gtk::Action::create("Settings", "_Settings") );
@@ -104,6 +108,7 @@ const Glib::ustring & createDefaultUI()
 		"    <menu action='View'>"
 		"      <menuitem action='ViewAll'/>"
 		"      <menuitem action='FullScreen'/>"
+		"      <menuitem action='MultiView'/>"
 		"    </menu>"
 		"    <menu action='Settings'>"
 		"      <menuitem action='MouseOnlyManipulation'/>"
@@ -120,6 +125,7 @@ const Glib::ustring & createDefaultUI()
 		"    <separator/>"
 		"    <toolitem action='ViewAll'/>"
 		"    <toolitem action='FullScreen'/>"
+		"    <toolitem action='MultiView'/>"
 		"    <separator/>"
 		"    <toolitem action='About'/>"
 		"  </toolbar>"
@@ -140,6 +146,9 @@ int main( int argc, char ** argv )
 
 	// Set the human readable name of the application.
 	Glib::set_application_name("vgsdkViewer");
+	
+	// Initializes the local stock icons.
+	vgsdkViewerGtk::stock::initialize();
 
 
 	// Creates the main mainWindow content.
