@@ -9,6 +9,8 @@
 
 #include <vector>
 #include <glibmm/ustring.h>
+#include <vgeGL/technique/MultiMain.hpp>
+#include <vgeGL/technique/Technique.hpp>
 #include <vgGTK/BasicManipulator.hpp>
 
 
@@ -43,6 +45,14 @@ struct myCanvas : public vgGTK::BasicManipulator
 	//@{
 	void initialize();
 	//@}
+	
+	
+	/**
+	 * @brief	Enables or disables the multi-view rendering.
+	 * 
+	 * @param	multi	@c true to enable multi-view rendering (the default), @c false otherwise
+	 */
+	void setMultiView( const bool multi = true );
 
 
 	/**
@@ -103,7 +113,9 @@ private:
 	const bool loadTrian2( const Glib::ustring & pathfilename );
 	//@}
 
-	Strings		m_filenames;	///< Contains the paths of the files currently loaded.
+	Strings									m_filenames;			///< Contains the paths of the files currently loaded.
+	vgd::Shp< vgeGL::technique::Technique >	m_defaultTechnique;		///< References the default painting technique.
+	vgd::Shp< vgeGL::technique::MultiMain >	m_multiViewTechnique;	///< References the multi view painting technique.
 };
 
 

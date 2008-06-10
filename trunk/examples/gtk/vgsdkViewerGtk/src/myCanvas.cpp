@@ -26,14 +26,94 @@
 namespace vgsdkViewerGtk
 {
 
+namespace
+{
+
+	struct ViewPointConfigurator : public vgeGL::technique::MultiMain::SceneGraphConfigurator
+	{
+		ViewPointConfigurator( vgd::Shp< vgd::node::TransformDragger > dragger, const vgm::Rotation rotation )
+		:	m_dragger( dragger ),
+			m_rotation( rotation )
+		{}
+		
+		const bool apply( vge::visitor::TraverseElementVector * /*traverseElements*/ )
+		{
+			if ( m_dragger )
+			{
+				m_rotationBackup = m_dragger->getRotation();				
+				m_dragger->setRotation( m_rotationBackup * m_rotation );
+				vgm::MatrixR mat = m_dragger->computeMatrixFromFields();
+				m_dragger->setMatrix( mat );
+			}
+			
+			return false;
+		}
+	   
+		void unapply( vge::visitor::TraverseElementVector * /*traverseElements*/ )
+		{
+			if ( m_dragger )
+			{
+				m_dragger->setRotation( m_rotationBackup );
+				vgm::MatrixR mat = m_dragger->computeMatrixFromFields();
+				m_dragger->setMatrix( mat );
+			}
+		}
+
+	private:
+		vgd::Shp< vgd::node::TransformDragger >	m_dragger;
+		const vgm::Rotation						m_rotation;
+		vgm::Rotation							m_rotationBackup;
+	};
+
+}
+
 
 
 myCanvas::myCanvas()
 {
+	// Initial window size.
 	set_size_request( 1024, 768 );
 
+	
+	// Scene graph initialization.
 	createDefaultLights();
  	createClearFrameBuffer();
+	
+	
+	// Get the reference of the default technique
+	m_defaultTechnique = getPaintTechnique();
+	
+	
+	// Multi-view rendering technique initialization.
+	using vgeGL::technique::MultiMain;
+
+// @todo	Reactivate left-side windows when the aspect ratio bug is fixed.
+//	const float	oneTier		= 1.f / 3.f;
+//	const float twoTiers	= 2.f / 3.f;
+	
+	m_multiViewTechnique = vgd::makeShp( new MultiMain() );
+	
+	vgd::Shp< MultiMain::Window > mainView = m_multiViewTechnique->addWindow( "main", 0, true, vgm::Vec4f(1.f,1.f,1.f,1.f) );
+//	mainView->setGeometry( vgm::Rectangle2f(oneTier, 0.f, twoTiers, 1.f) );
+	mainView->setGeometry( vgm::Rectangle2f(0.5f, 0.f, 0.5f, 0.5f) );
+	
+	vgd::Shp< MultiMain::Window >	topView = m_multiViewTechnique->addWindow( "top", 1, true, vgm::Vec4f(1.f,0.f,0.f,1.f), 1.f );
+	const vgm::Rotation				rotateTop(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,1.f,0.f));
+//	topView->setGeometry( vgm::Rectangle2f(0.0f, 0.0f, oneTier, oneTier) );
+	topView->setGeometry( vgm::Rectangle2f(0.0f, 0.0f, 0.5f, 0.5f) );
+	topView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateTop)) );
+
+	vgd::Shp< MultiMain::Window >	bottomView = m_multiViewTechnique->addWindow( "bottom", 1, true, vgm::Vec4f(0.f,1.f,0.f,1.f), 1.f );
+	const vgm::Rotation				rotateBottom(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,-1.f,0.f));
+//	bottomView->setGeometry( vgm::Rectangle2f(0.0f, oneTier, oneTier, oneTier) );
+	bottomView->setGeometry( vgm::Rectangle2f(0.0f, 0.5f, 0.5f, 0.5f) );
+	bottomView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateBottom)) );
+
+	vgd::Shp< MultiMain::Window >	oppositeView = m_multiViewTechnique->addWindow( "opposite", 1, true, vgm::Vec4f(0.f,0.f,1.f,1.f), 1.f );
+	const vgm::Rotation				rotateOpposite(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,0.f,1.f));
+//	oppositeView->setGeometry( vgm::Rectangle2f(0.0f, twoTiers, oneTier, oneTier) );
+	oppositeView->setGeometry( vgm::Rectangle2f(0.5f, 0.5f, 0.5f, 0.5f) );
+	oppositeView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateOpposite)) );
 }
 
 
@@ -82,6 +162,16 @@ void myCanvas::initialize()
 
 	// shape/mesh
 	//viewAll();
+}
+
+
+
+void myCanvas::setMultiView( const bool multi )
+{
+	assert( m_defaultTechnique );
+	assert( m_multiViewTechnique );
+	
+	setPaintTechnique( multi ? vgd::dynamic_pointer_cast< vgeGL::technique::Technique >(m_multiViewTechnique) : m_defaultTechnique );
 }
 
 

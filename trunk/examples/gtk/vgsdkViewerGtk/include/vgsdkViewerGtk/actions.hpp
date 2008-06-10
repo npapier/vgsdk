@@ -80,6 +80,13 @@ void fullScreen( myCanvas * canvas );
 void viewAll( myCanvas * canvas );
 
 /**
+ * @brief	Implements an action that will switch from single to multi-view rendering on the given canvas.
+ *
+ * @param	canvas	a pointer to the canvas to configure
+ */
+void multiView( myCanvas * canvas );
+
+/**
  * @brief	Implements an action that show the about box on top of the given top level window.
  *
  * @param	topLevel	a pointer to a top level window
