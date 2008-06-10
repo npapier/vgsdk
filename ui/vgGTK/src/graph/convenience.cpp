@@ -274,7 +274,14 @@ const std::string toString( const vgd::node::IBoundingBox * ibb )
 
 	vgio::configure( os );
 
-	os << ibb->getXfBoundingBox();
+	if ( ibb->isBoundingBoxValid() )
+	{
+		os << ibb->getXfBoundingBox();
+	}
+	else
+	{
+		os << "Invalid bounding box";
+	}
 
 	return os.str();
 }
