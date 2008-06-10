@@ -197,7 +197,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 		{
 			vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
-			prepareEval( engine, traverseElements );
+			prepareEval( engine, currentTraverseElements );
 
 			// At startup, the transparency pass is disabled. It would be enabled during the opaque pass if at least one
 			// transparent shape is encountered.
@@ -226,7 +226,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 		// Undo the scene graph configuration
 		if ( configurator )
 		{
-			configurator->unapply( traverseElements );
+			configurator->unapply( currentTraverseElements );
 		}
 
 		//
