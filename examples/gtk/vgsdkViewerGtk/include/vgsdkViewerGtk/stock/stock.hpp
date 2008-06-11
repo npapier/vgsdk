@@ -18,7 +18,9 @@ namespace stock
  * @name	Stock Icon Identifiers
  */
 //@{
-extern "C" Gtk::StockID	MULTI_VIEW;	///< Defines the stock identifier for the multi-view icon.
+extern "C" Gtk::StockID	SINGLE_VIEW;		///< Defines the stock identifier for the single-view icon.
+extern "C" Gtk::StockID	MULTI_VIEW_SIDED;	///< Defines the stock identifier for the multi-view-sided icon.
+extern "C" Gtk::StockID	MULTI_VIEW_SQUARED;	///< Defines the stock identifier for the multi-view-squared icon.
 //@}
 
 

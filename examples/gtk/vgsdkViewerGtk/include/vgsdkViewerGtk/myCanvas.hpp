@@ -9,7 +9,6 @@
 
 #include <vector>
 #include <glibmm/ustring.h>
-#include <vgeGL/technique/MultiMain.hpp>
 #include <vgeGL/technique/Technique.hpp>
 #include <vgGTK/BasicManipulator.hpp>
 
@@ -48,11 +47,24 @@ struct myCanvas : public vgGTK::BasicManipulator
 	
 	
 	/**
+	 * @name	Multi-View Mode Accessors
+	 */
+	//@{
+	enum ViewMode
+	{
+		SINGLE_VIEW = 0,
+		LEFT_SIDED_VIEWS,
+		SQUARED_VIEWS,
+		VIEW_MODE_COUNT
+	};
+	
+	/**
 	 * @brief	Enables or disables the multi-view rendering.
 	 * 
-	 * @param	multi	@c true to enable multi-view rendering (the default), @c false otherwise
+	 * @param	mode	the multi view mode.
 	 */
-	void setMultiView( const bool multi = true );
+	void setViewMode( const ViewMode mode );
+	//@}
 
 
 	/**
@@ -112,10 +124,19 @@ private:
 	const bool loadTrian( const Glib::ustring & pathfilename );
 	const bool loadTrian2( const Glib::ustring & pathfilename );
 	//@}
+	
+	/**
+	 * @name	View Mode Technique Factories
+	 */
+	//@{
+	vgd::Shp< vgeGL::technique::Technique > createMultiViewSidedTechnique();
+	vgd::Shp< vgeGL::technique::Technique > createMultiViewSquaredTechnique();
+	//@}
+	
+	typedef std::vector< vgd::Shp< vgeGL::technique::Technique > > TechniqueContainer;
 
-	Strings									m_filenames;			///< Contains the paths of the files currently loaded.
-	vgd::Shp< vgeGL::technique::Technique >	m_defaultTechnique;		///< References the default painting technique.
-	vgd::Shp< vgeGL::technique::MultiMain >	m_multiViewTechnique;	///< References the multi view painting technique.
+	Strings				m_filenames;			///< Contains the paths of the files currently loaded.
+	TechniqueContainer	m_viewModeTechniques;	///< Contains all view mode techniques.
 };
 
 
