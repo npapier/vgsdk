@@ -62,6 +62,7 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 			Gtk::Action::create("Quit", Gtk::Stock::QUIT),
 			sigc::ptr_fun(&vgsdkViewerGtk::fileExit) );
 
+	Gtk::RadioButtonGroup	viewModeGroup;
 	actions->add( Gtk::Action::create("View", "_View") );
 	actions->add( 
 			Gtk::Action::create("ViewAll", Gtk::Stock::ZOOM_FIT, "View _All"),
@@ -71,8 +72,14 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 			Gtk::AccelKey("F11"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullScreen), canvas) );
 	actions->add(
-			Gtk::ToggleAction::create("MultiView", vgsdkViewerGtk::stock::MULTI_VIEW, "Multi-View"),
-			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::multiView), canvas) );
+			Gtk::RadioAction::create(viewModeGroup, "SingleView", vgsdkViewerGtk::stock::SINGLE_VIEW, "Single View"),
+			sigc::bind(sigc::mem_fun(canvas,&vgsdkViewerGtk::myCanvas::setViewMode), vgsdkViewerGtk::myCanvas::SINGLE_VIEW) );
+	actions->add(
+			Gtk::RadioAction::create(viewModeGroup, "MultiViewSided", vgsdkViewerGtk::stock::MULTI_VIEW_SIDED, "Left-Sided Views"),
+			sigc::bind(sigc::mem_fun(canvas,&vgsdkViewerGtk::myCanvas::setViewMode), vgsdkViewerGtk::myCanvas::LEFT_SIDED_VIEWS) );
+	actions->add(
+			Gtk::RadioAction::create(viewModeGroup, "MultiViewSquared", vgsdkViewerGtk::stock::MULTI_VIEW_SQUARED, "Four Views"),
+			sigc::bind(sigc::mem_fun(canvas,&vgsdkViewerGtk::myCanvas::setViewMode), vgsdkViewerGtk::myCanvas::SQUARED_VIEWS) );
 			
 	Gtk::RadioButtonGroup	manipulationBindingGroup;
 	actions->add( Gtk::Action::create("Settings", "_Settings") );
@@ -108,7 +115,10 @@ const Glib::ustring & createDefaultUI()
 		"    <menu action='View'>"
 		"      <menuitem action='ViewAll'/>"
 		"      <menuitem action='FullScreen'/>"
-		"      <menuitem action='MultiView'/>"
+		"      <separator/>"
+		"      <menuitem action='SingleView'/>"
+		"      <menuitem action='MultiViewSided'/>"
+		"      <menuitem action='MultiViewSquared'/>"
 		"    </menu>"
 		"    <menu action='Settings'>"
 		"      <menuitem action='MouseOnlyManipulation'/>"
@@ -125,7 +135,10 @@ const Glib::ustring & createDefaultUI()
 		"    <separator/>"
 		"    <toolitem action='ViewAll'/>"
 		"    <toolitem action='FullScreen'/>"
-		"    <toolitem action='MultiView'/>"
+		"    <separator/>"
+		"    <toolitem action='SingleView'/>"
+		"    <toolitem action='MultiViewSided'/>"
+		"    <toolitem action='MultiViewSquared'/>"
 		"    <separator/>"
 		"    <toolitem action='About'/>"
 		"  </toolbar>"

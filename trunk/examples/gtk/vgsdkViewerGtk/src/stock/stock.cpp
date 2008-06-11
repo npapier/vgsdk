@@ -17,34 +17,55 @@ namespace stock
 
 
 
-#include "vgsdkViewerGtk/stock/multi-view-16.xpm"
-#include "vgsdkViewerGtk/stock/multi-view-24.xpm"
+#include "vgsdkViewerGtk/stock/single-view-16.xpm"
+#include "vgsdkViewerGtk/stock/single-view-24.xpm"
+#include "vgsdkViewerGtk/stock/multi-view-sided-16.xpm"
+#include "vgsdkViewerGtk/stock/multi-view-sided-24.xpm"
+#include "vgsdkViewerGtk/stock/multi-view-squared-16.xpm"
+#include "vgsdkViewerGtk/stock/multi-view-squared-24.xpm"
 
 
 
-Gtk::StockID	MULTI_VIEW("vgsdkViewerGtk::stock::MULTI_VIEW");
+Gtk::StockID	SINGLE_VIEW("vgsdkViewerGtk::stock::SINGLE_VIEW");
+Gtk::StockID	MULTI_VIEW_SIDED("vgsdkViewerGtk::stock::MULTI_VIEW_SIDED");
+Gtk::StockID	MULTI_VIEW_SQUARED("vgsdkViewerGtk::stock::MULTI_VIEW_SQUARED");
+
+
+
+const Gtk::IconSource createIconSource( const int size, const char* const* xpmData )
+{
+	Gtk::IconSource	iconSource;
+	
+	iconSource.set_pixbuf( Gdk::Pixbuf::create_from_xpm_data(xpmData) );
+	iconSource.set_size( Gtk::IconSize(size) );
+	
+	return iconSource;
+}
 
 
 
 void initialize()
 {
-	// Creates an icon set with our icons.
-	Gtk::IconSet	iconSet;
-	Gtk::IconSource	iconSource;
+	// Creates all icon sets.
+	Gtk::IconSet	singleViewSet;	
+	singleViewSet.add_source( createIconSource(16, single_view_16_xpm) );
+	singleViewSet.add_source( createIconSource(24, single_view_24_xpm) );
 	
-	iconSource.set_pixbuf( Gdk::Pixbuf::create_from_xpm_data(multi_view_16_xpm) );
-	iconSource.set_size( Gtk::IconSize(16) );
-	iconSet.add_source( iconSource );
+	Gtk::IconSet	multiViewSidedSet;	
+	multiViewSidedSet.add_source( createIconSource(16, multi_view_sided_16_xpm) );
+	multiViewSidedSet.add_source( createIconSource(24, multi_view_sided_24_xpm) );
 	
-	iconSource.set_pixbuf( Gdk::Pixbuf::create_from_xpm_data(multi_view_24_xpm) );
-	iconSource.set_size( Gtk::IconSize(24) );
-	iconSet.add_source( iconSource );
+	Gtk::IconSet	multiViewSquaredSet;
+	multiViewSquaredSet.add_source( createIconSource(16, multi_view_squared_16_xpm) );
+	multiViewSquaredSet.add_source( createIconSource(24, multi_view_squared_24_xpm) );
 	
 	
 	// Creates an icon factory for our icon sets.
 	Glib::RefPtr< Gtk::IconFactory >	iconFactory = Gtk::IconFactory::create();
 	
-	iconFactory->add( MULTI_VIEW, iconSet );
+	iconFactory->add( SINGLE_VIEW, singleViewSet );
+	iconFactory->add( MULTI_VIEW_SIDED, multiViewSidedSet );
+	iconFactory->add( MULTI_VIEW_SQUARED, multiViewSquaredSet );
 	iconFactory->add_default();
 }
 

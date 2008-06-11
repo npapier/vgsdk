@@ -209,17 +209,6 @@ void viewAll( myCanvas * canvas )
 
 
 
-void multiView( myCanvas * canvas )
-{
-	static bool	multi = false;
-	
-	multi = ! multi;
-	canvas->setMultiView( multi );
-	canvas->refresh();
-}
-
-
-
 void settingManipulationBinding( myCanvas * canvas, const int binding )
 {
 	switch( binding )
