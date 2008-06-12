@@ -26,7 +26,7 @@ namespace technique
 vgd::Shp< MultiMain::Window > MultiMain::addWindow( const std::string name,
 	const int zOrder, const bool hasBorder, const vgm::Vec4f borderColor, const float borderWidth )
 {
-	WindowContainer::value_type value( name, vgd::makeShp(new Window( zOrder, hasBorder, borderColor, borderWidth )) );
+	WindowContainer::value_type value( name, vgd::makeShp(new Window( zOrder, true/*isVisible*/, hasBorder, borderColor, borderWidth )) );
 
 	std::pair< WindowContainer::iterator, bool> retVal = m_windows.insert( value );
 
@@ -124,7 +124,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 	vgm::Rectangle2i cameraScissor;
 	const bool isCameraScissorDefined = camera->getScissor( cameraScissor );
 
-	// Computes the window z-order
+	// Computes the window z-order (for visible windows only)
 	typedef std::multimap< int, vgd::Shp< Window > > ZOrderedWindowContainer;
 	ZOrderedWindowContainer zOrderedWindows;
 	for( WindowContainer::const_iterator	i		= m_windows.begin(),
@@ -134,10 +134,15 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 	{
 		WindowContainer::mapped_type window = i->second;
 
-		const int zOrder = window->getZOrder();
+		if ( window->isVisible() )
+		{
+			// The window is visible
+			const int zOrder = window->getZOrder();
 
-		ZOrderedWindowContainer::value_type value( zOrder, window );
-		/*const ZOrderedWindowContainer::iterator retVal = */zOrderedWindows.insert( value );
+			ZOrderedWindowContainer::value_type value( zOrder, window );
+			/*const ZOrderedWindowContainer::iterator retVal = */zOrderedWindows.insert( value );
+		}
+		//else nothing to do, the window is hidden
 	}
 
 	// Renders each window from back to front (i.e. in z-order from 0 to n with n > 0 ).

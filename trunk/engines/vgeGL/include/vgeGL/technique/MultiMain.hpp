@@ -68,12 +68,14 @@ struct VGEGL_API MultiMain : public Main
 		 * @post getConfigurator()
 		 */
 		Window(	const int			zOrder		= 0,
+				const bool			isVisible	= true,
 				const bool			hasBorder	= true,
 				const vgm::Vec4f	borderColor	= vgm::Vec4f(1.f, 1.f, 1.f, 1.f),
 				const float			borderWidth	= 3.f )
 		:	m_zOrder		(	zOrder		),
 			//m_configurator
-			m_hasBorder		(	hasBorder	),
+			m_isVisible		( isVisible		),
+			m_hasBorder		( hasBorder		),
 			m_borderColor	( borderColor	),
 			m_borderWidth	( borderWidth	)
 		{
@@ -123,6 +125,22 @@ struct VGEGL_API MultiMain : public Main
 		 * @param configurator	the functor
 		 */
 		void setConfigurator( const vgd::Shp< SceneGraphConfigurator >  configurator ) { m_configurator = configurator; }
+
+
+
+		/**
+		 * @brief Tests if the window is visible.
+		 *
+		 * @return true if the window is visible, false otherwise.
+		 */
+		const bool isVisible() const { return m_isVisible; }
+
+		/**
+		 * @brief Sets window visible state.
+		 *
+		 * @param isVisible	true to show the window, false to hide it
+		 */
+		void setVisible( const bool isVisible = true ) { m_isVisible = isVisible; }
 
 
 
@@ -189,6 +207,7 @@ struct VGEGL_API MultiMain : public Main
 
 		vgd::Shp< SceneGraphConfigurator >	m_configurator;	///< Functor to configure the scene graph for this window.
 
+		bool								m_isVisible;	///< True if the window is visible, false otherwise
 		bool								m_hasBorder;	///< True if the window has a border
 		vgm::Vec4f							m_borderColor;	///< Border color
 		float								m_borderWidth;	///< Width of the window border.
@@ -211,6 +230,8 @@ struct VGEGL_API MultiMain : public Main
 	 * @param hasBorder		see Window
 	 * @param borderColor	see Window
 	 * @param borderWidth	see Window
+	 *
+	 * @remark By default, a new window is visible. See Window::setVisible() and Window::isVisible().
 	 */
 	vgd::Shp< Window > addWindow(	const std::string	name,
 									const int			zOrder		= 0,
