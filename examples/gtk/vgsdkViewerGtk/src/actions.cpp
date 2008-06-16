@@ -114,7 +114,10 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 			success = canvas->appendToScene( filename );
 
 			// On success, adds the current file to the recent history.
-			Gtk::RecentManager::get_default()->add_item( filename );
+			if ( success )
+			{
+				Gtk::RecentManager::get_default()->add_item( filename );
+			}
 		}
 
 
@@ -128,14 +131,16 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 void fileReload( myCanvas * canvas )
 {
 	canvas->reloadScene();
+
+	canvas->refresh();
 }
 
 
 
 void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas )
 {
-	bool				success = false;
-	const Glib::ustring	recentFile = recentChooser->get_current_uri();
+	bool				success		= false;
+	const Glib::ustring	recentFile	= recentChooser->get_current_uri();
 
 	// Removes any content of the scene and loads the given recent file.
 	canvas->clearScene();
@@ -205,6 +210,7 @@ void fullScreen( myCanvas * canvas )
 void viewAll( myCanvas * canvas )
 {
 	canvas->viewAll();
+	canvas->refresh();
 }
 
 
@@ -240,7 +246,7 @@ void helpAbout( Gtk::Window * topLevel )
 	aboutDialog.set_transient_for( *topLevel );
 	aboutDialog.set_authors( authors );
 	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load meshes (obj, trian, trian2), manipulate them and browse the rendering scene graph." );
-	aboutDialog.set_copyright( "Copyright (C) 2008, Guillaume Brocker, Nicolas Papier and Digital trainers SAS." );
+	aboutDialog.set_copyright( "Copyright (C) 2008, Guillaume Brocker, Nicolas Papier and Digital Trainers SAS." );
 	aboutDialog.set_license( "Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation." );
 	aboutDialog.set_website("http://home.gna.org/vgsdk");
 	aboutDialog.set_wrap_license( true );
@@ -277,7 +283,13 @@ void dragDataReceived( myCanvas * canvas, const Glib::RefPtr<Gdk::DragContext>& 
 
 		if( Glib::file_test(filename, Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_REGULAR) )
 		{
-			canvas->appendToScene(filename);
+			const bool success = canvas->appendToScene(filename);
+
+			// On success, adds the current file to the recent history.
+			if ( success )
+			{
+				Gtk::RecentManager::get_default()->add_item( filename );
+			}
 		}
 		else
 		{
