@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2006, Clement Forest.
+// VGSDK - Copyright (C) 2006, 2008, Clement Forest.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgd/node/Callback.hpp"
 
@@ -24,8 +25,9 @@ META_NODE_CPP( Callback );
 Callback::Callback( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
-	// Add field
-	addField( new FFunctionType(getFFunction()) );
+	// Add fields
+	addField( new FPaintFunctionType(getFPaintFunction()) );
+	addField( new FCbbFunctionType(getFCbbFunction()) );
 
 	// Link(s)
 	link( getDFNode() );
@@ -44,7 +46,8 @@ void Callback::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
 
-	setCallback( 0 );
+	setPaintFunction( 0 );
+	setCbbFunction( 0 );
 }
 
 
@@ -52,35 +55,105 @@ void Callback::setOptionalsToDefaults()
 
 
 
-// CALLBACK
+// Paint Function
 
-bool Callback::getCallback( CallbackType& value ) const
+bool Callback::getPaintFunction( PaintFunctionType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< FunctionParameterType, CallbackType >( this, getFFunction(), CALLBACKFUNCTION, value )
+		vgd::field::getParameterValue< FunctionParameterType, PaintFunctionType >( this, getFPaintFunction(), PAINT_FUNCTION, value )
 		);
 }
 
-void Callback::setCallback(  CallbackType value )
+
+
+void Callback::setPaintFunction(  PaintFunctionType value )
 {
-	vgd::field::setParameterValue< FunctionParameterType, CallbackType >( this, getFFunction(), CALLBACKFUNCTION, value );
+	vgd::field::setParameterValue< FunctionParameterType, PaintFunctionType >( this, getFPaintFunction(), PAINT_FUNCTION, value );
 }
 
 
 
-void Callback::eraseCallback()
+void Callback::erasePaintFunction()
 {
-	vgd::field::eraseParameterValue< FunctionParameterType, CallbackType >( this, getFFunction(), CALLBACKFUNCTION );
+	vgd::field::eraseParameterValue< FunctionParameterType, PaintFunctionType >( this, getFPaintFunction(), PAINT_FUNCTION );
 }
 
 
 
-
-
-const std::string Callback::getFFunction()
+const std::string Callback::getFPaintFunction()
 {
-	return ( "f_function" );
+	return ( "f_paintFunction" );
 }
+
+
+
+// Bounding Box Computation Function
+
+bool Callback::getCbbFunction( CbbFunctionType& value ) const
+{
+	return ( 
+		vgd::field::getParameterValue< FunctionParameterType, CbbFunctionType >( this, getFCbbFunction(), CBB_FUNCTION, value )
+		);
+}
+
+
+
+void Callback::setCbbFunction(  CbbFunctionType value )
+{
+	vgd::field::setParameterValue< FunctionParameterType, CbbFunctionType >( this, getFCbbFunction(), CBB_FUNCTION, value );
+}
+
+
+
+void Callback::eraseCbbFunction()
+{
+	vgd::field::eraseParameterValue< FunctionParameterType, CbbFunctionType >( this, getFCbbFunction(), CBB_FUNCTION );
+}
+
+
+
+const std::string Callback::getFCbbFunction()
+{
+	return ( "f_cbbFunction" );
+}
+
+
+
+// IBoundingBox computation
+
+bool Callback::computeBoundingBox( const vgm::MatrixR& transformation )
+{
+	bool			hasCbbFunction = false;
+	CbbFunctionType	cbbFunction;
+	
+	hasCbbFunction = getCbbFunction( cbbFunction );
+	if( hasCbbFunction )
+	{
+		cbbFunction(this);
+	}
+	else
+	{
+		m_boundingBox.makeEmpty();
+	}
+
+	m_transformation = transformation;
+	return true;
+}
+
+
+
+bool Callback::isBoundingBoxValid() const
+{
+	return m_boundingBox.isInvalid() == false;
+}
+
+
+
+void Callback::invalidateBoundingBox( bool bInvalidate )
+{
+	// Nothing todo.
+}
+
 
 
 
