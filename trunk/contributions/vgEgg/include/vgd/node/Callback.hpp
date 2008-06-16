@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2006, Clement Forest.
+// VGSDK - Copyright (C) 2006, 2008, Clement Forest.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGD_NODE_CALLBACK_HPP
 #define _VGD_NODE_CALLBACK_HPP
@@ -10,6 +11,7 @@
 
 #include "vgd/vgd.hpp"
 #include "vgd/field/TPairAssociativeField.hpp"
+#include "vgd/node/IBoundingBox.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
 
@@ -48,63 +50,110 @@ namespace node
  * @ingroup g_singleAttributeNodes
  * 
  */
-struct VGD_API Callback : public vgd::node::SingleAttribute
+struct VGD_API Callback : public vgd::node::SingleAttribute, public vgd::node::IBoundingBox
 {
 	META_NODE_HPP( Callback );
 	
-	/**
-	 * @name Accessors to field function.
-	 */
-	//@{
-
 	/**
 	 * @brief Enumeration of the \c callback parameter.
 	 */
 	typedef enum
 	{
-	  CALLBACKFUNCTION = 1
+	  PAINT_FUNCTION = 1,
+	  CBB_FUNCTION
 	} FunctionParameterType;
 
 	/**
-	 * @brief Typedef for the \c function parameter value.
+	 * @brief Typedef for the paint function.
 	 */
-	typedef boost::function<void (Callback*)> CallbackType;
-
-	/**
-	 * @brief Typedef for the \c function field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< FunctionParameterType, CallbackType > FFunctionType;
-
-	/**
-	 * @brief Sets the \c function value.
-	 */
-	void 			setCallback( CallbackType value );
+	typedef boost::function<void (Callback*)> PaintFunctionType;
 	
 	/**
-	 * @brief Erase the \c function value.
+	 * @brief	Typedef for the bounding box computation function.
 	 */
-	void 			eraseCallback();
-	//@}
+	typedef boost::function<void (Callback*)> CbbFunctionType;
+
 	/**
-	 * @brief Gets the \c function value.
+	 * @brief Typedef for the paint function field.
+	 */	
+	typedef vgd::field::TPairAssociativeField< FunctionParameterType, PaintFunctionType > FPaintFunctionType;
+	
+	/**
+	 * @brief Typedef for the bounding box computation function field.
+	 */	
+	typedef vgd::field::TPairAssociativeField< FunctionParameterType, CbbFunctionType > FCbbFunctionType;
+	
+		
+	/**
+	 * @name	Paint Function Access
 	 */
-	bool			getCallback( CallbackType& value ) const;
+	//@{
+	/**
+	 * @brief Sets the point function .
+	 */
+	void setPaintFunction( PaintFunctionType value );
+	
+	/**
+	 * @brief Erases the paint function.
+	 */
+	void erasePaintFunction();
+	
+	/**
+	 * @brief Gets the paint function.
+	 */
+	bool getPaintFunction( PaintFunctionType & value ) const;
+	//@}
+
+
+	/**
+	 * @name	Bounding Box Computation Function Access
+	 */
+	//@{
+	/**
+	 * @brief Sets the bounding box computation function .
+	 */
+	void setCbbFunction( CbbFunctionType value );
+	
+	/**
+	 * @brief Erases the bounding box computation function.
+	 */
+	void eraseCbbFunction();
+	
+	/**
+	 * @brief Gets the bounding box computation function.
+	 */
+	bool getCbbFunction( CbbFunctionType & value ) const;
+	//@}
 
 
 	/**
 	 * @name Fields names enumeration.
 	 */
 	//@{
-	
 	/**
-	 * @brief Returns the name of field \c function.
+	 * @brief Returns the name of paint function field.
 	 * 
-	 * @return the name of field \c function.
+	 * @return the name of paint function field.
 	 */
-	static const std::string getFFunction();
+	static const std::string getFPaintFunction();
 
+	/**
+	 * @brief Returns the name of bounding box computation function field.
+	 * 
+	 * @return the name of bounding box computation function field.
+	 */
+	static const std::string getFCbbFunction();
 	//@}
 	
+	
+	/**
+	 * @name	IBoundingBox Implementation
+	 */
+	//@{
+	bool computeBoundingBox( const vgm::MatrixR& transformation );
+	bool isBoundingBoxValid() const;
+	void invalidateBoundingBox( bool bInvalidate = true );
+	//@}	
 	
 	
 protected:
