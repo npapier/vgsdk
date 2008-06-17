@@ -48,6 +48,86 @@ struct VGEGL_API MultiMain : public Main
 		 */
 		virtual void		unapply(	vge::visitor::TraverseElementVector * /*traverseElements */ )		{}
 	};
+	
+	/**
+	 * @brief	Definition of a composite configurator that allows to combine several scene graph configurators in one.
+	 */
+	struct /*VGEGL_API*/ CompositeConfigurator : public SceneGraphConfigurator
+	{
+		/**
+		 * @name	Child Configurator Management
+		 */
+		//@{
+		/**
+		 * @brief	Adds a new configurator.
+		 *
+		 * @param	configurator	a configurator to add
+		 */
+		void add( vgd::Shp< SceneGraphConfigurator > configurator )
+		{
+			if( ! has(configurator) )
+			{
+				m_children.push_back(configurator);
+			}
+		}
+		
+		/**
+		 * @brief	Tells if the given configurator is already part of the composite.
+		 *
+		 * @param	configurator	a configurator
+		 *
+		 * @return	true or false
+		 */
+		const bool has( vgd::Shp< SceneGraphConfigurator > configurator ) const
+		{
+			return std::find(m_children.begin(), m_children.end(), configurator) != m_children.end();
+		}
+		
+		/**
+		 * @brief	Removes a given configurator.
+		 *
+		 * @param	configurator	a configurator to remove
+		 */
+		void remove( vgd::Shp< SceneGraphConfigurator > configurator )
+		{
+			Container::iterator	newEnd = std::remove(m_children.begin(), m_children.end(), configurator);
+			m_children.erase(newEnd, m_children.end());
+		}
+		//@}
+		
+		/**
+		 * @name	Overrides
+		 */
+		//@{
+		const bool apply( vge::visitor::TraverseElementVector * traverseElements )
+		{
+			bool	topologyChanged = false;
+			
+			for( Container::iterator i = m_children.begin(); i != m_children.end(); ++i )
+			{
+				vgd::Shp< SceneGraphConfigurator >	configurator( *i );
+				
+				topologyChanged = topologyChanged || configurator->apply( traverseElements );
+			}
+			return topologyChanged;
+		}
+		
+		void unapply( vge::visitor::TraverseElementVector * traverseElements )
+		{
+			for( Container::iterator i = m_children.begin(); i != m_children.end(); ++i )
+			{
+				vgd::Shp< SceneGraphConfigurator >	configurator( *i );
+				
+				configurator->unapply( traverseElements );
+			}
+		}
+		//@}
+		
+	private:
+		typedef std::vector< vgd::Shp< SceneGraphConfigurator > >	Container;
+		
+		Container	m_children;	///< Holds references to child configurators
+	};
 
 	/**
 	 * @brief Window properties definition
