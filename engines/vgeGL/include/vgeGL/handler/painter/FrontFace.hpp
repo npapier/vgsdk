@@ -10,32 +10,19 @@
 
 #include <vge/handler/painter/SingleAttribute.hpp>
 
-namespace vgd
-{
-	namespace node
-	{
-		struct FrontFace;
-	}
-}
+namespace vgd { namespace node { struct FrontFace; } }
 
-namespace vgeGL
+namespace vgeGL 
 {
-	namespace engine
-	{
-		struct Engine;
-	}
-
-	namespace rc
-	{
-		struct DisplayList;
-	}	
+namespace engine	{ struct Engine;		}
+namespace rc		{ struct DisplayList;	}
 }
 
 
 
 namespace vgeGL
 {
-	
+
 namespace handler
 {
 
@@ -51,15 +38,14 @@ struct VGEGL_API FrontFace : public vge::handler::painter::SingleAttribute
 {
 	META_HANDLER_HPP( FrontFace  );
 
-	//const vge::service::List			getServices	() const;
-	const TargetVector					getTargets()	const;
+	const TargetVector getTargets()	const;
 
-	void	apply				( vge::engine::Engine*, vgd::node::Node* );
-	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
-	
-	void	setToDefaults	();
-	
-	void	paint				( vgeGL::engine::Engine*, vgd::node::FrontFace* );
+	void apply( vge::engine::Engine*, vgd::node::Node* );
+	void unapply( vge::engine::Engine*, vgd::node::Node* );
+
+	void setToDefaults();
+
+	void paint( vgeGL::engine::Engine*, vgd::node::FrontFace* );
 };
 
 

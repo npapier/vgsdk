@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -24,10 +24,10 @@ META_NODE_CPP( FrontFace );
 FrontFace::FrontFace( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
-	// Add field
+	// Adds field(s)
 	addField( new FOrientationType(getFOrientation()) );
 
-	// Link(s)
+	// Sets link(s)
 	link( getDFNode() );
 }
 
@@ -36,6 +36,7 @@ FrontFace::FrontFace( const std::string nodeName ) :
 void FrontFace::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
+	setOrientation( CCW );
 }
 
 
@@ -43,39 +44,27 @@ void FrontFace::setToDefaults( void )
 void FrontFace::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-
-	setOrientation( CCW );
 }
 
 
 
-// ORIENTATION
-bool FrontFace::getOrientation( OrientationValueType& value ) const
+const FrontFace::OrientationValueType FrontFace::getOrientation() const
 {
-	return ( 
-		vgd::field::getParameterValue< OrientationParameterType, OrientationValueType >( this, getFOrientation(), ORIENTATION, value )
-		);
+	return getFieldRO<FOrientationType>(getFOrientation())->getValue();
 }
 
 
 
-void FrontFace::setOrientation( OrientationValueType value )
+void FrontFace::setOrientation( const OrientationValueType value )
 {
-	vgd::field::setParameterValue< OrientationParameterType, OrientationValueType >( this, getFOrientation(), ORIENTATION, value );
-}
-
-
-
-void FrontFace::eraseOrientation()
-{
-	vgd::field::eraseParameterValue< OrientationParameterType, OrientationValueType >( this, getFOrientation(), ORIENTATION );
+	getFieldRW<FOrientationType>(getFOrientation())->setValue( value );
 }
 
 
 
 const std::string FrontFace::getFOrientation( void )
 {
-	return ( "f_orientation" );
+	return "f_orientation";
 }
 
 
@@ -83,3 +72,4 @@ const std::string FrontFace::getFOrientation( void )
 } // namespace node
 
 } // namespace vgd
+
