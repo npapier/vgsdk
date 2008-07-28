@@ -716,7 +716,7 @@ void VertexShape::drawNormals( vgd::node::VertexShape *pCastedNode, const float 
 		const vgd::node::Primitive& primitive(*i);
 	
 		// Start rendering the primitive.
-		if ( primitive.getType() != vgd::node::Primitive::TRIANGLES )
+		if ( primitive.getType() == vgd::node::Primitive::NONE ) //!= vgd::node::Primitive::TRIANGLES )&&( primitive.getType() != vgd::node::Primitive::QUADS ))
 		{
 			// Next primitive ?
 			continue;
