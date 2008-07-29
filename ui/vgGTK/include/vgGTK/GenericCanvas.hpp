@@ -53,6 +53,9 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType
 	:	m_glc( 0 )
 	{
 		vgDebug::get().logDebug("Creates vgGTK::Canvas.");
+		
+		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
+		set_flags( Gtk::CAN_FOCUS );
 
 #ifdef USE_GTKGLEXT
 		setGlCapability( GTK_WIDGET(gobj()) );
@@ -72,6 +75,10 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType
 		m_glc( 0 )
 	{
 		vgDebug::get().logDebug("Creates vgGTK::Canvas.");
+		
+		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
+		set_flags( Gtk::CAN_FOCUS );
+		
 #ifdef USE_GTKGLEXT
 		GdkGLContext * glContext = gtk_widget_get_gl_context( GTK_WIDGET(sharedCanvas->gobj()) );
 		assert( glContext != 0 && "Shared canvas has no OpenGL capability." );
@@ -297,6 +304,14 @@ protected:
 	 * @name	Gtk::Widget overrides
 	 */
 	//@{
+	bool on_button_press_event( GdkEventButton * event )
+	{
+		grab_focus();
+	
+		return Gtk::DrawingArea::on_button_press_event( event );
+	}
+	
+	
 	bool on_configure_event( GdkEventConfigure * event )
 	{
 		//vgDebug::get().logDebug("vgGTK::Canvas::on_configure_event");
