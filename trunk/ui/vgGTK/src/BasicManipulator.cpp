@@ -14,11 +14,7 @@ namespace vgGTK
 
 
 BasicManipulator::BasicManipulator()
-{
-	set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
-	set_flags( Gtk::CAN_FOCUS );
-	grab_focus();
-}
+{}
 
 
 
