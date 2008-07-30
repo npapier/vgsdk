@@ -10,9 +10,6 @@
 #include <vgd/node/TransformDragger.hpp>
 
 #include "vgUI/BasicViewer.hpp"
-//#include "vgWX/event/Keyboard.hpp"
-//#include "vgWX/event/Mouse.hpp"
-//#include "vgWX/vgWX.hpp"
 
 
 
@@ -51,10 +48,6 @@ namespace vgUI
 struct VGUI_API BasicManipulator : public BasicViewer
 {
 	/**
-	 * @name Constructors/Destructor.
-	 */
-	//@{
-	/**
 	 * @name Constructors
 	 */
 	//@{
@@ -69,11 +62,6 @@ struct VGUI_API BasicManipulator : public BasicViewer
 	 * @param	parent	a pointer to the parent window.
 	 */
 	BasicManipulator( Canvas * pSharedCanvas );
-
-	/**
-	 * @brief Destructor.
-	 */
-	~BasicManipulator();
 	//@}
 
 
@@ -82,14 +70,12 @@ struct VGUI_API BasicManipulator : public BasicViewer
 	 * @name Accessors to scene graph.
 	 */
 	//@{
-
 	/**
 	 * @brief Returns the transformation node applied to the whole scene.
 	 *
 	 * @return the transformation node.
 	 */
-	vgd::Shp< vgd::node::TransformDragger >		getSceneTransformation();
-
+	vgd::Shp< vgd::node::TransformDragger > getSceneTransformation();
 	//@}
 
 
@@ -98,7 +84,6 @@ struct VGUI_API BasicManipulator : public BasicViewer
 	 * @name Overriden methods.
 	 */
 	//@{
-
 	/**
 	 * @brief Overriden method.
 	 */
@@ -112,50 +97,8 @@ struct VGUI_API BasicManipulator : public BasicViewer
 
 
 
-	/**
-	 * @name Useful methods.
-	 */
-	//@{
-
-	//@}
-
-
-
-protected:
-	/**
-	 * @name wxWidgets events processing methods.
-	 */
-	//@{
-//	/**
-//	 * @brief Handles \c EVT_MOUSE_EVENTS.
-//	 */
-//	void OnMouseEvent		(wxMouseEvent& event);
-
-	/**
-	 * Handles \c EVT_CHAR events.
-	 */
-//	void OnChar( wxKeyEvent& event );
-	//@}
-
-
-
-protected:
-
-	/**
-	 * @name Members for events.
-	 */
-	//@{
-//	vgWX::event::Keyboard	m_keyboard;
-//	vgWX::event::Mouse		m_mouse;
-	//@}
-
-
-
 private:
-	/**
-	 * @brief The transformation applyed to the whole scene.
-	 */
-	 vgd::Shp< vgd::node::TransformDragger >		m_sceneTransform;
+	 vgd::Shp< vgd::node::TransformDragger > m_sceneTransform;	///< The transformation applyed to the whole scene.
 };
 
 

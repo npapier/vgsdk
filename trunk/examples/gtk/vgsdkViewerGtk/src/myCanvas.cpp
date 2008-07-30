@@ -77,8 +77,10 @@ myCanvas::myCanvas()
 
 	
 	// Scene graph initialization.
-	createDefaultLights();
- 	createClearFrameBuffer();
+	createOptionalNode( LIGHTS );
+	createOptionalNode( CLEAR_FRAME_BUFFER );
+	createOptionalNode( DRAW_STYLE );
+	createOptionalNode( LIGHT_MODEL );
 	
 	
 	// Get the reference of the default technique

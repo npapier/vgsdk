@@ -6,19 +6,18 @@
 
 #include "vgUI/BasicViewer.hpp"
 
+#include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/DirectionalLight.hpp>
+#include <vgd/node/DrawStyle.hpp>
+#include <vgd/node/LightModel.hpp>
+#include <vgd/visitor/FindFirst.hpp>
+#include <vgd/visitor/predicate/ByName.hpp>
 #include <vgm/operations.hpp>
 
 
 
 namespace vgUI
 {
-
-
-
-//BEGIN_EVENT_TABLE( BasicViewer, Canvas )
-//
-//END_EVENT_TABLE()
 
 
 
@@ -166,74 +165,114 @@ const vgd::Shp< vgd::node::Group > BasicViewer::getScene() const
 
 
 
-vgd::Shp< vgd::node::ClearFrameBuffer > BasicViewer::createClearFrameBuffer()
+vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeType type )
 {
-	if( !m_clearFrameBuffer )
+	// Retrieves any existing node of the given type.
+	vgd::Shp< vgd::node::Node > existingNode = getOptionalNode( type );
+	
+	
+	// If no node for the given type exists, then we will create one.
+	if( ! existingNode )
 	{
-		m_clearFrameBuffer = vgd::node::ClearFrameBuffer::create("CLEAR");
-		getSetup()->addChild( m_clearFrameBuffer );
+		switch( type )
+		{
+		case CLEAR_FRAME_BUFFER:
+			existingNode = vgd::node::ClearFrameBuffer::create("CLEAR");
+			getSetup()->addChild( existingNode );
+			break;
+			
+		case LIGHTS:
+			{
+				using vgd::node::DirectionalLight;
+				using vgd::node::Group;
+	
+				// Creates and swithes on the directional lights.
+				vgd::Shp< DirectionalLight > light1 = DirectionalLight::create("defaultLight1");
+				light1->setOn( true );
+				light1->setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
+	
+				vgd::Shp< DirectionalLight > light2 = DirectionalLight::create("defaultLight2");
+				light2->setMultiAttributeIndex( 1 );
+				light2->setOn( true );
+				light2->setDirection( vgm::Vec3f(0.f, 0.f, 1.f) );
+	
+				// Creates the group that will contain the lights.
+				vgd::Shp< Group > lights = Group::create("LIGHTS");
+				lights->addChild( light1 );
+				lights->addChild( light2 );
+	
+				// Inserts the default lights before the scene transform.
+				const int32	insertIndex = m_setup->findChild( m_viewTransform );
+				getSetup()->insertChild( lights, insertIndex );
+				
+				existingNode = lights;
+			}
+			break;
+	
+		case DRAW_STYLE:
+			existingNode = vgd::node::DrawStyle::create("DRAW_STYLE");
+			getSetup()->addChild( existingNode );
+			break;
+	
+		case LIGHT_MODEL:
+			existingNode = vgd::node::LightModel::create("LIGHT_MODEL");
+			getSetup()->addChild( existingNode );
+			break;
+	
+		default:
+			assert( false && "Optional node type not supported" );
+		}
 	}
-	return m_clearFrameBuffer;
+	
+	
+	// Job's done.
+	return existingNode;
 }
 
 
 
-void BasicViewer::destroyClearFrameBuffer()
+void BasicViewer::destroyOptionalNode( const OptionalNodeType type )
 {
-	if( m_clearFrameBuffer )
+	vgd::Shp< vgd::node::Node > optionNode = getOptionalNode( type );
+	
+	if( optionNode )
 	{
-		getSetup()->removeChild( m_clearFrameBuffer );
-		m_clearFrameBuffer.reset();
+		getSetup()->removeChild( optionNode );
 	}
 }
 
 
 
-vgd::Shp< vgd::node::ClearFrameBuffer > BasicViewer::getClearFrameBuffer() const
+vgd::Shp< vgd::node::Node > BasicViewer::getOptionalNode( const OptionalNodeType type )
 {
-	return m_clearFrameBuffer;
-}
-
-
-
-void BasicViewer::createDefaultLights()
-{
-	if( !m_lights )
+	// Retrieves the optional node name.
+	std::string	optionalNodeName;
+	
+	switch( type )
 	{
-		using vgd::node::DirectionalLight;
-		using vgd::node::Group;
-
-		// Creates and swithes on the directional lights.
-		vgd::Shp< DirectionalLight > light1 = DirectionalLight::create("defaultLight1");
-		light1->setOn( true );
-		light1->setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
-
-		vgd::Shp< DirectionalLight > light2 = DirectionalLight::create("defaultLight2");
-		light2->setMultiAttributeIndex( 1 );
-		light2->setOn( true );
-		light2->setDirection( vgm::Vec3f(0.f, 0.f, 1.f) );
-
-		// Creates the group that will contain the lights.
-		m_lights = Group::create("LIGHTS");
-		m_lights->addChild( light1 );
-		m_lights->addChild( light2 );
-
-		// Inserts the default lights before the scene transform.
-		const int32	insertIndex = m_setup->findChild( m_viewTransform );
-		getSetup()->insertChild( m_lights, insertIndex );
+	case CLEAR_FRAME_BUFFER:
+		optionalNodeName = "CLEAR";
+		break;
+		
+	case LIGHTS:
+		optionalNodeName = "LIGHTS";
+		break;
+		
+	case DRAW_STYLE:
+		optionalNodeName = "DRAW_STYLE";
+		break;
+		
+	case LIGHT_MODEL:
+		optionalNodeName = "LIGHT_MODEL";
+		break;
+		
+	default:
+		assert( false && "Optional node type not supported" );
 	}
-}
-
-
-
-void BasicViewer::destroyDefaultLights()
-{
-	if( m_lights )
-	{
-		// Removes the default lights sub-graph and frees the sub-graph
-		getSetup()->removeChild( m_lights );
-		m_lights.reset();
-	}
+	
+	
+	// Searchs for the node in the setup.
+	return vgd::visitor::findFirst( getSetup(), vgd::visitor::predicate::ByName(optionalNodeName) ).second;	
 }
 
 

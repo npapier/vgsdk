@@ -18,47 +18,23 @@ namespace vgUI
 
 BasicManipulator::BasicManipulator()
 :	m_sceneTransform( vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
-
-	//m_previousMouseCoord
 {
 	// init scene dragger.
 	m_sceneTransform->setSurround( getScene() );
 
 	getSetup()->addChild( m_sceneTransform );
-
-	// Install event handler and event listener.
-/*	PushEventHandler( &m_keyboard );
-	PushEventHandler( &m_mouse );
-
-	m_keyboard.attachEventListener( this );
-	m_mouse.attachEventListener( this );*/
 }
 
 
 
 BasicManipulator::BasicManipulator( Canvas * pSharedCanvas )
 :	BasicViewer( pSharedCanvas ),
-
 	m_sceneTransform( vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
-
-	//m_previousMouseCoord
 {
 	// init scene dragger.
 	m_sceneTransform->setSurround( getScene() );
 
 	getSetup()->addChild( m_sceneTransform );
-}
-
-
-
-BasicManipulator::~BasicManipulator()
-{
-	// Deinstall event handler and event listener.
-/*	m_keyboard.detachEventListener( this );
-	m_mouse.detachEventListener( this );
-
-	PopEventHandler();
-	PopEventHandler();*/
 }
 
 
@@ -109,29 +85,6 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 
 	refresh( REFRESH_IF_NEEDED, SYNCHRONOUS );
 }
-
-
-
-//void BasicManipulator::OnChar( wxKeyEvent& event )
-//{
-//	if (	(event.GetKeyCode() == 'b') ||
-//			(event.GetKeyCode() == 'B')	)
-//	{
-//		if ( event.GetKeyCode() == 'b' )
-//		{
-//			bench(20);
-//		}
-//		else
-//		{
-//			bench(100);
-//		}
-//
-//		// Refresh view.
-//		Refresh();
-//	}
-//
-//	event.Skip();
-//}
 
 
 

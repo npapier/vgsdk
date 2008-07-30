@@ -2,16 +2,17 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGUI_BASICVIEWER_HPP
 #define _VGUI_BASICVIEWER_HPP
 
 #include <vgd/node/Camera.hpp>
-#include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/MatrixTransform.hpp>
 
 #include "vgUI/Canvas.hpp"
+
 
 
 namespace vgUI
@@ -146,63 +147,53 @@ struct VGUI_API BasicViewer : public Canvas
 	 */
 	const vgd::Shp< vgd::node::Group > getScene() const;
 	//@}
-
-
+	
+	
 	/**
-	 * @name Frame buffer clearing control
+	 * @name	Optional Nodes Control
 	 */
 	//@{
+	enum OptionalNodeType
+	{
+		CLEAR_FRAME_BUFFER,	///< ClearFrameBuffer optional node
+		DRAW_STYLE,			///< DrawStyle optional node
+		LIGHT_MODEL,		///< LightModel optional node
+		LIGHTS				///< Group optional node containing default lights
+	};
+	
 	/**
-	 * @brief	Creates the node to clear the frame buffer.
-	 *
-	 * @remark	The frame buffer clearing node is only created once. Invoking
-	 * 			several times his method will always return the same node instance.
-	 *
-	 * @return	a shared pointer to the created clear frame buffer node
-	 *
-	 * @author	Guillaume Brocker
+	 * @brief	Creates the given optional node, if it does not already exist.
+	 * 
+	 * @param	type	an optional node type
+	 * 
+	 * @return	a shared pointer to the create node
+	 * 
+	 * @see		destroyOptionalNode
+	 * @see		getOptionalNode
 	 */
-	vgd::Shp< vgd::node::ClearFrameBuffer > createClearFrameBuffer();
-
+	vgd::Shp< vgd::node::Node > createOptionalNode( const OptionalNodeType type );
+	
 	/**
-	 * @brief	Destroyes the frame buffer clearing node
+	 * @brief	Destroyes the the option node of the given type, if any exists.
+	 * 
+	 * @param	type	an optional node type
+	 * 
+	 * @see		createOptionalNode
+	 * @see		getOptionalNode
 	 */
-	void destroyClearFrameBuffer();
-
+	void destroyOptionalNode( const OptionalNodeType type );
+	
 	/**
-	 * @brief	Retrieves the frame buffer clearing node.
-	 *
-	 * @return	a shared pointer to the clear frame buffer node, can be empty when none
+	 * @brief	Retrieves an optional node for the given type, if any exists.
+	 * 
+	 * @param	type	an optional node type
+	 * 
+	 * @return	a share pointer to the found optional node, empty if none exists
+	 * 
+	 * @see		createOptionalNode
+	 * @see		destroyOptionalNode
 	 */
-	vgd::Shp< vgd::node::ClearFrameBuffer > getClearFrameBuffer() const;
-	//@}
-
-
-	/**
-	 * @name Default lighthing control
-	 */
-	//@{
-	/**
-	 * @brief	Creates default lights.
-	 *
-	 * This creates two directionnal lights, one pointing the scene from the
-	 * view point and one pointing the scene from the view point's opposite. These
-	 * lights are not moving with the scene.
-	 *
-	 * @see		destroyDefaultLights
-	 *
-	 * @author	Guillaume Brocker
-	 */
-	void createDefaultLights();
-
-	/**
-	 * @brief	Detroyes default lights.
-	 *
-	 * @see		createDefaultLights
-	 *
-	 * @author	Guillaume Brocker
-	 */
-	void destroyDefaultLights();
+	vgd::Shp< vgd::node::Node > getOptionalNode( const OptionalNodeType type );
 	//@}
 
 
@@ -249,8 +240,6 @@ private:
 
 	vgd::Shp< vgd::node::Group > 			m_setup;			///< A reference on the setup group node.
 	vgd::Shp< vgd::node::Camera >			m_camera;			///< A reference on the camera.
-	vgd::Shp< vgd::node::Group > 			m_lights;			///< A reference on the default lights group
-	vgd::Shp< vgd::node::ClearFrameBuffer >	m_clearFrameBuffer;	///< A reference on the frame buffer clearing node.
 	vgd::Shp< vgd::node::MatrixTransform >	m_viewTransform;	///< A reference on the view transformation.
 	vgd::Shp< vgd::node::Group >			m_scene;			///< A reference on the scene group node.
 	CameraType								m_cameraType;		///< The camera type that should be used.
