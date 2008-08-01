@@ -151,9 +151,7 @@ const int getKeyboardButton( const GdkEventKey * event )
 //	KeyboardButtonEvent::KEY_NUMPAD8
 //	KeyboardButtonEvent::KEY_NUMPAD9
 //	KeyboardButtonEvent::KEY_MULTIPLY
-//	KeyboardButtonEvent::KEY_ADD
 //	KeyboardButtonEvent::KEY_SEPARATOR
-//	KeyboardButtonEvent::KEY_SUBTRACT
 //	KeyboardButtonEvent::KEY_DECIMAL
 //	KeyboardButtonEvent::KEY_DIVIDE
 //
@@ -212,19 +210,19 @@ const int getKeyboardButton( const GdkEventKey * event )
 //	KeyboardButtonEvent::KEY_NUMPAD_DECIMAL
 //	KeyboardButtonEvent::KEY_NUMPAD_DIVIDE
 
-	case GDK_0:	return '0';
-	case GDK_1:	return '1';
-	case GDK_2:	return '2';
-	case GDK_3:	return '3';
-	case GDK_4:	return '4';
-	case GDK_5:	return '5';
-	case GDK_6:	return '6';
-	case GDK_7:	return '7';
-	case GDK_8:	return '8';
-	case GDK_9:	return '9';
+	case GDK_0:		return '0';
+	case GDK_1:		return '1';
+	case GDK_2:		return '2';
+	case GDK_3:		return '3';
+	case GDK_4:		return '4';
+	case GDK_5:		return '5';
+	case GDK_6:		return '6';
+	case GDK_7:		return '7';
+	case GDK_8:		return '8';
+	case GDK_9:		return '9';
+	case GDK_plus:	return KeyboardButtonEvent::KEY_ADD;
+	case GDK_minus:	return KeyboardButtonEvent::KEY_SUBTRACT;
 
-	case GDK_plus:			return '+';
-	case GDK_minus:			return '-';
 	case GDK_colon:			return ',';
 	case GDK_semicolon:		return ';';
 	case GDK_less:			return '<';
@@ -233,18 +231,18 @@ const int getKeyboardButton( const GdkEventKey * event )
 	case GDK_question:		return '?';
 	case GDK_at:			return '@';
 
-	case GDK_KP_0:			return '0';
-	case GDK_KP_1:			return '1';
-	case GDK_KP_2:			return '2';
-	case GDK_KP_3:			return '3';
-	case GDK_KP_4:			return '4';
-	case GDK_KP_5:			return '5';
-	case GDK_KP_6:			return '6';
-	case GDK_KP_7:			return '7';
-	case GDK_KP_8:			return '8';
-	case GDK_KP_9:			return '9';
-	case GDK_KP_Add:		return '+';
-	case GDK_KP_Subtract:	return '-';
+	case GDK_KP_0:			return KeyboardButtonEvent::KEY_NUMPAD0;
+	case GDK_KP_1:			return KeyboardButtonEvent::KEY_NUMPAD1;
+	case GDK_KP_2:			return KeyboardButtonEvent::KEY_NUMPAD2;
+	case GDK_KP_3:			return KeyboardButtonEvent::KEY_NUMPAD3;
+	case GDK_KP_4:			return KeyboardButtonEvent::KEY_NUMPAD4;
+	case GDK_KP_5:			return KeyboardButtonEvent::KEY_NUMPAD5;
+	case GDK_KP_6:			return KeyboardButtonEvent::KEY_NUMPAD6;
+	case GDK_KP_7:			return KeyboardButtonEvent::KEY_NUMPAD7;
+	case GDK_KP_8:			return KeyboardButtonEvent::KEY_NUMPAD8;
+	case GDK_KP_9:			return KeyboardButtonEvent::KEY_NUMPAD9;
+	case GDK_KP_Add:		return KeyboardButtonEvent::KEY_NUMPAD_ADD;
+	case GDK_KP_Subtract:	return KeyboardButtonEvent::KEY_NUMPAD_SUBTRACT;
 
 	case GDK_A:	return 'A';
 	case GDK_B:	return 'B';
