@@ -18,6 +18,7 @@
 #include <vgd/field/TSingleField.hpp>
 
 #include <vgd/node/Camera.hpp>
+#include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/Light.hpp>
 #include <vgd/node/Material.hpp>
 
@@ -42,6 +43,48 @@ namespace vgio
 VGIO_API void configure( std::ostream & os );
 
 }
+
+
+
+/**
+ * @brief	Writes into an output stream the textual representation of the draw style nodes bounding box parameter.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxParameterType & boundingBoxParameter );
+
+
+
+/**
+ * @brief	Writes into an output stream the textual representation of the draw style nodes bounding box parameter value.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxValueType & boundingBoxValue );
+
+
+
+/**
+ * @brief	Writes into an output stream the textual representation of the draw style nodes normal length parameter.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::NormalLengthParameterType & normalLengthParameter );
+
+
+
+/**
+ * @brief	Writes into an output stream the textual representation of the draw style nodes shape parameter.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeParameterType & shapeParameter );
+
+
+
+/**
+ * @brief	Writes into an output stream the textual representation of the draw style nodes shape parameter value.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeValueType & shapeValue );
+
+
+
+/**
+ * @brief	Writes into an output stream the textual representation of the draw style nodes show orientation parameter type.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShowOrientationParameterType & showOrientationParameter );
 
 
 

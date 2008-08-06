@@ -10,6 +10,7 @@
 #include <vgd/Shp.hpp>
 #include <vgGTK/engine/Settings.hpp>
 #include <vgGTK/graph/Browser.hpp>
+#include <vgGTK/node/DrawStyleEditor.hpp>
 
 namespace vgd
 {
@@ -21,7 +22,7 @@ namespace vgd
 
 namespace vgUI
 {
-	struct Canvas;
+	struct BasicManipulator;
 }
 
 
@@ -47,13 +48,14 @@ struct Notebook : public Gtk::Notebook
 	 *
 	 * @param	canvas	a reference to a canvas
 	 */
-	void setCanvas( vgUI::Canvas & canvas );
+	void setCanvas( vgUI::BasicManipulator & canvas );
 	
 	
 private:
 
-	vgGTK::engine::Settings	m_engineSettings;	///< the engine settings widget.
-	vgGTK::graph::Browser	m_graphBrowser;		///< The graph browser widget.
+	vgGTK::engine::Settings			m_engineSettings;	///< the engine settings widget
+	vgGTK::graph::Browser			m_graphBrowser;		///< the graph browser widget
+	vgGTK::node::DrawStyleEditor	m_drawStyleEditor;	///< the vgd::node::DrawStyle editor widget
 };
 
 

@@ -59,9 +59,9 @@ struct VGUI_API BasicViewer : public Canvas
 	/**
 	 * @brief	Constructs a BasicViewer with its own OpenGL context, but that share OpenGL objects with another(s) Canvas.
 	 *
-	 * @param	parent	a pointer to the parent window.
+	 * @param	sharedCanvas	a pointer to a canvas that will share OpenGL resources
 	 */
-	BasicViewer( Canvas * pSharedCanvas );
+	BasicViewer( Canvas * sharedCanvas );
 	//@}
 
 
@@ -194,6 +194,24 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @see		destroyOptionalNode
 	 */
 	vgd::Shp< vgd::node::Node > getOptionalNode( const OptionalNodeType type );
+	
+	/**
+	 * @brief	Retrieves an optional node for the given type, if any exists.
+	 * 
+	 * @param	type	an optional node type
+	 * 
+	 * @return	a share pointer to the found optional node, empty if none exists
+	 * 
+	 * @see		createOptionalNode
+	 * @see		destroyOptionalNode
+	 */
+	template< typename NodeType >
+	vgd::Shp< NodeType > getOptionalNodeAs( const OptionalNodeType type )
+	{
+		vgd::Shp< vgd::node::Node >	node = getOptionalNode( type );
+		
+		return node ? vgd::dynamic_pointer_cast<NodeType>(node) : vgd::Shp<NodeType>();
+	}
 	//@}
 
 
