@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGD_NODE_DRAWSTYLE_HPP
 #define _VGD_NODE_DRAWSTYLE_HPP
@@ -91,19 +92,24 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 	typedef vgd::field::TPairAssociativeField< ShapeParameterType, ShapeValueType > FShapeType;
 
 	/**
+	 * @brief Tests the presence of the \c shape value.
+	 */
+	bool hasShape() const;
+
+	/**
 	 * @brief Gets the \c shape value.
 	 */
-	bool			getShape( ShapeValueType& value ) const;
+	bool getShape( ShapeValueType& value ) const;
 
 	/**
 	 * @brief Sets the \c shape value.
 	 */
-	void 			setShape( ShapeValueType value );
+	void setShape( ShapeValueType value );
 	
 	/**
 	 * @brief Erase the \c shape value.
 	 */
-	void 			eraseShape();
+	void eraseShape();
 	//@}
 
 

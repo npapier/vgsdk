@@ -44,9 +44,9 @@ BasicViewer::BasicViewer() :
 
 
 
-BasicViewer::BasicViewer( Canvas * pSharedCanvas ) :
+BasicViewer::BasicViewer( Canvas * sharedCanvas ) :
 
-	Canvas( pSharedCanvas ),
+	Canvas( sharedCanvas ),
 
 	m_setup(				vgd::node::Group::create("SETUP") ),
 	m_camera(				vgd::node::Camera::create("CAMERA") ),

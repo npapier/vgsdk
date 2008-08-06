@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgd/node/DrawStyle.hpp"
 
@@ -56,6 +57,13 @@ void DrawStyle::setOptionalsToDefaults()
 
 
 // SHAPE
+bool DrawStyle::hasShape() const
+{
+	return vgd::field::hasParameterValue< ShapeParameterType, ShapeValueType >( this, getFShape(), SHAPE );
+}
+
+
+
 bool DrawStyle::getShape( ShapeValueType& value ) const
 {
 	return ( 
