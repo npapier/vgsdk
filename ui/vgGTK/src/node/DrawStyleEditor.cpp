@@ -125,7 +125,7 @@ struct DrawStyleEditor::NormalLengthBox : public Gtk::VBox
 	
 	NormalLengthBox( sigc::slot0< void > callback )
 	:	m_adjustment( 1.f, -100.f, 100.f, 1, 10 ),
-		m_spinButton( m_adjustment, 1.f, 1 )
+		m_spinButton( m_adjustment, 1.f, 2 )
 	{
 		set_border_width( 12 );
 		
