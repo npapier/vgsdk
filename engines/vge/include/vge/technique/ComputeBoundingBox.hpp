@@ -7,13 +7,12 @@
 #define _VGE_TECHNIQUE_COMPUTEBOUNDINGBOX_HPP
 
 #include "vge/technique/Technique.hpp"
-#include "vge/vge.hpp"
 
 
 
 namespace vge
 {
-	
+
 namespace technique
 {
 
@@ -21,6 +20,9 @@ namespace technique
 
 /**
  * @brief Technique to compute/update bounding box.
+ *
+ * @ingroup g_techniques_vge
+ * @ingroup g_techniques
  */
 struct ComputeBoundingBox : public Technique
 {
