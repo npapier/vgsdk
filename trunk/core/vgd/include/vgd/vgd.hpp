@@ -7,7 +7,7 @@
 #define _VGD_VGD_HPP
 
 /**
- * @defgroup g_vgd vgd (V)ersatile (G)raphical (D)ata
+ * @defgroup g_vgd vgd-(V)ersatile (G)raphical (D)ata
  * 
  * vgd, a shortcut for Versatile Graphical Data, is a collection of classes for describing 3d world.
  *
@@ -38,13 +38,13 @@
  * 	- Clip coordinates system :
  * 	- Normalized device coordinates :
  * 	- Window coordinates system :
-  * The windows, in a graphical user interface, are a series of planes parallel to the surface of the monitor.
- * The x-coordinate refers to the horizontal axis (left to right), the y-coordinate refers to the vertical axis (down to up) .
- * The origin of this coordinates system is the bottom left corner of the window. Width and height are expressed in pixels.
+ *		The windows, in a graphical user interface, are a series of planes parallel to the surface of the monitor.
+ *		The x-coordinate refers to the horizontal axis (left to right), the y-coordinate refers to the vertical axis (down to up) .
+ *		The origin of this coordinates system is the bottom left corner of the window. Width and height are expressed in pixels.
  *
  *	- Window stack (or window z-ordering) :
- * The z-coordinate refers to the axis perpendicular to the other two (backward to forward). 
- * The z-order refers to the order of the windows along the z-axis. When two windows overlap, their z-order determines which one appears on top of the other.
+ *		The z-coordinate refers to the axis perpendicular to the other two (backward to forward). 
+ *		The z-order refers to the order of the windows along the z-axis. When two windows overlap, their z-order determines which one appears on top of the other.
  *
  * 	- Normalized window coordinates system :
  * 		Width and height are expressed by a float within [0,1].
