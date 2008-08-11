@@ -15,12 +15,18 @@
 
 namespace vgeGL
 {
-	
+
 namespace technique
 {
 
 
 
+/**
+ * @brief Propagates an event into a scene graph
+ *
+ * @ingroup g_techniques_vgeGL
+ * @ingroup g_techniques
+ */
 struct VGEGL_API ProcessEvent : public Technique
 {
 	/**

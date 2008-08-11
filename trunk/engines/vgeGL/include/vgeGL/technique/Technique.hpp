@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -14,6 +14,20 @@ namespace vgeGL
 {
 	namespace engine { struct Engine; }
 }
+
+
+
+/**
+ * @namespace vgeGL::technique
+ * 
+ * @brief Describes multi-pass strategy used by engine to evaluate a scene graph using OpenGL.
+ *
+ * @defgroup g_techniques_vgeGL	Technique from vgeGL
+ *
+ * @brief Specialized techniques using OpenGL
+ *
+ * @ingroup g_techniques
+ */
 
 
 

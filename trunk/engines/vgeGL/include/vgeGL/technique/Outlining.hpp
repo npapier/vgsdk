@@ -19,6 +19,8 @@
 //
 //
 //
+// * @ingroup g_techniques_vgeGL
+// * @ingroup g_techniques
 //struct VGEGL_API Outlining : public Technique
 //{
 //	/**
