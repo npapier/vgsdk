@@ -20,6 +20,9 @@ namespace technique
 
 /**
  * @brief The default technique to render opaque and transparent object.
+ *
+ * @ingroup g_techniques_vgeGL
+ * @ingroup g_techniques
  */
 struct VGEGL_CLASS_API Main : public Technique
 {

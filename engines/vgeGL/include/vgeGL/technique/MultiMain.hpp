@@ -27,7 +27,10 @@ namespace technique
  * @todo MultiTechnique instead of MultiMain to be able to use another technique for the rendering (Shadow technique for example...).
  * @todo Window flipping in x and/or y
  * @todo Renders in FBO
- * @todo Composes windows to add transparency 
+ * @todo Composes windows to add transparency
+ *
+ * @ingroup g_techniques_vgeGL
+ * @ingroup g_techniques
  */
 struct VGEGL_API MultiMain : public Main
 {

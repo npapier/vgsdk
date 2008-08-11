@@ -6,7 +6,6 @@
 #ifndef _VGE_TECHNIQUE_TECHNIQUE_HPP
 #define _VGE_TECHNIQUE_TECHNIQUE_HPP
 
-#include "vge/vge.hpp"
 #include "vge/visitor/NodeCollectorExtended.hpp"
 
 namespace vgd { template<class T> struct Shp; }
@@ -14,11 +13,27 @@ namespace vgd { template<class T> struct Shp; }
 namespace vge
 {
 	namespace engine { struct Engine; }
-	
+
 	namespace pass { struct Pass; }
-	
-	namespace service { struct Service;	}
+
+	namespace service { struct Service; }
 }
+
+
+
+/**
+ * @defgroup g_techniques Techniques
+ *
+ * @brief Describes multi-pass strategy used by engine to evaluate a scene graph.
+ */
+
+/**
+ * @defgroup g_techniques_vge Techniques from vge
+ *
+ * @brief Techniques using CPU
+ *
+ * @ingroup g_techniques
+ */
 
 
 
@@ -28,7 +43,7 @@ namespace vge
 /** 
  * @namespace vge::technique
  * 
- * @brief Provide a framework to describe evaluation strategy used by engine.
+ * @brief Describes multi-pass strategy used by engine to evaluate a scene graph.
  */
 namespace technique
 {

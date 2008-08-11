@@ -13,7 +13,7 @@
 
 namespace vgeGL
 {
-	
+
 namespace technique
 {
 
@@ -33,6 +33,9 @@ namespace technique
  * @todo More than one camera node in the scene graph is actually not supported.
  * @todo m_pSelectBuffer = new GLuint[4*1024]; => 1024*4 is an arbitrary buffer size.
  * @todo See FIXME in .cpp
+ *
+ * @ingroup g_techniques_vgeGL
+ * @ingroup g_techniques
  */
 struct VGEGL_API RayCasting : public Technique
 {
