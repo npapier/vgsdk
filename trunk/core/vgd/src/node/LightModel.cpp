@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -131,7 +131,7 @@ void LightModel::eraseViewer()
 bool LightModel::getTwoSided( TwoSidedValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< TwoSidedParameterType, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED, value )
+		vgd::field::getParameterValue< int /*TwoSidedParameterType*/, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED, value )
 		);
 }
 
@@ -139,14 +139,14 @@ bool LightModel::getTwoSided( TwoSidedValueType& value ) const
 
 void LightModel::setTwoSided( TwoSidedValueType value )
 {
-	vgd::field::setParameterValue< TwoSidedParameterType, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED, value );
+	vgd::field::setParameterValue< int /*TwoSidedParameterType*/, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED, value );
 }
 
 
 
 void LightModel::eraseTwoSided()
 {
-	vgd::field::eraseParameterValue< TwoSidedParameterType, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED );
+	vgd::field::eraseParameterValue< int /*TwoSidedParameterType*/, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED );
 }
 
 

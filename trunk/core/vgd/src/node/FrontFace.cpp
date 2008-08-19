@@ -17,7 +17,32 @@ namespace node
 
 
 
-META_NODE_CPP( FrontFace );
+vgd::Shp< FrontFace > FrontFace::create( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< FrontFace > node( new FrontFace(nodeName) );
+
+	/* Adds a vertex (i.e. a node) to boost::graph */
+	graph().addNode( node );
+
+	/* Sets fields to their default values */
+	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< FrontFace > FrontFace::createWhole( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< FrontFace > node = FrontFace::create(nodeName);
+
+	/* Sets optional fields to their default values */
+	node->setOptionalsToDefaults();
+
+	return node;
+}
 
 
 
@@ -48,6 +73,7 @@ void FrontFace::setOptionalsToDefaults()
 
 
 
+// Orientation
 const FrontFace::OrientationValueType FrontFace::getOrientation() const
 {
 	return getFieldRO<FOrientationType>(getFOrientation())->getValue();
@@ -62,6 +88,7 @@ void FrontFace::setOrientation( const OrientationValueType value )
 
 
 
+// Field name accessor(s)
 const std::string FrontFace::getFOrientation( void )
 {
 	return "f_orientation";
@@ -69,7 +96,14 @@ const std::string FrontFace::getFOrientation( void )
 
 
 
+IMPLEMENT_INDEXABLE_CLASS_CPP( , FrontFace );
+
+
+
+const vgd::basic::RegisterNode<FrontFace> FrontFace::m_registrationInstance;
+
+
+
 } // namespace node
 
 } // namespace vgd
-

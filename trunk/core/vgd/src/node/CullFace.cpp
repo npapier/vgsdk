@@ -17,7 +17,32 @@ namespace node
 
 
 
-META_NODE_CPP( CullFace );
+vgd::Shp< CullFace > CullFace::create( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< CullFace > node( new CullFace(nodeName) );
+
+	/* Adds a vertex (i.e. a node) to boost::graph */
+	graph().addNode( node );
+
+	/* Sets fields to their default values */
+	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< CullFace > CullFace::createWhole( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< CullFace > node = CullFace::create(nodeName);
+
+	/* Sets optional fields to their default values */
+	node->setOptionalsToDefaults();
+
+	return node;
+}
 
 
 
@@ -48,6 +73,7 @@ void CullFace::setOptionalsToDefaults()
 
 
 
+// Mode
 const CullFace::ModeValueType CullFace::getMode() const
 {
 	return getFieldRO<FModeType>(getFMode())->getValue();
@@ -62,6 +88,7 @@ void CullFace::setMode( const ModeValueType value )
 
 
 
+// Field name accessor(s)
 const std::string CullFace::getFMode( void )
 {
 	return "f_mode";
@@ -69,7 +96,14 @@ const std::string CullFace::getFMode( void )
 
 
 
+IMPLEMENT_INDEXABLE_CLASS_CPP( , CullFace );
+
+
+
+const vgd::basic::RegisterNode<CullFace> CullFace::m_registrationInstance;
+
+
+
 } // namespace node
 
 } // namespace vgd
-

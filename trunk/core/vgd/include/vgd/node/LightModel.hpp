@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,7 +9,6 @@
 #include <vgm/Rectangle.hpp>
 #include <vgm/Vector.hpp>
 
-#include "vgd/vgd.hpp"
 #include "vgd/field/TPairAssociativeField.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
@@ -214,7 +213,7 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	/**
 	 * @brief Typedef for the \c twoSided field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< TwoSidedParameterType, TwoSidedValueType > FTwoSidedType;
+	typedef vgd::field::TPairAssociativeField< int /*TwoSidedParameterType*/, TwoSidedValueType > FTwoSidedType;
 
 	/**
 	 * @brief Gets the \c twoSided value.
