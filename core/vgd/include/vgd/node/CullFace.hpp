@@ -22,12 +22,11 @@ namespace node
 /**
  * @brief Cull face facets definition node
  *
- * The CullFace node specifies whether front-facing and/or back-facing facets can be culled. Facets include triangles, quadrilaterals, polygons and rectangles. FrontFace node specifies which of the clockwise and counterclockwise facets are front-facing and back-facing. See vgd::node::FrontFace.
+ * The CullFace node specifies whether front-facing and/or back-facing facets can be culled. Facets include triangles, quadrilaterals, polygons and rectangles. FrontFace node specifies which of the clockwise and counterclockwise facets are front-facing and back-facing. See vgd::node::FrontFace. 
  *
  * New fields defined by this node :
- * - SFEnum \c mode = DISABLED
-
- * 	Specifies whether front-facing and/or back-facing facets can be culled.
+ *	- SFEnum \c mode = DISABLED\n
+ *		Specifies whether front-facing and/or back-facing facets can be culled.
  *
  * Inherited fields :
  * @todo generates this section
@@ -38,7 +37,26 @@ namespace node
  */
 struct VGD_API CullFace : public vgd::node::SingleAttribute
 {
-	META_NODE_HPP( CullFace );
+	/**
+	 * @name Factories
+	 */
+	//@{
+
+	/**
+	 * @brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values
+	 */
+	static vgd::Shp< CullFace > create( const std::string nodeName = "NoName" );
+
+	/**
+	 *@brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values (optionals fields too).
+	 */
+	static vgd::Shp< CullFace > createWhole( const std::string nodeName = "DefaultWhole" );
+
+	//@}
 
 
 
@@ -50,19 +68,25 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the value contained by field named \c mode.
 	 */
-	typedef enum
+	typedef vgd::field::EnumType ModeValueType;
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
 	{
-		DISABLED = 258,	///< Facet culling is disabled
-		FRONT = 260,	///< Front-facing facets are culled
-		BACK = 259,	///< Back-facing facets are culled
-		FRONT_AND_BACK = 261,	///< Front-facing and back-facing facets are culled
+		DISABLED = 257,	///< Facet culling is disabled
+		FRONT = 259,	///< Front-facing facets are culled
+		BACK = 258,	///< Back-facing facets are culled
+		FRONT_AND_BACK = 260,	///< Front-facing and back-facing facets are culled
 		DEFAULT_MODE = DISABLED	///< Facet culling is disabled
-	} ModeValueType;
+	};
 
 	/**
 	 * @brief Type definition of the field named \c mode
 	 */
-	typedef vgd::field::TSingleField< ModeValueType > FModeType;
+	typedef vgd::field::SFEnum FModeType;
+
 
 	/**
 	 * @brief Gets the value of field named \c mode.
@@ -85,7 +109,7 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 
 	/**
 	 * @brief Returns the name of field \c mode.
-	 * 
+	 *
 	 * @return the name of field \c mode.
 	 */
 	static const std::string getFMode( void );
@@ -99,6 +123,12 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	 */
 	//@{
 
+	void	setToDefaults( void );
+
+	void	setOptionalsToDefaults();
+
+	//@}
+
 protected:
 	/**
 	 * @brief Default constructor
@@ -106,11 +136,9 @@ protected:
 	CullFace( const std::string nodeName );
 
 public:
-	void	setToDefaults( void );
-
-	void	setOptionalsToDefaults();
-
-	//@}
+	IMPLEMENT_INDEXABLE_CLASS_HPP( , CullFace );
+private:
+	static const vgd::basic::RegisterNode<CullFace> m_registrationInstance;
 };
 
 
@@ -118,5 +146,4 @@ public:
 } // namespace node
 
 } // namespace vgd
-
 #endif //#ifndef _VGD_NODE_CULLFACE_HPP

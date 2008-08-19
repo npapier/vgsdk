@@ -22,12 +22,11 @@ namespace node
 /**
  * @brief Front face polygons definition node
  *
- * The FrontFace node specifies if polygons are in clockwise winding in window coordinates, or counterclockwise winding in window coordinates, are taken to be front-facing.
+ * The FrontFace node specifies if polygons are in clockwise winding in window coordinates, or counterclockwise winding in window coordinates, are taken to be front-facing. 
  *
  * New fields defined by this node :
- * - SFEnum \c orientation = CCW
-
- * 	Specifies if front facing polygons are clockwise (CW) or conterclockwise (CCW)
+ *	- SFEnum \c orientation = CCW\n
+ *		Specifies if front facing polygons are clockwise (CW) or conterclockwise (CCW)
  *
  * Inherited fields :
  * @todo generates this section
@@ -38,7 +37,26 @@ namespace node
  */
 struct VGD_API FrontFace : public vgd::node::SingleAttribute
 {
-	META_NODE_HPP( FrontFace );
+	/**
+	 * @name Factories
+	 */
+	//@{
+
+	/**
+	 * @brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values
+	 */
+	static vgd::Shp< FrontFace > create( const std::string nodeName = "NoName" );
+
+	/**
+	 *@brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values (optionals fields too).
+	 */
+	static vgd::Shp< FrontFace > createWhole( const std::string nodeName = "DefaultWhole" );
+
+	//@}
 
 
 
@@ -50,17 +68,23 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the value contained by field named \c orientation.
 	 */
-	typedef enum
+	typedef vgd::field::EnumType OrientationValueType;
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
 	{
-		CCW = 256,	///< (C)ounter-(C)lock(W)ise ordering
-		CW = 257,	///< (C)lock(W)ise ordering
+		CCW = 261,	///< (C)ounter-(C)lock(W)ise ordering
+		CW = 262,	///< (C)lock(W)ise ordering
 		DEFAULT_ORIENTATION = CCW	///< (C)ounter-(C)lock(W)ise ordering
-	} OrientationValueType;
+	};
 
 	/**
 	 * @brief Type definition of the field named \c orientation
 	 */
-	typedef vgd::field::TSingleField< OrientationValueType > FOrientationType;
+	typedef vgd::field::SFEnum FOrientationType;
+
 
 	/**
 	 * @brief Gets the value of field named \c orientation.
@@ -83,7 +107,7 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 
 	/**
 	 * @brief Returns the name of field \c orientation.
-	 * 
+	 *
 	 * @return the name of field \c orientation.
 	 */
 	static const std::string getFOrientation( void );
@@ -97,6 +121,12 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	 */
 	//@{
 
+	void	setToDefaults( void );
+
+	void	setOptionalsToDefaults();
+
+	//@}
+
 protected:
 	/**
 	 * @brief Default constructor
@@ -104,11 +134,9 @@ protected:
 	FrontFace( const std::string nodeName );
 
 public:
-	void	setToDefaults( void );
-
-	void	setOptionalsToDefaults();
-
-	//@}
+	IMPLEMENT_INDEXABLE_CLASS_HPP( , FrontFace );
+private:
+	static const vgd::basic::RegisterNode<FrontFace> m_registrationInstance;
 };
 
 
@@ -116,5 +144,4 @@ public:
 } // namespace node
 
 } // namespace vgd
-
 #endif //#ifndef _VGD_NODE_FRONTFACE_HPP
