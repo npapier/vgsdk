@@ -6,12 +6,14 @@
 #include "vgGTK/node/DrawStyleEditor.hpp"
 
 #include <functional>
+#include <boost/assign/list_of.hpp>
 
 #include <gtkmm/adjustment.h>
 #include <gtkmm/box.h>
 #include <gtkmm/checkbutton.h>
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/radiobuttongroup.h>
+#include <gtkmm/separator.h>
 #include <gtkmm/spinbutton.h>
 
 #include <vgUI/Canvas.hpp>
@@ -26,153 +28,22 @@ namespace node
 
 
 
-/**
- * @brief	Contains all widgets to edit the drawStyle's bounding box field
- */
-struct DrawStyleEditor::BoundingBoxValueBox : public Gtk::VBox
-{
-	typedef std::map< vgd::node::DrawStyle::BoundingBoxValueType, Gtk::RadioButton * >	ButtonContainer;
-	
-	ButtonContainer	m_buttons;
-	
-	BoundingBoxValueBox( sigc::slot1<void, vgd::node::DrawStyle::BoundingBoxValueType > callback )
-	{
-		using vgd::node::DrawStyle;
-		
-		Gtk::RadioButtonGroup	radioGroup;
-		
-		m_buttons[ DrawStyle::NO_BOUNDING_BOX ]				= Gtk::manage( new Gtk::RadioButton(radioGroup, "None") );
-		m_buttons[ DrawStyle::OBJECT_SPACE ]				= Gtk::manage( new Gtk::RadioButton(radioGroup, "Object Space") );
-		m_buttons[ DrawStyle::AA_OBJECT_SPACE ]				= Gtk::manage( new Gtk::RadioButton(radioGroup, "AA Object Space") );
-		m_buttons[ DrawStyle::OBJECT_AND_AA_OBJECT_SPACE ]	= Gtk::manage( new Gtk::RadioButton(radioGroup, "Object and AA Object Space") );
-		
-		set_border_width( 12 );
-		
-		add( *m_buttons[ DrawStyle::NO_BOUNDING_BOX ]			 );
-		add( *m_buttons[ DrawStyle::OBJECT_SPACE ]				 );
-		add( *m_buttons[ DrawStyle::AA_OBJECT_SPACE ]			 );
-		add( *m_buttons[ DrawStyle::OBJECT_AND_AA_OBJECT_SPACE ] );
-				
-		m_buttons[ DrawStyle::NO_BOUNDING_BOX ]				->signal_clicked().connect( sigc::bind(callback, DrawStyle::NO_BOUNDING_BOX) );
-		m_buttons[ DrawStyle::OBJECT_SPACE ]				->signal_clicked().connect( sigc::bind(callback, DrawStyle::OBJECT_SPACE) );
-		m_buttons[ DrawStyle::AA_OBJECT_SPACE ]				->signal_clicked().connect( sigc::bind(callback, DrawStyle::AA_OBJECT_SPACE) );
-		m_buttons[ DrawStyle::OBJECT_AND_AA_OBJECT_SPACE ]	->signal_clicked().connect( sigc::bind(callback, DrawStyle::OBJECT_AND_AA_OBJECT_SPACE) );
-	}
-};
-
-
-
-
-/**
- * @brief	Contains all widgets to edit the drawStyle's shape field
- */
-struct DrawStyleEditor::ShapeValueBox : public Gtk::VBox
-{
-	typedef std::map< vgd::node::DrawStyle::ShapeValueType, Gtk::RadioButton * >	ButtonContainer;
-	
-	ButtonContainer	m_buttons;
-	
-	ShapeValueBox( sigc::slot1<void, vgd::node::DrawStyle::ShapeValueType > callback )
-	{
-		using vgd::node::DrawStyle;
-		
-		Gtk::RadioButtonGroup	radioGroup;
-		
-		m_buttons[ DrawStyle::NONE ]				= Gtk::manage( new Gtk::RadioButton(radioGroup, "None") );
-		m_buttons[ DrawStyle::POINT ]				= Gtk::manage( new Gtk::RadioButton(radioGroup, "Point") );
-		m_buttons[ DrawStyle::FLAT ]				= Gtk::manage( new Gtk::RadioButton(radioGroup, "Flat") );
-		m_buttons[ DrawStyle::SMOOTH ]				= Gtk::manage( new Gtk::RadioButton(radioGroup, "Smooth") );
-		m_buttons[ DrawStyle::WIREFRAME ]			= Gtk::manage( new Gtk::RadioButton(radioGroup, "Wireframe") );
-		m_buttons[ DrawStyle::HIDDEN_LINE ]			= Gtk::manage( new Gtk::RadioButton(radioGroup, "Hidden Line") );
-		m_buttons[ DrawStyle::FLAT_HIDDEN_LINE ]	= Gtk::manage( new Gtk::RadioButton(radioGroup, "Flat Hidden Line") );
-		m_buttons[ DrawStyle::SMOOTH_HIDDEN_LINE ]	= Gtk::manage( new Gtk::RadioButton(radioGroup, "Smooth Hidden Line") );
-		m_buttons[ DrawStyle::NEIGHBOUR ]			= Gtk::manage( new Gtk::RadioButton(radioGroup, "Neighbour") );
-		
-		set_border_width( 12 );
-		
-		add( *m_buttons[ DrawStyle::NONE ]				 );
-		add( *m_buttons[ DrawStyle::POINT ]				 );
-		add( *m_buttons[ DrawStyle::FLAT ]				 );
-		add( *m_buttons[ DrawStyle::SMOOTH ]			 );
-		add( *m_buttons[ DrawStyle::WIREFRAME ]			 );
-		add( *m_buttons[ DrawStyle::HIDDEN_LINE ]		 );
-		add( *m_buttons[ DrawStyle::FLAT_HIDDEN_LINE ]	 );
-		add( *m_buttons[ DrawStyle::SMOOTH_HIDDEN_LINE ] );
-		add( *m_buttons[ DrawStyle::NEIGHBOUR ]			 );
-		
-		m_buttons[ DrawStyle::NONE ]				->signal_clicked().connect( sigc::bind(callback, DrawStyle::NONE) );
-		m_buttons[ DrawStyle::POINT ]				->signal_clicked().connect( sigc::bind(callback, DrawStyle::POINT) );
-		m_buttons[ DrawStyle::FLAT ]				->signal_clicked().connect( sigc::bind(callback, DrawStyle::FLAT) );
-		m_buttons[ DrawStyle::SMOOTH ]				->signal_clicked().connect( sigc::bind(callback, DrawStyle::SMOOTH) );
-		m_buttons[ DrawStyle::WIREFRAME ]			->signal_clicked().connect( sigc::bind(callback, DrawStyle::WIREFRAME) );
-		m_buttons[ DrawStyle::HIDDEN_LINE ]			->signal_clicked().connect( sigc::bind(callback, DrawStyle::HIDDEN_LINE) );
-		m_buttons[ DrawStyle::FLAT_HIDDEN_LINE ]	->signal_clicked().connect( sigc::bind(callback, DrawStyle::FLAT_HIDDEN_LINE) );
-		m_buttons[ DrawStyle::SMOOTH_HIDDEN_LINE ]	->signal_clicked().connect( sigc::bind(callback, DrawStyle::SMOOTH_HIDDEN_LINE) );
-		m_buttons[ DrawStyle::NEIGHBOUR ]			->signal_clicked().connect( sigc::bind(callback, DrawStyle::NEIGHBOUR) );
-
-	}
-};
-
-
-
-/**
- * @brief	Contains all widgets to edit the DrawStyle's normal length field value.
- */
-struct DrawStyleEditor::NormalLengthBox : public Gtk::VBox
-{
-	Gtk::Adjustment		m_adjustment;
-	Gtk::SpinButton		m_spinButton;
-	
-	NormalLengthBox( sigc::slot0< void > callback )
-	:	m_adjustment( 1.f, -100.f, 100.f, 1, 10 ),
-		m_spinButton( m_adjustment, 1.f, 2 )
-	{
-		set_border_width( 12 );
-		
-		add( m_spinButton );
-		
-		m_adjustment.signal_value_changed().connect( callback );
-	}
-};
-
-
-
-/**
- * @brief	Contains all widgets to edit the DrawStyle's show roentation field value.
- */
-struct DrawStyleEditor::ShowOrientationValueBox : public Gtk::VBox
-{
-	Gtk::CheckButton	m_button;
-	
-	ShowOrientationValueBox( sigc::slot0< void > callback )
-	:	m_button("Visible")
-	{
-		set_border_width( 12 );
-		
-		add( m_button );
-		
-		m_button.signal_clicked().connect( callback );
-	}
-};
-
-
-
-
 DrawStyleEditor::DrawStyleEditor( vgd::Shp< vgd::node::DrawStyle > drawStyle, vgUI::Canvas * canvas )
 :	m_drawStyle					( drawStyle ),
 	m_canvas					( 0 ),
 	m_lastNormalLengthValue		( 1.f ),
 	m_normalLengthButton		( 0 ),
-	m_normalLengthBox			( 0 ),
+	m_normalLengthSpin			( 0 ),
+	m_normalLengthValue			( 0 ),
 	m_lastShapeValue			( vgd::node::DrawStyle::DEFAULT_SHAPE ),
 	m_shapeButton				( 0 ),
-	m_shapeValueBox				( 0 ),
+	m_shapeBox					( 0 ),
 	m_lastShowOrientationValue	( true ),
 	m_showOrientationButton		( 0 ),
-	m_showOrientationValueBox	( 0 ),
+	m_showOrientationValueButton( 0 ),
 	m_lastBoundingBoxValue		( vgd::node::DrawStyle::DEFAULT_BOUNDING_BOX ),
 	m_boundingBoxButton			( 0 ),
-	m_boundingBoxValueBox		( 0 )
+	m_boundingBoxBox			( 0 )
 {
 	createContent();
 	refreshWidgets();
@@ -182,44 +53,81 @@ DrawStyleEditor::DrawStyleEditor( vgd::Shp< vgd::node::DrawStyle > drawStyle, vg
 
 void DrawStyleEditor::createContent()
 {
+	using boost::assign::list_of;
 	using vgd::node::DrawStyle;
 	
 	// Shape configuration widgets.
+	const ShapeBox::ValueContainer	shapeValues = 
+		list_of< ShapeBox::Value >(DrawStyle::NONE, "None")
+		(DrawStyle::POINT, "Point")
+		(DrawStyle::FLAT, "Flat")
+		(DrawStyle::SMOOTH, "Smooth")
+		(DrawStyle::WIREFRAME, "Wireframe")
+		(DrawStyle::HIDDEN_LINE, "Hidden Line")
+		(DrawStyle::FLAT_HIDDEN_LINE, "Flat Hidden Line")
+		(DrawStyle::SMOOTH_HIDDEN_LINE, "Smooth Hidden Line")
+		(DrawStyle::NEIGHBOUR, "Neighbour");
+
 	m_shapeButton	= Gtk::manage( new Gtk::CheckButton("Shape") );
-	m_shapeValueBox	= Gtk::manage( new ShapeValueBox(sigc::mem_fun(this, &DrawStyleEditor::onShapeValue)) );
+	m_shapeBox		= Gtk::manage( new ShapeBox(shapeValues, sigc::mem_fun(this, &DrawStyleEditor::onShapeValue)) );
+	
+	m_shapeBox->set_border_width( 12 );
 			
 	pack_start( *m_shapeButton, Gtk::PACK_SHRINK );
-	pack_start( *m_shapeValueBox, Gtk::PACK_SHRINK );
+	pack_start( *m_shapeBox, Gtk::PACK_SHRINK );
+	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 12 );
 	
 	m_shapeButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onShape) );
 
 
 	// Normal length configuration widgets.
+	Gtk::VBox		* normalLengthBox			= Gtk::manage( new Gtk::VBox() );
+		
 	m_normalLengthButton	= Gtk::manage( new Gtk::CheckButton("Normal Length") );
-	m_normalLengthBox		= Gtk::manage( new NormalLengthBox(sigc::mem_fun(this, &DrawStyleEditor::onNormalLengthValue)) );
-	
+	m_normalLengthValue		= Gtk::manage( new Gtk::Adjustment(1.f, -100.f, 100.f, 1, 10) );
+	m_normalLengthSpin		= Gtk::manage( new Gtk::SpinButton(*m_normalLengthValue) );
+		
+	normalLengthBox->set_border_width( 12 );
+	normalLengthBox->add( *m_normalLengthSpin );
+		
 	pack_start( *m_normalLengthButton, Gtk::PACK_SHRINK );
-	pack_start( *m_normalLengthBox, Gtk::PACK_SHRINK );
+	pack_start( *normalLengthBox, Gtk::PACK_SHRINK );
+	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 12 );
 	
 	m_normalLengthButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onNormalLength) );
-		
+	m_normalLengthValue->signal_value_changed().connect( sigc::mem_fun(this, &DrawStyleEditor::onNormalLengthValue) );
 
 	// Show orientation widgets.
-	m_showOrientationButton		= Gtk::manage( new Gtk::CheckButton("Show Orientation") );
-	m_showOrientationValueBox	= Gtk::manage( new ShowOrientationValueBox(sigc::mem_fun(this, &DrawStyleEditor::onShowOrientationValue)) );
+	Gtk::VBox	* showOrientationBox = Gtk::manage( new Gtk::VBox() );
+	
+	m_showOrientationButton			= Gtk::manage( new Gtk::CheckButton("Show Orientation") );
+	m_showOrientationValueButton	= Gtk::manage( new Gtk::CheckButton("Activate") );
+	
+	showOrientationBox->set_border_width( 12 );
+	showOrientationBox->add( *m_showOrientationValueButton );
 	
 	pack_start( *m_showOrientationButton, Gtk::PACK_SHRINK );
-	pack_start( *m_showOrientationValueBox, Gtk::PACK_SHRINK );
+	pack_start( *showOrientationBox, Gtk::PACK_SHRINK );
+	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 12 );
 	
 	m_showOrientationButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onShowOrientation) );
+	m_showOrientationValueButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onShowOrientationValue) );
 		
 	
 	// Bounding box widgets.
-	m_boundingBoxButton		= Gtk::manage( new Gtk::CheckButton("Bounding Box") );
-	m_boundingBoxValueBox	= Gtk::manage( new BoundingBoxValueBox( sigc::mem_fun(this, &DrawStyleEditor::onBoundingBoxValue)) );
+	const BoundingBoxBox::ValueContainer	boundingBoxValues =
+		list_of< BoundingBoxBox::Value >(DrawStyle::NO_BOUNDING_BOX, "None")
+		(DrawStyle::OBJECT_SPACE, "Object Space")
+		(DrawStyle::AA_OBJECT_SPACE, "AA Object Space")
+		(DrawStyle::OBJECT_AND_AA_OBJECT_SPACE, "Object and AA Object Space");
+	
+	m_boundingBoxButton	= Gtk::manage( new Gtk::CheckButton("Bounding Box") );
+	m_boundingBoxBox	= Gtk::manage( new BoundingBoxBox(boundingBoxValues, sigc::mem_fun(this, &DrawStyleEditor::onBoundingBoxValue)) );
+	
+	m_boundingBoxBox->set_border_width( 12 );
 
 	pack_start( *m_boundingBoxButton, Gtk::PACK_SHRINK );
-	pack_start( *m_boundingBoxValueBox, Gtk::PACK_SHRINK );
+	pack_start( *m_boundingBoxBox, Gtk::PACK_SHRINK );
 	
 	m_boundingBoxButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onBoundingBox) );
 }
@@ -263,10 +171,10 @@ void DrawStyleEditor::refreshWidgets()
 		
 		m_shapeButton->set_sensitive( true );
 		m_shapeButton->set_active( hasShape );
-		m_shapeValueBox->set_sensitive( hasShape );
+		m_shapeBox->set_sensitive( hasShape );
 		if( hasShape )
 		{
-			m_shapeValueBox->m_buttons[ shape ]->set_active();
+			m_shapeBox->setValue( shape );
 		}
 		
 		
@@ -278,10 +186,10 @@ void DrawStyleEditor::refreshWidgets()
 		
 		m_normalLengthButton->set_sensitive( true );
 		m_normalLengthButton->set_active( hasNormalLength );
-		m_normalLengthBox->set_sensitive( hasNormalLength );
+		m_normalLengthSpin->set_sensitive( hasNormalLength );
 		if( hasNormalLength )
 		{
-			m_normalLengthBox->m_adjustment.set_value( normalLength );
+			m_normalLengthValue->set_value( normalLength );
 		}
 		
 		
@@ -293,10 +201,10 @@ void DrawStyleEditor::refreshWidgets()
 		
 		m_showOrientationButton->set_sensitive( true );
 		m_showOrientationButton->set_active( hasShowOrientation );
-		m_showOrientationValueBox->set_sensitive( hasShowOrientation );
+		m_showOrientationValueButton->set_sensitive( hasShowOrientation );
 		if( hasShowOrientation )
 		{
-			m_showOrientationValueBox->m_button.set_active( showOrientation );
+			m_showOrientationValueButton->set_active( showOrientation );
 		}
 
 		
@@ -308,29 +216,29 @@ void DrawStyleEditor::refreshWidgets()
 		
 		m_boundingBoxButton->set_sensitive( true );
 		m_boundingBoxButton->set_active( hasBoundingBox );
-		m_boundingBoxValueBox->set_sensitive( hasBoundingBox );
+		m_boundingBoxBox->set_sensitive( hasBoundingBox );
 		if( hasBoundingBox )
 		{
-			m_boundingBoxValueBox->m_buttons[ boundingBox ]->set_active();
+			m_boundingBoxBox->setValue( boundingBox );
 		}
 	}
 	else
 	{
 		// Shape
 		m_shapeButton->set_sensitive( false );
-		m_shapeValueBox->set_sensitive( false );
+		m_shapeBox->set_sensitive( false );
 		
 		// Normal length
 		m_normalLengthButton->set_sensitive( false );
-		m_normalLengthBox->set_sensitive( false );
+		m_normalLengthSpin->set_sensitive( false );
 		
 		// Show orientation
 		m_showOrientationButton->set_sensitive( false );
-		m_showOrientationValueBox->set_sensitive( false );
+		m_showOrientationValueButton->set_sensitive( false );
 		
 		// Bounding box
 		m_boundingBoxButton->set_sensitive( false );
-		m_boundingBoxValueBox->set_sensitive( false );
+		m_boundingBoxBox->set_sensitive( false );
 	}
 }
 
@@ -389,9 +297,9 @@ void DrawStyleEditor::onNormalLength()
 void DrawStyleEditor::onNormalLengthValue()
 {
 	assert( m_drawStyle );
-	assert( m_normalLengthBox );
+	assert( m_normalLengthValue );
 	
-	m_drawStyle->setNormalLength( static_cast< float >(m_normalLengthBox->m_adjustment.get_value()) );
+	m_drawStyle->setNormalLength( static_cast< float >(m_normalLengthValue->get_value()) );
 	refreshCanvas();
 }
 
@@ -451,9 +359,9 @@ void DrawStyleEditor::onShowOrientation()
 void DrawStyleEditor::onShowOrientationValue()
 {
 	assert( m_drawStyle );
-	assert( m_showOrientationValueBox );
+	assert( m_showOrientationValueButton );
 	
-	m_drawStyle->setShowOrientation( m_showOrientationValueBox->m_button.get_active() );
+	m_drawStyle->setShowOrientation( m_showOrientationValueButton->get_active() );
 	refreshCanvas();
 }
 

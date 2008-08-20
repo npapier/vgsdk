@@ -164,7 +164,12 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 		typedef vgd::node::DrawStyle::FNormalLengthType		PAFDrawStyleNormalLength;
 		typedef vgd::node::DrawStyle::FShapeType			PAFDrawStyleShape;
 		typedef vgd::node::DrawStyle::FShowOrientationType	PAFDrawStyleShowOrientation;
-								
+		
+		typedef vgd::node::LightModel::FAmbientType		PAFLightModelAmbient;
+		typedef vgd::node::LightModel::FModelType		PAFLightModelModel;
+		typedef vgd::node::LightModel::FTwoSidedType	PAFLightModelTwoSided;
+		typedef vgd::node::LightModel::FViewerType		PAFLightModelViewer;
+										
 		typedef vgd::node::Material::FColorType		PAFMaterialColor;
 		typedef vgd::node::Material::FShininessType	PAFMaterialShininess;
 
@@ -173,12 +178,15 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 
 /*		if	( fieldType == typeid(PAFCameraScissor) )		os << fieldManager->getFieldRO< PAFCameraScissor >( fieldName );
 		else if	( fieldType == typeid(PAFCameraViewport) )		os << fieldManager->getFieldRO< PAFCameraViewport >( fieldName );
-		else */if	( fieldType == typeid(PAFDrawStyleBoundingBox))			os << fieldManager->getFieldRO< PAFDrawStyleBoundingBox >( fieldName );
-		else if	( fieldType == typeid(PAFDrawStyleNormalLength))	os << fieldManager->getFieldRO< PAFDrawStyleNormalLength >( fieldName );
-		else if	( fieldType == typeid(PAFDrawStyleShape))			os << fieldManager->getFieldRO< PAFDrawStyleShape >( fieldName );
-		else if	( fieldType == typeid(PAFDrawStyleShowOrientation))	os << fieldManager->getFieldRO< PAFDrawStyleShowOrientation >( fieldName );
-		else if	( fieldType == typeid(PAFMaterialColor))			os << fieldManager->getFieldRO< PAFMaterialColor >( fieldName );
-		else if	( fieldType == typeid(PAFMaterialShininess))		os << fieldManager->getFieldRO< PAFMaterialShininess >( fieldName );
+		else */if	( fieldType == typeid(PAFDrawStyleBoundingBox) )	os << fieldManager->getFieldRO< PAFDrawStyleBoundingBox >( fieldName );
+		else if	( fieldType == typeid(PAFDrawStyleNormalLength) )		os << fieldManager->getFieldRO< PAFDrawStyleNormalLength    >( fieldName );
+		else if	( fieldType == typeid(PAFDrawStyleShape) )				os << fieldManager->getFieldRO< PAFDrawStyleShape           >( fieldName );
+		else if	( fieldType == typeid(PAFDrawStyleShowOrientation) )	os << fieldManager->getFieldRO< PAFDrawStyleShowOrientation >( fieldName );
+		else if	( fieldType == typeid(PAFLightModelAmbient) )			os << fieldManager->getFieldRO< PAFLightModelAmbient        >( fieldName );
+		else if	( fieldType == typeid(PAFLightModelModel) )				os << fieldManager->getFieldRO< PAFLightModelModel          >( fieldName );
+		else if	( fieldType == typeid(PAFLightModelTwoSided) )			os << fieldManager->getFieldRO< PAFLightModelTwoSided       >( fieldName );
+		else if	( fieldType == typeid(PAFLightModelViewer) )			os << fieldManager->getFieldRO< PAFLightModelViewer         >( fieldName );
+		else if	( fieldType == typeid(PAFMaterialShininess) )			os << fieldManager->getFieldRO< PAFMaterialShininess        >( fieldName );
 		else
 		{
 			// Serialization system using typelist
