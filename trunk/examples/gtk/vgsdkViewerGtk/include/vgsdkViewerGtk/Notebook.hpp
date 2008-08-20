@@ -11,6 +11,7 @@
 #include <vgGTK/engine/Settings.hpp>
 #include <vgGTK/graph/Browser.hpp>
 #include <vgGTK/node/DrawStyleEditor.hpp>
+#include <vgGTK/node/LightModelEditor.hpp>
 
 namespace vgd
 {
@@ -56,6 +57,7 @@ private:
 	vgGTK::engine::Settings			m_engineSettings;	///< the engine settings widget
 	vgGTK::graph::Browser			m_graphBrowser;		///< the graph browser widget
 	vgGTK::node::DrawStyleEditor	m_drawStyleEditor;	///< the vgd::node::DrawStyle editor widget
+	vgGTK::node::LightModelEditor	m_lightModelEditor;	///< the vgd::node::LightModel editor widget
 };
 
 

@@ -11,9 +11,13 @@
 #include <gtkmm/box.h>
 #include <gtkmm/checkbutton.h>
 #include <gtkmm/radiobutton.h>
-#include <vgd/node/drawStyle.hpp>
+#include <gtkmm/spinbutton.h>
+
+#include <vgd/Shp.hpp>
+#include <vgd/node/DrawStyle.hpp>
 
 #include "vgGTK/vgGTK.hpp"
+#include "vgGTK/node/internal/EnumBox.hpp"
 
 namespace vgUI
 {
@@ -37,7 +41,7 @@ struct VGGTK_API DrawStyleEditor : public Gtk::VBox
 	 * @brief	Constructor
 	 * 
 	 * @param	drawStyle	a reference to a DrawStyle node to edit (default is empty)
-	 * @para	canvas		a reference to a canvas to refresh on value changes (default is null)
+	 * @param	canvas		a reference to a canvas to refresh on value changes (default is null)
 	 */
 	DrawStyleEditor( vgd::Shp< vgd::node::DrawStyle > drawStyle = vgd::Shp< vgd::node::DrawStyle >(), vgUI::Canvas * canvas = 0 );
 	
@@ -58,27 +62,28 @@ struct VGGTK_API DrawStyleEditor : public Gtk::VBox
 	
 private:
 	
-	typedef std::set< Gtk::Widget * >	WidgetContainer;
-	
-	struct BoundingBoxValueBox;
-	struct NormalLengthBox;
-	struct ShapeValueBox;
-	struct ShowOrientationValueBox;
-	
-	vgd::Shp< vgd::node::DrawStyle 	>				m_drawStyle;					///< Refefences the DrawStyle node to edit
+	typedef internal::EnumBox< vgd::node::DrawStyle::BoundingBoxValueType >	BoundingBoxBox;
+	typedef internal::EnumBox< vgd::node::DrawStyle::ShapeValueType >		ShapeBox;
+		
+	vgd::Shp< vgd::node::DrawStyle >				m_drawStyle;					///< Refefences the DrawStyle node to edit
 	vgUI::Canvas									* m_canvas;						///< References the canvas to refresh on value changes
-	float											m_lastNormalLengthValue;		///< Holds the last normal length value.
+
+	vgd::node::DrawStyle::NormalLengthValueType		m_lastNormalLengthValue;		///< Holds the last normal length value.
 	Gtk::CheckButton								* m_normalLengthButton;			///< References the widget used to control the normal length field
-	NormalLengthBox									* m_normalLengthBox;			///< References the widet used to edit the normal length field values
+	Gtk::Adjustment									* m_normalLengthValue;			///< References the widet used to edit the normal length field values
+	Gtk::SpinButton									* m_normalLengthSpin;			///< References the widet used to edit the normal length field values
+	
 	vgd::node::DrawStyle::ShapeValueType			m_lastShapeValue;				///< Holds the last shape value.
 	Gtk::CheckButton								* m_shapeButton;				///< References the widget used to control the shape field
-	ShapeValueBox									* m_shapeValueBox;				///< References a widget used to edit shape field values
+	ShapeBox										* m_shapeBox;					///< References a widget used to edit shape field values
+	
 	vgd::node::DrawStyle::ShowOrientationValueType	m_lastShowOrientationValue;		///< Holds the last show orientation value
 	Gtk::CheckButton								* m_showOrientationButton;		///< References the widget used to control the show orentation field
-	ShowOrientationValueBox							* m_showOrientationValueBox;	///< References the widget used to edit show orientation values
+	Gtk::CheckButton								* m_showOrientationValueButton;	///< References the widget used to edit show orientation values
+	
 	vgd::node::DrawStyle::BoundingBoxValueType		m_lastBoundingBoxValue;			///< Holds the last bouding box field value
 	Gtk::CheckButton								* m_boundingBoxButton;			///< References the widgets used to control the bounding box field
-	BoundingBoxValueBox								* m_boundingBoxValueBox;		///< Reference the widget used to edit bouding box values
+	BoundingBoxBox									* m_boundingBoxBox;				///< Reference the widget used to edit bouding box values
 	
 	/**
 	 * @brief	Creates the content of the widget.
@@ -96,7 +101,7 @@ private:
 	void refreshWidgets();
 	
 	/**
-	 * @name	Signa Handlers
+	 * @name	Signal Handlers
 	 */
 	//@{
 	void onBoundingBox();

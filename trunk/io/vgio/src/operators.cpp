@@ -114,12 +114,94 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Show
 
 
 
-std::ostream & operator << ( std::ostream & os, vgd::node::Light::OnParameterType & on )
+std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParameterType & on )
 {
 	switch( on )
 	{
 	case vgd::node::Light::ON:	os << "ON"; break;
 	default:					os << "unsupported"; break;
+	}
+
+	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::AmbientParameterType & ambient )
+{
+	switch( ambient )
+	{
+	case vgd::node::LightModel::AMBIENT:	os << "AMBIENT"; break;
+	default:								os << "unsupported"; break;
+	}
+
+	return os;
+}
+
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::ModelParameterType & model )
+{
+	switch( model )
+	{
+	case vgd::node::LightModel::MODEL:	os << "MODEL"; break;
+	default:							os << "unsupported"; break;
+	}
+
+	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::ModelValueType & value )
+{
+	switch( value )
+	{
+	case vgd::node::LightModel::LIGHTING_OFF:			os << "LIGHTING_OFF"; break;
+	case vgd::node::LightModel::STANDARD_PER_VERTEX:	os << "STANDARD_PER_VERTEX"; break;
+	case vgd::node::LightModel::STANDARD_PER_PIXEL:		os << "STANDARD_PER_PIXEL"; break;
+	default:											os << "unsupported"; break;
+	}
+
+	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::TwoSidedParameterType & twoSided )
+{
+	switch( twoSided )
+	{
+	case vgd::node::LightModel::TWO_SIDED:	os << "TWO_SIDED"; break;
+	default:								os << "unsupported"; break;
+	}
+
+	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::ViewerParameterType & viewer )
+{
+	switch( viewer )
+	{
+	case vgd::node::LightModel::VIEWER:	os << "VIEWER"; break;
+	default:							os << "unsupported"; break;
+	}
+
+	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::ViewerValueType & value )
+{
+	switch( value )
+	{
+	case vgd::node::LightModel::AT_INFINITY:	os << "AT_INFINITY"; break;
+	case vgd::node::LightModel::AT_EYE:			os << "AT_EYE"; break;
+	default:									os << "unsupported"; break;
 	}
 
 	return os;
