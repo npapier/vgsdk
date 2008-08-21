@@ -33,14 +33,14 @@ META_HANDLER_CPP( Group );
 const Handler::TargetVector Group::getTargets()	const
 {
 	TargetVector targets;
-	
+
 	targets.reserve( 4 );
 	targets.push_back( vgd::node::Group::getClassIndexStatic() );
 	targets.push_back( vgd::node::MultiSwitch::getClassIndexStatic() );
 	targets.push_back( vgd::node::Separator::getClassIndexStatic() );
-	targets.push_back( vgd::node::Switch::getClassIndexStatic() );				
-		
-	return ( targets );
+	targets.push_back( vgd::node::Switch::getClassIndexStatic() );
+
+	return targets;
 }
 
 

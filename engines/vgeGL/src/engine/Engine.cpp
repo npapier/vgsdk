@@ -5,7 +5,9 @@
 
 #include "vgeGL/engine/Engine.hpp"
 
+#include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
+#include <vgd/basic/FilenameCollector.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/Texture2D.hpp>
 //#include <vgd/node/TextureCubeMap.hpp>
@@ -13,6 +15,7 @@
 #include <vgDebug/convenience.hpp>
 #include <vge/handler/Handler.hpp>
 #include <vge/handler/HandlerRegistry.hpp>
+#include "vgeGL/engine/ProgramGenerator.hpp"
 
 
 
@@ -25,7 +28,10 @@ namespace engine
 
 
 Engine::Engine()
-{}
+:	m_glslProgramGenerator( new ProgramGenerator() ),
+	m_glslState(0)
+{
+}
 
 
 
@@ -36,11 +42,15 @@ void Engine::reset()
 		return;
 	}
 
+	//
+	m_isGLSLEnabled		= false;
+	m_currentProgram	= 0;
+
 	// Reset cache
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
 
-	m_texture.clear();
-	m_texture.resize( getMaxTexUnits() );
+	//
+	getGLSLState().reset( getMaxTexUnits() );
 
 	if ( m_firstInstance )
 	{
@@ -59,6 +69,13 @@ void Engine::reset()
 
 
 
+void Engine::setupGLSLShaders()
+{
+	//loadShaders( "data/ar", ".*_vs[.]glsl" );				/// ????????????????????????????????????????????????????????
+}
+
+
+
 void Engine::setToDefaults()
 {
 	if ( isGLContextCurrent() == false )
@@ -69,10 +86,8 @@ void Engine::setToDefaults()
 	// GLOBAL INITIALIZATION
 	glEnable( GL_LIGHTING );
 	glEnable( GL_DEPTH_TEST );
-	
-//	glEnable( GL_NORMALIZE );
 
-	if ( isGL_EXT_rescale_normal() )
+	if ( false /*isGL_EXT_rescale_normal() */)		// @todo uncomment and test with GLSL
 	{
 		vgLogDebug( "vgeGL.Engine: GL_EXT_rescale_normal extension detected and used." );
 		glEnable( GL_RESCALE_NORMAL );  // gle: GL_EXT_rescale_normal
@@ -112,9 +127,17 @@ void Engine::setToDefaults()
 	//
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_LIGHTS			= %i", getMaxLights() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE			= %i", getMaxTexSize() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
+
+	// GLSL
+	setupGLSLShaders();
+
+	//
+	glo::GLSLProgram *program = new glo::GLSLProgram;
+	getGLSLManager().add( "vgSDK.main", program );
+	vgLogDebug( "vgeGL.Engine: Main shader successfully registered in GLSLManager" );
 }
 
 
@@ -126,15 +149,171 @@ vge::rc::Manager& Engine::getGLManager()
 
 
 
+/**
+ * @todo All OpenGL objects are destroyed by this method. Not very cute.
+ */
+void Engine::setGLSLEnabled( const bool isEnabled )
+{
+	m_isGLSLEnabled = isEnabled;
+
+	// @todo FIXME
+	//getGLManager().clear();			///< not very cute
+}
+
+
+
+const bool Engine::isGLSLEnabled() const
+{
+	return m_isGLSLEnabled;
+}
+
+
+
+void Engine::setCurrentProgram( glo::GLSLProgram * program )
+{
+	m_currentProgram = program;
+}
+
+
+
+void Engine::sethCurrentProgram( glo::GLSLProgram * program )
+{
+	setCurrentProgram( program );
+
+	if ( program )
+	{
+		program->use();
+	}
+	else
+	{
+		glo::GLSLProgram::useFixedPaths();
+	}
+}
+
+
+
+glo::GLSLProgram * Engine::getCurrentProgram() const
+{
+	return m_currentProgram;
+}
+
+
+
+glo::GLSLProgram * Engine::gethCurrentProgram() const
+{
+	if ( isGLSLEnabled() )
+	{
+		return m_currentProgram;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
+
+const GLSLState& Engine::getGLSLState() const
+{
+	return m_glslState;
+}
+
+
+
+GLSLState& Engine::getGLSLState()
+{
+	return m_glslState;
+}
+
+
+
+vgd::Shp< ProgramGenerator > Engine::getGLSLProgramGenerator()
+{
+	return m_glslProgramGenerator;
+}
+
+
+
+Engine::GLSLProgramManagerType& Engine::getGLSLManager()
+{
+	return m_glslManager;
+}
+
+
+
+void Engine::loadShaders( const std::string& path, const std::string& regex )
+{
+	using vgd::basic::FilenameCollector;
+
+	FilenameCollector filenameCollector( path );
+	filenameCollector.setRegex( regex );
+	const FilenameCollector::StringList& filenames = filenameCollector.run();
+
+	for( std::list< std::string >::const_iterator	i		= filenames.begin(),
+													iEnd	= filenames.end();
+		i != iEnd;
+		++i )
+	{
+		using ::glo::GLSLProgram;
+
+		// Gets the filename
+		const std::string filename( *i );
+
+		// Loads file
+		const std::string shaderString = GLSLProgram::loadFile( filename );
+
+		if ( !shaderString.empty() )
+		{
+			// File not empty, creates the shader
+			vgDebug::get().logDebug( "vgeGL.Engine: Loads shader %s", filename.c_str() );
+
+			///@todo Creates glo::GLSLShader
+			GLSLProgram *program = new GLSLProgram;
+
+			// Determines the type of shader in the file from extension
+			const bool isAVertexShader = (filename.rfind( "_vs.glsl" ) != std::string::npos );
+			
+			const GLSLProgram::ShaderType shaderType = isAVertexShader ? GLSLProgram::VERTEX : GLSLProgram::FRAGMENT;
+
+			const bool addShaderRetVal = program->addShader( shaderString.c_str(), shaderType, true );
+
+			if ( addShaderRetVal )
+			{
+				// Adds it to the GLSL manager
+				getGLSLManager().add( filename, program );
+				vgDebug::get().logDebug( "vgeGL.Engine: Shader %s successfully registered in GLSLManager", filename.c_str() );
+			}
+			else
+			{
+				vgDebug::get().logDebug( "vgeGL.Engine: Fails to registered shader %s", filename.c_str() );
+
+				//const std::string infoLog = program->getInfoLog( program->getProgramObject() );??????????????????????? FIXME
+				//vgDebug::get().logDebug( "Engine:\n%s\n", infoLog.c_str() );
+
+				delete program;
+			}
+		}
+		else
+		{
+			vgDebug::get().logDebug( "vgeGL.Engine: Empty shader %s", filename.c_str() );
+		}
+	}
+}
+
+
+
 const bool Engine::isGLContextCurrent() const
 {
-	// FIXME: founded a smarter method to test if OpenGL is current.
+	// @todo FIXME should found a smarter method to test if OpenGL is current.
 	const GLubyte *pString = glGetString(GL_EXTENSIONS);
 	return ( pString != 0 );
 }
 
 
 	
+/**
+ * @todo Use glLoadIdentity() and creates synchronizeMatricesFromEngineToGL()
+ */
 void Engine::resetMatrices()
 {
 	if ( isGLContextCurrent() == false )
@@ -259,7 +438,7 @@ void Engine::getViewport( vgm::Rectangle2i& viewport ) const
 
 
 
-const int32 Engine::getDepthBits() const
+const int Engine::getDepthBits() const
 {
 	GLint depthBits;
 	glGetIntegerv( GL_DEPTH_BITS, &depthBits );
@@ -338,32 +517,8 @@ void Engine::activeTexture( const int desiredTextureUnit )
 void Engine::activeTexture( const vgd::node::Texture * textureNode )
 {
 	const int desiredTextureUnit = textureNode->getMultiAttributeIndex();
-	
+
 	activeTexture( desiredTextureUnit );
-}
-
-
-
-::glo::Texture *Engine::getTexture( const int indexTexUnit )
-{
-	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
-	assert( indexTexUnit < getMaxTexUnits() && "Invalid texture unit index." );
-
-	return m_texture[indexTexUnit];
-}
-
-
-
-::glo::Texture *Engine::setTexture( const int indexTexUnit, ::glo::Texture * texture )
-{
-	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
-	assert( indexTexUnit < getMaxTexUnits() && "Invalid texture unit index." );
-
-	::glo::Texture * oldTexture = m_texture[indexTexUnit];
-
-	m_texture[indexTexUnit] = texture;
-
-	return oldTexture;
 }
 
 
@@ -402,9 +557,11 @@ bool Engine::populateNodeRegistry()
 
 
 
-vge::rc::Manager	Engine::m_glManager;
+vge::rc::Manager				Engine::m_glManager;
 
-bool				Engine::m_firstInstance				= true;
+Engine::GLSLProgramManagerType	Engine::m_glslManager;
+
+bool							Engine::m_firstInstance = true;
 
 
 

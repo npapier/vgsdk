@@ -8,11 +8,17 @@
 
 #include <vge/engine/Engine.hpp>
 #include <vge/rc/Manager.hpp>
+#include <vge/rc/TManager.hpp>
 
-#include "vgeGL/vgeGL.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 
-namespace glo { struct Texture; }
+namespace glo 
+{
+	struct GLSLProgram;
+//	struct Texture; 
+}
 namespace vgd { namespace node { struct Texture; } }
+namespace vgeGL { namespace engine { struct ProgramGenerator; } }
 
 
 
@@ -54,6 +60,17 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	// Overridden
 	void reset();
 
+private:
+	/**
+	 * @brief Initializes all shaders from vgsdk repository
+	 * 
+	 * @remarks vgsdk repository is a directory named data. Not very practical for deployment.
+	 * @todo Shaders should be in a zip file or in the code ?
+	 * 
+	 * @remarks This method is automatically called by setTodefaults() 
+	 */
+	void setupGLSLShaders();
+public:
 	//@}
 
 
@@ -66,9 +83,9 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	/**
 	 * @brief Sets OpenGL state variables to their defaults values.
 	 *
-	 * \li Lighting computation is enable (use the current lighting parameters to compute the vertex color).
-	 * \li Depth test is enable (do depth comparisons and update the depth buffer).
-	 * \li Normalization of normals is enable (normal vectors specified with glNormal are scaled to unit length after 
+	 * \li Lighting computation is enabled (use the current lighting parameters to compute the vertex color).
+	 * \li Depth test is enabled (do depth comparisons and update the depth buffer).
+	 * \li Normalization of normals is enabled (normal vectors specified with glNormal are scaled to unit length after 
 	 * transformation).
 	 * 
 	 * \li Call the method setToDefaults() for each registered handler.
@@ -80,9 +97,114 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	 */
 	vge::rc::Manager&	getGLManager();
 	//@}
-	
-	
-	
+
+
+
+	/**
+	 * @name GLSL related methods
+	 */
+	//@{
+
+	/**
+	 * @brief Enables or disables the GLSL rendering pipeline depending on the value of the parameter b.
+	 *
+	 * When this option is enabled, vgSDK generates on the fly GLSL programs and uses them in its rendering pipeline, otherwise the
+	 * fixed functionality pipeline is used.
+	 *
+	 * @param isEnabled		true when GLSL rendering pipeline must be enabled, false otherwise
+	 */
+	void setGLSLEnabled( const bool isEnabled = true );
+
+	/**
+	 * @brief Determines whether the GLSL rendering pipeline is enabled.
+	 *
+	 * @return true if the GLSL rendering pipeline is enabled, false otherwise
+	 */
+	const bool isGLSLEnabled() const;
+
+
+	/**
+	 * @brief Sets the current GLSL program.
+	 *
+	 * @param	program	a pointer on the GLSL program
+	 */
+	void setCurrentProgram( glo::GLSLProgram * program );
+
+	/**
+	 * @brief Sets the current GLSL program.
+	 *
+	 * @param	program	a pointer on the GLSL program that must be installed in the current rendering context.
+	 *
+	 * @remarks If the given parameter is an null pointer, then the programmable processors
+	 * will be disabled, and fixed functionality will be used.
+	 */
+	void sethCurrentProgram( glo::GLSLProgram * program = 0 );
+
+	/**
+	 * @brief Retrieves the current GLSL program.
+	 *
+	 * @return a pointer on the current GLSL program or an empty shared pointer
+	 */
+	glo::GLSLProgram * getCurrentProgram() const;
+
+	/**
+	 * @brief Retrieves the current GLSL program.
+	 *
+	 * @return if GLSL is enabled in this engine (see isGLSLEnabled()), then returns a pointer on the current GLSL program. 
+	 * Otherwise returns an null pointer.
+	 */
+	glo::GLSLProgram * gethCurrentProgram() const;
+
+
+	/**
+	 * @brief Retrieves the current GLSL state.
+	 *
+	 * @return the current GLSL state.
+	 */
+	const GLSLState& getGLSLState() const;
+
+	/**
+	 * @brief Retrieves the current GLSL state.
+	 *
+	 * @return the current GLSL state.
+	 */
+	GLSLState& getGLSLState();
+
+
+	/**
+	 * @brief Returns the OpenGL GLSL program generator.
+	 *
+	 * @return a shared pointer on the OpenGL GLSL program generator
+	 */
+	vgd::Shp< ProgramGenerator > getGLSLProgramGenerator();
+
+
+	/**
+	 * @brief Typedef for the glsl program manager
+	 * 
+	 * This manager associates a single string to a single glo::GLSLProgram
+	 */
+	typedef vge::rc::TManager< std::string > GLSLProgramManagerType;
+
+	/**
+	 * @brief Gets the glsl program manager.
+	 */
+	GLSLProgramManagerType& getGLSLManager();
+
+
+	/**
+	 * @brief Loads shaders from files
+	 *
+	 * This method loads shaders from files and registers them in the GLSL manager (see getGLSLManager()).
+	 *
+	 * @param path		path from where files would be searched
+	 * @param regex		regular expression used to filter files to load
+	 */
+	void loadShaders( const std::string& path, const std::string& regex );
+	//@}
+
+
+
 	/**
 	 * @name OpenGL context management methods
 	 * 
@@ -95,7 +217,7 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	 * 
 	 * @return true if there is a current OpenGL context, false if not.
 	 */
-	const bool	isGLContextCurrent() const;
+	const bool isGLContextCurrent() const;
 
 	//@}
 
@@ -139,7 +261,7 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	 * 
 	 * @return the number of bitplanes in the depth buffer
 	 */
-	const int32 getDepthBits() const;
+	const int getDepthBits() const;
 
 	/**
 	 * @brief Returns the depth texture format computed from the number of bitplanes in the depth buffer.
@@ -172,29 +294,26 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	 * @param textureNode	the texture node (used to know which texture unit must be activated, i.e. getMultiAttributeIndex())
 	 */
 	void activeTexture( const vgd::node::Texture * textureNode );
-
 	//@}
 
 
 
 	/**
-	 * @brief Retrieves texture object for the desired texture unit.
-	 *
-	 * @param indexTexUnit		the index of the texture unit
-	 *
-	 * @return The texture object for the given texture unit or a null pointer.
-	*/
-	::glo::Texture *getTexture( const int indexTexUnit = 0 );
+	 * @name Render target
+	 * @todo
+	 */
+	//@{
+	//Nonstereo double-buffered : GL_FRONT, GL_BACK
+	//Stereo double-buffered :GL_FRONT_LEFT, GL_FRONT_RIGHT, GL_BACK_LEFT, GL_BACK_RIGHT
+	//[GL_AUXi]
+	//beginTexture/endTexture([node] or texRC or [FBO])
+	//MRT
+	// color or depth buffer
 
-	/**
-	 * @brief Sets texture object for the given texture unit.
-	 *
-	 * @param indexTexUnit		the index of the texture unit
-	 * @param texture			the texture object
-	 *
-	 * @return The previous texture object for the given texture unit.
-	*/
-	::glo::Texture *setTexture( const int indexTexUnit, ::glo::Texture * texture );
+	// setRenderTarget/getRenderTarget
+	// beginRT/endRT
+
+	//@}
 
 
 
@@ -227,17 +346,47 @@ private:
 	mutable GLint	m_maxCubeMapTexSize;
 	//@}
 
-	std::vector< ::glo::Texture * > m_texture;	///< array of texture objects. The zero-based index selects the texture unit.
+
 
 	/**
 	 * @brief Manager for all opengl objects.
 	 */
-	static vge::rc::Manager		m_glManager;
+	static vge::rc::Manager			m_glManager;
+	
+	/**
+	 * @brief Manager for all glsl programs.
+	 */
+	static GLSLProgramManagerType	m_glslManager;
+	// @todo manager for glsl shaders
+
+
+	/**
+	 * @brief Boolean value to indicate if glsl must be used by engine/handler
+	 */
+	bool m_isGLSLEnabled;
+
+	/**
+	 * @brief The current GLSL program.
+	 */
+	glo::GLSLProgram *	m_currentProgram;
+
+
+	/**
+	 * @brief The GLSL rendering state.
+	 */
+	GLSLState						m_glslState;
+
+	/**
+	 * @brief OpenGL GLSL program generator.
+	 */
+	vgd::Shp< ProgramGenerator >	m_glslProgramGenerator;
+
+
 
 	/**
 	 * @brief Used to know if this instance is the first one or not (for doiing some initializations).
 	 */
-	static bool					m_firstInstance;
+	static bool m_firstInstance;
 };
 
 

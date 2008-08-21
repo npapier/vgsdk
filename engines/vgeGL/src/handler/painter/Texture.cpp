@@ -275,7 +275,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 		//pTexture->enable();
 
 		// Updates engine state about texture
-		pGLEngine->setTexture( pNode->getMultiAttributeIndex(), pTexture );
+		pGLEngine->getGLSLState().setTexture( pNode->getMultiAttributeIndex(), pTexture );
 
 		// Updates texture parameters ?
 		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );
@@ -306,7 +306,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 		//pTexture->enable();
 
 		// Updates engine state about texture
-		pGLEngine->setTexture( pNode->getMultiAttributeIndex(), pTexture );
+		pGLEngine->getGLSLState().setTexture( pNode->getMultiAttributeIndex(), pTexture );
 
 		const bool isCompatible = isTextureCompatible( pGLEngine, pNode, pTexture, texInfo );
 

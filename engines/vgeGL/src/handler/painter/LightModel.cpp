@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,7 @@
 
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/LightModel.hpp>
-#include <vgDebug/Global.hpp>
+#include <vgDebug/convenience.hpp>
 #include <vge/rc/Manager.hpp>
 #include <vge/service/Painter.hpp>
 
@@ -33,7 +33,7 @@ META_HANDLER_CPP( LightModel );
 const vge::handler::Handler::TargetVector LightModel::getTargets() const
 {
 	TargetVector targets;
-	
+
 	targets.reserve( 1 );
 	targets.push_back( vgd::node::LightModel::getClassIndexStatic() );
 
@@ -42,9 +42,21 @@ const vge::handler::Handler::TargetVector LightModel::getTargets() const
 
 
 
-void LightModel::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
+void LightModel::apply( vge::engine::Engine* engine, vgd::node::Node *node )
 {
-	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( pEngine, pNode, this );
+	/*assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+
+	// MODEL
+	vgd::node::LightModel::ModelValueType	modelValue;
+	const bool bDefined = node->getModel( modelValue );
+
+	if ( bDefined )
+	{
+		glEngine->setLightModel( modelValue );
+	}*/
+
+	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );
 }
 
 
@@ -59,14 +71,14 @@ void LightModel::setToDefaults()
 
 
 
-void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
+void LightModel::paint( vgeGL::engine::Engine * engine, vgd::node::LightModel *node )
 {
 	bool bDefined;
 	
 	// MODEL
 	vgd::node::LightModel::ModelValueType	modelValue;
 
-	bDefined = pNode->getModel( modelValue );
+	bDefined = node->getModel( modelValue );
 	
 	if ( bDefined )
 	{
@@ -81,8 +93,12 @@ void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 				break;
 
 			case vgd::node::LightModel::STANDARD_PER_PIXEL:
-				// Fallback to standard per vertex
-				vgDebug::get().logDebug("Reverts to standard per vertex lighting without glsl.");
+				if ( !engine->isGLSLEnabled() )
+				{
+					// Fallback to standard per vertex
+					vgLogDebug("LightModel::STANDARD_PER_PIXEL is only available when GLSL is enabled. Reverts to standard per vertex lighting.");
+				}
+				// else nothing to do
 				break;
 
 			default:
@@ -92,7 +108,7 @@ void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 
 	// AMBIENT
 	vgm::Vec4f	ambientValue;
-	bDefined = pNode->getAmbient( ambientValue );
+	bDefined = node->getAmbient( ambientValue );
 	
 	if ( bDefined )
 	{
@@ -101,7 +117,7 @@ void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 	
 	// VIEWER
 	vgd::node::LightModel::ViewerValueType	viewerValue;
-	bDefined = pNode->getViewer( viewerValue );
+	bDefined = node->getViewer( viewerValue );
 	
 	if ( bDefined )
 	{
@@ -118,7 +134,7 @@ void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 
 	// TWOSIDED
 	vgd::node::LightModel::TwoSidedValueType	twosidedValue;
-	bDefined = pNode->getTwoSided( twosidedValue );
+	bDefined = node->getTwoSided( twosidedValue );
 	
 	if ( bDefined )
 	{
@@ -126,7 +142,7 @@ void LightModel::paint( vgeGL::engine::Engine *, vgd::node::LightModel *pNode )
 	}
 	
 	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();
+	node->getDirtyFlag(node->getDFNode())->validate();
 }
 
 

@@ -21,7 +21,7 @@ namespace handler
 
 namespace painter
 {
-	
+
 
 
 //META_HANDLER_CPP( Light );
@@ -32,13 +32,13 @@ void Light::paint( vgeGL::engine::Engine *, vgd::node::Light *pLight )
 {
 	// Computes the light index
 	const GLenum lightIndex = GL_LIGHT0 + pLight->getMultiAttributeIndex();
-	
+
 	bool bDefined;
-	
+
 	// Handles field ON
 	bool value;
 	bDefined = pLight->getOn( value );
-	
+
 	if ( bDefined )
 	{
 		if ( value )
@@ -55,7 +55,7 @@ void Light::paint( vgeGL::engine::Engine *, vgd::node::Light *pLight )
 
 	using vgd::node::Light;
 	vgm::Vec4f color;
-	
+
 	bDefined = pLight->getColor( Light::AMBIENT, color );
 	if ( bDefined )	glLightfv( lightIndex, GL_AMBIENT, color.getValue() );
 
@@ -76,7 +76,7 @@ void Light::setToDefaults()
 	// FIXME
 	GLint	maxLights;
 	glGetIntegerv(GL_MAX_LIGHTS, &maxLights );
-	
+
 	for(	int32 lightI		= GL_LIGHT0;
 			lightI < GL_LIGHT0 + maxLights;
 			++lightI )
