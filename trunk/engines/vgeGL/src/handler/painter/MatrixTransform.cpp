@@ -33,11 +33,11 @@ META_HANDLER_CPP( MatrixTransform );
 const vge::service::List MatrixTransform::getServices() const
 {
 	vge::service::List list;
-	
+
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::ProcessEvent) );
 
-	return ( list );
+	return list;
 }
 
 
@@ -45,10 +45,10 @@ const vge::service::List MatrixTransform::getServices() const
 const vge::handler::Handler::TargetVector MatrixTransform::getTargets() const
 {
 	vge::handler::Handler::TargetVector targets;
-	
+
 	targets.push_back( vgd::node::MatrixTransform::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
@@ -63,7 +63,7 @@ void MatrixTransform::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNo
 	
 	vge::handler::MatrixTransform::apply( pEngine, pCastedNode );
 	
-	paint( pGLEngine, pCastedNode );	
+	paint( pGLEngine, pCastedNode );
 }
 
 
@@ -94,9 +94,9 @@ void MatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node::Matri
 
 	// Update OpenGL.
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-	
-	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
+
+	// Validates node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
 

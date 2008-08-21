@@ -5,8 +5,11 @@
 
 #include "vgeGL/handler/painter/VertexShape.hpp"
 
+#include <boost/lexical_cast.hpp>
+
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
+
 // @todo Move Box stuff to Box handler (FIXME)
 #include <vgd/node/Box.hpp>
 // @todo Move DrawStyle stuff to drawStyle handler (FIXME)
@@ -16,10 +19,20 @@
 #include <vgd/node/Texture.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgd/node/VertexShape.hpp>
+
 #include <vgDebug/convenience.hpp>
+#include <vgDebug/StdStreamsToFiles.hpp>
 #include <vgm/Box.hpp>
 
+#include "vgeGL/engine/GLSLState.hpp"
+#include "vgeGL/engine/FragmentShaderGenerator.hpp"
+#include "vgeGL/engine/GeometryShaderGenerator.hpp"
+#include "vgeGL/engine/ProgramGenerator.hpp"
+#include "vgeGL/engine/VertexShaderGenerator.hpp"
+
 #include "vgeGL/handler/painter/DrawStyle.hpp"
+
+#include "vgeGL/rc/GLSLProgram.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -51,7 +64,7 @@ const vge::handler::Handler::TargetVector VertexShape::getTargets() const
 	targets.push_back( vgd::node::TriSet::getClassIndexStatic() );
 	targets.push_back( vgd::node::VertexShape::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
@@ -67,9 +80,70 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::VertexShape* >(pNode) != 0 );
 	vgd::node::VertexShape *pCastedNode = static_cast< vgd::node::VertexShape* >(pNode);
 
+	// GLSL
+	if ( pGLEngine->isGLSLEnabled() )
+	{
+		//
+		vgd::Shp< vgeGL::engine::ProgramGenerator > pg = pGLEngine->getGLSLProgramGenerator();
+
+		using glo::GLSLProgram;
+
+		pGLEngine->getGLSLManager().remove("vgSDK.main");		// @todo
+
+		GLSLProgram * program = new glo::GLSLProgram;
+		pGLEngine->getGLSLManager().add( "vgSDK.main", program );
+
+		//
+		if ( pg->isDirty() )
+		{
+			// @todo Moves that code in a better place
+			// Updates GLSL state in engine
+			vgeGL::engine::GLSLState& glslState = pGLEngine->getGLSLState();
+			glslState.update( pGLEngine );
+
+			// @todo Adds an option to open files in "append" mode
+			vgDebug::StdStreamsToFiles redirection("GLSL.cout.txt", "GLSL.cerr.txt");
+
+			pg->generate( pGLEngine );
+			const std::string& vs = pg->getVertexShaderGenerator()->getCode();
+			const std::string& fs = pg->getFragmentShaderGenerator()->getCode();
+			//const std::string& gs = pg->getGeometryShaderGenerator()->getCode();
+
+#ifdef _DEBUG
+			std::cout << "Generates shaders\n" << std::endl;
+			std::cout << "Vertex shader\n" << std::endl << vs << std::endl;
+			std::cout << "Fragment shader\n" << std::endl << fs << std::endl;
+			// vgLogDebug("Generates shaders");
+			// vgLogDebug2("Vertex shader\n%s", vs.c_str());
+			// vgLogDebug2("Fragment shader\n%s", fs.c_str());
+#endif
+			// program->clear(); @todo
+			//
+			const bool compileVSRetVal = program->addShader( vs.c_str(),pg->getVertexShaderGenerator()->getShaderType(), false );
+			const bool compileFSRetVal = program->addShader( fs.c_str(), pg->getFragmentShaderGenerator()->getShaderType(), false );
+			const bool linkRetVal = program->link();
+
+#ifdef _DEBUG
+			if ( !compileVSRetVal )		vgLogDebug("VERTEX shader compilation fails !");
+			if ( !compileFSRetVal )		vgLogDebug("FRAGMENT shader compilation fails !");
+			if ( !linkRetVal )			vgLogDebug("Program link fails !");
+#endif
+			assert( compileVSRetVal );
+			assert( compileFSRetVal );
+			assert( linkRetVal );
+		}
+
+		pGLEngine->sethCurrentProgram( program );
+	}
+	else
+	{
+		pGLEngine->sethCurrentProgram();
+		//vgeGL::rc::GLSLProgram::useFixedPaths();
+	}
+
 	// Render the VertexShape
 	::vgeGL::handler::painter::DrawStyle::paintVertexShapeWithShapeProperty( pGLEngine, pCastedNode, this );
-	::vgeGL::handler::painter::DrawStyle::paintVertexShapeNormals( pGLEngine, pCastedNode, this );	
+	::vgeGL::handler::painter::DrawStyle::paintVertexShapeNormals( pGLEngine, pCastedNode, this );
 
 //	// pre
 //	GLboolean bLightingState;
@@ -302,11 +376,11 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 	// VERTEX-VERTEXINDEX-PRIMITIVE
 	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives( pVertexShape->getFPrimitiveRO() );
 
-	int32 i32IndexPrim = 0;
-	for(	vgd::field::MFPrimitive::const_iterator	i	=	primitives->begin(),
+	//int indexPrim = 0;
+	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
 													ie	= primitives->end();
 			i != ie;
-			++i, ++i32IndexPrim)
+			++i/*, ++indexPrim*/)
 	{
 		const vgd::node::Primitive& primitive(*i);
 
@@ -337,7 +411,8 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	//
 	const GLvoid	*pArray;
 
-
+	//
+	glo::GLSLProgram * program = pGLEngine->gethCurrentProgram();
 
 	// *** Step 1 : Setup arrays. ***
 
@@ -361,6 +436,8 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 				unit >= 0;
 				--unit )
 		{
+			const std::string strUnit = boost::lexical_cast< std::string >( unit );
+
 // FIXME see Texture2D handler
 //	// scaleFactors
 //	vgm::Vec3f scaleFactors;
@@ -383,12 +460,21 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
 			{
 				// Retrieves current texture object from engine
-				::glo::Texture * texture = pGLEngine->getTexture(unit);
+				::glo::Texture * texture = pGLEngine->getGLSLState().getTexture(unit);
 
 				if ( texture != 0 )
 				{
-					pGLEngine->activeTexture( unit );
-					texture->enable();
+					if ( program )
+					{
+						assert( program->isInUse() );
+
+						program->setUniform1i( "texUnit" + strUnit, unit );
+					}
+					else
+					{
+						pGLEngine->activeTexture( unit );
+						texture->enable();
+					}
 				}
 				else
 				{
@@ -500,7 +586,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	}
 
 	// VERTEX
-	vertex = pVertexShape->getFVertexRO();	
+	vertex = pVertexShape->getFVertexRO();
 
 	pArray = static_cast< const GLvoid* >( vertex->begin()->getValue() );
 
@@ -508,9 +594,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	glEnableClientState( GL_VERTEX_ARRAY );
 
 
-
 	// *** Step 2 : RENDERING ***
-
 	assert( primitive.getType() != vgd::node::Primitive::NONE );
 	const GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
 
@@ -541,12 +625,16 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
 			{
 				// Retrieves current texture object from engine
-				::glo::Texture * texture = pGLEngine->getTexture(unit);
+				::glo::Texture * texture = pGLEngine->getGLSLState().getTexture(unit);
 
 				if ( texture != 0 )
 				{
-					pGLEngine->activeTexture( unit );
-					texture->disable();
+					if ( !program )
+					{
+						pGLEngine->activeTexture( unit );
+						texture->disable();
+					}
+					// nothing to do
 				}
 				//else nothing to do (see arrays setup).
 

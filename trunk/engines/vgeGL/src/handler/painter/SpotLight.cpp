@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/SpotLight.hpp"
 
 #include <vgd/node/SpotLight.hpp>
-
+#include "vgeGL/engine/ShaderGenerator.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -19,7 +19,7 @@ namespace handler
 
 namespace painter
 {
-	
+
 
 
 META_HANDLER_CPP( SpotLight );
@@ -37,9 +37,18 @@ const vge::handler::Handler::TargetVector SpotLight::getTargets() const
 
 
 
-void SpotLight::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
+void SpotLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-	vgeGL::rc::applyUsingDisplayList<vgd::node::SpotLight, SpotLight>( pEngine, pNode, this );
+	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+
+	if ( glEngine->isGLSLEnabled() )
+	{
+		using vgeGL::engine::GLSLHelpers;
+		GLSLHelpers::addLightFlags( GLSLHelpers::SPOT_LIGHT );
+	}
+
+	vgeGL::rc::applyUsingDisplayList<vgd::node::SpotLight, SpotLight>( engine, node, this );
 }
 
 
@@ -105,8 +114,8 @@ void SpotLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SpotLight *p
 		glLightfv( lightIndex, GL_SPOT_EXPONENT, &dropOffRateGL );
 	}
 
-	// Validate node
-	pSpotLight->getDirtyFlag(pSpotLight->getDFNode())->validate();	
+	// Validates node
+	pSpotLight->getDirtyFlag(pSpotLight->getDFNode())->validate();
 }
 
 

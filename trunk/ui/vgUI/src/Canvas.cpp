@@ -343,7 +343,7 @@ const bool Canvas::shutdownVGSDK()
 
 		// Try to destroy OpenGL objects
 		getGLEngine()->getGLManager().clear();
-		//getGLEngine()->getGLSLManager().clear();
+		getGLEngine()->getGLSLManager().clear();
 
 		//
 		shutdownOpenGLContext();
