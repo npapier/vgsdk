@@ -7,6 +7,9 @@
 
 #include <vector>
 #include <gtkmm/button.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/separator.h>
+#include <vgeGL/engine/Engine.hpp>
 #include <vgUI/Canvas.hpp>
 
 
@@ -24,13 +27,17 @@ Settings::Settings()
 
 {
 	// Creates child widgets.
-	Gtk::Button	* benchButton = Gtk::manage( new Gtk::Button("Bench") );
+	Gtk::CheckButton	* glslButton	= Gtk::manage( new Gtk::CheckButton("Use GLSL pipeline") );
+	Gtk::Button			* benchButton	= Gtk::manage( new Gtk::Button("Bench") );
 	
-	set_layout( Gtk::BUTTONBOX_START );
-	add( *benchButton );
+	set_spacing( 8 );	
+	pack_start( *glslButton, Gtk::PACK_SHRINK );
+	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK );
+	pack_start( *benchButton, Gtk::PACK_SHRINK );
 	
 	
 	// Connects signal handlers.
+	glslButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onGLSL) );
 	benchButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onBench) );
 	
 	
@@ -51,7 +58,19 @@ void Settings::setCanvas( vgUI::Canvas * canvas )
 
 void Settings::onBench()
 {
+	assert( m_canvas != 0 );
+	
 	m_canvas->bench(100);
+}
+
+
+
+void Settings::onGLSL()
+{
+	assert( m_canvas != 0 );
+	
+	m_canvas->getGLEngine()->setGLSLEnabled( ! m_canvas->getGLEngine()->isGLSLEnabled() );
+	m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE );
 }
 
 

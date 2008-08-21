@@ -9,6 +9,7 @@
 
 #include <gtkmm/colorbutton.h>
 #include <gtkmm/separator.h>
+#include <gtkmm/tooltips.h>
 
 #include <vgd/node/LightModel.hpp>
 #include <vgUI/Canvas.hpp>
@@ -115,6 +116,15 @@ void LightModelEditor::createContent()
 	
 	pack_start( *m_twoSidedButton, Gtk::PACK_SHRINK );
 	pack_start( *twoSidedBox, Gtk::PACK_SHRINK );
+	
+	
+	// Tooltips.
+	Gtk::Tooltips	* tooltips = Gtk::manage( new Gtk::Tooltips() );
+	
+	tooltips->set_tip( *m_modelButton, "Specifies the lighting model" );
+	tooltips->set_tip( *m_ambientButton, "Specifies the ambient color" );
+	tooltips->set_tip( *m_viewerButton, "Specifies the viewer position" );
+	tooltips->set_tip( *m_twoSidedButton, "Specifies two-sided lighting" );	
 }
 
 
