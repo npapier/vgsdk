@@ -14,6 +14,7 @@ namespace vgsdkViewerGtk
 Notebook::Notebook()
 {
 	m_graphBrowser.set_border_width( 2 );
+	m_engineSettings.set_border_width( 8 );
 	m_drawStyleEditor.set_border_width( 8 );
 	m_lightModelEditor.set_border_width( 8 );
 			

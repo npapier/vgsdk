@@ -15,6 +15,7 @@
 #include <gtkmm/radiobuttongroup.h>
 #include <gtkmm/separator.h>
 #include <gtkmm/spinbutton.h>
+#include <gtkmm/tooltips.h>
 
 #include <vgUI/Canvas.hpp>
 
@@ -130,6 +131,15 @@ void DrawStyleEditor::createContent()
 	pack_start( *m_boundingBoxBox, Gtk::PACK_SHRINK );
 	
 	m_boundingBoxButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onBoundingBox) );
+	
+	
+	// Tooltips
+	Gtk::Tooltips	* tooltips = Gtk::manage( new Gtk::Tooltips() );
+	
+	tooltips->set_tip( *m_shapeButton, "Specifies the drawing style of shapes" );
+	tooltips->set_tip( *m_normalLengthButton, "Specifies the normal length to show" );
+	tooltips->set_tip( *m_showOrientationButton, "Specifies the triangle orientation feedback to show" );
+	tooltips->set_tip( *m_boundingBoxButton, "Specifies the bounding box drawing style" );
 }
 
 

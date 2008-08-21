@@ -6,7 +6,7 @@
 #ifndef VGGTK_ENGINE_SETTINGS_HPP
 #define VGGTK_ENGINE_SETTINGS_HPP
 
-#include <gtkmm/buttonbox.h>
+#include <gtkmm/box.h>
 
 #include "vgGTK/vgGTK.hpp"
 
@@ -28,7 +28,7 @@ namespace engine
 /**
  * @brief	A widget allowing to configure rendering engine's settings.
  */
-struct VGGTK_API Settings : public Gtk::VButtonBox
+struct VGGTK_API Settings : public Gtk::VBox
 {
 	/**
 	 * @brief	Constructor
@@ -51,7 +51,8 @@ private:
 	 * @name	Signal Handlers
 	 */
 	//@{
-	void onBench();	///< Handles the bench button's activation.
+	void onBench();
+	void onGLSL();
 	//@}
 	
 	/**
