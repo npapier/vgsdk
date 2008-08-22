@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -294,7 +294,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	{
 		case CAMERA_PERSPECTIVE:
 			matrix.setPerspective(
-							45.f,
+							90.f,
 							windowAspectRatio,
 							minDepth,
 							maxDepth
