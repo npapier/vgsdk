@@ -38,7 +38,7 @@ GLSLState::GLSLState( const uint maxTexUnits )
 void GLSLState::reset( const uint maxTexUnits )
 {
 	// TBitSet
-	TBitSet::reset();
+	vgeGL::engine::TBitSet<3>::reset();
 
 	// TEXTURE
 	for(	uint	i		= 0,
