@@ -122,11 +122,11 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() )
 	{
 		m_code += 
-		"	ecNormal = normalize(ecNormal);\n"
+		"	vec3 normal = normalize(ecNormal);\n"
 		"\n";
 
 		// Calls flight()
-		m_code += "	flight( ecPosition, ecNormal );\n";
+		m_code += "	flight( ecPosition, normal );\n";
 
 		m_code +=
 		"\n"
