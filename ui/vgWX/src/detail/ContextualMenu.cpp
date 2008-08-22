@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -91,7 +91,6 @@ wxMenu *createContextualMenu( const Canvas * canvas )
 	
 	ctxMenu->AppendSeparator();
 
-	/**@todo Uncomments this code 
 	// GLSL
 	subMenu = new wxMenu;
 
@@ -101,7 +100,7 @@ wxMenu *createContextualMenu( const Canvas * canvas )
 
 	ctxMenu->Append( wxID_CTX_GLSL, _T("GLSL"), subMenu );
 
-	ctxMenu->AppendSeparator();	*/
+	ctxMenu->AppendSeparator();
 
 	// ViewAll
 	if ( dynamic_cast< const vgWX::BasicViewer * >( canvas ) )
@@ -111,7 +110,7 @@ wxMenu *createContextualMenu( const Canvas * canvas )
 		ctxMenu->AppendSeparator();
 	}
 
-	// Creates lighting menu
+/*	// Creates lighting menu
 	subMenu = new wxMenu;
 
 	subMenu->AppendRadioItem(	wxID_CTX_LIGHTING_FIXED_PIPELINE,
@@ -135,7 +134,7 @@ wxMenu *createContextualMenu( const Canvas * canvas )
 
 	ctxMenu->Append( wxID_CTX_LIGHTING, _T("Lighting technique"), subMenu );
 	
-	ctxMenu->AppendSeparator();
+	ctxMenu->AppendSeparator();*/
 	
 	// DrawStyle
 	subMenu = new wxMenu;
@@ -381,16 +380,15 @@ void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event )
 			canvas->writeGraphviz( false );
 			break;
 
-	/**@todo Uncomments this code
 		// GLSL
 		case wxID_CTX_GLSL_ENABLE:
 		{
 			const bool isGLSLEnabled = canvas->getGLEngine()->isGLSLEnabled();
 			
-			canvas->getGLEngine()->enableGLSL( !isGLSLEnabled );
+			canvas->getGLEngine()->setGLSLEnabled( !isGLSLEnabled );
 			break;
 		}
-*/
+
 		// ViewAll
 		case wxID_CTX_VIEWALL:
 		{
@@ -403,7 +401,7 @@ void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event )
 			break;
 		}
 
-		// Lighting menu
+		/*// Lighting menu
 		case wxID_CTX_LIGHTING_FIXED_PIPELINE:
 		{
 			using vgeGL::technique::Main;
@@ -415,12 +413,12 @@ void processContextualMenuEvent( Canvas * canvas, wxCommandEvent& event )
 
 		case wxID_CTX_LIGHTING_PROGRAMMABLE_PIPELINE:
 		{
-			/*using vgeGL::technique::MainGLSL;
+			using vgeGL::technique::MainGLSL;
 			
 			vgd::Shp< MainGLSL > glsl( new MainGLSL() );
-			canvas->setPaintTechnique( glsl );*/
+			canvas->setPaintTechnique( glsl );
 			break;
-		}
+		}*/
 			
 		// DrawStyle
 		case wxID_CTX_DRAWSTYLE_NONE:
