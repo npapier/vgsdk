@@ -23,7 +23,8 @@ const std::string GLSLState::indexString[] =
 	{
 		"LIGHTING",
 		"TWO_SIDED_LIGHTING",
-		"PER_PIXEL_LIGHTING"
+		"PER_PIXEL_LIGHTING",
+		"CLIPPING_PLANE"
 	};
 
 
@@ -38,7 +39,7 @@ GLSLState::GLSLState( const uint maxTexUnits )
 void GLSLState::reset( const uint maxTexUnits )
 {
 	// TBitSet
-	vgeGL::engine::TBitSet<3>::reset();
+	vgeGL::engine::TBitSet<4>::reset();
 
 	// TEXTURE
 	for(	uint	i		= 0,

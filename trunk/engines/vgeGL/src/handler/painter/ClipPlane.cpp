@@ -7,6 +7,7 @@
 
 #include <vgd/node/ClipPlane.hpp>
 #include <vgDebug/convenience.hpp>
+#include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -40,11 +41,17 @@ const vge::handler::Handler::TargetVector ClipPlane::getTargets() const
 
 void ClipPlane::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(engine);
+	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
 //	assert( dynamic_cast< vgd::node::ClipPlane* >(node) != 0 );
 //	vgd::node::ClipPlane *pCastedNode = static_cast< vgd::node::ClipPlane* >(node);
+
+	if ( glEngine->isGLSLEnabled() )
+	{
+		using vgeGL::engine::GLSLState;
+		glEngine->getGLSLState().setEnabled( GLSLState::CLIPPING_PLANE );
+	}
 
 	vgeGL::rc::applyUsingDisplayList< vgd::node::ClipPlane, ClipPlane >( engine, node, this );
 }

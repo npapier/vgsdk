@@ -111,7 +111,7 @@ struct TManager : public boost::noncopyable
 	 * @param key		the key value
 	 * 
 	 * @return			a pointer on the desired resource, or 0 if there is no resource associated to the given key.
-	 * 					When the given resource type is wrong, an assertion will occurs and the return value would be 0.
+	 * 				When the given resource type is wrong, an assertion will occurs and the return value would be 0.
 	 */
 	template< typename ResourceType >
 	ResourceType* get( const KeyType& key );
