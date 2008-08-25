@@ -121,12 +121,14 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		"	ftexgen( ecPosition, ecNormal );\n";
 	}
 
+
 	/*if (	glIsEnabled(GL_CLIP_PLANE0) || glIsEnabled(GL_CLIP_PLANE1) ||
-			glIsEnabled(GL_CLIP_PLANE2) || glIsEnabled(GL_CLIP_PLANE3) ||
-			glIsEnabled(GL_CLIP_PLANE4) || glIsEnabled(GL_CLIP_PLANE5)	)
+		glIsEnabled(GL_CLIP_PLANE2) || glIsEnabled(GL_CLIP_PLANE3) ||
+		glIsEnabled(GL_CLIP_PLANE4) || glIsEnabled(GL_CLIP_PLANE5)	)*/
+	if ( state.isEnabled( GLSLState::CLIPPING_PLANE ) )
 	{
 		m_code += "	gl_ClipVertex = ecPosition;\n";
-	}*/
+	}
 
 	m_code += "}\n";
 

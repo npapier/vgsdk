@@ -67,13 +67,15 @@ void TBitSet<size>::reset()
  * This class is a specialized container for GLSL rendering state used by program/shader generators 
  * to take care of the rendering state given by the scene graph.
  */
-struct GLSLState : public TBitSet< 3 >
+struct GLSLState : public TBitSet< 4 >
 {
 	enum
 	{
 		LIGHTING = 0,
 		TWO_SIDED_LIGHTING,			///< Lighting must operate in two-sided mode
-		PER_PIXEL_LIGHTING
+		PER_PIXEL_LIGHTING,
+
+		CLIPPING_PLANE				///< True when at least on ClipPlane node has been traversed
 	} BitSetIndexType;
 
 	static const std::string indexString[];

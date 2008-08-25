@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -148,10 +148,17 @@ ResourceType* TManager< KeyType >::get( const KeyType& key )
 {
 	glo::IResource *resource = getAbstract(key);
 
-	ResourceType *castedResource = dynamic_cast< ResourceType* >(resource);
-	assert( castedResource != 0 && "Target resource type is invalid." );
+	if ( resource == 0 )
+	{
+		return 0;
+	}
+	else
+	{
+		ResourceType *castedResource = dynamic_cast< ResourceType* >(resource);
+		assert( castedResource != 0 && "Target resource type is invalid." );
 
-	return castedResource;
+		return castedResource;
+	}
 }
 
 

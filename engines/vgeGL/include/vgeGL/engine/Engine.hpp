@@ -128,7 +128,7 @@ public:
 	 *
 	 * @param	program	a pointer on the GLSL program
 	 */
-	void setCurrentProgram( glo::GLSLProgram * program );
+	void setCurrentProgram( glo::GLSLProgram * program = 0 );
 
 	/**
 	 * @brief Sets the current GLSL program.
