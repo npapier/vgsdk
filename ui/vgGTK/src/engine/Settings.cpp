@@ -29,18 +29,18 @@ Settings::Settings()
 	// Creates child widgets.
 	Gtk::CheckButton	* glslButton	= Gtk::manage( new Gtk::CheckButton("Use GLSL pipeline") );
 	Gtk::Button			* benchButton	= Gtk::manage( new Gtk::Button("Bench") );
-	
-	set_spacing( 8 );	
+
+	set_spacing( 8 );
 	pack_start( *glslButton, Gtk::PACK_SHRINK );
 	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK );
 	pack_start( *benchButton, Gtk::PACK_SHRINK );
-	
-	
+
+
 	// Connects signal handlers.
 	glslButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onGLSL) );
 	benchButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onBench) );
-	
-	
+
+
 	// Refresh child sensitiveness.
 	refreshChildrenSensitiveness();
 }
@@ -59,8 +59,9 @@ void Settings::setCanvas( vgUI::Canvas * canvas )
 void Settings::onBench()
 {
 	assert( m_canvas != 0 );
-	
-	m_canvas->bench(100);
+
+	m_canvas->bench(200);
+	m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::ASYNCHRONOUS );
 }
 
 
@@ -84,7 +85,7 @@ void Settings::refreshChildrenSensitiveness()
 	for( WidgetContainer::iterator i = children.begin(); i != children.end(); ++i )
 	{
 		Gtk::Widget	* widget = *i;
-		
+
 		widget->set_sensitive( m_canvas != 0 );
 	}
 }
