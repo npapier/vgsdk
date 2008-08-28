@@ -50,27 +50,13 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	if ( ftexgen )
 	{
-		for(	uint	i		= 0,
-						iEnd	= state.getMaxTexture();
-				i != iEnd;
-				++i )
-		{
-			const std::string strUnit = boost::lexical_cast< std::string >( i );
-
-			const glo::Texture * current = state.getTexture( i );
-
-			if ( current ) // @todo Texturing is enabled if vertex shape contains tex coord and NOT when a texture is defined.
-			{
-				m_code +=
-				"uniform sampler2D texUnit" + strUnit + ";\n";
-			}
-		}
+		m_code += GLSLHelpers::generate_samplers( state );
 	}
 
 	// FUNCTIONS
 	if ( state.isPerPixelLightingEnabled() )
 	{
-		m_code += GLSLHelpers::generate_lights();
+		m_code += GLSLHelpers::generate_lights( state );
 	}
 
 	// LIGHTING
@@ -91,21 +77,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	if ( ftexgen )
 	{
-		for(	uint	i		= 0,
-						iEnd	= state.getMaxTexture();
-				i != iEnd;
-				++i )
-		{
-			const std::string strUnit = boost::lexical_cast< std::string >( i );
-
-			const glo::Texture * current = state.getTexture( i );
-
-			if ( current ) // @todo Texturing is enabled if vertex shape contains tex coord and NOT when a texture is defined.
-			{
-				textureLookup +=
-				"	color *= texture2D(texUnit" + strUnit + ", gl_TexCoord[" + strUnit + "].xy);\n";
-			}
-		}
+		textureLookup += GLSLHelpers::generate_texLookups( state );
 	}
 
 	if ( state.isPerVertexLightingEnabled() )

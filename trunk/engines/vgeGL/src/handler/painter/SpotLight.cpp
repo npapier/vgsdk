@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/SpotLight.hpp"
 
 #include <vgd/node/SpotLight.hpp>
-#include "vgeGL/engine/ShaderGenerator.hpp"
+#include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -42,10 +42,22 @@ void SpotLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
+	assert( dynamic_cast< vgd::node::SpotLight* >(node) != 0 );
+	vgd::node::SpotLight *spotlight = static_cast< vgd::node::SpotLight* >(node);
+
 	if ( glEngine->isGLSLEnabled() )
 	{
-		using vgeGL::engine::GLSLHelpers;
-		GLSLHelpers::addLightFlags( GLSLHelpers::SPOT_LIGHT );
+		// Retrieves GLSL state
+		using vgeGL::engine::GLSLState;
+		typedef vgeGL::engine::GLSLState::LightState LightState;
+
+		GLSLState& state = glEngine->getGLSLState();
+
+		// Updates GLSL state
+		state.setEnabled( GLSLState::SPOT_LIGHT );
+
+		vgd::Shp< LightState > lightState( new LightState(spotlight, GLSLState::SPOT_LIGHT) );
+		state.setLight(	node->getMultiAttributeIndex(), lightState );
 	}
 
 	vgeGL::rc::applyUsingDisplayList<vgd::node::SpotLight, SpotLight>( engine, node, this );

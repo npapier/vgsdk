@@ -17,10 +17,6 @@ namespace engine
 
 
 
-uint GLSLHelpers::m_lightFlags = 0;
-
-
-
 ShaderGenerator::ShaderGenerator( const glo::GLSLProgram::ShaderType shaderType )
 :	m_shaderType	( shaderType ),
 	m_mainDirtyFlag	( "main" ),

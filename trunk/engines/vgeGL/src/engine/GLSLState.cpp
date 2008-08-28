@@ -22,24 +22,51 @@ namespace engine
 const std::string GLSLState::indexString[] =
 	{
 		"LIGHTING",
-		"TWO_SIDED_LIGHTING",
 		"PER_PIXEL_LIGHTING",
+		"LOCAL_VIEWER",
+		"TWO_SIDED_LIGHTING",
+
+		"DIRECTIONAL_LIGHT",
+		"POINT_LIGHT",
+		"SPOT_LIGHT",
 		"CLIPPING_PLANE"
 	};
 
 
 
-GLSLState::GLSLState( const uint maxTexUnits )
-:	m_texture(maxTexUnits),
+GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits )
+:	m_light(maxLightUnits),
+	m_numLight(0),
+	m_texture(maxTexUnits),
 	m_numTexture(0)
 {
 }
 
 
-void GLSLState::reset( const uint maxTexUnits )
+void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 {
 	// TBitSet
-	vgeGL::engine::TBitSet<4>::reset();
+	vgeGL::engine::TBitSet<8>::reset();
+
+	// LIGHT
+	for(	uint	i		= 0,
+					iEnd	= m_light.size();
+			i != iEnd;
+			++i )
+	{
+		if ( getLight(i) != 0 )
+		{
+			setLight( i );
+
+			if ( getNumLight() == 0 )
+			{
+				break;
+			}
+		}
+	}
+	assert( m_numLight == 0 );
+
+	m_light.resize( maxLightUnits );
 
 	// TEXTURE
 	for(	uint	i		= 0,
@@ -107,6 +134,67 @@ void GLSLState::setPerPixelLightingEnabled( const bool enabled )
 
 
 
+const vgd::Shp< GLSLState::LightState > GLSLState::getLight( const uint indexLightUnit ) const
+{
+	assert( indexLightUnit >= 0 && "Invalid light unit index." );
+	assert( indexLightUnit < m_light.size() && "Invalid light unit index." );
+
+	return m_light[indexLightUnit];
+}
+
+
+
+vgd::Shp< GLSLState::LightState > GLSLState::getLight( const uint indexLightUnit )
+{
+	assert( indexLightUnit >= 0 && "Invalid light unit index." );
+	assert( indexLightUnit < m_light.size() && "Invalid light unit index." );
+
+	return m_light[indexLightUnit];
+}
+
+
+
+vgd::Shp< GLSLState::LightState > GLSLState::setLight( const uint indexLightUnit, vgd::Shp< LightState > lightState )
+{
+	assert( indexLightUnit >= 0 && "Invalid light unit index." );
+	assert( indexLightUnit < m_light.size() && "Invalid light unit index." );
+
+	// Sets the light
+	vgd::Shp< LightState > oldLight = m_light[indexLightUnit];
+
+	m_light[indexLightUnit] = lightState;
+
+	// Updates light count
+	if ( oldLight )
+	{
+		m_numLight += ( lightState != 0 ) ? 0 : -1;
+	}
+	else
+	{
+		m_numLight += ( lightState != 0 ) ? 1 : 0;
+	}
+	assert( m_numLight >= 0 );
+	assert( m_numLight < m_light.size() );
+
+	return oldLight;
+}
+
+
+
+const uint GLSLState::getNumLight() const
+{
+	return m_numLight;
+}
+
+
+
+const uint GLSLState::getMaxLight() const
+{
+	return m_light.size();
+}
+
+
+
 const glo::Texture *GLSLState::getTexture( const uint indexTexUnit ) const
 {
 	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
@@ -132,6 +220,7 @@ glo::Texture *GLSLState::setTexture( const uint indexTexUnit, glo::Texture * tex
 	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
 	assert( indexTexUnit < m_texture.size() && "Invalid texture unit index." );
 
+	// Sets the texture
 	glo::Texture * oldTexture = m_texture[indexTexUnit];
 
 	m_texture[indexTexUnit] = texture;
@@ -170,11 +259,39 @@ void GLSLState::update( vgeGL::engine::Engine * engine )
 {
 	bool bDefined;
 
+	using vgd::node::LightModel;
+
 	// LIGHTING
-	setLightingEnabled( glIsEnabled(GL_LIGHTING) );		// @todo Removes glIsEnabled() call
+	LightModel::ModelValueType	modelValue;
+	bDefined = engine->getStateStackTop<
+			LightModel,
+			LightModel::ModelParameterType,
+			LightModel::ModelValueType >(	LightModel::getFModel(),
+											LightModel::MODEL,
+											modelValue );
+	assert( bDefined );
+	setLightingEnabled( modelValue != LightModel::LIGHTING_OFF );
+	//glIsEnabled(GL_LIGHTING) );		// @todo Removes glIsEnabled() call
+
+	// PER_PIXEL_LIGHTING
+	setPerPixelLightingEnabled( modelValue == LightModel::STANDARD_PER_PIXEL );
+
+	// LOCAL_VIEWER
+	LightModel::ViewerValueType viewerValue;
+	bDefined = engine->getStateStackTop<
+		LightModel,
+		LightModel::ViewerParameterType,
+		LightModel::ViewerValueType >(	LightModel::getFViewer(),
+										LightModel::VIEWER,
+										viewerValue );
+	assert( bDefined );
+	setEnabled( LOCAL_VIEWER, viewerValue == LightModel::AT_EYE );
+/*	GLint isLocalViewer;
+	glGetIntegerv( GL_LIGHT_MODEL_LOCAL_VIEWER, &isLocalViewer );
+
+	setEnabled( LOCAL_VIEWER, isLocalViewer == GL_TRUE );*/
 
 	// TWO_SIDED_LIGHTING
-	using vgd::node::LightModel;
 	LightModel::TwoSidedValueType twoSidedValue;
 	bDefined = engine->getStateStackTop<
 		LightModel,
@@ -184,17 +301,6 @@ void GLSLState::update( vgeGL::engine::Engine * engine )
 											twoSidedValue );
 	assert( bDefined );
 	setTwoSidedLightingEnabled( twoSidedValue );
-
-	// PER_PIXEL_LIGHTING
-	LightModel::ModelValueType	modelValue;
-	bDefined = engine->getStateStackTop<
-			LightModel,
-			LightModel::ModelParameterType,
-			LightModel::ModelValueType >(	LightModel::getFModel(),
-											LightModel::MODEL,
-											modelValue );
-	assert( bDefined );
-	setPerPixelLightingEnabled( modelValue == LightModel::STANDARD_PER_PIXEL );
 }
 
 
