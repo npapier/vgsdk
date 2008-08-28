@@ -51,7 +51,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// FUNCTIONS
 	m_code += GLSLHelpers::generateFunction_fnormal( state.isLightingEnabled() );
 
-	if ( state.isPerVertexLightingEnabled() )	m_code += GLSLHelpers::generate_lights();
+	if ( state.isPerVertexLightingEnabled() )	m_code += GLSLHelpers::generate_lights( state );
 
 	if ( ftexgen )	m_code += "\n" + GLSLHelpers::generateFunction_ftexgen(state);
 

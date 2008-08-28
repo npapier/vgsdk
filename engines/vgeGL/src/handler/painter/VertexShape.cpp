@@ -81,26 +81,24 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	vgd::node::VertexShape *pCastedNode = static_cast< vgd::node::VertexShape* >(pNode);
 
 	// GLSL
-	if ( pGLEngine->isGLSLEnabled() )
+	if ( pGLEngine->isGLSLEnabled() ) // pGLEngine->gethCurrentProgram()
 	{
 		//
 		vgd::Shp< vgeGL::engine::ProgramGenerator > pg = pGLEngine->getGLSLProgramGenerator();
 
 		using glo::GLSLProgram;
-
-		pGLEngine->getGLSLManager().remove("vgSDK.main");		// @todo
-
-		GLSLProgram * program = new glo::GLSLProgram;
-		pGLEngine->getGLSLManager().add( "vgSDK.main", program );
+		GLSLProgram * program = 0;
 
 		//
-		if ( pg->isDirty() )
+		if ( true /*program == 0 pg->isDirty() */) // ???????????????????????????????????
 		{
+			// GLSL STATE UPDATE
 			// @todo Moves that code in a better place
 			// Updates GLSL state in engine
 			vgeGL::engine::GLSLState& glslState = pGLEngine->getGLSLState();
 			glslState.update( pGLEngine );
 
+			// GENERATION
 			// @todo Adds an option to open files in "append" mode
 			vgDebug::StdStreamsToFiles redirection("GLSL.cout.txt", "GLSL.cerr.txt");
 
@@ -117,23 +115,51 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			// vgLogDebug2("Vertex shader\n%s", vs.c_str());
 			// vgLogDebug2("Fragment shader\n%s", fs.c_str());
 #endif
-			// program->clear(); @todo
-			//
-			const bool compileVSRetVal = program->addShader( vs.c_str(),pg->getVertexShaderGenerator()->getShaderType(), false );
-			const bool compileFSRetVal = program->addShader( fs.c_str(), pg->getFragmentShaderGenerator()->getShaderType(), false );
-			const bool linkRetVal = program->link();
+
+			// CACHE
+			const std::string fullCode = vs + fs/* + gs*/;
+
+			program = pGLEngine->getGLSLManager().get< GLSLProgram >( fullCode );
+
+			if ( program == 0 )
+			{
+				// Not found in cache. Creates a new one
+				program = new glo::GLSLProgram;
+#ifdef _DEBUG
+				vgLogDebug("Creates a new GLSL program.");
+				vgLogDebug2("GLSL managed program count : %i", pGLEngine->getGLSLManager().getNum());
+#endif
+				pGLEngine->getGLSLManager().add( fullCode, program );
+
+				// Compiles and links
+				const bool compileVSRetVal = program->addShader( vs.c_str(),pg->getVertexShaderGenerator()->getShaderType(), false );
+				const bool compileFSRetVal = program->addShader( fs.c_str(), pg->getFragmentShaderGenerator()->getShaderType(), false );
+				const bool linkRetVal = program->link();
 
 #ifdef _DEBUG
-			if ( !compileVSRetVal )		vgLogDebug("VERTEX shader compilation fails !");
-			if ( !compileFSRetVal )		vgLogDebug("FRAGMENT shader compilation fails !");
-			if ( !linkRetVal )			vgLogDebug("Program link fails !");
+				if ( !compileVSRetVal )		vgLogDebug("VERTEX shader compilation fails !");
+				if ( !compileFSRetVal )		vgLogDebug("FRAGMENT shader compilation fails !");
+				if ( !linkRetVal )			vgLogDebug("Program link fails !");
 #endif
-			assert( compileVSRetVal );
-			assert( compileFSRetVal );
-			assert( linkRetVal );
+				assert( compileVSRetVal );
+				assert( compileFSRetVal );
+				assert( linkRetVal );
+			}
+/*#ifdef _DEBUG
+			else
+			{
+				vgLogDebug("Uses GLSL program found in cache.");
+			}
+#endif*/
 		}
 
 		pGLEngine->sethCurrentProgram( program );
+/*
+		pGLEngine->getGLSLManager().remove("vgSDK.main");		// @todo
+		GLSLProgram * program = new glo::GLSLProgram;
+		pGLEngine->getGLSLManager().add( "vgSDK.main", program );
+			// program->clear(); @todo
+			*/
 	}
 	else
 	{
@@ -308,8 +334,8 @@ void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::
  * Support for normal					with BIND_OFF, BIND_PER_VERTEX.
  * Support for color4					with BIND_OFF, BIND_PER_VERTEX.
  * Support for secondaryColor4			with BIND_OFF, BIND_PER_VERTEX.
- * Support for texCoord					with BIND_OFF, BIND_PER_VERTEX.
- * Support for edgeFlag					with BIND_OFF, BIND_PER_VERTEX.
+ * Support for texCoord				with BIND_OFF, BIND_PER_VERTEX.
+ * Support for edgeFlag				with BIND_OFF, BIND_PER_VERTEX.
  * 
  * Support for primitive.
  * Support for vertexIndex.

@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/PointLight.hpp"
 
 #include <vgd/node/PointLight.hpp>
-#include "vgeGL/engine/ShaderGenerator.hpp"
+#include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -42,10 +42,22 @@ void PointLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
+	assert( dynamic_cast< vgd::node::PointLight* >(node) != 0 );
+	vgd::node::PointLight *pointLight = static_cast< vgd::node::PointLight* >(node);
+
 	if ( glEngine->isGLSLEnabled() )
 	{
-		using vgeGL::engine::GLSLHelpers;
-		GLSLHelpers::addLightFlags( GLSLHelpers::POINT_LIGHT );
+		// Retrieves GLSL state
+		using vgeGL::engine::GLSLState;
+		typedef vgeGL::engine::GLSLState::LightState LightState;
+
+		GLSLState& state = glEngine->getGLSLState();
+
+		// Updates GLSL state
+		state.setEnabled( GLSLState::POINT_LIGHT );
+
+		vgd::Shp< LightState > lightState( new LightState(pointLight, GLSLState::POINT_LIGHT) );
+		state.setLight(	node->getMultiAttributeIndex(), lightState );
 	}
 
 	vgeGL::rc::applyUsingDisplayList<vgd::node::PointLight, PointLight>( engine, node, this );

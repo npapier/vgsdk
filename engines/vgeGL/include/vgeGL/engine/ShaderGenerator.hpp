@@ -10,6 +10,7 @@
 #include <glo/GLSLProgram.hpp>
 #include <vgd/Shp.hpp>
 #include <vgd/field/DirtyFlag.hpp>
+#include <vgd/node/Light.hpp>
 
 #include "vgeGL/engine/GLSLState.hpp"
 
@@ -36,34 +37,6 @@ cache generated shaders at least for a single rendering */
 struct GLSLHelpers
 {
 	// @todo Flags class in vgd::basic
-	enum LightType
-	{
-		DIRECTIONAL_LIGHT	= 1<<0,
-		POINT_LIGHT			= 1<<1,
-		SPOT_LIGHT			= 1<<2
-	};
-
-	static uint m_lightFlags;
-
-	static void clearLightFlags()
-	{
-		m_lightFlags = 0;
-	}
-
-	static void addLightFlags( const LightType lightType )
-	{
-		m_lightFlags = m_lightFlags | lightType;
-	}
-
-	static void removeLightFlags( const LightType lightType )
-	{
-		m_lightFlags = m_lightFlags & (~lightType);
-	}
-
-	static const bool isLightFlags( const LightType lightType )
-	{
-		return (m_lightFlags & lightType) != 0;
-	}
 
 
 
@@ -81,28 +54,28 @@ struct GLSLHelpers
 
 
 
-	static const std::string generate_lights()
+	static const std::string generate_lights( const GLSLState& state )
 	{
 		std::string retVal;
 
 		// DIRECTIONAL_LIGHT
-		if ( GLSLHelpers::isLightFlags(GLSLHelpers::DIRECTIONAL_LIGHT) )
+		if ( state.isEnabled( GLSLState::DIRECTIONAL_LIGHT) )
 		{
-			const std::string& directionalLight = GLSLHelpers::generateFunction_directionalLight();
+			const std::string& directionalLight = GLSLHelpers::generateFunction_directionalLight( state );
 			retVal += directionalLight;
 		}
 
 		// POINT_LIGHT
-		if ( GLSLHelpers::isLightFlags(GLSLHelpers::POINT_LIGHT) )
+		if ( state.isEnabled( GLSLState::POINT_LIGHT) )
 		{
-			const std::string& pointLight = GLSLHelpers::generateFunction_pointLight();
+			const std::string& pointLight = GLSLHelpers::generateFunction_pointLight( state );
 			retVal += pointLight;
 		}
 
 		// SPOT_LIGHT
-		if ( GLSLHelpers::isLightFlags(GLSLHelpers::SPOT_LIGHT) )
+		if ( state.isEnabled( GLSLState::SPOT_LIGHT) )
 		{
-			const std::string& spotLight = GLSLHelpers::generateFunction_spotLight();
+			const std::string& spotLight = GLSLHelpers::generateFunction_spotLight( state );
 			retVal += spotLight;
 		}
 
@@ -111,7 +84,7 @@ struct GLSLHelpers
 
 
 
-	static const std::string& generateFunction_directionalLight()
+	static const std::string& generateFunction_directionalLight( const GLSLState& state )
 	{
 		static const std::string retVal = 
 		"void directionalLight( in int i, in vec3 normal )\n"
@@ -141,7 +114,7 @@ struct GLSLHelpers
 
 
 
-	static const std::string& generateFunction_pointLight()
+	static const std::string& generateFunction_pointLight( const GLSLState& state )
 	{
 		static const std::string retVal =
 		"void pointLight( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
@@ -192,7 +165,7 @@ struct GLSLHelpers
 
 
 
-	static const std::string& generateFunction_spotLight()
+	static const std::string& generateFunction_spotLight( const GLSLState& state )
 	{
 		static const std::string retVal =
 		"void spotLight( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
@@ -230,7 +203,6 @@ struct GLSLHelpers
 		"	}\n"
 		"	else\n"
 		"	{\n"
-//		"		spotAttenuation = 1.0;\n"
 		"		spotAttenuation = pow(spotDot, gl_LightSource[i].spotExponent);\n"
 		"	}\n"
 		"\n"
@@ -250,18 +222,7 @@ struct GLSLHelpers
 		"	}\n"
 		"	else\n"
 		"	{\n"
-/*//
-		"		if ( nDotHV == 0.0 )\n"
-		"		{\n"
-		"			pf = 0.0;\n"
-		"		}\n"
-		"		else\n"
-		"		{\n"*/
 		"		pf = pow( nDotHV, gl_FrontMaterial.shininess );\n"				// @todo gl_Back ?
-		//"		}\n"
-//		"if ( /*nDotHV == 0.0 && */gl_FrontMaterial.shininess <= 0.0 ) { pf = 0; } else {pf = pow( nDotHV, gl_FrontMaterial.shininess );}\n"
-//		"		pf = pow( nDotHV, gl_FrontMaterial.shininess );\n"				// @todo gl_Back ?
-//		"		pf = pow( nDotHV, 0.0 );\n"				// @todo gl_Back ?
 		"	}\n"
 		"\n"
 		"	Ambient		+= gl_LightSource[i].ambient * attenuation;\n"
@@ -277,24 +238,18 @@ struct GLSLHelpers
 	{
 		std::string retVal;
 
-		GLint isLocalViewer; // @todo moves to engine ?
-		//GLint lightModelTwoSidedInt;
-		//glGetIntegerv( GL_LIGHT_MODEL_TWO_SIDE, &lightModelTwoSidedInt );
-		glGetIntegerv( GL_LIGHT_MODEL_LOCAL_VIEWER, &isLocalViewer );
-
 		if ( state.isLightingEnabled() )
 		{
 			retVal +=
 			"\n"
-			"void flight( in vec4 ecPosition, in vec3 normal )\n"//, float alphaFade )\n"
+			"void flight( in vec4 ecPosition, in vec3 normal )\n"
 			"{\n"
 			"	vec3 ecPosition3;\n"
 			"	vec3 eye;\n"
-			//"	vec4 color;\n"
 			"\n"
 			"	ecPosition3 = (vec3(ecPosition)) / ecPosition.w;\n";
-			
-			if ( isLocalViewer )
+
+			if ( state.isEnabled(GLSLState::LOCAL_VIEWER) )
 			{
 				retVal +=
 				"	eye = -normalize(ecPosition3);\n"
@@ -314,56 +269,68 @@ struct GLSLHelpers
 			"	Specular	= vec4(0.0);\n"
 			"\n";
 
-			GLfloat position[4];
-			GLfloat spotCutoff;
+			std::string currentLightFront;
+			std::string currentLightBack;
 
-			for( int i = 0; i < 8/*NUM_LIGHTS*/; i++ )	// @todo
+			uint		i		= 0;
+			const uint	iEnd	= state.getMaxLight();
+
+			for( uint foundLight = 0; i != iEnd; ++i )
 			{
-				const std::string iStr = boost::lexical_cast< std::string >( i ); // @todo optme
+				const vgd::Shp< GLSLState::LightState > currentLightState = state.getLight(i);
 
-				std::string currentLightFront;
-				std::string currentLightBack;
-
-				if ( glIsEnabled(GL_LIGHT0 + i) )		// @todo
+				if ( currentLightState )
 				{
-					glGetLightfv( GL_LIGHT0 + i, GL_POSITION, position );
-					glGetLightfv( GL_LIGHT0 + i, GL_SPOT_CUTOFF, &spotCutoff );
+					const vgd::node::Light * currentLight = currentLightState->getLightNode();
+					assert( currentLight != 0 );
 
-					if ( position[3] == 0.f )
+					bool isDefined;
+					bool onValue;
+
+					isDefined = currentLight->getOn( onValue );
+
+					if ( isDefined && onValue )
 					{
-						if ( spotCutoff != 180.f )
+						const std::string iStr = boost::lexical_cast< std::string >( i ); // @todo optme
+
+						const int lightType = currentLightState->getLightType();
+
+						switch ( lightType )
 						{
-							assert( false && "Not yet implemented." );
-							/*retVal += "	infiniteSpotLight(" << iStr << ", normal );\n";
-							setFlags( fLightDirSpot = true );*/
+							case GLSLState::DIRECTIONAL_LIGHT:
+								currentLightFront	+= "	directionalLight( " + iStr + ", normal );\n";
+								currentLightBack	+= "	directionalLight( " + iStr + ", -normal );\n";
+								break;
+
+							case GLSLState::POINT_LIGHT:
+								currentLightFront	+= "	pointLight( " + iStr + ", ecPosition3, normal, eye );\n";
+								currentLightBack	+= "	pointLight( " + iStr + ", ecPosition3, -normal, eye );\n";
+								break;
+
+							case GLSLState::SPOT_LIGHT:
+								currentLightFront	+= "	spotLight( " + iStr + ", ecPosition3, normal, eye );\n";
+								currentLightBack	+= "	spotLight( " + iStr + ", ecPosition3, -normal, eye );\n";
+								break;
+
+							default:
+								assert( false && "Unknown light type !" );
 						}
-						else
+
+						retVal += currentLightFront;
+
+						// Takes care of two sided lighting
+						if ( state.isTwoSidedLightingEnabled() )
 						{
-							currentLightFront	+= "	directionalLight( " + iStr + ", normal );\n";
-							currentLightBack	+= "	directionalLight( " + iStr + ", -normal );\n";
-							//addLightFlags( DIRECTIONAL_LIGHT );
+							retVal += currentLightBack;
 						}
 					}
-					else
-					{
-						if ( spotCutoff == 180.f )
-						{
-							currentLightFront	+= "	pointLight( " + iStr + ", ecPosition3, normal, eye );\n";
-							currentLightBack	+= "	pointLight( " + iStr + ", ecPosition3, -normal, eye );\n";
-							//addLightFlags( POINT_LIGHT );
-						}
-						else
-						{
-							currentLightFront	+= "	spotLight( " + iStr + ", ecPosition3, normal, eye );\n";
-							currentLightBack	+= "	spotLight( " + iStr + ", ecPosition3, -normal, eye );\n";
-							//addLightFlags( SPOT_LIGHT );
-						}
-					}
+					// else light off, nothing to do
 
-					retVal += currentLightFront;
-					if ( state.isTwoSidedLightingEnabled() )
+					//
+					++foundLight;
+					if ( foundLight == state.getNumLight() )
 					{
-						retVal += currentLightBack;
+						break;
 					}
 				}
 				// else no light, nothing to do
@@ -491,26 +458,95 @@ struct GLSLHelpers
 		"void ftexgen( in vec4 ecPosition, in vec3 normal )\n"
 		"{\n";
 
-		// const uint numTexture = state.getNumTexture();
+		uint		i		= 0;
+		const uint	iEnd	= state.getMaxTexture();
 
-		for(	uint	i		= 0,
-						iEnd	= state.getMaxTexture();
-				i != iEnd;
-				++i )
+		for( uint foundTexture = 0; i != iEnd; ++i )
 		{
-			const std::string strUnit = boost::lexical_cast< std::string >( i );
-
 			const glo::Texture * current = state.getTexture( i );
 
 			if ( current ) // @todo Texturing is enabled if vertex shape contains tex coord and NOT when a texture is defined.
 			{
+				const std::string strUnit = boost::lexical_cast< std::string >( i );
 				retVal +=
 				"	gl_TexCoord[" + strUnit + "] = gl_MultiTexCoord" + strUnit + ";\n";
+
+				//
+				++foundTexture;
+				if ( foundTexture == state.getNumTexture() )
+				{
+					break;
+				}
 			}
+			// else no texture, nothing to do
 		}
 
 		retVal += 
 		"}\n";
+
+		return retVal;
+	}
+
+
+	static const std::string generate_samplers( const vgeGL::engine::GLSLState& state )
+	{
+		std::string retVal;
+
+		uint		i		= 0;
+		const uint	iEnd	= state.getMaxTexture();
+
+		for( uint foundTexture = 0; i != iEnd; ++i )
+		{
+			const glo::Texture * current = state.getTexture( i );
+
+			if ( current ) // @todo Texturing is enabled if vertex shape contains tex coord and NOT when a texture is defined.
+			{
+				const std::string strUnit = boost::lexical_cast< std::string >( i );
+
+				retVal +=
+				"uniform sampler2D texUnit" + strUnit + ";\n";
+
+				//
+				++foundTexture;
+				if ( foundTexture == state.getNumTexture() )
+				{
+					break;
+				}
+			}
+			// else no texture, nothing to do
+		}
+
+		return retVal;
+	}
+
+
+	static const std::string generate_texLookups( const vgeGL::engine::GLSLState& state )
+	{
+		std::string retVal;
+
+		uint		i		= 0;
+		const uint	iEnd	= state.getMaxTexture();
+
+		for( uint foundTexture = 0; i != iEnd; ++i )
+		{
+			const glo::Texture * current = state.getTexture( i );
+
+			if ( current ) // @todo Texturing is enabled if vertex shape contains tex coord and NOT when a texture is defined.
+			{
+				const std::string strUnit = boost::lexical_cast< std::string >( i );
+
+				retVal +=
+				"	color *= texture2D(texUnit" + strUnit + ", gl_TexCoord[" + strUnit + "].xy);\n";
+
+				//
+				++foundTexture;
+				if ( foundTexture == state.getNumTexture() )
+				{
+					break;
+				}
+			}
+			// else no texture, nothing to do
+		}
 
 		return retVal;
 	}

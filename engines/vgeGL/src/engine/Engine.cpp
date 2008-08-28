@@ -28,8 +28,8 @@ namespace engine
 
 
 Engine::Engine()
-:	m_glslProgramGenerator( new ProgramGenerator() ),
-	m_glslState(0)
+:	m_glslProgramGenerator( new ProgramGenerator() )
+	//m_glslState(0,0)
 {
 }
 
@@ -50,7 +50,7 @@ void Engine::reset()
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
 
 	//
-	getGLSLState().reset( getMaxTexUnits() );
+	getGLSLState().reset( getMaxLights(), getMaxTexUnits() );
 
 	if ( m_firstInstance )
 	{

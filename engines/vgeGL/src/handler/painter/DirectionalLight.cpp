@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/DirectionalLight.hpp"
 
 #include <vgd/node/DirectionalLight.hpp>
-#include "vgeGL/engine/ShaderGenerator.hpp"
+#include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -42,10 +42,22 @@ void DirectionalLight::apply( vge::engine::Engine * engine, vgd::node::Node * no
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
+	assert( dynamic_cast< vgd::node::DirectionalLight* >(node) != 0 );
+	vgd::node::DirectionalLight *directionalLight = static_cast< vgd::node::DirectionalLight* >(node);
+
 	if ( glEngine->isGLSLEnabled() )
 	{
-		using vgeGL::engine::GLSLHelpers;
-		GLSLHelpers::addLightFlags( GLSLHelpers::DIRECTIONAL_LIGHT );
+		// Retrieves GLSL state
+		using vgeGL::engine::GLSLState;
+		typedef vgeGL::engine::GLSLState::LightState LightState;
+
+		GLSLState& state = glEngine->getGLSLState();
+
+		// Updates GLSL state
+		state.setEnabled( GLSLState::DIRECTIONAL_LIGHT );
+
+		vgd::Shp< LightState > lightState( new LightState(directionalLight, GLSLState::DIRECTIONAL_LIGHT) );
+		state.setLight(	node->getMultiAttributeIndex(), lightState );
 	}
 
 	vgeGL::rc::applyUsingDisplayList<vgd::node::DirectionalLight, DirectionalLight>( engine, node, this );
