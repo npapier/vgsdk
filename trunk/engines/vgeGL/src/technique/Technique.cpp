@@ -35,16 +35,12 @@ void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::Traver
 	m_engine = engine;
 
 	// @todo move to pass
-	engine->getGLSLState().reset( engine->getMaxTexUnits() );
+	engine->getGLSLState().reset( engine->getMaxLights(), engine->getMaxTexUnits() );
 
 	if ( engine->isGLSLEnabled() )
 	{
 		//
 		engine->getGLSLProgramGenerator()->dirty();
-
-		//
-
-		vgeGL::engine::GLSLHelpers::clearLightFlags();
 	}
 }
 
