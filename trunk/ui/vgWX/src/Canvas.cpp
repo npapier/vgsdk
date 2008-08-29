@@ -134,6 +134,8 @@ Canvas::~Canvas()
 		else
 		{
 			assert( false && "OpenGL context could not be made current. So OpenGL objects could not be released properly." );
+			getGLEngine()->getGLManager().clear();
+			getGLEngine()->getGLSLManager().clear();
 		}
 
 		// Global initialization of vgsdk must be redone for each "first canvas"
@@ -291,6 +293,9 @@ bool Canvas::Destroy()
 
 	// Cleans the scene graph
 	setRoot( vgd::node::Group::create("empty") );
+
+	getGLEngine()->getGLManager().clear();
+	getGLEngine()->getGLSLManager().clear();
 
 	return wxGLCanvas::Destroy();
 }
