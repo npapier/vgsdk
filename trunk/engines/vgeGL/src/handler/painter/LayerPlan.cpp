@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -26,6 +26,8 @@ namespace handler
 namespace painter
 {
 
+
+
 META_HANDLER_CPP( LayerPlan );
 
 
@@ -33,7 +35,7 @@ META_HANDLER_CPP( LayerPlan );
 const vge::handler::Handler::TargetVector LayerPlan::getTargets() const
 {
 	TargetVector targets;
-	
+
 	targets.reserve( 1 );
 	targets.push_back( vgd::node::LayerPlan::getClassIndexStatic() );
 
@@ -101,28 +103,28 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 		rcRoot->getRoot()->addChild( texture2D );
 		rcRoot->getRoot()->addChild( quad );
-		
-		// setup rc		
+
+		// setup rc
 		quad->initializeTexUnits( 1, vgd::basic::TOP_LEFT, false /* cw */ );
 		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
 		quad->transform( translateToOrigin );
 
 		texture2D->setWrap( Texture2D::WRAP_S, Texture2D::ONCE );
 		texture2D->setWrap( Texture2D::WRAP_T, Texture2D::ONCE );
-		
+
 		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
 		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
-		
+
 		texture2D->setFunction( Texture2D::FUN_REPLACE );
 	}
 	else
 	{
 		assert( rcRoot != 0 );
-		
+
 		texture2D	= rcRoot->getRoot()->getChild< Texture2D >(0);
 		quad		= rcRoot->getRoot()->getChild< Quad >(1);
 	}
-	
+
 	// Dirty flags
 	vgd::field::DirtyFlag	*pDF		= layerPlan->getDirtyFlag( layerPlan->getDFNode() );
 	vgd::field::DirtyFlag	*pDFIImage	= layerPlan->getDirtyFlag( layerPlan->getDFIImage() );
@@ -157,9 +159,9 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	// render overlay
 	vgd::Shp< vge::service::Service > paintService = vge::service::Painter::create();
-	
+
 	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), true );
-	
+
 	glMatrixMode( GL_MODELVIEW );
 	glPushMatrix();
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
@@ -175,7 +177,14 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	glDisable( GL_LIGHTING );
 	glDisable( GL_DEPTH_TEST );
-	
+
+	glo::GLSLProgram * program = pGLEngine->gethCurrentProgram();
+	if ( program )
+	{
+		pGLEngine->setGLSLEnabled(false);
+		pGLEngine->setCurrentProgram();
+	}
+
 	pGLEngine->evaluate( paintService, texture2D.get(), true );
 
 	// draw proxy geometry
@@ -196,7 +205,13 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), false );
 
-	// Validate node
+	if ( program )
+	{
+		pGLEngine->setCurrentProgram( program );
+		pGLEngine->setGLSLEnabled();
+	}
+
+	// Validates node
 	pDF->validate();
 	pDFIImage->validate();
 }
