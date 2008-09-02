@@ -83,13 +83,13 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	vge::rc::IResource 		*resource	= rcManager.getAbstract( layerPlan );
 	vge::rc::Root			*rcRoot		= dynamic_cast< vge::rc::Root* >(resource);
-	
+
 	using vgd::node::Quad;
 	using vgd::node::Texture2D;
-	
+
 	vgd::Shp< Quad >		quad;
 	vgd::Shp< Texture2D >	texture2D;
-	
+
 	if ( resource == 0 )
 	{
 		assert( rcRoot == 0 );
@@ -97,7 +97,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 		// No resource (this is the first evaluation), create it.
 		rcRoot = new vge::rc::Root;
 		rcManager.add( layerPlan, rcRoot );
-		
+
 		quad = Quad::create("rootRC.LayerPlan.quad");
 		texture2D = Texture2D::create("rootRC.LayerPlan.texture2D");
 
@@ -136,26 +136,19 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 //	}
 
 	// @todo OPTME always computed
-	vgm::Vec2f layerPlanPosition	= layerPlan->getPosition();
-	vgm::Vec2f layerPlanSize		= layerPlan->getSize();
+	const vgm::Vec2f	layerPlanPosition	= layerPlan->getPosition();
+	const vgm::Vec2f	layerPlanSize		= layerPlan->getSize();
 
 //	assert( layerPlanSize[0] > 0.f ); // @todo FIXME floating point error (vgm::opearator equals( float, float );
 //	assert( layerPlanSize[0] <= 1.f );
 
 	vgm::MatrixR current;
-	
-	const vgm::Vec3f translation(	layerPlanPosition[0],
-									layerPlanPosition[1],
-									0.f );
+
+	const vgm::Vec3f translation( layerPlanPosition );
 	current.setTranslate( translation );
 
 	const vgm::Vec3f scaleFactors( layerPlanSize[0], layerPlanSize[1], 1.f );
 	current.scale( scaleFactors );
-
-	if ( pDFIImage->isDirty() )
-	{
-		texture2D->setIImage( layerPlan->getIImage() );
-	}
 
 	// render overlay
 	vgd::Shp< vge::service::Service > paintService = vge::service::Painter::create();
@@ -172,17 +165,34 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	projection.setOrtho( 0.f, 1.f, 0.f, 1.f );
 	glLoadMatrixf( reinterpret_cast<const float*>( projection.getValue() ) );
 
+	glMatrixMode( GL_TEXTURE );
+	glPushMatrix();
+	glLoadIdentity();
+
 	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();
 	glViewport( 0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1] );
 
 	glDisable( GL_LIGHTING );
 	glDisable( GL_DEPTH_TEST );
 
+	// @todo memento sethGLSLEnabled( false ); idem for seth2DEnabled()
 	glo::GLSLProgram * program = pGLEngine->gethCurrentProgram();
 	if ( program )
 	{
 		pGLEngine->setGLSLEnabled(false);
 		pGLEngine->setCurrentProgram();
+	}
+
+	if ( pDFIImage->isDirty() )
+	{
+		const float alphaScale = layerPlan->getAlphaScale();
+
+		if ( alphaScale != 1.f )
+		{
+			glPixelTransferf( GL_ALPHA_SCALE, alphaScale );
+		}
+
+		texture2D->setIImage( layerPlan->getIImage() );
 	}
 
 	pGLEngine->evaluate( paintService, texture2D.get(), true );
@@ -197,6 +207,9 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	// alpha/blend
 	pGLEngine->evaluate( paintService, quad.get(), true );
 
+	glMatrixMode( GL_TEXTURE );
+	glPopMatrix();
+
 	glMatrixMode( GL_PROJECTION );
 	glPopMatrix();
 
@@ -205,6 +218,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), false );
 
+	// @todo memento sethGLSLEnabled( memento(true/false, 0/1/2...) );
 	if ( program )
 	{
 		pGLEngine->setCurrentProgram( program );
