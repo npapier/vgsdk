@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -28,6 +28,7 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 	addField( new FPositionType(getFPosition()) );
 	addField( new FSizeType(getFSize()) );
 	addField( new FIImageType(getFIImage()) );
+	addField( new FAlphaScaleType(getFAlphaScale()) );
 
 	// Add dirty flags
 	addDirtyFlag(getDFIImage());
@@ -42,9 +43,10 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 void LayerPlan::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	
+
 	setPosition( vgm::Vec2f(0.f, 0.f) );
 	setSize( vgm::Vec2f(1.f, 1.f) );
+	setAlphaScale( 1.f );
 }
 
 
@@ -98,6 +100,20 @@ void LayerPlan::setIImage( const IImageValueType value )
 
 
 
+const LayerPlan::AlphaScaleValueType LayerPlan::getAlphaScale() const
+{
+	return ( getFieldRO<FAlphaScaleType>(getFAlphaScale())->getValue() );
+}
+
+
+
+void LayerPlan::setAlphaScale( const AlphaScaleValueType value )
+{
+	getFieldRW<FAlphaScaleType>(getFAlphaScale())->setValue( value );
+}
+
+
+
 const std::string LayerPlan::getFPosition()
 {
 	return "f_position";
@@ -115,6 +131,13 @@ const std::string LayerPlan::getFSize()
 const std::string LayerPlan::getFIImage()
 {
 	return "f_iimage";
+}
+
+
+
+const std::string LayerPlan::getFAlphaScale()
+{
+	return "f_alphaScale";
 }
 
 

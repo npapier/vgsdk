@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 #define _VGD_NODE_LAYERPLAN_HPP
 
 #include "vgd/field/Enum.hpp"
+#include "vgd/field/Float.hpp"
 #include "vgd/field/Image.hpp"
 #include "vgd/field/Vector.hpp"
 #include "vgd/node/MultiAttribute.hpp"
@@ -46,6 +47,9 @@ namespace node
  * 		Determines the image to display in the layer plan.
  * 		You can set multiple times this field, but only if all successive images have the same format.
  * 		The data and size of the image can changed, but that's all.
+ *
+ * - SFFloat \c alphaScale = 1\n
+ *		The alpha component of \c iimage is multiplied by the \c alphaScale factor.
  * 
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes
@@ -147,6 +151,33 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	//@}
 
 
+	/**
+	 * @name Accessors to alphaScale field
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c alphaScale field.
+	 */	
+	typedef vgd::field::SFFloat FAlphaScaleType;
+
+	/**
+	 * @brief Typedef for the \c alphaScale value.
+	 */
+	typedef float AlphaScaleValueType;
+	
+	/**
+	 * @brief Gets the alphaScale.
+	 */
+	const AlphaScaleValueType	getAlphaScale() const;
+
+	/**
+	 * @brief Sets the alphaScale.
+	 */
+	void					setAlphaScale( const AlphaScaleValueType value );
+
+	//@}
+
 
 	/**
 	 * @name Fields names enumeration
@@ -173,6 +204,13 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	 * @return the name of field \c iimage.
 	 */
 	static const std::string getFIImage();
+
+	/**
+	 * @brief Returns the name of field \c alphaScale.
+	 * 
+	 * @return the name of field \c alphaScale.
+	 */
+	static const std::string getFAlphaScale();
 
 	//@}
 
