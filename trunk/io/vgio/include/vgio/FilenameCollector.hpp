@@ -1,24 +1,21 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGD_BASIC_FILENAMECOLLECTOR_HPP
-#define _VGD_BASIC_FILENAMECOLLECTOR_HPP
+#ifndef _VGIO_FILENAMECOLLECTOR_HPP
+#define _VGIO_FILENAMECOLLECTOR_HPP
 
 #include <boost/filesystem/path.hpp>
 #include <boost/regex.hpp>
 #include <list>
 #include <string>
 
-#include "vgd/vgd.hpp"
+#include "vgio/vgio.hpp"
 
 
 
-namespace vgd
-{
-
-namespace basic
+namespace vgio
 {
 
 
@@ -29,10 +26,8 @@ namespace basic
  * A regular expression could be used to filter collected filenames.
  * 
  * @remarks Directories in path directory are not explored. 
- * 
- * @todo Moves to vgIO ?
  */
-struct VGD_API FilenameCollector
+struct VGIO_API FilenameCollector
 {
 	/**
 	 * @brief Typedef for list of path
@@ -109,8 +104,6 @@ private:
 
 
 
-} // namespace basic
+} // namespace vgio
 
-} // namespace vgd
-
-#endif //#ifndef _VGD_BASIC_FILENAMECOLLECTOR_HPP
+#endif //#ifndef _VGIO_FILENAMECOLLECTOR_HPP
