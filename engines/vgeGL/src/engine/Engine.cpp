@@ -7,7 +7,6 @@
 
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
-#include <vgd/basic/FilenameCollector.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/Texture2D.hpp>
 //#include <vgd/node/TextureCubeMap.hpp>
@@ -16,6 +15,7 @@
 #include <vge/handler/Handler.hpp>
 #include <vge/handler/HandlerRegistry.hpp>
 #include "vgeGL/engine/ProgramGenerator.hpp"
+#include <vgio/FilenameCollector.hpp>
 
 
 
@@ -28,7 +28,8 @@ namespace engine
 
 
 Engine::Engine()
-:	m_glslProgramGenerator( new ProgramGenerator() )
+:	m_isGLSLEnabled(false),
+	m_glslProgramGenerator( new ProgramGenerator() )
 	//m_glslState(0,0)
 {
 }
@@ -43,7 +44,6 @@ void Engine::reset()
 	}
 
 	//
-	m_isGLSLEnabled		= false;
 	m_currentProgram	= 0;
 
 	// Reset cache
@@ -243,7 +243,7 @@ Engine::GLSLProgramManagerType& Engine::getGLSLManager()
 
 void Engine::loadShaders( const std::string& path, const std::string& regex )
 {
-	using vgd::basic::FilenameCollector;
+	using vgio::FilenameCollector;
 
 	FilenameCollector filenameCollector( path );
 	filenameCollector.setRegex( regex );
