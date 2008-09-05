@@ -109,8 +109,8 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
 		quad->transform( translateToOrigin );
 
-		texture2D->setWrap( Texture2D::WRAP_S, Texture2D::ONCE );
-		texture2D->setWrap( Texture2D::WRAP_T, Texture2D::ONCE );
+		texture2D->setWrap( Texture2D::WRAP_S, Texture2D::CLAMP );
+		texture2D->setWrap( Texture2D::WRAP_T, Texture2D::CLAMP );
 
 		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
 		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
