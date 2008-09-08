@@ -57,14 +57,24 @@ struct StreamRedirection;
 struct VGDEBUG_API StdStreamsToFiles
 {
 	/**
+	 * @brief The opening mode
+	 */
+	enum OpenModeType
+	{
+		TRUNCATE,	///< To delete contents of an existing file when it is created.
+		APPEND,		///< To seek to the end of a file before each insertion.
+	};
+
+	/**
 	 * @brief	Constructor
 	 *
 	 * @param	coutPath	a string containing the path to the file that will log @c std::cout (@c cout.txt by default)
 	 * @param	cerrPath	a string containing the path to the file that will log @c std::cerr (@c cerr.txt by default)
+	 * @param	openMode	the opening mode of \c coutPath and \c cerrPath
 	 *
 	 * @pre		coutPath != cerrPath
 	 */
-	StdStreamsToFiles( const std::string & coutPath = "cout.txt", const std::string & cerrPath = "cerr.txt" );
+	StdStreamsToFiles( const std::string & coutPath = "cout.txt", const std::string & cerrPath = "cerr.txt", const OpenModeType openMode = TRUNCATE );
 
 	/**
 	 * @brief	Destructor
