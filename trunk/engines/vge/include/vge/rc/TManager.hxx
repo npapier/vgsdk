@@ -3,7 +3,6 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-//#include <boost/signals/connection.hpp>
 #include <vgd/ScopedPtr.hpp>
 
 
@@ -19,8 +18,9 @@ namespace rc
 // ********* template Manager::ResourceContainer *********
 
 
-template< typename KeyType/*, typename ResourceType*/ >
-struct TManager<KeyType>::ResourceContainer
+// @todo removes this resource container and stores directly the resource in the TManager ?
+template< typename KeyType, typename ResourceType >
+struct TManager<KeyType, ResourceType>::ResourceContainer
 {
 	/**
 	 * @brief Constructor
@@ -29,7 +29,7 @@ struct TManager<KeyType>::ResourceContainer
 	 * 
 	 * @remarks Ownership of the given resource is acquired by this class.
 	 */
-	ResourceContainer( glo::IResource *rc )
+	ResourceContainer( ResourceType *rc )
 	 :	m_rc(rc)
 	{}
 
@@ -38,14 +38,14 @@ struct TManager<KeyType>::ResourceContainer
 	 *
 	 * @return a pointer on the resource
 	 */
-	const glo::IResource *getResourcePointer() const { return m_rc.get(); }
+	const ResourceType *getResourcePointer() const { return m_rc.get(); }
 
 	/**
 	 * @brief Gets the owned resource.
 	 *
 	 * @return a pointer on the resource
 	 */
-	glo::IResource *getResourcePointer() { return m_rc.get(); }
+	ResourceType *getResourcePointer() { return m_rc.get(); }
 
 private:
 	/**
@@ -56,12 +56,8 @@ private:
 	/**
 	 * @brief The owned resource
 	 */
-	vgd::ScopedPtr< glo::IResource > m_rc;
-
-	/**
-	 * brief This object is the signal/slot connection between an object and its resource.
-	 */
-	//boost::signals::scoped_connection m_connection;
+	vgd::ScopedPtr< ResourceType > m_rc;
+	//@}
 };
 
 
@@ -70,16 +66,24 @@ private:
 
 
 // ********* template Manager *********
-template< typename KeyType >
-TManager< KeyType >::~TManager()
+template< typename KeyType, typename ResourceType >
+TManager< KeyType, ResourceType >::TManager( const std::string name )
+:	NamedObject( name )
+{
+}
+
+
+
+template< typename KeyType, typename ResourceType >
+TManager< KeyType, ResourceType >::~TManager()
 {
 	clear();
 }
 
 
 
-template< typename KeyType >
-const bool TManager< KeyType >::add( const KeyType& key, glo::IResource *resource )
+template< typename KeyType, typename ResourceType >
+const bool TManager< KeyType, ResourceType >::add( const KeyType& key, ResourceType *resource )
 {
 	assert( resource != 0 && "Null pointer" );
 
@@ -91,8 +95,8 @@ const bool TManager< KeyType >::add( const KeyType& key, glo::IResource *resourc
 
 
 
-template< typename KeyType >
-const bool TManager< KeyType >::remove( const KeyType& key )
+template< typename KeyType, typename ResourceType >
+const bool TManager< KeyType, ResourceType >::remove( const KeyType& key )
 {
 	typename ResourcesMap::iterator iter = m_resources.find( key );
 
@@ -100,7 +104,6 @@ const bool TManager< KeyType >::remove( const KeyType& key )
 	{
 		// A match is found for the key
 		// Removes it
-
 		m_resources.erase( iter );
 
 		return true;
@@ -115,16 +118,16 @@ const bool TManager< KeyType >::remove( const KeyType& key )
 
 
 
-template< typename KeyType >
-void TManager< KeyType >::clear()
+template< typename KeyType, typename ResourceType >
+void TManager< KeyType, ResourceType >::clear()
 {
 	m_resources.clear();
 }
 
 
 
-template< typename KeyType >
-glo::IResource* TManager< KeyType >::getAbstract( const KeyType& key )
+template< typename KeyType, typename ResourceType >
+ResourceType* TManager< KeyType, ResourceType >::getAbstract( const KeyType& key )
 {
 	typename ResourcesMap::iterator iter = m_resources.find( key );
 
@@ -142,11 +145,11 @@ glo::IResource* TManager< KeyType >::getAbstract( const KeyType& key )
 
 
 
-template< typename KeyType >
-template< typename ResourceType >
-ResourceType* TManager< KeyType >::get( const KeyType& key )
+template< typename KeyType, typename ResourceType >
+template< typename OutResourceType >
+OutResourceType* TManager< KeyType, ResourceType >::get( const KeyType& key )
 {
-	glo::IResource *resource = getAbstract(key);
+	ResourceType *resource = getAbstract(key);
 
 	if ( resource == 0 )
 	{
@@ -154,7 +157,7 @@ ResourceType* TManager< KeyType >::get( const KeyType& key )
 	}
 	else
 	{
-		ResourceType *castedResource = dynamic_cast< ResourceType* >(resource);
+		OutResourceType *castedResource = dynamic_cast< OutResourceType* >(resource);
 		assert( castedResource != 0 && "Target resource type is invalid." );
 
 		return castedResource;
@@ -163,8 +166,8 @@ ResourceType* TManager< KeyType >::get( const KeyType& key )
 
 
 
-template< typename KeyType >
-const uint TManager< KeyType >::getNum() const
+template< typename KeyType, typename ResourceType >
+const uint TManager< KeyType, ResourceType >::getNum() const
 {
 	return static_cast< const uint >( m_resources.size() );
 }
