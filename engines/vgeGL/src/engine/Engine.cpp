@@ -559,7 +559,7 @@ bool Engine::populateNodeRegistry()
 
 vge::rc::Manager				Engine::m_glManager;
 
-Engine::GLSLProgramManagerType	Engine::m_glslManager;
+Engine::GLSLProgramManagerType	Engine::m_glslManager("GLSL Program Manager");
 
 bool							Engine::m_firstInstance = true;
 

@@ -15,6 +15,7 @@
 namespace glo 
 {
 	struct GLSLProgram;
+	struct IResource;
 //	struct Texture; 
 }
 namespace vgd { namespace node { struct Texture; } }
@@ -184,7 +185,7 @@ public:
 	 * 
 	 * This manager associates a single string to a single glo::GLSLProgram
 	 */
-	typedef vge::rc::TManager< std::string > GLSLProgramManagerType;
+	typedef vge::rc::TManager< std::string, glo::IResource > GLSLProgramManagerType;
 
 	/**
 	 * @brief Gets the glsl program manager.
