@@ -17,13 +17,17 @@ namespace vgDebug
 {
 
 
-StdStreamsToFiles::StdStreamsToFiles( const std::string & coutPath, const std::string & cerrPath )
+StdStreamsToFiles::StdStreamsToFiles( const std::string & coutPath, const std::string & cerrPath, const OpenModeType openMode )
 :	m_coutPath( coutPath ),
-	m_cerrPath( cerrPath ),
-	m_coutFile( coutPath.c_str() ),
-	m_cerrFile( cerrPath.c_str() )
+	m_cerrPath( cerrPath )
 {
 	assert( coutPath != cerrPath );
+
+	std::ios_base::openmode stlOpenMode = std::ios_base::out;
+	stlOpenMode |= (openMode == TRUNCATE ? std::ios_base::trunc : std::ios_base::app);
+
+	m_coutFile.open( coutPath.c_str(), stlOpenMode );
+	m_cerrFile.open( cerrPath.c_str(), stlOpenMode );
 
 	m_coutRedirection.reset( new StreamRedirection(&std::cout, &m_coutFile) );
 	m_cerrRedirection.reset( new StreamRedirection(&std::cerr, &m_cerrFile) );

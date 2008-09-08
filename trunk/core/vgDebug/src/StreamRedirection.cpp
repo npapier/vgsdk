@@ -37,7 +37,6 @@ std::ostream * StreamRedirection::from()
 
 
 
-
 std::ostream * StreamRedirection::to()
 {
 	return m_to;
