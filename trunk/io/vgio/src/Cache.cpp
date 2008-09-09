@@ -18,7 +18,7 @@ namespace vgio
 
 
 ImageCache::ImageCache( const std::string name )
-: TManager(name)
+: vge::rc::TManager< std::string, vgd::basic::IImage >(name)
 {
 }
 
