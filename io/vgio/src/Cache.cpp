@@ -9,6 +9,7 @@
 #include <vgd/basic/IImage.hpp>
 #include <vgd/basic/Image.hpp>
 #include <vgd/basic/ImageInfo.hpp>
+#include <vgDebug/convenience.hpp>
 
 
 
@@ -18,44 +19,94 @@ namespace vgio
 
 
 ImageCache::ImageCache( const std::string name )
-: vge::rc::TManager< std::string, vgd::basic::IImage >(name)
+:	vge::rc::TManager< std::string, vgd::basic::IImage >(name),
+	m_isEnabled(false)
 {
+}
+
+
+
+const bool ImageCache::isEnabled() const
+{
+	return m_isEnabled;
+}
+
+
+
+void ImageCache::setEnabled( const bool enabled )
+{
+	m_isEnabled = enabled;
 }
 
 
 
 vgd::Shp< vgd::basic::IImage > ImageCache::load( const std::string pathFilename )
 {
-	vgd::Shp< vgd::basic::IImage > retVal;
-
-	// Searches in cache
-	vgd::basic::IImage * iimage = getInstance()->get< vgd::basic::IImage >( pathFilename );
-
-	if ( iimage == 0 )
+	if ( getInstance()->isEnabled() )
 	{
-		// No match is found for the key in cache
-		vgd::basic::Image * image( new vgd::basic::Image );
+		// USES THE CACHE
+		vgd::Shp< vgd::basic::IImage > retVal;
+
+		// Searches in cache
+		vgd::basic::IImage * iimage = getInstance()->get< vgd::basic::IImage >( pathFilename );
+
+		if ( iimage == 0 )
+		{
+			// No match is found for the key in cache
+			vgd::basic::Image * image( new vgd::basic::Image );
+
+			vgLogDebug2("vgio: load image %s", pathFilename );
+			const bool loadingRetVal = image->load( pathFilename );
+
+			if ( loadingRetVal )
+			{
+				// Loading successes
+				iimage = image;
+				const bool addingRetVal = getInstance()->add( pathFilename, image );
+				vgLogDebug2("vgio: image %s added to cache.", pathFilename );
+				assert( addingRetVal );
+			}
+			else
+			{
+				// Loading fails
+				vgLogDebug2("vgio: load image %s fails", pathFilename );
+				return retVal;
+			}
+		}
+		else
+		{
+			// A match is found for the key in cache. So returns it.
+			vgLogDebug2("vgio: image %s found in cache.", pathFilename );
+		}
+
+		// Returns a copy of the image
+		retVal.reset( new vgd::basic::ImageInfo(*iimage) );
+
+		return retVal;
+	}
+	else
+	{
+		// DON'T USE THE CACHE
+		vgd::Shp< vgd::basic::IImage > retVal;
+
+		vgd::Shp< vgd::basic::Image > image( new vgd::basic::Image );
+
+		vgLogDebug2("vgio: load image %s", pathFilename );
 		const bool loadingRetVal = image->load( pathFilename );
 
 		if ( loadingRetVal )
 		{
-			// Loading successes
-			iimage = image;
-			const bool addingRetVal = getInstance()->add( pathFilename, image );
-			assert( addingRetVal );
+			retVal = image;
+			vgLogDebug2("vgio: load image %s done.", pathFilename );
 		}
 		else
 		{
 			// Loading fails
-			return retVal;
+			vgLogDebug2("vgio: load image %s fails", pathFilename );
 		}
+
+		return retVal;
 	}
-	// else match is found for the key in cache. So returns it.
-
-	// Returns a copy of the image
-	retVal.reset( new vgd::basic::ImageInfo(*iimage) );
-
-	return retVal;
 }
 
 

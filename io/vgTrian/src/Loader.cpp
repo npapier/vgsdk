@@ -434,12 +434,12 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 
 
 std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *pathFilename,
-	bool bCCW, const bool useCache )
+	bool bCCW ) //, const bool useCache )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > >		retVal;
 	retVal.first	= false;
 
-	m_useCache = useCache;
+	// m_useCache = useCache;
 
 	vgd::Shp< vgd::node::Group > group;
 
@@ -686,8 +686,8 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		vgDebug::get().logDebug("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 		//vgDebug::get().logStatus("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 
-		vgd::Shp< vgd::basic::IImage > image;
-		if ( m_useCache )
+		vgd::Shp< vgd::basic::IImage > image = vgio::ImageCache::load( m_path + '/' + filename );
+		/*if ( m_useCache )
 		{
 			image = vgio::ImageCache::load( m_path + '/' + filename );
 			vgDebug::get().logDebug("vgTrian::loadTrian2: image %s/%s found in cache.", m_path.c_str(), filename.c_str() );
@@ -695,7 +695,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		else
 		{
 			image.reset( new vgd::basic::Image( m_path + '/' + filename ) );
-		}
+		}*/
 
 		tex->setIImage( image );
 
