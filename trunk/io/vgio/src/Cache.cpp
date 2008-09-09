@@ -55,7 +55,7 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const std::string pathFilename 
 			// No match is found for the key in cache
 			vgd::basic::Image * image( new vgd::basic::Image );
 
-			vgLogDebug2("vgio: load image %s", pathFilename );
+			vgLogDebug2("vgio: load image %s", pathFilename.c_str() );
 			const bool loadingRetVal = image->load( pathFilename );
 
 			if ( loadingRetVal )
@@ -63,20 +63,20 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const std::string pathFilename 
 				// Loading successes
 				iimage = image;
 				const bool addingRetVal = getInstance()->add( pathFilename, image );
-				vgLogDebug2("vgio: image %s added to cache.", pathFilename );
+				vgLogDebug2("vgio: image %s added to cache.", pathFilename.c_str() );
 				assert( addingRetVal );
 			}
 			else
 			{
 				// Loading fails
-				vgLogDebug2("vgio: load image %s fails", pathFilename );
+				vgLogDebug2("vgio: load image %s fails", pathFilename.c_str() );
 				return retVal;
 			}
 		}
 		else
 		{
 			// A match is found for the key in cache. So returns it.
-			vgLogDebug2("vgio: image %s found in cache.", pathFilename );
+			vgLogDebug2("vgio: image %s found in cache.", pathFilename.c_str() );
 		}
 
 		// Returns a copy of the image
@@ -91,18 +91,18 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const std::string pathFilename 
 
 		vgd::Shp< vgd::basic::Image > image( new vgd::basic::Image );
 
-		vgLogDebug2("vgio: load image %s", pathFilename );
+		vgLogDebug2("vgio: load image %s", pathFilename.c_str() );
 		const bool loadingRetVal = image->load( pathFilename );
 
 		if ( loadingRetVal )
 		{
 			retVal = image;
-			vgLogDebug2("vgio: load image %s done.", pathFilename );
+			vgLogDebug2("vgio: load image %s done.", pathFilename.c_str() );
 		}
 		else
 		{
 			// Loading fails
-			vgLogDebug2("vgio: load image %s fails", pathFilename );
+			vgLogDebug2("vgio: load image %s fails", pathFilename.c_str() );
 		}
 
 		return retVal;
