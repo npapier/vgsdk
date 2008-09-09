@@ -39,13 +39,32 @@ struct VGIO_API ImageCache
 	 */
 	ImageCache( const std::string name );
 
+	/**
+	 * @brief Determines whether the cache is enabled.
+	 *
+	 * @return true if cache is enabled, false otherwise
+	 */
+	const bool isEnabled() const;
+
+	/**
+	 * @brief Enables or disables the cache depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the cache must be enabled, false otherwise
+	 */
+	void setEnabled( const bool enabled = true );
+
+
+
 	static vgd::Shp< vgd::basic::IImage > load( const std::string pathFilename );
 
 	static vgd::Shp< ImageCache > getInstance();
 
+
+
 private:
 
-	static vgd::Shp< ImageCache > m_imageCache;
+	static vgd::Shp< ImageCache >	m_imageCache;
+	bool							m_isEnabled;			///< true to use cache system for image, false otherwise
 };
 
 

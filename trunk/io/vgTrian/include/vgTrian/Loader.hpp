@@ -92,7 +92,6 @@ struct VGTRIAN_API Loader
 	 *
 	 * @param pathFilename	the name of file to read.
 	 * @param bCCW		true to specify conter-clockwise ordering for triangle
-	 * @param useCache		true to use cache system for image
 	 *
 	 * @return true if successful, false otherwise.
 	 * 
@@ -100,7 +99,9 @@ struct VGTRIAN_API Loader
 	 * 
 	 * @todo create TriSet(with neighbours) insteed of VertexShape.
 	 */
-	std::pair< bool, vgd::Shp< vgd::node::Group > >	loadTrian2( const char *pathFilename, bool bCCW = false, const bool useCache = false );
+	// * param useCache		true to use cache system for image
+	std::pair< bool, vgd::Shp< vgd::node::Group > >	loadTrian2( const char *pathFilename, bool bCCW = false );
+	//, const bool useCache = false );
 
 private:
 	/**
@@ -120,7 +121,7 @@ private:
 
 	std::ifstream		m_fp;
 
-	bool				m_useCache;			///< true to use cache system for image, false otherwise
+//	bool				m_useCache;			///< true to use cache system for image, false otherwise
 
 	/**
 	 * @brief Path for the file.
