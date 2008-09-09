@@ -18,6 +18,8 @@
 #include <vgd/node/TriSet.hpp>
 #include <vgd/node/VertexShape.hpp>
 
+#include <vgio/Cache.hpp>
+
 
 
 namespace vgTrian
@@ -97,18 +99,18 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 			// read the three edges of triangle
 			int32 lEdge1;
 			int32 lEdge2;
-			int32 lEdge3;				
+			int32 lEdge3;
 	
 			fp >> lEdge1 >> lEdge2 >> lEdge3;
 	
 			vertexIndex->push_back(lEdge1);
-			vertexIndex->push_back(lEdge2);				
+			vertexIndex->push_back(lEdge2);
 			vertexIndex->push_back(lEdge3);
 
 			// read the three neighbours of triangle
 			int32 lNeighbour1;
 			int32 lNeighbour2;
-			int32 lNeighbour3;				
+			int32 lNeighbour3;
 	
 			fp >> lNeighbour1 >> lNeighbour2 >> lNeighbour3;
 
@@ -125,18 +127,18 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 			// read the three edges of triangle
 			int32 lEdge1;
 			int32 lEdge2;
-			int32 lEdge3;				
+			int32 lEdge3;
 	
 			fp >> lEdge1 >> lEdge2 >> lEdge3;
 	
 			vertexIndex->push_back(lEdge3);
-			vertexIndex->push_back(lEdge2);				
+			vertexIndex->push_back(lEdge2);
 			vertexIndex->push_back(lEdge1);
 	
 			// read the three neighbours of triangle
 			int32 lNeighbour1;
 			int32 lNeighbour2;
-			int32 lNeighbour3;				
+			int32 lNeighbour3;
 	
 			fp >> lNeighbour1 >> lNeighbour2 >> lNeighbour3;
 			//m_vNeighbours.push_back(lNeighbour3);
@@ -431,12 +433,14 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 
 
 
-std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *pathFilename, bool bCCW  )
+std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *pathFilename,
+	bool bCCW, const bool useCache )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > >		retVal;
-
 	retVal.first	= false;
-	
+
+	m_useCache = useCache;
+
 	vgd::Shp< vgd::node::Group > group;
 
 	vgd::basic::FilenameExtractor extractor( pathFilename );
@@ -458,7 +462,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 	if (!m_fp.is_open())
 	{
 		vgDebug::get().logDebug("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );		
+		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
 
 		return ( retVal );
 	}
@@ -538,7 +542,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 
 	retVal.first = true;
 	
-	vgDebug::get().logDebug("vgTrian::loadTrian2: load %s done", pathFilename );	
+	vgDebug::get().logDebug("vgTrian::loadTrian2: load %s done", pathFilename );
 	//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );
 
 	//close file
@@ -681,9 +685,17 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 
 		vgDebug::get().logDebug("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 		//vgDebug::get().logStatus("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
-		vgd::Shp< vgd::basic::Image > image( 
-			new vgd::basic::Image( m_path + '/' + filename ) 
-			);
+
+		vgd::Shp< vgd::basic::IImage > image;
+		if ( m_useCache )
+		{
+			image = vgio::ImageCache::load( m_path + '/' + filename );
+			vgDebug::get().logDebug("vgTrian::loadTrian2: image %s/%s found in cache.", m_path.c_str(), filename.c_str() );
+		}
+		else
+		{
+			image.reset( new vgd::basic::Image( m_path + '/' + filename ) );
+		}
 
 		tex->setIImage( image );
 
@@ -804,7 +816,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		// read nb of vertices
 		int32 vertexSize;
 		m_fp >> vertexSize;
-		
+
 		vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= vertexShape->getFVertexRW();
 
 		// setCounterClockWiseFlag( false ); FIXME
@@ -812,7 +824,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		// read vertices
 		vertex->clear();
 		vertex->reserve( vertexSize );
-	
+
 		for (	int i=0;
 				i < vertexSize;
 				++i)
@@ -823,11 +835,11 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		}
 		
 		// next field
-		m_fp >> fieldName;		
+		m_fp >> fieldName;
 	}
 
-	
-	
+
+
 	// NORMAL
 	if ( fieldName == "normal" )
 	{
@@ -897,7 +909,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 		// read nb of faces
 		int32 i32NumTriangles;
 		m_fp >> i32NumTriangles;
-		
+
 		// reserve memory for edges.
 		// and neighbours FIXME
 		vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex	= vertexShape->getFVertexIndexRW();	
@@ -912,17 +924,17 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 			// read the three edges of triangle
 			int32 lEdge1;
 			int32 lEdge2;
-			int32 lEdge3;				
-	
+			int32 lEdge3;
+
 			m_fp >> lEdge1 >> lEdge2 >> lEdge3;
-	
+
 			vertexIndex->push_back(lEdge1);
-			vertexIndex->push_back(lEdge2);				
+			vertexIndex->push_back(lEdge2);
 			vertexIndex->push_back(lEdge3);
 		}
 
 		//m_i32NextEdge = vertexIndex->getNum();
-	
+
 		// primitive
 		vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getFPrimitiveRW();
 		primitive->clear();
@@ -932,7 +944,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 	}
 
 	// ???
-	
+
 	return vertexShape;
 }
 
@@ -942,20 +954,20 @@ vgd::Shp< vgd::node::Material > Loader::loadWireColor( std::string nodeName )
 {
 	// color : already readed.
 	// 0.52549 0.431373 0.0313725 0
-	
+
 	std::string	name;
 	vgm::Vec3f	color3;
 	float			opacity;
-	
+
 	m_fp >> color3[0] >> color3[1] >> color3[2] >> opacity;
-	
+
 	vgd::Shp< vgd::node::Material > material;
-	
+
 	material = vgd::node::Material::create( nodeName );
 	material->setColor( vgd::node::Material::AMBIENT, color3 );
 	material->setColor( vgd::node::Material::DIFFUSE, color3 );
 	material->setTransparency( 1.f - opacity );
-	
+
 	return material;
 }
 
