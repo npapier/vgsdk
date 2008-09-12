@@ -204,9 +204,11 @@ void Canvas::refresh( const RefreshType type, const WaitType wait )
 {
 	if ( type == REFRESH_IF_NEEDED )
 	{
-		// must schedule a refresh of the window ?
+		// Must schedule a refresh of the window ?
+		using vgd::visitor::predicate::ByDirtyFlag;
+
 		std::pair< bool, vgd::Shp< vgd::node::Node > > retVal;
-		retVal = vgd::visitor::findFirst( getRoot(), vgd::visitor::predicate::ByDirtyFlag() );
+		retVal = vgd::visitor::findFirst( getRoot(), ByDirtyFlag() );
 
 		if ( retVal.first )
 		{
@@ -333,6 +335,12 @@ const bool Canvas::shutdownVGSDK()
 		// No current OpenGL context
 		vgDebug::get().logDebug/*logWarning*/("No current OpenGL context.");
 		vgDebug::get().logDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+
+		// Try to destroy OpenGL objects
+		vgDebug::get().logDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
+		getGLEngine()->getGLManager().clear();
+		getGLEngine()->getGLSLManager().clear();
+
 		return false;
 	}
 
@@ -342,6 +350,7 @@ const bool Canvas::shutdownVGSDK()
 		assert( isCurrent() && "OpenGL context must have been set current. So OpenGL objects could not be released properly." );
 
 		// Try to destroy OpenGL objects
+		vgDebug::get().logDebug/*logMessage*/("Releases managed OpenGL objects...\n");
 		getGLEngine()->getGLManager().clear();
 		getGLEngine()->getGLSLManager().clear();
 
