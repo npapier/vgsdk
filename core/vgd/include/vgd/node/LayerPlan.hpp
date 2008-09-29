@@ -49,7 +49,8 @@ namespace node
  * 		The data and size of the image can changed, but that's all.
  *
  * - SFFloat \c alphaScale = 1\n
- *		The alpha component of \c iimage is multiplied by the \c alphaScale factor.
+ *		Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor.
+ *		After this operation, the alpha component is clamped to the range [0, 1].
  * 
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes
