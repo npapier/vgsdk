@@ -367,7 +367,7 @@ private:
 	/**
 	 * @brief Draws the border for the given window
 	 */
-	void drawBorder( const vgd::Shp< MultiMain::Window > window, vgm::Rectangle2i newViewport2i );
+	void drawBorder( vgeGL::engine::Engine * engine, const vgd::Shp< MultiMain::Window > window, const vgm::Rectangle2i newViewport2i );
 
 	typedef std::map< std::string, vgd::Shp< Window > > WindowContainer;	///< Definition of window container
 	WindowContainer							m_windows;						///< The container of windows

@@ -107,7 +107,7 @@ public:
 	//@{
 
 	/**
-	 * @brief Enables or disables the GLSL rendering pipeline depending on the value of the parameter b.
+	 * @brief Enables or disables the GLSL rendering pipeline depending on the value of the parameter \c isEnabled.
 	 *
 	 * When this option is enabled, vgSDK generates on the fly GLSL programs and uses them in its rendering pipeline, otherwise the
 	 * fixed functionality pipeline is used.
@@ -124,6 +124,45 @@ public:
 	const bool isGLSLEnabled() const;
 
 
+
+	/**
+	 * @brief Memento DP used to capture and restore GLSL activation state.
+	 *
+	 * GLSL activation state is composed by the GLSL enabled state and the current GLSL program (see isGLSLEnabled() and getCurrentProgram()).
+	 */
+	struct GLSLActivationState
+	{
+		private:
+		/**
+		 * @brief Default constructor
+		 *
+		* @param isEnabled	true when GLSL rendering pipeline is enabled, false otherwise
+		* @param	program	a pointer on the GLSL program
+		*/
+		GLSLActivationState( const bool isGLSLEnabled, glo::GLSLProgram * currentProgram )
+		:	m_isGLSLEnabled(isGLSLEnabled),
+			m_currentProgram(currentProgram)
+		{}
+
+		const bool					m_isGLSLEnabled;
+		glo::GLSLProgram * const	m_currentProgram;
+
+		friend struct Engine;
+	};
+
+	/**
+	 * @brief Returns an opaque object that store activation state of GLSL
+	 *
+	 * @see GLSLActivationState
+	 */
+	const vgd::Shp< GLSLActivationState > getGLSLActivationState() const;
+
+	/**
+	 * @brief */
+	void setGLSLActivationState( const vgd::Shp< GLSLActivationState > state );
+
+
+
 	/**
 	 * @brief Sets the current GLSL program.
 	 *
@@ -132,12 +171,14 @@ public:
 	void setCurrentProgram( glo::GLSLProgram * program = 0 );
 
 	/**
-	 * @brief Sets the current GLSL program.
+	 * @brief Sets the current GLSL program and updates the GLSL enabled state.
 	 *
 	 * @param	program	a pointer on the GLSL program that must be installed in the current rendering context.
 	 *
-	 * @remarks If the given parameter is an null pointer, then the programmable processors
-	 * will be disabled, and fixed functionality will be used.
+	 * If the given parameter is an null pointer, then the programmable processors will be
+	 * disabled, and fixed functionality will be used (at OpenGL and vgSDK engine level).
+	 * Otherwise, if the given parameter is not null pointer, then the programmable processors will be
+	 * enabled, and fixed functionality will be disabled (at OpenGL and vgSDK engine level).
 	 */
 	void sethCurrentProgram( glo::GLSLProgram * program = 0 );
 
@@ -255,8 +296,9 @@ public:
 	 * 
 	 * @param viewport	the output viewport
 	 */
-	void getViewport( vgm::Rectangle2i& viewport ) const;
-	
+	static void getViewport( vgm::Rectangle2i& viewport ) /*const*/;
+	// @todo 	static vgm::Rectangle2i getViewport( & viewport )
+
 	/**
 	 * @brief Returns the number of bitplanes in the depth buffer.
 	 * 
@@ -295,6 +337,23 @@ public:
 	 * @param textureNode	the texture node (used to know which texture unit must be activated, i.e. getMultiAttributeIndex())
 	 */
 	void activeTexture( const vgd::node::Texture * textureNode );
+
+	/**
+	 * @brief Configures OpenGL for 2D rendering.
+	 *
+	 * @param optionalViewport		a pointer on the viewport or a null pointer to used current viewport.
+	 *
+	 * Lighting and depth test are disabled.
+	 * ModelView and Texture matrices are initialized to identity.
+	 * Projection matrix is initialized using an orthographic matrix (see glOrtho( 0.f, 1.f, 0.f, 1.f, 0.f, 1.f ) ).
+	 * The viewport and scissor are initialized using the given \c optionalViewport parameter.
+	 */
+	static void begin2DRendering( const vgm::Rectangle2i * optionalViewport = 0 );
+
+	/**
+	 * @brief Restores OpenGL states modified by begin2DRendering()
+	 */
+	static void end2DRendering();
 	//@}
 
 

@@ -11,11 +11,22 @@
 ///@todo Disables some log function in debug
 ///@todo Completes vgX mapping to vgDebug::get().X()
 
-#define vgLogError( arg1 )				vgDebug::get().logError( (arg1) )
-#define vgLogError2( arg1, arg2 )		vgDebug::get().logError( (arg1), (arg2) )
-#define vgLogWarning( arg1 )			vgDebug::get().logWarning( (arg1) )
-#define vgLogWarning2( arg1, arg2 )		vgDebug::get().logWarning( (arg1), (arg2) )
-#define vgLogDebug( arg1 )				vgDebug::get().logDebug( (arg1) )
-#define vgLogDebug2( arg1, arg2 )		vgDebug::get().logDebug( (arg1), (arg2) )
+#define vgLogError( arg1 )						vgDebug::get().logError( (arg1) )
+#define vgLogError2( arg1, arg2 )				vgDebug::get().logError( (arg1), (arg2) )
+#define vgLogError3( arg1, arg2, arg3 )			vgDebug::get().logError( (arg1), (arg2), (arg3) )
+
+#define vgLogWarning( arg1 )					vgDebug::get().logWarning( (arg1) )
+#define vgLogWarning2( arg1, arg2 )				vgDebug::get().logWarning( (arg1), (arg2) )
+#define vgLogWarning3( arg1, arg2, arg3 )		vgDebug::get().logWarning( (arg1), (arg2), (arg3) )
+
+#ifdef _DEBUG
+#define vgLogDebug( arg1 )						vgDebug::get().logDebug( (arg1) )
+#define vgLogDebug2( arg1, arg2 )				vgDebug::get().logDebug( (arg1), (arg2) )
+#define vgLogDebug3( arg1, arg2, arg3 )			vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
+#else
+#define vgLogDebug( arg1 )						vgDebug::get().logDebug( (arg1) )
+#define vgLogDebug2( arg1, arg2 )				vgDebug::get().logDebug( (arg1), (arg2) )
+#define vgLogDebug3( arg1, arg2, arg3 )			vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
+#endif
 
 #endif //#ifndef _VGDEBUG_CONVENIENCE_HPP

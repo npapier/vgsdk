@@ -225,7 +225,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 		// Draws the window decoration
 		if ( window->hasBorder() )
 		{
-			drawBorder( window, newViewport2i );
+			drawBorder( engine, window, newViewport2i );
 		}
 
 		// Undo the scene graph configuration
@@ -259,30 +259,23 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 	{
 		camera->eraseViewport();
 	}
+
+	// Validates the camera node
+	camera->getDirtyFlag( camera->getDFNode() )->validate();
 }
 
 
 
-void MultiMain::drawBorder( const vgd::Shp< MultiMain::Window > window, vgm::Rectangle2i newViewport2i )
+void MultiMain::drawBorder( vgeGL::engine::Engine * engine, const vgd::Shp< MultiMain::Window > window, const vgm::Rectangle2i newViewport2i )
 {
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	// Makes a backup of GLSL activation state
+	using vgeGL::engine::Engine;
+	vgd::Shp< Engine::GLSLActivationState > glslActivationState = engine->getGLSLActivationState();
 
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
+	//
+	engine->sethCurrentProgram();
 
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0.f, 1.f, 0.f, 1.f, 0.f, 1.f );
-
-	glViewport( newViewport2i[0], newViewport2i[1], newViewport2i[2], newViewport2i[3] );
-
-	glScissor( newViewport2i[0], newViewport2i[1], newViewport2i[2], newViewport2i[3] );
-	glEnable(GL_SCISSOR_TEST);
-
-	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
+	vgeGL::engine::Engine::begin2DRendering( &newViewport2i );
 
 	//glEnable(GL_LINE_SMOOTH);
 	glColor4fv( window->getBorderColor().getValue() );
@@ -295,13 +288,10 @@ void MultiMain::drawBorder( const vgd::Shp< MultiMain::Window > window, vgm::Rec
 	glVertex2f( 0.f, 1.f );
 	glEnd();
 
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
+	vgeGL::engine::Engine::end2DRendering();
 
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glPopAttrib();
+	// Restores GLSL activation state
+	engine->setGLSLActivationState( glslActivationState );
 }
 
 
