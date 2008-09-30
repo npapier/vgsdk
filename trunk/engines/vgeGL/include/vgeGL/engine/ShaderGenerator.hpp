@@ -6,6 +6,7 @@
 #ifndef _VGEGL_ENGINE_SHADERGENERATOR_HPP
 #define _VGEGL_ENGINE_SHADERGENERATOR_HPP
 
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
 #include <glo/GLSLProgram.hpp>
 #include <vgd/Shp.hpp>
@@ -44,9 +45,12 @@ struct GLSLHelpers
 	static const std::string& generate_lightAccumulators()
 	{
 		static const std::string retVal = 
-		"vec4 Ambient;\n"
-		"vec4 Diffuse;\n"
-		"vec4 Specular;\n"
+		"vec4 accumAmbient;\n"
+		"vec4 accumDiffuse;\n"
+		"vec4 accumSpecular;\n"
+		"\n"
+		"vec4 accumColor;\n"
+		"vec4 accumSecondaryColor;\n"
 		"\n";
 
 		return retVal;
@@ -61,22 +65,24 @@ struct GLSLHelpers
 		// DIRECTIONAL_LIGHT
 		if ( state.isEnabled( GLSLState::DIRECTIONAL_LIGHT) )
 		{
-			const std::string& directionalLight = GLSLHelpers::generateFunction_directionalLight( state );
+			const std::string& directionalLight = GLSLHelpers::generateFunction_directionalLight( state, false );
 			retVal += directionalLight;
 		}
 
 		// POINT_LIGHT
 		if ( state.isEnabled( GLSLState::POINT_LIGHT) )
 		{
-			const std::string& pointLight = GLSLHelpers::generateFunction_pointLight( state );
+			const std::string& pointLight = GLSLHelpers::generateFunction_pointLight( state, false );
 			retVal += pointLight;
 		}
 
 		// SPOT_LIGHT
 		if ( state.isEnabled( GLSLState::SPOT_LIGHT) )
 		{
-			const std::string& spotLight = GLSLHelpers::generateFunction_spotLight( state );
-			retVal += spotLight;
+			const std::string& spotLightFront	= GLSLHelpers::generateFunction_spotLight( state, false );
+			// const std::string& spotLightBack	= GLSLHelpers::generateFunction_spotLight( state, true ); @todo
+			retVal += spotLightFront;
+			// retVal += spotLightBack; @todo
 		}
 
 		return retVal;
@@ -84,169 +90,220 @@ struct GLSLHelpers
 
 
 
-	static const std::string& generateFunction_directionalLight( const GLSLState& state )
+	static const std::string& generateFunction_directionalLight( const GLSLState& state, const bool useBackMaterial )
 	{
-		static const std::string retVal = 
-		"void directionalLight( in int i, in vec3 normal )\n"
-		"{\n"
-		"	float nDotVP;			// normal . light direction\n"
-		"	float nDotHV;			// normal . light half vector\n"
-		"	float pf;				// power factor\n"
-		"\n"
-		"	nDotVP = max(0.0, dot(normal, normalize(vec3(gl_LightSource[i].position))));\n"
-		"	nDotHV = max(0.0, dot(normal, vec3(gl_LightSource[i].halfVector)));\n\n"
-		"	if ( nDotVP == 0.0 || nDotHV == 0.0 )\n"
-		"	{\n"
-		"		pf = 0.0;\n"
-		"	}\n"
-		"	else\n"
-		"	{\n"
-		"		pf = pow( nDotHV, gl_FrontMaterial.shininess);\n\n"
-		"	}\n"
-		"\n"
-		"	Ambient		+= gl_LightSource[i].ambient;\n"
-		"	Diffuse		+= gl_LightSource[i].diffuse * nDotVP;\n"
-		"	Specular	+= gl_LightSource[i].specular * pf;\n"
-		"}\n";
+		static std::string retValFront;
+		static std::string retValBack;
 
-		return retVal;
+		if ( retValFront.length() == 0 )
+		{
+			retValFront = 
+				"void directionalLightFront( in int i, in vec3 normal )\n"
+				"{\n"
+				"	float nDotVP;			// normal . light direction\n"
+				"	float nDotHV;			// normal . light half vector\n"
+				"	float pf;				// power factor\n"
+				"\n"
+				"	nDotVP = max(0.0, dot(normal, normalize(vec3(gl_LightSource[i].position))));\n"
+				"	nDotHV = max(0.0, dot(normal, vec3(gl_LightSource[i].halfVector)));\n\n"
+				"	if ( nDotVP == 0.0 || nDotHV == 0.0 )\n"
+				"	{\n"
+				"		pf = 0.0;\n"
+				"	}\n"
+				"	else\n"
+				"	{\n"
+				"		pf = pow( nDotHV, gl_FrontMaterial.shininess);\n\n"
+				"	}\n"
+				"\n"
+				"	accumAmbient	+= gl_LightSource[i].ambient;\n"
+				"	accumDiffuse	+= gl_LightSource[i].diffuse * nDotVP;\n"
+				"	accumSpecular	+= gl_LightSource[i].specular * pf;\n"
+				"}\n";
+
+			retValBack = retValFront;
+			boost::algorithm::replace_all( retValBack, "Front", "Back" );
+		}
+
+		// Returns the desired function
+		if ( useBackMaterial )
+		{
+			return retValBack;
+		}
+		else
+		{
+			return retValFront;
+		}
 	}
 
 
 
-	static const std::string& generateFunction_pointLight( const GLSLState& state )
+	static const std::string& generateFunction_pointLight( const GLSLState& state, const bool useBackMaterial )
 	{
-		static const std::string retVal =
-		"void pointLight( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
-		"{\n"
-		"	float nDotVP;			// normal . light direction\n"
-		"	float nDotHV;			// normal . light half vector\n"
-		"	float pf;				// power factor\n"
-		"	float attenuation;		// computed attenuation factor\n"
-		"	float d;				// distance from surface to light source\n"
-		"	vec3  VP;				// direction from surface to light position\n"
-		"	vec3  halfVector;		// direction of maximum highlights\n"
-		"\n"
-		"	// Compute vector from surface to light position\n"
-		"	VP = vec3(gl_LightSource[i].position) - ecPosition3;\n"
-		"\n"
-		"	// Compute distance between surface and light position\n"
-		"	d = length(VP);\n"
-		"\n"
-		"	// Normalize the vector from surface to light position\n"
-		"	VP = normalize(VP);\n"
-		"\n"
-		"	// Compute attenuation\n"
-		"	attenuation =	1.0 / (gl_LightSource[i].constantAttenuation +\n"
-		"					gl_LightSource[i].linearAttenuation * d +\n"
-		"					gl_LightSource[i].quadraticAttenuation * d * d);\n"
-		"\n"
-		"	halfVector = normalize(VP + eye);\n"
-		"\n"
-		"	nDotVP = max(0.0, dot(normal, VP));\n"
-		"	nDotHV = max(0.0, dot(normal, halfVector));\n"
-		"\n"
-		"	if ( nDotVP == 0.0 || nDotHV == 0.0 )\n"
-		"	{\n"
-		"		pf = 0.0;\n"
-		"	}\n"
-		"	else\n"
-		"	{\n"
-		"		pf = pow(nDotHV, gl_FrontMaterial.shininess);\n"
-		"	}\n"
-		"\n"
-		"	Ambient		+= gl_LightSource[i].ambient * attenuation;\n"
-		"	Diffuse		+= gl_LightSource[i].diffuse * nDotVP * attenuation;\n"
-		"	Specular	+= gl_LightSource[i].specular * pf * attenuation;\n"
-		"}\n";
+		static std::string retValFront;
+		static std::string retValBack;
 
-		return retVal;
+		if ( retValFront.length() == 0 )
+		{
+			retValFront =
+				"void pointLightFront( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
+				"{\n"
+				"	float nDotVP;			// normal . light direction\n"
+				"	float nDotHV;			// normal . light half vector\n"
+				"	float pf;				// power factor\n"
+				"	float attenuation;		// computed attenuation factor\n"
+				"	float d;				// distance from surface to light source\n"
+				"	vec3  VP;				// direction from surface to light position\n"
+				"	vec3  halfVector;		// direction of maximum highlights\n"
+				"\n"
+				"	// Compute vector from surface to light position\n"
+				"	VP = vec3(gl_LightSource[i].position) - ecPosition3;\n"
+				"\n"
+				"	// Compute distance between surface and light position\n"
+				"	d = length(VP);\n"
+				"\n"
+				"	// Normalize the vector from surface to light position\n"
+				"	VP = normalize(VP);\n"
+				"\n"
+				"	// Compute attenuation\n"
+				"	attenuation =	1.0 / (gl_LightSource[i].constantAttenuation +\n"
+				"					gl_LightSource[i].linearAttenuation * d +\n"
+				"					gl_LightSource[i].quadraticAttenuation * d * d);\n"
+				"\n"
+				"	halfVector = normalize(VP + eye);\n"
+				"\n"
+				"	nDotVP = max(0.0, dot(normal, VP));\n"
+				"	nDotHV = max(0.0, dot(normal, halfVector));\n"
+				"\n"
+				"	if ( nDotVP == 0.0 || nDotHV == 0.0 )\n"
+				"	{\n"
+				"		pf = 0.0;\n"
+				"	}\n"
+				"	else\n"
+				"	{\n"
+				"		pf = pow(nDotHV, gl_FrontMaterial.shininess);\n"
+				"	}\n"
+				"\n"
+				"	accumAmbient	+= gl_LightSource[i].ambient * attenuation;\n"
+				"	accumDiffuse	+= gl_LightSource[i].diffuse * nDotVP * attenuation;\n"
+				"	accumSpecular	+= gl_LightSource[i].specular * pf * attenuation;\n"
+				"}\n";
+
+			retValBack = retValFront;
+			boost::algorithm::replace_all( retValBack, "Front", "Back" );
+		}
+
+		// Returns the desired function
+		if ( useBackMaterial )
+		{
+			return retValBack;
+		}
+		else
+		{
+			return retValFront;
+		}
 	}
 
 
 
-	static const std::string& generateFunction_spotLight( const GLSLState& state )
+	static const std::string& generateFunction_spotLight( const GLSLState& state, const bool useBackMaterial )
 	{
-		static const std::string retVal =
-		"void spotLight( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
-		"{\n"
-		"	float nDotVP;			// normal . light direction\n"
-		"	float nDotHV;			// normal . light half vector\n"
-		"	float pf;				// power factor\n"
-		"	float spotDot;			// cosine of angle between spotlight\n"
-		"	float spotAttenuation;	// spotlight attenuation factor\n"
-		"	float attenuation;		// computed attenuation factor\n"
-		"	float d;				// distance from surface to light source\n"
-		"	vec3  VP;				// direction from surface to light position\n"
-		"	vec3  halfVector;		// direction of maximum highlights\n"
-		"\n"
-		"	// Compute vector from surface to light position\n"
-		"	VP = vec3(gl_LightSource[i].position) - ecPosition3;\n"
-		"\n"
-		"	// Compute distance between surface and light position\n"
-		"	d = length(VP);\n"
-		"\n"
-		"	// Normalize the vector from surface to light position\n"
-		"	VP = normalize(VP);\n"
-		"\n"
-		"	// Compute attenuation\n"
+		static std::string retValFront;
+		static std::string retValBack;
+
+		if ( retValFront.length() == 0 )
+		{
+			retValFront =
+			"void spotLightFront( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
+			"{\n"
+			"	float nDotVP;			// normal . light direction\n"
+			"	float nDotHV;			// normal . light half vector\n"
+			"	float pf;				// power factor\n"
+			"	float spotDot;			// cosine of angle between spotlight\n"
+			"	float spotAttenuation;	// spotlight attenuation factor\n"
+			"	float attenuation;		// computed attenuation factor\n"
+			"	float d;				// distance from surface to light source\n"
+			"	vec3  VP;				// direction from surface to light position\n"
+			"	vec3  halfVector;		// direction of maximum highlights\n"
+			"\n"
+			"	// Compute vector from surface to light position\n"
+			"	VP = vec3(gl_LightSource[i].position) - ecPosition3;\n"
+			"\n"
+			"	// Compute distance between surface and light position\n"
+			"	d = length(VP);\n"
+			"\n"
+			"	// Normalize the vector from surface to light position\n"
+			"	VP = normalize(VP);\n"
+			"\n"
+			"	// Compute attenuation\n"
 //		"	attenuation =	1.0;\n"
 // @todo uncomments attenuation (when Light node specifies distance attenuation).
 //		"	attenuation =	1.0 / (gl_LightSource[i].constantAttenuation +\n"
 //		"					gl_LightSource[i].linearAttenuation * d +\n"
 //		"					gl_LightSource[i].quadraticAttenuation * d * d);\n"
-		"\n"
-		"	// See if point on surface is inside cone of illumination\n"
-		"	spotDot = dot(-VP, normalize(gl_LightSource[i].spotDirection));\n"
+			"\n"
+			"	// See if point on surface is inside cone of illumination\n"
+			"	spotDot = dot(-VP, normalize(gl_LightSource[i].spotDirection));\n"
 
-		"	float cosOuterCone = cos( radians(gl_LightSource[i].spotCutoff + 10.0) );\n"
-		"	float cosInnerCone = gl_LightSource[i].spotCosCutoff;\n" // cos( radians(gl_LightSource[i].spotCutoff) )
-		"\n"
-		"	spotAttenuation = smoothstep( cosOuterCone, cosInnerCone, spotDot );\n"
+			"	float cosOuterCone = cos( radians(gl_LightSource[i].spotCutoff + 10.0) );\n"
+			"	float cosInnerCone = gl_LightSource[i].spotCosCutoff;\n" // cos( radians(gl_LightSource[i].spotCutoff) )
+			"\n"
+			"	spotAttenuation = smoothstep( cosOuterCone, cosInnerCone, spotDot );\n"
 /*		"	if ( spotAttenuation == 1.0 )\n"
-		"	{\n"
-		"		spotAttenuation = pow(spotDot, gl_LightSource[i].spotExponent);\n"
-		"	}\n"*/
+			"	{\n"
+			"		spotAttenuation = pow(spotDot, gl_LightSource[i].spotExponent);\n"
+			"	}\n"*/
 /*		"	if ( spotDot < cosOuterCone )\n"
-		"	{\n"
-		"		spotAttenuation = 0.0; // light adds no contribution\n"
-		"	}\n"
-		"	else\n"
-		"	if ( spotDot < cosInnerCone || spotDot == 0.0 )\n"
-		"	{\n"
-		"		spotAttenuation = 0.5; // light adds no contribution\n"
-		"	}\n"
-		"	else\n"
-		"	{\n"
-		"		spotAttenuation = pow(spotDot, gl_LightSource[i].spotExponent);\n"
-		"	}\n"*/
-		"\n"
-		"	// Combine the spotlight and distance attenuation.\n"
-		"	attenuation = spotAttenuation;\n"
+			"	{\n"
+			"		spotAttenuation = 0.0; // light adds no contribution\n"
+			"	}\n"
+			"	else\n"
+			"	if ( spotDot < cosInnerCone || spotDot == 0.0 )\n"
+			"	{\n"
+			"		spotAttenuation = 0.5; // light adds no contribution\n"
+			"	}\n"
+			"	else\n"
+			"	{\n"
+			"		spotAttenuation = pow(spotDot, gl_LightSource[i].spotExponent);\n"
+			"	}\n"*/
+			"\n"
+			"	// Combine the spotlight and distance attenuation.\n"
+			"	attenuation = spotAttenuation;\n"
 //		"	attenuation *= spotAttenuation;\n"
-		"\n"
-		//"	halfVector = gl_LightSource[i].halfVector;\n"
-		"	halfVector = normalize(VP + eye);\n"
-		"\n"
-		"	nDotVP = max( 0.0, dot(normal, VP) );\n"
-		"	nDotHV = max( 0.0, dot(normal, halfVector) );\n"
-		"\n"
+			"\n"
+			//"	halfVector = gl_LightSource[i].halfVector;\n"
+			"	halfVector = normalize(VP + eye);\n"
+			"\n"
+			"	nDotVP = max( 0.0, dot(normal, VP) );\n"
+			"	nDotHV = max( 0.0, dot(normal, halfVector) );\n"
+			"\n"
 //		"	if ( nDotVP <= 0.0 )\n"
-		"	if ( nDotVP == 0.0 || nDotHV == 0.0 )\n"
-		"	{\n"
-		"		pf = 0.0;\n"
-		"	}\n"
-		"	else\n"
-		"	{\n"
-		"		pf = pow( nDotHV, gl_FrontMaterial.shininess );\n"				// @todo gl_Back ?
-		"	}\n"
-		"\n"
-		"	Ambient		+= gl_LightSource[i].ambient * attenuation;\n"
-		"	Diffuse		+= gl_LightSource[i].diffuse * nDotVP * attenuation;\n"
-		"	Specular	+= gl_LightSource[i].specular * pf * attenuation;\n"
-		"}\n";
+			"	if ( nDotVP == 0.0 || nDotHV == 0.0 )\n"
+			"	{\n"
+			"		pf = 0.0;\n"
+			"	}\n"
+			"	else\n"
+			"	{\n"
+			"		pf = pow( nDotHV, gl_FrontMaterial.shininess );\n"				// @todo gl_Back ?
+			"	}\n"
+			"\n"
+			"	accumAmbient	+= gl_LightSource[i].ambient * attenuation;\n"
+			"	accumDiffuse	+= gl_LightSource[i].diffuse * nDotVP * attenuation;\n"
+			"	accumSpecular	+= gl_LightSource[i].specular * pf * attenuation;\n"
+			"}\n";
 
-		return retVal;
+			retValBack = retValFront;
+			boost::algorithm::replace_all( retValBack, "Front", "Back" );
+		}
+
+		// Returns the desired function
+		if ( useBackMaterial )
+		{
+			return retValBack;
+		}
+		else
+		{
+			return retValFront;
+		}
 	}
 
 
@@ -278,13 +335,25 @@ struct GLSLHelpers
 				"\n";
 			}
 
-			retVal += 
+			retVal +=
+			"	// Clear the color accumulators\n"
+			"	accumColor			= vec4(0.0);\n"
+			"	accumSecondaryColor	= vec4(0.0);\n"
+			"\n"
 			"	// Clear the light intensity accumulators\n"
-			"	Ambient		= vec4(0.0);\n"
-			"	Diffuse		= vec4(0.0);\n"
-			"	Specular	= vec4(0.0);\n"
+			"	accumAmbient	= vec4(0.0);\n"
+			"	accumDiffuse	= vec4(0.0);\n"
+			"	accumSpecular	= vec4(0.0);\n"
 			"\n";
 
+			std::string backLighting =
+			"	// Clear the light intensity accumulators\n"
+			"	accumAmbient	= vec4(0.0);\n"
+			"	accumDiffuse	= vec4(0.0);\n"
+			"	accumSpecular	= vec4(0.0);\n"
+			"\n";
+
+			//
 			std::string currentLightFront;
 			std::string currentLightBack;
 
@@ -314,31 +383,36 @@ struct GLSLHelpers
 						switch ( lightType )
 						{
 							case GLSLState::DIRECTIONAL_LIGHT:
-								currentLightFront	+= "	directionalLight( " + iStr + ", normal );\n";
-								currentLightBack	+= "	directionalLight( " + iStr + ", -normal );\n";
+								currentLightFront	= "	directionalLightFront( " + iStr + ", normal );\n";
+								currentLightBack	= "	directionalLightFront( " + iStr + ", -normal );\n";
+								//currentLightBack	+= "	directionalLightBack( " + iStr + ", -normal );\n";
 								break;
 
 							case GLSLState::POINT_LIGHT:
-								currentLightFront	+= "	pointLight( " + iStr + ", ecPosition3, normal, eye );\n";
-								currentLightBack	+= "	pointLight( " + iStr + ", ecPosition3, -normal, eye );\n";
+								currentLightFront	= "	pointLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+								currentLightBack	= "	pointLightFront( " + iStr + ", ecPosition3, -normal, eye );\n";
+								//currentLightBack	+= "	pointLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
 								break;
 
 							case GLSLState::SPOT_LIGHT:
-								currentLightFront	+= "	spotLight( " + iStr + ", ecPosition3, normal, eye );\n";
-								currentLightBack	+= "	spotLight( " + iStr + ", ecPosition3, -normal, eye );\n";
+								currentLightFront	= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+								currentLightBack	= "	spotLightFront( " + iStr + ", ecPosition3, -normal, eye );\n";
+								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
 								break;
 
 							default:
 								assert( false && "Unknown light type !" );
 						}
 
-						retVal += currentLightFront;
+						retVal			+= currentLightFront;
+						backLighting	+= currentLightBack;
 
-						// Takes care of two sided lighting
+						/*// Takes care of two sided lighting
 						if ( state.isTwoSidedLightingEnabled() )
 						{
 							retVal += currentLightBack;
-						}
+							backLighting += currentLightBack;
+						}*/
 					}
 					// else light off, nothing to do
 
@@ -352,15 +426,51 @@ struct GLSLHelpers
 				// else no light, nothing to do
 			}
 
+			// Color updating stage for front face
+			std::string colorUpdating =
+				"\n"
+				"	accumColor +=	gl_FrontLightModelProduct.sceneColor +\n"
+				"					accumAmbient * gl_FrontMaterial.ambient +\n"
+				"					accumDiffuse * gl_FrontMaterial.diffuse;\n"
+				"	accumSecondaryColor += accumSpecular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
+				// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += Specular * gl_FrontMaterial.specular;\n"
+
+			retVal += colorUpdating;
+
+			// Takes care of two sided lighting
+			if ( state.isTwoSidedLightingEnabled() )
+			{
+				retVal += backLighting;
+
+				// Color updating stage for back face
+				std::string colorUpdatingBack =
+					"\n"
+					"	accumColor +=/*	gl_FrontLightModelProduct.sceneColor +\n*/"
+					"					accumAmbient * gl_FrontMaterial.ambient +\n"
+					"					accumDiffuse * gl_FrontMaterial.diffuse;\n"
+					"	accumSecondaryColor += accumSpecular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
+					// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += Specular * gl_FrontMaterial.specular;\n"
+
+				//std::string colorUpdatingBack = colorUpdating;
+				//boost::algorithm::replace_all( colorUpdatingBack, "Front", "Back" );
+
+				retVal += colorUpdatingBack;
+			}
+
+	/*else
+			retVal += "
+			// Takes care of two sided lighting
+			retVal += backLighting;
+
 			/*retVal +=
 			"\n"
 			"	color =	gl_FrontLightModelProduct.sceneColor +\n"
-			"			Ambient * gl_FrontMaterial.ambient +\n"
-			"			Diffuse * gl_FrontMaterial.diffuse;\n";
+			"			accumAmbient * gl_FrontMaterial.ambient +\n"
+			"			accumDiffuse * gl_FrontMaterial.diffuse;\n";
 
 			// GL_SEPARATE_SPECULAR_COLOR
-			retVal += "	gl_FrontSecondaryColor = Specular * gl_FrontMaterial.specular;\n";
-			// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += Specular * gl_FrontMaterial.specular;\n"
+			retVal += "	gl_FrontSecondaryColor = accumSpecular * gl_FrontMaterial.specular;\n";
+			// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += accumSpecular * gl_FrontMaterial.specular;\n"
 
 			retVal += 
 			"	color = clamp( color, 0.0, 1.0 );\n"
@@ -372,9 +482,9 @@ struct GLSLHelpers
 	            // str +=  wxT("    // Invert the normal for these lighting calculations\n"
 	                    // "    normal = -normal;\n"
 	                    // "    //Clear the light intensity accumulators\n"
-	                    // "    Ambient  = vec4 (0.0);\n"
-	                    // "    Diffuse  = vec4 (0.0);\n"
-	                    // "    Specular = vec4 (0.0);\n\n");
+	                    // "    accumAmbient  = vec4 (0.0);\n"
+	                    // "    accumDiffuse  = vec4 (0.0);\n"
+	                    // "    accumSpecular = vec4 (0.0);\n\n");
 
 	            // for (int i = 0; i < 8; i++)
 	            // {
@@ -406,13 +516,13 @@ struct GLSLHelpers
 
 	            // str +=  "\n"
 	                // "    color = gl_BackLightModelProduct.sceneColor +\n"
-	                // "        Ambient * gl_BackMaterial.ambient +\n"
-	                // "        Diffuse * gl_BackMaterial.diffuse;\n";
+	                // "        accumAmbient * gl_BackMaterial.ambient +\n"
+	                // "        accumDiffuse * gl_BackMaterial.diffuse;\n";
 
 	            // if(separateSpecInt == GL_SEPARATE_SPECULAR_COLOR)
-	                // str += "    gl_BackSecondaryColor = Specular * gl_BackMaterial.specular;\n";
+	                // str += "    gl_BackSecondaryColor = accumSpecular * gl_BackMaterial.specular;\n";
 	            // else
-	                // str += "    color += Specular * gl_BackMaterial.specular;\n";
+	                // str += "    color += accumSpecular * gl_BackMaterial.specular;\n";
 
 	            // str += "    gl_BackColor = color;\n";
 	        // }
@@ -430,7 +540,7 @@ struct GLSLHelpers
 			retVal += 
 			"}\n";
 		}
-		//else no lighting => then nothing to do
+		// else no lighting @todo
 
 		return retVal;
 	}
