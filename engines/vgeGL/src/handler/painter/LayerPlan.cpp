@@ -155,33 +155,20 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), true );
 
+	pGLEngine->begin2DRendering();
+
 	glMatrixMode( GL_MODELVIEW );
-	glPushMatrix();
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-
-	glMatrixMode( GL_PROJECTION );
-	glPushMatrix();
-	vgm::MatrixR projection;
-	projection.setOrtho( 0.f, 1.f, 0.f, 1.f );
-	glLoadMatrixf( reinterpret_cast<const float*>( projection.getValue() ) );
-
-	glMatrixMode( GL_TEXTURE );
-	glPushMatrix();
-	glLoadIdentity();
 
 	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();
 	glViewport( 0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1] );
 
-	glDisable( GL_LIGHTING );
-	glDisable( GL_DEPTH_TEST );
+	// Makes a backup of GLSL activation state
+	using vgeGL::engine::Engine;
+	vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
 
-	// @todo memento sethGLSLEnabled( false ); idem for seth2DEnabled()
-	glo::GLSLProgram * program = pGLEngine->gethCurrentProgram();
-	if ( program )
-	{
-		pGLEngine->setGLSLEnabled(false);
-		pGLEngine->setCurrentProgram();
-	}
+	//
+	pGLEngine->sethCurrentProgram();
 
 	if ( pDFIImage->isDirty() )
 	{
@@ -207,23 +194,12 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	// alpha/blend
 	pGLEngine->evaluate( paintService, quad.get(), true );
 
-	glMatrixMode( GL_TEXTURE );
-	glPopMatrix();
-
-	glMatrixMode( GL_PROJECTION );
-	glPopMatrix();
-
-	glMatrixMode( GL_MODELVIEW );
-	glPopMatrix();
+	pGLEngine->end2DRendering();
 
 	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), false );
 
-	// @todo memento sethGLSLEnabled( memento(true/false, 0/1/2...) );
-	if ( program )
-	{
-		pGLEngine->setCurrentProgram( program );
-		pGLEngine->setGLSLEnabled();
-	}
+	// Restores GLSL activation state
+	pGLEngine->setGLSLActivationState( glslActivationState );
 
 	// Validates node
 	pDF->validate();

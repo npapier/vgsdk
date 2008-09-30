@@ -43,6 +43,12 @@ struct VGEGL_API ProgramGenerator : public vgd::field::DirtyFlag
 	// @todo returns list< ShaderType > containing modified shader
 	void generate( vgeGL::engine::Engine * engine );
 
+	/**
+	 * @brief Retrieves the full GLSL program.
+	 *
+	 * @return the concatenation of all enabled shaders
+	 */
+	const std::string getCode();
 
 	vgd::Shp< VertexShaderGenerator >			getVertexShaderGenerator();
 	const vgd::Shp< VertexShaderGenerator >		getVertexShaderGenerator() const;

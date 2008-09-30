@@ -63,6 +63,29 @@ void ProgramGenerator::generate( vgeGL::engine::Engine * engine )
 
 
 
+const std::string ProgramGenerator::getCode()
+{
+	std::string retVal;
+
+	for(	GeneratorContainer::iterator	i		= m_generators.begin(),
+											iEnd	= m_generators.end();
+			i != iEnd;
+			++i )
+	{
+		vgd::Shp< ShaderGenerator > element = *i;
+		assert( element != 0 );
+
+		if ( element->isEnabled() )
+		{
+			retVal += element->getCode();
+		}
+	}
+
+	return retVal;
+}
+
+
+
 vgd::Shp< VertexShaderGenerator > ProgramGenerator::getVertexShaderGenerator()
 {
 	return m_vertex;

@@ -169,6 +169,24 @@ const bool Engine::isGLSLEnabled() const
 
 
 
+const vgd::Shp< Engine::GLSLActivationState > Engine::getGLSLActivationState() const
+{
+	vgd::Shp< GLSLActivationState > memento( 
+		new GLSLActivationState( isGLSLEnabled(), getCurrentProgram() )
+			);
+	return memento;
+}
+
+
+
+void Engine::setGLSLActivationState( const vgd::Shp< GLSLActivationState > state )
+{
+	sethCurrentProgram( state->m_currentProgram );
+	setGLSLEnabled( state->m_isGLSLEnabled );
+}
+
+
+
 void Engine::setCurrentProgram( glo::GLSLProgram * program )
 {
 	m_currentProgram = program;
@@ -182,10 +200,12 @@ void Engine::sethCurrentProgram( glo::GLSLProgram * program )
 
 	if ( program )
 	{
+		setGLSLEnabled();
 		program->use();
 	}
 	else
 	{
+		setGLSLEnabled( false );
 		glo::GLSLProgram::useFixedPaths();
 	}
 }
@@ -427,10 +447,10 @@ const int32 Engine::getMaxCubeMapTexSize() const
 
 
 
-void Engine::getViewport( vgm::Rectangle2i& viewport ) const
+void Engine::getViewport( vgm::Rectangle2i& viewport ) /*const*/
 {
 	GLint viewportGL[4];
-	
+
 	glGetIntegerv( GL_VIEWPORT, viewportGL );
 
 	viewport.set( viewportGL[0], viewportGL[1], viewportGL[2], viewportGL[3] );
@@ -519,6 +539,65 @@ void Engine::activeTexture( const vgd::node::Texture * textureNode )
 	const int desiredTextureUnit = textureNode->getMultiAttributeIndex();
 
 	activeTexture( desiredTextureUnit );
+}
+
+
+
+void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport )
+{
+	// OpenGL attributes
+	glPushAttrib( GL_ALL_ATTRIB_BITS );	// @todo OPTME
+
+	glDisable( GL_LIGHTING );
+	glDisable( GL_DEPTH_TEST );
+
+	// Viewport and scissor
+	vgm::Rectangle2i viewport;
+	if ( optionalViewport )
+	{
+		viewport = (*optionalViewport);
+	}
+	else
+	{
+		getViewport( viewport );
+	}
+
+	glViewport( viewport[0], viewport[1], viewport[2], viewport[3] );
+
+	glScissor( viewport[0], viewport[1], viewport[2], viewport[3] );
+	glEnable(GL_SCISSOR_TEST);
+
+	// Matrix stacks
+	glMatrixMode( GL_MODELVIEW );
+	glPushMatrix();
+	glLoadIdentity();
+
+	glMatrixMode( GL_PROJECTION );
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho( 0.f, 1.f, 0.f, 1.f, 0.f, 1.f );
+
+	glMatrixMode( GL_TEXTURE );
+	glPushMatrix();
+	glLoadIdentity();
+}
+
+
+
+void Engine::end2DRendering()
+{
+	// Matrix stacks
+	glMatrixMode( GL_TEXTURE );
+	glPopMatrix();
+
+	glMatrixMode( GL_PROJECTION );
+	glPopMatrix();
+
+	glMatrixMode( GL_MODELVIEW );
+	glPopMatrix();
+
+	// OpenGL attributes
+	glPopAttrib();
 }
 
 

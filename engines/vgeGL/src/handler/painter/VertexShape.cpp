@@ -99,30 +99,30 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			glslState.update( pGLEngine );
 
 			// GENERATION
-			// @todo Adds an option to open files in "append" mode
-			vgDebug::StdStreamsToFiles redirection("GLSL.cout.txt", "GLSL.cerr.txt");
-
 			pg->generate( pGLEngine );
-			const std::string& vs = pg->getVertexShaderGenerator()->getCode();
-			const std::string& fs = pg->getFragmentShaderGenerator()->getCode();
-			//const std::string& gs = pg->getGeometryShaderGenerator()->getCode();
-
-#ifdef _DEBUG
-			std::cout << "Generates shaders\n" << std::endl;
-			std::cout << "Vertex shader\n" << std::endl << vs << std::endl;
-			std::cout << "Fragment shader\n" << std::endl << fs << std::endl;
-			// vgLogDebug("Generates shaders");
-			// vgLogDebug2("Vertex shader\n%s", vs.c_str());
-			// vgLogDebug2("Fragment shader\n%s", fs.c_str());
-#endif
 
 			// CACHE
-			const std::string fullCode = vs + fs/* + gs*/;
+			const std::string	fullCode	= pg->getCode();
+			const std::string&	vs			= pg->getVertexShaderGenerator()->getCode();
+			const std::string&	fs			= pg->getFragmentShaderGenerator()->getCode();
 
 			program = pGLEngine->getGLSLManager().get< GLSLProgram >( fullCode );
 
 			if ( program == 0 )
 			{
+#ifdef _DEBUG
+			static bool firstTime = true;
+
+			vgDebug::StdStreamsToFiles redirection(	"GLSL.cout.txt", "GLSL.cerr.txt", firstTime ? vgDebug::StdStreamsToFiles::TRUNCATE : vgDebug::StdStreamsToFiles::APPEND );
+
+			if ( firstTime ) firstTime = false;
+
+			std::cout << "Generates shaders\n" << std::endl;
+			std::cout << "Vertex shader\n" << std::endl << vs << std::endl;
+			std::cout << "Fragment shader\n" << std::endl << fs << std::endl;
+			std::cout << "\n\n\n";
+#endif
+
 				// Not found in cache. Creates a new one
 				program = new glo::GLSLProgram;
 #ifdef _DEBUG
@@ -137,7 +137,14 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				const bool linkRetVal = program->link();
 
 #ifdef _DEBUG
-				if ( !compileVSRetVal )		vgLogDebug("VERTEX shader compilation fails !");
+				if ( !compileVSRetVal )
+				{
+					vgLogDebug("VERTEX shader compilation fails");
+				}
+				else
+				{
+					vgLogDebug("VERTEX shader compilation succeeded");
+				}
 				if ( !compileFSRetVal )		vgLogDebug("FRAGMENT shader compilation fails !");
 				if ( !linkRetVal )			vgLogDebug("Program link fails !");
 #endif
@@ -163,8 +170,8 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	}
 	else
 	{
-		pGLEngine->sethCurrentProgram();
-		//vgeGL::rc::GLSLProgram::useFixedPaths();
+		//pGLEngine->sethCurrentProgram();
+		vgeGL::rc::GLSLProgram::useFixedPaths();
 	}
 
 	// Render the VertexShape
