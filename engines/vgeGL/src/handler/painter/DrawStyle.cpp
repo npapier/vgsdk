@@ -41,10 +41,10 @@ const vge::handler::Handler::TargetVector DrawStyle::getTargets() const
 
 
 
-void DrawStyle::apply ( vge::engine::Engine* , vgd::node::Node *pNode )
+void DrawStyle::apply( vge::engine::Engine *, vgd::node::Node *pNode )
 {
 	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
 
@@ -163,7 +163,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
 			float vMat[4];			
-			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );			
+			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
@@ -198,7 +198,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
 			float vMat[4];			
-			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );			
+			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
@@ -272,7 +272,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			if ( bRestorePolygonMode )
 			{
 				glPolygonMode( GL_FRONT,polygonMode[0] );
-				glPolygonMode( GL_BACK,	polygonMode[1] );				
+				glPolygonMode( GL_BACK,	polygonMode[1] );
 			}
 
 			///@todo FIXME OPTME

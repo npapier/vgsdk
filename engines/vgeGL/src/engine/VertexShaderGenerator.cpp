@@ -91,18 +91,23 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		//
 		m_code +=
 		"\n"
-		"	vec4 color =	gl_FrontLightModelProduct.sceneColor +\n"
-		"					Ambient * gl_FrontMaterial.ambient +\n"
-		"					Diffuse * gl_FrontMaterial.diffuse;\n";
+		"	gl_FrontColor = accumColor;\n"
+		"	gl_FrontSecondaryColor = accumSecondaryColor;\n"; // GL_SEPARATE_SPECULAR_COLOR
+		// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += accumSpecular * gl_FrontMaterial.specular;\n"
 
-		m_code += 
-//		"	gl_FrontSecondaryColor = clamp( Specular * gl_FrontMaterial.specular, 0.0, 1.1 );\n"; // GL_SEPARATE_SPECULAR_COLOR
-		"	gl_FrontSecondaryColor = Specular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
-		// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += Specular * gl_FrontMaterial.specular;\n"
+		// //
+		// m_code +=
+		// "\n"
+		// "	vec4 color =	gl_FrontLightModelProduct.sceneColor +\n"
+		// "					accumAmbient * gl_FrontMaterial.ambient +\n"
+		// "					accumDiffuse * gl_FrontMaterial.diffuse;\n";
 
-		m_code +=
-		//"	gl_FrontColor = clamp(color, 0.0, 1.0);\n";// * alphaFade;\n";
-		"	gl_FrontColor = color;\n";// * alphaFade;\n";
+		// m_code += 
+		// "	gl_FrontSecondaryColor = accumSpecular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
+		// // GL_SEPARATE_SPECULAR_COLOR == false => "	 color += accumSpecular * gl_FrontMaterial.specular;\n"
+
+		// m_code +=
+		// "	gl_FrontColor = color;\n";// * alphaFade;\n";
 	}
 	/*else
 	{
