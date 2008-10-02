@@ -100,20 +100,22 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		// Calls flight()
 		m_code += "	flight( ecPosition, normal );\n";
 
-/*		m_code +=
+		m_code +=
 		"\n"
-		"	vec4 color =	gl_FrontLightModelProduct.sceneColor +\n"
+		"	vec4 color = accumColor;\n";
+/*		"	vec4 color =	gl_FrontLightModelProduct.sceneColor +\n"
 		"					accumAmbient * gl_FrontMaterial.ambient +\n"
-		"					accumDiffuse * gl_FrontMaterial.diffuse;\n";
+		"					accumDiffuse * gl_FrontMaterial.diffuse;\n";*/
 
+		m_code += textureLookup;
+/*
 		m_code +=
 		"	vec4 secondaryColor = accumSpecular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
 		// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += accumSpecular * gl_FrontMaterial.specular;\n"
 */
 		m_code +=
-		textureLookup +
 		//"	color += secondaryColor;\n"
-		"	gl_FragColor = accumColor + accumSecondaryColor;\n";//clamp( color, 0.0, 1.0 ) * alphaFade;\n";
+		"	gl_FragColor = color + accumSecondaryColor;\n";//clamp( color, 0.0, 1.0 ) * alphaFade;\n";
 		//"	gl_FragColor = color;\n";//clamp( color, 0.0, 1.0 ) * alphaFade;\n";
 	}
 
