@@ -159,7 +159,7 @@ int main( int argc, char ** argv )
 
 	// Set the human readable name of the application.
 	Glib::set_application_name("vgsdkViewer");
-	
+
 	// Initializes the local stock icons.
 	vgsdkViewerGtk::stock::initialize();
 
@@ -206,6 +206,7 @@ int main( int argc, char ** argv )
 	// Configures the main window.
 	window.add_accel_group( uiManager->get_accel_group() );
 	window.set_title("vgsdkViewer");
+//window.set_default_size( 1024, 768 );
 	window.set_reallocate_redraws( true );
 
 
@@ -259,5 +260,6 @@ int main( int argc, char ** argv )
 
 	// Enters the main loop.
 	Gtk::Main::run( window );
+
  	return 0;
 }

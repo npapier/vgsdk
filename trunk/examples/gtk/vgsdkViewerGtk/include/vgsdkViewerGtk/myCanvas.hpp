@@ -38,6 +38,8 @@ struct myCanvas : public vgGTK::BasicManipulator
 	myCanvas();
 
 
+	bool onKeyPressed( GdkEventKey * event );
+
 	/**
 	 * @name Overrides
 	 */
@@ -65,7 +67,6 @@ struct myCanvas : public vgGTK::BasicManipulator
 	 */
 	void setViewMode( const ViewMode mode );
 	//@}
-
 
 	/**
 	 * @name Scene management methods

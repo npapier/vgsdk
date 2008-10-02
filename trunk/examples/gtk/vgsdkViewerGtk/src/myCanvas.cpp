@@ -6,21 +6,36 @@
 
 #include "vgsdkViewerGtk/myCanvas.hpp"
 
+#include <gdk/gdkkeysyms.h>
+#include <gdkmm/cursor.h>
+
 #include <vgd/basic/FilenameExtractor.hpp>
-#include <vgd/node/ClearFrameBuffer.hpp>
-#include <vgd/node/DirectionalLight.hpp>
-#include <vgd/node/DrawStyle.hpp>
+//#include <vgd/basic/ImageUtilities.hpp>
+//#include <vgd/node/ClearFrameBuffer.hpp>
+//#include <vgd/node/ClipPlane.hpp>
+//#include <vgd/node/DirectionalLight.hpp>
+//#include <vgd/node/DrawStyle.hpp>
+//#include <vgd/node/LayerPlan.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
+#include <vgd/node/MultiSwitch.hpp>
+//#include <vgd/node/SpotLight.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgd/visitor/Find.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgeGL/technique/MultiMain.hpp>
-#include <vgeGL/technique/RayCasting.hpp>
+//#include <vgeGL/technique/RayCasting.hpp>
 //#include <vgCollada/Reader.hpp>
-#include <vgDebug/Global.hpp>
+#include <vgDebug/convenience.hpp>
+//#include <vgDebug/Global.hpp>
+//#include <vgio/Cache.hpp>
+#include <vgm/operations.hpp>
 #include <vgObj/Loader.hpp>
 #include <vgTrian/Loader.hpp>
+
+//#include <vgTest/TestRunner.hpp>
+//#include <vgTest/CullFaceTest.hpp>
+//#include <vgTest/VertexShapeTest.hpp>
 
 
 
@@ -41,7 +56,7 @@ namespace
 		{
 			if ( m_dragger )
 			{
-				m_rotationBackup = m_dragger->getRotation();				
+				m_rotationBackup = m_dragger->getRotation();
 				m_dragger->setRotation( m_rotationBackup * m_rotation );
 				vgm::MatrixR mat = m_dragger->computeMatrixFromFields();
 				m_dragger->setMatrix( mat );
@@ -72,22 +87,64 @@ namespace
 
 myCanvas::myCanvas()
 {
-	// Initial window size.
+	// Initial window size
 	set_size_request( 1024, 768 );
 
-	
+	// Configures engine
+	getGLEngine()->setGLSLEnabled();
+
 	// Scene graph initialization.
+	using vgd::node::LightModel;
+
 	createOptionalNode( LIGHTS );
 	createOptionalNode( CLEAR_FRAME_BUFFER );
 	createOptionalNode( DRAW_STYLE );
-	createOptionalNode( LIGHT_MODEL );
-	
-	
+
+	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( createOptionalNode( LIGHT_MODEL ) );
+	lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
+	lightModel->setViewer( LightModel::AT_EYE );
+
 	// Get the reference of the default technique
 	m_viewModeTechniques.resize( VIEW_MODE_COUNT );
 	m_viewModeTechniques[ SINGLE_VIEW ]			= getPaintTechnique();
 	m_viewModeTechniques[ LEFT_SIDED_VIEWS ]	= createMultiViewSidedTechnique();
 	m_viewModeTechniques[ SQUARED_VIEWS ]		= createMultiViewSquaredTechnique();
+
+	// Installs key handler
+	add_events(Gdk::KEY_PRESS_MASK );
+	signal_key_press_event().connect( ::sigc::mem_fun(this, &myCanvas::onKeyPressed) );
+}
+
+
+
+bool myCanvas::onKeyPressed( GdkEventKey * event )
+{
+	using vgd::node::Switch;
+
+	vgd::Shp< Switch > lightSwitcher = vgd::dynamic_pointer_cast<Switch>( getOptionalNode(LIGHTS) );
+	int whichChild = lightSwitcher->getWhichChild();
+
+	if ( event->keyval == 'l' )
+	{
+		if ( whichChild == lightSwitcher->getNumChildren() - 1 )
+		{
+			whichChild = 0;
+		}
+		else
+		{
+			++whichChild;
+		}
+		lightSwitcher->setWhichChild( whichChild );
+	}
+
+	if ( event->keyval == 'd' )
+	{
+		clearScene();
+		appendToScene( "monkey.obj" );
+		refresh();
+	}
+
+	return false;
 }
 
 
@@ -145,7 +202,7 @@ void myCanvas::setViewMode( const ViewMode mode )
 	if( mode < VIEW_MODE_COUNT && m_viewModeTechniques[mode] )
 	{
 		setPaintTechnique( m_viewModeTechniques[mode] );
-		refresh();
+		refresh( REFRESH_FORCE, ASYNCHRONOUS );
 	}
 	else
 	{
@@ -158,14 +215,14 @@ void myCanvas::setViewMode( const ViewMode mode )
 void myCanvas::clearScene()
 {
 	// Changes the cursor
-// @todo	::wxBeginBusyCursor();
+	get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
 
 	m_filenames.clear();
 	getScene()->removeAllChildren();
 	vgDebug::get().logStatus( "Scene cleared." );
 
 	// Changes the cursor
-// @todo	::wxEndBusyCursor();
+	get_root_window()->set_cursor();
 }
 
 
@@ -173,7 +230,7 @@ void myCanvas::clearScene()
 const bool myCanvas::appendToScene( const Glib::ustring & filename, const bool mustCallViewAll )
 {
 	// Changes the cursor
-// @todo	::wxBeginBusyCursor();
+	get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
 
 	const bool retVal = load( filename );
 
@@ -186,7 +243,7 @@ const bool myCanvas::appendToScene( const Glib::ustring & filename, const bool m
 	}
 
 	// Changes the cursor
-// @todo	::wxEndBusyCursor();
+	get_root_window()->set_cursor();
 
 	return retVal;
 }
@@ -196,7 +253,7 @@ const bool myCanvas::appendToScene( const Glib::ustring & filename, const bool m
 const bool myCanvas::appendToScene( const Strings & pathfilenames, const bool mustCallViewAll )
 {
 	// Changes the cursor
-// @todo	::wxBeginBusyCursor();
+	get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
 
 	refresh();
 
@@ -225,7 +282,7 @@ const bool myCanvas::appendToScene( const Strings & pathfilenames, const bool mu
 	}
 
 	// Changes the cursor
-// @todo	::wxEndBusyCursor();
+	get_root_window()->set_cursor();
 
 	return retVal;
 }
@@ -242,7 +299,7 @@ const bool myCanvas::isEmpty() const
 const bool myCanvas::reloadScene()
 {
 	// Changes the cursor
-// @todo	::wxBeginBusyCursor();
+	get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
 
 	const Strings filenames = m_filenames;
 
@@ -251,10 +308,9 @@ const bool myCanvas::reloadScene()
 	const bool retVal = appendToScene( filenames, false );
 
 	// Changes the cursor
-// @todo	::wxEndBusyCursor();
+	get_root_window()->set_cursor();
 
 	return retVal;
-
 }
 
 
@@ -262,10 +318,7 @@ const bool myCanvas::reloadScene()
 const bool myCanvas::load( const Glib::ustring & pathfilename )
 {
 	// Changes the cursor
-// @todo	::wxBeginBusyCursor();
-
-	//
-
+	get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
 
 	// Retrieves the extension of the given filename.
 	vgd::basic::FilenameExtractor	extractor( pathfilename.c_str() );
@@ -313,7 +366,7 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 	}
 
 	// Changes the cursor
-// @todo	::wxEndBusyCursor();
+	get_root_window()->set_cursor();
 
 	return bRetVal;
 }
@@ -322,15 +375,17 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 
 const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
 {
-	// Load .DAE
-/*	vgCollada::Reader reader;
-	const bool retVal = reader.load( pathfilename.c_str() );*/
+/*	// Load .dae
+	vgCollada::Reader reader;
+	const bool retVal = reader.load( pathfilename.c_str() );
 
-	// Setup scene
-	// @todo
-	//getScene()->addChild( retVal.second );
+	if ( retVal )
+	{
+		// Setup scene
+		getScene()->addChild( reader.getRoot() );
+	}
 
-//	return retVal;
+	return retVal;*/
 	return false;
 }
 
@@ -353,7 +408,7 @@ const bool myCanvas::loadObj( const Glib::ustring & pathfilename )
 	getScene()->addChild( retVal.second );
 	//(retVal.second)->computeNormals();
 
-	return ( true );
+	return true;
 }
 
 
