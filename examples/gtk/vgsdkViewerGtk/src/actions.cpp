@@ -22,8 +22,7 @@
 #include <gtkmm/statusbar.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/window.h>
-
-#include <vgDebug/Global.hpp>
+#include <vgDebug/convenience.hpp>
 
 #include "vgsdkViewerGtk/myCanvas.hpp"
 
@@ -61,38 +60,36 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 	Gtk::FileChooserDialog	chooser( *topLevel, "Choose file(s)", Gtk::FILE_CHOOSER_ACTION_OPEN );
 	Gtk::FileFilter			allFilter;
 	Gtk::FileFilter			trianFilter;
-// Not supported yet !
-//	Gtk::FileFilter			colladaFilter;
+	Gtk::FileFilter			colladaFilter;
 	Gtk::FileFilter			objFilter;
 
 	allFilter.set_name( "All supported files" );
 	allFilter.add_pattern( "*.trian" );
 	allFilter.add_pattern( "*.trian2" );
-// Not supported yet !
-//	allFilter.add_pattern( "*.DAE" );
+	allFilter.add_pattern( "*.dae" );
 	allFilter.add_pattern( "*.obj" );
 
 	trianFilter.set_name( "Trian files (*.trian, *.trian2)" );
 	trianFilter.add_pattern( "*.trian" );
 	trianFilter.add_pattern( "*.trian2" );
 
-// Not supported yet !
-//	colladaFilter.set_name( "All collada files (*.DAE)" );
-//	colladaFilter.add_pattern( "*.DAE" );
+	colladaFilter.set_name( "All collada files (*.dae)" );
+	colladaFilter.add_pattern( "*.dae" );
 
 	objFilter.set_name( "Wavefront objects (*.obj)" );
 	objFilter.add_pattern( "*.obj" );
 
 	chooser.add_filter( allFilter );
 	chooser.add_filter( trianFilter );
-// Not supported yet !
-//	chooser.add_filter( colladaFilter );
+	chooser.add_filter( colladaFilter );
 	chooser.add_filter( objFilter );
 	chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
 	chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
 	chooser.set_select_multiple( true );
 
 	const int result = chooser.run();
+	chooser.hide();
+
 	if( result == Gtk::RESPONSE_OK )
 	{
 		// Clears the canvas if requested.
@@ -107,8 +104,8 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 
 		for( std::vector< Glib::ustring >::const_iterator i = filenames.begin(); i != filenames.end(); ++i )
 		{
-			const Glib::ustring	filename = *i;
-			bool				success = false;
+			const Glib::ustring	filename	= *i;
+			bool				success		= false;
 
 			// Appends the model contained in the current file to the canvas' scene.
 			success = canvas->appendToScene( filename );
@@ -116,7 +113,8 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 			// On success, adds the current file to the recent history.
 			if ( success )
 			{
-				Gtk::RecentManager::get_default()->add_item( filename );
+				Glib::ustring uri = Glib::filename_to_uri(filename);
+				Gtk::RecentManager::get_default()->add_item( uri );
 			}
 		}
 
@@ -139,22 +137,23 @@ void fileReload( myCanvas * canvas )
 
 void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas )
 {
-	bool				success		= false;
-	const Glib::ustring	recentFile	= recentChooser->get_current_uri();
+	bool				success			= false;
+	const Glib::ustring	uriRecentFile	= recentChooser->get_current_uri();
+	std::string			recentFile		= Glib::filename_from_uri( uriRecentFile );
 
 	// Removes any content of the scene and loads the given recent file.
 	canvas->clearScene();
 	success = canvas->appendToScene( recentFile );
 	canvas->refresh();
 
-	// According to the sucess, appends or removes the file from the default recent manager.
+	// According to the success, appends or removes the file from the default recent manager.
 	if( success )
 	{
-		Gtk::RecentManager::get_default()->add_item( recentFile );
+		Gtk::RecentManager::get_default()->add_item( uriRecentFile );
 	}
 	else
 	{
-		Gtk::RecentManager::get_default()->remove_item( recentFile );
+		Gtk::RecentManager::get_default()->remove_item( uriRecentFile );
 	}
 }
 
@@ -164,19 +163,19 @@ void fullScreen( myCanvas * canvas )
 {
 	// Remembers the current state.
 	static bool	isFullScreen = false;
-	
-	
+
+
 	// Retrieves the top level window.
 	Gtk::Container	* container				= canvas->get_toplevel();
 	Gtk::Window		* topLevel				= dynamic_cast< Gtk::Window * >( container );
-	
+
 	assert( topLevel != 0 );
-	
-	
+
+
 	// Stops refreshs.
 	topLevel->get_window()->freeze_updates();
-	
-	
+
+
 	// Configures the layout.
 	if( isFullScreen )
 	{
@@ -187,7 +186,7 @@ void fullScreen( myCanvas * canvas )
 	{
 		topLevel->get_child()->hide_all();
 		topLevel->maximize();
-		
+
 		// We want to see the canvas. So we walk from the canvas to the top level window
 		// and show each.
 		for( Gtk::Widget * widget = canvas; widget != topLevel; widget = widget->get_parent() )
@@ -195,12 +194,12 @@ void fullScreen( myCanvas * canvas )
 			widget->show();
 		}
 	}
-	
-	
+
+
 	// Refresh the window again.
-	topLevel->get_window()->thaw_updates();	
-	
-	
+	topLevel->get_window()->thaw_updates();
+
+
 	// Updates the current state.
 	isFullScreen = ! isFullScreen;
 }
@@ -219,18 +218,17 @@ void settingManipulationBinding( myCanvas * canvas, const int binding )
 {
 	switch( binding )
 	{
-	case 1:
-		canvas->getSceneTransformation()->setBindingsToDefaults();
-		break;
-		
-	case 2:
-		canvas->getSceneTransformation()->setBindingsToDefaults2();
-		break;
-		
-	default:
-		vgDebug::get().logWarning( "Invalid manipulation binding specified." );
+		case 1:
+			canvas->getSceneTransformation()->setBindingsToDefaults();
+			break;
+			
+		case 2:
+			canvas->getSceneTransformation()->setBindingsToDefaults2();
+			break;
+			
+		default:
+			vgLogWarning( "Invalid manipulation binding specified." );
 	}
-	
 }
 
 
@@ -245,7 +243,7 @@ void helpAbout( Gtk::Window * topLevel )
 
 	aboutDialog.set_transient_for( *topLevel );
 	aboutDialog.set_authors( authors );
-	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load meshes (obj, trian, trian2), manipulate them and browse the rendering scene graph." );
+	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load meshes (obj, trian, trian2 and dae), manipulate them and browse the rendering scene graph." );
 	aboutDialog.set_copyright( "Copyright (C) 2008, Guillaume Brocker, Nicolas Papier and Digital Trainers SAS." );
 	aboutDialog.set_license( "Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation." );
 	aboutDialog.set_website("http://home.gna.org/vgsdk");
@@ -288,12 +286,14 @@ void dragDataReceived( myCanvas * canvas, const Glib::RefPtr<Gdk::DragContext>& 
 			// On success, adds the current file to the recent history.
 			if ( success )
 			{
-				Gtk::RecentManager::get_default()->add_item( filename );
+				Glib::ustring uri = Glib::filename_to_uri(filename);
+				bool retVal = Gtk::RecentManager::get_default()->add_item( uri );
+				assert( retVal );
 			}
 		}
 		else
 		{
-			vgDebug::get().logWarning( "\"%s\": missing or invalid file path.", filename.c_str() );
+			vgLogWarning( "\"%s\": missing or invalid file path.", filename.c_str() );
 		}
 
 		// Moves the match start forward.
