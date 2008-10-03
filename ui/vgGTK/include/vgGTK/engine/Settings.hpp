@@ -57,6 +57,7 @@ private:
 	 */
 	//@{
 	void onBench();
+	void onClearGLResources();
 	void onGLSL();
 	//@}
 	

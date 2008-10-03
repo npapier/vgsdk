@@ -27,16 +27,19 @@ Settings::Settings()
 
 {
 	// Creates child widgets.
-	m_glslButton						= Gtk::manage( new Gtk::CheckButton("Use GLSL pipeline") );
-	Gtk::Button			* benchButton	= Gtk::manage( new Gtk::Button("Bench") );
-
+	m_glslButton								= Gtk::manage( new Gtk::CheckButton("Use GLSL pipeline") );
+	Gtk::Button		* benchButton				= Gtk::manage( new Gtk::Button("Bench") );
+	Gtk::Button		* clearGLResourcesButton	= Gtk::manage( new Gtk::Button("Clear OpenGL Resources") );
+	
 	set_spacing( 8 );
 	pack_start( *m_glslButton, Gtk::PACK_SHRINK );
 	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK );
 	pack_start( *benchButton, Gtk::PACK_SHRINK );
+	pack_start( *clearGLResourcesButton, Gtk::PACK_SHRINK );
 
 
 	// Connects signal handlers.
+	clearGLResourcesButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onClearGLResources) );
 	m_glslButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onGLSL) );
 	benchButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onBench) );
 
@@ -64,6 +67,17 @@ void Settings::onBench()
 
 	m_canvas->bench(200);
 	m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::ASYNCHRONOUS );
+}
+
+
+
+
+void Settings::onClearGLResources()
+{
+	assert( m_canvas != 0 );
+	
+	m_canvas->getGLEngine()->getGLManager().clear();
+	m_canvas->getGLEngine()->getGLSLManager().clear();
 }
 
 
