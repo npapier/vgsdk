@@ -60,7 +60,7 @@ struct VGGTK_API DrawStyleEditor : public Gtk::VBox
 	void setCanvas( vgUI::Canvas * canvas );
 	
 	
-private:
+protected:
 	
 	typedef internal::EnumBox< vgd::node::DrawStyle::BoundingBoxValueType >	BoundingBoxBox;
 	typedef internal::EnumBox< vgd::node::DrawStyle::ShapeValueType >		ShapeBox;
@@ -86,6 +86,23 @@ private:
 	BoundingBoxBox									* m_boundingBoxBox;				///< Reference the widget used to edit bouding box values
 	
 	/**
+	 * @name	Signal Handlers
+	 */
+	//@{
+	virtual void onBoundingBox();
+	virtual void onBoundingBoxValue( const vgd::node::DrawStyle::BoundingBoxValueType boundingBox );
+	virtual void onNormalLength();
+	virtual void onNormalLengthValue();
+	virtual void onShape();
+	virtual void onShapeValue( const vgd::node::DrawStyle::ShapeValueType shape );
+	virtual void onShowOrientation();
+	virtual void onShowOrientationValue();
+	//@}
+
+
+private:
+
+	/**
 	 * @brief	Creates the content of the widget.
 	 */
 	void createContent();
@@ -100,19 +117,6 @@ private:
 	 */
 	void refreshWidgets();
 	
-	/**
-	 * @name	Signal Handlers
-	 */
-	//@{
-	void onBoundingBox();
-	void onBoundingBoxValue( const vgd::node::DrawStyle::BoundingBoxValueType boundingBox );
-	void onNormalLength();
-	void onNormalLengthValue();
-	void onShape();
-	void onShapeValue( const vgd::node::DrawStyle::ShapeValueType shape );
-	void onShowOrientation();
-	void onShowOrientationValue();
-	//@}
 };
 
 

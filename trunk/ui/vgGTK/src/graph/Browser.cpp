@@ -192,7 +192,7 @@ Browser::Browser()
 	// Retrieves the toolbar and configures it.
 	Gtk::Toolbar	* toolbar = dynamic_cast< Gtk::Toolbar * >( Gtk::manage(m_uiManager->get_widget("/toolbar")) );
 
-//	toolbar->set_icon_size( Gtk::ICON_SIZE_SMALL_TOOLBAR );
+	toolbar->set_icon_size( Gtk::ICON_SIZE_SMALL_TOOLBAR );
 	toolbar->set_toolbar_style( Gtk::TOOLBAR_ICONS );
 	toolbar->set_tooltips();
 
