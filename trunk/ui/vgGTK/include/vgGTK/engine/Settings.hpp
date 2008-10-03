@@ -10,6 +10,11 @@
 
 #include "vgGTK/vgGTK.hpp"
 
+namespace Gtk
+{
+	class CheckButton;
+}
+
 namespace vgUI
 {
 	struct Canvas;
@@ -59,6 +64,8 @@ private:
 	 * @brief	Refreshes sensitiveness of child widgets.
 	 */
 	void refreshChildrenSensitiveness();
+
+	Gtk::CheckButton	* m_glslButton;		///< Button to enable/disable glsl rendering pipeline
 };
 
 
