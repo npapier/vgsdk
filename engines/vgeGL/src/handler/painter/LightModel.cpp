@@ -135,13 +135,22 @@ void LightModel::paint( vgeGL::engine::Engine * engine, vgd::node::LightModel *n
 	// TWOSIDED
 	vgd::node::LightModel::TwoSidedValueType	twosidedValue;
 	bDefined = node->getTwoSided( twosidedValue );
-	
+
 	if ( bDefined )
 	{
-		glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, twosidedValue ? GL_TRUE : GL_FALSE );
+		if ( twosidedValue )
+		{
+			glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
+			glEnable( GL_VERTEX_PROGRAM_TWO_SIDE );
+		}
+		else
+		{
+			glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE );
+			glDisable( GL_VERTEX_PROGRAM_TWO_SIDE );
+		}
 	}
-	
-	// Validate node
+
+	// Validates node
 	node->getDirtyFlag(node->getDFNode())->validate();
 }
 

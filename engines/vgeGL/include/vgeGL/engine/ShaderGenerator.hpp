@@ -42,8 +42,21 @@ struct GLSLHelpers
 
 
 	// LIGHTING
-	static const std::string& generate_lightAccumulators()
+	static const std::string& generate_lightAccumulators( const GLSLState& state )
 	{
+		static const std::string retValNoLighting("");
+
+		static const std::string retValTwoSided = 
+		"vec4 accumAmbient;\n"
+		"vec4 accumDiffuse;\n"
+		"vec4 accumSpecular;\n"
+		"\n"
+		"vec4 accumColor;\n"
+		"vec4 accumSecondaryColor;\n"
+		"vec4 accumBackColor;\n"
+		"vec4 accumBackSecondaryColor;\n"
+		"\n";
+
 		static const std::string retVal = 
 		"vec4 accumAmbient;\n"
 		"vec4 accumDiffuse;\n"
@@ -53,7 +66,18 @@ struct GLSLHelpers
 		"vec4 accumSecondaryColor;\n"
 		"\n";
 
-		return retVal;
+		if ( state.isLightingEnabled() == false )
+		{
+			return retValNoLighting;
+		}
+		else if ( state.isTwoSidedLightingEnabled() )
+		{
+			return retValTwoSided;
+		}
+		else
+		{
+			return retVal;
+		}
 	}
 
 
@@ -66,14 +90,14 @@ struct GLSLHelpers
 		if ( state.isEnabled( GLSLState::DIRECTIONAL_LIGHT) )
 		{
 			const std::string& directionalLight = GLSLHelpers::generateFunction_directionalLight( state, false );
-			retVal += directionalLight;
+			retVal += directionalLight + '\n';
 		}
 
 		// POINT_LIGHT
 		if ( state.isEnabled( GLSLState::POINT_LIGHT) )
 		{
 			const std::string& pointLight = GLSLHelpers::generateFunction_pointLight( state, false );
-			retVal += pointLight;
+			retVal += pointLight + '\n';
 		}
 
 		// SPOT_LIGHT
@@ -81,7 +105,7 @@ struct GLSLHelpers
 		{
 			const std::string& spotLightFront	= GLSLHelpers::generateFunction_spotLight( state, false );
 			// const std::string& spotLightBack	= GLSLHelpers::generateFunction_spotLight( state, true ); @todo
-			retVal += spotLightFront;
+			retVal += spotLightFront + '\n';
 			// retVal += spotLightBack; @todo
 		}
 
@@ -307,240 +331,229 @@ struct GLSLHelpers
 	}
 
 
+	static void generateFunction_flightFrontAndBack(	const GLSLState& state,
+														std::string& flightFront, std::string& flightBack )
+	{
+		const std::string clearLightIntensityAccumulators =
+			"	// Clear the light intensity accumulators\n"
+			"	accumAmbient	= vec4(0.0);\n"
+			"	accumDiffuse	= vec4(0.0);\n"
+			"	accumSpecular	= vec4(0.0);\n"
+			"\n";
+
+		flightFront	=
+			"// Computes the light contributions for front face\n"
+			"void flightFront( in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
+			"{\n" +
+			clearLightIntensityAccumulators;
+
+		flightBack	=
+			"// Computes the light contributions for back face\n"
+			"void flightBack( in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
+			"{\n" +
+			clearLightIntensityAccumulators;
+
+		// For each light, do
+		uint		i		= 0;
+		const uint	iEnd	= state.getMaxLight();
+
+		for( uint foundLight = 0; i != iEnd; ++i )
+		{
+			const vgd::Shp< GLSLState::LightState > currentLightState = state.getLight(i);
+
+			if ( currentLightState )
+			{
+				const vgd::node::Light * currentLight = currentLightState->getLightNode();
+				assert( currentLight != 0 );
+
+				bool onValue;
+				bool isDefined = currentLight->getOn( onValue );
+
+				if ( isDefined && onValue )
+				{
+					const std::string iStr = boost::lexical_cast< std::string >( i ); // @todo optme
+
+					const int lightType = currentLightState->getLightType();
+
+					switch ( lightType )
+					{
+						case GLSLState::DIRECTIONAL_LIGHT:
+							flightFront		+= "	directionalLightFront( " + iStr + ", normal );\n";
+							flightBack		+= "	directionalLightFront( " + iStr + ", normal );\n";
+							//currentLightBack	+= "	directionalLightBack( " + iStr + ", -normal );\n";
+							break;
+
+						case GLSLState::POINT_LIGHT:
+							flightFront		+= "	pointLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+							flightBack		+= "	pointLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+							//currentLightBack	+= "	pointLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
+							break;
+
+						case GLSLState::SPOT_LIGHT:
+							flightFront		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+							flightBack		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+							// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
+							break;
+
+						default:
+							assert( false && "Unknown light type !" );
+					}
+				}
+				// else light off, nothing to do
+
+				//
+				++foundLight;
+				if ( foundLight == state.getNumLight() )
+				{
+					break;
+				}
+			}
+			// else no light, nothing to do
+		}
+
+		flightFront	+= 
+		"}\n";
+
+		flightBack	+=
+		"}\n";
+	}
+
+
+
 	static const std::string generateFunction_flight( const GLSLState& state )
 	{
 		std::string retVal;
 
+		std::string flight;
+
 		if ( state.isLightingEnabled() )
 		{
-			retVal +=
-			"\n"
-			"void flight( in vec4 ecPosition, in vec3 normal )\n"
-			"{\n"
-			"	vec3 ecPosition3;\n"
-			"	vec3 eye;\n"
-			"\n"
-			"	ecPosition3 = (vec3(ecPosition)) / ecPosition.w;\n";
+			// 
+			flight +=
+				"\n"
+				"void flight( in vec4 ecPosition, in vec3 normal )\n"
+				"{\n"
+				"	// Several pre-computations\n"
+				"	vec3 ecPosition3	= (vec3(ecPosition)) / ecPosition.w;\n";
 
 			if ( state.isEnabled(GLSLState::LOCAL_VIEWER) )
 			{
-				retVal +=
-				"	eye = -normalize(ecPosition3);\n"
+				flight +=
+				"	vec3 eye			= -normalize(ecPosition3);\n"
 				"\n";
 			}
 			else
 			{
-				retVal +=
-				"	eye = vec3(0.0, 0.0, 1.0);\n"
+				flight +=
+				"	vec3 eye			= vec3(0.0, 0.0, 1.0);\n"
 				"\n";
 			}
 
-			retVal +=
-			"	// Clear the color accumulators\n"
-			"	accumColor			= vec4(0.0);\n"
-			"	accumSecondaryColor	= vec4(0.0);\n"
-			"\n"
-			"	// Clear the light intensity accumulators\n"
-			"	accumAmbient	= vec4(0.0);\n"
-			"	accumDiffuse	= vec4(0.0);\n"
-			"	accumSpecular	= vec4(0.0);\n"
-			"\n";
-
-			std::string backLighting =
-			"	// Clear the light intensity accumulators\n"
-			"	accumAmbient	= vec4(0.0);\n"
-			"	accumDiffuse	= vec4(0.0);\n"
-			"	accumSpecular	= vec4(0.0);\n"
-			"\n";
-
 			//
-			std::string currentLightFront;
-			std::string currentLightBack;
-
-			uint		i		= 0;
-			const uint	iEnd	= state.getMaxLight();
-
-			for( uint foundLight = 0; i != iEnd; ++i )
-			{
-				const vgd::Shp< GLSLState::LightState > currentLightState = state.getLight(i);
-
-				if ( currentLightState )
-				{
-					const vgd::node::Light * currentLight = currentLightState->getLightNode();
-					assert( currentLight != 0 );
-
-					bool isDefined;
-					bool onValue;
-
-					isDefined = currentLight->getOn( onValue );
-
-					if ( isDefined && onValue )
-					{
-						const std::string iStr = boost::lexical_cast< std::string >( i ); // @todo optme
-
-						const int lightType = currentLightState->getLightType();
-
-						switch ( lightType )
-						{
-							case GLSLState::DIRECTIONAL_LIGHT:
-								currentLightFront	= "	directionalLightFront( " + iStr + ", normal );\n";
-								currentLightBack	= "	directionalLightFront( " + iStr + ", -normal );\n";
-								//currentLightBack	+= "	directionalLightBack( " + iStr + ", -normal );\n";
-								break;
-
-							case GLSLState::POINT_LIGHT:
-								currentLightFront	= "	pointLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
-								currentLightBack	= "	pointLightFront( " + iStr + ", ecPosition3, -normal, eye );\n";
-								//currentLightBack	+= "	pointLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
-								break;
-
-							case GLSLState::SPOT_LIGHT:
-								currentLightFront	= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
-								currentLightBack	= "	spotLightFront( " + iStr + ", ecPosition3, -normal, eye );\n";
-								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
-								break;
-
-							default:
-								assert( false && "Unknown light type !" );
-						}
-
-						retVal			+= currentLightFront;
-						backLighting	+= currentLightBack;
-
-						/*// Takes care of two sided lighting
-						if ( state.isTwoSidedLightingEnabled() )
-						{
-							retVal += currentLightBack;
-							backLighting += currentLightBack;
-						}*/
-					}
-					// else light off, nothing to do
-
-					//
-					++foundLight;
-					if ( foundLight == state.getNumLight() )
-					{
-						break;
-					}
-				}
-				// else no light, nothing to do
-			}
-
-			// Color updating stage for front face
-			std::string colorUpdating =
+			// Color updating stage
+			const std::string colorUpdating =
 				"\n"
-				"	accumColor +=	gl_FrontLightModelProduct.sceneColor +\n"
+				"	// Sets the color accumulators\n"
+				"	accumColor	=	gl_FrontLightModelProduct.sceneColor + \n"
 				"					accumAmbient * gl_FrontMaterial.ambient +\n"
 				"					accumDiffuse * gl_FrontMaterial.diffuse;\n"
-				"	accumSecondaryColor += accumSpecular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
+				"	accumSecondaryColor	= accumSpecular * gl_FrontMaterial.specular;\n" // GL_SEPARATE_SPECULAR_COLOR
+				"\n\n";
 				// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += Specular * gl_FrontMaterial.specular;\n"
 
-			retVal += colorUpdating;
+			const std::string colorUpdating2 =
+				"\n"
+				"		// Sets the color accumulators\n"
+				"		accumColor	=	gl_FrontLightModelProduct.sceneColor + \n"
+				"						accumAmbient * gl_FrontMaterial.ambient +\n"
+				"						accumDiffuse * gl_FrontMaterial.diffuse;\n"
+				"		accumSecondaryColor	= accumSpecular * gl_FrontMaterial.specular;\n"
+				"\n\n";
 
-			// Takes care of two sided lighting
-			if ( state.isTwoSidedLightingEnabled() )
+			const std::string backColorUpdating =
+				"\n"
+				"	// Sets the color accumulators\n"
+				"	accumBackColor			=	gl_BackLightModelProduct.sceneColor + \n"
+				"								accumAmbient * gl_FrontMaterial.ambient +\n"
+				"								accumDiffuse * gl_FrontMaterial.diffuse;\n"
+				"	accumBackSecondaryColor	=	accumSpecular * gl_FrontMaterial.specular;\n" // GL_SEPARATE_SPECULAR_COLOR
+				"\n\n";
+
+			const std::string backColorUpdating2 =
+				"\n"
+				"		// Sets the color accumulators\n"
+				"		accumBackColor			=	gl_BackLightModelProduct.sceneColor + \n"
+				"									accumAmbient * gl_FrontMaterial.ambient +\n"
+				"									accumDiffuse * gl_FrontMaterial.diffuse;\n"
+				"		accumBackSecondaryColor	=	accumSpecular * gl_FrontMaterial.specular;\n" // GL_SEPARATE_SPECULAR_COLOR
+				"\n\n";
+
+			std::string flightFront, flightBack;
+			generateFunction_flightFrontAndBack( state, flightFront, flightBack );
+
+			retVal += flightFront + "\n";
+//if ( state.isTwoSidedLightingEnabled() ) retVal += flightBack + "\n";
+
+			if ( state.isPerPixelLightingEnabled() )
 			{
-				retVal += backLighting;
-
-				// Color updating stage for back face
-				std::string colorUpdatingBack =
-					"\n"
-					"	accumColor +=/*	gl_FrontLightModelProduct.sceneColor +\n*/"
-					"					accumAmbient * gl_FrontMaterial.ambient +\n"
-					"					accumDiffuse * gl_FrontMaterial.diffuse;\n"
-					"	accumSecondaryColor += accumSpecular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
-					// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += Specular * gl_FrontMaterial.specular;\n"
-
-				//std::string colorUpdatingBack = colorUpdating;
-				//boost::algorithm::replace_all( colorUpdatingBack, "Front", "Back" );
-
-				retVal += colorUpdatingBack;
+				if ( state.isTwoSidedLightingEnabled() )
+				{
+					flight +=
+						"	if ( gl_FrontFacing )\n"
+						"	{\n"
+						"		// Computes the light contributions for front face\n"
+						"		flightFront( ecPosition3, normal, eye );\n" +
+								colorUpdating2 +
+						"	}\n"
+						"	else\n"
+						"	{\n"
+						"		// Computes the light contributions for back face\n"
+						"		flightFront( ecPosition3, -normal, eye );\n" +
+								backColorUpdating2 +
+						"	}\n";
+				}
+				else
+				{
+					flight +=
+						"	// Computes the light contributions for front face\n"
+						"	flightFront( ecPosition3, normal, eye );\n" +
+							colorUpdating;
+				}
+			}
+			else
+			{
+				if ( state.isTwoSidedLightingEnabled() )
+				{
+					flight +=
+						"	// Computes the light contributions for front face\n"
+						"	flightFront( ecPosition3, normal, eye );\n" +
+							colorUpdating +
+						"	// Computes the light contributions for back face\n"
+						"	flightFront( ecPosition3, -normal, eye );\n" +
+							backColorUpdating;
+				}
+				else
+				{
+					flight +=
+						"	// Computes the light contributions for front face\n"
+						"	flightFront( ecPosition3, normal, eye );\n" +
+							colorUpdating;
+				}
 			}
 
-	/*else
-			retVal += "
-			// Takes care of two sided lighting
-			retVal += backLighting;
-
-			/*retVal +=
-			"\n"
-			"	color =	gl_FrontLightModelProduct.sceneColor +\n"
-			"			accumAmbient * gl_FrontMaterial.ambient +\n"
-			"			accumDiffuse * gl_FrontMaterial.diffuse;\n";
-
-			// GL_SEPARATE_SPECULAR_COLOR
-			retVal += "	gl_FrontSecondaryColor = accumSpecular * gl_FrontMaterial.specular;\n";
-			// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += accumSpecular * gl_FrontMaterial.specular;\n"
-
-			retVal += 
-			"	color = clamp( color, 0.0, 1.0 );\n"
-			"	gl_FrontColor = color;\n";*/
-
-			// @todo
-			// if(lightModelTwoSidedInt)
-	        // {
-	            // str +=  wxT("    // Invert the normal for these lighting calculations\n"
-	                    // "    normal = -normal;\n"
-	                    // "    //Clear the light intensity accumulators\n"
-	                    // "    accumAmbient  = vec4 (0.0);\n"
-	                    // "    accumDiffuse  = vec4 (0.0);\n"
-	                    // "    accumSpecular = vec4 (0.0);\n\n");
-
-	            // for (int i = 0; i < 8; i++)
-	            // {
-	                // if(glIsEnabled(GL_LIGHT0 + i))
-	                // {
-	                    // glGetLightfv( GL_LIGHT0 + i, GL_POSITION, v);
-
-	                    // if(v[3] == 0.0)
-	                    // {
-	                        // str += wxString::Format(wxT("    directionalLight(%d, normal);\n\n"), i);
-	                        // fLightDir = true;
-	                    // }
-	                    // else
-	                    // {
-	                        // glGetLightfv( GL_LIGHT0 + i, GL_SPOT_CUTOFF, &spotCut);
-	                        // if( spotCut == 180.0)
-	                        // {
-	                            // str += wxString::Format(wxT("    pointLight(%d, normal, eye, ecPosition3);\n\n"), i);
-	                            // fLightPoint = true;
-	                        // }
-	                        // else
-	                        // {
-	                            // str += wxString::Format(wxT("    spotLight(%d, normal, eye, ecPosition3);\n\n"), i);
-	                            // fLightSpot = true;
-	                        // }
-	                    // }
-	                // }
-	            // }
-
-	            // str +=  "\n"
-	                // "    color = gl_BackLightModelProduct.sceneColor +\n"
-	                // "        accumAmbient * gl_BackMaterial.ambient +\n"
-	                // "        accumDiffuse * gl_BackMaterial.diffuse;\n";
-
-	            // if(separateSpecInt == GL_SEPARATE_SPECULAR_COLOR)
-	                // str += "    gl_BackSecondaryColor = accumSpecular * gl_BackMaterial.specular;\n";
-	            // else
-	                // str += "    color += accumSpecular * gl_BackMaterial.specular;\n";
-
-	            // str += "    gl_BackColor = color;\n";
-	        // }
-
-			/*retVal += 
-			"\n"
-			"	gl_FrontColor *= alphaFade;\n"; // @todo*/
-			//"	gl_FrontColor.a *= alphaFade;\n"; // @todo
-	        // if(lightModelTwoSidedInt)
-	        // {     
-	            // str += "    gl_FrontSecondaryColor.a *= alphaFade;\n"
-	                // "    gl_BackColor.a *= alphaFade;\n"
-	                // "    gl_BackSecondaryColor.a *= alphaFade;\n";
-	        // }
-			retVal += 
-			"}\n";
+// if(lightModelTwoSidedInt)
+// {     
+	// str += "    gl_FrontSecondaryColor.a *= alphaFade;\n"
+		// "    gl_BackColor.a *= alphaFade;\n"
+		// "    gl_BackSecondaryColor.a *= alphaFade;\n";
+// }
+			flight += 
+			"}\n"
+			"\n";
 		}
-		// else no lighting @todo
+		//else no lighting, so nothing to do
+
+		retVal += flight;
 
 		return retVal;
 	}
@@ -548,10 +561,10 @@ struct GLSLHelpers
 
 
 	//
-	static const std::string& generateFunction_fnormal( const bool isLightingEnabled )
+	static const std::string& generateFunction_fnormal( const GLSLState& state )
 	{
-		if ( isLightingEnabled )
-		{
+		/*if ( state.isLightingEnabled() )
+		{*/
 			static const std::string retVal =
 			"\n"
 			"vec3 fnormal(void)\n"
@@ -565,12 +578,12 @@ struct GLSLHelpers
 			"\n";
 
 			return retVal;
-		}
+		/*}
 		else
 		{
 			static const std::string retVal("");
 			return retVal;
-		}
+		}*/
 	}
 
 

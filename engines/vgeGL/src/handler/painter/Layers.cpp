@@ -435,9 +435,9 @@ void Layers::applyScissorMask( vgd::Shp< vgd::basic::IImage > pScissor, vgd::Shp
 			(pScissor->format() == IImage::LUMINANCE_ALPHA) );
 
 	assert( pScissor->format() == pImage->format() );
-	
+
 	assert( pScissor->type() == IImage::UINT8 );
-	assert( pImage->type() == IImage::UINT8 );	
+	assert( pImage->type() == IImage::UINT8 );
 
 	assert( pScissor->width() == pImage->width() );
 	assert( pScissor->height() == pImage->height() );
@@ -445,7 +445,7 @@ void Layers::applyScissorMask( vgd::Shp< vgd::basic::IImage > pScissor, vgd::Shp
 	// scan image
 	const uint8*	iScissor = static_cast<const uint8*>(pScissor->pixels());
 	uint8*			iImage	= static_cast<uint8*>(pImage->editPixels());
-	
+
 	switch ( pImage->format() )
 	{
 		case IImage::RGBA:

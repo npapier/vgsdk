@@ -145,12 +145,28 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				{
 					vgLogDebug("VERTEX shader compilation succeeded");
 				}
-				if ( !compileFSRetVal )		vgLogDebug("FRAGMENT shader compilation fails !");
-				if ( !linkRetVal )			vgLogDebug("Program link fails !");
+
+				if ( !compileFSRetVal )
+				{
+					vgLogDebug("FRAGMENT shader compilation fails !");
+				}
+				else
+				{
+					vgLogDebug("FRAGMENT shader compilation succeeded");
+				}
+
+				if ( !linkRetVal )
+				{
+					vgLogDebug("Program link fails !");
+				}
+				else
+				{
+					vgLogDebug("Program link succeeded");
+				}
 #endif
-				assert( compileVSRetVal );
-				assert( compileFSRetVal );
-				assert( linkRetVal );
+				//assert( compileVSRetVal );
+				//assert( compileFSRetVal );
+				//assert( linkRetVal );
 			}
 /*#ifdef _DEBUG
 			else
