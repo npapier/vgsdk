@@ -33,33 +33,37 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	//
 	const bool ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
 
-	//
+	// Clears the code repository
 	m_code.clear();
 
 	// DECLARATIONS
-	if ( state.isPerVertexLightingEnabled() )
+	if ( state.isLightingEnabled() )
 	{
-		m_code += GLSLHelpers::generate_lightAccumulators();
+		if ( state.isPerVertexLightingEnabled() )
+		{
+			m_code += GLSLHelpers::generate_lightAccumulators( state ) + "\n";
+		}
+		else
+		{
+			m_code += 
+			"varying vec4 ecPosition;\n"
+			"varying vec3 ecNormal;\n"
+			"\n";
+		}
 	}
-	else
-	{
-		m_code += 
-		"varying vec4 ecPosition;\n"
-		"varying vec3 ecNormal;\n";
-	}
+	// else nothing to do
 
 	// FUNCTIONS
-	m_code += GLSLHelpers::generateFunction_fnormal( state.isLightingEnabled() );
+	m_code += GLSLHelpers::generateFunction_fnormal( state );
 
-	if ( state.isPerVertexLightingEnabled() )	m_code += GLSLHelpers::generate_lights( state );
-
-	if ( ftexgen )	m_code += "\n" + GLSLHelpers::generateFunction_ftexgen(state);
-
-	// LIGHTING
-	if ( state.isPerVertexLightingEnabled() )
+	if ( state.isLightingEnabled() && state.isPerVertexLightingEnabled() )
 	{
-		m_code += GLSLHelpers::generateFunction_flight( state );
+		m_code += GLSLHelpers::generate_lights( state ) + "\n";
+		m_code += GLSLHelpers::generateFunction_flight( state ) + "\n";
 	}
+
+	if ( ftexgen )
+		m_code += GLSLHelpers::generateFunction_ftexgen(state) + "\n";
 
 	// MAIN
 	m_code +=
@@ -67,7 +71,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	"void main( void )\n"
 	"{\n";
 
-	if ( state.isPerVertexLightingEnabled() )
+	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{
 		m_code += 
 		//"	float	alphaFade = 1.0;\n"
@@ -79,40 +83,47 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	m_code +=
 	"	gl_Position	= ftransform();\n"
-	"\n"
+	"\n";
+
+	m_code +=
 	"	ecPosition	= gl_ModelViewMatrix * gl_Vertex;\n"
-	"	ecNormal	= fnormal();\n";
+	"	ecNormal	= fnormal();\n"
+	"\n";
 
-	if ( state.isLightingEnabled() && state.isPerVertexLightingEnabled() )
+	if ( state.isLightingEnabled() )
 	{
-		// Calls flight()
-		m_code += "	flight( ecPosition, ecNormal );\n";
+		if ( state.isPerVertexLightingEnabled() )
+		{
+			// Calls flight()
+			m_code += 
+			"	flight( ecPosition, ecNormal );\n"
+			"\n"
+			"	gl_FrontColor			= accumColor;\n"			// * alphaFace
+			"	gl_FrontSecondaryColor	= accumSecondaryColor;\n";
 
-		//
-		m_code +=
-		"\n"
-		"	gl_FrontColor = accumColor;\n"
-		"	gl_FrontSecondaryColor = accumSecondaryColor;\n"; // GL_SEPARATE_SPECULAR_COLOR
-		// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += accumSpecular * gl_FrontMaterial.specular;\n"
-
-		// //
-		// m_code +=
-		// "\n"
-		// "	vec4 color =	gl_FrontLightModelProduct.sceneColor +\n"
-		// "					accumAmbient * gl_FrontMaterial.ambient +\n"
-		// "					accumDiffuse * gl_FrontMaterial.diffuse;\n";
-
-		// m_code += 
-		// "	gl_FrontSecondaryColor = accumSpecular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
-		// // GL_SEPARATE_SPECULAR_COLOR == false => "	 color += accumSpecular * gl_FrontMaterial.specular;\n"
-
-		// m_code +=
-		// "	gl_FrontColor = color;\n";// * alphaFade;\n";
+			if ( state.isTwoSidedLightingEnabled() )
+			{
+				m_code +=
+				"	gl_BackColor			= accumBackColor;\n"
+				"	gl_BackSecondaryColor	= accumBackSecondaryColor;\n";
+			}
+		}
+		// else per pixel lighting, so nothing to do
 	}
-	/*else
+	else
 	{
-		m_code += "	gl_FrontColor = gl_Color;\n";
-	}*/
+		// no lighting
+		m_code +=
+		"	gl_FrontColor			= gl_Color;\n"
+		"	gl_FrontSecondaryColor	= gl_SecondaryColor;\n";
+
+		if ( state.isTwoSidedLightingEnabled() )
+		{
+			m_code +=
+			"	gl_BackColor			= gl_Color;\n"
+			"	gl_BackSecondaryColor	= gl_SecondaryColor;\n";
+		}
+	}
 
 	/*if ( glIsEnabled(GL_FOG) )
 	{
@@ -121,9 +132,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	if ( ftexgen )
 	{
-		m_code += 
-		"\n"
-		"	ftexgen( ecPosition, ecNormal );\n";
+		m_code += "	ftexgen( ecPosition, ecNormal );\n";
 	}
 
 

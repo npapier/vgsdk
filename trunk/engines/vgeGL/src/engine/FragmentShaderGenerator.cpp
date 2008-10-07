@@ -34,7 +34,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	//
 	const bool ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
 
-	//
+	// Clears the code repository
 	m_code.clear();
 
 	// DECLARATIONS
@@ -42,81 +42,75 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	{
 		m_code += 
 		"varying vec4 ecPosition;\n"
-		"varying vec3 ecNormal;\n";
+		"varying vec3 ecNormal;\n\n";
 
-		m_code += GLSLHelpers::generate_lightAccumulators();
+		m_code += GLSLHelpers::generate_lightAccumulators( state ) + '\n';
 	}
 	// else nothing
 
-	if ( ftexgen )
-	{
-		m_code += GLSLHelpers::generate_samplers( state );
-	}
+	if ( ftexgen )	m_code += GLSLHelpers::generate_samplers( state ) + '\n';
 
 	// FUNCTIONS
-	if ( state.isPerPixelLightingEnabled() )
+	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() ) 
 	{
-		m_code += GLSLHelpers::generate_lights( state );
-	}
-
-	// LIGHTING
-	if ( state.isPerPixelLightingEnabled() )
-	{
-		m_code += GLSLHelpers::generateFunction_flight( state );
+		m_code += GLSLHelpers::generate_lights( state ) + '\n';
+		m_code += GLSLHelpers::generateFunction_flight( state ) + '\n';
 	}
 
 	// MAIN
 	m_code += 
-	"\n"
 	"void main( void )\n"
 	"{\n";
 	//"	float	alphaFade = 1.0;\n";
 
-	//
+	// texture lookup
 	std::string textureLookup;
 
-	if ( ftexgen )
-	{
-		textureLookup += GLSLHelpers::generate_texLookups( state );
-	}
+	if ( ftexgen ) textureLookup += GLSLHelpers::generate_texLookups( state );
 
-	if ( state.isPerVertexLightingEnabled() )
+	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{
 		m_code +=
 		"	vec4 color = gl_Color;\n" +
 		textureLookup +
 		"	color += gl_SecondaryColor;\n"
 		"	gl_FragColor = color;\n"; //* alphaFade
-		//"	gl_FragColor = clamp( color, 0.0, 1.0 ) ;\n";	// @todo removes clamp ?
 	}
-	//else nothing to do
-
-	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() )
+	else
 	{
-		m_code += 
-		"	vec3 normal = normalize(ecNormal);\n"
-		"\n";
+		assert( state.isLightingEnabled() );
+		assert( state.isPerPixelLightingEnabled() );
 
 		// Calls flight()
-		m_code += "	flight( ecPosition, normal );\n";
-
 		m_code +=
+		"	vec3 normal = normalize(ecNormal);\n"
 		"\n"
-		"	vec4 color = accumColor;\n";
-/*		"	vec4 color =	gl_FrontLightModelProduct.sceneColor +\n"
-		"					accumAmbient * gl_FrontMaterial.ambient +\n"
-		"					accumDiffuse * gl_FrontMaterial.diffuse;\n";*/
+		"	flight( ecPosition, normal );\n"
+		"\n";
 
-		m_code += textureLookup;
-/*
-		m_code +=
-		"	vec4 secondaryColor = accumSpecular * gl_FrontMaterial.specular;\n"; // GL_SEPARATE_SPECULAR_COLOR
-		// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += accumSpecular * gl_FrontMaterial.specular;\n"
-*/
-		m_code +=
-		//"	color += secondaryColor;\n"
-		"	gl_FragColor = color + accumSecondaryColor;\n";//clamp( color, 0.0, 1.0 ) * alphaFade;\n";
-		//"	gl_FragColor = color;\n";//clamp( color, 0.0, 1.0 ) * alphaFade;\n";
+		if ( state.isTwoSidedLightingEnabled() )
+		{
+			m_code +=
+			"	if ( gl_FrontFacing )\n"
+			"	{\n"
+			"		vec4 color = accumColor;\n" +
+					textureLookup +
+			"		gl_FragColor = color + accumSecondaryColor;\n"//clamp( color * alphaFade, 0.0, 1.0 ) ;\n";
+			"	}\n"
+			"	else\n"
+			"	{\n"
+			"		vec4 color = accumBackColor ;\n" +
+					textureLookup +
+			"		gl_FragColor = color + accumBackSecondaryColor;\n"//clamp( color * alphaFade, 0.0, 1.0 ) ;\n";
+			"	}\n";
+		}
+		else
+		{
+			m_code +=
+			"	vec4 color = accumColor;\n" +
+				textureLookup +
+			"	gl_FragColor = color + accumSecondaryColor;\n";//clamp( color, 0.0, 1.0 ) * alphaFade;\n";
+		}
 	}
 
 	m_code += "}\n";
