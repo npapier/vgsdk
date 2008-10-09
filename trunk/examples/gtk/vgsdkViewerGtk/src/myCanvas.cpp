@@ -27,7 +27,6 @@
 //#include <vgeGL/technique/RayCasting.hpp>
 //#include <vgCollada/Reader.hpp>
 #include <vgDebug/convenience.hpp>
-//#include <vgDebug/Global.hpp>
 //#include <vgio/Cache.hpp>
 #include <vgm/operations.hpp>
 #include <vgObj/Loader.hpp>
@@ -122,10 +121,10 @@ bool myCanvas::onKeyPressed( GdkEventKey * event )
 	using vgd::node::Switch;
 
 	vgd::Shp< Switch > lightSwitcher = vgd::dynamic_pointer_cast<Switch>( getOptionalNode(LIGHTS) );
-	int whichChild = lightSwitcher->getWhichChild();
 
-	if ( event->keyval == 'l' )
+	if ( lightSwitcher != 0 && event->keyval == 'l' )
 	{
+		int whichChild = lightSwitcher->getWhichChild();
 		if ( whichChild == lightSwitcher->getNumChildren() - 1 )
 		{
 			whichChild = 0;
