@@ -16,6 +16,113 @@
 
 
 
+namespace
+{
+void computeTrianglesNormals(vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt32 > &vertexIndex, vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> &normals, int32 beginIndex, int32 numTris)
+{
+	vgm::Vec3f faceNormal;
+	vgm::Vec3f v1, v2;	
+
+	for(int32 i=0; i < numTris; i++)
+	{
+		// compute face normal
+		int32 indexA, indexB, indexC;
+
+		indexA = (*vertexIndex)[beginIndex];
+		indexB = (*vertexIndex)[beginIndex+1];
+		indexC = (*vertexIndex)[beginIndex+2];
+
+		v1 = (*vertices)[indexB] - (*vertices)[indexA];
+		v2 = (*vertices)[indexC] - (*vertices)[indexA];
+		faceNormal = v1.cross(v2);
+
+		// add this face normal to each vertex normal
+		(*normals)[indexA]	+= faceNormal;
+		(*normals)[indexB]	+= faceNormal;
+		(*normals)[indexC]	+= faceNormal;
+		beginIndex += 3;
+	}
+}
+
+
+void computeQuadsNormals(vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt32 > &vertexIndex, vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> &normals, int32 beginIndex, int32 numQuads)
+{
+	vgm::Vec3f faceNormal;
+	vgm::Vec3f v1, v2;	
+
+	for(int32 i=0; i < numQuads; i++)
+	{
+		// compute face normal
+		int32 indexA, indexB, indexC, indexD;
+
+		indexA = (*vertexIndex)[beginIndex];
+		indexB = (*vertexIndex)[beginIndex+1];
+		indexC = (*vertexIndex)[beginIndex+2];
+		indexD = (*vertexIndex)[beginIndex+3];
+
+		v1 = (*vertices)[indexB] - (*vertices)[indexA];
+		v2 = (*vertices)[indexC] - (*vertices)[indexA];
+		faceNormal = v1.cross(v2);
+
+		// add this face normal to each vertex normal
+		(*normals)[indexA]	+= faceNormal;
+		(*normals)[indexB]	+= faceNormal;
+		(*normals)[indexC]	+= faceNormal;
+		(*normals)[indexD]	+= faceNormal;
+		beginIndex += 4;
+	}
+}
+
+void computeNormals(vgd::Shp<vgd::node::VertexShape> vertexShape)
+{
+	vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> normals = vertexShape->getFNormalRW();
+	vgd::field::EditorRO< vgd::field::MFVec3f > verticesRO = vertexShape->getFVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt32 > vertexIndexRO = vertexShape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive > primitiveRO = vertexShape->getFPrimitiveRO();
+
+	vgm::Vec3f faceNormal;
+	vgm::Vec3f v1, v2;
+
+	int32 numVertices;
+	numVertices	= verticesRO->size();
+
+	normals->resize(numVertices);
+	for (int j=0; j<numVertices;++j)
+	{
+		(*normals)[j].null();
+	}
+
+	for (unsigned int i=0; i<primitiveRO->size(); i++)
+	{
+		vgd::node::Primitive curPrim = (*primitiveRO)[i];
+		int32 beginIndex = curPrim.getIndex();
+
+		if (curPrim.getType() == vgd::node::Primitive::TRIANGLES)
+		{
+			int32 numTris = curPrim.getNumIndices() / 3;
+			computeTrianglesNormals(verticesRO, vertexIndexRO, normals, beginIndex, numTris);
+		}
+		else if (curPrim.getType() == vgd::node::Primitive::QUADS)
+		{
+			int32 numQuads = curPrim.getNumIndices() / 4;
+			computeQuadsNormals(verticesRO, vertexIndexRO, normals, beginIndex, numQuads);
+		}
+	}
+	// normalize normals
+	for(int32 i=0; i < numVertices; i++)
+	{
+		(*normals)[i].normalize();
+	}
+
+	normals.release();
+
+	vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
+}
+
+}
+
+
+
 namespace vgObj
 {
 
@@ -58,6 +165,13 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 
 
 	vgm::Vec3f result;
+	unsigned int currentPIndex = 0;
+	unsigned int nbFaces = 0;
+	enum {
+		NONE,
+		TRIANGLE,
+		QUAD
+	} lastPrimitive=NONE, currentPrimitive;
 
 	while (!fp.eof())
 	{
@@ -111,6 +225,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 		case 'f':
 			// face
 
+			nbFaces=0;
 			while(!ls.eof())
 			{
 				int vertex,texture,normal;
@@ -118,6 +233,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 				ls >> vertex;
 				vertex--; // la numérotation débute à 1 dans le .obj
 				vertexIndices->push_back(vertex);
+				++nbFaces;
 
 				ls >> token2;
 				if(token2!='/'){
@@ -139,23 +255,47 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 				ls >> normal;
 				normal--; // la numérotation débute à 1 dans le .obj
 			}
+			{
+			if(nbFaces==3)
+				currentPrimitive = TRIANGLE;
+			else if(nbFaces==4)
+				currentPrimitive = QUAD;
+			else
+				currentPrimitive = NONE;
+			vgd::field::EditorRW< vgd::field::MFPrimitive > primitive = vertexShape->getFPrimitiveRW();
+			if(currentPrimitive==lastPrimitive)
+			{
+				vgd::node::Primitive& p = *primitive->rbegin();
+				p.setNumIndices(p.getNumIndices()+nbFaces);
+			}
+			else
+			{
+				if(currentPrimitive==TRIANGLE)
+				{
+					vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, currentPIndex, 3 );
+					primitive->push_back( prim );						
+				}
+				else if(currentPrimitive==QUAD)
+				{
+					vgd::node::Primitive prim( vgd::node::Primitive::QUADS, currentPIndex, 4 );
+					primitive->push_back( prim );					
+				}
+			}
+			currentPIndex+=nbFaces;
+			lastPrimitive = currentPrimitive;
+			}
 			break;
 		default:
 			break;
 		}
 	}
 
-	vgd::field::EditorRW< vgd::field::MFPrimitive > primitive = vertexShape->getFPrimitiveRW();
-	vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndices->size() );
-	primitive->push_back( prim );
-
 	bool emptynormal=normals->empty();
-	primitive.release();
 	vertices.release();
 	normals.release();
 	vertexIndices.release();
 //	if (emptynormal)
-		vertexShape->computeNormals();
+	computeNormals(vertexShape);
 	retVal.first=true;
 	return retVal;
 }

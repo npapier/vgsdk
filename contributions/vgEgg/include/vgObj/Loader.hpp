@@ -35,9 +35,9 @@ namespace vgObj
  *
  * See vgObj namespace for mor info on the .obj format.
  *
- * For now, only triangle geometry is supported. No texturing.
+ * For now, only triangle and quad geometry are supported. No texturing.
  *
- * @todo add support for quads, lines and textures.
+ * @todo add support for lines and textures.
  */
 struct VGOBJ_API Loader
 {
