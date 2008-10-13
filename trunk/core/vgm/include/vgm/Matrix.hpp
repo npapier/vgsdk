@@ -740,6 +740,29 @@ private:
 };
 
 
+/**
+ * @brief Multiplication of a vector4 by a matrix (V*M)
+ * 
+ * @relates Vector
+ * @relates Matrix
+ * 
+ * @ingroup LinearAlgebra
+ */
+Vec4f VGM_API operator*(const Vec4f& vec, const MatrixR& mat);
+
+
+/**
+ * @brief Multiplication of a matrix by a vector4 (M*V)
+ * 
+ * @relates Vector
+ * @relates Matrix
+ * 
+ * @ingroup LinearAlgebra
+ */
+Vec4f VGM_API operator*(const MatrixR& mat, const Vec4f& vec);
+
+
+
 
 } // namespace vgm
 
