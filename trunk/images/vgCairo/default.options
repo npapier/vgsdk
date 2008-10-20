@@ -1,6 +1,7 @@
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-4'
-uses		= [ 'cairomm' ]
+uses		= [ 'cairo' ]
+#uses		= [ 'cairomm' ]
 libs		= [ 'vgd 0-4' ]
 deps		= [ '../../core' ]
