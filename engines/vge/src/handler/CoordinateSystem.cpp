@@ -53,6 +53,9 @@ void CoordinateSystem::apply ( vge::engine::Engine * engine, vgd::node::Coordina
 		// Sets the viewport in CoordinateSystem node
 		node->setViewport( viewport );
 	}
+
+	// Validates node
+	node->getDirtyFlag(node->getDFNode())->validate();
 }
 
 

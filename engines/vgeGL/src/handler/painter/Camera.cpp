@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,9 +7,9 @@
 
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Camera.hpp>
+#include "vge/service/ComputeBoundingBox.hpp"
 #include <vge/service/Painter.hpp>
 #include <vge/service/ProcessEvent.hpp>
-
 #include "vgeGL/engine/Engine.hpp"
 
 
@@ -22,7 +22,7 @@ namespace handler
 
 namespace painter
 {
-	
+
 
 
 META_HANDLER_CPP( Camera );
@@ -32,11 +32,12 @@ META_HANDLER_CPP( Camera );
 const vge::service::List Camera::getServices() const
 {
 	vge::service::List list;
-	
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
-	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::ProcessEvent) );
 
-	return ( list );
+	list.push_back( vge::service::ComputeBoundingBox::create()	);
+	list.push_back( vge::service::Painter::create()				);
+	list.push_back( vge::service::ProcessEvent::create()		);
+
+	return list;
 }
 
 
@@ -59,9 +60,9 @@ void Camera::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 
 	assert( dynamic_cast< vgd::node::Camera* >(pNode) != 0 );
 	vgd::node::Camera *pCastedNode = static_cast< vgd::node::Camera* >(pNode);
-	
+
 	vge::handler::Camera::apply( pEngine, pCastedNode );
-	
+
 	paint( pGLEngine, pCastedNode );
 }
 
@@ -86,9 +87,9 @@ void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
 {
 	// PROJECTION MATRIX
 	// Get the transformation.
-	vgm::MatrixR& 		current(	
+	vgm::MatrixR& 		current(
 		pGLEngine->getProjectionMatrix().getTop() 
-		);	
+		);
 
 	glMatrixMode( GL_PROJECTION );
 
@@ -100,7 +101,7 @@ void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
 	// VIEWPORT
 	bool bDefined;
 	vgm::Rectangle2i viewportValue;
-	
+
 	bDefined = pNode->getViewport( viewportValue );
 
 	if ( bDefined )
@@ -115,13 +116,13 @@ void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
 
 	// SCISSOR
 	vgm::Rectangle2i  scissorValue;
-	
+
 	bDefined = pNode->getScissor( scissorValue );
 
 	if ( bDefined )
 	{
 		glEnable( GL_SCISSOR_TEST );
-		
+
 		glScissor(
 			scissorValue.x(), scissorValue.y(),
 			scissorValue.width(), scissorValue.height()
@@ -131,8 +132,8 @@ void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
 	{
 		glDisable( GL_SCISSOR_TEST );
 	}
-	
-	// Validate node
+
+	// Validates node
 	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 

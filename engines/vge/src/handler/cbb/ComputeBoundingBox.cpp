@@ -14,7 +14,7 @@ namespace vge
 
 namespace handler
 {
-	
+
 namespace cbb
 {
 
@@ -26,7 +26,7 @@ const vge::service::List ComputeBoundingBox::getServices() const
 
 	list.push_back( vge::service::ComputeBoundingBox::create() );
 
-	return ( list );
+	return list;
 }
 
 
