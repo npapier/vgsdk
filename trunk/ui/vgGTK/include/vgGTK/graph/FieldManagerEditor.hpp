@@ -68,6 +68,18 @@ private:
 	 */
 	void fillModel();
 
+	/**
+	 * @brief	Refreshes the row at the given path.
+	 */
+	void refresh(const Gtk::TreeModel::Path& path);
+	
+	/**
+	 * @name	Signal Handlers
+	 */
+	//@{
+	void onRowActivated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
+	//@}
+
 };
 
 

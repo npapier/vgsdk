@@ -22,6 +22,7 @@
 #include <vgDebug/Global.hpp>
 
 #include "vgGTK/graph/icons/expand.xpm"
+#include "vgGTK/graph/icons/synchronize.xpm"
 
 
 namespace vgGTK
@@ -156,6 +157,8 @@ const Glib::ustring	Browser::m_uiDefinition =
 	"    <toolitem action='ExpandAll'/>"
 	"    <separator/>"
 	"    <toolitem action='SaveAs'/>"
+//	"    <separator/>"
+//	"    <toolitem action='Synchronize'/>"
 	"  </toolbar>"
 	"  <popup>"
 	"    <menuitem action='ExpandSubTree'/>"
@@ -170,9 +173,11 @@ Browser::Browser()
 {
 	// Creates the additionnal icons
 	const Gtk::StockID					expandID( Glib::ustring("vgGTK::graph::icons::expand") ); 
+	const Gtk::StockID					synchronizeID( Glib::ustring("vgGTK::graph::icons::synchronize") ); 
 	Glib::RefPtr< Gtk::IconFactory >	iconFactory = Gtk::IconFactory::create();
 	
 	iconFactory->add( expandID, Gtk::IconSet(Gdk::Pixbuf::create_from_xpm_data(expand_xpm)) );
+	iconFactory->add( synchronizeID, Gtk::IconSet(Gdk::Pixbuf::create_from_xpm_data(synchronize_xpm)) );
 	iconFactory->add_default();
 	
 	
@@ -181,6 +186,7 @@ Browser::Browser()
 	m_actions->add( Gtk::Action::create("ExpandSubTree", "Expand"), sigc::mem_fun(this, &Browser::onExpandSubTree) );
 	m_actions->add( Gtk::Action::create("FullRefresh", Gtk::Stock::REFRESH), sigc::mem_fun(this, &Browser::onFullRefresh) );
 	m_actions->add( Gtk::Action::create("SaveAs", Gtk::Stock::SAVE_AS), sigc::mem_fun(this, &Browser::onSaveAs) );
+//	m_actions->add( Gtk::Action::create("Synchronize", synchronizeID), sigc::mem_fun(this, &Browser::onSaveAs) );
 	m_actions->set_sensitive( false );
 
 
@@ -244,7 +250,7 @@ void Browser::setRoot( vgd::Shp< vgd::node::Group > root )
 {
 	m_root = root;
 	m_modelProvider.setRoot( root );
-	m_actions->set_sensitive( root );
+	m_actions->set_sensitive( root != 0 );
 }
 
 
