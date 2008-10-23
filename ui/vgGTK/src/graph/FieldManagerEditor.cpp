@@ -9,7 +9,14 @@
 #include <cassert>
 #include <typeinfo>
 
+#include <gtkmm/dialog.h>
+#include <gtkmm/messagedialog.h>
+#include <gtkmm/stock.h>
+
 #include <vgd/node/IBoundingBox.hpp>
+
+#include "vgGTK/field/EntryEditor.hpp"
+#include "vgGTK/field/operations.hpp"
 #include "vgGTK/graph/convenience.hpp"
 
 
@@ -19,6 +26,18 @@ namespace vgGTK
 
 namespace graph
 {
+
+namespace
+{
+	/**
+	 * @name	Node Properties Prefixes
+	 */
+	//@{
+	static const Glib::ustring	FIELD_PREFIX("f_");
+	static const Glib::ustring	DIRTY_FLAG_PREFIX("df_");
+	static const Glib::ustring	IBOUNDINGBOX_PREFIX("IBoundingBox");
+	//@}
+}
 
 
 
@@ -37,6 +56,8 @@ FieldManagerEditor::FieldManagerEditor()
 	get_column(0)->set_resizable();
 	get_column(1)->set_resizable();
 	get_column(2)->set_resizable();
+	
+	signal_row_activated().connect( sigc::mem_fun(this, &FieldManagerEditor::onRowActivated) );
 }
 
 
@@ -139,8 +160,125 @@ void FieldManagerEditor::fillModel()
 		// Appends a new row to the model.
 		const Gtk::TreeRow	& row( *m_model->append() );
 
-		row[ m_nameColumn ]		= "IBoundingBox";
+		row[ m_nameColumn ]		= IBOUNDINGBOX_PREFIX;
 		row[ m_valueColumn ]	= value.c_str();
+	}
+}
+
+
+
+void FieldManagerEditor::refresh(const Gtk::TreeModel::Path& path)
+{
+	// Retrieves the data row.
+	Gtk::TreeIter				i			= m_model->get_iter( path );
+	const Gtk::TreeModel::Row	& row		= *i;
+	const Glib::ustring			entryName	= row[m_nameColumn];
+	
+	if( entryName.find(FIELD_PREFIX) == 0 )
+	{
+		const std::string		value		= getFieldAsString( m_fieldManager, entryName );
+		const std::type_info	& typeInfo	= m_fieldManager->getFieldType( entryName );
+
+		row[ m_valueColumn ]	= value.c_str();
+		row[ m_typeColumn ]		= typeInfo.name();
+	}
+	else if( entryName.find(DIRTY_FLAG_PREFIX) == 0 )
+	{
+		const vgd::field::DirtyFlag *	dirtyFlag	= m_fieldManager->getDirtyFlag( entryName );
+		assert( dirtyFlag != 0 );
+
+		const std::string value = dirtyFlag->isDirty() ? "dirty" : "valid";
+		const std::type_info	& typeInfo	= typeid(*dirtyFlag);
+	
+		row[ m_valueColumn ]	= value.c_str();
+		row[ m_typeColumn ]		= typeInfo.name();
+	}
+	else if( entryName.find(IBOUNDINGBOX_PREFIX) == 0 )
+	{
+		using vgd::node::IBoundingBox;
+
+		vgd::Shp< IBoundingBox > ibb = vgd::dynamic_pointer_cast< IBoundingBox >( m_fieldManager );
+		assert( ibb != 0 );
+		
+		// Retrieves information about bounding box
+		const std::string value = toString( ibb.get() );
+
+		row[ m_valueColumn ]	= value.c_str();		}
+}
+
+
+
+void FieldManagerEditor::onRowActivated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column)
+{
+	// Retrieves the data row.
+	Gtk::TreeIter				i		= m_model->get_iter( path );
+	const Gtk::TreeModel::Row	& row	= *i;
+	
+	// Uses the row for edition, if it is a field.
+	const static Glib::ustring	fieldPrefix	= "f_";
+	const Glib::ustring			fieldName	= row[m_nameColumn];
+	
+	if( fieldName.find(FIELD_PREFIX) == 0 )
+	{
+		// Prepares the editor
+		const std::type_info				& fieldType	= m_fieldManager->getFieldType(fieldName);
+		vgd::Shp< vgGTK::field::Editor >	editor		= vgGTK::field::createEditor(fieldType);
+		
+		if( editor )
+		{
+			editor->setField( m_fieldManager, fieldName );
+		
+			// Prepares the dialog.
+			Gtk::Dialog		dialog;
+			Gtk::VBox		content;
+			Gtk::Label		label;
+			
+			label.set_markup( Glib::ustring::compose("Change the value of the field <b>%1</b> :", fieldName) );
+			label.set_justify( Gtk::JUSTIFY_LEFT );
+			content.set_border_width( 7 );
+			content.set_spacing( 5 );
+			content.pack_start( label );
+			content.pack_start( editor->getWidget() );
+			
+			dialog.add_button( Gtk::Stock::CANCEL, -1 );
+			dialog.add_button( Gtk::Stock::OK, 0 );
+			dialog.get_vbox()->pack_start( content );
+			dialog.get_vbox()->show_all();
+			dialog.set_has_separator(false);
+			dialog.set_title("Field Edition");
+			dialog.set_parent( *this );
+			
+			// Shows the dialog.
+			int result = 0;
+			
+			editor->grabFocus();
+			result = dialog.run();
+			
+			// Commits changes if user validated.
+			if( result == 0 )
+			{
+				editor->commit();
+				refresh(path);
+			}
+		}
+		else
+		{
+			const Glib::ustring	fieldTypeName( fieldType.name() );
+			const Glib::ustring	message( Glib::ustring::compose("The edition of fields of type %1 is not supported yet.", fieldTypeName) ); 
+			Gtk::MessageDialog	dialog( message );
+		
+			dialog.set_title("Field Edition");
+			dialog.set_parent( *this );
+			dialog.run();
+		}
+	}
+	else
+	{
+		Gtk::MessageDialog	dialog("This property is not editable.");
+		
+		dialog.set_title("Property Edition");
+		dialog.set_parent( *this );
+		dialog.run();
 	}
 }
 
