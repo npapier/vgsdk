@@ -238,6 +238,29 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::Material::Shini
 
 
 
+std::ostream & operator << ( std::ostream & os, const vgd::node::VertexShape::PrimitiveValueType & primitiveValue )
+{
+	switch( primitiveValue.getType() )
+	{
+	case vgd::node::Primitive::NONE:			os << "NONE"; break;
+	case vgd::node::Primitive::POINTS:			os << "POINTS"; break;
+	case vgd::node::Primitive::LINES:			os << "LINES"; break;
+	case vgd::node::Primitive::LINE_STRIP:		os << "LINE_STRIP"; break;
+	case vgd::node::Primitive::LINE_LOOP:		os << "LINE_LOOP"; break;
+	case vgd::node::Primitive::TRIANGLES:		os << "TRIANGLES"; break;
+	case vgd::node::Primitive::TRIANGLE_STRIP:	os << "TRIANGE_STRIP"; break;
+	case vgd::node::Primitive::TRIANGLE_FAN:	os << "TRIANGLE_FAN"; break;
+	case vgd::node::Primitive::QUADS:			os << "QUADS"; break;
+	case vgd::node::Primitive::QUAD_STRIP:		os << "QUAD_STRIP"; break;
+	case vgd::node::Primitive::POLYGON:			os << "POLYGON"; break;
+	default:									os << "unsupported"; break;
+	}
+
+	return os;
+}
+
+
+
 std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group > & node )
 {
 	os << node->getName();
