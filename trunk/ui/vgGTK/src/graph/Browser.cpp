@@ -201,13 +201,19 @@ Browser::Browser()
 	toolbar->set_icon_size( Gtk::ICON_SIZE_SMALL_TOOLBAR );
 	toolbar->set_toolbar_style( Gtk::TOOLBAR_ICONS );
 	toolbar->set_tooltips();
+	
+	
+	// Configures the path label.
+	m_pathLabel.set_markup("Path: </i>none</i>");
+	m_pathLabel.set_alignment( 0, 0 );
 
 
 	// Builds the widget hieararchy.
 	m_vpaned.pack1( *addDecoration(m_treeView) );
 	m_vpaned.pack2( *addDecoration(m_editor) );
 
-	this->pack_start( *toolbar, Gtk::PACK_SHRINK );
+	this->pack_start( *toolbar, Gtk::PACK_SHRINK, 3 );
+	this->pack_start( m_pathLabel, Gtk::PACK_SHRINK, 3 );
 	this->add( m_vpaned );
 
 
@@ -357,12 +363,25 @@ void Browser::onSelectionChanged()
 
 	if( selected )
 	{
+		// Retrieves the row that is selected.
 		const Gtk::TreeModel::Row	& row = *selected;
-
+		
+		// Updates the field manager editor.
 		m_editor.setFieldManager( row.get_value(m_modelProvider.getColumnRecord().m_nodeColumn) );
+		
+		// Updates the path label.
+		Glib::ustring	pathString;
+		
+		for( Gtk::TreeModel::iterator i = selected; i; i = i->parent() )
+		{
+			pathString = "/" + i->get_value(m_modelProvider.getColumnRecord().m_nameColumn) + pathString;
+		}
+		
+		m_pathLabel.set_label( "Path: " + pathString );
 	}
 	else
 	{
+		m_pathLabel.set_markup( "Path: <i>none</i>" );
 		m_editor.clear();
 	}
 }
