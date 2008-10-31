@@ -22,6 +22,7 @@
 #include <vgd/node/Light.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
+#include <vgd/node/VertexShape.hpp>
 
 #include "vgio/vgio.hpp"
 
@@ -149,6 +150,13 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Materi
  * @brief	Writes into an output stream the textual representation of the material nodes shininess parameter.
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Material::ShininessParameterType & shininessParameter );
+
+
+
+/**
+ * @brief	Writes into an output stream the textual representation of the primitive value type.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::VertexShape::PrimitiveValueType & primitiveValue );
 
 
 
