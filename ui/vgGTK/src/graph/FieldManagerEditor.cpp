@@ -11,12 +11,10 @@
 
 #include <gtkmm/dialog.h>
 #include <gtkmm/messagedialog.h>
-#include <gtkmm/stock.h>
 
 #include <vgd/node/IBoundingBox.hpp>
 
-#include "vgGTK/field/EntryEditor.hpp"
-#include "vgGTK/field/operations.hpp"
+#include "vgGTK/field/EditorDialog.hpp"
 #include "vgGTK/graph/convenience.hpp"
 
 
@@ -215,69 +213,24 @@ void FieldManagerEditor::onRowActivated(const Gtk::TreeModel::Path& path, Gtk::T
 	const Gtk::TreeModel::Row	& row	= *i;
 	
 	// Uses the row for edition, if it is a field.
+	Gtk::Window					* topLevel	= dynamic_cast< Gtk::Window * >( get_toplevel() );
 	const static Glib::ustring	fieldPrefix	= "f_";
 	const Glib::ustring			fieldName	= row[m_nameColumn];
 	
 	if( fieldName.find(FIELD_PREFIX) == 0 )
 	{
-		// Prepares the editor
-		const std::type_info				& fieldType	= m_fieldManager->getFieldType(fieldName);
-		vgd::Shp< vgGTK::field::Editor >	editor		= vgGTK::field::createEditor(fieldType);
+		vgGTK::field::EditorDialog	dialog( *topLevel, m_fieldManager, fieldName );
 		
-		if( editor )
+		if( dialog.run() == 0 )
 		{
-			editor->setField( m_fieldManager, fieldName );
-		
-			// Prepares the dialog.
-			Gtk::Dialog		dialog;
-			Gtk::VBox		content;
-			Gtk::Label		label;
-			
-			label.set_markup( Glib::ustring::compose("Change the value of the field <b>%1</b> :", fieldName) );
-			label.set_justify( Gtk::JUSTIFY_LEFT );
-			content.set_border_width( 7 );
-			content.set_spacing( 5 );
-			content.pack_start( label );
-			content.pack_start( editor->getWidget() );
-			
-			dialog.add_button( Gtk::Stock::CANCEL, -1 );
-			dialog.add_button( Gtk::Stock::OK, 0 );
-			dialog.get_vbox()->pack_start( content );
-			dialog.get_vbox()->show_all();
-			dialog.set_has_separator(false);
-			dialog.set_title("Field Edition");
-			dialog.set_parent( *this );
-			
-			// Shows the dialog.
-			int result = 0;
-			
-			editor->grabFocus();
-			result = dialog.run();
-			
-			// Commits changes if user validated.
-			if( result == 0 )
-			{
-				editor->commit();
-				refresh(path);
-			}
-		}
-		else
-		{
-			const Glib::ustring	fieldTypeName( fieldType.name() );
-			const Glib::ustring	message( Glib::ustring::compose("The edition of fields of type %1 is not supported yet.", fieldTypeName) ); 
-			Gtk::MessageDialog	dialog( message );
-		
-			dialog.set_title("Field Edition");
-			dialog.set_parent( *this );
-			dialog.run();
+			refresh( path );
 		}
 	}
 	else
 	{
-		Gtk::MessageDialog	dialog("This property is not editable.");
+		Gtk::MessageDialog	dialog( *topLevel, "Sorry, this property is not editable." );
 		
 		dialog.set_title("Property Edition");
-		dialog.set_parent( *this );
 		dialog.run();
 	}
 }

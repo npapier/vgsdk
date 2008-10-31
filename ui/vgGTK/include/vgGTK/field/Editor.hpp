@@ -64,6 +64,11 @@ struct Editor
 	virtual void refresh() = 0;
 	
 	/**
+	 * @brief	Validates the current data.
+	 */
+	virtual const bool validate() = 0;
+	
+	/**
 	 * @brief	Assignes the field to edit.
 	 *
 	 * @param	fieldManager	a reference to a field manager

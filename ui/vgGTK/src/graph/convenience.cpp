@@ -20,10 +20,13 @@
 #include <vgd/field/Float.hpp>
 #include <vgd/field/Matrix.hpp>
 #include <vgd/field/Node.hpp>
+#include <vgd/field/Primitive.hpp>
 #include <vgd/field/Rectangle.hpp>
 #include <vgd/field/Rotation.hpp>
 #include <vgd/field/String.hpp>
 #include <vgd/field/Vector.hpp>
+
+#include <vgd/node/VertexShape.hpp>
 
 #include <vgio/operators.hpp>
 
@@ -157,6 +160,8 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 	else
 	{
 		// Old serialization system, always useful for enum type
+		typedef vgd::node::VertexShape::FPrimitiveType	MFPrimitiveType;
+		
 		//typedef vgd::node::Camera::FScissorType		PAFCameraScissor;
 		//typedef vgd::node::Camera::FViewportType	PAFCameraViewport;
 
@@ -172,13 +177,15 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 										
 		typedef vgd::node::Material::FColorType		PAFMaterialColor;
 		typedef vgd::node::Material::FShininessType	PAFMaterialShininess;
-
+		
+		
 		// Retrieves the field type information
 		const std::type_info	& fieldType = fieldManager->getFieldType( fieldName );
 
-/*		if	( fieldType == typeid(PAFCameraScissor) )		os << fieldManager->getFieldRO< PAFCameraScissor >( fieldName );
-		else if	( fieldType == typeid(PAFCameraViewport) )		os << fieldManager->getFieldRO< PAFCameraViewport >( fieldName );
-		else */if	( fieldType == typeid(PAFDrawStyleBoundingBox) )	os << fieldManager->getFieldRO< PAFDrawStyleBoundingBox >( fieldName );
+		if		( fieldType == typeid(MFPrimitiveType) )				os << fieldManager->getFieldRO< MFPrimitiveType				>( fieldName );
+/*		else if	( fieldType == typeid(PAFCameraScissor) )		os << fieldManager->getFieldRO< PAFCameraScissor >( fieldName );
+		else if	( fieldType == typeid(PAFCameraViewport) )		os << fieldManager->getFieldRO< PAFCameraViewport >( fieldName );*/
+		else if	( fieldType == typeid(PAFDrawStyleBoundingBox) )		os << fieldManager->getFieldRO< PAFDrawStyleBoundingBox		>( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleNormalLength) )		os << fieldManager->getFieldRO< PAFDrawStyleNormalLength    >( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleShape) )				os << fieldManager->getFieldRO< PAFDrawStyleShape           >( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleShowOrientation) )	os << fieldManager->getFieldRO< PAFDrawStyleShowOrientation >( fieldName );
@@ -211,6 +218,9 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 				// bool_t
 				bool
 				> bool_t;
+				
+			typedef mpl::list<
+			> enum_t;
 
 			typedef mpl::list<
 				// int_t
@@ -261,15 +271,16 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 				vgd::Shp< vgd::node::Node >
 			> vgd_t;
 
-			typedef mpl::copy< bool_t, mpl::front_inserter< int_t > >::type		l2;
-			typedef mpl::copy< l2, mpl::front_inserter< float_t > >::type		l3;
-			typedef mpl::copy< l3, mpl::front_inserter< string_t > >::type		l4;
-			typedef mpl::copy< l4, mpl::front_inserter< Box_t > >::type			l5;
-			typedef mpl::copy< l5, mpl::front_inserter< Rectangle_t > >::type	l6;
-			typedef mpl::copy< l6, mpl::front_inserter< Vector_t > >::type		l7;
-			typedef mpl::copy< l7, mpl::front_inserter< vgm_t > >::type			l8;
-			typedef mpl::copy< l8, mpl::front_inserter< vgd_t > >::type			l9;
-			typedef l9 AllTypes;
+			typedef mpl::copy< bool_t, mpl::front_inserter< enum_t > >::type	l2;
+			typedef mpl::copy< l2, mpl::front_inserter< int_t > >::type			l3;
+			typedef mpl::copy< l3, mpl::front_inserter< float_t > >::type		l4;
+			typedef mpl::copy< l4, mpl::front_inserter< string_t > >::type		l5;
+			typedef mpl::copy< l5, mpl::front_inserter< Box_t > >::type			l6;
+			typedef mpl::copy< l6, mpl::front_inserter< Rectangle_t > >::type	l7;
+			typedef mpl::copy< l7, mpl::front_inserter< Vector_t > >::type		l8;
+			typedef mpl::copy< l8, mpl::front_inserter< vgm_t > >::type			l9;
+			typedef mpl::copy< l9, mpl::front_inserter< vgd_t > >::type			l10;
+			typedef l10 AllTypes;
 // @todo for() with break
 // @todo debug done() serializer is copied
 			boost::mpl::for_each< AllTypes >( singleFieldSerializer );
