@@ -25,44 +25,52 @@ namespace field
 /**
  * @brief	Abstract editor for vgd::field::TSingleField<T>.
  */
+template< typename Widget >
 struct SingleFieldEditor : public Editor
 {
-
-protected:
-
-	/**
-	 * @brief	Retrieves the value of the field.
-	 *
-	 * @return	the value of the field
-	 */
-	template< typename T > const T & getFieldValue() const
+	Gtk::Widget& getWidget()
 	{
-		assert( m_fieldManager != false );
-		assert( m_fieldName.empty() == false );
-	
-		typedef vgd::field::TSingleField< T > FieldType;
-
-		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
-	
-		return fieldEditor.get()->getValue();
+		return m_widget;
 	}
 	
-	/**
-	 * @brief	Assignes a new value to the field.
-	 *
-	 * @param	value	the new value for the field
-	 */
-	template< typename T > void setFieldValue( const T & value )
+	void grabFocus()
+	{
+		m_widget.grab_focus();
+	}
+	
+	void commit()
 	{
 		assert( m_fieldManager != false );
 		assert( m_fieldName.empty() == false );
 	
-		typedef vgd::field::TSingleField< T > FieldType;
+		typedef vgd::field::TSingleField< Widget::ValueType > FieldType;
 		
 		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
 	
-		return fieldEditor.get()->setValue( value );
+		return fieldEditor.get()->setValue( m_widget.getValue() );
 	}
+	
+	void refresh()
+	{
+		assert( m_fieldManager != false );
+		assert( m_fieldName.empty() == false );
+	
+		typedef vgd::field::TSingleField< Widget::ValueType > FieldType;
+
+		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
+	
+		m_widget.setValue( fieldEditor.get()->getValue() );
+	}
+	
+	const bool validate()
+	{
+		return m_widget.validate();
+	}
+	
+
+private:
+
+	Widget	m_widget;	///< The widget used to edit the field value, assumed to be a widget::Widget derived class.
 };
 
 

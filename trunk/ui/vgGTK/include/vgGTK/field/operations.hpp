@@ -6,7 +6,9 @@
 #ifndef _VGGTK_FIELD_OPERATIONS_HPP_
 #define _VGGTK_FIELD_OPERATIONS_HPP_
 
+#include <string>
 #include <vgd/Shp.hpp>
+#include <vgd/field/FieldManager.hpp>
 
 
 
@@ -17,6 +19,18 @@ namespace field
 {
 
 struct Editor;
+
+
+
+/**
+ * @brief	Creates an editor for the given  field.
+ *
+ * @param	fieldManager	a reference to the field manager that owns the field to edit
+ * @param	fieldName		the name of the field to edit
+ *
+ * @return	a reference to an editor, null if none
+ */
+vgd::Shp< Editor > createEditor( const vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName );
 
 
 
