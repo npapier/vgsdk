@@ -10,6 +10,7 @@
 
 #include <gtkmm/actiongroup.h>
 #include <gtkmm/box.h>
+#include <gtkmm/label.h>
 #include <gtkmm/paned.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/uimanager.h>
@@ -67,8 +68,9 @@ private:
 	 * @name	Widgets
 	 */
 	//@{
-	Gtk::TreeView				m_treeView;			///< The treeview widget that shows the vgSDK graph.
+	Gtk::Label					m_pathLabel;		///< Shows the current selection path.
 	Gtk::VPaned					m_vpaned;			///< Allows to configure size between the tree view and the field managed editor.
+	Gtk::TreeView				m_treeView;			///< The treeview widget that shows the vgSDK graph.
 	FieldManagerEditor			m_editor;			///< Allows to edit the fields of the selected node.
 	//@}
 
