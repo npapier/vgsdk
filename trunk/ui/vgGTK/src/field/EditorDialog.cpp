@@ -78,7 +78,10 @@ void EditorDialog::on_response( int response_id )
 		// Dialog::on_response( response_id );
 	// }
 	
-	m_editor->commit();
+	if( m_editor )
+	{
+		m_editor->commit();
+	}
 	Dialog::on_response( response_id );
 }
 
