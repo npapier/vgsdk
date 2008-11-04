@@ -12,19 +12,34 @@ namespace transaction {
 /**
  * @brief Container for transaction that is also a transaction.
  */
-struct VGD_API TransactionContainer : public Transaction {
+struct VGD_API TransactionContainer : public Transaction
+{
 	/**
 	 * @brief the apply function.
 	 */
+
 	void apply();
+
+
 	/**
 	 * @brief Add a transaction.
 	 */
+
 	void add_transaction(vgd::Shp<Transaction> transaction);
+
+
+	/**
+	 * @brief Clear all transaction in container.
+	 */
+
+	void clear();
+
+
 protected:
 	/**
 	 * @brief The list of transactions.
 	 */
+
 	std::vector<vgd::Shp<Transaction> > m_tList;
 };
 
