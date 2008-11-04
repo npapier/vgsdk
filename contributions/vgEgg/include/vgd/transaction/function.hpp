@@ -164,6 +164,10 @@ protected:
 	template <typename T0> vgd::Shp<function0<T0> > createFunctionTransaction(boost::function<T0 ()> f){
 		return function0<T0>::create(f);
 	}
+/**
+ * @name Non-member Function
+ */
+//@{
 	/**
 	 * @brief Template factory for functions with one single arg.
 	 */
@@ -182,6 +186,11 @@ protected:
 	template <typename T0, typename T1, typename T2, typename T3, typename P1, typename P2, typename P3>  vgd::Shp<function3<T0,T1,T2,T3> > createFunctionTransaction(boost::function<T0 (T1,T2,T3)> f, P1 p1, P2 p2, P3 p3){
 		return function3<T0,T1,T2,T3>::create(f, (T1)p1, (T2)p2, (T3)p3);
 	}
+//@}
+/**
+ * @name Member functions
+ */
+//@{
 	/**
 	 * @brief Template factory for member functions with no args.
 	 */
@@ -200,6 +209,10 @@ protected:
 	template <typename B,typename C,typename T0, typename T1, typename T2, typename P1, typename P2> vgd::Shp< function3< T0, B*, T1, T2> > createFunctionTransaction(B* object, T0 (C::*f)(T1, T2), P1 p1, P2 p2){
 		return function3<T0,B*,T1,T2>::create(f,object,p1,p2);
 	}
+//@}
+
+
+
 
 
 
