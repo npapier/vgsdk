@@ -204,8 +204,8 @@ Browser::Browser()
 	
 	
 	// Configures the path label.
-	m_pathLabel.set_markup("Path: </i>none</i>");
-	m_pathLabel.set_alignment( 0, 0 );
+	m_path.set_selectable( true );
+	m_path.set_alignment( 0, 0 );
 
 
 	// Builds the widget hieararchy.
@@ -213,7 +213,7 @@ Browser::Browser()
 	m_vpaned.pack2( *addDecoration(m_editor) );
 
 	this->pack_start( *toolbar, Gtk::PACK_SHRINK, 3 );
-	this->pack_start( m_pathLabel, Gtk::PACK_SHRINK, 3 );
+	this->pack_start( m_path, Gtk::PACK_SHRINK, 3 );
 	this->add( m_vpaned );
 
 
@@ -377,11 +377,15 @@ void Browser::onSelectionChanged()
 			pathString = "/" + i->get_value(m_modelProvider.getColumnRecord().m_nameColumn) + pathString;
 		}
 		
-		m_pathLabel.set_label( "Path: " + pathString );
+		m_path.set_text( pathString );
+		m_path.set_has_tooltip( true );
+		m_path.set_tooltip_text( pathString );
 	}
 	else
 	{
-		m_pathLabel.set_markup( "Path: <i>none</i>" );
+		m_path.set_text( Glib::ustring() );
+		m_path.set_has_tooltip( false );
+		
 		m_editor.clear();
 	}
 }
