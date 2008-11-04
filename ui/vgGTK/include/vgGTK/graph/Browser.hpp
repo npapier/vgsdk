@@ -68,10 +68,10 @@ private:
 	 * @name	Widgets
 	 */
 	//@{
-	Gtk::Label					m_pathLabel;		///< Shows the current selection path.
-	Gtk::VPaned					m_vpaned;			///< Allows to configure size between the tree view and the field managed editor.
-	Gtk::TreeView				m_treeView;			///< The treeview widget that shows the vgSDK graph.
-	FieldManagerEditor			m_editor;			///< Allows to edit the fields of the selected node.
+	Gtk::Label					m_path;		///< Shows the current selection path.
+	Gtk::VPaned					m_vpaned;	///< Allows to configure size between the tree view and the field managed editor.
+	Gtk::TreeView				m_treeView;	///< The treeview widget that shows the vgSDK graph.
+	FieldManagerEditor			m_editor;	///< Allows to edit the fields of the selected node.
 	//@}
 
 	/**
