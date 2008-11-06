@@ -22,7 +22,7 @@ META_NODE_CPP( LayerPlan );
 
 
 LayerPlan::LayerPlan( const std::string nodeName ) :
-	vgd::node::MultiAttribute( nodeName )
+	vgd::node::SingleAttribute( nodeName )
 {
 	// Add fields
 	addField( new FPositionType(getFPosition()) );
@@ -42,7 +42,7 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 
 void LayerPlan::setToDefaults( void )
 {
-	MultiAttribute::setToDefaults();
+	SingleAttribute::setToDefaults();
 
 	setPosition( vgm::Vec2f(0.f, 0.f) );
 	setSize( vgm::Vec2f(1.f, 1.f) );
@@ -53,7 +53,7 @@ void LayerPlan::setToDefaults( void )
 
 void LayerPlan::setOptionalsToDefaults()
 {
-	MultiAttribute::setOptionalsToDefaults();
+	SingleAttribute::setOptionalsToDefaults();
 }
 
 
