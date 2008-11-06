@@ -10,7 +10,7 @@
 #include "vgd/field/Float.hpp"
 #include "vgd/field/Image.hpp"
 #include "vgd/field/Vector.hpp"
-#include "vgd/node/MultiAttribute.hpp"
+#include "vgd/node/SingleAttribute.hpp"
 
 
 
@@ -26,9 +26,7 @@ namespace node
  * @brief Defines a single layer plan (overlay or underlay).
  * 
  * This node defines a layer plan that could be displayed just before the rendering (UNDERLAY) or just after (OVERLAY).
- * 
- * Althought this class is a node, adding it to a scene graph is not allowed (an exception is raised). Layer plan must 
- * be attached to canvas.
+ * In fact, the behavior depends of its position in the scene graph. It could even be displayed at any time during the rendering.
  * 
  * New fields added by this node :
  * 
@@ -56,9 +54,9 @@ namespace node
  * @ingroup g_multiAttributeNodes
  * 
  * @todo More advanced transformation (a field \c matrixTransform)
- * @todo Support of multiple layer planes, because this class is a multiattribute.
+ * @todo Support multiple layer planes at the same time and do rendering in one pass. => This class should be a multiattribute.
  */
-struct VGD_API LayerPlan : public vgd::node::MultiAttribute
+struct VGD_API LayerPlan : public vgd::node::SingleAttribute
 {
 	META_NODE_HPP( LayerPlan );
 
