@@ -35,6 +35,7 @@ struct MatrixR : public Widget< vgm::MatrixR >, public Gtk::VBox
 	void setValue( const vgm::MatrixR & value );
 	const bool validate();
 	
+	const bool resizable() const;
 	void setFrame( const bool frame );
 
 private:

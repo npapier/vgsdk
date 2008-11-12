@@ -238,9 +238,9 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::Material::Shini
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::VertexShape::PrimitiveValueType & primitiveValue )
+std::ostream & operator << ( std::ostream & os, const vgd::node::Primitive::Type & primitiveType )
 {
-	switch( primitiveValue.getType() )
+	switch( primitiveType )
 	{
 	case vgd::node::Primitive::NONE:			os << "NONE"; break;
 	case vgd::node::Primitive::POINTS:			os << "POINTS"; break;
@@ -257,6 +257,13 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::VertexShape::Pr
 	}
 
 	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::node::VertexShape::PrimitiveValueType & primitiveValue )
+{
+	return ( os << primitiveValue.getType() << "(" << primitiveValue.getIndex() << "," << primitiveValue.getNumIndices() << ")" );
 }
 
 

@@ -40,6 +40,7 @@ struct Widget
 	 * @name	Aspect Accessors
 	 */
 	//@{
+	virtual const bool resizable() const = 0;
 	virtual void setFrame( const bool frame ) = 0;
 	//@}
 	

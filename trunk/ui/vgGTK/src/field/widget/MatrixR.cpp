@@ -136,6 +136,13 @@ const bool MatrixR::validate()
 
 
 
+const bool MatrixR::resizable() const
+{
+	return false;
+}
+
+
+
 void MatrixR::setFrame( const bool frame )
 {
 	for(int i = 0; i < 16; ++i)
