@@ -33,6 +33,7 @@ struct Bool : public Widget< bool >, public Gtk::VBox
 	void setValue( const bool & value );
 	const bool validate();
 	
+	const bool resizable() const;
 	void setFrame( const bool frame );
 
 private:

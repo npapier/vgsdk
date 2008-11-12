@@ -72,6 +72,13 @@ const bool Bool::validate()
 
 
 
+const bool Bool::resizable() const
+{
+	return false;
+}
+
+
+
 void Bool::setFrame( const bool frame )
 {}
 

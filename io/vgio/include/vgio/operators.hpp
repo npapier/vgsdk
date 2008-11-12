@@ -8,6 +8,7 @@
 #define _VGIO_OPERATORS_HPP_
 
 #include <ostream>
+#include <sstream>
 
 #include <vgm/Box.hpp>
 #include <vgm/Matrix.hpp>
@@ -22,15 +23,12 @@
 #include <vgd/node/Light.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
+#include <vgd/node/Primitive.hpp>
 #include <vgd/node/VertexShape.hpp>
 
 #include "vgio/vgio.hpp"
 
 namespace vgd { namespace node { struct Group; } }
-
-
-
-/// @todo Adds toString methods
 
 
 
@@ -150,6 +148,13 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Materi
  * @brief	Writes into an output stream the textual representation of the material nodes shininess parameter.
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Material::ShininessParameterType & shininessParameter );
+
+
+
+/**
+ * @brief	Writes into an output stream the textual representation of the primitive type.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Primitive::Type & primitiveType );
 
 
 
@@ -300,13 +305,12 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TSingleField< 
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group > & node );
 
+
+
 /**
  * @brief	Writes into an output stream the given node.
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node > & node );
-
-
-
 
 
 
@@ -396,10 +400,40 @@ std::ostream & operator << ( std::ostream & os, const vgm::Vector< T, N > & vect
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const int8 & integer );
 
+
+
 /**
  * @brief	Writes into an output stream the integer.
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const uint8 & integer );
+
+
+
+/**
+ * @brief	Appends to string anything that has a serialization operator.
+ */
+template< typename T >
+std::string & operator << ( std::string & buffer, const T & value )
+{
+	std::ostringstream	os;
+	
+	os << value;
+	buffer += os.str();
+	return buffer;
+}
+
+
+/**
+ * @brief	Serializes a given object to a string.
+ */
+template< typename T >
+const std::string toString( const T & value )
+{
+	std::string	buffer;
+	
+	buffer << value;
+	return buffer;
+}
 
 
 

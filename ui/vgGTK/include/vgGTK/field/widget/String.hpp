@@ -32,6 +32,7 @@ struct String : public Widget< std::string >, public Gtk::Entry
 	void setValue( const std::string & value );
 	const bool validate();
 	
+	const bool resizable() const;
 	void setFrame( const bool frame );
 };
 

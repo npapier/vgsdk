@@ -92,6 +92,11 @@ struct MultiFieldEditor : public Editor, public Gtk::VBox
 	{
 		m_widgets.begin()->second->grab_focus();
 	}
+	
+	const bool resizable() const
+	{
+		return false;
+	}
 
 	void commit()
 	{	

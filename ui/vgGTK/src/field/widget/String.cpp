@@ -53,6 +53,13 @@ const bool String::validate()
 
 
 
+const bool String::resizable() const
+{
+	return false;
+}
+
+
+
 void String::setFrame( const bool frame )
 {
 	set_has_frame( frame );

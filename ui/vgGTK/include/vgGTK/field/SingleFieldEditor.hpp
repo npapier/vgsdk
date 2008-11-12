@@ -38,6 +38,11 @@ struct SingleFieldEditor : public Editor
 		m_widget.grab_focus();
 	}
 	
+	const bool resizable() const
+	{
+		return m_widget.resizable();
+	}
+	
 	void commit()
 	{
 		assert( m_fieldManager != false );

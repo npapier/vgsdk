@@ -67,6 +67,11 @@ struct Number : public Widget< NumberType >, public Gtk::Entry
 		}
 	}
 	
+	const bool resizable() const
+	{
+		return false;
+	}
+	
 	void setFrame( const bool frame )
 	{
 		set_has_frame( frame );

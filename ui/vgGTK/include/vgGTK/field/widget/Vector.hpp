@@ -111,6 +111,11 @@ struct Vector : public Widget< V >, public Gtk::HBox
 		return validate;
 	}
 	
+	const bool resizable() const
+	{
+		return false;
+	}
+	
 	void setFrame( const bool frame )
 	{
 		m_hasFrame = frame;

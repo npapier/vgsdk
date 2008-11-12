@@ -46,6 +46,11 @@ struct Editor
 	 * @brief	Sets the focus on the edition widget.
 	 */
 	virtual void grabFocus() = 0;
+	
+	/**
+	 * @brief	Tells if the editor is resizable.
+	 */
+	virtual const bool resizable() const = 0;
 	//@}
 
 	
