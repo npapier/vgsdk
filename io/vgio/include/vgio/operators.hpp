@@ -4,16 +4,18 @@
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
-#ifndef _VGIO_OPERATORS_HPP_
-#define _VGIO_OPERATORS_HPP_
+#ifndef _VGIO_OPERATORS_HPP
+#define _VGIO_OPERATORS_HPP
 
 #include <ostream>
 #include <sstream>
 
 #include <vgm/Box.hpp>
 #include <vgm/Matrix.hpp>
+#include <vgm/Plane.hpp>
 #include <vgm/Vector.hpp>
 
+#include <vgd/field/Enum.hpp>
 #include <vgd/field/TMultiField.hpp>
 #include <vgd/field/TPairAssociativeField.hpp>
 #include <vgd/field/TSingleField.hpp>
@@ -22,7 +24,6 @@
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/Light.hpp>
 #include <vgd/node/LightModel.hpp>
-#include <vgd/node/Material.hpp>
 #include <vgd/node/Primitive.hpp>
 #include <vgd/node/VertexShape.hpp>
 
@@ -138,20 +139,6 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::LightM
 
 
 /**
- * @brief	Writes into an output stream the textual representation of the material nodes color parameter.
- */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Material::ColorParameterType & colorParameter );
-
-
-
-/**
- * @brief	Writes into an output stream the textual representation of the material nodes shininess parameter.
- */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Material::ShininessParameterType & shininessParameter );
-
-
-
-/**
  * @brief	Writes into an output stream the textual representation of the primitive type.
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Primitive::Type & primitiveType );
@@ -250,7 +237,7 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TPairAssociati
 			{
 				os << std::endl;
 			}
-			os << i->first << ": " << i->second;
+			os << i->first << " : " << i->second;
 		}
 	}
 
@@ -396,11 +383,23 @@ std::ostream & operator << ( std::ostream & os, const vgm::Vector< T, N > & vect
 
 
 /**
+ * @brief	Writes into an output stream the given plane.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgm::Plane & plane );
+
+
+
+/**
+ * @brief	Writes into an output stream the given enumeration.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::field::Enum & enumValue );
+
+
+
+/**
  * @brief	Writes into an output stream the integer.
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const int8 & integer );
-
-
 
 /**
  * @brief	Writes into an output stream the integer.
@@ -416,9 +415,10 @@ template< typename T >
 std::string & operator << ( std::string & buffer, const T & value )
 {
 	std::ostringstream	os;
-	
+
 	os << value;
 	buffer += os.str();
+
 	return buffer;
 }
 
@@ -430,11 +430,11 @@ template< typename T >
 const std::string toString( const T & value )
 {
 	std::string	buffer;
-	
+
 	buffer << value;
 	return buffer;
 }
 
 
 
-#endif /*_VGIO_OPERATORS_HPP_*/
+#endif // #ifndef _VGIO_OPERATORS_HPP

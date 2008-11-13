@@ -17,22 +17,80 @@ namespace field
 {
 
 /**
- * @brief Definition of enumeration type
+ * @brief Definition of an enumeration type
+ *
+ * @todo virtual getValues(), getStrs() ...
  */
-typedef int EnumType;
+struct VGD_API Enum
+{
+	/**
+	 * @brief Default constructor
+	 *
+	 * @post isValid() == false
+	 */
+	Enum();
+
+	/**
+	 * @brief Constructor from an integer
+	 *
+	 * @remarks a c++ enum is an integer, so this constructor permits to use an element of an enum with this class smoothly.
+	 */
+	Enum( const int v );
+
+	/**
+	 * @brief Assign operator
+	 */
+	Enum& operator = ( const Enum& other );
+
+	/**
+	 * @brief Returns if value() is less than the value of the given object
+	 *
+	 * @remarks Used by std::map
+	 */
+	const bool operator < ( const Enum& other ) const;
+
+	/**
+	 @brief Returns if value() is equal to the value of the given object
+	 */
+	const bool operator == ( const Enum& other ) const;
+
+	/**
+	 * @brief Returns the integer value used to construct this object.
+	 *
+	 * @return the integer value of this object.
+	 */
+	const int value() const;
+
+	/**
+	 * @brief Returns the litteral representation of enumeration value.
+	 *
+	 * @return the string containing the litteral representation of enumeration value
+	 */
+	const std::string str() const;
+
+	/**
+	 * @brief Returns if this instance of enumeration is valid
+	 *
+	 * @return true if valid, false otherwise
+	 */
+	const bool isValid() const;
+
+private:
+	int m_value;	//< the enumeration value
+};
 
 /**
  * @name Container definitions of enum type
  */
 //@{
 
-typedef TSingleField< EnumType >					SFEnum;
+typedef TSingleField< Enum >					SFEnum;
 
-typedef TMultiField< EnumType >						MFEnum;
+typedef TMultiField< Enum >						MFEnum;
 
-typedef TSingleAssociativeField< EnumType >			SAFEnum;
+typedef TSingleAssociativeField< Enum >			SAFEnum;
 
-typedef TPairAssociativeField< EnumType, EnumType >	PAFEnum;
+typedef TPairAssociativeField< Enum, Enum >		PAFEnum;
 
 //@}
 

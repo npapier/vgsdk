@@ -39,13 +39,13 @@ Node::Node( const std::string nodeName )
 {
 	// Adds field
 	addField( new FNameType(getFName()) );
-	
+
 	// Adds dirty flag
 	addDirtyFlag( getDFNode() );
 
 	// Default value : see setToDefaults().
 	setName( nodeName );
-		
+
 	// Links
 	link( getDFNode() );
 }
@@ -68,7 +68,7 @@ Node::Node( const vgd::node::Node& )
 vgd::node::Node& Node::operator =( const vgd::node::Node& )
 {
 	assert( false );
-		
+
 	return *this;
 }
 
@@ -149,21 +149,21 @@ void Node::setName( const std::string strNodeName )
 
 int8 Node::getMultiAttributeIndex() const
 {
-	return ( 0 );
+	return 0;
 }
 
 
 
 const std::string Node::getFName()
 {
-	return ( "f_name" );
+	return "f_name";
 }
 
 
 
 const std::string Node::getDFNode()
 {
-	return ( "df_node" );
+	return "df_node";
 }
 
 

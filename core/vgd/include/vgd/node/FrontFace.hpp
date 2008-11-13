@@ -68,7 +68,7 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the value contained by field named \c orientation.
 	 */
-	typedef vgd::field::EnumType OrientationValueType;
+	typedef vgd::field::Enum OrientationValueType;
 
 	/**
 	 * @brief Definition of symbolic values

@@ -7,6 +7,7 @@
 #define _VGD_NODE_CLIPPLANE_HPP
 
 #include "vgd/field/Bool.hpp"
+#include "vgd/field/Enum.hpp"
 #include "vgd/field/Plane.hpp"
 #include "vgd/node/MultiAttribute.hpp"
 
@@ -71,7 +72,7 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	/**
 	 * @brief Type definition of the parameter contained by field named \c on.
 	 */
-	typedef vgd::field::EnumType OnParameterType;
+	typedef vgd::field::Enum OnParameterType;
 
 	/**
 	 * @brief Definition of symbolic values

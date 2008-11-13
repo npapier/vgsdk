@@ -6,6 +6,9 @@
 #ifndef _VGIO_VGIO_HPP
 #define _VGIO_VGIO_HPP
 
+/**
+ * @defgroup g_vgio vgio-(V)ersatile (G)raphical (I)nput and (O)utput
+ */
 
 #include <vgBase/Type.hpp>
 

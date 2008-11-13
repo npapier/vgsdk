@@ -28,7 +28,7 @@ typedef TMultiField< bool  >					MFBool;
 
 typedef TSingleAssociativeField< bool >			SAFBool;
 
-typedef TPairAssociativeField< EnumType, bool >	PAFBool;
+typedef TPairAssociativeField< Enum, bool >		PAFBool;
 
 //@}
 
