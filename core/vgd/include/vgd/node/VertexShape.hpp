@@ -597,7 +597,7 @@ public:
 		DEFAULT_DEFORMABLE_HINT = STATIC
 	};
 	
-	typedef vgd::field::EnumType DeformableHintValueType;
+	typedef vgd::field::Enum DeformableHintValueType;
 
 	/**
 	 * @brief Gets the deformableHint of node.
@@ -637,7 +637,7 @@ public:
 		DEFAULT_BOUNDINGBOX_UPDATE_POLICY = AUTOMATIC
 	};
 
-	typedef vgd::field::EnumType BoundingBoxUpdatePolicyValueType;
+	typedef vgd::field::Enum BoundingBoxUpdatePolicyValueType;
 
 	/**
 	 * @brief Gets the boundingBoxUpdatePolicy of node.
