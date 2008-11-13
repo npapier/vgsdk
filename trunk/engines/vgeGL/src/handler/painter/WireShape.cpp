@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -45,28 +45,28 @@ void WireShape::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 {
 	//
 	bool			bDefined;
-	vgm::Vec3f	diffuseColor;
+	vgm::Vec3f		diffuseColor;
+
+	using vgd::node::Material;
 	bDefined = pEngine->getStateStackTop< 
-						vgd::node::Material,
-						vgd::node::Material::ColorParameterType,
-						vgd::node::Material::ColorValueType >(
-																				vgd::node::Material::getFColor(),
-																				vgd::node::Material::DIFFUSE,
-																				diffuseColor );
+				Material, Material::DiffuseParameterType, Material::DiffuseValueType >(
+										Material::getFDiffuse(),
+										Material::DIFFUSE,
+										diffuseColor );
 	assert( bDefined );
 
 	// pre
 	GLboolean bLightingState;
 	glGetBooleanv( GL_LIGHTING, &bLightingState );
-	
+
 	glDisable( GL_LIGHTING );
 	glDisable( GL_COLOR_MATERIAL );
-	
+
 	glColor3fv( diffuseColor.getValue() );
-	
+
 	// render
 	VertexShape::apply( pEngine, pNode );
-	
+
 	// post
 	if ( bLightingState == GL_TRUE )
 	{

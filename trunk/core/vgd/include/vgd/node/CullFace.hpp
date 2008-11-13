@@ -68,7 +68,7 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the value contained by field named \c mode.
 	 */
-	typedef vgd::field::EnumType ModeValueType;
+	typedef vgd::field::Enum ModeValueType;
 
 	/**
 	 * @brief Definition of symbolic values

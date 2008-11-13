@@ -209,35 +209,6 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::Vie
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::Material::ColorParameterType & colorParameter )
-{
-	switch( colorParameter )
-	{
-	case vgd::node::Material::AMBIENT:	os << "AMBIENT"; break;
-	case vgd::node::Material::DIFFUSE:	os << "DIFFUSE"; break;
-	case vgd::node::Material::SPECULAR:	os << "SPECULAR"; break;
-	case vgd::node::Material::EMISSION:	os << "EMISSION"; break;
-	default:							os << "unsupported"; break;
-	}
-
-	return os;
-}
-
-
-
-std::ostream & operator << ( std::ostream & os, const vgd::node::Material::ShininessParameterType & shininessParameter )
-{
-	switch( shininessParameter )
-	{
-	case vgd::node::Material::SHININESS:	os << "SHININESS"; break;
-	default:								os << "unsupported"; break;
-	}
-
-	return os;
-}
-
-
-
 std::ostream & operator << ( std::ostream & os, const vgd::node::Primitive::Type & primitiveType )
 {
 	switch( primitiveType )
@@ -403,6 +374,27 @@ std::ostream & operator << ( std::ostream & os, const vgm::Rotation & rotation )
 
 		os << "( (" << axis[0] << ", " << axis[1] << ", " << axis[2] << "), " << degrees << ")";
 	}
+
+	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgm::Plane & plane )
+{
+	const vgm::Vec3f&	normal		= plane.getNormal();
+	const float			distance	= plane.getDistanceFromOrigin();
+
+	os << "normal: " << normal << std::endl << "distance: " << distance;
+
+	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::field::Enum & enumValue )
+{
+	os << enumValue.str();
 
 	return os;
 }

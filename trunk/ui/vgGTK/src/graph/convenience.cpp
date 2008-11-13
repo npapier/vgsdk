@@ -16,10 +16,13 @@
 #include <sstream>
 
 #include <vgd/field/Bool.hpp>
+#include <vgd/field/Enum.hpp>
 #include <vgd/field/Integer.hpp>
 #include <vgd/field/Float.hpp>
 #include <vgd/field/Matrix.hpp>
 #include <vgd/field/Node.hpp>
+
+#include <vgd/field/Plane.hpp>
 #include <vgd/field/Primitive.hpp>
 #include <vgd/field/Rectangle.hpp>
 #include <vgd/field/Rotation.hpp>
@@ -174,11 +177,7 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 		typedef vgd::node::LightModel::FModelType		PAFLightModelModel;
 		typedef vgd::node::LightModel::FTwoSidedType	PAFLightModelTwoSided;
 		typedef vgd::node::LightModel::FViewerType		PAFLightModelViewer;
-										
-		typedef vgd::node::Material::FColorType		PAFMaterialColor;
-		typedef vgd::node::Material::FShininessType	PAFMaterialShininess;
-		
-		
+
 		// Retrieves the field type information
 		const std::type_info	& fieldType = fieldManager->getFieldType( fieldName );
 
@@ -193,7 +192,6 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 		else if	( fieldType == typeid(PAFLightModelModel) )				os << fieldManager->getFieldRO< PAFLightModelModel          >( fieldName );
 		else if	( fieldType == typeid(PAFLightModelTwoSided) )			os << fieldManager->getFieldRO< PAFLightModelTwoSided       >( fieldName );
 		else if	( fieldType == typeid(PAFLightModelViewer) )			os << fieldManager->getFieldRO< PAFLightModelViewer         >( fieldName );
-		else if	( fieldType == typeid(PAFMaterialShininess) )			os << fieldManager->getFieldRO< PAFMaterialShininess        >( fieldName );
 		else
 		{
 			// Serialization system using typelist
@@ -206,7 +204,8 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 			FieldSerializer1< TMultiField >					multiFieldSerializer( fieldManager, fieldName, os );
 
 			using vgd::field::TPairAssociativeField;
-			FieldSerializer2< int, TPairAssociativeField >	paFieldSerializer( fieldManager, fieldName, os );
+			FieldSerializer2< int, TPairAssociativeField >	paFieldSerializer1( fieldManager, fieldName, os );
+			FieldSerializer2< vgd::field::Enum, TPairAssociativeField >	paFieldSerializer2( fieldManager, fieldName, os );
 
 			using vgd::field::TSingleAssociativeField;
 			FieldSerializer1< TSingleAssociativeField >		saFieldSerializer( fieldManager, fieldName, os );
@@ -220,6 +219,7 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 				> bool_t;
 				
 			typedef mpl::list<
+				vgd::field::Enum
 			> enum_t;
 
 			typedef mpl::list<
@@ -261,8 +261,9 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 
 			typedef mpl::list<
 				// others vgm types
-				vgm::Rotation,
-				vgm::MatrixR
+				vgm::MatrixR,
+				vgm::Plane,
+				vgm::Rotation
 			> vgm_t;
 
 			typedef mpl::list<
@@ -285,7 +286,8 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 // @todo debug done() serializer is copied
 			boost::mpl::for_each< AllTypes >( singleFieldSerializer );
 			boost::mpl::for_each< AllTypes >( multiFieldSerializer );
-			boost::mpl::for_each< AllTypes >( paFieldSerializer );
+			boost::mpl::for_each< AllTypes >( paFieldSerializer1 );
+			boost::mpl::for_each< AllTypes >( paFieldSerializer2 );
 			boost::mpl::for_each< AllTypes >( saFieldSerializer );
 // @todo else os << "Not yet supported!";*/
 		}
@@ -308,7 +310,7 @@ const std::string toString( const vgd::node::IBoundingBox * ibb )
 	}
 	else
 	{
-		os << "Invalid bounding box";
+		os << "invalid";
 	}
 
 	return os.str();

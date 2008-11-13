@@ -28,7 +28,7 @@ typedef TMultiField< vgm::Plane >						MFPlane;
 
 typedef TSingleAssociativeField< vgm::Plane >			SAFPlane;
 
-typedef TPairAssociativeField< EnumType, vgm::Plane >	PAFPlane;
+typedef TPairAssociativeField< Enum, vgm::Plane >		PAFPlane;
 
 //@}
 
