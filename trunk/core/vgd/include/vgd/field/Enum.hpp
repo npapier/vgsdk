@@ -55,6 +55,11 @@ struct VGD_API Enum
 	const bool operator == ( const Enum& other ) const;
 
 	/**
+	 @brief Returns if value() is not equal to the value of the given object
+	 */
+	const bool operator != ( const Enum& other ) const;
+
+	/**
 	 * @brief Returns the integer value used to construct this object.
 	 *
 	 * @return the integer value of this object.
