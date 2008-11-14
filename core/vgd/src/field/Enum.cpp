@@ -58,6 +58,13 @@ const bool Enum::operator ==( const Enum& other ) const
 
 
 
+const bool Enum::operator !=( const Enum& other ) const
+{
+	return value() != other.value();
+}
+
+
+
 const int Enum::value() const
 {
 	return m_value;
