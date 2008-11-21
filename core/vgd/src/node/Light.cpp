@@ -47,9 +47,9 @@ void Light::setOptionalsToDefaults()
 
 	setOn( false );
 
-	setColor( AMBIENT,	vgm::Vec4f( 0.f, 0.f, 0.f, 1.f ) );
-	setColor( DIFFUSE,	vgm::Vec4f( 1.f, 1.f, 1.f, 1.f ) );
-	setColor( SPECULAR,	vgm::Vec4f( 1.f, 1.f, 1.f, 1.f ) );
+	setColor( AMBIENT,	vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
+	setColor( DIFFUSE,	vgm::Vec4f( 1.f, 1.f, 1.f, 0.f ) );
+	setColor( SPECULAR,	vgm::Vec4f( 1.f, 1.f, 1.f, 0.f ) );
 }
 
 

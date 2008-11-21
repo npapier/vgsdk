@@ -67,7 +67,10 @@ void LightModel::unapply ( vge::engine::Engine* , vgd::node::Node*  )
 
 
 void LightModel::setToDefaults()
-{}
+{
+	const vgm::Vec4f defaultAmbientValue( 0.2f, 0.2f, 0.2f, 0.0f );
+	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, defaultAmbientValue.getValue() );
+}
 
 
 

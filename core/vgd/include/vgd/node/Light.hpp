@@ -35,11 +35,11 @@ namespace node
  *	Set to true to switch on the light, false to switch off the light.
  * 
  * - PAFVec4f \c color
- * 	- [AMBIENT]		= (0 0 0 1)\n
+ * 	- [AMBIENT]		= (0 0 0 0)\n
  * 		Ambient intensity of the light.
- * 	- [DIFFUSE]		= (1 1 1 1)\n
+ * 	- [DIFFUSE]		= (1 1 1 0)\n
  *		Diffuse intensity of the light.
- * 	- [SPECULAR]	= (1 1 1 1)\n
+ * 	- [SPECULAR]	= (1 1 1 0)\n
  * 		Specular intensity of the light.
  * 
  * @remarks The maximum number of lights is equal at least to 8 in OpenGL and DirectX. Feel free to use up to 8 lights.
@@ -174,7 +174,7 @@ protected:
 
 	void	setToDefaults( void );
 	
-	void	setOptionalsToDefaults();	
+	void	setOptionalsToDefaults();
 
 	//@}
 };

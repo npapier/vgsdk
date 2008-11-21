@@ -33,7 +33,7 @@ namespace node
  * - PAFInt \c [model] = STANDARD_PER_VERTEX\n
  * 		Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.
  * 
- * - PAFVec4f \c [ambient] = (0.2, 0.2, 0.2, 1.0)\n
+ * - PAFVec4f \c [ambient] = (0.2, 0.2, 0.2, 0.0)\n
  * 		Sets the ambient RGBA intensity of the entire scene.
  * 
  * - PAFInt \c [viewer] = AT_INFINITY\n

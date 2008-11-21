@@ -45,7 +45,7 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 		{
 			vgd::node::Material *pMaterial( engine->getStateStackTop<vgd::node::Material>() );
 			assert( pMaterial != 0 );
-			
+
 			const float transparencyDiff = fabs( pMaterial->getTransparency() - 1.f );
 
 			if ( transparencyDiff < vgm::Epsilon<float>::value() )
