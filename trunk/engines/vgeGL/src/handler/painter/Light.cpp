@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Light.hpp>
 #include <vge/service/Painter.hpp>
-
 #include "vgeGL/engine/Engine.hpp"
 
 
@@ -28,16 +27,16 @@ namespace painter
 
 
 
-void Light::paint( vgeGL::engine::Engine *, vgd::node::Light *pLight )
+void Light::paint( vgeGL::engine::Engine *, vgd::node::Light * light )
 {
 	// Computes the light index
-	const GLenum lightIndex = GL_LIGHT0 + pLight->getMultiAttributeIndex();
+	const GLenum lightIndex = GL_LIGHT0 + light->getMultiAttributeIndex();
 
 	bool bDefined;
 
 	// Handles field ON
 	bool value;
-	bDefined = pLight->getOn( value );
+	bDefined = light->getOn( value );
 
 	if ( bDefined )
 	{
@@ -56,17 +55,17 @@ void Light::paint( vgeGL::engine::Engine *, vgd::node::Light *pLight )
 	using vgd::node::Light;
 	vgm::Vec4f color;
 
-	bDefined = pLight->getColor( Light::AMBIENT, color );
+	bDefined = light->getColor( Light::AMBIENT, color );
 	if ( bDefined )	glLightfv( lightIndex, GL_AMBIENT, color.getValue() );
 
-	bDefined = pLight->getColor( Light::DIFFUSE, color );
+	bDefined = light->getColor( Light::DIFFUSE, color );
 	if ( bDefined )	glLightfv( lightIndex, GL_DIFFUSE, color.getValue() );
 
-	bDefined = pLight->getColor( Light::SPECULAR, color );
+	bDefined = light->getColor( Light::SPECULAR, color );
 	if ( bDefined )	glLightfv( lightIndex, GL_SPECULAR, color.getValue() );
 
-	// Validate node
-	pLight->getDirtyFlag(pLight->getDFNode())->validate();
+	// Validates node
+	light->getDirtyFlag(light->getDFNode())->validate();
 }
 
 
@@ -85,8 +84,8 @@ void Light::setToDefaults()
 		glDisable( lightI );
 
 		// COLOR
-		GLfloat color0[] = { 0.f, 0.f, 0.f, 1.f };
-		GLfloat color1[] = { 1.f, 1.f, 1.f, 1.f };
+		GLfloat color0[] = { 0.f, 0.f, 0.f, 0.f };
+		GLfloat color1[] = { 1.f, 1.f, 1.f, 0.f };
 
 		glLightfv( lightI, GL_AMBIENT, color0 );
 		glLightfv( lightI, GL_DIFFUSE, color1 );

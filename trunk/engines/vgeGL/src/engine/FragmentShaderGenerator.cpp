@@ -111,8 +111,6 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 				textureLookup +
 			"	gl_FragColor = color + accumSecondaryColor;\n";//clamp( color, 0.0, 1.0 ) * alphaFade;\n";
 		}
-		m_code +=
-			"	gl_FragColor.a = gl_FrontMaterial.diffuse.a;\n";
 	}
 
 	m_code += "}\n";

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 #include <vgd/node/Material.hpp>
 #include <vgd/node/Shape.hpp>
 #include <vgeGL/engine/Engine.hpp>
+#include <vgm/operations.hpp>
 
 
 
@@ -44,15 +45,25 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 	{
 		if ( (i->first)->isAKindOf< vgd::node::Shape >() )
 		{
-			vgd::node::Material *pMaterial( engine->getStateStackTop<vgd::node::Material>() );
-			assert( pMaterial != 0 );
+			using vgd::node::Material;
 
-			if ( pMaterial->getTransparency() < 1.f )
+			Material *material( engine->getStateStackTop<Material>() );
+			assert( material != 0 && "Internal error" );
+
+			const float opacity = material->getTransparency(); // @todo getTransparency() => getOpacity()
+			const float opaqueDelta = fabs( opacity - 1.f );
+
+			if ( opaqueDelta > vgm::Epsilon<float>::value() )
 			{
-				// object is transparent, draw it.
-				engine->evaluate( service, i->first, i->second );
+				// Incoming shape is not opaque
+				if ( opacity > vgm::Epsilon<float>::value() )
+				{
+					// Incoming shape is transparent (but not totally), it must be rendered
+					engine->evaluate( service, i->first, i->second );
+				}
+				// else incoming shape is totally transparent, nothing to render
 			}
-			// nothing to do for opaque object.
+			// else nothing to do for opaque object.
 		}
 		else
 		{

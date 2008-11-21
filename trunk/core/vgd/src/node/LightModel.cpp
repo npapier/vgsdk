@@ -48,7 +48,7 @@ void LightModel::setOptionalsToDefaults()
 	SingleAttribute::setOptionalsToDefaults();
 
 	setModel(		DEFAULT_MODEL );
-	setAmbient(		vgm::Vec4f( 0.2f, 0.2f, 0.2f, 1.0f ) );
+	setAmbient(		vgm::Vec4f( 0.2f, 0.2f, 0.2f, 0.0f ) );
 	setViewer(		DEFAULT_VIEWER );
 	setTwoSided(	false );
 }
