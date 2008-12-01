@@ -7,6 +7,7 @@
 
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
+#include <vgd/basic/Image.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/Texture2D.hpp>
 //#include <vgd/node/TextureCubeMap.hpp>
@@ -376,9 +377,9 @@ void Engine::resetMatrices()
 			++index )
 	{
 		current = getTextureMatrix().getTop( index );
-		
+
 		activeTexture( index );
-		
+
 		glMatrixMode( GL_TEXTURE );
 
 		glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
@@ -500,6 +501,27 @@ const GLenum Engine::getDepthTextureFormatFromDepthBits() const
 
 
 
+vgd::Shp< vgd::basic::Image > Engine::captureFramebuffer() const
+{
+	// Reads back the framebuffer color values
+	using vgd::basic::Image;
+
+	const vgm::Vec2i drawingSurfaceSize = getDrawingSurfaceSize();
+
+	vgd::Shp< Image > image( new Image() );
+	image->create(	3, drawingSurfaceSize[0], drawingSurfaceSize[1], 1,
+					Image::BGR, Image::UINT8 );
+	uint8 *imageData = static_cast<uint8*>( image->editPixels() );
+	glReadPixels(	0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1], 
+					GL_BGR, GL_UNSIGNED_BYTE,
+					imageData );
+	image->editPixelsDone();
+
+	return image;
+}
+
+
+
 void Engine::activeTexture( const int desiredTextureUnit )
 {
 //	static int currentTextureUnit = 0;
@@ -577,6 +599,7 @@ void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport )
 	glLoadIdentity();
 	glOrtho( 0.f, 1.f, 0.f, 1.f, 0.f, 1.f );
 
+	activeTexture(0);
 	glMatrixMode( GL_TEXTURE );
 	glPushMatrix();
 	glLoadIdentity();
@@ -587,6 +610,7 @@ void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport )
 void Engine::end2DRendering()
 {
 	// Matrix stacks
+	activeTexture(0);
 	glMatrixMode( GL_TEXTURE );
 	glPopMatrix();
 
