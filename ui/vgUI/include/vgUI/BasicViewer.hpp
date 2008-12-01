@@ -7,11 +7,14 @@
 #ifndef _VGUI_BASICVIEWER_HPP
 #define _VGUI_BASICVIEWER_HPP
 
-#include <vgd/node/Camera.hpp>
-#include <vgd/node/Group.hpp>
-#include <vgd/node/MatrixTransform.hpp>
-
 #include "vgUI/Canvas.hpp"
+
+namespace vgd { namespace node {
+	struct Camera;
+	struct Group;
+	struct MatrixTransform;
+	struct MultiSwitch;
+} }
 
 
 
@@ -33,14 +36,18 @@ namespace vgUI
  *
  * The scene graph is divided in two parts. First child of the root is a group node, named \c SETUP, that contains some
  * useful nodes to initialize the scene like :
- * \li the camera node named \c CAMERA
+ * \li the optional frame buffer clearing node named \c CLEAR_FRAME_BUFFER
+ * \li the optional draw style node named \c DRAW_STYLE
+ * \li the optional light model node named \c LIGHT_MODEL 
  * \li the optional default light group named \c LIGHTS
- * \li the optional frame buffer clearing node named \c CLEAR
  * \li the view transformation named \c VIEW_TRANSFORM.
+ * \li the camera node named \c CAMERA
+ * \li the optional underlay container named \c UNDERLAY_CONTAINER
+ * \li and the overlay container (see getOverlayContainer() method).
  *
  * The second child of the root is a group node, named \c SCENE that must contains the real scene (mesh, material...).
  *
- * @ingroup g_vgWXGroup
+ * @ingroup g_vgUIGroup
  *
  * @todo More documentation on SETUP nodes and more generic.
  * @todo populateSetupGroup( Full | Light).
@@ -62,6 +69,8 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @param	sharedCanvas	a pointer to a canvas that will share OpenGL resources
 	 */
 	BasicViewer( Canvas * sharedCanvas );
+
+	virtual void resetSceneGraph();
 	//@}
 
 
@@ -146,9 +155,16 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @brief Returns scene group node.
 	 */
 	const vgd::Shp< vgd::node::Group > getScene() const;
+
+	/**
+	 * @brief Returns the overlay container node
+	 *
+	 * @return the overlay container multi switch
+	 */
+	vgd::Shp< vgd::node::MultiSwitch > getOverlayContainer();
 	//@}
-	
-	
+
+
 	/**
 	 * @name	Optional Nodes Control
 	 */
@@ -158,7 +174,8 @@ struct VGUI_API BasicViewer : public Canvas
 		CLEAR_FRAME_BUFFER,	///< ClearFrameBuffer optional node
 		DRAW_STYLE,			///< DrawStyle optional node
 		LIGHT_MODEL,		///< LightModel optional node
-		LIGHTS				///< Group optional node containing default lights
+		LIGHTS,				///< Group optional node containing default lights
+		UNDERLAY_CONTAINER	///< Container node containing underlay (see LayerPlan node).
 	};
 	
 	/**
@@ -224,6 +241,8 @@ struct VGUI_API BasicViewer : public Canvas
 
 
 
+
+
 protected:
 	/**
 	 * @brief Compute bounding box.
@@ -252,10 +271,18 @@ protected:
 private:
 
 	/**
+	 * @brief Resets scene graph
+	 */
+	void privateResetSceneGraph();
+
+
+	/**
 	 * @brief Computes a value used to set the camera position in the scene
 	 */
 	const float compute( const CameraDistanceHints cameraDistance );
 
+//	vgd::Shp< vgd::node::MultiSwitch >		m_underlayContainer;///< A reference on the underlay container node.
+	vgd::Shp< vgd::node::MultiSwitch >		m_overlayContainer;	///< A reference on the overlay container node.
 	vgd::Shp< vgd::node::Group > 			m_setup;			///< A reference on the setup group node.
 	vgd::Shp< vgd::node::Camera >			m_camera;			///< A reference on the camera.
 	vgd::Shp< vgd::node::MatrixTransform >	m_viewTransform;	///< A reference on the view transformation.

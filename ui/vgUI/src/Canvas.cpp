@@ -9,11 +9,22 @@
 #include <cassert>
 #include <iostream>
 
+#include <boost/format.hpp> 
+//#include <boost/date_time/posix_time/posix_time.hpp>
+//#include <boost/lexical_cast.hpp>
+#include <boost/lexical_cast.hpp>
+#include <vgCairo/helpers.hpp>
+#include <vgCairo/ImageSurface.hpp>
+#include <vgd/basic/Image.hpp>
+//
+
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/Location2Event.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vgd/event/MouseWheelEvent.hpp>
 #include <vgd/event/detail/helpers.hpp>
+#include <vgd/node/LayerPlan.hpp>
+#include <vgd/node/MultiSwitch.hpp>
 #include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByDirtyFlag.hpp>
 
@@ -49,10 +60,19 @@ Canvas::Canvas()
 	m_gleContext				( getGleOutputStream()	),
 	m_sharedCanvas				( 0						),
 	m_bLocalInitializedVGSDK	( false					),
-	m_debugEvents				( false					)
+	m_scheduleScreenshot		( false					),
+	m_videoCapture				( false					),
+	m_debugEvents				( false					),
+	m_frameBase					( 0						),
+	// m_timeBase
+	m_fps						( -1					)
 {
+	// Updates the number of canvas
 	assert( getCanvasCount() == 0 && "This is not the first canvas." );
 	++m_canvasCount;
+
+	// Resets the scene graph
+	privateResetSceneGraph();
 }
 
 
@@ -62,40 +82,70 @@ Canvas::Canvas(	const Canvas *sharedCanvas )
 	// m_gleLogSystem
 	// m_gleLogFile
 	m_gleContext				( getGleOutputStream()	),
-	m_sharedCanvas				( sharedCanvas			),
+	m_sharedCanvas				( 0						),
 	m_bLocalInitializedVGSDK	( false					),
-	m_debugEvents				( false					)
+	m_scheduleScreenshot		( false					),
+	m_videoCapture				( false					),
+	m_debugEvents				( false					),
+	m_frameBase					( 0						),
+	// m_timeBase
+	m_fps						( -1					)
 {
+	// Updates the number of canvas
 	assert( getCanvasCount() >= 1 && "This is the first canvas." );
 	++m_canvasCount;
+
+	// Resets the scene graph
+	privateResetSceneGraph();
 }
 
+
+
+void Canvas::resetSceneGraph()
+{
+	privateResetSceneGraph();
+}
+
+
+
+void Canvas::privateResetSceneGraph()
+{
+	// Initializes ROOT node
+	vgd::Shp< vgd::node::Group > rootNode = vgd::node::Group::create("ROOT");
+	setRoot( rootNode );
+
+	// Debug overlay scene graph
+	using vgd::node::LayerPlan;
+
+	m_debugOverlayContainer	= vgd::node::MultiSwitch::create(	"DEBUG_OVERLAY_CONTAINER"	);
+	m_overlayForFPS = LayerPlan::create( "FPS" );
+	m_debugOverlayContainer->addChild( m_overlayForFPS );
+
+	// @todo position and size should be in pixel (LayerPlan must be improved)
+	const float width = 0.2f;
+	m_overlayForFPS->setPosition( vgm::Vec2f(1.f - width, 0.0f) );
+	m_overlayForFPS->setSize( vgm::Vec2f(width, width * 32.f / 128.f) );
+
+	//
+	using vgCairo::ImageSurface;
+	vgd::Shp< ImageSurface > imageSurface( new ImageSurface(128, 32) );
+	m_overlayForFPS->setIImage( imageSurface );
+}
 
 
 
 Canvas::~Canvas()
 {
+	// Updates the number of canvas
 	assert( m_canvasCount > 0 );
-
 	--m_canvasCount;
 }
 
 
 
-const bool Canvas::debugEvents() const
-{
-	return m_debugEvents;
-}
-
-
-
-void Canvas::setDebugEvents( const bool enable )
-{
-	m_debugEvents = enable;
-}
-
-
-
+/**
+ * @todo toString( vgd::event::Event)
+ */
 void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 {
 	vgeGL::engine::SceneManager::onEvent( event );
@@ -170,13 +220,131 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	{
 		gleGetCurrent()->reportGLErrors();
 
+		//
+		namespace bpt = boost::posix_time;
+
+		bpt::ptime beginPaint = bpt::microsec_clock::universal_time();
+
+		// Initializes attributes used by fps computation
+		if ( m_timeBase.is_not_a_date_time() )
+		{
+			m_frameBase	= getFrameCount();
+			m_timeBase	= beginPaint;
+		}
+
+		//bpt::ptime current = bpt::microsec_clock::universal_time();
+
+/*		m_elapsedTimeBetweenPaint = current - m_lastPaint;
+		std::cout << "elapsedTimeBetweenPaint:" << m_elapsedTimeBetweenPaint.total_milliseconds() << std::endl;
+		m_lastPaint = current;
+
+		//
+		bpt::ptime beginPaint = bpt::microsec_clock::universal_time();
+*/
 		::vgeGL::engine::SceneManager::paint( size, getBoundingBoxUpdate() );
 
+		// Capture screenshot or video
+		using vgd::basic::Image;
+		vgd::Shp< Image > capturedImage;
+
+		if ( isScreenshotScheduled() )
+		{
+			capturedImage = getGLEngine()->captureFramebuffer();
+
+			//
+			Screenshot shot( getFrameCount(), capturedImage );
+
+			// Constructs filename
+			std::string filename("../var/vgsdk/screenshots/frame");
+			const std::string strCount = (boost::format("%|06|") % shot.getFrameNumber()).str();
+			filename += strCount + ".png";
+
+			// Saves image
+			shot.getImage()->save( filename );
+
+			//
+			//m_screenshots.push_back( Screenshot( getFrameCount(), capturedImage ) );
+			
+			m_scheduleScreenshot = false;
+		}
+
+		if ( isVideoCaptureEnabled() )
+		{
+			static bpt::ptime lastCapture;
+			if ( lastCapture.is_not_a_date_time() )
+			{
+				lastCapture = bpt::microsec_clock::universal_time();
+			}
+
+			bpt::ptime currentCapture = bpt::microsec_clock::universal_time();
+
+			bpt::time_duration	elapsedTimeBetweenCapture = currentCapture - lastCapture;
+
+			const float capturesPerSecond = 20.f; // @todo parameter
+			const float desiredElapsedTimeBetween2Captures = 1000.f / capturesPerSecond;
+			if ( elapsedTimeBetweenCapture.total_milliseconds() > desiredElapsedTimeBetween2Captures  )
+			{
+				if ( capturedImage == 0 )
+				{
+					capturedImage = getGLEngine()->captureFramebuffer();
+				}
+
+				m_videos.push_back( Screenshot( getFrameCount(), capturedImage ) );
+			}
+		}
+
+/*
+		//glFlush();
+		//glFinish(); // ???
+
+// ???
+		static uint count = 0;
+
+			m_lastCapture = currentCapture;
+
+
+
+			//
+			Screenshot shot(count, image );
+			m_video.push_back( shot );
+		}
+		else
+		{
+			std::cout << "Skip\n";
+		}
+		// else nothing to do 
+*/
+		//
+		//++count;
+// ???
 		gleGetCurrent()->reportGLErrors();
 
-		// Swap
+		// Exchanges back and front buffers
 		swapBuffer();
 
+		bpt::ptime endPaint = bpt::microsec_clock::universal_time();
+
+		// Computes fps
+		bpt::time_duration elapsedTimeBetweenFPSComputation = endPaint - m_timeBase;
+		if ( elapsedTimeBetweenFPSComputation.total_milliseconds() > 1000 )
+		{
+			const uint numberOfFrames = getFrameCount() - m_frameBase;
+			m_fps = numberOfFrames * 1000 / elapsedTimeBetweenFPSComputation.total_milliseconds();
+
+			// Resets fps attributes
+			m_frameBase	= getFrameCount();
+			m_timeBase	= endPaint;
+		}
+
+		if ( isDebugOverlay() )
+		{
+			updateFPSOverlay();
+		}
+/*
+		bpt::ptime endPaint = bpt::microsec_clock::universal_time();
+		m_paintDuration = endPaint - beginPaint;
+		std::cout << "paintDuration:" << m_paintDuration.total_milliseconds() << std::endl;
+*/
 		setNumberOfFrames( getNumberOfFrames()-1 );
 	}
 
@@ -239,6 +407,74 @@ void Canvas::refresh( const RefreshType type, const WaitType wait )
 			doRefresh();
 		}
 	}
+}
+
+
+
+void Canvas::scheduleScreenshot()
+{
+	m_scheduleScreenshot = true;
+}
+
+
+
+const bool Canvas::isScreenshotScheduled() const
+{
+	return m_scheduleScreenshot;
+}
+
+
+
+void Canvas::setVideoCapture( const bool isEnabled )
+{
+	m_videoCapture = isEnabled;
+}
+
+
+
+const bool Canvas::isVideoCaptureEnabled() const
+{
+	return m_videoCapture;
+}
+
+
+
+void Canvas::setDebugOverlay( const bool isEnabled )
+{
+	using vgd::node::MultiSwitch;
+	m_debugOverlayContainer->setWhichChild( isEnabled ? MultiSwitch::MULTI_SWITCH_ALL : MultiSwitch::MULTI_SWITCH_OFF );
+}
+
+
+
+const bool Canvas::isDebugOverlay() const
+{
+	using vgd::node::MultiSwitch;
+
+	const bool retVal = m_debugOverlayContainer->getWhichChild() == MultiSwitch::MULTI_SWITCH_ALL;
+
+	return retVal;
+}
+
+
+
+const bool Canvas::debugEvents() const
+{
+	return m_debugEvents;
+}
+
+
+
+void Canvas::setDebugEvents( const bool enable )
+{
+	m_debugEvents = enable;
+}
+
+
+
+const int Canvas::getFPS() const
+{
+	return m_fps;
 }
 
 
@@ -320,6 +556,47 @@ const bool Canvas::startVGSDK()
 
 const bool Canvas::shutdownVGSDK()
 {
+	// @todo FIXME ??? do a function
+	ScreenshotContainerType::const_iterator	i, iEnd;
+	/*ScreenshotContainerType::const_iterator	i		= m_screenshots.begin(),
+											iEnd	= m_screenshots.end();
+	while ( i != iEnd )
+	{
+		// Gets current screenshot
+		Screenshot shot = *i;
+
+		// Constructs filename
+		std::string filename("../var/vgsdk/screenshots/frame");
+		const std::string strCount = (boost::format("%|06|") % shot.getFrameNumber()).str();
+		filename += strCount + ".png";
+
+		// Saves image
+		shot.getImage()->save( filename );
+
+		//
+		++i;
+	}*/
+
+	// @todo FIXME ???
+	i		= m_videos.begin();
+	iEnd	= m_videos.end();
+	while ( i != iEnd )
+	{
+		// Gets current screenshot
+		Screenshot shot = *i;
+
+		// Constructs filename
+		std::string filename("../var/vgsdk/videos/video");
+		const std::string strCount = (boost::format("%|06|") % shot.getFrameNumber()).str();
+		filename += strCount + ".png";
+
+		// Saves image
+		shot.getImage()->save( filename );
+
+		//
+		++i;
+	}
+	//
 	vgDebug::get().logDebug("Shutdown vgSDK...");
 
 	if ( m_bLocalInitializedVGSDK == false )
@@ -369,10 +646,68 @@ const bool Canvas::shutdownVGSDK()
 }
 
 
+void Canvas::updateFPSOverlay()
+{
+	// Updates fps overlay overlay
+	using vgCairo::ImageSurface;
+	vgd::Shp< ImageSurface > imageSurface = vgd::dynamic_pointer_cast< ImageSurface >( m_overlayForFPS->getIImage() );
+	assert( imageSurface != 0 && "Internal error." );
+
+	// Draws on image surface with cairo
+	cairo_t *			cr		= imageSurface->getContext();
+
+	// Clears image surface with cairo
+	cairo_save(cr);
+	//cairo_set_source_rgba(cr, 0, 0.1, 0.1, 0.1);
+	//cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+	cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+	cairo_paint(cr);
+	cairo_restore(cr);
+
+	// Draws the capsule background and its boundary
+	// @todo do a function in vgCairo
+	cairo_save(cr);
+	const float margin = 2.0;
+	cairo_set_source_rgba( cr, 0.0, 0.0, 0.0, 0.3 );
+	vgCairo::rounded_rectangle( cr, 0.5 + margin, 0.5 + margin, 127.5 - 2.f * margin, 31.5 - 2.f * margin, 10 );
+	cairo_fill(cr);
+
+	double ux = 1.f, uy = 1.f;
+	cairo_device_to_user_distance(cr, &ux, &uy); //if (ux < uy) ux = uy;
+	cairo_set_line_width(cr, 2 * ux);
+
+	cairo_set_source_rgb( cr, 1.0, 1.0, 1.0 );
+	vgCairo::rounded_rectangle( cr, 0.5 + margin, 0.5 + margin, 127.5 - 2.f * margin, 31.5 - 2.f * margin, 10 );
+	cairo_stroke(cr);
+	cairo_restore(cr);
+	//
+
+	// Draws the text in capsule
+	cairo_save(cr);
+
+	cairo_select_font_face( cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD );
+
+	cairo_set_font_size( cr, 24.0 );
+	cairo_set_source_rgb( cr, 1.0, 1.0, 1.0 );
+	cairo_move_to( cr, 5.0, 24.0 );
+
+	const std::string strFrameCount = boost::lexical_cast< std::string >( getFrameCount() );
+	const std::string strFPS = getFPS() >= 0 ? boost::lexical_cast< std::string >( getFPS() ) : "na";
+
+	cairo_show_text( cr, (strFPS + " " + strFrameCount).c_str() );
+
+	cairo_restore(cr);
+
+	// Updates the image (invalidates the image).
+	m_overlayForFPS->setIImage( m_overlayForFPS->getIImage() );
+}
+
+
+
 uint32 Canvas::m_canvasCount = 0;
 
 
-Canvas::GleLogSystem Canvas::m_gleLogSystem = GLE_FILE;
+Canvas::GleLogSystem Canvas::m_gleLogSystem = GLE_FILE_IN_VAR;
 
 
 
@@ -390,6 +725,16 @@ std::ostream* Canvas::getGleOutputStream()
 		if ( m_gleLogFile.is_open() == false )
 		{
 			m_gleLogFile.open("gle.txt");
+		}
+
+		return &m_gleLogFile;
+	}
+	else if ( currentGleLogSystem == GLE_FILE_IN_VAR )
+	{
+		// Opens gle.txt if not already done
+		if ( m_gleLogFile.is_open() == false )
+		{
+			m_gleLogFile.open("../var/gle.txt");
 		}
 
 		return &m_gleLogFile;
