@@ -7,10 +7,26 @@
 #ifndef _VGUI_CANVAS_HPP
 #define _VGUI_CANVAS_HPP
 
-
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <vgeGL/engine/SceneManager.hpp>
 
 #include "vgUI/vgUI.hpp"
+
+namespace vgd 
+{ 
+
+namespace basic 
+{
+	struct Image; 
+}
+
+namespace node 
+{
+	struct LayerPlan;
+	struct MultiSwitch;
+} 
+
+}
 
 
 
@@ -25,6 +41,9 @@ namespace vgUI
  * - Use the vgeGL::engine::SceneManager to link GUI and the scene graph.
  * - Initialize OpenGL and its extensions (with gle) to being used by vgsdk.
  * - Report OpenGL errors before and after rendering (paint and resize methods).
+ * - Screenshot and video capture
+ * - event debugging helpers
+ * - debug overlay with runtime informations like fps
  *
  * @ingroup g_vgUIGroup
  */
@@ -35,9 +54,11 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	 */
 	//@{
 
-	enum GleLogSystem {
-		GLE_FILE,		//!< gle.txt file. This is the default log system.
-		GLE_COUT		//!< standard output
+	enum GleLogSystem
+	{
+		GLE_FILE,			//!< gle.txt file. This is the default log system.
+		GLE_FILE_IN_VAR,	//!< gle.txt file in ../var
+		GLE_COUT			//!< standard output
 	};
 
 	/**
@@ -76,14 +97,19 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	 *
 	 * @param	sharedCanvas	a pointer to another Canvas for OpenGL objects sharing
 	 *
-	 * @pre		getCanvasCount() >= 1
+	 * @pre	getCanvasCount() >= 1
 	 */
 	Canvas(	const Canvas * sharedCanvas );
 
 	/**
-	 * @brief	Destructor
+	 * @brief	Virtual destructor
 	 */
 	virtual ~Canvas();
+
+	/**
+	 * @brief Resets scene graph
+	 */
+	virtual void resetSceneGraph();
 	//@}
 
 
@@ -118,25 +144,6 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	virtual void swapBuffer() = 0;
 	///@}
 
-
-	/**
-	 * @name	Events Debugging
-	 */
-	//@{
-	/**
-	 * @brief	Tells if the canvas will trace events.
-	 *
-	 * @return	true of false
-	 */
-	const bool debugEvents() const;
-
-	/**
-	 * @brief	Activates or deactivates the event debugging.
-	 *
-	 * @param	enable	a boolean with the new event debugging status
-	 */
-	void setDebugEvents( const bool enable );
-	//@}
 
 
 	/**
@@ -173,7 +180,8 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	/**
 	 * @brief Type of refresh.
 	 */
-	enum RefreshType {
+	enum RefreshType
+	{
 		REFRESH_FORCE,
 		REFRESH_IF_NEEDED
 	};
@@ -181,7 +189,8 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	/**
 	 * @brief Wait behavior of refresh.
 	 */
-	enum WaitType {
+	enum WaitType
+	{
 		SYNCHRONOUS,
 		ASYNCHRONOUS
 	};
@@ -196,6 +205,123 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	 */
 	void refresh( const RefreshType type = REFRESH_IF_NEEDED, const WaitType wait = ASYNCHRONOUS );
 	//@}
+
+
+	/**
+	 * @brief An image taken to record the 3d rendering
+	 *
+	 * @todo move this class
+	 */
+	struct Screenshot
+	{
+		Screenshot( const uint frameNumber, vgd::Shp< vgd::basic::Image > image )
+		:	m_frameNumber( frameNumber ),
+			m_image( image )
+		{}
+
+		const uint getFrameNumber() const				{ return m_frameNumber; }
+		vgd::Shp< vgd::basic::Image > getImage() const	{ return m_image; }
+
+	private:
+		const uint						m_frameNumber;	///< the frame number to identify a screenshot. This attribute could be used to order a sequence of screenshots.
+		vgd::Shp< vgd::basic::Image >	m_image;		///< the screenshot is stored by this image
+	};
+	typedef std::list< Screenshot > ScreenshotContainerType;	///< a collection of screenshots
+
+private:
+	ScreenshotContainerType			m_screenshots;
+	ScreenshotContainerType 		m_videos;
+	//std::list< ScreenshotContainerType >	m_videos;
+public:
+
+
+
+	/**
+	 * @name Screenshot and video capture
+	 *
+	 * Screen and video capture occurs only on 3d frame buffer.
+	 */
+	//@{
+
+	/**
+	 * @brief Schedules a screen capture at the end of next rendering.
+	 */
+	void scheduleScreenshot();
+
+	/**
+	 * @brief Tests if a screen capture is scheduled at the end of next rendering.
+	 *
+	 * @return true if a screen capture is scheduled at the end of next rendering, false otherwise.
+	 */
+	const bool isScreenshotScheduled() const;
+
+	/**
+	 * @brief Enables or disables the video capture depending on the value of the parameter \c isEnabled.
+	 *
+	 * When this option is enabled, vgSDK captures the screen at the end of each rendering until this option is disabled.
+	 * To form a video file, captures the screen over an extended period of time.
+	 *
+	 * @param isEnabled		true when video capture is enables, false otherwise
+	 */
+	void setVideoCapture( const bool isEnabled = true );
+
+	/**
+	 * @brief Determines whether the video capture is enabled.
+	 *
+	 * @return true if the video capture is enabled, false otherwise
+	 */
+	const bool isVideoCaptureEnabled() const;
+
+	//@}
+
+
+
+	/**
+	 * @name	Debugging helpers
+	 */
+	//@{
+
+	/**
+	 * @brief Enables or disables the rendering of the debug overlay depending on the value of the parameter \c isEnabled.
+	 *
+	 * @param isEnabled		true when debug overlay must be rendered, false otherwise
+	 */
+	void setDebugOverlay( const bool isEnabled = true );
+
+	/**
+	 * @brief Determines whether the rendering of the debug overlay is enabled.
+	 *
+	 * @return true if the rendering of the debug overlay is enabled, false otherwise
+	 */
+	const bool isDebugOverlay() const;
+
+
+
+	/**
+	 * @brief	Tells if the canvas will trace events.
+	 *
+	 * @return	true of false
+	 */
+	const bool debugEvents() const;
+
+	/**
+	 * @brief	Activates or deactivates the event debugging.
+	 *
+	 * @param	enable	a boolean with the new event debugging status
+	 */
+	void setDebugEvents( const bool enable );
+
+	//@}
+
+
+
+	/**
+	 * @brief Returns the current fps, a shortcut for frames per second.
+	 *
+	 * @return the number of fps or a negative value if not available (this occurs at startup during the first second).
+	 */
+	const int getFPS() const;
+
 
 
 protected:
@@ -256,6 +382,17 @@ protected:
 
 private:
 
+	/**
+	 * @brief Resets scene graph
+	 */
+	void privateResetSceneGraph();
+
+
+	/**
+	 * @brief Updates the layer plan used by fps overlay.
+	 */
+	void updateFPSOverlay();
+
 	static uint32			m_canvasCount;	///< Instance count of this class.
 	static GleLogSystem		m_gleLogSystem;	///< A value from GleLogSystem enumeration to specify the log system used by gle library.
 	static std::ofstream	m_gleLogFile;	///< The gle.txt file
@@ -269,7 +406,25 @@ private:
 
 	const Canvas *	m_sharedCanvas;				///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 	bool			m_bLocalInitializedVGSDK;	///< Boolean value set if initializeVGSDK() has already been called for this instance of Canvas.
+
+	bool			m_scheduleScreenshot;		///< Boolean value telling if a screen capture should be done at the end of next rendering.
+	bool			m_videoCapture;				///< Boolean value telling if the video capture is enabled.
+
 	bool			m_debugEvents;				///< Boolean value telling if events should be debugged or not.
+
+protected: // @todo FIXME ????????
+	vgd::Shp< vgd::node::MultiSwitch >		m_debugOverlayContainer;	///< A reference on the overlay container node used internally by vgSDK
+private:
+	vgd::Shp< vgd::node::LayerPlan >		m_overlayForFPS;	///< A reference on the layer plan used to render fps
+
+	/**
+	 * @name Attributes used to compute fps
+	 */
+	//@{
+	uint						m_frameBase;
+	boost::posix_time::ptime	m_timeBase;
+	int							m_fps;
+	//@}
 };
 
 
