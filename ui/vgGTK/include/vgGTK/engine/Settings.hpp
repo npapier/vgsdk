@@ -56,17 +56,29 @@ private:
 	 * @name	Signal Handlers
 	 */
 	//@{
-	void onBench();
-	void onClearGLResources();
 	void onGLSL();
+
+	void onDisableTexture();
+
+	void onBench();
+
+	void onShowFPS();
+	void onDebugEvents();
+	void onClearGLResources();
+
+	void onCaptureButton();
 	//@}
-	
+
 	/**
 	 * @brief	Refreshes sensitiveness of child widgets.
 	 */
 	void refreshChildrenSensitiveness();
 
-	Gtk::CheckButton	* m_glslButton;		///< Button to enable/disable glsl rendering pipeline
+	Gtk::CheckButton	* m_glslButton;			///< Button to enable/disable glsl rendering pipeline
+	Gtk::CheckButton	* m_disableTexture;		///< Button to disable texture
+	Gtk::CheckButton	* m_showFPS;			///< Widget to choose which debug overlay must be displayed
+	Gtk::CheckButton	* m_debugEvents;		///< Button to enable/disable event logging
+	Gtk::CheckButton	* m_captureButton;		///< Widget to enable screenshot/video capture hotkey
 };
 
 
