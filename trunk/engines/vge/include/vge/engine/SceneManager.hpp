@@ -286,7 +286,13 @@ struct VGE_API SceneManager
 	 * Number of frames to render during the next paint(). This value is automatically reseted to 1 inside paint().
 	 */
 	void	setNumberOfFrames( const uint numberOfFrames );
-	
+
+	/**
+	 * @brief Returns the number of frames displayed by paint() method.
+	 *
+	 * @return the number of frames displayed by paint() method
+	 */
+	const uint getFrameCount() const;
 	//@}
 
 
@@ -321,6 +327,8 @@ private:
 	 * @brief Number of frames to render during the next OnPaint().
 	 */
 	uint									m_numberOfFrames;
+
+	uint m_frameCount;	///< the number of frames displayed by paint() method
 	//@}
 };
 

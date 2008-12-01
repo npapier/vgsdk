@@ -20,12 +20,13 @@ namespace engine
 {
 
 
-SceneManager::SceneManager( vgd::Shp< vge::engine::Engine > pEngine ) :
+SceneManager::SceneManager( vgd::Shp< vge::engine::Engine > engine ) :
 	m_root					(	vgd::node::Group::create("ROOT") ),
-	m_engine				(	pEngine	),
+	m_engine				(	engine	),
 	//m_collectorExt
 	m_updateBoundingBox		( 	true	),
-	m_numberOfFrames		(	1		)
+	m_numberOfFrames		(	1		),
+	m_frameCount			(	0		)
 {}
 
 
@@ -154,7 +155,7 @@ void SceneManager::writeGraphviz( bool bGeneratePNG, std::ofstream *pofstream )
 	}
 
 	if ( bGeneratePNG )
-	{	
+	{
 		system("dot -Tpng -osceneGraph.png sceneGraph.dot");
 	}
 }
@@ -178,14 +179,21 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	{
 		computeBoundingBox();
 	}
+
+	// Updates the frame count
+	++m_frameCount;
 }
 
 
 
+// @todo computeBoundingBox() see paint() method
 void SceneManager::resize( const vgm::Vec2i size )
 {
 	// Updates engine with size of window
 	getEngine()->setDrawingSurfaceSize( size );
+
+	// Updates the frame count
+	++m_frameCount;
 }
 
 
@@ -222,6 +230,13 @@ uint SceneManager::getNumberOfFrames() const
 void SceneManager::setNumberOfFrames( const uint numberOfFrames )
 {
 	m_numberOfFrames = numberOfFrames;
+}
+
+
+
+const uint SceneManager::getFrameCount() const
+{
+	return m_frameCount;
 }
 
 

@@ -18,7 +18,13 @@ namespace glo
 	struct IResource;
 //	struct Texture; 
 }
-namespace vgd { namespace node { struct Texture; } }
+
+namespace vgd 
+{
+namespace basic { struct Image; }
+namespace node { struct Texture; } 
+}
+
 namespace vgeGL { namespace engine { struct ProgramGenerator; } }
 
 
@@ -288,6 +294,8 @@ public:
 	
 	/**
 	 * @name OpenGL state accessors
+	 *
+	 * @todo captureFramebuffer() for others buffers (depth, renderbuffers...)
 	 */
 	//@{
 
@@ -313,6 +321,12 @@ public:
 	 */
 	const GLenum getDepthTextureFormatFromDepthBits() const;
 
+	/**
+	 * @brief Returns an image containing the framebuffer color values.
+	 *
+	 * @remarks This method reads back the framebuffer color values, be careful this is slow and stalled the OpenGL pipeline.
+	 */
+	vgd::Shp< vgd::basic::Image > captureFramebuffer() const;
 	//@}
 
 
@@ -329,14 +343,14 @@ public:
 	 *
 	 * @param desiredTextureUnit	the index of the texture unit that must be activated
 	 */
-	void activeTexture( const int desiredTextureUnit );
+	static void activeTexture( const int desiredTextureUnit );
 
 	/**
 	 * @brief Activates the desired texture unit
 	 *
 	 * @param textureNode	the texture node (used to know which texture unit must be activated, i.e. getMultiAttributeIndex())
 	 */
-	void activeTexture( const vgd::node::Texture * textureNode );
+	static void activeTexture( const vgd::node::Texture * textureNode );
 
 	/**
 	 * @brief Configures OpenGL for 2D rendering.
