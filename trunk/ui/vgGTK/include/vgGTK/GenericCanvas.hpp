@@ -211,14 +211,24 @@ protected:
 
 	void doRefresh()
 	{
-		get_window()->invalidate_region( get_window()->get_visible_region(), false );
-		gdk_window_process_all_updates();
+		Glib::RefPtr< Gdk::Window >	window = get_window();
+		
+		if( window )
+		{
+			window->invalidate_region( get_window()->get_visible_region(), false );
+			gdk_window_process_all_updates();
+		}
 	}
 
 
 	void sendRefresh()
 	{
-		get_window()->invalidate_region( get_window()->get_visible_region(), false );
+		Glib::RefPtr< Gdk::Window >	window = get_window();
+		
+		if( window )
+		{
+			window->invalidate_region( get_window()->get_visible_region(), false );
+		}
 	}
 
 
