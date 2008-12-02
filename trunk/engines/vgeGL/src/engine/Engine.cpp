@@ -510,8 +510,10 @@ vgd::Shp< vgd::basic::Image > Engine::captureFramebuffer() const
 
 	vgd::Shp< Image > image( new Image() );
 	image->create(	3, drawingSurfaceSize[0], drawingSurfaceSize[1], 1,
-					Image::BGR, Image::UINT8 );
+					Image::BGR, Image::UINT8 );	// @todo always BGR ? and UINT8 ?
 	uint8 *imageData = static_cast<uint8*>( image->editPixels() );
+
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glReadPixels(	0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1], 
 					GL_BGR, GL_UNSIGNED_BYTE,
 					imageData );
