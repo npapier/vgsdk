@@ -222,15 +222,40 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 		const uint getFrameNumber() const				{ return m_frameNumber; }
 		vgd::Shp< vgd::basic::Image > getImage() const	{ return m_image; }
 
+		const std::string buildFilename( const std::string filePrefix );
+		void save( const std::string path, const std::string filePrefix, const bool feedback = false );
+
 	private:
 		const uint						m_frameNumber;	///< the frame number to identify a screenshot. This attribute could be used to order a sequence of screenshots.
 		vgd::Shp< vgd::basic::Image >	m_image;		///< the screenshot is stored by this image
 	};
-	typedef std::list< Screenshot > ScreenshotContainerType;	///< a collection of screenshots
 
-private:
-	ScreenshotContainerType			m_screenshots;
-	ScreenshotContainerType 		m_videos;
+	struct ScreenshotContainer : public std::list< Screenshot >
+	{
+		//void append( vgd::Shp< Screenshot > screenshot );
+
+		void save( const std::string path, const std::string filePrefix, const bool feedback = false )
+		{
+			const_iterator	i		= begin(),
+							iEnd	= end();
+
+			while ( i != iEnd )
+			{
+				// Gets current screenshot
+				Screenshot shot = *i;
+
+				// Saves image
+				shot.save( path, filePrefix, feedback );
+
+				//
+				++i;
+			}
+		}
+	};
+	//typedef std::list< Screenshot > ScreenshotContainerType;	///< a collection of screenshots
+
+public://private:
+	ScreenshotContainer 		m_video;
 	//std::list< ScreenshotContainerType >	m_videos;
 public:
 
