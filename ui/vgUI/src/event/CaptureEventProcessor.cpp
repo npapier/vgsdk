@@ -62,6 +62,18 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 				getCanvas()->m_video.clear();
 			}
 		}
+		else if ( buttonID == 'c' && buttonState == KeyboardButtonEvent::DOWN )
+		{
+			if ( getCanvas()->isVideoCaptureEnabled() )
+			{
+				vgLogDebug( "Cancels the video capture" );
+				vgLogStatus( "Cancels the video capture" );
+				getCanvas()->setVideoCapture( false );
+
+				// Removes the video
+				getCanvas()->m_video.clear();
+			}
+		}
 	}
 
 	return false;
