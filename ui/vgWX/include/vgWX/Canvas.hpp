@@ -51,6 +51,7 @@ struct VGWX_API Canvas : public wxGLCanvas, public vgeGL::engine::SceneManager
 
 	enum GleLogSystem {
 		GLE_FILE,		//!< gle.txt file. This is the default log system.
+		GLE_FILE_IN_VAR,//!< gle.txt file in ../var
 		GLE_COUT		//!< standard output
 	};
 
