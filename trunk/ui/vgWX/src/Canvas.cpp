@@ -216,7 +216,7 @@ void Canvas::refresh( const RefreshType type, const WaitType wait )
 			}
 			else
 			{
-				paint( v2iSize, getBoundingBoxUpdate() );				
+				paint( v2iSize, getBoundingBoxUpdate() );
 			}
 		}
 		// else refresh not needed
@@ -542,7 +542,7 @@ int	Canvas::m_vgsdk_attrib[] = {
 
 
 
-Canvas::GleLogSystem Canvas::m_gleLogSystem = GLE_FILE;
+Canvas::GleLogSystem Canvas::m_gleLogSystem = GLE_FILE_IN_VAR;
 
 
 
@@ -561,7 +561,17 @@ std::ostream* Canvas::getGleOutputStream()
 		{
 			m_gleLogFile.open("gle.txt");
 		}
-		
+
+		return &m_gleLogFile;
+	}
+	else if ( currentGleLogSystem == GLE_FILE_IN_VAR )
+	{
+		// Opens gle.txt if not already done
+		if ( m_gleLogFile.is_open() == false )
+		{
+			m_gleLogFile.open("../var/gle.txt");
+		}
+
 		return &m_gleLogFile;
 	}
 	else if ( currentGleLogSystem == GLE_COUT )
