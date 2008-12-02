@@ -1,0 +1,73 @@
+/**
+ * @mainpage Versatile Graphical Software Development Kit (vgSDK)
+ *
+ * \image html vgsdk.png
+ * 
+ * 
+ *
+ * @section about About vgSDK
+ * 
+ * Welcome to the (V)ersatile (G)raphical (S)oftware (D)evelopment (K)it. \c vgSDK provides a C++ programming interface to do 
+ * graphical jobs. Its main goal is to create real-time graphics applications and to obtain easily high-performance and reliable
+ * graphics applications.\n
+ * Typical applications are in the fields of virtual reality, augmented reality, research papers, games and graphical computation.
+ *
+ * \c vgSDK hides low-level details on graphics programming and reduces drastically the work required to start with a 
+ * graphical application. It provides a set of geometrical and mathematical classes that are needed in almost every graphics program.
+ * 
+ * 
+ * 
+ * @section Prerequisites
+ * 
+ * \c vgSDK is intended for users who are already familiar with C++ and have basic graphics programming skills (like 3d 
+ * transformation and coordinate system, mesh, texture...). Knowledges about OpenGL or Direct3D could help, but are not
+ * absolutely needed.
+ * 
+ * 
+ * 
+ * @section project_page Project Page
+ * 
+ * The \c vgSDK project pages are hosted by Gna! (https://gna.org/).
+ * For Subversion information, downloads, bug tracking, feature requests, mailing list information and more, visit
+ * - our Gna! project page at http://gna.org/projects/vgsdk
+ * - our website at http://home.gna.org/vgsdk/
+ *
+ * @if vgsdkNonFree
+ * The non-free \c vgSDK project pages are hosted by Savannah.
+ * For Subversion information, downloads, bug tracking, feature requests, mailing list information and more, visit our
+ * Savannah project page at http://dev-srv.ircad.fr/savannah/projects/vgsdk/
+ *
+ * Another source of informations could be the wiki at https://intranet.ircad.fr:8443/xwiki/bin/view/vgsdk/
+ * @endif
+ * 
+ *
+ *
+ * \ref g_TOC
+ *
+ * Central point of the documentation
+ *
+ *
+ *
+ * \ref g_changeLog
+ *
+ * What's new
+ * 
+ * 
+ * 
+ * @section Licensing
+ * 
+ * All these libraries are distributed under GNU LGPL license, which can be found in files COPYING and COPYING.LESSER.
+ * This license allows you to use \c vgSDK freely in commercial programs as long as you link with the dynamic library.
+ * 
+ * See http://www.gnu.org/licenses/lgpl.html
+ *
+ * 
+ * 
+ * \b Powered \b by
+ *
+ * \image html gnu-head-sm.png
+ * \image html c++boost.png
+ * \image html openIL.png
+ * \image html opengl_logo.png
+ * \image html wxWidgets.png
+ */

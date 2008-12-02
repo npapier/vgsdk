@@ -1,0 +1,2 @@
+all install dep dist-all dist-clean clean help dep-all world publish allConfig info leaktracer mpatrol full debug release debug-install full-install release-install boundchecker coverage performance dp_full unittest dsp doc tar msi printvar update status diff checkout checkout_tags tags:
+	make -f Makefile/Makefile '$@'

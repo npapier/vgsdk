@@ -1,0 +1,7 @@
+USE		=	['boost','openil','openilu']
+LIB		=	['vgDebug_0-4','vgm_0-4']
+TYPE	=	'shared'
+VERSION =	'0-4'
+#TEST	=	'yes'
+COMBINE 	= 'yes'
+USEVISIBILITY	= 'no'

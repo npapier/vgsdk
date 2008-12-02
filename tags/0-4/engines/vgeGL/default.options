@@ -1,0 +1,6 @@
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-4'
+uses		= [ 'glu', 'opengl' ]
+libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgm 0-4', 'vgio 0-4' ]
+deps		= [ '../../dependencies', '../../core', '../vge', '../../io/vgio' ]

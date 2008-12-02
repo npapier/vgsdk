@@ -1,0 +1,23 @@
+all install dep dist-all dist-clean clean help dep-all world publish allConfig info leaktracer mpatrol full debug release debug-install full-install release-install boundchecker coverage performance dp_full unittest dsp doc tar msi printvar:
+	# dependencies
+	cd dependencies;		make -f Makefile.root '$@';
+	# core
+	cd core/vgBase;			make '$@';
+	cd core/vgDebug;		make '$@';
+	cd core/vgm;			make '$@';
+	cd core/vgd;			make '$@';
+	# algorithms
+	cd algorithms/vgAlg;	make '$@';
+	# io
+	cd io/vgTrian;			make '$@';
+	# engines
+	cd engines/vge;			make '$@';
+	cd engines/vgeGL;		make '$@';
+	# ui
+	cd ui/vgWX;				make '$@';
+	# images
+#	cd images/vgCairo;		make '$@';
+	cd images/vgITK;		make '$@';
+	# contributions
+	cd contributions/vgEgg;	make '$@';
+#	cd examples

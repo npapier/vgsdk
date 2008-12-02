@@ -1,0 +1,6 @@
+vcsUse				= 'no'
+type				= 'shared'
+version				= '0-4'
+deps				= ['../../core'] #, '../../io']
+uses				= ['colladadom']
+libs				= ['vgBase 0-4', 'vgd 0-4', 'vgDebug 0-4', 'vgm 0-4']

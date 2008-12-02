@@ -1,0 +1,9 @@
+USE  	= ['boost','opengl','glu','wxgl']
+LIB  	= ['gle_0-3','vgAlg_0-4', 'vgd_0-4', 'vgDebug_0-4', 'vge_0-4', 'vgeGL_0-4', 'vgm_0-4', 'vgTrian_0-4' ]
+TYPE	= 'shared'
+VERSION = '0-4'
+COMBINE = 'yes'
+import os
+import sys
+if os.name != 'nt' and sys.platform != 'darwin' :
+	USEVISIBILITY = 'no'
