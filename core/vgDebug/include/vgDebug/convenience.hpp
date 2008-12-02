@@ -19,6 +19,10 @@
 #define vgLogWarning2( arg1, arg2 )				vgDebug::get().logWarning( (arg1), (arg2) )
 #define vgLogWarning3( arg1, arg2, arg3 )		vgDebug::get().logWarning( (arg1), (arg2), (arg3) )
 
+#define vgLogStatus( arg1 )						vgDebug::get().logStatus( (arg1) )
+#define vgLogStatus2( arg1, arg2 )				vgDebug::get().logStatus( (arg1), (arg2) )
+#define vgLogStatus3( arg1, arg2, arg3 )		vgDebug::get().logStatus( (arg1), (arg2), (arg3) )
+
 #ifdef _DEBUG
 #define vgLogDebug( arg1 )						vgDebug::get().logDebug( (arg1) )
 #define vgLogDebug2( arg1, arg2 )				vgDebug::get().logDebug( (arg1), (arg2) )
