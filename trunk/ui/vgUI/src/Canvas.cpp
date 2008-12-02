@@ -28,6 +28,7 @@
 #include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByDirtyFlag.hpp>
 
+#include <vgDebug/convenience.hpp>
 #include <vgDebug/Global.hpp>
 
 #include <vgeGL/engine/Engine.hpp>
@@ -36,6 +37,36 @@
 
 namespace vgUI
 {
+
+
+
+const std::string Canvas::Screenshot::buildFilename( const std::string filePrefix )
+{
+	// Constructs filename
+	const std::string strCount = (boost::format("%|07|") % getFrameNumber()).str();
+	const std::string filename = filePrefix + strCount + ".png";
+
+	return filename;
+}
+
+
+
+void Canvas::Screenshot::save( const std::string path, const std::string filePrefix, const bool feedback )
+{
+	const std::string filename = buildFilename( filePrefix );
+
+	// Tests path existance ???
+
+	// User feedback
+	if ( feedback )
+	{
+		vgLogDebug2( "Screenshot done in file %s", filename.c_str() );
+		vgLogStatus2( "Screenshot done in file %s", filename.c_str() );
+	}
+
+	// Saves image
+	getImage()->save( path + filename );
+}
 
 
 
@@ -249,22 +280,14 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 		if ( isScreenshotScheduled() )
 		{
+			// Do the capture
 			capturedImage = getGLEngine()->captureFramebuffer();
 
-			//
+			// Constructs the screenshot and saves the png image
 			Screenshot shot( getFrameCount(), capturedImage );
-
-			// Constructs filename
-			std::string filename("../var/vgsdk/screenshots/frame");
-			const std::string strCount = (boost::format("%|06|") % shot.getFrameNumber()).str();
-			filename += strCount + ".png";
-
-			// Saves image
-			shot.getImage()->save( filename );
+			shot.save( "../var/vgsdk/screenshots/", "frame", true );		// @todo
 
 			//
-			//m_screenshots.push_back( Screenshot( getFrameCount(), capturedImage ) );
-			
 			m_scheduleScreenshot = false;
 		}
 
@@ -276,47 +299,33 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 				lastCapture = bpt::microsec_clock::universal_time();
 			}
 
-			bpt::ptime currentCapture = bpt::microsec_clock::universal_time();
+			const bpt::ptime currentCapture = bpt::microsec_clock::universal_time();
 
-			bpt::time_duration	elapsedTimeBetweenCapture = currentCapture - lastCapture;
+			const bpt::time_duration elapsedTimeBetweenTwoCaptures = currentCapture - lastCapture;
 
-			const float capturesPerSecond = 20.f; // @todo parameter
-			const float desiredElapsedTimeBetween2Captures = 1000.f / capturesPerSecond;
-			if ( elapsedTimeBetweenCapture.total_milliseconds() > desiredElapsedTimeBetween2Captures  )
+			const float maxNumberOfCapturesPerSecond = 20.f; // @todo parameter
+			const float desiredElapsedTimeBetween2Captures = 1000.f / maxNumberOfCapturesPerSecond;
+			if ( elapsedTimeBetweenTwoCaptures.total_milliseconds() >= desiredElapsedTimeBetween2Captures  )
 			{
 				if ( capturedImage == 0 )
 				{
 					capturedImage = getGLEngine()->captureFramebuffer();
 				}
 
-				m_videos.push_back( Screenshot( getFrameCount(), capturedImage ) );
+				m_video.push_back( Screenshot( getFrameCount(), capturedImage ) );
+
+				lastCapture = currentCapture;
 			}
 		}
 
 /*
 		//glFlush();
-		//glFinish(); // ???
-
-// ???
-		static uint count = 0;
-
-			m_lastCapture = currentCapture;
-
-
-
-			//
-			Screenshot shot(count, image );
-			m_video.push_back( shot );
-		}
-		else
+		//glFinish(); 
 		{
 			std::cout << "Skip\n";
 		}
 		// else nothing to do 
 */
-		//
-		//++count;
-// ???
 		gleGetCurrent()->reportGLErrors();
 
 		// Exchanges back and front buffers
@@ -556,46 +565,6 @@ const bool Canvas::startVGSDK()
 
 const bool Canvas::shutdownVGSDK()
 {
-	// @todo FIXME ??? do a function
-	ScreenshotContainerType::const_iterator	i, iEnd;
-	/*ScreenshotContainerType::const_iterator	i		= m_screenshots.begin(),
-											iEnd	= m_screenshots.end();
-	while ( i != iEnd )
-	{
-		// Gets current screenshot
-		Screenshot shot = *i;
-
-		// Constructs filename
-		std::string filename("../var/vgsdk/screenshots/frame");
-		const std::string strCount = (boost::format("%|06|") % shot.getFrameNumber()).str();
-		filename += strCount + ".png";
-
-		// Saves image
-		shot.getImage()->save( filename );
-
-		//
-		++i;
-	}*/
-
-	// @todo FIXME ???
-	i		= m_videos.begin();
-	iEnd	= m_videos.end();
-	while ( i != iEnd )
-	{
-		// Gets current screenshot
-		Screenshot shot = *i;
-
-		// Constructs filename
-		std::string filename("../var/vgsdk/videos/video");
-		const std::string strCount = (boost::format("%|06|") % shot.getFrameNumber()).str();
-		filename += strCount + ".png";
-
-		// Saves image
-		shot.getImage()->save( filename );
-
-		//
-		++i;
-	}
 	//
 	vgDebug::get().logDebug("Shutdown vgSDK...");
 

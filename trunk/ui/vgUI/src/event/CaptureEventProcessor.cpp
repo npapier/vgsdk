@@ -6,6 +6,7 @@
 #include "vgUI/event/CaptureEventProcessor.hpp"
 
 #include <vgd/event/KeyboardButtonEvent.hpp>
+#include <vgDebug/convenience.hpp>
 #include "vgUI/Canvas.hpp"
 
 
@@ -41,11 +42,25 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if ( buttonID == 'v' && buttonState == KeyboardButtonEvent::DOWN )
 		{
-			getCanvas()->setVideoCapture();
+			if ( getCanvas()->isVideoCaptureEnabled() == false )
+			{
+				vgLogDebug( "Starts the video capture" );
+				vgLogStatus( "Starts the video capture" );
+				getCanvas()->setVideoCapture();
+			}
 		}
 		else if ( buttonID == 'b' && buttonState == KeyboardButtonEvent::DOWN )
 		{
-			getCanvas()->setVideoCapture( false );
+			if ( getCanvas()->isVideoCaptureEnabled() )
+			{
+				vgLogDebug( "Stops the video capture" );
+				vgLogStatus( "Stops the video capture" );
+				getCanvas()->setVideoCapture( false );
+
+				// Flushs the video
+				getCanvas()->m_video.save( "../var/vgsdk/videos/", "video", true );
+				getCanvas()->m_video.clear();
+			}
 		}
 	}
 
