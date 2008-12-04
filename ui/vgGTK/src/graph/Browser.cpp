@@ -162,6 +162,7 @@ const Glib::ustring	Browser::m_uiDefinition =
 	"  </toolbar>"
 	"  <popup>"
 	"    <menuitem action='ExpandSubTree'/>"
+	"    <menuitem action='RemoveNode'/>"
 	"  </popup>"
 	"</ui>";
 
@@ -184,6 +185,7 @@ Browser::Browser()
 	// Populates all user interface actions and set it unsensitive.
 	m_actions->add( Gtk::Action::create("ExpandAll", expandID), sigc::mem_fun(this, &Browser::onExpandAll) );
 	m_actions->add( Gtk::Action::create("ExpandSubTree", "Expand"), sigc::mem_fun(this, &Browser::onExpandSubTree) );
+	m_actions->add( Gtk::Action::create("RemoveNode", "Remove"), sigc::mem_fun(this, &Browser::onRemoveNode) );
 	m_actions->add( Gtk::Action::create("FullRefresh", Gtk::Stock::REFRESH), sigc::mem_fun(this, &Browser::onFullRefresh) );
 	m_actions->add( Gtk::Action::create("SaveAs", Gtk::Stock::SAVE_AS), sigc::mem_fun(this, &Browser::onSaveAs) );
 //	m_actions->add( Gtk::Action::create("Synchronize", synchronizeID), sigc::mem_fun(this, &Browser::onSaveAs) );
@@ -313,6 +315,48 @@ void Browser::onFullRefresh()
 	// Restores the selection and the expanded rows.
 	expandedRowsBackup.restore( m_treeView );
 	selectionBackup.restore( m_treeView );
+}
+
+
+
+void Browser::onRemoveNode()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
+
+	if( rowIterator )
+	{
+		Gtk::TreePath	rowPath( rowIterator );
+		
+		if( rowPath.get_depth() == 1 )
+		{
+			Gtk::MessageDialog("You can't remove the root node.").run();
+		}
+		else
+		{
+			// Asks the user to confirm the node removal.
+			const Glib::ustring	nodeName = (*rowIterator)[ m_modelProvider.getColumnRecord().m_nameColumn ];
+			Gtk::MessageDialog	messageDialog("<big><b>Do you really want to remove the node <i>" + nodeName + "</i> ?</b></big>\n\nThis can break then rendering or may even cause the program to crash.", true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO );
+			
+			if( messageDialog.run() == Gtk::RESPONSE_YES )
+			{
+				// Moves the path to the parent node.
+				rowPath.up();
+				
+				// Retrieves the parent row iterator, the node to remove and the parent group.
+				Gtk::TreeModel::iterator		parentRowIterator	= m_modelProvider.getModel()->get_iter( rowPath );
+				vgd::Shp< vgd::node::Node >		node				= (*rowIterator)[ m_modelProvider.getColumnRecord().m_nodeColumn ];
+				vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_modelProvider.getColumnRecord().m_nodeColumn ];
+				vgd::Shp< vgd::node::Group >	parentGroup			= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );
+				
+				// Removes the node and the row in the tree model.
+				parentGroup->removeChild( node );
+				m_modelProvider.getModel()->erase( rowIterator );
+				
+				// @todo refresh shared information for remaining rows containing the node being removed.
+			}
+		}
+	}
 }
 
 

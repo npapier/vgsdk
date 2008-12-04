@@ -33,7 +33,7 @@ const TreeModelColumnRecord & TreeModelProvider::getColumnRecord() const
 
 
 
-const Glib::RefPtr< Gtk::TreeModel > TreeModelProvider::getModel() const
+const Glib::RefPtr< Gtk::TreeStore > TreeModelProvider::getModel() const
 {
 	return m_treeStore;
 }
