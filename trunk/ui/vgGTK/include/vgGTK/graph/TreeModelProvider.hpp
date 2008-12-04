@@ -54,7 +54,7 @@ struct VGGTK_API TreeModelProvider
 	 *
 	 * @return	a reference to a Gtk::TreeModel
 	 */
-	const Glib::RefPtr< Gtk::TreeModel > getModel() const;
+	const Glib::RefPtr< Gtk::TreeStore > getModel() const;
 
 	/**
 	 * @brief	Refreshes the managed model to reflect graph changes.
