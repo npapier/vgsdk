@@ -7,7 +7,7 @@
 #define _VGD_VISITOR_HELPERS_HPP
 
 #include <vgd/node/Group.hpp>
-#include <vgd/visitor/FindFirst.hpp>
+#include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByName.hpp>
 
 
