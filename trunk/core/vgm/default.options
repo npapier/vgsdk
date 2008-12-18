@@ -1,3 +1,4 @@
+description	= '(V)ersatile (G)raphical (M)athematics'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-4'
