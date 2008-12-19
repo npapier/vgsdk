@@ -381,6 +381,8 @@ protected:
 	 */
 	virtual const bool shutdownOpenGLContext() = 0;
 
+	// @todo documentation
+	gle::OpenGLExtensionsGen& getGleContext();
 
 	/**
 	 * @brief Calls this method before using vgsdk.
@@ -397,7 +399,7 @@ protected:
 	const bool shutdownVGSDK();
 
 
-protected:
+private:
 
 	/**
 	 * @brief gle main object to be able to access OpenGL extensions.

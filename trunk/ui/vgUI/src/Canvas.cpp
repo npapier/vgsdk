@@ -488,6 +488,13 @@ const int Canvas::getFPS() const
 
 
 
+gle::OpenGLExtensionsGen& Canvas::getGleContext()
+{
+	return m_gleContext;
+}
+
+
+
 void Canvas::doInitialize()
 {
 	// Call method initialize if needed.
