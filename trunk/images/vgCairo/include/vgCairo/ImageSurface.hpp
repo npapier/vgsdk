@@ -7,6 +7,7 @@
 #define _VGCAIRO_IMAGESURFACE_HPP
 
 #include <cairo.h>
+#include <string>
 #include <vgd/basic/IImage.hpp>
 
 #include "vgCairo/vgCairo.hpp"
@@ -154,7 +155,7 @@ struct VGCAIRO_API ImageSurface : public ::vgd::basic::IImage
 	 *
 	 * @see ImageSurface( const std::string filename ) to read PNG file.
 	 */
-	/*@{
+	//@{
 	
 	/**
 	 * @brief Writes to a new file as a PNG image.
