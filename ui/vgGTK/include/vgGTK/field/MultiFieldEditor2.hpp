@@ -16,6 +16,8 @@
 #include <gtkmm/treemodelcolumn.h>
 #include <gtkmm/treeview.h>
 
+#include <vgd/field/TMultiField.hpp>
+
 #include "vgGTK/field/Editor.hpp"
 
 
@@ -111,7 +113,7 @@ struct MultiFieldEditor2 : public Editor, public Gtk::Table
 	
 	void commit()
 	{
-		typedef vgd::field::TMultiField< MFAdapter::value_type > FieldType;
+		typedef vgd::field::TMultiField< typename MFAdapter::value_type > FieldType;
 
 		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
 		
@@ -119,7 +121,7 @@ struct MultiFieldEditor2 : public Editor, public Gtk::Table
 		
 		for( Gtk::TreeModel::iterator i = m_listStore->children().begin(); i; ++i )
 		{
-			MFAdapter::value_type	value;
+			typename MFAdapter::value_type	value;
 			
 			m_adapter.updateFromRow( *i, value );
 			fieldEditor->push_back( value );
@@ -132,7 +134,7 @@ struct MultiFieldEditor2 : public Editor, public Gtk::Table
 		m_listStore->clear();
 		
 		// Copies values from local cache into the field.
-		typedef vgd::field::TMultiField< MFAdapter::value_type > FieldType;
+		typedef vgd::field::TMultiField< typename MFAdapter::value_type > FieldType;
 
 		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
 		
@@ -205,7 +207,7 @@ private:
 		if( newRow )
 		{
 			(*newRow)[ m_indexColumn ] = -1;
-			m_adapter.updateToRow( (*newRow), MFAdapter::value_type() );
+			m_adapter.updateToRow( (*newRow), typename MFAdapter::value_type() );
 			
 			selection->unselect_all();
 			selection->select( newRow );

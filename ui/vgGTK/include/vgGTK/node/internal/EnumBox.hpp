@@ -48,7 +48,7 @@ public:
 	{
 		Gtk::RadioButtonGroup	radioGroup;
 		
-		for( ValueContainer::const_iterator i = values.begin(); i != values.end(); ++i )
+		for( typename ValueContainer::const_iterator i = values.begin(); i != values.end(); ++i )
 		{
 			Gtk::RadioButton	* button = Gtk::manage( new Gtk::RadioButton(radioGroup, i->second) );
 			
@@ -62,7 +62,7 @@ public:
 	{
 		EnumType	result;
 		
-		for( ButtonContainer::const_iterator i = m_buttons.begin(); i != m_buttons.end(); ++i )
+		for( typename ButtonContainer::const_iterator i = m_buttons.begin(); i != m_buttons.end(); ++i )
 		{
 			if( i->second->get_active() )
 			{
@@ -75,7 +75,7 @@ public:
 	
 	void setValue( const EnumType & value )
 	{
-		ButtonContainer::iterator	found = m_buttons.find( value );
+		typename ButtonContainer::iterator	found = m_buttons.find( value );
 		
 		if( found != m_buttons.end() )
 		{

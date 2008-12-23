@@ -11,8 +11,9 @@
 #include <string>
 #include <vector>
 
-#include <SDL_Events.h>
-#include <SDL_Joystick.h>
+#include <SDL.h>
+#include <SDL_events.h>
+#include <SDL_joystick.h>
 
 #include <vgd/Shp.hpp>
 #include <vgd/WeakPtr.hpp>
