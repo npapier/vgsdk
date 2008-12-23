@@ -101,7 +101,7 @@ struct TreeModelFillVisitor : public vgd::visitor::Traverse< boost::null_visitor
 
 		m_active = edgeName.enable();
 
-		Traverse< boost::null_visitor >::examine_edge( e, g );
+		vgd::visitor::Traverse< boost::null_visitor >::examine_edge( e, g );
 	}
 	//@}
 

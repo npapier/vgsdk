@@ -27,7 +27,7 @@ namespace vgGTK
 struct VGGTK_API BasicManipulator : public GenericCanvas< vgUI::BasicManipulator >
 {
 	/**
-	 * @name	Constrcutors
+	 * @name	Constructors
 	 */
 	//@{
 	BasicManipulator();
@@ -35,9 +35,7 @@ struct VGGTK_API BasicManipulator : public GenericCanvas< vgUI::BasicManipulator
 	template< typename SharedCanvasType >
 	BasicManipulator( const SharedCanvasType * sharedCanvas )
 	:	GenericCanvas< vgUI::BasicManipulator >( sharedCanvas )
-	{
-		attachDevices();
-	}
+	{}
 	//@}
 
 protected:
