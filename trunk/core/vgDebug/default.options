@@ -1,3 +1,4 @@
+description	= '(V)ersatile (G)raphical (Debug)'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-4'
