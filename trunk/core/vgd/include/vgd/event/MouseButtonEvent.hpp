@@ -42,17 +42,32 @@ struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 	 * @param	state			a button state
 	 * @param	location		a location to pass through the event
 	 * @param	size			the size of the 'canvas' where Location2event occurs
+	 * @param	deviceId			the id of the device causing the event
 	 */
 	MouseButtonEvent(	Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state,
-						const Location& location, const Size& size );
+						const Location& location, const Size& size, const unsigned int deviceId=0 );
 	
 	/**
 	 * @brief	Destructor
 	 */
 	virtual ~MouseButtonEvent();
 
+	/**
+	 * @brief	Retrives the device id
+	 * 
+	 * @return	the device id
+	 */
+	unsigned int getDeviceId() const;
+
 	// overridden method
 	void accept( vgd::event::EventVisitor& eventVisitor );
+
+private:
+	/**
+	 * @brief Id of the device causing the event.
+	 */
+	unsigned int m_deviceId;
+
 };
 
 

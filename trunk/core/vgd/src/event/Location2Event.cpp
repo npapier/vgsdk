@@ -19,10 +19,11 @@ namespace event
 
 	
 Location2Event::Location2Event(	Source * source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation,
-								const Size& size )
+								const Size& size, const unsigned int deviceId )
 :	Location2( location, size),
 	Event( source, buttonStates ),
-	m_previous( previousLocation )
+	m_previous( previousLocation ),
+	m_deviceId(deviceId)
 {}
 
 
@@ -47,6 +48,11 @@ const Location2Event::LocationDelta Location2Event::getDelta() const
 		LocationDelta delta = this->m_location - this->m_previous;
 		return ( delta );
 	}
+}
+
+unsigned int Location2Event::getDeviceId() const
+{
+	return m_deviceId;
 }
 
 

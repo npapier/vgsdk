@@ -41,8 +41,9 @@ struct VGD_API Location2Event : public Location2, public Event
 	 * @param	previousLocation	the previous location. If there is no previous location, initialize each vector components
 	 * 								with std::numeric_limits<float>::max()
 	 * @param	size				the size of the 'canvas' where Location2event occurs
+	 * @param	deviceId			the id of the device causing the event
 	 */
-	Location2Event( Source *source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation, const Size& size );
+	Location2Event( Source *source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation, const Size& size, const unsigned int deviceId=0);
 	
 	/**
 	 * @brief	Destructor.
@@ -65,6 +66,12 @@ struct VGD_API Location2Event : public Location2, public Event
 	 */
 	const LocationDelta getDelta() const;
 	
+	/**
+	 * @brief	Retrives the device id
+	 * 
+	 * @return	the device id
+	 */
+	unsigned int getDeviceId() const;
 
 	// overridden method
 	void accept( vgd::event::EventVisitor& eventVisitor );	
@@ -75,7 +82,12 @@ private:
 	/**
 	 * @brief The previous location passed through the event.
 	 */
-	Location m_previous;	
+	Location m_previous;
+
+	/**
+	 * @brief Id of the device causing the event.
+	 */
+	unsigned int m_deviceId;
 };
 
 
