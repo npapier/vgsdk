@@ -16,10 +16,11 @@ namespace event
 
 	
 	
-MouseWheelEvent::MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis a, int32 d )
+MouseWheelEvent::MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis a, int32 d, const unsigned int deviceId )
 : Event( source, buttonStates ),
   axis( a ),
-  delta( d )
+  delta( d ),
+  m_deviceId(deviceId)
 {}
 
 
@@ -32,6 +33,11 @@ const MouseWheelEvent::Axis MouseWheelEvent::getAxis() const
 const int32 MouseWheelEvent::getDelta() const
 {
 	return this->delta;
+}
+
+unsigned int MouseWheelEvent::getDeviceId() const
+{
+	return m_deviceId;
 }
 
 

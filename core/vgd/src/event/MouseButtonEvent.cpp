@@ -20,14 +20,21 @@ namespace event
 	
 MouseButtonEvent::MouseButtonEvent( Source *source, const ButtonStateSet& buttonStates, 
 									const int32 buttonID, const State state,
-									const Location& location, const Size& size )
+									const Location& location, const Size& size,
+									const unsigned int deviceId )
 :	Location2( location, size),					
-	ButtonEvent( source, buttonStates, buttonID, state )
+	ButtonEvent( source, buttonStates, buttonID, state ),
+	m_deviceId(deviceId)
 {}
 
 
 MouseButtonEvent::~MouseButtonEvent()
 {}
+
+unsigned int MouseButtonEvent::getDeviceId() const
+{
+	return m_deviceId;
+}
 
 
 void MouseButtonEvent::accept( vgd::event::EventVisitor& eventVisitor )

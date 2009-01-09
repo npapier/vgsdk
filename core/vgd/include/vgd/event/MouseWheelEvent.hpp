@@ -37,8 +37,9 @@ struct VGD_API MouseWheelEvent : public Event
 	 * @param	buttonStates	a reference to the button state set
 	 * @param	axis				a wheel axis
 	 * @param	delta				a wheel rotation delta
+	 * @param	deviceId			the id of the device causing the event
 	 */
-	MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis axis, int32 delta );
+	MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis axis, int32 delta, unsigned int deviceId=0 );
 	
 	/**
 	 * @brief	Retrieves the wheel axis.
@@ -54,6 +55,12 @@ struct VGD_API MouseWheelEvent : public Event
 	 */
 	const int32 getDelta() const;
 
+	/**
+	 * @brief	Retrives the device id
+	 * 
+	 * @return	the device id
+	 */
+	unsigned int getDeviceId() const;	
 
 	// overridden method
 	void accept( vgd::event::EventVisitor& eventVisitor );
@@ -69,6 +76,10 @@ private:
 	 * @brief	The rotation delta.
 	 */
 	int32 delta;
+	/**
+	 * @brief Id of the device causing the event.
+	 */
+	unsigned int m_deviceId;
 };
 	
 	
