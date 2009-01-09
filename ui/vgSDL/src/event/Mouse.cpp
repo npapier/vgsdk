@@ -1,10 +1,12 @@
 #include <vgSDL/event/Mouse.hpp>
-#include <vgSDL/event/EventHandler.hpp>
-#include <vgd/event/detail/GlobalButtonStateSet.hpp>
-
-#include <vgd/event/Location2Event.hpp>
 
 #include <SDL_events.h>
+
+//#include <vgd/Shp.hpp>
+#include <vgd/event/detail/GlobalButtonStateSet.hpp>
+#include <vgd/event/Location2Event.hpp>
+
+#include <vgSDL/event/EventHandler.hpp>
 
 namespace vgSDL
 {
@@ -13,18 +15,23 @@ namespace event
 
 Mouse::Mouse()
 {
-	EventHandler::connect(this);
+	//EventHandler::connect(this);
 }
 
 Mouse::~Mouse()
 {
-	EventHandler::disconnect(this);
+	//EventHandler::disconnect(this);
 }
 
 
 
 void Mouse::handleEvent( const SDL_Event & event )
 {
+
+	vgd::Shp<Mouse> mouse = find(event.motion.which);
+	if(!mouse)
+		return;
+
 	switch(event.type)
 	{
 	case SDL_MOUSEMOTION:
@@ -34,20 +41,57 @@ void Mouse::handleEvent( const SDL_Event & event )
 		vgm::Vec2f location((float)event.motion.x,(float)event.motion.y);
 		vgd::Shp<Location2Event> locationEvent(
 			new vgd::event::Location2Event(
-				this,
+				mouse.get(),
 				vgd::event::detail::GlobalButtonStateSet::get(),
 				location,
-				m_previousLocation,
+				mouse->m_previousLocation,
 				vgm::Vec2f(0,0),
 				event.motion.which
 				)
 			);
-		fireEvent(locationEvent);
+		mouse->fireEvent(locationEvent);
 		break;
 	}
 	}
 }
 
+
+
+Mouse::MiceCollection	Mouse::m_mouseCache;
+
+
+
+vgd::Shp< Mouse > Mouse::find( const int index )
+{
+	assert( index >= 0 );
+
+	return (static_cast<size_t>(index) < m_mouseCache.size()) ? m_mouseCache[index].lock() : vgd::Shp< Mouse >();
+}
+
+
+
+vgd::Shp< Mouse > Mouse::get( const int index )
+{
+	assert( index >= 0 );
+	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
+
+	// Adjusts the cache size to the number of joysticks.
+	m_mouseCache.resize( SDL_GetNumMice() );
+
+
+	// Let's look for a joystick in the cache.
+	vgd::Shp< Mouse >	result = find(index);
+
+	if( ! result )
+	{
+		result = vgd::makeShp(new Mouse());
+		if(result)
+		{
+			m_mouseCache[ index ] = result;
+		}
+	}
+	return result;
+}
 
 
 } // namespace event

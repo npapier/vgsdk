@@ -40,18 +40,6 @@ struct VGSDL_API EventHandler
 
 	static void dispatchEvents();
 
-	/**
-	 * @brief attach device.
-	 * @return true if the device could be registered.
-	 */
-
-	static bool connect(vgd::event::Device* );
-
-	/**
-	 * @brief dettach device.
-	 */
-
-	static void disconnect(vgd::event::Device* );
 
 private:
 
@@ -65,17 +53,6 @@ private:
 	 */
 
 	static vgd::Shp <EventHandler> g_instance;
-
-	/**
-	 * @brief list of Mice.
-	 */
-	std::list<Mouse*> m_mice;
-
-	/**
-	 * @brief list of Joystick.
-	 */
-	//std::list<Joystick*> m_joysticks;
-
 
 	/**
 	 * @brief List of events.

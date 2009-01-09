@@ -38,6 +38,7 @@ gboolean my_source_dispatch (GSource    *source,
 void initSDL()
 {
 
+	vgSDL::event::EventHandler::getEvents();
 	GSourceFuncs* source=new GSourceFuncs;
 	source->prepare=&my_source_prepare;
 	source->check=&my_source_check;
@@ -45,7 +46,6 @@ void initSDL()
 	source->finalize=0;
 	GSource* gs = g_source_new(source, sizeof(GSource));
 	g_source_attach(gs,0);
-
 }
 
 } // namespace event
