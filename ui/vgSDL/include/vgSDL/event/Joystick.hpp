@@ -40,7 +40,7 @@ namespace event
  * joystick get removed, the joystick instance is destroyed will not send
  * any event.
  *
- * @remark	Prior using any method if this class, you must
+ * @remark	Prior using any method of this class, you must
  * 			have initialized joystick support in SDL
  * 			by passing the @c SDL_INIT_JOYSTICK flag to @c SDL_Init function.
  */
