@@ -58,7 +58,6 @@ vgd::Shp< Joystick > Joystick::find( const int index )
 
 vgd::Shp< Joystick > Joystick::get( const int index )
 {
-	SDL_Init( SDL_INIT_JOYSTICK | SDL_INIT_VIDEO );
 	assert( index >= 0 );
 	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
 

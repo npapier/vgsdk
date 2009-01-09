@@ -58,49 +58,13 @@ void EventHandler::dispatchEvents()
 		case SDL_MOUSEMOTION:
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP:
-			for(itm=g_instance->m_mice.begin();itm!=g_instance->m_mice.end();++itm)
-			{
-				(*itm)->handleEvent(g_instance->m_events[i]);
-			}
+			Mouse::handleEvent(g_instance->m_events[i]);
 			break;
 		}
 	}
 	if(g_instance->m_nbEvents!=0)
 	{
 		g_instance->m_nbEvents=0;
-	}
-}
-
-bool EventHandler::connect(vgd::event::Device* device)
-{
-	disconnect(device); // this is to avoid multiple insertion of a same device.
-	if(!g_instance)
-		g_instance.reset(new EventHandler);
-	bool success=false;
-	if(dynamic_cast<Mouse*>(device))
-	{
-		g_instance->m_mice.push_back(dynamic_cast<Mouse*>(device));
-		success = true;
-	}
-	if(dynamic_cast<Joystick*>(device))
-	{
-		//g_instance->m_joysticks.push_back(dynamic_cast<Joystick*>(device));
-		success = true;
-	}
-	return success;
-}
-
-void EventHandler::disconnect(vgd::event::Device* device)
-{
-	if(!g_instance)
-		g_instance.reset(new EventHandler);
-	if(dynamic_cast<Mouse*>(device))
-	{
-		g_instance->m_mice.remove(dynamic_cast<Mouse*>(device));
-	}
-	if(dynamic_cast<Joystick*>(device))
-	{
-		//g_instance->m_joysticks.remove(dynamic_cast<Joystick*>(device));
 	}
 }
 
