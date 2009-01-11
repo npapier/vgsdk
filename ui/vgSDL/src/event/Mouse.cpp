@@ -73,7 +73,7 @@ vgd::Shp< Mouse > Mouse::find( const int index )
 vgd::Shp< Mouse > Mouse::get( const int index )
 {
 	assert( index >= 0 );
-	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
+	//assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
 
 	// Adjusts the cache size to the number of joysticks.
 	m_mouseCache.resize( 2/*SDL_GetNumMice()*/ );
