@@ -46,7 +46,7 @@ void Mouse::handleEvent( const SDL_Event & event )
 				location,
 				mouse->m_previousLocation,
 				vgm::Vec2f(0,0),
-				event.motion.which
+				0//event.motion.which
 				)
 			);
 		mouse->fireEvent(locationEvent);
@@ -76,7 +76,7 @@ vgd::Shp< Mouse > Mouse::get( const int index )
 	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
 
 	// Adjusts the cache size to the number of joysticks.
-	m_mouseCache.resize( SDL_GetNumMice() );
+	m_mouseCache.resize( 2/*SDL_GetNumMice()*/ );
 
 
 	// Let's look for a joystick in the cache.

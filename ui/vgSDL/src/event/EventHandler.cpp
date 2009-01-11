@@ -16,7 +16,8 @@ vgd::Shp<EventHandler> EventHandler::g_instance;
 EventHandler::EventHandler()
 {
 	// Init SDL
-	SDL_WindowID id = SDL_CreateWindow("SDL",0,0,0,0,0);
+	//SDL_WindowID id = SDL_CreateWindow("SDL",0,0,0,0,0);
+	SDL_CreateRGBSurface(0,0,0,0,0,0,0,0);
 	SDL_Init( SDL_INIT_JOYSTICK | SDL_INIT_VIDEO );
 	SDL_JoystickEventState(SDL_ENABLE);
 	m_events = new SDL_Event[ MAX_SDL_EVENTS ];
