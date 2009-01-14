@@ -68,7 +68,7 @@ vgd::Shp< Joystick > Joystick::get( const int index )
 	// Let's look for a joystick in the cache.
 	vgd::Shp< Joystick >	result = find(index);
 
-	if( ! result )
+	if( ! result && (index<(int)m_joyCache.size()))
 	{
 		result = create(index);
 		if(result)
