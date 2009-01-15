@@ -1,6 +1,7 @@
 #include <vgSDL/event/Mouse.hpp>
 
 #include <SDL_events.h>
+#include <SDL_version.h>
 
 //#include <vgd/Shp.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
@@ -46,7 +47,7 @@ void Mouse::handleEvent( const SDL_Event & event )
 				location,
 				mouse->m_previousLocation,
 				vgm::Vec2f(0,0),
-#if SDL_MINOR_VERSION == 3 // SDL 1.3
+#if (SDL_MINOR_VERSION == 3) // SDL 1.3
 				event.motion.which
 #else // SDL 1.2
 				0
