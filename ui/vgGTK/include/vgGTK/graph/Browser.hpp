@@ -20,7 +20,8 @@
 
 #include "vgGTK/vgGTK.hpp"
 #include "vgGTK/graph/FieldManagerEditor.hpp"
-#include "vgGTK/graph/TreeModelProvider.hpp"
+#include "vgGTK/graph/TreeModelColumnRecord.hpp"
+#include "vgGTK/graph/TreeStore.hpp"
 
 
 
@@ -75,11 +76,12 @@ private:
 	//@}
 
 	/**
-	 * @name	Misc
+	 * @name	Data
 	 */
 	//@{
-	vgd::Shp< vgd::node::Group >	m_root;				///< References the root node.
-	TreeModelProvider				m_modelProvider;	///< The managed tree model provider.
+	vgd::Shp< vgd::node::Group >	m_root;			///< References the root node.
+	const TreeModelColumnRecord		m_columns;		///< The tree store columns.
+	Glib::RefPtr< TreeStore >		m_treeStore;	///< References the tree store.
 	//@}
 
 	/**

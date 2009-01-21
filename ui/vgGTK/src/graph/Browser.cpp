@@ -217,31 +217,40 @@ Browser::Browser()
 	this->pack_start( *toolbar, Gtk::PACK_SHRINK, 3 );
 	this->pack_start( m_path, Gtk::PACK_SHRINK, 3 );
 	this->add( m_vpaned );
+	
+	
+	// Creates the tree store model.
+	m_treeStore = Glib::RefPtr< TreeStore >( new TreeStore(m_columns) );
 
 
 	// Configures the managed tree view to show the model build-up from a vgSDK graph.
 	m_treeView.set_enable_tree_lines();
-	m_treeView.set_model( m_modelProvider.getModel() );
+	m_treeView.set_model( m_treeStore );
 
-	m_treeView.append_column( "Name", m_modelProvider.getColumnRecord().m_nameColumn );
-	m_treeView.append_column( "Type", m_modelProvider.getColumnRecord().m_typeColumn );
-	m_treeView.append_column( "Active", m_modelProvider.getColumnRecord().m_activeColumn );
-	m_treeView.append_column( "Shared", m_modelProvider.getColumnRecord().m_sharedColumn );
+	m_treeView.append_column( "Name", m_columns.m_nameColumn );
+	m_treeView.append_column( "Type", m_columns.m_typeColumn );
+	m_treeView.append_column( "Active", m_columns.m_activeColumn );
+	m_treeView.append_column( "Shared", m_columns.m_sharedColumn );
 
 	m_treeView.get_column(0)->set_resizable();
 	m_treeView.get_column(1)->set_resizable();
 
 	Gtk::TreeViewColumn			* column		= 0;
 	Gtk::CellRenderer			* renderer		= 0;
-	const TreeModelColumnRecord	& columnRecord	= m_modelProvider.getColumnRecord();
-
+	
 	column		= m_treeView.get_column(0);
 	renderer	= column->get_first_cell_renderer();
-	column->set_cell_data_func( *renderer, sigc::bind< 0 >(sigc::mem_fun(this, &Browser::textCellDataFunc), columnRecord.m_nameColumn) );
+	column->set_cell_data_func( *renderer, sigc::bind< 0 >(sigc::mem_fun(this, &Browser::textCellDataFunc), m_columns.m_nameColumn) );
 
 //	column		= m_treeView.get_column(1);
 //	renderer	= column->get_first_cell_renderer();
 //	column->set_cell_data_func( *renderer, sigc::bind< 0 >(sigc::mem_fun(this, &Browser::textCellDataFunc), columnRecord.m_typeColumn) );
+
+
+	// Enable drag&drop on the tree view.
+	// We explicitly tell that only moves are possible (no copy).
+	m_treeView.enable_model_drag_source( Gdk::MODIFIER_MASK, Gdk::ACTION_MOVE );
+	m_treeView.enable_model_drag_dest();	
 
 
 	// Connects several signal handlers on the tree view.
@@ -257,7 +266,7 @@ Browser::Browser()
 void Browser::setRoot( vgd::Shp< vgd::node::Group > root )
 {
 	m_root = root;
-	m_modelProvider.setRoot( root );
+	m_treeStore->setRoot( root );
 	m_actions->set_sensitive( root != 0 );
 }
 
@@ -297,7 +306,7 @@ void Browser::onExpandSubTree()
 
 	if( rowIterator )
 	{
-		m_treeView.expand_row( m_modelProvider.getModel()->get_path(rowIterator), true );
+		m_treeView.expand_row( m_treeStore->get_path(rowIterator), true );
 	}
 }
 
@@ -310,7 +319,7 @@ void Browser::onFullRefresh()
 	const ExpandedRowsBackup	expandedRowsBackup( m_treeView );
 
 	// Do the refresh.
-	m_modelProvider.refresh();
+	m_treeStore->refresh();
 
 	// Restores the selection and the expanded rows.
 	expandedRowsBackup.restore( m_treeView );
@@ -335,7 +344,7 @@ void Browser::onRemoveNode()
 		else
 		{
 			// Asks the user to confirm the node removal.
-			const Glib::ustring	nodeName = (*rowIterator)[ m_modelProvider.getColumnRecord().m_nameColumn ];
+			const Glib::ustring	nodeName = (*rowIterator)[ m_columns.m_nameColumn ];
 			Gtk::MessageDialog	messageDialog("<big><b>Do you really want to remove the node <i>" + nodeName + "</i> ?</b></big>\n\nThis can break then rendering or may even cause the program to crash.", true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO );
 			
 			if( messageDialog.run() == Gtk::RESPONSE_YES )
@@ -344,14 +353,14 @@ void Browser::onRemoveNode()
 				rowPath.up();
 				
 				// Retrieves the parent row iterator, the node to remove and the parent group.
-				Gtk::TreeModel::iterator		parentRowIterator	= m_modelProvider.getModel()->get_iter( rowPath );
-				vgd::Shp< vgd::node::Node >		node				= (*rowIterator)[ m_modelProvider.getColumnRecord().m_nodeColumn ];
-				vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_modelProvider.getColumnRecord().m_nodeColumn ];
+				Gtk::TreeModel::iterator		parentRowIterator	= m_treeStore->get_iter( rowPath );
+				vgd::Shp< vgd::node::Node >		node				= (*rowIterator)[ m_columns.m_nodeColumn ];
+				vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_columns.m_nodeColumn ];
 				vgd::Shp< vgd::node::Group >	parentGroup			= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );
 				
 				// Removes the node and the row in the tree model.
 				parentGroup->removeChild( node );
-				m_modelProvider.getModel()->erase( rowIterator );
+				m_treeStore->erase( rowIterator );
 				
 				// @todo refresh shared information for remaining rows containing the node being removed.
 			}
@@ -411,14 +420,14 @@ void Browser::onSelectionChanged()
 		const Gtk::TreeModel::Row	& row = *selected;
 		
 		// Updates the field manager editor.
-		m_editor.setFieldManager( row.get_value(m_modelProvider.getColumnRecord().m_nodeColumn) );
+		m_editor.setFieldManager( row.get_value(m_columns.m_nodeColumn) );
 		
 		// Updates the path label.
 		Glib::ustring	pathString;
 		
 		for( Gtk::TreeModel::iterator i = selected; i; i = i->parent() )
 		{
-			pathString = "/" + i->get_value(m_modelProvider.getColumnRecord().m_nameColumn) + pathString;
+			pathString = "/" + i->get_value(m_columns.m_nameColumn) + pathString;
 		}
 		
 		m_path.set_text( pathString );
@@ -448,8 +457,8 @@ void Browser::textCellDataFunc( const Gtk::TreeModelColumn< Glib::ustring > & te
 	}
 
 	textRenderer->property_text()			= row[ textColumn ];
-	textRenderer->property_style()			= row[ m_modelProvider.getColumnRecord().m_activeColumn ] == true ? Pango::STYLE_NORMAL : Pango::STYLE_ITALIC;
-	textRenderer->property_strikethrough()	= row[ m_modelProvider.getColumnRecord().m_activeColumn ] == false;
+	textRenderer->property_style()			= row[ m_columns.m_activeColumn ] == true ? Pango::STYLE_NORMAL : Pango::STYLE_ITALIC;
+	textRenderer->property_strikethrough()	= row[ m_columns.m_activeColumn ] == false;
 }
 
 
