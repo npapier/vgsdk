@@ -44,7 +44,9 @@ bool TreeStore::drag_data_delete_vfunc( const TreeModel::Path & path )
 	{
 		vgd::Shp< vgd::node::Group >	parentNode	= vgd::dynamic_pointer_cast< vgd::node::Group >( parentRow->get_value( m_columns.m_nodeColumn ) );
 		
+		// Updates the child node list and the child rows activeness
 		parentNode->removeChild( childIndex );
+		updateChildRowsActiveness( *parentRow );
 	}
 	
 	
@@ -56,6 +58,12 @@ bool TreeStore::drag_data_delete_vfunc( const TreeModel::Path & path )
 
 bool TreeStore::drag_data_received_vfunc( const TreeModel::Path & dest, const Gtk::SelectionData & selection_data )
 {
+	// Do the normal processing.
+	if( Gtk::TreeStore::drag_data_received_vfunc(dest, selection_data) == false )
+	{
+		return false;
+	}
+	
 	// Retrieves the path of the row that has been dropped.
 	Gtk::TreePath	childPath;
 	
@@ -83,12 +91,14 @@ bool TreeStore::drag_data_received_vfunc( const TreeModel::Path & dest, const Gt
 		vgd::Shp< vgd::node::Node >		childNode	= childRow->get_value( m_columns.m_nodeColumn );
 		vgd::Shp< vgd::node::Group >	parentNode	= vgd::dynamic_pointer_cast< vgd::node::Group >( parentRow->get_value( m_columns.m_nodeColumn ) );
 		
+		// Updates the parent's children list and child rows activeness
 		parentNode->insertChild( childNode, insertIndex );
+		updateChildRowsActiveness( *parentRow );
 	}
 	
 	
-	// Do the normal processing.
-	return Gtk::TreeStore::drag_data_received_vfunc( dest, selection_data );
+	// Job's done.
+	return true;
 }
 
 
@@ -131,6 +141,24 @@ void TreeStore::setRoot( vgd::Shp< vgd::node::Group > root )
 	// Updates the reference to the root node and refreshes the model.
 	m_root = root;
 	refresh();
+}
+
+
+
+void TreeStore::updateChildRowsActiveness( const Gtk::TreeRow & parentRow )
+{
+	vgd::Shp< vgd::node::Group >	parentNode	= vgd::dynamic_pointer_cast< vgd::node::Group >( parentRow.get_value(m_columns.m_nodeColumn) );
+	vgd::node::NodeList				enabledChildren;
+	
+	parentNode->getEnabledChildren( enabledChildren );
+	
+	for( Gtk::TreeIter childRow = parentRow.children().begin(); childRow != parentRow.children().end(); ++childRow )
+	{
+		vgd::Shp< vgd::node::Node >	childNode	= childRow->get_value( m_columns.m_nodeColumn );
+		bool						active		= std::find( enabledChildren.begin(), enabledChildren.end(), childNode ) != enabledChildren.end();
+		
+		childRow->set_value( m_columns.m_activeColumn, active );
+	}
 }
 
 
