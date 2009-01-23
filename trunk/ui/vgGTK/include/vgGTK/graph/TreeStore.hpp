@@ -61,6 +61,11 @@ private:
 
 	const TreeModelColumnRecord		& m_columns;	///< Keeps track of the column of the managed tree model.
 	vgd::Shp< vgd::node::Group >	m_root;			///< References the root node.
+	
+	/**
+	 * @brief	Update the activeness of the child rows of the given model row.
+	 */
+	void updateChildRowsActiveness( const Gtk::TreeRow & parentRow );
 };
 
 
