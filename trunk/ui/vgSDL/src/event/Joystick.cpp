@@ -90,7 +90,7 @@ void Joystick::handleEvent( const SDL_JoyAxisEvent & event )
 		using ::vgd::event::AxisEvent;
 		using ::vgd::event::detail::GlobalButtonStateSet;
 
-		const float value		= normalize(event.value);
+		const float value		= normalize((const short)event.value);
 		AxisEvent	* myEvent	= 0;
 
 		myEvent = new AxisEvent(
@@ -191,7 +191,7 @@ Joystick::~Joystick()
 {
 	assert( m_joystick != 0 );
 
-	SDL_JoystickClose( m_joystick );
+//	SDL_JoystickClose( m_joystick );
 }
 
 
