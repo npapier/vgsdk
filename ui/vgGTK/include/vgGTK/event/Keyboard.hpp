@@ -23,6 +23,9 @@ namespace event
 
 /**
  * @brief	Implements a keyboard event device for GTK widgets.
+ *
+ * @remark	This device will not handle the @code tab key since it can involve inconsistancy in the global
+ *		button state set due to the focus lost.
  */
 struct VGGTK_API Keyboard : public ::vgd::event::Keyboard, public SignalHandler
 {
@@ -43,6 +46,9 @@ private:
 	//@{
 	/**
 	 * @brief	Handles any key event notifications (press or release).
+	 *
+	 * @remark Will skip @code tab key events to avoid inconsistancy problems due to
+	 *		the focus lost.
 	 */
 	bool onKeyEvent( GdkEventKey * event );
 	//@}
