@@ -56,7 +56,7 @@ struct VGEGL_API Dragger : public vgd::event::EventVisitor
 	/**
 	 * @name Interface of EventVisitor.
 	 *
-	 * The five following methods done nothing, but must be overriden by derived Dragger to perform action.
+	 * The following methods do nothing and must be overriden by derived Dragger to perform proper actions.
 	 */
 	//@{
 
