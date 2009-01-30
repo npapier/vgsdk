@@ -1,4 +1,4 @@
 description	= '(V)ersatile (G)raphical (B)ase'
 vcsUse		= 'no'
 type		= 'static'
-version		= '0-4'
+version		= '0-5'

@@ -1,6 +1,7 @@
+description	= '(V)ersatile (G)raphical (E)valuation with Open(GL)'
 vcsUse		= 'no'
 type		= 'shared'
-version		= '0-4'
+version		= '0-5'
 uses		= [ 'glu', 'opengl' ]
-libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgm 0-4', 'vgio 0-4' ]
+libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgm 0-5', 'vgio 0-5' ]
 deps		= [ '../../dependencies', '../../core', '../vge', '../../io/vgio' ]

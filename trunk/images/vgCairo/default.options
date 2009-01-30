@@ -1,7 +1,8 @@
+description	= '(V)ersatile (G)raphical (Cairo)'
 vcsUse		= 'no'
 type		= 'shared'
-version		= '0-4'
-uses		= [ 'cairo' ]
+version		= '0-5'
 #uses		= [ 'cairomm' ]
-libs		= [ 'vgd 0-4' ]
+uses		= [ 'cairo' ]
+libs		= [ 'vgd 0-5' ]
 deps		= [ '../../core' ]

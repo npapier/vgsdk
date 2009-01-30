@@ -1,6 +1,7 @@
+description	= '(V)ersatile (G)raphical (ITK)'
 vcsUse		= 'no'
 type		= 'shared'
-version		= '0-4'
+version		= '0-5'
 uses		= [ 'itk' ]
-libs		= [ 'vgd 0-4' ]
+libs		= [ 'vgd 0-5' ]
 deps		= [ '../../core' ]

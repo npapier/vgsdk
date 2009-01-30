@@ -1,7 +1,7 @@
 description	= '(V)ersatile (G)raphical (D)ata'
 vcsUse		= 'no'
 type		= 'shared'
-version		= '0-4'
+version		= '0-5'
 uses		= [ 'boost', 'openil', 'openilu' ]
-libs		= [ 'vgDebug 0-4', 'vgm 0-4' ]
+libs		= [ 'vgDebug 0-5', 'vgm 0-5' ]
 deps		= [ '../vgBase', '../vgDebug', '../vgm' ]
