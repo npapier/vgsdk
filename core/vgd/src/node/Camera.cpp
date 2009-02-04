@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,19 +17,44 @@ namespace node
 
 
 
-META_NODE_CPP( Camera );
+vgd::Shp< Camera > Camera::create( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< Camera > node( new Camera(nodeName) );
+
+	/* Adds a vertex (i.e. a node) to boost::graph */
+	graph().addNode( node );
+
+	/* Sets fields to their default values */
+	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< Camera > Camera::createWhole( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< Camera > node = Camera::create(nodeName);
+
+	/* Sets optional fields to their default values */
+	node->setOptionalsToDefaults();
+
+	return node;
+}
 
 
 
 Camera::Camera( const std::string nodeName ) :
 	vgd::node::ProjectionTransformation( nodeName )
 {
-	// Add field
+	// Adds field(s)
+	addField( new FScissorType(getFScissor()) );
 	addField( new FMatrixType(getFMatrix()) );
 	addField( new FViewportType(getFViewport()) );
-	addField( new FScissorType(getFScissor()) );
 
-	// Links
+	// Sets link(s)
 	link( getDFNode() );
 }
 
@@ -38,11 +63,7 @@ Camera::Camera( const std::string nodeName ) :
 void Camera::setToDefaults( void )
 {
 	ProjectionTransformation::setToDefaults();
-
-	vgm::MatrixR identity;
-	identity.setIdentity();
-	
-	setMatrix( identity );
+	setMatrix( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 }
 
 
@@ -51,68 +72,78 @@ void Camera::setOptionalsToDefaults()
 {
 	ProjectionTransformation::setOptionalsToDefaults();
 	
-	setViewport( 	vgm::Rectangle2i( 0, 0, 1600, 1200 ) );
-	//setScissor( empty );
+	setViewport( vgm::Rectangle2i(0, 0, 1600, 1200) );
 }
 
 
 
-const vgm::MatrixR& Camera::getMatrix( void ) const
+// Scissor
+const bool Camera::getScissor( ScissorValueType& value ) const
 {
-	return ( getFieldRO<FMatrixType>(getFMatrix())->getValue() );
-}
-
-
-
-void Camera::setMatrix( const vgm::MatrixR& projection )
-{
-	getFieldRW<FMatrixType>(getFMatrix())->setValue( projection );
-}
-
-
-
-bool Camera::getViewport( vgm::Rectangle2i& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< int /*ViewportParameterType*/, ViewportValueType >( this, getFViewport(), VIEWPORT, value )
+	return (
+		vgd::field::getParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), static_cast<ScissorParameterType>(SCISSOR), value )
 		);
 }
 
 
 
-void Camera::setViewport( vgm::Rectangle2i value )
+void Camera::setScissor( ScissorValueType value )
 {
-	vgd::field::setParameterValue< int /*ViewportParameterType*/, ViewportValueType >( this, getFViewport(), VIEWPORT, value );
-}
-
-
-
-void Camera::eraseViewport()
-{
-	vgd::field::eraseParameterValue< int /*ViewportParameterType*/, ViewportValueType >( this, getFViewport(), VIEWPORT );
-}
-
-
-
-bool Camera::getScissor( vgm::Rectangle2i& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue<int /*ScissorParameterType*/, ScissorValueType >( this, getFScissor(), SCISSOR, value )
-		);
-}
-
-
-
-void Camera::setScissor( vgm::Rectangle2i value )
-{
-	vgd::field::setParameterValue<int /*ScissorParameterType*/, ScissorValueType >( this, getFScissor(), SCISSOR, value );
+	vgd::field::setParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), static_cast<ScissorParameterType>(SCISSOR), value );
 }
 
 
 
 void Camera::eraseScissor()
 {
-	vgd::field::eraseParameterValue<int /*ScissorParameterType*/, ScissorValueType >( this, getFScissor(), SCISSOR );
+	vgd::field::eraseParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), static_cast<ScissorParameterType>(SCISSOR) );
+}
+
+
+
+// Matrix
+const Camera::MatrixValueType Camera::getMatrix() const
+{
+	return getFieldRO<FMatrixType>(getFMatrix())->getValue();
+}
+
+
+
+void Camera::setMatrix( const MatrixValueType value )
+{
+	getFieldRW<FMatrixType>(getFMatrix())->setValue( value );
+}
+
+
+
+// Viewport
+const bool Camera::getViewport( ViewportValueType& value ) const
+{
+	return (
+		vgd::field::getParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), static_cast<ViewportParameterType>(VIEWPORT), value )
+		);
+}
+
+
+
+void Camera::setViewport( ViewportValueType value )
+{
+	vgd::field::setParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), static_cast<ViewportParameterType>(VIEWPORT), value );
+}
+
+
+
+void Camera::eraseViewport()
+{
+	vgd::field::eraseParameterValue< ViewportParameterType, ViewportValueType >( this, getFViewport(), static_cast<ViewportParameterType>(VIEWPORT) );
+}
+
+
+
+// Field name accessor(s)
+const std::string Camera::getFScissor( void )
+{
+	return "f_scissor";
 }
 
 
@@ -131,22 +162,16 @@ const std::string Camera::getFViewport( void )
 
 
 
-const std::string Camera::getFScissor( void )
-{
-	return "f_scissor";
-}
 
-
-
-vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
+const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 {
 	vgm::Rectangle2i viewport;
 	bool isDefined = getViewport( viewport );
 	assert( isDefined );
 
-	vgm::Vec2f o(	static_cast<float>(viewport.x()) + static_cast<float>(viewport.width())*0.5f,
-					static_cast<float>(viewport.y()) + static_cast<float>(viewport.height())*0.5f );
-	
+	vgm::Vec2f o(	static_cast<float>(viewport.x()) + static_cast<float>(viewport.width()) * 0.5f,
+					static_cast<float>(viewport.y()) + static_cast<float>(viewport.height()) * 0.5f );
+
 	vgm::Vec2f p(	static_cast<float>(viewport.width()),
 					static_cast<float>(viewport.height()) );
 
@@ -156,12 +181,17 @@ vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 	vgm::Vec3f window(	p[0] * 0.5f * vertex[0] + o[0],
 						p[1] * 0.5f * vertex[1] + o[1],
 						(fFar - fNear) * 0.5f * vertex[2] + (fNear+fFar)*0.5f );
-	
+
 	return window;
 }
+		IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
 
 
-	
+
+const vgd::basic::RegisterNode<Camera> Camera::m_registrationInstance;
+
+
+
 } // namespace node
 
 } // namespace vgd

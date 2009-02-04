@@ -79,7 +79,7 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		ON = 256,	///< Specifies if the clipping plane is enabled or disabled.
+		ON = 258,	///< Specifies if the clipping plane is enabled or disabled.
 		DEFAULT_ON = ON	///< Specifies if the clipping plane is enabled or disabled.
 	};
 

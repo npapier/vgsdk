@@ -75,10 +75,10 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		DISABLED = 257,	///< Facet culling is disabled
-		FRONT = 259,	///< Front-facing facets are culled
-		BACK = 258,	///< Back-facing facets are culled
-		FRONT_AND_BACK = 260,	///< Front-facing and back-facing facets are culled
+		DISABLED = 259,	///< Facet culling is disabled
+		FRONT = 261,	///< Front-facing facets are culled
+		BACK = 260,	///< Back-facing facets are culled
+		FRONT_AND_BACK = 262,	///< Front-facing and back-facing facets are culled
 		DEFAULT_MODE = DISABLED	///< Facet culling is disabled
 	};
 
