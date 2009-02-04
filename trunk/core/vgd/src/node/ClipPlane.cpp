@@ -79,7 +79,7 @@ void ClipPlane::setOptionalsToDefaults()
 const bool ClipPlane::getOn( OnValueType& value ) const
 {
 	return (
-		vgd::field::getParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON, value )
+		vgd::field::getParameterValue< OnParameterType, OnValueType >( this, getFOn(), static_cast<OnParameterType>(ON), value )
 		);
 }
 
@@ -87,14 +87,14 @@ const bool ClipPlane::getOn( OnValueType& value ) const
 
 void ClipPlane::setOn( OnValueType value )
 {
-	vgd::field::setParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON, value );
+	vgd::field::setParameterValue< OnParameterType, OnValueType >( this, getFOn(), static_cast<OnParameterType>(ON), value );
 }
 
 
 
 void ClipPlane::eraseOn()
 {
-	vgd::field::eraseParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON );
+	vgd::field::eraseParameterValue< OnParameterType, OnValueType >( this, getFOn(), static_cast<OnParameterType>(ON) );
 }
 
 

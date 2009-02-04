@@ -87,7 +87,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		SHININESS = 267,	///< Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
+		SHININESS = 269,	///< Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
 		DEFAULT_SHININESS = SHININESS	///< Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
 	};
 
@@ -135,7 +135,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		EMISSION = 266,	///< Emmissive color of the surface.
+		EMISSION = 268,	///< Emmissive color of the surface.
 		DEFAULT_EMISSION = EMISSION	///< Emmissive color of the surface.
 	};
 
@@ -183,7 +183,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		SPECULAR = 265,	///< Specular color of the surface.
+		SPECULAR = 267,	///< Specular color of the surface.
 		DEFAULT_SPECULAR = SPECULAR	///< Specular color of the surface.
 	};
 
@@ -261,7 +261,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		AMBIENT = 263,	///< Ambient color of the surface.
+		AMBIENT = 265,	///< Ambient color of the surface.
 		DEFAULT_AMBIENT = AMBIENT	///< Ambient color of the surface.
 	};
 
@@ -309,7 +309,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		DIFFUSE = 264,	///< Diffuse color of the surface.
+		DIFFUSE = 266,	///< Diffuse color of the surface.
 		DEFAULT_DIFFUSE = DIFFUSE	///< Diffuse color of the surface.
 	};
 
