@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -608,6 +608,19 @@ void Rotation::multVec( const Vec3f& src, Vec3f& dst ) const
 	getValue( myMat );
 
 	myMat.multVecMatrix( src, dst );
+}
+
+
+
+const Vec3f Rotation::multVec( const Vec3f& src ) const
+{
+	MatrixR myMat;
+	getValue( myMat );
+
+	vgm::Vec3f dst;
+	myMat.multVecMatrix( src, dst );
+
+	return dst;
 }
 
 
