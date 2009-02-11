@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -30,10 +30,10 @@ namespace event
 /**
  * @brief	Defines the abstract interface for objects that can receive events.
  * 
- * Objects of this class must be attached to a event source to get notified on
+ * Objects of this class must be attached to a event Source to get notified on
  * new events.
  * 
- * @see	::vgd::event::source
+ * @see	vgd::event::Source
  */
 struct VGD_API Listener
 {

@@ -1,12 +1,13 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGEGL_ENGINE_SCENEMANAGER_HPP
 #define _VGEGL_ENGINE_SCENEMANAGER_HPP
 
-#include <vgd/event/Listener.hpp>
+#include <vgd/event/DeviceListener.hpp>
 #include <vge/engine/SceneManager.hpp>
 
 #include "vgeGL/event/IEventProcessor.hpp"
@@ -37,7 +38,7 @@ namespace engine
  * - Event handling (listen and process events with event processors).
  * - Casts ray under the mouse cursor.
  */
-struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::Listener
+struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::DeviceListener
 {
 	/**
 	 * @name Constructors/Destructor
