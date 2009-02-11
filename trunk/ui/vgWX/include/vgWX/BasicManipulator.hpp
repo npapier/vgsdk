@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGWX_BASICMANIPULATOR_HPP
 #define _VGWX_BASICMANIPULATOR_HPP
@@ -10,9 +11,16 @@
 #include <wx/defs.h>
 
 #include "vgWX/BasicViewer.hpp"
-#include "vgWX/event/Keyboard.hpp"
-#include "vgWX/event/Mouse.hpp"
 #include "vgWX/vgWX.hpp"
+
+namespace vgWX
+{
+	namespace event
+	{
+		struct Keyboard;
+		struct Mouse;
+	}
+}
 
 
 
@@ -155,16 +163,13 @@ protected:
 protected:
 	DECLARE_EVENT_TABLE();
 	
-
-
 	/**
-	 * @name Members for events.
+	 * @name Devices
 	 */
 	//@{
-	vgWX::event::Keyboard	m_keyboard;
-	vgWX::event::Mouse		m_mouse;
+	vgd::Shp< vgWX::event::Keyboard	>	m_keyboard;
+	vgd::Shp< vgWX::event::Mouse >		m_mouse;
 	//@}
-
 
 
 private:

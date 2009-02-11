@@ -1,12 +1,16 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgWX/BasicManipulator.hpp"
 
 #include <vgm/Utilities.hpp>
 #include <vgDebug/Global.hpp>
+
+#include "vgWX/event/Keyboard.hpp"
+#include "vgWX/event/Mouse.hpp"
 
 
 
@@ -16,7 +20,7 @@ namespace vgWX
 
 
 BEGIN_EVENT_TABLE( BasicManipulator, Canvas )
-	EVT_CHAR    				( BasicManipulator::OnChar			)
+	EVT_CHAR( BasicManipulator::OnChar )
 END_EVENT_TABLE()
 
 
@@ -27,11 +31,13 @@ BasicManipulator::BasicManipulator(
 					const wxPoint& pos, const wxSize& size,
 					long style,					
 					int* gl_attrib,
-					const wxWindowID id ) :
-
-	BasicViewer( parent, name, pos, size, style, gl_attrib, id ),
+					const wxWindowID id )
+:	BasicViewer( parent, name, pos, size, style, gl_attrib, id ),
 	
-	m_sceneTransform(	vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
+	m_keyboard		( new vgWX::event::Keyboard() ),
+	m_mouse			( new vgWX::event::Mouse() ),
+	
+	m_sceneTransform( vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
 	
 	//m_previousMouseCoord
 {
@@ -45,11 +51,11 @@ BasicManipulator::BasicManipulator(
 	getSetup()->addChild( m_sceneTransform );
 	
 	// Install event handler and event listener.
-	PushEventHandler( &m_keyboard );
-	PushEventHandler( &m_mouse );
-	
-	m_keyboard.attachEventListener( this );
-	m_mouse.attachEventListener( this );
+	PushEventHandler( m_keyboard.get() );
+	PushEventHandler( m_mouse.get() );
+
+	addDevice( m_keyboard );
+	addDevice( m_mouse );
 }
 
 
@@ -61,9 +67,11 @@ BasicManipulator::BasicManipulator(
 					const wxPoint& pos, const wxSize& size,
 					long style,					
 					int* gl_attrib,
-					const wxWindowID id ) :
-
-	BasicViewer( parent, pSharedCanvas, name, pos, size, style, gl_attrib, id ),
+					const wxWindowID id )
+:	BasicViewer( parent, pSharedCanvas, name, pos, size, style, gl_attrib, id ),
+	
+	m_keyboard		( new vgWX::event::Keyboard() ),
+	m_mouse			( new vgWX::event::Mouse() ),
 	
 	m_sceneTransform(	vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
 	
@@ -79,23 +87,23 @@ BasicManipulator::BasicManipulator(
 	getSetup()->addChild( m_sceneTransform );
 	
 	// Install event handler and event listener.
-	PushEventHandler( &m_keyboard );
-	PushEventHandler( &m_mouse );
-	
-	m_keyboard.attachEventListener( this );
-	m_mouse.attachEventListener( this );
+	PushEventHandler( m_keyboard.get() );
+	PushEventHandler( m_mouse.get() );
+
+	addDevice( m_keyboard );
+	addDevice( m_mouse );
 }
 
 
 
 BasicManipulator::~BasicManipulator()
 {
-	// Deinstall event handler and event listener.
-	m_keyboard.detachEventListener( this );
-	m_mouse.detachEventListener( this );
-
+	// Deinstall event handlers.
 	PopEventHandler();
 	PopEventHandler();
+	
+	removeDevice( m_mouse );
+	removeDevice( m_keyboard );
 }
 
 

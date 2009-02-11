@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -20,7 +20,7 @@ namespace event
 {
 
 /**
- * @brief	Implements a keyboard button event class.
+ * @brief	Implements a mouse button event.
  */
 struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 {
@@ -57,10 +57,14 @@ struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 	 * 
 	 * @return	the device id
 	 */
-	unsigned int getDeviceId() const;
+	const unsigned int getDeviceId() const;
 
-	// overridden method
+	/**
+	 * @brief	Overrides
+	 */
+	//@{
 	void accept( vgd::event::EventVisitor& eventVisitor );
+	//@}
 
 private:
 	/**

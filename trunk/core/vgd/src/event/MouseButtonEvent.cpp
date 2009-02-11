@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -28,10 +28,13 @@ MouseButtonEvent::MouseButtonEvent( Source *source, const ButtonStateSet& button
 {}
 
 
+
 MouseButtonEvent::~MouseButtonEvent()
 {}
 
-unsigned int MouseButtonEvent::getDeviceId() const
+
+
+const unsigned int MouseButtonEvent::getDeviceId() const
 {
 	return m_deviceId;
 }

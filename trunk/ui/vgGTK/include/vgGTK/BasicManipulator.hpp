@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -34,7 +34,9 @@ struct VGGTK_API BasicManipulator : public GenericCanvas< vgUI::BasicManipulator
 
 	template< typename SharedCanvasType >
 	BasicManipulator( const SharedCanvasType * sharedCanvas )
-	:	GenericCanvas< vgUI::BasicManipulator >( sharedCanvas )
+	:	GenericCanvas< vgUI::BasicManipulator >( sharedCanvas ),
+		m_keyboard( new vgGTK::event::Keyboard() ),
+		m_mouse( new vgGTK::event::Mouse() )
 	{}
 	//@}
 
@@ -50,8 +52,8 @@ protected:
 
 private:
 
-	::vgGTK::event::Keyboard	m_keyboard;	///< The GTK keyboard device.
-	::vgGTK::event::Mouse		m_mouse;	///< The GTK mouse device.
+	vgd::Shp< vgGTK::event::Keyboard >	m_keyboard;	///< The GTK keyboard device.
+	vgd::Shp< vgGTK::event::Mouse >		m_mouse;	///< The GTK mouse device.
 
 };
 
