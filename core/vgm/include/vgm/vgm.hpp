@@ -6,19 +6,8 @@
 #ifndef _VGM_VGM_HPP
 #define _VGM_VGM_HPP
 
-/** 
- * @namespace vgm
- * 
- * @brief (V)ersatile (G)raphical (M)athematics
- *
- * Vgm is a collection of classes for doing basic linear algebra(matrix, vector and rotation...) and geometry
- * (line, box, plane...).
- * 
- * \b vgm is open source (LGPL).
- */
-
 /**
- * @defgroup vgmGroup vgm
+ * @defgroup g_vgm vgm- (V)ersatile (G)raphical (M)athematics
  */
 
 /**
@@ -26,7 +15,7 @@
  *
  * vgm provides some basic geometrical classes like box, line, plane and rectangle.
  * 
- * @ingroup vgmGroup
+ * @ingroup g_vgm
  */
 
 /**
@@ -37,8 +26,19 @@
  *
  * This linear algebra package contains mainly matrix, rotation and vectors classes.
  * 
- * @ingroup vgmGroup
- */ 
+ * @ingroup g_vgm
+ */
+
+/** 
+ * @namespace vgm
+ * 
+ * @brief (V)ersatile (G)raphical (M)athematics
+ *
+ * Vgm is a collection of classes for doing basic linear algebra(matrix, vector and rotation...) and geometry
+ * (line, box, plane...).
+ * 
+ * \b vgm is open source (LGPL).
+ */
 
 #include <vgBase/Type.hpp>
 
