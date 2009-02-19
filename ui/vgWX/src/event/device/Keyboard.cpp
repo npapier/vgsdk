@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
-#include "vgWX/event/Keyboard.hpp"
+#include "vgWX/event/device/Keyboard.hpp"
 
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/Shp.hpp>
@@ -14,17 +14,21 @@
 
 namespace vgWX
 {
-	
+
 namespace event
 {
+
+namespace device
+{
+
 
 
 BEGIN_EVENT_TABLE(Keyboard, wxEvtHandler)
 	EVT_KEY_DOWN	(	Keyboard::onKeyDown	)
 	EVT_KEY_UP		(	Keyboard::onKeyUp	)
 END_EVENT_TABLE()
-	
-	
+
+
 Keyboard::Keyboard()
 {}
 
@@ -70,7 +74,9 @@ void Keyboard::onKeyUp( wxKeyEvent& event )
 }
 
 
-	
+
+} // namespace device
+
 } // namespace event
 
 } // namespace vgWX

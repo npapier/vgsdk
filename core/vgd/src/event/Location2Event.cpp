@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -15,15 +15,13 @@ namespace vgd
 
 namespace event
 {
-	
 
-	
-Location2Event::Location2Event(	Source * source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation,
-								const Size& size, const unsigned int deviceId )
+
+
+Location2Event::Location2Event(	Source * source, const ButtonStateSet& buttonStates, const Location& location, const Location& previousLocation, const Size& size )
 :	Location2( location, size),
 	Event( source, buttonStates ),
-	m_previous( previousLocation ),
-	m_deviceId(deviceId)
+	m_previous( previousLocation )
 {}
 
 
@@ -48,11 +46,6 @@ const Location2Event::LocationDelta Location2Event::getDelta() const
 		LocationDelta delta = this->m_location - this->m_previous;
 		return ( delta );
 	}
-}
-
-unsigned int Location2Event::getDeviceId() const
-{
-	return m_deviceId;
 }
 
 

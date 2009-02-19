@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -40,13 +40,14 @@ struct VGEGL_API IInteraction : public EventProcessor, public vgd::event::EventV
 	 */
 	//@{
 	void apply( const vgd::event::AxisEvent				* /*pAxisEvent*/			) {}
-	void apply( const vgd::event::HatEvent				* /*pHatEvent*/				) {}
+	void apply( const vgd::event::HatEvent				* /*pHatEvent*/			) {}
 	void apply( const vgd::event::JoystickButtonEvent	* /*pJoystickButtonEvent*/	) {}
 	void apply( const vgd::event::KeyboardButtonEvent	* /*pKeyboardButtonEvent*/	) {}
 	void apply( const vgd::event::Location2Event		* /*pLocation2Event*/ 		) {}
-	void apply( const vgd::event::MouseButtonEvent		* /*pMouseButtonEvent*/		) {}
-	void apply( const vgd::event::Motion3Event			* /*pMotion3Event*/			) {}
-	void apply( const vgd::event::MouseWheelEvent		* /*pMouseWheelEvent*/		) {}
+	void apply( const vgd::event::MouseButtonEvent		* /*pMouseButtonEvent*/	) {}
+	void apply( const vgd::event::Motion3Event			* /*pMotion3Event*/		) {}
+	void apply( const vgd::event::MouseWheelEvent		* /*pMouseWheelEvent*/	) {}
+	void apply( const vgd::event::TimerEvent			* /*pTimerEvent*/		) {}
 	//@}
 
 private:	

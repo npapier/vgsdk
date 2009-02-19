@@ -11,14 +11,16 @@
 #include <wx/defs.h>
 
 #include "vgWX/BasicViewer.hpp"
-#include "vgWX/vgWX.hpp"
 
 namespace vgWX
 {
 	namespace event
 	{
-		struct Keyboard;
-		struct Mouse;
+		namespace device
+		{
+			struct Keyboard;
+			struct Mouse;
+		}
 	}
 }
 
@@ -167,8 +169,8 @@ protected:
 	 * @name Devices
 	 */
 	//@{
-	vgd::Shp< vgWX::event::Keyboard	>	m_keyboard;
-	vgd::Shp< vgWX::event::Mouse >		m_mouse;
+	vgd::Shp< vgWX::event::device::Keyboard	>	m_keyboard;
+	vgd::Shp< vgWX::event::device::Mouse >		m_mouse;
 	//@}
 
 

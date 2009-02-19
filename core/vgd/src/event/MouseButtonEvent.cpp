@@ -12,19 +12,17 @@
 
 namespace vgd
 {
-	
+
 namespace event
 {
-	
 
-	
+
+
 MouseButtonEvent::MouseButtonEvent( Source *source, const ButtonStateSet& buttonStates, 
 									const int32 buttonID, const State state,
-									const Location& location, const Size& size,
-									const unsigned int deviceId )
+									const Location& location, const Size& size )
 :	Location2( location, size),					
-	ButtonEvent( source, buttonStates, buttonID, state ),
-	m_deviceId(deviceId)
+	ButtonEvent( source, buttonStates, buttonID, state )
 {}
 
 
@@ -32,12 +30,6 @@ MouseButtonEvent::MouseButtonEvent( Source *source, const ButtonStateSet& button
 MouseButtonEvent::~MouseButtonEvent()
 {}
 
-
-
-const unsigned int MouseButtonEvent::getDeviceId() const
-{
-	return m_deviceId;
-}
 
 
 void MouseButtonEvent::accept( vgd::event::EventVisitor& eventVisitor )

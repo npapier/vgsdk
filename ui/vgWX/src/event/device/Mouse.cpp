@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
-#include "vgWX/event/Mouse.hpp"
+#include "vgWX/event/device/Mouse.hpp"
 
 #include <limits>
 #include <vgd/Shp.hpp>
@@ -19,10 +19,13 @@
 
 namespace vgWX
 {
-	
+
 namespace event
 {
-	
+
+namespace device
+{
+
 BEGIN_EVENT_TABLE(Mouse, wxEvtHandler)
 	EVT_LEFT_DCLICK		(Mouse::onLeftDoubleClick	)
 	EVT_LEFT_DOWN		(Mouse::onLeftDown			)
@@ -36,8 +39,8 @@ BEGIN_EVENT_TABLE(Mouse, wxEvtHandler)
 	EVT_MOTION			(Mouse::onMotion			)
 	EVT_MOUSEWHEEL		(Mouse::onWheel				)
 END_EVENT_TABLE()
-	
-	
+
+
 Mouse::Mouse() :
 	m_previousMousePosition( std::numeric_limits<float>::max(), std::numeric_limits<float>::max() )
 {
@@ -304,6 +307,8 @@ vgd::event::Location2Event::Location Mouse::getLocation( wxMouseEvent& event ) c
 	return ( location );
 }
 
+
+} // namespace device
 
 } // namespace event
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,17 +7,16 @@
 #ifndef _VGD_EVENT_MOUSEWHEELEVENT_HPP
 #define _VGD_EVENT_MOUSEWHEELEVENT_HPP
 
-#include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
 
 
 
 namespace vgd
 {
-	
+
 namespace event
 {
-	
+
 
 
 /**
@@ -37,10 +36,9 @@ struct VGD_API MouseWheelEvent : public Event
 	 * @param	buttonStates	a reference to the button state set
 	 * @param	axis				a wheel axis
 	 * @param	delta				a wheel rotation delta
-	 * @param	deviceId			the id of the device causing the event
 	 */
-	MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis axis, int32 delta, unsigned int deviceId=0 );
-	
+	MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis axis, int32 delta );
+
 	/**
 	 * @brief	Retrieves the wheel axis.
 	 * 
@@ -56,15 +54,12 @@ struct VGD_API MouseWheelEvent : public Event
 	const int32 getDelta() const;
 
 	/**
-	 * @brief	Retrives the device id
-	 * 
-	 * @return	the device id
+	 * @name Overridden method
 	 */
-	unsigned int getDeviceId() const;	
-
-	// overridden method
+	//@{
 	void accept( vgd::event::EventVisitor& eventVisitor );
-	
+	//@}
+
 private:
 
 	/**
@@ -76,13 +71,9 @@ private:
 	 * @brief	The rotation delta.
 	 */
 	int32 delta;
-	/**
-	 * @brief Id of the device causing the event.
-	 */
-	unsigned int m_deviceId;
 };
-	
-	
+
+
 } // namespace event
 
 } // namespace vgd

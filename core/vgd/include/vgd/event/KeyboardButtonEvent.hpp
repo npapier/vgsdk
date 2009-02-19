@@ -7,7 +7,6 @@
 #ifndef _VGD_EVENT_KEYBOARDBUTTONEVENT_HPP
 #define _VGD_EVENT_KEYBOARDBUTTONEVENT_HPP
 
-#include "vgd/vgd.hpp"
 #include "vgd/event/ButtonEvent.hpp"
 
 

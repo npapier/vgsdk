@@ -1,11 +1,11 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-#ifndef _VGSDL_EVENT_JOYSTICK_HPP_
-#define _VGSDL_EVENT_JOYSTICK_HPP_
+#ifndef _VGSDL_EVENT_DEVICE_JOYSTICK_HPP_
+#define _VGSDL_EVENT_DEVICE_JOYSTICK_HPP_
 
 #include <cassert>
 #include <string>
@@ -17,7 +17,7 @@
 
 #include <vgd/Shp.hpp>
 #include <vgd/WeakPtr.hpp>
-#include <vgd/event/Joystick.hpp>
+#include <vgd/event/device/Joystick.hpp>
 
 #include "vgSDL/vgSDL.hpp"
 
@@ -27,6 +27,9 @@ namespace vgSDL
 {
 
 namespace event
+{
+
+namespace device
 {
 
 
@@ -44,7 +47,7 @@ namespace event
  * 			have initialized joystick support in SDL
  * 			by passing the @c SDL_INIT_JOYSTICK flag to @c SDL_Init function.
  */
-struct VGSDL_API Joystick : public ::vgd::event::Joystick
+struct VGSDL_API Joystick : public ::vgd::event::device::Joystick
 {
 	/**
 	 * @name	Joystick Querying
@@ -205,10 +208,10 @@ private:
 	 * This constructor is reserved for private use since there can be only
 	 * joystick instance per identifier (thanks to the SDL architecture).
 	 *
-	 * @param	index	the index of an attached joystick
+	 * @param joystick		the sdl joystick to be attached
+	 * @param identifier	the device identifier
 	 */
-	Joystick( SDL_Joystick* joystick );
-
+	Joystick( SDL_Joystick* joystick, const uint identifier = 0 );
 
 	typedef std::vector< vgd::WeakPtr< Joystick >  >	JoyCollection;
 
@@ -218,6 +221,8 @@ private:
 
 
 
+} // namespace device
+
 } // namespace event
 
 } // namespace vgSDL
@@ -225,4 +230,4 @@ private:
 
 
 
-#endif /*_VGSDL_EVENT_JOYSTICK_HPP_*/
+#endif /*_VGSDL_EVENT_DEVICE_JOYSTICK_HPP_*/

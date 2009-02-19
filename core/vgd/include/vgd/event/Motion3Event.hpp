@@ -9,7 +9,6 @@
 #include <vgm/Vector.hpp>
 #include <vgm/Rotation.hpp>
 
-#include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
 
 
@@ -20,8 +19,8 @@ namespace vgd
 namespace event
 {
 
-	
-	
+
+
 /**
  * @brief	Defines the event class for 3d movement notifications.
  */
@@ -36,20 +35,20 @@ struct VGD_API Motion3Event : public Event
 	 * @brief	Defines the rotation type.
 	 */
 	typedef vgm::Rotation Rotation;
-	
+
 	/**
 	 * @brief	Defines the 'canvas size' type.
 	 */
 	typedef vgm::Vec3f Size;
-		
+
 	/**
 	 * @brief	Constructor.
 	 * 
-	 * @param	source				a pointer to event source
+	 * @param	source			a pointer to event source
 	 * @param	buttonStates		a reference to the button state set
 	 * @param	translation			the translation to pass through the event
-	 * @param	rotation				the rotation to pass through the event
-	 * @param	size					the size of the 'canvas' where Motion3Event occurs
+	 * @param	rotation			the rotation to pass through the event
+	 * @param	size				the size of the 'canvas' where Motion3Event occurs
 	 */
 	Motion3Event( Source *source, const ButtonStateSet& buttonStates, const Translation& translation, const Rotation& rotation, const Size& size );
 	
@@ -57,7 +56,7 @@ struct VGD_API Motion3Event : public Event
 	 * @brief	Destructor.
 	 */
 	virtual ~Motion3Event();
-	
+
 	/**
 	 * @brief	Retrieves the translation passed through the event.
 	 * 
@@ -71,7 +70,7 @@ struct VGD_API Motion3Event : public Event
 	 * @return	a rotation
 	 */
 	const Rotation& getRotation() const;
-	
+
 	/**
 	 * @brief	Retrieves the 'canvas size' passed through the event.
 	 * 

@@ -1,13 +1,20 @@
-#include <vgSDL/event/EventHandler.hpp>
+// VGSDK - Copyright (C) 2009, Clement Forest and Nicolas Papier.
+// Distributed under the terms of the GNU Library General Public License (LGPL)
+// as published by the Free Software Foundation.
+// Author Clement Forest
+// Author Nicolas Papier
 
-#include <vgSDL/event/Mouse.hpp>
-#include <vgSDL/event/Joystick.hpp>
+#include "vgSDL/event/EventHandler.hpp"
+
 #include <SDL_version.h>
+#include "vgSDL/event/device/Mouse.hpp"
+#include "vgSDL/event/device/Joystick.hpp"
 
-#define MAX_SDL_EVENTS 20
+
 
 namespace vgSDL
 {
+
 namespace event
 {
 
@@ -15,6 +22,8 @@ namespace event
 vgd::Shp<EventHandler> EventHandler::g_instance;
 
 EventHandler::EventHandler()
+:	m_events( new SDL_Event[ MAX_SDL_EVENTS ] ),
+	m_nbEvents( 0 )
 {
 	// Init SDL
 	SDL_Init( SDL_INIT_JOYSTICK | SDL_INIT_VIDEO );
@@ -24,8 +33,15 @@ EventHandler::EventHandler()
 	SDL_CreateRGBSurface(0,0,0,0,0,0,0,0);
 #endif
 	SDL_JoystickEventState(SDL_ENABLE);
-	m_events = new SDL_Event[ MAX_SDL_EVENTS ];
-	m_nbEvents = 0;
+}
+
+
+EventHandler::~EventHandler()
+{
+	if ( m_events != 0 )
+	{
+		delete [] m_events;
+	}
 }
 
 
@@ -40,12 +56,13 @@ bool EventHandler::getEvents()
 
 void EventHandler::dispatchEvents()
 {
+	using ::vgSDL::event::device::Joystick;
+	using ::vgSDL::event::device::Mouse;
+
 	if(!g_instance)
 		g_instance.reset(new EventHandler);
 	for(int i=0;i<g_instance->m_nbEvents;++i)
 	{
-		std::list<Mouse*>::iterator itm;
-		std::list<Joystick*>::iterator itj;
 		switch( g_instance->m_events[i].type )
 		{
 		case SDL_JOYBUTTONDOWN:
@@ -67,11 +84,15 @@ void EventHandler::dispatchEvents()
 			break;
 		}
 	}
+
 	if(g_instance->m_nbEvents!=0)
 	{
 		g_instance->m_nbEvents=0;
 	}
 }
 
+const uint EventHandler::MAX_SDL_EVENTS = 20;
+
 } // namespace event
+
 } // namespace vgSDL
