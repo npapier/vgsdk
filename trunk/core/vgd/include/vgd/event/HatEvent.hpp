@@ -7,7 +7,6 @@
 #ifndef _VGD_EVENT_HATEVENT_HPP_
 #define _VGD_EVENT_HATEVENT_HPP_
 
-#include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
 
 
@@ -45,7 +44,7 @@ struct VGD_API HatEvent : public Event
 	/**
 	 * @brief	Constructor
 	 *
-	 * @param	source			a pointer to a device that emitted the event
+	 * @param	source		a pointer to a device that emitted the event
 	 * @param	buttonStates	the state of the buttons at the time the event has been generated
 	 * @param	index			the hat's index
 	 * @param	state			the hat's state

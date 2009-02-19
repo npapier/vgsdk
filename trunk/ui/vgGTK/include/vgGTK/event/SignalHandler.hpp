@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -43,7 +43,7 @@ struct VGGTK_API SignalHandler
 	//@{
 
 	/**
-	 * @brief	Tells the signale handler to connect to the given GTK widget.
+	 * @brief	Tells the signal handler to connect to the given GTK widget.
 	 *
 	 * Sub-classes must override this method in order to connect signal callbacks and store
 	 * connections.

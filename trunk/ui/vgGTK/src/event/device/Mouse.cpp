@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
-#include "vgGTK/event/Mouse.hpp"
+#include "vgGTK/event/device/Mouse.hpp"
 
 #include <iostream>
 #include <limits>
@@ -24,20 +24,26 @@ namespace vgGTK
 namespace event
 {
 
+namespace device
+{
 
 
-Mouse::Mouse()
-:	m_previousLocation( std::numeric_limits<float>::max(), std::numeric_limits<float>::max() )
+
+Mouse::Mouse( const uint identifier )
+:	::vgd::event::device::Mouse(identifier),
+	m_previousLocation( std::numeric_limits<float>::max(), std::numeric_limits<float>::max() )
 {}
 
 
 
 void Mouse::connect( Gtk::Widget * widget )
 {
-	store( widget->signal_button_press_event()  .connect( ::sigc::mem_fun(this, &vgGTK::event::Mouse::onButtonEvent) )			);
-	store( widget->signal_button_release_event().connect( ::sigc::mem_fun(this, &vgGTK::event::Mouse::onButtonEvent) )			);
-	store( widget->signal_motion_notify_event() .connect( ::sigc::mem_fun(this, &vgGTK::event::Mouse::onMotionNotifyEvent) )	);
-	store( widget->signal_scroll_event()        .connect( ::sigc::mem_fun(this, &vgGTK::event::Mouse::onScrollEvent ) )			);
+	using vgGTK::event::device::Mouse;
+
+	store( widget->signal_button_press_event()  .connect( ::sigc::mem_fun(this, &Mouse::onButtonEvent) )			);
+	store( widget->signal_button_release_event().connect( ::sigc::mem_fun(this, &Mouse::onButtonEvent) )			);
+	store( widget->signal_motion_notify_event() .connect( ::sigc::mem_fun(this, &Mouse::onMotionNotifyEvent) )	);
+	store( widget->signal_scroll_event()        .connect( ::sigc::mem_fun(this, &Mouse::onScrollEvent ) )			);
 
 	SignalHandler::connect( widget );
 }
@@ -149,6 +155,8 @@ bool Mouse::onScrollEvent( GdkEventScroll * event )
 }
 
 
+
+} // namespace device
 
 } // namespace event
 

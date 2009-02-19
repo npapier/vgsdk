@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -68,7 +68,7 @@ struct VGEGL_API Dragger : public vgd::event::EventVisitor
 	void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent		);
 	void apply( const vgd::event::Motion3Event			*pMotion3Event			);
 	void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent		);
-
+	void apply( const vgd::event::TimerEvent			*pTimerEvent			);
 	//@}
 
 

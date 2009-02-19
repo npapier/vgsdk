@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-#include "vgSDL/event/Joystick.hpp"
+#include "vgSDL/event/device/Joystick.hpp"
 
 #include <limits>
 
@@ -21,6 +21,9 @@ namespace vgSDL
 {
 
 namespace event
+{
+
+namespace device
 {
 
 namespace
@@ -169,18 +172,19 @@ vgd::Shp<Joystick> Joystick::create( const int index )
 	SDL_Joystick* joystick = SDL_JoystickOpen( index );
 	if(joystick != 0)
 	{
-		return vgd::makeShp(new Joystick(joystick));
+		return vgd::makeShp(new Joystick(joystick, index));
 	}
 	else
 	{
 		return vgd::Shp<Joystick>();
 	}
-	//assert( m_joystick != 0 && "SDL joystick opening faled !" );
+	//assert( m_joystick != 0 && "SDL joystick opening failed !" );
 }
 
 
-Joystick::Joystick( SDL_Joystick* joystick )
-:	m_joystick( joystick )
+Joystick::Joystick( SDL_Joystick* joystick, const uint identifier )
+:	::vgd::event::device::Joystick( identifier ),
+	m_joystick( joystick )
 {
 	assert(joystick!=0 && "Invalid joystick");
 }
@@ -249,6 +253,8 @@ const bool Joystick::getButton( const Button button ) const
 }
 
 
+
+} // namespace device
 
 } // namespace event
 

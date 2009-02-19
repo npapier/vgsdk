@@ -7,7 +7,6 @@
 #ifndef _VGD_EVENT_MOUSEBUTTONEVENT_HPP
 #define _VGD_EVENT_MOUSEBUTTONEVENT_HPP
 
-#include "vgd/vgd.hpp"
 #include "vgd/event/ButtonEvent.hpp"
 #include "vgd/event/Location2.hpp"
 
@@ -15,7 +14,7 @@
 
 namespace vgd
 {
-	
+
 namespace event
 {
 
@@ -36,28 +35,20 @@ struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 	/**
 	 * @brief	Constructor
 	 * 
-	 * @param	source			a pointer to the source fo the event
+	 * @param	source		a pointer to the source fo the event
 	 * @param	buttonStates	a reference to the button state set
 	 * @param	buttonID		a mouse button
 	 * @param	state			a button state
 	 * @param	location		a location to pass through the event
 	 * @param	size			the size of the 'canvas' where Location2event occurs
-	 * @param	deviceId			the id of the device causing the event
 	 */
 	MouseButtonEvent(	Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state,
-						const Location& location, const Size& size, const unsigned int deviceId=0 );
-	
+						const Location& location, const Size& size );
+
 	/**
 	 * @brief	Destructor
 	 */
 	virtual ~MouseButtonEvent();
-
-	/**
-	 * @brief	Retrives the device id
-	 * 
-	 * @return	the device id
-	 */
-	const unsigned int getDeviceId() const;
 
 	/**
 	 * @brief	Overrides
@@ -65,13 +56,6 @@ struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 	//@{
 	void accept( vgd::event::EventVisitor& eventVisitor );
 	//@}
-
-private:
-	/**
-	 * @brief Id of the device causing the event.
-	 */
-	unsigned int m_deviceId;
-
 };
 
 

@@ -1,14 +1,14 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
-#ifndef _VGWX_EVENT_MOUSE_HPP
-#define _VGWX_EVENT_MOUSE_HPP
+#ifndef _VGWX_EVENT_DEVICE_MOUSE_HPP
+#define _VGWX_EVENT_DEVICE_MOUSE_HPP
 
+#include <vgd/event/device/Mouse.hpp>
 #include <vgd/event/Location2Event.hpp>
-#include <vgd/event/Mouse.hpp>
 #include <vgm/Vector.hpp>
 #include <wx/event.h>
 
@@ -18,10 +18,14 @@
 
 namespace vgWX
 {
-	
+
 namespace event
 {
-	
+
+namespace device
+{
+
+
 
 /**
  * @brief	Implements a mouse device that attach to a window to retrieve
@@ -31,13 +35,13 @@ namespace event
  * Each window must have its own instance of this class, otherwise values returned by 
  * Location2Event::getDelta() would be wrong.
  */
-struct VGWX_API Mouse : public wxEvtHandler, public vgd::event::Mouse
+struct VGWX_API Mouse : public wxEvtHandler, public vgd::event::device::Mouse
 {
 	/**
 	 * @brief	Constructor.
 	 */
 	Mouse();
-	
+
 protected:
 
 	DECLARE_EVENT_TABLE();
@@ -48,14 +52,14 @@ protected:
 	 * @param	event	the event to process
 	 */
 	void onLeftDoubleClick( wxMouseEvent& event );
-	
+
 	/**
 	 * @brief	Handles a left mouse button down event.
 	 * 
 	 * @param	event	the event to process
 	 */
 	void onLeftDown( wxMouseEvent& event );
-	 
+
 	/**
 	 * @brief	Handles a left mouse button up event.
 	 * 
@@ -152,8 +156,10 @@ private:
 };
 
 
+} // namespace device
+
 } // namespace event
 
 } // namespace vgWX
 
-#endif // _VGWX_EVENT_MOUSE_HPP
+#endif // _VGWX_EVENT_DEVICE_MOUSE_HPP

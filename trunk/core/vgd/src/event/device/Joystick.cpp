@@ -4,8 +4,6 @@
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-#include "vgd/event/JoystickButtonEvent.hpp"
-
 #include "vgd/event/device/Joystick.hpp"
 
 
@@ -16,20 +14,18 @@ namespace vgd
 namespace event
 {
 
+namespace device
+{
 
 
-JoystickButtonEvent::JoystickButtonEvent( Source * source, const ButtonStateSet & buttonStates, const int32 buttonID, const State state )
-:	ButtonEvent( source, buttonStates, buttonID, state )
+
+Joystick::Joystick( const uint identifier )
+: Device( identifier )
 {}
 
 
 
-void JoystickButtonEvent::accept( vgd::event::EventVisitor& eventVisitor )
-{
-	eventVisitor.apply( this );
-}
-
-
+} // namespace device
 
 } // namespace event
 

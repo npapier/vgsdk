@@ -4,11 +4,9 @@
 // Author Nicolas Papier
 // Author Guillaume Brocker
 
-#include "vgd/vgd.hpp"
+#include "vgd/event/AxisEvent.hpp"
 
 #include <cassert>
-
-#include "vgd/event/AxisEvent.hpp"
 
 
 

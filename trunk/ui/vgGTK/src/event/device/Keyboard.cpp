@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
-#include "vgGTK/event/Keyboard.hpp"
+#include "vgGTK/event/device/Keyboard.hpp"
 
 #include <iostream>
 #include <gdk/gdkkeysyms.h>
@@ -22,6 +22,8 @@ namespace vgGTK
 namespace event
 {
 
+namespace device
+{
 
 
 void Keyboard::connect( Gtk::Widget * widget )
@@ -69,6 +71,8 @@ bool Keyboard::onKeyEvent( GdkEventKey * event )
 }
 
 
+
+} // namespace device
 
 } // namespace event
 

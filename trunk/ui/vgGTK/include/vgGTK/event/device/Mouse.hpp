@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -8,8 +8,9 @@
 #define _VGGTK_EVENT_MOUSE_HPP_
 
 #include <gdk/gdk.h>
+#include <vgd/event/device/Mouse.hpp>
 #include <vgd/event/Location2.hpp>
-#include <vgd/event/Mouse.hpp>
+
 
 #include <vgGTK/vgGTK.hpp>
 #include "vgGTK/event/SignalHandler.hpp"
@@ -22,7 +23,8 @@ namespace vgGTK
 namespace event
 {
 
-
+namespace device
+{
 
 /**
  * @brief	Implements a mouse event device for GTK widgets
@@ -30,13 +32,16 @@ namespace event
  * In order to generate events for the vgSDK objects,
  * you must connect an Mouse instance as a signal handler to a Gtk::Widget.
  */
-struct VGGTK_API Mouse : public ::vgd::event::Mouse, public SignalHandler
+struct VGGTK_API Mouse : public ::vgd::event::device::Mouse, public SignalHandler
 {
 
 	/**
 	 * @brief	Constructor
+	 *
+	 * @param identifier	the device identifier
+	 *
 	 */
-	Mouse();
+	Mouse( const uint identifier = 0 );
 
 
 	/**
@@ -80,6 +85,8 @@ private:
 };
 
 
+
+} // namespace device
 
 } // namespace event
 

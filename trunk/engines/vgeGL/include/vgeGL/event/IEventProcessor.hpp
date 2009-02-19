@@ -38,16 +38,16 @@ struct VGEGL_API IEventProcessor
 	IEventProcessor();
 	
 	/**
-	 * @brief Destructor
+	 * @brief Virtual destructor
 	 */
 	virtual ~IEventProcessor();
-	
+
 	//@}
-	
-	
-	
+
+
+
 	/**
-	 * @brief Method call to process the incoming event.
+	 * @brief Method called to process an incoming event.
 	 * 
 	 * @param event		event to process
 	 * 
@@ -68,15 +68,15 @@ struct VGEGL_API IEventProcessor
 	 * @return true if enabled, false otherwise.
 	 */
 	const bool isEnabled() const { return m_isEnabled; }
-	
+
 	/**
 	 * @brief Sets if this event processor is enabled or not.
 	 */
 	void setEnabled( const bool isEnabled = true ) { m_isEnabled = isEnabled; }
-	
+
 	//@}
-	
-	
+
+
 private:
 
 	/**

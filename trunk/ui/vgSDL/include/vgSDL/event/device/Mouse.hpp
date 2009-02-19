@@ -1,30 +1,39 @@
-#ifndef _VGSDL_EVENT_MOUSE_HPP_
-#define _VGSDL_EVENT_MOUSE_HPP_
+// VGSDK - Copyright (C) 2009, Clement Forest.
+// Distributed under the terms of the GNU Library General Public License (LGPL)
+// as published by the Free Software Foundation.
+// Author Clement Forest
 
-#include<vgSDL/vgSDL.hpp>
+#ifndef _VGSDL_EVENT_DEVICE_MOUSE_HPP_
+#define _VGSDL_EVENT_DEVICE_MOUSE_HPP_
+
 #include <vgd/WeakPtr.hpp>
-#include <vgd/event/Mouse.hpp>
+#include <vgd/event/device/Mouse.hpp>
 #include <vgd/event/Location2.hpp>
-//#include <SDL.h>
+
+#include "vgSDL/vgSDL.hpp"
 
 union SDL_Event;
 
+
+
 namespace vgSDL
 {
+
 namespace event
+{
+
+namespace device
 {
 
 /**
  * @brief Implement a SDL based mouse.
  */
-
-struct VGSDL_API Mouse : public ::vgd::event::Mouse
+struct VGSDL_API Mouse : public ::vgd::event::device::Mouse
 {
 
 	/**
 	 * @brief Destructor.
 	 */
-
 	~Mouse();
 
 	/**
@@ -60,15 +69,15 @@ struct VGSDL_API Mouse : public ::vgd::event::Mouse
 private:
 
 	/**
-	 * @brief Creator.
+	 * @brief Constructor
+	 *
+	 * @param identifier	the device identifier
 	 */
-
-	Mouse();
+	Mouse( const uint identifier = 0 );
 
 	/**
 	 * @brief Holds the previous mouse location.
 	 */
-
 	::vgd::event::Location2::Location	m_previousLocation;
 
 	typedef std::vector< vgd::WeakPtr< Mouse >  >	MiceCollection;
@@ -82,7 +91,11 @@ private:
 };
 
 
+
+} // namespace device
+
 } // namespace event
+
 } // namespace vgSDL
 
-#endif // _VGSDL_EVENT_MOUSE_HPP_
+#endif // _VGSDL_EVENT_DEVICE_MOUSE_HPP_

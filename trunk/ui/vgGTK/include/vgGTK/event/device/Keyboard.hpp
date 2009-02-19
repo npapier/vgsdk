@@ -1,13 +1,13 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
-#ifndef _VGGTK_EVENT_KEYBOARD_HPP_
-#define _VGGTK_EVENT_KEYBOARD_HPP_
+#ifndef _VGGTK_EVENT_DEVICE_KEYBOARD_HPP_
+#define _VGGTK_EVENT_DEVICE_KEYBOARD_HPP_
 
-#include <vgd/event/Keyboard.hpp>
+#include <vgd/event/device/Keyboard.hpp>
 
 #include "vgGTK/event/SignalHandler.hpp"
 
@@ -19,6 +19,9 @@ namespace vgGTK
 namespace event
 {
 
+namespace device
+{
+
 
 
 /**
@@ -27,7 +30,7 @@ namespace event
  * @remark	This device will not handle the @code tab key since it can involve inconsistancy in the global
  *		button state set due to the focus lost.
  */
-struct VGGTK_API Keyboard : public ::vgd::event::Keyboard, public SignalHandler
+struct VGGTK_API Keyboard : public ::vgd::event::device::Keyboard, public SignalHandler
 {
 
 	/**
@@ -56,10 +59,12 @@ private:
 
 
 
+} // namespace device
+
 } // namespace event
 
 } // namespace vgGTK
 
 
 
-#endif /*_VGGTK_EVENT_KEYBOARD_HPP_*/
+#endif /*_VGGTK_EVENT_DEVICE_KEYBOARD_HPP_*/

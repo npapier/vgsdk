@@ -12,11 +12,11 @@ namespace vgd
 
 namespace event
 {
-	
 
-	
+
+
 Motion3Event::Motion3Event(	Source * source, const ButtonStateSet& buttonStates, const Translation& translation, 
-										const Rotation& rotation, const Size& size )
+							const Rotation& rotation, const Size& size )
 : Event( source, buttonStates ),
   m_translation( translation ),
   m_rotation( rotation ),

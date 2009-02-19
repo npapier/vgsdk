@@ -9,8 +9,8 @@
 #include <vgm/Utilities.hpp>
 #include <vgDebug/Global.hpp>
 
-#include "vgWX/event/Keyboard.hpp"
-#include "vgWX/event/Mouse.hpp"
+#include "vgWX/event/device/Keyboard.hpp"
+#include "vgWX/event/device/Mouse.hpp"
 
 
 
@@ -34,8 +34,8 @@ BasicManipulator::BasicManipulator(
 					const wxWindowID id )
 :	BasicViewer( parent, name, pos, size, style, gl_attrib, id ),
 	
-	m_keyboard		( new vgWX::event::Keyboard() ),
-	m_mouse			( new vgWX::event::Mouse() ),
+	m_keyboard		( new vgWX::event::device::Keyboard() ),
+	m_mouse			( new vgWX::event::device::Mouse() ),
 	
 	m_sceneTransform( vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
 	
@@ -70,8 +70,8 @@ BasicManipulator::BasicManipulator(
 					const wxWindowID id )
 :	BasicViewer( parent, pSharedCanvas, name, pos, size, style, gl_attrib, id ),
 	
-	m_keyboard		( new vgWX::event::Keyboard() ),
-	m_mouse			( new vgWX::event::Mouse() ),
+	m_keyboard		( new vgWX::event::device::Keyboard() ),
+	m_mouse			( new vgWX::event::device::Mouse() ),
 	
 	m_sceneTransform(	vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
 	

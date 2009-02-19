@@ -13,12 +13,12 @@
 
 namespace vgd
 {
-	
+
 namespace event
 {
 
-	
-	
+
+
 KeyboardButtonEvent::KeyboardButtonEvent( Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state) :
 	ButtonEvent( source, buttonStates, buttonID, state )
 {}

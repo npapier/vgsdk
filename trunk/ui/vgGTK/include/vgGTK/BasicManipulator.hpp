@@ -11,8 +11,9 @@
 
 #include "vgGTK/vgGTK.hpp"
 #include "vgGTK/GenericCanvas.hpp"
-#include "vgGTK/event/Keyboard.hpp"
-#include "vgGTK/event/Mouse.hpp"
+#include "vgGTK/event/device/Keyboard.hpp"
+#include "vgGTK/event/device/Mouse.hpp"
+#include "vgGTK/event/device/Timer.hpp"
 
 
 
@@ -35,8 +36,9 @@ struct VGGTK_API BasicManipulator : public GenericCanvas< vgUI::BasicManipulator
 	template< typename SharedCanvasType >
 	BasicManipulator( const SharedCanvasType * sharedCanvas )
 	:	GenericCanvas< vgUI::BasicManipulator >( sharedCanvas ),
-		m_keyboard( new vgGTK::event::Keyboard() ),
-		m_mouse( new vgGTK::event::Mouse() )
+		m_keyboard( new vgGTK::event::device::Keyboard() ),
+		m_mouse( new vgGTK::event::device::Mouse() ),
+		m_timer( new vgGTK::event::device::Timer() )
 	{}
 	//@}
 
@@ -52,8 +54,9 @@ protected:
 
 private:
 
-	vgd::Shp< vgGTK::event::Keyboard >	m_keyboard;	///< The GTK keyboard device.
-	vgd::Shp< vgGTK::event::Mouse >		m_mouse;	///< The GTK mouse device.
+	vgd::Shp< vgGTK::event::device::Keyboard >	m_keyboard;	///< The GTK keyboard device.
+	vgd::Shp< vgGTK::event::device::Mouse >		m_mouse;	///< The GTK mouse device.
+	vgd::Shp< vgGTK::event::device::Timer >		m_timer;	///< The GTK timer device.
 
 };
 
