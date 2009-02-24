@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -15,6 +15,12 @@
  * Visitors allow the user to insert their own operations at various steps within a graph algorithm or a graph traversing.
  * 
  * This namespace contains a collection of classes to traverse, make statistics, collect nodes...
+ */
+
+/**
+ * @defgroup g_vgd_visitor Scene graph visitors
+ *
+ * @ingroup g_vgd
  */
 
 #endif //#ifndef _VGD_VISITOR_HPP

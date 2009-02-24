@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -201,7 +201,7 @@ void Canvas::refresh( const RefreshType type, const WaitType wait )
 	{
 		// must schedule a refresh of the window ?
 		std::pair< bool, vgd::Shp< vgd::node::Node > > retVal;
-		retVal = vgd::visitor::findFirst( getRoot(), vgd::visitor::predicate::ByDirtyFlag() );
+		retVal = vgd::visitor::findFirstDEPRECATED( getRoot(), vgd::visitor::predicate::ByDirtyFlag() );
 
 		if ( retVal.first )
 		{
