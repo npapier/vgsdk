@@ -17,8 +17,7 @@
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Switch.hpp>
 
-#include <vgd/visitor/FindFirst.hpp>
-#include <vgd/visitor/predicate/ByName.hpp>
+#include <vgd/visitor/helpers.hpp>
 #include <vgm/operations.hpp>
 
 
@@ -351,7 +350,7 @@ vgd::Shp< vgd::node::Node > BasicViewer::getOptionalNode( const OptionalNodeType
 	}
 
 	// Searches for the node in the setup.
-	return vgd::visitor::findFirst( getSetup(), vgd::visitor::predicate::ByName(optionalNodeName) ).second;
+	return vgd::visitor::findFirstByName< vgd::node::Node >( getSetup(), optionalNodeName );
 }
 
 

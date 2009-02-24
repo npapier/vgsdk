@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -13,7 +13,7 @@
 
 namespace vgd
 {
-	
+
 namespace visitor
 {
 
@@ -24,12 +24,14 @@ namespace visitor
  * returns true to the predicate.
  * 
  * @remark This method is an helper to simplify usage of traverse() with vgd::visitor::FindFirst.
+ *
+ * @deprecated @see g_vgd_visitor_helpers
  */
 template< class Predicate >
-std::pair< bool, vgd::Shp< vgd::node::Node > > findFirst( vgd::Shp< vgd::node::Group > group, const Predicate& predicate )
+std::pair< bool, vgd::Shp< vgd::node::Node > > findFirstDEPRECATED( vgd::Shp< vgd::node::Group > group, const Predicate& predicate )
 {
 	vgd::visitor::FindFirst< Predicate >	find( predicate );
-	
+
 	bool bFounded = false;
 
 	try
