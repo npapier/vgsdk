@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -147,7 +147,7 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 
 
 	/**
-	 * @name	Overrides
+	 * @name	Overridden methods
 	 */
 	//@{
 	void onEvent( vgd::Shp< vgd::event::Event > event );
@@ -198,12 +198,29 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	/**
 	 * @brief Repaints the window.
 	 *
-	 * @param type		set to REFRESH_FORCE to force the repaint even if no changes have been made in the scene graph,
-	 * 					or to REFRESH_IF_NEEDED to repaint only when at least one change in the scene graph has occured.
-	 * @param wait		set to SYNCHRONOUS to wait the end of the repaint before returning from this method, or
-	 * 					to ASYNCHRONOUS to post a paint message to the window and returning without beiing blocked.
+	 * @param type		REFRESH_FORCE to force the repaint even if no changes have been made in the scene graph,
+	 * 				or REFRESH_IF_NEEDED to repaint only when at least one change in the scene graph has occured since the
+	 *				last repaint
+	 * @param wait		SYNCHRONOUS to wait the end of the repaint before returning from this method, or
+	 * 				ASYNCHRONOUS to post a paint message to the window and returning without being blocked.
 	 */
 	void refresh( const RefreshType type = REFRESH_IF_NEEDED, const WaitType wait = ASYNCHRONOUS );
+
+	/**
+	 * @brief Repaints the window only and only if at least one change in the scene graph has occured since the last repaint.
+	 *
+	 * @param wait		SYNCHRONOUS to wait the end of the repaint before returning from this method, or
+	 * 				ASYNCHRONOUS to post a paint message to the window and returning without being blocked.
+	 */
+	void refreshIfNeeded( const WaitType wait = ASYNCHRONOUS );
+
+	/**
+	 * @brief Force the repaints of the window even if no changes have been made in the scene graph.
+	 *
+	 * @param wait		SYNCHRONOUS to wait the end of the repaint before returning from this method, or
+	 * 				ASYNCHRONOUS to post a paint message to the window and returning without being blocked.
+	 */
+	void refreshForced( const WaitType wait = ASYNCHRONOUS );
 	//@}
 
 
@@ -350,12 +367,28 @@ public:
 
 
 protected:
+
+	const uint increaseFrameCount();	///< Overridden method
+
+	/**
+	 * @brief Sets the frames per second counter.
+	 *
+	 * @param newFPS	the new counter value
+	 *
+	 * @return the new counter value
+	 */
+	virtual const int setFPS( const int newFPS );
+
+
+
 	/**
 	 * @brief	Calls the overridable initialize method.
 	 *
 	 * @see		initialize()
 	 */
 	void doInitialize();
+
+
 
 	/**
 	 * @brief	Implementors must call the user interface toolkit dependent synchronious refresh method.
@@ -439,7 +472,7 @@ private:
 
 	bool			m_debugEvents;				///< Boolean value telling if events should be debugged or not.
 
-protected: // @todo FIXME ????????
+protected: // @todo FIXME
 	vgd::Shp< vgd::node::MultiSwitch >		m_debugOverlayContainer;	///< A reference on the overlay container node used internally by vgSDK
 private:
 	vgd::Shp< vgd::node::LayerPlan >		m_overlayForFPS;	///< A reference on the layer plan used to render fps

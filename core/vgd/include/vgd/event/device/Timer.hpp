@@ -20,6 +20,9 @@ namespace device
 {
 
 
+
+
+
 /**
  * @brief	Implements the timer device.
  */

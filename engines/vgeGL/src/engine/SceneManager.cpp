@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/event/DefaultEventProcessor.hpp"
+#include "vgeGL/event/TimerEventProcessor.hpp"
 #include "vgeGL/technique/Main.hpp"
 #include "vgeGL/technique/RayCasting.hpp"
 
@@ -30,10 +31,13 @@ SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > engine ) :
 	// Initializes event processor subsystem.
 	using ::vgeGL::event::IEventProcessor;
 	using ::vgeGL::event::DefaultEventProcessor;
+	using ::vgeGL::event::TimerEventProcessor;
 
-	vgd::Shp< IEventProcessor > eventProcessor( new DefaultEventProcessor(this) );
+	m_timerEventProcessor.reset( new TimerEventProcessor(this) );
+	vgd::Shp< IEventProcessor > defaultEventProcessor( new DefaultEventProcessor(this) );
 
-	insertEventProcessor( eventProcessor );
+	insertEventProcessor( defaultEventProcessor );
+	insertEventProcessor( m_timerEventProcessor );
 }
 
 
@@ -201,6 +205,13 @@ vgd::Shp< ::vgeGL::event::IEventProcessor > SceneManager::getEventProcessor( con
 const int32 SceneManager::getNumEventProcessors() const
 {
 	return static_cast<int32>(m_eventProcessors.size());
+}
+
+
+
+vgd::Shp< ::vgeGL::event::TimerEventProcessor > SceneManager::getTimerEventProcessor()
+{
+	return m_timerEventProcessor;
 }
 
 

@@ -6,7 +6,9 @@
 #ifndef _VGD_EVENT_TIMEREVENT_HPP
 #define _VGD_EVENT_TIMEREVENT_HPP
 
+#include "vgd/basic/Time.hpp"
 #include "vgd/event/Event.hpp"
+
 
 
 namespace vgd
@@ -30,11 +32,16 @@ struct VGD_API TimerEvent : public Event
 	 * @param	buttonStates	a reference to the button state set
 	 */
 	TimerEvent( Source *source, const ButtonStateSet& buttonStates );
-	
+
 	/**
 	 * @brief	Destructor
 	 */
 	virtual ~TimerEvent();
+
+	/**
+	 * @brief Returns the time point of the creation of this event
+	 */
+	const vgd::basic::Time& getTime() const;
 
 	/**
 	 * @name Overridden methods
@@ -42,6 +49,9 @@ struct VGD_API TimerEvent : public Event
 	//@{
 	void accept( vgd::event::EventVisitor& eventVisitor );
 	//@}
+
+private:
+	vgd::basic::Time m_time;	///<  the time point of the creation of this event
 };
 
 
