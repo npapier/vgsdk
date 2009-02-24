@@ -13,6 +13,8 @@
 #include "vgeGL/event/IEventProcessor.hpp"
 #include "vgeGL/technique/RayCasting.hpp"
 
+namespace vgeGL { namespace event { struct TimerEventProcessor; } }
+
 
 
 namespace vgeGL
@@ -301,6 +303,21 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 
 	/**
+	 * @name Timer event processor methods
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the default timer event processor.
+	 *
+	 * @return the timer event processor.
+	 */
+	vgd::Shp< ::vgeGL::event::TimerEventProcessor > getTimerEventProcessor();
+	//@}
+
+
+
+	/**
 	 * @name Ray casting
 	 */
 	//@{
@@ -372,7 +389,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * 
 	 * @return the vgeGL engine.
 	 */
-	vgd::Shp< vgeGL::engine::Engine > getGLEngine() const;	
+	vgd::Shp< vgeGL::engine::Engine > getGLEngine() const;
 	
 	//@}
 	
@@ -444,6 +461,7 @@ protected:
 	 */
 	EventProcessorContainer	m_eventProcessors;
 
+	vgd::Shp< ::vgeGL::event::TimerEventProcessor > m_timerEventProcessor;
 	//@}
 };
 

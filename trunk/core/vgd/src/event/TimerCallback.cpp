@@ -3,6 +3,9 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
+#include "vgd/event/TimerCallback.hpp"
+
+//#include "vgd/basic/TimeDuration.hpp"
 #include "vgd/event/TimerEvent.hpp"
 
 
@@ -15,26 +18,29 @@ namespace event
 
 
 
-TimerEvent::TimerEvent( Source *source, const ButtonStateSet& buttonStates )
-:	Event( source, buttonStates )
-	// m_time
-{}
-
-
-TimerEvent::~TimerEvent()
-{}
-
-
-const vgd::basic::Time& TimerEvent::getTime() const
+TimerCallback::TimerCallback()
+//: m_node
 {
-	return m_time;
 }
 
 
 
-void TimerEvent::accept( vgd::event::EventVisitor& eventVisitor )
+TimerCallback::TimerCallback( vgd::Shp< vgd::node::Node > node )
+: m_node( node )
 {
-	eventVisitor.apply( this );
+}
+
+
+
+TimerCallback::~TimerCallback()
+{
+}
+
+
+
+vgd::Shp< vgd::node::Node > TimerCallback::getNode()
+{
+	return m_node;
 }
 
 
