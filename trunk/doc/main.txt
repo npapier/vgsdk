@@ -69,9 +69,15 @@
  * \b Powered \b by
  *
  * \image html gnu-head-sm.png
- * \image html c++boost.png
+ * \image html boost.png
+ * \image html glib.png
+ * \image html cairo.png
+ * \image html glm.png
+ * \image html itk.png
+ * \image html opengl.png
+ * \image html collada.png
+ * \image html sdl.png
+ * \image html gtk.png
  * \image html openIL.png
- * \image html opengl_logo.png
  * \image html wxWidgets.png
- * @todo
  */
