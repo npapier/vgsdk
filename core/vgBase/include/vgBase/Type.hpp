@@ -31,6 +31,7 @@
 	
 	#endif
 
+#include <boost/cstdint.hpp>
 #include <cassert>
 #include <typeinfo>
 
@@ -48,7 +49,8 @@ typedef unsigned short		uint16;
 typedef long				int32;
 typedef unsigned long		uint32;
 
-typedef long long			int64;
+typedef boost::int64_t		int64;
+typedef boost::uint64_t		uint64;
 
 //typedef int				int;
 typedef unsigned int		uint;
