@@ -21,28 +21,28 @@ TimeDuration::TimeDuration( const Time& t1, const Time& t2 )
 
 
 
-const uint TimeDuration::seconds() const
+const uint64 TimeDuration::seconds() const
 {
 	return m_duration.total_seconds();
 }
 
 
 
-const uint TimeDuration::s() const
+const uint64 TimeDuration::s() const
 {
 	return seconds();
 }
 
 
 
-const uint TimeDuration::milliSeconds() const
+const uint64 TimeDuration::milliSeconds() const
 {
 	return m_duration.total_milliseconds();
 }
 
 
 
-const uint TimeDuration::m() const
+const uint64 TimeDuration::ms() const
 {
 	return milliSeconds();
 }

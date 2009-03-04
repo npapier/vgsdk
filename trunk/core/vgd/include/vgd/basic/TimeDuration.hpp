@@ -40,16 +40,16 @@ struct VGD_API TimeDuration
 	 *
 	 * @return the duration value in seconds truncating any fractional seconds.
 	 */
-	const uint seconds() const;
-	const uint s() const;
+	const uint64 seconds() const;
+	const uint64 s() const;
 
 	/**
 	 * @brief Returns the number of milliseconds
 	 *
 	 * @return the duration value in milliseconds truncating any fractional seconds.
 	 */
-	const uint milliSeconds() const;
-	const uint m() const;
+	const uint64 milliSeconds() const;
+	const uint64 ms() const;
 
 private:
 
