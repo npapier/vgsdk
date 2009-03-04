@@ -3,5 +3,5 @@ vcsUse				= 'no'
 type				= 'shared'
 version				= '0-5'
 deps				= ['../../core'] #, '../../io']
-uses				= ['colladadom']
+uses				= [ 'colladadom' ]
 libs				= ['vgBase 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vgm 0-5']

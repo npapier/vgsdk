@@ -4,4 +4,4 @@ type		= 'shared'
 version		= '0-5'
 uses		= [ 'glu', 'opengl' ]
 libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgm 0-5', 'vgio 0-5' ]
-deps		= [ '../../dependencies', '../../core', '../vge', '../../io/vgio' ]
+deps		= [ '../../dependencies/gle', '../../dependencies/glo', '../../core', '../vge', '../../io/vgio' ]
