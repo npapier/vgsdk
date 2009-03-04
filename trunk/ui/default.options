@@ -1,3 +1,4 @@
 vcsUse		= 'no'
 type		= 'none'
-deps		= [ 'vgGTK', 'vgUI', 'vgSDL', 'vgWX' ]
+deps		= [ 'vgGTK', 'vgUI', 'vgSDL' ]
+#deps		= [ 'vgGTK', 'vgUI', 'vgSDL', 'vgWX' ]
