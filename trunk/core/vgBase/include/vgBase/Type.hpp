@@ -35,6 +35,19 @@
 #include <cassert>
 #include <typeinfo>
 
+/**
+ * @brief Macro to issue warning when using deprecated functions
+ *
+ * @remarks Only for gcc and MS/VisualCPP
+ */
+#if defined(_WIN32) && (_MSC_VER>= 1300)
+	#define vgDEPRECATED(x) __declspec(deprecated) x
+#else
+/// @todo Checks gcc usage and version (>3.1)
+/// #define vgDEPRECATED(x) x if not supported
+	#define vgDEPRECATED(x) x __attribute__ ((deprecated))
+#endif
+
 // @todo FIXME static assertion on sizeof( following types) must == 1 2 4...
 #ifdef __STDC__
 	typedef signed char		int8;
