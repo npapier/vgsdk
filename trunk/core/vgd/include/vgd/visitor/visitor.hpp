@@ -18,7 +18,7 @@
  */
 
 /**
- * @defgroup g_vgd_visitor Scene graph visitors
+ * @defgroup g_vgd_visitor Scene graph traversing using visitor
  *
  * @ingroup g_vgd
  */

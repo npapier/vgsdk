@@ -6,6 +6,7 @@
 #include "vgd/visitor/predicate/ByDirtyFlag.hpp"
 
 #include "vgd/field/DirtyFlag.hpp"
+#include "vgd/node/Node.hpp"
 
 
 
@@ -14,13 +15,13 @@ namespace vgd
 
 namespace visitor
 {
-	
+
 namespace predicate
 {
 
 
 
-bool ByDirtyFlag::operator () ( const vgd::Shp< vgd::node::Node > node ) const
+const bool ByDirtyFlag::operator () ( const vgd::Shp< vgd::node::Node > node ) const
 {
 	const vgd::field::DirtyFlag *pDirtyFlag;
 	pDirtyFlag = node->getDirtyFlag( node->getDFNode() );
