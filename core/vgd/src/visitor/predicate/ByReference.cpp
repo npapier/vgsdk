@@ -5,6 +5,8 @@
 
 #include "vgd/visitor/predicate/ByReference.hpp"
 
+#include "vgd/Shp.hpp"
+
 
 
 namespace vgd
@@ -12,7 +14,7 @@ namespace vgd
 
 namespace visitor
 {
-	
+
 namespace predicate
 {
 
@@ -24,7 +26,7 @@ ByReference::ByReference( const vgd::node::Node *reference ) :
 
 
 
-bool ByReference::operator () ( const vgd::Shp< vgd::node::Node > node ) const
+const bool ByReference::operator () ( const vgd::Shp< vgd::node::Node > node ) const
 {
 	return ( node.get() == m_reference );
 }
