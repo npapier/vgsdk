@@ -73,6 +73,28 @@ struct VGEGL_API MultiMain : public Main
 				m_children.push_back(configurator);
 			}
 		}
+		/**
+		 * @brief	Looks for the first configurator that matches the given type.
+		 *
+		 * @return	A shared pointer to the encountered configurator, or empty if none.
+		 */
+		template< typename ConfiguratorType >
+		vgd::Shp< ConfiguratorType > find() const
+		{
+			vgd::Shp< ConfiguratorType >   result;
+
+			for( Container::const_iterator i = m_children.begin(); i != m_children.end(); ++i )
+			{
+				result = vgd::dynamic_pointer_cast< ConfiguratorType >( *i );
+ 
+				if( result )
+				{
+					break;
+				}
+			}
+
+			return result;
+		}
 		
 		/**
 		 * @brief	Tells if the given configurator is already part of the composite.
