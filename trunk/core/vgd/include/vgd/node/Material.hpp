@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -27,14 +27,14 @@ namespace node
  * The Material node specifies current surface material properties for all subsequent shapes nodes  and is used by the lighting equations during rendering. The field \c transparency is not optional because it is used by others fields (in OpenGL ambient and others use 4 floats). 
  *
  * New fields defined by this node :
+ *	- SFFloat \c opacity = 1.f\n
+ *		Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.
  *	- PAFFloat \c shininess = 0.f\n
  *		Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
  *	- PAFVec3f \c emission = vgm::Vec3f(0.f, 0.f, 0.f)\n
  *		Emmissive color of the surface.
  *	- PAFVec3f \c specular = vgm::Vec3f(0.f, 0.f, 0.f)\n
  *		Specular color of the surface.
- *	- SFFloat \c transparency = 1.f\n
- *		Sets transparency from 1.0 for being completely opaque until 0.0 for being completely transparent.
  *	- PAFVec3f \c ambient = vgm::Vec3f(0.2f, 0.2f, 0.2f)\n
  *		Ambient color of the surface.
  *	- PAFVec3f \c diffuse = vgm::Vec3f(0.8f, 0.8f, 0.8f)\n
@@ -67,6 +67,36 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
 	static vgd::Shp< Material > createWhole( const std::string nodeName = "DefaultWhole" );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field \c opacity
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c opacity.
+	 */
+	typedef float OpacityValueType;
+
+	/**
+	 * @brief Type definition of the field named \c opacity
+	 */
+	typedef vgd::field::SFFloat FOpacityType;
+
+
+	/**
+	 * @brief Gets the value of field named \c opacity.
+	 */
+	const OpacityValueType getOpacity() const;
+
+	/**
+	 * @brief Sets the value of field named \c opacity.
+	 */
+	void setOpacity( const OpacityValueType value );
 
 	//@}
 
@@ -217,36 +247,6 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field \c transparency
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c transparency.
-	 */
-	typedef float TransparencyValueType;
-
-	/**
-	 * @brief Type definition of the field named \c transparency
-	 */
-	typedef vgd::field::SFFloat FTransparencyType;
-
-
-	/**
-	 * @brief Gets the value of field named \c transparency.
-	 */
-	const TransparencyValueType getTransparency() const;
-
-	/**
-	 * @brief Sets the value of field named \c transparency.
-	 */
-	void setTransparency( const TransparencyValueType value );
-
-	//@}
-
-
-
-	/**
 	 * @name Accessors to field \c ambient
 	 */
 	//@{
@@ -348,6 +348,13 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	//@{
 
 	/**
+	 * @brief Returns the name of field \c opacity.
+	 *
+	 * @return the name of field \c opacity.
+	 */
+	static const std::string getFOpacity( void );
+
+	/**
 	 * @brief Returns the name of field \c shininess.
 	 *
 	 * @return the name of field \c shininess.
@@ -369,13 +376,6 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	static const std::string getFSpecular( void );
 
 	/**
-	 * @brief Returns the name of field \c transparency.
-	 *
-	 * @return the name of field \c transparency.
-	 */
-	static const std::string getFTransparency( void );
-
-	/**
 	 * @brief Returns the name of field \c ambient.
 	 *
 	 * @return the name of field \c ambient.
@@ -390,6 +390,41 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	static const std::string getFDiffuse( void );
 
 	//@}
+
+
+
+
+	/**
+	 * @name Accessors to field \c transparency
+	 *
+	 * This accessors emulates the old interface of the field transparency using the new field opacity.
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c transparency.
+	 */
+	typedef float TransparencyValueType;
+
+	/**
+	 * @brief Type definition of the field named \c transparency
+	 */
+	typedef vgd::field::SFFloat FTransparencyType;
+
+
+	/**
+	 * @brief Gets the value of field named \c transparency.
+	 */
+	vgDEPRECATED( const TransparencyValueType getTransparency() const );
+
+	/**
+	 * @brief Sets the value of field named \c transparency.
+	 */
+	vgDEPRECATED( void setTransparency( const TransparencyValueType value ) );
+
+	//@}
+
+
 
 	/**
 	 * @name Accessors to field color
@@ -411,17 +446,17 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Gets the \c color value.
 	 */
-	bool			getColor( const ColorParameterType param, ColorValueType& value ) const;
+	vgDEPRECATED( bool			getColor( const ColorParameterType param, ColorValueType& value ) const );
 
 	/**
 	 * @brief Sets the \c color value.
 	 */
-	void 			setColor( const ColorParameterType param, ColorValueType value );
+	vgDEPRECATED( void 			setColor( const ColorParameterType param, ColorValueType value ) );
 
 	/**
 	 * @brief Erase the \c color value.
 	 */
-	void 			eraseColor( const ColorParameterType param );
+	vgDEPRECATED( void 			eraseColor( const ColorParameterType param ) );
 	//@}
 		
 
