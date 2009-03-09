@@ -66,6 +66,9 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 
 	glPopAttrib();
 	engine->popStateStack();
+	//@todo Quick hack to fix transparency rendering with GLSL pipeline.
+	//@todo Must be a stack. FIXME
+	engine->getGLSLState().reset( engine->getMaxLights(), engine->getMaxTexUnits() );
 }
 
 
