@@ -25,6 +25,7 @@ struct Location2Event;
 struct MouseButtonEvent;
 struct Motion3Event;
 struct MouseWheelEvent;
+struct SizeEvent;
 struct TimerEvent;
 
 
@@ -46,6 +47,7 @@ struct VGD_API EventVisitor
 	virtual void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent		)=0;
 	virtual void apply( const vgd::event::Motion3Event			*pMotion3Event			)=0;
 	virtual void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent		)=0;
+	virtual void apply( const vgd::event::SizeEvent				*pSizeEvent				)=0;
 	virtual void apply( const vgd::event::TimerEvent			*pTimerEvent			)=0;
 };
 

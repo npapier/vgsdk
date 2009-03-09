@@ -89,6 +89,7 @@ struct VGD_API ButtonStateSet : public EventVisitor
 	void apply( const vgd::event::Location2Event		*pLocation2Event 	);
 	void apply( const vgd::event::Motion3Event			*pMotion3Event		);
 	void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent	);
+	void apply( const vgd::event::SizeEvent				*pSizeEvent			);
 	void apply( const vgd::event::TimerEvent			*pTimerEvent		);
 
 	//@}
