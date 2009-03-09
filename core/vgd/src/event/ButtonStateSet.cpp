@@ -103,6 +103,13 @@ void ButtonStateSet::apply( const vgd::event::MouseWheelEvent * )
 
 
 
+void ButtonStateSet::apply( const vgd::event::SizeEvent * )
+{
+	// nothing to do.
+}
+
+
+
 void ButtonStateSet::apply( const vgd::event::TimerEvent * )
 {
 	// nothing to do.

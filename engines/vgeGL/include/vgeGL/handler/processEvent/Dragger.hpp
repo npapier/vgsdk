@@ -59,7 +59,6 @@ struct VGEGL_API Dragger : public vgd::event::EventVisitor
 	 * The following methods do nothing and must be overriden by derived Dragger to perform proper actions.
 	 */
 	//@{
-
 	void apply( const vgd::event::AxisEvent				*pAxisEvent				);
 	void apply( const vgd::event::HatEvent				*pHatEvent				);
 	void apply( const vgd::event::JoystickButtonEvent	*pJoystickButtonEvent	);
@@ -68,6 +67,7 @@ struct VGEGL_API Dragger : public vgd::event::EventVisitor
 	void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent		);
 	void apply( const vgd::event::Motion3Event			*pMotion3Event			);
 	void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent		);
+	void apply( const vgd::event::SizeEvent				*pSizeEvent				);
 	void apply( const vgd::event::TimerEvent			*pTimerEvent			);
 	//@}
 

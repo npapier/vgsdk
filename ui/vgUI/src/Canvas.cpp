@@ -22,6 +22,8 @@
 #include <vgd/event/Location2Event.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vgd/event/MouseWheelEvent.hpp>
+#include <vgd/event/SizeEvent.hpp>
+#include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/event/detail/helpers.hpp>
 #include <vgd/node/LayerPlan.hpp>
 #include <vgd/node/MultiSwitch.hpp>
@@ -355,6 +357,17 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 	// Reset the number of frame to render next time to 1.
 	setNumberOfFrames( 1 );
+}
+
+
+void Canvas::resize( const vgm::Vec2i size )
+{
+	vgeGL::engine::SceneManager::resize( size );
+
+	// Forward a resize notification event.
+	vgd::Shp< vgd::event::Event >	event( new vgd::event::SizeEvent(this, vgd::event::detail::GlobalButtonStateSet::get(), size) );
+
+	fireEvent( event );
 }
 
 

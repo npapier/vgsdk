@@ -8,6 +8,7 @@
 #define _VGUI_CANVAS_HPP
 
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <vgd/event/Device.hpp>
 #include <vgeGL/engine/SceneManager.hpp>
 
 #include "vgUI/vgUI.hpp"
@@ -47,7 +48,7 @@ namespace vgUI
  *
  * @ingroup g_vgUIGroup
  */
-struct VGUI_API Canvas : public vgeGL::engine::SceneManager
+	struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::Device
 {
 	/**
 	 * @name gle log accessors
@@ -152,6 +153,7 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 	//@{
 	void onEvent( vgd::Shp< vgd::event::Event > event );
 	void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
+	void resize( const vgm::Vec2i size );
 	//@}
 
 

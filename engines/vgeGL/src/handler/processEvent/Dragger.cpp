@@ -81,6 +81,12 @@ void Dragger::apply( const vgd::event::MouseWheelEvent * )
 
 
 
+void Dragger::apply( const vgd::event::SizeEvent *pSizeEvent )
+{
+}
+
+
+
 void Dragger::apply( const vgd::event::TimerEvent *pTimerEvent )
 {
 }

@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGD_NODE_MULTISWITCH_HPP
 #define _VGD_NODE_MULTISWITCH_HPP
@@ -68,15 +69,14 @@ struct VGD_API MultiSwitch : public Group
 	/**
 	 * @brief Gets the value of \c whichChild field.
 	 */
-	const int32	getWhichChild		( void ) const;
+	const int32	getWhichChild( void ) const;
 
 	/**
 	 * @brief Sets the value of \c whichChild field.
 	 * 
 	 * @param whichChild : one of MULTI_SWITCH_OFF, MULTI_SWITCH_ON, MULTI_SWITCH_ALL or MULTI_SWITCH_DEFAULT.
 	 */
-	void		setWhichChild		( const int32 whichChild );
-
+	void setWhichChild( const int32 whichChild );
 
 	/**
 	 * @brief Tests if the set of children to traverse contains this child.
@@ -85,7 +85,7 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @return true if this child is in the set of children to traverse, false otherwise.
 	 */
-	bool		isChildChoosen		( const int32 index ) const;
+	bool isChildChoosen( const int32 index ) const;
 
 	/**
 	 * @brief Adds a new child to the set of children to traverse.
@@ -94,7 +94,7 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @remark A chosen child is never insert more than once.
 	 */
-	void		addToChosenChild	( const int32 index );
+	void addToChoosenChildren( const int32 index );
 
 	/**
 	 * @brief Removes a child from the set of children to traverse.
@@ -103,13 +103,12 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @remark Removed only if already inserted, if not inserted nothing is done.
 	 */	
-	void		removeFromChosenChild( const int32 index );
+	void removeFromChoosenChildren( const int32 index );
 
 	/**
-	 * @brief Removes all from the set of children to traverse.
+	 * @brief Clears the set of children to traverse.
 	 */
-	void		removeAllFromChosenChild( void );
-
+	void clearChoosenChildren( void );
 	//@}
 
 
