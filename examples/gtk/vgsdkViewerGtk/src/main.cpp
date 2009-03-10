@@ -72,6 +72,9 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 			Gtk::AccelKey("F11"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullScreen), canvas) );
 	actions->add(
+			Gtk::Action::create("SetResolution", vgsdkViewerGtk::stock::RESOLUTION, "Set Resolution"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::setResolution), canvas) );
+	actions->add(
 			Gtk::RadioAction::create(viewModeGroup, "SingleView", vgsdkViewerGtk::stock::SINGLE_VIEW, "Single View"),
 			sigc::bind(sigc::mem_fun(canvas,&vgsdkViewerGtk::myCanvas::setViewMode), vgsdkViewerGtk::myCanvas::SINGLE_VIEW) );
 	actions->add(
@@ -115,6 +118,7 @@ const Glib::ustring & createDefaultUI()
 		"    <menu action='View'>"
 		"      <menuitem action='ViewAll'/>"
 		"      <menuitem action='FullScreen'/>"
+		"      <menuitem action='SetResolution'/>"
 		"      <separator/>"
 		"      <menuitem action='SingleView'/>"
 		"      <menuitem action='MultiViewSided'/>"
@@ -135,6 +139,7 @@ const Glib::ustring & createDefaultUI()
 		"    <separator/>"
 		"    <toolitem action='ViewAll'/>"
 		"    <toolitem action='FullScreen'/>"
+		"    <toolitem action='SetResolution'/>"
 		"    <separator/>"
 		"    <toolitem action='SingleView'/>"
 		"    <toolitem action='MultiViewSided'/>"
