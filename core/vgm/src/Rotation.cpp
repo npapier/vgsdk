@@ -672,5 +672,16 @@ void Rotation::normalize( void )
 }
 
 
+vgm::Vec3f operator *( const vgm::Vec3f& vec, const vgm::Rotation& rot)
+{
+	return rot.multVec(vec);
+}
+
+vgm::Vec3f& operator *=( vgm::Vec3f& vec, const vgm::Rotation& rot)
+{
+	vec = rot.multVec(vec);
+	return vec;
+}
+
 
 } // namespace vgm

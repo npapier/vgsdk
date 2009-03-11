@@ -346,6 +346,17 @@ Rotation& Rotation::setValue( const InType * q )
 }
 
 
+/**
+ * @brief Multiply a vector by a rotation.
+ */
+VGM_API vgm::Vec3f operator *( const vgm::Vec3f& vec, const vgm::Rotation& rot);
+
+/**
+ * @brief Multiply a vector by a rotation.
+ */
+VGM_API vgm::Vec3f& operator *=( vgm::Vec3f& vec, const vgm::Rotation& rot);
+
+
 
 } // namespace vgm
 
