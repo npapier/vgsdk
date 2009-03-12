@@ -16,8 +16,10 @@ namespace basic
 {
 
 
-Time::Time()
-: m_current( boost::posix_time::microsec_clock::universal_time() )
+Time::Time( const bool initializeUsingUTCTime )
+: m_current( initializeUsingUTCTime ?
+				boost::posix_time::microsec_clock::universal_time() : 
+				boost::posix_time::not_a_date_time )
 {
 }
 
@@ -32,6 +34,8 @@ void Time::restart()
 
 const TimeDuration Time::getElapsedTime() const
 {
+	assert( isValid() && "Time is invalid." );
+
 	Time now;
 
 	const TimeDuration duration( *this, now );
@@ -43,9 +47,92 @@ const TimeDuration Time::getElapsedTime() const
 
 const TimeDuration Time::operator - ( const Time& t2 ) const
 {
+	assert( isValid() && "Time is invalid." );
+	assert( t2.isValid() && "Time is invalid." );
+
 	const TimeDuration duration( *this, t2 );
 
 	return duration;
+}
+
+
+
+const bool Time::isValid() const
+{
+	const bool retVal = m_current.is_not_a_date_time();
+
+	return !retVal;
+}
+
+
+
+const bool Time::isInvalid() const
+{
+	const bool retVal = m_current.is_not_a_date_time();
+
+	return retVal;
+}
+
+
+
+void Time::setInvalid()
+{
+	m_current = boost::posix_time::ptime( boost::posix_time::not_a_date_time );
+}
+
+
+
+const bool Time::operator < ( const Time & t2 ) const
+{
+	assert( isValid() && "Time is invalid." );
+	assert( t2.isValid() && "Time is invalid." );
+
+	return m_current < t2.m_current;
+}
+
+
+const bool Time::operator <= ( const Time & t2 ) const
+{
+	assert( isValid() && "Time is invalid." );
+	assert( t2.isValid() && "Time is invalid." );
+
+	return m_current <= t2.m_current;
+}
+
+
+const bool Time::operator > ( const Time & t2 ) const
+{
+	assert( isValid() && "Time is invalid." );
+	assert( t2.isValid() && "Time is invalid." );
+
+	return m_current > t2.m_current;
+}
+
+
+const bool Time::operator >= ( const Time & t2 ) const
+{
+	assert( isValid() && "Time is invalid." );
+	assert( t2.isValid() && "Time is invalid." );
+
+	return m_current >= t2.m_current;
+}
+
+
+const bool Time::operator == ( const Time & t2 ) const
+{
+	assert( isValid() && "Time is invalid." );
+	assert( t2.isValid() && "Time is invalid." );
+
+	return m_current == t2.m_current;
+}
+
+
+const bool Time::operator != ( const Time & t2 ) const
+{
+	assert( isValid() && "Time is invalid." );
+	assert( t2.isValid() && "Time is invalid." );
+
+	return m_current != t2.m_current;
 }
 
 

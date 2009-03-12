@@ -21,6 +21,8 @@ namespace event
 
 /**
  * @brief	Implements a timer event class.
+ *
+ * @ingroup g_time
  */
 struct VGD_API TimerEvent : public Event
 {

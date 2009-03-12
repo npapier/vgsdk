@@ -97,6 +97,10 @@ const bool TimerEventProcessor::onEvent( vgd::Shp<vgd::event::Event> event )
 
 void TimerEventProcessor::onTimerEvent( vgd::Shp<vgd::event::TimerEvent> event )
 {
+	// First stage : executes callbacks
+	typedef std::list< vgd::Shp< vgd::event::TimerCallback > > TimerCallbackList;
+	TimerCallbackList toBeRemoved;
+
 	for(	TimerCallbackContainer::iterator	i		= m_callbacks.begin(),
 												iEnd	= m_callbacks.end();
 			i != iEnd;
@@ -105,7 +109,21 @@ void TimerEventProcessor::onTimerEvent( vgd::Shp<vgd::event::TimerEvent> event )
 		vgd::Shp< vgd::event::TimerCallback > callback = *i;
 		assert( (*i) != 0 );
 
-		callback->apply( event );
+		const bool shouldBeRemoved = (*callback)( event );
+		if ( shouldBeRemoved )
+		{
+			toBeRemoved.push_back( callback );
+		}
+	}
+
+	// Second stage : removes callback that should be removed.
+	while ( toBeRemoved.size() > 0 )
+	{
+		vgd::Shp< vgd::event::TimerCallback > callback = *toBeRemoved.begin();
+		toBeRemoved.pop_back();
+
+		assert( has(callback) && "Internal error : Callback not in timer event processor" );
+		remove( callback );
 	}
 }
 

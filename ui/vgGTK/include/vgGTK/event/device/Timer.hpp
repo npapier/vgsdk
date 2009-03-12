@@ -25,6 +25,10 @@ namespace device
 
 /**
  * @brief	Implements a timer event device for GTK widgets.
+ *
+ * @ingroup g_time
+ *
+ * @todo onIdle()
  */
 struct VGGTK_API Timer : public ::vgd::event::device::Timer, public vgGTK::event::SignalHandler
 {

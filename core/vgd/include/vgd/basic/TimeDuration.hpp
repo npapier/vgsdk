@@ -6,7 +6,10 @@
 #ifndef _VGD_BASIC_TIMEDURATION_HPP
 #define _VGD_BASIC_TIMEDURATION_HPP
 
-#include "vgd/basic/Time.hpp"
+#include "vgd/vgd.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+namespace vgd { namespace basic { struct Time; } }
 
 
 
@@ -16,15 +19,17 @@ namespace vgd
 namespace basic
 {
 
-
-
 /**
  * @brief Interface for time duration.
  *
- * @see Time
+ * @ingroup g_time
  */
 struct VGD_API TimeDuration
 {
+	/**
+	 * @name Constructors
+	 */
+	//@{
 	/**
 	 * @brief Constructor taking the difference between two times.
 	 *
@@ -36,20 +41,92 @@ struct VGD_API TimeDuration
 	TimeDuration( const Time& t1, const Time& t2 );
 
 	/**
+	 * @brief Constructor from a number of milliseconds.
+	 *
+	 * @param milliSeconds	number of milliseconds
+	 */
+	TimeDuration( const int milliSeconds = 0 );
+
+	/**
+	 * @brief Constructor
+	 *
+	 * @param hours		number of hours
+	 * @param minutes		number of minutes
+	 * @param seconds		number of seconds
+	 * @param milliSeconds	number of milliseconds
+	 */
+	TimeDuration( const int hours, const int minutes, const int seconds, const int milliSeconds = 0 );
+
+	//@}
+
+
+	/**
+	 * @name Accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the number of hours
+	 *
+	 * @return the duration value in hours truncating any fractional hours.
+	 */
+	const uint64 hours() const;
+
+	/**
+	 * @copydoc TimeDuration::hours()
+	 */
+	const uint64 h() const;
+
+	/**
+	 * @brief Returns the number of minutes
+	 *
+	 * @return the duration value in minutes truncating any fractional minutes.
+	 */
+	const uint64 minutes() const;
+
+	/**
+	 * @copydoc TimeDuration::minutes()
+	 */
+	const uint64 m() const;
+
+	/**
 	 * @brief Returns the number of seconds
 	 *
 	 * @return the duration value in seconds truncating any fractional seconds.
 	 */
 	const uint64 seconds() const;
+
+	/**
+	 * @copydoc TimeDuration::seconds()
+	 */
 	const uint64 s() const;
 
 	/**
 	 * @brief Returns the number of milliseconds
 	 *
-	 * @return the duration value in milliseconds truncating any fractional seconds.
+	 * @return the duration value in milliseconds truncating any fractional milliseconds.
 	 */
 	const uint64 milliSeconds() const;
+
+	/**
+	 * @copydoc TimeDuration::milliSeconds()
+	 */
 	const uint64 ms() const;
+
+	//@}
+
+
+	/**
+	 * @name Comparison operators
+	 */
+	//@{
+	const bool operator < ( const TimeDuration & duration ) const;
+	const bool operator <= ( const TimeDuration & duration ) const;
+	const bool operator > ( const TimeDuration & duration ) const;
+	const bool operator >= ( const TimeDuration & duration ) const;
+	const bool operator == ( const TimeDuration & duration ) const;
+	const bool operator != ( const TimeDuration & duration ) const;
+	//@}
 
 private:
 
