@@ -5,6 +5,8 @@
 
 #include "vgd/basic/TimeDuration.hpp"
 
+#include "vgd/basic/Time.hpp"
+
 
 
 namespace vgd
@@ -20,12 +22,51 @@ TimeDuration::TimeDuration( const Time& t1, const Time& t2 )
 }
 
 
+TimeDuration::TimeDuration( const int milliSeconds )
+: m_duration( boost::posix_time::milliseconds( milliSeconds ) )
+{
+}
+
+
+TimeDuration::TimeDuration( const int hours, const int minutes, const int seconds, const int milliSeconds )
+: m_duration( hours, minutes, seconds )
+{
+	if ( milliSeconds != 0 )
+	{
+		m_duration = m_duration + boost::posix_time::milliseconds( milliSeconds );
+	}
+}
+
+
+
+const uint64 TimeDuration::hours() const
+{
+	return m_duration.hours();
+}
+
+
+const uint64 TimeDuration::h() const
+{
+	return hours();
+}
+
+
+const uint64 TimeDuration::minutes() const
+{
+	return m_duration.minutes();
+}
+
+
+const uint64 TimeDuration::m() const
+{
+	return minutes();
+}
+
 
 const uint64 TimeDuration::seconds() const
 {
 	return m_duration.total_seconds();
 }
-
 
 
 const uint64 TimeDuration::s() const
@@ -34,17 +75,52 @@ const uint64 TimeDuration::s() const
 }
 
 
-
 const uint64 TimeDuration::milliSeconds() const
 {
 	return m_duration.total_milliseconds();
 }
 
 
-
 const uint64 TimeDuration::ms() const
 {
 	return milliSeconds();
+}
+
+
+
+const bool TimeDuration::operator < ( const TimeDuration & duration ) const
+{
+	return m_duration < duration.m_duration;
+}
+
+
+const bool TimeDuration::operator <= ( const TimeDuration & duration ) const
+{
+	return m_duration <= duration.m_duration;
+}
+
+
+const bool TimeDuration::operator > ( const TimeDuration & duration ) const
+{
+	return m_duration > duration.m_duration;
+}
+
+
+const bool TimeDuration::operator >= ( const TimeDuration & duration ) const
+{
+	return m_duration >= duration.m_duration;
+}
+
+
+const bool TimeDuration::operator == ( const TimeDuration & duration ) const
+{
+	return m_duration == duration.m_duration;
+}
+
+
+const bool TimeDuration::operator != ( const TimeDuration & duration ) const
+{
+	return m_duration != duration.m_duration;
 }
 
 

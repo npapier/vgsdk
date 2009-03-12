@@ -25,6 +25,8 @@ namespace device
 
 /**
  * @brief	Implements the timer device.
+ *
+ * @ingroup g_time
  */
 struct VGD_API Timer : public Device
 {
