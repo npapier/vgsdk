@@ -117,6 +117,24 @@ struct VGD_API TimeDuration
 
 
 	/**
+	 * @name Arithmetic operator
+	 */
+	//@{
+
+	/**
+	 * @brief Adds duration
+	 */
+	TimeDuration operator + ( const TimeDuration& t2 ) const;
+
+	/**
+	 * @brief Substracts duration
+	 */
+	TimeDuration operator - ( const TimeDuration& t2 ) const;
+
+	//@}
+
+
+	/**
 	 * @name Comparison operators
 	 */
 	//@{
@@ -129,7 +147,7 @@ struct VGD_API TimeDuration
 	//@}
 
 private:
-
+	friend struct Time;
 	boost::posix_time::time_duration m_duration; ///< The time duration
 };
 
