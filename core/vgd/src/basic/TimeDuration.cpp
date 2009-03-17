@@ -88,6 +88,28 @@ const uint64 TimeDuration::ms() const
 
 
 
+TimeDuration TimeDuration::operator + ( const TimeDuration& t2 ) const
+{
+	TimeDuration retVal(*this);
+
+	retVal.m_duration += t2.m_duration;
+
+	return retVal;
+}
+
+
+
+TimeDuration TimeDuration::operator - ( const TimeDuration& t2 ) const
+{
+	TimeDuration retVal(*this);
+
+	retVal.m_duration -= t2.m_duration;
+
+	return retVal;
+}
+
+
+
 const bool TimeDuration::operator < ( const TimeDuration & duration ) const
 {
 	return m_duration < duration.m_duration;

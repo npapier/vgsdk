@@ -57,6 +57,28 @@ const TimeDuration Time::operator - ( const Time& t2 ) const
 
 
 
+Time Time::operator + ( const TimeDuration& t2 ) const
+{
+	Time retVal( *this );
+
+	retVal.m_current += t2.m_duration;
+
+	return retVal;
+}
+
+
+
+Time Time::operator - ( const TimeDuration& t2 ) const
+{
+	Time retVal( *this );
+
+	retVal.m_current -= t2.m_duration;
+
+	return retVal;
+}
+
+
+
 const bool Time::isValid() const
 {
 	const bool retVal = m_current.is_not_a_date_time();

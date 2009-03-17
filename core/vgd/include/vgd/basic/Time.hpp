@@ -77,6 +77,26 @@ struct VGD_API Time
 	const TimeDuration operator - ( const Time& t2 ) const;
 
 
+
+	/**
+	 * @name Arithmetic operator
+	 */
+	//@{
+
+	/**
+	 * @brief Returns a point time adding a time duration
+	 */
+	Time operator + ( const TimeDuration& t2 ) const;
+
+	/**
+	 * @brief Returns a point time substracting duration
+	 */
+	Time operator - ( const TimeDuration& t2 ) const;
+
+	//@}
+
+
+
 	/**
 	 * @name Validity accessors
 	 */
