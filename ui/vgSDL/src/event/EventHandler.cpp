@@ -45,12 +45,17 @@ EventHandler::~EventHandler()
 }
 
 
-bool EventHandler::getEvents()
+bool EventHandler::getEvents(int eventMask)
 {
 	if(!g_instance)
 		g_instance.reset(new EventHandler);
-	SDL_JoystickUpdate();
-	g_instance->m_nbEvents = SDL_PeepEvents(g_instance->m_events, 10, SDL_GETEVENT, SDL_ALLEVENTS);
+	if(eventMask == -1)
+		eventMask = SDL_ALLEVENTS;
+	if(eventMask&SDL_JOYEVENTMASK)
+	{
+		SDL_JoystickUpdate();
+	}
+	g_instance->m_nbEvents = SDL_PeepEvents(g_instance->m_events, 10, SDL_GETEVENT, eventMask);
 	return (g_instance->m_nbEvents>0);
 }
 

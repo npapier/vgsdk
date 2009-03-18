@@ -39,8 +39,9 @@ struct VGSDL_API EventHandler
 
 	/**
 	 * @brief Get events.
+	 * @param eventMask the SDL_EVENTMASK we want to retrieve (default = SDL_ALLEVENTS)
 	 */
-	static bool getEvents();
+	static bool getEvents(int eventMask = -1);
 
 	/**
 	 * @brief Dispatch events
