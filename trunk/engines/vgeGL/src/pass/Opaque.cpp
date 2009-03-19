@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -46,9 +46,9 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 			vgd::node::Material *pMaterial( engine->getStateStackTop<vgd::node::Material>() );
 			assert( pMaterial != 0 );
 
-			const float transparencyDiff = fabs( pMaterial->getTransparency() - 1.f );
+			const float opacityDiff = fabs( pMaterial->getOpacity() - 1.f );
 
-			if ( transparencyDiff < vgm::Epsilon<float>::value() )
+			if ( opacityDiff < vgm::Epsilon<float>::value() )
 			{
 				// object is opaque, draw it.
 				engine->evaluate( service, i->first, i->second );
@@ -67,7 +67,7 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 	glPopAttrib();
 	engine->popStateStack();
 	//@todo Quick hack to fix transparency rendering with GLSL pipeline.
-	//@todo Must be a stack. FIXME
+	//@todo Must be a stack.
 	engine->getGLSLState().reset( engine->getMaxLights(), engine->getMaxTexUnits() );
 }
 

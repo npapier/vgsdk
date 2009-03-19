@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -50,16 +50,23 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 			Material *material( engine->getStateStackTop<Material>() );
 			assert( material != 0 && "Internal error" );
 
-			const float opacity = material->getTransparency(); // @todo getTransparency() => getOpacity()
-			const float opaqueDelta = fabs( opacity - 1.f );
+			const float opacity = material->getOpacity();
+			const float opacityDelta = fabs( opacity - 1.f );
 
-			if ( opaqueDelta > vgm::Epsilon<float>::value() )
+			if ( opacityDelta > vgm::Epsilon<float>::value() )
 			{
 				// Incoming shape is not opaque
 				if ( opacity > vgm::Epsilon<float>::value() )
 				{
 					// Incoming shape is transparent (but not totally), it must be rendered
+					// glPushAttrib( GL_ALL_ATTRIB_BITS );
+					// glEnable(GL_BLEND);
+					// glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+					// glDepthMask(GL_FALSE);
+
 					engine->evaluate( service, i->first, i->second );
+
+					// glPopAttrib();
 				}
 				// else incoming shape is totally transparent, nothing to render
 			}
