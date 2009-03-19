@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -60,6 +60,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType
 		
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
+		grab_focus();
 
 #ifdef USE_GTKGLEXT
 		setGlCapability( GTK_WIDGET(gobj()) );
@@ -84,6 +85,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType
 		
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
+		grab_focus();
 		
 #ifdef USE_GTKGLEXT
 		GdkGLContext * glContext = gtk_widget_get_gl_context( GTK_WIDGET(sharedCanvas->gobj()) );

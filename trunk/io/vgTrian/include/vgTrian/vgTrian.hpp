@@ -9,7 +9,7 @@
 /** 
  * @namespace vgTrian
  * 
- * @brief (V)ersatile (G)raphical Trian files serializer.
+ * @brief (V)ersatile (G)raphical (Trian) files serializer.
  *
  * \b vgTrian is open source (LGPL).
  */
