@@ -173,6 +173,12 @@ Canvas::~Canvas()
 }
 
 
+const bool Canvas::isVGSDKLocalyInitialized() const
+{
+	return m_bLocalInitializedVGSDK;
+}
+
+
 
 /**
  * @todo toString( vgd::event::Event)

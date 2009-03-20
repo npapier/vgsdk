@@ -96,10 +96,6 @@ const BasicViewer::CameraType BasicViewer::getCameraType() const
 
 void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 {
-	if ( !startVGSDK() )
-	{
-		return;
-	}
 
 	// Initializes VIEWTRANSFORM
 	m_viewTransform->setMatrix( vgm::MatrixR::getIdentity() );
@@ -131,9 +127,12 @@ void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 	}
 
 	// Compute and setup the camera type and frustum.
-	const vgm::Vec2i v2iSize = getEngine()->getDrawingSurfaceSize();
+	if ( isVGSDKLocalyInitialized() )
+	{
+		const vgm::Vec2i v2iSize = getEngine()->getDrawingSurfaceSize();
 
-	resize( v2iSize );
+		resize( v2iSize );
+	}
 
 	// Setup the scene position.
 	m_viewTransform->setMatrix( matrix );
