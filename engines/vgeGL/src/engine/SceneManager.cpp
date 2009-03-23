@@ -5,6 +5,7 @@
 
 #include "vgeGL/engine/SceneManager.hpp"
 
+#include <vgd/node/LayerPlan.hpp>
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/event/DefaultEventProcessor.hpp"
@@ -13,7 +14,7 @@
 #include "vgeGL/technique/RayCasting.hpp"
 
 
-
+ 
 namespace vgeGL
 {
 
@@ -60,10 +61,26 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		updateNodeCollector();
 	}
 
-	// Renders scene
+	// Renders scene graph
 	vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
+
+	vgd::Shp< vgeGL::itf::IUnderlay > iunderlay = vgd::dynamic_pointer_cast< vgeGL::itf::IUnderlay >( paintTechnique );
+
+	if ( iunderlay )
+	{
+		// Transferts underlay to the rendering technique
+		iunderlay->setUnderlay( getUnderlay() );
+	}
+
 	getGLEngine()->resetEval();
 	paintTechnique->apply( getGLEngine().get(), getNodeCollector().getTraverseElements() );
+
+	// Renders overlay
+	if ( getOverlay() )
+	{
+		vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
+		getGLEngine()->evaluate( paint, getOverlay().get(), true, false );
+	}
 }
 
 
@@ -290,6 +307,34 @@ vgd::Shp< vgeGL::technique::Technique > SceneManager::getPaintTechnique() const
 void SceneManager::setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique )
 {
 	m_paintTechnique = technique;
+}
+
+
+
+void SceneManager::setOverlay( vgd::Shp< vgd::node::LayerPlan > overlay )
+{
+	m_overlay = overlay;
+}
+
+
+
+vgd::Shp< vgd::node::LayerPlan > SceneManager::getOverlay()
+{
+	return m_overlay;
+}
+
+
+
+void SceneManager::setUnderlay( vgd::Shp< vgd::node::LayerPlan > underlay )
+{
+	m_underlay = underlay;
+}
+
+
+
+vgd::Shp< vgd::node::LayerPlan > SceneManager::getUnderlay()
+{
+	return m_underlay;
 }
 
 

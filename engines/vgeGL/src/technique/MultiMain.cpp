@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,6 +6,8 @@
 #include "vgeGL/technique/MultiMain.hpp"
 
 #include <vgd/node/Camera.hpp>
+#include <vgd/node/ClearFrameBuffer.hpp>
+#include <vgd/node/LayerPlan.hpp>
 #include <vgDebug/convenience.hpp>
 #include <vge/pass/ForEach.hpp>
 #include <vge/service/Painter.hpp>
@@ -26,7 +28,19 @@ namespace technique
 vgd::Shp< MultiMain::Window > MultiMain::addWindow( const std::string name,
 	const int zOrder, const bool hasBorder, const vgm::Vec4f borderColor, const float borderWidth )
 {
-	WindowContainer::value_type value( name, vgd::makeShp(new Window( zOrder, true/*isVisible*/, hasBorder, borderColor, borderWidth )) );
+	WindowContainer::value_type value( name, vgd::makeShp(new Window( zOrder, true/*isVisible*/, WindowBorder(hasBorder, borderColor, borderWidth) ) ) );
+
+	std::pair< WindowContainer::iterator, bool> retVal = m_windows.insert( value );
+
+	return retVal.first->second;
+}
+
+
+
+vgd::Shp< MultiMain::Window > MultiMain::addWindow( const std::string name,
+	const int zOrder, const WindowBorder borderState )
+{
+	WindowContainer::value_type value( name, vgd::makeShp(new Window( zOrder, true/*isVisible*/, borderState ) ) );
 
 	std::pair< WindowContainer::iterator, bool> retVal = m_windows.insert( value );
 
@@ -92,10 +106,25 @@ const vgd::Shp< MultiMain::Window > MultiMain::getWindow( const std::string name
 
 
 
+void MultiMain::setUnderlay( vgd::Shp< vgd::node::LayerPlan > underlay )
+{
+	m_underlay = underlay;
+}
+
+
+
+vgd::Shp< vgd::node::LayerPlan > MultiMain::getUnderlay()
+{
+	return m_underlay;
+}
+
+
+
 void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements )
 {
-	// Searches camera node
-	vgd::node::Camera * camera = 0;
+	// Searches clear framebuffer and camera node
+	vgd::node::Camera *				camera				= 0;
+	vgd::node::ClearFrameBuffer *	clearFrameBuffer	= 0;
 
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
@@ -107,12 +136,30 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 			camera = dynamic_cast< vgd::node::Camera * >(i->first);
 			break;
 		}
+		
+	}
+
+	while ( i != iEnd )
+	{
+		if ( (i->first)->isAKindOf< vgd::node::ClearFrameBuffer >() )
+		{
+			clearFrameBuffer = dynamic_cast< vgd::node::ClearFrameBuffer * >(i->first);
+			break;
+		}
+		++i;
 	}
 
 	if ( camera == 0 )
 	{
 		// No camera node in scene graph, do nothing
 		vgLogDebug( "No camera in scene graph." );
+		return;
+	}
+
+	if ( clearFrameBuffer == 0 )
+	{
+		// No clearFrameBuffer node in scene graph, do nothing
+		vgLogDebug( "No ClearFrameBuffer in scene graph." );
 		return;
 	}
 
@@ -143,6 +190,17 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 			/*const ZOrderedWindowContainer::iterator retVal = */zOrderedWindows.insert( value );
 		}
 		//else nothing to do, the window is hidden
+	}
+
+	// Clears the frame buffer
+	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
+	engine->evaluate( paint, clearFrameBuffer, true, false );
+
+	// Renders underlay
+	if ( getUnderlay() )
+	{
+		// Renders underlay
+		engine->evaluate( paint, getUnderlay().get(), true, false );
 	}
 
 	// Renders each window from back to front (i.e. in z-order from 0 to n with n > 0 ).

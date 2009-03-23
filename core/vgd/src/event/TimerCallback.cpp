@@ -23,7 +23,6 @@ namespace event
 
 TimerCallback::TimerCallback()
 :	//m_node
-	m_sceneManager( 0 ),
 
 	m_executionDuration( 1000  ),
 	m_frequency( 25.f ),
@@ -42,9 +41,8 @@ TimerCallback::TimerCallback()
 
 
 
-TimerCallback::TimerCallback( vgd::Shp< vgd::node::Node > node, vgeGL::engine::SceneManager * sceneManager )
+TimerCallback::TimerCallback( vgd::Shp< vgd::node::Node > node )
 :	m_node( node ),
-	m_sceneManager( sceneManager ),
 
 	m_executionDuration( 1000 ),
 	m_frequency( 25.f ),
@@ -76,13 +74,6 @@ vgd::Shp< vgd::node::Node > TimerCallback::getNode()
 
 
 
-vgeGL::engine::SceneManager * TimerCallback::getSceneManager()
-{
-	return m_sceneManager;
-}
-
-
-
 const bool TimerCallback::operator() ( const vgd::Shp< vgd::event::TimerEvent > event )
 {
 	if ( m_firstExecution.isInvalid() )
@@ -93,6 +84,7 @@ const bool TimerCallback::operator() ( const vgd::Shp< vgd::event::TimerEvent > 
 		//
 		m_lastExecution = m_firstExecution;
 		m_elapsedTimeFrom0 = m_firstExecution.getElapsedTime();
+		beginExecution();
 		apply( event );
 	}
 	else
@@ -110,9 +102,17 @@ const bool TimerCallback::operator() ( const vgd::Shp< vgd::event::TimerEvent > 
 	}
 
 	// Takes care of execution duration
-	return (getExecutionDuration() == vgd::basic::TimeDuration()) ?
+	const bool retVal = (getExecutionDuration() == vgd::basic::TimeDuration()) ?
 		false :														// executes this callback forever
 		m_firstExecution.getElapsedTime() > getExecutionDuration();	// stops execution if conditions are reached
+
+	if ( retVal )
+	{
+		// This is the last execution of this callback
+		endExecution();
+	}
+
+	return retVal;
 }
 
 
