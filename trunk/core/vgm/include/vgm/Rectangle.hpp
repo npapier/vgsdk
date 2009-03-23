@@ -93,9 +93,9 @@ struct Rectangle
 	T&			operator[]( const unsigned int i )			{ return m_rectangle[i]; }
 	const T&	operator[]( const unsigned int i ) const	{ return m_rectangle[i]; }
 
-	const vgm::Vector< T, 2 > getPosition() const { return vgm::Vector< T, 2 >( m_tCoord[0], m_tCoord[1] ); }
+	const vgm::Vector< T, 2 > getPosition() const { return vgm::Vector< T, 2 >( m_rectangle[0], m_rectangle[1] ); }
 
-	const vgm::Vector< T, 2 > getSize() const { return vgm::Vector< T, 2 >( m_tCoord[2], m_tCoord[3] ); }
+	const vgm::Vector< T, 2 > getSize() const { return vgm::Vector< T, 2 >( m_rectangle[2], m_rectangle[3] ); }
 	//@}
 
 
