@@ -12,7 +12,6 @@
 
 namespace vgd { namespace event { struct TimerEvent; } }
 namespace vgd { namespace node { struct Node; } }
-namespace vgeGL { namespace engine { struct SceneManager; } }
 
 
 
@@ -30,43 +29,41 @@ namespace event
  * @ingroup g_time
  *
  * @todo isCallable(), isActive or isPlaying()
+ * @todo functor
  * @todo delay()
  * @todo pause()
  * @todo start(), stop(), rewind(), skip(), advance()
  */
-struct VGD_API TimerCallback
+struct TimerCallback
 {
 	/**
 	 * @brief	Default constructor
 	 *
 	 * @post getNode() == 0
-	 * @post getSceneManager() == 0
 	 *
 	 * @post getExecutionDuration().seconds() == 1
 	 * @post getFrequency() == 25
 	 */
-	TimerCallback();
+	VGD_API TimerCallback();
 
 	/**
 	 * @brief	Constructor storing a node reference for future usage in apply method.
 	 *
 	 * @param node			a shared pointer on the node to store
-	 * @param sceneManager		a reference on a scene manager
 	 *
 	 * @pre node != 0
 	 *
 	 * @post getNode() != 0
-	 * @post getSceneManager() == sceneManager
 	 *
 	 * @post getExecutionDuration().seconds() == 1
 	 * @post getFrequency() == 25
 	 */
-	TimerCallback( vgd::Shp< vgd::node::Node > node, vgeGL::engine::SceneManager * sceneManager = 0 );
+	VGD_API TimerCallback( vgd::Shp< vgd::node::Node > node );
 
 	/**
 	 * @brief	Virtual destructor
 	 */
-	virtual ~TimerCallback();
+	VGD_API virtual ~TimerCallback();
 
 
 	/**
@@ -74,14 +71,8 @@ struct VGD_API TimerCallback
 	 *
 	 * @return the node reference stored by this callback
 	 */
-	vgd::Shp< vgd::node::Node > getNode();
+	VGD_API vgd::Shp< vgd::node::Node > getNode();
 
-	/**
-	 * @brief Retrieves the scene manager reference stored by this callback
-	 *
-	 * @return the scene manager reference stored by this callback
-	 */
-	vgeGL::engine::SceneManager * getSceneManager();
 
 
 	/**
@@ -97,7 +88,7 @@ struct VGD_API TimerCallback
 	 * @param event	the event that has triggered the callback execution
 	 * @return true to stop futur execution of this callback, false to continue.
 	 */
-	const bool operator() ( const vgd::Shp< vgd::event::TimerEvent > event );
+	VGD_API const bool operator() ( const vgd::Shp< vgd::event::TimerEvent > event );
 
 	/**
 	 * @brief Implements the user part of the timer callback
@@ -106,7 +97,21 @@ struct VGD_API TimerCallback
 	 *
 	 * @remarks Overriddes this method to customize this callback.
 	 */
-	virtual void apply( const vgd::Shp< vgd::event::TimerEvent > event )=0;
+	VGD_API virtual void apply( const vgd::Shp< vgd::event::TimerEvent > event )=0;
+
+	/**
+	 * @brief Implements the user part of the first execution of the timer callback
+	 *
+	 * By default, this method does nothing. Overriddes this method to customize this callback.
+	 */
+	VGD_API virtual void beginExecution() {}
+
+	/**
+	 * @brief Implements the user part of the last execution of the timer callback
+	 *
+	 * By default, this method does nothing. Overriddes this method to customize this callback.
+	 */
+	VGD_API virtual void endExecution() {}
 
 	//@}
 
@@ -124,14 +129,14 @@ struct VGD_API TimerCallback
 	 *
 	 * @remarks Uses a null duration, constructed using TimeDuration(), to set an infinite life duration of callback execution.
 	 */
-	void setExecutionDuration( const vgd::basic::TimeDuration duration );
+	VGD_API void setExecutionDuration( const vgd::basic::TimeDuration duration );
 
 	/**
 	 * @brief Returns the life duration of callback execution
 	 *
 	 * @return the life duration of callback execution
 	 */
-	const vgd::basic::TimeDuration getExecutionDuration() const;
+	VGD_API const vgd::basic::TimeDuration getExecutionDuration() const;
 
 
 	/**
@@ -139,7 +144,7 @@ struct VGD_API TimerCallback
 	 *
 	 * Sets the desired number of execution per seconds.
 	 */
-	void setFrequency( const float frequency );
+	VGD_API void setFrequency( const float frequency );
 
 	/**
 	 * @brief Returns the frequency of callback execution in hertz.
@@ -148,7 +153,7 @@ struct VGD_API TimerCallback
 	 *
 	 * @see setFrequency
 	 */
-	const float getFrequency() const;
+	VGD_API const float getFrequency() const;
 
 	//@}
 
@@ -173,14 +178,14 @@ struct VGD_API TimerCallback
 	 *
 	 * @return a value between 0 and 1.
 	 */
-	const float getTf();
+	VGD_API const float getTf();
 
 	/**
 	 * @brief Returns the t parameter value
 	 *
 	 * @return a value between 0 and 1.
 	 */
-	const double getTd();
+	VGD_API const double getTd();
 
 
 	/**
@@ -188,12 +193,12 @@ struct VGD_API TimerCallback
 	 *
 	 * This value represents the time needed for the t parameter to reach 1 from zero.
 	 */
-	void setTDuration( const vgd::basic::TimeDuration duration );
+	VGD_API void setTDuration( const vgd::basic::TimeDuration duration );
 
 	/**
 	 * @brief Returns the duration
 	 */
-	const vgd::basic::TimeDuration getTDuration() const;
+	VGD_API const vgd::basic::TimeDuration getTDuration() const;
 
 
 	/**
@@ -214,12 +219,12 @@ struct VGD_API TimerCallback
 	 *
 	 * @see TDirection
 	 */
-	void setTDirection( const TDirection direction );
+	VGD_API void setTDirection( const TDirection direction );
 
 	/**
 	 * @brief Returns the direction
 	 */
-	const TDirection getTDirection() const;
+	VGD_API const TDirection getTDirection() const;
 
 
 	/**
@@ -239,12 +244,12 @@ struct VGD_API TimerCallback
 	 *
 	 * @see TLoopMode
 	 */
-	void setTLoopMode( const TLoopMode mode );
+	VGD_API void setTLoopMode( const TLoopMode mode );
 
 	/**
 	 * @brief Returns the loop mode
 	 */
-	const TLoopMode getTLoopMode() const;
+	VGD_API const TLoopMode getTLoopMode() const;
 
 
 	/**
@@ -254,12 +259,12 @@ struct VGD_API TimerCallback
 	 *
 	 * @remarks a loop count sets to zero means the loop would be execute forever
 	 */
-	void setTLoopCount( const uint count );
+	VGD_API void setTLoopCount( const uint count );
 
 	/**
 	 * @brief Returns the loop count
 	 */
-	const uint getTLoopCount() const;
+	VGD_API const uint getTLoopCount() const;
 
 	//@}
 
@@ -267,7 +272,6 @@ struct VGD_API TimerCallback
 private:
 
 	vgd::Shp< vgd::node::Node >	m_node;				///< the node reference stored by this callback.
-	vgeGL::engine::SceneManager	*m_sceneManager;	///< the scene manager reference stored by this callback.
 
 
 	/**

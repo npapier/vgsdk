@@ -397,9 +397,9 @@ const int32 Engine::getMaxLights() const
 
 	return m_maxLights;
 }
-	
-	
-	
+
+
+
 const int32 Engine::getMaxTexUnits() const
 {
 	if ( m_maxTexUnits == 0 )
