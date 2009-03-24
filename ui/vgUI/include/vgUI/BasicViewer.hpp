@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -110,6 +110,8 @@ struct VGUI_API BasicViewer : public Canvas
 	 */
 	vgd::Shp< vgd::node::Camera > getCamera();
 
+	const vgd::Shp< vgd::node::Camera > getCamera() const;
+
 	/**
 	 * @brief Camera position hints
 	 */
@@ -132,12 +134,15 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @name Other Accessors
 	 */
 	//@{
+
 	/**
 	 * @brief Returns the setup node.
 	 *
 	 * @return the setup node.
 	 */
 	vgd::Shp< vgd::node::Group > getSetup();
+
+	const vgd::Shp< vgd::node::Group > getSetup() const;
 
 	/**
 	 * @brief Returns the view transformation node.
@@ -146,14 +151,13 @@ struct VGUI_API BasicViewer : public Canvas
 	 */
 	vgd::Shp< vgd::node::MatrixTransform > getViewTransformation();
 
+	const vgd::Shp< vgd::node::MatrixTransform > getViewTransformation() const;
+
 	/**
 	 * @brief Returns scene group node.
 	 */
 	vgd::Shp< vgd::node::Group > getScene();
 
-	/**
-	 * @brief Returns scene group node.
-	 */
 	const vgd::Shp< vgd::node::Group > getScene() const;
 
 	/**
@@ -162,6 +166,8 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @return the overlay container multi switch
 	 */
 	vgd::Shp< vgd::node::MultiSwitch > getOverlayContainer();
+
+	const vgd::Shp< vgd::node::MultiSwitch > getOverlayContainer() const;
 	//@}
 
 
@@ -189,7 +195,25 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @see		getOptionalNode
 	 */
 	vgd::Shp< vgd::node::Node > createOptionalNode( const OptionalNodeType type );
-	
+
+	/**
+	 * @brief	Creates the given optional node, if it does not already exist.
+	 * 
+	 * @param	type	an optional node type
+	 * 
+	 * @return	a shared pointer to the create node
+	 * 
+	 * @see		destroyOptionalNode
+	 * @see		getOptionalNode
+	 */
+	template< typename T >
+	vgd::Shp< T > createOptionalNodeAs( const OptionalNodeType type )
+	{
+		vgd::Shp< T > retVal = vgd::dynamic_pointer_cast< T >( createOptionalNode( type ) );
+
+		return retVal;
+	}
+
 	/**
 	 * @brief	Destroyes the the option node of the given type, if any exists.
 	 * 
@@ -199,7 +223,7 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @see		getOptionalNode
 	 */
 	void destroyOptionalNode( const OptionalNodeType type );
-	
+
 	/**
 	 * @brief	Retrieves an optional node for the given type, if any exists.
 	 * 
@@ -211,7 +235,9 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @see		destroyOptionalNode
 	 */
 	vgd::Shp< vgd::node::Node > getOptionalNode( const OptionalNodeType type );
-	
+
+	const vgd::Shp< vgd::node::Node > getOptionalNode( const OptionalNodeType type ) const;
+
 	/**
 	 * @brief	Retrieves an optional node for the given type, if any exists.
 	 * 
@@ -224,6 +250,24 @@ struct VGUI_API BasicViewer : public Canvas
 	 */
 	template< typename NodeType >
 	vgd::Shp< NodeType > getOptionalNodeAs( const OptionalNodeType type )
+	{
+		vgd::Shp< vgd::node::Node >	node = getOptionalNode( type );
+		
+		return node ? vgd::dynamic_pointer_cast<NodeType>(node) : vgd::Shp<NodeType>();
+	}
+
+	/**
+	 * @brief	Retrieves an optional node for the given type, if any exists.
+	 * 
+	 * @param	type	an optional node type
+	 * 
+	 * @return	a share pointer to the found optional node, empty if none exists
+	 * 
+	 * @see		createOptionalNode
+	 * @see		destroyOptionalNode
+	 */
+	template< typename NodeType >
+	const vgd::Shp< NodeType > getOptionalNodeAs( const OptionalNodeType type ) const
 	{
 		vgd::Shp< vgd::node::Node >	node = getOptionalNode( type );
 		
@@ -274,6 +318,9 @@ private:
 	 * @brief Resets scene graph
 	 */
 	void privateResetSceneGraph();
+
+
+	const vgd::Shp< vgd::node::Node > implGetOptionalNode( const OptionalNodeType type ) const; ///< getOptionalNode() implementation
 
 
 	/**
