@@ -27,7 +27,11 @@ void Timer::connect( Gtk::Widget * widget )
 	// Connects the slot to the Glib::signal_timeout()
 	sigc::slot<bool> mySlot = sigc::bind( ::sigc::mem_fun(this, &Timer::onTimeout), 1 );
 
-	store( Glib::signal_timeout().connect( mySlot, 1000/60 ) );
+#ifdef _DEBUG
+	store( Glib::signal_timeout().connect( mySlot, 1000/5 ) );
+#else
+	store( Glib::signal_timeout().connect( mySlot, 1000/25 ) );
+#endif
 
 	SignalHandler::connect( widget );
 }
