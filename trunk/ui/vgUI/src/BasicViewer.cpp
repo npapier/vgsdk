@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -71,7 +71,7 @@ void BasicViewer::privateResetSceneGraph()
 	getRoot()->addChild( m_setup );
 	getRoot()->addChild( m_scene );
 	getRoot()->addChild( m_overlayContainer );
-	getRoot()->addChild( m_debugOverlayContainer );			// @todo FIXME ?????????
+	getRoot()->addChild( m_debugOverlayContainer );
 
 	// Populates SETUP
 	getSetup()->addChild( m_camera );
@@ -145,6 +145,10 @@ vgd::Shp< vgd::node::Group > BasicViewer::getSetup()
 	return m_setup;
 }
 
+const vgd::Shp< vgd::node::Group > BasicViewer::getSetup() const
+{
+	return m_setup;
+}
 
 
 vgd::Shp< vgd::node::Camera > BasicViewer::getCamera()
@@ -152,6 +156,10 @@ vgd::Shp< vgd::node::Camera > BasicViewer::getCamera()
 	return m_camera;
 }
 
+const vgd::Shp< vgd::node::Camera > BasicViewer::getCamera() const
+{
+	return m_camera;
+}
 
 
 vgd::Shp< vgd::node::MatrixTransform > BasicViewer::getViewTransformation()
@@ -159,14 +167,16 @@ vgd::Shp< vgd::node::MatrixTransform > BasicViewer::getViewTransformation()
 	return m_viewTransform;
 }
 
+const vgd::Shp< vgd::node::MatrixTransform > BasicViewer::getViewTransformation() const
+{
+	return m_viewTransform;
+}
 
 
 vgd::Shp< vgd::node::Group > BasicViewer::getScene()
 {
 	return m_scene;
 }
-
-
 
 const vgd::Shp< vgd::node::Group > BasicViewer::getScene() const
 {
@@ -180,14 +190,18 @@ vgd::Shp< vgd::node::MultiSwitch > BasicViewer::getOverlayContainer()
 	return m_overlayContainer;
 }
 
+const vgd::Shp< vgd::node::MultiSwitch > BasicViewer::getOverlayContainer() const
+{
+	return m_overlayContainer;
+}
 
 
 vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeType type )
 {
 	// Retrieves any existing node of the given type.
 	vgd::Shp< vgd::node::Node > existingNode = getOptionalNode( type );
-	
-	
+
+
 	// If no node for the given type exists, then we will create one.
 	if( ! existingNode )
 	{
@@ -195,7 +209,7 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 		{
 		case CLEAR_FRAME_BUFFER:
 			existingNode = vgd::node::ClearFrameBuffer::create("CLEAR_FRAME_BUFFER");
-			getSetup()->addChild( existingNode ); // insertChild( existingNode ); ???
+			getSetup()->addChild( existingNode );
 			break;
 
 		case DRAW_STYLE:
@@ -318,6 +332,20 @@ void BasicViewer::destroyOptionalNode( const OptionalNodeType type )
 
 
 vgd::Shp< vgd::node::Node > BasicViewer::getOptionalNode( const OptionalNodeType type )
+{
+	return implGetOptionalNode( type );
+}
+
+
+
+const vgd::Shp< vgd::node::Node > BasicViewer::getOptionalNode( const OptionalNodeType type ) const
+{
+	return implGetOptionalNode( type );
+}
+
+
+
+const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const OptionalNodeType type ) const
 {
 	// Retrieves the optional node name.
 	std::string	optionalNodeName;
