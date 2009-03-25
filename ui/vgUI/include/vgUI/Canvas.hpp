@@ -143,12 +143,7 @@ namespace vgUI
 	 * @brief Performs an OpenGL swap buffer command.
 	 */
 	virtual void swapBuffer() = 0;
-	/**
-	 * @brief Determines whether vgsdk is locally initialized or not.
-	 *
-	 * @return true if Vgsdk is localy initialized, false otherwise
-	 */
-	const bool isVGSDKLocalyInitialized() const;
+
 	///@}
 
 
@@ -179,6 +174,15 @@ namespace vgUI
 	 */
 	const bool isOpenGLObjectsShared() const;
 
+
+protected:
+	/**
+	 * @brief Determines whether vgsdk is locally initialized or not.
+	 *
+	 * @return true if Vgsdk is localy initialized, false otherwise
+	 */
+	const bool isVGSDKLocalyInitialized() const;
+public:
 
 
 	/**
@@ -472,6 +476,7 @@ private:
 
 	const Canvas *	m_sharedCanvas;				///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 	bool			m_bLocalInitializedVGSDK;	///< Boolean value set if initializeVGSDK() has already been called for this instance of Canvas.
+
 	bool			m_scheduleScreenshot;		///< Boolean value telling if a screen capture should be done at the end of next rendering.
 	bool			m_videoCapture;				///< Boolean value telling if the video capture is enabled.
 
