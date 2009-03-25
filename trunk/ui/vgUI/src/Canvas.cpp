@@ -173,12 +173,6 @@ Canvas::~Canvas()
 }
 
 
-const bool Canvas::isVGSDKLocalyInitialized() const
-{
-	return m_bLocalInitializedVGSDK;
-}
-
-
 
 /**
  * @todo toString( vgd::event::Event)
@@ -390,6 +384,12 @@ const bool Canvas::isOpenGLObjectsShared() const
 	return m_sharedCanvas != 0;
 }
 
+
+
+const bool Canvas::isVGSDKLocalyInitialized() const
+{
+	return m_bLocalInitializedVGSDK;
+}
 
 
 void Canvas::refresh( const RefreshType type, const WaitType wait )
