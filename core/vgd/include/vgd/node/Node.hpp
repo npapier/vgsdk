@@ -208,7 +208,14 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
  	 * 
  	 * @remark For more explanation see IGroup::getEnabledChildren().
 	 */
-	virtual void	getEnabledParents( NodeList& parents, const bool bGetEnabled = true) const;
+	virtual void	getEnabledParents( NodeList& parents, const bool bGetEnabled = true ) const;
+
+	/**
+	 * @brief Returns the number of parents.
+	 *
+ 	 * @param bGetEnabled	true to only take care of enabled parents, false to only take care of disabled parents.
+	 */
+	const int32 getNumEnabledParents( const bool bGetEnabled = true ) const;
 
 	/**
 	 * @brief Invalidate bounding box dirty flag for each parents of this node.
