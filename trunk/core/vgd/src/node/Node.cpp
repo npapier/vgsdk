@@ -116,6 +116,17 @@ void Node::getEnabledParents( NodeList& parents, const bool bGetEnabled ) const
 
 
 
+const int32 Node::getNumEnabledParents( const bool bGetEnabled ) const
+{
+	// @todo Implements in Graph
+	NodeList parents;
+	getEnabledParents( parents, bGetEnabled );
+
+	return parents.size();
+}
+
+
+
 void Node::invalidateParentsBoundingBoxDirtyFlag() 
 {
 	NodeList parents;
