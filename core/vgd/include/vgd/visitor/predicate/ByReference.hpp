@@ -35,7 +35,7 @@ struct VGD_API ByReference : public IPredicate
 	 * 
 	 * @param reference		node reference to find.
 	 */
-	ByReference( const vgd::node::Node *reference );
+	vgDEPRECATED( ByReference( const vgd::node::Node *reference ) );
 
 	/**
 	 * @brief Test the predicate.
