@@ -48,31 +48,21 @@ namespace vgGTK
 struct VGGTK_API BasicManipulator : public GenericCanvas< vgUI::BasicManipulator >
 {
 	/**
-	 * @name	Constructors
+	 * @name	Constructors & destructor
 	 */
 	//@{
 	BasicManipulator();
 
 	template< typename SharedCanvasType >
 	BasicManipulator( const SharedCanvasType * sharedCanvas )
-	:	GenericCanvas< vgUI::BasicManipulator >( sharedCanvas ),
-		m_keyboard(	new vgGTK::event::device::Keyboard()	),
-		m_mouse(	new vgGTK::event::device::Mouse()		),
-		m_timer(	new vgGTK::event::device::Timer()		),
-		m_joystick( vgSDL::event::device::Joystick::get(0)	)
-	{}
+	:	GenericCanvas< vgUI::BasicManipulator >( sharedCanvas )
+	{
+		initDevices();
+	}
+
+	~BasicManipulator();
 	//@}
 
-
-protected:
-
-	/**
-	 * @name	Overrides
-	 */
-	//@{
-	void on_realize();
-	void on_unrealize();
-	//@}
 
 private:
 
@@ -80,6 +70,8 @@ private:
 	vgd::Shp< vgGTK::event::device::Mouse >		m_mouse;	///< The GTK mouse device.
 	vgd::Shp< vgGTK::event::device::Timer >		m_timer;	///< The GTK timer device.
 	vgd::Shp< vgSDL::event::device::Joystick >	m_joystick;	///< References the joystick used to control the scene.
+
+	void initDevices();	///< Initializes device instances and perform listening connections.
 };
 
 
