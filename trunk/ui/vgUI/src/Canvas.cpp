@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,15 +9,11 @@
 #include <cassert>
 #include <iostream>
 
-#include <boost/format.hpp> 
-//#include <boost/date_time/posix_time/posix_time.hpp>
-//#include <boost/lexical_cast.hpp>
 #include <boost/lexical_cast.hpp>
+#include <sbf/Module.hpp>
 #include <vgCairo/helpers.hpp>
 #include <vgCairo/ImageSurface.hpp>
 #include <vgd/basic/Image.hpp>
-//
-
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/Location2Event.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
@@ -30,7 +26,6 @@
 #include <vgd/visitor/helpers.hpp>
 #include <vgDebug/convenience.hpp>
 #include <vgDebug/Global.hpp>
-
 #include <vgeGL/engine/Engine.hpp>
 
 
@@ -40,22 +35,12 @@ namespace vgUI
 
 
 
-const std::string Canvas::Screenshot::buildFilename( const std::string filePrefix )
-{
-	// Constructs filename
-	const std::string strCount = (boost::format("%|07|") % getFrameNumber()).str();
-	const std::string filename = filePrefix + strCount + ".png";
-
-	return filename;
-}
-
-
-
 void Canvas::Screenshot::save( const std::string path, const std::string filePrefix, const bool feedback )
 {
-	const std::string filename = buildFilename( filePrefix );
+	namespace bfs = boost::filesystem;
+	assert( bfs::exists( path ) && "Path not found" );
 
-	// Tests path existance ???
+	const std::string filename = buildFilename( filePrefix );
 
 	// User feedback
 	if ( feedback )
@@ -65,7 +50,24 @@ void Canvas::Screenshot::save( const std::string path, const std::string filePre
 	}
 
 	// Saves image
-	getImage()->save( path + filename );
+	getImage()->save( (bfs::path(path) / filename).file_string() );
+}
+
+
+
+const std::string Canvas::Screenshot::buildFilename( const std::string filePrefix )
+{
+	// Constructs filename
+
+	// FIXME boost::format seems to SEGV with boost 1.38 on win32, so boost lexical cast is used
+	//const std::string strCount = (boost::format("%|07|") % getFrameNumber()).str();
+
+	const std::string strFrameCount = boost::lexical_cast< std::string >( getFrameNumber() );
+	const std::string strZero( (8 - strFrameCount.size()), '0' );
+
+	const std::string filename = filePrefix + strZero + strFrameCount + ".png";
+
+	return filename;
 }
 
 
@@ -286,7 +288,12 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 			// Constructs the screenshot and saves the png image
 			Screenshot shot( getFrameCount(), capturedImage );
-			shot.save( "../var/vgsdk/screenshots/", "frame", true );		// @todo
+
+			// Path
+			sbf::Module module;
+			const boost::filesystem::path path = module.getPath( sbf::Module::Var, "screenshots" );
+			shot.mkdirs( path.file_string() );
+			shot.save( path.file_string(), "frame", true );
 
 			//
 			m_scheduleScreenshot = false;
@@ -313,10 +320,17 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 					capturedImage = getGLEngine()->captureFramebuffer();
 				}
 
-				m_video.push_back( Screenshot( getFrameCount(), capturedImage ) );
+				Screenshot screenshot( getFrameCount(), capturedImage );
+				m_video.push_back( screenshot );
 
 				lastCapture = currentCapture;
 			}
+/*			else
+			// else save one image on disk
+			{
+				vgLogDebug("Time to save");
+// ???			
+			}*/
 		}
 
 /*

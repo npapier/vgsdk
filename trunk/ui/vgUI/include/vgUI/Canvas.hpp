@@ -7,8 +7,13 @@
 #ifndef _VGUI_CANVAS_HPP
 #define _VGUI_CANVAS_HPP
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp> // @todo uses vgsdk time classes
+#include <boost/filesystem/convenience.hpp>
+#include <boost/filesystem/operations.hpp>
+
+#include <gle/OpenGLExtensionsGen.hpp>
 #include <vgd/event/Device.hpp>
+#include <vgDebug/convenience.hpp>
 #include <vgeGL/engine/SceneManager.hpp>
 
 #include "vgUI/vgUI.hpp"
@@ -251,10 +256,28 @@ public:
 		const uint getFrameNumber() const				{ return m_frameNumber; }
 		vgd::Shp< vgd::basic::Image > getImage() const	{ return m_image; }
 
-		const std::string buildFilename( const std::string filePrefix );
+		/**
+		 * @pre path directory must exist
+		 */
 		void save( const std::string path, const std::string filePrefix, const bool feedback = false );
 
+		void mkdirs( const std::string path )
+		{
+			namespace bfs = boost::filesystem;
+
+			if ( bfs::exists( path ) == false )
+			{
+				vgLogDebug2( "Creates %s", path.c_str() );
+				vgLogStatus2( "Creates %s", path.c_str() );
+
+				bfs::create_directories( path );
+			}
+			// else nothing to do
+		}
+
 	private:
+		const std::string buildFilename( const std::string filePrefix );
+
 		const uint						m_frameNumber;	///< the frame number to identify a screenshot. This attribute could be used to order a sequence of screenshots.
 		vgd::Shp< vgd::basic::Image >	m_image;		///< the screenshot is stored by this image
 	};
@@ -263,8 +286,19 @@ public:
 	{
 		//void append( vgd::Shp< Screenshot > screenshot );
 
+		/**
+		 * @pre path directory must exist
+		 */
 		void save( const std::string path, const std::string filePrefix, const bool feedback = false )
 		{
+			namespace bfs = boost::filesystem;
+			assert( bfs::exists( path ) && "Path not found" );
+
+			while( size() >= 1 )
+			{
+				saveAndPopFront( path, filePrefix, feedback );
+			}
+			/*// 
 			const_iterator	i		= begin(),
 							iEnd	= end();
 
@@ -278,7 +312,40 @@ public:
 
 				//
 				++i;
+			}*/
+		}
+
+		/**
+		 * @pre path directory must exist
+		 * @pre size() >= 1
+		 */
+		void saveAndPopFront( const std::string path, const std::string filePrefix, const bool feedback = false )
+		{
+			namespace bfs = boost::filesystem;
+			assert( bfs::exists( path ) && "Path not found" );
+
+			// Gets current screenshot
+			Screenshot& shot = *begin();
+
+			// Saves image
+			shot.save( path, filePrefix, feedback );
+
+			pop_front();
+		}
+
+
+		void mkdirs( const std::string path )
+		{
+			namespace bfs = boost::filesystem;
+
+			if ( bfs::exists( path ) == false )
+			{
+				vgLogDebug2( "Creates %s", path.c_str() );
+				vgLogStatus2( "Creates %s", path.c_str() );
+
+				bfs::create_directories( path );
 			}
+			// else nothing to do
 		}
 	};
 	//typedef std::list< Screenshot > ScreenshotContainerType;	///< a collection of screenshots
@@ -325,6 +392,8 @@ public:
 	 * @return true if the video capture is enabled, false otherwise
 	 */
 	const bool isVideoCaptureEnabled() const;
+
+// @todo set/get/CapturesPerSecond()
 
 	//@}
 
@@ -456,7 +525,6 @@ private:
 	 * @brief Resets scene graph
 	 */
 	void privateResetSceneGraph();
-
 
 	/**
 	 * @brief Updates the layer plan used by fps overlay.
