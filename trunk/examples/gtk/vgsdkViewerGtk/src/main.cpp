@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -18,6 +18,7 @@
 #include <gtkmm/treeview.h>
 
 #include <vgDebug/Global.hpp>
+#include <vgGTK/event/sdl.hpp>
 #include <vgGTK/Logging.hpp>
 
 #include "vgsdkViewerGtk/actions.hpp"
@@ -28,13 +29,13 @@
 
 
 
-bool myRecentFilter( const Gtk::RecentFilter::Info& filter_info )
+/*bool myRecentFilter( const Gtk::RecentFilter::Info& filter_info )
 {
 	const Glib::ustring							applicationName	= Glib::get_application_name();
 	std::list< Glib::ustring >::const_iterator	found			= std::find( filter_info.applications.begin(), filter_info.applications.end(), applicationName );
 
 	return found != filter_info.applications.end();
-}
+}*/
 
 
 
@@ -56,7 +57,7 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 			Gtk::Action::create("Recent", "Recent Files") );
 	actions->add(
 			Gtk::Action::create("Reload", "Reload"),
-			Gtk::AccelKey("F5"),
+			Gtk::AccelKey("<control>R"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileReload), canvas) );
 	actions->add(
 			Gtk::Action::create("Quit", Gtk::Stock::QUIT),
@@ -90,7 +91,7 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 			Gtk::RadioAction::create(manipulationBindingGroup, "MouseAndKeyboardManipulation", "Mouse & Keyboard Manipulation"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::settingManipulationBinding), canvas, 1) );
 	actions->add(
-			Gtk::RadioAction::create(manipulationBindingGroup, "MouseOnlyManipulation", "Mouse Only Manipuation"),
+			Gtk::RadioAction::create(manipulationBindingGroup, "MouseOnlyManipulation", "Mouse Only Manipulation"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::settingManipulationBinding), canvas, 2) );
 
 	actions->add( Gtk::Action::create("Help", "_Help") );
@@ -156,11 +157,17 @@ const Glib::ustring & createDefaultUI()
 
 int main( int argc, char ** argv )
 {
+	// Glib thread system initialization.
+	//Glib::thread_init();
+
 	// Initializes the gtk system.
 	Gtk::Main	kit( &argc, &argv );
 
 	// Installs the GTK-based logging.
 	vgDebug::set< vgGTK::Logging >();
+
+	// Another initialization thing.
+	vgGTK::event::initSDL();
 
 	// Set the human readable name of the application.
 	Glib::set_application_name("vgsdkViewer");
@@ -185,24 +192,26 @@ int main( int argc, char ** argv )
 	uiManager->add_ui_from_string( createDefaultUI() );
 
 
-	// Creates and appends the recent files sub-menu. The rencent items will be filtered
+	// Creates and appends the recent files sub-menu. The recent items will be filtered
 	// to show only items added by this application. Also connect a signal handler to
 	// load a selected entry.
 // @todo	Why is the filtering not working ?
-//	Gtk::RecentFilter			recentFilter;
-	Gtk::RecentChooserMenu		recentChooserMenu( Gtk::RecentManager::get_default() );
 	Gtk::Widget					* recentWidget		= uiManager->get_widget("/DefaultMenuBar/File/Recent");
 	Gtk::MenuItem				* recentMenuItem	= dynamic_cast< Gtk::MenuItem * >( recentWidget );
 
-//	recentFilter.add_application( Glib::get_application_name() );
-//	recentChooserMenu.add_filter( recentFilter );
-//	recentChooserMenu.set_filter( recentFilter );
-	recentChooserMenu.set_sort_type( Gtk::RECENT_SORT_MRU );
-	recentChooserMenu.signal_item_activated().connect( sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileRecent), &recentChooserMenu, &canvas) );
-	recentMenuItem->set_submenu( recentChooserMenu );
+	Gtk::RecentChooserMenu	* recentChooserMenu	= Gtk::manage( new Gtk::RecentChooserMenu(Gtk::RecentManager::get_default()) );
+	Gtk::RecentFilter		* recentFilter		= Gtk::manage( new Gtk::RecentFilter() );
+
+	recentMenuItem->set_submenu( * recentChooserMenu );
 	recentMenuItem->property_visible() = true;
-	
-	
+
+	recentChooserMenu->set_sort_type( Gtk::RECENT_SORT_MRU );
+	recentChooserMenu->set_show_tips( true );
+	recentChooserMenu->signal_item_activated().connect( sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fileRecent), recentChooserMenu, &canvas) );
+
+	recentFilter->add_application( Glib::get_application_name() );
+	recentChooserMenu->add_filter( *recentFilter );
+
 	// Configures the notebook widget.
 	notebook.set_border_width( 2 );
 	notebook.set_size_request( 333, 0 );
