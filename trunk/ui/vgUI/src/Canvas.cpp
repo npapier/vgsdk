@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include <boost/lexical_cast.hpp>
-#include <sbf/Module.hpp>
+#include <sbf/path.hpp>
 #include <vgCairo/helpers.hpp>
 #include <vgCairo/ImageSurface.hpp>
 #include <vgd/basic/Image.hpp>
@@ -290,8 +290,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			Screenshot shot( getFrameCount(), capturedImage );
 
 			// Path
-			sbf::Module module;
-			const boost::filesystem::path path = module.getPath( sbf::Module::Var, "screenshots" );
+			const boost::filesystem::path path = sbf::path::get(sbf::path::Var) / "screenshots";
 			shot.mkdirs( path.file_string() );
 			shot.save( path.file_string(), "frame", true );
 
