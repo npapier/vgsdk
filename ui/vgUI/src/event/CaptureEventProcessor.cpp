@@ -10,7 +10,7 @@
 #include "boost/date_time/local_time/local_time.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <sbf/Module.hpp>
+#include <sbf/path.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgDebug/convenience.hpp>
 #include "vgUI/Canvas.hpp"
@@ -76,8 +76,7 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 				outputFacet->format("%A-%d-%m-%Y_%Hh%Mm%Ss");
 				ss << second_clock::local_time();
 
-				sbf::Module module;
-				const bfs::path path = module.getPath( sbf::Module::Var, bfs::path("videos") / ss.str() );
+				const bfs::path path = sbf::path::get(sbf::path::Var) / bfs::path("videos") / ss.str();
 				const std::string strPath = path.file_string();
 
 				// Flushs the video
