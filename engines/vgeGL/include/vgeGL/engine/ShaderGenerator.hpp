@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,23 +47,23 @@ struct GLSLHelpers
 		static const std::string retValNoLighting("");
 
 		static const std::string retValTwoSided = 
-		"vec4 accumAmbient;\n"
-		"vec4 accumDiffuse;\n"
-		"vec4 accumSpecular;\n"
+		"vec4 accumAmbient = vec4(0.0);\n"
+		"vec4 accumDiffuse = vec4(0.0);\n"
+		"vec4 accumSpecular = vec4(0.0);\n"
 		"\n"
-		"vec4 accumColor;\n"
-		"vec4 accumSecondaryColor;\n"
-		"vec4 accumBackColor;\n"
-		"vec4 accumBackSecondaryColor;\n"
+		"vec4 accumColor = vec4(0.0);\n"
+		"vec4 accumSecondaryColor = vec4(0.0);\n"
+		"vec4 accumBackColor = vec4(0.0);\n"
+		"vec4 accumBackSecondaryColor = vec4(0.0);\n"
 		"\n";
 
 		static const std::string retVal = 
-		"vec4 accumAmbient;\n"
-		"vec4 accumDiffuse;\n"
-		"vec4 accumSpecular;\n"
+		"vec4 accumAmbient = vec4(0.0);\n"
+		"vec4 accumDiffuse = vec4(0.0);\n"
+		"vec4 accumSpecular = vec4(0.0);\n"
 		"\n"
-		"vec4 accumColor;\n"
-		"vec4 accumSecondaryColor;\n"
+		"vec4 accumColor = vec4(0.0);\n"
+		"vec4 accumSecondaryColor = vec4(0.0);\n"
 		"\n";
 
 		if ( state.isLightingEnabled() == false )
@@ -602,13 +602,17 @@ struct GLSLHelpers
 
 		for( uint foundTexture = 0; i != iEnd; ++i )
 		{
-			const glo::Texture * current = state.getTexture( i );
+			const vgd::Shp< GLSLState::TexUnitState >  current = state.getTexture( i );
 
-			if ( current ) // @todo Texturing is enabled if vertex shape contains tex coord and NOT when a texture is defined.
+			if ( current )
 			{
-				const std::string strUnit = boost::lexical_cast< std::string >( i );
-				retVal +=
-				"	gl_TexCoord[" + strUnit + "] = gl_MultiTexCoord" + strUnit + ";\n";
+				if ( current->isComplete() )
+				{
+					const std::string strUnit = boost::lexical_cast< std::string >( i );
+					retVal +=
+					"	gl_TexCoord[" + strUnit + "] = gl_MultiTexCoord" + strUnit + ";\n";
+				}
+				// else nothing to do
 
 				//
 				++foundTexture;
@@ -636,14 +640,18 @@ struct GLSLHelpers
 
 		for( uint foundTexture = 0; i != iEnd; ++i )
 		{
-			const glo::Texture * current = state.getTexture( i );
+			const vgd::Shp< GLSLState::TexUnitState > current = state.getTexture( i );
 
-			if ( current ) // @todo Texturing is enabled if vertex shape contains tex coord and NOT when a texture is defined.
+			if ( current )
 			{
-				const std::string strUnit = boost::lexical_cast< std::string >( i );
+				if ( current->isComplete() )
+				{
+					const std::string strUnit = boost::lexical_cast< std::string >( i );
 
-				retVal +=
-				"uniform sampler2D texUnit" + strUnit + ";\n";
+					retVal +=
+					"uniform sampler2D texUnit" + strUnit + ";\n";
+				}
+				// else nothing to do
 
 				//
 				++foundTexture;
@@ -668,14 +676,18 @@ struct GLSLHelpers
 
 		for( uint foundTexture = 0; i != iEnd; ++i )
 		{
-			const glo::Texture * current = state.getTexture( i );
+			const vgd::Shp< GLSLState::TexUnitState > current = state.getTexture( i );
 
-			if ( current ) // @todo Texturing is enabled if vertex shape contains tex coord and NOT when a texture is defined.
+			if ( current )
 			{
-				const std::string strUnit = boost::lexical_cast< std::string >( i );
+				if ( current->isComplete() )
+				{
+					const std::string strUnit = boost::lexical_cast< std::string >( i );
 
-				retVal +=
-				"	color *= texture2D(texUnit" + strUnit + ", gl_TexCoord[" + strUnit + "].xy);\n";
+					retVal +=
+					"	color *= texture2D(texUnit" + strUnit + ", gl_TexCoord[" + strUnit + "].xy);\n";
+				}
+				// else nothing to do
 
 				//
 				++foundTexture;

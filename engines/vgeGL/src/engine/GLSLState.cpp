@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -76,7 +76,7 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 	{
 		if ( getTexture(i) != 0 )
 		{
-			setTexture( i, 0 );
+			setTexture( i );
 
 			if ( getNumTexture() == 0 )
 			{
@@ -195,7 +195,7 @@ const uint GLSLState::getMaxLight() const
 
 
 
-const glo::Texture *GLSLState::getTexture( const uint indexTexUnit ) const
+const vgd::Shp< GLSLState::TexUnitState > GLSLState::getTexture( const uint indexTexUnit ) const
 {
 	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
 	assert( indexTexUnit < m_texture.size() && "Invalid texture unit index." );
@@ -205,7 +205,7 @@ const glo::Texture *GLSLState::getTexture( const uint indexTexUnit ) const
 
 
 
-glo::Texture *GLSLState::getTexture( const uint indexTexUnit )
+vgd::Shp< GLSLState::TexUnitState > GLSLState::getTexture( const uint indexTexUnit )
 {
 	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
 	assert( indexTexUnit < m_texture.size() && "Invalid texture unit index." );
@@ -215,13 +215,13 @@ glo::Texture *GLSLState::getTexture( const uint indexTexUnit )
 
 
 
-glo::Texture *GLSLState::setTexture( const uint indexTexUnit, glo::Texture * texture )
+vgd::Shp< GLSLState::TexUnitState > GLSLState::setTexture( const uint indexTexUnit, vgd::Shp< TexUnitState > texture )
 {
 	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
 	assert( indexTexUnit < m_texture.size() && "Invalid texture unit index." );
 
 	// Sets the texture
-	glo::Texture * oldTexture = m_texture[indexTexUnit];
+	vgd::Shp< TexUnitState > oldTexture = m_texture[indexTexUnit];
 
 	m_texture[indexTexUnit] = texture;
 
