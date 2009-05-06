@@ -1,0 +1,356 @@
+<?xml version="1.0"?>
+
+<!--	VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+	Distributed under the terms of the GNU Library General Public License (LGPL)
+	as published by the Free Software Foundation.
+	Author Nicolas Papier -->
+
+	<nodes>
+	<node	name = "Camera"
+			inherits="ProjectionTransformation">
+		<doxygen>
+			<docBrief>Camera node used to set the projection matrix, viewport and scissor box</docBrief>
+			<doc>Sets up the projection with an user defined matrix for the viewing frustum(into the world coordinate system). </doc>
+			<doc>Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting. </doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_transformationNodes</ingroup>
+		</doxygen>
+		<sf name="matrix" doc="Determines the projection matrix.">
+			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
+		</sf>
+		<paf name="viewport" doc="Determines the viewport.">
+			<type name="Rectangle2i" namespace="vgm" default="0, 0, 1600, 1200"/>
+		</paf>
+		<paf name="scissor" doc="Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.">
+			<type name="Rectangle2i" namespace="vgm" default=""/>
+		</paf>
+		<codehpp>
+	/**
+	 * @name High-level methods
+	 *
+	 * @todo viewAll()
+	 */
+	//@{
+
+	/**
+	 * @brief Apply the viewport transformation (as defined in OpenGL specification) to a vertex.
+	 *
+	 * @param vertex	vertex to transform
+	 * @return vertex transformed
+	 *
+	 * @pre getViewport(...) == true
+	 */
+	const vgm::Vec3f applyViewport( const vgm::Vec3f&amp; vertex );
+	//@}
+		</codehpp>
+		<codecpp>
+const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f&amp; vertex )
+{
+	vgm::Rectangle2i viewport;
+	bool isDefined = getViewport( viewport );
+	assert( isDefined );
+
+	vgm::Vec2f o(	static_cast&lt;float&gt;(viewport.x()) + static_cast&lt;float&gt;(viewport.width()) * 0.5f,
+					static_cast&lt;float&gt;(viewport.y()) + static_cast&lt;float&gt;(viewport.height()) * 0.5f );
+
+	vgm::Vec2f p(	static_cast&lt;float&gt;(viewport.width()),
+					static_cast&lt;float&gt;(viewport.height()) );
+
+	float fFar	(	1.f	);
+	float fNear	(	0.f	);
+
+	vgm::Vec3f window(	p[0] * 0.5f * vertex[0] + o[0],
+						p[1] * 0.5f * vertex[1] + o[1],
+						(fFar - fNear) * 0.5f * vertex[2] + (fNear+fFar)*0.5f );
+
+	return window;
+}
+		</codecpp>
+	</node>
+
+	<node	name = "ClipPlane"
+			inherits="MultiAttribute">
+		<doxygen>
+			<docBrief>Clipping plane node</docBrief>
+			<doc>All subsequent shapes in the scene graph will be clipped to the half-space defined by the \c plane field.</doc>
+			<doc>The half-space is the side of the plane in the direction of the plane normal.</doc>
+			<doc>Any number of clipping planes may be active simultaneously, although the graphics library may place a limit on this number during rendering (i.e. 6 for OpenGL).</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_transformationNodes</ingroup>
+		</doxygen>
+		<sf name="plane" doc="Specifies the clipping plane.">
+			<type name="Plane" namespace="vgm" default="vgm::Vec3f(1.f, 0.f, 0.f), 0.f "></type>
+		</sf>
+		<paf name="on" doc="Specifies if the clipping plane is enabled or disabled.">
+			<type name="bool" default="true"/>
+		</paf>
+	</node>
+
+	<node	name = "CullFace"
+			inherits="SingleAttribute">
+		<doxygen>
+			<docBrief>Cull face facets definition node</docBrief>
+			<doc>The CullFace node specifies whether front-facing and/or back-facing facets can be culled.</doc>
+			<doc>Facets include triangles, quadrilaterals, polygons and rectangles.</doc>
+			<doc>FrontFace node specifies which of the clockwise and counterclockwise facets are front-facing and back-facing.</doc>
+			<doc>See vgd::node::FrontFace.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+		</doxygen>
+		<sf name="mode" doc="Specifies whether front-facing and/or back-facing facets can be culled.">
+			<type name="enum">
+				<enum default="DISABLED">
+					<value name="DISABLED" doc="Facet culling is disabled"/>
+					<value name="BACK" doc="Back-facing facets are culled"/>
+					<value name="FRONT" doc="Front-facing facets are culled"/>
+					<value name="FRONT_AND_BACK" doc="Front-facing and back-facing facets are culled"/>
+				</enum>
+			</type>
+		</sf>
+	</node>
+
+	<node	name="FrontFace"
+			inherits="SingleAttribute">
+		<doxygen>
+			<docBrief>Front face polygons definition node</docBrief>
+			<doc>The FrontFace node specifies if polygons are in clockwise winding in window coordinates, or counterclockwise winding in window coordinates, are taken to be front-facing.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+		</doxygen>
+		<sf name="orientation" doc="Specifies if front facing polygons are clockwise (CW) or conterclockwise (CCW)">
+			<type name="enum">
+				<enum default="CCW">
+					<value name="CCW" doc="(C)ounter-(C)lock(W)ise ordering"/>
+					<value name="CW" doc="(C)lock(W)ise ordering"/>
+				</enum>
+			</type>
+		</sf>
+	</node>
+
+	<node	name = "Material"
+			inherits="SingleAttribute">
+		<doxygen>
+			<docBrief>Surface material definition node</docBrief>
+			<doc>The Material node specifies current surface material properties for all subsequent shapes nodes</doc>
+			<doc> and is used by the lighting equations during rendering.</doc>
+			<doc>The field \c transparency is not optional because it is used by others fields (in OpenGL ambient and others use 4 floats).</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_coloringAndLightingNodes</ingroup>
+		</doxygen>
+		<sf name="opacity" doc="Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.">
+			<type name="float" default="1.f"></type>
+		</sf>
+<!--		<sf name="transparency" doc="Sets transparency from 1.0 for being completely opaque until 0.0 for being completely transparent.">
+			<type name="float" default="1.f"></type>
+		</sf> -->
+		<paf name="ambient" doc="Ambient color of the surface.">
+			<type name="Vec3f" namespace="vgm" default="0.2f, 0.2f, 0.2f"/>
+		</paf>
+		<paf name="diffuse" doc="Diffuse color of the surface.">
+			<type name="Vec3f" namespace="vgm" default="0.8f, 0.8f, 0.8f"/>
+		</paf>
+		<paf name="specular" doc="Specular color of the surface.">
+			<type name="Vec3f" namespace="vgm" default="0.f, 0.f, 0.f"/>
+		</paf>
+		<paf name="emission" doc="Emmissive color of the surface.">
+			<type name="Vec3f" namespace="vgm" default="0.f, 0.f, 0.f"/>
+		</paf>
+		<paf name="shininess" doc="Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).">
+			<type name="float" default="0.f"></type>
+		</paf>
+
+<!--	/**
+	 * brief Typedef for the \c color field.
+	 */
+	//typedef vgd::field::TPairAssociativeField< /*int */ColorParameterType, ColorValueType > FColorType; -->
+		<codehpp>
+
+
+
+	/**
+	 * @name Accessors to field \c transparency
+	 *
+	 * This accessors emulates the old interface of the field transparency using the new field opacity.
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c transparency.
+	 */
+	typedef float TransparencyValueType;
+
+	/**
+	 * @brief Type definition of the field named \c transparency
+	 */
+	typedef vgd::field::SFFloat FTransparencyType;
+
+
+	/**
+	 * @brief Gets the value of field named \c transparency.
+	 */
+	vgDEPRECATED( const TransparencyValueType getTransparency() const );
+
+	/**
+	 * @brief Sets the value of field named \c transparency.
+	 */
+	vgDEPRECATED( void setTransparency( const TransparencyValueType value ) );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field color
+	 *
+	 * This accessors emulates the old interface of the field color using the new fields.
+	 */
+	//@{
+
+	/**
+	 * @brief Enumeration of the \c color parameter.
+	 */
+	typedef int /*vgd::field::EnumType*/ ColorParameterType;
+
+	/**
+	 * @brief Typedef for the \c color parameter value.
+	 */
+	typedef vgm::Vec3f  ColorValueType;
+
+	/**
+	 * @brief Gets the \c color value.
+	 */
+	vgDEPRECATED( bool			getColor( const ColorParameterType param, ColorValueType&amp; value ) const );
+
+	/**
+	 * @brief Sets the \c color value.
+	 */
+	vgDEPRECATED( void 			setColor( const ColorParameterType param, ColorValueType value ) );
+
+	/**
+	 * @brief Erase the \c color value.
+	 */
+	vgDEPRECATED( void 			eraseColor( const ColorParameterType param ) );
+	//@}
+		</codehpp>
+		<codecpp>
+// Transparency
+const Material::TransparencyValueType Material::getTransparency() const
+{
+	return getOpacity();
+}
+
+
+
+void Material::setTransparency( const TransparencyValueType value )
+{
+	setOpacity( value );
+}
+
+
+
+// Color
+bool Material::getColor( const ColorParameterType param, ColorValueType&amp; value ) const
+{
+	if ( param == AMBIENT )
+	{
+		return getAmbient( value );
+	}
+	else if ( param == DIFFUSE )
+	{
+		return getDiffuse( value );
+	}
+	else if ( param == SPECULAR )
+	{
+		return getSpecular( value );
+	}
+	else if ( param == EMISSION )
+	{
+		return getEmission( value );
+	}
+	else
+	{
+		assert( false );
+		return false;
+	}
+}
+
+
+
+void Material::setColor( const ColorParameterType param, ColorValueType value )
+{
+	if ( param == AMBIENT )
+	{
+		setAmbient( value );
+	}
+	else if ( param == DIFFUSE )
+	{
+		setDiffuse( value );
+	}
+	else if ( param == SPECULAR )
+	{
+		setSpecular( value );
+	}
+	else if ( param == EMISSION )
+	{
+		setEmission( value );
+	}
+	else
+	{
+		assert( false );
+	}
+}
+
+
+
+void Material::eraseColor( const ColorParameterType param )
+{
+	if ( param == AMBIENT )
+	{
+		eraseAmbient();
+	}
+	else if ( param == DIFFUSE )
+	{
+		eraseDiffuse();
+	}
+	else if ( param == SPECULAR )
+	{
+		eraseSpecular();
+	}
+	else if ( param == EMISSION )
+	{
+		eraseEmission();
+	}
+	else
+	{
+		assert( false );
+	}
+}
+		</codecpp>
+	</node>
+
+
+
+<!-- todo
+	<node	name="SingleAttribute">
+	</node> -->
+</nodes>
+
+<!---		<paf name="color" doc="Specifies the color of the material.">
+			<type name="Vec3f" namespace="vgm">
+			<parameter name="AMBIENT" default="Vec3f(0.2f, 0.2f, 0.2f)" doc="Ambient color of the surface."></parameter>
+			DIFFUSE Vec3f(0.8f, 0.8f, 0.8f) Diffuse color of the surface.
+			SPECULAR Vec3f(0.0f, 0.0f, 0.0f) Specular color of the surface.
+			EMISSION Vec3f(0.0f, 0.0f, 0.0f) Emissive color of the surface.
+		</paf>-->
+
+<!-- test default value code generator
+			<type name="float"></type>
+			<type name="float" default="1.f"></type>
+			<type name="Plane" namespace="vgm"></type>
+			<type name="Plane" namespace="vgm" default=" "></type>
+			<type name="Plane" namespace="vgm" default=" 0, 1, 2"></type>-->
