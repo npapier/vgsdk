@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -48,7 +48,7 @@ struct VGGTK_API DrawStyleEditor : public Gtk::VBox
 	/**
 	 * @brief	Assignes a DrawStyle node to edit.
 	 * 
-	 * @param	drawStyle	a reference to a DrawStyle node
+	 * @param	drawStyle	a reference to a DrawStyle node, empty if none
 	 */
 	void setDrawStyle( vgd::Shp< vgd::node::DrawStyle > drawStyle );
 	

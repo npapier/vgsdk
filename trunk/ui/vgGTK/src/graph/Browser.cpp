@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -169,7 +169,8 @@ const Glib::ustring	Browser::m_uiDefinition =
 
 
 Browser::Browser()
-:	m_actions( Gtk::ActionGroup::create() ),
+:	m_canvas( 0 ),
+	m_actions( Gtk::ActionGroup::create() ),
 	m_uiManager( Gtk::UIManager::create() )
 {
 	// Creates the additionnal icons
@@ -259,6 +260,13 @@ Browser::Browser()
 
 	// Connects signal handlers on the tree view's selection
 	m_treeView.get_selection()->signal_changed().connect( sigc::mem_fun(this, &Browser::onSelectionChanged) );
+}
+
+
+
+void Browser::setCanvas( vgUI::Canvas * canvas )
+{
+	m_canvas = canvas;
 }
 
 

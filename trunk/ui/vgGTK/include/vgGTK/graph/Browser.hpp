@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -23,6 +23,10 @@
 #include "vgGTK/graph/TreeModelColumnRecord.hpp"
 #include "vgGTK/graph/TreeStore.hpp"
 
+namespace vgUI {
+	struct Canvas;
+}
+
 
 
 namespace vgGTK
@@ -42,6 +46,13 @@ struct VGGTK_API Browser : public Gtk::VBox
 	 * @brief	Constructor
 	 */
 	Browser();
+	
+	/**
+	 * @brief	Assignes the pointer to the canvas to refesh on graph changes.
+	 *
+	 * @param	canvas	a pointer to a canvas, null if none
+	 */
+	void setCanvas( vgUI::Canvas * canvas );
 
 	/**
 	 * @brief	Updates the root node of the graph to browse
@@ -55,6 +66,8 @@ struct VGGTK_API Browser : public Gtk::VBox
 private:
 
 	typedef std::set< Glib::ustring > StringSet;	///< Defines a set of Glib::ustring.
+	
+	vgUI::Canvas	* m_canvas;	///< Points to the canvas to refresh.
 
 	/**
 	 * @name	User Interface Management
