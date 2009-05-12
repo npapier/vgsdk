@@ -35,22 +35,23 @@ namespace vgUI
 
 
 
-void Canvas::Screenshot::save( const std::string path, const std::string filePrefix, const bool feedback )
+void Canvas::Screenshot::save( const std::string path, const std::string filename, const bool feedback )
 {
 	namespace bfs = boost::filesystem;
 	assert( bfs::exists( path ) && "Path not found" );
 
-	const std::string filename = buildFilename( filePrefix );
+	const std::string lFilename = filename.size() > 0 ?
+		filename : buildFilename( "frame" );
 
 	// User feedback
 	if ( feedback )
 	{
-		vgLogDebug2( "Screenshot done in file %s", filename.c_str() );
-		vgLogStatus2( "Screenshot done in file %s", filename.c_str() );
+		vgLogDebug2( "Screenshot done in file %s", lFilename.c_str() );
+		vgLogStatus2( "Screenshot done in file %s", lFilename.c_str() );
 	}
 
 	// Saves image
-	getImage()->save( (bfs::path(path) / filename).file_string() );
+	getImage()->save( (bfs::path(path) / lFilename).file_string() );
 }
 
 
@@ -292,10 +293,21 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			// Path
 			const boost::filesystem::path path = sbf::path::get(sbf::path::Var) / "screenshots";
 			shot.mkdirs( path.file_string() );
-			shot.save( path.file_string(), "frame", true );
+
+			if ( m_screenshotFilename.size() > 0 )
+			{
+				// A filename has been specified
+				shot.save( path.file_string(), m_screenshotFilename );
+			}
+			else
+			{
+				// No filename has been specified, so constructs a filename using 'frame' and frame counter.
+				shot.save( path.file_string() );
+			}
 
 			//
 			m_scheduleScreenshot = false;
+			m_screenshotFilename.clear();
 		}
 
 		if ( isVideoCaptureEnabled() )
@@ -453,9 +465,10 @@ void Canvas::refreshForced( const WaitType wait )
 
 
 
-void Canvas::scheduleScreenshot()
+void Canvas::scheduleScreenshot( const std::string filename )
 {
-	m_scheduleScreenshot = true;
+	m_scheduleScreenshot	= true;
+	m_screenshotFilename	= filename;
 }
 
 
