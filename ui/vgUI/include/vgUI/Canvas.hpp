@@ -263,6 +263,8 @@ public:
 		 *				empty to automatically construct a filename using prefix 'frame' and appending frame counter.
 		 *
 		 * @pre path directory must exist
+		 *
+		 * @remark If image specified by given parameters already exists, then it is overridden. Otherwise the image file is simply created.
 		 */
 		void save( const std::string path, const std::string filename = "", const bool feedback = true );
 

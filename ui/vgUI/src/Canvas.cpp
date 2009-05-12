@@ -50,8 +50,17 @@ void Canvas::Screenshot::save( const std::string path, const std::string filenam
 		vgLogStatus2( "Screenshot done in file %s", lFilename.c_str() );
 	}
 
+	// Output image
+	const std::string output = (bfs::path(path) / lFilename).file_string();
+
+	// Removes image if needed
+	if ( bfs::exists( output ) )
+	{
+		bfs::remove( output );
+	}
+
 	// Saves image
-	getImage()->save( (bfs::path(path) / lFilename).file_string() );
+	getImage()->save( output );
 }
 
 
