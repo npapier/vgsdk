@@ -267,6 +267,7 @@ Browser::Browser()
 void Browser::setCanvas( vgUI::Canvas * canvas )
 {
 	m_canvas = canvas;
+	m_editor.setCanvas( canvas );
 }
 
 
