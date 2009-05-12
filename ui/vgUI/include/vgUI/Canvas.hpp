@@ -257,9 +257,14 @@ public:
 		vgd::Shp< vgd::basic::Image > getImage() const	{ return m_image; }
 
 		/**
+		 * @brief Saves the screenshot to a file.
+		 *
+		 * @param filename	name of image file (with extension .png ) or 
+		 *				empty to automatically construct a filename using prefix 'frame' and appending frame counter.
+		 *
 		 * @pre path directory must exist
 		 */
-		void save( const std::string path, const std::string filePrefix, const bool feedback = false );
+		void save( const std::string path, const std::string filename = "", const bool feedback = true );
 
 		void mkdirs( const std::string path )
 		{
@@ -366,8 +371,10 @@ public:
 
 	/**
 	 * @brief Schedules a screen capture at the end of next rendering.
+	 *
+	 * @param filename	name of the file containing the screen capture
 	 */
-	void scheduleScreenshot();
+	void scheduleScreenshot( const std::string filename = "" );
 
 	/**
 	 * @brief Tests if a screen capture is scheduled at the end of next rendering.
@@ -545,10 +552,11 @@ private:
 	const Canvas *	m_sharedCanvas;				///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 	bool			m_bLocalInitializedVGSDK;	///< Boolean value set if initializeVGSDK() has already been called for this instance of Canvas.
 
-	bool			m_scheduleScreenshot;		///< Boolean value telling if a screen capture should be done at the end of next rendering.
-	bool			m_videoCapture;				///< Boolean value telling if the video capture is enabled.
+	bool				m_scheduleScreenshot;		///< Boolean value telling if a screen capture should be done at the end of next rendering.
+	std::string			m_screenshotFilename;		///< name of file used for the screenshot
+	bool				m_videoCapture;				///< Boolean value telling if the video capture is enabled.
 
-	bool			m_debugEvents;				///< Boolean value telling if events should be debugged or not.
+	bool				m_debugEvents;				///< Boolean value telling if events should be debugged or not.
 
 protected: // @todo FIXME
 	vgd::Shp< vgd::node::MultiSwitch >		m_debugOverlayContainer;	///< A reference on the overlay container node used internally by vgSDK
