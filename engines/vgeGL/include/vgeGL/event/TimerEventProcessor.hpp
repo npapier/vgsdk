@@ -25,6 +25,8 @@ namespace event
  * @brief Process incoming timer event by propagating in its timer callbacks.
  * 
  * This is the default event processor in vgsdk used to process event from timer devices.
+ *
+ * @ingroup g_time
  */
 struct VGEGL_API TimerEventProcessor : public EventProcessor
 {
