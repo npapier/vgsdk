@@ -22,6 +22,8 @@ namespace event
 
 /**
  * @brief Specialized version of TimerCallback
+ *
+ * @ingroup g_time
  */
 struct VGEGL_API TimerCallback : public vgd::event::TimerCallback
 {
