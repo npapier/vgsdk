@@ -7,6 +7,7 @@
 #define _VGD_VISITOR_HELPERS_HPP
 
 #include <vgd/node/Group.hpp>
+#include "vgd/visitor/Find.hpp"
 #include "vgd/visitor/FindFirst.hpp"
 #include <vgd/visitor/predicate/ByDirtyFlag.hpp>
 #include <vgd/visitor/predicate/ByName.hpp>
@@ -60,6 +61,30 @@ vgd::Shp< T > findFirst( vgd::Shp< vgd::node::Group > root, const Predicate& pre
 		assert( retVal && "Found node, but dynamic cast fails. Wrong given type ?" );
 	}
 	// else nothing to do
+
+	return retVal;
+}
+
+
+
+/**
+ * @brief Traverses the scene graph from the specified root node to locate the all occurences of node that matches the given predicate.
+ *
+ * @param root		the starting point of the traversing
+ * @param predicate	the object that defines a set of criteria and determines whether the specified node meets those criteria.
+ *
+ * @return A shared pointer on the desired node list.
+ *
+ * @remarks When a node matches the predicate during scene graph traversing, it is added at the end of the returned node list.
+ */
+template< typename Predicate >
+vgd::Shp< vgd::node::NodeList > find( vgd::Shp< vgd::node::Group > root, const Predicate& predicate )
+{
+	vgd::visitor::Find< Predicate > find( predicate );
+
+	root->traverse( find );
+
+	vgd::Shp< vgd::node::NodeList > retVal = find.getShpNodes();
 
 	return retVal;
 }

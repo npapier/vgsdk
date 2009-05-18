@@ -128,9 +128,10 @@ private:
  * the predicate.
  * 
  * @remark This method is an helper to simplify usage of traverse() with vgd::visitor::Find.
+ * @deprecated
  */
 template< class Predicate >
-vgd::Shp< vgd::node::NodeList > find( vgd::Shp< vgd::node::Group > group, const Predicate& predicate )
+vgd::Shp< vgd::node::NodeList > findDEPRECATED( vgd::Shp< vgd::node::Group > group, const Predicate& predicate )
 {
 	vgd::visitor::Find< Predicate >	find( predicate );
 
