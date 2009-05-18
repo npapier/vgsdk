@@ -1,0 +1,4 @@
+USE		= [ 'cairo' ]
+LIB		= [ 'vgd_0-4' ]
+TYPE	= 'shared'
+VERSION = '0-4'

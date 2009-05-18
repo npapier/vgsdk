@@ -1,0 +1,6 @@
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-4'
+libs		= [ 'glc 0-0', 'glc_gtkmm 0-0', 'gle 0-3', 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgeGL 0-4', 'vgio 0-4', 'vgm 0-4', 'vgUI 0-4' ]
+uses		= [ 'gtkmm', 'opengl' ]
+deps		= [ '../../dependencies/glContext/glc_gtkmm', '../../dependencies/gle', '../../core', '../../engines', '../../io/vgio', '../vgUI' ]

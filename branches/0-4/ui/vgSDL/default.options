@@ -1,0 +1,6 @@
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-4'
+libs		= [ 'vgd 0-4' ]
+uses		= [ 'sdl' ]
+deps		= [ '../../core/vgd' ]

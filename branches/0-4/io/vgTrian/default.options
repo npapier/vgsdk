@@ -1,0 +1,5 @@
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-4'
+libs		= [ 'vgd 0-4', 'vgDebug 0-4', 'vgm 0-4', 'vgio 0-4' ]
+deps		= [ '../../core', '../vgio' ]

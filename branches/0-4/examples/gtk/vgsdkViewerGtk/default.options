@@ -1,0 +1,24 @@
+vcsUse		= 'no'
+type		= 'exec'
+version		= '0-1'
+uses 		=	[	#'boost',
+					#'cairo',
+					'gtkmm',
+					#'itk', 
+					#'openil', 
+					'opengl', 
+					#'wx', 'wxgl'
+				]
+libs		=	[
+					#'glContext 0-0', 'glc_gtk 0-0', 'glc_gtkmm 0-0',
+					#'gle 0-3', 'glo 0-3',
+					'vgBase 0-4', 'vgDebug 0-4', 'vgm 0-4', 'vgd 0-4',
+					#'vgAlg 0-4',
+					'vgTrian 0-4', #'vgio 0-4', #'vgCollada 0-4',
+					'vge 0-4','vgeGL 0-4',
+					'vgUI 0-4', 'vgGTK 0-4', #'vgSDL 0-4', 'vgWX 0-4',
+					#'vgCairo 0-4','vgITK 0-4',
+					'vgEgg 0-4'
+				]
+deps		= [ '../../../../vgsdk' ]
+#deps		= [ '../../../core', '../../../engines', '../../../io', '../../../ui/vgGTK' ]
