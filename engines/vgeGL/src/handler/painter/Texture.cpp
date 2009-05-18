@@ -248,6 +248,15 @@ void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNod
 void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture * pNode,
 							::glo::Texture * pTexture )
 {
+	if ( pGLEngine->isTextureMappingEnabled() == false )
+	{
+		// Texture mapping is disabled, so do nothing
+		// Validates node
+		vgd::field::DirtyFlag* pDFNode = pNode->getDirtyFlag( pNode->getDFNode() );
+		pDFNode->validate();
+		return;
+	}
+
 	TexInfo	texInfo;
 
 	State	state = preSynchronize( pGLEngine, pNode, pTexture, texInfo );
