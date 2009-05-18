@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -50,10 +50,10 @@ Material::Material( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FOpacityType(getFOpacity()) );
 	addField( new FShininessType(getFShininess()) );
 	addField( new FEmissionType(getFEmission()) );
 	addField( new FSpecularType(getFSpecular()) );
+	addField( new FTransparencyType(getFTransparency()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FDiffuseType(getFDiffuse()) );
 
@@ -66,7 +66,7 @@ Material::Material( const std::string nodeName ) :
 void Material::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setOpacity( 1.f );
+	setTransparency( 1.f );
 }
 
 
@@ -79,21 +79,6 @@ void Material::setOptionalsToDefaults()
 	setSpecular( vgm::Vec3f(0.f, 0.f, 0.f) );
 	setAmbient( vgm::Vec3f(0.2f, 0.2f, 0.2f) );
 	setDiffuse( vgm::Vec3f(0.8f, 0.8f, 0.8f) );
-}
-
-
-
-// Opacity
-const Material::OpacityValueType Material::getOpacity() const
-{
-	return getFieldRO<FOpacityType>(getFOpacity())->getValue();
-}
-
-
-
-void Material::setOpacity( const OpacityValueType value )
-{
-	getFieldRW<FOpacityType>(getFOpacity())->setValue( value );
 }
 
 
@@ -170,6 +155,21 @@ void Material::eraseSpecular()
 
 
 
+// Transparency
+const Material::TransparencyValueType Material::getTransparency() const
+{
+	return getFieldRO<FTransparencyType>(getFTransparency())->getValue();
+}
+
+
+
+void Material::setTransparency( const TransparencyValueType value )
+{
+	getFieldRW<FTransparencyType>(getFTransparency())->setValue( value );
+}
+
+
+
 // Ambient
 const bool Material::getAmbient( AmbientValueType& value ) const
 {
@@ -219,13 +219,6 @@ void Material::eraseDiffuse()
 
 
 // Field name accessor(s)
-const std::string Material::getFOpacity( void )
-{
-	return "f_opacity";
-}
-
-
-
 const std::string Material::getFShininess( void )
 {
 	return "f_shininess";
@@ -247,6 +240,13 @@ const std::string Material::getFSpecular( void )
 
 
 
+const std::string Material::getFTransparency( void )
+{
+	return "f_transparency";
+}
+
+
+
 const std::string Material::getFAmbient( void )
 {
 	return "f_ambient";
@@ -259,21 +259,6 @@ const std::string Material::getFDiffuse( void )
 	return "f_diffuse";
 }
 
-
-
-
-// Transparency
-const Material::TransparencyValueType Material::getTransparency() const
-{
-	return getOpacity();
-}
-
-
-
-void Material::setTransparency( const TransparencyValueType value )
-{
-	setOpacity( value );
-}
 
 
 

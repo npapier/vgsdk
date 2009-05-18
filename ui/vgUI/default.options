@@ -1,8 +1,10 @@
-description	= '(V)ersatile (G)raphical (U)ser (I)nterface'
-#Cross-platform interface to OpenGL windows
 vcsUse		= 'no'
 type		= 'shared'
-version		= '0-5'
-libs		= [ 'gle 0-3', 'sbf 0-0', 'vgCairo 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgm 0-5' ]
-uses		= [ 'cairo' ]
-deps		= [ '../../dependencies/gle', '../../core', '../../engines' ]
+version		= '0-4'
+libs		= [ 'gle 0-3', 'vgCairo 0-4', 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgeGL 0-4', 'vgm 0-4' ]
+
+uses = [ 'cairo' ]
+
+#uses		= [ 'boost', 'glu', 'opengl', 'wx', 'wxgl' ]
+#libs		= [ 'gle 0-3', 'vgAlg 0-4', 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgeGL 0-4', 'vgm 0-4', 'vgTrian 0-4' ]
+#deps		= [ '../../dependencies/gle', '../../core', '../../engines' ]

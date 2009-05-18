@@ -1,21 +1,16 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
-// Author Guillaume Brocker
 
 #ifndef _VGEGL_ENGINE_SCENEMANAGER_HPP
 #define _VGEGL_ENGINE_SCENEMANAGER_HPP
 
-#include <vgd/event/DeviceListener.hpp>
+#include <vgd/event/Listener.hpp>
 #include <vge/engine/SceneManager.hpp>
 
 #include "vgeGL/event/IEventProcessor.hpp"
-#include "vgeGL/itf/IUnderlay.hpp"
 #include "vgeGL/technique/RayCasting.hpp"
-
-namespace vgd { namespace node { struct LayerPlan; } }
-namespace vgeGL { namespace event { struct TimerEventProcessor; } }
 
 
 
@@ -40,12 +35,9 @@ namespace engine
  * 		camera node. By default nothing is done in it, because there is no vgd::node::Camera in the scene graph.
  * 		But if you derived this class and add a Camera node, you should write this piece of code.
  * - Event handling (listen and process events with event processors).
- * - A time base animation system. @ref g_time
  * - Casts ray under the mouse cursor.
- * - Renders an overlay after the rendering of the scene graph. The typical use case is to draw a logo over the GUI window.
- * - Renders an underlay just after the clearing of the whole framebuffer in the MultiMain technique. This layer is only used by the MultiMain technique.
  */
-struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::DeviceListener, public vgeGL::itf::IUnderlay
+struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::Listener
 {
 	/**
 	 * @name Constructors/Destructor
@@ -308,21 +300,6 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 
 	/**
-	 * @name Timer event processor methods
-	 */
-	//@{
-
-	/**
-	 * @brief Returns the default timer event processor.
-	 *
-	 * @return the timer event processor.
-	 */
-	vgd::Shp< ::vgeGL::event::TimerEventProcessor > getTimerEventProcessor();
-	//@}
-
-
-
-	/**
 	 * @name Ray casting
 	 */
 	//@{
@@ -394,7 +371,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * 
 	 * @return the vgeGL engine.
 	 */
-	vgd::Shp< vgeGL::engine::Engine > getGLEngine() const;
+	vgd::Shp< vgeGL::engine::Engine > getGLEngine() const;	
 	
 	//@}
 	
@@ -423,43 +400,6 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 
 	//@}
 
-
-	/**
-	 * @name Overlay/underlay
-	 */
-	//@{
-
-	/**
-	 * @brief Sets the current overlay.
-	 * @param overlay	the layer plan to use for overlay
-	 */
-	void setOverlay( vgd::Shp< vgd::node::LayerPlan > overlay );
-
-	/**
-	 * @brief Returns the current overlay.
-	 *
-	 * @return the installed overlay
-	 */
-	vgd::Shp< vgd::node::LayerPlan > getOverlay();
-
-
-	/**
-	 * @brief Sets the current underlay.
-	 * @param underlay	the layer plan to use for underlay
-	 *
-	 * @see vgeGL::technique::MultiMain
-	 */
-	void setUnderlay( vgd::Shp< vgd::node::LayerPlan > underlay );
-
-	/**
-	 * @brief Returns the current underlay.
-	 *
-	 * @return the installed underlay
-	 *
-	 * @see vgeGL::technique::MultiMain
-	 */
-	vgd::Shp< vgd::node::LayerPlan > getUnderlay();
-	//@}
 
 
 protected:
@@ -503,15 +443,6 @@ protected:
 	 */
 	EventProcessorContainer	m_eventProcessors;
 
-	vgd::Shp< ::vgeGL::event::TimerEventProcessor > m_timerEventProcessor;
-	//@}
-
-	/**
-	 * @name Overlay/underlay
-	 */
-	//@{
-	vgd::Shp< vgd::node::LayerPlan > m_overlay;
-	vgd::Shp< vgd::node::LayerPlan > m_underlay;
 	//@}
 };
 

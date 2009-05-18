@@ -102,7 +102,7 @@ struct Vector : public Widget< V >, public Gtk::HBox
 			}
 			catch( const boost::bad_lexical_cast & )
 			{
-				vgGTK::field::widget::Widget< V >::showWarning("Please, enter a number!");
+				showWarning("Please, enter a number!");
 				m_elements[i]->grab_focus();
 				validate = false;
 			}

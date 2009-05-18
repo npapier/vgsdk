@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 #ifndef _VGD_EVENT_MOUSEBUTTONEVENT_HPP
 #define _VGD_EVENT_MOUSEBUTTONEVENT_HPP
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/ButtonEvent.hpp"
 #include "vgd/event/Location2.hpp"
 
@@ -14,12 +15,12 @@
 
 namespace vgd
 {
-
+	
 namespace event
 {
 
 /**
- * @brief	Implements a mouse button event.
+ * @brief	Implements a keyboard button event class.
  */
 struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 {
@@ -35,7 +36,7 @@ struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 	/**
 	 * @brief	Constructor
 	 * 
-	 * @param	source		a pointer to the source fo the event
+	 * @param	source			a pointer to the source fo the event
 	 * @param	buttonStates	a reference to the button state set
 	 * @param	buttonID		a mouse button
 	 * @param	state			a button state
@@ -44,18 +45,14 @@ struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 	 */
 	MouseButtonEvent(	Source *source, const ButtonStateSet& buttonStates, const int32 buttonID, const State state,
 						const Location& location, const Size& size );
-
+	
 	/**
 	 * @brief	Destructor
 	 */
 	virtual ~MouseButtonEvent();
 
-	/**
-	 * @brief	Overrides
-	 */
-	//@{
+	// overridden method
 	void accept( vgd::event::EventVisitor& eventVisitor );
-	//@}
 };
 
 

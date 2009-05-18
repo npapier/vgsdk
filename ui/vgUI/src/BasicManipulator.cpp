@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -7,9 +7,6 @@
 #include "vgUI/BasicManipulator.hpp"
 
 #include <vgm/Utilities.hpp>
-#include <vgd/event/device/Mouse.hpp>
-#include <vgd/event/device/Timer.hpp>
-#include <vgd/event/MouseWheelEvent.hpp>
 #include <vgDebug/Global.hpp>
 
 
@@ -86,29 +83,7 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 
 	BasicViewer::onEvent( event );
 
-	vgd::event::device::Mouse * mouseDevice = dynamic_cast< vgd::event::device::Mouse * >( event->getSource() );
-
-	vgd::event::device::Timer * timerDevice = dynamic_cast< vgd::event::device::Timer * >( event->getSource() );
-
-	// @todo refresh policy is not very cute and generic
-	if ( mouseDevice && mouseDevice->getId() == 0 )
-	{
-		using vgd::event::MouseWheelEvent;
-		vgd::Shp< MouseWheelEvent > mouseWheelEvent = vgd::dynamic_pointer_cast< MouseWheelEvent >( event );
-		if ( event->getButtonStates().getNumDown() > 0 || mouseWheelEvent )
-		{
-			refreshIfNeeded( SYNCHRONOUS );
-		}
-		// else nothing to do
-	}
-	else if ( timerDevice )
-	{
-		refreshForced( SYNCHRONOUS );
-	}
-	else
-	{
-		refreshIfNeeded( ASYNCHRONOUS );
-	}
+	refresh( REFRESH_IF_NEEDED, SYNCHRONOUS );
 }
 
 

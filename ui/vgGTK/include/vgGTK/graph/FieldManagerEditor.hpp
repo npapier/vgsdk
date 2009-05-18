@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -11,10 +11,6 @@
 #include <gtkmm/treeview.h>
 
 #include <vgd/field/FieldManager.hpp>
-
-namespace vgUI {
-	struct Canvas;
-}
 
 
 namespace vgGTK
@@ -40,13 +36,6 @@ struct FieldManagerEditor : public Gtk::TreeView
 	 * @brief	Clears the editor.
 	 */
 	void clear();
-	
-	/**
-	 * @brief	Assignes the canvas to refresh after field changes.
-	 *
-	 * @param	canvas	a pointer to a canvas, null if none
-	 */
-	void setCanvas( vgUI::Canvas * canvas );
 
 	/**
 	 * @brief	Assignes the field manager to editor.
@@ -60,7 +49,6 @@ struct FieldManagerEditor : public Gtk::TreeView
 
 private:
 
-	vgUI::Canvas							* m_canvas;		///< Points to the canvas to refresh.
 	vgd::Shp< vgd::field::FieldManager >	m_fieldManager;	///< References the fied manager to edit.
 
 	/**

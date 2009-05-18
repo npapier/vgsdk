@@ -48,7 +48,7 @@ struct SingleFieldEditor : public Editor
 		assert( m_fieldManager != false );
 		assert( m_fieldName.empty() == false );
 	
-		typedef vgd::field::TSingleField< typename Widget::ValueType > FieldType;
+		typedef vgd::field::TSingleField< Widget::ValueType > FieldType;
 		
 		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
 	
@@ -60,7 +60,7 @@ struct SingleFieldEditor : public Editor
 		assert( m_fieldManager != false );
 		assert( m_fieldName.empty() == false );
 	
-		typedef vgd::field::TSingleField< typename Widget::ValueType > FieldType;
+		typedef vgd::field::TSingleField< Widget::ValueType > FieldType;
 
 		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
 	

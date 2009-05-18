@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,13 +7,7 @@
 #ifndef _VGUI_CANVAS_HPP
 #define _VGUI_CANVAS_HPP
 
-#include <boost/date_time/posix_time/posix_time.hpp> // @todo uses vgsdk time classes
-#include <boost/filesystem/convenience.hpp>
-#include <boost/filesystem/operations.hpp>
-
-#include <gle/OpenGLExtensionsGen.hpp>
-#include <vgd/event/Device.hpp>
-#include <vgDebug/convenience.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <vgeGL/engine/SceneManager.hpp>
 
 #include "vgUI/vgUI.hpp"
@@ -53,7 +47,7 @@ namespace vgUI
  *
  * @ingroup g_vgUIGroup
  */
-	struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::Device
+struct VGUI_API Canvas : public vgeGL::engine::SceneManager
 {
 	/**
 	 * @name gle log accessors
@@ -148,18 +142,16 @@ namespace vgUI
 	 * @brief Performs an OpenGL swap buffer command.
 	 */
 	virtual void swapBuffer() = 0;
-
 	///@}
 
 
 
 	/**
-	 * @name	Overridden methods
+	 * @name	Overrides
 	 */
 	//@{
 	void onEvent( vgd::Shp< vgd::event::Event > event );
 	void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
-	void resize( const vgm::Vec2i size );
 	//@}
 
 
@@ -179,15 +171,6 @@ namespace vgUI
 	 */
 	const bool isOpenGLObjectsShared() const;
 
-
-protected:
-	/**
-	 * @brief Determines whether vgsdk is locally initialized or not.
-	 *
-	 * @return true if Vgsdk is localy initialized, false otherwise
-	 */
-	const bool isVGSDKLocalyInitialized() const;
-public:
 
 
 	/**
@@ -215,29 +198,12 @@ public:
 	/**
 	 * @brief Repaints the window.
 	 *
-	 * @param type		REFRESH_FORCE to force the repaint even if no changes have been made in the scene graph,
-	 * 				or REFRESH_IF_NEEDED to repaint only when at least one change in the scene graph has occured since the
-	 *				last repaint
-	 * @param wait		SYNCHRONOUS to wait the end of the repaint before returning from this method, or
-	 * 				ASYNCHRONOUS to post a paint message to the window and returning without being blocked.
+	 * @param type		set to REFRESH_FORCE to force the repaint even if no changes have been made in the scene graph,
+	 * 					or to REFRESH_IF_NEEDED to repaint only when at least one change in the scene graph has occured.
+	 * @param wait		set to SYNCHRONOUS to wait the end of the repaint before returning from this method, or
+	 * 					to ASYNCHRONOUS to post a paint message to the window and returning without beiing blocked.
 	 */
 	void refresh( const RefreshType type = REFRESH_IF_NEEDED, const WaitType wait = ASYNCHRONOUS );
-
-	/**
-	 * @brief Repaints the window only and only if at least one change in the scene graph has occured since the last repaint.
-	 *
-	 * @param wait		SYNCHRONOUS to wait the end of the repaint before returning from this method, or
-	 * 				ASYNCHRONOUS to post a paint message to the window and returning without being blocked.
-	 */
-	void refreshIfNeeded( const WaitType wait = ASYNCHRONOUS );
-
-	/**
-	 * @brief Force the repaints of the window even if no changes have been made in the scene graph.
-	 *
-	 * @param wait		SYNCHRONOUS to wait the end of the repaint before returning from this method, or
-	 * 				ASYNCHRONOUS to post a paint message to the window and returning without being blocked.
-	 */
-	void refreshForced( const WaitType wait = ASYNCHRONOUS );
 	//@}
 
 
@@ -256,35 +222,10 @@ public:
 		const uint getFrameNumber() const				{ return m_frameNumber; }
 		vgd::Shp< vgd::basic::Image > getImage() const	{ return m_image; }
 
-		/**
-		 * @brief Saves the screenshot to a file.
-		 *
-		 * @param filename	name of image file (with extension .png ) or 
-		 *				empty to automatically construct a filename using prefix 'frame' and appending frame counter.
-		 *
-		 * @pre path directory must exist
-		 *
-		 * @remark If image specified by given parameters already exists, then it is overridden. Otherwise the image file is simply created.
-		 */
-		void save( const std::string path, const std::string filename = "", const bool feedback = true );
-
-		void mkdirs( const std::string path )
-		{
-			namespace bfs = boost::filesystem;
-
-			if ( bfs::exists( path ) == false )
-			{
-				vgLogDebug2( "Creates %s", path.c_str() );
-				vgLogStatus2( "Creates %s", path.c_str() );
-
-				bfs::create_directories( path );
-			}
-			// else nothing to do
-		}
+		const std::string buildFilename( const std::string filePrefix );
+		void save( const std::string path, const std::string filePrefix, const bool feedback = false );
 
 	private:
-		const std::string buildFilename( const std::string filePrefix );
-
 		const uint						m_frameNumber;	///< the frame number to identify a screenshot. This attribute could be used to order a sequence of screenshots.
 		vgd::Shp< vgd::basic::Image >	m_image;		///< the screenshot is stored by this image
 	};
@@ -293,19 +234,8 @@ public:
 	{
 		//void append( vgd::Shp< Screenshot > screenshot );
 
-		/**
-		 * @pre path directory must exist
-		 */
 		void save( const std::string path, const std::string filePrefix, const bool feedback = false )
 		{
-			namespace bfs = boost::filesystem;
-			assert( bfs::exists( path ) && "Path not found" );
-
-			while( size() >= 1 )
-			{
-				saveAndPopFront( path, filePrefix, feedback );
-			}
-			/*// 
 			const_iterator	i		= begin(),
 							iEnd	= end();
 
@@ -319,40 +249,7 @@ public:
 
 				//
 				++i;
-			}*/
-		}
-
-		/**
-		 * @pre path directory must exist
-		 * @pre size() >= 1
-		 */
-		void saveAndPopFront( const std::string path, const std::string filePrefix, const bool feedback = false )
-		{
-			namespace bfs = boost::filesystem;
-			assert( bfs::exists( path ) && "Path not found" );
-
-			// Gets current screenshot
-			Screenshot& shot = *begin();
-
-			// Saves image
-			shot.save( path, filePrefix, feedback );
-
-			pop_front();
-		}
-
-
-		void mkdirs( const std::string path )
-		{
-			namespace bfs = boost::filesystem;
-
-			if ( bfs::exists( path ) == false )
-			{
-				vgLogDebug2( "Creates %s", path.c_str() );
-				vgLogStatus2( "Creates %s", path.c_str() );
-
-				bfs::create_directories( path );
 			}
-			// else nothing to do
 		}
 	};
 	//typedef std::list< Screenshot > ScreenshotContainerType;	///< a collection of screenshots
@@ -373,10 +270,8 @@ public:
 
 	/**
 	 * @brief Schedules a screen capture at the end of next rendering.
-	 *
-	 * @param filename	name of the file containing the screen capture
 	 */
-	void scheduleScreenshot( const std::string filename = "" );
+	void scheduleScreenshot();
 
 	/**
 	 * @brief Tests if a screen capture is scheduled at the end of next rendering.
@@ -402,8 +297,6 @@ public:
 	 */
 	const bool isVideoCaptureEnabled() const;
 
-// @todo set/get/CapturesPerSecond()
-
 	//@}
 
 
@@ -426,6 +319,8 @@ public:
 	 * @return true if the rendering of the debug overlay is enabled, false otherwise
 	 */
 	const bool isDebugOverlay() const;
+
+
 
 	/**
 	 * @brief	Tells if the canvas will trace events.
@@ -455,28 +350,12 @@ public:
 
 
 protected:
-
-	const uint increaseFrameCount();	///< Overridden method
-
-	/**
-	 * @brief Sets the frames per second counter.
-	 *
-	 * @param newFPS	the new counter value
-	 *
-	 * @return the new counter value
-	 */
-	virtual const int setFPS( const int newFPS );
-
-
-
 	/**
 	 * @brief	Calls the overridable initialize method.
 	 *
 	 * @see		initialize()
 	 */
 	void doInitialize();
-
-
 
 	/**
 	 * @brief	Implementors must call the user interface toolkit dependent synchronious refresh method.
@@ -502,8 +381,6 @@ protected:
 	 */
 	virtual const bool shutdownOpenGLContext() = 0;
 
-	// @todo documentation
-	gle::OpenGLExtensionsGen& getGleContext();
 
 	/**
 	 * @brief Calls this method before using vgsdk.
@@ -520,7 +397,7 @@ protected:
 	const bool shutdownVGSDK();
 
 
-private:
+protected:
 
 	/**
 	 * @brief gle main object to be able to access OpenGL extensions.
@@ -534,6 +411,7 @@ private:
 	 * @brief Resets scene graph
 	 */
 	void privateResetSceneGraph();
+
 
 	/**
 	 * @brief Updates the layer plan used by fps overlay.
@@ -554,13 +432,12 @@ private:
 	const Canvas *	m_sharedCanvas;				///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 	bool			m_bLocalInitializedVGSDK;	///< Boolean value set if initializeVGSDK() has already been called for this instance of Canvas.
 
-	bool				m_scheduleScreenshot;		///< Boolean value telling if a screen capture should be done at the end of next rendering.
-	std::string			m_screenshotFilename;		///< name of file used for the screenshot
-	bool				m_videoCapture;				///< Boolean value telling if the video capture is enabled.
+	bool			m_scheduleScreenshot;		///< Boolean value telling if a screen capture should be done at the end of next rendering.
+	bool			m_videoCapture;				///< Boolean value telling if the video capture is enabled.
 
-	bool				m_debugEvents;				///< Boolean value telling if events should be debugged or not.
+	bool			m_debugEvents;				///< Boolean value telling if events should be debugged or not.
 
-protected: // @todo FIXME
+protected: // @todo FIXME ????????
 	vgd::Shp< vgd::node::MultiSwitch >		m_debugOverlayContainer;	///< A reference on the overlay container node used internally by vgSDK
 private:
 	vgd::Shp< vgd::node::LayerPlan >		m_overlayForFPS;	///< A reference on the layer plan used to render fps

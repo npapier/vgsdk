@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -20,12 +20,7 @@
 
 #include "vgGTK/vgGTK.hpp"
 #include "vgGTK/graph/FieldManagerEditor.hpp"
-#include "vgGTK/graph/TreeModelColumnRecord.hpp"
-#include "vgGTK/graph/TreeStore.hpp"
-
-namespace vgUI {
-	struct Canvas;
-}
+#include "vgGTK/graph/TreeModelProvider.hpp"
 
 
 
@@ -46,13 +41,6 @@ struct VGGTK_API Browser : public Gtk::VBox
 	 * @brief	Constructor
 	 */
 	Browser();
-	
-	/**
-	 * @brief	Assignes the pointer to the canvas to refesh on graph changes.
-	 *
-	 * @param	canvas	a pointer to a canvas, null if none
-	 */
-	void setCanvas( vgUI::Canvas * canvas );
 
 	/**
 	 * @brief	Updates the root node of the graph to browse
@@ -66,8 +54,6 @@ struct VGGTK_API Browser : public Gtk::VBox
 private:
 
 	typedef std::set< Glib::ustring > StringSet;	///< Defines a set of Glib::ustring.
-	
-	vgUI::Canvas	* m_canvas;	///< Points to the canvas to refresh.
 
 	/**
 	 * @name	User Interface Management
@@ -89,12 +75,11 @@ private:
 	//@}
 
 	/**
-	 * @name	Data
+	 * @name	Misc
 	 */
 	//@{
-	vgd::Shp< vgd::node::Group >	m_root;			///< References the root node.
-	const TreeModelColumnRecord		m_columns;		///< The tree store columns.
-	Glib::RefPtr< TreeStore >		m_treeStore;	///< References the tree store.
+	vgd::Shp< vgd::node::Group >	m_root;				///< References the root node.
+	TreeModelProvider				m_modelProvider;	///< The managed tree model provider.
 	//@}
 
 	/**
@@ -105,7 +90,6 @@ private:
 	void onExpandAll();										///< Handles the action that will expand all tree view content.
 	void onExpandSubTree();									///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onFullRefresh();									///< Handles the action that will perfrom a refresh of the whole tree.
-	void onRemoveNode();									///< Handles the action that will remove the selected node from it parent.
 	void onSaveAs();										///< Handles the action that will allow the user to save the graph.
 	void onSelectionChanged();								///< Handles notification about a selection change.
 	//@}

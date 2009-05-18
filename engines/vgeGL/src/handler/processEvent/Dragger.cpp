@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -76,18 +76,6 @@ void Dragger::apply( const vgd::event::Motion3Event * )
 
 
 void Dragger::apply( const vgd::event::MouseWheelEvent * )
-{
-}
-
-
-
-void Dragger::apply( const vgd::event::SizeEvent *pSizeEvent )
-{
-}
-
-
-
-void Dragger::apply( const vgd::event::TimerEvent *pTimerEvent )
 {
 }
 
@@ -409,7 +397,7 @@ void Dragger::postApply()
 	{
 		vgm::MatrixR matrix = m_pDragger->computeMatrixFromFields();
 		m_pDragger->setMatrix( matrix );
-		// pDF->validate();	validation is done only during paint().
+		//pDF->validate(); validation is done only during paint().
 	}
 	//else nothing to do
 }

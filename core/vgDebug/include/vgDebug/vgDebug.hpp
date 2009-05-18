@@ -40,7 +40,7 @@
 /** 
  * @namespace vgDebug
  * 
- * @brief (V)ersatile (G)raphical (Debug)
+ * @brief (V)ersatile (G)raphical Debug
  * 
  * \b vgDebug is open source (LGPL).
  */

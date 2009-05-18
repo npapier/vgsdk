@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -94,13 +94,6 @@ void helpAbout( Gtk::Window * topLevel );
  * @remark	Other parameters are gtkmm specific.
  */
 void dragDataReceived( myCanvas * canvas, const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time );
-
-/**
- * @brief	Updates the resolution of the given canvas.
- *
- * @param	canvas	a pointer to the canvas to update
- */
-void setResolution( myCanvas * canvas );
 
 /**
  * @brief	Updates the manipulation bindings of the given canvas.

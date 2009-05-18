@@ -33,8 +33,6 @@ Engine::Engine()
 	m_glslProgramGenerator( new ProgramGenerator() )
 	//m_glslState(0,0)
 {
-	// Reset cache
-	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
 }
 
 
@@ -399,9 +397,9 @@ const int32 Engine::getMaxLights() const
 
 	return m_maxLights;
 }
-
-
-
+	
+	
+	
 const int32 Engine::getMaxTexUnits() const
 {
 	if ( m_maxTexUnits == 0 )

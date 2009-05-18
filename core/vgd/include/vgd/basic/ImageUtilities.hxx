@@ -6,7 +6,6 @@
 #ifndef _VGD_BASIC_IMAGEUTILITIES_HXX_
 #define _VGD_BASIC_IMAGEUTILITIES_HXX_
 
-#include <cstring>
 #include <limits>
 #include <vgm/Utilities.hpp>
 

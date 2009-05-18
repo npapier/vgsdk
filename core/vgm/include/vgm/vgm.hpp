@@ -6,29 +6,6 @@
 #ifndef _VGM_VGM_HPP
 #define _VGM_VGM_HPP
 
-/**
- * @defgroup g_vgm vgm- (V)ersatile (G)raphical (M)athematics
- */
-
-/**
- * @defgroup Geometry Geometrical classes
- *
- * vgm provides some basic geometrical classes like box, line, plane and rectangle.
- * 
- * @ingroup g_vgm
- */
-
-/**
- * @defgroup LinearAlgebra Linear algebra.
- *
- * Linear Algebra consists mostly of matrix calculus. It formalises and gives geometrical interpretation of the resolution of equation systems.
- * It creates a formal link between matrix calculus and the use of linear and quadratic transformations.
- *
- * This linear algebra package contains mainly matrix, rotation and vectors classes.
- * 
- * @ingroup g_vgm
- */
-
 /** 
  * @namespace vgm
  * 
@@ -39,6 +16,29 @@
  * 
  * \b vgm is open source (LGPL).
  */
+
+/**
+ * @defgroup vgmGroup vgm
+ */
+
+/**
+ * @defgroup Geometry Geometrical classes
+ *
+ * vgm provides some basic geometrical classes like box, line, plane and rectangle.
+ * 
+ * @ingroup vgmGroup
+ */
+
+/**
+ * @defgroup LinearAlgebra Linear algebra.
+ *
+ * Linear Algebra consists mostly of matrix calculus. It formalises and gives geometrical interpretation of the resolution of equation systems.
+ * It creates a formal link between matrix calculus and the use of linear and quadratic transformations.
+ *
+ * This linear algebra package contains mainly matrix, rotation and vectors classes.
+ * 
+ * @ingroup vgmGroup
+ */ 
 
 #include <vgBase/Type.hpp>
 

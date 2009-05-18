@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,7 +12,6 @@
 #include <vgd/node/Kit.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/TriSet.hpp>
-#include <vgd/visitor/helpers.hpp>
 #include <vgd/visitor/predicate/ByKindOfType.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgeGL/technique/Main.hpp>
@@ -47,8 +46,15 @@ vgd::Shp< vgd::node::TriSet > extractTriSet( vgd::Shp< vgd::node::Node > shape )
 
 		// Searches first triset node
 		vgd::visitor::predicate::ByKindOfType< TriSet > predicate;
-
-		triset = vgd::visitor::findFirst< TriSet >( root, predicate );
+		
+		std::pair< bool, vgd::Shp< vgd::node::Node > > result;
+		
+		result = vgd::visitor::findFirst( root, predicate );
+		
+		if ( result.first )
+		{
+			triset = vgd::dynamic_pointer_cast< TriSet >( result.second );
+		}
 
 //		vgd::Shp< vgd::node::Node > result = root->findFirst( predicate );
 //	

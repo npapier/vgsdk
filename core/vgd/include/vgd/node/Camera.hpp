@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,9 +6,10 @@
 #ifndef _VGD_NODE_CAMERA_HPP
 #define _VGD_NODE_CAMERA_HPP
 
-#include "vgd/field/Enum.hpp"
-#include "vgd/field/MatrixR.hpp"
-#include "vgd/field/Rectangle2i.hpp"
+#include <vgm/Rectangle.hpp>
+
+#include "vgd/field/Matrix.hpp"
+#include "vgd/field/TPairAssociativeField.hpp"
 #include "vgd/node/ProjectionTransformation.hpp"
 
 
@@ -22,250 +23,209 @@ namespace node
 
 
 /**
- * @brief Camera node used to set the projection matrix, viewport and scissor box
+ * @brief Camera node used to set the projection matrix, viewport and scissor box.
+ * 
+ * Sets up the projection with an user defined matrix for the viewing frustum(into the world coordinate system).
+ * Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting.
+ * 
+ * New fields added by this node :
  *
- * Sets up the projection with an user defined matrix for the viewing frustum(into the world coordinate system).  Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting.  
- *
- * New fields defined by this node :
- *	- PAFRectangle2i \c scissor = empty\n
- *		Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
- *	- SFMatrixR \c matrix = vgm::MatrixR(vgm::MatrixR::getIdentity())\n
+ * - SFMatrixR			\c matrix		= identity\n
  *		Determines the projection matrix.
- *	- PAFRectangle2i \c viewport = vgm::Rectangle2i(0, 0, 1600, 1200)\n
+ * - PAFRectangle2i		\c [viewport]	= (0,0,1600,200).\n
  *		Determines the viewport.
- *
- * Inherited fields :
- * @todo generates this section
- *
+ * - PAFRectangle2i		\c [scissor]	= empty (i.e. scissor test is disabled).\n
+ *		Determines the scissor box (it is automatically enabled if this field is defined, otherwise it is disabled ).
+ * 
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
  * @ingroup g_transformationNodes
  */
 struct VGD_API Camera : public vgd::node::ProjectionTransformation
 {
+	META_NODE_HPP( Camera );
+
+
+
 	/**
-	 * @name Factories
+	 * @name Accessors to field matrix
 	 */
 	//@{
 
 	/**
-	 * @brief Node factory
-	 *
-	 * Creates a node with all fields sets to defaults values
+	 * @brief Typedef for the \c matrix field.
 	 */
-	static vgd::Shp< Camera > create( const std::string nodeName = "NoName" );
+	typedef vgd::field::SFMatrixR	FMatrixType;
 
 	/**
-	 *@brief Node factory
-	 *
-	 * Creates a node with all fields sets to defaults values (optionals fields too).
+	 * @brief Typedef for the \c matrix field value.
 	 */
-	static vgd::Shp< Camera > createWhole( const std::string nodeName = "DefaultWhole" );
+	typedef vgm::MatrixR			MatrixValueType;
 
+	/**
+	 * @brief Gets the projection transformation.
+	 */
+	const vgm::MatrixR&	getMatrix( void ) const;
+
+	/**
+	 * @brief Sets the projection transformation.
+	 */
+	void				setMatrix( const vgm::MatrixR& projection );
+	
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field \c scissor
+	 * @name Accessors to field viewport
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the parameter contained by field named \c scissor.
+	 * @brief Enumeration of the \c viewport parameter.
 	 */
-	typedef vgd::field::Enum ScissorParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
+	typedef enum
 	{
-		SCISSOR = 257,	///< Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
-		DEFAULT_SCISSOR = SCISSOR	///< Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
-	};
+		VIEWPORT = 1
+	} ViewportParameterType;
 
 	/**
-	 * @brief Type definition of the value contained by field named \c scissor.
-	 */
-	typedef vgm::Rectangle2i ScissorValueType;
-
-	/**
-	 * @brief Type definition of the field named \c scissor
-	 */
-	typedef vgd::field::TPairAssociativeField< ScissorParameterType, ScissorValueType > FScissorType;
-
-
-	/**
-	 * @brief Gets the value of field named \c scissor.
-	 */
-	const bool getScissor( ScissorValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c scissor.
- 	 */
-	void setScissor( ScissorValueType value );
-
-	/**
-	 * @brief Erases the field named \c scissor.
-	 */
-	void eraseScissor();
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field \c matrix
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c matrix.
-	 */
-	typedef vgm::MatrixR MatrixValueType;
-
-	/**
-	 * @brief Type definition of the field named \c matrix
-	 */
-	typedef vgd::field::SFMatrixR FMatrixType;
-
-
-	/**
-	 * @brief Gets the value of field named \c matrix.
-	 */
-	const MatrixValueType getMatrix() const;
-
-	/**
-	 * @brief Sets the value of field named \c matrix.
-	 */
-	void setMatrix( const MatrixValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field \c viewport
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the parameter contained by field named \c viewport.
-	 */
-	typedef vgd::field::Enum ViewportParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		VIEWPORT = 256,	///< Determines the viewport.
-		DEFAULT_VIEWPORT = VIEWPORT	///< Determines the viewport.
-	};
-
-	/**
-	 * @brief Type definition of the value contained by field named \c viewport.
+	 * @brief Typedef for the \c viewport parameter value.
 	 */
 	typedef vgm::Rectangle2i ViewportValueType;
 
 	/**
-	 * @brief Type definition of the field named \c viewport
-	 */
-	typedef vgd::field::TPairAssociativeField< ViewportParameterType, ViewportValueType > FViewportType;
-
-
-	/**
-	 * @brief Gets the value of field named \c viewport.
-	 */
-	const bool getViewport( ViewportValueType& value ) const;
+	 * @brief Typedef for the \c viewport field.
+	 */	
+	typedef vgd::field::TPairAssociativeField< int/*ViewportParameterType*/, ViewportValueType > FViewportType;
 
 	/**
-	 * @brief Sets the value of field named \c viewport.
- 	 */
-	void setViewport( ViewportValueType value );
+	 * @brief Gets the \c viewport value.
+	 */
+	bool			getViewport( vgm::Rectangle2i& value ) const;
 
 	/**
-	 * @brief Erases the field named \c viewport.
+	 * @brief Sets the \c viewport value.
 	 */
-	void eraseViewport();
+	void 			setViewport( vgm::Rectangle2i value );
+	
+	/**
+	 * @brief Erase the \c viewport value.
+	 */
+	void 			eraseViewport();
 	//@}
 
 
 
 	/**
-	 * @name Field name accessors
+	 * @name Accessors to field scissor
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c scissor.
-	 *
-	 * @return the name of field \c scissor.
+	 * @brief Enumeration of the \c scissor parameter.
 	 */
-	static const std::string getFScissor( void );
+	typedef enum
+	{
+		SCISSOR = 1
+	} ScissorParameterType;
+
+	/**
+	 * @brief Typedef for the \c scissor parameter value.
+	 */
+	typedef vgm::Rectangle2i ScissorValueType;
+
+	/**
+	 * @brief Typedef for the \c scissor field.
+	 */	
+	typedef vgd::field::TPairAssociativeField< int /*ScissorParameterType*/, ScissorValueType > FScissorType;
+
+	/**
+	 * @brief Gets the \c scissor value.
+	 */
+	bool			getScissor( vgm::Rectangle2i& value ) const;
+
+	/**
+	 * @brief Sets the \c scissor value.
+	 */
+	void 			setScissor( vgm::Rectangle2i value );
+	
+	/**
+	 * @brief Erase the \c scissor value.
+	 */
+	void 			eraseScissor();
+	//@}
+
+
+
+	/**
+	 * @name Fields names enumeration
+	 */
+	//@{
 
 	/**
 	 * @brief Returns the name of field \c matrix.
-	 *
+	 * 
 	 * @return the name of field \c matrix.
 	 */
 	static const std::string getFMatrix( void );
 
 	/**
 	 * @brief Returns the name of field \c viewport.
-	 *
+	 * 
 	 * @return the name of field \c viewport.
 	 */
 	static const std::string getFViewport( void );
-
+	
+	/**
+	 * @brief Returns the name of field \c scissor.
+	 * 
+	 * @return the name of field \c scissor.
+	 */
+	static const std::string getFScissor( void );
 	//@}
+
+
 
 	/**
 	 * @name High-level methods
-	 *
+	 * 
 	 * @todo viewAll()
 	 */
 	//@{
 
 	/**
 	 * @brief Apply the viewport transformation (as defined in OpenGL specification) to a vertex.
-	 *
+	 * 
 	 * @param vertex	vertex to transform
 	 * @return vertex transformed
-	 *
+	 * 
 	 * @pre getViewport(...) == true
-	 */
-	const vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
-	//@}
-		
-
-
-	/**
-	 * @name Constructor and initializer methods
-	 */
-	//@{
-
-	void	setToDefaults( void );
-
-	void	setOptionalsToDefaults();
-
+	 */	
+	vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
 	//@}
 
 protected:
 	/**
-	 * @brief Default constructor
+	 * @name Constructor.
+	 */
+	//@{
+
+	/**
+	 * @brief Default constructor.
 	 */
 	Camera( const std::string nodeName );
 
-public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Camera );
-private:
-	static const vgd::basic::RegisterNode<Camera> m_registrationInstance;
-};
+	void	setToDefaults( void );
+	
+	void	setOptionalsToDefaults();
 
+	//@}
+};
 
 
 } // namespace node
 
 } // namespace vgd
+
 #endif //#ifndef _VGD_NODE_CAMERA_HPP

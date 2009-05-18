@@ -1,7 +1,7 @@
-description	= '(V)ersatile (G)raphical (Egg) code incubator'
 vcsUse		= 'no'
 type		= 'shared'
-version		= '0-5'
+version		= '0-4'
 defines		= [ 'VGD_EXPORTS', 'VGEGL_EXPORTS', 'VGOBJ_EXPORTS', 'VGM_EXPORTS' ]
-libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgm 0-5' ]
-deps		= [ '../../core', '../../engines', '../../dependencies/gle', '../../dependencies/glo' ]
+uses		= [ 'boost', 'openil', 'opengl', 'glu' ]
+libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-4', 'vgDebug 0-4', 'vge 0-4', 'vgeGL 0-4', 'vgm 0-4' ]
+#deps		= [ '../../core', '../../engines', '../../dependencies/gle', '../../dependencies/glo' ]

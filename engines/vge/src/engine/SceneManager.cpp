@@ -1,10 +1,13 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vge/engine/SceneManager.hpp"
 
+#include <vgd/visitor/FindFirstHelper.hpp>
+#include <vgd/visitor/predicate/ByName.hpp>
+#include <vgd/visitor/predicate/ByReference.hpp>
 #include <vgd/visitor/predicate/ByRegexName.hpp>
 #include "vge/technique/ComputeBoundingBox.hpp"
 
@@ -54,17 +57,51 @@ vgd::Shp< vgd::node::Group > SceneManager::setRoot( vgd::Shp< vgd::node::Group >
 
 vgd::Shp< vgd::node::Node > SceneManager::findFirstByName( const std::string name ) const
 {
-	return vgd::visitor::findFirstByName< vgd::node::Node >( m_root, name );
+	vgd::Shp< vgd::node::Node >						retVal;
+
+	std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
+	result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByName(name) );
+
+	if ( result.first )
+	{
+		retVal = result.second;
+	}
+
+	return retVal;
 }
 
 
 
 vgd::Shp< vgd::node::Node > SceneManager::findFirstByRegex( const std::string regexName ) const
 {
-	return vgd::visitor::findFirst< vgd::node::Node >(
-		m_root,
-		vgd::visitor::predicate::ByRegexName(regexName)
-		);
+	vgd::Shp< vgd::node::Node >							retVal;
+
+	std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
+	result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByRegexName(regexName) );
+
+	if ( result.first )
+	{
+		retVal = result.second;
+	}
+
+	return retVal;
+}
+
+
+
+vgd::Shp< vgd::node::Node > SceneManager::findFirstByReference( const vgd::node::Node* reference ) const
+{
+	vgd::Shp< vgd::node::Node >							retVal;
+
+	std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
+	result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByReference(reference) );
+
+	if ( result.first )
+	{
+		retVal = result.second;
+	}
+
+	return retVal;
 }
 
 
@@ -144,7 +181,7 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	}
 
 	// Updates the frame count
-	increaseFrameCount();
+	++m_frameCount;
 }
 
 
@@ -156,7 +193,7 @@ void SceneManager::resize( const vgm::Vec2i size )
 	getEngine()->setDrawingSurfaceSize( size );
 
 	// Updates the frame count
-	increaseFrameCount();
+	++m_frameCount;
 }
 
 
@@ -199,15 +236,6 @@ void SceneManager::setNumberOfFrames( const uint numberOfFrames )
 
 const uint SceneManager::getFrameCount() const
 {
-	return m_frameCount;
-}
-
-
-
-const uint SceneManager::increaseFrameCount()
-{
-	++m_frameCount;
-
 	return m_frameCount;
 }
 

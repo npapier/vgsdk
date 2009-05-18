@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -248,15 +248,6 @@ void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNod
 void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture * pNode,
 							::glo::Texture * pTexture )
 {
-	if ( pGLEngine->isTextureMappingEnabled() == false )
-	{
-		// Texture mapping is disabled, so do nothing
-		// Validates node
-		vgd::field::DirtyFlag* pDFNode = pNode->getDirtyFlag( pNode->getDFNode() );
-		pDFNode->validate();
-		return;
-	}
-
 	TexInfo	texInfo;
 
 	State	state = preSynchronize( pGLEngine, pNode, pTexture, texInfo );
@@ -280,13 +271,11 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 		//Binds texture to the texture unit
 		pTexture->bind();
 
-		// Texturing is enabled lazily in shape handlers (pTexture->enable()).
+		// Texturing is enabled lazily in shape handlers.
+		//pTexture->enable();
 
 		// Updates engine state about texture
-		typedef vgeGL::engine::GLSLState::TexUnitState TexUnitState;
-
-		vgd::Shp< TexUnitState > texUnitState( new TexUnitState(pNode, pTexture) );
-		pGLEngine->getGLSLState().setTexture( pNode->getMultiAttributeIndex(), texUnitState );
+		pGLEngine->getGLSLState().setTexture( pNode->getMultiAttributeIndex(), pTexture );
 
 		// Updates texture parameters ?
 		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );
@@ -313,13 +302,11 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 		// Binds the texture object
 		pTexture->bind();
 
-		// Texturing is enabled lazily in shape handlers ( pTexture->enable();)
+		// Texturing is enabled lazily in shape handlers.
+		//pTexture->enable();
 
 		// Updates engine state about texture
-		typedef vgeGL::engine::GLSLState::TexUnitState TexUnitState;
-
-		vgd::Shp< TexUnitState > texUnitState( new TexUnitState(pNode, pTexture) );
-		pGLEngine->getGLSLState().setTexture( pNode->getMultiAttributeIndex(), texUnitState );
+		pGLEngine->getGLSLState().setTexture( pNode->getMultiAttributeIndex(), pTexture );
 
 		const bool isCompatible = isTextureCompatible( pGLEngine, pNode, pTexture, texInfo );
 
@@ -501,14 +488,14 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 	{
 		// NPOT image
 		#ifdef _DEBUG
-		//vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
-		//						texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
+		vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
+								texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
 		#endif
 
 		if ( isGL_ARB_texture_non_power_of_two() )
 		{
 			#ifdef _DEBUG
-			//vgDebug::get().logDebug("vgeGL.Texture: GL_ARB_texture_non_power_of_two is supported and used.");
+			vgDebug::get().logDebug("vgeGL.Texture: GL_ARB_texture_non_power_of_two is supported and used.");
 			#endif
 			texInfo.texSize			= texInfo.imageSize;
 			texInfo.resizeForTex	= false;
@@ -516,8 +503,6 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 		else
 		{
 			#ifdef _DEBUG
-			vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
-									texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
 			vgDebug::get().logDebug("vgeGL.Texture: Incoming image must be resized.");
 			#endif
 
@@ -529,8 +514,8 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 	{
 		// POT image
 		#ifdef _DEBUG
-		//vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (pot)",
-		//						texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
+		vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (pot)",
+								texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
 		#endif
 
 		texInfo.texSize			= texInfo.imageSizePOT; //  texInfo.imageSize == texInfo.imageSizePOT

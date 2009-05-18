@@ -1,7 +1,6 @@
-// VGSDK - Copyright (C) 2008, Pierre-Jean Bensoussan, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
-// Author Pierre-Jean Bensoussan
 // Author Nicolas Papier
 
 #ifndef _VGALG_NODE_VERTEXSHAPE_HPP
@@ -12,7 +11,7 @@
 namespace vgd
 {
 	template<class T> struct Shp;
-
+	
 	namespace node { struct VertexShape; }
 }
 

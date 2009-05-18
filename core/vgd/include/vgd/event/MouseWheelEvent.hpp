@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,16 +7,17 @@
 #ifndef _VGD_EVENT_MOUSEWHEELEVENT_HPP
 #define _VGD_EVENT_MOUSEWHEELEVENT_HPP
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
 
 
 
 namespace vgd
 {
-
+	
 namespace event
 {
-
+	
 
 
 /**
@@ -38,7 +39,7 @@ struct VGD_API MouseWheelEvent : public Event
 	 * @param	delta				a wheel rotation delta
 	 */
 	MouseWheelEvent( Source *source, const ButtonStateSet& buttonStates, Axis axis, int32 delta );
-
+	
 	/**
 	 * @brief	Retrieves the wheel axis.
 	 * 
@@ -53,13 +54,10 @@ struct VGD_API MouseWheelEvent : public Event
 	 */
 	const int32 getDelta() const;
 
-	/**
-	 * @name Overridden method
-	 */
-	//@{
-	void accept( vgd::event::EventVisitor& eventVisitor );
-	//@}
 
+	// overridden method
+	void accept( vgd::event::EventVisitor& eventVisitor );
+	
 private:
 
 	/**
@@ -72,8 +70,8 @@ private:
 	 */
 	int32 delta;
 };
-
-
+	
+	
 } // namespace event
 
 } // namespace vgd

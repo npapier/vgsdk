@@ -9,7 +9,7 @@
 
 namespace vgd
 {
-
+	
 namespace event
 {
 
@@ -19,7 +19,7 @@ EventVisitor::~EventVisitor()
 {}
 
 
-
+	
 } // namespace event
 
 } // namespace vgd

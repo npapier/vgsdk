@@ -1,20 +1,18 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgeGL/engine/SceneManager.hpp"
 
-#include <vgd/node/LayerPlan.hpp>
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/event/DefaultEventProcessor.hpp"
-#include "vgeGL/event/TimerEventProcessor.hpp"
 #include "vgeGL/technique/Main.hpp"
 #include "vgeGL/technique/RayCasting.hpp"
 
 
- 
+
 namespace vgeGL
 {
 
@@ -32,13 +30,10 @@ SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > engine ) :
 	// Initializes event processor subsystem.
 	using ::vgeGL::event::IEventProcessor;
 	using ::vgeGL::event::DefaultEventProcessor;
-	using ::vgeGL::event::TimerEventProcessor;
 
-	m_timerEventProcessor.reset( new TimerEventProcessor(this) );
-	vgd::Shp< IEventProcessor > defaultEventProcessor( new DefaultEventProcessor(this) );
+	vgd::Shp< IEventProcessor > eventProcessor( new DefaultEventProcessor(this) );
 
-	insertEventProcessor( defaultEventProcessor );
-	insertEventProcessor( m_timerEventProcessor );
+	insertEventProcessor( eventProcessor );
 }
 
 
@@ -61,26 +56,10 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		updateNodeCollector();
 	}
 
-	// Renders scene graph
+	// Renders scene
 	vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
-
-	vgd::Shp< vgeGL::itf::IUnderlay > iunderlay = vgd::dynamic_pointer_cast< vgeGL::itf::IUnderlay >( paintTechnique );
-
-	if ( iunderlay )
-	{
-		// Transferts underlay to the rendering technique
-		iunderlay->setUnderlay( getUnderlay() );
-	}
-
 	getGLEngine()->resetEval();
 	paintTechnique->apply( getGLEngine().get(), getNodeCollector().getTraverseElements() );
-
-	// Renders overlay
-	if ( getOverlay() )
-	{
-		vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
-		getGLEngine()->evaluate( paint, getOverlay().get(), true, false );
-	}
 }
 
 
@@ -226,13 +205,6 @@ const int32 SceneManager::getNumEventProcessors() const
 
 
 
-vgd::Shp< ::vgeGL::event::TimerEventProcessor > SceneManager::getTimerEventProcessor()
-{
-	return m_timerEventProcessor;
-}
-
-
-
 const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32 y )
 {
 	// CAST A RAY
@@ -307,34 +279,6 @@ vgd::Shp< vgeGL::technique::Technique > SceneManager::getPaintTechnique() const
 void SceneManager::setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique )
 {
 	m_paintTechnique = technique;
-}
-
-
-
-void SceneManager::setOverlay( vgd::Shp< vgd::node::LayerPlan > overlay )
-{
-	m_overlay = overlay;
-}
-
-
-
-vgd::Shp< vgd::node::LayerPlan > SceneManager::getOverlay()
-{
-	return m_overlay;
-}
-
-
-
-void SceneManager::setUnderlay( vgd::Shp< vgd::node::LayerPlan > underlay )
-{
-	m_underlay = underlay;
-}
-
-
-
-vgd::Shp< vgd::node::LayerPlan > SceneManager::getUnderlay()
-{
-	return m_underlay;
 }
 
 

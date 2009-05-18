@@ -7,6 +7,7 @@
 #ifndef _VGD_EVENT_AXISEVENT_HPP_
 #define _VGD_EVENT_AXISEVENT_HPP_
 
+#include "vgd/vgd.hpp"
 #include "vgd/event/Event.hpp"
 
 
@@ -21,14 +22,14 @@ namespace event
 
 /**
  * @brief	Implements an event that notifies about axis positions (like analog controls of a joystick).
- * 		The axis position is normalized so values are always in the range [-1, 1].
+ * 			The axis position is normalized so values are always in the range [-1, 1].
  */
 struct VGD_API AxisEvent : public Event
 {
 	/**
 	 * @brief	Constructor
 	 *
-	 * @param	source		a pointer to the source device
+	 * @param	source			a pointer to the source device
 	 * @param	buttonStates	states of the buttons
 	 * @param	index			axis' index
 	 * @param	value			axis' value (must be in the range [-1, 1])

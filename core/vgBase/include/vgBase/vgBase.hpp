@@ -9,7 +9,7 @@
 /** 
  * @namespace vgBase
  * 
- * @brief (V)ersatile (G)raphical (B)ase
+ * @brief (V)ersatile (G)raphical Base
  *
  * \b vgBase is open source (LGPL).
  */

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -13,7 +13,6 @@
 #include <gtkmm/messagedialog.h>
 
 #include <vgd/node/IBoundingBox.hpp>
-#include <vgUI/Canvas.hpp>
 
 #include "vgGTK/field/EditorDialog.hpp"
 #include "vgGTK/graph/convenience.hpp"
@@ -41,7 +40,6 @@ namespace
 
 
 FieldManagerEditor::FieldManagerEditor()
-:	m_canvas( 0 )
 {
 	m_columnRecord.add( m_nameColumn );
 	m_columnRecord.add( m_valueColumn );
@@ -66,13 +64,6 @@ void FieldManagerEditor::clear()
 {
 	m_model->clear();
 	m_fieldManager.reset();
-}
-
-
-
-void FieldManagerEditor::setCanvas( vgUI::Canvas * canvas )
-{
-	m_canvas = canvas;
 }
 
 
@@ -233,10 +224,6 @@ void FieldManagerEditor::onRowActivated(const Gtk::TreeModel::Path& path, Gtk::T
 		if( dialog.run() == 0 )
 		{
 			refresh( path );
-			if( m_canvas != 0 )
-			{
-				m_canvas->refresh();
-			}
 		}
 	}
 	else

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -22,9 +22,7 @@
 #include <gtkmm/statusbar.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/window.h>
-
 #include <vgDebug/convenience.hpp>
-#include <vgGTK/ResolutionDialog.hpp>
 
 #include "vgsdkViewerGtk/myCanvas.hpp"
 
@@ -212,15 +210,6 @@ void viewAll( myCanvas * canvas )
 {
 	canvas->viewAll();
 	canvas->refresh();
-}
-
-
-
-void setResolution( myCanvas * canvas )
-{
-	vgGTK::ResolutionDialog	dialog( canvas );
-	
-	dialog.run();
 }
 
 

@@ -229,7 +229,7 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TPairAssociati
 	}
 	else
 	{
-		typename vgd::field::TPairAssociativeField< K, D >::const_iterator	i;
+		vgd::field::TPairAssociativeField< K, D >::const_iterator	i;
 
 		for( i = field.begin(); i != field.end(); ++i )
 		{
@@ -258,7 +258,7 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TSingleAssocia
 	}
 	else
 	{
-		typename vgd::field::TSingleAssociativeField< K >::const_iterator	i;
+		vgd::field::TSingleAssociativeField< K >::const_iterator	i;
 
 		for( i = field.begin(); i != field.end(); ++i )
 		{

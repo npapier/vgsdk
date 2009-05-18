@@ -190,7 +190,7 @@ void App::OnFileExit( wxCommandEvent& /*event*/ )
 
 void App::OnHelpAbout( wxCommandEvent& /*event*/ )
 {
-	wxMessageBox(_T("vgsdkViewer version 0.5 by Nicolas Papier"), _T("About vgsdkViewer"));
+	wxMessageBox(_T("vgsdkViewer version 0.4 by Nicolas Papier"), _T("About vgsdkViewer"));
 }
 
 

@@ -8,7 +8,6 @@
 
 #include <map>
 #include <set>
-#include <string>
 #include <utility>
 
 #include "vgd/vgd.hpp"

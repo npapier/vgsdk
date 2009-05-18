@@ -8,11 +8,12 @@
 
 #include <vector>
 
+#include <gtkmm/treestore.h>
+
 #include <vgd/node/Node.hpp>
 #include <vgd/visitor/Traverse.hpp>
 
 #include "vgGTK/graph/TreeModelColumnRecord.hpp"
-#include "vgGTK/graph/TreeStore.hpp"
 
 
 
@@ -36,7 +37,7 @@ struct TreeModelFillVisitor : public vgd::visitor::Traverse< boost::null_visitor
 	 * @param	treeStore		a reference to the tree store to fill
 	 * @param	columnRecord	a reference to the column record associated to the given tree store
 	 */
-	TreeModelFillVisitor( TreeStore & treeStore, const TreeModelColumnRecord & columnRecord );
+	TreeModelFillVisitor( Glib::RefPtr< Gtk::TreeStore > treeStore, const TreeModelColumnRecord & columnRecord );
 
 	/**
 	 * @name	Overrides
@@ -46,8 +47,8 @@ struct TreeModelFillVisitor : public vgd::visitor::Traverse< boost::null_visitor
 	void discover_vertex(Vertex u, const Graph &g)
 	{
 		// Creates a new tree model row for the current node.
-		Gtk::TreeModel::iterator	ancestor = m_ancestors.empty() ? Gtk::TreeModel::iterator() : m_treeStore.get_iter( m_ancestors.back() );
-		Gtk::TreeModel::iterator	current = ancestor ? m_treeStore.append(ancestor->children()) : m_treeStore.append();
+		Gtk::TreeModel::iterator	ancestor = m_ancestors.empty() ? Gtk::TreeModel::iterator() : m_treeStore->get_iter( m_ancestors.back() );
+		Gtk::TreeModel::iterator	current = ancestor ? m_treeStore->append(ancestor->children()) : m_treeStore->append();
 		const Gtk::TreeModel::Row	& row	= *current;
 
 
@@ -84,7 +85,7 @@ struct TreeModelFillVisitor : public vgd::visitor::Traverse< boost::null_visitor
 		row[ m_columnRecord.m_sharedColumn ]	= shared;
 
 		// Stores the current row's path in the ancestors list.
-		m_ancestors.push_back( m_treeStore.get_string(current) );
+		m_ancestors.push_back( m_treeStore->get_string(current) );
 	}
 
 	template<class Vertex, class Graph>
@@ -100,7 +101,7 @@ struct TreeModelFillVisitor : public vgd::visitor::Traverse< boost::null_visitor
 
 		m_active = edgeName.enable();
 
-		vgd::visitor::Traverse< boost::null_visitor >::examine_edge( e, g );
+		Traverse< boost::null_visitor >::examine_edge( e, g );
 	}
 	//@}
 
@@ -109,7 +110,7 @@ private:
 
 	typedef std::vector< Glib::ustring >	PathContainer;	///< Defines the container of tree model paths.
 
-	TreeStore						& m_treeStore;		///< Refrences the tree store to fill.
+	Glib::RefPtr< Gtk::TreeStore >	m_treeStore;		///< Refrences the tree store to fill.
 	const TreeModelColumnRecord		& m_columnRecord;	///< Refereces the tree model column record.
 	PathContainer					m_ancestors;		///< Contains all ancestors' paths.
 	bool							m_active;			///< Tells if the node is active or not.

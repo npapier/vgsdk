@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -612,19 +612,6 @@ void Rotation::multVec( const Vec3f& src, Vec3f& dst ) const
 
 
 
-const Vec3f Rotation::multVec( const Vec3f& src ) const
-{
-	MatrixR myMat;
-	getValue( myMat );
-
-	vgm::Vec3f dst;
-	myMat.multVecMatrix( src, dst );
-
-	return dst;
-}
-
-
-
 bool Rotation::operator ==( const Rotation& q2) const
 {
 	return (
@@ -671,17 +658,6 @@ void Rotation::normalize( void )
 	quat[3] *= dist;
 }
 
-
-vgm::Vec3f operator *( const vgm::Vec3f& vec, const vgm::Rotation& rot)
-{
-	return rot.multVec(vec);
-}
-
-vgm::Vec3f& operator *=( vgm::Vec3f& vec, const vgm::Rotation& rot)
-{
-	vec = rot.multVec(vec);
-	return vec;
-}
 
 
 } // namespace vgm

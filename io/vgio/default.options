@@ -1,6 +1,5 @@
-description	= '(V)ersatile (G)raphical (I)nput and (O)utput'
 vcsUse		= 'no'
 type		= 'shared'
-version		= '0-5'
-libs		= [ 'vgd 0-5', 'vgDebug 0-5', 'vgm 0-5' ]
+version		= '0-4'
+libs		= [ 'vgd 0-4', 'vgDebug 0-4', 'vgm 0-4' ]
 deps		= [ '../../core' ]

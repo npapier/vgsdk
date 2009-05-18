@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -55,7 +55,7 @@
 #include <limits>
 #include <vector>
 
-#include "vgm/operations.hpp"
+#include "vgm/vgm.hpp"
 
 
 
@@ -92,12 +92,6 @@ struct Vector
 	 * @brief Constructor with value affectation from array of n components.
 	 */
 	explicit Vector( const T* v );
-
-	/**
-	 * @brief Constructor with value affectation from array of n components.
-	 */
-	template< typename InType >
-	explicit Vector< T, N >( const InType* v );
 
 	/**
 	 * @brief Copy constructor.
@@ -245,12 +239,6 @@ vgm::Vec4f		out5b( in5 );
 	 * @brief Set value of vector from array of n components.
 	 */
 	void		setValue( const T* );
-
-	/**
-	 * @brief Set value of vector from array of n components.
-	 */
-	template< typename InType >
-	void		setValue( const InType* );
 
 	/**
 	 * @brief Set value of vector from another one (with same dimension).
@@ -468,13 +456,6 @@ vgm::Vec4f		out5b( in5 );
 	 * @brief Returns the dot product of two vectors.
 	 */
 	float		dot( const Vector& v ) const;
-
-	/**
-	 * @brief Returns the angle between two vectors.
-	 *
-	 * @return the angle in radians between the two vectors.
-	 */
-	const float getAngle( const Vector& v ) const;
 
 
 

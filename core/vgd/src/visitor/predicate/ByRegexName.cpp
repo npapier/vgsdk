@@ -5,8 +5,6 @@
 
 #include "vgd/visitor/predicate/ByRegexName.hpp"
 
-#include "vgd/node/Node.hpp"
-
 
 
 namespace vgd
@@ -14,20 +12,20 @@ namespace vgd
 
 namespace visitor
 {
-
+	
 namespace predicate
 {
 
 
 
-ByRegexName::ByRegexName( std::string regexName )
-:	m_regexName( regexName )
+ByRegexName::ByRegexName( std::string regexName ) :
+	m_regexName( regexName )
 {
 }
 
 
 
-const bool ByRegexName::operator () ( const vgd::Shp< vgd::node::Node > node ) const
+bool ByRegexName::operator () ( const vgd::Shp< vgd::node::Node > node ) const
 {
 	return ( boost::regex_match( node->getName().c_str(), m_regexName ) );
 }

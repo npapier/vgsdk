@@ -139,9 +139,6 @@ void myCanvas::initialize()
 
 	// shape/mesh
 	viewAll();
-
-	//
-	getGLEngine()->setGLSLEnabled();
 }
 
 

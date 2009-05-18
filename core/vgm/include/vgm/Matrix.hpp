@@ -732,8 +732,8 @@ private:
 	/**
 	 * @brief Compute inverse of 3d affine matrix if possible.
 	 *
-	 * @param in	3d affine matrix.
-	 * @param out	inverse of 3d affine matrix.
+	 * @param in  : 3d affine matrix.
+	 * @param out : inverse of 3d affine matrix.
 	 * @return true if input matrix is nonsingular and affine, false.otherwise.
 	 */
 	bool	affine_inverse( const MatrixR& in, MatrixR& out ) const;

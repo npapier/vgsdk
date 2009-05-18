@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -50,6 +50,7 @@
 #ifndef _VGM_ROTATION_HPP
 #define _VGM_ROTATION_HPP
 
+#include "vgm/vgm.hpp"
 #include "vgm/Vector.hpp"
 
 
@@ -93,12 +94,6 @@ struct VGM_API Rotation
 	 * @brief Constructor given a quaternion as an array of 4 components.
 	 */
 	Rotation( const float v[4] );
-
-	/**
-	 * @brief Constructor given a quaternion as an array of 4 components.
-	 */
-	template< typename InType >
-	Rotation( const InType * q );
 
 	/**
 	 * @brief Constructor given 4 individual components of a quaternion.
@@ -169,12 +164,6 @@ struct VGM_API Rotation
 	Rotation&		setValue( const float q[4] );
 
 	/**
-	 * @brief Sets value of rotation from array of 4 components of a quaternion.
-	 */
-	template< typename InType >
-	Rotation& setValue( const InType * q );
-
-	/**
 	 * @brief Sets value of rotation from 4 individual components of a quaternion.
 	 */
 	Rotation&		setValue( float q0, float q1, float q2, float q3 );
@@ -229,7 +218,7 @@ struct VGM_API Rotation
 	/**
 	 * @brief Multiplication of two rotations; results in product of rotations.
 	 */
-	Rotation			operator *( const Rotation& q2 ) const;
+	Rotation				operator *( const Rotation& q2 ) const;
 
 	/**
 	 * @brief Changes a rotation to be its inverse.
@@ -239,19 +228,19 @@ struct VGM_API Rotation
 	/**
 	 * @brief Returns the inverse of a rotation.
 	 */
-	Rotation			getInverse( void ) const;
+	Rotation				getInverse( void ) const;
 
 	/**
 	 * @brief Keep the axis the same. Multiply the angle of rotation by 
 	 * the amount 'scaleFactor'
 	 */
-	void				scaleAngle( float scaleFactor );
+	void					scaleAngle( float scaleFactor );
 
 	/**
 	 * @brief Returns a rotation with a scaled angle
 	 * @sa Rotation::scaleAngle(float)
 	 */
-	Rotation			getScaleAngle( float scaleFactor );
+	Rotation				getScaleAngle( float scaleFactor );
 
 	/**
 	 * @brief Spherical linear interpolation: as t goes from 0 to 1, returned
@@ -271,14 +260,7 @@ struct VGM_API Rotation
 	 *
 	 * Multiplies the given vector by the matrix of this rotation.
 	 */
-	void multVec( const Vec3f& src, Vec3f& dst ) const;
-
-	/**
-	 * @brief Puts the given vector through this rotation.
-	 *
-	 * Multiplies the given vector by the matrix of this rotation.
-	 */
-	const Vec3f multVec( const Vec3f& src ) const;
+	void					multVec( const Vec3f& src, Vec3f& dst ) const;
 	//@}
 
 
@@ -322,41 +304,6 @@ private:
 	 */
 	void	normalize( void );
 };
-
-
-
-template< typename InType >
-Rotation::Rotation( const InType * q )
-{
-	setValue( q );
-}
-
-
-
-template< typename InType >
-Rotation& Rotation::setValue( const InType * q )
-{
-	quat[0] = static_cast< float >( q[0] );
-	quat[1] = static_cast< float >( q[1] );
-	quat[2] = static_cast< float >( q[2] );
-	quat[3] = static_cast< float >( q[3] );
-	normalize();
-
-	return ( *this );
-}
-
-
-/**
- * @brief Multiply a vector by a rotation.
- */
-VGM_API vgm::Vec3f operator *( const vgm::Vec3f& vec, const vgm::Rotation& rot);
-
-/**
- * @brief Multiply a vector by a rotation.
- */
-VGM_API vgm::Vec3f& operator *=( vgm::Vec3f& vec, const vgm::Rotation& rot);
-
-
 
 } // namespace vgm
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 #include <boost/graph/graphviz.hpp>
 
 #include "vgd/node/Node.hpp"
-#include "vgd/node/Group.hpp"
 
 
 
@@ -267,28 +266,6 @@ void Graph::getEnabledChildren(	const vgd::node::Node* pSourceNode, vgd::node::N
 const uint32 Graph::getNumChildren( const vgd::node::Node* pSourceNode ) const
 {
 	const uint32 retVal = static_cast<uint32>( out_degree( pSourceNode->vertexDescriptor(), bglGraph() ) );
-
-	return retVal;
-}
-
-
-
-vgd::Shp< vgd::node::Group > Graph::getParent( const vgd::node::Node* pTargetNode ) const
-{
-	vgd::Shp< vgd::node::Group > retVal;
-
-	const detail::VertexNamePropertyMap&	vertexNamePM = getVertexNamePropertyMap();
-
-	detail::bglGraphTraits::in_edge_iterator	in_i, in_end;
-	tie(in_i, in_end) = in_edges(pTargetNode->vertexDescriptor(), bglGraph());
-
-	if ( in_i != in_end )
-	{
-		vertex_descriptor vdSource = source(*in_i, bglGraph());
-		vgd::Shp<vgd::node::Node> parent( vertexNamePM[vdSource] );
-		retVal = vgd::dynamic_pointer_cast< vgd::node::Group >( parent );
-	}
-	// else nothing to do
 
 	return retVal;
 }

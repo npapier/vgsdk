@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -79,7 +79,7 @@ void ClipPlane::setOptionalsToDefaults()
 const bool ClipPlane::getOn( OnValueType& value ) const
 {
 	return (
-		vgd::field::getParameterValue< OnParameterType, OnValueType >( this, getFOn(), static_cast<OnParameterType>(ON), value )
+		vgd::field::getParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON, value )
 		);
 }
 
@@ -87,14 +87,14 @@ const bool ClipPlane::getOn( OnValueType& value ) const
 
 void ClipPlane::setOn( OnValueType value )
 {
-	vgd::field::setParameterValue< OnParameterType, OnValueType >( this, getFOn(), static_cast<OnParameterType>(ON), value );
+	vgd::field::setParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON, value );
 }
 
 
 
 void ClipPlane::eraseOn()
 {
-	vgd::field::eraseParameterValue< OnParameterType, OnValueType >( this, getFOn(), static_cast<OnParameterType>(ON) );
+	vgd::field::eraseParameterValue< OnParameterType, OnValueType >( this, getFOn(), ON );
 }
 
 

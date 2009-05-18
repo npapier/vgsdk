@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -43,7 +43,7 @@ struct VGGTK_API Settings : public Gtk::VBox
 	/**
 	 * @brief	Assignes the canvas used for rendering
 	 *
-	 * @param	canvas	a pointer to a canvas, null if none
+	 * @param	canvas	a pointer to a canvas
 	 */
 	void setCanvas( vgUI::Canvas * canvas );
 	

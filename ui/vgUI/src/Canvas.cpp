@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,23 +9,28 @@
 #include <cassert>
 #include <iostream>
 
+#include <boost/format.hpp> 
+//#include <boost/date_time/posix_time/posix_time.hpp>
+//#include <boost/lexical_cast.hpp>
 #include <boost/lexical_cast.hpp>
-#include <sbf/path.hpp>
 #include <vgCairo/helpers.hpp>
 #include <vgCairo/ImageSurface.hpp>
 #include <vgd/basic/Image.hpp>
+//
+
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/Location2Event.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vgd/event/MouseWheelEvent.hpp>
-#include <vgd/event/SizeEvent.hpp>
-#include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/event/detail/helpers.hpp>
 #include <vgd/node/LayerPlan.hpp>
 #include <vgd/node/MultiSwitch.hpp>
-#include <vgd/visitor/helpers.hpp>
+#include <vgd/visitor/FindFirstHelper.hpp>
+#include <vgd/visitor/predicate/ByDirtyFlag.hpp>
+
 #include <vgDebug/convenience.hpp>
 #include <vgDebug/Global.hpp>
+
 #include <vgeGL/engine/Engine.hpp>
 
 
@@ -35,49 +40,32 @@ namespace vgUI
 
 
 
-void Canvas::Screenshot::save( const std::string path, const std::string filename, const bool feedback )
+const std::string Canvas::Screenshot::buildFilename( const std::string filePrefix )
 {
-	namespace bfs = boost::filesystem;
-	assert( bfs::exists( path ) && "Path not found" );
+	// Constructs filename
+	const std::string strCount = (boost::format("%|07|") % getFrameNumber()).str();
+	const std::string filename = filePrefix + strCount + ".png";
 
-	const std::string lFilename = filename.size() > 0 ?
-		filename : buildFilename( "frame" );
-
-	// User feedback
-	if ( feedback )
-	{
-		vgLogDebug2( "Screenshot done in file %s", lFilename.c_str() );
-		vgLogStatus2( "Screenshot done in file %s", lFilename.c_str() );
-	}
-
-	// Output image
-	const std::string output = (bfs::path(path) / lFilename).file_string();
-
-	// Removes image if needed
-	if ( bfs::exists( output ) )
-	{
-		bfs::remove( output );
-	}
-
-	// Saves image
-	getImage()->save( output );
+	return filename;
 }
 
 
 
-const std::string Canvas::Screenshot::buildFilename( const std::string filePrefix )
+void Canvas::Screenshot::save( const std::string path, const std::string filePrefix, const bool feedback )
 {
-	// Constructs filename
+	const std::string filename = buildFilename( filePrefix );
 
-	// FIXME boost::format seems to SEGV with boost 1.38 on win32, so boost lexical cast is used
-	//const std::string strCount = (boost::format("%|07|") % getFrameNumber()).str();
+	// Tests path existance ???
 
-	const std::string strFrameCount = boost::lexical_cast< std::string >( getFrameNumber() );
-	const std::string strZero( (8 - strFrameCount.size()), '0' );
+	// User feedback
+	if ( feedback )
+	{
+		vgLogDebug2( "Screenshot done in file %s", filename.c_str() );
+		vgLogStatus2( "Screenshot done in file %s", filename.c_str() );
+	}
 
-	const std::string filename = filePrefix + strZero + strFrameCount + ".png";
-
-	return filename;
+	// Saves image
+	getImage()->save( path + filename );
 }
 
 
@@ -284,7 +272,6 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		//
 		bpt::ptime beginPaint = bpt::microsec_clock::universal_time();
 */
-
 		::vgeGL::engine::SceneManager::paint( size, getBoundingBoxUpdate() );
 
 		// Capture screenshot or video
@@ -298,25 +285,10 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 			// Constructs the screenshot and saves the png image
 			Screenshot shot( getFrameCount(), capturedImage );
-
-			// Path
-			const boost::filesystem::path path = sbf::path::get(sbf::path::Var) / "screenshots";
-			shot.mkdirs( path.file_string() );
-
-			if ( m_screenshotFilename.size() > 0 )
-			{
-				// A filename has been specified
-				shot.save( path.file_string(), m_screenshotFilename );
-			}
-			else
-			{
-				// No filename has been specified, so constructs a filename using 'frame' and frame counter.
-				shot.save( path.file_string() );
-			}
+			shot.save( "../var/vgsdk/screenshots/", "frame", true );		// @todo
 
 			//
 			m_scheduleScreenshot = false;
-			m_screenshotFilename.clear();
 		}
 
 		if ( isVideoCaptureEnabled() )
@@ -340,17 +312,10 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 					capturedImage = getGLEngine()->captureFramebuffer();
 				}
 
-				Screenshot screenshot( getFrameCount(), capturedImage );
-				m_video.push_back( screenshot );
+				m_video.push_back( Screenshot( getFrameCount(), capturedImage ) );
 
 				lastCapture = currentCapture;
 			}
-/*			else
-			// else save one image on disk
-			{
-				vgLogDebug("Time to save");
-// ???			
-			}*/
 		}
 
 /*
@@ -373,14 +338,17 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		if ( elapsedTimeBetweenFPSComputation.total_milliseconds() > 1000 )
 		{
 			const uint numberOfFrames = getFrameCount() - m_frameBase;
-			setFPS( numberOfFrames * 1000 / elapsedTimeBetweenFPSComputation.total_milliseconds() );
+			m_fps = numberOfFrames * 1000 / elapsedTimeBetweenFPSComputation.total_milliseconds();
 
 			// Resets fps attributes
 			m_frameBase	= getFrameCount();
 			m_timeBase	= endPaint;
 		}
 
-
+		if ( isDebugOverlay() )
+		{
+			updateFPSOverlay();
+		}
 /*
 		bpt::ptime endPaint = bpt::microsec_clock::universal_time();
 		m_paintDuration = endPaint - beginPaint;
@@ -391,17 +359,6 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 	// Reset the number of frame to render next time to 1.
 	setNumberOfFrames( 1 );
-}
-
-
-void Canvas::resize( const vgm::Vec2i size )
-{
-	vgeGL::engine::SceneManager::resize( size );
-
-	// Forward a resize notification event.
-	vgd::Shp< vgd::event::Event >	event( new vgd::event::SizeEvent(this, vgd::event::detail::GlobalButtonStateSet::get(), size) );
-
-	fireEvent( event );
 }
 
 
@@ -420,64 +377,52 @@ const bool Canvas::isOpenGLObjectsShared() const
 
 
 
-const bool Canvas::isVGSDKLocalyInitialized() const
-{
-	return m_bLocalInitializedVGSDK;
-}
-
-
 void Canvas::refresh( const RefreshType type, const WaitType wait )
 {
 	if ( type == REFRESH_IF_NEEDED )
 	{
-		refreshIfNeeded( wait );
+		// Must schedule a refresh of the window ?
+		using vgd::visitor::predicate::ByDirtyFlag;
+
+		std::pair< bool, vgd::Shp< vgd::node::Node > > retVal;
+		retVal = vgd::visitor::findFirst( getRoot(), ByDirtyFlag() );
+
+		if ( retVal.first )
+		{
+			// refresh must be done.
+
+			// useful for debugging wrong dirty flags
+			// vgDebug::get().logDebug("%s\n", retVal.second->getName().c_str() );
+
+			if ( wait == ASYNCHRONOUS )
+			{
+				sendRefresh();
+			}
+			else
+			{
+				doRefresh();
+			}
+		}
+		// else refresh not needed
 	}
 	else
 	{
-		refreshForced( wait );
+		if ( wait == ASYNCHRONOUS )
+		{
+			sendRefresh();
+		}
+		else
+		{
+			doRefresh();
+		}
 	}
 }
 
 
 
-void Canvas::refreshIfNeeded( const WaitType wait )
+void Canvas::scheduleScreenshot()
 {
-	// Should we refresh the window ?
-	using vgd::node::Node;
-	vgd::Shp< Node > result = vgd::visitor::findFirstByDirtyFlag< Node >( getRoot() );
-
-	if ( result )
-	{
-		// Do the refresh
-
-		// Useful for debugging wrong dirty flags
-		//vgDebug::get().logDebug("refresh: because of node named %s\n", result->getName().c_str() );
-
-		refreshForced( wait );
-	}
-	// else refresh not needed
-}
-
-
-
-void Canvas::refreshForced( const WaitType wait )
-{
-	if ( wait == ASYNCHRONOUS )
-	{
-		sendRefresh();
-	}
-	else
-	{
-		doRefresh();
-	}
-}
-
-
-
-void Canvas::scheduleScreenshot( const std::string filename )
-{
-	m_scheduleScreenshot	= true;
-	m_screenshotFilename	= filename;
+	m_scheduleScreenshot = true;
 }
 
 
@@ -539,36 +484,6 @@ void Canvas::setDebugEvents( const bool enable )
 const int Canvas::getFPS() const
 {
 	return m_fps;
-}
-
-
-
-const int Canvas::setFPS( const int newFPS )
-{
-	m_fps = newFPS;
-
-	return m_fps;
-}
-
-
-
-gle::OpenGLExtensionsGen& Canvas::getGleContext()
-{
-	return m_gleContext;
-}
-
-
-
-const uint Canvas::increaseFrameCount()
-{
-	const uint count = vgeGL::engine::SceneManager::increaseFrameCount();
-
-	if ( isDebugOverlay() )
-	{
-		updateFPSOverlay();
-	}
-
-	return count;
 }
 
 
@@ -721,17 +636,17 @@ void Canvas::updateFPSOverlay()
 	// Draws the capsule background and its boundary
 	// @todo do a function in vgCairo
 	cairo_save(cr);
-	const float margin = 2.f;
-	cairo_set_source_rgba( cr, 0.f, 0.f, 0.f, 0.3f );
-	vgCairo::rounded_rectangle( cr, 0.5f + margin, 0.5f + margin, 127.5f - 2.f * margin, 31.5f - 2.f * margin, 10 );
+	const float margin = 2.0;
+	cairo_set_source_rgba( cr, 0.0, 0.0, 0.0, 0.3 );
+	vgCairo::rounded_rectangle( cr, 0.5 + margin, 0.5 + margin, 127.5 - 2.f * margin, 31.5 - 2.f * margin, 10 );
 	cairo_fill(cr);
 
 	double ux = 1.f, uy = 1.f;
 	cairo_device_to_user_distance(cr, &ux, &uy); //if (ux < uy) ux = uy;
-	cairo_set_line_width(cr, 2.f * ux);
+	cairo_set_line_width(cr, 2 * ux);
 
-	cairo_set_source_rgb( cr, 1.f, 1.f, 1.f );
-	vgCairo::rounded_rectangle( cr, 0.5f + margin, 0.5f + margin, 127.5f - 2.f * margin, 31.5f - 2.f * margin, 10 );
+	cairo_set_source_rgb( cr, 1.0, 1.0, 1.0 );
+	vgCairo::rounded_rectangle( cr, 0.5 + margin, 0.5 + margin, 127.5 - 2.f * margin, 31.5 - 2.f * margin, 10 );
 	cairo_stroke(cr);
 	cairo_restore(cr);
 	//
@@ -741,9 +656,9 @@ void Canvas::updateFPSOverlay()
 
 	cairo_select_font_face( cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD );
 
-	cairo_set_font_size( cr, 24.f );
-	cairo_set_source_rgb( cr, 1.f, 1.f, 1.f );
-	cairo_move_to( cr, 5.f, 24.f );
+	cairo_set_font_size( cr, 24.0 );
+	cairo_set_source_rgb( cr, 1.0, 1.0, 1.0 );
+	cairo_move_to( cr, 5.0, 24.0 );
 
 	const std::string strFrameCount = boost::lexical_cast< std::string >( getFrameCount() );
 	const std::string strFPS = getFPS() >= 0 ? boost::lexical_cast< std::string >( getFPS() ) : "na";

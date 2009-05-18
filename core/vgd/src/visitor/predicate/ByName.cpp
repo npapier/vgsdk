@@ -5,8 +5,6 @@
 
 #include "vgd/visitor/predicate/ByName.hpp"
 
-#include "vgd/node/Node.hpp"
-
 
 
 namespace vgd
@@ -14,19 +12,19 @@ namespace vgd
 
 namespace visitor
 {
-
+	
 namespace predicate
 {
 
 
 
-ByName::ByName( const std::string name )
-:	m_name( name )
+ByName::ByName( std::string name ) :
+	m_name( name )
 {}
 
 
 
-const bool ByName::operator () ( const vgd::Shp< vgd::node::Node > node ) const
+bool ByName::operator () ( const vgd::Shp< vgd::node::Node > node ) const
 {
 	return ( node->getName() == m_name );
 }

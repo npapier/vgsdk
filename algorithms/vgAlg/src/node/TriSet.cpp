@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -20,18 +20,17 @@ namespace node
 void invertTriangleOrientation( vgd::Shp< vgd::node::TriSet > triset )
 {
 	vgd::field::EditorRW< vgd::field::MFUInt32 >	vertexIndex	= triset->getFVertexIndexRW();
+	
+	const int32 numTris = vertexIndex->size()/3;	//< number of triangles	
 
-	const int32 numTris = vertexIndex->size()/3;	//< number of triangles
-
-	// For each triangle, do
+	// compute vertices normals
 	for(int32 j=0, i=0; i < numTris; i++)
 	{
-		// Retrieves indices
+		// compute face normal
 		const int32 indexA = (*vertexIndex)[j];
 		//const int32 indexB = (*vertexIndex)[j+1];
 		const int32 indexC = (*vertexIndex)[j+2];
-
-		// Reverses the triangle orientation
+		
 		(*vertexIndex)[j]	= indexC;
 		//(*vertexIndex)[j+1]	= indexB;
 		(*vertexIndex)[j+2]	= indexA;

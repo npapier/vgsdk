@@ -61,7 +61,7 @@ struct Number : public Widget< NumberType >, public Gtk::Entry
 		}
 		catch( const boost::bad_lexical_cast & )
 		{
-			vgGTK::field::widget::Widget< NumberType >::showWarning("Please, enter a number!");
+			showWarning("Please, enter a number!");
 			grab_focus();
 			return false;
 		}

@@ -1,8 +1,7 @@
-// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
-// Author Guillaume Brocker
 
 #ifndef _VGEGL_EVENT_IINTERACTION_HPP
 #define _VGEGL_EVENT_IINTERACTION_HPP
@@ -37,7 +36,7 @@ struct VGEGL_API IInteraction : public EventProcessor, public vgd::event::EventV
 	/**
 	 * @name Interface of EventVisitor
 	 * 
-	 * Following methods do nothing, but sub-classes can override them at will to perform actions.
+	 * The eight following methods done nothing, but must be overriden by class to perform action.
 	 */
 	//@{
 	void apply( const vgd::event::AxisEvent				* /*pAxisEvent*/			) {}
@@ -48,8 +47,6 @@ struct VGEGL_API IInteraction : public EventProcessor, public vgd::event::EventV
 	void apply( const vgd::event::MouseButtonEvent		* /*pMouseButtonEvent*/		) {}
 	void apply( const vgd::event::Motion3Event			* /*pMotion3Event*/			) {}
 	void apply( const vgd::event::MouseWheelEvent		* /*pMouseWheelEvent*/		) {}
-	void apply( const vgd::event::SizeEvent				* /*pSizeEvent*/			) {}
-	void apply( const vgd::event::TimerEvent			* /*pTimerEvent*/			) {}
 	//@}
 
 private:	

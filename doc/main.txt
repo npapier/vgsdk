@@ -27,15 +27,10 @@
  * 
  * @section project_page Project Page
  * 
- * The \c vgSDK project pages are hosted by GoogleCode (http://code.google.com/).
- *
- * For project home, updates, wiki, issues, bug tracking, feature requests, downloads, source from subversion, 
- * mailing list information and more, visit
- * - our GoogleCode project page at http://code.google.com/p/vgsdk
- *
- * Previously, the \c vgSDK project pages has been hosted by Gna! (https://gna.org/).
- * - our old Gna! project page at http://gna.org/projects/vgsdk
- * - our old website at http://home.gna.org/vgsdk/
+ * The \c vgSDK project pages are hosted by Gna! (https://gna.org/).
+ * For Subversion information, downloads, bug tracking, feature requests, mailing list information and more, visit
+ * - our Gna! project page at http://gna.org/projects/vgsdk
+ * - our website at http://home.gna.org/vgsdk/
  *
  * @if vgsdkNonFree
  * The non-free \c vgSDK project pages are hosted by Savannah.
@@ -47,7 +42,9 @@
  * 
  *
  *
- * \ref g_TOC Central point of the documentation
+ * \ref g_TOC
+ *
+ * Central point of the documentation
  *
  *
  *
@@ -69,15 +66,8 @@
  * \b Powered \b by
  *
  * \image html gnu-head-sm.png
- * \image html boost.png
- * \image html glib.png
- * \image html cairo.png
- * \image html glm.png
- * \image html itk.png
- * \image html opengl.png
- * \image html collada.png
- * \image html sdl.png
- * \image html gtk.png
+ * \image html c++boost.png
  * \image html openIL.png
+ * \image html opengl_logo.png
  * \image html wxWidgets.png
  */

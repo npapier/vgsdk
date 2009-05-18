@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,21 +7,15 @@
 #define _VGEGL_ENGINE_GLSLSTATE_HPP
 
 #include <bitset>
-#include <vector>
 #include <vgd/Shp.hpp>
 #include "vgeGL/vgeGL.hpp"
 
-namespace glo
-{
-	struct Texture;
-}
-
+namespace glo { struct Texture; }
 namespace vgd
 { 
 	namespace node
 	{
 		struct Light;
-		struct Texture;
 	}
 }
 namespace vgeGL { namespace engine { struct Engine; } }
@@ -100,7 +94,7 @@ struct GLSLState : public TBitSet< 8 >
 		CLIPPING_PLANE				///< True when at least on ClipPlane node has been traversed
 	} BitSetIndexType;
 
-	static const std::string indexString[]; // @todo hides
+	static const std::string indexString[];
 
 
 	/**
@@ -213,80 +207,37 @@ struct GLSLState : public TBitSet< 8 >
 	//@{
 
 	/**
-	 * @brief Texture unit state structure
-	 */
-	struct TexUnitState
-	{
-		TexUnitState(	vgd::node::Texture * textureNode = 0,
-						glo::Texture * texture = 0,
-						const uint8 texCoordDim = 0 )
-		:	m_textureNode	( textureNode	),
-			m_texture		( texture		),
-			m_texCoordDim	( texCoordDim	)
-		{}
-
-		const vgd::node::Texture * getTextureNode() const	{ return m_textureNode; }
-		vgd::node::Texture * getTextureNode()				{ return m_textureNode; }
-
-		const glo::Texture * getTexture() const	{ return m_texture; }
-		glo::Texture * getTexture()				{ return m_texture; }
-
-		const uint8 getTexCoordDim() const		{ return m_texCoordDim; }
-		uint8 getTexCoordDim()					{ return m_texCoordDim; }
-
-		void setTexCoordDim( const uint8 texCoordDim ) { m_texCoordDim = texCoordDim; }
-
-		/**
-		 * @brief Tests completeness of the texture unit
-		 *
-		 * A texture unit is said to be complete if it contains a texture node and the dimension of texture coordinates is not zero.
-		 *
-		 * @return true the texture unit is complete, false otherwise
-		 */
-		const bool isComplete() const
-		{
-			const bool retVal = getTextureNode() && getTexCoordDim() != 0;
-			return retVal;
-		}
-
-	private:
-		vgd::node::Texture *	m_textureNode;
-		glo::Texture *			m_texture;
-		uint8					m_texCoordDim;
-	};
-
-	/**
-	 * @brief Retrieves state for the desired texture unit.
+	 * @brief Retrieves texture object for the desired texture unit.
 	 *
 	 * @param indexTexUnit		the index of the texture unit
 	 *
-	 * @return The state for the given texture unit or an empty shared pointer.
+	 * @return The texture object for the given texture unit or a null pointer.
 	*/
-	const vgd::Shp< TexUnitState > getTexture( const uint indexTexUnit = 0 ) const;
+	const glo::Texture *getTexture( const uint indexTexUnit = 0 ) const;
 
 	/**
-	 * @brief Retrieves state for the desired texture unit.
+	 * @brief Retrieves texture object for the desired texture unit.
 	 *
 	 * @param indexTexUnit		the index of the texture unit
 	 *
-	 * @return The state for the given texture unit or an empty shared pointer.
+	 * @return The texture object for the given texture unit or a null pointer.
 	*/
-	vgd::Shp< TexUnitState > getTexture( const uint indexTexUnit = 0 );
+	glo::Texture *getTexture( const uint indexTexUnit = 0 );
 
 	/**
-	 * @brief Sets state for the given texture unit.
+	 * @brief Sets texture object for the given texture unit.
 	 *
 	 * @param indexTexUnit		the index of the texture unit
-	 * @param texture			the texture state
+	 * @param texture			the texture object
 	 *
-	 * @return The previous texture state for the given texture unit.
+	 * @return The previous texture object for the given texture unit.
 	*/
-	vgd::Shp< TexUnitState > setTexture( const uint indexTexUnit, vgd::Shp< TexUnitState > textureState = vgd::Shp< TexUnitState >() );
+	glo::Texture *setTexture( const uint indexTexUnit, glo::Texture * texture );
 
 	/**
-	 * @brief Retrieves the number of texture state in all texture units.
+	 * @brief Retrieves the number of texture object in all texture units.
 	 *
-	 * @return The number of texture state in all texture units.
+	 * @return The number of texture object in all texture units.
 	 */
 	const uint getNumTexture() const;
 
@@ -296,18 +247,18 @@ struct GLSLState : public TBitSet< 8 >
 	 * @return The number of texture units
 	 */
 	const uint getMaxTexture() const;
-
 	//@}
+
 
 
 	void update( vgeGL::engine::Engine * engine );
 
 private:
-	std::vector< vgd::Shp< LightState > >		m_light;		///< array of light state. The zero-based index selects the light unit.
-	uint										m_numLight;		///< number of light state in all light units.
+	std::vector< vgd::Shp< LightState > >	m_light;		///< array of light state. The zero-based index selects the light unit.
+	uint									m_numLight;		///< number of light state in all light units.
 
-	std::vector< vgd::Shp< TexUnitState > >		m_texture;		///< array of texture state. The zero-based index selects the texture unit.
-	uint										m_numTexture;	///< number of texture state in all light units.
+	std::vector< ::glo::Texture * >	m_texture;		///< array of texture object. The zero-based index selects the texture unit.
+	uint							m_numTexture;	///< number of texture object in all texture units.
 };
 
 

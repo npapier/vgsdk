@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -142,9 +142,6 @@ struct VGD_API IGroup
 	virtual void			getEnabledChildren( NodeList& children, const bool bGetEnabled = true) const=0;
 	//@}
 
-
-	// @todo stl like interface
-	virtual const int size() const=0;
 
 protected:
 	/**

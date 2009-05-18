@@ -10,12 +10,10 @@
 #include <string>
 #include <gtkmm/box.h>
 #include <gtkmm/frame.h>
-#include <gtkmm/label.h>
 #include <gtkmm/scrollbar.h>
 #include <gtkmm/table.h>
 #include <gtkmm/widget.h>
 #include <vgd/field/FieldManager.hpp>
-#include <vgd/field/TMultiField.hpp>
 
 #include "vgGTK/field/Editor.hpp"
 
@@ -76,7 +74,7 @@ struct MultiFieldEditor : public Editor, public Gtk::VBox
 	 */
 	~MultiFieldEditor()
 	{
-		typename WidgetContainer::iterator	i;
+		WidgetContainer::iterator	i;
 		
 		for( i = m_widgets.begin(); i != m_widgets.end(); ++i )
 		{
@@ -109,12 +107,12 @@ struct MultiFieldEditor : public Editor, public Gtk::VBox
 		refreshValuesFromWidgets();
 	
 		// Copies values from local cache into the field.
-		typedef vgd::field::TMultiField< typename WidgetType::ValueType > FieldType;
+		typedef vgd::field::TMultiField< WidgetType::ValueType > FieldType;
 
 		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
 		
-		typename ValueContainer::iterator	source;
-		typename FieldType::iterator		target;
+		ValueContainer::iterator	source;
+		FieldType::iterator			target;
 		
 		for(	source = m_values.begin(), target = fieldEditor->begin();
 				source != m_values.end() && target != fieldEditor->end();
@@ -130,7 +128,7 @@ struct MultiFieldEditor : public Editor, public Gtk::VBox
 		assert( m_fieldName.empty() == false );
 		
 		// Copies the data from the vgsdk node field to the local cache.
-		typedef vgd::field::TMultiField< typename WidgetType::ValueType > FieldType;
+		typedef vgd::field::TMultiField< WidgetType::ValueType > FieldType;
 
 		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
 		
@@ -217,8 +215,8 @@ private:
 	 */
 	void refreshValuesFromWidgets()
 	{
-		typename ValueContainer::iterator	curValue;
-		typename WidgetContainer::iterator	curWidget;
+		ValueContainer::iterator	curValue;
+		WidgetContainer::iterator	curWidget;
 		
 		for(	curValue = m_valueIndex, curWidget = m_widgets.begin();
 				curValue != m_values.end() && curWidget != m_widgets.end();
@@ -234,8 +232,8 @@ private:
 	 */
 	void refreshWidgetsFromValues()
 	{
-		typename ValueContainer::iterator	curValue;
-		typename WidgetContainer::iterator	curWidget;
+		ValueContainer::iterator	curValue;
+		WidgetContainer::iterator	curWidget;
 		
 		// Synchronize widgets' content with values.
 		for(	curValue = m_valueIndex, curWidget = m_widgets.begin();
@@ -264,7 +262,7 @@ private:
 	{
 		bool	validate = true;
 		
-		for( typename WidgetContainer::iterator curWidget = m_widgets.begin(); curWidget != m_widgets.end() && validate; ++curWidget )
+		for( WidgetContainer::iterator curWidget = m_widgets.begin(); curWidget != m_widgets.end() && validate; ++curWidget )
 		{
 			if( curWidget->second->is_sensitive() )
 			{

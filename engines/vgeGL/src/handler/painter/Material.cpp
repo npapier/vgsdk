@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -95,7 +95,7 @@ void Material::paint( vgeGL::engine::Engine *, vgd::node::Material * material )
 	vgm::Vec4f	color4;
 
 	// OPACITY
-	const float	opacity = material->getOpacity();
+	const float	opacity = material->getTransparency();				// @todo uses new api
 
 	// SHININESS
 	float shininess;
@@ -111,7 +111,8 @@ void Material::paint( vgeGL::engine::Engine *, vgd::node::Material * material )
 	}
 
 	// COLOR
-	bDefined = material->getAmbient( color3 );
+	// bDefined = material->getAmbient( color3 );
+	bDefined = material->getColor( vgd::node::Material::AMBIENT, color3 );
 
 	if ( bDefined )
 	{
@@ -120,13 +121,15 @@ void Material::paint( vgeGL::engine::Engine *, vgd::node::Material * material )
 	}
 
 	//
-	bDefined = material->getDiffuse( color3 );
+	//bDefined = material->getDiffuse( color3 );
+	bDefined = material->getColor( vgd::node::Material::DIFFUSE, color3 );
 
 	color4.setValue( color3[0], color3[1], color3[2], opacity );
 	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, color4.getValue() );
 
 	//
-	bDefined = material->getSpecular( color3 );
+	//bDefined = material->getSpecular( color3 );
+	bDefined = material->getColor( vgd::node::Material::SPECULAR, color3 );
 
 	if ( bDefined )
 	{
@@ -135,7 +138,8 @@ void Material::paint( vgeGL::engine::Engine *, vgd::node::Material * material )
 	}
 
 	//
-	bDefined = material->getEmission( color3 );
+	//bDefined = material->getEmission( color3 );
+	bDefined = material->getColor( vgd::node::Material::EMISSION, color3 );
 
 	if ( bDefined )
 	{

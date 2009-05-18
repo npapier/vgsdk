@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -50,7 +50,7 @@ struct VGGTK_API LightModelEditor : public Gtk::VBox
 	/**
 	 * @brief	Assignes a vgd::node::LightModel node to edit.
 	 * 
-	 * @param	lightModel	a reference to a vgd::node::LightModel node, empty if none
+	 * @param	lightModel	a reference to a vgd::node::LightModel node
 	 */
 	void setLightModel( vgd::Shp< vgd::node::LightModel > lightModel );
 	

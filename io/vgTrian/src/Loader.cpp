@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -608,25 +608,25 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 		m_fp >> name >> color[0] >> color[1] >> color[2];
 		assert( name == "ambient" );
 
-		material->setAmbient( color );
+		material->setColor( vgd::node::Material::AMBIENT, color );
 		
 		// diffuse
 		m_fp >> name >> color[0] >> color[1] >> color[2];
 		assert( name == "diffuse" );
 
-		material->setDiffuse( color );
+		material->setColor( vgd::node::Material::DIFFUSE, color );
 		
 		// specular
 		m_fp >> name >> color[0] >> color[1] >> color[2];
 		assert( name == "specular" );
 
-		material->setSpecular( color );
+		material->setColor( vgd::node::Material::SPECULAR, color );
 		
 		// emission
 		m_fp >> name >> color[0] >> color[1] >> color[2];
 		assert( name == "emission" );
 
-		material->setEmission( color );
+		material->setColor( vgd::node::Material::EMISSION, color );
 		
 		// specularLevel/glosiness
 		float	real;
@@ -643,7 +643,7 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 		m_fp >> name >> real;
 		assert( name == "transparency" );
 		
-		material->setOpacity( 1.f - real );
+		material->setTransparency( 1.f - real );
 
 		loadTextureMaps( container );
 	}
@@ -966,7 +966,7 @@ vgd::Shp< vgd::node::Material > Loader::loadWireColor( std::string nodeName )
 	material = vgd::node::Material::create( nodeName );
 	material->setColor( vgd::node::Material::AMBIENT, color3 );
 	material->setColor( vgd::node::Material::DIFFUSE, color3 );
-	material->setOpacity( 1.f - opacity );
+	material->setTransparency( 1.f - opacity );
 
 	return material;
 }

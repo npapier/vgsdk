@@ -1,8 +1,7 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
-// Author Guillaume Brocker
 
 #include "vgd/node/MultiSwitch.hpp"
 
@@ -46,7 +45,7 @@ void MultiSwitch::setToDefaults( void )
 	Group::setToDefaults();
 
 	setWhichChild( MULTI_SWITCH_DEFAULT );
-	clearChoosenChildren();
+	removeAllFromChosenChild();
 }
 
 
@@ -80,12 +79,12 @@ bool MultiSwitch::isChildChoosen( const int32 index ) const
 
 	vgd::field::EditorRO<vgd::field::MFInt32> chosenChild = getFieldRO<vgd::field::MFInt32>(getFChosenChild());
 
-	return ( chosenChild->find( index ) != chosenChild->size() );
+	return ( chosenChild->find( index ) != -1 );
 }
 
 
 
-void MultiSwitch::addToChoosenChildren( const int32 index )
+void MultiSwitch::addToChosenChild( const int32 index )
 {
 	assert( checkChildIndex(index) && "index is out of range." );
 
@@ -100,14 +99,14 @@ void MultiSwitch::addToChoosenChildren( const int32 index )
 
 
 
-void MultiSwitch::removeFromChoosenChildren( const int32 index )
+void MultiSwitch::removeFromChosenChild( const int32 index )
 {
 	assert( checkChildIndex(index) && "index is out of range." );
 
 	vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
 	const int32 indexChosenChild = chosenChild->find( index );
 
-	if ( indexChosenChild != chosenChild->size() )
+	if ( indexChosenChild != -1 )
 	{
 		// Found index in chosenChild
 		chosenChild->erase( indexChosenChild );
@@ -119,7 +118,7 @@ void MultiSwitch::removeFromChoosenChildren( const int32 index )
 
 
 
-void MultiSwitch::clearChoosenChildren( void )
+void MultiSwitch::removeAllFromChosenChild( void )
 {
 	vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
 

@@ -9,6 +9,7 @@
 
 #include "vgd/event/Event.hpp"
 #include "vgd/event/EventVisitor.hpp"
+#include "vgd/vgd.hpp"
 
 
 
@@ -35,7 +36,7 @@ struct VGD_API ButtonEvent : public Event
 	/**
 	 * @brief	Constructor
 	 *
-	 * @param	source		a pointer to the source of the event
+	 * @param	source			a pointer to the source of the event
 	 * @param	buttonStates	a reference to the button state set
 	 * @param	buttonID		a button identifier
 	 * @param	state			a button state

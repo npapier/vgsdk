@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,8 @@
 
 #include <fstream>
 #include <vgd/node/Group.hpp>
-#include <vgd/visitor/helpers.hpp>
+#include <vgd/visitor/FindFirst.hpp>
+#include <vgd/visitor/FindFirstHelper.hpp>
 #include <vgd/visitor/predicate/ByKindOfType.hpp>
 #include <vgd/visitor/predicate/ByType.hpp>
 #include "vge/engine/Engine.hpp"
@@ -66,8 +67,6 @@ struct VGE_API SceneManager
 
 	/**
 	 * @name Accessors to scene graph
-	 *
-	 * @todo Updates doc of findFirst*() methods (see vgd/visitor/helpers.hpp)
 	 */
 	//@{
 
@@ -95,7 +94,17 @@ struct VGE_API SceneManager
 	template< typename nodeType >
 	vgd::Shp< nodeType > findFirstByType() const
 	{
-		return vgd::visitor::findFirst< nodeType >( m_root, vgd::visitor::predicate::ByType< nodeType >() );
+		vgd::Shp< nodeType > retVal;
+
+		std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
+		result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByType< nodeType >() );
+		
+		if ( result.first )
+		{
+			retVal = vgd::dynamic_pointer_cast< nodeType >(result.second);
+		}
+		
+		return ( retVal );
 	}
 
 	/**
@@ -106,7 +115,17 @@ struct VGE_API SceneManager
 	template< typename nodeType >
 	vgd::Shp< nodeType > findFirstByKindOfType() const
 	{
-		return vgd::visitor::findFirst< nodeType >( m_root, vgd::visitor::predicate::ByKindOfType< nodeType >() );
+		vgd::Shp< nodeType > retVal;
+
+		std::pair< bool, vgd::Shp< vgd::node::Node > >	result;
+		result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByKindOfType< nodeType >() );
+		
+		if ( result.first )
+		{
+			retVal = vgd::dynamic_pointer_cast< nodeType >(result.second);
+		}
+		
+		return ( retVal );
 	}
 
 	/**
@@ -126,7 +145,17 @@ struct VGE_API SceneManager
 	 * @return The desired node or a smart pointer to null.
 	 */
 	vgd::Shp< vgd::node::Node > findFirstByRegex( const std::string regexName ) const;
-
+	
+	/**
+	 * @brief Search the first node with shared pointer (vgd::Shp()) that match a reference.
+	 * 
+	 * @param reference		reference to search.
+	 * 
+	 * @return The desired node or a smart pointer to null.
+	 * 
+	 * @deprecated
+	 */
+	vgd::Shp< vgd::node::Node > findFirstByReference( const vgd::node::Node* reference ) const;	
 	//@}
 
 
@@ -180,11 +209,9 @@ struct VGE_API SceneManager
 	 * @remark To generate png, Graphviz must be in your path.
 	 * 
 	 * @sa vgd::node::Group::writeGraphviz
-	 *
-	 * @deprecated At least for gtk user interface.
 	 */
 	 void writeGraphviz( bool bGeneratePNG = false, std::ofstream *pofstream = 0 );
-
+	 
 	//@}
 
 
@@ -260,7 +287,6 @@ struct VGE_API SceneManager
 	 */
 	void	setNumberOfFrames( const uint numberOfFrames );
 
-
 	/**
 	 * @brief Returns the number of frames displayed by paint() method.
 	 *
@@ -269,15 +295,6 @@ struct VGE_API SceneManager
 	const uint getFrameCount() const;
 	//@}
 
-
-protected:
-
-	/**
-	 * @brief Increases the frame count by one.
-	 *
-	 * @return the new frame count, i.e. getFrameCount()
-	 */
-	virtual const uint increaseFrameCount();
 
 
 private:

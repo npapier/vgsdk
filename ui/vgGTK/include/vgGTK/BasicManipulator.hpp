@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -11,30 +11,9 @@
 
 #include "vgGTK/vgGTK.hpp"
 #include "vgGTK/GenericCanvas.hpp"
+#include "vgGTK/event/Keyboard.hpp"
+#include "vgGTK/event/Mouse.hpp"
 
-namespace vgGTK
-{
-	namespace event
-	{
-		namespace device
-		{
-			struct Keyboard;
-			struct Mouse;
-			struct Timer;
-		}
-	}
-}
-
-namespace vgSDL
-{
-	namespace event
-	{
-		namespace device
-		{
-			struct Joystick;
-		}
-	}
-}
 
 
 namespace vgGTK
@@ -48,7 +27,7 @@ namespace vgGTK
 struct VGGTK_API BasicManipulator : public GenericCanvas< vgUI::BasicManipulator >
 {
 	/**
-	 * @name	Constructors & destructor
+	 * @name	Constrcutors
 	 */
 	//@{
 	BasicManipulator();
@@ -57,21 +36,25 @@ struct VGGTK_API BasicManipulator : public GenericCanvas< vgUI::BasicManipulator
 	BasicManipulator( const SharedCanvasType * sharedCanvas )
 	:	GenericCanvas< vgUI::BasicManipulator >( sharedCanvas )
 	{
-		initDevices();
+		attachDevices();
 	}
-
-	~BasicManipulator();
 	//@}
 
+protected:
+
+	/**
+	 * @name	Overrides
+	 */
+	//@{
+	void on_realize();
+	void on_unrealize();
+	//@}
 
 private:
 
-	vgd::Shp< vgGTK::event::device::Keyboard >	m_keyboard;	///< The GTK keyboard device.
-	vgd::Shp< vgGTK::event::device::Mouse >		m_mouse;	///< The GTK mouse device.
-	vgd::Shp< vgGTK::event::device::Timer >		m_timer;	///< The GTK timer device.
-	vgd::Shp< vgSDL::event::device::Joystick >	m_joystick;	///< References the joystick used to control the scene.
+	::vgGTK::event::Keyboard	m_keyboard;	///< The GTK keyboard device.
+	::vgGTK::event::Mouse		m_mouse;	///< The GTK mouse device.
 
-	void initDevices();	///< Initializes device instances and perform listening connections.
 };
 
 

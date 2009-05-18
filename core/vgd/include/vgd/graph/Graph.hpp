@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,7 +16,6 @@ namespace vgd
 {
 	namespace node
 	{
-		struct Group;
 		struct Node;
 		typedef std::list< vgd::Shp<vgd::node::Node> > NodeList;
 	}
@@ -154,15 +153,6 @@ struct VGD_API Graph
 	 * @name Parents accessors
 	 */
 	//@{
-
-	/**
-	 * @brief Returns the first parent of a node.
-	 *
-	 * @param pTargetNode	node
-	 *
-	 * @return a shared pointer on the first parent, otherwise an empty shared pointer
-	 */
-	vgd::Shp< vgd::node::Group > getParent( const vgd::node::Node* pTargetNode ) const;
 
 	/**
 	 * @brief Returns parents of a node.

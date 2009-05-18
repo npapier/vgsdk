@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -7,7 +7,8 @@
 #include "vgSDL/event/event.hpp"
 
 #include <SDL.h>
-#include "vgSDL/event/device/Joystick.hpp"
+
+#include "vgSDL/event/Joystick.hpp"
 
 
 
@@ -31,15 +32,15 @@ namespace
 		{
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
-			device::Joystick::handleEvent( event.jbutton );
+			Joystick::handleEvent( event.jbutton );
 			break;
 
 		case SDL_JOYAXISMOTION:
-			device::Joystick::handleEvent( event.jaxis );
+			Joystick::handleEvent( event.jaxis );
 			break;
 
 		case SDL_JOYHATMOTION:
-			device::Joystick::handleEvent( event.jhat );
+			Joystick::handleEvent( event.jhat );
 			break;
 		}
 	}

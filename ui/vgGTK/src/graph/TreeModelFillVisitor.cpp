@@ -15,8 +15,8 @@ namespace graph
 
 
 
-TreeModelFillVisitor::TreeModelFillVisitor( TreeStore & treeStore, const TreeModelColumnRecord & columnRecord )
-:	vgd::visitor::Traverse< boost::null_visitor >( false, false ),
+TreeModelFillVisitor::TreeModelFillVisitor( Glib::RefPtr< Gtk::TreeStore > treeStore, const TreeModelColumnRecord & columnRecord )
+:	Traverse( false, false ),
 	m_treeStore( treeStore ),
 	m_columnRecord( columnRecord ),
 	m_active( true )

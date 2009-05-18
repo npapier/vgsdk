@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -14,15 +14,6 @@ Vector<T,N>::Vector( void )
 
 template< typename T, int N >
 Vector<T,N>::Vector( const T* v )
-{
-	setValue( v );
-}
-
-
-
-template< typename T, int N >
-template< typename InType >
-Vector<T,N>::Vector( const InType* v )
 {
 	setValue( v );
 }
@@ -78,19 +69,7 @@ void Vector<T,N>::setValue( const T* v )
 
 
 template< typename T, int N >
-template< typename InType >
-void Vector<T,N>::setValue( const InType* v )
-{
-	for (int32 i=0; i<N; i++)
-	{
-		m_tCoord[i] = static_cast< T >( v[i] );
-	}
-}
-
-
-
-template< typename T, int N >
-void Vector<T, N>::setValue( const Vector& v )
+void Vector<T, N>::setValue( const Vector& v)
 {
 	for (int32 i=0; i<N; i++)
 	{
@@ -398,25 +377,6 @@ float Vector<T,N>::dot( const Vector& v ) const
 	}
 	
 	return retVal;
-}
-
-
-
-template< typename T, int N >
-const float Vector<T,N>::getAngle( const Vector& v ) const
-{
-	const Vector a = getNormalized();
-	const Vector b = v.getNormalized();
-
-	const float dotValue = a.dot(b);
-
-	// Preconditions for acos
-/*	assert( -1.f <= dotValue + vgm::Epsilon<float>::value() && "Out of range (for acos)" );
-	assert( dotValue - vgm::Epsilon<float>::value() <= 1.f && "Out of range (for acos)" );*/
-
-	const float dotValueClamped = vgm::clamp(dotValue, -1.f, 1.f);
-
-	return std::acos( dotValueClamped );
 }
 
 

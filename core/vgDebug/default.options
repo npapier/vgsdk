@@ -1,6 +1,5 @@
-description	= '(V)ersatile (G)raphical (Debug)'
 vcsUse		= 'no'
 type		= 'shared'
-version		= '0-5'
+version		= '0-4'
 uses		= ['boost']
 deps		= ['../vgBase']

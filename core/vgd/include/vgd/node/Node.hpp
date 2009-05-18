@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -38,7 +38,6 @@ namespace vgd
 
 	namespace node
 	{
-		struct Group;
 		struct Node;
 	}
 }
@@ -175,18 +174,8 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 
 	/**
 	 * @name Accessors to parents
-	 *
-	 * @todo adds vgd::Shp< vgd::node::Group > getParent()
-	 * @todo adds getParents( GroupList ), same getEnabledParents()
 	 */
 	//@{
-
-	/**
-	 * @brief Returns the first parent
-	 *
-	 * @return a shared pointer on the first parent, otherwise an empty shared pointer
-	 */
-	vgd::Shp< vgd::node::Group > getParent();
 
 	/**
 	 * @brief Returns the list of parents.
@@ -203,19 +192,12 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	/**
 	 * @brief Returns only enabled or disabled parents nodes.
 	 * 
-	 * @param parents		append parents at the end of this list.
+	 * @param parents			append parents at the end of this list.
  	 * @param bGetEnabled	true to get all enabled parents, false to get all disabled parents.
  	 * 
  	 * @remark For more explanation see IGroup::getEnabledChildren().
 	 */
-	virtual void	getEnabledParents( NodeList& parents, const bool bGetEnabled = true ) const;
-
-	/**
-	 * @brief Returns the number of parents.
-	 *
- 	 * @param bGetEnabled	true to only take care of enabled parents, false to only take care of disabled parents.
-	 */
-	const int32 getNumEnabledParents( const bool bGetEnabled = true ) const;
+	virtual void	getEnabledParents( NodeList& parents, const bool bGetEnabled = true) const;
 
 	/**
 	 * @brief Invalidate bounding box dirty flag for each parents of this node.
