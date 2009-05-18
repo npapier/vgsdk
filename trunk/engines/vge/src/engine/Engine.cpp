@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -23,7 +23,8 @@ namespace engine
 
 
 Engine::Engine()
-:	m_drawingSurfaceSize(0, 0)
+:	m_drawingSurfaceSize(0, 0),
+	m_isTextureMappingEnabled(true)
 {
 	reset();
 }
@@ -34,6 +35,9 @@ void Engine::reset()
 {
 	// Handlers
 	resetHandlers();
+
+	//
+	setTextureMappingEnabled();
 
 	//	
 	resetEval();
@@ -92,6 +96,20 @@ void Engine::evaluate(	const vgd::Shp< vge::service::Service >service,
 		}
 	}
 	// nothing to do, handler not regarded.
+}
+
+
+
+const bool Engine::isTextureMappingEnabled() const
+{
+	return m_isTextureMappingEnabled;
+}
+
+
+
+void Engine::setTextureMappingEnabled( const bool enabled )
+{
+	m_isTextureMappingEnabled = enabled;
 }
 
 

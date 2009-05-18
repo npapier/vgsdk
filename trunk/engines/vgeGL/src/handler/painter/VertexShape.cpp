@@ -101,7 +101,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 			// Updates GLSL state with vertex shape info
 			// @todo OPTME
-			const int32 numTexUnits = pVertexShape->getNumTexUnits();
+			const int32 numTexUnits = pGLEngine->isTextureMappingEnabled() ? pVertexShape->getNumTexUnits() : 0;
 			if ( numTexUnits >= 1 )
 			{
 				for(	int32 unit = numTexUnits-1;
@@ -519,7 +519,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	}
 
 	// TEX COORD
-	const int32 numTexUnits = pVertexShape->getNumTexUnits();
+	const int32 numTexUnits = pGLEngine->isTextureMappingEnabled() ? pVertexShape->getNumTexUnits() : 0;
 
 	if ( numTexUnits >= 1 )
 	{

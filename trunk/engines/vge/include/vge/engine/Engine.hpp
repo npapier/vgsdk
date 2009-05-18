@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -136,10 +136,10 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	//@{
 
 //	/**
-//	 * @brief Evaluation of scene graph.
+//	 * brief Evaluation of scene graph.
 //	 * 
-//	 * @param service		Service to use during evaluation (Painter...).
-//	 * @param collector		Visitor that has collect all traversing informations.
+//	 * param service		Service to use during evaluation (Painter...).
+//	 * param collector		Visitor that has collect all traversing informations.
 //	 */
 //	template< typename Visitors >
 //	void evaluate(	const vgd::Shp< vge::service::Service > service,
@@ -178,9 +178,23 @@ struct VGE_API Engine : public vgd::field::FieldManager
 					const bool bTrace = true );
 // FIXME ???
 //	/**
-//	 * @brief Evaluation of the state being at the top of the evaluation stack.
+//	 * brief Evaluation of the state being at the top of the evaluation stack.
 //	 */
 //	void evaluateTopStateWithoutTrace(	const vgd::Shp< vge::service::Service > service, const bool isPreTraverse );
+
+	/**
+	 * @brief Determines whether the texture mapping is enabled.
+	 *
+	 * @return true if texture mapping is enabled, false otherwise
+	 */
+	const bool isTextureMappingEnabled() const;
+
+	/**
+	 * @brief Enables or disables the texture mapping depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the texture mapping must be enabled, false otherwise
+	 */
+	void setTextureMappingEnabled( const bool enabled = true );
 	//@}
 
 
@@ -669,8 +683,9 @@ protected:
 	 * @brief Initial size for StateStack.
 	 */
 	static const int32					StateStack_SizeHint;
-	
-	vgm::Vec2i m_drawingSurfaceSize;		//< the drawing surface size (window size).	
+
+	vgm::Vec2i m_drawingSurfaceSize;	//< the drawing surface size (window size).
+	bool m_isTextureMappingEnabled;		//< true if texture mapping is enabled, false otherwise
 };
 
 
