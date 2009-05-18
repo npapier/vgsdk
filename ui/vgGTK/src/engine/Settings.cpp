@@ -9,6 +9,8 @@
 #include <gtkmm/button.h>
 #include <gtkmm/checkbutton.h>
 #include <gtkmm/separator.h>
+#include <vgd/visitor/helpers.hpp>
+#include <vgd/visitor/predicate/True.hpp>
 #include <vgUI/event/CaptureEventProcessor.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgUI/Canvas.hpp>
@@ -29,7 +31,7 @@ Settings::Settings()
 {
 	// Creates child widgets.
 	m_glslButton								= Gtk::manage( new Gtk::CheckButton("Use GLSL pipeline") );
-	m_disableTexture							= Gtk::manage( new Gtk::CheckButton("Disable texture (todo)") );
+	m_disableTexture							= Gtk::manage( new Gtk::CheckButton("Disable texture") );
 	Gtk::Button		* benchButton				= Gtk::manage( new Gtk::Button("Bench") );
 
 	m_showFPS									= Gtk::manage( new Gtk::CheckButton("Show counters (fps and frame)") );
@@ -37,6 +39,7 @@ Settings::Settings()
 	Gtk::Button		* clearGLResourcesButton	= Gtk::manage( new Gtk::Button("Clear OpenGL Resources") );
 
 	m_captureButton								= Gtk::manage( new Gtk::CheckButton("Enable capture HotKeys") );
+	m_captureButton->set_tooltip_text( "Hotkeys\n---------\n\ns : captures a screenshot\n\nv : starts video capture\nb : stops and saves video capture\nc : cancels video capture");
 
 	set_spacing( 8 );
 
@@ -80,6 +83,8 @@ void Settings::setCanvas( vgUI::Canvas * canvas )
 	if( m_canvas != 0 )
 	{
 		m_glslButton->set_active( m_canvas->getGLEngine()->isGLSLEnabled() );
+		m_disableTexture->set_active( !m_canvas->getGLEngine()->isTextureMappingEnabled() );
+		m_showFPS->set_active( m_canvas->isDebugOverlay() );
 	}
 }
 
@@ -90,7 +95,7 @@ void Settings::onGLSL()
 	assert( m_canvas != 0 );
 
 	m_canvas->getGLEngine()->setGLSLEnabled( m_glslButton->get_active() );
-	m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE );
+	m_canvas->refreshForced();
 }
 
 
@@ -98,10 +103,25 @@ void Settings::onGLSL()
 void Settings::onDisableTexture()
 {
 	assert( m_canvas != 0 );
+	m_canvas->getGLEngine()->setTextureMappingEnabled( !m_disableTexture->get_active() );
 
-	// @todo
-	/*m_canvas->getGLEngine()->setGLSLEnabled( m_glslButton->get_active() );
-	m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE );*/
+	// @todo a function to dirty all nodeDF
+	vgd::Shp< vgd::node::NodeList > nodeList;
+	nodeList = vgd::visitor::find( m_canvas->getRoot(), vgd::visitor::predicate::True() );
+
+	using vgd::node::NodeList;
+
+	for( NodeList::const_iterator	i		= nodeList->begin(),
+									iEnd	= nodeList->end();
+		i != iEnd;
+		++i )
+	{
+		vgd::Shp< vgd::node::Node > node = *i;
+		node->getDirtyFlag( node->getDFNode() )->dirty();
+	}
+	// end todo
+
+	m_canvas->refreshForced();
 }
 
 
@@ -114,8 +134,8 @@ void Settings::onBench()
 
 	if ( fps >= 0 )
 	{
-		m_canvas->bench( fps * 2 );
-		m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::ASYNCHRONOUS );
+		m_canvas->bench( 100 );// @todo FIXME fps * 2 );
+		m_canvas->refreshForced();
 	}
 }
 
@@ -129,7 +149,7 @@ void Settings::onShowFPS()
 	const bool isDebugOverlay = m_showFPS->get_active();
 	m_canvas->setDebugOverlay( isDebugOverlay );
 
-	m_canvas->refresh(); // vgUI::Canvas::REFRESH_FORCE );
+	m_canvas->refreshForced();
 }
 
 
@@ -148,9 +168,12 @@ void Settings::onDebugEvents()
 void Settings::onClearGLResources()
 {
 	assert( m_canvas != 0 );
-	
-	m_canvas->getGLEngine()->getGLManager().clear();
-	m_canvas->getGLEngine()->getGLSLManager().clear();
+
+	// @todo
+	/*m_canvas->getGLEngine()->getGLManager().clear();
+	m_canvas->getGLEngine()->getGLSLManager().clear();*/
+
+	m_canvas->refreshForced();
 }
 
 
