@@ -294,7 +294,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	{
 		case CAMERA_PERSPECTIVE:
 			matrix.setPerspective(
-							90.f,
+							60.f,
 							windowAspectRatio,
 							minDepth,
 							maxDepth
