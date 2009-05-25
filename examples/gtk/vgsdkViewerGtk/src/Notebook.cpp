@@ -33,6 +33,7 @@ Notebook::Notebook()
 
 void Notebook::setCanvas( vgUI::BasicManipulator & canvas )
 {
+	m_graphBrowser.setCanvas( &canvas );
 	m_graphBrowser.setRoot( canvas.getRoot() );
 	m_engineSettings.setCanvas( &canvas );
 	m_drawStyleEditor.setDrawStyle( canvas.getOptionalNodeAs<vgd::node::DrawStyle>(vgUI::BasicManipulator::DRAW_STYLE) );
