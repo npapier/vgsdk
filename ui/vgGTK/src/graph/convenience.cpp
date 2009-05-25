@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -200,6 +200,9 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 			using vgd::field::TSingleField;
 			FieldSerializer1< TSingleField >				singleFieldSerializer( fieldManager, fieldName, os );
 
+			using vgd::field::TOptionalField;
+			FieldSerializer1< TOptionalField >				optionalFieldSerializer( fieldManager, fieldName, os );
+
 			using vgd::field::TMultiField;
 			FieldSerializer1< TMultiField >					multiFieldSerializer( fieldManager, fieldName, os );
 
@@ -285,6 +288,7 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 // @todo for() with break
 // @todo debug done() serializer is copied
 			boost::mpl::for_each< AllTypes >( singleFieldSerializer );
+			boost::mpl::for_each< AllTypes >( optionalFieldSerializer );
 			boost::mpl::for_each< AllTypes >( multiFieldSerializer );
 			boost::mpl::for_each< AllTypes >( paFieldSerializer1 );
 			boost::mpl::for_each< AllTypes >( paFieldSerializer2 );

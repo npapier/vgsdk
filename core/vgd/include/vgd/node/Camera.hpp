@@ -27,7 +27,7 @@ namespace node
  * Sets up the projection with an user defined matrix for the viewing frustum(into the world coordinate system).  Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting.  
  *
  * New fields defined by this node :
- *	- PAFRectangle2i \c scissor = empty\n
+ *	- OFRectangle2i \c scissor = empty\n
  *		Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
  *	- SFMatrixR \c matrix = vgm::MatrixR(vgm::MatrixR::getIdentity())\n
  *		Determines the projection matrix.
@@ -67,23 +67,9 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 	/**
-	 * @name Accessors to field \c scissor
+	 * @name Accessors to field scissor
 	 */
 	//@{
-
-	/**
-	 * @brief Type definition of the parameter contained by field named \c scissor.
-	 */
-	typedef vgd::field::Enum ScissorParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		SCISSOR = 257,	///< Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
-		DEFAULT_SCISSOR = SCISSOR	///< Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
-	};
 
 	/**
 	 * @brief Type definition of the value contained by field named \c scissor.
@@ -93,7 +79,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Type definition of the field named \c scissor
 	 */
-	typedef vgd::field::TPairAssociativeField< ScissorParameterType, ScissorValueType > FScissorType;
+	typedef vgd::field::TOptionalField< ScissorValueType > FScissorType;
 
 
 	/**
@@ -104,12 +90,17 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Sets the value of field named \c scissor.
  	 */
-	void setScissor( ScissorValueType value );
+	void setScissor( const ScissorValueType& value );
 
 	/**
 	 * @brief Erases the field named \c scissor.
 	 */
 	void eraseScissor();
+
+	/**
+	 * @brief Tests if the value of field named \c scissor has been initialized.
+	 */
+	const bool hasScissor() const;
 	//@}
 
 

@@ -12,7 +12,7 @@
 
 namespace vgd
 {
-	
+
 namespace field
 {
 
@@ -67,7 +67,7 @@ struct TSingleField : public AbstractField
 	 *
 	 * @param rItem	the value to store
 	 */
-	void     setValue ( const T& rItem )
+	void setValue( const T& rItem )
 	{
 		assert( checkRW() );
 
@@ -79,11 +79,11 @@ struct TSingleField : public AbstractField
 	 *
 	 * @return the value stored by this field.
 	 */
-	const T& getValue () const
+	const T& getValue() const
 	{
 		assert( checkRO() );
-    	
-    	return ( m_item );
+
+		return m_item;
 	}
 
 	/**
@@ -91,11 +91,11 @@ struct TSingleField : public AbstractField
 	 *
 	 * @return the value stored by this field.
 	 */
-	T&       getValue ()
+	T& getValue ()
 	{
 		assert( checkRW() );
-    	
-    	return ( m_item );
+
+		return m_item;
 	}
 	//@}
 

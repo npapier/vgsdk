@@ -7,7 +7,6 @@
 #define _VGD_NODE_CLIPPLANE_HPP
 
 #include "vgd/field/Bool.hpp"
-#include "vgd/field/Enum.hpp"
 #include "vgd/field/Plane.hpp"
 #include "vgd/node/MultiAttribute.hpp"
 
@@ -27,7 +26,7 @@ namespace node
  * All subsequent shapes in the scene graph will be clipped to the half-space defined by the \c plane field. The half-space is the side of the plane in the direction of the plane normal. Any number of clipping planes may be active simultaneously, although the graphics library may place a limit on this number during rendering (i.e. 6 for OpenGL). 
  *
  * New fields defined by this node :
- *	- PAFBool \c on = true\n
+ *	- OFBool \c [on] = true\n
  *		Specifies if the clipping plane is enabled or disabled.
  *	- SFPlane \c plane = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f )\n
  *		Specifies the clipping plane.
@@ -65,23 +64,9 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field \c on
+	 * @name Accessors to field on
 	 */
 	//@{
-
-	/**
-	 * @brief Type definition of the parameter contained by field named \c on.
-	 */
-	typedef vgd::field::Enum OnParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		ON = 258,	///< Specifies if the clipping plane is enabled or disabled.
-		DEFAULT_ON = ON	///< Specifies if the clipping plane is enabled or disabled.
-	};
 
 	/**
 	 * @brief Type definition of the value contained by field named \c on.
@@ -91,7 +76,7 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	/**
 	 * @brief Type definition of the field named \c on
 	 */
-	typedef vgd::field::TPairAssociativeField< OnParameterType, OnValueType > FOnType;
+	typedef vgd::field::TOptionalField< OnValueType > FOnType;
 
 
 	/**
@@ -102,12 +87,17 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	/**
 	 * @brief Sets the value of field named \c on.
  	 */
-	void setOn( OnValueType value );
+	void setOn( const OnValueType& value );
 
 	/**
 	 * @brief Erases the field named \c on.
 	 */
 	void eraseOn();
+
+	/**
+	 * @brief Tests if the value of field named \c on has been initialized.
+	 */
+	const bool hasOn() const;
 	//@}
 
 

@@ -80,23 +80,27 @@ void Camera::setOptionalsToDefaults()
 // Scissor
 const bool Camera::getScissor( ScissorValueType& value ) const
 {
-	return (
-		vgd::field::getParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), static_cast<ScissorParameterType>(SCISSOR), value )
-		);
+	return getFieldRO<FScissorType>(getFScissor())->getValue( value );
 }
 
 
 
-void Camera::setScissor( ScissorValueType value )
+void Camera::setScissor( const ScissorValueType& value )
 {
-	vgd::field::setParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), static_cast<ScissorParameterType>(SCISSOR), value );
+	getFieldRW<FScissorType>(getFScissor())->setValue( value );
 }
 
 
 
 void Camera::eraseScissor()
 {
-	vgd::field::eraseParameterValue< ScissorParameterType, ScissorValueType >( this, getFScissor(), static_cast<ScissorParameterType>(SCISSOR) );
+	getFieldRW<FScissorType>(getFScissor())->eraseValue();
+}
+
+
+const bool Camera::hasScissor() const
+{
+	return getFieldRO<FScissorType>(getFScissor())->hasValue();
 }
 
 
