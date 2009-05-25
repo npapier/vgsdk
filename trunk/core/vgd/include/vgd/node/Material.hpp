@@ -29,13 +29,13 @@ namespace node
  * New fields defined by this node :
  *	- SFFloat \c opacity = 1.f\n
  *		Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.
- *	- PAFFloat \c shininess = 0.f\n
- *		Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
- *	- PAFVec3f \c emission = vgm::Vec3f(0.f, 0.f, 0.f)\n
+ *	- OFVec3f \c [emission] = vgm::Vec3f(0.f, 0.f, 0.f)\n
  *		Emmissive color of the surface.
- *	- PAFVec3f \c specular = vgm::Vec3f(0.f, 0.f, 0.f)\n
+ *	- OFFloat \c [shininess] = 0.f\n
+ *		Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
+ *	- OFVec3f \c [specular] = vgm::Vec3f(0.f, 0.f, 0.f)\n
  *		Specular color of the surface.
- *	- PAFVec3f \c ambient = vgm::Vec3f(0.2f, 0.2f, 0.2f)\n
+ *	- OFVec3f \c [ambient] = vgm::Vec3f(0.2f, 0.2f, 0.2f)\n
  *		Ambient color of the surface.
  *	- PAFVec3f \c diffuse = vgm::Vec3f(0.8f, 0.8f, 0.8f)\n
  *		Diffuse color of the surface.
@@ -103,71 +103,9 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field \c shininess
+	 * @name Accessors to field emission
 	 */
 	//@{
-
-	/**
-	 * @brief Type definition of the parameter contained by field named \c shininess.
-	 */
-	typedef vgd::field::Enum ShininessParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		SHININESS = 269,	///< Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
-		DEFAULT_SHININESS = SHININESS	///< Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
-	};
-
-	/**
-	 * @brief Type definition of the value contained by field named \c shininess.
-	 */
-	typedef float ShininessValueType;
-
-	/**
-	 * @brief Type definition of the field named \c shininess
-	 */
-	typedef vgd::field::TPairAssociativeField< ShininessParameterType, ShininessValueType > FShininessType;
-
-
-	/**
-	 * @brief Gets the value of field named \c shininess.
-	 */
-	const bool getShininess( ShininessValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c shininess.
- 	 */
-	void setShininess( ShininessValueType value );
-
-	/**
-	 * @brief Erases the field named \c shininess.
-	 */
-	void eraseShininess();
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field \c emission
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the parameter contained by field named \c emission.
-	 */
-	typedef vgd::field::Enum EmissionParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		EMISSION = 268,	///< Emmissive color of the surface.
-		DEFAULT_EMISSION = EMISSION	///< Emmissive color of the surface.
-	};
 
 	/**
 	 * @brief Type definition of the value contained by field named \c emission.
@@ -177,7 +115,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the field named \c emission
 	 */
-	typedef vgd::field::TPairAssociativeField< EmissionParameterType, EmissionValueType > FEmissionType;
+	typedef vgd::field::TOptionalField< EmissionValueType > FEmissionType;
 
 
 	/**
@@ -188,34 +126,64 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Sets the value of field named \c emission.
  	 */
-	void setEmission( EmissionValueType value );
+	void setEmission( const EmissionValueType& value );
 
 	/**
 	 * @brief Erases the field named \c emission.
 	 */
 	void eraseEmission();
+
+	/**
+	 * @brief Tests if the value of field named \c emission has been initialized.
+	 */
+	const bool hasEmission() const;
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field \c specular
+	 * @name Accessors to field shininess
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the parameter contained by field named \c specular.
+	 * @brief Type definition of the value contained by field named \c shininess.
 	 */
-	typedef vgd::field::Enum SpecularParameterType;
+	typedef float ShininessValueType;
 
 	/**
-	 * @brief Definition of symbolic values
+	 * @brief Type definition of the field named \c shininess
 	 */
-	enum
-	{
-		SPECULAR = 267,	///< Specular color of the surface.
-		DEFAULT_SPECULAR = SPECULAR	///< Specular color of the surface.
-	};
+	typedef vgd::field::TOptionalField< ShininessValueType > FShininessType;
+
+
+	/**
+	 * @brief Gets the value of field named \c shininess.
+	 */
+	const bool getShininess( ShininessValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c shininess.
+ 	 */
+	void setShininess( const ShininessValueType& value );
+
+	/**
+	 * @brief Erases the field named \c shininess.
+	 */
+	void eraseShininess();
+
+	/**
+	 * @brief Tests if the value of field named \c shininess has been initialized.
+	 */
+	const bool hasShininess() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field specular
+	 */
+	//@{
 
 	/**
 	 * @brief Type definition of the value contained by field named \c specular.
@@ -225,7 +193,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the field named \c specular
 	 */
-	typedef vgd::field::TPairAssociativeField< SpecularParameterType, SpecularValueType > FSpecularType;
+	typedef vgd::field::TOptionalField< SpecularValueType > FSpecularType;
 
 
 	/**
@@ -236,34 +204,25 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Sets the value of field named \c specular.
  	 */
-	void setSpecular( SpecularValueType value );
+	void setSpecular( const SpecularValueType& value );
 
 	/**
 	 * @brief Erases the field named \c specular.
 	 */
 	void eraseSpecular();
+
+	/**
+	 * @brief Tests if the value of field named \c specular has been initialized.
+	 */
+	const bool hasSpecular() const;
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field \c ambient
+	 * @name Accessors to field ambient
 	 */
 	//@{
-
-	/**
-	 * @brief Type definition of the parameter contained by field named \c ambient.
-	 */
-	typedef vgd::field::Enum AmbientParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		AMBIENT = 265,	///< Ambient color of the surface.
-		DEFAULT_AMBIENT = AMBIENT	///< Ambient color of the surface.
-	};
 
 	/**
 	 * @brief Type definition of the value contained by field named \c ambient.
@@ -273,7 +232,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the field named \c ambient
 	 */
-	typedef vgd::field::TPairAssociativeField< AmbientParameterType, AmbientValueType > FAmbientType;
+	typedef vgd::field::TOptionalField< AmbientValueType > FAmbientType;
 
 
 	/**
@@ -284,12 +243,17 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Sets the value of field named \c ambient.
  	 */
-	void setAmbient( AmbientValueType value );
+	void setAmbient( const AmbientValueType& value );
 
 	/**
 	 * @brief Erases the field named \c ambient.
 	 */
 	void eraseAmbient();
+
+	/**
+	 * @brief Tests if the value of field named \c ambient has been initialized.
+	 */
+	const bool hasAmbient() const;
 	//@}
 
 
@@ -309,7 +273,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		DIFFUSE = 266,	///< Diffuse color of the surface.
+		DIFFUSE = 263,	///< Diffuse color of the surface.
 		DEFAULT_DIFFUSE = DIFFUSE	///< Diffuse color of the surface.
 	};
 
@@ -355,18 +319,18 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	static const std::string getFOpacity( void );
 
 	/**
-	 * @brief Returns the name of field \c shininess.
-	 *
-	 * @return the name of field \c shininess.
-	 */
-	static const std::string getFShininess( void );
-
-	/**
 	 * @brief Returns the name of field \c emission.
 	 *
 	 * @return the name of field \c emission.
 	 */
 	static const std::string getFEmission( void );
+
+	/**
+	 * @brief Returns the name of field \c shininess.
+	 *
+	 * @return the name of field \c shininess.
+	 */
+	static const std::string getFShininess( void );
 
 	/**
 	 * @brief Returns the name of field \c specular.
@@ -393,6 +357,18 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 
 
 
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		SHININESS,
+		EMISSION,
+		SPECULAR,
+		AMBIENT,
+		//DIFFUSE
+	};
 
 	/**
 	 * @name Accessors to field \c transparency

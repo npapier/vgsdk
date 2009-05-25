@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -14,42 +14,38 @@ class EnumRegistry :
 	_id		= 255
 	_values	= {}
 
+	@classmethod
 	def nextID( self ) :
 		self._id += 1
 		return self._id
 
-	nextID = classmethod(nextID)
 
-
+	@classmethod
 	def register( self, enumValue ) :
 		if enumValue not in self._values :
 			self._values[enumValue] = self.nextID()
 		else :
 			raise StandardError("Enum value %s already defined." % enumValue)
 
-	register = classmethod(register)
 
-
+	@classmethod
 	def getID( self, enumValue ) :
 		if enumValue in self._values :
 			return self._values[enumValue]
 		else :
 			raise StandardError("Enum value %s not registered" % enumValue )
 
-	getID = classmethod(getID)
 
-
+	@classmethod
 	def getIterItems( self ):
 		return self._values.iteritems()
 
-	getIterItems = classmethod(getIterItems)
 
+	@classmethod
 	def generate( self ) :
 		print "Generates enum registry"
 		for value, id in self._values.iteritems() :
 			print "(%s,%i)" % (value, id)
-
-	generate = classmethod(generate)
 
 
 
@@ -58,9 +54,11 @@ class EnumRegistry :
 ########
 class Type :
 	def __init__( self, name ) :
-		self.name			= name
 		self.namespace		= ""
+		self.name			= name
+
 		self.defaultValue	= ""
+
 		# @todo range
 
 	def generateTYPEDEF( self, fieldName, postfix ) :
@@ -85,7 +83,7 @@ class Type :
 		return self.name[0].upper() + self.name[1:]
 
 
-
+# @todo Constructs a derived class from vgd::field::Enum to add getAllValues()...
 class Enum ( Type ) :
 	def __init__( self ) :
 		Type.__init__( self, "enum" )
@@ -134,10 +132,10 @@ class Enum ( Type ) :
 # FIELD #
 #########
 class Field :
-	type		= None
-	name		= "noName"
+#	type		= None
+#	name		= "noName"
 	#@todo optional	= False
-	doc			= "@todo documentation"
+#	doc			= "@todo documentation"
 
 	def __init__( self, name, doc ) :
 		self.type		= None
@@ -159,6 +157,8 @@ class Field :
 	def generateCompleteType( self ) :
 		raise StandardError("Field::generateCompleteType() not implemented")
 
+	def isOptional( self ):
+		return False
 
 
 class SingleField ( Field ) :
@@ -235,6 +235,108 @@ void NewNode::setFieldName( const FieldNameValueType value )
 	def generateCompleteType( self ) :
 		return "SF%s" % self.type.getNormalizedName()
 
+
+
+class OptionalField ( Field ) :
+
+	def __init__( self, name, doc ) :
+		Field.__init__( self, name, doc )
+
+	def generateAccessorsHeader( self ) :
+		str = """\n\n\n	/**
+	 * @name Accessors to field fieldName
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c fieldName.
+	 */
+	TYPEDEF_FIELDNAMEVALUETYPE
+
+	/**
+	 * @brief Type definition of the field named \c fieldName
+	 */
+	typedef vgd::field::TOptionalField< FieldNameValueType > FFieldNameType;
+
+
+	/**
+	 * @brief Gets the value of field named \c fieldName.
+	 */
+	const bool getFieldName( FieldNameValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c fieldName.
+ 	 */
+	void setFieldName( const FieldNameValueType& value );
+
+	/**
+	 * @brief Erases the field named \c fieldName.
+	 */
+	void eraseFieldName();
+
+	/**
+	 * @brief Tests if the value of field named \c fieldName has been initialized.
+	 */
+	const bool hasFieldName() const;
+	//@}\n"""
+
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, "ValueType" ) )
+		str = str.replace( "fieldName", self.name )
+		str = str.replace( "FieldName", self.name.capitalize() )
+
+		return str
+
+
+	def generateAccessorsImpl( self, nodeName ) :
+		str = """// FieldName
+const bool NewNode::getFieldName( FieldNameValueType& value ) const
+{
+	return getFieldRO<FFieldNameType>(getFFieldName())->getValue( value );
+}
+
+
+
+void NewNode::setFieldName( const FieldNameValueType& value )
+{
+	getFieldRW<FFieldNameType>(getFFieldName())->setValue( value );
+}
+
+
+
+void NewNode::eraseFieldName()
+{
+	getFieldRW<FFieldNameType>(getFFieldName())->eraseValue();
+}
+
+
+const bool NewNode::hasFieldName() const
+{
+	return getFieldRO<FFieldNameType>(getFFieldName())->hasValue();
+}
+\n\n\n"""
+
+		str = str.replace( "NewNode", nodeName )
+		str = str.replace( "FieldName", self.name.capitalize() )
+
+		return str
+
+
+	def generateDefaultSetter( self ) :
+		# @todo Adds eraseFieldName()
+		return None
+
+	def generateOptionalDefaultSetter( self ) :
+		defaultValue = self.type.generateDefaultValue()
+		if len(defaultValue) == 0 :
+			return defaultValue
+		else :
+			return "set%s( %s );" % (self.name.capitalize(), defaultValue )
+
+	def generateCompleteType( self ) :
+		return "OF%s" % self.type.getNormalizedName()
+
+	def isOptional( self ):
+		return True
 
 
 class PairAssociativeField ( Field ) :

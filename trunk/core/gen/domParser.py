@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -131,6 +131,27 @@ def handleSF( domSF ) :
 	return sf
 
 
+def handleOF( domOF ) :
+	# name and doc
+	attrName	= domOF.getAttributeNode("name")
+	attrDoc		= domOF.getAttributeNode("doc")
+
+	if attrName == None or attrDoc == None :
+		raise StandardError("Optional Field must have both name and doc attributes.")
+
+	# Creates optional field
+	of = OptionalField(attrName.value, attrDoc.value)
+
+	# type
+	type = handleOneType(domOF)
+	if type == None :
+		raise StandardError("In optional field named %s, the type of field is not defined" % of.name )
+	else :
+		of.type = type
+
+	return of
+
+
 def handlePAF( domPAF ) :
 	# name and doc
 	attrName	= domPAF.getAttributeNode("name")
@@ -199,6 +220,12 @@ def handleNode( domNode ) :
 	for domSingleField in domSingleFields :
 		sf = handleSF( domSingleField )
 		node.addField( sf )
+
+	# Handles of
+	domOptionalFields = domNode.getElementsByTagName("of")
+	for domOptionalField in domOptionalFields :
+		of = handleOF( domOptionalField )
+		node.addField( of )
 
 	# Handles paf
 	domPairAssociativeFields = domNode.getElementsByTagName("paf")

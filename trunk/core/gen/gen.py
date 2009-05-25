@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -193,8 +193,11 @@ def generateNodeHeader( fd, node ) :
 	for field in node.fields.itervalues() :
 		if len(field.type.generateDefaultValue()) == 0 :
 			str += "\n *	- %s \c %s = empty\\n\n" % (field.generateCompleteType(), field.name)
-		else :
-			str += "\n *	- %s \c %s = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
+		else:
+			if field.isOptional():
+				str += "\n *	- %s \c [%s] = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
+			else:
+				str += "\n *	- %s \c %s = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
 		str +=   " *		%s" % field.doc
 
 	fd.write( classFields.replace("NEWFIELDS", str ) )

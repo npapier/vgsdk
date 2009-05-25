@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -17,6 +17,7 @@
 
 #include <vgd/field/Enum.hpp>
 #include <vgd/field/TMultiField.hpp>
+#include <vgd/field/TOptionalField.hpp>
 #include <vgd/field/TPairAssociativeField.hpp>
 #include <vgd/field/TSingleField.hpp>
 
@@ -287,6 +288,29 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TSingleField< 
 
 
 
+
+/**
+ * @brief	Writes into an output stream the given optional field
+ */
+template< typename T >
+std::ostream & operator << ( std::ostream & os, const vgd::field::TOptionalField< T > & field )
+{
+	if ( field.hasValue() )
+	{
+		T value;
+		field.getValue( value );
+		os << value;
+	}
+	else
+	{
+		os << "empty";
+	}
+
+	return os;
+}
+
+
+
 /**
  * @brief	Writes into an output stream the given node.
  */
@@ -430,8 +454,8 @@ template< typename T >
 const std::string toString( const T & value )
 {
 	std::string	buffer;
-
 	buffer << value;
+
 	return buffer;
 }
 

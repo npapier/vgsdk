@@ -22,9 +22,9 @@
 		<paf name="viewport" doc="Determines the viewport.">
 			<type name="Rectangle2i" namespace="vgm" default="0, 0, 1600, 1200"/>
 		</paf>
-		<paf name="scissor" doc="Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.">
+		<of name="scissor" doc="Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.">
 			<type name="Rectangle2i" namespace="vgm" default=""/>
-		</paf>
+		</of>
 		<codehpp>
 	/**
 	 * @name High-level methods
@@ -83,9 +83,9 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f&amp; vertex )
 		<sf name="plane" doc="Specifies the clipping plane.">
 			<type name="Plane" namespace="vgm" default="vgm::Vec3f(1.f, 0.f, 0.f), 0.f "></type>
 		</sf>
-		<paf name="on" doc="Specifies if the clipping plane is enabled or disabled.">
+		<of name="on" doc="Specifies if the clipping plane is enabled or disabled.">
 			<type name="bool" default="true"/>
-		</paf>
+		</of>
 	</node>
 
 	<node	name = "CullFace"
@@ -148,21 +148,21 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f&amp; vertex )
 <!--		<sf name="transparency" doc="Sets transparency from 1.0 for being completely opaque until 0.0 for being completely transparent.">
 			<type name="float" default="1.f"></type>
 		</sf> -->
-		<paf name="ambient" doc="Ambient color of the surface.">
+		<of name="ambient" doc="Ambient color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.2f, 0.2f, 0.2f"/>
-		</paf>
+		</of>
 		<paf name="diffuse" doc="Diffuse color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.8f, 0.8f, 0.8f"/>
 		</paf>
-		<paf name="specular" doc="Specular color of the surface.">
+		<of name="specular" doc="Specular color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.f, 0.f, 0.f"/>
-		</paf>
-		<paf name="emission" doc="Emmissive color of the surface.">
+		</of>
+		<of name="emission" doc="Emmissive color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.f, 0.f, 0.f"/>
-		</paf>
-		<paf name="shininess" doc="Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).">
+		</of>
+		<of name="shininess" doc="Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).">
 			<type name="float" default="0.f"></type>
-		</paf>
+		</of>
 
 <!--	/**
 	 * brief Typedef for the \c color field.
@@ -171,6 +171,18 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f&amp; vertex )
 		<codehpp>
 
 
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		SHININESS,
+		EMISSION,
+		SPECULAR,
+		AMBIENT,
+		//DIFFUSE
+	};
 
 	/**
 	 * @name Accessors to field \c transparency

@@ -51,8 +51,8 @@ Material::Material( const std::string nodeName ) :
 {
 	// Adds field(s)
 	addField( new FOpacityType(getFOpacity()) );
-	addField( new FShininessType(getFShininess()) );
 	addField( new FEmissionType(getFEmission()) );
+	addField( new FShininessType(getFShininess()) );
 	addField( new FSpecularType(getFSpecular()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FDiffuseType(getFDiffuse()) );
@@ -74,8 +74,8 @@ void Material::setToDefaults( void )
 void Material::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setShininess( 0.f );
 	setEmission( vgm::Vec3f(0.f, 0.f, 0.f) );
+	setShininess( 0.f );
 	setSpecular( vgm::Vec3f(0.f, 0.f, 0.f) );
 	setAmbient( vgm::Vec3f(0.2f, 0.2f, 0.2f) );
 	setDiffuse( vgm::Vec3f(0.8f, 0.8f, 0.8f) );
@@ -98,50 +98,58 @@ void Material::setOpacity( const OpacityValueType value )
 
 
 
-// Shininess
-const bool Material::getShininess( ShininessValueType& value ) const
-{
-	return (
-		vgd::field::getParameterValue< ShininessParameterType, ShininessValueType >( this, getFShininess(), static_cast<ShininessParameterType>(SHININESS), value )
-		);
-}
-
-
-
-void Material::setShininess( ShininessValueType value )
-{
-	vgd::field::setParameterValue< ShininessParameterType, ShininessValueType >( this, getFShininess(), static_cast<ShininessParameterType>(SHININESS), value );
-}
-
-
-
-void Material::eraseShininess()
-{
-	vgd::field::eraseParameterValue< ShininessParameterType, ShininessValueType >( this, getFShininess(), static_cast<ShininessParameterType>(SHININESS) );
-}
-
-
-
 // Emission
 const bool Material::getEmission( EmissionValueType& value ) const
 {
-	return (
-		vgd::field::getParameterValue< EmissionParameterType, EmissionValueType >( this, getFEmission(), static_cast<EmissionParameterType>(EMISSION), value )
-		);
+	return getFieldRO<FEmissionType>(getFEmission())->getValue( value );
 }
 
 
 
-void Material::setEmission( EmissionValueType value )
+void Material::setEmission( const EmissionValueType& value )
 {
-	vgd::field::setParameterValue< EmissionParameterType, EmissionValueType >( this, getFEmission(), static_cast<EmissionParameterType>(EMISSION), value );
+	getFieldRW<FEmissionType>(getFEmission())->setValue( value );
 }
 
 
 
 void Material::eraseEmission()
 {
-	vgd::field::eraseParameterValue< EmissionParameterType, EmissionValueType >( this, getFEmission(), static_cast<EmissionParameterType>(EMISSION) );
+	getFieldRW<FEmissionType>(getFEmission())->eraseValue();
+}
+
+
+const bool Material::hasEmission() const
+{
+	return getFieldRO<FEmissionType>(getFEmission())->hasValue();
+}
+
+
+
+// Shininess
+const bool Material::getShininess( ShininessValueType& value ) const
+{
+	return getFieldRO<FShininessType>(getFShininess())->getValue( value );
+}
+
+
+
+void Material::setShininess( const ShininessValueType& value )
+{
+	getFieldRW<FShininessType>(getFShininess())->setValue( value );
+}
+
+
+
+void Material::eraseShininess()
+{
+	getFieldRW<FShininessType>(getFShininess())->eraseValue();
+}
+
+
+const bool Material::hasShininess() const
+{
+	return getFieldRO<FShininessType>(getFShininess())->hasValue();
 }
 
 
@@ -149,23 +157,27 @@ void Material::eraseEmission()
 // Specular
 const bool Material::getSpecular( SpecularValueType& value ) const
 {
-	return (
-		vgd::field::getParameterValue< SpecularParameterType, SpecularValueType >( this, getFSpecular(), static_cast<SpecularParameterType>(SPECULAR), value )
-		);
+	return getFieldRO<FSpecularType>(getFSpecular())->getValue( value );
 }
 
 
 
-void Material::setSpecular( SpecularValueType value )
+void Material::setSpecular( const SpecularValueType& value )
 {
-	vgd::field::setParameterValue< SpecularParameterType, SpecularValueType >( this, getFSpecular(), static_cast<SpecularParameterType>(SPECULAR), value );
+	getFieldRW<FSpecularType>(getFSpecular())->setValue( value );
 }
 
 
 
 void Material::eraseSpecular()
 {
-	vgd::field::eraseParameterValue< SpecularParameterType, SpecularValueType >( this, getFSpecular(), static_cast<SpecularParameterType>(SPECULAR) );
+	getFieldRW<FSpecularType>(getFSpecular())->eraseValue();
+}
+
+
+const bool Material::hasSpecular() const
+{
+	return getFieldRO<FSpecularType>(getFSpecular())->hasValue();
 }
 
 
@@ -173,23 +185,27 @@ void Material::eraseSpecular()
 // Ambient
 const bool Material::getAmbient( AmbientValueType& value ) const
 {
-	return (
-		vgd::field::getParameterValue< AmbientParameterType, AmbientValueType >( this, getFAmbient(), static_cast<AmbientParameterType>(AMBIENT), value )
-		);
+	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
 }
 
 
 
-void Material::setAmbient( AmbientValueType value )
+void Material::setAmbient( const AmbientValueType& value )
 {
-	vgd::field::setParameterValue< AmbientParameterType, AmbientValueType >( this, getFAmbient(), static_cast<AmbientParameterType>(AMBIENT), value );
+	getFieldRW<FAmbientType>(getFAmbient())->setValue( value );
 }
 
 
 
 void Material::eraseAmbient()
 {
-	vgd::field::eraseParameterValue< AmbientParameterType, AmbientValueType >( this, getFAmbient(), static_cast<AmbientParameterType>(AMBIENT) );
+	getFieldRW<FAmbientType>(getFAmbient())->eraseValue();
+}
+
+
+const bool Material::hasAmbient() const
+{
+	return getFieldRO<FAmbientType>(getFAmbient())->hasValue();
 }
 
 
@@ -226,16 +242,16 @@ const std::string Material::getFOpacity( void )
 
 
 
-const std::string Material::getFShininess( void )
+const std::string Material::getFEmission( void )
 {
-	return "f_shininess";
+	return "f_emission";
 }
 
 
 
-const std::string Material::getFEmission( void )
+const std::string Material::getFShininess( void )
 {
-	return "f_emission";
+	return "f_shininess";
 }
 
 

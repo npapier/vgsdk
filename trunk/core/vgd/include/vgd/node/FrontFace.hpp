@@ -75,8 +75,8 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		CCW = 263,	///< (C)ounter-(C)lock(W)ise ordering
-		CW = 264,	///< (C)lock(W)ise ordering
+		CCW = 261,	///< (C)ounter-(C)lock(W)ise ordering
+		CW = 262,	///< (C)lock(W)ise ordering
 		DEFAULT_ORIENTATION = CCW	///< (C)ounter-(C)lock(W)ise ordering
 	};
 
