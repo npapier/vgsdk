@@ -132,10 +132,6 @@ class Enum ( Type ) :
 # FIELD #
 #########
 class Field :
-#	type		= None
-#	name		= "noName"
-	#@todo optional	= False
-#	doc			= "@todo documentation"
 
 	def __init__( self, name, doc ) :
 		self.type		= None
@@ -168,7 +164,7 @@ class SingleField ( Field ) :
 
 	def generateAccessorsHeader( self ) :
 		str = """\n\n\n	/**
-	 * @name Accessors to field \c fieldName
+	 * @name Accessors to field fieldName
 	 */
 	//@{
 
@@ -347,7 +343,7 @@ class PairAssociativeField ( Field ) :
 
 	def generateAccessorsHeader( self ) :
 		str = """\n\n\n	/**
-	 * @name Accessors to field \c fieldName
+	 * @name Accessors to field fieldName
 	 */
 	//@{
 

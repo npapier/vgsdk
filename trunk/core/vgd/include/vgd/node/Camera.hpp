@@ -6,7 +6,6 @@
 #ifndef _VGD_NODE_CAMERA_HPP
 #define _VGD_NODE_CAMERA_HPP
 
-#include "vgd/field/Enum.hpp"
 #include "vgd/field/MatrixR.hpp"
 #include "vgd/field/Rectangle2i.hpp"
 #include "vgd/node/ProjectionTransformation.hpp"
@@ -31,7 +30,7 @@ namespace node
  *		Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
  *	- SFMatrixR \c matrix = vgm::MatrixR(vgm::MatrixR::getIdentity())\n
  *		Determines the projection matrix.
- *	- PAFRectangle2i \c viewport = vgm::Rectangle2i(0, 0, 1600, 1200)\n
+ *	- OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)\n
  *		Determines the viewport.
  *
  * Inherited fields :
@@ -106,7 +105,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 	/**
-	 * @name Accessors to field \c matrix
+	 * @name Accessors to field matrix
 	 */
 	//@{
 
@@ -136,23 +135,9 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 	/**
-	 * @name Accessors to field \c viewport
+	 * @name Accessors to field viewport
 	 */
 	//@{
-
-	/**
-	 * @brief Type definition of the parameter contained by field named \c viewport.
-	 */
-	typedef vgd::field::Enum ViewportParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		VIEWPORT = 256,	///< Determines the viewport.
-		DEFAULT_VIEWPORT = VIEWPORT	///< Determines the viewport.
-	};
 
 	/**
 	 * @brief Type definition of the value contained by field named \c viewport.
@@ -162,7 +147,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Type definition of the field named \c viewport
 	 */
-	typedef vgd::field::TPairAssociativeField< ViewportParameterType, ViewportValueType > FViewportType;
+	typedef vgd::field::TOptionalField< ViewportValueType > FViewportType;
 
 
 	/**
@@ -173,12 +158,17 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Sets the value of field named \c viewport.
  	 */
-	void setViewport( ViewportValueType value );
+	void setViewport( const ViewportValueType& value );
 
 	/**
 	 * @brief Erases the field named \c viewport.
 	 */
 	void eraseViewport();
+
+	/**
+	 * @brief Tests if the value of field named \c viewport has been initialized.
+	 */
+	const bool hasViewport() const;
 	//@}
 
 
@@ -210,7 +200,6 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	static const std::string getFViewport( void );
 
 	//@}
-
 	/**
 	 * @name High-level methods
 	 *
@@ -228,7 +217,11 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	 */
 	const vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
 	//@}
-		
+
+
+
+
+
 
 
 	/**

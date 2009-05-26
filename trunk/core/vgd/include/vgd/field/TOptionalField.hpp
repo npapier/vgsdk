@@ -51,6 +51,7 @@ struct TOptionalField : public AbstractField
 	 * @brief Default constructor
 	 * 
 	 * @param strFieldName	name of field.
+	 * @post hasValue() == false
 	 */
 	TOptionalField( const std::string strFieldName )
 	:	AbstractField(strFieldName)

@@ -47,91 +47,69 @@ void EnumRegistry::initialize()
 {
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 261 ) != m_toString.end() )
-	{
-		vgLogDebug("(261, CCW) already in enum registry");
-		assert( false && "(261, CCW) already in registry" );
-	}
-	#endif
-
-	m_toString[ 261 ] = std::string("CCW");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 258 ) != m_toString.end() )
-	{
-		vgLogDebug("(258, BACK) already in enum registry");
-		assert( false && "(258, BACK) already in registry" );
-	}
-	#endif
-
-	m_toString[ 258 ] = std::string("BACK");
-
-	//
-	#ifdef _DEBUG
 	if ( m_toString.find( 260 ) != m_toString.end() )
 	{
-		vgLogDebug("(260, FRONT_AND_BACK) already in enum registry");
-		assert( false && "(260, FRONT_AND_BACK) already in registry" );
+		vgLogDebug("(260, CCW) already in enum registry");
+		assert( false && "(260, CCW) already in registry" );
 	}
 	#endif
 
-	m_toString[ 260 ] = std::string("FRONT_AND_BACK");
+	m_toString[ 260 ] = std::string("CCW");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 257 ) != m_toString.end() )
 	{
-		vgLogDebug("(257, DISABLED) already in enum registry");
-		assert( false && "(257, DISABLED) already in registry" );
+		vgLogDebug("(257, BACK) already in enum registry");
+		assert( false && "(257, BACK) already in registry" );
 	}
 	#endif
 
-	m_toString[ 257 ] = std::string("DISABLED");
+	m_toString[ 257 ] = std::string("BACK");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 259 ) != m_toString.end() )
 	{
-		vgLogDebug("(259, FRONT) already in enum registry");
-		assert( false && "(259, FRONT) already in registry" );
+		vgLogDebug("(259, FRONT_AND_BACK) already in enum registry");
+		assert( false && "(259, FRONT_AND_BACK) already in registry" );
 	}
 	#endif
 
-	m_toString[ 259 ] = std::string("FRONT");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 262 ) != m_toString.end() )
-	{
-		vgLogDebug("(262, CW) already in enum registry");
-		assert( false && "(262, CW) already in registry" );
-	}
-	#endif
-
-	m_toString[ 262 ] = std::string("CW");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 263 ) != m_toString.end() )
-	{
-		vgLogDebug("(263, DIFFUSE) already in enum registry");
-		assert( false && "(263, DIFFUSE) already in registry" );
-	}
-	#endif
-
-	m_toString[ 263 ] = std::string("DIFFUSE");
+	m_toString[ 259 ] = std::string("FRONT_AND_BACK");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 256 ) != m_toString.end() )
 	{
-		vgLogDebug("(256, VIEWPORT) already in enum registry");
-		assert( false && "(256, VIEWPORT) already in registry" );
+		vgLogDebug("(256, DISABLED) already in enum registry");
+		assert( false && "(256, DISABLED) already in registry" );
 	}
 	#endif
 
-	m_toString[ 256 ] = std::string("VIEWPORT");
+	m_toString[ 256 ] = std::string("DISABLED");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 258 ) != m_toString.end() )
+	{
+		vgLogDebug("(258, FRONT) already in enum registry");
+		assert( false && "(258, FRONT) already in registry" );
+	}
+	#endif
+
+	m_toString[ 258 ] = std::string("FRONT");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 261 ) != m_toString.end() )
+	{
+		vgLogDebug("(261, CW) already in enum registry");
+		assert( false && "(261, CW) already in registry" );
+	}
+	#endif
+
+	m_toString[ 261 ] = std::string("CW");
 
 }
 
