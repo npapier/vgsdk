@@ -5,6 +5,8 @@
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
 
+from __future__ import with_statement
+import os
 import xml.dom.minidom
 
 from dbNodes import *
@@ -236,14 +238,32 @@ def handleNode( domNode ) :
 
 	#@todo handle df, links, method, attribute...
 
-	# Handles codehpp and codecpp
+	# Handles codehpp, includehpp, codecpp and includecpp
 	domCodeHpps = domNode.getElementsByTagName("codehpp")
 	for domCodeHpp in domCodeHpps :
 		node.addCodeDeclaration( getText( domCodeHpp.childNodes ) )
 
+	domIncludeHpps = domNode.getElementsByTagName("includehpp")
+	for domIncludeHpp in domIncludeHpps :
+		pathfilename = getText( domIncludeHpp.childNodes )
+		if os.path.exists(pathfilename):
+			with open( os.path.join(pathfilename), 'r' ) as file:
+				node.addCodeDeclaration( file.read() + '\n\n\n\n' )
+		else:
+			print ('WARNING: %s in <includehpp> refers to a missing path !' % pathfilename )
+
 	domCodeCpps = domNode.getElementsByTagName("codecpp")
 	for domCodeCpp in domCodeCpps :
 		node.addCodeImplementation( getText( domCodeCpp.childNodes ) )
+
+	domIncludeCpps = domNode.getElementsByTagName("includecpp")
+	for domIncludeCpp in domIncludeCpps :
+		pathfilename = getText( domIncludeCpp.childNodes )
+		if os.path.exists(pathfilename):
+			with open( os.path.join(pathfilename), 'r' ) as file:
+				node.addCodeImplementation( file.read() + '\n\n\n\n' )
+		else:
+			print ('WARNING: %s in <includecpp> refers to a missing path !' % pathfilename )
 
 	# Prints a message
 	print "Found %s" % node.name

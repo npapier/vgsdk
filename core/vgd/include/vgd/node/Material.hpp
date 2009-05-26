@@ -6,7 +6,6 @@
 #ifndef _VGD_NODE_MATERIAL_HPP
 #define _VGD_NODE_MATERIAL_HPP
 
-#include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
 #include "vgd/field/Vec3f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
@@ -29,15 +28,15 @@ namespace node
  * New fields defined by this node :
  *	- SFFloat \c opacity = 1.f\n
  *		Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.
- *	- OFVec3f \c [emission] = vgm::Vec3f(0.f, 0.f, 0.f)\n
- *		Emmissive color of the surface.
  *	- OFFloat \c [shininess] = 0.f\n
  *		Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
+ *	- OFVec3f \c [emission] = vgm::Vec3f(0.f, 0.f, 0.f)\n
+ *		Emmissive color of the surface.
  *	- OFVec3f \c [specular] = vgm::Vec3f(0.f, 0.f, 0.f)\n
  *		Specular color of the surface.
  *	- OFVec3f \c [ambient] = vgm::Vec3f(0.2f, 0.2f, 0.2f)\n
  *		Ambient color of the surface.
- *	- PAFVec3f \c diffuse = vgm::Vec3f(0.8f, 0.8f, 0.8f)\n
+ *	- OFVec3f \c [diffuse] = vgm::Vec3f(0.8f, 0.8f, 0.8f)\n
  *		Diffuse color of the surface.
  *
  * Inherited fields :
@@ -73,7 +72,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field \c opacity
+	 * @name Accessors to field opacity
 	 */
 	//@{
 
@@ -98,45 +97,6 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	void setOpacity( const OpacityValueType value );
 
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field emission
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c emission.
-	 */
-	typedef vgm::Vec3f EmissionValueType;
-
-	/**
-	 * @brief Type definition of the field named \c emission
-	 */
-	typedef vgd::field::TOptionalField< EmissionValueType > FEmissionType;
-
-
-	/**
-	 * @brief Gets the value of field named \c emission.
-	 */
-	const bool getEmission( EmissionValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c emission.
- 	 */
-	void setEmission( const EmissionValueType& value );
-
-	/**
-	 * @brief Erases the field named \c emission.
-	 */
-	void eraseEmission();
-
-	/**
-	 * @brief Tests if the value of field named \c emission has been initialized.
-	 */
-	const bool hasEmission() const;
 	//@}
 
 
@@ -176,6 +136,45 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 * @brief Tests if the value of field named \c shininess has been initialized.
 	 */
 	const bool hasShininess() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field emission
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c emission.
+	 */
+	typedef vgm::Vec3f EmissionValueType;
+
+	/**
+	 * @brief Type definition of the field named \c emission
+	 */
+	typedef vgd::field::TOptionalField< EmissionValueType > FEmissionType;
+
+
+	/**
+	 * @brief Gets the value of field named \c emission.
+	 */
+	const bool getEmission( EmissionValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c emission.
+ 	 */
+	void setEmission( const EmissionValueType& value );
+
+	/**
+	 * @brief Erases the field named \c emission.
+	 */
+	void eraseEmission();
+
+	/**
+	 * @brief Tests if the value of field named \c emission has been initialized.
+	 */
+	const bool hasEmission() const;
 	//@}
 
 
@@ -259,23 +258,9 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field \c diffuse
+	 * @name Accessors to field diffuse
 	 */
 	//@{
-
-	/**
-	 * @brief Type definition of the parameter contained by field named \c diffuse.
-	 */
-	typedef vgd::field::Enum DiffuseParameterType;
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		DIFFUSE = 263,	///< Diffuse color of the surface.
-		DEFAULT_DIFFUSE = DIFFUSE	///< Diffuse color of the surface.
-	};
 
 	/**
 	 * @brief Type definition of the value contained by field named \c diffuse.
@@ -285,7 +270,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the field named \c diffuse
 	 */
-	typedef vgd::field::TPairAssociativeField< DiffuseParameterType, DiffuseValueType > FDiffuseType;
+	typedef vgd::field::TOptionalField< DiffuseValueType > FDiffuseType;
 
 
 	/**
@@ -296,12 +281,17 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Sets the value of field named \c diffuse.
  	 */
-	void setDiffuse( DiffuseValueType value );
+	void setDiffuse( const DiffuseValueType& value );
 
 	/**
 	 * @brief Erases the field named \c diffuse.
 	 */
 	void eraseDiffuse();
+
+	/**
+	 * @brief Tests if the value of field named \c diffuse has been initialized.
+	 */
+	const bool hasDiffuse() const;
 	//@}
 
 
@@ -319,18 +309,18 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	static const std::string getFOpacity( void );
 
 	/**
-	 * @brief Returns the name of field \c emission.
-	 *
-	 * @return the name of field \c emission.
-	 */
-	static const std::string getFEmission( void );
-
-	/**
 	 * @brief Returns the name of field \c shininess.
 	 *
 	 * @return the name of field \c shininess.
 	 */
 	static const std::string getFShininess( void );
+
+	/**
+	 * @brief Returns the name of field \c emission.
+	 *
+	 * @return the name of field \c emission.
+	 */
+	static const std::string getFEmission( void );
 
 	/**
 	 * @brief Returns the name of field \c specular.
@@ -354,10 +344,6 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	static const std::string getFDiffuse( void );
 
 	//@}
-
-
-
-
 	/**
 	 * @brief Definition of symbolic values
 	 */
@@ -367,11 +353,11 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 		EMISSION,
 		SPECULAR,
 		AMBIENT,
-		//DIFFUSE
+		DIFFUSE
 	};
 
 	/**
-	 * @name Accessors to field \c transparency
+	 * @name Accessors to field transparency
 	 *
 	 * This accessors emulates the old interface of the field transparency using the new field opacity.
 	 */
@@ -434,7 +420,11 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	vgDEPRECATED( void 			eraseColor( const ColorParameterType param ) );
 	//@}
-		
+
+
+
+
+
 
 
 	/**

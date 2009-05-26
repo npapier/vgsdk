@@ -51,8 +51,8 @@ Material::Material( const std::string nodeName ) :
 {
 	// Adds field(s)
 	addField( new FOpacityType(getFOpacity()) );
-	addField( new FEmissionType(getFEmission()) );
 	addField( new FShininessType(getFShininess()) );
+	addField( new FEmissionType(getFEmission()) );
 	addField( new FSpecularType(getFSpecular()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FDiffuseType(getFDiffuse()) );
@@ -74,8 +74,8 @@ void Material::setToDefaults( void )
 void Material::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setEmission( vgm::Vec3f(0.f, 0.f, 0.f) );
 	setShininess( 0.f );
+	setEmission( vgm::Vec3f(0.f, 0.f, 0.f) );
 	setSpecular( vgm::Vec3f(0.f, 0.f, 0.f) );
 	setAmbient( vgm::Vec3f(0.2f, 0.2f, 0.2f) );
 	setDiffuse( vgm::Vec3f(0.8f, 0.8f, 0.8f) );
@@ -94,34 +94,6 @@ const Material::OpacityValueType Material::getOpacity() const
 void Material::setOpacity( const OpacityValueType value )
 {
 	getFieldRW<FOpacityType>(getFOpacity())->setValue( value );
-}
-
-
-
-// Emission
-const bool Material::getEmission( EmissionValueType& value ) const
-{
-	return getFieldRO<FEmissionType>(getFEmission())->getValue( value );
-}
-
-
-
-void Material::setEmission( const EmissionValueType& value )
-{
-	getFieldRW<FEmissionType>(getFEmission())->setValue( value );
-}
-
-
-
-void Material::eraseEmission()
-{
-	getFieldRW<FEmissionType>(getFEmission())->eraseValue();
-}
-
-
-const bool Material::hasEmission() const
-{
-	return getFieldRO<FEmissionType>(getFEmission())->hasValue();
 }
 
 
@@ -150,6 +122,34 @@ void Material::eraseShininess()
 const bool Material::hasShininess() const
 {
 	return getFieldRO<FShininessType>(getFShininess())->hasValue();
+}
+
+
+
+// Emission
+const bool Material::getEmission( EmissionValueType& value ) const
+{
+	return getFieldRO<FEmissionType>(getFEmission())->getValue( value );
+}
+
+
+
+void Material::setEmission( const EmissionValueType& value )
+{
+	getFieldRW<FEmissionType>(getFEmission())->setValue( value );
+}
+
+
+
+void Material::eraseEmission()
+{
+	getFieldRW<FEmissionType>(getFEmission())->eraseValue();
+}
+
+
+const bool Material::hasEmission() const
+{
+	return getFieldRO<FEmissionType>(getFEmission())->hasValue();
 }
 
 
@@ -213,23 +213,27 @@ const bool Material::hasAmbient() const
 // Diffuse
 const bool Material::getDiffuse( DiffuseValueType& value ) const
 {
-	return (
-		vgd::field::getParameterValue< DiffuseParameterType, DiffuseValueType >( this, getFDiffuse(), static_cast<DiffuseParameterType>(DIFFUSE), value )
-		);
+	return getFieldRO<FDiffuseType>(getFDiffuse())->getValue( value );
 }
 
 
 
-void Material::setDiffuse( DiffuseValueType value )
+void Material::setDiffuse( const DiffuseValueType& value )
 {
-	vgd::field::setParameterValue< DiffuseParameterType, DiffuseValueType >( this, getFDiffuse(), static_cast<DiffuseParameterType>(DIFFUSE), value );
+	getFieldRW<FDiffuseType>(getFDiffuse())->setValue( value );
 }
 
 
 
 void Material::eraseDiffuse()
 {
-	vgd::field::eraseParameterValue< DiffuseParameterType, DiffuseValueType >( this, getFDiffuse(), static_cast<DiffuseParameterType>(DIFFUSE) );
+	getFieldRW<FDiffuseType>(getFDiffuse())->eraseValue();
+}
+
+
+const bool Material::hasDiffuse() const
+{
+	return getFieldRO<FDiffuseType>(getFDiffuse())->hasValue();
 }
 
 
@@ -242,16 +246,16 @@ const std::string Material::getFOpacity( void )
 
 
 
-const std::string Material::getFEmission( void )
+const std::string Material::getFShininess( void )
 {
-	return "f_emission";
+	return "f_shininess";
 }
 
 
 
-const std::string Material::getFShininess( void )
+const std::string Material::getFEmission( void )
 {
-	return "f_shininess";
+	return "f_emission";
 }
 
 
@@ -274,7 +278,6 @@ const std::string Material::getFDiffuse( void )
 {
 	return "f_diffuse";
 }
-
 
 
 
@@ -370,7 +373,11 @@ void Material::eraseColor( const ColorParameterType param )
 		assert( false );
 	}
 }
-		IMPLEMENT_INDEXABLE_CLASS_CPP( , Material );
+
+
+
+
+IMPLEMENT_INDEXABLE_CLASS_CPP( , Material );
 
 
 

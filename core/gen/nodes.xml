@@ -19,54 +19,14 @@
 		<sf name="matrix" doc="Determines the projection matrix.">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
-		<paf name="viewport" doc="Determines the viewport.">
+		<of name="viewport" doc="Determines the viewport.">
 			<type name="Rectangle2i" namespace="vgm" default="0, 0, 1600, 1200"/>
-		</paf>
+		</of>
 		<of name="scissor" doc="Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.">
 			<type name="Rectangle2i" namespace="vgm" default=""/>
 		</of>
-		<codehpp>
-	/**
-	 * @name High-level methods
-	 *
-	 * @todo viewAll()
-	 */
-	//@{
-
-	/**
-	 * @brief Apply the viewport transformation (as defined in OpenGL specification) to a vertex.
-	 *
-	 * @param vertex	vertex to transform
-	 * @return vertex transformed
-	 *
-	 * @pre getViewport(...) == true
-	 */
-	const vgm::Vec3f applyViewport( const vgm::Vec3f&amp; vertex );
-	//@}
-		</codehpp>
-		<codecpp>
-const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f&amp; vertex )
-{
-	vgm::Rectangle2i viewport;
-	bool isDefined = getViewport( viewport );
-	assert( isDefined );
-
-	vgm::Vec2f o(	static_cast&lt;float&gt;(viewport.x()) + static_cast&lt;float&gt;(viewport.width()) * 0.5f,
-					static_cast&lt;float&gt;(viewport.y()) + static_cast&lt;float&gt;(viewport.height()) * 0.5f );
-
-	vgm::Vec2f p(	static_cast&lt;float&gt;(viewport.width()),
-					static_cast&lt;float&gt;(viewport.height()) );
-
-	float fFar	(	1.f	);
-	float fNear	(	0.f	);
-
-	vgm::Vec3f window(	p[0] * 0.5f * vertex[0] + o[0],
-						p[1] * 0.5f * vertex[1] + o[1],
-						(fFar - fNear) * 0.5f * vertex[2] + (fNear+fFar)*0.5f );
-
-	return window;
-}
-		</codecpp>
+		<includehpp>vgd/include/vgd/node/Camera.hpp</includehpp>
+		<includecpp>vgd/src/node/Camera.cpp</includecpp>
 	</node>
 
 	<node	name = "ClipPlane"
@@ -151,9 +111,9 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f&amp; vertex )
 		<of name="ambient" doc="Ambient color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.2f, 0.2f, 0.2f"/>
 		</of>
-		<paf name="diffuse" doc="Diffuse color of the surface.">
+		<of name="diffuse" doc="Diffuse color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.8f, 0.8f, 0.8f"/>
-		</paf>
+		</of>
 		<of name="specular" doc="Specular color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.f, 0.f, 0.f"/>
 		</of>
@@ -168,181 +128,10 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f&amp; vertex )
 	 * brief Typedef for the \c color field.
 	 */
 	//typedef vgd::field::TPairAssociativeField< /*int */ColorParameterType, ColorValueType > FColorType; -->
-		<codehpp>
-
-
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		SHININESS,
-		EMISSION,
-		SPECULAR,
-		AMBIENT,
-		//DIFFUSE
-	};
-
-	/**
-	 * @name Accessors to field \c transparency
-	 *
-	 * This accessors emulates the old interface of the field transparency using the new field opacity.
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c transparency.
-	 */
-	typedef float TransparencyValueType;
-
-	/**
-	 * @brief Type definition of the field named \c transparency
-	 */
-	typedef vgd::field::SFFloat FTransparencyType;
-
-
-	/**
-	 * @brief Gets the value of field named \c transparency.
-	 */
-	vgDEPRECATED( const TransparencyValueType getTransparency() const );
-
-	/**
-	 * @brief Sets the value of field named \c transparency.
-	 */
-	vgDEPRECATED( void setTransparency( const TransparencyValueType value ) );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field color
-	 *
-	 * This accessors emulates the old interface of the field color using the new fields.
-	 */
-	//@{
-
-	/**
-	 * @brief Enumeration of the \c color parameter.
-	 */
-	typedef int /*vgd::field::EnumType*/ ColorParameterType;
-
-	/**
-	 * @brief Typedef for the \c color parameter value.
-	 */
-	typedef vgm::Vec3f  ColorValueType;
-
-	/**
-	 * @brief Gets the \c color value.
-	 */
-	vgDEPRECATED( bool			getColor( const ColorParameterType param, ColorValueType&amp; value ) const );
-
-	/**
-	 * @brief Sets the \c color value.
-	 */
-	vgDEPRECATED( void 			setColor( const ColorParameterType param, ColorValueType value ) );
-
-	/**
-	 * @brief Erase the \c color value.
-	 */
-	vgDEPRECATED( void 			eraseColor( const ColorParameterType param ) );
-	//@}
-		</codehpp>
-		<codecpp>
-// Transparency
-const Material::TransparencyValueType Material::getTransparency() const
-{
-	return getOpacity();
-}
-
-
-
-void Material::setTransparency( const TransparencyValueType value )
-{
-	setOpacity( value );
-}
-
-
-
-// Color
-bool Material::getColor( const ColorParameterType param, ColorValueType&amp; value ) const
-{
-	if ( param == AMBIENT )
-	{
-		return getAmbient( value );
-	}
-	else if ( param == DIFFUSE )
-	{
-		return getDiffuse( value );
-	}
-	else if ( param == SPECULAR )
-	{
-		return getSpecular( value );
-	}
-	else if ( param == EMISSION )
-	{
-		return getEmission( value );
-	}
-	else
-	{
-		assert( false );
-		return false;
-	}
-}
-
-
-
-void Material::setColor( const ColorParameterType param, ColorValueType value )
-{
-	if ( param == AMBIENT )
-	{
-		setAmbient( value );
-	}
-	else if ( param == DIFFUSE )
-	{
-		setDiffuse( value );
-	}
-	else if ( param == SPECULAR )
-	{
-		setSpecular( value );
-	}
-	else if ( param == EMISSION )
-	{
-		setEmission( value );
-	}
-	else
-	{
-		assert( false );
-	}
-}
-
-
-
-void Material::eraseColor( const ColorParameterType param )
-{
-	if ( param == AMBIENT )
-	{
-		eraseAmbient();
-	}
-	else if ( param == DIFFUSE )
-	{
-		eraseDiffuse();
-	}
-	else if ( param == SPECULAR )
-	{
-		eraseSpecular();
-	}
-	else if ( param == EMISSION )
-	{
-		eraseEmission();
-	}
-	else
-	{
-		assert( false );
-	}
-}
-		</codecpp>
+		<includehpp>vgd/include/vgd/node/Material.hpp</includehpp>
+		<includecpp>vgd/src/node/Material.cpp</includecpp>
+<!--	<codehpp></codehpp>
+		<codecpp></codecpp> -->
 	</node>
 
 

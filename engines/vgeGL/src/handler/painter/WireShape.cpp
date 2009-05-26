@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -48,12 +48,9 @@ void WireShape::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	vgm::Vec3f		diffuseColor;
 
 	using vgd::node::Material;
-	bDefined = pEngine->getStateStackTop< 
-				Material, Material::DiffuseParameterType, Material::DiffuseValueType >(
-										Material::getFDiffuse(),
-										Material::DIFFUSE,
-										diffuseColor );
-	assert( bDefined );
+	bDefined = pEngine->getStateStackTop< Material, Material::DiffuseValueType >( 
+		Material::getFDiffuse(), diffuseColor );
+	assert( bDefined && "Internal error, because getStateStackTop<>() should never fail." );
 
 	// pre
 	GLboolean bLightingState;

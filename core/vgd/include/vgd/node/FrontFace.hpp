@@ -61,7 +61,7 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field \c orientation
+	 * @name Accessors to field orientation
 	 */
 	//@{
 
@@ -75,8 +75,8 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		CCW = 261,	///< (C)ounter-(C)lock(W)ise ordering
-		CW = 262,	///< (C)lock(W)ise ordering
+		CCW = 260,	///< (C)ounter-(C)lock(W)ise ordering
+		CW = 261,	///< (C)lock(W)ise ordering
 		DEFAULT_ORIENTATION = CCW	///< (C)ounter-(C)lock(W)ise ordering
 	};
 

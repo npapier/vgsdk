@@ -293,7 +293,7 @@ bool Engine::isStateStackEmpty() const
 
 
 
-const uint32 Engine::sizeOfStateStack() const
+const uint Engine::sizeOfStateStack() const
 {
 	return static_cast<uint32>(m_state.size());
 }
@@ -399,9 +399,8 @@ const vgm::Rectangle2i Engine::getViewport() const
 	vgm::Rectangle2i viewport;
 
 	using vgd::node::Camera;
-	const bool retVal = getStateStackTop< Camera, Camera::ViewportParameterType, Camera::ViewportValueType >(
-		Camera::getFViewport(), Camera::VIEWPORT,
-		viewport );
+	const bool retVal = getStateStackTop< Camera, Camera::ViewportValueType >(
+		Camera::getFViewport(), viewport );
 	assert( retVal && "Internal error, because getStateStackTop<>() should never fail." );
 
 	return viewport;
