@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,20 +6,14 @@
 #ifndef _VGD_FIELD_VECTOR_HPP
 #define _VGD_FIELD_VECTOR_HPP
 
-#include "vgd/vgd.hpp"
-
+#include "vgd/field/containers.hpp"
 #include <vgm/Vector.hpp>
-
-#include "vgd/field/TSingleField.hpp"
-#include "vgd/field/TMultiField.hpp"
-#include "vgd/field/TSingleAssociativeField.hpp"
-#include "vgd/field/TPairAssociativeField.hpp"
 
 
 
 namespace vgd
 {
-	
+
 namespace field
 {
 
@@ -38,6 +32,16 @@ typedef TSingleField< vgm::Vec4d >	SFVec4d;
 typedef TSingleField< vgm::Vec2i >	SFVec2i;
 typedef TSingleField< vgm::Vec3i >	SFVec3i;
 typedef TSingleField< vgm::Vec4i >	SFVec4i;
+
+typedef TOptionalField< vgm::Vec2f >	OFVec2f;
+typedef TOptionalField< vgm::Vec3f >	OFVec3f;
+typedef TOptionalField< vgm::Vec4f >	OFVec4f;
+typedef TOptionalField< vgm::Vec2d >	OFVec2d;
+typedef TOptionalField< vgm::Vec3d >	OFVec3d;
+typedef TOptionalField< vgm::Vec4d >	OFVec4d;
+typedef TOptionalField< vgm::Vec2i >	OFVec2i;
+typedef TOptionalField< vgm::Vec3i >	OFVec3i;
+typedef TOptionalField< vgm::Vec4i >	OFVec4i;
 
 typedef TMultiField< vgm::Vec2f >		MFVec2f;
 typedef TMultiField< vgm::Vec3f >		MFVec3f;
