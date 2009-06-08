@@ -63,15 +63,6 @@ typedef TSingleAssociativeField< vgm::Vec2i >	SAFVec2i;
 typedef TSingleAssociativeField< vgm::Vec3i >	SAFVec3i;
 typedef TSingleAssociativeField< vgm::Vec4i >	SAFVec4i;
 
-// typedef TPairAssociativeField< vgm::Vec2f >	PAFVec2f;
-// typedef TPairAssociativeField< vgm::Vec3f >	PAFVec3f;
-// typedef TPairAssociativeField< vgm::Vec4f >	PAFVec4f;
-// typedef TPairAssociativeField< vgm::Vec2d >	PAFVec2d;
-// typedef TPairAssociativeField< vgm::Vec3d >	PAFVec3d;
-// typedef TPairAssociativeField< vgm::Vec4d >	PAFVec4d;
-// typedef TPairAssociativeField< vgm::Vec2i >	PAFVec2i;
-// typedef TPairAssociativeField< vgm::Vec3i >	PAFVec3i;
-// typedef TPairAssociativeField< vgm::Vec4i >	PAFVec4i;
 //@}
 
 

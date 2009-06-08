@@ -32,6 +32,13 @@ Enum::Enum( const int v )
 
 
 
+Enum::Enum( const Enum& o )
+: m_value( o.m_value )
+{
+}
+
+
+
 Enum& Enum::operator = ( const Enum& other )
 {
 	if ( this != &other )
@@ -47,6 +54,27 @@ Enum& Enum::operator = ( const Enum& other )
 const bool Enum::operator < ( const Enum& other ) const
 {
 	return value() < other.value();
+}
+
+
+
+const bool Enum::operator <= ( const Enum& other ) const
+{
+	return value() <= other.value();
+}
+
+
+
+const bool Enum::operator > ( const Enum& other ) const
+{
+	return value() > other.value();
+}
+
+
+
+const bool Enum::operator >= ( const Enum& other ) const
+{
+	return value() >= other.value();
 }
 
 
@@ -79,6 +107,48 @@ const std::string Enum::str() const
 	const std::string enumString = vgd::node::EnumRegistry::toString( value() );
 
 	return enumString;
+}
+
+
+
+const std::vector< std::pair< int, std::string> > Enum::valuesAndStrings() const
+{
+	std::vector< std::pair< int, std::string> > retVal;
+
+	const std::vector< int >			allValues(	values()	);
+	const std::vector< std::string >	allStrings(	strings()	);
+	assert( allValues.size() == allStrings.size() && "values() and strings() must returned vector<> with the same size." );
+
+	retVal.reserve( allValues.size() );
+
+	for( uint i = 0; i < allValues.size(); ++i )
+	{
+		retVal.push_back( std::make_pair( allValues[i], allStrings[i] ) );
+	}
+
+	return retVal;
+}
+
+
+
+const std::vector< int > Enum::values() const
+{
+	std::vector< int > retVal;
+
+	assert( false && "This method should be overriden." );
+
+	return retVal;
+}
+
+
+
+const std::vector< std::string > Enum::strings() const
+{
+	std::vector< std::string > retVal;
+
+	assert( false && "This method should be overriden." );
+
+	return retVal;
 }
 
 

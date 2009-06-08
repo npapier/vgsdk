@@ -107,3 +107,4 @@ const vgd::basic::RegisterNode<CullFace> CullFace::m_registrationInstance;
 } // namespace node
 
 } // namespace vgd
+

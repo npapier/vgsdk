@@ -15,38 +15,32 @@ class EnumRegistry :
 	_values	= {}
 
 	@classmethod
-	def nextID( self ) :
+	def nextID( self ):
 		self._id += 1
 		return self._id
 
 
 	@classmethod
-	def register( self, enumValue ) :
-		if enumValue not in self._values :
-			self._values[enumValue] = self.nextID()
-		else :
-			raise StandardError("Enum value %s already defined." % enumValue)
+	def register( self, nodeName, enumValue ):
+		newValue = nodeName + '.' + enumValue
+		if newValue not in self._values :
+			self._values[newValue] = self.nextID()
+		else:
+			raise StandardError("Enum value %s already defined." % newValue)
 
 
 	@classmethod
-	def getID( self, enumValue ) :
-		if enumValue in self._values :
-			return self._values[enumValue]
+	def getID( self, nodeName, enumValue ) :
+		newValue = nodeName + '.' + enumValue
+		if newValue in self._values :
+			return self._values[newValue]
 		else :
-			raise StandardError("Enum value %s not registered" % enumValue )
+			raise StandardError("Enum value %s not registered" % newValue )
 
 
 	@classmethod
 	def getIterItems( self ):
 		return self._values.iteritems()
-
-
-	@classmethod
-	def generate( self ) :
-		print "Generates enum registry"
-		for value, id in self._values.iteritems() :
-			print "(%s,%i)" % (value, id)
-
 
 
 ########
@@ -62,7 +56,11 @@ class Type :
 		# @todo range
 
 	def generateTYPEDEF( self, fieldName, postfix ) :
-		return "typedef %s %s%s;" % (self.generateTypeWithNamespace(), fieldName.capitalize(), postfix)
+		str = """\t/**
+\t * @brief Type definition of the value contained by field named \c %s.
+\t */
+\ttypedef %s %s%s;""" % (fieldName, self.generateTypeWithNamespace(), fieldName.capitalize(), postfix)
+		return str
 
 	def generateTypeWithNamespace( self ) :
 		if len(self.namespace) > 0 :
@@ -83,16 +81,17 @@ class Type :
 		return self.name[0].upper() + self.name[1:]
 
 
-# @todo Constructs a derived class from vgd::field::Enum to add getAllValues()...
-class Enum ( Type ) :
-	def __init__( self ) :
+class Enum ( Type ):
+
+	def __init__( self, nodeName ) :
 		Type.__init__( self, "enum" )
+		self.nodeName = nodeName
 		self.values = {}
 
-	def addValue( self, value, docValue = "" ) :
+	def addValue( self, value, docValue = "" ):
 		if value not in self.values :
 			self.values[value] = docValue
-			EnumRegistry.register(value)
+			EnumRegistry.register( self.nodeName, value )
 
 	def setDefaultValue( self, defaultValue ) :
 		if defaultValue in self.values :
@@ -101,13 +100,61 @@ class Enum ( Type ) :
 			raise StandardError("Try to set unknown value %s as the default value for an enum.")
 
 
-	# Overridden
+	# Overriden
 	def generateTYPEDEF( self, fieldName, postfix ) :
-		str =	"typedef vgd::field::Enum %s%s;\n\n" % (fieldName.capitalize(), postfix)
-		str +=	"""\t/**
+
+		fieldNameValueType = fieldName.capitalize() + postfix
+
+		str =	"""\t/**
 \t * @brief Definition of symbolic values
 \t */
-\t%s;""" % self._generateDefinition( fieldName )
+\t%s;
+""" % self._generateDefinition( fieldName )
+
+		strValues = ""
+		for value in self._getValues():
+			strValues += """\t\t\tretVal.push_back( %s );\n""" % value
+
+		strStrings = ""
+		for string in self._getStrings():
+			strStrings += """\t\t\tretVal.push_back( "%s" );\n""" % string
+
+		definitionOfFieldNameValueType = """
+	/**
+	 * @brief Type definition of the value contained by field named \c %s.
+	 */
+	struct FieldNameValueType : public vgd::field::Enum
+	{
+		FieldNameValueType()
+		{}
+
+		FieldNameValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		FieldNameValueType( const FieldNameValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+%s
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+%s
+			return retVal;
+		}
+	};""" % (fieldName, strValues, strStrings)
+
+		str += definitionOfFieldNameValueType
+
 		return str
 
 	#
@@ -115,8 +162,8 @@ class Enum ( Type ) :
 		# begin definition
 		str = "enum\n\t{\n"
 		# values
-		for i, (value, docValue) in enumerate(self.values.iteritems()) :
-			valueID = EnumRegistry.getID(value)
+		for i, (value, docValue) in enumerate(self.values.iteritems()) : # @todo removes i
+			valueID = EnumRegistry.getID(self.nodeName, value)
 			str += "\t\t%s = %i," % ( value, valueID )
 			str += "\t///< %s\n" % docValue
 		# default value
@@ -125,6 +172,12 @@ class Enum ( Type ) :
 		str += "\t}"
 
 		return str
+
+	def _getValues( self ):
+		return [ EnumRegistry.getID(self.nodeName, value) for value in self.values.iterkeys() ]
+
+	def _getStrings( self ):
+		return [ value for value in self.values.iterkeys() ]
 
 
 
@@ -168,15 +221,12 @@ class SingleField ( Field ) :
 	 */
 	//@{
 
-	/**
-	 * @brief Type definition of the value contained by field named \c fieldName.
-	 */
-	TYPEDEF_FIELDNAMEVALUETYPE
+TYPEDEF_FIELDNAMEVALUETYPE
 
 	/**
 	 * @brief Type definition of the field named \c fieldName
 	 */
-	typedef vgd::field::SFFieldType FFieldNameType;
+	typedef vgd::field::TSingleField< FieldNameValueType > FFieldNameType;
 
 
 	/**
@@ -194,7 +244,7 @@ class SingleField ( Field ) :
 		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, "ValueType" ) )
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.name.capitalize() )
-		str = str.replace( "SFFieldType", "SF" + self.type.getNormalizedName() )
+		str = str.replace( "FieldType", self.type.name )
 
 		return str
 
@@ -244,10 +294,7 @@ class OptionalField ( Field ) :
 	 */
 	//@{
 
-	/**
-	 * @brief Type definition of the value contained by field named \c fieldName.
-	 */
-	TYPEDEF_FIELDNAMEVALUETYPE
+TYPEDEF_FIELDNAMEVALUETYPE
 
 	/**
 	 * @brief Type definition of the field named \c fieldName
@@ -352,10 +399,7 @@ class PairAssociativeField ( Field ) :
 	 */
 	TYPEDEF_FIELDNAMEPARAMETERTYPE
 
-	/**
-	 * @brief Type definition of the value contained by field named \c fieldName.
-	 */
-	TYPEDEF_FIELDNAMEVALUETYPE
+TYPEDEF_FIELDNAMEVALUETYPE
 
 	/**
 	 * @brief Type definition of the field named \c fieldName
@@ -441,6 +485,7 @@ void NewNode::eraseFieldName( const FieldNameParameterType param )
 
 
 class Node :
+
 	def __init__( self, name ) :
 		self.name		= name
 		self.inherits	= []

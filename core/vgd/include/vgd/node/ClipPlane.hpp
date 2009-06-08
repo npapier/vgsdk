@@ -31,8 +31,6 @@ namespace node
  *	- SFPlane \c plane = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f )\n
  *		Specifies the clipping plane.
  *
- * Inherited fields :
- * @todo generates this section
  *
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes
@@ -103,7 +101,7 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field \c plane
+	 * @name Accessors to field plane
 	 */
 	//@{
 
@@ -115,7 +113,7 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	/**
 	 * @brief Type definition of the field named \c plane
 	 */
-	typedef vgd::field::SFPlane FPlaneType;
+	typedef vgd::field::TSingleField< PlaneValueType > FPlaneType;
 
 
 	/**
@@ -183,4 +181,5 @@ private:
 } // namespace node
 
 } // namespace vgd
+
 #endif //#ifndef _VGD_NODE_CLIPPLANE_HPP

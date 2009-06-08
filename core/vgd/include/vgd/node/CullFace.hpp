@@ -28,8 +28,6 @@ namespace node
  *	- SFEnum \c mode = DISABLED\n
  *		Specifies whether front-facing and/or back-facing facets can be culled.
  *
- * Inherited fields :
- * @todo generates this section
  *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
@@ -66,11 +64,6 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c mode.
-	 */
-	typedef vgd::field::Enum ModeValueType;
-
-	/**
 	 * @brief Definition of symbolic values
 	 */
 	enum
@@ -83,9 +76,50 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	};
 
 	/**
+	 * @brief Type definition of the value contained by field named \c mode.
+	 */
+	struct ModeValueType : public vgd::field::Enum
+	{
+		ModeValueType()
+		{}
+
+		ModeValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ModeValueType( const ModeValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 256 );
+			retVal.push_back( 258 );
+			retVal.push_back( 257 );
+			retVal.push_back( 259 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "DISABLED" );
+			retVal.push_back( "FRONT" );
+			retVal.push_back( "BACK" );
+			retVal.push_back( "FRONT_AND_BACK" );
+
+			return retVal;
+		}
+	};
+
+	/**
 	 * @brief Type definition of the field named \c mode
 	 */
-	typedef vgd::field::SFEnum FModeType;
+	typedef vgd::field::TSingleField< ModeValueType > FModeType;
 
 
 	/**
@@ -146,4 +180,5 @@ private:
 } // namespace node
 
 } // namespace vgd
+
 #endif //#ifndef _VGD_NODE_CULLFACE_HPP

@@ -47,39 +47,6 @@ void EnumRegistry::initialize()
 {
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 260 ) != m_toString.end() )
-	{
-		vgLogDebug("(260, CCW) already in enum registry");
-		assert( false && "(260, CCW) already in registry" );
-	}
-	#endif
-
-	m_toString[ 260 ] = std::string("CCW");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 257 ) != m_toString.end() )
-	{
-		vgLogDebug("(257, BACK) already in enum registry");
-		assert( false && "(257, BACK) already in registry" );
-	}
-	#endif
-
-	m_toString[ 257 ] = std::string("BACK");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 259 ) != m_toString.end() )
-	{
-		vgLogDebug("(259, FRONT_AND_BACK) already in enum registry");
-		assert( false && "(259, FRONT_AND_BACK) already in registry" );
-	}
-	#endif
-
-	m_toString[ 259 ] = std::string("FRONT_AND_BACK");
-
-	//
-	#ifdef _DEBUG
 	if ( m_toString.find( 256 ) != m_toString.end() )
 	{
 		vgLogDebug("(256, DISABLED) already in enum registry");
@@ -88,6 +55,17 @@ void EnumRegistry::initialize()
 	#endif
 
 	m_toString[ 256 ] = std::string("DISABLED");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 260 ) != m_toString.end() )
+	{
+		vgLogDebug("(260, CCW) already in enum registry");
+		assert( false && "(260, CCW) already in registry" );
+	}
+	#endif
+
+	m_toString[ 260 ] = std::string("CCW");
 
 	//
 	#ifdef _DEBUG
@@ -102,6 +80,17 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
+	if ( m_toString.find( 259 ) != m_toString.end() )
+	{
+		vgLogDebug("(259, FRONT_AND_BACK) already in enum registry");
+		assert( false && "(259, FRONT_AND_BACK) already in registry" );
+	}
+	#endif
+
+	m_toString[ 259 ] = std::string("FRONT_AND_BACK");
+
+	//
+	#ifdef _DEBUG
 	if ( m_toString.find( 261 ) != m_toString.end() )
 	{
 		vgLogDebug("(261, CW) already in enum registry");
@@ -110,6 +99,17 @@ void EnumRegistry::initialize()
 	#endif
 
 	m_toString[ 261 ] = std::string("CW");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 257 ) != m_toString.end() )
+	{
+		vgLogDebug("(257, BACK) already in enum registry");
+		assert( false && "(257, BACK) already in registry" );
+	}
+	#endif
+
+	m_toString[ 257 ] = std::string("BACK");
 
 }
 
