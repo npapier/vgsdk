@@ -107,3 +107,4 @@ const vgd::basic::RegisterNode<FrontFace> FrontFace::m_registrationInstance;
 } // namespace node
 
 } // namespace vgd
+

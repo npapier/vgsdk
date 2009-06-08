@@ -28,8 +28,6 @@ namespace node
  *	- SFEnum \c orientation = CCW\n
  *		Specifies if front facing polygons are clockwise (CW) or conterclockwise (CCW)
  *
- * Inherited fields :
- * @todo generates this section
  *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
@@ -66,11 +64,6 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c orientation.
-	 */
-	typedef vgd::field::Enum OrientationValueType;
-
-	/**
 	 * @brief Definition of symbolic values
 	 */
 	enum
@@ -81,9 +74,46 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	};
 
 	/**
+	 * @brief Type definition of the value contained by field named \c orientation.
+	 */
+	struct OrientationValueType : public vgd::field::Enum
+	{
+		OrientationValueType()
+		{}
+
+		OrientationValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		OrientationValueType( const OrientationValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 260 );
+			retVal.push_back( 261 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "CCW" );
+			retVal.push_back( "CW" );
+
+			return retVal;
+		}
+	};
+
+	/**
 	 * @brief Type definition of the field named \c orientation
 	 */
-	typedef vgd::field::SFEnum FOrientationType;
+	typedef vgd::field::TSingleField< OrientationValueType > FOrientationType;
 
 
 	/**
@@ -144,4 +174,5 @@ private:
 } // namespace node
 
 } // namespace vgd
+
 #endif //#ifndef _VGD_NODE_FRONTFACE_HPP

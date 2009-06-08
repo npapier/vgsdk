@@ -13,6 +13,9 @@ from dbNodes import *
 
 
 
+currentNodeName = None
+
+
 def getText( nodeList ) :
 	text = ""
 	for node in nodeList :
@@ -27,7 +30,8 @@ def handleEnum( domEnum ) :
 	if attrDefault == None :
 		raise StandardError("Enum without default value.")
 
-	enum = Enum()
+	global currentNodeName
+	enum = Enum( currentNodeName )
 
 	# value
 	domValues = domEnum.getElementsByTagName("value")
@@ -206,6 +210,9 @@ def handleNode( domNode ) :
 	attrInherits = domNode.getAttributeNode("inherits")
 
 	# Constructs node
+	global currentNodeName
+	currentNodeName = attrName.value
+
 	node = Node(attrName.value)
 	if attrInherits != None :
 		node.inherits = attrInherits.value.split()

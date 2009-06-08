@@ -33,8 +33,6 @@ namespace node
  *	- OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)\n
  *		Determines the viewport.
  *
- * Inherited fields :
- * @todo generates this section
  *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
@@ -117,7 +115,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	/**
 	 * @brief Type definition of the field named \c matrix
 	 */
-	typedef vgd::field::SFMatrixR FMatrixType;
+	typedef vgd::field::TSingleField< MatrixValueType > FMatrixType;
 
 
 	/**
@@ -252,4 +250,5 @@ private:
 } // namespace node
 
 } // namespace vgd
+
 #endif //#ifndef _VGD_NODE_CAMERA_HPP

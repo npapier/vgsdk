@@ -102,39 +102,58 @@
 			<ingroup>g_singleAttributeNodes</ingroup>
 			<ingroup>g_coloringAndLightingNodes</ingroup>
 		</doxygen>
+
 		<sf name="opacity" doc="Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.">
 			<type name="float" default="1.f"></type>
 		</sf>
-<!--		<sf name="transparency" doc="Sets transparency from 1.0 for being completely opaque until 0.0 for being completely transparent.">
-			<type name="float" default="1.f"></type>
-		</sf> -->
+
 		<of name="ambient" doc="Ambient color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.2f, 0.2f, 0.2f"/>
 		</of>
+
 		<of name="diffuse" doc="Diffuse color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.8f, 0.8f, 0.8f"/>
 		</of>
+
 		<of name="specular" doc="Specular color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.f, 0.f, 0.f"/>
 		</of>
+
 		<of name="emission" doc="Emmissive color of the surface.">
 			<type name="Vec3f" namespace="vgm" default="0.f, 0.f, 0.f"/>
 		</of>
+
 		<of name="shininess" doc="Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).">
 			<type name="float" default="0.f"></type>
 		</of>
 
-<!--	/**
-	 * brief Typedef for the \c color field.
-	 */
-	//typedef vgd::field::TPairAssociativeField< /*int */ColorParameterType, ColorValueType > FColorType; -->
+<!--		<of name="face" doc="Specifies which face(s) are being updated.">
+			<type name="enum">
+				<enum default="FRONT_AND_BACK">
+					<value name="BACK" doc="Back-facing facets are updated"/>
+					<value name="FRONT" doc="Front-facing facets are updated"/>
+					<value name="FRONT_AND_BACK" doc="Front-facing and back-facing facets are updated"/>
+				</enum>
+			</type>
+		</of>-->
+
 		<includehpp>vgd/include/vgd/node/Material.hpp</includehpp>
 		<includecpp>vgd/src/node/Material.cpp</includecpp>
-<!--	<codehpp></codehpp>
-		<codecpp></codecpp> -->
+<!--	<codehpp></codehpp> <codecpp></codecpp> -->
 	</node>
 
-
+<!--	<node	name = "MaterialExt"
+			inherits="Material">
+		<doxygen>
+			<docBrief>Extended surface material definition node</docBrief>
+			<doc>The Material node specifies current surface material properties for all subsequent shapes nodes</doc>
+			<doc> and is used by the lighting equations during rendering.</doc>
+			<doc>The field \c transparency is not optional because it is used by others fields (in OpenGL ambient and others use 4 floats).</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_coloringAndLightingNodes</ingroup>
+		</doxygen>
+	</node>-->
 
 <!-- todo
 	<node	name="SingleAttribute">

@@ -388,3 +388,4 @@ const vgd::basic::RegisterNode<Material> Material::m_registrationInstance;
 } // namespace node
 
 } // namespace vgd
+

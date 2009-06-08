@@ -5,8 +5,10 @@
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
 
+# @todo mask type
+# typedef vgd::field::SFEnum 	FOrientationType => OrientationType
+# getFFieldNameRO/RW() accessors
 # @todo splits doxygen comment
-# @todo enum type => mask type
 # @todo Special type for Flags/Mask and special field ? see TBitSet in GLSLState class
 # @todo Boost.Optional OSF, OMF (OptionalSingleField, OptionalMultiField) ...
 # @todo vgio ?
@@ -17,6 +19,12 @@
 from __future__ import with_statement
 import datetime
 import os
+
+#try:
+#	import toto
+#except ImportError:
+#	import titi
+
 
 from domParser import *
 
@@ -55,7 +63,9 @@ namespace node
 def generateEndNamespace( fd ) :
 	endNamespace = """} // namespace node
 
-} // namespace vgd\n"""
+} // namespace vgd
+
+"""
 
 	fd.write( endNamespace )
 
@@ -134,6 +144,19 @@ const vgd::basic::RegisterNode<nodeType> nodeType::m_registrationInstance;
 	fd.write( str.replace("nodeType", node.name) )
 
 
+def getDocOfFields( node ):
+	str = ""
+	for field in node.fields.itervalues() :
+		if len(field.type.generateDefaultValue()) == 0 :
+			str += "\n *	- %s \c %s = empty\\n\n" % (field.generateCompleteType(), field.name)
+		else:
+			if field.isOptional():
+				str += "\n *	- %s \c [%s] = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
+			else:
+				str += "\n *	- %s \c %s = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
+		str +=   " *		%s" % field.doc
+	return str
+
 
 def generateNodeHeader( fd, node ) :
 	# copyright
@@ -177,33 +200,36 @@ def generateNodeHeader( fd, node ) :
  * @brief docBrief\n"""
 
 	classDoc = """ *
- * doc\n"""
-
-	classFields = """ *
- * New fields defined by this node :NEWFIELDS
+ * doc
  *
- * Inherited fields :
- * @todo generates this section
- *\n"""
+"""
+
+	classFields = """ * New fields defined by this node :NEWFIELDS
+ *
+"""
 
 	fd.write( classDocBrief.replace("docBrief", node.docBrief) )
 	fd.write( classDoc.replace("doc", node.doc) )
 
-	str = ""
-	for field in node.fields.itervalues() :
-		if len(field.type.generateDefaultValue()) == 0 :
-			str += "\n *	- %s \c %s = empty\\n\n" % (field.generateCompleteType(), field.name)
-		else:
-			if field.isOptional():
-				str += "\n *	- %s \c [%s] = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
-			else:
-				str += "\n *	- %s \c %s = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
-		str +=   " *		%s" % field.doc
+	if len(node.fields) == 0:
+		fd.write( " * No new field defined by this node.\n" )
+	else:
+		fd.write( classFields.replace("NEWFIELDS", getDocOfFields(node) ) )
 
-	fd.write( classFields.replace("NEWFIELDS", str ) )
+	if len(node.inherits) > 0:
+		toProcess = node.inherits[:]
+		while ( len(toProcess) > 0 ):
+			nodeName = toProcess.pop()
+			if nodeName in dbNodes :
+				baseNode = dbNodes[nodeName]
+				toProcess.extend( baseNode.inherits )
+				fd.write( """ *\n * Inherited fields from %s:%s\n""" % (nodeName, getDocOfFields(baseNode) ) )
+			else:
+				print( "Warning %s is not generated from xml. So inherited fields are not documented" % nodeName )
+	fd.write( """ *\n""" )
 
 	for ingroup in node.ingroup :
-		fd.write( " * @ingroup %s\n" % ingroup )
+		fd.write( """ * @ingroup %s\n""" % ingroup )
 
 	fd.write( " */\n" )
 
@@ -392,6 +418,7 @@ def generatesNodes( dbNodes ) :
 			generateNodeHeader( fh, node )
 		with open( os.path.join(implementationsOutputDir, nodeName + ".cpp"), 'w+' ) as fcpp :
 			generateNodeImpl( fcpp, node )
+		print
 
 
 
@@ -488,7 +515,9 @@ EnumRegistry::ToStringType EnumRegistry::m_toString;
 
 void EnumRegistry::initialize()
 {""")
-		for enumString, enumValue in iterItems :
+		for enumString, enumValue in iterItems:
+			print enumString, enumValue
+			enumString = enumString.split('.')[1]
 			fcpp.write( """
 	//
 	#ifdef _DEBUG

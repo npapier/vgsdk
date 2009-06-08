@@ -39,8 +39,6 @@ namespace node
  *	- OFVec3f \c [diffuse] = vgm::Vec3f(0.8f, 0.8f, 0.8f)\n
  *		Diffuse color of the surface.
  *
- * Inherited fields :
- * @todo generates this section
  *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
@@ -84,7 +82,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the field named \c opacity
 	 */
-	typedef vgd::field::SFFloat FOpacityType;
+	typedef vgd::field::TSingleField< OpacityValueType > FOpacityType;
 
 
 	/**
@@ -455,4 +453,5 @@ private:
 } // namespace node
 
 } // namespace vgd
+
 #endif //#ifndef _VGD_NODE_MATERIAL_HPP

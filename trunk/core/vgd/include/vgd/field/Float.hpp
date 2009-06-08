@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,18 +6,13 @@
 #ifndef _VGD_FIELD_FLOAT_HPP
 #define _VGD_FIELD_FLOAT_HPP
 
-#include "vgd/vgd.hpp"
-
-#include "vgd/field/TSingleField.hpp"
-#include "vgd/field/TMultiField.hpp"
-#include "vgd/field/TSingleAssociativeField.hpp"
-#include "vgd/field/TPairAssociativeField.hpp"
+#include "vgd/field/containers.hpp"
 
 
 
 namespace vgd
 {
-	
+
 namespace field
 {
 
@@ -30,8 +25,11 @@ namespace field
 typedef TSingleField< float  >						SFFloat;
 typedef TSingleField< double >						SFDouble;
 
-typedef TMultiField< float  >							MFFloat;
-typedef TMultiField< double >							MFDouble;
+typedef TOptionalField< float  >					OFFloat;
+typedef TOptionalField< double >					OFDouble;
+
+typedef TMultiField< float  >						MFFloat;
+typedef TMultiField< double >						MFDouble;
 
 typedef TSingleAssociativeField< float  >			SAFFloat;
 typedef TSingleAssociativeField< double >			SAFDouble;
