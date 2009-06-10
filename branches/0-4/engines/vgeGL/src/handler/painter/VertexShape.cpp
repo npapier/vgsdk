@@ -334,7 +334,8 @@ void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::
 	/* Vertex Array in DL */
 	if ( deformableHint == vgd::node::VertexShape::STATIC )
 	{
-		paint(engine, vertexShape, vgeGL::engine::VertexArrayDisplayListMethod() );
+		paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
+		//paint(engine, vertexShape, vgeGL::engine::VertexArrayDisplayListMethod() );
 	}
 	else
 	{
@@ -650,8 +651,9 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	vertexIndex	= pVertexShape->getFVertexIndexRO();
 	pArray		= reinterpret_cast< const GLvoid* >( &(*vertexIndex)[primitive.getIndex()] );
 	
-	glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+	//glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 	// or glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+	glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 
 
 
