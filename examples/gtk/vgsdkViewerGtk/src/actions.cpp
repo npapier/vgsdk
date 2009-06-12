@@ -130,7 +130,52 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 
 void fileReload( myCanvas * canvas )
 {
-	canvas->reloadScene();
+	if ( canvas->isEmpty() )
+	{
+		// @todo a function in vgGTK ?
+		// If no scene has been loaded, then we use the recent files.
+		typedef Glib::RefPtr< Gtk::RecentInfo >	InfoRefPtr;
+		typedef std::vector< InfoRefPtr >		InfoContainer;
+
+		// We first look for the most recent file loaded by this application.
+		const Glib::ustring	appName	= Glib::get_application_name();
+		InfoContainer		infos	= Gtk::RecentManager::get_default()->get_items();
+		InfoRefPtr			recentInfo;
+
+		for( InfoContainer::iterator i = infos.begin(); i != infos.end(); ++i )
+		{
+			InfoRefPtr currentInfo = *i;
+
+			if( currentInfo->has_application(appName) && (recentInfo ==  false || currentInfo->get_modified() > recentInfo->get_modified()) )
+			{
+				recentInfo = currentInfo;
+			}
+		}
+
+		// If we got one, then we uses this.
+		if( recentInfo )
+		{
+			const std::string				recentFile( Glib::filename_from_uri( recentInfo->get_uri() ) );
+
+			// Removes any content of the scene and loads the given recent file.
+			canvas->clearScene();
+			const bool success = canvas->appendToScene( recentFile );
+
+			// According to the success, appends or removes the file from the default recent manager.
+			if( success )
+			{
+				Gtk::RecentManager::get_default()->add_item( recentInfo->get_uri() );
+			}
+			else
+			{
+				Gtk::RecentManager::get_default()->remove_item( recentInfo->get_uri() );
+			}
+		}
+	}
+	else
+	{
+		canvas->reloadScene();
+	}
 
 	canvas->refresh();
 }
@@ -141,7 +186,7 @@ void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas )
 {
 	bool				success			= false;
 	const Glib::ustring	uriRecentFile	= recentChooser->get_current_uri();
-	std::string			recentFile		= Glib::filename_from_uri( uriRecentFile );
+	const std::string	recentFile		= Glib::filename_from_uri( uriRecentFile );
 
 	// Removes any content of the scene and loads the given recent file.
 	canvas->clearScene();
@@ -255,9 +300,9 @@ void helpAbout( Gtk::Window * topLevel )
 	aboutDialog.set_transient_for( *topLevel );
 	aboutDialog.set_authors( authors );
 	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load meshes (obj, trian, trian2 and dae), manipulate them and browse the rendering scene graph." );
-	aboutDialog.set_copyright( "Copyright (C) 2008, Guillaume Brocker, Nicolas Papier and Digital Trainers SAS." );
+	aboutDialog.set_copyright( "Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier and Digital Trainers SAS." );
 	aboutDialog.set_license( "Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation." );
-	aboutDialog.set_website("http://home.gna.org/vgsdk");
+	aboutDialog.set_website("http://code.google.com/p/vgsdk");
 	aboutDialog.set_wrap_license( true );
 
 	aboutDialog.run();
@@ -304,7 +349,7 @@ void dragDataReceived( myCanvas * canvas, const Glib::RefPtr<Gdk::DragContext>& 
 		}
 		else
 		{
-			vgLogWarning( "\"%s\": missing or invalid file path.", filename.c_str() );
+			vgLogWarning2( "\"%s\": missing or invalid file path.", filename.c_str() );
 		}
 
 		// Moves the match start forward.
