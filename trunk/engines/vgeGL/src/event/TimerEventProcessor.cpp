@@ -120,7 +120,7 @@ void TimerEventProcessor::onTimerEvent( vgd::Shp<vgd::event::TimerEvent> event )
 	while ( toBeRemoved.size() > 0 )
 	{
 		vgd::Shp< vgd::event::TimerCallback > callback = *toBeRemoved.begin();
-		toBeRemoved.pop_back();
+		toBeRemoved.pop_front();
 
 		assert( has(callback) && "Internal error : Callback not in timer event processor" );
 		remove( callback );
