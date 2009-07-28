@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -152,6 +152,7 @@ Image::Image( const IImage& image )
 
 
 Image::Image( const Image& src )
+:	m_iluintImgID(0)
 {
 	copy(src);
 }
