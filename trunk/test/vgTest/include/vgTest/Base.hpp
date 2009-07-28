@@ -51,7 +51,7 @@ private:
 
 };
 
-} // namespace dtTest
+} // namespace vgTest
 
 
 

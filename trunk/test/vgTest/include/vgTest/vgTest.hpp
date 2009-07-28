@@ -10,7 +10,6 @@
  * @defgroup g_vgTest vgTest - (V)ersatile (G)raphical (T)est framework
  */
 
-#include <vgBase/Type.hpp>
 
 #ifdef _WIN32
 
