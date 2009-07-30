@@ -125,40 +125,40 @@ TEST_P(VgTestModel, PerformanceModelTest)
 /**
 * @brief Compare a generated image and a reference image
 */
-TEST_F(VgTestModel, FailCompareTest)
-{	
-	RecordProperty("Description", "Compare a generated image and a fake reference image ==> MUST FAIL");
-	
-	const ::testing::TestInfo* const test_info =
-	  ::testing::UnitTest::GetInstance()->current_test_info();
-
-	std::string filename = vgTest::getImageName(test_info->name());
-
-	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT) );
-	RecordProperty("Object", "cavite.obj");
-
-	// prepare scene
-	base->addObject("cavite.obj");
-
-	//run GTK
-	base->run();
-
-
-	// do the test
-	int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
-	EXPECT_EQ( diff, 0 );
-
-	RecordProperty("PixelDiff", diff);
-
-	if (diff > 0)
-	{
-		RecordProperty("ImagePath", base->getImagesPath(true).c_str());
-	}
-	else
-	{
-		RecordProperty("ImagePath", base->getImagesPath(false).c_str());
-	}
-}
+//TEST_F(VgTestModel, FailCompareTest)
+//{	
+//	RecordProperty("Description", "Compare a generated image and a fake reference image ==> MUST FAIL");
+//	
+//	const ::testing::TestInfo* const test_info =
+//	  ::testing::UnitTest::GetInstance()->current_test_info();
+//
+//	std::string filename = vgTest::getImageName(test_info->name());
+//
+//	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT) );
+//	RecordProperty("Object", "cavite.obj");
+//
+//	// prepare scene
+//	base->addObject("cavite.obj");
+//
+//	//run GTK
+//	base->run();
+//
+//
+//	// do the test
+//	int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
+//	EXPECT_EQ( diff, 0 );
+//
+//	RecordProperty("PixelDiff", diff);
+//
+//	if (diff > 0)
+//	{
+//		RecordProperty("ImagePath", base->getImagesPath(true).c_str());
+//	}
+//	else
+//	{
+//		RecordProperty("ImagePath", base->getImagesPath(false).c_str());
+//	}
+//}
 
 
 
