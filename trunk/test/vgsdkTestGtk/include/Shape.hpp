@@ -85,6 +85,11 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 	}
 	else
 	{
+		if (!boost::filesystem::exists(base->getReferencePath()))
+		{
+			FAIL() << "REFERENCE FILE IS NOT CREATED";
+		}
+
 		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
 		EXPECT_EQ( diff, 0 );
 
@@ -135,6 +140,11 @@ TEST_F(VgTestShape, StaticShapeTest)
 	}
 	else
 	{
+		if (!boost::filesystem::exists(base->getReferencePath()))
+		{
+			FAIL() << "REFERENCE FILE IS NOT CREATED";
+		}		
+		
 		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
 		EXPECT_EQ( diff, 0 );
 

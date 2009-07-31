@@ -52,6 +52,11 @@ TEST_P(VgTestModel, CompareTest)
 	else
 	{
 		// do the test
+		if (!boost::filesystem::exists(base->getReferencePath()))
+		{
+			FAIL() << "REFERENCE FILE IS NOT CREATED";
+		}
+
 		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
 		EXPECT_EQ( diff, 0 );
 
@@ -106,6 +111,11 @@ TEST_P(VgTestModel, PerformanceModelTest)
 	}
 	else
 	{
+		if (!boost::filesystem::exists(base->getReferencePath()))
+		{
+			FAIL() << "REFERENCE FILE IS NOT CREATED";
+		}
+
 		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
 		EXPECT_EQ( diff, 0 );
 
