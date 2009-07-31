@@ -10,6 +10,7 @@ Author Maxime Peresson
 
 import os
 import shutil
+import sys
 import Run
 import globals
 import config
@@ -51,8 +52,14 @@ class TestReport(object):
 			os.mkdir(self._projectPath)
 		
 		os.mkdir(self._path)
-		shutil.copyfile(config.param['xmlPath'] + document, self._path + config.param['file']) #@todo: cp -> mv
 		
+		if os.path.exists(config.param['xmlPath'] + document):
+			shutil.move(config.param['xmlPath'] + document, self._path + config.param['file'])
+			#shutil.copyfile(config.param['xmlPath'] + document, self._path + config.param['file']) #for test purpose
+		else :
+			print 'XML file not found'
+			sys.exit(1)
+			
 		#create the link
 		self._link = config.param['link'] + '/projects/' + self._projet + '/' + d.strftime('%m-%d-%y_%H%M%S') + '/index.html'
 		
