@@ -66,7 +66,8 @@ class XmlCompareAttribute(CustomAttribute):
 				
 				graph = str.split(file, '/')[len(str.split(file, '/'))-1]
 				filename = TestReport.TestReport.extpath + 'graph' + os.sep + graph
-				CairoPlot.dot_line_plot(filename, errors, 400, 300, h_labels = time, axis = True, grid = True)
+				if len(errors) > 0 or len(time) > 0:
+					CairoPlot.dot_line_plot(filename, errors, 400, 300, h_labels = time, axis = True, grid = True)
 				
 				html += '			<td align="center">\r'
 				html += '				<embed src="./graph/'+graph+'.svg" type="image/svg+xml" />\r'
