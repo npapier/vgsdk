@@ -48,7 +48,7 @@ class Dashboard(object):
 	def createDashboardXml(self):
 		doc = xml.dom.minidom.Document()
 		root = doc.createElement('dashboard')
-		root.setAttribute('link', config.param['link'] + 'index2.html')
+		root.setAttribute('link', config.param['link'] + 'index.html')
 		doc.appendChild(root)
 		
 		for project in self._runList:
@@ -73,7 +73,7 @@ class Dashboard(object):
 	def createFullDashboardXml(self):
 		doc = xml.dom.minidom.Document()
 		root = doc.createElement('dashboard')
-		root.setAttribute('link', config.param['link'] + 'index2.html')
+		root.setAttribute('link', config.param['link'] + 'index.html')
 		doc.appendChild(root)
 		
 		for project in self._projectList:
