@@ -135,7 +135,10 @@ const bool Manager::remove( vgd::node::Node *pNode )
 
 void Manager::clear()
 {
-	m_resources.clear();
+	while(!m_resources.empty())
+	{
+		m_resources.erase(m_resources.begin());
+	}
 }
 
 
