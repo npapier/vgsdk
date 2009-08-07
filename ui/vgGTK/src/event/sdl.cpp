@@ -1,16 +1,25 @@
-#include <vgGTK/event/sdl.hpp>
+// VGSDK - Copyright (C) 2009, Clement Forest.
+// Distributed under the terms of the GNU Library General Public License (LGPL)
+// as published by the Free Software Foundation.
+// Author Clement Forest
 
-#include <vgSDL/event/EventHandler.hpp>
+#include "vgGTK/event/sdl.hpp"
+
 #include <gtkmm.h>
+#include <vgSDL/event/EventHandler.hpp>
+
 
 
 namespace vgGTK
 {
+
 namespace event
 {
 
 
-namespace {
+
+namespace
+{
 
 
 gboolean my_source_prepare  (GSource    *source,
@@ -19,10 +28,12 @@ gboolean my_source_prepare  (GSource    *source,
 	 return false;
 }
 
+
 gboolean my_source_check    (GSource    *source)
 {
 	return vgSDL::event::EventHandler::getEvents();
 }
+
 
 gboolean my_source_dispatch (GSource    *source,
 			GSourceFunc callback,
@@ -32,12 +43,12 @@ gboolean my_source_dispatch (GSource    *source,
 	return true;
 }
 
+
 }
 
 
 void initSDL()
 {
-
 	vgSDL::event::EventHandler::getEvents();
 	GSourceFuncs* source=new GSourceFuncs;
 	source->prepare=&my_source_prepare;
@@ -49,4 +60,5 @@ void initSDL()
 }
 
 } // namespace event
+
 } // namespace vgGTK
