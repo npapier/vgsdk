@@ -75,7 +75,7 @@ template< typename T, int N >
 struct Vector
 {
 	typedef T value_type;	///< Defines an alias on the components type
-	
+
 	/**
 	 * @name Constructors, destructor and assign operator
 	 */
@@ -413,7 +413,7 @@ vgm::Vec4f		out5b( in5 );
 	/**
 	 * @brief Negates each component of vector in place.
 	 */
-	void				negate( void );
+	void			negate( void );
 
 	/**
 	 * @brief Component-wise vector addition operators.
