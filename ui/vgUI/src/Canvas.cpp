@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include <boost/lexical_cast.hpp>
+#include <glo/GLSLProgram.hpp>
 #include <sbf/path.hpp>
 #include <vgCairo/helpers.hpp>
 #include <vgCairo/ImageSurface.hpp>
@@ -116,6 +117,9 @@ Canvas::Canvas()
 
 	// Resets the scene graph
 	privateResetSceneGraph();
+
+	// Fps
+	setDebugOverlay( true );
 }
 
 
@@ -140,6 +144,9 @@ Canvas::Canvas(	const Canvas *sharedCanvas )
 
 	// Resets the scene graph
 	privateResetSceneGraph();
+
+	// Fps
+	setDebugOverlay( true );
 }
 
 
@@ -669,7 +676,10 @@ const bool Canvas::shutdownVGSDK()
 
 		// Try to destroy OpenGL objects
 		vgDebug::get().logDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
+
 		getGLEngine()->getGLManager().clear();
+
+		::glo::GLSLProgram::useFixedPaths();
 		getGLEngine()->getGLSLManager().clear();
 
 		return false;
@@ -682,7 +692,10 @@ const bool Canvas::shutdownVGSDK()
 
 		// Try to destroy OpenGL objects
 		vgDebug::get().logDebug/*logMessage*/("Releases managed OpenGL objects...\n");
+
 		getGLEngine()->getGLManager().clear();
+
+		::glo::GLSLProgram::useFixedPaths();
 		getGLEngine()->getGLSLManager().clear();
 
 		//
