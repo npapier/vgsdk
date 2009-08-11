@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -8,10 +8,10 @@
 
 #include "vgGTK/field/widget/Widget.hpp"
 
-#include <vector>
 #include <boost/lexical_cast.hpp>
 #include <gtkmm/box.h>
 #include <gtkmm/entry.h>
+#include <vgm/Vector.hpp>
 
 
 
@@ -26,67 +26,71 @@ namespace widget
 
 
 
-template< typename V >
-struct Vector : public Widget< V >, public Gtk::HBox
+/**
+ * @brief	Implements a widget for vgm::Vector edition.
+ */
+template< typename T, int N >
+struct Vector : public Widget< vgm::Vector<T, N> >, public Gtk::HBox
 {
 	Vector()
 	:	m_hasFrame( true )
-	{}
-	
-	~Vector()
 	{
-		for( EntryContainer::iterator i = m_elements.begin(); i != m_elements.end(); ++i )
+		for( unsigned int i = 0; i < N; ++i )
 		{
-			delete *i;
+			m_elements[i].set_width_chars( 10 );
+			m_elements[i].set_size_request( 75, -1 );
+			m_elements[i].set_has_frame( m_hasFrame );
+			m_elements[i].set_activates_default();
+		
+			add( m_elements[i] );
 		}
 	}
 	
 	void clear()
 	{
-		for( EntryContainer::iterator i = m_elements.begin(); i != m_elements.end(); ++i )
+		for( unsigned int i = 0; i != N; ++i )
 		{
-			(*i)->set_text( Glib::ustring() );
+			m_elements[i].set_text( Glib::ustring() );
 		}
 	}
 	
-	const V getValue() const
+	const vgm::Vector< T, N > getValue() const
 	{
-		V	result;
+		vgm::Vector< T, N >	result;
 		
-		for( unsigned int i = 0; i < m_elements.size(); ++i )
+		for( unsigned int i = 0; i < N; ++i )
 		{
-			result[i] = boost::lexical_cast< V::value_type >( m_elements[i]->get_text() );
+			try
+			{
+				result[i] = boost::lexical_cast< T >( m_elements[i].get_text() );
+			}
+			catch( const boost::bad_lexical_cast & )
+			{
+				result[i] = static_cast< T >( 0 );
+			}
 		}
 		
 		return result;
 	}
 	
-	
-	void setValue( const V & value )
+	const bool hasValue() const
 	{
-		if( m_elements.empty() )
+		for( unsigned int i = 0; i != N; ++i )
 		{
-			m_elements.resize( value.getSize(), 0 );
-		}
-		
-		assert( m_elements.size() == value.getSize() );
-		
-		for( unsigned int i = 0; i < value.getSize(); ++i )
-		{
-			Gtk::Entry	* entry = m_elements[i];
-			
-			if( entry == 0 )
+			if( m_elements[i].get_text().empty() == false )
 			{
-				entry = new Gtk::Entry();
-			
-				entry->set_width_chars( 10 );
-				entry->set_has_frame( m_hasFrame );
-			
-				add( *entry );
-				m_elements[i] = entry;
+				return true;
 			}
-			
-			entry->set_text( Glib::ustring::compose("%1", value[i]) );
+		}
+
+		return false;
+	}
+	
+	void setValue( const vgm::Vector< T, N > & value )
+	{
+		for( unsigned int i = 0; i < N; ++i )
+		{
+			m_elements[i].set_text( Glib::ustring::compose("%1", value[i]) );
 		}
 	}
 	
@@ -94,16 +98,16 @@ struct Vector : public Widget< V >, public Gtk::HBox
 	{
 		bool validate = true;
 		
-		for( unsigned int i = 0; i < m_elements.size() && validate; ++i )
+		for( unsigned int i = 0; i < N && validate; ++i )
 		{
 			try
 			{
-				boost::lexical_cast< V::value_type >( m_elements[i]->get_text() );
+				boost::lexical_cast< T >( m_elements[i].get_text() );
 			}
 			catch( const boost::bad_lexical_cast & )
 			{
-				vgGTK::field::widget::Widget< V >::showWarning("Please, enter a number!");
-				m_elements[i]->grab_focus();
+				showWarning("Please, enter a number!");
+				m_elements[i].grab_focus();
 				validate = false;
 			}
 		}
@@ -119,20 +123,17 @@ struct Vector : public Widget< V >, public Gtk::HBox
 	void setFrame( const bool frame )
 	{
 		m_hasFrame = frame;
-		for( EntryContainer::iterator i = m_elements.begin(); i != m_elements.end(); ++i )
+		for( unsigned int i = 0; i != N; ++i )
 		{
-			(*i)->set_has_frame( frame );
+			m_elements[i].set_has_frame( frame );
 		}
 	}
-				
-	
+
 
 private:
 	
-	typedef std::vector< Gtk::Entry * >	EntryContainer;
-	
-	bool			m_hasFrame;
-	EntryContainer	m_elements;
+	bool		m_hasFrame;		///< Tells if edition fields must show a frame.
+	Gtk::Entry	m_elements[N];	///< Holds all edition widgets.
 };
 
 

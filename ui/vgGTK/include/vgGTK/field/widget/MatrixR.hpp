@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -26,12 +26,16 @@ namespace widget
 
 
 
+/**
+ * @brief	Implements a widget for vgm::MatrixR edition.
+ */
 struct MatrixR : public Widget< vgm::MatrixR >, public Gtk::VBox
 {
 	MatrixR();
 	
 	void clear();
 	const vgm::MatrixR getValue() const;
+	const bool hasValue() const;
 	void setValue( const vgm::MatrixR & value );
 	const bool validate();
 	

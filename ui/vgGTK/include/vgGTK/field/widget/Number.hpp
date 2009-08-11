@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -22,6 +22,10 @@ namespace widget
 {
 
 
+
+/**
+ * @brief	Implements a widget for the edition of any number type.
+ */
 template< typename NumberType >
 struct Number : public Widget< NumberType >, public Gtk::Entry
 {
@@ -45,6 +49,11 @@ struct Number : public Widget< NumberType >, public Gtk::Entry
 		{
 			return static_cast< NumberType >( 0 );
 		}
+	}
+
+	const bool hasValue() const
+	{
+		return get_text().empty() == false;
 	}
 	
 	void setValue( const NumberType & value )
