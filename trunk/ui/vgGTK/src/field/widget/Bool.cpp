@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -37,6 +37,13 @@ void Bool::clear()
 {
 	m_trueButton.set_active( false );
 	m_falseButton.set_active( false );
+}
+
+
+
+const bool Bool::hasValue() const
+{
+	return m_trueButton.get_active() || m_falseButton.get_active();
 }
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -99,6 +99,21 @@ const vgm::MatrixR MatrixR::getValue() const
 	}
 	
 	return result;
+}
+
+
+
+const bool MatrixR::hasValue() const
+{
+	for(int i = 0; i < 16; ++i)
+	{
+		if( m_elements[i].get_text().empty() == false )
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 

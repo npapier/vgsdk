@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -21,6 +21,9 @@ namespace widget
 
 
 
+/**
+ * @brief	Abstract implementation of edition widgets.
+ */
 template< typename T >
 struct Widget
 {
@@ -30,18 +33,19 @@ struct Widget
 	 * @name	Value Accessors
 	 */
 	//@{
-	virtual void clear() = 0;
-	virtual const T getValue() const = 0;
-	virtual void setValue( const T & value ) = 0;
-	virtual const bool validate() = 0;
+	virtual void clear() = 0;						///< Clears the widget content.
+	virtual const T getValue() const = 0;			///< Retrieves the current widget value.
+	virtual const bool hasValue() const = 0;		///< Tells if the widget is currently holding a value.
+	virtual void setValue( const T & value ) = 0;	///< Assigns a new value to the widget.
+	virtual const bool validate() = 0;				///< Asks the widget if the current value is valid.
 	//@}
 	
 	/**
 	 * @name	Aspect Accessors
 	 */
 	//@{
-	virtual const bool resizable() const = 0;
-	virtual void setFrame( const bool frame ) = 0;
+	virtual const bool resizable() const = 0;		///< Tells if the widget supports changing its size.
+	virtual void setFrame( const bool frame ) = 0;	///< Tells the widget to show (or hide) its border frame.
 	//@}
 	
 protected:
