@@ -119,7 +119,7 @@ Canvas::Canvas()
 	privateResetSceneGraph();
 
 	// Fps
-	setDebugOverlay( true );
+	// setDebugOverlay( true );
 }
 
 
@@ -146,7 +146,7 @@ Canvas::Canvas(	const Canvas *sharedCanvas )
 	privateResetSceneGraph();
 
 	// Fps
-	setDebugOverlay( true );
+	// setDebugOverlay( true );
 }
 
 
