@@ -34,11 +34,11 @@ META_HANDLER_CPP( SurroundScale );
 const vge::service::List SurroundScale::getServices() const
 {
 	vge::service::List list;
-	
+
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::ProcessEvent) );
 
-	return ( list );
+	return list;
 }
 
 
@@ -49,7 +49,7 @@ const vge::handler::Handler::TargetVector SurroundScale::getTargets() const
 
 	targets.push_back( vgd::node::SurroundScale::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
@@ -60,8 +60,8 @@ void SurroundScale::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode
 	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
 
 	assert( dynamic_cast< vgd::node::SurroundScale* >(pNode) != 0 );
-	vgd::node::SurroundScale *pCastedNode = static_cast< vgd::node::SurroundScale* >(pNode);
-	
+	vgd::node::SurroundScale *pCastedNode = dynamic_cast< vgd::node::SurroundScale* >(pNode);
+
 	vge::handler::SurroundScale::apply( pEngine, pCastedNode );
 
 	paint( pGLEngine, pCastedNode );
@@ -87,18 +87,18 @@ void SurroundScale::setToDefaults()
 void SurroundScale::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SurroundScale *pNode )
 {
 	// GEOMETRICAL MATRIX
-	// Get the transformation.
+	// Gets the transformation
 	vgm::MatrixR& 		current(	
 		pGLEngine->getGeometricalMatrix().getTop() 
 		);
 
 	glMatrixMode( GL_MODELVIEW );
 
-	// Update OpenGL.
+	// Updates OpenGL
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-	
-	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
+
+	// Validates node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
 

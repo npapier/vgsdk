@@ -8,6 +8,7 @@
 
 #include "vgd/field/MatrixR.hpp"
 #include "vgd/field/Rectangle2i.hpp"
+#include "vgd/node/GeometricalTransformation.hpp"
 #include "vgd/node/ProjectionTransformation.hpp"
 
 
@@ -21,14 +22,16 @@ namespace node
 
 
 /**
- * @brief Camera node used to set the projection matrix, viewport and scissor box
+ * @brief Camera node used to set the projection matrix, viewport and scissor box. Camera position and orientation could be specified too.
  *
- * Sets up the projection with an user defined matrix for the viewing frustum(into the world coordinate system).  Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting.  
+ * Sets up the projection with an user defined matrix for the viewing frustum (into the world coordinate system).  Sets up the camera position and orientation with 4x4 matrix from lookAt field. Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting.  
  *
  * New fields defined by this node :
  *	- OFRectangle2i \c scissor = empty\n
  *		Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
- *	- SFMatrixR \c matrix = vgm::MatrixR(vgm::MatrixR::getIdentity())\n
+ *	- SFMatrixR \c lookAt = vgm::MatrixR(vgm::MatrixR::getIdentity())\n
+ *		Determines the 3D geometric transformation as a 4x4 matrix applied to camera.\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).
+ *	- SFMatrixR \c projection = vgm::MatrixR(vgm::MatrixR::getIdentity())\n
  *		Determines the projection matrix.
  *	- OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)\n
  *		Determines the viewport.
@@ -38,7 +41,7 @@ namespace node
  * @ingroup g_singleAttributeNodes
  * @ingroup g_transformationNodes
  */
-struct VGD_API Camera : public vgd::node::ProjectionTransformation
+struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd::node::ProjectionTransformation
 {
 	/**
 	 * @name Factories
@@ -69,7 +72,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c scissor.
+	 * @brief Type definition of the value contained by field named \c Scissor.
 	 */
 	typedef vgm::Rectangle2i ScissorValueType;
 
@@ -103,30 +106,60 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 	/**
-	 * @name Accessors to field matrix
+	 * @name Accessors to field lookAt
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c matrix.
+	 * @brief Type definition of the value contained by field named \c LookAt.
 	 */
-	typedef vgm::MatrixR MatrixValueType;
+	typedef vgm::MatrixR LookAtValueType;
 
 	/**
-	 * @brief Type definition of the field named \c matrix
+	 * @brief Type definition of the field named \c lookAt
 	 */
-	typedef vgd::field::TSingleField< MatrixValueType > FMatrixType;
+	typedef vgd::field::TSingleField< LookAtValueType > FLookAtType;
 
 
 	/**
-	 * @brief Gets the value of field named \c matrix.
+	 * @brief Gets the value of field named \c lookAt.
 	 */
-	const MatrixValueType getMatrix() const;
+	const LookAtValueType getLookAt() const;
 
 	/**
-	 * @brief Sets the value of field named \c matrix.
+	 * @brief Sets the value of field named \c lookAt.
 	 */
-	void setMatrix( const MatrixValueType value );
+	void setLookAt( const LookAtValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field projection
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c Projection.
+	 */
+	typedef vgm::MatrixR ProjectionValueType;
+
+	/**
+	 * @brief Type definition of the field named \c projection
+	 */
+	typedef vgd::field::TSingleField< ProjectionValueType > FProjectionType;
+
+
+	/**
+	 * @brief Gets the value of field named \c projection.
+	 */
+	const ProjectionValueType getProjection() const;
+
+	/**
+	 * @brief Sets the value of field named \c projection.
+	 */
+	void setProjection( const ProjectionValueType value );
 
 	//@}
 
@@ -138,7 +171,7 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c viewport.
+	 * @brief Type definition of the value contained by field named \c Viewport.
 	 */
 	typedef vgm::Rectangle2i ViewportValueType;
 
@@ -184,11 +217,18 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 	static const std::string getFScissor( void );
 
 	/**
-	 * @brief Returns the name of field \c matrix.
+	 * @brief Returns the name of field \c lookAt.
 	 *
-	 * @return the name of field \c matrix.
+	 * @return the name of field \c lookAt.
 	 */
-	static const std::string getFMatrix( void );
+	static const std::string getFLookAt( void );
+
+	/**
+	 * @brief Returns the name of field \c projection.
+	 *
+	 * @return the name of field \c projection.
+	 */
+	static const std::string getFProjection( void );
 
 	/**
 	 * @brief Returns the name of field \c viewport.
@@ -218,7 +258,38 @@ struct VGD_API Camera : public vgd::node::ProjectionTransformation
 
 
 
+	/**
+	 * @name Accessors to field matrix
+	 * @deprecated
+	 */
+	//@{
 
+	/**
+	 * @brief Type definition of the value contained by field named \c Matrix.
+	 * @deprecated
+	 */
+	typedef vgm::MatrixR MatrixValueType;
+
+	/**
+	 * @brief Type definition of the field named \c matrix
+	 * @deprecated
+	 */
+	typedef vgd::field::TSingleField< MatrixValueType > FMatrixType;
+
+
+	/**
+	 * @brief Gets the value of field named \c matrix.
+	 * @deprecated
+	 */
+	vgDEPRECATED( const MatrixValueType getMatrix() const );
+
+	/**
+	 * @brief Sets the value of field named \c matrix.
+	 * @deprecated
+	 */
+	vgDEPRECATED( void setMatrix( const MatrixValueType value ) );
+
+	//@}
 
 
 

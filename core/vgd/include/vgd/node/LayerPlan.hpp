@@ -51,6 +51,7 @@ namespace node
  *		After this operation, the alpha component is clamped to the range [0, 1].
  * 
  * @ingroup g_nodes
+ * @ingroup g_shapeNodes
  * @ingroup g_multiAttributeNodes
  * 
  * @todo More advanced transformation (a field \c matrixTransform)

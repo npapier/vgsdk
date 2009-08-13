@@ -149,9 +149,9 @@ struct VGUI_API BasicViewer : public Canvas
 	 *
 	 * @return the view transformation node.
 	 */
-	vgd::Shp< vgd::node::MatrixTransform > getViewTransformation();
+	vgDEPRECATED( vgd::Shp< vgd::node::MatrixTransform > getViewTransformation() );
 
-	const vgd::Shp< vgd::node::MatrixTransform > getViewTransformation() const;
+	vgDEPRECATED( const vgd::Shp< vgd::node::MatrixTransform > getViewTransformation() const );
 
 	/**
 	 * @brief Returns scene group node.
@@ -339,6 +339,6 @@ private:
 
 
 
-} // namespace vgWX
+} // namespace vgUI
 
 #endif // #ifndef _VGUI_BASICVIEWER_HPP

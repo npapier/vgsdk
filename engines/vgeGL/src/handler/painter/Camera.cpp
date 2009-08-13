@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -33,7 +33,7 @@ const vge::service::List Camera::getServices() const
 {
 	vge::service::List list;
 
-	list.push_back( vge::service::ComputeBoundingBox::create()	);
+	//list.push_back( vge::service::ComputeBoundingBox::create()	);
 	list.push_back( vge::service::Painter::create()				);
 	list.push_back( vge::service::ProcessEvent::create()		);
 
@@ -48,20 +48,20 @@ const vge::handler::Handler::TargetVector Camera::getTargets() const
 
 	targets.push_back( vgd::node::Camera::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
 
-void Camera::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
+void Camera::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
-	assert( dynamic_cast< vgd::node::Camera* >(pNode) != 0 );
-	vgd::node::Camera *pCastedNode = static_cast< vgd::node::Camera* >(pNode);
+	assert( dynamic_cast< vgd::node::Camera* >(node) != 0 );
+	vgd::node::Camera *pCastedNode = dynamic_cast< vgd::node::Camera* >(node);
 
-	vge::handler::Camera::apply( pEngine, pCastedNode );
+	vge::handler::Camera::apply( engine, pCastedNode );
 
 	paint( pGLEngine, pCastedNode );
 }
@@ -77,24 +77,36 @@ void Camera::setToDefaults()
 {
 //	glMatrixMode( GL_PROJECTION );
 //	glLoadIdentity();
+//
+//	glMatrixMode( GL_MODELVIEW );
+//	glLoadIdentity();
 //	
 //	glDisable( GL_SCISSOR_TEST );
 }
 
 
 
-void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
+void Camera::paint( vgeGL::engine::Engine *engine, vgd::node::Camera *node )
 {
 	// PROJECTION MATRIX
-	// Get the transformation.
-	vgm::MatrixR& 		current(
-		pGLEngine->getProjectionMatrix().getTop() 
-		);
+	// Gets the transformation
+	vgm::MatrixR& currentProj = engine->getProjectionMatrix().getTop();
 
 	glMatrixMode( GL_PROJECTION );
 
-	// Update OpenGL.
-	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
+	// Updates OpenGL
+	glLoadMatrixf( reinterpret_cast<const float*>( currentProj.getValue() ) );
+
+
+
+	// GEOMETRICAL MATRIX
+	// Gets the transformation
+	vgm::MatrixR& currentGeom = engine->getGeometricalMatrix().getTop();
+
+	glMatrixMode( GL_MODELVIEW );
+
+	// Updates OpenGL
+	glLoadMatrixf( reinterpret_cast<const float*>( currentGeom.getValue() ) );
 
 
 
@@ -102,7 +114,7 @@ void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
 	bool bDefined;
 	vgm::Rectangle2i viewportValue;
 
-	bDefined = pNode->getViewport( viewportValue );
+	bDefined = node->getViewport( viewportValue );
 
 	if ( bDefined )
 	{
@@ -117,7 +129,7 @@ void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
 	// SCISSOR
 	vgm::Rectangle2i  scissorValue;
 
-	bDefined = pNode->getScissor( scissorValue );
+	bDefined = node->getScissor( scissorValue );
 
 	if ( bDefined )
 	{
@@ -134,7 +146,7 @@ void Camera::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Camera *pNode )
 	}
 
 	// Validates node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();
+	node->getDirtyFlag(node->getDFNode())->validate();
 }
 
 

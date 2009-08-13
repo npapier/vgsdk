@@ -29,9 +29,9 @@ const Handler::TargetVector Layers::getTargets() const
 {
 	TargetVector targets;
 
-	targets.push_back( vgd::node::Layers::getClassIndexStatic() );	
-	
-	return ( targets );
+	targets.push_back( vgd::node::Layers::getClassIndexStatic() );
+
+	return targets;
 }
 
 
@@ -40,7 +40,7 @@ void Layers::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 {
 	assert( dynamic_cast< vgd::node::Layers* >(pNode) != 0 );
 	vgd::node::Layers *pLayers = static_cast< vgd::node::Layers* >(pNode);
-	
+
 	// compute bounding.
 	vgm::MatrixR&	current( pEngine->getGeometricalMatrix().getTop() );
 	pLayers->computeBoundingBox( current );
@@ -62,7 +62,7 @@ void Layers::setToDefaults()
 
 
 } // namespace cbb
-	
+
 } // namespace handler
 
 } // namespace vge

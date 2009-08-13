@@ -32,11 +32,11 @@ const Handler::TargetVector Kits::getTargets() const
 
 	targets.reserve( 3 );
 
-	targets.push_back( vgd::node::NullDragger::getClassIndexStatic() );	
-	targets.push_back( vgd::node::Scale1Dragger::getClassIndexStatic() );		
+	targets.push_back( vgd::node::NullDragger::getClassIndexStatic() );
+	targets.push_back( vgd::node::Scale1Dragger::getClassIndexStatic() );
 	targets.push_back( vgd::node::TransformDragger::getClassIndexStatic() );
-	
-	return ( targets );
+
+	return targets;
 }
 
 
@@ -68,7 +68,7 @@ void Kits::setToDefaults()
 
 
 } // namespace cbb
-	
+
 } // namespace handler
 
 } // namespace vge

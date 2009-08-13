@@ -31,10 +31,10 @@ META_HANDLER_CPP( TransformSeparator );
 const Handler::TargetVector TransformSeparator::getTargets()	const
 {
 	TargetVector targets;
-	
+
 	targets.push_back( vgd::node::TransformSeparator::getClassIndexStatic() );
-	
-	return ( targets );
+
+	return targets;
 }
 
 
@@ -46,7 +46,7 @@ void TransformSeparator::apply( vge::engine::Engine *pEngine, vgd::node::Node *p
 
 	Group::apply( pEngine, pCastedNode ); // do nothing
 
-	vge::handler::TransformSeparator::apply( pEngine, pCastedNode );	
+	vge::handler::TransformSeparator::apply( pEngine, pCastedNode );
 }
 
 
@@ -70,7 +70,7 @@ void TransformSeparator::setToDefaults()
 
 
 } // namespace cbb
-	
+
 } // namespace handler
 
 } // namespace vge

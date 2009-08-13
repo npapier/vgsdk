@@ -26,7 +26,7 @@ MatrixTransform::MatrixTransform( const std::string nodeName ) :
 {
 	// Add field
 	addField( new FMatrixType(getFMatrix()) );
-	
+
 	// Link(s)
 	link( getDFNode() );
 }
@@ -70,7 +70,7 @@ void MatrixTransform::setMatrix( const vgm::MatrixR& matrix )
 
 const std::string MatrixTransform::getFMatrix( void )
 {
-	return ( "f_matrix" );
+	return "f_matrix";
 }
 
 

@@ -75,7 +75,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c opacity.
+	 * @brief Type definition of the value contained by field named \c Opacity.
 	 */
 	typedef float OpacityValueType;
 
@@ -105,7 +105,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c shininess.
+	 * @brief Type definition of the value contained by field named \c Shininess.
 	 */
 	typedef float ShininessValueType;
 
@@ -144,7 +144,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c emission.
+	 * @brief Type definition of the value contained by field named \c Emission.
 	 */
 	typedef vgm::Vec3f EmissionValueType;
 
@@ -183,7 +183,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c specular.
+	 * @brief Type definition of the value contained by field named \c Specular.
 	 */
 	typedef vgm::Vec3f SpecularValueType;
 
@@ -222,7 +222,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c ambient.
+	 * @brief Type definition of the value contained by field named \c Ambient.
 	 */
 	typedef vgm::Vec3f AmbientValueType;
 
@@ -261,7 +261,7 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c diffuse.
+	 * @brief Type definition of the value contained by field named \c Diffuse.
 	 */
 	typedef vgm::Vec3f DiffuseValueType;
 
@@ -418,10 +418,6 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	vgDEPRECATED( void 			eraseColor( const ColorParameterType param ) );
 	//@}
-
-
-
-
 
 
 

@@ -19,3 +19,18 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 
 	return window;
 }
+
+
+
+// Matrix
+const Camera::MatrixValueType Camera::getMatrix() const
+{
+	return getFieldRO<FMatrixType>(getFProjection())->getValue();
+}
+
+
+
+void Camera::setMatrix( const MatrixValueType value )
+{
+	getFieldRW<FMatrixType>(getFProjection())->setValue( value );
+}
