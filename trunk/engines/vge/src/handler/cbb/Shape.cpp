@@ -24,7 +24,7 @@ namespace vge
 
 namespace handler
 {
-	
+
 namespace cbb
 {
 
@@ -37,7 +37,7 @@ META_HANDLER_CPP( Shape );
 const Handler::TargetVector Shape::getTargets()	const
 {
 	TargetVector targets;
-	
+
 	targets.reserve( 7 );
 	targets.push_back( vgd::node::Box::getClassIndexStatic() );
 	targets.push_back( vgd::node::Quad::getClassIndexStatic() );
@@ -46,7 +46,7 @@ const Handler::TargetVector Shape::getTargets()	const
 	targets.push_back( vgd::node::VertexShape::getClassIndexStatic() );
 	targets.push_back( vgd::node::WireBox::getClassIndexStatic() );
 	targets.push_back( vgd::node::WireQuad::getClassIndexStatic() );
-	
+
 	return targets;
 }
 
@@ -58,7 +58,7 @@ void Shape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	vgd::node::Shape *pCastedNode = static_cast< vgd::node::Shape* >(pNode);
 
 	vgm::MatrixR&	current( pEngine->getGeometricalMatrix().getTop() );
-	
+
 	pCastedNode->computeBoundingBox( current );
 }
 

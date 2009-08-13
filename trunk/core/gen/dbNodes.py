@@ -47,7 +47,7 @@ class EnumRegistry :
 # TYPE #
 ########
 class Type :
-	def __init__( self, name ) :
+	def __init__( self, name ):
 		self.namespace		= ""
 		self.name			= name
 
@@ -55,20 +55,20 @@ class Type :
 
 		# @todo range
 
-	def generateTYPEDEF( self, fieldName, postfix ) :
+	def generateTYPEDEF( self, fieldName, postfix ):
 		str = """\t/**
 \t * @brief Type definition of the value contained by field named \c %s.
 \t */
-\ttypedef %s %s%s;""" % (fieldName, self.generateTypeWithNamespace(), fieldName.capitalize(), postfix)
+\ttypedef %s %s%s;""" % (fieldName, self.generateTypeWithNamespace(), fieldName, postfix)
 		return str
 
-	def generateTypeWithNamespace( self ) :
+	def generateTypeWithNamespace( self ):
 		if len(self.namespace) > 0 :
 			return self.namespace + "::" + self.name
 		else :
 			return self.name
 
-	def generateDefaultValue( self ) :
+	def generateDefaultValue( self ):
 		if len(self.defaultValue) == 0 :
 			return ""
 		else :
@@ -83,7 +83,7 @@ class Type :
 
 class Enum ( Type ):
 
-	def __init__( self, nodeName ) :
+	def __init__( self, nodeName ):
 		Type.__init__( self, "enum" )
 		self.nodeName = nodeName
 		self.values = {}
@@ -93,7 +93,7 @@ class Enum ( Type ):
 			self.values[value] = docValue
 			EnumRegistry.register( self.nodeName, value )
 
-	def setDefaultValue( self, defaultValue ) :
+	def setDefaultValue( self, defaultValue ):
 		if defaultValue in self.values :
 			self.defaultValue = defaultValue
 		else :
@@ -101,9 +101,9 @@ class Enum ( Type ):
 
 
 	# Overriden
-	def generateTYPEDEF( self, fieldName, postfix ) :
+	def generateTYPEDEF( self, fieldName, postfix ):
 
-		fieldNameValueType = fieldName.capitalize() + postfix
+		fieldNameValueType = fieldName + postfix
 
 		str =	"""\t/**
 \t * @brief Definition of symbolic values
@@ -209,6 +209,9 @@ class Field :
 	def isOptional( self ):
 		return False
 
+	def getFieldName( self ):
+		return self.name[0].upper() + self.name[1:]
+
 
 class SingleField ( Field ) :
 
@@ -241,9 +244,9 @@ TYPEDEF_FIELDNAMEVALUETYPE
 
 	//@}\n"""
 
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.getFieldName(), "ValueType" ) )
 		str = str.replace( "fieldName", self.name )
-		str = str.replace( "FieldName", self.name.capitalize() )
+		str = str.replace( "FieldName", self.getFieldName() )
 		str = str.replace( "FieldType", self.type.name )
 
 		return str
@@ -264,7 +267,7 @@ void NewNode::setFieldName( const FieldNameValueType value )
 \n\n\n"""
 
 		str = str.replace( "NewNode", nodeName )
-		str = str.replace( "FieldName", self.name.capitalize() )
+		str = str.replace( "FieldName", self.getFieldName() )
 
 		return str
 
@@ -273,7 +276,7 @@ void NewNode::setFieldName( const FieldNameValueType value )
 		if len(defaultValue) == 0 :
 			return defaultValue
 		else :
-			return "set%s( %s );" % (self.name.capitalize(), defaultValue )
+			return "set%s( %s );" % (self.getFieldName(), defaultValue )
 
 	def generateOptionalDefaultSetter( self ) :
 		return None
@@ -323,9 +326,9 @@ TYPEDEF_FIELDNAMEVALUETYPE
 	const bool hasFieldName() const;
 	//@}\n"""
 
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.getFieldName(), "ValueType" ) )
 		str = str.replace( "fieldName", self.name )
-		str = str.replace( "FieldName", self.name.capitalize() )
+		str = str.replace( "FieldName", self.getFieldName() )
 
 		return str
 
@@ -359,7 +362,7 @@ const bool NewNode::hasFieldName() const
 \n\n\n"""
 
 		str = str.replace( "NewNode", nodeName )
-		str = str.replace( "FieldName", self.name.capitalize() )
+		str = str.replace( "FieldName", self.getFieldName() )
 
 		return str
 
@@ -373,7 +376,7 @@ const bool NewNode::hasFieldName() const
 		if len(defaultValue) == 0 :
 			return defaultValue
 		else :
-			return "set%s( %s );" % (self.name.capitalize(), defaultValue )
+			return "set%s( %s );" % (self.getFieldName(), defaultValue )
 
 	def generateCompleteType( self ) :
 		return "OF%s" % self.type.getNormalizedName()
@@ -427,10 +430,10 @@ TYPEDEF_FIELDNAMEVALUETYPE
 			str = str.replace( " const FieldNameParameterType param,", "" )
 			str = str.replace( " const FieldNameParameterType param ", "" )
 
-		str = str.replace( "TYPEDEF_FIELDNAMEPARAMETERTYPE", self.keyType.generateTYPEDEF( self.name, "ParameterType" ) )
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEPARAMETERTYPE", self.keyType.generateTYPEDEF( self.getFieldName(), "ParameterType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.getFieldName(), "ValueType" ) )
 		str = str.replace( "fieldName", self.name )
-		str = str.replace( "FieldName", self.name.capitalize() )
+		str = str.replace( "FieldName", self.getFieldName() )
 
 		return str
 
@@ -464,7 +467,7 @@ void NewNode::eraseFieldName( const FieldNameParameterType param )
 			str = str.replace( "param", self.keyType.values.keys()[0] )
 
 		str = str.replace( "NewNode", nodeName )
-		str = str.replace( "FieldName", self.name.capitalize() )
+		str = str.replace( "FieldName", self.getFieldName() )
 
 		return str
 
@@ -477,7 +480,7 @@ void NewNode::eraseFieldName( const FieldNameParameterType param )
 		if len(defaultValue) == 0 :
 			return defaultValue
 		else :
-			return "set%s( %s );" % (self.name.capitalize(), defaultValue )
+			return "set%s( %s );" % (self.getFieldName(), defaultValue )
 
 	def generateCompleteType( self ) :
 		return "PAF%s" % self.type.getNormalizedName()

@@ -6,8 +6,6 @@
 #ifndef _VGD_NODE_SINGLETRANSFORMATION_HPP
 #define _VGD_NODE_SINGLETRANSFORMATION_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/field/Bool.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
@@ -51,7 +49,7 @@ struct VGD_API SingleTransformation : public vgd::node::SingleAttribute
 	/**
 	 * @brief Typedef for the \c composeTransformation value.
 	 */
-	typedef bool					ComposeTransformationValue;
+	typedef bool				ComposeTransformationValue;
 
 	/**
 	 * @brief Gets if composition with current matrix is enable or disable.
@@ -86,19 +84,19 @@ struct VGD_API SingleTransformation : public vgd::node::SingleAttribute
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
-	
+
 	/**
 	 * @brief Default constructor.
 	 */
 	SingleTransformation( const std::string nodeName );
 
-	void	setToDefaults( void );
-	
-	void	setOptionalsToDefaults();
-		
+	void setToDefaults( void );
+
+	void setOptionalsToDefaults();
+
 	//@}
 };
 

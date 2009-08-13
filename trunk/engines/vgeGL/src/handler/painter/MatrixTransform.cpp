@@ -59,10 +59,10 @@ void MatrixTransform::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNo
 	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
 
 	assert( dynamic_cast< vgd::node::MatrixTransform* >(pNode) != 0 );
-	vgd::node::MatrixTransform *pCastedNode = static_cast< vgd::node::MatrixTransform* >(pNode);
-	
+	vgd::node::MatrixTransform *pCastedNode = dynamic_cast< vgd::node::MatrixTransform* >(pNode);
+
 	vge::handler::MatrixTransform::apply( pEngine, pCastedNode );
-	
+
 	paint( pGLEngine, pCastedNode );
 }
 
@@ -82,7 +82,7 @@ void MatrixTransform::setToDefaults()
 
 
 
-void MatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node::MatrixTransform *pNode )
+void MatrixTransform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::MatrixTransform *pNode )
 {
 	// GEOMETRICAL MATRIX
 	// Get the transformation.

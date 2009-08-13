@@ -234,10 +234,10 @@ def generateNodeHeader( fd, node ) :
 	fd.write( " */\n" )
 
 	# begin class
-	fd.write( "struct VGD_API %s : public " % node.name )
+	fd.write( "struct VGD_API %s : " % node.name )
 
 	for i, base in enumerate(node.inherits) :
-		fd.write( "vgd::node::%s" % base )
+		fd.write( "public vgd::node::%s" % base )
 		if i != len(node.inherits)-1 :
 			fd.write( ", " )
 
@@ -268,7 +268,7 @@ def generateNodeHeader( fd, node ) :
 	static const std::string getFFieldName( void );\n"""
 
 		str = str.replace( "fieldName", field.name )
-		str = str.replace( "FieldName", field.name.capitalize() )
+		str = str.replace( "FieldName", field.getFieldName() )
 		fd.write( str )
 		if i != len(node.fields)-1 :
 			fd.write( "\n" )
@@ -332,20 +332,20 @@ def generateNodeImpl( fd, node ) :
 	str = """NodeName::NodeName( const std::string nodeName ) :\n"""
 	fd.write( str.replace( "NodeName", node.name ) )
 
-	for i, base in enumerate(node.inherits) :
-		if i == 0 :
+	for i, base in enumerate(node.inherits):
+		if i == 0:
 			fd.write( "\tvgd::node::%s( nodeName )" % base )
-		else :
+		else:
 			fd.write( "\tvgd::node::%s()" % base )
-		if i != len(node.inherits)-1 :
-			fd.write( ", " )
+		if i != len(node.inherits)-1:
+			fd.write( ",\n" )
 
 	fd.write("""\n{
 	// Adds field(s)\n""")
 
 	for field in node.fields.itervalues() :
 		str = "\taddField( new FFieldNameType(getFFieldName()) );\n"
-		fd.write( str.replace( "FieldName", field.name.capitalize() ) )
+		fd.write( str.replace( "FieldName", field.getFieldName() ) )
 
 	fd.write("""\n	// Sets link(s)
 	link( getDFNode() );
@@ -391,12 +391,12 @@ def generateNodeImpl( fd, node ) :
 	for i, field in enumerate(node.fields.itervalues()) :
 		str = """const std::string NewNode::getFFieldName( void )
 {
-	return \"f_fieldname\";
+	return \"f_fieldName\";
 }\n\n\n\n"""
 
 		str = str.replace( "NewNode", node.name )
-		str = str.replace( "FieldName", field.name.capitalize() )
-		str = str.replace( "fieldname", field.name.lower() )
+		str = str.replace( "FieldName", field.getFieldName() )
+		str = str.replace( "fieldName", field.name )
 		fd.write( str )
 
 	# Code implementation

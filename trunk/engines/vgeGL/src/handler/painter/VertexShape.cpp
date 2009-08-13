@@ -114,7 +114,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 						vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
 						if ( texUnitState )
 						{
-							texUnitState->setTexCoordDim( dimTexCoord );
+							texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
 						}
 						// else nothing to do
 					}

@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004, 2006 Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Clément Forest
 
 #include "vge/rc/Manager.hpp"
 
@@ -135,6 +136,7 @@ const bool Manager::remove( vgd::node::Node *pNode )
 
 void Manager::clear()
 {
+	// The following code is equivalent to m_resources.clear();
 	while(!m_resources.empty())
 	{
 		m_resources.erase(m_resources.begin());

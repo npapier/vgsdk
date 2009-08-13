@@ -31,10 +31,10 @@ META_HANDLER_CPP( SurroundScale );
 const Handler::TargetVector SurroundScale::getTargets()	const
 {
 	TargetVector targets;
-	
+
 	targets.push_back( vgd::node::SurroundScale::getClassIndexStatic() );
-	
-	return ( targets );
+
+	return targets;
 }
 
 
@@ -42,8 +42,8 @@ const Handler::TargetVector SurroundScale::getTargets()	const
 void SurroundScale::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 {
 	assert( dynamic_cast< vgd::node::SurroundScale* >(pNode) != 0 );
-	vgd::node::SurroundScale *pCastedNode = static_cast< vgd::node::SurroundScale* >(pNode);
-	
+	vgd::node::SurroundScale *pCastedNode = dynamic_cast< vgd::node::SurroundScale* >(pNode);
+
 	vge::handler::SurroundScale::apply( pEngine, pCastedNode );	
 }
 
@@ -63,7 +63,7 @@ void SurroundScale::setToDefaults()
 
 
 } // namespace cbb
-	
+
 } // namespace handler
 
 } // namespace vge

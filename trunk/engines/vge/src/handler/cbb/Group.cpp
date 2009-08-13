@@ -57,7 +57,7 @@ void Group::unapply( vge::engine::Engine *, vgd::node::Node *pNode )
 	// All children have already been traversed. Update now the bounding box of this group.
 	assert( dynamic_cast< vgd::node::Group* >(pNode) != 0 );
 	vgd::node::Group *pCastedNode = static_cast< vgd::node::Group* >(pNode);
-	
+
 	vgm::MatrixR dummy;
 	pCastedNode->computeBoundingBox( dummy /* not used */);
 }
@@ -71,7 +71,7 @@ void Group::setToDefaults()
 
 
 } // namespace cbb
-	
+
 } // namespace handler
 
 } // namespace vge

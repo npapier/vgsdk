@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,8 +7,7 @@
 #define _VGD_NODE_PROJECTIONTRANSFORMATION_HPP
 
 #include "vgd/vgd.hpp"
-
-#include "vgd/node/SingleTransformation.hpp"
+//#include "vgd/node/SingleTransformation.hpp"
 
 
 
@@ -25,7 +24,7 @@ namespace node
  * 
  * @ingroup g_abstractNodes
  */
-struct VGD_API ProjectionTransformation : public SingleTransformation
+struct VGD_API ProjectionTransformation // : public virtual SingleTransformation
 {
 	//META_NODE_HPP( ProjectionTransformation ); abstract class.
 
@@ -33,18 +32,18 @@ struct VGD_API ProjectionTransformation : public SingleTransformation
 
 protected:
 	/**
-	 * @name Constructor.
-	 */
+	  * @name Constructor
+	  */
 	//@{
 
 	/**
-	 * @brief Default constructor.
-	 */
-	ProjectionTransformation( const std::string nodeName );
+	  * @brief Default constructor.
+	  */
+	ProjectionTransformation();
 
-	void	setToDefaults( void );
-	
-	void	setOptionalsToDefaults();
+	void setToDefaults( void );
+
+	void setOptionalsToDefaults();
 
 	//@}
 };

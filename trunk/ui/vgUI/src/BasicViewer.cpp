@@ -65,7 +65,7 @@ void BasicViewer::privateResetSceneGraph()
 	m_camera			= vgd::node::Camera::create(			"CAMERA"				);
 	m_viewTransform		= vgd::node::MatrixTransform::create(	"VIEW_TRANSFORM"		);
 	m_camera->setComposeTransformation( false );
-	m_viewTransform->setComposeTransformation( false );
+	m_viewTransform->setComposeTransformation( true /*false*/ );
 
 	// Constructs scene graph
 	getRoot()->addChild( m_setup );
@@ -99,6 +99,7 @@ void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 
 	// Initializes VIEWTRANSFORM
 	m_viewTransform->setMatrix( vgm::MatrixR::getIdentity() );
+	m_camera->setLookAt( vgm::MatrixR::getIdentity() );
 
 	// Compute bounding box and some informations
 	vgm::Box3f	box;
@@ -135,7 +136,8 @@ void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 	}
 
 	// Setup the scene position.
-	m_viewTransform->setMatrix( matrix );
+	// m_viewTransform->setMatrix( matrix );
+	m_camera->setLookAt( matrix );
 }
 
 
@@ -294,8 +296,8 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			lightSwitcher->addChild( pointLights );
 			lightSwitcher->addChild( spotLights2 );
 
-			// Inserts the default lights before the scene transform.
-			const int32	insertIndex = m_setup->findChild( m_viewTransform );
+			// Inserts the default lights before the camera node.
+			const int32	insertIndex = m_setup->findChild( m_camera );
 			getSetup()->insertChild( lightSwitcher, insertIndex );
 
 			existingNode = lightSwitcher;
@@ -506,7 +508,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 			assert( false && "Unknwon camera type." );
 	}
 
-	m_camera->setMatrix( matrix );
+	m_camera->setProjection( matrix );
 
 	m_camera->setViewport( vgm::Rectangle2i( 0, 0, size[0], size[1] ) );
 }

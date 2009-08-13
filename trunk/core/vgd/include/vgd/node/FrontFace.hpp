@@ -74,7 +74,7 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c orientation.
+	 * @brief Type definition of the value contained by field named \c Orientation.
 	 */
 	struct OrientationValueType : public vgd::field::Enum
 	{

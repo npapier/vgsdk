@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -19,30 +19,52 @@ namespace handler
 
 
 
-void Camera::apply( vge::engine::Engine *pEngine, vgd::node::Camera *pNode )
+void Camera::apply( vge::engine::Engine *engine, vgd::node::Camera *node )
+{
+	applyMatrix( engine, node );
+	applyLookAt( engine, node );
+}
+
+
+
+void Camera::unapply( vge::engine::Engine *engine, vgd::node::Camera *node )
+{
+	//unapplyMatrix( engine, node );
+	//unapplyLookAt( engine, node );
+}
+
+
+
+void Camera::applyMatrix( vge::engine::Engine *engine, vgd::node::Camera *node )
 {
 	// PROJECTION MATRIX
-	// Get the transformation.
-	const vgm::MatrixR& matrix	( pNode->getMatrix() );
+	// Gets the transformation
+	const vgm::MatrixR& matrix( node->getProjection() );
 	
-	if ( pNode->getComposeTransformation() )
+	if ( node->getComposeTransformation() )
 	{
-		// Compose and update engine.
-		vgm::MatrixR& 		current(	pEngine->getProjectionMatrix().getTop() );
-		
+		// Composes and updates engine
+		vgm::MatrixR& 		current(	engine->getProjectionMatrix().getTop() );
+
 		current		= matrix * current;
 	}
 	else
 	{
-		// Update engine.
-		pEngine->getProjectionMatrix().setTop( matrix );
+		// Updates engine
+		engine->getProjectionMatrix().setTop( matrix );
 	}
 }
 
 
 
-void Camera::unapply( vge::engine::Engine *, vgd::node::Camera * )
+void Camera::applyLookAt( vge::engine::Engine *engine, vgd::node::Camera *node )
 {
+	// GEOMETRICAL MATRIX
+	// Gets the transformation
+	const vgm::MatrixR& matrix( node->getLookAt() );
+
+	// Updates engine
+	engine->getGeometricalMatrix().setTop( matrix );
 }
 
 

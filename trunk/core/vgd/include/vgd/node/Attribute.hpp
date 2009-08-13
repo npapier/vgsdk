@@ -6,8 +6,6 @@
 #ifndef _VGD_NODE_ATTRIBUTE_HPP
 #define _VGD_NODE_ATTRIBUTE_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/node/Node.hpp"
 
 
@@ -33,7 +31,7 @@ struct VGD_API Attribute : public vgd::node::Node
 
 protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor
 	 */
 	//@{
 
@@ -41,10 +39,10 @@ protected:
 	 * @brief Default constructor.
 	 */
 	Attribute( const std::string nodeName );
-	
-	void	setToDefaults( void );
-	
-	void	setOptionalsToDefaults();	
+
+	void setToDefaults( void );
+
+	void setOptionalsToDefaults();
 
 	//@}
 };

@@ -47,11 +47,13 @@ vgd::Shp< Camera > Camera::createWhole( const std::string nodeName )
 
 
 Camera::Camera( const std::string nodeName ) :
-	vgd::node::ProjectionTransformation( nodeName )
+	vgd::node::GeometricalTransformation( nodeName ),
+	vgd::node::ProjectionTransformation()
 {
 	// Adds field(s)
 	addField( new FScissorType(getFScissor()) );
-	addField( new FMatrixType(getFMatrix()) );
+	addField( new FLookAtType(getFLookAt()) );
+	addField( new FProjectionType(getFProjection()) );
 	addField( new FViewportType(getFViewport()) );
 
 	// Sets link(s)
@@ -62,14 +64,17 @@ Camera::Camera( const std::string nodeName ) :
 
 void Camera::setToDefaults( void )
 {
+	GeometricalTransformation::setToDefaults();
 	ProjectionTransformation::setToDefaults();
-	setMatrix( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
+	setLookAt( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
+	setProjection( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 }
 
 
 
 void Camera::setOptionalsToDefaults()
 {
+	GeometricalTransformation::setOptionalsToDefaults();
 	ProjectionTransformation::setOptionalsToDefaults();
 	
 	setViewport( vgm::Rectangle2i(0, 0, 1600, 1200) );
@@ -105,17 +110,32 @@ const bool Camera::hasScissor() const
 
 
 
-// Matrix
-const Camera::MatrixValueType Camera::getMatrix() const
+// LookAt
+const Camera::LookAtValueType Camera::getLookAt() const
 {
-	return getFieldRO<FMatrixType>(getFMatrix())->getValue();
+	return getFieldRO<FLookAtType>(getFLookAt())->getValue();
 }
 
 
 
-void Camera::setMatrix( const MatrixValueType value )
+void Camera::setLookAt( const LookAtValueType value )
 {
-	getFieldRW<FMatrixType>(getFMatrix())->setValue( value );
+	getFieldRW<FLookAtType>(getFLookAt())->setValue( value );
+}
+
+
+
+// Projection
+const Camera::ProjectionValueType Camera::getProjection() const
+{
+	return getFieldRO<FProjectionType>(getFProjection())->getValue();
+}
+
+
+
+void Camera::setProjection( const ProjectionValueType value )
+{
+	getFieldRW<FProjectionType>(getFProjection())->setValue( value );
 }
 
 
@@ -156,9 +176,16 @@ const std::string Camera::getFScissor( void )
 
 
 
-const std::string Camera::getFMatrix( void )
+const std::string Camera::getFLookAt( void )
 {
-	return "f_matrix";
+	return "f_lookAt";
+}
+
+
+
+const std::string Camera::getFProjection( void )
+{
+	return "f_projection";
 }
 
 
@@ -194,7 +221,18 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 
 
 
+// Matrix
+const Camera::MatrixValueType Camera::getMatrix() const
+{
+	return getFieldRO<FMatrixType>(getFProjection())->getValue();
+}
 
+
+
+void Camera::setMatrix( const MatrixValueType value )
+{
+	getFieldRW<FMatrixType>(getFProjection())->setValue( value );
+}
 IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
 
 
@@ -206,3 +244,4 @@ const vgd::basic::RegisterNode<Camera> Camera::m_registrationInstance;
 } // namespace node
 
 } // namespace vgd
+

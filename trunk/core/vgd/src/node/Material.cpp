@@ -373,10 +373,6 @@ void Material::eraseColor( const ColorParameterType param )
 		assert( false );
 	}
 }
-
-
-
-
 IMPLEMENT_INDEXABLE_CLASS_CPP( , Material );
 
 

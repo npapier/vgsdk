@@ -7,16 +7,22 @@
 
 	<nodes>
 	<node	name = "Camera"
-			inherits="ProjectionTransformation">
+			inherits="GeometricalTransformation ProjectionTransformation">
 		<doxygen>
-			<docBrief>Camera node used to set the projection matrix, viewport and scissor box</docBrief>
-			<doc>Sets up the projection with an user defined matrix for the viewing frustum(into the world coordinate system). </doc>
+			<docBrief>Camera node used to set the projection matrix, viewport and scissor box. Camera position and orientation could be specified too.</docBrief>
+			<doc>Sets up the projection with an user defined matrix for the viewing frustum (into the world coordinate system). </doc>
+			<doc>Sets up the camera position and orientation with 4x4 matrix from lookAt field.</doc>
 			<doc>Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting. </doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
 			<ingroup>g_transformationNodes</ingroup>
 		</doxygen>
-		<sf name="matrix" doc="Determines the projection matrix.">
+		<!-- projection and lookAt renames into intrinsics and extrinsics -->
+		<sf name="projection" doc="Determines the projection matrix.">
+			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
+		</sf>
+		<sf name="lookAt"
+			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera.\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
 		<of name="viewport" doc="Determines the viewport.">

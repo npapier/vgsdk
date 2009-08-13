@@ -34,11 +34,11 @@ META_HANDLER_CPP( Transform );
 const vge::service::List Transform::getServices() const
 {
 	vge::service::List list;
-	
+
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::Painter ) );
 	list.push_back( vgd::Shp<vge::service::Service>( new vge::service::ProcessEvent) );
 
-	return ( list );
+	return list;
 }
 
 
@@ -49,7 +49,7 @@ const vge::handler::Handler::TargetVector Transform::getTargets() const
 
 	targets.push_back( vgd::node::Transform::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
@@ -60,8 +60,8 @@ void Transform::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
 
 	assert( dynamic_cast< vgd::node::Transform* >(pNode) != 0 );
-	vgd::node::Transform *pCastedNode = static_cast< vgd::node::Transform* >(pNode);
-	
+	vgd::node::Transform *pCastedNode = dynamic_cast< vgd::node::Transform* >(pNode);
+
 	vge::handler::Transform::apply( pEngine, pCastedNode );
 
 	paint( pGLEngine, pCastedNode );
@@ -87,19 +87,19 @@ void Transform::setToDefaults()
 void Transform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Transform *pNode )
 {
 	// GEOMETRICAL MATRIX
-	// Get the transformation.
+	// Gets the transformation
 	vgm::MatrixR& 		current(	
 		pGLEngine->getGeometricalMatrix().getTop() 
 		);
 
 	glMatrixMode( GL_MODELVIEW );
 
-	// Update OpenGL.
+	// Updates OpenGL
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-	
-	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();		
-	
+
+	// Validates node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
+
 // OpenGL version
 //	glMatrixMode( GL_MODELVIEW );
 //	if ( !pTransform->getComposeMatrix() )

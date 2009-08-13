@@ -31,10 +31,10 @@ META_HANDLER_CPP( MatrixTransform );
 const Handler::TargetVector MatrixTransform::getTargets()	const
 {
 	TargetVector targets;
-	
+
 	targets.push_back( vgd::node::MatrixTransform::getClassIndexStatic() );
-	
-	return ( targets );
+
+	return targets;
 }
 
 
@@ -42,9 +42,9 @@ const Handler::TargetVector MatrixTransform::getTargets()	const
 void MatrixTransform::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 {
 	assert( dynamic_cast< vgd::node::MatrixTransform* >(pNode) != 0 );
-	vgd::node::MatrixTransform *pCastedNode = static_cast< vgd::node::MatrixTransform* >(pNode);
-	
-	vge::handler::MatrixTransform::apply( pEngine, pCastedNode );	
+	vgd::node::MatrixTransform *pCastedNode = dynamic_cast< vgd::node::MatrixTransform* >(pNode);
+
+	vge::handler::MatrixTransform::apply( pEngine, pCastedNode );
 }
 
 
@@ -63,7 +63,7 @@ void MatrixTransform::setToDefaults()
 
 
 } // namespace cbb
-	
+
 } // namespace handler
 
 } // namespace vge

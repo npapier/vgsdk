@@ -255,7 +255,7 @@ def handleNode( domNode ) :
 		pathfilename = getText( domIncludeHpp.childNodes )
 		if os.path.exists(pathfilename):
 			with open( os.path.join(pathfilename), 'r' ) as file:
-				node.addCodeDeclaration( file.read() + '\n\n\n\n' )
+				node.addCodeDeclaration( file.read() )
 		else:
 			print ('WARNING: %s in <includehpp> refers to a missing path !' % pathfilename )
 
@@ -268,7 +268,7 @@ def handleNode( domNode ) :
 		pathfilename = getText( domIncludeCpp.childNodes )
 		if os.path.exists(pathfilename):
 			with open( os.path.join(pathfilename), 'r' ) as file:
-				node.addCodeImplementation( file.read() + '\n\n\n\n' )
+				node.addCodeImplementation( file.read() )
 		else:
 			print ('WARNING: %s in <includecpp> refers to a missing path !' % pathfilename )
 
