@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,6 +6,7 @@
 #ifndef _VGD_BASIC_IIMAGE_HPP
 #define _VGD_BASIC_IIMAGE_HPP
 
+#include <string>
 #include <utility>
 #include <vgm/Vector.hpp>
 
@@ -30,6 +31,11 @@ namespace basic
  */
 struct VGD_API IImage
 {
+private:
+	static std::string m_formatToString[];		///< array used by toString( Format) method. format is the index and value is string equivalent to format. 
+	static std::string m_typeToString[];		///< array used by toString(Type) method
+
+public:
 	/**
 	 * @brief Format of image.
 	 */
@@ -549,6 +555,25 @@ struct VGD_API IImage
 	 * Note that the given offset is valid, if and only if 0 <= offset < computeMaximumOffset()
 	 */
 	const bool isOffsetValid( const uint32 offset ) const;
+
+	//@}
+
+
+
+	/**
+	 * @name toString methods
+	 */
+	//@{
+
+	/**
+	 * @brief Converts to string the given format
+	 */
+	static const std::string& toString( const Format format );
+
+	/**
+	 * @brief Converts to string the given type
+	 */
+	static const std::string& toString( const Type type );
 
 	//@}
 };

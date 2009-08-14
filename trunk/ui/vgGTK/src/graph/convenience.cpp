@@ -17,6 +17,7 @@
 
 #include <vgd/field/Bool.hpp>
 #include <vgd/field/Enum.hpp>
+#include <vgd/field/Image.hpp>
 #include <vgd/field/Integer.hpp>
 #include <vgd/field/Float.hpp>
 #include <vgd/field/Matrix.hpp>
@@ -271,6 +272,7 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 
 			typedef mpl::list<
 				// vgd types
+				vgd::Shp< vgd::basic::IImage >,
 				vgd::Shp< vgd::node::Group >,
 				vgd::Shp< vgd::node::Node >
 			> vgd_t;

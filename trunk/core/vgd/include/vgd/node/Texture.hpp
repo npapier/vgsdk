@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -157,22 +157,22 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	/**
 	 * @brief Typedef for the \c iimages field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< IImagesParameterType, IImagesValueType > FIImagesType;
+	typedef vgd::field::TPairAssociativeField< int /*IImagesParameterType*/, IImagesValueType > FIImagesType;
 
 	/**
 	 * @brief Gets the iimages value.
 	 */
-	bool			getIImages( const IImagesParameterType param, IImagesValueType& value ) const;
+	bool			getIImages( const int /*IImagesParameterType*/ param, IImagesValueType& value ) const;
 
 	/**
 	 * @brief Sets the iimages value.
 	 */
-	void 			setIImages( const IImagesParameterType param, IImagesValueType value );
+	void 			setIImages( const int /*IImagesParameterType*/ param, IImagesValueType value );
 	
 	/**
 	 * @brief Erase the iimages value.
 	 */
-	void 			eraseIImages( const IImagesParameterType param );
+	void 			eraseIImages( const int /*IImagesParameterType*/ param );
 	//@}
 
 

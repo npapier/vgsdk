@@ -21,7 +21,7 @@ namespace basic
 namespace
 {
 	boost::recursive_mutex globalOpenILMutex; //< a mutex to protect accesses to OpenIL library (OpenIL is not reentrant).
-	
+
 /**
  * @brief Global startup and shutdown of OpenIL library
  */

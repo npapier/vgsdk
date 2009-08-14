@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -555,9 +555,48 @@ const bool IImage::isOffsetValid( const uint32 offset ) const
 {
 	const bool retVal =	(0 <= offset) &&
 						(offset < computeMaximumOffset());
-	
+
 	return retVal;
 }
+
+
+
+const std::string& IImage::toString( const Format format )
+{
+	return m_formatToString[format];
+}
+
+
+
+const std::string& IImage::toString( const Type type )
+{
+	return m_typeToString[type];
+}
+
+
+
+std::string IImage::m_formatToString[] = {
+	"NO_FORMAT",
+	"RGB",
+	"RGBA",
+	"BGR",
+	"BGRA",
+	"LUMINANCE",
+	"LUMINANCE_ALPHA",
+	"COLOR_INDEX" };
+
+
+
+std::string IImage::m_typeToString[] = {
+	"NO_TYPE",
+	"UINT8",
+	"INT8",
+	"UINT16",
+	"INT16",
+	"UINT32",
+	"INT32",
+	"FLOAT",
+	"DOUBLE" };
 
 
 
