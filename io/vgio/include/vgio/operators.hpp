@@ -15,6 +15,7 @@
 #include <vgm/Plane.hpp>
 #include <vgm/Vector.hpp>
 
+#include <vgd/basic/IImage.hpp>
 #include <vgd/field/Enum.hpp>
 #include <vgd/field/TMultiField.hpp>
 #include <vgd/field/TOptionalField.hpp>
@@ -321,6 +322,13 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::no
 /**
  * @brief	Writes into an output stream the given node.
  */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::basic::IImage > & iimage );
+
+
+
+/**
+ * @brief	Writes into an output stream the given node.
+ */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node > & node );
 
 
@@ -410,6 +418,13 @@ std::ostream & operator << ( std::ostream & os, const vgm::Vector< T, N > & vect
  * @brief	Writes into an output stream the given plane.
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgm::Plane & plane );
+
+
+
+/**
+ * @brief	Writes into an output stream the given image.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::basic::IImage & iimage );
 
 
 

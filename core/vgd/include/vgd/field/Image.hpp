@@ -6,8 +6,6 @@
 #ifndef _VGD_FIELD_IMAGE_HPP
 #define _VGD_FIELD_IMAGE_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/Shp.hpp"
 #include "vgd/basic/IImage.hpp"
 #include "vgd/basic/Image.hpp"
@@ -21,7 +19,7 @@
 
 namespace vgd
 {
-	
+
 namespace field
 {
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -31,7 +31,7 @@ Texture::Texture( const std::string nodeName ) :
 	addField( new FFilterType(getFFilter()) );
 	addField( new FMipmapType(getFMipmap()) );
 	addField( new FBorderType(getFBorder()) );
-	addField( new FBorderColorType(getFBorderColor()) );	
+	addField( new FBorderColorType(getFBorderColor()) );
 	addField( new FEnvColorType(getFEnvColor()) );
 
 	addField( new FFunctionType(getFFunction()) );
@@ -59,7 +59,7 @@ Texture::Texture( const std::string nodeName ) :
 	link( getFCombine(),	getDFEnvironmentParameters() );
 	link( getFSource(),		getDFEnvironmentParameters() );
 	link( getFOperand(),	getDFEnvironmentParameters() );
-	link( getFScale(),		getDFEnvironmentParameters() );									
+	link( getFScale(),		getDFEnvironmentParameters() );
 
 	link( getDFNode() );
 }
@@ -76,7 +76,7 @@ void Texture::setToDefaults( void )
 void Texture::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
-	
+
 	setWrap( WRAP_S,	DEFAULT_WRAP );
 	setWrap( WRAP_T,	DEFAULT_WRAP );
 	setWrap( WRAP_R,	DEFAULT_WRAP );
@@ -85,10 +85,10 @@ void Texture::setOptionalsToDefaults()
 	setFilter( MAG_FILTER, DEFAULT_FILTER );
 
 	setMipmap( true );
-	
+
 	setBorder( false );
 	setBorderColor( vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
-	
+
 	setEnvColor( vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
 
 	setFunction( DEFAULT_FUN );
@@ -97,25 +97,25 @@ void Texture::setOptionalsToDefaults()
 
 
 // IIMAGES
-bool Texture::getIImages( const IImagesParameterType param, IImagesValueType& value ) const
+bool Texture::getIImages( const int /*IImagesParameterType*/ param, IImagesValueType& value ) const
 {
 	return ( 
-		vgd::field::getParameterValue< IImagesParameterType, IImagesValueType >( this, getFIImages(), param, value )
+		vgd::field::getParameterValue< int /*IImagesParameterType*/, IImagesValueType >( this, getFIImages(), param, value )
 		);
 }
 
 
 
-void Texture::setIImages( const IImagesParameterType param, IImagesValueType value )
+void Texture::setIImages( const int /*IImagesParameterType*/ param, IImagesValueType value )
 {
-	vgd::field::setParameterValue< IImagesParameterType, IImagesValueType >( this, getFIImages(), param, value );
+	vgd::field::setParameterValue< int /*IImagesParameterType*/, IImagesValueType >( this, getFIImages(), param, value );
 }
 
 
 
-void Texture::eraseIImages( const IImagesParameterType param )
+void Texture::eraseIImages( const int /*IImagesParameterType*/ param )
 {
-	vgd::field::eraseParameterValue< IImagesParameterType, IImagesValueType >( this, getFIImages(), param );
+	vgd::field::eraseParameterValue< int /*IImagesParameterType*/, IImagesValueType >( this, getFIImages(), param );
 }
 
 

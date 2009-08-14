@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -248,6 +248,15 @@ std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group
 
 
 
+std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::basic::IImage > & iimage )
+{
+	os << *iimage;
+
+	return os;
+}
+
+
+
 std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node > & node )
 {
 	os << node->getName();
@@ -386,6 +395,18 @@ std::ostream & operator << ( std::ostream & os, const vgm::Plane & plane )
 	const float			distance	= plane.getDistanceFromOrigin();
 
 	os << "normal: " << normal << std::endl << "distance: " << distance;
+
+	return os;
+}
+
+
+
+std::ostream & operator << ( std::ostream & os, const vgd::basic::IImage & iimage )
+{
+	os << "(" << iimage.width() << "x" << iimage.height() << "x" << iimage.depth() << ", ";
+	os << vgd::basic::IImage::toString(iimage.format()) << ", ";
+	os << vgd::basic::IImage::toString(iimage.type());
+	os << ")" << std::endl;
 
 	return os;
 }
