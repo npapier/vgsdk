@@ -31,7 +31,7 @@ namespace vgeGL
 
 namespace vgeGL
 {
-	
+
 namespace handler
 {
 
@@ -49,12 +49,12 @@ struct VGEGL_API DrawStyle : public vge::handler::painter::SingleAttribute
 {
 	META_HANDLER_HPP( DrawStyle  );
 
-	const TargetVector		getTargets()	const;
+	const TargetVector getTargets() const;
 
-	void	apply			( vge::engine::Engine*, vgd::node::Node* );
-	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
-	
-	void	setToDefaults	();
+	void apply	( vge::engine::Engine*, vgd::node::Node* );
+	void unapply( vge::engine::Engine*, vgd::node::Node* );
+
+	void setToDefaults();
 
 	/**
 	 * @name Internal helpers

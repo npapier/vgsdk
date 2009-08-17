@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -32,19 +32,60 @@ META_HANDLER_CPP( DrawStyle );
 const vge::handler::Handler::TargetVector DrawStyle::getTargets() const
 {
 	TargetVector targets;
-	
-	targets.reserve( 1 );
+
 	targets.push_back( vgd::node::DrawStyle::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
 
-void DrawStyle::apply( vge::engine::Engine *, vgd::node::Node *pNode )
+void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();
+	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+
+	assert( dynamic_cast< vgd::node::DrawStyle* >(node) != 0 );
+	vgd::node::DrawStyle *drawStyle = static_cast< vgd::node::DrawStyle* >(node);
+
+	// *** DRAWSTYLE.shape ***
+	using vgd::node::DrawStyle;
+
+	DrawStyle::ShapeValueType shapeValue;
+	const bool bDefined = drawStyle->getShape( shapeValue );
+
+	if ( bDefined && glEngine->isGLSLEnabled() )
+	{
+		// Retrieves GLSL state
+		using vgeGL::engine::GLSLState;
+		GLSLState& state = glEngine->getGLSLState();
+
+		switch ( shapeValue )
+		{
+			case DrawStyle::NONE:
+			case DrawStyle::POINT:
+			case DrawStyle::FLAT:
+			case DrawStyle::WIREFRAME:
+			case DrawStyle::HIDDEN_LINE:
+			case DrawStyle::FLAT_HIDDEN_LINE:
+				// Updates GLSL state
+				state.setEnabled( GLSLState::FLAT_SHADING );
+				break;
+
+			case DrawStyle::SMOOTH:
+			case DrawStyle::SMOOTH_HIDDEN_LINE:
+			case DrawStyle::NEIGHBOUR:
+				// Updates GLSL state
+				state.setEnabled( GLSLState::FLAT_SHADING, false );
+				break;
+
+			default:
+				assert( false && "Unknown DrawStyle.shape value." );
+		}
+	}
+
+	// Validates node
+	node->getDirtyFlag( node->getDFNode() )->validate();
 }
 
 
@@ -63,73 +104,75 @@ void DrawStyle::setToDefaults()
  * @todo Splits this method into smaller one
  */
 void DrawStyle::paintVertexShapeWithShapeProperty(
-	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pVertexShape,
+	vgeGL::engine::Engine *glEngine, vgd::node::VertexShape *pVertexShape,
 	vgeGL::handler::painter::VertexShape *pVertexShapeHandler )
 {
-	// *** DRAWSTYLE.shape ***
-	vgd::node::DrawStyle::ShapeValueType shapeValue;
+	using vgd::node::DrawStyle;
 
-	const bool bDefined = pGLEngine->getStateStackTop<
+	// *** DRAWSTYLE.shape ***
+	DrawStyle::ShapeValueType shapeValue;
+
+	const bool bDefined = glEngine->getStateStackTop<
 						vgd::node::DrawStyle,
-						vgd::node::DrawStyle::ShapeParameterType,
-						vgd::node::DrawStyle::ShapeValueType >(	vgd::node::DrawStyle::getFShape(),
-																vgd::node::DrawStyle::SHAPE,
-																shapeValue );
+						DrawStyle::ShapeParameterType,
+						DrawStyle::ShapeValueType >(	DrawStyle::getFShape(),
+														DrawStyle::SHAPE,
+														shapeValue );
 	assert( bDefined );
 
 	switch ( shapeValue )
 	{
-		case vgd::node::DrawStyle::NONE:
+		case DrawStyle::NONE:
 			break;
 
-		case vgd::node::DrawStyle::POINT:
+		case DrawStyle::POINT:
 			///@todo FIXME OPTME
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
 
 			glPointSize( 4.0 );
 			glPolygonMode( GL_FRONT_AND_BACK, GL_POINT );
 
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 
 			///@todo FIXME OPTME
 			glPopAttrib();
 			break;
 
-		case vgd::node::DrawStyle::FLAT:
+		case DrawStyle::FLAT:
 			///@todo FIXME OPTME
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
 
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			glShadeModel(GL_FLAT);
 
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 			
 			///@todo FIXME OPTME
-			glPopAttrib();			
+			glPopAttrib();
 			break;
 			
 		// see below for case SMOOTH:
 
-		case vgd::node::DrawStyle::WIREFRAME:
+		case DrawStyle::WIREFRAME:
 			///@todo FIXME OPTME
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
 		
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 			
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 			
 			///@todo FIXME OPTME
 			glPopAttrib();
 			break;
 
-		case vgd::node::DrawStyle::HIDDEN_LINE:
+		case DrawStyle::HIDDEN_LINE:
 		{
 			///@todo FIXME OPTME
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
 	
 			//
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 
 			//
 			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -144,7 +187,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
 
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 
 			glDisable(GL_POLYGON_OFFSET_FILL);
 			
@@ -153,7 +196,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			break;
 		}
 
-		case vgd::node::DrawStyle::FLAT_HIDDEN_LINE:
+		case DrawStyle::FLAT_HIDDEN_LINE:
 		{
 			///@todo FIXME OPTME
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -162,14 +205,14 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
-			float vMat[4];			
+			float vMat[4];
 			glGetFloatv( GL_COLOR_CLEAR_VALUE, vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
 			
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 			
 			glPopAttrib();
 			
@@ -179,7 +222,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glEnable( GL_POLYGON_OFFSET_FILL );
 			glPolygonOffset( 1.0, 1.0 );
 
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 			
 			glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -188,7 +231,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			break;
 		}
 
-		case vgd::node::DrawStyle::SMOOTH_HIDDEN_LINE:
+		case DrawStyle::SMOOTH_HIDDEN_LINE:
 		{
 			///@todo FIXME OPTME
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -204,7 +247,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
 			
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 			
 			glPopAttrib();
 			
@@ -214,7 +257,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glEnable( GL_POLYGON_OFFSET_FILL );
 			glPolygonOffset( 1.0, 1.0 );
 
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 			
 			glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -223,8 +266,8 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			break;
 		}
 
-		case vgd::node::DrawStyle::NEIGHBOUR: ///@todo support Neighbour option
-		case vgd::node::DrawStyle::SMOOTH:
+		case DrawStyle::NEIGHBOUR: ///@todo support Neighbour option
+		case DrawStyle::SMOOTH:
 		
 			///@todo FIXME OPTME
 			//glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -261,7 +304,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 				bRestoreShadeModel = false;
 			}
 
-			pVertexShapeHandler->paintMethodChooser( pGLEngine, pVertexShape );
+			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
 			
 			//
 			if ( bRestoreShadeModel )
@@ -286,13 +329,13 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 
 
 
-void DrawStyle::paintVertexShapeNormals(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pVertexShape,
+void DrawStyle::paintVertexShapeNormals(	vgeGL::engine::Engine *glEngine, vgd::node::VertexShape *pVertexShape,
 											vgeGL::handler::painter::VertexShape *pVertexShapeHandler )
 {
 	// *** DRAWSTYLE.normalLength ***
 	vgd::node::DrawStyle::NormalLengthValueType	value;
 
-	const bool bDefined = pGLEngine->getStateStackTop< 
+	const bool bDefined = glEngine->getStateStackTop< 
 						vgd::node::DrawStyle, 
 						vgd::node::DrawStyle::NormalLengthParameterType,
 						vgd::node::DrawStyle::NormalLengthValueType >(	vgd::node::DrawStyle::getFNormalLength(),

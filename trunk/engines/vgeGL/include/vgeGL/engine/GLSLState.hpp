@@ -24,6 +24,7 @@ namespace vgd
 		struct Texture;
 	}
 }
+
 namespace vgeGL { namespace engine { struct Engine; } }
 
 
@@ -81,9 +82,9 @@ void TBitSet<size>::reset()
  * This class is a specialized container for GLSL rendering state used by program/shader generators 
  * to take care of the rendering state given by the scene graph.
  */
-struct GLSLState : public TBitSet< 8 >
+struct GLSLState : public TBitSet< 9 >
 {
-	enum
+	enum BitSetIndexType
 	{
 		// LightModel node
 		LIGHTING = 0,
@@ -97,10 +98,21 @@ struct GLSLState : public TBitSet< 8 >
 		SPOT_LIGHT,
 
 		// ClipPlane node
-		CLIPPING_PLANE				///< True when at least on ClipPlane node has been traversed
-	} BitSetIndexType;
+		CLIPPING_PLANE,				///< True when at least on ClipPlane node has been traversed
 
-	static const std::string indexString[]; // @todo hides
+		// DrawStyle node
+		FLAT_SHADING,				///< True when DrawStyle.shape implies a flat shading (instead of smooth shading)
+
+		MAX_BITSETINDEXTYPE
+	};
+
+	/**
+	 * @brief Returns the string representation of the given BitSetIndexType value.
+	 *
+	 * @pre bitSetIndexType >= 0 and bitSetIndexType < MAX_BITSETINDEXTYPE
+	 */
+	static const std::string& toString( const BitSetIndexType bitSetIndexType );
+
 
 
 	/**
@@ -308,6 +320,8 @@ private:
 
 	std::vector< vgd::Shp< TexUnitState > >		m_texture;		///< array of texture state. The zero-based index selects the texture unit.
 	uint										m_numTexture;	///< number of texture state in all light units.
+
+	static const std::string m_indexString[];	///< array containing the string representation for BitSetIndexType.
 };
 
 

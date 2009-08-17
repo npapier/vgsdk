@@ -226,8 +226,16 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		vgeGL::rc::GLSLProgram::useFixedPaths();
 	}
 
-	// Render the VertexShape
+	// Renders the VertexShape
 	::vgeGL::handler::painter::DrawStyle::paintVertexShapeWithShapeProperty( pGLEngine, pVertexShape, this );
+
+	// Renders additional properties of VertexShape
+
+	// Makes a backup of GLSL activation state
+	using vgeGL::engine::Engine;
+	vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
+	pGLEngine->sethCurrentProgram();
+
 	::vgeGL::handler::painter::DrawStyle::paintVertexShapeNormals( pGLEngine, pVertexShape, this );
 
 //	// pre
@@ -337,7 +345,10 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 //		glEnable( GL_LIGHTING );
 //	}	
 
-	// Validate node
+	// Restores GLSL activation state
+	pGLEngine->setGLSLActivationState( glslActivationState );
+
+	// Validates node
 	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
