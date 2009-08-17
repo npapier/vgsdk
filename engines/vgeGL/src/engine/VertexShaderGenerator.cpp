@@ -45,10 +45,20 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		}
 		else
 		{
-			m_code += 
-			"varying vec4 ecPosition;\n"
-			"varying vec3 ecNormal;\n"
-			"\n";
+			if ( state.isEnabled( GLSLState::FLAT_SHADING ) )
+			{
+				m_code += 
+				"#version 120\n"
+				"flat varying out vec4 ecPosition;\n"
+				"flat varying out vec3 ecNormal;\n\n";
+			}
+			else
+			{
+				m_code += 
+				"#version 120\n"
+				"varying vec4 ecPosition;\n"
+				"varying vec3 ecNormal;\n\n";
+			}
 		}
 	}
 	// else nothing to do

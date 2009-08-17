@@ -19,7 +19,7 @@ namespace engine
 
 
 
-const std::string GLSLState::indexString[] =
+const std::string GLSLState::m_indexString[] =
 	{
 		"LIGHTING",
 		"PER_PIXEL_LIGHTING",
@@ -29,8 +29,21 @@ const std::string GLSLState::indexString[] =
 		"DIRECTIONAL_LIGHT",
 		"POINT_LIGHT",
 		"SPOT_LIGHT",
-		"CLIPPING_PLANE"
+
+		"CLIPPING_PLANE",
+
+		"FLAT_SHADING"
 	};
+
+
+
+const std::string& GLSLState::toString( const BitSetIndexType bitSetIndexType )
+{
+	assert( bitSetIndexType >= 0 && "Out of range index." );
+	assert( bitSetIndexType < MAX_BITSETINDEXTYPE && "Out of range index." );
+
+	return m_indexString[bitSetIndexType];
+}
 
 
 
@@ -46,7 +59,7 @@ GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits )
 void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 {
 	// TBitSet
-	vgeGL::engine::TBitSet<8>::reset();
+	vgeGL::engine::TBitSet<9>::reset();
 
 	// LIGHT
 	for(	uint	i		= 0,
@@ -87,6 +100,9 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 	assert( m_numTexture == 0 );
 
 	m_texture.resize( maxTexUnits );
+
+	// @todo others ( at this time default values for others are initialized by GLSLState::update() )
+	setEnabled( FLAT_SHADING, false );
 }
 
 
@@ -255,6 +271,7 @@ const uint GLSLState::getMaxTexture() const
 
 
 
+// @todo This code must be in handlers
 void GLSLState::update( vgeGL::engine::Engine * engine )
 {
 	bool bDefined;

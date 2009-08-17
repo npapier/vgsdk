@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -40,9 +40,20 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// DECLARATIONS
 	if ( state.isPerPixelLightingEnabled() )
 	{
-		m_code += 
-		"varying vec4 ecPosition;\n"
-		"varying vec3 ecNormal;\n\n";
+		if ( state.isEnabled( GLSLState::FLAT_SHADING ) )
+		{
+			m_code += 
+			"#version 120\n"
+			"flat varying in vec4 ecPosition;\n"
+			"flat varying in vec3 ecNormal;\n\n";
+		}
+		else
+		{
+			m_code += 
+			"#version 120\n"
+			"varying vec4 ecPosition;\n"
+			"varying vec3 ecNormal;\n\n";
+		}
 
 		m_code += GLSLHelpers::generate_lightAccumulators( state ) + '\n';
 	}
@@ -113,7 +124,15 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		}
 	}
 
-	m_code += "}\n";
+	// sepia
+	/*m_code +=
+	"	// Sepia colors\n"
+	"	vec4 Sepia1 = vec4( 0.2, 0.05, 0.0, 1.0 );\n"
+	"	vec4 Sepia2 = vec4( 1.0, 0.9, 0.5, 1.0 );\n"
+	"	float SepiaMix = dot(vec3(0.3, 0.59, 0.11), vec3(gl_FragColor));\n"
+	"	gl_FragColor = mix(gl_FragColor, vec4(SepiaMix), vec4(0.5));\n"
+	"	vec4 Sepia = mix(Sepia1, Sepia2, SepiaMix);\n"
+	"	gl_FragColor = mix(gl_FragColor, Sepia, 1.0);\n";*/
 
 	// grid effect
 	/*m_code +=
@@ -126,6 +145,8 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	"	{\n"
 	"		gl_FragColor = color;\n"
 	"	}\n"*/
+
+	m_code += "}\n";
 
 	return true;
 }
