@@ -8,6 +8,7 @@ Author Maxime Peresson
 
 '''
 
+from __future__ import with_statement 
 import os
 import shutil
 import sys
@@ -49,15 +50,18 @@ class TestReport(object):
 		self._projectPath = path + 'projects' + os.sep + self._projet + os.sep
 		
 		if not os.path.exists(self._projectPath):
+			print 'Creating project folder ' + self._projectPath
 			os.mkdir(self._projectPath)
 		
-		os.mkdir(self._path)
-		
 		if os.path.exists(config.param['xmlPath'] + document):
+			print 'Creating run folder ' + self._pat
+			os.mkdir(self._path)
+			
+			print 'Moving XML file from ' + config.param['xmlPath'] + document + ' to ' + self._path + config.param['file']
 			shutil.move(config.param['xmlPath'] + document, self._path + config.param['file'])
 			#shutil.copyfile(config.param['xmlPath'] + document, self._path + config.param['file']) #for test purpose
 		else :
-			print 'XML file not found'
+			print 'XML file not found ('+config.param['xmlPath'] + document+')'
 			sys.exit(1)
 			
 		#create the link
@@ -168,11 +172,8 @@ class TestReport(object):
 		html += '</body>\r'
 		html += '</html>\r'
 		
-		
-		
-		f = open(self._path + 'index.html', 'w')
-		f.write(html)
-		f.close()
+		with open( self._path + 'index.html', 'w' ) as file :
+			file.write(html)
 	
 	
 	def generateHtml(self):
@@ -254,10 +255,9 @@ class TestReport(object):
 			html += '	<a href="index.html">Back</a>\r'
 			html += '</body>\r'
 			html += '</html>\r'
-	
-			f = open(self._path + filename+'.html', 'w')
-			f.write(html)
-			f.close()
+			
+			with open( self._path + filename+'.html', 'w' ) as file :
+				file.write(html)
 				
 		
 	def moveToLastTest(self):

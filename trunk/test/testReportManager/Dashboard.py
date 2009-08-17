@@ -7,7 +7,7 @@ as published by the Free Software Foundation.
 Author Maxime Peresson
 
 '''
-
+from __future__ import with_statement 
 import config
 import os
 import glob
@@ -66,9 +66,8 @@ class Dashboard(object):
 		
 		root.appendChild(p)
 		
-		file = open(config.param['path'] + 'dashboard.xml', 'w')
-		file.write(doc.toprettyxml())
-		file.close()
+		with open( config.param['path'] + 'dashboard.xml', 'w' ) as file :
+			file.write(doc.toprettyxml())
 		
 	def createFullDashboardXml(self):
 		doc = xml.dom.minidom.Document()
@@ -96,9 +95,8 @@ class Dashboard(object):
 			
 			root.appendChild(p)
 		
-		file = open(config.param['path'] + 'fulldashboard.xml', 'w')
-		file.write(doc.toprettyxml())
-		file.close()	
+		with open( config.param['path'] + 'fulldashboard.xml', 'w' ) as file :
+			file.write(doc.toprettyxml())	
 	
 	def createDashboardHtml(self):
 		#self.createLiteDashboardHtml()
@@ -129,9 +127,8 @@ class Dashboard(object):
 		</html>
 		'''
 		
-		f = open(config.param['path'] + 'index.html', 'w')
-		f.write(html)
-		f.close()
+		with open( config.param['path'] + 'index.html', 'w' ) as file :
+			f.write(html)
 		
 		
 	def createFullDashboardHtml(self):
@@ -215,9 +212,8 @@ class Dashboard(object):
 		html += '</body>\r'
 		html += '</html>\r'		
 		
-		f = open(config.param['path'] + 'index.html', 'w')
-		f.write(html)
-		f.close()
+		with open( config.param['path'] + 'index.html', 'w' ) as file :
+			file.write(html)
 		
 	def getHtmlHeader(self):
 		html = '''
