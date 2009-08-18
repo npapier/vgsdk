@@ -72,7 +72,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c Scissor.
+	 * @brief Type definition of the value contained by field named \c scissor.
 	 */
 	typedef vgm::Rectangle2i ScissorValueType;
 
@@ -111,7 +111,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c LookAt.
+	 * @brief Type definition of the value contained by field named \c lookAt.
 	 */
 	typedef vgm::MatrixR LookAtValueType;
 
@@ -141,7 +141,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c Projection.
+	 * @brief Type definition of the value contained by field named \c projection.
 	 */
 	typedef vgm::MatrixR ProjectionValueType;
 
@@ -171,7 +171,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c Viewport.
+	 * @brief Type definition of the value contained by field named \c viewport.
 	 */
 	typedef vgm::Rectangle2i ViewportValueType;
 

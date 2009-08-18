@@ -55,11 +55,11 @@ class Type :
 
 		# @todo range
 
-	def generateTYPEDEF( self, fieldName, postfix ):
+	def generateTYPEDEF( self, fieldName, FieldName, postfix ):
 		str = """\t/**
 \t * @brief Type definition of the value contained by field named \c %s.
 \t */
-\ttypedef %s %s%s;""" % (fieldName, self.generateTypeWithNamespace(), fieldName, postfix)
+\ttypedef %s %s%s;""" % (fieldName, self.generateTypeWithNamespace(), FieldName, postfix)
 		return str
 
 	def generateTypeWithNamespace( self ):
@@ -101,9 +101,9 @@ class Enum ( Type ):
 
 
 	# Overriden
-	def generateTYPEDEF( self, fieldName, postfix ):
+	def generateTYPEDEF( self, fieldName, FieldName, postfix ):
 
-		fieldNameValueType = fieldName + postfix
+		fieldNameValueType = FieldName + postfix
 
 		str =	"""\t/**
 \t * @brief Definition of symbolic values
@@ -244,7 +244,7 @@ TYPEDEF_FIELDNAMEVALUETYPE
 
 	//@}\n"""
 
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.getFieldName(), "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, self.getFieldName(), "ValueType" ) )
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.getFieldName() )
 		str = str.replace( "FieldType", self.type.name )
@@ -326,7 +326,7 @@ TYPEDEF_FIELDNAMEVALUETYPE
 	const bool hasFieldName() const;
 	//@}\n"""
 
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.getFieldName(), "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, self.getFieldName(), "ValueType" ) )
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.getFieldName() )
 
@@ -430,8 +430,8 @@ TYPEDEF_FIELDNAMEVALUETYPE
 			str = str.replace( " const FieldNameParameterType param,", "" )
 			str = str.replace( " const FieldNameParameterType param ", "" )
 
-		str = str.replace( "TYPEDEF_FIELDNAMEPARAMETERTYPE", self.keyType.generateTYPEDEF( self.getFieldName(), "ParameterType" ) )
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.getFieldName(), "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEPARAMETERTYPE", self.keyType.generateTYPEDEF( self.name, self.getFieldName(), "ParameterType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, self.getFieldName(), "ValueType" ) )
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.getFieldName() )
 

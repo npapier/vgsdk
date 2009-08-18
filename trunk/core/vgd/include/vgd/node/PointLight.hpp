@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,8 +6,7 @@
 #ifndef _VGD_NODE_POINTLIGHT_HPP
 #define _VGD_NODE_POINTLIGHT_HPP
 
-#include <vgm/Vector.hpp>
-
+#include "vgd/field/Vec3f.hpp"
 #include "vgd/node/Light.hpp"
 
 
@@ -23,14 +22,24 @@ namespace node
 /**
  * @brief Node representing a point light source.
  *
- * A point source illuminates equally in all directions. It is omni-directional. All shape nodes that come after this 
- * light in the scene graph are illuminated by this light. The light's location is affected by the current geometrical 
- * transformation.
- * 
- * New field added by this node :
- * 
- * - PAFVec3f	\c [position] = (0 0 1)\n
- * 	Location of the light source.
+ * A point source illuminates equally in all directions. It is omni-directional. All shape nodes that come after this light in the scene graph are illuminated by this light. The light's location is affected by the current geometrical transformation. 
+ *
+ * New fields defined by this node :
+ *	- OFVec3f \c [position] = vgm::Vec3f(0.f, 0.f, 1.f)\n
+ *		Location of the light source.
+ *
+ *
+ * Inherited fields from Light:
+ *	- OFBool \c [on] = false\n
+ *		Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.
+ *	- OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)\n
+ *		Specular intensity of the light.
+ *	- OFBool \c [castShadow] = false\n
+ *		Indicating that this light casts a shadow.
+ *	- OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)\n
+ *		Diffuse intensity of the light.
+ *	- OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)\n
+ *		Ambient intensity of the light.
  *
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes
@@ -38,82 +47,105 @@ namespace node
  */
 struct VGD_API PointLight : public vgd::node::Light
 {
-	META_NODE_HPP( PointLight );
-
-
-
 	/**
-	 * @name Accessors to field position.
+	 * @name Factories
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c position parameter.
+	 * @brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values
 	 */
-	typedef enum
-	{
-		POSITION = 1
-	} PositionParameterType;
+	static vgd::Shp< PointLight > create( const std::string nodeName = "NoName" );
 
 	/**
-	 * @brief Typedef for the \c position parameter value.
+	 *@brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
-	typedef vgm::Vec3f  PositionValueType;
+	static vgd::Shp< PointLight > createWhole( const std::string nodeName = "DefaultWhole" );
 
-	/**
-	 * @brief Typedef for the \c position field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< int /*PositionParameterType*/, PositionValueType > FPositionType;
-
-	/**
-	 * @brief Gets the \c position value.
-	 */
-	bool			getPosition( PositionValueType& value ) const;
-
-	/**
-	 * @brief Sets the \c position value.
-	 */
-	void 			setPosition( PositionValueType value );
-	
-	/**
-	 * @brief Erase the \c position value.
-	 */
-	void 			erasePosition();
 	//@}
 
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Accessors to field position
 	 */
 	//@{
-	
+
+	/**
+	 * @brief Type definition of the value contained by field named \c position.
+	 */
+	typedef vgm::Vec3f PositionValueType;
+
+	/**
+	 * @brief Type definition of the field named \c position
+	 */
+	typedef vgd::field::TOptionalField< PositionValueType > FPositionType;
+
+
+	/**
+	 * @brief Gets the value of field named \c position.
+	 */
+	const bool getPosition( PositionValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c position.
+ 	 */
+	void setPosition( const PositionValueType& value );
+
+	/**
+	 * @brief Erases the field named \c position.
+	 */
+	void erasePosition();
+
+	/**
+	 * @brief Tests if the value of field named \c position has been initialized.
+	 */
+	const bool hasPosition() const;
+	//@}
+
+
+
+	/**
+	 * @name Field name accessors
+	 */
+	//@{
+
 	/**
 	 * @brief Returns the name of field \c position.
-	 * 
+	 *
 	 * @return the name of field \c position.
 	 */
 	static const std::string getFPosition( void );
+
 	//@}
-	
-	
-	
-protected:
+
+
+
 	/**
-	 * @name Constructor.
+	 * @name Constructor and initializer methods
 	 */
 	//@{
 
-	/**
-	 * @brief Default constructor.
-	 */
-	PointLight( const std::string nodeName );
-
 	void	setToDefaults( void );
-	
+
 	void	setOptionalsToDefaults();
 
 	//@}
+
+protected:
+	/**
+	 * @brief Default constructor
+	 */
+	PointLight( const std::string nodeName );
+
+public:
+	IMPLEMENT_INDEXABLE_CLASS_HPP( , PointLight );
+private:
+	static const vgd::basic::RegisterNode<PointLight> m_registrationInstance;
 };
 
 

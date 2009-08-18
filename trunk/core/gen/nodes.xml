@@ -5,7 +5,8 @@
 	as published by the Free Software Foundation.
 	Author Nicolas Papier -->
 
-	<nodes>
+<nodes>
+
 	<node	name = "Camera"
 			inherits="GeometricalTransformation ProjectionTransformation">
 		<doxygen>
@@ -35,8 +36,8 @@
 		<includecpp>vgd/src/node/Camera.cpp</includecpp>
 	</node>
 
-	<node	name = "ClipPlane"
-			inherits="MultiAttribute">
+
+	<node name = "ClipPlane" inherits = "MultiAttribute" >
 		<doxygen>
 			<docBrief>Clipping plane node</docBrief>
 			<doc>All subsequent shapes in the scene graph will be clipped to the half-space defined by the \c plane field.</doc>
@@ -54,8 +55,8 @@
 		</of>
 	</node>
 
-	<node	name = "CullFace"
-			inherits="SingleAttribute">
+
+	<node name = "CullFace" inherits="SingleAttribute" >
 		<doxygen>
 			<docBrief>Cull face facets definition node</docBrief>
 			<doc>The CullFace node specifies whether front-facing and/or back-facing facets can be culled.</doc>
@@ -78,8 +79,23 @@
 		</sf>
 	</node>
 
-	<node	name="FrontFace"
-			inherits="SingleAttribute">
+
+	<node name = "DirectionalLight" inherits = "Light" >
+		<doxygen>
+			<docBrief>Node representing a directional light source.</docBrief>
+			<doc>This node defines a directional light source that illuminates along rays parallel to a given 3-dimensional vector.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_coloringAndLightingNodes</ingroup>
+		</doxygen>
+
+		<of name="direction" doc="Direction of the light.">
+			<type name = "Vec3f" namespace="vgm" default="0.f, 0.f, -1.f"></type>
+		</of>
+	</node>
+
+
+	<node name = "FrontFace" inherits = "SingleAttribute" >
 		<doxygen>
 			<docBrief>Front face polygons definition node</docBrief>
 			<doc>The FrontFace node specifies if polygons are in clockwise winding in window coordinates, or counterclockwise winding in window coordinates, are taken to be front-facing.</doc>
@@ -97,8 +113,42 @@
 		</sf>
 	</node>
 
-	<node	name = "Material"
-			inherits="SingleAttribute">
+
+	<node name = "Light" inherits = "MultiAttribute" >
+		<doxygen>
+			<docBrief>Abstract base class for all light source nodes</docBrief>
+			<doc>Light is the abstract base class for all light nodes. A light node defines an illumination</doc>
+			<doc>source that may affect subsequent shapes in the scene graph, depending on the current lighting</doc>
+			<doc>style. Light sources are affected by the current transformation. A light node under a separator</doc>
+			<doc>does not affect any objects outside that separator.</doc>
+			<doc>@remarks The maximum number of lights is equal at least to 8 in OpenGL and DirectX. Feel free to use up to 8 lights. @todo Removes this limits</doc>
+			<doc>@todo Support for attenuation</doc>
+			<doc>@todo High-level method for changing intensity of color.</doc>
+			<ingroup>g_abstractNodes</ingroup>
+		</doxygen>
+		<of name="on" doc="Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.">
+			<type name="bool" default="false"></type>
+		</of>
+		<of name="ambient" doc="Ambient intensity of the light.">
+			<type name="Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"></type>
+		</of>
+		<of name="diffuse" doc="Diffuse intensity of the light.">
+			<type name="Vec4f" namespace="vgm" default="1.f, 1.f, 1.f, 0.f"></type>
+		</of>
+		<of name="specular" doc="Specular intensity of the light.">
+			<type name="Vec4f" namespace="vgm" default="1.f, 1.f, 1.f, 0.f"></type>
+		</of>
+
+		<of name="castShadow" doc="Indicating that this light casts a shadow.">
+			<type name="bool" default="false"></type>
+		</of>
+
+		<includehpp>vgd/include/vgd/node/Light.hpp</includehpp>
+		<includecpp>vgd/src/node/Light.cpp</includecpp>
+	</node>
+
+
+	<node	name = "Material" inherits="SingleAttribute">
 		<doxygen>
 			<docBrief>Surface material definition node</docBrief>
 			<doc>The Material node specifies current surface material properties for all subsequent shapes nodes</doc>
@@ -147,6 +197,53 @@
 		<includecpp>vgd/src/node/Material.cpp</includecpp>
 <!--	<codehpp></codehpp> <codecpp></codecpp> -->
 	</node>
+
+
+	<node name = "PointLight" inherits = "Light" >
+		<doxygen>
+			<docBrief>Node representing a point light source.</docBrief>
+			<doc>A point source illuminates equally in all directions. It is omni-directional.</doc>
+			<doc>All shape nodes that come after this light in the scene graph are illuminated by this light.</doc>
+			<doc>The light's location is affected by the current geometrical transformation.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_coloringAndLightingNodes</ingroup>
+		</doxygen>
+
+		<of name = "position" doc = "Location of the light source.">
+			<type name = "Vec3f" namespace = "vgm" default = "0.f, 0.f, 1.f"></type>
+		</of>
+	</node>
+
+
+	<node name = "SpotLight" inherits = "PointLight" >
+		<doxygen>
+			<docBrief>Node representing a spotlight source.</docBrief>
+			<doc>This node defines a spotlight style light source.</doc>
+			<doc>A spotlight is placed at a fixed \c position in 3-space and illuminates in a cone along a particular \c direction.</doc>
+			<doc>The illumination is within a cone whose angle is given by the \c cutOffAngle field.</doc>
+			<doc>The intensity of the illumination drops off exponentially as a ray of light diverges from this direction toward the edges of the cone.</doc>
+			<doc>The rate of drop-off and the angle of the cone are controlled by the \c dropOffRate and \c cutOffAngle fields.</doc>
+			<doc>All shape nodes that come after this light in the scene graph are illuminated by this light.</doc>
+			<doc>The light's location is affected by the current geometrical transformation.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_coloringAndLightingNodes</ingroup>
+		</doxygen>
+
+		<of name = "direction" doc = "The direction (center axis of cone) of the light in homogeneous object coordinates.">
+			<type name = "Vec3f" namespace = "vgm" default = "0.f, 0.f, -1.f"></type>
+		</of>
+
+		<of name = "cutOffAngle" doc = "The angle (in degree) outside of which intensity is zero, measured from the center axis of the cone to an edge. This value must be inside [0, 90] or be equal to 180 (like PointLight node).">
+			<type name = "float" default = "90.f"></type>
+		</of>
+
+		<of name = "dropOffRate" doc = "Rate of intensity drop-off per change in angle from primary direction. 0 means constant intensity, 1 means very sharp drop-off.">
+			<type name = "float" default = "0.f"></type>
+		</of>
+	</node>
+
 
 <!--	<node	name = "MaterialExt"
 			inherits="Material">

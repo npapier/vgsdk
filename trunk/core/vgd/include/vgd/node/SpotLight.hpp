@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,7 +6,8 @@
 #ifndef _VGD_NODE_SPOTLIGHT_HPP
 #define _VGD_NODE_SPOTLIGHT_HPP
 
-#include "vgd/field/TPairAssociativeField.hpp"
+#include "vgd/field/Float.hpp"
+#include "vgd/field/Vec3f.hpp"
 #include "vgd/node/PointLight.hpp"
 
 
@@ -22,116 +23,58 @@ namespace node
 /**
  * @brief Node representing a spotlight source.
  *
- * This node defines a spotlight style light source. A spotlight is placed at a fixed \c position in 3-space and 
- * illuminates in a cone along a particular \c direction. The illumination is within a cone whose angle is given by 
- * the \c cutOffAngle field. The intensity of the illumination drops off exponentially as a ray of light diverges from 
- * this direction toward the edges of the cone. The rate of drop-off and the angle of the cone are controlled by the 
- * \c dropOffRate and \c cutOffAngle fields. 
- * 
- * All shape nodes that come after this light in the scene graph are illuminated by this light. The light's location is 
- * affected by the current geometrical transformation.
- * 
- * New fields added by this node :
- * 
- * - PAFVec3f	\c [direction] = (0 0 -1)\n
- * 	The direction (center axis of cone) of the light in homogeneous object coordinates.
- * 
- * - PAFFloat 	\c [cutOffAngle] = (180) \n
- * 	The angle (in degree) outside of which intensity is zero, measured from the center axis of the cone to an edge.
- * 	This value must be inside [0, 90] or be equal to 180 (like PointLight node).
+ * This node defines a spotlight style light source. A spotlight is placed at a fixed \c position in 3-space and illuminates in a cone along a particular \c direction. The illumination is within a cone whose angle is given by the \c cutOffAngle field. The intensity of the illumination drops off exponentially as a ray of light diverges from this direction toward the edges of the cone. The rate of drop-off and the angle of the cone are controlled by the \c dropOffRate and \c cutOffAngle fields. All shape nodes that come after this light in the scene graph are illuminated by this light. The light's location is affected by the current geometrical transformation. 
  *
- * - PAFFloat	\c [dropOffRate] = (0) \n
- *	Rate of intensity drop-off per change in angle from primary direction. 0 means constant intensity, 1 means very 
- *	sharp drop-off.
- * 
+ * New fields defined by this node :
+ *	- OFFloat \c [dropOffRate] = 0.f\n
+ *		Rate of intensity drop-off per change in angle from primary direction. 0 means constant intensity, 1 means very sharp drop-off.
+ *	- OFVec3f \c [direction] = vgm::Vec3f(0.f, 0.f, -1.f)\n
+ *		The direction (center axis of cone) of the light in homogeneous object coordinates.
+ *	- OFFloat \c [cutOffAngle] = 90.f\n
+ *		The angle (in degree) outside of which intensity is zero, measured from the center axis of the cone to an edge. This value must be inside [0, 90] or be equal to 180 (like PointLight node).
+ *
+ *
+ * Inherited fields from PointLight:
+ *	- OFVec3f \c [position] = vgm::Vec3f(0.f, 0.f, 1.f)\n
+ *		Location of the light source.
+ *
+ * Inherited fields from Light:
+ *	- OFBool \c [on] = false\n
+ *		Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.
+ *	- OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)\n
+ *		Specular intensity of the light.
+ *	- OFBool \c [castShadow] = false\n
+ *		Indicating that this light casts a shadow.
+ *	- OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)\n
+ *		Diffuse intensity of the light.
+ *	- OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)\n
+ *		Ambient intensity of the light.
+ *
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes
  * @ingroup g_coloringAndLightingNodes
  */
 struct VGD_API SpotLight : public vgd::node::PointLight
 {
-	META_NODE_HPP( SpotLight );
-
-
-
 	/**
-	 * @name Accessors to field direction
+	 * @name Factories
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c direction parameter.
+	 * @brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values
 	 */
-	typedef enum
-	{
-		DIRECTION = 1
-	} DirectionParameterType;
+	static vgd::Shp< SpotLight > create( const std::string nodeName = "NoName" );
 
 	/**
-	 * @brief Typedef for the \c direction parameter value.
+	 *@brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
-	typedef vgm::Vec3f  DirectionValueType;
+	static vgd::Shp< SpotLight > createWhole( const std::string nodeName = "DefaultWhole" );
 
-	/**
-	 * @brief Typedef for the \c direction field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< int /*DirectionParameterType*/, DirectionValueType > FDirectionType;
-
-	/**
-	 * @brief Gets the \c direction value.
-	 */
-	bool			getDirection( DirectionValueType& value ) const;
-
-	/**
-	 * @brief Sets the \c direction value.
-	 */
-	void 			setDirection( DirectionValueType value );
-	
-	/**
-	 * @brief Erase the \c direction value.
-	 */
-	void 			eraseDirection();
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field cutOffAngle
-	 */
-	//@{
-
-	/**
-	 * @brief Enumeration of the \c cutOffAngle parameter.
-	 */
-	typedef enum
-	{
-		CUTOFFANGLE = 1
-	} CutOffAngleParameterType;
-
-	/**
-	 * @brief Typedef for the \c cutOffAngle parameter value.
-	 */
-	typedef float  CutOffAngleValueType;
-
-	/**
-	 * @brief Typedef for the \c cutOffAngle field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< int /*CutOffAngleParameterType*/, CutOffAngleValueType > FCutOffAngleType;
-
-	/**
-	 * @brief Gets the \c cutOffAngle value.
-	 */
-	bool			getCutOffAngle( CutOffAngleValueType& value ) const;
-
-	/**
-	 * @brief Sets the \c cutOffAngle value.
-	 */
-	void 			setCutOffAngle( CutOffAngleValueType value );
-	
-	/**
-	 * @brief Erase the \c cutOffAngle value.
-	 */
-	void 			eraseCutOffAngle();
 	//@}
 
 
@@ -142,86 +85,168 @@ struct VGD_API SpotLight : public vgd::node::PointLight
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c dropOffRate parameter.
+	 * @brief Type definition of the value contained by field named \c dropOffRate.
 	 */
-	typedef enum
-	{
-		DROPOFFRATE = 1
-	} DropOffRateParameterType;
+	typedef float DropOffRateValueType;
 
 	/**
-	 * @brief Typedef for the \c dropOffRate parameter value.
+	 * @brief Type definition of the field named \c dropOffRate
 	 */
-	typedef float  DropOffRateValueType;
+	typedef vgd::field::TOptionalField< DropOffRateValueType > FDropOffRateType;
+
 
 	/**
-	 * @brief Typedef for the \c dropOffRate field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< int /*DropOffRateParameterType*/, DropOffRateValueType > FDropOffRateType;
+	 * @brief Gets the value of field named \c dropOffRate.
+	 */
+	const bool getDropOffRate( DropOffRateValueType& value ) const;
 
 	/**
-	 * @brief Gets the \c dropOffRate value.
-	 */
-	bool			getDropOffRate( DropOffRateValueType& value ) const;
+	 * @brief Sets the value of field named \c dropOffRate.
+ 	 */
+	void setDropOffRate( const DropOffRateValueType& value );
 
 	/**
-	 * @brief Sets the \c dropOffRate value.
+	 * @brief Erases the field named \c dropOffRate.
 	 */
-	void 			setDropOffRate( DropOffRateValueType value );
-	
+	void eraseDropOffRate();
+
 	/**
-	 * @brief Erase the \c dropOffRate value.
+	 * @brief Tests if the value of field named \c dropOffRate has been initialized.
 	 */
-	void 			eraseDropOffRate();
+	const bool hasDropOffRate() const;
 	//@}
 
 
 
 	/**
-	 * @name Fields names enumeration
+	 * @name Accessors to field direction
 	 */
 	//@{
-	
+
 	/**
-	 * @brief Returns the name of field \c direction.
-	 * 
-	 * @return the name of field \c direction.
+	 * @brief Type definition of the value contained by field named \c direction.
 	 */
-	static const std::string getFDirection();
-	
+	typedef vgm::Vec3f DirectionValueType;
+
 	/**
-	 * @brief Returns the name of field \c cutOffAngle.
-	 * 
-	 * @return the name of field \c cutOffAngle.
+	 * @brief Type definition of the field named \c direction
 	 */
-	static const std::string getFCutOffAngle();
-	
+	typedef vgd::field::TOptionalField< DirectionValueType > FDirectionType;
+
+
+	/**
+	 * @brief Gets the value of field named \c direction.
+	 */
+	const bool getDirection( DirectionValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c direction.
+ 	 */
+	void setDirection( const DirectionValueType& value );
+
+	/**
+	 * @brief Erases the field named \c direction.
+	 */
+	void eraseDirection();
+
+	/**
+	 * @brief Tests if the value of field named \c direction has been initialized.
+	 */
+	const bool hasDirection() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field cutOffAngle
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c cutOffAngle.
+	 */
+	typedef float CutOffAngleValueType;
+
+	/**
+	 * @brief Type definition of the field named \c cutOffAngle
+	 */
+	typedef vgd::field::TOptionalField< CutOffAngleValueType > FCutOffAngleType;
+
+
+	/**
+	 * @brief Gets the value of field named \c cutOffAngle.
+	 */
+	const bool getCutOffAngle( CutOffAngleValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c cutOffAngle.
+ 	 */
+	void setCutOffAngle( const CutOffAngleValueType& value );
+
+	/**
+	 * @brief Erases the field named \c cutOffAngle.
+	 */
+	void eraseCutOffAngle();
+
+	/**
+	 * @brief Tests if the value of field named \c cutOffAngle has been initialized.
+	 */
+	const bool hasCutOffAngle() const;
+	//@}
+
+
+
+	/**
+	 * @name Field name accessors
+	 */
+	//@{
+
 	/**
 	 * @brief Returns the name of field \c dropOffRate.
-	 * 
+	 *
 	 * @return the name of field \c dropOffRate.
 	 */
-	static const std::string getFDropOffRate();
+	static const std::string getFDropOffRate( void );
+
+	/**
+	 * @brief Returns the name of field \c direction.
+	 *
+	 * @return the name of field \c direction.
+	 */
+	static const std::string getFDirection( void );
+
+	/**
+	 * @brief Returns the name of field \c cutOffAngle.
+	 *
+	 * @return the name of field \c cutOffAngle.
+	 */
+	static const std::string getFCutOffAngle( void );
+
 	//@}
 
 
 
-protected:
 	/**
-	 * @name Constructor.
+	 * @name Constructor and initializer methods
 	 */
 	//@{
 
-	/**
-	 * @brief Default constructor.
-	 */
-	SpotLight( const std::string nodeName );
-
 	void	setToDefaults( void );
-	
+
 	void	setOptionalsToDefaults();
 
 	//@}
+
+protected:
+	/**
+	 * @brief Default constructor
+	 */
+	SpotLight( const std::string nodeName );
+
+public:
+	IMPLEMENT_INDEXABLE_CLASS_HPP( , SpotLight );
+private:
+	static const vgd::basic::RegisterNode<SpotLight> m_registrationInstance;
 };
 
 
