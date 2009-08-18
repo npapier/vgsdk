@@ -67,7 +67,7 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c On.
+	 * @brief Type definition of the value contained by field named \c on.
 	 */
 	typedef bool OnValueType;
 
@@ -106,7 +106,7 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c Plane.
+	 * @brief Type definition of the value contained by field named \c plane.
 	 */
 	typedef vgm::Plane PlaneValueType;
 

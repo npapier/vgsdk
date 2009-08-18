@@ -76,7 +76,7 @@ vgd::node::Node& Node::operator =( const vgd::node::Node& )
 
 void Node::setToDefaults( void )
 {
-	// field name is not like other field, because value is done by factory(no real defaults value).
+	// field name is not like other field, because value is done by factory (no real defaults value).
 }
 
 
@@ -161,6 +161,10 @@ const std::string Node::getName( void ) const
 void Node::setName( const std::string strNodeName )
 {
 	getFieldRW<FNameType>(getFName())->setValue( strNodeName );
+
+#ifdef _DEBUG
+	m_nodeName = strNodeName;
+#endif
 }
 
 
@@ -186,7 +190,7 @@ const std::string Node::getDFNode()
 
 
 
-Node::ConnectionType Node::connect( SignalDestructorType::slot_function_type slot )
+Node::ConnectionType Node::connect( DestructorSignalType::slot_function_type slot )
 {
 	return m_destructorSignal.connect( slot );
 }

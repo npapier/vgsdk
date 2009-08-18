@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,19 +17,44 @@ namespace node
 
 
 
-META_NODE_CPP( SpotLight );
+vgd::Shp< SpotLight > SpotLight::create( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< SpotLight > node( new SpotLight(nodeName) );
+
+	/* Adds a vertex (i.e. a node) to boost::graph */
+	graph().addNode( node );
+
+	/* Sets fields to their default values */
+	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< SpotLight > SpotLight::createWhole( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< SpotLight > node = SpotLight::create(nodeName);
+
+	/* Sets optional fields to their default values */
+	node->setOptionalsToDefaults();
+
+	return node;
+}
 
 
 
 SpotLight::SpotLight( const std::string nodeName ) :
 	vgd::node::PointLight( nodeName )
 {
-	// Add field
+	// Adds field(s)
+	addField( new FDropOffRateType(getFDropOffRate()) );
 	addField( new FDirectionType(getFDirection()) );
 	addField( new FCutOffAngleType(getFCutOffAngle()) );
-	addField( new FDropOffRateType(getFDropOffRate()) );
 
-	// Link(s)
+	// Sets link(s)
 	link( getDFNode() );
 }
 
@@ -45,108 +70,128 @@ void SpotLight::setToDefaults( void )
 void SpotLight::setOptionalsToDefaults()
 {
 	PointLight::setOptionalsToDefaults();
-
-	setDirection( vgm::Vec3f( 0.f, 0.f, -1.f ) );
-	setCutOffAngle( 90 );
-	setDropOffRate( 0 );
+	setDropOffRate( 0.f );
+	setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
+	setCutOffAngle( 90.f );
 }
 
 
 
-// DIRECTION
-bool SpotLight::getDirection( DirectionValueType& value ) const
+// DropOffRate
+const bool SpotLight::getDropOffRate( DropOffRateValueType& value ) const
 {
-	return ( 
-		vgd::field::getParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION, value )
-		);
+	return getFieldRO<FDropOffRateType>(getFDropOffRate())->getValue( value );
 }
 
 
 
-void SpotLight::setDirection( DirectionValueType value )
+void SpotLight::setDropOffRate( const DropOffRateValueType& value )
 {
-	vgd::field::setParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION, value );
-}
-
-
-
-void SpotLight::eraseDirection()
-{
-	vgd::field::eraseParameterValue< int /*DirectionParameterType*/, DirectionValueType >( this, getFDirection(), DIRECTION );
-}
-
-
-
-// CUTOFFANGLE
-bool SpotLight::getCutOffAngle( CutOffAngleValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< int /*CutOffAngleParameterType*/, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE, value )
-		);
-}
-
-
-
-void SpotLight::setCutOffAngle( CutOffAngleValueType value )
-{
-	vgd::field::setParameterValue< int /*CutOffAngleParameterType*/, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE, value );
-}
-
-
-
-void SpotLight::eraseCutOffAngle()
-{
-	vgd::field::eraseParameterValue< int /*CutOffAngleParameterType*/, CutOffAngleValueType >( this, getFCutOffAngle(), CUTOFFANGLE );
-}
-
-
-
-// DROPOFFRATE
-bool SpotLight::getDropOffRate( DropOffRateValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< int /*DropOffRateParameterType*/, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE, value )
-		);
-}
-
-
-
-void SpotLight::setDropOffRate( DropOffRateValueType value )
-{
-	vgd::field::setParameterValue< int /*DropOffRateParameterType*/, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE, value );
+	getFieldRW<FDropOffRateType>(getFDropOffRate())->setValue( value );
 }
 
 
 
 void SpotLight::eraseDropOffRate()
 {
-	vgd::field::eraseParameterValue< int /*DropOffRateParameterType*/, DropOffRateValueType >( this, getFDropOffRate(), DROPOFFRATE );
+	getFieldRW<FDropOffRateType>(getFDropOffRate())->eraseValue();
 }
 
 
-
-// FIELDS
-const std::string SpotLight::getFDirection()
+const bool SpotLight::hasDropOffRate() const
 {
-	return "f_direction";
+	return getFieldRO<FDropOffRateType>(getFDropOffRate())->hasValue();
 }
 
 
 
-const std::string SpotLight::getFCutOffAngle()
+// Direction
+const bool SpotLight::getDirection( DirectionValueType& value ) const
 {
-	return "f_cutOffAngle";
+	return getFieldRO<FDirectionType>(getFDirection())->getValue( value );
 }
 
 
 
-const std::string SpotLight::getFDropOffRate()
+void SpotLight::setDirection( const DirectionValueType& value )
+{
+	getFieldRW<FDirectionType>(getFDirection())->setValue( value );
+}
+
+
+
+void SpotLight::eraseDirection()
+{
+	getFieldRW<FDirectionType>(getFDirection())->eraseValue();
+}
+
+
+const bool SpotLight::hasDirection() const
+{
+	return getFieldRO<FDirectionType>(getFDirection())->hasValue();
+}
+
+
+
+// CutOffAngle
+const bool SpotLight::getCutOffAngle( CutOffAngleValueType& value ) const
+{
+	return getFieldRO<FCutOffAngleType>(getFCutOffAngle())->getValue( value );
+}
+
+
+
+void SpotLight::setCutOffAngle( const CutOffAngleValueType& value )
+{
+	getFieldRW<FCutOffAngleType>(getFCutOffAngle())->setValue( value );
+}
+
+
+
+void SpotLight::eraseCutOffAngle()
+{
+	getFieldRW<FCutOffAngleType>(getFCutOffAngle())->eraseValue();
+}
+
+
+const bool SpotLight::hasCutOffAngle() const
+{
+	return getFieldRO<FCutOffAngleType>(getFCutOffAngle())->hasValue();
+}
+
+
+
+// Field name accessor(s)
+const std::string SpotLight::getFDropOffRate( void )
 {
 	return "f_dropOffRate";
 }
 
 
 
+const std::string SpotLight::getFDirection( void )
+{
+	return "f_direction";
+}
+
+
+
+const std::string SpotLight::getFCutOffAngle( void )
+{
+	return "f_cutOffAngle";
+}
+
+
+
+IMPLEMENT_INDEXABLE_CLASS_CPP( , SpotLight );
+
+
+
+const vgd::basic::RegisterNode<SpotLight> SpotLight::m_registrationInstance;
+
+
+
 } // namespace node
 
 } // namespace vgd
+

@@ -25,7 +25,7 @@
 namespace vgd
 {
 	template<class T> struct Shp;
-	
+
 	namespace basic
 	{
 		template< typename baseClassType > struct ClassRegistry;
@@ -127,7 +127,7 @@ typedef std::set< vgd::Shp<vgd::node::Node> >		NodeSet;
  *
  * - SFString \c name = "NoName"\n
  * 	Name of a node.
- * 	
+ *
  * This is the abstract base class from which all scene graph node classes are derived.
  * 
  * @remarks All node could be shared multiple times in the same DAG and even in other DAG.
@@ -164,9 +164,9 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	 * @name Destructor
 	 */
 	//@{
-	
+
 	/**
-	 * @brief Virtual default destructor.
+	 * @brief Virtual default destructor
 	 */
 	virtual ~Node();
 	//@}
@@ -207,6 +207,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
  	 * @param bGetEnabled	true to get all enabled parents, false to get all disabled parents.
  	 * 
  	 * @remark For more explanation see IGroup::getEnabledChildren().
+	 * @todo why this method is virtual ?
 	 */
 	virtual void	getEnabledParents( NodeList& parents, const bool bGetEnabled = true ) const;
 
@@ -221,7 +222,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	 * @brief Invalidate bounding box dirty flag for each parents of this node.
 	 */
 	void invalidateParentsBoundingBoxDirtyFlag();
-	
+
 	//@}
 
 
@@ -234,12 +235,12 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	 * @brief Typedef for the \c name field.
 	 */	
 	typedef vgd::field::SFString	FNameType;
-		
+
 	/**
 	 * @brief Typedef for the \c name value.
 	 */
 	typedef std::string 			NameValueType;
-	
+
 	/**
 	 * @brief Gets the name of node.
 	 */
@@ -286,7 +287,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	static const std::string getFName();
 
 	//@}
-	
+
 
 
 	/**
@@ -311,7 +312,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	/**
 	 * @brief Alias on signal associated to the destructor of node (i.e. ~Node).
 	 */
-	typedef boost::signal<void (vgd::node::Node*) >	SignalDestructorType;
+	typedef boost::signal<void (vgd::node::Node*) >	DestructorSignalType;
 
 	/**
 	 * @brief Alias on signal connection.
@@ -322,10 +323,10 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	 * @brief Connects the signal (SignalDestructorType) to the incoming slot.
 	 * 
 	 * @param slot	incoming slot
-	 * 			
+	 *
 	 * @return the connection object associated to the signal
 	 */
-	ConnectionType connect( SignalDestructorType::slot_function_type slot );
+	ConnectionType connect( DestructorSignalType::slot_function_type slot );
 	
 	//@}
 
@@ -349,7 +350,7 @@ protected:
 	 * @brief Set fields and dirty flags to default values.
 	 */
 	virtual void setToDefaults( void );
-	
+
 	/**
 	 * @brief Set optionals fields to defaults values.
 	 */
@@ -374,7 +375,7 @@ protected:
 	 * @todo Remove this.
 	 */
 	friend struct vgd::graph::Graph;
-	
+
 	/**
 	 * @brief Alias on vertex descriptor.
 	 */
@@ -416,8 +417,8 @@ private:
 	/**
 	 * @brief Signal for destructor
 	 */
-	SignalDestructorType		m_destructorSignal;
-	
+	DestructorSignalType m_destructorSignal;
+
 protected:
 	/**
 	 * @brief Copy constructor
@@ -429,6 +430,11 @@ protected:
 	 */
 	Node& operator =( const vgd::node::Node& );
 	//@}
+
+private:
+#ifdef _DEBUG
+	std::string m_nodeName; ///< this attribute contains the name of node like field 'name'. But this one could be seen in debugger easily.
+#endif
 };
 
 
