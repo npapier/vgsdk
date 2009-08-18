@@ -54,7 +54,7 @@ class TestReport(object):
 			os.mkdir(self._projectPath)
 		
 		if os.path.exists(config.param['xmlPath'] + document):
-			print 'Creating run folder ' + self._pat
+			print 'Creating run folder ' + self._path
 			os.mkdir(self._path)
 			
 			print 'Moving XML file from ' + config.param['xmlPath'] + document + ' to ' + self._path + config.param['file']

@@ -9,8 +9,10 @@
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/program_options.hpp>
 
+#include <sbf/path.hpp>
 
 
 int main(int argc, char **argv) 
@@ -19,6 +21,8 @@ int main(int argc, char **argv)
 	std::vector<std::string> vec;
 	boost::algorithm::split(vec, argv[0], boost::algorithm::is_any_of("\\"));
 	std::string appName = vec[vec.size()-1];
+	std::string xmlPath = sbf::path::getTopLevel(sbf::path::Var).string() + "\\googletest\\0-0\\";
+	boost::algorithm::replace_all(xmlPath, "/", "\\");
 
     try {
 		namespace po = boost::program_options;
@@ -42,11 +46,11 @@ int main(int argc, char **argv)
 		if (vm.count("saveRef")) 
 		{
 			vgTest::setCreateReference(true);
-			::testing::FLAGS_gtest_output = "xml:tests\\createRef-" + appName + ".xml";
+			::testing::FLAGS_gtest_output = "xml:" + xmlPath + "createRef-" + appName + ".xml";
 		}
 		else 
 		{
-			::testing::FLAGS_gtest_output = "xml:tests\\" + appName + ".xml";
+			::testing::FLAGS_gtest_output = "xml:" + xmlPath + appName + ".xml";
 		}
 	}
 	catch(std::exception& e)
