@@ -114,7 +114,7 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Show
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParameterType & on )
+/*std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParameterType & on )
 {
 	switch( on )
 	{
@@ -123,7 +123,7 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParame
 	}
 
 	return os;
-}
+}*/
 
 
 
