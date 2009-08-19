@@ -29,21 +29,32 @@ Bool::Bool()
 	
 	m_trueButton.set_group( group );
 	m_falseButton.set_group( group );
+
+	m_trueButton.signal_clicked().connect( sigc::mem_fun(this, &Bool::buttonClicked) );
+	m_falseButton.signal_clicked().connect( sigc::mem_fun(this, &Bool::buttonClicked) );
+}
+
+
+
+void Bool::buttonClicked()
+{
+	m_trueButton.set_inconsistent( false );
+	m_falseButton.set_inconsistent( false );
 }
 
 
 
 void Bool::clear()
 {
-	m_trueButton.set_active( false );
-	m_falseButton.set_active( false );
+	m_trueButton.set_inconsistent( true );
+	m_falseButton.set_inconsistent( true );
 }
 
 
 
 const bool Bool::hasValue() const
 {
-	return m_trueButton.get_active() || m_falseButton.get_active();
+	return m_trueButton.get_inconsistent() == false || m_falseButton.get_inconsistent() == false;
 }
 
 

@@ -43,6 +43,13 @@ struct Bool : public Widget< bool >, public Gtk::VBox
 private:
 	Gtk::RadioButton	m_trueButton;	///< Maps the true value.
 	Gtk::RadioButton	m_falseButton;	///< Maps the false value
+
+	/**
+	 * @name	Signal Handlers
+	 */
+	//@{
+	void buttonClicked();
+	//@}
 };
 
 
