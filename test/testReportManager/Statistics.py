@@ -33,7 +33,7 @@ class Statistics(object):
 		self._graphPath = graphPath
 		
 		#@todo: regex + compacte : (\d{2})-(\d{2})-(\d{2})_(\d{4}) ?
-		self._dirList = glob.glob(self._path + '[0-9][0-9]-[0-9][0-9]-[0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]')
+		self._dirList = glob.glob(self._path + '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_[0-9][0-9]h[0-9][0-9]m[0-9][0-9]s')
 		self._runList = []
 		
 		self.listRun()

@@ -43,29 +43,31 @@ class TestReport(object):
 		
 		#Create the test report directory based on the date/time and copy the xml file into it
 		d = datetime.now()
-		self._path = path + 'projects' + os.sep + self._projet + os.sep + d.strftime('%m-%d-%y_%H%M%S') + os.sep
+		currentDate = d.strftime('%Y-%m-%d_%Hh%Mm%Ss')
+		
+		self._path = path + 'projects' + os.sep + self._projet + os.sep + currentDate + os.sep
 		
 		TestReport.extpath = self._path
 		
 		self._projectPath = path + 'projects' + os.sep + self._projet + os.sep
 		
 		if not os.path.exists(self._projectPath):
-			print 'Creating project folder ' + self._projectPath
+			print('Creating project folder ' + self._projectPath)
 			os.mkdir(self._projectPath)
 		
 		if os.path.exists(config.param['xmlPath'] + document):
-			print 'Creating run folder ' + self._path
+			print('Creating run folder ' + self._path)
 			os.mkdir(self._path)
 			
-			print 'Moving XML file from ' + config.param['xmlPath'] + document + ' to ' + self._path + config.param['file']
+			print('Moving XML file from ' + config.param['xmlPath'] + document + ' to ' + self._path + config.param['file'])
 			shutil.move(config.param['xmlPath'] + document, self._path + config.param['file'])
 			#shutil.copyfile(config.param['xmlPath'] + document, self._path + config.param['file']) #for test purpose
 		else :
-			print 'XML file not found ('+config.param['xmlPath'] + document+')'
+			print('XML file not found ('+config.param['xmlPath'] + document+')')
 			sys.exit(1)
 			
 		#create the link
-		self._link = config.param['link'] + '/projects/' + self._projet + '/' + d.strftime('%m-%d-%y_%H%M%S') + '/index.html'
+		self._link = config.param['link'] + '/projects/' + self._projet + '/' + currentDate + '/index.html'
 		
 		#Create graph path
 		self._graphPath = self._path + 'graph' + os.sep		

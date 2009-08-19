@@ -39,7 +39,7 @@ class Run(object):
 		self._errorsList = []
 	   
 		if lastTest != True:
-			self._name = re.search(r'(\d{2}-\d{2}-\d{2}_\d{6})', document).groups()[0]
+			self._name = re.search(r'(\d{2}-\d{2}-\d{2}_\d{2}h\d{2}m\d{2}s)', document).groups()[0]
 		
 		self._doc = parse(document)
 		self._rootElement = None
