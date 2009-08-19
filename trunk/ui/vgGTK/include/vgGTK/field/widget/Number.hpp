@@ -1,13 +1,15 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #ifndef _VGGTK_FIELD_WIDGET_NUMBER_HPP_
 #define _VGGTK_FIELD_WIDGET_NUMBER_HPP_
 
 #include <boost/lexical_cast.hpp>
 #include <gtkmm/entry.h>
+#include <vgBase/Type.hpp>
 #include "vgGTK/field/widget/Widget.hpp"
 
 
@@ -84,6 +86,48 @@ struct Number : public Widget< NumberType >, public Gtk::Entry
 	void setFrame( const bool frame )
 	{
 		set_has_frame( frame );
+	}
+};
+
+
+
+/**
+ * @brief	Specialized version of a widget for the edition of int8 number type.
+ */
+struct Int8Number : public Number< int8 >
+{
+	const int8 getValue() const
+	{
+		try
+		{
+			return static_cast< int8 >(
+				boost::lexical_cast< int >( get_text() )
+					);
+		}
+		catch( const boost::bad_lexical_cast & )
+		{
+			return static_cast< int8 >( 0 );
+		}
+	}
+
+	void setValue( const int & value )
+	{
+		set_text( Glib::ustring::compose("%1", value) );
+	}
+
+	const bool validate()
+	{
+		try
+		{
+			boost::lexical_cast< int >( get_text() );
+			return true;
+		}
+		catch( const boost::bad_lexical_cast & )
+		{
+			vgGTK::field::widget::Widget< int8 >::showWarning("Please, enter a number!");
+			grab_focus();
+			return false;
+		}
 	}
 };
 
