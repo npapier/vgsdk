@@ -31,7 +31,7 @@ Author Maxime Peresson
 
 import os, sys, getopt
 import TestReport
-import Dashboard
+import TestDashboard
 import Statistics
 import config
 
@@ -42,12 +42,12 @@ def go(file, type, deps = []):
 	print 'Initialize all'
 	t = TestReport.TestReport(file, type, deps)
 		
-	print 'Create statistics'
+	print('Create statistics')
 	stats = Statistics.Statistics(t.getGraphPath(), t.getProjet())
 	stats.createErrorGraph()
 	stats.createPerformanceGraph()  
 	
-	print 'Manage alert'
+	print('Manage alert')
 	#List of errors which must be sended
 	if len(stats.getRunList()) > 1 :
 		listErrorTest = [] 
@@ -61,14 +61,14 @@ def go(file, type, deps = []):
 				alert.initialize(listErrorTest, t.getLink(), t.getProjet())
 				alert()
 	
-	print 'Generated HTML pages'
+	print('Generated HTML pages')
 	t.generateRootHtml()
 	t.generateHtml()
 	
-	print 'Create "LastTest" directory'
+	print('Create "LastTest" directory')
 	t.moveToLastTest()
 	
-	print 'Publishing'
+	print('Publishing')
 	t.goRsync()
 
 	return t
@@ -111,7 +111,7 @@ def main(argv):
 		go(file, type, depsTestReport)
 	
 	elif dashboard == True:
-		db = Dashboard.Dashboard()
+		db = TestDashboard.TestDashboard()
 		db.createDashboardHtml()
 		db.createDashboardXml()
 		db.createFullDashboardXml()

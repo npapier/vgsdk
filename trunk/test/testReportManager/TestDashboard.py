@@ -15,7 +15,7 @@ import Run
 import xml.dom.minidom
 
 
-class Dashboard(object):
+class TestDashboard(object):
 	'''
 	classdocs
 	@summary: Creates differents dashboard full/lite and HTML or XML.
@@ -37,7 +37,7 @@ class Dashboard(object):
 		self._projectList = {}
 		for project in self._projects:
 			self._projectList[project] = {}
-			dirList = glob.glob(self._projectsPath + os.sep + project + os.sep + '[0-9][0-9]-[0-9][0-9]-[0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]')   
+			dirList = glob.glob(self._projectsPath + os.sep + project + os.sep + '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_[0-9][0-9]h[0-9][0-9]m[0-9][0-9]s')   
 			dirList.reverse()
 			for run in dirList:
 					date = str.split(run, os.sep)
@@ -86,7 +86,7 @@ class Dashboard(object):
 				r.setAttribute('tests', str(self._projectList[project][run].getTests()))
 				
 				if self._projectList[project][run].getErrors() > 0:
-					r.setAttribute('errors', str(self._runList[project].getErrors()))
+					r.setAttribute('errors', str(self._projectList[project][run].getErrors()))
 					r.setAttribute('status', 'failure')
 				else:
 					r.setAttribute('status', 'success')
