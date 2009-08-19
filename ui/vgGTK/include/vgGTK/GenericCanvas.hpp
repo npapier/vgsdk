@@ -12,6 +12,8 @@
 #include <vgUI/Canvas.hpp>
 
 #include "vgGTK/vgGTK.hpp"
+#include "vgGTK/event/SignalHandler.hpp"
+#include <vgd/event/detail/GlobalButtonStateSet.hpp>
 
 #ifdef WIN32
 	#define	USE_GLC
@@ -45,7 +47,7 @@ namespace vgGTK
  * @todo	Implement/debug vgSDK finalization.
  */
 template< typename BaseCanvasType >
-struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType
+struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public event::SignalHandler
 {
 
 	/**
@@ -66,6 +68,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType
 		setGlCapability( GTK_WIDGET(gobj()) );
 //#else
 #endif
+	store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 	}
 
 	/**
@@ -96,6 +99,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType
 		// @todo sharing
 		assert( false && "Sharing not yet implemented !!!" );
 #endif
+	store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 	}
 
 	/**
@@ -439,6 +443,11 @@ private:
 //#else
 	glc_t			*m_glc;
 //#endif
+	bool onFocusEvent( GdkEventFocus * event )
+	{
+		vgd::event::detail::GlobalButtonStateSet::clear();
+		return false;
+	}
 
 };
 
