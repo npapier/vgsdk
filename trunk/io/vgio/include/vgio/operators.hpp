@@ -94,7 +94,7 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawSt
 /**
  * @brief	Writes into an output stream the textual representation of the light nodes on parameter.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParameterType & on );
+//VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParameterType & on );
 
 
 
