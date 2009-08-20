@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -85,9 +85,10 @@ void DrawStyleEditor::createContent()
 	Gtk::VBox		* normalLengthBox			= Gtk::manage( new Gtk::VBox() );
 		
 	m_normalLengthButton	= Gtk::manage( new Gtk::CheckButton("Normal Length") );
-	m_normalLengthValue		= Gtk::manage( new Gtk::Adjustment(1.f, -100.f, 100.f, 1, 10) );
+	m_normalLengthValue		= Gtk::manage( new Gtk::Adjustment(1.f, -100.f, 100.f, 0.1f, 1.f) );
 	m_normalLengthSpin		= Gtk::manage( new Gtk::SpinButton(*m_normalLengthValue) );
-		
+	m_normalLengthSpin->set_digits(2);
+
 	normalLengthBox->set_border_width( 12 );
 	normalLengthBox->add( *m_normalLengthSpin );
 		
@@ -308,7 +309,7 @@ void DrawStyleEditor::onNormalLengthValue()
 {
 	assert( m_drawStyle );
 	assert( m_normalLengthValue );
-	
+
 	m_drawStyle->setNormalLength( static_cast< float >(m_normalLengthValue->get_value()) );
 	refreshCanvas();
 }
