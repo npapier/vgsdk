@@ -1,0 +1,93 @@
+<%page args="projet, deps, run"/>
+<%include file="header.html" args="title='Test Run', path='../../..'"/>
+ 	<body>		
+		<h1>Test Report for: ${projet}</h1>
+		<table width="100%">
+			<tr>
+				<td align="left">
+		% if len(deps) > 0:
+			This report depends on :
+			% for dep in deps:
+			<br/><a href="${dep.getLink()}">Test Report</a>
+				</td>
+			% endfor
+		% endif
+				<td align="right">This report uses <a href="http://jakarta.apache.org/ant">Ant</a> CSS.</td>
+			</tr>
+		</table>
+		
+		<hr size="1"/>
+		
+		<h2>Summary</h2>
+		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
+		<tr valign="top">
+			<th>Tests</th>
+			<th>Errors</th>
+			<th>Success rate</th>
+			<th>Time</th>
+		</tr>
+		<tr valign="top">
+			<td>${str(run.getTests())}</td>
+			<td>${str(run.getErrors())}</td>
+			<td>${str(run.getSuccesRate())}%</td>
+			<td>${str(run.getTime())}</td>
+		</tr>
+		<tr>
+			<td colspan="5" style="text-align:center">
+				<embed src="./graph/ErrorGraph.svg" type="image/svg+xml" />
+			</td>
+		</tr>
+		</table>
+		
+		% for testsuite in run.getTestsuites():
+			% if len(testsuite.getTestsList()) > 0:
+				<h3>TestCase ${testsuite.getName()}</h3>
+				<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
+				
+					<tr valign="top">
+					<th width="20%">Name</th>
+					<th width="65%">Description</th>
+					<th width="5%">Status</th>
+					<th width="5%">Time(s)</th>
+					<th width="5%">Details</th>
+					</tr>
+					
+				% for test in testsuite.getTestsList():
+					% if test.getAttribute('status') != 'notrun':
+						<tr valign="top">
+							<td>${test.getAttribute('name')}</td>
+							<td>
+						% if test.getAttribute('Description') != None: 
+							${test.getAttribute('Description')}
+						% endif
+						% if test.getAttribute('failure') != None:
+							<p class="error">
+								${test.getAttribute('failure')}
+								<code>
+								<br/><br/>
+								${test.getAttribute('failure_code')}
+								</code>	
+							</p>
+						% endif			
+							</td>
+							<td>${test.getAttribute('status')}</td>
+							<td>${test.getAttribute('time')}</td>
+							<td>
+						<%
+							testFileName = test.getAttribute('name')
+							testFileName = testFileName.replace('/', '-')
+						%>
+								<a href="${testFileName}.html">here</a>
+							</td>		
+						</tr>
+					% endif
+				% endfor
+		</table>
+			% endif
+		% endfor	   
+		<p/>
+				
+		<a href="#top">Back to top</a>
+		
+	</body>
+</html>
