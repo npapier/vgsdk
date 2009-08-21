@@ -1,0 +1,78 @@
+<%page args="runList"/>
+<%include file="header.html" args="title='Test Dashboard'"/>
+	<body>
+		<h1>Tests Dashboard</h1>
+		
+		<br />
+		<hr size="1"/>
+		
+		% for project in runList:
+			<% run = runList[project] %>
+			<div id="${project}">
+			<h2><a href="projects/${project}/LastTest/index.html">${project}<a/></h2>
+			<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
+				<tr valign="top">
+					<th>Tests</th>
+					<th>Errors</th>
+					<th>Success rate</th>
+					<th>Time</th>
+				</tr>
+				<tr valign="top">
+					<td width="25%">${str(run.getTests())}</td>
+					<td width="25%">${str(run.getErrors())}</td>
+					<td width="25%">${str(run.getSuccesRate())}%</td>
+					<td width="25%">${str(run.getTime())}</td>
+				</tr>
+			</table>
+
+			% if len(run.getErrorsList()) > 0:
+				<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
+					<tr valign="top">
+					<th width="20%">Name</th>
+					<th width="65%">Description</th>
+					<th width="5%">Status</th>
+					<th width="5%">Time(s)</th>
+					<th width="5%">Details</th>
+					</tr>
+
+				% for test in run.getErrorsList():
+					% if test.getAttribute('status') != 'notrun':
+						<tr valign="top">
+							<td>${test.getAttribute('name')}</td>
+							<td>
+						% if test.getAttribute('Description') != None: 
+							${test.getAttribute('Description')}
+						% endif
+						
+						% if test.getAttribute('failure') != None:
+							<p class="error">
+								${test.getAttribute('failure')}
+								<code>
+									<br/><br/>
+									${test.getAttribute('failure_code')}
+								</code>
+							</p>
+						% endif	
+							</td>
+							<td>${test.getAttribute('status')}</td>
+							<td>${test.getAttribute('time')}</td>
+							<td>
+						<% 
+							testFileName = test.getAttribute('name')
+							testFileName = testFileName.replace('/', '-')
+						%>				
+								<a href="projects/${project}/LastTest/${testFileName}.html">here</a>
+							</td>
+						</tr>
+					% endif
+				% endfor
+			
+			</table>
+			% endif
+		% endfor
+		<p/>
+			
+		<a href="#top">Back to top</a>
+		</div>  		
+	</body>
+</html>

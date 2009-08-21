@@ -8,6 +8,8 @@ Author Maxime Peresson
 
 '''
 from __future__ import with_statement 
+from mako.template import Template
+from mako.lookup import TemplateLookup
 import config
 import os
 import glob
@@ -99,135 +101,8 @@ class TestDashboard(object):
 			file.write(doc.toprettyxml())	
 	
 	def createDashboardHtml(self):
-		#self.createLiteDashboardHtml()
-		self.createFullDashboardHtml()
-	
-	
-	def createLiteDashboardHtml(self):
-		html = self.getHtmlHeader()
-		html += '''
-		<h1>Tests Dashboard</h1>
-		
-		<br />
-		<table>
-		'''
-		for project in self._runList:
-			html += '<tr>'
-			html += '<td class="LastBuild db_header"><a href="index2.html#'+project+'">'+project+'</a></td>'
-			if self._runList[project].getErrors() > 0:
-				html += '<td align="center" class="LastBuild db_failure"><a href="index2.html#'+project+'">#details</a><br />Error(s): '+str(self._runList[project].getErrors())+'</td>'
-			else:
-				html += '<td align="center" class="LastBuild db_success"><a href="index2.html#'+project+'">#details</a><br />Run successful</td>'
-		
-			html += '</tr>'
-
-		html += '''
-		</table>
-		</body>
-		</html>
-		'''
-		
+		mylookup = TemplateLookup(directories=['./templates'])
+		mytemplate = mylookup.get_template('TestDashboard.html')		
 		with open( config.param['path'] + 'index.html', 'w' ) as file :
-			f.write(html)
-		
-		
-	def createFullDashboardHtml(self):
-		html = self.getHtmlHeader()
-		html += '''
-		<h1>Tests Dashboard</h1>
-		
-		<br />
-		<hr size="1"/>
-		'''
-				
-		for project in self._runList:
-			run = self._runList[project]
+			file.write(mytemplate.render(runList=self._runList))
 			
-			html += '<div id="' + project + '">'
-			html += '<h2><a href="projects/' + project + '/LastTest/index.html">' + project + '<a/></h2>'
-			html += '''
-			<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
-			<tr valign="top">
-				<th>Tests</th>
-				<th>Errors</th>
-				<th>Success rate</th>
-				<th>Time</th>
-			</tr>
-			<tr valign="top">
-			'''
-			html += '<td width="25%">' + str(run.getTests()) +'</td>'
-			html += '<td width="25%">' + str(run.getErrors()) +'</td>'
-			html += '<td width="25%">' + str(run.getSuccesRate()) + '%</td>'
-			html += '<td width="25%">' + str(run.getTime()) + '</td>'
-			html += '''
-			</tr>
-			</table>
-			'''	 
-
-			if len(run.getErrorsList()) > 0:
-				html += '<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">'
-				html +='''
-					<tr valign="top">
-					<th width="20%">Name</th>
-					<th width="65%">Description</th>
-					<th width="5%">Status</th>
-					<th width="5%">Time(s)</th>
-					<th width="5%">Details</th>
-					</tr>
-					'''			
-				for test in run.getErrorsList():
-					if test.getAttribute('status') != 'notrun':
-						html +='<tr valign="top">\r'
-						html +='	<td>' + test.getAttribute('name') + '</td>\r'
-						html +='	<td>\r'
-						if test.getAttribute('Description') != None: 
-							html += test.getAttribute('Description')
-						if test.getAttribute('failure') != None:
-							html += '<p class="error">\r'
-							html += '			'+ test.getAttribute('failure') + '\r'
-							html += '			<code>\r'
-							html += '			<br/><br/>\r'
-							html += '			'+ test.getAttribute('failure_code') +'\r'
-							html += '			</code>\r'	
-							html += '</p>\r'				
-						html +='	</td>\r'
-						html +='	<td>' + test.getAttribute('status') + '</td>\r'
-						html +='	<td>' + test.getAttribute('time') + '</td>\r'
-						html +='	<td>\r'
-						
-						testFileName = test.getAttribute('name')
-						testFileName = testFileName.replace('/', '-')				
-						html +='		<a href="projects/' + project + '/LastTest/' + testFileName + '.html">here</a>\r'
-						html +='	</td>\r'		
-						html +='</tr>\r'		   
-			
-			html += '</table>'
-			html += '<p/>'
-			
-			html += '<a href="#top">Back to top</a>'  
-			html += '</div>'		  
-		
-		
-		
-		html += '</body>\r'
-		html += '</html>\r'		
-		
-		with open( config.param['path'] + 'index.html', 'w' ) as file :
-			file.write(html)
-		
-	def getHtmlHeader(self):
-		html = '''
-		<html>
-			<head>
-				<title>Dashboard</title>
-				<link rel="stylesheet" type="text/css" href="./css/style.css" />
-				<link rel="stylesheet" type="text/css" href="./css/lightbox.css" />
-				<script type="text/javascript" src="./js/prototype.js"></script>
-				<script type="text/javascript" src="./js/scriptaculous.js?load=effects,builder"></script>
-				<script type="text/javascript" src="./js/lightbox.js"></script>
-				<script type="text/javascript" src="./js/tooltip.js"></script>
-		
-			</head>
-			<body>	 
-		'''
-		return html

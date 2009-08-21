@@ -9,6 +9,8 @@ Author Maxime Peresson
 '''
 
 from __future__ import with_statement 
+from mako.template import Template
+from mako.lookup import TemplateLookup
 import os
 import shutil
 import sys
@@ -73,110 +75,22 @@ class TestReport(object):
 		self._graphPath = self._path + 'graph' + os.sep		
 		os.mkdir(self._graphPath)	   
 		
-				
 		#Parse the XML document and create the Run object
 		self._file = config.param['file']
 		self._doc = self._path + self._file
 		self._run = Run.Run(self._doc)
+		
+		#Initialize template
+		self._mylookup = TemplateLookup(directories=['./templates'])
 
 	
 	def generateRootHtml(self):
 		'''
 		@summary: Generate root HTML file (formerly generate with XSLT)
 		'''		
-		filename = None	 
-		
-		html = self.getHtmlHeader()   
-		
-		html += '<h1>Test Report for: ' + self._projet + '</h1>\r'
-		html += '<table width="100%">\r'
-		html += '	<tr>\r'
-		html += '		<td align="left">\r'
-		if len(self._deps) > 0:
-			html += 'This report depends on :'
-		for deps in self._deps:
-			html += '<br/><a href="'+deps.getLink()+'">Test Report</a>'
-		html += '		</td>\r'
-		html += '		<td align="right">This report uses <a href="http://jakarta.apache.org/ant">Ant</a> CSS.</td>\r'
-		html += '	</tr>\r'
-		html += '</table>\r'
-		html += '<hr size="1"/>\r'
-		
-		html += '''
-		<h2>Summary</h2>
-		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
-		<tr valign="top">
-			<th>Tests</th>
-			<th>Errors</th>
-			<th>Success rate</th>
-			<th>Time</th>
-		</tr>
-		<tr valign="top">
-		'''
-
-		html += '<td>' + str(self._run.getTests()) +'</td>'
-		html += '<td>' + str(self._run.getErrors()) +'</td>'
-		html += '<td>' + str(self._run.getSuccesRate()) + '%</td>'
-		html += '<td>' + str(self._run.getTime()) + '</td>'
-		html += '''
-		</tr>
-		<tr>
-			<td colspan="5" style="text-align:center">
-				<embed src="./graph/ErrorGraph.svg" type="image/svg+xml" />
-			</td>
-		</tr>
-		</table>
-		'''  
-		for testsuite in self._run.getTestsuites():
-			if len(testsuite.getTestsList()) > 0:
-				html += '<h3>TestCase ' + testsuite.getName() +'</h3>'
-				html += '<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">'
-				html +='''
-					<tr valign="top">
-					<th width="20%">Name</th>
-					<th width="65%">Description</th>
-					<th width="5%">Status</th>
-					<th width="5%">Time(s)</th>
-					<th width="5%">Details</th>
-					</tr>
-					'''
-				for test in testsuite.getTestsList():
-					if test.getAttribute('status') != 'notrun':
-						html +='<tr valign="top">\r'
-						html +='	<td>' + test.getAttribute('name') + '</td>\r'
-						html +='	<td>\r'
-						if test.getAttribute('Description') != None: 
-							html += test.getAttribute('Description')
-						if test.getAttribute('failure') != None:
-							html += '<p class="error">\r'
-							html += '			'+ test.getAttribute('failure') + '\r'
-							html += '			<code>\r'
-							html += '			<br/><br/>\r'
-							html += '			'+ test.getAttribute('failure_code') +'\r'
-							html += '			</code>\r'	
-							html += '</p>\r'				
-						html +='	</td>\r'
-						html +='	<td>' + test.getAttribute('status') + '</td>\r'
-						html +='	<td>' + test.getAttribute('time') + '</td>\r'
-						html +='	<td>\r'
-						
-						testFileName = test.getAttribute('name')
-						testFileName = testFileName.replace('/', '-')				
-						html +='		<a href="' + testFileName + '.html">here</a>\r'
-						html +='	</td>\r'		
-						html +='</tr>\r'		   
-				
-				html += '</table>'
-				html += '<p/>'
-				
-				html += '<a href="#top">Back to top</a>'
-		
-		html += '</body>\r'
-		html += '</html>\r'
-		
+		mytemplate = self._mylookup.get_template('TestRun.html')	
 		with open( self._path + 'index.html', 'w' ) as file :
-			file.write(html)
-	
+			file.write(mytemplate.render(projet=self._projet, deps=self._deps, run=self._run))
 	
 	def generateHtml(self):
 		'''
@@ -188,78 +102,10 @@ class TestReport(object):
 			filename = test.getAttribute('name')
 			filename = filename.replace('/', '-')
 			
-			col = len(test.getAttributes())
-			
-			#HTML header				
-			html = None
-			html = self.getHtmlHeader()
-			
-			#Title and table declaration
-			html += '<h2>'+ test.getAttribute('name') +'</h2>\r'
-			html += '	<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">\r'
-			html += '	<tr valign="top">\r'				 
-			
-			#Table header
-			for key in test.getAttributes():
-				if key != 'failure' and key != 'failure_code':
-					html += '		<div id="'+key+'_tooltip" class="tooltip" style="display:none">'+globals.description[key]+'</div>'
-					html += '		<th id="'+key+'">'+key+'</th>\r'
-					html += '		<script type="text/javascript">\r'
-					html += '			var my_tooltip = new Tooltip("'+key+'", "'+key+'_tooltip")\r'
-					html += '		</script>\r'
-			
-			for att in test.getCustomAttributes():
-				if att.getDisplay() == True:
-					html += '		<th>'+att.getName()+'</th>\r'
-			html += '	</tr>\r'
-			
-			#Value of each column
-			html += '	<tr valign="top">\r'
-			for key in test.getAttributes():
-				if key != 'failure' and key != 'failure_code':
-					html += '		<td>' + test.getAttribute(key) + '</td>\r'
-			
-			for att in test.getCustomAttributes():
-				if att.getDisplay() == True:
-					html += '		<td>'+att.getAttribute()+'</td>\r'			
+			mytemplate = self._mylookup.get_template('Test.html')
 				
-			html += '	</tr>\r'
-			
-			#Special line for failed test
-			if test.getAttribute('failure') != None:
-				html += '	<tr class="error">\r'
-				html += '		<td colspan="'+str(col)+'">\r'
-				html += '			'+ test.getAttribute('failure') + '\r'
-				html += '			<code>\r'
-				html += '			<br/><br/>\r'
-				html += '			'+ test.getAttribute('failure_code') +'\r'
-				html += '			</code>\r'   
-				html += '		</td>\r'
-				html += '	</tr>\r'
-			
-			#Special line for compare test (print screentshot/reference/difference image)
-			for customAttribute in test.getCustomAttributes():
-				html += customAttribute.getHtml()
-			
-			#Special line for graph (performance test)
-			if os.path.isfile(self._graphPath + filename + '.svg'):   
-				html += '	<tr>\r'
-				html += '		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">\r'
-				html += '		<tr class="screenshot">\r'
-				html += '			<td colspan="' + str(col) + '">\r'
-				html += '				<embed src="./graph/' + filename + '.svg" type="image/svg+xml" />\r'
-				html += '			</td>\r'
-				html += '		</tr>\r'					
-				html += '		</table>\r'
-				html += '	</tr>\r' 
-			
-			html += '	</table>\r'
-			html += '	<a href="index.html">Back</a>\r'
-			html += '</body>\r'
-			html += '</html>\r'
-			
 			with open( self._path + filename+'.html', 'w' ) as file :
-				file.write(html)
+				file.write(mytemplate.render(test=test, graphPath=self._graphPath, filename=filename))
 				
 		
 	def moveToLastTest(self):
@@ -293,21 +139,3 @@ class TestReport(object):
 	
 	def getLink(self):
 		return self._link
-	
-	def getHtmlHeader(self):
-		html = '''
-		<html>
-			<head>
-				<title>Test Details</title>
-				<link rel="stylesheet" type="text/css" href="../../../css/style.css" />
-				<link rel="stylesheet" type="text/css" href="../../../css/lightbox.css" />
-				<script type="text/javascript" src="../../../js/prototype.js"></script>
-				<script type="text/javascript" src="../../../js/scriptaculous.js?load=effects,builder"></script>
-				<script type="text/javascript" src="../../../js/lightbox.js"></script>
-				<script type="text/javascript" src="../../../js/tooltip.js"></script>
-		
-			</head>
-			<body>
-		'''
-		
-		return html
