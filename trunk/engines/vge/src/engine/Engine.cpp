@@ -320,7 +320,7 @@ void Engine::setStateStackTop( vgd::node::Node *pNode )
 
 void Engine::pushStateStack()
 {
-	State top(	m_state.back()	);
+	State& top(	m_state.back()	);
 	
 	m_state.push_back( top );
 }
