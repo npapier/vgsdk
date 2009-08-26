@@ -16,6 +16,8 @@
 #include <sbf/path.hpp>
 
 #include <vector>
+#include <map>
+#include <string>
 #include <boost/assign/list_of.hpp>
 
 #include "vgTest/myBase.hpp"
@@ -35,34 +37,34 @@
 */
 TEST_P(VgTestShape, PerformanceShapeTest)
 {
-	RecordProperty("Description", "Test performance with different complexity");
-	
-	vgTest::Performance perf = GetParam();
-
-	vgd::Shp<vgd::node::Sphere> obj = vgd::node::Sphere::create("sphere");
-	RecordProperty("Shape", "sphere");
-
 	const ::testing::TestInfo* const test_info =
 	  ::testing::UnitTest::GetInstance()->current_test_info();
 
 	std::string filename = vgTest::getImageName(test_info->name());
 
 	// prerun Gtk
-	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT_PERFORMANCE) );
+	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT_PERFORMANCE) );	
+	
+	base->getLog()->add("Description", "Test performance with different complexity");
+	
+	vgTest::Performance perf = GetParam();
+
+	vgd::Shp<vgd::node::Sphere> obj = vgd::node::Sphere::create("sphere");
+	base->getLog()->add("Shape", "sphere");
 	
 	vgd::Shp<vgTest::ShapePerformanceTest> customPerf(new vgTest::ShapePerformanceTest(base->getCanvas()));
 	base->getCanvas()->setCustomPerf(customPerf);
 
 	// prepare scene
 	obj->initializeGeometry(perf.getLevel());
-	RecordProperty("GeometryLevel", perf.getLevel());
+	base->getLog()->add("GeometryLevel", perf.getLevel());
 
 	obj->setDeformableHint(perf.getDeformableHint());
 
-	RecordProperty("DeformableHintValue", perf.getDeformableHintToString().c_str());
+	base->getLog()->add("DeformableHintValue", perf.getDeformableHintToString());
 
 	obj->setBoundingBoxUpdatePolicy(perf.getBoundingBox());
-	RecordProperty("BoundingBoxUpdatePolicyValue", perf.getBoundingBoxToString().c_str());
+	base->getLog()->add("BoundingBoxUpdatePolicyValue", perf.getBoundingBoxToString());
 
 	base->addObject( obj );
 
@@ -70,14 +72,6 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 
 	// run GTK
 	base->run();
-
-	int f = base->getFrame();
-	int d = base->getDuration();
-	int fps = base->getFps();
-
-	RecordProperty("Frame", f);
-	RecordProperty("Duration", d);
-	RecordProperty("Fps", fps);
 
 	if (vgTest::getCreateReference())
 	{
@@ -93,17 +87,20 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
 		EXPECT_EQ( diff, 0 );
 
-		RecordProperty("PixelDiff", diff);
+		base->getLog()->add("PixelDiff", diff);
 
 		if (diff > 0)
 		{
-			RecordProperty("ImagePath", base->getImagesPath(true).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(true));
 		}
 		else
 		{
-			RecordProperty("ImagePath", base->getImagesPath(false).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(false));
 		}
 	}
+
+	//base->getLog()->addToGtest();
+	PutInGtestReport(base)
 }
 
 /**
@@ -112,18 +109,17 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 static vgd::Shp<vgd::node::Sphere> objStatic = vgd::node::Sphere::create("sphere");
 TEST_F(VgTestShape, StaticShapeTest)
 {
-	RecordProperty("Description", "Test if it crash when we add a static object");
-	
 	const ::testing::TestInfo* const test_info =
 	  ::testing::UnitTest::GetInstance()->current_test_info();
 
 	std::string filename = vgTest::getImageName(test_info->name());
 
-	//static vgd::Shp<vgd::node::Sphere> objStatic = vgd::node::Sphere::create("sphere");
-	RecordProperty("Shape", "sphere");
-
 	// prerun Gtk
 	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT) );
+
+	base->getLog()->add("Description", "Test if it crash when we add a static object");
+
+	base->getLog()->add("Shape", "sphere");
 
 	// prepare scene
 	objStatic->initializeGeometry();
@@ -148,17 +144,20 @@ TEST_F(VgTestShape, StaticShapeTest)
 		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
 		EXPECT_EQ( diff, 0 );
 
-		RecordProperty("PixelDiff", diff);
+		base->getLog()->add("PixelDiff", diff);
 
 		if (diff > 0)
 		{
-			RecordProperty("ImagePath", base->getImagesPath(true).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(true));
 		}
 		else
 		{
-			RecordProperty("ImagePath", base->getImagesPath(false).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(false));
 		}
 	}
+	
+	//base->getLog()->addToGtest();
+	PutInGtestReport(base)
 }
 
 #endif // #ifndef _VGTEST_SHAPE_HPP

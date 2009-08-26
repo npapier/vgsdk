@@ -86,15 +86,6 @@ namespace vgTest
 	 */
 	vgd::Shp< vgd::node::Group >		getScene();
 
-	void								setFrame(int f);
-	int									getFrame();
-
-	void								setDuration(int d);
-	int									getDuration();
-
-	void								setFps(int fps);
-	int									getFps();
-
 	/**
 	* @brief Get the path of the reference image
 	*/

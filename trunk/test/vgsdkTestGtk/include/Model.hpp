@@ -27,17 +27,18 @@
 */
 TEST_P(VgTestModel, CompareTest)
 {	
-	std::string desc = "Compare a generated image and a reference image.<br/> Object:";
-	desc += GetParam();
-	RecordProperty("Description", desc.c_str());
-	
 	const ::testing::TestInfo* const test_info =
 	  ::testing::UnitTest::GetInstance()->current_test_info();
 
 	std::string filename = vgTest::getImageName(test_info->name());
 
-	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT) );
-	RecordProperty("Object", GetParam().c_str());
+	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT) );	
+
+	std::string desc = "Compare a generated image and a reference image.<br/> Object:";
+	desc += GetParam();
+	base->getLog()->add("Description", desc);
+	
+	base->getLog()->add("Object", GetParam());
 
 	// prepare scene
 	base->addObject(GetParam());
@@ -60,17 +61,20 @@ TEST_P(VgTestModel, CompareTest)
 		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
 		EXPECT_EQ( diff, 0 );
 
-		RecordProperty("PixelDiff", diff);
+		base->getLog()->add("PixelDiff", diff);
 		
 		if (diff > 0)
 		{
-			RecordProperty("ImagePath", base->getImagesPath(true).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(true));
 		}
 		else
 		{
-			RecordProperty("ImagePath", base->getImagesPath(false).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(false));
 		}
 	}
+
+	//base->getLog()->addToGtest();
+	PutInGtestReport(base)
 }
 
 
@@ -79,31 +83,24 @@ TEST_P(VgTestModel, CompareTest)
 */
 TEST_P(VgTestModel, PerformanceModelTest)
 {
-	std::string desc = "Test performance with different model.<br/> Object:";
-	desc += GetParam();
-	RecordProperty("Description", desc.c_str());	
-	
 	const ::testing::TestInfo* const test_info =
 	  ::testing::UnitTest::GetInstance()->current_test_info();
 
 	std::string filename = vgTest::getImageName(test_info->name());
 
-	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT_PERFORMANCE) );
-	RecordProperty("Object", GetParam().c_str());
+	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT_PERFORMANCE) );	
+
+	std::string desc = "Test performance with different model.<br/> Object:";
+	desc += GetParam();
+	base->getLog()->add("Description", desc);	
+	
+	base->getLog()->add("Object", GetParam());
 
 	// prepare scene
 	base->addObject(GetParam());
 
 	//run GTK
 	base->run();
-
-	int f = base->getFrame();
-	int d = base->getDuration();
-	int fps = base->getFps();
-
-	RecordProperty("Frame", f);
-	RecordProperty("Duration", d);
-	RecordProperty("Fps", fps);
 
 	if (vgTest::getCreateReference())
 	{
@@ -119,17 +116,20 @@ TEST_P(VgTestModel, PerformanceModelTest)
 		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
 		EXPECT_EQ( diff, 0 );
 
-		RecordProperty("PixelDiff", diff);
+		base->getLog()->add("PixelDiff", diff);
 
 		if (diff > 0)
 		{
-			RecordProperty("ImagePath", base->getImagesPath(true).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(true).c_str());
 		}
 		else
 		{
-			RecordProperty("ImagePath", base->getImagesPath(false).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(false).c_str());
 		}
 	}
+
+	//base->getLog()->addToGtest();
+	PutInGtestReport(base)
 }
 
 /**
