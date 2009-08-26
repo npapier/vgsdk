@@ -4,3 +4,4 @@ type				= 'shared'
 version				= '0-5'
 libs				= [ 'vgd 0-5' ]
 deps				= [ '../../core/vgd' ]
+test				= 'gtest'

@@ -11,11 +11,22 @@ namespace vgTest
 Base::Base()
 :	m_quit ( false )
 {
+	m_log = new Logging;
+}
+
+Base::~Base()
+{
 }
 
 void Base::setQuit(bool b)
 {
 	m_quit = b;
 }
+
+vgTest::Logging* Base::getLog()
+{
+	return m_log;
+}
+
 
 } // namespace vgTest
