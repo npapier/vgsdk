@@ -7,7 +7,7 @@
 #define _VGTEST_BASE_HPP
 
 #include "vgTest.hpp"
-
+#include "vgTest/Logging.hpp"
 
 
 namespace vgTest
@@ -22,6 +22,11 @@ struct VGTEST_API Base
 	 * @brief Default constructor
 	 */
 	Base();
+
+	/**
+	 * @brief Virtual destructor
+	 */
+	virtual ~Base();
 
 	/**
 	 * @brief Run the Gtk main loop
@@ -39,6 +44,11 @@ struct VGTEST_API Base
 	 */
 	virtual void			setQuit(bool b);
 
+	/**
+	 * @brief Get logging class
+	 */
+	vgTest::Logging* getLog();
+
 protected:
 	bool			m_quit;
 
@@ -48,6 +58,8 @@ private:
 	 * @param true to take screenshot in the paint function
 	 */
 	virtual void	prerun()=0;
+
+	Logging		*m_log;
 
 };
 
