@@ -122,36 +122,6 @@ vgd::Shp< vgd::node::Group > myBase::getScene()
 	return m_canvas->getScene();
 }
 
-void myBase::setFrame(int f)
-{
-	m_frame = f;
-}
-
-int myBase::getFrame()
-{
-	return m_frame;
-}
-
-void myBase::setDuration(int d)
-{
-	m_duration = d;
-}
-
-int myBase::getDuration()
-{
-	return m_duration;
-}
-
-void myBase::setFps(int fps)
-{
-	m_fps = fps;
-}
-
-int myBase::getFps()
-{
-	return m_fps;
-}
-
 std::string myBase::getReferencePath()
 {
 	// @todo Replace the hard coded path

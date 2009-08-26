@@ -110,9 +110,9 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 
 			// @todo num of triangles => MTS
 			uint duration = time.getElapsedTime().milliSeconds();
-			m_base->setDuration(duration);
-			m_base->setFrame(frame);
-			m_base->setFps(frame / (duration / 1000));
+			m_base->getLog()->add("Duration", duration);
+			m_base->getLog()->add("Frame", frame);
+			m_base->getLog()->add("Fps", frame / (duration / 1000));
 
 			m_perf = true;
 
