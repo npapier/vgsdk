@@ -19,7 +19,7 @@ namespace handler
 
 
 
-void Camera::apply( vge::engine::Engine *engine, vgd::node::Camera *node )
+void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * node )
 {
 	applyMatrix( engine, node );
 	applyLookAt( engine, node );

@@ -44,7 +44,7 @@ void Camera::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::Camera* >(pNode) != 0 );
 	vgd::node::Camera *pCastedNode = dynamic_cast< vgd::node::Camera* >(pNode);
 
-	vge::handler::Camera::applyLookAt( pEngine, pCastedNode );
+	vge::handler::Camera::apply( pEngine, pCastedNode );
 }
 
 
@@ -55,7 +55,7 @@ void Camera::unapply( vge::engine::Engine *, vgd::node::Node * )
 	//assert( dynamic_cast< vgd::node::Camera* >(pNode) != 0 );
 	//vgd::node::Camera *pCastedNode = static_cast< vgd::node::Camera* >(pNode);
 
-	//vge::handler::Camera::unapplyLookAt( pEngine, pCastedNode );
+	//vge::handler::Camera::unapply( pEngine, pCastedNode );
 }
 
 
