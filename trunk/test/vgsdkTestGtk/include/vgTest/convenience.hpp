@@ -55,6 +55,8 @@ std::vector<vgTest::Performance> getPerformance(	std::vector<int> level,
 std::string getImageName(std::string filename);
 std::string getDatedImageName(std::string filename);
 
+std::list< std::string > createModelList();
+
 } //namespace vgTest
 
 #endif // #ifndef _VGTEST_CONVENIENCE_HPP

@@ -5,6 +5,8 @@
 
 #include "Fixtures.hpp"
 
+#include "vgTest/convenience.hpp"
+
 //Test Suite VgTestModel
 void VgTestModel::SetUp()
 {
@@ -14,9 +16,7 @@ void VgTestModel::TearDown()
 {
 }
 
-std::string files[] = {	"box.trian", "cavite.obj", "geosphere.trian"};
-
-INSTANTIATE_TEST_CASE_P(FileList, VgTestModel, testing::ValuesIn(files));
+INSTANTIATE_TEST_CASE_P(FileList, VgTestModel, testing::ValuesIn(vgTest::createModelList()));
 
 //Test Suite VgTestShape
 void VgTestShape::SetUp()
