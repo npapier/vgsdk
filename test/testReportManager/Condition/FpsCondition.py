@@ -72,6 +72,7 @@ class FpsCondition(Condition):
 			else:
 				limit = self._lowLimit
 				
-			if int(self._currentTest.getAttribute('Fps')) < (int(t.getAttribute('Fps')) - (int(limit) * int(t.getAttribute('Fps')) / 100)):
-				self._currentTest.addAttribute('alert', 'fps')
-				self._alert.append(self._currentTest)
+			if t.getAttribute('Fps') != None: #if no attribut "Fps" in last test run
+				if int(self._currentTest.getAttribute('Fps')) < (int(t.getAttribute('Fps')) - (int(limit) * int(t.getAttribute('Fps')) / 100)):
+					self._currentTest.addAttribute('alert', 'fps')
+					self._alert.append(self._currentTest)
