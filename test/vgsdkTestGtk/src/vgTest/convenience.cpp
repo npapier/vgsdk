@@ -6,6 +6,8 @@
 #include "vgTest/convenience.hpp"
 #include <vgd/Shp.hpp>
 #include <vgd/basic/Image.hpp>
+#include <sbf/path.hpp>
+#include <vgio/FilenameCollector.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -154,6 +156,17 @@ std::string getDatedImageName(std::string filename)
 	boost::replace_all(filename, " ", "_");
 	boost::replace_all(filename, ":", "");
 	return filename + ".png";
+}
+
+std::list< std::string > createModelList()
+{
+	boost::filesystem::path path = sbf::path::getTopLevel(sbf::path::Share) / "vgTest" / "0-5";
+
+	vgio::FilenameCollector collector( path.string() );
+	
+	collector.setRegex(".*");
+	collector.run();
+	return collector.getStringFilenames();
 }
 
 } //namespace vgTest
