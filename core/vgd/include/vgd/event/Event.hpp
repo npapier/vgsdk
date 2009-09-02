@@ -67,7 +67,7 @@ struct VGD_API Event
 	 * 
 	 * @param buttonID	a button identifier
 	 * 
-	 * @remarks The request is processed by the ButtonStateSet. It's a shortcut for getButtonStates().isDonw()
+	 * @remarks The request is processed by the ButtonStateSet. It's a shortcut for getButtonStates().isDown()
 	 */
 	bool isButtonDown( const int32 buttonID ) const;
 
