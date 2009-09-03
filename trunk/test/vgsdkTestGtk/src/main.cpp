@@ -4,8 +4,8 @@
 // Author Maxime Peresson
 
 #include <gtest/gtest.h>
-#include "vgTest/TestEnvironment.hpp"
-#include "vgTest/convenience.hpp"
+#include "vgsdkTestGtk/vgTest/TestEnvironment.hpp"
+#include "vgsdkTestGtk/vgTest/convenience.hpp"
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 
 		if (vm.count("saveRef")) 
 		{
-			vgTest::setCreateReference(true);
+			vgsdkTestGtk::vgTest::setCreateReference(true);
 			::testing::FLAGS_gtest_output = "xml:" + xmlPath + "createRef-" + appName + ".xml";
 		}
 		else 
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 	testing::InitGoogleTest(&argc, argv);
 
 	//run the environnement (do it AFTER googletest init, or you may have problem (gtk init must be after googletest init))
-	::testing::AddGlobalTestEnvironment( new vgTest::TestEnvironment( argc, argv ));
+	::testing::AddGlobalTestEnvironment( new vgsdkTestGtk::vgTest::TestEnvironment( argc, argv ));
 
 	// Should be : return RUN_ALL_TESTS();
 	// RUN_ALL_TESTS doesn't return 0 if a test fail. We want 0 if the execution is completely done.

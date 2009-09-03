@@ -5,7 +5,7 @@
 
 #include "Fixtures.hpp"
 
-#include "vgTest/convenience.hpp"
+#include <vgTest/convenience.hpp>
 
 //Test Suite VgTestModel
 void VgTestModel::SetUp()
@@ -27,4 +27,4 @@ void VgTestShape::TearDown()
 {
 }
 
-INSTANTIATE_TEST_CASE_P(PerformanceList, VgTestShape, testing::ValuesIn( vgTest::getPerformance(level, deformableHint, boundingBoxPolicy) ));
+INSTANTIATE_TEST_CASE_P(PerformanceList, VgTestShape, testing::ValuesIn( vgsdkTestGtk::vgTest::getPerformance(level, deformableHint, boundingBoxPolicy) ));

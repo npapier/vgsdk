@@ -6,7 +6,7 @@
 #ifndef _VGTEST_LOGGING_HPP
 #define _VGTEST_LOGGING_HPP
 
-#include "vgTest.hpp"
+#include "vgTest/vgTest.hpp"
 
 #include <map>
 #include <string>
@@ -46,7 +46,7 @@ struct VGTEST_API Logging
 	/**
 	 * @brief Get value from the map
 	 */
-	std::string get(std::string key);
+	const std::string get(std::string key);
 
 	/**
 	 * @brief Remove value from the map
@@ -56,7 +56,7 @@ struct VGTEST_API Logging
 	/**
 	 * @brief Get the log map
 	 */
-	std::map<std::string, std::string> getLog();
+	std::map<std::string, std::string> getLog() const;
 
 	/**
 	 * @brief Add the whole map to googletest report

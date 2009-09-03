@@ -3,47 +3,51 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgTest/TestEnvironment.hpp"
+#include "vgsdkTestGtk/vgTest/TestEnvironment.hpp"
 
 #include <vgDebug/convenience.hpp>
 #include <vgGTK/event/sdl.hpp>
 #include <vgGTK/Logging.hpp>
 #include <gtkmm.h>
 
-namespace vgTest
+namespace vgsdkTestGtk
 {
-
-TestEnvironment::TestEnvironment( int argc, char **argv )
-:	m_kit ( 0 ),
-	m_argc( argc ),
-	m_argv( argv )
-{}
-
-	TestEnvironment::~TestEnvironment()
+	namespace vgTest
 	{
-		//assert(false); // @todo really called ?
-	}
-	
-	void TestEnvironment::SetUp()
-	{
-		// Glib thread system initialization.
-		Glib::thread_init();
 
-		// Initializes the gtk system.
-		m_kit = new Gtk::Main( m_argc, m_argv );
+	TestEnvironment::TestEnvironment( int argc, char **argv )
+	:	m_kit ( 0 ),
+		m_argc( argc ),
+		m_argv( argv )
+	{}
 
-		// Installs the GTK-based logging.
-		vgDebug::set< vgGTK::Logging >();
+		TestEnvironment::~TestEnvironment()
+		{
+			//assert(false); // @todo really called ?
+		}
+		
+		void TestEnvironment::SetUp()
+		{
+			// Glib thread system initialization.
+			Glib::thread_init();
 
-		// Another initialization thing.
-		vgGTK::event::initSDL();
+			// Initializes the gtk system.
+			m_kit = new Gtk::Main( m_argc, m_argv );
 
-		// Set the human readable name of the application.
-		Glib::set_application_name("vgsdkTestGtk");
-	}
+			// Installs the GTK-based logging.
+			vgDebug::set< vgGTK::Logging >();
 
-	void TestEnvironment::TearDown()
-	{
-	}
+			// Another initialization thing.
+			vgGTK::event::initSDL();
 
-} // namespace vgTest
+			// Set the human readable name of the application.
+			Glib::set_application_name("vgsdkTestGtk");
+		}
+
+		void TestEnvironment::TearDown()
+		{
+		}
+
+	} // namespace vgTest
+
+} //namespace vgsdkTestGtk

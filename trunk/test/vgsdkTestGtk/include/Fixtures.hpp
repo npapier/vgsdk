@@ -12,8 +12,8 @@
 
 #include <vgd/node/VertexShape.hpp>
 
-#include "vgTest/Performance.hpp"
-#include "vgTest/convenience.hpp"
+#include "vgsdkTestGtk/vgTest/Performance.hpp"
+#include "vgsdkTestGtk/vgTest/convenience.hpp"
 
 /**
 * @brief Fixtures for test on models (VgTestModel testsuite)
@@ -32,7 +32,7 @@ std::string files[];
 /**
 * @brief Fixtures for test on shapes (VgTestShape testsuite)
 */
-class VgTestShape : public ::testing::TestWithParam<vgTest::Performance>
+class VgTestShape : public ::testing::TestWithParam<vgsdkTestGtk::vgTest::Performance>
 {
 	protected:
 	virtual void SetUp();

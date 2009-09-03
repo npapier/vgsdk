@@ -10,12 +10,12 @@
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
-
-#include "vgTest/myBase.hpp"
-#include "vgTest/myCanvas.hpp"
-#include "vgTest/convenience.hpp"
+#include <vgTest/convenience.hpp>
 
 #include "Fixtures.hpp"
+#include "vgsdkTestGtk/vgTest/myBase.hpp"
+#include "vgsdkTestGtk/vgTest/myCanvas.hpp"
+
 
 
 /**

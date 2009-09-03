@@ -11,12 +11,12 @@
 
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
-
-#include "vgTest/myBase.hpp"
-#include "vgTest/myCanvas.hpp"
-#include "vgTest/convenience.hpp"
+#include <vgTest/convenience.hpp>
 
 #include "Fixtures.hpp"
+#include "vgsdkTestGtk/vgTest/myBase.hpp"
+#include "vgsdkTestGtk/vgTest/myCanvas.hpp"
+
 
 /**
 * @brief VgTestModel testsuite
@@ -32,7 +32,7 @@ TEST_P(VgTestModel, CompareTest)
 
 	std::string filename = vgTest::getImageName(test_info->name());
 
-	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT) );	
+	vgd::ScopedPtr< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );	
 
 	std::string desc = "Compare a generated image and a reference image.<br/> Object:";
 	desc += GetParam();
@@ -46,9 +46,9 @@ TEST_P(VgTestModel, CompareTest)
 	//run GTK
 	base->run();
 
-	if (vgTest::getCreateReference())
+	if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
-		vgTest::moveTo(base->getScreenShotPath(), base->getReferencePath());
+		vgTest::moveTo(base->getScreenShotPath() + base->getDatedScreenShotName(), base->getReferencePath() + base->getScreenShotName());
 	}
 	else
 	{
@@ -58,7 +58,7 @@ TEST_P(VgTestModel, CompareTest)
 			FAIL() << "REFERENCE FILE IS NOT CREATED";
 		}
 
-		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
+		int diff = vgTest::compare(base->getReferencePath() + base->getScreenShotName(), base->getScreenShotPath() + base->getDatedScreenShotName(), base->getDifferencePath() + base->getDatedScreenShotName());
 		EXPECT_EQ( diff, 0 );
 
 		base->getLog()->add("PixelDiff", diff);
@@ -88,7 +88,7 @@ TEST_P(VgTestModel, PerformanceModelTest)
 
 	std::string filename = vgTest::getImageName(test_info->name());
 
-	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT_PERFORMANCE) );	
+	vgd::ScopedPtr< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT_PERFORMANCE) );	
 
 	std::string desc = "Test performance with different model.<br/> Object:";
 	desc += GetParam();
@@ -102,9 +102,9 @@ TEST_P(VgTestModel, PerformanceModelTest)
 	//run GTK
 	base->run();
 
-	if (vgTest::getCreateReference())
+	if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
-		vgTest::moveTo(base->getScreenShotPath(), base->getReferencePath());
+		vgTest::moveTo(base->getScreenShotPath() + base->getDatedScreenShotName(), base->getReferencePath() + base->getScreenShotName());
 	}
 	else
 	{
@@ -113,18 +113,18 @@ TEST_P(VgTestModel, PerformanceModelTest)
 			FAIL() << "REFERENCE FILE IS NOT CREATED";
 		}
 
-		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
+		int diff = vgTest::compare(base->getReferencePath() + base->getScreenShotName(), base->getScreenShotPath() + base->getDatedScreenShotName(), base->getDifferencePath() + base->getDatedScreenShotName());
 		EXPECT_EQ( diff, 0 );
 
 		base->getLog()->add("PixelDiff", diff);
 
 		if (diff > 0)
 		{
-			base->getLog()->add("ImagePath", base->getImagesPath(true).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(true));
 		}
 		else
 		{
-			base->getLog()->add("ImagePath", base->getImagesPath(false).c_str());
+			base->getLog()->add("ImagePath", base->getImagesPath(false));
 		}
 	}
 
