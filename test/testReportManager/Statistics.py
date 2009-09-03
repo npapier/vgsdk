@@ -108,5 +108,44 @@ class Statistics(object):
 				
 				shutil.move(filename+'.svg', self._graphPath + filename+'.svg')
 
+	def createRenderPerformanceGraph(self):
+		'''
+		@summary: Create graph for all render performance tests (a test where the attribut "MinRenderDuration", "MaxRenderDuration" and "AverageRenderDuration" are set)
+		'''		
+		if len(self._runList) > 0:
+			ref = self._runList[0]
+		else:
+			return
+		
+		for test in ref.getTestsList():
+			if 'MinRenderDuration' in test.getAttributes() and 'MaxRenderDuration' in test.getAttributes() and 'AverageRenderDuration' in test.getAttributes():
+				minDuration = []
+				maxDuration = []
+				averageDuration = []
+				legend = []
+				
+				for run in self._runList:
+					for t in run.getTestsList():
+						if 'MinRenderDuration' in t.getAttributes() and 'MaxRenderDuration' in t.getAttributes() and 'AverageRenderDuration' in t.getAttributes() and test.equals(t):
+							minDuration.append(int(t.getAttribute('MinRenderDuration')))
+							maxDuration.append(int(t.getAttribute('MaxRenderDuration')))
+							averageDuration.append(int(t.getAttribute('AverageRenderDuration')))
+							legend.append(run.getName())
+				
+				filename = test.getAttribute('name')
+				filename = filename.replace('/', '-')
+				
+				#Reverse to have chronological order
+				minDuration.reverse()
+				maxDuration.reverse()
+				averageDuration.reverse()
+				legend.reverse()
+				
+				values = {'min' : minDuration, 'max' : maxDuration, 'average' : averageDuration} 
+				
+				CairoPlot.dot_line_plot(filename, values, 400, 300, h_labels = legend, axis = True, grid = True)
+				
+				shutil.move(filename+'.svg', self._graphPath + filename+'.svg')
+
 	def getRunList(self):
 		return self._runList

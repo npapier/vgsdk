@@ -12,6 +12,7 @@ from CustomAttribute import CustomAttribute
 import TestReport
 import os
 import shutil
+import re
 import PIL
 from PIL import Image
 
@@ -34,22 +35,30 @@ class ImageAttribute(CustomAttribute):
 		self._display = False
 		self.imageList = {}
 		args = self._attribute.split('|')
+		self._maxImg = 0
 		for a in args:
 			folder = a.split('=')[0]
-			externalPath = a.split('=')[1]
-			filename = externalPath.split('/')
-			filename = filename[len(filename)-1]
+			self.imageList[folder] = []
+			files = a.split('=')[1]
+			externalPath = files.split(';')[0]
+			filenames = str(files.split(';')[1]).split(',')
+			
 			internalPath = TestReport.TestReport.extpath + folder + os.sep
 			
 			if not os.path.exists(internalPath):
 				os.mkdir(internalPath)
 			
-			shutil.copyfile(externalPath, internalPath + filename)
-			
-			self.resizeImg(filename, internalPath)
-			
-			#save only the file name without extension
-			self.imageList[folder] = filename.split('.')[0]
+			for filename in filenames:
+				if filename != "":
+					if folder == "references":
+						self._maxImg +=	1				
+					
+					shutil.copyfile(externalPath + filename, internalPath + filename)
+					
+					self.resizeImg(filename, internalPath)
+					
+					#save only the file name without extension
+					self.imageList[folder].append(filename.split('.')[0])
 
 	def getHtml(self):
 		'''
@@ -59,14 +68,33 @@ class ImageAttribute(CustomAttribute):
 		html += '	<tr>\r'
 		html += '		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">\r'
 
-		html += '		<tr class="screenshot">\r'
 		for folder in self.imageList:
-			html += '			<td>\r'
-			html += '			<a href="./'+folder+'/'+self.imageList[folder]+'.png" rel="lightbox[img]"><img src="./'+folder+'/'+self.imageList[folder]+'_thumb.png" alt="'+folder+'"></a>\r'					
-			html += '			<p>'+folder+' image</p>\r'
-			html += '			</td>\r'
-									 
-		html += '		</tr>\r'	  
+				
+			html += '		<tr class="screenshot">\r'
+			html += '		<td>'+folder+'</td>\r'
+			
+			num = -1
+			currentImg = 0
+			for file in self.imageList[folder]:
+				if folder == "differences": #get current image number, add cell tab where there is no difference images
+					motif = '_([0-9]{1,2})$'
+					motifCompile = re.compile(motif)
+					result = re.findall(motifCompile, file)
+					if len(result) != 0:
+						num = int(result[0]) - num - 1
+						currentImg = int(result[0])
+						for i in range(0, num):
+							html += '		<td></td>\r'
+				html += '			<td>\r'
+				html += '			<a href="./'+folder+'/'+file+'.png" rel="lightbox[img]"><img src="./'+folder+'/'+file+'_thumb.png" alt="'+folder+'"></a>\r'					
+				#html += '			<p>'+folder+' image</p>\r'
+				html += '			</td>\r'
+			
+			if folder == "differences":
+				if currentImg < self._maxImg:
+					for i in range(1, (self._maxImg - currentImg)):
+						html += '		<td></td>\r'										 
+			html += '		</tr>\r'	  
 		
 		return html
 		
