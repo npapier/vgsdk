@@ -679,8 +679,8 @@ const bool Canvas::shutdownVGSDK()
 
 		getGLEngine()->getGLManager().clear();
 
-		::glo::GLSLProgram::useFixedPaths();
-		getGLEngine()->getGLSLManager().clear();
+		// ::glo::GLSLProgram::useFixedPaths();
+		// getGLEngine()->getGLSLManager().clear();
 
 		return false;
 	}
