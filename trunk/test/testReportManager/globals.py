@@ -33,6 +33,10 @@ description = {
 	
 	'VerificationError' : 'Sofa Verification error',
 	'VerificationErrorByDof' : 'Sofa Verification error by DOF',
+	
+	'MinRenderDuration' : 'Minimum duration (in milliseconds) to render scene',
+	'MaxRenderDuration' : 'Maximum duration (in milliseconds) to render scene',
+	'AverageRenderDuration' : 'Average duration (in milliseconds) to render scene',
 	}
 
 #Attributes which identify a test
@@ -41,5 +45,6 @@ testIdentifier = [
 	'Object',
 	'GeometryLevel',
 	'DeformableHintValue',
-	'BoundingBoxUpdatePolicyValue'
+	'BoundingBoxUpdatePolicyValue',
+	'Scene'
 	]
