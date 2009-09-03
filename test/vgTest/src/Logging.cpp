@@ -4,8 +4,9 @@
 // Author Maxime Peresson
 
 #include "vgTest/Logging.hpp"
-#include <sstream>
+
 #include <gtest/gtest.h>
+#include <sstream>
 
 
 namespace vgTest
@@ -28,12 +29,12 @@ void Logging::add(std::string key, int value)
 	m_log[key] = out.str();
 }
 
-std::string Logging::get(std::string key)
+const std::string Logging::get(std::string key)
 {
 	return m_log[key];
 }
 
-std::map<std::string, std::string> Logging::getLog()
+std::map<std::string, std::string> Logging::getLog() const
 {
 	return m_log;
 }

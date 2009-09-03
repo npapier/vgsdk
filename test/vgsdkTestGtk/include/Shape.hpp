@@ -11,6 +11,8 @@
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
 
+#include <vgTest/convenience.hpp>
+
 #include <vgd/node/VertexShape.hpp>
 #include <vgd/node/Sphere.hpp>
 #include <sbf/path.hpp>
@@ -20,12 +22,13 @@
 #include <string>
 #include <boost/assign/list_of.hpp>
 
-#include "vgTest/myBase.hpp"
-#include "vgTest/myCanvas.hpp"
-#include "vgTest/convenience.hpp"
-#include "vgTest/ShapePerformanceTest.hpp"
-
 #include "Fixtures.hpp"
+#include "vgsdkTestGtk/vgTest/myBase.hpp"
+#include "vgsdkTestGtk/vgTest/myCanvas.hpp"
+#include "vgsdkTestGtk/vgTest/convenience.hpp"
+#include "vgsdkTestGtk/vgTest/ShapePerformanceTest.hpp"
+
+
 
 /**
 * @brief VgTestShape testsuite
@@ -43,16 +46,16 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 	std::string filename = vgTest::getImageName(test_info->name());
 
 	// prerun Gtk
-	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT_PERFORMANCE) );	
+	vgd::ScopedPtr< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT_PERFORMANCE) );	
 	
 	base->getLog()->add("Description", "Test performance with different complexity");
 	
-	vgTest::Performance perf = GetParam();
+	vgsdkTestGtk::vgTest::Performance perf = GetParam();
 
 	vgd::Shp<vgd::node::Sphere> obj = vgd::node::Sphere::create("sphere");
 	base->getLog()->add("Shape", "sphere");
 	
-	vgd::Shp<vgTest::ShapePerformanceTest> customPerf(new vgTest::ShapePerformanceTest(base->getCanvas()));
+	vgd::Shp<vgsdkTestGtk::vgTest::ShapePerformanceTest> customPerf(new vgsdkTestGtk::vgTest::ShapePerformanceTest(base->getCanvas()));
 	base->getCanvas()->setCustomPerf(customPerf);
 
 	// prepare scene
@@ -73,9 +76,9 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 	// run GTK
 	base->run();
 
-	if (vgTest::getCreateReference())
+	if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
-		vgTest::moveTo(base->getScreenShotPath(), base->getReferencePath());
+		vgTest::moveTo(base->getScreenShotPath() + base->getDatedScreenShotName(), base->getReferencePath() + base->getScreenShotName());
 	}
 	else
 	{
@@ -84,7 +87,7 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 			FAIL() << "REFERENCE FILE IS NOT CREATED";
 		}
 
-		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
+		int diff = vgTest::compare(base->getReferencePath() + base->getScreenShotName(), base->getScreenShotPath() + base->getDatedScreenShotName(), base->getDifferencePath() + base->getDatedScreenShotName());
 		EXPECT_EQ( diff, 0 );
 
 		base->getLog()->add("PixelDiff", diff);
@@ -115,7 +118,7 @@ TEST_F(VgTestShape, StaticShapeTest)
 	std::string filename = vgTest::getImageName(test_info->name());
 
 	// prerun Gtk
-	vgd::ScopedPtr< vgTest::myBase > base( new vgTest::myBase(filename, vgTest::SCREENSHOT) );
+	vgd::ScopedPtr< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );
 
 	base->getLog()->add("Description", "Test if it crash when we add a static object");
 
@@ -130,9 +133,9 @@ TEST_F(VgTestShape, StaticShapeTest)
 	// run GTK
 	base->run();
 	
-	if (vgTest::getCreateReference())
+	if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
-		vgTest::moveTo(base->getScreenShotPath(), base->getReferencePath());
+		vgTest::moveTo(base->getScreenShotPath() + base->getDatedScreenShotName(), base->getReferencePath() + base->getScreenShotName());
 	}
 	else
 	{
@@ -141,7 +144,7 @@ TEST_F(VgTestShape, StaticShapeTest)
 			FAIL() << "REFERENCE FILE IS NOT CREATED";
 		}		
 		
-		int diff = vgTest::compare(base->getReferencePath(), base->getScreenShotPath(), base->getDifferencePath());
+		int diff = vgTest::compare(base->getReferencePath() + base->getScreenShotName(), base->getScreenShotPath() + base->getDatedScreenShotName(), base->getDifferencePath() + base->getDatedScreenShotName());
 		EXPECT_EQ( diff, 0 );
 
 		base->getLog()->add("PixelDiff", diff);

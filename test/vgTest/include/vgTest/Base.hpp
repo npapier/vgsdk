@@ -6,8 +6,11 @@
 #ifndef _VGTEST_BASE_HPP
 #define _VGTEST_BASE_HPP
 
-#include "vgTest.hpp"
+#include "vgTest/vgTest.hpp"
+
+#include <list>
 #include "vgTest/Logging.hpp"
+
 
 
 namespace vgTest
@@ -23,6 +26,8 @@ struct VGTEST_API Base
 	 */
 	Base();
 
+	Base( const std::string& filename );
+	
 	/**
 	 * @brief Virtual destructor
 	 */
@@ -42,15 +47,79 @@ struct VGTEST_API Base
 	 * @brief Set if the Gtk main loop must quit next idle time
 	 * @param true to quit
 	 */
-	virtual void			setQuit(bool b);
+	virtual void	setQuit(const bool b);
 
 	/**
 	 * @brief Get logging class
 	 */
 	vgTest::Logging* getLog();
 
+
+	/**
+	 * @name Path accessor
+	 */
+	//@{
+	/**
+	* @brief Get the path of the reference image
+	*/
+	const std::string					getReferencePath() const;
+
+	/**
+	* @brief Get the path of the screenshot
+	*/
+	const std::string					getScreenShotPath() const;
+
+	/**
+	* @brief Get the path of the difference
+	*/
+	const std::string					getDifferencePath() const;
+
+	/**
+	* @brief Get the images path for xml attribute for one capture
+	* @param diff true if the capture contains differences
+	*/
+	const std::string					getImagesPath( const bool diff ) const;
+
+	/**
+	* @brief Get the images path for xml attribute for different capture (using file counter)
+	* @param diff list of capture containing differences
+	*/
+	const std::string					getImagesPath( const std::list<int>& diff ) const;
+	//@}
+
+
+	/**
+	 * @name Screenshot name accessor
+	 */
+	//@{
+	/**
+	* @brief Get the screenshot name
+	*/
+	const std::string					getScreenShotName() const;
+
+	/**
+	* @brief Get the dated screenshot name
+	*/
+	const std::string					getDatedScreenShotName() const;
+
+	/**
+	* @brief Get the dated and numbered screenshot name. Adds one to file counter.
+	*/
+	const std::string					getCountedDatedScreenShotName();
+
+	//@}
+
+	/**
+	* @brief Get total number of screenshot taken. Starts at 0.
+	*/
+	const int							getFileCounter() const;
+
 protected:
-	bool			m_quit;
+	bool					m_quit;
+	std::string				m_filename;
+	std::string				m_datedFilename;
+	int						m_fileCounter;
+
 
 private:
 	/**
@@ -59,7 +128,7 @@ private:
 	 */
 	virtual void	prerun()=0;
 
-	Logging		*m_log;
+	Logging			*m_log;
 
 };
 

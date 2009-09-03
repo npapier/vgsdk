@@ -3,37 +3,41 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgTest/ShapePerformanceTest.hpp"
+#include "vgsdkTestGtk/vgTest/ShapePerformanceTest.hpp"
 
-namespace vgTest
+namespace vgsdkTestGtk
 {
+	namespace vgTest
+	{
 
-ShapePerformanceTest::ShapePerformanceTest(vgTest::TestManipulator *canvas)
-{
-	m_canvas = canvas;
-}
+	ShapePerformanceTest::ShapePerformanceTest(vgsdkTestGtk::vgTest::TestManipulator *canvas)
+	{
+		m_canvas = canvas;
+	}
 
-void ShapePerformanceTest::begin()
-{
-	using vgd::node::VertexShape;
+	void ShapePerformanceTest::begin()
+	{
+		using vgd::node::VertexShape;
 
-	vgd::visitor::predicate::ByKindOfType < VertexShape > predicate;
-	m_shape = vgd::visitor::findFirst< VertexShape >( m_canvas->getRoot(), predicate );
-}
+		vgd::visitor::predicate::ByKindOfType < VertexShape > predicate;
+		m_shape = vgd::visitor::findFirst< VertexShape >( m_canvas->getRoot(), predicate );
+	}
 
-void ShapePerformanceTest::end()
-{
+	void ShapePerformanceTest::end()
+	{
 
-}
+	}
 
-void ShapePerformanceTest::prePaint()
-{
-	m_shape->getFVertexRW();
-}
+	void ShapePerformanceTest::prePaint()
+	{
+		m_shape->getFVertexRW();
+	}
 
-void ShapePerformanceTest::postPaint()
-{
+	void ShapePerformanceTest::postPaint()
+	{
 
-}
+	}
 
-} //namespace vgTest
+	} //namespace vgTest
+
+} //namespace vgsdkTestGtk
