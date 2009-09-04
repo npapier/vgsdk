@@ -14,126 +14,127 @@
 
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
 
-	TestManipulator::TestManipulator() 
-	:	m_type( vgsdkTestGtk::vgTest::NOTHING ),
-		m_screenShotName(""),
-		m_perf( false ),
-		m_screenShot( false )
-	{
-		//vgUI::BasicManipulator::BasicManipulator();
-	}
+namespace vgTest
+{
 
-	TestManipulator::TestManipulator( Canvas * pSharedCanvas )
-	:	vgUI::BasicManipulator( pSharedCanvas ), 
-		m_type( vgsdkTestGtk::vgTest::NOTHING ), 
-		m_screenShotName (""), 
-		m_perf( false ),
-		m_screenShot( false )
-	{
-	}
+TestManipulator::TestManipulator() 
+:	m_type( vgsdkTestGtk::vgTest::NOTHING ),
+	m_screenShotName(""),
+	m_perf( false ),
+	m_screenShot( false )
+{
+	//vgUI::BasicManipulator::BasicManipulator();
+}
 
-	TestManipulator::~TestManipulator()
-	{
-	}
+TestManipulator::TestManipulator( Canvas * pSharedCanvas )
+:	vgUI::BasicManipulator( pSharedCanvas ), 
+	m_type( vgsdkTestGtk::vgTest::NOTHING ), 
+	m_screenShotName (""), 
+	m_perf( false ),
+	m_screenShot( false )
+{
+}
 
-	void TestManipulator::setType(vgsdkTestGtk::vgTest::testType t)
-	{
-		m_type = t;
-	}
+TestManipulator::~TestManipulator()
+{
+}
 
-	void TestManipulator::setScreenShotName(std::string s)
-	{
-		m_screenShotName = s;
-	}
+void TestManipulator::setType(const vgsdkTestGtk::vgTest::testType t)
+{
+	m_type = t;
+}
 
-	void TestManipulator::setBase(vgsdkTestGtk::vgTest::myBase *l)
-	{
-		m_base = l;
-	}
+void TestManipulator::setScreenShotName(const std::string s)
+{
+	m_screenShotName = s;
+}
 
-	void TestManipulator::setCustomPerf(vgd::Shp<vgsdkTestGtk::vgTest::CustomPerformanceTest> customPerf)
-	{
-		m_customPerf = customPerf;
-	}
+void TestManipulator::setBase(vgsdkTestGtk::vgTest::myBase *l)
+{
+	m_base = l;
+}
 
-	//
-	// Overriden from BasicManipulator
-	//
-	void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox)
+void TestManipulator::setCustomPerf(const vgd::Shp<vgsdkTestGtk::vgTest::CustomPerformanceTest> customPerf)
+{
+	m_customPerf = customPerf;
+}
+
+//
+// Overriden from BasicManipulator
+//
+void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox)
+{
+	if (m_type == vgsdkTestGtk::vgTest::SCREENSHOT || m_type == vgsdkTestGtk::vgTest::SCREENSHOT_PERFORMANCE)
 	{
-		if (m_type == vgsdkTestGtk::vgTest::SCREENSHOT || m_type == vgsdkTestGtk::vgTest::SCREENSHOT_PERFORMANCE)
+		if (m_screenShot == false)
 		{
-			if (m_screenShot == false)
+			scheduleScreenshot(m_screenShotName);
+			m_screenShot = true;
+		}
+
+		vgUI::BasicManipulator::paint(size, bUpdateBoundingBox);
+
+		if (m_type == vgsdkTestGtk::vgTest::SCREENSHOT_PERFORMANCE && m_perf == false)
+		{
+		
+			if ( m_customPerf )
 			{
-				scheduleScreenshot(m_screenShotName);
-				m_screenShot = true;
+				m_customPerf->begin();
 			}
 
-			vgUI::BasicManipulator::paint(size, bUpdateBoundingBox);
-
-			if (m_type == vgsdkTestGtk::vgTest::SCREENSHOT_PERFORMANCE && m_perf == false)
-			{
+			vgd::basic::Time time;
 			
+		#ifdef _DEBUG
+			const uint testDuration = 1000;
+		#else
+			const uint testDuration = 1000;
+		#endif
+
+			vgd::basic::TimeDuration endTime(time.getElapsedTime().milliSeconds() + testDuration);
+
+			int frame = 0;
+			while ( time.getElapsedTime() < endTime )
+			{
 				if ( m_customPerf )
 				{
-					m_customPerf->begin();
+					m_customPerf->prePaint();
 				}
 
-				vgd::basic::Time time;
-				
-			#ifdef _DEBUG
-				const uint testDuration = 1000;
-			#else
-				const uint testDuration = 1000;
-			#endif
-
-				vgd::basic::TimeDuration endTime(time.getElapsedTime().milliSeconds() + testDuration);
-
-				int frame = 0;
-				while ( time.getElapsedTime() < endTime )
-				{
-					if ( m_customPerf )
-					{
-						m_customPerf->prePaint();
-					}
-
-					vgUI::BasicManipulator::paint(size, bUpdateBoundingBox);
-
-					if ( m_customPerf )
-					{
-						m_customPerf->postPaint();
-					}
-
-					frame++;
-				}
-
-				// @todo num of triangles => MTS
-				uint duration = time.getElapsedTime().milliSeconds();
-				m_base->getLog()->add("Duration", duration);
-				m_base->getLog()->add("Frame", frame);
-				m_base->getLog()->add("Fps", frame / (duration / 1000));
-
-				m_perf = true;
+				vgUI::BasicManipulator::paint(size, bUpdateBoundingBox);
 
 				if ( m_customPerf )
 				{
-					m_customPerf->end();
+					m_customPerf->postPaint();
 				}
+
+				frame++;
 			}
-			// else nothing
 
-			m_base->setQuit(true);
+			// @todo num of triangles => MTS
+			uint duration = time.getElapsedTime().milliSeconds();
+			m_base->getLog()->add("Duration", duration);
+			m_base->getLog()->add("Frame", frame);
+			m_base->getLog()->add("Fps", frame / (duration / 1000));
+
+			m_perf = true;
+
+			if ( m_customPerf )
+			{
+				m_customPerf->end();
+			}
 		}
-		else
-		{
-			vgUI::BasicManipulator::paint(size, bUpdateBoundingBox);
-			m_base->setQuit(true);
-		}
+		// else nothing
+
+		m_base->setQuit(true);
 	}
+	else
+	{
+		vgUI::BasicManipulator::paint(size, bUpdateBoundingBox);
+		m_base->setQuit(true);
+	}
+}
 
-	} // namespace vgTest
+} // namespace vgTest
 
 } //namespace vgsdkTestGtk

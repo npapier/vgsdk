@@ -6,8 +6,8 @@
 #ifndef _VGTEST_MODEL_HPP
 #define _VGTEST_MODEL_HPP
 
-#include <gtest/gtest.h>
 #include <boost/algorithm/string.hpp>
+#include <gtest/gtest.h>
 
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>

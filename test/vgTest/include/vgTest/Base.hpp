@@ -9,6 +9,8 @@
 #include "vgTest/vgTest.hpp"
 
 #include <list>
+#include <vgd/Shp.hpp>
+
 #include "vgTest/Logging.hpp"
 
 
@@ -52,7 +54,7 @@ struct VGTEST_API Base
 	/**
 	 * @brief Get logging class
 	 */
-	vgTest::Logging* getLog();
+	vgd::Shp< vgTest::Logging >	getLog();
 
 
 	/**
@@ -128,7 +130,7 @@ private:
 	 */
 	virtual void	prerun()=0;
 
-	Logging			*m_log;
+	vgd::Shp< vgTest::Logging > m_log;
 
 };
 

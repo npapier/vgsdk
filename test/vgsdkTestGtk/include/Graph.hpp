@@ -7,9 +7,10 @@
 #define _VGTEST_GRAPH_HPP
 
 #include <gtest/gtest.h>
+
+#include <vgd/node/Group.hpp>
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
-#include <vgd/node/Group.hpp>
 #include <vgTest/convenience.hpp>
 
 #include "Fixtures.hpp"

@@ -7,68 +7,70 @@
 #define _VGSDKTESTGTK_VGTEST_PERFORMANCE_HPP
 
 #include <vector>
+
 #include <vgd/node/VertexShape.hpp>
 
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
+
+namespace vgTest
+{
+
+/**
+ * @brief Container for different performance test param
+ */
+struct Performance
+{
+	/**
+	 * @name Constructors
+	 */
+	//@{
 
 	/**
-	 * @brief Container for different performance test param
+	 * @brief Default constructor
 	 */
-	struct Performance
-	{
-		/**
-		 * @name Constructors
-		 */
-		//@{
-
-		/**
-		 * @brief Default constructor
-		 */
-		Performance();
+	Performance();
 
 
-		/**
-		 * @brief Constructor
-		 */
-		Performance(int l, vgd::node::VertexShape::DeformableHintValueType d, vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType b);
-		//@}
+	/**
+	 * @brief Constructor
+	 */
+	Performance(const int l, const vgd::node::VertexShape::DeformableHintValueType d, const vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType b);
+	//@}
 
 
-		/**
-		 * @brief return the level.
-		 */
-		int															getLevel();
+	/**
+	 * @brief return the level.
+	 */
+	const int														getLevel() const;
 
-		/**
-		 * @brief return the deformable hint value
-		 */
-		vgd::node::VertexShape::DeformableHintValueType				getDeformableHint();
+	/**
+	 * @brief return the deformable hint value
+	 */
+	const vgd::node::VertexShape::DeformableHintValueType			getDeformableHint() const;
 
-		/**
-		 * @brief return boundingbox update policy value
-		 */
-		vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType	getBoundingBox();
+	/**
+	 * @brief return boundingbox update policy value
+	 */
+	const vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType	getBoundingBox() const;
 
-		/**
-		 * @brief return the deformable hint value as a string
-		 */
-		std::string													getDeformableHintToString();
+	/**
+	 * @brief return the deformable hint value as a string
+	 */
+	const std::string												getDeformableHintToString() const;
 
-		/**
-		 * @brief return boundingbox update policy value as a string
-		 */
-		std::string													getBoundingBoxToString();
+	/**
+	 * @brief return boundingbox update policy value as a string
+	 */
+	const std::string												getBoundingBoxToString() const;
 
-	private :
-		int															m_level;
-		vgd::node::VertexShape::DeformableHintValueType				m_deformableHint;
-		vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType	m_boundingBox;
-	};
+private :
+	int															m_level;
+	vgd::node::VertexShape::DeformableHintValueType				m_deformableHint;
+	vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType	m_boundingBox;
+};
 
-	} //namespace vgTest
+} //namespace vgTest
 
 } //namespace vgsdkTestGtk
 

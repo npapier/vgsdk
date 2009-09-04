@@ -6,26 +6,25 @@
 #ifndef _VGTEST_SHAPE_HPP
 #define _VGTEST_SHAPE_HPP
 
-#include <gtest/gtest.h>
 #include <boost/algorithm/string.hpp>
+#include <boost/assign/list_of.hpp>
+#include <gtest/gtest.h>
+#include <map>
+
+#include <sbf/path.hpp>
+#include <string>
+#include <vgd/node/Sphere.hpp>
+#include <vgd/node/VertexShape.hpp>
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
-
 #include <vgTest/convenience.hpp>
 
-#include <vgd/node/VertexShape.hpp>
-#include <vgd/node/Sphere.hpp>
-#include <sbf/path.hpp>
-
 #include <vector>
-#include <map>
-#include <string>
-#include <boost/assign/list_of.hpp>
 
 #include "Fixtures.hpp"
+#include "vgsdkTestGtk/vgTest/convenience.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
-#include "vgsdkTestGtk/vgTest/convenience.hpp"
 #include "vgsdkTestGtk/vgTest/ShapePerformanceTest.hpp"
 
 
