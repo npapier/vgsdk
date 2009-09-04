@@ -7,37 +7,39 @@
 
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
 
-	ShapePerformanceTest::ShapePerformanceTest(vgsdkTestGtk::vgTest::TestManipulator *canvas)
-	{
-		m_canvas = canvas;
-	}
+namespace vgTest
+{
 
-	void ShapePerformanceTest::begin()
-	{
-		using vgd::node::VertexShape;
+ShapePerformanceTest::ShapePerformanceTest(vgsdkTestGtk::vgTest::TestManipulator *canvas)
+{
+	m_canvas = canvas;
+}
 
-		vgd::visitor::predicate::ByKindOfType < VertexShape > predicate;
-		m_shape = vgd::visitor::findFirst< VertexShape >( m_canvas->getRoot(), predicate );
-	}
+void ShapePerformanceTest::begin()
+{
+	using vgd::node::VertexShape;
 
-	void ShapePerformanceTest::end()
-	{
+	vgd::visitor::predicate::ByKindOfType < VertexShape > predicate;
+	m_shape = vgd::visitor::findFirst< VertexShape >( m_canvas->getRoot(), predicate );
+}
 
-	}
+void ShapePerformanceTest::end()
+{
 
-	void ShapePerformanceTest::prePaint()
-	{
-		m_shape->getFVertexRW();
-	}
+}
 
-	void ShapePerformanceTest::postPaint()
-	{
+void ShapePerformanceTest::prePaint()
+{
+	m_shape->getFVertexRW();
+}
 
-	}
+void ShapePerformanceTest::postPaint()
+{
 
-	} //namespace vgTest
+}
+
+} //namespace vgTest
 
 } //namespace vgsdkTestGtk
+

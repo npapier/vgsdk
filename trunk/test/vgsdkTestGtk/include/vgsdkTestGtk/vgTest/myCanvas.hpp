@@ -10,72 +10,76 @@
 
 #include <glibmm/ustring.h>
 #include <vector>
+
 #include <vgGTK/TBasicManipulator.hpp>
+
 #include "vgsdkTestGtk/vgTest/TestManipulator.hpp"
 
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
+
+namespace vgTest
+{
+/**
+ * @brief	Implements a BasicManipulator with some content loading features.
+ *
+ */
+	struct myCanvas : public vgGTK::TBasicManipulator< vgsdkTestGtk::vgTest::TestManipulator >
+{
+	typedef std::vector< Glib::ustring > Strings;	///< Defines a collection of strings.
+
 	/**
-	 * @brief	Implements a BasicManipulator with some content loading features.
-	 *
+	 * @name	Constructors & destructor
 	 */
-		struct myCanvas : public vgGTK::TBasicManipulator< vgsdkTestGtk::vgTest::TestManipulator >
-	{
-		typedef std::vector< Glib::ustring > Strings;	///< Defines a collection of strings.
+	//@{
+	myCanvas();
 
-		/**
-		 * @name	Constructors & destructor
-		 */
-		//@{
-		myCanvas();
+	//~myCanvas();
+	//@}
 
-		//~myCanvas();
-		//@}
+	/**
+	 * @name Scene management methods
+	 */
+	//@{
+	/**
+	 * @brief	Loads and appends an object to the scene.
+	 *
+	 * @param	filename	a string containing the path to the file to load
+	 * @param	viewAll 	true to move the camera so every object is in the view field
+	 *
+	 * @return	true on success, false otherwise
+	 */
+	const bool appendToScene( const Glib::ustring & filename, const bool viewAll = true );
 
-		/**
-		 * @name Scene management methods
-		 */
-		//@{
-		/**
-		 * @brief	Loads and appends an object to the scene.
-		 *
-		 * @param	filename	a string containing the path to the file to load
-		 * @param	viewAll 	true to move the camera so every object is in the view field
-		 *
-		 * @return	true on success, false otherwise
-		 */
-		const bool appendToScene( const Glib::ustring & filename, const bool viewAll = true );
+	/**
+	 * @brief	Loads and appends objects to the scene.
+	 *
+	 * @param	filenames	a collection of strings containing the paths to the files to load
+	 * @param	viewAll 	true to move the camera so every object is in the view field
+	 *
+	 * @return	true on success, false otherwise
+	 */
+	const bool appendToScene( const Strings & filenames, const bool viewAll = true );
 
-		/**
-		 * @brief	Loads and appends objects to the scene.
-		 *
-		 * @param	filenames	a collection of strings containing the paths to the files to load
-		 * @param	viewAll 	true to move the camera so every object is in the view field
-		 *
-		 * @return	true on success, false otherwise
-		 */
-		const bool appendToScene( const Strings & filenames, const bool viewAll = true );
+	const bool load( const Glib::ustring & pathfilename );
 
-		const bool load( const Glib::ustring & pathfilename );
+	const bool loadCollada( const Glib::ustring & pathfilename );
 
-		const bool loadCollada( const Glib::ustring & pathfilename );
+	const bool loadObj( const Glib::ustring & pathfilename );
 
-		const bool loadObj( const Glib::ustring & pathfilename );
+	const bool loadTrian( const Glib::ustring & pathfilename );
 
-		const bool loadTrian( const Glib::ustring & pathfilename );
-
-		const bool loadTrian2( const Glib::ustring & pathfilename );
+	const bool loadTrian2( const Glib::ustring & pathfilename );
 
 
-	private:
-		Strings				m_filenames;			///< Contains the paths of the files currently loaded.
-	};
+private:
+	Strings				m_filenames;			///< Contains the paths of the files currently loaded.
+};
 
 
-	} // namespace vgTest
+} // namespace vgTest
 
 } //namespace vgsdkTestGtk
 
 #endif // #ifndef _VGSDKTESTGTK_VGTEST_MYCANVAS_HPP
+

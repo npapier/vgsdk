@@ -6,14 +6,15 @@
 #ifndef _VGTEST_FIXTURES_HPP
 #define _VGTEST_FIXTURES_HPP
 
+#include <boost/assign/list_of.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <boost/assign/list_of.hpp>
 
 #include <vgd/node/VertexShape.hpp>
 
-#include "vgsdkTestGtk/vgTest/Performance.hpp"
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
+#include "vgsdkTestGtk/vgTest/Performance.hpp"
+
 
 /**
 * @brief Fixtures for test on models (VgTestModel testsuite)

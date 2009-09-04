@@ -6,38 +6,39 @@
 #ifndef _VGSDKTESTGTK_VGTEST_SHAPEPERFORMANCETEST_HPP
 #define _VGSDKTESTGTK_VGTEST_SHAPEPERFORMANCETEST_HPP
 
-#include "vgsdkTestGtk/vgTest/CustomPerformanceTest.hpp"
-
-#include <vgd/Shp.hpp>
 #include <vgd/node/VertexShape.hpp>
+#include <vgd/Shp.hpp>
+
+#include "vgsdkTestGtk/vgTest/CustomPerformanceTest.hpp"
 #include "vgsdkTestGtk/vgTest/TestManipulator.hpp"
 
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
 
-	/**
-	 * @brief Provide function called at the begining/end of the test end before and after each paint in shape performance tests
-	 */
-	struct ShapePerformanceTest : public CustomPerformanceTest
-	{
-		ShapePerformanceTest(vgsdkTestGtk::vgTest::TestManipulator *canvas);
+namespace vgTest
+{
 
-		void begin();
+/**
+ * @brief Provide function called at the begining/end of the test end before and after each paint in shape performance tests
+ */
+struct ShapePerformanceTest : public CustomPerformanceTest
+{
+	ShapePerformanceTest(vgsdkTestGtk::vgTest::TestManipulator *canvas);
 
-		void end();
+	void begin();
 
-		void prePaint();
+	void end();
 
-		void postPaint();
+	void prePaint();
 
-	private:
-		vgd::Shp< vgd::node::VertexShape > m_shape;
-		vgsdkTestGtk::vgTest::TestManipulator	*m_canvas;
+	void postPaint();
 
-	};
-	} //namespace vgTest
+private:
+	vgd::Shp< vgd::node::VertexShape > m_shape;
+	vgsdkTestGtk::vgTest::TestManipulator	*m_canvas;
+
+};
+} //namespace vgTest
 
 } //namespace vgsdkTestGtk
 

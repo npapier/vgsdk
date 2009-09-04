@@ -16,43 +16,44 @@ namespace Gtk
 
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
+
+namespace vgTest
+{
+
+/**
+ * @brief Environnement of the program
+ */
+struct TestEnvironment : public testing::Environment
+{
+	/**
+	 * @name Constructor / Desctructor
+	 */
+	//@{
+	/**
+	 * @brief Construct the environnement with program command line argument
+	 */
+	TestEnvironment( int argc, char **argv );
 
 	/**
-	 * @brief Environnement of the program
+	 * @brief Destructor
 	 */
-	struct TestEnvironment : public testing::Environment
-	{
-		/**
-		 * @name Constructor / Desctructor
-		 */
-		//@{
-		/**
-		 * @brief Construct the environnement with program command line argument
-		 */
-		TestEnvironment( int argc, char **argv );
-
-		/**
-		 * @brief Destructor
-		 */
-		~TestEnvironment();
-		//@}
+	~TestEnvironment();
+	//@}
 
 
-		/**
-		 * Initialize the environnement (GTK, SDL, logging....)
-		 */
-		void SetUp();
-		void TearDown();
+	/**
+	 * Initialize the environnement (GTK, SDL, logging....)
+	 */
+	void SetUp();
+	void TearDown();
 
-	private:
-		Gtk::Main	*m_kit;
-		int			m_argc;
-		char		**m_argv;
-	};
+private:
+	Gtk::Main	*m_kit;
+	int			m_argc;
+	char		**m_argv;
+};
 
-	} // namespace vgTest
+} // namespace vgTest
 
 } //namespace vgsdkTestGtk
 

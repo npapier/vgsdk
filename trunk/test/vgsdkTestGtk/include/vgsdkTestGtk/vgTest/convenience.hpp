@@ -17,30 +17,32 @@
  */
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
-	enum testType { NOTHING, SCREENSHOT, PERFORMANCE, SCREENSHOT_PERFORMANCE };
 
-	static bool createReference = false;
+namespace vgTest
+{
 
-	/**
-	 * @brief Return True if program is executed to create screenshot reference
-	 */
-	bool getCreateReference();
+enum testType { NOTHING, SCREENSHOT, PERFORMANCE, SCREENSHOT_PERFORMANCE };
 
-	/**
-	 * @brief Set to True if the program is executed to create screenshot reference
-	 */
-	void setCreateReference(bool createRef);
+static bool createReference = false;
 
-	/**
-	 * @brief Return a vector of all possibility of performance object
-	 */
-	std::vector<vgsdkTestGtk::vgTest::Performance> getPerformance(	std::vector<int> level, 
-														std::vector<vgd::node::VertexShape::DeformableHintValueType> deformableHint, 
-														std::vector<vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType> boundingBoxPolicy);
+/**
+ * @brief Return True if program is executed to create screenshot reference
+ */
+bool getCreateReference();
 
-	} //namespace vgTest
+/**
+ * @brief Set to True if the program is executed to create screenshot reference
+ */
+void setCreateReference(bool createRef);
+
+/**
+ * @brief Return a vector of all possibility of performance object
+ */
+std::vector<vgsdkTestGtk::vgTest::Performance> getPerformance(	const std::vector<int> level, 
+													const std::vector<vgd::node::VertexShape::DeformableHintValueType> deformableHint, 
+													const std::vector<vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType> boundingBoxPolicy);
+
+} //namespace vgTest
 
 } //namespace vgsdkTestGtk
 

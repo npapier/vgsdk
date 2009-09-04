@@ -4,50 +4,55 @@
 // Author Maxime Peresson
 
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
-#include <vgd/Shp.hpp>
-#include <vgd/basic/Image.hpp>
-#include <sbf/path.hpp>
-#include <vgio/FilenameCollector.hpp>
-#include <boost/filesystem.hpp>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/filesystem.hpp>
+
+#include <sbf/path.hpp>
 #include <sstream>
+#include <vgd/basic/Image.hpp>
+#include <vgd/Shp.hpp>
+#include <vgio/FilenameCollector.hpp>
+
 
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
 
-	bool getCreateReference()
-	{
-		return createReference;
-	}
+namespace vgTest
+{
 
-	void setCreateReference(bool createRef)
-	{
-		createReference = createRef;
-	}
+bool getCreateReference()
+{
+	return createReference;
+}
 
-	std::vector<vgsdkTestGtk::vgTest::Performance> getPerformance(std::vector<int> level, 
-											std::vector<vgd::node::VertexShape::DeformableHintValueType> deformableHint, 
-											std::vector<vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType> boundingBoxPolicy)
-	{
-		std::vector<vgsdkTestGtk::vgTest::Performance> p;
+void setCreateReference(bool createRef)
+{
+	createReference = createRef;
+}
 
-		for( uint i = 0; i < level.size(); i++)
+std::vector<vgsdkTestGtk::vgTest::Performance> getPerformance(const std::vector<int> level, 
+										const std::vector<vgd::node::VertexShape::DeformableHintValueType> deformableHint, 
+										const std::vector<vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType> boundingBoxPolicy)
+{
+	std::vector<vgsdkTestGtk::vgTest::Performance> p;
+
+	for( uint i = 0; i < level.size(); i++)
+	{
+		for( uint j = 0; j< deformableHint.size(); j++)
 		{
-			for( uint j = 0; j< deformableHint.size(); j++)
+			for( uint k = 0; k < boundingBoxPolicy.size(); k++)
 			{
-				for( uint k = 0; k < boundingBoxPolicy.size(); k++)
-				{
-					p.push_back(Performance(level[i], deformableHint[j], boundingBoxPolicy[k]));
-				}
+				p.push_back(Performance(level[i], deformableHint[j], boundingBoxPolicy[k]));
 			}
 		}
-		
-		return p;
 	}
+	
+	return p;
+}
 
-	} //namespace vgTest
+} //namespace vgTest
 
 } //namespace vgsdkTestGtk
+

@@ -7,74 +7,76 @@
 
 namespace vgsdkTestGtk
 {
-	namespace vgTest
-	{
 
-	Performance::Performance()
+namespace vgTest
+{
+
+Performance::Performance()
+:	m_level( 1 ),
+	m_deformableHint( vgd::node::VertexShape::DEFAULT_DEFORMABLE_HINT ),
+	m_boundingBox( vgd::node::VertexShape::DEFAULT_BOUNDINGBOX_UPDATE_POLICY )
+{
+}
+
+Performance::Performance(const int l, const vgd::node::VertexShape::DeformableHintValueType d, const vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType b)
+:	m_level( l ),
+	m_deformableHint( d ),
+	m_boundingBox( b )
+{
+}
+
+const int Performance::getLevel() const
+{
+	return m_level;
+}
+
+const vgd::node::VertexShape::DeformableHintValueType Performance::getDeformableHint() const
+{
+	return m_deformableHint;
+}
+
+const vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType Performance::getBoundingBox() const
+{
+	return m_boundingBox;
+}
+
+const std::string	Performance::getDeformableHintToString() const
+{
+	if ( m_deformableHint == vgd::node::VertexShape::STATIC )
 	{
-		m_level = 1;
-		m_deformableHint = vgd::node::VertexShape::DEFAULT_DEFORMABLE_HINT;
-		m_boundingBox = vgd::node::VertexShape::DEFAULT_BOUNDINGBOX_UPDATE_POLICY;
+		return "STATIC";
 	}
-
-	Performance::Performance(int l, vgd::node::VertexShape::DeformableHintValueType d, vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType b)
+	else if ( m_deformableHint == vgd::node::VertexShape::DYNAMIC )
 	{
-		m_level = l;
-		m_deformableHint = d;
-		m_boundingBox = b;
+		return "DYNAMIC";
 	}
-
-	int Performance::getLevel()
+	else if ( m_deformableHint == vgd::node::VertexShape::STREAM )
 	{
-		return m_level;
+		return "STREAM";
 	}
-
-	vgd::node::VertexShape::DeformableHintValueType Performance::getDeformableHint()
+	else
 	{
-		return m_deformableHint;
+		return "DEFAULT";
 	}
+}
 
-	vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType Performance::getBoundingBox()
+const std::string	Performance::getBoundingBoxToString() const
+{
+	if ( m_boundingBox == vgd::node::VertexShape::AUTOMATIC )
 	{
-		return m_boundingBox;
+		return "AUTOMATIC";
 	}
-
-	std::string	Performance::getDeformableHintToString()
+	else if ( m_boundingBox == vgd::node::VertexShape::ONCE )
 	{
-		if ( m_deformableHint == vgd::node::VertexShape::STATIC )
-		{
-			return "STATIC";
-		}
-		else if ( m_deformableHint == vgd::node::VertexShape::DYNAMIC )
-		{
-			return "DYNAMIC";
-		}
-		else if ( m_deformableHint == vgd::node::VertexShape::STREAM )
-		{
-			return "STREAM";
-		}
-		else
-		{
-			return "DEFAULT";
-		}
+		return "ONCE";
 	}
-
-	std::string	Performance::getBoundingBoxToString()
+	else
 	{
-		if ( m_boundingBox == vgd::node::VertexShape::AUTOMATIC )
-		{
-			return "AUTOMATIC";
-		}
-		else if ( m_boundingBox == vgd::node::VertexShape::ONCE )
-		{
-			return "ONCE";
-		}
-		else
-		{
-			return "DEFAULT";
-		}
+		return "DEFAULT";
 	}
+}
 
-	} //namespace vgTest
+} //namespace vgTest
 
 } //namespace vgsdkTestGtk
+

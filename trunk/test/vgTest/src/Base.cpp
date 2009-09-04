@@ -32,6 +32,7 @@ Base::Base(const std::string& filename)
 
 Base::~Base()
 {
+	m_log.reset();
 }
 
 void Base::setQuit(const bool b)
@@ -39,7 +40,7 @@ void Base::setQuit(const bool b)
 	m_quit = b;
 }
 
-vgTest::Logging* Base::getLog()
+vgd::Shp< vgTest::Logging > Base::getLog()
 {
 	return m_log;
 }
