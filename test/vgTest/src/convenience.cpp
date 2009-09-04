@@ -146,7 +146,9 @@ std::string getNumberedImageName(std::string filename, int number)
 	std::ostringstream out;
 	out << number;
 
-	return filename + "_" + out.str() + ".png";
+	std::string zero( (8 - out.str().size()), '0');
+
+	return filename + "_" + zero + out.str() + ".png";
 }
 
 std::list< std::string > createModelList()

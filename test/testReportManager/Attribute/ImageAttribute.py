@@ -73,26 +73,26 @@ class ImageAttribute(CustomAttribute):
 			html += '		<tr class="screenshot">\r'
 			html += '		<td>'+folder+'</td>\r'
 			
-			num = -1
 			currentImg = 0
+			lastImg = -1
 			for file in self.imageList[folder]:
 				if folder == "differences": #get current image number, add cell tab where there is no difference images
-					motif = '_([0-9]{1,2})$'
+					motif = '_([0-9]{8})$'
 					motifCompile = re.compile(motif)
 					result = re.findall(motifCompile, file)
 					if len(result) != 0:
-						num = int(result[0]) - num - 1
 						currentImg = int(result[0])
+						num = int(result[0]) - lastImg -1
 						for i in range(0, num):
 							html += '		<td></td>\r'
+						lastImg = int(result[0])
 				html += '			<td>\r'
 				html += '			<a href="./'+folder+'/'+file+'.png" rel="lightbox[img]"><img src="./'+folder+'/'+file+'_thumb.png" alt="'+folder+'"></a>\r'					
-				#html += '			<p>'+folder+' image</p>\r'
 				html += '			</td>\r'
 			
 			if folder == "differences":
-				if currentImg < self._maxImg:
-					for i in range(1, (self._maxImg - currentImg)):
+				if currentImg+1 < self._maxImg: #+1 because image counter starts at 0
+					for i in range(0, (self._maxImg - currentImg)):
 						html += '		<td></td>\r'										 
 			html += '		</tr>\r'	  
 		
