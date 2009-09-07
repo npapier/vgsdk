@@ -103,6 +103,11 @@ struct TBasicManipulator : public vgGTK::GenericCanvas< T >
 	}
 	//@}
 
+	vgd::Shp< vgGTK::event::device::Keyboard >	getKeyboard() ///< Get the keyboard
+	{
+		return m_keyboard;
+	}
+
 private:
 
 	vgd::Shp< vgGTK::event::device::Keyboard >	m_keyboard;	///< The GTK keyboard device.
