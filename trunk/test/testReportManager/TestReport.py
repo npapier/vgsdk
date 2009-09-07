@@ -108,6 +108,15 @@ class TestReport(object):
 				file.write(mytemplate.render(test=test, graphPath=self._graphPath, filename=filename))
 				
 		
+	def generateScreenshotHtml(self):
+		'''
+		@summary: Generate an HTML page with all screenshot/reference images
+		'''		
+		mytemplate = self._mylookup.get_template('Images.html')
+			
+		with open( self._path + 'images.html', 'w' ) as file :
+			file.write(mytemplate.render(tests=self._run.getTestsList()))
+		
 	def moveToLastTest(self):
 		'''
 		@summary: Move the test report to the "LastTest" directory

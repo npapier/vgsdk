@@ -45,7 +45,8 @@ def go(file, type, deps = []):
 	print('Create statistics')
 	stats = Statistics.Statistics(t.getGraphPath(), t.getProjet())
 	stats.createErrorGraph()
-	stats.createPerformanceGraph()  
+	stats.createPerformanceGraph()
+	stats.createRenderPerformanceGraph()  
 	
 	print('Manage alert')
 	#List of errors which must be sended
@@ -64,6 +65,7 @@ def go(file, type, deps = []):
 	print('Generated HTML pages')
 	t.generateRootHtml()
 	t.generateHtml()
+	t.generateScreenshotHtml()
 	
 	print('Create "LastTest" directory')
 	t.moveToLastTest()

@@ -62,7 +62,9 @@
 		
 		##Special line for compare test (print screentshot/reference/difference image)
 		% for customAttribute in test.getCustomAttributes():
+			<tr>
 			${customAttribute.getHtml()}
+			</tr>
 		% endfor
 		
 		##Special line for graph (performance test)
