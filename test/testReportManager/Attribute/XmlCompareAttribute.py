@@ -46,7 +46,6 @@ class XmlCompareAttribute(CustomAttribute):
 				doc = parse(file)
 				root = doc.documentElement
 				
-				html += '	<tr>\r'
 				html += '		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">\r'
 				
 				html += '		<tr>\r'
@@ -74,4 +73,5 @@ class XmlCompareAttribute(CustomAttribute):
 				html += '			</td>\r'
 				html += '		</tr>\r'	  
 		
+		html += '		</table>\r'	
 		return html

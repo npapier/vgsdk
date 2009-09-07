@@ -35,7 +35,7 @@ class ImageAttribute(CustomAttribute):
 		self._display = False
 		self.imageList = {}
 		args = self._attribute.split('|')
-		self._maxImg = 0
+		
 		for a in args:
 			folder = a.split('=')[0]
 			self.imageList[folder] = []
@@ -50,9 +50,7 @@ class ImageAttribute(CustomAttribute):
 			
 			for filename in filenames:
 				if filename != "":
-					if folder == "references":
-						self._maxImg +=	1				
-					
+						
 					shutil.copyfile(externalPath + filename, internalPath + filename)
 					
 					self.resizeImg(filename, internalPath)
@@ -65,36 +63,72 @@ class ImageAttribute(CustomAttribute):
 		@summary: return html tab line for images
 		'''
 		html = ''
-		html += '	<tr>\r'
+
+		htmlScreen = ''
+		htmlRef = ''
+		htmlDif = ''
+		
+		difPath = TestReport.TestReport.extpath + 'differences' + os.sep
+		
 		html += '		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">\r'
 
-		for folder in self.imageList:
+		htmlScreen	+= '		<tr class="screenshot">\r'
+		htmlScreen	+= '		<td>Screenshots</td>\r'
+		
+		htmlDif	+= '		<tr class="screenshot">\r'
+		htmlDif	+= '		<td>Differences</td>\r'		
+		
+		htmlRef	+= '		<tr class="screenshot">\r'
+		htmlRef	+= '		<td>References</td>\r'		
+
+		for screen, ref in zip(self.imageList['screenshots'], self.imageList['references']):
+			
+			screenUrl = './screenshots/'+screen+'.png'
+			refUrl = './references/'+ref+'.png'
+			
+			if os.path.exists(difPath + screen + '.png'):
+				difUrl = './differences/'+screen+'.png'	
 				
-			html += '		<tr class="screenshot">\r'
-			html += '		<td>'+folder+'</td>\r'
+				htmlDif += '			<td>\r'
+				htmlDif += '			<a href=\'javascript:showImg("'+screenUrl+'","'+refUrl+'","'+difUrl+'")\'><img src="./differences/'+screen+'_thumb.png" alt="differences/'+ref+'"></a>\r'					
+				htmlDif += '			</td>\r'	
+			else:
+				htmlDif += '			<td></td>\r'	
+				difUrl = ''		
 			
-			currentImg = 0
-			lastImg = -1
-			for file in self.imageList[folder]:
-				if folder == "differences": #get current image number, add cell tab where there is no difference images
-					motif = '_([0-9]{8})$'
-					motifCompile = re.compile(motif)
-					result = re.findall(motifCompile, file)
-					if len(result) != 0:
-						currentImg = int(result[0])
-						num = int(result[0]) - lastImg -1
-						for i in range(0, num):
-							html += '		<td></td>\r'
-						lastImg = int(result[0])
-				html += '			<td>\r'
-				html += '			<a href="./'+folder+'/'+file+'.png" rel="lightbox[img]"><img src="./'+folder+'/'+file+'_thumb.png" alt="'+folder+'"></a>\r'					
-				html += '			</td>\r'
-			
-			if folder == "differences":
-				if currentImg+1 < self._maxImg: #+1 because image counter starts at 0
-					for i in range(0, (self._maxImg - currentImg)):
-						html += '		<td></td>\r'										 
-			html += '		</tr>\r'	  
+			htmlScreen += '			<td>\r'
+			htmlScreen += '			<a href=\'javascript:showImg("'+screenUrl+'","'+refUrl+'","'+difUrl+'")\'><img src="./screenshots/'+screen+'_thumb.png" alt="screenshots/'+screen+'"></a>\r'					
+			htmlScreen += '			</td>\r'								
+				
+			htmlRef += '			<td>\r'
+			htmlRef += '			<a href=\'javascript:showImg("'+screenUrl+'","'+refUrl+'","'+difUrl+'")\'><img src="./references/'+ref+'_thumb.png" alt="references/'+ref+'"></a>\r'					
+			htmlRef += '			</td>\r'	
+		
+		htmlScreen += '		</tr>\r'
+		htmlDif += '		</tr>\r'
+		htmlRef	+= '		</tr>\r'
+		
+		html += '''
+			<script type="text/javascript">
+				function showImg(screen, ref, dif)
+				{
+					var dialog = new Element('div', { 'id': 'foo' });
+					
+					dialog.insert(new Element('img', { 'src': screen }));
+					if (dif != '')
+					{				
+						dialog.insert(new Element('img', { 'src':  dif }));
+					}
+					dialog.insert(new Element('img', { 'src': ref }));										
+					var overlay = new DialogOverlay(dialog);
+					overlay.show();				
+				}
+			</script>
+		'''		
+		
+		html += htmlScreen + htmlDif + htmlRef
+
+		html += '		</table>\r'
 		
 		return html
 		

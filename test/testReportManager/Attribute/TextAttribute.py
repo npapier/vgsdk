@@ -33,7 +33,6 @@ class TextAttribute(CustomAttribute):
 		f = open(self._attribute, 'r')
 		
 		html = ''
-		html += '	<tr>\r'
 		html += '		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">\r'
 
 		html += '		<tr>\r'
@@ -46,5 +45,6 @@ class TextAttribute(CustomAttribute):
 		html += '			</td>\r'
 									 
 		html += '		</tr>\r'	  
+		html += '		</table>'
 		
 		return html
