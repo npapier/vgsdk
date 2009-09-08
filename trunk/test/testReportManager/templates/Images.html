@@ -1,0 +1,28 @@
+<%!
+    import globals
+    import os
+%>
+
+<%page args="tests"/>
+<%include file="header.html" args="title='Images List', path='../../..'"/>
+
+	<body>				
+		##Title and table declaration
+		<h2>Images of all tests</h2>
+		% for test in tests:
+			% for customAttribute in test.getCustomAttributes():
+				% if customAttribute.getName() == 'ImagePath':
+		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
+			<tr>
+				<td style="font-weight: bold; text-align:left; background-color:#a6caf0;">${test.getAttribute('name')}</td>
+			</tr>
+			<tr>				
+					${customAttribute.getHtml()}
+			</tr>
+		</table>					
+				% endif
+			% endfor
+		% endfor
+		<a href="index.html">Back</a>
+	</body>
+</html>

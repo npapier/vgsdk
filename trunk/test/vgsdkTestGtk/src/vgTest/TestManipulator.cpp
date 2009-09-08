@@ -5,6 +5,8 @@
 
 #include "vgsdkTestGtk/vgTest/TestManipulator.hpp"
 
+#include <limits>
+
 #include <vgeGL/engine/Engine.hpp>
 #include <vgd/basic/Image.hpp>
 #include <vgd/basic/Time.hpp>
@@ -22,7 +24,10 @@ TestManipulator::TestManipulator()
 :	m_type( vgsdkTestGtk::vgTest::NOTHING ),
 	m_screenShotName(""),
 	m_perf( false ),
-	m_screenShot( false )
+	m_screenShot( false ),
+	m_minDuration( std::numeric_limits<uint>::max() ),
+	m_maxDuration( std::numeric_limits<uint>::min() ),
+	m_averageDuration( 0 )
 {
 	//vgUI::BasicManipulator::BasicManipulator();
 }
@@ -32,7 +37,10 @@ TestManipulator::TestManipulator( Canvas * pSharedCanvas )
 	m_type( vgsdkTestGtk::vgTest::NOTHING ), 
 	m_screenShotName (""), 
 	m_perf( false ),
-	m_screenShot( false )
+	m_screenShot( false ),
+	m_minDuration( std::numeric_limits<uint>::max() ),
+	m_maxDuration( std::numeric_limits<uint>::min() ),
+	m_averageDuration( 0 )
 {
 }
 
@@ -101,7 +109,22 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 					m_customPerf->prePaint();
 				}
 
+				vgd::basic::Time paintTime;
 				vgUI::BasicManipulator::paint(size, bUpdateBoundingBox);
+				uint paintDuration = paintTime.getElapsedTime().milliSeconds();
+
+				if (m_minDuration > paintDuration)
+				{
+					m_minDuration = paintDuration;
+				}
+
+				if (m_maxDuration < paintDuration)
+				{
+					m_maxDuration = paintDuration;
+				}
+				
+				m_averageDuration += paintDuration;
+
 
 				if ( m_customPerf )
 				{
@@ -113,9 +136,12 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 
 			// @todo num of triangles => MTS
 			uint duration = time.getElapsedTime().milliSeconds();
-			m_base->getLog()->add("Duration", duration);
-			m_base->getLog()->add("Frame", frame);
-			m_base->getLog()->add("Fps", frame / (duration / 1000));
+			
+			float averageDuration = (float)m_averageDuration / frame;
+
+			m_base->getLog()->add("MinRenderDuration", m_minDuration);
+			m_base->getLog()->add("MaxRenderDuration", m_maxDuration);
+			m_base->getLog()->add("AverageRenderDuration", averageDuration);
 
 			m_perf = true;
 

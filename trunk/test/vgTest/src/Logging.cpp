@@ -21,14 +21,6 @@ void Logging::add(std::string key, std::string value)
 	m_log[key] = value;
 }
 
-void Logging::add(std::string key, int value)
-{
-	std::ostringstream out;
-	out << value;
-	
-	m_log[key] = out.str();
-}
-
 const std::string Logging::get(std::string key)
 {
 	return m_log[key];

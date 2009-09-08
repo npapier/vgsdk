@@ -39,9 +39,16 @@ struct VGTEST_API Logging
 	void add(std::string key, std::string value);
 	
 	/**
-	 * @brief Add an integer to the logging map
+	 * @brief Add something to the logging map
 	 */
-	void add(std::string key, int value);
+	template <class T>
+	void add(std::string key, T value)
+	{
+		std::ostringstream out;
+		out << value;
+		
+		m_log[key] = out.str();
+	}
 
 	/**
 	 * @brief Get value from the map
