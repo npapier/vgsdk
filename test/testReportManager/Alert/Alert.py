@@ -32,6 +32,8 @@ class Alert(object):
 			alert += ' (new error) \r'
 		if test.getAttribute('alert') == 'fps' :
 			alert += ' (performance decrease by more than '+ str(config.param['highFpsLimit']) +'%/'+ str(config.param['lowFpsLimit']) +'%) \r'		
+		if test.getAttribute('alert') == 'render' :
+			alert += ' (performance decrease by more than '+ str(config.param['renderLimit']) +'%) \r'			
 			
 		return alert
 	   

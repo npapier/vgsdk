@@ -127,9 +127,9 @@ class Statistics(object):
 				for run in self._runList:
 					for t in run.getTestsList():
 						if 'MinRenderDuration' in t.getAttributes() and 'MaxRenderDuration' in t.getAttributes() and 'AverageRenderDuration' in t.getAttributes() and test.equals(t):
-							minDuration.append(int(t.getAttribute('MinRenderDuration')))
-							maxDuration.append(int(t.getAttribute('MaxRenderDuration')))
-							averageDuration.append(int(t.getAttribute('AverageRenderDuration')))
+							minDuration.append(float(t.getAttribute('MinRenderDuration')))
+							maxDuration.append(float(t.getAttribute('MaxRenderDuration')))
+							averageDuration.append(float(t.getAttribute('AverageRenderDuration')))
 							legend.append(run.getName())
 				
 				filename = test.getAttribute('name')
