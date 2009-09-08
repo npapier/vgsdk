@@ -29,12 +29,14 @@ param = {
 		'mailRecipient' : ['username@example.com'], # @note: example 'usr@example.com', 'usr2@example.com', 'usr@example.net'
 		'mailSender' : 'username@example.com',
 		 
-		'highFpsLimit' : 25, #@see FpsCondition.py
-		'lowFpsLimit' : 10 #@see FpsCondition.py
+		#'highFpsLimit' : 25, #@see FpsCondition.py
+		#'lowFpsLimit' : 10 #@see FpsCondition.py
+		
+		'renderLimit' : 20 #@see FpsCondition.py
 		}
 
 #List of conditions
-listCondition = [FpsCondition(param['highFpsLimit'], param['lowFpsLimit']), ErrorCondition()] 
+listCondition = [RenderPerformanceCondition(param['renderLimit']), ErrorCondition()] 
 
 #List of alert type
 listAlert = [MailAlert(), ConsoleAlert()]
