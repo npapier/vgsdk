@@ -12,6 +12,7 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 import config
 import os
+import stat
 import glob
 import Run
 import xml.dom.minidom
@@ -70,6 +71,7 @@ class TestDashboard(object):
 		
 		with open( config.param['path'] + 'dashboard.xml', 'w' ) as file :
 			file.write(doc.toprettyxml())
+		os.chmod( config.param['path'] + 'dashboard.xml', stat.S_IREAD|stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH )
 		
 	def createFullDashboardXml(self):
 		doc = xml.dom.minidom.Document()
@@ -98,11 +100,12 @@ class TestDashboard(object):
 			root.appendChild(p)
 		
 		with open( config.param['path'] + 'fulldashboard.xml', 'w' ) as file :
-			file.write(doc.toprettyxml())	
+			file.write(doc.toprettyxml())
+		os.chmod( config.param['path'] + 'fulldashboard.xml', stat.S_IREAD|stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH )
 	
 	def createDashboardHtml(self):
 		mylookup = TemplateLookup(directories=['./templates'])
 		mytemplate = mylookup.get_template('TestDashboard.html')		
 		with open( config.param['path'] + 'index.html', 'w' ) as file :
 			file.write(mytemplate.render(runList=self._runList))
-			
+		os.chmod( config.param['path'] + 'index.html', stat.S_IREAD|stat.S_IWRITE | stat.S_IRGRP | stat.S_IROTH )
