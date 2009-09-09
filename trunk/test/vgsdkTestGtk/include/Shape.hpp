@@ -81,7 +81,7 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 	}
 	else
 	{
-		if (!boost::filesystem::exists(base->getReferencePath()))
+		if (!boost::filesystem::exists(base->getReferencePath() + base->getScreenShotName()))
 		{
 			FAIL() << "REFERENCE FILE IS NOT CREATED";
 		}
@@ -138,7 +138,7 @@ TEST_F(VgTestShape, StaticShapeTest)
 	}
 	else
 	{
-		if (!boost::filesystem::exists(base->getReferencePath()))
+		if (!boost::filesystem::exists(base->getReferencePath() + base->getScreenShotName()))
 		{
 			FAIL() << "REFERENCE FILE IS NOT CREATED";
 		}		
