@@ -17,7 +17,7 @@
   		<row>
      		<string>Errors</string>				
 		% for e in errors:
-     		<number>${str(e)}</number>
+     		<number tooltip='${str(e)}'>${str(e)}</number>
 		% endfor
   		</row>		
 	</chart_data>
