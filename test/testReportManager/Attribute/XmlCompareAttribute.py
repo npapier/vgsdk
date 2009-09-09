@@ -8,11 +8,14 @@ Author Maxime Peresson
 
 '''
 
+from __future__ import with_statement 
 import os
 from xml.dom.minidom import * 
 from CustomAttribute import CustomAttribute
 import TestReport
-import CairoPlot
+
+from mako.template import Template
+from mako.lookup import TemplateLookup
 
 class XmlCompareAttribute(CustomAttribute):
 	'''
@@ -30,6 +33,8 @@ class XmlCompareAttribute(CustomAttribute):
 		self._display = False
 		
 		self._files = str.split(str(attribute), '|')
+		
+		self._mylookup = TemplateLookup(directories=['./templates'])
 
 	def getHtml(self):
 		'''
@@ -37,6 +42,7 @@ class XmlCompareAttribute(CustomAttribute):
 		'''
 		
 		html = ''
+		html += '		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">\r'
 		
 		for file in self._files:
 			if file != '':
@@ -46,32 +52,43 @@ class XmlCompareAttribute(CustomAttribute):
 				doc = parse(file)
 				root = doc.documentElement
 				
-				html += '		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">\r'
+				if len(root.getElementsByTagName('error')) > 0:
 				
-				html += '		<tr>\r'
-				html += '			<td width="40%">\r'	 
-				html += '			Object: ' + root.attributes['name'].value
-				html += '			<pre>'
-				for error in root.getElementsByTagName('error'):
-						html += 'dt: ' + error.attributes['dt'].value + '\r'
-						html += 'time: ' + error.attributes['time'].value + '\r'
-						html += 'error: ' + error.attributes['error'].value + '\r'
-						html += '<br/>'
-						
-						errors.append(float(error.attributes['error'].value))
-						time.append(error.attributes['time'].value)
-				html += '			</pre>'
-				html += '			</td>\r'
-				
-				graph = str.split(file, '/')[len(str.split(file, '/'))-1]
-				filename = TestReport.TestReport.extpath + 'graph' + os.sep + graph
-				if len(errors) > 0 or len(time) > 0:
-					CairoPlot.dot_line_plot(filename, errors, 400, 300, h_labels = time, axis = True, grid = True)
-				
-				html += '			<td align="center">\r'
-				html += '				<embed src="./graph/'+graph+'.svg" type="image/svg+xml" />\r'
-				html += '			</td>\r'
-				html += '		</tr>\r'	  
+					html += '		<tr>\r'
+					html += '			<td width="40%">\r'	 
+					html += '			Object: ' + root.attributes['name'].value
+					html += '			<pre>'
+					for error in root.getElementsByTagName('error'):
+							html += 'dt: ' + error.attributes['dt'].value + '\r'
+							html += 'time: ' + error.attributes['time'].value + '\r'
+							html += 'error: ' + error.attributes['error'].value + '\r'
+							html += '<br/>'
+							
+							errors.append(float(error.attributes['error'].value))
+							time.append(error.attributes['time'].value)
+					html += '			</pre>'
+					html += '			</td>\r'
+					
+					graph = str.split(file, '/')[len(str.split(file, '/'))-1]
+					filename = TestReport.TestReport.extpath + 'graph' + os.sep + graph
+					
+					mytemplate = self._mylookup.get_template('XmlCompareAttributeChart.xml')
+					
+					with open( filename + '.xml', 'w' ) as file :
+						file.write(mytemplate.render(legend=time, errors=errors))					
+					
+					html += '			<td align="center">\r'
+					html += '''
+							<object type="application/x-shockwave-flash" width="600" height="550" data="../../../charts/charts.swf">
+							  <param name="movie" value="../../../charts/charts.swf" />
+							  '''
+				  	html += '<param name="FlashVars" value="library_path=../../../charts/charts_library&amp;xml_source=graph/'+graph+'.xml" />'
+				  	html += '''
+							  <param name="wmode" value="transparent" />
+							</object>	
+					'''
+					html += '			</td>\r'
+					html += '		</tr>\r'	  
 		
 		html += '		</table>\r'	
 		return html

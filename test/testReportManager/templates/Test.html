@@ -68,12 +68,17 @@
 		% endfor
 		
 		##Special line for graph (performance test)
-		% if os.path.isfile(graphPath + filename + '.svg'):   
+		% if os.path.isfile(graphPath + filename + '.xml'):   
 			<tr>
 				<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
 				<tr class="screenshot">
 					<td colspan="' + str(col) + '">
-						<embed src="./graph/${filename}.svg" type="image/svg+xml" />
+						<object type="application/x-shockwave-flash" width="600" height="550" data="../../../charts/charts.swf">
+						  <param name="movie" value="../../../charts/charts.swf" />
+						
+						  <param name="FlashVars" value="library_path=../../../charts/charts_library&amp;xml_source=graph/${filename}.xml" />
+						  <param name="wmode" value="transparent" />
+						</object>
 					</td>
 				</tr>					
 				</table>
