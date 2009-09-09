@@ -10,8 +10,9 @@ Author Maxime Peresson
 
 from Alert.ConsoleAlert import ConsoleAlert
 from Alert.MailAlert import MailAlert
-from Condition.FpsCondition import FpsCondition
 from Condition.ErrorCondition import ErrorCondition
+from Condition.FpsCondition import FpsCondition
+from Condition.RenderPerformanceCondition import RenderPerformanceCondition
 from Attribute.ImageAttribute import ImageAttribute
 from Attribute.XmlCompareAttribute import XmlCompareAttribute
 
