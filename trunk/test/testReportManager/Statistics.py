@@ -8,13 +8,17 @@ Author Maxime Peresson
 
 '''
 
+from __future__ import with_statement 
 import globals
 import config
 import os
-import CairoPlot
+#import CairoPlot
 import glob
 import shutil
 import Run
+
+from mako.template import Template
+from mako.lookup import TemplateLookup
 
 class Statistics(object):
 	'''
@@ -31,6 +35,8 @@ class Statistics(object):
 		'''
 		self._path = config.param['path'] + 'projects' + os.sep + projet + os.sep
 		self._graphPath = graphPath
+		
+		self._mylookup = TemplateLookup(directories=['./templates'])
 		
 		#@todo: regex + compacte : (\d{2})-(\d{2})-(\d{2})_(\d{4}) ?
 		self._dirList = glob.glob(self._path + '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_[0-9][0-9]h[0-9][0-9]m[0-9][0-9]s')
@@ -70,16 +76,17 @@ class Statistics(object):
 		errors.reverse()
 		legend.reverse()
 		
-		values = {'tests' : tests, 'errors' : errors}  
+		mytemplate = self._mylookup.get_template('ErrorChart.xml')
+			
+		with open( self._graphPath + filename + '.xml', 'w' ) as file :
+			file.write(mytemplate.render(legend=legend, tests=tests, errors=errors))		
 		
-		CairoPlot.dot_line_plot(filename, values, 400, 300, h_labels = legend, axis = True, grid = True)
-		
-		shutil.move(filename+'.svg', self._graphPath + filename+'.svg')
 
 
 	def createPerformanceGraph(self):
 		'''
 		@summary: Create graph for all performance tests (a performance test is a test where the attribut "fps" is set)
+		@deprecated: now uses createRenderPerformanceGraph (attribute 'Fps' doesn't exist anymore)
 		'''		
 		if len(self._runList) > 0:
 			ref = self._runList[0]
@@ -141,11 +148,10 @@ class Statistics(object):
 				averageDuration.reverse()
 				legend.reverse()
 				
-				values = {'min' : minDuration, 'max' : maxDuration, 'average' : averageDuration} 
-				
-				CairoPlot.dot_line_plot(filename, values, 400, 300, h_labels = legend, axis = True, grid = True)
-				
-				shutil.move(filename+'.svg', self._graphPath + filename+'.svg')
+				mytemplate = self._mylookup.get_template('RenderPerformanceChart.xml')
+					
+				with open( self._graphPath + filename + '.xml', 'w' ) as file :
+					file.write(mytemplate.render(legend=legend, minDuration=minDuration, maxDuration=maxDuration, averageDuration=averageDuration))	
 
 	def getRunList(self):
 		return self._runList
