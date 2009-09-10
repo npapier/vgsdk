@@ -136,7 +136,7 @@ class Statistics(object):
 						if 'MinRenderDuration' in t.getAttributes() and 'MaxRenderDuration' in t.getAttributes() and 'AverageRenderDuration' in t.getAttributes() and test.equals(t):
 							minDuration.append(float(t.getAttribute('MinRenderDuration')))
 							maxDuration.append(float(t.getAttribute('MaxRenderDuration')))
-							averageDuration.append(float(t.getAttribute('AverageRenderDuration')))
+							averageDuration.append(round(float(t.getAttribute('AverageRenderDuration')), 2))
 							legend.append(run.getName())
 				
 				filename = test.getAttribute('name')
