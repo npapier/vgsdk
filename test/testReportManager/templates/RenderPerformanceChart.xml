@@ -17,19 +17,19 @@
   		<row>
      		<string>Minimum duration</string>				
 		% for min in minDuration:
-     		<number tooltip='Minimum Duration\r${str(min)}'>${str(min)}</number>
+     		<number tooltip='Min. duration\r${str(min)}'>${str(min)}</number>
 		% endfor
   		</row>  		
   		<row>
      		<string>Maximum duration</string>
 		% for max in maxDuration:
-     		<number tooltip='Maximum Duration\r${str(max)}'>${str(max)}</number>
+     		<number tooltip='Max. duration\r${str(max)}'>${str(max)}</number>
 		% endfor     
   		</row>
   		<row>
      		<string>Average duration</string>
 		% for avg in averageDuration:
-     		<number tooltip='Average Duration\r${str(avg)}'>${str(avg)}</number>
+     		<number tooltip='Av. duration\r${str(avg)}'>${str(avg)}</number>
 		% endfor     
   		</row>  		
 	</chart_data>
