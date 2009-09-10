@@ -116,11 +116,22 @@ struct VGTEST_API Base
 	*/
 	const int							getFileCounter() const;
 
+	/**
+	* @brief Get frequency for screenshot.
+	*/
+	const int							getScreenshotFrenquency() const;
+
+	/**
+	* @brief Set frequency for screenshot. One every 'f' paint.
+	*/
+	void								setScreenshotFrequency(int f);
+
 protected:
 	bool					m_quit;
 	std::string				m_filename;
 	std::string				m_datedFilename;
 	int						m_fileCounter;
+	int						m_screenshotFrequency;
 
 
 private:
