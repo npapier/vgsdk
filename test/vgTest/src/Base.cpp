@@ -5,6 +5,8 @@
 
 #include "vgTest/Base.hpp"
 
+#include <gtest/gtest.h>
+
 #include <sbf/Module.hpp>
 #include <sbf/path.hpp>
 #include <vgTest/convenience.hpp>
@@ -17,7 +19,8 @@ Base::Base()
 :	m_quit ( false ),
 	m_filename( "test" ),
 	m_fileCounter( 0 ),
-	m_log( new Logging )
+	m_log( new Logging ),
+	m_screenshotFrequency ( 1 )
 {
 }
 
@@ -25,7 +28,8 @@ Base::Base(const std::string& filename)
 :	m_quit ( false ),
 	m_filename( filename ),
 	m_fileCounter( 0 ),
-	m_log( new Logging )
+	m_log( new Logging ),
+	m_screenshotFrequency ( 1 )
 {
 	m_datedFilename = vgTest::getDatedImageName(m_filename);
 }
@@ -136,6 +140,21 @@ const std::string	Base::getCountedDatedScreenShotName()
 const int Base::getFileCounter() const
 {
 	return m_fileCounter;
+}
+
+const int Base::getScreenshotFrenquency() const
+{
+	return m_screenshotFrequency;
+}
+
+void Base::setScreenshotFrequency(int f)
+{
+	if ( f < 1 )
+	{
+		FAIL() << "FREQUENCY MUST BE POSITIVE";
+		return;
+	}
+	m_screenshotFrequency = f;
 }
 
 } // namespace vgTest
