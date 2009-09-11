@@ -23,6 +23,7 @@ int main(int argc, char **argv)
 	std::string appName = vec[vec.size()-1];
 	std::string xmlPath = sbf::path::getTopLevel(sbf::path::Var).string() + "\\googletest\\0-0\\";
 	boost::algorithm::replace_all(xmlPath, "/", "\\");
+	sbf::path::mkdirs(xmlPath);
 
     try {
 		namespace po = boost::program_options;

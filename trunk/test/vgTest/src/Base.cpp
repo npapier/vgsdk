@@ -18,7 +18,7 @@ namespace vgTest
 Base::Base()
 :	m_quit ( false ),
 	m_filename( "test" ),
-	m_fileCounter( 0 ),
+	m_fileCounter( -1 ),
 	m_log( new Logging ),
 	m_screenshotFrequency ( 1 )
 {
@@ -27,7 +27,7 @@ Base::Base()
 Base::Base(const std::string& filename)
 :	m_quit ( false ),
 	m_filename( filename ),
-	m_fileCounter( 0 ),
+	m_fileCounter( -1 ),
 	m_log( new Logging ),
 	m_screenshotFrequency ( 1 )
 {
@@ -100,7 +100,7 @@ const std::string	Base::getImagesPath(const std::list<int>& diff) const
 	std::string references = "references="+getReferencePath() + ";";
 	std::string screenshots = "|screenshots="+getScreenShotPath() + ";";
 	std::string differences = "";
-	for (int i = 0; i < m_fileCounter; i++)
+	for (int i = 0; i <= m_fileCounter; i++)
 	{
 		references += vgTest::getNumberedImageName(m_filename, i) + ",";
 		screenshots += vgTest::getNumberedImageName(m_datedFilename, i) + ",";
@@ -129,10 +129,13 @@ const std::string	Base::getDatedScreenShotName() const
 	return m_datedFilename;
 }
 
-const std::string	Base::getCountedDatedScreenShotName()
+const std::string	Base::getCountedDatedScreenShotName(bool n)
 {
+	if (n || m_fileCounter < 0)
+	{
+		++m_fileCounter;
+	}
 	std::string filename =  vgTest::getNumberedImageName(m_datedFilename, m_fileCounter);
-	++m_fileCounter;
 
 	return filename;
 }
@@ -155,6 +158,43 @@ void Base::setScreenshotFrequency(int f)
 		return;
 	}
 	m_screenshotFrequency = f;
+}
+
+
+void Base::compareScreenShots() const
+{
+	std::list<int> differences;
+	for (int i = 0; i <= m_fileCounter; i++)
+	{		
+		if (!boost::filesystem::exists(getReferencePath() + vgTest::getNumberedImageName(getScreenShotName(), i)))
+		{
+			FAIL() << "REFERENCES FILES : " + getReferencePath() + vgTest::getNumberedImageName(getScreenShotName(), i) + " IS NOT CREATED";
+		}			
+		
+		SCOPED_TRACE("Screenshot : " + vgTest::getNumberedImageName(getDatedScreenShotName(), i) + " Reference : " +  vgTest::getNumberedImageName(getScreenShotName(), i)); 
+
+		int diff = vgTest::compare(getReferencePath() + vgTest::getNumberedImageName(getScreenShotName(), i),
+			getScreenShotPath() + vgTest::getNumberedImageName(getDatedScreenShotName(), i),
+			getDifferencePath() + vgTest::getNumberedImageName(getDatedScreenShotName(), i));
+
+		EXPECT_EQ( diff, 0 );
+
+		if( diff != 0)
+		{
+			differences.push_back(i);
+		}
+	}
+
+	m_log->add("ImagePath", getImagesPath(differences));
+}
+
+void Base::moveToReference() const
+{
+	for (int i = 0; i <= m_fileCounter; i++)
+	{
+		vgTest::moveTo(getScreenShotPath() + vgTest::getNumberedImageName(getDatedScreenShotName(), i),
+			getReferencePath() + vgTest::getNumberedImageName(getScreenShotName(), i));
+	}
 }
 
 } // namespace vgTest

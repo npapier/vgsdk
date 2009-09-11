@@ -77,28 +77,13 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 
 	if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
-		vgTest::moveTo(base->getScreenShotPath() + base->getDatedScreenShotName(), base->getReferencePath() + base->getScreenShotName());
+		base->moveToReference();
 	}
 	else
 	{
-		if (!boost::filesystem::exists(base->getReferencePath() + base->getScreenShotName()))
-		{
-			FAIL() << "REFERENCE FILE IS NOT CREATED";
-		}
-
-		int diff = vgTest::compare(base->getReferencePath() + base->getScreenShotName(), base->getScreenShotPath() + base->getDatedScreenShotName(), base->getDifferencePath() + base->getDatedScreenShotName());
-		EXPECT_EQ( diff, 0 );
-
-		base->getLog()->add("PixelDiff", diff);
-
-		if (diff > 0)
-		{
-			base->getLog()->add("ImagePath", base->getImagesPath(true));
-		}
-		else
-		{
-			base->getLog()->add("ImagePath", base->getImagesPath(false));
-		}
+		// do the test
+		//base->compareScreenShots();
+		macroCompareScreenShots(base);
 	}
 
 	//base->getLog()->addToGtest();
@@ -134,28 +119,13 @@ TEST_F(VgTestShape, StaticShapeTest)
 	
 	if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
-		vgTest::moveTo(base->getScreenShotPath() + base->getDatedScreenShotName(), base->getReferencePath() + base->getScreenShotName());
+		base->moveToReference();
 	}
 	else
 	{
-		if (!boost::filesystem::exists(base->getReferencePath() + base->getScreenShotName()))
-		{
-			FAIL() << "REFERENCE FILE IS NOT CREATED";
-		}		
-		
-		int diff = vgTest::compare(base->getReferencePath() + base->getScreenShotName(), base->getScreenShotPath() + base->getDatedScreenShotName(), base->getDifferencePath() + base->getDatedScreenShotName());
-		EXPECT_EQ( diff, 0 );
-
-		base->getLog()->add("PixelDiff", diff);
-
-		if (diff > 0)
-		{
-			base->getLog()->add("ImagePath", base->getImagesPath(true));
-		}
-		else
-		{
-			base->getLog()->add("ImagePath", base->getImagesPath(false));
-		}
+		// do the test
+		//base->compareScreenShots();
+		macroCompareScreenShots(base);
 	}
 	
 	//base->getLog()->addToGtest();

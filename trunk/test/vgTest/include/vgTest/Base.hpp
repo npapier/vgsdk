@@ -14,7 +14,6 @@
 #include "vgTest/Logging.hpp"
 
 
-
 namespace vgTest
 {
 
@@ -105,9 +104,9 @@ struct VGTEST_API Base
 	const std::string					getDatedScreenShotName() const;
 
 	/**
-	* @brief Get the dated and numbered screenshot name. Adds one to file counter.
+	* @brief Get the dated and numbered screenshot name. Adds one to file counter if nn == true.
 	*/
-	const std::string					getCountedDatedScreenShotName();
+	const std::string					getCountedDatedScreenShotName(bool n = true);
 
 	//@}
 
@@ -125,6 +124,17 @@ struct VGTEST_API Base
 	* @brief Set frequency for screenshot. One every 'f' paint.
 	*/
 	void								setScreenshotFrequency(int f);
+
+	/**
+	 * @brief Compare all screenshots done with reference.
+	 * @todo Will work if gtest is compiled as a DLL
+	 */
+	void								compareScreenShots() const;
+
+	/**
+	 * @brief Move screenshots done to reference folder.
+	 */
+	void								moveToReference() const;
 
 protected:
 	bool					m_quit;
@@ -148,6 +158,32 @@ private:
 } // namespace vgTest
 
 
+
+//Macro which replace compareScreenShots function
+#define macroCompareScreenShots(base) \
+	std::list<int> differences; \
+	for (int i = 0; i <= base->getFileCounter(); i++) \
+	{ \
+		if (!boost::filesystem::exists(base->getReferencePath() + vgTest::getNumberedImageName(base->getScreenShotName(), i))) \
+		{ \
+			FAIL() << "REFERENCES FILES : " + base->getReferencePath() + vgTest::getNumberedImageName(base->getScreenShotName(), i) + " IS NOT CREATED"; \
+		} \
+		\
+		SCOPED_TRACE("Screenshot : " + vgTest::getNumberedImageName(base->getDatedScreenShotName(), i) + " Reference : " +  vgTest::getNumberedImageName(base->getScreenShotName(), i)); \
+		\
+		int diff = vgTest::compare(base->getReferencePath() + vgTest::getNumberedImageName(base->getScreenShotName(), i), \
+			base->getScreenShotPath() + vgTest::getNumberedImageName(base->getDatedScreenShotName(), i), \
+			base->getDifferencePath() + vgTest::getNumberedImageName(base->getDatedScreenShotName(), i)); \
+		\
+		EXPECT_EQ( diff, 0 ); \
+		\
+		if( diff != 0) \
+		{ \
+			differences.push_back(i); \
+		} \
+	} \
+	\
+	base->getLog()->add("ImagePath", base->getImagesPath(differences)); \
 
 #endif // #ifndef _VGTEST_BASE_HPP
 
