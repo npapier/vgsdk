@@ -112,14 +112,15 @@ class ImageAttribute(CustomAttribute):
 			<script type="text/javascript">
 				function showImg(screen, ref, dif)
 				{
-					var dialog = new Element('div', { 'id': 'foo' });
+					var dialog = new Element('div', { 'id': 'popup' });
 					
 					dialog.insert(new Element('img', { 'src': screen }));
+					dialog.insert(new Element('img', { 'src': ref }));	
 					if (dif != '')
 					{				
 						dialog.insert(new Element('img', { 'src':  dif }));
-					}
-					dialog.insert(new Element('img', { 'src': ref }));										
+					}					
+														
 					var overlay = new DialogOverlay(dialog);
 					overlay.show();				
 				}
