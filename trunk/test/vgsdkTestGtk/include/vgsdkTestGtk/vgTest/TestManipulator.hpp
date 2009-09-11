@@ -37,7 +37,6 @@ struct TestManipulator : public vgUI::BasicManipulator
 	~TestManipulator();
 
 	void setType(const vgsdkTestGtk::vgTest::testType t);
-	void setScreenShotName(const std::string s);
 	void setBase(vgTest::myBase *l);
 	void setCustomPerf(const vgd::Shp<vgsdkTestGtk::vgTest::CustomPerformanceTest> customPerf);
 
@@ -58,7 +57,6 @@ struct TestManipulator : public vgUI::BasicManipulator
 private :
 	vgsdkTestGtk::vgTest::testType							m_type;
 	vgsdkTestGtk::vgTest::myBase							*m_base;
-	std::string												m_screenShotName;
 	bool													m_perf;
 	bool													m_screenShot;
 	vgd::Shp<vgsdkTestGtk::vgTest::CustomPerformanceTest>	m_customPerf;
