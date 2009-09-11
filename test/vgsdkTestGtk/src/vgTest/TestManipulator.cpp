@@ -22,7 +22,6 @@ namespace vgTest
 
 TestManipulator::TestManipulator() 
 :	m_type( vgsdkTestGtk::vgTest::NOTHING ),
-	m_screenShotName(""),
 	m_perf( false ),
 	m_screenShot( false ),
 	m_minDuration( std::numeric_limits<uint>::max() ),
@@ -35,7 +34,6 @@ TestManipulator::TestManipulator()
 TestManipulator::TestManipulator( Canvas * pSharedCanvas )
 :	vgUI::BasicManipulator( pSharedCanvas ), 
 	m_type( vgsdkTestGtk::vgTest::NOTHING ), 
-	m_screenShotName (""), 
 	m_perf( false ),
 	m_screenShot( false ),
 	m_minDuration( std::numeric_limits<uint>::max() ),
@@ -51,11 +49,6 @@ TestManipulator::~TestManipulator()
 void TestManipulator::setType(const vgsdkTestGtk::vgTest::testType t)
 {
 	m_type = t;
-}
-
-void TestManipulator::setScreenShotName(const std::string s)
-{
-	m_screenShotName = s;
 }
 
 void TestManipulator::setBase(vgsdkTestGtk::vgTest::myBase *l)
@@ -77,7 +70,7 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 	{
 		if (m_screenShot == false)
 		{
-			scheduleScreenshot(m_screenShotName);
+			scheduleScreenshot(m_base->getCountedDatedScreenShotName());
 			m_screenShot = true;
 		}
 

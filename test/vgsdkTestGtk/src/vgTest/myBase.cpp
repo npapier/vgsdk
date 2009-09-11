@@ -54,7 +54,7 @@ void myBase::prerun(const vgsdkTestGtk::vgTest::testType t)
 
 	m_canvas->setBase(this);
 	m_canvas->setType(t);
-	m_canvas->setScreenShotName(m_datedFilename);
+	//m_canvas->setScreenShotName(m_datedFilename);
 
 	// Creates the main window content.
 	m_window = new Gtk::Window;
