@@ -23,8 +23,7 @@ namespace engine
 
 
 Engine::Engine()
-:	m_drawingSurfaceSize(0, 0),
-	m_isTextureMappingEnabled(true)
+:	m_drawingSurfaceSize(0, 0)
 {
 	reset();
 }
@@ -37,9 +36,6 @@ void Engine::reset()
 	resetHandlers();
 
 	//
-	setTextureMappingEnabled();
-
-	//	
 	resetEval();
 }
 
@@ -96,20 +92,6 @@ void Engine::evaluate(	const vgd::Shp< vge::service::Service >service,
 		}
 	}
 	// nothing to do, handler not regarded.
-}
-
-
-
-const bool Engine::isTextureMappingEnabled() const
-{
-	return m_isTextureMappingEnabled;
-}
-
-
-
-void Engine::setTextureMappingEnabled( const bool enabled )
-{
-	m_isTextureMappingEnabled = enabled;
 }
 
 
@@ -252,7 +234,7 @@ void Engine::clearStateStack()
 	m_state.clear();
 	m_state.reserve( StateStack_SizeHint );
 	m_state.resize(1);
-	
+
 	resetState( m_state[0] );
 }
 
@@ -320,8 +302,7 @@ void Engine::setStateStackTop( vgd::node::Node *pNode )
 
 void Engine::pushStateStack()
 {
-	State& top(	m_state.back()	);
-	
+	State& top( m_state.back() );
 	m_state.push_back( top );
 }
 
@@ -332,11 +313,11 @@ bool Engine::popStateStack()
 	if ( m_state.size() > 0 )
 	{
 		m_state.pop_back();
-		return ( true );
+		return true;
 	}
 	else
 	{
-		return ( false );
+		return false;
 	}
 }
 
@@ -347,11 +328,11 @@ bool Engine::popStateStack()
 
 void Engine::resetMatrices()
 {
-	getProjectionMatrix().resize(	1 );
-	//getProjectionMatrix().setMatrixStackSizeHint( 1 );
-											
+	getProjectionMatrix().resize( 1 );
+	getProjectionMatrix().setMatrixStackSizeHint( 8 );
+
 	getTextureMatrix().resize( getMaxTexUnits() );
-	//getTextureMatrix().setMatrixStackSizeHint( 1 );
+	getTextureMatrix().setMatrixStackSizeHint( 8 );
 
 	getGeometricalMatrix().resize( 1 );
 	getGeometricalMatrix().setMatrixStackSizeHint( 8 );

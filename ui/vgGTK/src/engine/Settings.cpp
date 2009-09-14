@@ -32,6 +32,7 @@ Settings::Settings()
 	// Creates child widgets.
 	m_glslButton								= Gtk::manage( new Gtk::CheckButton("Use GLSL pipeline") );
 	m_disableTexture							= Gtk::manage( new Gtk::CheckButton("Disable texture") );
+	m_disableDisplayList						= Gtk::manage( new Gtk::CheckButton("Disable display list") );
 	Gtk::Button		* benchButton				= Gtk::manage( new Gtk::Button("Bench") );
 
 	m_showFPS									= Gtk::manage( new Gtk::CheckButton("Show counters (fps and frame)") );
@@ -45,6 +46,7 @@ Settings::Settings()
 
 	pack_start( *m_glslButton, Gtk::PACK_SHRINK );
 	pack_start( *m_disableTexture, Gtk::PACK_SHRINK );
+	pack_start( *m_disableDisplayList, Gtk::PACK_SHRINK );
 	pack_start( *m_showFPS, Gtk::PACK_SHRINK );
 	pack_start( *m_debugEvents, Gtk::PACK_SHRINK );
 
@@ -58,6 +60,7 @@ Settings::Settings()
 	// Connects signal handlers.
 	m_glslButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onGLSL) );
 	m_disableTexture->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableTexture) );
+	m_disableDisplayList->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableDisplayList ) );
 
 	benchButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onBench) );
 
@@ -84,6 +87,7 @@ void Settings::setCanvas( vgUI::Canvas * canvas )
 	{
 		m_glslButton->set_active( m_canvas->getGLEngine()->isGLSLEnabled() );
 		m_disableTexture->set_active( !m_canvas->getGLEngine()->isTextureMappingEnabled() );
+		m_disableDisplayList->set_active( !m_canvas->getGLEngine()->isDisplayListEnabled() );
 		m_showFPS->set_active( m_canvas->isDebugOverlay() );
 	}
 }
@@ -126,6 +130,17 @@ void Settings::onDisableTexture()
 
 
 
+void Settings::onDisableDisplayList()
+{
+	assert( m_canvas != 0 );
+
+	m_canvas->getGLEngine()->setDisplayListEnabled( !m_disableDisplayList->get_active() );
+
+	m_canvas->refreshForced();
+}
+
+
+
 void Settings::onBench()
 {
 	assert( m_canvas != 0 );
@@ -134,7 +149,7 @@ void Settings::onBench()
 
 	if ( fps >= 0 )
 	{
-		m_canvas->bench( 100 );// @todo FIXME fps * 2 );
+		m_canvas->bench( 100 );// @todo FIXME bench( fps * 2 );
 		m_canvas->refreshForced();
 	}
 }
@@ -170,8 +185,8 @@ void Settings::onClearGLResources()
 	assert( m_canvas != 0 );
 
 	// @todo
-	/*m_canvas->getGLEngine()->getGLManager().clear();
-	m_canvas->getGLEngine()->getGLSLManager().clear();*/
+	/* m_canvas->getGLEngine()->getGLManager().clear();
+	m_canvas->getGLEngine()->getGLSLManager().clear(); */
 
 	m_canvas->refreshForced();
 }

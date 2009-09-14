@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -18,7 +18,7 @@
 
 namespace vgeGL
 {
-	
+
 namespace rc
 {
 
@@ -35,8 +35,7 @@ namespace rc
  */
 template< typename nodeType, typename handlerType >
 void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode,
-										handlerType	*pHandler
-									 )
+							handlerType	*pHandler )
 {
 	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
 	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
@@ -47,68 +46,72 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 	vge::rc::Manager& rGLManager = pGLEngine->getGLManager();
 
 	// ****** Render ******
-	vgd::field::DirtyFlag	*pDF;
-	
-	vge::rc::IResource 		*pResource;
-	vgeGL::rc::DisplayList	*pDisplayList;
-
 	// get dirty flag of node
-	pDF = pCastedNode->getDirtyFlag( pCastedNode->getDFNode() );
+	vgd::field::DirtyFlag	*pDF			= pCastedNode->getDirtyFlag( pCastedNode->getDFNode() );
 
 	// lookup the resource.
-	pResource		= rGLManager.getAbstract( pNode );
-	pDisplayList	= dynamic_cast< vgeGL::rc::DisplayList* >(pResource);
+	vge::rc::IResource 		*pResource		= rGLManager.getAbstract( pNode );
+	vgeGL::rc::DisplayList	*pDisplayList	= dynamic_cast< vgeGL::rc::DisplayList* >(pResource);
 
 	// @todo relax
 	assert(	(pResource==0 && pDisplayList==0) ||
 			(pResource!=0 && pDisplayList!=0)		// (pResource!=0 && (pDisplayList!=0||==0) ) => rc type could be changed for a node (display list <=> vbo)
 				 );
-	
+
 	// What to do ?
-	if ( pDF->isDirty() )
+	// USING DISPLAY LIST
+	if ( pGLEngine->isDisplayListEnabled() )
 	{
-		// Node has been modified
-		if ( pDisplayList != 0 )
+		if ( pDF->isDirty() )
 		{
-			// Found an associated resource, recycle it
-			pDisplayList->release();
-		}
-		else
-		{
-			// No resource (this is the first evaluation), creates a new one.
-			pDisplayList = new vgeGL::rc::DisplayList();
-			rGLManager.add( pNode, pDisplayList );
-		}
+			// Node has been modified
+			if ( pDisplayList != 0 )
+			{
+				// Found an associated resource, recycle it
+				pDisplayList->release();
+			}
+			else
+			{
+				// No resource (this is the first evaluation), creates a new one.
+				pDisplayList = new vgeGL::rc::DisplayList();
+				rGLManager.add( pNode, pDisplayList );
+			}
 
-		// Updates display lists.
-		pDisplayList->begin();
+			// Updates display lists.
+			pDisplayList->begin();
 
-		pHandler->paint( pGLEngine, pCastedNode );
+			pHandler->paint( pGLEngine, pCastedNode );
 
-		bool bRetVal = pDisplayList->next();
-		assert( !bRetVal );
-
-		// render
-		pDisplayList->call();
-
-		// Validates node.
-		pDF->validate();
-	}
-	else
-	{
-		// No change in node.
-		if ( pDisplayList != 0 )
-		{
-			// Found an associated resource.
+			bool bRetVal = pDisplayList->next();
+			assert( !bRetVal );
 
 			// render
 			pDisplayList->call();
+
+			// Validates node.
+			pDF->validate();
 		}
 		else
 		{
-			// No resource, but already validate !!!
-			assert( false && "No resource, but already validate !!!" );
+			// No change in node.
+			if ( pDisplayList != 0 )
+			{
+				// Found an associated resource.
+
+				// render
+				pDisplayList->call();
+			}
+			else
+			{
+				// No resource, but already validate !!!
+				assert( false && "No resource, but already validate !!!" );
+			}
 		}
+	}
+	// WITHOUT USING DISPLAY LIST
+	else
+	{
+		pHandler->paint( pGLEngine, pCastedNode );
 	}
 }
 
@@ -116,8 +119,7 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 
 template< typename nodeType, typename handlerType, typename paintParamType >
 void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode,
-							handlerType	*pHandler
-									 )
+							handlerType	*pHandler )
 {
 	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
 	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
@@ -128,69 +130,73 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 	vge::rc::Manager& rGLManager = pGLEngine->getGLManager();
 
 	// ****** Render ******
-	vgd::field::DirtyFlag	*pDF;
-	
-	vge::rc::IResource 		*pResource;
-	vgeGL::rc::DisplayList	*pDisplayList;
-
 	// get dirty flag of node
-	pDF = pCastedNode->getDirtyFlag( pCastedNode->getDFNode() );
+	vgd::field::DirtyFlag	*pDF			= pCastedNode->getDirtyFlag( pCastedNode->getDFNode() );
 
 	// lookup the resource.
-	pResource		= rGLManager.getAbstract( pNode );
-	pDisplayList	= dynamic_cast< vgeGL::rc::DisplayList* >(pResource);
+	vge::rc::IResource 		*pResource		= rGLManager.getAbstract( pNode );
+	vgeGL::rc::DisplayList	*pDisplayList	= dynamic_cast< vgeGL::rc::DisplayList* >(pResource);
 
 	assert(	(pResource==0 && pDisplayList==0) ||
 				(pResource!=0 && pDisplayList!=0)
 				 );
 	
 	// What to do ?
-	if ( pDF->isDirty() )
+	// USING DISPLAY LIST
+	if ( pGLEngine->isDisplayListEnabled() )
 	{
-		// Invalidate vertex shape.
-		if ( pDisplayList != 0 )
+		if ( pDF->isDirty() )
 		{
-			// Founded an associated resource, recycle it
-			pDisplayList->release();
-		}
-		else
-		{
-			// No resource (this is the first evaluation), create it.
-			pDisplayList = new vgeGL::rc::DisplayList();
-			rGLManager.add( pNode, pDisplayList );
-		}
+			// Invalidate vertex shape.
+			if ( pDisplayList != 0 )
+			{
+				// Founded an associated resource, recycle it
+				pDisplayList->release();
+			}
+			else
+			{
+				// No resource (this is the first evaluation), create it.
+				pDisplayList = new vgeGL::rc::DisplayList();
+				rGLManager.add( pNode, pDisplayList );
+			}
 
-		// update display lists.
-		pDisplayList->begin();
+			// update display lists.
+			pDisplayList->begin();
 
-		paintParamType method;
-		pHandler->paint( pGLEngine, pCastedNode, method );
+			paintParamType method;
+			pHandler->paint( pGLEngine, pCastedNode, method );
 
-		bool bRetVal;
-		bRetVal = pDisplayList->next();
-		assert( !bRetVal );
-		
-		// render
-		pDisplayList->call();
-		
-		// validate vertex shape.
-		pDF->validate();
-	}
-	else
-	{
-		// No change in vertex shape.
-		if ( pDisplayList != 0 )
-		{
-			// Founded an associated resource.
-			
+			bool bRetVal = pDisplayList->next();
+			assert( !bRetVal );
+
 			// render
 			pDisplayList->call();
+			
+			// Validates vertex shape.
+			pDF->validate();
 		}
 		else
 		{
-			// No resource, but already validate !!!
-			assert( false && "No resource, but already validate !!!" );
+			// No change in vertex shape.
+			if ( pDisplayList != 0 )
+			{
+				// Founded an associated resource.
+				
+				// render
+				pDisplayList->call();
+			}
+			else
+			{
+				// No resource, but already validate !!!
+				assert( false && "No resource, but already validate !!!" );
+			}
 		}
+	}
+	// WITHOUT USING DISPLAY LIST
+	else
+	{
+		paintParamType method;
+		pHandler->paint( pGLEngine, pCastedNode, method );
 	}
 }
 

@@ -29,9 +29,12 @@ namespace engine
 
 
 Engine::Engine()
-:	m_isGLSLEnabled(false),
-	m_glslProgramGenerator( new ProgramGenerator() )
+:	m_isTextureMappingEnabled(true),
+	m_isDisplayListEnabled(true),
+	m_isGLSLEnabled(false),
+	m_currentProgram(0),
 	//m_glslState(0,0)
+	m_glslProgramGenerator( new ProgramGenerator() )
 {
 	// Reset cache
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
@@ -45,6 +48,10 @@ void Engine::reset()
 	{
 		return;
 	}
+
+	//
+	setTextureMappingEnabled();
+	setDisplayListEnabled();
 
 	//
 	m_currentProgram	= 0;
@@ -74,7 +81,7 @@ void Engine::reset()
 
 void Engine::setupGLSLShaders()
 {
-	//loadShaders( "data/ar", ".*_vs[.]glsl" );				/// ????????????????????????????????????????????????????????
+	//loadShaders( "data/ar", ".*_vs[.]glsl" );
 }
 
 
@@ -129,13 +136,20 @@ void Engine::setToDefaults()
 	
 	//
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_LIGHTS			= %i", getMaxLights() );
+
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
+
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS = %i", getMaxVertexTexImageUnits() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS = %i", getMaxCombinedTexImageUnits() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_IMAGE_UNITS = %i", getMaxTexImageUnits() );
+	vgLogDebug2( "vgeGL.Engine: GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_ARB = %i", getMaxGeometryTexImageUnits() );
+
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
 
 	// GLSL
-	setupGLSLShaders();
+	//setupGLSLShaders();
 }
 
 
@@ -143,6 +157,34 @@ void Engine::setToDefaults()
 vge::rc::Manager& Engine::getGLManager()
 {
 	return m_glManager;
+}
+
+
+
+const bool Engine::isTextureMappingEnabled() const
+{
+	return m_isTextureMappingEnabled;
+}
+
+
+
+void Engine::setTextureMappingEnabled( const bool enabled )
+{
+	m_isTextureMappingEnabled = enabled;
+}
+
+
+
+const bool Engine::isDisplayListEnabled() const
+{
+	return m_isDisplayListEnabled;
+}
+
+
+
+void Engine::setDisplayListEnabled( const bool enabled )
+{
+	m_isDisplayListEnabled = enabled;
 }
 
 
@@ -441,6 +483,46 @@ const int32 Engine::getMaxCubeMapTexSize() const
 	}
 
 	return m_maxCubeMapTexSize;
+}
+
+
+
+const int Engine::getMaxVertexTexImageUnits() const
+{
+	GLint value;
+	glGetIntegerv( GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &value );
+
+	return value;
+}
+
+
+
+const int Engine::getMaxCombinedTexImageUnits() const
+{
+	GLint value;
+	glGetIntegerv( GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value );
+
+	return value;
+}
+
+
+
+const int Engine::getMaxTexImageUnits() const
+{
+	GLint value;
+	glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &value );
+
+	return value;
+}
+
+
+
+const int Engine::getMaxGeometryTexImageUnits() const
+{
+	GLint value;
+	glGetIntegerv( GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_ARB, &value );
+
+	return value;
 }
 
 
