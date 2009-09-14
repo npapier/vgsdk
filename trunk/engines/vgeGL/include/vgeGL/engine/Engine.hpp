@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -108,6 +108,41 @@ public:
 
 
 	/**
+	 * @name Engine configuration
+	 */
+	//@{
+
+	/**
+	 * @brief Determines whether the texture mapping is enabled.
+	 *
+	 * @return true if texture mapping is enabled, false otherwise
+	 */
+	const bool isTextureMappingEnabled() const;
+
+	/**
+	 * @brief Enables or disables the texture mapping depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the texture mapping must be enabled, false otherwise
+	 */
+	void setTextureMappingEnabled( const bool enabled = true );
+
+	/**
+	 * @brief Determines whether the display list caching mechanism is enabled.
+	 *
+	 * @return true if display list caching mechanism is enabled, false otherwise
+	 */
+	const bool isDisplayListEnabled() const;
+
+	/**
+	 * @brief Enables or disables the display list caching mechanism depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the display list caching mechanism must be enabled, false otherwise
+	 */
+	void setDisplayListEnabled( const bool enabled = true );
+	//@}
+
+
+	/**
 	 * @name GLSL related methods
 	 */
 	//@{
@@ -143,7 +178,7 @@ public:
 		 * @brief Default constructor
 		 *
 		* @param isEnabled	true when GLSL rendering pipeline is enabled, false otherwise
-		* @param	program	a pointer on the GLSL program
+		* @param program		a pointer on the GLSL program
 		*/
 		GLSLActivationState( const bool isGLSLEnabled, glo::GLSLProgram * currentProgram )
 		:	m_isGLSLEnabled(isGLSLEnabled),
@@ -291,6 +326,13 @@ public:
 
 	//@}
 
+	// @todo
+	const int getMaxVertexTexImageUnits() const;
+	const int getMaxCombinedTexImageUnits() const;
+	const int getMaxTexImageUnits() const;
+	const int getMaxGeometryTexImageUnits() const;
+	
+
 	
 	/**
 	 * @name OpenGL state accessors
@@ -408,6 +450,10 @@ protected:
 
 
 private:
+
+	bool m_isTextureMappingEnabled;		//< true if texture mapping is enabled, false otherwise
+	bool m_isDisplayListEnabled;		//< true if engine must used display list, false otherwise
+
 	/**
 	 * @name Cache implementations specifics capabilities
 	 */
@@ -443,7 +489,6 @@ private:
 	 * @brief The current GLSL program.
 	 */
 	glo::GLSLProgram *	m_currentProgram;
-
 
 	/**
 	 * @brief The GLSL rendering state.

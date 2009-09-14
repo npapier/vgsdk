@@ -183,19 +183,6 @@ struct VGE_API Engine : public vgd::field::FieldManager
 //	 */
 //	void evaluateTopStateWithoutTrace(	const vgd::Shp< vge::service::Service > service, const bool isPreTraverse );
 
-	/**
-	 * @brief Determines whether the texture mapping is enabled.
-	 *
-	 * @return true if texture mapping is enabled, false otherwise
-	 */
-	const bool isTextureMappingEnabled() const;
-
-	/**
-	 * @brief Enables or disables the texture mapping depending on the value of the parameter isEnabled.
-	 *
-	 * @param isEnabled		true when the texture mapping must be enabled, false otherwise
-	 */
-	void setTextureMappingEnabled( const bool enabled = true );
 	//@}
 
 
@@ -728,7 +715,6 @@ protected:
 	static const int32					StateStack_SizeHint;
 
 	vgm::Vec2i m_drawingSurfaceSize;	//< the drawing surface size (window size).
-	bool m_isTextureMappingEnabled;		//< true if texture mapping is enabled, false otherwise
 };
 
 
