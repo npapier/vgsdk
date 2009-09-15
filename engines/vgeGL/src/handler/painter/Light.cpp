@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -55,13 +55,13 @@ void Light::paint( vgeGL::engine::Engine *, vgd::node::Light * light )
 	using vgd::node::Light;
 	vgm::Vec4f color;
 
-	bDefined = light->getColor( Light::AMBIENT, color );
+	bDefined = light->getAmbient( color );
 	if ( bDefined )	glLightfv( lightIndex, GL_AMBIENT, color.getValue() );
 
-	bDefined = light->getColor( Light::DIFFUSE, color );
+	bDefined = light->getDiffuse( color );
 	if ( bDefined )	glLightfv( lightIndex, GL_DIFFUSE, color.getValue() );
 
-	bDefined = light->getColor( Light::SPECULAR, color );
+	bDefined = light->getSpecular( color );
 	if ( bDefined )	glLightfv( lightIndex, GL_SPECULAR, color.getValue() );
 
 	// Validates node
