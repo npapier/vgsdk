@@ -139,7 +139,7 @@ const int getKeyboardButton( const GdkEventKey * event )
 //	KeyboardButtonEvent::KEY_PRINT
 //	KeyboardButtonEvent::KEY_EXEC
 //	KeyboardButtonEvent::KEY_SNAPSHOT
-//	KeyboardButtonEvent::KEY_INSERT
+	case GDK_Insert:	return KeyboardButtonEvent::KEY_INSERT;
 //	KeyboardButtonEvent::KEY_HELP
 	case GDK_KP_0:			return KeyboardButtonEvent::KEY_NUMPAD0;
 	case GDK_KP_1:			return KeyboardButtonEvent::KEY_NUMPAD1;
