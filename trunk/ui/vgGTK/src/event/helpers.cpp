@@ -124,7 +124,7 @@ const int getKeyboardButton( const GdkEventKey * event )
 	case GDK_Meta_L:	return KeyboardButtonEvent::KEY_MENU;
 	case GDK_Meta_R:	return KeyboardButtonEvent::KEY_MENU;
 
-//	KeyboardButtonEvent::KEY_PAUSE;
+	case GDK_Pause:		KeyboardButtonEvent::KEY_PAUSE;
 //	KeyboardButtonEvent::KEY_CAPITAL;
 	case GDK_Prior:		return KeyboardButtonEvent::KEY_PRIOR;  /*!< Page up */
 	case GDK_Next:		return KeyboardButtonEvent::KEY_NEXT;   /*!< Page down */
@@ -135,12 +135,12 @@ const int getKeyboardButton( const GdkEventKey * event )
 	case GDK_Right:		return KeyboardButtonEvent::KEY_RIGHT;
 	case GDK_Down:		return KeyboardButtonEvent::KEY_DOWN;
 
-//	KeyboardButtonEvent::KEY_SELECT
-//	KeyboardButtonEvent::KEY_PRINT
-//	KeyboardButtonEvent::KEY_EXEC
+	case GDK_Select:	return KeyboardButtonEvent::KEY_SELECT;
+	case GDK_Print:		return KeyboardButtonEvent::KEY_PRINT;
+	case GDK_Execute:	return KeyboardButtonEvent::KEY_EXEC;
 //	KeyboardButtonEvent::KEY_SNAPSHOT
 	case GDK_Insert:	return KeyboardButtonEvent::KEY_INSERT;
-//	KeyboardButtonEvent::KEY_HELP
+	case GDK_Help:		return KeyboardButtonEvent::KEY_HELP;
 	case GDK_KP_0:			return KeyboardButtonEvent::KEY_NUMPAD0;
 	case GDK_KP_1:			return KeyboardButtonEvent::KEY_NUMPAD1;
 	case GDK_KP_2:			return KeyboardButtonEvent::KEY_NUMPAD2;
@@ -151,7 +151,7 @@ const int getKeyboardButton( const GdkEventKey * event )
 	case GDK_KP_7:			return KeyboardButtonEvent::KEY_NUMPAD7;
 	case GDK_KP_8:			return KeyboardButtonEvent::KEY_NUMPAD8;
 	case GDK_KP_9:			return KeyboardButtonEvent::KEY_NUMPAD9;
-//	KeyboardButtonEvent::KEY_MULTIPLY
+	case GDK_multiply:		return KeyboardButtonEvent::KEY_MULTIPLY;
 //	KeyboardButtonEvent::KEY_SEPARATOR
 //	KeyboardButtonEvent::KEY_DECIMAL
 //	KeyboardButtonEvent::KEY_DIVIDE
