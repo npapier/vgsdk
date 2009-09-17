@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -19,9 +19,7 @@
 
 #ifndef _VGEGL_DISABLED_GLE_
 
-#include <gle/Wrapper.hpp>
-#include <gle/WrapperGen.hpp>
-#include <gle/OpenGLExtensionsGen.hpp>
+#include <gle/gl.h>
 
 #endif
 
