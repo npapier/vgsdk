@@ -6,6 +6,7 @@
 #ifndef _VGEGL_ENGINE_PROGRAMGENERATOR_HPP
 #define _VGEGL_ENGINE_PROGRAMGENERATOR_HPP
 
+#include <vector>
 #include <vgd/Shp.hpp>
 #include <vgd/field/DirtyFlag.hpp>
 
