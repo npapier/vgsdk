@@ -89,6 +89,10 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 		: vgd::field::Enum(o)
 		{}
 
+		OrientationValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
 		const std::vector< int > values() const
 		{
 			std::vector< int > retVal;
@@ -113,7 +117,7 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the field named \c orientation
 	 */
-	typedef vgd::field::TSingleField< OrientationValueType > FOrientationType;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FOrientationType;
 
 
 	/**

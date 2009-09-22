@@ -148,7 +148,56 @@
 	</node>
 
 
-	<node	name = "Material" inherits="SingleAttribute">
+	<node name = "LightModel" inherits = "SingleAttribute" >
+		<doxygen>
+			<docBrief>Lighting model node</docBrief>
+			<doc>This node specifies current lighting mode (off/standard per vertex lighting/standard per pixel lighting) and some options of the lighting model.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_coloringAndLightingNodes</ingroup>
+		</doxygen>
+
+		<of name="model" doc="Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.">
+			<type name="enum">
+				<enum default="STANDARD_PER_VERTEX">
+					<value name="LIGHTING_OFF"			doc="No lighting"/>
+					<value name="STANDARD_PER_VERTEX"	doc="Lighting is computed per vertex"/>
+					<value name="STANDARD_PER_PIXEL"	doc="Lighting is computed per pixel"/>
+				</enum>
+			</type>
+		</of>
+
+		<of name="ambient" doc="Sets the ambient RGBA intensity of the entire scene.">
+			<type name="Vec4f" namespace="vgm" default="0.2f, 0.2f, 0.2f, 0.0f"></type>
+		</of>
+
+		<of name="viewer" doc="Specifies how specular reflection angles are computed. Possible values :
+- AT_INFINITY specular reflections are computed from the origin of the eye coordinate system.
+- AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.">
+			<type name="enum">
+				<enum default="AT_INFINITY">
+					<value name="AT_INFINITY"	doc="Specular reflections are computed from the origin of the eye coordinate system"/>
+					<value name="AT_EYE"		doc="Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates"/>
+				</enum>
+			</type>
+		</of>
+
+		<of name="twoSided" doc="Specifies whether one- or two-sided lighting calculations are done for polygons and triangles.">
+			<type name="bool" default="false"></type>
+		</of>
+
+		<of name="shadow" doc="Specifies the algorithm used to compute shadow.">
+			<type name="enum">
+				<enum default="NONE">
+					<value name="NONE"				doc="Shadows are not computed"/>
+					<value name="SHADOW_MAPPING"	doc="Shadows are computed using shadow mapping algorithm"/>
+				</enum>
+			</type>
+		</of>
+	</node>
+
+
+	<node name = "Material" inherits = "SingleAttribute" >
 		<doxygen>
 			<docBrief>Surface material definition node</docBrief>
 			<doc>The Material node specifies current surface material properties for all subsequent shapes nodes</doc>
@@ -262,14 +311,6 @@
 	<node	name="SingleAttribute">
 	</node> -->
 </nodes>
-
-<!---		<paf name="color" doc="Specifies the color of the material.">
-			<type name="Vec3f" namespace="vgm">
-			<parameter name="AMBIENT" default="Vec3f(0.2f, 0.2f, 0.2f)" doc="Ambient color of the surface."></parameter>
-			DIFFUSE Vec3f(0.8f, 0.8f, 0.8f) Diffuse color of the surface.
-			SPECULAR Vec3f(0.0f, 0.0f, 0.0f) Specular color of the surface.
-			EMISSION Vec3f(0.0f, 0.0f, 0.0f) Emissive color of the surface.
-		</paf>-->
 
 <!-- test default value code generator
 			<type name="float"></type>

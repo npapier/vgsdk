@@ -91,6 +91,10 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 		: vgd::field::Enum(o)
 		{}
 
+		ModeValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
 		const std::vector< int > values() const
 		{
 			std::vector< int > retVal;
@@ -119,7 +123,7 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the field named \c mode
 	 */
-	typedef vgd::field::TSingleField< ModeValueType > FModeType;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FModeType;
 
 
 	/**
