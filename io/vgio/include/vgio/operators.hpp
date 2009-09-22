@@ -24,8 +24,6 @@
 
 #include <vgd/node/Camera.hpp>
 #include <vgd/node/DrawStyle.hpp>
-#include <vgd/node/Light.hpp>
-#include <vgd/node/LightModel.hpp>
 #include <vgd/node/Primitive.hpp>
 #include <vgd/node/VertexShape.hpp>
 
@@ -95,48 +93,6 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawSt
  * @brief	Writes into an output stream the textual representation of the light nodes on parameter.
  */
 //VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParameterType & on );
-
-
-
-/**
- * @brief	Writes into an output stream the textual representation of the light model nodes ambient parameter.
- */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::AmbientParameterType & ambient );
-
-
-
-/**
- * @brief	Writes into an output stream the textual representation of the light model nodes model parameter.
- */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::ModelParameterType & model );
-
-
-
-/**
- * @brief	Writes into an output stream the textual representation of the light model nodes two-sided parameter.
- */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::TwoSidedParameterType & twoSided );
-
-
-
-/**
- * @brief	Writes into an output stream the textual representation of the light model nodes model value.
- */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::ModelValueType & value );
-
-
-
-/**
- * @brief	Writes into an output stream the textual representation of the light model nodes viewer parameter.
- */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::ViewerParameterType & viewer );
-
-
-
-/**
- * @brief	Writes into an output stream the textual representation of the light model nodes viewer value.
- */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::LightModel::ViewerValueType & value );
 
 
 

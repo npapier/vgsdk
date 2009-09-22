@@ -166,33 +166,19 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 		// Old serialization system, always useful for enum type
 		typedef vgd::node::VertexShape::FPrimitiveType	MFPrimitiveType;
 		
-		//typedef vgd::node::Camera::FScissorType		PAFCameraScissor;
-		//typedef vgd::node::Camera::FViewportType	PAFCameraViewport;
-
 		typedef vgd::node::DrawStyle::FBoundingBoxType		PAFDrawStyleBoundingBox;
 		typedef vgd::node::DrawStyle::FNormalLengthType		PAFDrawStyleNormalLength;
 		typedef vgd::node::DrawStyle::FShapeType			PAFDrawStyleShape;
 		typedef vgd::node::DrawStyle::FShowOrientationType	PAFDrawStyleShowOrientation;
 		
-		typedef vgd::node::LightModel::FAmbientType		PAFLightModelAmbient;
-		typedef vgd::node::LightModel::FModelType		PAFLightModelModel;
-		typedef vgd::node::LightModel::FTwoSidedType	PAFLightModelTwoSided;
-		typedef vgd::node::LightModel::FViewerType		PAFLightModelViewer;
-
 		// Retrieves the field type information
 		const std::type_info	& fieldType = fieldManager->getFieldType( fieldName );
 
 		if		( fieldType == typeid(MFPrimitiveType) )				os << fieldManager->getFieldRO< MFPrimitiveType				>( fieldName );
-/*		else if	( fieldType == typeid(PAFCameraScissor) )		os << fieldManager->getFieldRO< PAFCameraScissor >( fieldName );
-		else if	( fieldType == typeid(PAFCameraViewport) )		os << fieldManager->getFieldRO< PAFCameraViewport >( fieldName );*/
 		else if	( fieldType == typeid(PAFDrawStyleBoundingBox) )		os << fieldManager->getFieldRO< PAFDrawStyleBoundingBox		>( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleNormalLength) )		os << fieldManager->getFieldRO< PAFDrawStyleNormalLength    >( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleShape) )				os << fieldManager->getFieldRO< PAFDrawStyleShape           >( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleShowOrientation) )	os << fieldManager->getFieldRO< PAFDrawStyleShowOrientation >( fieldName );
-		else if	( fieldType == typeid(PAFLightModelAmbient) )			os << fieldManager->getFieldRO< PAFLightModelAmbient        >( fieldName );
-		else if	( fieldType == typeid(PAFLightModelModel) )				os << fieldManager->getFieldRO< PAFLightModelModel          >( fieldName );
-		else if	( fieldType == typeid(PAFLightModelTwoSided) )			os << fieldManager->getFieldRO< PAFLightModelTwoSided       >( fieldName );
-		else if	( fieldType == typeid(PAFLightModelViewer) )			os << fieldManager->getFieldRO< PAFLightModelViewer         >( fieldName );
 		else
 		{
 			// Serialization system using typelist

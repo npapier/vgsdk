@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -22,6 +22,10 @@
 #define vgLogStatus( arg1 )						vgDebug::get().logStatus( (arg1) )
 #define vgLogStatus2( arg1, arg2 )				vgDebug::get().logStatus( (arg1), (arg2) )
 #define vgLogStatus3( arg1, arg2, arg3 )		vgDebug::get().logStatus( (arg1), (arg2), (arg3) )
+
+#define vgLogMessage( arg1 )					vgDebug::get().logMessage( (arg1) )
+#define vgLogMessage2( arg1, arg2 )				vgDebug::get().logMessage( (arg1), (arg2) )
+#define vgLogMessage3( arg1, arg2, arg3 )		vgDebug::get().logMessage( (arg1), (arg2), (arg3) )
 
 #ifdef _DEBUG
 #define vgLogDebug( arg1 )						vgDebug::get().logDebug( (arg1) )

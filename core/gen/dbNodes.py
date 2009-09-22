@@ -136,6 +136,10 @@ class Enum ( Type ):
 		: vgd::field::Enum(o)
 		{}
 
+		FieldNameValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
 		const std::vector< int > values() const
 		{
 			std::vector< int > retVal;
@@ -229,7 +233,7 @@ TYPEDEF_FIELDNAMEVALUETYPE
 	/**
 	 * @brief Type definition of the field named \c fieldName
 	 */
-	typedef vgd::field::TSingleField< FieldNameValueType > FFieldNameType;
+	typedef vgd::field::TSingleField< InternalFieldNameValueType > FFieldNameType;
 
 
 	/**
@@ -243,6 +247,11 @@ TYPEDEF_FIELDNAMEVALUETYPE
 	void setFieldName( const FieldNameValueType value );
 
 	//@}\n"""
+
+		if self.type.name == "enum":
+			str = str.replace( "InternalFieldNameValueType", "vgd::field::Enum" )
+		else:
+			str = str.replace( "InternalFieldNameValueType", "FieldNameValueType" )
 
 		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, self.getFieldName(), "ValueType" ) )
 		str = str.replace( "fieldName", self.name )
@@ -302,7 +311,7 @@ TYPEDEF_FIELDNAMEVALUETYPE
 	/**
 	 * @brief Type definition of the field named \c fieldName
 	 */
-	typedef vgd::field::TOptionalField< FieldNameValueType > FFieldNameType;
+	typedef vgd::field::TOptionalField< InternalFieldNameValueType > FFieldNameType;
 
 
 	/**
@@ -325,6 +334,11 @@ TYPEDEF_FIELDNAMEVALUETYPE
 	 */
 	const bool hasFieldName() const;
 	//@}\n"""
+
+		if self.type.name == "enum":
+			str = str.replace( "InternalFieldNameValueType", "vgd::field::Enum" )
+		else:
+			str = str.replace( "InternalFieldNameValueType", "FieldNameValueType" )
 
 		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, self.getFieldName(), "ValueType" ) )
 		str = str.replace( "fieldName", self.name )

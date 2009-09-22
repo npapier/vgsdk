@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,20 +17,46 @@ namespace node
 
 
 
-META_NODE_CPP( LightModel );
+vgd::Shp< LightModel > LightModel::create( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< LightModel > node( new LightModel(nodeName) );
+
+	/* Adds a vertex (i.e. a node) to boost::graph */
+	graph().addNode( node );
+
+	/* Sets fields to their default values */
+	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< LightModel > LightModel::createWhole( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< LightModel > node = LightModel::create(nodeName);
+
+	/* Sets optional fields to their default values */
+	node->setOptionalsToDefaults();
+
+	return node;
+}
 
 
 
 LightModel::LightModel( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
-	// Add field
-	addField( new FModelType(getFModel()) );
-	addField( new FAmbientType(getFAmbient()) );
+	// Adds field(s)
 	addField( new FViewerType(getFViewer()) );
+	addField( new FModelType(getFModel()) );
+	addField( new FShadowType(getFShadow()) );
 	addField( new FTwoSidedType(getFTwoSided()) );
+	addField( new FAmbientType(getFAmbient()) );
 
-	// Link(s)
+	// Sets link(s)
 	link( getDFNode() );
 }
 
@@ -46,139 +72,200 @@ void LightModel::setToDefaults( void )
 void LightModel::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-
-	setModel(		DEFAULT_MODEL );
-	setAmbient(		vgm::Vec4f( 0.2f, 0.2f, 0.2f, 0.0f ) );
-	setViewer(		DEFAULT_VIEWER );
-	setTwoSided(	false );
+	setViewer( AT_INFINITY );
+	setModel( STANDARD_PER_VERTEX );
+	setShadow( NONE );
+	setTwoSided( false );
+	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 }
 
 
 
-// MODEL
-bool LightModel::getModel( ModelValueType& value ) const
+// Viewer
+const bool LightModel::getViewer( ViewerValueType& value ) const
 {
-	return ( 
-		vgd::field::getParameterValue< ModelParameterType, ModelValueType >( this, getFModel(), MODEL, value )
-		);
+	return getFieldRO<FViewerType>(getFViewer())->getValue( value );
 }
 
 
 
-void LightModel::setModel( ModelValueType value )
+void LightModel::setViewer( const ViewerValueType& value )
 {
-	vgd::field::setParameterValue< ModelParameterType, ModelValueType >( this, getFModel(), MODEL, value );
-}
-
-
-
-void LightModel::eraseModel()
-{
-	vgd::field::eraseParameterValue< ModelParameterType, ModelValueType >( this, getFModel(), MODEL );
-}
-
-
-
-// AMBIENT
-bool LightModel::getAmbient( AmbientValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< AmbientParameterType, AmbientValueType >( this, getFAmbient(), AMBIENT, value )
-		);
-}
-
-
-
-void LightModel::setAmbient( AmbientValueType value )
-{
-	vgd::field::setParameterValue< AmbientParameterType, AmbientValueType >( this, getFAmbient(), AMBIENT, value );
-}
-
-
-
-void LightModel::eraseAmbient()
-{
-	vgd::field::eraseParameterValue< AmbientParameterType, AmbientValueType >( this, getFAmbient(), AMBIENT );
-}
-
-
-
-// VIEWER
-bool LightModel::getViewer( ViewerValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< ViewerParameterType, ViewerValueType >( this, getFViewer(), VIEWER, value )
-		);
-}
-
-
-
-void LightModel::setViewer( ViewerValueType value )
-{
-	vgd::field::setParameterValue< ViewerParameterType, ViewerValueType >( this, getFViewer(), VIEWER, value );
+	getFieldRW<FViewerType>(getFViewer())->setValue( value );
 }
 
 
 
 void LightModel::eraseViewer()
 {
-	vgd::field::eraseParameterValue< ViewerParameterType, ViewerValueType >( this, getFViewer(), VIEWER );
+	getFieldRW<FViewerType>(getFViewer())->eraseValue();
+}
+
+
+const bool LightModel::hasViewer() const
+{
+	return getFieldRO<FViewerType>(getFViewer())->hasValue();
 }
 
 
 
-// TWO_SIDED
-bool LightModel::getTwoSided( TwoSidedValueType& value ) const
+// Model
+const bool LightModel::getModel( ModelValueType& value ) const
 {
-	return ( 
-		vgd::field::getParameterValue< int /*TwoSidedParameterType*/, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED, value )
-		);
+	return getFieldRO<FModelType>(getFModel())->getValue( value );
 }
 
 
 
-void LightModel::setTwoSided( TwoSidedValueType value )
+void LightModel::setModel( const ModelValueType& value )
 {
-	vgd::field::setParameterValue< int /*TwoSidedParameterType*/, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED, value );
+	getFieldRW<FModelType>(getFModel())->setValue( value );
+}
+
+
+
+void LightModel::eraseModel()
+{
+	getFieldRW<FModelType>(getFModel())->eraseValue();
+}
+
+
+const bool LightModel::hasModel() const
+{
+	return getFieldRO<FModelType>(getFModel())->hasValue();
+}
+
+
+
+// Shadow
+const bool LightModel::getShadow( ShadowValueType& value ) const
+{
+	return getFieldRO<FShadowType>(getFShadow())->getValue( value );
+}
+
+
+
+void LightModel::setShadow( const ShadowValueType& value )
+{
+	getFieldRW<FShadowType>(getFShadow())->setValue( value );
+}
+
+
+
+void LightModel::eraseShadow()
+{
+	getFieldRW<FShadowType>(getFShadow())->eraseValue();
+}
+
+
+const bool LightModel::hasShadow() const
+{
+	return getFieldRO<FShadowType>(getFShadow())->hasValue();
+}
+
+
+
+// TwoSided
+const bool LightModel::getTwoSided( TwoSidedValueType& value ) const
+{
+	return getFieldRO<FTwoSidedType>(getFTwoSided())->getValue( value );
+}
+
+
+
+void LightModel::setTwoSided( const TwoSidedValueType& value )
+{
+	getFieldRW<FTwoSidedType>(getFTwoSided())->setValue( value );
 }
 
 
 
 void LightModel::eraseTwoSided()
 {
-	vgd::field::eraseParameterValue< int /*TwoSidedParameterType*/, TwoSidedValueType >( this, getFTwoSided(), TWO_SIDED );
+	getFieldRW<FTwoSidedType>(getFTwoSided())->eraseValue();
+}
+
+
+const bool LightModel::hasTwoSided() const
+{
+	return getFieldRO<FTwoSidedType>(getFTwoSided())->hasValue();
+}
+
+
+
+// Ambient
+const bool LightModel::getAmbient( AmbientValueType& value ) const
+{
+	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
+}
+
+
+
+void LightModel::setAmbient( const AmbientValueType& value )
+{
+	getFieldRW<FAmbientType>(getFAmbient())->setValue( value );
+}
+
+
+
+void LightModel::eraseAmbient()
+{
+	getFieldRW<FAmbientType>(getFAmbient())->eraseValue();
+}
+
+
+const bool LightModel::hasAmbient() const
+{
+	return getFieldRO<FAmbientType>(getFAmbient())->hasValue();
+}
+
+
+
+// Field name accessor(s)
+const std::string LightModel::getFViewer( void )
+{
+	return "f_viewer";
 }
 
 
 
 const std::string LightModel::getFModel( void )
 {
-	return ( "f_model" );
+	return "f_model";
 }
 
 
 
-const std::string LightModel::getFAmbient( void )
+const std::string LightModel::getFShadow( void )
 {
-	return ( "f_ambient" );
-}
-
-
-
-const std::string LightModel::getFViewer( void )
-{
-	return ( "f_viewer" );
+	return "f_shadow";
 }
 
 
 
 const std::string LightModel::getFTwoSided( void )
 {
-	return ( "f_twoSided" );
+	return "f_twoSided";
 }
+
+
+
+const std::string LightModel::getFAmbient( void )
+{
+	return "f_ambient";
+}
+
+
+
+IMPLEMENT_INDEXABLE_CLASS_CPP( , LightModel );
+
+
+
+const vgd::basic::RegisterNode<LightModel> LightModel::m_registrationInstance;
 
 
 
 } // namespace node
 
 } // namespace vgd
+

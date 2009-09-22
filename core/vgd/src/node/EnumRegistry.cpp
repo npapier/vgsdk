@@ -69,6 +69,39 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
+	if ( m_toString.find( 262 ) != m_toString.end() )
+	{
+		vgLogDebug("(262, LIGHTING_OFF) already in enum registry");
+		assert( false && "(262, LIGHTING_OFF) already in registry" );
+	}
+	#endif
+
+	m_toString[ 262 ] = std::string("LIGHTING_OFF");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 266 ) != m_toString.end() )
+	{
+		vgLogDebug("(266, AT_EYE) already in enum registry");
+		assert( false && "(266, AT_EYE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 266 ] = std::string("AT_EYE");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 265 ) != m_toString.end() )
+	{
+		vgLogDebug("(265, AT_INFINITY) already in enum registry");
+		assert( false && "(265, AT_INFINITY) already in registry" );
+	}
+	#endif
+
+	m_toString[ 265 ] = std::string("AT_INFINITY");
+
+	//
+	#ifdef _DEBUG
 	if ( m_toString.find( 258 ) != m_toString.end() )
 	{
 		vgLogDebug("(258, FRONT) already in enum registry");
@@ -99,6 +132,50 @@ void EnumRegistry::initialize()
 	#endif
 
 	m_toString[ 261 ] = std::string("CW");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 268 ) != m_toString.end() )
+	{
+		vgLogDebug("(268, SHADOW_MAPPING) already in enum registry");
+		assert( false && "(268, SHADOW_MAPPING) already in registry" );
+	}
+	#endif
+
+	m_toString[ 268 ] = std::string("SHADOW_MAPPING");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 263 ) != m_toString.end() )
+	{
+		vgLogDebug("(263, STANDARD_PER_VERTEX) already in enum registry");
+		assert( false && "(263, STANDARD_PER_VERTEX) already in registry" );
+	}
+	#endif
+
+	m_toString[ 263 ] = std::string("STANDARD_PER_VERTEX");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 264 ) != m_toString.end() )
+	{
+		vgLogDebug("(264, STANDARD_PER_PIXEL) already in enum registry");
+		assert( false && "(264, STANDARD_PER_PIXEL) already in registry" );
+	}
+	#endif
+
+	m_toString[ 264 ] = std::string("STANDARD_PER_PIXEL");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 267 ) != m_toString.end() )
+	{
+		vgLogDebug("(267, NONE) already in enum registry");
+		assert( false && "(267, NONE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 267 ] = std::string("NONE");
 
 	//
 	#ifdef _DEBUG
