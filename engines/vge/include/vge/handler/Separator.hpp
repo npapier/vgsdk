@@ -28,20 +28,21 @@ namespace vge
 
 namespace vge
 {
-	
+
 namespace handler
 {
 
 
 
 /**
- * @brief Evaluate Separator node.
+ * brief Evaluate Separator node.
  */
-struct VGE_API Separator
-{
-	void	apply		( vge::engine::Engine*, vgd::node::Separator* );
-	void	unapply	( vge::engine::Engine*, vgd::node::Separator* );	
-};
+// @todo removes me
+// struct VGE_API Separator
+// {
+	// void	apply		( vge::engine::Engine*, vgd::node::Separator* );
+	// void	unapply	( vge::engine::Engine*, vgd::node::Separator* );	
+// };
 
 
 

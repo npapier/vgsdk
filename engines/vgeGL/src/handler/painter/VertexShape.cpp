@@ -93,11 +93,8 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		if ( true /*program == 0 pg->isDirty() */) // ???????????????????????????????????
 		{
 			// GLSL STATE UPDATE
-			// @todo Moves that code in a better place
-			// Updates GLSL state in engine
 			using vgeGL::engine::GLSLState;
 			GLSLState& glslState = pGLEngine->getGLSLState();
-			glslState.update( pGLEngine );
 
 			// Updates GLSL state with vertex shape info
 			// @todo OPTME
@@ -147,16 +144,16 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			if ( program == 0 )
 			{
 #ifdef _DEBUG
-			static bool firstTime = true;
+				static bool firstTime = true;
 
-			vgDebug::StdStreamsToFiles redirection(	"GLSL.cout.txt", "GLSL.cerr.txt", firstTime ? vgDebug::StdStreamsToFiles::TRUNCATE : vgDebug::StdStreamsToFiles::APPEND );
+				vgDebug::StdStreamsToFiles redirection(	"GLSL.cout.txt", "GLSL.cerr.txt", firstTime ? vgDebug::StdStreamsToFiles::TRUNCATE : vgDebug::StdStreamsToFiles::APPEND );
 
-			if ( firstTime ) firstTime = false;
+				if ( firstTime ) firstTime = false;
 
-			std::cout << "Generates shaders\n" << std::endl;
-			std::cout << "Vertex shader\n" << std::endl << vs << std::endl;
-			std::cout << "Fragment shader\n" << std::endl << fs << std::endl;
-			std::cout << "\n\n\n";
+				std::cout << "Generates shaders\n" << std::endl;
+				std::cout << "Vertex shader\n" << std::endl << vs << std::endl;
+				std::cout << "Fragment shader\n" << std::endl << fs << std::endl;
+				std::cout << "\n\n\n";
 #endif
 
 				// Not found in cache. Creates a new one
@@ -213,12 +210,6 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		}
 
 		pGLEngine->sethCurrentProgram( program );
-/*
-		pGLEngine->getGLSLManager().remove("vgSDK.main");		// @todo
-		GLSLProgram * program = new glo::GLSLProgram;
-		pGLEngine->getGLSLManager().add( "vgSDK.main", program );
-			// program->clear(); @todo
-			*/
 	}
 	else
 	{
@@ -238,29 +229,15 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 	::vgeGL::handler::painter::DrawStyle::paintVertexShapeNormals( pGLEngine, pVertexShape, this );
 
-//	// pre
-//	GLboolean bLightingState;
-//	glGetBooleanv( GL_LIGHTING, &bLightingState );
-//
-//	glDisable( GL_LIGHTING );
-
-	// FIXME not the good place ?
+	// @todo not the good place ?
 	// *** DRAWSTYLE.showOrientation
-	//bool	bDefined;
-	bool	showOrientationValue;
+	const bool showOrientationValue = pGLEngine->getGLState().getShowOrientation();
 
-	bool	bDefined = pGLEngine->getStateStackTop< 
-						vgd::node::DrawStyle, 
-						vgd::node::DrawStyle::ShowOrientationParameterType,
-						vgd::node::DrawStyle::ShowOrientationValueType >(	vgd::node::DrawStyle::getFShowOrientation(),
-																			vgd::node::DrawStyle::SHOW_ORIENTATION,
-																			showOrientationValue );
-	assert( bDefined );
 	if ( showOrientationValue )
 	{
 		// FIXME optimize me
 		glPushAttrib( GL_ALL_ATTRIB_BITS );
-		
+
 		glDisable( GL_LIGHTING );
 		//glColor3f( 1.f, 1.f, 1.f );
 		// END FIXME
@@ -281,25 +258,14 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	}
 
 
-	// FIXME not the good place ?
+	// @todo not the good place ?
 	// *** DRAWSTYLE.boundingBox ***
-	//bool										bDefined;
-	vgd::node::DrawStyle::BoundingBoxValueType	bbValue;
-
-	bDefined = pGLEngine->getStateStackTop< 
-						vgd::node::DrawStyle, 
-						vgd::node::DrawStyle::BoundingBoxParameterType,
-						vgd::node::DrawStyle::BoundingBoxValueType >(	vgd::node::DrawStyle::getFBoundingBox(),
-																		vgd::node::DrawStyle::BOUNDING_BOX,
-																		bbValue );
-	assert( bDefined );
+	vgd::node::DrawStyle::BoundingBoxValueType	bbValue = pGLEngine->getGLState().getBoundingBox();
 
 	if ( bbValue != vgd::node::DrawStyle::NONE )
 	{
 		// FIXME optimize me
 		glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-		//::glo::GLSLProgram::useFixedPaths();																			??? FIXME
 
 		glDisable( GL_LIGHTING );
 
@@ -338,12 +304,6 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		///@todo FIXME OPTME	
 		glPopAttrib();
 	}
-	
-//	// post
-//	if ( bLightingState == GL_TRUE )
-//	{
-//		glEnable( GL_LIGHTING );
-//	}	
 
 	// Restores GLSL activation state
 	pGLEngine->setGLSLActivationState( glslActivationState );

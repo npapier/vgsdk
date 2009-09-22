@@ -21,6 +21,18 @@ namespace handler
 
 void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * node )
 {
+	// VIEWPORT
+	bool bDefined;
+	vgm::Rectangle2i viewportValue;
+
+	bDefined = node->getViewport( viewportValue );
+
+	if ( bDefined )
+	{
+		engine->setViewport( viewportValue );
+	}
+
+	//
 	applyMatrix( engine, node );
 	applyLookAt( engine, node );
 }

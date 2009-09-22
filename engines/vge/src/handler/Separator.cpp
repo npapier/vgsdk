@@ -22,10 +22,8 @@ namespace handler
 /**
  * @todo Check overflow in stack.
  */
-void Separator::apply ( vge::engine::Engine* pEngine, vgd::node::Separator * )
+/*void Separator::apply( vge::engine::Engine* pEngine, vgd::node::Separator * )
 {
-	//vge::TransformSeparator::apply( pEngine, pNode ); FIXME REMOVE ME
-
 	// Push software part.
 	pEngine->pushStateStack();
 	assert( pEngine->sizeOfStateStack() <= 12 );
@@ -35,12 +33,10 @@ void Separator::apply ( vge::engine::Engine* pEngine, vgd::node::Separator * )
 
 void Separator::unapply ( vge::engine::Engine* pEngine, vgd::node::Separator* )
 {
-	//vge::TransformSeparator::unapply( pEngine, pNode ); FIXME REMOVE ME
-
 	// Pop software part.
 	pEngine->popStateStack();
 	assert( pEngine->sizeOfStateStack() >= 1 );
-}
+}*/
 
 
 

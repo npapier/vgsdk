@@ -312,7 +312,6 @@ struct GLSLState : public TBitSet< 9 >
 	//@}
 
 
-	void update( vgeGL::engine::Engine * engine );
 
 private:
 	std::vector< vgd::Shp< LightState > >		m_light;		///< array of light state. The zero-based index selects the light unit.

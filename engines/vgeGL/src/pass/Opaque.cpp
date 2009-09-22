@@ -30,10 +30,14 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 					vge::visitor::TraverseElementVector* traverseElements,
 					vgd::Shp< vge::service::Service > service )
 {
+	// @todo
 	engine->resetMatrices();
 
+	engine->getGLSLStateStack().push();
+	engine->getGLStateStack().push();
 	engine->pushStateStack();
 	glPushAttrib( GL_ALL_ATTRIB_BITS );
+	//
 
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 
@@ -43,10 +47,7 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 	{
 		if ( (i->first)->isAKindOf< vgd::node::Shape >() )
 		{
-			vgd::node::Material *pMaterial( engine->getStateStackTop<vgd::node::Material>() );
-			assert( pMaterial != 0 );
-
-			const float opacityDiff = fabs( pMaterial->getOpacity() - 1.f );
+			const float opacityDiff = fabs( engine->getGLState().getOpacity() - 1.f );
 
 			if ( opacityDiff < vgm::Epsilon<float>::value() )
 			{
@@ -64,11 +65,12 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 		}
 	}
 
+	// @todo
 	glPopAttrib();
 	engine->popStateStack();
-	//@todo Quick hack to fix transparency rendering with GLSL pipeline.
-	//@todo Must be a stack.
-	engine->getGLSLState().reset( engine->getMaxLights(), engine->getMaxTexUnits() );
+	engine->getGLStateStack().pop();
+	engine->getGLSLStateStack().pop();
+	//
 }
 
 

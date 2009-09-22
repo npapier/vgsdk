@@ -26,10 +26,14 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 							vge::visitor::TraverseElementVector* traverseElements,
 							vgd::Shp< vge::service::Service > service )
 {
+	// @todo
 	engine->resetMatrices();
 
+	engine->getGLSLStateStack().push();
+	engine->getGLStateStack().push();
 	engine->pushStateStack();
 	glPushAttrib( GL_ALL_ATTRIB_BITS );
+	//
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
@@ -47,10 +51,7 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 		{
 			using vgd::node::Material;
 
-			Material *material( engine->getStateStackTop<Material>() );
-			assert( material != 0 && "Internal error" );
-
-			const float opacity = material->getOpacity();
+			const float opacity = engine->getGLState().getOpacity();
 			const float opacityDelta = fabs( opacity - 1.f );
 
 			if ( opacityDelta > vgm::Epsilon<float>::value() )
@@ -81,8 +82,12 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 	engine->regardIfIsAKindOf< vgd::node::Kit >();
 	engine->regardIfIsA< vgd::node::ClearFrameBuffer >();
 
+	// @todo
 	glPopAttrib();
 	engine->popStateStack();
+	engine->getGLStateStack().pop();
+	engine->getGLSLStateStack().pop();
+	//
 }
 
 

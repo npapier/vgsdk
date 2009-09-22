@@ -25,6 +25,8 @@ namespace engine
 Engine::Engine()
 :	m_drawingSurfaceSize(0, 0)
 {
+	m_viewport.setInvalid();
+
 	reset();
 }
 
@@ -42,47 +44,49 @@ void Engine::reset()
 
 
 void Engine::resetEval()
-{	
+{
 	// States
 	resetStateStack();
-	
+
 	// Matrices
 	resetMatrices();
 }
 
 
 
-void Engine::evaluate(	const vgd::Shp< vge::service::Service >service,
-						vgd::node::Node *pNode, 
+void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
+						vgd::node::Node * node, 
 						const bool isPreTraverse,
 						const bool bTrace )
 {
 	const int32 indexService( service->getClassIndex() );
-	const int32 indexNode	( pNode->getClassIndex() );
-	
+	const int32 indexNode	( node->getClassIndex() );
+
 	if ( m_regarded[indexNode] )
 	{
-		vge::handler::Handler *pHandler;
-		
-		pHandler = m_dispatch[indexService][indexNode].get();
-		
-		if ( pHandler != 0 )
+		vge::handler::Handler *pHandler( m_dispatch[indexService][indexNode].get() );
+
+		if ( pHandler )
 		{
 			if ( isPreTraverse )
 			{
 				// pretraverse
-				//vgDebug::get().logTrace( "preTraverse %s", pNode->getName().c_str() );
-				if ( bTrace )
+				//vgDebug::get().logTrace( "preTraverse %s", node->getName().c_str() );
+
+				// state stack is disabled.
+				// @todo removes
+				/*if ( bTrace )
 				{
-					setStateStackTop( pNode );
-				}
-				pHandler->apply( this, pNode );
+					setStateStackTop( node );
+				}*/
+				pHandler->apply( this, node );
 			}
 			else
 			{
 				// posttraverse
-				//vgDebug::get().logTrace( "postTraverse %s", pNode->getName().c_str() );
-				pHandler->unapply( this, pNode );
+				//vgDebug::get().logTrace( "postTraverse %s", node->getName().c_str() );
+
+				pHandler->unapply( this, node );
 			}
 		}
 		else
@@ -222,6 +226,9 @@ void Engine::disregard()
 
 void Engine::resetStateStack()
 {
+	// state stack is disabled. @todo removes all call to this method
+	return;
+
 	clearStateStack();
 	initializeStateStack();
 }
@@ -277,6 +284,9 @@ bool Engine::isStateStackEmpty() const
 
 const uint Engine::sizeOfStateStack() const
 {
+	// state stack is disabled. @todo removes all call to this method
+	return 1;
+
 	return static_cast<uint32>(m_state.size());
 }
 
@@ -302,6 +312,9 @@ void Engine::setStateStackTop( vgd::node::Node *pNode )
 
 void Engine::pushStateStack()
 {
+	// state stack is disabled. @todo removes all call to this method
+	return;
+
 	State& top( m_state.back() );
 	m_state.push_back( top );
 }
@@ -310,6 +323,9 @@ void Engine::pushStateStack()
 
 bool Engine::popStateStack()
 {
+	// state stack is disabled. @todo removes all call to this method
+	return true;
+
 	if ( m_state.size() > 0 )
 	{
 		m_state.pop_back();
@@ -331,6 +347,7 @@ void Engine::resetMatrices()
 	getProjectionMatrix().resize( 1 );
 	getProjectionMatrix().setMatrixStackSizeHint( 8 );
 
+// @todo size of 0, 1 or 2 by default and resize/add at runtime if needed
 	getTextureMatrix().resize( getMaxTexUnits() );
 	getTextureMatrix().setMatrixStackSizeHint( 8 );
 
@@ -366,33 +383,28 @@ const vgm::Vec2i Engine::getDrawingSurfaceSize() const
 	return m_drawingSurfaceSize;
 }
 
-
-
 void Engine::setDrawingSurfaceSize( const vgm::Vec2i drawingSurfaceSize )
 {
 	m_drawingSurfaceSize = drawingSurfaceSize;
 }
 
 
-
-const vgm::Rectangle2i Engine::getViewport() const
+const vgm::Rectangle2i& Engine::getViewport() const
 {
-	vgm::Rectangle2i viewport;
+	return m_viewport;
+}
 
-	using vgd::node::Camera;
-	const bool retVal = getStateStackTop< Camera, Camera::ViewportValueType >(
-		Camera::getFViewport(), viewport );
-	assert( retVal && "Internal error, because getStateStackTop<>() should never fail." );
-
-	return viewport;
+void Engine::setViewport( const vgm::Rectangle2i& viewport )
+{
+	m_viewport = viewport;
 }
 
 
 
-const int32 Engine::getMaxTexUnits() const
+const int Engine::getMaxTexUnits() const
 { 
 	return 0;
-};
+}
 
 
 
@@ -403,7 +415,7 @@ bool Engine::addField( vgd::field::AbstractField* pField )
 
 
 
-const int32 Engine::StateStack_SizeHint		= 4;
+const int32 Engine::StateStack_SizeHint		= 1;
 
 
 

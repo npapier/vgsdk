@@ -28,12 +28,14 @@ namespace engine
 
 
 
+// CONSTRUCTORS
 Engine::Engine()
 :	m_isTextureMappingEnabled(true),
 	m_isDisplayListEnabled(true),
-	m_isGLSLEnabled(false),
+	m_isGLSLEnabled(true),
 	m_currentProgram(0),
-	//m_glslState(0,0)
+	// m_glStateStack()
+	//m_glslStateStack()
 	m_glslProgramGenerator( new ProgramGenerator() )
 {
 	// Reset cache
@@ -44,9 +46,11 @@ Engine::Engine()
 
 void Engine::reset()
 {
+	// @todo remove me, because getMaxTexUnits() and getMaxLights() are OpenGL context protected...
 	if ( isGLContextCurrent() == false )
 	{
-		return;
+		vgLogDebug("Engine::reset(): OpenGL context not current. Checks behavior.");
+		//return;
 	}
 
 	//
@@ -60,10 +64,13 @@ void Engine::reset()
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
 
 	//
-	getGLSLState().reset( getMaxLights(), getMaxTexUnits() );
+	getGLStateStack().clear( GLState() );
+	getGLSLStateStack().clear( GLSLState(getMaxLights(), getMaxTexUnits()) );
 
 	if ( m_firstInstance )
 	{
+		// @todo move to constructor ? yes, but only when dynamic management of state for Light and Texture would be done
+
 		// This is the first instance of this class.
 
 		// Do some initialization
@@ -71,17 +78,10 @@ void Engine::reset()
 		m_firstInstance = (populateNodeRegistry() == false);
 	}
 
-	if ( m_firstInstance == false )
-	{
+	//if ( m_firstInstance == false )
+	//{
 		::vge::engine::Engine::reset();
-	}
-}
-
-
-
-void Engine::setupGLSLShaders()
-{
-	//loadShaders( "data/ar", ".*_vs[.]glsl" );
+	//}
 }
 
 
@@ -147,16 +147,68 @@ void Engine::setToDefaults()
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
-
-	// GLSL
-	//setupGLSLShaders();
 }
 
 
 
+// STATE
+const Engine::GLStateStack& Engine::getGLStateStack() const
+{
+	return m_glStateStack;
+}
+
+Engine::GLStateStack& Engine::getGLStateStack()
+{
+	return m_glStateStack;
+}
+
+
+const Engine::GLSLStateStack& Engine::getGLSLStateStack() const
+{
+	return m_glslStateStack;
+}
+
+Engine::GLSLStateStack& Engine::getGLSLStateStack()
+{
+	return m_glslStateStack;
+}
+
+
+
+const GLState& Engine::getGLState() const
+{
+	return m_glStateStack.getTop();
+}
+
+GLState& Engine::getGLState()
+{
+	return m_glStateStack.getTop();
+}
+
+
+const GLSLState& Engine::getGLSLState() const
+{
+	return m_glslStateStack.getTop();
+}
+
+GLSLState& Engine::getGLSLState()
+{
+	return m_glslStateStack.getTop();
+}
+
+
+
+// MANAGER
 vge::rc::Manager& Engine::getGLManager()
 {
 	return m_glManager;
+}
+
+
+
+Engine::GLSLProgramManagerType& Engine::getGLSLManager()
+{
+	return m_glslManager;
 }
 
 
@@ -189,6 +241,7 @@ void Engine::setDisplayListEnabled( const bool enabled )
 
 
 
+// 
 /**
  * @todo All OpenGL objects are destroyed by this method. Not very cute.
  */
@@ -273,30 +326,9 @@ glo::GLSLProgram * Engine::gethCurrentProgram() const
 
 
 
-const GLSLState& Engine::getGLSLState() const
-{
-	return m_glslState;
-}
-
-
-
-GLSLState& Engine::getGLSLState()
-{
-	return m_glslState;
-}
-
-
-
 vgd::Shp< ProgramGenerator > Engine::getGLSLProgramGenerator()
 {
 	return m_glslProgramGenerator;
-}
-
-
-
-Engine::GLSLProgramManagerType& Engine::getGLSLManager()
-{
-	return m_glslManager;
 }
 
 
@@ -370,17 +402,18 @@ const bool Engine::isGLContextCurrent() const
 }
 
 
-	
+
 /**
  * @todo Use glLoadIdentity() and creates synchronizeMatricesFromEngineToGL()
  */
 void Engine::resetMatrices()
 {
-	if ( isGLContextCurrent() == false )
-	{
-		return;
-	}
-	
+	// @todo remove me
+	//if ( isGLContextCurrent() == false )
+	//{
+	//	return;
+	//}
+
 	// STEP 1 : call method from vge::engine::Engine
 	vge::engine::Engine::resetMatrices();
 	
@@ -402,7 +435,7 @@ void Engine::resetMatrices()
 
 	// PROJECTION
 	assert( getProjectionMatrix().size() == 1 );
-	
+
 	current = getProjectionMatrix().getTop();
 
 	glMatrixMode( GL_PROJECTION );
@@ -427,11 +460,21 @@ void Engine::resetMatrices()
 
 
 
-const int32 Engine::getMaxLights() const
+const int Engine::getMaxLights() const
 {
 	if ( m_maxLights == 0 )
 	{
-		glGetIntegerv(GL_MAX_LIGHTS, &m_maxLights );
+		if ( isGLContextCurrent() )
+		{
+			// @todo
+			glGetIntegerv(GL_MAX_LIGHTS, &m_maxLights );
+			m_maxLights = 4;
+		}
+		else
+		{
+			vgLogDebug("Engine::getMaxLights(): OpenGL context not current, so return arbitrary value 4.");
+			return 4;
+		}
 	}
 
 	return m_maxLights;
@@ -439,11 +482,21 @@ const int32 Engine::getMaxLights() const
 
 
 
-const int32 Engine::getMaxTexUnits() const
+const int Engine::getMaxTexUnits() const
 {
 	if ( m_maxTexUnits == 0 )
 	{
-		glGetIntegerv( GL_MAX_TEXTURE_UNITS, &m_maxTexUnits );
+		if ( isGLContextCurrent() )
+		{
+			// @todo
+			glGetIntegerv( GL_MAX_TEXTURE_UNITS, &m_maxTexUnits );
+			m_maxTexUnits = 2;
+		}
+		else
+		{
+			vgLogDebug("Engine::getMaxTexUnits(): OpenGL context not current, so return arbitrary value 2.");
+			return 2;
+		}
 	}
 
 	return m_maxTexUnits;
@@ -451,7 +504,7 @@ const int32 Engine::getMaxTexUnits() const
 
 
 
-const int32 Engine::getMaxTexSize() const
+const int Engine::getMaxTexSize() const
 {
 	if ( m_maxTexSize == 0 )
 	{
@@ -463,7 +516,7 @@ const int32 Engine::getMaxTexSize() const
 
 
 
-const int32 Engine::getMax3DTexSize() const
+const int Engine::getMax3DTexSize() const
 {
 	if ( m_max3DTexSize == 0 )
 	{
@@ -475,7 +528,7 @@ const int32 Engine::getMax3DTexSize() const
 
 
 
-const int32 Engine::getMaxCubeMapTexSize() const
+const int Engine::getMaxCubeMapTexSize() const
 {
 	if ( m_maxCubeMapTexSize == 0 )
 	{
@@ -527,7 +580,7 @@ const int Engine::getMaxGeometryTexImageUnits() const
 
 
 
-void Engine::getViewport( vgm::Rectangle2i& viewport ) /*const*/
+void Engine::getGLViewport( vgm::Rectangle2i& viewport ) /*const*/
 {
 	GLint viewportGL[4];
 
@@ -538,7 +591,7 @@ void Engine::getViewport( vgm::Rectangle2i& viewport ) /*const*/
 
 
 
-const int Engine::getDepthBits() const
+const int Engine::getGLDepthBits() const
 {
 	GLint depthBits;
 	glGetIntegerv( GL_DEPTH_BITS, &depthBits );
@@ -548,11 +601,11 @@ const int Engine::getDepthBits() const
 
 
 
-const GLenum Engine::getDepthTextureFormatFromDepthBits() const
+const GLenum Engine::getGLDepthTextureFormatFromDepthBits() const
 {
 	GLenum retVal;
 
-	const int32 depthBits = getDepthBits();
+	const int32 depthBits = getGLDepthBits();
 	
 	switch ( depthBits )
 	{
@@ -580,7 +633,7 @@ const GLenum Engine::getDepthTextureFormatFromDepthBits() const
 
 
 
-vgd::Shp< vgd::basic::Image > Engine::captureFramebuffer() const
+vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer() const
 {
 	// Reads back the framebuffer color values
 	using vgd::basic::Image;
@@ -662,7 +715,10 @@ void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport )
 	}
 	else
 	{
-		getViewport( viewport );
+		// @todo Uses engine.viewport ? glEngine must be a method param or remove static
+		getGLViewport( viewport );
+		//
+		// assert( viewport == getViewport() ); // ???
 	}
 
 	glViewport( viewport[0], viewport[1], viewport[2], viewport[3] );
@@ -709,34 +765,28 @@ void Engine::end2DRendering()
 
 bool Engine::populateNodeRegistry()
 {
-	if ( isGLContextCurrent() )
+	// DirectionalLight
+	for(	int8	i		= 1,
+					iMax	= static_cast< int8 >(getMaxLights());
+			i < iMax;
+			++i )
 	{
-		// DirectionalLight
-		for(	int8	i		= 1,
-						iMax	= static_cast< int8 >(getMaxLights());
-				i < iMax;
-				++i )
-		{
-			vgd::basic::RegisterNode< vgd::node::DirectionalLight >	registerNode( i );
-		}
-	
-		// TextureMatrixTransform, Texture2D, TextureCubeMap
-		for(	int8	i		= 1,
-						iMax	= static_cast< int8 >(getMaxTexUnits());
-				i < iMax;
-				++i )
-		{
-			vgd::basic::RegisterNode< vgd::node::Texture2D >				registerNode1( i );
-			vgd::basic::RegisterNode< vgd::node::TextureMatrixTransform >	registerNode2( i );
-			//vgd::basic::RegisterNode< vgd::node::TextureCubeMap>			registerNode3( i );		
-		}
-		
-		return true;
+		vgd::basic::RegisterNode< vgd::node::DirectionalLight >	registerNode( i );
 	}
-	else
+
+	// TextureMatrixTransform, Texture2D, TextureCubeMap
+	for(	int8	i		= 1,
+					iMax	= static_cast< int8 >(getMaxTexUnits());
+			i < iMax;
+			++i )
 	{
-		return false;
+		vgd::basic::RegisterNode< vgd::node::Texture2D >				registerNode1( i );
+		vgd::basic::RegisterNode< vgd::node::TextureMatrixTransform >	registerNode2( i );
+		//vgd::basic::RegisterNode< vgd::node::TextureCubeMap>			registerNode3( i );
 	}
+
+	// @todo remove this returned value
+	return true;
 }
 
 
