@@ -7,6 +7,7 @@
 #define _VGWX_CANVAS_HPP
 
 #include <wx/wx.h>
+#include <gle/OpenGLExtensionsGen.hpp>
 
 #include <vgeGL/engine/SceneManager.hpp>
 

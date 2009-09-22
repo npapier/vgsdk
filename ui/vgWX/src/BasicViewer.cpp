@@ -367,7 +367,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 			assert( false && "Unknwon camera type." );
 	}
 	
-	m_camera->setMatrix( matrix );
+	m_camera->setProjection( matrix );
 	
 	m_camera->setViewport( vgm::Rectangle2i( 0, 0, size[0], size[1] ) );
 }
