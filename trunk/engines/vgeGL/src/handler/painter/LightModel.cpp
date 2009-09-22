@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -34,7 +34,6 @@ const vge::handler::Handler::TargetVector LightModel::getTargets() const
 {
 	TargetVector targets;
 
-	targets.reserve( 1 );
 	targets.push_back( vgd::node::LightModel::getClassIndexStatic() );
 
 	return targets;
@@ -42,19 +41,53 @@ const vge::handler::Handler::TargetVector LightModel::getTargets() const
 
 
 
-void LightModel::apply( vge::engine::Engine* engine, vgd::node::Node *node )
+void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-	/*assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
-	// MODEL
-	vgd::node::LightModel::ModelValueType	modelValue;
-	const bool bDefined = node->getModel( modelValue );
+	assert( dynamic_cast< vgd::node::LightModel* >(node) != 0 );
+	vgd::node::LightModel *lightModel = static_cast< vgd::node::LightModel* >(node);
 
-	if ( bDefined )
+	// Retrieves GLSL state
+	using vgeGL::engine::GLSLState;
+	GLSLState& state = glEngine->getGLSLState();
+
+	bool isDefined;
+
+	// MODEL
+	vgd::node::LightModel::ModelValueType modelValue;
+	isDefined = lightModel->getModel( modelValue );
+
+	if ( isDefined )
 	{
-		glEngine->setLightModel( modelValue );
-	}*/
+		// Updates GLSLState
+		// LIGHTING
+		state.setLightingEnabled( modelValue != vgd::node::LightModel::LIGHTING_OFF );
+
+		// PER_PIXEL_LIGHTING
+		state.setPerPixelLightingEnabled( modelValue == vgd::node::LightModel::STANDARD_PER_PIXEL );
+	}
+
+	// LOCAL_VIEWER
+	vgd::node::LightModel::ViewerValueType viewerValue;
+	isDefined = lightModel->getViewer( viewerValue );
+
+	if ( isDefined )
+	{
+		// Updates GLSLState
+		state.setEnabled( GLSLState::LOCAL_VIEWER, viewerValue == vgd::node::LightModel::AT_EYE );
+	}
+
+	// TWO_SIDED_LIGHTING
+	vgd::node::LightModel::TwoSidedValueType twoSidedValue;
+	isDefined = lightModel->getTwoSided( twoSidedValue );
+
+	if ( isDefined )
+	{
+		// Updates GLSLState
+		state.setTwoSidedLightingEnabled( twoSidedValue );
+	}
 
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );
 }
@@ -77,15 +110,15 @@ void LightModel::setToDefaults()
 void LightModel::paint( vgeGL::engine::Engine * engine, vgd::node::LightModel *node )
 {
 	bool bDefined;
-	
+
 	// MODEL
 	vgd::node::LightModel::ModelValueType	modelValue;
 
 	bDefined = node->getModel( modelValue );
-	
+
 	if ( bDefined )
 	{
-		switch ( modelValue )
+		switch ( modelValue.value() )
 		{
 			case vgd::node::LightModel::LIGHTING_OFF:
 				glDisable( GL_LIGHTING );

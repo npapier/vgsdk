@@ -39,15 +39,31 @@ const vge::handler::Handler::TargetVector Material::getTargets() const
 
 void Material::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-/*	assert( dynamic_cast< vgd::node::Material* >(node) != 0 );
-	vgd::node::Material *castedNode = static_cast< vgd::node::Material* >(node);
-
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
-	paint( glEngine, castedNode );*/
+	assert( dynamic_cast< vgd::node::Material* >(node) != 0 );
+	vgd::node::Material *material = static_cast< vgd::node::Material* >(node);
 
+	// Updates GLState
+	// OPACITY
+	const float	opacity = material->getOpacity();
+	glEngine->getGLState().setOpacity( opacity );
+
+	// DIFFUSE
+	bool isDefined;
+	vgm::Vec3f diffuse;
+
+	isDefined = material->getDiffuse( diffuse );
+
+	if ( isDefined )
+	{
+		glEngine->getGLState().setDiffuse( diffuse );
+	}
+
+	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::Material, Material >( engine, node, this );
+	//paint( glEngine, castedNode );
 }
 
 

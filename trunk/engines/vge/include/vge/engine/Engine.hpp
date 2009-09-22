@@ -50,7 +50,7 @@ namespace engine
  * engine.
  * Engine is responsible for associating the correct handler for each node and to maintain a stack of state during 
  * evaluation.
- * At startup, the stack contains a state with all nodes (with theirs fields initialized, even optionals fields).
+ * @todo updates : At startup, the stack contains a state with all nodes (with theirs fields initialized, even optionals fields).
  * 
  * This process depends on installed Handler for evaluating each single node.
  * This process depends on installed Technique for filtering/multipass algorithms (TODO)
@@ -108,7 +108,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
-	 * @name Constructor like.
+	 * @name Constructor like
 	 */
 	//@{
 	
@@ -116,7 +116,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Default constructor
 	 */
 	Engine();
-	
+
 	/**
 	 * @brief Reset handlers, state stack and matrix stacks (texture, projection and geometrical).
 	 */
@@ -132,63 +132,31 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
-	 * @name Evaluation.
+	 * @name Evaluation
 	 */
 	//@{
-
-//	/**
-//	 * brief Evaluation of scene graph.
-//	 * 
-//	 * param service		Service to use during evaluation (Painter...).
-//	 * param collector		Visitor that has collect all traversing informations.
-//	 */
-//	template< typename Visitors >
-//	void evaluate(	const vgd::Shp< vge::service::Service > service,
-//					vge::visitor::NodeCollectorExtended<Visitors>& collector	)
-//	{
-//		const typename std::vector< typename vge::visitor::NodeCollectorExtended<Visitors>::TraverseElement >& nodes
-//				= collector.getNodes();
-//
-//		typename std::vector< typename vge::visitor::NodeCollectorExtended<Visitors>::TraverseElement >::const_iterator i, iEnd;
-//
-//		for(	i		= nodes.begin(),
-//				iEnd	= nodes.end();
-//				
-//				i != iEnd;
-//				
-//				i++ )
-//		{
-//			evaluate( service, i->first, i->second );
-//		}
-//	}
-
 
 
 	/**
 	 * @brief Evaluation of a node.
 	 * 
-	 * @param	service			service to use during evaluation (Painter...)
-	 * @param	pNode				node to evaluate
+	 * @param	service		service to use during evaluation (Painter...)
+	 * @param	pNode		node to evaluate
 	 * @param	isPreTraverse	true if preTraverse (when a node is encountered for the first time), false if 
-	 * 								postTraverse (when all children of this node have been already encountered)
-	 * @param	bTrace			true if the evaluation of the node must be stored in the engine state, false if not.
+	 * 					postTraverse (when all children of this node have been already encountered)
+	 * @param	bTrace		true if the evaluation of the node must be stored in the engine state, false if not.
 	 */
 	void evaluate(	const vgd::Shp< vge::service::Service > service,
 					vgd::node::Node* pNode, 
 					const bool isPreTraverse,
 					const bool bTrace = true );
-// FIXME ???
-//	/**
-//	 * brief Evaluation of the state being at the top of the evaluation stack.
-//	 */
-//	void evaluateTopStateWithoutTrace(	const vgd::Shp< vge::service::Service > service, const bool isPreTraverse );
 
 	//@}
 
 
 
 	/**
-	 * @name Handler management.
+	 * @name Handler management
 	 * 
 	 * @todo More accessors like isRegarded*().
 	 * @todo regardIfIsAKindOf() works, but be carefull about multiattribute that comes from vgeGL::engine::populate*()
@@ -264,24 +232,26 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	template< typename nodeType >
 	bool isRegardedIfIsA() const;
+
 	//@}
 
 
 
+// @todo CLEAN
 	/**
-	 * @name States management
+	 * name States management
 	 * 
-	 * @todo Should go in a new class ?
-	 * @todo push(Node), pop(Node).
+	 * todo Should go in a new class ?
+	 * todo push(Node), pop(Node).
 	 */
 	//@{
 
 	/**
-	 * @brief Resets completely the state stack.
+	 * brief Resets completely the state stack.
 	 * 
 	 * This method call clearStateStack() and after call initializeStateStack().
 	 * 
-	 * @post		sizeOfStateStack() must return 1.
+	 * post		sizeOfStateStack() must return 1.
 	 */
 	void resetStateStack();
 
@@ -328,13 +298,13 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
-	 * @brief Gets the desired node list to the top of the state stack
+	 * brief Gets the desired node list to the top of the state stack
 	 * 
 	 * selected by his type and his multi-attribute index.
 	 * 
-	 * @return Pointer on the desired node list or 0 if not found.
+	 * return Pointer on the desired node list or 0 if not found.
 	 */
-	template< typename nodeType >
+	/*template< typename nodeType >
 	const NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 ) const
 	{
 		const State& 		topState		(	m_state.back()						);
@@ -353,16 +323,16 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		{
 			return static_cast< NodeList* >(0);
 		}
-	}
+	}*/
 
 	/**
-	 * @brief Gets the desired node list to the top of the state stack
+	 *@brief Gets the desired node list to the top of the state stack
 	 * 
 	 * selected by his type and his multi-attribute index.
 	 * 
-	 * @return Pointer on the desired node list or 0 if not found.
+	 * return Pointer on the desired node list or 0 if not found.
 	 */
-	template< typename nodeType >
+	/*template< typename nodeType >
 	NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 )
 	{
 		State& 				topState		(	m_state.back()						);
@@ -381,17 +351,17 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		{
 			return static_cast< NodeList* >(0);
 		}
-	}
+	}*/
 
 	/**
-	 * @brief Gets the desired node to the top of the state stack
+	 * brief Gets the desired node to the top of the state stack
 	 * 
 	 * selected by his type and his multi-attribute index.
 	 * 
-	 * @return Pointer on the desired node or 0 if not found.
+	 * return Pointer on the desired node or 0 if not found.
 	 */
-	template< typename nodeType >
-	nodeType*		getStateStackTop( const int8 multiAttributeIndex = 0 )
+	/*template< typename nodeType >
+	nodeType*		getStateStackTopDeprecated( const int8 multiAttributeIndex = 0 )
 	{
 		NodeList *pNodeList = getNodeListFromStateStackTop< nodeType >( multiAttributeIndex );
 
@@ -403,22 +373,22 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		{
 			return 0;
 		}
-	}
+	}*/
 
 
 
 	/**
-	 * @brief Gets the desired field value from the top of the state stack
+	 * brief Gets the desired field value from the top of the state stack
 	 * 
 	 * Gets the desired field value from a node (selected by his type and multi-attribute index) from the top of the
 	 * state stack that contains a value in its vgd::field::TOptionalField< ValueType > field named strFieldName.
 	 *
-	 * @return true if found, false otherwise.
+	 * return true if found, false otherwise.
 	 */
-	template< typename NodeType, typename ValueType >
-	const bool getStateStackTop(	const std::string& strFieldName,
-									ValueType& value,
-									const int8 multiAttributeIndex = 0 ) const
+	/*template< typename NodeType, typename ValueType >
+	const bool getStateStackTopDeprecated(	const std::string& strFieldName,
+											ValueType& value,
+											const int8 multiAttributeIndex = 0 ) const
 	{
 		bool bDefined(	false	);
 
@@ -447,20 +417,20 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		}
 
 		return bDefined;
-	}
+	}*/
 
 
 
 	/**
-	 * @brief Gets the desired field value from the top of the state stack
+	 * brief Gets the desired field value from the top of the state stack
 	 * 
 	 * Gets the desired field value from a node (selected by his type and his multi-attribute index) from the top of the
 	 * state stack that has the key \c ParameterType defined in the 
 	 * vgd::field::TPairAssociativeField< ParameterType, ValueType > field named strFieldName.
 	 *
-	 * @return true if found, false otherwise.
+	 * return true if found, false otherwise.
 	 */
-	template< typename nodeType, typename ParameterType, typename ValueType >
+	/*template< typename nodeType, typename ParameterType, typename ValueType >
 	bool getStateStackTop(	const std::string& strFieldName,
 							const ParameterType param, ValueType& value,
 							const int8 multiAttributeIndex = 0 ) const
@@ -489,7 +459,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		}
 
 		return bDefined;
-	}
+	}*/
 
 
 
@@ -541,9 +511,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
-	 * @name Drawing surface accessors
-	 * 
-	 * The drawing surface size is typically the window size.
+	 * @name Built-in state accessors
 	 */
 	//@{
 
@@ -551,6 +519,8 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Returns the drawing surface size
 	 * 
 	 * @return the drawing surface size in pixels
+	 *
+	 * @remarks The drawing surface size is typically the window size.
 	 */
 	const vgm::Vec2i getDrawingSurfaceSize() const;
 
@@ -558,24 +528,26 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Sets the drawing surface size
 	 * 
 	 * @param	drawingSurfaceSize		the drawing surface size 
+	 *
+	 * @remarks The drawing surface size is typically the window size.
+	* 
 	 */
 	void setDrawingSurfaceSize( const vgm::Vec2i drawingSurfaceSize );
 
-	//@}
-
-
-
-	/**
-	 * @name State accessors helpers
-	 */
-	//@{
 
 	/**
 	 * @brief Returns the viewport
 	 * 
 	 * @return the value of \c viewport field for the last encountered Camera node with this field defined
 	 */
-	const vgm::Rectangle2i getViewport() const;
+	const vgm::Rectangle2i& getViewport() const;
+
+	/**
+	 * @brief Sets the viewport
+	 *
+	 * @param viewport	the viewport value
+	 */
+	void setViewport( const vgm::Rectangle2i& viewport );
 
 	//@}
 
@@ -583,33 +555,34 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 	/**
 	 * @name Implementations specifics capabilities
+	 * @todo move to vgeGL
 	 */
 	//@{
 	
 	/**
 	 * @brief Returns the maximum number of lights.
 	 */
-	virtual const int32 getMaxLights() const = 0;
+	virtual const int getMaxLights() const = 0;
 	
 	/**
 	 * @brief Returns the maximum number of texture units.
 	 */
-	virtual const int32 getMaxTexUnits() const;
+	virtual const int getMaxTexUnits() const;
 
 	/**
 	 * @brief Returns the maximum 1D/2D texture image dimension.
 	 */
-	virtual const int32 getMaxTexSize() const = 0;
+	virtual const int getMaxTexSize() const = 0;
 	
 	/**
 	 * @brief Returns the maximum 3D texture image dimension.
 	 */
-	virtual const int32 getMax3DTexSize() const = 0;
+	virtual const int getMax3DTexSize() const = 0;
 
 	/**
 	 * @brief Returns the maximum cube map texture image dimension.
 	 */
-	virtual const int32 getMaxCubeMapTexSize() const = 0;
+	virtual const int getMaxCubeMapTexSize() const = 0;
 	//@}
 
 
@@ -630,7 +603,7 @@ protected:
 
 
 	/** 
-	 * @name Typedefs.
+	 * @name Typedefs
 	 */
 	//@{
 	
@@ -657,7 +630,7 @@ protected:
 
 
 	/**
-	 * @name Dispatch data.
+	 * @name Dispatch data
 	 */
 	//@{
 
@@ -699,7 +672,7 @@ protected:
 	/**
 	 * @brief A stack with geometrical matrix.
 	 */	
-	vge::engine::MultiMatrixStack		m_geometricals;	
+	vge::engine::MultiMatrixStack		m_geometricals;
 
 	/**
 	 * @brief Multiples stacks with texture matrix.
@@ -714,7 +687,9 @@ protected:
 	 */
 	static const int32					StateStack_SizeHint;
 
-	vgm::Vec2i m_drawingSurfaceSize;	//< the drawing surface size (window size).
+
+	vgm::Vec2i			m_drawingSurfaceSize;	///< the drawing surface size (window size).
+	vgm::Rectangle2i	m_viewport;				///< the value of \c viewport field for the last encountered Camera node with this field defined
 };
 
 

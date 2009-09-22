@@ -217,7 +217,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 
 		if( keyboardButtonEvent != 0 )
 		{
-			vgDebug::get().logDebug(
+			vgLogDebug3(
 					"KeyboardButtonEvent (%s, %s)",
 					toString( keyboardButtonEvent->getButtonID() ).c_str(),
 					toString( keyboardButtonEvent->getState() ).c_str()
@@ -225,7 +225,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( mouseButtonEvent != 0 )
 		{
-			vgDebug::get().logDebug(
+			vgLogDebug3(
 					"MouseButtonEvent (%s,%s)",
 					toString( mouseButtonEvent->getButtonID() ).c_str(),
 					toString( mouseButtonEvent->getState() ).c_str()
@@ -245,7 +245,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( mouseWheelEvent != 0 )
 		{
-			vgDebug::get().logDebug(
+			vgLogDebug3(
 					"MouseWheelEvent (%s, %d)",
 					toString( mouseWheelEvent->getAxis() ).c_str(),
 					mouseWheelEvent->getDelta()
@@ -253,13 +253,14 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else
 		{
-			vgDebug::get().logDebug("Unknown event");
+			vgLogDebug("Unknown event");
 		}
 	}
 }
 
 
 
+// @todo clean this method !!!
 void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
 	assert( isCurrent() && "OpenGL context must have been set current." );
@@ -301,7 +302,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		if ( isScreenshotScheduled() )
 		{
 			// Do the capture
-			capturedImage = getGLEngine()->captureFramebuffer();
+			capturedImage = getGLEngine()->captureGLFramebuffer();
 
 			// Constructs the screenshot and saves the png image
 			Screenshot shot( getFrameCount(), capturedImage );
@@ -344,7 +345,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			{
 				if ( capturedImage == 0 )
 				{
-					capturedImage = getGLEngine()->captureFramebuffer();
+					capturedImage = getGLEngine()->captureGLFramebuffer();
 				}
 
 				Screenshot screenshot( getFrameCount(), capturedImage );
@@ -458,7 +459,7 @@ void Canvas::refreshIfNeeded( const WaitType wait )
 		// Do the refresh
 
 		// Useful for debugging wrong dirty flags
-		//vgDebug::get().logDebug("refresh: because of node named %s\n", result->getName().c_str() );
+		//vgLogDebug2("refreshIfNeeded(): because of node named %s\n", result->getName().c_str() );
 
 		refreshForced( wait );
 	}
@@ -604,8 +605,8 @@ const bool Canvas::startVGSDK()
 	if ( startOpenGLContext() == false )
 	{
 		// No current OpenGL context
-		vgDebug::get().logWarning("No current OpenGL context.");
-		vgDebug::get().logMessage("vgSDK startup aborted...\n");
+		vgLogWarning("No current OpenGL context.");
+		vgLogMessage("vgSDK startup aborted...\n");
 		return false;
 	}
 
@@ -613,7 +614,7 @@ const bool Canvas::startVGSDK()
 
 	if ( !m_bLocalInitializedVGSDK )
 	{
-		vgDebug::get().logMessage("Start vgSDK...");
+		vgLogMessage("Start vgSDK...");
 
 		// Initializes vgeGL
 		getGLEngine()->reset();
@@ -631,23 +632,24 @@ const bool Canvas::startVGSDK()
 		m_bLocalInitializedVGSDK = true;
 
 		// Checks OpenGL requirements for vgsdk
-		if ( m_gleContext.isGL_VERSION_1_5 == false )
+		// @todo Checks GLSL requirements (glGetString(GL_SHADING_LANGUAGE_VERSION)).
+		if ( m_gleContext.isGL_VERSION_2_1 == false )
 		{
-			vgDebug::get().logWarning("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
-//			vgDebug::get().logError("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 1.5.");
+			vgLogWarning("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 2.1");
+			// vgLogWarning("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 2.1");
 		}
-		else if ( m_gleContext.isGL_VERSION_2_0 == false )
+		else if ( m_gleContext.isGL_VERSION_3_0 == false )
 		{
-			vgDebug::get().logWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
-//			vgDebug::get().logWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 2.0.");
+			vgLogWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 3.0");
+			// vgLogWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 3.0");
 		}
 		else
 		{
-			assert( m_gleContext.isGL_VERSION_2_0 );
-			vgDebug::get().logMessage("You have the full requirements for vgsdk.");
+			assert( m_gleContext.isGL_VERSION_3_0 );
+			vgLogMessage("You have the full requirements for vgsdk (OpenGL version > 3.0).");
 		}
 
-		vgDebug::get().logDebug("vgSDK startup completed.\n");
+		vgLogDebug("vgSDK startup completed.\n");
 	}
 
 	return true;
@@ -658,12 +660,12 @@ const bool Canvas::startVGSDK()
 const bool Canvas::shutdownVGSDK()
 {
 	//
-	vgDebug::get().logDebug("Shutdown vgSDK...");
+	vgLogDebug("Shutdown vgSDK...");
 
 	if ( m_bLocalInitializedVGSDK == false )
 	{
-		vgDebug::get().logDebug/*logWarning*/("Method shutdownVGSDK() called before startVGSDK() !!!");
-		vgDebug::get().logDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+		vgLogDebug/*logWarning*/("Method shutdownVGSDK() called before startVGSDK() !!!");
+		vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
 
 		return false;
 	}
@@ -671,17 +673,21 @@ const bool Canvas::shutdownVGSDK()
 	if ( startOpenGLContext() == false )
 	{
 		// No current OpenGL context
-		vgDebug::get().logDebug/*logWarning*/("No current OpenGL context.");
-		vgDebug::get().logDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+		vgLogDebug/*logWarning*/("No current OpenGL context.");
+		vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
 
 		// Try to destroy OpenGL objects
-		vgDebug::get().logDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
+		vgLogDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
 
 		getGLEngine()->getGLManager().clear();
 
 		// ::glo::GLSLProgram::useFixedPaths();
 		// getGLEngine()->getGLSLManager().clear();
 
+		//
+		shutdownOpenGLContext();
+
+		vgLogDebug("vgSDK shutdown finished, but not completed.\n");
 		return false;
 	}
 
@@ -691,7 +697,7 @@ const bool Canvas::shutdownVGSDK()
 		assert( isCurrent() && "OpenGL context must have been set current. So OpenGL objects could not be released properly." );
 
 		// Try to destroy OpenGL objects
-		vgDebug::get().logDebug/*logMessage*/("Releases managed OpenGL objects...\n");
+		vgLogDebug/*logMessage*/("Releases managed OpenGL objects...\n");
 
 		getGLEngine()->getGLManager().clear();
 
@@ -701,13 +707,13 @@ const bool Canvas::shutdownVGSDK()
 		//
 		shutdownOpenGLContext();
 
-		vgDebug::get().logDebug("vgSDK shutdown completed.\n");
+		vgLogDebug("vgSDK shutdown completed.\n");
 		return true;
 	}
 	else
 	{
 		// Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
-		vgDebug::get().logDebug("vgSDK shutdown completed (delayed to the last canvas).\n");
+		vgLogDebug("vgSDK shutdown completed (delayed to the last canvas).\n");
 		return false;
 	}
 }

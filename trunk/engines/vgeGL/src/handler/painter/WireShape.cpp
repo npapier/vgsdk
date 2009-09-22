@@ -41,18 +41,17 @@ const vge::handler::Handler::TargetVector WireShape::getTargets() const
 
 
 
-void WireShape::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
+void WireShape::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-	//
-	bool			bDefined;
-	vgm::Vec3f		diffuseColor;
+	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
 	using vgd::node::Material;
-	bDefined = pEngine->getStateStackTop< Material, Material::DiffuseValueType >( 
-		Material::getFDiffuse(), diffuseColor );
-	assert( bDefined && "Internal error, because getStateStackTop<>() should never fail." );
+
+	vgm::Vec3f		diffuseColor = glEngine->getGLState().getDiffuse();
 
 	// pre
+	// @todo OPTME
 	GLboolean bLightingState;
 	glGetBooleanv( GL_LIGHTING, &bLightingState );
 
@@ -62,7 +61,7 @@ void WireShape::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	glColor3fv( diffuseColor.getValue() );
 
 	// render
-	VertexShape::apply( pEngine, pNode );
+	VertexShape::apply( engine, node );
 
 	// post
 	if ( bLightingState == GL_TRUE )

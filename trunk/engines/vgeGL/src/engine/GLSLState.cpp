@@ -271,57 +271,6 @@ const uint GLSLState::getMaxTexture() const
 
 
 
-// @todo This code must be in handlers
-void GLSLState::update( vgeGL::engine::Engine * engine )
-{
-	bool bDefined;
-
-	using vgd::node::LightModel;
-
-	// LIGHTING
-	LightModel::ModelValueType	modelValue;
-	bDefined = engine->getStateStackTop<
-			LightModel,
-			LightModel::ModelParameterType,
-			LightModel::ModelValueType >(	LightModel::getFModel(),
-											LightModel::MODEL,
-											modelValue );
-	assert( bDefined );
-	setLightingEnabled( modelValue != LightModel::LIGHTING_OFF );
-	//glIsEnabled(GL_LIGHTING) );		// @todo Removes glIsEnabled() call
-
-	// PER_PIXEL_LIGHTING
-	setPerPixelLightingEnabled( modelValue == LightModel::STANDARD_PER_PIXEL );
-
-	// LOCAL_VIEWER
-	LightModel::ViewerValueType viewerValue;
-	bDefined = engine->getStateStackTop<
-		LightModel,
-		LightModel::ViewerParameterType,
-		LightModel::ViewerValueType >(	LightModel::getFViewer(),
-										LightModel::VIEWER,
-										viewerValue );
-	assert( bDefined );
-	setEnabled( LOCAL_VIEWER, viewerValue == LightModel::AT_EYE );
-/*	GLint isLocalViewer;
-	glGetIntegerv( GL_LIGHT_MODEL_LOCAL_VIEWER, &isLocalViewer );
-
-	setEnabled( LOCAL_VIEWER, isLocalViewer == GL_TRUE );*/
-
-	// TWO_SIDED_LIGHTING
-	LightModel::TwoSidedValueType twoSidedValue;
-	bDefined = engine->getStateStackTop<
-		LightModel,
-		int /*LightModel::TwoSidedParameterType*/,
-		LightModel::TwoSidedValueType >(	LightModel::getFTwoSided(),
-											LightModel::TWO_SIDED,
-											twoSidedValue );
-	assert( bDefined );
-	setTwoSidedLightingEnabled( twoSidedValue );
-}
-
-
-
 } // namespace engine
 
 } // namespace vgeGL

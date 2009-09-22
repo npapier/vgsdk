@@ -51,37 +51,79 @@ void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	// *** DRAWSTYLE.shape ***
 	using vgd::node::DrawStyle;
 
+	bool isDefined;
 	DrawStyle::ShapeValueType shapeValue;
-	const bool bDefined = drawStyle->getShape( shapeValue );
 
-	if ( bDefined && glEngine->isGLSLEnabled() )
+	isDefined = drawStyle->getShape( shapeValue );
+
+	if ( isDefined )
 	{
-		// Retrieves GLSL state
-		using vgeGL::engine::GLSLState;
-		GLSLState& state = glEngine->getGLSLState();
+		// Updates GLState
+		glEngine->getGLState().setShape( shapeValue );
 
-		switch ( shapeValue )
+		// Updates GLSLState
+		if ( glEngine->isGLSLEnabled() )
 		{
-			case DrawStyle::NONE:
-			case DrawStyle::POINT:
-			case DrawStyle::FLAT:
-			case DrawStyle::WIREFRAME:
-			case DrawStyle::HIDDEN_LINE:
-			case DrawStyle::FLAT_HIDDEN_LINE:
-				// Updates GLSL state
-				state.setEnabled( GLSLState::FLAT_SHADING );
-				break;
+			// Retrieves GLSL state
+			using vgeGL::engine::GLSLState;
+			GLSLState& state = glEngine->getGLSLState();
 
-			case DrawStyle::SMOOTH:
-			case DrawStyle::SMOOTH_HIDDEN_LINE:
-			case DrawStyle::NEIGHBOUR:
-				// Updates GLSL state
-				state.setEnabled( GLSLState::FLAT_SHADING, false );
-				break;
+			switch ( shapeValue )
+			{
+				case DrawStyle::NONE:
+				case DrawStyle::POINT:
+				case DrawStyle::FLAT:
+				case DrawStyle::WIREFRAME:
+				case DrawStyle::HIDDEN_LINE:
+				case DrawStyle::FLAT_HIDDEN_LINE:
+					// Updates GLSL state
+					state.setEnabled( GLSLState::FLAT_SHADING );
+					break;
 
-			default:
-				assert( false && "Unknown DrawStyle.shape value." );
+				case DrawStyle::SMOOTH:
+				case DrawStyle::SMOOTH_HIDDEN_LINE:
+				case DrawStyle::NEIGHBOUR:
+					// Updates GLSL state
+					state.setEnabled( GLSLState::FLAT_SHADING, false );
+					break;
+
+				default:
+					assert( false && "Unknown DrawStyle.shape value." );
+			}
 		}
+	}
+
+	// DRAWSTYLE.normalLength
+	vgd::node::DrawStyle::NormalLengthValueType	normalLengthValue;
+
+	isDefined = drawStyle->getNormalLength( normalLengthValue );
+
+	if ( isDefined )
+	{
+		// Updates GLState
+		glEngine->getGLState().setNormalLength( normalLengthValue );
+	}
+
+	// DRAWSTYLE.showOrientation
+	vgd::node::DrawStyle::ShowOrientationValueType showOrientationValue;
+
+	isDefined = drawStyle->getShowOrientation( showOrientationValue );
+
+	if ( isDefined )
+	{
+		// Updates GLState
+		glEngine->getGLState().setShowOrientation( showOrientationValue );
+	}
+
+	// DRAWSTYLE.boundingBox
+	vgd::node::DrawStyle::BoundingBoxValueType boundingBoxValue;
+
+	isDefined = drawStyle->getBoundingBox( boundingBoxValue );
+
+	if ( isDefined )
+	{
+		// Updates GLState
+		glEngine->getGLState().setBoundingBox( boundingBoxValue );
 	}
 
 	// Validates node
@@ -110,15 +152,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 	using vgd::node::DrawStyle;
 
 	// *** DRAWSTYLE.shape ***
-	DrawStyle::ShapeValueType shapeValue;
-
-	const bool bDefined = glEngine->getStateStackTop<
-						vgd::node::DrawStyle,
-						DrawStyle::ShapeParameterType,
-						DrawStyle::ShapeValueType >(	DrawStyle::getFShape(),
-														DrawStyle::SHAPE,
-														shapeValue );
-	assert( bDefined );
+	const DrawStyle::ShapeValueType shapeValue = glEngine->getGLState().getShape();
 
 	switch ( shapeValue )
 	{
@@ -333,15 +367,7 @@ void DrawStyle::paintVertexShapeNormals(	vgeGL::engine::Engine *glEngine, vgd::n
 											vgeGL::handler::painter::VertexShape *pVertexShapeHandler )
 {
 	// *** DRAWSTYLE.normalLength ***
-	vgd::node::DrawStyle::NormalLengthValueType	value;
-
-	const bool bDefined = glEngine->getStateStackTop< 
-						vgd::node::DrawStyle, 
-						vgd::node::DrawStyle::NormalLengthParameterType,
-						vgd::node::DrawStyle::NormalLengthValueType >(	vgd::node::DrawStyle::getFNormalLength(),
-																		vgd::node::DrawStyle::NORMAL_LENGTH,
-																		value );
-	assert( bDefined );
+	vgd::node::DrawStyle::NormalLengthValueType	value = glEngine->getGLState().getNormalLength();
 
 	if ( value != 0.f )
 	{

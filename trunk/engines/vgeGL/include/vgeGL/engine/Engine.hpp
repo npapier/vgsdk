@@ -7,10 +7,15 @@
 #define _VGEGL_ENGINE_ENGINE_HPP
 
 #include <vge/engine/Engine.hpp>
+#include <vge/engine/TStack.hpp>
 #include <vge/rc/Manager.hpp>
 #include <vge/rc/TManager.hpp>
 
 #include "vgeGL/engine/GLSLState.hpp"
+
+// for GLState
+#include <vgd/node/DrawStyle.hpp>
+// endfor
 
 namespace glo 
 {
@@ -21,8 +26,8 @@ namespace glo
 
 namespace vgd 
 {
-namespace basic { struct Image; }
-namespace node { struct Texture; } 
+	namespace basic { struct Image; }
+	namespace node { struct Texture; } 
 }
 
 namespace vgeGL { namespace engine { struct ProgramGenerator; } }
@@ -33,7 +38,6 @@ namespace vgeGL { namespace engine { struct ProgramGenerator; } }
  * @namespace vgeGL::engine
  * 
  * @brief Engine evaluate scene graph with handlers and take care of OpenGL resources and states.
- * 
  */
 namespace vgeGL
 {
@@ -41,6 +45,55 @@ namespace vgeGL
 namespace engine
 {
 
+
+/**
+ * @todo Moves this class in its own file
+ */
+struct VGEGL_API GLState
+{
+	// Default values must be identical to engine/node default values
+	GLState()
+	:	// MATERIAL
+		m_opacity(1.f),
+		m_diffuse(0.8f, 0.8f, 0.8f),
+
+		// DRAWSTYLE
+		m_shape( vgd::node::DrawStyle::DEFAULT_SHAPE ),
+		m_normalLength( 0.f ),
+		m_showOrientation( false ),
+		m_boundingBox( vgd::node::DrawStyle::DEFAULT_BOUNDING_BOX ) 
+	{}
+
+	// MATERIAL
+	void setOpacity( const float opacity )	{ m_opacity = opacity; }
+	const float getOpacity() const			{ return m_opacity; }
+
+	void setDiffuse( const vgm::Vec3f diffuse )	{ m_diffuse = diffuse; }
+	const vgm::Vec3f getDiffuse() const			{ return m_diffuse; }
+
+	// DRAWSTYLE
+	void setShape( const vgd::node::DrawStyle::ShapeValueType& shape )										{ m_shape = shape; }
+	const vgd::node::DrawStyle::ShapeValueType& getShape() const											{ return m_shape; }
+
+	void setNormalLength( const vgd::node::DrawStyle::NormalLengthValueType& normalLength )					{ m_normalLength = normalLength; }
+	const vgd::node::DrawStyle::NormalLengthValueType& getNormalLength() const								{ return m_normalLength; }
+
+	void setShowOrientation( const vgd::node::DrawStyle::ShowOrientationValueType& showOrientation )		{ m_showOrientation = showOrientation; }
+	const vgd::node::DrawStyle::ShowOrientationValueType& getShowOrientation() const						{ return m_showOrientation; }
+
+	void setBoundingBox( const vgd::node::DrawStyle::BoundingBoxValueType& boundingBox )					{ m_boundingBox = boundingBox; }
+	const vgd::node::DrawStyle::BoundingBoxValueType& getBoundingBox() const								{ return m_boundingBox; }
+
+private:
+	float											m_opacity;
+	vgm::Vec3f										m_diffuse;
+
+	vgd::node::DrawStyle::ShapeValueType			m_shape;
+	vgd::node::DrawStyle::NormalLengthValueType		m_normalLength;
+	vgd::node::DrawStyle::ShowOrientationValueType	m_showOrientation;
+	vgd::node::DrawStyle::BoundingBoxValueType		m_boundingBox;
+	
+};
 
 
 /**
@@ -53,39 +106,19 @@ namespace engine
 struct VGEGL_API Engine : public vge::engine::Engine
 {
 	/**
+	 * @name Constructors
+	 */
+	//@{
+
+	/**
 	 * @brief Default constructor
 	 */
 	Engine();
 
-
-
-	/**
-	 * @name Constructor like
-	 */
-	//@{
-	
 	// Overridden
 	void reset();
 
-private:
-	/**
-	 * @brief Initializes all shaders from vgsdk repository
-	 * 
-	 * @remarks vgsdk repository is a directory named data. Not very practical for deployment.
-	 * @todo Shaders should be in a zip file or in the code ?
-	 * 
-	 * @remarks This method is automatically called by setTodefaults() 
-	 */
-	void setupGLSLShaders();
 public:
-	//@}
-
-
-
-	/**
-	 * @name Accessors
-	 */
-	//@{
 
 	/**
 	 * @brief Sets OpenGL state variables to their defaults values.
@@ -99,16 +132,113 @@ public:
 	 */
 	virtual void setToDefaults();
 
+	//@}
+
+
+
+	/**
+	 * @name State management
+	 */
+	//@{
+
+	typedef vge::engine::TStack< GLState >		GLStateStack;	///< Type definition for the stack of GLState
+	typedef vge::engine::TStack< GLSLState >	GLSLStateStack; ///< Type definition for the stack of GLSLState
+
+	/**
+	 * @brief Retrieves the OpenGL state stack.
+	 *
+	 * @return the OpenGL state stack
+	 */
+	const GLStateStack& getGLStateStack() const;
+
+	/**
+	 * @brief Retrieves the OpenGL state stack.
+	 *
+	 * @return the OpenGL state stack
+	 */
+	GLStateStack& getGLStateStack();
+
+
+	/**
+	 * @brief Retrieves the GLSL state stack.
+	 *
+	 * @return the GLSL state stack
+	 */
+	const GLSLStateStack& getGLSLStateStack() const;
+
+	/**
+	 * @brief Retrieves the GLSL state stack.
+	 *
+	 * @return the GLSL state stack
+	 */
+	GLSLStateStack& getGLSLStateStack();
+
+
+
+	/**
+	 * @brief Retrieves the current OpenGL state.
+	 *
+	 * @return the current OpenGL state.
+	 */
+	const GLState& getGLState() const;
+
+	/**
+	 * @brief Retrieves the current OpenGL state.
+	 *
+	 * @return the current OpenGL state.
+	 */
+	GLState& getGLState();
+
+
+	/**
+	 * @brief Retrieves the current GLSL state.
+	 *
+	 * @return the current GLSL state.
+	 */
+	const GLSLState& getGLSLState() const;
+
+	/**
+	 * @brief Retrieves the current GLSL state.
+	 *
+	 * @return the current GLSL state.
+	 */
+	GLSLState& getGLSLState();
+
+	//@}
+
+
+
+	
+	/**
+	 * @name Manager accessors
+	 */
+	//@{
+
 	/**
 	 * @brief Gets the OpenGL objects manager.
 	 */
 	vge::rc::Manager&	getGLManager();
+
+	/**
+	 * @brief Typedef for the glsl program manager
+	 * 
+	 * This manager associates a single string to a single glo::GLSLProgram
+	 */
+	typedef vge::rc::TManager< std::string, glo::IResource > GLSLProgramManagerType;
+
+	/**
+	 * @brief Gets the glsl program manager.
+	 */
+	GLSLProgramManagerType& getGLSLManager();
+
 	//@}
 
 
 
 	/**
 	 * @name Engine configuration
+	 *
+	 * @todo Adds GREMEDY_string_marker
 	 */
 	//@{
 
@@ -140,6 +270,7 @@ public:
 	 */
 	void setDisplayListEnabled( const bool enabled = true );
 	//@}
+
 
 
 	/**
@@ -240,21 +371,6 @@ public:
 
 
 	/**
-	 * @brief Retrieves the current GLSL state.
-	 *
-	 * @return the current GLSL state.
-	 */
-	const GLSLState& getGLSLState() const;
-
-	/**
-	 * @brief Retrieves the current GLSL state.
-	 *
-	 * @return the current GLSL state.
-	 */
-	GLSLState& getGLSLState();
-
-
-	/**
 	 * @brief Returns the OpenGL GLSL program generator.
 	 *
 	 * @return a shared pointer on the OpenGL GLSL program generator
@@ -262,19 +378,7 @@ public:
 	vgd::Shp< ProgramGenerator > getGLSLProgramGenerator();
 
 
-	/**
-	 * @brief Typedef for the glsl program manager
-	 * 
-	 * This manager associates a single string to a single glo::GLSLProgram
-	 */
-	typedef vge::rc::TManager< std::string, glo::IResource > GLSLProgramManagerType;
-
-	/**
-	 * @brief Gets the glsl program manager.
-	 */
-	GLSLProgramManagerType& getGLSLManager();
-
-
+// @todo remove me
 	/**
 	 * @brief Loads shaders from files
 	 *
@@ -309,35 +413,31 @@ public:
 	// overridden method
 	void resetMatrices();
 
+
+
 	/**
 	 * @name OpenGL implementations specifics capabilities
 	 */
 	//@{
-	
-	const int32 getMaxLights() const;
 
-	const int32 getMaxTexUnits() const;
+	const int getMaxLights() const;
+	const int getMaxTexUnits() const;
+	const int getMaxTexSize() const;
+	const int getMax3DTexSize() const;
+	const int getMaxCubeMapTexSize() const;
 
-	const int32 getMaxTexSize() const;
-
-	const int32 getMax3DTexSize() const;
-	
-	const int32 getMaxCubeMapTexSize() const;
-
-	//@}
-
-	// @todo
 	const int getMaxVertexTexImageUnits() const;
 	const int getMaxCombinedTexImageUnits() const;
 	const int getMaxTexImageUnits() const;
 	const int getMaxGeometryTexImageUnits() const;
-	
+	//@}
 
-	
+
+
 	/**
 	 * @name OpenGL state accessors
 	 *
-	 * @todo captureFramebuffer() for others buffers (depth, renderbuffers...)
+	 * @todo captureGLFramebuffer() for others buffers (depth, renderbuffers...)
 	 */
 	//@{
 
@@ -346,7 +446,7 @@ public:
 	 * 
 	 * @param viewport	the output viewport
 	 */
-	static void getViewport( vgm::Rectangle2i& viewport ) /*const*/;
+	static void getGLViewport( vgm::Rectangle2i& viewport ) /*const*/;
 	// @todo 	static vgm::Rectangle2i getViewport( & viewport )
 
 	/**
@@ -354,21 +454,21 @@ public:
 	 * 
 	 * @return the number of bitplanes in the depth buffer
 	 */
-	const int getDepthBits() const;
+	const int getGLDepthBits() const;
 
 	/**
 	 * @brief Returns the depth texture format computed from the number of bitplanes in the depth buffer.
 	 * 
 	 * @return the desired depth texture format
 	 */
-	const GLenum getDepthTextureFormatFromDepthBits() const;
+	const GLenum getGLDepthTextureFormatFromDepthBits() const;
 
 	/**
 	 * @brief Returns an image containing the framebuffer color values.
 	 *
 	 * @remarks This method reads back the framebuffer color values, be careful this is slow and stalled the OpenGL pipeline.
 	 */
-	vgd::Shp< vgd::basic::Image > captureFramebuffer() const;
+	vgd::Shp< vgd::basic::Image > captureGLFramebuffer() const;
 	//@}
 
 
@@ -410,6 +510,7 @@ public:
 	 * @brief Restores OpenGL states modified by begin2DRendering()
 	 */
 	static void end2DRendering();
+
 	//@}
 
 
@@ -490,10 +591,17 @@ private:
 	 */
 	glo::GLSLProgram *	m_currentProgram;
 
+
+
 	/**
-	 * @brief The GLSL rendering state.
+	 * @brief The stack of OpenGL rendering state.
 	 */
-	GLSLState						m_glslState;
+	vge::engine::TStack< GLState > m_glStateStack;
+
+	/**
+	 * @brief The stack of GLSL rendering state.
+	 */
+	vge::engine::TStack< GLSLState > m_glslStateStack;
 
 	/**
 	 * @brief OpenGL GLSL program generator.

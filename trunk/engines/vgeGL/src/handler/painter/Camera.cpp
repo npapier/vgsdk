@@ -33,7 +33,6 @@ const vge::service::List Camera::getServices() const
 {
 	vge::service::List list;
 
-	//list.push_back( vge::service::ComputeBoundingBox::create()	);
 	list.push_back( vge::service::Painter::create()				);
 	list.push_back( vge::service::ProcessEvent::create()		);
 
@@ -115,13 +114,10 @@ void Camera::paint( vgeGL::engine::Engine *engine, vgd::node::Camera *node )
 	vgm::Rectangle2i viewportValue;
 
 	bDefined = node->getViewport( viewportValue );
-
 	if ( bDefined )
 	{
-		glViewport(
-			viewportValue.x(), viewportValue.y(),
-			viewportValue.width(), viewportValue.height()
-				);
+		glViewport(	viewportValue.x(), viewportValue.y(),
+					viewportValue.width(), viewportValue.height() );
 	}
 
 
