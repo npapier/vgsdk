@@ -277,23 +277,14 @@ wxMenu *createContextualMenu( const Canvas * canvas )
 		
 		if ( isDefined )
 		{
-			switch ( modelValue )
-			{
-				case LightModel::LIGHTING_OFF:
-					subMenu->Check( wxID_CTX_LIGHTMODEL_MODEL_LIGHTING_OFF, true );
-					break;
-		
-				case LightModel::STANDARD_PER_VERTEX:
-					subMenu->Check( wxID_CTX_LIGHTMODEL_MODEL_STANDARD_PER_VERTEX, true );
-					break;
-		
-				case LightModel::STANDARD_PER_PIXEL:
-					subMenu->Check( wxID_CTX_LIGHTMODEL_MODEL_STANDARD_PER_PIXEL, true );
-					break;
-					
-				default:
-					assert( false && "Unknown LightModel.model value." );
-			}
+			if(modelValue==LightModel::LIGHTING_OFF)
+				subMenu->Check( wxID_CTX_LIGHTMODEL_MODEL_LIGHTING_OFF, true );
+			else if (modelValue==LightModel::STANDARD_PER_VERTEX)
+				subMenu->Check( wxID_CTX_LIGHTMODEL_MODEL_STANDARD_PER_VERTEX, true );
+			else if(modelValue==LightModel::STANDARD_PER_PIXEL)
+				subMenu->Check( wxID_CTX_LIGHTMODEL_MODEL_STANDARD_PER_PIXEL, true );
+			else
+				assert( false && "Unknown LightModel.model value." );
 		}
 	}		
 	
