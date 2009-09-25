@@ -156,32 +156,32 @@ const int getKeyboardButton( const GdkEventKey * event )
 //	KeyboardButtonEvent::KEY_DECIMAL
 //	KeyboardButtonEvent::KEY_DIVIDE
 //
-//	KeyboardButtonEvent::KEY_F1
-//	KeyboardButtonEvent::KEY_F2
-//	KeyboardButtonEvent::KEY_F3
-//	KeyboardButtonEvent::KEY_F4
-//	KeyboardButtonEvent::KEY_F5
-//	KeyboardButtonEvent::KEY_F6
-//	KeyboardButtonEvent::KEY_F7
-//	KeyboardButtonEvent::KEY_F8
-//	KeyboardButtonEvent::KEY_F9
-//	KeyboardButtonEvent::KEY_F10
-//	KeyboardButtonEvent::KEY_F11
-//	KeyboardButtonEvent::KEY_F12
-//	KeyboardButtonEvent::KEY_F13
-//	KeyboardButtonEvent::KEY_F14
-//	KeyboardButtonEvent::KEY_F15
-//	KeyboardButtonEvent::KEY_F16
-//	KeyboardButtonEvent::KEY_F17
-//	KeyboardButtonEvent::KEY_F18
-//	KeyboardButtonEvent::KEY_F19
-//	KeyboardButtonEvent::KEY_F20
-//	KeyboardButtonEvent::KEY_F21
-//	KeyboardButtonEvent::KEY_F22
-//	KeyboardButtonEvent::KEY_F23
-//	KeyboardButtonEvent::KEY_F24
-//	KeyboardButtonEvent::KEY_NUMLOCK
-//	KeyboardButtonEvent::KEY_SCROLL
+	case GDK_F1:			return KeyboardButtonEvent::KEY_F1;
+	case GDK_F2:			return KeyboardButtonEvent::KEY_F2;
+	case GDK_F3:			return KeyboardButtonEvent::KEY_F3;
+	case GDK_F4:			return KeyboardButtonEvent::KEY_F4;
+	case GDK_F5:			return KeyboardButtonEvent::KEY_F5;
+	case GDK_F6:			return KeyboardButtonEvent::KEY_F6;
+	case GDK_F7:			return KeyboardButtonEvent::KEY_F7;
+	case GDK_F8:			return KeyboardButtonEvent::KEY_F8;
+	case GDK_F9:			return KeyboardButtonEvent::KEY_F9;
+	case GDK_F10:			return KeyboardButtonEvent::KEY_F10;
+	case GDK_F11:			return KeyboardButtonEvent::KEY_F11;
+	case GDK_F12:			return KeyboardButtonEvent::KEY_F12;
+	case GDK_F13:			return KeyboardButtonEvent::KEY_F13;
+	case GDK_F14:			return KeyboardButtonEvent::KEY_F14;
+	case GDK_F15:			return KeyboardButtonEvent::KEY_F15;
+	case GDK_F16:			return KeyboardButtonEvent::KEY_F16;
+	case GDK_F17:			return KeyboardButtonEvent::KEY_F17;
+	case GDK_F18:			return KeyboardButtonEvent::KEY_F18;
+	case GDK_F19:			return KeyboardButtonEvent::KEY_F19;
+	case GDK_F20:			return KeyboardButtonEvent::KEY_F20;
+	case GDK_F21:			return KeyboardButtonEvent::KEY_F21;
+	case GDK_F22:			return KeyboardButtonEvent::KEY_F22;
+	case GDK_F23:			return KeyboardButtonEvent::KEY_F23;
+	case GDK_F24:			return KeyboardButtonEvent::KEY_F24;
+	case GDK_Num_Lock:		return KeyboardButtonEvent::KEY_NUMLOCK;
+	case GDK_Scroll_Lock:	return KeyboardButtonEvent::KEY_SCROLL;
 //	KeyboardButtonEvent::KEY_PAGEUP
 //	KeyboardButtonEvent::KEY_PAGEDOWN
 //
