@@ -55,9 +55,10 @@ void LightModelEditor::createContent()
 	
 	
 	// Model
-	const ModelBox::ValueContainer modelValues =	list_of< ModelBox::Value >( LightModel::LIGHTING_OFF, "Lighting Off" )
-													( LightModel::STANDARD_PER_VERTEX, "Standard Per Vertex" )
-													( LightModel::STANDARD_PER_PIXEL, "Standard Per Pixel" );
+	// @todo Uses new vgsdk api for enumeration
+	const ModelBox::ValueContainer modelValues =	list_of< ModelBox::Value >(	LightModel::ModelValueType(LightModel::LIGHTING_OFF), "Lighting Off" )
+													( LightModel::ModelValueType(LightModel::STANDARD_PER_VERTEX), "Standard Per Vertex" )
+													( LightModel::ModelValueType(LightModel::STANDARD_PER_PIXEL), "Standard Per Pixel" );
 	
 	m_modelButton	= Gtk::manage( new Gtk::CheckButton("Model") );
 	m_modelBox		= Gtk::manage( new ModelBox(modelValues, sigc::mem_fun(this,&LightModelEditor::onModelValue)) );
@@ -88,8 +89,8 @@ void LightModelEditor::createContent()
 	
 	
 	// Viewer
-	const ViewerBox::ValueContainer viewerValues =	list_of< ViewerBox::Value >( LightModel::AT_INFINITY, "At Infinity" )
-													( LightModel::AT_EYE, "At Eye" );
+	const ViewerBox::ValueContainer viewerValues =	list_of< ViewerBox::Value >( LightModel::ViewerValueType(LightModel::AT_INFINITY), "At Infinity" )
+													( LightModel::ViewerValueType(LightModel::AT_EYE), "At Eye" );
 	
 	m_viewerButton	= Gtk::manage( new Gtk::CheckButton("Viewer") );
 	m_viewerBox		= Gtk::manage( new ViewerBox(viewerValues, sigc::mem_fun(this,&LightModelEditor::onViewerValue)) );
