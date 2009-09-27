@@ -244,14 +244,14 @@ bool Image::create(	const uint32	width, const uint32 height, const uint32 depth,
 	bind();
 
 	//
-	const ILvoid *cpixels = reinterpret_cast<const ILvoid*>(pixels);
+	const void *cpixels = reinterpret_cast<const void*>(pixels);
 
 	ilTexImage(
 		width, height, depth,
 		static_cast<ILubyte>(computeNumComponents(format)),
 		convertMyFormat2IL(format),
 		convertMyType2IL(type),
-		const_cast<ILvoid*>( cpixels )
+		const_cast<void*>( cpixels )
 		);
 
 	if ( reportILError() )
@@ -289,14 +289,14 @@ bool Image::create(	const uint32		components,
 	bind();
 
 	//
-	const ILvoid *cpixels = reinterpret_cast<const ILvoid*>(pixels);
+	const void *cpixels = reinterpret_cast<const void*>(pixels);
 
 	ilTexImage(
 		width, height, depth,
 		static_cast<ILubyte>(components),
 		convertMyFormat2IL(format),
 		convertMyType2IL(type),
-		const_cast<ILvoid*>( cpixels )
+		const_cast<void*>( cpixels )
 		);
 
 	if ( reportILError() )
