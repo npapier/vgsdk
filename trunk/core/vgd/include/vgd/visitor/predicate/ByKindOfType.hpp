@@ -6,6 +6,7 @@
 #ifndef _VGD_VISITOR_PREDICATE_BYKINDOFTYPE_HPP
 #define _VGD_VISITOR_PREDICATE_BYKINDOFTYPE_HPP
 
+#include "vgd/node/Node.hpp"
 #include "vgd/visitor/predicate/IPredicate.hpp"
 
 
