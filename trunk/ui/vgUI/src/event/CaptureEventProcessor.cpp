@@ -81,7 +81,7 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 
 				// Flushs the video
 				getCanvas()->m_video.mkdirs( strPath );
-				getCanvas()->m_video.save( strPath, "video", true );
+				getCanvas()->m_video.save( strPath, "", true );
 				getCanvas()->m_video.clear();
 			}
 		}
