@@ -8,7 +8,7 @@
 #define _VGGTK_GENERICCANVAS_HPP
 
 #include <gtkmm/drawingarea.h>
-#include <vgDebug/Global.hpp>
+#include <vgDebug/convenience.hpp>
 #include <vgUI/Canvas.hpp>
 
 #include "vgGTK/vgGTK.hpp"
@@ -58,8 +58,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	:	m_glc( 0 )
 //#endif
 	{
-		vgDebug::get().logDebug("Creates vgGTK::Canvas.");
-		
+		vgLogDebug("Creates vgGTK::Canvas.");
+
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
 		grab_focus();
@@ -68,7 +68,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		setGlCapability( GTK_WIDGET(gobj()) );
 //#else
 #endif
-	store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
+		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 	}
 
 	/**
@@ -84,7 +84,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		m_glc( 0 )
 //#endif
 	{
-		vgDebug::get().logDebug("Creates vgGTK::Canvas.");
+		vgLogDebug("Creates vgGTK::Canvas.");
 		
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
@@ -99,7 +99,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		// @todo sharing
 		assert( false && "Sharing not yet implemented !!!" );
 #endif
-	store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
+		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 	}
 
 	/**
@@ -114,7 +114,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	//@{
 	const bool setCurrent()
 	{
-		//vgDebug::get().logDebug("vgGTK::Canvas::setCurrent");
+		//vgLogDebug("vgGTK::Canvas::setCurrent");
 
 #ifdef USE_GTKGLEXT
 		GdkGLContext	* glContext  = gtk_widget_get_gl_context( GTK_WIDGET(gobj()) );
@@ -122,7 +122,13 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 
 		const bool retVal = gdk_gl_drawable_gl_begin( glDrawable, glContext );
 #else
+
 		const bool retVal = (m_glc != 0) ? glc_set_current( m_glc ) : false;
+		if ( retVal == false )
+		{
+			vgLogDebug("glc_set_current returns false");
+		}
+
 #endif
 		// gle must be made current
 		if ( retVal )
@@ -146,7 +152,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 
 	const bool unsetCurrent()
 	{
-		//vgDebug::get().logDebug("vgGTK::Canvas::unsetCurrent");
+		//vgLogDebug("vgGTK::Canvas::unsetCurrent");
 
 #ifdef USE_GTKGLEXT
 		GdkGLDrawable	* glDrawable = gtk_widget_get_gl_drawable( GTK_WIDGET(gobj()) );
@@ -155,9 +161,12 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 
 		const bool retVal = true;
 #else
-		const bool retVal = (m_glc != 0) ? glc_unset_current( m_glc ) : false;
 
+		const bool retVal = (m_glc != 0) ? glc_unset_current( m_glc ) : false;
 		gleSetCurrent( 0 );
+
+		// To be able to modify/recompile GLSL shaders in gDEBugger.
+		//const bool retVal = true;
 #endif
 		return retVal;
 	}
@@ -165,16 +174,16 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 
 	const bool isCurrent()
 	{
-		//vgDebug::get().logDebug("vgGTK::Canvas::isCurrent");
+		//vgLogDebug("vgGTK::Canvas::isCurrent");
 
 #ifdef USE_GTKGLEXT
 		GdkGLContext	* glContext  = gtk_widget_get_gl_context( GTK_WIDGET(gobj()) );
 
 		return (gdk_gl_context_get_current() == glContext);
 #else
-		assert(		(m_glc == 0) ||
+/*		assert(		(m_glc == 0) ||
 					((m_glc != 0) && (glc_is_current(m_glc) == (gleGetCurrent()==&BaseCanvasType::getGleContext()))) );
-
+*/
 		return (m_glc != 0) ? glc_is_current( m_glc ) : false;
 #endif
 	}
@@ -182,7 +191,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 
 	void swapBuffer()
 	{
-		//vgDebug::get().logDebug("vgGTK::Canvas::swapBuffer");
+		//vgLogDebug("vgGTK::Canvas::swapBuffer");
 
 #ifdef USE_GTKGLEXT
 		GdkGLDrawable	* glDrawable = gtk_widget_get_gl_drawable( GTK_WIDGET(gobj()) );
@@ -202,7 +211,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		}
 		else
 		{
-			vgDebug::get().logDebug("vgGTK::Canvas::swapBuffer called without a glc context.");
+			vgLogDebug("vgGTK::Canvas::swapBuffer called without a glc context.");
 		}
 #endif
 	}
@@ -251,7 +260,7 @@ protected:
 			glc_drawable_t * drawable	= glc_gtkmm_drawable_create( this );
 			if ( drawable == 0 )
 			{
-				vgDebug::get().logWarning("Unable to create the drawable.");
+				vgLogWarning("Unable to create the drawable.");
 				return false;
 			}
 
@@ -259,17 +268,17 @@ protected:
 			m_glc						= glc_create( drawable );
 			if ( m_glc == 0 )
 			{
-				vgDebug::get().logWarning("Unable to create the glc context.");
+				vgLogWarning("Unable to create the glc context.");
 				return false;
 			}
 
-			vgDebug::get().logMessage("glc context successfully created.");
+			vgLogMessage("glc context successfully created.");
 
 			// Next, mades the glc context current
 			const bool isGLCCurrent = glc_set_current( m_glc );
 			assert( isGLCCurrent && "Unable to set glc context current. This is not expected !!!" );
 
-			vgDebug::get().logMessage("glc context made current.");
+			vgLogMessage("glc context made current.");
 #else
 			setCurrent();
 
@@ -279,15 +288,15 @@ protected:
 			}
 			else
 			{
-				vgDebug::get().logMessage("Unable to set OpenGL context current using gtkglext.");
+				vgLogMessage("Unable to set OpenGL context current using gtkglext.");
 				return false;
 			}
 #endif
 			// Finally, initializes gle and sets it current
-			vgDebug::get().logMessage("Start gle initialization...");
+			vgLogMessage("Start gle initialization...");
 			BaseCanvasType::getGleContext().clear();
 			BaseCanvasType::getGleContext().initialize();
-			vgDebug::get().logMessage("gle initialization successfully completed.");
+			vgLogMessage("gle initialization successfully completed.");
 
 			gleSetCurrent( &BaseCanvasType::getGleContext() );
 
@@ -313,13 +322,13 @@ protected:
 			// Deletes glc context
 			glc_destroy( m_glc );
 			m_glc = 0;
-			vgDebug::get().logDebug("glc context deleted.");
+			vgLogDebug("glc context deleted.");
 #else
 			m_glc = 0;
 #endif
 			// Cleans gle context
 			BaseCanvasType::getGleContext().clear();
-			vgDebug::get().logDebug("gle context cleaned.");
+			vgLogDebug("gle context cleaned.");
 
 			return true;
 		}
@@ -347,17 +356,16 @@ protected:
 	
 	bool on_configure_event( GdkEventConfigure * event )
 	{
-		//vgDebug::get().logDebug("vgGTK::Canvas::on_configure_event");
-		
+		//vgLogDebug("vgGTK::Canvas::on_configure_event");
+
 		// vgsdk resize
 		const vgm::Vec2i v2iSize( event->width, event->height );
 
 		if ( BaseCanvasType::startVGSDK() )
 		{
 			BaseCanvasType::resize( v2iSize );
+			unsetCurrent();
 		}
-
-		//unsetCurrent();
 
 		// Default gtk processing
 		return Gtk::DrawingArea::on_configure_event( event );
@@ -366,7 +374,7 @@ protected:
 
 	bool on_expose_event( GdkEventExpose * event )
 	{
-		//vgDebug::get().logDebug("vgGTK::Canvas::on_expose_event()");
+		//vgLogDebug("vgGTK::Canvas::on_expose_event()");
 		
 		// vgsdk paint
 		const vgm::Vec2i v2iSize( get_width(), get_height() );
@@ -374,9 +382,8 @@ protected:
 		if ( BaseCanvasType::startVGSDK() )
 		{
 			BaseCanvasType::paint( v2iSize, BaseCanvasType::getBoundingBoxUpdate() );
+			unsetCurrent();
 		}
-
-		//unsetCurrent();
 
 		// Default gtk processing
 		return Gtk::DrawingArea::on_expose_event( event );
@@ -385,12 +392,12 @@ protected:
 
 	/*void on_realize()
 	{
-		vgDebug::get().logDebug("vgGTK::Canvas::on_realize:begin");
+		vgLogDebug("vgGTK::Canvas::on_realize:begin");
 
 		// Default gtk processing
 		Gtk::DrawingArea::on_realize();
 
-		vgDebug::get().logDebug("vgGTK::Canvas::on_realize:end");
+		vgLogDebug("vgGTK::Canvas::on_realize:end");
 	}*/
 
 	//@}
@@ -455,7 +462,7 @@ private:
 template< typename BaseCanvasType >
 GenericCanvas< BaseCanvasType >::~GenericCanvas()
 {
-	vgDebug::get().logDebug("Deletes vgGTK::Canvas.");
+	vgLogDebug("Deletes vgGTK::Canvas.");
 
 	BaseCanvasType::shutdownVGSDK();
 }
