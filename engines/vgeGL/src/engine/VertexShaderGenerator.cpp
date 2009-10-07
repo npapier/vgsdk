@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,7 @@
 
 #include "vgeGL/engine/Engine.hpp"
 
-
+// @todo generates all shaders from one function to avoid multiple if
 
 namespace vgeGL
 {
@@ -35,6 +35,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	// Clears the code repository
 	m_code.clear();
+	m_code += "#version 120\n";
 
 	// DECLARATIONS
 	if ( state.isLightingEnabled() )
@@ -48,16 +49,19 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			if ( state.isEnabled( GLSLState::FLAT_SHADING ) )
 			{
 				m_code += 
-				"#version 120\n"
-				"flat varying out vec4 ecPosition;\n"
+				"flat varying out vec4 ecPosition;\n" // @todo really flat ?
 				"flat varying out vec3 ecNormal;\n\n";
 			}
 			else
 			{
 				m_code += 
-				"#version 120\n"
 				"varying vec4 ecPosition;\n"
 				"varying vec3 ecNormal;\n\n";
+
+				/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+				{
+					m_code += "varying vec4 mglColor;\n\n";
+				}*/
 			}
 		}
 	}
@@ -75,6 +79,8 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	if ( ftexgen )
 		m_code += GLSLHelpers::generateFunction_ftexgen(state) + "\n";
 
+// @todo generateFunction_fVertexAttrib()  and generate_vertexAttribDeclaration()
+
 	// MAIN
 	m_code +=
 	"\n"
@@ -84,7 +90,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{
 		m_code += 
-		//"	float	alphaFade = 1.0;\n"
 		"	vec4	ecPosition;\n"		// Eye-coordinate position of vertex
 		"	vec3	ecNormal;\n"
 		"\n";
@@ -108,30 +113,48 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			m_code += 
 			"	flight( ecPosition, ecNormal );\n"
 			"\n"
-			"	gl_FrontColor			= accumColor;\n"			// * alphaFace
-			"	gl_FrontSecondaryColor	= accumSecondaryColor;\n";
+			"	gl_FrontColor			= vec4(accumColor.rgb, gl_Color.a);\n"
+			"	gl_FrontSecondaryColor	= vec4(accumSecondaryColor.rgb, 0.0);\n";
 
 			if ( state.isTwoSidedLightingEnabled() )
 			{
 				m_code +=
-				"	gl_BackColor			= accumBackColor;\n"
-				"	gl_BackSecondaryColor	= accumBackSecondaryColor;\n";
+				"	gl_BackColor			= vec4(accumBackColor.rgb, gl_Color.a);\n"
+				"	gl_BackSecondaryColor	= vec4(accumBackSecondaryColor.rgb, 0.0);\n";
 			}
 		}
-		// else per pixel lighting, so nothing to do
+		else
+		{
+			if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+			{
+				// pixel lighting and color4 field of VertexShape, so gl_Color must be transfered to fragment program.
+				// m_code += "	mglColor = gl_Color;\n";
+				m_code +=	
+				"	gl_FrontColor			= gl_Color;\n"
+				"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
+
+				if ( state.isTwoSidedLightingEnabled() )
+				{
+					m_code +=
+					"	gl_BackColor			= gl_Color;\n"
+					"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
+				}
+			}
+			// else nothing to do
+		}
 	}
 	else
 	{
 		// no lighting
 		m_code +=
 		"	gl_FrontColor			= gl_Color;\n"
-		"	gl_FrontSecondaryColor	= gl_SecondaryColor;\n";
+		"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 
 		if ( state.isTwoSidedLightingEnabled() )
 		{
 			m_code +=
 			"	gl_BackColor			= gl_Color;\n"
-			"	gl_BackSecondaryColor	= gl_SecondaryColor;\n";
+			"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 		}
 	}
 

@@ -97,6 +97,9 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			GLSLState& glslState = pGLEngine->getGLSLState();
 
 			// Updates GLSL state with vertex shape info
+			//
+			glslState.setEnabled( GLSLState::COLOR4_BIND_PER_VERTEX, pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX );
+
 			// @todo OPTME
 			const int32 numTexUnits = pGLEngine->isTextureMappingEnabled() ? pVertexShape->getNumTexUnits() : 0;
 			if ( numTexUnits >= 1 )
@@ -636,11 +639,14 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 		glEnable( GL_COLOR_MATERIAL );
 
 		color4 = pVertexShape->getFColor4RO();
-		
+
+		// @todo Improves this test and do the same for all fields
+		assert( color4->size() > 0 && "Color4Binding is BIND_PER_VERTEX, but no Color4 field has no data." );
+
 		pArray = static_cast< const GLvoid* >( color4->begin()->getValue() );
-		
+
 		glColorPointer( 4, GL_FLOAT, 0, pArray );
-		
+
 		glEnableClientState( GL_COLOR_ARRAY );
 	}
 

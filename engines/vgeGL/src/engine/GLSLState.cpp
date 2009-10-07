@@ -32,7 +32,9 @@ const std::string GLSLState::m_indexString[] =
 
 		"CLIPPING_PLANE",
 
-		"FLAT_SHADING"
+		"FLAT_SHADING",
+
+		"COLOR4_BIND_PER_VERTEX"
 	};
 
 
@@ -59,7 +61,7 @@ GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits )
 void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 {
 	// TBitSet
-	vgeGL::engine::TBitSet<9>::reset();
+	vgeGL::engine::TBitSet< 10 >::reset();
 
 	// LIGHT
 	for(	uint	i		= 0,
