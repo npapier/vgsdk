@@ -36,6 +36,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	// Clears the code repository
 	m_code.clear();
+	m_code += "#version 120\n";
 
 	// DECLARATIONS
 	if ( state.isPerPixelLightingEnabled() )
@@ -43,16 +44,19 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		if ( state.isEnabled( GLSLState::FLAT_SHADING ) )
 		{
 			m_code += 
-			"#version 120\n"
 			"flat varying in vec4 ecPosition;\n"
 			"flat varying in vec3 ecNormal;\n\n";
 		}
 		else
 		{
 			m_code += 
-			"#version 120\n"
 			"varying vec4 ecPosition;\n"
 			"varying vec3 ecNormal;\n\n";
+
+			/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+			{
+				m_code += "varying vec4 mglColor;\n\n";
+			}*/
 		}
 
 		m_code += GLSLHelpers::generate_lightAccumulators( state ) + '\n';
@@ -72,7 +76,6 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code += 
 	"void main( void )\n"
 	"{\n";
-	//"	float	alphaFade = 1.0;\n";
 
 	// texture lookup
 	std::string textureLookup;
@@ -83,9 +86,9 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	{
 		m_code +=
 		"	vec4 color = gl_Color;\n" +
-		textureLookup +
+			textureLookup +
 		"	color += gl_SecondaryColor;\n"
-		"	gl_FragColor = color;\n"; //* alphaFade
+		"	gl_FragColor = vec4(color.rgb, gl_Color.a);\n";
 	}
 	else
 	{
@@ -106,13 +109,13 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			"	{\n"
 			"		vec4 color = accumColor;\n" +
 					textureLookup +
-			"		gl_FragColor = color + accumSecondaryColor;\n"//clamp( color * alphaFade, 0.0, 1.0 ) ;\n";
+			"		gl_FragColor = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n"//clamp( color * alphaFade, 0.0, 1.0 ) ;\n";
 			"	}\n"
 			"	else\n"
 			"	{\n"
 			"		vec4 color = accumBackColor ;\n" +
 					textureLookup +
-			"		gl_FragColor = color + accumBackSecondaryColor;\n"//clamp( color * alphaFade, 0.0, 1.0 ) ;\n";
+			"		gl_FragColor = vec4( (color + accumBackSecondaryColor).rgb, gl_Color.a );\n"//clamp( color * alphaFade, 0.0, 1.0 ) ;\n";
 			"	}\n";
 		}
 		else
@@ -120,7 +123,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			m_code +=
 			"	vec4 color = accumColor;\n" +
 				textureLookup +
-			"	gl_FragColor = color + accumSecondaryColor;\n";//clamp( color, 0.0, 1.0 ) * alphaFade;\n";
+			"	gl_FragColor = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n";
 		}
 	}
 

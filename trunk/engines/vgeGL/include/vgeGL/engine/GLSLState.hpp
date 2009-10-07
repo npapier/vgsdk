@@ -82,7 +82,7 @@ void TBitSet<size>::reset()
  * This class is a specialized container for GLSL rendering state used by program/shader generators 
  * to take care of the rendering state given by the scene graph.
  */
-struct GLSLState : public TBitSet< 9 >
+struct GLSLState : public TBitSet< 10 >
 {
 	enum BitSetIndexType
 	{
@@ -103,6 +103,10 @@ struct GLSLState : public TBitSet< 9 >
 		// DrawStyle node
 		FLAT_SHADING,				///< True when DrawStyle.shape implies a flat shading (instead of smooth shading)
 
+		// VertexShape node
+		COLOR4_BIND_PER_VERTEX,
+
+		//
 		MAX_BITSETINDEXTYPE
 	};
 
