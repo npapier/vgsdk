@@ -459,7 +459,6 @@ struct GLSLHelpers
 				"					accumDiffuse * gl_FrontMaterial.diffuse;\n"
 				"	accumSecondaryColor	= accumSpecular * gl_FrontMaterial.specular;\n" // GL_SEPARATE_SPECULAR_COLOR
 				"\n\n";
-				// GL_SEPARATE_SPECULAR_COLOR == false => "	 color += Specular * gl_FrontMaterial.specular;\n"
 
 			const std::string colorUpdating2 =
 				"\n"
@@ -519,6 +518,12 @@ struct GLSLHelpers
 						"	flightFront( ecPosition3, normal, eye );\n" +
 							colorUpdating;
 				}
+
+				//
+				if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+				{
+					boost::algorithm::replace_all( flight, "gl_FrontMaterial.diffuse", "gl_Color" /*"mglColor"*/ );
+				}
 			}
 			else
 			{
@@ -539,7 +544,14 @@ struct GLSLHelpers
 						"	flightFront( ecPosition3, normal, eye );\n" +
 							colorUpdating;
 				}
+
+				//
+				if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+				{
+					boost::algorithm::replace_all( flight, "gl_FrontMaterial.diffuse", "gl_Color" ); //mglColor
+				}
 			}
+
 
 // if(lightModelTwoSidedInt)
 // {     
