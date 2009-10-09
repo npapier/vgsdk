@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -74,7 +74,7 @@ void ClipPlane::paint( vgeGL::engine::Engine * engine, vgd::node::ClipPlane * no
 {
 	const int index = GL_CLIP_PLANE0 + node->getMultiAttributeIndex();
 
-	// ON
+	// ON and PLANE (if ON is true)
 	vgd::node::ClipPlane::OnValueType onValue;
 
 	const bool isDefined = node->getOn( onValue );
@@ -84,6 +84,14 @@ void ClipPlane::paint( vgeGL::engine::Engine * engine, vgd::node::ClipPlane * no
 		if ( onValue )
 		{
 			glEnable( index );
+
+            // PLANE
+            vgd::node::ClipPlane::PlaneValueType planeValue = node->getPlane();
+
+            vgm::Vec4d planeEquation( planeValue.getNormal() );
+            planeEquation[3] = planeValue.getDistanceFromOrigin();
+
+            glClipPlane( index, planeEquation.getValue() );
 		}
 		else
 		{
@@ -91,14 +99,6 @@ void ClipPlane::paint( vgeGL::engine::Engine * engine, vgd::node::ClipPlane * no
 		}
 	}
 	// else nothing to do
-
-	// PLANE
-	vgd::node::ClipPlane::PlaneValueType planeValue = node->getPlane();
-
-	vgm::Vec4d planeEquation( planeValue.getNormal() );
-	planeEquation[3] = planeValue.getDistanceFromOrigin();
-
-	glClipPlane( index, planeEquation.getValue() );
 
 	// Validates node df
 	node->getDirtyFlag(node->getDFNode())->validate();
