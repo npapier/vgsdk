@@ -124,7 +124,7 @@ const int getKeyboardButton( const GdkEventKey * event )
 	case GDK_Meta_L:	return KeyboardButtonEvent::KEY_MENU;
 	case GDK_Meta_R:	return KeyboardButtonEvent::KEY_MENU;
 
-	case GDK_Pause:		KeyboardButtonEvent::KEY_PAUSE;
+	case GDK_Pause:		return KeyboardButtonEvent::KEY_PAUSE;
 //	KeyboardButtonEvent::KEY_CAPITAL;
 	case GDK_Prior:		return KeyboardButtonEvent::KEY_PRIOR;  /*!< Page up */
 	case GDK_Next:		return KeyboardButtonEvent::KEY_NEXT;   /*!< Page down */
