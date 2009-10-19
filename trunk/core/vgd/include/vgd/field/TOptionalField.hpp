@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGD_FIELD_TOPTIONALFIELD_HPP
 #define _VGD_FIELD_TOPTIONALFIELD_HPP
@@ -88,6 +89,23 @@ struct TOptionalField : public AbstractField
 			return false;
 		}
 	}
+
+
+	/**
+	 * @brief Gets the value stored by this field.
+	 *
+	 * @return	the value stored by this field
+	 *
+	 * @pre		hasValue() == true
+	 */
+	const T& getValue() const
+	{
+		assert( checkRO() );
+		assert( hasValue() );
+
+		return *m_item;
+	}
+
 
 	/**
 	 * @brief Sets the value stored by this field.
