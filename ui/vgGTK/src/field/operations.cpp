@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vgBase/Type.hpp>
+#include <vgd/field/Enum.hpp>
 #include <vgd/field/TMultiField.hpp>
 #include <vgd/field/TOptionalField.hpp>
 #include <vgd/field/TSingleField.hpp>
@@ -20,6 +21,7 @@
 #include "vgGTK/field/adapter/MFPrimitiveAdapter.hpp"
 #include "vgGTK/field/adapter/MFVectorAdapter.hpp"
 #include "vgGTK/field/widget/Bool.hpp"
+#include "vgGTK/field/widget/Enum.hpp"
 #include "vgGTK/field/widget/Number.hpp"
 #include "vgGTK/field/widget/MatrixR.hpp"
 #include "vgGTK/field/widget/Rectangle.hpp"
@@ -78,6 +80,7 @@ vgd::Shp< Editor > createEditor( const std::type_info & fieldType )
 	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec2i >)				)	result.reset( new OptionalFieldEditor< widget::Vector<int, 2> >()	);
 	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec3i >)				)	result.reset( new OptionalFieldEditor< widget::Vector<int, 3> >()	);
 	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec4i >)				)	result.reset( new OptionalFieldEditor< widget::Vector<int, 4> >()	);
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgd::field::Enum > )		)	result.reset( new OptionalFieldEditor< widget::Enum >()				);
 	
 	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec3f >)	)			result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec3f > >()		);
 	else if	( fieldType == typeid(vgd::field::TMultiField< unsigned long >)	)			result.reset( new MultiFieldEditor2< adapter::MFNumberAdapter< unsigned long > >()	);
