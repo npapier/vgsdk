@@ -27,7 +27,7 @@ namespace vgm
  * @ingroup Geometry
  */
 template< typename T >
-struct Rectangle : protected vgm::Vector< T, 4 >
+struct Rectangle : public vgm::Vector< T, 4 >
 {
 	/**
 	 * @name Constructors
@@ -41,19 +41,21 @@ struct Rectangle : protected vgm::Vector< T, 4 >
 	 *
 	 * @see getInvalid
 	 */
-	Rectangle() {}
+	Rectangle()
+	{}
 
 	/**
 	 * @brief Constructor
 	 */
 	Rectangle( const T x, const T y, const T width, const T height )
-	: Vector( x, y, width, height )
+	: vgm::Vector<T,4>( x, y, width, height )
 	{}
 
 	/**
 	 * @brief Constructor with value affectation from array of n components.
 	 */
-	explicit Rectangle( const T* v ) : Vector( v )
+	explicit Rectangle( const T* v )
+	: vgm::Vector<T,4>( v )
 	{}
 
 
@@ -82,7 +84,7 @@ struct Rectangle : protected vgm::Vector< T, 4 >
 	{
 		for( uint i = 0; i < 4; ++i )
 		{
-			m_tCoord[i] = static_cast< T >( v[i] );
+			Vector<T,4>::m_tCoord[i] = static_cast< T >( v[i] );
 		}
 	}
 
@@ -111,27 +113,28 @@ struct Rectangle : protected vgm::Vector< T, 4 >
 		setValue( x, y, width, height );
 	}
 
-	T&			x()				{ return m_tCoord[0]; }
-	const T&	x() const		{ return m_tCoord[0]; }
+	T&			x()				{ return Vector<T,4>::m_tCoord[0]; }
+	const T&	x() const		{ return Vector<T,4>::m_tCoord[0]; }
 
-	T&			y()				{ return m_tCoord[1]; }
-	const T&	y() const 		{ return m_tCoord[1]; }
+	T&			y()				{ return Vector<T,4>::m_tCoord[1]; }
+	const T&	y() const 		{ return Vector<T,4>::m_tCoord[1]; }
 
-	T&			width()			{ return m_tCoord[2]; }
-	const T&	width() const	{ return m_tCoord[2]; }
+	T&			width()			{ return Vector<T,4>::m_tCoord[2]; }
+	const T&	width() const	{ return Vector<T,4>::m_tCoord[2]; }
 
-	T&			height()		{ return m_tCoord[3]; }
-	const T&	height() const	{ return m_tCoord[3]; }
+	T&			height()		{ return Vector<T,4>::m_tCoord[3]; }
+	const T&	height() const	{ return Vector<T,4>::m_tCoord[3]; }
 
 	T*			getValue()			{ return Vector<T, 4>::getValue(); }
 	const T*	getValue() const	{ return Vector<T, 4>::getValue(); }
 
-	T&			operator[]( const uint i )			{ return m_tCoord[i]; }
-	const T&	operator[]( const uint i ) const	{ return m_tCoord[i]; }
+	//T&			operator[]( const uint i )			{ return m_tCoord[i]; }
+	//const T&	operator[]( const uint i ) const	{ return m_tCoord[i]; }
 
-	const vgm::Vector< T, 2 > getPosition() const { return vgm::Vector< T, 2 >( m_tCoord[0], m_tCoord[1] ); }
+	const vgm::Vector< T, 2 > getPosition() const { return vgm::Vector< T, 2 >( x(), y() ); }
 
-	const vgm::Vector< T, 2 > getSize() const { return vgm::Vector< T, 2 >( m_tCoord[2], m_tCoord[3] ); }
+	const vgm::Vector< T, 2 > getSize() const { return vgm::Vector< T, 2 >( width(), height() ); }
+	// @todo Rectangle( position, size )
 	//@}
 
 
@@ -183,17 +186,17 @@ struct Rectangle : protected vgm::Vector< T, 4 >
 	 */
 	const bool isPointIn( const T x, const T y ) const
 	{
-		assert( m_tCoord[2] > static_cast< T >( 0 ) );
-		assert( m_tCoord[3] > static_cast< T >( 0 ) );
+		assert( width() > static_cast< T >( 0 ) );
+		assert( height() > static_cast< T >( 0 ) );
 
-		if (	(x < m_tCoord[0]) ||
-				(x > m_tCoord[0]+m_tCoord[2]) )
+		if (	(x < x()) ||
+				(x > x() + width()) )
 		{
 			return false;
 		}
 
-		if (	(y < m_tCoord[1]) ||
-				(y > m_tCoord[1]+m_tCoord[3]) )
+		if (	(y < y()) ||
+				(y > y() + height()) )
 		{
 			return false;
 		}
