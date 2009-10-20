@@ -435,6 +435,9 @@ def generateEnumerationRegistry():
 #include <string>
 #include "vgd/vgd.hpp"
 
+namespace vgd { template<class T> struct Shp; }
+namespace vgd { namespace field { struct Enum; } }
+
 
 
 namespace vgd
@@ -454,9 +457,21 @@ struct VGD_API EnumRegistry
 	 */
 	static const std::string toString( const int enumValue );
 
+	/**
+	 * @brief Converts the given enumeration value to the real enumeration type.
+	 *
+	 * @param enumValue	the enumeration value to convert
+	 *
+	 * @return the desired enum type
+	 */
+	static const vgd::Shp< vgd::field::Enum > toEnum( const int enumValue );
+
 private:
 	typedef std::map< const int, std::string > ToStringType;	//< typedef for the registry storing association between enum value and enum string
 	static ToStringType m_toString;								//< instanciation of the registry
+
+	typedef std::map< const int, vgd::Shp< vgd::field::Enum > > ToEnumType;	//< typedef for the registry storing association between enum value and the real enum type
+	static ToEnumType m_toEnum;												//< instanciation of the registry
 
 	/**
 	 * @brief Initializes the registry
@@ -476,7 +491,19 @@ private:
 		fcpp.write("""#include "vgd/node/EnumRegistry.hpp"
 
 #include <vgDebug/convenience.hpp>
+#include <vgd/Shp.hpp>
+#include <vgd/field/Enum.hpp>
+""")
 
+		iterItems = EnumRegistry.getIterItems()
+		includeSet = set()
+		for enumString, enumValue in iterItems:
+			enumNode = enumString.split('.')[0]
+			includeSet.add(enumNode)
+		for include in sorted(includeSet):
+			fcpp.write( """#include <vgd/node/%s.hpp>\n""" % include )
+
+		fcpp.write("""
 
 
 namespace vgd
@@ -509,27 +536,81 @@ const std::string EnumRegistry::toString( const int enumValue )
 
 
 
+const vgd::Shp< vgd::field::Enum > EnumRegistry::toEnum( const int enumValue )
+{
+	if ( m_toEnum.empty() )
+	{
+		// Initializes the registry (only once).
+		initialize();
+	}
+
+	ToEnumType::const_iterator iter = m_toEnum.find( enumValue );
+
+	if ( iter != m_toEnum.end() )
+	{
+		return iter->second;
+	}
+	else
+	{
+		return vgd::makeShp( new vgd::field::Enum() );
+	}
+}
+
+
+
 EnumRegistry::ToStringType EnumRegistry::m_toString;
 
 
 
+EnumRegistry::ToEnumType EnumRegistry::m_toEnum;
+
+
+
 void EnumRegistry::initialize()
-{""")
+{
+	// Initializes m_toString map
+""")
+		# m_toString
+		iterItems = EnumRegistry.getIterItems()
 		for enumString, enumValue in iterItems:
-			print enumString, enumValue
-			enumString = enumString.split('.')[1]
+			print ("toString:	", enumString, enumValue)
+			enumString = enumString.split('.')[2]
 			fcpp.write( """
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( %s ) != m_toString.end() )
 	{
-		vgLogDebug("(%s, %s) already in enum registry");
+		vgLogDebug("(%s, %s) already in m_toString enum registry");
 		assert( false && "(%s, %s) already in registry" );
 	}
 	#endif
 
 	m_toString[ %s ] = std::string("%s");
 """ % ( enumValue, enumValue, enumString, enumValue, enumString, enumValue, enumString ) )
+
+		# m_toEnum
+		fcpp.write( """
+	// Initializes m_toEnum map
+""")
+
+		print
+		iterItems = EnumRegistry.getIterItems()
+		for enumString, enumValue in iterItems:
+			print ("toEnum:", enumString, enumValue)
+			enumNode, enumField, enumString = enumString.split('.')
+			enumValueType = enumField[0].upper() + enumField[1:] + 'ValueType'
+			fcpp.write( """
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( %s ) != m_toEnum.end() )
+	{
+		vgLogDebug("(%s, %s) already in m_toEnum enum registry");
+		assert( false && "(%s, %s) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ %s ] = vgd::makeShp( new vgd::node::%s::%s(%s) );
+	""" % ( enumValue, enumValue, enumValueType, enumValue, enumValueType, enumValue, enumNode, enumValueType, enumValue ) )
 
 		fcpp.write( """
 }

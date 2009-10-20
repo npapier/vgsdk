@@ -14,6 +14,8 @@ from dbNodes import *
 
 
 currentNodeName = None
+currentFieldName = None
+
 
 
 def getText( nodeList ) :
@@ -31,7 +33,8 @@ def handleEnum( domEnum ) :
 		raise StandardError("Enum without default value.")
 
 	global currentNodeName
-	enum = Enum( currentNodeName )
+	global currentFieldName
+	enum = Enum( currentNodeName, currentFieldName )
 
 	# value
 	domValues = domEnum.getElementsByTagName("value")
@@ -125,6 +128,8 @@ def handleSF( domSF ) :
 		raise StandardError("Single Field must have both name and doc attributes.")
 
 	# Creates single field
+	global currentFieldName
+	currentFieldName = attrName.value
 	sf = SingleField(attrName.value, attrDoc.value)
 
 	# type
@@ -146,6 +151,8 @@ def handleOF( domOF ) :
 		raise StandardError("Optional Field must have both name and doc attributes.")
 
 	# Creates optional field
+	global currentFieldName
+	currentFieldName = attrName.value
 	of = OptionalField(attrName.value, attrDoc.value)
 
 	# type
@@ -167,6 +174,8 @@ def handlePAF( domPAF ) :
 		raise StandardError("Pair Associative Field must have both name and doc attributes.")
 
 	# Creates pair associative field
+	global currentFieldName
+	currentFieldName = attrName.value
 	paf = PairAssociativeField(attrName.value, attrDoc.value)
 
 	# types

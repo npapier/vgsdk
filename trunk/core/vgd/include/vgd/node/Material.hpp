@@ -23,7 +23,7 @@ namespace node
 /**
  * @brief Surface material definition node
  *
- * The Material node specifies current surface material properties for all subsequent shapes nodes  and is used by the lighting equations during rendering. The field \c transparency is not optional because it is used by others fields (in OpenGL ambient and others use 4 floats). 
+ * The Material node specifies current surface material properties for all subsequent shapes nodes  and is used by the lighting equations during rendering. The field \c opacity (alpha value) is used in the lighting computation only for the diffuse alpha component. The field \c transparency is not optional because it is used by others fields (in OpenGL ambient and others use 4 floats). 
  *
  * New fields defined by this node :
  *	- SFFloat \c opacity = 1.f\n

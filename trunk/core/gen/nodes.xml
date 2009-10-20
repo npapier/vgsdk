@@ -202,6 +202,7 @@
 			<docBrief>Surface material definition node</docBrief>
 			<doc>The Material node specifies current surface material properties for all subsequent shapes nodes</doc>
 			<doc> and is used by the lighting equations during rendering.</doc>
+			<doc>The field \c opacity (alpha value) is used in the lighting computation only for the diffuse alpha component.</doc>
 			<doc>The field \c transparency is not optional because it is used by others fields (in OpenGL ambient and others use 4 floats).</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
