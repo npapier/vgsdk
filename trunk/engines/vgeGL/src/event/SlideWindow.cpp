@@ -5,7 +5,7 @@
 
 #include "vgeGL/event/SlideWindow.hpp"
 
-#include <glm/glm.h>
+//#include <glm/glm.hpp>
 
 
 
@@ -54,6 +54,7 @@ void SlideWindow::add(	vgd::Shp< vgeGL::technique::MultiMain::Window > window,
 }
 
 
+
 void SlideWindow::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 {
 	// Computes normalized time
@@ -62,7 +63,9 @@ void SlideWindow::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 	// Moves each window
 	for( uint i=0; i < m_window.size(); ++i )
 	{
-		vgm::Vec4f geom = glm::mix( m_window[i].source, m_window[i].destination, t );
+		vgm::Vec4f geom(
+			glm::mix( vgm::glm(m_window[i].source), vgm::glm(m_window[i].destination), t )
+				);
 
 		m_window[i].window->setGeometry( 
 			vgm::Rectangle2f( geom[0], geom[1], geom[2], geom[3] ) );
