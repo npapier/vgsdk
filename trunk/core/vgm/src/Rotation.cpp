@@ -343,9 +343,7 @@ Rotation& Rotation::setValue( const MatrixR& m )
 
 Rotation& Rotation::setValue( const Vec3f& axis, float radians )
 {
-	Vec3f	q;
-
-	q = axis;
+	Vec3f q( axis );
 	q.normalize();
 
 	q *= sinf(radians / 2.0f);
