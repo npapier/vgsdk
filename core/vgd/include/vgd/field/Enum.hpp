@@ -117,7 +117,7 @@ struct VGD_API Enum
 	/**
 	 * @brief Returns a vector containing all integer values (and theirs literal representation) allowed to construct this object.
 	 */
-	virtual const std::vector< std::pair< int, std::string> > valuesAndStrings() const;
+	const std::vector< std::pair< int, std::string> > valuesAndStrings() const;
 
 	/**
 	 * @brief Returns a vector containing all integer values allowed to construct this object.

@@ -21,8 +21,8 @@ class EnumRegistry :
 
 
 	@classmethod
-	def register( self, nodeName, enumValue ):
-		newValue = nodeName + '.' + enumValue
+	def register( self, nodeName, fieldName, enumValue ):
+		newValue = nodeName + '.' + fieldName + '.' + enumValue
 		if newValue not in self._values :
 			self._values[newValue] = self.nextID()
 		else:
@@ -30,8 +30,8 @@ class EnumRegistry :
 
 
 	@classmethod
-	def getID( self, nodeName, enumValue ) :
-		newValue = nodeName + '.' + enumValue
+	def getID( self, nodeName, fieldName, enumValue ) :
+		newValue = nodeName + '.' + fieldName + '.' + enumValue
 		if newValue in self._values :
 			return self._values[newValue]
 		else :
@@ -83,15 +83,16 @@ class Type :
 
 class Enum ( Type ):
 
-	def __init__( self, nodeName ):
+	def __init__( self, nodeName, fieldName ):
 		Type.__init__( self, "enum" )
 		self.nodeName = nodeName
+		self.fieldName = fieldName
 		self.values = {}
 
 	def addValue( self, value, docValue = "" ):
 		if value not in self.values :
 			self.values[value] = docValue
-			EnumRegistry.register( self.nodeName, value )
+			EnumRegistry.register( self.nodeName, self.fieldName, value )
 
 	def setDefaultValue( self, defaultValue ):
 		if defaultValue in self.values :
@@ -101,6 +102,7 @@ class Enum ( Type ):
 
 
 	# Overriden
+# @todo fieldName is now known by this class
 	def generateTYPEDEF( self, fieldName, FieldName, postfix ):
 
 		fieldNameValueType = FieldName + postfix
@@ -119,6 +121,7 @@ class Enum ( Type ):
 		for string in self._getStrings():
 			strStrings += """\t\t\tretVal.push_back( "%s" );\n""" % string
 
+# @todo comments in generated code
 		definitionOfFieldNameValueType = """
 	/**
 	 * @brief Type definition of the value contained by field named \c %s.
@@ -166,8 +169,8 @@ class Enum ( Type ):
 		# begin definition
 		str = "enum\n\t{\n"
 		# values
-		for i, (value, docValue) in enumerate(self.values.iteritems()) : # @todo removes i
-			valueID = EnumRegistry.getID(self.nodeName, value)
+		for (value, docValue) in self.values.iteritems() :
+			valueID = EnumRegistry.getID(self.nodeName, fieldName, value)
 			str += "\t\t%s = %i," % ( value, valueID )
 			str += "\t///< %s\n" % docValue
 		# default value
@@ -178,7 +181,7 @@ class Enum ( Type ):
 		return str
 
 	def _getValues( self ):
-		return [ EnumRegistry.getID(self.nodeName, value) for value in self.values.iterkeys() ]
+		return [ EnumRegistry.getID(self.nodeName, self.fieldName, value) for value in self.values.iterkeys() ]
 
 	def _getStrings( self ):
 		return [ value for value in self.values.iterkeys() ]

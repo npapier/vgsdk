@@ -10,6 +10,9 @@
 #include <string>
 #include "vgd/vgd.hpp"
 
+namespace vgd { template<class T> struct Shp; }
+namespace vgd { namespace field { struct Enum; } }
+
 
 
 namespace vgd
@@ -29,9 +32,21 @@ struct VGD_API EnumRegistry
 	 */
 	static const std::string toString( const int enumValue );
 
+	/**
+	 * @brief Converts the given enumeration value to the real enumeration type.
+	 *
+	 * @param enumValue	the enumeration value to convert
+	 *
+	 * @return the desired enum type
+	 */
+	static const vgd::Shp< vgd::field::Enum > toEnum( const int enumValue );
+
 private:
 	typedef std::map< const int, std::string > ToStringType;	//< typedef for the registry storing association between enum value and enum string
 	static ToStringType m_toString;								//< instanciation of the registry
+
+	typedef std::map< const int, vgd::Shp< vgd::field::Enum > > ToEnumType;	//< typedef for the registry storing association between enum value and the real enum type
+	static ToEnumType m_toEnum;												//< instanciation of the registry
 
 	/**
 	 * @brief Initializes the registry

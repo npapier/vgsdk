@@ -6,6 +6,7 @@
 #include "vgd/field/Enum.hpp"
 
 #include <limits>
+#include "vgd/Shp.hpp"
 #include "vgd/node/EnumRegistry.hpp"
 
 
@@ -133,22 +134,18 @@ const std::vector< std::pair< int, std::string> > Enum::valuesAndStrings() const
 
 const std::vector< int > Enum::values() const
 {
-	std::vector< int > retVal;
+	const vgd::Shp< Enum > registryEnum = vgd::node::EnumRegistry::toEnum( value() );
 
-	assert( false && "This method should be overriden." );
-
-	return retVal;
+	return registryEnum->values();
 }
 
 
 
 const std::vector< std::string > Enum::strings() const
 {
-	std::vector< std::string > retVal;
+	const vgd::Shp< Enum > registryEnum = vgd::node::EnumRegistry::toEnum( value() );
 
-	assert( false && "This method should be overriden." );
-
-	return retVal;
+	return registryEnum->strings();
 }
 
 
