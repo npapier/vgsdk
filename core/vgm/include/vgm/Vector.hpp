@@ -52,8 +52,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <glm/glm.hpp>
 #include <limits>
 #include <vector>
+
 
 #include "vgm/operations.hpp"
 
@@ -87,6 +89,22 @@ struct Vector
 	 * @warning vector is not initialized.
 	 */
 	Vector( void );
+
+	/**
+	 * @brief Constructor from a glm vector
+	 *
+ 	 * @remarks only if dimension is equal to 4.
+ 	 */
+	Vector( const glm::vec4 v )
+	{
+		assert(N==4);
+
+		m_tCoord[0] = v[0];
+		m_tCoord[1] = v[1];
+		m_tCoord[2] = v[2];
+		m_tCoord[3] = v[3];
+	}	
+
 
 	/**
 	 * @brief Constructor with value affectation from array of n components.
@@ -769,6 +787,14 @@ typedef Vector<	int32, 4 > Vec4i;
 
 
 #include "vgm/Vector.hxx"
+
+
+
+// @todo others glm(*)
+/**
+ * @brief Constructs a glm vector from a vgm::Vector
+ */
+glm::vec4 glm( const vgm::Vec4f& v );
 
 
 
