@@ -105,7 +105,11 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	/**
 	 * @brief	Destructor
 	 */
-	virtual ~GenericCanvas();
+	virtual ~GenericCanvas()
+	{
+		BaseCanvasType::shutdownVGSDK();
+	}
+
 
 
 	/**
@@ -400,6 +404,14 @@ protected:
 		vgLogDebug("vgGTK::Canvas::on_realize:end");
 	}*/
 
+	void on_unrealize()
+	{
+		BaseCanvasType::shutdownVGSDK();
+
+		// Default gtk processing
+		Gtk::DrawingArea::on_unrealize();
+	}
+
 	//@}
 
 
@@ -457,15 +469,6 @@ private:
 	}
 
 };
-
-
-template< typename BaseCanvasType >
-GenericCanvas< BaseCanvasType >::~GenericCanvas()
-{
-	vgLogDebug("Deletes vgGTK::Canvas.");
-
-	BaseCanvasType::shutdownVGSDK();
-}
 
 
 
