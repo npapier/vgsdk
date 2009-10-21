@@ -794,7 +794,7 @@ typedef Vector<	int32, 4 > Vec4i;
 /**
  * @brief Constructs a glm vector from a vgm::Vector
  */
-glm::vec4 glm( const vgm::Vec4f& v );
+VGM_API glm::vec4 glm( const vgm::Vec4f& v );
 
 
 
