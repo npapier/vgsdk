@@ -291,7 +291,6 @@ protected:
 	 * @name cairo objects
 	 */
 	//@{
-
 	uint8 *				m_pixels;	//< pointer of the pixel buffer
 	cairo_surface_t	*	m_surface;	//< the cairo surface
 	cairo_t *			m_cairo;	//< the cairo context

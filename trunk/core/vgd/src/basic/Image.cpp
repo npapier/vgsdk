@@ -6,7 +6,7 @@
 #include "vgd/basic/Image.hpp"
 
 #include <boost/thread.hpp>
-#include <vgDebug/Global.hpp>
+#include <vgDebug/convenience.hpp>
 
 #include "vgd/Shp.hpp"
 
@@ -48,7 +48,7 @@ struct OpenILStartupManagement
 	 */
 	static void initializeOpenIL()
 	{
-		vgDebug::get().logDebug("Image::OpenIL library initialization.");
+		vgLogDebug("Image::OpenIL library startup.");
 
 		// Do some initialization.
 		boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
@@ -61,13 +61,13 @@ struct OpenILStartupManagement
 	 */
 	static void shutdownOpenIL()
 	{
-		vgDebug::get().logDebug("Image::OpenIL library shutdown.");
+		vgLogDebug("Image::OpenIL library shutdown.");
 
 		ilShutDown();
 	}
 };
 
-	static OpenILStartupManagement openILStartupManagement; //< Global startup and shutdown of OpenIL library 
+	static OpenILStartupManagement openILStartupManagement; ///< Global startup and shutdown of OpenIL library 
 }
 
 
