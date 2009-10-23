@@ -91,7 +91,7 @@ const uint32 ImageSurface::height() const
 
 const uint32 ImageSurface::depth() const
 {
-	return 0;
+	return 1;
 }
 
 
