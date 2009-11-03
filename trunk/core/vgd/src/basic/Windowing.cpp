@@ -15,9 +15,9 @@ namespace vgd
 
 namespace basic
 {
-	
-	
-	
+
+
+
 Windowing::Windowing( const int min, const int max )
 :	m_min			( min ),
 	m_max			( max ),
@@ -56,9 +56,9 @@ void Windowing::setOutputIntensities( const uint8 low, const uint8 min, const ui
 void Windowing::setWindow( const int min, const int max )
 {
 	assert( min <= max );
-	
+
 	m_min = min;
-	m_max = max;			
+	m_max = max;
 }
 
 
@@ -66,7 +66,7 @@ void Windowing::setWindow( const int min, const int max )
 vgd::Shp< vgd::basic::IImage > Windowing::apply( const vgd::Shp< vgd::basic::IImage > image ) const
 {
 	using ::vgd::basic::IImage;
-	
+
 	switch( image->type() )
 	{
 	case IImage::UINT8:		return doApply<  uint8 >( image );
@@ -77,8 +77,8 @@ vgd::Shp< vgd::basic::IImage > Windowing::apply( const vgd::Shp< vgd::basic::IIm
 	case IImage::INT32:		return doApply<  int32 >( image );
 	case IImage::FLOAT:		return doApply<  float >( image );
 	case IImage::DOUBLE:	return doApply< double >( image );
-	default:				assert( false && "Unsupported image type." ); 			
-	}						  
+	default:				assert( false && "Unsupported image type." ); return Shp<vgd::basic::IImage>();
+	}
 }
 
 
