@@ -22,9 +22,9 @@ void TMultiStack<T>::clear()
 template< typename T >
 void TMultiStack<T>::resize( const uint numberOfStacks )
 {
-	m_stacks.resize( size );
+	m_stacks.resize( numberOfStacks );
 
-	for( uint i = 0; i < size; ++i )
+	for( uint i = 0; i < numberOfStacks; ++i )
 	{
 		(*this)[i].clear();
 	}
@@ -53,7 +53,7 @@ typename TMultiStack<T>::StackType& TMultiStack<T>::operator []( const uint inde
 
 
 template< typename T >
-typename const TMultiStack<T>::StackType& TMultiStack<T>::operator []( const uint index ) const
+const typename TMultiStack<T>::StackType& TMultiStack<T>::operator []( const uint index ) const
 {
 	return m_stacks[index];
 }
@@ -62,7 +62,7 @@ typename const TMultiStack<T>::StackType& TMultiStack<T>::operator []( const uin
 template< typename T >
 void TMultiStack<T>::setTop( const T& value )
 {
-	for( uint i = 0; i < size; ++i )
+	for( uint i = 0; i < getSize(); ++i )
 	{
 		(*this)[i].setTop( value );
 	}
@@ -72,7 +72,7 @@ void TMultiStack<T>::setTop( const T& value )
 template< typename T >
 void TMultiStack<T>::push( const T& element )
 {
-	for( uint i = 0; i < size; ++i )
+	for( uint i = 0; i < getSize(); ++i )
 	{
 		(*this)[i].push( element );
 	}
@@ -82,7 +82,7 @@ void TMultiStack<T>::push( const T& element )
 template< typename T >
 void TMultiStack<T>::push()
 {
-	for( uint i = 0; i < size; ++i )
+	for( uint i = 0; i < getSize(); ++i )
 	{
 		(*this)[i].push();
 	}
@@ -92,7 +92,7 @@ void TMultiStack<T>::push()
 template< typename T >
 const bool TMultiStack<T>::pop()
 {
-	for( uint i = 0; i < size; ++i )
+	for( uint i = 0; i < getSize(); ++i )
 	{
 		(*this)[i].pop();
 	}
