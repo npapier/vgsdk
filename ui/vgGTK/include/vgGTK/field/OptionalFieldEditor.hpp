@@ -36,8 +36,8 @@ struct OptionalFieldEditor : public Editor
 	{
 		Gtk::Alignment	* alignment = Gtk::manage( new Gtk::Alignment(0.5, 1.0, 1.0, 0.0) );
 
-		m_box.pack_start( m_widget );
-		m_box.pack_start( *alignment );
+		m_box.add( m_widget );
+		m_box.pack_end( *alignment, Gtk::PACK_SHRINK );
 
 		alignment->add( m_clear );
 
