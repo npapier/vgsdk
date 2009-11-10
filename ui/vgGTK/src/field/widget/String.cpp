@@ -20,6 +20,7 @@ namespace widget
 
 String::String()
 {
+	set_width_chars( 20 );
 	set_activates_default( true );
 }
 
@@ -48,7 +49,18 @@ const std::string String::getValue() const
 
 void String::setValue( const std::string & value )
 {
+	// Assigns the new text to the widget.
 	set_text( value );
+
+	// Computes the new width of the widget.
+	const int	valueWidth = value.size();
+
+	if( valueWidth > get_width_chars()  )
+	{
+		const int newWidth = valueWidth + 5;
+
+		set_width_chars( newWidth > 80 ? 80 : newWidth );
+	}
 }
 
 
