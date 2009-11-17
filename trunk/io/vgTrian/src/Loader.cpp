@@ -964,8 +964,8 @@ vgd::Shp< vgd::node::Material > Loader::loadWireColor( std::string nodeName )
 	vgd::Shp< vgd::node::Material > material;
 
 	material = vgd::node::Material::create( nodeName );
-	material->setColor( vgd::node::Material::AMBIENT, color3 );
-	material->setColor( vgd::node::Material::DIFFUSE, color3 );
+	material->setAmbient( color3 );
+	material->setDiffuse( color3 );
 	material->setOpacity( 1.f - opacity );
 
 	return material;
