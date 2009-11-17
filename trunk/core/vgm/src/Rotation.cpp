@@ -171,7 +171,10 @@ void Rotation::getValue( MatrixR& matrix ) const
 	matrix = m;
 }
 
-
+float Rotation::getAngle() const
+{
+	return 2.0f * acosf(quat[3]);
+}
 
 Rotation Rotation::getIdentity( void )
 {

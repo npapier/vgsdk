@@ -159,6 +159,11 @@ struct VGM_API Rotation
 	void			getValue( MatrixR& matrix ) const;
 
 	/**
+	 * @brief Returns the angle of the corresponding rotation.
+	 */
+	float			getAngle() const;
+
+	/**
 	 * @brief Null rotation.
 	 */
 	static Rotation	getIdentity( void );
