@@ -9,7 +9,9 @@
 #include <gtkmm/alignment.h>
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
+#include <vgd/field/TOptionalField.hpp>
 #include "vgGTK/field/Editor.hpp"
 
 
@@ -86,7 +88,7 @@ struct OptionalFieldEditor : public Editor
 		typedef vgd::field::TOptionalField< typename Widget::ValueType > FieldType;
 
 		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
-		Widget::ValueType					value;
+		typename Widget::ValueType			value;
 		bool								hasValue;
 
 		hasValue = fieldEditor.get()->getValue( value );
