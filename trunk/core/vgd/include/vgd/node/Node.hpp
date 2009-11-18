@@ -8,9 +8,13 @@
 
 ///@todo pragma warning for signals.hpp
 #ifdef WIN32
-	#pragma warning(disable:4511 4512)
+	#pragma warning (push)
+	#pragma warning(disable:4251 4275 4511 4512)
 #endif
 #include <boost/signals.hpp>
+#ifdef WIN32
+#pragma warning (pop)
+#endif
 
 #include <vector>
 
