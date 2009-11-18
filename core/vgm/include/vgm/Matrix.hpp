@@ -364,6 +364,14 @@ struct VGM_API MatrixR
 		const Vec3f& center			= Vec3f(0.f, 0.f, 0.f) ) const;
 
 	/**
+	 * @brief Decomposes the matrix into a translation, rotation 
+	 * Any scale and projection information are discarded.
+  	 */
+	void	getTransform(
+		Vec3f& translation,
+		Rotation& rotation ) const;
+
+	/**
 	 * @brief Set matrix to perspective matrix.
 	 * 
 	 * @param left		The coordinates for the left-vertical clipping planes.
