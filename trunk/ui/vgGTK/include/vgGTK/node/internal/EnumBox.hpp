@@ -89,7 +89,7 @@ public:
 
 } // namespace internal
 
-} // namespace noce
+} // namespace node
 
 } // namespace vgGTK
 
