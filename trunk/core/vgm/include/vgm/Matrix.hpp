@@ -136,6 +136,11 @@ struct VGM_API MatrixR
 	explicit MatrixR( const double* m );
 
 	/**
+	 * @brief Constructor from a rotation
+	 */
+	explicit MatrixR( const Rotation& q );
+
+	/**
 	 * @brief Copy constructor.
 	 */
 	MatrixR( const MatrixR& m );
