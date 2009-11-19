@@ -132,6 +132,13 @@ MatrixR::MatrixR( const double* m )
 
 
 
+MatrixR::MatrixR( const Rotation& q )
+{
+	setRotate( q );
+}
+
+
+
 MatrixR::MatrixR( const MatrixR& m )
 {
 	setValue( m.matrix );
