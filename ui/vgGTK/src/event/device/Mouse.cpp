@@ -119,7 +119,7 @@ bool Mouse::onMotionNotifyEvent( GdkEventMotion * event )
 	// Update previous location
 	m_previousLocation = location;
 
-	return true;
+	return false;
 }
 
 
