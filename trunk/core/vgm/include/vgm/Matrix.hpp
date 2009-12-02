@@ -347,7 +347,7 @@ struct VGM_API MatrixR
 	void	setTransform(
 			const Vec3f&	translation,
 			const Rotation& rotation,
-			const Vec3f&	scaleFactor			= Vec3f(0.f, 0.f, 0.f),
+			const Vec3f&	scaleFactor			= Vec3f(1.f, 1.f, 1.f),
 			const Rotation&	scaleOrientation	= Rotation(0.f,0.f,0.f,1.f),
 			const Vec3f&	center				= Vec3f(0.f, 0.f, 0.f) );
 
