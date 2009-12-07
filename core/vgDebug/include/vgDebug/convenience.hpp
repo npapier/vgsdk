@@ -31,10 +31,12 @@
 #define vgLogDebug( arg1 )						vgDebug::get().logDebug( (arg1) )
 #define vgLogDebug2( arg1, arg2 )				vgDebug::get().logDebug( (arg1), (arg2) )
 #define vgLogDebug3( arg1, arg2, arg3 )			vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
+#define vgLogDebug4( arg1, arg2, arg3, arg4 )	vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4) )
 #else
 #define vgLogDebug( arg1 )						vgDebug::get().logDebug( (arg1) )
 #define vgLogDebug2( arg1, arg2 )				vgDebug::get().logDebug( (arg1), (arg2) )
 #define vgLogDebug3( arg1, arg2, arg3 )			vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
+#define vgLogDebug4( arg1, arg2, arg3, arg4 )	vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4) )
 #endif
 
 #endif //#ifndef _VGDEBUG_CONVENIENCE_HPP
