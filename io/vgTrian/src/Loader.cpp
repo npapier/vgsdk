@@ -697,7 +697,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 			image.reset( new vgd::basic::Image( m_path + '/' + filename ) );
 		}*/
 
-		tex->setIImage( image );
+		tex->setImage( image );
 
 		// default value.
 		using vgd::node::Texture2D;
@@ -794,7 +794,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 			assert( false );
 		}		
 
-		tex->setFunction( vgd::node::Texture2D::FUN_MODULATE );
+		tex->sethFunction( vgd::node::Texture2D::FUN_MODULATE );
 	}
 }
 
