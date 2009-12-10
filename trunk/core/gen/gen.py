@@ -148,13 +148,18 @@ def getDocOfFields( node ):
 	str = ""
 	for field in node.fields.itervalues() :
 		if len(field.type.generateDefaultValue()) == 0 :
-			str += "\n *	- %s \c %s = empty\\n\n" % (field.generateCompleteType(), field.name)
+			if field.isOptional():
+				str += "\n * - %s \c [%s] = empty<br>\n" % (field.generateCompleteType(), field.name)
+			else:
+				str += "\n * - %s \c %s = empty<br>\n" % (field.generateCompleteType(), field.name)
 		else:
 			if field.isOptional():
-				str += "\n *	- %s \c [%s] = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
+				str += "\n * - %s \c [%s] = %s<br>\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
 			else:
-				str += "\n *	- %s \c %s = %s\\n\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
-		str +=   " *		%s" % field.doc
+				str += "\n * - %s \c %s = %s<br>\n" % (field.generateCompleteType(), field.name, field.type.generateDefaultValue())
+		if len(field.doc) > 0:
+			str +=   " *   %s<br>\n" % field.doc
+		str += " *<br>"
 	return str
 
 
@@ -226,7 +231,7 @@ def generateNodeHeader( fd, node ) :
 				fd.write( """ *\n * Inherited fields from %s:%s\n""" % (nodeName, getDocOfFields(baseNode) ) )
 			else:
 				print( "Warning %s is not generated from xml. So inherited fields are not documented" % nodeName )
-	fd.write( """ *\n""" )
+#	fd.write( """ *\n""" )
 
 	for ingroup in node.ingroup :
 		fd.write( """ * @ingroup %s\n""" % ingroup )
@@ -245,7 +250,8 @@ def generateNodeHeader( fd, node ) :
 	fd.write( "\n{\n" )
 
 	# META_NODE_HPP.factories
-	generateFactoriesHeader( fd, node )
+	if not node.abstract:
+		generateFactoriesHeader( fd, node )
 
 	# Accessors (for fields)
 	for field in node.fields.itervalues() :
@@ -300,7 +306,8 @@ protected:
 	fd.write( str.replace("NodeName", node.name) )
 
 	# META_NODE_HPP.protected/private section
-	generateMETA_NODE_HPP( fd, node )
+	if not node.abstract:
+		generateMETA_NODE_HPP( fd, node )
 
 	# end class declaration
 	fd.write("};\n\n\n\n")
@@ -326,7 +333,8 @@ def generateNodeImpl( fd, node ) :
 	generateBeginNamespace( fd )
 
 	# META_NODE_CPP.factories
-	generateFactoriesImpl( fd, node )
+	if not node.abstract:
+		generateFactoriesImpl( fd, node )
 
 	# Constructor
 	str = """NodeName::NodeName( const std::string nodeName ) :\n"""
@@ -362,7 +370,7 @@ def generateNodeImpl( fd, node ) :
 	for field in node.fields.itervalues() :
 		str = field.generateDefaultSetter()
 		if str != None :
-			fd.write( "\t" + str + "\n" )
+			fd.write( str + "\n" )
 
 	fd.write("}\n\n\n\n")
 
@@ -377,7 +385,7 @@ def generateNodeImpl( fd, node ) :
 	for field in node.fields.itervalues() :
 		str = field.generateOptionalDefaultSetter()
 		if str != None :
-			fd.write( "\t" + str + "\n" )
+			fd.write( str + "\n" )
 
 	fd.write("}\n\n\n\n")
 
@@ -404,7 +412,8 @@ def generateNodeImpl( fd, node ) :
 		fd.write( node.codeImplementation )
 
 	# META_NODE_CPP.protected/private section
-	generateMETA_NODE_CPP( fd, node )
+	if not node.abstract:
+		generateMETA_NODE_CPP( fd, node )
 
 	# end namespace
 	generateEndNamespace( fd )
@@ -598,7 +607,11 @@ void EnumRegistry::initialize()
 		for enumString, enumValue in iterItems:
 			print ("toEnum:", enumString, enumValue)
 			enumNode, enumField, enumString = enumString.split('.')
-			enumValueType = enumField[0].upper() + enumField[1:] + 'ValueType'
+			# Tests if the last part of field name is 'Parameter' (hack for PAF)
+			if enumField.rfind('Parameter') == -1:
+				enumValueType = enumField[0].upper() + enumField[1:] + 'ValueType'
+			else:
+				enumValueType = enumField[0].upper() + enumField[1:] + 'Type'
 			fcpp.write( """
 	//
 	#ifdef _DEBUG
