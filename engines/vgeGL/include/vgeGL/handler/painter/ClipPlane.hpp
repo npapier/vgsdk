@@ -11,10 +11,7 @@
 
 namespace vgd { namespace node { struct ClipPlane; } }
 
-namespace vgeGL 
-{
-	namespace engine	{ struct Engine;		}
-}
+namespace vgeGL { namespace engine { struct Engine; } }
 
 
 

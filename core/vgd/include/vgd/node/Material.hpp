@@ -26,19 +26,24 @@ namespace node
  * The Material node specifies current surface material properties for all subsequent shapes nodes  and is used by the lighting equations during rendering. The field \c opacity (alpha value) is used in the lighting computation only for the diffuse alpha component. The field \c transparency is not optional because it is used by others fields (in OpenGL ambient and others use 4 floats). 
  *
  * New fields defined by this node :
- *	- SFFloat \c opacity = 1.f\n
- *		Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.
- *	- OFFloat \c [shininess] = 0.f\n
- *		Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).
- *	- OFVec3f \c [emission] = vgm::Vec3f(0.f, 0.f, 0.f)\n
- *		Emmissive color of the surface.
- *	- OFVec3f \c [specular] = vgm::Vec3f(0.f, 0.f, 0.f)\n
- *		Specular color of the surface.
- *	- OFVec3f \c [ambient] = vgm::Vec3f(0.2f, 0.2f, 0.2f)\n
- *		Ambient color of the surface.
- *	- OFVec3f \c [diffuse] = vgm::Vec3f(0.8f, 0.8f, 0.8f)\n
- *		Diffuse color of the surface.
- *
+ * - SFFloat \c opacity = 1.f<br>
+ *   Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.<br>
+ *<br>
+ * - OFFloat \c [shininess] = 0.f<br>
+ *   Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).<br>
+ *<br>
+ * - OFVec3f \c [emission] = vgm::Vec3f(0.f, 0.f, 0.f)<br>
+ *   Emmissive color of the surface.<br>
+ *<br>
+ * - OFVec3f \c [specular] = vgm::Vec3f(0.f, 0.f, 0.f)<br>
+ *   Specular color of the surface.<br>
+ *<br>
+ * - OFVec3f \c [ambient] = vgm::Vec3f(0.2f, 0.2f, 0.2f)<br>
+ *   Ambient color of the surface.<br>
+ *<br>
+ * - OFVec3f \c [diffuse] = vgm::Vec3f(0.8f, 0.8f, 0.8f)<br>
+ *   Diffuse color of the surface.<br>
+ *<br>
  *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes

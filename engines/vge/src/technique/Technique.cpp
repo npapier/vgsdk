@@ -1,12 +1,12 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vge/technique/Technique.hpp"
 
-//#include <vgd/Shp.hpp>
-#include <vge/pass/Pass.hpp>
+#include "vge/engine/Engine.hpp"
+#include "vge/pass/Pass.hpp"
 
 
 
@@ -19,9 +19,10 @@ namespace technique
 
 
 Technique::Technique()
-:	m_currentPass	(	0 		),
-	m_inPass		(	false	),
-	
+:	m_currentPass		(	0 						),
+	m_inPass			(	false					),
+	//m_passIsolationMask	(	PassIsolationMask(0)	),
+
 	m_engine			(	0	),
 	m_traverseElements	(	0	)
 {}
@@ -29,62 +30,17 @@ Technique::Technique()
 
 
 Technique::~Technique()
-{}
-
-
-
-/*vgd::Shp< vgd::node::Group > Technique::getRoot() const
 {
-	return m_root;
+	// Virtual destructor
 }
-
-
-
-vgd::Shp< vgd::node::Group > Technique::setRoot( vgd::Shp< vgd::node::Group > newRoot )
-{
-	vgd::Shp< vgd::node::Group > retVal = m_root;
-
-	m_root = newRoot;
-
-	return retVal;
-}*/
-
-
-
-/*vge::visitor::NodeCollectorExtended<>& Technique::getNodeCollector()
-{
-	return m_collectorExt;
-}*/
-
-
-
-// void Technique::apply( vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
-// {
-	// // // 
-	// // m_collectorExt.reset();
-	// // getRoot()->traverse( m_collectorExt );
-
-	// //
-	// //prepareEval( engine, m_collectorExt->getTraverseElements() );
-
-	// prepareEval( engine, traverseElements );
-// }
-
-
-
-/*void Technique::resetEngine()
-{
-	engine()->resetStateStack();
-	engine()->resetMatrices();
-}*/
 
 
 
 void Technique::prepareEval( vge::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements )
 {
-	assert( !m_inPass );
-
 	m_currentPass = 0;
+	assert( !m_inPass && "prepareEval() called inside a pass." );
+	m_passIsolationMask.resize(0);//	= PassIsolationMask(0);
 
 	m_engine			= engine;
 	m_traverseElements	= traverseElements;
@@ -94,35 +50,86 @@ void Technique::prepareEval( vge::engine::Engine *engine, vge::visitor::Traverse
 
 void Technique::finishEval()
 {
-	assert( !m_inPass );
+	assert( !m_inPass && "finishEval() called inside a pass." );
 	assert( m_currentPass > 0 && "No evaluation pass." );
-	
+
 	m_engine			= 0;
 	m_traverseElements	= 0;
 }
 
 
 
-void Technique::beginPass()
+void Technique::setPassDescription( const std::string description )
 {
-	assert( !m_inPass );
-	
+	m_passDescription = description;
+}
+
+
+
+void Technique::beginPass( const PassIsolationMask isolationMask )
+{
+	assert( !m_inPass && "beginPass() called inside a pass." );
+
 	++m_currentPass;
 	m_inPass = true;
+
+	// Processes isolation mask
+	applyPassIsolation( m_engine, isolationMask );
 }
 
 
 
 void Technique::endPass()
 {
-	assert( m_inPass );	
-	
+	assert( m_inPass && "endPass() called outside a pass." );
+
+	// Processes isolation mask
+	unapplyPassIsolation( m_engine );
+
+	//
 	m_inPass = false;
 }
 
 
 
-const uint32 Technique::getCurrentPass() const
+void Technique::applyPassIsolation( vge::engine::Engine *engine, const PassIsolationMask isolationMask )
+{
+	if ( isolationMask & RESET_MATRICES )
+	{
+		engine->resetMatrices();
+	}
+
+	if ( isolationMask & REGARD_ALL )
+	{
+		engine->regard();
+	}
+
+	if ( isolationMask & PUSH_POP_STATE )
+	{
+		engine->push();
+	}
+
+	// Stores isolation mask for endPass()
+	m_passIsolationMask.push_back( isolationMask );
+}
+
+
+void Technique::unapplyPassIsolation( vge::engine::Engine *engine )
+{
+	const PassIsolationMask passIsolationMask = m_passIsolationMask.back();
+
+	if ( passIsolationMask & PUSH_POP_STATE )
+	{
+		engine->pop();
+	}
+
+	// Resets isolation mask
+	m_passIsolationMask.pop_back();
+}
+
+
+
+const uint Technique::getCurrentPass() const
 {
 	return m_currentPass;
 }
@@ -136,24 +143,67 @@ const bool Technique::isInsideAPass() const
 
 
 
-void Technique::evaluatePass( vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service )
+void Technique::evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service,
+								vge::engine::Engine * engine,
+								const PassIsolationMask isolationMask, const bool nestedPass )
 {
-	beginPass();
+	assert( pass != 0 );
+	assert( service != 0 );
+	assert( engine != 0 );
 
-	assert( m_engine != 0 );
-	assert( m_traverseElements != 0 );
-		
-	pass->apply( this, m_engine, getTraverseElements(), service );
-	
-	endPass();
+	if ( nestedPass )
+	{
+		applyPassIsolation( engine, isolationMask );
+	}
+	else
+	{
+		beginPass( isolationMask );
+	}
+
+	//assert( m_engine != 0 );
+	assert( getTraverseElements() != 0 );
+
+	pass->apply( this, engine, getTraverseElements(), service );
+
+	if ( nestedPass )
+	{
+		unapplyPassIsolation( engine );
+	}
+	else
+	{
+		endPass();
+	}
 }
 
 
 
-vge::visitor::TraverseElementVector	*Technique::getTraverseElements() const
+/*void Technique::push()
+{
+	assert( m_engine != 0 );
+
+	m_engine getEngine()->push();
+}
+
+
+void Technique::pop()
+{
+	assert( m_engine != 0 );
+
+	m_engine getEngine()->pop();
+}*/
+
+
+
+vge::visitor::TraverseElementVector *Technique::getTraverseElements() const
 {
 	return m_traverseElements;
 }
+
+
+/*vge::engine::Engine * Technique::getEngine() const
+{
+	return m_engine;
+}*/
 
 
 

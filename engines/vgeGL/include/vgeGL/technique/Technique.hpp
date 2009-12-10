@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -49,39 +49,52 @@ struct VGEGL_CLASS_API Technique : public vge::technique::Technique
 	 */
 	VGEGL_API Technique();
 
+
+
 	/**
-	 * @brief Must be overridden to implements the technique.
+	 * @brief Must be overridden to implement the technique.
 	 * 
 	 * @param engine			engine used during evaluation
 	 * @param traverseElements	elements to evaluate
 	 */
-	VGEGL_API virtual void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
+	VGEGL_API virtual void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
 
+	/**
+	 * This description specified by calling setPassDescription() is used to insert textual markers into the OpenGL stream (with GREMEDY_string_marker).
+	 */
+	/*virtual */void beginPass( const PassIsolationMask isolationMask = PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK) );
 
+	/**
+	 * This description specified by calling setPassDescription() is used to insert textual markers into the OpenGL stream (with GREMEDY_string_marker).
+	 */
+	/*virtual */void endPass();
 
 protected:
 	/**
 	 * @copydoc ::vge::technique::Technique::prepareEval(vge::engine::Engine*, vge::visitor::TraverseElementVector*)
 	 */
 	VGEGL_API void prepareEval( vgeGL::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements );
-	
-	/**
-	 * @copydoc ::vge::technique::Technique::evaluatePass(vgd::Shp<vge::pass::Pass>, vgd::Shp<vge::service::Service>)
-	 */
-	VGEGL_API void evaluatePass( vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service );
-	
 
-	
+	/**
+	 * @copydoc ::vge::technique::Technique::evaluatePass(vgd::Shp<vge::pass::Pass>, vgd::Shp<vge::service::Service>,const PassIsolationMask)
+	 */
+	VGEGL_API void evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service,
+									const PassIsolationMask isolationMask = PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK),
+									const bool nestedPass = false );
+
+	VGEGL_API vge::engine::Engine * getEngine() const;
+
+
 private:
 	VGEGL_API void prepareEval( vge::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector * /*traverseElements*/ );
 	VGEGL_API void apply(		vge::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector * /*traverseElements*/ );
-	
+
 	/**
 	 * @name Internal data
 	 */
 	//@{
-	vgeGL::engine::Engine	*				m_engine;
-	//@}	
+	vgeGL::engine::Engine *	m_engine;
+	//@}
 };
 
 

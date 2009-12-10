@@ -133,6 +133,48 @@ struct Int8Number : public Number< int8 >
 
 
 
+/**
+ * @brief	Specialized version of a widget for the edition of uint8 number type.
+ */
+struct UInt8Number : public Number< uint8 >
+{
+	const uint8 getValue() const
+	{
+		try
+		{
+			return static_cast< uint8 >(
+				boost::lexical_cast< int >( get_text() )
+					);
+		}
+		catch( const boost::bad_lexical_cast & )
+		{
+			return static_cast< uint8 >( 0 );
+		}
+	}
+
+	void setValue( const int & value )
+	{
+		set_text( Glib::ustring::compose("%1", value) );
+	}
+
+	const bool validate()
+	{
+		try
+		{
+			boost::lexical_cast< int >( get_text() );
+			return true;
+		}
+		catch( const boost::bad_lexical_cast & )
+		{
+			vgGTK::field::widget::Widget< uint8 >::showWarning("Please, enter a number!");
+			grab_focus();
+			return false;
+		}
+	}
+};
+
+
+
 } // namespace widget
 
 } // namespace field

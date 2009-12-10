@@ -11,6 +11,7 @@
 #include <vgm/Vector.hpp>
 
 #include "vgd/vgd.hpp"
+#include "vgd/Shp.hpp"
 
 
 
@@ -577,6 +578,10 @@ public:
 
 	//@}
 };
+
+
+
+typedef vgd::Shp< vgd::basic::IImage > IImageShp; ///< type definition for shared pointer on an IImage
 
 
 

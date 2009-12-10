@@ -17,44 +17,15 @@ namespace node
 
 
 
-vgd::Shp< Light > Light::create( const std::string nodeName )
-{
-	/* Creates a new node */
-	vgd::Shp< Light > node( new Light(nodeName) );
-
-	/* Adds a vertex (i.e. a node) to boost::graph */
-	graph().addNode( node );
-
-	/* Sets fields to their default values */
-	node->setToDefaults();
-
-	return node;
-}
-
-
-
-vgd::Shp< Light > Light::createWhole( const std::string nodeName )
-{
-	/* Creates a new node */
-	vgd::Shp< Light > node = Light::create(nodeName);
-
-	/* Sets optional fields to their default values */
-	node->setOptionalsToDefaults();
-
-	return node;
-}
-
-
-
 Light::Light( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FOnType(getFOn()) );
 	addField( new FSpecularType(getFSpecular()) );
-	addField( new FCastShadowType(getFCastShadow()) );
-	addField( new FDiffuseType(getFDiffuse()) );
+	addField( new FOnType(getFOn()) );
 	addField( new FAmbientType(getFAmbient()) );
+	addField( new FDiffuseType(getFDiffuse()) );
+	addField( new FCastShadowType(getFCastShadow()) );
 
 	// Sets link(s)
 	link( getDFNode() );
@@ -65,6 +36,7 @@ Light::Light( const std::string nodeName ) :
 void Light::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
+	setCastShadow( false );
 }
 
 
@@ -72,39 +44,10 @@ void Light::setToDefaults( void )
 void Light::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
-	setOn( false );
 	setSpecular( vgm::Vec4f(1.f, 1.f, 1.f, 0.f) );
-	setCastShadow( false );
-	setDiffuse( vgm::Vec4f(1.f, 1.f, 1.f, 0.f) );
+	setOn( false );
 	setAmbient( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
-}
-
-
-
-// On
-const bool Light::getOn( OnValueType& value ) const
-{
-	return getFieldRO<FOnType>(getFOn())->getValue( value );
-}
-
-
-
-void Light::setOn( const OnValueType& value )
-{
-	getFieldRW<FOnType>(getFOn())->setValue( value );
-}
-
-
-
-void Light::eraseOn()
-{
-	getFieldRW<FOnType>(getFOn())->eraseValue();
-}
-
-
-const bool Light::hasOn() const
-{
-	return getFieldRO<FOnType>(getFOn())->hasValue();
+	setDiffuse( vgm::Vec4f(1.f, 1.f, 1.f, 0.f) );
 }
 
 
@@ -137,58 +80,30 @@ const bool Light::hasSpecular() const
 
 
 
-// CastShadow
-const bool Light::getCastShadow( CastShadowValueType& value ) const
+// On
+const bool Light::getOn( OnValueType& value ) const
 {
-	return getFieldRO<FCastShadowType>(getFCastShadow())->getValue( value );
+	return getFieldRO<FOnType>(getFOn())->getValue( value );
 }
 
 
 
-void Light::setCastShadow( const CastShadowValueType& value )
+void Light::setOn( const OnValueType& value )
 {
-	getFieldRW<FCastShadowType>(getFCastShadow())->setValue( value );
+	getFieldRW<FOnType>(getFOn())->setValue( value );
 }
 
 
 
-void Light::eraseCastShadow()
+void Light::eraseOn()
 {
-	getFieldRW<FCastShadowType>(getFCastShadow())->eraseValue();
+	getFieldRW<FOnType>(getFOn())->eraseValue();
 }
 
 
-const bool Light::hasCastShadow() const
+const bool Light::hasOn() const
 {
-	return getFieldRO<FCastShadowType>(getFCastShadow())->hasValue();
-}
-
-
-
-// Diffuse
-const bool Light::getDiffuse( DiffuseValueType& value ) const
-{
-	return getFieldRO<FDiffuseType>(getFDiffuse())->getValue( value );
-}
-
-
-
-void Light::setDiffuse( const DiffuseValueType& value )
-{
-	getFieldRW<FDiffuseType>(getFDiffuse())->setValue( value );
-}
-
-
-
-void Light::eraseDiffuse()
-{
-	getFieldRW<FDiffuseType>(getFDiffuse())->eraseValue();
-}
-
-
-const bool Light::hasDiffuse() const
-{
-	return getFieldRO<FDiffuseType>(getFDiffuse())->hasValue();
+	return getFieldRO<FOnType>(getFOn())->hasValue();
 }
 
 
@@ -221,14 +136,50 @@ const bool Light::hasAmbient() const
 
 
 
-// Field name accessor(s)
-const std::string Light::getFOn( void )
+// Diffuse
+const bool Light::getDiffuse( DiffuseValueType& value ) const
 {
-	return "f_on";
+	return getFieldRO<FDiffuseType>(getFDiffuse())->getValue( value );
 }
 
 
 
+void Light::setDiffuse( const DiffuseValueType& value )
+{
+	getFieldRW<FDiffuseType>(getFDiffuse())->setValue( value );
+}
+
+
+
+void Light::eraseDiffuse()
+{
+	getFieldRW<FDiffuseType>(getFDiffuse())->eraseValue();
+}
+
+
+const bool Light::hasDiffuse() const
+{
+	return getFieldRO<FDiffuseType>(getFDiffuse())->hasValue();
+}
+
+
+
+// CastShadow
+const Light::CastShadowValueType Light::getCastShadow() const
+{
+	return getFieldRO<FCastShadowType>(getFCastShadow())->getValue();
+}
+
+
+
+void Light::setCastShadow( const CastShadowValueType value )
+{
+	getFieldRW<FCastShadowType>(getFCastShadow())->setValue( value );
+}
+
+
+
+// Field name accessor(s)
 const std::string Light::getFSpecular( void )
 {
 	return "f_specular";
@@ -236,9 +187,16 @@ const std::string Light::getFSpecular( void )
 
 
 
-const std::string Light::getFCastShadow( void )
+const std::string Light::getFOn( void )
 {
-	return "f_castShadow";
+	return "f_on";
+}
+
+
+
+const std::string Light::getFAmbient( void )
+{
+	return "f_ambient";
 }
 
 
@@ -250,9 +208,9 @@ const std::string Light::getFDiffuse( void )
 
 
 
-const std::string Light::getFAmbient( void )
+const std::string Light::getFCastShadow( void )
 {
-	return "f_ambient";
+	return "f_castShadow";
 }
 
 
@@ -322,14 +280,6 @@ void Light::eraseColor( const ColorParameterType param )
 		assert( false );
 	}
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Light );
-
-
-
-const vgd::basic::RegisterNode<Light> Light::m_registrationInstance;
-
-
-
 } // namespace node
 
 } // namespace vgd

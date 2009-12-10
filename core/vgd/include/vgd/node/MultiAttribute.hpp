@@ -6,8 +6,7 @@
 #ifndef _VGD_NODE_MULTIATTRIBUTE_HPP
 #define _VGD_NODE_MULTIATTRIBUTE_HPP
 
-#include "vgd/vgd.hpp"
-
+#include "vgd/basic/toString.hpp"
 #include "vgd/field/Integer.hpp"
 #include "vgd/node/Attribute.hpp"
 

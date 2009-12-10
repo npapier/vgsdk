@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,8 +12,8 @@
 #include <vge/rc/Manager.hpp>
 #include <vge/rc/Root.hpp>
 #include <vge/service/Painter.hpp>
-
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/rc/Texture2D.hpp"
 
 
 
@@ -114,8 +114,6 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
 		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
-
-		texture2D->setFunction( Texture2D::FUN_REPLACE );
 	}
 	else
 	{
@@ -155,13 +153,12 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), true );
 
-	pGLEngine->begin2DRendering();
+	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();	
+	const vgm::Rectangle2i viewport( 0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1] );
+	pGLEngine->begin2DRendering( &viewport );
 
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-
-	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();
-	glViewport( 0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1] );
 
 	// Makes a backup of GLSL activation state
 	using vgeGL::engine::Engine;
@@ -179,10 +176,15 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 			glPixelTransferf( GL_ALPHA_SCALE, alphaScale );
 		}
 
-		texture2D->setIImage( layerPlan->getIImage() );
+		texture2D->setImage( layerPlan->getIImage() );
 	}
 
 	pGLEngine->evaluate( paintService, texture2D.get(), true );
+
+	// Gets the resource manager
+	vge::rc::Manager& manager = pGLEngine->getGLManager();
+	vgeGL::rc::Texture2D * gloTex2D = manager.get< vgeGL::rc::Texture2D >( texture2D.get() );
+	gloTex2D->env( GL_TEXTURE_ENV_MODE, GL_REPLACE );
 
 	// draw proxy geometry
 	glEnable( GL_ALPHA_TEST );

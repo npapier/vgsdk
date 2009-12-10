@@ -47,6 +47,10 @@ namespace engine
 
 
 /**
+ * @brief GL rendering state
+ *
+ * This class is a specialized container for GL rendering state used by vgeGL to take care of the rendering state given by the scene graph. 
+ *
  * @todo Moves this class in its own file
  */
 struct VGEGL_API GLState
@@ -454,14 +458,21 @@ public:
 	 * 
 	 * @return the number of bitplanes in the depth buffer
 	 */
-	const int getGLDepthBits() const;
+	static const int getGLDepthBits()/* const */;
+
+	/**
+	 * @brief Returns the depth texture format computed from the given number of depth bitplanes.
+	 * 
+	 * @return the desired depth texture format
+	 */
+	static const GLenum convertDepthTextureFormat( const int depthBits ) /* const */;
 
 	/**
 	 * @brief Returns the depth texture format computed from the number of bitplanes in the depth buffer.
 	 * 
 	 * @return the desired depth texture format
 	 */
-	const GLenum getGLDepthTextureFormatFromDepthBits() const;
+	static const GLenum getGLDepthTextureFormatFromDepthBits() /*const*/;
 
 	/**
 	 * @brief Returns an image containing the framebuffer color values.
@@ -529,6 +540,25 @@ public:
 
 	// setRenderTarget/getRenderTarget
 	// beginRT/endRT
+
+	//@}
+
+
+
+	/**
+	 * @name Helpers
+	 */
+	//@{
+
+	/**
+	 * @brief Pushes all stacks.
+	 */
+	void push();
+
+	/**
+	 * @brief Pops all stacks.
+	 */
+	void pop();
 
 	//@}
 

@@ -31,7 +31,7 @@ namespace vgeGL
 
 namespace vgeGL
 {
-	
+
 namespace handler
 {
 
@@ -52,12 +52,12 @@ struct VGEGL_API Camera :
 	const vge::service::List	getServices	() const;
 	const TargetVector			getTargets()	const;
 
-	void	apply				( vge::engine::Engine*, vgd::node::Node* );
+	void	apply			( vge::engine::Engine*, vgd::node::Node* );
 	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
 	
 	void	setToDefaults	();
 
-	void	paint				( vgeGL::engine::Engine*, vgd::node::Camera* );
+	void	paint			( vgeGL::engine::Engine*, vgd::node::Camera* );
 };
 
 

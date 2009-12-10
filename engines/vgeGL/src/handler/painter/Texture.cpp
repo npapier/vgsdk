@@ -9,7 +9,7 @@
 #include <vgd/basic/Image.hpp>
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Texture.hpp>
-#include <vgDebug/Global.hpp>
+#include <vgDebug/convenience.hpp>
 #include <vgm/VectorOperations.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
@@ -35,18 +35,18 @@ void Texture::setToDefaults()
 void Texture::paint(vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
 {
 	paintParams(	pEngine, pNode, pResource );
-	paintEnv(		pEngine, pNode, pResource );
+	//paintEnv(		pEngine, pNode, pResource );
 }
 
 
 
-void Texture::paintParams(vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
+void Texture::paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
 {
 	using vgd::node::Texture;
-	
+
 	// WRAP
 	vgd::field::EditorRO< Texture::FWrapType > wrap = pNode->getFieldRO<Texture::FWrapType>(pNode->getFWrap());
-	
+
 	Texture::FWrapType::const_iterator wrapIter;
 	Texture::FWrapType::const_iterator wrapEnd;
 	
@@ -59,12 +59,12 @@ void Texture::paintParams(vgeGL::engine::Engine *pEngine, vgd::node::Texture *pN
 			)
 	{
 		pResource->parameter(
-				m_wrapParameter[ wrapIter->first ],
-				m_wrapValue[ wrapIter->second ]
+				m_wrapParameter[ wrapIter->first.value() - Texture::WRAP_S ],
+				m_wrapValue[ wrapIter->second.value() - Texture::REPEAT ]
 				);
 	}
 	wrap.release();
-	
+
 	// FILTER
 	vgd::field::EditorRO< Texture::FFilterType > filter = pNode->getFieldRO<Texture::FFilterType>(pNode->getFFilter());
 	
@@ -80,36 +80,35 @@ void Texture::paintParams(vgeGL::engine::Engine *pEngine, vgd::node::Texture *pN
 			)
 	{
 		pResource->parameter(
-				m_filterParameter[ filterIter->first ],
-				m_filterValue[ filterIter->second ]
+				m_filterParameter[ filterIter->first.value() - Texture::MIN_FILTER ],
+				m_filterValue[ filterIter->second.value() - Texture::NEAREST ]
 				);
-	}	
+	}
 	filter.release();
 
 	// MIPMAP
-	bool bMipmap;
-	bool bDefined = pNode->getMipmap( bMipmap );
-
-	if ( bDefined )
+	if ( pNode->hasMipmap() )
 	{
+		bool bMipmap;
+		pNode->getMipmap( bMipmap );
+
 		if ( isGL_SGIS_generate_mipmap() )
 		{
 			#ifdef _DEBUG
-			vgDebug::get().logDebug("vgeGL.Texture: GL_SGIS_generate_mipmap detected and used.");
+			vgLogDebug("vgeGL.Texture: GL_SGIS_generate_mipmap detected and used.");
 			#endif
 
-			pResource->parameter(
-				GL_GENERATE_MIPMAP, bMipmap );
+			pResource->parameter( GL_GENERATE_MIPMAP, bMipmap );
 		}
 		else
 		{
 			#ifdef _DEBUG
-			vgDebug::get().logDebug("vgeGL.Texture: GL_SGIS_generate_mipmap not detected, try software mipmap later.");
+			vgLogDebug("vgeGL.Texture: GL_SGIS_generate_mipmap not detected, try software mipmap later.");
 			#endif
 		}
 	}
 
-	// BORDER_COLOR
+/*	// BORDER_COLOR
 	vgm::Vec4f v4;
 	bDefined = pNode->getBorderColor( v4 );
 
@@ -117,12 +116,12 @@ void Texture::paintParams(vgeGL::engine::Engine *pEngine, vgd::node::Texture *pN
 	{
 		pResource->parameter(
 			GL_TEXTURE_BORDER_COLOR, v4.getValue() );
-	}
+	}*/
 }
 
 
 
-void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
+/*void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
 {
 	using vgd::node::Texture;
 
@@ -135,9 +134,10 @@ void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNod
 		pResource->env( 
 			GL_TEXTURE_ENV_COLOR,
 			v4.getValue() );
-	}
+	}*/
 
 	// FUNCTION
+/*// @todo
 	vgd::field::EditorRO< Texture::FFunctionType > function = pNode->getFieldRO<Texture::FFunctionType>(pNode->getFFunction());
 	
 	Texture::FFunctionType::const_iterator functionIter;
@@ -153,12 +153,12 @@ void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNod
 	{
 		pResource->env(
 				GL_TEXTURE_ENV_MODE,
-				m_functionValue[ functionIter->second ]
+				m_functionValue[ functionIter->second ] - Texture::FUN_REPLACE
 				);
 	}	
-	function.release();
-	
-	// COMBINE
+	function.release();*/
+
+	/*// COMBINE
 	vgd::field::EditorRO< Texture::FCombineType > combine = pNode->getFieldRO<Texture::FCombineType>(pNode->getFCombine());
 	
 	Texture::FCombineType::const_iterator combineIter;
@@ -241,33 +241,36 @@ void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNod
 				);
 	}
 	scale.release();
-}
+}*/
 
 
 
-void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture * pNode,
-							::glo::Texture * pTexture )
+void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * node,
+							::glo::Texture * texture )
 {
-	if ( pGLEngine->isTextureMappingEnabled() == false )
+	if ( engine->isTextureMappingEnabled() == false )
 	{
 		// Texture mapping is disabled, so do nothing
 		// Validates node
-		vgd::field::DirtyFlag* pDFNode = pNode->getDirtyFlag( pNode->getDFNode() );
+		vgd::field::DirtyFlag* pDFNode = node->getDirtyFlag( node->getDFNode() );
 		pDFNode->validate();
 		return;
 	}
 
 	TexInfo	texInfo;
 
-	State	state = preSynchronize( pGLEngine, pNode, pTexture, texInfo );
+	State state = preSynchronize( engine, node, texture, texInfo );
 
-	if ( state  == NOIIMAGE_VALIDATED )
+	const uint texUnit = node->getMultiAttributeIndex();
+
+	if ( state == NOIIMAGE_DIRTY )
 	{
 		// Nothing to do
-
-		// // Disables texturing
-		// pTexture->disable();
-
+		// Validates dirty flags (see the end of this method)
+	}
+	else if ( state == NOIIMAGE_VALIDATED )
+	{
+		// Nothing to do
 		return;
 	}
 	else if ( state == IIMAGE_VALIDATED )
@@ -275,53 +278,83 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 		// No synchronization, just uses the texture
 
 		// Activates the desired texture unit
-		pGLEngine->activeTexture( pNode );
+		engine->activeTexture( node );
 
 		//Binds texture to the texture unit
-		pTexture->bind();
+		texture->bind();
 
-		// Texturing is enabled lazily in shape handlers (pTexture->enable()).
+		// Texturing is enabled lazily in shape handlers (texture->enable()).
 
-		// Updates engine state about texture
-		typedef vgeGL::engine::GLSLState::TexUnitState TexUnitState;
+// @todo share with else
+		// Updates engine state
+		using vgeGL::engine::GLSLState;
+		typedef GLSLState::TexUnitState TexUnitState;
 
-		vgd::Shp< TexUnitState > texUnitState( new TexUnitState(pNode, pTexture) );
-		pGLEngine->getGLSLState().setTexture( pNode->getMultiAttributeIndex(), texUnitState );
+		GLSLState& glslState = engine->getGLSLState();
+
+		vgd::Shp< TexUnitState > texUnitState( glslState.getTexture( texUnit ) );
+		if ( texUnitState )
+		{
+			// Updates the existing texture unit state
+			texUnitState->setTextureNode( node );
+		}
+		else
+		{
+			// Creates the new texture unit state
+			texUnitState.reset( new GLSLState::TexUnitState(node, texture) );
+			glslState.setTexture( texUnit, texUnitState );
+		}
+//
 
 		// Updates texture parameters ?
-		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );
+		synchronizeParametersAndEnv( engine, node, texture );
 	}
 	else
 	{
-		assert( state == NEW_IIMAGE );
+		assert( state == IIMAGE_DIRTY );
 
-		computeTexInfo( pGLEngine, pNode, pTexture, texInfo );
+		computeTexInfo( engine, node, texture, texInfo );
 
 		// Allocates texture object
-		const bool newTexture = pTexture->isEmpty();
+		const bool newTexture = texture->isEmpty();
 
 		if ( newTexture )
 		{
 			// Creates texture object
-			pTexture->generate();
+			texture->generate();
 		}
 		// else nothing to do texture already created
 
 		// Activates the desired texture unit
-		pGLEngine->activeTexture( pNode );
+		engine->activeTexture( node );
 
 		// Binds the texture object
-		pTexture->bind();
+		texture->bind();
 
-		// Texturing is enabled lazily in shape handlers ( pTexture->enable();)
+		// Texturing is enabled lazily in shape handlers ( texture->enable();)
 
-		// Updates engine state about texture
-		typedef vgeGL::engine::GLSLState::TexUnitState TexUnitState;
+// @todo share with if (IIMAGE_VALIDATED)
+		// Updates engine state
+		using vgeGL::engine::GLSLState;
+		typedef GLSLState::TexUnitState TexUnitState;
 
-		vgd::Shp< TexUnitState > texUnitState( new TexUnitState(pNode, pTexture) );
-		pGLEngine->getGLSLState().setTexture( pNode->getMultiAttributeIndex(), texUnitState );
+		GLSLState& glslState = engine->getGLSLState();
 
-		const bool isCompatible = isTextureCompatible( pGLEngine, pNode, pTexture, texInfo );
+		vgd::Shp< TexUnitState > texUnitState( glslState.getTexture( texUnit ) );
+		if ( texUnitState )
+		{
+			// Updates the existing texture unit state
+			texUnitState->setTextureNode( node );
+		}
+		else
+		{
+			// Creates the new texture unit state
+			texUnitState.reset( new GLSLState::TexUnitState(node, texture) );
+			glslState.setTexture( texUnit, texUnitState );
+		}
+//
+
+		const bool isCompatible = isTextureCompatible( engine, node, texture, texInfo );
 
 		// Creates n-dimensionnal texture
 		if ( newTexture || !isCompatible )
@@ -331,31 +364,31 @@ void Texture::synchronize(	vgeGL::engine::Engine * pGLEngine, vgd::node::Texture
 
 			// Specifies a texture image
 			// @todo Support of level-of-detail number
-			pTexture->texImage(	0,	 // level
+			texture->texImage(	0,	 // level
 								texInfo.internalFormat,
-								texInfo.texSize[0] + texInfo.borderSize,
-								texInfo.texSize[1] + texInfo.borderSize,
-								texInfo.texSize[2] + texInfo.borderSize,
-								texInfo.borderSize,
+								texInfo.texSize[0] /*+ texInfo.borderSize*/,
+								texInfo.texSize[1] /*+ texInfo.borderSize*/,
+								texInfo.texSize[2] /*+ texInfo.borderSize*/,
+								0 /*texInfo.borderSize*/,
 								texInfo.format,
-								texInfo.type	);
+								texInfo.type );
 		}
 		// else nothing to do
 
 		// Updates texture parameters ?
-		synchronizeParametersAndEnv( pGLEngine, pNode, pTexture );
+		synchronizeParametersAndEnv( engine, node, texture );
 
 		// Updates texture image
-		texSubImage( pGLEngine, pNode, pTexture, texInfo );
+		texSubImage( engine, node, texture, texInfo );
 	}
 
 	// Validates node
-	vgd::field::DirtyFlag* pDFNode = pNode->getDirtyFlag( pNode->getDFNode() );
+	vgd::field::DirtyFlag* pDFNode = node->getDirtyFlag( node->getDFNode() );
 	pDFNode->validate();
 
-	assert( pNode->getDirtyFlag(pNode->getDFIImages())->isValid() );
-	assert( pNode->getDirtyFlag(pNode->getDFParameters())->isValid() );
-	assert( pNode->getDirtyFlag(pNode->getDFEnvironmentParameters())->isValid() );
+	//assert( node->getDirtyFlag(node->getDFIImages())->isValid() );
+	//assert( node->getDirtyFlag(node->getDFParameters())->isValid() );
+	//assert( node->getDirtyFlag(node->getDFEnvironmentParameters())->isValid() );
 	assert( pDFNode->isValid() );
 }
 
@@ -365,7 +398,12 @@ void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture 
 							glo::Texture *pTexture,
 							TexInfo& texInfo )
 {
-	using vgd::node::Texture;
+	const void*	pixels = texInfo.iimage->pixels();
+	if ( pixels == 0 )
+	{
+		// IImage contains no data, then do nothing
+		return;
+	}
 
 	// Tests if rescaling incoming image must be done and updates texture
 	if ( texInfo.resizeForTex )
@@ -391,7 +429,7 @@ void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture 
 		//@todo use vgITK::Image to really support any image type
 
 		const void * newPixels = newImage.pixels();
-		
+
 		pTexture->texSubImage(	0,			// level
 								0, 0, 0,	// offset
 								texInfo.texSize[0], texInfo.texSize[1], texInfo.texSize[2],
@@ -401,8 +439,6 @@ void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture 
 	else
 	{
 		// DON'T RESCALE IMAGE
-		const void*	pixels = texInfo.iimage->pixels();
-		
 		pTexture->texSubImage(	0,				// level
 								0, 0, 0, 		// offset
 								texInfo.texSize[0], texInfo.texSize[1], texInfo.texSize[2],
@@ -410,8 +446,8 @@ void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture 
 								pixels );
 	}
 
-	vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
-	pDFIImages->validate();
+	/*vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
+	pDFIImages->validate();*/
 }
 
 
@@ -423,10 +459,16 @@ Texture::State Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::n
 	State state;
 
 	// Tests if 'iimage' field is valid
-	vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
+	//vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
+	vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFNode() ); // @todo DFIImages()
 
 	// Gets texture.iimage
-	const bool imageFieldDefined = 	pNode->getIImages( vgd::node::Texture::DEFAULT_IIMAGES, texInfo.iimage );
+	//const bool imageFieldDefined = 	pNode->getIImages( vgd::node::Texture::DEFAULT_IIMAGES, texInfo.iimage );
+	const bool imageFieldDefined = pNode->hasImage();
+	if ( imageFieldDefined )
+	{
+		pNode->getImage( texInfo.iimage );
+	}
 
 	const bool noImage =	!imageFieldDefined				||
 							( texInfo.iimage == 0 )			||
@@ -446,7 +488,14 @@ Texture::State Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::n
 	}
 	else
 	{
-		state = NEW_IIMAGE;
+		if ( noImage )
+		{
+			state = NOIIMAGE_DIRTY;
+		}
+		else
+		{
+			state = IIMAGE_DIRTY;
+		}
 	}
 	
 	return state;
@@ -476,11 +525,11 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 	// Alias on image
 	vgd::Shp< vgd::basic::IImage >& image = texInfo.iimage;
 
-	// Updates border property
+/*	// Updates border property
 	bool		borderValue		= false;
 	const bool	isBorderDefined	= pNode->getBorder( borderValue );
 
-	texInfo.borderSize = borderValue ? 1 : 0;
+	texInfo.borderSize = borderValue ? 1 : 0;*/
 
 	// Updates image properties
 	texInfo.imageSize		= image->getSize3i();
@@ -490,10 +539,8 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 	texInfo.texDimension = pNode->gethTextureDimension();
 	assert( texInfo.texDimension == 1 || texInfo.texDimension == 2 || texInfo.texDimension == 3 );
 
-	// @todo chooseInternalFormat( m_pIImage->format(), m_pIImage->type(), texture->getHints() ).
-	texInfo.internalFormat	= static_cast< GLint >( image->components() );
-	texInfo.format			= convertMyFormat2GL( image->format() );
-	texInfo.type			= convertMyType2GL	( image->type()	);
+	boost::tie(texInfo.internalFormat, texInfo.format ) = chooseFormats( image, pNode );
+	texInfo.type										= convertMyType2GL	( image->type()	);
 
 	// Takes care of POT/NPOT image (by using GL_ARB_texture_non_power_of_two or by resizing incoming image)
 	// @todo Support of GL_ARB_texture_rectangle
@@ -590,7 +637,7 @@ void Texture::clampTexImageSize( vgeGL::engine::Engine *pGLEngine, ::glo::Textur
 
 		default:
 			texInfo.texSize.null();
-			vgDebug::get().logDebug("Texture: Unsupported texture dimension (!= 1, 2, 3, 6)");
+			vgLogDebug("Texture: Unsupported texture dimension (!= 1, 2, 3, 6)");
 			assert( false && "Unsupported texture dimension (!= 1, 2, 3, 6)" );
 	}
 }
@@ -604,7 +651,7 @@ const bool Texture::isTextureCompatible(	vgeGL::engine::Engine *pGLEngine, vgd::
 	// @todo checks format, type and internalFormat
 
 	const bool isCompatible = isTexSizeCompatible;
-	
+
 	return isCompatible;
 }
 
@@ -614,10 +661,10 @@ const bool Texture::isTextureSizeCompatible( ::glo::Texture * pTexture, const Te
 {
 	// Retrieves texture size
 	vgm::Vec3i texSize;
-	const GLint texBorder = pTexture->getSize( texSize[0], texSize[1], texSize[2] );
+	/*const GLint texBorder = */pTexture->getSize( texSize[0], texSize[1], texSize[2] );
 
-	bool isCompatible =	( texInfo.texSize == texSize ) &&
-						( texInfo.borderSize == texBorder );
+	bool isCompatible =	( texInfo.texSize == texSize ) /*&&
+						( texInfo.borderSize == texBorder )*/;
 
 	return isCompatible;
 }
@@ -628,7 +675,8 @@ void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd
 											::glo::Texture *pTexture )
 {
 	// TEXTURE PARAMETERS
-	vgd::field::DirtyFlag* pDFParameters = pNode->getDirtyFlag( pNode->getDFParameters() );	
+	//vgd::field::DirtyFlag* pDFParameters = pNode->getDirtyFlag( pNode->getDFParameters() );	 // @todo DFParameters
+	vgd::field::DirtyFlag* pDFParameters = pNode->getDirtyFlag( pNode->getDFNode() );
 
 	if ( pDFParameters->isDirty() )
 	{
@@ -639,12 +687,13 @@ void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd
 		paintParams( pGLEngine, pNode, pTexture );
 
 		// Validates DF
-		pDFParameters->validate();
+		//pDFParameters->validate();
 	}
 	// else nothing to do
 
-	// TEXTURE ENVIRONMENT PARAMETERS
-	vgd::field::DirtyFlag* pDFEnvironmentParameters = pNode->getDirtyFlag( pNode->getDFEnvironmentParameters() );
+	/*// TEXTURE ENVIRONMENT PARAMETERS
+	//vgd::field::DirtyFlag* pDFEnvironmentParameters = pNode->getDirtyFlag( pNode->getDFEnvironmentParameters() ); // @todo DFEnvironmentParameters
+	vgd::field::DirtyFlag* pDFEnvironmentParameters = pNode->getDirtyFlag( pNode->getDFNode() );
 
 	if ( pDFEnvironmentParameters->isDirty() )
 	{
@@ -652,12 +701,12 @@ void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd
 		pGLEngine->activeTexture( pNode );
 
 		// Apply texture parameters
-		paintEnv( pGLEngine, pNode, pTexture );
+		//paintEnv( pGLEngine, pNode, pTexture );
 
 		// Validates DF
 		pDFEnvironmentParameters->validate();
 	}
-	// else nothing to do
+	// else nothing to do*/
 
 /*	// TEXTURE SCALE (see Scale factors in ::glo::Texture)
 	//@todo scale factors could be better done in VertexShape ?
@@ -677,6 +726,30 @@ void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd
 		glMatrixMode( GL_TEXTURE );
 		glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
 	}*/
+}
+
+
+
+const boost::tuple< GLint, GLenum > Texture::chooseFormats( vgd::Shp< vgd::basic::IImage > iimage, vgd::node::Texture * texture )
+{
+	const GLint		components	= iimage->components();
+	const GLenum	format		= convertMyFormat2GL( iimage->format() );
+
+	// Adapts internal/external format of texture depending of its usage (see Texture.usage)
+	vgd::node::Texture::UsageValueType usage = texture->getUsage();
+	if ( usage.value() == vgd::node::Texture::SHADOW )
+	{
+		// Texture is used for shadow
+		assert( components == 1 && "Texture.usage == SHADOW, but Texture.image.components != 1" );
+
+// @todo not generic
+		const GLenum internalFormat = vgeGL::engine::Engine::getGLDepthTextureFormatFromDepthBits();
+		return boost::make_tuple( internalFormat, GL_DEPTH_COMPONENT );
+	}
+	else
+	{
+		return boost::make_tuple( components, format );
+	}
 }
 
 
@@ -799,7 +872,7 @@ GLint Texture::m_filterValue[] = {
 
 	GL_NEAREST,
 	GL_LINEAR,
-	
+
 	GL_NEAREST_MIPMAP_NEAREST,
 	GL_LINEAR_MIPMAP_NEAREST,
 	GL_NEAREST_MIPMAP_LINEAR,
@@ -809,7 +882,7 @@ GLint Texture::m_filterValue[] = {
 
 
 
-GLint Texture::m_functionValue[] = {
+/*GLint Texture::m_functionValue[] = {
 
 		GL_REPLACE,
 		GL_MODULATE, 
@@ -818,11 +891,11 @@ GLint Texture::m_functionValue[] = {
 		GL_ADD,
 		GL_COMBINE
 
-};
+};*/
 
 
 
-GLenum Texture::m_combineParameter[] = {
+/*GLenum Texture::m_combineParameter[] = {
 	
 	GL_COMBINE_RGB,
 	GL_COMBINE_ALPHA
@@ -934,7 +1007,7 @@ GLenum Texture::m_scaleParameter[] = {
 	GL_ALPHA_SCALE
 
 };
-
+*/
 
 
 /* 	// Rescale image if necessary (boolean value already set if image is too big).

@@ -102,6 +102,7 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	void	paint(	vgeGL::engine::Engine*, vgd::node::VertexShape*, const vgd::node::Primitive&, 
 					const vgeGL::engine::VertexArrayMethod& );
 
+	void configureTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim );
 
 
 	// VERTEX ARRAY IN DISPLAY LIST

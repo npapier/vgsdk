@@ -91,7 +91,8 @@ void SceneManager::computeBoundingBox( vge::visitor::NodeCollectorExtended<> * p
 	if ( pCollectorExt == 0 )
 	{
 		updateNodeCollector();
-		m_engine->resetEval();
+		m_engine->resetMatrices(); //  @todo should call vge::engine::Engine::resetMatrices(); but virtual method
+		//m_engine->resetEval();
 		computeBB.apply( m_engine.get(), getNodeCollector().getTraverseElements() );
 	}
 	else

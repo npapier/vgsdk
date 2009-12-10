@@ -179,12 +179,12 @@ void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers
 		//pGLEngine->getTextureMatrix().pushAll();
 		// FIXME i do this because texture with options ONCE change the texture matrix and never restore it !!!
 		pGLEngine->getTextureMatrix().push(0);
-		pGLEngine->getTextureMatrix().push(1);		
+		pGLEngine->getTextureMatrix().push(1);
 		pGLEngine->getTextureMatrix().push(2);
 		
 		vgd::Shp< vgd::basic::IImage > iimage;
-		bool imageInTex2D = pTex2D->getIImage( iimage );
-		bool imageInTex1D = pTex1D->getIImage( iimage ); 
+		bool imageInTex2D = pTex2D->getImage( iimage );
+		bool imageInTex1D = pTex1D->getImage( iimage ); 
 
 		// painter
 		vgd::Shp< vge::service::Painter >	painter(vge::service::Painter::create());
@@ -268,7 +268,7 @@ const bool Layers::configure(	vgd::Shp< vgd::basic::IImage > pIImage,
 				if ( dirtyFlagImage->isDirty() )
 				{
 					pTex2D->setMultiAttributeIndex(0);
-					pTex2D->setIImage( pIImage );
+					pTex2D->setImage( pIImage );
 					
 					assert( pIImage->paletteSize() > 0 );
 					ImageInfo *pImagePalette = new ImageInfo(	pIImage->paletteSize(), 1, 1,
@@ -276,7 +276,7 @@ const bool Layers::configure(	vgd::Shp< vgd::basic::IImage > pIImage,
 																pIImage->palettePixels() );
 
 					pTex1D->setMultiAttributeIndex(1);
-					pTex1D->setIImage( vgd::Shp< ImageInfo >(pImagePalette) );
+					pTex1D->setImage( vgd::Shp< ImageInfo >(pImagePalette) );
 					
 					dirtyFlagImage->validate();
 				}
@@ -287,7 +287,7 @@ const bool Layers::configure(	vgd::Shp< vgd::basic::IImage > pIImage,
 				if ( dirtyFlagImage->isDirty() )
 				{
 					pTex2D->setMultiAttributeIndex(0);
-					pTex2D->setIImage( pIImage );
+					pTex2D->setImage( pIImage );
 					dirtyFlagImage->validate();
 				}
 				//else nothing to do
@@ -306,7 +306,7 @@ const bool Layers::configure(	vgd::Shp< vgd::basic::IImage > pIImage,
 			{
 				if ( dirtyFlagImage->isDirty() )
 				{
-					pTex2D->setIImage( pIImage );
+					pTex2D->setImage( pIImage );
 					dirtyFlagImage->validate();
 				}
 				//else nothing to do
@@ -630,7 +630,7 @@ glo::GLSLProgram *Layers::m_pScissorPaletteReplaceShader	= 0;
 //			case Layers::MODULATE:
 //				if ( dirtyFlagImage->isDirty() || bScissorHasChanged )								FIXME: todo
 //				{
-//					pTex2D->setIImage( pIImage );
+//					pTex2D->setImage( pIImage );
 //					dirtyFlagImage->validate();
 //				}
 //				//else nothing to do

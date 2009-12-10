@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,13 +17,42 @@ namespace node
 
 
 
-META_NODE_CPP( Texture1D );
+vgd::Shp< Texture1D > Texture1D::create( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< Texture1D > node( new Texture1D(nodeName) );
+
+	/* Adds a vertex (i.e. a node) to boost::graph */
+	graph().addNode( node );
+
+	/* Sets fields to their default values */
+	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< Texture1D > Texture1D::createWhole( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< Texture1D > node = Texture1D::create(nodeName);
+
+	/* Sets optional fields to their default values */
+	node->setOptionalsToDefaults();
+
+	return node;
+}
 
 
 
 Texture1D::Texture1D( const std::string nodeName ) :
 	vgd::node::Texture( nodeName )
 {
+	// Adds field(s)
+
+	// Sets link(s)
+	link( getDFNode() );
 }
 
 
@@ -42,34 +71,20 @@ void Texture1D::setOptionalsToDefaults()
 
 
 
-bool Texture1D::getIImage( vgd::Shp< vgd::basic::IImage >& value ) const
-{
-	return ( getIImages( DEFAULT_IIMAGES, value ) );
-}
-
-
-
-void Texture1D::setIImage( vgd::Shp< vgd::basic::IImage > value )
-{
-	setIImages( DEFAULT_IIMAGES, value );
-}
-
-
-
-void Texture1D::eraseIImage()
-{
-	eraseIImages( DEFAULT_IIMAGES );
-}
-
-
-
+// Field name accessor(s)
 const uint32 Texture1D::gethTextureDimension() const
 {
-	return ( 1 );
+	return 1;
 }
+IMPLEMENT_INDEXABLE_CLASS_CPP( , Texture1D );
+
+
+
+const vgd::basic::RegisterNode<Texture1D> Texture1D::m_registrationInstance;
 
 
 
 } // namespace node
 
 } // namespace vgd
+

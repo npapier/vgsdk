@@ -46,6 +46,15 @@ struct Rectangle : public vgm::Vector< T, 4 >
 
 	/**
 	 * @brief Constructor
+	 *
+	 * @post getPosition() == (value, value) and getSize() == (value, value)
+	 */
+	Rectangle( const T value )
+	: Vector( value, value, value, value )
+	{}
+
+	/**
+	 * @brief Constructor
 	 */
 	Rectangle( const T x, const T y, const T width, const T height )
 	: vgm::Vector<T,4>( x, y, width, height )
@@ -135,8 +144,41 @@ struct Rectangle : public vgm::Vector< T, 4 >
 
 	const vgm::Vector< T, 2 > getSize() const { return vgm::Vector< T, 2 >( width(), height() ); }
 	// @todo Rectangle( position, size )
+
+	void setPosition( const vgm::Vector< T, 2 > position ) { m_tCoord[0] = position[0]; m_tCoord[1] = position[1]; }
+	void setSize( const vgm::Vector< T, 2 > size ) { m_tCoord[2] = size[0]; m_tCoord[3] = size[1]; }
 	//@}
 
+
+	/**
+	 * @name Comparison methods
+	 */
+	//@{
+
+	/**
+	 * @brief Equality comparison.
+	 */
+	bool operator ==( const Rectangle& other ) const
+	{
+		return Vector<T, 4>::operator ==( other );
+	}
+
+	/**
+	 * @brief Difference comparison.
+	 */
+	bool operator !=( const Rectangle& other ) const
+	{
+		return Vector<T, 4>::operator !=( other );
+	}
+
+	/**
+	 * @brief Equality comparison within given tolerance, for each component.
+	 */
+	bool equals( const Rectangle& other, const float tolerance ) const
+	{ 
+		return Vector<T, 4>::equals( other, tolerance );
+	}
+	//@}
 
 
 	/**

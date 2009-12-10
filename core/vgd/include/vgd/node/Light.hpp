@@ -26,41 +26,64 @@ namespace node
  * Light is the abstract base class for all light nodes. A light node defines an illumination source that may affect subsequent shapes in the scene graph, depending on the current lighting style. Light sources are affected by the current transformation. A light node under a separator does not affect any objects outside that separator. @remarks The maximum number of lights is equal at least to 8 in OpenGL and DirectX. Feel free to use up to 8 lights. @todo Removes this limits @todo Support for attenuation @todo High-level method for changing intensity of color. 
  *
  * New fields defined by this node :
- *	- OFBool \c [on] = false\n
- *		Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.
- *	- OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)\n
- *		Specular intensity of the light.
- *	- OFBool \c [castShadow] = false\n
- *		Indicating that this light casts a shadow.
- *	- OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)\n
- *		Diffuse intensity of the light.
- *	- OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)\n
- *		Ambient intensity of the light.
- *
+ * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
+ *   Specular intensity of the light.<br>
+ *<br>
+ * - OFBool \c [on] = false<br>
+ *   Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.<br>
+ *<br>
+ * - OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
+ *   Ambient intensity of the light.<br>
+ *<br>
+ * - OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
+ *   Diffuse intensity of the light.<br>
+ *<br>
+ * - SFBool \c castShadow = false<br>
+ *   Indicating that this light casts a shadow.<br>
+ *<br>
  *
  * @ingroup g_abstractNodes
  */
 struct VGD_API Light : public vgd::node::MultiAttribute
 {
+
+
+
 	/**
-	 * @name Factories
+	 * @name Accessors to field specular
 	 */
 	//@{
 
 	/**
-	 * @brief Node factory
-	 *
-	 * Creates a node with all fields sets to defaults values
+	 * @brief Type definition of the value contained by field named \c specular.
 	 */
-	static vgd::Shp< Light > create( const std::string nodeName = "NoName" );
+	typedef vgm::Vec4f SpecularValueType;
 
 	/**
-	 *@brief Node factory
-	 *
-	 * Creates a node with all fields sets to defaults values (optionals fields too).
+	 * @brief Type definition of the field named \c specular
 	 */
-	static vgd::Shp< Light > createWhole( const std::string nodeName = "DefaultWhole" );
+	typedef vgd::field::TOptionalField< SpecularValueType > FSpecularType;
 
+
+	/**
+	 * @brief Gets the value of field named \c specular.
+	 */
+	const bool getSpecular( SpecularValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c specular.
+ 	 */
+	void setSpecular( const SpecularValueType& value );
+
+	/**
+	 * @brief Erases the field named \c specular.
+	 */
+	void eraseSpecular();
+
+	/**
+	 * @brief Tests if the value of field named \c specular has been initialized.
+	 */
+	const bool hasSpecular() const;
 	//@}
 
 
@@ -105,79 +128,40 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field specular
+	 * @name Accessors to field ambient
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c specular.
+	 * @brief Type definition of the value contained by field named \c ambient.
 	 */
-	typedef vgm::Vec4f SpecularValueType;
+	typedef vgm::Vec4f AmbientValueType;
 
 	/**
-	 * @brief Type definition of the field named \c specular
+	 * @brief Type definition of the field named \c ambient
 	 */
-	typedef vgd::field::TOptionalField< SpecularValueType > FSpecularType;
+	typedef vgd::field::TOptionalField< AmbientValueType > FAmbientType;
 
 
 	/**
-	 * @brief Gets the value of field named \c specular.
+	 * @brief Gets the value of field named \c ambient.
 	 */
-	const bool getSpecular( SpecularValueType& value ) const;
+	const bool getAmbient( AmbientValueType& value ) const;
 
 	/**
-	 * @brief Sets the value of field named \c specular.
+	 * @brief Sets the value of field named \c ambient.
  	 */
-	void setSpecular( const SpecularValueType& value );
+	void setAmbient( const AmbientValueType& value );
 
 	/**
-	 * @brief Erases the field named \c specular.
+	 * @brief Erases the field named \c ambient.
 	 */
-	void eraseSpecular();
+	void eraseAmbient();
 
 	/**
-	 * @brief Tests if the value of field named \c specular has been initialized.
+	 * @brief Tests if the value of field named \c ambient has been initialized.
 	 */
-	const bool hasSpecular() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field castShadow
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c castShadow.
-	 */
-	typedef bool CastShadowValueType;
-
-	/**
-	 * @brief Type definition of the field named \c castShadow
-	 */
-	typedef vgd::field::TOptionalField< CastShadowValueType > FCastShadowType;
-
-
-	/**
-	 * @brief Gets the value of field named \c castShadow.
-	 */
-	const bool getCastShadow( CastShadowValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c castShadow.
- 	 */
-	void setCastShadow( const CastShadowValueType& value );
-
-	/**
-	 * @brief Erases the field named \c castShadow.
-	 */
-	void eraseCastShadow();
-
-	/**
-	 * @brief Tests if the value of field named \c castShadow has been initialized.
-	 */
-	const bool hasCastShadow() const;
+	const bool hasAmbient() const;
 	//@}
 
 
@@ -222,40 +206,31 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field ambient
+	 * @name Accessors to field castShadow
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c ambient.
+	 * @brief Type definition of the value contained by field named \c castShadow.
 	 */
-	typedef vgm::Vec4f AmbientValueType;
+	typedef bool CastShadowValueType;
 
 	/**
-	 * @brief Type definition of the field named \c ambient
+	 * @brief Type definition of the field named \c castShadow
 	 */
-	typedef vgd::field::TOptionalField< AmbientValueType > FAmbientType;
+	typedef vgd::field::TSingleField< CastShadowValueType > FCastShadowType;
 
 
 	/**
-	 * @brief Gets the value of field named \c ambient.
+	 * @brief Gets the value of field named \c castShadow.
 	 */
-	const bool getAmbient( AmbientValueType& value ) const;
+	const CastShadowValueType getCastShadow() const;
 
 	/**
-	 * @brief Sets the value of field named \c ambient.
- 	 */
-	void setAmbient( const AmbientValueType& value );
-
-	/**
-	 * @brief Erases the field named \c ambient.
+	 * @brief Sets the value of field named \c castShadow.
 	 */
-	void eraseAmbient();
+	void setCastShadow( const CastShadowValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c ambient has been initialized.
-	 */
-	const bool hasAmbient() const;
 	//@}
 
 
@@ -266,13 +241,6 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c on.
-	 *
-	 * @return the name of field \c on.
-	 */
-	static const std::string getFOn( void );
-
-	/**
 	 * @brief Returns the name of field \c specular.
 	 *
 	 * @return the name of field \c specular.
@@ -280,11 +248,18 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	static const std::string getFSpecular( void );
 
 	/**
-	 * @brief Returns the name of field \c castShadow.
+	 * @brief Returns the name of field \c on.
 	 *
-	 * @return the name of field \c castShadow.
+	 * @return the name of field \c on.
 	 */
-	static const std::string getFCastShadow( void );
+	static const std::string getFOn( void );
+
+	/**
+	 * @brief Returns the name of field \c ambient.
+	 *
+	 * @return the name of field \c ambient.
+	 */
+	static const std::string getFAmbient( void );
 
 	/**
 	 * @brief Returns the name of field \c diffuse.
@@ -294,11 +269,11 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	static const std::string getFDiffuse( void );
 
 	/**
-	 * @brief Returns the name of field \c ambient.
+	 * @brief Returns the name of field \c castShadow.
 	 *
-	 * @return the name of field \c ambient.
+	 * @return the name of field \c castShadow.
 	 */
-	static const std::string getFAmbient( void );
+	static const std::string getFCastShadow( void );
 
 	//@}
 	/**
@@ -363,10 +338,6 @@ protected:
 	 */
 	Light( const std::string nodeName );
 
-public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Light );
-private:
-	static const vgd::basic::RegisterNode<Light> m_registrationInstance;
 };
 
 

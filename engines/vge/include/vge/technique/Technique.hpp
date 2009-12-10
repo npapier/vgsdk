@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,7 +6,7 @@
 #ifndef _VGE_TECHNIQUE_TECHNIQUE_HPP
 #define _VGE_TECHNIQUE_TECHNIQUE_HPP
 
-#include "vge/visitor/NodeCollectorExtended.hpp"
+#include "vge/visitor/NodeCollectorExtended.hpp" // @todo remove me
 
 namespace vgd { template<class T> struct Shp; }
 
@@ -72,8 +72,8 @@ namespace technique
  * }
  * @endcode
  * 
+ * @todo cleans this class (see commented code).
  * @todo more documentation...
- * @todo collectNodes();
  * @todo virtual void push(); and virtual void pop();
  */
 struct VGE_API Technique
@@ -92,38 +92,9 @@ struct VGE_API Technique
 	 * @brief Virtual destructor
 	 */
 	virtual ~Technique();
+
 	//@}
 
-
-
-	// /**
-	 // * name Accessors to scene graph
-	 // */
-	// //{
-
-	// /**
-	 // * brief Returns the root node.
-	 // *
-	 // * return the root node.
-	 // */
-	// vgd::Shp< vgd::node::Group > getRoot() const;
-
-	// /**
-	 // * brief Set the root node.
-	 // * 
-	 // * param newRoot		the new root node.
-	 // *
-	 // * return the previous root node.
-	 // */
-	// vgd::Shp< vgd::node::Group > setRoot( vgd::Shp< vgd::node::Group > newRoot );
-	// //}
-
-	// /**
-	 // * brief Returns the collector of node.
-	 // *
-	 // * return the node collector.
-	 // */
-	// vge::visitor::NodeCollectorExtended<>&	getNodeCollector();
 
 
 	/**
@@ -134,16 +105,9 @@ struct VGE_API Technique
 	 */
 	virtual void apply( vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
 
-	// @todo doc
-	//virtual void apply( vge::engine::Engine * engine );
 
 
 protected:
-	/**
-	 * brief Resets completely the state stack and all stacks for each matrix type.
-	 * @todo
-	 */
-	//virtual void resetEngine();
 
 	/**
 	 * @brief Initializes the technique to prepare evaluation.
@@ -160,7 +124,7 @@ protected:
 	 * @post getCurrentPass() == 0
 	 * @post isInsideAPass() == false
 	 */
-	virtual void prepareEval( vge::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements );
+	/*virtual */void prepareEval( vge::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements );
 
 	/**
 	 * @brief Initializes the technique to finish evaluation.
@@ -174,63 +138,120 @@ protected:
 	 */
 	virtual void finishEval();
 
+
+
+	/**
+	 * @brief Isolation policy for a pass
+	 */
+	enum PassIsolationMask
+	{
+		RESET_MATRICES	= 1<<0,	///< calls engine->resetMatrices() at the beginning of the pass (in beginPass() method).
+		REGARD_ALL		= 1<<1,	///< calls engine->regard() at the beginning of the pass
+		PUSH_POP_STATE	= 1<<2,	///< calls engine->push() at the beginning of the pass and engine->pop() at the end of the pass (in endPass() method).
+		DEFAULT_PASS_ISOLATION_MASK = RESET_MATRICES|REGARD_ALL|PUSH_POP_STATE
+	};
+
+	/**
+	 * @brief Sets the description of the pass
+	 *
+	 * @param description		a string describing the next pass
+	 */
+	void setPassDescription( const std::string description );
+
 	/**
 	 * @brief Must be called at the beginning of each new pass.
 	 * 
+	 * @param isolationMask	Isolation policy for the pass
+	 *
 	 * @pre isInsideAPass() == false
+	 * @post isInsideAPass() == true
+	 *
 	 * @post currentPass() = currentPass() + 1
 	 */
-	virtual void beginPass();
+	/*virtual */void beginPass( const PassIsolationMask isolationMask = PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK) );
 
 	/**
-	 * @brief Muse be called at the end of each new pass
+	 * @brief Must be called at the end of each new pass
+	 *
+	 * @pre isInsideAPass() == true
+	 * @post isInsideAPass() == false
 	 */
-	virtual void endPass();
+	/*virtual */void endPass();
+
+	// @todo doc and assert()
+	/*virtual*/ void applyPassIsolation( vge::engine::Engine *engine, const PassIsolationMask isolationMask = PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK) );
+
+	// @todo doc and assert()
+	/*virtual */void unapplyPassIsolation( vge::engine::Engine *engine );
 
 	/**
-	 * @brief Returns the current pass (1 for the first, 2 for the second and so on).
+	 * @brief Returns the current pass (0 if not in a pass, 1 for the first one, 2 for the second and so on).
 	 * 
 	 * @return the current pass number
 	 */
-	const uint32 getCurrentPass() const;
+	const uint getCurrentPass() const;
 
 	/**
 	 * @brief Tests if the technique is inside a pass.
 	 * 
 	 * A technique is inside a pass if and only if beginPass() has been called and endPass() has not yet been called.
 	 * 
-	 * @return true if this technique is inside a pass, false otherwisE.
+	 * @return true if this technique is inside a pass, false otherwise.
 	 */
 	const bool isInsideAPass() const;
+
 
 	/**
 	 * @brief Evaluates a single pass
 	 * 
-	 * @param pass		the pass to evaluate
-	 * @param service	the service to evaluate
+	 * @param pass			the pass to evaluate
+	 * @param service		the service to evaluate
+	 * @param engine		
+	 * @param isolationMask	isolation policy for the pass
+	 * @param nestedPass
 	 */
-	void evaluatePass( vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service );
+	void evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service,
+						vge::engine::Engine * engine,
+						const PassIsolationMask isolationMask = PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK),
+						const bool nestedPass = false );
 
 
 
-protected:
+
+	/**
+	 * name Helpers
+	 */
+	//@{
+
+	/**
+	 * brief Pushes all engine stacks.
+	 */
+	//virtual void push();
+
+	/**
+	 * brief Pops all engine stacks.
+	 */
+	//virtual void pop();
+
+	//@}
+
+
 
 	vge::visitor::TraverseElementVector	*getTraverseElements() const;
-
+	/*virtual vge::engine::Engine * getEngine() const;*/
 private:
 	/**
 	 * @name Internal data
 	 */
 	//@{
-	uint32									m_currentPass;
+	uint									m_currentPass;
 	bool									m_inPass;
-	
+	std::vector<PassIsolationMask>			m_passIsolationMask;
+
 	vge::engine::Engine	*					m_engine;
-//protected:
-	//vgd::Shp< vgd::node::Group >			m_root;				///< Scene graph root
-	//vge::visitor::NodeCollectorExtended<>	m_collectorExt;		///< Collector of nodes
-//private:
 	vge::visitor::TraverseElementVector	*	m_traverseElements;
+protected:
+	std::string								m_passDescription;
 	//@}
 };
 

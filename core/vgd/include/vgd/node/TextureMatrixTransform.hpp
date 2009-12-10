@@ -6,8 +6,6 @@
 #ifndef _VGD_NODE_TEXTUREMATRIXTRANSFORM_HPP
 #define _VGD_NODE_TEXTUREMATRIXTRANSFORM_HPP
 
-#include "vgd/vgd.hpp"
-
 #include "vgd/field/Matrix.hpp"
 #include "vgd/node/TextureTransformation.hpp"
 
@@ -66,7 +64,7 @@ struct VGD_API TextureMatrixTransform : public vgd::node::TextureTransformation
 	/**
 	 * @brief Sets the geometrical transformation.
 	 */
-	void						setMatrix( const vgm::MatrixR& matrix );
+	void				setMatrix( const vgm::MatrixR& matrix );
 	
 	//@}
 

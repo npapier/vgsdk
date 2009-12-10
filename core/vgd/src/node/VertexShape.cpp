@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -389,7 +389,7 @@ void VertexShape::setToDefaults( void )
 	setBoundingBoxUpdatePolicy( DEFAULT_BOUNDINGBOX_UPDATE_POLICY );
 	
 	// Invalidates m_numTexUnits
-	m_numTexUnits = -1;
+	//m_numTexUnits = -1;
 }
 
 
@@ -465,11 +465,20 @@ vgd::field::EditorRW< vgd::node::VertexShape::FSecondaryColor4Type > VertexShape
 
 
 // TEXCOORD
-int8 VertexShape::getTexCoordDim( const int32 index ) const
+const bool VertexShape::hasFTexCoord( const uint index ) const
+{
+	const std::type_info& fieldType(	getFieldType( getFTexCoord( index ) )	);
+
+	return fieldType != typeid( NotFound );
+}
+
+
+
+const int8 VertexShape::getTexCoordDim( const int32 index ) const
 {
 	// FIXME OPTME this could be optimize (see if (fieldType ... ) ).
-	int8	retVal;
-	
+	int8 retVal;
+
 	const std::type_info& fieldType(	getFieldType( getFTexCoord( index ) )	);
 
 	if ( fieldType != typeid( NotFound ) )
@@ -496,8 +505,8 @@ int8 VertexShape::getTexCoordDim( const int32 index ) const
 	{
 		retVal = 0;
 	}
-	
-	return ( retVal );
+
+	return retVal;
 }
 
 
@@ -506,7 +515,7 @@ void VertexShape::createTexUnits( const int8 texCoordDimension, const int32 inde
 {
 	assert( texCoordDimension >= 1 );
 	assert( texCoordDimension <= 4 );
-	
+
 	assert( index >= 0 );
 	assert( num >= 1 );
 
@@ -516,7 +525,7 @@ void VertexShape::createTexUnits( const int8 texCoordDimension, const int32 inde
 			++i32)
 	{
 		assert( !isField( getFTexCoord(i32) ) );
-		assert( !isField( getFTexCoordBinding(i32) ) );		
+		assert( !isField( getFTexCoordBinding(i32) ) );
 	}
 #endif
 
@@ -537,7 +546,7 @@ void VertexShape::createTexUnits( const int8 texCoordDimension, const int32 inde
 		case 4:
 			createTexUnits<FTexCoord4fType>( index, num );
 			break;
-			
+
 		default:
 			assert( false && "Unexpected dimension of the texture coordinate." );
 	}
@@ -548,18 +557,21 @@ void VertexShape::createTexUnits( const int8 texCoordDimension, const int32 inde
 template< typename fieldType >
 void VertexShape::createTexUnits( const int32 index, const int32 num )
 {
-	// Add fields.
+	// Adds fields
 	int32	i32Max = index + num;
-	
+
 	for(	int32 i32 = index;
 			i32 < i32Max;
 			++i32 )
 	{
 		addField( new fieldType(getFTexCoord(i32)) );
 		addField( new FTexCoordBindingType(getFTexCoordBinding(i32)) );
+
+		assert( m_texUnitsIndexSet.find( i32 ) == m_texUnitsIndexSet.end() );
+		m_texUnitsIndexSet.insert( i32 );
 	}
 	
-	// Links.
+	// Links
 	for(	int32 i32 = index;
 			i32 < i32Max;
 			++i32 )
@@ -567,7 +579,7 @@ void VertexShape::createTexUnits( const int32 index, const int32 num )
 		link( getFTexCoord(i32), getDFNode() );
 		link( getFTexCoordBinding(i32), getDFNode() );
 	}
-	
+
 	// Defaults bindings
 	for(	int32 i32 = index;
 			i32 < i32Max;
@@ -575,9 +587,9 @@ void VertexShape::createTexUnits( const int32 index, const int32 num )
 	{
 		setTexCoordBinding( i32, vgd::node::BIND_OFF );
 	}
-	
+
 	// Invalidates m_numTexUnits
-	m_numTexUnits = -1;
+	// m_numTexUnits = -1;
 }
 
 
@@ -588,35 +600,41 @@ void VertexShape::removeTexUnits( const int32 index, const int32 num )
 	assert( num >= 1 );
 
 	int32	i32Max = index + num;
-	
+
 #ifdef _DEBUG
 	for(	int32 i32 = index;
 			i32 < i32Max;
 			++i32)
 	{
 		assert( isField( getFTexCoord(i32) ) );
+		assert( m_texUnitsIndexSet.find(i32) != m_texUnitsIndexSet.end() );
 	}
 #endif
 
-	// Remove fields.
+	// Removes fields
 	for(	int32 i32 = index;
 			i32 < i32Max;
 			++i32 )
 	{
 		removeField( getFTexCoord(i32) );
 		removeField( getFTexCoordBinding(i32) );
+
+		const uint num = m_texUnitsIndexSet.erase( i32 );
+		assert( num == 1 );
 	}
-	
+
 	// Links are removed automatically by the fieldManager.
-	
+
 	// Invalidates m_numTexUnits
-	m_numTexUnits = -1;
+	//m_numTexUnits = -1;
 }
 
 
 
 const int32	VertexShape::getNumTexUnits() const
 {
+	return m_texUnitsIndexSet.size();
+/*
 	if ( m_numTexUnits == -1 )
 	{
 		// m_numTexUnits is invalid, computes it.
@@ -632,7 +650,14 @@ const int32	VertexShape::getNumTexUnits() const
 		m_numTexUnits = i32;
 	}
 	
-	return m_numTexUnits;
+	return m_numTexUnits;*/
+}
+
+
+
+const std::pair< VertexShape::ConstIteratorIndexSet, VertexShape::ConstIteratorIndexSet > VertexShape::getTexUnitsIterators() const
+{
+	return std::make_pair( m_texUnitsIndexSet.begin(), m_texUnitsIndexSet.end() );
 }
 
 

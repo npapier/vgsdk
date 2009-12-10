@@ -114,7 +114,7 @@
 	</node>
 
 
-	<node name = "Light" inherits = "MultiAttribute" >
+	<node name = "Light" inherits = "MultiAttribute" abstract = "true" >
 		<doxygen>
 			<docBrief>Abstract base class for all light source nodes</docBrief>
 			<doc>Light is the abstract base class for all light nodes. A light node defines an illumination</doc>
@@ -139,9 +139,9 @@
 			<type name="Vec4f" namespace="vgm" default="1.f, 1.f, 1.f, 0.f"></type>
 		</of>
 
-		<of name="castShadow" doc="Indicating that this light casts a shadow.">
+		<sf name="castShadow" doc="Indicating that this light casts a shadow.">
 			<type name="bool" default="false"></type>
-		</of>
+		</sf>
 
 		<includehpp>vgd/include/vgd/node/Light.hpp</includehpp>
 		<includecpp>vgd/src/node/Light.cpp</includecpp>
@@ -188,9 +188,13 @@
 
 		<of name="shadow" doc="Specifies the algorithm used to compute shadow.">
 			<type name="enum">
-				<enum default="NONE">
-					<value name="NONE"				doc="Shadows are not computed"/>
-					<value name="SHADOW_MAPPING"	doc="Shadows are computed using shadow mapping algorithm"/>
+				<enum default="SHADOW_OFF">
+					<value name="SHADOW_OFF"			doc="Shadows are not computed"/>
+					<value name="SHADOW_MAPPING"		doc="Shadows are computed using shadow mapping algorithm"/>
+					<value name="SHADOW_MAPPING_4U"		doc="Four uniform samples"/>
+					<value name="SHADOW_MAPPING_4D"		doc="Four four dithered samples"/>
+					<value name="SHADOW_MAPPING_16U"	doc="Sixteen uniform samples"/>
+					<value name="SHADOW_MAPPING_32U"	doc="Thirty two uniform samples"/>
 				</enum>
 			</type>
 		</of>
@@ -293,6 +297,156 @@
 			<type name = "float" default = "0.f"></type>
 		</of>
 	</node>
+
+
+<!--TEXTURE_GEN_MODE
+	OBJECT_LINEAR, EYE_LINEAR, SPHERE_MAP, NORMAL_MAP, or REFLECTION_MAP -->
+
+	<node name = "TexGen" inherits = "MultiAttribute" abstract = "true" >
+		<doxygen>
+			<docBrief>Abstract node to control the generation of texture coordinates S, T, R and Q.</docBrief>
+			<ingroup>g_abstractNodes</ingroup>
+		</doxygen>
+
+		<sf name="on" doc="Specifies if the texture generation is enabled or disabled.">
+			<type name="bool" default="true"/>
+		</sf>
+	</node>
+
+	<node name = "TexGenEyeLinear" inherits = "TexGen" >
+		<doxygen>
+			<docBrief>Generating texture coordinates using eye linear function</docBrief>
+			<doc>See OpenGL specification for details</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_texturingNodes</ingroup>
+		</doxygen>
+
+		<of name = "parameters" doc = "" >
+			<type name = "MatrixR" namespace = "vgm" default = "vgm::MatrixR::getIdentity()"></type>
+		</of>
+	</node>
+
+<!-- improves doc tag -->
+	<node name = "Texture" inherits = "MultiAttribute" abstract = "true" >
+		<doxygen>
+			<docBrief>Abstract texture mapping node</docBrief>
+			<doc>This node defines texture parameters (wrapping, filter for minifying and magnification, mipmapping and function).</doc>
+			<doc>Be carefull, data referenced by image must be available when texture is update.</doc>
+			<doc>This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface)</doc>
+			<doc>@remarks When The scene graph is evaluated by vgeGL, there are a size constraint one texture that you should keep in mind.\n</doc>
+			<doc>When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage(to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n</doc>
+			<doc>- Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping.\n</doc>
+			<doc>- GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping.\n</doc>
+			<doc>- GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n</doc>
+			<doc>- GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n</doc>
+			<doc>- GeForce 8 could do  8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n</doc>
+			<doc>@remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n</doc>
+			<doc>@todo More docs\n</doc>
+			<ingroup>g_abstractNodes</ingroup>
+		</doxygen>
+
+		<of name = "image" doc = "Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.">
+			<type name = "IImageShp" namespace = "vgd::basic"></type>
+		</of>
+
+<!-- @todo Declare a new enum here to be shared by several fields -->
+<!-- @todo <of name = "wrapS" doc=""> </of> -->
+
+		<paf name = "wrap" doc = "Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R." >
+			<type name="enum">
+				<enum default="WRAP_S">
+					<value name="WRAP_S" doc=""/>
+					<value name="WRAP_T" doc=""/>
+					<value name="WRAP_R" doc=""/>
+				</enum>
+			</type>
+			<type name="enum">
+				<enum default="REPEAT">
+					<value name="REPEAT" doc=""/>
+					<value name="CLAMP" doc=""/>
+					<value name="CLAMP_TO_EDGE" doc=""/>
+					<value name="CLAMP_TO_BORDER" doc=""/>
+					<value name="MIRRORED_REPEAT" doc=""/>
+					<value name="ONCE" doc="Don't set texture coordinates outside the interval [0.f, 1.f]"/>
+				</enum>
+			</type>
+		</paf>
+
+		<paf name = "filter" doc ="The texture minifying function (MIN_FILTER) is used whenever the pixel being textured maps to an area greater than one texture element. The texture magnification function (MAG_FILTER) is used when the pixel being textured maps to an area less than or equal to one texture element." >
+			<type name="enum">
+				<enum default="MAG_FILTER">
+					<value name="MIN_FILTER" doc="Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR."/>
+					<value name="MAG_FILTER" doc="Choose one value among NEAREST or LINEAR (default)."/>
+				</enum>
+			</type>
+			<type name="enum">
+				<enum default="LINEAR">
+					<value name="NEAREST" doc=""/>
+					<value name="LINEAR" doc=""/>
+					<value name="NEAREST_MIPMAP_NEAREST" doc=""/>
+					<value name="LINEAR_MIPMAP_NEAREST" doc=""/>
+					<value name="NEAREST_MIPMAP_LINEAR" doc=""/>
+					<value name="LINEAR_MIPMAP_LINEAR" doc=""/>
+				</enum>
+			</type>
+		</paf>
+
+		<of name = "mipmap" doc="Specifies if all levels of a mipmap array should be automatically updated when any modification to the image field (the base level of mipmap) is done." >
+			<type name="bool" default="false"/>
+		</of>
+
+<!-- @todo Choose a value among FUN_REPLACE, FUN_MODULATE, FUN_DECAL, FUN_BLEND, FUN_ADD and FUN_COMBINE. -->
+		<of name = "function" doc="Example similar to old FUN_MODULATE: color *= texture2D(texUnitX, gl_TexCoord[X].xy);" >
+			<type name="string" namespace="std"/>
+		</of>
+
+		<sf name = "usage" doc="Indicating the expected usage pattern of the texture.">
+			<type name="enum">
+				<enum default = "IMAGE">
+					<value name="IMAGE" doc="Simple image mapping"/>
+					<value name="SHADOW" doc="Shadow mapping"/>
+				</enum>
+			</type>
+		</sf>
+<!-- image format depth
+ GL_TEXTURE_COMPARE_MODE
+ GL_TEXTURE_COMPARE_FUNC
+ usage SHADOWMAP -->
+
+ 		<includehpp>vgd/include/vgd/node/Texture.hpp</includehpp>
+ 		<includecpp>vgd/src/node/Texture.cpp</includecpp>
+	</node>
+
+	<node name = "Texture1D" inherits = "Texture" >
+		<doxygen>
+			<docBrief>Texture mapping node</docBrief>
+			<doc>This property node defines a texture map and parameters for that map. This map is used to apply texture to subsequent shapes as they are rendered.</doc>
+			<doc>@remarks Must be a 1d image (iimage.height() == iimage.depth() == 0).</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_texturingNodes</ingroup>
+		</doxygen>
+		<includehpp>vgd/include/vgd/node/Texture1D.hpp</includehpp>
+		<includecpp>vgd/src/node/Texture1D.cpp</includecpp>
+	</node>
+
+	<node name = "Texture2D" inherits = "Texture" >
+		<doxygen>
+			<docBrief>Texture mapping node</docBrief>
+			<doc>This property node defines a texture map and parameters for that map. This map is used to apply texture to subsequent shapes as they are rendered.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_texturingNodes</ingroup>
+		</doxygen>
+		<includehpp>vgd/include/vgd/node/Texture2D.hpp</includehpp>
+		<includecpp>vgd/src/node/Texture2D.cpp</includecpp>
+	</node>
+
+
+
+<!-- @todo abstract class -->
+
 
 
 <!--	<node	name = "MaterialExt"

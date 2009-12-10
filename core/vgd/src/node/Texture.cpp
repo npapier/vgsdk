@@ -1,11 +1,11 @@
-// VGSDK - Copyright (C) 2004, 2007, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/node/Texture.hpp"
 
-#include "vgd/field/TAccessors.hpp"
+#include "vgd/node/detail/Node.hpp"
 
 
 
@@ -17,50 +17,18 @@ namespace node
 
 
 
-//META_NODE_CPP( Texture );
-
-
-
 Texture::Texture( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
-	// Add field
-	addField( new FIImagesType(getFIImages()) );
-		
-	addField( new FWrapType(getFWrap()) );
-	addField( new FFilterType(getFFilter()) );
-	addField( new FMipmapType(getFMipmap()) );
-	addField( new FBorderType(getFBorder()) );
-	addField( new FBorderColorType(getFBorderColor()) );
-	addField( new FEnvColorType(getFEnvColor()) );
-
+	// Adds field(s)
 	addField( new FFunctionType(getFFunction()) );
-	addField( new FCombineType(getFCombine()) );
-	addField( new FSourceType(getFSource()) );
-	addField( new FOperandType(getFOperand()) );
-	addField( new FScaleType(getFScale()) );
+	addField( new FImageType(getFImage()) );
+	addField( new FMipmapType(getFMipmap()) );
+	addField( new FFilterType(getFFilter()) );
+	addField( new FWrapType(getFWrap()) );
+	addField( new FUsageType(getFUsage()) );
 
-	// Add dirty flags
-	addDirtyFlag( getDFIImages() );
-	addDirtyFlag( getDFParameters() );
-	addDirtyFlag( getDFEnvironmentParameters() );
-
-	// Links
-	link( getFIImages(),	getDFIImages() );
-	link( getFBorder(),		getDFIImages() );
-
-	link( getFWrap(),		getDFParameters() );
-	link( getFFilter(),		getDFParameters() );
-	link( getFMipmap(),		getDFParameters() );
-	link( getFBorderColor(),getDFParameters() );
-
-	link( getFEnvColor(),	getDFEnvironmentParameters() );
-	link( getFFunction(),	getDFEnvironmentParameters() );
-	link( getFCombine(),	getDFEnvironmentParameters() );
-	link( getFSource(),		getDFEnvironmentParameters() );
-	link( getFOperand(),	getDFEnvironmentParameters() );
-	link( getFScale(),		getDFEnvironmentParameters() );
-
+	// Sets link(s)
 	link( getDFNode() );
 }
 
@@ -69,6 +37,7 @@ Texture::Texture( const std::string nodeName ) :
 void Texture::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
+	setUsage( IMAGE );
 }
 
 
@@ -77,78 +46,108 @@ void Texture::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
 
-	setWrap( WRAP_S,	DEFAULT_WRAP );
-	setWrap( WRAP_T,	DEFAULT_WRAP );
-	setWrap( WRAP_R,	DEFAULT_WRAP );
-	
-	setFilter( MIN_FILTER, DEFAULT_FILTER );
-	setFilter( MAG_FILTER, DEFAULT_FILTER );
 
-	setMipmap( true );
+	setMipmap( false );
+	setFilter( MIN_FILTER, LINEAR );
+	setFilter( MAG_FILTER, LINEAR );
 
-	setBorder( false );
-	setBorderColor( vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
+	setWrap( WRAP_T, REPEAT );
+	setWrap( WRAP_S, REPEAT );
+	setWrap( WRAP_R, REPEAT );
 
-	setEnvColor( vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
-
-	setFunction( DEFAULT_FUN );
 }
 
 
 
-// IIMAGES
-bool Texture::getIImages( const int /*IImagesParameterType*/ param, IImagesValueType& value ) const
+// Function
+const bool Texture::getFunction( FunctionValueType& value ) const
 {
-	return ( 
-		vgd::field::getParameterValue< int /*IImagesParameterType*/, IImagesValueType >( this, getFIImages(), param, value )
-		);
+	return getFieldRO<FFunctionType>(getFFunction())->getValue( value );
 }
 
 
 
-void Texture::setIImages( const int /*IImagesParameterType*/ param, IImagesValueType value )
+void Texture::setFunction( const FunctionValueType& value )
 {
-	vgd::field::setParameterValue< int /*IImagesParameterType*/, IImagesValueType >( this, getFIImages(), param, value );
+	getFieldRW<FFunctionType>(getFFunction())->setValue( value );
 }
 
 
 
-void Texture::eraseIImages( const int /*IImagesParameterType*/ param )
+void Texture::eraseFunction()
 {
-	vgd::field::eraseParameterValue< int /*IImagesParameterType*/, IImagesValueType >( this, getFIImages(), param );
+	getFieldRW<FFunctionType>(getFFunction())->eraseValue();
+}
+
+
+const bool Texture::hasFunction() const
+{
+	return getFieldRO<FFunctionType>(getFFunction())->hasValue();
 }
 
 
 
-// WRAP
-bool Texture::getWrap( const WrapParameterType param, WrapValueType& value ) const
+// Image
+const bool Texture::getImage( ImageValueType& value ) const
 {
-	return ( 
-		vgd::field::getParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), param, value )
-		);
+	return getFieldRO<FImageType>(getFImage())->getValue( value );
 }
 
 
 
-void Texture::setWrap( const WrapParameterType param, WrapValueType value )
+void Texture::setImage( const ImageValueType& value )
 {
-	vgd::field::setParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), param, value );
+	getFieldRW<FImageType>(getFImage())->setValue( value );
 }
 
 
 
-void Texture::eraseWrap( const WrapParameterType param )
+void Texture::eraseImage()
 {
-	vgd::field::eraseParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), param );
+	getFieldRW<FImageType>(getFImage())->eraseValue();
+}
+
+
+const bool Texture::hasImage() const
+{
+	return getFieldRO<FImageType>(getFImage())->hasValue();
 }
 
 
 
-// FILTER
-bool Texture::getFilter( const FilterParameterType param, FilterValueType& value ) const
+// Mipmap
+const bool Texture::getMipmap( MipmapValueType& value ) const
 {
-	return ( 
-		vgd::field::getParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), param, value )
+	return getFieldRO<FMipmapType>(getFMipmap())->getValue( value );
+}
+
+
+
+void Texture::setMipmap( const MipmapValueType& value )
+{
+	getFieldRW<FMipmapType>(getFMipmap())->setValue( value );
+}
+
+
+
+void Texture::eraseMipmap()
+{
+	getFieldRW<FMipmapType>(getFMipmap())->eraseValue();
+}
+
+
+const bool Texture::hasMipmap() const
+{
+	return getFieldRO<FMipmapType>(getFMipmap())->hasValue();
+}
+
+
+
+// Filter
+const bool Texture::getFilter( const FilterParameterType param, FilterValueType& value ) const
+{
+	return (
+		vgd::field::getParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), static_cast<FilterParameterType>(param), value )
 		);
 }
 
@@ -156,339 +155,121 @@ bool Texture::getFilter( const FilterParameterType param, FilterValueType& value
 
 void Texture::setFilter( const FilterParameterType param, FilterValueType value )
 {
-	vgd::field::setParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), param, value );
+	vgd::field::setParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), static_cast<FilterParameterType>(param), value );
 }
 
 
 
 void Texture::eraseFilter( const FilterParameterType param )
 {
-	vgd::field::eraseParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), param );
+	vgd::field::eraseParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), static_cast<FilterParameterType>(param) );
 }
 
 
 
-// MIPMAP
-bool Texture::getMipmap( MipmapValueType& value ) const
+// Wrap
+const bool Texture::getWrap( const WrapParameterType param, WrapValueType& value ) const
 {
-	return ( 
-		vgd::field::getParameterValue< MipmapParameterType, MipmapValueType >( this, getFMipmap(), MIPMAP, value )
+	return (
+		vgd::field::getParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param), value )
 		);
 }
 
 
 
-void Texture::setMipmap( MipmapValueType value )
+void Texture::setWrap( const WrapParameterType param, WrapValueType value )
 {
-	vgd::field::setParameterValue< MipmapParameterType, MipmapValueType >( this, getFMipmap(), MIPMAP, value );
+	vgd::field::setParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param), value );
 }
 
 
 
-void Texture::eraseMipmap()
+void Texture::eraseWrap( const WrapParameterType param )
 {
-	vgd::field::eraseParameterValue< MipmapParameterType, MipmapValueType >( this, getFMipmap(), MIPMAP );
+	vgd::field::eraseParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param) );
 }
 
 
 
-// BORDER
-bool Texture::getBorder( BorderValueType& value ) const
+// Usage
+const Texture::UsageValueType Texture::getUsage() const
 {
-	return ( 
-		vgd::field::getParameterValue< BorderParameterType, BorderValueType >( this, getFBorder(), BORDER, value )
-		);
+	return getFieldRO<FUsageType>(getFUsage())->getValue();
 }
 
 
 
-void Texture::setBorder( BorderValueType value )
+void Texture::setUsage( const UsageValueType value )
 {
-	vgd::field::setParameterValue< BorderParameterType, BorderValueType >( this, getFBorder(), BORDER, value );
+	getFieldRW<FUsageType>(getFUsage())->setValue( value );
 }
 
 
 
-void Texture::eraseBorder()
+// Field name accessor(s)
+const std::string Texture::getFFunction( void )
 {
-	vgd::field::eraseParameterValue< BorderParameterType, BorderValueType >( this, getFBorder(), BORDER );
+	return "f_function";
 }
 
 
 
-// BORDER_COLOR
-bool Texture::getBorderColor( BorderColorValueType& value ) const
+const std::string Texture::getFImage( void )
 {
-	return ( 
-		vgd::field::getParameterValue< BorderColorParameterType, BorderColorValueType >( this, getFBorderColor(), BORDER_COLOR, value )
-		);
-}
-
-
-
-void Texture::setBorderColor( BorderColorValueType value )
-{
-	vgd::field::setParameterValue< BorderColorParameterType, BorderColorValueType >( this, getFBorderColor(), BORDER_COLOR, value );
-}
-
-
-
-void Texture::eraseBorderColor()
-{
-	vgd::field::eraseParameterValue< BorderColorParameterType, BorderColorValueType >( this, getFBorderColor(), BORDER_COLOR );
-}
-
-
-
-// ENV_COLOR
-bool Texture::getEnvColor( EnvColorValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< EnvColorParameterType, EnvColorValueType >( this, getFEnvColor(), ENV_COLOR, value )
-		);
-}
-
-
-
-void Texture::setEnvColor( EnvColorValueType value )
-{
-	vgd::field::setParameterValue< EnvColorParameterType, EnvColorValueType >( this, getFEnvColor(), ENV_COLOR, value );
-}
-
-
-
-void Texture::eraseEnvColor()
-{
-	vgd::field::eraseParameterValue< EnvColorParameterType, EnvColorValueType >( this, getFEnvColor(), ENV_COLOR );
-}
-
-
-
-// FUNCTION
-bool Texture::getFunction( FunctionValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< FunctionParameterType, FunctionValueType >( this, getFFunction(), FUNCTION, value )
-		);
-}
-
-
-
-void Texture::setFunction( FunctionValueType value )
-{
-	vgd::field::setParameterValue< FunctionParameterType, FunctionValueType >( this, getFFunction(), FUNCTION, value );
-}
-
-
-
-void Texture::eraseFunction()
-{
-	vgd::field::eraseParameterValue< FunctionParameterType, FunctionValueType >( this, getFFunction(), FUNCTION );
-}
-
-
-
-// COMBINE
-bool Texture::getCombine( const CombineParameterType param, CombineValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< CombineParameterType, CombineValueType >( this, getFCombine(), param, value )
-		);
-}
-
-
-
-void Texture::setCombine( const CombineParameterType param, CombineValueType value )
-{
-	vgd::field::setParameterValue< CombineParameterType, CombineValueType >( this, getFCombine(), param, value );
-}
-
-
-
-void Texture::eraseCombine( const CombineParameterType param )
-{
-	vgd::field::eraseParameterValue< CombineParameterType, CombineValueType >( this, getFCombine(), param );
-}
-
-
-
-// SOURCE
-bool Texture::getSource( const SourceParameterType param, SourceValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< SourceParameterType, SourceValueType >( this, getFSource(), param, value )
-		);
-}
-
-
-
-void Texture::setSource( const SourceParameterType param, SourceValueType value )
-{
-	vgd::field::setParameterValue< SourceParameterType, SourceValueType >( this, getFSource(), param, value );
-}
-
-
-
-void Texture::eraseSource( const SourceParameterType param )
-{
-	vgd::field::eraseParameterValue< SourceParameterType, SourceValueType >( this, getFSource(), param );
-}
-
-
-
-// OPERAND
-bool Texture::getOperand( const OperandParameterType param, OperandValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< OperandParameterType, OperandValueType >( this, getFOperand(), param, value )
-		);
-}
-
-
-
-void Texture::setOperand( const OperandParameterType param, OperandValueType value )
-{
-	vgd::field::setParameterValue< OperandParameterType, OperandValueType >( this, getFOperand(), param, value );
-}
-
-
-
-void Texture::eraseOperand( const OperandParameterType param )
-{
-	vgd::field::eraseParameterValue< OperandParameterType, OperandValueType >( this, getFOperand(), param );
-}
-
-
-
-// SCALE
-bool Texture::getScale( const ScaleParameterType param, ScaleValueType& value ) const
-{
-	return ( 
-		vgd::field::getParameterValue< ScaleParameterType, ScaleValueType >( this, getFScale(), param, value )
-		);
-}
-
-
-
-void Texture::setScale( const ScaleParameterType param, ScaleValueType value )
-{
-	vgd::field::setParameterValue< ScaleParameterType, ScaleValueType >( this, getFScale(), param, value );
-}
-
-
-
-void Texture::eraseScale( const ScaleParameterType param )
-{
-	vgd::field::eraseParameterValue< ScaleParameterType, ScaleValueType >( this, getFScale(), param );
-}
-
-
-
-const std::string Texture::getFIImages( void )
-{
-	return ( "f_iimages" );
-}
-
-
-
-const std::string Texture::getFWrap( void )
-{
-	return ( "f_wrap" );
-}
-
-
-
-const std::string Texture::getFFilter( void )
-{
-	return ( "f_filter" );
+	return "f_image";
 }
 
 
 
 const std::string Texture::getFMipmap( void )
 {
-	return ( "f_mipmap" );
+	return "f_mipmap";
 }
 
 
 
-const std::string Texture::getFBorder( void )
+const std::string Texture::getFFilter( void )
 {
-	return ( "f_border" );
+	return "f_filter";
 }
 
 
 
-const std::string Texture::getFBorderColor( void )
+const std::string Texture::getFWrap( void )
 {
-	return ( "f_borderColor" );
+	return "f_wrap";
 }
 
 
 
-const std::string Texture::getFEnvColor( void )
+const std::string Texture::getFUsage( void )
 {
-	return ( "f_envColor" );
+	return "f_usage";
 }
 
 
 
-const std::string Texture::getFFunction( void )
+// FUNCTION
+void Texture::sethFunction( OldFunctionValueType value )
 {
-	return ( "f_function" );
+	const std::string strIndex = vgd::basic::toString( getMultiAttributeIndex() );
+
+	if ( value == FUN_REPLACE )
+	{
+		std::string function = "color = texture2D(texUnit" + strIndex + ", gl_TexCoord[" + strIndex + "].xy);\n";
+		setFunction( function );
+	}
+	else if ( value == FUN_MODULATE )
+	{
+		std::string function = "color *= texture2D(texUnit" + strIndex + ", gl_TexCoord[" + strIndex + "].xy);\n";
+		setFunction( function );
+	}
+	else
+	{
+		assert( false );
+	}
 }
-
-
-
-const std::string Texture::getFCombine( void )
-{
-	return ( "f_combine" );
-}
-
-
-
-const std::string Texture::getFSource( void )
-{
-	return ( "f_source" );
-}
-
-
-
-const std::string Texture::getFOperand( void )
-{
-	return ( "f_operand" );
-}
-
-
-
-const std::string Texture::getFScale( void )
-{
-	return ( "f_scale" );
-}
-
-
-
-const std::string Texture::getDFIImages()
-{
-	return ( "df_iimages" );
-}
-
-
-
-const std::string Texture::getDFParameters()
-{
-	return ( "df_parameters" );
-}
-
-
-
-const std::string Texture::getDFEnvironmentParameters()
-{
-	return ( "df_environmentParameters" );
-}
-
-
-
 } // namespace node
 
 } // namespace vgd
+

@@ -25,9 +25,9 @@ namespace node
  * The FrontFace node specifies if polygons are in clockwise winding in window coordinates, or counterclockwise winding in window coordinates, are taken to be front-facing. 
  *
  * New fields defined by this node :
- *	- SFEnum \c orientation = CCW\n
- *		Specifies if front facing polygons are clockwise (CW) or conterclockwise (CCW)
- *
+ * - SFEnum \c orientation = CCW<br>
+ *   Specifies if front facing polygons are clockwise (CW) or conterclockwise (CCW)<br>
+ *<br>
  *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes

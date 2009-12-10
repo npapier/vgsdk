@@ -71,24 +71,20 @@ void TextureMatrixTransform::setToDefaults()
 
 void TextureMatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node::TextureMatrixTransform *pNode )
 {
-	// PROJECTION MATRIX
+	// TEXTURE MATRIX
 	// Get the transformation.
-	int32	indexMultiAttribute;
-	
-	indexMultiAttribute = pNode->getMultiAttributeIndex();
-	
-	vgm::MatrixR& 		current(	
-			pGLEngine->getTextureMatrix().getTop( indexMultiAttribute ) 
-			);
+	int32	indexMultiAttribute = pNode->getMultiAttributeIndex();
+
+	vgm::MatrixR& current( pGLEngine->getTextureMatrix().getTop( indexMultiAttribute ) );
 
 	pGLEngine->activeTexture( indexMultiAttribute );
 	glMatrixMode( GL_TEXTURE );
 
 	// Update OpenGL.
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-	
-	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
+
+	// Validates node
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
 

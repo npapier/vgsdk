@@ -23,7 +23,8 @@ namespace engine
 
 
 Engine::Engine()
-:	m_drawingSurfaceSize(0, 0)
+:	m_drawingSurfaceSize(0, 0),
+	m_camera( 0 )
 {
 	m_viewport.setInvalid();
 
@@ -50,6 +51,11 @@ void Engine::resetEval()
 
 	// Matrices
 	resetMatrices();
+
+	// Built-in state
+	// m_drawingSurfaceSize
+	m_camera = 0;
+	m_viewport.setInvalid();
 }
 
 
@@ -96,6 +102,15 @@ void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
 		}
 	}
 	// nothing to do, handler not regarded.
+}
+
+
+
+void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
+						const vge::visitor::TraverseElement & element,
+						const bool bTrace )
+{
+	evaluate( service, element.first, element.second, bTrace );
 }
 
 
@@ -389,6 +404,19 @@ void Engine::setDrawingSurfaceSize( const vgm::Vec2i drawingSurfaceSize )
 }
 
 
+const vgd::node::Camera * Engine::getCamera() const
+{
+	return m_camera;
+}
+
+
+void Engine::setCamera( const vgd::node::Camera * camera )
+{
+	m_camera = camera;
+}
+
+
+
 const vgm::Rectangle2i& Engine::getViewport() const
 {
 	return m_viewport;
@@ -404,6 +432,27 @@ void Engine::setViewport( const vgm::Rectangle2i& viewport )
 const int Engine::getMaxTexUnits() const
 { 
 	return 0;
+}
+
+
+
+void Engine::push()
+{
+	pushStateStack();
+
+	getGeometricalMatrix().pushAll();
+	getProjectionMatrix().pushAll();
+	getTextureMatrix().pushAll();
+}
+
+
+void Engine::pop()
+{
+	getTextureMatrix().popAll();      
+	getProjectionMatrix().popAll();
+	getGeometricalMatrix().popAll();
+
+	popStateStack();
 }
 
 

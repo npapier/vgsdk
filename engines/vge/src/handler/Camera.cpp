@@ -19,13 +19,16 @@ namespace handler
 
 
 
-void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * node )
+void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 {
+	// Updates engine
+	engine->setCamera( camera );
+
 	// VIEWPORT
 	bool bDefined;
 	vgm::Rectangle2i viewportValue;
 
-	bDefined = node->getViewport( viewportValue );
+	bDefined = camera->getViewport( viewportValue );
 
 	if ( bDefined )
 	{
@@ -33,27 +36,27 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * node )
 	}
 
 	//
-	applyMatrix( engine, node );
-	applyLookAt( engine, node );
+	applyMatrix( engine, camera );
+	applyLookAt( engine, camera );
 }
 
 
 
-void Camera::unapply( vge::engine::Engine *engine, vgd::node::Camera *node )
+void Camera::unapply( vge::engine::Engine *engine, vgd::node::Camera *camera )
 {
-	//unapplyMatrix( engine, node );
-	//unapplyLookAt( engine, node );
+	//unapplyMatrix( engine, camera );
+	//unapplyLookAt( engine, camera );
 }
 
 
 
-void Camera::applyMatrix( vge::engine::Engine *engine, vgd::node::Camera *node )
+void Camera::applyMatrix( vge::engine::Engine *engine, vgd::node::Camera *camera )
 {
 	// PROJECTION MATRIX
 	// Gets the transformation
-	const vgm::MatrixR& matrix( node->getProjection() );
+	const vgm::MatrixR& matrix( camera->getProjection() );
 	
-	if ( node->getComposeTransformation() )
+	if ( camera->getComposeTransformation() )
 	{
 		// Composes and updates engine
 		vgm::MatrixR& 		current(	engine->getProjectionMatrix().getTop() );
@@ -69,11 +72,11 @@ void Camera::applyMatrix( vge::engine::Engine *engine, vgd::node::Camera *node )
 
 
 
-void Camera::applyLookAt( vge::engine::Engine *engine, vgd::node::Camera *node )
+void Camera::applyLookAt( vge::engine::Engine *engine, vgd::node::Camera *camera )
 {
 	// GEOMETRICAL MATRIX
 	// Gets the transformation
-	const vgm::MatrixR& matrix( node->getLookAt() );
+	const vgm::MatrixR& matrix( camera->getLookAt() );
 
 	// Updates engine
 	engine->getGeometricalMatrix().setTop( matrix );

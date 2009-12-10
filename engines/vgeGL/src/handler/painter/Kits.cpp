@@ -66,7 +66,7 @@ void Kits::apply ( vge::engine::Engine*, vgd::node::Node *pNode )
 
 	// Validate node
 	pNode->getDirtyFlag(pNode->getDFNode())->validate();
-}
+}										
 
 
 
