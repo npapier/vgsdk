@@ -68,7 +68,9 @@ def handleType( domType ) :
 			raise StandardError("The type, named enum, must have one enum child node.")
 		type = handleEnum( domEnums[0] )
 	else :
-		type = Type( attrName.value )
+		global currentNodeName
+		global currentFieldName
+		type = Type( attrName.value, currentNodeName, currentFieldName )
 
 		# [namespace]
 		attrNamespace = domType.getAttributeNode("namespace")
@@ -110,7 +112,13 @@ def handleTwoTypes( dom ) :
 	if domTypes.length == 1 :
 		types.append( handleType(domTypes[0]) )
 	elif domTypes.length == 2 :
+		global currentFieldName
+		currentFieldNameBak = currentFieldName
+		currentFieldName += "Parameter"
+		print currentFieldName
 		types.append( handleType(domTypes[0]) )
+		currentFieldName = currentFieldNameBak
+		print currentFieldName
 		types.append( handleType(domTypes[1]) )
 	else :
 		raise StandardError("One or two type(s) expected, but encountered %s type(s) in a %s named %s." % (domTypes.length, dom.nodeName, dom.getAttributeNode("name").value) )
@@ -183,13 +191,14 @@ def handlePAF( domPAF ) :
 	if len(types) == 0 :
 		raise StandardError("In pair associative field named %s, the type of field is not defined." % paf.name )
 	elif len(types) == 1 :
+		paf.keyType = Enum( currentNodeName, currentFieldName )
 		paf.keyType.addValue( paf.name.upper(), paf.doc )
 		paf.keyType.setDefaultValue( paf.name.upper() )
 		paf.type = types[0]
 	elif len(types) == 2 :
 		paf.keyType	= types[0]
 		paf.type	= types[1]
-	else :
+	else:
 		raise StandardError("In pair associative field named %s, the type of field is not well defined." % paf.name )
 
 	return paf
@@ -217,6 +226,7 @@ def handleNode( domNode ) :
 	# Retrieves node attributes
 	attrName = domNode.getAttributeNode("name")
 	attrInherits = domNode.getAttributeNode("inherits")
+	attrAbstract = domNode.getAttributeNode("abstract")
 
 	# Constructs node
 	global currentNodeName
@@ -227,6 +237,11 @@ def handleNode( domNode ) :
 		node.inherits = attrInherits.value.split()
 	else :
 		node.inherits = []
+	if attrAbstract != None :
+		if attrAbstract.value in ['true', 'false']:
+			node.abstract = attrAbstract.value
+		else:
+			raise StandardError("abstract must be equal to true or false.")
 
 	# Handles doxygen
 	domDoxygens = domNode.getElementsByTagName("doxygen")

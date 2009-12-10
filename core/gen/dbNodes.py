@@ -47,19 +47,26 @@ class EnumRegistry :
 # TYPE #
 ########
 class Type :
-	def __init__( self, name ):
+	def __init__( self, name, nodeName = "", fieldName = "" ):
 		self.namespace		= ""
 		self.name			= name
 
 		self.defaultValue	= ""
 
+		self.nodeName = nodeName
+		self.fieldName = fieldName
+		if len(fieldName)>0:
+			self.FieldName = fieldName[0].upper() + fieldName[1:]
+		else:
+			self.FieldName = ""
+
 		# @todo range
 
-	def generateTYPEDEF( self, fieldName, FieldName, postfix ):
+	def generateTYPEDEF( self ):
 		str = """\t/**
 \t * @brief Type definition of the value contained by field named \c %s.
 \t */
-\ttypedef %s %s%s;""" % (fieldName, self.generateTypeWithNamespace(), FieldName, postfix)
+\ttypedef %s %sValueType;""" % (self.fieldName, self.generateTypeWithNamespace(), self.FieldName ) # @todo ValueType => Type
 		return str
 
 	def generateTypeWithNamespace( self ):
@@ -84,9 +91,7 @@ class Type :
 class Enum ( Type ):
 
 	def __init__( self, nodeName, fieldName ):
-		Type.__init__( self, "enum" )
-		self.nodeName = nodeName
-		self.fieldName = fieldName
+		Type.__init__( self, "enum", nodeName, fieldName )
 		self.values = {}
 
 	def addValue( self, value, docValue = "" ):
@@ -102,16 +107,13 @@ class Enum ( Type ):
 
 
 	# Overriden
-# @todo fieldName is now known by this class
-	def generateTYPEDEF( self, fieldName, FieldName, postfix ):
-
-		fieldNameValueType = FieldName + postfix
+	def generateTYPEDEF( self ):
 
 		str =	"""\t/**
 \t * @brief Definition of symbolic values
 \t */
 \t%s;
-""" % self._generateDefinition( fieldName )
+""" % self._generateDefinition()
 
 		strValues = ""
 		for value in self._getValues():
@@ -122,24 +124,24 @@ class Enum ( Type ):
 			strStrings += """\t\t\tretVal.push_back( "%s" );\n""" % string
 
 # @todo comments in generated code
-		definitionOfFieldNameValueType = """
+		definitionOfFieldNameType = """
 	/**
 	 * @brief Type definition of the value contained by field named \c %s.
 	 */
-	struct FieldNameValueType : public vgd::field::Enum
+	struct FieldNameType : public vgd::field::Enum
 	{
-		FieldNameValueType()
+		FieldNameType()
 		{}
 
-		FieldNameValueType( const int v )
+		FieldNameType( const int v )
 		: vgd::field::Enum(v)
 		{}
 
-		FieldNameValueType( const FieldNameValueType& o )
+		FieldNameType( const FieldNameType& o )
 		: vgd::field::Enum(o)
 		{}
 
-		FieldNameValueType( const vgd::field::Enum& o )
+		FieldNameType( const vgd::field::Enum& o )
 		: vgd::field::Enum(o)
 		{}
 
@@ -158,23 +160,23 @@ class Enum ( Type ):
 %s
 			return retVal;
 		}
-	};""" % (fieldName, strValues, strStrings)
+	};""" % (self.fieldName, strValues, strStrings)
 
-		str += definitionOfFieldNameValueType
+		str += definitionOfFieldNameType.replace( "FieldNameType", self.FieldName + "ValueType" )		# @todo ValueType => Type
 
 		return str
 
 	#
-	def _generateDefinition( self, fieldName ) :
+	def _generateDefinition( self ):
 		# begin definition
 		str = "enum\n\t{\n"
 		# values
 		for (value, docValue) in self.values.iteritems() :
-			valueID = EnumRegistry.getID(self.nodeName, fieldName, value)
+			valueID = EnumRegistry.getID(self.nodeName, self.fieldName, value)
 			str += "\t\t%s = %i," % ( value, valueID )
 			str += "\t///< %s\n" % docValue
 		# default value
-		str += "\t\tDEFAULT_%s = %s\t///< %s\n" % ( fieldName.upper(), self.defaultValue, self.values[self.defaultValue] )
+		str += "\t\tDEFAULT_%s = %s\t///< %s\n" % ( self.fieldName.upper(), self.defaultValue, self.values[self.defaultValue] )
 		# end definition
 		str += "\t}"
 
@@ -256,7 +258,7 @@ TYPEDEF_FIELDNAMEVALUETYPE
 		else:
 			str = str.replace( "InternalFieldNameValueType", "FieldNameValueType" )
 
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, self.getFieldName(), "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF() )		# @todo ValueType => Type
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.getFieldName() )
 		str = str.replace( "FieldType", self.type.name )
@@ -288,7 +290,7 @@ void NewNode::setFieldName( const FieldNameValueType value )
 		if len(defaultValue) == 0 :
 			return defaultValue
 		else :
-			return "set%s( %s );" % (self.getFieldName(), defaultValue )
+			return "\tset%s( %s );" % (self.getFieldName(), defaultValue )
 
 	def generateOptionalDefaultSetter( self ) :
 		return None
@@ -343,7 +345,7 @@ TYPEDEF_FIELDNAMEVALUETYPE
 		else:
 			str = str.replace( "InternalFieldNameValueType", "FieldNameValueType" )
 
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, self.getFieldName(), "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF() )	# @todo ValueType => Type
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.getFieldName() )
 
@@ -393,7 +395,7 @@ const bool NewNode::hasFieldName() const
 		if len(defaultValue) == 0 :
 			return defaultValue
 		else :
-			return "set%s( %s );" % (self.getFieldName(), defaultValue )
+			return "\tset%s( %s );" % (self.getFieldName(), defaultValue )
 
 	def generateCompleteType( self ) :
 		return "OF%s" % self.type.getNormalizedName()
@@ -402,11 +404,11 @@ const bool NewNode::hasFieldName() const
 		return True
 
 
-class PairAssociativeField ( Field ) :
+class PairAssociativeField ( Field ):
 
 	def __init__( self, name, doc ) :
 		Field.__init__( self, name, doc )
-		self.keyType = Enum()
+		self.keyType = None
 
 	def generateAccessorsHeader( self ) :
 		str = """\n\n\n	/**
@@ -417,7 +419,7 @@ class PairAssociativeField ( Field ) :
 	/**
 	 * @brief Type definition of the parameter contained by field named \c fieldName.
 	 */
-	TYPEDEF_FIELDNAMEPARAMETERTYPE
+TYPEDEF_FIELDNAMEPARAMETERTYPE
 
 TYPEDEF_FIELDNAMEVALUETYPE
 
@@ -447,8 +449,8 @@ TYPEDEF_FIELDNAMEVALUETYPE
 			str = str.replace( " const FieldNameParameterType param,", "" )
 			str = str.replace( " const FieldNameParameterType param ", "" )
 
-		str = str.replace( "TYPEDEF_FIELDNAMEPARAMETERTYPE", self.keyType.generateTYPEDEF( self.name, self.getFieldName(), "ParameterType" ) )
-		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF( self.name, self.getFieldName(), "ValueType" ) )
+		str = str.replace( "TYPEDEF_FIELDNAMEPARAMETERTYPE", self.keyType.generateTYPEDEF().replace('ParameterValueType', 'ParameterType') )
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF() )
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.getFieldName() )
 
@@ -492,12 +494,20 @@ void NewNode::eraseFieldName( const FieldNameParameterType param )
 		# @todo Adds eraseFieldName()
 		return None
 
-	def generateOptionalDefaultSetter( self ) :
+	def generateOptionalDefaultSetter( self ):
+		retVal = ""
 		defaultValue = self.type.generateDefaultValue()
-		if len(defaultValue) == 0 :
-			return defaultValue
-		else :
-			return "set%s( %s );" % (self.getFieldName(), defaultValue )
+
+		if isinstance( self.keyType, Enum ):
+			selectors = self.keyType.values.keys()
+			for selector in selectors:
+				if len(defaultValue)>0:
+					retVal += "\tset{0}( {1}, {2} );\n".format(self.getFieldName(), selector, defaultValue )
+		else:
+			if len(defaultValue) > 0:
+				retVal += "\tset%s( %s );\n" % (self.getFieldName(), defaultValue )
+		return retVal
+
 
 	def generateCompleteType( self ) :
 		return "PAF%s" % self.type.getNormalizedName()
@@ -507,8 +517,12 @@ void NewNode::eraseFieldName( const FieldNameParameterType param )
 class Node :
 
 	def __init__( self, name ) :
+		# Name of class
 		self.name		= name
+		#
 		self.inherits	= []
+		# True if class is abstract, False otherwise
+		self.abstract	= False
 
 		self.docBrief	= ""
 		self.doc		= ""
