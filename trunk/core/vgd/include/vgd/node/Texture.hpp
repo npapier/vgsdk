@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,9 +6,10 @@
 #ifndef _VGD_NODE_TEXTURE_HPP
 #define _VGD_NODE_TEXTURE_HPP
 
-#include <vgm/Vector.hpp>
-#include "vgd/basic/IImage.hpp"
-#include "vgd/field/TPairAssociativeField.hpp"
+#include "vgd/field/Bool.hpp"
+#include "vgd/field/Enum.hpp"
+#include "vgd/field/IImageShp.hpp"
+#include "vgd/field/String.hpp"
 #include "vgd/node/MultiAttribute.hpp"
 
 
@@ -23,265 +24,110 @@ namespace node
 
 /**
  * @brief Abstract texture mapping node
- * 
- * This node defines texture parameters (wrapping, filters, mipmapping, border, border color, environnement color and 
- * function/combine).
- * 
- * @remarks You MUST define at least the \c wrap, \c filter and \c function fields.
- * 
- * New field added by this node :
- * 
- * - PAFInt32 \c wrap
- *  - [WRAP_S]\n
- * 		Choose one value among :
- * 			- REPEAT (default)
- * 			- CLAMP
- * 			- CLAMP_TO_EDGE
- * 			- CLAMP_TO_BORDER
- * 			- MIRRORED_REPEAT
- * 			- ONCE ( don't set texture coordinates outside the interval [0.f, 1.f] ).
- *  - [WRAP_T]\n
- * 		Choose one value among REPEAT (default), CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE.
- * 
- * - [WRAP_R]\n
- * 		Choose one value among REPEAT (default), CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE.
- * 
- * - PAFInt32 \c filter
- * 	- [MIN_FILTER]\n
- * 		Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR,
- * 			LINEAR_MIPMAP_LINEAR.
- * 
- * 	- [MAG_FILTER]\n
- * 		Choose one value among NEAREST or LINEAR (default).
- * 
- * - PAFBool \c [mipmap] = true\n
- * 
- * - PAFBool \c [border] = (false)\n
- * 
- * - PAFVec4f \c [borderColor] = (0,0,0,0)\n
- * 
- * - PAFVec4f \c [envColor] = (0,0,0,0)\n
- * 
- * - PAFInt32 \c [function] = FUN_MODULATE\n
- * 	Choose a value among FUN_REPLACE, FUN_MODULATE, FUN_DECAL, FUN_BLEND, FUN_ADD and FUN_COMBINE.
- * 
- * - PAFInt32 combine
- * 	- [RGB]\n
- * 		Choose a value among REPLACE, MODULATE, ADD, ADD_SIGNED, INTERPOLATE, SUBTRACT, DOT3_RGB or DOT3_RGBA.
- * 	- [ALPHA]\n
- * 		Choose a value among REPLACE, MODULATE, ADD, ADD_SIGNED, INTERPOLATE, or SUBTRACT.
- * 
- * - PAFInt32 source
- * 	- [RGB0]\n
- * 		Choose a value among CONSTANT, PRIMARY_COLOR, PREVIOUS, TEXTURE or TEXTUREn.
- * 	- [RGB1]\n
- * 		Choose a value among CONSTANT, PRIMARY_COLOR, PREVIOUS, TEXTURE or TEXTUREn.
- * 	- [RGB2]\n
- * 		Choose a value among CONSTANT, PRIMARY_COLOR, PREVIOUS, TEXTURE or TEXTUREn.
- * 	- [ALPHA0]\n
- * 		Choose a value among CONSTANT, PRIMARY_COLOR, PREVIOUS, TEXTURE or TEXTUREn.
- * 	- [ALPHA1]\n
- * 		Choose a value among CONSTANT, PRIMARY_COLOR, PREVIOUS, TEXTURE or TEXTUREn.
- * 	- [ALPHA2]\n
- * 		Choose a value among CONSTANT, PRIMARY_COLOR, PREVIOUS, TEXTURE or TEXTUREn.
- * 
- * - PAFInt32 operand
- * 	- [RGB0]\n
- * 		Choose a value among SRC_COLOR, ONE_MINUS_SRC_COLOR, SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
- *	- [RGB1]\n
- * 		Choose a value among SRC_COLOR, ONE_MINUS_SRC_COLOR, SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
- * 	- [RGB2]\n
- * 		Choose a value among SRC_COLOR, ONE_MINUS_SRC_COLOR, SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
- * 	- [ALPHA0]\n
- *			Choose a value among SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
- * 	- [ALPHA1]\n
- *			Choose a value among SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
- * 	- [ALPHA2]\n
- *			Choose a value among SRC_ALPHA or ONE_MINUS_SRC_ALPHA.
  *
- * - PAFFloat scale
- * 	- [RGB_SCALE]\n
- *			Choose a value among 1.0, 2.0 or 4.0.
- * 	- [ALPHA_SCALE]\n
- *			Choose a value among 1.0, 2.0 or 4.0.
- * 
- * - PAFImage \c [images]
- * 		Generic repository of images used to specify texture images. Don't use this field unless knowing exactly what
- * 		you do.
+ * This node defines texture parameters (wrapping, filter for minifying and magnification, mipmapping and function). Be carefull, data referenced by image must be available when texture is update. This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface) @remarks When The scene graph is evaluated by vgeGL, there are a size constraint one texture that you should keep in mind.\n When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage(to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n - Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping.\n - GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping.\n - GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce 8 could do  8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n @remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n @todo More docs\n 
  *
- * @remarks When you evaluate scene graph with vgeGL, there are two constraints that you should keep in mind :
- * 	- When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage(to 
- * 		the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull. 
- * 		For example :
- * 		- Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping. 
- * 		- GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping. 
- * 		- GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.
- * 		- GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.
- * 	- If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two 
- * 		dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.
- * 
- * @todo Add documentation about used OpenGL extensions (like GL_ARB_texture_env_combine, GL_texture_env_crossbar).
- * 
+ * New fields defined by this node :
+ * - OFString \c [function] = empty<br>
+ *   Example similar to old FUN_MODULATE: color *= texture2D(texUnitX, gl_TexCoord[X].xy);<br>
+ *<br>
+ * - OFIImageShp \c [image] = empty<br>
+ *   Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
+ *<br>
+ * - OFBool \c [mipmap] = false<br>
+ *   Specifies if all levels of a mipmap array should be automatically updated when any modification to the image field (the base level of mipmap) is done.<br>
+ *<br>
+ * - PAFEnum \c filter = LINEAR<br>
+ *   The texture minifying function (MIN_FILTER) is used whenever the pixel being textured maps to an area greater than one texture element. The texture magnification function (MAG_FILTER) is used when the pixel being textured maps to an area less than or equal to one texture element.<br>
+ *<br>
+ * - PAFEnum \c wrap = REPEAT<br>
+ *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
+ *<br>
+ * - SFEnum \c usage = IMAGE<br>
+ *   Indicating the expected usage pattern of the texture.<br>
+ *<br>
+ *
  * @ingroup g_abstractNodes
  */
 struct VGD_API Texture : public vgd::node::MultiAttribute
 {
-	//META_NODE_HPP( Texture );
 
 
 
 	/**
-	 * @name Accessors to field iimages
+	 * @name Accessors to field function
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c iimages parameters.
+	 * @brief Type definition of the value contained by field named \c function.
 	 */
-	typedef enum
-	{
-		IIMAGE_1 = 1,
-		IIMAGE_2,
-		IIMAGE_3,
-		IIMAGE_4,
-		IIMAGE_5,
-		IIMAGE_6,
-		DEFAULT_IIMAGES = IIMAGE_1
-	} IImagesParameterType;
+	typedef std::string FunctionValueType;
 
 	/**
-	 * @brief Typedef for the \c iimages value.
+	 * @brief Type definition of the field named \c function
 	 */
-	typedef vgd::Shp< vgd::basic::IImage > IImagesValueType;
+	typedef vgd::field::TOptionalField< FunctionValueType > FFunctionType;
+
 
 	/**
-	 * @brief Typedef for the \c iimages field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< int /*IImagesParameterType*/, IImagesValueType > FIImagesType;
+	 * @brief Gets the value of field named \c function.
+	 */
+	const bool getFunction( FunctionValueType& value ) const;
 
 	/**
-	 * @brief Gets the iimages value.
-	 */
-	bool			getIImages( const int /*IImagesParameterType*/ param, IImagesValueType& value ) const;
+	 * @brief Sets the value of field named \c function.
+ 	 */
+	void setFunction( const FunctionValueType& value );
 
 	/**
-	 * @brief Sets the iimages value.
+	 * @brief Erases the field named \c function.
 	 */
-	void 			setIImages( const int /*IImagesParameterType*/ param, IImagesValueType value );
-	
+	void eraseFunction();
+
 	/**
-	 * @brief Erase the iimages value.
+	 * @brief Tests if the value of field named \c function has been initialized.
 	 */
-	void 			eraseIImages( const int /*IImagesParameterType*/ param );
+	const bool hasFunction() const;
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field wrap
+	 * @name Accessors to field image
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c wrap parameters.
+	 * @brief Type definition of the value contained by field named \c image.
 	 */
-	typedef enum
-	{
-		WRAP_S = 0,
-		WRAP_T,
-		WRAP_R			/*!< GL 1.2 */
-	} WrapParameterType;
+	typedef vgd::basic::IImageShp ImageValueType;
 
 	/**
-	 * @brief Typedef for the \c wrap value.
+	 * @brief Type definition of the field named \c image
 	 */
-	typedef enum {
+	typedef vgd::field::TOptionalField< ImageValueType > FImageType;
 
-		REPEAT	= 0,
-		CLAMP,
-		CLAMP_TO_EDGE,			/*!< GL 1.2 */
-		CLAMP_TO_BORDER,		/*!< GL 1.3 */
-		MIRRORED_REPEAT,		/*!< GL 1.4 */
-		
-		ONCE,
-
-		DEFAULT_WRAP		= REPEAT
-	} WrapValueType;
 
 	/**
-	 * @brief Typedef for the \c wrap field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< WrapParameterType, WrapValueType > FWrapType;
-
-	/**
-	 * @brief Gets the wrap value.
+	 * @brief Gets the value of field named \c image.
 	 */
-	bool			getWrap( const WrapParameterType param, WrapValueType& value ) const;
+	const bool getImage( ImageValueType& value ) const;
 
 	/**
-	 * @brief Sets the wrap value.
+	 * @brief Sets the value of field named \c image.
+ 	 */
+	void setImage( const ImageValueType& value );
+
+	/**
+	 * @brief Erases the field named \c image.
 	 */
-	void 			setWrap( const WrapParameterType param, WrapValueType value );
-	
+	void eraseImage();
+
 	/**
-	 * @brief Erase the wrap value.
+	 * @brief Tests if the value of field named \c image has been initialized.
 	 */
-	void 			eraseWrap( const WrapParameterType param );
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field filter
-	 */
-	//@{
-
-	/**
-	 * @brief Enumeration of the \c filter parameters.
-	 */
-	typedef enum {
-		
-		MIN_FILTER = 0,
-		MAG_FILTER
-		
-	} FilterParameterType;
-
-	/**
-	 * @brief Typedef for the \c filter value.
-	 */
-	typedef enum {
-
-		NEAREST	= 0,
-		LINEAR,
-
-		NEAREST_MIPMAP_NEAREST,
-		LINEAR_MIPMAP_NEAREST,
-		NEAREST_MIPMAP_LINEAR,
-		LINEAR_MIPMAP_LINEAR,
-
-		DEFAULT_FILTER					= LINEAR
-		
-	} FilterValueType;
-
-	/**
-	 * @brief Typedef for the \c filter field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< FilterParameterType, FilterValueType > FFilterType;
-
-	/**
-	 * @brief Gets the filter value.
-	 */
-	bool			getFilter( const FilterParameterType param, FilterValueType& value ) const;
-
-	/**
-	 * @brief Sets the filter value.
-	 */
-	void 			setFilter( const FilterParameterType param, FilterValueType value );
-	
-	/**
-	 * @brief Erase the filter value.
-	 */
-	void 			eraseFilter( const FilterParameterType param );
+	const bool hasImage() const;
 	//@}
 
 
@@ -292,175 +138,487 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c mipmap parameter.
-	 */
-	typedef enum
-	{
-		MIPMAP = 0
-	} MipmapParameterType;
-
-	/**
-	 * @brief Typedef for the \c mipmap parameter value.
+	 * @brief Type definition of the value contained by field named \c mipmap.
 	 */
 	typedef bool MipmapValueType;
 
 	/**
-	 * @brief Typedef for the \c mipmap field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< MipmapParameterType, MipmapValueType > FMipmapType;
+	 * @brief Type definition of the field named \c mipmap
+	 */
+	typedef vgd::field::TOptionalField< MipmapValueType > FMipmapType;
+
 
 	/**
-	 * @brief Gets the \c mipmap value.
+	 * @brief Gets the value of field named \c mipmap.
 	 */
-	bool			getMipmap( MipmapValueType& value ) const;
+	const bool getMipmap( MipmapValueType& value ) const;
 
 	/**
-	 * @brief Sets the \c mipmap value.
-	 */
-	void 			setMipmap( MipmapValueType value );
-	
+	 * @brief Sets the value of field named \c mipmap.
+ 	 */
+	void setMipmap( const MipmapValueType& value );
+
 	/**
-	 * @brief Erase the \c mipmap value.
+	 * @brief Erases the field named \c mipmap.
 	 */
-	void 			eraseMipmap();
+	void eraseMipmap();
+
+	/**
+	 * @brief Tests if the value of field named \c mipmap has been initialized.
+	 */
+	const bool hasMipmap() const;
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field border
+	 * @name Accessors to field filter
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c border parameter.
+	 * @brief Type definition of the parameter contained by field named \c filter.
 	 */
-	typedef enum
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
 	{
-		BORDER = 0
-	} BorderParameterType;
+		MIN_FILTER = 284,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
+		MAG_FILTER = 285,	///< Choose one value among NEAREST or LINEAR (default).
+		DEFAULT_FILTERPARAMETER = MAG_FILTER	///< Choose one value among NEAREST or LINEAR (default).
+	};
 
 	/**
-	 * @brief Typedef for the \c border parameter value.
+	 * @brief Type definition of the value contained by field named \c filterParameter.
 	 */
-	typedef bool BorderValueType;
+	struct FilterParameterType : public vgd::field::Enum
+	{
+		FilterParameterType()
+		{}
+
+		FilterParameterType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		FilterParameterType( const FilterParameterType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		FilterParameterType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 284 );
+			retVal.push_back( 285 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "MIN_FILTER" );
+			retVal.push_back( "MAG_FILTER" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Typedef for the \c border field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< BorderParameterType, BorderValueType > FBorderType;
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		NEAREST = 286,	///< 
+		LINEAR = 287,	///< 
+		LINEAR_MIPMAP_NEAREST = 289,	///< 
+		NEAREST_MIPMAP_NEAREST = 288,	///< 
+		LINEAR_MIPMAP_LINEAR = 291,	///< 
+		NEAREST_MIPMAP_LINEAR = 290,	///< 
+		DEFAULT_FILTER = LINEAR	///< 
+	};
 
 	/**
-	 * @brief Gets the \c border value.
+	 * @brief Type definition of the value contained by field named \c filter.
 	 */
-	bool			getBorder( BorderValueType& value ) const;
+	struct FilterValueType : public vgd::field::Enum
+	{
+		FilterValueType()
+		{}
+
+		FilterValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		FilterValueType( const FilterValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		FilterValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 286 );
+			retVal.push_back( 287 );
+			retVal.push_back( 289 );
+			retVal.push_back( 288 );
+			retVal.push_back( 291 );
+			retVal.push_back( 290 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "NEAREST" );
+			retVal.push_back( "LINEAR" );
+			retVal.push_back( "LINEAR_MIPMAP_NEAREST" );
+			retVal.push_back( "NEAREST_MIPMAP_NEAREST" );
+			retVal.push_back( "LINEAR_MIPMAP_LINEAR" );
+			retVal.push_back( "NEAREST_MIPMAP_LINEAR" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Sets the \c border value.
+	 * @brief Type definition of the field named \c filter
 	 */
-	void 			setBorder( BorderValueType value );
-	
+	typedef vgd::field::TPairAssociativeField< FilterParameterType, FilterValueType > FFilterType;
+
+
 	/**
-	 * @brief Erase the \c border value.
+	 * @brief Gets the value of field named \c filter.
 	 */
-	void 			eraseBorder();
+	const bool getFilter( const FilterParameterType param, FilterValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c filter.
+ 	 */
+	void setFilter( const FilterParameterType param, FilterValueType value );
+
+	/**
+	 * @brief Erases the field named \c filter.
+	 */
+	void eraseFilter( const FilterParameterType param );
 	//@}
 
-	
-	
+
+
 	/**
-	 * @name Accessors to field borderColor
+	 * @name Accessors to field wrap
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c borderColor parameter.
+	 * @brief Type definition of the parameter contained by field named \c wrap.
 	 */
-	typedef enum
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
 	{
-		BORDER_COLOR = 0
-	} BorderColorParameterType;
+		WRAP_T = 276,	///< 
+		WRAP_S = 275,	///< 
+		WRAP_R = 277,	///< 
+		DEFAULT_WRAPPARAMETER = WRAP_S	///< 
+	};
 
 	/**
-	 * @brief Typedef for the \c borderColor parameter value.
+	 * @brief Type definition of the value contained by field named \c wrapParameter.
 	 */
-	typedef vgm::Vec4f BorderColorValueType;
+	struct WrapParameterType : public vgd::field::Enum
+	{
+		WrapParameterType()
+		{}
+
+		WrapParameterType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		WrapParameterType( const WrapParameterType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		WrapParameterType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 276 );
+			retVal.push_back( 275 );
+			retVal.push_back( 277 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "WRAP_T" );
+			retVal.push_back( "WRAP_S" );
+			retVal.push_back( "WRAP_R" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Typedef for the \c borderColor field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< BorderColorParameterType, BorderColorValueType > FBorderColorType;
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		CLAMP = 279,	///< 
+		REPEAT = 278,	///< 
+		MIRRORED_REPEAT = 282,	///< 
+		CLAMP_TO_EDGE = 280,	///< 
+		CLAMP_TO_BORDER = 281,	///< 
+		ONCE = 283,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
+		DEFAULT_WRAP = REPEAT	///< 
+	};
 
 	/**
-	 * @brief Gets the \c borderColor value.
+	 * @brief Type definition of the value contained by field named \c wrap.
 	 */
-	bool			getBorderColor( BorderColorValueType& value ) const;
+	struct WrapValueType : public vgd::field::Enum
+	{
+		WrapValueType()
+		{}
+
+		WrapValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		WrapValueType( const WrapValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		WrapValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 279 );
+			retVal.push_back( 278 );
+			retVal.push_back( 282 );
+			retVal.push_back( 280 );
+			retVal.push_back( 281 );
+			retVal.push_back( 283 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "CLAMP" );
+			retVal.push_back( "REPEAT" );
+			retVal.push_back( "MIRRORED_REPEAT" );
+			retVal.push_back( "CLAMP_TO_EDGE" );
+			retVal.push_back( "CLAMP_TO_BORDER" );
+			retVal.push_back( "ONCE" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Sets the \c borderColor value.
+	 * @brief Type definition of the field named \c wrap
 	 */
-	void 			setBorderColor( BorderColorValueType value );
-	
+	typedef vgd::field::TPairAssociativeField< WrapParameterType, WrapValueType > FWrapType;
+
+
 	/**
-	 * @brief Erase the \c borderColor value.
+	 * @brief Gets the value of field named \c wrap.
 	 */
-	void 			eraseBorderColor();
+	const bool getWrap( const WrapParameterType param, WrapValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c wrap.
+ 	 */
+	void setWrap( const WrapParameterType param, WrapValueType value );
+
+	/**
+	 * @brief Erases the field named \c wrap.
+	 */
+	void eraseWrap( const WrapParameterType param );
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field envColor
+	 * @name Accessors to field usage
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c envColor parameter.
+	 * @brief Definition of symbolic values
 	 */
-	typedef enum
+	enum
 	{
-		ENV_COLOR = 0
-	} EnvColorParameterType;
+		IMAGE = 273,	///< Simple image mapping
+		SHADOW = 274,	///< Shadow mapping
+		DEFAULT_USAGE = IMAGE	///< Simple image mapping
+	};
 
 	/**
-	 * @brief Typedef for the \c envColor parameter value.
+	 * @brief Type definition of the value contained by field named \c usage.
 	 */
-	typedef vgm::Vec4f EnvColorValueType;
+	struct UsageValueType : public vgd::field::Enum
+	{
+		UsageValueType()
+		{}
+
+		UsageValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		UsageValueType( const UsageValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		UsageValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 273 );
+			retVal.push_back( 274 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "IMAGE" );
+			retVal.push_back( "SHADOW" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Typedef for the \c envColor field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< EnvColorParameterType, EnvColorValueType > FEnvColorType;
+	 * @brief Type definition of the field named \c usage
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FUsageType;
+
 
 	/**
-	 * @brief Gets the \c envColor value.
+	 * @brief Gets the value of field named \c usage.
 	 */
-	bool			getEnvColor( EnvColorValueType& value ) const;
+	const UsageValueType getUsage() const;
 
 	/**
-	 * @brief Sets the \c envColor value.
+	 * @brief Sets the value of field named \c usage.
 	 */
-	void 			setEnvColor( EnvColorValueType value );
-	
+	void setUsage( const UsageValueType value );
+
+	//@}
+
+
+
 	/**
-	 * @brief Erase the \c envColor value.
+	 * @name Field name accessors
 	 */
-	void 			eraseEnvColor();
+	//@{
+
+	/**
+	 * @brief Returns the name of field \c function.
+	 *
+	 * @return the name of field \c function.
+	 */
+	static const std::string getFFunction( void );
+
+	/**
+	 * @brief Returns the name of field \c image.
+	 *
+	 * @return the name of field \c image.
+	 */
+	static const std::string getFImage( void );
+
+	/**
+	 * @brief Returns the name of field \c mipmap.
+	 *
+	 * @return the name of field \c mipmap.
+	 */
+	static const std::string getFMipmap( void );
+
+	/**
+	 * @brief Returns the name of field \c filter.
+	 *
+	 * @return the name of field \c filter.
+	 */
+	static const std::string getFFilter( void );
+
+	/**
+	 * @brief Returns the name of field \c wrap.
+	 *
+	 * @return the name of field \c wrap.
+	 */
+	static const std::string getFWrap( void );
+
+	/**
+	 * @brief Returns the name of field \c usage.
+	 *
+	 * @return the name of field \c usage.
+	 */
+	static const std::string getFUsage( void );
+
+	//@}
+	/**
+	 * @name High-level accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the dimension of this texture node.
+	 * 
+	 * @return dimension of this texture node
+	 */
+	virtual const uint32 gethTextureDimension() const=0;
+
 	//@}
 
 
 
 	/**
 	 * @name Accessors to field function
+	 *
+	 * This accessors emulates the old interface of the field function.
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c function parameters.
+	 * brief Enumeration of the \c function parameters.
 	 */
-	typedef enum {
+	/*typedef enum {
 		FUNCTION
-	} FunctionParameterType;
+	} OldFunctionParameterType;*/
 
 	/**
 	 * @brief Typedef for the \c function value.
@@ -469,421 +627,55 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	{
 		FUN_REPLACE = 0,
 		FUN_MODULATE, 
-		FUN_DECAL, 
-		FUN_BLEND, 
-		
-		FUN_ADD,
-		FUN_COMBINE,
-		
+//		FUN_DECAL, 
+//		FUN_BLEND, 
+
+//		FUN_ADD,
+//		FUN_COMBINE,
+
 		DEFAULT_FUN = FUN_MODULATE
-	} FunctionValueType;
+	} OldFunctionValueType;
 
 	/**
-	 * @brief Typedef for the \c function field.
+	 * brief Typedef for the \c function field.
 	 */	
-	typedef vgd::field::TPairAssociativeField< FunctionParameterType, FunctionValueType > FFunctionType;
+	//typedef vgd::field::TPairAssociativeField< OldFunctionParameterType, OldFunctionValueType > FFunctionType;
 
 	/**
-	 * @brief Gets the function value.
+	 * brief Gets the function value.
 	 */
-	bool			getFunction( FunctionValueType& value ) const;
+	//vgDEPRECATED( bool			gethFunction( OldFunctionValueType& value ) const );
 
 	/**
 	 * @brief Sets the function value.
 	 */
-	void 			setFunction( FunctionValueType value );
+	void 			sethFunction( OldFunctionValueType value );
 	
 	/**
-	 * @brief Erase the function value.
+	 * brief Erase the function value.
 	 */
-	void 			eraseFunction();
+	//void 			eraseFunction();
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field combine
+	 * @name Constructor and initializer methods
 	 */
 	//@{
 
-	/**
-	 * @brief Enumeration of the \c combine parameters.
-	 */
-	typedef enum
-	{
-		RGB = 0,
-		ALPHA
-	} CombineParameterType;
+	void	setToDefaults( void );
 
-	/**
-	 * @brief Typedef for the \c combine value.
-	 */
-	typedef enum {
-		REPLACE = 0,
-		MODULATE, 
-		ADD, 
-		ADD_SIGNED, 
-		INTERPOLATE,
-		SUBTRACT,
-		DOT3_RBG,
-		DOT3_RGBA
-	} CombineValueType;
-
-	/**
-	 * @brief Typedef for the \c combine field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< CombineParameterType, CombineValueType > FCombineType;
-
-	/**
-	 * @brief Gets the combine value.
-	 */
-	bool			getCombine( const CombineParameterType param, CombineValueType& value ) const;
-
-	/**
-	 * @brief Sets the combine value.
-	 */
-	void 			setCombine( const CombineParameterType param, CombineValueType value );
-	
-	/**
-	 * @brief Erase the combine value.
-	 */
-	void 			eraseCombine( const CombineParameterType param );
-	//@}
-
-
-
-
-	/**
-	 * @name Accessors to field source
-	 */
-	//@{
-
-	/**
-	 * @brief Enumeration of the \c source parameters.
-	 */
-	typedef enum
-	{
-		RGB0 = 0,
-		RGB1,
-		RGB2,
-		
-		ALPHA0,
-		ALPHA1,
-		ALPHA2
-
-	} SourceParameterType;
- 
-	/**
-	 * @brief Typedef for the \c source value.
-	 */
-	typedef enum {
-		
-		CONSTANT = 0,
-		PRIMARY_COLOR,
-		PREVIOUS,
-		TEXTURE,
-		TEXTURE0=TEXTURE,
-		TEXTURE1,
-		TEXTURE2,
-		TEXTURE3,
-		TEXTURE4,
-		TEXTURE5,
-		TEXTURE6,
-		TEXTURE7,
-		TEXTURE8,
-		TEXTURE9,
-		TEXTURE10,
-		TEXTURE11,
-		TEXTURE12,
-		TEXTURE13,
-		TEXTURE14,
-		TEXTURE15,
-		TEXTURE16,
-		TEXTURE17,
-		TEXTURE18,
-		TEXTURE19,
-		TEXTURE20,
-		TEXTURE21,
-		TEXTURE22,
-		TEXTURE23,
-		TEXTURE24,
-		TEXTURE25,
-		TEXTURE26,
-		TEXTURE27,
-		TEXTURE28,
-		TEXTURE29,
-		TEXTURE30,
-		TEXTURE31
-
-	} SourceValueType;
-
-	/**
-	 * @brief Typedef for the \c source field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< SourceParameterType, SourceValueType > FSourceType;
-
-	/**
-	 * @brief Gets the source value.
-	 */
-	bool			getSource( const SourceParameterType param, SourceValueType& value ) const;
-
-	/**
-	 * @brief Sets the source value.
-	 */
-	void 			setSource( const SourceParameterType param, SourceValueType value );
-	
-	/**
-	 * @brief Erase the source value.
-	 */
-	void 			eraseSource( const SourceParameterType param );
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field operand
-	 */
-	//@{
-
-	/**
-	 * @brief Enumeration of the \c operand parameters.
-	 */
-	typedef SourceParameterType /*enum
-	{
-		RGB0 = 0,
-		RGB1,
-		RGB2,
-		
-		ALPHA0,
-		ALPHA1,
-		ALPHA2
-		
-	} */OperandParameterType;
- 
-	/**
-	 * @brief Typedef for the \c operand value.
-	 */
-	typedef enum {
-
-		SRC_COLOR = 0,
-		ONE_MINUS_SRC_COLOR,
-		SRC_ALPHA,
-		ONE_MINUS_SRC_ALPHA
-	} OperandValueType;
-
-	/**
-	 * @brief Typedef for the \c operand field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< OperandParameterType, OperandValueType > FOperandType;
-
-	/**
-	 * @brief Gets the operand value.
-	 */
-	bool			getOperand( const OperandParameterType param, OperandValueType& value ) const;
-
-	/**
-	 * @brief Sets the operand value.
-	 */
-	void 			setOperand( const OperandParameterType param, OperandValueType value );
-	
-	/**
-	 * @brief Erase the operand value.
-	 */
-	void 			eraseOperand( const OperandParameterType param );
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field scale
-	 */
-	//@{
-
-	/**
-	 * @brief Enumeration of the \c scale parameters.
-	 */
-	typedef CombineParameterType /*enum
-	{
-		RGB = 0,
-		ALPHA
-	} */ScaleParameterType;
- 
-	/**
-	 * @brief Typedef for the \c scale value.
-	 */
-	typedef float ScaleValueType;
-
-	/**
-	 * @brief Typedef for the \c scale field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< ScaleParameterType, ScaleValueType > FScaleType;
-
-	/**
-	 * @brief Gets the scale value.
-	 */
-	bool			getScale( const ScaleParameterType param, ScaleValueType& value ) const;
-
-	/**
-	 * @brief Sets the scale value.
-	 */
-	void 			setScale( const ScaleParameterType param, ScaleValueType value );
-	
-	/**
-	 * @brief Erase the scale value.
-	 */
-	void 			eraseScale( const ScaleParameterType param );
-	//@}
-
-
-
-	/**
-	 * @name Fields names enumeration
-	 */
-	//@{
-
-	/**
-	 * @brief Returns the name of field \c iimages.
-	 * 
-	 * @return the name of field \c iimages.
-	 */
-	static const std::string getFIImages( void );
-
-	/**
-	 * @brief Returns the name of field \c wrap.
-	 * 
-	 * @return the name of field \c wrap.
-	 */
-	static const std::string getFWrap( void );
-	
-	/**
-	 * @brief Returns the name of field \c filter.
-	 * 
-	 * @return the name of field \c filter.
-	 */
-	static const std::string getFFilter( void );
-	
-	/**
-	 * @brief Returns the name of field \c mipmap.
-	 * 
-	 * @return the name of field \c mipmap.
-	 */
-	static const std::string getFMipmap( void );	
-
-	/**
-	 * @brief Returns the name of field \c border.
-	 * 
-	 * @return the name of field \c border.
-	 */
-	static const std::string getFBorder( void );
-
-	/**
-	 * @brief Returns the name of field \c borderColor.
-	 * 
-	 * @return the name of field \c borderColor.
-	 */
-	static const std::string getFBorderColor( void );
-	
-	/**
-	 * @brief Returns the name of field \c envColor.
-	 * 
-	 * @return the name of field \c envColor.
-	 */
-	static const std::string getFEnvColor( void );
-	
-	/**
-	 * @brief Returns the name of field \c function.
-	 * 
-	 * @return the name of field \c function.
-	 */
-	static const std::string getFFunction( void );
-	
-	/**
-	 * @brief Returns the name of field \c combine.
-	 * 
-	 * @return the name of field \c combine.
-	 */
-	static const std::string getFCombine( void );
-	
-	/**
-	 * @brief Returns the name of field \c source.
-	 * 
-	 * @return the name of field \c source.
-	 */
-	static const std::string getFSource( void );
-
-	/**
-	 * @brief Returns the name of field \c operand.
-	 * 
-	 * @return the name of field \c operand.
-	 */
-	static const std::string getFOperand( void );
-
-	/**
-	 * @brief Returns the name of field \c scale.
-	 * 
-	 * @return the name of field \c scale.
-	 */
-	static const std::string getFScale( void );
+	void	setOptionalsToDefaults();
 
 	//@}
-
-
-
-	/**
-	 * @name Dirty flags enumeration
-	 */
-	//@{
-
-	/**
-	 * @brief Returns name of dirty flag that is invalidate when at least one image has changed.
-	 */
-	static const std::string getDFIImages();
-
-	/**
-	 * @brief Returns name of dirty flag that is invalidate when texture parameters changed.
-	 */
-	static const std::string getDFParameters();
-	
-	/**
-	 * @brief Returns name of dirty flag that is invalidate when texture environment parameters changed.
-	 */
-	static const std::string getDFEnvironmentParameters();
-
-	//@}		
-
-
-
-	/**
-	 * @name High-level accessors
-	 */
-	//@{
-	
-	/**
-	 * @brief Returns the dimension of this texture node.
-	 * 
-	 * @return dimension of this texture node
-	 */
-	virtual const uint32 gethTextureDimension() const=0;
-	
-	//@}
-
 
 protected:
 	/**
-	 * @name Constructor
-	 */
-	//@{
-
-	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 */
 	Texture( const std::string nodeName );
 
-	void	setToDefaults( void );
-	
-	void	setOptionalsToDefaults();	
-
-	//@}
 };
 
 

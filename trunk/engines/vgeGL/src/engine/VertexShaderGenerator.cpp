@@ -30,7 +30,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// Retrieves the GLSL state
 	GLSLState& state = engine->getGLSLState();
 
-	//
 	const bool ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
 
 	// Clears the code repository
@@ -76,8 +75,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		m_code += GLSLHelpers::generateFunction_flight( state ) + "\n";
 	}
 
-	if ( ftexgen )
-		m_code += GLSLHelpers::generateFunction_ftexgen(state) + "\n";
+	if ( ftexgen )	m_code += GLSLHelpers::generateFunction_ftexgen(state) + "\n";
 
 // @todo generateFunction_fVertexAttrib()  and generate_vertexAttribDeclaration()
 
@@ -125,22 +123,23 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		}
 		else
 		{
-			if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+			/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
 			{
-				// pixel lighting and color4 field of VertexShape, so gl_Color must be transfered to fragment program.
+				// pixel lighting and VertexShape::color4, so gl_Color must be transfered to fragment program.
 				// m_code += "	mglColor = gl_Color;\n";
-				m_code +=	
-				"	gl_FrontColor			= gl_Color;\n"
-				"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
+			}*/
 
-				if ( state.isTwoSidedLightingEnabled() )
-				{
-					m_code +=
-					"	gl_BackColor			= gl_Color;\n"
-					"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
-				}
+			m_code +=	
+			"	gl_FrontColor			= gl_Color;\n"
+			"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
+
+			if ( state.isTwoSidedLightingEnabled() )
+			{
+				m_code +=
+				"	gl_BackColor			= gl_Color;\n"
+				"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 			}
-			// else nothing to do
+//			// else nothing to do
 		}
 	}
 	else

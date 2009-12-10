@@ -27,15 +27,18 @@ namespace node
  * Sets up the projection with an user defined matrix for the viewing frustum (into the world coordinate system).  Sets up the camera position and orientation with 4x4 matrix from lookAt field. Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting.  
  *
  * New fields defined by this node :
- *	- OFRectangle2i \c scissor = empty\n
- *		Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.
- *	- SFMatrixR \c lookAt = vgm::MatrixR(vgm::MatrixR::getIdentity())\n
- *		Determines the 3D geometric transformation as a 4x4 matrix applied to camera.\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).
- *	- SFMatrixR \c projection = vgm::MatrixR(vgm::MatrixR::getIdentity())\n
- *		Determines the projection matrix.
- *	- OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)\n
- *		Determines the viewport.
- *
+ * - OFRectangle2i \c [scissor] = empty<br>
+ *   Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.<br>
+ *<br>
+ * - SFMatrixR \c lookAt = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
+ *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera.\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
+ *<br>
+ * - SFMatrixR \c projection = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
+ *   Determines the projection matrix.<br>
+ *<br>
+ * - OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
+ *   Determines the viewport.<br>
+ *<br>
  *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes

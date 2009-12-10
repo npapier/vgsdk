@@ -14,6 +14,7 @@
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/pass/Opaque.hpp"
 #include "vgeGL/pass/Transparent.hpp"
+#include "vgeGL/technique/ForwardRendering.hpp"
 
 
 
@@ -25,10 +26,17 @@ namespace technique
 
 
 
+MultiMain::MultiMain()
+:	m_paintTechnique( vgd::makeShp( new vgeGL::technique::ForwardRendering() ) )
+{
+}
+
+
+
 vgd::Shp< MultiMain::Window > MultiMain::addWindow( const std::string name,
 	const int zOrder, const bool hasBorder, const vgm::Vec4f borderColor, const float borderWidth )
 {
-	WindowContainer::value_type value( name, vgd::makeShp(new Window( zOrder, true/*isVisible*/, WindowBorder(hasBorder, borderColor, borderWidth) ) ) );
+	WindowContainer::value_type value( name, vgd::makeShp(new Window( name, zOrder, true/*isVisible*/, WindowBorder(hasBorder, borderColor, borderWidth) ) ) );
 
 	std::pair< WindowContainer::iterator, bool> retVal = m_windows.insert( value );
 
@@ -40,7 +48,7 @@ vgd::Shp< MultiMain::Window > MultiMain::addWindow( const std::string name,
 vgd::Shp< MultiMain::Window > MultiMain::addWindow( const std::string name,
 	const int zOrder, const WindowBorder borderState )
 {
-	WindowContainer::value_type value( name, vgd::makeShp(new Window( zOrder, true/*isVisible*/, borderState ) ) );
+	WindowContainer::value_type value( name, vgd::makeShp(new Window( name, zOrder, true/*isVisible*/, borderState ) ) );
 
 	std::pair< WindowContainer::iterator, bool> retVal = m_windows.insert( value );
 
@@ -133,7 +141,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 	{
 		if ( (i->first)->isAKindOf< vgd::node::Camera >() )
 		{
-			camera = dynamic_cast< vgd::node::Camera * >(i->first);
+			//camera = dynamic_cast< vgd::node::Camera * >(i->first);
 			break;
 		}
 		
@@ -149,27 +157,27 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 		++i;
 	}
 
-	if ( camera == 0 )
-	{
-		// No camera node in scene graph, do nothing
-		vgLogDebug( "No camera in scene graph." );
-		return;
-	}
-
 	if ( clearFrameBuffer == 0 )
 	{
 		// No clearFrameBuffer node in scene graph, do nothing
-		vgLogDebug( "No ClearFrameBuffer in scene graph." );
+		vgLogDebug( "MultiMain::apply(): No ClearFrameBuffer in scene graph." );
 		return;
 	}
 
 	// Retrieves camera properties and stores them.
 	vgm::Rectangle2i cameraViewport;
-	const bool isCameraViewportDefined = camera->getViewport( cameraViewport );
-	const vgm::Rectangle2f cameraViewport2f(cameraViewport);
-
 	vgm::Rectangle2i cameraScissor;
-	const bool isCameraScissorDefined = camera->getScissor( cameraScissor );
+	bool isCameraViewportDefined;
+	bool isCameraScissorDefined;
+
+	/*vgm::Rectangle2i cameraViewport;
+	const bool isCameraViewportDefined = camera->getViewport( cameraViewport );
+	const vgm::Rectangle2f cameraViewport2f(cameraViewport);*/
+	const vgm::Rectangle2f drawingSurface(	0.f, 0.f,
+											static_cast<float>(engine->getDrawingSurfaceSize()[0]), static_cast<float>(engine->getDrawingSurfaceSize()[1]) );
+
+	/*vgm::Rectangle2i cameraScissor;
+	const bool isCameraScissorDefined = camera->getScissor( cameraScissor );*/
 
 	// Computes the window z-order (for visible windows only)
 	typedef std::multimap< int, vgd::Shp< Window > > ZOrderedWindowContainer;
@@ -217,15 +225,15 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 
 		vgm::Rectangle2f newViewport;
 		newViewport.set(
+			drawingSurface.x() + windowGeometry.x() *	drawingSurface.width(),
+			drawingSurface.y() + windowGeometry.y() *	drawingSurface.height(),
+			windowGeometry.width() * drawingSurface.width(),
+			windowGeometry.height() * drawingSurface.height() );
+/*		newViewport.set(
 			cameraViewport2f.x() + windowGeometry.x() *	cameraViewport2f.width(),
 			cameraViewport2f.y() + windowGeometry.y() *	cameraViewport2f.height(),
 			windowGeometry.width() * cameraViewport2f.width(),
-			windowGeometry.height() * cameraViewport2f.height() );
-
-		// Modifies the camera node
-		const vgm::Rectangle2i newViewport2i(newViewport);
-		camera->setViewport( newViewport2i );
-		camera->setScissor( newViewport2i );
+			windowGeometry.height() * cameraViewport2f.height() );*/
 
 		// Configures the scene graph
 		const vgd::Shp< SceneGraphConfigurator > configurator = window->getConfigurator();
@@ -254,31 +262,37 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 			currentTraverseElements = traverseElements;
 		}
 
-		// @todo OPTME
-		//Main::apply( engine, traverseElements );
-		// or
+		//
+		camera = 0;
+		vge::visitor::TraverseElementVector::const_iterator traverseElement, traverseElementEnd;
+		for(	traverseElement = currentTraverseElements->begin(), traverseElementEnd = currentTraverseElements->end();
+				traverseElement != traverseElementEnd;
+				++traverseElement )
 		{
-			vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
-
-			prepareEval( engine, currentTraverseElements );
-
-			// At startup, the transparency pass is disabled. It would be enabled during the opaque pass if at least one
-			// transparent shape is encountered.
-
-			// First pass : OPAQUE PASS (draw opaque shape)
-			using ::vgeGL::pass::Opaque;
-			vgd::Shp< Opaque > opaque( new Opaque() );
-
-			evaluatePass( opaque, paint );
-
-			// Second pass : TRANSPARENT PASS (draw transparent shape).
-			if ( opaque->mustDoTransparencyPass() )
+			if ( (traverseElement->first)->isAKindOf< vgd::node::Camera >() )
 			{
-				using ::vgeGL::pass::Transparent;
-				
-				evaluatePass( vgd::makeShp( new Transparent() ), paint );
+				camera = dynamic_cast< vgd::node::Camera * >(traverseElement->first);
+				break;
 			}
 		}
+
+		if ( camera == 0 )
+		{
+			// No camera node in scene graph, do nothing
+			vgLogDebug( "MultiMain::apply(): No camera in scene graph." );
+			return;
+		}
+		// Modifies the camera node
+		isCameraViewportDefined = camera->getViewport( cameraViewport );
+		isCameraScissorDefined = camera->getScissor( cameraScissor );
+		
+		const vgm::Rectangle2i newViewport2i(newViewport);
+		camera->setViewport( newViewport2i );
+		camera->setScissor( newViewport2i );		
+
+		// Paints the window
+		vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
+		paintTechnique->apply( engine, currentTraverseElements );
 
 		// Draws the window decoration
 		if ( window->hasBorder() )
@@ -292,34 +306,47 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 			configurator->unapply( currentTraverseElements );
 		}
 
-		//
-		finishEval();
+		// Restores camera node
+
+		// scissor
+		if ( isCameraScissorDefined )
+		{
+			camera->setScissor( cameraScissor );
+		}
+		else
+		{
+			camera->eraseScissor();
+		}
+
+		// viewport
+		if ( isCameraViewportDefined )
+		{
+			camera->setViewport( cameraViewport );
+		}
+		else
+		{
+			camera->eraseViewport();
+		}
 	}
 
-	// Restores camera node
 
-	// scissor
-	if ( isCameraScissorDefined )
-	{
-		camera->setScissor( cameraScissor );
-	}
-	else
-	{
-		camera->eraseScissor();
-	}
-
-	// viewport
-	if ( isCameraViewportDefined )
-	{
-		camera->setViewport( cameraViewport );
-	}
-	else
-	{
-		camera->eraseViewport();
-	}
 
 	// Validates the camera node
 	camera->getDirtyFlag( camera->getDFNode() )->validate();
+}
+
+
+
+vgd::Shp< vgeGL::technique::Technique > MultiMain::getPaintTechnique() const
+{
+	return m_paintTechnique;
+}
+
+
+
+void MultiMain::setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique )
+{
+	m_paintTechnique = technique;
 }
 
 

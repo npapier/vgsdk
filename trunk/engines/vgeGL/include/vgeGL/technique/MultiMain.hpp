@@ -8,7 +8,7 @@
 
 #include <vgd/node/TransformDragger.hpp>
 #include "vgeGL/itf/IUnderlay.hpp"
-#include "vgeGL/technique/Main.hpp"
+#include "vgeGL/technique/Technique.hpp"
 #include <map>
 
 
@@ -24,18 +24,20 @@ namespace technique
 /**
  * @brief Windows emulation in a single framebuffer.
  *
- * This technique is useful to simulate windows in a single framebuffer. The technique Main is used as rendering backend.
+ * This technique is useful to simulate windows in a single framebuffer. The technique ForwardRendering is used as rendering backend, but could be changed using get/setPaintTechnique() methods.
  *
- * @todo MultiTechnique instead of MultiMain to be able to use another technique for the rendering (Shadow technique for example...).
+ *
+ * @todo MultiMain => MultiView or MultiWindow
  * @todo Window flipping in x and/or y
- * @todo Renders in FBO
+ * @todo Renders in Texture/FBO
  * @todo Composes windows to add transparency
  *
  * @ingroup g_techniques_vgeGL
  * @ingroup g_techniques
  */
-struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
+struct VGEGL_API MultiMain : public vgeGL::technique::Technique, public vgeGL::itf::IUnderlay
 {
+	// *********************************************************************************************************
 	/**
 	 * @brief Definition of a functor to configure/unconfigure scene graph just before/after the rendering of a window.
 	 */
@@ -53,7 +55,9 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 		 */
 		virtual void		unapply(	vge::visitor::TraverseElementVector * /*traverseElements */ )		{}
 	};
-	
+
+
+
 	/**
 	 * @brief	Definition of a composite configurator that allows to combine several scene graph configurators in one.
 	 */
@@ -157,6 +161,7 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 	};
 
 
+
 	/**
 	 * @brief Change the view point of a multi-main window using its dragger.
 	 */
@@ -208,14 +213,16 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 	};
 
 
+
+	// *********************************************************************************************************
 	/**
 	 * @brief State definition of window border
 	 */
 	struct VGEGL_API WindowBorder
 	{
 		WindowBorder(	const bool			hasBorder	= true,
-						const vgm::Vec4f	color		= vgm::Vec4f(0.f, 0.f, 0.f, 1.f),
-						const float			width	= 3.f )
+						const vgm::Vec4f	color		= vgm::Vec4f(1.f, 1.f, 1.f, 1.f),
+						const float			width	= 4.f )
 		:	m_hasBorder( hasBorder		),
 			m_color	( color ),
 			m_width	( width )
@@ -284,11 +291,12 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 	/**
 	 * @brief Window properties definition
 	 *
-	 * The window position and size is defined by \c geometry and \c zOrder properties.
+	 * A window has a name. Its position and size are defined by \c geometry and \c zOrder properties.
 	 * @see g_coordinatesSystem
 	 *
 	 * The \c configurator property defines a functor used to configure the scene graph for this window. Typically this functor moves the camera.
 	 *
+	 * A window could be visible or invisible.
 	 * Each window could have a border (or not) with a different color and a different width.
 	 */
 	struct VGEGL_API Window
@@ -297,18 +305,20 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 		 * @name Constructors
 		 */
 		//@{
+
 		/**
 		 * @brief Default constructor
 		 *
 		 * @post getGeometry().isInvalid() == true
-		 * @post getConfigurator()
+		 * @post getConfigurator() == 0
 		 */
 		vgDEPRECATED( Window(	const int			zOrder		= 0,
 								const bool			isVisible	= true,
 								const bool			hasBorder	= true,
 								const vgm::Vec4f	borderColor	= vgm::Vec4f(1.f, 1.f, 1.f, 1.f),
 								const float			borderWidth	= 3.f ) )
-		:	m_zOrder		(	zOrder		),
+		:	m_name			("defaultNameFromDeprecatedConstructor"	),
+			m_zOrder		(	zOrder		),
 			//m_configurator
 			m_isVisible		( isVisible		),
 			m_borderState	( hasBorder, borderColor, borderWidth )
@@ -320,12 +330,14 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 		 * @brief Default constructor
 		 *
 		 * @post getGeometry().isInvalid() == true
-		 * @post getConfigurator()
+		 * @post getConfigurator() == 0
 		 */
-		Window(	const int			zOrder		/*= 0*/,
+		Window(	const std::string	name,
+				const int			zOrder		/*= 0*/,
 				const bool			isVisible	= true,
 				const WindowBorder	borderState = WindowBorder() )
-		:	m_zOrder		(	zOrder		),
+		:	m_name			(	name		),
+			m_zOrder		(	zOrder		),
 			//m_configurator
 			m_isVisible		( isVisible		),
 			m_borderState	( borderState	)
@@ -339,6 +351,12 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 		 * @name Accessors
 		 */
 		//@{
+
+		/**
+		 * @brief Retrieves the window name.
+		 */
+		const std::string& getName() const { return m_name; }
+
 
 		/**
 		 * @brief Retrieves the window geometry.
@@ -468,21 +486,22 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 
 
 		/**
-		 * @brief Swaps two windows
+		 * brief Swaps two windows
 		 *
-		 * @param window2	the second window
+		 * param window2	the second window
 		 */
-		void swap( Window& window2 )
+		/*void swap( Window& window2 )
 		{
 			std::swap( m_geometry,		window2.m_geometry );
 			std::swap( m_zOrder,		window2.m_zOrder );
 			std::swap( m_configurator,	window2.m_configurator );
 			std::swap( m_isVisible,		window2.m_isVisible );
 			std::swap( m_borderState,	window2.m_borderState );
-		}
+		}*/
 
 
 	private:
+		std::string							m_name;			///< Name of the window
 		vgm::Rectangle2f					m_geometry;		///< Geometry of the window (position and size in the framebuffer).
 		/// @todo rel or abs for geometry
 		int									m_zOrder;		///< Z-order of the window (position in window stack).
@@ -492,6 +511,17 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 		bool								m_isVisible;	///< True if the window is visible, false otherwise
 		WindowBorder						m_borderState;	///< State of the window border ( existence, color, width ).
 	};
+
+
+
+	// *********************************************************************************************************
+
+	/**
+	 * @brief Default constructor
+	 */
+	MultiMain();
+
+
 
 	/**
 	 * @name Windows accessors
@@ -505,9 +535,9 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 	/**
 	 * @brief Adds a new window.
 	 *
-	 * @param name			name of the window
+	 * @param name		name of the window
 	 * @param zOrder		see Window
-	 * @param hasBorder		see Window
+	 * @param hasBorder	see Window
 	 * @param borderColor	see Window
 	 * @param borderWidth	see Window
 	 *
@@ -565,6 +595,9 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 	 * @return the desired window
 	 */
 	const vgd::Shp< Window > getWindow( const std::string name ) const;
+
+	// @todo getAllWindows() returns a list of window name
+
 	//@}
 
 
@@ -585,6 +618,31 @@ struct VGEGL_API MultiMain : public Main, public vgeGL::itf::IUnderlay
 
 
 
+	/**
+	 * @name Accessors to technique used to paint a window
+	 * 
+	 * Design Pattern \c Strategy
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the current technique used to paint a window
+	 * 
+	 * @return the current technique used to paint a window
+	 */
+	vgd::Shp< vgeGL::technique::Technique > getPaintTechnique() const;
+	
+	/**
+	 * @brief Sets the current technique used to paint a window
+	 * 
+	 * @param technique		the current technique used to paint a window
+	 */
+	void setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique );
+
+	//@}
+
+
+
 private:
 	/**
 	 * @brief Draws the border for the given window
@@ -595,7 +653,10 @@ private:
 	WindowContainer							m_windows;		///< The container of windows
 
 	vge::visitor::NodeCollectorExtended<>	m_collectorExt;	///< Collector of nodes. Useful because scene graph topology could be different for each window.
+	
 	vgd::Shp< vgd::node::LayerPlan >		m_underlay;		///< Underlay from SceneManager
+
+	vgd::Shp< vgeGL::technique::Technique >	m_paintTechnique; ///< technique used by MultiMain to paint a window
 };
 
 

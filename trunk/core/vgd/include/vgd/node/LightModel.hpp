@@ -27,17 +27,21 @@ namespace node
  * This node specifies current lighting mode (off/standard per vertex lighting/standard per pixel lighting) and some options of the lighting model. 
  *
  * New fields defined by this node :
- *	- OFEnum \c [viewer] = AT_INFINITY\n
- *		Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.
- *	- OFEnum \c [model] = STANDARD_PER_VERTEX\n
- *		Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.
- *	- OFEnum \c [shadow] = NONE\n
- *		Specifies the algorithm used to compute shadow.
- *	- OFBool \c [twoSided] = false\n
- *		Specifies whether one- or two-sided lighting calculations are done for polygons and triangles.
- *	- OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)\n
- *		Sets the ambient RGBA intensity of the entire scene.
- *
+ * - OFEnum \c [viewer] = AT_INFINITY<br>
+ *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
+ *<br>
+ * - OFEnum \c [model] = STANDARD_PER_VERTEX<br>
+ *   Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.<br>
+ *<br>
+ * - OFEnum \c [shadow] = SHADOW_OFF<br>
+ *   Specifies the algorithm used to compute shadow.<br>
+ *<br>
+ * - OFBool \c [twoSided] = false<br>
+ *   Specifies whether one- or two-sided lighting calculations are done for polygons and triangles.<br>
+ *<br>
+ * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
+ *   Sets the ambient RGBA intensity of the entire scene.<br>
+ *<br>
  *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
@@ -251,9 +255,13 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		NONE = 267,	///< Shadows are not computed
+		SHADOW_MAPPING_16U = 271,	///< Sixteen uniform samples
 		SHADOW_MAPPING = 268,	///< Shadows are computed using shadow mapping algorithm
-		DEFAULT_SHADOW = NONE	///< Shadows are not computed
+		SHADOW_OFF = 267,	///< Shadows are not computed
+		SHADOW_MAPPING_4U = 269,	///< Four uniform samples
+		SHADOW_MAPPING_32U = 272,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4D = 270,	///< Four four dithered samples
+		DEFAULT_SHADOW = SHADOW_OFF	///< Shadows are not computed
 	};
 
 	/**
@@ -280,8 +288,12 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 267 );
+			retVal.push_back( 271 );
 			retVal.push_back( 268 );
+			retVal.push_back( 267 );
+			retVal.push_back( 269 );
+			retVal.push_back( 272 );
+			retVal.push_back( 270 );
 
 			return retVal;
 		}
@@ -290,8 +302,12 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "NONE" );
+			retVal.push_back( "SHADOW_MAPPING_16U" );
 			retVal.push_back( "SHADOW_MAPPING" );
+			retVal.push_back( "SHADOW_OFF" );
+			retVal.push_back( "SHADOW_MAPPING_4U" );
+			retVal.push_back( "SHADOW_MAPPING_32U" );
+			retVal.push_back( "SHADOW_MAPPING_4D" );
 
 			return retVal;
 		}

@@ -20,6 +20,8 @@
 #include "vge/service/Service.hpp"
 #include "vge/visitor/NodeCollectorExtended.hpp"
 
+namespace vgd { namespace node { struct Camera; } }
+
 
 
 /**
@@ -151,6 +153,16 @@ struct VGE_API Engine : public vgd::field::FieldManager
 					const bool isPreTraverse,
 					const bool bTrace = true );
 
+	/**
+	 * @brief Evaluation of a node.
+	 * 
+	 * @param	service		service to use during evaluation (Painter...)
+	 * @param	traverseElement	traverse element to evaluate
+	 * @param	bTrace		true if the evaluation of the node must be stored in the engine state, false if not.
+	 */
+	void evaluate(	const vgd::Shp< vge::service::Service > service,
+					const vge::visitor::TraverseElement & element,
+					const bool bTrace = true );
 	//@}
 
 
@@ -536,6 +548,21 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
+	 * @brief Returns the camera
+	 *
+	 * @return the last encountered Camera node
+	 */
+	const vgd::node::Camera * getCamera() const;
+
+	/**
+	 * @brief Sets the camera
+	 *
+	 * @param camera	the camera to set
+	 */
+	void setCamera( const vgd::node::Camera * camera );
+
+
+	/**
 	 * @brief Returns the viewport
 	 * 
 	 * @return the value of \c viewport field for the last encountered Camera node with this field defined
@@ -585,6 +612,25 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	virtual const int getMaxCubeMapTexSize() const = 0;
 	//@}
 
+
+
+
+	/**
+	 * @name Helpers
+	 */
+	//@{
+
+	/**
+	 * @brief Pushes all stacks.
+	 */
+	virtual void push();
+
+	/**
+	 * @brief Pops all stacks.
+	 */
+	virtual void pop();
+
+	//@}
 
 
 
@@ -688,8 +734,9 @@ protected:
 	static const int32					StateStack_SizeHint;
 
 
-	vgm::Vec2i			m_drawingSurfaceSize;	///< the drawing surface size (window size).
-	vgm::Rectangle2i	m_viewport;				///< the value of \c viewport field for the last encountered Camera node with this field defined
+	vgm::Vec2i						m_drawingSurfaceSize;	///< the drawing surface size (window size).
+	const vgd::node::Camera *		m_camera;				///< the last encountered Camera node
+	vgm::Rectangle2i				m_viewport;				///< the value of \c viewport field for the last encountered Camera node with this field defined
 };
 
 

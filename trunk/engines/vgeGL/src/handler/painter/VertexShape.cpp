@@ -5,11 +5,10 @@
 
 #include "vgeGL/handler/painter/VertexShape.hpp"
 
-#include <boost/lexical_cast.hpp>
-
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
 
+#include <vgd/basic/toString.hpp>
 // @todo Move Box stuff to Box handler (FIXME)
 #include <vgd/node/Box.hpp>
 // @todo Move DrawStyle stuff to drawStyle handler (FIXME)
@@ -80,6 +79,42 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::VertexShape* >(pNode) != 0 );
 	vgd::node::VertexShape *pVertexShape = static_cast< vgd::node::VertexShape* >(pNode);
 
+	// GLSL STATE UPDATE
+	using vgeGL::engine::GLSLState;
+	GLSLState& glslState = pGLEngine->getGLSLState();
+
+	// Updates GLSL state with vertex shape info
+	glslState.setEnabled( GLSLState::COLOR4_BIND_PER_VERTEX, pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX );
+
+// @todo OPTME
+	//  setTexCoordDim for texUnitState of glslState => useful for pg->generate();
+	//pGLEngine->getGLSLStateStack().push();
+	if ( pGLEngine->isTextureMappingEnabled() )
+	{
+		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
+		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
+				i != iEnd;
+				++i )
+		{
+			const uint unit = *i;
+
+			if ( pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
+			{
+				const int32 dimTexCoord = pVertexShape->getTexCoordDim( unit );
+				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+				if ( texUnitState )
+				{
+					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
+				}
+				else
+				{
+					vgLogDebug3(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
+									pVertexShape->getName().c_str(), unit );
+				}
+			}
+		}
+	}
+
 	// GLSL
 	if ( pGLEngine->isGLSLEnabled() ) // pGLEngine->gethCurrentProgram()
 	{
@@ -90,52 +125,31 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		GLSLProgram * program = 0;
 
 		//
-		if ( true /*program == 0 pg->isDirty() */) // ???????????????????????????????????
+		if ( true /*program == 0 pg->isDirty() */) // @todo OPTME: don't regenerate always shaders
 		{
-			// GLSL STATE UPDATE
-			using vgeGL::engine::GLSLState;
-			GLSLState& glslState = pGLEngine->getGLSLState();
+			// GENERATION
+			pg->generate( pGLEngine );
 
-			// Updates GLSL state with vertex shape info
-			//
-			glslState.setEnabled( GLSLState::COLOR4_BIND_PER_VERTEX, pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX );
-
-			// @todo OPTME
-			const int32 numTexUnits = pGLEngine->isTextureMappingEnabled() ? pVertexShape->getNumTexUnits() : 0;
-			if ( numTexUnits >= 1 )
+			/*if ( pGLEngine->isTextureMappingEnabled() )
 			{
-				for(	int32 unit = numTexUnits-1;
-						unit >= 0;
-						--unit )
+				vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
+				for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
+						i != iEnd;
+						++i )
 				{
+					const uint unit = *i;
+
 					if ( pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
 					{
-						const int32 dimTexCoord = pVertexShape->getTexCoordDim( unit );
 						vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
 						if ( texUnitState )
 						{
-							texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
+							texUnitState->setTexCoordDim( static_cast< uint8 >(0) );
 						}
-						// else nothing to do
 					}
 				}
-			}
-			else
-			{
-				for(	int unit=glslState.getMaxTexture()-1;
-						unit >= 0;
-						--unit )
-				{
-					vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
-					if ( texUnitState )
-					{
-						texUnitState->setTexCoordDim( 0 );
-					}
-				}
-			}
-
-			// GENERATION
-			pg->generate( pGLEngine );
+			}*/
+			//pGLEngine->getGLSLStateStack().pop();
 
 			// CACHE
 			const std::string	fullCode	= pg->getCode();
@@ -227,6 +241,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 	// Makes a backup of GLSL activation state
 	using vgeGL::engine::Engine;
+	// @todo not always
 	vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
 	pGLEngine->sethCurrentProgram();
 
@@ -365,8 +380,8 @@ void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::
 /**
  * Support for vertex.
  * 
- * Support for normal					with BIND_OFF, BIND_PER_VERTEX.
- * Support for color4					with BIND_OFF, BIND_PER_VERTEX.
+ * Support for normal				with BIND_OFF, BIND_PER_VERTEX.
+ * Support for color4				with BIND_OFF, BIND_PER_VERTEX.
  * Support for secondaryColor4			with BIND_OFF, BIND_PER_VERTEX.
  * Support for texCoord				with BIND_OFF, BIND_PER_VERTEX.
  * Support for edgeFlag				with BIND_OFF, BIND_PER_VERTEX.
@@ -492,8 +507,74 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 		glEnableClientState( GL_EDGE_FLAG_ARRAY );
 	}
 
-	// TEX COORD
-	const int32 numTexUnits = pGLEngine->isTextureMappingEnabled() ? pVertexShape->getNumTexUnits() : 0;
+	// TEX COORD and uniform sampler (from VertexShape.texCoord*/TexGen and Texture)
+	// Texture |	VertexShape.texCoord |	TexGen	=> action (sampler(S), vertex array(VA), warning (W) )
+	// normal cases
+	// y		y				n		=> S, VA
+	// y		n				y		=> S
+	// n		n				n		=> none
+	// others cases (errors or warnings)
+	// y		y				y		=> S, VA (use texCoord), W
+	// y		n				n		=> none, W
+	// n		 ?				?		=> none, W(print warning if needed).
+// @todo not texture, but VertexShape.texCoord | TexGen
+	uint		i		= 0;
+	const uint	iEnd	= pGLEngine->isTextureMappingEnabled() ? glslState.getMaxTexture() : 0;
+
+	for( uint foundTexture = 0; i != iEnd; ++i )
+	{
+		const vgd::Shp< GLSLState::TexUnitState > current = glslState.getTexture( i );
+
+		// Empty texture unit, so do nothing
+		if ( current == 0 )	continue;
+
+		const uint&					unit	= i;
+		const std::string			strUnit = vgd::basic::toString( unit );
+
+		const vgd::node::Texture *	textureNode	= current->getTextureNode();
+		glo::Texture *				texture		= current->getTexture();
+		const uint8					texCoordDim	= current->getTexCoordDim();
+		const vgd::node::TexGen *	texGen		= current->getTexGenNode();
+
+		//
+		// @todo hasImage() ? see handler Texture::preSynchronize() : idea boolean value in glo::Texture for "completeness" ?
+		// @todo case textureNode and texture, but textureNode with IImage containing no data (texInfo.iimage->pixels() == 0)
+		const bool isTextureComplete = textureNode && textureNode->hasImage() && texture; // @todo not accurate
+
+		//
+		const bool hasTexCoord = texCoordDim > 0; // pVertexShape->getTexCoordDim(unit) || texGen;
+
+		//
+		const bool isUnitComplete = isTextureComplete && hasTexCoord;
+
+		// SAMPLER
+		if ( isUnitComplete )
+		{
+			if ( program )
+			{
+				assert( program->isInUse() );
+
+				program->setUniform1i( "texUnit" + strUnit, unit );
+			}
+			else
+			{
+				pGLEngine->activeTexture( unit );
+				texture->enable();
+			}
+
+			configureTexCoord( pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */ );
+		}
+
+		//
+		++foundTexture;
+		if ( foundTexture == glslState.getNumTexture() )
+		{
+			break;
+		}
+	}
+
+
+/*	const int32 numTexUnits = pGLEngine->isTextureMappingEnabled() ? pVertexShape->getNumTexUnits() : 0;
 
 	if ( numTexUnits >= 1 )
 	{
@@ -501,8 +582,8 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 				unit >= 0;
 				--unit )
 		{
-			const std::string strUnit = boost::lexical_cast< std::string >( unit );
-
+			const std::string strUnit = vgd::basic::toString( unit );
+*/
 // FIXME see Texture2D handler
 //	// scaleFactors
 //	vgm::Vec3f scaleFactors;
@@ -521,12 +602,13 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 //	// apply scale to vgeGL.
 //	glMatrixMode( GL_TEXTURE );
 //	glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
-
-			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
+/*
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+			if ( texUnitState )
 			{
 				// Retrieves current texture object from engine
 				::glo::Texture * texture;
-				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+
 				if ( texUnitState )
 				{
 					texture = texUnitState->getTexture();
@@ -538,6 +620,8 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 
 				if ( texture != 0 )
 				{
+				// ??? not more lazy
+				//pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX 
 					if ( program )
 					{
 						assert( program->isInUse() );
@@ -557,59 +641,12 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 				}
 
 				//
-				glClientActiveTexture( GL_TEXTURE0_ARB + unit );
-				const int32 dimTexCoord = pVertexShape->getTexCoordDim( unit );
 
-				switch ( dimTexCoord )
-				{
-					case 2:
-					{
-						vgd::field::EditorRO< vgd::field::MFVec2f >	texCoord;
-						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec2f >( unit );
-						pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
-						glTexCoordPointer( 2, GL_FLOAT, 0, pArray );
-						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-						break;
-					}
-
-					case 3:
-					{
-						vgd::field::EditorRO< vgd::field::MFVec3f >	texCoord;
-						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec3f >( unit );
-						pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
-						glTexCoordPointer( 3, GL_FLOAT, 0, pArray );
-						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-						break;
-					}
-
-					case 1:
-					{
-						vgd::field::EditorRO< vgd::field::MFFloat >	texCoord;
-						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFFloat >( unit );
-						pArray = static_cast< const GLvoid* >( &(*texCoord)[0] );
-						glTexCoordPointer( 1, GL_FLOAT, 0, pArray );
-						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-						break;
-					}
-
-					case 4:
-					{
-						vgd::field::EditorRO< vgd::field::MFVec4f >	texCoord;
-						texCoord	= pVertexShape->getFTexCoordRO< vgd::field::MFVec4f >( unit );
-						pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
-						glTexCoordPointer( 4, GL_FLOAT, 0, pArray );
-						glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-						break;
-					}
-
-					default:
-						assert( false && "Unexpected dimension for texCoord." );
-				} // switch
 			} // BIND_PER_VERTEX
 		} // for(	int32 unit = numTexUnits-1;
 	}
 	// else nothing to do.
-
+*/
 
 
 	// SECONDARY COLOR4
@@ -693,7 +730,47 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	}
 
 	// TEX COORD
+	if ( pGLEngine->isTextureMappingEnabled() )
+	{
+		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
+		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
+				i != iEnd;
+				++i )
+		{
+			const uint unit = *i;
+
+			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX  )
+			{
+				//
+				glClientActiveTexture( GL_TEXTURE0_ARB + unit );
+
+				glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+
+				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+				if ( texUnitState )
+				{
+					texUnitState->setTexCoordDim( static_cast< uint8 >(0) );
+				}
+			}
+		}
+	}
+/*			else // ???
+			{
+				for(	int unit=glslState.getMaxTexture()-1;
+						unit >= 0;
+						--unit )
+				{
+					vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+					if (	texUnitState &&
+							pVertexShape->getTexCoordDim(unit)!=0 &&
+							pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
+					{
+						texUnitState->setTexCoordDim( 0 );
+					}
+				}
+			}*/
 	// @todo Optimizes numTexUnits == 1 case
+	/*const uint numTexUnits = pVertexShape->getNumTexUnits();
 	if ( numTexUnits >= 1 )
 	{
 		for(	int32 unit=pVertexShape->getNumTexUnits()-1;
@@ -724,14 +801,9 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 					// nothing to do
 				}
 				//else nothing to do (see arrays setup).
-
-				//
-				glClientActiveTexture( GL_TEXTURE0_ARB + unit );
-
-				glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 			}
 		}
-	}
+	}*/
 
 	// SECONDARY COLOR4
 	if ( pVertexShape->getSecondaryColor4Binding() == vgd::node::BIND_PER_VERTEX )
@@ -759,7 +831,66 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	}
 
 	// VERTEX
-	glDisableClientState( GL_VERTEX_ARRAY );	
+	glDisableClientState( GL_VERTEX_ARRAY );
+}
+
+
+
+void VertexShape::configureTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim )
+{
+	if (	texCoordDim > 0 &&
+			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
+	{
+		glClientActiveTexture( GL_TEXTURE0_ARB + unit );
+
+		const GLvoid *pArray;
+		switch ( texCoordDim )
+		{
+			case 2:
+			{
+				vgd::field::EditorRO< vgd::field::MFVec2f >	texCoord;
+				texCoord = vertexShape->getFTexCoordRO< vgd::field::MFVec2f >( unit );
+				pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
+				glTexCoordPointer( 2, GL_FLOAT, 0, pArray );
+				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+				break;
+			}
+
+			case 3:
+			{
+				vgd::field::EditorRO< vgd::field::MFVec3f >	texCoord;
+				texCoord = vertexShape->getFTexCoordRO< vgd::field::MFVec3f >( unit );
+				pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
+				glTexCoordPointer( 3, GL_FLOAT, 0, pArray );
+				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+				break;
+			}
+
+			case 1:
+			{
+				vgd::field::EditorRO< vgd::field::MFFloat >	texCoord;
+				texCoord = vertexShape->getFTexCoordRO< vgd::field::MFFloat >( unit );
+				pArray = static_cast< const GLvoid* >( &(*texCoord)[0] );
+				glTexCoordPointer( 1, GL_FLOAT, 0, pArray );
+				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+				break;
+			}
+
+			case 4:
+			{
+				vgd::field::EditorRO< vgd::field::MFVec4f >	texCoord;
+				texCoord = vertexShape->getFTexCoordRO< vgd::field::MFVec4f >( unit );
+				pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
+				glTexCoordPointer( 4, GL_FLOAT, 0, pArray );
+				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+				break;
+			}
+			vgLogDebug4("VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim ); // ???
+			//default:
+				// NOT SUPPORTED
+				//assert( false && "Unexpected dimension for texCoord." );
+		} // switch
+	}
 }
 
 

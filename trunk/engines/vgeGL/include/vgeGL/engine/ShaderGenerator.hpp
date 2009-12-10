@@ -7,15 +7,16 @@
 #define _VGEGL_ENGINE_SHADERGENERATOR_HPP
 
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/lexical_cast.hpp>
 #include <glo/GLSLProgram.hpp>
 #include <vgd/Shp.hpp>
+#include <vgd/basic/toString.hpp>
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Light.hpp>
+#include <vgd/node/Texture.hpp>
 
 #include "vgeGL/engine/GLSLState.hpp"
 
-
+//// @todo gl_Color only in vertexShader and if color4 ?
 
 namespace vgeGL { namespace engine { struct Engine; } }
 
@@ -522,7 +523,7 @@ struct GLSLHelpers
 				//
 				if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
 				{
-					boost::algorithm::replace_all( flight, "gl_FrontMaterial.diffuse", "gl_Color" /*"mglColor"*/ );
+					boost::algorithm::replace_all( flight, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"
 				}
 			}
 			else
@@ -618,11 +619,22 @@ struct GLSLHelpers
 
 			if ( current )
 			{
-				if ( current->isComplete() )
+				const std::string strUnit = boost::lexical_cast< std::string >( i );
+				vgd::node::TexGen * texGen = current->getTexGenNode();
+
+				if ( texGen /*&& current->isComplete() */)
 				{
-					const std::string strUnit = boost::lexical_cast< std::string >( i );
 					retVal +=
-					"	gl_TexCoord[" + strUnit + "] = gl_MultiTexCoord" + strUnit + ";\n";
+					"	gl_TexCoord[" + strUnit + "].s = dot( ecPosition, gl_EyePlaneS[" + strUnit + "] );\n"
+					"	gl_TexCoord[" + strUnit + "].t = dot( ecPosition, gl_EyePlaneT[" + strUnit + "] );\n"
+					"	gl_TexCoord[" + strUnit + "].p = dot( ecPosition, gl_EyePlaneR[" + strUnit + "] );\n"
+					"	gl_TexCoord[" + strUnit + "].q = dot( ecPosition, gl_EyePlaneQ[" + strUnit + "] );\n"
+					"	gl_TexCoord[" + strUnit + "] = gl_TextureMatrix[" + strUnit +"] * gl_TexCoord[" + strUnit + "];\n";
+				}
+				else if ( texGen == 0 && current->isComplete() )
+				{
+					retVal +=
+					"	gl_TexCoord[" + strUnit + "] = gl_TextureMatrix[" + strUnit +"] * gl_MultiTexCoord" + strUnit + ";\n";
 				}
 				// else nothing to do
 
@@ -654,31 +666,63 @@ struct GLSLHelpers
 		{
 			const vgd::Shp< GLSLState::TexUnitState > current = state.getTexture( i );
 
-			if ( current )
+			// Empty texture unit, so do nothing
+			if ( current == 0 )	continue;
+
+			if ( current->isComplete() )
 			{
-				if ( current->isComplete() )
-				{
-					const std::string strUnit = boost::lexical_cast< std::string >( i );
+				const vgd::node::Texture * textureNode = current->getTextureNode();
+				const std::string strUnit = vgd::basic::toString( i );
 
-					retVal +=
-					"uniform sampler2D texUnit" + strUnit + ";\n";
-				}
-				// else nothing to do
+				vgd::node::Texture::UsageValueType usage = textureNode->getUsage();
 
-				//
-				++foundTexture;
-				if ( foundTexture == state.getNumTexture() )
+				switch ( usage.value() )
 				{
-					break;
+					case vgd::node::Texture::SHADOW:
+						retVal += "uniform sampler2DShadow texUnit" + strUnit + ";\n";
+
+						retVal +=
+// @todo not the good place
+						"\n"
+						"float lookupShadowMap(int unit, vec2 offset )\n"
+						"{\n"
+						"	float Epsilon = 0.05;\n" // @todo
+//						"	float Illumination = 0.90;\n" // @todo
+						"	float Illumination = 0.80;\n" // @todo
+						//"	float depth = gl_TexCoord[unit].z < 0.0 ? 1.0 : shadow2DProj(	texUnit" + strUnit + ",\n"
+						//"								gl_TexCoord[unit] + vec4( offset, 0, 0) * Epsilon).x;\n"
+						"	float depth = shadow2DProj(	texUnit" + strUnit + ",\n"
+						"								gl_TexCoord[unit] + vec4( offset, 0, 0) * Epsilon).x;\n"
+						"    return depth != 1.0 ? Illumination : 1.0;\n"
+						"}\n" 
+						"\n";
+
+						break;
+
+					case vgd::node::Texture::IMAGE:
+						retVal += "uniform sampler2D texUnit" + strUnit + ";\n";
+						break;
+
+					default:
+						retVal += "uniform sampler2D texUnit" + strUnit + ";\n";
+						assert( false && "Unexpected value for vgd::node::Texture.usage field" );
 				}
 			}
-			// else no texture, nothing to do
+			// else nothing to do
+
+			//
+			++foundTexture;
+			if ( foundTexture == state.getNumTexture() )
+			{
+				break;
+			}
 		}
 
 		return retVal;
 	}
 
 
+	// @todo renames generate_texLookups into generate_fragmentShader_texLookups
 	static const std::string generate_texLookups( const vgeGL::engine::GLSLState& state )
 	{
 		std::string retVal;
@@ -690,25 +734,36 @@ struct GLSLHelpers
 		{
 			const vgd::Shp< GLSLState::TexUnitState > current = state.getTexture( i );
 
-			if ( current )
-			{
-				if ( current->isComplete() )
-				{
-					const std::string strUnit = boost::lexical_cast< std::string >( i );
+			// Empty texture unit, so do nothing
+			if ( current == 0 ) continue;
 
+			if ( current->isComplete() )
+			{
+				const vgd::node::Texture * textureNode = current->getTextureNode();
+				const std::string strUnit = vgd::basic::toString( i );
+
+				if ( textureNode->hasFunction() )
+				{
+					std::string function;
+					textureNode->getFunction( function );
+					retVal +=
+					"	" + function;
+				}
+				else
+				{
+					// @todo
 					retVal +=
 					"	color *= texture2D(texUnit" + strUnit + ", gl_TexCoord[" + strUnit + "].xy);\n";
 				}
-				// else nothing to do
-
-				//
-				++foundTexture;
-				if ( foundTexture == state.getNumTexture() )
-				{
-					break;
-				}
 			}
-			// else no texture, nothing to do
+			// else nothing to do
+
+			//
+			++foundTexture;
+			if ( foundTexture == state.getNumTexture() )
+			{
+				break;
+			}
 		}
 
 		return retVal;

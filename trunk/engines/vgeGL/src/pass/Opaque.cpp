@@ -31,12 +31,13 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 					vgd::Shp< vge::service::Service > service )
 {
 	// @todo
-	engine->resetMatrices();
+//	engine->resetMatrices();
 
-	engine->getGLSLStateStack().push();
+	engine->push();
+	/*getGLSLStateStack().push();
 	engine->getGLStateStack().push();
 	engine->pushStateStack();
-	glPushAttrib( GL_ALL_ATTRIB_BITS );
+	glPushAttrib( GL_ALL_ATTRIB_BITS );*/
 	//
 
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
@@ -66,10 +67,11 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 	}
 
 	// @todo
-	glPopAttrib();
+	engine->pop();
+	/*glPopAttrib();
 	engine->popStateStack();
 	engine->getGLStateStack().pop();
-	engine->getGLSLStateStack().pop();
+	engine->getGLSLStateStack().pop();*/
 	//
 }
 

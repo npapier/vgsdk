@@ -109,13 +109,13 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			"	{\n"
 			"		vec4 color = accumColor;\n" +
 					textureLookup +
-			"		gl_FragColor = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n"//clamp( color * alphaFade, 0.0, 1.0 ) ;\n";
+			"		gl_FragColor = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n"
 			"	}\n"
 			"	else\n"
 			"	{\n"
 			"		vec4 color = accumBackColor ;\n" +
 					textureLookup +
-			"		gl_FragColor = vec4( (color + accumBackSecondaryColor).rgb, gl_Color.a );\n"//clamp( color * alphaFade, 0.0, 1.0 ) ;\n";
+			"		gl_FragColor = vec4( (color + accumBackSecondaryColor).rgb, gl_Color.a );\n"
 			"	}\n";
 		}
 		else

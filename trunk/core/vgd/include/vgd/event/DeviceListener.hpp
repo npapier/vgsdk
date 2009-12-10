@@ -8,7 +8,6 @@
 
 #include <set>
 
-#include "vgd/vgd.hpp"
 #include "vgd/Shp.hpp"
 #include "vgd/event/Listener.hpp"
 
@@ -38,7 +37,7 @@ namespace event
  * detaches it-self upon detruction.
  *
  * @remark	Although the DeviceListener will not attached to a device that is passed twice, you must ensure to not
- *		pass two Device instances wrapping the same real device, or may result in unpredicted bahviours.
+ *		pass two Device instances wrapping the same real device, or may result in unpredicted behaviours.
  */
 struct VGD_API DeviceListener : public Listener
 {
@@ -46,7 +45,7 @@ struct VGD_API DeviceListener : public Listener
 	 * @brief	Destructor
 	 */
 	~DeviceListener();
-	
+
 	/**
 	 * @name	Device Management
 	 */
@@ -67,11 +66,11 @@ struct VGD_API DeviceListener : public Listener
 	vgd::Shp< DeviceType > findDevice() const
 	{
 		vgd::Shp< DeviceType >	result;
-		
+
 		for( DeviceContainer::const_iterator i = m_devices.begin(); i != m_devices.end(); ++i )
 		{
 			result = vgd::dynamic_pointer_cast< DeviceType >( *i );
-			
+
 			if( result )
 			{
 				break;
@@ -93,11 +92,11 @@ struct VGD_API DeviceListener : public Listener
 	 */
 	void removeDevice( vgd::Shp< vgd::event::Device > device );
 	//@}
-	
+
 private:
 
 	typedef std::set< vgd::Shp< vgd::event::Device > >	DeviceContainer;
-	
+
 	DeviceContainer	m_devices;	///< Holds all devices the listener is connected to.
 };
 

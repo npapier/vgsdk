@@ -191,7 +191,7 @@ vgm::Vec4f		out5b( in5 );
 	//@}
 
 	/**
-	 * @name Constructors not available in all dimensions.
+	 * @name Constructors not available in all dimensions
 	 * 
  	 * @todo move it to a partial specialization of this template.
 	 */
@@ -368,11 +368,19 @@ vgm::Vec4f		out5b( in5 );
 		m_tCoord[2] = c3;
 		m_tCoord[3] = c4;
 	}
-	
+
 	/**
 	 * @brief	Retrieves the number of components.
 	 */
-	const uint getSize() const
+	vgDEPRECATED( const uint getSize() const )
+	{
+		return static_cast<uint>(N);
+	}
+
+	/**
+	 * @brief	Retrieves the dimension of the vector.
+	 */
+	const uint getDim() const
 	{
 		return static_cast<uint>(N);
 	}
@@ -380,7 +388,7 @@ vgm::Vec4f		out5b( in5 );
 
 
 	/**
-	 * @name Vector arithmetic.
+	 * @name Vector arithmetic
 	 */
 	//@{
 
@@ -458,7 +466,7 @@ vgm::Vec4f		out5b( in5 );
 
 
 	/**
-	 * @name More Vector arithmetic.
+	 * @name More Vector arithmetic
 	 */
 	//@{
 
@@ -536,7 +544,7 @@ vgm::Vec4f		out5b( in5 );
 
 
 	/**
-	 * @name Comparison methods.
+	 * @name Comparison methods
 	 */
 	//@{
 

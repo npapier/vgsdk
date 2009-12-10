@@ -88,9 +88,7 @@ void Transform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Transform *p
 {
 	// GEOMETRICAL MATRIX
 	// Gets the transformation
-	vgm::MatrixR& 		current(	
-		pGLEngine->getGeometricalMatrix().getTop() 
-		);
+	vgm::MatrixR& current( pGLEngine->getGeometricalMatrix().getTop() );
 
 	glMatrixMode( GL_MODELVIEW );
 

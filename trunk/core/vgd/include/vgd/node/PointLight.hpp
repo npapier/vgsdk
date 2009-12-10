@@ -25,22 +25,27 @@ namespace node
  * A point source illuminates equally in all directions. It is omni-directional. All shape nodes that come after this light in the scene graph are illuminated by this light. The light's location is affected by the current geometrical transformation. 
  *
  * New fields defined by this node :
- *	- OFVec3f \c [position] = vgm::Vec3f(0.f, 0.f, 1.f)\n
- *		Location of the light source.
+ * - OFVec3f \c [position] = vgm::Vec3f(0.f, 0.f, 1.f)<br>
+ *   Location of the light source.<br>
+ *<br>
  *
  *
  * Inherited fields from Light:
- *	- OFBool \c [on] = false\n
- *		Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.
- *	- OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)\n
- *		Specular intensity of the light.
- *	- OFBool \c [castShadow] = false\n
- *		Indicating that this light casts a shadow.
- *	- OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)\n
- *		Diffuse intensity of the light.
- *	- OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)\n
- *		Ambient intensity of the light.
- *
+ * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
+ *   Specular intensity of the light.<br>
+ *<br>
+ * - OFBool \c [on] = false<br>
+ *   Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.<br>
+ *<br>
+ * - OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
+ *   Ambient intensity of the light.<br>
+ *<br>
+ * - OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
+ *   Diffuse intensity of the light.<br>
+ *<br>
+ * - SFBool \c castShadow = false<br>
+ *   Indicating that this light casts a shadow.<br>
+ *<br>
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes
  * @ingroup g_coloringAndLightingNodes

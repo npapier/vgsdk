@@ -12,7 +12,7 @@
 
 namespace vgd
 {
-	
+
 namespace basic
 {
 

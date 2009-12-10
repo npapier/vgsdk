@@ -35,7 +35,7 @@ namespace vgeGL
 
 namespace vgeGL
 {
-	
+
 namespace handler
 {
 
@@ -51,14 +51,14 @@ struct VGEGL_API LightModel : public vge::handler::painter::SingleAttribute
 {
 	META_HANDLER_HPP( LightModel  );
 
-	const TargetVector					getTargets()	const;
+	const TargetVector getTargets() const;
 
-	void	apply				( vge::engine::Engine*, vgd::node::Node* );
-	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
+	void	apply	( vge::engine::Engine*, vgd::node::Node* );
+	void	unapply	( vge::engine::Engine*, vgd::node::Node* );
 	
-	void	setToDefaults	();
+	void	setToDefaults();
 	
-	void	paint				( vgeGL::engine::Engine*, vgd::node::LightModel* );
+	void	paint( vgeGL::engine::Engine*, vgd::node::LightModel* );
 };
 
 

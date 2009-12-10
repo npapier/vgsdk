@@ -7,6 +7,7 @@
 
 #include <glo/Texture.hpp>
 #include <vgd/node/LightModel.hpp>
+#include <vgd/node/SpotLight.hpp>
 #include "vgeGL/engine/Engine.hpp"
 
 
@@ -16,6 +17,14 @@ namespace vgeGL
 
 namespace engine
 {
+
+
+
+// LightState
+const vgd::node::SpotLight *GLSLState::LightState::getSpotLightNode() const
+{
+	return dynamic_cast< vgd::node::SpotLight * >(m_light);
+}
 
 
 
@@ -192,7 +201,7 @@ vgd::Shp< GLSLState::LightState > GLSLState::setLight( const uint indexLightUnit
 		m_numLight += ( lightState != 0 ) ? 1 : 0;
 	}
 	assert( m_numLight >= 0 );
-	assert( m_numLight < m_light.size() );
+	assert( m_numLight <= m_light.size() );
 
 	return oldLight;
 }
@@ -253,7 +262,7 @@ vgd::Shp< GLSLState::TexUnitState > GLSLState::setTexture( const uint indexTexUn
 		m_numTexture += ( texture != 0 ) ? 1 : 0;
 	}
 	assert( m_numTexture >= 0 );
-	assert( m_numTexture < m_texture.size() );
+	assert( m_numTexture <= m_texture.size() );
 
 	return oldTexture;
 }

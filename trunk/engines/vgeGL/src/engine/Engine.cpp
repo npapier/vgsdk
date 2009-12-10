@@ -55,7 +55,7 @@ void Engine::reset()
 
 	//
 	setTextureMappingEnabled();
-	setDisplayListEnabled();
+	//setDisplayListEnabled();
 
 	//
 	m_currentProgram	= 0;
@@ -490,12 +490,12 @@ const int Engine::getMaxTexUnits() const
 		{
 			// @todo
 			glGetIntegerv( GL_MAX_TEXTURE_UNITS, &m_maxTexUnits );
-			m_maxTexUnits = 2;
+			m_maxTexUnits = 3;
 		}
 		else
 		{
 			vgLogDebug("Engine::getMaxTexUnits(): OpenGL context not current, so return arbitrary value 2.");
-			return 2;
+			return 3;
 		}
 	}
 
@@ -591,7 +591,7 @@ void Engine::getGLViewport( vgm::Rectangle2i& viewport ) /*const*/
 
 
 
-const int Engine::getGLDepthBits() const
+const int Engine::getGLDepthBits() /* const */
 {
 	GLint depthBits;
 	glGetIntegerv( GL_DEPTH_BITS, &depthBits );
@@ -601,12 +601,10 @@ const int Engine::getGLDepthBits() const
 
 
 
-const GLenum Engine::getGLDepthTextureFormatFromDepthBits() const
+const GLenum Engine::convertDepthTextureFormat( const int depthBits ) /* const */
 {
 	GLenum retVal;
 
-	const int32 depthBits = getGLDepthBits();
-	
 	switch ( depthBits )
 	{
 		case 24:
@@ -622,11 +620,22 @@ const GLenum Engine::getGLDepthTextureFormatFromDepthBits() const
 			break;
 
 		default:
-			vgLogDebug( "vgeGL.Engine:getDepthTextureFormatFromDepthBits(): Performance warning : No matching between depth buffer bits and depth texture format." );
-			vgLogDebug( "vgeGL.Engine:getDepthTextureFormatFromDepthBits(): Performance warning : Use GL_DEPTH_COMPONENT16_ARB" );
+			vgLogDebug( "vgeGL.Engine:getGLDepthTextureFormat(): Performance warning : No matching between given depth buffer bits and depth texture format." );
+			vgLogDebug( "vgeGL.Engine:getGLDepthTextureFormat(): Performance warning : Use GL_DEPTH_COMPONENT16_ARB" );
 			retVal = GL_DEPTH_COMPONENT16_ARB;
 			break;
 	}
+
+	return retVal;
+}
+
+
+
+const GLenum Engine::getGLDepthTextureFormatFromDepthBits() /*const */
+{
+	const int32 depthBits = getGLDepthBits();
+
+	const GLenum retVal = convertDepthTextureFormat(depthBits);
 
 	return retVal;
 }
@@ -759,6 +768,27 @@ void Engine::end2DRendering()
 
 	// OpenGL attributes
 	glPopAttrib();
+}
+
+
+
+void Engine::push()
+{
+	getGLSLStateStack().push();
+	getGLStateStack().push();
+	glPushAttrib( GL_ALL_ATTRIB_BITS );
+
+	vge::engine::Engine::push();
+}
+
+
+void Engine::pop()
+{
+	vge::engine::Engine::pop();
+
+	glPopAttrib();
+	getGLStateStack().pop();
+	getGLSLStateStack().pop();
 }
 
 

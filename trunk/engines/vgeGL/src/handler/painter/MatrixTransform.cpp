@@ -85,14 +85,12 @@ void MatrixTransform::setToDefaults()
 void MatrixTransform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::MatrixTransform *pNode )
 {
 	// GEOMETRICAL MATRIX
-	// Get the transformation.
-	vgm::MatrixR& 		current(	
-		pGLEngine->getGeometricalMatrix().getTop() 
-		);
+	// Gets the transformation.
+	vgm::MatrixR& current( pGLEngine->getGeometricalMatrix().getTop() );
 
 	glMatrixMode( GL_MODELVIEW );
 
-	// Update OpenGL.
+	// Updates OpenGL
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
 
 	// Validates node

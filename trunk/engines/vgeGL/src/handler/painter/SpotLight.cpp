@@ -43,23 +43,86 @@ void SpotLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
 	assert( dynamic_cast< vgd::node::SpotLight* >(node) != 0 );
-	vgd::node::SpotLight *spotlight = static_cast< vgd::node::SpotLight* >(node);
+	vgd::node::SpotLight *spotLight = static_cast< vgd::node::SpotLight* >(node);
 
-	if ( glEngine->isGLSLEnabled() )
+	using vgeGL::engine::GLSLState;
+	typedef vgeGL::engine::GLSLState::LightState LightState;
+
+	// *** Retrieves GLSL state ***
+	GLSLState& state = glEngine->getGLSLState();
+
+	vgd::Shp< LightState > lightState;
+	/* lightState = state.getLight( node->getMultiAttributeIndex() );
+	if ( lightState->getLightType() != GLSLState::SPOT_LIGHT )
 	{
-		// Retrieves GLSL state
-		using vgeGL::engine::GLSLState;
-		typedef vgeGL::engine::GLSLState::LightState LightState;
+		lightState.reset();
+	}*/
 
-		GLSLState& state = glEngine->getGLSLState();
+	// *** Computes light informations ***
+	const vgm::MatrixR& current( glEngine->getGeometricalMatrix().getTop() );
 
-		// Updates GLSL state
-		state.setEnabled( GLSLState::SPOT_LIGHT );
+	// fields
+	bool isDefined;
+	vgd::node::SpotLight::PositionValueType	position;
+	vgd::node::SpotLight::DirectionValueType	direction;
 
-		vgd::Shp< LightState > lightState( new LightState(spotlight, GLSLState::SPOT_LIGHT) );
-		state.setLight(	node->getMultiAttributeIndex(), lightState );
+	isDefined = spotLight->getPosition( position );
+	assert( isDefined );
+	/* @todo
+	if ( !isDefined )
+	{
+		// from light state
+		isDefined = lightState->getSpotLightNode()->getPosition( position );
+
+		if ( !isDefined )
+		{
+			// from default value of the engine
+			// @todo getPosition() that returns the value for the field if field is defined, else default value. 
+			// @todo or getPosition( position, default) like in python dict. <<< this one is my preferred api.
+			position = vgm::Vec3f(0.f, 0.f, 1.f);
+		}
+	}*/
+
+	isDefined = spotLight->getDirection( direction );
+	assert( isDefined );
+	/* @todo
+	if ( !isDefined )
+	{
+		// from light state
+		isDefined = lightState->getSpotLightNode()->getDirection( direction );
+
+		if ( !isDefined )
+		{
+			// from default value of the engine
+			direction = vgm::Vec3f(0.f, 0.f, -1.f);
+		}
+	}*/
+
+	// @todo but only with MODEL_MATRIX
+	//current.multVecMatrix( position, position );
+	//current.multVecMatrix( direction, direction );
+
+	const vgm::Vec3f	eye		( position );
+	const vgm::Vec3f	center	( position + direction );
+	vgm::Vec3f			up		( 0.f, 1.f, 0.f );
+
+	if ( direction.dot( up ) > 0.5f )
+	{
+		up.setValue( 1.f, 0.f, 0.f );
 	}
 
+	// Updates GLSL state
+	state.setEnabled( GLSLState::SPOT_LIGHT );
+
+	lightState.reset( new LightState(spotLight, GLSLState::SPOT_LIGHT) );
+
+	// @todo api in light state
+	lightState->lightViewMatrix.setLookAt( eye, center, up );
+	lightState->lightMODELVIEWMatrix = current;
+
+	state.setLight(	node->getMultiAttributeIndex(), lightState );
+
+	//
 	vgeGL::rc::applyUsingDisplayList<vgd::node::SpotLight, SpotLight>( engine, node, this );
 }
 

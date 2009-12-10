@@ -8,7 +8,7 @@
 
 #include "vgd/basic/ImageUtilities.hpp"
 #include "vgd/basic/ITransferFunction.hpp"
-#include "vgd/field/Image.hpp"
+#include "vgd/field/IImageShp.hpp"
 #include "vgd/field/TSingleField.hpp"
 #include "vgd/field/Vector.hpp"
 #include "vgd/node/Kit.hpp"
@@ -148,8 +148,8 @@ struct VGD_API ILayers : public vgd::node::Kit
 
 	/**
 	 * @brief Typedef for the \c iimage* field.
-	 */	
-	typedef vgd::field::SFIImage			FIImageType;
+	 */
+	typedef vgd::field::SFIImageShp			FIImageType;
 
 	/**
 	 * @brief Typedef for the \c iimage* value.

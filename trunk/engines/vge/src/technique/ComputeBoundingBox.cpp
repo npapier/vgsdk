@@ -24,8 +24,7 @@ void ComputeBoundingBox::apply( vge::engine::Engine * engine, vge::visitor::Trav
 
 	prepareEval( engine, traverseElements );
 
-	evaluatePass(	::vgd::makeShp( new vge::pass::ForEach ),
-					cbb );
+	evaluatePass( ::vgd::makeShp( new vge::pass::ForEach ), cbb, engine, PassIsolationMask(0) );
 
 	finishEval();
 }

@@ -76,7 +76,7 @@ void Camera::setOptionalsToDefaults()
 {
 	GeometricalTransformation::setOptionalsToDefaults();
 	ProjectionTransformation::setOptionalsToDefaults();
-	
+
 	setViewport( vgm::Rectangle2i(0, 0, 1600, 1200) );
 }
 

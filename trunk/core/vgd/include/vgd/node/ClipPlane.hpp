@@ -26,11 +26,12 @@ namespace node
  * All subsequent shapes in the scene graph will be clipped to the half-space defined by the \c plane field. The half-space is the side of the plane in the direction of the plane normal. Any number of clipping planes may be active simultaneously, although the graphics library may place a limit on this number during rendering (i.e. 6 for OpenGL). 
  *
  * New fields defined by this node :
- *	- OFBool \c [on] = true\n
- *		Specifies if the clipping plane is enabled or disabled.
- *	- SFPlane \c plane = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f )\n
- *		Specifies the clipping plane.
- *
+ * - OFBool \c [on] = true<br>
+ *   Specifies if the clipping plane is enabled or disabled.<br>
+ *<br>
+ * - SFPlane \c plane = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f )<br>
+ *   Specifies the clipping plane.<br>
+ *<br>
  *
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes

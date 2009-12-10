@@ -9,6 +9,7 @@
 #include <bitset>
 #include <vector>
 #include <vgd/Shp.hpp>
+#include <vgm/Matrix.hpp>
 #include "vgeGL/vgeGL.hpp"
 
 namespace glo
@@ -21,6 +22,8 @@ namespace vgd
 	namespace node
 	{
 		struct Light;
+		struct SpotLight;
+		struct TexGen;
 		struct Texture;
 	}
 }
@@ -149,6 +152,16 @@ struct GLSLState : public TBitSet< 10 >
 	const bool isPerPixelLightingEnabled() const;
 	const bool isPerVertexLightingEnabled() const;
 	void setPerPixelLightingEnabled( const bool enabled = true );
+
+/*	vgDEPRECATED( const bool isLightingEnabled() const );
+	vgDEPRECATED( void setLightingEnabled( const bool enabled = true ) );
+
+	vgDEPRECATED( const bool isTwoSidedLightingEnabled() const );
+	vgDEPRECATED( void setTwoSidedLightingEnabled( const bool enabled = true ) );
+
+	vgDEPRECATED( const bool isPerPixelLightingEnabled() const );
+	vgDEPRECATED( const bool isPerVertexLightingEnabled() const );
+	vgDEPRECATED( void setPerPixelLightingEnabled( const bool enabled = true ) );*/
 	//@}
 
 
@@ -157,9 +170,14 @@ struct GLSLState : public TBitSet< 10 >
 	 */
 	//@{
 
-	// @todo completes and documents
+	/**
+	 * @brief Light unit state
+	 */
 	struct LightState
 	{
+		/**
+		 * @brief Constructor
+		 */
 		LightState( vgd::node::Light * light, const int type )
 		:	m_light(light),
 			m_type(type)
@@ -168,11 +186,30 @@ struct GLSLState : public TBitSet< 10 >
 			assert( m_type == DIRECTIONAL_LIGHT || m_type == POINT_LIGHT || m_type == SPOT_LIGHT );
 		}
 
+		/**
+		 * @brief Returns light node
+		 */
 		const vgd::node::Light *getLightNode() const	{ return m_light; }
+
+		/**
+		 * @brief Returns light node
+		 */
 		vgd::node::Light *getLightNode()				{ return m_light; }
 
+
+		/**
+		 * @brief Returns light node
+		 */
+		const vgd::node::SpotLight *getSpotLightNode() const;
+
+		/**
+		 * @brief Returns the light type
+		 */
 		const int getLightType() const					{ return m_type; }
 
+		// @todo api
+		vgm::MatrixR lightMODELVIEWMatrix;
+		vgm::MatrixR lightViewMatrix;
 	private:
 		vgd::node::Light *	m_light;
 		int					m_type;
@@ -233,24 +270,31 @@ struct GLSLState : public TBitSet< 10 >
 	 */
 	struct TexUnitState
 	{
-		TexUnitState(	vgd::node::Texture * textureNode = 0,
-						glo::Texture * texture = 0,
-						const uint8 texCoordDim = 0 )
+		TexUnitState(	vgd::node::Texture * textureNode	= 0,
+						glo::Texture * texture				= 0,
+						const uint8 texCoordDim				= 0,
+						vgd::node::TexGen * texGenNode		= 0)
 		:	m_textureNode	( textureNode	),
 			m_texture		( texture		),
-			m_texCoordDim	( texCoordDim	)
+			m_texCoordDim	( texCoordDim	),
+			m_texGenNode	( texGenNode	)
 		{}
 
-		const vgd::node::Texture * getTextureNode() const	{ return m_textureNode; }
-		vgd::node::Texture * getTextureNode()				{ return m_textureNode; }
+		const vgd::node::Texture * getTextureNode() const		{ return m_textureNode; }
+		vgd::node::Texture * getTextureNode()					{ return m_textureNode; }
+		void setTextureNode( vgd::node::Texture * textureNode ) { m_textureNode = textureNode; }
 
-		const glo::Texture * getTexture() const	{ return m_texture; }
-		glo::Texture * getTexture()				{ return m_texture; }
+		const glo::Texture * getTexture() const		{ return m_texture; }
+		glo::Texture * getTexture()					{ return m_texture; }
+		void setTexture( glo::Texture * texture )	{ m_texture = texture; }
 
 		const uint8 getTexCoordDim() const		{ return m_texCoordDim; }
 		uint8 getTexCoordDim()					{ return m_texCoordDim; }
-
 		void setTexCoordDim( const uint8 texCoordDim ) { m_texCoordDim = texCoordDim; }
+
+		const vgd::node::TexGen * getTexGenNode() const			{ return m_texGenNode; }
+		vgd::node::TexGen * getTexGenNode()						{ return m_texGenNode; }
+		void setTexGenNode( vgd::node::TexGen * texGenNode )	{ m_texGenNode = texGenNode; }
 
 		/**
 		 * @brief Tests completeness of the texture unit
@@ -269,6 +313,7 @@ struct GLSLState : public TBitSet< 10 >
 		vgd::node::Texture *	m_textureNode;
 		glo::Texture *			m_texture;
 		uint8					m_texCoordDim;
+		vgd::node::TexGen *		m_texGenNode;
 	};
 
 	/**

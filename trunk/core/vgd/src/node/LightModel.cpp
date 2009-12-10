@@ -74,7 +74,7 @@ void LightModel::setOptionalsToDefaults()
 	SingleAttribute::setOptionalsToDefaults();
 	setViewer( AT_INFINITY );
 	setModel( STANDARD_PER_VERTEX );
-	setShadow( NONE );
+	setShadow( SHADOW_OFF );
 	setTwoSided( false );
 	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 }

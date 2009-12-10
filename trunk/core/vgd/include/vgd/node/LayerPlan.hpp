@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2009, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,7 @@
 
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
-#include "vgd/field/Image.hpp"
+#include "vgd/field/IImageShp.hpp"
 #include "vgd/field/Vector.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
@@ -130,7 +130,7 @@ struct VGD_API LayerPlan : public vgd::node::SingleAttribute
 	/**
 	 * @brief Typedef for the \c iimage field.
 	 */	
-	typedef vgd::field::SFIImage FIImageType;
+	typedef vgd::field::SFIImageShp FIImageType;
 		
 	/**
 	 * @brief Typedef for the \c iimage value.

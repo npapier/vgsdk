@@ -111,6 +111,8 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	 * @brief Computes mesh normals (one normal per vertex)
 	 */
 	void			computeNormals();
+
+	// @todo vgm::Box3f computeAndRetrivesBoundingBox();
 	//@}
 
 
@@ -265,24 +267,24 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 
 	/**
 	 * @brief Typedef for the \c texCoord field.
-	 */	
+	 */
 	typedef vgd::field::MFFloat	FTexCoord1fType;
 	
 	/**
 	 * @brief Typedef for the \c texCoord field.
-	 */	
+	 */
 	typedef vgd::field::MFVec2f	FTexCoord2fType;
-		
+
 	/**
 	 * @brief Typedef for the \c texCoord field.
 	 */	
 	typedef vgd::field::MFVec3f	FTexCoord3fType;
-	
+
 	/**
 	 * @brief Typedef for the \c texCoord field.
-	 */	
-	typedef vgd::field::MFVec4f	FTexCoord4fType;	
-		
+	 */
+	typedef vgd::field::MFVec4f	FTexCoord4fType;
+
 	/**
 	 * @brief Typedef for the \c texCoord value.
 	 */
@@ -302,7 +304,15 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	 * @brief Typedef for the \c texCoord value.
 	 */
 	typedef vgm::Vec4f			TexCoord4fValueType;
-	
+
+
+	/**
+	 * @brief Returns true if the specified field is existing.
+	 *
+	 * @param index		zero-base index for the \c texCoord field.
+	 */
+	const bool hasFTexCoord( const uint index ) const;
+
 	/**
 	 * @brief Returns the dimension of the i-th \c texCoord field.
 	 * 
@@ -313,8 +323,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	 * 
 	 * @remarks Expected values are 0, 1, 2, 3 and 4.
 	 */
-	int8	getTexCoordDim( const int32 index ) const;
-
+	const int8 getTexCoordDim( const int32 index ) const;
 
 
 	/**
@@ -348,9 +357,9 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	 * A field \c texCoord with an index of \c i is used with the texture (Texture2D, Texture3D...) that has a multi 
 	 * attribute index of \c i.
 	 * 
-	 * @param texCoordDimension	dimension of the texture coordinate (1, 2, 3 or 4).
-	 * @param index					zero-base index for the \c texCoord field.
-	 * @param num						number of contiguous fields.
+	 * @param texCoordDimension		dimension of the texture coordinate (1, 2, 3 or 4)
+	 * @param index				zero-base index for the \c texCoord field
+	 * @param num				number of contiguous fields
 	 * 
 	 * @remarks Call this method before any access to texture coordinate or binding related methods with a specific 
 	 * index.
@@ -358,6 +367,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	 * @remarks Texture coordinates and bindings, initialized by this method, must not be already created.
 	 */
 	void createTexUnits( const int8 texCoordDimension = 2, const int32 index = 0, const int32 num = 1 );
+
 
 private:
 
@@ -370,6 +380,14 @@ private:
 	 */
 	template< typename fieldType >
 	void createTexUnits( const int32 index, const int32 num );
+
+public:
+	typedef std::set< uint > IndexSet;
+	typedef IndexSet::const_iterator ConstIteratorIndexSet;
+	typedef std::pair< ConstIteratorIndexSet, ConstIteratorIndexSet > PairConstIteratorIndexSet;
+private:
+	typedef IndexSet::iterator IteratorIndexSet;
+	IndexSet m_texUnitsIndexSet;
 
 public:
 
@@ -393,6 +411,8 @@ public:
 	 * @remarks This method is relatively slow.
 	 */
 	const int32	getNumTexUnits() const;
+
+	const std::pair< ConstIteratorIndexSet, ConstIteratorIndexSet > getTexUnitsIterators() const;
 	//@}
 
 
