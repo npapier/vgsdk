@@ -89,6 +89,17 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 		state.setTwoSidedLightingEnabled( twoSidedValue );
 	}
 
+	// SHADOW
+	vgd::node::LightModel::ShadowValueType shadow;
+	isDefined = lightModel->getShadow( shadow );
+
+	if ( isDefined )
+	{
+		// Updates GLSLState
+		state.setShadowType( shadow );
+	}
+
+	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );
 }
 

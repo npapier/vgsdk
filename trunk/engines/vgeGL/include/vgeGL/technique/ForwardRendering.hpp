@@ -19,6 +19,10 @@ namespace technique
 {
 
 
+namespace
+{
+	struct ShadowMappingInput;
+}
 
 /**
  * @brief Forward rendering technique.
@@ -31,12 +35,21 @@ namespace technique
 struct VGEGL_CLASS_API ForwardRendering : public Main
 {
 	/**
+	 * @brief Default constructor
+	 */
+	VGEGL_API ForwardRendering();
+
+
+	/**
 	 * @brief Evaluates the technique
 	 *
 	 * @param engine			evaluation engine
 	 * @param traverseElements	the "flatten" scene graph to evaluate
 	 */
 	VGEGL_API void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
+
+private:
+	vgd::Shp< ShadowMappingInput > m_shadowMappingInput;
 };
 
 

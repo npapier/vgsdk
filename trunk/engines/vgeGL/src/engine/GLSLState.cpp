@@ -38,6 +38,7 @@ const std::string GLSLState::m_indexString[] =
 		"DIRECTIONAL_LIGHT",
 		"POINT_LIGHT",
 		"SPOT_LIGHT",
+		"SPOT_LIGHT_CASTING_SHADOW",
 
 		"CLIPPING_PLANE",
 
@@ -70,7 +71,7 @@ GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits )
 void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 {
 	// TBitSet
-	vgeGL::engine::TBitSet< 10 >::reset();
+	vgeGL::engine::TBitSet< 11 >::reset();
 
 	// LIGHT
 	for(	uint	i		= 0,
@@ -113,7 +114,7 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 	m_texture.resize( maxTexUnits );
 
 	// @todo others ( at this time default values for others are initialized by GLSLState::update() )
-	setEnabled( FLAT_SHADING, false );
+	setShadowType( vgd::node::LightModel::DEFAULT_SHADOW );
 }
 
 

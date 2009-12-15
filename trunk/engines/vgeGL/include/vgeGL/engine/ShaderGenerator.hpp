@@ -104,12 +104,21 @@ struct GLSLHelpers
 		// SPOT_LIGHT
 		if ( state.isEnabled( GLSLState::SPOT_LIGHT) )
 		{
-			const std::string& spotLightFront	= GLSLHelpers::generateFunction_spotLight( state, false );
+			const std::string& spotLightFront = GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, false /*castShadow*/ );
 			// const std::string& spotLightBack	= GLSLHelpers::generateFunction_spotLight( state, true ); @todo
 			retVal += spotLightFront + '\n';
 			// retVal += spotLightBack; @todo
 		}
 
+		// SPOT_LIGHT_CASTING_SHADOW
+		if (	state.isEnabled( GLSLState::SPOT_LIGHT_CASTING_SHADOW) &&
+				state.getShadowType() != vgd::node::LightModel::SHADOW_OFF )
+		{
+			const std::string& spotLightFront	= GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, true /*castShadow*/);
+			// const std::string& spotLightBack	= GLSLHelpers::generateFunction_spotLight( state, true ); @todo
+			retVal += spotLightFront + '\n';
+			// retVal += spotLightBack; @todo
+		}
 		return retVal;
 	}
 
@@ -230,15 +239,39 @@ struct GLSLHelpers
 
 
 
-	static const std::string& generateFunction_spotLight( const GLSLState& state, const bool useBackMaterial )
+	static const std::string& generateFunction_spotLight( const GLSLState& state, const bool useBackMaterial, const bool castShadow )
 	{
 		static std::string retValFront;
 		static std::string retValBack;
 
-		if ( retValFront.length() == 0 )
+		// @todo
+		// 4X dither
+		// with modulo
+		std::string functionSignature;
+		std::string shadowString;
+		if ( castShadow )
 		{
-			retValFront =
-			"void spotLightFront( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
+			functionSignature = "void spotLightFrontShadow( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n";
+
+			shadowString =	"	// use modulo to vary the sample pattern\n"
+						"	vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"	shadowFactor = 0.0;\n"
+						"	shadowFactor += lookupShadowMap(2, vec2(-1.5, 1.5) + o );\n"
+						"	shadowFactor += lookupShadowMap(2, vec2(0.5, 1.5) + o );\n"
+						"	shadowFactor += lookupShadowMap(2, vec2(-1.5, -0.5) + o );\n"
+						"	shadowFactor += lookupShadowMap(2, vec2(0.5, -0.5) + o );\n"
+						"	shadowFactor *= 0.25;\n";
+		}
+		else
+		{
+			functionSignature = "void spotLightFront( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n";
+			shadowString =	"	shadowFactor = 1.0;\n";
+		}
+
+		if ( true /*retValFront.length() == 0 @todo */ )
+		{
+			retValFront = functionSignature;
+			retValFront +=
 			"{\n"
 			"	float nDotVP;			// normal . light direction\n"
 			"	float nDotHV;			// normal . light half vector\n"
@@ -269,10 +302,18 @@ struct GLSLHelpers
 			"	// See if point on surface is inside cone of illumination\n"
 			"	spotDot = dot(-VP, normalize(gl_LightSource[i].spotDirection));\n"
 
-			"	float cosOuterCone = cos( radians(gl_LightSource[i].spotCutoff + 10.0) );\n"
-			"	float cosInnerCone = gl_LightSource[i].spotCosCutoff;\n" // cos( radians(gl_LightSource[i].spotCutoff) )
+			"	float cosOuterCone = cos( radians(gl_LightSource[i].spotCutoff) );\n"
+			"	float cosInnerCone = cos( radians(gl_LightSource[i].spotCutoff * 0.8) );" // @todo 0.5 must be a param
 			"\n"
-			"	spotAttenuation = smoothstep( cosOuterCone, cosInnerCone, spotDot );\n"
+			"	spotAttenuation = 1.0 - smoothstep( cosInnerCone, cosOuterCone, spotDot );\n"
+			"\n";
+
+			retValFront += "	// Compute shadow\n"
+						"	float shadowFactor;\n\n" +
+						shadowString;
+
+			retValFront += 
+
 /*		"	if ( spotAttenuation == 1.0 )\n"
 			"	{\n"
 			"		spotAttenuation = pow(spotDot, gl_LightSource[i].spotExponent);\n"
@@ -292,7 +333,7 @@ struct GLSLHelpers
 			"	}\n"*/
 			"\n"
 			"	// Combine the spotlight and distance attenuation.\n"
-			"	attenuation = spotAttenuation;\n"
+			"	attenuation = spotAttenuation * shadowFactor;\n"
 //		"	attenuation *= spotAttenuation;\n"
 			"\n"
 			//"	halfVector = gl_LightSource[i].halfVector;\n"
@@ -372,7 +413,7 @@ struct GLSLHelpers
 
 				if ( isDefined && onValue )
 				{
-					const std::string iStr = boost::lexical_cast< std::string >( i ); // @todo optme
+					const std::string iStr = vgd::basic::toString( i );
 
 					const int lightType = currentLightState->getLightType();
 
@@ -391,9 +432,19 @@ struct GLSLHelpers
 							break;
 
 						case GLSLState::SPOT_LIGHT:
-							flightFront		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
-							flightBack		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
-							// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
+							if (	state.getShadowType() != vgd::node::LightModel::SHADOW_OFF && 
+									currentLight->getCastShadow() )
+							{
+								flightFront		+= "	spotLightFrontShadow( " + iStr + ", ecPosition3, normal, eye );\n";
+								flightBack		+= "	spotLightFrontShadow( " + iStr + ", ecPosition3, normal, eye );\n";
+								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
+							}
+							else
+							{
+								flightFront		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+								flightBack		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
+							}
 							break;
 
 						default:
@@ -684,16 +735,16 @@ struct GLSLHelpers
 						retVal +=
 // @todo not the good place
 						"\n"
-						"float lookupShadowMap(int unit, vec2 offset )\n"
+						"float lookupShadowMap( int unit, vec2 offset )\n"
 						"{\n"
-						"	float Epsilon = 0.05;\n" // @todo
-//						"	float Illumination = 0.90;\n" // @todo
-						"	float Illumination = 0.80;\n" // @todo
+						"	float Epsilon = 0.05;\n" // @todo should be a param of LightModel
+//						"	float Illumination = 0.90;\n" // @todo param of LightModel
+						"	float illuminationInShadow = 0.7;\n" // @todo should be a param of LightModel
 						//"	float depth = gl_TexCoord[unit].z < 0.0 ? 1.0 : shadow2DProj(	texUnit" + strUnit + ",\n"
 						//"								gl_TexCoord[unit] + vec4( offset, 0, 0) * Epsilon).x;\n"
 						"	float depth = shadow2DProj(	texUnit" + strUnit + ",\n"
 						"								gl_TexCoord[unit] + vec4( offset, 0, 0) * Epsilon).x;\n"
-						"    return depth != 1.0 ? Illumination : 1.0;\n"
+						"    return depth != 1.0 ? illuminationInShadow : 1.0;\n"
 						"}\n" 
 						"\n";
 
@@ -742,19 +793,15 @@ struct GLSLHelpers
 				const vgd::node::Texture * textureNode = current->getTextureNode();
 				const std::string strUnit = vgd::basic::toString( i );
 
-				if ( textureNode->hasFunction() )
+				if (	textureNode->hasFunction() &&
+						textureNode->getUsage() == vgd::node::Texture::IMAGE )
 				{
 					std::string function;
 					textureNode->getFunction( function );
 					retVal +=
 					"	" + function;
 				}
-				else
-				{
-					// @todo
-					retVal +=
-					"	color *= texture2D(texUnit" + strUnit + ", gl_TexCoord[" + strUnit + "].xy);\n";
-				}
+				// else nothing to do (at least for SHADOW)
 			}
 			// else nothing to do
 

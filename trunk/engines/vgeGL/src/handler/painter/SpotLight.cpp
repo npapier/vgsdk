@@ -63,7 +63,7 @@ void SpotLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 	// fields
 	bool isDefined;
-	vgd::node::SpotLight::PositionValueType	position;
+	vgd::node::SpotLight::PositionValueType		position;
 	vgd::node::SpotLight::DirectionValueType	direction;
 
 	isDefined = spotLight->getPosition( position );
@@ -112,10 +112,14 @@ void SpotLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	}
 
 	// Updates GLSL state
+	const bool castShadow = spotLight->getCastShadow();
+	if ( castShadow )
+	{
+		state.setEnabled( GLSLState::SPOT_LIGHT_CASTING_SHADOW );
+	}
+
 	state.setEnabled( GLSLState::SPOT_LIGHT );
-
 	lightState.reset( new LightState(spotLight, GLSLState::SPOT_LIGHT) );
-
 	// @todo api in light state
 	lightState->lightViewMatrix.setLookAt( eye, center, up );
 	lightState->lightMODELVIEWMatrix = current;
