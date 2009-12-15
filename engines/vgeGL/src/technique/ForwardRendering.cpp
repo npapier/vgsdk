@@ -9,6 +9,7 @@
 #include <vgd/node/Camera.hpp>
 #include <vgd/node/CullFace.hpp>
 #include <vgd/node/LightModel.hpp>
+#include <vgd/node/MultiTransformation.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Texture2D.hpp>
 #include <vgd/node/TexGenEyeLinear.hpp>
@@ -20,7 +21,6 @@
 #include "vgeGL/rc/Texture2D.hpp"
 
 
-#include <vgd/basic/Image.hpp> // ???
 
 
 
@@ -44,13 +44,12 @@ namespace
 struct ShadowMappingInput
 {
 	/**
-	 * @brief Default constructor
+	 * @brief "Default" constructor
 	 *
 	 * @param engine		the engine where informations on the current state would be extracted.
 	 * @param shadowType	
 	 */
-	ShadowMappingInput( const vgeGL::engine::Engine * engine, const vgd::node::LightModel::ShadowValueType shadowType );
-
+	void reset( const vgeGL::engine::Engine * engine, const vgd::node::LightModel::ShadowValueType shadowType );
 
 	/**
 	 * @name Accessors
@@ -62,9 +61,10 @@ struct ShadowMappingInput
 	 */
 	const uint getNumLight() const;
 
-	const vgm::MatrixR& getLightViewMatrix( const uint index );
-	const vgm::MatrixR& getLightMODELVIEWMatrix( const uint index );
-	const vgm::MatrixR& getLightProjectionMatrix( const uint index );
+	const vgm::MatrixR& getLightViewMatrix( const uint index ) const;
+	const vgm::MatrixR& getLightMODELVIEWMatrix( const uint index ) const;
+	const vgm::MatrixR& getLightProjectionMatrix( const uint index ) const;
+	const vgd::node::SpotLight *getLightNode( const uint index ) const;
 
 	//vgd::Shp< glo::Texture2D > getLightDepthMap( const uint index );
 	vgd::Shp< vgd::node::Texture2D > getLightDepthMap( const uint index );
@@ -78,23 +78,37 @@ struct ShadowMappingInput
 	//@}
 
 
-private:
-// @todo only one vector
-	std::vector< vgm::MatrixR >					m_lightViewMatrix;
-	std::vector< vgm::MatrixR >					m_lightMODELVIEWMatrix;
-	std::vector< vgm::MatrixR >					m_lightProjectionMatrix;
+	struct LightInfo
+	{
+		LightInfo(	const vgm::MatrixR lightView, const vgm::MatrixR lightMODELVIEW, const vgm::MatrixR projection,
+					const vgd::node::SpotLight * spotLight )
+		:	m_lightViewMatrix(lightView),
+			m_lightMODELVIEWMatrix(lightMODELVIEW),
+			m_lightProjectionMatrix( projection),
+			m_spotLight(spotLight)
+		{}
 
+		vgm::MatrixR m_lightViewMatrix;
+		vgm::MatrixR m_lightMODELVIEWMatrix;
+		vgm::MatrixR m_lightProjectionMatrix;
+		const vgd::node::SpotLight * m_spotLight;
+	};
+
+private:
+	vgm::Vec2i												m_shadowMapSize;
+
+	// @todo only one vector
+	std::vector< LightInfo >								m_lights;
+
+	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_recycleLightDepthMap;
 	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_lightDepthMap;
-//	std::vector< vgd::Shp< glo::Texture2D > >				m_lightDepthMap;
 	std::vector< vgd::Shp< vgd::node::TexGenEyeLinear > >	m_texGen;
 
-	vgm::Vec2i												m_shadowMapSize;
-	//vgd::node::LightModel::ShadowValueType					m_type;
 };
 
 
 
-ShadowMappingInput::ShadowMappingInput( const vgeGL::engine::Engine * engine, const vgd::node::LightModel::ShadowValueType shadowType )
+void ShadowMappingInput::reset( const vgeGL::engine::Engine * engine, const vgd::node::LightModel::ShadowValueType shadowType )
 {
 	// Retrieves GLSLState from engine
 	using vgeGL::engine::GLSLState;
@@ -108,6 +122,13 @@ ShadowMappingInput::ShadowMappingInput( const vgeGL::engine::Engine * engine, co
 	m_shadowMapSize = drawingSurface; //drawingSurfacePower2i; // @todo wait FBO
 
 	// Lights informations
+	m_lights.clear();
+
+	m_recycleLightDepthMap.clear();
+	m_lightDepthMap.swap( m_recycleLightDepthMap );
+	m_texGen.clear();
+	// @todo recycle texGen
+
 	uint		i		= 0;
 	const uint	iEnd	= state.getMaxLight();
 
@@ -131,20 +152,31 @@ ShadowMappingInput::ShadowMappingInput( const vgeGL::engine::Engine * engine, co
 			if ( castShadow )
 			{
 				// LIGHT MATRICES
-				m_lightViewMatrix.push_back( current->lightViewMatrix );
-				m_lightMODELVIEWMatrix.push_back( current->lightMODELVIEWMatrix );
+				assert( spot->hasCutOffAngle() ); // @todo
+				float cutOffAngle;
+				/*hasCutOffAngle = */ spot->getCutOffAngle( cutOffAngle );
 
 // @todo FIXME check scene size
 				vgm::MatrixR projection;
-				projection.setPerspective(	45.f,
-											m_shadowMapSize[0]/m_shadowMapSize[1], //1.f, /* see aspect ratio of FBO */ 
+				projection.setPerspective(	cutOffAngle * 2.f,
+											static_cast<float>(m_shadowMapSize[0])/static_cast<float>(m_shadowMapSize[1]),
 											1.f, 1000.f );
-				m_lightProjectionMatrix.push_back( projection );
+
+				m_lights.push_back( LightInfo(current->lightViewMatrix, current->lightMODELVIEWMatrix, projection, spot ) );
 
 				// Initializes private nodes for shadow mapping
-// @todo recycle nodes
+// @todo TBT recycle nodes
 				using vgd::node::Texture;
-				vgd::Shp< vgd::node::Texture2D > lightDepthMap = vgd::node::Texture2D::create("depthMap.spotLight" + vgd::basic::toString( static_cast<int>(spot->getMultiAttributeIndex())) );
+				vgd::Shp< vgd::node::Texture2D > lightDepthMap;
+				if ( m_recycleLightDepthMap.size() > 0 )
+				{
+					lightDepthMap = m_recycleLightDepthMap.back();
+					lightDepthMap->setName("depthMap.spotLight" + vgd::basic::toString( static_cast<int>(spot->getMultiAttributeIndex())));
+				}
+				else
+				{
+					lightDepthMap = vgd::node::Texture2D::create("depthMap.spotLight" + vgd::basic::toString( static_cast<int>(spot->getMultiAttributeIndex())) );
+				}
 
 				std::string function;
 				if ( shadowType == vgd::node::LightModel::SHADOW_OFF )
@@ -261,33 +293,42 @@ ShadowMappingInput::ShadowMappingInput( const vgeGL::engine::Engine * engine, co
 
 const uint ShadowMappingInput::getNumLight() const
 {
-	return m_lightViewMatrix.size();
+	return m_lights.size();
 }
 
 
-const vgm::MatrixR& ShadowMappingInput::getLightViewMatrix( const uint index )
+const vgm::MatrixR& ShadowMappingInput::getLightViewMatrix( const uint index ) const
 {
 	assert( index < getNumLight() && "ShadowMappingInput::getLightViewMatrix(): Out of range index." );
 
-	return m_lightViewMatrix[index];
+	return m_lights[index].m_lightViewMatrix;
 }
 
 
-const vgm::MatrixR& ShadowMappingInput::getLightMODELVIEWMatrix( const uint index )
+const vgm::MatrixR& ShadowMappingInput::getLightMODELVIEWMatrix( const uint index ) const
 {
 	assert( index < getNumLight() && "ShadowMappingInput::getLightMODELVIEWMatrix(): Out of range index." );
 
-	return m_lightMODELVIEWMatrix[index];
+	return m_lights[index].m_lightMODELVIEWMatrix;
 }
 
 
 
-const vgm::MatrixR& ShadowMappingInput::getLightProjectionMatrix( const uint index )
+const vgm::MatrixR& ShadowMappingInput::getLightProjectionMatrix( const uint index ) const
 {
 	assert( index < getNumLight() && "ShadowMappingInput::getLightProjectionMatrix(): Out of range index." );
 
-	return m_lightProjectionMatrix[index];
+	return m_lights[index].m_lightProjectionMatrix;
 }
+
+
+const vgd::node::SpotLight *ShadowMappingInput::getLightNode( const uint index ) const
+{
+	assert( index < getNumLight() && "ShadowMappingInput::getLightNode(): Out of range index." );
+
+	return m_lights[index].m_spotLight;
+}
+
 
 
 vgd::Shp< vgd::node::Texture2D > ShadowMappingInput::getLightDepthMap( const uint index )
@@ -344,6 +385,15 @@ void ShadowMappingInput::setType( const vgd::node::LightModel::ShadowValueType& 
 
 
 
+
+
+
+ForwardRendering::ForwardRendering()
+:	m_shadowMappingInput( new ShadowMappingInput() )
+{}
+
+
+
 // DONE: compatible with GLSL, texturing, MultiMain (embeded a technique into another one)
 // Ulis SG(run)
 // @todo Depth peeling to replace cullface => no, MaterialExt
@@ -373,7 +423,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	/////////////////////////////////////////////////////////
 
 	vgd::node::LightModel::ShadowValueType shadowType;
-	vgd::Shp< ShadowMappingInput > shadowMappingInput;
+	vgd::Shp< ShadowMappingInput >& shadowMappingInput = m_shadowMappingInput;
 
 	const uint internalTexUnitIndex = engine->getMaxTexUnits()-1;
 
@@ -430,7 +480,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			if ( shadowType != LightModel::SHADOW_OFF )
 			{
 				// Extracts informations
-				shadowMappingInput.reset( new ShadowMappingInput( engine, shadowType ) );
+				shadowMappingInput->reset( engine, shadowType );
 				//shadowMappingInput->setType( shadow );
 			}
 			// else nothing to do
@@ -460,6 +510,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 	endPass();
 
+	vgm::MatrixR lightLookAt; // ????
 
 	/////////////////////////////////////////////////////////
 	// STEP 2: Computes shadow map, i.e. renders scene from light POV
@@ -487,10 +538,9 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 // @todo installs new handler intead of doing test on node type
 
 		// @todo creates node polygonOffset
-		//glPolygonOffset( 2.f, 16.f ); // 1.1, 4 from MJK // @todo must be adaptative
-		//glEnable( GL_POLYGON_OFFSET_FILL );
 // @todo think about interaction whith CullFace ? Don't use it, but see PolygonOffset
 
+		//const bool isTextureMappingEnabled(engine->isTextureMappingEnabled());
 
 		for(	uint currentLightIndex = 0;
 				currentLightIndex < shadowMappingInput->getNumLight();
@@ -500,15 +550,26 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			beginPass();
 
 			// pre-configuration
+			//engine->setTextureMappingEnabled(false);
+
 			glColorMask( GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE );
 
 // @todo
 			glEnable( GL_CULL_FACE );
 			glCullFace( GL_FRONT );
 			engine->disregardIfIsA< vgd::node::CullFace >();
-
-			//glPolygonOffset( 1.1f, 4.f ); //2.f, 16.f ); // 1.1, 4 from MJK // @todo must be adaptative
+			//glPolygonOffset( 1.1f, 4.f ); //2.f, 16.f ); 
 			//glEnable( GL_POLYGON_OFFSET_FILL );
+
+			engine->disregardIfIsAKindOf<vgd::node::Light>();
+
+			//engine->disregardIfIsAKindOf<vgd::node::MultiTransformation>();
+			//engine->disregardIfIsAKindOf<vgd::node::TexGen>();
+
+//			engine->disregardIfIsAKindOf<vgd::node::Texture>();
+
+			engine->disregardIfIsA<vgd::node::LightModel>();
+
 
 			vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 			for(	i = traverseElements->begin(), iEnd = traverseElements->end();
@@ -531,12 +592,38 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 					vgm::MatrixR lightViewMatrix = shadowMappingInput->getLightViewMatrix(currentLightIndex);
 					vgm::MatrixR lightMODELVIEWMatrix = shadowMappingInput->getLightMODELVIEWMatrix(currentLightIndex);
-/*// I must undo the transform dragger action => @todo disable TransformDragger
+					const vgd::node::SpotLight * spotLight = shadowMappingInput->getLightNode(currentLightIndex);
+
+					bool isDefined;
+					vgd::node::SpotLight::PositionValueType		position;
+					vgd::node::SpotLight::DirectionValueType	direction;
+
+					isDefined = spotLight->getPosition( position );
+					assert( isDefined );
+
+					isDefined = spotLight->getDirection( direction );
+					assert( isDefined );
+
+					vgm::MatrixR current = lightMODELVIEWMatrix * invViewMatrix;
+					current.multVecMatrix( position, position );
+					current[3][0] = current[3][1] = current[3][2] = 0.f;
+					current.multVecMatrix( direction, direction );
+
+					vgm::Vec3f	eye		( position );
+					vgm::Vec3f	center	( position + direction );
+					vgm::Vec3f	up		( 0.f, 1.f, 0.f );
+
+					if ( direction.dot( up ) > 0.5f )
+					{
+						up.setValue( 1.f, 0.f, 0.f );
+					}
+					/*current.multVecMatrix( eye, eye );
+					current.multVecMatrix( center, center );
+					current.multVecMatrix( up,up );*/
+					lightLookAt.setLookAt( eye, center, up );
+// I must undo the transform dragger action => @todo disable TransformDragger
 					newCamera->setLookAt(
-						 invTransformDraggerMatrix * lightViewMatrix
-						);*/
-					newCamera->setLookAt(
-						 invTransformDraggerMatrix * (lightMODELVIEWMatrix * invViewMatrix * lightViewMatrix)
+						 invTransformDraggerMatrix * lightLookAt
 						);
 					newCamera->setProjection( shadowMappingInput->getLightProjectionMatrix(currentLightIndex) );
 
@@ -556,6 +643,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 			// Rendering done, extract depth map  from depth buffer and copy into a texture2D node.
 // @todo more high-level (Engine::renderTargets section ?)
+			//engine->setTextureMappingEnabled(true);
 			vgd::Shp< vgd::node::Texture2D > texture2D = shadowMappingInput->getLightDepthMap( currentLightIndex );
 
 // @todo Image::DEPTH ?
@@ -625,6 +713,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 //			glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
 //			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		}
+		//engine->setTextureMappingEnabled(isTextureMappingEnabled);
 	}
 
 
@@ -692,8 +781,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			const vgm::MatrixR lightViewMatrix = shadowMappingInput->getLightViewMatrix(currentLightIndex);
 			const vgm::MatrixR lightMODELVIEWMatrix = shadowMappingInput->getLightMODELVIEWMatrix(currentLightIndex);
 
-			//textureMatrix = invViewMatrix * lightViewMatrix * lightProjectionMatrix * textureMatrix;
-			textureMatrix = invViewMatrix * (lightMODELVIEWMatrix * invViewMatrix * lightViewMatrix) * lightProjectionMatrix * textureMatrix;
+			textureMatrix = invViewMatrix * (lightLookAt) * lightProjectionMatrix * textureMatrix;
 
 			//
 			engine->activeTexture(currentTexUnit);
@@ -710,10 +798,10 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		const bool mustDoTransparencyPass = evaluateOpaquePass( paintService, PassIsolationMask(0), true );
 
 		// Second pass : TRANSPARENT PASS (draw transparent shape).
-		/*if ( mustDoTransparencyPass )
+		if ( mustDoTransparencyPass )
 		{
 			evaluateTransparentPass( paintService, PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK), true );
-		}*/
+		}
 		/////////////////////////////////////////////////////////
 
 		endPass();

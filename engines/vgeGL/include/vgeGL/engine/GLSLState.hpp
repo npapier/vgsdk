@@ -9,6 +9,7 @@
 #include <bitset>
 #include <vector>
 #include <vgd/Shp.hpp>
+#include <vgd/node/LightModel.hpp>
 #include <vgm/Matrix.hpp>
 #include "vgeGL/vgeGL.hpp"
 
@@ -85,7 +86,7 @@ void TBitSet<size>::reset()
  * This class is a specialized container for GLSL rendering state used by program/shader generators 
  * to take care of the rendering state given by the scene graph.
  */
-struct GLSLState : public TBitSet< 10 >
+struct GLSLState : public TBitSet< 11 >
 {
 	enum BitSetIndexType
 	{
@@ -99,6 +100,7 @@ struct GLSLState : public TBitSet< 10 >
 		DIRECTIONAL_LIGHT,
 		POINT_LIGHT,
 		SPOT_LIGHT,
+		SPOT_LIGHT_CASTING_SHADOW,
 
 		// ClipPlane node
 		CLIPPING_PLANE,				///< True when at least on ClipPlane node has been traversed
@@ -361,8 +363,22 @@ struct GLSLState : public TBitSet< 10 >
 	//@}
 
 
+	/**
+	 * @brief Returns the last encountered value of LightModel.shadow
+	 */
+	const vgd::node::LightModel::ShadowValueType getShadowType() const { return m_lightModelShadow; }
+
+	/**
+	 * @brief Sets the last encountered value of LightModel.shadow.
+	 *
+	 * @param shadowType	the value of LightModel.shadow
+	 */
+	void setShadowType( const vgd::node::LightModel::ShadowValueType shadowType ) { m_lightModelShadow = shadowType; }
+
 
 private:
+	vgd::node::LightModel::ShadowValueType		m_lightModelShadow;	///< Last encountered value of LightModel.shadow field
+
 	std::vector< vgd::Shp< LightState > >		m_light;		///< array of light state. The zero-based index selects the light unit.
 	uint										m_numLight;		///< number of light state in all light units.
 
