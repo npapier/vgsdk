@@ -737,7 +737,7 @@ struct GLSLHelpers
 						"\n"
 						"float lookupShadowMap( int unit, vec2 offset )\n"
 						"{\n"
-						"	float Epsilon = 0.05;\n" // @todo should be a param of LightModel
+						"	float Epsilon = 0.05 * 5.0;\n" // @todo should be a param of LightModel
 //						"	float Illumination = 0.90;\n" // @todo param of LightModel
 						"	float illuminationInShadow = 0.7;\n" // @todo should be a param of LightModel
 						//"	float depth = gl_TexCoord[unit].z < 0.0 ? 1.0 : shadow2DProj(	texUnit" + strUnit + ",\n"
