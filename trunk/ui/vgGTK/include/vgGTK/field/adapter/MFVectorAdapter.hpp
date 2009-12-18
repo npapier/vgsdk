@@ -30,7 +30,7 @@ template< typename VectorType >
 struct MFVectorAdapter : public MFAdapter< VectorType >
 {
 	MFVectorAdapter()
-	:	m_columns( VectorType().getSize() )
+	:	m_columns( VectorType().getDim() )
 	{}
 	
 	void addColumnsToRecord( Gtk::TreeModel::ColumnRecord & columnRecord )
