@@ -256,6 +256,12 @@ vgd::Shp< ::vgeGL::event::TimerEventProcessor > SceneManager::getTimerEventProce
 
 const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32 y )
 {
+	if ( !startVGSDK() )
+	{
+		vgLogDebug("vgeGL::engine::SceneManager::castRayForHit(): startVGSDK fails !");
+		return 0;
+	}
+
 	// CAST A RAY
 	updateNodeCollector();
 

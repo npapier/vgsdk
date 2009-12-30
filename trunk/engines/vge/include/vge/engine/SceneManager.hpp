@@ -270,6 +270,21 @@ struct VGE_API SceneManager
 	//@}
 
 
+	/**
+	 * @brief Calls this method before using vgsdk.
+	 *
+	 * @return true if vgsdk could be used, false otherwise.
+	 */
+	virtual const bool startVGSDK()=0;
+
+	/**
+	 * @brief Calls this method when you no longer need vgsdk.
+	 *
+	 * @return true if vgsdk shutdown has been completed successfuly, false otherwise.
+	 */
+	virtual const bool shutdownVGSDK()=0;
+
+
 protected:
 
 	/**
