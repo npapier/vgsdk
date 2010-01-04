@@ -427,8 +427,8 @@ const bool myCanvas::loadTrian( const Glib::ustring & pathfilename )
 	using vgd::node::Material;
 
 	vgd::Shp< Material > material = Material::create("material");
-	material->setColor( Material::DIFFUSE, vgm::Vec3f(204.f/255.f, 51.f/255.f, 51.f/255.f) );
-	material->setColor( Material::SPECULAR, vgm::Vec3f(1.f, 1.f, 1.f) );
+	material->setDiffuse( vgm::Vec3f(204.f/255.f, 51.f/255.f, 51.f/255.f) );
+	material->setSpecular( vgm::Vec3f(1.f, 1.f, 1.f) );
 	material->setShininess( 1.f );
 
 	getScene()->addChild( material );
@@ -472,20 +472,20 @@ vgd::Shp< vgeGL::technique::Technique > myCanvas::createMultiViewSidedTechnique(
 	const float				subHeight	= oneTier - padding - padding;
 	vgd::Shp< MultiMain >	technique( new MultiMain() );
 	
-	vgd::Shp< MultiMain::Window > mainView = technique->addWindow( "main", 0, false );
+	vgd::Shp< MultiMain::Window > mainView = technique->addWindow( "main", 0, MultiMain::WindowBorder(false) );
 	mainView->setGeometry( vgm::Rectangle2f(0.f, 0.f, 1.f, 1.f) );
 	
-	vgd::Shp< MultiMain::Window >	topView = technique->addWindow( "top", 1, true, vgm::Vec4f(1.f,0.f,0.f,1.f) );
+	vgd::Shp< MultiMain::Window >	topView = technique->addWindow( "top", 1, MultiMain::WindowBorder(true, vgm::Vec4f(1.f,0.f,0.f,1.f)) );
 	const vgm::Rotation				rotateTop(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,1.f,0.f));
 	topView->setGeometry( vgm::Rectangle2f(padding, 0*oneTier+padding, subWidth, subHeight) );
 	topView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateTop)) );
 
-	vgd::Shp< MultiMain::Window >	bottomView = technique->addWindow( "bottom", 1, true, vgm::Vec4f(0.f,1.f,0.f,1.f) );
+	vgd::Shp< MultiMain::Window >	bottomView = technique->addWindow( "bottom", 1, MultiMain::WindowBorder(true, vgm::Vec4f(0.f,1.f,0.f,1.f)) );
 	const vgm::Rotation				rotateBottom(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,-1.f,0.f));
 	bottomView->setGeometry( vgm::Rectangle2f(padding, 1*oneTier+padding, subWidth, subHeight) );
 	bottomView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateBottom)) );
 
-	vgd::Shp< MultiMain::Window >	oppositeView = technique->addWindow( "opposite", 1, true, vgm::Vec4f(0.f,0.f,1.f,1.f) );
+	vgd::Shp< MultiMain::Window >	oppositeView = technique->addWindow( "opposite", 1, MultiMain::WindowBorder(true, vgm::Vec4f(0.f,0.f,1.f,1.f)) );
 	const vgm::Rotation				rotateOpposite(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,0.f,1.f));
 	oppositeView->setGeometry( vgm::Rectangle2f(padding, 2*oneTier+padding, subWidth, subHeight) );
 	oppositeView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateOpposite)) );
@@ -502,20 +502,20 @@ vgd::Shp< vgeGL::technique::Technique > myCanvas::createMultiViewSquaredTechniqu
 
 	vgd::Shp< MultiMain >	technique( new MultiMain() );
 	
-	vgd::Shp< MultiMain::Window > mainView = technique->addWindow( "main", 0, true, vgm::Vec4f(1.f,1.f,1.f,1.f) );
+	vgd::Shp< MultiMain::Window > mainView = technique->addWindow( "main", 0, MultiMain::WindowBorder(true, vgm::Vec4f(1.f,1.f,1.f,1.f)) );
 	mainView->setGeometry( vgm::Rectangle2f(0.5f, 0.5f, 0.5f, 0.5f) );
 	
-	vgd::Shp< MultiMain::Window >	topView = technique->addWindow( "top", 1, true, vgm::Vec4f(1.f,0.f,0.f,1.f) );
+	vgd::Shp< MultiMain::Window >	topView = technique->addWindow( "top", 1, MultiMain::WindowBorder(true, vgm::Vec4f(1.f,0.f,0.f,1.f)) );
 	const vgm::Rotation				rotateTop(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,1.f,0.f));
 	topView->setGeometry( vgm::Rectangle2f(0.f, 0.f, 0.5f, 0.5f) );
 	topView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateTop)) );
 
-	vgd::Shp< MultiMain::Window >	bottomView = technique->addWindow( "bottom", 1, true, vgm::Vec4f(0.f,1.f,0.f,1.f) );
+	vgd::Shp< MultiMain::Window >	bottomView = technique->addWindow( "bottom", 1, MultiMain::WindowBorder(true, vgm::Vec4f(0.f,1.f,0.f,1.f)) );
 	const vgm::Rotation				rotateBottom(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,-1.f,0.f));
 	bottomView->setGeometry( vgm::Rectangle2f(0.f, 0.5f, 0.5f, 0.5f) );
 	bottomView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateBottom)) );
 
-	vgd::Shp< MultiMain::Window >	oppositeView = technique->addWindow( "opposite", 1, true, vgm::Vec4f(0.f,0.f,1.f,1.f) );
+	vgd::Shp< MultiMain::Window >	oppositeView = technique->addWindow( "opposite", 1, MultiMain::WindowBorder(true, vgm::Vec4f(0.f,0.f,1.f,1.f)) );
 	const vgm::Rotation				rotateOpposite(vgm::Vec3f(0.f,0.f,-1.f), vgm::Vec3f(0.f,0.f,1.f));
 	oppositeView->setGeometry( vgm::Rectangle2f(0.5, 0.f, 0.5f, 0.5f) );
 	oppositeView->setConfigurator( vgd::makeShp(new ViewPointConfigurator(getSceneTransformation(), rotateOpposite)) );
