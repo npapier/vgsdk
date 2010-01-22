@@ -78,14 +78,14 @@ void myBase::addObject(const std::string filename)
 	m_canvas->appendToScene( filename );
 }
 
-void myBase::addObject(const vgd::Shp<vgd::node::VertexShape> shape)
+void myBase::addObject( const vgd::Shp<vgd::node::Node> node )
 {
-	m_canvas->getScene()->addChild(shape);
+	m_canvas->getScene()->addChild(node);
 }
 
-void myBase::addObject(const std::list<vgd::Shp<vgd::node::VertexShape>> shapeList)
+void myBase::addObject( const std::list< vgd::Shp<vgd::node::Node> > nodeList )
 {
-	for (std::list<vgd::Shp<vgd::node::VertexShape>>::const_iterator it = shapeList.begin(); it != shapeList.end(); it++)
+	for (std::list<vgd::Shp<vgd::node::Node>>::const_iterator it = nodeList.begin(); it != nodeList.end(); ++it)
 	{
 		m_canvas->getScene()->addChild(*it);
 	}
@@ -120,6 +120,8 @@ vgd::Shp< vgd::node::Group > myBase::getScene()
 {
 	return m_canvas->getScene();
 }
+
+
 
 } // namespace vgTest
 
