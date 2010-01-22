@@ -21,10 +21,9 @@ namespace vgsdkTestGtk
 
 namespace vgTest
 {
-
 	struct myCanvas;
 	
-	struct myBase : public ::vgTest::Base
+struct myBase : public ::vgTest::Base
 {
 	/**
 	 * @brief Default constructor
@@ -54,18 +53,18 @@ namespace vgTest
 	void								addObject(const std::string filename);
 
 	/**
-	 * @brief Add a shape to the scene
+	 * @brief Add a node to the scene
 	 * 
-	 * @param the VertexShape
+	 * @param node	the node to add
 	 */
-	void								addObject(const vgd::Shp<vgd::node::VertexShape> shape);
+	void								addObject( const vgd::Shp<vgd::node::Node > node );
 
 	/**
-	 * @brief Add a list of shape to the scene
+	 * @brief Add a list of node to the scene
 	 * 
-	 * @param the VertexShape
+	 * @param nodeList	the nodes to add
 	 */
-	void								addObject(const std::list<vgd::Shp<vgd::node::VertexShape>> shapeList);
+	void								addObject(const std::list< vgd::Shp<vgd::node::Node> > nodeList );
 
 	/**
 	 * @brief Quit the Gtk main loop and destroy the canvas and window
