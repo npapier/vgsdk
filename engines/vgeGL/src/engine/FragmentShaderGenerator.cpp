@@ -31,9 +31,6 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// Retrieves the GLSL state
 	GLSLState& state = engine->getGLSLState();
 
-	//
-	const bool ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
-
 	// Clears the code repository
 	m_code.clear();
 	m_code += "#version 120\n";
@@ -63,7 +60,16 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing
 
-	if ( ftexgen )	m_code += GLSLHelpers::generate_samplers( state ) + '\n';
+	const bool has_ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
+
+	std::pair< std::string, std::string > code_ftexgen;
+	if ( has_ftexgen )
+	{
+		code_ftexgen = GLSLHelpers::generateFunction_ftexgen(state);
+		m_code += code_ftexgen.first;
+
+		m_code += GLSLHelpers::generate_samplers( state ) + '\n';
+	}
 
 	// FUNCTIONS
 	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() ) 
@@ -80,7 +86,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// texture lookup
 	std::string textureLookup;
 
-	if ( ftexgen ) textureLookup += GLSLHelpers::generate_texLookups( state );
+	if ( has_ftexgen ) textureLookup += GLSLHelpers::generate_texLookups( state );
 
 	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{

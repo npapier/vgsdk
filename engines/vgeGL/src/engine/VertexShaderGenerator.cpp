@@ -30,8 +30,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// Retrieves the GLSL state
 	GLSLState& state = engine->getGLSLState();
 
-	const bool ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
-
 	// Clears the code repository
 	m_code.clear();
 	m_code += "#version 120\n";
@@ -66,8 +64,19 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing to do
 
+	const bool has_ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
+
+	std::pair< std::string, std::string > code_ftexgen;
+	if ( has_ftexgen )
+	{
+		code_ftexgen = GLSLHelpers::generateFunction_ftexgen(state);
+		m_code += code_ftexgen.first;
+	}
+
 	// FUNCTIONS
 	m_code += GLSLHelpers::generateFunction_fnormal( state );
+
+	if ( has_ftexgen )	m_code += code_ftexgen.second;
 
 	if ( state.isLightingEnabled() && state.isPerVertexLightingEnabled() )
 	{
@@ -75,7 +84,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		m_code += GLSLHelpers::generateFunction_flight( state ) + "\n";
 	}
 
-	if ( ftexgen )	m_code += GLSLHelpers::generateFunction_ftexgen(state) + "\n";
 
 // @todo generateFunction_fVertexAttrib()  and generate_vertexAttribDeclaration()
 
@@ -162,7 +170,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		m_code += "	gl_FogFragCoord = ffog( ecPosition.z );\n";
 	}*/
 
-	if ( ftexgen )
+	if ( has_ftexgen )
 	{
 		m_code += "	ftexgen( ecPosition, ecNormal );\n";
 	}

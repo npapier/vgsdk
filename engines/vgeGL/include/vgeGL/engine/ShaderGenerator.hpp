@@ -253,14 +253,16 @@ struct GLSLHelpers
 		{
 			functionSignature = "void spotLightFrontShadow( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n";
 
-			shadowString =	"	// use modulo to vary the sample pattern\n"
+			shadowString =	"	shadowFactor = lookupShadowMap( mgl_TexCoord2, vec2(0,0));\n"; // @todo mgl_TexCoord2 !!!
+
+			/*shadowString =	"	// use modulo to vary the sample pattern\n"
 						"	vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
 						"	shadowFactor = 0.0;\n"
 						"	shadowFactor += lookupShadowMap(2, vec2(-1.5, 1.5) + o );\n"
 						"	shadowFactor += lookupShadowMap(2, vec2(0.5, 1.5) + o );\n"
 						"	shadowFactor += lookupShadowMap(2, vec2(-1.5, -0.5) + o );\n"
 						"	shadowFactor += lookupShadowMap(2, vec2(0.5, -0.5) + o );\n"
-						"	shadowFactor *= 0.25;\n";
+						"	shadowFactor *= 0.25;\n";*/
 		}
 		else
 		{
@@ -653,11 +655,13 @@ struct GLSLHelpers
 
 
 	// TEXTURE
-	static const std::string generateFunction_ftexgen( const vgeGL::engine::GLSLState& state )
+	// @todo class to store varying variables (vertex output, fragment input in glsl 1.3)
+	static std::pair< std::string, std::string > generateFunction_ftexgen( const vgeGL::engine::GLSLState& state )
 	{
-		std::string retVal;
+		std::string decl;
+		std::string code;
 
-		retVal = 
+		code = 
 		"void ftexgen( in vec4 ecPosition, in vec3 normal )\n"
 		"{\n";
 
@@ -670,22 +674,26 @@ struct GLSLHelpers
 
 			if ( current )
 			{
-				const std::string strUnit = boost::lexical_cast< std::string >( i );
-				vgd::node::TexGen * texGen = current->getTexGenNode();
+				const std::string strUnit = vgd::basic::toString( i );
+				const vgd::node::TexGen * texGen = current->getTexGenNode();
 
 				if ( texGen /*&& current->isComplete() */)
 				{
-					retVal +=
-					"	gl_TexCoord[" + strUnit + "].s = dot( ecPosition, gl_EyePlaneS[" + strUnit + "] );\n"
-					"	gl_TexCoord[" + strUnit + "].t = dot( ecPosition, gl_EyePlaneT[" + strUnit + "] );\n"
-					"	gl_TexCoord[" + strUnit + "].p = dot( ecPosition, gl_EyePlaneR[" + strUnit + "] );\n"
-					"	gl_TexCoord[" + strUnit + "].q = dot( ecPosition, gl_EyePlaneQ[" + strUnit + "] );\n"
-					"	gl_TexCoord[" + strUnit + "] = gl_TextureMatrix[" + strUnit +"] * gl_TexCoord[" + strUnit + "];\n";
+					decl += "varying vec4 mgl_TexCoord" + strUnit + ";\n";
+
+					code +=
+					"	mgl_TexCoord" + strUnit + ".s = dot( ecPosition, gl_EyePlaneS[" + strUnit + "] );\n"
+					"	mgl_TexCoord" + strUnit + ".t = dot( ecPosition, gl_EyePlaneT[" + strUnit + "] );\n"
+					"	mgl_TexCoord" + strUnit + ".p = dot( ecPosition, gl_EyePlaneR[" + strUnit + "] );\n"
+					"	mgl_TexCoord" + strUnit + ".q = dot( ecPosition, gl_EyePlaneQ[" + strUnit + "] );\n"
+					"	mgl_TexCoord" + strUnit + " = gl_TextureMatrix[" + strUnit +"] * mgl_TexCoord" + strUnit + ";\n";
 				}
 				else if ( texGen == 0 && current->isComplete() )
 				{
-					retVal +=
-					"	gl_TexCoord[" + strUnit + "] = gl_TextureMatrix[" + strUnit +"] * gl_MultiTexCoord" + strUnit + ";\n";
+					decl += "varying vec4 mgl_TexCoord" + strUnit + ";\n";
+
+					code +=
+					"	mgl_TexCoord" + strUnit + " = gl_TextureMatrix[" + strUnit +"] * gl_MultiTexCoord" + strUnit + ";\n";
 				}
 				// else nothing to do
 
@@ -699,10 +707,12 @@ struct GLSLHelpers
 			// else no texture, nothing to do
 		}
 
-		retVal += 
-		"}\n";
+		code  += 
+		"}\n\n";
 
-		return retVal;
+		decl += "\n";
+
+		return std::make_pair( decl, code );
 	}
 
 
@@ -735,15 +745,16 @@ struct GLSLHelpers
 						retVal +=
 // @todo not the good place
 						"\n"
-						"float lookupShadowMap( int unit, vec2 offset )\n"
+						"float lookupShadowMap( vec4 texCoord, vec2 offset )\n"
 						"{\n"
-						"	float Epsilon = 0.05 * 5.0;\n" // @todo should be a param of LightModel
+//						"	float Epsilon = 1.0/2048.0; //0.05 * 1.0;\n" // @todo should be a param of LightModel
 //						"	float Illumination = 0.90;\n" // @todo param of LightModel
-						"	float illuminationInShadow = 0.7;\n" // @todo should be a param of LightModel
+						"	float illuminationInShadow = 0.3;\n" // @todo should be a param of LightModel
 						//"	float depth = gl_TexCoord[unit].z < 0.0 ? 1.0 : shadow2DProj(	texUnit" + strUnit + ",\n"
 						//"								gl_TexCoord[unit] + vec4( offset, 0, 0) * Epsilon).x;\n"
 						"	float depth = shadow2DProj(	texUnit" + strUnit + ",\n"
-						"								gl_TexCoord[unit] + vec4( offset, 0, 0) * Epsilon).x;\n"
+						"								texCoord ).x;\n"
+//						"								texCoord /*+ vec4( offset, 0, 0) * Epsilon*/).x;\n"
 						"    return depth != 1.0 ? illuminationInShadow : 1.0;\n"
 						"}\n" 
 						"\n";
