@@ -26,7 +26,7 @@ namespace node
  * By default, the sphere is builded with 20 triangles :
  * 
  * \li centered around the origin (0,0,0).
- * \li unit length.
+ * \li unit length (the radius).
  * \li any normals generated point away from the center of sphere.
  *
  * @todo method initializeTexUnits() (li could optionally have texture coordinates (see initializeTex() for more details)).
@@ -74,7 +74,7 @@ protected:
 
 	void	setToDefaults( void );
 	
-	void	setOptionalsToDefaults();	
+	void	setOptionalsToDefaults();
 
 	//@}
 };
