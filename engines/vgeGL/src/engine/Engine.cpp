@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -39,6 +39,7 @@ Engine::Engine()
 	m_glslProgramGenerator( new ProgramGenerator() )
 {
 	// Reset cache
+	m_maxViewportSize.setInvalid();
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
 }
 
@@ -61,6 +62,7 @@ void Engine::reset()
 	m_currentProgram	= 0;
 
 	// Reset cache
+	m_maxViewportSize.setInvalid();
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
 
 	//
@@ -135,7 +137,9 @@ void Engine::setToDefaults()
 	}
 	
 	//
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_LIGHTS			= %i", getMaxLights() );
+	vgLogDebug3( "vgeGL.Engine: MAX VIEWPORT SIZE		= %i x %i", getMaxViewportSize()[0],  getMaxViewportSize()[1] );
+
+	vgLogDebug2( "vgeGL.Engine: MAX_LIGHTS			= %i", getMaxLights() );
 
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
 
@@ -456,6 +460,29 @@ void Engine::resetMatrices()
 
 		glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
 	}
+}
+
+
+
+const vgm::Vec2i Engine::getMaxViewportSize() const
+{
+	if ( m_maxViewportSize.isInvalid() )
+	{
+		if ( isGLContextCurrent() )
+		{
+			GLint viewportSize[2];
+
+			glGetIntegerv( GL_MAX_VIEWPORT_DIMS, &viewportSize[0] );
+			m_maxViewportSize.setValue( viewportSize[0], viewportSize[1] );
+		}
+		else
+		{
+			vgLogDebug("Engine::getMaxViewportSize(): OpenGL context not current, so return arbitrary value (4096,4096).");
+			return vgm::Vec2i(4096,4096);
+		}
+	}
+
+	return m_maxViewportSize;
 }
 
 

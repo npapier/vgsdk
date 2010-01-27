@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -424,6 +424,7 @@ public:
 	 */
 	//@{
 
+	const vgm::Vec2i getMaxViewportSize() const;
 	const int getMaxLights() const;
 	const int getMaxTexUnits() const;
 	const int getMaxTexSize() const;
@@ -589,12 +590,14 @@ private:
 	 * @name Cache implementations specifics capabilities
 	 */
 	//@{
-	mutable GLint	m_maxLights;
+	mutable vgm::Vec2i	m_maxViewportSize;
 
-	mutable GLint	m_maxTexUnits;
-	mutable GLint	m_maxTexSize;
-	mutable GLint	m_max3DTexSize;
-	mutable GLint	m_maxCubeMapTexSize;
+	mutable GLint		m_maxLights;
+
+	mutable GLint		m_maxTexUnits;
+	mutable GLint		m_maxTexSize;
+	mutable GLint		m_max3DTexSize;
+	mutable GLint		m_maxCubeMapTexSize;
 	//@}
 
 
