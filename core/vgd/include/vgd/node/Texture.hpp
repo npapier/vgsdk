@@ -184,8 +184,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		MIN_FILTER = 284,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
-		MAG_FILTER = 285,	///< Choose one value among NEAREST or LINEAR (default).
+		MIN_FILTER = 288,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
+		MAG_FILTER = 289,	///< Choose one value among NEAREST or LINEAR (default).
 		DEFAULT_FILTERPARAMETER = MAG_FILTER	///< Choose one value among NEAREST or LINEAR (default).
 	};
 
@@ -213,8 +213,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 284 );
-			retVal.push_back( 285 );
+			retVal.push_back( 288 );
+			retVal.push_back( 289 );
 
 			return retVal;
 		}
@@ -235,12 +235,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		NEAREST = 286,	///< 
-		LINEAR = 287,	///< 
-		LINEAR_MIPMAP_NEAREST = 289,	///< 
-		NEAREST_MIPMAP_NEAREST = 288,	///< 
-		LINEAR_MIPMAP_LINEAR = 291,	///< 
-		NEAREST_MIPMAP_LINEAR = 290,	///< 
+		NEAREST = 290,	///< 
+		LINEAR = 291,	///< 
+		LINEAR_MIPMAP_NEAREST = 293,	///< 
+		NEAREST_MIPMAP_NEAREST = 292,	///< 
+		LINEAR_MIPMAP_LINEAR = 295,	///< 
+		NEAREST_MIPMAP_LINEAR = 294,	///< 
 		DEFAULT_FILTER = LINEAR	///< 
 	};
 
@@ -268,12 +268,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 286 );
-			retVal.push_back( 287 );
-			retVal.push_back( 289 );
-			retVal.push_back( 288 );
-			retVal.push_back( 291 );
 			retVal.push_back( 290 );
+			retVal.push_back( 291 );
+			retVal.push_back( 293 );
+			retVal.push_back( 292 );
+			retVal.push_back( 295 );
+			retVal.push_back( 294 );
 
 			return retVal;
 		}
@@ -330,9 +330,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		WRAP_T = 276,	///< 
-		WRAP_S = 275,	///< 
-		WRAP_R = 277,	///< 
+		WRAP_T = 280,	///< 
+		WRAP_S = 279,	///< 
+		WRAP_R = 281,	///< 
 		DEFAULT_WRAPPARAMETER = WRAP_S	///< 
 	};
 
@@ -360,9 +360,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 276 );
-			retVal.push_back( 275 );
-			retVal.push_back( 277 );
+			retVal.push_back( 280 );
+			retVal.push_back( 279 );
+			retVal.push_back( 281 );
 
 			return retVal;
 		}
@@ -384,12 +384,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		CLAMP = 279,	///< 
-		REPEAT = 278,	///< 
-		MIRRORED_REPEAT = 282,	///< 
-		CLAMP_TO_EDGE = 280,	///< 
-		CLAMP_TO_BORDER = 281,	///< 
-		ONCE = 283,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
+		CLAMP = 283,	///< 
+		REPEAT = 282,	///< 
+		MIRRORED_REPEAT = 286,	///< 
+		CLAMP_TO_EDGE = 284,	///< 
+		CLAMP_TO_BORDER = 285,	///< 
+		ONCE = 287,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
 		DEFAULT_WRAP = REPEAT	///< 
 	};
 
@@ -417,12 +417,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 279 );
-			retVal.push_back( 278 );
-			retVal.push_back( 282 );
-			retVal.push_back( 280 );
-			retVal.push_back( 281 );
 			retVal.push_back( 283 );
+			retVal.push_back( 282 );
+			retVal.push_back( 286 );
+			retVal.push_back( 284 );
+			retVal.push_back( 285 );
+			retVal.push_back( 287 );
 
 			return retVal;
 		}
@@ -476,8 +476,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		IMAGE = 273,	///< Simple image mapping
-		SHADOW = 274,	///< Shadow mapping
+		IMAGE = 277,	///< Simple image mapping
+		SHADOW = 278,	///< Shadow mapping
 		DEFAULT_USAGE = IMAGE	///< Simple image mapping
 	};
 
@@ -505,8 +505,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 273 );
-			retVal.push_back( 274 );
+			retVal.push_back( 277 );
+			retVal.push_back( 278 );
 
 			return retVal;
 		}
