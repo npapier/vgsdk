@@ -198,6 +198,17 @@
 				</enum>
 			</type>
 		</of>
+
+		<of name="shadowQuality" doc="Specifies the quality of the shadow computation">
+			<type name="enum">
+				<enum default="HIGH">
+					<value name="VERY_HIGH"	doc="Very high resolution shadow map using float depth buffer"/>
+					<value name="HIGH"		doc="High resolution shadow map using float depth buffer"/>
+					<value name="MEDIUM"	doc="Medium resolution shadow map using float depth buffer"/>
+					<value name="LOW"		doc="Low resolution shadow map using float depth buffer"/>
+				</enum>
+			</type>
+		</of>
 	</node>
 
 

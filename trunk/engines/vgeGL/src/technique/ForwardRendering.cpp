@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -19,9 +19,7 @@
 #include <vgm/VectorOperations.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/rc/Texture2D.hpp"
-
-
-
+#include "vgeGL/rc/FrameBufferObject.hpp"
 
 
 
@@ -43,13 +41,16 @@ namespace
  */
 struct ShadowMappingInput
 {
+	ShadowMappingInput()
+	{}
+
 	/**
 	 * @brief "Default" constructor
 	 *
 	 * @param engine		the engine where informations on the current state would be extracted.
 	 * @param shadowType	
 	 */
-	void reset( const vgeGL::engine::Engine * engine, const vgd::node::LightModel::ShadowValueType shadowType );
+	void reset( const vgeGL::engine::Engine * engine, const vgd::node::LightModel::ShadowValueType shadowType, const vgd::node::LightModel::ShadowQualityValueType shadowQuality );
 
 	/**
 	 * @name Accessors
@@ -75,7 +76,9 @@ struct ShadowMappingInput
 
 	/*const vgd::node::LightModel::ShadowValueType& getType() const;
 	void setType( const vgd::node::LightModel::ShadowValueType& type );*/
+
 	//@}
+
 
 
 	struct LightInfo
@@ -94,35 +97,63 @@ struct ShadowMappingInput
 		const vgd::node::SpotLight * m_spotLight;
 	};
 
+
+
+
+	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_dummyNodeForFBO; // @todo FIXME
+
 private:
 	vgm::Vec2i												m_shadowMapSize;
-
-	// @todo only one vector
+// @todo only one vector
 	std::vector< LightInfo >								m_lights;
 
 	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_recycleLightDepthMap;
 	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_lightDepthMap;
 	std::vector< vgd::Shp< vgd::node::TexGenEyeLinear > >	m_texGen;
-
 };
 
 
 
-void ShadowMappingInput::reset( const vgeGL::engine::Engine * engine, const vgd::node::LightModel::ShadowValueType shadowType )
+void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
+								const vgd::node::LightModel::ShadowValueType shadowType,
+								const vgd::node::LightModel::ShadowQualityValueType shadowQuality )
 {
+	using vgd::node::LightModel;
+
 	// Retrieves GLSLState from engine
 	using vgeGL::engine::GLSLState;
 	const GLSLState& state = engine->getGLSLState();
 
 	// Computes shadow map size and type
-	const vgm::Vec2i drawingSurface = engine->getDrawingSurfaceSize();
-	//const vgm::Vec2i drawingSurfacePower2( /*vgm::nextPower2(*/drawingSurface/*)*/ ); // @todo still useful ?
-	//const vgm::Vec2f drawingSurfacePower2f( drawingSurfacePower2 );
-	//const vgm::Vec2i drawingSurfacePower2i( drawingSurfacePower2f/2.f );
-	m_shadowMapSize = drawingSurface; //drawingSurfacePower2i; // @todo wait FBO
+	// @todo param HIGH-QUALITY => GL_FLOAT
+	vgm::Vec2i drawingSurface = engine->getDrawingSurfaceSize();
+	if ( shadowQuality == LightModel::LOW )
+	{
+		drawingSurface /= 2;
+		drawingSurface = vgm::nextPower2(drawingSurface);
+	}
+	else if ( shadowQuality == LightModel::MEDIUM )
+	{
+		// nothing to do
+	}
+	else if ( shadowQuality == LightModel::HIGH )
+	{
+		drawingSurface *= 2;
+		drawingSurface = vgm::nextPower2(drawingSurface);
+	}
+	else if ( shadowQuality == LightModel::VERY_HIGH )
+	{
+		drawingSurface *= 3;
+		drawingSurface = vgm::nextPower2(drawingSurface);
+	}
+
+	// Takes care of the maximum viewport size
+	m_shadowMapSize.setValue(	std::min(engine->getMaxViewportSize()[0], drawingSurface[0]),
+								std::min(engine->getMaxViewportSize()[1], drawingSurface[1])	);
 
 	// Lights informations
 	m_lights.clear();
+	m_dummyNodeForFBO.clear();
 
 	m_recycleLightDepthMap.clear();
 	m_lightDepthMap.swap( m_recycleLightDepthMap );
@@ -257,9 +288,6 @@ void ShadowMappingInput::reset( const vgeGL::engine::Engine * engine, const vgd:
 
 				lightDepthMap->setFunction( function );
 
-				//lightDepthMap->sethFunction( vgd::node::Texture2D::FUN_MODULATE );
-				// vgd::Shp< glo::Texture2D > lightDepthMap( new glo::Texture2D() );
-
 				lightDepthMap->setWrap( Texture::WRAP_S, Texture::CLAMP ); // GL_CLAMP_TO_EDGE
 				lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP );
 
@@ -272,6 +300,7 @@ void ShadowMappingInput::reset( const vgeGL::engine::Engine * engine, const vgd:
 				lightDepthMap->setUsage( Texture::SHADOW );
 
 				m_lightDepthMap.push_back( lightDepthMap );
+				m_dummyNodeForFBO.push_back( vgd::node::Texture2D::create("dummyNodeForFBO") );
 
 				// TexGen
 				// @todo recycle texgen node
@@ -394,8 +423,6 @@ ForwardRendering::ForwardRendering()
 
 
 
-// DONE: compatible with GLSL, texturing, MultiMain (embeded a technique into another one)
-// Ulis SG(run)
 // @todo Depth peeling to replace cullface => no, MaterialExt
 // @todo CullFace
 // @todo depth comparison pb : polygonOffset or Cullface
@@ -476,11 +503,15 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			bool isDefined = lightModel->getShadow( shadowType );	// @todo getDefaultShadow(LightModel::DEFAULT_SHADOW ); value = getShadow() 
 			if ( !isDefined )	shadowType = LightModel::DEFAULT_SHADOW; // @todo not very cute
 
+			LightModel::ShadowQualityValueType shadowQuality;
+			isDefined = lightModel->getShadowQuality( shadowQuality );	// @todo getDefaultShadowQuality();
+			if ( !isDefined )	shadowQuality = LightModel::DEFAULT_SHADOWQUALITY; // @todo not very cute
+
 			//
 			if ( shadowType != LightModel::SHADOW_OFF )
 			{
 				// Extracts informations
-				shadowMappingInput->reset( engine, shadowType );
+				shadowMappingInput->reset( engine, shadowType, shadowQuality );
 				//shadowMappingInput->setType( shadow );
 			}
 			// else nothing to do
@@ -511,6 +542,11 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	endPass();
 
 	vgm::MatrixR lightLookAt; // ????
+/*	setPassDescription("ForwardRendering: begin/endPass test");
+	beginPass();
+	endPass();*/
+
+
 
 	/////////////////////////////////////////////////////////
 	// STEP 2: Computes shadow map, i.e. renders scene from light POV
@@ -552,14 +588,15 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			// pre-configuration
 			//engine->setTextureMappingEnabled(false);
 
-			glColorMask( GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE );
+			// not with fbo:glColorMask( GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE );
 
 // @todo
-			glEnable( GL_CULL_FACE );
-			glCullFace( GL_FRONT );
-			engine->disregardIfIsA< vgd::node::CullFace >();
-			//glPolygonOffset( 1.1f, 4.f ); //2.f, 16.f ); 
-			//glEnable( GL_POLYGON_OFFSET_FILL );
+			//glEnable( GL_CULL_FACE );
+			//glCullFace( GL_FRONT );
+			//engine->disregardIfIsA< vgd::node::CullFace >();
+
+			glPolygonOffset( 4.f, 16.f ); //2.f, 16.f ); 
+			glEnable( GL_POLYGON_OFFSET_FILL );
 
 			engine->disregardIfIsAKindOf<vgd::node::Light>();
 
@@ -570,6 +607,56 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 			engine->disregardIfIsA<vgd::node::LightModel>();
 
+//
+			vgd::Shp< vgd::node::Texture2D > texture2D = shadowMappingInput->getLightDepthMap( currentLightIndex );
+
+			using vgd::basic::IImage;
+			using vgd::basic::ImageInfo;
+			vgd::Shp< ImageInfo > depthImage(
+				new ImageInfo(	shadowMappingInput->getShadowMapSize()[0], shadowMappingInput->getShadowMapSize()[1], 1,
+								IImage::LUMINANCE, IImage::FLOAT/*,0*/ ) );
+			texture2D->setImage( depthImage );
+			const uint currentTexUnit = internalTexUnitIndex - currentLightIndex;
+			texture2D->setMultiAttributeIndex( currentTexUnit );
+			engine->evaluate( paintService, texture2D.get(), true );
+			vgeGL::rc::Texture2D * lightDepthMap = shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
+			lightDepthMap->bind();
+// @todo moves
+			lightDepthMap->parameter( GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB );
+			lightDepthMap->parameter( GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL );
+
+			// Lookups or creates fbo
+			vge::rc::Manager& rcManager = engine->getGLManager();
+			vgeGL::rc::FrameBufferObject * fbo = rcManager.get< vgeGL::rc::FrameBufferObject >( shadowMappingInput->m_dummyNodeForFBO[currentLightIndex].get() ); // @todo not very cute
+			if ( fbo == 0 )
+			{
+				fbo = new vgeGL::rc::FrameBufferObject();
+				rcManager.add( shadowMappingInput->m_dummyNodeForFBO[currentLightIndex].get(), fbo );
+
+				fbo->generate();
+
+				// Enables render to depth texture
+				fbo->bind();
+				fbo->renderDepthOnly();
+
+				fbo->attachDepth( lightDepthMap );
+
+				// Check framebuffer completeness at the end of initialization.
+				const std::string fboStatus = fbo->getStatusString();
+				if ( fboStatus.size() > 0 )
+				{
+					vgLogError2( "ForwardRendering::apply(): %s", fboStatus.c_str() );
+					return;
+					// @todo
+				}
+				// else nothing to do
+			}
+			else
+			{
+				// Enables render to depth texture
+				fbo->bind();
+				fbo->renderDepthOnly();
+			}
 
 			vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 			for(	i = traverseElements->begin(), iEnd = traverseElements->end();
@@ -583,9 +670,6 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 					Camera * currentCamera = dynamic_cast< Camera * >(i->first);
 					assert( currentCamera != 0 );
 					assert( currentCamera == camera );
-
-					//
-					//engine->evaluate( paintService, *i );
 
 					// Uses my camera
 					vgd::Shp< Camera > newCamera = Camera::create("ForwardRendering::CameraFromLight");
@@ -631,7 +715,6 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 					newCamera->setViewport( viewport );
 
 					engine->evaluate( paintService, newCamera.get(), i->second );
-// PB RENDER Point Of Light and
 // Cullface in sg(TBT)
 				}
 				else
@@ -640,34 +723,17 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 				}
 			}
 
+			// Re-enable rendering to the window
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // @todo fbo->unbound();
 
-			// Rendering done, extract depth map  from depth buffer and copy into a texture2D node.
-// @todo more high-level (Engine::renderTargets section ?)
-			//engine->setTextureMappingEnabled(true);
-			vgd::Shp< vgd::node::Texture2D > texture2D = shadowMappingInput->getLightDepthMap( currentLightIndex );
-
-// @todo Image::DEPTH ?
-			using vgd::basic::IImage;
-			using vgd::basic::ImageInfo;
-			vgd::Shp< ImageInfo > depthImage(
-				new ImageInfo(	shadowMappingInput->getShadowMapSize()[0], shadowMappingInput->getShadowMapSize()[1], 1,
-								IImage::LUMINANCE, IImage::FLOAT/*,0*/ ) );
-			texture2D->setImage( depthImage );
-			const uint currentTexUnit = internalTexUnitIndex - currentLightIndex;
-			texture2D->setMultiAttributeIndex( currentTexUnit );
-			engine->evaluate( paintService, texture2D.get(), true );
-			vgeGL::rc::Texture2D * lightDepthMap = shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
-			lightDepthMap->bind();
-
-// @todo in Texture handler
-			lightDepthMap->parameter( GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB );
-			lightDepthMap->parameter( GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL );
-			lightDepthMap->parameter( GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY );
+			// Rendering done, extract depth map from depth buffer and copy into a texture2D node.
+			// @todo more high-level (Engine::renderTargets section ?)
+			//lightDepthMap->parameter( GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY );
 // @todo in glo
-			glCopyTexSubImage2D(	GL_TEXTURE_2D, 0,
+			/*glCopyTexSubImage2D(	GL_TEXTURE_2D, 0,
 									0, 0, 0, 0,
 									shadowMappingInput->getShadowMapSize()[0], 
-									shadowMappingInput->getShadowMapSize()[1] );
+									shadowMappingInput->getShadowMapSize()[1] );*/
 
 			// to debug projective texturing
 /*			static vgd::Shp< vgd::basic::Image > image( new vgd::basic::Image("ulis_gbr_0571.png") );
@@ -679,32 +745,6 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 									image->pixels() );*/
 
 			endPass();
-
-// @todo param HIGH-QUALITY => GL_FLOAT
-/*			using vgd::basic::IImage;
-			vgd::Shp< vgd::basic::Image > image( new vgd::basic::Image(
-				getShadowMapSize()[0], getShadowMapSize()[1], 1,
-				IImage::LUMINANCE, Image::FLOAT ) );
-
-			texture2D->setImage( image );
-			const GLenum internalDepthFormat = engine->getGLDepthTextureFormatFromDepthBits();
-			lightDepthMap->texImage(	0, internalDepthFormat,
-										getShadowMapSize()[0],
-										getShadowMapSize()[1],
-										0,
-										0, // border
-										GL_DEPTH_COMPONENT, GL_FLOAT 
-										// GL_UNSIGNED_INT, GL_UNSIGNED_BYTE 
-										);
-
-			lightDepthMap->parameter( GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB );
-			lightDepthMap->parameter( GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL );
-			lightDepthMap->parameter( GL_DEPTH_TEXTURE_MODE_ARB, GL_INTENSITY );
-
-			glCopyTexSubImage2D(	GL_TEXTURE_2D, 0, 0, 0, 0, 0,
-									shadowMappingInput->getShadowMapSize()[0], 
-									shadowMappingInput->getShadowMapSize()[1] );*/
-
 
 
 //			glDisable( GL_CULL_FACE );
@@ -718,47 +758,31 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 
 
-	/////////////////////////////////////////////////////////
-	// STEP 3: Rendering (opaque and transparent pass ) with/without shadow
-	/////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	// STEP 3: Rendering (opaque and transparent pass ) with/without shadow //
+	//////////////////////////////////////////////////////////////////////////
 	if ( shadowType != LightModel::SHADOW_OFF && shadowMappingInput->getNumLight() > 0 )
 	{
 		setPassDescription("ForwardRendering:STEP3:Rendering with shadow");
 		beginPass();
 
-// @todo
 		for(	uint currentLightIndex = 0;
 				currentLightIndex < shadowMappingInput->getNumLight();
 				++currentLightIndex )
 		{
 			const uint currentTexUnit = internalTexUnitIndex - currentLightIndex;
 
-// @todo must be compatible with texturing from SG
 // @todo Improves vgd::node::Texture to be able to use it directly
 
 			// *** Updates Texture ***
 			vgd::Shp< vgd::node::Texture2D > texture2D = shadowMappingInput->getLightDepthMap( currentLightIndex );
-			//texture2D->setMultiAttributeIndex( currentTexUnit );
 // @todo setFunction()
 			engine->evaluate( paintService, texture2D.get(), true );
-			
-			//vgeGL::rc::Texture2D * lightDepthMap( shadowMappingInput->getLightDepthMap( currentLightIndex, engine ) );
-			//glo::Texture::active( GL_TEXTURE0_ARB + currentTexUnit );
-			//lightDepthMap->bind();
-			//lightDepthMap->enable();
 
 			// *** Updates TexGen ***
-			/*glMatrixMode( GL_MODELVIEW );
-			glPushMatrix();
-			glLoadIdentity();
-//			glLoadMatrixf( reinterpret_cast<const float*>( transformDragger->getMatrix().getValue() ) );
-			glLoadMatrixf( reinterpret_cast<const float*>( transformDragger->computeMatrixFromFields().getValue() ) );*/
-
 			vgd::Shp< vgd::node::TexGenEyeLinear > texGen = shadowMappingInput->getTexGen( currentLightIndex );
 			texGen->setMultiAttributeIndex( currentTexUnit );
 			engine->evaluate( paintService, texGen.get(), true );
-
-			//glPopMatrix();
 
 			// *** Updates Texture Matrix ***
 /*// @todo use TextureMatrix node
@@ -770,8 +794,8 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			textureMatrix = lightProjectionMatrix * textureMatrix;
 			// LIGHT VIEW (Look At)
 			textureMatrix = (invViewMatrix * shadowMappingInput->getLightViewMatrix(0)) * textureMatrix;*/
-
 // @todo use TextureMatrix node
+
 			vgm::MatrixR textureMatrix;
 			textureMatrix.setTranslate( vgm::Vec3f(0.5f, 0.5f, 0.5f) );	// offset
 			textureMatrix.scale( vgm::Vec3f(0.5f, 0.5f, 0.5f) );		// bias
@@ -791,7 +815,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			engine->getTextureMatrix().setTop( textureMatrix, currentTexUnit );
 		}
 
-		engine->disregardIfIsA< vgd::node::CullFace >();
+//		engine->disregardIfIsA< vgd::node::CullFace >();
 
 		/////////////////////////////////////////////////////////
 		// First pass : OPAQUE PASS (draw opaque shape)

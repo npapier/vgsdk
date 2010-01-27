@@ -27,20 +27,23 @@ namespace node
  * This node specifies current lighting mode (off/standard per vertex lighting/standard per pixel lighting) and some options of the lighting model. 
  *
  * New fields defined by this node :
+ * - OFBool \c [twoSided] = false<br>
+ *   Specifies whether one- or two-sided lighting calculations are done for polygons and triangles.<br>
+ *<br>
  * - OFEnum \c [viewer] = AT_INFINITY<br>
  *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
+ *<br>
+ * - OFEnum \c [shadowQuality] = HIGH<br>
+ *   Specifies the quality of the shadow computation<br>
+ *<br>
+ * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
+ *   Sets the ambient RGBA intensity of the entire scene.<br>
  *<br>
  * - OFEnum \c [model] = STANDARD_PER_VERTEX<br>
  *   Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.<br>
  *<br>
  * - OFEnum \c [shadow] = SHADOW_OFF<br>
  *   Specifies the algorithm used to compute shadow.<br>
- *<br>
- * - OFBool \c [twoSided] = false<br>
- *   Specifies whether one- or two-sided lighting calculations are done for polygons and triangles.<br>
- *<br>
- * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
- *   Sets the ambient RGBA intensity of the entire scene.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -68,6 +71,45 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	static vgd::Shp< LightModel > createWhole( const std::string nodeName = "DefaultWhole" );
 
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field twoSided
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c twoSided.
+	 */
+	typedef bool TwoSidedValueType;
+
+	/**
+	 * @brief Type definition of the field named \c twoSided
+	 */
+	typedef vgd::field::TOptionalField< TwoSidedValueType > FTwoSidedType;
+
+
+	/**
+	 * @brief Gets the value of field named \c twoSided.
+	 */
+	const bool getTwoSided( TwoSidedValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c twoSided.
+ 	 */
+	void setTwoSided( const TwoSidedValueType& value );
+
+	/**
+	 * @brief Erases the field named \c twoSided.
+	 */
+	void eraseTwoSided();
+
+	/**
+	 * @brief Tests if the value of field named \c twoSided has been initialized.
+	 */
+	const bool hasTwoSided() const;
 	//@}
 
 
@@ -153,6 +195,136 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Tests if the value of field named \c viewer has been initialized.
 	 */
 	const bool hasViewer() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field shadowQuality
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		HIGH = 274,	///< High resolution shadow map using float depth buffer
+		VERY_HIGH = 273,	///< Very high resolution shadow map using float depth buffer
+		MEDIUM = 275,	///< Medium resolution shadow map using float depth buffer
+		LOW = 276,	///< Low resolution shadow map using float depth buffer
+		DEFAULT_SHADOWQUALITY = HIGH	///< High resolution shadow map using float depth buffer
+	};
+
+	/**
+	 * @brief Type definition of the value contained by field named \c shadowQuality.
+	 */
+	struct ShadowQualityValueType : public vgd::field::Enum
+	{
+		ShadowQualityValueType()
+		{}
+
+		ShadowQualityValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ShadowQualityValueType( const ShadowQualityValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		ShadowQualityValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 274 );
+			retVal.push_back( 273 );
+			retVal.push_back( 275 );
+			retVal.push_back( 276 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "HIGH" );
+			retVal.push_back( "VERY_HIGH" );
+			retVal.push_back( "MEDIUM" );
+			retVal.push_back( "LOW" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c shadowQuality
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FShadowQualityType;
+
+
+	/**
+	 * @brief Gets the value of field named \c shadowQuality.
+	 */
+	const bool getShadowQuality( ShadowQualityValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c shadowQuality.
+ 	 */
+	void setShadowQuality( const ShadowQualityValueType& value );
+
+	/**
+	 * @brief Erases the field named \c shadowQuality.
+	 */
+	void eraseShadowQuality();
+
+	/**
+	 * @brief Tests if the value of field named \c shadowQuality has been initialized.
+	 */
+	const bool hasShadowQuality() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field ambient
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c ambient.
+	 */
+	typedef vgm::Vec4f AmbientValueType;
+
+	/**
+	 * @brief Type definition of the field named \c ambient
+	 */
+	typedef vgd::field::TOptionalField< AmbientValueType > FAmbientType;
+
+
+	/**
+	 * @brief Gets the value of field named \c ambient.
+	 */
+	const bool getAmbient( AmbientValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c ambient.
+ 	 */
+	void setAmbient( const AmbientValueType& value );
+
+	/**
+	 * @brief Erases the field named \c ambient.
+	 */
+	void eraseAmbient();
+
+	/**
+	 * @brief Tests if the value of field named \c ambient has been initialized.
+	 */
+	const bool hasAmbient() const;
 	//@}
 
 
@@ -343,87 +515,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field twoSided
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c twoSided.
-	 */
-	typedef bool TwoSidedValueType;
-
-	/**
-	 * @brief Type definition of the field named \c twoSided
-	 */
-	typedef vgd::field::TOptionalField< TwoSidedValueType > FTwoSidedType;
-
-
-	/**
-	 * @brief Gets the value of field named \c twoSided.
-	 */
-	const bool getTwoSided( TwoSidedValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c twoSided.
- 	 */
-	void setTwoSided( const TwoSidedValueType& value );
-
-	/**
-	 * @brief Erases the field named \c twoSided.
-	 */
-	void eraseTwoSided();
-
-	/**
-	 * @brief Tests if the value of field named \c twoSided has been initialized.
-	 */
-	const bool hasTwoSided() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field ambient
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c ambient.
-	 */
-	typedef vgm::Vec4f AmbientValueType;
-
-	/**
-	 * @brief Type definition of the field named \c ambient
-	 */
-	typedef vgd::field::TOptionalField< AmbientValueType > FAmbientType;
-
-
-	/**
-	 * @brief Gets the value of field named \c ambient.
-	 */
-	const bool getAmbient( AmbientValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c ambient.
- 	 */
-	void setAmbient( const AmbientValueType& value );
-
-	/**
-	 * @brief Erases the field named \c ambient.
-	 */
-	void eraseAmbient();
-
-	/**
-	 * @brief Tests if the value of field named \c ambient has been initialized.
-	 */
-	const bool hasAmbient() const;
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c twoSided.
+	 *
+	 * @return the name of field \c twoSided.
+	 */
+	static const std::string getFTwoSided( void );
 
 	/**
 	 * @brief Returns the name of field \c viewer.
@@ -431,6 +532,20 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c viewer.
 	 */
 	static const std::string getFViewer( void );
+
+	/**
+	 * @brief Returns the name of field \c shadowQuality.
+	 *
+	 * @return the name of field \c shadowQuality.
+	 */
+	static const std::string getFShadowQuality( void );
+
+	/**
+	 * @brief Returns the name of field \c ambient.
+	 *
+	 * @return the name of field \c ambient.
+	 */
+	static const std::string getFAmbient( void );
 
 	/**
 	 * @brief Returns the name of field \c model.
@@ -445,20 +560,6 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c shadow.
 	 */
 	static const std::string getFShadow( void );
-
-	/**
-	 * @brief Returns the name of field \c twoSided.
-	 *
-	 * @return the name of field \c twoSided.
-	 */
-	static const std::string getFTwoSided( void );
-
-	/**
-	 * @brief Returns the name of field \c ambient.
-	 *
-	 * @return the name of field \c ambient.
-	 */
-	static const std::string getFAmbient( void );
 
 	//@}
 

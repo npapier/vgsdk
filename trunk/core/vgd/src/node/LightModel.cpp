@@ -50,11 +50,12 @@ LightModel::LightModel( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FTwoSidedType(getFTwoSided()) );
 	addField( new FViewerType(getFViewer()) );
+	addField( new FShadowQualityType(getFShadowQuality()) );
+	addField( new FAmbientType(getFAmbient()) );
 	addField( new FModelType(getFModel()) );
 	addField( new FShadowType(getFShadow()) );
-	addField( new FTwoSidedType(getFTwoSided()) );
-	addField( new FAmbientType(getFAmbient()) );
 
 	// Sets link(s)
 	link( getDFNode() );
@@ -72,11 +73,40 @@ void LightModel::setToDefaults( void )
 void LightModel::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setTwoSided( false );
 	setViewer( AT_INFINITY );
+	setShadowQuality( HIGH );
+	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setModel( STANDARD_PER_VERTEX );
 	setShadow( SHADOW_OFF );
-	setTwoSided( false );
-	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
+}
+
+
+
+// TwoSided
+const bool LightModel::getTwoSided( TwoSidedValueType& value ) const
+{
+	return getFieldRO<FTwoSidedType>(getFTwoSided())->getValue( value );
+}
+
+
+
+void LightModel::setTwoSided( const TwoSidedValueType& value )
+{
+	getFieldRW<FTwoSidedType>(getFTwoSided())->setValue( value );
+}
+
+
+
+void LightModel::eraseTwoSided()
+{
+	getFieldRW<FTwoSidedType>(getFTwoSided())->eraseValue();
+}
+
+
+const bool LightModel::hasTwoSided() const
+{
+	return getFieldRO<FTwoSidedType>(getFTwoSided())->hasValue();
 }
 
 
@@ -105,6 +135,62 @@ void LightModel::eraseViewer()
 const bool LightModel::hasViewer() const
 {
 	return getFieldRO<FViewerType>(getFViewer())->hasValue();
+}
+
+
+
+// ShadowQuality
+const bool LightModel::getShadowQuality( ShadowQualityValueType& value ) const
+{
+	return getFieldRO<FShadowQualityType>(getFShadowQuality())->getValue( value );
+}
+
+
+
+void LightModel::setShadowQuality( const ShadowQualityValueType& value )
+{
+	getFieldRW<FShadowQualityType>(getFShadowQuality())->setValue( value );
+}
+
+
+
+void LightModel::eraseShadowQuality()
+{
+	getFieldRW<FShadowQualityType>(getFShadowQuality())->eraseValue();
+}
+
+
+const bool LightModel::hasShadowQuality() const
+{
+	return getFieldRO<FShadowQualityType>(getFShadowQuality())->hasValue();
+}
+
+
+
+// Ambient
+const bool LightModel::getAmbient( AmbientValueType& value ) const
+{
+	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
+}
+
+
+
+void LightModel::setAmbient( const AmbientValueType& value )
+{
+	getFieldRW<FAmbientType>(getFAmbient())->setValue( value );
+}
+
+
+
+void LightModel::eraseAmbient()
+{
+	getFieldRW<FAmbientType>(getFAmbient())->eraseValue();
+}
+
+
+const bool LightModel::hasAmbient() const
+{
+	return getFieldRO<FAmbientType>(getFAmbient())->hasValue();
 }
 
 
@@ -165,66 +251,31 @@ const bool LightModel::hasShadow() const
 
 
 
-// TwoSided
-const bool LightModel::getTwoSided( TwoSidedValueType& value ) const
-{
-	return getFieldRO<FTwoSidedType>(getFTwoSided())->getValue( value );
-}
-
-
-
-void LightModel::setTwoSided( const TwoSidedValueType& value )
-{
-	getFieldRW<FTwoSidedType>(getFTwoSided())->setValue( value );
-}
-
-
-
-void LightModel::eraseTwoSided()
-{
-	getFieldRW<FTwoSidedType>(getFTwoSided())->eraseValue();
-}
-
-
-const bool LightModel::hasTwoSided() const
-{
-	return getFieldRO<FTwoSidedType>(getFTwoSided())->hasValue();
-}
-
-
-
-// Ambient
-const bool LightModel::getAmbient( AmbientValueType& value ) const
-{
-	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
-}
-
-
-
-void LightModel::setAmbient( const AmbientValueType& value )
-{
-	getFieldRW<FAmbientType>(getFAmbient())->setValue( value );
-}
-
-
-
-void LightModel::eraseAmbient()
-{
-	getFieldRW<FAmbientType>(getFAmbient())->eraseValue();
-}
-
-
-const bool LightModel::hasAmbient() const
-{
-	return getFieldRO<FAmbientType>(getFAmbient())->hasValue();
-}
-
-
-
 // Field name accessor(s)
+const std::string LightModel::getFTwoSided( void )
+{
+	return "f_twoSided";
+}
+
+
+
 const std::string LightModel::getFViewer( void )
 {
 	return "f_viewer";
+}
+
+
+
+const std::string LightModel::getFShadowQuality( void )
+{
+	return "f_shadowQuality";
+}
+
+
+
+const std::string LightModel::getFAmbient( void )
+{
+	return "f_ambient";
 }
 
 
@@ -239,20 +290,6 @@ const std::string LightModel::getFModel( void )
 const std::string LightModel::getFShadow( void )
 {
 	return "f_shadow";
-}
-
-
-
-const std::string LightModel::getFTwoSided( void )
-{
-	return "f_twoSided";
-}
-
-
-
-const std::string LightModel::getFAmbient( void )
-{
-	return "f_ambient";
 }
 
 
