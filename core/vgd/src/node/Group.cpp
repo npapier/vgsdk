@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -69,6 +69,36 @@ void Group::addChild( vgd::Shp<vgd::node::Node> node )
 
 	updateGraph();
 }
+
+
+
+void Group::addChilds( vgd::Shp<Node> node1, vgd::Shp<Node> node2 )
+{
+	graph().addEdge( this, node1 );
+	graph().addEdge( this, node2 );
+
+	getDirtyFlag(getDFChildren())->dirty();
+	getDirtyFlag(getDFBoundingBox())->dirty();
+	getDirtyFlag(getDFNode())->dirty();
+
+	updateGraph();
+}
+
+
+
+void Group::addChilds( vgd::Shp<Node> node1, vgd::Shp<Node> node2, vgd::Shp<Node> node3 )
+{
+	graph().addEdge( this, node1 );
+	graph().addEdge( this, node2 );
+	graph().addEdge( this, node3 );
+
+	getDirtyFlag(getDFChildren())->dirty();
+	getDirtyFlag(getDFBoundingBox())->dirty();
+	getDirtyFlag(getDFNode())->dirty();
+
+	updateGraph();
+}
+
 
 
 

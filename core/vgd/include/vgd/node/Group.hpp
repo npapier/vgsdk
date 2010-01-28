@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -51,6 +51,8 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 	 */
 	//@{
 	void			addChild			( vgd::Shp<Node> node );
+	void			addChilds			( vgd::Shp<Node> node1, vgd::Shp<Node> node2 );
+	void			addChilds			( vgd::Shp<Node> node1, vgd::Shp<Node> node2, vgd::Shp<Node> node3 );
 	void			insertChild			( vgd::Shp<Node> node, const int newChildIndex = 0 );
 
 	void			replaceChild		( vgd::Shp<Node> newChild, const int index );

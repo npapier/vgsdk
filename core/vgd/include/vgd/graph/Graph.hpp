@@ -59,6 +59,11 @@ struct VGD_API Graph
 	 * @brief Default constructor
 	 */
 	Graph();
+
+	/**
+	 * @brief Destructor
+	 */
+	~Graph();
 	//@}
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -21,9 +21,9 @@ namespace node
 
 
 /**
- * @brief Interface of Group nodes.
+ * @brief Interface of Group nodes
  * 
- * IGroup is a node that contains an ordered list of child nodes. For more details see vgd::node::Group.
+ * IGroup is a node that contains an ordered list of child nodes. For more details see vgd::node::Group
  * 
  * @remarks In Group class and derived, when a child node is inserted or removed, all indices after this one are 
  * invalidated. Be careful.
@@ -41,6 +41,8 @@ struct VGD_API IGroup
 
 	/**
 	 * @name Insert/remove/replace accessor methods
+	 *
+	 * @todo addChilds( list )
 	 */
 	//@{
 
@@ -49,6 +51,25 @@ struct VGD_API IGroup
 	 */
 	virtual void	addChild	( vgd::Shp<Node> node )=0;
 
+	/**
+	 * @brief Adds two childs at the end of this group
+	 *
+	 * @param node1		first node to add
+	 * @param node2		second node to add
+	 *
+	 * @remarks addChilds(node1, node2) is equivalent to addChild(node1) followed by addChild(node2)
+	 */
+	virtual void	addChilds	( vgd::Shp<Node> node1, vgd::Shp<Node> node2 )=0;
+
+	/**
+	 * @brief Adds three childs at the end of this group
+	 *
+	 * @param node1		first node to add
+	 * @param node2		second node to add
+	 * @param node2		third node to add
+	 */
+	virtual void	addChilds	( vgd::Shp<Node> node1, vgd::Shp<Node> node2, vgd::Shp<Node> node3 )=0;
+	
 	/**
 	 * @brief Adds a child so that it becomes the one with the given index.
 	 */

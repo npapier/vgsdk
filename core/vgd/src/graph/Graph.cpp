@@ -107,11 +107,18 @@ Graph::Graph()
 
 
 
+Graph::~Graph()
+{
+	bglGraph().clear();
+}
+
+
+
 void Graph::addNode( vgd::Shp< vgd::node::Node > node )
 {
 	// Creates the vertex property
 	vgd::WeakPtr<vgd::node::Node> wkpNode( node );
-	
+
 	// Is there a vertex to recycle ?
 	if ( m_freeVertexDescriptors.empty() )
 	{
@@ -121,11 +128,11 @@ void Graph::addNode( vgd::Shp< vgd::node::Node > node )
 	else
 	{
 		// Recycles a vertex
-		
-		// Retrives the vertex descriptor to recycle (and remove it from the container of free vertex descriptors).
+
+		// Retrieves the vertex descriptor to recycle (and remove it from the container of free vertex descriptors).
 		vertex_descriptor vertexDescriptor = m_freeVertexDescriptors.front();
 		m_freeVertexDescriptors.pop_front();
-		
+
 		// Initializes node vertex descriptor
 		node->vertexDescriptor() = vertexDescriptor;
 
@@ -143,7 +150,9 @@ void Graph::addNode( vgd::Shp< vgd::node::Node > node )
  */
 void Graph::removeNode( vgd::node::Node* pNode )
 {
-	// std::string name = pNode->getName();
+#ifdef _DEBUG
+	std::string name = pNode->getName();
+#endif
 
 	// Removes all edges from vertex descriptor of the given node.
 	bgl_removeAllOutEdges( pNode->vertexDescriptor() );
@@ -540,9 +549,10 @@ void Graph::bgl_makePlaceInOutEdges( vertex_descriptor vertexDescriptor, const u
 void Graph::bgl_removeAllOutEdges( vertex_descriptor vertexDescriptor )
 {
 	// Work fine on windows, but don't compile on LINUX. Strange...
-	//	true_edge_predicate<edge_descriptor> predicate;
-	//	remove_out_edge_if(vertexDescriptor, predicate, bglGraph());
-	
+	// assert( getVertexNamePropertyMap()[vertexDescriptor] != 0 );
+	/*true_edge_predicate<edge_descriptor> predicate;
+	remove_out_edge_if(vertexDescriptor, predicate, bglGraph());*/
+
 	//
 	typedef std::list< vertex_descriptor > ListVD;
 
