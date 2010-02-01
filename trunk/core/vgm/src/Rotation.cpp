@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 /*
  * This file is a work based on the open source release of Open Inventor (from SGI).
@@ -48,6 +49,8 @@
  */
 
 #include "vgm/Rotation.hpp"
+
+#include <limits>
 
 #include "vgm/Matrix.hpp"
 
@@ -171,14 +174,49 @@ void Rotation::getValue( MatrixR& matrix ) const
 	matrix = m;
 }
 
+
+
 float Rotation::getAngle() const
 {
 	return 2.0f * acosf(quat[3]);
 }
 
+
+
 Rotation Rotation::getIdentity( void )
 {
 	return Rotation(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+
+
+const Rotation Rotation::getInvalid()
+{
+	Rotation	r;
+
+	r.setInvalid();
+	return r;
+}
+
+
+
+const bool Rotation::isInvalid() const
+{
+	const float max = std::numeric_limits< float >::max();
+
+	return quat[0]==max && quat[1]==max && quat[2]==max && quat[3]==max;
+}
+
+
+
+void Rotation::setInvalid()
+{
+	const float max = std::numeric_limits< float >::max();
+	
+	quat[0] = max;
+	quat[1] = max;
+	quat[2] = max;
+	quat[3] = max;
 }
 
 
