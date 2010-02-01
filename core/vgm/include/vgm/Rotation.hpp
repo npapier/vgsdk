@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 /*
  * This file is a work based on the open source release of Open Inventor (from SGI).
@@ -167,6 +168,21 @@ struct VGM_API Rotation
 	 * @brief Null rotation.
 	 */
 	static Rotation	getIdentity( void );
+
+	/**
+	 * @brief	Creates an invalid rotation.
+	 */
+	static const Rotation getInvalid();
+
+	/**
+	 * @brief	Tells if the rotation is invalid.
+	 */
+	const bool isInvalid() const;
+
+	/**
+	 * @brief	Set the rotation as invalid.
+	 */
+	void setInvalid();
 
 	/**
 	 * @brief Sets value of rotation from array of 4 components of a quaternion.
