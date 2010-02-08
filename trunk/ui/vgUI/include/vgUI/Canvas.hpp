@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -149,6 +149,28 @@ namespace vgUI
 	 */
 	virtual void swapBuffer() = 0;
 
+
+
+	/**
+	 * @brief Enables/disables fullscreen mode.
+	 *
+	 * @param wantFullscreen	true to enable fullscreen mode, false to disable fullscreen mode.
+	 */
+	virtual const bool setFullscreen( const bool wantFullscreen = true ) = 0;
+
+	/**
+	 * @brief Returns the fullscreen mode.
+	 *
+	 * @return true if in fullscreen mode, false otherwise.
+	 */
+	virtual const bool isFullscreen() = 0;
+
+	/**
+	 * @brief Enables or disables fullscreen mode depending on the current state.
+	 *
+	 * @remarks To check if mode switching occurs, checks return value of isFullscreen()
+	 */
+	virtual void switchFullscreen();
 	///@}
 
 
@@ -510,14 +532,14 @@ protected:
 	 *
 	 * @return true if vgsdk could be used. OpenGL, glc, gle, vge, vgeGL are ready to be used, false otherwise.
 	 */
-	const bool startVGSDK();
+	virtual const bool startVGSDK();
 
 	/**
 	 * @brief Calls this method when you no longer need vgsdk.
 	 *
 	 * @return true if vgsdk shutdown has been completed successfuly, false otherwise.
 	 */
-	const bool shutdownVGSDK();
+	virtual const bool shutdownVGSDK();
 
 
 private:
