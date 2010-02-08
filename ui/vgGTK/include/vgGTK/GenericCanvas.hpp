@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,13 +8,13 @@
 #define _VGGTK_GENERICCANVAS_HPP
 
 #include <gtkmm/drawingarea.h>
+#include <gtkmm/window.h>
 #include <vgDebug/convenience.hpp>
 #include <vgUI/Canvas.hpp>
 
 #include "vgGTK/vgGTK.hpp"
 #include "vgGTK/event/SignalHandler.hpp"
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
-
 #ifdef WIN32
 	#define	USE_GLC
 	#undef	USE_GTKGLEXT
@@ -58,8 +58,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	:	m_glc( 0 )
 //#endif
 	{
-		vgLogDebug("Creates vgGTK::Canvas.");
-
+		// vgLogDebug("Creates vgGTK::Canvas.");
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
 		grab_focus();
@@ -84,8 +83,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		m_glc( 0 )
 //#endif
 	{
-		vgLogDebug("Creates vgGTK::Canvas.");
-		
+		// vgLogDebug("Creates vgGTK::Canvas.");
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
 		grab_focus();
@@ -105,11 +103,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	/**
 	 * @brief	Destructor
 	 */
-	virtual ~GenericCanvas()
-	{
-		BaseCanvasType::shutdownVGSDK();
-	}
-
+	virtual ~GenericCanvas();
 
 
 	/**
@@ -218,6 +212,63 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 			vgLogDebug("vgGTK::Canvas::swapBuffer called without a glc context.");
 		}
 #endif
+	}
+
+
+
+	/**
+	 * @pre top level window must be a Gtk::Window.
+	 */
+	const bool setFullscreen( const bool wantFullscreen = true )
+	{
+		// Retrieves the top level window.
+		Gtk::Container	* container				= get_toplevel();
+		Gtk::Window		* topLevel				= dynamic_cast< Gtk::Window * >( container );
+
+		assert( topLevel != 0 );
+
+
+		// Stops refreshs.
+		topLevel->get_window()->freeze_updates();
+
+
+		// Configures the layout.
+		if( wantFullscreen )
+		{
+			//
+			topLevel->get_child()->hide_all();
+
+			// We want to see the canvas. So we walk from the canvas to the top level window
+			// and show each.
+			for( Gtk::Widget * widget = this; widget != topLevel; widget = widget->get_parent() )
+			{
+				widget->show();
+			}
+
+			//
+			topLevel->set_decorated(false);
+			topLevel->fullscreen();
+			topLevel->set_keep_above(true);
+		}
+		else
+		{
+			topLevel->set_keep_above(false);
+			topLevel->unfullscreen();
+			topLevel->set_decorated(true);
+
+			topLevel->get_child()->show_all();	
+		}
+
+		// Refresh the window again.
+		topLevel->get_window()->thaw_updates();
+
+		// Updates the current state.
+		return glc_drawable_set_fullscreen( m_glc, wantFullscreen ) != 0;
+	}
+
+	const bool isFullscreen()
+	{
+		return glc_drawable_is_fullscreen( m_glc ) != 0;
 	}
 	//@}
 
@@ -404,14 +455,6 @@ protected:
 		vgLogDebug("vgGTK::Canvas::on_realize:end");
 	}*/
 
-	void on_unrealize()
-	{
-		BaseCanvasType::shutdownVGSDK();
-
-		// Default gtk processing
-		Gtk::DrawingArea::on_unrealize();
-	}
-
 	//@}
 
 
@@ -469,6 +512,15 @@ private:
 	}
 
 };
+
+
+template< typename BaseCanvasType >
+GenericCanvas< BaseCanvasType >::~GenericCanvas()
+{
+	// vgLogDebug("Deletes vgGTK::Canvas.");
+
+	BaseCanvasType::shutdownVGSDK();
+}
 
 
 
