@@ -235,17 +235,18 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		// Configures the layout.
 		if( wantFullscreen )
 		{
+			// Desctivated !
+			// Each application is responsible to manage widget visibility in order to provide a proper full-screen mode.
 			//
-			topLevel->get_child()->hide_all();
-
-			// We want to see the canvas. So we walk from the canvas to the top level window
-			// and show each.
-			for( Gtk::Widget * widget = this; widget != topLevel; widget = widget->get_parent() )
-			{
-				widget->show();
-			}
-
+			//topLevel->get_child()->hide_all();
 			//
+			//// We want to see the canvas. So we walk from the canvas to the top level window
+			//// and show each.
+			//for( Gtk::Widget * widget = this; widget != topLevel; widget = widget->get_parent() )
+			//{
+			//	widget->show();
+			//}
+
 			topLevel->set_decorated(false);
 			topLevel->fullscreen();
 			topLevel->set_keep_above(true);
@@ -256,7 +257,10 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 			topLevel->unfullscreen();
 			topLevel->set_decorated(true);
 
-			topLevel->get_child()->show_all();	
+			// Desctivated !
+			// Each application is responsible to manage widget visibility in order to provide a proper full-screen mode.
+			//
+			//topLevel->get_child()->show_all();	
 		}
 
 		// Refresh the window again.
