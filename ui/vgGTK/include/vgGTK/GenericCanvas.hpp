@@ -222,49 +222,52 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	const bool setFullscreen( const bool wantFullscreen = true )
 	{
 		// Retrieves the top level window.
-		Gtk::Container	* container				= get_toplevel();
-		Gtk::Window		* topLevel				= dynamic_cast< Gtk::Window * >( container );
+		Gtk::Window	* topLevel	= dynamic_cast< Gtk::Window * >( get_toplevel() );
 
-		assert( topLevel != 0 );
-
-
-		// Stops refreshs.
-		topLevel->get_window()->freeze_updates();
-
-
-		// Configures the layout.
-		if( wantFullscreen )
+		if( !topLevel )
 		{
-			// Desctivated !
-			// Each application is responsible to manage widget visibility in order to provide a proper full-screen mode.
-			//
-			//topLevel->get_child()->hide_all();
-			//
-			//// We want to see the canvas. So we walk from the canvas to the top level window
-			//// and show each.
-			//for( Gtk::Widget * widget = this; widget != topLevel; widget = widget->get_parent() )
-			//{
-			//	widget->show();
-			//}
-
-			topLevel->set_decorated(false);
-			topLevel->fullscreen();
-			topLevel->set_keep_above(true);
+			vgLogDebug("vgGTK::Canvas::setFullscreen called without a Gtk::Window as toplevel.");
 		}
 		else
 		{
-			topLevel->set_keep_above(false);
-			topLevel->unfullscreen();
-			topLevel->set_decorated(true);
+			// Stops refreshs.
+			//topLevel->get_window()->freeze_updates();
 
-			// Desctivated !
-			// Each application is responsible to manage widget visibility in order to provide a proper full-screen mode.
-			//
-			//topLevel->get_child()->show_all();	
+
+			// Configures the layout.
+			if( wantFullscreen )
+			{
+				// Desctivated !
+				// Each application is responsible to manage widget visibility in order to provide a proper full-screen mode.
+				//
+				//topLevel->get_child()->hide_all();
+				//
+				//// We want to see the canvas. So we walk from the canvas to the top level window
+				//// and show each.
+				//for( Gtk::Widget * widget = this; widget != topLevel; widget = widget->get_parent() )
+				//{
+				//	widget->show();
+				//}
+
+				topLevel->set_decorated(false);
+				topLevel->fullscreen();
+				topLevel->set_keep_above(true);
+			}
+			else
+			{
+				topLevel->set_keep_above(false);
+				topLevel->unfullscreen();
+				topLevel->set_decorated(true);
+
+				// Desctivated !
+				// Each application is responsible to manage widget visibility in order to provide a proper full-screen mode.
+				//
+				//topLevel->get_child()->show_all();	
+			}
+
+			// Refresh the window again.
+			//topLevel->get_window()->thaw_updates();
 		}
-
-		// Refresh the window again.
-		topLevel->get_window()->thaw_updates();
 
 		// Updates the current state.
 		return glc_drawable_set_fullscreen( m_glc, wantFullscreen ) != 0;
