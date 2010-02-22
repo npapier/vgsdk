@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -7,10 +7,9 @@
 #ifndef _VGSDKVIEWERGTK_ACTIONS_HPP_
 #define _VGSDKVIEWERGTK_ACTIONS_HPP_
 
-
-
-#include <gtkmm/window.h>
 #include <gtkmm/recentchooser.h>
+#include <gtkmm/uimanager.h>
+#include <gtkmm/window.h>
 
 
 
@@ -111,6 +110,15 @@ void setResolution( myCanvas * canvas );
  * @param	binding	an integer identifiying a binding
  */
 void settingManipulationBinding( myCanvas * canvas, const int binding );
+
+/**
+ * @brief	Shows/hides the vgSdk properties widget.
+ *
+ * @param	uiManager		a reference to the ui manager
+ * @param	properties		a pointer to the properties widget
+ * @param	hiddenForced	true to force the properties to get hidden
+ */
+void showHideProperties( Glib::RefPtr< Gtk::UIManager > uiManager, Gtk::Widget * properties, const bool hiddenForced );
 
 /**
  * @brief	Implements a log handler that pushes the message to a statusbar passed in the user data.
