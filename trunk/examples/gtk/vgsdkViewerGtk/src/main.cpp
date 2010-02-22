@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -23,7 +23,7 @@
 
 #include "vgsdkViewerGtk/actions.hpp"
 #include "vgsdkViewerGtk/myCanvas.hpp"
-#include "vgGTK/Notebook.hpp"
+#include "vgsdkViewerGtk/Properties.hpp"
 #include "vgsdkViewerGtk/stock/stock.hpp"
 
 
@@ -39,7 +39,7 @@
 
 
 
-Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLevel, vgsdkViewerGtk::myCanvas * canvas )
+Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Glib::RefPtr< Gtk::UIManager > uiManager, Gtk::Window * topLevel, vgsdkViewerGtk::myCanvas * canvas, vgsdkViewerGtk::Properties * properties )
 {
 	Glib::RefPtr< Gtk::ActionGroup >	actions = Gtk::ActionGroup::create();
 
@@ -75,6 +75,9 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 	actions->add(
 			Gtk::Action::create("SetResolution", vgsdkViewerGtk::stock::RESOLUTION, "Set Resolution"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::setResolution), canvas) );
+	actions->add(
+			Gtk::ToggleAction::create("Properties", Gtk::Stock::PROPERTIES, "Properties"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::showHideProperties), uiManager, properties, false) );
 	actions->add(
 			Gtk::RadioAction::create(viewModeGroup, "SingleView", vgsdkViewerGtk::stock::SINGLE_VIEW, "Single View"),
 			sigc::bind(sigc::mem_fun(canvas,&vgsdkViewerGtk::myCanvas::setViewMode), vgsdkViewerGtk::myCanvas::SINGLE_VIEW) );
@@ -117,6 +120,8 @@ const Glib::ustring & createDefaultUI()
 		"      <menuitem action='Quit'/>"
 		"    </menu>"
 		"    <menu action='View'>"
+		"      <menuitem action='Properties'/>"
+		"      <separator/>"
 		"      <menuitem action='ViewAll'/>"
 		"      <menuitem action='FullScreen'/>"
 		"      <menuitem action='SetResolution'/>"
@@ -137,6 +142,8 @@ const Glib::ustring & createDefaultUI()
 		"    <toolitem action='New'/>"
 		"    <toolitem action='Open'/>"
 		"    <toolitem action='Add'/>"
+		"    <separator/>"
+		"    <toolitem action='Properties'/>"
 		"    <separator/>"
 		"    <toolitem action='ViewAll'/>"
 		"    <toolitem action='FullScreen'/>"
@@ -176,11 +183,11 @@ int main( int argc, char ** argv )
 	vgsdkViewerGtk::stock::initialize();
 
 
-	// Creates the main mainWindow content.
+	// Creates the main content.
 	Gtk::Window					window;
 	Gtk::VBox					vbox;
 	Gtk::HPaned					hpaned;
-	vgGTK::Notebook				notebook;
+	vgsdkViewerGtk::Properties	properties;
 	vgsdkViewerGtk::myCanvas	canvas;
 	Gtk::Statusbar				statusBar;
 
@@ -188,7 +195,7 @@ int main( int argc, char ** argv )
 	// Creates the UI manager.
 	Glib::RefPtr<Gtk::UIManager>	uiManager = Gtk::UIManager::create();
 
-	uiManager->insert_action_group( createDefaultActionGroup(&window, &canvas) );
+	uiManager->insert_action_group( createDefaultActionGroup(uiManager, &window, &canvas, &properties) );
 	uiManager->add_ui_from_string( createDefaultUI() );
 
 
@@ -196,8 +203,8 @@ int main( int argc, char ** argv )
 	// to show only items added by this application. Also connect a signal handler to
 	// load a selected entry.
 // @todo	Why is the filtering not working ?
-	Gtk::Widget					* recentWidget		= uiManager->get_widget("/DefaultMenuBar/File/Recent");
-	Gtk::MenuItem				* recentMenuItem	= dynamic_cast< Gtk::MenuItem * >( recentWidget );
+	Gtk::Widget				* recentWidget		= uiManager->get_widget("/DefaultMenuBar/File/Recent");
+	Gtk::MenuItem			* recentMenuItem	= dynamic_cast< Gtk::MenuItem * >( recentWidget );
 
 	Gtk::RecentChooserMenu	* recentChooserMenu	= Gtk::manage( new Gtk::RecentChooserMenu(Gtk::RecentManager::get_default()) );
 	Gtk::RecentFilter		* recentFilter		= Gtk::manage( new Gtk::RecentFilter() );
@@ -212,9 +219,11 @@ int main( int argc, char ** argv )
 	recentFilter->add_application( Glib::get_application_name() );
 	recentChooserMenu->add_filter( *recentFilter );
 
-	// Configures the notebook widget.
-	notebook.set_border_width( 2 );
-	notebook.set_size_request( 333, 0 );
+
+	// Configures the properties widget.
+	properties.set_border_width( 2 );
+	properties.set_size_request( 333, 0 );
+	properties.signalClose().connect( sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::showHideProperties), uiManager, &properties, true) );
 
 
 	// Configures the main window.
@@ -228,7 +237,7 @@ int main( int argc, char ** argv )
 	window.add( vbox );
 	vbox.pack_start( *uiManager->get_widget("/DefaultMenuBar"), false, true );
 	vbox.pack_start( *uiManager->get_widget("/DefaultToolBar"), false, true );
-	hpaned.pack1( notebook, false, true );
+	hpaned.pack1( properties, false, true );
 	hpaned.pack2( canvas, true, true );
 	vbox.add( hpaned );
 	vbox.pack_end( statusBar, false, true );
@@ -248,8 +257,17 @@ int main( int argc, char ** argv )
 	}
 
 
-	// Gives the canvas' root node to the notebook.
-	notebook.setCanvas( canvas );
+	// Shows the properties.
+	Glib::RefPtr< Gtk::ToggleAction >	showProperties = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic( uiManager->get_action("/DefaultMenuBar/View/Properties") );
+	
+	if( showProperties )
+	{
+		showProperties->set_active(true);
+	}
+
+
+	// Gives the canvas' root node to the properties.
+	properties.setCanvas( canvas );
 
 
 	// Activates drag and drop on the main window.

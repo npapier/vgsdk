@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -21,6 +21,7 @@
 #include <gtkmm/messagedialog.h>
 #include <gtkmm/statusbar.h>
 #include <gtkmm/stock.h>
+#include <gtkmm/toggleaction.h>
 #include <gtkmm/window.h>
 
 #include <vgDebug/convenience.hpp>
@@ -275,6 +276,28 @@ void settingManipulationBinding( myCanvas * canvas, const int binding )
 			
 		default:
 			vgLogWarning( "Invalid manipulation binding specified." );
+	}
+}
+
+
+
+void showHideProperties( Glib::RefPtr< Gtk::UIManager > uiManager, Gtk::Widget * properties, const bool hiddenForced )
+{
+	Glib::RefPtr< Gtk::ToggleAction >	action = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( uiManager->get_action("/DefaultMenuBar/View/Properties") );
+
+	assert( action );
+
+	if( hiddenForced )
+	{
+		action->set_active( false );
+	}
+	else if( action->get_active() )
+	{
+		properties->show();
+	}
+	else
+	{
+		properties->hide();
 	}
 }
 
