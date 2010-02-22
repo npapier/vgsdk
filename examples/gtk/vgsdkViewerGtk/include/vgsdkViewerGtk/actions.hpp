@@ -70,7 +70,7 @@ void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas );
  * 
  * @remark	The canvas is expected to be a direct child of the top level window.
  */
-void fullScreen( myCanvas * canvas );
+void fullscreen( myCanvas * canvas );
 
 /**
  * @brief	Implements an action that will recenter the camera on the objects visible in the scene.

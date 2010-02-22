@@ -23,7 +23,7 @@
 
 #include "vgsdkViewerGtk/actions.hpp"
 #include "vgsdkViewerGtk/myCanvas.hpp"
-#include "vgsdkViewerGtk/Notebook.hpp"
+#include "vgGTK/Notebook.hpp"
 #include "vgsdkViewerGtk/stock/stock.hpp"
 
 
@@ -71,7 +71,7 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Gtk::Window * topLeve
 	actions->add(
 			Gtk::Action::create("FullScreen", Gtk::Stock::FULLSCREEN, "Full Screen"),
 			Gtk::AccelKey("F11"),
-			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullScreen), canvas) );
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullscreen), canvas) );
 	actions->add(
 			Gtk::Action::create("SetResolution", vgsdkViewerGtk::stock::RESOLUTION, "Set Resolution"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::setResolution), canvas) );
@@ -180,7 +180,7 @@ int main( int argc, char ** argv )
 	Gtk::Window					window;
 	Gtk::VBox					vbox;
 	Gtk::HPaned					hpaned;
-	vgsdkViewerGtk::Notebook	notebook;
+	vgGTK::Notebook				notebook;
 	vgsdkViewerGtk::myCanvas	canvas;
 	Gtk::Statusbar				statusBar;
 

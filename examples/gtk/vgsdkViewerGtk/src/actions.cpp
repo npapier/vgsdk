@@ -206,51 +206,42 @@ void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas )
 
 
 
-void fullScreen( myCanvas * canvas )
+void fullscreen( myCanvas * canvas )
 {
-	// Remembers the current state.
-	static bool	isFullScreen = false;
+	canvas->switchFullscreen();
 
+	const bool isFullscreen = canvas->isFullscreen();
 
 	// Retrieves the top level window.
-	Gtk::Container	* container				= canvas->get_toplevel();
-	Gtk::Window		* topLevel				= dynamic_cast< Gtk::Window * >( container );
+	Gtk::Window	* topLevel	= dynamic_cast< Gtk::Window * >( canvas->get_toplevel() );
 
-	assert( topLevel != 0 );
-
-
-	// Stops refreshs.
-	topLevel->get_window()->freeze_updates();
-
-
-	// Configures the layout.
-	if( isFullScreen )
+	if ( topLevel )
 	{
-		topLevel->get_child()->show_all();
-		topLevel->unmaximize();
-	}
-	else
-	{
-		topLevel->get_child()->hide_all();
-		topLevel->maximize();
+		// Stops refreshs.
+		topLevel->get_window()->freeze_updates();
 
-		// We want to see the canvas. So we walk from the canvas to the top level window
-		// and show each.
-		for( Gtk::Widget * widget = canvas; widget != topLevel; widget = widget->get_parent() )
+		// Configures the layout.		
+		if ( isFullscreen )
 		{
-			widget->show();
+			topLevel->get_child()->hide_all();
+			
+			// We want to see the canvas. So we walk from the canvas to the top level window
+			// and show each.
+			for( Gtk::Widget * widget = canvas; widget != topLevel; widget = widget->get_parent() )
+			{
+				widget->show();
+			}
 		}
+		else
+		{
+			topLevel->get_child()->show_all();
+		}
+
+		// Refresh the window again.
+		topLevel->get_window()->thaw_updates();
 	}
-
-
-	// Refresh the window again.
-	topLevel->get_window()->thaw_updates();
-
-
-	// Updates the current state.
-	isFullScreen = ! isFullScreen;
+	// else do nothing
 }
-
 
 
 void viewAll( myCanvas * canvas )
@@ -300,7 +291,7 @@ void helpAbout( Gtk::Window * topLevel )
 	aboutDialog.set_transient_for( *topLevel );
 	aboutDialog.set_authors( authors );
 	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load meshes (obj, trian, trian2 and dae), manipulate them and browse the rendering scene graph." );
-	aboutDialog.set_copyright( "Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier and Digital Trainers SAS." );
+	aboutDialog.set_copyright( "Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier and Digital Trainers SAS." );
 	aboutDialog.set_license( "Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation." );
 	aboutDialog.set_website("http://code.google.com/p/vgsdk");
 	aboutDialog.set_wrap_license( true );

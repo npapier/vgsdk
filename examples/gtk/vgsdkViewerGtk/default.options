@@ -4,11 +4,11 @@ type		= 'exec'
 version		= '0-5'
 uses 		=	[	#'boost',
 					#'cairo',
-					'colladadom',
+					#'colladadom',
 					'gtkmm',
 					#'itk',
 					#'openil',
-					'opengl',
+					#'opengl',
 					#'physx',
 					#'wx', 'wxgl'
 				]
@@ -17,10 +17,11 @@ libs		=	[
 					#'gle 0-3', 'glo 0-3',
 					'vgBase 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgd 0-5',
 					#'vgAlg 0-5',
-					'vgTrian 0-5', 'vgio 0-5', 'vgCollada 0-5',
+					'vgTrian 0-5', 'vgio 0-5', #'vgCollada 0-5',
 					'vge 0-5','vgeGL 0-5',
 					'vgUI 0-5', 'vgGTK 0-5', #'vgSDL 0-5', 'vgWX 0-5',
-					#'vgCairo 0-5','vgITK 0-5',
+					#'vgFFmpeg 0-5',
+					#'vgCairo 0-5','vgITK 0-5', 'vgFFmpeg 0-5'
 					'vgEgg 0-5',
 					#'vgTest 0-5'
 				]
