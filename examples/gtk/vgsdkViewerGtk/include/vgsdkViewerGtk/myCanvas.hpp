@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -40,18 +40,20 @@ struct myCanvas : public vgGTK::BasicManipulator
 
 	bool onKeyPressed( GdkEventKey * event );
 
+
 	/**
 	 * @name Overrides
 	 */
 	//@{
 	void initialize();
 	//@}
-	
-	
+
+
 	/**
-	 * @name	Multi-View Mode Accessors
+	 * @name	View Mode Accessors
 	 */
 	//@{
+
 	enum ViewMode
 	{
 		SINGLE_VIEW = 0,
@@ -59,19 +61,24 @@ struct myCanvas : public vgGTK::BasicManipulator
 		SQUARED_VIEWS,
 		VIEW_MODE_COUNT
 	};
-	
+
 	/**
 	 * @brief	Enables or disables the multi-view rendering.
 	 * 
 	 * @param	mode	the multi view mode.
 	 */
 	void setViewMode( const ViewMode mode );
+
+	// @todo getViewMode
+
 	//@}
+
 
 	/**
 	 * @name Scene management methods
 	 */
 	//@{
+
 	/**
 	 * @brief	Loads and appends an object to the scene.
 	 *
@@ -125,19 +132,21 @@ private:
 	const bool loadTrian( const Glib::ustring & pathfilename );
 	const bool loadTrian2( const Glib::ustring & pathfilename );
 	//@}
-	
+
+
 	/**
 	 * @name	View Mode Technique Factories
 	 */
 	//@{
+	vgd::Shp< vgeGL::technique::Technique > createMultiViewSingleTechnique();
 	vgd::Shp< vgeGL::technique::Technique > createMultiViewSidedTechnique();
 	vgd::Shp< vgeGL::technique::Technique > createMultiViewSquaredTechnique();
 	//@}
-	
+
 	typedef std::vector< vgd::Shp< vgeGL::technique::Technique > > TechniqueContainer;
+	TechniqueContainer	m_viewModeTechniques;	///< Contains all view mode techniques.
 
 	Strings				m_filenames;			///< Contains the paths of the files currently loaded.
-	TechniqueContainer	m_viewModeTechniques;	///< Contains all view mode techniques.
 };
 
 
