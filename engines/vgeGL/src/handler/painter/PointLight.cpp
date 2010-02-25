@@ -73,7 +73,6 @@ void PointLight::unapply ( vge::engine::Engine* , vgd::node::Node* )
 
 void PointLight::setToDefaults()
 {
-	Light::setToDefaults();
 }
 
 
