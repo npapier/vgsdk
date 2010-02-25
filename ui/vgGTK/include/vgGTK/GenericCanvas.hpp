@@ -462,6 +462,14 @@ protected:
 		vgLogDebug("vgGTK::Canvas::on_realize:end");
 	}*/
 
+	void on_unrealize()
+	{
+		BaseCanvasType::shutdownVGSDK();
+
+		// Default gtk processing
+		Gtk::DrawingArea::on_unrealize();
+	}
+
 	//@}
 
 
