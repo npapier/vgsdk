@@ -139,7 +139,6 @@ void SpotLight::unapply ( vge::engine::Engine*, vgd::node::Node* )
 
 void SpotLight::setToDefaults()
 {
-	PointLight::setToDefaults();
 }
 
 
