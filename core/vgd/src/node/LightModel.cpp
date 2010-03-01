@@ -50,6 +50,8 @@ LightModel::LightModel( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FShadowMapTypeType(getFShadowMapType()) );
+	addField( new FIlluminationInShadowType(getFIlluminationInShadow()) );
 	addField( new FTwoSidedType(getFTwoSided()) );
 	addField( new FViewerType(getFViewer()) );
 	addField( new FShadowQualityType(getFShadowQuality()) );
@@ -66,6 +68,8 @@ LightModel::LightModel( const std::string nodeName ) :
 void LightModel::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
+	setShadowMapType( INT16 );
+	setIlluminationInShadow( 0.4f );
 }
 
 
@@ -75,10 +79,40 @@ void LightModel::setOptionalsToDefaults()
 	SingleAttribute::setOptionalsToDefaults();
 	setTwoSided( false );
 	setViewer( AT_INFINITY );
-	setShadowQuality( HIGH );
+	setShadowQuality( MEDIUM );
 	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setModel( STANDARD_PER_VERTEX );
 	setShadow( SHADOW_OFF );
+}
+
+
+
+// ShadowMapType
+const LightModel::ShadowMapTypeValueType LightModel::getShadowMapType() const
+{
+	return getFieldRO<FShadowMapTypeType>(getFShadowMapType())->getValue();
+}
+
+
+
+void LightModel::setShadowMapType( const ShadowMapTypeValueType value )
+{
+	getFieldRW<FShadowMapTypeType>(getFShadowMapType())->setValue( value );
+}
+
+
+
+// IlluminationInShadow
+const LightModel::IlluminationInShadowValueType LightModel::getIlluminationInShadow() const
+{
+	return getFieldRO<FIlluminationInShadowType>(getFIlluminationInShadow())->getValue();
+}
+
+
+
+void LightModel::setIlluminationInShadow( const IlluminationInShadowValueType value )
+{
+	getFieldRW<FIlluminationInShadowType>(getFIlluminationInShadow())->setValue( value );
 }
 
 
@@ -252,6 +286,20 @@ const bool LightModel::hasShadow() const
 
 
 // Field name accessor(s)
+const std::string LightModel::getFShadowMapType( void )
+{
+	return "f_shadowMapType";
+}
+
+
+
+const std::string LightModel::getFIlluminationInShadow( void )
+{
+	return "f_illuminationInShadow";
+}
+
+
+
 const std::string LightModel::getFTwoSided( void )
 {
 	return "f_twoSided";

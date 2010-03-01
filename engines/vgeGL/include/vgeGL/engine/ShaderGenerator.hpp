@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -13,6 +13,7 @@
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Light.hpp>
 #include <vgd/node/Texture.hpp>
+#include <vgDebug/convenience.hpp>
 
 #include "vgeGL/engine/GLSLState.hpp"
 
@@ -88,30 +89,21 @@ struct GLSLHelpers
 		std::string retVal;
 
 		// DIRECTIONAL_LIGHT
-		if ( state.isEnabled( GLSLState::DIRECTIONAL_LIGHT) )
+		if ( state.isEnabled( GLSLState::DIRECTIONAL_LIGHT ) )
 		{
 			const std::string& directionalLight = GLSLHelpers::generateFunction_directionalLight( state, false );
 			retVal += directionalLight + '\n';
 		}
 
 		// POINT_LIGHT
-		if ( state.isEnabled( GLSLState::POINT_LIGHT) )
+		if ( state.isEnabled( GLSLState::POINT_LIGHT ) )
 		{
 			const std::string& pointLight = GLSLHelpers::generateFunction_pointLight( state, false );
 			retVal += pointLight + '\n';
 		}
 
-		// SPOT_LIGHT
-		if ( state.isEnabled( GLSLState::SPOT_LIGHT) )
-		{
-			const std::string& spotLightFront = GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, false /*castShadow*/ );
-			// const std::string& spotLightBack	= GLSLHelpers::generateFunction_spotLight( state, true ); @todo
-			retVal += spotLightFront + '\n';
-			// retVal += spotLightBack; @todo
-		}
-
 		// SPOT_LIGHT_CASTING_SHADOW
-		if (	state.isEnabled( GLSLState::SPOT_LIGHT_CASTING_SHADOW) &&
+		if (	state.isEnabled( GLSLState::SPOT_LIGHT_CASTING_SHADOW ) &&
 				state.getShadowType() != vgd::node::LightModel::SHADOW_OFF )
 		{
 			const std::string& spotLightFront	= GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, true /*castShadow*/);
@@ -119,6 +111,15 @@ struct GLSLHelpers
 			retVal += spotLightFront + '\n';
 			// retVal += spotLightBack; @todo
 		}
+		else if ( state.isEnabled( GLSLState::SPOT_LIGHT ) )
+		// SPOT_LIGHT
+		{
+			const std::string& spotLightFront = GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, false /*castShadow*/ );
+			// const std::string& spotLightBack	= GLSLHelpers::generateFunction_spotLight( state, true ); @todo
+			retVal += spotLightFront + '\n';
+			// retVal += spotLightBack; @todo
+		}
+		
 		return retVal;
 	}
 
@@ -179,7 +180,7 @@ struct GLSLHelpers
 		if ( retValFront.length() == 0 )
 		{
 			retValFront =
-				"void pointLightFront( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
+				"void pointLightFront( int i, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
 				"{\n"
 				"	float nDotVP;			// normal . light direction\n"
 				"	float nDotHV;			// normal . light half vector\n"
@@ -239,41 +240,147 @@ struct GLSLHelpers
 
 
 
-	static const std::string& generateFunction_spotLight( const GLSLState& state, const bool useBackMaterial, const bool castShadow )
+	static const std::string generate_shadowFactorComputation( vgd::node::LightModel::ShadowValueType shadowType )
 	{
-		static std::string retValFront;
-		static std::string retValBack;
-
-		// @todo
-		// 4X dither
-		// with modulo
-		std::string functionSignature;
-		std::string shadowString;
-		if ( castShadow )
+		std::string retVal;
+		
+		using vgd::node::LightModel;		
+		if ( shadowType == LightModel::SHADOW_OFF )
 		{
-			functionSignature = "void spotLightFrontShadow( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n";
-
-			shadowString =	"	shadowFactor = lookupShadowMap( mgl_TexCoord2, vec2(0,0));\n"; // @todo mgl_TexCoord2 !!!
-
-			/*shadowString =	"	// use modulo to vary the sample pattern\n"
-						"	vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"	shadowFactor = 0.0;\n"
-						"	shadowFactor += lookupShadowMap(2, vec2(-1.5, 1.5) + o );\n"
-						"	shadowFactor += lookupShadowMap(2, vec2(0.5, 1.5) + o );\n"
-						"	shadowFactor += lookupShadowMap(2, vec2(-1.5, -0.5) + o );\n"
-						"	shadowFactor += lookupShadowMap(2, vec2(0.5, -0.5) + o );\n"
-						"	shadowFactor *= 0.25;\n";*/
+			retVal =	"shadowFactor = 0.0;\n";
 		}
+		else if ( shadowType ==LightModel::SHADOW_MAPPING )
+		{
+			// 1X
+			retVal =	"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(0,0) );\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_4U )
+		{
+			// 4X uniform
+			retVal =	"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(-0.5, -0.5) );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, -0.5) );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(-0.5, 0.5) );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, 0.5) );\n"
+						"shadowFactor *= 0.25;\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_4DM )
+		{
+			// 4X dither
+			// with modulo
+			retVal =	"// use modulo to vary the sample pattern\n"
+						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(-1.5, 1.5) + o );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, 1.5) + o );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(-1.5, -0.5) + o );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, -0.5) + o );\n"
+						"shadowFactor *= 0.25;\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_16U )
+		{
+			// 16X uniform
+			retVal =	"shadowFactor = 0.0;\n"
+						"float x, y;\n"
+						"for( y = -1.5; y <= 1.5; y += 1.0 )\n"
+						"	for( x = -1.5; x <= 1.5; x += 1.0 )\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) );\n"
+						"shadowFactor /= 16.0;\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_16UM )
+		{
+			// 16X uniform
+			// with modulo
+			retVal =	"// use modulo to vary the sample pattern\n"
+						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"shadowFactor = 0.0;\n"
+						"float x, y;\n"
+						"for( y = -1.5; y <= 1.5; y += 1.0 )\n"
+						"	for( x = -1.5; x <= 1.5; x += 1.0 )\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) + o);\n"
+						"shadowFactor /= 16.0;\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_32U )
+		{
+			// 32X uniform
+			retVal =	"shadowFactor = 0.0;\n"
+						"float x, y;\n"
+						"float coeff = 2.0;\n"
+						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
+						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) );\n"
+						"shadowFactor /= 16.0 * pow(coeff,2.0);\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_32UM )
+		{
+			// 32X dither
+			// with modulo
+			retVal =	"// use modulo to vary the sample pattern\n"
+						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"shadowFactor = 0.0;\n"
+						"float x, y;\n"
+						"float coeff = 2.0;\n"
+						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
+						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) + o);\n"
+						"shadowFactor /= 16.0 * pow(coeff,2.0);\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_64U )
+		{
+			// 64X uniform
+			retVal =	"shadowFactor = 0.0;\n"
+						"float x, y;\n"
+						"float coeff = 4.0;\n"
+						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
+						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) );\n"
+						"shadowFactor /= 16.0 * pow(coeff,2.0);\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_64UM )
+		{
+			// 64X dither
+			// with modulo
+			retVal =	"// use modulo to vary the sample pattern\n"
+						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"shadowFactor = 0.0;\n"
+						"float x, y;\n"
+						"float coeff = 4.0;\n"
+						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
+						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) + o);\n"
+						"shadowFactor /= 16.0 * pow(coeff,2.0);\n";
+		}		
 		else
 		{
-			functionSignature = "void spotLightFront( in int i, in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n";
-			shadowString =	"	shadowFactor = 1.0;\n";
+			assert( false && "Unexpected value." );
+			retVal =	"shadowFactor = 0.0;\n";
 		}
 
-		if ( true /*retValFront.length() == 0 @todo */ )
+		return retVal;
+	}
+
+	// @todo removes /*&*/
+	static const std::string /*&*/ generateFunction_spotLight( const GLSLState& state, const bool useBackMaterial, const bool castShadow )
+	{
+		using vgd::node::LightModel;
+
+		static LightModel::ShadowValueType	shadowType		= LightModel::SHADOW_OFF;
+		static std::string					shadowString	= generate_shadowFactorComputation(shadowType);
+
+		static std::string					retValFront;
+		static std::string					retValBack;
+
+		// Updates shadow factor computation string
+		LightModel::ShadowValueType incomingShadowType = state.getShadowType();
+		if ( shadowType != incomingShadowType )
 		{
-			retValFront = functionSignature;
-			retValFront +=
+			shadowType = incomingShadowType;
+			shadowString = generate_shadowFactorComputation( shadowType );
+		}
+
+		//
+		if ( retValFront.length() == 0 )
+		{
+			retValFront =
+			"void spotLightFront( int i, vec3 ecPosition3, vec3 normal, vec3 eye, float shadowFactor )\n"
 			"{\n"
 			"	float nDotVP;			// normal . light direction\n"
 			"	float nDotHV;			// normal . light half vector\n"
@@ -308,13 +415,7 @@ struct GLSLHelpers
 			"	float cosInnerCone = cos( radians(gl_LightSource[i].spotCutoff * 0.8) );" // @todo 0.5 must be a param
 			"\n"
 			"	spotAttenuation = 1.0 - smoothstep( cosInnerCone, cosOuterCone, spotDot );\n"
-			"\n";
-
-			retValFront += "	// Compute shadow\n"
-						"	float shadowFactor;\n\n" +
-						shadowString;
-
-			retValFront += 
+			"\n"
 
 /*		"	if ( spotAttenuation == 1.0 )\n"
 			"	{\n"
@@ -333,10 +434,10 @@ struct GLSLHelpers
 			"	{\n"
 			"		spotAttenuation = pow(spotDot, gl_LightSource[i].spotExponent);\n"
 			"	}\n"*/
+
 			"\n"
-			"	// Combine the spotlight and distance attenuation.\n"
+			"	// Combine the spotlight, shadow factor and distance attenuation.\n"
 			"	attenuation = spotAttenuation * shadowFactor;\n"
-//		"	attenuation *= spotAttenuation;\n"
 			"\n"
 			//"	halfVector = gl_LightSource[i].halfVector;\n"
 			"	halfVector = normalize(VP + eye);\n"
@@ -363,14 +464,34 @@ struct GLSLHelpers
 			boost::algorithm::replace_all( retValBack, "Front", "Back" );
 		}
 
+		//if ( castShadow )
+		//{
+			std::string spotLightFrontShadow =
+				"\n"
+				"void spotLightFrontShadow( int i, sampler2D texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
+//				"void spotLightFrontShadow( int i, sampler2DShadow texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
+				"{\n"
+				"	float shadowFactor;\n";
+
+			spotLightFrontShadow += shadowString;
+			spotLightFrontShadow +=
+				"\n"
+				"	spotLightFront( i, ecPosition3, normal, eye, shadowFactor );\n"
+				"}\n\n";
+
+			std::string spotLightBackShadow = spotLightFrontShadow;
+			boost::algorithm::replace_all( spotLightBackShadow, "Front", "Back" );
+		//}
+
 		// Returns the desired function
+		// @todo not always included shadow code
 		if ( useBackMaterial )
 		{
-			return retValBack;
+			return retValBack + spotLightBackShadow;
 		}
 		else
 		{
-			return retValFront;
+			return retValFront + spotLightFrontShadow;
 		}
 	}
 
@@ -398,8 +519,9 @@ struct GLSLHelpers
 			clearLightIntensityAccumulators;
 
 		// For each light, do
-		uint		i		= 0;
-		const uint	iEnd	= state.getMaxLight();
+		uint		lightCastingShadowCount	= 0;
+		uint		i						= 0;
+		const uint	iEnd					= state.getMaxLight();
 
 		for( uint foundLight = 0; i != iEnd; ++i )
 		{
@@ -437,14 +559,20 @@ struct GLSLHelpers
 							if (	state.getShadowType() != vgd::node::LightModel::SHADOW_OFF && 
 									currentLight->getCastShadow() )
 							{
-								flightFront		+= "	spotLightFrontShadow( " + iStr + ", ecPosition3, normal, eye );\n";
-								flightBack		+= "	spotLightFrontShadow( " + iStr + ", ecPosition3, normal, eye );\n";
+								const std::string texCoordShadowIndexStr	= vgd::basic::toString(lightCastingShadowCount);
+								const std::string texMapIndexStr			= state.getPrivateTexture(lightCastingShadowCount);
+								++lightCastingShadowCount;
+
+								flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2D[" + texMapIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
+								flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2D[" +  texMapIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
+//								flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + iStr + "], mgl_TexCoordShadow[" + iStr + "], ecPosition3, normal, eye );\n";
+//								flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + iStr + "], mgl_TexCoordShadow[" + iStr + "], ecPosition3, normal, eye );\n";
 								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
 							}
 							else
 							{
-								flightFront		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
-								flightBack		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
+								flightFront		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye, 1.0 );\n";
+								flightBack		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye, 1.0 );\n";
 								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
 							}
 							break;
@@ -661,7 +789,10 @@ struct GLSLHelpers
 		std::string decl;
 		std::string code;
 
-		code = 
+		uint mgl_TexCoordCount			= 0;
+		uint mgl_TexCoordShadowCount	= 0;
+
+		code =
 		"void ftexgen( in vec4 ecPosition, in vec3 normal )\n"
 		"{\n";
 
@@ -674,26 +805,66 @@ struct GLSLHelpers
 
 			if ( current )
 			{
-				const std::string strUnit = vgd::basic::toString( i );
-				const vgd::node::TexGen * texGen = current->getTexGenNode();
+				const vgd::node::Texture *			textureNode	= current->getTextureNode();
+				if ( textureNode == 0 )
+				{
+					vgLogDebug("generateFunction_ftexgen(): No texture node !");
+					continue;
+				}
+				vgd::node::Texture::UsageValueType	usage		= textureNode->getUsage();
 
+				const std::string					strUnit		= vgd::basic::toString( i );
+				const vgd::node::TexGen *			texGen		= current->getTexGenNode();
+
+				// TEXGEN
 				if ( texGen /*&& current->isComplete() */)
 				{
-					decl += "varying vec4 mgl_TexCoord" + strUnit + ";\n";
+					if ( usage == vgd::node::Texture::SHADOW )
+					{
+						const std::string strIndex = vgd::basic::toString( mgl_TexCoordShadowCount );
+						++mgl_TexCoordShadowCount;
 
-					code +=
-					"	mgl_TexCoord" + strUnit + ".s = dot( ecPosition, gl_EyePlaneS[" + strUnit + "] );\n"
-					"	mgl_TexCoord" + strUnit + ".t = dot( ecPosition, gl_EyePlaneT[" + strUnit + "] );\n"
-					"	mgl_TexCoord" + strUnit + ".p = dot( ecPosition, gl_EyePlaneR[" + strUnit + "] );\n"
-					"	mgl_TexCoord" + strUnit + ".q = dot( ecPosition, gl_EyePlaneQ[" + strUnit + "] );\n"
-					"	mgl_TexCoord" + strUnit + " = gl_TextureMatrix[" + strUnit +"] * mgl_TexCoord" + strUnit + ";\n";
+						code +=
+						"	mgl_TexCoordShadow[" + strIndex + "].s = dot( ecPosition, gl_EyePlaneS[" + strUnit + "] );\n"
+						"	mgl_TexCoordShadow[" + strIndex + "].t = dot( ecPosition, gl_EyePlaneT[" + strUnit + "] );\n"
+						"	mgl_TexCoordShadow[" + strIndex + "].p = dot( ecPosition, gl_EyePlaneR[" + strUnit + "] );\n"
+						"	mgl_TexCoordShadow[" + strIndex + "].q = dot( ecPosition, gl_EyePlaneQ[" + strUnit + "] );\n"
+						"	mgl_TexCoordShadow[" + strIndex + "] = gl_TextureMatrix[" + strUnit +"] * mgl_TexCoordShadow[" + strIndex + "];\n";
+					}
+					else
+					{
+						assert( usage == vgd::node::Texture::IMAGE );
+
+						const std::string strIndex = vgd::basic::toString( mgl_TexCoordCount );
+						++mgl_TexCoordCount;
+
+						code +=
+						"	mgl_TexCoord[" + strIndex + "].s = dot( ecPosition, gl_EyePlaneS[" + strUnit + "] );\n"
+						"	mgl_TexCoord[" + strIndex + "].t = dot( ecPosition, gl_EyePlaneT[" + strUnit + "] );\n"
+						"	mgl_TexCoord[" + strIndex + "].p = dot( ecPosition, gl_EyePlaneR[" + strUnit + "] );\n"
+						"	mgl_TexCoord[" + strIndex + "].q = dot( ecPosition, gl_EyePlaneQ[" + strUnit + "] );\n"
+						"	mgl_TexCoord[" + strIndex + "] = gl_TextureMatrix[" + strUnit +"] * mgl_TexCoord[" + strIndex + "];\n";
+					}
 				}
+				// NO TEXGEN
 				else if ( texGen == 0 && current->isComplete() )
 				{
-					decl += "varying vec4 mgl_TexCoord" + strUnit + ";\n";
+					if ( usage == vgd::node::Texture::SHADOW )
+					{
+						const std::string strIndex = vgd::basic::toString( mgl_TexCoordShadowCount );
+						++mgl_TexCoordShadowCount;
 
-					code +=
-					"	mgl_TexCoord" + strUnit + " = gl_TextureMatrix[" + strUnit +"] * gl_MultiTexCoord" + strUnit + ";\n";
+						code +=
+						"	mgl_TexCoordShadow[" + strIndex + "] = gl_TextureMatrix[" + strUnit +"] * gl_MultiTexCoord" + strUnit + ";\n";
+					}
+					else
+					{
+						const std::string strIndex = vgd::basic::toString( mgl_TexCoordCount );
+						++mgl_TexCoordCount;
+
+						code +=
+						"	mgl_TexCoord[" + strIndex + "] = gl_TextureMatrix[" + strUnit +"] * gl_MultiTexCoord" + strUnit + ";\n";
+					}
 				}
 				// else nothing to do
 
@@ -710,15 +881,33 @@ struct GLSLHelpers
 		code  += 
 		"}\n\n";
 
+		if ( mgl_TexCoordCount > 0 )
+		{
+			decl += "varying vec4 mgl_TexCoord[" + vgd::basic::toString(mgl_TexCoordCount) + "];\n";
+		}
+
+		if ( mgl_TexCoordShadowCount > 0 )
+		{
+			decl += "varying vec4 mgl_TexCoordShadow[" + vgd::basic::toString(mgl_TexCoordShadowCount) + "];\n";
+		}
+
 		decl += "\n";
 
 		return std::make_pair( decl, code );
 	}
 
 
-	static const std::string generate_samplers( const vgeGL::engine::GLSLState& state )
+	static std::pair< std::string, std::string >  generate_samplers( const vgeGL::engine::GLSLState& state )
 	{
-		std::string retVal;
+		std::string decl;
+		std::string code;
+
+		uint sampler2DCount						= 0;
+		uint sampler2DShadowCount				= 0;
+
+		// Contained the last texture node used for shadow mapping. Used to retrieve the shadow map size.
+		// Remarks that all shadow map have the same size.
+		vgd::node::Texture * shadowTextureNode	= 0;
 
 		uint		i		= 0;
 		const uint	iEnd	= state.getMaxTexture();
@@ -732,41 +921,22 @@ struct GLSLHelpers
 
 			if ( current->isComplete() )
 			{
-				const vgd::node::Texture * textureNode = current->getTextureNode();
-				const std::string strUnit = vgd::basic::toString( i );
-
-				vgd::node::Texture::UsageValueType usage = textureNode->getUsage();
+				vgd::node::Texture *				textureNode	= current->getTextureNode();
+				vgd::node::Texture::UsageValueType	usage		= textureNode->getUsage();
 
 				switch ( usage.value() )
 				{
 					case vgd::node::Texture::SHADOW:
-						retVal += "uniform sampler2DShadow texUnit" + strUnit + ";\n";
-
-						retVal +=
-// @todo not the good place
-						"\n"
-						"float lookupShadowMap( vec4 texCoord, vec2 offset )\n"
-						"{\n"
-//						"	float Epsilon = 1.0/2048.0; //0.05 * 1.0;\n" // @todo should be a param of LightModel
-//						"	float Illumination = 0.90;\n" // @todo param of LightModel
-						"	float illuminationInShadow = 0.3;\n" // @todo should be a param of LightModel
-						//"	float depth = gl_TexCoord[unit].z < 0.0 ? 1.0 : shadow2DProj(	texUnit" + strUnit + ",\n"
-						//"								gl_TexCoord[unit] + vec4( offset, 0, 0) * Epsilon).x;\n"
-						"	float depth = shadow2DProj(	texUnit" + strUnit + ",\n"
-						"								texCoord ).x;\n"
-//						"								texCoord /*+ vec4( offset, 0, 0) * Epsilon*/).x;\n"
-						"    return depth != 1.0 ? illuminationInShadow : 1.0;\n"
-						"}\n" 
-						"\n";
-
+						++sampler2DShadowCount;
+						shadowTextureNode = textureNode;
 						break;
 
 					case vgd::node::Texture::IMAGE:
-						retVal += "uniform sampler2D texUnit" + strUnit + ";\n";
+						++sampler2DCount;
 						break;
 
 					default:
-						retVal += "uniform sampler2D texUnit" + strUnit + ";\n";
+						++sampler2DCount;
 						assert( false && "Unexpected value for vgd::node::Texture.usage field" );
 				}
 			}
@@ -780,7 +950,101 @@ struct GLSLHelpers
 			}
 		}
 
-		return retVal;
+		if ( sampler2DCount + sampler2DShadowCount > 0 )
+		{
+			// @todo OPTME: sparse array => consume more memory
+			decl += "uniform sampler2D texMap2D[";
+			decl += vgd::basic::toString(state.getMaxTexture());
+			decl += "];\n";
+		}
+
+/*		if ( sampler2DCount > 0 )
+		{
+			decl += "uniform sampler2D texMap2D[" + vgd::basic::toString(sampler2DCount) + "];\n";
+		}*/
+
+/*		if ( sampler2DShadowCount > 0 )
+		{
+			decl += "uniform sampler2D texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
+//			decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
+		}*/
+
+		if ( sampler2DShadowCount > 0 )
+		{
+//			decl += "uniform sampler2D texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
+//			decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
+
+			code +=
+			"\n"
+			"float lookupShadowMap( sampler2D map, vec4 coord, vec2 offset )\n"
+//			"float lookupShadowMap( sampler2DShadow map, vec4 coord, vec2 offset )\n"
+			"{\n";
+
+			const float illuminationInShadow = state.getIlluminationInShadow();
+			code += 
+			"	const float illuminationInShadow = " + boost::lexical_cast<std::string>(illuminationInShadow) + ";\n"; // @todo should be a uniform param
+	
+			if ( isGL_VERSION_3_0() )
+			{
+				code +=
+			"	vec2 mapSize = vec2( textureSize( map, 0) );\n"; // @todo mapSize*samplingSize, samplingSize should be a param of LightModel
+			}
+			else
+			{
+				if ( shadowTextureNode->hasImage() )
+				{
+					vgd::Shp< vgd::basic::IImage > iimage;
+					shadowTextureNode->getImage( iimage );
+					const std::string widthStr = boost::lexical_cast<std::string>( iimage->width() );
+					const std::string heightStr = boost::lexical_cast<std::string>( iimage->height() );
+					code +=
+						"	vec2 mapSize = vec2( " + widthStr + ", " + heightStr + " );\n";
+				}
+				else
+				{
+					assert( false && "Texture node without image used for shadow !" );
+					code +=
+						"	vec2 mapSize = vec2( 1.0, 1.0 );\n";
+				}
+			}
+
+			code +=
+			"\n"
+			"	vec4 newCoord = vec4(coord.xy + (offset / mapSize * coord.w), coord.z, coord.w );\n"
+//
+			"	vec4 newCoordWDivided = newCoord/newCoord.w;\n"
+// Used to lower moiré pattern and self-shadowing
+//:)			"	newCoordWDivided.z += 0.00005;\n" // ATI
+//:)			"	newCoordWDivided.z += 0.0005;\n" // NV
+			//"	newCoordWDivided.z += 0.00005;\n" // ATI
+
+//			"	newCoordWDivided.z -= 0.0005;\n" // ATI(ok), NV (nok) ?
+//			"	newCoordWDivided.z += 0.0005;\n" // ATI ?, NV ?
+
+			"	float distanceFromLight = texture2DProj( map, newCoord ).z;\n"
+//			"	float distanceFromLight = texture2D( map, newCoordWDivided.st ).z;\n"
+			"	float shadow;\n"
+//			"	float shadow = 1.0;\n"
+			"	if ( coord.w > 0.0 )\n"
+			"	{\n"
+			"	shadow = distanceFromLight < newCoordWDivided.z ? illuminationInShadow : 1.0;\n"
+			"	}\n"
+			"	else\n"
+			"	{\n"
+			"		shadow = 1.0;\n"
+			"	}\n"
+			"	return shadow;\n"
+			"}\n"
+			"\n";
+//
+/*			"	float depth = shadow2DProj( map, newCoord ).r;\n"
+			"\n"
+			"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
+			"}\n"
+			"\n";*/
+		}
+
+		return std::make_pair(decl, code);
 	}
 
 
@@ -801,8 +1065,8 @@ struct GLSLHelpers
 
 			if ( current->isComplete() )
 			{
-				const vgd::node::Texture * textureNode = current->getTextureNode();
-				const std::string strUnit = vgd::basic::toString( i );
+				//const std::string				strUnit		= vgd::basic::toString( i );
+				const vgd::node::Texture *		textureNode	= current->getTextureNode();
 
 				if (	textureNode->hasFunction() &&
 						textureNode->getUsage() == vgd::node::Texture::IMAGE )
@@ -892,15 +1156,18 @@ struct VGEGL_API ShaderGenerator
 	 *
 	 * @return the string containing the generated code
 	 */
-	const std::string& getCode() const;
+	const std::string getCode() const;
 
 
 private:
 	glo::GLSLProgram::ShaderType	m_shaderType;		///< the type of the generated shader
 	vgd::field::DirtyFlag			m_mainDirtyFlag;	///< the main dirty flag
 	bool							m_isEnabled;		///< true when code generation is enabled, false otherwise
+
 protected:
-	std::string						m_code;				///< the string containing the generated code
+	std::string						m_decl;				///< the string containing the generated declaration
+	std::string						m_code1;			///< the string containing the first part of the generated code : several different helpers functions
+	std::string						m_code2;			///< the string containing the second part of the generated code : the main() function
 };
 
 

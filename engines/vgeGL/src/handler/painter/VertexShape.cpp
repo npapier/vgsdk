@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -79,6 +79,8 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::VertexShape* >(pNode) != 0 );
 	vgd::node::VertexShape *pVertexShape = static_cast< vgd::node::VertexShape* >(pNode);
 
+//	glPushAttrib( GL_ALL_ATTRIB_BITS );
+
 	// GLSL STATE UPDATE
 	using vgeGL::engine::GLSLState;
 	GLSLState& glslState = pGLEngine->getGLSLState();
@@ -87,7 +89,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	glslState.setEnabled( GLSLState::COLOR4_BIND_PER_VERTEX, pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX );
 
 // @todo OPTME
-	//  setTexCoordDim for texUnitState of glslState => useful for pg->generate();
+	//setTexCoordDim for texUnitState of glslState => useful for pg->generate();
 	//pGLEngine->getGLSLStateStack().push();
 	if ( pGLEngine->isTextureMappingEnabled() )
 	{
@@ -98,20 +100,20 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		{
 			const uint unit = *i;
 
-			if ( pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+
+			if (	(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF) && 
+					texUnitState	)
 			{
 				const int32 dimTexCoord = pVertexShape->getTexCoordDim( unit );
-				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
-				if ( texUnitState )
-				{
-					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
-				}
-				else
-				{
-					vgLogDebug3(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
-									pVertexShape->getName().c_str(), unit );
-				}
+				texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
 			}
+			//else
+			//{
+				//texUnitState->setTexCoordDim( 0 );
+				//vgLogDebug3(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
+				//				pVertexShape->getName().c_str(), unit );
+			//}
 		}
 	}
 
@@ -323,6 +325,26 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		glPopAttrib();
 	}
 
+	if ( pGLEngine->isTextureMappingEnabled() )
+	{
+		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
+		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
+				i != iEnd;
+				++i )
+		{
+			const uint unit = *i;
+
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+	
+			if (	(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF) &&
+					texUnitState	)
+			{
+				texUnitState->setTexCoordDim( 0 );
+			}
+		}
+	}
+//	glPopAttrib();
+
 	// Restores GLSL activation state
 	pGLEngine->setGLSLActivationState( glslActivationState );
 
@@ -347,6 +369,7 @@ void VertexShape::setToDefaults()
  */
 void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::VertexShape* vertexShape )
 {
+//glPushClientAttrib( GL_CLIENT_ALL_ATTRIB_BITS );
 	const vgd::node::VertexShape::DeformableHintValueType deformableHint = vertexShape->getDeformableHint();
 
 	/* ImmediateMode */
@@ -359,8 +382,9 @@ void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::
 	/* Vertex Array in DL */
 	if ( deformableHint == vgd::node::VertexShape::STATIC )
 	{
-		//paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
-		paint(engine, vertexShape, vgeGL::engine::VertexArrayDisplayListMethod() );
+		paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
+// @todo Reenabled display list usage or uses VAO
+//		paint(engine, vertexShape, vgeGL::engine::VertexArrayDisplayListMethod() ); @todo don't work on Radeon
 	}
 	else
 	{
@@ -373,6 +397,8 @@ void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::
 	/* Vertex Arrays in VBO */
 	//paintVBO				( pGLEngine, pVertexShape );
 	//paintVBOVertexArray	( pGLEngine, pVertexShape );
+
+//glPopClientAttrib();
 }
 
 
@@ -554,15 +580,34 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 			{
 				assert( program->isInUse() );
 
-				program->setUniform1i( "texUnit" + strUnit, unit );
+				const vgd::node::Texture::UsageValueType usage = textureNode->getUsage();
+
+				if ( usage == vgd::node::Texture::SHADOW )
+				{
+//					const std::string privateUnit = pGLEngine->getGLSLState().getPrivateTexture(i);
+//					program->setUniform1i( "texMap2DShadow[" + vgd::basic::toString(internalUnit) + "]", unit );
+					program->setUniform1i( "texMap2D[" + strUnit + "]", unit );
+				}
+				else if ( usage == vgd::node::Texture::IMAGE )
+				{
+					program->setUniform1i( "texMap2D[" + strUnit + "]", unit );
+					configureTexCoord( pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */ );
+				}
+				else
+				{
+					assert( false );
+				}
 			}
 			else
 			{
 				pGLEngine->activeTexture( unit );
-				texture->enable();
+				const uint texCoordDim = pVertexShape->getTexCoordDim(unit);
+				if ( texCoordDim > 0 )
+				{
+					texture->enable();
+				}
+				configureTexCoord( pVertexShape, unit,  texCoordDim );
 			}
-
-			configureTexCoord( pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */ );
 		}
 
 		//
@@ -730,45 +775,8 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	}
 
 	// TEX COORD
-	if ( pGLEngine->isTextureMappingEnabled() )
-	{
-		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
-		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
-				i != iEnd;
-				++i )
-		{
-			const uint unit = *i;
+	// nothing to do
 
-			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX  )
-			{
-				//
-				glClientActiveTexture( GL_TEXTURE0_ARB + unit );
-
-				glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-
-				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
-				if ( texUnitState )
-				{
-					texUnitState->setTexCoordDim( static_cast< uint8 >(0) );
-				}
-			}
-		}
-	}
-/*			else // ???
-			{
-				for(	int unit=glslState.getMaxTexture()-1;
-						unit >= 0;
-						--unit )
-				{
-					vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
-					if (	texUnitState &&
-							pVertexShape->getTexCoordDim(unit)!=0 &&
-							pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
-					{
-						texUnitState->setTexCoordDim( 0 );
-					}
-				}
-			}*/
 	// @todo Optimizes numTexUnits == 1 case
 	/*const uint numTexUnits = pVertexShape->getNumTexUnits();
 	if ( numTexUnits >= 1 )
@@ -885,11 +893,17 @@ void VertexShape::configureTexCoord( vgd::node::VertexShape * vertexShape, const
 				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 				break;
 			}
-			vgLogDebug4("VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim ); // ???
-			//default:
+
+			default:
 				// NOT SUPPORTED
-				//assert( false && "Unexpected dimension for texCoord." );
+				vgLogDebug4("VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
+				assert( false && "Unexpected dimension for texCoord." );
 		} // switch
+	}
+	else
+	{
+		glClientActiveTexture( GL_TEXTURE0_ARB + unit );
+		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	}
 }
 

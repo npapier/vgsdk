@@ -95,6 +95,14 @@ void Engine::setToDefaults()
 		return;
 	}
 
+	// MARKER
+	if ( isGL_GREMEDY_string_marker() )
+	{
+		std::stringstream ss;
+		ss << "BEGIN( Engine::setToDefaults() )";
+		glStringMarkerGREMEDY( 0, ss.str().c_str() );
+	}
+
 	// GLOBAL INITIALIZATION
 	glEnable( GL_LIGHTING );
 	glEnable( GL_DEPTH_TEST );
@@ -151,6 +159,14 @@ void Engine::setToDefaults()
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
 	vgLogDebug2( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
+
+	// MARKER
+	if ( isGL_GREMEDY_string_marker() )
+	{
+		std::stringstream ss;
+		ss << "END( Engine::setToDefaults() )";
+		glStringMarkerGREMEDY( 0, ss.str().c_str() );
+	}
 }
 
 
@@ -735,10 +751,13 @@ void Engine::activeTexture( const vgd::node::Texture * textureNode )
 
 
 
-void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport )
+void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport, const bool pushAttribs )
 {
 	// OpenGL attributes
-	glPushAttrib( GL_ALL_ATTRIB_BITS );	// @todo OPTME
+	if ( pushAttribs )
+	{
+		glPushAttrib( GL_ALL_ATTRIB_BITS );
+	}
 
 	glDisable( GL_LIGHTING );
 	glDisable( GL_DEPTH_TEST );
@@ -780,7 +799,7 @@ void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport )
 
 
 
-void Engine::end2DRendering()
+void Engine::end2DRendering( const bool popAttribs )
 {
 	// Matrix stacks
 	activeTexture(0);
@@ -794,7 +813,10 @@ void Engine::end2DRendering()
 	glPopMatrix();
 
 	// OpenGL attributes
-	glPopAttrib();
+	if ( popAttribs )
+	{
+		glPopAttrib();
+	}
 }
 
 

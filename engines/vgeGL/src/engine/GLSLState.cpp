@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,6 +6,7 @@
 #include "vgeGL/engine/GLSLState.hpp"
 
 #include <glo/Texture.hpp>
+#include <vgd/basic/toString.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include "vgeGL/engine/Engine.hpp"
@@ -115,6 +116,8 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 
 	// @todo others ( at this time default values for others are initialized by GLSLState::update() )
 	setShadowType( vgd::node::LightModel::DEFAULT_SHADOW );
+	setShadowMapType( vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE );
+	setIlluminationInShadow( 0.4f ); // @todo Adds const float DEFAULT_ILLUMINATIONINSHADOW in node
 }
 
 
@@ -279,6 +282,22 @@ const uint GLSLState::getNumTexture() const
 const uint GLSLState::getMaxTexture() const
 {
 	return m_texture.size();
+}
+
+
+
+const uint GLSLState::getPrivateTextureIndex( const uint indexTexUnit ) const
+{
+	const uint retVal = (getMaxTexture()-1) - indexTexUnit;
+	return retVal;
+}
+
+
+
+const std::string GLSLState::getPrivateTexture( const uint indexTexUnit ) const
+{
+	const uint retVal = getPrivateTextureIndex( indexTexUnit );
+	return vgd::basic::toString(retVal);
 }
 
 

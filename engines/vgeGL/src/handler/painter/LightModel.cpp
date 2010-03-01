@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -99,6 +99,16 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 		state.setShadowType( shadow );
 	}
 
+	// SHADOW QUALITY ?
+
+	// SHADOW MAP TYPE
+	vgd::node::LightModel::ShadowMapTypeValueType shadowMapType = lightModel->getShadowMapType();
+	state.setShadowMapType( shadowMapType );
+
+	// ILLUMINATION IN SHADOW
+	vgd::node::LightModel::IlluminationInShadowValueType illuminationInShadow = lightModel->getIlluminationInShadow();
+	state.setIlluminationInShadow( illuminationInShadow );
+
 	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );
 }
@@ -140,6 +150,7 @@ void LightModel::paint( vgeGL::engine::Engine * engine, vgd::node::LightModel *n
 				break;
 
 			case vgd::node::LightModel::STANDARD_PER_PIXEL:
+				glEnable( GL_LIGHTING );
 				if ( !engine->isGLSLEnabled() )
 				{
 					// Fallback to standard per vertex

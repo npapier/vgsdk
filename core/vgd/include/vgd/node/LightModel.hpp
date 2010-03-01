@@ -8,6 +8,7 @@
 
 #include "vgd/field/Bool.hpp"
 #include "vgd/field/Enum.hpp"
+#include "vgd/field/Float.hpp"
 #include "vgd/field/Vec4f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
@@ -27,13 +28,18 @@ namespace node
  * This node specifies current lighting mode (off/standard per vertex lighting/standard per pixel lighting) and some options of the lighting model. 
  *
  * New fields defined by this node :
+ * - SFEnum \c shadowMapType = INT16<br>
+ *<br>
+ * - SFFloat \c illuminationInShadow = 0.4f<br>
+ *   value=[0,1] : 0 full attenuation in shadow, 1 no attenuation in shadow<br>
+ *<br>
  * - OFBool \c [twoSided] = false<br>
  *   Specifies whether one- or two-sided lighting calculations are done for polygons and triangles.<br>
  *<br>
  * - OFEnum \c [viewer] = AT_INFINITY<br>
  *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
  *<br>
- * - OFEnum \c [shadowQuality] = HIGH<br>
+ * - OFEnum \c [shadowQuality] = MEDIUM<br>
  *   Specifies the quality of the shadow computation<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
@@ -70,6 +76,115 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
 	static vgd::Shp< LightModel > createWhole( const std::string nodeName = "DefaultWhole" );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field shadowMapType
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		INT32 = 263,	///< 
+		INT16 = 264,	///< 
+		FLOAT = 262,	///< 
+		DEFAULT_SHADOWMAPTYPE = INT16	///< 
+	};
+
+	/**
+	 * @brief Type definition of the value contained by field named \c shadowMapType.
+	 */
+	struct ShadowMapTypeValueType : public vgd::field::Enum
+	{
+		ShadowMapTypeValueType()
+		{}
+
+		ShadowMapTypeValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ShadowMapTypeValueType( const ShadowMapTypeValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		ShadowMapTypeValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 263 );
+			retVal.push_back( 264 );
+			retVal.push_back( 262 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "INT32" );
+			retVal.push_back( "INT16" );
+			retVal.push_back( "FLOAT" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c shadowMapType
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FShadowMapTypeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c shadowMapType.
+	 */
+	const ShadowMapTypeValueType getShadowMapType() const;
+
+	/**
+	 * @brief Sets the value of field named \c shadowMapType.
+	 */
+	void setShadowMapType( const ShadowMapTypeValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field illuminationInShadow
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c illuminationInShadow.
+	 */
+	typedef float IlluminationInShadowValueType;
+
+	/**
+	 * @brief Type definition of the field named \c illuminationInShadow
+	 */
+	typedef vgd::field::TSingleField< IlluminationInShadowValueType > FIlluminationInShadowType;
+
+
+	/**
+	 * @brief Gets the value of field named \c illuminationInShadow.
+	 */
+	const IlluminationInShadowValueType getIlluminationInShadow() const;
+
+	/**
+	 * @brief Sets the value of field named \c illuminationInShadow.
+	 */
+	void setIlluminationInShadow( const IlluminationInShadowValueType value );
 
 	//@}
 
@@ -124,8 +239,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		AT_INFINITY = 265,	///< Specular reflections are computed from the origin of the eye coordinate system
-		AT_EYE = 266,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
+		AT_INFINITY = 268,	///< Specular reflections are computed from the origin of the eye coordinate system
+		AT_EYE = 269,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
 		DEFAULT_VIEWER = AT_INFINITY	///< Specular reflections are computed from the origin of the eye coordinate system
 	};
 
@@ -153,8 +268,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 265 );
-			retVal.push_back( 266 );
+			retVal.push_back( 268 );
+			retVal.push_back( 269 );
 
 			return retVal;
 		}
@@ -209,11 +324,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		HIGH = 274,	///< High resolution shadow map using float depth buffer
-		VERY_HIGH = 273,	///< Very high resolution shadow map using float depth buffer
-		MEDIUM = 275,	///< Medium resolution shadow map using float depth buffer
-		LOW = 276,	///< Low resolution shadow map using float depth buffer
-		DEFAULT_SHADOWQUALITY = HIGH	///< High resolution shadow map using float depth buffer
+		HIGH = 281,	///< High resolution shadow map
+		VERY_HIGH = 280,	///< Very high resolution shadow map
+		MEDIUM = 282,	///< Medium resolution shadow map
+		LOW = 283,	///< Low resolution shadow map
+		DEFAULT_SHADOWQUALITY = MEDIUM	///< Medium resolution shadow map
 	};
 
 	/**
@@ -240,10 +355,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 274 );
-			retVal.push_back( 273 );
-			retVal.push_back( 275 );
-			retVal.push_back( 276 );
+			retVal.push_back( 281 );
+			retVal.push_back( 280 );
+			retVal.push_back( 282 );
+			retVal.push_back( 283 );
 
 			return retVal;
 		}
@@ -339,9 +454,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		STANDARD_PER_PIXEL = 264,	///< Lighting is computed per pixel
-		LIGHTING_OFF = 262,	///< No lighting
-		STANDARD_PER_VERTEX = 263,	///< Lighting is computed per vertex
+		STANDARD_PER_PIXEL = 267,	///< Lighting is computed per pixel
+		LIGHTING_OFF = 265,	///< No lighting
+		STANDARD_PER_VERTEX = 266,	///< Lighting is computed per vertex
 		DEFAULT_MODEL = STANDARD_PER_VERTEX	///< Lighting is computed per vertex
 	};
 
@@ -369,9 +484,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 264 );
-			retVal.push_back( 262 );
-			retVal.push_back( 263 );
+			retVal.push_back( 267 );
+			retVal.push_back( 265 );
+			retVal.push_back( 266 );
 
 			return retVal;
 		}
@@ -427,12 +542,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		SHADOW_MAPPING_16U = 271,	///< Sixteen uniform samples
-		SHADOW_MAPPING = 268,	///< Shadows are computed using shadow mapping algorithm
-		SHADOW_OFF = 267,	///< Shadows are not computed
-		SHADOW_MAPPING_4U = 269,	///< Four uniform samples
-		SHADOW_MAPPING_32U = 272,	///< Thirty two uniform samples
-		SHADOW_MAPPING_4D = 270,	///< Four four dithered samples
+		SHADOW_MAPPING_16U = 274,	///< Sixteen uniform samples
+		SHADOW_MAPPING = 271,	///< Shadows are computed using shadow mapping algorithm
+		SHADOW_OFF = 270,	///< Shadows are not computed
+		SHADOW_MAPPING_16UM = 275,	///< Sixteen unifrom samples
+		SHADOW_MAPPING_64UM = 279,	///< Sixty four uniform samples
+		SHADOW_MAPPING_32UM = 277,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4U = 272,	///< Four uniform samples
+		SHADOW_MAPPING_64U = 278,	///< Sixty four uniform samples
+		SHADOW_MAPPING_32U = 276,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4DM = 273,	///< Four dithered samples
 		DEFAULT_SHADOW = SHADOW_OFF	///< Shadows are not computed
 	};
 
@@ -460,12 +579,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
+			retVal.push_back( 274 );
 			retVal.push_back( 271 );
-			retVal.push_back( 268 );
-			retVal.push_back( 267 );
-			retVal.push_back( 269 );
-			retVal.push_back( 272 );
 			retVal.push_back( 270 );
+			retVal.push_back( 275 );
+			retVal.push_back( 279 );
+			retVal.push_back( 277 );
+			retVal.push_back( 272 );
+			retVal.push_back( 278 );
+			retVal.push_back( 276 );
+			retVal.push_back( 273 );
 
 			return retVal;
 		}
@@ -477,9 +600,13 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 			retVal.push_back( "SHADOW_MAPPING_16U" );
 			retVal.push_back( "SHADOW_MAPPING" );
 			retVal.push_back( "SHADOW_OFF" );
+			retVal.push_back( "SHADOW_MAPPING_16UM" );
+			retVal.push_back( "SHADOW_MAPPING_64UM" );
+			retVal.push_back( "SHADOW_MAPPING_32UM" );
 			retVal.push_back( "SHADOW_MAPPING_4U" );
+			retVal.push_back( "SHADOW_MAPPING_64U" );
 			retVal.push_back( "SHADOW_MAPPING_32U" );
-			retVal.push_back( "SHADOW_MAPPING_4D" );
+			retVal.push_back( "SHADOW_MAPPING_4DM" );
 
 			return retVal;
 		}
@@ -518,6 +645,20 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c shadowMapType.
+	 *
+	 * @return the name of field \c shadowMapType.
+	 */
+	static const std::string getFShadowMapType( void );
+
+	/**
+	 * @brief Returns the name of field \c illuminationInShadow.
+	 *
+	 * @return the name of field \c illuminationInShadow.
+	 */
+	static const std::string getFIlluminationInShadow( void );
 
 	/**
 	 * @brief Returns the name of field \c twoSided.

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -31,33 +31,35 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	GLSLState& state = engine->getGLSLState();
 
 	// Clears the code repository
-	m_code.clear();
-	m_code += "#version 120\n";
+	m_decl.clear();
+	m_code1.clear();
+	m_code2.clear();
+	m_decl += "#version 120\n";
 
 	// DECLARATIONS
 	if ( state.isLightingEnabled() )
 	{
 		if ( state.isPerVertexLightingEnabled() )
 		{
-			m_code += GLSLHelpers::generate_lightAccumulators( state ) + "\n";
+			m_decl += GLSLHelpers::generate_lightAccumulators( state ) + "\n";
 		}
 		else
 		{
 			if ( state.isEnabled( GLSLState::FLAT_SHADING ) )
 			{
-				m_code += 
-				"flat varying out vec4 ecPosition;\n" // @todo really flat ?
-				"flat varying out vec3 ecNormal;\n\n";
+				m_decl += 
+				"flat varying vec4 ecPosition;\n" // @todo really flat ?
+				"flat varying vec3 ecNormal;\n\n";
 			}
 			else
 			{
-				m_code += 
+				m_decl += 
 				"varying vec4 ecPosition;\n"
 				"varying vec3 ecNormal;\n\n";
 
 				/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
 				{
-					m_code += "varying vec4 mglColor;\n\n";
+					m_decl += "varying vec4 mglColor;\n\n";
 				}*/
 			}
 		}
@@ -70,43 +72,43 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	if ( has_ftexgen )
 	{
 		code_ftexgen = GLSLHelpers::generateFunction_ftexgen(state);
-		m_code += code_ftexgen.first;
+		m_decl += code_ftexgen.first;
 	}
 
 	// FUNCTIONS
-	m_code += GLSLHelpers::generateFunction_fnormal( state );
+	m_code1 += GLSLHelpers::generateFunction_fnormal( state );
 
-	if ( has_ftexgen )	m_code += code_ftexgen.second;
+	if ( has_ftexgen )	m_code1 += code_ftexgen.second;
 
 	if ( state.isLightingEnabled() && state.isPerVertexLightingEnabled() )
 	{
-		m_code += GLSLHelpers::generate_lights( state ) + "\n";
-		m_code += GLSLHelpers::generateFunction_flight( state ) + "\n";
+		m_code1 += GLSLHelpers::generate_lights( state ) + "\n";
+		m_code1 += GLSLHelpers::generateFunction_flight( state ) + "\n";
 	}
 
 
 // @todo generateFunction_fVertexAttrib()  and generate_vertexAttribDeclaration()
 
 	// MAIN
-	m_code +=
+	m_code2 +=
 	"\n"
 	"void main( void )\n"
 	"{\n";
 
 	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{
-		m_code += 
+		m_code2 += 
 		"	vec4	ecPosition;\n"		// Eye-coordinate position of vertex
 		"	vec3	ecNormal;\n"
 		"\n";
 	}
 	// else nothing
 
-	m_code +=
+	m_code2 +=
 	"	gl_Position	= ftransform();\n"
 	"\n";
 
-	m_code +=
+	m_code2 +=
 	"	ecPosition	= gl_ModelViewMatrix * gl_Vertex;\n"
 	"	ecNormal	= fnormal();\n"
 	"\n";
@@ -116,7 +118,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		if ( state.isPerVertexLightingEnabled() )
 		{
 			// Calls flight()
-			m_code += 
+			m_code2 += 
 			"	flight( ecPosition, ecNormal );\n"
 			"\n"
 			"	gl_FrontColor			= vec4(accumColor.rgb, gl_Color.a);\n"
@@ -124,7 +126,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 			if ( state.isTwoSidedLightingEnabled() )
 			{
-				m_code +=
+				m_code2 +=
 				"	gl_BackColor			= vec4(accumBackColor.rgb, gl_Color.a);\n"
 				"	gl_BackSecondaryColor	= vec4(accumBackSecondaryColor.rgb, 0.0);\n";
 			}
@@ -134,16 +136,16 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
 			{
 				// pixel lighting and VertexShape::color4, so gl_Color must be transfered to fragment program.
-				// m_code += "	mglColor = gl_Color;\n";
+				// m_code2 += "	mglColor = gl_Color;\n";
 			}*/
 
-			m_code +=	
+			m_code2 +=	
 			"	gl_FrontColor			= gl_Color;\n"
 			"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 
 			if ( state.isTwoSidedLightingEnabled() )
 			{
-				m_code +=
+				m_code2 +=
 				"	gl_BackColor			= gl_Color;\n"
 				"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 			}
@@ -153,13 +155,13 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	else
 	{
 		// no lighting
-		m_code +=
+		m_code2 +=
 		"	gl_FrontColor			= gl_Color;\n"
 		"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 
 		if ( state.isTwoSidedLightingEnabled() )
 		{
-			m_code +=
+			m_code2 +=
 			"	gl_BackColor			= gl_Color;\n"
 			"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 		}
@@ -167,12 +169,12 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	/*if ( glIsEnabled(GL_FOG) )
 	{
-		m_code += "	gl_FogFragCoord = ffog( ecPosition.z );\n";
+		m_code2 += "	gl_FogFragCoord = ffog( ecPosition.z );\n";
 	}*/
 
 	if ( has_ftexgen )
 	{
-		m_code += "	ftexgen( ecPosition, ecNormal );\n";
+		m_code2 += "	ftexgen( ecPosition, ecNormal );\n";
 	}
 
 
@@ -181,10 +183,10 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		glIsEnabled(GL_CLIP_PLANE4) || glIsEnabled(GL_CLIP_PLANE5)	)*/
 	if ( state.isEnabled( GLSLState::CLIPPING_PLANE ) )
 	{
-		m_code += "	gl_ClipVertex = ecPosition;\n";
+		m_code2 += "	gl_ClipVertex = ecPosition;\n";
 	}
 
-	m_code += "}\n";
+	m_code2 += "}\n";
 
 	return true;
 }
