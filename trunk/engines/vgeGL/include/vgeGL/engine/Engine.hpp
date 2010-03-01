@@ -510,18 +510,21 @@ public:
 	 * @brief Configures OpenGL for 2D rendering.
 	 *
 	 * @param optionalViewport		a pointer on the viewport or a null pointer to used current viewport.
-	 *
+	 * @param pushAttribs			true to call glPushAttrib( GL_ALL_ATTRIB_BITS ), false otherwise
+	 * 
 	 * Lighting and depth test are disabled.
 	 * ModelView and Texture matrices are initialized to identity.
 	 * Projection matrix is initialized using an orthographic matrix (see glOrtho( 0.f, 1.f, 0.f, 1.f, 0.f, 1.f ) ).
 	 * The viewport and scissor are initialized using the given \c optionalViewport parameter.
 	 */
-	static void begin2DRendering( const vgm::Rectangle2i * optionalViewport = 0 );
+	static void begin2DRendering( const vgm::Rectangle2i * optionalViewport = 0, const bool pushAttribs = false );
 
 	/**
 	 * @brief Restores OpenGL states modified by begin2DRendering()
+	 *
+	 * @param popAttribs	true to call glPopAttrib(), false otherwise
 	 */
-	static void end2DRendering();
+	static void end2DRendering( const bool popAttribs = false );
 
 	//@}
 

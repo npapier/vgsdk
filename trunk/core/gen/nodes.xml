@@ -192,23 +192,46 @@
 					<value name="SHADOW_OFF"			doc="Shadows are not computed"/>
 					<value name="SHADOW_MAPPING"		doc="Shadows are computed using shadow mapping algorithm"/>
 					<value name="SHADOW_MAPPING_4U"		doc="Four uniform samples"/>
-					<value name="SHADOW_MAPPING_4D"		doc="Four four dithered samples"/>
+					<value name="SHADOW_MAPPING_4DM"	doc="Four dithered samples"/>
 					<value name="SHADOW_MAPPING_16U"	doc="Sixteen uniform samples"/>
+					<value name="SHADOW_MAPPING_16UM"	doc="Sixteen unifrom samples"/>
 					<value name="SHADOW_MAPPING_32U"	doc="Thirty two uniform samples"/>
+					<value name="SHADOW_MAPPING_32UM"	doc="Thirty two uniform samples"/>
+					<value name="SHADOW_MAPPING_64U"	doc="Sixty four uniform samples"/>
+					<value name="SHADOW_MAPPING_64UM"	doc="Sixty four uniform samples"/>
+					<!-- @todo custom -->
 				</enum>
 			</type>
 		</of>
 
 		<of name="shadowQuality" doc="Specifies the quality of the shadow computation">
 			<type name="enum">
-				<enum default="HIGH">
-					<value name="VERY_HIGH"	doc="Very high resolution shadow map using float depth buffer"/>
-					<value name="HIGH"		doc="High resolution shadow map using float depth buffer"/>
-					<value name="MEDIUM"	doc="Medium resolution shadow map using float depth buffer"/>
-					<value name="LOW"		doc="Low resolution shadow map using float depth buffer"/>
+				<enum default="MEDIUM">
+					<value name="VERY_HIGH"	doc="Very high resolution shadow map"/>
+					<value name="HIGH"		doc="High resolution shadow map"/>
+					<value name="MEDIUM"	doc="Medium resolution shadow map"/>
+					<value name="LOW"		doc="Low resolution shadow map"/>
 				</enum>
 			</type>
 		</of>
+
+		<sf name="shadowMapType" doc="">
+			<type name="enum">
+				<enum default="INT16">
+					<!--<value name="FLOAT32"	doc=""/>
+					<value name="FLOAT24"	doc=""/>
+					<value name="FLOAT16"	doc=""/>-->
+					<value name="FLOAT"	doc=""/>
+					<value name="INT32"		doc=""/>
+					<!--<value name="INT24"		doc=""/>-->
+					<value name="INT16"		doc=""/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name="illuminationInShadow" doc="value=[0,1] : 0 full attenuation in shadow, 1 no attenuation in shadow">
+			<type name="float" default="0.4f"></type>
+		</sf>
 	</node>
 
 

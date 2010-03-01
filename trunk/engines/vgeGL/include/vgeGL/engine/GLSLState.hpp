@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -360,7 +360,22 @@ struct GLSLState : public TBitSet< 11 >
 	 */
 	const uint getMaxTexture() const;
 
+
+
+	/**
+	 * @brief Retrieves index of private texture unit.
+	 *
+	 * @param indexTexUnit		zero-based index to select private texture unit
+	 *
+	 * @return The index of the desired texture unit
+	 *
+	 * @remarks Private texture units are used internally by vgSDK and should not be used directly by user.
+	 * @remarks Substract one to the first index to compute the index of the second private texture unit. And so on.
+	 */
+	const uint getPrivateTextureIndex( const uint indexTexUnit = 0 ) const;
+	const std::string getPrivateTexture( const uint indexTexUnit = 0 ) const;
 	//@}
+
 
 
 	/**
@@ -375,9 +390,19 @@ struct GLSLState : public TBitSet< 11 >
 	 */
 	void setShadowType( const vgd::node::LightModel::ShadowValueType shadowType ) { m_lightModelShadow = shadowType; }
 
+	const vgd::node::LightModel::ShadowMapTypeValueType getShadowMapType() const		{ return m_shadowMapType; }
+	void setShadowMapType( const vgd::node::LightModel::ShadowMapTypeValueType type )	{ m_shadowMapType = type; }
+
+	// @todo must be an uniform
+	const float getIlluminationInShadow() const { return m_illuminationInShadow; }
+	void setIlluminationInShadow( const float illuminationInShadow ) { m_illuminationInShadow = illuminationInShadow; }
+
+
 
 private:
-	vgd::node::LightModel::ShadowValueType		m_lightModelShadow;	///< Last encountered value of LightModel.shadow field
+	vgd::node::LightModel::ShadowValueType			m_lightModelShadow;		///< Last encountered value of LightModel.shadow field
+	vgd::node::LightModel::ShadowMapTypeValueType	m_shadowMapType;		///< @todo doc
+	float											m_illuminationInShadow;	///< @todo doc
 
 	std::vector< vgd::Shp< LightState > >		m_light;		///< array of light state. The zero-based index selects the light unit.
 	uint										m_numLight;		///< number of light state in all light units.

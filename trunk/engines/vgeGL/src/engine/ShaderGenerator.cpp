@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -21,7 +21,7 @@ ShaderGenerator::ShaderGenerator( const glo::GLSLProgram::ShaderType shaderType 
 :	m_shaderType	( shaderType ),
 	m_mainDirtyFlag	( "main" ),
 	m_isEnabled		( true )
-	//m_code
+	//m_decl, m_code1, m_code2
 {}
 
 
@@ -54,9 +54,9 @@ const bool ShaderGenerator::isEnabled() const
 
 
 
-const std::string& ShaderGenerator::getCode() const
+const std::string ShaderGenerator::getCode() const
 {
-	return m_code;
+	return m_decl + m_code1 + m_code2;
 }
 
 

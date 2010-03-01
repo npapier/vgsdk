@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -253,7 +253,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 		// Texture mapping is disabled, so do nothing
 		// Validates node
 		vgd::field::DirtyFlag* pDFNode = node->getDirtyFlag( node->getDFNode() );
-		pDFNode->validate();
+		// pDFNode->validate();
 		return;
 	}
 
@@ -540,7 +540,7 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 	assert( texInfo.texDimension == 1 || texInfo.texDimension == 2 || texInfo.texDimension == 3 );
 
 	boost::tie(texInfo.internalFormat, texInfo.format ) = chooseFormats( image, pNode );
-	texInfo.type										= convertMyType2GL	( image->type()	);
+	texInfo.type										= convertMyType2GL( image->type() );
 
 	// Takes care of POT/NPOT image (by using GL_ARB_texture_non_power_of_two or by resizing incoming image)
 	// @todo Support of GL_ARB_texture_rectangle
@@ -743,8 +743,8 @@ const boost::tuple< GLint, GLenum > Texture::chooseFormats( vgd::Shp< vgd::basic
 		assert( components == 1 && "Texture.usage == SHADOW, but Texture.image.components != 1" );
 
 // @todo not generic
-		const GLenum internalFormat = vgeGL::engine::Engine::getGLDepthTextureFormatFromDepthBits();
-		return boost::make_tuple( internalFormat, GL_DEPTH_COMPONENT );
+		//const GLenum internalFormat = vgeGL::engine::Engine::getGLDepthTextureFormatFromDepthBits();
+		return boost::make_tuple( GL_DEPTH_COMPONENT /*internalFormat*/, GL_DEPTH_COMPONENT );
 	}
 	else
 	{

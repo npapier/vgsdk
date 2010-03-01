@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -13,6 +13,7 @@
 #include <vge/rc/Root.hpp>
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
+//#include "vgeGL/rc/TDisplayListHelper.hpp"
 #include "vgeGL/rc/Texture2D.hpp"
 
 
@@ -53,7 +54,8 @@ void LayerPlan::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	vgd::node::LayerPlan *pCastedNode = static_cast< vgd::node::LayerPlan* >(pNode);
 
 	paint( pGLEngine, pCastedNode );
-	//vgeGL::rc::applyUsingDisplayList< vgd::node::LayerPlan, LayerPlan >( pEngine, pNode, this );
+	// @todo conflict in manager between display list and vge::rc::Root for the same node (the LayerPlan)
+	// vgeGL::rc::applyUsingDisplayList< vgd::node::LayerPlan, LayerPlan >( pEngine, pNode, this );
 }
 
 
@@ -68,6 +70,8 @@ void LayerPlan::setToDefaults()
 
 
 
+
+// @todo Uses glsl for LayerPlan
 void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *layerPlan )
 {
 	if (	(layerPlan->getIImage() == 0) ||													// no image
@@ -90,7 +94,14 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	vgd::Shp< Quad >		quad;
 	vgd::Shp< Texture2D >	texture2D;
 
-	if ( resource == 0 )
+	if ( resource )
+	{
+		assert( rcRoot != 0 );
+
+		texture2D	= rcRoot->getRoot()->getChild< Texture2D >(0);
+		quad		= rcRoot->getRoot()->getChild< Quad >(1);
+	}
+	else
 	{
 		assert( rcRoot == 0 );
 
@@ -98,74 +109,57 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 		rcRoot = new vge::rc::Root;
 		rcManager.add( layerPlan, rcRoot );
 
-		quad = Quad::create("rootRC.LayerPlan.quad");
 		texture2D = Texture2D::create("rootRC.LayerPlan.texture2D");
+		quad = Quad::create("rootRC.LayerPlan.quad");
 
 		rcRoot->getRoot()->addChild( texture2D );
 		rcRoot->getRoot()->addChild( quad );
 
 		// setup rc
-		quad->initializeTexUnits( 1, vgd::basic::TOP_LEFT, false /* cw */ );
-		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
-		quad->transform( translateToOrigin );
-
 		texture2D->setWrap( Texture2D::WRAP_S, Texture2D::CLAMP_TO_EDGE );
 		texture2D->setWrap( Texture2D::WRAP_T, Texture2D::CLAMP_TO_EDGE );
 
 		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
 		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
-	}
-	else
-	{
-		assert( rcRoot != 0 );
 
-		texture2D	= rcRoot->getRoot()->getChild< Texture2D >(0);
-		quad		= rcRoot->getRoot()->getChild< Quad >(1);
+		quad->initializeTexUnits( 1, vgd::basic::TOP_LEFT, false /* cw */ );
+		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
+		quad->transform( translateToOrigin );
 	}
 
 	// Dirty flags
 	vgd::field::DirtyFlag	*pDF		= layerPlan->getDirtyFlag( layerPlan->getDFNode() );
 	vgd::field::DirtyFlag	*pDFIImage	= layerPlan->getDirtyFlag( layerPlan->getDFIImage() );
 
-//	if ( pDF->isDirty() )
-//	{
-//		// At least one field has been modified
-//		// @todo OPTME
-//	}
-
 	// @todo OPTME always computed
 	const vgm::Vec2f	layerPlanPosition	= layerPlan->getPosition();
 	const vgm::Vec2f	layerPlanSize		= layerPlan->getSize();
 
-//	assert( layerPlanSize[0] > 0.f ); // @todo FIXME floating point error (vgm::opearator equals( float, float );
-//	assert( layerPlanSize[0] <= 1.f );
+	assert( layerPlanSize[0] + vgm::Epsilon<float>().value() > 0.f );
+	assert( layerPlanSize[0] - vgm::Epsilon<float>().value() <= 1.f );
+	assert( layerPlanSize[1] + vgm::Epsilon<float>().value() > 0.f );
+	assert( layerPlanSize[1] - vgm::Epsilon<float>().value() <= 1.f );
 
 	vgm::MatrixR current;
-
-	const vgm::Vec3f translation( layerPlanPosition );
-	current.setTranslate( translation );
-
-	const vgm::Vec3f scaleFactors( layerPlanSize[0], layerPlanSize[1], 1.f );
-	current.scale( scaleFactors );
+	current.setTranslate( vgm::Vec3f(layerPlanPosition) );
+	current.scale( vgm::Vec3f(layerPlanSize[0], layerPlanSize[1], 1.f) );
 
 	// render overlay
 	vgd::Shp< vge::service::Service > paintService = vge::service::Painter::create();
+
+	// Makes a backup of GLSL activation state
+	using vgeGL::engine::Engine;
+	vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
+	pGLEngine->sethCurrentProgram();
 
 	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), true );
 
 	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();	
 	const vgm::Rectangle2i viewport( 0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1] );
-	pGLEngine->begin2DRendering( &viewport );
+	pGLEngine->begin2DRendering( &viewport, false );
 
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-
-	// Makes a backup of GLSL activation state
-	using vgeGL::engine::Engine;
-	vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
-
-	//
-	pGLEngine->sethCurrentProgram();
 
 	if ( pDFIImage->isDirty() )
 	{
@@ -196,7 +190,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	// alpha/blend
 	pGLEngine->evaluate( paintService, quad.get(), true );
 
-	pGLEngine->end2DRendering();
+	pGLEngine->end2DRendering( false );
 
 	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), false );
 

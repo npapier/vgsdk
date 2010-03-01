@@ -27,7 +27,10 @@ GeometryShaderGenerator::GeometryShaderGenerator()
 
 const bool GeometryShaderGenerator::generate( vgeGL::engine::Engine * engine )
 {
-	m_code.clear();
+	m_decl.clear();
+	m_code1.clear();
+	m_code2.clear();
+
 	return true;
 }
 
