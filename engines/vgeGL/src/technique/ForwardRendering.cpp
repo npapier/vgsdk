@@ -170,7 +170,10 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 	for( uint numLightFound = 0; (i != iEnd) && (numLightFound != state.getNumLight()); ++i )
 	{
 		const vgd::Shp< GLSLState::LightState > current = state.getLight( i );
-		if ( !current )
+
+		// Skip this light unit ?
+		if (	!current ||
+				(current->getLightNode() && current->getLightNode()->getCastShadow() == false )	)
 		{
 			continue;
 		}
