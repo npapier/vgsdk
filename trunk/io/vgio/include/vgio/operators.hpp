@@ -22,7 +22,6 @@
 #include <vgd/field/TPairAssociativeField.hpp>
 #include <vgd/field/TSingleField.hpp>
 
-#include <vgd/node/Camera.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/Primitive.hpp>
 #include <vgd/node/VertexShape.hpp>
@@ -86,13 +85,6 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawSt
  * @brief	Writes into an output stream the textual representation of the draw style nodes show orientation parameter type.
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShowOrientationParameterType & showOrientationParameter );
-
-
-
-/**
- * @brief	Writes into an output stream the textual representation of the light nodes on parameter.
- */
-//VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParameterType & on );
 
 
 

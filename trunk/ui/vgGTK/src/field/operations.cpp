@@ -55,35 +55,110 @@ vgd::Shp< Editor > createEditor( const vgd::Shp< vgd::field::FieldManager > fiel
 
 vgd::Shp< Editor > createEditor( const std::type_info & fieldType )
 {
-	vgd::Shp< Editor >	result;
-	
-	if		( fieldType == typeid(vgd::field::TSingleField< std::string >)	)	result.reset( new SingleFieldEditor< widget::String >()					);
-	else if	( fieldType == typeid(vgd::field::TSingleField< bool >)			)	result.reset( new SingleFieldEditor< widget::Bool >()					);
-	else if	( fieldType == typeid(vgd::field::TSingleField< int8 >)			)	result.reset( new SingleFieldEditor< widget::Int8Number >()				);
-	else if	( fieldType == typeid(vgd::field::TSingleField< float >)		)	result.reset( new SingleFieldEditor< widget::Number< float > >()		);
-	else if	( fieldType == typeid(vgd::field::TSingleField< int >)			)	result.reset( new SingleFieldEditor< widget::Number< int > >()			);
-	else if	( fieldType == typeid(vgd::field::TSingleField< long >)			)	result.reset( new SingleFieldEditor< widget::Number< long > >()			);
-	else if	( fieldType == typeid(vgd::field::TSingleField< vgm::MatrixR >)	)	result.reset( new SingleFieldEditor< widget::MatrixR >()				);
-	else if	( fieldType == typeid(vgd::field::TSingleField< vgm::Vec2f >)	)	result.reset( new SingleFieldEditor< widget::Vector<float, 2> >()		);
-	else if	( fieldType == typeid(vgd::field::TSingleField< vgm::Vec3f >)	)	result.reset( new SingleFieldEditor< widget::Vector<float, 3> >()		);
-	else if	( fieldType == typeid(vgd::field::TSingleField< vgm::Vec4f >)	)	result.reset( new SingleFieldEditor< widget::Vector<float, 3> >()		);
-	else if	( fieldType == typeid(vgd::field::TSingleField< vgm::Vec2i >)	)	result.reset( new SingleFieldEditor< widget::Vector<int, 2> >()			);
-	else if	( fieldType == typeid(vgd::field::TSingleField< vgm::Vec3i >)	)	result.reset( new SingleFieldEditor< widget::Vector<int, 3> >()			);
-	else if	( fieldType == typeid(vgd::field::TSingleField< vgm::Vec4i >)	)	result.reset( new SingleFieldEditor< widget::Vector<int, 4> >()			);
+	vgd::Shp< Editor > result;
 
-	else if	( fieldType == typeid(vgd::field::TOptionalField< bool >)					)	result.reset( new OptionalFieldEditor< widget::Bool >()				);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< float >)					)	result.reset( new OptionalFieldEditor< widget::Number< float > >()	);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Rectangle< int > >)	)	result.reset( new OptionalFieldEditor< widget::Rectangle< int > >()	);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec2f >)				)	result.reset( new OptionalFieldEditor< widget::Vector<float, 2> >()	);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec3f >)				)	result.reset( new OptionalFieldEditor< widget::Vector<float, 3> >()	);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec4f >)				)	result.reset( new OptionalFieldEditor< widget::Vector<float, 4> >()	);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec2i >)				)	result.reset( new OptionalFieldEditor< widget::Vector<int, 2> >()	);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec3i >)				)	result.reset( new OptionalFieldEditor< widget::Vector<int, 3> >()	);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec4i >)				)	result.reset( new OptionalFieldEditor< widget::Vector<int, 4> >()	);
-	else if	( fieldType == typeid(vgd::field::TOptionalField< vgd::field::Enum > )		)	result.reset( new OptionalFieldEditor< widget::Enum >()				);
-	
-	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec3f >)	)			result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec3f > >()		);
-	else if	( fieldType == typeid(vgd::field::TMultiField< unsigned long >)	)			result.reset( new MultiFieldEditor2< adapter::MFNumberAdapter< unsigned long > >()	);
+	// TSingleField
+	if ( fieldType == typeid(vgd::field::TSingleField< bool >) )
+		result.reset( new SingleFieldEditor< widget::Bool >() );
+
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgd::field::Enum >) )
+		result.reset( new SingleFieldEditor< widget::Enum >() );
+
+	else if ( fieldType == typeid(vgd::field::TSingleField< int8 >) )
+		result.reset( new SingleFieldEditor< widget::Int8Number >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< uint8 >) )
+		result.reset( new SingleFieldEditor< widget::UInt8Number >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< int16 >) )
+		result.reset( new SingleFieldEditor< widget::Number< int > >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< uint16 >) )
+		result.reset( new SingleFieldEditor< widget::Number< int > >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< int32 >) )
+		result.reset( new SingleFieldEditor< widget::Number< int > >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< uint32 >) )
+		result.reset( new SingleFieldEditor< widget::Number< int > >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< int >) )
+		result.reset( new SingleFieldEditor< widget::Number< int > >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< uint >) )
+		result.reset( new SingleFieldEditor< widget::Number< uint > >() );
+
+	else if ( fieldType == typeid(vgd::field::TSingleField< float >) )
+		result.reset( new SingleFieldEditor< widget::Number< float > >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< double >) )
+		result.reset( new SingleFieldEditor< widget::Number< double > >() );
+
+	else if ( fieldType == typeid(vgd::field::TSingleField< std::string >) )
+		result.reset( new SingleFieldEditor< widget::String >() );
+
+	// @todo Box3f and XfBox3f
+
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Rectangle2i >) )
+		result.reset( new SingleFieldEditor< widget::Rectangle< int > >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Rectangle2f >) )
+		result.reset( new SingleFieldEditor< widget::Rectangle< float > >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Rectangle2d >) )
+		result.reset( new SingleFieldEditor< widget::Rectangle< double > >() );
+
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec2i >) )
+		result.reset( new SingleFieldEditor< widget::Vector<int, 2> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec3i >) )
+		result.reset( new SingleFieldEditor< widget::Vector<int, 3> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec4i >) )
+		result.reset( new SingleFieldEditor< widget::Vector<int, 4> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec2f >) )
+		result.reset( new SingleFieldEditor< widget::Vector<float, 2> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec3f >) )
+		result.reset( new SingleFieldEditor< widget::Vector<float, 3> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec4f >) )
+		result.reset( new SingleFieldEditor< widget::Vector<float, 4> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec2d >) )
+		result.reset( new SingleFieldEditor< widget::Vector<double, 2> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec3d >) )
+		result.reset( new SingleFieldEditor< widget::Vector<double, 3> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec4d >) )
+		result.reset( new SingleFieldEditor< widget::Vector<double, 4> >() );
+
+	// @todo Plane, Rotation
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::MatrixR >) )
+		result.reset( new SingleFieldEditor< widget::MatrixR >() );
+
+	// @todo vgd types : vgd::Shp< vgd::basic::IImage >, vgd::Shp< vgd::node::Group >,  vgd::Shp< vgd::node::Node >
+
+
+
+	// TOptionalField
+	// @todo
+	else if	( fieldType == typeid(vgd::field::TOptionalField< std::string >) )
+		result.reset( new OptionalFieldEditor< widget::String >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< bool >) )
+		result.reset( new OptionalFieldEditor< widget::Bool >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< float >) )
+		result.reset( new OptionalFieldEditor< widget::Number< float > >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgd::field::Enum > ) )
+		result.reset( new OptionalFieldEditor< widget::Enum >() );
+	// @todo MatrixR
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Rectangle< int > >) )
+		result.reset( new OptionalFieldEditor< widget::Rectangle< int > >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec2f >) )
+		result.reset( new OptionalFieldEditor< widget::Vector<float, 2> >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec3f >) )
+		result.reset( new OptionalFieldEditor< widget::Vector<float, 3> >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec4f >) )
+		result.reset( new OptionalFieldEditor< widget::Vector<float, 4> >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec2i >) )
+		result.reset( new OptionalFieldEditor< widget::Vector<int, 2> >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec3i >) )
+		result.reset( new OptionalFieldEditor< widget::Vector<int, 3> >() );
+	else if	( fieldType == typeid(vgd::field::TOptionalField< vgm::Vec4i >) )
+		result.reset( new OptionalFieldEditor< widget::Vector<int, 4> >());
+
+
+
+	// TMultiField
+	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec3f >) )
+		result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec3f > >() );
+	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec4f >) )
+		result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec4f > >()		);
+	else if	( fieldType == typeid(vgd::field::TMultiField< uint32 >)	)			result.reset( new MultiFieldEditor2< adapter::MFNumberAdapter< uint32 > >()	);
 	else if	( fieldType == typeid(vgd::field::TMultiField< vgd::node::Primitive >)	)	result.reset( new MultiFieldEditor2< adapter::MFPrimitiveAdapter >()				);
 	
 	return result;

@@ -216,7 +216,8 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 				// int_t
 				int8,	uint8,
 				int16,	uint16,
-				int32,	uint32
+				int32,	uint32,
+				int,	uint
 			> int_t;
 
 			typedef mpl::list<
