@@ -51,7 +51,7 @@ struct SlideWindow : public vgeGL::event::TimerCallback
 	 * @name Overridden method
 	 */
 	//@{
-	VGEGL_API void apply( const vgd::Shp< vgd::event::TimerEvent > event );
+	VGEGL_API void apply( vgd::Shp< vgd::event::TimerEvent > event );
 
 	VGEGL_API void endExecution();
 	//@}

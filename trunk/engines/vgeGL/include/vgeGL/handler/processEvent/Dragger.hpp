@@ -54,21 +54,21 @@ namespace processEvent
 struct VGEGL_API Dragger : public vgd::event::EventVisitor
 {
 	/**
-	 * @name Interface of EventVisitor.
+	 * @name Interface of EventVisitor
 	 *
 	 * The following methods do nothing and must be overriden by derived Dragger to perform proper actions.
 	 */
 	//@{
-	void apply( const vgd::event::AxisEvent				*pAxisEvent				);
-	void apply( const vgd::event::HatEvent				*pHatEvent				);
-	void apply( const vgd::event::JoystickButtonEvent	*pJoystickButtonEvent	);
-	void apply( const vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent	);
-	void apply( const vgd::event::Location2Event		*pLocation2Event 		);
-	void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent		);
-	void apply( const vgd::event::Motion3Event			*pMotion3Event			);
-	void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent		);
-	void apply( const vgd::event::SizeEvent				*pSizeEvent				);
-	void apply( const vgd::event::TimerEvent			*pTimerEvent			);
+	void apply( vgd::event::AxisEvent			*pAxisEvent				);
+	void apply( vgd::event::HatEvent			*pHatEvent				);
+	void apply( vgd::event::JoystickButtonEvent	*pJoystickButtonEvent	);
+	void apply( vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent	);
+	void apply( vgd::event::Location2Event		*pLocation2Event 		);
+	void apply( vgd::event::MouseButtonEvent	*pMouseButtonEvent		);
+	void apply( vgd::event::Motion3Event		*pMotion3Event			);
+	void apply( vgd::event::MouseWheelEvent		*pMouseWheelEvent		);
+	void apply( vgd::event::SizeEvent			*pSizeEvent				);
+	void apply( vgd::event::TimerEvent			*pTimerEvent			);
 	//@}
 
 
@@ -99,7 +99,7 @@ struct VGEGL_API Dragger : public vgd::event::EventVisitor
 	/**
 	 * @brief Convert vectors from window space to object space.
 	 *
-	 * @param pEngine				an engine
+	 * @param pEngine			an engine
 	 * @param pDragger			a dragger
 	 * @param oLeftToRightO
 	 * @param oUpToDownO

@@ -40,16 +40,16 @@ struct VGEGL_API IInteraction : public EventProcessor, public vgd::event::EventV
 	 * Following methods do nothing, but sub-classes can override them at will to perform actions.
 	 */
 	//@{
-	void apply( const vgd::event::AxisEvent				* /*pAxisEvent*/			) {}
-	void apply( const vgd::event::HatEvent				* /*pHatEvent*/				) {}
-	void apply( const vgd::event::JoystickButtonEvent	* /*pJoystickButtonEvent*/	) {}
-	void apply( const vgd::event::KeyboardButtonEvent	* /*pKeyboardButtonEvent*/	) {}
-	void apply( const vgd::event::Location2Event		* /*pLocation2Event*/ 		) {}
-	void apply( const vgd::event::MouseButtonEvent		* /*pMouseButtonEvent*/		) {}
-	void apply( const vgd::event::Motion3Event			* /*pMotion3Event*/			) {}
-	void apply( const vgd::event::MouseWheelEvent		* /*pMouseWheelEvent*/		) {}
-	void apply( const vgd::event::SizeEvent				* /*pSizeEvent*/			) {}
-	void apply( const vgd::event::TimerEvent			* /*pTimerEvent*/			) {}
+	void apply( vgd::event::AxisEvent				* /*pAxisEvent*/			) {}
+	void apply( vgd::event::HatEvent				* /*pHatEvent*/				) {}
+	void apply( vgd::event::JoystickButtonEvent		* /*pJoystickButtonEvent*/	) {}
+	void apply( vgd::event::KeyboardButtonEvent		* /*pKeyboardButtonEvent*/	) {}
+	void apply( vgd::event::Location2Event			* /*pLocation2Event*/ 		) {}
+	void apply( vgd::event::MouseButtonEvent		* /*pMouseButtonEvent*/		) {}
+	void apply( vgd::event::Motion3Event			* /*pMotion3Event*/			) {}
+	void apply( vgd::event::MouseWheelEvent			* /*pMouseWheelEvent*/		) {}
+	void apply( vgd::event::SizeEvent				* /*pSizeEvent*/			) {}
+	void apply( vgd::event::TimerEvent				* /*pTimerEvent*/			) {}
 	//@}
 
 private:	

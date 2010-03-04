@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -73,6 +73,12 @@ struct TimerCallback
 	 */
 	VGD_API vgd::Shp< vgd::node::Node > getNode();
 
+	/**
+	 * @brief Sets the node reference stored by this callback
+	 *
+	 * @param node	the node to store
+	 */
+	VGD_API void setNode( vgd::Shp< vgd::node::Node > node );
 
 
 	/**
@@ -88,7 +94,7 @@ struct TimerCallback
 	 * @param event	the event that has triggered the callback execution
 	 * @return true to stop futur execution of this callback, false to continue.
 	 */
-	VGD_API const bool operator() ( const vgd::Shp< vgd::event::TimerEvent > event );
+	VGD_API const bool operator() ( vgd::Shp< vgd::event::TimerEvent > event );
 
 	/**
 	 * @brief Implements the user part of the timer callback
@@ -97,7 +103,7 @@ struct TimerCallback
 	 *
 	 * @remarks Overriddes this method to customize this callback.
 	 */
-	VGD_API virtual void apply( const vgd::Shp< vgd::event::TimerEvent > event )=0;
+	VGD_API virtual void apply( vgd::Shp< vgd::event::TimerEvent > event )=0;
 
 	/**
 	 * @brief Implements the user part of the first execution of the timer callback

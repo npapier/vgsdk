@@ -33,61 +33,61 @@ namespace processEvent
 
 
 
-void Dragger::apply( const vgd::event::AxisEvent * )
+void Dragger::apply( vgd::event::AxisEvent * )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::HatEvent * )
+void Dragger::apply( vgd::event::HatEvent * )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::JoystickButtonEvent * )
+void Dragger::apply( vgd::event::JoystickButtonEvent * )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::KeyboardButtonEvent * )
+void Dragger::apply( vgd::event::KeyboardButtonEvent * )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::Location2Event * )
+void Dragger::apply( vgd::event::Location2Event * )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::MouseButtonEvent * )
+void Dragger::apply( vgd::event::MouseButtonEvent * )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::Motion3Event * )
+void Dragger::apply( vgd::event::Motion3Event * )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::MouseWheelEvent * )
+void Dragger::apply( vgd::event::MouseWheelEvent * )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::SizeEvent *pSizeEvent )
+void Dragger::apply( vgd::event::SizeEvent *pSizeEvent )
 {
 }
 
 
 
-void Dragger::apply( const vgd::event::TimerEvent *pTimerEvent )
+void Dragger::apply( vgd::event::TimerEvent *pTimerEvent )
 {
 }
 
