@@ -114,19 +114,6 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Show
 
 
 
-/*std::ostream & operator << ( std::ostream & os, const vgd::node::Light::OnParameterType & on )
-{
-	switch( on )
-	{
-	case vgd::node::Light::ON:	os << "ON"; break;
-	default:					os << "unsupported"; break;
-	}
-
-	return os;
-}*/
-
-
-
 std::ostream & operator << ( std::ostream & os, const vgd::node::Primitive::Type & primitiveType )
 {
 	switch( primitiveType )
