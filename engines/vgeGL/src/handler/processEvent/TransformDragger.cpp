@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -74,7 +74,7 @@ void TransformDragger::setToDefaults()
 
 
 
-void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event )
+void TransformDragger::apply( vgd::event::Location2Event *pLocation2Event )
 {
 	using vgd::node::TransformDragger;
 
@@ -113,6 +113,9 @@ void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event 
 		// UPDATE TransformDragger.rotation
 		pDragger->setRotation(
 			pDragger->getRotation() * newRotO );
+
+		// Schedules a refresh
+		pLocation2Event->scheduleRefreshForced();
 	}
 	else if ( pDragger->getCurrentState() == TransformDragger::TRANSLATION_XY_ACTIVE )
 	{
@@ -134,6 +137,9 @@ void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event 
 			translation +=	(delta[1]/size[1]) * -oUpToDownO;
 
 			pDragger->setTranslation( pDragger->getTranslation() + translation );
+
+			// Schedules a refresh
+			pLocation2Event->scheduleRefreshForced();
 		}
 	}
 	else if ( pDragger->getCurrentState() == TransformDragger::TRANSLATION_Z_ACTIVE )
@@ -155,6 +161,9 @@ void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event 
 			translation = oNearToFarO * delta[1]/size[1] / 4.f;
 
 			pDragger->setTranslation( pDragger->getTranslation() + translation );
+
+			// Schedules a refresh
+			pLocation2Event->scheduleRefreshForced();			
 		}
 	}
 	else if ( pDragger->getCurrentState() == TransformDragger::ROTATION_Z_ACTIVE )
@@ -178,13 +187,16 @@ void TransformDragger::apply( const vgd::event::Location2Event *pLocation2Event 
 
 		//
 		pDragger->setRotation( pDragger->getRotation() * vgm::Rotation( axis, angle ) );
+
+		// Schedules a refresh
+		pLocation2Event->scheduleRefreshForced();
 	}
 	//else nothing
 }
 
 
 
-void TransformDragger::apply( const vgd::event::MouseWheelEvent *pMouseWheelEvent )
+void TransformDragger::apply( vgd::event::MouseWheelEvent *pMouseWheelEvent )
 {
 	using vgd::event::MouseWheelEvent;
 	using vgd::node::TransformDragger;
@@ -212,6 +224,9 @@ void TransformDragger::apply( const vgd::event::MouseWheelEvent *pMouseWheelEven
 				translation = oNearToFarO * static_cast<float>(pMouseWheelEvent->getDelta())/120.f / 50.f;
 
 				pDragger->setTranslation( pDragger->getTranslation() + translation );
+
+				// Schedules a refresh
+				pMouseWheelEvent->scheduleRefreshForced();
 			}
 		}
 	}

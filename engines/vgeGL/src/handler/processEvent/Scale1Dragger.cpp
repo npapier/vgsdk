@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -74,7 +74,7 @@ void Scale1Dragger::setToDefaults()
 
 
 
-void Scale1Dragger::apply( const vgd::event::Location2Event *pLocation2Event )
+void Scale1Dragger::apply( vgd::event::Location2Event *pLocation2Event )
 {
 	using vgd::node::Scale1Dragger;
 		
@@ -88,12 +88,15 @@ void Scale1Dragger::apply( const vgd::event::Location2Event *pLocation2Event )
 		vgd::event::Location2Event::Size				size	= pLocation2Event->getSize();				
 			
 		pDragger->setScale( pDragger->getScale() + (delta[0]/size[0]) );
+
+		// Schedules a refresh
+		pLocation2Event->scheduleRefreshForced();
 	}
 }
 
 
 
-void Scale1Dragger::apply( const vgd::event::MouseWheelEvent *pMouseWheelEvent )
+void Scale1Dragger::apply( vgd::event::MouseWheelEvent *pMouseWheelEvent )
 {
 	using vgd::event::MouseWheelEvent;
 	using vgd::node::Scale1Dragger;
@@ -116,6 +119,9 @@ void Scale1Dragger::apply( const vgd::event::MouseWheelEvent *pMouseWheelEvent )
 			{
 				pDragger->setScale( pDragger->getScale() - 0.5f );
 			}
+
+			// Schedules a refresh
+			pMouseWheelEvent->scheduleRefreshForced();
 		}
 	}
 }

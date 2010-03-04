@@ -8,7 +8,6 @@
 
 #include "vgeGL/handler/processEvent/Dragger.hpp"
 #include "vgeGL/handler/processEvent/ProcessEvent.hpp"
-#include "vgeGL/vgeGL.hpp"
 
 
 
@@ -22,22 +21,22 @@ namespace processEvent
 {
 
 /**
- * @brief Process event for a vgd::node::TransformDragger.
+ * @brief Process event for a vgd::node::TransformDragger
  */
 struct VGEGL_API TransformDragger :	public vgeGL::handler::processEvent::ProcessEvent,
-												public vgeGL::handler::processEvent::Dragger
+									public vgeGL::handler::processEvent::Dragger
 {
 	META_HANDLER_HPP( TransformDragger );
 
-	const TargetVector				getTargets()	const;
+	const TargetVector	getTargets()	const;
 	
-	void	apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode );
-	void	unapply( vge::engine::Engine *pEngine, vgd::node::Node *pNode );
+	void	apply( vge::engine::Engine *, vgd::node::Node * );
+	void	unapply( vge::engine::Engine *, vgd::node::Node * );
 
 	void	setToDefaults();
 	
-	void	apply( const vgd::event::Location2Event *pLocation2Event );
-	void	apply( const vgd::event::MouseWheelEvent *pMouseWheelEvent );
+	void	apply( vgd::event::Location2Event * );
+	void	apply( vgd::event::MouseWheelEvent * );
 };
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,6 @@
 #ifndef _VGD_EVENT_EVENT_HPP
 #define _VGD_EVENT_EVENT_HPP
 
-#include "vgd/vgd.hpp"
 #include "vgd/event/ButtonStateSet.hpp"
 
 
@@ -82,16 +81,36 @@ struct VGD_API Event
 
 
 
+	/**
+	 * @name Refresh policy
+	 */
+	//@{
+
+	/**
+	 * @brief Forces the refresh of the canvas.
+	 *
+	 * @param doIt		true to force the repaint of the canvas even if no changes have been made in the scene graph.
+	 *
+	 * @remarks The canvas is an event listener. So when it receives an event (see BasicManipulator::onEvent()), vgUI::Canvas::refreshForced() is called if the event is marked to schedule a refresh.
+	 */
+	void scheduleRefreshForced( const bool doIt = true );
+
+	/**
+	 * @brief Returns if the refresh of the canvas is desired.
+	 *
+	 * @return true if the refresh of the canvas is desired, false otherwise.
+	 */
+	const bool isScheduleRefreshForced() const;
+	//@}
+
+
 private:
-	/**
-	 * @brief	a pointer to the source of the event
-	 */
-	Source*			m_pSource;
-	
-	/**
-	 * @brief	a button state set
-	 */
-	ButtonStateSet	m_buttonStates;
+
+	Source*			m_pSource;					///< a pointer to the source of the event
+
+	ButtonStateSet	m_buttonStates;				///< a button state set
+
+	bool			m_scheduleRefreshForced;	///< true to force the refresh of the canvas. See scheduleRefreshForced()/isScheduleRefreshForced().
 };
 
 

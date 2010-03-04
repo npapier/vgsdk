@@ -5,6 +5,7 @@
 
 #include "vgeGL/event/SlideWindow.hpp"
 
+#include <vgd/event/TimerEvent.hpp>
 //#include <glm/glm.hpp>
 
 
@@ -55,7 +56,7 @@ void SlideWindow::add(	vgd::Shp< vgeGL::technique::MultiMain::Window > window,
 
 
 
-void SlideWindow::apply( const vgd::Shp< vgd::event::TimerEvent > event )
+void SlideWindow::apply( vgd::Shp< vgd::event::TimerEvent > event )
 {
 	// Computes normalized time
 	const float t = getTf();
@@ -71,6 +72,9 @@ void SlideWindow::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 			vgm::Rectangle2f( geom[0], geom[1], geom[2], geom[3] ) );
 		m_window[i].window->setVisible( true );
 	}
+
+	// Schedules a refresh
+	event->scheduleRefreshForced();
 }
 
 

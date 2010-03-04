@@ -8,7 +8,6 @@
 
 #include "vgeGL/handler/processEvent/Dragger.hpp"
 #include "vgeGL/handler/processEvent/ProcessEvent.hpp"
-#include "vgeGL/vgeGL.hpp"
 
 
 
@@ -22,17 +21,17 @@ namespace processEvent
 {
 
 /**
- * @brief Process event for a vgd::node::NullDragger.
+ * @brief Process event for a vgd::node::NullDragger
  */
 struct VGEGL_API NullDragger :	public vgeGL::handler::processEvent::ProcessEvent,
-											public vgeGL::handler::processEvent::Dragger
+								public vgeGL::handler::processEvent::Dragger
 {
 	META_HANDLER_HPP( NullDragger );
 
 	const TargetVector getTargets()	const;
 	
-	void	apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode );
-	void	unapply( vge::engine::Engine *pEngine, vgd::node::Node *pNode );
+	void	apply( vge::engine::Engine *, vgd::node::Node * );
+	void	unapply( vge::engine::Engine *, vgd::node::Node * );
 
 	void	setToDefaults();
 };
