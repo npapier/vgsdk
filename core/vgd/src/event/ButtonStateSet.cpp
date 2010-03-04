@@ -20,21 +20,21 @@ namespace event
 
 
 
-void ButtonStateSet::apply( const vgd::event::AxisEvent *pAxisEvent )
+void ButtonStateSet::apply( vgd::event::AxisEvent *pAxisEvent )
 {
 	assert( pAxisEvent != 0 );
 }
 
 
 
-void ButtonStateSet::apply( const vgd::event::HatEvent *pHatEvent )
+void ButtonStateSet::apply( vgd::event::HatEvent *pHatEvent )
 {
 	assert( pHatEvent != 0 );
 }
 
 
 
-void ButtonStateSet::apply( const vgd::event::JoystickButtonEvent *pJoystickButtonEvent )
+void ButtonStateSet::apply( vgd::event::JoystickButtonEvent *pJoystickButtonEvent )
 {
 	assert( pJoystickButtonEvent != 0 );
 
@@ -50,7 +50,7 @@ void ButtonStateSet::apply( const vgd::event::JoystickButtonEvent *pJoystickButt
 
 
 
-void ButtonStateSet::apply( const vgd::event::KeyboardButtonEvent *pKeyboardButtonEvent )
+void ButtonStateSet::apply( vgd::event::KeyboardButtonEvent *pKeyboardButtonEvent )
 {
 	assert( pKeyboardButtonEvent != 0 );
 
@@ -66,7 +66,7 @@ void ButtonStateSet::apply( const vgd::event::KeyboardButtonEvent *pKeyboardButt
 
 
 
-void ButtonStateSet::apply( const vgd::event::MouseButtonEvent *pMouseButtonEvent )
+void ButtonStateSet::apply( vgd::event::MouseButtonEvent *pMouseButtonEvent )
 {
 	assert( pMouseButtonEvent != 0 );
 
@@ -82,35 +82,35 @@ void ButtonStateSet::apply( const vgd::event::MouseButtonEvent *pMouseButtonEven
 
 
 
-void ButtonStateSet::apply( const vgd::event::Location2Event *  )
+void ButtonStateSet::apply( vgd::event::Location2Event *  )
 {
 	// nothing to do.
 }
 
 
 
-void ButtonStateSet::apply( const vgd::event::Motion3Event * )
+void ButtonStateSet::apply( vgd::event::Motion3Event * )
 {
 	// nothing to do.
 }
 
 
 
-void ButtonStateSet::apply( const vgd::event::MouseWheelEvent * )
+void ButtonStateSet::apply( vgd::event::MouseWheelEvent * )
 {
 	// nothing to do.
 }
 
 
 
-void ButtonStateSet::apply( const vgd::event::SizeEvent * )
+void ButtonStateSet::apply( vgd::event::SizeEvent * )
 {
 	// nothing to do.
 }
 
 
 
-void ButtonStateSet::apply( const vgd::event::TimerEvent * )
+void ButtonStateSet::apply( vgd::event::TimerEvent * )
 {
 	// nothing to do.
 }

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -39,16 +39,16 @@ struct VGD_API EventVisitor
 	 */
 	virtual ~EventVisitor();
 
-	virtual void apply( const vgd::event::AxisEvent				*pAxisEvent				)=0;
-	virtual void apply( const vgd::event::HatEvent				*pHatEvent				)=0;
-	virtual void apply( const vgd::event::JoystickButtonEvent	*pJoystickButtonEvent	)=0;
-	virtual void apply( const vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent	)=0;
-	virtual void apply( const vgd::event::Location2Event		*pLocation2Event 		)=0;
-	virtual void apply( const vgd::event::MouseButtonEvent		*pMouseButtonEvent		)=0;
-	virtual void apply( const vgd::event::Motion3Event			*pMotion3Event			)=0;
-	virtual void apply( const vgd::event::MouseWheelEvent		*pMouseWheelEvent		)=0;
-	virtual void apply( const vgd::event::SizeEvent				*pSizeEvent				)=0;
-	virtual void apply( const vgd::event::TimerEvent			*pTimerEvent			)=0;
+	virtual void apply( vgd::event::AxisEvent			*pAxisEvent				)=0;
+	virtual void apply( vgd::event::HatEvent			*pHatEvent				)=0;
+	virtual void apply( vgd::event::JoystickButtonEvent	*pJoystickButtonEvent	)=0;
+	virtual void apply( vgd::event::KeyboardButtonEvent	*pKeyboardButtonEvent	)=0;
+	virtual void apply( vgd::event::Location2Event		*pLocation2Event 		)=0;
+	virtual void apply( vgd::event::MouseButtonEvent	*pMouseButtonEvent		)=0;
+	virtual void apply( vgd::event::Motion3Event		*pMotion3Event			)=0;
+	virtual void apply( vgd::event::MouseWheelEvent		*pMouseWheelEvent		)=0;
+	virtual void apply( vgd::event::SizeEvent			*pSizeEvent				)=0;
+	virtual void apply( vgd::event::TimerEvent			*pTimerEvent			)=0;
 };
 
 

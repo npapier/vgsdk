@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -74,7 +74,14 @@ vgd::Shp< vgd::node::Node > TimerCallback::getNode()
 
 
 
-const bool TimerCallback::operator() ( const vgd::Shp< vgd::event::TimerEvent > event )
+void TimerCallback::setNode( vgd::Shp< vgd::node::Node > node )
+{
+	m_node = node;
+}
+
+
+
+const bool TimerCallback::operator() ( vgd::Shp< vgd::event::TimerEvent > event )
 {
 	if ( m_firstExecution.isInvalid() )
 	{
@@ -301,3 +308,4 @@ const uint TimerCallback::getTLoopCount() const
 } // namespace event
 
 } // namespace vgd
+
