@@ -380,6 +380,16 @@ void statusbarLogHandler( const gchar *log_domain, GLogLevelFlags log_level, con
 	statusbar->push( Glib::ustring(message) );
 }
 
+int openOpenCOLLADAFile( )
+{
+	Gtk::Dialog	dialog( "How to open COLLADA file?" );
+	dialog.set_keep_above( true );
+	dialog.add_button("Geometry", 0);
+	dialog.add_button("Material", 1);
+	dialog.add_button("Texture", 2);
+	return dialog.run();
+}
 
 
 } // namespace vgsdkViewerGtk
+
