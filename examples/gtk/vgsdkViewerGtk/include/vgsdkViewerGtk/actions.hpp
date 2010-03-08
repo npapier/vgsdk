@@ -125,7 +125,11 @@ void showHideProperties( Glib::RefPtr< Gtk::UIManager > uiManager, Gtk::Widget *
  */
 void statusbarLogHandler( const gchar *log_domain, GLogLevelFlags log_level, const gchar * message, gpointer user_data );
 
-
+/**
+ * @brief	Show a Dialog when a Collada file is open to select the open mode.
+ * @return the open mode (geometry, material, texture, all).
+ */
+int openOpenCOLLADAFile( );
 
 } // namespace vgsdkViewerGtk
 

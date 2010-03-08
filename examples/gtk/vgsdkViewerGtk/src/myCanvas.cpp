@@ -20,6 +20,10 @@
 #include <vgDebug/convenience.hpp>
 #include <vgObj/Loader.hpp>
 #include <vgTrian/Loader.hpp>
+#include <vgOpenCOLLADA/Loader.hpp>
+#include <vgOpenCOLLADA/convenience.hpp>
+
+#include "vgsdkViewerGtk/actions.hpp"
 
 #ifdef MY_WORK
 #include "vgsdkViewerGtk/my.hpp"
@@ -296,7 +300,7 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 	}
 	else if ( extension.compare( ".dae" ) == 0 )
 	{
-		bRetVal = loadCollada( pathfilename );
+		bRetVal = loadOpenCollada( pathfilename );
 	}
 	else if( extension.compare( ".obj" ) == 0 )
 	{
@@ -346,6 +350,41 @@ const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
 	return false;
 }
 
+const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename )
+{
+	// Load .dae
+	vgOpenCOLLADA::LOAD_TYPE loadType = vgOpenCOLLADA::LOAD_ALL;
+	int type = openOpenCOLLADAFile();
+	switch (type)
+	{
+		case 0: 
+		loadType = vgOpenCOLLADA::LOAD_GEOMETRY;
+		break;
+
+		case 1: 
+		loadType = vgOpenCOLLADA::LOAD_MATERIAL;
+		break;
+
+		case 2: 
+		loadType = vgOpenCOLLADA::LOAD_TEXTURE;
+		break;
+
+		default: 
+		loadType = vgOpenCOLLADA::LOAD_ALL;
+		break;
+	}
+	vgOpenCOLLADA::Loader loader(loadType);
+	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+	retVal = loader.load( pathfilename.c_str() );
+
+	if ( retVal.first )
+	{
+		// Setup scene
+		getScene()->addChild( retVal.second );
+	}
+
+	return retVal.first;
+}
 
 
 const bool myCanvas::loadObj( const Glib::ustring & pathfilename )
