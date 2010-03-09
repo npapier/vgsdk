@@ -95,6 +95,12 @@ void helpAbout( Gtk::Window * topLevel );
 void dragDataReceived( myCanvas * canvas, const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time );
 
 /**
+ * @brief	Show a Dialog when a Collada file is open to select the open mode.
+ * @return the open mode (geometry, material, texture, all).
+ */
+int openOpenCOLLADAFile( );
+
+/**
  * @brief	Updates the resolution of the given canvas.
  *
  * @param	canvas	a pointer to the canvas to update
@@ -126,10 +132,10 @@ void showHideProperties( Glib::RefPtr< Gtk::UIManager > uiManager, Gtk::Widget *
 void statusbarLogHandler( const gchar *log_domain, GLogLevelFlags log_level, const gchar * message, gpointer user_data );
 
 /**
- * @brief	Show a Dialog when a Collada file is open to select the open mode.
- * @return the open mode (geometry, material, texture, all).
+ * @brief	Configure user engine's settings
  */
-int openOpenCOLLADAFile( );
+void userSettings( Gtk::Window * toplevel, myCanvas * canvas );
+
 
 } // namespace vgsdkViewerGtk
 

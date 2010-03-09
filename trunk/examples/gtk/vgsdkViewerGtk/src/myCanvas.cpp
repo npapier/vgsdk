@@ -70,10 +70,10 @@ myCanvas::myCanvas()
 	// @todo
 
 	// Radeon 5870
-	lightModel->setShadow( LightModel::SHADOW_MAPPING_32UM );
+/*	lightModel->setShadow( LightModel::SHADOW_MAPPING_32UM );
 	lightModel->setShadowQuality( LightModel::VERY_HIGH );
 	lightModel->setShadowMapType( LightModel::FLOAT );
-	lightModel->setIlluminationInShadow( 0.4f );
+	lightModel->setIlluminationInShadow( 0.4f );*/
 
 	// END SHADOW configuration
 
