@@ -204,6 +204,10 @@
 			</type>
 		</of>
 
+		<sf name="samplingSize" doc="">
+			<type name="float" default="1.0"/>
+		</sf>
+		
 		<of name="shadowQuality" doc="Specifies the quality of the shadow computation">
 			<type name="enum">
 				<enum default="MEDIUM">
@@ -231,6 +235,10 @@
 
 		<sf name="illuminationInShadow" doc="value=[0,1] : 0 full attenuation in shadow, 1 no attenuation in shadow">
 			<type name="float" default="0.4f"></type>
+		</sf>
+
+		<sf name="useShadowSamplers" doc="True to use GLSL shadowSampler, false to use traditionnal texture sampler.">
+			<type name="bool" default="true"/>
 		</sf>
 	</node>
 

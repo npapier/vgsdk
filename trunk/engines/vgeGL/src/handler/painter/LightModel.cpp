@@ -96,18 +96,27 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	if ( isDefined )
 	{
 		// Updates GLSLState
+		// SHADOW
 		state.setShadowType( shadow );
+
+		// SAMPLING SIZE
+		vgd::node::LightModel::SamplingSizeValueType samplingSize = lightModel->getSamplingSize();
+		state.setSamplingSize( samplingSize );
+
+		// SHADOW QUALITY ?
+
+		// SHADOW MAP TYPE
+		vgd::node::LightModel::ShadowMapTypeValueType shadowMapType = lightModel->getShadowMapType();
+		state.setShadowMapType( shadowMapType );
+
+		// ILLUMINATION IN SHADOW
+		vgd::node::LightModel::IlluminationInShadowValueType illuminationInShadow = lightModel->getIlluminationInShadow();
+		state.setIlluminationInShadow( illuminationInShadow );
+
+		// USESHADOWSAMPLERS
+		vgd::node::LightModel::UseShadowSamplersValueType useShadowSamplers = lightModel->getUseShadowSamplers();
+		state.setShadowSamplerUsageEnabled( useShadowSamplers );
 	}
-
-	// SHADOW QUALITY ?
-
-	// SHADOW MAP TYPE
-	vgd::node::LightModel::ShadowMapTypeValueType shadowMapType = lightModel->getShadowMapType();
-	state.setShadowMapType( shadowMapType );
-
-	// ILLUMINATION IN SHADOW
-	vgd::node::LightModel::IlluminationInShadowValueType illuminationInShadow = lightModel->getIlluminationInShadow();
-	state.setIlluminationInShadow( illuminationInShadow );
 
 	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );

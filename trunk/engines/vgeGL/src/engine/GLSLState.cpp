@@ -116,8 +116,10 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 
 	// @todo others ( at this time default values for others are initialized by GLSLState::update() )
 	setShadowType( vgd::node::LightModel::DEFAULT_SHADOW );
+	setSamplingSize( 1.f );
 	setShadowMapType( vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE );
 	setIlluminationInShadow( 0.4f ); // @todo Adds const float DEFAULT_ILLUMINATIONINSHADOW in node
+	setShadowSamplerUsageEnabled(true); // @todo
 }
 
 
@@ -286,18 +288,48 @@ const uint GLSLState::getMaxTexture() const
 
 
 
-const uint GLSLState::getPrivateTextureIndex( const uint indexTexUnit ) const
+const uint GLSLState::getPrivateTexUnitIndex( const uint index ) const
 {
-	const uint retVal = (getMaxTexture()-1) - indexTexUnit;
+	const uint retVal = (getMaxTexture()-1) - index;
 	return retVal;
 }
 
 
 
-const std::string GLSLState::getPrivateTexture( const uint indexTexUnit ) const
+const std::string GLSLState::getPrivateTexUnit( const uint index ) const
 {
-	const uint retVal = getPrivateTextureIndex( indexTexUnit );
+	const uint retVal = getPrivateTexUnitIndex( index );
 	return vgd::basic::toString(retVal);
+}
+
+
+
+const uint GLSLState::getPrivateIndex( const uint privateTexUnitIndex )
+{
+	const uint retVal = (getMaxTexture()-1) - privateTexUnitIndex;
+	return retVal;
+}
+
+
+
+const std::string GLSLState::getPrivate( const uint privateTexUnitIndex )
+{
+	const uint retVal = getPrivateIndex( privateTexUnitIndex );
+	return vgd::basic::toString(retVal);
+}
+
+
+
+const bool GLSLState::isShadowSamplerUsageEnabled() const
+{
+	return m_isShadowSamplerEnabled;
+}
+
+
+
+void GLSLState::setShadowSamplerUsageEnabled( const bool enabled )
+{
+	m_isShadowSamplerEnabled = enabled;
 }
 
 

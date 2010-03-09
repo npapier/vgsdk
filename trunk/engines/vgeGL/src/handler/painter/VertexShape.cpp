@@ -584,9 +584,14 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 
 				if ( usage == vgd::node::Texture::SHADOW )
 				{
-//					const std::string privateUnit = pGLEngine->getGLSLState().getPrivateTexture(i);
-//					program->setUniform1i( "texMap2DShadow[" + vgd::basic::toString(internalUnit) + "]", unit );
-					program->setUniform1i( "texMap2D[" + strUnit + "]", unit );
+					if ( glslState.isShadowSamplerUsageEnabled() )
+					{
+						program->setUniform1i( "texMap2DShadow[" + glslState.getPrivate( unit ) + "]", unit );
+					}
+					else
+					{
+						program->setUniform1i( "texMap2D[" + strUnit + "]", unit );
+					}
 				}
 				else if ( usage == vgd::node::Texture::IMAGE )
 				{
