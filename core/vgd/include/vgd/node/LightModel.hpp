@@ -36,11 +36,16 @@ namespace node
  * - OFBool \c [twoSided] = false<br>
  *   Specifies whether one- or two-sided lighting calculations are done for polygons and triangles.<br>
  *<br>
- * - OFEnum \c [viewer] = AT_INFINITY<br>
- *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
+ * - SFFloat \c samplingSize = 1.0<br>
  *<br>
  * - OFEnum \c [shadowQuality] = MEDIUM<br>
  *   Specifies the quality of the shadow computation<br>
+ *<br>
+ * - OFEnum \c [viewer] = AT_INFINITY<br>
+ *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
+ *<br>
+ * - SFBool \c useShadowSamplers = true<br>
+ *   True to use GLSL shadowSampler, false to use traditionnal texture sampler.<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
  *   Sets the ambient RGBA intensity of the entire scene.<br>
@@ -230,86 +235,31 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field viewer
+	 * @name Accessors to field samplingSize
 	 */
 	//@{
 
 	/**
-	 * @brief Definition of symbolic values
+	 * @brief Type definition of the value contained by field named \c samplingSize.
 	 */
-	enum
-	{
-		AT_INFINITY = 268,	///< Specular reflections are computed from the origin of the eye coordinate system
-		AT_EYE = 269,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
-		DEFAULT_VIEWER = AT_INFINITY	///< Specular reflections are computed from the origin of the eye coordinate system
-	};
+	typedef float SamplingSizeValueType;
 
 	/**
-	 * @brief Type definition of the value contained by field named \c viewer.
+	 * @brief Type definition of the field named \c samplingSize
 	 */
-	struct ViewerValueType : public vgd::field::Enum
-	{
-		ViewerValueType()
-		{}
-
-		ViewerValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		ViewerValueType( const ViewerValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		ViewerValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 268 );
-			retVal.push_back( 269 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "AT_INFINITY" );
-			retVal.push_back( "AT_EYE" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c viewer
-	 */
-	typedef vgd::field::TOptionalField< vgd::field::Enum > FViewerType;
+	typedef vgd::field::TSingleField< SamplingSizeValueType > FSamplingSizeType;
 
 
 	/**
-	 * @brief Gets the value of field named \c viewer.
+	 * @brief Gets the value of field named \c samplingSize.
 	 */
-	const bool getViewer( ViewerValueType& value ) const;
+	const SamplingSizeValueType getSamplingSize() const;
 
 	/**
-	 * @brief Sets the value of field named \c viewer.
- 	 */
-	void setViewer( const ViewerValueType& value );
-
-	/**
-	 * @brief Erases the field named \c viewer.
+	 * @brief Sets the value of field named \c samplingSize.
 	 */
-	void eraseViewer();
+	void setSamplingSize( const SamplingSizeValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c viewer has been initialized.
-	 */
-	const bool hasViewer() const;
 	//@}
 
 
@@ -401,6 +351,121 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Tests if the value of field named \c shadowQuality has been initialized.
 	 */
 	const bool hasShadowQuality() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field viewer
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		AT_INFINITY = 268,	///< Specular reflections are computed from the origin of the eye coordinate system
+		AT_EYE = 269,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
+		DEFAULT_VIEWER = AT_INFINITY	///< Specular reflections are computed from the origin of the eye coordinate system
+	};
+
+	/**
+	 * @brief Type definition of the value contained by field named \c viewer.
+	 */
+	struct ViewerValueType : public vgd::field::Enum
+	{
+		ViewerValueType()
+		{}
+
+		ViewerValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ViewerValueType( const ViewerValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		ViewerValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 268 );
+			retVal.push_back( 269 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "AT_INFINITY" );
+			retVal.push_back( "AT_EYE" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c viewer
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FViewerType;
+
+
+	/**
+	 * @brief Gets the value of field named \c viewer.
+	 */
+	const bool getViewer( ViewerValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c viewer.
+ 	 */
+	void setViewer( const ViewerValueType& value );
+
+	/**
+	 * @brief Erases the field named \c viewer.
+	 */
+	void eraseViewer();
+
+	/**
+	 * @brief Tests if the value of field named \c viewer has been initialized.
+	 */
+	const bool hasViewer() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field useShadowSamplers
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c useShadowSamplers.
+	 */
+	typedef bool UseShadowSamplersValueType;
+
+	/**
+	 * @brief Type definition of the field named \c useShadowSamplers
+	 */
+	typedef vgd::field::TSingleField< UseShadowSamplersValueType > FUseShadowSamplersType;
+
+
+	/**
+	 * @brief Gets the value of field named \c useShadowSamplers.
+	 */
+	const UseShadowSamplersValueType getUseShadowSamplers() const;
+
+	/**
+	 * @brief Sets the value of field named \c useShadowSamplers.
+	 */
+	void setUseShadowSamplers( const UseShadowSamplersValueType value );
+
 	//@}
 
 
@@ -668,11 +733,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	static const std::string getFTwoSided( void );
 
 	/**
-	 * @brief Returns the name of field \c viewer.
+	 * @brief Returns the name of field \c samplingSize.
 	 *
-	 * @return the name of field \c viewer.
+	 * @return the name of field \c samplingSize.
 	 */
-	static const std::string getFViewer( void );
+	static const std::string getFSamplingSize( void );
 
 	/**
 	 * @brief Returns the name of field \c shadowQuality.
@@ -680,6 +745,20 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c shadowQuality.
 	 */
 	static const std::string getFShadowQuality( void );
+
+	/**
+	 * @brief Returns the name of field \c viewer.
+	 *
+	 * @return the name of field \c viewer.
+	 */
+	static const std::string getFViewer( void );
+
+	/**
+	 * @brief Returns the name of field \c useShadowSamplers.
+	 *
+	 * @return the name of field \c useShadowSamplers.
+	 */
+	static const std::string getFUseShadowSamplers( void );
 
 	/**
 	 * @brief Returns the name of field \c ambient.

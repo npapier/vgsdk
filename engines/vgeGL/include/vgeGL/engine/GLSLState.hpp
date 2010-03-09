@@ -365,15 +365,41 @@ struct GLSLState : public TBitSet< 11 >
 	/**
 	 * @brief Retrieves index of private texture unit.
 	 *
-	 * @param indexTexUnit		zero-based index to select private texture unit
+	 * @param index		zero-based index to select private texture unit
 	 *
 	 * @return The index of the desired texture unit
 	 *
 	 * @remarks Private texture units are used internally by vgSDK and should not be used directly by user.
 	 * @remarks Substract one to the first index to compute the index of the second private texture unit. And so on.
 	 */
-	const uint getPrivateTextureIndex( const uint indexTexUnit = 0 ) const;
-	const std::string getPrivateTexture( const uint indexTexUnit = 0 ) const;
+	const uint getPrivateTexUnitIndex( const uint index = 0 ) const;
+
+	/**
+	 * @brief Retrieves index of private texture unit.
+	 *
+	 * @param index		zero-based index to select private texture unit
+	 *
+	 * @return a string containing the index of the desired texture unit
+	 */
+	const std::string getPrivateTexUnit( const uint index = 0 ) const;
+
+	/**
+	 * @brief Inverse function of getPrivateTexUnitIndex()
+	 *
+	 * @param privateTexUnitIndex	index of a private texture unit
+	 *
+	 * @return the zero-based index.
+	 */
+	const uint getPrivateIndex( const uint privateTexUnitIndex = 0 );
+
+	/**
+	 * @brief Inverse function of getPrivateTexUnitIndex()
+	 *
+	 * @param privateTexUnitIndex	index of a private texture unit
+	 *
+	 * @return a string containing zero-based index.
+	 */
+	const std::string getPrivate( const uint privateTexUnitIndex = 0 );
 	//@}
 
 
@@ -390,6 +416,10 @@ struct GLSLState : public TBitSet< 11 >
 	 */
 	void setShadowType( const vgd::node::LightModel::ShadowValueType shadowType ) { m_lightModelShadow = shadowType; }
 
+	// @todo not here, because don't change generated shaders
+	void setSamplingSize( const float samplingSize )									{ m_samplingSize = samplingSize; }
+	const float getSamplingSize() const													{ return m_samplingSize; }
+
 	const vgd::node::LightModel::ShadowMapTypeValueType getShadowMapType() const		{ return m_shadowMapType; }
 	void setShadowMapType( const vgd::node::LightModel::ShadowMapTypeValueType type )	{ m_shadowMapType = type; }
 
@@ -399,16 +429,35 @@ struct GLSLState : public TBitSet< 11 >
 
 
 
+	/**
+	 * @brief Determines whether the shadow sampler usage is enabled.
+	 *
+	 * @return true if shadow sampler usage is enabled, false otherwise.
+	 */
+	const bool isShadowSamplerUsageEnabled() const;
+
+	/**
+	 * @brief Enables or disables the shadow sampler usage depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the shadow sampler usage must be enabled, false otherwise
+	 */
+	void setShadowSamplerUsageEnabled( const bool enabled = true );
+
+	
+
 private:
 	vgd::node::LightModel::ShadowValueType			m_lightModelShadow;		///< Last encountered value of LightModel.shadow field
+	float											m_samplingSize;			///< @todo doc
 	vgd::node::LightModel::ShadowMapTypeValueType	m_shadowMapType;		///< @todo doc
 	float											m_illuminationInShadow;	///< @todo doc
+	bool											m_isShadowSamplerEnabled;		//< true if engine must used shadow sampler, false otherwise
 
 	std::vector< vgd::Shp< LightState > >		m_light;		///< array of light state. The zero-based index selects the light unit.
 	uint										m_numLight;		///< number of light state in all light units.
 
 	std::vector< vgd::Shp< TexUnitState > >		m_texture;		///< array of texture state. The zero-based index selects the texture unit.
 	uint										m_numTexture;	///< number of texture state in all light units.
+
 
 	static const std::string m_indexString[];	///< array containing the string representation for BitSetIndexType.
 };

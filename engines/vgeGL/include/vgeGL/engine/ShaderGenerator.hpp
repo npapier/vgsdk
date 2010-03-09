@@ -240,10 +240,10 @@ struct GLSLHelpers
 
 
 
-	static const std::string generate_shadowFactorComputation( vgd::node::LightModel::ShadowValueType shadowType )
+	static const std::string generate_shadowFactorComputation( const vgd::node::LightModel::ShadowValueType shadowType, const float samplingSize )
 	{
-		std::string retVal;
-		
+		std::string retVal = "const float samplingSize = " + boost::lexical_cast<std::string>( samplingSize ) + ";\n";
+
 		using vgd::node::LightModel;		
 		if ( shadowType == LightModel::SHADOW_OFF )
 		{
@@ -257,96 +257,112 @@ struct GLSLHelpers
 		else if ( shadowType == LightModel::SHADOW_MAPPING_4U )
 		{
 			// 4X uniform
-			retVal =	"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(-0.5, -0.5) );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, -0.5) );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(-0.5, 0.5) );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, 0.5) );\n"
+			retVal +=	"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(-0.5, -0.5) * samplingSize );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, -0.5) * samplingSize );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(-0.5, 0.5) * samplingSize );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, 0.5) * samplingSize );\n"
 						"shadowFactor *= 0.25;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_4DM )
 		{
 			// 4X dither
 			// with modulo
-			retVal =	"// use modulo to vary the sample pattern\n"
+			retVal +=	"// use modulo to vary the sample pattern\n"
 						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(-1.5, 1.5) + o );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, 1.5) + o );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(-1.5, -0.5) + o );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, -0.5) + o );\n"
+						"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(-1.5, 1.5) * samplingSize  + o );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, 1.5) * samplingSize  + o );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(-1.5, -0.5) * samplingSize  + o );\n"
+						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, -0.5) * samplingSize  + o );\n"
 						"shadowFactor *= 0.25;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_16U )
 		{
 			// 16X uniform
-			retVal =	"shadowFactor = 0.0;\n"
+			retVal +=	"shadowFactor = 0.0;\n"
 						"float x, y;\n"
 						"for( y = -1.5; y <= 1.5; y += 1.0 )\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 )\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) );\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize );\n"
 						"shadowFactor /= 16.0;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_16UM )
 		{
 			// 16X uniform
 			// with modulo
-			retVal =	"// use modulo to vary the sample pattern\n"
+			retVal +=	"// use modulo to vary the sample pattern\n"
 						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
 						"shadowFactor = 0.0;\n"
 						"float x, y;\n"
 						"for( y = -1.5; y <= 1.5; y += 1.0 )\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 )\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) + o);\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize  + o);\n"
 						"shadowFactor /= 16.0;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_32U )
 		{
 			// 32X uniform
-			retVal =	"shadowFactor = 0.0;\n"
+			retVal +=	"shadowFactor = 0.0;\n"
 						"float x, y;\n"
-						"float coeff = 2.0;\n"
+						"float coeff = sqrt(2.0);\n"
+						"int count = 0;\n"
 						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) );\n"
-						"shadowFactor /= 16.0 * pow(coeff,2.0);\n";
+						"	{\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize );\n"
+						"		count++;\n"
+						"	}\n"						
+						"shadowFactor /= count;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_32UM )
 		{
 			// 32X dither
 			// with modulo
-			retVal =	"// use modulo to vary the sample pattern\n"
+			retVal +=	"// use modulo to vary the sample pattern\n"
 						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
 						"shadowFactor = 0.0;\n"
 						"float x, y;\n"
-						"float coeff = 2.0;\n"
+						"float coeff = sqrt(2.0);\n"
+						"int count = 0;\n"
 						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) + o);\n"
-						"shadowFactor /= 16.0 * pow(coeff,2.0);\n";
+						"	{\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize + o );\n"
+						"		count++;\n"
+						"	}\n"						
+						"shadowFactor /= count;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_64U )
 		{
 			// 64X uniform
-			retVal =	"shadowFactor = 0.0;\n"
+			retVal +=	"shadowFactor = 0.0;\n"
 						"float x, y;\n"
-						"float coeff = 4.0;\n"
+						"float coeff = 2.0;\n"
+						"int count = 0;\n"
 						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) );\n"
-						"shadowFactor /= 16.0 * pow(coeff,2.0);\n";
+						"	{\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize );\n"
+						"		count++;\n"
+						"	}\n"						
+						"shadowFactor /= count;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_64UM )
 		{
 			// 64X dither
 			// with modulo
-			retVal =	"// use modulo to vary the sample pattern\n"
+			retVal +=	"// use modulo to vary the sample pattern\n"
 						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
 						"shadowFactor = 0.0;\n"
 						"float x, y;\n"
-						"float coeff = 4.0;\n"
+						"float coeff = 2.0;\n"
+						"int count = 0;\n"
 						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) + o);\n"
-						"shadowFactor /= 16.0 * pow(coeff,2.0);\n";
+						"	{\n"
+						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize + o );\n"
+						"		count++;\n"
+						"	}\n"						
+						"shadowFactor /= count;\n";
 		}		
 		else
 		{
@@ -363,17 +379,21 @@ struct GLSLHelpers
 		using vgd::node::LightModel;
 
 		static LightModel::ShadowValueType	shadowType		= LightModel::SHADOW_OFF;
-		static std::string					shadowString	= generate_shadowFactorComputation(shadowType);
+		static float						samplingSize	= 1.f;
+		static std::string					shadowString	= generate_shadowFactorComputation( LightModel::SHADOW_OFF, 1.f );
 
 		static std::string					retValFront;
 		static std::string					retValBack;
 
 		// Updates shadow factor computation string
-		LightModel::ShadowValueType incomingShadowType = state.getShadowType();
-		if ( shadowType != incomingShadowType )
+		LightModel::ShadowValueType	incomingShadowType		= state.getShadowType();
+		const float					incomingSamplingSize	= state.getSamplingSize();
+		if (	(incomingShadowType != shadowType ) ||
+				(incomingSamplingSize != samplingSize )	)
 		{
 			shadowType = incomingShadowType;
-			shadowString = generate_shadowFactorComputation( shadowType );
+			samplingSize = incomingSamplingSize;
+			shadowString = generate_shadowFactorComputation( shadowType, samplingSize );
 		}
 
 		//
@@ -466,12 +486,23 @@ struct GLSLHelpers
 
 		//if ( castShadow )
 		//{
-			std::string spotLightFrontShadow =
+			std::string spotLightFrontShadow;
+			if ( state.isShadowSamplerUsageEnabled() )
+			{
+				spotLightFrontShadow =
+				"\n"
+				"void spotLightFrontShadow( int i, sampler2DShadow texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
+				"{\n"
+				"	float shadowFactor;\n";			
+			}
+			else
+			{
+				spotLightFrontShadow =
 				"\n"
 				"void spotLightFrontShadow( int i, sampler2D texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
-//				"void spotLightFrontShadow( int i, sampler2DShadow texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
 				"{\n"
-				"	float shadowFactor;\n";
+				"	float shadowFactor;\n";			
+			}
 
 			spotLightFrontShadow += shadowString;
 			spotLightFrontShadow +=
@@ -559,14 +590,22 @@ struct GLSLHelpers
 							if (	state.getShadowType() != vgd::node::LightModel::SHADOW_OFF && 
 									currentLight->getCastShadow() )
 							{
-								const std::string texCoordShadowIndexStr	= vgd::basic::toString(lightCastingShadowCount);
-								const std::string texMapIndexStr			= state.getPrivateTexture(lightCastingShadowCount);
+								const std::string	texCoordShadowIndexStr	= vgd::basic::toString(lightCastingShadowCount);
+								const std::string	texMapIndexStr			= state.getPrivateTexUnit(lightCastingShadowCount);
+								const std::string&	texMapShadowIndexStr	= texCoordShadowIndexStr;
 								++lightCastingShadowCount;
 
-								flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2D[" + texMapIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
-								flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2D[" +  texMapIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
-//								flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + iStr + "], mgl_TexCoordShadow[" + iStr + "], ecPosition3, normal, eye );\n";
-//								flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + iStr + "], mgl_TexCoordShadow[" + iStr + "], ecPosition3, normal, eye );\n";
+								if ( state.isShadowSamplerUsageEnabled() )
+								{
+									flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + texMapShadowIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
+									flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + texMapShadowIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
+								}
+								else
+								{
+									flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2D[" + texMapIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
+									flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2D[" +  texMapIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
+								}
+
 								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
 							}
 							else
@@ -648,7 +687,7 @@ struct GLSLHelpers
 				"		accumColor	=	gl_FrontLightModelProduct.sceneColor + \n"
 				"						accumAmbient * gl_FrontMaterial.ambient +\n"
 				"						accumDiffuse * gl_FrontMaterial.diffuse;\n"
-				"		accumSecondaryColor	= accumSpecular * gl_FrontMaterial.specular;\n"
+				"		accumSecondaryColor	= accumSpecular * gl_FrontMaterial.specular;\n"  // GL_SEPARATE_SPECULAR_COLOR
 				"\n\n";
 
 			const std::string backColorUpdating =
@@ -950,35 +989,48 @@ struct GLSLHelpers
 			}
 		}
 
-		if ( sampler2DCount + sampler2DShadowCount > 0 )
+		// Updates samplers declarations
+		if ( state.isShadowSamplerUsageEnabled() )
 		{
-			// @todo OPTME: sparse array => consume more memory
-			decl += "uniform sampler2D texMap2D[";
-			decl += vgd::basic::toString(state.getMaxTexture());
-			decl += "];\n";
+			if ( sampler2DCount > 0 )
+			{
+				decl += "uniform sampler2D texMap2D[" + vgd::basic::toString(sampler2DCount) + "];\n";
+			}
+
+			if ( sampler2DShadowCount > 0 )
+			{
+				//decl += "uniform sampler2D texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
+				decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
+			}		
+		}
+		else
+		{
+			if ( sampler2DCount + sampler2DShadowCount > 0 )
+			{
+				// @todo OPTME: sparse array => consume more memory
+				decl += "uniform sampler2D texMap2D[";
+				decl += vgd::basic::toString(state.getMaxTexture());
+				decl += "];\n";
+			}		
 		}
 
-/*		if ( sampler2DCount > 0 )
-		{
-			decl += "uniform sampler2D texMap2D[" + vgd::basic::toString(sampler2DCount) + "];\n";
-		}*/
-
-/*		if ( sampler2DShadowCount > 0 )
-		{
-			decl += "uniform sampler2D texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
-//			decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
-		}*/
-
+		// Updates code for lookupShadowMap()
 		if ( sampler2DShadowCount > 0 )
 		{
-//			decl += "uniform sampler2D texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
-//			decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
-
-			code +=
-			"\n"
-			"float lookupShadowMap( sampler2D map, vec4 coord, vec2 offset )\n"
-//			"float lookupShadowMap( sampler2DShadow map, vec4 coord, vec2 offset )\n"
-			"{\n";
+			if ( state.isShadowSamplerUsageEnabled() )
+			{
+				code +=
+				"\n"
+				"float lookupShadowMap( sampler2DShadow map, vec4 coord, vec2 offset )\n"
+				"{\n";
+			}
+			else
+			{
+				code +=
+				"\n"
+				"float lookupShadowMap( sampler2D map, vec4 coord, vec2 offset )\n"
+				"{\n";
+			}
 
 			const float illuminationInShadow = state.getIlluminationInShadow();
 			code += 
@@ -1008,40 +1060,54 @@ struct GLSLHelpers
 				}
 			}
 
-			code +=
-			"\n"
-			"	vec4 newCoord = vec4(coord.xy + (offset / mapSize * coord.w), coord.z, coord.w );\n"
-//
-			"	vec4 newCoordWDivided = newCoord/newCoord.w;\n"
-// Used to lower moiré pattern and self-shadowing
-//:)			"	newCoordWDivided.z += 0.00005;\n" // ATI
-//:)			"	newCoordWDivided.z += 0.0005;\n" // NV
-			//"	newCoordWDivided.z += 0.00005;\n" // ATI
+			if ( state.isShadowSamplerUsageEnabled() )
+			{
+				code +=
+				"\n"
+				"	vec4 newCoord = vec4(coord.xy + (offset / mapSize * coord.w), coord.z, coord.w );\n"
+				"	float depth = shadow2DProj( map, newCoord ).r;\n"
+				"\n"
+				"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
+				"}\n"
+				"\n";
+			}
+			else
+			{
+				code +=
+				"\n"
+				"	vec4 newCoord = vec4(coord.xy + (offset / mapSize * coord.w), coord.z, coord.w );\n"
+	//
+				"	vec4 newCoordWDivided = newCoord/newCoord.w;\n"
+	// Used to lower moiré pattern and self-shadowing
+	//:)			"	newCoordWDivided.z += 0.00005;\n" // ATI
+	//:)			"	newCoordWDivided.z += 0.0005;\n" // NV
+				//"	newCoordWDivided.z += 0.00005;\n" // ATI
 
-//			"	newCoordWDivided.z -= 0.0005;\n" // ATI(ok), NV (nok) ?
-//			"	newCoordWDivided.z += 0.0005;\n" // ATI ?, NV ?
+	//			"	newCoordWDivided.z -= 0.0005;\n" // ATI(ok), NV (nok) ?
+	//			"	newCoordWDivided.z += 0.0005;\n" // ATI ?, NV ?
 
-			"	float distanceFromLight = texture2DProj( map, newCoord ).z;\n"
-//			"	float distanceFromLight = texture2D( map, newCoordWDivided.st ).z;\n"
-			"	float shadow;\n"
-//			"	float shadow = 1.0;\n"
-			"	if ( coord.w > 0.0 )\n"
-			"	{\n"
-			"	shadow = distanceFromLight < newCoordWDivided.z ? illuminationInShadow : 1.0;\n"
-			"	}\n"
-			"	else\n"
-			"	{\n"
-			"		shadow = 1.0;\n"
-			"	}\n"
-			"	return shadow;\n"
-			"}\n"
-			"\n";
-//
-/*			"	float depth = shadow2DProj( map, newCoord ).r;\n"
-			"\n"
-			"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
-			"}\n"
-			"\n";*/
+				"	float distanceFromLight = texture2DProj( map, newCoord ).z;\n"
+	//			"	float distanceFromLight = texture2D( map, newCoordWDivided.st ).z;\n"
+				"	float shadow;\n"
+	//			"	float shadow = 1.0;\n"
+				"	if ( coord.w > 0.0 )\n"
+				"	{\n"
+				"	shadow = distanceFromLight < newCoordWDivided.z ? illuminationInShadow : 1.0;\n"
+				"	}\n"
+				"	else\n"
+				"	{\n"
+				"		shadow = 1.0;\n"
+				"	}\n"
+				"	return shadow;\n"
+				"}\n"
+				"\n";
+	//
+	/*			"	float depth = shadow2DProj( map, newCoord ).r;\n"
+				"\n"
+				"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
+				"}\n"
+				"\n";*/
+			}
 		}
 
 		return std::make_pair(decl, code);

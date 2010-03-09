@@ -53,8 +53,10 @@ LightModel::LightModel( const std::string nodeName ) :
 	addField( new FShadowMapTypeType(getFShadowMapType()) );
 	addField( new FIlluminationInShadowType(getFIlluminationInShadow()) );
 	addField( new FTwoSidedType(getFTwoSided()) );
-	addField( new FViewerType(getFViewer()) );
+	addField( new FSamplingSizeType(getFSamplingSize()) );
 	addField( new FShadowQualityType(getFShadowQuality()) );
+	addField( new FViewerType(getFViewer()) );
+	addField( new FUseShadowSamplersType(getFUseShadowSamplers()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FModelType(getFModel()) );
 	addField( new FShadowType(getFShadow()) );
@@ -70,6 +72,8 @@ void LightModel::setToDefaults( void )
 	SingleAttribute::setToDefaults();
 	setShadowMapType( INT16 );
 	setIlluminationInShadow( 0.4f );
+	setSamplingSize( 1.0 );
+	setUseShadowSamplers( true );
 }
 
 
@@ -78,8 +82,8 @@ void LightModel::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
 	setTwoSided( false );
-	setViewer( AT_INFINITY );
 	setShadowQuality( MEDIUM );
+	setViewer( AT_INFINITY );
 	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setModel( STANDARD_PER_VERTEX );
 	setShadow( SHADOW_OFF );
@@ -145,30 +149,17 @@ const bool LightModel::hasTwoSided() const
 
 
 
-// Viewer
-const bool LightModel::getViewer( ViewerValueType& value ) const
+// SamplingSize
+const LightModel::SamplingSizeValueType LightModel::getSamplingSize() const
 {
-	return getFieldRO<FViewerType>(getFViewer())->getValue( value );
+	return getFieldRO<FSamplingSizeType>(getFSamplingSize())->getValue();
 }
 
 
 
-void LightModel::setViewer( const ViewerValueType& value )
+void LightModel::setSamplingSize( const SamplingSizeValueType value )
 {
-	getFieldRW<FViewerType>(getFViewer())->setValue( value );
-}
-
-
-
-void LightModel::eraseViewer()
-{
-	getFieldRW<FViewerType>(getFViewer())->eraseValue();
-}
-
-
-const bool LightModel::hasViewer() const
-{
-	return getFieldRO<FViewerType>(getFViewer())->hasValue();
+	getFieldRW<FSamplingSizeType>(getFSamplingSize())->setValue( value );
 }
 
 
@@ -197,6 +188,49 @@ void LightModel::eraseShadowQuality()
 const bool LightModel::hasShadowQuality() const
 {
 	return getFieldRO<FShadowQualityType>(getFShadowQuality())->hasValue();
+}
+
+
+
+// Viewer
+const bool LightModel::getViewer( ViewerValueType& value ) const
+{
+	return getFieldRO<FViewerType>(getFViewer())->getValue( value );
+}
+
+
+
+void LightModel::setViewer( const ViewerValueType& value )
+{
+	getFieldRW<FViewerType>(getFViewer())->setValue( value );
+}
+
+
+
+void LightModel::eraseViewer()
+{
+	getFieldRW<FViewerType>(getFViewer())->eraseValue();
+}
+
+
+const bool LightModel::hasViewer() const
+{
+	return getFieldRO<FViewerType>(getFViewer())->hasValue();
+}
+
+
+
+// UseShadowSamplers
+const LightModel::UseShadowSamplersValueType LightModel::getUseShadowSamplers() const
+{
+	return getFieldRO<FUseShadowSamplersType>(getFUseShadowSamplers())->getValue();
+}
+
+
+
+void LightModel::setUseShadowSamplers( const UseShadowSamplersValueType value )
+{
+	getFieldRW<FUseShadowSamplersType>(getFUseShadowSamplers())->setValue( value );
 }
 
 
@@ -307,9 +341,9 @@ const std::string LightModel::getFTwoSided( void )
 
 
 
-const std::string LightModel::getFViewer( void )
+const std::string LightModel::getFSamplingSize( void )
 {
-	return "f_viewer";
+	return "f_samplingSize";
 }
 
 
@@ -317,6 +351,20 @@ const std::string LightModel::getFViewer( void )
 const std::string LightModel::getFShadowQuality( void )
 {
 	return "f_shadowQuality";
+}
+
+
+
+const std::string LightModel::getFViewer( void )
+{
+	return "f_viewer";
+}
+
+
+
+const std::string LightModel::getFUseShadowSamplers( void )
+{
+	return "f_useShadowSamplers";
 }
 
 
