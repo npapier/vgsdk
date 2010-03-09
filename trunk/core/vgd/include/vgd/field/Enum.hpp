@@ -115,6 +115,13 @@ struct VGD_API Enum
 
 
 	/**
+	 * @brief	Retrieves the enumeration value for the given string.
+	 *
+	 * @return	an enumeration for the given value, cab be invalid
+	 */
+	const Enum fromString( const std::string & str ) const;
+
+	/**
 	 * @brief Returns a vector containing all integer values (and theirs literal representation) allowed to construct this object.
 	 */
 	const std::vector< std::pair< int, std::string> > valuesAndStrings() const;

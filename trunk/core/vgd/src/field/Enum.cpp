@@ -112,6 +112,25 @@ const std::string Enum::str() const
 
 
 
+const Enum Enum::fromString( const std::string & str ) const
+{
+	typedef std::vector< std::pair< int, std::string> > PairContainer;
+	
+	const PairContainer	pairs = valuesAndStrings();
+
+	for( PairContainer::const_iterator i = pairs.begin(); i != pairs.end(); ++i )
+	{
+		if( i->second == str )
+		{
+			return Enum(i->first);
+		}
+	}
+
+	return Enum();
+}
+
+
+
 const std::vector< std::pair< int, std::string> > Enum::valuesAndStrings() const
 {
 	std::vector< std::pair< int, std::string> > retVal;
