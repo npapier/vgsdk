@@ -55,24 +55,32 @@ myCanvas::myCanvas()
 	lightModel->setViewer( LightModel::AT_EYE );
 
 	// SHADOW configuration
-	lightModel->setShadow( LightModel::DEFAULT_SHADOWQUALITY );
+
+	// NV
+	lightModel->setUseShadowSamplers(true);
+
+	// ATI
+	// lightModel->setUseShadowSamplers(false);
 
 	// no shadow
 	/*lightModel->setShadow( LightModel::SHADOW_OFF );*/
 
 	// basic shadow (compatible with OpenGL 2.x, i.e. NVidia/GeForce 7).
-	/*lightModel->setShadow( LightModel::SHADOW_MAPPING );
+	/*lightModel->setShadow( LightModel::SHADOW_MAPPING_4DM );
 	lightModel->setShadowQuality( LightModel::MEDIUM );
 	lightModel->setShadowMapType( LightModel::INT32 );
-	// lightModel->setIlluminationInShadow( 0.4f );*/
+	lightModel->setIlluminationInShadow( 0.4f );*/
 
 	// GeForce 8
-	// @todo
+	lightModel->setShadow( LightModel::SHADOW_MAPPING_16UM );
+	lightModel->setShadowQuality( LightModel::MEDIUM );
+	lightModel->setShadowMapType( LightModel::INT32 );
+	lightModel->setIlluminationInShadow( 0.4f );
 
 	// Radeon 5870
 /*	lightModel->setShadow( LightModel::SHADOW_MAPPING_32UM );
-	lightModel->setShadowQuality( LightModel::VERY_HIGH );
-	lightModel->setShadowMapType( LightModel::FLOAT );
+	lightModel->setShadowQuality( LightModel::HIGH );
+	lightModel->setShadowMapType( LightModel::INT32 ); // FLOAT ?
 	lightModel->setIlluminationInShadow( 0.4f );*/
 
 	// END SHADOW configuration
@@ -100,8 +108,8 @@ myCanvas::myCanvas()
 	}
 
 	// Configures engine
-	// getGLEngine()->setDisplayListEnabled( false );
-	//setDebugOverlay(true);
+	// getGLEngine()->setDisplayListEnabled( true );
+	// setDebugOverlay(true);
 }
 
 
