@@ -349,7 +349,7 @@ std::ostream & operator << ( std::ostream & os, const vgm::Vector< T, N > & vect
 		for( uint i = 0; i < vector.getSize(); ++i )
 		{
 			os << vector[i];
-			if( i != vector.getSize() - 1 )
+			if( i != vector.getDim() - 1 )
 			{
 				os << ", ";
 			}
