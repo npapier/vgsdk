@@ -26,6 +26,7 @@
 
 #include <vgDebug/convenience.hpp>
 #include <vgGTK/ResolutionDialog.hpp>
+#include <vgGTK/engine/UserSettings.hpp>
 
 #include "vgsdkViewerGtk/myCanvas.hpp"
 
@@ -373,13 +374,6 @@ void dragDataReceived( myCanvas * canvas, const Glib::RefPtr<Gdk::DragContext>& 
 
 
 
-void statusbarLogHandler( const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data )
-{
-	Gtk::Statusbar		* statusbar( reinterpret_cast<Gtk::Statusbar *>(user_data) );
-
-	statusbar->push( Glib::ustring(message) );
-}
-
 int openOpenCOLLADAFile( )
 {
 	Gtk::Dialog	dialog( "How to open COLLADA file?" );
@@ -389,6 +383,39 @@ int openOpenCOLLADAFile( )
 	dialog.add_button("Texture", 2);
 	return dialog.run();
 }
+
+
+
+void statusbarLogHandler( const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data )
+{
+	Gtk::Statusbar		* statusbar( reinterpret_cast<Gtk::Statusbar *>(user_data) );
+
+	statusbar->push( Glib::ustring(message) );
+}
+
+
+
+void userSettings( Gtk::Window * toplevel, myCanvas * canvas )
+{
+	Gtk::Dialog					dialog;
+	vgGTK::engine::UserSettings	userSettings;
+
+	userSettings.set_border_width( 12 );
+	userSettings.set( vge::engine::UserSettings(*canvas) );
+
+	dialog.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+	dialog.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+	dialog.set_title( "User Settings" );
+	dialog.set_transient_for( *toplevel );
+	dialog.get_vbox()->add( userSettings );	
+	
+	dialog.show_all();
+	if( dialog.run() == Gtk::RESPONSE_OK )
+	{
+		userSettings.get().apply( *canvas );
+	}
+}
+
 
 
 } // namespace vgsdkViewerGtk

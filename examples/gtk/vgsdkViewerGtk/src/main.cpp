@@ -28,7 +28,6 @@
 
 
 
-
 /*bool myRecentFilter( const Gtk::RecentFilter::Info& filter_info )
 {
 	const Glib::ustring							applicationName	= Glib::get_application_name();
@@ -76,7 +75,7 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Glib::RefPtr< Gtk::UI
 			Gtk::Action::create("SetResolution", vgsdkViewerGtk::stock::RESOLUTION, "Set Resolution"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::setResolution), canvas) );
 	actions->add(
-			Gtk::ToggleAction::create("Properties", Gtk::Stock::PROPERTIES, "Properties"),
+			Gtk::ToggleAction::create("Properties", Gtk::Stock::PROPERTIES),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::showHideProperties), uiManager, properties, false) );
 	actions->add(
 			Gtk::RadioAction::create(viewModeGroup, "SingleView", vgsdkViewerGtk::stock::SINGLE_VIEW, "Single View"),
@@ -96,6 +95,10 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Glib::RefPtr< Gtk::UI
 	actions->add(
 			Gtk::RadioAction::create(manipulationBindingGroup, "MouseOnlyManipulation", "Mouse Only Manipulation"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::settingManipulationBinding), canvas, 2) );
+
+	actions->add(
+			Gtk::Action::create("UserSettings", Gtk::Stock::PROPERTIES, "User Settings"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::userSettings), topLevel, canvas) );
 
 	actions->add( Gtk::Action::create("Help", "_Help") );
 	actions->add(
@@ -133,6 +136,8 @@ const Glib::ustring & createDefaultUI()
 		"    <menu action='Settings'>"
 		"      <menuitem action='MouseOnlyManipulation'/>"
 		"      <menuitem action='MouseAndKeyboardManipulation'/>"
+		"      <separator/>"
+		"      <menuitem action='UserSettings'/>"
 		"    </menu>"
 		"    <menu action='Help'>"
 		"      <menuitem action='About'/>"
@@ -144,6 +149,7 @@ const Glib::ustring & createDefaultUI()
 		"    <toolitem action='Add'/>"
 		"    <separator/>"
 		"    <toolitem action='Properties'/>"
+		"    <toolitem action='UserSettings'/>"
 		"    <separator/>"
 		"    <toolitem action='ViewAll'/>"
 		"    <toolitem action='FullScreen'/>"
