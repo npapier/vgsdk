@@ -1035,8 +1035,10 @@ struct GLSLHelpers
 			const float illuminationInShadow = state.getIlluminationInShadow();
 			code += 
 			"	const float illuminationInShadow = " + boost::lexical_cast<std::string>(illuminationInShadow) + ";\n"; // @todo should be a uniform param
-	
-			if ( isGL_VERSION_3_0() )
+
+			if ( false )
+			// @todo FIXME : On NVidia GF8800 => 0(19) : error C1115: unable to find compatible overloaded function "textureSize(sampler2DShadow, int)"
+			// if ( isGL_VERSION_3_0() )
 			{
 				code +=
 			"	vec2 mapSize = vec2( textureSize( map, 0) );\n"; // @todo mapSize*samplingSize, samplingSize should be a param of LightModel
