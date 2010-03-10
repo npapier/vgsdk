@@ -536,8 +536,8 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			glCullFace( GL_FRONT );
 			engine->disregardIfIsA< vgd::node::CullFace >();
 
-//			glPolygonOffset( 6.f, 16.f );
-//			glEnable( GL_POLYGON_OFFSET_FILL );
+			glPolygonOffset( 4.f, 16.f );
+			glEnable( GL_POLYGON_OFFSET_FILL );
 
 			engine->disregardIfIsAKindOf<vgd::node::Light>();
 
