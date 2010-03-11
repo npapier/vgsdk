@@ -60,16 +60,18 @@ const std::string& GLSLState::toString( const BitSetIndexType bitSetIndexType )
 
 
 
-GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits )
+GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
 :	m_light(maxLightUnits),
 	m_numLight(0),
 	m_texture(maxTexUnits),
-	m_numTexture(0)
+	m_numTexture(0),
+
+	m_isShadowSamplerEnabled(isShadowSamplerUsageEnabled)
 {
 }
 
 
-void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
+void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
 {
 	// TBitSet
 	vgeGL::engine::TBitSet< 11 >::reset();
@@ -119,7 +121,8 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits )
 	setSamplingSize( 1.f );
 	setShadowMapType( vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE );
 	setIlluminationInShadow( 0.4f ); // @todo Adds const float DEFAULT_ILLUMINATIONINSHADOW in node
-	setShadowSamplerUsageEnabled(true); // @todo
+
+	setShadowSamplerUsageEnabled( isShadowSamplerUsageEnabled );
 }
 
 

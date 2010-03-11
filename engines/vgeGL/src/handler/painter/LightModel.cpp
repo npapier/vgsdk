@@ -114,8 +114,12 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 		state.setIlluminationInShadow( illuminationInShadow );
 
 		// USESHADOWSAMPLERS
-		vgd::node::LightModel::UseShadowSamplersValueType useShadowSamplers = lightModel->getUseShadowSamplers();
-		state.setShadowSamplerUsageEnabled( useShadowSamplers );
+		if ( lightModel->hasUseShadowSamplers() )
+		{
+			vgd::node::LightModel::UseShadowSamplersValueType useShadowSamplers;
+			lightModel->getUseShadowSamplers(useShadowSamplers);
+			state.setShadowSamplerUsageEnabled( useShadowSamplers );
+		}
 	}
 
 	//
