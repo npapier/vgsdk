@@ -5,6 +5,7 @@
 
 #include "vgeGL/engine/Engine.hpp"
 
+#include <gle/OpenGLExtensionsGen.hpp>
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
 #include <vgd/basic/Image.hpp>
@@ -32,6 +33,7 @@ namespace engine
 Engine::Engine()
 :	m_isTextureMappingEnabled(true),
 	m_isDisplayListEnabled(true),
+	m_isShadowSamplerEnabled(true),
 	m_isGLSLEnabled(true),
 	m_currentProgram(0),
 	// m_glStateStack()
@@ -54,9 +56,31 @@ void Engine::reset()
 		//return;
 	}
 
-	//
+	// Detects drivers provider
+	vgLogMessage2( "%s driver found", gleGetCurrent()->getDriverProviderString().c_str() );	
+	const gle::OpenGLExtensions::DriverProviderType driverProvider = gleGetCurrent()->getDriverProvider();
+
+	// Configures engine
 	setTextureMappingEnabled();
-	//setDisplayListEnabled();
+	setDisplayListEnabled();
+
+	switch ( driverProvider )
+	{
+		case gle::OpenGLExtensions::NVIDIA_DRIVERS:
+			vgLogMessage("Engine: Enabled usage of shadow samplers on NVIDIA GPU.");
+			setShadowSamplerUsageEnabled( true );
+			break;
+
+		case gle::OpenGLExtensions::ATI_DRIVERS:
+			vgLogMessage("Engine: Disabled usage of shadow samplers on ATI GPU.");
+			setShadowSamplerUsageEnabled( false );
+			break;
+
+		case gle::OpenGLExtensions::UNKNOWN_DRIVERS:
+		default:
+			vgLogMessage("Engine: Disabled usage of shadow samplers on UNKNOWN GPU.");
+			setShadowSamplerUsageEnabled( false );
+	}
 
 	//
 	m_currentProgram	= 0;
@@ -67,7 +91,7 @@ void Engine::reset()
 
 	//
 	getGLStateStack().clear( GLState() );
-	getGLSLStateStack().clear( GLSLState(getMaxLights(), getMaxTexUnits()) );
+	getGLSLStateStack().clear( GLSLState(getMaxLights(), getMaxTexUnits(), isShadowSamplerUsageEnabled() ) );
 
 	if ( m_firstInstance )
 	{
@@ -257,6 +281,20 @@ const bool Engine::isDisplayListEnabled() const
 void Engine::setDisplayListEnabled( const bool enabled )
 {
 	m_isDisplayListEnabled = enabled;
+}
+
+
+
+const bool Engine::isShadowSamplerUsageEnabled() const
+{
+	return m_isShadowSamplerEnabled;
+}
+
+
+
+void Engine::setShadowSamplerUsageEnabled( const bool enabled )
+{
+	m_isShadowSamplerEnabled = enabled;
 }
 
 

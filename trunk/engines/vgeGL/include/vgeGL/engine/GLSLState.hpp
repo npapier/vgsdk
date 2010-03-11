@@ -127,18 +127,20 @@ struct GLSLState : public TBitSet< 11 >
 	/**
 	 * @brief Default constructor
 	 *
-	 * @param maxLightUnits		the maximum number of light units
-	 * @param maxTexUnits		the maximum number of texture units
+	 * @param maxLightUnits					the maximum number of light units
+	 * @param maxTexUnits					the maximum number of texture units
+	 * @param isShadowSamplerUsageEnabled	true if shadow sampler usage is enabled, false otherwise
 	 */
-	GLSLState( const uint maxLightUnits = 0, const uint maxTexUnits = 0 );
+	GLSLState( const uint maxLightUnits = 0, const uint maxTexUnits = 0, const bool isShadowSamplerUsageEnabled = true );
 
 	/**
 	 * @brief Resets to the default state.
 	 *
 	 * @param maxLightUnits		the maximum number of light units
 	 * @param maxTexUnits		the maximum number of texture units
+	 * @param isShadowSamplerUsageEnabled	true if shadow sampler usage is enabled, false otherwise
 	 */
-	void reset( const uint maxLightUnits, const uint maxTexUnits );
+	void reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled );
 
 
 	/**

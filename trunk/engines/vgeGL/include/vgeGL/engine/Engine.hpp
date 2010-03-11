@@ -260,6 +260,7 @@ public:
 	 */
 	void setTextureMappingEnabled( const bool enabled = true );
 
+
 	/**
 	 * @brief Determines whether the display list caching mechanism is enabled.
 	 *
@@ -273,6 +274,21 @@ public:
 	 * @param isEnabled		true when the display list caching mechanism must be enabled, false otherwise
 	 */
 	void setDisplayListEnabled( const bool enabled = true );
+
+
+	/**
+	 * @brief Determines whether the shadow sampler usage is enabled.
+	 *
+	 * @return true if shadow sampler usage is enabled, false otherwise.
+	 */
+	const bool isShadowSamplerUsageEnabled() const;
+
+	/**
+	 * @brief Enables or disables the shadow sampler usage depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the shadow sampler usage must be enabled, false otherwise
+	 */
+	void setShadowSamplerUsageEnabled( const bool enabled = true );
 	//@}
 
 
@@ -588,6 +604,7 @@ private:
 
 	bool m_isTextureMappingEnabled;		//< true if texture mapping is enabled, false otherwise
 	bool m_isDisplayListEnabled;		//< true if engine must used display list, false otherwise
+	bool m_isShadowSamplerEnabled;		//< true if engine must used shadow sampler, false otherwise
 
 	/**
 	 * @name Cache implementations specifics capabilities

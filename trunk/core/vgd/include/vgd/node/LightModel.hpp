@@ -44,7 +44,7 @@ namespace node
  * - OFEnum \c [viewer] = AT_INFINITY<br>
  *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
  *<br>
- * - SFBool \c useShadowSamplers = true<br>
+ * - OFBool \c [useShadowSamplers] = true<br>
  *   True to use GLSL shadowSampler, false to use traditionnal texture sampler.<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
@@ -453,19 +453,28 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the field named \c useShadowSamplers
 	 */
-	typedef vgd::field::TSingleField< UseShadowSamplersValueType > FUseShadowSamplersType;
+	typedef vgd::field::TOptionalField< UseShadowSamplersValueType > FUseShadowSamplersType;
 
 
 	/**
 	 * @brief Gets the value of field named \c useShadowSamplers.
 	 */
-	const UseShadowSamplersValueType getUseShadowSamplers() const;
+	const bool getUseShadowSamplers( UseShadowSamplersValueType& value ) const;
 
 	/**
 	 * @brief Sets the value of field named \c useShadowSamplers.
-	 */
-	void setUseShadowSamplers( const UseShadowSamplersValueType value );
+ 	 */
+	void setUseShadowSamplers( const UseShadowSamplersValueType& value );
 
+	/**
+	 * @brief Erases the field named \c useShadowSamplers.
+	 */
+	void eraseUseShadowSamplers();
+
+	/**
+	 * @brief Tests if the value of field named \c useShadowSamplers has been initialized.
+	 */
+	const bool hasUseShadowSamplers() const;
 	//@}
 
 

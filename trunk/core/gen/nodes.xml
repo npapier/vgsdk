@@ -237,9 +237,9 @@
 			<type name="float" default="0.4f"></type>
 		</sf>
 
-		<sf name="useShadowSamplers" doc="True to use GLSL shadowSampler, false to use traditionnal texture sampler.">
+		<of name="useShadowSamplers" doc="True to use GLSL shadowSampler, false to use traditionnal texture sampler.">
 			<type name="bool" default="true"/>
-		</sf>
+		</of>
 	</node>
 
 

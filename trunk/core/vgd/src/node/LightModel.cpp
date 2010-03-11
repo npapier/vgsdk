@@ -73,7 +73,6 @@ void LightModel::setToDefaults( void )
 	setShadowMapType( INT16 );
 	setIlluminationInShadow( 0.4f );
 	setSamplingSize( 1.0 );
-	setUseShadowSamplers( true );
 }
 
 
@@ -84,6 +83,7 @@ void LightModel::setOptionalsToDefaults()
 	setTwoSided( false );
 	setShadowQuality( MEDIUM );
 	setViewer( AT_INFINITY );
+	setUseShadowSamplers( true );
 	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setModel( STANDARD_PER_VERTEX );
 	setShadow( SHADOW_OFF );
@@ -221,16 +221,29 @@ const bool LightModel::hasViewer() const
 
 
 // UseShadowSamplers
-const LightModel::UseShadowSamplersValueType LightModel::getUseShadowSamplers() const
+const bool LightModel::getUseShadowSamplers( UseShadowSamplersValueType& value ) const
 {
-	return getFieldRO<FUseShadowSamplersType>(getFUseShadowSamplers())->getValue();
+	return getFieldRO<FUseShadowSamplersType>(getFUseShadowSamplers())->getValue( value );
 }
 
 
 
-void LightModel::setUseShadowSamplers( const UseShadowSamplersValueType value )
+void LightModel::setUseShadowSamplers( const UseShadowSamplersValueType& value )
 {
 	getFieldRW<FUseShadowSamplersType>(getFUseShadowSamplers())->setValue( value );
+}
+
+
+
+void LightModel::eraseUseShadowSamplers()
+{
+	getFieldRW<FUseShadowSamplersType>(getFUseShadowSamplers())->eraseValue();
+}
+
+
+const bool LightModel::hasUseShadowSamplers() const
+{
+	return getFieldRO<FUseShadowSamplersType>(getFUseShadowSamplers())->hasValue();
 }
 
 
