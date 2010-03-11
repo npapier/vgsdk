@@ -54,13 +54,8 @@ myCanvas::myCanvas()
 	lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
 	lightModel->setViewer( LightModel::AT_EYE );
 
+
 	// SHADOW configuration
-
-	// NV
-	lightModel->setUseShadowSamplers(true);
-
-	// ATI
-	// lightModel->setUseShadowSamplers(false);
 
 	// no shadow
 	/*lightModel->setShadow( LightModel::SHADOW_OFF );*/
