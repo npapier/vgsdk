@@ -312,6 +312,19 @@
 	</node>
 
 
+	<node name = "PointStyle" inherits="SingleAttribute" >
+		<doxygen>
+			<docBrief>Defines the style to use when rendering points</docBrief>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+		</doxygen>
+		<of name="size" doc="Specifies the rasterized diameter of both aliased and antialiased points">
+			<type name ="float" default = "1.f"></type>
+		</of>
+	</node>
+
+
 	<node name = "SpotLight" inherits = "PointLight" >
 		<doxygen>
 			<docBrief>Node representing a spotlight source.</docBrief>
