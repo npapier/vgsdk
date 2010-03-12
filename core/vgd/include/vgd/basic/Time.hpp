@@ -7,9 +7,9 @@
 #define _VGD_BASIC_TIME_HPP
 
 #include "vgd/vgd.hpp"
+#include "vgd/basic/TimeDuration.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-namespace vgd { namespace basic { struct TimeDuration; } }
 
 /**
  * @defgroup g_time Time
@@ -22,7 +22,6 @@ namespace vgd
 
 namespace basic
 {
-
 
 
 /**
@@ -50,6 +49,16 @@ struct VGD_API Time
 	 * @brief Reinitializes this time point using the current UTC time.
 	 */
 	void restart();
+
+	/**
+	 * @brief Pause the time point.
+	 */
+	void pause();
+
+	/**
+	 * @brief Resume the time point from its paused state.
+	 */
+	void resume();
 
 
 	/**
@@ -141,7 +150,9 @@ struct VGD_API Time
 
 private:
 	friend struct TimeDuration;
-	boost::posix_time::ptime	m_current; ///< The UTC time
+	boost::posix_time::ptime			m_current;			///< The UTC time
+	boost::posix_time::ptime			m_pauseTime;		///< The time when pause was hit
+	boost::posix_time::time_duration	m_pauseDuration;	///< Total pause duration
 };
 
 

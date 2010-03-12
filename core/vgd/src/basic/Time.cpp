@@ -17,9 +17,13 @@ namespace basic
 
 
 Time::Time( const bool initializeUsingUTCTime )
-: m_current( initializeUsingUTCTime ?
+:	m_current( initializeUsingUTCTime ?
 				boost::posix_time::microsec_clock::universal_time() : 
 				boost::posix_time::not_a_date_time )
+,	m_pauseTime( initializeUsingUTCTime ?
+				boost::posix_time::microsec_clock::universal_time() : 
+				boost::posix_time::not_a_date_time )
+,	m_pauseDuration()
 {
 }
 
@@ -27,9 +31,21 @@ Time::Time( const bool initializeUsingUTCTime )
 
 void Time::restart()
 {
-	m_current = boost::posix_time::microsec_clock::universal_time();
+	m_current		= boost::posix_time::microsec_clock::universal_time();
+	// reset pause duration
+	m_pauseDuration = boost::posix_time::time_duration();
 }
 
+void Time::pause()
+{
+	m_pauseTime = boost::posix_time::microsec_clock::universal_time();
+}
+
+void Time::resume()
+{
+	boost::posix_time::ptime	now	=	boost::posix_time::microsec_clock::universal_time();
+	m_pauseDuration					+=	now - m_pauseTime;
+}
 
 
 const TimeDuration Time::getElapsedTime() const
@@ -39,8 +55,9 @@ const TimeDuration Time::getElapsedTime() const
 	Time now;
 
 	const TimeDuration duration( *this, now );
-
-	return duration;
+	// remove pause duration
+	const TimeDuration correctedDuration( duration.milliSeconds() - m_pauseDuration.total_milliseconds() );
+	return correctedDuration;
 }
 
 
