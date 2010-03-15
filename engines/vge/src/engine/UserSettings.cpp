@@ -197,7 +197,7 @@ void UserSettings::loadLevels()
 	}
 	catch( bpt::ini_parser::ini_parser_error & )
 	{
-		vgLogError( "Error while reading detail level definitions file %1", path.native_file_string() );
+		vgLogError2( "Error while reading detail level definitions file %s", path.native_file_string().c_str() );
 	}
 }
 
@@ -298,4 +298,4 @@ const UserSettings & UserSettings::operator=( const UserSettings & other )
 
 } // namespace engine
 
-} // namespac vge
+} // namespace vge
