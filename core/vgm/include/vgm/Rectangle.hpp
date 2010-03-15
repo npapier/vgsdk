@@ -249,7 +249,7 @@ struct Rectangle : public vgm::Vector< T, 4 >
 
 
 
-typedef Rectangle< int		>	Rectangle2i;	///< An integer based rectangle.
+typedef Rectangle< int32	>	Rectangle2i;	///< An integer based rectangle.
 typedef Rectangle< float	>	Rectangle2f;	///< A float based rectangle.
 typedef Rectangle< double	>	Rectangle2d;	///< A float based rectangle.
 
