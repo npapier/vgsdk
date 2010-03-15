@@ -64,8 +64,8 @@ struct VGD_API ButtonEvent : public Event
 
 private:
 
-	State	m_state;	///< The state of the related button.
 	int32	m_buttonID;	///< The identifier of the related button.
+	State	m_state;	///< The state of the related button.
 };
 
 
@@ -75,3 +75,4 @@ private:
 } // namespace vgd
 
 #endif // #ifndef _VGD_EVENT_BUTTONEVENT_HPP
+

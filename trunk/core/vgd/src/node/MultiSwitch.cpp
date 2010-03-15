@@ -107,7 +107,7 @@ void MultiSwitch::removeFromChoosenChildren( const int32 index )
 	vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
 	const int32 indexChosenChild = chosenChild->find( index );
 
-	if ( indexChosenChild != chosenChild->size() )
+	if ( indexChosenChild != static_cast< int32 >(chosenChild->size()) )
 	{
 		// Found index in chosenChild
 		chosenChild->erase( indexChosenChild );
