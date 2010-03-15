@@ -50,7 +50,7 @@ struct Rectangle : public vgm::Vector< T, 4 >
 	 * @post getPosition() == (value, value) and getSize() == (value, value)
 	 */
 	Rectangle( const T value )
-	: Vector( value, value, value, value )
+	: vgm::Vector<T,4>( value, value, value, value )
 	{}
 
 	/**
@@ -145,8 +145,8 @@ struct Rectangle : public vgm::Vector< T, 4 >
 	const vgm::Vector< T, 2 > getSize() const { return vgm::Vector< T, 2 >( width(), height() ); }
 	// @todo Rectangle( position, size )
 
-	void setPosition( const vgm::Vector< T, 2 > position ) { m_tCoord[0] = position[0]; m_tCoord[1] = position[1]; }
-	void setSize( const vgm::Vector< T, 2 > size ) { m_tCoord[2] = size[0]; m_tCoord[3] = size[1]; }
+	void setPosition( const vgm::Vector< T, 2 > position ) { Vector<T,4>::m_tCoord[0] = position[0]; Vector<T,4>::m_tCoord[1] = position[1]; }
+	void setSize( const vgm::Vector< T, 2 > size ) { Vector<T,4>::m_tCoord[2] = size[0]; Vector<T,4>::m_tCoord[3] = size[1]; }
 	//@}
 
 
