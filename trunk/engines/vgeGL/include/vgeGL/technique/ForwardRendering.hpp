@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -36,8 +36,6 @@ namespace
  * by Williams Lance in Casting Curved Shadows On Curved Surfaces, Computer Graphics Lab New York Institute of Techno, 
  * 1978 [Will1978].
  * At this time, it works only for SpotLight
- *
- * @todo only the first one.
  *
  * @ingroup g_techniques_vgeGL
  * @ingroup g_techniques
