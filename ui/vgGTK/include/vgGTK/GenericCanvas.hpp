@@ -7,6 +7,7 @@
 #ifndef _VGGTK_GENERICCANVAS_HPP
 #define _VGGTK_GENERICCANVAS_HPP
 
+#include <gdk/gdkkeysyms.h>
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/window.h>
 #include <vgDebug/convenience.hpp>
@@ -269,13 +270,35 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 			//topLevel->get_window()->thaw_updates();
 		}
 
+#ifdef USE_GTKGLEXT
+		return false;
+#else
 		// Updates the current state.
-		return glc_drawable_set_fullscreen( m_glc, wantFullscreen ) != 0;
+		if ( m_glc )
+		{
+			return glc_drawable_set_fullscreen( m_glc, wantFullscreen ) != 0;
+		}
+		else
+		{
+			return false;
+		}
+#endif
 	}
 
 	const bool isFullscreen()
 	{
-		return glc_drawable_is_fullscreen( m_glc ) != 0;
+#ifdef USE_GTKGLEXT
+		return false;
+#else
+		if ( m_glc )
+		{
+			return glc_drawable_is_fullscreen( m_glc ) != 0;
+		}
+		else
+		{
+			return false;
+		}
+#endif
 	}
 	//@}
 
@@ -449,6 +472,17 @@ protected:
 
 		// Default gtk processing
 		return Gtk::DrawingArea::on_expose_event( event );
+	}
+
+
+	bool on_key_release_event( GdkEventKey * event )
+	{
+		if( event->keyval == GDK_Escape && isFullscreen() )
+		{
+			setFullscreen( false );
+		}
+
+		return Gtk::DrawingArea::on_key_release_event( event );
 	}
 
 

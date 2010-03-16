@@ -677,6 +677,13 @@ const bool Canvas::shutdownVGSDK()
 		return false;
 	}
 
+	// Leaves the fullscreen mode.
+	if( isFullscreen() )
+	{
+		vgLogDebug/*logMessage*/("Leaving fullscreen...");
+		setFullscreen( false );
+	}
+
 	if ( startOpenGLContext() == false )
 	{
 		// No current OpenGL context
