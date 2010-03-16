@@ -23,6 +23,11 @@ struct myCanvas;
 
 
 /**
+ * @brief	Handles key release events on the canvas.
+ */
+bool canvasKeyReleaseEvent( GdkEventKey*, Glib::RefPtr<Gtk::UIManager>, myCanvas* );
+
+/**
  * @brief	Implements an action that quits the application.
  */
 void fileExit();
