@@ -216,17 +216,15 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 					lightDepthMap = vgd::node::Texture2D::create("depthMap.spotLight" + vgd::basic::toString( static_cast<int>(spot->getMultiAttributeIndex())) );
 				}
 
-				std::string function;
- 
-				lightDepthMap->setFunction( function );
-
-				lightDepthMap->setWrap( Texture::WRAP_S, Texture::CLAMP ); // GL_CLAMP_TO_EDGE
-				lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP );
+				lightDepthMap->setWrap( Texture::WRAP_S, Texture::CLAMP_TO_EDGE ); // CLAMP, GL_CLAMP_TO_EDGE
+				lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP_TO_EDGE );
 
 				//lightDepthMap->setMipmap( true );
 				lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+				//lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
 				//lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR_MIPMAP_LINEAR /*LINEAR */);
 				lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+				//lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
 
 				lightDepthMap->setUsage( Texture::SHADOW );
 
@@ -379,8 +377,14 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 {
 	using vgd::node::LightModel;
 
+	// Retrieves GLSLState from engine
+	using vgeGL::engine::GLSLState;
+	const GLSLState& state = engine->getGLSLState();
+
 	//
 	vgd::Shp< vge::service::Service > paintService = vge::service::Painter::create();
+
+
 
 	prepareEval( engine, traverseElements );
 
@@ -394,6 +398,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	vgd::node::LightModel::ShadowMapTypeValueType	shadowMapType;
 	vgd::Shp< ShadowMappingInput >& shadowMappingInput = m_shadowMappingInput;
 
+// @todo Uses state.getPrivateTexture(index);
 	const uint internalTexUnitIndex = engine->getMaxTexUnits()-1;
 
 	// VIEW MATRIX and PROJECTION MATRIX
@@ -485,10 +490,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 	endPass();
 
-	vgm::MatrixR lightLookAt; // ????
-/*	setPassDescription("ForwardRendering: begin/endPass test");
-	beginPass();
-	endPass();*/
+	vgm::MatrixR lightLookAt[4]; // ????
 
 
 
@@ -544,7 +546,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			//engine->disregardIfIsAKindOf<vgd::node::MultiTransformation>();
 			//engine->disregardIfIsAKindOf<vgd::node::TexGen>();
 
-			//engine->disregardIfIsA<vgd::node::LightModel>();
+			engine->disregardIfIsA<vgd::node::LightModel>();
 
 //
 			vgd::Shp< vgd::node::Texture2D > texture2D = shadowMappingInput->getLightDepthMap( currentLightIndex );
@@ -579,12 +581,14 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			texture2D->setMultiAttributeIndex( currentTexUnit );
 			engine->evaluate( paintService, texture2D.get(), true );
 			vgeGL::rc::Texture2D * lightDepthMap = shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
-			lightDepthMap->bind();
 // @todo moves
-			lightDepthMap->parameter( GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB );
-			lightDepthMap->parameter( GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL );
-			lightDepthMap->parameter( GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE );
-
+			if ( state.isShadowSamplerUsageEnabled() )
+			{
+				lightDepthMap->bind();
+				lightDepthMap->parameter( GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB );
+				lightDepthMap->parameter( GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL );
+				lightDepthMap->parameter( GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE );
+			}
 
 			// Lookups or creates fbo
 			vge::rc::Manager& rcManager = engine->getGLManager();
@@ -683,10 +687,10 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 					/*current.multVecMatrix( eye, eye );
 					current.multVecMatrix( center, center );
 					current.multVecMatrix( up,up );*/
-					lightLookAt.setLookAt( eye, center, up );
+					lightLookAt[currentLightIndex].setLookAt( eye, center, up );
 // I must undo the transform dragger action => @todo disable TransformDragger
 					newCamera->setLookAt(
-						 invTransformDraggerMatrix * lightLookAt
+						 invTransformDraggerMatrix * lightLookAt[currentLightIndex]
 						);
 					newCamera->setProjection( shadowMappingInput->getLightProjectionMatrix(currentLightIndex) );
 
@@ -781,7 +785,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			const vgm::MatrixR lightViewMatrix = shadowMappingInput->getLightViewMatrix(currentLightIndex);
 			const vgm::MatrixR lightMODELVIEWMatrix = shadowMappingInput->getLightMODELVIEWMatrix(currentLightIndex);
 
-			textureMatrix = invViewMatrix * (lightLookAt) * lightProjectionMatrix * textureMatrix;
+			textureMatrix = invViewMatrix * (lightLookAt[currentLightIndex]) * lightProjectionMatrix * textureMatrix;
 
 			//
 			engine->activeTexture(currentTexUnit);
