@@ -475,7 +475,8 @@ protected:
 	}
 
 
-	bool on_key_release_event( GdkEventKey * event )
+// Applications should manage that.
+/*	bool on_key_release_event( GdkEventKey * event )
 	{
 		if( event->keyval == GDK_Escape && isFullscreen() )
 		{
@@ -483,7 +484,7 @@ protected:
 		}
 
 		return Gtk::DrawingArea::on_key_release_event( event );
-	}
+	}*/
 
 
 	/*void on_realize()

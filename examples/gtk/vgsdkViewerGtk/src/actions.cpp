@@ -37,6 +37,22 @@ namespace vgsdkViewerGtk
 
 
 
+bool canvasKeyReleaseEvent( GdkEventKey * event, Glib::RefPtr<Gtk::UIManager> uiManager, myCanvas * canvas )
+{
+	if( event->keyval == GDK_Escape && canvas->isFullscreen() )
+	{
+		Glib::RefPtr< Gtk::Action >	action = uiManager->get_action( "/DefaultMenuBar/View/FullScreen" );
+
+		if( action )
+		{
+			action->activate();
+		}
+	}
+	return false;
+}
+
+
+
 void fileExit()
 {
 	Gtk::Main::quit();

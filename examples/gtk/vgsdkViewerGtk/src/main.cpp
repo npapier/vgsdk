@@ -232,6 +232,10 @@ int main( int argc, char ** argv )
 	properties.signalClose().connect( sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::showHideProperties), uiManager, &properties, true) );
 
 
+	// Connects to some signal on the canvas.
+	canvas.signal_key_release_event().connect( sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::canvasKeyReleaseEvent), uiManager, &canvas) );
+
+
 	// Configures the main window.
 	window.add_accel_group( uiManager->get_accel_group() );
 	window.set_title("vgsdkViewer");
