@@ -420,7 +420,7 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 	vgd::node::Primitive primitive = (*primitives)[0];
 	assert( primitive.getType() == vgd::node::Primitive::TRIANGLES );
 	assert( primitive.getIndex() == 0 );
-	assert( primitive.getNumIndices() == vertexIndex->size() );
+	assert( static_cast<uint32>(primitive.getNumIndices()) == vertexIndex->size() );
 
 	//
 	retVal = true;
