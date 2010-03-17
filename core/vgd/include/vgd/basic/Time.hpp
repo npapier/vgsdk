@@ -1,14 +1,14 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Philippe Sengchanpheng
 
 #ifndef _VGD_BASIC_TIME_HPP
 #define _VGD_BASIC_TIME_HPP
 
-#include "vgd/vgd.hpp"
-#include "vgd/basic/TimeDuration.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "vgd/basic/TimeDuration.hpp"
 
 
 /**
