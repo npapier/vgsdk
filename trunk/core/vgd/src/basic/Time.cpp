@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Philippe Sengchanpheng
 
 #include "vgd/basic/Time.hpp"
 
@@ -19,11 +20,9 @@ namespace basic
 Time::Time( const bool initializeUsingUTCTime )
 :	m_current( initializeUsingUTCTime ?
 				boost::posix_time::microsec_clock::universal_time() : 
-				boost::posix_time::not_a_date_time )
-,	m_pauseTime( initializeUsingUTCTime ?
-				boost::posix_time::microsec_clock::universal_time() : 
-				boost::posix_time::not_a_date_time )
-,	m_pauseDuration()
+				boost::posix_time::not_a_date_time ),
+	m_pauseTime( boost::posix_time::not_a_date_time ),
+	m_pauseDuration()
 {
 }
 
@@ -32,20 +31,30 @@ Time::Time( const bool initializeUsingUTCTime )
 void Time::restart()
 {
 	m_current		= boost::posix_time::microsec_clock::universal_time();
+
 	// reset pause duration
 	m_pauseDuration = boost::posix_time::time_duration();
 }
 
+
+
 void Time::pause()
 {
+	assert( m_pauseTime.is_not_a_date_time() && "Already in pause mode. Must call resume() before recalling pause()." );
 	m_pauseTime = boost::posix_time::microsec_clock::universal_time();
 }
 
+
+
 void Time::resume()
 {
+	assert( !m_pauseTime.is_not_a_date_time() && "Must call pause() before resume()." );
+
 	boost::posix_time::ptime	now	=	boost::posix_time::microsec_clock::universal_time();
 	m_pauseDuration					+=	now - m_pauseTime;
+	m_pauseTime						=	boost::posix_time::not_a_date_time;
 }
+
 
 
 const TimeDuration Time::getElapsedTime() const
@@ -55,6 +64,7 @@ const TimeDuration Time::getElapsedTime() const
 	Time now;
 
 	const TimeDuration duration( *this, now );
+
 	// remove pause duration
 	const TimeDuration correctedDuration( duration.milliSeconds() - m_pauseDuration.total_milliseconds() );
 	return correctedDuration;
