@@ -48,7 +48,7 @@ void ProgramGenerator::generate( vgeGL::engine::Engine * engine )
 			if (	element->isEnabled() &&
 					element->getMainDirtyFlag().isDirty() )
 			{
-				const bool hasBeenGenerated = element->generate( engine );
+				/*const bool hasBeenGenerated = */element->generate( engine );
 				// @todo uses hasBeenGenerated
 			}
 			// else nothing to do
