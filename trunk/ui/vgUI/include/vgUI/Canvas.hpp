@@ -47,6 +47,7 @@ namespace vgUI
  * - Use the vgeGL::engine::SceneManager to link GUI and the scene graph.
  * - Initialize OpenGL and its extensions (with gle) to being used by vgsdk.
  * - Report OpenGL errors before and after rendering (paint and resize methods).
+ * - switch to/from fullscreen mode
  * - Screenshot and video capture
  * - event debugging helpers
  * - debug overlay with runtime informations like fps
