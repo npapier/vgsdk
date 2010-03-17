@@ -56,9 +56,9 @@ void invertPrimitiveOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape 
 			for(int32 i = 0; i < numQuads; i++)
 			{
 				// Retrieves indices
-				const int32 indexA = (*vertexIndexRW)[j];
+				//const int32 indexA = (*vertexIndexRW)[j];
 				const int32 indexB = (*vertexIndexRW)[j+1];
-				const int32 indexC = (*vertexIndexRW)[j+2];
+				//const int32 indexC = (*vertexIndexRW)[j+2];
 				const int32 indexD = (*vertexIndexRW)[j+3];
 
 				// Reverses the orientation

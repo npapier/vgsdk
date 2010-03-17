@@ -61,12 +61,12 @@ const std::string& GLSLState::toString( const BitSetIndexType bitSetIndexType )
 
 
 GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
-:	m_light(maxLightUnits),
+:	m_isShadowSamplerEnabled(isShadowSamplerUsageEnabled),
+
+	m_light(maxLightUnits),
 	m_numLight(0),
 	m_texture(maxTexUnits),
-	m_numTexture(0),
-
-	m_isShadowSamplerEnabled(isShadowSamplerUsageEnabled)
+	m_numTexture(0)
 {
 }
 

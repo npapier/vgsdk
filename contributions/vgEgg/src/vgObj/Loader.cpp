@@ -210,7 +210,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 				break;
 
 			default:
-				vgDebug::get().logDebug("vgObj::loadObj : Unknown token %c%s", token, line );
+				vgDebug::get().logDebug("vgObj::loadObj : Unknown token %c%s", token, line.c_str() );
 				break;
 			}
 			break;
@@ -290,7 +290,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 		}
 	}
 
-	bool emptynormal=normals->empty();
+	/*bool emptynormal=*/normals->empty();
 	vertices.release();
 	normals.release();
 	vertexIndices.release();
