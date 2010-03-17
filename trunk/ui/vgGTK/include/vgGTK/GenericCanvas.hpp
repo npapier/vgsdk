@@ -8,6 +8,8 @@
 #define _VGGTK_GENERICCANVAS_HPP
 
 #include <gdk/gdkkeysyms.h>
+#include <gdkmm/cursor.h>
+#include <glibmm/main.h>
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/window.h>
 #include <vgDebug/convenience.hpp>
@@ -487,6 +489,17 @@ protected:
 	}*/
 
 
+	bool on_motion_notify_event( GdkEventMotion * event )
+	{
+		// Resets the canvas cursor and starts the timeout for cursor hidding.
+		get_window()->set_cursor();
+		m_cursorTimeout.disconnect();
+		m_cursorTimeout = Glib::signal_timeout().connect_seconds( sigc::mem_fun(this, &GenericCanvas< BaseCanvasType >::onCursorTimeout), 3 );
+
+		return Gtk::DrawingArea::on_motion_notify_event( event );
+	}
+
+
 	/*void on_realize()
 	{
 		vgLogDebug("vgGTK::Canvas::on_realize:begin");
@@ -509,6 +522,8 @@ protected:
 
 
 private:
+
+	sigc::connection	m_cursorTimeout;	///< The connect to the timeout signal used to hide the cursor.
 
 #ifdef USE_GTKGLEXT
 	/**
@@ -555,9 +570,19 @@ private:
 //#else
 	glc_t			*m_glc;
 //#endif
+
 	bool onFocusEvent( GdkEventFocus * event )
 	{
 		vgd::event::detail::GlobalButtonStateSet::clear();
+		return false;
+	}
+
+	bool onCursorTimeout()
+	{
+		// Change this for the new Gdk::BLANK_CURSOR type when switching to a newer gdkmm.
+		static const Gdk::Cursor	blankCursor( Gdk::Pixmap::create(get_window(), 1, 1, 1), Gdk::Pixmap::create(get_window(), 1, 1, 1), Gdk::Color(), Gdk::Color(), 0, 0 );
+
+		get_window()->set_cursor( blankCursor );
 		return false;
 	}
 
