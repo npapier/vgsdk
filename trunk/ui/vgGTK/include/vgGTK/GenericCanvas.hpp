@@ -65,7 +65,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
 		grab_focus();
-
+		
 #ifdef USE_GTKGLEXT
 		setGlCapability( GTK_WIDGET(gobj()) );
 //#else
@@ -500,15 +500,12 @@ protected:
 	}
 
 
-	/*void on_realize()
+	void on_realize()
 	{
-		vgLogDebug("vgGTK::Canvas::on_realize:begin");
-
-		// Default gtk processing
 		Gtk::DrawingArea::on_realize();
+		hideCursor();
+	}
 
-		vgLogDebug("vgGTK::Canvas::on_realize:end");
-	}*/
 
 	void on_unrealize()
 	{
@@ -524,6 +521,17 @@ protected:
 private:
 
 	sigc::connection	m_cursorTimeout;	///< The connect to the timeout signal used to hide the cursor.
+
+	/**
+	 * @brief	Hides the cursor.
+	 */
+	void hideCursor()
+	{
+		// Change this for the new Gdk::BLANK_CURSOR type when switching to a newer gdkmm.
+		static const Gdk::Cursor	blankCursor( Gdk::Pixmap::create(get_window(), 1, 1, 1), Gdk::Pixmap::create(get_window(), 1, 1, 1), Gdk::Color(), Gdk::Color(), 0, 0 );
+
+		get_window()->set_cursor( blankCursor );
+	}
 
 #ifdef USE_GTKGLEXT
 	/**
@@ -579,10 +587,7 @@ private:
 
 	bool onCursorTimeout()
 	{
-		// Change this for the new Gdk::BLANK_CURSOR type when switching to a newer gdkmm.
-		static const Gdk::Cursor	blankCursor( Gdk::Pixmap::create(get_window(), 1, 1, 1), Gdk::Pixmap::create(get_window(), 1, 1, 1), Gdk::Color(), Gdk::Color(), 0, 0 );
-
-		get_window()->set_cursor( blankCursor );
+		hideCursor();
 		return false;
 	}
 
