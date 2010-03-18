@@ -619,8 +619,12 @@ void VertexShape::removeTexUnits( const int32 index, const int32 num )
 		removeField( getFTexCoord(i32) );
 		removeField( getFTexCoordBinding(i32) );
 
+#ifdef _DEBUG
 		const uint num = m_texUnitsIndexSet.erase( i32 );
 		assert( num == 1 );
+#else
+		m_texUnitsIndexSet.erase( i32 );
+#endif
 	}
 
 	// Links are removed automatically by the fieldManager.
