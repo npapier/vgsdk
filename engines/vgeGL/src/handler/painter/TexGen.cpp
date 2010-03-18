@@ -52,27 +52,25 @@ void TexGen::apply( vgeGL::engine::Engine * engine, vgd::node::TexGen * texGen )
 
 void TexGen::paint( vgeGL::engine::Engine * engine, vgd::node::TexGen * texGen )
 {
-	// Activates the desired texture unit
-	const int texUnit = texGen->getMultiAttributeIndex();
-
-	engine->activeTexture( texUnit );
-
-	// ON
-	vgd::node::TexGen::OnValueType onValue = texGen->getOn();
-
-	if ( onValue )
+	if ( !engine->isGLSLEnabled() )
 	{
-		glEnable( GL_TEXTURE_GEN_S );
-		glEnable( GL_TEXTURE_GEN_T );
-		glEnable( GL_TEXTURE_GEN_R );
-		glEnable( GL_TEXTURE_GEN_Q );
-	}
-	else
-	{
-		glDisable( GL_TEXTURE_GEN_S );
-		glDisable( GL_TEXTURE_GEN_T );
-		glDisable( GL_TEXTURE_GEN_R );
-		glDisable( GL_TEXTURE_GEN_Q );
+		// ON
+		vgd::node::TexGen::OnValueType onValue = texGen->getOn();
+
+		if ( onValue )
+		{
+			glEnable( GL_TEXTURE_GEN_S );
+			glEnable( GL_TEXTURE_GEN_T );
+			glEnable( GL_TEXTURE_GEN_R );
+			glEnable( GL_TEXTURE_GEN_Q );
+		}
+		else
+		{
+			glDisable( GL_TEXTURE_GEN_S );
+			glDisable( GL_TEXTURE_GEN_T );
+			glDisable( GL_TEXTURE_GEN_R );
+			glDisable( GL_TEXTURE_GEN_Q );
+		}
 	}
 }
 

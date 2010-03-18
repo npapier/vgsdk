@@ -69,11 +69,14 @@ void TexGenEyeLinear::setToDefaults()
 void TexGenEyeLinear::paint( vgeGL::engine::Engine * engine, vgd::node::TexGenEyeLinear * node )
 {
 	// PARAMETERS
-	vgd::node::TexGenEyeLinear::ParametersValueType parameters;
-
 	if ( node->hasParameters() )
 	{
+		vgd::node::TexGenEyeLinear::ParametersValueType parameters;
 		/*isDefined = */node->getParameters( parameters );
+
+		// Activates the desired texture unit
+		const int texUnit = node->getMultiAttributeIndex();
+		engine->activeTexture( texUnit );
 
 		TexGen::paint( engine, node );
 		TexGen::paint( GL_EYE_LINEAR, GL_EYE_PLANE, parameters );
