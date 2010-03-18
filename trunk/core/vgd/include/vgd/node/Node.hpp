@@ -352,6 +352,7 @@ protected:
 	 */
 	Node( const std::string nodeName );
 
+public:
 	/**
 	 * @brief Set fields and dirty flags to default values.
 	 */
@@ -361,6 +362,7 @@ protected:
 	 * @brief Set optionals fields to defaults values.
 	 */
 	virtual void setOptionalsToDefaults();
+protected:
 	//@}
 
 
