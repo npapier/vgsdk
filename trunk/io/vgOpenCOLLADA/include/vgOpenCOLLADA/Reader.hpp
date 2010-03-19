@@ -10,10 +10,11 @@
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 #include "vgOpenCOLLADA/convenience.hpp"
 
+#include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Switch.hpp>
+#include <vgd/node/Texture2D.hpp>
 #include <vgd/node/VertexShape.hpp>
-#include <vgd/Shp.hpp>
 
 #include <COLLADAFWIWriter.h>
 #include <COLLADABUURI.h>
@@ -136,8 +137,20 @@ struct VGOPENCOLLADA_API Reader : public COLLADAFW::IWriter
 	 * @param geometry: the COLLADA geometry attribute.
 	 * 
 	 * @param mesh: the COLLADA mesh attribute of current geometry
+	 *
+	 * @return: a pair bool/vertex shape. Return false if the mesh don't create correctly.
 	 */
-	vgd::Shp< vgd::node::VertexShape > loadMesh(const COLLADAFW::Geometry* geometry, const COLLADAFW::Mesh* mesh);
+	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > loadMesh(const COLLADAFW::Geometry* geometry, const COLLADAFW::Mesh* mesh);
+
+	/**
+	* @brief Clones a Texture node
+	*
+	* @param texture: a texture
+	*
+	* @return: the cloned texture
+	*/
+	vgd::Shp< vgd::node::Texture2D > cloneTexture(vgd::Shp< vgd::node::Texture2D > texture);
+
 
 private:
 	COLLADABU::URI									m_inputFile;

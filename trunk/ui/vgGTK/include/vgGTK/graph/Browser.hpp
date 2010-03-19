@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier and Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Maxime Peresson
 
 #ifndef _VGGTK_GRAPH_BROWSER_HPP_
 #define _VGGTK_GRAPH_BROWSER_HPP_
@@ -106,6 +107,11 @@ private:
 	void onExpandSubTree();									///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onFullRefresh();									///< Handles the action that will perfrom a refresh of the whole tree.
 	void onRemoveNode();									///< Handles the action that will remove the selected node from it parent.
+	void onExportNode();									///< Handles the action that will export the selected.
+	void onSetToDefault();									///< Handles the action that will set node filed to default.
+	void onSetOptionalToDefault();							///< Handles the action that will set the optional node field to default.
+	void onInvertTriangleOrientation();						///< Handles the action that will invert triangles orientation.
+	void onInvertNormalOrientation();						///< Handles the action that will invert normals orientation.
 	void onSaveAs();										///< Handles the action that will allow the user to save the graph.
 	void onSelectionChanged();								///< Handles notification about a selection change.
 	//@}
@@ -128,3 +134,4 @@ private:
 
 
 #endif /*_VGGTK_GRAPH_BROWSER_HPP_*/
+

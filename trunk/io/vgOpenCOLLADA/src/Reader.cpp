@@ -5,16 +5,6 @@
 
 #include "vgOpenCOLLADA/Reader.hpp"
 
-#include <vgd/visitor/helpers.hpp>
-#include <vgd/visitor/predicate/ByRegexName.hpp>
-#include <vgd/node/Transform.hpp>
-#include <vgd/node/TransformSeparator.hpp>
-#include <vgd/node/MatrixTransform.hpp>
-#include <vgd/node/Material.hpp>
-#include <vgd/node/Texture2D.hpp>
-#include <vgm/Matrix.hpp>
-#include <vgio/Cache.hpp>
-
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>  
 
@@ -30,6 +20,19 @@
 #include <COLLADAFWScale.h>
 #include <COLLADAFWMatrix.h>
 #include <COLLADAFWLookAt.h>
+
+#include <vgd/basic/Image.hpp>
+#include <vgd/node/Transform.hpp>
+#include <vgd/node/TransformSeparator.hpp>
+#include <vgd/node/MatrixTransform.hpp>
+#include <vgd/node/Material.hpp>
+#include <vgd/visitor/helpers.hpp>
+#include <vgd/visitor/predicate/ByRegexName.hpp>
+#include <vgDebug/Global.hpp>
+#include <vgm/Matrix.hpp>
+#include <vgio/Cache.hpp>
+
+
 
 namespace vgOpenCOLLADA
 {
@@ -129,6 +132,7 @@ void Reader::createNode(const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group 
 	}
 }
 
+//@todo problem with complex scene
 void Reader::createNodeTransformation( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode )
 {
 	const COLLADAFW::TransformationPointerArray& transformations = node->getTransformations();
@@ -236,7 +240,7 @@ void Reader::createNodeGeometry( const COLLADAFW::Node* node, vgd::Shp< vgd::nod
 		const COLLADAFW::UniqueId& id = geometries.getData()[i]->getInstanciatedObjectId();
 
 		//add each material before adding geometry.
-		if ( m_loadType > LOAD_TYPE::LOAD_GEOMETRY )
+		if ( m_loadType > LOAD_GEOMETRY )
 		{
 			for (std::size_t j = 0; j < geometries.getData()[i]->getMaterialBindings().getCount(); j++)
 			{
@@ -265,7 +269,15 @@ bool Reader::writeGeometry ( const COLLADAFW::Geometry* geometry )
 		
 		try 
 		{
-			vgd::Shp< vgd::node::VertexShape > vertexShape = loadMesh( geometry, mesh );
+			std::pair< bool, vgd::Shp< vgd::node::VertexShape > > retVal = loadMesh( geometry, mesh );
+			
+			if ( !retVal.first )
+			{
+				return false;
+			}
+
+			vgd::Shp< vgd::node::VertexShape > vertexShape = retVal.second;
+
 			if ( vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX )
 			{
 				vertexShape->computeNormals();
@@ -283,9 +295,12 @@ bool Reader::writeGeometry ( const COLLADAFW::Geometry* geometry )
 	return true;
 }
 
-vgd::Shp< vgd::node::VertexShape > Reader::loadMesh( const COLLADAFW::Geometry* geometry, const COLLADAFW::Mesh* mesh)
+std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Reader::loadMesh( const COLLADAFW::Geometry* geometry, const COLLADAFW::Mesh* mesh)
 {
+	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > retVal;
+	retVal.first = false;
 	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::node::VertexShape::create( geometry->getUniqueId().toAscii() );
+	retVal.second = vertexShape;
 	
 	if (mesh->getPositions().getType() != COLLADAFW::FloatOrDoubleArray::DATA_TYPE_FLOAT) {
 		throw std::runtime_error("Position Data types are not float!");
@@ -302,7 +317,13 @@ vgd::Shp< vgd::node::VertexShape > Reader::loadMesh( const COLLADAFW::Geometry* 
 	{
 		assert("Only triangles/polygons mesh are supported.");
 	}
-	int32 i32NumTriangles = primitives->getFaceCount();
+	uint32 i32NumTriangles = primitives->getFaceCount();
+
+	//Test coherence of vertex/normals/textCoord number
+	if ( primitives->getPositionIndices().getCount() < i32NumTriangles*3 || primitives->getNormalIndices().getCount() < i32NumTriangles*3  )
+	{
+		return retVal;
+	}
 
 	// reserve memory for edges.
 	// and neighbours FIXME
@@ -337,31 +358,45 @@ vgd::Shp< vgd::node::VertexShape > Reader::loadMesh( const COLLADAFW::Geometry* 
 	const COLLADAFW::FloatArray* normals = mesh->getNormals().getFloatValues();
 
 	// TEXCOORD
-	// read nb of texCoord
-	int32 texNumber = primitives->getUVCoordIndicesArray().getCount();
-	int32 texCoordSize = mesh->getUVCoords().getValuesCount() / texNumber;
-	int32 texCoordStride = 3; //mesh->getUVCoords().getStride(0); //@todo don't work for all files?!
-
-	vertexShape->createTexUnits( 2, 0, 1 );	// ??????????FIXME multitexture multiTexcoord
-	vertexShape->setTexCoordBinding( 0, vgd::node::BIND_PER_VERTEX );
-	
-	// FIXME only for MFVec2f...
+	// read nb of texCoord*
+	int32 texNumber;
+	int32 texCoordSize;
+	int32 texCoordStride;
+	const COLLADAFW::FloatArray* texCoords;
 	std::vector< vgd::field::EditorRW< vgd::field::MFVec2f > > texCoord;
-	for ( int iTex =0; iTex < texNumber; iTex++)
+	
+	if ( m_loadType > LOAD_MATERIAL )
 	{
-		texCoord.push_back( vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( iTex ) );
-		texCoord[iTex]->clear();
-		texCoord[iTex]->reserve( texCoordSize / texCoordStride );
-	}
-	//vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord = vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( 0 );
+		texNumber = primitives->getUVCoordIndicesArray().getCount();
+		if ( texNumber > 0 )
+		{
+			texCoordSize = mesh->getUVCoords().getValuesCount() / texNumber;
+			texCoordStride = 3; //mesh->getUVCoords().getStride(0); //@todo don't work for all files?!
 
-	// read texCoords
-	const COLLADAFW::FloatArray* texCoords = mesh->getUVCoords().getFloatValues();
+			vertexShape->createTexUnits( 2, 0, 1 );	// @todo FIXME multitexture multiTexcoord
+			vertexShape->setTexCoordBinding( 0, vgd::node::BIND_PER_VERTEX );
+
+			for ( int iTex =0; iTex < texNumber; iTex++)
+			{
+				texCoord.push_back( vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( iTex ) );
+				texCoord[iTex]->clear();
+				texCoord[iTex]->reserve( texCoordSize / texCoordStride );
+			}
+
+			// read texCoords
+			texCoords = mesh->getUVCoords().getFloatValues();
+		}
+		else
+		{
+			vgDebug::get().logDebug("No texture found. Skiping texture loading part.");
+			m_loadType = LOAD_MATERIAL;
+		}
+	}
 
 	// ok go.
 	boost::unordered_map<std::size_t, int> hashmap;
 
-	for (int i=0; i < i32NumTriangles * 3; i++ )
+	for (uint i=0; i < i32NumTriangles * 3; i++ )
 	{
 		std::vector<float> hash_me;
 		const float vX = verticies->getData()[primitives->getPositionIndices()[i] * vertexStride];
@@ -380,14 +415,17 @@ vgd::Shp< vgd::node::VertexShape > Reader::loadMesh( const COLLADAFW::Geometry* 
 		hash_me.push_back(nY);
 		hash_me.push_back(nZ);		
 
-		std::vector< vgm::Vec2f > tVec;
-		for ( int iTex = 0; iTex < texNumber; iTex++)
-		{
-			const float tX = texCoords->getData()[primitives->getUVCoordIndicesArray()[iTex]->getIndices()[i] * texCoordStride];
-			const float tY = texCoords->getData()[primitives->getUVCoordIndicesArray()[iTex]->getIndices()[i] * texCoordStride+1];
-			tVec.push_back(vgm::Vec2f(tX, tY));
-			hash_me.push_back(tX);
-			hash_me.push_back(tY);
+		std::vector< vgm::Vec2f > tVec;		
+		if ( m_loadType > LOAD_MATERIAL )
+		{	
+			for ( int iTex = 0; iTex < texNumber; iTex++)
+			{
+				const float tX = texCoords->getData()[primitives->getUVCoordIndicesArray()[iTex]->getIndices()[i] * texCoordStride];
+				const float tY = texCoords->getData()[primitives->getUVCoordIndicesArray()[iTex]->getIndices()[i] * texCoordStride+1];
+				tVec.push_back(vgm::Vec2f(tX, tY));
+				hash_me.push_back(tX);
+				hash_me.push_back(tY);
+			}
 		}
 
 		//Les "find" font perdre de temps mais permette d'éviter de dupliquer des vertex/normales/coordonnées de texture déjà présente.
@@ -406,9 +444,12 @@ vgd::Shp< vgd::node::VertexShape > Reader::loadMesh( const COLLADAFW::Geometry* 
 		{
 			vertex->push_back( vVec );
 			normal->push_back( nVec );
-			for ( int iTex = 0; iTex < texNumber; iTex++)
+			if ( m_loadType > LOAD_MATERIAL )
 			{
-				texCoord[iTex]->push_back( tVec[iTex] );
+				for ( int iTex = 0; iTex < texNumber; iTex++)
+				{
+					texCoord[iTex]->push_back( tVec[iTex] );
+				}
 			}
 			vertexIndex->push_back(vertex->size()-1);
 			hashmap[hash] = vertex->size()-1;
@@ -453,17 +494,16 @@ vgd::Shp< vgd::node::VertexShape > Reader::loadMesh( const COLLADAFW::Geometry* 
 
 	vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );
 	primitive->push_back( prim );
+	
+	retVal.first = true;
 
-	return vertexShape;
+	return retVal;
 }
 
 bool Reader::writeMaterial( const COLLADAFW::Material* material )
 {
 	//called before writeEffect.
 	//material name = effect id because it is the only why to find material in writeEffect method.
-	//no problem until 1 effect == 1 material
-	//can one effect used in many material?
-	//if yes ==> problem to find the materiel (many material with same name) in writeEffect method.
 
 	std::string name = "mat:" + material->getUniqueId().toAscii() + " effect:" + material->getInstantiatedEffect().toAscii();
 	vgd::Shp< vgd::node::Group > container = vgd::node::Group::create( name );
@@ -557,13 +597,17 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	real = (float)effectCommon->getOpacity().getColor().getAlpha(); //by default (opaque="A_ONE")Takes the transparency information from the color’s alpha channel, where the value 1.0 is opaque. 
 	material->setOpacity( real );
 	
-	if ( m_loadType > LOAD_TYPE::LOAD_MATERIAL )
+	if ( m_loadType > LOAD_MATERIAL )
 	{
 		for (uint i = 0; i < effectCommon->getSamplerPointerArray().getCount(); i++)
 		{
 			const COLLADAFW::Sampler* sampler = effectCommon->getSamplerPointerArray().getData()[i];
 
-			vgd::Shp< vgd::node::Texture2D > tex = vgd::visitor::findFirstByName< vgd::node::Texture2D >( m_switchTexture, sampler->getSourceImage().toAscii() );
+			vgd::Shp< vgd::node::Texture2D > texture (vgd::visitor::findFirstByName< vgd::node::Texture2D >( m_switchTexture, sampler->getSourceImage().toAscii() ) );
+
+			//@TODO: tex must be a copy of the stored texture because one texture can be used in several materials with different parameters.
+			// cloneTexture function was created, but a function to clone Node may be better.
+			vgd::Shp< vgd::node::Texture2D > tex = cloneTexture( texture );
 			
 			container->addChild( tex );
 
@@ -667,14 +711,17 @@ bool Reader::writeImage( const COLLADAFW::Image* image )
 	vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( image->getUniqueId().toAscii() );
 	tex->setMultiAttributeIndex( (int8)0 ); //a quoi ca sert?
 
-
-	//@TODO: manage path.
+	//@todo manage full path. Only works with relative path atm.
 	std::string path = m_inputFile.getPathDir() + image->getImageURI().getPath();
-	path = path.substr(1);
+	path = path.substr(1); //removes first /
 
-	vgd::Shp< vgd::basic::IImage > img = vgio::ImageCache::load( path );
+	path = COLLADABU::URI::uriDecode(path);
 
-	tex->setImage( img );
+	vgd::Shp< vgd::basic::Image > img ( new vgd::basic::Image ( path ) );
+
+	img->flip();
+
+	tex->setImage( vgd::Shp< vgd::basic::Image >(img) );
 
 	//// default value.
 	using vgd::node::Texture2D;
@@ -686,6 +733,30 @@ bool Reader::writeImage( const COLLADAFW::Image* image )
 
 	return true;
 }
+
+
+
+// @todo copy fields from the given texture
+vgd::Shp< vgd::node::Texture2D > Reader::cloneTexture(vgd::Shp< vgd::node::Texture2D > texture)
+{
+	vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( texture->getName() );
+
+	vgd::Shp< vgd::basic::IImage > img;
+
+	texture->getImage( img );
+
+	tex->setImage( img );
+
+	//// default value.
+	using vgd::node::Texture2D;
+	tex->setMipmap( true );
+	tex->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR_MIPMAP_LINEAR );
+	tex->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );	
+
+	return tex;
+}
+
+
 
 } // namespace vgCollada
 
