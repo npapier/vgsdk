@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -345,6 +345,13 @@ struct VGD_API Image : public IImage
 	 * @return true if rescale has been successful, false if not
 	 */
 	const bool scale( const vgm::Vec3i size, const Filter filter = FILTER_SCALE_BOX );
+
+	/**
+	 * @brief Inverts an image over the x axis.
+	 *
+	 * @return true if flip has been successful, false if not
+	 */
+	const bool flip();
 
 	//@}
 
