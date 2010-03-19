@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -428,6 +428,22 @@ const bool Image::scale( const vgm::Vec3i size, const Filter filter )
 
 	iluImageParameter( ILU_FILTER, filter );
 	iluScale( size[0], size[1], size[2] );
+
+	updateInformations();
+
+	return ( !reportILError() );
+}
+
+
+
+
+const bool Image::flip()
+{
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
+	bind();
+
+	iluFlipImage();
 
 	updateInformations();
 

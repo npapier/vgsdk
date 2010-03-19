@@ -35,6 +35,14 @@ namespace node
 VGALG_API void invertPrimitiveOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape );
 
 
+/**
+ * @brief Inverse the orientation of normals.
+ * 
+ * @param vertexShape		the vertexShape node
+ * 
+ * This method reverses the orientation of each normals of the given vertexShape.
+ */
+VGALG_API void invertNormalOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape );
 
 } // namespace node
 

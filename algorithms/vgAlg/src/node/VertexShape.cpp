@@ -79,6 +79,19 @@ void invertPrimitiveOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape 
 
 
 
+void invertNormalOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape )
+{
+	vgd::field::EditorRW< vgd::field::MFVec3f >	normals = vertexShape->getFNormalRW();
+
+	for( uint i = 0; i < normals->size(); ++i )
+	{
+		(*normals)[i].negate();
+	}
+}
+
+
+
 } // namespace node
 
 } // namespace vgAlg
+
