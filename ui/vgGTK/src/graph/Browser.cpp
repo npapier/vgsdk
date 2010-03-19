@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier and Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Maxime Peresson
 
 #include "vgGTK/graph/Browser.hpp"
 
@@ -18,8 +19,14 @@
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
 
+#include <vgAlg/node/TriSet.hpp>
+#include <vgAlg/node/VertexShape.hpp>
 #include <vgd/node/Group.hpp>
+#include <vgd/node/VertexShape.hpp>
+#include <vgd/node/TriSet.hpp>
 #include <vgDebug/Global.hpp>
+#include <vgOpenCOLLADA/exporter/SceneExporter.hpp>
+#include <vgUI/Canvas.hpp>
 
 #include "vgGTK/graph/icons/expand.xpm"
 #include "vgGTK/graph/icons/synchronize.xpm"
@@ -163,6 +170,14 @@ const Glib::ustring	Browser::m_uiDefinition =
 	"  <popup>"
 	"    <menuitem action='ExpandSubTree'/>"
 	"    <menuitem action='RemoveNode'/>"
+	"    <separator/>"
+	"    <menuitem action='ExportNode'/>"
+	"    <separator/>"
+	"    <menuitem action='SetToDefault'/>"
+	"    <menuitem action='SetOptionalToDefault'/>"
+	"    <separator/>"
+	"    <menuitem action='InvertTriangleOrientation'/>"
+	"    <menuitem action='InvertNormalOrientation'/>"
 	"  </popup>"
 	"</ui>";
 
@@ -187,6 +202,11 @@ Browser::Browser()
 	m_actions->add( Gtk::Action::create("ExpandAll", expandID), sigc::mem_fun(this, &Browser::onExpandAll) );
 	m_actions->add( Gtk::Action::create("ExpandSubTree", "Expand"), sigc::mem_fun(this, &Browser::onExpandSubTree) );
 	m_actions->add( Gtk::Action::create("RemoveNode", "Remove"), sigc::mem_fun(this, &Browser::onRemoveNode) );
+	m_actions->add( Gtk::Action::create("ExportNode", "Export"), sigc::mem_fun(this, &Browser::onExportNode) );
+	m_actions->add( Gtk::Action::create("SetToDefault", "SetToDefault"), sigc::mem_fun(this, &Browser::onSetToDefault) );
+	m_actions->add( Gtk::Action::create("SetOptionalToDefault", "SetOptionalToDefault"), sigc::mem_fun(this, &Browser::onSetOptionalToDefault) );
+	m_actions->add( Gtk::Action::create("InvertTriangleOrientation", "InvertTriangleOrientation"), sigc::mem_fun(this, &Browser::onInvertTriangleOrientation) );
+	m_actions->add( Gtk::Action::create("InvertNormalOrientation", "InvertNormalOrientation"), sigc::mem_fun(this, &Browser::onInvertNormalOrientation) );
 	m_actions->add( Gtk::Action::create("FullRefresh", Gtk::Stock::REFRESH), sigc::mem_fun(this, &Browser::onFullRefresh) );
 	m_actions->add( Gtk::Action::create("SaveAs", Gtk::Stock::SAVE_AS), sigc::mem_fun(this, &Browser::onSaveAs) );
 //	m_actions->add( Gtk::Action::create("Synchronize", synchronizeID), sigc::mem_fun(this, &Browser::onSaveAs) );
@@ -291,6 +311,20 @@ void Browser::onButtonReleaseEvent( GdkEventButton * event )
 		
 		if( rowIterator )
 		{
+			vgd::Shp< vgd::node::Node >	node = (*rowIterator)[ m_columns.m_nodeColumn ];
+
+			if(!node->isA<vgd::node::VertexShape>() && !node->isA<vgd::node::TriSet>())
+			{
+				m_actions->get_action("ExportNode")->set_visible(false);
+				m_actions->get_action("InvertTriangleOrientation")->set_visible(false);
+				m_actions->get_action("InvertNormalOrientation")->set_visible(false);
+			}
+			else
+			{
+				m_actions->get_action("ExportNode")->set_visible(true);
+				m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
+				m_actions->get_action("InvertNormalOrientation")->set_visible(true);
+			}
 			Gtk::Menu *	popupMenu = dynamic_cast< Gtk::Menu * >( m_uiManager->get_widget("/popup") );
 	
 			Gtk::manage( popupMenu );
@@ -374,6 +408,125 @@ void Browser::onRemoveNode()
 				// @todo refresh shared information for remaining rows containing the node being removed.
 			}
 		}
+	}
+}
+
+
+
+void Browser::onExportNode()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
+
+	if( rowIterator )
+	{
+		vgd::Shp< vgd::node::Node > node = (*rowIterator)[ m_columns.m_nodeColumn ];
+
+		if(node->isA<vgd::node::VertexShape>() || node->isA<vgd::node::TriSet>())
+		{		
+			Gtk::Window				* topLevel = dynamic_cast< Gtk::Window * >(get_toplevel());
+			Gtk::FileChooserDialog	chooser( *topLevel, "Save VertexShape As", Gtk::FILE_CHOOSER_ACTION_SAVE );
+			Gtk::FileFilter			dotFilter;
+
+			dotFilter.set_name( "COLLADA file (*.dae)" );
+			dotFilter.add_pattern( "*.dae" );
+
+			chooser.add_filter( dotFilter );
+			chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+			chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+			chooser.set_do_overwrite_confirmation( true );
+
+			const int result = chooser.run();
+			if( result == Gtk::RESPONSE_OK )
+			{
+				const Glib::ustring	filename( chooser.get_filename() );
+				
+				vgOpenCOLLADA::exporter::SceneExporter exporter( filename, m_root, vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
+
+				if( !exporter.doExport() )
+				{
+
+					Gtk::MessageDialog	messageDlg(*topLevel, "Unable to save VertexShape.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+					
+					messageDlg.run();
+				}
+			}
+		}
+	}
+}
+
+
+
+void Browser::onSetToDefault()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
+
+	if( rowIterator )
+	{
+		vgd::Shp< vgd::node::Node > node = (*rowIterator)[ m_columns.m_nodeColumn ];
+
+		node->setToDefaults();
+
+		m_canvas->refreshForced();
+	}
+}
+
+
+
+void Browser::onSetOptionalToDefault()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
+
+	if( rowIterator )
+	{
+		vgd::Shp< vgd::node::Node >	node = (*rowIterator)[ m_columns.m_nodeColumn ];
+
+		node->setOptionalsToDefaults();
+
+		m_canvas->refreshForced();
+	}
+}
+
+
+
+void Browser::onInvertTriangleOrientation()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
+
+	if( rowIterator )
+	{
+		vgd::Shp< vgd::node::Node >	node = (*rowIterator)[ m_columns.m_nodeColumn ];
+
+		if( node->isA<vgd::node::VertexShape>() )
+		{
+			vgAlg::node::invertPrimitiveOrientation( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
+		}
+		else if( node->isA<vgd::node::TriSet>() )
+		{
+			vgAlg::node::invertTriangleOrientation( vgd::dynamic_pointer_cast< vgd::node::TriSet >( node ) );
+		}
+
+		m_canvas->refreshForced();
+	}
+}
+
+
+
+void Browser::onInvertNormalOrientation()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
+
+	if( rowIterator )
+	{
+		vgd::Shp< vgd::node::Node >	node = (*rowIterator)[ m_columns.m_nodeColumn ];
+
+		vgAlg::node::invertNormalOrientation( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
+
+		m_canvas->refreshForced();
 	}
 }
 
