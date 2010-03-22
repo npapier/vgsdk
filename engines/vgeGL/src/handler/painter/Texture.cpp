@@ -98,7 +98,7 @@ void Texture::paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *p
 			vgLogDebug("vgeGL.Texture: GL_SGIS_generate_mipmap detected and used.");
 			#endif
 
-			pResource->parameter( GL_GENERATE_MIPMAP, bMipmap );
+			pResource->setAutomaticMipmapGenerationEnabled( bMipmap );
 		}
 		else
 		{
@@ -253,7 +253,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 		// Texture mapping is disabled, so do nothing
 		// Validates node
 		vgd::field::DirtyFlag* pDFNode = node->getDirtyFlag( node->getDFNode() );
-		// pDFNode->validate();
+		pDFNode->validate();
 		return;
 	}
 
