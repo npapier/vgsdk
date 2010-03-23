@@ -667,14 +667,17 @@ const bool Canvas::startVGSDK()
 const bool Canvas::shutdownVGSDK()
 {
 	//
-	vgLogDebug("Shutdown vgSDK...");
-
-	if ( m_bLocalInitializedVGSDK == false )
+	if ( !m_bLocalInitializedVGSDK )
 	{
-		vgLogDebug/*logWarning*/("Method shutdownVGSDK() called before startVGSDK() !!!");
-		vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+		// Nothing to do, already shutdown.
+		vgLogDebug/*logMessage*/("vgSDK already shutdown.\n");
 
 		return false;
+	}
+	else
+	{
+		vgLogDebug/*logMessage*/("Shutdown vgSDK...");
+		m_bLocalInitializedVGSDK = false;
 	}
 
 	// Leaves the fullscreen mode.
@@ -684,45 +687,47 @@ const bool Canvas::shutdownVGSDK()
 		setFullscreen( false );
 	}
 
-	if ( startOpenGLContext() == false )
-	{
-		// No current OpenGL context
-		vgLogDebug/*logWarning*/("No current OpenGL context.");
-		vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
-
-		// Try to destroy OpenGL objects
-		vgLogDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
-
-		getGLEngine()->getGLManager().clear();
-
-		//::glo::GLSLProgram::useFixedPaths();
-		getGLEngine()->getGLSLManager().clear();
-
-		//
-		shutdownOpenGLContext();
-
-		vgLogDebug("vgSDK shutdown finished, but not completed.\n");
-		return false;
-	}
-
 	// Last canvas is about to be destroy
 	if ( m_canvasCount == 1 )
 	{
-		assert( isCurrent() && "OpenGL context must have been set current. So OpenGL objects could not be released properly." );
+		if ( startOpenGLContext() )
+		{
+			assert( isCurrent() && "OpenGL context must have been set current. So OpenGL objects could not be released properly." );
 
-		// Try to destroy OpenGL objects
-		vgLogDebug/*logMessage*/("Releases managed OpenGL objects...\n");
+			// Try to destroy OpenGL objects
+			vgLogDebug/*logMessage*/("Releases managed OpenGL objects...\n");
 
-		getGLEngine()->getGLManager().clear();
+			getGLEngine()->getGLManager().clear();
 
-		::glo::GLSLProgram::useFixedPaths();
-		getGLEngine()->getGLSLManager().clear();
+			::glo::GLSLProgram::useFixedPaths();
+			getGLEngine()->getGLSLManager().clear();
 
-		//
-		shutdownOpenGLContext();
+			//
+			shutdownOpenGLContext();
 
-		vgLogDebug("vgSDK shutdown completed.\n");
-		return true;
+			vgLogDebug("vgSDK shutdown completed.\n");
+			return true;
+		}
+		else
+		{
+			// No current OpenGL context
+			vgLogDebug/*logWarning*/("No current OpenGL context.");
+			vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+
+			// Try to destroy OpenGL objects
+			vgLogDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
+
+			getGLEngine()->getGLManager().clear();
+
+			//::glo::GLSLProgram::useFixedPaths();
+			getGLEngine()->getGLSLManager().clear();
+
+			//
+			shutdownOpenGLContext();
+
+			vgLogDebug("vgSDK shutdown finished, but not completed.\n");
+			return false;
+		}
 	}
 	else
 	{
