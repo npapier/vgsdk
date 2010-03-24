@@ -15,9 +15,11 @@
 #include <vgDebug/convenience.hpp>
 #include <vgUI/Canvas.hpp>
 
+#include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include "vgGTK/vgGTK.hpp"
 #include "vgGTK/event/SignalHandler.hpp"
-#include <vgd/event/detail/GlobalButtonStateSet.hpp>
+#include "vgGTK/node/ActionsNode.hpp"
+
 #ifdef WIN32
 	#define	USE_GLC
 	#undef	USE_GTKGLEXT
@@ -71,6 +73,9 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 //#else
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
+
+		m_actionsNode = vgGTK::node::ActionsNode::getActionsNode(); 
+		m_actionsNode->setCanvas( this );
 	}
 
 	/**
@@ -101,6 +106,9 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		assert( false && "Sharing not yet implemented !!!" );
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
+
+		m_actionsNode = vgGTK::node::ActionsNode::getActionsNode();
+		m_actionsNode->setCanvas( this );
 	}
 
 	/**
@@ -428,19 +436,38 @@ protected:
 	//@}
 
 
-
 	/**
 	 * @name	Gtk::Widget overrides
 	 */
 	//@{
+
+	vgd::Shp< vgGTK::node::ActionsNode > m_actionsNode;		///< a reference to the popup menu
+
 	bool on_button_press_event( GdkEventButton * event )
 	{
 		grab_focus();
-	
+
+		if( event->button == 3 )
+		{		
+			int x = 0;
+			int y = 0;
+
+			get_pointer( x, y );
+
+			vgd::node::Node* node = castRay( x, y );
+
+			if( node )
+			{
+				vgd::Shp< vgd::node::Node > currentNode = node->shpFromThis();
+
+				m_actionsNode->showPopup(event, currentNode);
+			}
+		}
+
 		return Gtk::DrawingArea::on_button_press_event( event );
 	}
-	
-	
+
+
 	bool on_configure_event( GdkEventConfigure * event )
 	{
 		//vgLogDebug("vgGTK::Canvas::on_configure_event");
@@ -607,3 +634,4 @@ GenericCanvas< BaseCanvasType >::~GenericCanvas()
 } // namespace vgGTK
 
 #endif // #ifndef _VGGTK_GENERICCANVAS_HPP
+

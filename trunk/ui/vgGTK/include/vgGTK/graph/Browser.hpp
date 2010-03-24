@@ -23,6 +23,7 @@
 #include "vgGTK/graph/FieldManagerEditor.hpp"
 #include "vgGTK/graph/TreeModelColumnRecord.hpp"
 #include "vgGTK/graph/TreeStore.hpp"
+#include "vgGTK/node/ActionsNode.hpp"
 
 namespace vgUI {
 	struct Canvas;
@@ -64,6 +65,56 @@ struct VGGTK_API Browser : public Gtk::VBox
 	 */
 	void setRoot( vgd::Shp< vgd::node::Group > root );
 
+
+
+	/**
+	 * @name Actions
+	 */
+	//@{
+
+	/**
+	 * @brief	Search recursively a vgsdk node in the treeview
+	 *
+	 * @param	children: a node of the treeview
+	 *
+	 * @param	node: the vgsdk node
+	 *
+	 * @param	it: interator of the row where the node is found
+	 *
+	 * @return true if the node is found
+	 */
+	bool searchNode( Gtk::TreeModel::Children children, vgd::Shp< vgd::node::Node > node, Gtk::TreeModel::Row *it );
+
+
+	/**
+	 * @brief	Select a vgsdk node in the treeview
+	 *
+	 * @param	node: the vgsdk node
+	 */
+	void selectNode( vgd::Shp< vgd::node::Node > node );
+	
+
+	/**
+	 * @brief	Refresh the whole tree.
+	 */
+	void refreshTree();
+
+
+	/**
+	 * @brief	Expand the tree node.
+	 */
+	void expandSubTree();
+
+
+	/**
+	 * @brief	Remove selected node from the treeview / vgsdk graph.
+	 */
+	void removeNode();
+
+	//@}
+
+
+
 private:
 
 	typedef std::set< Glib::ustring > StringSet;	///< Defines a set of Glib::ustring.
@@ -77,6 +128,8 @@ private:
 	static const Glib::ustring			m_uiDefinition;		///< Defines the user interfaces.
 	Glib::RefPtr< Gtk::ActionGroup >	m_actions;			///< Holds all actions of the user interface.
 	Glib::RefPtr< Gtk::UIManager >		m_uiManager;		///< Manages the user inteface toolbar and menus.
+
+	vgd::Shp< vgGTK::node::ActionsNode >	m_actionsNode;
 	//@}
 
 	/**
@@ -103,15 +156,8 @@ private:
 	 */
 	//@{
 	void onButtonReleaseEvent( GdkEventButton * event );	///< Handles button clicks on the tree view.
-	void onExpandAll();										///< Handles the action that will expand all tree view content.
-	void onExpandSubTree();									///< Handles the action that will expand all the tree view sub-tree of the selection element.
+	void onExpandAll();										///< Handles the action that will expand all tree view content.	
 	void onFullRefresh();									///< Handles the action that will perfrom a refresh of the whole tree.
-	void onRemoveNode();									///< Handles the action that will remove the selected node from it parent.
-	void onExportNode();									///< Handles the action that will export the selected.
-	void onSetToDefault();									///< Handles the action that will set node filed to default.
-	void onSetOptionalToDefault();							///< Handles the action that will set the optional node field to default.
-	void onInvertTriangleOrientation();						///< Handles the action that will invert triangles orientation.
-	void onInvertNormalOrientation();						///< Handles the action that will invert normals orientation.
 	void onSaveAs();										///< Handles the action that will allow the user to save the graph.
 	void onSelectionChanged();								///< Handles notification about a selection change.
 	//@}
