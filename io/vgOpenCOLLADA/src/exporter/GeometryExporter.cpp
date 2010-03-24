@@ -81,7 +81,7 @@ void GeometryExporter::exportPositions( vgd::Shp< vgd::node::VertexShape > verte
 
 	for( int i = 0; i < vertexCount; ++i )
 	{
-		vgm::Vec3f vec = vertex.get()[0][i];
+		vgm::Vec3f vec = (*vertex)[i];
 		source.appendValues( vec[0], vec[1], vec[2] );
 	}
 
@@ -108,7 +108,7 @@ void GeometryExporter::exportNormals( vgd::Shp< vgd::node::VertexShape > vertexS
 
 	for( int i = 0; i < normalCount; ++i )
 	{
-		vgm::Vec3f vec = normals.get()[0][i];
+		vgm::Vec3f vec = (*normals)[i];
 		source.appendValues( vec[0], vec[1], vec[2] );
 	}
 
@@ -144,10 +144,9 @@ void GeometryExporter::exportTriangles( vgd::Shp< vgd::node::VertexShape > verte
 
 	for( int i = 0; i < numberOfFaces; ++i )
 	{
-		//vgm::Vec3f vec = vertexIndex.get()[0][i];
 		//2 times, one for vertices, one for normals.
-		triangles.appendValues( vertexIndex.get()[0][i] );
-		triangles.appendValues( vertexIndex.get()[0][i] );
+		triangles.appendValues( (*vertexIndex)[i] );
+		triangles.appendValues( (*vertexIndex)[i] );
 	}
 
 	triangles.finish();
