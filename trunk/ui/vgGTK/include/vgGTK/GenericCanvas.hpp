@@ -557,7 +557,16 @@ private:
 		// Change this for the new Gdk::BLANK_CURSOR type when switching to a newer gdkmm.
 		static const Gdk::Cursor	blankCursor( Gdk::Pixmap::create(get_window(), 1, 1, 1), Gdk::Pixmap::create(get_window(), 1, 1, 1), Gdk::Color(), Gdk::Color(), 0, 0 );
 
-		get_window()->set_cursor( blankCursor );
+		Gtk::Window	* toplevel	= dynamic_cast< Gtk::Window * >( get_toplevel() );
+
+		if( toplevel && toplevel->property_is_active() )
+		{
+			get_window()->set_cursor( blankCursor );
+		}
+		else
+		{
+			get_window()->set_cursor();
+		}
 	}
 
 #ifdef USE_GTKGLEXT
@@ -634,4 +643,3 @@ GenericCanvas< BaseCanvasType >::~GenericCanvas()
 } // namespace vgGTK
 
 #endif // #ifndef _VGGTK_GENERICCANVAS_HPP
-
