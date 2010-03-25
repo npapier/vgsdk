@@ -95,6 +95,28 @@ void ActionsNode::setBrowser( vgGTK::graph::Browser * browser )
 
 
 
+bool ActionsNode::onBoutonPressEvent(GdkEventButton * event )
+{
+	if( event->button == 3 )
+	{		
+		int x = 0;
+		int y = 0;
+		m_browser->get_pointer( x, y );
+
+		vgd::node::Node* node = m_canvas->castRay( event->x, event->y );
+
+		if( node )
+		{
+			vgd::Shp< vgd::node::Node > currentNode = node->shpFromThis();
+
+			showPopup(event, currentNode);
+		}
+	}	
+	return true; 
+}
+
+
+
 void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, bool tree)
 {
 	//@todo don't show "ExpandSubTree" if node don't have any children.

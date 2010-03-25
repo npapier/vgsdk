@@ -60,7 +60,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	 */
 	GenericCanvas()
 //#ifdef USE_GLC
-	:	m_glc( 0 )
+	:	m_glc( 0 ),
+		m_showMenu( false )
 //#endif
 	{
 		// vgLogDebug("Creates vgGTK::Canvas.");
@@ -73,9 +74,6 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 //#else
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
-
-		m_actionsNode = vgGTK::node::ActionsNode::getActionsNode(); 
-		m_actionsNode->setCanvas( this );
 	}
 
 	/**
@@ -88,7 +86,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	GenericCanvas( const SharedCanvasType * sharedCanvas )
 	:	vgUI::Canvas( sharedCanvas ),
 //#ifdef USE_GLC
-		m_glc( 0 )
+		m_glc( 0 ),
+		m_showMenu( false )
 //#endif
 	{
 		// vgLogDebug("Creates vgGTK::Canvas.");
@@ -106,9 +105,6 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		assert( false && "Sharing not yet implemented !!!" );
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
-
-		m_actionsNode = vgGTK::node::ActionsNode::getActionsNode();
-		m_actionsNode->setCanvas( this );
 	}
 
 	/**
@@ -312,6 +308,34 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	}
 	//@}
 
+	/**
+	* @brief enable/disable popup menu
+	*
+	* @param show: true to enable menu, false otherwise.
+	*/
+	void setShowMenu(bool show)
+	{
+		if( m_showMenu != show)
+		{
+			m_showMenu = show;
+			if( m_showMenu )
+			{
+				vgd::Shp< vgGTK::node::ActionsNode > actionsNode = vgGTK::node::ActionsNode::getActionsNode();
+				actionsNode->setCanvas( this );
+
+				m_actionNodeConnection = signal_button_press_event().connect( ::sigc::mem_fun(actionsNode.get(), &vgGTK::node::ActionsNode::onBoutonPressEvent) );
+			}
+			else
+			{
+				m_actionNodeConnection.disconnect();
+			}
+		}
+	}
+
+	bool getShowMenu()
+	{
+		return m_showMenu;
+	}
 
 protected:
 
@@ -441,28 +465,9 @@ protected:
 	 */
 	//@{
 
-	vgd::Shp< vgGTK::node::ActionsNode > m_actionsNode;		///< a reference to the popup menu
-
 	bool on_button_press_event( GdkEventButton * event )
 	{
 		grab_focus();
-
-		if( event->button == 3 )
-		{		
-			int x = 0;
-			int y = 0;
-
-			get_pointer( x, y );
-
-			vgd::node::Node* node = castRay( x, y );
-
-			if( node )
-			{
-				vgd::Shp< vgd::node::Node > currentNode = node->shpFromThis();
-
-				m_actionsNode->showPopup(event, currentNode);
-			}
-		}
 
 		return Gtk::DrawingArea::on_button_press_event( event );
 	}
@@ -547,7 +552,10 @@ protected:
 
 private:
 
-	sigc::connection	m_cursorTimeout;	///< The connect to the timeout signal used to hide the cursor.
+	sigc::connection	m_cursorTimeout;		///< The connect to the timeout signal used to hide the cursor.
+
+	sigc::connection	m_actionNodeConnection; ///< The connect to the popup menu mouse event.
+	bool				m_showMenu;
 
 	/**
 	 * @brief	Hides the cursor.

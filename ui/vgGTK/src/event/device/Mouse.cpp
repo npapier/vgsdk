@@ -89,7 +89,7 @@ bool Mouse::onButtonEvent( GdkEventButton * event )
 		assert( false && "Unsupported mouse button." );
 	}
 
-	return true;
+	return false;
 }
 
 

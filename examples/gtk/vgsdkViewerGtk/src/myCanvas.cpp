@@ -105,6 +105,8 @@ myCanvas::myCanvas()
 	// Configures engine
 	// getGLEngine()->setDisplayListEnabled( true );
 	// setDebugOverlay(true);
+
+	setShowMenu(true);
 }
 
 
