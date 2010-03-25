@@ -315,6 +315,7 @@ void Browser::selectNode(vgd::Shp< vgd::node::Node > node)
 	{
 		Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
 		m_treeView.expand_to_path( Gtk::TreePath( it ) );
+		m_treeView.scroll_to_row( Gtk::TreePath( it ) );
 		selection->select(it);
 	}
 }
