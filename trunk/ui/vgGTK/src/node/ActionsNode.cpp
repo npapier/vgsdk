@@ -95,24 +95,30 @@ void ActionsNode::setBrowser( vgGTK::graph::Browser * browser )
 
 
 
-bool ActionsNode::onBoutonPressEvent(GdkEventButton * event )
+bool ActionsNode::onBoutonPressEvent( GdkEventButton * event )
 {
 	if( event->button == 3 )
-	{		
-		int x = 0;
-		int y = 0;
-		m_browser->get_pointer( x, y );
+	{
+		// Retrieves some properties of the window.
+		gint	x;
+		gint	y;
+		gint	width;
+		gint	height;
+		gint	depth;
 
-		vgd::node::Node* node = m_canvas->castRay( event->x, event->y );
+		gdk_window_get_geometry( event->window, &x, &y, &width, &height, &depth );
 
-		if( node )
+		vgd::node::Node * node = m_canvas->castRay( event->x, height - event->y );
+
+		if ( node )
 		{
 			vgd::Shp< vgd::node::Node > currentNode = node->shpFromThis();
 
 			showPopup(event, currentNode);
 		}
-	}	
-	return true; 
+	}
+
+	return true;
 }
 
 

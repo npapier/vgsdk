@@ -40,7 +40,7 @@ struct VGGTK_API ActionsNode
 	void setCanvas( vgUI::Canvas * canvas );
 	void setBrowser( vgGTK::graph::Browser * browser );
 
-	bool onBoutonPressEvent(GdkEventButton * event );
+	bool onBoutonPressEvent( GdkEventButton * event );
 
 /**
  * @brief Show the popup menu
