@@ -45,6 +45,10 @@ const std::string GLSLState::m_indexString[] =
 
 		"FLAT_SHADING",
 
+		"POINT_STYLE",
+
+		"PROGRAM",
+
 		"COLOR4_BIND_PER_VERTEX"
 	};
 
@@ -74,7 +78,7 @@ GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits, const bo
 void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
 {
 	// TBitSet
-	vgeGL::engine::TBitSet< 11 >::reset();
+	vgeGL::engine::TBitSet< 13 >::reset();
 
 	// LIGHT
 	for(	uint	i		= 0,
@@ -117,6 +121,8 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits, const b
 	m_texture.resize( maxTexUnits );
 
 	// @todo others ( at this time default values for others are initialized by GLSLState::update() )
+	setProgram( 0 );
+
 	setShadowType( vgd::node::LightModel::DEFAULT_SHADOW );
 	setSamplingSize( 1.f );
 	setShadowMapType( vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE );
@@ -319,6 +325,20 @@ const std::string GLSLState::getPrivate( const uint privateTexUnitIndex )
 {
 	const uint retVal = getPrivateIndex( privateTexUnitIndex );
 	return vgd::basic::toString(retVal);
+}
+
+
+
+vgd::node::Program * GLSLState::getProgram() const
+{
+	return m_program;
+}
+
+
+
+void GLSLState::setProgram( vgd::node::Program * program )
+{
+	m_program = program;
 }
 
 

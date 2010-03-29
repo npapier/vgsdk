@@ -5,6 +5,7 @@
 
 #include "vgeGL/engine/FragmentShaderGenerator.hpp"
 
+#include <vgd/node/Program.hpp>
 #include "vgeGL/engine/Engine.hpp"
 
 
@@ -35,6 +36,20 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code1.clear();
 	m_code2.clear();
 	m_decl += "#version 120\n";
+
+	// Test if custom program must be installed
+	if ( state.isEnabled( GLSLState::PROGRAM ) )
+	{
+		vgd::node::Program * program = state.getProgram();
+		assert( program );
+
+		std::string shaderStr;
+		program->getShader( vgd::node::Program::FRAGMENT, shaderStr );
+
+		m_code1 = shaderStr;
+
+		return true;		
+	}
 
 	// DECLARATIONS
 	if ( state.isPerPixelLightingEnabled() )

@@ -23,6 +23,7 @@ namespace vgd
 	namespace node
 	{
 		struct Light;
+		struct Program;
 		struct SpotLight;
 		struct TexGen;
 		struct Texture;
@@ -86,7 +87,7 @@ void TBitSet<size>::reset()
  * This class is a specialized container for GLSL rendering state used by program/shader generators 
  * to take care of the rendering state given by the scene graph.
  */
-struct GLSLState : public TBitSet< 11 >
+struct GLSLState : public TBitSet< 13 >
 {
 	enum BitSetIndexType
 	{
@@ -103,10 +104,16 @@ struct GLSLState : public TBitSet< 11 >
 		SPOT_LIGHT_CASTING_SHADOW,
 
 		// ClipPlane node
-		CLIPPING_PLANE,				///< True when at least on ClipPlane node has been traversed
+		CLIPPING_PLANE,				///< True when at least one ClipPlane node has been traversed
 
 		// DrawStyle node
 		FLAT_SHADING,				///< True when DrawStyle.shape implies a flat shading (instead of smooth shading)
+
+		// PointStyle node
+		POINT_STYLE,				///< True when at least one PointStyle node has been traversed
+
+		// Program node
+		PROGRAM,					///< True when at least one Program node has been traversed
 
 		// VertexShape node
 		COLOR4_BIND_PER_VERTEX,
@@ -362,8 +369,15 @@ struct GLSLState : public TBitSet< 11 >
 	 */
 	const uint getMaxTexture() const;
 
+	//@}
 
 
+
+	/**
+	 * @name Private texture unit accesors
+	 */
+	//@{
+	 
 	/**
 	 * @brief Retrieves index of private texture unit.
 	 *
@@ -402,7 +416,22 @@ struct GLSLState : public TBitSet< 11 >
 	 * @return a string containing zero-based index.
 	 */
 	const std::string getPrivate( const uint privateTexUnitIndex = 0 );
+
 	//@}
+
+
+
+	/**
+	 * @brief Returns the last encountered Program node
+	 */
+	vgd::node::Program * getProgram() const;
+
+	/**
+	 * @brief Sets the last encountered Program node
+	 *
+	 * @param node		reference on the Program node
+	 */
+	void setProgram( vgd::node::Program * program );
 
 
 
@@ -448,6 +477,8 @@ struct GLSLState : public TBitSet< 11 >
 	
 
 private:
+	vgd::node::Program *							m_program;				///< the last encountered Program node
+
 	vgd::node::LightModel::ShadowValueType			m_lightModelShadow;		///< Last encountered value of LightModel.shadow field
 	float											m_samplingSize;			///< @todo doc
 	vgd::node::LightModel::ShadowMapTypeValueType	m_shadowMapType;		///< @todo doc

@@ -70,7 +70,7 @@ LightModel::LightModel( const std::string nodeName ) :
 void LightModel::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setShadowMapType( INT16 );
+	setShadowMapType( INT32 );
 	setIlluminationInShadow( 0.4f );
 	setSamplingSize( 1.0 );
 }

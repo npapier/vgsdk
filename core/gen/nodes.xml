@@ -95,6 +95,17 @@
 	</node>
 
 
+	<node name = "FrameBuffer" inherits = "SingleAttribute" >
+		<doxygen>
+			<docBrief>Node representing the current framebuffer.</docBrief>
+			<doc>This node specifies which color(s)/depth/stencil buffers are to be drawn into.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_frameBufferNodes</ingroup>
+		</doxygen>
+	</node>
+
+
 	<node name = "FrontFace" inherits = "SingleAttribute" >
 		<doxygen>
 			<docBrief>Front face polygons definition node</docBrief>
@@ -211,24 +222,21 @@
 		<of name="shadowQuality" doc="Specifies the quality of the shadow computation">
 			<type name="enum">
 				<enum default="MEDIUM">
-					<value name="VERY_HIGH"	doc="Very high resolution shadow map"/>
-					<value name="HIGH"		doc="High resolution shadow map"/>
-					<value name="MEDIUM"	doc="Medium resolution shadow map"/>
 					<value name="LOW"		doc="Low resolution shadow map"/>
+					<value name="MEDIUM"	doc="Medium resolution shadow map"/>
+					<value name="HIGH"		doc="High resolution shadow map"/>
+					<value name="VERY_HIGH"	doc="Very high resolution shadow map"/>
 				</enum>
 			</type>
 		</of>
 
 		<sf name="shadowMapType" doc="">
 			<type name="enum">
-				<enum default="INT16">
-					<!--<value name="FLOAT32"	doc=""/>
-					<value name="FLOAT24"	doc=""/>
-					<value name="FLOAT16"	doc=""/>-->
-					<value name="FLOAT"	doc=""/>
-					<value name="INT32"		doc=""/>
-					<!--<value name="INT24"		doc=""/>-->
-					<value name="INT16"		doc=""/>
+				<enum default="INT32">
+					<value name="INT16"		doc="see Texture.internalFormat documentation"/>
+					<value name="INT24"		doc="see Texture.internalFormat documentation"/>
+					<value name="INT32"		doc="see Texture.internalFormat documentation"/>
+					<value name="FLOAT32"	doc="see Texture.internalFormat documentation"/>
 				</enum>
 			</type>
 		</sf>
@@ -320,7 +328,15 @@
 			<ingroup>g_propertiesNodes</ingroup>
 		</doxygen>
 		<of name="size" doc="Specifies the rasterized diameter of both aliased and antialiased points">
-			<type name ="float" default = "1.f"></type>
+			<type name = "float" default = "1.f"></type>
+		</of>
+
+		<of name="distanceAttenuation" doc="a vector of three floating-point values that specify the coefficients used for scaling the computed point size. The default values are (1 0 0).">
+			<type name = "Vec3f" namespace="vgm" default = "1.f, 0.f, 0.f"></type>
+		</of>
+
+		<of name="smooth" doc="If enabled, draw antialiased points, otherwise draw aliased points.">
+			<type name = "bool" default = "false"></type>
 		</of>
 	</node>
 
@@ -464,6 +480,19 @@
 				</enum>
 			</type>
 		</sf>
+
+		<sf name = "internalFormat" doc="Specifies the desired internal format used by the GPU.">
+			<type name="enum">
+				<enum default="AUTOMATIC">
+					<value name="AUTOMATIC"	doc="Choosed automatically an internal format matching the image format used by the texture."/>
+					<value name="DEPTH_COMPONENT_16" doc="a single component buffer used to store depth. A 16-bit integer is used to encode a texel."/>
+					<value name="DEPTH_COMPONENT_24" doc="a single component buffer used to store depth. A 24-bit integer is used to encode a texel."/>
+					<value name="DEPTH_COMPONENT_32" doc="a single component buffer used to store depth. A 32-bit integer is used to encode a texel."/>
+					<value name="DEPTH_COMPONENT_32F" doc="a single component buffer used to store depth. A 32-bit float is used to encode a texel."/>
+				</enum>
+			</type>
+		</sf>
+
 <!-- image format depth
  GL_TEXTURE_COMPARE_MODE
  GL_TEXTURE_COMPARE_FUNC

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,8 +6,10 @@
 #include "vgeGL/handler/painter/Program.hpp"
 
 #include <vgd/node/Program.hpp>
-#include "vgeGL/rc/GLSLProgram.hpp"
-#include "vgeGL/rc/TSyncAndBindHelper.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
+#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGL/rc/GLSLProgram.hpp"
+//#include "vgeGL/rc/TSyncAndBindHelper.hpp"
 
 
 
@@ -45,9 +47,20 @@ void Program::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	assert( dynamic_cast< vgd::node::Program* >(node) != 0 );
 	vgd::node::Program *castedNode = static_cast< vgd::node::Program* >(node);
 
+	// Retrieves GLSL state
+	using vgeGL::engine::GLSLState;
+	GLSLState& state = glEngine->getGLSLState();
+
+	state.setEnabled( GLSLState::PROGRAM );
+	state.setProgram( castedNode );
+
+	// Validates node
+	node->getDirtyFlag(node->getDFNode())->validate();
+
+/* This code installs immediately the program.
 	using vgeGL::rc::applyUsingSyncAndBind;
 	applyUsingSyncAndBind< vgd::node::Program, vgeGL::handler::painter::Program, vgeGL::rc::GLSLProgram >( 
-			glEngine, castedNode, this );
+			glEngine, castedNode, this );*/
 
 	// Validates node
 	// assert( node->getDirtyFlag(node->getDFNode())->isValid() && "Node dirty flag not validated." ); not always true
@@ -63,23 +76,23 @@ void Program::unapply( vge::engine::Engine * /*engine*/, vgd::node::Node * /*nod
 
 void Program::setToDefaults()
 {
-	glo::GLSLProgram::useFixedPaths();
+	//glo::GLSLProgram::useFixedPaths();
 }
 
 
 
-void Program::bind( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGL::rc::GLSLProgram * resource )
+void Program::bind( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGL::rc::GLSLProgram * /*resource*/ )
 {
-	assert( resource != 0 );
+	/*assert( resource != 0 );
 	// assert( !resource->isEmpty() );
 
-	resource->use();
+	resource->use();*/
 }
 
 
 
-void Program::synchronize( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * node, vgeGL::rc::GLSLProgram * resource )
-{
+void Program::synchronize( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGL::rc::GLSLProgram * /*resource*/ )
+{/*
 	bool defined;
 	vgd::node::Program::ShaderValueType value;
 
@@ -118,7 +131,7 @@ void Program::synchronize( vgeGL::engine::Engine * /*engine*/, vgd::node::Progra
 		vgd::field::DirtyFlag * nodeDF = node->getDirtyFlag( node->getDFNode() );
 		nodeDF->validate();
 	}
-	// else nothing to do. Don't validate df.
+	// else nothing to do. Don't validate df.*/
 }
 
 

@@ -254,7 +254,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @param vertex	vertex to transform
 	 * @return vertex transformed
 	 *
-	 * @pre getViewport(...) == true
+	 * @pre hasViewport()
 	 */
 	const vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
 	//@}

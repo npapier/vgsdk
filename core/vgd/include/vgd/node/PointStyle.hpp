@@ -6,7 +6,9 @@
 #ifndef _VGD_NODE_POINTSTYLE_HPP
 #define _VGD_NODE_POINTSTYLE_HPP
 
+#include "vgd/field/Bool.hpp"
 #include "vgd/field/Float.hpp"
+#include "vgd/field/Vec3f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
 
@@ -25,6 +27,12 @@ namespace node
  * 
  *
  * New fields defined by this node :
+ * - OFBool \c [smooth] = false<br>
+ *   If enabled, draw antialiased points, otherwise draw aliased points.<br>
+ *<br>
+ * - OFVec3f \c [distanceAttenuation] = vgm::Vec3f(1.f, 0.f, 0.f)<br>
+ *   a vector of three floating-point values that specify the coefficients used for scaling the computed point size. The default values are (1 0 0).<br>
+ *<br>
  * - OFFloat \c [size] = 1.f<br>
  *   Specifies the rasterized diameter of both aliased and antialiased points<br>
  *<br>
@@ -54,6 +62,84 @@ struct VGD_API PointStyle : public vgd::node::SingleAttribute
 	 */
 	static vgd::Shp< PointStyle > createWhole( const std::string nodeName = "DefaultWhole" );
 
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field smooth
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c smooth.
+	 */
+	typedef bool SmoothValueType;
+
+	/**
+	 * @brief Type definition of the field named \c smooth
+	 */
+	typedef vgd::field::TOptionalField< SmoothValueType > FSmoothType;
+
+
+	/**
+	 * @brief Gets the value of field named \c smooth.
+	 */
+	const bool getSmooth( SmoothValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c smooth.
+ 	 */
+	void setSmooth( const SmoothValueType& value );
+
+	/**
+	 * @brief Erases the field named \c smooth.
+	 */
+	void eraseSmooth();
+
+	/**
+	 * @brief Tests if the value of field named \c smooth has been initialized.
+	 */
+	const bool hasSmooth() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field distanceAttenuation
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c distanceAttenuation.
+	 */
+	typedef vgm::Vec3f DistanceAttenuationValueType;
+
+	/**
+	 * @brief Type definition of the field named \c distanceAttenuation
+	 */
+	typedef vgd::field::TOptionalField< DistanceAttenuationValueType > FDistanceAttenuationType;
+
+
+	/**
+	 * @brief Gets the value of field named \c distanceAttenuation.
+	 */
+	const bool getDistanceAttenuation( DistanceAttenuationValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c distanceAttenuation.
+ 	 */
+	void setDistanceAttenuation( const DistanceAttenuationValueType& value );
+
+	/**
+	 * @brief Erases the field named \c distanceAttenuation.
+	 */
+	void eraseDistanceAttenuation();
+
+	/**
+	 * @brief Tests if the value of field named \c distanceAttenuation has been initialized.
+	 */
+	const bool hasDistanceAttenuation() const;
 	//@}
 
 
@@ -101,6 +187,20 @@ struct VGD_API PointStyle : public vgd::node::SingleAttribute
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c smooth.
+	 *
+	 * @return the name of field \c smooth.
+	 */
+	static const std::string getFSmooth( void );
+
+	/**
+	 * @brief Returns the name of field \c distanceAttenuation.
+	 *
+	 * @return the name of field \c distanceAttenuation.
+	 */
+	static const std::string getFDistanceAttenuation( void );
 
 	/**
 	 * @brief Returns the name of field \c size.

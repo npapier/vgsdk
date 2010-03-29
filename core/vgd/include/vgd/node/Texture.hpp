@@ -43,6 +43,9 @@ namespace node
  * - PAFEnum \c wrap = REPEAT<br>
  *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
  *<br>
+ * - SFEnum \c internalFormat = AUTOMATIC<br>
+ *   Specifies the desired internal format used by the GPU.<br>
+ *<br>
  * - SFEnum \c usage = IMAGE<br>
  *   Indicating the expected usage pattern of the texture.<br>
  *<br>
@@ -184,8 +187,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		MIN_FILTER = 295,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
-		MAG_FILTER = 296,	///< Choose one value among NEAREST or LINEAR (default).
+		MIN_FILTER = 301,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
+		MAG_FILTER = 302,	///< Choose one value among NEAREST or LINEAR (default).
 		DEFAULT_FILTERPARAMETER = MAG_FILTER	///< Choose one value among NEAREST or LINEAR (default).
 	};
 
@@ -213,8 +216,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 295 );
-			retVal.push_back( 296 );
+			retVal.push_back( 301 );
+			retVal.push_back( 302 );
 
 			return retVal;
 		}
@@ -235,12 +238,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		NEAREST = 297,	///< 
-		LINEAR = 298,	///< 
-		LINEAR_MIPMAP_NEAREST = 300,	///< 
-		NEAREST_MIPMAP_NEAREST = 299,	///< 
-		LINEAR_MIPMAP_LINEAR = 302,	///< 
-		NEAREST_MIPMAP_LINEAR = 301,	///< 
+		NEAREST = 303,	///< 
+		LINEAR = 304,	///< 
+		LINEAR_MIPMAP_NEAREST = 306,	///< 
+		NEAREST_MIPMAP_NEAREST = 305,	///< 
+		LINEAR_MIPMAP_LINEAR = 308,	///< 
+		NEAREST_MIPMAP_LINEAR = 307,	///< 
 		DEFAULT_FILTER = LINEAR	///< 
 	};
 
@@ -268,12 +271,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 297 );
-			retVal.push_back( 298 );
-			retVal.push_back( 300 );
-			retVal.push_back( 299 );
-			retVal.push_back( 302 );
-			retVal.push_back( 301 );
+			retVal.push_back( 303 );
+			retVal.push_back( 304 );
+			retVal.push_back( 306 );
+			retVal.push_back( 305 );
+			retVal.push_back( 308 );
+			retVal.push_back( 307 );
 
 			return retVal;
 		}
@@ -330,9 +333,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		WRAP_T = 287,	///< 
-		WRAP_S = 286,	///< 
-		WRAP_R = 288,	///< 
+		WRAP_T = 293,	///< 
+		WRAP_S = 292,	///< 
+		WRAP_R = 294,	///< 
 		DEFAULT_WRAPPARAMETER = WRAP_S	///< 
 	};
 
@@ -360,9 +363,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 287 );
-			retVal.push_back( 286 );
-			retVal.push_back( 288 );
+			retVal.push_back( 293 );
+			retVal.push_back( 292 );
+			retVal.push_back( 294 );
 
 			return retVal;
 		}
@@ -384,12 +387,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		CLAMP = 290,	///< 
-		REPEAT = 289,	///< 
-		MIRRORED_REPEAT = 293,	///< 
-		CLAMP_TO_EDGE = 291,	///< 
-		CLAMP_TO_BORDER = 292,	///< 
-		ONCE = 294,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
+		CLAMP = 296,	///< 
+		REPEAT = 295,	///< 
+		MIRRORED_REPEAT = 299,	///< 
+		CLAMP_TO_EDGE = 297,	///< 
+		CLAMP_TO_BORDER = 298,	///< 
+		ONCE = 300,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
 		DEFAULT_WRAP = REPEAT	///< 
 	};
 
@@ -417,12 +420,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 290 );
-			retVal.push_back( 289 );
-			retVal.push_back( 293 );
-			retVal.push_back( 291 );
-			retVal.push_back( 292 );
-			retVal.push_back( 294 );
+			retVal.push_back( 296 );
+			retVal.push_back( 295 );
+			retVal.push_back( 299 );
+			retVal.push_back( 297 );
+			retVal.push_back( 298 );
+			retVal.push_back( 300 );
 
 			return retVal;
 		}
@@ -467,6 +470,91 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field internalFormat
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		DEPTH_COMPONENT_16 = 288,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
+		DEPTH_COMPONENT_24 = 289,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
+		AUTOMATIC = 287,	///< Choosed automatically an internal format matching the image format used by the texture.
+		DEPTH_COMPONENT_32F = 291,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32 = 290,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
+		DEFAULT_INTERNALFORMAT = AUTOMATIC	///< Choosed automatically an internal format matching the image format used by the texture.
+	};
+
+	/**
+	 * @brief Type definition of the value contained by field named \c internalFormat.
+	 */
+	struct InternalFormatValueType : public vgd::field::Enum
+	{
+		InternalFormatValueType()
+		{}
+
+		InternalFormatValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		InternalFormatValueType( const InternalFormatValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		InternalFormatValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 288 );
+			retVal.push_back( 289 );
+			retVal.push_back( 287 );
+			retVal.push_back( 291 );
+			retVal.push_back( 290 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "DEPTH_COMPONENT_16" );
+			retVal.push_back( "DEPTH_COMPONENT_24" );
+			retVal.push_back( "AUTOMATIC" );
+			retVal.push_back( "DEPTH_COMPONENT_32F" );
+			retVal.push_back( "DEPTH_COMPONENT_32" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c internalFormat
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FInternalFormatType;
+
+
+	/**
+	 * @brief Gets the value of field named \c internalFormat.
+	 */
+	const InternalFormatValueType getInternalFormat() const;
+
+	/**
+	 * @brief Sets the value of field named \c internalFormat.
+	 */
+	void setInternalFormat( const InternalFormatValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field usage
 	 */
 	//@{
@@ -476,8 +564,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		IMAGE = 284,	///< Simple image mapping
-		SHADOW = 285,	///< Shadow mapping
+		IMAGE = 285,	///< Simple image mapping
+		SHADOW = 286,	///< Shadow mapping
 		DEFAULT_USAGE = IMAGE	///< Simple image mapping
 	};
 
@@ -505,8 +593,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 284 );
 			retVal.push_back( 285 );
+			retVal.push_back( 286 );
 
 			return retVal;
 		}
@@ -581,6 +669,13 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 * @return the name of field \c wrap.
 	 */
 	static const std::string getFWrap( void );
+
+	/**
+	 * @brief Returns the name of field \c internalFormat.
+	 *
+	 * @return the name of field \c internalFormat.
+	 */
+	static const std::string getFInternalFormat( void );
 
 	/**
 	 * @brief Returns the name of field \c usage.

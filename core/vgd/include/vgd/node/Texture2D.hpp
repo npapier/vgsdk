@@ -41,6 +41,9 @@ namespace node
  * - PAFEnum \c wrap = REPEAT<br>
  *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
  *<br>
+ * - SFEnum \c internalFormat = AUTOMATIC<br>
+ *   Specifies the desired internal format used by the GPU.<br>
+ *<br>
  * - SFEnum \c usage = IMAGE<br>
  *   Indicating the expected usage pattern of the texture.<br>
  *<br>

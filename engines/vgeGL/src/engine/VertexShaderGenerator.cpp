@@ -5,9 +5,12 @@
 
 #include "vgeGL/engine/VertexShaderGenerator.hpp"
 
+#include <vgd/node/Program.hpp>
 #include "vgeGL/engine/Engine.hpp"
 
 // @todo generates all shaders from one function to avoid multiple if
+
+
 
 namespace vgeGL
 {
@@ -35,6 +38,20 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code1.clear();
 	m_code2.clear();
 	m_decl += "#version 120\n";
+
+	// Test if custom program must be installed
+	if ( state.isEnabled( GLSLState::PROGRAM ) )
+	{
+		vgd::node::Program * program = state.getProgram();
+		assert( program );
+
+		std::string shaderStr;
+		program->getShader( vgd::node::Program::VERTEX, shaderStr );
+
+		m_code1 = shaderStr;
+
+		return true;
+	}
 
 	// DECLARATIONS
 	if ( state.isLightingEnabled() )
@@ -184,6 +201,13 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	if ( state.isEnabled( GLSLState::CLIPPING_PLANE ) )
 	{
 		m_code2 += "	gl_ClipVertex = ecPosition;\n";
+	}
+
+	// POINT SIZE
+	if ( state.isEnabled( GLSLState::POINT_STYLE ) )
+	{
+		m_code1 += GLSLHelpers::generate_fpoint( state ) + "\n";
+		m_code2 += "	gl_PointSize = fpoint( length(ecPosition) );\n"; // , 1.0 );\n";
 	}
 
 	m_code2 += "}\n";

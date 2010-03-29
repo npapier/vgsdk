@@ -5,6 +5,7 @@
 
 #include "vgeGL/engine/GeometryShaderGenerator.hpp"
 
+#include <vgd/node/Program.hpp>
 #include "vgeGL/engine/Engine.hpp"
 
 
@@ -27,9 +28,28 @@ GeometryShaderGenerator::GeometryShaderGenerator()
 
 const bool GeometryShaderGenerator::generate( vgeGL::engine::Engine * engine )
 {
+	// Retrieves the GLSL state
+	GLSLState& state = engine->getGLSLState();
+
+	// Clears the code repository
 	m_decl.clear();
 	m_code1.clear();
 	m_code2.clear();
+	m_decl += "#version 120\n";
+
+	// Test if custom program must be installed
+	if ( state.isEnabled( GLSLState::PROGRAM ) )
+	{
+		vgd::node::Program * program = state.getProgram();
+		assert( program );
+
+		std::string shaderStr;
+		program->getShader( vgd::node::Program::GEOMETRY, shaderStr );
+
+		m_code1 = shaderStr;
+
+		return true;
+	}
 
 	return true;
 }
