@@ -44,11 +44,17 @@ struct VGGTK_API UserSettings : public Gtk::VBox
 	 */
 	void set( const vge::engine::UserSettings & );
 
+	/**
+	 * @brief	Signal emited when the settings changed.
+	 */
+	sigc::signal< void > & signalChanged();
+
 private:
 
-	vge::engine::UserSettings	m_settings;		///< The settings to configure.
-	Gtk::ComboBoxText			m_levelCombo;	///< The scale use to select a level.
-	Gtk::ComboBoxText			m_cardCombo;	///< The combo box use to select a graphic card.
+	vge::engine::UserSettings	m_settings;			///< The settings to configure.
+	Gtk::ComboBoxText			m_levelCombo;		///< The scale use to select a level.
+	Gtk::ComboBoxText			m_cardCombo;		///< The combo box use to select a graphic card.
+	sigc::signal< void >		m_signalChanged;	///< The signal emited when on setting changes
 
 	/**
 	 * @name	Signal connections
