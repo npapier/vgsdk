@@ -116,10 +116,19 @@ const vge::engine::UserSettings & UserSettings::get() const
 
 
 
+sigc::signal< void > & UserSettings::signalChanged()
+{
+	return m_signalChanged;
+}
+
+
+
 void UserSettings::set( const vge::engine::UserSettings & settings )
 {
 	m_settings = settings;
 	refreshLevel();
+	refreshCard();
+	m_signalChanged.emit();
 }
 
 
@@ -132,6 +141,7 @@ void UserSettings::onCardChanged()
 	{
 		m_settings.setGraphicCard( card );
 		refreshLevel();
+		m_signalChanged.emit();
 	}
 }
 
@@ -145,6 +155,7 @@ void UserSettings::onLevelChanged()
 	{
 		m_settings.setLevel( level );
 		refreshCard();
+		m_signalChanged.emit();
 	}
 }
 
