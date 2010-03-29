@@ -29,7 +29,7 @@ namespace
 	{
 		Gtk::Expander	* expander	= Gtk::manage( new Gtk::Expander(label) );
 		Gtk::Frame		* frame		= Gtk::manage( new Gtk::Frame() );
-	
+
 		frame->add( *content );
 		frame->set_shadow_type( Gtk::SHADOW_IN );
 
