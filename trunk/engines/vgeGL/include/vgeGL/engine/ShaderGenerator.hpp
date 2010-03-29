@@ -1158,6 +1158,24 @@ struct GLSLHelpers
 
 		return retVal;
 	}
+
+	static const std::string generate_fpoint( const vgeGL::engine::GLSLState& state )
+	{
+		std::string retVal;
+
+		retVal +=	"float fpoint( in float ecDistance )\n" //, out float fadeFactor)\n"
+					"{\n"
+					"	float derivedSize;\n"
+					"	derivedSize =	gl_Point.distanceConstantAttenuation +\n"
+					"					(gl_Point.distanceLinearAttenuation * ecDistance) +\n"
+					"					(gl_Point.distanceQuadraticAttenuation * ecDistance * ecDistance);\n"
+					"	derivedSize = gl_Point.size * inversesqrt(derivedSize);\n"
+					"	derivedSize = clamp( derivedSize, gl_Point.sizeMin, gl_Point.sizeMax );\n"
+					"	return derivedSize;\n"
+					"}\n";
+
+		return retVal;
+	}
 };
 
 

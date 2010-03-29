@@ -220,11 +220,11 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 				lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP_TO_EDGE );
 
 				//lightDepthMap->setMipmap( true );
-				lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-				//lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
+				//lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+				lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
 				//lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR_MIPMAP_LINEAR /*LINEAR */);
-				lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
-				//lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+				//lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+				lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
 
 				lightDepthMap->setUsage( Texture::SHADOW );
 
@@ -554,29 +554,41 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			using vgd::basic::IImage;
 			using vgd::basic::ImageInfo;
 
-			vgd::basic::IImage::Type imageType;
-			if ( shadowMapType == vgd::node::LightModel::FLOAT )
+			vgd::basic::IImage::Type					imageType;
+			vgd::node::Texture::InternalFormatValueType internalFormat;
+
+			if ( shadowMapType == vgd::node::LightModel::FLOAT32 )
 			{
-				imageType = IImage::FLOAT;
+				imageType		= IImage::FLOAT;
+				internalFormat	= vgd::node::Texture::DEPTH_COMPONENT_32F;
 			}
 			else if ( shadowMapType == vgd::node::LightModel::INT32 )
 			{
-				imageType = IImage::INT32;
+				imageType		= IImage::INT32;
+				internalFormat	= vgd::node::Texture::DEPTH_COMPONENT_32;
 			}
+			else if ( shadowMapType == vgd::node::LightModel::INT24 )
+			{
+				imageType		= IImage::INT32;
+				internalFormat	= vgd::node::Texture::DEPTH_COMPONENT_24;
+			}			
 			else if ( shadowMapType == vgd::node::LightModel::INT16 )
 			{
-				imageType = IImage::INT16;
+				imageType		= IImage::INT16;
+				internalFormat	= vgd::node::Texture::DEPTH_COMPONENT_16;
 			}
 			else
 			{
 				assert( false );
-				imageType = IImage::INT16;
+				imageType		= IImage::INT16;
+				internalFormat	= vgd::node::Texture::DEPTH_COMPONENT_16;
 			}
 
 			vgd::Shp< ImageInfo > depthImage(
 				new ImageInfo(	shadowMappingInput->getShadowMapSize()[0], shadowMappingInput->getShadowMapSize()[1], 1,
 								IImage::LUMINANCE, imageType ) );
 			texture2D->setImage( depthImage );
+			texture2D->setInternalFormat( internalFormat );
 			const uint currentTexUnit = internalTexUnitIndex - currentLightIndex;
 			texture2D->setMultiAttributeIndex( currentTexUnit );
 			engine->evaluate( paintService, texture2D.get(), true );
@@ -620,9 +632,9 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			{
 				// Enables render to depth texture
 				fbo->bind();
-				fbo->renderDepthOnly();
+				//fbo->renderDepthOnly();
 
-				fbo->attachDepth( lightDepthMap );
+				//fbo->attachDepth( lightDepthMap );
 #ifdef _DEBUG
 				// Check framebuffer completeness at the end of initialization.
 				const std::string fboStatus = fbo->getStatusString();
@@ -707,11 +719,9 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			}
 
 			// Re-enable rendering to the window
-			fbo->detachDepth();			
-			fbo->renderDepthOnly( false );
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);// @todo fbo->unbound();
-//			glDrawBuffer( GL_BACK );
-//			glReadBuffer( GL_BACK );
+			//fbo->detachDepth();			
+			//fbo->renderDepthOnly( false );
+			fbo->unbind();
 
 			// Rendering done, extract depth map from depth buffer and copy into a texture2D node.
 			// @todo more high-level (Engine::renderTargets section ?)
@@ -764,14 +774,14 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 			// *** Updates Texture ***
 			vgd::Shp< vgd::node::Texture2D > texture2D = shadowMappingInput->getLightDepthMap( currentLightIndex );
-			texture2D->setMultiAttributeIndex( currentTexUnit );
+//			//texture2D->setMultiAttributeIndex( currentTexUnit );
 // @todo setFunction()
 			engine->evaluate( paintService, texture2D.get(), true );
 
 			// *** Updates TexGen ***
 			vgd::Shp< vgd::node::TexGenEyeLinear > texGen = shadowMappingInput->getTexGen( currentLightIndex );
 			//texGen->setMultiAttributeIndex( texture2D->getMultiAttributeIndex() );
-			texGen->setMultiAttributeIndex( currentTexUnit );
+			if ( texGen->getMultiAttributeIndex() != currentTexUnit )	texGen->setMultiAttributeIndex( currentTexUnit );
 			engine->evaluate( paintService, texGen.get(), true );
 
 			// *** Updates Texture Matrix ***
@@ -811,9 +821,9 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		endPass();
 	}
 	else
-	/////////////////////////////////////////////////////////
-	// STEP 3 bis : Rendering (opaque and transparent pass )
-	/////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
+	// STEP 3 bis : Rendering (opaque and transparent pass) //
+	//////////////////////////////////////////////////////////
 	{
 		setPassDescription("ForwardRendering:begin:Default rendering");
 

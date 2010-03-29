@@ -1,6 +1,6 @@
 const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 {
-	assert( hasViewport() ;
+	assert( hasViewport() );
 
 	vgm::Rectangle2i viewport;
 	getViewport( viewport );

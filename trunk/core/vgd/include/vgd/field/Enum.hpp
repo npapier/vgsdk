@@ -117,7 +117,7 @@ struct VGD_API Enum
 	/**
 	 * @brief	Retrieves the enumeration value for the given string.
 	 *
-	 * @return	an enumeration for the given value, cab be invalid
+	 * @return	an enumeration for the given value, can be invalid
 	 */
 	const Enum fromString( const std::string & str ) const;
 

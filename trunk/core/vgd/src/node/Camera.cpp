@@ -199,9 +199,10 @@ const std::string Camera::getFViewport( void )
 
 const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 {
+	assert( hasViewport() );
+
 	vgm::Rectangle2i viewport;
-	const bool isDefined = getViewport( viewport );
-	assert( isDefined );
+	getViewport( viewport );
 
 	const vgm::Vec2f o(	static_cast<float>(viewport.x()) + static_cast<float>(viewport.width()) * 0.5f,
 						static_cast<float>(viewport.y()) + static_cast<float>(viewport.height()) * 0.5f );

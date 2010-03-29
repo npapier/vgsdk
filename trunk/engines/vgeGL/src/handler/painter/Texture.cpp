@@ -27,6 +27,44 @@ namespace painter
 
 
 
+namespace
+{
+
+const GLenum convertInternalFormatToGLInternalFormat( const vgd::node::Texture::InternalFormatValueType internalFormat )
+{
+	using vgd::node::Texture;
+
+	if ( internalFormat == Texture::DEPTH_COMPONENT_16 )
+	{
+		return GL_DEPTH_COMPONENT16;
+	}
+	else if ( internalFormat == Texture::DEPTH_COMPONENT_24 )
+	{
+		return GL_DEPTH_COMPONENT24;
+	}
+	else if ( internalFormat == Texture::DEPTH_COMPONENT_32 )
+	{
+		return GL_DEPTH_COMPONENT32;
+	}
+	else if ( internalFormat == Texture::DEPTH_COMPONENT_32F )
+	{
+		return GL_DEPTH_COMPONENT32F;
+	}	
+	else if ( internalFormat ==  Texture::AUTOMATIC )
+	{
+		return GL_DEPTH_COMPONENT;
+	}
+	else
+	{
+		assert( false && "Unexpected value in convertInternalFormatToGLInternalFormat()" );
+		return GL_DEPTH_COMPONENT;
+	}
+}
+
+}
+
+
+
 void Texture::setToDefaults()
 {}
 
@@ -648,9 +686,12 @@ const bool Texture::isTextureCompatible(	vgeGL::engine::Engine *pGLEngine, vgd::
 											const TexInfo& texInfo )
 {
 	const bool isTexSizeCompatible = isTextureSizeCompatible( pTexture, texInfo );
-	// @todo checks format, type and internalFormat
 
-	const bool isCompatible = isTexSizeCompatible;
+	const bool isTexInternalFormatCompatible = (texInfo.internalFormat == pTexture->getInternalFormat());
+
+	// @todo checks format and type.
+
+	const bool isCompatible = isTexSizeCompatible && isTexInternalFormatCompatible;
 
 	return isCompatible;
 }
@@ -732,22 +773,23 @@ void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd
 
 const boost::tuple< GLint, GLenum > Texture::chooseFormats( vgd::Shp< vgd::basic::IImage > iimage, vgd::node::Texture * texture )
 {
-	const GLint		components	= iimage->components();
-	const GLenum	format		= convertMyFormat2GL( iimage->format() );
-
 	// Adapts internal/external format of texture depending of its usage (see Texture.usage)
 	vgd::node::Texture::UsageValueType usage = texture->getUsage();
+
 	if ( usage.value() == vgd::node::Texture::SHADOW )
 	{
 		// Texture is used for shadow
-		assert( components == 1 && "Texture.usage == SHADOW, but Texture.image.components != 1" );
+		assert( iimage->components() == 1 && "Texture.usage == SHADOW, but Texture.image.components != 1" );
 
-// @todo not generic
-		//const GLenum internalFormat = vgeGL::engine::Engine::getGLDepthTextureFormatFromDepthBits();
-		return boost::make_tuple( GL_DEPTH_COMPONENT /*internalFormat*/, GL_DEPTH_COMPONENT );
+		vgd::node::Texture::InternalFormatValueType	internalFormat	= texture->getInternalFormat();
+		const GLenum internalFormatGL = convertInternalFormatToGLInternalFormat( internalFormat );
+
+		return boost::make_tuple( internalFormatGL, GL_DEPTH_COMPONENT );
 	}
 	else
 	{
+		const GLint		components	= iimage->components();
+		const GLenum	format		= convertMyFormat2GL( iimage->format() );
 		return boost::make_tuple( components, format );
 	}
 }

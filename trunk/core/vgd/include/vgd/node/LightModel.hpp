@@ -28,7 +28,7 @@ namespace node
  * This node specifies current lighting mode (off/standard per vertex lighting/standard per pixel lighting) and some options of the lighting model. 
  *
  * New fields defined by this node :
- * - SFEnum \c shadowMapType = INT16<br>
+ * - SFEnum \c shadowMapType = INT32<br>
  *<br>
  * - SFFloat \c illuminationInShadow = 0.4f<br>
  *   value=[0,1] : 0 full attenuation in shadow, 1 no attenuation in shadow<br>
@@ -96,10 +96,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		INT32 = 263,	///< 
-		INT16 = 264,	///< 
-		FLOAT = 262,	///< 
-		DEFAULT_SHADOWMAPTYPE = INT16	///< 
+		INT24 = 263,	///< see Texture.internalFormat documentation
+		INT32 = 264,	///< see Texture.internalFormat documentation
+		INT16 = 262,	///< see Texture.internalFormat documentation
+		FLOAT32 = 265,	///< see Texture.internalFormat documentation
+		DEFAULT_SHADOWMAPTYPE = INT32	///< see Texture.internalFormat documentation
 	};
 
 	/**
@@ -129,6 +130,7 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 			retVal.push_back( 263 );
 			retVal.push_back( 264 );
 			retVal.push_back( 262 );
+			retVal.push_back( 265 );
 
 			return retVal;
 		}
@@ -137,9 +139,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< std::string > retVal;
 
+			retVal.push_back( "INT24" );
 			retVal.push_back( "INT32" );
 			retVal.push_back( "INT16" );
-			retVal.push_back( "FLOAT" );
+			retVal.push_back( "FLOAT32" );
 
 			return retVal;
 		}
@@ -274,10 +277,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		HIGH = 281,	///< High resolution shadow map
-		VERY_HIGH = 280,	///< Very high resolution shadow map
+		HIGH = 283,	///< High resolution shadow map
+		VERY_HIGH = 284,	///< Very high resolution shadow map
 		MEDIUM = 282,	///< Medium resolution shadow map
-		LOW = 283,	///< Low resolution shadow map
+		LOW = 281,	///< Low resolution shadow map
 		DEFAULT_SHADOWQUALITY = MEDIUM	///< Medium resolution shadow map
 	};
 
@@ -305,10 +308,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 281 );
-			retVal.push_back( 280 );
-			retVal.push_back( 282 );
 			retVal.push_back( 283 );
+			retVal.push_back( 284 );
+			retVal.push_back( 282 );
+			retVal.push_back( 281 );
 
 			return retVal;
 		}
@@ -365,8 +368,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		AT_INFINITY = 268,	///< Specular reflections are computed from the origin of the eye coordinate system
-		AT_EYE = 269,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
+		AT_INFINITY = 269,	///< Specular reflections are computed from the origin of the eye coordinate system
+		AT_EYE = 270,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
 		DEFAULT_VIEWER = AT_INFINITY	///< Specular reflections are computed from the origin of the eye coordinate system
 	};
 
@@ -394,8 +397,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 268 );
 			retVal.push_back( 269 );
+			retVal.push_back( 270 );
 
 			return retVal;
 		}
@@ -528,9 +531,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		STANDARD_PER_PIXEL = 267,	///< Lighting is computed per pixel
-		LIGHTING_OFF = 265,	///< No lighting
-		STANDARD_PER_VERTEX = 266,	///< Lighting is computed per vertex
+		STANDARD_PER_PIXEL = 268,	///< Lighting is computed per pixel
+		LIGHTING_OFF = 266,	///< No lighting
+		STANDARD_PER_VERTEX = 267,	///< Lighting is computed per vertex
 		DEFAULT_MODEL = STANDARD_PER_VERTEX	///< Lighting is computed per vertex
 	};
 
@@ -558,9 +561,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 267 );
-			retVal.push_back( 265 );
+			retVal.push_back( 268 );
 			retVal.push_back( 266 );
+			retVal.push_back( 267 );
 
 			return retVal;
 		}
@@ -616,16 +619,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		SHADOW_MAPPING_16U = 274,	///< Sixteen uniform samples
-		SHADOW_MAPPING = 271,	///< Shadows are computed using shadow mapping algorithm
-		SHADOW_OFF = 270,	///< Shadows are not computed
-		SHADOW_MAPPING_16UM = 275,	///< Sixteen unifrom samples
-		SHADOW_MAPPING_64UM = 279,	///< Sixty four uniform samples
-		SHADOW_MAPPING_32UM = 277,	///< Thirty two uniform samples
-		SHADOW_MAPPING_4U = 272,	///< Four uniform samples
-		SHADOW_MAPPING_64U = 278,	///< Sixty four uniform samples
-		SHADOW_MAPPING_32U = 276,	///< Thirty two uniform samples
-		SHADOW_MAPPING_4DM = 273,	///< Four dithered samples
+		SHADOW_MAPPING_16U = 275,	///< Sixteen uniform samples
+		SHADOW_MAPPING = 272,	///< Shadows are computed using shadow mapping algorithm
+		SHADOW_OFF = 271,	///< Shadows are not computed
+		SHADOW_MAPPING_16UM = 276,	///< Sixteen unifrom samples
+		SHADOW_MAPPING_64UM = 280,	///< Sixty four uniform samples
+		SHADOW_MAPPING_32UM = 278,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4U = 273,	///< Four uniform samples
+		SHADOW_MAPPING_64U = 279,	///< Sixty four uniform samples
+		SHADOW_MAPPING_32U = 277,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4DM = 274,	///< Four dithered samples
 		DEFAULT_SHADOW = SHADOW_OFF	///< Shadows are not computed
 	};
 
@@ -653,16 +656,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 274 );
-			retVal.push_back( 271 );
-			retVal.push_back( 270 );
 			retVal.push_back( 275 );
+			retVal.push_back( 272 );
+			retVal.push_back( 271 );
+			retVal.push_back( 276 );
+			retVal.push_back( 280 );
+			retVal.push_back( 278 );
+			retVal.push_back( 273 );
 			retVal.push_back( 279 );
 			retVal.push_back( 277 );
-			retVal.push_back( 272 );
-			retVal.push_back( 278 );
-			retVal.push_back( 276 );
-			retVal.push_back( 273 );
+			retVal.push_back( 274 );
 
 			return retVal;
 		}

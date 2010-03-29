@@ -50,6 +50,8 @@ PointStyle::PointStyle( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FSmoothType(getFSmooth()) );
+	addField( new FDistanceAttenuationType(getFDistanceAttenuation()) );
 	addField( new FSizeType(getFSize()) );
 
 	// Sets link(s)
@@ -68,7 +70,65 @@ void PointStyle::setToDefaults( void )
 void PointStyle::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setSmooth( false );
+	setDistanceAttenuation( vgm::Vec3f(1.f, 0.f, 0.f) );
 	setSize( 1.f );
+}
+
+
+
+// Smooth
+const bool PointStyle::getSmooth( SmoothValueType& value ) const
+{
+	return getFieldRO<FSmoothType>(getFSmooth())->getValue( value );
+}
+
+
+
+void PointStyle::setSmooth( const SmoothValueType& value )
+{
+	getFieldRW<FSmoothType>(getFSmooth())->setValue( value );
+}
+
+
+
+void PointStyle::eraseSmooth()
+{
+	getFieldRW<FSmoothType>(getFSmooth())->eraseValue();
+}
+
+
+const bool PointStyle::hasSmooth() const
+{
+	return getFieldRO<FSmoothType>(getFSmooth())->hasValue();
+}
+
+
+
+// DistanceAttenuation
+const bool PointStyle::getDistanceAttenuation( DistanceAttenuationValueType& value ) const
+{
+	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->getValue( value );
+}
+
+
+
+void PointStyle::setDistanceAttenuation( const DistanceAttenuationValueType& value )
+{
+	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->setValue( value );
+}
+
+
+
+void PointStyle::eraseDistanceAttenuation()
+{
+	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->eraseValue();
+}
+
+
+const bool PointStyle::hasDistanceAttenuation() const
+{
+	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->hasValue();
 }
 
 
@@ -102,6 +162,20 @@ const bool PointStyle::hasSize() const
 
 
 // Field name accessor(s)
+const std::string PointStyle::getFSmooth( void )
+{
+	return "f_smooth";
+}
+
+
+
+const std::string PointStyle::getFDistanceAttenuation( void )
+{
+	return "f_distanceAttenuation";
+}
+
+
+
 const std::string PointStyle::getFSize( void )
 {
 	return "f_size";

@@ -26,6 +26,7 @@ Texture::Texture( const std::string nodeName ) :
 	addField( new FMipmapType(getFMipmap()) );
 	addField( new FFilterType(getFFilter()) );
 	addField( new FWrapType(getFWrap()) );
+	addField( new FInternalFormatType(getFInternalFormat()) );
 	addField( new FUsageType(getFUsage()) );
 
 	// Sets link(s)
@@ -37,6 +38,7 @@ Texture::Texture( const std::string nodeName ) :
 void Texture::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
+	setInternalFormat( AUTOMATIC );
 	setUsage( IMAGE );
 }
 
@@ -191,6 +193,21 @@ void Texture::eraseWrap( const WrapParameterType param )
 
 
 
+// InternalFormat
+const Texture::InternalFormatValueType Texture::getInternalFormat() const
+{
+	return getFieldRO<FInternalFormatType>(getFInternalFormat())->getValue();
+}
+
+
+
+void Texture::setInternalFormat( const InternalFormatValueType value )
+{
+	getFieldRW<FInternalFormatType>(getFInternalFormat())->setValue( value );
+}
+
+
+
 // Usage
 const Texture::UsageValueType Texture::getUsage() const
 {
@@ -238,6 +255,13 @@ const std::string Texture::getFFilter( void )
 const std::string Texture::getFWrap( void )
 {
 	return "f_wrap";
+}
+
+
+
+const std::string Texture::getFInternalFormat( void )
+{
+	return "f_internalFormat";
 }
 
 
