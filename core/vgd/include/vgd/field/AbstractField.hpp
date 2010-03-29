@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGD_FIELD_ABSTRACTFIELD_HPP
 #define _VGD_FIELD_ABSTRACTFIELD_HPP
@@ -89,19 +90,19 @@ struct VGD_API AbstractField : public vgd::basic::NamedObject
 	 * 
 	 * @remarks Throw an assert if pObserver already an observer of this field.
 	 */
-	void	attach( IFieldObserver* pObserver );
+	void	attach( IFieldObserver* pObserver ) const;
 
 	/**
 	 * @brief Detach an observer.
 	 * 
 	 * @remarks Throw an assert if pObserver is not an observer of this field.
 	 */
-	void	detach( IFieldObserver* pObserver );
+	void	detach( IFieldObserver* pObserver ) const;
 
 	/**
 	 * @brief Detach all observers.
 	 */
-	void	detach();
+	void	detach() const;
 
 	/**
 	 * @brief Send a notification of an event to all observers.
@@ -222,7 +223,7 @@ private:
 	 * @brief List of observers.
 	 */
 	typedef std::list< IFieldObserver* >	TListObserver;
-	TListObserver							m_listObservers;
+	mutable TListObserver					m_listObservers;
 
 	/**
 	 * @brief Pseudo mutex.

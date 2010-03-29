@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgd/field/AbstractField.hpp"
 
@@ -52,7 +53,7 @@ const std::list< IFieldObserver* >& AbstractField::getObservers() const
 
 const bool AbstractField::findObserver( IFieldObserver *pFieldObserver ) const
 {
-	assert( m_editingMode == NONE );
+	assert( m_editingMode >= NONE );
 
 	TListObserver::const_iterator iter;
 	iter = std::find( getObservers().begin(), getObservers().end(), pFieldObserver );
@@ -62,37 +63,38 @@ const bool AbstractField::findObserver( IFieldObserver *pFieldObserver ) const
 
 
 
-void AbstractField::attach( IFieldObserver* pObserver )
+void AbstractField::attach( IFieldObserver* pObserver ) const
 {
-	assert( m_editingMode == NONE );
+	assert( m_editingMode >= NONE );
 	assert( !findObserver(pObserver) );
 
-	getObservers().push_back( pObserver );
+	m_listObservers.push_back( pObserver );
 }
 
 
 
-void AbstractField::detach( IFieldObserver* pObserver )
+void AbstractField::detach( IFieldObserver* pObserver ) const
 {
-	assert( m_editingMode == NONE );	
+	assert( m_editingMode >= NONE );
 	assert( findObserver(pObserver) );
 
-	getObservers().remove( pObserver );
+	m_listObservers.remove( pObserver );
 }
 
 
 
-void AbstractField::detach()
+void AbstractField::detach() const
 {
-	assert( m_editingMode == NONE );
-	getObservers().clear();
+	assert( m_editingMode >= NONE );
+
+	m_listObservers.clear();
 }
 
 
 
 void AbstractField::sendNotify( const Event& event ) const
 {
-	assert( m_editingMode == NONE );
+	assert( m_editingMode >= NONE );
 
     // notify all observers.
     for(	TListObserver::const_iterator i = getObservers().begin();
