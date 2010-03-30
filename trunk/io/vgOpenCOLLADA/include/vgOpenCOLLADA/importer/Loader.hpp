@@ -1,17 +1,17 @@
-// VGSDK - Copyright (C) 2010 Nicolas Papier.
+// VGSDK - Copyright (C) 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGOPENCOLLADA_LOADER_HPP
-#define _VGOPENCOLLADA_LOADER_HPP
+#ifndef _VGOPENCOLLADA_IMPORTER_LOADER_HPP
+#define _VGOPENCOLLADA_IMPORTER_LOADER_HPP
 
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 #include "vgOpenCOLLADA/convenience.hpp"
 
-#include "vgOpenCOLLADA/Reader.hpp"
-#include "vgOpenCOLLADA/ErrorHandler.hpp"
+#include "vgOpenCOLLADA/importer/Reader.hpp"
+#include "vgOpenCOLLADA/importer/ErrorHandler.hpp"
 
 #include <string>
 
@@ -23,6 +23,9 @@
 
 
 namespace vgOpenCOLLADA
+{
+
+namespace importer
 {
 
 /**
@@ -50,7 +53,9 @@ private:
 
 
 
+} // namespace importer
+
 } // namespace vgOpenCOLLADA
 
-#endif // _VGOPENCOLLADA_LOADER_HPP
+#endif // _VGOPENCOLLADA_IMPORTER_LOADER_HPP
 

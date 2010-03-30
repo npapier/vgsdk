@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2010 Nicolas Papier.
+// VGSDK - Copyright (C) 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGOPENCOLLADA_READER_HPP
-#define _VGOPENCOLLADA_READER_HPP
+#ifndef _VGOPENCOLLADA_IMPORTER_READER_HPP
+#define _VGOPENCOLLADA_IMPORTER_READER_HPP
 
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
@@ -28,6 +28,8 @@
 namespace vgOpenCOLLADA
 {
 
+namespace importer
+{
 
 /**
  * @brief The COLLADA file reader frontend.
@@ -105,51 +107,13 @@ struct VGOPENCOLLADA_API Reader : public COLLADAFW::IWriter
 	std::pair< bool, vgd::Shp< vgd::node::Group > > getScene();
 
 	/**
-	 * @brief Creates a node as in the COLLADA file. 1 node = 1 group.
-	 * 
-	 * @param node: the COLLADA node.
-	 * 
-	 * @param vgsdkNode: the parent node in current vgsdk scene graph (m_group = root node)
-	 */
-	void createNode(const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode);
-
-	/**
-	 * @brief Adds geometry transformation to the current node.
-	 * 
-	 * @param node: the COLLADA node.
-	 * 
-	 * @param vgsdkNode: the current node in current vgsdk scene graph (m_group = root node)
-	 */
-	void createNodeTransformation(const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode);
-
-	/**
-	 * @brief Adds geometry to the current node.
-	 * 
-	 * @param node: the COLLADA node.
-	 * 
-	 * @param vgsdkNode: the current node in current vgsdk scene graph (m_group = root node)
-	 */
-	void createNodeGeometry(const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode);
-
-	/**
-	 * @brief Creates geometry.
-	 * 
-	 * @param geometry: the COLLADA geometry attribute.
-	 * 
-	 * @param mesh: the COLLADA mesh attribute of current geometry
-	 *
-	 * @return: a pair bool/vertex shape. Return false if the mesh don't create correctly.
-	 */
-	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > loadMesh(const COLLADAFW::Geometry* geometry, const COLLADAFW::Mesh* mesh);
-
-	/**
 	* @brief Clones a Texture node
 	*
 	* @param texture: a texture
 	*
 	* @return: the cloned texture
 	*/
-	vgd::Shp< vgd::node::Texture2D > cloneTexture(vgd::Shp< vgd::node::Texture2D > texture);
+	vgd::Shp< vgd::node::Texture2D > cloneTexture( vgd::Shp< vgd::node::Texture2D > texture );
 
 
 private:
@@ -165,7 +129,8 @@ private:
 
 
 
+} // namespace importer
+
 } // namespace vgOpenCOLLADA
 
-#endif // _VGOPENCOLLADA_READER_HPP
-
+#endif // _VGOPENCOLLADA_IMPORTER_READER_HPP
