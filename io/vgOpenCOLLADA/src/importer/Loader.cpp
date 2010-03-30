@@ -1,13 +1,16 @@
-// VGSDK - Copyright (C) 2010 Nicolas Papier.
+// VGSDK - Copyright (C) 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgOpenCOLLADA/Loader.hpp"
+#include "vgOpenCOLLADA/importer/Loader.hpp"
 
 
 
 namespace vgOpenCOLLADA
+{
+
+namespace importer
 {
 
 Loader::Loader(LOAD_TYPE type) throw (std::runtime_error) :
@@ -34,5 +37,6 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load(const std::string f
 	return m_reader.getScene();
 }
 
-} // namespace vgCollada
+} // namespace importer
 
+} // namespace vgCollada

@@ -3,11 +3,14 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgOpenCOLLADA/ErrorHandler.hpp"
+#include "vgOpenCOLLADA/importer/ErrorHandler.hpp"
 
 #include <COLLADASaxFWLSaxParserError.h>
 
 namespace vgOpenCOLLADA
+{
+
+namespace importer
 {
 
 bool ErrorHandler::handleError(const COLLADASaxFWL::IError* error)
@@ -30,5 +33,6 @@ bool ErrorHandler::handleError(const COLLADASaxFWL::IError* error)
 		return false;
 }
 
-} // namespace vgCollada
+} // namespace importer
 
+} // namespace vgCollada

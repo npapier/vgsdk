@@ -20,7 +20,7 @@
 #include <vgDebug/convenience.hpp>
 #include <vgObj/Loader.hpp>
 #include <vgTrian/Loader.hpp>
-#include <vgOpenCOLLADA/Loader.hpp>
+#include <vgOpenCOLLADA/importer/Loader.hpp>
 #include <vgOpenCOLLADA/convenience.hpp>
 
 #include "vgsdkViewerGtk/actions.hpp"
@@ -378,7 +378,7 @@ const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename )
 		loadType = vgOpenCOLLADA::LOAD_ALL;
 		break;
 	}
-	vgOpenCOLLADA::Loader loader(loadType);
+	vgOpenCOLLADA::importer::Loader loader(loadType);
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
 	retVal = loader.load( pathfilename.c_str() );
 

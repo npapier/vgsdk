@@ -167,13 +167,13 @@ const bool FieldManager::removeField( const std::string strFieldName )
 	// STEP 2 : Remove link between field and field manager
 	assert( shpAField->findObserver( this ) == true && "The removed field is not observed by this manager of fields." );
 	shpAField->detach( this );
-	
-	// STEP 3 : Remove field to field container.
+
+	// STEP 3 : Remove links between this field and all dirty flags.
+	unlinkField( strFieldName );
+
+	// STEP 4 : Remove field to field container.
 	uint32 numRemovedElement = static_cast<uint32>(m_fields.erase( strFieldName ));
 	assert( numRemovedElement == 1 );
-	
-	// STEP 4 : Remove links between this field and all dirty flags.
-	unlinkField( strFieldName );
 
 	return true;
 }

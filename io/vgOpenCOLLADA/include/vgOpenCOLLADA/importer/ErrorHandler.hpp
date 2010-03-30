@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGOPENCOLLADA_ERRORHANDLER_HPP
-#define _VGOPENCOLLADA_ERRORHANDLER_HPP
+#ifndef _VGOPENCOLLADA_IMPORTER_ERRORHANDLER_HPP
+#define _VGOPENCOLLADA_IMPORTER_ERRORHANDLER_HPP
 
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
@@ -15,6 +15,10 @@
 
 namespace vgOpenCOLLADA
 {
+
+namespace importer
+{
+
 
 /**
  * @brief Class to handle errors that occur while parsing a collada file.
@@ -34,7 +38,9 @@ struct VGOPENCOLLADA_API ErrorHandler : public COLLADASaxFWL::IErrorHandler
 
 
 
+} // namespace importer
+
 } // namespace vgOpenCOLLADA
 
-#endif // _VGOPENCOLLADA_ERRORHANDLER_HPP
+#endif // _VGOPENCOLLADA_IMPORTER_ERRORHANDLER_HPP
 
