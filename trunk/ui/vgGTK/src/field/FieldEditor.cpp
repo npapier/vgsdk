@@ -1,9 +1,9 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 
-#include "vgGTK/field/Editor.hpp"
+#include "vgGTK/field/FieldEditor.hpp"
 
 
 
@@ -15,12 +15,12 @@ namespace field
 
 
 
-Editor::~Editor()
+FieldEditor::~FieldEditor()
 {}
 
 
 
-void Editor::setField( vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName )
+void FieldEditor::setField( vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName )
 {
 	m_fieldManager	= fieldManager;
 	m_fieldName		= fieldName;

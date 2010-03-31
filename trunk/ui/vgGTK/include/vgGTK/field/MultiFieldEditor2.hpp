@@ -1,10 +1,12 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 
 #ifndef _VGGTK_FIELD_MULTIFIELDEDITOR2_HPP_
 #define _VGGTK_FIELD_MULTIFIELDEDITOR2_HPP_
+
+#include <vector>
 
 #include <gtkmm/button.h>
 #include <gtkmm/buttonbox.h>
@@ -18,7 +20,7 @@
 
 #include <vgd/field/TMultiField.hpp>
 
-#include "vgGTK/field/Editor.hpp"
+#include "vgGTK/field/FieldEditor.hpp"
 
 
 
@@ -38,17 +40,18 @@ namespace field
  * @see	vgGTK::field::adapter::MFAdapater
  */
 template< typename MFAdapter >
-struct MultiFieldEditor2 : public Editor, public Gtk::Table
+struct MultiFieldEditor2 : public FieldEditor, public Gtk::Table
 {
 	/**
 	 * @brief	Constructor
 	 */
 	MultiFieldEditor2()
-	:	Table			( 1, 2, false ),
-		m_addButton		( Gtk::Stock::ADD ),
-		m_removeButton	( Gtk::Stock::REMOVE ),
-		m_moveUpButton	( Gtk::Stock::GO_UP ),
-		m_moveDownButton( Gtk::Stock::GO_DOWN )
+	:	Table					( 1, 2, false ),
+		m_addButton				( Gtk::Stock::ADD ),
+		m_removeButton			( Gtk::Stock::REMOVE ),
+		m_moveUpButton			( Gtk::Stock::GO_UP ),
+		m_moveDownButton		( Gtk::Stock::GO_DOWN ),
+		m_freezeChangedNotify	( false )
 	{
 		// Prepares the data model.
 		m_columnRecord.add( m_indexColumn );
@@ -89,6 +92,7 @@ struct MultiFieldEditor2 : public Editor, public Gtk::Table
 		m_removeButton.signal_clicked().connect( sigc::mem_fun(this, &MultiFieldEditor2< MFAdapter >::removeClicked) );
 		m_moveUpButton.signal_clicked().connect( sigc::mem_fun(this, &MultiFieldEditor2< MFAdapter >::moveUpClicked) );
 		m_moveDownButton.signal_clicked().connect( sigc::mem_fun(this, &MultiFieldEditor2< MFAdapter >::moveDownClicked) );
+		m_listStore->signal_row_changed().connect( sigc::mem_fun(this, &MultiFieldEditor2< MFAdapter >::rowChanged) );
 	}
 
 	
@@ -130,24 +134,78 @@ struct MultiFieldEditor2 : public Editor, public Gtk::Table
 	
 	void refresh()
 	{
-		// Clears the view.
+		m_freezeChangedNotify = true;
+
+		// Clears the view and the data backup copy.
 		m_listStore->clear();
+		m_backupValue.clear();
 		
-		// Copies values from local cache into the field.
+
+		// Gets the editor of the field.
 		typedef vgd::field::TMultiField< typename MFAdapter::value_type > FieldType;
 
 		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
-		
+
+
+		// Copies values from the field into the local edition model and backup of the data.
 		for( unsigned int i = 0; i < fieldEditor->size(); ++i )
 		{
 			const Gtk::TreeRow	& row = *m_listStore->append();
 			
 			row[ m_indexColumn ] = i;
 			m_adapter.updateToRow( row, (*fieldEditor)[i] );
+			m_backupValue.push_back( (*fieldEditor)[i] );
 		}
+
+		
+		// Updates the status label to show the number of elements.
+		m_status.set_label( Glib::ustring::compose("%1 elements", fieldEditor->size()) );
+
+
+		// Sends a change notification.
+		m_freezeChangedNotify = false;
+		m_signalChanged.emit();
+	}
+
+	void rollback()
+	{
+		m_freezeChangedNotify = true;
+
+
+		// Gets the editor of the field.
+		typedef vgd::field::TMultiField< typename MFAdapter::value_type > FieldType;
+
+		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
+
+
+		// Clears the view and the edited field.
+		m_listStore->clear();
+		fieldEditor->clear();
+		
+		
+		// Copies values from the backup value into the local edition model and the field.
+		for( unsigned int i = 0; i < m_backupValue.size(); ++i )
+		{
+			const Gtk::TreeRow	& row = *m_listStore->append();
+			
+			row[ m_indexColumn ] = i;
+			m_adapter.updateToRow( row, m_backupValue[i] );
+			fieldEditor->push_back( m_backupValue[i] );
+		}
+
 
 		// Updates the status label to show the number of elements.
 		m_status.set_label( Glib::ustring::compose("%1 elements", fieldEditor->size()) );
+
+
+		// Sends a change notification.
+		m_freezeChangedNotify = false;
+		m_signalChanged.emit();
+	}
+
+	sigc::signal< void > & signalChanged()
+	{
+		return m_signalChanged;
 	}
 	
 	const bool validate()
@@ -176,10 +234,13 @@ private:
 	 * @name	Data
 	 */
 	//@{
-	MFAdapter						m_adapter;
-	Gtk::TreeModelColumn< int >		m_indexColumn;
-	Gtk::TreeModel::ColumnRecord	m_columnRecord;
-	Glib::RefPtr< Gtk::ListStore >	m_listStore;
+	MFAdapter										m_adapter;				///< Used to wrap items of the multifield to/from the edition model.
+	std::vector< typename MFAdapter::value_type	>	m_backupValue;			///< Holds a copy of the initial multifield data.
+	Gtk::TreeModelColumn< int >						m_indexColumn;			///< The columns that shows the row index.
+	Gtk::TreeModel::ColumnRecord					m_columnRecord;			///< Holds all columns of the edition model.
+	Glib::RefPtr< Gtk::ListStore >					m_listStore;			///< The edition model.
+	sigc::signal< void >							m_signalChanged;		///< Emited when te content changed.
+	bool											m_freezeChangedNotify;	///< True to prevent change notifications to get sent.
 	//@}
 	
 	/**
@@ -191,6 +252,9 @@ private:
 	 */
 	void addClicked()
 	{
+		m_freezeChangedNotify = true;
+
+
 		Glib::RefPtr< Gtk::TreeSelection >	selection		= m_treeView.get_selection();
 		const std::vector< Gtk::TreePath >	selectedPaths	= selection->get_selected_rows();
 		Gtk::TreeModel::iterator			newRow;
@@ -214,6 +278,11 @@ private:
 			m_treeView.scroll_to_row( m_listStore->get_path(newRow) );
 			rebuildRowIndexes();
 		}
+
+
+		// Sends a change notification.
+		m_freezeChangedNotify = false;
+		m_signalChanged.emit();
 	}
 	
 	/**
@@ -221,6 +290,9 @@ private:
 	 */
 	void removeClicked()
 	{
+		m_freezeChangedNotify = true;
+
+
 		const std::vector< Gtk::TreePath >	selectedPaths	= m_treeView.get_selection()->get_selected_rows();
 		
 		for( int i = selectedPaths.size() - 1; i >= 0; --i )
@@ -229,6 +301,11 @@ private:
 		}
 		
 		rebuildRowIndexes();
+
+
+		// Sends a change notification.
+		m_freezeChangedNotify = false;
+		m_signalChanged.emit();
 	}
 	
 	/**
@@ -248,12 +325,20 @@ private:
 		}
 		else
 		{
+			m_freezeChangedNotify = true;
+
+
 			// Retrieves the value that is before the first selected row.
 			const Gtk::TreeModel::iterator	oldRow	= -- m_listStore->get_iter(selectedPaths.front());
 			const Gtk::TreeModel::iterator	newRow	= ++ m_listStore->get_iter(selectedPaths.back());
 			
 			m_listStore->move( oldRow, newRow );
 			rebuildRowIndexes();
+
+
+			// Sends a change notification.
+			m_freezeChangedNotify = false;
+			m_signalChanged.emit();
 		}
 	}
 	
@@ -274,12 +359,28 @@ private:
 		}
 		else
 		{
+			m_freezeChangedNotify = true;
+
+
 			// Retrieves the value that is before the first selected row.
 			const Gtk::TreeModel::iterator	oldRow	= ++ m_listStore->get_iter(selectedPaths.back());
 			const Gtk::TreeModel::iterator	newRow	= m_listStore->get_iter(selectedPaths.front());
 			
 			m_listStore->move( oldRow, newRow );
 			rebuildRowIndexes();
+
+
+			// Sends a change notification.
+			m_freezeChangedNotify = false;
+			m_signalChanged.emit();
+		}
+	}
+
+	void rowChanged( const Gtk::TreeModel::Path&, const Gtk::TreeModel::iterator& )
+	{
+		if( ! m_freezeChangedNotify )
+		{
+			m_signalChanged.emit();
 		}
 	}
 	//@}

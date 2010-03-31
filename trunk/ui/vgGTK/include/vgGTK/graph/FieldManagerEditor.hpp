@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -11,6 +11,7 @@
 #include <gtkmm/treeview.h>
 
 #include <vgd/field/FieldManager.hpp>
+#include <vgd/field/IFieldObserver.hpp>
 
 namespace vgUI {
 	struct Canvas;
@@ -28,7 +29,7 @@ namespace graph
 /**
  * @brief	Implements a gtkmm based widget that allows to edit a field manager.
  */
-struct FieldManagerEditor : public Gtk::TreeView
+struct FieldManagerEditor : public Gtk::TreeView, public vgd::field::IFieldObserver
 {
 
 	/**
@@ -58,6 +59,14 @@ struct FieldManagerEditor : public Gtk::TreeView
 	void setFieldManager( vgd::Shp< vgd::field::FieldManager > fieldManager );
 
 
+	/**
+	 * @name	Overrides
+	 */
+	//@{
+	void updateField( const vgd::field::AbstractField & rField, const vgd::field::Event event );
+	//@}
+
+
 private:
 
 	vgUI::Canvas							* m_canvas;		///< Points to the canvas to refresh.
@@ -83,7 +92,19 @@ private:
 	/**
 	 * @brief	Refreshes the row at the given path.
 	 */
-	void refresh(const Gtk::TreeModel::Path& path);
+	void refresh( const Gtk::TreeModel::Path & );
+
+	/**
+	 * @brief	refreshes the row pointed by the given iterator
+	 */
+	void refresh( Gtk::TreeModel::iterator );
+
+	/**
+	 * @brief	Refreshes field observation connections.
+	 *
+	 * @param	connect	true to connect observation on the current field manager's fields, false otherwise.
+	 */
+	void refreshFieldObservation( const bool connect );
 	
 	/**
 	 * @name	Signal Handlers

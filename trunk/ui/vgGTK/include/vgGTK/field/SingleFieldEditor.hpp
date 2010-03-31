@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -10,7 +10,7 @@
 #include <vgd/field/EditorRW.hpp>
 #include <vgd/field/TSingleField.hpp>
 
-#include "vgGTK/field/Editor.hpp"
+#include "vgGTK/field/FieldEditor.hpp"
 
 
 
@@ -26,7 +26,7 @@ namespace field
  * @brief	Abstract editor for vgd::field::TSingleField<T>.
  */
 template< typename Widget >
-struct SingleFieldEditor : public Editor
+struct SingleFieldEditor : public FieldEditor
 {
 	Gtk::Widget& getWidget()
 	{
@@ -35,7 +35,7 @@ struct SingleFieldEditor : public Editor
 	
 	void grabFocus()
 	{
-		m_widget.grab_focus();
+		m_widget.grabFocus();
 	}
 	
 	const bool resizable() const
@@ -45,14 +45,7 @@ struct SingleFieldEditor : public Editor
 	
 	void commit()
 	{
-		assert( m_fieldManager != false );
-		assert( m_fieldName.empty() == false );
-	
-		typedef vgd::field::TSingleField< typename Widget::ValueType > FieldType;
-		
-		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
-	
-		return fieldEditor.get()->setValue( m_widget.getValue() );
+		setField( m_widget.getValue() );
 	}
 	
 	void refresh()
@@ -65,6 +58,18 @@ struct SingleFieldEditor : public Editor
 		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
 	
 		m_widget.setValue( fieldEditor.get()->getValue() );
+		m_backupValue = fieldEditor.get()->getValue();
+	}
+
+	void rollback()
+	{
+		setField( m_backupValue );
+		m_widget.setValue( m_backupValue );
+	}
+
+	sigc::signal< void > & signalChanged()
+	{
+		return m_widget.signalChanged();
 	}
 	
 	const bool validate()
@@ -75,7 +80,24 @@ struct SingleFieldEditor : public Editor
 
 private:
 
-	Widget	m_widget;	///< The widget used to edit the field value, assumed to be a widget::Widget derived class.
+	Widget						m_widget;		///< The widget used to edit the field value, assumed to be a widget::Widget derived class.
+	typename Widget::ValueType	m_backupValue;	///< The backup of the initial field value.
+
+
+	/**
+	 * @brief	Assigns a given value to the field to edit.
+	 */
+	void setField( const typename Widget::ValueType & value )
+	{
+		assert( m_fieldManager != false );
+		assert( m_fieldName.empty() == false );
+	
+		typedef vgd::field::TSingleField< typename Widget::ValueType > FieldType;
+		
+		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
+	
+		fieldEditor.get()->setValue( value );
+	}
 };
 
 

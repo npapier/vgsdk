@@ -39,10 +39,10 @@ namespace field
 
 
 
-vgd::Shp< Editor > createEditor( const vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName )
+vgd::Shp< FieldEditor > createEditor( const vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName )
 {
 	const std::type_info	& fieldType	= fieldManager->getFieldType(fieldName);
-	vgd::Shp< Editor >		editor		= createEditor( fieldType );
+	vgd::Shp< FieldEditor >		editor	= createEditor( fieldType );
 	
 	if( editor )
 	{
@@ -54,9 +54,9 @@ vgd::Shp< Editor > createEditor( const vgd::Shp< vgd::field::FieldManager > fiel
 
 
 
-vgd::Shp< Editor > createEditor( const std::type_info & fieldType )
+vgd::Shp< FieldEditor > createEditor( const std::type_info & fieldType )
 {
-	vgd::Shp< Editor > result;
+	vgd::Shp< FieldEditor > result;
 
 	// TSingleField
 	if ( fieldType == typeid(vgd::field::TSingleField< bool >) )

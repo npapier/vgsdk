@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -7,6 +7,7 @@
 #define _VGGTK_FIELD_WIDGET_WIDGET_HPP_
 
 #include <gtkmm/messagedialog.h>
+#include <sigc++/signal.h>
 
 
 
@@ -30,7 +31,7 @@ struct Widget
 	typedef T ValueType;	///< Defines the value type symbolic name.
 	
 	/**
-	 * @name	Value Accessors
+	 * @name	Value
 	 */
 	//@{
 	virtual void clear() = 0;						///< Clears the widget content.
@@ -41,14 +42,25 @@ struct Widget
 	//@}
 	
 	/**
-	 * @name	Aspect Accessors
+	 * @name	Aspect & Interaction
 	 */
 	//@{
+	virtual void grabFocus() = 0;					///< Tells the widget to grab focus.
 	virtual const bool resizable() const = 0;		///< Tells if the widget supports changing its size.
 	virtual void setFrame( const bool frame ) = 0;	///< Tells the widget to show (or hide) its border frame.
 	//@}
+
+	/**
+	 * @brief	Retrieves the signal emited when the widget content has changed
+	 */
+	sigc::signal< void > & signalChanged()
+	{
+		return m_signalChanged;
+	}
 	
 protected:
+
+	sigc::signal< void >	m_signalChanged;	///< To emit when the widget content has changed.
 
 	/**
 	 * @brief	Shows the given message as a warning.

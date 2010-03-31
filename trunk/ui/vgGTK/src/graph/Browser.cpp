@@ -417,6 +417,7 @@ void Browser::onFullRefresh()
 	const ExpandedRowsBackup	expandedRowsBackup( m_treeView );
 
 	// Do the refresh.
+	m_editor.setFieldManager( vgd::Shp< vgd::field::FieldManager >() );
 	m_treeStore->refresh();
 
 	// Restores the selection and the expanded rows.

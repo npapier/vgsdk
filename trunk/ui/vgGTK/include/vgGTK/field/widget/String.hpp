@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -37,8 +37,13 @@ struct String : public Widget< std::string >, public Gtk::Entry
 	void setValue( const std::string & value );
 	const bool validate();
 	
+	void grabFocus();
 	const bool resizable() const;
 	void setFrame( const bool frame );
+
+protected:
+
+	void on_changed();
 };
 
 

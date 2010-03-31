@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -96,6 +96,13 @@ struct Rectangle : public Widget< vgm::Rectangle< T > >, public Gtk::Table
 		focusChain.push_back( &m_height );
 
 		set_focus_chain( focusChain );
+
+
+		// Connects children change signal to our change signal.
+		m_x     .signal_changed().connect( sigc::mem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
+		m_y     .signal_changed().connect( sigc::mem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
+		m_width .signal_changed().connect( sigc::mem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
+		m_height.signal_changed().connect( sigc::mem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
 	}
 
 	void clear()
@@ -135,6 +142,11 @@ struct Rectangle : public Widget< vgm::Rectangle< T > >, public Gtk::Table
 	const bool validate()
 	{
 		return true; /// To be done.
+	}
+
+	void grabFocus()
+	{
+		m_x.grab_focus();
 	}
 	
 	const bool resizable() const

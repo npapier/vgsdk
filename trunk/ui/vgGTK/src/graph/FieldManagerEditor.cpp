@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -12,10 +12,11 @@
 #include <gtkmm/dialog.h>
 #include <gtkmm/messagedialog.h>
 
+#include <vgd/field/AbstractField.hpp>
 #include <vgd/node/IBoundingBox.hpp>
 #include <vgUI/Canvas.hpp>
 
-#include "vgGTK/field/EditorDialog.hpp"
+#include "vgGTK/field/FieldEditorDialog.hpp"
 #include "vgGTK/graph/convenience.hpp"
 
 
@@ -79,6 +80,13 @@ void FieldManagerEditor::setCanvas( vgUI::Canvas * canvas )
 
 void FieldManagerEditor::setFieldManager( vgd::Shp< vgd::field::FieldManager > fieldManager )
 {
+	// Disconnects observation from all fields.
+	if( m_fieldManager )
+	{
+		refreshFieldObservation( false );
+	}
+
+
 	// Clear the current state.
 	m_model->clear();
 	m_fieldManager.reset();
@@ -89,6 +97,7 @@ void FieldManagerEditor::setFieldManager( vgd::Shp< vgd::field::FieldManager > f
 	{
 		m_fieldManager = fieldManager;
 		fillModel();
+		refreshFieldObservation( true );
 	}
 }
 
@@ -174,10 +183,17 @@ void FieldManagerEditor::fillModel()
 
 
 
-void FieldManagerEditor::refresh(const Gtk::TreeModel::Path& path)
+void FieldManagerEditor::refresh( const Gtk::TreeModel::Path & path )
 {
-	// Retrieves the data row.
-	Gtk::TreeIter				i			= m_model->get_iter( path );
+	refresh( m_model->get_iter(path) );
+}
+
+
+
+void FieldManagerEditor::refresh( Gtk::TreeModel::iterator i )
+{
+	assert( i );
+	
 	const Gtk::TreeModel::Row	& row		= *i;
 	const Glib::ustring			entryName	= row[m_nameColumn];
 	
@@ -215,6 +231,40 @@ void FieldManagerEditor::refresh(const Gtk::TreeModel::Path& path)
 
 
 
+void FieldManagerEditor::refreshFieldObservation( const bool connect )
+{
+	assert( m_fieldManager );
+
+	// Retrieves all field names.
+	typedef std::vector< std::string > 						StringContainer;
+	typedef std::back_insert_iterator< StringContainer >	InsertIterator;
+
+	StringContainer	fieldNames;
+	InsertIterator	inserter( fieldNames );
+
+	m_fieldManager->getFieldNames( inserter );
+
+
+	// Updates observations connections.
+	StringContainer::const_iterator	i;
+
+	for( i = fieldNames.begin(); i != fieldNames.end(); ++i )
+	{
+		vgd::field::EditorRO< vgd::field::AbstractField >	editor = m_fieldManager->getFieldRO< vgd::field::AbstractField >(*i);
+
+		if( connect )
+		{
+			editor->attach( this );
+		}
+		else
+		{
+			editor->detach( this );
+		}
+	}
+}
+
+
+
 void FieldManagerEditor::onRowActivated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column)
 {
 	// Retrieves the data row.
@@ -228,16 +278,7 @@ void FieldManagerEditor::onRowActivated(const Gtk::TreeModel::Path& path, Gtk::T
 	
 	if( fieldName.find(FIELD_PREFIX) == 0 )
 	{
-		vgGTK::field::EditorDialog	dialog( *topLevel, m_fieldManager, fieldName );
-		
-		if( dialog.run() == 0 )
-		{
-			refresh( path );
-			if( m_canvas != 0 )
-			{
-				m_canvas->refresh();
-			}
-		}
+		vgGTK::field::FieldEditorDialog::show( *topLevel, m_fieldManager, fieldName, m_canvas );
 	}
 	else
 	{
@@ -245,6 +286,20 @@ void FieldManagerEditor::onRowActivated(const Gtk::TreeModel::Path& path, Gtk::T
 		
 		dialog.set_title("Property Edition");
 		dialog.run();
+	}
+}
+
+
+
+void FieldManagerEditor::updateField( const vgd::field::AbstractField & rField, const vgd::field::Event event )
+{
+	for( Gtk::TreeModel::iterator i = m_model->children().begin(); i != m_model->children().end(); ++i )
+	{
+		if( i->get_value(m_nameColumn) == rField.name() )
+		{
+			refresh( i );
+			break;
+		}
 	}
 }
 

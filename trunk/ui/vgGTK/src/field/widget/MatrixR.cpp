@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -24,9 +24,6 @@ namespace widget
 
 MatrixR::MatrixR()
 {
-	set_spacing( 7 );
-	
-	
 	// Creates the matrix edition controls layout.
 	Gtk::HBox	* rows[4];
 	
@@ -39,6 +36,7 @@ MatrixR::MatrixR()
 	{
 		m_elements[i].set_has_frame( false );
 		m_elements[i].set_width_chars( 10 );
+		m_elements[i].signal_changed().connect( sigc::mem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
 		
 		rows[i/4]->add( m_elements[i] );
 	}
@@ -54,6 +52,7 @@ MatrixR::MatrixR()
 	frame->set_shadow_type( Gtk::SHADOW_IN );
 	
 	add( *frame );
+	set_spacing( 7 );
 	
 	
 	// Adds buttons to set matrix to identity or null.
@@ -99,6 +98,13 @@ const vgm::MatrixR MatrixR::getValue() const
 	}
 	
 	return result;
+}
+
+
+
+void MatrixR::grabFocus()
+{
+	m_elements[0].grab_focus();
 }
 
 

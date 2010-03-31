@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -47,11 +47,26 @@ const std::string String::getValue() const
 
 
 
+void String::grabFocus()
+{
+	grab_focus();
+}
+
+
+
+void String::on_changed()
+{
+	Gtk::Entry::on_changed();
+	m_signalChanged.emit();
+}
+
+
+
 void String::setValue( const std::string & value )
 {
 	// Assigns the new text to the widget.
 	set_text( value );
-
+	
 	// Computes the new width of the widget.
 	const int	valueWidth = value.size();
 

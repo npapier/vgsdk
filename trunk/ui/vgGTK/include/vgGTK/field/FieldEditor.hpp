@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 
-#ifndef _VGGTK_FIELD_EDITOR_HPP_
-#define _VGGTK_FIELD_EDITOR_HPP_
+#ifndef _VGGTK_FIELD_FIELDEDITOR_HPP_
+#define _VGGTK_FIELD_FIELDEDITOR_HPP_
 
 #include <string>
 #include <gtkmm/widget.h>
@@ -21,16 +21,16 @@ namespace field
 
 
 /**
- * @brief	Provides the abstract implementation of field editors.
+ * @brief	Provides the abstract implementation for field editors.
  *
  * Implementors should build the user interface widget in the constructor.
  */
-struct Editor
+struct FieldEditor
 {
 	/**
 	 * @brief	Destructor
 	 */
-	virtual ~Editor();
+	virtual ~FieldEditor();
 	
 	
 	/**
@@ -67,7 +67,17 @@ struct Editor
 	 * @brief	Refreshes the user interface widgets to show the field value.
 	 */
 	virtual void refresh() = 0;
+
+	/**
+	 * @brief	Retrieves the initial value of the edited field.
+	 */
+	virtual void rollback() = 0;
 	
+	/**
+	 * @brief	Retrieves the signal emited when the content has changed.
+	 */
+	virtual sigc::signal< void > & signalChanged() = 0;
+
 	/**
 	 * @brief	Validates the current data.
 	 */
@@ -96,4 +106,4 @@ protected:
 
 
 
-#endif // _VGGTK_FIELD_EDITOR_HPP_
+#endif // _VGGTK_FIELD_FIELDEDITOR_HPP_
