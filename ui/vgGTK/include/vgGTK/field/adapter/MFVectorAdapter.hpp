@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -24,7 +24,7 @@ namespace adapter
 
 
 /**
- * @brief	Multi-field editor adapter for vgd::Vector values.
+ * @brief	Multi-field editor adapter for vgm::Vector values.
  */
 template< typename VectorType >
 struct MFVectorAdapter : public MFAdapter< VectorType >

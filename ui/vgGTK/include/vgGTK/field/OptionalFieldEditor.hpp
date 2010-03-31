@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -12,7 +12,7 @@
 #include <gtkmm/stock.h>
 
 #include <vgd/field/TOptionalField.hpp>
-#include "vgGTK/field/Editor.hpp"
+#include "vgGTK/field/FieldEditor.hpp"
 
 
 
@@ -30,7 +30,7 @@ namespace field
  * The template parameter must specify a vgGTK::field::widget::Widget derived type.
  */
 template< typename Widget >
-struct OptionalFieldEditor : public Editor
+struct OptionalFieldEditor : public FieldEditor
 {
 	OptionalFieldEditor()
 	:	m_box( false, 12 ),
@@ -43,7 +43,7 @@ struct OptionalFieldEditor : public Editor
 
 		alignment->add( m_clear );
 
-		m_clear.signal_clicked().connect( sigc::mem_fun(this, &OptionalFieldEditor<Widget>::clearClicked) );
+		m_clear.signal_clicked().connect( sigc::mem_fun(&m_widget, &Widget::clear) );
 	}
 
 	Gtk::Widget& getWidget()
@@ -53,7 +53,7 @@ struct OptionalFieldEditor : public Editor
 	
 	void grabFocus()
 	{
-		m_widget.grab_focus();
+		m_widget.grabFocus();
 	}
 	
 	const bool resizable() const
@@ -96,11 +96,39 @@ struct OptionalFieldEditor : public Editor
 		if( hasValue )
 		{
 			m_widget.setValue( value );
+			m_backupValue = value;
 		}
 		else
 		{
 			m_widget.clear();
+			m_backupValue = boost::optional< typename Widget::ValueType >();
 		}
+	}
+
+	void rollback()
+	{
+		assert( m_fieldManager != false );
+		assert( m_fieldName.empty() == false );
+	
+		typedef vgd::field::TOptionalField< typename Widget::ValueType > FieldType;
+
+		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
+
+		if( m_backupValue )
+		{
+			fieldEditor.get()->setValue( *m_backupValue );
+			m_widget.setValue( *m_backupValue );
+		}
+		else
+		{
+			fieldEditor.get()->eraseValue();
+			m_widget.clear();
+		}
+	}
+
+	sigc::signal< void > & signalChanged()
+	{
+		return m_widget.signalChanged();
 	}
 	
 	const bool validate()
@@ -117,14 +145,10 @@ struct OptionalFieldEditor : public Editor
 
 private:
 
-	Gtk::HBox	m_box;		///< The root widget.
-	Gtk::Button	m_clear;	///< The widget to clear the value.
-	Widget		m_widget;	///< The edition widget.
-
-	void clearClicked()
-	{
-		m_widget.clear();
-	}
+	Gtk::HBox										m_box;			///< The root widget.
+	Gtk::Button										m_clear;		///< The widget to clear the value.
+	Widget											m_widget;		///< The edition widget.
+	boost::optional< typename Widget::ValueType >	m_backupValue;	///< Holds a backup of the initial field value.
 };
 
 

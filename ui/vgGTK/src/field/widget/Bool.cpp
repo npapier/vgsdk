@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -40,6 +40,8 @@ void Bool::buttonClicked()
 {
 	m_trueButton.set_inconsistent( false );
 	m_falseButton.set_inconsistent( false );
+
+	m_signalChanged.emit();
 }
 
 
@@ -66,10 +68,27 @@ const bool Bool::getValue() const
 
 
 
+void Bool::grabFocus()
+{
+	if( m_falseButton.get_active() )
+	{
+		m_falseButton.grab_focus();
+	}
+	else
+	{
+		m_trueButton.grab_focus();
+	}
+}
+
+
+
 void Bool::setValue( const bool & value )
 {
 	m_trueButton.set_active( value );
 	m_falseButton.set_active( !value );
+
+	m_trueButton.set_inconsistent( false );
+	m_falseButton.set_inconsistent( false );
 }
 
 

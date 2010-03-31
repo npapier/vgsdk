@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -77,6 +77,11 @@ struct Number : public Widget< NumberType >, public Gtk::Entry
 			return false;
 		}
 	}
+
+	void grabFocus()
+	{
+		grab_focus();
+	}
 	
 	const bool resizable() const
 	{
@@ -86,6 +91,14 @@ struct Number : public Widget< NumberType >, public Gtk::Entry
 	void setFrame( const bool frame )
 	{
 		set_has_frame( frame );
+	}
+
+protected:
+
+	void on_changed()
+	{
+		Gtk::Entry::on_changed();
+		m_signalChanged.emit();
 	}
 };
 

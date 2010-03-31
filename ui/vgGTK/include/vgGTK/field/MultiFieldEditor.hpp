@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -17,7 +17,7 @@
 #include <vgd/field/FieldManager.hpp>
 #include <vgd/field/TMultiField.hpp>
 
-#include "vgGTK/field/Editor.hpp"
+#include "vgGTK/field/FieldEditor.hpp"
 
 
 
@@ -30,7 +30,7 @@ namespace field
 
 
 template< typename WidgetType >
-struct MultiFieldEditor : public Editor, public Gtk::VBox
+struct MultiFieldEditor : public FieldEditor, public Gtk::VBox
 {
 	/**
 	 * @brief	Constructor
@@ -47,6 +47,7 @@ struct MultiFieldEditor : public Editor, public Gtk::VBox
 			WidgetType	* widget	= new WidgetType();
 			
 			widget->setFrame( false );
+			widget->signalChanged().connect( sigcmem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
 			m_widgets.push_back( std::make_pair(label, widget) );
 			m_widgetTable.attach( *label,  0, 1, i, i+1, Gtk::SHRINK );
 			m_widgetTable.attach( *widget, 1, 2, i, i+1 );
@@ -92,7 +93,7 @@ struct MultiFieldEditor : public Editor, public Gtk::VBox
 	
 	void grabFocus()
 	{
-		m_widgets.begin()->second->grab_focus();
+		m_widgets.begin()->second->grabFocus();
 	}
 	
 	const bool resizable() const
@@ -148,6 +149,11 @@ struct MultiFieldEditor : public Editor, public Gtk::VBox
 		// Refreshes the widgets.
 		refreshWidgetsFromValues();
 	}
+
+	sigc::signal< void > & signalChanged()
+	{
+		return m_signalChanged;
+	}
 	
 	const bool validate()
 	{
@@ -161,13 +167,14 @@ private:
 	//@{
 	typedef std::vector< std::pair< Gtk::Label*, WidgetType* > >	WidgetContainer;
 
-	const unsigned int	m_visibleRows;	
-	Gtk::HBox			m_frameBox;
-	Gtk::Frame			m_frame;
-	Gtk::Table			m_widgetTable;
-	WidgetContainer		m_widgets;
-	Gtk::VScrollbar		m_scrollbar;
-	Gtk::Label			m_status;
+	const unsigned int		m_visibleRows;	
+	Gtk::HBox				m_frameBox;
+	Gtk::Frame				m_frame;
+	Gtk::Table				m_widgetTable;
+	WidgetContainer			m_widgets;
+	Gtk::VScrollbar			m_scrollbar;
+	Gtk::Label				m_status;
+	sigc::signal< void >	m_signalChanged;
 	//@}
 	
 	/**

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -31,6 +31,7 @@ void Enum::clear()
 	{
 		i->second->set_inconsistent( true );
 	}
+	m_signalChanged.emit();
 }
 
 
@@ -49,6 +50,20 @@ const vgd::field::Enum Enum::getValue() const
 
 	// Default response.
 	return vgd::field::Enum();
+}
+
+
+
+void Enum::grabFocus()
+{
+	for( EntryContainer::const_iterator i = m_entries.begin(); i != m_entries.end(); ++i )
+	{
+		if( i->second->get_active() || i->second->get_inconsistent() )
+		{
+			i->second->grab_focus();
+			break;
+		}
+	}
 }
 
 
@@ -76,6 +91,8 @@ void Enum::onButtonClicked()
 	{
 		i->second->set_inconsistent( false );
 	}
+
+	m_signalChanged.emit();
 }
 
 
@@ -125,13 +142,12 @@ void Enum::setValue( const vgd::field::Enum & value )
 	// Assignes the new value.
 	for( EntryContainer::iterator i = m_entries.begin(); i != m_entries.end(); ++i )
 	{
-		if( vgd::field::Enum(i->first) == value )
-		{
-			i->second->set_active( true );
-			i->second->set_inconsistent( false );
-			break;
-		}
+		i->second->set_active( vgd::field::Enum(i->first) == value );
+		i->second->set_inconsistent( false );
 	}
+
+	// Notifies about the change.
+	m_signalChanged.emit();
 }
 
 

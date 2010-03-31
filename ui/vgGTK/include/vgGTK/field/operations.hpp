@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -18,7 +18,7 @@ namespace vgGTK
 namespace field
 {
 
-struct Editor;
+struct FieldEditor;
 
 
 
@@ -30,7 +30,7 @@ struct Editor;
  *
  * @return	a reference to an editor, null if none
  */
-vgd::Shp< Editor > createEditor( const vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName );
+vgd::Shp< FieldEditor > createEditor( const vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName );
 
 
 
@@ -39,7 +39,7 @@ vgd::Shp< Editor > createEditor( const vgd::Shp< vgd::field::FieldManager > fiel
  *
  * @return	a reference to an editor, null if none
  */
-vgd::Shp< Editor > createEditor( const std::type_info & fieldType );
+vgd::Shp< FieldEditor > createEditor( const std::type_info & fieldType );
 
 
 
