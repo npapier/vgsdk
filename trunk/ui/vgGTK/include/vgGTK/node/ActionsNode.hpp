@@ -13,6 +13,7 @@
 
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
+#include <vgd/node/VertexShape.hpp>
 
 #include <vgUI/Canvas.hpp>
 
@@ -26,6 +27,61 @@ namespace graph
 
 namespace node
 {
+
+struct HiddenNode
+{
+	HiddenNode(vgd::Shp< vgd::node::VertexShape > node, Gtk::MenuItem * hiddenMenuItem ) :
+	m_node( node ),
+	m_hiddenMenuItem ( hiddenMenuItem )
+	{
+	}
+
+	void hide()
+	{
+		vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = m_node->getFPrimitiveRW();
+
+		for( uint i = 0; i < editPrimitive->size(); i++)
+		{
+			m_primitives.push_back( editPrimitive->operator[](i) );
+		}
+
+		editPrimitive->clear();
+	}
+
+	void restorePrimitives()
+	{
+		vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = m_node->getFPrimitiveRW();
+
+		editPrimitive->clear();
+		
+		for( uint i = 0; i < m_primitives.size(); i++)
+		{
+			editPrimitive->push_back( m_primitives[i] );
+		}
+	}
+
+	vgd::Shp< vgd::node::VertexShape > getNode()
+	{
+		return m_node;
+	}
+
+	Gtk::MenuItem * getMenuItem()
+	{
+		return m_hiddenMenuItem;
+	}
+
+private:
+	vgd::Shp< vgd::node::VertexShape >	m_node;
+	std::vector< vgd::node::Primitive > m_primitives;
+	Gtk::MenuItem						* m_hiddenMenuItem;
+};
+
+enum POPUP_LOCATION
+{
+	TREE,
+	NODE,
+	CANVAS
+};
 
 
 /**
@@ -51,7 +107,7 @@ struct VGGTK_API ActionsNode
  *
  * @param tree: true if we are in the treeview.
  */
-	void showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, bool tree = false);
+	void showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, POPUP_LOCATION location);
 
 private:
 
@@ -62,6 +118,8 @@ private:
 	void onGetNodeInTree();				///< Handles the action that will select the node in the treeview.
 	void onExpandSubTree();				///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onRemoveNode();				///< Handles the action that will remove the selected node from it parent.
+	void onHideNode();					///< Handles the action that will hide the selected node.
+	void onShowNode(vgd::Shp < HiddenNode > hidden);					///< Handles the action that will hide the selected node.
 	void onExportNode();				///< Handles the action that will export the selected.
 	void onSetToDefault();				///< Handles the action that will set node filed to default.
 	void onSetOptionalToDefault();		///< Handles the action that will set the optional node field to default.
@@ -79,9 +137,11 @@ private:
 	Glib::ustring						m_uiDefinition;		///< Defines the user interfaces.
 	Glib::RefPtr< Gtk::ActionGroup >	m_actions;			///< Holds all actions of the user interface.
 	Glib::RefPtr< Gtk::UIManager >		m_uiManager;		///< Manages the user inteface toolbar and menus.
+	Gtk::Menu							* m_hiddenMenu;
+	Gtk::MenuItem						* m_hiddenMenuItem;
 	//@}
 
-	bool								m_tree;
+	POPUP_LOCATION						m_location;
 };
 
 

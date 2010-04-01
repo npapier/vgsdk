@@ -38,7 +38,7 @@ void VisualSceneExporter::doExport()
 	
 	std::vector<std::string> geomList = m_sceneExporter->getGeometryExporter()->getGeomNameList();
 
-	for(int i = 0; i < geomList.size(); i++)
+	for( uint i = 0; i < geomList.size(); i++ )
 	{
 		std::string geomName = geomList[i];
 

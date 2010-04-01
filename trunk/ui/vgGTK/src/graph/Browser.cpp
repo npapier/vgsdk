@@ -396,7 +396,7 @@ void Browser::onButtonReleaseEvent( GdkEventButton * event )
 		{
 			vgd::Shp< vgd::node::Node >	node = (*rowIterator)[ m_columns.m_nodeColumn ];
 
-			m_actionsNode->showPopup(event, node, true);
+			m_actionsNode->showPopup(event, node, vgGTK::node::TREE);
 		}
 	}
 }
