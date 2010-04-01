@@ -76,7 +76,6 @@ private:
 	 */
 	//@{
 	Gtk::Label	m_label;			///< Holds the description of the field being edited
-	Gtk::Button m_applyButton;		///< The button to apply field changes
 	Gtk::Button	m_closeButton;		///< The button to dismiss the dialog
 	Gtk::Button	m_rollbackButton;	///< The button to revert the field changes
 	//@}
@@ -100,7 +99,6 @@ private:
 	 * @name	Signal Handlers
 	 */
 	//@{
-	void onApply();										///< Handles apply button clicks.
 	void onClose();										///< Handles close button clicks.
 	static void onDialogHidden( FieldEditorDialog* );	///< Handles dialog hide notifications.
 	void onEditorChanged();								///< Handles editor changes.

@@ -6,12 +6,13 @@
 #ifndef _VGGTK_FIELD_WIDGET_MATRIXR_HPP_
 #define _VGGTK_FIELD_WIDGET_MATRIXR_HPP_
 
-#include "vgGTK/field/widget/Widget.hpp"
-
 #include <gtkmm/box.h>
-#include <gtkmm/entry.h>
+#include <gtkmm/spinbutton.h>
 
 #include <vgm/Matrix.hpp>
+
+#include "vgGTK/convenience.hpp"
+#include "vgGTK/field/widget/Widget.hpp"
 
 
 
@@ -45,7 +46,7 @@ struct MatrixR : public Widget< vgm::MatrixR >, public Gtk::VBox
 
 private:
 
-	Gtk::Entry	m_elements[16];	///< Entry widgets for matrix elements.
+	Gtk::SpinButton	m_elements[16];	///< Entry widgets for matrix elements.
 	
 	/** 
 	 * @name	Signal Handlers

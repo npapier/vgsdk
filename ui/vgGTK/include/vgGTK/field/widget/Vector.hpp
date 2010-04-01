@@ -6,12 +6,13 @@
 #ifndef _VGGTK_FIELD_WIDGET_VECTOR_HPP_
 #define _VGGTK_FIELD_WIDGET_VECTOR_HPP_
 
-#include "vgGTK/field/widget/Widget.hpp"
-
-#include <boost/lexical_cast.hpp>
+//#include <boost/lexical_cast.hpp>
 #include <gtkmm/box.h>
-#include <gtkmm/entry.h>
+#include <gtkmm/spinbutton.h>
 #include <vgm/Vector.hpp>
+
+#include "vgGTK/convenience.hpp"
+#include "vgGTK/field/widget/Widget.hpp"
 
 
 
@@ -37,12 +38,13 @@ struct Vector : public Widget< vgm::Vector<T, N> >, public Gtk::HBox
 	{
 		for( unsigned int i = 0; i < N; ++i )
 		{
-			m_elements[i].set_width_chars( 10 );
+			vgGTK::configure< T >( m_elements[i] );
+			m_elements[i].set_width_chars( 12 );
 			m_elements[i].set_size_request( 75, -1 );
 			m_elements[i].set_has_frame( m_hasFrame );
 			m_elements[i].set_activates_default();
 			m_elements[i].signal_changed().connect( sigc::mem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
-		
+								
 			add( m_elements[i] );
 		}
 	}
@@ -61,14 +63,7 @@ struct Vector : public Widget< vgm::Vector<T, N> >, public Gtk::HBox
 		
 		for( unsigned int i = 0; i < N; ++i )
 		{
-			try
-			{
-				result[i] = boost::lexical_cast< T >( m_elements[i].get_text() );
-			}
-			catch( const boost::bad_lexical_cast & )
-			{
-				result[i] = static_cast< T >( 0 );
-			}
+			result[i] = static_cast< T >( m_elements[i].get_value() );
 		}
 		
 		return result;
@@ -91,13 +86,13 @@ struct Vector : public Widget< vgm::Vector<T, N> >, public Gtk::HBox
 	{
 		for( unsigned int i = 0; i < N; ++i )
 		{
-			m_elements[i].set_text( Glib::ustring::compose("%1", value[i]) );
+			m_elements[i].set_value( value[i] );
 		}
 	}
 	
 	const bool validate()
 	{
-		bool validate = true;
+		/*bool validate = true;
 		
 		for( unsigned int i = 0; i < N && validate; ++i )
 		{
@@ -111,9 +106,9 @@ struct Vector : public Widget< vgm::Vector<T, N> >, public Gtk::HBox
 				m_elements[i].grab_focus();
 				validate = false;
 			}
-		}
+		}*/
 		
-		return validate;
+		return true;
 	}
 
 	void grabFocus()
@@ -138,8 +133,8 @@ struct Vector : public Widget< vgm::Vector<T, N> >, public Gtk::HBox
 
 private:
 	
-	bool		m_hasFrame;		///< Tells if edition fields must show a frame.
-	Gtk::Entry	m_elements[N];	///< Holds all edition widgets.
+	bool			m_hasFrame;		///< Tells if edition fields must show a frame.
+	Gtk::SpinButton	m_elements[N];	///< Holds all edition widgets.
 };
 
 

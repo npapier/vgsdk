@@ -7,11 +7,12 @@
 #define _VGGTK_FIELD_WIDGET_RECTANGLE_HPP_
 
 #include <boost/lexical_cast.hpp>
-#include <gtkmm/entry.h>
 #include <gtkmm/label.h>
+#include <gtkmm/spinbutton.h>
 #include <gtkmm/table.h>
 #include <vgm/Rectangle.hpp>
 
+#include "vgGTK/convenience.hpp"
 #include "vgGTK/field/widget/Widget.hpp"
 
 
@@ -71,6 +72,11 @@ struct Rectangle : public Widget< vgm::Rectangle< T > >, public Gtk::Table
 		m_width.set_activates_default();
 		m_height.set_activates_default();
 
+		vgGTK::configure< T >( m_x );
+		vgGTK::configure< T >( m_y );
+		vgGTK::configure< T >( m_width );
+		vgGTK::configure< T >( m_height );
+
 		attach( *positionLabel, 0, 2, 0, 1 );
 		attach( *sizeLabel, 2, 4, 0, 1 );
 
@@ -115,10 +121,10 @@ struct Rectangle : public Widget< vgm::Rectangle< T > >, public Gtk::Table
 
 	const vgm::Rectangle< T > getValue() const
 	{
-		const T	x		= toNumber( m_x.get_text() );
-		const T	y		= toNumber( m_y.get_text() );
-		const T	width	= toNumber( m_width.get_text() );
-		const T	height	= toNumber( m_height.get_text() );
+		const T	x		= static_cast< T >( m_x.get_value() );
+		const T	y		= static_cast< T >( m_y.get_value() );
+		const T	width	= static_cast< T >( m_width.get_value() );
+		const T	height	= static_cast< T >( m_height.get_value() );
 
 		return vgm::Rectangle< T >(x, y, width, height);
 	}
@@ -133,10 +139,10 @@ struct Rectangle : public Widget< vgm::Rectangle< T > >, public Gtk::Table
 
 	void setValue( const vgm::Rectangle< T > & value )
 	{
-		m_x.set_text( Glib::ustring::compose("%1", value.x()) );
-		m_y.set_text( Glib::ustring::compose("%1", value.y()) );
-		m_width.set_text( Glib::ustring::compose("%1", value.width()) );
-		m_height.set_text( Glib::ustring::compose("%1", value.height()) );
+		m_x.set_value( value.x() );
+		m_y.set_value( value.y() );
+		m_width.set_value( value.width() );
+		m_height.set_value( value.height() );
 	}
 
 	const bool validate()
@@ -159,22 +165,10 @@ struct Rectangle : public Widget< vgm::Rectangle< T > >, public Gtk::Table
 
 private:
 
-	Gtk::Entry	m_x;		///< The widget used to edit the x value.
-	Gtk::Entry	m_y;		///< The widget used to edit the y value.
-	Gtk::Entry	m_width;	///< The widget used to edit the width value.
-	Gtk::Entry	m_height;	///< The widget used to edit the height value.
-
-	static const T toNumber( const Glib::ustring & text )
-	{
-		try
-		{
-			return boost::lexical_cast< T >( text );
-		}
-		catch( const boost::bad_lexical_cast & )
-		{
-			return static_cast< T >( 0 );
-		}
-	}
+	Gtk::SpinButton	m_x;		///< The widget used to edit the x value.
+	Gtk::SpinButton	m_y;		///< The widget used to edit the y value.
+	Gtk::SpinButton	m_width;	///< The widget used to edit the width value.
+	Gtk::SpinButton	m_height;	///< The widget used to edit the height value.
 };
 
 

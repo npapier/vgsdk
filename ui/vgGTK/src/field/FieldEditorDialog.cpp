@@ -8,7 +8,6 @@
 
 #include <cassert>
 
-#include <gtkmm/alignment.h>
 #include <gtkmm/box.h>
 #include <gtkmm/image.h>
 #include <gtkmm/stock.h>
@@ -39,30 +38,27 @@ FieldEditorDialog::FieldEditorDialog( Gtk::Window & parent, vgd::Shp< vgd::field
 	m_fieldName		( fieldName ),
 	m_editor		( createEditor(fieldManager, fieldName) ),
 	m_canvas		( canvas ),
-	m_applyButton	( Gtk::Stock::APPLY ),
 	m_closeButton	( Gtk::Stock::CLOSE ),
 	m_rollbackButton( Gtk::Stock::REVERT_TO_SAVED )
 {
-	Gtk::HBox		* topBox		= Gtk::manage( new Gtk::HBox() );
-	Gtk::VBox		* contentBox	= Gtk::manage( new Gtk::VBox() );
-	Gtk::Alignment	* alignment		= Gtk::manage( new Gtk::Alignment(0.5, 0.0, 1.0, 0.0) );	
-	Gtk::Image		* image			= Gtk::manage( new Gtk::Image(Gtk::Stock::EDIT, Gtk::ICON_SIZE_DIALOG) );
-	
-	
-	// Initial content creation.
-	topBox->set_border_width( 7 );
-	topBox->set_spacing( 15 );
-	topBox->pack_start( *alignment, Gtk::PACK_SHRINK );
-	topBox->add( *contentBox );
+	Gtk::HBox	* headerBox		= Gtk::manage( new Gtk::HBox() );
+	Gtk::VBox	* contentBox	= Gtk::manage( new Gtk::VBox() );
+	Gtk::Image	* image			= Gtk::manage( new Gtk::Image(Gtk::Stock::EDIT, Gtk::ICON_SIZE_SMALL_TOOLBAR) );
 
-	alignment->add( *image );
 
-	m_label.set_alignment( 0.f, 0.f );
-	m_label.set_justify( Gtk::JUSTIFY_LEFT );
+	// Content box initialization.
+	contentBox->set_border_width( 12 );
+	contentBox->set_spacing( 12 );
+
+
+	// Header box content creation.
+	headerBox->pack_start( *image, Gtk::PACK_SHRINK );
+	headerBox->add( m_label );
+	headerBox->set_spacing( 7 );
+	contentBox->pack_start( *headerBox, Gtk::PACK_SHRINK );
+
+	m_label.set_alignment( 0.f, 0.5f );
 		
-	contentBox->set_spacing( 15 );
-	contentBox->pack_start( m_label, Gtk::PACK_SHRINK );
-
 
 	// Editor configuration.
 	if( m_editor )
@@ -74,13 +70,8 @@ FieldEditorDialog::FieldEditorDialog( Gtk::Window & parent, vgd::Shp< vgd::field
 		
 		// Adds buttons for the rollback and apply.
 		get_action_area()->pack_start( m_rollbackButton, Gtk::PACK_SHRINK );
-		get_action_area()->pack_start( m_applyButton, Gtk::PACK_SHRINK );
-
 		m_rollbackButton.signal_clicked().connect( sigc::mem_fun(this, &FieldEditorDialog::onRollback) );
-		m_applyButton.signal_clicked().connect( sigc::mem_fun(this, &FieldEditorDialog::onApply) );
-
 		m_rollbackButton.set_sensitive( false );
-		m_applyButton.set_sensitive( false );
 
 		
 		// Gives the focus to the editor.
@@ -105,7 +96,7 @@ FieldEditorDialog::FieldEditorDialog( Gtk::Window & parent, vgd::Shp< vgd::field
 	refreshLabel();
 	set_has_separator(false);
 	set_resizable( m_editor ? m_editor->resizable() : false );
-	get_vbox()->add( *topBox );
+	get_vbox()->add( *contentBox );
 	get_vbox()->show_all();
 
 
@@ -128,21 +119,6 @@ FieldEditorDialog::~FieldEditorDialog()
 		vgd::field::EditorRO< vgd::field::AbstractField >	nameEditor = m_fieldManager->getFieldRO< vgd::field::AbstractField >( "f_name" );
 
 		nameEditor->detach( this );
-	}
-}
-
-
-
-void FieldEditorDialog::onApply()
-{
-	assert( m_editor );
-
-	m_editor->commit();
-	m_applyButton.set_sensitive( false );
-
-	if( m_canvas )
-	{
-		m_canvas->refresh();
 	}
 }
 
@@ -172,8 +148,13 @@ void FieldEditorDialog::onEditorChanged()
 {
 	assert( m_editor );
 
-	m_applyButton.set_sensitive( true );
+	m_editor->commit();
 	m_rollbackButton.set_sensitive( true );
+
+	if( m_canvas )
+	{
+		m_canvas->refresh();
+	}
 }
 
 
@@ -184,7 +165,6 @@ void FieldEditorDialog::onRollback()
 
 	m_editor->rollback();
 	m_editor->grabFocus();
-	m_applyButton.set_sensitive( false );
 	m_rollbackButton.set_sensitive( false );
 
 	if( m_canvas )
