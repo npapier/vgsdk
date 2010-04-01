@@ -15,23 +15,13 @@
 #include <COLLADAFWSampler.h>
 #include <COLLADAFWImage.h>
 
-#include <COLLADAFWRotate.h>
-#include <COLLADAFWTranslate.h>
-#include <COLLADAFWTriangles.h>
-#include <COLLADAFWScale.h>
-#include <COLLADAFWMatrix.h>
-#include <COLLADAFWLookAt.h>
-
 #include <vgd/basic/Image.hpp>
-#include <vgd/node/Transform.hpp>
 #include <vgd/node/TransformSeparator.hpp>
-#include <vgd/node/MatrixTransform.hpp>
 #include <vgd/node/Material.hpp>
 #include <vgd/visitor/helpers.hpp>
 #include <vgd/visitor/predicate/ByRegexName.hpp>
 #include <vgd/visitor/predicate/ByType.hpp>
 #include <vgDebug/Global.hpp>
-#include <vgm/Matrix.hpp>
 #include <vgm/Utilities.hpp>
 #include <vgio/Cache.hpp>
 

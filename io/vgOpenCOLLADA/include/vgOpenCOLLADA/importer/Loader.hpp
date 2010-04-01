@@ -33,7 +33,7 @@ namespace importer
  */
 struct VGOPENCOLLADA_API Loader
 {
-	Loader(LOAD_TYPE type) throw(std::runtime_error);
+	Loader(LOAD_TYPE type = LOAD_ALL) throw(std::runtime_error);
 	virtual ~Loader() {};
 
 	/**

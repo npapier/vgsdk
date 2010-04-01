@@ -43,16 +43,18 @@ vgd::Shp< ActionsNode > ActionsNode::getActionsNode()
 ActionsNode::ActionsNode() :
 m_actions( Gtk::ActionGroup::create() ),
 m_uiManager( Gtk::UIManager::create() ),
-m_tree( false )
+m_location( CANVAS )
 {
 	// Initializes the user interface manager.
 	m_uiDefinition =
 		"<ui>"
-		"  <popup>"
+		"  <popup name='popup'>"
 		"    <menuitem action='GetNodeInTree'/>"
 		"    <separator/>"
 		"    <menuitem action='ExpandSubTree'/>"
 		"    <menuitem action='RemoveNode'/>"
+		"    <menuitem action='HideNode'/>"
+		"    <menu action='HiddenNode'/>"
 		"    <separator/>"
 		"    <menuitem action='ExportNode'/>"
 		"    <separator/>"
@@ -62,7 +64,7 @@ m_tree( false )
 		"    <menuitem action='InvertTriangleOrientation'/>"
 		"    <menuitem action='InvertNormalOrientation'/>"
 		"  </popup>"
-		"</ui>";	
+		"</ui>";
 	
 	
 	m_uiManager->insert_action_group( m_actions );
@@ -71,12 +73,28 @@ m_tree( false )
 	m_actions->add( Gtk::Action::create("GetNodeInTree", "GetNode"), sigc::mem_fun(this, &ActionsNode::onGetNodeInTree) );
 	m_actions->add( Gtk::Action::create("ExpandSubTree", "Expand"), sigc::mem_fun(this, &ActionsNode::onExpandSubTree) );
 	m_actions->add( Gtk::Action::create("RemoveNode", "Remove"), sigc::mem_fun(this, &ActionsNode::onRemoveNode) );
+	m_actions->add( Gtk::Action::create("HideNode", "Hide"), sigc::mem_fun(this, &ActionsNode::onHideNode) );
+	m_actions->add( Gtk::Action::create("HiddenNode", "Hidden Nodes") );
 	m_actions->add( Gtk::Action::create("ExportNode", "Export"), sigc::mem_fun(this, &ActionsNode::onExportNode) );
 	m_actions->add( Gtk::Action::create("SetToDefault", "SetToDefault"), sigc::mem_fun(this, &ActionsNode::onSetToDefault) );
 	m_actions->add( Gtk::Action::create("SetOptionalToDefault", "SetOptionalToDefault"), sigc::mem_fun(this, &ActionsNode::onSetOptionalToDefault) );
 	m_actions->add( Gtk::Action::create("InvertTriangleOrientation", "InvertTriangleOrientation"), sigc::mem_fun(this, &ActionsNode::onInvertTriangleOrientation) );
 	m_actions->add( Gtk::Action::create("InvertNormalOrientation", "InvertNormalOrientation"), sigc::mem_fun(this, &ActionsNode::onInvertNormalOrientation) );
 
+	Gtk::Widget		* hiddenWidget	= m_uiManager->get_widget("/popup/HiddenNode");
+	m_hiddenMenuItem= dynamic_cast< Gtk::MenuItem * >( hiddenWidget );
+
+	m_hiddenMenu	= Gtk::manage( new Gtk::Menu() );
+
+	m_hiddenMenuItem->set_submenu( *m_hiddenMenu );
+
+	m_hiddenMenuItem->property_visible() = false;
+
+	//Gtk::MenuItem	* test = Gtk::manage( new Gtk::MenuItem("test") );
+	//test->signal_activate().connect( sigc::mem_fun(this, &ActionsNode::onShowNode) );
+
+	//hiddenMenu->append(*test);
+	//hiddenMenu->show_all();
 }
 
 
@@ -114,7 +132,11 @@ bool ActionsNode::onBoutonPressEvent( GdkEventButton * event )
 		{
 			vgd::Shp< vgd::node::Node > currentNode = node->shpFromThis();
 
-			showPopup(event, currentNode);
+			showPopup(event, currentNode, NODE);
+		}
+		else
+		{
+			showPopup(event, m_currentNode, CANVAS);
 		}
 	}
 
@@ -123,28 +145,37 @@ bool ActionsNode::onBoutonPressEvent( GdkEventButton * event )
 
 
 
-void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, bool tree)
+void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, POPUP_LOCATION location)
 {
 	//@todo don't show "ExpandSubTree" if node don't have any children.
 	m_currentNode = node;
-	m_tree = tree;
+	m_location = location;
 
-	if(!node->isAKindOf<vgd::node::VertexShape>())
+	m_actions->get_action("GetNodeInTree")->set_visible(false);
+	m_actions->get_action("ExpandSubTree")->set_visible(false);
+	m_actions->get_action("RemoveNode")->set_visible(false);
+	m_actions->get_action("HideNode")->set_visible(false);
+	m_actions->get_action("ExportNode")->set_visible(false);
+	m_actions->get_action("SetToDefault")->set_visible(false);
+	m_actions->get_action("SetOptionalToDefault")->set_visible(false);
+	m_actions->get_action("InvertTriangleOrientation")->set_visible(false);
+	m_actions->get_action("InvertNormalOrientation")->set_visible(false);
+
+	//m_hiddenMenuItem->property_visible() = false;
+
+	if( m_location == CANVAS && m_hiddenMenuItem->property_visible() == false)
 	{
-		m_actions->get_action("ExportNode")->set_visible(false);
-		m_actions->get_action("InvertTriangleOrientation")->set_visible(false);
-		m_actions->get_action("InvertNormalOrientation")->set_visible(false);
+		return;
 	}
-	else
+	else if( m_location == NODE )
 	{
+		m_actions->get_action("RemoveNode")->set_visible(true);
+		m_actions->get_action("SetToDefault")->set_visible(true);
+		m_actions->get_action("SetOptionalToDefault")->set_visible(true);
 		m_actions->get_action("ExportNode")->set_visible(true);
+		m_actions->get_action("HideNode")->set_visible(true);
 		m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
 		m_actions->get_action("InvertNormalOrientation")->set_visible(true);
-	}
-
-	if(!m_tree)
-	{
-		m_actions->get_action("ExpandSubTree")->set_visible(false);
 		
 		if(!m_browser)
 		{
@@ -154,11 +185,24 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		m_actions->get_action("GetNodeInTree")->set_visible(true);
 		m_actions->get_action("GetNodeInTree")->set_label(node->getName());
 	}
-	else
+	else if( m_location == TREE )
 	{
-		m_actions->get_action("ExpandSubTree")->set_visible(true);
-		
-		m_actions->get_action("GetNodeInTree")->set_visible(false);
+		m_actions->get_action("RemoveNode")->set_visible(true);
+		m_actions->get_action("SetToDefault")->set_visible(true);
+		m_actions->get_action("SetOptionalToDefault")->set_visible(true);		
+
+		if(!node->isAKindOf<vgd::node::VertexShape>())
+		{
+			m_actions->get_action("GetNodeInTree")->set_visible(true);
+			m_actions->get_action("ExpandSubTree")->set_visible(true);
+		}
+		else
+		{
+			m_actions->get_action("ExportNode")->set_visible(true);
+			m_actions->get_action("HideNode")->set_visible(true);
+			m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
+			m_actions->get_action("InvertNormalOrientation")->set_visible(true);
+		}
 	}
 
 	Gtk::Menu *	popupMenu = dynamic_cast< Gtk::Menu * >( m_uiManager->get_widget("/popup") );
@@ -187,7 +231,7 @@ void ActionsNode::onRemoveNode()
 {
 	if(m_browser)
 	{
-		if (!m_tree)
+		if (m_location == NODE)
 		{
 			m_browser->selectNode(m_currentNode);
 		}
@@ -198,6 +242,43 @@ void ActionsNode::onRemoveNode()
 	{
 		m_currentNode->getParent()->removeChild(m_currentNode);
 	}
+}
+
+
+
+void ActionsNode::onHideNode()
+{
+	Gtk::MenuItem	* item = Gtk::manage( new Gtk::MenuItem(m_currentNode->getName()) );
+
+	m_hiddenMenu->append( *item );
+	m_hiddenMenu->show_all();	
+	m_hiddenMenuItem->property_visible() = true;
+
+	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::dynamic_pointer_cast< vgd::node::VertexShape >(m_currentNode );
+
+	vgd::Shp < HiddenNode > hidden = vgd::makeShp( new HiddenNode(vertexShape, item) );
+	hidden->hide();
+	
+	item->signal_activate().connect( sigc::bind<0>( sigc::mem_fun(this, &ActionsNode::onShowNode), hidden) );
+
+	m_canvas->refreshForced();
+}
+
+
+
+void ActionsNode::onShowNode( vgd::Shp < HiddenNode > hidden )
+{
+	hidden->restorePrimitives();
+
+	delete hidden->getMenuItem();
+	hidden.reset();
+	
+	if( m_hiddenMenu->items().size() < 1 )
+	{
+		m_hiddenMenuItem->property_visible() = false;
+	}
+
+	m_canvas->refreshForced();
 }
 
 

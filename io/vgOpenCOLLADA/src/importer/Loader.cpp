@@ -30,13 +30,25 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load(const std::string f
 	COLLADAFW::String colladaFileURI = COLLADABU::URI::nativePathToUri(filePath);
 
 	bool loadResult = m_root.loadDocument(colladaFileURI);
-	
-	if (!m_reader.getScene().second || !loadResult)
+
+	if( loadResult )
+	{
+		if ( m_reader.getScene().second )
+		{
+			return m_reader.getScene();
+		}
+		else
+		{
+			throw std::runtime_error("Scene-import failed.");
+		}
+	}
+	else
+	{
 		throw std::runtime_error("Scene-import failed.");
-		
-	return m_reader.getScene();
+	}
 }
 
 } // namespace importer
 
 } // namespace vgCollada
+

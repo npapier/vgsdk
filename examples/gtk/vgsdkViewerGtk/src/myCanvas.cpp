@@ -380,7 +380,15 @@ const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename )
 	}
 	vgOpenCOLLADA::importer::Loader loader(loadType);
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
-	retVal = loader.load( pathfilename.c_str() );
+	
+	try
+	{
+		retVal = loader.load( pathfilename.c_str() );
+	}
+	catch(std::runtime_error e)
+	{
+		return false;
+	}
 
 	if ( retVal.first )
 	{

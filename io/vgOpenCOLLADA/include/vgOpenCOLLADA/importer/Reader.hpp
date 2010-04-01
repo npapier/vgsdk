@@ -21,8 +21,6 @@
 #include <COLLADAFWPrerequisites.h>
 #include <COLLADAFWFileInfo.h>
 #include <COLLADASaxFWLLoader.h>
-#include <COLLADAFWMeshPrimitive.h>
-#include <COLLADAFWMesh.h>
 
 
 namespace vgOpenCOLLADA
