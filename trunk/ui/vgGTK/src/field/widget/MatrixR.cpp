@@ -34,6 +34,7 @@ MatrixR::MatrixR()
 	
 	for( int i = 0; i < 16; ++i )
 	{
+		vgGTK::configure< float >( m_elements[i] );
 		m_elements[i].set_has_frame( false );
 		m_elements[i].set_width_chars( 10 );
 		m_elements[i].signal_changed().connect( sigc::mem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
@@ -87,14 +88,7 @@ const vgm::MatrixR MatrixR::getValue() const
 	
 	for( int i = 0; i < 16; ++i )
 	{
-		try
-		{
-			result(i/4, i%4) = boost::lexical_cast< float >( m_elements[i].get_text() );
-		}
-		catch( const boost::bad_lexical_cast & )
-		{
-			result(i/4, i%4) = 0.f;
-		}
+		result(i/4, i%4) = static_cast< float >( m_elements[i].get_value() );
 	}
 	
 	return result;
@@ -128,7 +122,7 @@ void MatrixR::setValue( const vgm::MatrixR & value )
 {
 	for(int i = 0; i < 16; ++i)
 	{
-		m_elements[i].set_text( Glib::ustring::compose("%1", value(i/4, i%4) ) );
+		m_elements[i].set_value( value(i/4, i%4) );
 	}
 }
 
@@ -136,7 +130,8 @@ void MatrixR::setValue( const vgm::MatrixR & value )
 
 const bool MatrixR::validate()
 {
-	bool	validate = true;
+	return true;
+	/*bool	validate = true;
 	
 	for(int i = 0; i < 16 && validate; ++i)
 	{
@@ -152,7 +147,7 @@ const bool MatrixR::validate()
 		}
 	}
 	
-	return validate;
+	return validate;*/
 }
 
 

@@ -65,10 +65,17 @@ vgd::Shp< FieldEditor > createEditor( const std::type_info & fieldType )
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgd::field::Enum >) )
 		result.reset( new SingleFieldEditor< widget::Enum >() );
 
+// Obsolated by the user of Gtk::SpinButton in widget::Number
+//
+//	else if ( fieldType == typeid(vgd::field::TSingleField< int8 >) )
+//		result.reset( new SingleFieldEditor< widget::Int8Number >() );
+//	else if ( fieldType == typeid(vgd::field::TSingleField< uint8 >) )
+//		result.reset( new SingleFieldEditor< widget::UInt8Number >() );
+
 	else if ( fieldType == typeid(vgd::field::TSingleField< int8 >) )
-		result.reset( new SingleFieldEditor< widget::Int8Number >() );
+		result.reset( new SingleFieldEditor< widget::Number< int8 > >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< uint8 >) )
-		result.reset( new SingleFieldEditor< widget::UInt8Number >() );
+		result.reset( new SingleFieldEditor< widget::Number< uint8 > >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< int16 >) )
 		result.reset( new SingleFieldEditor< widget::Number< int16 > >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< uint16 >) )

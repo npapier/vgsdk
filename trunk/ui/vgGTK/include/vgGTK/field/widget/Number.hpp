@@ -7,9 +7,10 @@
 #ifndef _VGGTK_FIELD_WIDGET_NUMBER_HPP_
 #define _VGGTK_FIELD_WIDGET_NUMBER_HPP_
 
-#include <boost/lexical_cast.hpp>
-#include <gtkmm/entry.h>
+#include <gtkmm/spinbutton.h>
 #include <vgBase/Type.hpp>
+
+#include "vgGTK/convenience.hpp"
 #include "vgGTK/field/widget/Widget.hpp"
 
 
@@ -29,11 +30,13 @@ namespace widget
  * @brief	Implements a widget for the edition of any number type.
  */
 template< typename NumberType >
-struct Number : public Widget< NumberType >, public Gtk::Entry
+struct Number : public Widget< NumberType >, public Gtk::SpinButton
 {
 	Number()
 	{
 		set_activates_default( true );
+		set_text( Glib::ustring() );
+		vgGTK::configure< NumberType >( *this );
 	}
 	
 	void clear()
@@ -43,14 +46,16 @@ struct Number : public Widget< NumberType >, public Gtk::Entry
 	
 	const NumberType getValue() const
 	{
-		try
+		return static_cast< NumberType >( get_value() );
+
+		/*try
 		{
-			return boost::lexical_cast< NumberType >( get_text() );
+			return boost::lexical_cast< NumberType >( get_text() );			
 		}
 		catch( const boost::bad_lexical_cast & )
 		{
 			return static_cast< NumberType >( 0 );
-		}
+		}*/
 	}
 
 	const bool hasValue() const
@@ -60,22 +65,24 @@ struct Number : public Widget< NumberType >, public Gtk::Entry
 	
 	void setValue( const NumberType & value )
 	{
-		set_text( Glib::ustring::compose("%1", value) );
+		set_value( value );
 	}
 	
 	const bool validate()
 	{
-		try
+		/*try
 		{
 			boost::lexical_cast< NumberType >( get_text() );
-			return true;
+			return is_number();
 		}
 		catch( const boost::bad_lexical_cast & )
 		{
 			vgGTK::field::widget::Widget< NumberType >::showWarning("Please, enter a number!");
 			grab_focus();
 			return false;
-		}
+		}*/
+
+		return true;
 	}
 
 	void grabFocus()
@@ -97,17 +104,21 @@ protected:
 
 	void on_changed()
 	{
-		Gtk::Entry::on_changed();
+		Gtk::SpinButton::on_changed();
 		m_signalChanged.emit();
 	}
 };
 
 
 
+///
+/// Following specializations are now obsolat since the use of Gtk::SpinButton
+///
+
 /**
  * @brief	Specialized version of a widget for the edition of int8 number type.
  */
-struct Int8Number : public Number< int8 >
+/*struct Int8Number : public Number< int8 >
 {
 	const int8 getValue() const
 	{
@@ -142,14 +153,14 @@ struct Int8Number : public Number< int8 >
 			return false;
 		}
 	}
-};
+};*/
 
 
 
 /**
  * @brief	Specialized version of a widget for the edition of uint8 number type.
  */
-struct UInt8Number : public Number< uint8 >
+/*struct UInt8Number : public Number< uint8 >
 {
 	const uint8 getValue() const
 	{
@@ -184,7 +195,7 @@ struct UInt8Number : public Number< uint8 >
 			return false;
 		}
 	}
-};
+};*/
 
 
 
