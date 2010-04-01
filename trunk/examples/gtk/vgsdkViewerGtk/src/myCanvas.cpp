@@ -99,7 +99,7 @@ myCanvas::myCanvas()
 
 	if ( lightSwitcher )
 	{
-		lightSwitcher->setWhichChild( 1 );
+		lightSwitcher->setWhichChild( 0 );
 	}
 
 	// Configures engine
