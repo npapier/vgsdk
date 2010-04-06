@@ -380,7 +380,11 @@ void TrianExporter2::DumpProperty( IGameProperty * prop )
 		return;
 	}
 
-	Point4 p4; Point3 p3; int i; TCHAR *s; float f;
+	Point4 p4;
+	Point3 p3;
+	int i;
+	const MCHAR *s;
+	float f;
 
 	//Output the property based on its type.
 	switch( prop->GetType() )
@@ -432,12 +436,11 @@ void TrianExporter2::DumpTexture( IGameMaterial * mat )
 
 	//@todo FIXME remove this limitation
 	// Don't export more than one texture map
-	const int numTexToExport = std::min<int>(numTex, 1 /* todo numTexToExportFromGUI*/ );
+	const int numTotalTexToExport = std::min<int>(numTex, 1 /* todo numTexToExportFromGUI*/ );
 
-	m_of << "textureMaps " << numTexToExport << std::endl;
+	int numTexToExport = 0;
 
-	//For each texture output its information.
-	for( int i = 0; i < numTexToExport; i++ )
+	for( int i = 0; i < numTotalTexToExport; i++ )
 	{
 		//Get the texture.
 		IGameTextureMap * tex = mat->GetIGameTextureMap( i );
@@ -452,11 +455,39 @@ void TrianExporter2::DumpTexture( IGameMaterial * mat )
 		if( !tex || !tex->IsEntitySupported() )
 			continue;
 
-		//Print
-		m_of << "texture Bitmap" << std::endl;
+		//Get path, filename and extensiopn of bitmap
+		TCHAR * source = tex->GetBitmapFileName();
+		if( source )
+		{
+			++numTexToExport;
+		}
+	}
+
+	m_of << "textureMaps " << numTexToExport << std::endl;
+
+	//For each texture output its information.
+	for( int i = 0; i < numTotalTexToExport; i++ )
+	{
+		//Get the texture.
+		IGameTextureMap * tex = mat->GetIGameTextureMap( i );
+
+		//Get 3dsmax texmap and co
+		Texmap *	pTexMap		= tex->GetMaxTexmap();
+		/*BitmapTex*	pBitmapTex	= (BitmapTex*)pTexMap;
+		assert( pBitmapTex != 0 );*/
+
+		//Texture map must be valid or a textured bitmap to continue.
+		// if it is a textured bitmap.
+		if( !tex || !tex->IsEntitySupported() )
+			continue;
 
 		//Get path, filename and extensiopn of bitmap
 		TCHAR * source = tex->GetBitmapFileName();
+		if( !source )
+			continue;
+
+		//Print
+		m_of << "texture Bitmap" << std::endl;
 
 		TSTR tstrSource( source );
 
@@ -775,7 +806,7 @@ void TrianExporter2::DumpMesh( IGameMesh * gm, TCHAR * meshName )
 
 	m_fVertices.clear(), m_fNormals.clear(), m_fTexCoords.clear(), m_fVertexIndex.clear();
 	int currentVertexIndex = 0;
-	for( int i = 0; i < vertexIndex.size(); i++ )
+	for( unsigned int i = 0; i < vertexIndex.size(); i++ )
 	{
 		//Storage.
 		Point3 v = Point3( 0.0f, 0.0f, 0.0f ), n = Point3( 0.0f, 0.0f, 0.0f );
@@ -826,7 +857,7 @@ void TrianExporter2::DumpMesh( IGameMesh * gm, TCHAR * meshName )
 	//Write Information to file.
 	//VERTEX
 	m_of << "vertex " << m_fVertices.size() << std::endl;
-	for( int i = 0; i < m_fVertices.size(); i++ )
+	for( unsigned int i = 0; i < m_fVertices.size(); i++ )
 	{
 		Point3 v = m_fVertices.at( i );
 		m_of << v.x << " " << v.y << " " << v.z << std::endl;
@@ -837,7 +868,7 @@ void TrianExporter2::DumpMesh( IGameMesh * gm, TCHAR * meshName )
 	{
 		m_of << "normal " << m_fNormals.size() << std::endl;
 
-		for(	int i = 0;
+		for(	unsigned int i = 0;
 				i < m_fNormals.size();
 				++i )
 		{
@@ -850,7 +881,7 @@ void TrianExporter2::DumpMesh( IGameMesh * gm, TCHAR * meshName )
 	if( m_expTexCoord )
 	{
 		m_of << "texCoord " << m_fTexCoords.size() << std::endl;
-		for( int i = 0; i < m_fTexCoords.size(); i++ )
+		for( unsigned int i = 0; i < m_fTexCoords.size(); i++ )
 		{
 			Point2 t = m_fTexCoords.at( i );
 
@@ -860,7 +891,7 @@ void TrianExporter2::DumpMesh( IGameMesh * gm, TCHAR * meshName )
 
 	//VERTEX INDEX
 	m_of << "triangles " << m_fVertexIndex.size() / 3 << std::endl;
-	for( int i = 0; i < m_fVertexIndex.size(); )
+	for( unsigned int i = 0; i < m_fVertexIndex.size(); )
 	{
 		int a = m_fVertexIndex.at( i++ );
 		int b = m_fVertexIndex.at( i++ );
@@ -874,10 +905,10 @@ int TrianExporter2::Search( Point3 v, Point3 n, Point2 t )
 {
 	//Run through the final vertices, texCoords, normals lists and see
 	//if the combination already exists.
-	for( int i = 0; i < m_fVertices.size(); i++ )
+	for( unsigned int i = 0; i < m_fVertices.size(); i++ )
 	{
 		//First check the vertices.
-		bool found = (m_fVertices[i] == v);
+		bool found = (m_fVertices[i] == v) != 0;
 
 		if (!found)
 			continue;
@@ -885,7 +916,7 @@ int TrianExporter2::Search( Point3 v, Point3 n, Point2 t )
 		//Check normals
 		if( m_expNormals )
 		{
-			found = (m_fNormals[i] == n);
+			found = (m_fNormals[i] == n) != 0;
 		
 			if (!found)
 				continue;
@@ -894,7 +925,7 @@ int TrianExporter2::Search( Point3 v, Point3 n, Point2 t )
 		//Check texCoords.
 		if( m_expTexCoord )
 		{
-			found = (m_fTexCoords[i] == t);
+			found = (m_fTexCoords[i] == t) != 0;
 		
 			//if (!found) continue;
 		}
