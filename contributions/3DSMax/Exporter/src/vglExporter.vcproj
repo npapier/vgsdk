@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="vglExporter"
 	ProjectGUID="{2CE7110E-E92E-40A0-9193-3C86BDDC57EB}"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Autodesk\3ds Max 9 SDK\maxsdk\include&quot;;&quot;C:\Program Files\Autodesk\3ds Max 9 SDK\maxsdk\include\IGame&quot;;&quot;D:\CommonLibExt_win32_cl8-0\include&quot;;D:\CommonLib\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Autodesk\3ds Max 2010 SDK\maxsdk\include&quot;;&quot;C:\Program Files\Autodesk\3ds Max 2010 SDK\maxsdk\include\IGame&quot;;&quot;E:\localExt_win32_cl9-0Exp\include&quot;;E:\local\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -65,16 +66,18 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib bmm.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib igame.lib DevIL.lib ILU.lib vgm_0-4_win32_cl8-0_D.lib"
-				OutputFile="C:\Program Files\Autodesk\3ds Max 9\plugins\vglExporter.dle"
+				AdditionalDependencies="comctl32.lib bmm.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib igame.lib DevIL.lib ILU.lib vgm_0-5_win32_cl9-0Exp_D.lib"
+				OutputFile="C:\Program Files\Autodesk\3ds Max 2010\plugins\vglExporter.dle"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Autodesk\3ds Max 9 SDK\maxsdk\lib&quot;;&quot;D:\CommonLibExt_win32_cl8-0\lib&quot;;D:\CommonLib\lib"
-				ManifestFile="C:\Program Files\Autodesk\3ds Max 9\plugins\$(TargetFileName).intermediate.manifest"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Autodesk\3ds Max 2010 SDK\maxsdk\lib&quot;;&quot;E:\localExt_win32_cl9-0Exp\lib&quot;;E:\local\lib"
+				ManifestFile="C:\Program Files\Autodesk\3ds Max 2010\plugins\$(TargetFileName).intermediate.manifest"
 				ModuleDefinitionFile="vglExporter.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/vglExporter.pdb"
+				ProgramDatabaseFile="C:\Program Files\Autodesk\3ds Max 2010\plugins\vglExporter.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/vglExporter.lib"
 				TargetMachine="1"
 			/>
@@ -95,9 +98,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -132,7 +132,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Autodesk\3ds Max 9 SDK\maxsdk\include&quot;;&quot;C:\Program Files\Autodesk\3ds Max 9 SDK\maxsdk\include\IGame&quot;;&quot;D:\CommonLibExt_win32_cl8-0\include&quot;;D:\CommonLib\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Autodesk\3ds Max 2010 SDK\maxsdk\include&quot;;&quot;C:\Program Files\Autodesk\3ds Max 2010 SDK\maxsdk\include\IGame&quot;;&quot;E:\localExt_win32_cl9-0Exp\include&quot;;E:\local\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -157,17 +157,20 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib bmm.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib igame.lib DevIL.lib ILU.lib vgm_0-4_win32_cl8-0.lib"
-				OutputFile="C:\Program Files\Autodesk\3ds Max 9\plugins\vglExporter.dle"
+				AdditionalDependencies="comctl32.lib bmm.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib igame.lib DevIL.lib ILU.lib vgm_0-5_win32_cl9-0Exp.lib"
+				OutputFile="C:\Program Files\Autodesk\3ds Max 2010\plugins\vglExporter.dle"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Autodesk\3ds Max 9 SDK\maxsdk\lib&quot;;&quot;D:\CommonLibExt_win32_cl8-0\lib&quot;;D:\CommonLib\lib"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Autodesk\3ds Max 2010 SDK\maxsdk\lib&quot;;&quot;E:\localExt_win32_cl9-0Exp\lib&quot;;E:\local\lib"
+				ManifestFile="C:\Program Files\Autodesk\3ds Max 2010\plugins\$(TargetFileName).intermediate.manifest"
 				ModuleDefinitionFile="vglExporter.def"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/vglExporter.lib"
 				TargetMachine="1"
 			/>
@@ -188,9 +191,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
