@@ -1,18 +1,18 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_RC_ROOT_HPP
-#define _VGE_RC_ROOT_HPP
+#ifndef _VGEGL_RC_ROOT_HPP
+#define _VGEGL_RC_ROOT_HPP
 
-#include "vge/rc/IResource.hpp"
-
+#include <glo/IResource.hpp>
 #include <vgd/node/Separator.hpp>
+#include "vgeGL/vgeGL.hpp"
 
 
 
-namespace vge
+namespace vgeGL
 {
 	
 namespace rc
@@ -22,27 +22,29 @@ namespace rc
 
 /**
  * @brief Root of a scene graph
+ *
+ * @todo Should be in vge...
  */
-struct Root : public IResource
+struct Root : public ::glo::IResource
 {
 	/**
 	 * @brief Default constructor
 	 */
-	VGE_API Root();
+	VGEGL_API Root();
 
 	/**
 	 * @brief Gets the root node of the scene graph
 	 * 
 	 * @return the root node
 	 */
-	VGE_API const vgd::Shp< vgd::node::Separator > getRoot() const;
+	VGEGL_API const vgd::Shp< vgd::node::Separator > getRoot() const;
 	
 	/**
 	 * @brief Gets the root node of the scene graph
 	 * 
 	 * @return the root node
 	 */
-	VGE_API vgd::Shp< vgd::node::Separator > getRoot();
+	VGEGL_API vgd::Shp< vgd::node::Separator > getRoot();
 	
 	
 	
@@ -55,6 +57,6 @@ private:
 
 } // namespace rc
 
-} // namespace vge
+} // namespace vgeGL
 
-#endif //#ifndef _VGE_RC_ROOT_HPP
+#endif //#ifndef _VGEGL_RC_ROOT_HPP

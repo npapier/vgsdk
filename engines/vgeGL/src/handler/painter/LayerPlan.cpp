@@ -10,9 +10,9 @@
 #include <vgd/node/LayerPlan.hpp>
 #include <vgd/node/Texture2D.hpp>
 #include <vge/rc/Manager.hpp>
-#include <vge/rc/Root.hpp>
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include <vgeGL/rc/Root.hpp>
 //#include "vgeGL/rc/TDisplayListHelper.hpp"
 #include "vgeGL/rc/Texture2D.hpp"
 
@@ -83,10 +83,10 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	}
 
 	// Searchs resource
-	vge::rc::Manager&		rcManager	= pGLEngine->getGLManager();
+	vgeGL::engine::Engine::GLManagerType&		rcManager	= pGLEngine->getGLManager();
 
-	vge::rc::IResource 		*resource	= rcManager.getAbstract( layerPlan );
-	vge::rc::Root			*rcRoot		= dynamic_cast< vge::rc::Root* >(resource);
+	::glo::IResource 							*resource	= rcManager.getAbstract( layerPlan );
+	vgeGL::rc::Root								*rcRoot		= dynamic_cast< vgeGL::rc::Root* >(resource);
 
 	using vgd::node::Quad;
 	using vgd::node::Texture2D;
@@ -106,7 +106,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 		assert( rcRoot == 0 );
 
 		// No resource (this is the first evaluation), create it.
-		rcRoot = new vge::rc::Root;
+		rcRoot = new vgeGL::rc::Root;
 		rcManager.add( layerPlan, rcRoot );
 
 		texture2D = Texture2D::create("rootRC.LayerPlan.texture2D");
@@ -176,8 +176,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	pGLEngine->evaluate( paintService, texture2D.get(), true );
 
 	// Gets the resource manager
-	vge::rc::Manager& manager = pGLEngine->getGLManager();
-	vgeGL::rc::Texture2D * gloTex2D = manager.get< vgeGL::rc::Texture2D >( texture2D.get() );
+	vgeGL::rc::Texture2D * gloTex2D = rcManager.get< vgeGL::rc::Texture2D >( texture2D.get() );
 	gloTex2D->env( GL_TEXTURE_ENV_MODE, GL_REPLACE );
 
 	// draw proxy geometry

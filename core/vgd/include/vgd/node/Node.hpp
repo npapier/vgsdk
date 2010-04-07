@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -318,7 +318,7 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	/**
 	 * @brief Alias on signal associated to the destructor of node (i.e. ~Node).
 	 */
-	typedef boost::signal<void (vgd::node::Node*) >	DestructorSignalType;
+	typedef boost::signal< void (vgd::node::Node*) >	DestructorSignalType;
 
 	/**
 	 * @brief Alias on signal connection.
@@ -332,8 +332,8 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	 *
 	 * @return the connection object associated to the signal
 	 */
-	ConnectionType connect( DestructorSignalType::slot_function_type slot );
-	
+	static ConnectionType connect( DestructorSignalType::slot_function_type slot );
+
 	//@}
 
 
@@ -425,7 +425,7 @@ private:
 	/**
 	 * @brief Signal for destructor
 	 */
-	DestructorSignalType m_destructorSignal;
+	static DestructorSignalType& destructorSignal();
 
 protected:
 	/**
@@ -444,6 +444,10 @@ private:
 	std::string m_nodeName; ///< this attribute contains the name of node like field 'name'. But this one could be seen in debugger easily.
 #endif
 };
+
+
+
+typedef vgd::Shp< vgd::node::Node > NodeShp; ///< type definition for shared pointer on a Node
 
 
 

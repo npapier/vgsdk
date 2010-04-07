@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,7 @@
 #define _VGEGL_RC_TSYNCANDBINDHELPER_HPP
 
 #include <vgd/field/DirtyFlag.hpp>
-#include <vge/rc/Manager.hpp>
+#include <vge/rc/TManager.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
 
@@ -33,13 +33,13 @@ void applyUsingSyncAndBind(	vgeGL::engine::Engine * engine, nodeType * node,
 							handlerType * handler )
 {
 	// Gets the resource manager
-	vge::rc::Manager& manager = engine->getGLManager();
+	vgeGL::engine::Engine::GLManagerType& manager = engine->getGLManager();
 
 	// Gets node dirty flag
 	vgd::field::DirtyFlag * nodeDF = node->getDirtyFlag( node->getDFNode() );
 
 	// Gets resource associated to the given node
-	vge::rc::IResource 	* resource			= manager.getAbstract( node );
+	::glo::IResource 	* resource			= manager.getAbstract( node );
 	GLResourceType		* castedResource	= dynamic_cast< GLResourceType * >(resource);
 
 	// Sometimes GLResourceType must be changed for a given node (display list to/from vbo for example).
