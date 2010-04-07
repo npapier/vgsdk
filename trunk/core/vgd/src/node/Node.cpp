@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -27,9 +27,9 @@ Node::~Node()
 {
 	// Updates boost::graph
 	graph().removeNode( this );
-	
+
 	// Signal invocation
-	m_destructorSignal(this);
+	destructorSignal()(this);
 }
 
 
@@ -192,7 +192,7 @@ const std::string Node::getDFNode()
 
 Node::ConnectionType Node::connect( DestructorSignalType::slot_function_type slot )
 {
-	return m_destructorSignal.connect( slot );
+	return destructorSignal().connect( slot );
 }
 
 
@@ -226,6 +226,14 @@ vgd::basic::ClassRegistry< vgd::node::Node >& Node::getClassRegistry( void )
 	static vgd::basic::ClassRegistry< vgd::node::Node > nodeRegistry;
 
 	return nodeRegistry;
+}
+
+
+
+Node::DestructorSignalType& Node::destructorSignal()
+{
+	static DestructorSignalType m_destructorSignal;
+	return m_destructorSignal;
 }
 
 

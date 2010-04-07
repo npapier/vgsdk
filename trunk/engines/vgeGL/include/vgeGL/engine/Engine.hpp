@@ -8,7 +8,6 @@
 
 #include <vge/engine/Engine.hpp>
 #include <vge/engine/TStack.hpp>
-#include <vge/rc/Manager.hpp>
 #include <vge/rc/TManager.hpp>
 
 #include "vgeGL/engine/GLSLState.hpp"
@@ -30,7 +29,10 @@ namespace vgd
 	namespace node { struct Texture; } 
 }
 
-namespace vgeGL { namespace engine { struct ProgramGenerator; } }
+namespace vgeGL 
+{ 
+	namespace engine { struct ProgramGenerator; } 
+}
 
 
 
@@ -118,6 +120,11 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	 * @brief Default constructor
 	 */
 	Engine();
+
+	/**
+	 * @brief Destructor
+	 */
+	~Engine();
 
 	// Overridden
 	void reset();
@@ -212,16 +219,22 @@ public:
 
 
 
-	
 	/**
 	 * @name Manager accessors
 	 */
 	//@{
 
 	/**
-	 * @brief Gets the OpenGL objects manager.
+	 * @brief Typedef for the OpenGL object manager
+	 * 
+	 * This manager associates a node to an OpenGL resource
 	 */
-	vge::rc::Manager&	getGLManager();
+	typedef vge::rc::TManager< vgd::node::Node *, glo::IResource > GLManagerType;
+
+	/**
+	 * @brief Gets the OpenGL objects manager
+	 */
+	GLManagerType& getGLManager();
 
 	/**
 	 * @brief Typedef for the glsl program manager
@@ -496,7 +509,15 @@ public:
 	 *
 	 * @remarks This method reads back the framebuffer color values, be careful this is slow and stalled the OpenGL pipeline.
 	 */
-	vgd::Shp< vgd::basic::Image > captureGLFramebuffer() const;
+	/*static*/ vgd::Shp< vgd::basic::Image > captureGLFramebuffer() const;
+
+	/**
+	 * @brief Enables or disables the given OpenGL capability.
+	 *
+	 * @param capability	specifies a symbolic constant indicating a GL capability
+	 * @param isEnabled		true to enable the capability, false to disable it
+	 */
+	 static void setGLEnable( const GLenum capability, const bool isEnabled ) /*const*/;
 	//@}
 
 
@@ -625,13 +646,13 @@ private:
 	/**
 	 * @brief Manager for all opengl objects.
 	 */
-	static vge::rc::Manager			m_glManager;
+	GLManagerType					m_glManager;
+	boost::signals::connection		m_glManagerConnection;
 	
 	/**
 	 * @brief Manager for all glsl programs.
 	 */
-	static GLSLProgramManagerType	m_glslManager;
-	// @todo manager for glsl shaders
+	GLSLProgramManagerType			m_glslManager;
 
 
 	/**

@@ -1,9 +1,9 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#include <vgd/ScopedPtr.hpp>
+#include <vgd/Shp.hpp>
 
 
 
@@ -26,38 +26,52 @@ struct TManager<KeyType, ResourceType>::ResourceContainer
 	 * @brief Constructor
 	 * 
 	 * @param rc	pointer on the resource
+	 */
+	ResourceContainer( vgd::Shp< ResourceType > rc )
+	 :	m_rc(rc)
+	{}
+
+	/**
+	 * @brief Constructor
 	 * 
-	 * @remarks Ownership of the given resource is acquired by this class.
+	 * @param rc	pointer on the resource
 	 */
 	ResourceContainer( ResourceType *rc )
 	 :	m_rc(rc)
 	{}
 
-	/**
-	 * @brief Gets the owned resource.
-	 *
-	 * @return a pointer on the resource
-	 */
-	const ResourceType *getResourcePointer() const { return m_rc.get(); }
 
 	/**
-	 * @brief Gets the owned resource.
+	 * @brief Returns the pointer on the owned resource.
 	 *
-	 * @return a pointer on the resource
+	 * @return a pointer on the owned resource.
 	 */
-	ResourceType *getResourcePointer() { return m_rc.get(); }
+	const vgd::Shp< ResourceType > getShp() const { return m_rc; }
+	
+	/**
+	 * @brief Returns the pointer on the owned resource.
+	 *
+	 * @return a pointer on the owned resource.
+	 */
+	vgd::Shp< ResourceType > getShp() { return m_rc; }
+
+	/**
+	 * @brief Returns the pointer on the owned resource.
+	 *
+	 * @return a pointer on the owned resource.
+	 */
+	const ResourceType * get() const { return m_rc.get(); }
+
+	/**
+	 * @brief Returns the pointer on the owned resource.
+	 *
+	 * @return a pointer on the owned resource.
+	 */
+	ResourceType * get() { return m_rc.get(); }
+
 
 private:
-	/**
-	 * @name Data
-	 */
-	//@{
-
-	/**
-	 * @brief The owned resource
-	 */
-	vgd::ScopedPtr< ResourceType > m_rc;
-	//@}
+	vgd::Shp< ResourceType > m_rc; ///< the resource
 };
 
 
@@ -80,6 +94,18 @@ TManager< KeyType, ResourceType >::~TManager()
 	clear();
 }
 
+
+
+template< typename KeyType, typename ResourceType >
+const bool TManager< KeyType, ResourceType >::add( const KeyType& key, vgd::Shp< ResourceType > resource )
+{
+	assert( resource != 0 && "Null pointer" );
+
+	vgd::Shp< ResourceContainer > value( new ResourceContainer(resource) );
+	std::pair< typename ResourcesMap::iterator, bool > retVal = m_resources.insert( ResourcesValueType(key, value) );
+
+	return retVal.second;
+}
 
 
 template< typename KeyType, typename ResourceType >
@@ -111,7 +137,6 @@ const bool TManager< KeyType, ResourceType >::remove( const KeyType& key )
 	else
 	{
 		// No match is found for the key
-
 		return false;
 	}
 }
@@ -121,7 +146,30 @@ const bool TManager< KeyType, ResourceType >::remove( const KeyType& key )
 template< typename KeyType, typename ResourceType >
 void TManager< KeyType, ResourceType >::clear()
 {
-	m_resources.clear();
+	// The following code is equivalent to m_resources.clear();
+	while(!m_resources.empty())
+	{
+		m_resources.erase(m_resources.begin());
+	}
+}
+
+
+
+template< typename KeyType, typename ResourceType >
+vgd::Shp< ResourceType > TManager< KeyType, ResourceType >::getAbstractShp( const KeyType& key )
+{
+	typename ResourcesMap::iterator iter = m_resources.find( key );
+
+	if ( iter != m_resources.end() )
+	{
+		// A match is found for the key
+		return iter->second->getShp();
+	}
+	else
+	{
+		// No match is found for the key
+		return vgd::Shp< ResourceType >();
+	}
 }
 
 
@@ -134,7 +182,7 @@ ResourceType* TManager< KeyType, ResourceType >::getAbstract( const KeyType& key
 	if ( iter != m_resources.end() )
 	{
 		// A match is found for the key
-		return iter->second->getResourcePointer();
+		return iter->second->get();
 	}
 	else
 	{
@@ -158,6 +206,27 @@ OutResourceType* TManager< KeyType, ResourceType >::get( const KeyType& key )
 	else
 	{
 		OutResourceType *castedResource = dynamic_cast< OutResourceType* >(resource);
+		assert( castedResource != 0 && "Target resource type is invalid." );
+
+		return castedResource;
+	}
+}
+
+
+
+template< typename KeyType, typename ResourceType >
+template< typename OutResourceType >
+vgd::Shp< OutResourceType > TManager< KeyType, ResourceType >::getShp( const KeyType& key )
+{
+	vgd::Shp< ResourceType > resource = getAbstractShp(key);
+
+	if ( !resource )
+	{
+		return vgd::Shp<OutResourceType>();
+	}
+	else
+	{
+		vgd::Shp< OutResourceType > castedResource = vgd::dynamic_pointer_cast< OutResourceType >(resource);
 		assert( castedResource != 0 && "Target resource type is invalid." );
 
 		return castedResource;

@@ -34,15 +34,29 @@ Engine::Engine()
 :	m_isTextureMappingEnabled(true),
 	m_isDisplayListEnabled(true),
 	m_isShadowSamplerEnabled(true),
+
+	m_glManager("GL object manager"),
+	m_glslManager("GLSL Program Manager"),
+
 	m_isGLSLEnabled(true),
 	m_currentProgram(0),
 	// m_glStateStack()
 	//m_glslStateStack()
 	m_glslProgramGenerator( new ProgramGenerator() )
 {
+	// Connects OpenGL manager to node destruction signal.
+	m_glManagerConnection = vgd::node::Node::connect( boost::bind(&GLManagerType::remove, &getGLManager(), _1) );
+
 	// Reset cache
 	m_maxViewportSize.setInvalid();
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
+}
+
+
+
+Engine::~Engine()
+{
+	m_glManagerConnection.disconnect();
 }
 
 
@@ -101,7 +115,8 @@ void Engine::reset()
 
 		// Do some initialization
 		// and don't do the same for any others instances if populateNodeRegistry returns true
-		m_firstInstance = (populateNodeRegistry() == false);
+		m_firstInstance = true;
+		//m_firstInstance = (populateNodeRegistry() == false);
 	}
 
 	//if ( m_firstInstance == false )
@@ -243,7 +258,7 @@ GLSLState& Engine::getGLSLState()
 
 
 // MANAGER
-vge::rc::Manager& Engine::getGLManager()
+Engine::GLManagerType& Engine::getGLManager()
 {
 	return m_glManager;
 }
@@ -746,6 +761,20 @@ vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer() const
 
 
 
+void Engine::setGLEnable( const GLenum capability, const bool isEnabled ) /*const*/
+{
+	if ( isEnabled )
+	{
+		glEnable( capability );
+	}
+	else
+	{
+		glDisable( capability );
+	}
+}
+
+
+
 void Engine::activeTexture( const int desiredTextureUnit )
 {
 //	static int currentTextureUnit = 0;
@@ -908,9 +937,9 @@ bool Engine::populateNodeRegistry()
 
 
 
-vge::rc::Manager				Engine::m_glManager;
+//Engine::GLManagerType			Engine::m_glManager("GL object manager");
 
-Engine::GLSLProgramManagerType	Engine::m_glslManager("GLSL Program Manager");
+//Engine::GLSLProgramManagerType	Engine::m_glslManager("GLSL Program Manager");
 
 bool							Engine::m_firstInstance = true;
 

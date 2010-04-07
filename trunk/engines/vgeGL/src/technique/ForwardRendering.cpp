@@ -69,7 +69,7 @@ struct ShadowMappingInput
 
 	//vgd::Shp< glo::Texture2D > getLightDepthMap( const uint index );
 	vgd::Shp< vgd::node::Texture2D > getLightDepthMap( const uint index );
-	vgeGL::rc::Texture2D * getLightDepthMap( const uint index, vgeGL::engine::Engine * engine );
+	vgd::Shp< vgeGL::rc::Texture2D > getLightDepthMap( const uint index, vgeGL::engine::Engine * engine );
 	vgd::Shp< vgd::node::TexGenEyeLinear > getTexGen( const uint index );
 
 	const vgm::Vec2i getShadowMapSize() const;
@@ -306,16 +306,16 @@ vgd::Shp< vgd::node::Texture2D > ShadowMappingInput::getLightDepthMap( const uin
 }
 
 
-vgeGL::rc::Texture2D * ShadowMappingInput::getLightDepthMap( const uint index, vgeGL::engine::Engine * engine )
+vgd::Shp< vgeGL::rc::Texture2D > ShadowMappingInput::getLightDepthMap( const uint index, vgeGL::engine::Engine * engine )
 {
 	assert( index < getNumLight() && "ShadowMappingInput::getLightDepthMap(): Out of range index." );
 
 	vgd::Shp< vgd::node::Texture2D > texture2DNode = getLightDepthMap(index);
 
 	// Gets the resource manager
-	vge::rc::Manager& manager = engine->getGLManager();
+	vgeGL::engine::Engine::GLManagerType& manager = engine->getGLManager();
 
-	return manager.get< vgeGL::rc::Texture2D >( texture2DNode.get() );
+	return manager.getShp< vgeGL::rc::Texture2D >( texture2DNode.get() );
 }
 
 
@@ -592,7 +592,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			const uint currentTexUnit = internalTexUnitIndex - currentLightIndex;
 			texture2D->setMultiAttributeIndex( currentTexUnit );
 			engine->evaluate( paintService, texture2D.get(), true );
-			vgeGL::rc::Texture2D * lightDepthMap = shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
+			vgd::Shp< vgeGL::rc::Texture2D > lightDepthMap = shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
 // @todo moves
 			if ( state.isShadowSamplerUsageEnabled() )
 			{
@@ -603,7 +603,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			}
 
 			// Lookups or creates fbo
-			vge::rc::Manager& rcManager = engine->getGLManager();
+			vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
 			vgeGL::rc::FrameBufferObject * fbo = rcManager.get< vgeGL::rc::FrameBufferObject >( shadowMappingInput->m_dummyNodeForFBO[currentLightIndex].get() ); // @todo not very cute
 			if ( fbo == 0 )
 			{
@@ -614,9 +614,9 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 				// Enables render to depth texture
 				fbo->bind();
-				fbo->renderDepthOnly();
-
 				fbo->attachDepth( lightDepthMap );
+
+				fbo->renderDepthOnly();
 
 				// Check framebuffer completeness at the end of initialization.
 				const std::string fboStatus = fbo->getStatusString();

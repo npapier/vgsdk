@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,6 @@
 #define _VGEGL_RC_TSYNCHRONIZEHELPER_HPP
 
 #include <vgd/field/DirtyFlag.hpp>
-#include <vge/rc/Manager.hpp>
 
 #include "vgeGL/vgeGL.hpp"
 #include "vgeGL/engine/Engine.hpp"
@@ -32,13 +31,13 @@ void applyUsingSynchronize(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
 							handlerType*			pHandler )
 {
 	// get the resource manager
-	vge::rc::Manager&		rGLManager	= pGLEngine->getGLManager();
+	vgeGL::engine::Engine::GLManagerType&		rGLManager	= pGLEngine->getGLManager();
 
 	// get dirty flag of node
-	vgd::field::DirtyFlag*	pDFNode		= pNode->getDirtyFlag( pNode->getDFNode() );
+	vgd::field::DirtyFlag*	pDFNode				= pNode->getDirtyFlag( pNode->getDFNode() );
 
 	// get associated resource
-	vge::rc::IResource 		*pResource			= rGLManager.getAbstract( pNode );
+	::glo::IResource 		*pResource			= rGLManager.getAbstract( pNode );
 	GLResourceType			*pCastedResource	= dynamic_cast< GLResourceType* >(pResource);
 	
 	if (	( pCastedResource == 0 ) &&

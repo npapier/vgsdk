@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,7 +6,9 @@
 #ifndef _VGE_RC_TMANAGER_HPP
 #define _VGE_RC_TMANAGER_HPP
 
+#include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
+//#include <boost/signals/trackable.hpp>
 #include <map>
 #include <utility>
 
@@ -34,7 +36,7 @@ namespace rc
  * @todo Some methods for doing statistics on resources. 
  */
 template< typename KeyType, typename ResourceType >
-struct TManager : public boost::noncopyable, public vgd::basic::NamedObject
+struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyable, public vgd::basic::NamedObject
 {
 	/**
 	 * @name Constructor and destructor
@@ -73,10 +75,22 @@ struct TManager : public boost::noncopyable, public vgd::basic::NamedObject
 	 * @param resource		the resource to add
 	 * 
 	 * @return true if the pair (key,resource) was successfully added, false otherwise (i.e. key already added).
+	 */
+	const bool add( const KeyType& key, vgd::Shp< ResourceType > resource );
+
+	/**
+	 * @brief Adds a new resource associated to a unique key in the manager.
+	 *
+	 * @pre resource != 0
+	 * 
+	 * @param key 			the key value
+	 * @param resource		the resource to add
+	 * 
+	 * @return true if the pair (key,resource) was successfully added, false otherwise (i.e. key already added).
 	 * 
 	 * @remarks The ownership of resource is transfered to this manager. So the destruction is done by this class.
 	 */
-	const bool add( const KeyType& key, ResourceType *resource );
+	const bool add( const KeyType& key, ResourceType * resource );
 
 	/**
 	 * @brief Removes a resource associated to a key in the manager.
@@ -113,6 +127,15 @@ struct TManager : public boost::noncopyable, public vgd::basic::NamedObject
 	/**
 	 * @brief Gets the resource associated to the given key.
 	 * 
+	 * @param key		the key value
+	 * 
+	 * @return			a pointer on the desired resource, or an empty pointer if there is no resource associated to the given key.
+	 */
+	vgd::Shp< ResourceType > getAbstractShp( const KeyType& key );
+
+	/**
+	 * @brief Gets the resource associated to the given key.
+	 * 
 	 * @pre	resourceType must be the good one or an assertion will occurs.
 	 * 
 	 * @param key		the key value
@@ -122,6 +145,19 @@ struct TManager : public boost::noncopyable, public vgd::basic::NamedObject
 	 */
 	template< typename OutResourceType >
 	OutResourceType * get( const KeyType& key );
+
+	/**
+	 * @brief Gets the resource associated to the given key.
+	 * 
+	 * @pre	resourceType must be the good one or an assertion will occurs.
+	 * 
+	 * @param key		the key value
+	 * 
+	 * @return			a pointer on the desired resource, or an empty pointer if there is no resource associated to the given key.
+	 * 					When the given resource type is wrong, an assertion will occurs and the return value would be an empty pointer.
+	 */
+	template< typename OutResourceType >
+	vgd::Shp< OutResourceType > getShp( const KeyType& key );
 
 	/**
 	 * @brief Returns the number of resources owned by this manager.

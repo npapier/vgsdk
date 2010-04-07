@@ -6,9 +6,7 @@
 #ifndef _VGD_NODE_KIT_HPP
 #define _VGD_NODE_KIT_HPP
 
-#include "vgd/vgd.hpp"
-
-#include "vgd/field/Node.hpp"
+#include "vgd/field/NodeShp.hpp"
 #include "vgd/field/TSingleField.hpp"
 #include "vgd/node/Group.hpp"
 

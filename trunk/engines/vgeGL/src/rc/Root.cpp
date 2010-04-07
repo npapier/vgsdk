@@ -1,13 +1,13 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#include "vge/rc/Root.hpp"
+#include "vgeGL/rc/Root.hpp"
 
 
 
-namespace vge
+namespace vgeGL
 {
 
 namespace rc
@@ -37,4 +37,4 @@ vgd::Shp< vgd::node::Separator > Root::getRoot()
 
 } // namespace rc
 
-} // namespace vge
+} // namespace vgeGL
