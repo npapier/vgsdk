@@ -37,6 +37,8 @@ namespace predicate
 struct VGD_API IPredicate : public std::unary_function< const bool, const vgd::Shp< vgd::node::Node > >
 {
 	virtual const bool operator () ( const vgd::Shp< vgd::node::Node > node ) const=0;
+
+	virtual const vgd::Shp< IPredicate > clone() const=0;
 };
 
 

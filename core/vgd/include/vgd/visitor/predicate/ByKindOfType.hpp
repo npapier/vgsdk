@@ -41,6 +41,11 @@ struct ByKindOfType : public IPredicate
 	{
 		return ( node->template isAKindOf<Type>() != 0 );
 	}
+
+	const vgd::Shp< IPredicate > clone() const
+	{
+		return vgd::makeShp( new ByKindOfType< Type >() );
+	}
 };
 
 

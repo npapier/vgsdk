@@ -27,6 +27,13 @@ const bool True::operator () ( const vgd::Shp< vgd::node::Node > node ) const
 
 
 
+const vgd::Shp< IPredicate > True::clone() const
+{
+	return vgd::makeShp( new True() );
+}
+
+
+
 } // namespace predicate
 
 } // namespace visitor

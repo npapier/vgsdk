@@ -7,6 +7,7 @@
 #define _VGD_VISITOR_FIND_HPP
 
 #include "vgd/node/Group.hpp"
+#include "vgd/visitor/predicate/IPredicate.hpp"
 #include "vgd/visitor/Traverse.hpp"
 
 
@@ -51,9 +52,9 @@ struct Find : public Traverse<Visitors>
 	 */
 	Find( const Predicate& predicate, bool bUseEdgeName = true, bool bVisitForest = false ) :
 			vgd::visitor::Traverse<Visitors>( bUseEdgeName, bVisitForest ),
-			m_predicate( predicate ),
 			m_trueNodes( new vgd::node::NodeList )
 	{
+		addPredicate( predicate.clone() );
 		reset();
 	}
 
@@ -89,7 +90,12 @@ struct Find : public Traverse<Visitors>
 	//@}
 	
 
-	
+	void addPredicate( vgd::Shp< vgd::visitor::predicate::IPredicate > pred )
+	{
+		m_vPredicate.push_back( pred );
+	}
+
+
 	/**
 	 * @name Visitor interface that could be overloaded
 	 */
@@ -99,10 +105,15 @@ struct Find : public Traverse<Visitors>
 	{
 		vgd::Shp< vgd::node::Node > node = getNode(u);
 
-		if ( m_predicate( node ) )
+		for( uint i = 0; i < m_vPredicate.size(); i++)
 		{
-			m_trueNodes->push_back( node );
+			if ( (*m_vPredicate[i])( node ) == false )
+			{
+				return;
+			}
 		}
+
+		m_trueNodes->push_back( node );
 	}
 	//@}
 
@@ -117,7 +128,7 @@ private:
 
 	vgd::Shp< vgd::node::NodeList >		m_trueNodes;
 	
-	const Predicate&					m_predicate;
+	std::vector< vgd::Shp< vgd::visitor::predicate::IPredicate > > m_vPredicate;
 	//@}
 };
 

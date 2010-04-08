@@ -41,6 +41,11 @@ struct ByType : public IPredicate
 	{
 		return ( node->template isA<Type>() );
 	}
+
+	const vgd::Shp< IPredicate > clone() const
+	{
+		return vgd::makeShp( new ByType< Type >() );
+	}
 };
 
 

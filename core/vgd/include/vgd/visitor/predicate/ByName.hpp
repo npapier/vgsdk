@@ -43,7 +43,7 @@ struct VGD_API ByName : public IPredicate
 	 */
 	const bool operator () ( const vgd::Shp< vgd::node::Node > node ) const;
 
-
+	const vgd::Shp< IPredicate > clone() const;
 
 private:
 

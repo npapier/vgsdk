@@ -29,6 +29,11 @@ const bool ByDirtyFlag::operator () ( const vgd::Shp< vgd::node::Node > node ) c
 	return pDirtyFlag->isDirty();
 }
 
+const vgd::Shp< IPredicate > ByDirtyFlag::clone() const
+{
+	return vgd::makeShp( new ByDirtyFlag() );
+}
+
 
 
 } // namespace predicate
