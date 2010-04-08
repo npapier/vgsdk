@@ -223,17 +223,19 @@ const vgd::node::Node::vertex_descriptor& Node::vertexDescriptor() const
 
 vgd::basic::ClassRegistry< vgd::node::Node >& Node::getClassRegistry( void )
 {
-	static vgd::basic::ClassRegistry< vgd::node::Node > nodeRegistry;
+	static vgd::basic::ClassRegistry< vgd::node::Node > m_nodeRegistry;
 
-	return nodeRegistry;
+	return m_nodeRegistry;
 }
 
 
 
 Node::DestructorSignalType& Node::destructorSignal()
 {
-	static DestructorSignalType m_destructorSignal;
-	return m_destructorSignal;
+	// @todo fix memory leak (hard because m_destructorSignal must exist when m_nodeRegistry is destroyed !!!).
+	static DestructorSignalType * m_destructorSignal = new DestructorSignalType;
+
+	return *m_destructorSignal;
 }
 
 
