@@ -140,3 +140,4 @@ vgd::Shp< T > findFirstByName( vgd::Shp< vgd::node::Group > root, const std::str
 
 
 #endif //#ifndef _VGD_VISITOR_HELPERS_HPP
+

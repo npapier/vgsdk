@@ -33,6 +33,13 @@ const bool ByReference::operator () ( const vgd::Shp< vgd::node::Node > node ) c
 
 
 
+const vgd::Shp< IPredicate > ByReference::clone() const
+{
+	return vgd::makeShp( new ByReference( m_reference ) );
+}
+
+
+
 } // namespace predicate
 
 } // namespace visitor

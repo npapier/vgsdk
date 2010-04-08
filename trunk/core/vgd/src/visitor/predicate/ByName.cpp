@@ -31,6 +31,11 @@ const bool ByName::operator () ( const vgd::Shp< vgd::node::Node > node ) const
 	return ( node->getName() == m_name );
 }
 
+const vgd::Shp< IPredicate > ByName::clone() const
+{
+	return vgd::makeShp( new ByName( m_name ) );
+}
+
 
 
 } // namespace predicate

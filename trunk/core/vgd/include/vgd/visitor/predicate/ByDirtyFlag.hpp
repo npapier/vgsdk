@@ -35,6 +35,8 @@ struct VGD_API ByDirtyFlag : public IPredicate
 	 * @return Returns true if the "node" dirty flag is invalidate.
 	 */
 	const bool operator () ( const vgd::Shp< vgd::node::Node > node ) const;
+
+	const vgd::Shp< IPredicate > clone() const;
 };
 
 

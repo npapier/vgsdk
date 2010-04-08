@@ -34,6 +34,13 @@ const bool ByRegexName::operator () ( const vgd::Shp< vgd::node::Node > node ) c
 
 
 
+const vgd::Shp< IPredicate > ByRegexName::clone() const
+{
+	return vgd::makeShp( new ByRegexName( m_regexName.str() ) );
+}
+
+
+
 } // namespace predicate
 
 } // namespace visitor

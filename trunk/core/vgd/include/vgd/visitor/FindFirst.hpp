@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "vgd/visitor/Traverse.hpp"
-
+#include "vgd/visitor/predicate/IPredicate.hpp"
 
 
 namespace vgd
@@ -60,9 +60,9 @@ struct FindFirst : public Traverse<Visitors>
 	 * @brief Default constructor
 	 */
 	FindFirst( const Predicate& predicate, bool bUseEdgeName = true, bool bVisitForest = false ) :
-			vgd::visitor::Traverse<Visitors>( bUseEdgeName, bVisitForest ),
-			m_predicate( predicate )
+			vgd::visitor::Traverse<Visitors>( bUseEdgeName, bVisitForest )
 	{
+		addPredicate( predicate.clone() );
 		reset();
 	}
 
@@ -99,16 +99,26 @@ struct FindFirst : public Traverse<Visitors>
 	{
 		vgd::Shp< vgd::node::Node > node = getNode(u);
 
-		if ( m_predicate( node ) )
+		for( uint i = 0; i < m_vPredicate.size(); i++)
 		{
-			m_node = node;
-			
-			throw DesiredStop();
+			if ( (*m_vPredicate[i])( node ) == false )
+			{
+				return;
+			}
 		}
+
+		// Found the node
+		m_node = node;
+
+		// Stops the graph traversing
+		throw DesiredStop();
 	}
 	//@}
 
-
+	void addPredicate( vgd::Shp< vgd::visitor::predicate::IPredicate > pred )
+	{
+		m_vPredicate.push_back( pred );
+	}
 
 private:
 
@@ -118,8 +128,8 @@ private:
 	//@{
 
 	vgd::Shp< vgd::node::Node >	m_node;
-	
-	const Predicate&					m_predicate;
+
+	std::vector< vgd::Shp< vgd::visitor::predicate::IPredicate > > m_vPredicate;
 	//@}
 };
 
@@ -130,3 +140,4 @@ private:
 } // namespace vgd
 
 #endif //#ifndef _VGD_VISITOR_FINDFIRST_HPP
+

@@ -34,6 +34,8 @@ struct VGD_API True : public IPredicate
 	 * @return Returns always true.
 	 */
 	const bool operator () ( const vgd::Shp< vgd::node::Node > node ) const;
+
+	const vgd::Shp< IPredicate > clone() const;
 };
 
 
