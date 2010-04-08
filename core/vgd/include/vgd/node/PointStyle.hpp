@@ -28,10 +28,13 @@ namespace node
  *
  * New fields defined by this node :
  * - OFBool \c [smooth] = false<br>
- *   If enabled, draw antialiased points, otherwise draw aliased points.<br>
+ *   If enabled, draw antialiased points, otherwise draw aliased points. Ignored when point sprite is enabled.<br>
  *<br>
  * - OFVec3f \c [distanceAttenuation] = vgm::Vec3f(1.f, 0.f, 0.f)<br>
  *   a vector of three floating-point values that specify the coefficients used for scaling the computed point size. The default values are (1 0 0).<br>
+ *<br>
+ * - OFBool \c [pointSprite] = false<br>
+ *   See GL_ARB_point_sprite extension for details (http://oss.sgi.com/projects/ogl-sample/registry/ARB/point_sprite.txt).<br>
  *<br>
  * - OFFloat \c [size] = 1.f<br>
  *   Specifies the rasterized diameter of both aliased and antialiased points<br>
@@ -145,6 +148,45 @@ struct VGD_API PointStyle : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field pointSprite
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c pointSprite.
+	 */
+	typedef bool PointSpriteValueType;
+
+	/**
+	 * @brief Type definition of the field named \c pointSprite
+	 */
+	typedef vgd::field::TOptionalField< PointSpriteValueType > FPointSpriteType;
+
+
+	/**
+	 * @brief Gets the value of field named \c pointSprite.
+	 */
+	const bool getPointSprite( PointSpriteValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c pointSprite.
+ 	 */
+	void setPointSprite( const PointSpriteValueType& value );
+
+	/**
+	 * @brief Erases the field named \c pointSprite.
+	 */
+	void erasePointSprite();
+
+	/**
+	 * @brief Tests if the value of field named \c pointSprite has been initialized.
+	 */
+	const bool hasPointSprite() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field size
 	 */
 	//@{
@@ -201,6 +243,13 @@ struct VGD_API PointStyle : public vgd::node::SingleAttribute
 	 * @return the name of field \c distanceAttenuation.
 	 */
 	static const std::string getFDistanceAttenuation( void );
+
+	/**
+	 * @brief Returns the name of field \c pointSprite.
+	 *
+	 * @return the name of field \c pointSprite.
+	 */
+	static const std::string getFPointSprite( void );
 
 	/**
 	 * @brief Returns the name of field \c size.

@@ -52,6 +52,7 @@ PointStyle::PointStyle( const std::string nodeName ) :
 	// Adds field(s)
 	addField( new FSmoothType(getFSmooth()) );
 	addField( new FDistanceAttenuationType(getFDistanceAttenuation()) );
+	addField( new FPointSpriteType(getFPointSprite()) );
 	addField( new FSizeType(getFSize()) );
 
 	// Sets link(s)
@@ -72,6 +73,7 @@ void PointStyle::setOptionalsToDefaults()
 	SingleAttribute::setOptionalsToDefaults();
 	setSmooth( false );
 	setDistanceAttenuation( vgm::Vec3f(1.f, 0.f, 0.f) );
+	setPointSprite( false );
 	setSize( 1.f );
 }
 
@@ -133,6 +135,34 @@ const bool PointStyle::hasDistanceAttenuation() const
 
 
 
+// PointSprite
+const bool PointStyle::getPointSprite( PointSpriteValueType& value ) const
+{
+	return getFieldRO<FPointSpriteType>(getFPointSprite())->getValue( value );
+}
+
+
+
+void PointStyle::setPointSprite( const PointSpriteValueType& value )
+{
+	getFieldRW<FPointSpriteType>(getFPointSprite())->setValue( value );
+}
+
+
+
+void PointStyle::erasePointSprite()
+{
+	getFieldRW<FPointSpriteType>(getFPointSprite())->eraseValue();
+}
+
+
+const bool PointStyle::hasPointSprite() const
+{
+	return getFieldRO<FPointSpriteType>(getFPointSprite())->hasValue();
+}
+
+
+
 // Size
 const bool PointStyle::getSize( SizeValueType& value ) const
 {
@@ -172,6 +202,13 @@ const std::string PointStyle::getFSmooth( void )
 const std::string PointStyle::getFDistanceAttenuation( void )
 {
 	return "f_distanceAttenuation";
+}
+
+
+
+const std::string PointStyle::getFPointSprite( void )
+{
+	return "f_pointSprite";
 }
 
 

@@ -21,7 +21,7 @@
 #include <vgd/field/Integer.hpp>
 #include <vgd/field/Float.hpp>
 #include <vgd/field/Matrix.hpp>
-#include <vgd/field/Node.hpp>
+#include <vgd/field/NodeShp.hpp>
 
 #include <vgd/field/Plane.hpp>
 #include <vgd/field/Primitive.hpp>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -511,6 +511,86 @@ void NewNode::eraseFieldName( const FieldNameParameterType param )
 
 	def generateCompleteType( self ) :
 		return "PAF%s" % self.type.getNormalizedName()
+
+
+
+class MultiField( Field ) :
+
+	def __init__( self, name, doc ) :
+		Field.__init__( self, name, doc )
+
+	def generateAccessorsHeader( self ) :
+		str = """\n\n\n	/**
+	 * @name Accessors to field fieldName
+	 *
+	 * @todo getFieldName( const bool rw = false ) ?
+	 */
+	//@{
+
+TYPEDEF_FIELDNAMEVALUETYPE
+
+	/**
+	 * @brief Type definition of the field named \c fieldName
+	 */
+	typedef vgd::field::TMultiField< InternalFieldNameValueType > FFieldNameType;
+
+
+	/**
+	 * @brief Gets a read-only editor on the multi field named \c fieldName.
+	 */
+	vgd::field::EditorRO< FFieldNameType > getFieldNameRO() const;
+
+	/**
+	 * @brief Gets a read-write editor on the multi field named \c fieldName.
+	 */
+	vgd::field::EditorRW< FFieldNameType > getFieldNameRW();
+
+	//@}\n"""
+
+		if self.type.name == "enum":
+			str = str.replace( "InternalFieldNameValueType", "vgd::field::Enum" )
+		else:
+			str = str.replace( "InternalFieldNameValueType", "FieldNameValueType" )
+
+		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF() )	# @todo ValueType => Type
+		str = str.replace( "fieldName", self.name )
+		str = str.replace( "FieldName", self.getFieldName() )
+
+		return str
+
+
+	def generateAccessorsImpl( self, nodeName ) :
+		str = """// FieldName
+vgd::field::EditorRO< NewNode::FFieldNameType > NewNode::getFieldNameRO() const
+{
+	return getFieldRO<FFieldNameType>( getFFieldName() );
+}
+
+
+
+vgd::field::EditorRW< NewNode::FFieldNameType > NewNode::getFieldNameRW()
+{
+	return getFieldRW<FFieldNameType>( getFFieldName() );
+}
+\n\n\n"""
+
+		str = str.replace( "NewNode", nodeName )
+		str = str.replace( "FieldName", self.getFieldName() )
+
+		return str
+
+
+	def generateDefaultSetter( self ) :
+		return None
+
+	def generateOptionalDefaultSetter( self ) :
+		return None
+
+	def generateCompleteType( self ) :
+		return "MF%s" % self.type.getNormalizedName()
+
+	def isOptional( self ):
+		return False
 
 
 

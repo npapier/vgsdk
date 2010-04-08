@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 
 #include "vge/handler/Handler.hpp"
 #include "vge/handler/HandlerRegistry.hpp"
+#include "vge/service/Painter.hpp"
 #include "vge/service/Service.hpp"
 
 
@@ -24,7 +25,9 @@ namespace engine
 
 Engine::Engine()
 :	m_drawingSurfaceSize(0, 0),
-	m_camera( 0 )
+	m_camera( 0 ),
+
+	m_paintService( new vge::service::Painter() )
 {
 	m_viewport.setInvalid();
 
@@ -115,6 +118,36 @@ void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
 
 
 
+void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
+						vgd::Shp< vgd::node::Node > node,
+						const bool isPreTraverse,
+						const bool bTrace )
+{
+	evaluate( service, node.get(), isPreTraverse, bTrace );
+}
+
+
+
+void Engine::paint(		vgd::Shp< vgd::node::Node > node,
+						const bool isPreTraverse,
+						const bool bTrace )
+{
+	evaluate( m_paintService, node.get(), isPreTraverse, bTrace );
+}
+
+
+
+void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
+						vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2,
+						const bool isPreTraverse,
+						const bool bTrace )
+{
+	evaluate( service, node1, isPreTraverse, bTrace );
+	evaluate( service, node2, isPreTraverse, bTrace );
+}
+
+
+
 void Engine::resetHandlers()
 {
 	clearHandlers();
@@ -176,7 +209,7 @@ void Engine::initializeHandlers()
 
 void Engine::install( vgd::Shp< vge::handler::Handler > shpHandler )
 {
-	const vge::service::List						services = shpHandler->getServices();
+	const vge::service::List					services = shpHandler->getServices();
 	const vge::handler::Handler::TargetVector	targets	= shpHandler->getTargets();
 	
 	// For each services, do
@@ -448,7 +481,7 @@ void Engine::push()
 
 void Engine::pop()
 {
-	getTextureMatrix().popAll();      
+	getTextureMatrix().popAll();
 	getProjectionMatrix().popAll();
 	getGeometricalMatrix().popAll();
 

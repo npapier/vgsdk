@@ -163,6 +163,22 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	void evaluate(	const vgd::Shp< vge::service::Service > service,
 					const vge::visitor::TraverseElement & element,
 					const bool bTrace = true );
+
+
+
+	void evaluate(	const vgd::Shp< vge::service::Service > service,
+					vgd::Shp< vgd::node::Node > node,
+					const bool isPreTraverse = true,
+					const bool bTrace = true );
+
+	void paint(		vgd::Shp< vgd::node::Node > node,
+					const bool isPreTraverse = true,
+					const bool bTrace = true );
+
+	void evaluate(	const vgd::Shp< vge::service::Service > service,
+					vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2,
+					const bool isPreTraverse = true,
+					const bool bTrace = true );
 	//@}
 
 
@@ -742,6 +758,8 @@ protected:
 	vgm::Vec2i						m_drawingSurfaceSize;	///< the drawing surface size (window size).
 	const vgd::node::Camera *		m_camera;				///< the last encountered Camera node
 	vgm::Rectangle2i				m_viewport;				///< the value of \c viewport field for the last encountered Camera node with this field defined
+
+	const vgd::Shp< vge::service::Service > m_paintService;	///< a reference on paint service object used by render() methods.
 };
 
 
