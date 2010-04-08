@@ -26,7 +26,7 @@ namespace glo
 namespace vgd 
 {
 	namespace basic { struct Image; }
-	namespace node { struct Texture; } 
+	namespace node { struct MultipleInstances; struct Texture; }
 }
 
 namespace vgeGL 
@@ -54,6 +54,7 @@ namespace engine
  * This class is a specialized container for GL rendering state used by vgeGL to take care of the rendering state given by the scene graph. 
  *
  * @todo Moves this class in its own file
+ * @todo Renames GraphicalState or GState
  */
 struct VGEGL_API GLState
 {
@@ -67,7 +68,10 @@ struct VGEGL_API GLState
 		m_shape( vgd::node::DrawStyle::DEFAULT_SHAPE ),
 		m_normalLength( 0.f ),
 		m_showOrientation( false ),
-		m_boundingBox( vgd::node::DrawStyle::DEFAULT_BOUNDING_BOX ) 
+		m_boundingBox( vgd::node::DrawStyle::DEFAULT_BOUNDING_BOX ),
+
+		//
+		m_multipleInstances(0)
 	{}
 
 	// MATERIAL
@@ -90,6 +94,10 @@ struct VGEGL_API GLState
 	void setBoundingBox( const vgd::node::DrawStyle::BoundingBoxValueType& boundingBox )					{ m_boundingBox = boundingBox; }
 	const vgd::node::DrawStyle::BoundingBoxValueType& getBoundingBox() const								{ return m_boundingBox; }
 
+	//
+	void setMultipleInstances( const vgd::node::MultipleInstances * multipleInstances )						{ m_multipleInstances = multipleInstances; }
+	const vgd::node::MultipleInstances * getMultipleInstances() const										{ return m_multipleInstances; }
+
 private:
 	float											m_opacity;
 	vgm::Vec3f										m_diffuse;
@@ -98,7 +106,8 @@ private:
 	vgd::node::DrawStyle::NormalLengthValueType		m_normalLength;
 	vgd::node::DrawStyle::ShowOrientationValueType	m_showOrientation;
 	vgd::node::DrawStyle::BoundingBoxValueType		m_boundingBox;
-	
+
+	const vgd::node::MultipleInstances *			m_multipleInstances;
 };
 
 

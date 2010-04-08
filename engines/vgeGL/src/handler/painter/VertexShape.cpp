@@ -14,6 +14,7 @@
 // @todo Move DrawStyle stuff to drawStyle handler (FIXME)
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/Quad.hpp>
+#include <vgd/node/MultipleInstances.hpp>
 #include <vgd/node/Sphere.hpp>
 #include <vgd/node/Texture.hpp>
 #include <vgd/node/TriSet.hpp>
@@ -765,11 +766,50 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	vertexIndex	= pVertexShape->getFVertexIndexRO();
 	pArray		= reinterpret_cast< const GLvoid* >( &(*vertexIndex)[primitive.getIndex()] );
 
-	//glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
-	glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
-	// or glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+	const vgd::node::MultipleInstances * multipleInstances = pGLEngine->getGLState().getMultipleInstances();
 
+	if ( multipleInstances )
+	{
+		// MATRIX
+		using vgd::field::EditorRO;
+		typedef vgd::node::MultipleInstances::FMatrixType FMatrixType;
 
+		EditorRO< FMatrixType > matrix = multipleInstances->getMatrixRO();
+
+		// Gets the geometrical matrix transformation.
+		const vgm::MatrixR backup( pGLEngine->getGeometricalMatrix().getTop() );
+
+		//
+		glMatrixMode( GL_MODELVIEW );
+
+		for(	FMatrixType::const_iterator	i		= matrix->begin(),
+											iEnd	= matrix->end();
+				i != iEnd;
+				++i	)
+		{
+			// Updates geometrical transformation
+			const vgm::MatrixR& iMatrix = *i;
+			const vgm::MatrixR current = iMatrix * backup;
+
+			glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
+
+			// RENDER
+			glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+		}
+
+		//
+		glLoadMatrixf( reinterpret_cast<const float*>( backup.getValue() ) );
+
+		//
+		pGLEngine->getGLState().setMultipleInstances( 0 );
+	}
+	else
+	{
+		// RENDER
+		//glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+		glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+		// or glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+	}
 
 	// *** Step 3 : Disable arrays ***
 

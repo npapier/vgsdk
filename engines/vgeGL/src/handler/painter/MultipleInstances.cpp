@@ -46,6 +46,10 @@ void MultipleInstances::apply( vge::engine::Engine * engine, vgd::node::Node * n
 	assert( dynamic_cast< vgd::node::MultipleInstances* >(node) != 0 );
 	vgd::node::MultipleInstances *pCastedNode = static_cast< vgd::node::MultipleInstances* >(node);
 
+	// Updates GLState
+	pGLEngine->getGLState().setMultipleInstances( pCastedNode );
+
+	//
 	//vgeGL::rc::applyUsingDisplayList< vgd::node::MultipleInstances, MultipleInstances >( engine, node, this );
 	paint( pGLEngine, pCastedNode );
 }
@@ -69,35 +73,7 @@ void MultipleInstances::paint( vgeGL::engine::Engine * engine, vgd::node::Multip
 	// SHAPE
 	const vgd::Shp< vgd::node::Shape > shape = vgd::dynamic_pointer_cast< vgd::node::Shape >( multipleInstances->getShape() );
 
-	// MATRIX
-	using vgd::field::EditorRO;
-	typedef vgd::node::MultipleInstances::FMatrixType FMatrixType;
-
-	EditorRO< FMatrixType > matrix = multipleInstances->getMatrixRO();
-
-	// Gets the geometrical matrix transformation.
-	const vgm::MatrixR backup( engine->getGeometricalMatrix().getTop() );
-	vgm::MatrixR current;
-
-	//
-	for(	FMatrixType::const_iterator	i		= matrix->begin(),
-										iEnd	= matrix->end();
-			i != iEnd;
-			++i	)
-	{
-		// Updates geometrical transformation
-		const vgm::MatrixR& iMatrix = *i;
-		current = iMatrix * backup;
-
-		glMatrixMode( GL_MODELVIEW );
-		glLoadMatrixf( reinterpret_cast<float*>( current.getValue() ) );
-
-		engine->paint( shape );
-	}
-
-	//
-	glMatrixMode( GL_MODELVIEW );
-	glLoadMatrixf( reinterpret_cast<const float*>( backup.getValue() ) );
+	engine->paint( shape );
 
 	// Validates node df
 	multipleInstances->getDirtyFlag(multipleInstances->getDFNode())->validate();
