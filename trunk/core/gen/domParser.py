@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -204,6 +204,29 @@ def handlePAF( domPAF ) :
 	return paf
 
 
+def handleMF( domMF ) :
+	# name and doc
+	attrName	= domMF.getAttributeNode("name")
+	attrDoc		= domMF.getAttributeNode("doc")
+
+	if attrName == None or attrDoc == None :
+		raise StandardError("Multi Field must have both name and doc attributes.")
+
+	# Creates multi field
+	global currentFieldName
+	currentFieldName = attrName.value
+	mf = MultiField(attrName.value, attrDoc.value)
+
+	# type
+	type = handleOneType(domMF)
+	if type == None :
+		raise StandardError("In multi field named %s, the type of field is not defined" % sf.name )
+	else :
+		mf.type = type
+
+	return mf
+
+
 def handleDoxygen( domDoxygen, node ) :
 	# docBrief
 	docBriefs = domDoxygen.getElementsByTagName("docBrief")
@@ -265,6 +288,13 @@ def handleNode( domNode ) :
 	for domPairAssociativeField in domPairAssociativeFields :
 		paf = handlePAF( domPairAssociativeField )
 		node.addField( paf )
+
+	# Handles mf
+	domMultiFields = domNode.getElementsByTagName("mf")
+	for domMultiField in domMultiFields :
+		mf = handleMF( domMultiField )
+		node.addField( mf )
+
 	# @todo handles other field type.
 
 	#@todo handle df, links, method, attribute...

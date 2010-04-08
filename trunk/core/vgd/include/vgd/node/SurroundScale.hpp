@@ -6,9 +6,7 @@
 #ifndef _VGD_NODE_SURROUNDSCALE_HPP
 #define _VGD_NODE_SURROUNDSCALE_HPP
 
-#include "vgd/vgd.hpp"
-
-#include "vgd/field/Node.hpp"
+#include "vgd/field/NodeShp.hpp"
 #include "vgd/node/GeometricalTransformation.hpp"
 
 
@@ -57,7 +55,7 @@ struct VGD_API SurroundScale : public vgd::node::GeometricalTransformation
 	/**
 	 * @brief Typedef for the \c surround field.
 	 */	
-	typedef vgd::field::SFNode FSurroundType;
+	typedef vgd::field::SFNodeShp FSurroundType;
 		
 	/**
 	 * @brief Typedef for the \c surround value.

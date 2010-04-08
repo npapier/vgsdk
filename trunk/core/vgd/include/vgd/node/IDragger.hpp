@@ -8,10 +8,9 @@
 
 #include <vgm/Matrix.hpp>
 
-#include "vgd/vgd.hpp"
 #include "vgd/field/Bool.hpp"
 #include "vgd/field/Integer.hpp"
-#include "vgd/field/Node.hpp"
+#include "vgd/field/NodeShp.hpp"
 #include "vgd/node/Kit.hpp"
 #include "vgd/node/Switch.hpp"
 #include "vgd/node/TransformSeparator.hpp"
@@ -88,7 +87,7 @@ struct VGD_API IDragger : public vgd::node::Kit
 	/**
 	 * @brief Typedef for the \c surround field.
 	 */	
-	typedef vgd::field::SFNode FSurroundType;
+	typedef vgd::field::SFNodeShp FSurroundType;
 		
 	/**
 	 * @brief Typedef for the \c surround value.

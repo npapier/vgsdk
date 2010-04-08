@@ -303,6 +303,31 @@
 	</node>
 
 
+	<node name = "MultipleInstances" inherits = "Shape">
+		<doxygen>
+			<docBrief>Instanciated the same object multiple times in the scene</docBrief>
+			<doc>The object, defined by the shape field, is instanciated once per matrix available in the field named matrix.</doc>
+			<doc>The matrix is concatenated to the current geometrical transformation matrix.</doc>
+			<doc>This allows the user to put multiple copies of the same data in different locations easily and efficiently.</doc>
+			<doc>@todo really implements vgd::node::IBoundingBox interface. useful ?</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_shapeNodes</ingroup>
+			<ingroup>g_transformationNodes</ingroup>
+		</doxygen>
+
+		<sf name = "shape" doc = "The object to instanciate multiple times.">
+			<type name = "NodeShp" namespace = "vgd::node"></type>
+		</sf>
+
+		<mf name = "matrix" doc = "The array of matrices used to transform the object in different locations">
+			<type name = "MatrixR" namespace="vgm"></type>
+		</mf>
+
+		<includehpp>vgd/include/vgd/node/MultipleInstances.hpp</includehpp>
+		<includecpp>vgd/src/node/MultipleInstances.cpp</includecpp>
+	</node>
+
+
 	<node name = "PointLight" inherits = "Light" >
 		<doxygen>
 			<docBrief>Node representing a point light source.</docBrief>
@@ -335,7 +360,11 @@
 			<type name = "Vec3f" namespace="vgm" default = "1.f, 0.f, 0.f"></type>
 		</of>
 
-		<of name="smooth" doc="If enabled, draw antialiased points, otherwise draw aliased points.">
+		<of name="smooth" doc="If enabled, draw antialiased points, otherwise draw aliased points. Ignored when point sprite is enabled.">
+			<type name = "bool" default = "false"></type>
+		</of>
+
+		<of name="pointSprite" doc="See GL_ARB_point_sprite extension for details (http://oss.sgi.com/projects/ogl-sample/registry/ARB/point_sprite.txt).">
 			<type name = "bool" default = "false"></type>
 		</of>
 	</node>

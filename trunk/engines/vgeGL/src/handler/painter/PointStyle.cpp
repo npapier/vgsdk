@@ -79,12 +79,16 @@ void PointStyle::setToDefaults()
 	glPointParameterfv( GL_POINT_DISTANCE_ATTENUATION, coef );
 
 	glDisable( GL_POINT_SMOOTH );
+
+	glDisable( GL_POINT_SPRITE_ARB );
 }
 
 
 
 void PointStyle::paint( vgeGL::engine::Engine *, vgd::node::PointStyle * node )
 {
+	using vgeGL::engine::Engine;
+
 	// SIZE
 	if ( node->hasSize() )
 	{
@@ -94,7 +98,7 @@ void PointStyle::paint( vgeGL::engine::Engine *, vgd::node::PointStyle * node )
 		glPointSize( size );
 	}
 
-	// DISTANCEATTENUATION
+	// DISTANCE ATTENUATION
 	if ( node->hasDistanceAttenuation() )
 	{
 		vgd::node::PointStyle::DistanceAttenuationValueType distanceAttenuation;
@@ -108,7 +112,7 @@ void PointStyle::paint( vgeGL::engine::Engine *, vgd::node::PointStyle * node )
 		glPointParameterf( GL_POINT_SIZE_MIN, 1.f );
 		glPointParameterf( GL_POINT_SIZE_MAX, 8192.f );
 
-		//glPointParameterf( GL_POINT_FADE_THRESHOLD_SIZE, 3.0f );
+		// glPointParameterf( GL_POINT_FADE_THRESHOLD_SIZE, 3.0f );
 	}
 
 	// SMOOTH
@@ -117,14 +121,21 @@ void PointStyle::paint( vgeGL::engine::Engine *, vgd::node::PointStyle * node )
 		vgd::node::PointStyle::SmoothValueType smooth;
 		node->getSmooth( smooth );
 
-		if ( smooth )
-		{
-			glEnable( GL_POINT_SMOOTH );
-		}
-		else
-		{
-			glDisable( GL_POINT_SMOOTH );
-		}
+		Engine::setGLEnable( GL_POINT_SMOOTH, smooth );
+	}
+
+	// POINT SPRITE
+	if ( node->hasPointSprite() )
+	{
+		vgd::node::PointStyle::PointSpriteValueType pointSprite;
+		node->getPointSprite( pointSprite  );
+
+		Engine::setGLEnable( GL_POINT_SPRITE_ARB, pointSprite );
+		Engine::activeTexture(0);
+		glTexEnvf( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE );
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+		glDepthMask(GL_FALSE);
 	}
 
 	// Validates node df
