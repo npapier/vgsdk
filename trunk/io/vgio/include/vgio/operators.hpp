@@ -158,7 +158,7 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TMultiField< T
 
 		if( field.size() > limit )
 		{
-			os << ", ...";
+			os << ", ..." << std::endl << "size: " << field.size();
 		}
 	}
 
