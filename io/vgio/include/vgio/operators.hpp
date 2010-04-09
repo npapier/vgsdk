@@ -103,6 +103,13 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Vertex
 
 
 /**
+ * @brief	Writes into an output stream the textual representation of the binding value type.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::Binding & bindingValue );
+
+
+
+/**
  * @brief	Writes into an output stream the field of type @c T managed by the given editor.
  */
 template< typename T >

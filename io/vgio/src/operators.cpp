@@ -144,6 +144,22 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::VertexShape::Pr
 
 
 
+std::ostream & operator << ( std::ostream & os, const vgd::node::Binding & bindingValue )
+{
+	switch( bindingValue )
+	{
+		case vgd::node::BIND_OFF:				os << "BIND_OFF"; break;
+		case vgd::node::BIND_OVERALL:			os << "BIND_OVERALL"; break;
+		case vgd::node::BIND_PER_PRIMITIVE:		os << "BIND_PER_PRIMITIVE"; break;
+		case vgd::node::BIND_PER_VERTEX:		os << "BIND_PER_VERTEX"; break;
+		default:								os << "unsupported"; break;
+	}
+
+	return os;
+}
+
+
+
 std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group > & node )
 {
 	os << node->getName();
