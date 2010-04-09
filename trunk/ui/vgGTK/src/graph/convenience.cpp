@@ -165,7 +165,9 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 	{
 		// Old serialization system, always useful for enum type
 		typedef vgd::node::VertexShape::FPrimitiveType	MFPrimitiveType;
-		
+
+		typedef vgd::field::SFBinding						SFBinding;
+
 		typedef vgd::node::DrawStyle::FBoundingBoxType		PAFDrawStyleBoundingBox;
 		typedef vgd::node::DrawStyle::FNormalLengthType		PAFDrawStyleNormalLength;
 		typedef vgd::node::DrawStyle::FShapeType			PAFDrawStyleShape;
@@ -175,6 +177,7 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 		const std::type_info	& fieldType = fieldManager->getFieldType( fieldName );
 
 		if		( fieldType == typeid(MFPrimitiveType) )				os << fieldManager->getFieldRO< MFPrimitiveType				>( fieldName );
+		else if	( fieldType == typeid(SFBinding) )						os << fieldManager->getFieldRO< SFBinding					>( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleBoundingBox) )		os << fieldManager->getFieldRO< PAFDrawStyleBoundingBox		>( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleNormalLength) )		os << fieldManager->getFieldRO< PAFDrawStyleNormalLength    >( fieldName );
 		else if	( fieldType == typeid(PAFDrawStyleShape) )				os << fieldManager->getFieldRO< PAFDrawStyleShape           >( fieldName );
