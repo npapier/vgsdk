@@ -648,10 +648,15 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 #endif
 			}
 
-			engine->disregardIfIsAKindOf<vgd::node::Texture>();
-			// pre-configuration
 			const bool isTextureMappingEnabledBak = engine->isTextureMappingEnabled();
-			engine->setTextureMappingEnabled(false);
+// @todo FIXME : This should work on NV GPU !!!
+			if ( !state.isShadowSamplerUsageEnabled() )
+			//if ( gleGetCurrent()->getDriverProvider() == gle::OpenGLExtensions::ATI_DRIVERS )
+			{
+				engine->disregardIfIsAKindOf<vgd::node::Texture>();
+				// pre-configuration
+				engine->setTextureMappingEnabled(false);
+			}
 
 			vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 			for(	i = traverseElements->begin(), iEnd = traverseElements->end();
