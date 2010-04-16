@@ -30,10 +30,11 @@ Time::Time( const bool initializeUsingUTCTime )
 
 void Time::restart()
 {
-	m_current		= boost::posix_time::microsec_clock::universal_time();
+	m_current		=	boost::posix_time::microsec_clock::universal_time();
 
 	// reset pause duration
-	m_pauseDuration = boost::posix_time::time_duration();
+	m_pauseDuration =	boost::posix_time::time_duration();
+	m_pauseTime		=	boost::posix_time::not_a_date_time;
 }
 
 
@@ -61,12 +62,20 @@ const TimeDuration Time::getElapsedTime() const
 {
 	assert( isValid() && "Time is invalid." );
 
-	Time now;
+	Time rightNow;
 
-	const TimeDuration duration( *this, now );
+	const TimeDuration duration( *this, rightNow );
+
+	// temporary pause duration, if we're still paused
+	boost::posix_time::time_duration	currentPauseDuration(0,0,0,0);
+	if( !m_pauseTime.is_not_a_date_time() )
+	{
+		boost::posix_time::ptime	now	=	boost::posix_time::microsec_clock::universal_time();
+		currentPauseDuration			=	now - m_pauseTime;
+	}
 
 	// remove pause duration
-	const TimeDuration correctedDuration( duration.milliSeconds() - m_pauseDuration.total_milliseconds() );
+	const TimeDuration correctedDuration( duration.milliSeconds() - m_pauseDuration.total_milliseconds() - currentPauseDuration.total_milliseconds() );
 	return correctedDuration;
 }
 
