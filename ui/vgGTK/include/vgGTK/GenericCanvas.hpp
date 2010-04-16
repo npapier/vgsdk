@@ -19,6 +19,7 @@
 #include "vgGTK/vgGTK.hpp"
 #include "vgGTK/event/SignalHandler.hpp"
 #include "vgGTK/node/ActionsNode.hpp"
+#include "vgGTK/node/SelectedNode.hpp"
 
 #ifdef WIN32
 	#define	USE_GLC
@@ -74,6 +75,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 //#else
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
+
+		vgGTK::node::SelectedNode::getSelectedNode()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
 	}
 
 	/**
@@ -105,6 +108,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		assert( false && "Sharing not yet implemented !!!" );
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
+
+		vgGTK::node::SelectedNode::getSelectedNode()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
 	}
 
 	/**
@@ -313,6 +318,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	*
 	* @param show: true to enable menu, false otherwise.
 	*/
+	vgd::Shp< vgGTK::node::ActionsNode > m_actionsNode;
 	void setShowMenu(bool show)
 	{
 		if( m_showMenu != show)
@@ -320,10 +326,9 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 			m_showMenu = show;
 			if( m_showMenu )
 			{
-				vgd::Shp< vgGTK::node::ActionsNode > actionsNode = vgGTK::node::ActionsNode::getActionsNode();
-				actionsNode->setCanvas( this );
-
-				m_actionNodeConnection = signal_button_press_event().connect( ::sigc::mem_fun(actionsNode.get(), &vgGTK::node::ActionsNode::onBoutonPressEvent) );
+				m_actionsNode = vgd::makeShp( new vgGTK::node::ActionsNode( vgGTK::node::CANVAS ) );
+				m_actionsNode->setCanvas( this );
+				m_actionNodeConnection = signal_button_press_event().connect( ::sigc::mem_fun(m_actionsNode.get(), &vgGTK::node::ActionsNode::onBoutonPressEvent) );
 			}
 			else
 			{
@@ -549,6 +554,16 @@ protected:
 
 	//@}
 
+	void onActionChanged( vgGTK::node::ActionOnNode action )
+	{
+		switch( action )
+		{
+			case vgGTK::node::REFRESH:
+				refreshForced();
+				break;
+		}
+	}
+
 
 private:
 
@@ -651,3 +666,4 @@ GenericCanvas< BaseCanvasType >::~GenericCanvas()
 } // namespace vgGTK
 
 #endif // #ifndef _VGGTK_GENERICCANVAS_HPP
+
