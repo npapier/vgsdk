@@ -16,6 +16,7 @@
 #include <vgDebug/convenience.hpp>
 #include <vgd/node/TriSet.hpp>
 #include <vgGTK/graph/Browser.hpp>
+#include <vgGTK/node/SelectedNode.hpp>
 #include <vgOpenCOLLADA/exporter/SceneExporter.hpp>
 
 
@@ -26,24 +27,10 @@ namespace vgGTK
 namespace node
 {
 
-vgd::Shp< ActionsNode > ActionsNode::m_actionsNode;
-
-vgd::Shp< ActionsNode > ActionsNode::getActionsNode()
-{
-	if(!m_actionsNode)
-	{
-		m_actionsNode = vgd::Shp< ActionsNode >( new ActionsNode );
-	}
-	
-	return m_actionsNode;
-}
-
-
-
-ActionsNode::ActionsNode() :
+ActionsNode::ActionsNode( POPUP_LOCATION location ) :
 m_actions( Gtk::ActionGroup::create() ),
 m_uiManager( Gtk::UIManager::create() ),
-m_location( CANVAS )
+m_location( location )
 {
 	// Initializes the user interface manager.
 	m_uiDefinition =
@@ -55,6 +42,7 @@ m_location( CANVAS )
 		"    <menuitem action='RemoveNode'/>"
 		"    <menuitem action='HideNode'/>"
 		"    <menu action='HiddenNode'/>"
+		"	 <menuitem action='ShowAllHiddenNode'/>"
 		"    <separator/>"
 		"    <menuitem action='ExportNode'/>"
 		"    <separator/>"
@@ -75,6 +63,7 @@ m_location( CANVAS )
 	m_actions->add( Gtk::Action::create("RemoveNode", "Remove"), sigc::mem_fun(this, &ActionsNode::onRemoveNode) );
 	m_actions->add( Gtk::Action::create("HideNode", "Hide"), sigc::mem_fun(this, &ActionsNode::onHideNode) );
 	m_actions->add( Gtk::Action::create("HiddenNode", "Hidden Nodes") );
+	m_actions->add( Gtk::Action::create("ShowAllHiddenNode", "Show All"), sigc::mem_fun(this, &ActionsNode::onShowAllHiddenNode) );
 	m_actions->add( Gtk::Action::create("ExportNode", "Export"), sigc::mem_fun(this, &ActionsNode::onExportNode) );
 	m_actions->add( Gtk::Action::create("SetToDefault", "SetToDefault"), sigc::mem_fun(this, &ActionsNode::onSetToDefault) );
 	m_actions->add( Gtk::Action::create("SetOptionalToDefault", "SetOptionalToDefault"), sigc::mem_fun(this, &ActionsNode::onSetOptionalToDefault) );
@@ -87,7 +76,6 @@ m_location( CANVAS )
 	m_hiddenMenu	= Gtk::manage( new Gtk::Menu() );
 
 	m_hiddenMenuItem->set_submenu( *m_hiddenMenu );
-
 	m_hiddenMenuItem->property_visible() = false;
 }
 
@@ -96,13 +84,6 @@ m_location( CANVAS )
 void ActionsNode::setCanvas( vgUI::Canvas * canvas )
 {
 	m_canvas = canvas;
-}
-
-
-
-void ActionsNode::setBrowser( vgGTK::graph::Browser * browser )
-{
-	m_browser = browser;
 }
 
 
@@ -151,6 +132,7 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 	m_actions->get_action("ExpandSubTree")->set_visible(false);
 	m_actions->get_action("RemoveNode")->set_visible(false);
 	m_actions->get_action("HideNode")->set_visible(false);
+	m_actions->get_action("ShowAllHiddenNode")->set_visible(false);	
 	m_actions->get_action("ExportNode")->set_visible(false);
 	m_actions->get_action("SetToDefault")->set_visible(false);
 	m_actions->get_action("SetOptionalToDefault")->set_visible(false);
@@ -159,26 +141,35 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 
 	//check if all node contained in m_hiddenNodes exists.
 	vgd::Shp < HiddenNode > hidden;
-	std::list< vgd::Shp < HiddenNode > >::iterator it = m_hiddenNodes.begin();
-	while( it !=  m_hiddenNodes.end() )
+	vgd::Shp< std::list< vgd::Shp < HiddenNode > > > hiddenNodes = vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList();
+	std::list< vgd::Shp < HiddenNode > >::iterator it = hiddenNodes->begin();
+	m_hiddenMenu->items().clear();
+	while( it !=  hiddenNodes->end() )
 	{
 		if( !(*it)->hasNode() || (*it)->getNode()->getNumParents() < 1 )
 		{
 			hidden = (*it);
 
-			it = m_hiddenNodes.erase(it);
+			it = hiddenNodes->erase(it);
 			delete hidden->getMenuItem();
 			hidden.reset();
 		}
 		else
 		{
+			m_hiddenMenu->append( *(*it)->getMenuItem() );
 			++it;
 		}
 	}
+	m_hiddenMenu->show_all();
 
-	if( m_hiddenMenu->items().size() < 1 )
+	if( m_hiddenMenu->items().size() < 1)
 	{
 		m_hiddenMenuItem->property_visible() = false;
+	}
+	else
+	{
+		m_actions->get_action("ShowAllHiddenNode")->set_visible(true);
+		m_hiddenMenuItem->property_visible() = true;
 	}
 
 	if( m_location == CANVAS && m_hiddenMenuItem->property_visible() == false)
@@ -194,11 +185,6 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		m_actions->get_action("HideNode")->set_visible(true);
 		m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
 		m_actions->get_action("InvertNormalOrientation")->set_visible(true);
-		
-		if(!m_browser)
-		{
-			m_actions->get_action("GetNodeInTree")->set_sensitive(false);
-		}
 
 		m_actions->get_action("GetNodeInTree")->set_visible(true);
 		m_actions->get_action("GetNodeInTree")->set_label(node->getName());
@@ -232,15 +218,16 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 
 void ActionsNode::onGetNodeInTree()
 {
-	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();	
-	m_browser->selectNode( node );
+	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+	vgGTK::node::SelectedNode::getSelectedNode()->setSelectedNode( node );
+	vgDebug::get().logStatus( "Node %s selected.", node->getName().c_str() );
 }
 
 
 
 void ActionsNode::onExpandSubTree()
 {
-	m_browser->expandSubTree();
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( EXPAND );
 }
 
 
@@ -248,20 +235,9 @@ void ActionsNode::onExpandSubTree()
 void ActionsNode::onRemoveNode()
 {
 	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
-
-	if(m_browser)
-	{
-		if (m_location == NODE)
-		{
-			m_browser->selectNode(node);
-		}
-
-		m_browser->removeNode();
-	}
-	else
-	{
-		node->getParent()->removeChild(node);
-	}
+	vgGTK::node::SelectedNode::getSelectedNode()->setSelectedNode( node );
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REMOVE );
+	vgDebug::get().logStatus( "Node %s removed.", node->getName().c_str() );
 }
 
 
@@ -270,21 +246,19 @@ void ActionsNode::onHideNode()
 {
 	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
 	
-	Gtk::MenuItem	* item = Gtk::manage( new Gtk::MenuItem(node->getName()) );
-
-	m_hiddenMenu->append( *item );
-	m_hiddenMenu->show_all();	
-	m_hiddenMenuItem->property_visible() = true;
+	Gtk::MenuItem	* item = new Gtk::MenuItem(node->getName());
 
 	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node );
 
 	vgd::Shp < HiddenNode > hidden = vgd::makeShp( new HiddenNode(vertexShape, item) );
-	m_hiddenNodes.push_back( hidden );
+	vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList()->push_back( hidden );
 	hidden->hide();
 	
 	item->signal_activate().connect( sigc::bind<0>( sigc::mem_fun(this, &ActionsNode::onShowNode), hidden) );
 
-	m_canvas->refreshForced();
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+
+	vgDebug::get().logStatus( "Node %s hidden.", node->getName().c_str() );
 }
 
 
@@ -293,11 +267,27 @@ void ActionsNode::onShowNode( vgd::Shp < HiddenNode > hidden )
 {
 	hidden->restorePrimitives();
 
-	m_hiddenNodes.remove(hidden);
+	vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList()->remove(hidden);
+	vgDebug::get().logStatus( "Node %s restored.", hidden->getNode()->getName().c_str() );
 	delete hidden->getMenuItem();
 	hidden.reset();
 
-	m_canvas->refreshForced();
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+}
+
+
+
+void ActionsNode::onShowAllHiddenNode()
+{
+	vgd::Shp < HiddenNode > hidden;
+	vgd::Shp< std::list< vgd::Shp < HiddenNode > > > hiddenNodes = vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList();	
+	std::list< vgd::Shp < HiddenNode > >::iterator it = hiddenNodes->begin();
+	for( it; it !=  hiddenNodes->end(); )
+	{
+		hidden = (*it);
+		it++;
+		onShowNode( hidden );
+	}
 }
 
 
@@ -305,32 +295,9 @@ void ActionsNode::onShowNode( vgd::Shp < HiddenNode > hidden )
 void ActionsNode::onExportNode()
 {
 	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
-	Gtk::Window				* topLevel = dynamic_cast< Gtk::Window * >(m_browser->get_toplevel());
-	Gtk::FileChooserDialog	chooser( *topLevel, "Save VertexShape As", Gtk::FILE_CHOOSER_ACTION_SAVE );
-	Gtk::FileFilter			dotFilter;
-
-	dotFilter.set_name( "COLLADA file (*.DAE)" );
-	dotFilter.add_pattern( "*.DAE" );
-
-	chooser.add_filter( dotFilter );
-	chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-	chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
-	chooser.set_do_overwrite_confirmation( true );
-
-	const int result = chooser.run();
-	if( result == Gtk::RESPONSE_OK )
-	{
-		const Glib::ustring	filename( chooser.get_filename() );
-		
-		vgOpenCOLLADA::exporter::SceneExporter exporter( filename, m_canvas->getRoot(), vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
-
-		if( !exporter.doExport() )
-		{
-			Gtk::MessageDialog	messageDlg(*topLevel, "Unable to save VertexShape.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-			
-			messageDlg.run();
-		}
-	}
+	vgGTK::node::SelectedNode::getSelectedNode()->setSelectedNode( node );
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( EXPORT );
+	vgDebug::get().logStatus( "Node %s exported.", node->getName().c_str() );
 }
 
 
@@ -341,7 +308,7 @@ void ActionsNode::onSetToDefault()
 
 	node->setToDefaults();
 
-	m_canvas->refreshForced();
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
 }
 
 
@@ -352,7 +319,7 @@ void ActionsNode::onSetOptionalToDefault()
 
 	node->setOptionalsToDefaults();
 
-	m_canvas->refreshForced();
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
 }
 
 
@@ -370,7 +337,7 @@ void ActionsNode::onInvertTriangleOrientation()
 		vgAlg::node::invertTriangleOrientation( vgd::dynamic_pointer_cast< vgd::node::TriSet >( node ) );
 	}
 
-	m_canvas->refreshForced();
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
 }
 
 
@@ -381,11 +348,11 @@ void ActionsNode::onInvertNormalOrientation()
 
 	vgAlg::node::invertNormalOrientation( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
 
-	m_canvas->refreshForced();
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
 }
+
 
 
 } // namespace node
 
 } // namespace vgGTK
-

@@ -16,6 +16,8 @@
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
 
+#include <vgGTK/node/HiddenNode.hpp>
+
 #include <vgUI/Canvas.hpp>
 
 namespace vgGTK
@@ -28,82 +30,6 @@ namespace graph
 
 namespace node
 {
-
-
-struct HiddenNode
-{
-	HiddenNode(vgd::Shp< vgd::node::VertexShape > node, Gtk::MenuItem * hiddenMenuItem ) :
-	m_node( node ),
-	m_hiddenMenuItem ( hiddenMenuItem )
-	{
-	}
-
-	~HiddenNode()
-	{
-		m_node.reset();
-	}
-
-	void hide()
-	{
-		vgd::Shp< vgd::node::VertexShape > node = m_node.lock();
-		if( node )
-		{
-			vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = node->getFPrimitiveRW();
-
-			for( uint i = 0; i < editPrimitive->size(); i++)
-			{
-				m_primitives.push_back( editPrimitive->operator[](i) );
-			}
-
-			editPrimitive->clear();
-		}
-	}
-
-	void restorePrimitives()
-	{
-		vgd::Shp< vgd::node::VertexShape > node = m_node.lock();
-		if( node )
-		{		
-			vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = node->getFPrimitiveRW();
-
-			editPrimitive->clear();
-			
-			for( uint i = 0; i < m_primitives.size(); i++)
-			{
-				editPrimitive->push_back( m_primitives[i] );
-			}
-		}
-	}
-
-	vgd::Shp< vgd::node::VertexShape > getNode()
-	{
-		vgd::Shp< vgd::node::VertexShape > node = m_node.lock();
-		return node;
-	}
-
-	bool hasNode()
-	{
-		vgd::Shp< vgd::node::VertexShape > node = m_node.lock();
-		if( node )
-		{	
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	Gtk::MenuItem * getMenuItem()
-	{
-		return m_hiddenMenuItem;
-	}
-
-private:
-	vgd::WeakPtr< vgd::node::VertexShape >	m_node;
-	std::vector< vgd::node::Primitive >		m_primitives;
-	Gtk::MenuItem							* m_hiddenMenuItem;
-};
 
 
 enum POPUP_LOCATION
@@ -121,12 +47,13 @@ enum POPUP_LOCATION
  */
 struct VGGTK_API ActionsNode
 {
-	static vgd::Shp< ActionsNode > getActionsNode();
-
-	void setCanvas( vgUI::Canvas * canvas );
-	void setBrowser( vgGTK::graph::Browser * browser );
+	//ActionsNode();
+	
+	ActionsNode( POPUP_LOCATION location );
 
 	bool onBoutonPressEvent( GdkEventButton * event );
+
+	void setCanvas( vgUI::Canvas * canvas );
 
 /**
  * @brief Show the popup menu
@@ -141,24 +68,20 @@ struct VGGTK_API ActionsNode
 
 private:
 
-	ActionsNode();
-	
-	static vgd::Shp< ActionsNode >		m_actionsNode;
+	void onGetNodeInTree();							///< Handles the action that will select the node in the treeview.
+	void onExpandSubTree();							///< Handles the action that will expand all the tree view sub-tree of the selection element.
+	void onRemoveNode();							///< Handles the action that will remove the selected node from it parent.
+	void onHideNode();								///< Handles the action that will hide the selected node.
+	void onShowNode(vgd::Shp < HiddenNode > hidden);///< Handles the action that will show the selected node.
+	void onShowAllHiddenNode();								///< Handles the action that will show all hidden node.
+	void onExportNode();							///< Handles the action that will export the selected node.
+	void onSetToDefault();							///< Handles the action that will set node filed to default.
+	void onSetOptionalToDefault();					///< Handles the action that will set the optional node field to default.
+	void onInvertTriangleOrientation();				///< Handles the action that will invert triangles orientation.
+	void onInvertNormalOrientation();				///< Handles the action that will invert nsls orientation.
 
-	void onGetNodeInTree();				///< Handles the action that will select the node in the treeview.
-	void onExpandSubTree();				///< Handles the action that will expand all the tree view sub-tree of the selection element.
-	void onRemoveNode();				///< Handles the action that will remove the selected node from it parent.
-	void onHideNode();					///< Handles the action that will hide the selected node.
-	void onShowNode(vgd::Shp < HiddenNode > hidden);					///< Handles the action that will hide the selected node.
-	void onExportNode();				///< Handles the action that will export the selected.
-	void onSetToDefault();				///< Handles the action that will set node filed to default.
-	void onSetOptionalToDefault();		///< Handles the action that will set the optional node field to default.
-	void onInvertTriangleOrientation();	///< Handles the action that will invert triangles orientation.
-	void onInvertNormalOrientation();	///< Handles the action that will invert nsls orientation.	
-
-	vgUI::Canvas						* m_canvas;	///< Points to the canvas to refresh.
-	vgGTK::graph::Browser				* m_browser;
 	vgd::WeakPtr< vgd::node::Node >		m_currentNode;
+	vgUI::Canvas						*m_canvas;
 
 	/**
 	 * @name	User Interface Management

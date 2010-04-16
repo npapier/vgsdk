@@ -262,8 +262,29 @@ Browser::Browser()
 	// Connects signal handlers on the tree view's selection
 	m_treeView.get_selection()->signal_changed().connect( sigc::mem_fun(this, &Browser::onSelectionChanged) );
 
-	m_actionsNode = vgGTK::node::ActionsNode::getActionsNode();
-	m_actionsNode->setBrowser( this );
+	m_actionsNode = vgd::makeShp( new vgGTK::node::ActionsNode( vgGTK::node::TREE ) );
+
+	vgGTK::node::SelectedNode::getSelectedNode()->signal_action_changed.connect( sigc::mem_fun(this, &Browser::onActionChanged) );
+
+	vgGTK::node::SelectedNode::getSelectedNode()->signal_selection_changed.connect( sigc::mem_fun(this, &Browser::selectNode) );
+}
+
+
+
+void Browser::onActionChanged( vgGTK::node::ActionOnNode action )
+{
+	switch( action )
+	{
+		case vgGTK::node::EXPAND:
+			onExpandSubTree();
+			break;
+		case vgGTK::node::REMOVE:
+			onRemoveNode();
+			break;
+		case vgGTK::node::EXPORT:
+			onExportNode();
+			break;
+	}
 }
 
 
@@ -284,7 +305,7 @@ void Browser::setRoot( vgd::Shp< vgd::node::Group > root )
 }
 
 
-bool Browser::searchNode(Gtk::TreeModel::Children children, vgd::Shp< vgd::node::Node > node, Gtk::TreeModel::Row *it)
+bool Browser::searchNode( Gtk::TreeModel::Children children, vgd::Shp< vgd::node::Node > node, Gtk::TreeModel::Row *it )
 {
 	for(Gtk::TreeModel::Children::iterator iter = children.begin(); iter != children.end(); ++iter)
 	{
@@ -307,13 +328,24 @@ bool Browser::searchNode(Gtk::TreeModel::Children children, vgd::Shp< vgd::node:
 
 
 
-void Browser::selectNode(vgd::Shp< vgd::node::Node > node)
+void Browser::selectNode( vgd::Shp< vgd::node::Node > node )
 {
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	if( selection->count_selected_rows() > 0 )
+	{
+		Gtk::TreeModel::iterator		rowIterator = selection->get_selected();
+		vgd::Shp< vgd::node::Node >		selectedNode = (*rowIterator)[ m_columns.m_nodeColumn ];
+
+		if( node == selectedNode )
+		{
+			return;
+		}
+	}
+
 	m_treeStore->refresh();
 	Gtk::TreeModel::Row it;
-	if (searchNode(m_treeStore->children(), node, &it) )
+	if ( searchNode(m_treeStore->children(), node, &it) )
 	{
-		Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
 		m_treeView.expand_to_path( Gtk::TreePath( it ) );
 		m_treeView.scroll_to_row( Gtk::TreePath( it ) );
 		selection->select(it);
@@ -329,7 +361,7 @@ void Browser::refreshTree()
 
 
 
-void Browser::expandSubTree()
+void Browser::onExpandSubTree()
 {
 	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
 	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
@@ -342,7 +374,7 @@ void Browser::expandSubTree()
 
 
 
-void Browser::removeNode()
+void Browser::onRemoveNode()
 {
 	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
 	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
@@ -375,9 +407,48 @@ void Browser::removeNode()
 				// Removes the node and the row in the tree model.
 				parentGroup->removeChild( node );
 				m_treeStore->erase( rowIterator );
+
+				m_canvas->refreshForced();
 				
 				// @todo refresh shared information for remaining rows containing the node being removed.
 			}
+		}
+	}
+}
+
+
+
+void Browser::onExportNode()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
+
+	vgd::Shp< vgd::node::Node >	node = (*rowIterator)[ m_columns.m_nodeColumn ];
+	
+	Gtk::Window				* topLevel = dynamic_cast< Gtk::Window * >(this->get_toplevel());
+	Gtk::FileChooserDialog	chooser( *topLevel, "Save VertexShape As", Gtk::FILE_CHOOSER_ACTION_SAVE );
+	Gtk::FileFilter			dotFilter;
+
+	dotFilter.set_name( "COLLADA file (*.DAE)" );
+	dotFilter.add_pattern( "*.DAE" );
+
+	chooser.add_filter( dotFilter );
+	chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+	chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+	chooser.set_do_overwrite_confirmation( true );
+
+	const int result = chooser.run();
+	if( result == Gtk::RESPONSE_OK )
+	{
+		const Glib::ustring	filename( chooser.get_filename() );
+		
+		vgOpenCOLLADA::exporter::SceneExporter exporter( filename, m_canvas->getRoot(), vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
+
+		if( !exporter.doExport() )
+		{
+			Gtk::MessageDialog	messageDlg(*topLevel, "Unable to save VertexShape.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+			
+			messageDlg.run();
 		}
 	}
 }
