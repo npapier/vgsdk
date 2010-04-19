@@ -138,13 +138,15 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			m_code2 += 
 			"	flight( ecPosition, ecNormal );\n"
 			"\n"
-			"	gl_FrontColor			= vec4(accumColor.rgb, gl_Color.a);\n"
+			"	gl_FrontColor			= vec4(accumColor.rgb, gl_FrontMaterial.diffuse.a);\n"
+//			"	gl_FrontColor			= vec4(accumColor.rgb, gl_Color.a);\n"
 			"	gl_FrontSecondaryColor	= vec4(accumSecondaryColor.rgb, 0.0);\n";
 
 			if ( state.isTwoSidedLightingEnabled() )
 			{
 				m_code2 +=
-				"	gl_BackColor			= vec4(accumBackColor.rgb, gl_Color.a);\n"
+				"	gl_BackColor			= vec4(accumBackColor.rgb, gl_FrontMaterial.diffuse.a);\n"				
+//				"	gl_BackColor			= vec4(accumBackColor.rgb, gl_Color.a);\n"
 				"	gl_BackSecondaryColor	= vec4(accumBackSecondaryColor.rgb, 0.0);\n";
 			}
 		}
@@ -157,14 +159,16 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			}*/
 
 			m_code2 +=	
-			"	gl_FrontColor			= gl_Color;\n"
-			"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
+			"	gl_FrontColor			= gl_FrontMaterial.diffuse;\n";
+//			"	gl_FrontColor			= gl_Color;\n"
+//			"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 
 			if ( state.isTwoSidedLightingEnabled() )
 			{
 				m_code2 +=
-				"	gl_BackColor			= gl_Color;\n"
-				"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
+				"	gl_BackColor			= gl_FrontMaterial.diffuse;\n";
+//				"	gl_BackColor			= gl_Color;\n"
+//				"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
 			}
 //			// else nothing to do
 		}
@@ -173,14 +177,14 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	{
 		// no lighting
 		m_code2 +=
-		"	gl_FrontColor			= gl_Color;\n"
-		"	gl_FrontSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
+		"	gl_FrontColor			= gl_FrontMaterial.diffuse;\n"
+		"	gl_FrontSecondaryColor	= vec4(0.0, 0.0, 0.0, 1.0);\n";
 
 		if ( state.isTwoSidedLightingEnabled() )
 		{
 			m_code2 +=
-			"	gl_BackColor			= gl_Color;\n"
-			"	gl_BackSecondaryColor	= vec4(gl_SecondaryColor.rgb, 0.0);\n";
+			"	gl_BackColor			= gl_FrontMaterial.diffuse;\n"
+			"	gl_BackSecondaryColor	= vec4(0.0, 0.0, 0.0, 1.0);\n";
 		}
 	}
 
@@ -211,6 +215,12 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 
 	m_code2 += "}\n";
+
+	if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+	{
+		boost::algorithm::replace_all( m_code1, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"
+		boost::algorithm::replace_all( m_code2, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"
+	}
 
 	return true;
 }

@@ -741,10 +741,10 @@ struct GLSLHelpers
 				}
 
 				//
-				if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+				/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
 				{
 					boost::algorithm::replace_all( flight, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"
-				}
+				}*/
 			}
 			else
 			{
@@ -767,10 +767,10 @@ struct GLSLHelpers
 				}
 
 				//
-				if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+				/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
 				{
 					boost::algorithm::replace_all( flight, "gl_FrontMaterial.diffuse", "gl_Color" ); //mglColor
-				}
+				}*/
 			}
 
 
@@ -1111,6 +1111,16 @@ struct GLSLHelpers
 				"\n";*/
 			}
 		}
+		/*// @todo FIXME remove me
+		else
+		{
+			code +=
+			"\n"
+			"float lookupShadowMap( sampler2D map, vec4 coord, vec2 offset )\n"
+			"{\n"
+			"	return 0.0;\n"
+			"}\n\n";
+		}*/
 
 		return std::make_pair(decl, code);
 	}

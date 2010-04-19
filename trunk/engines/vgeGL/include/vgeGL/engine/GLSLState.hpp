@@ -374,7 +374,7 @@ struct GLSLState : public TBitSet< 13 >
 
 
 	/**
-	 * @name Private texture unit accesors
+	 * @name Private texture unit accessors
 	 */
 	//@{
 	 
