@@ -28,7 +28,7 @@ int TrianImporter2::DoImport( const TCHAR * name, ImpInterface *ii, Interface *i
 	//Get the version information and make sure the start of the file is valid.
 	std::string version;
 	m_if >> version;
-	if( version.compare( "vglExporter100" ) != 0 )
+	if( version.compare( "vgsdkExporter100" ) != 0 )
 	{
 		std::string errMsg = version + " is an incorrect version.";
 		::MessageBox( NULL, errMsg.c_str(), "Error", MB_OK | MB_ICONERROR );
