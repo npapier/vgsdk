@@ -85,13 +85,13 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		code_ftexgen = GLSLHelpers::generateFunction_ftexgen(state); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
 		m_decl += code_ftexgen.first;
 
-		code_samplers = GLSLHelpers::generate_samplers( state );// + '\n';
+		code_samplers = GLSLHelpers::generate_samplers( state );
 		m_decl += code_samplers.first;
 		m_code1 += code_samplers.second;
 	}
 
 	// FUNCTIONS
-	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() ) 
+	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() )
 	{
 		m_code1 += GLSLHelpers::generate_lights( state ) + '\n';
 		m_code1 += GLSLHelpers::generateFunction_flight( state ) + '\n';
@@ -134,12 +134,14 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			"		vec4 color = accumColor;\n" +
 					textureLookup +
 			"		gl_FragColor = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n"
+//			"		gl_FragColor = color + accumSecondaryColor;\n"
 			"	}\n"
 			"	else\n"
 			"	{\n"
 			"		vec4 color = accumBackColor ;\n" +
 					textureLookup +
 			"		gl_FragColor = vec4( (color + accumBackSecondaryColor).rgb, gl_Color.a );\n"
+//			"		gl_FragColor = color + accumBackSecondaryColor;\n"
 			"	}\n";
 		}
 		else
@@ -148,6 +150,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			"	vec4 color = accumColor;\n" +
 				textureLookup +
 			"	gl_FragColor = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n";
+//			"	gl_FragColor = color + accumSecondaryColor;\n";
 		}
 	}
 
@@ -183,3 +186,4 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 } // namespace engine
 
 } // namespace vgeGL
+
