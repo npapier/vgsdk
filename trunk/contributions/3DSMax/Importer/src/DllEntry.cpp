@@ -16,8 +16,8 @@ BOOL WINAPI DllMain( HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved )
 
 	if( !controlsInit ) {
 		controlsInit = TRUE;
-		InitCustomControls( hInstance );	// Initialize MAX's custom controls
-		InitCommonControls();			// Initialize Win95 controls
+		//InitCustomControls( hInstance );	// Initialize MAX's custom controls
+		//InitCommonControls();			// Initialize Win95 controls
 	}
 			
 	return (TRUE);
