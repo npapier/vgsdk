@@ -73,12 +73,16 @@ private:
 	void onRemoveNode();							///< Handles the action that will remove the selected node from it parent.
 	void onHideNode();								///< Handles the action that will hide the selected node.
 	void onShowNode(vgd::Shp < HiddenNode > hidden);///< Handles the action that will show the selected node.
-	void onShowAllHiddenNode();								///< Handles the action that will show all hidden node.
+	void onShowAllHiddenNode();						///< Handles the action that will show all hidden node.
+	void onHideAll();								///< Handles the action that will hide all node.
+	void onHideAllExceptSelected();					///< Handles the action that will hide all node execept selected node.
 	void onExportNode();							///< Handles the action that will export the selected node.
 	void onSetToDefault();							///< Handles the action that will set node filed to default.
 	void onSetOptionalToDefault();					///< Handles the action that will set the optional node field to default.
 	void onInvertTriangleOrientation();				///< Handles the action that will invert triangles orientation.
 	void onInvertNormalOrientation();				///< Handles the action that will invert nsls orientation.
+
+	bool isAlreadyHidden( vgd::Shp< vgd::node::Node > node );
 
 	vgd::WeakPtr< vgd::node::Node >		m_currentNode;
 	vgUI::Canvas						*m_canvas;

@@ -262,8 +262,6 @@ Browser::Browser()
 	// Connects signal handlers on the tree view's selection
 	m_treeView.get_selection()->signal_changed().connect( sigc::mem_fun(this, &Browser::onSelectionChanged) );
 
-	m_actionsNode = vgd::makeShp( new vgGTK::node::ActionsNode( vgGTK::node::TREE ) );
-
 	vgGTK::node::SelectedNode::getSelectedNode()->signal_action_changed.connect( sigc::mem_fun(this, &Browser::onActionChanged) );
 
 	vgGTK::node::SelectedNode::getSelectedNode()->signal_selection_changed.connect( sigc::mem_fun(this, &Browser::selectNode) );
@@ -293,6 +291,9 @@ void Browser::setCanvas( vgUI::Canvas * canvas )
 {
 	m_canvas = canvas;
 	m_editor.setCanvas( canvas );
+
+	m_actionsNode = vgd::makeShp( new vgGTK::node::ActionsNode( vgGTK::node::TREE ) );
+	m_actionsNode->setCanvas( m_canvas );
 }
 
 

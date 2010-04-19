@@ -40,7 +40,10 @@ m_location( location )
 		"    <separator/>"
 		"    <menuitem action='ExpandSubTree'/>"
 		"    <menuitem action='RemoveNode'/>"
+		"    <separator/>"
 		"    <menuitem action='HideNode'/>"
+		"    <menuitem action='HideAllNode'/>"
+		"    <menuitem action='HideAllExecptSelectedNode'/>"
 		"    <menu action='HiddenNode'/>"
 		"	 <menuitem action='ShowAllHiddenNode'/>"
 		"    <separator/>"
@@ -62,6 +65,8 @@ m_location( location )
 	m_actions->add( Gtk::Action::create("ExpandSubTree", "Expand"), sigc::mem_fun(this, &ActionsNode::onExpandSubTree) );
 	m_actions->add( Gtk::Action::create("RemoveNode", "Remove"), sigc::mem_fun(this, &ActionsNode::onRemoveNode) );
 	m_actions->add( Gtk::Action::create("HideNode", "Hide"), sigc::mem_fun(this, &ActionsNode::onHideNode) );
+	m_actions->add( Gtk::Action::create("HideAllNode", "Hide All"), sigc::mem_fun(this, &ActionsNode::onHideAll) );
+	m_actions->add( Gtk::Action::create("HideAllExecptSelectedNode", "Hide All Except Selection"), sigc::mem_fun(this, &ActionsNode::onHideAllExceptSelected) );
 	m_actions->add( Gtk::Action::create("HiddenNode", "Hidden Nodes") );
 	m_actions->add( Gtk::Action::create("ShowAllHiddenNode", "Show All"), sigc::mem_fun(this, &ActionsNode::onShowAllHiddenNode) );
 	m_actions->add( Gtk::Action::create("ExportNode", "Export"), sigc::mem_fun(this, &ActionsNode::onExportNode) );
@@ -73,7 +78,7 @@ m_location( location )
 	Gtk::Widget		* hiddenWidget	= m_uiManager->get_widget("/popup/HiddenNode");
 	m_hiddenMenuItem= dynamic_cast< Gtk::MenuItem * >( hiddenWidget );
 
-	m_hiddenMenu	= Gtk::manage( new Gtk::Menu() );
+	m_hiddenMenu	= new Gtk::Menu();
 
 	m_hiddenMenuItem->set_submenu( *m_hiddenMenu );
 	m_hiddenMenuItem->property_visible() = false;
@@ -132,6 +137,8 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 	m_actions->get_action("ExpandSubTree")->set_visible(false);
 	m_actions->get_action("RemoveNode")->set_visible(false);
 	m_actions->get_action("HideNode")->set_visible(false);
+	m_actions->get_action("HideAllNode")->set_visible(false);
+	m_actions->get_action("HideAllExecptSelectedNode")->set_visible(false);
 	m_actions->get_action("ShowAllHiddenNode")->set_visible(false);	
 	m_actions->get_action("ExportNode")->set_visible(false);
 	m_actions->get_action("SetToDefault")->set_visible(false);
@@ -139,24 +146,45 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 	m_actions->get_action("InvertTriangleOrientation")->set_visible(false);
 	m_actions->get_action("InvertNormalOrientation")->set_visible(false);
 
-	//check if all node contained in m_hiddenNodes exists.
+	//check if there are nodes displayed, to put "hide all node" action in menu or not.
+	//if there is no shape, don't display menu at all.
+	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+	vgd::Shp< vgd::node::NodeList > result;
+	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
+	if( result->size() < 1 && m_location == CANVAS )
+	{
+		return;
+	}
+
+	std::list< vgd::Shp < vgd::node::Node > >::iterator iter = result->begin();
+	for( iter; iter !=  result->end(); iter++ )
+	{
+		if( !isAlreadyHidden( (*iter) ) )
+		{
+			m_actions->get_action("HideAllNode")->set_visible(true); //show "hide all" only if there is at least one node displayed.
+			break;
+		}
+	}
+
+	//check if all node contained in m_hiddenNodes exists and display their menu items.
 	vgd::Shp < HiddenNode > hidden;
 	vgd::Shp< std::list< vgd::Shp < HiddenNode > > > hiddenNodes = vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList();
 	std::list< vgd::Shp < HiddenNode > >::iterator it = hiddenNodes->begin();
 	m_hiddenMenu->items().clear();
 	while( it !=  hiddenNodes->end() )
 	{
-		if( !(*it)->hasNode() || (*it)->getNode()->getNumParents() < 1 )
+		hidden = (*it);
+		if( !hidden->hasNode() || hidden->getNode()->getNumParents() < 1 )
 		{
-			hidden = (*it);
-
 			it = hiddenNodes->erase(it);
-			delete hidden->getMenuItem();
 			hidden.reset();
 		}
 		else
 		{
-			m_hiddenMenu->append( *(*it)->getMenuItem() );
+			Gtk::MenuItem	* item = Gtk::manage( new Gtk::MenuItem( hidden->getNode()->getName() ) );
+			hidden->setMenuItem( item );
+			item->signal_activate().connect( sigc::bind<0>( sigc::mem_fun(this, &ActionsNode::onShowNode), hidden) );			
+			m_hiddenMenu->append( *item );
 			++it;
 		}
 	}
@@ -172,17 +200,14 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		m_hiddenMenuItem->property_visible() = true;
 	}
 
-	if( m_location == CANVAS && m_hiddenMenuItem->property_visible() == false)
-	{
-		return;
-	}
-	else if( m_location == NODE )
+	if( m_location == NODE )
 	{
 		m_actions->get_action("RemoveNode")->set_visible(true);
 		m_actions->get_action("SetToDefault")->set_visible(true);
 		m_actions->get_action("SetOptionalToDefault")->set_visible(true);
 		m_actions->get_action("ExportNode")->set_visible(true);
 		m_actions->get_action("HideNode")->set_visible(true);
+		m_actions->get_action("HideAllExecptSelectedNode")->set_visible(true);
 		m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
 		m_actions->get_action("InvertNormalOrientation")->set_visible(true);
 
@@ -202,7 +227,11 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		else
 		{
 			m_actions->get_action("ExportNode")->set_visible(true);
-			m_actions->get_action("HideNode")->set_visible(true);
+			if( !isAlreadyHidden( node ) )
+			{
+				m_actions->get_action("HideNode")->set_visible(true);
+				m_actions->get_action("HideAllExecptSelectedNode")->set_visible(true);
+			}
 			m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
 			m_actions->get_action("InvertNormalOrientation")->set_visible(true);
 		}
@@ -245,12 +274,17 @@ void ActionsNode::onRemoveNode()
 void ActionsNode::onHideNode()
 {
 	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+
+	if( isAlreadyHidden( node ) )
+	{
+		return;
+	}
 	
 	Gtk::MenuItem	* item = new Gtk::MenuItem(node->getName());
 
 	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node );
 
-	vgd::Shp < HiddenNode > hidden = vgd::makeShp( new HiddenNode(vertexShape, item) );
+	vgd::Shp < HiddenNode > hidden = vgd::makeShp( new HiddenNode(vertexShape) );
 	vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList()->push_back( hidden );
 	hidden->hide();
 	
@@ -263,13 +297,34 @@ void ActionsNode::onHideNode()
 
 
 
+bool ActionsNode::isAlreadyHidden( vgd::Shp< vgd::node::Node > node )
+{
+	bool retVal = false;
+	
+	vgd::Shp < HiddenNode > hidden;
+	vgd::Shp< std::list< vgd::Shp < HiddenNode > > > hiddenNodes = vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList();	
+	std::list< vgd::Shp < HiddenNode > >::iterator it = hiddenNodes->begin();
+	for( it; it !=  hiddenNodes->end(); it++)
+	{
+		hidden = (*it);
+
+		if( hidden->getNode() == node )
+		{
+			return true;
+		}
+	}
+
+	return retVal;
+}
+
+
+
 void ActionsNode::onShowNode( vgd::Shp < HiddenNode > hidden )
 {
 	hidden->restorePrimitives();
 
 	vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList()->remove(hidden);
 	vgDebug::get().logStatus( "Node %s restored.", hidden->getNode()->getName().c_str() );
-	delete hidden->getMenuItem();
 	hidden.reset();
 
 	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
@@ -288,6 +343,47 @@ void ActionsNode::onShowAllHiddenNode()
 		it++;
 		onShowNode( hidden );
 	}
+}
+
+
+
+void ActionsNode::onHideAll()
+{
+	vgd::Shp < vgd::node::Node > currentNode = m_currentNode.lock();
+	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+	vgd::Shp< vgd::node::NodeList > result;
+	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
+
+	std::list< vgd::Shp < vgd::node::Node > >::iterator it = result->begin();
+	for( it; it !=  result->end(); it++ )
+	{
+		m_currentNode = (*it);
+		onHideNode();
+	}
+
+	m_currentNode = currentNode;
+}
+
+
+
+void ActionsNode::onHideAllExceptSelected()
+{
+	vgd::Shp < vgd::node::Node > currentNode = m_currentNode.lock();
+	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+	vgd::Shp< vgd::node::NodeList > result;
+	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
+
+	std::list< vgd::Shp < vgd::node::Node > >::iterator it = result->begin();
+	for( it; it !=  result->end(); it++ )
+	{
+		if ( currentNode != (*it) )
+		{
+			m_currentNode = (*it);
+			onHideNode();
+		}
+	}
+
+	m_currentNode = currentNode;
 }
 
 

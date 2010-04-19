@@ -12,9 +12,8 @@ namespace vgGTK
 namespace node
 {
 	
-HiddenNode::HiddenNode(vgd::Shp< vgd::node::VertexShape > node, Gtk::MenuItem * hiddenMenuItem ) :
-m_node( node ),
-m_hiddenMenuItem ( hiddenMenuItem )
+HiddenNode::HiddenNode(vgd::Shp< vgd::node::VertexShape > node ) :
+m_node( node )
 {
 }
 
@@ -77,6 +76,13 @@ bool HiddenNode::hasNode()
 Gtk::MenuItem * HiddenNode::getMenuItem()
 {
 	return m_hiddenMenuItem;
+}
+
+
+
+void HiddenNode::setMenuItem( Gtk::MenuItem * menuItem )
+{
+	m_hiddenMenuItem = menuItem;
 }
 
 } // namespace node

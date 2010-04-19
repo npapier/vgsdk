@@ -25,7 +25,7 @@ namespace node
 
 struct HiddenNode
 {
-	HiddenNode(vgd::Shp< vgd::node::VertexShape > node, Gtk::MenuItem * hiddenMenuItem );
+	HiddenNode(vgd::Shp< vgd::node::VertexShape > node );
 
 	~HiddenNode();
 
@@ -38,6 +38,8 @@ struct HiddenNode
 	bool hasNode();
 
 	Gtk::MenuItem * getMenuItem();
+
+	void setMenuItem( Gtk::MenuItem * menuItem );
 
 private:
 	vgd::WeakPtr< vgd::node::VertexShape >	m_node;
