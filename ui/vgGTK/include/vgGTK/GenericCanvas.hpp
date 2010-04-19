@@ -316,9 +316,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	/**
 	* @brief enable/disable popup menu
 	*
-	* @param show: true to enable menu, false otherwise.
+	* @param show	true to enable menu, false otherwise.
 	*/
-	vgd::Shp< vgGTK::node::ActionsNode > m_actionsNode;
 	void setShowMenu(bool show)
 	{
 		if( m_showMenu != show)
@@ -566,6 +565,8 @@ protected:
 
 
 private:
+
+	vgd::Shp< vgGTK::node::ActionsNode > m_actionsNode;	///< The popup menu.
 
 	sigc::connection	m_cursorTimeout;		///< The connect to the timeout signal used to hide the cursor.
 
