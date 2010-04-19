@@ -159,7 +159,7 @@ bool GeometryImporter::importMeshPrimitives( vgd::Shp< vgd::node::Group > group 
 		//Create vertexshape with its material ID. Very important, name used to bind material to vertexshape during instanciation.
 		vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::node::VertexShape::create( name );
 
-		vgd::field::EditorRW< vgd::field::MFUInt32>	editVertexIndex	= vertexShape->getFVertexIndexRW();
+		vgd::field::EditorRW< vgd::field::MFUInt32 >	editVertexIndex	= vertexShape->getFVertexIndexRW();
 
 		vgd::field::EditorRW< vgd::field::MFVec3f >	editPositions = vertexShape->getFVertexRW();
 		editPositions->clear();

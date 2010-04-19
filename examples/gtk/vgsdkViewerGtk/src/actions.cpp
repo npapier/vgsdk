@@ -397,6 +397,7 @@ int openOpenCOLLADAFile( )
 	dialog.add_button("Geometry", 0);
 	dialog.add_button("Material", 1);
 	dialog.add_button("Texture", 2);
+	dialog.set_default_response(2);
 	return dialog.run();
 }
 
