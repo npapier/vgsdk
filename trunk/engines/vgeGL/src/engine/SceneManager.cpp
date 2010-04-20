@@ -265,7 +265,6 @@ const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32
 	// CAST A RAY
 	updateNodeCollector();
 
-	getGLEngine()->resetEval();
 	m_rayCasting.apply(	getGLEngine().get(), getNodeCollector().getTraverseElements(), x, y );
 
 	if ( m_rayCasting.getHitsSize() == 0 )

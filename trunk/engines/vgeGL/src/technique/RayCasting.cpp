@@ -165,23 +165,23 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
 	prepareEval( engine, traverseElements );
-	engine->resetEval();
 
 	// First pass : draw all shape.
 	// @todo Creates a Pass class
+
+	// Makes a backup of GLSL activation state
+	using vgeGL::engine::Engine;
+	vgd::Shp< Engine::GLSLActivationState > glslActivationState = engine->getGLSLActivationState();
+	engine->sethCurrentProgram();
+
+	setPassDescription("RayCasting::apply()");
 	beginPass();
 
-	engine->resetMatrices();
-	
-	engine->pushStateStack();			
-	glPushAttrib( GL_ALL_ATTRIB_BITS );
-
 	engine->disregard();
-	
+
 	engine->regardIfIsAKindOf<vgd::node::SingleTransformation>();
 	engine->regardIfIsA<vgd::node::DrawStyle>();
-	engine->regardIfIsA<vgd::node::FrontFace>();
-	
+
 	engine->regardIfIsAKindOf<vgd::node::Group>();
 	engine->regardIfIsAKindOf<vgd::node::Kit>();
 	engine->regardIfIsAKindOf<vgd::node::Shape>();
@@ -208,7 +208,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 			if ( i->second )
 			{
 				// preTraverse
-				engine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, *i );
 			}
 			else
 			{
@@ -216,7 +216,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 				assert( !cameraAlreadyTraversed && "Multiple camera node not supported." );			// FIXME
 				cameraAlreadyTraversed = true;
 				
-				engine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, *i );
 				
 				// getting some OpenGL informations : step 1
 				glGetIntegerv( GL_VIEWPORT, m_oglViewport );										// FIXME
@@ -226,7 +226,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 				vgm::Rectangle2i viewport(	m_oglViewport[0], m_oglViewport[1],
 											m_oglViewport[2], m_oglViewport[3] );
 	
-				pickMatrix.setPick(	static_cast<float>(m_x), static_cast<float>(m_y), 1., 1., viewport );
+				pickMatrix.setPick(	static_cast<float>(m_x), static_cast<float>(m_y), 1.f, 1.f, viewport );
 				
 				// update engine
 				vgm::MatrixR& current( engine->getProjectionMatrix().getTop() );
@@ -254,11 +254,11 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 				++currentGLName;
 				m_pNodes->push_back( i->first );
 			
-				engine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, *i );
 			}
 			else
 			{
-				engine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, *i );
 				
 				glPopName();
 			}
@@ -274,21 +274,18 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 				m_pNodes->push_back( i->first );
 			
 				// this is a shape, draw it.
-				engine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, *i );
 			}
 			else
 			{
-				engine->evaluate( paint, i->first, i->second );
+				engine->evaluate( paint, *i );
 			}
 		}
 		else
 		{
-			engine->evaluate( paint, i->first, i->second );
+			engine->evaluate( paint, *i );
 		}
 	}
-
-	glPopAttrib();
-	engine->popStateStack();
 
 	endPass();
 
@@ -300,9 +297,10 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	fillHits( gluintHitsSize );
 
 	//
-	engine->regard();
-
 	finishEval();
+
+	// Restores GLSL activation state
+	engine->setGLSLActivationState( glslActivationState );
 
 	// Release memory.
 	m_pNodes.reset();
