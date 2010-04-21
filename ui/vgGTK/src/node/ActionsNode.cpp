@@ -43,7 +43,7 @@ m_location( location )
 		"    <separator/>"
 		"    <menuitem action='HideNode'/>"
 		"    <menuitem action='HideAllNode'/>"
-		"    <menuitem action='HideAllExecptSelectedNode'/>"
+		"    <menuitem action='HideAllExceptSelectedNode'/>"
 		"    <menu action='HiddenNode'/>"
 		"	 <menuitem action='ShowAllHiddenNode'/>"
 		"    <separator/>"
@@ -66,7 +66,7 @@ m_location( location )
 	m_actions->add( Gtk::Action::create("RemoveNode", "Remove"), sigc::mem_fun(this, &ActionsNode::onRemoveNode) );
 	m_actions->add( Gtk::Action::create("HideNode", "Hide"), sigc::mem_fun(this, &ActionsNode::onHideNode) );
 	m_actions->add( Gtk::Action::create("HideAllNode", "Hide All"), sigc::mem_fun(this, &ActionsNode::onHideAll) );
-	m_actions->add( Gtk::Action::create("HideAllExecptSelectedNode", "Hide All Except Selection"), sigc::mem_fun(this, &ActionsNode::onHideAllExceptSelected) );
+	m_actions->add( Gtk::Action::create("HideAllExceptSelectedNode", "Hide All Except Selection"), sigc::mem_fun(this, &ActionsNode::onHideAllExceptSelected) );
 	m_actions->add( Gtk::Action::create("HiddenNode", "Hidden Nodes") );
 	m_actions->add( Gtk::Action::create("ShowAllHiddenNode", "Show All"), sigc::mem_fun(this, &ActionsNode::onShowAllHiddenNode) );
 	m_actions->add( Gtk::Action::create("ExportNode", "Export"), sigc::mem_fun(this, &ActionsNode::onExportNode) );
@@ -138,7 +138,7 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 	m_actions->get_action("RemoveNode")->set_visible(false);
 	m_actions->get_action("HideNode")->set_visible(false);
 	m_actions->get_action("HideAllNode")->set_visible(false);
-	m_actions->get_action("HideAllExecptSelectedNode")->set_visible(false);
+	m_actions->get_action("HideAllExceptSelectedNode")->set_visible(false);
 	m_actions->get_action("ShowAllHiddenNode")->set_visible(false);	
 	m_actions->get_action("ExportNode")->set_visible(false);
 	m_actions->get_action("SetToDefault")->set_visible(false);
@@ -146,8 +146,7 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 	m_actions->get_action("InvertTriangleOrientation")->set_visible(false);
 	m_actions->get_action("InvertNormalOrientation")->set_visible(false);
 
-	//check if there are nodes displayed, to put "hide all node" action in menu or not.
-	//if there is no shape, don't display menu at all.
+	//if there is no shape in graph, don't display menu at all.
 	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
 	vgd::Shp< vgd::node::NodeList > result;
 	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
@@ -156,14 +155,10 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		return;
 	}
 
-	std::list< vgd::Shp < vgd::node::Node > >::iterator iter = result->begin();
-	for( iter; iter !=  result->end(); iter++ )
+	int displayedNode = getDisplayedNodeNumber();
+	if (displayedNode > 0 && m_location == CANVAS )
 	{
-		if( !isAlreadyHidden( (*iter) ) )
-		{
-			m_actions->get_action("HideAllNode")->set_visible(true); //show "hide all" only if there is at least one node displayed.
-			break;
-		}
+		m_actions->get_action("HideAllNode")->set_visible(true); //show "hide all" only if there is at least one node displayed.
 	}
 
 	//check if all node contained in m_hiddenNodes exists and display their menu items.
@@ -207,7 +202,11 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		m_actions->get_action("SetOptionalToDefault")->set_visible(true);
 		m_actions->get_action("ExportNode")->set_visible(true);
 		m_actions->get_action("HideNode")->set_visible(true);
-		m_actions->get_action("HideAllExecptSelectedNode")->set_visible(true);
+		if( displayedNode > 1 )
+		{
+			m_actions->get_action("HideAllNode")->set_visible(true);
+			m_actions->get_action("HideAllExceptSelectedNode")->set_visible(true);
+		}
 		m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
 		m_actions->get_action("InvertNormalOrientation")->set_visible(true);
 
@@ -230,8 +229,13 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 			if( !isAlreadyHidden( node ) )
 			{
 				m_actions->get_action("HideNode")->set_visible(true);
-				m_actions->get_action("HideAllExecptSelectedNode")->set_visible(true);
 			}
+			if( displayedNode > 1 )
+			{
+				m_actions->get_action("HideAllNode")->set_visible(true);
+				m_actions->get_action("HideAllExceptSelectedNode")->set_visible(true);
+			}
+
 			m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
 			m_actions->get_action("InvertNormalOrientation")->set_visible(true);
 		}
@@ -315,6 +319,28 @@ bool ActionsNode::isAlreadyHidden( vgd::Shp< vgd::node::Node > node )
 	}
 
 	return retVal;
+}
+
+
+
+int ActionsNode::getDisplayedNodeNumber()
+{
+	int counter = 0;
+
+	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+	vgd::Shp< vgd::node::NodeList > result;
+	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
+
+	std::list< vgd::Shp < vgd::node::Node > >::iterator iter = result->begin();
+	for( iter; iter !=  result->end(); iter++ )
+	{
+		if( !isAlreadyHidden( (*iter) ) )
+		{
+			counter++;
+		}
+	}
+
+	return counter;
 }
 
 

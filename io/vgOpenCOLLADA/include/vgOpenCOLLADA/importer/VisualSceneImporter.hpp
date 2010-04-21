@@ -43,8 +43,10 @@ struct VGOPENCOLLADA_API VisualSceneImporter
 	 * @param node: the COLLADA node.
 	 * 
 	 * @param vgsdkNode: the parent node in current vgsdk scene graph (m_group = root node)
+	 * 
+	 * @param name: name of the node. if empty, name of the parent node.
 	 */
-	void createNode( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode );
+	void createNode( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode, std::string name );
 
 	/**
 	 * @brief Adds geometry transformation to the current node.
@@ -61,8 +63,10 @@ struct VGOPENCOLLADA_API VisualSceneImporter
 	 * @param node: the COLLADA node.
 	 * 
 	 * @param vgsdkNode: the current node in current vgsdk scene graph (m_group = root node)
+	 * 
+	 * @param name: name of the node. if empty, name of the parent node.
 	 */
-	void createNodeGeometry( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode );
+	void createNodeGeometry( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode, std::string shapeName );
 
 private:
 	LOAD_TYPE						m_loadType;
