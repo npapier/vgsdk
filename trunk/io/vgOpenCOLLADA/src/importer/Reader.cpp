@@ -92,7 +92,7 @@ bool Reader::writeVisualScene ( const COLLADAFW::VisualScene* visualScene ) {
 	for (std::size_t i = 0; i<rootNodes.getCount(); i++) 
 	{
 		const COLLADAFW::Node* node = rootNodes.getData()[i];
-		importer.createNode(node, m_group);
+		importer.createNode( node, m_group, node->getName() );
 	}
 	return true;
 }
@@ -211,15 +211,15 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	material->setEmission( color );
 	//
 	//// specularLevel/glosiness
-	float real;
+	float real = 1.f;
 	real = effectCommon->getShininess().getFloatValue();
-	if( real <= 1 )
+	if( real <= 1 && real >= 0 )
 	{
 		material->setShininess( real );
 	}
 	else
 	{
-		//if > 1 ==> it uses Blinn Phong equation. How to use it? (p. 244 COLLADA Spec).
+		//@todo if > 1 ==> it uses Blinn Phong equation. How to use it? (p. 244 COLLADA Spec).
 		///material->setShininess( real );
 		material->setShininess( vgm::clamp<float>( real, 0.f, 1.f ) );
 	}

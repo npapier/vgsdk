@@ -36,7 +36,7 @@ m_switchVertexShape ( switchVertexShape )
 {
 }
 
-void VisualSceneImporter::createNode(const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode)
+void VisualSceneImporter::createNode(const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode, std::string name)
 {
 	vgd::Shp< vgd::node::Group > vgsdkSubNode;
 	//if direct child of the rootnode, we create a TransformSeparator (to prevent from geometry transformation..)
@@ -53,9 +53,20 @@ void VisualSceneImporter::createNode(const COLLADAFW::Node* node, vgd::Shp< vgd:
 
 	vgsdkNode->addChild(vgsdkSubNode);
 
+	//retain parent node name and keep it if current node name is empty
+	std::string nodeName;
+	if( node->getName() == "" )
+	{
+		nodeName = name;
+	}
+	else
+	{
+		nodeName = node->getName();
+	}
+
 	createNodeTransformation(node, vgsdkSubNode);
 
-	createNodeGeometry(node, vgsdkSubNode);
+	createNodeGeometry(node, vgsdkSubNode, nodeName);
 
 
 	//recurcivity for child node.
@@ -64,7 +75,7 @@ void VisualSceneImporter::createNode(const COLLADAFW::Node* node, vgd::Shp< vgd:
 	{
 		if (childNodes.getData()[i]->getType() == COLLADAFW::Node::NODE)
 		{
-			createNode(childNodes.getData()[i], vgsdkSubNode);
+			createNode(childNodes.getData()[i], vgsdkSubNode, nodeName);
 		}
 		else
 		{
@@ -180,7 +191,7 @@ void VisualSceneImporter::createNodeTransformation( const COLLADAFW::Node* node,
 	}
 }
 
-void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode )
+void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode, std::string shapeName )
 {	
 	const COLLADAFW::InstanceGeometryPointerArray& geometries = node->getInstanceGeometries();
 	for (std::size_t i = 0; i < geometries.getCount(); i++ )
@@ -188,14 +199,14 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 		const COLLADAFW::UniqueId& id = geometries.getData()[i]->getInstanciatedObjectId();
 
 		//add each material before adding geometry coresponding geometry.
-		//@todo check if every vertexshape are instanciate ==> every vertexhshape got 1 material.
+		//@todo check if every vertexshape are instanciate ==> every vertexhshape got 1 material : not true.
 		const COLLADAFW::MaterialBindingArray& materialBindingArray = geometries.getData()[i]->getMaterialBindings();
 		vgd::Shp< vgd::node::Group > group = vgd::visitor::findFirstByName< vgd::node::Group >(m_switchVertexShape, id.toAscii());
 
 		//for each instanciate material, we search the coresponding vertexshape.
 		for (std::size_t j = 0; j < materialBindingArray.getCount(); j++)
 		{				
-			vgd::Shp< vgd::node::Group > childNode = vgd::node::Group::create("");
+			vgd::Shp< vgd::node::Group > childNode = vgd::node::Group::create( node->getName() );
 			vgsdkNode->addChild( childNode );
 
 			const COLLADAFW::MaterialBinding& materialBinding = materialBindingArray[j];
@@ -220,6 +231,7 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 			ss2 << matId;
 			std::string name = ss2.str();
 			vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::visitor::findFirstByName< vgd::node::VertexShape >(group, name);
+			vertexShape->setName( shapeName );
 
 			//check if vertexshape contains texture coordinates and no texture are binded to it.
 			//if yes, removes texture coordinates.

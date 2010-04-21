@@ -47,29 +47,38 @@ struct VGOPENCOLLADA_API GeometryImporter
 	*
 	* @return: a vector of every position of current mesh
 	*/
-	void importTriangleMeshPositions();
+	void importMeshPositions();
 
 	/**
 	* @brief: Import all normals for current mesh.
 	*
 	* @return: a vector of every normals of current mesh
 	*/
-	void importTriangleMeshNormals();
+	void importMeshNormals();
 
 	/**
 	* @brief: Import all texture coordinates for current mesh.
 	*
 	* @return: a vector of every texture coordinates of current mesh
 	*/
-	void importTriangleMeshUVCoords();
+	void importMeshUVCoords();
 
 	/**
-	* @brief: Import primitives of the mesh. Each primitives (<triangles> tag) is a vertexShape.
+	* @brief: Import primitives of the mesh considering the type. Each primitives (<triangles> tag) is a vertexShape.
 	*
 	* @return: bool. True if everything is ok.
 	*/
 	bool importMeshPrimitives( vgd::Shp< vgd::node::Group > group );
 	
+	/**
+	* @brief: Import triangle primitives. Each primitives (<triangles> tag) is a vertexShape.
+	*/
+	void importTriangleMeshPrimitives( vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive );
+
+	/**
+	* @brief: Import polylist primitives. Each primitives (<polylist> tag) is a vertexShape.
+	*/
+	void importPolygonMeshPrimitives( vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive );
 
 private:
 	COLLADAFW::Mesh*			m_mesh;

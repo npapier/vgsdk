@@ -82,7 +82,8 @@ private:
 	void onInvertTriangleOrientation();				///< Handles the action that will invert triangles orientation.
 	void onInvertNormalOrientation();				///< Handles the action that will invert nsls orientation.
 
-	bool isAlreadyHidden( vgd::Shp< vgd::node::Node > node );
+	bool isAlreadyHidden( vgd::Shp< vgd::node::Node > node );	///< Return tif the node is actually displayed or hidden.
+	int getDisplayedNodeNumber();					///< Return the number of node which are displayed
 
 	vgd::WeakPtr< vgd::node::Node >		m_currentNode;
 	vgUI::Canvas						*m_canvas;
