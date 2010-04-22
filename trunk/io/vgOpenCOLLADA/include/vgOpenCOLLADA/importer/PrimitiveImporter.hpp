@@ -33,16 +33,16 @@ namespace importer
  *			Import triangle primitives. Each mesh/primitive (<triangles> tag) is a vertexShape.
  */
 template< typename PrimitiveType >
-struct VGOPENCOLLADA_API PrimitiveImporter
+struct VGOPENCOLLADA_API TPrimitiveImporter
 {
 
-	PrimitiveImporter( std::vector< vgm::Vec3f > positions, std::vector< vgm::Vec3f > normals,
-		std::vector< vgm::Vec2f > textCoords, LOAD_TYPE loadType,
+	TPrimitiveImporter( std::vector< vgm::Vec3f > positions, std::vector< vgm::Vec3f > normals,
+		std::vector< vgm::Vec2f > texCoords, LOAD_TYPE loadType,
 		vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial,
 		vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive ) :
 	m_positions( positions ),
 	m_normals( normals ),
-	m_textCoords( textCoords ),
+	m_texCoords( texCoords ),
 	m_loadType( loadType ),
 	m_mapShapeMaterial( mapShapeMaterial ),
 	m_group( group ),
@@ -61,11 +61,11 @@ struct VGOPENCOLLADA_API PrimitiveImporter
 	{
 		initialize();
 		
-		//hashmap used to check if the vertex/normal/textCoord set doesn't exists yet.
+		//hashmap used to check if the vertex/normal/texCoord set doesn't exists yet.
 		m_hashmap.clear();
 		for ( size_t j = 0; j < m_primitivesNumber; j++ )
 		{
-			loop( j );
+			processPrimitive( j );
 		}
 
 		vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, m_editVertexIndex->size() );
@@ -88,7 +88,7 @@ struct VGOPENCOLLADA_API PrimitiveImporter
 	{
 		//check if mesh has texture coordinates.
 		m_hasTextCoords = false;
-		if( m_primitives->hasUVCoordIndices() && m_textCoords.size() > 0 && m_loadType > LOAD_MATERIAL)
+		if( m_primitives->hasUVCoordIndices() && m_texCoords.size() > 0 && m_loadType > LOAD_MATERIAL)
 		{
 			m_hasTextCoords = true;
 		}
@@ -127,7 +127,7 @@ struct VGOPENCOLLADA_API PrimitiveImporter
 	/**
 	* @brief The procedure of the loop, called for each primitives.
 	*/
-	void loop( int j )
+	void processPrimitive( int j )
 	{
 		std::vector<float> hash_me;
 
@@ -141,9 +141,9 @@ struct VGOPENCOLLADA_API PrimitiveImporter
 
 		if ( m_hasTextCoords )
 		{
-			hash_me.push_back( m_textCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][0] );
-			hash_me.push_back( m_textCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][1] );
-			hash_me.push_back( m_textCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][2] );
+			hash_me.push_back( m_texCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][0] );
+			hash_me.push_back( m_texCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][1] );
+			hash_me.push_back( m_texCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][2] );
 		}
 
 
@@ -163,7 +163,7 @@ struct VGOPENCOLLADA_API PrimitiveImporter
 
 			if ( m_hasTextCoords )
 			{
-				m_editTextCoords->push_back( m_textCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ] );
+				m_editTextCoords->push_back( m_texCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ] );
 			}
 			
 			m_editVertexIndex->push_back( m_editPositions->size()-1 );
@@ -175,7 +175,7 @@ struct VGOPENCOLLADA_API PrimitiveImporter
 protected:
 	std::vector< vgm::Vec3f >	m_positions;
 	std::vector< vgm::Vec3f >	m_normals;
-	std::vector< vgm::Vec2f >	m_textCoords;
+	std::vector< vgm::Vec2f >	m_texCoords;
 	LOAD_TYPE					m_loadType;
 
 	const PrimitiveType*							m_primitives;
@@ -202,14 +202,14 @@ protected:
 /**
 * @brief Import polylist primitives. Each primitives (<polylist> tag) is a vertexShape.
 */
-struct VGOPENCOLLADA_API PrimitivePolygonsImporter : PrimitiveImporter< COLLADAFW::Polygons >
+struct VGOPENCOLLADA_API PrimitivePolygonsImporter : TPrimitiveImporter< COLLADAFW::Polygons >
 {
 
 	PrimitivePolygonsImporter( std::vector< vgm::Vec3f > positions, std::vector< vgm::Vec3f > normals,
-		std::vector< vgm::Vec2f > textCoords, LOAD_TYPE loadType,
+		std::vector< vgm::Vec2f > texCoords, LOAD_TYPE loadType,
 		vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial,
 		vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive ) :
-	PrimitiveImporter( positions, normals, textCoords, loadType, mapShapeMaterial, group, meshPrimitive )
+	TPrimitiveImporter( positions, normals, texCoords, loadType, mapShapeMaterial, group, meshPrimitive )
 	{
 	}
 
@@ -221,7 +221,7 @@ struct VGOPENCOLLADA_API PrimitivePolygonsImporter : PrimitiveImporter< COLLADAF
 	{
 		initialize();
 		
-		//hashmap used to check if the vertex/normal/textCoord set doesn't exists yet.
+		//hashmap used to check if the vertex/normal/texCoord set doesn't exists yet.
 		m_hashmap.clear();
 		const COLLADAFW::IntValuesArray& faceVertexCountArray = m_primitives->getGroupedVerticesVertexCountArray();
 		int indexCount = 0; //number of polygons parsed
@@ -230,7 +230,7 @@ struct VGOPENCOLLADA_API PrimitivePolygonsImporter : PrimitiveImporter< COLLADAF
 
 		for ( size_t j = 0; j < m_primitivesNumber; j++ )
 		{
-			loop( j );
+			processPrimitive( j );
 
 			indexCount++;
 			if( indexCount % lastFaceNumber == 0 )
