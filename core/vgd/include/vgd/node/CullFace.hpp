@@ -100,8 +100,8 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 			std::vector< int > retVal;
 
 			retVal.push_back( 256 );
-			retVal.push_back( 258 );
 			retVal.push_back( 257 );
+			retVal.push_back( 258 );
 			retVal.push_back( 259 );
 
 			return retVal;
@@ -112,8 +112,8 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 			std::vector< std::string > retVal;
 
 			retVal.push_back( "DISABLED" );
-			retVal.push_back( "FRONT" );
 			retVal.push_back( "BACK" );
+			retVal.push_back( "FRONT" );
 			retVal.push_back( "FRONT_AND_BACK" );
 
 			return retVal;

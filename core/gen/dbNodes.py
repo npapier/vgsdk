@@ -12,7 +12,9 @@
 ############
 class EnumRegistry :
 	_id		= 255
-	_values	= {}
+
+	_values	= {}	# enum_string, enum_id
+	_rvalues = {}	# enum_id, enum_string
 
 	@classmethod
 	def nextID( self ):
@@ -23,19 +25,29 @@ class EnumRegistry :
 	@classmethod
 	def register( self, nodeName, fieldName, enumValue ):
 		newValue = nodeName + '.' + fieldName + '.' + enumValue
-		if newValue not in self._values :
-			self._values[newValue] = self.nextID()
+		if newValue not in self._values:
+			newID = self.nextID()
+			self._values[newValue] = newID
+			self._rvalues[newID] = newValue
 		else:
 			raise StandardError("Enum value %s already defined." % newValue)
 
 
 	@classmethod
-	def getID( self, nodeName, fieldName, enumValue ) :
+	def getID( self, nodeName, fieldName, enumValue ):
 		newValue = nodeName + '.' + fieldName + '.' + enumValue
 		if newValue in self._values :
 			return self._values[newValue]
 		else :
 			raise StandardError("Enum value %s not registered" % newValue )
+
+
+	@classmethod
+	def getString( self, id ):
+		if id in self._rvalues:
+			return self._rvalues[id].split('.')[2]
+		else:
+			raise StandardError("Enum value %i not registered" % id )
 
 
 	@classmethod
@@ -92,7 +104,7 @@ class Enum ( Type ):
 
 	def __init__( self, nodeName, fieldName ):
 		Type.__init__( self, "enum", nodeName, fieldName )
-		self.values = {}
+		self.values = {}	# enum_string, enum_doc
 
 	def addValue( self, value, docValue = "" ):
 		if value not in self.values :
@@ -116,7 +128,7 @@ class Enum ( Type ):
 """ % self._generateDefinition()
 
 		strValues = ""
-		for value in self._getValues():
+		for value in self._getIds():
 			strValues += """\t\t\tretVal.push_back( %s );\n""" % value
 
 		strStrings = ""
@@ -182,11 +194,15 @@ class Enum ( Type ):
 
 		return str
 
-	def _getValues( self ):
-		return [ EnumRegistry.getID(self.nodeName, self.fieldName, value) for value in self.values.iterkeys() ]
+
+	def _getIds( self ):
+		keys = self.values.keys()
+		ids = [ EnumRegistry.getID(self.nodeName, self.fieldName, key) for key in keys ]
+		return sorted(ids)
 
 	def _getStrings( self ):
-		return [ value for value in self.values.iterkeys() ]
+		sortedIds = self._getIds()
+		return [ EnumRegistry.getString(id) for id in sortedIds ]
 
 
 
