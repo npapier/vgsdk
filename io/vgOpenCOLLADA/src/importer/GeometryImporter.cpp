@@ -107,17 +107,17 @@ void GeometryImporter::importMeshUVCoords()
 	//const COLLADAFW::MeshVertexData::InputInfosArray& uvInputInfos = uvCoordinates.getInputInfosArray();
 	//COLLADAFW::MeshVertexData::InputInfos* inputInfo = uvInputInfos[ 0 ];
 
-	int32 textCoordSize = (int)uvCoordinates.getValuesCount();
-	int32 textCoordStride = 3;//inputInfo->mStride;
+	int32 texCoordSize = (int)uvCoordinates.getValuesCount();
+	int32 texCoordStride = 3;//inputInfo->mStride;
 
-	const COLLADAFW::FloatArray* textCoordArray = uvCoordinates.getFloatValues();
+	const COLLADAFW::FloatArray* texCoordArray = uvCoordinates.getFloatValues();
 
-	int32 textCoordCount = textCoordSize / textCoordStride;
+	int32 texCoordCount = texCoordSize / texCoordStride;
 
-	std::vector< vgm::Vec2f > textCoords;
-	for ( int i = 0; i < textCoordCount; ++i)
+	std::vector< vgm::Vec2f > texCoords;
+	for ( int i = 0; i < texCoordCount; ++i)
 	{
-		m_textCoords.push_back(vgm::Vec2f( (float)(*textCoordArray)[textCoordStride*i], (float)(*textCoordArray)[textCoordStride*i + 1] ));
+		m_texCoords.push_back(vgm::Vec2f( (float)(*texCoordArray)[texCoordStride*i], (float)(*texCoordArray)[texCoordStride*i + 1] ));
 	}
 }
 
@@ -138,12 +138,12 @@ bool GeometryImporter::importMeshPrimitives( vgd::Shp< vgd::node::Group > group 
 
 		if( meshPrimitive->getPrimitiveType() == COLLADAFW::MeshPrimitive::TRIANGLES )
 		{
-			PrimitiveImporter< COLLADAFW::Triangles > importer( m_positions, m_normals, m_textCoords, m_loadType, m_mapShapeMaterial, group, meshPrimitive );
+			TPrimitiveImporter< COLLADAFW::Triangles > importer( m_positions, m_normals, m_texCoords, m_loadType, m_mapShapeMaterial, group, meshPrimitive );
 			importer.importMeshPrimitives();
 		}
 		else if( meshPrimitive->getPrimitiveType() == COLLADAFW::MeshPrimitive::POLYGONS )
 		{
-			PrimitivePolygonsImporter importer( m_positions, m_normals, m_textCoords, m_loadType, m_mapShapeMaterial, group, meshPrimitive );
+			PrimitivePolygonsImporter importer( m_positions, m_normals, m_texCoords, m_loadType, m_mapShapeMaterial, group, meshPrimitive );
 			importer.importMeshPrimitives();
 		}
 		else
