@@ -273,10 +273,10 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 			retVal.push_back( 303 );
 			retVal.push_back( 304 );
-			retVal.push_back( 306 );
 			retVal.push_back( 305 );
-			retVal.push_back( 308 );
+			retVal.push_back( 306 );
 			retVal.push_back( 307 );
+			retVal.push_back( 308 );
 
 			return retVal;
 		}
@@ -287,10 +287,10 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 			retVal.push_back( "NEAREST" );
 			retVal.push_back( "LINEAR" );
-			retVal.push_back( "LINEAR_MIPMAP_NEAREST" );
 			retVal.push_back( "NEAREST_MIPMAP_NEAREST" );
-			retVal.push_back( "LINEAR_MIPMAP_LINEAR" );
+			retVal.push_back( "LINEAR_MIPMAP_NEAREST" );
 			retVal.push_back( "NEAREST_MIPMAP_LINEAR" );
+			retVal.push_back( "LINEAR_MIPMAP_LINEAR" );
 
 			return retVal;
 		}
@@ -363,8 +363,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 293 );
 			retVal.push_back( 292 );
+			retVal.push_back( 293 );
 			retVal.push_back( 294 );
 
 			return retVal;
@@ -374,8 +374,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "WRAP_T" );
 			retVal.push_back( "WRAP_S" );
+			retVal.push_back( "WRAP_T" );
 			retVal.push_back( "WRAP_R" );
 
 			return retVal;
@@ -420,11 +420,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 296 );
 			retVal.push_back( 295 );
-			retVal.push_back( 299 );
+			retVal.push_back( 296 );
 			retVal.push_back( 297 );
 			retVal.push_back( 298 );
+			retVal.push_back( 299 );
 			retVal.push_back( 300 );
 
 			return retVal;
@@ -434,11 +434,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "CLAMP" );
 			retVal.push_back( "REPEAT" );
-			retVal.push_back( "MIRRORED_REPEAT" );
+			retVal.push_back( "CLAMP" );
 			retVal.push_back( "CLAMP_TO_EDGE" );
 			retVal.push_back( "CLAMP_TO_BORDER" );
+			retVal.push_back( "MIRRORED_REPEAT" );
 			retVal.push_back( "ONCE" );
 
 			return retVal;
@@ -511,11 +511,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
+			retVal.push_back( 287 );
 			retVal.push_back( 288 );
 			retVal.push_back( 289 );
-			retVal.push_back( 287 );
-			retVal.push_back( 291 );
 			retVal.push_back( 290 );
+			retVal.push_back( 291 );
 
 			return retVal;
 		}
@@ -524,11 +524,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
+			retVal.push_back( "AUTOMATIC" );
 			retVal.push_back( "DEPTH_COMPONENT_16" );
 			retVal.push_back( "DEPTH_COMPONENT_24" );
-			retVal.push_back( "AUTOMATIC" );
-			retVal.push_back( "DEPTH_COMPONENT_32F" );
 			retVal.push_back( "DEPTH_COMPONENT_32" );
+			retVal.push_back( "DEPTH_COMPONENT_32F" );
 
 			return retVal;
 		}

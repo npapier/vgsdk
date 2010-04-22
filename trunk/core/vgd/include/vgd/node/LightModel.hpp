@@ -127,9 +127,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
+			retVal.push_back( 262 );
 			retVal.push_back( 263 );
 			retVal.push_back( 264 );
-			retVal.push_back( 262 );
 			retVal.push_back( 265 );
 
 			return retVal;
@@ -139,9 +139,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< std::string > retVal;
 
+			retVal.push_back( "INT16" );
 			retVal.push_back( "INT24" );
 			retVal.push_back( "INT32" );
-			retVal.push_back( "INT16" );
 			retVal.push_back( "FLOAT32" );
 
 			return retVal;
@@ -308,10 +308,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
+			retVal.push_back( 281 );
+			retVal.push_back( 282 );
 			retVal.push_back( 283 );
 			retVal.push_back( 284 );
-			retVal.push_back( 282 );
-			retVal.push_back( 281 );
 
 			return retVal;
 		}
@@ -320,10 +320,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< std::string > retVal;
 
+			retVal.push_back( "LOW" );
+			retVal.push_back( "MEDIUM" );
 			retVal.push_back( "HIGH" );
 			retVal.push_back( "VERY_HIGH" );
-			retVal.push_back( "MEDIUM" );
-			retVal.push_back( "LOW" );
 
 			return retVal;
 		}
@@ -561,9 +561,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 268 );
 			retVal.push_back( 266 );
 			retVal.push_back( 267 );
+			retVal.push_back( 268 );
 
 			return retVal;
 		}
@@ -572,9 +572,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "STANDARD_PER_PIXEL" );
 			retVal.push_back( "LIGHTING_OFF" );
 			retVal.push_back( "STANDARD_PER_VERTEX" );
+			retVal.push_back( "STANDARD_PER_PIXEL" );
 
 			return retVal;
 		}
@@ -656,16 +656,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 275 );
-			retVal.push_back( 272 );
 			retVal.push_back( 271 );
-			retVal.push_back( 276 );
-			retVal.push_back( 280 );
-			retVal.push_back( 278 );
+			retVal.push_back( 272 );
 			retVal.push_back( 273 );
-			retVal.push_back( 279 );
-			retVal.push_back( 277 );
 			retVal.push_back( 274 );
+			retVal.push_back( 275 );
+			retVal.push_back( 276 );
+			retVal.push_back( 277 );
+			retVal.push_back( 278 );
+			retVal.push_back( 279 );
+			retVal.push_back( 280 );
 
 			return retVal;
 		}
@@ -674,16 +674,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "SHADOW_MAPPING_16U" );
-			retVal.push_back( "SHADOW_MAPPING" );
 			retVal.push_back( "SHADOW_OFF" );
-			retVal.push_back( "SHADOW_MAPPING_16UM" );
-			retVal.push_back( "SHADOW_MAPPING_64UM" );
-			retVal.push_back( "SHADOW_MAPPING_32UM" );
+			retVal.push_back( "SHADOW_MAPPING" );
 			retVal.push_back( "SHADOW_MAPPING_4U" );
-			retVal.push_back( "SHADOW_MAPPING_64U" );
-			retVal.push_back( "SHADOW_MAPPING_32U" );
 			retVal.push_back( "SHADOW_MAPPING_4DM" );
+			retVal.push_back( "SHADOW_MAPPING_16U" );
+			retVal.push_back( "SHADOW_MAPPING_16UM" );
+			retVal.push_back( "SHADOW_MAPPING_32U" );
+			retVal.push_back( "SHADOW_MAPPING_32UM" );
+			retVal.push_back( "SHADOW_MAPPING_64U" );
+			retVal.push_back( "SHADOW_MAPPING_64UM" );
 
 			return retVal;
 		}
