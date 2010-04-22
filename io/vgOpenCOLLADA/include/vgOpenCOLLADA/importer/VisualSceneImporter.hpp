@@ -9,6 +9,8 @@
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
+#include <boost/unordered_map.hpp>
+
 #include <COLLADAFWNode.h>
 
 #include "vgOpenCOLLADA/convenience.hpp"
@@ -28,7 +30,7 @@ namespace importer
  */
 struct VGOPENCOLLADA_API VisualSceneImporter
 {
-	VisualSceneImporter( LOAD_TYPE loadType, vgd::Shp< vgd::node::Switch > switchMaterial, vgd::Shp< vgd::node::Switch > switchVertexShape );
+	VisualSceneImporter( LOAD_TYPE loadType, vgd::Shp< vgd::node::Switch > switchMaterial, vgd::Shp< vgd::node::Switch > switchVertexShape, vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial, vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > mapMaterial );
 
 	/**
 	 * @brief Return the whole scene
@@ -72,6 +74,8 @@ private:
 	LOAD_TYPE						m_loadType;
 	vgd::Shp< vgd::node::Switch >	m_switchMaterial;
 	vgd::Shp< vgd::node::Switch >	m_switchVertexShape;
+	vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > m_mapShapeMaterial;
+	vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > m_mapMaterial;
 
 };
 

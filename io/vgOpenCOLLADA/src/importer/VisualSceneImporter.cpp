@@ -29,10 +29,12 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
-VisualSceneImporter::VisualSceneImporter( LOAD_TYPE loadType, vgd::Shp< vgd::node::Switch > switchMaterial, vgd::Shp< vgd::node::Switch > switchVertexShape ) :
+VisualSceneImporter::VisualSceneImporter( LOAD_TYPE loadType, vgd::Shp< vgd::node::Switch > switchMaterial, vgd::Shp< vgd::node::Switch > switchVertexShape, vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial, vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > mapMaterial ) :
 m_loadType ( loadType ),
 m_switchMaterial ( switchMaterial ),
-m_switchVertexShape ( switchVertexShape )
+m_switchVertexShape ( switchVertexShape ),
+m_mapShapeMaterial( mapShapeMaterial ),
+m_mapMaterial( mapMaterial )
 {
 }
 
@@ -197,64 +199,43 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 	for (std::size_t i = 0; i < geometries.getCount(); i++ )
 	{
 		const COLLADAFW::UniqueId& id = geometries.getData()[i]->getInstanciatedObjectId();
-
-		//add each material before adding geometry coresponding geometry.
-		//@todo check if every vertexshape are instanciate ==> every vertexhshape got 1 material : not true.
 		const COLLADAFW::MaterialBindingArray& materialBindingArray = geometries.getData()[i]->getMaterialBindings();
 		vgd::Shp< vgd::node::Group > group = vgd::visitor::findFirstByName< vgd::node::Group >(m_switchVertexShape, id.toAscii());
 
-		//for each instanciate material, we search the coresponding vertexshape.
-		for (std::size_t j = 0; j < materialBindingArray.getCount(); j++)
-		{				
+		vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+		vgd::Shp< vgd::node::NodeList > result;
+		result = vgd::visitor::find( group, predicate );
+
+		std::list< vgd::Shp < vgd::node::Node > >::iterator it = result->begin();
+		for( it; it !=  result->end(); it++ )
+		{
+			vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::dynamic_pointer_cast< vgd::node::VertexShape >(*it);
+			vertexShape->setName( shapeName );
+
 			vgd::Shp< vgd::node::Group > childNode = vgd::node::Group::create( node->getName() );
 			vgsdkNode->addChild( childNode );
 
-			const COLLADAFW::MaterialBinding& materialBinding = materialBindingArray[j];
-			//search material.
-			int matId = materialBinding.getMaterialId();
-			int classId = materialBinding.getReferencedMaterial().getClassId();
-			int objectId = (int)materialBinding.getReferencedMaterial().getObjectId();
-			vgd::Shp< vgd::node::Group > material;
 			if ( m_loadType > LOAD_GEOMETRY )
 			{
-				std::stringstream ss;
-				ss << "mat:UniqueID\\(" << classId << "," << objectId << "\\)" << ".*";
-				std::string regex = ss.str();
-
-				vgd::visitor::predicate::ByRegexName predicate(regex);
-				material = vgd::visitor::findFirst< vgd::node::Group >( m_switchMaterial, predicate );
-				childNode->addChild( material );
-			}
-			
-			//search coresponding vertexshape (matID = vertexshape name).
-			std::stringstream ss2;
-			ss2 << matId;
-			std::string name = ss2.str();
-			vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::visitor::findFirstByName< vgd::node::VertexShape >(group, name);
-			vertexShape->setName( shapeName );
-
-			//check if vertexshape contains texture coordinates and no texture are binded to it.
-			//if yes, removes texture coordinates.
-			if ( m_loadType > LOAD_GEOMETRY )
-			{
-				vgd::visitor::predicate::ByType< vgd::node::Texture2D > type;
-				if( !vgd::visitor::findFirst< vgd::node::Texture2D >( material, type ) )
+				if( m_mapShapeMaterial->find( vertexShape ) != m_mapShapeMaterial->end() )
 				{
-					if( vertexShape->hasFTexCoord(0) )
+					int matId = (*m_mapShapeMaterial)[vertexShape];
+					for (std::size_t j = 0; j < materialBindingArray.getCount(); j++)
 					{
-						vertexShape->setTexCoordBinding(0, vgd::node::BIND_OFF);
-						vertexShape->removeTexUnits(0);
+						if ( materialBindingArray[j].getMaterialId() == matId )
+						{						
+							const COLLADAFW::MaterialBinding& materialBinding = materialBindingArray[j];
+							std::string id = materialBinding.getReferencedMaterial().toAscii();
+							
+							if( m_mapMaterial->find( id ) != m_mapMaterial->end() )
+							{
+								childNode->addChild( (*m_mapMaterial)[id] );
+							}
+						}
 					}
 				}
 			}
-			else
-			{
-				if( vertexShape->hasFTexCoord(0) )
-				{
-					vertexShape->setTexCoordBinding(0, vgd::node::BIND_OFF);
-					vertexShape->removeTexUnits(0);
-				}
-			}
+			
 			childNode->addChild( vertexShape );
 		}
 	}

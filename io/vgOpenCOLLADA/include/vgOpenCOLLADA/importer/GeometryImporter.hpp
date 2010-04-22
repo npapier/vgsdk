@@ -9,7 +9,9 @@
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
-#include "vgOpenCOLLADA/convenience.hpp"
+#include <boost/unordered_map.hpp>  
+
+#include <vgOpenCOLLADA/convenience.hpp>
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
@@ -28,7 +30,7 @@ namespace importer
  */
 struct VGOPENCOLLADA_API GeometryImporter
 {
-	GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType );
+	GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType, vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial );
 	
 	/**
 	 * @brief Creates geometry.
@@ -69,16 +71,6 @@ struct VGOPENCOLLADA_API GeometryImporter
 	* @return: bool. True if everything is ok.
 	*/
 	bool importMeshPrimitives( vgd::Shp< vgd::node::Group > group );
-	
-	/**
-	* @brief: Import triangle primitives. Each primitives (<triangles> tag) is a vertexShape.
-	*/
-	void importTriangleMeshPrimitives( vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive );
-
-	/**
-	* @brief: Import polylist primitives. Each primitives (<polylist> tag) is a vertexShape.
-	*/
-	void importPolygonMeshPrimitives( vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive );
 
 private:
 	COLLADAFW::Mesh*			m_mesh;
@@ -86,6 +78,8 @@ private:
 	std::vector< vgm::Vec3f >	m_normals;
 	std::vector< vgm::Vec2f >	m_textCoords;
 	LOAD_TYPE					m_loadType;
+
+	vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > m_mapShapeMaterial;
 
 };
 

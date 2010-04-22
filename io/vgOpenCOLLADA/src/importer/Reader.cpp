@@ -38,6 +38,10 @@ Reader::Reader(LOAD_TYPE type) :
 m_loadType ( type )
 {
 	m_scene.first = true;
+	m_mapShapeMaterial = vgd::makeShp( new boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > );
+	m_mapMaterialEffect = vgd::makeShp( new boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > );
+	m_mapMaterial = vgd::makeShp( new boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > );
+	m_mapTextures = vgd::makeShp( new boost::unordered_map< std::string, vgd::Shp< vgd::node::Texture2D > > );
 }
 
 
@@ -86,7 +90,7 @@ bool Reader::writeVisualScene ( const COLLADAFW::VisualScene* visualScene ) {
 	
 	//get the root nodes under the visual_scene element
 	const COLLADAFW::NodePointerArray& rootNodes = visualScene->getRootNodes();
-	vgOpenCOLLADA::importer::VisualSceneImporter importer(m_loadType, m_switchMaterial, m_switchVertexShape);
+	vgOpenCOLLADA::importer::VisualSceneImporter importer( m_loadType, m_switchMaterial, m_switchVertexShape, m_mapShapeMaterial, m_mapMaterial );
 
 	//for each node of the rootnode
 	for (std::size_t i = 0; i<rootNodes.getCount(); i++) 
@@ -106,7 +110,7 @@ bool Reader::writeGeometry ( const COLLADAFW::Geometry* geometry )
 	{
 		try 
 		{
-			vgOpenCOLLADA::importer::GeometryImporter importer( geometry, m_loadType );
+			vgOpenCOLLADA::importer::GeometryImporter importer( geometry, m_loadType, m_mapShapeMaterial );
 			std::pair< bool, vgd::Shp< vgd::node::Group > > retVal = importer.loadMesh();
 			
 			if ( !retVal.first )
@@ -133,11 +137,11 @@ bool Reader::writeGeometry ( const COLLADAFW::Geometry* geometry )
 bool Reader::writeMaterial( const COLLADAFW::Material* material )
 {
 	//called before writeEffect.
-	//material name = effect id because it is the only why to find material in writeEffect method.
-
-	std::string name = "mat:" + material->getUniqueId().toAscii() + " effect:" + material->getInstantiatedEffect().toAscii();
-	vgd::Shp< vgd::node::Group > container = vgd::node::Group::create( name );
+	std::string name = material->getInstantiatedEffect().toAscii();
+	vgd::Shp< vgd::node::Group > container = vgd::node::Group::create( material->getName() );
 	m_switchMaterial->addChild( container );
+	(*m_mapMaterialEffect)[material->getInstantiatedEffect().toAscii()] = container;
+	(*m_mapMaterial)[material->getUniqueId().toAscii()] = container;
 
 	return true;
 }
@@ -148,14 +152,12 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 {
 	vgd::Shp< vgd::node::Material > material = vgd::node::Material::create( effect->getName() );
 	
-	std::stringstream ss;
-	int classId = effect->getUniqueId().getClassId();
-	int objectId = (int)effect->getUniqueId().getObjectId();
-	ss << ".*" << "effect:UniqueID\\(" << classId << "," << objectId << "\\)";
-	std::string regex = ss.str();
+	if( m_mapMaterialEffect->find( effect->getUniqueId().toAscii() ) == m_mapMaterialEffect->end() )
+	{
+		return false;
+	}
 
-	vgd::visitor::predicate::ByRegexName predicate(regex);
-	vgd::Shp< vgd::node::Group > container = vgd::visitor::findFirst< vgd::node::Group >( m_switchMaterial, predicate );
+	vgd::Shp< vgd::node::Group > container = (*m_mapMaterialEffect)[effect->getUniqueId().toAscii()];
 
 	container->addChild( material );
 	
@@ -234,8 +236,12 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 		{
 			const COLLADAFW::Sampler* sampler = effectCommon->getSamplerPointerArray().getData()[i];
 
-			vgd::Shp< vgd::node::Texture2D > texture (vgd::visitor::findFirstByName< vgd::node::Texture2D >( m_switchTexture, sampler->getSourceImage().toAscii() ) );
+			if( m_mapTextures->find( sampler->getSourceImage().toAscii() ) == m_mapTextures->end() )
+			{
+				return false;
+			}
 
+			vgd::Shp< vgd::node::Texture2D > texture = (*m_mapTextures)[sampler->getSourceImage().toAscii()];
 			//@TODO: tex must be a copy of the stored texture because one texture can be used in several materials with different parameters.
 			// cloneTexture function was created, but a function to clone Node may be better.
 			vgd::Shp< vgd::node::Texture2D > tex = cloneTexture( texture );
@@ -340,7 +346,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 
 bool Reader::writeImage( const COLLADAFW::Image* image )
 {
-	vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( image->getUniqueId().toAscii() );
+	vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( image->getName() );
 	//tex->setMultiAttributeIndex( (int8)0 ); //@todo manage multi textures
 
 	//@todo manage full path. Only works with relative path atm.
@@ -362,6 +368,7 @@ bool Reader::writeImage( const COLLADAFW::Image* image )
 	tex->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
 	
 	m_switchTexture->addChild( tex );
+	(*m_mapTextures)[image->getUniqueId().toAscii()] = tex;
 
 	return true;
 }
