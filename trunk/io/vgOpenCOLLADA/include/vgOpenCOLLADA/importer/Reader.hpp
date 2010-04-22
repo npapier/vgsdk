@@ -10,6 +10,8 @@
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 #include "vgOpenCOLLADA/convenience.hpp"
 
+#include <boost/unordered_map.hpp>  
+
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Switch.hpp>
@@ -122,6 +124,11 @@ private:
 	vgd::Shp< vgd::node::Switch >					m_switchMaterial;
 	vgd::Shp< vgd::node::Switch >					m_switchTexture;
 	vgd::Shp< vgd::node::Switch >					m_switchVertexShape;
+
+	vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > m_mapShapeMaterial; //< vertexshape, id of its material >
+	vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > m_mapMaterialEffect; //< id of its effect, group containing material >
+	vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > m_mapMaterial; //< id of material, group containing material >
+	vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Texture2D > > > m_mapTextures; //< id of texture, texture node >
 
 };
 

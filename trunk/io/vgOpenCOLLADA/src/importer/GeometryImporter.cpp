@@ -5,12 +5,10 @@
 
 #include "vgOpenCOLLADA/importer/GeometryImporter.hpp"
 
-#include <boost/functional/hash.hpp>
-#include <boost/unordered_map.hpp>  
-
 #include <COLLADAFWPolygons.h>
 #include <COLLADAFWTriangles.h>
 
+#include <vgOpenCOLLADA/importer/PrimitiveImporter.hpp>
 
 namespace vgOpenCOLLADA
 {
@@ -18,8 +16,9 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
-GeometryImporter::GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType ) :
-m_loadType( loadType )
+GeometryImporter::GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType, vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial ) :
+m_loadType( loadType ),
+m_mapShapeMaterial( mapShapeMaterial )
 {
 	m_mesh = (COLLADAFW::Mesh*) geometry;
 }
@@ -136,269 +135,24 @@ bool GeometryImporter::importMeshPrimitives( vgd::Shp< vgd::node::Group > group 
 		{
 			continue;		
 		}
-		if( meshPrimitive->getPrimitiveType() != COLLADAFW::MeshPrimitive::TRIANGLES && meshPrimitive->getPrimitiveType() != COLLADAFW::MeshPrimitive::POLYGONS )
+
+		if( meshPrimitive->getPrimitiveType() == COLLADAFW::MeshPrimitive::TRIANGLES )
+		{
+			PrimitiveImporter< COLLADAFW::Triangles > importer( m_positions, m_normals, m_textCoords, m_loadType, m_mapShapeMaterial, group, meshPrimitive );
+			importer.importMeshPrimitives();
+		}
+		else if( meshPrimitive->getPrimitiveType() == COLLADAFW::MeshPrimitive::POLYGONS )
+		{
+			PrimitivePolygonsImporter importer( m_positions, m_normals, m_textCoords, m_loadType, m_mapShapeMaterial, group, meshPrimitive );
+			importer.importMeshPrimitives();
+		}
+		else
 		{
 			throw std::runtime_error("Only triangles/polylist mesh are supported.");
-		}
-
-		switch( meshPrimitive->getPrimitiveType() )
-		{
-			case COLLADAFW::MeshPrimitive::TRIANGLES:
-				importTriangleMeshPrimitives( group, meshPrimitive );
-				break;
-
-			case COLLADAFW::MeshPrimitive::POLYGONS:
-				importPolygonMeshPrimitives( group, meshPrimitive );
-				break;
-
-			default:
-				throw std::runtime_error("Only triangles/polylist mesh are supported.");
-				break;
 		}
 	}
 
 	return true;
-}
-
-
-
-void GeometryImporter::importTriangleMeshPrimitives( vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive )
-{
-	const COLLADAFW::Triangles* triangles = (const COLLADAFW::Triangles*) meshPrimitive;
-	const COLLADAFW::UIntValuesArray& positionIndices = triangles->getPositionIndices();
-	const COLLADAFW::UIntValuesArray& normalIndices = triangles->getNormalIndices();		
-	
-	//check if mesh has texture coordinates.
-	bool hasTextCoords = false;
-	if( triangles->hasUVCoordIndices() && m_textCoords.size() > 0 && m_loadType > LOAD_MATERIAL)
-	{
-		hasTextCoords = true;
-	}
-
-	int trianglesNumber = positionIndices.getCount();
-
-	std::stringstream ss;
-	ss << triangles->getMaterialId();
-	std::string name = ss.str();
-	//Create vertexshape with its material ID. Very important, name used to bind material to vertexshape during instanciation.
-	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::node::VertexShape::create( name );
-
-	vgd::field::EditorRW< vgd::field::MFUInt32 >	editVertexIndex	= vertexShape->getFVertexIndexRW();
-
-	vgd::field::EditorRW< vgd::field::MFVec3f >	editPositions = vertexShape->getFVertexRW();
-	editPositions->clear();
-	editPositions->reserve( trianglesNumber );
-
-	vgd::field::EditorRW< vgd::field::MFVec3f >	editNormals = vertexShape->getFNormalRW();
-	editNormals->clear();
-	editNormals->reserve( trianglesNumber );
-	vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
-
-	vgd::field::EditorRW< vgd::field::MFVec2f > editTextCoords;
-	if ( hasTextCoords )
-	{
-		vertexShape->createTexUnits( 2, 0, 1 );	// @todo FIXME multitexture multiTexcoord
-		vertexShape->setTexCoordBinding( 0, vgd::node::BIND_PER_VERTEX );
-		editTextCoords = vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( 0 );
-		editTextCoords->clear();
-		editTextCoords->reserve( trianglesNumber );
-	}
-
-	//hashmap used to check if the vertex/normal/textCoord set doesn't exists yet.
-	boost::unordered_map<std::size_t, int> hashmap;
-	for ( size_t j = 0; j < trianglesNumber; j++ )
-	{
-		std::vector<float> hash_me;
-
-		hash_me.push_back( m_positions[ positionIndices[j] ][0] );
-		hash_me.push_back( m_positions[ positionIndices[j] ][1] );
-		hash_me.push_back( m_positions[ positionIndices[j] ][2] );
-
-		hash_me.push_back( m_normals[ normalIndices[j] ][0] );
-		hash_me.push_back( m_normals[ normalIndices[j] ][1] );
-		hash_me.push_back( m_normals[ normalIndices[j] ][2] );
-
-		if ( hasTextCoords )
-		{
-			hash_me.push_back( m_textCoords[ triangles->getUVCoordIndicesArray()[0]->getIndices()[j] ][0] );
-			hash_me.push_back( m_textCoords[ triangles->getUVCoordIndicesArray()[0]->getIndices()[j] ][1] );
-			hash_me.push_back( m_textCoords[ triangles->getUVCoordIndicesArray()[0]->getIndices()[j] ][2] );
-		}
-
-
-		//create hash with vecotr of each coordinate.
-		std::size_t hash = boost::hash_range(hash_me.begin(), hash_me.end());
-
-		//if hash exist, adds index of existing set to vertex index.
-		if( hashmap.find(hash) != hashmap.end() )
-		{
-			editVertexIndex->push_back( hashmap[hash] );
-		}
-		else
-		{
-			//adds all.
-			editPositions->push_back( m_positions[ positionIndices[j] ] );
-			editNormals->push_back( m_normals[ normalIndices[j] ] );
-
-			if ( hasTextCoords )
-			{
-				editTextCoords->push_back( m_textCoords[ triangles->getUVCoordIndicesArray()[0]->getIndices()[j] ] );
-			}
-			
-			editVertexIndex->push_back( editPositions->size()-1 );
-
-			hashmap[hash] = editPositions->size()-1;
-		}
-	}
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = vertexShape->getFPrimitiveRW();
-	editPrimitive->clear();
-
-	vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, editVertexIndex->size() );
-	editPrimitive->push_back( prim );
-
-	if ( vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX )
-	{
-		vertexShape->computeNormals();
-	}
-
-	group->addChild( vertexShape );
-}
-
-
-
-void GeometryImporter::importPolygonMeshPrimitives( vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive )
-{
-	const COLLADAFW::Polygons* polygons = (const COLLADAFW::Polygons*) meshPrimitive;
-	const COLLADAFW::UIntValuesArray& positionIndices = polygons->getPositionIndices();
-	const COLLADAFW::UIntValuesArray& normalIndices = polygons->getNormalIndices();		
-	
-	//check if mesh has texture coordinates.
-	bool hasTextCoords = false;
-	if( polygons->hasUVCoordIndices() && m_textCoords.size() > 0 && m_loadType > LOAD_MATERIAL)
-	{
-		hasTextCoords = true;
-	}
-
-	int polygonsNumber = positionIndices.getCount();
-
-	std::stringstream ss;
-	ss << polygons->getMaterialId();
-	std::string name = ss.str();
-	//Create vertexshape with its material ID. Very important, name used to bind material to vertexshape during instanciation.
-	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::node::VertexShape::create( name );
-
-	vgd::field::EditorRW< vgd::field::MFUInt32 >	editVertexIndex	= vertexShape->getFVertexIndexRW();
-
-	vgd::field::EditorRW< vgd::field::MFVec3f >	editPositions = vertexShape->getFVertexRW();
-	editPositions->clear();
-	editPositions->reserve( polygonsNumber );
-
-	vgd::field::EditorRW< vgd::field::MFVec3f >	editNormals = vertexShape->getFNormalRW();
-	editNormals->clear();
-	editNormals->reserve( polygonsNumber );
-	vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
-
-	vgd::field::EditorRW< vgd::field::MFVec2f > editTextCoords;
-	if ( hasTextCoords )
-	{
-		vertexShape->createTexUnits( 2, 0, 1 );	// @todo FIXME multitexture multiTexcoord
-		vertexShape->setTexCoordBinding( 0, vgd::node::BIND_PER_VERTEX );
-		editTextCoords = vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( 0 );
-		editTextCoords->clear();
-		editTextCoords->reserve( polygonsNumber );
-	}
-
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = vertexShape->getFPrimitiveRW();
-	editPrimitive->clear();
-
-	//hashmap used to check if the vertex/normal/textCoord set doesn't exists yet.
-	boost::unordered_map<std::size_t, int> hashmap;
-
-	const COLLADAFW::IntValuesArray& faceVertexCountArray = polygons->getGroupedVerticesVertexCountArray();
-	int indexCount = 0; //number of polygons parsed
-	int faceCount = 0; //current index of faceVertexCountArray
-	int lastFaceNumber = faceVertexCountArray[0]; //number of face of the last polygon
-	for ( size_t j = 0; j < polygonsNumber; j++ )
-	{
-		std::vector<float> hash_me;
-
-		hash_me.push_back( m_positions[ positionIndices[j] ][0] );
-		hash_me.push_back( m_positions[ positionIndices[j] ][1] );
-		hash_me.push_back( m_positions[ positionIndices[j] ][2] );
-
-		hash_me.push_back( m_normals[ normalIndices[j] ][0] );
-		hash_me.push_back( m_normals[ normalIndices[j] ][1] );
-		hash_me.push_back( m_normals[ normalIndices[j] ][2] );
-
-		if ( hasTextCoords )
-		{
-			hash_me.push_back( m_textCoords[ polygons->getUVCoordIndicesArray()[0]->getIndices()[j] ][0] );
-			hash_me.push_back( m_textCoords[ polygons->getUVCoordIndicesArray()[0]->getIndices()[j] ][1] );
-			hash_me.push_back( m_textCoords[ polygons->getUVCoordIndicesArray()[0]->getIndices()[j] ][2] );
-		}
-
-
-		//create hash with vecotr of each coordinate.
-		std::size_t hash = boost::hash_range(hash_me.begin(), hash_me.end());
-
-		//if hash exist, adds index of existing set to vertex index.
-		if( hashmap.find(hash) != hashmap.end() )
-		{
-			editVertexIndex->push_back( hashmap[hash] );
-		}
-		else
-		{
-			//adds all.
-			editPositions->push_back( m_positions[ positionIndices[j] ] );
-			editNormals->push_back( m_normals[ normalIndices[j] ] );
-
-			if ( hasTextCoords )
-			{
-				editTextCoords->push_back( m_textCoords[ polygons->getUVCoordIndicesArray()[0]->getIndices()[j] ] );
-			}
-			
-			editVertexIndex->push_back( editPositions->size()-1 );
-
-			hashmap[hash] = editPositions->size()-1;
-		}
-
-		indexCount++;
-		if( indexCount % lastFaceNumber == 0 )
-		{
-			faceCount++;
-			if( lastFaceNumber != faceVertexCountArray[faceCount] || j == polygonsNumber-1 )
-			{
-				switch( lastFaceNumber )
-				{
-					case 3:
-						editPrimitive->push_back( vgd::node::Primitive( vgd::node::Primitive::TRIANGLES, editVertexIndex->size() - indexCount, indexCount ) );
-						break;
-					case 4:
-						editPrimitive->push_back( vgd::node::Primitive( vgd::node::Primitive::QUADS, editVertexIndex->size() - indexCount, indexCount ) );
-						break;
-					default:
-						//editPrimitive->push_back( vgd::node::Primitive prim( vgd::node::Primitive::POLYGON, editVertexIndex->size() - indexCount, indexCount ) );
-						throw std::runtime_error("Polygons with more than 4 faces are not supported.");
-						break;
-				}
-
-				indexCount = 0;
-				lastFaceNumber = faceVertexCountArray[faceCount];
-			}
-			else
-			{
-				//do nothing, same number of face.
-				//add next polygon.
-			}
-		}
-	}
-
-	if ( vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX )
-	{
-		vertexShape->computeNormals();
-	}
-
-	group->addChild( vertexShape );
 }
 
 
