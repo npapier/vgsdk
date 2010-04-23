@@ -316,6 +316,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 		else
 		{
 			camera->eraseScissor();
+			glDisable(GL_SCISSOR_TEST);
 		}
 
 		// viewport
@@ -360,7 +361,7 @@ void MultiMain::drawBorder( vgeGL::engine::Engine * engine, const vgd::Shp< Mult
 	//
 	engine->sethCurrentProgram();
 
-	vgeGL::engine::Engine::begin2DRendering( &newViewport2i );
+	vgeGL::engine::Engine::begin2DRendering( &newViewport2i, true );
 
 	//glEnable(GL_LINE_SMOOTH);
 	glColor4fv( window->getBorderColor().getValue() );
@@ -373,7 +374,7 @@ void MultiMain::drawBorder( vgeGL::engine::Engine * engine, const vgd::Shp< Mult
 	glVertex2f( 0.f, 1.f );
 	glEnd();
 
-	vgeGL::engine::Engine::end2DRendering();
+	vgeGL::engine::Engine::end2DRendering( true );
 
 	// Restores GLSL activation state
 	engine->setGLSLActivationState( glslActivationState );
