@@ -25,8 +25,9 @@
 #include <gtkmm/window.h>
 
 #include <vgDebug/convenience.hpp>
+#include <vge/engine/UserSettings.hpp>
 #include <vgGTK/ResolutionDialog.hpp>
-#include <vgGTK/engine/UserSettings.hpp>
+#include <vgGTK/engine/UserSettingsDialog.hpp>
 
 #include "vgsdkViewerGtk/myCanvas.hpp"
 
@@ -414,22 +415,12 @@ void statusbarLogHandler( const gchar *log_domain, GLogLevelFlags log_level, con
 
 void userSettings( Gtk::Window * toplevel, myCanvas * canvas )
 {
-	Gtk::Dialog					dialog;
-	vgGTK::engine::UserSettings	userSettings;
-
-	userSettings.set_border_width( 12 );
-	userSettings.set( vge::engine::UserSettings(*canvas) );
-
-	dialog.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
-	dialog.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-	dialog.set_title( "User Settings" );
-	dialog.set_transient_for( *toplevel );
-	dialog.get_vbox()->add( userSettings );	
+	vgGTK::engine::UserSettingsDialog	dialog( toplevel, vge::engine::UserSettings(*canvas) );
 	
 	dialog.show_all();
 	if( dialog.run() == Gtk::RESPONSE_OK )
 	{
-		userSettings.get().apply( *canvas );
+		dialog.get().apply( *canvas );
 	}
 }
 
