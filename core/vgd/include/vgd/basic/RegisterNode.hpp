@@ -38,6 +38,7 @@ struct RegisterNode
 
 		const bool retVal = classType::getClassRegistry().template add<classType>( shpClass );
 		assert( retVal );
+		retVal;
 	}
 	
 	/**
@@ -54,6 +55,7 @@ struct RegisterNode
 
 		const bool retVal = classType::getClassRegistry().template add<classType>( shpClass );
 		assert( retVal );
+		retVal;
 	}
 };
 
