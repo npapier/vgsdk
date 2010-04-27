@@ -1,10 +1,11 @@
 '''
 Created on 22 mai 2009
 
-VGSDK - Copyright (C) 2009, Maxime Peresson.
+VGSDK - Copyright (C) 2009, 2010, Maxime Peresson, Nicolas Papier.
 Distributed under the terms of the GNU Library General Public License (LGPL)
 as published by the Free Software Foundation.
 Author Maxime Peresson
+Author Nicolas Papier
 
 '''
 
@@ -55,11 +56,11 @@ class TestReport(object):
 		
 		if not os.path.exists(self._projectPath):
 			print('Creating project folder ' + self._projectPath)
-			os.mkdir(self._projectPath)
+			os.makedirs(self._projectPath)
 		
 		if os.path.exists(config.param['xmlPath'] + document):
 			print('Creating run folder ' + self._path)
-			os.mkdir(self._path)
+			os.makedirs(self._path)
 			
 			print('Moving XML file from ' + config.param['xmlPath'] + document + ' to ' + self._path + config.param['file'])
 			shutil.move(config.param['xmlPath'] + document, self._path + config.param['file'])
@@ -73,7 +74,7 @@ class TestReport(object):
 		
 		#Create graph path
 		self._graphPath = self._path + 'graph' + os.sep		
-		os.mkdir(self._graphPath)	   
+		os.makedirs(self._graphPath)
 		
 		#Parse the XML document and create the Run object
 		self._file = config.param['file']
