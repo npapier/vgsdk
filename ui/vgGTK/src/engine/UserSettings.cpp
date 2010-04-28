@@ -7,7 +7,6 @@
 
 #include <gtkmm/alignment.h>
 #include <gtkmm/dialog.h>
-#include <gtkmm/expander.h>
 #include <gtkmm/label.h>
 #include <gtkmm/listviewtext.h>
 #include <gtkmm/scrolledwindow.h>
@@ -25,10 +24,8 @@ namespace engine
 
 UserSettings::UserSettings()
 {
-	Gtk::Label			* label			= Gtk::manage( new Gtk::Label() );
-	Gtk::HBox			* levelBox		= Gtk::manage( new Gtk::HBox() );
-	Gtk::Expander		* expander		= Gtk::manage( new Gtk::Expander("Descriptions") );
-	Gtk::VBox			* descriptions	= Gtk::manage( new Gtk::VBox() );
+	Gtk::Label	* label		= Gtk::manage( new Gtk::Label() );
+	Gtk::HBox	* levelBox	= Gtk::manage( new Gtk::HBox() );
 	
 	label->set_alignment( 0, 0 );
 	label->set_line_wrap( true );
@@ -36,10 +33,6 @@ UserSettings::UserSettings()
 	label->set_max_width_chars( -1 );
 
 	label->set_text( "To configure rendering settings according to your hardware capabilities, select a detail level in the list below.\n\nYou can also activate the appropriate detail level by selecting your graphic card in advanced mode." );
-
-	expander->add( *descriptions );
-	descriptions->set_border_width( 7 );
-	descriptions->set_spacing( 5 );
 
 	m_selectCard.set_label( "Advanced..." );
 	m_selectCard.signal_clicked().connect( sigc::mem_fun(this, &UserSettings::onSelectCardClicked) );
@@ -49,37 +42,24 @@ UserSettings::UserSettings()
 	levelBox->pack_end( m_selectCard, Gtk::PACK_SHRINK );
 
 	m_levelCombo.signal_changed().connect( sigc::mem_fun(this, &UserSettings::onLevelChanged) );
-	
+
+	m_description.set_alignment( 0, 0 );
+	m_description.set_line_wrap( true );
+	m_description.set_width_chars( -1 );
+	m_description.set_max_width_chars( -1 );
+
 	set_spacing( 12 );
 	pack_start( *label, Gtk::PACK_SHRINK );
 	pack_start( *levelBox, Gtk::PACK_SHRINK );
+	pack_start( m_description, Gtk::PACK_SHRINK );
 
 
-	// Fills the scale and the description expander with available levels.
+	// Fills the combo with available levels.
 	const int	levelCount = m_settings.getLevelCount();
 
 	for( int i = 0; i != levelCount; ++i )
 	{
-		const Glib::ustring	levelName			= m_settings.getName(i);
-		const Glib::ustring	levelDescription	= m_settings.getDescription(i);
-		Gtk::Label			* descriptionWidget = Gtk::manage( new Gtk::Label() );
-
-		m_levelCombo.append_text( levelName );
-
-		descriptionWidget->set_alignment( 0, 0 );
-		descriptionWidget->set_markup( Glib::ustring::compose("%1: <i>%2</i>", levelName, levelDescription) );
-		descriptions->add( *descriptionWidget );
-	}
-
-
-	// Adds a notification when no description has been found.
-	if( levelCount == 0 )
-	{
-		Gtk::Label	* descriptionWidget = Gtk::manage( new Gtk::Label() );
-
-		descriptionWidget->set_alignment( 0, 0 );
-		descriptionWidget->set_markup( "<i>No description found</i>" );
-		descriptions->add( *descriptionWidget );
+		m_levelCombo.append_text( m_settings.getName(i) );
 	}
 }
 
@@ -115,7 +95,12 @@ void UserSettings::onLevelChanged()
 	if( level >= 0 )
 	{
 		m_settings.setLevel( level );
+		m_description.set_markup( Glib::ustring::compose("<i>%1</i>", m_settings.getDescription(level)) );
 		m_signalChanged.emit();
+	}
+	else
+	{
+		m_description.set_markup( "<i>No detail level selected.</i>" );
 	}
 }
 
