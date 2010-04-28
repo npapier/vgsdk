@@ -52,6 +52,7 @@ private:
 	vge::engine::UserSettings	m_settings;			///< The settings to configure.
 	Gtk::ComboBoxText			m_levelCombo;		///< The scale use to select a level.
 	Gtk::Button					m_selectCard;		///< The button to select a graphic card.
+	Gtk::Label					m_description;		///< The label showing the selected level's description.
 	sigc::signal< void >		m_signalChanged;	///< The signal emited when on setting changes.
 
 	/**
