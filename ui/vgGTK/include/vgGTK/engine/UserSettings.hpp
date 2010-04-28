@@ -9,8 +9,6 @@
 #include <gtkmm/box.h>
 #include <gtkmm/comboboxtext.h>
 
-#include <sigc++/connection.h>
-
 #include <vge/engine/UserSettings.hpp>
 
 #include "vgGTK/vgGTK.hpp"
@@ -53,30 +51,21 @@ private:
 
 	vge::engine::UserSettings	m_settings;			///< The settings to configure.
 	Gtk::ComboBoxText			m_levelCombo;		///< The scale use to select a level.
-	Gtk::ComboBoxText			m_cardCombo;		///< The combo box use to select a graphic card.
-	sigc::signal< void >		m_signalChanged;	///< The signal emited when on setting changes
-
-	/**
-	 * @name	Signal connections
-	 */
-	//@{
-	sigc::connection	m_cardChangedConnection;
-	sigc::connection	m_levelChangedConnection;
-	//@}
+	Gtk::Button					m_selectCard;		///< The button to select a graphic card.
+	sigc::signal< void >		m_signalChanged;	///< The signal emited when on setting changes.
 
 	/**
 	 * @name	Signal Handlers
 	 */
 	//@{
-	void onCardChanged();	///< Handles card changes.
-	void onLevelChanged();	///< Handles level changes.
+	void onLevelChanged();		///< Handles level changes.
+	void onSelectCardClicked();	///< Handles clicks on the select card button.
 	//@}
 
 	/**
 	 * @name	Helpers
 	 */
 	//@{
-	void refreshCard();		///< Refreshes the card selection widget.
 	void refreshLevel();	///< Refreshes the level selection widget.
 	//@}
 };
