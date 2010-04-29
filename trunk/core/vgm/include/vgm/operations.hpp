@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,9 +6,8 @@
 #ifndef _VGM_OPERATIONS_HPP
 #define _VGM_OPERATIONS_HPP
 
-#include "vgm/vgm.hpp"
-
 #include <algorithm>
+#include "vgm/vgm.hpp"
 
 
 
@@ -64,6 +63,33 @@ struct Epsilon<double>
 	}
 };
 
+
+/**
+ * @name Equality comparisons within tolerance
+ */
+//@{ 
+ 
+/**
+ * @brief Equality comparison within tolerance
+ */
+const bool equals( const float value1, const float value2 );
+
+/**
+ * @brief Inequality comparison within tolerance
+ */
+const bool notEquals( const float value1, const float value2 );
+
+/**
+ * @brief Equality comparison within tolerance
+ */
+const bool equals( const double value1, const double value2 );
+
+/**
+ * @brief Inequality comparison within tolerance
+ */
+const bool notEquals( const double value1, const double value2 );
+
+//@}
 
 
 /**
