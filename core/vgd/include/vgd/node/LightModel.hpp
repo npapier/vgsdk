@@ -9,6 +9,7 @@
 #include "vgd/field/Bool.hpp"
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
+#include "vgd/field/Vec2f.hpp"
 #include "vgd/field/Vec4f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
@@ -47,11 +48,16 @@ namespace node
  * - OFBool \c [useShadowSamplers] = true<br>
  *   True to use GLSL shadowSampler, false to use traditionnal texture sampler.<br>
  *<br>
+ * - SFBool \c postProcessing = false<br>
+ *   True to enable post-processing, false to disable it<br>
+ *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
  *   Sets the ambient RGBA intensity of the entire scene.<br>
  *<br>
  * - OFEnum \c [model] = STANDARD_PER_VERTEX<br>
  *   Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.<br>
+ *<br>
+ * - SFVec2f \c shadowPolygonOffset = vgm::Vec2f(4.f, 16.f)<br>
  *<br>
  * - OFEnum \c [shadow] = SHADOW_OFF<br>
  *   Specifies the algorithm used to compute shadow.<br>
@@ -483,6 +489,36 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field postProcessing
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c postProcessing.
+	 */
+	typedef bool PostProcessingValueType;
+
+	/**
+	 * @brief Type definition of the field named \c postProcessing
+	 */
+	typedef vgd::field::TSingleField< PostProcessingValueType > FPostProcessingType;
+
+
+	/**
+	 * @brief Gets the value of field named \c postProcessing.
+	 */
+	const PostProcessingValueType getPostProcessing() const;
+
+	/**
+	 * @brief Sets the value of field named \c postProcessing.
+	 */
+	void setPostProcessing( const PostProcessingValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field ambient
 	 */
 	//@{
@@ -605,6 +641,36 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Tests if the value of field named \c model has been initialized.
 	 */
 	const bool hasModel() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field shadowPolygonOffset
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c shadowPolygonOffset.
+	 */
+	typedef vgm::Vec2f ShadowPolygonOffsetValueType;
+
+	/**
+	 * @brief Type definition of the field named \c shadowPolygonOffset
+	 */
+	typedef vgd::field::TSingleField< ShadowPolygonOffsetValueType > FShadowPolygonOffsetType;
+
+
+	/**
+	 * @brief Gets the value of field named \c shadowPolygonOffset.
+	 */
+	const ShadowPolygonOffsetValueType getShadowPolygonOffset() const;
+
+	/**
+	 * @brief Sets the value of field named \c shadowPolygonOffset.
+	 */
+	void setShadowPolygonOffset( const ShadowPolygonOffsetValueType value );
+
 	//@}
 
 
@@ -773,6 +839,13 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	static const std::string getFUseShadowSamplers( void );
 
 	/**
+	 * @brief Returns the name of field \c postProcessing.
+	 *
+	 * @return the name of field \c postProcessing.
+	 */
+	static const std::string getFPostProcessing( void );
+
+	/**
 	 * @brief Returns the name of field \c ambient.
 	 *
 	 * @return the name of field \c ambient.
@@ -785,6 +858,13 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c model.
 	 */
 	static const std::string getFModel( void );
+
+	/**
+	 * @brief Returns the name of field \c shadowPolygonOffset.
+	 *
+	 * @return the name of field \c shadowPolygonOffset.
+	 */
+	static const std::string getFShadowPolygonOffset( void );
 
 	/**
 	 * @brief Returns the name of field \c shadow.

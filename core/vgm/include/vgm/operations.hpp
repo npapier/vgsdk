@@ -72,22 +72,22 @@ struct Epsilon<double>
 /**
  * @brief Equality comparison within tolerance
  */
-const bool equals( const float value1, const float value2 );
+VGM_API const bool equals( const float value1, const float value2 );
 
 /**
  * @brief Inequality comparison within tolerance
  */
-const bool notEquals( const float value1, const float value2 );
+VGM_API const bool notEquals( const float value1, const float value2 );
 
 /**
  * @brief Equality comparison within tolerance
  */
-const bool equals( const double value1, const double value2 );
+VGM_API const bool equals( const double value1, const double value2 );
 
 /**
  * @brief Inequality comparison within tolerance
  */
-const bool notEquals( const double value1, const double value2 );
+VGM_API const bool notEquals( const double value1, const double value2 );
 
 //@}
 

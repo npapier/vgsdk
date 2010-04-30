@@ -57,8 +57,10 @@ LightModel::LightModel( const std::string nodeName ) :
 	addField( new FShadowQualityType(getFShadowQuality()) );
 	addField( new FViewerType(getFViewer()) );
 	addField( new FUseShadowSamplersType(getFUseShadowSamplers()) );
+	addField( new FPostProcessingType(getFPostProcessing()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FModelType(getFModel()) );
+	addField( new FShadowPolygonOffsetType(getFShadowPolygonOffset()) );
 	addField( new FShadowType(getFShadow()) );
 
 	// Sets link(s)
@@ -73,6 +75,8 @@ void LightModel::setToDefaults( void )
 	setShadowMapType( INT32 );
 	setIlluminationInShadow( 0.4f );
 	setSamplingSize( 1.0 );
+	setPostProcessing( false );
+	setShadowPolygonOffset( vgm::Vec2f(4.f, 16.f) );
 }
 
 
@@ -248,6 +252,21 @@ const bool LightModel::hasUseShadowSamplers() const
 
 
 
+// PostProcessing
+const LightModel::PostProcessingValueType LightModel::getPostProcessing() const
+{
+	return getFieldRO<FPostProcessingType>(getFPostProcessing())->getValue();
+}
+
+
+
+void LightModel::setPostProcessing( const PostProcessingValueType value )
+{
+	getFieldRW<FPostProcessingType>(getFPostProcessing())->setValue( value );
+}
+
+
+
 // Ambient
 const bool LightModel::getAmbient( AmbientValueType& value ) const
 {
@@ -300,6 +319,21 @@ void LightModel::eraseModel()
 const bool LightModel::hasModel() const
 {
 	return getFieldRO<FModelType>(getFModel())->hasValue();
+}
+
+
+
+// ShadowPolygonOffset
+const LightModel::ShadowPolygonOffsetValueType LightModel::getShadowPolygonOffset() const
+{
+	return getFieldRO<FShadowPolygonOffsetType>(getFShadowPolygonOffset())->getValue();
+}
+
+
+
+void LightModel::setShadowPolygonOffset( const ShadowPolygonOffsetValueType value )
+{
+	getFieldRW<FShadowPolygonOffsetType>(getFShadowPolygonOffset())->setValue( value );
 }
 
 
@@ -382,6 +416,13 @@ const std::string LightModel::getFUseShadowSamplers( void )
 
 
 
+const std::string LightModel::getFPostProcessing( void )
+{
+	return "f_postProcessing";
+}
+
+
+
 const std::string LightModel::getFAmbient( void )
 {
 	return "f_ambient";
@@ -392,6 +433,13 @@ const std::string LightModel::getFAmbient( void )
 const std::string LightModel::getFModel( void )
 {
 	return "f_model";
+}
+
+
+
+const std::string LightModel::getFShadowPolygonOffset( void )
+{
+	return "f_shadowPolygonOffset";
 }
 
 

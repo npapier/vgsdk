@@ -148,6 +148,36 @@ void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
 
 
 
+void Engine::paint2( vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2,
+					const bool isPreTraverse,
+					const bool bTrace )
+{
+	evaluate( m_paintService, node1, node2, isPreTraverse, bTrace );
+}
+
+
+
+void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
+						vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2, vgd::Shp< vgd::node::Node > node3,
+						const bool isPreTraverse,
+						const bool bTrace )
+{
+	evaluate( service, node1, isPreTraverse, bTrace );
+	evaluate( service, node2, isPreTraverse, bTrace );
+	evaluate( service, node3, isPreTraverse, bTrace );
+}
+
+
+
+void Engine::paint3( vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2, vgd::Shp< vgd::node::Node > node3,
+					const bool isPreTraverse,
+					const bool bTrace )
+{
+	evaluate( m_paintService, node1, node2, node3, isPreTraverse, bTrace );
+}
+
+
+
 void Engine::resetHandlers()
 {
 	clearHandlers();

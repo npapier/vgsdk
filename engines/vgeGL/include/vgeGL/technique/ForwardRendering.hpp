@@ -6,10 +6,12 @@
 #ifndef _VGEGL_TECHNIQUE_FORWARDRENDERING_HPP
 #define _VGEGL_TECHNIQUE_FORWARDRENDERING_HPP
 
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/technique/Main.hpp"
 
-namespace glo { struct Texture2D; }
-
+namespace glo { struct FrameBufferObject; struct Texture2D; }
+namespace vgd { namespace node { struct FrameBuffer; struct Quad; struct Texture2D; } }
+namespace vgeGL { namespace rc { struct FrameBufferObject; } }
 
 
 namespace vgeGL
@@ -57,7 +59,43 @@ struct VGEGL_CLASS_API ForwardRendering : public Main
 	VGEGL_API void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
 
 private:
-	vgd::Shp< ShadowMappingInput > m_shadowMappingInput;
+	//
+	vgd::Shp< ShadowMappingInput >				m_shadowMappingInput;
+
+	//
+	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
+	vgd::Shp< PostProcessingStateContainer > m_postProcessing;
+	float m_lastCurrentScaleForVertex;
+
+	const vgd::Shp< vgeGL::rc::FrameBufferObject > applyPostProcessing( vgeGL::engine::Engine * engine, const vgd::Shp< vgeGL::rc::FrameBufferObject > fbo0, const vgd::Shp< vgeGL::rc::FrameBufferObject > fbo1 );
+	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo );
+
+
+	/**
+	 * @name Buffers
+	 */
+	//@{
+
+	void initializeBuffers( vgeGL::engine::Engine * engine );
+
+	vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer0;
+	vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer1;
+	vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer;
+
+	vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo0;
+	vgd::Shp< vgeGL::rc::FrameBufferObject >		m_fbo1;
+	vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo;
+
+// @todo removes
+	std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures0;	///< textures for FBO 0
+	std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures1;	///< textures for FBO 1
+	std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures;		///< textures for FBO
+
+	vgd::Shp< vgd::node::Quad >						m_quad1;
+	vgd::Shp< vgd::node::Quad >						m_quad2;
+
+	vgd::Shp< vgd::node::Texture2D >				m_blackTexture2D; // @todo moves in Engine or in a repository ?
+	//@}
 };
 
 
