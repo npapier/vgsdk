@@ -49,7 +49,9 @@ const std::string GLSLState::m_indexString[] =
 
 		"PROGRAM",
 
-		"COLOR4_BIND_PER_VERTEX"
+		"COLOR4_BIND_PER_VERTEX",
+
+		"POST_PROCESSING"
 	};
 
 
@@ -65,20 +67,20 @@ const std::string& GLSLState::toString( const BitSetIndexType bitSetIndexType )
 
 
 GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
-:	m_isShadowSamplerEnabled(isShadowSamplerUsageEnabled),
-
-	m_light(maxLightUnits),
+:	m_light(maxLightUnits),
 	m_numLight(0),
 	m_texture(maxTexUnits),
-	m_numTexture(0)
+	m_numTexture(0),
+	postProcessing(9)
 {
+	reset( maxLightUnits, maxTexUnits, isShadowSamplerUsageEnabled );
 }
 
 
 void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
 {
 	// TBitSet
-	vgeGL::engine::TBitSet< 13 >::reset();
+	vgeGL::engine::TBitSet< 14 >::reset();
 
 	// LIGHT
 	for(	uint	i		= 0,
@@ -120,8 +122,14 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits, const b
 
 	m_texture.resize( maxTexUnits );
 
+	// POST PROCESSING
+	postProcessing.clear();
+
 	// @todo others ( at this time default values for others are initialized by GLSLState::update() )
 	setProgram( 0 );
+
+	m_shaderStage.clear();
+	m_shaderStage.resize( MAX_SHADERSTAGE );
 
 	setShadowType( vgd::node::LightModel::DEFAULT_SHADOW );
 	setSamplingSize( 1.f );
@@ -339,6 +347,20 @@ vgd::node::Program * GLSLState::getProgram() const
 void GLSLState::setProgram( vgd::node::Program * program )
 {
 	m_program = program;
+}
+
+
+
+void GLSLState::setShaderStage( const ShaderStage shaderStage, const std::string& glslCode )
+{
+	m_shaderStage[shaderStage] = glslCode;
+}
+
+
+
+const std::string& GLSLState::getShaderStage( const ShaderStage shaderStage ) const
+{
+	return m_shaderStage[shaderStage];
 }
 
 

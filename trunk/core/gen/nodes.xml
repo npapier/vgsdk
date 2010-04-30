@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<!--	VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+<!--	VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 	Distributed under the terms of the GNU Library General Public License (LGPL)
 	as published by the Free Software Foundation.
 	Author Nicolas Papier -->
@@ -159,6 +159,7 @@
 	</node>
 
 
+	<!-- TODO Split this node => ShadowStyle/Properties -->
 	<node name = "LightModel" inherits = "SingleAttribute" >
 		<doxygen>
 			<docBrief>Lighting model node</docBrief>
@@ -245,9 +246,17 @@
 			<type name="float" default="0.4f"></type>
 		</sf>
 
+		<sf name="shadowPolygonOffset" doc="">
+			<type name="Vec2f" namespace="vgm" default="4.f, 16.f"></type>
+		</sf>
+
 		<of name="useShadowSamplers" doc="True to use GLSL shadowSampler, false to use traditionnal texture sampler.">
 			<type name="bool" default="true"/>
 		</of>
+
+		<sf name="postProcessing" doc="True to enable post-processing, false to disable it">
+			<type name="bool" default="false"/>
+		</sf>
 	</node>
 
 
@@ -367,6 +376,77 @@
 		<of name="pointSprite" doc="See GL_ARB_point_sprite extension for details (http://oss.sgi.com/projects/ogl-sample/registry/ARB/point_sprite.txt).">
 			<type name = "bool" default = "false"></type>
 		</of>
+	</node>
+
+
+	<node name = "PostProcessing" inherits = "MultiAttribute" >
+		<doxygen>
+			<docBrief>A single stage of a post-processing stage.</docBrief>
+			<doc>This node defines a single stage of a post-processing stage.</doc>
+			<doc>Post-processing effect is applied to the previously rendered scene using COLOR and/or NORMAL buffer(s)</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_texturingNodes</ingroup>
+			<ingroup>g_frameBufferNodes</ingroup>
+		</doxygen>
+
+		<sf name = "filter" doc = "Specifies the filter to apply to the input buffers.">
+			<type name = "enum">
+				<enum default="NO_FILTER">
+					<value name="COLOR_TO_MONOCHROME" doc="Converts colored value to black and white"/>
+					<value name="COLOR_INVERSE" doc="Inverts the colored value"/>
+
+					<value name="BLUR_HORIZ" doc="Blurs an image horizontally using weights that follow a Gaussian distribution"/>
+					<value name="BLUR_VERT" doc="Blurs an image vertically using weights that follow a Gaussian distribution"/>
+					<value name="BLOOM_HORIZ" doc="Amplifies and blurs an image horizontally using weights that follow a gaussian distribution"/>
+					<value name="BLOOM_VERT" doc="Amplifies and blurs an image vertically using weights that follow a gaussian distribution"/>
+
+					<value name="COLOR_EDGE_DETECT" doc="Detects edges and highlights them"/>
+
+					<value name="DOWN_FILTER4" doc="Scales images down 4 times with a high-pass filter"/>
+					<value name="UP_FILTER4" doc="Scales images up 4 times"/>
+
+<!--					<value name="NORMAL_EDGE_DETECT" doc="Detects edges and highlights them (using NORMAL buffer)"/> -->
+
+					<value name="COMBINE" doc="Combines two images (ADD)"/>
+
+					<value name="NO_FILTER" doc="No filter is applied"/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name = "input0" doc = "Specifies the first input buffer used by the filter.">
+			<type name = "enum">
+				<enum default = "PREVIOUS_COLOR">
+					<value name="ORIGINAL_COLOR" doc=""/>
+					<value name="ORIGINAL_NORMAL" doc=""/>
+					<value name="PREVIOUS_COLOR" doc=""/>
+					<value name="NONE" doc=""/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name = "input1" doc = "Specifies the second input buffer used by the filter.">
+			<type name = "enum">
+				<enum default = "INPUT1_NONE">
+					<value name="INPUT1_ORIGINAL_COLOR" doc=""/>
+					<value name="INPUT1_NONE" doc=""/>
+				</enum>
+			</type>
+		</sf>
+			<!-- TODO enum for input1 should be the same as input0 => specify enum at node level
+			<type name = "enum">
+				<enum default = "INPUT1_PREVIOUS_COLOR">
+					<value name="INPUT1_ORIGINAL_COLOR" doc=""/>
+					<value name="INPUT1_ORIGINAL_NORMAL" doc=""/>
+					<value name="INPUT1_PREVIOUS_COLOR" doc=""/>
+					<value name="INPUT1_NONE" doc=""/>
+				</enum>
+			</type>
+		</sf>-->
+<!-- param0 -->
+<!-- custom filter -->
+<!-- ouput0, output1.... -->
 	</node>
 
 

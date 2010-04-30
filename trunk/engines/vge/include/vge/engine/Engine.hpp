@@ -140,21 +140,22 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
-	 * @brief Evaluation of a node.
+	 * @brief Evaluation of a node
 	 * 
-	 * @param	service		service to use during evaluation (Painter...)
-	 * @param	pNode		node to evaluate
+	 * @param	service			service to use during evaluation (Painter...)
+	 * @param	pNode			node to evaluate
 	 * @param	isPreTraverse	true if preTraverse (when a node is encountered for the first time), false if 
-	 * 					postTraverse (when all children of this node have been already encountered)
-	 * @param	bTrace		true if the evaluation of the node must be stored in the engine state, false if not.
+	 * 							postTraverse (when all children of this node have been already encountered)
+	 * @param	bTrace			true if the evaluation of the node must be stored in the engine state, false if not.
 	 */
 	void evaluate(	const vgd::Shp< vge::service::Service > service,
 					vgd::node::Node* pNode, 
 					const bool isPreTraverse,
 					const bool bTrace = true );
 
+
 	/**
-	 * @brief Evaluation of a node.
+	 * @brief Evaluation of a node
 	 * 
 	 * @param	service		service to use during evaluation (Painter...)
 	 * @param	traverseElement	traverse element to evaluate
@@ -163,7 +164,6 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	void evaluate(	const vgd::Shp< vge::service::Service > service,
 					const vge::visitor::TraverseElement & element,
 					const bool bTrace = true );
-
 
 
 	void evaluate(	const vgd::Shp< vge::service::Service > service,
@@ -175,8 +175,23 @@ struct VGE_API Engine : public vgd::field::FieldManager
 					const bool isPreTraverse = true,
 					const bool bTrace = true );
 
+
 	void evaluate(	const vgd::Shp< vge::service::Service > service,
 					vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2,
+					const bool isPreTraverse = true,
+					const bool bTrace = true );
+
+	void paint2(	vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2,
+					const bool isPreTraverse = true,
+					const bool bTrace = true );
+
+
+	void evaluate(	const vgd::Shp< vge::service::Service > service,
+					vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2, vgd::Shp< vgd::node::Node > node3,
+					const bool isPreTraverse = true,
+					const bool bTrace = true );
+
+	void paint3(	vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2, vgd::Shp< vgd::node::Node > node3,
 					const bool isPreTraverse = true,
 					const bool bTrace = true );
 	//@}

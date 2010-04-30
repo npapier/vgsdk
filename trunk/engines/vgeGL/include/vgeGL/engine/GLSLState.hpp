@@ -10,6 +10,7 @@
 #include <vector>
 #include <vgd/Shp.hpp>
 #include <vgd/node/LightModel.hpp>
+#include <vge/basic/TUnitContainer.hpp>
 #include <vgm/Matrix.hpp>
 #include "vgeGL/vgeGL.hpp"
 
@@ -24,6 +25,7 @@ namespace vgd
 	{
 		struct Light;
 		struct Program;
+		struct PostProcessing;
 		struct SpotLight;
 		struct TexGen;
 		struct Texture;
@@ -86,8 +88,10 @@ void TBitSet<size>::reset()
  *
  * This class is a specialized container for GLSL rendering state used by program/shader generators 
  * to take care of the rendering state given by the scene graph.
+ *
+ * @todo uses TUnitContainer
  */
-struct GLSLState : public TBitSet< 13 >
+struct GLSLState : public TBitSet< 14 >
 {
 	enum BitSetIndexType
 	{
@@ -117,6 +121,9 @@ struct GLSLState : public TBitSet< 13 >
 
 		// VertexShape node
 		COLOR4_BIND_PER_VERTEX,
+
+		// PostProcessing
+		POST_PROCESSING,			///< True when post-processing is enabled, false otherwise
 
 		//
 		MAX_BITSETINDEXTYPE
@@ -422,6 +429,39 @@ struct GLSLState : public TBitSet< 13 >
 
 
 	/**
+	 * @name Post-processing units
+	 */
+	//@{
+	 
+	/**
+	 * @brief Post-processing unit state structure
+	 */
+	struct PostProcessingState
+	{
+		/**
+		 * @brief Default constructor
+		 */
+		PostProcessingState( vgd::node::PostProcessing * node )
+		: m_node(node)
+		{}
+
+		vgd::node::PostProcessing * getNode() const { return m_node; }
+
+	private:
+		vgd::node::PostProcessing * m_node;
+	};
+
+	/**
+	 * @brief Post-processing unit container
+	 */
+	typedef vge::basic::TUnitContainer< PostProcessingState > PostProcessingStateContainer;
+	PostProcessingStateContainer postProcessing;
+
+	//@}
+
+
+
+	/**
 	 * @brief Returns the last encountered Program node
 	 */
 	vgd::node::Program * getProgram() const;
@@ -432,6 +472,40 @@ struct GLSLState : public TBitSet< 13 >
 	 * @param node		reference on the Program node
 	 */
 	void setProgram( vgd::node::Program * program );
+
+
+
+	/**
+	 * @name Shader generation accessors
+	 */
+	//@{
+
+	enum ShaderStage
+	{
+		FRAGMENT_OUTPUT = 0,		///< Fragment Shader Outputs stage (example: gl_FragData[1] = ...)
+
+		//
+		MAX_SHADERSTAGE
+	};
+
+	/**
+	 * @brief Sets the glsl code for a specific stage.
+	 *
+	 * @param shaderStage	selector of the stage
+	 * @param glslCode		code to insert in the desired shader
+	 */
+	void setShaderStage( const ShaderStage shaderStage, const std::string& glslCode );
+
+	/**
+	 * @brief Returns the glsl code for a specific stage.
+	 *
+	 * @param shaderStage	selector of the stage
+	 *
+	 * @return code to insert in the desired shader or an empty string.
+	 */
+	const std::string& getShaderStage( const ShaderStage shaderStage ) const;
+
+	//@}
 
 
 
@@ -479,6 +553,8 @@ struct GLSLState : public TBitSet< 13 >
 private:
 	vgd::node::Program *							m_program;				///< the last encountered Program node
 
+	std::vector< std::string >						m_shaderStage;			///< container of glsl code for custom shader stage
+
 	vgd::node::LightModel::ShadowValueType			m_lightModelShadow;		///< Last encountered value of LightModel.shadow field
 	float											m_samplingSize;			///< @todo doc
 	vgd::node::LightModel::ShadowMapTypeValueType	m_shadowMapType;		///< @todo doc
@@ -490,7 +566,6 @@ private:
 
 	std::vector< vgd::Shp< TexUnitState > >		m_texture;		///< array of texture state. The zero-based index selects the texture unit.
 	uint										m_numTexture;	///< number of texture state in all light units.
-
 
 	static const std::string m_indexString[];	///< array containing the string representation for BitSetIndexType.
 };

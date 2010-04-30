@@ -122,6 +122,12 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 		}
 	}
 
+	// POSTPROCESSING
+	if ( lightModel->getPostProcessing() )
+	{
+		state.setEnabled( GLSLState::POST_PROCESSING );
+	}
+
 	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );
 }
