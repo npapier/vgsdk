@@ -15,6 +15,8 @@
 #include <vgAlg/node/VertexShape.hpp>
 #include <vgDebug/convenience.hpp>
 #include <vgd/node/TriSet.hpp>
+#include <vge/technique/ApplyGeometricalTransformations.hpp>
+#include <vgeGL/engine/Engine.hpp>
 #include <vgGTK/graph/Browser.hpp>
 #include <vgGTK/node/SelectedNode.hpp>
 #include <vgOpenCOLLADA/exporter/SceneExporter.hpp>
@@ -54,6 +56,7 @@ m_location( location )
 		"    <separator/>"
 		"    <menuitem action='InvertTriangleOrientation'/>"
 		"    <menuitem action='InvertNormalOrientation'/>"
+		"    <menuitem action='ApplyGeometricalTransformation'/>"
 		"  </popup>"
 		"</ui>";
 	
@@ -74,14 +77,23 @@ m_location( location )
 	m_actions->add( Gtk::Action::create("SetOptionalToDefault", "SetOptionalToDefault"), sigc::mem_fun(this, &ActionsNode::onSetOptionalToDefault) );
 	m_actions->add( Gtk::Action::create("InvertTriangleOrientation", "InvertTriangleOrientation"), sigc::mem_fun(this, &ActionsNode::onInvertTriangleOrientation) );
 	m_actions->add( Gtk::Action::create("InvertNormalOrientation", "InvertNormalOrientation"), sigc::mem_fun(this, &ActionsNode::onInvertNormalOrientation) );
+	m_actions->add( Gtk::Action::create("ApplyGeometricalTransformation", "ApplyGeometricalTransformation"), sigc::mem_fun(this, &ActionsNode::onApplyGeometricalTransformation) );
 
 	Gtk::Widget		* hiddenWidget	= m_uiManager->get_widget("/popup/HiddenNode");
-	m_hiddenMenuItem= dynamic_cast< Gtk::MenuItem * >( hiddenWidget );
+	m_hiddenMenuItem				= dynamic_cast< Gtk::MenuItem * >( hiddenWidget );
 
-	m_hiddenMenu	= new Gtk::Menu();
+	m_hiddenMenu					= new Gtk::Menu();
 
 	m_hiddenMenuItem->set_submenu( *m_hiddenMenu );
 	m_hiddenMenuItem->property_visible() = false;
+}
+
+
+
+ActionsNode::~ActionsNode()
+{
+	delete m_hiddenMenu;
+	delete m_hiddenMenuItem;
 }
 
 
@@ -108,7 +120,7 @@ bool ActionsNode::onBoutonPressEvent( GdkEventButton * event )
 
 		gdk_window_get_geometry( event->window, &x, &y, &width, &height, &depth );
 
-		vgd::node::Node * castNode = m_canvas->castRay( event->x, height - event->y );
+		vgd::node::Node *castNode = m_canvas->castRay( event->x, height - event->y );
 
 		if ( castNode )
 		{
@@ -121,6 +133,7 @@ bool ActionsNode::onBoutonPressEvent( GdkEventButton * event )
 			showPopup(event, node, CANVAS);
 		}
 	}
+	// else do nothing.
 
 	return true;
 }
@@ -145,14 +158,15 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 	m_actions->get_action("SetOptionalToDefault")->set_visible(false);
 	m_actions->get_action("InvertTriangleOrientation")->set_visible(false);
 	m_actions->get_action("InvertNormalOrientation")->set_visible(false);
+	//m_actions->get_action("ApplyGeometricalTransformation")->set_visible(false);
 
 	//if there is no shape in graph, don't display menu at all.
-	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+	vgd::visitor::predicate::ByKindOfType<vgd::node::VertexShape> predicate;
 	vgd::Shp< vgd::node::NodeList > result;
 	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
 	if( result->size() < 1 && m_location == CANVAS )
 	{
-		return;
+		return; //no menu needed.
 	}
 
 	int displayedNode = getDisplayedNodeNumber();
@@ -161,7 +175,7 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		m_actions->get_action("HideAllNode")->set_visible(true); //show "hide all" only if there is at least one node displayed.
 	}
 
-	//check if all node contained in m_hiddenNodes exists and display their menu items.
+	//check if all node contained in hidden nodes list exists and display their menu items.
 	vgd::Shp < HiddenNode > hidden;
 	vgd::Shp< std::list< vgd::Shp < HiddenNode > > > hiddenNodes = vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList();
 	std::list< vgd::Shp < HiddenNode > >::iterator it = hiddenNodes->begin();
@@ -242,8 +256,6 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 	}
 
 	Gtk::Menu *	popupMenu = dynamic_cast< Gtk::Menu * >( m_uiManager->get_widget("/popup") );
-
-	Gtk::manage( popupMenu );
 	popupMenu->popup( event->button, event->time );
 }
 
@@ -281,7 +293,7 @@ void ActionsNode::onHideNode()
 
 	if( isAlreadyHidden( node ) )
 	{
-		return;
+		return; //node is already hidden.
 	}
 	
 	Gtk::MenuItem	* item = new Gtk::MenuItem(node->getName());
@@ -327,7 +339,7 @@ int ActionsNode::getDisplayedNodeNumber()
 {
 	int counter = 0;
 
-	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+	vgd::visitor::predicate::ByKindOfType<vgd::node::VertexShape> predicate;
 	vgd::Shp< vgd::node::NodeList > result;
 	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
 
@@ -376,7 +388,7 @@ void ActionsNode::onShowAllHiddenNode()
 void ActionsNode::onHideAll()
 {
 	vgd::Shp < vgd::node::Node > currentNode = m_currentNode.lock();
-	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+	vgd::visitor::predicate::ByKindOfType<vgd::node::VertexShape> predicate;
 	vgd::Shp< vgd::node::NodeList > result;
 	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
 
@@ -395,7 +407,7 @@ void ActionsNode::onHideAll()
 void ActionsNode::onHideAllExceptSelected()
 {
 	vgd::Shp < vgd::node::Node > currentNode = m_currentNode.lock();
-	vgd::visitor::predicate::ByType<vgd::node::VertexShape> predicate;
+	vgd::visitor::predicate::ByKindOfType<vgd::node::VertexShape> predicate;
 	vgd::Shp< vgd::node::NodeList > result;
 	result = vgd::visitor::find( m_canvas->getRoot(), predicate );
 
@@ -469,6 +481,20 @@ void ActionsNode::onInvertNormalOrientation()
 	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
 
 	vgAlg::node::invertNormalOrientation( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
+
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+}
+
+
+
+void ActionsNode::onApplyGeometricalTransformation()
+{
+	using vge::visitor::NodeCollectorExtended;
+	vge::technique::ApplyGeometricalTransformations technique;
+	vgeGL::engine::Engine* engine = new vgeGL::engine::Engine();
+	NodeCollectorExtended<> collector( true, false, NodeCollectorExtended<>::IGNORE_KIT );
+	m_canvas->getRoot()->traverse( collector );
+	technique.apply( engine, collector.getTraverseElements() );
 
 	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
 }

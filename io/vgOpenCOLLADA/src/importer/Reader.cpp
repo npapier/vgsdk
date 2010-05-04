@@ -128,6 +128,10 @@ bool Reader::writeGeometry ( const COLLADAFW::Geometry* geometry )
 			return false;
 		}
 	}
+	else
+	{
+		throw std::runtime_error("Only mesh geometries are supported.");
+	}
 	
 	return true;
 }
@@ -154,7 +158,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	
 	if( m_mapMaterialEffect->find( effect->getUniqueId().toAscii() ) == m_mapMaterialEffect->end() )
 	{
-		return false;
+		return true; //effect is not instanciate.
 	}
 
 	vgd::Shp< vgd::node::Group > container = (*m_mapMaterialEffect)[effect->getUniqueId().toAscii()];
@@ -238,6 +242,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 
 			if( m_mapTextures->find( sampler->getSourceImage().toAscii() ) == m_mapTextures->end() )
 			{
+				assert( false && "Instanciate texture not found." );
 				return false;
 			}
 
@@ -278,7 +283,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 			//WRAP_S
 			if ( sampler->getWrapS() == COLLADAFW::Sampler::WRAP_MODE_UNSPECIFIED )
 			{
-				assert("UNSPECIFIED WRAP MODE");
+				assert(false && "Unspecified wrap mode.");
 			}
 			else if ( sampler->getWrapS() == COLLADAFW::Sampler::WRAP_MODE_NONE )
 			{
@@ -302,13 +307,13 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 			}
 			else
 			{
-				assert("UNSPECIFIED WRAP MODE");
+				assert(false && "Unspecified wrap mode.");
 			}
 
 			//WRAP_T
 			if ( sampler->getWrapT() == COLLADAFW::Sampler::WRAP_MODE_UNSPECIFIED )
 			{
-				assert("UNSPECIFIED WRAP MODE");
+				assert(false && "Unspecified wrap mode.");
 			}
 			else if ( sampler->getWrapT() == COLLADAFW::Sampler::WRAP_MODE_NONE )
 			{
@@ -332,7 +337,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 			}
 			else
 			{
-				assert("UNSPECIFIED WRAP MODE");
+				assert(false && "Unspecified wrap mode.");
 			}
 
 			tex->sethFunction( Texture2D::FUN_MODULATE );
