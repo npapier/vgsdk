@@ -188,7 +188,11 @@ void VisualSceneImporter::createNodeTransformation( const COLLADAFW::Node* node,
 		//SKEW
 		else if (transformation->getTransformationType() == COLLADAFW::Transformation::SKEW)
 		{
-
+			assert( false && "Skew is not yet implement." );
+		}
+		else
+		{
+			assert( false && "Unexpected value." );
 		}
 	}
 }

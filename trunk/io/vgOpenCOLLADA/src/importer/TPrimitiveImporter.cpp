@@ -3,4 +3,4 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgOpenCOLLADA/importer/PrimitiveImporter.hpp"
+#include "vgOpenCOLLADA/importer/TPrimitiveImporter.hpp"

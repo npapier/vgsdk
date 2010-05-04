@@ -8,7 +8,7 @@
 #include <COLLADAFWPolygons.h>
 #include <COLLADAFWTriangles.h>
 
-#include <vgOpenCOLLADA/importer/PrimitiveImporter.hpp>
+#include <vgOpenCOLLADA/importer/TPrimitiveImporter.hpp>
 
 namespace vgOpenCOLLADA
 {
