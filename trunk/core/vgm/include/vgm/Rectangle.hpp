@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -194,6 +194,16 @@ struct Rectangle : public vgm::Vector< T, 4 >
 	const bool isInvalid() const
 	{
 		return Vector<T, 4>::isInvalid();
+	}
+
+	/**
+	 * @brief	Tells if the rectangle is valid.
+	 *
+	 * @return	true or false
+	 */
+	const bool isValid() const
+	{
+		return Vector<T, 4>::isValid();
 	}
 
 	/**

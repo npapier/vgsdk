@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -205,6 +205,13 @@ const bool Rotation::isInvalid() const
 	const float max = std::numeric_limits< float >::max();
 
 	return quat[0]==max && quat[1]==max && quat[2]==max && quat[3]==max;
+}
+
+
+
+const bool Rotation::isValid() const
+{
+	return !isInvalid();
 }
 
 

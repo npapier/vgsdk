@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -195,6 +195,13 @@ const bool Box3f::isInvalid( void ) const
 #endif
 
 	return retVal;
+}
+
+
+
+const bool Box3f::isValid( void ) const
+{
+	return !isInvalid();
 }
 
 
