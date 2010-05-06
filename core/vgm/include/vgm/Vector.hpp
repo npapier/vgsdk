@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -420,6 +420,11 @@ vgm::Vec4f		out5b( in5 );
 	 * @author	Guillaume Brocker
 	 */
 	const bool isInvalid( void ) const;
+
+	/**
+	 * @brief Tests if the vector is valid.
+	 */
+	const bool isValid( void ) const;
 
 	/**
 	 * @brief Component-wise binary vector addition operators.

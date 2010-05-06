@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -178,6 +178,11 @@ struct VGM_API Rotation
 	 * @brief	Tells if the rotation is invalid.
 	 */
 	const bool isInvalid() const;
+
+	/**
+	 * @brief	Tells if the rotation is valid.
+	 */
+	const bool isValid() const;
 
 	/**
 	 * @brief	Set the rotation as invalid.

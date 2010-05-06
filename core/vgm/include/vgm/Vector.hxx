@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -177,6 +177,14 @@ const bool Vector<T,N>::isInvalid( void ) const
 		invalid = (m_tCoord[i] == tMax);
 	}
 	return invalid;
+}
+
+
+
+template< typename T, int N >
+const bool Vector<T,N>::isValid( void ) const
+{
+	return !isInvalid();
 }
 
 
