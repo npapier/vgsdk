@@ -251,8 +251,8 @@ Browser::Browser()
 
 	// Enable drag&drop on the tree view.
 	// We explicitly tell that only moves are possible (no copy).
-	m_treeView.enable_model_drag_source( Gdk::MODIFIER_MASK, Gdk::ACTION_MOVE );
-	m_treeView.enable_model_drag_dest();	
+	//m_treeView.enable_model_drag_source( Gdk::MODIFIER_MASK, Gdk::ACTION_MOVE );
+	//m_treeView.enable_model_drag_dest();	
 
 
 	// Connects several signal handlers on the tree view.
@@ -281,6 +281,9 @@ void Browser::onActionChanged( vgGTK::node::ActionOnNode action )
 			break;
 		case vgGTK::node::EXPORT:
 			onExportNode();
+			break;
+		case vgGTK::node::REFRESH:
+			refreshTree();
 			break;
 	}
 }
@@ -330,7 +333,7 @@ bool Browser::searchNode( Gtk::TreeModel::Children children, vgd::Shp< vgd::node
 
 
 void Browser::selectNode( vgd::Shp< vgd::node::Node > node )
-{
+{	
 	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
 	if( selection->count_selected_rows() > 0 )
 	{
@@ -343,11 +346,13 @@ void Browser::selectNode( vgd::Shp< vgd::node::Node > node )
 		}
 	}
 
-	m_treeStore->refresh();
 	Gtk::TreeModel::Row it;
 	if ( searchNode(m_treeStore->children(), node, &it) )
 	{
-		m_treeView.expand_to_path( Gtk::TreePath( it ) );
+		Gtk::TreePath path( it );
+		path.up(); //expand to parent row
+
+		m_treeView.expand_to_path( path );
 		m_treeView.scroll_to_row( Gtk::TreePath( it ) );
 		selection->select(it);
 	}
@@ -466,9 +471,23 @@ void Browser::onButtonReleaseEvent( GdkEventButton * event )
 		
 		if( rowIterator )
 		{
-			vgd::Shp< vgd::node::Node >	node = (*rowIterator)[ m_columns.m_nodeColumn ];
+			Gtk::TreePath	rowPath( rowIterator );
 
-			m_actionsNode->showPopup(event, node, vgGTK::node::TREE);
+			vgd::Shp< vgd::node::Node >		node				= (*rowIterator)[ m_columns.m_nodeColumn ];
+			vgd::Shp< vgd::node::Group >	parentGroup;
+			if( rowPath.get_depth() > 1 )
+			{
+				// Moves the path to the parent node.
+				rowPath.up();
+
+				// Retrieves the parent row iterator, the node to remove and the parent group.
+				Gtk::TreeModel::iterator		parentRowIterator	= m_treeStore->get_iter( rowPath );
+				vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_columns.m_nodeColumn ];
+				parentGroup											= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );	
+			}
+			//else root node => no parent.
+
+			m_actionsNode->showPopup(event, node, parentGroup, vgGTK::node::TREE);
 		}
 	}
 }

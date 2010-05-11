@@ -17,7 +17,6 @@
 #include <vgd/node/TriSet.hpp>
 #include <vge/technique/ApplyGeometricalTransformations.hpp>
 #include <vgeGL/engine/Engine.hpp>
-#include <vgGTK/graph/Browser.hpp>
 #include <vgGTK/node/SelectedNode.hpp>
 #include <vgOpenCOLLADA/exporter/SceneExporter.hpp>
 
@@ -29,10 +28,10 @@ namespace vgGTK
 namespace node
 {
 
-ActionsNode::ActionsNode( POPUP_LOCATION location ) :
-m_actions( Gtk::ActionGroup::create() ),
-m_uiManager( Gtk::UIManager::create() ),
-m_location( location )
+ActionsNode::ActionsNode( POPUP_LOCATION location ) 
+:	m_actions( Gtk::ActionGroup::create() ),
+	m_uiManager( Gtk::UIManager::create() ),
+	m_location( location )
 {
 	// Initializes the user interface manager.
 	m_uiDefinition =
@@ -42,6 +41,14 @@ m_location( location )
 		"    <separator/>"
 		"    <menuitem action='ExpandSubTree'/>"
 		"    <menuitem action='RemoveNode'/>"
+		"    <separator/>"
+		"    <menuitem action='PreviousNode'/>"
+		"    <menuitem action='NextNode'/>"
+		"    <separator/>"
+		"    <menuitem action='CutNode'/>"
+		"    <menuitem action='CopyNode'/>"
+		"    <menuitem action='PastNode'/>"
+		"    <menu action='InsertNode'/>"
 		"    <separator/>"
 		"    <menuitem action='HideNode'/>"
 		"    <menuitem action='HideAllNode'/>"
@@ -65,19 +72,33 @@ m_location( location )
 	m_uiManager->add_ui_from_string( m_uiDefinition );
 
 	m_actions->add( Gtk::Action::create("GetNodeInTree", "GetNode"), sigc::mem_fun(this, &ActionsNode::onGetNodeInTree) );
+
 	m_actions->add( Gtk::Action::create("ExpandSubTree", "Expand"), sigc::mem_fun(this, &ActionsNode::onExpandSubTree) );
 	m_actions->add( Gtk::Action::create("RemoveNode", "Remove"), sigc::mem_fun(this, &ActionsNode::onRemoveNode) );
+
+	m_actions->add( Gtk::Action::create("PreviousNode", "Previous"), sigc::mem_fun(this, &ActionsNode::onPreviousNode) );
+	m_actions->add( Gtk::Action::create("NextNode", "Next"), sigc::mem_fun(this, &ActionsNode::onNextNode) );
+
+	m_actions->add( Gtk::Action::create("CutNode", "Cut"), sigc::mem_fun(this, &ActionsNode::onCutNode) );
+	m_actions->add( Gtk::Action::create("CopyNode", "Copy"), sigc::mem_fun(this, &ActionsNode::onCopyNode) );
+	m_actions->add( Gtk::Action::create("PastNode", "Paste"), sigc::mem_fun(this, &ActionsNode::onPastNode) );
+	m_actions->add( Gtk::Action::create("InsertNode", "Insert Node") );
+
 	m_actions->add( Gtk::Action::create("HideNode", "Hide"), sigc::mem_fun(this, &ActionsNode::onHideNode) );
 	m_actions->add( Gtk::Action::create("HideAllNode", "Hide All"), sigc::mem_fun(this, &ActionsNode::onHideAll) );
 	m_actions->add( Gtk::Action::create("HideAllExceptSelectedNode", "Hide All Except Selection"), sigc::mem_fun(this, &ActionsNode::onHideAllExceptSelected) );
 	m_actions->add( Gtk::Action::create("HiddenNode", "Hidden Nodes") );
 	m_actions->add( Gtk::Action::create("ShowAllHiddenNode", "Show All"), sigc::mem_fun(this, &ActionsNode::onShowAllHiddenNode) );
+	
 	m_actions->add( Gtk::Action::create("ExportNode", "Export"), sigc::mem_fun(this, &ActionsNode::onExportNode) );
+	
 	m_actions->add( Gtk::Action::create("SetToDefault", "SetToDefault"), sigc::mem_fun(this, &ActionsNode::onSetToDefault) );
 	m_actions->add( Gtk::Action::create("SetOptionalToDefault", "SetOptionalToDefault"), sigc::mem_fun(this, &ActionsNode::onSetOptionalToDefault) );
+	
 	m_actions->add( Gtk::Action::create("InvertTriangleOrientation", "InvertTriangleOrientation"), sigc::mem_fun(this, &ActionsNode::onInvertTriangleOrientation) );
 	m_actions->add( Gtk::Action::create("InvertNormalOrientation", "InvertNormalOrientation"), sigc::mem_fun(this, &ActionsNode::onInvertNormalOrientation) );
 	m_actions->add( Gtk::Action::create("ApplyGeometricalTransformation", "ApplyGeometricalTransformation"), sigc::mem_fun(this, &ActionsNode::onApplyGeometricalTransformation) );
+
 
 	Gtk::Widget		* hiddenWidget	= m_uiManager->get_widget("/popup/HiddenNode");
 	m_hiddenMenuItem				= dynamic_cast< Gtk::MenuItem * >( hiddenWidget );
@@ -86,6 +107,15 @@ m_location( location )
 
 	m_hiddenMenuItem->set_submenu( *m_hiddenMenu );
 	m_hiddenMenuItem->property_visible() = false;
+
+
+	Gtk::Widget		* insertWidget		= m_uiManager->get_widget("/popup/InsertNode");
+	m_insertMenuItem	= dynamic_cast< Gtk::MenuItem * >( insertWidget );
+
+	m_insertNode = new InsertNode();
+
+	m_insertMenuItem->set_submenu( *m_insertNode->getMenu() );
+	m_insertMenuItem->property_visible() = false;
 }
 
 
@@ -94,6 +124,8 @@ ActionsNode::~ActionsNode()
 {
 	delete m_hiddenMenu;
 	delete m_hiddenMenuItem;
+	delete m_insertMenuItem;
+	delete m_insertNode;
 }
 
 
@@ -126,11 +158,19 @@ bool ActionsNode::onBoutonPressEvent( GdkEventButton * event )
 		{
 			vgd::Shp< vgd::node::Node > currentNode = castNode->shpFromThis();
 
-			showPopup(event, currentNode, NODE);
+			showPopup(event, currentNode, currentNode->getParent(), NODE);
 		}
 		else
 		{
-			showPopup(event, node, CANVAS);
+			if( node )
+			{
+				showPopup(event, node, node->getParent(), CANVAS);
+			}
+			else
+			{
+				vgd::Shp< vgd::node::Group > parent;
+				showPopup(event, node, parent, CANVAS);
+			}
 		}
 	}
 	// else do nothing.
@@ -140,15 +180,25 @@ bool ActionsNode::onBoutonPressEvent( GdkEventButton * event )
 
 
 
-void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, POPUP_LOCATION location)
+void ActionsNode::showPopup( GdkEventButton * event, vgd::Shp< vgd::node::Node > node, vgd::Shp< vgd::node::Group > parentNode, POPUP_LOCATION location )
 {
 	//@todo don't show "ExpandSubTree" if node don't have any children.
 	m_currentNode = node;
+	m_currentParentNode = parentNode;
 	m_location = location;
+
+	m_insertNode->setCurrentNode( node, parentNode );
 
 	m_actions->get_action("GetNodeInTree")->set_visible(false);
 	m_actions->get_action("ExpandSubTree")->set_visible(false);
 	m_actions->get_action("RemoveNode")->set_visible(false);
+
+	m_actions->get_action("PreviousNode")->set_visible(false);
+	m_actions->get_action("NextNode")->set_visible(false);
+	m_actions->get_action("CutNode")->set_visible(false);
+	m_actions->get_action("CopyNode")->set_visible(false);
+	m_actions->get_action("PastNode")->set_visible(false);
+
 	m_actions->get_action("HideNode")->set_visible(false);
 	m_actions->get_action("HideAllNode")->set_visible(false);
 	m_actions->get_action("HideAllExceptSelectedNode")->set_visible(false);
@@ -190,7 +240,7 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		}
 		else
 		{
-			Gtk::MenuItem	* item = Gtk::manage( new Gtk::MenuItem( hidden->getNode()->getName() ) );
+			Gtk::MenuItem	* item = new Gtk::MenuItem( hidden->getNode()->getName() );
 			hidden->setMenuItem( item );
 			item->signal_activate().connect( sigc::bind<0>( sigc::mem_fun(this, &ActionsNode::onShowNode), hidden) );			
 			m_hiddenMenu->append( *item );
@@ -207,6 +257,17 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 	{
 		m_actions->get_action("ShowAllHiddenNode")->set_visible(true);
 		m_hiddenMenuItem->property_visible() = true;
+	}
+
+	if( parentNode && m_location != CANVAS )
+	{
+		m_actions->get_action("CutNode")->set_visible(true);
+		m_actions->get_action("CopyNode")->set_visible(true);
+	}
+
+	if( vgGTK::node::SelectedNode::getSelectedNode()->getClipboardedNode() && m_location == TREE )
+	{
+		m_actions->get_action("PastNode")->set_visible(true);
 	}
 
 	if( m_location == NODE )
@@ -233,6 +294,20 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 		m_actions->get_action("SetToDefault")->set_visible(true);
 		m_actions->get_action("SetOptionalToDefault")->set_visible(true);		
 
+		if( parentNode )
+		{
+			const int index = parentNode->findChild( node );
+			if ( index > 0 )
+			{
+				m_actions->get_action("PreviousNode")->set_visible(true);
+			}
+
+			if ( index < parentNode->size() -1 )
+			{
+				m_actions->get_action("NextNode")->set_visible(true);
+			}
+		}
+
 		if(!node->isAKindOf<vgd::node::VertexShape>())
 		{
 			m_actions->get_action("ExpandSubTree")->set_visible(true);
@@ -253,6 +328,8 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 			m_actions->get_action("InvertTriangleOrientation")->set_visible(true);
 			m_actions->get_action("InvertNormalOrientation")->set_visible(true);
 		}
+
+		m_insertMenuItem->property_visible() = true;
 	}
 
 	Gtk::Menu *	popupMenu = dynamic_cast< Gtk::Menu * >( m_uiManager->get_widget("/popup") );
@@ -264,6 +341,7 @@ void ActionsNode::showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > 
 void ActionsNode::onGetNodeInTree()
 {
 	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
 	vgGTK::node::SelectedNode::getSelectedNode()->setSelectedNode( node );
 	vgDebug::get().logStatus( "Node %s selected.", node->getName().c_str() );
 }
@@ -295,16 +373,12 @@ void ActionsNode::onHideNode()
 	{
 		return; //node is already hidden.
 	}
-	
-	Gtk::MenuItem	* item = new Gtk::MenuItem(node->getName());
 
 	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node );
 
 	vgd::Shp < HiddenNode > hidden = vgd::makeShp( new HiddenNode(vertexShape) );
 	vgGTK::node::SelectedNode::getSelectedNode()->getHiddenNodeList()->push_back( hidden );
 	hidden->hide();
-	
-	item->signal_activate().connect( sigc::bind<0>( sigc::mem_fun(this, &ActionsNode::onShowNode), hidden) );
 
 	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
 
@@ -497,6 +571,107 @@ void ActionsNode::onApplyGeometricalTransformation()
 	technique.apply( engine, collector.getTraverseElements() );
 
 	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+}
+
+
+
+void ActionsNode::onPreviousNode()
+{
+	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+	vgd::Shp< vgd::node::Group > parentGroup = m_currentParentNode.lock();
+
+	if( node && parentGroup )
+	{
+		int index = parentGroup->findChild( node );
+
+		if ( index > 0 )
+		{
+			vgd::Shp< vgd::node::Node > prevNode = parentGroup->getAbstractChild( index - 1 );
+
+			parentGroup->replaceChild( node, index - 1 );
+			parentGroup->replaceChild( prevNode, index );
+
+			vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+			vgGTK::node::SelectedNode::getSelectedNode()->setSelectedNode( node );
+		}
+	}	
+}
+
+
+
+void ActionsNode::onNextNode()
+{
+	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+	vgd::Shp< vgd::node::Group > parentGroup = m_currentParentNode.lock();
+
+	if( node && parentGroup )
+	{
+		int index = parentGroup->findChild( node );
+
+		if ( index < parentGroup->size() -1 )
+		{
+			vgd::Shp< vgd::node::Node > nextNode = parentGroup->getAbstractChild( index + 1 );
+			parentGroup->replaceChild( node, index + 1 );
+			parentGroup->replaceChild( nextNode, index );
+			
+			vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+			vgGTK::node::SelectedNode::getSelectedNode()->setSelectedNode( node );
+		}
+	}
+}
+
+
+
+void ActionsNode::onCutNode()
+{
+	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+	vgd::Shp< vgd::node::Group > parentGroup = m_currentParentNode.lock();
+
+	if( node && parentGroup )
+	{
+		vgGTK::node::SelectedNode::getSelectedNode()->setClipboardedNode( node );
+		parentGroup->removeChild( node );
+		vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+	}
+}
+
+
+
+void ActionsNode::onCopyNode()
+{
+	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+	vgd::Shp< vgd::node::Group > parentGroup = m_currentParentNode.lock();
+
+	if( node && parentGroup )
+	{
+		vgGTK::node::SelectedNode::getSelectedNode()->setClipboardedNode( node );
+	}
+}
+
+
+
+void ActionsNode::onPastNode()
+{
+	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+	vgd::Shp< vgd::node::Group > parentGroup = m_currentParentNode.lock();
+
+	vgd::Shp< vgd::node::Node > clipboardedNode = vgGTK::node::SelectedNode::getSelectedNode()->getClipboardedNode();
+	if( clipboardedNode )
+	{
+		if( node )
+		{
+			if( node->isAKindOf<vgd::node::Group>() )
+			{
+				vgd::dynamic_pointer_cast< vgd::node::Group >( node )->addChild( clipboardedNode );
+			}
+			else if( parentGroup )
+			{
+				parentGroup->insertChild( clipboardedNode, parentGroup->findChild( node ) );
+			}
+		}
+
+		vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+	}
 }
 
 

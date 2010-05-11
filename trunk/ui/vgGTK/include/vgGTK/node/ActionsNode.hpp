@@ -17,16 +17,13 @@
 #include <vgd/node/VertexShape.hpp>
 
 #include <vgGTK/node/HiddenNode.hpp>
+#include <vgGTK/node/InsertNode.hpp>
 
 #include <vgUI/Canvas.hpp>
 
 namespace vgGTK
 {
 
-namespace graph
-{
-	struct Browser;
-}
 
 namespace node
 {
@@ -66,13 +63,20 @@ struct VGGTK_API ActionsNode
  *
  * @param tree: true if we are in the treeview.
  */
-	void showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, POPUP_LOCATION location);
+	void showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, vgd::Shp< vgd::node::Group > parentNode, POPUP_LOCATION location );
 
 private:
 
 	void onGetNodeInTree();							///< Handles the action that will select the node in the treeview.
 	void onExpandSubTree();							///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onRemoveNode();							///< Handles the action that will remove the selected node from it parent.
+
+	void onPreviousNode();								///< Handles the action that will move up the node.	
+	void onNextNode();								///< Handles the action that will move down the node.	
+	void onCutNode();								///< Handles the action that will cut the node.	
+	void onCopyNode();								///< Handles the action that will copy the node.	
+	void onPastNode();								///< Handles the action that will past the node.	
+	
 	void onHideNode();								///< Handles the action that will hide the selected node.
 	void onShowNode(vgd::Shp < HiddenNode > hidden);///< Handles the action that will show the selected node.
 	void onShowAllHiddenNode();						///< Handles the action that will show all hidden node.
@@ -89,6 +93,7 @@ private:
 	int getDisplayedNodeNumber();								///< Return the number of node which are displayed.
 
 	vgd::WeakPtr< vgd::node::Node >		m_currentNode;			///< current selected node.
+	vgd::WeakPtr< vgd::node::Group >	m_currentParentNode;	///< current parent of selected node.
 	vgUI::Canvas						*m_canvas;				///< canvas of the application
 
 	/**
@@ -100,6 +105,8 @@ private:
 	Glib::RefPtr< Gtk::UIManager >			m_uiManager;		///< Manages the user inteface toolbar and menus.
 	Gtk::Menu								* m_hiddenMenu;		///< Menu of hidden nodes
 	Gtk::MenuItem							* m_hiddenMenuItem;	///< MenuItem of hidden nodes.
+	InsertNode								* m_insertNode;
+	Gtk::MenuItem							* m_insertMenuItem;
 	//@}
 
 	POPUP_LOCATION						m_location;				///< Location of the menu (Canvas, TreeView...).

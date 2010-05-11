@@ -65,8 +65,12 @@ FieldManagerEditor::FieldManagerEditor()
 
 void FieldManagerEditor::clear()
 {
-	m_model->clear();
-	m_fieldManager.reset();
+	if( m_fieldManager )
+	{
+		refreshFieldObservation( false );
+		m_model->clear();
+		m_fieldManager.reset();
+	}
 }
 
 

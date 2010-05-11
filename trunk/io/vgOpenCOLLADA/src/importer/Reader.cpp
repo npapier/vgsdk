@@ -307,7 +307,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 			}
 			else
 			{
-				assert(false && "Unspecified wrap mode.");
+				assert(false && "Unsupported wrap mode.");
 			}
 
 			//WRAP_T
@@ -337,7 +337,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 			}
 			else
 			{
-				assert(false && "Unspecified wrap mode.");
+				assert(false && "Unsupported wrap mode.");
 			}
 
 			tex->sethFunction( Texture2D::FUN_MODULATE );
