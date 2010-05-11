@@ -59,17 +59,29 @@ struct VGGTK_API SelectedNode
 	*/
 	vgd::Shp< std::list< vgd::Shp < HiddenNode > > > getHiddenNodeList();
 
+	/**
+	* @brief	Get the current clipboarded node.
+	*/
+	void setClipboardedNode( vgd::Shp< vgd::node::Node > node );
+
+	/**
+	* @brief	Get the current clipboarded node.
+	*/
+	vgd::Shp< vgd::node::Node > getClipboardedNode();
+
 	sigc::signal< void, vgd::Shp< vgd::node::Node > > signal_selection_changed; ///< Signal emited when the selected node changes.
 	sigc::signal< void, ActionOnNode > signal_action_changed;					///< Signal emited when an action is called.
 
 private:
 	SelectedNode();
 
-	static vgd::Shp< SelectedNode >			m_selectedNode; ///< Singleton of SelectedNode.
+	static vgd::Shp< SelectedNode >						m_selectedNode;	///< Singleton of SelectedNode.
 
-	vgd::Shp< vgd::node::Node >				m_node;			///< Current selected node.
+	vgd::Shp< vgd::node::Node >							m_node;			///< Current selected node.
 
 	vgd::Shp< std::list< vgd::Shp < HiddenNode > > >	m_hiddenNodes; ///< List of hidden nodes.
+
+	vgd::Shp< vgd::node::Node >							m_clipboardNode;///< Current clipboarded node.
 	
 };
 

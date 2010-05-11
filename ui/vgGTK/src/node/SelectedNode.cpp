@@ -14,6 +14,7 @@ namespace node
 vgd::Shp< SelectedNode > SelectedNode::m_selectedNode;
 
 
+
 vgd::Shp< SelectedNode > SelectedNode::getSelectedNode()
 {
 	if(!m_selectedNode)
@@ -25,10 +26,13 @@ vgd::Shp< SelectedNode > SelectedNode::getSelectedNode()
 }
 
 
+
 SelectedNode::SelectedNode()
 {
 	m_hiddenNodes = vgd::makeShp( new std::list< vgd::Shp < HiddenNode > > );
 }
+
+
 
 void SelectedNode::setSelectedNode( vgd::Shp< vgd::node::Node > node )
 {
@@ -36,15 +40,35 @@ void SelectedNode::setSelectedNode( vgd::Shp< vgd::node::Node > node )
 	signal_selection_changed.emit( m_node );
 }
 
+
+
 void SelectedNode::setAction( ActionOnNode action )
 {
 	signal_action_changed.emit( action );
 }
 
+
+
 vgd::Shp< std::list< vgd::Shp < HiddenNode > > > SelectedNode::getHiddenNodeList()
 {
 	return m_hiddenNodes;
 }
+
+
+
+void SelectedNode::setClipboardedNode( vgd::Shp< vgd::node::Node > node )
+{
+	m_clipboardNode = node;
+}
+
+
+
+vgd::Shp< vgd::node::Node > SelectedNode::getClipboardedNode()
+{
+	return m_clipboardNode;
+}
+
+
 
 } // namespace node
 
