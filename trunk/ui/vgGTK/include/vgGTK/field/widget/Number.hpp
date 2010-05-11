@@ -37,6 +37,8 @@ struct Number : public Widget< NumberType >, public Gtk::SpinButton
 		set_activates_default( true );
 		set_text( Glib::ustring() );
 		vgGTK::configure< NumberType >( *this );
+
+		signal_value_changed().connect( sigc::mem_fun(&m_signalChanged, &sigc::signal< void >::emit) );
 	}
 	
 	void clear()
@@ -98,14 +100,6 @@ struct Number : public Widget< NumberType >, public Gtk::SpinButton
 	void setFrame( const bool frame )
 	{
 		set_has_frame( frame );
-	}
-
-protected:
-
-	void on_changed()
-	{
-		Gtk::SpinButton::on_changed();
-		m_signalChanged.emit();
 	}
 };
 
