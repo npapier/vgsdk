@@ -36,9 +36,12 @@ struct RegisterNode
 		// Register the new node in ClassRegistry. This instance of node is managed(deleted) by the registry.
  		vgd::Shp< classType > shpClass(	classType::createWhole() );
 
+#ifdef _DEBUG
 		const bool retVal = classType::getClassRegistry().template add<classType>( shpClass );
 		assert( retVal );
-		retVal;
+#else
+		classType::getClassRegistry().template add<classType>( shpClass );
+#endif
 	}
 	
 	/**
@@ -50,12 +53,15 @@ struct RegisterNode
 	RegisterNode( const int8 index )
 	{
 		// Register the new node in ClassRegistry. This instance of node is managed(deleted) by the registry.
-		vgd::Shp< classType > shpClass(	classType::createWhole()	);
+		vgd::Shp< classType > shpClass(	classType::createWhole() );
 		shpClass->setMultiAttributeIndex( index );
 
+#ifdef _DEBUG
 		const bool retVal = classType::getClassRegistry().template add<classType>( shpClass );
 		assert( retVal );
-		retVal;
+#else
+		classType::getClassRegistry().template add<classType>( shpClass );
+#endif
 	}
 };
 
@@ -66,3 +72,4 @@ struct RegisterNode
 } // namespace vgd
 
 #endif //#ifndef _VGD_BASIC_REGISTERNODE_HPP
+
