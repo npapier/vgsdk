@@ -15,7 +15,7 @@ vgd::Shp< SelectedNode > SelectedNode::m_selectedNode;
 
 
 
-vgd::Shp< SelectedNode > SelectedNode::getSelectedNode()
+vgd::Shp< SelectedNode > SelectedNode::getSelectedNodeObject()
 {
 	if(!m_selectedNode)
 	{
@@ -34,10 +34,27 @@ SelectedNode::SelectedNode()
 
 
 
-void SelectedNode::setSelectedNode( vgd::Shp< vgd::node::Node > node )
+void SelectedNode::setSelectedNode( vgd::Shp< vgd::node::Node > node,  vgd::Shp< vgd::node::Group > parent )
 {
 	m_node = node;
-	signal_selection_changed.emit( m_node );
+	m_parentNode = parent;
+	//signal_selection_changed.emit( node );
+}
+
+
+
+vgd::Shp< vgd::node::Node > SelectedNode::getSelectedNode()
+{
+	vgd::Shp< vgd::node::Node > node = m_node.lock();
+	return node;
+}
+
+
+
+vgd::Shp< vgd::node::Group > SelectedNode::getParentSelectedNode()
+{
+	vgd::Shp< vgd::node::Group > parent = m_parentNode.lock();
+	return parent;
 }
 
 

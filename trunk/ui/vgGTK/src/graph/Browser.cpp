@@ -262,9 +262,9 @@ Browser::Browser()
 	// Connects signal handlers on the tree view's selection
 	m_treeView.get_selection()->signal_changed().connect( sigc::mem_fun(this, &Browser::onSelectionChanged) );
 
-	vgGTK::node::SelectedNode::getSelectedNode()->signal_action_changed.connect( sigc::mem_fun(this, &Browser::onActionChanged) );
+	vgGTK::node::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &Browser::onActionChanged) );
 
-	vgGTK::node::SelectedNode::getSelectedNode()->signal_selection_changed.connect( sigc::mem_fun(this, &Browser::selectNode) );
+	//vgGTK::node::SelectedNode::getSelectedNodeObject()->signal_selection_changed.connect( sigc::mem_fun(this, &Browser::selectNode) );
 }
 
 
@@ -285,6 +285,12 @@ void Browser::onActionChanged( vgGTK::node::ActionOnNode action )
 		case vgGTK::node::REFRESH:
 			refreshTree();
 			break;
+		case vgGTK::node::SELECT:
+			selectNode( vgGTK::node::SelectedNode::getSelectedNodeObject()->getSelectedNode() );
+			break;
+		default:
+			assert(false && "Action not defined.");
+			break;
 	}
 }
 
@@ -295,8 +301,8 @@ void Browser::setCanvas( vgUI::Canvas * canvas )
 	m_canvas = canvas;
 	m_editor.setCanvas( canvas );
 
-	m_actionsNode = vgd::makeShp( new vgGTK::node::ActionsNode( vgGTK::node::TREE ) );
-	m_actionsNode->setCanvas( m_canvas );
+	m_actionsMenu = vgd::makeShp( new vgGTK::node::ActionsMenu( vgGTK::node::TREE ) );
+	m_actionsMenu->setCanvas( m_canvas );
 }
 
 
@@ -465,30 +471,7 @@ void Browser::onButtonReleaseEvent( GdkEventButton * event )
 {
 	if( event->button == 3 )
 	{
-		// Retrieves the selection and its path.
-		Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
-		Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
-		
-		if( rowIterator )
-		{
-			Gtk::TreePath	rowPath( rowIterator );
-
-			vgd::Shp< vgd::node::Node >		node				= (*rowIterator)[ m_columns.m_nodeColumn ];
-			vgd::Shp< vgd::node::Group >	parentGroup;
-			if( rowPath.get_depth() > 1 )
-			{
-				// Moves the path to the parent node.
-				rowPath.up();
-
-				// Retrieves the parent row iterator, the node to remove and the parent group.
-				Gtk::TreeModel::iterator		parentRowIterator	= m_treeStore->get_iter( rowPath );
-				vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_columns.m_nodeColumn ];
-				parentGroup											= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );	
-			}
-			//else root node => no parent.
-
-			m_actionsNode->showPopup(event, node, parentGroup, vgGTK::node::TREE);
-		}
+		m_actionsMenu->showPopup(event, vgGTK::node::TREE);
 	}
 }
 
@@ -581,6 +564,24 @@ void Browser::onSelectionChanged()
 		m_path.set_text( pathString );
 		m_path.set_has_tooltip( true );
 		m_path.set_tooltip_text( pathString );
+
+		//retrieve current node and its parent.
+		Gtk::TreePath	rowPath( selected );
+
+		vgd::Shp< vgd::node::Node >		node = (*selected)[ m_columns.m_nodeColumn ];
+		vgd::Shp< vgd::node::Group >	parentGroup;
+		if( rowPath.get_depth() > 1 )
+		{
+			// Moves the path to the parent node.
+			rowPath.up();
+
+			// Retrieves the parent row iterator, the node to remove and the parent group.
+			Gtk::TreeModel::iterator		parentRowIterator	= m_treeStore->get_iter( rowPath );
+			vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_columns.m_nodeColumn ];
+			parentGroup											= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );	
+		}
+
+		vgGTK::node::SelectedNode::getSelectedNodeObject()->setSelectedNode( node, parentGroup );
 	}
 	else
 	{

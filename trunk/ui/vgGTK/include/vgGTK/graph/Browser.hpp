@@ -23,7 +23,7 @@
 #include "vgGTK/graph/FieldManagerEditor.hpp"
 #include "vgGTK/graph/TreeModelColumnRecord.hpp"
 #include "vgGTK/graph/TreeStore.hpp"
-#include "vgGTK/node/ActionsNode.hpp"
+#include "vgGTK/node/ActionsMenu.hpp"
 #include "vgGTK/node/SelectedNode.hpp"
 
 namespace vgUI {
@@ -118,7 +118,7 @@ private:
 	Glib::RefPtr< Gtk::ActionGroup >	m_actions;			///< Holds all actions of the user interface.
 	Glib::RefPtr< Gtk::UIManager >		m_uiManager;		///< Manages the user inteface toolbar and menus.
 
-	vgd::Shp< vgGTK::node::ActionsNode >	m_actionsNode;
+	vgd::Shp< vgGTK::node::ActionsMenu >	m_actionsMenu;
 	//@}
 
 	/**

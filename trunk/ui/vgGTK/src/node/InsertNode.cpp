@@ -138,8 +138,8 @@ void InsertNode::onInsertNode( std::string name )
 	CreateNode createNode( name, this );
 	boost::mpl::for_each< shapes >( createNode );
 
-	vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
-	vgd::Shp< vgd::node::Group > parentGroup = m_currentParentNode.lock();
+	vgd::Shp< vgd::node::Node > node = vgGTK::node::SelectedNode::getSelectedNodeObject()->getSelectedNode();
+	vgd::Shp< vgd::node::Group > parentGroup = vgGTK::node::SelectedNode::getSelectedNodeObject()->getParentSelectedNode();
 
 	if( node )
 	{
@@ -153,7 +153,7 @@ void InsertNode::onInsertNode( std::string name )
 		}
 	}
 
-	vgGTK::node::SelectedNode::getSelectedNode()->setAction( REFRESH );
+	vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 }
 
 

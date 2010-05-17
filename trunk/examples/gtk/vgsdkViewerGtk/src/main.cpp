@@ -20,6 +20,7 @@
 #include <vgDebug/Global.hpp>
 #include <vgGTK/event/sdl.hpp>
 #include <vgGTK/Logging.hpp>
+#include <vgGTK/node/EditMenu.hpp>
 
 #include "vgsdkViewerGtk/actions.hpp"
 #include "vgsdkViewerGtk/myCanvas.hpp"
@@ -61,6 +62,8 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Glib::RefPtr< Gtk::UI
 	actions->add(
 			Gtk::Action::create("Quit", Gtk::Stock::QUIT),
 			sigc::ptr_fun(&vgsdkViewerGtk::fileExit) );
+
+	actions->add( Gtk::Action::create("Edit", "_Edit") );
 
 	Gtk::RadioButtonGroup	viewModeGroup;
 	actions->add( Gtk::Action::create("View", "_View") );
@@ -122,6 +125,7 @@ const Glib::ustring & createDefaultUI()
 		"      <separator/>"
 		"      <menuitem action='Quit'/>"
 		"    </menu>"
+		"    <menu name='EditMenu' action='Edit'/>"
 		"    <menu action='View'>"
 		"      <menuitem action='Properties'/>"
 		"      <separator/>"
@@ -188,6 +192,8 @@ int main( int argc, char ** argv )
 	// Initializes the local stock icons.
 	vgsdkViewerGtk::stock::initialize();
 
+	// Forces the language to english to avoid half translate interfaces.
+	Glib::setenv("LANG", "en");
 
 	// Creates the main content.
 	Gtk::Window					window;
@@ -196,7 +202,6 @@ int main( int argc, char ** argv )
 	vgsdkViewerGtk::Properties	properties;
 	vgsdkViewerGtk::myCanvas	canvas;
 	Gtk::Statusbar				statusBar;
-
 
 	// Creates the UI manager.
 	Glib::RefPtr<Gtk::UIManager>	uiManager = Gtk::UIManager::create();
@@ -225,6 +230,13 @@ int main( int argc, char ** argv )
 	recentFilter->add_application( Glib::get_application_name() );
 	recentChooserMenu->add_filter( *recentFilter );
 
+	Gtk::Widget		* editWidget		= uiManager->get_widget("/DefaultMenuBar/EditMenu");
+	Gtk::MenuItem	* editMenuItem		= dynamic_cast< Gtk::MenuItem * >( editWidget );
+
+	vgGTK::node::EditMenu * editMenu = new vgGTK::node::EditMenu();
+
+	editMenuItem->set_submenu( *editMenu->getMenu() );
+	editMenuItem->property_visible() = true;
 
 	// Configures the properties widget.
 	properties.set_border_width( 2 );
@@ -237,6 +249,7 @@ int main( int argc, char ** argv )
 
 
 	// Configures the main window.
+	window.add_accel_group( editMenu->getUIManager()->get_accel_group() );
 	window.add_accel_group( uiManager->get_accel_group() );
 	window.set_title("vgsdkViewer");
 //window.set_default_size( 1024, 768 );

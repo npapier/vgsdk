@@ -328,11 +328,12 @@ void helpAbout( Gtk::Window * topLevel )
 
 	authors.push_back( Glib::ustring("Guillaume Brocker") );
 	authors.push_back( Glib::ustring("Nicolas Papier") );
+	authors.push_back( Glib::ustring("Maxime Peresson") );
 
 	aboutDialog.set_transient_for( *topLevel );
 	aboutDialog.set_authors( authors );
 	aboutDialog.set_comments( "This programm is a simple demonstration of vgSDK capabilities. It allows you to load meshes (obj, trian, trian2 and dae), manipulate them and browse the rendering scene graph." );
-	aboutDialog.set_copyright( "Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier and Digital Trainers SAS." );
+	aboutDialog.set_copyright( "Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier, Maxime Peresson and Digital Trainers SAS." );
 	aboutDialog.set_license( "Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation." );
 	aboutDialog.set_website("http://code.google.com/p/vgsdk");
 	aboutDialog.set_wrap_license( true );
