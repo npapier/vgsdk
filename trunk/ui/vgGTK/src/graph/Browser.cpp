@@ -288,6 +288,12 @@ void Browser::onActionChanged( vgGTK::node::ActionOnNode action )
 		case vgGTK::node::SELECT:
 			selectNode( vgGTK::node::SelectedNode::getSelectedNodeObject()->getSelectedNode() );
 			break;
+		case vgGTK::node::MOVE_PREVIOUS:
+			movePrevious();
+			break;
+		case vgGTK::node::MOVE_NEXT:
+			moveNext();
+			break;
 		default:
 			assert(false && "Action not defined.");
 			break;
@@ -358,9 +364,36 @@ void Browser::selectNode( vgd::Shp< vgd::node::Node > node )
 		Gtk::TreePath path( it );
 		path.up(); //expand to parent row
 
-		m_treeView.expand_to_path( path );
-		m_treeView.scroll_to_row( Gtk::TreePath( it ) );
+		if( !m_treeView.row_expanded( path ) ) //only if parent row is not expanded.
+		{
+			m_treeView.expand_to_path( path );
+			m_treeView.scroll_to_row( Gtk::TreePath( it ) );
+		}
 		selection->select(it);
+	}
+}
+
+
+
+void Browser::movePrevious()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	if( selection->count_selected_rows() > 0 )
+	{
+		Gtk::TreeModel::iterator		rowIterator = selection->get_selected();
+		m_treeStore->iter_swap( rowIterator, rowIterator-- );
+	}
+}
+
+
+
+void Browser::moveNext()
+{
+	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
+	if( selection->count_selected_rows() > 0 )
+	{
+		Gtk::TreeModel::iterator		rowIterator = selection->get_selected();
+		m_treeStore->iter_swap( rowIterator, rowIterator++ );
 	}
 }
 

@@ -256,11 +256,15 @@ void ActionsNode::onPreviousNode()
 			parentGroup->replaceChild( node, index - 1 );
 			parentGroup->replaceChild( prevNode, index );
 
-			vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
+			vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( MOVE_PREVIOUS );
 
-			//during refresh, selection change, we have to reselect it.
-			vgGTK::node::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
-			vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
+			//vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
+
+			////during refresh, selection change, we have to reselect it.
+			//vgGTK::node::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
+			//vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
+
+
 		}
 	}	
 }
@@ -281,12 +285,14 @@ void ActionsNode::onNextNode()
 			vgd::Shp< vgd::node::Node > nextNode = parentGroup->getAbstractChild( index + 1 );
 			parentGroup->replaceChild( node, index + 1 );
 			parentGroup->replaceChild( nextNode, index );
-			
-			vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
+
+			vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( MOVE_NEXT );
+
+			//vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 
 			//during refresh, selection change, we have to reselect it.
-			vgGTK::node::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
-			vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
+			//vgGTK::node::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
+			//vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
 		}
 	}
 }
