@@ -25,7 +25,9 @@ enum ActionOnNode
 	EXPORT,
 	REFRESH,
 	REMOVE,
-	SELECT
+	SELECT,
+	MOVE_PREVIOUS,
+	MOVE_NEXT
 };
 
 /**

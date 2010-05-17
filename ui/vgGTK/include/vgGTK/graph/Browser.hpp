@@ -93,6 +93,16 @@ struct VGGTK_API Browser : public Gtk::VBox
 	 * @param	node: the vgsdk node
 	 */
 	void selectNode( vgd::Shp< vgd::node::Node > node );
+
+	/**
+	 * @brief	Move back selection
+	 */
+	void movePrevious();
+
+	/**
+	 * @brief	Move forward selection
+	 */
+	void moveNext();
 	
 
 	/**
