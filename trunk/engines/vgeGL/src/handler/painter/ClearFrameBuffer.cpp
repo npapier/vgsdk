@@ -1,10 +1,11 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgeGL/handler/painter/ClearFrameBuffer.hpp"
 
+#include <glo/FrameBufferObject.hpp>
 #include <vgd/node/ClearFrameBuffer.hpp>
 
 #include "vgeGL/rc/TDisplayListHelper.hpp"
@@ -37,16 +38,45 @@ const vge::handler::Handler::TargetVector ClearFrameBuffer::getTargets() const
 
 
 
-void ClearFrameBuffer::apply ( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
+void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node )
 {
-	vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( pEngine, pNode, this );	
+	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+
+	// Updates engine state
+	using vgeGL::engine::GLSLState;
+	GLSLState& glslState = glEngine->getGLSLState();
+
+	const bool							isPostProcessingEnabled	= glslState.isEnabled( GLSLState::POST_PROCESSING );
+	vgd::Shp< glo::FrameBufferObject >	fbo						= glEngine->getOutputBuffers();
+
+	if (	glEngine->isGLSLEnabled() && isPostProcessingEnabled && // @todo FIXME Works only if LightModel is before ClearFrameBuffer
+			fbo && (fbo->getDrawBuffers().size() > 1)	)
+	{
+		// glsl, post-processing and several draw buffers are enabled, then clears all output buffers
+
+// @todo move into PostProcessing handler.
+		// applyPPForClearFrameBuffer()
+		const std::vector< int > drawBuffersBackup = fbo->getDrawBuffers();
+		fbo->setDrawBuffersToAll();
+
+		//
+		vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
+
+		// unappplyPP()
+		// Restores the draw buffers
+		fbo->setDrawBuffers( drawBuffersBackup );
+	}
+	else
+	{
+		vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
+	}
 }
 
 
 
 void ClearFrameBuffer::unapply ( vge::engine::Engine*, vgd::node::Node* )
-{
-}
+{}
 
 
 
@@ -54,6 +84,7 @@ void ClearFrameBuffer::setToDefaults()
 {
 	glClearColor( 0.f, 0.f, 0.f, 0.f );
 	glClearAccum( 0.f, 0.f, 0.f, 0.f );
+	glClearDepth( 1.0f );
 }
 
 
@@ -62,7 +93,7 @@ void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuf
 {
 	// CLEAR COLOR
 	vgm::Vec4f	clearValue;
-	bool			defined;
+	bool		defined;
 	
 	//
 	defined = pFrameBuffer->getClear( vgd::node::ClearFrameBuffer::COLOR, clearValue );
@@ -97,7 +128,7 @@ void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuf
 	
 	if ( clearMask & vgd::node::ClearFrameBuffer::COLOR_BUFFER_BIT )
 	{
-		clearMaskGL|= GL_COLOR_BUFFER_BIT;
+		clearMaskGL |= GL_COLOR_BUFFER_BIT;
 	}
 	
 	if ( clearMask & vgd::node::ClearFrameBuffer::DEPTH_BUFFER_BIT )
@@ -114,10 +145,13 @@ void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuf
 	{
 		clearMaskGL |= GL_STENCIL_BUFFER_BIT;
 	}
-	
-	glClear( clearMaskGL );
-	
-	// Validate node
+
+	if ( clearMask != 0 )
+	{
+		glClear( clearMaskGL );
+	}
+
+	// Validates node
 	pFrameBuffer->getDirtyFlag(pFrameBuffer->getDFNode())->validate();
 }
 

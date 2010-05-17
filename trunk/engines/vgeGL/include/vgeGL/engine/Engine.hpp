@@ -10,6 +10,7 @@
 #include <vge/engine/TStack.hpp>
 #include <vge/rc/TManager.hpp>
 
+#include "vgeGL/basic/UniformContainer.hpp"
 #include "vgeGL/engine/GLSLState.hpp"
 
 // for GLState
@@ -18,6 +19,7 @@
 
 namespace glo 
 {
+	struct FrameBufferObject;
 	struct GLSLProgram;
 	struct IResource;
 //	struct Texture; 
@@ -163,6 +165,7 @@ public:
 
 	typedef vge::engine::TStack< GLState >		GLStateStack;	///< Type definition for the stack of GLState
 	typedef vge::engine::TStack< GLSLState >	GLSLStateStack; ///< Type definition for the stack of GLSLState
+	typedef vgeGL::basic::UniformContainer		UniformState;	///< Type definition for the uniform variables state
 
 	/**
 	 * @brief Retrieves the OpenGL state stack.
@@ -224,6 +227,26 @@ public:
 	 */
 	GLSLState& getGLSLState();
 
+
+	/**
+	 * @brief Retrieves the current state for Uniform
+	 *
+	 * @return the current state for Uniform
+	 */
+	const UniformState& getUniformState() const;
+
+	/**
+	 * @brief Retrieves the current state for Uniform
+	 *
+	 * @return the current state for Uniform
+	 */
+	UniformState& getUniformState();
+
+
+	// @todo doc, new section
+	vgd::Shp< glo::FrameBufferObject > getOutputBuffers() const;
+	// @todo doc
+	void setOutputBuffers( vgd::Shp< glo::FrameBufferObject > buffers = vgd::Shp< glo::FrameBufferObject >() );
 	//@}
 
 
@@ -686,6 +709,11 @@ private:
 	 */
 	vge::engine::TStack< GLSLState > m_glslStateStack;
 
+	UniformState						m_uniformState;		///< store the current uniform state
+
+	vgd::Shp< glo::FrameBufferObject >	m_outputBuffers;	///< store the output buffers (see OutputBuffers, ForwardRendering and PostProcessing nodes).
+
+
 	/**
 	 * @brief OpenGL GLSL program generator.
 	 */
@@ -693,10 +721,7 @@ private:
 
 
 
-	/**
-	 * @brief Used to know if this instance is the first one or not (for doiing some initializations).
-	 */
-	static bool m_firstInstance;
+	static bool m_firstInstance; ///< Used to know if this instance is the first one or not (for doiing some initializations).
 };
 
 

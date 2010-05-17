@@ -42,6 +42,8 @@ Engine::Engine()
 	m_currentProgram(0),
 	// m_glStateStack()
 	//m_glslStateStack()
+	//m_uniformState
+	//m_outputBuffers
 	m_glslProgramGenerator( new ProgramGenerator() )
 {
 	// Connects OpenGL manager to node destruction signal.
@@ -106,6 +108,8 @@ void Engine::reset()
 	//
 	getGLStateStack().clear( GLState() );
 	getGLSLStateStack().clear( GLSLState(getMaxLights(), getMaxTexUnits(), isShadowSamplerUsageEnabled() ) );
+	getUniformState().clear();
+	setOutputBuffers();
 
 	if ( m_firstInstance )
 	{
@@ -253,6 +257,29 @@ const GLSLState& Engine::getGLSLState() const
 GLSLState& Engine::getGLSLState()
 {
 	return m_glslStateStack.getTop();
+}
+
+
+const Engine::UniformState& Engine::getUniformState() const
+{
+	return m_uniformState;
+}
+
+Engine::UniformState& Engine::getUniformState()
+{
+	return m_uniformState;
+}
+
+
+
+vgd::Shp< glo::FrameBufferObject > Engine::getOutputBuffers() const
+{
+	return m_outputBuffers;
+}
+
+void Engine::setOutputBuffers( vgd::Shp< glo::FrameBufferObject > buffers )
+{
+	m_outputBuffers = buffers;
 }
 
 
@@ -469,9 +496,10 @@ void Engine::loadShaders( const std::string& path, const std::string& regex )
 
 const bool Engine::isGLContextCurrent() const
 {
+	return gleIsOpenGLCurrent();
 	// @todo FIXME should found a smarter method to test if OpenGL is current.
-	const GLubyte *pString = glGetString(GL_EXTENSIONS);
-	return ( pString != 0 );
+	//const GLubyte *pString = glGetString(GL_EXTENSIONS);
+	//return ( pString != 0 );
 }
 
 
@@ -858,10 +886,16 @@ void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport, const 
 	glLoadIdentity();
 	glOrtho( 0.f, 1.f, 0.f, 1.f, 0.f, 1.f );
 
-	activeTexture(0);
 	glMatrixMode( GL_TEXTURE );
-	glPushMatrix();
-	glLoadIdentity();
+	for(	int8	i		= 0,
+					iMax	= 3; // static_cast< int8 >(getMaxTexUnits()); @todo FIXME
+			i < iMax;
+			++i )
+	{
+		activeTexture(i);
+		glPushMatrix();
+		glLoadIdentity();
+	}
 }
 
 
@@ -869,9 +903,15 @@ void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport, const 
 void Engine::end2DRendering( const bool popAttribs )
 {
 	// Matrix stacks
-	activeTexture(0);
 	glMatrixMode( GL_TEXTURE );
-	glPopMatrix();
+	for(	int8	i		= 0,
+					iMax	= 3; // static_cast< int8 >(getMaxTexUnits()); @todo FIXME
+			i < iMax;
+			++i )
+	{
+		activeTexture(i);
+		glPopMatrix();
+	}
 
 	glMatrixMode( GL_PROJECTION );
 	glPopMatrix();
@@ -905,6 +945,8 @@ void Engine::pop()
 	glPopAttrib();
 	getGLStateStack().pop();
 	getGLSLStateStack().pop();
+
+	getUniformState().clear();
 }
 
 

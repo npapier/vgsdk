@@ -30,7 +30,7 @@ namespace painter
 namespace
 {
 
-const GLenum convertInternalFormatToGLInternalFormat( const vgd::node::Texture::InternalFormatValueType internalFormat )
+const GLenum convertInternalFormatToGLInternalFormat( const vgd::node::Texture::InternalFormatValueType internalFormat, const GLenum defaultGLInternalFormat )
 {
 	using vgd::node::Texture;
 
@@ -49,10 +49,22 @@ const GLenum convertInternalFormatToGLInternalFormat( const vgd::node::Texture::
 	else if ( internalFormat == Texture::DEPTH_COMPONENT_32F )
 	{
 		return GL_DEPTH_COMPONENT32F;
+	}
+	else if ( internalFormat == Texture::RGB_16F )
+	{
+		return GL_RGB16F;
+	}
+	else if ( internalFormat == Texture::RGB_32F )
+	{
+		return GL_RGB32F;
+	}
+	else if ( internalFormat == Texture::LUMINANCE_16F )
+	{
+		return GL_R16;
 	}	
 	else if ( internalFormat ==  Texture::AUTOMATIC )
 	{
-		return GL_DEPTH_COMPONENT;
+		return defaultGLInternalFormat;
 	}
 	else
 	{
@@ -781,16 +793,24 @@ const boost::tuple< GLint, GLenum > Texture::chooseFormats( vgd::Shp< vgd::basic
 		// Texture is used for shadow
 		assert( iimage->components() == 1 && "Texture.usage == SHADOW, but Texture.image.components != 1" );
 
-		vgd::node::Texture::InternalFormatValueType	internalFormat	= texture->getInternalFormat();
-		const GLenum internalFormatGL = convertInternalFormatToGLInternalFormat( internalFormat );
+		const vgd::node::Texture::InternalFormatValueType internalFormat = texture->getInternalFormat();
+		const GLenum internalFormatGL = convertInternalFormatToGLInternalFormat( internalFormat, GL_DEPTH_COMPONENT );
 
+// @todo test if internalFormat is a depth format
 		return boost::make_tuple( internalFormatGL, GL_DEPTH_COMPONENT );
 	}
 	else
 	{
+		assert( usage.value() == vgd::node::Texture::IMAGE && "Unexpected value for usage field." );
+
 		const GLint		components	= iimage->components();
 		const GLenum	format		= convertMyFormat2GL( iimage->format() );
-		return boost::make_tuple( components, format );
+
+		const vgd::node::Texture::InternalFormatValueType internalFormat = texture->getInternalFormat();
+
+		const GLenum internalFormatGL = convertInternalFormatToGLInternalFormat( internalFormat, components );
+
+		return boost::make_tuple( internalFormatGL, format );
 	}
 }
 

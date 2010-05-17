@@ -7,6 +7,8 @@
 #define _VGD_NODE_POSTPROCESSING_HPP
 
 #include "vgd/field/Enum.hpp"
+#include "vgd/field/Float.hpp"
+#include "vgd/field/Vec4f.hpp"
 #include "vgd/node/MultiAttribute.hpp"
 
 
@@ -25,14 +27,23 @@ namespace node
  * This node defines a single stage of a post-processing stage. Post-processing effect is applied to the previously rendered scene using COLOR and/or NORMAL buffer(s) 
  *
  * New fields defined by this node :
- * - SFEnum \c filter = NO_FILTER<br>
- *   Specifies the filter to apply to the input buffers.<br>
+ * - SFEnum \c input2 = INPUT2_NONE<br>
+ *   Specifies the third input buffer used by the filter.<br>
  *<br>
  * - SFEnum \c input0 = PREVIOUS_COLOR<br>
  *   Specifies the first input buffer used by the filter.<br>
  *<br>
  * - SFEnum \c input1 = INPUT1_NONE<br>
  *   Specifies the second input buffer used by the filter.<br>
+ *<br>
+ * - SFEnum \c filter = NO_FILTER<br>
+ *   Specifies the filter to apply to the input buffers.<br>
+ *<br>
+ * - OFVec4f \c [param4f0] = vgm::Vec4f(0.0, 0.0, 0.0, 0.0)<br>
+ *   Specifies the first 4f parameter used by the filter.<br>
+ *<br>
+ * - OFFloat \c [param1f0] = 0.0<br>
+ *   Specifies the first 1f parameter used by the filter.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -66,7 +77,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field filter
+	 * @name Accessors to field input2
 	 */
 	//@{
 
@@ -75,37 +86,34 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		COLOR_INVERSE = 286,	///< Inverts the colored value
-		BLUR_VERT = 288,	///< Blurs an image vertically using weights that follow a Gaussian distribution
-		BLOOM_HORIZ = 289,	///< Amplifies and blurs an image horizontally using weights that follow a gaussian distribution
-		COLOR_TO_MONOCHROME = 285,	///< Converts colored value to black and white
-		NO_FILTER = 295,	///< No filter is applied
-		DOWN_FILTER4 = 292,	///< Scales images down 4 times with a high-pass filter
-		COMBINE = 294,	///< Combines two images (ADD)
-		UP_FILTER4 = 293,	///< Scales images up 4 times
-		BLOOM_VERT = 290,	///< Amplifies and blurs an image vertically using weights that follow a gaussian distribution
-		COLOR_EDGE_DETECT = 291,	///< Detects edges and highlights them
-		BLUR_HORIZ = 287,	///< Blurs an image horizontally using weights that follow a Gaussian distribution
-		DEFAULT_FILTER = NO_FILTER	///< No filter is applied
+		INPUT2_ORIGINAL_POSITION = 324,	///< 
+		INPUT2_ORIGINAL_NORMAL = 323,	///< 
+		INPUT2_ORIGINAL_COLOR0 = 319,	///< 
+		INPUT2_ORIGINAL_COLOR1 = 321,	///< 
+		INPUT2_PREVIOUS_COLOR = 325,	///< 
+		INPUT2_NONE = 326,	///< 
+		INPUT2_ORIGINAL_DEPTH0 = 320,	///< 
+		INPUT2_ORIGINAL_DEPTH1 = 322,	///< 
+		DEFAULT_INPUT2 = INPUT2_NONE	///< 
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c filter.
+	 * @brief Type definition of the value contained by field named \c input2.
 	 */
-	struct FilterValueType : public vgd::field::Enum
+	struct Input2ValueType : public vgd::field::Enum
 	{
-		FilterValueType()
+		Input2ValueType()
 		{}
 
-		FilterValueType( const int v )
+		Input2ValueType( const int v )
 		: vgd::field::Enum(v)
 		{}
 
-		FilterValueType( const FilterValueType& o )
+		Input2ValueType( const Input2ValueType& o )
 		: vgd::field::Enum(o)
 		{}
 
-		FilterValueType( const vgd::field::Enum& o )
+		Input2ValueType( const vgd::field::Enum& o )
 		: vgd::field::Enum(o)
 		{}
 
@@ -113,17 +121,14 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 285 );
-			retVal.push_back( 286 );
-			retVal.push_back( 287 );
-			retVal.push_back( 288 );
-			retVal.push_back( 289 );
-			retVal.push_back( 290 );
-			retVal.push_back( 291 );
-			retVal.push_back( 292 );
-			retVal.push_back( 293 );
-			retVal.push_back( 294 );
-			retVal.push_back( 295 );
+			retVal.push_back( 319 );
+			retVal.push_back( 320 );
+			retVal.push_back( 321 );
+			retVal.push_back( 322 );
+			retVal.push_back( 323 );
+			retVal.push_back( 324 );
+			retVal.push_back( 325 );
+			retVal.push_back( 326 );
 
 			return retVal;
 		}
@@ -132,37 +137,34 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "COLOR_TO_MONOCHROME" );
-			retVal.push_back( "COLOR_INVERSE" );
-			retVal.push_back( "BLUR_HORIZ" );
-			retVal.push_back( "BLUR_VERT" );
-			retVal.push_back( "BLOOM_HORIZ" );
-			retVal.push_back( "BLOOM_VERT" );
-			retVal.push_back( "COLOR_EDGE_DETECT" );
-			retVal.push_back( "DOWN_FILTER4" );
-			retVal.push_back( "UP_FILTER4" );
-			retVal.push_back( "COMBINE" );
-			retVal.push_back( "NO_FILTER" );
+			retVal.push_back( "INPUT2_ORIGINAL_COLOR0" );
+			retVal.push_back( "INPUT2_ORIGINAL_DEPTH0" );
+			retVal.push_back( "INPUT2_ORIGINAL_COLOR1" );
+			retVal.push_back( "INPUT2_ORIGINAL_DEPTH1" );
+			retVal.push_back( "INPUT2_ORIGINAL_NORMAL" );
+			retVal.push_back( "INPUT2_ORIGINAL_POSITION" );
+			retVal.push_back( "INPUT2_PREVIOUS_COLOR" );
+			retVal.push_back( "INPUT2_NONE" );
 
 			return retVal;
 		}
 	};
 
 	/**
-	 * @brief Type definition of the field named \c filter
+	 * @brief Type definition of the field named \c input2
 	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FFilterType;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FInput2Type;
 
 
 	/**
-	 * @brief Gets the value of field named \c filter.
+	 * @brief Gets the value of field named \c input2.
 	 */
-	const FilterValueType getFilter() const;
+	const Input2ValueType getInput2() const;
 
 	/**
-	 * @brief Sets the value of field named \c filter.
+	 * @brief Sets the value of field named \c input2.
 	 */
-	void setFilter( const FilterValueType value );
+	void setInput2( const Input2ValueType value );
 
 	//@}
 
@@ -178,10 +180,14 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		NONE = 299,	///< 
-		ORIGINAL_COLOR = 296,	///< 
-		PREVIOUS_COLOR = 298,	///< 
-		ORIGINAL_NORMAL = 297,	///< 
+		ORIGINAL_POSITION = 308,	///< 
+		NONE = 310,	///< 
+		PREVIOUS_COLOR = 309,	///< 
+		ORIGINAL_NORMAL = 307,	///< 
+		ORIGINAL_COLOR0 = 303,	///< 
+		ORIGINAL_COLOR1 = 305,	///< 
+		ORIGINAL_DEPTH0 = 304,	///< 
+		ORIGINAL_DEPTH1 = 306,	///< 
 		DEFAULT_INPUT0 = PREVIOUS_COLOR	///< 
 	};
 
@@ -209,10 +215,14 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 296 );
-			retVal.push_back( 297 );
-			retVal.push_back( 298 );
-			retVal.push_back( 299 );
+			retVal.push_back( 303 );
+			retVal.push_back( 304 );
+			retVal.push_back( 305 );
+			retVal.push_back( 306 );
+			retVal.push_back( 307 );
+			retVal.push_back( 308 );
+			retVal.push_back( 309 );
+			retVal.push_back( 310 );
 
 			return retVal;
 		}
@@ -221,8 +231,12 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "ORIGINAL_COLOR" );
+			retVal.push_back( "ORIGINAL_COLOR0" );
+			retVal.push_back( "ORIGINAL_DEPTH0" );
+			retVal.push_back( "ORIGINAL_COLOR1" );
+			retVal.push_back( "ORIGINAL_DEPTH1" );
 			retVal.push_back( "ORIGINAL_NORMAL" );
+			retVal.push_back( "ORIGINAL_POSITION" );
 			retVal.push_back( "PREVIOUS_COLOR" );
 			retVal.push_back( "NONE" );
 
@@ -260,8 +274,14 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		INPUT1_ORIGINAL_COLOR = 300,	///< 
-		INPUT1_NONE = 301,	///< 
+		INPUT1_ORIGINAL_NORMAL = 315,	///< 
+		INPUT1_PREVIOUS_COLOR = 317,	///< 
+		INPUT1_ORIGINAL_COLOR1 = 313,	///< 
+		INPUT1_ORIGINAL_COLOR0 = 311,	///< 
+		INPUT1_ORIGINAL_DEPTH1 = 314,	///< 
+		INPUT1_ORIGINAL_DEPTH0 = 312,	///< 
+		INPUT1_ORIGINAL_POSITION = 316,	///< 
+		INPUT1_NONE = 318,	///< 
 		DEFAULT_INPUT1 = INPUT1_NONE	///< 
 	};
 
@@ -289,8 +309,14 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 300 );
-			retVal.push_back( 301 );
+			retVal.push_back( 311 );
+			retVal.push_back( 312 );
+			retVal.push_back( 313 );
+			retVal.push_back( 314 );
+			retVal.push_back( 315 );
+			retVal.push_back( 316 );
+			retVal.push_back( 317 );
+			retVal.push_back( 318 );
 
 			return retVal;
 		}
@@ -299,7 +325,13 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "INPUT1_ORIGINAL_COLOR" );
+			retVal.push_back( "INPUT1_ORIGINAL_COLOR0" );
+			retVal.push_back( "INPUT1_ORIGINAL_DEPTH0" );
+			retVal.push_back( "INPUT1_ORIGINAL_COLOR1" );
+			retVal.push_back( "INPUT1_ORIGINAL_DEPTH1" );
+			retVal.push_back( "INPUT1_ORIGINAL_NORMAL" );
+			retVal.push_back( "INPUT1_ORIGINAL_POSITION" );
+			retVal.push_back( "INPUT1_PREVIOUS_COLOR" );
 			retVal.push_back( "INPUT1_NONE" );
 
 			return retVal;
@@ -327,16 +359,212 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field filter
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum
+	{
+		COLOR_INVERSE = 289,	///< Inverts the colored value
+		OVER = 297,	///< Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition
+		BLUR_VERT = 291,	///< Blurs an image vertically using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0
+		BLOOM_HORIZ = 292,	///< Amplifies and blurs an image horizontally using weights that follow a gaussian distribution
+		COLOR_TO_MONOCHROME = 287,	///< Converts colored value to black and white
+		DOF = 301,	///< @todo
+		MIX_AND_SCALE = 299,	///< Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]
+		NO_FILTER = 302,	///< No filter is applied
+		COMBINE2_AND_SCALE = 300,	///< Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]
+		ADD = 298,	///< Combines two images into one by blending them linearly using the following formula : image1 + image2
+		DOWN_FILTER4 = 295,	///< Scales images down 4 times with a high-pass filter
+		UP_FILTER4 = 296,	///< Scales images up 4 times
+		BLOOM_VERT = 293,	///< Amplifies and blurs an image vertically using weights that follow a gaussian distribution
+		COLOR_TO_SEPIA = 288,	///< Converts colored value to sepia.\nSets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1].
+		COLOR_EDGE_DETECT = 294,	///< Detects edges and highlights them
+		BLUR_HORIZ = 290,	///< Blurs an image horizontally using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0.
+		DEFAULT_FILTER = NO_FILTER	///< No filter is applied
+	};
+
+	/**
+	 * @brief Type definition of the value contained by field named \c filter.
+	 */
+	struct FilterValueType : public vgd::field::Enum
+	{
+		FilterValueType()
+		{}
+
+		FilterValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		FilterValueType( const FilterValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		FilterValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 287 );
+			retVal.push_back( 288 );
+			retVal.push_back( 289 );
+			retVal.push_back( 290 );
+			retVal.push_back( 291 );
+			retVal.push_back( 292 );
+			retVal.push_back( 293 );
+			retVal.push_back( 294 );
+			retVal.push_back( 295 );
+			retVal.push_back( 296 );
+			retVal.push_back( 297 );
+			retVal.push_back( 298 );
+			retVal.push_back( 299 );
+			retVal.push_back( 300 );
+			retVal.push_back( 301 );
+			retVal.push_back( 302 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "COLOR_TO_MONOCHROME" );
+			retVal.push_back( "COLOR_TO_SEPIA" );
+			retVal.push_back( "COLOR_INVERSE" );
+			retVal.push_back( "BLUR_HORIZ" );
+			retVal.push_back( "BLUR_VERT" );
+			retVal.push_back( "BLOOM_HORIZ" );
+			retVal.push_back( "BLOOM_VERT" );
+			retVal.push_back( "COLOR_EDGE_DETECT" );
+			retVal.push_back( "DOWN_FILTER4" );
+			retVal.push_back( "UP_FILTER4" );
+			retVal.push_back( "OVER" );
+			retVal.push_back( "ADD" );
+			retVal.push_back( "MIX_AND_SCALE" );
+			retVal.push_back( "COMBINE2_AND_SCALE" );
+			retVal.push_back( "DOF" );
+			retVal.push_back( "NO_FILTER" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c filter
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FFilterType;
+
+
+	/**
+	 * @brief Gets the value of field named \c filter.
+	 */
+	const FilterValueType getFilter() const;
+
+	/**
+	 * @brief Sets the value of field named \c filter.
+	 */
+	void setFilter( const FilterValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field param4f0
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c param4f0.
+	 */
+	typedef vgm::Vec4f Param4f0ValueType;
+
+	/**
+	 * @brief Type definition of the field named \c param4f0
+	 */
+	typedef vgd::field::TOptionalField< Param4f0ValueType > FParam4f0Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c param4f0.
+	 */
+	const bool getParam4f0( Param4f0ValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c param4f0.
+ 	 */
+	void setParam4f0( const Param4f0ValueType& value );
+
+	/**
+	 * @brief Erases the field named \c param4f0.
+	 */
+	void eraseParam4f0();
+
+	/**
+	 * @brief Tests if the value of field named \c param4f0 has been initialized.
+	 */
+	const bool hasParam4f0() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field param1f0
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c param1f0.
+	 */
+	typedef float Param1f0ValueType;
+
+	/**
+	 * @brief Type definition of the field named \c param1f0
+	 */
+	typedef vgd::field::TOptionalField< Param1f0ValueType > FParam1f0Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c param1f0.
+	 */
+	const bool getParam1f0( Param1f0ValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c param1f0.
+ 	 */
+	void setParam1f0( const Param1f0ValueType& value );
+
+	/**
+	 * @brief Erases the field named \c param1f0.
+	 */
+	void eraseParam1f0();
+
+	/**
+	 * @brief Tests if the value of field named \c param1f0 has been initialized.
+	 */
+	const bool hasParam1f0() const;
+	//@}
+
+
+
+	/**
 	 * @name Field name accessors
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c filter.
+	 * @brief Returns the name of field \c input2.
 	 *
-	 * @return the name of field \c filter.
+	 * @return the name of field \c input2.
 	 */
-	static const std::string getFFilter( void );
+	static const std::string getFInput2( void );
 
 	/**
 	 * @brief Returns the name of field \c input0.
@@ -351,6 +579,27 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @return the name of field \c input1.
 	 */
 	static const std::string getFInput1( void );
+
+	/**
+	 * @brief Returns the name of field \c filter.
+	 *
+	 * @return the name of field \c filter.
+	 */
+	static const std::string getFFilter( void );
+
+	/**
+	 * @brief Returns the name of field \c param4f0.
+	 *
+	 * @return the name of field \c param4f0.
+	 */
+	static const std::string getFParam4f0( void );
+
+	/**
+	 * @brief Returns the name of field \c param1f0.
+	 *
+	 * @return the name of field \c param1f0.
+	 */
+	static const std::string getFParam1f0( void );
 
 	//@}
 

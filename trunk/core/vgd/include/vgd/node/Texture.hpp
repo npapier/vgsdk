@@ -187,8 +187,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		MIN_FILTER = 318,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
-		MAG_FILTER = 319,	///< Choose one value among NEAREST or LINEAR (default).
+		MIN_FILTER = 346,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
+		MAG_FILTER = 347,	///< Choose one value among NEAREST or LINEAR (default).
 		DEFAULT_FILTERPARAMETER = MAG_FILTER	///< Choose one value among NEAREST or LINEAR (default).
 	};
 
@@ -216,8 +216,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 318 );
-			retVal.push_back( 319 );
+			retVal.push_back( 346 );
+			retVal.push_back( 347 );
 
 			return retVal;
 		}
@@ -238,12 +238,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		NEAREST = 320,	///< 
-		LINEAR = 321,	///< 
-		LINEAR_MIPMAP_NEAREST = 323,	///< 
-		NEAREST_MIPMAP_NEAREST = 322,	///< 
-		LINEAR_MIPMAP_LINEAR = 325,	///< 
-		NEAREST_MIPMAP_LINEAR = 324,	///< 
+		NEAREST = 348,	///< 
+		LINEAR = 349,	///< 
+		LINEAR_MIPMAP_NEAREST = 351,	///< 
+		NEAREST_MIPMAP_NEAREST = 350,	///< 
+		LINEAR_MIPMAP_LINEAR = 353,	///< 
+		NEAREST_MIPMAP_LINEAR = 352,	///< 
 		DEFAULT_FILTER = LINEAR	///< 
 	};
 
@@ -271,12 +271,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 320 );
-			retVal.push_back( 321 );
-			retVal.push_back( 322 );
-			retVal.push_back( 323 );
-			retVal.push_back( 324 );
-			retVal.push_back( 325 );
+			retVal.push_back( 348 );
+			retVal.push_back( 349 );
+			retVal.push_back( 350 );
+			retVal.push_back( 351 );
+			retVal.push_back( 352 );
+			retVal.push_back( 353 );
 
 			return retVal;
 		}
@@ -333,9 +333,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		WRAP_T = 310,	///< 
-		WRAP_S = 309,	///< 
-		WRAP_R = 311,	///< 
+		WRAP_T = 338,	///< 
+		WRAP_S = 337,	///< 
+		WRAP_R = 339,	///< 
 		DEFAULT_WRAPPARAMETER = WRAP_S	///< 
 	};
 
@@ -363,9 +363,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 309 );
-			retVal.push_back( 310 );
-			retVal.push_back( 311 );
+			retVal.push_back( 337 );
+			retVal.push_back( 338 );
+			retVal.push_back( 339 );
 
 			return retVal;
 		}
@@ -387,12 +387,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		CLAMP = 313,	///< 
-		REPEAT = 312,	///< 
-		MIRRORED_REPEAT = 316,	///< 
-		CLAMP_TO_EDGE = 314,	///< 
-		CLAMP_TO_BORDER = 315,	///< 
-		ONCE = 317,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
+		CLAMP = 341,	///< 
+		REPEAT = 340,	///< 
+		MIRRORED_REPEAT = 344,	///< 
+		CLAMP_TO_EDGE = 342,	///< 
+		CLAMP_TO_BORDER = 343,	///< 
+		ONCE = 345,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
 		DEFAULT_WRAP = REPEAT	///< 
 	};
 
@@ -420,12 +420,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 312 );
-			retVal.push_back( 313 );
-			retVal.push_back( 314 );
-			retVal.push_back( 315 );
-			retVal.push_back( 316 );
-			retVal.push_back( 317 );
+			retVal.push_back( 340 );
+			retVal.push_back( 341 );
+			retVal.push_back( 342 );
+			retVal.push_back( 343 );
+			retVal.push_back( 344 );
+			retVal.push_back( 345 );
 
 			return retVal;
 		}
@@ -479,11 +479,14 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		DEPTH_COMPONENT_16 = 305,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
-		DEPTH_COMPONENT_24 = 306,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
-		AUTOMATIC = 304,	///< Choosed automatically an internal format matching the image format used by the texture.
-		DEPTH_COMPONENT_32F = 308,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
-		DEPTH_COMPONENT_32 = 307,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
+		DEPTH_COMPONENT_16 = 330,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
+		RGB_32F = 335,	///< A three component buffer. A 32-bit float is used to encode a texel.
+		LUMINANCE_16F = 336,	///< A single component buffer. A 16-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32F = 333,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
+		DEPTH_COMPONENT_24 = 331,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
+		AUTOMATIC = 329,	///< Choosed automatically an internal format matching the image format used by the texture.
+		RGB_16F = 334,	///< A three component buffer. A 16-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32 = 332,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
 		DEFAULT_INTERNALFORMAT = AUTOMATIC	///< Choosed automatically an internal format matching the image format used by the texture.
 	};
 
@@ -511,11 +514,14 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 304 );
-			retVal.push_back( 305 );
-			retVal.push_back( 306 );
-			retVal.push_back( 307 );
-			retVal.push_back( 308 );
+			retVal.push_back( 329 );
+			retVal.push_back( 330 );
+			retVal.push_back( 331 );
+			retVal.push_back( 332 );
+			retVal.push_back( 333 );
+			retVal.push_back( 334 );
+			retVal.push_back( 335 );
+			retVal.push_back( 336 );
 
 			return retVal;
 		}
@@ -529,6 +535,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 			retVal.push_back( "DEPTH_COMPONENT_24" );
 			retVal.push_back( "DEPTH_COMPONENT_32" );
 			retVal.push_back( "DEPTH_COMPONENT_32F" );
+			retVal.push_back( "RGB_16F" );
+			retVal.push_back( "RGB_32F" );
+			retVal.push_back( "LUMINANCE_16F" );
 
 			return retVal;
 		}
@@ -564,8 +573,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		IMAGE = 302,	///< Simple image mapping
-		SHADOW = 303,	///< Shadow mapping
+		IMAGE = 327,	///< Simple image mapping
+		SHADOW = 328,	///< Shadow mapping
 		DEFAULT_USAGE = IMAGE	///< Simple image mapping
 	};
 
@@ -593,8 +602,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 302 );
-			retVal.push_back( 303 );
+			retVal.push_back( 327 );
+			retVal.push_back( 328 );
 
 			return retVal;
 		}

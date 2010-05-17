@@ -79,7 +79,7 @@ const std::string saturate =
 // Converts colored value to black & white //
 /////////////////////////////////////////////
 
-static const std::string colorToMonochrome =
+const std::string colorToMonochrome =
 "float colorToMonochrome( vec4 color )\n"
 "{\n"
 "	vec3 luminanceConversion = vec3( 0.2125, 0.7154, 0.0721 );\n"
@@ -96,6 +96,31 @@ static const std::string colorToMonochrome =
 
 const std::string applyColorToMonochrome( 
 	"	color = vec4( colorToMonochrome(texMap2D[0], mgl_TexCoord[0].xy) );\n" );
+
+
+/////////////////////////////////////
+// Converts colored value to sepia //
+/////////////////////////////////////
+const std::string colorToSepia =
+"const vec3 lightColor	= vec3( 1.0, 0.9, 0.5 );\n"
+"const vec3 darkColor	= vec3( 0.2, 0.05, 0.0 );\n"
+"const vec3 grayXfer	= vec3( 0.3, 0.59, 0.11 );\n"
+"vec4 colorToSepia( sampler2D texMap, vec2 texCoord, float desaturate, float toning )\n"
+"{\n"
+"	vec4	color		= texture2D( texMap, texCoord );\n"
+"\n"
+"	vec3	sceneColor	= lightColor * color.rgb;\n"
+"	float	gray		= dot( grayXfer, sceneColor );\n"
+"	vec3	muted		= mix( sceneColor, vec3(gray), desaturate );\n"
+"	vec3	sepia		= mix( darkColor, lightColor, gray );\n"
+"	vec3	result		= mix( muted, sepia, toning );\n"
+"	return vec4( result.xyz, 1.0);\n"
+"}\n"
+"\n\n\n";
+
+
+const std::string applyColorToSepia(
+	"	color = vec4( colorToSepia(texMap2D[0], mgl_TexCoord[0].xy, param4f0.x, param4f0.y) );\n" );
 
 
 ///////////////////////////////
@@ -168,7 +193,7 @@ const std::string bloomHoriz =
 "\n";
 
 const std::string applyBloomHoriz(
-	"	color = bloomHoriz( texMap2D[0], mgl_TexCoord[0].xy, 1.5f );\n" ); // @todo 1.5f => dynamic parameter
+	"	color = bloomHoriz( texMap2D[0], mgl_TexCoord[0].xy, param1f0 );\n" );
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +208,7 @@ const std::string bloomVert =
 "\n\n\n";
 
 const std::string applyBloomVert(
-	"	color = bloomVert( texMap2D[0], mgl_TexCoord[0].xy, 1.5f );\n" ); // @todo 1.5f => dynamic parameter
+	"	color = bloomVert( texMap2D[0], mgl_TexCoord[0].xy, param1f0 );\n" );
 
 
 ///////////////////////////////////////
@@ -254,12 +279,37 @@ const std::string applyUpFilter4(
 	"	color = upFilter4( texMap2D[0], mgl_TexCoord[0].xy );\n" );
 
 
-/////////////////////////
-// Combines two images //
-/////////////////////////
+//////////
+// OVER //
+//////////
 
-const std::string combine =
-"vec4 combine( sampler2D texMap0, sampler2D texMap1, vec2 texCoord )"
+const std::string over  =
+"vec4 over( sampler2D texMap0, sampler2D texMap1, vec2 texCoord )"
+"{\n"
+"	vec4 color0 = texture2D( texMap0, texCoord );\n"
+"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	if ( length(color0.rgb) > 0 )\n"
+"	{\n"
+"		return color0;\n"
+"	}\n"
+"	else\n"
+"	{\n"
+"		return color1;\n"
+"	}\n"
+"}\n"
+"\n\n\n";
+
+const std::string applyOver(
+	"	color = over( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy );\n" );
+
+
+
+/////////
+// ADD //
+/////////
+
+const std::string add =
+"vec4 add( sampler2D texMap0, sampler2D texMap1, vec2 texCoord )"
 "{\n"
 "	vec4 color0 = texture2D( texMap0, texCoord );\n"
 "	vec4 color1 = texture2D( texMap1, texCoord );\n"
@@ -267,8 +317,62 @@ const std::string combine =
 "}\n"
 "\n\n\n";
 
-const std::string applyCombine(
-	"	color = combine( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy );\n" );
+const std::string applyAdd(
+	"	color = add( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy );\n" );
+
+
+///////////////////
+// MIX_AND_SCALE //
+///////////////////
+
+const std::string mixAndScale =
+"vec4 mixAndScale( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, float a, float scale )"
+"{\n"
+"	vec4 color0 = texture2D( texMap0, texCoord );\n"
+"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	return mix(color0, color1, a) * scale;\n"
+"}\n"
+"\n\n\n";
+
+const std::string applyMixAndScale(
+	"	color = mixAndScale( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param4f0.x, param4f0.y );\n" );
+
+
+///////////////////////////////////
+// Combines two images and scale //
+///////////////////////////////////
+
+const std::string combine2AndScale =
+"vec4 combine2AndScale( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, float a, float b, float scale )"
+"{\n"
+"	vec4 color0 = texture2D( texMap0, texCoord );\n"
+"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	return (color0 * a + color1 * b) * scale;\n"
+"}\n"
+"\n\n\n";
+
+const std::string applyCombine2AndScale(
+	"	color = combine2AndScale( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param4f0.x, param4f0.y, param4f0.z );\n" );
+
+
+/////////
+// DOF //
+/////////
+
+const std::string dof =
+"vec4 dof( sampler2D texMap0, sampler2D texMap1, sampler2D texMap2, vec2 texCoord, vec4 focalPlane )"
+"{\n"
+"	vec4 colorOrig = texture2D( texMap0, texCoord );\n"
+"	vec4 colorBlur = texture2D( texMap1, texCoord );\n"
+"	vec4 position = texture2D( texMap2, texCoord );\n"
+"\n"
+"	float blur = dot( position, focalPlane );\n"
+"	return mix(colorOrig, colorBlur, saturate(abs(blur)));\n"
+"}\n"
+"\n\n\n";
+
+const std::string applyDOF(
+	"	color = dof( texMap2D[0], texMap2D[1], texMap2D[2], mgl_TexCoord[0].xy, param4f0 );\n" );
 
 }
 
@@ -346,6 +450,10 @@ std::pair< std::string, std::string > PostProcessing::getFilter( const vgd::node
 	{
 		return std::make_pair( colorToMonochrome, applyColorToMonochrome );
 	}
+	else if ( filter == vgd::node::PostProcessing::COLOR_TO_SEPIA )
+	{
+		return std::make_pair( colorToSepia, applyColorToSepia );
+	}
 	else if ( filter == vgd::node::PostProcessing::COLOR_INVERSE )
 	{
 		return std::make_pair( colorInverse, applyColorInverse );
@@ -378,9 +486,25 @@ std::pair< std::string, std::string > PostProcessing::getFilter( const vgd::node
 	{
 		return std::make_pair( upFilter4, applyUpFilter4 );
 	}
-	else if ( filter == vgd::node::PostProcessing::COMBINE )
+	else if ( filter == vgd::node::PostProcessing::OVER )
 	{
-		return std::make_pair( combine, applyCombine );
+		return std::make_pair( over, applyOver );
+	}
+	else if ( filter == vgd::node::PostProcessing::ADD )
+	{
+		return std::make_pair( add, applyAdd );
+	}
+	else if ( filter == vgd::node::PostProcessing::MIX_AND_SCALE )
+	{
+		return std::make_pair( mixAndScale, applyMixAndScale );
+	}	
+	else if ( filter == vgd::node::PostProcessing::COMBINE2_AND_SCALE )
+	{
+		return std::make_pair( combine2AndScale, applyCombine2AndScale );
+	}
+	else if ( filter == vgd::node::PostProcessing::DOF )
+	{
+		return std::make_pair( saturate + dof, applyDOF );
 	}
 	else if ( filter == vgd::node::PostProcessing::NO_FILTER )
 	{

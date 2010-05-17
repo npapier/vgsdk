@@ -6,7 +6,10 @@
 #include "vgeGL/technique/ForwardRendering.hpp"
 
 #include <algorithm>
+#include <boost/assign/std/vector.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <vgeGL/rc/GLSLProgram.hpp>
 #include <strstream>
 #include <vgd/basic/Image.hpp>
 #include <vgd/basic/ImageInfo.hpp>
@@ -55,21 +58,52 @@ vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessin
 
 	switch ( input.value() )
 	{
-		case PostProcessing::ORIGINAL_COLOR:
-		case PostProcessing::INPUT1_ORIGINAL_COLOR:
+		case PostProcessing::ORIGINAL_COLOR0:
+		case PostProcessing::INPUT1_ORIGINAL_COLOR0:
+		case PostProcessing::INPUT2_ORIGINAL_COLOR0:
 			retVal = (*originalTexture)[0];
 			break;
 
-		case PostProcessing::ORIGINAL_NORMAL:
+		case PostProcessing::ORIGINAL_DEPTH0:
+		case PostProcessing::INPUT1_ORIGINAL_DEPTH0:
+		case PostProcessing::INPUT2_ORIGINAL_DEPTH0:
 			retVal = (*originalTexture)[1];
 			break;
 
+		case PostProcessing::ORIGINAL_COLOR1:
+		case PostProcessing::INPUT1_ORIGINAL_COLOR1:
+		case PostProcessing::INPUT2_ORIGINAL_COLOR1:
+			retVal = (*originalTexture)[2];
+			break;
+
+		case PostProcessing::ORIGINAL_DEPTH1:
+		case PostProcessing::INPUT1_ORIGINAL_DEPTH1:
+		case PostProcessing::INPUT2_ORIGINAL_DEPTH1:
+			retVal = (*originalTexture)[3];
+			break;
+
+		//
+		case PostProcessing::ORIGINAL_NORMAL:
+		case PostProcessing::INPUT1_ORIGINAL_NORMAL:
+		case PostProcessing::INPUT2_ORIGINAL_NORMAL:
+			retVal = (*originalTexture)[4];
+			break;
+
+		case PostProcessing::ORIGINAL_POSITION:
+		case PostProcessing::INPUT1_ORIGINAL_POSITION:
+		case PostProcessing::INPUT2_ORIGINAL_POSITION:
+			retVal = (*originalTexture)[5];
+			break;
+
 		case PostProcessing::PREVIOUS_COLOR:
+		case PostProcessing::INPUT1_PREVIOUS_COLOR:
+		case PostProcessing::INPUT2_PREVIOUS_COLOR:
 			retVal = (*inputTexture)[0];
 			break;
 
 		case PostProcessing::NONE:
 		case PostProcessing::INPUT1_NONE:
+		case PostProcessing::INPUT2_NONE:
 			// @todo returns black texture
 			break;
 
@@ -112,9 +146,9 @@ const std::string applyNormalEdgeDetect(
 
 ////
 const std::string declarations =
-"varying vec4 mgl_TexCoord[2];\n"
+"uniform sampler2D texMap2D[3];\n"
 "\n"
-"uniform sampler2D texMap2D[2];\n"
+"varying vec4 mgl_TexCoord[3];\n"
 "\n";
 
 
@@ -324,8 +358,8 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 					lightDepthMap = vgd::node::Texture2D::create("depthMap.spotLight" + vgd::basic::toString( static_cast<int>(spot->getMultiAttributeIndex())) );
 				}
 
-				lightDepthMap->setWrap( Texture::WRAP_S, Texture::CLAMP_TO_EDGE ); // CLAMP, GL_CLAMP_TO_EDGE
-				lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP_TO_EDGE );
+				lightDepthMap->setWrap( Texture::WRAP_S, Texture::CLAMP );
+				lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP );
 
 				//lightDepthMap->setMipmap( true );
 				//lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
@@ -473,183 +507,43 @@ void ForwardRendering::initializeBuffers( vgeGL::engine::Engine * engine )
 {
 	vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
 
-	// *** Initializes FBOs ***
-	// FrameBuffer nodes
-	m_frameBuffer0	= vgd::node::FrameBuffer::create("ForwardRendering.frameBuffer0");
-	m_frameBuffer1	= vgd::node::FrameBuffer::create("ForwardRendering.frameBuffer1");
-	m_frameBuffer	= vgd::node::FrameBuffer::create("ForwardRendering.frameBuffer");
-
-// @todo evaluate( m_frameBuffer ) => creates and adds to manager the FBO
-	// Creates OpenGL rc and add to the manager
-	m_fbo0.reset( new vgeGL::rc::FrameBufferObject() );
-	m_fbo1.reset( new vgeGL::rc::FrameBufferObject() );
-	m_fbo.reset( new vgeGL::rc::FrameBufferObject() );
-	rcManager.add( m_frameBuffer0.get(), m_fbo0 );
-	rcManager.add( m_frameBuffer1.get(), m_fbo1 );
-	rcManager.add( m_frameBuffer.get(), m_fbo );
-
-	m_fbo0->generate();
-	m_fbo1->generate();
-	m_fbo->generate();
-
-	// *** Creates textures ***
+	// *** Initializes FBOs and creates textures ***
 	// (COLOR0, NORMAL,	DEPTH) * 3			// @todo adds POSITION, COLOR1 (for fluid)
 	m_textures0.clear();
 	m_textures1.clear();
 	m_textures.clear();
 
 	// for each fbo
-	for( uint i = 0; i < 3; ++ i )
-	{
-		std::vector< vgd::Shp< vgd::node::Texture2D > > * currentTexContainer = 0;
-		if ( i == 0 )
-		{
-			currentTexContainer = &m_textures0;
-		}
-		else if ( i == 1 )
-		{ 
-			currentTexContainer = &m_textures1;
-		}
-		else //if ( i == 2 )
-		{
-			assert( i == 2 );
-			currentTexContainer = &m_textures;
-		}
+	using namespace boost::assign;
+	std::vector< AttachmentType > attachments;
 
-		// for each texture
-		for( uint j = 0; j < 4; ++j )
-		{
-			using vgd::node::Texture;
-			using vgd::node::Texture2D;
+	// fbo0
+	//attachments.clear();
+	attachments += COLOR_RGB;
+	boost::tie( m_frameBuffer0, m_fbo0 ) = createsFBO( engine, attachments, std::back_inserter(m_textures0) );
 
-			std::strstream name;
-			if ( i == 2 )
-			{
-				name << "ForwardRendering.frameBuffer.texture2D" << j;
-			}
-			else
-			{
-				name << "ForwardRendering.frameBuffer" << i << ".texture2D" << j;
-			}
-			vgd::Shp< Texture2D > texture = Texture2D::create( name.str() );
+	// fbo1
+	attachments.clear();
+	attachments += COLOR_RGB;
+	boost::tie( m_frameBuffer1, m_fbo1 ) = createsFBO( engine, attachments, std::back_inserter(m_textures1) );
 
-			currentTexContainer->push_back( texture );
-
-	// @todo sethDefault();
-			texture->setWrap( Texture::WRAP_S, Texture::CLAMP_TO_EDGE );
-			texture->setWrap( Texture::WRAP_T, Texture::CLAMP_TO_EDGE );
-			texture->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-			texture->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
-			//texture->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-			//texture->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
-
-			//
-			using vgd::basic::ImageInfo;
-
-			ImageInfo::Format	format;
-			ImageInfo::Type		type;
-			if ( j == 3 )
-			{
-				format	= ImageInfo::LUMINANCE;
-				type	= ImageInfo::FLOAT;
-				texture->setUsage( Texture::SHADOW );		// @todo Adds DEPTH usage
-				texture->setInternalFormat( Texture::DEPTH_COMPONENT_24 );
-			}
-			else
-			{
-				format	= ImageInfo::RGB;
-				type	= ImageInfo::FLOAT;
-				texture->setUsage( Texture::IMAGE );
-				// @todo setInternalFormat(...)
-			}
-			vgd::Shp< ImageInfo > image(
-					new ImageInfo(	engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1], 1,
-									format, type ) );
-			texture->setImage( image );
-			engine->paint( texture );
-		}
-	}
-
-	// *** Fills FBOs ***
-
-	// Attaching images
-	vgd::Shp< vgeGL::rc::Texture2D > tex;
-
-	// FBO 0
-	m_fbo0->bind();
-	tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures0[0].get() );
-	m_fbo0->attachColor(tex, 0);
-	/*tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures0[1].get() );
-	m_fbo0->attachColor(tex, 1);*/
-	/*tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures0[2].get() );
-	m_fbo0->attachColor(tex, 2);*/
-	tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures0[3].get() );
-	m_fbo0->attachDepth(tex);
-
-	// Checks framebuffer completeness at the end of initialization
-	std::string fboStatus = m_fbo0->getStatusString();
-	if ( fboStatus.size() > 0 )
-	{
-		vgLogError2( "ForwardRendering::initializeBuffers(): %s", fboStatus.c_str() );
-		return;
-		// @todo better error management
-	}
-	// else nothing to do
-
-	// FBO 1
-	m_fbo1->bind();
-	tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures1[0].get() );
-	m_fbo1->attachColor(tex, 0);
-	/*tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures1[1].get() );
-	m_fbo1->attachColor(tex, 1);*/
-	/*tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures1[2].get() );
-	m_fbo1->attachColor(tex, 2);*/
-	tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures1[3].get() );
-	m_fbo1->attachDepth(tex);
-
-	// Checks framebuffer completeness at the end of initialization
-	fboStatus = m_fbo1->getStatusString();
-	if ( fboStatus.size() > 0 )
-	{
-		vgLogError2( "ForwardRendering::initializeBuffers(): %s", fboStatus.c_str() );
-		return;
-		// @todo better error management
-	}
-	// else nothing to do
-
-	// FBO
-	m_fbo->bind();
-	tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures[0].get() );
-	m_fbo->attachColor(tex, 0);
-	tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures[1].get() );
-	m_fbo->attachColor(tex, 1);
-	/*tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures[2].get() );
-	m_fbo->attachColor(tex, 2);*/
-	tex = rcManager.getShp< vgeGL::rc::Texture2D >( m_textures[3].get() );
-	m_fbo->attachDepth(tex);
-
-	// Checks framebuffer completeness at the end of initialization
-	fboStatus = m_fbo->getStatusString();
-	if ( fboStatus.size() > 0 )
-	{
-		vgLogError2( "ForwardRendering::initializeBuffers(): %s", fboStatus.c_str() );
-		return;
-		// @todo better error management
-	}
-	// else nothing to do	
-
-	//glo::FrameBufferObject::setReadBufferToDefaultFrameBuffer();
-	//glo::FrameBufferObject::setDrawBufferToDefaultFrameBuffer();
-	m_fbo->unbind();
+	// fbo
+	attachments.clear();
+	attachments +=	COLOR_RGB, COLOR_LUMINANCE_16F,	// BUFFER 0 (color+depth)
+					COLOR_RGB, COLOR_LUMINANCE_16F, // BUFFER 1 (color+depth)
+					COLOR_RGB_16F,					// NORMAL
+					COLOR_RGB_32F,					// POSITION
+					DEPTH_COMPONENT_24;				// DEPTH
+	boost::tie( m_frameBuffer, m_fbo ) = createsFBO( engine, attachments, std::back_inserter(m_textures) );
 
 	// Initializes Quad for PostProcessing	
-	/*if ( !m_quad1 )
+	if ( !m_quad1 )
 	{
 		m_quad1 = vgd::node::Quad::create("ForwardRendering.fullscreenQuad1Tex");
 		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
 		m_quad1->transform( translateToOrigin );
 		m_quad1->initializeTexUnits( 1 );
-	}*/
+	}
 
 	if ( !m_quad2 )
 	{
@@ -657,6 +551,14 @@ void ForwardRendering::initializeBuffers( vgeGL::engine::Engine * engine )
 		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
 		m_quad2->transform( translateToOrigin );
 		m_quad2->initializeTexUnits( 2 );
+	}
+
+	if ( !m_quad3 )
+	{
+		m_quad3 = vgd::node::Quad::create("ForwardRendering.fullscreenQuad3Tex");
+		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
+		m_quad3->transform( translateToOrigin );
+		m_quad3->initializeTexUnits( 3 );
 	}
 
 	// Creates a black texture
@@ -936,6 +838,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			}
 
 			// Lookups or creates fbo
+// @todo remove m_dummyNodeForFBO
 			vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
 			vgeGL::rc::FrameBufferObject * fbo = rcManager.get< vgeGL::rc::FrameBufferObject >( m_shadowMappingInput->m_dummyNodeForFBO[currentLightIndex].get() ); // @todo not very cute
 			if ( !fbo )
@@ -965,20 +868,6 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			{
 				// Enables render to depth texture
 				fbo->bind();
-				//fbo->renderDepthOnly();
-
-				//fbo->attachDepth( lightDepthMap );
-#ifdef _DEBUG
-				// Check framebuffer completeness at the end of initialization.
-				const std::string fboStatus = fbo->getStatusString();
-				if ( fboStatus.size() > 0 )
-				{
-					vgLogError2( "ForwardRendering::apply(): %s", fboStatus.c_str() );
-					return;
-					// @todo
-				}
-				// else nothing to do
-#endif
 			}
 
 			const bool isTextureMappingEnabledBak = engine->isTextureMappingEnabled();
@@ -1110,6 +999,9 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			initializeBuffers( engine );
 			endPass();
 		}
+
+		//
+		engine->setOutputBuffers( m_fbo );
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1176,10 +1068,12 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		{
 			// Renders in FBO
 			m_fbo->bind();
-			m_fbo->setDrawBuffers( 0, 1 );
+			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, 4/*NORMAL*/, 5/*POSITION*/ );
+
 			const std::string postProcessingFragmentOutputStage =
-			"	gl_FragData[1] = vec4(normal,1.0);\n"
-//			"	gl_FragData[2] = vec4(ecPosition.xyz, 1.0);\n" // @todo FIXME
+			"	gl_FragData[1].z = gl_FragCoord.z;\n"
+			"	gl_FragData[2] = vec4(normal,1.0);\n"
+			"	gl_FragData[3] = vec4(ecPosition.xyz, 1.0);\n"
 			"\n";
 
 			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, postProcessingFragmentOutputStage );
@@ -1219,10 +1113,12 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		{
 			// Renders in FBO
 			m_fbo->bind();
-			m_fbo->setDrawBuffers( 0, 1 );
+			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, 4/*NORMAL*/, 5/*POSITION*/ );
+
 			const std::string postProcessingFragmentOutputStage =
-			"	gl_FragData[1] = vec4(normal,1.0);\n"
-//			"	gl_FragData[2] = vec4(ecPosition.xyz, 1.0);\n" // @todo FIXME
+			"	gl_FragData[1].z = gl_FragCoord.z;\n"
+			"	gl_FragData[2] = vec4(normal,1.0);\n"
+			"	gl_FragData[3] = vec4(ecPosition.xyz, 1.0);\n"
 			"\n";
 
 			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, postProcessingFragmentOutputStage );
@@ -1278,9 +1174,14 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 	//const GLSLState& state = engine->getGLSLState();
 
 	// 
-	std::vector< vgd::Shp< Program > > programs;
-	std::vector< vgd::node::PostProcessing::Input0ValueType > input0;
-	std::vector< vgd::node::PostProcessing::Input1ValueType > input1;
+	std::vector< float >										params1f0;
+	std::vector< vgm::Vec4f >									params4f0;
+	std::vector< vgd::node::PostProcessing::Input0ValueType >	inputs0;
+	std::vector< vgd::node::PostProcessing::Input1ValueType >	inputs1;
+	std::vector< vgd::node::PostProcessing::Input2ValueType >	inputs2;
+
+	std::vector< vgd::Shp< Program > >							programs;
+	std::vector< float >										scales;
 
 	uint		i		= 0;
 	const uint	iEnd	= m_postProcessing->getMax(); // @todo beginIndex(), endIndex(), iterators
@@ -1288,8 +1189,6 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 	float currentScaleForTexCoord	= 1.f;
 	float currentScaleForVertex		= 1.f;
-
-	std::vector< float > scales;
 
 	for( uint foundPP = 0; i != iEnd; ++i )
 	{
@@ -1301,23 +1200,67 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			vgd::node::PostProcessing * postProcessingNode = current->getNode();
 			assert( postProcessingNode );
 
+			// Parameters
+
+			// Builds declaration section of the shaders (depends of post-processing node param* fields)
+			std::string currentDeclaration = 
+			"uniform float param1f0;\n"
+			"uniform vec4 param4f0;\n\n";
+
+			// param1f0
+			if ( postProcessingNode->hasParam1f0() )
+			{
+				float value;
+				postProcessingNode->getParam1f0(value);
+
+				params1f0.push_back( value );
+			}
+			else
+			{
+				params1f0.push_back( std::numeric_limits<float>::max() );
+			}
+
+			// param4f0
+			if ( postProcessingNode->hasParam4f0() )
+			{
+				vgm::Vec4f value;
+				postProcessingNode->getParam4f0(value);
+
+				params4f0.push_back( value );
+			}
+			else
+			{
+				params4f0.push_back( vgm::Vec4f::getInvalid() );
+			}
+
+			currentDeclaration += declarations;
+
 			// Inputs
-			input0.push_back( postProcessingNode->getInput0() );
-			input1.push_back( postProcessingNode->getInput1() );
+			inputs0.push_back( postProcessingNode->getInput0() );
+			inputs1.push_back( postProcessingNode->getInput1() );
+			inputs2.push_back( postProcessingNode->getInput2() );
 
 			// Creates Program node
 			vgd::Shp< Program > program = Program::create("program");
 			programs.push_back( program );
 
 			// Initializes Program node
-
 			std::pair< std::string, std::string > filter = vgeGL::handler::painter::PostProcessing::getFilter( postProcessingNode->getFilter() );
 			std::pair< float, float > scale = vgeGL::handler::painter::PostProcessing::getScale( postProcessingNode->getFilter() );
+
+			// Scales
 			scales.push_back(scale.second);
 
 			// Builds Vertex shader
 			std::string vertexShader;
-			if ( postProcessingNode->getInput1() != vgd::node::PostProcessing::INPUT1_NONE )
+			if ( postProcessingNode->getInput2() != vgd::node::PostProcessing::INPUT2_NONE )
+			{			
+				vertexShader = boost::algorithm::replace_first_copy( 
+					vertexProgram, "INLINE_FTEXGEN",	"mgl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;"
+														"mgl_TexCoord[1] = gl_TextureMatrix[1] * gl_MultiTexCoord1;"
+														"mgl_TexCoord[2] = gl_TextureMatrix[2] * gl_MultiTexCoord2;" );
+			}
+			else if ( postProcessingNode->getInput1() != vgd::node::PostProcessing::INPUT1_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
 					vertexProgram, "INLINE_FTEXGEN",	"mgl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;"
@@ -1344,10 +1287,10 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			// else nothing to do*/
 
 // @todo OPTME reduce glsl code size
-			program->setShader( Program::VERTEX, declarations + vertexShader );
+			program->setShader( Program::VERTEX, currentDeclaration + vertexShader );
 
 			// Builds Fragment shader
-			std::string fragmentShader = declarations + filter.first +
+			std::string fragmentShader = currentDeclaration + filter.first +
 				boost::algorithm::replace_first_copy( fragmentProgram, "INLINE_POST_PROCESSING", filter.second );
 
 			if ( vgm::notEquals( currentScaleForTexCoord, 1.f ) )
@@ -1413,13 +1356,31 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		engine->paint( program );
 
 		currentScaleForVertex *= scales[i];
-		glViewport( 0, 0, engine->getDrawingSurfaceSize()[0]* currentScaleForVertex, engine->getDrawingSurfaceSize()[1] * currentScaleForVertex);
+		glViewport( 0, 0,
+					static_cast<int>(engine->getDrawingSurfaceSize()[0] * currentScaleForVertex),
+					static_cast<int>(engine->getDrawingSurfaceSize()[1] * currentScaleForVertex) );
 //engine->begin2DRendering( &lviewport, false );
 // @todo a light version of begin2DRendering
 // @todo uses DF and cache
 
+		// param1f0
+		const float param1f0 = params1f0[i];
+		if ( param1f0 != std::numeric_limits<float>::max() )
+		{
+			assert( !engine->getUniformState().isUniform( "param1f0") && "Uniform param1f0 already used" );
+			engine->getUniformState().addUniform( "param1f0", param1f0 );
+		}
+
+		// param4f0
+		const vgm::Vec4f param4f0 = params4f0[i];
+		if ( param4f0.isValid() )
+		{
+			assert( !engine->getUniformState().isUniform( "param4f0") && "Uniform param4f0 already used" );
+			engine->getUniformState().addUniform( "param4f0", param4f0 );
+		}
+
 		// input0
-		vgd::Shp< Texture2D > inputTexture0 = getInputTexture( input0[i], &m_textures, ltex0 );
+		vgd::Shp< Texture2D > inputTexture0 = getInputTexture( inputs0[i], &m_textures, ltex0 );
 		if ( inputTexture0 )
 		{
 			if ( inputTexture0->getMultiAttributeIndex() != 0 )		inputTexture0->setMultiAttributeIndex(0);
@@ -1432,7 +1393,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		}
 
 		// input1
-		vgd::Shp< Texture2D > inputTexture1 = getInputTexture( input1[i], &m_textures, ltex0 );
+		vgd::Shp< Texture2D > inputTexture1 = getInputTexture( inputs1[i], &m_textures, ltex0 );
 		if ( inputTexture1 )
 		{
 			if ( inputTexture1->getMultiAttributeIndex() != 1 )		inputTexture1->setMultiAttributeIndex(1);
@@ -1444,9 +1405,38 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			engine->paint( m_blackTexture2D );
 		}
 
+		// input2
+		vgd::Shp< Texture2D > inputTexture2 = getInputTexture( inputs2[i], &m_textures, ltex0 );
+		if ( inputTexture2 )
+		{
+			if ( inputTexture2->getMultiAttributeIndex() != 2 )		inputTexture2->setMultiAttributeIndex(2);
+			engine->paint( inputTexture2 );
+		}
+		else
+		{
+			if ( m_blackTexture2D->getMultiAttributeIndex() != 2 )		m_blackTexture2D->setMultiAttributeIndex(2);
+			engine->paint( m_blackTexture2D );
+		}
+
 		// render
 		lfbo1->setDrawBuffer();
-		engine->paint( m_quad2 );
+		if ( inputTexture0 && !inputTexture1 && !inputTexture2 )
+		{
+			engine->paint( m_quad1 );
+		}
+		else if ( inputTexture0 && inputTexture1 && !inputTexture2 )
+		{
+			engine->paint( m_quad2 );
+		}
+		else if ( inputTexture0 && inputTexture1 && inputTexture2 )
+		{
+			engine->paint( m_quad3 );
+		}
+		else
+		{
+			assert( false );
+		}
+		
 		/*if ( inputTexture0 && inputTexture1 )
 		{
 			engine->paint( m_quad2 );
@@ -1460,6 +1450,8 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		std::swap( ltex0, ltex1 );
 
 		currentScaleForTexCoord *= scales[i];
+
+		engine->getUniformState().clear();
 	}
 
 	//lfbo1->setReadBuffer();
@@ -1480,11 +1472,148 @@ void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc
 	fbo->setReadBuffer();
 	glo::FrameBufferObject::setDrawBufferToDefaultFrameBuffer();
 
+// @todo removes warnings
 	glBlitFramebuffer(	0, 0, engine->getDrawingSurfaceSize()[0] * m_lastCurrentScaleForVertex, engine->getDrawingSurfaceSize()[1] * m_lastCurrentScaleForVertex,
 //						0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1],
 						0, 0, engine->getDrawingSurfaceSize()[0] * m_lastCurrentScaleForVertex, engine->getDrawingSurfaceSize()[1] * m_lastCurrentScaleForVertex,
 						GL_COLOR_BUFFER_BIT, GL_NEAREST );
 	glo::FrameBufferObject::setReadBufferToDefaultFrameBuffer();
+}
+
+
+
+ForwardRendering::createsFBORetValType ForwardRendering::createsFBO( vgeGL::engine::Engine * engine, std::vector< AttachmentType > attachments, std::back_insert_iterator< TextureContainer > backInserter )
+{
+	// Retrieves manager
+	vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
+
+	// Creates FBO node and GL rc
+	vgd::Shp< vgd::node::FrameBuffer >			framebuffer	= vgd::node::FrameBuffer::create("ForwardRendering.frameBuffer0");
+	vgd::Shp< vgeGL::rc::FrameBufferObject >	fbo( new vgeGL::rc::FrameBufferObject() );
+
+	createsFBORetValType retVal = std::make_pair( framebuffer, fbo );
+
+	rcManager.add( framebuffer.get(), fbo );
+
+	//
+	fbo->generate();
+	fbo->bind();
+
+	// For each attachments
+	for( uint i=0; i < attachments.size(); ++i )
+	{
+		using vgd::node::Texture;
+
+		vgd::Shp< vgd::node::Texture2D > texture = vgd::node::Texture2D::create( "attachment" );
+
+		backInserter = texture;
+		++backInserter;
+
+		// WRAP, FILTER
+// @todo sethDefault();
+		texture->setWrap( Texture::WRAP_S, Texture::CLAMP );
+		texture->setWrap( Texture::WRAP_T, Texture::CLAMP );
+		texture->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
+		texture->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+		//texture->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+		//texture->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+
+		// IMAGE
+		using vgd::basic::IImage;
+		using vgd::basic::ImageInfo;
+
+// @todo should work with ImageInfo(0, 0, 0, ....) see Texture handlers
+		vgd::Shp< ImageInfo > image( new ImageInfo(	engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1], 1 ) );
+		texture->setImage( image );
+
+		if ( attachments[i] == COLOR_RGB )
+		{
+			image->format()	= IImage::RGB;
+			image->type()	= IImage::UINT8;
+
+			texture->setUsage( Texture::IMAGE );
+		}
+		else if ( attachments[i] == COLOR_RGB_16F )
+		{
+			image->format()	= IImage::RGB;
+			image->type()	= IImage::FLOAT;
+
+			texture->setUsage( Texture::IMAGE );
+			texture->setInternalFormat( Texture::RGB_16F);
+		}
+		else if ( attachments[i] == COLOR_RGB_32F )
+		{
+			image->format()	= IImage::RGB;
+			image->type()	= IImage::FLOAT;
+
+			texture->setUsage( Texture::IMAGE );
+			texture->setInternalFormat( Texture::RGB_32F);
+		}
+		else if ( attachments[i] == COLOR_LUMINANCE_16F )
+		{
+			image->format()	= IImage::LUMINANCE;
+			image->type()	= IImage::FLOAT;
+
+			texture->setUsage( Texture::IMAGE );
+			texture->setInternalFormat( Texture::LUMINANCE_16F);
+		}
+		else if ( attachments[i] == DEPTH )
+		{
+			image->format()	= IImage::LUMINANCE;
+			image->type()	= IImage::UINT8;
+
+			texture->setUsage( Texture::SHADOW );						// @todo Adds DEPTH usage
+		}
+		else if ( attachments[i] == DEPTH_COMPONENT_24 )
+		{
+			image->format()	= IImage::LUMINANCE;
+			image->type()	= IImage::UINT32;
+
+			texture->setUsage( Texture::SHADOW );						// @todo Adds DEPTH usage
+			texture->setInternalFormat( Texture::DEPTH_COMPONENT_24 );			
+		}
+		else
+		{
+			assert( false && "Unexpected value for AttachmentType" );
+		}
+
+		engine->paint( texture );
+
+		// Attaching images
+		vgd::Shp< vgeGL::rc::Texture2D > tex = rcManager.getShp< vgeGL::rc::Texture2D >( texture );
+
+		if ( i == attachments.size()-1 )
+		{
+			// Last attachment
+			if ( attachments[i] == DEPTH || attachments[i] == DEPTH_COMPONENT_24 )
+			{
+				fbo->attachDepth( tex );
+			}
+			else
+			{
+				fbo->attachColor( tex, i );
+			}
+			//assert( attachments[i] == DEPTH && "Last attachment must be a DEPTH" );
+		}
+		else
+		{
+			fbo->attachColor( tex, i );
+		}
+	}
+
+	// Checks framebuffer completeness at the end of initialization
+	std::string fboStatus = fbo->getStatusString();
+	if ( fboStatus.size() > 0 )
+	{
+		vgLogError2( "ForwardRendering::createsFBO(): %s", fboStatus.c_str() );
+		// return retVal;
+		// @todo better error management
+	}
+	// else nothing to do
+
+	fbo->unbind();
+
+	return retVal;
 }
 
 

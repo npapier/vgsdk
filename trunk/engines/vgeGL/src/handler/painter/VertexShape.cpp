@@ -230,6 +230,11 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		}
 
 		pGLEngine->sethCurrentProgram( program );
+// @todo OPTME
+		if ( pGLEngine->getUniformState().getSize() > 0 )
+		{
+			pGLEngine->getUniformState().apply( pGLEngine );
+		}
 	}
 	else
 	{
