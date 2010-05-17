@@ -19,8 +19,10 @@
 #include <vgd/node/Group.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
+#include <vgd/node/OutputBuffers.hpp>
 #include <vgd/node/PointLight.hpp>
 #include <vgd/node/PostProcessing.hpp>
+#include <vgd/node/Separator.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Sphere.hpp>
 
@@ -41,8 +43,10 @@ namespace node
 								vgd::Shp< vgd::node::Group >,
 								vgd::Shp< vgd::node::LightModel >,
 								vgd::Shp< vgd::node::Material >,
+								vgd::Shp< vgd::node::OutputBuffers >,
 								vgd::Shp< vgd::node::PointLight >,
 								vgd::Shp< vgd::node::PostProcessing >,
+								vgd::Shp< vgd::node::Separator >,
 								vgd::Shp< vgd::node::SpotLight >
 									> shapes;
 
@@ -54,8 +58,10 @@ namespace node
 																	("Group")
 																	("LightModel")
 																	("Material")
+																	("OutputBuffers")
 																	("PointLight")
 																	("PostProcessing")
+																	("Separator")
 																	("SpotLight");
 
 struct CreateNodeList

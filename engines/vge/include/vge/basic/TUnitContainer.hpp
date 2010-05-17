@@ -72,8 +72,7 @@ struct TUnitContainer
 	//@}
 
 
-	/**
-	 * @brief
+
 	/**
 	 * @brief Clears content
 	 *

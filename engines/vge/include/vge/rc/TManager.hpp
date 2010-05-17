@@ -17,7 +17,7 @@
 #include "vge/vge.hpp"
 
 namespace vgd { template<class T> struct Shp; }
-
+namespace vgd { namespace node { struct Node; } }
 
 
 namespace vge
@@ -147,6 +147,17 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	OutResourceType * get( const KeyType& key );
 
 	/**
+	 * @brief Helper around OutResourceType * get( const KeyType& key )
+	 *
+	 * @remark Works only if KeyType type is vgd::node::Node*
+	 */
+	template< typename OutResourceType >
+	OutResourceType * get( const vgd::Shp< vgd::node::Node > key )
+	{
+		return get<OutResourceType>( key.get() );
+	}
+
+	/**
 	 * @brief Gets the resource associated to the given key.
 	 * 
 	 * @pre	resourceType must be the good one or an assertion will occurs.
@@ -158,6 +169,17 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	 */
 	template< typename OutResourceType >
 	vgd::Shp< OutResourceType > getShp( const KeyType& key );
+
+	/**
+	 * @brief Helper around vgd::Shp< OutResourceType > getShp( const KeyType& key )
+	 *
+	 * @remark Works only if KeyType type is vgd::node::Node*
+	 */
+	template< typename OutResourceType >
+	vgd::Shp< OutResourceType > getShp( const vgd::Shp< vgd::node::Node > key )
+	{
+		return getShp<OutResourceType>( key.get() );
+	}
 
 	/**
 	 * @brief Returns the number of resources owned by this manager.

@@ -6,6 +6,8 @@
 #ifndef _VGEGL_TECHNIQUE_FORWARDRENDERING_HPP
 #define _VGEGL_TECHNIQUE_FORWARDRENDERING_HPP
 
+#include <iterator>
+#include <utility>
 #include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/technique/Main.hpp"
 
@@ -93,9 +95,26 @@ private:
 
 	vgd::Shp< vgd::node::Quad >						m_quad1;
 	vgd::Shp< vgd::node::Quad >						m_quad2;
+	vgd::Shp< vgd::node::Quad >						m_quad3;
 
 	vgd::Shp< vgd::node::Texture2D >				m_blackTexture2D; // @todo moves in Engine or in a repository ?
 	//@}
+
+	enum AttachmentType
+	{
+		// COLOR FORMATS
+		COLOR_RGB,
+		COLOR_RGB_16F,
+		COLOR_RGB_32F,
+		COLOR_LUMINANCE_16F,
+		// DEPTH FORMATS
+		DEPTH,
+		DEPTH_COMPONENT_24 // @todo others DEPTH_COMPONENT*
+	};
+
+	typedef std::pair< vgd::Shp< vgd::node::FrameBuffer >, vgd::Shp< vgeGL::rc::FrameBufferObject > > createsFBORetValType;
+	typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;
+	createsFBORetValType createsFBO( vgeGL::engine::Engine * engine, std::vector< AttachmentType > attachments, std::back_insert_iterator< TextureContainer > backInserter );
 };
 
 

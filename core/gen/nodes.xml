@@ -337,6 +337,28 @@
 	</node>
 
 
+	<node name = "OutputBuffers" inherits = "SingleAttribute">
+		<doxygen>
+			<docBrief>Select which buffers to use for drawing</docBrief>
+			<doc>This node affect subsequent shapes in the scene graph.</doc>
+			<doc>But if this node is under a separator, it does not affect any objects outside that separator.</doc>
+			<doc>@todo Adds support for more than 2 different output buffers</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_frameBufferNodes</ingroup>
+		</doxygen>
+
+		<sf name = "output" doc = "Specifies the buffers used for rendering.">
+			<type name="enum">
+				<enum default="BUFFERS_0">
+					<value name="BUFFERS_0" doc="Selects color buffer 0 and a depth buffer 0"/>
+					<value name="BUFFERS_1" doc="Selects color buffer 1 and a depth buffer 1"/>
+				</enum>
+			</type>
+		</sf>
+	</node>
+
+
 	<node name = "PointLight" inherits = "Light" >
 		<doxygen>
 			<docBrief>Node representing a point light source.</docBrief>
@@ -394,10 +416,11 @@
 			<type name = "enum">
 				<enum default="NO_FILTER">
 					<value name="COLOR_TO_MONOCHROME" doc="Converts colored value to black and white"/>
+					<value name="COLOR_TO_SEPIA" doc="Converts colored value to sepia.\nSets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1]."/>
 					<value name="COLOR_INVERSE" doc="Inverts the colored value"/>
 
-					<value name="BLUR_HORIZ" doc="Blurs an image horizontally using weights that follow a Gaussian distribution"/>
-					<value name="BLUR_VERT" doc="Blurs an image vertically using weights that follow a Gaussian distribution"/>
+					<value name="BLUR_HORIZ" doc="Blurs an image horizontally using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0."/>
+					<value name="BLUR_VERT" doc="Blurs an image vertically using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0"/>
 					<value name="BLOOM_HORIZ" doc="Amplifies and blurs an image horizontally using weights that follow a gaussian distribution"/>
 					<value name="BLOOM_VERT" doc="Amplifies and blurs an image vertically using weights that follow a gaussian distribution"/>
 
@@ -408,7 +431,12 @@
 
 <!--					<value name="NORMAL_EDGE_DETECT" doc="Detects edges and highlights them (using NORMAL buffer)"/> -->
 
-					<value name="COMBINE" doc="Combines two images (ADD)"/>
+					<value name="OVER" doc="Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition"/>
+					<value name="ADD" doc="Combines two images into one by blending them linearly using the following formula : image1 + image2"/>
+					<value name="MIX_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]"/>
+					<value name="COMBINE2_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]"/>
+
+					<value name="DOF" doc="@todo"/>
 
 					<value name="NO_FILTER" doc="No filter is applied"/>
 				</enum>
@@ -418,8 +446,12 @@
 		<sf name = "input0" doc = "Specifies the first input buffer used by the filter.">
 			<type name = "enum">
 				<enum default = "PREVIOUS_COLOR">
-					<value name="ORIGINAL_COLOR" doc=""/>
+					<value name="ORIGINAL_COLOR0" doc=""/>
+					<value name="ORIGINAL_DEPTH0" doc=""/>
+					<value name="ORIGINAL_COLOR1" doc=""/>
+					<value name="ORIGINAL_DEPTH1" doc=""/>
 					<value name="ORIGINAL_NORMAL" doc=""/>
+					<value name="ORIGINAL_POSITION" doc=""/>
 					<value name="PREVIOUS_COLOR" doc=""/>
 					<value name="NONE" doc=""/>
 				</enum>
@@ -429,8 +461,29 @@
 		<sf name = "input1" doc = "Specifies the second input buffer used by the filter.">
 			<type name = "enum">
 				<enum default = "INPUT1_NONE">
-					<value name="INPUT1_ORIGINAL_COLOR" doc=""/>
+					<value name="INPUT1_ORIGINAL_COLOR0" doc=""/>
+					<value name="INPUT1_ORIGINAL_DEPTH0" doc=""/>
+					<value name="INPUT1_ORIGINAL_COLOR1" doc=""/>
+					<value name="INPUT1_ORIGINAL_DEPTH1" doc=""/>
+					<value name="INPUT1_ORIGINAL_NORMAL" doc=""/>
+					<value name="INPUT1_ORIGINAL_POSITION" doc=""/>
+					<value name="INPUT1_PREVIOUS_COLOR" doc=""/>
 					<value name="INPUT1_NONE" doc=""/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name = "input2" doc = "Specifies the third input buffer used by the filter.">
+			<type name = "enum">
+				<enum default = "INPUT2_NONE">
+					<value name="INPUT2_ORIGINAL_COLOR0" doc=""/>
+					<value name="INPUT2_ORIGINAL_DEPTH0" doc=""/>
+					<value name="INPUT2_ORIGINAL_COLOR1" doc=""/>
+					<value name="INPUT2_ORIGINAL_DEPTH1" doc=""/>
+					<value name="INPUT2_ORIGINAL_NORMAL" doc=""/>
+					<value name="INPUT2_ORIGINAL_POSITION" doc=""/>
+					<value name="INPUT2_PREVIOUS_COLOR" doc=""/>
+					<value name="INPUT2_NONE" doc=""/>
 				</enum>
 			</type>
 		</sf>
@@ -442,10 +495,20 @@
 					<value name="INPUT1_PREVIOUS_COLOR" doc=""/>
 					<value name="INPUT1_NONE" doc=""/>
 				</enum>
-			</type>
-		</sf>-->
+			</type>-->
+
+		<of name = "param1f0" doc = "Specifies the first 1f parameter used by the filter.">
+			<type name = "float" default = "0.0"></type>
+		</of>
+
+		<of name = "param4f0" doc = "Specifies the first 4f parameter used by the filter.">
+			<type name = "Vec4f" namespace = "vgm" default = "0.0, 0.0, 0.0, 0.0"></type>
+		</of>
+
+<!-- convolution filter and param [] -->
 <!-- param0 -->
 <!-- custom filter -->
+<!-- filter0, filter1, filter2 -->
 <!-- ouput0, output1.... -->
 	</node>
 
@@ -598,6 +661,9 @@
 					<value name="DEPTH_COMPONENT_24" doc="a single component buffer used to store depth. A 24-bit integer is used to encode a texel."/>
 					<value name="DEPTH_COMPONENT_32" doc="a single component buffer used to store depth. A 32-bit integer is used to encode a texel."/>
 					<value name="DEPTH_COMPONENT_32F" doc="a single component buffer used to store depth. A 32-bit float is used to encode a texel."/>
+					<value name="RGB_16F" doc="A three component buffer. A 16-bit float is used to encode a texel."/>
+					<value name="RGB_32F" doc="A three component buffer. A 32-bit float is used to encode a texel."/>
+					<value name="LUMINANCE_16F" doc="A single component buffer. A 16-bit float is used to encode a texel."/>
 				</enum>
 			</type>
 		</sf>
