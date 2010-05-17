@@ -24,7 +24,8 @@ enum ActionOnNode
 	EXPAND,
 	EXPORT,
 	REFRESH,
-	REMOVE
+	REMOVE,
+	SELECT
 };
 
 /**
@@ -36,14 +37,29 @@ struct VGGTK_API SelectedNode
 	/**
 	* @brief	Get the instance of SelectedNode.
 	*/
-	static vgd::Shp< SelectedNode > getSelectedNode();
+	static vgd::Shp< SelectedNode > getSelectedNodeObject();
 
 	/**
-	* @brief	Set the current selected node.
+	* @brief		Set the current selected node.
 	*
 	* @param node	Current selected node.
 	*/
-	void setSelectedNode( vgd::Shp< vgd::node::Node > node );
+	void setSelectedNode( vgd::Shp< vgd::node::Node > node,  vgd::Shp< vgd::node::Group > parent = vgd::Shp< vgd::node::Group >() );
+
+	/**
+	* @brief	Get the current selected node.
+	*
+	* @return 	Current selected node.
+	*/
+	vgd::Shp< vgd::node::Node > getSelectedNode();
+
+	/**
+	* @brief	Get the parent of the current selected node.
+	*
+	* @return 	Current parent of selected node.
+	*/
+	vgd::Shp< vgd::node::Group > getParentSelectedNode();
+
 
 	/**
 	* @brief	Set custom action needed for the selected node.
@@ -77,7 +93,8 @@ private:
 
 	static vgd::Shp< SelectedNode >						m_selectedNode;	///< Singleton of SelectedNode.
 
-	vgd::Shp< vgd::node::Node >							m_node;			///< Current selected node.
+	vgd::WeakPtr< vgd::node::Node >						m_node;			///< Current selected node.
+	vgd::WeakPtr< vgd::node::Group >					m_parentNode;	///< Parnet of current selected node.
 
 	vgd::Shp< std::list< vgd::Shp < HiddenNode > > >	m_hiddenNodes; ///< List of hidden nodes.
 

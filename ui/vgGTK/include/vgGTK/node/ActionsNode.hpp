@@ -8,9 +8,6 @@
 
 #include "vgGTK/vgGTK.hpp"
 
-#include <gtkmm/actiongroup.h>
-#include <gtkmm/uimanager.h>
-
 #include <vgd/Shp.hpp>
 #include <vgd/WeakPtr.hpp>
 #include <vgd/node/Group.hpp>
@@ -36,46 +33,28 @@ enum POPUP_LOCATION
 	CANVAS
 };
 
-
 /**
  * @brief Popup menu shared between vgGTK::GenericCanvas and vgGTK::graph::Browser.
  *
  * @todo replace singleton pattern with an observer pattern (to modify treeview by the canvas, onGetNodeInTree() method).
  */
 struct VGGTK_API ActionsNode
-{
-	//ActionsNode();
-	
-	ActionsNode( POPUP_LOCATION location );
+{	
+	ActionsNode();
 
 	~ActionsNode();
 
-	bool onBoutonPressEvent( GdkEventButton * event );
-
 	void setCanvas( vgUI::Canvas * canvas );
-
-/**
- * @brief Show the popup menu
- * 
- * @param event: the GTK event.
- *
- * @param node: the selected vgsdk node.
- *
- * @param tree: true if we are in the treeview.
- */
-	void showPopup(GdkEventButton * event, vgd::Shp< vgd::node::Node > node, vgd::Shp< vgd::node::Group > parentNode, POPUP_LOCATION location );
-
-private:
 
 	void onGetNodeInTree();							///< Handles the action that will select the node in the treeview.
 	void onExpandSubTree();							///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onRemoveNode();							///< Handles the action that will remove the selected node from it parent.
 
-	void onPreviousNode();								///< Handles the action that will move up the node.	
+	void onPreviousNode();							///< Handles the action that will move up the node.	
 	void onNextNode();								///< Handles the action that will move down the node.	
 	void onCutNode();								///< Handles the action that will cut the node.	
 	void onCopyNode();								///< Handles the action that will copy the node.	
-	void onPastNode();								///< Handles the action that will past the node.	
+	void onPasteNode();								///< Handles the action that will paste the node.	
 	
 	void onHideNode();								///< Handles the action that will hide the selected node.
 	void onShowNode(vgd::Shp < HiddenNode > hidden);///< Handles the action that will show the selected node.
@@ -89,27 +68,16 @@ private:
 	void onInvertNormalOrientation();				///< Handles the action that will invert nsls orientation.
 	void onApplyGeometricalTransformation();		///< Handles the action that will apply geometrical transformaiton directly on shapes.
 
-	bool isAlreadyHidden( vgd::Shp< vgd::node::Node > node );	///< Return tif the node is actually displayed or hidden.
+	bool isAlreadyHidden( vgd::Shp< vgd::node::Node > node );	///< Return true if the node is actually displayed or hidden.
 	int getDisplayedNodeNumber();								///< Return the number of node which are displayed.
+
+	void setCurrentNode( vgd::Shp< vgd::node::Node > node, vgd::Shp< vgd::node::Group > parentNode );
+
+private:
 
 	vgd::WeakPtr< vgd::node::Node >		m_currentNode;			///< current selected node.
 	vgd::WeakPtr< vgd::node::Group >	m_currentParentNode;	///< current parent of selected node.
 	vgUI::Canvas						*m_canvas;				///< canvas of the application
-
-	/**
-	 * @name	User Interface Management
-	 */
-	//@{
-	Glib::ustring							m_uiDefinition;		///< Defines the user interfaces.
-	Glib::RefPtr< Gtk::ActionGroup >		m_actions;			///< Holds all actions of the user interface.
-	Glib::RefPtr< Gtk::UIManager >			m_uiManager;		///< Manages the user inteface toolbar and menus.
-	Gtk::Menu								* m_hiddenMenu;		///< Menu of hidden nodes
-	Gtk::MenuItem							* m_hiddenMenuItem;	///< MenuItem of hidden nodes.
-	InsertNode								* m_insertNode;
-	Gtk::MenuItem							* m_insertMenuItem;
-	//@}
-
-	POPUP_LOCATION						m_location;				///< Location of the menu (Canvas, TreeView...).
 };
 
 

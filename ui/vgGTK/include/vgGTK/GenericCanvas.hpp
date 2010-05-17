@@ -18,7 +18,7 @@
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include "vgGTK/vgGTK.hpp"
 #include "vgGTK/event/SignalHandler.hpp"
-#include "vgGTK/node/ActionsNode.hpp"
+#include "vgGTK/node/ActionsMenu.hpp"
 #include "vgGTK/node/SelectedNode.hpp"
 
 #ifdef WIN32
@@ -76,7 +76,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 
-		vgGTK::node::SelectedNode::getSelectedNode()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
+		vgGTK::node::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
 	}
 
 	/**
@@ -109,7 +109,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 
-		vgGTK::node::SelectedNode::getSelectedNode()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
+		vgGTK::node::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
 	}
 
 	/**
@@ -325,9 +325,9 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 			m_showMenu = show;
 			if( m_showMenu )
 			{
-				m_actionsNode = vgd::makeShp( new vgGTK::node::ActionsNode( vgGTK::node::CANVAS ) );
-				m_actionsNode->setCanvas( this );
-				m_actionNodeConnection = signal_button_press_event().connect( ::sigc::mem_fun(m_actionsNode.get(), &vgGTK::node::ActionsNode::onBoutonPressEvent) );
+				m_actionsMenu = vgd::makeShp( new vgGTK::node::ActionsMenu( vgGTK::node::CANVAS ) );
+				m_actionsMenu->setCanvas( this );
+				m_actionNodeConnection = signal_button_press_event().connect( ::sigc::mem_fun(m_actionsMenu.get(), &vgGTK::node::ActionsMenu::onBoutonPressEvent) );
 			}
 			else
 			{
@@ -566,7 +566,7 @@ protected:
 
 private:
 
-	vgd::Shp< vgGTK::node::ActionsNode > m_actionsNode;	///< The popup menu.
+	vgd::Shp< vgGTK::node::ActionsMenu > m_actionsMenu;	///< The popup menu.
 
 	sigc::connection	m_cursorTimeout;		///< The connect to the timeout signal used to hide the cursor.
 

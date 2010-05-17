@@ -25,7 +25,7 @@ namespace node
 
 
 /**
- * @brief Sub menu of ActionsNode to insert node in graph.
+ * @brief Sub menu of ActionsMenu to insert node in graph.
  *
  * @todo replace singleton pattern with an observer pattern (to modify treeview by the canvas, onGetNodeInTree() method).
  */
