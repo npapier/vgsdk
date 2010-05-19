@@ -10,6 +10,7 @@
 
 #include <gtkmm.h>
 #include <gtkmm/container.h>
+#include <gtkmm/drawingarea.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/menuitem.h>
 #include <gtkmm/paned.h>
@@ -199,6 +200,8 @@ int main( int argc, char ** argv )
 	Gtk::Window					window;
 	Gtk::VBox					vbox;
 	Gtk::HPaned					hpaned;
+	Gtk::HBox					hbox;
+	Gtk::DrawingArea			atiFullScreenTrick;
 	vgsdkViewerGtk::Properties	properties;
 	vgsdkViewerGtk::myCanvas	canvas;
 	Gtk::Statusbar				statusBar;
@@ -256,14 +259,26 @@ int main( int argc, char ** argv )
 	window.set_reallocate_redraws( true );
 
 
+	// Configures the ati full-screen trik.
+	// It is a drawing area that has a 1 pixel width and placed on the left canvas side.
+	// Its background is black to make it as unvisible as possible.
+	atiFullScreenTrick.modify_bg( Gtk::STATE_NORMAL, Gdk::Color("000000") );
+	atiFullScreenTrick.set_size_request( 1, 0 );
+	hbox.pack_start( atiFullScreenTrick, Gtk::PACK_SHRINK );
+	hbox.add( canvas );
+
+
 	// Creates the main window content.
 	window.add( vbox );
+	
 	vbox.pack_start( *uiManager->get_widget("/DefaultMenuBar"), false, true );
 	vbox.pack_start( *uiManager->get_widget("/DefaultToolBar"), false, true );
-	hpaned.pack1( properties, false, true );
-	hpaned.pack2( canvas, true, true );
 	vbox.add( hpaned );
 	vbox.pack_end( statusBar, false, true );
+	
+	hpaned.pack1( properties, false, true );
+	hpaned.pack2( hbox, true, true );
+	
 	window.show_all();
 	
 	
