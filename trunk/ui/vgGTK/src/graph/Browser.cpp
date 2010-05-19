@@ -449,12 +449,21 @@ void Browser::onRemoveNode()
 				vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_columns.m_nodeColumn ];
 				vgd::Shp< vgd::node::Group >	parentGroup			= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );
 				
+				Gtk::TreePath prevPath( rowIterator );
+				if( prevPath.prev() )
+				{
+					 selection->select( m_treeStore->get_iter( prevPath ) );
+				}
+				else
+				{
+					selection->select( parentRowIterator );
+				}
+
 				// Removes the node and the row in the tree model.
 				parentGroup->removeChild( node );
 				m_treeStore->erase( rowIterator );
 
 				m_canvas->refreshForced();
-				
 				// @todo refresh shared information for remaining rows containing the node being removed.
 			}
 		}

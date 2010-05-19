@@ -233,7 +233,21 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 							
 							if( m_mapMaterial->find( id ) != m_mapMaterial->end() )
 							{
-								childNode->addChild( (*m_mapMaterial)[id] );
+								vgd::Shp< vgd::node::Group > materialGroup = (*m_mapMaterial)[id];
+								
+								//removes texture coordinate from VertexShape if no texture are present.
+								vgd::visitor::predicate::ByType< vgd::node::Texture2D > pred;
+								vgd::Shp< vgd::node::NodeList > texturesResult;
+								texturesResult = vgd::visitor::find( materialGroup, pred );
+								if( texturesResult->size() == 0 )
+								{
+									for( int i = 0; i < vertexShape->getNumTexUnits(); i++)
+									{
+										vertexShape->removeTexUnits( i );
+									}
+								}
+
+								childNode->addChild( materialGroup );
 							}
 						}
 					}

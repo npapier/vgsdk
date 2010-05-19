@@ -234,10 +234,22 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	real = (float)effectCommon->getOpacity().getColor().getAlpha(); //by default (opaque="A_ONE")Takes the transparency information from the color’s alpha channel, where the value 1.0 is opaque. 
 	material->setOpacity( real );
 	
+	//// reflective
+	bool reflectiveTypeTexture = false;
+	if( effectCommon->getReflective().getType() == COLLADAFW::ColorOrTexture::TEXTURE )
+	{
+		reflectiveTypeTexture = true;
+	}
+
 	if ( m_loadType > LOAD_MATERIAL )
 	{
 		for (uint i = 0; i < effectCommon->getSamplerPointerArray().getCount(); i++)
 		{
+			if( reflectiveTypeTexture )
+			{
+				break;
+			}
+
 			const COLLADAFW::Sampler* sampler = effectCommon->getSamplerPointerArray().getData()[i];
 
 			if( m_mapTextures->find( sampler->getSourceImage().toAscii() ) == m_mapTextures->end() )
