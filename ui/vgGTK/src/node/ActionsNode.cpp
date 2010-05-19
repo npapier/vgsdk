@@ -64,10 +64,13 @@ void ActionsNode::onExpandSubTree()
 void ActionsNode::onRemoveNode()
 {
 	vgd::Shp< vgd::node::Node > node = vgGTK::node::SelectedNode::getSelectedNodeObject()->getSelectedNode();
-
-	vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
-	vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REMOVE );
-	vgDebug::get().logStatus( "Node %s removed.", node->getName().c_str() );
+	
+	if( node )
+	{
+		vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
+		vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REMOVE );
+		vgDebug::get().logStatus( "Node %s removed.", node->getName().c_str() );
+	}
 }
 
 
