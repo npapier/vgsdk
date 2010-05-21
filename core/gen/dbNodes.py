@@ -115,7 +115,7 @@ class Enum ( Type ):
 		if defaultValue in self.values :
 			self.defaultValue = defaultValue
 		else :
-			raise StandardError("Try to set unknown value %s as the default value for an enum.")
+			raise StandardError("Try to set unknown value %s as the default value for an enum." % defaultValue )
 
 
 	# Overriden

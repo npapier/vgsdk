@@ -58,9 +58,29 @@ const GLenum convertInternalFormatToGLInternalFormat( const vgd::node::Texture::
 	{
 		return GL_RGB32F;
 	}
+	else if ( internalFormat == Texture::RGBA_16F )
+	{
+		return GL_RGBA16F;
+	}
+	else if ( internalFormat == Texture::RGBA_32F )
+	{
+		return GL_RGBA32F;
+	}	
 	else if ( internalFormat == Texture::LUMINANCE_16F )
 	{
-		return GL_R16;
+		return GL_LUMINANCE16F_ARB; // @todo GL_R16 ?
+	}
+	else if ( internalFormat == Texture::LUMINANCE_32F )
+	{
+		return GL_LUMINANCE32F_ARB;
+	}
+	else if ( internalFormat == Texture::LUMINANCE_ALPHA_16F )
+	{
+		return GL_LUMINANCE_ALPHA16F_ARB;
+	}
+	else if ( internalFormat == Texture::LUMINANCE_ALPHA_32F )
+	{
+		return GL_LUMINANCE_ALPHA32F_ARB;
 	}	
 	else if ( internalFormat ==  Texture::AUTOMATIC )
 	{

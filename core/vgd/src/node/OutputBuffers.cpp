@@ -61,7 +61,7 @@ OutputBuffers::OutputBuffers( const std::string nodeName ) :
 void OutputBuffers::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setOutput( BUFFERS_0 );
+	setOutput( BUFFERS0 );
 }
 
 

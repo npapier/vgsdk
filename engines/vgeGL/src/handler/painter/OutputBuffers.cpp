@@ -63,7 +63,7 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 		assert( fbo->isBound() );
 
 		std::vector< int >	drawBuffers	= fbo->getDrawBuffers();
-		const int			output		= outputBuffers->getOutput().value() - vgd::node::OutputBuffers::BUFFERS_0;
+		const int			output		= outputBuffers->getOutput().value() - vgd::node::OutputBuffers::BUFFERS0;
 		// @todo FIXME hard-coded
 		drawBuffers[0] = output*2;
 		drawBuffers[1] = output*2 + 1;

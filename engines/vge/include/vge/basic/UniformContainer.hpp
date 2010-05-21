@@ -79,7 +79,7 @@ struct VGE_API UniformContainer
 	 * @param name		name of the uniform variable
 	 * @param value		value of the uniform variable
 	 *
-	 * @return true if sucess
+	 * @return true if success
 	 */
 	template< typename T >
 	const bool addUniform( const std::string& name, const T value = T() )
@@ -96,11 +96,37 @@ struct VGE_API UniformContainer
 		}
 	}
 
+	/**
+	 * @brief Removes a uniform variable
+	 *
+	 * @param name		name of the uniform variable
+	 *
+	 * @return true if success, false otherwise
+	 */
 	const bool removeUniform( const std::string& name );
 
+	/**
+	 * @brief Tests if an uniform variable exists.
+	 *
+	 * @param name		name of the uniform variable
+	 *
+	 * @return true if the variable exists, false otherwise	
+	 */
 	const bool isUniform( const std::string& name ) const;
+
+	/**
+	 * @brief Returns the number of uniform variables
+	 */
 	const uint getSize() const;
 
+	/**
+	 * @brief Sets the value of an uniform variable
+	 *
+	 * @param name		name of the uniform variable
+	 * @param value		value of the uniform variable
+	 *
+	 * @pre isUniform(name)
+	 */	
 	template< typename T >
 	void setUniform( const std::string& name, const T& value )
 	{
