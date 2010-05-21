@@ -449,10 +449,11 @@ void Browser::onRemoveNode()
 				vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_columns.m_nodeColumn ];
 				vgd::Shp< vgd::node::Group >	parentGroup			= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );
 				
-				Gtk::TreePath prevPath( rowIterator );
-				if( prevPath.prev() )
+				Gtk::TreePath nextPath( rowIterator );
+				nextPath.next();
+				if( m_treeStore->get_iter( nextPath ) )
 				{
-					 selection->select( m_treeStore->get_iter( prevPath ) );
+					 selection->select( m_treeStore->get_iter( nextPath ) );
 				}
 				else
 				{
