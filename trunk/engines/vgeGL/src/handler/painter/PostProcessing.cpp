@@ -138,6 +138,21 @@ const std::string colorInverse =
 const std::string applyColorInverse( 
 	"	color = colorInverse( texMap2D[0], mgl_TexCoord[0].xy );\n" );
 
+////////////////////
+// SCALE_AND_BIAS //
+////////////////////
+
+const std::string scaleAndBias =
+"vec4 scaleAndBias( sampler2D texMap, vec2 texCoord, vec4 scale, float bias )\n"
+"{\n"
+"	vec4 color = texture2D( texMap, texCoord );\n"
+"	return (color * scale) + bias;\n"
+"}\n"
+"\n\n\n";
+
+const std::string applyScaleAndBias( 
+	"	color = scaleAndBias( texMap2D[0], mgl_TexCoord[0].xy, param4f0, param1f0 );\n" );
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Blurs an image horizontally using weights that follow a Gaussian distribution //
@@ -338,9 +353,9 @@ const std::string applyMixAndScale(
 	"	color = mixAndScale( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param4f0.x, param4f0.y );\n" );
 
 
-///////////////////////////////////
-// Combines two images and scale //
-///////////////////////////////////
+////////////////////////
+// COMBINE2_AND_SCALE //
+////////////////////////
 
 const std::string combine2AndScale =
 "vec4 combine2AndScale( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, float a, float b, float scale )"
@@ -353,6 +368,24 @@ const std::string combine2AndScale =
 
 const std::string applyCombine2AndScale(
 	"	color = combine2AndScale( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param4f0.x, param4f0.y, param4f0.z );\n" );
+
+
+////////////////////////
+// COMBINE3_AND_SCALE //
+////////////////////////
+
+const std::string combine3AndScale =
+"vec4 combine3AndScale( sampler2D texMap0, sampler2D texMap1, sampler2D texMap2, vec2 texCoord, vec4 param )"
+"{\n"
+"	vec4 color0 = texture2D( texMap0, texCoord );\n"
+"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	vec4 color2 = texture2D( texMap2, texCoord );\n"
+"	return (color0 * param[0] + color1 * param[1] + color2 * param[2] ) * param[3];\n"
+"}\n"
+"\n\n\n";
+
+const std::string applyCombine3AndScale(
+	"	color = combine3AndScale( texMap2D[0], texMap2D[1], texMap2D[2], mgl_TexCoord[0].xy, param4f0 );\n" );
 
 
 /////////
@@ -458,6 +491,10 @@ std::pair< std::string, std::string > PostProcessing::getFilter( const vgd::node
 	{
 		return std::make_pair( colorInverse, applyColorInverse );
 	}
+	else if ( filter == vgd::node::PostProcessing::SCALE_AND_BIAS )
+	{
+		return std::make_pair( scaleAndBias, applyScaleAndBias );
+	}
 	else if ( filter == vgd::node::PostProcessing::BLUR_HORIZ )
 	{
 		return std::make_pair( horizKernel13 + gaussianWeights13 + blurHoriz, applyBlurHoriz );
@@ -502,6 +539,10 @@ std::pair< std::string, std::string > PostProcessing::getFilter( const vgd::node
 	{
 		return std::make_pair( combine2AndScale, applyCombine2AndScale );
 	}
+	else if ( filter == vgd::node::PostProcessing::COMBINE3_AND_SCALE )
+	{
+		return std::make_pair( combine3AndScale, applyCombine3AndScale );
+	}	
 	else if ( filter == vgd::node::PostProcessing::DOF )
 	{
 		return std::make_pair( saturate + dof, applyDOF );

@@ -50,7 +50,8 @@ namespace
 
 vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessing::Input0ValueType input,
 	std::vector< vgd::Shp< vgd::node::Texture2D > >* originalTexture,
-	std::vector< vgd::Shp< vgd::node::Texture2D > >* inputTexture
+	std::vector< vgd::Shp< vgd::node::Texture2D > >* inputTexture,
+	const int normalIndex, const int positionIndex
 	)
 {
 	using vgd::node::PostProcessing;
@@ -82,23 +83,41 @@ vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessin
 			retVal = (*originalTexture)[3];
 			break;
 
+		case PostProcessing::ORIGINAL_COLOR2:
+		case PostProcessing::INPUT1_ORIGINAL_COLOR2:
+		case PostProcessing::INPUT2_ORIGINAL_COLOR2:
+			retVal = (*originalTexture)[4];
+			break;
+
+		case PostProcessing::ORIGINAL_DEPTH2:
+		case PostProcessing::INPUT1_ORIGINAL_DEPTH2:
+		case PostProcessing::INPUT2_ORIGINAL_DEPTH2:
+			retVal = (*originalTexture)[5];
+			break;
+			
 		//
 		case PostProcessing::ORIGINAL_NORMAL:
 		case PostProcessing::INPUT1_ORIGINAL_NORMAL:
 		case PostProcessing::INPUT2_ORIGINAL_NORMAL:
-			retVal = (*originalTexture)[4];
+			retVal = (*originalTexture)[normalIndex];
 			break;
 
 		case PostProcessing::ORIGINAL_POSITION:
 		case PostProcessing::INPUT1_ORIGINAL_POSITION:
 		case PostProcessing::INPUT2_ORIGINAL_POSITION:
-			retVal = (*originalTexture)[5];
+			retVal = (*originalTexture)[positionIndex];
 			break;
 
-		case PostProcessing::PREVIOUS_COLOR:
-		case PostProcessing::INPUT1_PREVIOUS_COLOR:
-		case PostProcessing::INPUT2_PREVIOUS_COLOR:
+		case PostProcessing::PREVIOUS_COLOR0:
+		case PostProcessing::INPUT1_PREVIOUS_COLOR0:
+		case PostProcessing::INPUT2_PREVIOUS_COLOR0:
 			retVal = (*inputTexture)[0];
+			break;
+
+		case PostProcessing::PREVIOUS_COLOR1:
+		case PostProcessing::INPUT1_PREVIOUS_COLOR1:
+		case PostProcessing::INPUT2_PREVIOUS_COLOR1:
+			retVal = (*inputTexture)[1];
 			break;
 
 		case PostProcessing::NONE:
@@ -517,24 +536,24 @@ void ForwardRendering::initializeBuffers( vgeGL::engine::Engine * engine )
 	using namespace boost::assign;
 	std::vector< AttachmentType > attachments;
 
-	// fbo0
+	// fbo0 and fbo1
 	//attachments.clear();
-	attachments += COLOR_RGB;
+	attachments += COLOR_RGBA, COLOR_RGBA;
 	boost::tie( m_frameBuffer0, m_fbo0 ) = createsFBO( engine, attachments, std::back_inserter(m_textures0) );
-
-	// fbo1
-	attachments.clear();
-	attachments += COLOR_RGB;
 	boost::tie( m_frameBuffer1, m_fbo1 ) = createsFBO( engine, attachments, std::back_inserter(m_textures1) );
 
 	// fbo
 	attachments.clear();
-	attachments +=	COLOR_RGB, COLOR_LUMINANCE_16F,	// BUFFER 0 (color+depth)
-					COLOR_RGB, COLOR_LUMINANCE_16F, // BUFFER 1 (color+depth)
-					COLOR_RGB_16F,					// NORMAL
-					COLOR_RGB_32F,					// POSITION
-					DEPTH_COMPONENT_24;				// DEPTH
+	attachments +=	COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 0 (color+depth)
+					COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 1 (color+depth)
+					COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 2 (color+depth)
+					COLOR_RGB_16F,						// NORMAL
+					COLOR_RGB_32F,						// POSITION
+					DEPTH_COMPONENT_24;					// DEPTH
 	boost::tie( m_frameBuffer, m_fbo ) = createsFBO( engine, attachments, std::back_inserter(m_textures) );
+// @todo vector< BufferUsage > = COLOR0, DEPTH0, ...., NORMAL, POSITION
+	m_normalIndex = 6;
+	m_positionIndex = 7;
 
 	// Initializes Quad for PostProcessing	
 	if ( !m_quad1 )
@@ -1068,7 +1087,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		{
 			// Renders in FBO
 			m_fbo->bind();
-			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, 4/*NORMAL*/, 5/*POSITION*/ );
+			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, m_normalIndex/*NORMAL*/, m_positionIndex/*POSITION*/ );
 
 			const std::string postProcessingFragmentOutputStage =
 			"	gl_FragData[1].z = gl_FragCoord.z;\n"
@@ -1113,7 +1132,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		{
 			// Renders in FBO
 			m_fbo->bind();
-			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, 4/*NORMAL*/, 5/*POSITION*/ );
+			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, m_normalIndex/*NORMAL*/, m_positionIndex/*POSITION*/ );
 
 			const std::string postProcessingFragmentOutputStage =
 			"	gl_FragData[1].z = gl_FragCoord.z;\n"
@@ -1179,6 +1198,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 	std::vector< vgd::node::PostProcessing::Input0ValueType >	inputs0;
 	std::vector< vgd::node::PostProcessing::Input1ValueType >	inputs1;
 	std::vector< vgd::node::PostProcessing::Input2ValueType >	inputs2;
+	std::vector< uint >											output;
 
 	std::vector< vgd::Shp< Program > >							programs;
 	std::vector< float >										scales;
@@ -1239,6 +1259,9 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			inputs0.push_back( postProcessingNode->getInput0() );
 			inputs1.push_back( postProcessingNode->getInput1() );
 			inputs2.push_back( postProcessingNode->getInput2() );
+
+			// Ouput
+			output.push_back( postProcessingNode->getOutput().value() - vgd::node::PostProcessing::OUTPUT_TMP0 );
 
 			// Creates Program node
 			vgd::Shp< Program > program = Program::create("program");
@@ -1380,7 +1403,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		}
 
 		// input0
-		vgd::Shp< Texture2D > inputTexture0 = getInputTexture( inputs0[i], &m_textures, ltex0 );
+		vgd::Shp< Texture2D > inputTexture0 = getInputTexture( inputs0[i], &m_textures, ltex0, m_normalIndex, m_positionIndex );
 		if ( inputTexture0 )
 		{
 			if ( inputTexture0->getMultiAttributeIndex() != 0 )		inputTexture0->setMultiAttributeIndex(0);
@@ -1393,7 +1416,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		}
 
 		// input1
-		vgd::Shp< Texture2D > inputTexture1 = getInputTexture( inputs1[i], &m_textures, ltex0 );
+		vgd::Shp< Texture2D > inputTexture1 = getInputTexture( inputs1[i], &m_textures, ltex0, m_normalIndex, m_positionIndex );
 		if ( inputTexture1 )
 		{
 			if ( inputTexture1->getMultiAttributeIndex() != 1 )		inputTexture1->setMultiAttributeIndex(1);
@@ -1406,7 +1429,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		}
 
 		// input2
-		vgd::Shp< Texture2D > inputTexture2 = getInputTexture( inputs2[i], &m_textures, ltex0 );
+		vgd::Shp< Texture2D > inputTexture2 = getInputTexture( inputs2[i], &m_textures, ltex0, m_normalIndex, m_positionIndex );
 		if ( inputTexture2 )
 		{
 			if ( inputTexture2->getMultiAttributeIndex() != 2 )		inputTexture2->setMultiAttributeIndex(2);
@@ -1420,6 +1443,8 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 		// render
 		lfbo1->setDrawBuffer();
+		lfbo1->setDrawBuffers( output[i] );
+
 		if ( inputTexture0 && !inputTexture1 && !inputTexture2 )
 		{
 			engine->paint( m_quad1 );
@@ -1548,6 +1573,29 @@ ForwardRendering::createsFBORetValType ForwardRendering::createsFBO( vgeGL::engi
 
 			texture->setUsage( Texture::IMAGE );
 			texture->setInternalFormat( Texture::RGB_32F);
+		}
+		else if ( attachments[i] == COLOR_RGBA )
+		{
+			image->format()	= IImage::RGBA;
+			image->type()	= IImage::UINT8;
+
+			texture->setUsage( Texture::IMAGE );
+		}
+		else if ( attachments[i] == COLOR_RGBA_16F )
+		{
+			image->format()	= IImage::RGBA;
+			image->type()	= IImage::FLOAT;
+
+			texture->setUsage( Texture::IMAGE );
+			texture->setInternalFormat( Texture::RGBA_16F );
+		}
+		else if ( attachments[i] == COLOR_RGBA_32F )
+		{
+			image->format()	= IImage::RGBA;
+			image->type()	= IImage::FLOAT;
+
+			texture->setUsage( Texture::IMAGE );
+			texture->setInternalFormat( Texture::RGBA_32F );
 		}
 		else if ( attachments[i] == COLOR_LUMINANCE_16F )
 		{

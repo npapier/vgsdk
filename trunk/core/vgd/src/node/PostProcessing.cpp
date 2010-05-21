@@ -55,6 +55,7 @@ PostProcessing::PostProcessing( const std::string nodeName ) :
 	addField( new FInput1Type(getFInput1()) );
 	addField( new FFilterType(getFFilter()) );
 	addField( new FParam4f0Type(getFParam4f0()) );
+	addField( new FOutputType(getFOutput()) );
 	addField( new FParam1f0Type(getFParam1f0()) );
 
 	// Sets link(s)
@@ -67,9 +68,10 @@ void PostProcessing::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
 	setInput2( INPUT2_NONE );
-	setInput0( PREVIOUS_COLOR );
+	setInput0( PREVIOUS_COLOR0 );
 	setInput1( INPUT1_NONE );
 	setFilter( NO_FILTER );
+	setOutput( OUTPUT_TMP0 );
 }
 
 
@@ -171,6 +173,21 @@ const bool PostProcessing::hasParam4f0() const
 
 
 
+// Output
+const PostProcessing::OutputValueType PostProcessing::getOutput() const
+{
+	return getFieldRO<FOutputType>(getFOutput())->getValue();
+}
+
+
+
+void PostProcessing::setOutput( const OutputValueType value )
+{
+	getFieldRW<FOutputType>(getFOutput())->setValue( value );
+}
+
+
+
 // Param1f0
 const bool PostProcessing::getParam1f0( Param1f0ValueType& value ) const
 {
@@ -231,6 +248,13 @@ const std::string PostProcessing::getFFilter( void )
 const std::string PostProcessing::getFParam4f0( void )
 {
 	return "f_param4f0";
+}
+
+
+
+const std::string PostProcessing::getFOutput( void )
+{
+	return "f_output";
 }
 
 

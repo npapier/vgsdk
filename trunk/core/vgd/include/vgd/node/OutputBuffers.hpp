@@ -25,7 +25,7 @@ namespace node
  * This node affect subsequent shapes in the scene graph. But if this node is under a separator, it does not affect any objects outside that separator. @todo Adds support for more than 2 different output buffers 
  *
  * New fields defined by this node :
- * - SFEnum \c output = BUFFERS_0<br>
+ * - SFEnum \c output = BUFFERS0<br>
  *   Specifies the buffers used for rendering.<br>
  *<br>
  *
@@ -68,9 +68,10 @@ struct VGD_API OutputBuffers : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		BUFFERS_1 = 286,	///< Selects color buffer 1 and a depth buffer 1
-		BUFFERS_0 = 285,	///< Selects color buffer 0 and a depth buffer 0
-		DEFAULT_OUTPUT = BUFFERS_0	///< Selects color buffer 0 and a depth buffer 0
+		BUFFERS2 = 287,	///< Selects color buffer 2 and a depth buffer 2
+		BUFFERS1 = 286,	///< Selects color buffer 1 and a depth buffer 1
+		BUFFERS0 = 285,	///< Selects color buffer 0 and a depth buffer 0
+		DEFAULT_OUTPUT = BUFFERS0	///< Selects color buffer 0 and a depth buffer 0
 	};
 
 	/**
@@ -99,6 +100,7 @@ struct VGD_API OutputBuffers : public vgd::node::SingleAttribute
 
 			retVal.push_back( 285 );
 			retVal.push_back( 286 );
+			retVal.push_back( 287 );
 
 			return retVal;
 		}
@@ -107,8 +109,9 @@ struct VGD_API OutputBuffers : public vgd::node::SingleAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "BUFFERS_0" );
-			retVal.push_back( "BUFFERS_1" );
+			retVal.push_back( "BUFFERS0" );
+			retVal.push_back( "BUFFERS1" );
+			retVal.push_back( "BUFFERS2" );
 
 			return retVal;
 		}

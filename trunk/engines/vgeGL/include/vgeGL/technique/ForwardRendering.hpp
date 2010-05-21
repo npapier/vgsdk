@@ -87,6 +87,8 @@ private:
 	vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo0;
 	vgd::Shp< vgeGL::rc::FrameBufferObject >		m_fbo1;
 	vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo;
+	int m_normalIndex;
+	int m_positionIndex;
 
 // @todo removes
 	std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures0;	///< textures for FBO 0
@@ -106,12 +108,16 @@ private:
 		COLOR_RGB,
 		COLOR_RGB_16F,
 		COLOR_RGB_32F,
+		COLOR_RGBA,
+		COLOR_RGBA_16F,
+		COLOR_RGBA_32F,
 		COLOR_LUMINANCE_16F,
 		// DEPTH FORMATS
 		DEPTH,
 		DEPTH_COMPONENT_24 // @todo others DEPTH_COMPONENT*
 	};
 
+// @todo only glo FBO
 	typedef std::pair< vgd::Shp< vgd::node::FrameBuffer >, vgd::Shp< vgeGL::rc::FrameBufferObject > > createsFBORetValType;
 	typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;
 	createsFBORetValType createsFBO( vgeGL::engine::Engine * engine, std::vector< AttachmentType > attachments, std::back_insert_iterator< TextureContainer > backInserter );
