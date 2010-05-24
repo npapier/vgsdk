@@ -132,7 +132,7 @@ struct VGE_API UniformContainer
 	{
 		assert( isUniform(name) && "Uniform not found" );
 
-		ContainerType::const__iterator iUniform = m_container.find( name );
+		ContainerType::const_iterator iUniform = m_container.find( name );
 		if ( iUniform != m_container.end() )
 		{
 			// Found
