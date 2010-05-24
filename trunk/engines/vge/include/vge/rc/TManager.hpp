@@ -13,7 +13,7 @@
 #include <utility>
 
 #include <vgd/basic/NamedObject.hpp>
-
+#include <vgd/Shp.hpp>
 #include "vge/vge.hpp"
 
 namespace vgd { template<class T> struct Shp; }
