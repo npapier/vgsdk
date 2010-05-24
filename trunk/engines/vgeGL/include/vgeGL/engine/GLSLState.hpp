@@ -561,13 +561,13 @@ private:
 	float											m_illuminationInShadow;	///< @todo doc
 	bool											m_isShadowSamplerEnabled;		//< true if engine must used shadow sampler, false otherwise
 
-	std::vector< vgd::Shp< LightState > >		m_light;		///< array of light state. The zero-based index selects the light unit.
-	uint										m_numLight;		///< number of light state in all light units.
+	std::vector< vgd::Shp< LightState > >			m_light;		///< array of light state. The zero-based index selects the light unit.
+	uint											m_numLight;		///< number of light state in all light units.
 
-	std::vector< vgd::Shp< TexUnitState > >		m_texture;		///< array of texture state. The zero-based index selects the texture unit.
-	uint										m_numTexture;	///< number of texture state in all light units.
+	std::vector< vgd::Shp< TexUnitState > >			m_texture;		///< array of texture state. The zero-based index selects the texture unit.
+	uint											m_numTexture;	///< number of texture state in all light units.
 
-	static const std::string m_indexString[];	///< array containing the string representation for BitSetIndexType.
+	static const std::string m_indexString[];						///< array containing the string representation for BitSetIndexType.
 };
 
 
