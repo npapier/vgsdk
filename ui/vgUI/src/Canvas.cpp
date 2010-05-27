@@ -189,6 +189,8 @@ Canvas::~Canvas()
 	// Updates the number of canvas
 	assert( m_canvasCount > 0 );
 	--m_canvasCount;
+
+	gleSetCurrent(0);
 }
 
 
