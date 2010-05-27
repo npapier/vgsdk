@@ -451,6 +451,7 @@ protected:
 #endif
 			// Cleans gle context
 			BaseCanvasType::getGleContext().clear();
+			gleSetCurrent(0);
 			vgLogDebug("gle context cleaned.");
 
 			return true;
