@@ -47,11 +47,10 @@ void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node
 	using vgeGL::engine::GLSLState;
 	GLSLState& glslState = glEngine->getGLSLState();
 
-	const bool							isPostProcessingEnabled	= glslState.isEnabled( GLSLState::POST_PROCESSING );
 	vgd::Shp< glo::FrameBufferObject >	fbo						= glEngine->getOutputBuffers();
 
-	if (	glEngine->isGLSLEnabled() && isPostProcessingEnabled && // @todo FIXME Works only if LightModel is before ClearFrameBuffer
-			fbo && (fbo->getDrawBuffers().size() > 1)	)
+	if (	glEngine->isGLSLEnabled() &&
+			fbo && fbo->isBound() && (fbo->getDrawBuffers().size() > 1)	)
 	{
 		// glsl, post-processing and several draw buffers are enabled, then clears all output buffers
 

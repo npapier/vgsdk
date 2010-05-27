@@ -51,7 +51,7 @@ const std::string GLSLState::m_indexString[] =
 
 		"COLOR4_BIND_PER_VERTEX",
 
-		"POST_PROCESSING"
+		"IGNORE_POST_PROCESSING"
 	};
 
 
@@ -67,7 +67,7 @@ const std::string& GLSLState::toString( const BitSetIndexType bitSetIndexType )
 
 
 GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
-:	postProcessing(9),
+:	postProcessing(16),
 	m_light(maxLightUnits),
 	m_numLight(0),
 	m_texture(maxTexUnits),

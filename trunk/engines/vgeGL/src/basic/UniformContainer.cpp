@@ -8,7 +8,6 @@
 #include <boost/tuple/tuple.hpp>
 #include <glo/GLSLProgram.hpp>
 #include "vgeGL/engine/Engine.hpp"
-//#include <boost/variant/static_visitor.hpp>
 
 
 
@@ -56,7 +55,17 @@ struct UniformVisitor : public boost::static_visitor<>
 	{
 		m_engine->getCurrentProgram()->setUniform1f( m_name, value );
 	}
-	
+
+	void operator() ( vgm::Vec2f value ) const
+	{
+		m_engine->getCurrentProgram()->setUniform2fv( m_name, value.getValue() );
+	}
+
+	void operator() ( vgm::Vec3f value ) const
+	{
+		m_engine->getCurrentProgram()->setUniform3fv( m_name, value.getValue() );
+	}
+
 	void operator() ( vgm::Vec4f value ) const
 	{
 		m_engine->getCurrentProgram()->setUniform4fv( m_name, value.getValue() );

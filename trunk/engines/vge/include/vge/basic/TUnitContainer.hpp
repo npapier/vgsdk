@@ -180,6 +180,26 @@ struct TUnitContainer
 	}
 
 	/**
+	 * @brief Tests if the number of defined states is equal to zero.
+	 *
+	 * @return getNum() == 0
+	 */
+	const bool isEmpty() const
+	{
+		return getNum() == 0;
+	}
+
+	/**
+	 * @brief Tests if the number of defined states is not equal to zero.
+	 *
+	 * @return getNum() > 0
+	 */
+	const bool isNotEmpty() const
+	{
+		return getNum() > 0;
+	}
+
+	/**
 	 * @brief Retrieves the number of state units.
 	 *
 	 * @return The number of state units

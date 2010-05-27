@@ -607,6 +607,19 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	void setViewport( const vgm::Rectangle2i& viewport );
 
+	/**
+	 * @brief Returns a vector containing respectively the distances to the near and far depth clipping planes.
+	 *
+	 * @remark Distances are from the eye located at (0, 0, 0).
+	 */
+	const vgm::Vec2f getNearFar() const;
+
+	/**
+	 * @brief Sets the vector containing respectively the distances to the near and far depth clipping planes.
+	 *
+	 * @param nearFar	the vector containing near-far values
+	 */
+	void setNearFar( const vgm::Vec2f nearFar );
 	//@}
 
 
@@ -770,11 +783,11 @@ protected:
 	static const int32					StateStack_SizeHint;
 
 
-	vgm::Vec2i						m_drawingSurfaceSize;	///< the drawing surface size (window size).
+	vgm::Vec2i						m_drawingSurfaceSize;	///< the drawing surface size (window size)
 	const vgd::node::Camera *		m_camera;				///< the last encountered Camera node
 	vgm::Rectangle2i				m_viewport;				///< the value of \c viewport field for the last encountered Camera node with this field defined
-
-	const vgd::Shp< vge::service::Service > m_paintService;	///< a reference on paint service object used by render() methods.
+	vgm::Vec2f						m_nearFar;				///< a vector containing respectively the distances to the near and far depth clipping planes
+	const vgd::Shp< vge::service::Service > m_paintService;	///< a reference on paint service object used by render() methods
 };
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -55,14 +55,21 @@ const vge::handler::Handler::TargetVector Camera::getTargets() const
 void Camera::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(engine);
+	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
 	assert( dynamic_cast< vgd::node::Camera* >(node) != 0 );
 	vgd::node::Camera *pCastedNode = dynamic_cast< vgd::node::Camera* >(node);
 
 	vge::handler::Camera::apply( engine, pCastedNode );
 
-	paint( pGLEngine, pCastedNode );
+	// Updates engine state
+	if ( glEngine->isGLSLEnabled() )
+	{
+		assert( !glEngine->getUniformState().isUniform( "nearFar") && "Uniform nearFar already used" );
+		glEngine->getUniformState().addUniform( "nearFar", glEngine->getNearFar() );
+	}
+
+	paint( glEngine, pCastedNode );
 }
 
 

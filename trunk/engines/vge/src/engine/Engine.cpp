@@ -30,6 +30,7 @@ Engine::Engine()
 	m_paintService( new vge::service::Painter() )
 {
 	m_viewport.setInvalid();
+	m_nearFar.setInvalid();
 
 	reset();
 }
@@ -59,6 +60,7 @@ void Engine::resetEval()
 	// m_drawingSurfaceSize
 	m_camera = 0;
 	m_viewport.setInvalid();
+	m_nearFar.setInvalid();
 }
 
 
@@ -472,12 +474,10 @@ const vgd::node::Camera * Engine::getCamera() const
 	return m_camera;
 }
 
-
 void Engine::setCamera( const vgd::node::Camera * camera )
 {
 	m_camera = camera;
 }
-
 
 
 const vgm::Rectangle2i& Engine::getViewport() const
@@ -490,6 +490,16 @@ void Engine::setViewport( const vgm::Rectangle2i& viewport )
 	m_viewport = viewport;
 }
 
+
+const vgm::Vec2f Engine::getNearFar() const
+{
+	return m_nearFar;
+}
+
+void Engine::setNearFar( const vgm::Vec2f nearFar )
+{
+	m_nearFar = nearFar;
+}
 
 
 const int Engine::getMaxTexUnits() const

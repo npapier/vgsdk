@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -38,6 +38,25 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 	//
 	applyMatrix( engine, camera );
 	applyLookAt( engine, camera );
+
+	// Updates engine
+
+	// Computes near and far from the projection matrix.
+	const vgm::MatrixR projectionMatrix = camera->getProjection();
+	if ( !projectionMatrix.isIdentity() )
+	{
+		const double c = projectionMatrix[2][2];
+		const double d = projectionMatrix[3][2];
+
+		const double near	= d / (c - 1.0);
+		const double far	= d / (1.0 + c);
+
+		engine->setNearFar( vgm::Vec2f(near, far) );
+	}
+	else
+	{
+		engine->setNearFar( vgm::Vec2f::getInvalid() );
+	}
 }
 
 

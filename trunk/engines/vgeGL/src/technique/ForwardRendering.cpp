@@ -548,7 +548,7 @@ void ForwardRendering::initializeBuffers( vgeGL::engine::Engine * engine )
 					COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 1 (color+depth)
 					COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 2 (color+depth)
 					COLOR_RGB_16F,						// NORMAL
-					COLOR_RGB_32F,						// POSITION
+					COLOR_RGB_16F,						// POSITION
 					DEPTH_COMPONENT_24;					// DEPTH
 	boost::tie( m_frameBuffer, m_fbo ) = createsFBO( engine, attachments, std::back_inserter(m_textures) );
 // @todo vector< BufferUsage > = COLOR0, DEPTH0, ...., NORMAL, POSITION
@@ -703,7 +703,9 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	}
 
 	// Checks post-processing
-	const bool isPostProcessingEnabled = lightModel->getPostProcessing();
+	const bool isPostProcessingEnabled =
+		!lightModel->getIgnorePostProcessing() && engine->getGLSLState().postProcessing.isNotEmpty();
+
 	if ( isPostProcessingEnabled )
 	{
 		// Saves the post-processing state
@@ -1008,8 +1010,8 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		// Tests if initialization must be done
 		const bool callInitializeBuffers =
 				!m_frameBuffer0 ||
-				(texImage && texImage->width() != drawingSurfaceSize[0]) ||
-				(texImage && texImage->height() != drawingSurfaceSize[1] );
+				( texImage && (texImage->width() != drawingSurfaceSize[0]) ) ||
+				( texImage && (texImage->height() != drawingSurfaceSize[1] ) );
 
 		if ( callInitializeBuffers )
 		{
@@ -1026,6 +1028,16 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	//////////////////////////////////////////////////////////////////////////
 	// STEP 3: Rendering (opaque and transparent pass ) with/without shadow //
 	//////////////////////////////////////////////////////////////////////////
+	const std::string postProcessingFragmentOutputStage =
+	// linear depth-buffer (will map near..far to 0..1)
+	"	gl_FragData[1] = vec4( (-ecPosition.z-nearFar[0])/(nearFar[1]-nearFar[0]) );\n"
+	//"	gl_FragData[1].z = gl_FragCoord.z;\n" // does'nt work !!!
+	//"	gl_FragData[1] = vec4(gl_FragCoord.z);\n"
+
+	"	gl_FragData[2] = vec4(normal,1.0);\n"
+	"	gl_FragData[3] = vec4(ecPosition.xyz, 1.0);\n"
+	"\n";
+
 	if ( shadowType != LightModel::SHADOW_OFF && m_shadowMappingInput->getNumLight() > 0 )
 	{
 		if ( isPostProcessingEnabled )
@@ -1089,12 +1101,6 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			m_fbo->bind();
 			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, m_normalIndex/*NORMAL*/, m_positionIndex/*POSITION*/ );
 
-			const std::string postProcessingFragmentOutputStage =
-			"	gl_FragData[1].z = gl_FragCoord.z;\n"
-			"	gl_FragData[2] = vec4(normal,1.0);\n"
-			"	gl_FragData[3] = vec4(ecPosition.xyz, 1.0);\n"
-			"\n";
-
 			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, postProcessingFragmentOutputStage );
 		}
 
@@ -1133,12 +1139,6 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			// Renders in FBO
 			m_fbo->bind();
 			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, m_normalIndex/*NORMAL*/, m_positionIndex/*POSITION*/ );
-
-			const std::string postProcessingFragmentOutputStage =
-			"	gl_FragData[1].z = gl_FragCoord.z;\n"
-			"	gl_FragData[2] = vec4(normal,1.0);\n"
-			"	gl_FragData[3] = vec4(ecPosition.xyz, 1.0);\n"
-			"\n";
 
 			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, postProcessingFragmentOutputStage );
 		}
@@ -1195,6 +1195,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 	// 
 	std::vector< float >										params1f0;
 	std::vector< vgm::Vec4f >									params4f0;
+	std::vector< vgm::Vec4f >									params4f1;
 	std::vector< vgd::node::PostProcessing::Input0ValueType >	inputs0;
 	std::vector< vgd::node::PostProcessing::Input1ValueType >	inputs1;
 	std::vector< vgd::node::PostProcessing::Input2ValueType >	inputs2;
@@ -1225,7 +1226,8 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			// Builds declaration section of the shaders (depends of post-processing node param* fields)
 			std::string currentDeclaration = 
 			"uniform float param1f0;\n"
-			"uniform vec4 param4f0;\n\n";
+			"uniform vec4 param4f0;\n"
+			"uniform vec4 param4f1;\n\n";
 
 			// param1f0
 			if ( postProcessingNode->hasParam1f0() )
@@ -1251,6 +1253,19 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			else
 			{
 				params4f0.push_back( vgm::Vec4f::getInvalid() );
+			}
+
+			// param4f1
+			if ( postProcessingNode->hasParam4f1() )
+			{
+				vgm::Vec4f value;
+				postProcessingNode->getParam4f1(value);
+
+				params4f1.push_back( value );
+			}
+			else
+			{
+				params4f1.push_back( vgm::Vec4f::getInvalid() );
 			}
 
 			currentDeclaration += declarations;
@@ -1400,6 +1415,14 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		{
 			assert( !engine->getUniformState().isUniform( "param4f0") && "Uniform param4f0 already used" );
 			engine->getUniformState().addUniform( "param4f0", param4f0 );
+		}
+
+		// param4f1
+		const vgm::Vec4f param4f1 = params4f1[i];
+		if ( param4f1.isValid() )
+		{
+			assert( !engine->getUniformState().isUniform( "param4f1") && "Uniform param4f1 already used" );
+			engine->getUniformState().addUniform( "param4f1", param4f1 );
 		}
 
 		// input0
@@ -1597,6 +1620,13 @@ ForwardRendering::createsFBORetValType ForwardRendering::createsFBO( vgeGL::engi
 			texture->setUsage( Texture::IMAGE );
 			texture->setInternalFormat( Texture::RGBA_32F );
 		}
+		else if ( attachments[i] == COLOR_LUMINANCE )
+		{
+			image->format()	= IImage::LUMINANCE;
+			image->type()	= IImage::UINT8;
+
+			texture->setUsage( Texture::IMAGE );
+		}		
 		else if ( attachments[i] == COLOR_LUMINANCE_16F )
 		{
 			image->format()	= IImage::LUMINANCE;
@@ -1605,6 +1635,30 @@ ForwardRendering::createsFBORetValType ForwardRendering::createsFBO( vgeGL::engi
 			texture->setUsage( Texture::IMAGE );
 			texture->setInternalFormat( Texture::LUMINANCE_16F);
 		}
+		else if ( attachments[i] == COLOR_LUMINANCE_32F )
+		{
+			image->format()	= IImage::LUMINANCE;
+			image->type()	= IImage::FLOAT;
+
+			texture->setUsage( Texture::IMAGE );
+			texture->setInternalFormat( Texture::LUMINANCE_32F);
+		}
+		else if ( attachments[i] == COLOR_LUMINANCE_ALPHA_16F )
+		{
+			image->format()	= IImage::LUMINANCE;
+			image->type()	= IImage::FLOAT;
+
+			texture->setUsage( Texture::IMAGE );
+			texture->setInternalFormat( Texture::LUMINANCE_ALPHA_16F);
+		}
+		else if ( attachments[i] == COLOR_LUMINANCE_ALPHA_32F )
+		{
+			image->format()	= IImage::LUMINANCE;
+			image->type()	= IImage::FLOAT;
+
+			texture->setUsage( Texture::IMAGE );
+			texture->setInternalFormat( Texture::LUMINANCE_ALPHA_32F);
+		}		
 		else if ( attachments[i] == DEPTH )
 		{
 			image->format()	= IImage::LUMINANCE;

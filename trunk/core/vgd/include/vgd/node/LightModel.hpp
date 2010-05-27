@@ -39,6 +39,9 @@ namespace node
  *<br>
  * - SFFloat \c samplingSize = 1.0<br>
  *<br>
+ * - SFBool \c ignorePostProcessing = false<br>
+ *   true to ignore the whole post-processing stage, false to do post-processing stage if at least one PostProcessing node is defined.<br>
+ *<br>
  * - OFEnum \c [shadowQuality] = MEDIUM<br>
  *   Specifies the quality of the shadow computation<br>
  *<br>
@@ -47,9 +50,6 @@ namespace node
  *<br>
  * - OFBool \c [useShadowSamplers] = true<br>
  *   True to use GLSL shadowSampler, false to use traditionnal texture sampler.<br>
- *<br>
- * - SFBool \c postProcessing = false<br>
- *   True to enable post-processing, false to disable it<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
  *   Sets the ambient RGBA intensity of the entire scene.<br>
@@ -274,6 +274,36 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field ignorePostProcessing
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c ignorePostProcessing.
+	 */
+	typedef bool IgnorePostProcessingValueType;
+
+	/**
+	 * @brief Type definition of the field named \c ignorePostProcessing
+	 */
+	typedef vgd::field::TSingleField< IgnorePostProcessingValueType > FIgnorePostProcessingType;
+
+
+	/**
+	 * @brief Gets the value of field named \c ignorePostProcessing.
+	 */
+	const IgnorePostProcessingValueType getIgnorePostProcessing() const;
+
+	/**
+	 * @brief Sets the value of field named \c ignorePostProcessing.
+	 */
+	void setIgnorePostProcessing( const IgnorePostProcessingValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field shadowQuality
 	 */
 	//@{
@@ -484,36 +514,6 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Tests if the value of field named \c useShadowSamplers has been initialized.
 	 */
 	const bool hasUseShadowSamplers() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field postProcessing
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c postProcessing.
-	 */
-	typedef bool PostProcessingValueType;
-
-	/**
-	 * @brief Type definition of the field named \c postProcessing
-	 */
-	typedef vgd::field::TSingleField< PostProcessingValueType > FPostProcessingType;
-
-
-	/**
-	 * @brief Gets the value of field named \c postProcessing.
-	 */
-	const PostProcessingValueType getPostProcessing() const;
-
-	/**
-	 * @brief Sets the value of field named \c postProcessing.
-	 */
-	void setPostProcessing( const PostProcessingValueType value );
-
 	//@}
 
 
@@ -818,6 +818,13 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	static const std::string getFSamplingSize( void );
 
 	/**
+	 * @brief Returns the name of field \c ignorePostProcessing.
+	 *
+	 * @return the name of field \c ignorePostProcessing.
+	 */
+	static const std::string getFIgnorePostProcessing( void );
+
+	/**
 	 * @brief Returns the name of field \c shadowQuality.
 	 *
 	 * @return the name of field \c shadowQuality.
@@ -837,13 +844,6 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c useShadowSamplers.
 	 */
 	static const std::string getFUseShadowSamplers( void );
-
-	/**
-	 * @brief Returns the name of field \c postProcessing.
-	 *
-	 * @return the name of field \c postProcessing.
-	 */
-	static const std::string getFPostProcessing( void );
 
 	/**
 	 * @brief Returns the name of field \c ambient.

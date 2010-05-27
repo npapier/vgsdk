@@ -143,7 +143,7 @@ const std::string applyColorInverse(
 ////////////////////
 
 const std::string scaleAndBias =
-"vec4 scaleAndBias( sampler2D texMap, vec2 texCoord, vec4 scale, float bias )\n"
+"vec4 scaleAndBias( sampler2D texMap, vec2 texCoord, vec4 scale, vec4 bias )\n"
 "{\n"
 "	vec4 color = texture2D( texMap, texCoord );\n"
 "	return (color * scale) + bias;\n"
@@ -151,7 +151,7 @@ const std::string scaleAndBias =
 "\n\n\n";
 
 const std::string applyScaleAndBias( 
-	"	color = scaleAndBias( texMap2D[0], mgl_TexCoord[0].xy, param4f0, param1f0 );\n" );
+	"	color = scaleAndBias( texMap2D[0], mgl_TexCoord[0].xy, param4f0, param4f1 );\n" );
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -336,6 +336,23 @@ const std::string applyAdd(
 	"	color = add( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy );\n" );
 
 
+/////////
+// SUB //
+/////////
+
+const std::string sub =
+"vec4 sub( sampler2D texMap0, sampler2D texMap1, vec2 texCoord )"
+"{\n"
+"	vec4 color0 = texture2D( texMap0, texCoord );\n"
+"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	return color0 - color1;\n"
+"}\n"
+"\n\n\n";
+
+const std::string applySub(
+	"	color = sub( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy );\n" );
+
+
 ///////////////////
 // MIX_AND_SCALE //
 ///////////////////
@@ -351,6 +368,23 @@ const std::string mixAndScale =
 
 const std::string applyMixAndScale(
 	"	color = mixAndScale( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param4f0.x, param4f0.y );\n" );
+
+
+////////////////////////
+// ALPHAMIX_AND_SCALE //
+////////////////////////
+
+const std::string alphamixAndScale =
+"vec4 alphamixAndScale( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, float scale )"
+"{\n"
+"	vec4 color0 = texture2D( texMap0, texCoord );\n"
+"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	return mix(color0, color1, color1.a) * scale;\n"
+"}\n"
+"\n\n\n";
+
+const std::string applyAlphamixAndScale(
+	"	color = alphamixAndScale( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param1f0 );\n" );
 
 
 ////////////////////////
@@ -531,10 +565,18 @@ std::pair< std::string, std::string > PostProcessing::getFilter( const vgd::node
 	{
 		return std::make_pair( add, applyAdd );
 	}
+	else if ( filter == vgd::node::PostProcessing::SUB )
+	{
+		return std::make_pair( sub, applySub );
+	}	
 	else if ( filter == vgd::node::PostProcessing::MIX_AND_SCALE )
 	{
 		return std::make_pair( mixAndScale, applyMixAndScale );
-	}	
+	}
+	else if ( filter == vgd::node::PostProcessing::ALPHAMIX_AND_SCALE )
+	{
+		return std::make_pair( alphamixAndScale, applyAlphamixAndScale );
+	}
 	else if ( filter == vgd::node::PostProcessing::COMBINE2_AND_SCALE )
 	{
 		return std::make_pair( combine2AndScale, applyCombine2AndScale );

@@ -123,7 +123,7 @@ struct GLSLState : public TBitSet< 14 >
 		COLOR4_BIND_PER_VERTEX,
 
 		// PostProcessing
-		POST_PROCESSING,			///< True when post-processing is enabled, false otherwise
+		IGNORE_POST_PROCESSING,		///< see LightModel.ignorePostProcessing
 
 		//
 		MAX_BITSETINDEXTYPE

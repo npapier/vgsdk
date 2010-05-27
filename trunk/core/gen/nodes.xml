@@ -254,7 +254,7 @@
 			<type name="bool" default="true"/>
 		</of>
 
-		<sf name="postProcessing" doc="True to enable post-processing, false to disable it">
+		<sf name="ignorePostProcessing" doc="true to ignore the whole post-processing stage, false to do post-processing stage if at least one PostProcessing node is defined.">
 			<type name="bool" default="false"/>
 		</sf>
 	</node>
@@ -420,7 +420,7 @@
 					<value name="COLOR_TO_SEPIA" doc="Converts colored value to sepia.\nSets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1]."/>
 					<value name="COLOR_INVERSE" doc="Inverts the colored value"/>
 
-					<value name="SCALE_AND_BIAS" doc="Each of the color components is multiplied by a scale factor, then added to a bias factor using the following formula : output = input0 * param4f0 + vec4(param1f0)."/>
+					<value name="SCALE_AND_BIAS" doc="Each of the color components is multiplied by a scale factor, then added to a bias factor using the following formula : output = input0 * param4f0 + param4f1."/>
 
 					<value name="BLUR_HORIZ" doc="Blurs an image horizontally using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0."/>
 					<value name="BLUR_VERT" doc="Blurs an image vertically using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0"/>
@@ -435,8 +435,11 @@
 <!--					<value name="NORMAL_EDGE_DETECT" doc="Detects edges and highlights them (using NORMAL buffer)"/> -->
 
 					<value name="OVER" doc="Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition"/>
-					<value name="ADD" doc="Combines two images into one by blending them linearly using the following formula : image1 + image2"/>
+					<value name="ADD" doc="Combines two images into one using the following formula : image1 + image2"/>
+					<value name="SUB" doc="Combines two images into one using the following formula : image1 - image2"/>
+
 					<value name="MIX_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]"/>
+					<value name="ALPHAMIX_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = image2.a\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param1f0. The alpha channel of the output is image2.a"/>
 					<value name="COMBINE2_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]"/>
 					<value name="COMBINE3_AND_SCALE" doc="Combines three images into one by blending them linearly using the following formula : image1 * a + image2 * b + image3 * c with a = param4f0[0], b = param4f0[1] and c = param4f0[2].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[3]"/>
 
@@ -509,12 +512,17 @@
 					<value name="INPUT1_NONE" doc=""/>
 				</enum>
 			</type>-->
-
+<!--input from texture-->
+<!--alpha_if_not_black-->
 		<of name = "param1f0" doc = "Specifies the first 1f parameter used by the filter.">
 			<type name = "float" default = "0.0"></type>
 		</of>
 
 		<of name = "param4f0" doc = "Specifies the first 4f parameter used by the filter.">
+			<type name = "Vec4f" namespace = "vgm" default = "0.0, 0.0, 0.0, 0.0"></type>
+		</of>
+
+		<of name = "param4f1" doc = "Specifies the second 4f parameter used by the filter.">
 			<type name = "Vec4f" namespace = "vgm" default = "0.0, 0.0, 0.0, 0.0"></type>
 		</of>
 
