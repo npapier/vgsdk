@@ -54,10 +54,10 @@ LightModel::LightModel( const std::string nodeName ) :
 	addField( new FIlluminationInShadowType(getFIlluminationInShadow()) );
 	addField( new FTwoSidedType(getFTwoSided()) );
 	addField( new FSamplingSizeType(getFSamplingSize()) );
+	addField( new FIgnorePostProcessingType(getFIgnorePostProcessing()) );
 	addField( new FShadowQualityType(getFShadowQuality()) );
 	addField( new FViewerType(getFViewer()) );
 	addField( new FUseShadowSamplersType(getFUseShadowSamplers()) );
-	addField( new FPostProcessingType(getFPostProcessing()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FModelType(getFModel()) );
 	addField( new FShadowPolygonOffsetType(getFShadowPolygonOffset()) );
@@ -75,7 +75,7 @@ void LightModel::setToDefaults( void )
 	setShadowMapType( INT32 );
 	setIlluminationInShadow( 0.4f );
 	setSamplingSize( 1.0 );
-	setPostProcessing( false );
+	setIgnorePostProcessing( false );
 	setShadowPolygonOffset( vgm::Vec2f(4.f, 16.f) );
 }
 
@@ -168,6 +168,21 @@ void LightModel::setSamplingSize( const SamplingSizeValueType value )
 
 
 
+// IgnorePostProcessing
+const LightModel::IgnorePostProcessingValueType LightModel::getIgnorePostProcessing() const
+{
+	return getFieldRO<FIgnorePostProcessingType>(getFIgnorePostProcessing())->getValue();
+}
+
+
+
+void LightModel::setIgnorePostProcessing( const IgnorePostProcessingValueType value )
+{
+	getFieldRW<FIgnorePostProcessingType>(getFIgnorePostProcessing())->setValue( value );
+}
+
+
+
 // ShadowQuality
 const bool LightModel::getShadowQuality( ShadowQualityValueType& value ) const
 {
@@ -248,21 +263,6 @@ void LightModel::eraseUseShadowSamplers()
 const bool LightModel::hasUseShadowSamplers() const
 {
 	return getFieldRO<FUseShadowSamplersType>(getFUseShadowSamplers())->hasValue();
-}
-
-
-
-// PostProcessing
-const LightModel::PostProcessingValueType LightModel::getPostProcessing() const
-{
-	return getFieldRO<FPostProcessingType>(getFPostProcessing())->getValue();
-}
-
-
-
-void LightModel::setPostProcessing( const PostProcessingValueType value )
-{
-	getFieldRW<FPostProcessingType>(getFPostProcessing())->setValue( value );
 }
 
 
@@ -395,6 +395,13 @@ const std::string LightModel::getFSamplingSize( void )
 
 
 
+const std::string LightModel::getFIgnorePostProcessing( void )
+{
+	return "f_ignorePostProcessing";
+}
+
+
+
 const std::string LightModel::getFShadowQuality( void )
 {
 	return "f_shadowQuality";
@@ -412,13 +419,6 @@ const std::string LightModel::getFViewer( void )
 const std::string LightModel::getFUseShadowSamplers( void )
 {
 	return "f_useShadowSamplers";
-}
-
-
-
-const std::string LightModel::getFPostProcessing( void )
-{
-	return "f_postProcessing";
 }
 
 

@@ -152,7 +152,7 @@ struct VGE_API UniformContainer
 	//void copy( const UniformContainer& src );	///< code for copy constructor
 
 	typedef std::string KeyType;
-	typedef boost::variant< float, vgm::Vec4f > ValueType;
+	typedef boost::variant< float, vgm::Vec2f, vgm::Vec3f, vgm::Vec4f > ValueType;
 	typedef std::map< KeyType, ValueType > ContainerType;
 
 	typedef ContainerType::const_iterator	ConstIteratorType;

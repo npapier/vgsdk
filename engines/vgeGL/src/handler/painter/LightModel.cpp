@@ -123,9 +123,9 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	}
 
 	// POSTPROCESSING
-	if ( lightModel->getPostProcessing() )
+	if ( lightModel->getIgnorePostProcessing() )
 	{
-		state.setEnabled( GLSLState::POST_PROCESSING );
+		state.setEnabled( GLSLState::IGNORE_POST_PROCESSING );
 	}
 
 	//

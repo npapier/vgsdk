@@ -35,7 +35,10 @@ const bool GeometryShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_decl.clear();
 	m_code1.clear();
 	m_code2.clear();
-	m_decl += "#version 120\n";
+
+	m_decl += "#version 130\n\n";
+
+	m_decl += "uniform vec2 nearFar;\n\n";
 
 	// Test if custom program must be installed
 	if ( state.isEnabled( GLSLState::PROGRAM ) )

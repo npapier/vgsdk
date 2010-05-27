@@ -54,6 +54,7 @@ PostProcessing::PostProcessing( const std::string nodeName ) :
 	addField( new FInput0Type(getFInput0()) );
 	addField( new FInput1Type(getFInput1()) );
 	addField( new FFilterType(getFFilter()) );
+	addField( new FParam4f1Type(getFParam4f1()) );
 	addField( new FParam4f0Type(getFParam4f0()) );
 	addField( new FOutputType(getFOutput()) );
 	addField( new FParam1f0Type(getFParam1f0()) );
@@ -79,6 +80,7 @@ void PostProcessing::setToDefaults( void )
 void PostProcessing::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
+	setParam4f1( vgm::Vec4f(0.0, 0.0, 0.0, 0.0) );
 	setParam4f0( vgm::Vec4f(0.0, 0.0, 0.0, 0.0) );
 	setParam1f0( 0.0 );
 }
@@ -141,6 +143,34 @@ const PostProcessing::FilterValueType PostProcessing::getFilter() const
 void PostProcessing::setFilter( const FilterValueType value )
 {
 	getFieldRW<FFilterType>(getFFilter())->setValue( value );
+}
+
+
+
+// Param4f1
+const bool PostProcessing::getParam4f1( Param4f1ValueType& value ) const
+{
+	return getFieldRO<FParam4f1Type>(getFParam4f1())->getValue( value );
+}
+
+
+
+void PostProcessing::setParam4f1( const Param4f1ValueType& value )
+{
+	getFieldRW<FParam4f1Type>(getFParam4f1())->setValue( value );
+}
+
+
+
+void PostProcessing::eraseParam4f1()
+{
+	getFieldRW<FParam4f1Type>(getFParam4f1())->eraseValue();
+}
+
+
+const bool PostProcessing::hasParam4f1() const
+{
+	return getFieldRO<FParam4f1Type>(getFParam4f1())->hasValue();
 }
 
 
@@ -241,6 +271,13 @@ const std::string PostProcessing::getFInput1( void )
 const std::string PostProcessing::getFFilter( void )
 {
 	return "f_filter";
+}
+
+
+
+const std::string PostProcessing::getFParam4f1( void )
+{
+	return "f_param4f1";
 }
 
 

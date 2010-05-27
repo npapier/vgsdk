@@ -52,11 +52,10 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 	using vgeGL::engine::GLSLState;
 	GLSLState& glslState = glEngine->getGLSLState();
 
-	const bool							isPostProcessingEnabled	= glslState.isEnabled( GLSLState::POST_PROCESSING );
-	vgd::Shp< glo::FrameBufferObject >	fbo						= glEngine->getOutputBuffers();
+	vgd::Shp< glo::FrameBufferObject >	fbo = glEngine->getOutputBuffers();
 
-	if (	glEngine->isGLSLEnabled() && isPostProcessingEnabled &&
-			fbo && (fbo->getDrawBuffers().size() > 1)	)
+	if (	glEngine->isGLSLEnabled() &&
+			fbo && fbo->isBound() && (fbo->getDrawBuffers().size() > 1)	)
 	{
 		// glsl, post-processing and several draw buffers are enabled, then select output buffers
 // @todo moves into PostProcessing handler.
