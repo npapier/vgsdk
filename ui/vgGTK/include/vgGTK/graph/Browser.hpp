@@ -158,6 +158,7 @@ private:
 	void onExpandAll();										///< Handles the action that will expand all tree view content.	
 	void onExpandSubTree();									///< Handles the action that will expand all the tree view sub-tree of the selection element.
 	void onExportNode();									///< Handles the action that will export the selected.
+	void onExportScene();									///< Handles the action that will export the selected.
 	void onFullRefresh();									///< Handles the action that will perfrom a refresh of the whole tree.
 	void onRemoveNode();									///< Handles the action that will remove the selected node from it parent.
 	void onSaveAs();										///< Handles the action that will allow the user to save the graph.

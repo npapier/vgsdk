@@ -67,6 +67,7 @@ void ActionsNode::onRemoveNode()
 	
 	if( node )
 	{
+		vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 		vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
 		vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REMOVE );
 		vgDebug::get().logStatus( "Node %s removed.", node->getName().c_str() );
@@ -172,6 +173,7 @@ void ActionsNode::onExportNode()
 {
 	vgd::Shp< vgd::node::Node > node = vgGTK::node::SelectedNode::getSelectedNodeObject()->getSelectedNode();
 	vgGTK::node::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
+	vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 	vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( EXPORT );
 	vgDebug::get().logStatus( "Node %s exported.", node->getName().c_str() );
 }

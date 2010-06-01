@@ -219,6 +219,8 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 			vgd::Shp< vgd::node::Group > childNode = vgd::node::Group::create( node->getName() );
 			vgsdkNode->addChild( childNode );
 
+			bool hasMaterial = false;
+
 			if ( m_loadType > LOAD_GEOMETRY )
 			{
 				if( m_mapShapeMaterial->find( vertexShape ) != m_mapShapeMaterial->end() )
@@ -233,6 +235,7 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 							
 							if( m_mapMaterial->find( id ) != m_mapMaterial->end() )
 							{
+								hasMaterial = true;
 								vgd::Shp< vgd::node::Group > materialGroup = (*m_mapMaterial)[id];
 								
 								//removes texture coordinate from VertexShape if no texture are present.
@@ -253,7 +256,15 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 					}
 				}
 			}
-			
+			if( !hasMaterial )
+			{
+				//removes texture coordinate from VertexShape if no material are present.
+				for( int i = 0; i < vertexShape->getNumTexUnits(); i++)
+				{
+					vertexShape->removeTexUnits( i );
+				}
+			}
+
 			childNode->addChild( vertexShape );
 		}
 	}

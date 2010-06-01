@@ -4,4 +4,4 @@ type				= 'shared'
 version				= '0-5'
 deps				= ['../../core', '../vgio']
 uses				= [ 'opencollada' ]
-libs				= ['vgBase 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgio 0-5']
+libs				= [ 'sbf 0-0', 'vgBase 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgm 0-5', 'vgio 0-5' ]

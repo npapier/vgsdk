@@ -8,7 +8,11 @@
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
+#include <boost/bimap.hpp>
+
 #include <vgd/node/Group.hpp>
+
+#include <vge/technique/CollectNode.hpp>
 
 #include "COLLADASWLibraryMaterials.h"
 
@@ -18,6 +22,8 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
+	typedef boost::bimap< vgd::Shp< vge::technique::CollectedShape >, vgd::Shp< vge::technique::CollectedMaterial > > collectedMapType;
+
 struct SceneExporter;
 
 /**
@@ -25,13 +31,15 @@ struct SceneExporter;
  */
 struct VGOPENCOLLADA_API MaterialExporter : public COLLADASW::LibraryMaterials
 {
-	MaterialExporter(COLLADASW::StreamWriter * streamWriter, SceneExporter * sceneExporter, vgd::Shp< vgd::node::Group > sceneGraph);
+	MaterialExporter(COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap );
 
+	/**
+	 * @brief start exporting
+	 */
 	void doExport();
 
 private:
-	vgd::Shp< vgd::node::Group >	m_sceneGraph;
-	SceneExporter					*m_sceneExporter;
+	collectedMapType	m_collectedMap;
 };
 
 } // namespace exporter

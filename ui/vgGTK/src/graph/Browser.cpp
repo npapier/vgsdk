@@ -164,6 +164,7 @@ const Glib::ustring	Browser::m_uiDefinition =
 	"    <toolitem action='ExpandAll'/>"
 	"    <separator/>"
 	"    <toolitem action='SaveAs'/>"
+	"    <toolitem action='ExportScene'/>"
 //	"    <separator/>"
 //	"    <toolitem action='Synchronize'/>"
 	"  </toolbar>"
@@ -190,6 +191,7 @@ Browser::Browser()
 	m_actions->add( Gtk::Action::create("ExpandAll", expandID), sigc::mem_fun(this, &Browser::onExpandAll) );
 	m_actions->add( Gtk::Action::create("FullRefresh", Gtk::Stock::REFRESH), sigc::mem_fun(this, &Browser::onFullRefresh) );
 	m_actions->add( Gtk::Action::create("SaveAs", Gtk::Stock::SAVE_AS), sigc::mem_fun(this, &Browser::onSaveAs) );
+	m_actions->add( Gtk::Action::create("ExportScene", Gtk::Stock::CONVERT), sigc::mem_fun(this, &Browser::onExportScene) );
 //	m_actions->add( Gtk::Action::create("Synchronize", synchronizeID), sigc::mem_fun(this, &Browser::onSaveAs) );
 	m_actions->set_sensitive( false );
 
@@ -450,10 +452,16 @@ void Browser::onRemoveNode()
 				vgd::Shp< vgd::node::Group >	parentGroup			= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );
 				
 				Gtk::TreePath nextPath( rowIterator );
+				Gtk::TreePath prevPath( rowIterator );
+
 				nextPath.next();
 				if( m_treeStore->get_iter( nextPath ) )
 				{
 					 selection->select( m_treeStore->get_iter( nextPath ) );
+				}
+				else if( prevPath.prev() )
+				{
+					selection->select( m_treeStore->get_iter( prevPath ) );
 				}
 				else
 				{
@@ -475,13 +483,68 @@ void Browser::onRemoveNode()
 
 void Browser::onExportNode()
 {
-	Glib::RefPtr< Gtk::TreeSelection >	selection = m_treeView.get_selection();
-	Gtk::TreeModel::iterator			rowIterator = selection->get_selected();
-
-	vgd::Shp< vgd::node::Node >	node = (*rowIterator)[ m_columns.m_nodeColumn ];
+	Gtk::TreeModel::Row rowIterator;
+	vgd::Shp< vgd::node::Node > node = vgGTK::node::SelectedNode::getSelectedNodeObject()->getSelectedNode();
 	
+	if ( searchNode(m_treeStore->children(), node, &rowIterator) )
+	{
+		Gtk::TreePath	rowPath( rowIterator );
+
+		// Moves the path to the parent node.
+		rowPath.up();
+		
+		// Retrieves the parent row iterator, the node to remove and the parent group.
+		Gtk::TreeModel::iterator		parentRowIterator	= m_treeStore->get_iter( rowPath );
+		vgd::Shp< vgd::node::Node >		parentNode			= (*parentRowIterator)[ m_columns.m_nodeColumn ];
+		vgd::Shp< vgd::node::Group >	parentGroup			= vgd::dynamic_pointer_cast< vgd::node::Group >( parentNode );
+		
+		Gtk::Window				* topLevel = dynamic_cast< Gtk::Window * >(this->get_toplevel());
+		Gtk::FileChooserDialog	chooser( *topLevel, "Save As", Gtk::FILE_CHOOSER_ACTION_SAVE );
+		Gtk::FileFilter			dotFilter;
+
+		dotFilter.set_name( "COLLADA file (*.DAE)" );
+		dotFilter.add_pattern( "*.DAE" );
+
+		chooser.add_filter( dotFilter );
+		chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+		chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+		chooser.set_do_overwrite_confirmation( true );
+
+		const int result = chooser.run();
+		if( result == Gtk::RESPONSE_OK )
+		{
+			const Glib::ustring	filename( chooser.get_filename() );
+
+			bool exportSuccess;
+
+			if( node->isAKindOf< vgd::node::Group >() )
+			{
+				vgOpenCOLLADA::exporter::SceneExporter exporter( filename, vgd::dynamic_pointer_cast< vgd::node::Group >( node ) );
+				exportSuccess = exporter.doExport();
+			}
+			else
+			{
+				vgOpenCOLLADA::exporter::SceneExporter exporter( filename, parentGroup );
+				exportSuccess = exporter.doExport();
+			}
+
+			if( !exportSuccess )
+			{
+				Gtk::MessageDialog	messageDlg(*topLevel, "Unable to export.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+				
+				messageDlg.run();
+			}
+		}
+	}
+
+}
+
+
+
+void Browser::onExportScene()
+{
 	Gtk::Window				* topLevel = dynamic_cast< Gtk::Window * >(this->get_toplevel());
-	Gtk::FileChooserDialog	chooser( *topLevel, "Save VertexShape As", Gtk::FILE_CHOOSER_ACTION_SAVE );
+	Gtk::FileChooserDialog	chooser( *topLevel, "Save As", Gtk::FILE_CHOOSER_ACTION_SAVE );
 	Gtk::FileFilter			dotFilter;
 
 	dotFilter.set_name( "COLLADA file (*.DAE)" );
@@ -497,15 +560,15 @@ void Browser::onExportNode()
 	{
 		const Glib::ustring	filename( chooser.get_filename() );
 		
-		vgOpenCOLLADA::exporter::SceneExporter exporter( filename, m_canvas->getRoot(), vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
+		vgOpenCOLLADA::exporter::SceneExporter exporter( filename, m_canvas->getRoot() );
 
 		if( !exporter.doExport() )
 		{
-			Gtk::MessageDialog	messageDlg(*topLevel, "Unable to save VertexShape.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+			Gtk::MessageDialog	messageDlg(*topLevel, "Unable to export.", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 			
 			messageDlg.run();
 		}
-	}
+	}	
 }
 
 

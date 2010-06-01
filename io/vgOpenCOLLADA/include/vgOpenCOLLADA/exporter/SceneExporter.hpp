@@ -6,17 +6,21 @@
 #ifndef _VGOPENCOLLADA_EXPORTER_SCENEEXPORTER_HPP
 #define _VGOPENCOLLADA_EXPORTER_SCENEEXPORTER_HPP
 
+#include <boost/bimap.hpp>
+
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
-#include "vgOpenCOLLADA/exporter/GeometryExporter.hpp"
 #include "vgOpenCOLLADA/exporter/EffectExporter.hpp"
+#include "vgOpenCOLLADA/exporter/GeometryExporter.hpp"
+#include "vgOpenCOLLADA/exporter/ImageExporter.hpp"
 #include "vgOpenCOLLADA/exporter/MaterialExporter.hpp"
 #include "vgOpenCOLLADA/exporter/VisualSceneExporter.hpp"
 
 #include <vgd/node/Group.hpp>
 
+#include <vge/technique/CollectNode.hpp>
+
 #include <COLLADASWStreamWriter.h>
-#include <COLLADABUURI.h>
 
 namespace vgOpenCOLLADA
 {
@@ -24,38 +28,66 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
+	typedef boost::bimap< vgd::Shp< vge::technique::CollectedShape >, vgd::Shp< vge::technique::CollectedMaterial > > collectedMapType;
 /**
  * @brief The COLLADA file writer frontend.
  */
 struct VGOPENCOLLADA_API SceneExporter
 {
-	SceneExporter(std::string filepath, vgd::Shp< vgd::node::Group > sceneGraph, vgd::Shp< vgd::node::VertexShape >	node = vgd::Shp< vgd::node::VertexShape >());
+	SceneExporter( std::string filepath, vgd::Shp< vgd::node::Group > rootNode );
 
-	~SceneExporter(){};
+	~SceneExporter();
 
-	EffectExporter *getEffectExporter();
-
-	GeometryExporter *getGeometryExporter();
-
+	/**
+	 * @brief start exporting
+	 */
 	bool doExport();
 
 private:
 
+	/**
+	 * @brief loads all exporters
+	 */
 	void loadExporter();
 	
 	/**
-	* @brief: export the "asset" tag.
+	 * @brief collects all nodes which need to be exported
+	 */
+	void collectNodes();
+
+	/**
+	* @brief export COLLADA asset tag
 	*/
 	void exportAsset();
 
+	/**
+	* @brief call the ImageExporter to export COLLADA image library
+	*/
+	void exportImage();
+
+	/**
+	* @brief call the EffectExporter to export COLLADA effect library
+	*/
 	void exportEffect();
 
+	/**
+	* @brief call the MaterialExporter to export COLLADA material library
+	*/
 	void exportMaterial();
 
+	/**
+	* @brief call the GeometryExporter to export COLLADA geometry library
+	*/
 	void exportGeometry();
 
+	/**
+	* @brief call the VisualSceneExporter to export COLLADA visual scene (scene graph creation)
+	*/
 	void exportVisualScene();
 
+	/**
+	* @briefexport export COLLADA scene tag
+	*/
 	void exportScene();
 
 	/**
@@ -67,16 +99,17 @@ private:
 	*/
 	std::string getEnvironmentVariable( const std::string & variableName );
 
-    COLLADASW::StreamWriter				m_streamWriter;
-	COLLADASW::URI						m_outputFileUri;
+    COLLADASW::StreamWriter									m_streamWriter;
+	std::string												m_outputFileUri;
 
-	vgd::Shp< vgd::node::Group >		m_sceneGraph;
-	vgd::Shp< vgd::node::VertexShape >	m_node;
+	vgd::Shp< vgd::node::Group >							m_rootNode;
+	collectedMapType										m_collectedMap;
 
-	GeometryExporter					*m_geometryExporter;
-	EffectExporter						*m_effectExporter;
-	MaterialExporter					*m_materialExporter;
-	VisualSceneExporter					*m_visualSceneExporter;
+	GeometryExporter										*m_geometryExporter;
+	EffectExporter											*m_effectExporter;
+	ImageExporter											*m_imageExporter;
+	MaterialExporter										*m_materialExporter;
+	VisualSceneExporter										*m_visualSceneExporter;
 };
 
 } // namespace exporter

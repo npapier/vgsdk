@@ -17,10 +17,9 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-MaterialExporter::MaterialExporter(COLLADASW::StreamWriter * streamWriter, SceneExporter * sceneExporter, vgd::Shp< vgd::node::Group > sceneGraph) :
+MaterialExporter::MaterialExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap ) :
 COLLADASW::LibraryMaterials ( streamWriter ),
-m_sceneExporter ( sceneExporter),
-m_sceneGraph( sceneGraph )
+m_collectedMap ( collectedMap )
 {
 }
 
@@ -28,13 +27,18 @@ void MaterialExporter::doExport()
 {
 	vgDebug::get().logDebug("Exporting materials");
 	openLibrary();
-
-	std::vector<std::string> effectList = m_sceneExporter->getEffectExporter()->getEffectIdList();
 	
-	for(uint i = 0; i < effectList.size(); i++)
+	typedef collectedMapType::right_map::const_iterator right_const_iterator;
+
+	for( right_const_iterator right_iter = m_collectedMap.right.begin(), iend = m_collectedMap.right.end();
+		 right_iter != iend; ++right_iter )
 	{
-		std::string effectName = effectList[i];
+		vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial = right_iter->first;
+		
+		std::string effectName = collectedMaterial->getEffectId();
 		std::string materialName = effectName + MATERIAL_ID_SUFFIX;
+		collectedMaterial->setMaterialId( materialName );
+
 		openMaterial ( materialName, COLLADABU::Utils::checkNCName(materialName) );
 		addInstanceEffect ( "#" + effectName );
 		closeMaterial ();

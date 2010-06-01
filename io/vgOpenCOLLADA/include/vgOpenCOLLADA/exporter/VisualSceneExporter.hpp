@@ -6,9 +6,13 @@
 #ifndef _VGOPENCOLLADA_EXPORTER_VISUALSCENEEXPORTER_HPP
 #define _VGOPENCOLLADA_EXPORTER_VISUALSCENEEXPORTER_HPP
 
+#include <boost/bimap.hpp>
+
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
 #include <vgd/node/Group.hpp>
+
+#include <vge/technique/CollectNode.hpp>
 
 #include "COLLADASWLibraryVisualScenes.h"
 
@@ -18,6 +22,8 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
+	typedef boost::bimap< vgd::Shp< vge::technique::CollectedShape >, vgd::Shp< vge::technique::CollectedMaterial > > collectedMapType;
+
 struct SceneExporter;
 
 /**
@@ -25,13 +31,13 @@ struct SceneExporter;
  */
 struct VGOPENCOLLADA_API VisualSceneExporter : public COLLADASW::LibraryVisualScenes
 {
-	VisualSceneExporter(COLLADASW::StreamWriter * streamWriter, SceneExporter * sceneExporter, vgd::Shp< vgd::node::Group > sceneGraph);
+	VisualSceneExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap );
 
 	void doExport();
 
 private:
-	vgd::Shp< vgd::node::Group >	m_sceneGraph;
 	SceneExporter					*m_sceneExporter;
+	collectedMapType				m_collectedMap;
 
 	static const std::string NODE_ID_PRAEFIX;
 };

@@ -347,7 +347,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * 
 	 * return Pointer on the desired node list or 0 if not found.
 	 */
-	/*template< typename nodeType >
+	template< typename nodeType >
 	const NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 ) const
 	{
 		const State& 		topState		(	m_state.back()						);
@@ -366,7 +366,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		{
 			return static_cast< NodeList* >(0);
 		}
-	}*/
+	}
 
 	/**
 	 *@brief Gets the desired node list to the top of the state stack
@@ -375,7 +375,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * 
 	 * return Pointer on the desired node list or 0 if not found.
 	 */
-	/*template< typename nodeType >
+	template< typename nodeType >
 	NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 )
 	{
 		State& 				topState		(	m_state.back()						);
@@ -394,7 +394,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		{
 			return static_cast< NodeList* >(0);
 		}
-	}*/
+	}
 
 	/**
 	 * brief Gets the desired node to the top of the state stack
@@ -473,7 +473,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 *
 	 * return true if found, false otherwise.
 	 */
-	/*template< typename nodeType, typename ParameterType, typename ValueType >
+	template< typename nodeType, typename ParameterType, typename ValueType >
 	bool getStateStackTop(	const std::string& strFieldName,
 							const ParameterType param, ValueType& value,
 							const int8 multiAttributeIndex = 0 ) const
@@ -502,8 +502,76 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		}
 
 		return bDefined;
-	}*/
+	}
 
+
+
+	/**
+	 * @brief Gets the desired single field value from the top of the state stack
+	 * 
+	 * Gets the desired single field named strFieldName value from a node (selected by his type and his multi-attribute index) from the top of the
+	 * state stack.
+	 *
+	 * return true if found, false otherwise.
+	 */
+	template< typename nodeType, typename ParameterType, typename ValueType >
+	bool getStateStackTopFromSingleField( std::string strFieldName, ValueType& value ) const
+	{
+		bool bDefined(	false	);
+
+		const NodeList *pNodeList = getNodeListFromStateStackTop< nodeType >();
+
+		if ( pNodeList != 0 )
+		{
+			for( NodeList::const_reverse_iterator	i = pNodeList->rbegin(), iEnd = pNodeList->rend();
+													i != iEnd;
+													++i )
+			{
+				bDefined = vgd::field::getParameterValueFromSingleField< ParameterType, ValueType >( (*i), strFieldName, value );
+
+				if ( bDefined )
+				{
+					break;
+				}
+			}
+		}
+
+		return bDefined;
+	}
+
+
+	/**
+	 * @brief Gets the desired optional field value from the top of the state stack
+	 * 
+	 * Gets the desired optional field named strFieldName value from a node (selected by his type and his multi-attribute index) from the top of the
+	 * state stack.
+	 *
+	 * return true if found, false otherwise.
+	 */
+	template< typename nodeType, typename ParameterType, typename ValueType >
+	bool getStateStackTopFromOptionalField( const std::string& strFieldName, ValueType& value ) const
+	{
+		bool bDefined(	false	);
+
+		const NodeList *pNodeList = getNodeListFromStateStackTop< nodeType >();
+		
+		if ( pNodeList != 0 )
+		{
+			for( NodeList::const_reverse_iterator	i = pNodeList->rbegin(), iEnd = pNodeList->rend();
+													i != iEnd;
+													++i )
+			{
+				bDefined = vgd::field::getParameterValueFromOptionalField< ParameterType, ValueType >( (*i), strFieldName, value );
+
+				if ( bDefined )
+				{
+					break;
+				}
+			}
+		}
+
+		return bDefined;
+	}
 
 
 	/**
@@ -620,6 +688,20 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @param nearFar	the vector containing near-far values
 	 */
 	void setNearFar( const vgm::Vec2f nearFar );
+
+	/**
+	 * @brief Sets if engine need to trace everything.
+	 *
+	 * @param trace	true if trace is enabled
+	 */	
+	void setTrace( const bool trace );
+
+	/**
+	 * @brief Tests if trace is active.
+	 *
+	 * @return true if active, false otherwise
+	 */
+	const bool isTraceEnabled() const;
 	//@}
 
 
@@ -660,8 +742,6 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	virtual const int getMaxCubeMapTexSize() const = 0;
 	//@}
-
-
 
 
 	/**
@@ -788,6 +868,8 @@ protected:
 	vgm::Rectangle2i				m_viewport;				///< the value of \c viewport field for the last encountered Camera node with this field defined
 	vgm::Vec2f						m_nearFar;				///< a vector containing respectively the distances to the near and far depth clipping planes
 	const vgd::Shp< vge::service::Service > m_paintService;	///< a reference on paint service object used by render() methods
+
+	bool							m_trace;
 };
 
 

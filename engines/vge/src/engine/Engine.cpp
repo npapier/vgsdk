@@ -26,8 +26,8 @@ namespace engine
 Engine::Engine()
 :	m_drawingSurfaceSize(0, 0),
 	m_camera( 0 ),
-
-	m_paintService( new vge::service::Painter() )
+	m_paintService( new vge::service::Painter() ),
+	m_trace( false )
 {
 	m_viewport.setInvalid();
 	m_nearFar.setInvalid();
@@ -77,36 +77,32 @@ void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
 	{
 		vge::handler::Handler *pHandler( m_dispatch[indexService][indexNode].get() );
 
+		// Calling handler
 		if ( pHandler )
 		{
 			if ( isPreTraverse )
 			{
 				// pretraverse
 				//vgDebug::get().logTrace( "preTraverse %s", node->getName().c_str() );
-
-				// state stack is disabled.
-				// @todo removes
-				/*if ( bTrace )
-				{
-					setStateStackTop( node );
-				}*/
 				pHandler->apply( this, node );
 			}
 			else
 			{
 				// posttraverse
 				//vgDebug::get().logTrace( "postTraverse %s", node->getName().c_str() );
-
 				pHandler->unapply( this, node );
 			}
 		}
-		else
+		// else no installed handler for this node
+
+		// Trace if desired
+		if ( m_trace && bTrace && isPreTraverse )
 		{
-			// No installed handler for this node, do nothing.
-			return;
+			setStateStackTop( node );
 		}
+		// else nothing to do
 	}
-	// nothing to do, handler not regarded.
+	// else nothing to do, handler not regarded.
 }
 
 
@@ -306,11 +302,11 @@ void Engine::disregard()
 
 void Engine::resetStateStack()
 {
-	// state stack is disabled. @todo removes all call to this method
-	return;
-
-	clearStateStack();
-	initializeStateStack();
+	if ( isTraceEnabled() )
+	{
+		clearStateStack();
+		initializeStateStack();
+	}
 }
 
 
@@ -365,9 +361,15 @@ bool Engine::isStateStackEmpty() const
 const uint Engine::sizeOfStateStack() const
 {
 	// state stack is disabled. @todo removes all call to this method
-	return 1;
 
-	return static_cast<uint32>(m_state.size());
+	if ( isTraceEnabled() )
+	{
+		return static_cast<uint32>(m_state.size());
+	}
+	else
+	{
+		return 1;
+	}
 }
 
 
@@ -392,28 +394,33 @@ void Engine::setStateStackTop( vgd::node::Node *pNode )
 
 void Engine::pushStateStack()
 {
-	// state stack is disabled. @todo removes all call to this method
-	return;
-
-	State& top( m_state.back() );
-	m_state.push_back( top );
+	if ( isTraceEnabled() )
+	{
+		State& top( m_state.back() );
+		m_state.push_back( top );
+	}
+	// else nothing to do
 }
 
 
 
 bool Engine::popStateStack()
 {
-	// state stack is disabled. @todo removes all call to this method
-	return true;
-
-	if ( m_state.size() > 0 )
+	if ( isTraceEnabled() )
 	{
-		m_state.pop_back();
-		return true;
+		if ( m_state.size() > 0 )
+		{
+			m_state.pop_back();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	else
 	{
-		return false;
+		return true;
 	}
 }
 
@@ -505,6 +512,20 @@ void Engine::setNearFar( const vgm::Vec2f nearFar )
 const int Engine::getMaxTexUnits() const
 { 
 	return 0;
+}
+
+
+
+void Engine::setTrace( const bool trace )
+{
+	m_trace = trace;
+}
+
+
+
+const bool Engine::isTraceEnabled() const
+{
+	return m_trace;
 }
 
 
