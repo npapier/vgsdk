@@ -170,51 +170,51 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	vgm::Vec3f color;
 	//
 	//// ambient
-	color[0] = (float)effectCommon->getAmbient().getColor().getRed();
-	color[1] = (float)effectCommon->getAmbient().getColor().getGreen();
-	color[2] = (float)effectCommon->getAmbient().getColor().getBlue();
-	material->setAmbient( color );
-	//
-	//// diffuse
-	if (effectCommon->getDiffuse().getColor().getRed() == -1)
+	if( effectCommon->getAmbient().getType() == COLLADAFW::ColorOrTexture::COLOR )
 	{
 		color[0] = (float)effectCommon->getAmbient().getColor().getRed();
+		color[1] = (float)effectCommon->getAmbient().getColor().getGreen();
+		color[2] = (float)effectCommon->getAmbient().getColor().getBlue();
+		material->setAmbient( color );
 	}
-	else
+	
+	//
+	//// diffuse
+	if( effectCommon->getDiffuse().getType() == COLLADAFW::ColorOrTexture::COLOR )
 	{
 		color[0] = (float)effectCommon->getDiffuse().getColor().getRed();
-	}
-
-	if (effectCommon->getDiffuse().getColor().getRed() == -1)
-	{
-		color[1] = (float)effectCommon->getAmbient().getColor().getGreen();
-	}
-	else
-	{
 		color[1] = (float)effectCommon->getDiffuse().getColor().getGreen();
+		color[2] = (float)effectCommon->getDiffuse().getColor().getBlue();
+		material->setDiffuse( color );
+	}
+	else if( effectCommon->getDiffuse().getType() == COLLADAFW::ColorOrTexture::TEXTURE )
+	{
+		color[0] = 1;
+		color[1] = 1;
+		color[2] = 1;
+		material->setDiffuse( color );
 	}
 
-	if (effectCommon->getDiffuse().getColor().getRed() == -1)
-	{
-		color[2] = (float)effectCommon->getAmbient().getColor().getBlue();
-	}
-	else
-	{
-		color[2] = (float)effectCommon->getDiffuse().getColor().getBlue();
-	}
-	material->setDiffuse( color );
 	//
 	//// specular
-	color[0] = (float)effectCommon->getSpecular().getColor().getRed();
-	color[1] = (float)effectCommon->getSpecular().getColor().getGreen();
-	color[2] = (float)effectCommon->getSpecular().getColor().getBlue();
-	material->setSpecular( color );
+	if( effectCommon->getSpecular().getType() == COLLADAFW::ColorOrTexture::COLOR )
+	{
+		color[0] = (float)effectCommon->getSpecular().getColor().getRed();
+		color[1] = (float)effectCommon->getSpecular().getColor().getGreen();
+		color[2] = (float)effectCommon->getSpecular().getColor().getBlue();
+		material->setSpecular( color );
+	}
+
 	//
 	//// emission
-	color[0] = (float)effectCommon->getEmission().getColor().getRed();
-	color[1] = (float)effectCommon->getEmission().getColor().getGreen();
-	color[2] = (float)effectCommon->getEmission().getColor().getBlue();
-	material->setEmission( color );
+	if( effectCommon->getEmission().getType() == COLLADAFW::ColorOrTexture::COLOR )
+	{
+		color[0] = (float)effectCommon->getEmission().getColor().getRed();
+		color[1] = (float)effectCommon->getEmission().getColor().getGreen();
+		color[2] = (float)effectCommon->getEmission().getColor().getBlue();
+		material->setEmission( color );
+	}
+
 	//
 	//// specularLevel/glosiness
 	float real = 1.f;

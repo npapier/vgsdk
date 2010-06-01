@@ -20,49 +20,69 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-GeometryExporter::GeometryExporter(COLLADASW::StreamWriter * streamWriter, vgd::Shp< vgd::node::Group > sceneGraph, vgd::Shp< vgd::node::VertexShape > node) :
-COLLADASW::LibraryGeometries ( streamWriter ),
-m_sceneGraph( sceneGraph ),
-m_node( node )
+GeometryExporter::GeometryExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap )
+:	COLLADASW::LibraryGeometries ( streamWriter ),
+	m_collectedMap( collectedMap )
 {
 }
+
 
 
 void GeometryExporter::doExport()
 {
 	openLibrary();
 
-	if (m_node)
+	//export all
+	vgDebug::get().logDebug("Exporting geometry...");
+	
+	typedef collectedMapType::left_map::const_iterator left_const_iterator;
+
+	for( left_const_iterator left_iter = m_collectedMap.left.begin(), iend = m_collectedMap.left.end();
+		 left_iter != iend; ++left_iter )
 	{
-		//export vertexShape only
-		vgDebug::get().logDebug("Exporting VertexShape");
-		exportMesh( m_node );
+		exportMesh( left_iter->first, left_iter->second );
+		m_texCoordsList.clear();
 	}
-	else
-	{
-		//export all
-		vgDebug::get().logDebug("Exporting geometry...");
-	}
+
 
 	closeLibrary();
 }
 
 
-void GeometryExporter::exportMesh( vgd::Shp< vgd::node::VertexShape > vertexShape )
+
+void GeometryExporter::exportMesh( vgd::Shp< vge::technique::CollectedShape > collectedShape, vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial )
 {
+	vgd::Shp< vgd::node::VertexShape > vertexShape = collectedShape->getShape();
+	
 	m_currentGeometryName = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( COLLADASW::LibraryGeometries::GEOMETRY_ID_PRAEFIX + vertexShape->getName() ) );
 
+	std::string currentGeometryMaterialSymbol;
+	if( collectedMaterial->getMaterial() )
+	{
+		currentGeometryMaterialSymbol = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( collectedMaterial->getMaterial()->getName() ) ) + "_symbol";
+	}
+	else
+	{
+		currentGeometryMaterialSymbol = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( "default" ) ) + "_symbol";
+	}
+	collectedMaterial->setMaterialSymbol( currentGeometryMaterialSymbol );
+
+	//open mesh & geometry tag.
 	openMesh( m_currentGeometryName, COLLADASW::Utils::checkNCName( COLLADASW::NativeString(vertexShape->getName()) ) );
 	
-	m_geomNameList.push_back(m_currentGeometryName);
+	collectedShape->setColladaShapeName( m_currentGeometryName );
 
 	exportPositions( vertexShape );
 	exportNormals( vertexShape );
+	exportTexCoords( vertexShape );
 	exportVerticies( m_currentGeometryName );
-	exportTriangles( vertexShape );
+	exportTriangles( vertexShape, currentGeometryMaterialSymbol );
 	
 	closeMesh();
+	closeGeometry();
 }
+
+
 
 void GeometryExporter::exportPositions( vgd::Shp< vgd::node::VertexShape > vertexShape )
 {
@@ -87,6 +107,7 @@ void GeometryExporter::exportPositions( vgd::Shp< vgd::node::VertexShape > verte
 
 	source.finish();
 }
+
 
 
 void GeometryExporter::exportNormals( vgd::Shp< vgd::node::VertexShape > vertexShape )
@@ -116,6 +137,44 @@ void GeometryExporter::exportNormals( vgd::Shp< vgd::node::VertexShape > vertexS
 }
 
 
+
+void GeometryExporter::exportTexCoords( vgd::Shp< vgd::node::VertexShape > vertexShape )
+{
+	
+	for( int i = 0; i < vertexShape->getNumTexUnits(); i++ )
+	{
+		std::stringstream ss;
+
+		ss << "-" << i;
+
+		COLLADASW::FloatSource source( mSW );
+		source.setId( m_currentGeometryName + COLLADASW::LibraryGeometries::TEXCOORDS_SOURCE_ID_SUFFIX + ss.str() );
+		source.setArrayId( m_currentGeometryName + COLLADASW::LibraryGeometries::TEXCOORDS_SOURCE_ID_SUFFIX + COLLADASW::LibraryGeometries::ARRAY_ID_SUFFIX + ss.str()  );
+		m_texCoordsList.push_back( "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::TEXCOORDS_SOURCE_ID_SUFFIX + ss.str() );
+		source.setAccessorStride( 3 );
+
+		source.getParameterNameList().push_back( "S" );
+		source.getParameterNameList().push_back( "T" );
+		source.getParameterNameList().push_back( "P" );
+
+
+		vgd::field::EditorRO< vgd::field::MFVec2f >	texCoords = vertexShape->getFTexCoordRO<vgd::field::MFVec2f>( i );
+		int texCoordsCount = texCoords->size();
+		source.setAccessorCount( texCoordsCount );
+		source.prepareToAppendValues();
+
+		for( int i = 0; i < texCoordsCount; ++i )
+		{
+			vgm::Vec2f vec = (*texCoords)[i];
+			source.appendValues( vec[0], vec[1], 0 );
+		}
+
+		source.finish();
+	}
+}
+
+
+
 void GeometryExporter::exportVerticies( std::string meshName )
 {
 	COLLADASW::VerticesElement vertices( mSW );
@@ -125,7 +184,8 @@ void GeometryExporter::exportVerticies( std::string meshName )
 }
 
 
-void GeometryExporter::exportTriangles( vgd::Shp< vgd::node::VertexShape > vertexShape )
+
+void GeometryExporter::exportTriangles( vgd::Shp< vgd::node::VertexShape > vertexShape, std::string materialSymbol )
 {
 	COLLADASW::Triangles triangles( mSW );
 
@@ -133,30 +193,34 @@ void GeometryExporter::exportTriangles( vgd::Shp< vgd::node::VertexShape > verte
 	int numberOfFaces = vertexIndex->size();
 	triangles.setCount( numberOfFaces );
 	
-	//@todo: need material symbol here (!= material name/id, it's only used in instanciation)
-	triangles.setMaterial( "default" );
+	triangles.setMaterial( materialSymbol );
 
 	int offset = 0;
 	triangles.getInputList().push_back( COLLADASW::Input( COLLADASW::VERTEX, "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::VERTICES_ID_SUFFIX, offset++ ) );
 	triangles.getInputList().push_back( COLLADASW::Input( COLLADASW::NORMAL, "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::NORMALS_SOURCE_ID_SUFFIX, offset++ ) );
 
+	for( uint i = 0; i < m_texCoordsList.size(); i++ )
+	{
+		triangles.getInputList().push_back( COLLADASW::Input( COLLADASW::TEXCOORD, m_texCoordsList[i], offset++, i+1 ) );
+	}
+
 	triangles.prepareToAppendValues();
 
-	for( int i = 0; i < numberOfFaces; ++i )
+	for( uint i = 0; i < numberOfFaces; ++i )
 	{
-		//2 times, one for vertices, one for normals.
+		//2 times, one for vertices, one for normals, and one for each texture.
 		triangles.appendValues( (*vertexIndex)[i] );
 		triangles.appendValues( (*vertexIndex)[i] );
+
+		for( uint j = 0; j < m_texCoordsList.size(); j++ )
+		{
+			triangles.appendValues( (*vertexIndex)[i] );
+		}
 	}
 
 	triangles.finish();
 }
 
-
-std::vector<std::string> GeometryExporter::getGeomNameList()
-{
-	return m_geomNameList;
-}
 
 
 } // namespace exporter

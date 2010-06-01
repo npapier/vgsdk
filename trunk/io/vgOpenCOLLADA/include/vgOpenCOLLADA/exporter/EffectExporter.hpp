@@ -8,10 +8,14 @@
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
+#include <boost/bimap.hpp>
+
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Material.hpp>
 
-#include "COLLADASWLibraryEffects.h"
+#include <vge/technique/CollectNode.hpp>
+
+#include <COLLADASWLibraryEffects.h>
 
 namespace vgOpenCOLLADA
 {
@@ -19,26 +23,48 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
+typedef boost::bimap< vgd::Shp< vge::technique::CollectedShape >, vgd::Shp< vge::technique::CollectedMaterial > > collectedMapType;
+
 /**
  * @brief COLLADA effect writer.
  */
 struct VGOPENCOLLADA_API EffectExporter : public COLLADASW::LibraryEffects
 {
-	EffectExporter(COLLADASW::StreamWriter * streamWriter, vgd::Shp< vgd::node::Group > sceneGraph, bool exportVertexShape = false);
+	EffectExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap );
 
+	/**
+	 * @brief start exporting
+	 */
 	void doExport();
 
-	void exportSimpleEffect( vgd::Shp< vgd::node::Material > effect );
+	/**
+	 * @biref Export an effect
+	 *
+	 * @param collectedMaterial list of vgsdk material/texture to export
+	 */
+	void exportSimpleEffect( vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial );
 
+	/**
+	 * @biref Export all color properties
+	 *
+	 * @param effect vgSDK material to export
+	 *
+	 * @param effectProfile current COLLADA exported effect
+	 */
 	void exportColorEffect( vgd::Shp< vgd::node::Material > effect, COLLADASW::EffectProfile &effectProfile );
 
-	std::vector<std::string> getEffectIdList();
+	/**
+	 * @biref Export all color properties
+	 *
+	 * @param collectedMaterial list of vgsdk material/texture to export
+	 *
+	 * @param effectProfile current COLLADA exported effect
+	 */
+	void exportTextureEffect( vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial, COLLADASW::EffectProfile &effectProfile );
 
 private:
-	vgd::Shp< vgd::node::Group >	m_sceneGraph;
-	bool							m_exportVertexShape;
+	collectedMapType				m_collectedMap;
 	std::string						m_currentEffectName;
-	std::vector<std::string>		m_effectIdList;
 };
 
 } // namespace exporter

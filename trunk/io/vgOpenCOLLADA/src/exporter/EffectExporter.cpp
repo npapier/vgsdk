@@ -5,6 +5,8 @@
 
 #include "vgOpenCOLLADA/exporter/EffectExporter.hpp"
 
+#include <COLLADASWSampler.h>
+
 #include <vgDebug/Global.hpp>
 #include <vgd/visitor/helpers.hpp>
 
@@ -15,10 +17,9 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-EffectExporter::EffectExporter(COLLADASW::StreamWriter * streamWriter, vgd::Shp< vgd::node::Group > sceneGraph, bool exportVertexShape) :
+EffectExporter::EffectExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap ) :
 COLLADASW::LibraryEffects ( streamWriter ),
-m_sceneGraph( sceneGraph ),
-m_exportVertexShape( exportVertexShape )
+m_collectedMap( collectedMap )
 {
 }
 
@@ -27,82 +28,189 @@ void EffectExporter::doExport()
 	vgDebug::get().logDebug("Exporting effects");
 	openLibrary();
 
-	if ( m_exportVertexShape )
-	{
-		//export vertexShape only ==> export default effect.
-		vgd::Shp< vgd::node::Material > effect = vgd::node::Material::create( "default" );
-		vgm::Vec3f color;
-		color[0] = 1.0f;
-		color[1] = 1.0f;
-		color[2] = 1.0f;
+	typedef collectedMapType::right_map::const_iterator right_const_iterator;
 
-		effect->setAmbient( color );
-		effect->setDiffuse( color );
-		effect->setSpecular( color );
-		effect->setEmission( color );
-		effect->setShininess( 1.0f );
-		effect->setOpacity( 1.0f );
-
-		exportSimpleEffect( effect );
-	}
-	else
+	for( right_const_iterator right_iter = m_collectedMap.right.begin(), iend = m_collectedMap.right.end();
+		 right_iter != iend; ++right_iter )
 	{
-		//@todo: export all effects
-	}
+		vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial = right_iter->first;
+		exportSimpleEffect( collectedMaterial );
+	}	
 
 	closeLibrary();
 }
 
-void EffectExporter::exportSimpleEffect( vgd::Shp< vgd::node::Material > effect )
+void EffectExporter::exportSimpleEffect( vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial )
 {
-	m_currentEffectName = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( effect->getName() ) );	
-	openEffect ( m_currentEffectName );
+	vgd::Shp< vgd::node::Material > material = collectedMaterial->getMaterial();
+	vgd::Shp< vgd::node::Texture2D > texture = collectedMaterial->getTexture();	
 	
-	m_effectIdList.push_back( m_currentEffectName );
+	if( material )
+	{
 
-	COLLADASW::EffectProfile effectProfile ( mSW );
+		m_currentEffectName = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( material->getName() ) );	
 
-	//@todo: consider other type of effect
-	exportColorEffect( effect, effectProfile);
+		collectedMaterial->setEffectId( m_currentEffectName );
 
-	addEffectProfile ( effectProfile );
+		openEffect ( m_currentEffectName );
 
-	closeEffect();
+		COLLADASW::EffectProfile effectProfile ( mSW );
+
+		effectProfile.setProfileType( COLLADASW::EffectProfile::COMMON );
+
+		//@todo: consider other type of effect
+
+		exportColorEffect( material, effectProfile);
+
+		if( texture )
+		{
+			exportTextureEffect( collectedMaterial, effectProfile );
+		}
+
+		addEffectProfile ( effectProfile );
+
+		closeEffect();
+	}
 }
 
 
-void EffectExporter::exportColorEffect( vgd::Shp< vgd::node::Material > effect, COLLADASW::EffectProfile &effectProfile )
+void EffectExporter::exportColorEffect( vgd::Shp< vgd::node::Material > material, COLLADASW::EffectProfile &effectProfile )
 {
-    effectProfile.setShaderType ( COLLADASW::EffectProfile::PHONG );
+    effectProfile.setShaderType ( COLLADASW::EffectProfile::BLINN );
 
 	vgm::Vec3f color;
 
-	effect->getAmbient(color);
-    COLLADASW::Color ambiantColor ( color[0], color[1], color[2] );
-    effectProfile.setAmbient ( COLLADASW::ColorOrTexture ( ambiantColor ) );
+	if( material->hasAmbient() )
+	{
+		material->getAmbient(color);
+		COLLADASW::Color ambientColor ( color[0], color[1], color[2] );
+		effectProfile.setAmbient ( COLLADASW::ColorOrTexture ( ambientColor ) );
+	}
 
-	effect->getDiffuse(color);
-    COLLADASW::Color diffuseColor ( color[0], color[1], color[2] );
-    effectProfile.setDiffuse ( COLLADASW::ColorOrTexture ( diffuseColor ) );
+	if( material->hasDiffuse() )
+	{
+		material->getDiffuse(color);
+		COLLADASW::Color diffuseColor ( color[0], color[1], color[2] );
+		effectProfile.setDiffuse ( COLLADASW::ColorOrTexture ( diffuseColor ) );
+	}
 
-	effect->getSpecular(color);
-    COLLADASW::Color specularColor ( color[0], color[1], color[2] );
-    effectProfile.setSpecular ( COLLADASW::ColorOrTexture ( specularColor ) );
+	if( material->hasEmission() )
+	{
+		material->getEmission(color);
+		COLLADASW::Color emissionColor ( color[0], color[1], color[2] );
+		effectProfile.setEmission ( COLLADASW::ColorOrTexture ( emissionColor ) );
+	}
+
+	if( material->hasSpecular() )
+	{
+		material->getSpecular(color);
+		COLLADASW::Color specularColor ( color[0], color[1], color[2] );
+		effectProfile.setSpecular ( COLLADASW::ColorOrTexture ( specularColor ) );
+	}
 
 	float real;
-	effect->getShininess( real );
-    effectProfile.setShininess ( real );
+	if( material->hasShininess() )
+	{
+		material->getShininess( real );
+		effectProfile.setShininess ( real );
+	}
 
-    effectProfile.setTransparent ( COLLADASW::ColorOrTexture ( COLLADASW::Color::WHITE ) );
-    effectProfile.setTransparency ( 1.0 );
-    effectProfile.setReflective ( COLLADASW::ColorOrTexture ( COLLADASW::Color::BLACK ) );
+    //effectProfile.setTransparent ( COLLADASW::ColorOrTexture ( COLLADASW::Color::WHITE ) );
+    //effectProfile.setTransparency ( 1.0 );
+    //effectProfile.setReflective ( COLLADASW::ColorOrTexture ( COLLADASW::Color::BLACK ) );
 }
 
 
-std::vector<std::string> EffectExporter::getEffectIdList()
+
+
+void EffectExporter::exportTextureEffect( vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial, COLLADASW::EffectProfile &effectProfile )
 {
-	return m_effectIdList;
+	std::string imageId = collectedMaterial->getImageId();
+	vgd::Shp< vgd::node::Texture2D > tex = collectedMaterial->getTexture();	
+
+	COLLADASW::Texture texture ( imageId );
+
+    // Create the sampler
+    std::string samplerSid = imageId + COLLADASW::Sampler::SAMPLER_SID_SUFFIX;
+    std::string surfaceSid = imageId + COLLADASW::Sampler::SURFACE_SID_SUFFIX;
+    COLLADASW::Sampler sampler( COLLADASW::Sampler::SAMPLER_TYPE_2D, samplerSid, surfaceSid );
+	sampler.setImageId( imageId );
+
+	using vgd::node::Texture2D;
+	Texture2D::WrapValueType wrap_s;
+	Texture2D::WrapValueType wrap_t;
+	tex->getWrap( Texture2D::WRAP_S, wrap_s );
+	tex->getWrap( Texture2D::WRAP_T, wrap_t );
+
+	//WRAP_S
+	if ( wrap_s == Texture2D::DEFAULT_WRAP )
+	{
+		sampler.setWrapS( COLLADASW::Sampler::WRAP_MODE_NONE );
+	}
+	else if ( wrap_s == Texture2D::REPEAT )
+	{
+		sampler.setWrapS( COLLADASW::Sampler::WRAP_MODE_WRAP );
+	}
+	else if ( wrap_s == Texture2D::MIRRORED_REPEAT )
+	{
+		sampler.setWrapS( COLLADASW::Sampler::WRAP_MODE_MIRROR );
+	}
+	else if ( wrap_s == Texture2D::CLAMP_TO_EDGE )
+	{
+		sampler.setWrapS( COLLADASW::Sampler::WRAP_MODE_CLAMP );
+	}
+	else if ( wrap_s == Texture2D::CLAMP_TO_BORDER )
+	{
+		sampler.setWrapS( COLLADASW::Sampler::WRAP_MODE_BORDER );
+	}
+	else
+	{
+		//assert(false && "Unsupported wrap mode.");
+		sampler.setWrapS( COLLADASW::Sampler::WRAP_MODE_NONE );
+	}
+
+	//WRAP_T
+	if ( wrap_t == Texture2D::DEFAULT_WRAP )
+	{
+		sampler.setWrapT( COLLADASW::Sampler::WRAP_MODE_NONE );
+	}
+	else if ( wrap_t == Texture2D::REPEAT )
+	{
+		sampler.setWrapT( COLLADASW::Sampler::WRAP_MODE_WRAP );
+	}
+	else if ( wrap_t == Texture2D::MIRRORED_REPEAT )
+	{
+		sampler.setWrapT( COLLADASW::Sampler::WRAP_MODE_MIRROR );
+	}
+	else if ( wrap_t == Texture2D::CLAMP_TO_EDGE )
+	{
+		sampler.setWrapT( COLLADASW::Sampler::WRAP_MODE_CLAMP );
+	}
+	else if ( wrap_t == Texture2D::CLAMP_TO_BORDER )
+	{
+		sampler.setWrapT( COLLADASW::Sampler::WRAP_MODE_BORDER );
+	}
+	else
+	{
+		//assert(false && "Unsupported wrap mode.");
+		sampler.setWrapT( COLLADASW::Sampler::WRAP_MODE_NONE );
+	}
+	
+	texture.setSampler( sampler );
+
+    texture.setTexcoord ( "CHANNEL1" ); //@todo manage multitexture
+	
+	
+	//effectProfile.addSampler( texture );
+	//texture.setProfileName("vgsdkCOLLADAExporter");
+	//texture.setChildElementName("bump");
+	//effectProfile.setExtraTechniqueColorOrTexture(COLLADASW::ColorOrTexture(texture)); 
+
+	effectProfile.setDiffuse( COLLADASW::ColorOrTexture ( texture ) );
+
 }
+
+
 
 } // namespace exporter
 

@@ -20,12 +20,11 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
-	const std::string VisualSceneExporter::NODE_ID_PRAEFIX = "node-";
+const std::string VisualSceneExporter::NODE_ID_PRAEFIX = "node-";
 
-VisualSceneExporter::VisualSceneExporter(COLLADASW::StreamWriter * streamWriter, SceneExporter * sceneExporter, vgd::Shp< vgd::node::Group > sceneGraph) :
+VisualSceneExporter::VisualSceneExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap ) :
 COLLADASW::LibraryVisualScenes ( streamWriter ),
-m_sceneExporter ( sceneExporter),
-m_sceneGraph( sceneGraph )
+m_collectedMap ( collectedMap )
 {
 }
 
@@ -36,11 +35,12 @@ void VisualSceneExporter::doExport()
 
 	openVisualScene( "scene" );
 	
-	std::vector<std::string> geomList = m_sceneExporter->getGeometryExporter()->getGeomNameList();
+	typedef collectedMapType::left_map::const_iterator left_const_iterator;
 
-	for( uint i = 0; i < geomList.size(); i++ )
+	for( left_const_iterator left_iter = m_collectedMap.left.begin(), iend = m_collectedMap.left.end();
+		 left_iter != iend; ++left_iter )
 	{
-		std::string geomName = geomList[i];
+		std::string geomName = left_iter->first->getColladaShapeName();
 
 		COLLADASW::Node colladaNode( mSW );
 
@@ -50,10 +50,37 @@ void VisualSceneExporter::doExport()
 
 		colladaNode.start();	
 
+		double m[4][4];
+		double n[4][4];
+
+		left_iter->first->getGeometricalMatrix().getValue( m );
+
+		for (size_t iRow = 0 ;iRow < 4 ; iRow++) 
+		{
+			for (size_t iCol = 0; iCol < 4; iCol++) 
+			{
+				n[iRow][iCol] = m[iCol][iRow];
+			}
+		}
+
+		colladaNode.addMatrix( n );
+
 		COLLADASW::InstanceGeometry instanceGeometry ( mSW );
 
 		instanceGeometry.setUrl ( "#" + geomName );
-		//fillInstanceMaterialList(instanceGeometry.getBindMaterial().getInstanceMaterialList(), exportNode);
+
+		if ( left_iter->second->getMaterial() )
+		{
+			COLLADASW::InstanceMaterial instanceMaterial( left_iter->second->getMaterialSymbol(), "#"+left_iter->second->getMaterialId() );
+			
+			if( left_iter->second->getTexture() )
+			{
+				COLLADASW::BindVertexInput bindVertexInput("CHANNEL1", "TEXTCOORD", 1); //@todo manage multi texture		
+				instanceMaterial.push_back( bindVertexInput );
+			}
+
+			instanceGeometry.getBindMaterial().getInstanceMaterialList().push_back( instanceMaterial );
+		}
 		instanceGeometry.add();
 
 		colladaNode.end();

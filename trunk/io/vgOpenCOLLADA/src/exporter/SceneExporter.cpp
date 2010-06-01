@@ -5,10 +5,14 @@
 
 #include "vgOpenCOLLADA/exporter/SceneExporter.hpp"
 
-#include <vgDebug/Global.hpp>
-
 #include <COLLADASWAsset.h>
 #include "COLLADASWScene.h"
+
+#include <vgDebug/Global.hpp>
+
+#include <vge/technique/CollectNode.hpp>
+#include <vgeGL/engine/Engine.hpp>
+
 
 namespace vgOpenCOLLADA
 {
@@ -16,22 +20,40 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
-SceneExporter::SceneExporter(std::string filepath, vgd::Shp< vgd::node::Group > sceneGraph, vgd::Shp< vgd::node::VertexShape > node) :
+SceneExporter::SceneExporter( std::string filepath, vgd::Shp< vgd::node::Group > rootNode ) :
 m_streamWriter ( COLLADASW::NativeString (filepath), false ),
-m_sceneGraph ( sceneGraph ),
-m_node ( node )
+m_rootNode ( rootNode ),
+m_outputFileUri( filepath )
 {
 }
 
 
+
+SceneExporter::~SceneExporter()
+{
+	//std::list< vgd::Shp< vge::technique::CollectedShape > >::iterator it;
+
+	//for( it = m_collectedShapeList.begin(); it != m_collectedShapeList.end(); it++ )
+	//{
+	//	(*it).reset();
+	//}
+}
+
+
+
 bool SceneExporter::doExport()
 {
+	vgDebug::get().logDebug("Collecting nodes...");
+	collectNodes();
+	
 	vgDebug::get().logDebug("Creating COLLADA document...");
 	m_streamWriter.startDocument();
 
 	loadExporter();
 
 	exportAsset();
+
+	exportImage();
 
 	exportEffect();
 
@@ -50,13 +72,36 @@ bool SceneExporter::doExport()
 	return true;
 }
 
+
+
 void SceneExporter::loadExporter()
 {
-	m_effectExporter = new EffectExporter(&m_streamWriter, m_sceneGraph, true);
-	m_materialExporter = new MaterialExporter(&m_streamWriter, this, m_sceneGraph);
-	m_geometryExporter = new GeometryExporter(&m_streamWriter, m_sceneGraph, m_node);
-	m_visualSceneExporter = new VisualSceneExporter(&m_streamWriter, this, m_sceneGraph);
+	m_effectExporter = new EffectExporter( &m_streamWriter, m_collectedMap );
+	m_materialExporter = new MaterialExporter( &m_streamWriter, m_collectedMap );
+	m_imageExporter = new ImageExporter( &m_streamWriter, m_collectedMap, m_outputFileUri );
+	m_geometryExporter = new GeometryExporter( &m_streamWriter, m_collectedMap );
+	m_visualSceneExporter = new VisualSceneExporter( &m_streamWriter, m_collectedMap );
 }
+
+
+
+
+void SceneExporter::collectNodes()
+{
+	using vge::visitor::NodeCollectorExtended;
+	vge::technique::CollectNode technique;
+
+	vgeGL::engine::Engine* engine = new vgeGL::engine::Engine();
+	engine->setTrace( true );
+	NodeCollectorExtended<> collector( true, false, NodeCollectorExtended<>::IGNORE_KIT );
+	m_rootNode->traverse( collector );
+
+	technique.apply( engine, collector.getTraverseElements() );
+
+	m_collectedMap = technique.getCollectedMap();
+}
+
+
 
 void SceneExporter::exportAsset()
 {
@@ -87,10 +132,18 @@ void SceneExporter::exportAsset()
 }
 
 
+void SceneExporter::exportImage()
+{
+	m_imageExporter->doExport();
+}
+
+
+
 void SceneExporter::exportEffect()
 {
 	m_effectExporter->doExport();
 }
+
 
 
 void SceneExporter::exportMaterial()
@@ -105,16 +158,20 @@ void SceneExporter::exportGeometry()
 }
 
 
+
 void SceneExporter::exportVisualScene()
 {
 	m_visualSceneExporter->doExport();
 }
+
+
 
 void SceneExporter::exportScene()
 {
 	COLLADASW::Scene scene ( &m_streamWriter, COLLADASW::URI ( "#scene" ) );
 	scene.add();
 }
+
 
 
 std::string SceneExporter::getEnvironmentVariable ( const std::string & variableName )
@@ -134,18 +191,6 @@ std::string SceneExporter::getEnvironmentVariable ( const std::string & variable
 
     free ( buffer );
     return variableValue;
-}
-
-
-EffectExporter* SceneExporter::getEffectExporter()
-{
-	return m_effectExporter;
-}
-
-
-GeometryExporter* SceneExporter::getGeometryExporter()
-{
-	return m_geometryExporter;
 }
 
 
