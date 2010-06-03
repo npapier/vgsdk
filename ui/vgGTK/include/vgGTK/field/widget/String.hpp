@@ -6,9 +6,12 @@
 #ifndef _VGGTK_FIELD_WIDGET_STRING_HPP_
 #define _VGGTK_FIELD_WIDGET_STRING_HPP_
 
-
-
+#include <gtkmm/box.h>
 #include <gtkmm/entry.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/textview.h>
+#include <gtkmm/togglebutton.h>
+
 #include "vgGTK/field/widget/Widget.hpp"
 
 
@@ -27,9 +30,19 @@ namespace widget
 /**
  * @brief	Implements a widget for std::string edition.
  */
-struct String : public Widget< std::string >, public Gtk::Entry
+struct String : public Widget< std::string >, public Gtk::VBox
 {
 	String();
+
+	/**
+	 * @brief	Tells if the widget is in multiline edition mode.
+	 */
+	const bool isMultiLine() const;
+
+	/**
+	 * @brief	Switch the multi-line edition mode.
+	 */
+	void setMultiLine( const bool multi = true );
 	
 	void clear();
 	const bool hasValue() const;
@@ -43,7 +56,14 @@ struct String : public Widget< std::string >, public Gtk::Entry
 
 protected:
 
-	void on_changed();
+	Gtk::Entry				m_entry;				///< The widget for the single line edition mode.
+	Gtk::TextView			m_textView;				///< The widget for the multi-line edition mode.
+	Gtk::ScrolledWindow		m_scrolled;				///< The widget for scrolling in multi-line edition mode.
+	Gtk::ToggleButton		m_multiLineButton;		///< The widget for toggling multi/single line edition mode.
+	bool					m_ignoreTextChanges;	///< Tells to ignore text changes.
+
+	void onMultiLineToggled();	///< Handles multi-line toggle button changes.
+	void onTextChanged();		///< Handles text changes.
 };
 
 

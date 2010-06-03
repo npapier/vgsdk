@@ -28,7 +28,8 @@ namespace widget
 template< typename T >
 struct Widget
 {
-	typedef T ValueType;	///< Defines the value type symbolic name.
+	typedef T						ValueType;	///< Defines the value type symbolic name.
+	typedef sigc::signal< void >	SignalType;	///< Defines the signal type symbolic name.
 	
 	/**
 	 * @name	Value
@@ -53,14 +54,14 @@ struct Widget
 	/**
 	 * @brief	Retrieves the signal emited when the widget content has changed
 	 */
-	sigc::signal< void > & signalChanged()
+	SignalType & signalChanged()
 	{
 		return m_signalChanged;
 	}
 	
 protected:
 
-	sigc::signal< void >	m_signalChanged;	///< To emit when the widget content has changed.
+	SignalType	m_signalChanged;	///< To emit when the widget content has changed.
 
 	/**
 	 * @brief	Shows the given message as a warning.

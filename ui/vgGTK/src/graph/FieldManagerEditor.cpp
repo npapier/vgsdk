@@ -282,7 +282,7 @@ void FieldManagerEditor::onRowActivated(const Gtk::TreeModel::Path& path, Gtk::T
 	
 	if( fieldName.find(FIELD_PREFIX) == 0 )
 	{
-		vgGTK::field::FieldEditorDialog::show( *topLevel, m_fieldManager, fieldName, m_canvas );
+		vgGTK::field::FieldEditorDialog::create( *topLevel, m_fieldManager, fieldName, m_canvas );
 	}
 	else
 	{
