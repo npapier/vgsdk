@@ -45,7 +45,7 @@ struct FieldEditorDialog : public Gtk::Dialog, public vgd::field::IFieldObserver
 	 * @param	fieldName		a string containing the name of the field to edit
 	 * @param	canvas			a pointer to a canvas to refresh on field changes (null by default)
 	 */
-	static void show( Gtk::Window & parent, vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName, vgUI::Canvas * canvas=0 );
+	static void create( Gtk::Window & parent, vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName, vgUI::Canvas * canvas=0 );
 
 	/**
 	 * @brief	Destructor

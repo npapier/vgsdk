@@ -97,7 +97,6 @@ FieldEditorDialog::FieldEditorDialog( Gtk::Window & parent, vgd::Shp< vgd::field
 	set_has_separator(false);
 	set_resizable( m_editor ? m_editor->resizable() : false );
 	get_vbox()->add( *contentBox );
-	get_vbox()->show_all();
 
 
 	// Connects observation to the eventual f_name field 
@@ -119,6 +118,40 @@ FieldEditorDialog::~FieldEditorDialog()
 		vgd::field::EditorRO< vgd::field::AbstractField >	nameEditor = m_fieldManager->getFieldRO< vgd::field::AbstractField >( "f_name" );
 
 		nameEditor->detach( this );
+	}
+}
+
+
+
+void FieldEditorDialog::create( Gtk::Window & parent, vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName, vgUI::Canvas * canvas )
+{
+	// Searches for a dialog that already exists for the given field manager and field.
+	DialogContainer::iterator	found = m_dialogs.end();
+
+	for( found = m_dialogs.begin(); found != m_dialogs.end(); ++found )
+	{
+		FieldEditorDialog	* dialog = *found;
+
+		if( dialog->m_fieldManager == fieldManager && dialog->m_fieldName == fieldName )
+		{
+			break;
+		}
+	}
+
+	// Shows any existing dialog 
+	if( found != m_dialogs.end() )
+	{
+		(*found)->raise();
+		(*found)->grab_focus();
+	}
+	// Or builds a new dialog and shows it.
+	else
+	{
+		FieldEditorDialog	* dialog = new FieldEditorDialog( parent, fieldManager, fieldName, canvas );
+
+		m_dialogs.insert( m_dialogs.end(), dialog );
+		dialog->show_all();
+		dialog->signal_hide().connect( sigc::bind(sigc::ptr_fun(&FieldEditorDialog::onDialogHidden), dialog) );
 	}
 }
 
@@ -180,40 +213,6 @@ void FieldEditorDialog::refreshLabel()
 	const std::string	name = vgGTK::graph::getFieldAsString(m_fieldManager, "f_name");
 
 	m_label.set_markup( Glib::ustring::compose("<big><b>%1.%2</b></big>", name.empty() ? "Unamed" : name, m_fieldName) );
-}
-
-
-
-void FieldEditorDialog::show( Gtk::Window & parent, vgd::Shp< vgd::field::FieldManager > fieldManager, const std::string & fieldName, vgUI::Canvas * canvas )
-{
-	// Searches for a dialog that already exists for the given field manager and field.
-	DialogContainer::iterator	found = m_dialogs.end();
-
-	for( found = m_dialogs.begin(); found != m_dialogs.end(); ++found )
-	{
-		FieldEditorDialog	* dialog = *found;
-
-		if( dialog->m_fieldManager == fieldManager && dialog->m_fieldName == fieldName )
-		{
-			break;
-		}
-	}
-
-	// Shows any existing dialog 
-	if( found != m_dialogs.end() )
-	{
-		(*found)->raise();
-		(*found)->grab_focus();
-	}
-	// Or builds a new dialog and shows it.
-	else
-	{
-		FieldEditorDialog	* dialog = new FieldEditorDialog( parent, fieldManager, fieldName, canvas );
-
-		m_dialogs.insert( m_dialogs.end(), dialog );
-		dialog->show_all();
-		dialog->signal_hide().connect( sigc::bind(sigc::ptr_fun(&FieldEditorDialog::onDialogHidden), dialog) );
-	}
 }
 
 
