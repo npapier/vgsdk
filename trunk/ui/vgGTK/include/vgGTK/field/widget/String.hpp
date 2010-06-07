@@ -7,10 +7,10 @@
 #define _VGGTK_FIELD_WIDGET_STRING_HPP_
 
 #include <gtkmm/box.h>
+#include <gtkmm/checkbutton.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/textview.h>
-#include <gtkmm/togglebutton.h>
 
 #include "vgGTK/field/widget/Widget.hpp"
 
@@ -56,14 +56,21 @@ struct String : public Widget< std::string >, public Gtk::VBox
 
 protected:
 
-	Gtk::Entry				m_entry;				///< The widget for the single line edition mode.
-	Gtk::TextView			m_textView;				///< The widget for the multi-line edition mode.
-	Gtk::ScrolledWindow		m_scrolled;				///< The widget for scrolling in multi-line edition mode.
-	Gtk::ToggleButton		m_multiLineButton;		///< The widget for toggling multi/single line edition mode.
-	bool					m_ignoreTextChanges;	///< Tells to ignore text changes.
+	Gtk::Entry			m_entry;				///< The widget for the single line edition mode.
+	Gtk::TextView		m_textView;				///< The widget for the multi-line edition mode.
+	Gtk::ScrolledWindow	m_textViewScroll;		///< The widget for scrolling multi-line edition widget .
+	Gtk::CheckButton	m_multiLineButton;		///< The widget for toggling multi/single line edition mode.
+	bool				m_ignoreTextChanges;	///< Tells to ignore text changes.
 
+	/**
+	 * @name	Signal handlers
+	 */
+	//@{
 	void onMultiLineToggled();	///< Handles multi-line toggle button changes.
 	void onTextChanged();		///< Handles text changes.
+	//@}
+
+	void show_all_vfunc();	///< Overriden to manage custom child visibility
 };
 
 
