@@ -23,7 +23,7 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
-typedef boost::bimap< vgd::Shp< vge::technique::CollectedShape >, vgd::Shp< vge::technique::CollectedMaterial > > collectedMapType;
+typedef vge::technique::collectedMapType	collectedMapType;
 
 /**
  * @brief COLLADA effect writer.

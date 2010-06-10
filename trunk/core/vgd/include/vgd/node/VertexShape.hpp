@@ -21,6 +21,7 @@
 
 
 
+
 namespace vgd
 {
 
@@ -168,6 +169,38 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	void transform( const vgm::Vec3f translation );
 
 	void transform( const vgm::Rotation rotation );
+
+	/**
+	* @brief	Check the texture coordinates dimension and call the template texutureTransform method to
+	*			transform the texture coordinates at the given index with the given matrix.
+	* 
+	* @param matrix the transformation matrix
+	*
+	* @param texUnit the texture unit index
+	*/
+	void textureTransform( const vgm::MatrixR& matrix, const int texUnit = 0 );
+
+	/**
+	* @brief Transform the texture coordinates at the given index with the given matrix.
+	* 
+	* @param matrix the transformation matrix
+	*
+	* @param texUnit the texture unit index
+	*/
+	template< typename T >
+	void textureTransform( const vgm::MatrixR& matrix, const int texUnit )
+	{
+		vgd::field::EditorRW< T > texCoords	= getFTexCoordRW< T >( texUnit );
+
+		// Transform each vertex.
+		for(	T::iterator	i	= texCoords->begin(),
+							ie	= texCoords->end();
+				i != ie;
+				++i )
+		{
+			matrix.multVecMatrix( (*i), (*i) );
+		}
+	};
 	//@}
 
 

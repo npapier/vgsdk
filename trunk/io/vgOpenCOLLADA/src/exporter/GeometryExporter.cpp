@@ -6,6 +6,7 @@
 #include "vgOpenCOLLADA/exporter/GeometryExporter.hpp"
 
 #include <vgDebug/Global.hpp>
+#include <vgd/node/MultipleInstances.hpp>
 #include <vgd/visitor/helpers.hpp>
 
 #include "COLLADASWSource.h"
@@ -52,9 +53,47 @@ void GeometryExporter::doExport()
 
 void GeometryExporter::exportMesh( vgd::Shp< vge::technique::CollectedShape > collectedShape, vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial )
 {
-	vgd::Shp< vgd::node::VertexShape > vertexShape = collectedShape->getShape();
-	
-	m_currentGeometryName = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( COLLADASW::LibraryGeometries::GEOMETRY_ID_PRAEFIX + vertexShape->getName() ) );
+	vgd::Shp< vgd::node::Shape > shape = collectedShape->getShape();
+	vgd::Shp< vgd::node::VertexShape > vertexShape;
+	std::string shapeName;
+	if( collectedShape->getShapeType() == vge::technique::VERTEXSHAPE )
+	{
+		vertexShape = vgd::dynamic_pointer_cast< vgd::node::VertexShape >( shape );
+		shapeName = vertexShape->getName();
+	}
+	else if( collectedShape->getShapeType() == vge::technique::MULTIPLEINSTANCES )
+	{
+		vgd::Shp< vgd::node::MultipleInstances > multipleInstance = vgd::dynamic_pointer_cast< vgd::node::MultipleInstances >( shape );
+		vgd::Shp< vgd::node::Node > shape = multipleInstance->getShape();
+		
+		if( shape->isAKindOf< vgd::node::VertexShape >() )
+		{
+			vertexShape = vgd::dynamic_pointer_cast< vgd::node::VertexShape >( shape->shpFromThis() );
+			shapeName = multipleInstance->getName();
+		}
+		else
+		{
+			return;
+		}
+	}
+	else
+	{
+		return;
+	}
+
+	//check if geom name is already used.
+	m_currentGeometryName = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( COLLADASW::LibraryGeometries::GEOMETRY_ID_PRAEFIX + shapeName ) );
+	bool inserted = m_geomIds.insert( m_currentGeometryName ).second;
+
+	int counter = 0;
+	while( !inserted )
+	{
+		std::stringstream ss;
+		ss << counter << std::endl;
+		m_currentGeometryName = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( COLLADASW::LibraryGeometries::GEOMETRY_ID_PRAEFIX + shapeName + ss.str() ) );
+		inserted = m_geomIds.insert( m_currentGeometryName ).second;
+		counter++;
+	}
 
 	std::string currentGeometryMaterialSymbol;
 	if( collectedMaterial->getMaterial() )

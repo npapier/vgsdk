@@ -10,6 +10,8 @@
 #include "vgd/node/Group.hpp"
 #include "vgd/node/detail/Node.hpp"
 
+#include <vgDebug/convenience.hpp>
+
 
 
 namespace vgd
@@ -325,6 +327,39 @@ void VertexShape::transform( const vgm::Rotation rotation )
 	{
 		rotation.multVec( (*i), (*i) );
 		i->normalize();
+	}
+}
+
+
+void VertexShape::textureTransform( const vgm::MatrixR& matrix, const int texUnit )
+{
+	if( hasFTexCoord( texUnit ) )
+	{
+		int dim = getTexCoordDim  ( texUnit );
+		switch( dim )
+		{
+			case 1:
+				//textureTransform< FTexCoord1fType >( matrix, texUnit );
+				assert( false && "Texture dimension not supported" );
+				break;
+
+			case 2:
+				textureTransform< FTexCoord2fType >( matrix, texUnit );
+				break;
+
+			case 3:
+				textureTransform< FTexCoord3fType >( matrix, texUnit );
+				break;
+
+			case 4:
+				//textureTransform< FTexCoord4fType >( matrix, texUnit );
+				assert( false && "Texture dimension not supported" );
+				break;
+		}
+	}
+	else
+	{
+		vgDebug::get().logDebug( "No texture coordinates found for this index." );
 	}
 }
 

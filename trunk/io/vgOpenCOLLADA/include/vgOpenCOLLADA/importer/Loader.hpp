@@ -8,10 +8,12 @@
 
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
-#include "vgOpenCOLLADA/convenience.hpp"
+#include <vgOpenCOLLADA/convenience.hpp>
 
-#include "vgOpenCOLLADA/importer/Reader.hpp"
-#include "vgOpenCOLLADA/importer/ErrorHandler.hpp"
+#include <vgOpenCOLLADA/importer/ErrorHandler.hpp>
+#include <vgOpenCOLLADA/importer/ExtraDataCallbackHandler.hpp>
+#include <vgOpenCOLLADA/importer/Reader.hpp>
+
 
 #include <string>
 
@@ -43,11 +45,14 @@ struct VGOPENCOLLADA_API Loader
 	 */
 	std::pair< bool, vgd::Shp< vgd::node::Group > > load(const std::string filePath) throw(std::runtime_error);
 
+	const ExtraDataCallbackHandler&	getExtraDataCallbackHandler();
+
 private:
-	Reader m_reader;
-	ErrorHandler m_errorHandler;
-	COLLADASaxFWL::Loader m_saxLoader;
-	COLLADAFW::Root m_root;
+	Reader						m_reader;
+	ErrorHandler				m_errorHandler;
+	COLLADASaxFWL::Loader		m_saxLoader;
+	COLLADAFW::Root				m_root;
+	ExtraDataCallbackHandler	m_extraDataCallbackHandler;
 
 };
 

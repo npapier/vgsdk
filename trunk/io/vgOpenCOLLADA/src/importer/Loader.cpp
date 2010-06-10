@@ -14,7 +14,7 @@ namespace importer
 {
 
 Loader::Loader(LOAD_TYPE type) throw (std::runtime_error) :
-	m_reader(type),
+	m_reader(type, this),
 	m_saxLoader(&m_errorHandler),
 	m_root(&m_saxLoader, &m_reader)
 {
@@ -28,6 +28,8 @@ Loader::Loader(LOAD_TYPE type) throw (std::runtime_error) :
 std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load(const std::string filePath) throw (std::runtime_error)
 {
 	COLLADAFW::String colladaFileURI = COLLADABU::URI::nativePathToUri(filePath);
+
+	m_saxLoader.registerExtraDataCallbackHandler ( &m_extraDataCallbackHandler );
 
 	bool loadResult = m_root.loadDocument(colladaFileURI);
 
@@ -47,6 +49,15 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load(const std::string f
 		throw std::runtime_error("Scene-import failed.");
 	}
 }
+
+
+
+const ExtraDataCallbackHandler& Loader::getExtraDataCallbackHandler()
+{
+	return m_extraDataCallbackHandler;
+}
+
+
 
 } // namespace importer
 

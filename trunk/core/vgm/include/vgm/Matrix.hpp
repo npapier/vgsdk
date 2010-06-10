@@ -658,9 +658,19 @@ struct VGM_API MatrixR
 	void			multMatrixVec( const Vec3f& src, Vec3f& dst ) const;
 
 	/**
+	 * @brief Multiplies matrix by given column vector, giving vector result.
+	 */
+	void			multMatrixVec( const Vec2f& src, Vec2f& dst ) const;
+
+	/**
 	 * @brief Multiplies given row vector by matrix, giving vector result.
 	 */
 	void			multVecMatrix( const Vec3f& src, Vec3f& dst ) const;
+
+	/**
+	 * @brief Multiplies given row vector by matrix, giving vector result.
+	 */
+	void			multVecMatrix( const Vec2f& src, Vec2f& dst ) const;
 
 	/**
 	 * @brief Multiplies given row vector by matrix, giving vector result.

@@ -1784,6 +1784,21 @@ bool MatrixR::factor(MatrixR& r, Vec3f& s, MatrixR& u, Vec3f& t,
 
 
 
+void MatrixR::multMatrixVec( const Vec2f& src, Vec2f& dst ) const
+{
+	float	x,y,w;
+
+	x =	matrix[0][0]*src[0] + matrix[0][1]*src[1] + matrix[0][3];
+
+	y = matrix[1][0]*src[0] + matrix[1][1]*src[1] + matrix[1][3];
+
+	w = matrix[3][0]*src[0] + matrix[3][1]*src[1] + matrix[3][3];
+
+	dst.setValue(x/w, y/w);
+}
+
+
+
 void MatrixR::multMatrixVec( const Vec3f& src, Vec3f& dst ) const
 {
 	float	x,y,z,w;
@@ -1801,6 +1816,21 @@ void MatrixR::multMatrixVec( const Vec3f& src, Vec3f& dst ) const
 		matrix[3][2]*src[2] + matrix[3][3];
 
 	dst.setValue(x/w, y/w, z/w);
+}
+
+
+
+void MatrixR::multVecMatrix(const Vec2f& src, Vec2f& dst ) const
+{
+	float	x,y,w;
+
+	x = src[0]*matrix[0][0] + src[1]*matrix[1][0] + matrix[3][0];
+
+	y = src[0]*matrix[0][1] + src[1]*matrix[1][1] + matrix[3][1];
+
+	w = src[0]*matrix[0][3] + src[1]*matrix[1][3] + matrix[3][3];
+
+	dst.setValue(x/w, y/w);
 }
 
 
