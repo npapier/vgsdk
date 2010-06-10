@@ -4,6 +4,7 @@
 // Author Maxime Peresson
 
 #include "vgOpenCOLLADA/importer/GeometryImporter.hpp"
+#include <vgOpenCOLLADA/importer/Reader.hpp>
 
 #include <COLLADAFWPolygons.h>
 #include <COLLADAFWTriangles.h>
@@ -16,9 +17,9 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
-GeometryImporter::GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType, vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial ) :
+GeometryImporter::GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType, Reader *reader ) :
 m_loadType( loadType ),
-m_mapShapeMaterial( mapShapeMaterial )
+m_mapShapeMaterial( reader->getMapShapeMaterial() )
 {
 	m_mesh = (COLLADAFW::Mesh*) geometry;
 }

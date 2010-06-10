@@ -362,7 +362,7 @@ void ActionsMenu::showInTreeViewMenu( int displayedNode )
 		}
 	}
 
-	if(!node->isAKindOf<vgd::node::VertexShape>())
+	if(!node->isAKindOf<vgd::node::Shape>())
 	{
 		m_actions->get_action("ExpandSubTree")->set_visible(true);
 	}

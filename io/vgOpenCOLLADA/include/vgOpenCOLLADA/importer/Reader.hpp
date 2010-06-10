@@ -31,12 +31,14 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
+struct Loader;
+
 /**
  * @brief The COLLADA file reader frontend.
  */
 struct VGOPENCOLLADA_API Reader : public COLLADAFW::IWriter
 {
-	Reader(LOAD_TYPE type);
+	Reader( LOAD_TYPE type, Loader *loader );
 	virtual ~Reader() {};
 
 	virtual void start() {}
@@ -115,10 +117,22 @@ struct VGOPENCOLLADA_API Reader : public COLLADAFW::IWriter
 	*/
 	vgd::Shp< vgd::node::Texture2D > cloneTexture( vgd::Shp< vgd::node::Texture2D > texture );
 
+	//Getters
+	vgd::Shp< vgd::node::Switch >	getSwitchMaterial(){ return m_switchMaterial; };
+	vgd::Shp< vgd::node::Switch >	getSwitchTexture(){ return m_switchTexture; };
+	vgd::Shp< vgd::node::Switch >	getSwitchVertexShape(){ return m_switchVertexShape; };
+
+	vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > getMapShapeMaterial(){ return m_mapShapeMaterial; }; //< vertexshape, id of its material >
+	vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > getMapMaterialEffect(){ return m_mapMaterialEffect; }; //< id of its effect, group containing material >
+	vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > getMapMaterial(){ return m_mapMaterial; }; //< id of material, group containing material >
+	vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Texture2D > > >getMapTextures(){ return m_mapTextures; }; //< id of texture, texture node >
+
+	Loader*											getLoader(){ return m_loader; };
 
 private:
 	COLLADABU::URI									m_inputFile;
 	LOAD_TYPE										m_loadType;
+	Loader											*m_loader;
 	std::pair< bool, vgd::Shp< vgd::node::Group > > m_scene;
 	vgd::Shp< vgd::node::Group >					m_group;
 	vgd::Shp< vgd::node::Switch >					m_switchMaterial;

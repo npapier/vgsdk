@@ -34,8 +34,9 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
-Reader::Reader(LOAD_TYPE type) :
-m_loadType ( type )
+Reader::Reader( LOAD_TYPE type, Loader *loader ) :
+m_loadType ( type ),
+m_loader( loader )
 {
 	m_scene.first = true;
 	m_mapShapeMaterial = vgd::makeShp( new boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > );
@@ -90,7 +91,7 @@ bool Reader::writeVisualScene ( const COLLADAFW::VisualScene* visualScene ) {
 	
 	//get the root nodes under the visual_scene element
 	const COLLADAFW::NodePointerArray& rootNodes = visualScene->getRootNodes();
-	vgOpenCOLLADA::importer::VisualSceneImporter importer( m_loadType, m_switchMaterial, m_switchVertexShape, m_mapShapeMaterial, m_mapMaterial );
+	vgOpenCOLLADA::importer::VisualSceneImporter importer( m_loadType, this );
 
 	//for each node of the rootnode
 	for (std::size_t i = 0; i<rootNodes.getCount(); i++) 
@@ -110,7 +111,7 @@ bool Reader::writeGeometry ( const COLLADAFW::Geometry* geometry )
 	{
 		try 
 		{
-			vgOpenCOLLADA::importer::GeometryImporter importer( geometry, m_loadType, m_mapShapeMaterial );
+			vgOpenCOLLADA::importer::GeometryImporter importer( geometry, m_loadType, this );
 			std::pair< bool, vgd::Shp< vgd::node::Group > > retVal = importer.loadMesh();
 			
 			if ( !retVal.first )
@@ -154,6 +155,11 @@ bool Reader::writeMaterial( const COLLADAFW::Material* material )
 
 bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 {
+	if( m_loadType < LOAD_MATERIAL )
+	{
+		return true;
+	}
+
 	vgd::Shp< vgd::node::Material > material = vgd::node::Material::create( effect->getName() );
 	
 	if( m_mapMaterialEffect->find( effect->getUniqueId().toAscii() ) == m_mapMaterialEffect->end() )
@@ -363,6 +369,11 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 
 bool Reader::writeImage( const COLLADAFW::Image* image )
 {
+	if ( m_loadType < LOAD_MATERIAL )
+	{
+		return true;
+	}
+
 	vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( image->getName() );
 	//tex->setMultiAttributeIndex( (int8)0 ); //@todo manage multi textures
 

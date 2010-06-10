@@ -5,13 +5,15 @@
 
 #include "vgOpenCOLLADA/exporter/VisualSceneExporter.hpp"
 
-#include "vgOpenCOLLADA/exporter/SceneExporter.hpp"
+#include <vgOpenCOLLADA/exporter/InstanceGeometry.hpp>
+#include <vgOpenCOLLADA/exporter/SceneExporter.hpp>
+
 
 #include <vgDebug/Global.hpp>
+#include <vgd/node/MultipleInstances.hpp>
 #include <vgd/visitor/helpers.hpp>
 
-#include "COLLADASWNode.h"
-#include "COLLADASWInstanceGeometry.h"
+#include <COLLADASWNode.h>
 
 
 namespace vgOpenCOLLADA
@@ -46,13 +48,13 @@ void VisualSceneExporter::doExport()
 
 		colladaNode.setNodeId( NODE_ID_PRAEFIX + geomName );
 
-		colladaNode.setNodeName( COLLADASW::Utils::checkNCName( COLLADABU::NativeString(NODE_ID_PRAEFIX + geomName) ) );
+		std::string nodeName = COLLADASW::Utils::checkNCName( COLLADABU::NativeString(NODE_ID_PRAEFIX + geomName) );
+		colladaNode.setNodeName( nodeName );
 
 		colladaNode.start();	
-
+		
 		double m[4][4];
 		double n[4][4];
-
 		left_iter->first->getGeometricalMatrix().getValue( m );
 
 		for (size_t iRow = 0 ;iRow < 4 ; iRow++) 
@@ -65,7 +67,22 @@ void VisualSceneExporter::doExport()
 
 		colladaNode.addMatrix( n );
 
-		COLLADASW::InstanceGeometry instanceGeometry ( mSW );
+		InstanceGeometry instanceGeometry ( mSW );
+
+		if( left_iter->first->getShapeType() == vge::technique::MULTIPLEINSTANCES )
+		{
+			vgd::Shp< vgd::node::MultipleInstances > multipleInstances = vgd::dynamic_pointer_cast< vgd::node::MultipleInstances >(  left_iter->first->getShape() );
+			
+			instanceGeometry.setName( nodeName );
+			vgd::field::EditorRO< vgd::node::MultipleInstances::FMatrixType > matrixEdit = multipleInstances->getMatrixRO();
+			for( uint it = 0; it < matrixEdit->size(); it++ )
+			{
+				vgm::MatrixR m = (*matrixEdit)[it];
+				instanceGeometry.addMultipleInstanceMatrix( m );
+			}
+
+			instanceGeometry.createMultipleInstances();
+		}
 
 		instanceGeometry.setUrl ( "#" + geomName );
 
@@ -82,7 +99,6 @@ void VisualSceneExporter::doExport()
 			instanceGeometry.getBindMaterial().getInstanceMaterialList().push_back( instanceMaterial );
 		}
 		instanceGeometry.add();
-
 		colladaNode.end();
 	}
 
@@ -94,4 +110,3 @@ void VisualSceneExporter::doExport()
 } // namespace exporter
 
 } // namespace vgOpenCOLLADA
-

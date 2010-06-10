@@ -14,10 +14,14 @@
 #include <COLLADAFWNode.h>
 
 #include "vgOpenCOLLADA/convenience.hpp"
+#include "vgOpenCOLLADA/importer/ExtraDataCallbackHandler.hpp"
+
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Switch.hpp>
 #include <vgd/node/VertexShape.hpp>
+#include <vgd/node/MultipleInstances.hpp>
+
 
 namespace vgOpenCOLLADA
 {
@@ -25,12 +29,14 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
+struct Reader;
+
 /**
  * @brief The COLLADA visual scene importer.
  */
 struct VGOPENCOLLADA_API VisualSceneImporter
 {
-	VisualSceneImporter( LOAD_TYPE loadType, vgd::Shp< vgd::node::Switch > switchMaterial, vgd::Shp< vgd::node::Switch > switchVertexShape, vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial, vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > mapMaterial );
+	VisualSceneImporter( LOAD_TYPE loadType, Reader *reader );
 
 	/**
 	 * @brief Return the whole scene
@@ -49,6 +55,8 @@ struct VGOPENCOLLADA_API VisualSceneImporter
 	 * @param name: name of the node. if empty, name of the parent node.
 	 */
 	void createNode( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode, std::string name );
+
+private:
 
 	/**
 	 * @brief Adds geometry transformation to the current node.
@@ -70,8 +78,17 @@ struct VGOPENCOLLADA_API VisualSceneImporter
 	 */
 	void createNodeGeometry( const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode, std::string shapeName );
 
-private:
+	/**
+	 * @brief Create a multiple instances with a list of matrix.
+	 * 
+	 * @param multipleInstances: the multiple instances to create.
+	 * 
+	 * @param extraInfos: matrix list for the multiple instance.
+	 */
+	void createMultipleInstances( vgd::Shp< vgd::node::MultipleInstances > multipleInstances, std::vector< ExtraInfo > extraInfos );
+
 	LOAD_TYPE						m_loadType;
+	Reader							*m_reader;
 	vgd::Shp< vgd::node::Switch >	m_switchMaterial;
 	vgd::Shp< vgd::node::Switch >	m_switchVertexShape;
 	vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > m_mapShapeMaterial;

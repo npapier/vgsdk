@@ -515,17 +515,22 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * return true if found, false otherwise.
 	 */
 	template< typename nodeType, typename ParameterType, typename ValueType >
-	bool getStateStackTopFromSingleField( std::string strFieldName, ValueType& value ) const
+	bool getStateStackTopFromSingleField( std::string strFieldName, ValueType& value, const bool checkDefaultNode = true ) const
 	{
 		bool bDefined(	false	);
 
 		const NodeList *pNodeList = getNodeListFromStateStackTop< nodeType >();
 
-		if ( pNodeList != 0 )
+		if ( pNodeList )
 		{
-			for( NodeList::const_reverse_iterator	i = pNodeList->rbegin(), iEnd = pNodeList->rend();
-													i != iEnd;
-													++i )
+			NodeList::const_reverse_iterator i		= pNodeList->rbegin();
+			NodeList::const_reverse_iterator iEnd	= pNodeList->rend();
+			if( !checkDefaultNode )
+			{
+				--iEnd;
+			}
+
+			for( i;	i != iEnd; ++i )
 			{
 				bDefined = vgd::field::getParameterValueFromSingleField< ParameterType, ValueType >( (*i), strFieldName, value );
 
@@ -546,10 +551,12 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * Gets the desired optional field named strFieldName value from a node (selected by his type and his multi-attribute index) from the top of the
 	 * state stack.
 	 *
+	 * @param checkDefaultNode true if we check default node, false otherwise.
+	 *
 	 * return true if found, false otherwise.
 	 */
 	template< typename nodeType, typename ParameterType, typename ValueType >
-	bool getStateStackTopFromOptionalField( const std::string& strFieldName, ValueType& value ) const
+	bool getStateStackTopFromOptionalField( const std::string& strFieldName, ValueType& value, const bool checkDefaultNode = true  ) const
 	{
 		bool bDefined(	false	);
 
@@ -557,9 +564,14 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		
 		if ( pNodeList != 0 )
 		{
-			for( NodeList::const_reverse_iterator	i = pNodeList->rbegin(), iEnd = pNodeList->rend();
-													i != iEnd;
-													++i )
+			NodeList::const_reverse_iterator i		= pNodeList->rbegin();
+			NodeList::const_reverse_iterator iEnd	= pNodeList->rend();
+			if( !checkDefaultNode )
+			{
+				--iEnd;
+			}
+
+			for( i;	i != iEnd; ++i )
 			{
 				bDefined = vgd::field::getParameterValueFromOptionalField< ParameterType, ValueType >( (*i), strFieldName, value );
 

@@ -44,6 +44,9 @@ void Technique::prepareEval( vge::engine::Engine *engine, vge::visitor::Traverse
 
 	m_engine			= engine;
 	m_traverseElements	= traverseElements;
+
+	//
+	engine->resetStateStack(); // @todo resetEval(); ? see Technique::prepareEval in vgeGL
 }
 
 

@@ -21,26 +21,33 @@ namespace vge
 namespace technique
 {
 
-
+enum SHAPE_TYPE
+{
+	VERTEXSHAPE,
+	MULTIPLEINSTANCES
+};
 
 /**
  * @brief Store shape informations while collecting nodes.
  */
 struct VGE_API CollectedShape
 {
-	CollectedShape(	vgd::Shp< vgd::node::VertexShape > shape, vgm::MatrixR geometricalMatrix );
+	CollectedShape(	vgd::Shp< vgd::node::Shape > shape, vgm::MatrixR geometricalMatrix, SHAPE_TYPE shapeType );
 
 	~CollectedShape();
-	vgd::Shp< vgd::node::VertexShape >				getShape();
+	vgd::Shp< vgd::node::Shape >					getShape();
+	SHAPE_TYPE										getShapeType();
+
 	std::string										getColladaShapeName();
 	void											setColladaShapeName( std::string colladaShapeName );
 
 	vgm::MatrixR									getGeometricalMatrix();
 
 private:
-	vgd::Shp< vgd::node::VertexShape >				m_shape;
-	std::string										m_colladaShapeName;
-	vgm::MatrixR									m_geometricalMatrix;
+	vgd::Shp< vgd::node::Shape >					m_shape;				///< Shape to export.
+	SHAPE_TYPE										m_shapeType;				///< Type of the shape.
+	std::string										m_colladaShapeName;		///< COLLADA id of the shape in library_geometry.
+	vgm::MatrixR									m_geometricalMatrix;	///< Geometrical marix applied on the shape.
 };
 
 
@@ -69,13 +76,13 @@ struct VGE_API CollectedMaterial
 	std::string							getImageId();
 
 private:
-	vgd::Shp< vgd::node::Material >		m_material;
-	vgd::Shp< vgd::node::Texture2D >	m_texture;
+	vgd::Shp< vgd::node::Material >		m_material;			///< vgSDK material to export.
+	vgd::Shp< vgd::node::Texture2D >	m_texture;			///< vgSDK texture to export.
 
-	std::string							m_effectId;
-	std::string							m_materialId;
-	std::string							m_materialSymbol;
-	std::string							m_imageId;
+	std::string							m_effectId;			///< COLLADA id of the effect in library_geometry.
+	std::string							m_materialId;		///< COLLADA id of the material in library_material.
+	std::string							m_materialSymbol;	///< COLLADA symbol of the material of a shape in library_geometry.
+	std::string							m_imageId;			///< COLLADA id of the image in library_image.
 };
 
 
@@ -93,16 +100,29 @@ struct CollectNode : public Technique
 {
 	VGE_API virtual void apply(	vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 
-	VGE_API std::list< vgd::Shp< vge::technique::CollectedShape > > getCollectedShapeList();
-
+	/**
+	 * @brief Return the map containing all shape and material to export.
+	 *
+	 * @return the map
+	 */
 	VGE_API collectedMapType getCollectedMap();
 
 private:
-	void addShape( vgd::Shp< vgd::node::VertexShape > shape, vgm::MatrixR matrix, vge::engine::Engine * engine );
+	/**
+	 * @brief Adds shape and its collected material/texture to the map.
+	 *
+	 * @param shape		the shape to export
+	 *
+	 * @param matrix	geometrical matrix applied on the shape
+	 *
+	 * @param engine	current engine
+	 */	
+	void addShape( vgd::Shp< vgd::node::Shape > shape, vgm::MatrixR matrix, vge::engine::Engine * engine, SHAPE_TYPE shapeType );
 
-	std::list< vgd::Shp< vge::technique::CollectedShape > > m_collectedShapeList;
+	collectedMapType		m_collectedMap;	///< COLLADA id of the image in library_image.
 
-	collectedMapType	m_collectedMap;
+	std::set< std::string >	m_matNameList;
+	std::set< std::string >	m_texNameList;
 
 };
 

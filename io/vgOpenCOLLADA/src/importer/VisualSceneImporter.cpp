@@ -5,6 +5,12 @@
 
 #include "vgOpenCOLLADA/importer/VisualSceneImporter.hpp"
 
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include <vgOpenCOLLADA/importer/Loader.hpp>
+#include <vgOpenCOLLADA/importer/Reader.hpp>
+
 #include <COLLADAFWLookAt.h>
 #include <COLLADAFWMatrix.h>
 #include <COLLADAFWRotate.h>
@@ -17,6 +23,7 @@
 #include <vgd/node/Texture2D.hpp>
 #include <vgd/node/Transform.hpp>
 #include <vgd/node/TransformSeparator.hpp>
+
 #include <vgd/visitor/helpers.hpp>
 #include <vgd/visitor/predicate/ByRegexName.hpp>
 #include <vgd/visitor/predicate/ByType.hpp>
@@ -29,12 +36,13 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
-VisualSceneImporter::VisualSceneImporter( LOAD_TYPE loadType, vgd::Shp< vgd::node::Switch > switchMaterial, vgd::Shp< vgd::node::Switch > switchVertexShape, vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial, vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > mapMaterial ) :
+VisualSceneImporter::VisualSceneImporter( LOAD_TYPE loadType, Reader *reader ) :
 m_loadType ( loadType ),
-m_switchMaterial ( switchMaterial ),
-m_switchVertexShape ( switchVertexShape ),
-m_mapShapeMaterial( mapShapeMaterial ),
-m_mapMaterial( mapMaterial )
+m_reader( reader ),
+m_switchMaterial ( reader->getSwitchMaterial() ),
+m_switchVertexShape ( reader->getSwitchVertexShape() ),
+m_mapShapeMaterial( reader->getMapShapeMaterial() ),
+m_mapMaterial( reader->getMapMaterial() )
 {
 }
 
@@ -215,6 +223,19 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 		{
 			vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::dynamic_pointer_cast< vgd::node::VertexShape >(*it);
 			vertexShape->setName( shapeName );
+			
+			//Create multiple instances if extra tag are present
+			const ExtraDataCallbackHandler& callbackHandler = m_reader->getLoader()->getExtraDataCallbackHandler();
+			std::vector< ExtraInfo > extraInfos = callbackHandler.findExtraInfo( shapeName );
+			vgd::Shp< vgd::node::MultipleInstances > multipleInstances;
+			bool isMultipleInstances = false;
+			if( extraInfos.size() > 0 )
+			{
+				multipleInstances = vgd::node::MultipleInstances::create( shapeName );
+				multipleInstances->setShape( vertexShape );
+				createMultipleInstances( multipleInstances, extraInfos );
+				isMultipleInstances = true;
+			}
 
 			vgd::Shp< vgd::node::Group > childNode = vgd::node::Group::create( node->getName() );
 			vgsdkNode->addChild( childNode );
@@ -265,10 +286,66 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 				}
 			}
 
-			childNode->addChild( vertexShape );
+			if( isMultipleInstances )
+			{
+				childNode->addChild( multipleInstances );
+			}
+			else
+			{
+				childNode->addChild( vertexShape );
+			}
 		}
 	}
 }
+
+
+
+void VisualSceneImporter::createMultipleInstances( vgd::Shp< vgd::node::MultipleInstances > multipleInstances, std::vector< ExtraInfo > extraInfos )
+{
+	vgd::field::EditorRW< vgd::node::MultipleInstances::FMatrixType > matrixEdit = multipleInstances->getMatrixRW();
+
+	std::vector< ExtraInfo >::iterator extraIter = extraInfos.begin();
+	for( extraIter; extraIter != extraInfos.end(); extraIter++)
+	{
+		std::string strMatrix = extraIter->getMatrix();
+
+		std::vector< std::string > numbers;
+		boost::split(numbers, strMatrix, boost::is_any_of(" "));
+
+		std::vector< std::string >::iterator nbrIter = numbers.begin();
+		int iCol = 0;
+		int iRaw = 0;
+		vgm::MatrixR matrix;
+
+		for( nbrIter; nbrIter != numbers.end(); nbrIter++)
+		{
+			if( (*nbrIter) != "" )
+			{
+				try
+				{
+					float number = boost::lexical_cast< float >( (*nbrIter) );
+					matrix[iCol][iRaw] = number;
+				}
+				catch( const boost::bad_lexical_cast & )
+				{
+					assert(false && "Wrong matrix format");
+				}
+
+				if( iCol < 3 )
+				{
+					iCol++;
+				}
+				else
+				{
+					iCol = 0;
+					iRaw++;
+				}
+			}
+		}
+		matrixEdit->push_back( matrix );
+	}
+}
+
 
 
 } // namespace importer

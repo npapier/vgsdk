@@ -22,9 +22,7 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
-	typedef boost::bimap< vgd::Shp< vge::technique::CollectedShape >, vgd::Shp< vge::technique::CollectedMaterial > > collectedMapType;
-
-struct SceneExporter;
+typedef vge::technique::collectedMapType	collectedMapType;
 
 /**
  * @brief COLLADA effect writer.
@@ -36,7 +34,6 @@ struct VGOPENCOLLADA_API VisualSceneExporter : public COLLADASW::LibraryVisualSc
 	void doExport();
 
 private:
-	SceneExporter					*m_sceneExporter;
 	collectedMapType				m_collectedMap;
 
 	static const std::string NODE_ID_PRAEFIX;

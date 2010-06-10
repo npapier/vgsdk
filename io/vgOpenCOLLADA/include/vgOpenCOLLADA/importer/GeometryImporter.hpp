@@ -25,12 +25,14 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
+struct Reader;
+
 /**
  * @brief The COLLADA geometry importer.
  */
 struct VGOPENCOLLADA_API GeometryImporter
 {
-	GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType, vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial );
+	GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType, Reader *reader );
 	
 	/**
 	 * @brief Creates geometry.
