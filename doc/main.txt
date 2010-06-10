@@ -23,6 +23,12 @@
  * transformation and coordinate system, mesh, texture...). Knowledges about OpenGL or Direct3D could help, but are not
  * absolutely needed.
  * 
+ * Hardware specification:
+ *
+ * An OpenGL 3.x graphics card :
+ *  - ATI: from R600 ( from Radeon HD 2400 ). R700 (Radeon HD 4850)
+ *  - NVIDIA: OpenGL 3.0, OpenGL 3.1 and OpenGL 3.2 require G80, or newer hardware, i.e. GeForce 8000 series or higher; Geforce G100, GT120, 130, 220, GTS 150, GTS 250, GeForce GTX 260 and higher, any ION based products. Quadro FX. Available on mobile version too.
+ *
  * 
  * 
  * @section project_page Project Page
@@ -38,11 +44,6 @@
  * - our old website at http://home.gna.org/vgsdk/
  *
  * @if vgsdkNonFree
- * The non-free \c vgSDK project pages are hosted by Savannah.
- * For Subversion information, downloads, bug tracking, feature requests, mailing list information and more, visit our
- * Savannah project page at http://dev-srv.ircad.fr/savannah/projects/vgsdk/
- *
- * Another source of informations could be the wiki at https://intranet.ircad.fr:8443/xwiki/bin/view/vgsdk/
  * @endif
  * 
  *
