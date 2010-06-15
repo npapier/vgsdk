@@ -11,7 +11,6 @@
 
 #include "COLLADASWSource.h"
 #include "COLLADASWBaseInputElement.h"
-#include "COLLADASWPrimitves.h"
 #include "COLLADASWControlVertices.h"
 #include "COLLADASWConstants.h"
 
@@ -115,8 +114,24 @@ void GeometryExporter::exportMesh( vgd::Shp< vge::technique::CollectedShape > co
 	exportNormals( vertexShape );
 	exportTexCoords( vertexShape );
 	exportVerticies( m_currentGeometryName );
-	exportTriangles( vertexShape, currentGeometryMaterialSymbol );
-	
+
+	vgd::field::EditorRO< vgd::field::MFPrimitive > primitives = vertexShape->getFPrimitiveRO();
+	for( uint i = 0; i < primitives->size(); ++i )
+	{
+		if( (*primitives)[i].getType() == vgd::node::Primitive::TRIANGLES )
+		{
+			exportPrimitives< COLLADASW::Triangles >( vertexShape, currentGeometryMaterialSymbol );
+		}
+		else if( (*primitives)[i].getType() == vgd::node::Primitive::QUADS )
+		{
+			exportPrimitives< COLLADASW::Polylist >( vertexShape, currentGeometryMaterialSymbol );
+		}
+		else
+		{
+			assert( false && "Primitives type not supported." );
+		}
+	}
+
 	closeMesh();
 	closeGeometry();
 }
@@ -224,40 +239,19 @@ void GeometryExporter::exportVerticies( std::string meshName )
 
 
 
-void GeometryExporter::exportTriangles( vgd::Shp< vgd::node::VertexShape > vertexShape, std::string materialSymbol )
+void GeometryExporter::exportVCount(int numberOfFaces, COLLADASW::Polylist *primitive )
 {
-	COLLADASW::Triangles triangles( mSW );
-
-	vgd::field::EditorRO< vgd::field::MFUInt32>	vertexIndex	= vertexShape->getFVertexIndexRO();	
-	int numberOfFaces = vertexIndex->size();
-	triangles.setCount( numberOfFaces );
-	
-	triangles.setMaterial( materialSymbol );
-
-	int offset = 0;
-	triangles.getInputList().push_back( COLLADASW::Input( COLLADASW::VERTEX, "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::VERTICES_ID_SUFFIX, offset++ ) );
-	triangles.getInputList().push_back( COLLADASW::Input( COLLADASW::NORMAL, "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::NORMALS_SOURCE_ID_SUFFIX, offset++ ) );
-
-	for( uint i = 0; i < m_texCoordsList.size(); i++ )
+	for( uint i = 0; i < numberOfFaces / 4; ++i )
 	{
-		triangles.getInputList().push_back( COLLADASW::Input( COLLADASW::TEXCOORD, m_texCoordsList[i], offset++, i+1 ) );
+		primitive->getVCountList().push_back( 4 );
 	}
+}
 
-	triangles.prepareToAppendValues();
 
-	for( uint i = 0; i < numberOfFaces; ++i )
-	{
-		//2 times, one for vertices, one for normals, and one for each texture.
-		triangles.appendValues( (*vertexIndex)[i] );
-		triangles.appendValues( (*vertexIndex)[i] );
 
-		for( uint j = 0; j < m_texCoordsList.size(); j++ )
-		{
-			triangles.appendValues( (*vertexIndex)[i] );
-		}
-	}
-
-	triangles.finish();
+void GeometryExporter::exportVCount(int numberOfFaces, COLLADASW::Triangles *primitive )
+{
+	//nothing to do for Triangles.
 }
 
 
