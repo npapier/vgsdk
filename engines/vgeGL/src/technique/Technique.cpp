@@ -95,7 +95,7 @@ void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::Traver
 	using vgeGL::engine::GLSLState;
 
 	engine->getGLStateStack().clear( GLState() );
-	engine->getGLSLStateStack().clear( GLSLState(engine->getMaxLights(), engine->getMaxTexUnits()) );
+	engine->getGLSLStateStack().clear( GLSLState(engine->getMaxLights(), engine->getMaxTexUnits(), engine->isShadowSamplerUsageEnabled() ) );
 
 	if ( engine->isGLSLEnabled() )
 	{
