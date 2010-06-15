@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -13,18 +13,10 @@
 # @todo Boost.Optional OSF, OMF (OptionalSingleField, OptionalMultiField) ...
 # @todo vgio ?
 # @todo generates enumRegistry for vgsdk see META_NODE_HPP, META_NODE_CPP, doc, annotation.
-# @order in enum
-# @todo df, link(s) and methods
 
 from __future__ import with_statement
 import datetime
 import os
-
-#try:
-#	import toto
-#except ImportError:
-#	import titi
-
 
 from domParser import *
 
@@ -281,6 +273,20 @@ def generateNodeHeader( fd, node ) :
 
 	fd.write( "\n	//@}\n" )
 
+	# Dirty flags
+	fd.write( """\n\n	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{\n\n""" );
+
+	for df in node.dirtyFlags.itervalues():
+		fd.write( """	/**
+	 * @brief Returns name of dirty flag that is invalidate when \c {0} field is modified.
+	 */
+	static const std::string getDF{1}();\n""".format( df.name, df.name.capitalize() ) )
+
+	fd.write( """\n	//@}\n""" )
+
 	# Code declaration
 	if len(node.codeDeclaration) > 0 :
 		fd.write( node.codeDeclaration )
@@ -355,9 +361,21 @@ def generateNodeImpl( fd, node ) :
 		str = "\taddField( new FFieldNameType(getFFieldName()) );\n"
 		fd.write( str.replace( "FieldName", field.getFieldName() ) )
 
-	fd.write("""\n	// Sets link(s)
-	link( getDFNode() );
-}\n\n\n\n""")
+	# dirty flags in constructor
+	dfs = ""
+	links = ""
+	for df in node.dirtyFlags.itervalues():
+		dfs += "	addDirtyFlag(getDF{0}());\n".format( df.name.capitalize() )
+		for linkToField in df.linkToFields:
+			links += "	link( getF{0}(), getDF{1}() );\n".format( capitalize(linkToField), df.name.capitalize() )
+
+	if len(dfs) > 0:
+		fd.write( """\n	// Adds dirty flag(s)\n""" )
+		fd.write( dfs )
+
+	fd.write("""\n	// Sets link(s)\n""")
+	fd.write( links )
+	fd.write("""\n	link( getDFNode() );\n}\n\n\n\n""")
 
 	# setToDefaults
 	str = """void NodeName::setToDefaults( void )
@@ -406,6 +424,17 @@ def generateNodeImpl( fd, node ) :
 		str = str.replace( "FieldName", field.getFieldName() )
 		str = str.replace( "fieldName", field.name )
 		fd.write( str )
+
+	# Dirty flags
+	if len(node.dirtyFlags)>0:
+		fd.write("// DIRTY FLAG(S)\n")
+		for df in node.dirtyFlags.itervalues():
+			str = """const std::string {0}::getDF{1}()
+{{
+	return \"df_{2}\";
+}}\n\n\n""".format(node.name, df.name.capitalize(), df.name.lower())
+
+			fd.write( str )
 
 	# Code implementation
 	if len(node.codeImplementation) > 0 :

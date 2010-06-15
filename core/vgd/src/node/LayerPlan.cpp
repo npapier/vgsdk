@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,24 +17,50 @@ namespace node
 
 
 
-META_NODE_CPP( LayerPlan );
+vgd::Shp< LayerPlan > LayerPlan::create( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< LayerPlan > node( new LayerPlan(nodeName) );
+
+	/* Adds a vertex (i.e. a node) to boost::graph */
+	graph().addNode( node );
+
+	/* Sets fields to their default values */
+	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< LayerPlan > LayerPlan::createWhole( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< LayerPlan > node = LayerPlan::create(nodeName);
+
+	/* Sets optional fields to their default values */
+	node->setOptionalsToDefaults();
+
+	return node;
+}
 
 
 
 LayerPlan::LayerPlan( const std::string nodeName ) :
-	vgd::node::SingleAttribute( nodeName )
+	vgd::node::MultiAttribute( nodeName )
 {
-	// Add fields
-	addField( new FPositionType(getFPosition()) );
-	addField( new FSizeType(getFSize()) );
-	addField( new FIImageType(getFIImage()) );
+	// Adds field(s)
 	addField( new FAlphaScaleType(getFAlphaScale()) );
+	addField( new FPositionType(getFPosition()) );
+	addField( new FImageType(getFImage()) );
+	addField( new FSizeType(getFSize()) );
 
-	// Add dirty flags
-	addDirtyFlag(getDFIImage());
+	// Adds dirty flag(s)
+	addDirtyFlag(getDFImage());
 
-	// Link(s)
-	link( getFIImage(), getDFIImage() );
+	// Sets link(s)
+	link( getFImage(), getDFImage() );
+
 	link( getDFNode() );
 }
 
@@ -42,67 +68,26 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 
 void LayerPlan::setToDefaults( void )
 {
-	SingleAttribute::setToDefaults();
-
-	setPosition( vgm::Vec2f(0.f, 0.f) );
-	setSize( vgm::Vec2f(1.f, 1.f) );
+	MultiAttribute::setToDefaults();
 	setAlphaScale( 1.f );
+	setPosition( vgm::Vec2f(0.f, 0.f) );
+
+	setSize( vgm::Vec2f(1.f, 1.f) );
 }
 
 
 
 void LayerPlan::setOptionalsToDefaults()
 {
-	SingleAttribute::setOptionalsToDefaults();
+	MultiAttribute::setOptionalsToDefaults();
 }
 
 
 
-const LayerPlan::PositionValueType LayerPlan::getPosition() const
-{
-	return ( getFieldRO<FPositionType>(getFPosition())->getValue() );
-}
-
-
-
-void LayerPlan::setPosition( const PositionValueType value )
-{
-	getFieldRW<FPositionType>(getFPosition())->setValue( value );
-}
-
-
-
-const LayerPlan::SizeValueType LayerPlan::getSize() const
-{
-	return ( getFieldRO<FSizeType>(getFSize())->getValue() );
-}
-
-
-
-void LayerPlan::setSize( const SizeValueType value )
-{
-	getFieldRW<FSizeType>(getFSize())->setValue( value );
-}
-
-
-
-const LayerPlan::IImageValueType LayerPlan::getIImage() const
-{
-	return ( getFieldRO<FIImageType>(getFIImage())->getValue() );
-}
-
-
-
-void LayerPlan::setIImage( const IImageValueType value )
-{
-	getFieldRW<FIImageType>(getFIImage())->setValue( value );
-}
-
-
-
+// AlphaScale
 const LayerPlan::AlphaScaleValueType LayerPlan::getAlphaScale() const
 {
-	return ( getFieldRO<FAlphaScaleType>(getFAlphaScale())->getValue() );
+	return getFieldRO<FAlphaScaleType>(getFAlphaScale())->getValue();
 }
 
 
@@ -114,41 +99,96 @@ void LayerPlan::setAlphaScale( const AlphaScaleValueType value )
 
 
 
-const std::string LayerPlan::getFPosition()
+// Position
+const LayerPlan::PositionValueType LayerPlan::getPosition() const
 {
-	return "f_position";
+	return getFieldRO<FPositionType>(getFPosition())->getValue();
 }
 
 
 
-const std::string LayerPlan::getFSize()
+void LayerPlan::setPosition( const PositionValueType value )
 {
-	return "f_size";
+	getFieldRW<FPositionType>(getFPosition())->setValue( value );
 }
 
 
 
-const std::string LayerPlan::getFIImage()
+// Image
+const LayerPlan::ImageValueType LayerPlan::getImage() const
 {
-	return "f_iimage";
+	return getFieldRO<FImageType>(getFImage())->getValue();
 }
 
 
 
-const std::string LayerPlan::getFAlphaScale()
+void LayerPlan::setImage( const ImageValueType value )
+{
+	getFieldRW<FImageType>(getFImage())->setValue( value );
+}
+
+
+
+// Size
+const LayerPlan::SizeValueType LayerPlan::getSize() const
+{
+	return getFieldRO<FSizeType>(getFSize())->getValue();
+}
+
+
+
+void LayerPlan::setSize( const SizeValueType value )
+{
+	getFieldRW<FSizeType>(getFSize())->setValue( value );
+}
+
+
+
+// Field name accessor(s)
+const std::string LayerPlan::getFAlphaScale( void )
 {
 	return "f_alphaScale";
 }
 
 
 
-const std::string LayerPlan::getDFIImage()
+const std::string LayerPlan::getFPosition( void )
 {
-	return "df_iimage";
+	return "f_position";
 }
+
+
+
+const std::string LayerPlan::getFImage( void )
+{
+	return "f_image";
+}
+
+
+
+const std::string LayerPlan::getFSize( void )
+{
+	return "f_size";
+}
+
+
+
+// DIRTY FLAG(S)
+const std::string LayerPlan::getDFImage()
+{
+	return "df_image";
+}
+
+
+IMPLEMENT_INDEXABLE_CLASS_CPP( , LayerPlan );
+
+
+
+const vgd::basic::RegisterNode<LayerPlan> LayerPlan::m_registrationInstance;
 
 
 
 } // namespace node
 
 } // namespace vgd
+

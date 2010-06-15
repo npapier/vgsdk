@@ -68,6 +68,7 @@ const std::string& GLSLState::toString( const BitSetIndexType bitSetIndexType )
 
 GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
 :	postProcessing(16),
+	overlays(8),
 	m_light(maxLightUnits),
 	m_numLight(0),
 	m_texture(maxTexUnits),
@@ -124,6 +125,9 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits, const b
 
 	// POST PROCESSING
 	postProcessing.clear();
+
+	// OVERLAY
+	overlays.clear();
 
 	// @todo others ( at this time default values for others are initialized by GLSLState::update() )
 	setProgram( 0 );

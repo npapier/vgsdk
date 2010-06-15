@@ -54,6 +54,7 @@ ClipPlane::ClipPlane( const std::string nodeName ) :
 	addField( new FPlaneType(getFPlane()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

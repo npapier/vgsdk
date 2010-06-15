@@ -67,6 +67,7 @@
 			<ingroup>g_singleAttributeNodes</ingroup>
 			<ingroup>g_propertiesNodes</ingroup>
 		</doxygen>
+
 		<sf name="mode" doc="Specifies whether front-facing and/or back-facing facets can be culled.">
 			<type name="enum">
 				<enum default="DISABLED">
@@ -77,6 +78,53 @@
 				</enum>
 			</type>
 		</sf>
+	</node>
+
+
+	<node name = "LayerPlan" inherits = "MultiAttribute" > <!-- @todo not a real MultiAttribute -->
+		<doxygen>
+			<docBrief>Defines a single layer plan (overlay or underlay).</docBrief>
+			<doc>This node defines a layer plan that could be displayed just before the rendering (UNDERLAY) or just after (OVERLAY).</doc>
+			<doc>In fact, the behavior depends of its position in the scene graph. It could even be displayed at any time during the rendering.</doc>
+			<doc>@todo More advanced transformation (a field \c matrixTransform)</doc>
+			<doc>@todo Support multiple layer planes at the same time and do rendering in one pass. => This class should be a multiattribute.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_shapeNodes</ingroup>
+		</doxygen>
+
+		<df name = "image" linkToFields="image"></df>
+
+		<sf name = "position" doc="Sets the position of the layer plan in normalized window coordinates system. @see g_coordinatesSystem">
+			<type name="Vec2f" namespace="vgm" default = "0.f, 0.f"></type>
+		</sf>
+
+		<sf name = "size" doc="Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n- A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.">
+			<type name="Vec2f" namespace="vgm" default ="1.f, 1.f"></type>
+		</sf>
+
+		<sf name = "image" doc="Determines the image to display in the layer plan. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.">
+			<type name = "IImageShp" namespace = "vgd::basic"></type>
+		</sf>
+
+		<sf name = "alphaScale" doc="Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor. After this operation, the alpha component is clamped to the range [0, 1].">
+			<type name = "float" default = "1.f"></type>
+		</sf>
+	</node>
+
+
+	<!-- @todo generalizes for all MultiAttribute -->
+	<!-- @todo Underlay -->
+	<node name= "Overlay" inherits = "LayerPlan" >
+		<doxygen>
+			<docBrief>Specialized layer plan drawn at the end of the rendering.</docBrief>
+			<doc>This node behaves as a MultiAttribute node with an automatic index.</doc>
+			<doc>Unlike LayerPlan, the rendering is deferred at the end of the rendering pipeline.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_shapeNodes</ingroup>
+		</doxygen>
 	</node>
 
 
@@ -253,7 +301,7 @@
 		<of name="useShadowSamplers" doc="True to use GLSL shadowSampler, false to use traditionnal texture sampler.">
 			<type name="bool" default="true"/>
 		</of>
-
+<!-- EngineProperty/properties/style -->
 		<sf name="ignorePostProcessing" doc="true to ignore the whole post-processing stage, false to do post-processing stage if at least one PostProcessing node is defined.">
 			<type name="bool" default="false"/>
 		</sf>
@@ -446,8 +494,18 @@
 					<value name="DOF" doc="@todo"/>
 
 					<value name="NO_FILTER" doc="No filter is applied"/>
+
+					<value name="CUSTOM_FILTER" doc="The filter defined by field customFilterDefinition is applied using field customFilterApply."/>
 				</enum>
 			</type>
+		</sf>
+
+		<sf name = "customFilterDefinition" doc = "Specifies the code implementing the filter.">
+			<type name="string" namespace="std"/>
+		</sf>
+
+		<sf name = "customFilterApply" doc = "Specifies the code calling the filter defined by customFilterDefinition.">
+			<type name="string" namespace="std"/>
 		</sf>
 
 		<sf name = "input0" doc = "Specifies the first input buffer used by the filter.">
@@ -480,7 +538,7 @@
 					<value name="INPUT1_ORIGINAL_NORMAL" doc=""/>
 					<value name="INPUT1_ORIGINAL_POSITION" doc=""/>
 					<value name="INPUT1_PREVIOUS_COLOR0" doc=""/>
-					<value name="INPUT1_PREVIOUS_COLOR1" doc=""/>
+					<!--<value name="INPUT1_PREVIOUS_COLOR1" doc=""/>@todo re-enables-->
 					<value name="INPUT1_NONE" doc=""/>
 				</enum>
 			</type>
@@ -498,7 +556,7 @@
 					<value name="INPUT2_ORIGINAL_NORMAL" doc=""/>
 					<value name="INPUT2_ORIGINAL_POSITION" doc=""/>
 					<value name="INPUT2_PREVIOUS_COLOR0" doc=""/>
-					<value name="INPUT2_PREVIOUS_COLOR1" doc=""/>
+					<!--<value name="INPUT2_PREVIOUS_COLOR1" doc=""/>@todo re-enables-->
 					<value name="INPUT2_NONE" doc=""/>
 				</enum>
 			</type>
@@ -530,7 +588,7 @@
 			<type name = "enum">
 				<enum default = "OUTPUT_TMP0">
 					<value name="OUTPUT_TMP0" doc=""/>
-					<value name="OUTPUT_TMP1" doc=""/>
+					<!--<value name="OUTPUT_TMP1" doc=""/> @todo re-enables-->
 				</enum>
 			</type>
 		</sf>

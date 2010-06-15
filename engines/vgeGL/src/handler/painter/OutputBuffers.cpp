@@ -64,8 +64,9 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 		std::vector< int >	drawBuffers	= fbo->getDrawBuffers();
 		const int			output		= outputBuffers->getOutput().value() - vgd::node::OutputBuffers::BUFFERS0;
 		// @todo FIXME hard-coded
-		drawBuffers[0] = output*2;
-		drawBuffers[1] = output*2 + 1;
+		drawBuffers[0] = output;
+		//drawBuffers[0] = output * 2;
+		//drawBuffers[1] = output * 2 + 1;
 
 		// Modifies the draw buffers
 		fbo->setDrawBuffers( drawBuffers );

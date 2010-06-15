@@ -30,6 +30,7 @@ Texture::Texture( const std::string nodeName ) :
 	addField( new FUsageType(getFUsage()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

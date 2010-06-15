@@ -8,6 +8,7 @@
 
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
+#include "vgd/field/String.hpp"
 #include "vgd/field/Vec4f.hpp"
 #include "vgd/node/MultiAttribute.hpp"
 
@@ -36,6 +37,9 @@ namespace node
  * - SFEnum \c input1 = INPUT1_NONE<br>
  *   Specifies the second input buffer used by the filter.<br>
  *<br>
+ * - SFString \c customFilterDefinition = empty<br>
+ *   Specifies the code implementing the filter.<br>
+ *<br>
  * - SFEnum \c filter = NO_FILTER<br>
  *   Specifies the filter to apply to the input buffers.<br>
  *<br>
@@ -44,6 +48,9 @@ namespace node
  *<br>
  * - OFVec4f \c [param4f0] = vgm::Vec4f(0.0, 0.0, 0.0, 0.0)<br>
  *   Specifies the first 4f parameter used by the filter.<br>
+ *<br>
+ * - SFString \c customFilterApply = empty<br>
+ *   Specifies the code calling the filter defined by customFilterDefinition.<br>
  *<br>
  * - SFEnum \c output = OUTPUT_TMP0<br>
  *   Specifices the output buffer used by the filter.<br>
@@ -95,10 +102,9 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		INPUT2_ORIGINAL_POSITION = 337,	///< 
 		INPUT2_ORIGINAL_NORMAL = 336,	///< 
 		INPUT2_ORIGINAL_COLOR2 = 334,	///< 
-		INPUT2_PREVIOUS_COLOR1 = 339,	///< 
 		INPUT2_ORIGINAL_COLOR0 = 330,	///< 
 		INPUT2_ORIGINAL_COLOR1 = 332,	///< 
-		INPUT2_NONE = 340,	///< 
+		INPUT2_NONE = 339,	///< 
 		INPUT2_PREVIOUS_COLOR0 = 338,	///< 
 		INPUT2_ORIGINAL_DEPTH0 = 331,	///< 
 		INPUT2_ORIGINAL_DEPTH1 = 333,	///< 
@@ -140,7 +146,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 337 );
 			retVal.push_back( 338 );
 			retVal.push_back( 339 );
-			retVal.push_back( 340 );
 
 			return retVal;
 		}
@@ -158,7 +163,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( "INPUT2_ORIGINAL_NORMAL" );
 			retVal.push_back( "INPUT2_ORIGINAL_POSITION" );
 			retVal.push_back( "INPUT2_PREVIOUS_COLOR0" );
-			retVal.push_back( "INPUT2_PREVIOUS_COLOR1" );
 			retVal.push_back( "INPUT2_NONE" );
 
 			return retVal;
@@ -195,17 +199,17 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		ORIGINAL_POSITION = 315,	///< 
-		NONE = 318,	///< 
-		ORIGINAL_NORMAL = 314,	///< 
-		ORIGINAL_DEPTH2 = 313,	///< 
-		ORIGINAL_COLOR0 = 308,	///< 
-		ORIGINAL_COLOR1 = 310,	///< 
-		ORIGINAL_DEPTH0 = 309,	///< 
-		ORIGINAL_DEPTH1 = 311,	///< 
-		ORIGINAL_COLOR2 = 312,	///< 
-		PREVIOUS_COLOR0 = 316,	///< 
-		PREVIOUS_COLOR1 = 317,	///< 
+		ORIGINAL_POSITION = 316,	///< 
+		NONE = 319,	///< 
+		ORIGINAL_NORMAL = 315,	///< 
+		ORIGINAL_DEPTH2 = 314,	///< 
+		ORIGINAL_COLOR0 = 309,	///< 
+		ORIGINAL_COLOR1 = 311,	///< 
+		ORIGINAL_DEPTH0 = 310,	///< 
+		ORIGINAL_DEPTH1 = 312,	///< 
+		ORIGINAL_COLOR2 = 313,	///< 
+		PREVIOUS_COLOR0 = 317,	///< 
+		PREVIOUS_COLOR1 = 318,	///< 
 		DEFAULT_INPUT0 = PREVIOUS_COLOR0	///< 
 	};
 
@@ -233,7 +237,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 308 );
 			retVal.push_back( 309 );
 			retVal.push_back( 310 );
 			retVal.push_back( 311 );
@@ -244,6 +247,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 316 );
 			retVal.push_back( 317 );
 			retVal.push_back( 318 );
+			retVal.push_back( 319 );
 
 			return retVal;
 		}
@@ -298,16 +302,15 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		INPUT1_ORIGINAL_DEPTH2 = 324,	///< 
-		INPUT1_ORIGINAL_NORMAL = 325,	///< 
-		INPUT1_ORIGINAL_COLOR2 = 323,	///< 
-		INPUT1_ORIGINAL_COLOR1 = 321,	///< 
-		INPUT1_ORIGINAL_COLOR0 = 319,	///< 
-		INPUT1_ORIGINAL_DEPTH1 = 322,	///< 
-		INPUT1_ORIGINAL_DEPTH0 = 320,	///< 
-		INPUT1_PREVIOUS_COLOR1 = 328,	///< 
-		INPUT1_PREVIOUS_COLOR0 = 327,	///< 
-		INPUT1_ORIGINAL_POSITION = 326,	///< 
+		INPUT1_ORIGINAL_DEPTH2 = 325,	///< 
+		INPUT1_ORIGINAL_NORMAL = 326,	///< 
+		INPUT1_ORIGINAL_COLOR2 = 324,	///< 
+		INPUT1_ORIGINAL_COLOR1 = 322,	///< 
+		INPUT1_ORIGINAL_COLOR0 = 320,	///< 
+		INPUT1_ORIGINAL_DEPTH1 = 323,	///< 
+		INPUT1_ORIGINAL_DEPTH0 = 321,	///< 
+		INPUT1_PREVIOUS_COLOR0 = 328,	///< 
+		INPUT1_ORIGINAL_POSITION = 327,	///< 
 		INPUT1_NONE = 329,	///< 
 		DEFAULT_INPUT1 = INPUT1_NONE	///< 
 	};
@@ -336,7 +339,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 319 );
 			retVal.push_back( 320 );
 			retVal.push_back( 321 );
 			retVal.push_back( 322 );
@@ -364,7 +366,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( "INPUT1_ORIGINAL_NORMAL" );
 			retVal.push_back( "INPUT1_ORIGINAL_POSITION" );
 			retVal.push_back( "INPUT1_PREVIOUS_COLOR0" );
-			retVal.push_back( "INPUT1_PREVIOUS_COLOR1" );
 			retVal.push_back( "INPUT1_NONE" );
 
 			return retVal;
@@ -392,6 +393,36 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field customFilterDefinition
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c customFilterDefinition.
+	 */
+	typedef std::string CustomFilterDefinitionValueType;
+
+	/**
+	 * @brief Type definition of the field named \c customFilterDefinition
+	 */
+	typedef vgd::field::TSingleField< CustomFilterDefinitionValueType > FCustomFilterDefinitionType;
+
+
+	/**
+	 * @brief Gets the value of field named \c customFilterDefinition.
+	 */
+	const CustomFilterDefinitionValueType getCustomFilterDefinition() const;
+
+	/**
+	 * @brief Sets the value of field named \c customFilterDefinition.
+	 */
+	void setCustomFilterDefinition( const CustomFilterDefinitionValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field filter
 	 */
 	//@{
@@ -405,6 +436,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		OVER = 299,	///< Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition
 		SUB = 301,	///< Combines two images into one using the following formula : image1 - image2
 		BLUR_VERT = 293,	///< Blurs an image vertically using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0
+		CUSTOM_FILTER = 308,	///< The filter defined by field customFilterDefinition is applied using field customFilterApply.
 		BLOOM_HORIZ = 294,	///< Amplifies and blurs an image horizontally using weights that follow a gaussian distribution
 		COLOR_TO_MONOCHROME = 288,	///< Converts colored value to black and white
 		DOF = 306,	///< @todo
@@ -468,6 +500,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 305 );
 			retVal.push_back( 306 );
 			retVal.push_back( 307 );
+			retVal.push_back( 308 );
 
 			return retVal;
 		}
@@ -496,6 +529,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( "COMBINE3_AND_SCALE" );
 			retVal.push_back( "DOF" );
 			retVal.push_back( "NO_FILTER" );
+			retVal.push_back( "CUSTOM_FILTER" );
 
 			return retVal;
 		}
@@ -600,6 +634,36 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field customFilterApply
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c customFilterApply.
+	 */
+	typedef std::string CustomFilterApplyValueType;
+
+	/**
+	 * @brief Type definition of the field named \c customFilterApply
+	 */
+	typedef vgd::field::TSingleField< CustomFilterApplyValueType > FCustomFilterApplyType;
+
+
+	/**
+	 * @brief Gets the value of field named \c customFilterApply.
+	 */
+	const CustomFilterApplyValueType getCustomFilterApply() const;
+
+	/**
+	 * @brief Sets the value of field named \c customFilterApply.
+	 */
+	void setCustomFilterApply( const CustomFilterApplyValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field output
 	 */
 	//@{
@@ -609,8 +673,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		OUTPUT_TMP0 = 341,	///< 
-		OUTPUT_TMP1 = 342,	///< 
+		OUTPUT_TMP0 = 340,	///< 
 		DEFAULT_OUTPUT = OUTPUT_TMP0	///< 
 	};
 
@@ -638,8 +701,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 341 );
-			retVal.push_back( 342 );
+			retVal.push_back( 340 );
 
 			return retVal;
 		}
@@ -649,7 +711,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			std::vector< std::string > retVal;
 
 			retVal.push_back( "OUTPUT_TMP0" );
-			retVal.push_back( "OUTPUT_TMP1" );
 
 			return retVal;
 		}
@@ -741,6 +802,13 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	static const std::string getFInput1( void );
 
 	/**
+	 * @brief Returns the name of field \c customFilterDefinition.
+	 *
+	 * @return the name of field \c customFilterDefinition.
+	 */
+	static const std::string getFCustomFilterDefinition( void );
+
+	/**
 	 * @brief Returns the name of field \c filter.
 	 *
 	 * @return the name of field \c filter.
@@ -762,6 +830,13 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	static const std::string getFParam4f0( void );
 
 	/**
+	 * @brief Returns the name of field \c customFilterApply.
+	 *
+	 * @return the name of field \c customFilterApply.
+	 */
+	static const std::string getFCustomFilterApply( void );
+
+	/**
 	 * @brief Returns the name of field \c output.
 	 *
 	 * @return the name of field \c output.
@@ -774,6 +849,15 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @return the name of field \c param1f0.
 	 */
 	static const std::string getFParam1f0( void );
+
+	//@}
+
+
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
 
 	//@}
 

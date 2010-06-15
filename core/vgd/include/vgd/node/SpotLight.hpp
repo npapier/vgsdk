@@ -233,6 +233,15 @@ struct VGD_API SpotLight : public vgd::node::PointLight
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

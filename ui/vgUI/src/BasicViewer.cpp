@@ -418,7 +418,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	}
 
 	float	minDepth = max / 2048.f; // r = 2048 in r = far/near.
-	float	maxDepth = 12.f * max;
+	float	maxDepth = 4.f * max;
 
 	//
 	if ( height == 0.f )

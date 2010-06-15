@@ -83,6 +83,15 @@ struct VGD_API Texture1D : public vgd::node::Texture
 
 
 	//@}
+
+
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
 	const uint32 gethTextureDimension() const; ///< overridden method
 
 

@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/PostProcessing.hpp"
 
+#include <vgDebug/convenience.hpp>
 #include <vgd/node/PostProcessing.hpp>
 #include "vgeGL/engine/Engine.hpp"
 
@@ -249,9 +250,9 @@ const std::string applyColorEdgeDetect(
 	"	color = colorEdgeDetect( texMap2D[0], mgl_TexCoord[0].xy );\n" );
 
 
-////////////////////////////////
-// Scales images down 4 times //
-////////////////////////////////
+//////////////////
+// DOWN_FILTER4 //
+//////////////////
 
 const std::string downFilter4 =
 "vec2 downFilter4Kernel[16] = vec2[16](\n"
@@ -511,7 +512,7 @@ void PostProcessing::setToDefaults()
 
 
 
-std::pair< std::string, std::string > PostProcessing::getFilter( const vgd::node::PostProcessing::FilterValueType& filter )
+std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::PostProcessing * postProcessing, const vgd::node::PostProcessing::FilterValueType& filter )
 {
 	if ( filter == vgd::node::PostProcessing::COLOR_TO_MONOCHROME )
 	{
@@ -593,6 +594,25 @@ std::pair< std::string, std::string > PostProcessing::getFilter( const vgd::node
 	{
 		return std::make_pair( "", "color = texture2D( texMap2D[0], mgl_TexCoord[0].xy );\n" );
 	}
+	else if ( filter == vgd::node::PostProcessing::CUSTOM_FILTER )
+	{
+		const std::string definition	= postProcessing->getCustomFilterDefinition();
+		const std::string apply			= postProcessing->getCustomFilterApply();
+
+		if ( apply.empty() )
+		{
+			vgLogDebug("PostProcessing.filter is equal to CUSTOM_FILTER, but no custom filter is defined.");
+			return std::make_pair( "", "color = texture2D( texMap2D[0], mgl_TexCoord[0].xy );\n" );
+		}
+		else
+		{
+			// @todo documentation for all conventions in shaders (texture.function, PostProcesing.custom*...)
+			// @todo doc about the predefined functions (horizKernel13 + ... + colorEdgeDetect)
+			return std::make_pair(	horizKernel13 + vertKernel13 + kernel4 + gaussianWeights13 +
+									saturate + colorToMonochrome + blurHoriz + blurVert + bloomHoriz + bloomVert + colorEdgeDetect +
+									definition, apply );
+		}
+	}	
 	else
 	{
 		assert( false );

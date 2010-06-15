@@ -37,12 +37,12 @@ struct VGEGL_API LayerPlan : public vge::handler::painter::MultiAttribute
 	//const vge::service::List			getServices	() const;
 	const TargetVector					getTargets()	const;
 
-	void	apply			( vge::engine::Engine*, vgd::node::Node* );
-	void	unapply			( vge::engine::Engine*, vgd::node::Node* );
+	void apply( vge::engine::Engine*, vgd::node::Node* );
+	void unapply( vge::engine::Engine*, vgd::node::Node* );
 	
-	void	setToDefaults	();
+	void setToDefaults();
 	
-	void	paint			( vgeGL::engine::Engine*, vgd::node::LayerPlan* );
+	static void	paint( vgeGL::engine::Engine*, vgd::node::LayerPlan* );
 };
 
 

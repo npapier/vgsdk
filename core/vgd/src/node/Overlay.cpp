@@ -3,7 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#include "vgd/node/FrameBuffer.hpp"
+#include "vgd/node/Overlay.hpp"
 
 #include "vgd/node/detail/Node.hpp"
 
@@ -17,10 +17,10 @@ namespace node
 
 
 
-vgd::Shp< FrameBuffer > FrameBuffer::create( const std::string nodeName )
+vgd::Shp< Overlay > Overlay::create( const std::string nodeName )
 {
 	/* Creates a new node */
-	vgd::Shp< FrameBuffer > node( new FrameBuffer(nodeName) );
+	vgd::Shp< Overlay > node( new Overlay(nodeName) );
 
 	/* Adds a vertex (i.e. a node) to boost::graph */
 	graph().addNode( node );
@@ -33,10 +33,10 @@ vgd::Shp< FrameBuffer > FrameBuffer::create( const std::string nodeName )
 
 
 
-vgd::Shp< FrameBuffer > FrameBuffer::createWhole( const std::string nodeName )
+vgd::Shp< Overlay > Overlay::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */
-	vgd::Shp< FrameBuffer > node = FrameBuffer::create(nodeName);
+	vgd::Shp< Overlay > node = Overlay::create(nodeName);
 
 	/* Sets optional fields to their default values */
 	node->setOptionalsToDefaults();
@@ -46,8 +46,8 @@ vgd::Shp< FrameBuffer > FrameBuffer::createWhole( const std::string nodeName )
 
 
 
-FrameBuffer::FrameBuffer( const std::string nodeName ) :
-	vgd::node::SingleAttribute( nodeName )
+Overlay::Overlay( const std::string nodeName ) :
+	vgd::node::LayerPlan( nodeName )
 {
 	// Adds field(s)
 
@@ -58,26 +58,26 @@ FrameBuffer::FrameBuffer( const std::string nodeName ) :
 
 
 
-void FrameBuffer::setToDefaults( void )
+void Overlay::setToDefaults( void )
 {
-	SingleAttribute::setToDefaults();
+	LayerPlan::setToDefaults();
 }
 
 
 
-void FrameBuffer::setOptionalsToDefaults()
+void Overlay::setOptionalsToDefaults()
 {
-	SingleAttribute::setOptionalsToDefaults();
+	LayerPlan::setOptionalsToDefaults();
 }
 
 
 
 // Field name accessor(s)
-IMPLEMENT_INDEXABLE_CLASS_CPP( , FrameBuffer );
+IMPLEMENT_INDEXABLE_CLASS_CPP( , Overlay );
 
 
 
-const vgd::basic::RegisterNode<FrameBuffer> FrameBuffer::m_registrationInstance;
+const vgd::basic::RegisterNode<Overlay> Overlay::m_registrationInstance;
 
 
 

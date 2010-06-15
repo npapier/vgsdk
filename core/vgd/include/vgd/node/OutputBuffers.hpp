@@ -152,6 +152,15 @@ struct VGD_API OutputBuffers : public vgd::node::SingleAttribute
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

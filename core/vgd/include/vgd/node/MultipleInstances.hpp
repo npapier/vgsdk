@@ -146,6 +146,15 @@ struct VGD_API MultipleInstances : public vgd::node::Shape
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	bool computeBoundingBox( const vgm::MatrixR& transformation );	///< overridden method
 

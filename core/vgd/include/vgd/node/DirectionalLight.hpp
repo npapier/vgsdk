@@ -129,6 +129,15 @@ struct VGD_API DirectionalLight : public vgd::node::Light
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

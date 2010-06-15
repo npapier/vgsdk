@@ -7,6 +7,10 @@
 
 
 
+def capitalize( str ):
+	"""Return a copy of the string with only its first character capitalized. Other characters are left unchanged (unlike python capitalize)"""
+	return str[0].upper() + str[1:]
+
 ############
 # REGISTRY #
 ############
@@ -68,7 +72,7 @@ class Type :
 		self.nodeName = nodeName
 		self.fieldName = fieldName
 		if len(fieldName)>0:
-			self.FieldName = fieldName[0].upper() + fieldName[1:]
+			self.FieldName = capitalize(fieldName)
 		else:
 			self.FieldName = ""
 
@@ -97,7 +101,7 @@ class Type :
 				return self.defaultValue
 
 	def getNormalizedName( self ):
-		return self.name[0].upper() + self.name[1:]
+		return capitalize(self.name)
 
 
 class Enum ( Type ):
@@ -205,6 +209,14 @@ class Enum ( Type ):
 		return [ EnumRegistry.getString(id) for id in sortedIds ]
 
 
+##############
+# DIRTY FLAG #
+##############
+class DirtyFlag:
+	def __init__( self, name, linkToFields ):
+		self.name			= name
+		self.linkToFields	= linkToFields.split()
+
 
 #########
 # FIELD #
@@ -235,7 +247,7 @@ class Field :
 		return False
 
 	def getFieldName( self ):
-		return self.name[0].upper() + self.name[1:]
+		return capitalize(self.name)
 
 
 class SingleField ( Field ) :
@@ -624,10 +636,18 @@ class Node :
 		self.doc		= ""
 		self.ingroup	= []
 
+		self.dirtyFlags	= {}
+
 		self.fields		= {}
 
 		self.codeDeclaration	= ''
 		self.codeImplementation	= ''
+
+	def addDirtyFlag( self, newDF ) :
+		if newDF.name not in self.dirtyFlags:
+			self.dirtyFlags[newDF.name] = newDF
+		else:
+			print ("Unable to add dirty flag named {0}.".format(newDF.name))
 
 	def addField( self, newField ) :
 		if newField.name not in self.fields :

@@ -53,6 +53,7 @@ PointLight::PointLight( const std::string nodeName ) :
 	addField( new FPositionType(getFPosition()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

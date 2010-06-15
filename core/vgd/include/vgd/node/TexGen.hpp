@@ -81,6 +81,15 @@ struct VGD_API TexGen : public vgd::node::MultiAttribute
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

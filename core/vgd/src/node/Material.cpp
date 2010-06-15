@@ -58,6 +58,7 @@ Material::Material( const std::string nodeName ) :
 	addField( new FDiffuseType(getFDiffuse()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

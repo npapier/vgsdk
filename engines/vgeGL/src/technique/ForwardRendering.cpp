@@ -20,6 +20,7 @@
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Program.hpp>
 #include <vgd/node/MultiTransformation.hpp>
+#include <vgd/node/Overlay.hpp>
 #include <vgd/node/PostProcessing.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Texture2D.hpp>
@@ -30,6 +31,7 @@
 #include <vgeGL/handler/painter/PostProcessing.hpp>
 #include <vgm/VectorOperations.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/handler/painter/Overlay.hpp"
 #include "vgeGL/rc/Texture2D.hpp"
 #include "vgeGL/rc/FrameBufferObject.hpp"
 
@@ -68,31 +70,31 @@ vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessin
 		case PostProcessing::ORIGINAL_DEPTH0:
 		case PostProcessing::INPUT1_ORIGINAL_DEPTH0:
 		case PostProcessing::INPUT2_ORIGINAL_DEPTH0:
-			retVal = (*originalTexture)[1];
+			retVal = (*originalTexture)[0];
 			break;
 
 		case PostProcessing::ORIGINAL_COLOR1:
 		case PostProcessing::INPUT1_ORIGINAL_COLOR1:
 		case PostProcessing::INPUT2_ORIGINAL_COLOR1:
-			retVal = (*originalTexture)[2];
+			retVal = (*originalTexture)[1];
 			break;
 
 		case PostProcessing::ORIGINAL_DEPTH1:
 		case PostProcessing::INPUT1_ORIGINAL_DEPTH1:
 		case PostProcessing::INPUT2_ORIGINAL_DEPTH1:
-			retVal = (*originalTexture)[3];
+			retVal = (*originalTexture)[1];
 			break;
 
 		case PostProcessing::ORIGINAL_COLOR2:
 		case PostProcessing::INPUT1_ORIGINAL_COLOR2:
 		case PostProcessing::INPUT2_ORIGINAL_COLOR2:
-			retVal = (*originalTexture)[4];
+			retVal = (*originalTexture)[2];
 			break;
 
 		case PostProcessing::ORIGINAL_DEPTH2:
 		case PostProcessing::INPUT1_ORIGINAL_DEPTH2:
 		case PostProcessing::INPUT2_ORIGINAL_DEPTH2:
-			retVal = (*originalTexture)[5];
+			retVal = (*originalTexture)[2];
 			break;
 			
 		//
@@ -114,11 +116,11 @@ vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessin
 			retVal = (*inputTexture)[0];
 			break;
 
-		case PostProcessing::PREVIOUS_COLOR1:
+/*		case PostProcessing::PREVIOUS_COLOR1:
 		case PostProcessing::INPUT1_PREVIOUS_COLOR1:
 		case PostProcessing::INPUT2_PREVIOUS_COLOR1:
 			retVal = (*inputTexture)[1];
-			break;
+			break;*/
 
 		case PostProcessing::NONE:
 		case PostProcessing::INPUT1_NONE:
@@ -356,10 +358,13 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 				/*hasCutOffAngle = */ spot->getCutOffAngle( cutOffAngle );
 
 // @todo FIXME check scene size
+				const vgm::Vec2f nearFar = engine->getNearFar();
+				assert( nearFar.isValid() );
+
 				vgm::MatrixR projection;
 				projection.setPerspective(	cutOffAngle * 2.f,
 											static_cast<float>(m_shadowMapSize[0])/static_cast<float>(m_shadowMapSize[1]),
-											1.f, 1000.f );
+											nearFar[0], nearFar[1] );
 
 				m_lights.push_back( LightInfo(current->lightViewMatrix, current->lightMODELVIEWMatrix, projection, spot ) );
 
@@ -538,22 +543,30 @@ void ForwardRendering::initializeBuffers( vgeGL::engine::Engine * engine )
 
 	// fbo0 and fbo1
 	//attachments.clear();
-	attachments += COLOR_RGBA, COLOR_RGBA;
+	attachments += COLOR_RGBA_32F; // , COLOR_RGBA_32F; @todo
+	//attachments += COLOR_RGBA_16F, COLOR_RGBA_16F;
+	//attachments += COLOR_RGBA, COLOR_RGBA;
 	boost::tie( m_frameBuffer0, m_fbo0 ) = createsFBO( engine, attachments, std::back_inserter(m_textures0) );
 	boost::tie( m_frameBuffer1, m_fbo1 ) = createsFBO( engine, attachments, std::back_inserter(m_textures1) );
 
 	// fbo
 	attachments.clear();
-	attachments +=	COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 0 (color+depth)
+//	attachments +=	COLOR_RGBA, COLOR_LUMINANCE,		// BUFFER 0 (color+depth)
+//					COLOR_RGBA, COLOR_LUMINANCE,		// BUFFER 1 (color+depth)
+//					COLOR_RGBA, COLOR_LUMINANCE,		// BUFFER 2 (color+depth)
+/*	attachments +=	COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 0 (color+depth)
 					COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 1 (color+depth)
-					COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 2 (color+depth)
+					COLOR_RGBA, COLOR_LUMINANCE_16F,	// BUFFER 2 (color+depth)*/
+	attachments +=	COLOR_RGBA_32F/*, /*COLOR_RGBA_32F COLOR_LUMINANCE_32F*/,	// BUFFER 0 (color+depth)
+					COLOR_RGBA_32F/*, /*COLOR_RGBA_32F COLOR_LUMINANCE_32F*/,	// BUFFER 1 (color+depth) // ?????????????
+					COLOR_RGBA_32F/*, /*COLOR_RGBA_32F COLOR_LUMINANCE_32F*/,	// BUFFER 2 (color+depth)					
 					COLOR_RGB_16F,						// NORMAL
 					COLOR_RGB_16F,						// POSITION
 					DEPTH_COMPONENT_24;					// DEPTH
 	boost::tie( m_frameBuffer, m_fbo ) = createsFBO( engine, attachments, std::back_inserter(m_textures) );
 // @todo vector< BufferUsage > = COLOR0, DEPTH0, ...., NORMAL, POSITION
-	m_normalIndex = 6;
-	m_positionIndex = 7;
+	m_normalIndex = 3;
+	m_positionIndex = m_normalIndex+1;
 
 	// Initializes Quad for PostProcessing	
 	if ( !m_quad1 )
@@ -646,6 +659,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	engine->regardIfIsAKindOf<vgd::node::Group>();
 	engine->regardIfIsAKindOf<vgd::node::Kit>();
 	engine->regardIfIsAKindOf<vgd::node::Light>();
+	engine->regardIfIsAKindOf<vgd::node::Overlay>();
 	engine->regardIfIsAKindOf<vgd::node::PostProcessing>();
 
 	//bool foundLightModel = false;
@@ -712,6 +726,16 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		m_postProcessing.reset( new PostProcessingStateContainer(engine->getGLSLState().postProcessing) );
 	}
 
+	// Checks overlays
+	const bool renderOverlays = engine->getGLSLState().overlays.isNotEmpty();
+
+	if ( renderOverlays )
+	{
+		// Saves the overlays state
+		m_overlays.reset( new OverlayStateContainer(engine->getGLSLState().overlays) );
+	}
+
+	//
 	if ( !lightModel )
 	{
 		vgLogDebug("ForwardRendering::apply(): You must have a LightModel node in the scene graph.");
@@ -1028,14 +1052,24 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	//////////////////////////////////////////////////////////////////////////
 	// STEP 3: Rendering (opaque and transparent pass ) with/without shadow //
 	//////////////////////////////////////////////////////////////////////////
-	const std::string postProcessingFragmentOutputStage =
-	// linear depth-buffer (will map near..far to 0..1)
-	"	gl_FragData[1] = vec4( (-ecPosition.z-nearFar[0])/(nearFar[1]-nearFar[0]) );\n"
-	//"	gl_FragData[1].z = gl_FragCoord.z;\n" // does'nt work !!!
-	//"	gl_FragData[1] = vec4(gl_FragCoord.z);\n"
+	const std::string fragmentOutputStage = 
+	"\n"
+	"	gl_FragData[0] = color;\n";
 
-	"	gl_FragData[2] = vec4(normal,1.0);\n"
-	"	gl_FragData[3] = vec4(ecPosition.xyz, 1.0);\n"
+	const std::string postProcessingFragmentOutputStage =
+	"\n"	
+	// linear depth-buffer (will map near..far to 0..1)
+	"	float near	= nearFar[0];\n"
+	"	float far	= nearFar[1];\n"
+	"	float linearDepth = (2.0 * near)/(far + near - gl_FragCoord.z * (far-near));\n"
+	""
+	//"	gl_FragData[0] = vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z );\n"
+	"	gl_FragData[0] = vec4( clamp(color.rgb, 0.0, 1.0), linearDepth );\n"
+	//"	gl_FragData[1] = vec4( (-ecPosition.z-nearFar[0])/(nearFar[1]-nearFar[0]) );\n"
+	//"	gl_FragData[1].z = gl_FragCoord.z;\n" // does'nt work !!!
+
+	"	gl_FragData[1] = vec4(normal,1.0);\n"
+	"	gl_FragData[2] = vec4(ecPosition.xyz, 1.0);\n"
 	"\n";
 
 	if ( shadowType != LightModel::SHADOW_OFF && m_shadowMappingInput->getNumLight() > 0 )
@@ -1099,10 +1133,15 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		{
 			// Renders in FBO
 			m_fbo->bind();
-			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, m_normalIndex/*NORMAL*/, m_positionIndex/*POSITION*/ );
+			m_fbo->setDrawBuffers( 0/*COLOR0*//*, 1DEPTH0*/, m_normalIndex/*NORMAL*/, m_positionIndex/*POSITION*/ );
 
 			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, postProcessingFragmentOutputStage );
 		}
+		else
+		{
+			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, fragmentOutputStage );
+		}
+			
 
 		/////////////////////////////////////////////////////////
 
@@ -1138,10 +1177,15 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 		{
 			// Renders in FBO
 			m_fbo->bind();
-			m_fbo->setDrawBuffers( 0/*COLOR0*/, 1/*DEPTH0*/, m_normalIndex/*NORMAL*/, m_positionIndex/*POSITION*/ );
+			m_fbo->setDrawBuffers( 0/*COLOR0*//*, 1DEPTH0*/, m_normalIndex/*NORMAL*/, m_positionIndex/*POSITION*/ );
 
 			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, postProcessingFragmentOutputStage );
 		}
+		else
+		{
+			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, fragmentOutputStage );
+		}
+		
 		//////////////////////////////////////////////////////////
 		// STEP 3 bis : Rendering (opaque and transparent pass) //
 		//////////////////////////////////////////////////////////
@@ -1166,6 +1210,15 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			blit( engine, finalBuffers );
 		}		
 
+	}
+
+	// Renders overlays
+	if ( renderOverlays )
+	{
+		setPassDescription("ForwardRendering:OVERLAYS");
+		beginPass();
+		vgeGL::handler::painter::Overlay::paint( engine, m_overlays );
+		endPass();
 	}
 
 	//
@@ -1283,7 +1336,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			programs.push_back( program );
 
 			// Initializes Program node
-			std::pair< std::string, std::string > filter = vgeGL::handler::painter::PostProcessing::getFilter( postProcessingNode->getFilter() );
+			std::pair< std::string, std::string > filter = vgeGL::handler::painter::PostProcessing::getFilter( postProcessingNode, postProcessingNode->getFilter() );
 			std::pair< float, float > scale = vgeGL::handler::painter::PostProcessing::getScale( postProcessingNode->getFilter() );
 
 			// Scales
@@ -1401,6 +1454,13 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 // @todo a light version of begin2DRendering
 // @todo uses DF and cache
 
+		// nearFar
+		const vgm::Vec2f nearFar = engine->getNearFar();
+		assert( nearFar.isValid() );
+
+		assert( !engine->getUniformState().isUniform( "nearFar") && "Uniform nearFar already used" );
+		engine->getUniformState().addUniform( "nearFar", nearFar );
+
 		// param1f0
 		const float param1f0 = params1f0[i];
 		if ( param1f0 != std::numeric_limits<float>::max() )
@@ -1482,17 +1542,8 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		}
 		else
 		{
-			assert( false );
+			vgLogDebug("Found a PostProcessing node without any input textures.");
 		}
-		
-		/*if ( inputTexture0 && inputTexture1 )
-		{
-			engine->paint( m_quad2 );
-		}
-		else
-		{
-			engine->paint( m_quad1 );
-		}*/
 
 		lfbo0.swap( lfbo1 );
 		std::swap( ltex0, ltex1 );
@@ -1561,10 +1612,10 @@ ForwardRendering::createsFBORetValType ForwardRendering::createsFBO( vgeGL::engi
 // @todo sethDefault();
 		texture->setWrap( Texture::WRAP_S, Texture::CLAMP );
 		texture->setWrap( Texture::WRAP_T, Texture::CLAMP );
-		texture->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-		texture->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
-		//texture->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-		//texture->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+/*		texture->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
+		texture->setFilter( Texture::MAG_FILTER, Texture::NEAREST );*/
+		texture->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+		texture->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
 
 		// IMAGE
 		using vgd::basic::IImage;

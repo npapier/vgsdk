@@ -52,6 +52,7 @@ Texture2D::Texture2D( const std::string nodeName ) :
 	// Adds field(s)
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

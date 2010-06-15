@@ -276,6 +276,15 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	static const std::string getFCastShadow( void );
 
 	//@}
+
+
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
 	/**
 	 * @name Accessors to field color
 	 *

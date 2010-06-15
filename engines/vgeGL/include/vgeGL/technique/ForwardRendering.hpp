@@ -72,6 +72,8 @@ private:
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > applyPostProcessing( vgeGL::engine::Engine * engine, const vgd::Shp< vgeGL::rc::FrameBufferObject > fbo0, const vgd::Shp< vgeGL::rc::FrameBufferObject > fbo1 );
 	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo );
 
+	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
+	vgd::Shp< OverlayStateContainer > m_overlays;	
 
 	/**
 	 * @name Buffers
