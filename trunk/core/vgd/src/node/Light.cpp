@@ -28,6 +28,7 @@ Light::Light( const std::string nodeName ) :
 	addField( new FCastShadowType(getFCastShadow()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

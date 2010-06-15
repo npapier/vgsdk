@@ -876,6 +876,15 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

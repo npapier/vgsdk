@@ -241,6 +241,15 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFViewport( void );
 
 	//@}
+
+
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
 	/**
 	 * @name High-level methods
 	 *

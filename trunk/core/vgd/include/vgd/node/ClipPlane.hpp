@@ -153,6 +153,15 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

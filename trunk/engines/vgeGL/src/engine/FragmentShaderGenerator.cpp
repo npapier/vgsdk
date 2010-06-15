@@ -36,7 +36,12 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code1.clear();
 	m_code2.clear();
 
-	m_decl += "#version 130\n\n";
+	m_decl +=	"#version 130\n"
+//				"#pragma optimize (on)\n"
+//				"#pragma debug (off)\n"	
+//				"#pragma optimize (off)\n"
+//				"#pragma debug (on)\n"
+				"\n";
 
 	m_decl += "uniform vec2 nearFar;\n\n";
 
@@ -103,7 +108,8 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// MAIN
 	m_code2 += 
 	"void main( void )\n"
-	"{\n";
+	"{\n"
+	"	vec4 color;\n";
 
 	// texture lookup
 	std::string textureLookup;
@@ -112,11 +118,13 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{
 		m_code2 +=
-		"	vec4 color = gl_Color;\n" +
+		"\n"
+		"	color = gl_Color;\n" +
 			textureLookup +
 		"	color += gl_SecondaryColor;\n"
 //		"	gl_FragData[0] = vec4(color.rgb, gl_Color.a);\n";
-		"	gl_FragData[0] = vec4(color.rgb, 1);\n";
+//		"	gl_FragData[0] = vec4(color.rgb, 1);\n";
+		"	color = vec4(color.rgb, 1);\n";
 	}
 	else
 	{
@@ -125,8 +133,8 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 		// Calls flight()
 		m_code2 +=
-		"	vec3 normal = normalize(ecNormal);\n"
 		"\n"
+		"	vec3 normal = normalize(ecNormal);\n"
 		"	flight( ecPosition, normal );\n"
 		"\n";
 
@@ -135,28 +143,31 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			m_code2 +=
 			"	if ( gl_FrontFacing )\n"
 			"	{\n"
-			"		vec4 color = accumColor;\n" +
+			"		color = accumColor;\n" +
 					textureLookup +
 //			"		gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n"
-			"		gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, 1 );\n"
+//			"		gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, 1 );\n"
+			"		color = vec4( (color + accumSecondaryColor).rgb, 1 );\n"
 //			"		gl_FragData[0] = color + accumSecondaryColor;\n"
 			"	}\n"
 			"	else\n"
 			"	{\n"
-			"		vec4 color = accumBackColor ;\n" +
+			"		color = accumBackColor ;\n" +
 					textureLookup +
 //			"		gl_FragData[0] = vec4( (color + accumBackSecondaryColor).rgb, gl_Color.a );\n"
-			"		gl_FragData[0] = vec4( (color + accumBackSecondaryColor).rgb, 1 );\n"
+//			"		gl_FragData[0] = vec4( (color + accumBackSecondaryColor).rgb, 1 );\n"
+			"		color = vec4( (color + accumBackSecondaryColor).rgb, 1 );\n"
 //			"		gl_FragData[0] = color + accumBackSecondaryColor;\n"
 			"	}\n";
 		}
 		else
 		{
 			m_code2 +=
-			"	vec4 color = accumColor;\n" +
+			"	color = accumColor;\n" +
 				textureLookup +
 //			"	gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n";
-			"	gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, 1 );\n"; // @todo FIXME gl_FrontMaterial.diffuse.a <=> gl_Color.a ? 
+//			"	gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, 1 );\n"; // @todo FIXME gl_FrontMaterial.diffuse.a <=> gl_Color.a ? 
+			"	color = vec4( (color + accumSecondaryColor).rgb, 1 );\n"; // @todo FIXME gl_FrontMaterial.diffuse.a <=> gl_Color.a ? 
 //			"	gl_FragData[0] = color + accumSecondaryColor;\n";
 		}
 	}

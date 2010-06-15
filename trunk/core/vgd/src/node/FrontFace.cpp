@@ -53,6 +53,7 @@ FrontFace::FrontFace( const std::string nodeName ) :
 	addField( new FOrientationType(getFOrientation()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

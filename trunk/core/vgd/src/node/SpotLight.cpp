@@ -55,6 +55,7 @@ SpotLight::SpotLight( const std::string nodeName ) :
 	addField( new FCutOffAngleType(getFCutOffAngle()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

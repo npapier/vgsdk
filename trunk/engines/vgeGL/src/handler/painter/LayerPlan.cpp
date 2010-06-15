@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/LayerPlan.hpp"
 
+#include <vgDebug/convenience.hpp>
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Quad.hpp>
 #include <vgd/node/LayerPlan.hpp>
@@ -74,8 +75,8 @@ void LayerPlan::setToDefaults()
 // @todo Uses glsl for LayerPlan
 void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *layerPlan )
 {
-	if (	(layerPlan->getIImage() == 0) ||													// no image
-			(	(layerPlan->getIImage() != 0) && layerPlan->getIImage()->isEmpty()	)			// empty image
+	if (	(layerPlan->getImage() == 0) ||													// no image
+			(	(layerPlan->getImage() != 0) && layerPlan->getImage()->isEmpty()	)		// empty image
 			)
 	{
 		// Nothing to do
@@ -129,7 +130,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	// Dirty flags
 	vgd::field::DirtyFlag	*pDF		= layerPlan->getDirtyFlag( layerPlan->getDFNode() );
-	vgd::field::DirtyFlag	*pDFIImage	= layerPlan->getDirtyFlag( layerPlan->getDFIImage() );
+	vgd::field::DirtyFlag	*pDFImage	= layerPlan->getDirtyFlag( layerPlan->getDFImage() );
 
 	// @todo OPTME always computed
 	const vgm::Vec2f	layerPlanPosition	= layerPlan->getPosition();
@@ -145,14 +146,13 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	current.scale( vgm::Vec3f(layerPlanSize[0], layerPlanSize[1], 1.f) );
 
 	// render overlay
-	vgd::Shp< vge::service::Service > paintService = vge::service::Painter::create();
 
 	// Makes a backup of GLSL activation state
 	using vgeGL::engine::Engine;
 	vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
 	pGLEngine->sethCurrentProgram();
 
-	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), true );
+	pGLEngine->paint( rcRoot->getRoot(), true );
 
 	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();	
 	const vgm::Rectangle2i viewport( 0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1] );
@@ -161,7 +161,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
 
-	if ( pDFIImage->isDirty() )
+	if ( pDFImage->isDirty() )
 	{
 		const float alphaScale = layerPlan->getAlphaScale();
 
@@ -170,10 +170,10 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 			glPixelTransferf( GL_ALPHA_SCALE, alphaScale );
 		}
 
-		texture2D->setImage( layerPlan->getIImage() );
+		texture2D->setImage( layerPlan->getImage() );
 	}
 
-	pGLEngine->evaluate( paintService, texture2D.get(), true );
+	pGLEngine->paint( texture2D, true );
 
 	// Gets the resource manager
 	vgeGL::rc::Texture2D * gloTex2D = rcManager.get< vgeGL::rc::Texture2D >( texture2D.get() );
@@ -187,18 +187,18 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
 	// alpha/blend
-	pGLEngine->evaluate( paintService, quad.get(), true );
+	pGLEngine->paint( quad, true );
 
 	pGLEngine->end2DRendering( false );
 
-	pGLEngine->evaluate( paintService, rcRoot->getRoot().get(), false );
+	pGLEngine->paint( rcRoot->getRoot(), false );
 
 	// Restores GLSL activation state
 	pGLEngine->setGLSLActivationState( glslActivationState );
 
 	// Validates node
 	pDF->validate();
-	pDFIImage->validate();
+	pDFImage->validate();
 }
 
 

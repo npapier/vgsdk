@@ -24,6 +24,7 @@ TexGen::TexGen( const std::string nodeName ) :
 	addField( new FOnType(getFOn()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

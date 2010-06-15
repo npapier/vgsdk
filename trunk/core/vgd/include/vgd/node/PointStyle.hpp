@@ -261,6 +261,15 @@ struct VGD_API PointStyle : public vgd::node::SingleAttribute
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

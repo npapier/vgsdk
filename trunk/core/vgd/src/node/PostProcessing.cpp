@@ -53,13 +53,16 @@ PostProcessing::PostProcessing( const std::string nodeName ) :
 	addField( new FInput2Type(getFInput2()) );
 	addField( new FInput0Type(getFInput0()) );
 	addField( new FInput1Type(getFInput1()) );
+	addField( new FCustomFilterDefinitionType(getFCustomFilterDefinition()) );
 	addField( new FFilterType(getFFilter()) );
 	addField( new FParam4f1Type(getFParam4f1()) );
 	addField( new FParam4f0Type(getFParam4f0()) );
+	addField( new FCustomFilterApplyType(getFCustomFilterApply()) );
 	addField( new FOutputType(getFOutput()) );
 	addField( new FParam1f0Type(getFParam1f0()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 
@@ -71,7 +74,9 @@ void PostProcessing::setToDefaults( void )
 	setInput2( INPUT2_NONE );
 	setInput0( PREVIOUS_COLOR0 );
 	setInput1( INPUT1_NONE );
+
 	setFilter( NO_FILTER );
+
 	setOutput( OUTPUT_TMP0 );
 }
 
@@ -128,6 +133,21 @@ const PostProcessing::Input1ValueType PostProcessing::getInput1() const
 void PostProcessing::setInput1( const Input1ValueType value )
 {
 	getFieldRW<FInput1Type>(getFInput1())->setValue( value );
+}
+
+
+
+// CustomFilterDefinition
+const PostProcessing::CustomFilterDefinitionValueType PostProcessing::getCustomFilterDefinition() const
+{
+	return getFieldRO<FCustomFilterDefinitionType>(getFCustomFilterDefinition())->getValue();
+}
+
+
+
+void PostProcessing::setCustomFilterDefinition( const CustomFilterDefinitionValueType value )
+{
+	getFieldRW<FCustomFilterDefinitionType>(getFCustomFilterDefinition())->setValue( value );
 }
 
 
@@ -203,6 +223,21 @@ const bool PostProcessing::hasParam4f0() const
 
 
 
+// CustomFilterApply
+const PostProcessing::CustomFilterApplyValueType PostProcessing::getCustomFilterApply() const
+{
+	return getFieldRO<FCustomFilterApplyType>(getFCustomFilterApply())->getValue();
+}
+
+
+
+void PostProcessing::setCustomFilterApply( const CustomFilterApplyValueType value )
+{
+	getFieldRW<FCustomFilterApplyType>(getFCustomFilterApply())->setValue( value );
+}
+
+
+
 // Output
 const PostProcessing::OutputValueType PostProcessing::getOutput() const
 {
@@ -268,6 +303,13 @@ const std::string PostProcessing::getFInput1( void )
 
 
 
+const std::string PostProcessing::getFCustomFilterDefinition( void )
+{
+	return "f_customFilterDefinition";
+}
+
+
+
 const std::string PostProcessing::getFFilter( void )
 {
 	return "f_filter";
@@ -285,6 +327,13 @@ const std::string PostProcessing::getFParam4f1( void )
 const std::string PostProcessing::getFParam4f0( void )
 {
 	return "f_param4f0";
+}
+
+
+
+const std::string PostProcessing::getFCustomFilterApply( void )
+{
+	return "f_customFilterApply";
 }
 
 

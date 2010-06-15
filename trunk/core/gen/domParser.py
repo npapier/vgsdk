@@ -244,6 +244,19 @@ def handleDoxygen( domDoxygen, node ) :
 		node.ingroup.append( getText(ingroup.childNodes) )
 
 
+def handleDF( domDF ) :
+	# Retrieves df attributes
+	attrName = domDF.getAttributeNode("name")
+	attrLinkToFields = domDF.getAttributeNode("linkToFields")
+
+	# Checks
+	if attrName == None or attrLinkToFields == None :
+		raise StandardError("Dirty flags must have both name and linkToFields attributes.")
+
+	#
+	df = DirtyFlag(attrName.value, attrLinkToFields.value)
+	return df
+
 
 def handleNode( domNode ) :
 	# Retrieves node attributes
@@ -271,13 +284,20 @@ def handleNode( domNode ) :
 	if domDoxygens.length > 0 :
 		handleDoxygen( domDoxygens[0], node )
 
-	# Handles sf
+	# Handles df (dirty flags)
+	domDFs = domNode.getElementsByTagName("df")
+	for domDF in domDFs:
+		df = handleDF( domDF )
+		print "DFDF", df.name, df.linkToFields
+		node.addDirtyFlag( df )
+
+	# Handles sf (single field)
 	domSingleFields = domNode.getElementsByTagName("sf")
 	for domSingleField in domSingleFields :
 		sf = handleSF( domSingleField )
 		node.addField( sf )
 
-	# Handles of
+	# Handles of (optional field)
 	domOptionalFields = domNode.getElementsByTagName("of")
 	for domOptionalField in domOptionalFields :
 		of = handleOF( domOptionalField )
@@ -289,7 +309,7 @@ def handleNode( domNode ) :
 		paf = handlePAF( domPairAssociativeField )
 		node.addField( paf )
 
-	# Handles mf
+	# Handles mf (multi-fields)
 	domMultiFields = domNode.getElementsByTagName("mf")
 	for domMultiField in domMultiFields :
 		mf = handleMF( domMultiField )
@@ -297,7 +317,7 @@ def handleNode( domNode ) :
 
 	# @todo handles other field type.
 
-	#@todo handle df, links, method, attribute...
+	#@todo handle method, attribute...
 
 	# Handles codehpp, includehpp, codecpp and includecpp
 	domCodeHpps = domNode.getElementsByTagName("codehpp")

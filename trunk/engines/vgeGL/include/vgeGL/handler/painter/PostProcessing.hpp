@@ -42,7 +42,7 @@ struct VGEGL_API PostProcessing : public vge::handler::painter::MultiAttribute
 	/**
 	 * @brief Returns a pair containing glsl code implementing and applying the desired filter
 	 */
-	static std::pair< std::string, std::string > getFilter( const vgd::node::PostProcessing::FilterValueType& filter );
+	static std::pair< std::string, std::string > getFilter( vgd::node::PostProcessing *, const vgd::node::PostProcessing::FilterValueType& /*filter*/ );
 
 	/**
 	 * @brief Returns a pair containing glsl code implementing and applying the desired scaling for the filter

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -28,7 +28,27 @@ Technique::Technique()
 
 void Technique::beginPass( const PassIsolationMask isolationMask )
 {
+	if ( isGL_GREMEDY_string_marker() )
+	{
+		std::stringstream ss;
+		ss << "beginPass(" << m_passDescription << ")";
+		glStringMarkerGREMEDY( 0, ss.str().c_str() );
+	}
+
+	//
+	using vgeGL::engine::GLState;	
+	using vgeGL::engine::GLSLState;
+
+	assert( m_engine->getGLStateStack().getSize() == 1 );
+	assert( m_engine->getGLSLStateStack().getSize() == 1 );	
+
 	vge::technique::Technique::beginPass(isolationMask);
+
+	assert( m_engine->getGLStateStack().getSize() == 2 );
+	assert( m_engine->getGLSLStateStack().getSize() == 2 );
+
+	//m_engine->getGLStateStack().clear( GLState() );
+	//m_engine->getGLSLState().reset( m_engine->getMaxLights(), m_engine->getMaxTexUnits() );
 
 	if ( isGL_GREMEDY_string_marker() )
 	{
@@ -38,16 +58,25 @@ void Technique::beginPass( const PassIsolationMask isolationMask )
 	}
 }
 
+
+
 void Technique::endPass()
 {
-	vge::technique::Technique::endPass();
-
 	if ( isGL_GREMEDY_string_marker() )
 	{
 		std::stringstream ss;
 		ss << "END:" << m_passDescription;
 		glStringMarkerGREMEDY( 0, ss.str().c_str() );
 		m_passDescription.clear();
+	}
+
+	vge::technique::Technique::endPass();
+
+	if ( isGL_GREMEDY_string_marker() )
+	{
+		std::stringstream ss;
+		ss << "endPass(" << m_passDescription << ")";
+		glStringMarkerGREMEDY( 0, ss.str().c_str() );
 	}
 }
 
@@ -61,12 +90,12 @@ void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::Traver
 	//
 	m_engine = engine;
 
-// ???????????????????
-// @todo move to pass
-//	engine->getGLSLState().reset( engine->getMaxLights(), engine->getMaxTexUnits() );
-// @todo disable the two following lines, and see stack<GL/GLSLState> growing !!! (TBT)
-//	engine->getGLStateStack().clear( GLState() );
-//	engine->getGLSLStateStack().clear( GLSLState(getMaxLights(), getMaxTexUnits()) );
+	//
+	using vgeGL::engine::GLState;
+	using vgeGL::engine::GLSLState;
+
+	engine->getGLStateStack().clear( GLState() );
+	engine->getGLSLStateStack().clear( GLSLState(engine->getMaxLights(), engine->getMaxTexUnits()) );
 
 	if ( engine->isGLSLEnabled() )
 	{

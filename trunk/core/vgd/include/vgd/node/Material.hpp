@@ -347,6 +347,15 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	static const std::string getFDiffuse( void );
 
 	//@}
+
+
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
 	/**
 	 * @brief Definition of symbolic values
 	 */

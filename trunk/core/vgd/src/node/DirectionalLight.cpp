@@ -53,6 +53,7 @@ DirectionalLight::DirectionalLight( const std::string nodeName ) :
 	addField( new FDirectionType(getFDirection()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

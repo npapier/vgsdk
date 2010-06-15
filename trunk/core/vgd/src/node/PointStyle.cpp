@@ -56,6 +56,7 @@ PointStyle::PointStyle( const std::string nodeName ) :
 	addField( new FSizeType(getFSize()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

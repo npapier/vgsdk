@@ -62,6 +62,15 @@ struct VGD_API FrameBuffer : public vgd::node::SingleAttribute
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

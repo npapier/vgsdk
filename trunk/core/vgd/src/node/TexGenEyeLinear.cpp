@@ -53,6 +53,7 @@ TexGenEyeLinear::TexGenEyeLinear( const std::string nodeName ) :
 	addField( new FParametersType(getFParameters()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

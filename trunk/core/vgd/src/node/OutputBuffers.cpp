@@ -53,6 +53,7 @@ OutputBuffers::OutputBuffers( const std::string nodeName ) :
 	addField( new FOutputType(getFOutput()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

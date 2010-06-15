@@ -155,6 +155,15 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

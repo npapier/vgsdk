@@ -53,6 +53,7 @@ CullFace::CullFace( const std::string nodeName ) :
 	addField( new FModeType(getFMode()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

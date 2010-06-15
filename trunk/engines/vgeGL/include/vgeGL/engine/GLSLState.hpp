@@ -24,6 +24,7 @@ namespace vgd
 	namespace node
 	{
 		struct Light;
+		struct Overlay;
 		struct Program;
 		struct PostProcessing;
 		struct SpotLight;
@@ -154,7 +155,7 @@ struct GLSLState : public TBitSet< 14 >
 	 * @param maxTexUnits		the maximum number of texture units
 	 * @param isShadowSamplerUsageEnabled	true if shadow sampler usage is enabled, false otherwise
 	 */
-	void reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled );
+	void reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled = true );
 
 
 	/**
@@ -456,6 +457,39 @@ struct GLSLState : public TBitSet< 14 >
 	 */
 	typedef vge::basic::TUnitContainer< PostProcessingState > PostProcessingStateContainer;
 	PostProcessingStateContainer postProcessing;
+
+	//@}
+
+
+
+	/**
+	 * @name Overlay units
+	 */
+	//@{
+	 
+	/**
+	 * @brief Overlay unit state structure
+	 */
+	struct OverlayState
+	{
+		/**
+		 * @brief Default constructor
+		 */
+		OverlayState( vgd::node::Overlay * node )
+		: m_node(node)
+		{}
+
+		vgd::node::Overlay * getNode() const { return m_node; }
+
+	private:
+		vgd::node::Overlay * m_node;
+	};
+
+	/**
+	 * @brief Overlay unit container
+	 */
+	typedef vge::basic::TUnitContainer< OverlayState > OverlayStateContainer;
+	OverlayStateContainer overlays;
 
 	//@}
 

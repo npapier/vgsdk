@@ -64,6 +64,7 @@ LightModel::LightModel( const std::string nodeName ) :
 	addField( new FShadowType(getFShadow()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

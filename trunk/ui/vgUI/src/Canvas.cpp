@@ -22,8 +22,8 @@
 #include <vgd/event/SizeEvent.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/event/detail/helpers.hpp>
-#include <vgd/node/LayerPlan.hpp>
 #include <vgd/node/MultiSwitch.hpp>
+#include <vgd/node/Overlay.hpp>
 #include <vgd/visitor/helpers.hpp>
 #include <vgDebug/convenience.hpp>
 #include <vgDebug/Global.hpp>
@@ -165,10 +165,11 @@ void Canvas::privateResetSceneGraph()
 	setRoot( rootNode );
 
 	// Debug overlay scene graph
-	using vgd::node::LayerPlan;
+	using vgd::node::Overlay;
 
 	m_debugOverlayContainer	= vgd::node::MultiSwitch::create(	"DEBUG_OVERLAY_CONTAINER"	);
-	m_overlayForFPS = LayerPlan::create( "FPS" );
+	m_overlayForFPS = Overlay::create( "FPS" );
+	m_overlayForFPS->setMultiAttributeIndex(-1);
 	m_debugOverlayContainer->addChild( m_overlayForFPS );
 
 	// @todo position and size should be in pixel (LayerPlan must be improved)
@@ -179,7 +180,7 @@ void Canvas::privateResetSceneGraph()
 	//
 	using vgCairo::ImageSurface;
 	vgd::Shp< ImageSurface > imageSurface( new ImageSurface(128, 32) );
-	m_overlayForFPS->setIImage( imageSurface );
+	m_overlayForFPS->setImage( imageSurface );
 }
 
 
@@ -744,7 +745,7 @@ void Canvas::updateFPSOverlay()
 {
 	// Updates fps overlay overlay
 	using vgCairo::ImageSurface;
-	vgd::Shp< ImageSurface > imageSurface = vgd::dynamic_pointer_cast< ImageSurface >( m_overlayForFPS->getIImage() );
+	vgd::Shp< ImageSurface > imageSurface = vgd::dynamic_pointer_cast< ImageSurface >( m_overlayForFPS->getImage() );
 	assert( imageSurface != 0 && "Internal error." );
 
 	// Draws on image surface with cairo
@@ -793,7 +794,7 @@ void Canvas::updateFPSOverlay()
 	cairo_restore(cr);
 
 	// Updates the image (invalidates the image).
-	m_overlayForFPS->setIImage( m_overlayForFPS->getIImage() );
+	m_overlayForFPS->setImage( m_overlayForFPS->getImage() );
 }
 
 

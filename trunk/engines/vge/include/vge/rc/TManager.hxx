@@ -19,6 +19,7 @@ namespace rc
 
 
 // @todo removes this resource container and stores directly the resource in the TManager ?
+
 template< typename KeyType, typename ResourceType >
 struct TManager<KeyType, ResourceType>::ResourceContainer
 {

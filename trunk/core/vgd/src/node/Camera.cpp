@@ -57,6 +57,7 @@ Camera::Camera( const std::string nodeName ) :
 	addField( new FViewportType(getFViewport()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

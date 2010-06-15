@@ -52,6 +52,7 @@ Texture1D::Texture1D( const std::string nodeName ) :
 	// Adds field(s)
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 

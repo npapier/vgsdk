@@ -116,6 +116,15 @@ struct VGD_API TexGenEyeLinear : public vgd::node::TexGen
 	//@}
 
 
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
 
 	/**
 	 * @name Constructor and initializer methods

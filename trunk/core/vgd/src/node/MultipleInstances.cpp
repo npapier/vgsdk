@@ -54,6 +54,7 @@ MultipleInstances::MultipleInstances( const std::string nodeName ) :
 	addField( new FMatrixType(getFMatrix()) );
 
 	// Sets link(s)
+
 	link( getDFNode() );
 }
 
