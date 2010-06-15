@@ -155,7 +155,7 @@ struct GLSLState : public TBitSet< 14 >
 	 * @param maxTexUnits		the maximum number of texture units
 	 * @param isShadowSamplerUsageEnabled	true if shadow sampler usage is enabled, false otherwise
 	 */
-	void reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled = true );
+	void reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled );
 
 
 	/**
