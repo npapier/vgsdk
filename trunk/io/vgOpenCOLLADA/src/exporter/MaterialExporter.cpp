@@ -35,13 +35,16 @@ void MaterialExporter::doExport()
 	{
 		vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial = right_iter->first;
 		
-		std::string effectName = collectedMaterial->getEffectId();
-		std::string materialName = effectName + MATERIAL_ID_SUFFIX;
-		collectedMaterial->setMaterialId( materialName );
+		if( collectedMaterial->getMaterial() )
+		{
+			std::string effectName = collectedMaterial->getEffectId();
+			std::string materialName = effectName + MATERIAL_ID_SUFFIX;
+			collectedMaterial->setMaterialId( materialName );
 
-		openMaterial ( materialName, COLLADABU::Utils::checkNCName(materialName) );
-		addInstanceEffect ( "#" + effectName );
-		closeMaterial ();
+			openMaterial ( materialName, COLLADABU::Utils::checkNCName(materialName) );
+			addInstanceEffect ( "#" + effectName );
+			closeMaterial ();
+		}
 	}
 
 	closeLibrary();

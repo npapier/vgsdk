@@ -96,72 +96,6 @@ void CollectNode::addShape( vgd::Shp< vgd::node::Shape > shape, vgm::MatrixR mat
 	vge::engine::Engine::NodeList* textureList = engine->getNodeListFromStateStackTop< vgd::node::Texture2D >();
 	vge::engine::Engine::NodeList* textureTransformList = engine->getNodeListFromStateStackTop< vgd::node::TextureMatrixTransform >();
 
-	//material
-	vgd::Shp< vgd::node::Material > material;
-
-	if( materialList->size() > 1 ) // == 1: default node only.
-	{
-		material = vgd::node::Material::create();
-		
-		vgd::node::Material::OpacityValueType opacity;
-		if( engine->getStateStackTopFromSingleField< vgd::node::Material, vgd::node::Material::FOpacityType, vgd::node::Material::OpacityValueType >( "f_opacity", opacity ) )
-		{
-			material->setOpacity( opacity );
-		}
-		
-		vgd::node::Material::ShininessValueType shininess;
-		if( engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FShininessType, vgd::node::Material::ShininessValueType >( "f_shininess", shininess, false ) )
-		{
-			material->setShininess( shininess );
-		}
-
-		vgd::node::Material::EmissionValueType emission;
-		if( engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FEmissionType, vgd::node::Material::EmissionValueType >( "f_emission", emission, false ) )
-		{
-			material->setEmission( emission );
-		}
-
-		vgd::node::Material::DiffuseValueType diffuse;
-		if( engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FDiffuseType, vgd::node::Material::DiffuseValueType >( "f_diffuse", diffuse, false ) )
-		{
-			material->setDiffuse( diffuse );
-		}
-
-		vgd::node::Material::SpecularValueType specular;
-		if( engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FSpecularType, vgd::node::Material::SpecularValueType >( "f_specular", specular, false ) )
-		{
-			material->setSpecular( specular );
-		}
-
-		vgd::node::Material::AmbientValueType ambient;
-		if(	engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FAmbientType, vgd::node::Material::AmbientValueType >( "f_ambient", ambient, false ) )
-		{
-			material->setAmbient( ambient );
-		}
-
-		vgd::node::Material::TransparencyValueType transparency;
-		if( engine->getStateStackTopFromSingleField< vgd::node::Material, vgd::node::Material::FTransparencyType, vgd::node::Material::TransparencyValueType >( "f_transparency", transparency ) )
-		{
-			material->setTransparency( transparency );
-		}
-
-		std::string matName;
-		if( engine->getStateStackTopFromSingleField< vgd::node::Material, vgd::field::TSingleField< std::string >, std::string >( "f_name", matName ) )
-		{	
-			//check unique mat name.
-			int counter = 0;
-			std::stringstream ss;
-			ss.str( matName );
-			while( !m_matNameList.insert( ss.str() ).second )
-			{
-				ss.str( "" );
-				ss << matName << "_" << counter;
-				counter++;
-			}			
-			material->setName( ss.str() );
-		}
-	}
-
 
 	//texture
 	vgd::Shp< vgd::node::Texture2D > texture;
@@ -243,6 +177,76 @@ void CollectNode::addShape( vgd::Shp< vgd::node::Shape > shape, vgm::MatrixR mat
 			texture->setFilter( vgd::node::Texture::MIN_FILTER, min_filter );
 			texture->setFilter( vgd::node::Texture::MAG_FILTER, mag_filter );
 		}
+	}
+
+	//material
+	vgd::Shp< vgd::node::Material > material;
+
+	if( materialList->size() > 1 ) // == 1: default node only.
+	{
+		material = vgd::node::Material::create();
+		
+		vgd::node::Material::OpacityValueType opacity;
+		if( engine->getStateStackTopFromSingleField< vgd::node::Material, vgd::node::Material::FOpacityType, vgd::node::Material::OpacityValueType >( "f_opacity", opacity ) )
+		{
+			material->setOpacity( opacity );
+		}
+		
+		vgd::node::Material::ShininessValueType shininess;
+		if( engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FShininessType, vgd::node::Material::ShininessValueType >( "f_shininess", shininess, false ) )
+		{
+			material->setShininess( shininess );
+		}
+
+		vgd::node::Material::EmissionValueType emission;
+		if( engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FEmissionType, vgd::node::Material::EmissionValueType >( "f_emission", emission, false ) )
+		{
+			material->setEmission( emission );
+		}
+
+		vgd::node::Material::DiffuseValueType diffuse;
+		if( engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FDiffuseType, vgd::node::Material::DiffuseValueType >( "f_diffuse", diffuse, false ) )
+		{
+			material->setDiffuse( diffuse );
+		}
+
+		vgd::node::Material::SpecularValueType specular;
+		if( engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FSpecularType, vgd::node::Material::SpecularValueType >( "f_specular", specular, false ) )
+		{
+			material->setSpecular( specular );
+		}
+
+		vgd::node::Material::AmbientValueType ambient;
+		if(	engine->getStateStackTopFromOptionalField< vgd::node::Material, vgd::node::Material::FAmbientType, vgd::node::Material::AmbientValueType >( "f_ambient", ambient, false ) )
+		{
+			material->setAmbient( ambient );
+		}
+
+		vgd::node::Material::TransparencyValueType transparency;
+		if( engine->getStateStackTopFromSingleField< vgd::node::Material, vgd::node::Material::FTransparencyType, vgd::node::Material::TransparencyValueType >( "f_transparency", transparency ) )
+		{
+			material->setTransparency( transparency );
+		}
+
+		std::string matName;
+		if( engine->getStateStackTopFromSingleField< vgd::node::Material, vgd::field::TSingleField< std::string >, std::string >( "f_name", matName ) )
+		{	
+			//check unique mat name @todo create conveniance function to check unique id/name.
+			int counter = 0;
+			std::stringstream ss;
+			ss.str( matName );
+			while( !m_matNameList.insert( ss.str() ).second )
+			{
+				ss.str( "" );
+				ss << matName << "_" << counter;
+				counter++;
+			}			
+			material->setName( ss.str() );
+		}
+	}
+	else if( needTexture )
+	{
+		material = vgd::node::Material::createWhole( "mat" + shape->getName() );
 	}
 
 	vgd::Shp< vge::technique::CollectedShape > collectedShape( new vge::technique::CollectedShape( shape, matrix, shapeType ) );
