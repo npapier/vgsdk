@@ -197,13 +197,32 @@ struct VGM_API MatrixR
 	
 	/**
 	 * @brief Returns an array of 16 elements.
+	 *
+	 * @remark Values in array are ordered from row0 to row3.
 	 */
 	void getValue( float *m ) const;
 
 	/**
 	 * @brief Returns an array of 16 elements.
+	 *
+	 * @remark Values in array are ordered from column0 to column3.	 
+	 */
+	void getTransposeValue( float *m ) const;
+
+	/**
+	 * @brief Returns an array of 16 elements.
+	 *
+	 * @remark Values in array are ordered from row0 to row3.
 	 */
 	void getValue( double *m ) const;
+
+	/**
+	 * @brief Returns an array of 16 elements.
+	 *
+	 * @remark Values in array are ordered from column0 to column3.	 	 
+	 */
+	void getTransposeValue( double *m ) const;
+
 
 	/**
 	 * @brief Returns the desired row

@@ -316,7 +316,7 @@ void MatrixR::getValue( RawMatrixd m ) const
 
 
 
-void MatrixR::getValue( float *m ) const
+void MatrixR::getValue( float * m ) const
 {
 	m[0]	= matrix[0][0];
 	m[1]	= matrix[0][1];
@@ -336,6 +336,31 @@ void MatrixR::getValue( float *m ) const
 	m[12]	= matrix[3][0];
 	m[13]	= matrix[3][1];
 	m[14]	= matrix[3][2];
+	m[15]	= matrix[3][3];
+}
+
+
+
+void MatrixR::getTransposeValue( float * m ) const
+{
+	m[0]	= matrix[0][0];
+	m[1]	= matrix[1][0];
+	m[2]	= matrix[2][0];
+	m[3]	= matrix[3][0];
+
+	m[4]	= matrix[0][1];
+	m[5]	= matrix[1][1];
+	m[6]	= matrix[2][1];
+	m[7]	= matrix[3][1];
+
+	m[8]	= matrix[0][2];
+	m[9]	= matrix[1][2];
+	m[10]	= matrix[2][2];
+	m[11]	= matrix[3][2];
+
+	m[12]	= matrix[0][3];
+	m[13]	= matrix[1][3];
+	m[14]	= matrix[2][3];
 	m[15]	= matrix[3][3];
 }
 
@@ -361,6 +386,31 @@ void MatrixR::getValue( double *m ) const
 	m[12]	= static_cast<double>(matrix[3][0]);
 	m[13]	= static_cast<double>(matrix[3][1]);
 	m[14]	= static_cast<double>(matrix[3][2]);
+	m[15]	= static_cast<double>(matrix[3][3]);
+}
+
+
+
+void MatrixR::getTransposeValue( double * m ) const
+{
+	m[0]	= static_cast<double>(matrix[0][0]);
+	m[1]	= static_cast<double>(matrix[1][0]);
+	m[2]	= static_cast<double>(matrix[2][0]);
+	m[3]	= static_cast<double>(matrix[3][0]);
+
+	m[4]	= static_cast<double>(matrix[0][1]);
+	m[5]	= static_cast<double>(matrix[1][1]);
+	m[6]	= static_cast<double>(matrix[2][1]);
+	m[7]	= static_cast<double>(matrix[3][1]);
+
+	m[8]	= static_cast<double>(matrix[0][2]);
+	m[9]	= static_cast<double>(matrix[1][2]);
+	m[10]	= static_cast<double>(matrix[2][2]);
+	m[11]	= static_cast<double>(matrix[3][2]);
+
+	m[12]	= static_cast<double>(matrix[0][3]);
+	m[13]	= static_cast<double>(matrix[1][3]);
+	m[14]	= static_cast<double>(matrix[2][3]);
 	m[15]	= static_cast<double>(matrix[3][3]);
 }
 
@@ -782,9 +832,9 @@ void MatrixR::setFrustum(
 	d = -(2.0f * zFar * zNear) / (zFar - zNear);
 
 	matrix[0][0] = x;		matrix[0][1] = 0.f;		matrix[0][2] = 0.f;		matrix[0][3] = 0.f;
-	matrix[1][0] = 0.f;	matrix[1][1] = y;			matrix[1][2] = 0.f;		matrix[1][3] = 0.f;
-	matrix[2][0] = a;		matrix[2][1] = b;			matrix[2][2] = c;			matrix[2][3] = -1.f;
-	matrix[3][0] = 0.f;	matrix[3][1] = 0.f;		matrix[3][2] = d;			matrix[3][3] = 0.f;
+	matrix[1][0] = 0.f;		matrix[1][1] = y;		matrix[1][2] = 0.f;		matrix[1][3] = 0.f;
+	matrix[2][0] = a;		matrix[2][1] = b;		matrix[2][2] = c;		matrix[2][3] = -1.f;
+	matrix[3][0] = 0.f;		matrix[3][1] = 0.f;		matrix[3][2] = d;		matrix[3][3] = 0.f;	
 }
 
 
