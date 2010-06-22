@@ -225,7 +225,7 @@ void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas )
 
 
 
-void fullscreen( myCanvas * canvas )
+void fullscreen( myCanvas * canvas, Glib::RefPtr< Gtk::UIManager > uiManager, Gtk::Widget * properties )
 {
 	canvas->switchFullscreen();
 
@@ -242,6 +242,7 @@ void fullscreen( myCanvas * canvas )
 		// Configures the layout.		
 		if ( isFullscreen )
 		{
+			// Go to fullscreen mode
 			topLevel->get_child()->hide_all();
 			
 			// We want to see the canvas. So we walk from the canvas to the top level window
@@ -253,8 +254,12 @@ void fullscreen( myCanvas * canvas )
 		}
 		else
 		{
+			// Exit fullscreen mode
 			topLevel->get_child()->show_all();
 		}
+
+		// Restores properties panel.
+		showHideProperties( uiManager, properties, false );
 
 		// Refresh the window again.
 		topLevel->get_window()->thaw_updates();
@@ -311,11 +316,11 @@ void showHideProperties( Glib::RefPtr< Gtk::UIManager > uiManager, Gtk::Widget *
 	}
 	else if( action->get_active() )
 	{
-		properties->show();
+		properties->show_all();
 	}
 	else
 	{
-		properties->hide();
+		properties->hide_all();
 	}
 }
 
@@ -422,6 +427,7 @@ void userSettings( Gtk::Window * toplevel, myCanvas * canvas )
 	if( dialog.run() == Gtk::RESPONSE_OK )
 	{
 		dialog.get().apply( *canvas );
+		canvas->refresh();
 	}
 }
 

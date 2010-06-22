@@ -74,7 +74,7 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Glib::RefPtr< Gtk::UI
 	actions->add(
 			Gtk::Action::create("FullScreen", Gtk::Stock::FULLSCREEN, "Full Screen"),
 			Gtk::AccelKey("F11"),
-			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullscreen), canvas) );
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::fullscreen), canvas, uiManager, properties) );
 	actions->add(
 			Gtk::Action::create("SetResolution", vgsdkViewerGtk::stock::RESOLUTION, "Set Resolution"),
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::setResolution), canvas) );
