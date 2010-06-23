@@ -70,11 +70,13 @@ void fileRecent( Gtk::RecentChooser * recentChooser, myCanvas * canvas );
 /**
  * @brief	Implements an action that shows the canvas in full screen
  * 
- * @param	canvas	a pointer to the canvas that must be displayed full screen.
- * 
+ * @param	canvas			a pointer to the canvas that must be displayed full screen.
+ * @param	uiManager		a reference to the ui manager
+ * @param	properties		a pointer to the properties widget
+ *
  * @remark	The canvas is expected to be a direct child of the top level window.
  */
-void fullscreen( myCanvas * canvas );
+void fullscreen( myCanvas * canvas, Glib::RefPtr< Gtk::UIManager > uiManager, Gtk::Widget * properties );
 
 /**
  * @brief	Implements an action that will recenter the camera on the objects visible in the scene.
