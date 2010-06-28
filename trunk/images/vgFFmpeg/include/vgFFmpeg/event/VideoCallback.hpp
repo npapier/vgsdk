@@ -28,10 +28,26 @@ struct VGFFMPEG_API VideoCallback : public vgd::event::TimerCallback
 	 * @brief Constructs the video callback
 	 *
 	 * @param pathFilename		name of video file to play
-	 * @param node				node to update with video frame
 	 */
-	VideoCallback(	const std::string& pathFilename,
-					vgd::Shp< vgd::node::Texture2D > node );
+	VideoCallback( const std::string& pathFilename );
+
+
+
+	/**
+	 * @name Accessors to playback output
+	 */
+	//@{
+
+	/**
+	 * @brief Sets playback output to texture 2d.
+	 *
+	 * @return a group node containing a texture node that would be updated by this callback and a quad node filled by the texture.
+	 */
+	vgd::Shp< vgd::node::Group > setVideoPlaybackInTexture2D();
+
+	//@}
+
+
 
 protected:
 	/**
@@ -39,8 +55,23 @@ protected:
 	 */
 	void apply( const vgd::Shp< vgd::event::TimerEvent > event );
 
+
+	void beginExecution();
+	void endExecution();
+
+
 private:
-	vgd::Shp< vgFFmpeg::Video > m_video;
+
+	void update( const vgd::Shp< vgd::event::TimerEvent > event );
+
+	vgd::Shp< vgFFmpeg::Video > m_video;		///< The video stream
+
+	enum PlayBackOutput
+	{
+		NO_OUTPUT,
+		TEXTURE2D
+	};
+	PlayBackOutput m_output;
 };
 
 
