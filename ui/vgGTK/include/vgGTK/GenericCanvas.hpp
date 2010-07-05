@@ -7,19 +7,25 @@
 #ifndef _VGGTK_GENERICCANVAS_HPP
 #define _VGGTK_GENERICCANVAS_HPP
 
+#include <boost/bind.hpp>
+#include <boost/signal.hpp>
+
 #include <gdk/gdkkeysyms.h>
 #include <gdkmm/cursor.h>
 #include <glibmm/main.h>
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/window.h>
+
+#include <vgAlg/actions/SelectedNode.hpp>
+
 #include <vgDebug/convenience.hpp>
 #include <vgUI/Canvas.hpp>
 
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include "vgGTK/vgGTK.hpp"
-#include "vgGTK/event/SignalHandler.hpp"
-#include "vgGTK/node/ActionsMenu.hpp"
-#include "vgGTK/node/SelectedNode.hpp"
+
+#include <vgGTK/event/SignalHandler.hpp>
+#include <vgGTK/node/ActionsMenu.hpp>
 
 #ifdef WIN32
 	#define	USE_GLC
@@ -76,7 +82,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 
-		vgGTK::node::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
+		//vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
+		vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( boost::bind( &GenericCanvas::onActionChanged, this, _1 ) );
 	}
 
 	/**
@@ -109,7 +116,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 
-		vgGTK::node::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
+		//vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
+		vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( boost::bind( &GenericCanvas::onActionChanged, this, _1 ) );
 	}
 
 	/**
@@ -554,11 +562,11 @@ protected:
 
 	//@}
 
-	void onActionChanged( vgGTK::node::ActionOnNode action )
+	void onActionChanged( vgAlg::actions::ActionOnNode action )
 	{
 		switch( action )
 		{
-			case vgGTK::node::REFRESH:
+			case vgAlg::actions::REFRESH:
 				refreshForced();
 				break;
 		}

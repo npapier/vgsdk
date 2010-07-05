@@ -5,8 +5,19 @@
 
 #include "vgGTK/node/EditMenu.hpp"
 
+#include <boost/bind.hpp>
+#include <boost/signals.hpp>
+
 #include <gtkmm/stock.h>
 #include <gtkmm/window.h>
+#include <gtkmm/icontheme.h>
+
+#include <vgAlg/actions/IAction.hpp>
+#include <vgAlg/actions/input/INodeInput.hpp>
+#include <vgAlg/actions/input/IParentInput.hpp>
+#include <vgAlg/actions/SelectedNode.hpp>
+#include <vgGTK/actions/Icons.hpp>
+#include <vgUI/actions/IActionUI.hpp>
 
 
 namespace vgGTK
@@ -23,46 +34,44 @@ EditMenu::EditMenu()
 	m_uiDefinition =
 		"<ui>"
 		"	<popup name='Edit'>"
-		"      <menuitem action='Cut'/>"
-		"      <menuitem action='Copy'/>"
-		"      <menuitem action='Paste'/>"
+		"      <menuitem action='CutNode'/>"
+		"      <menuitem action='CopyNode'/>"
+		"      <menuitem action='PasteNode'/>"
 		"      <separator/>"
-		"      <menuitem action='Next'/>"
-		"      <menuitem action='Previous'/>"
+		"      <menuitem action='NextNode'/>"
+		"      <menuitem action='PreviousNode'/>"
 		"      <separator/>"
-		"      <menuitem action='Delete'/>"
+		"      <menuitem action='RemoveNode'/>"
 		"    </popup>"
 		"</ui>";
 	
-	m_actionsNode = vgd::Shp< ActionsNode >( new ActionsNode() );
 	m_uiManager->add_ui_from_string( m_uiDefinition );
 
+	Glib::RefPtr< Gtk::IconTheme > iconTheme = Gtk::IconTheme::get_default();
+	iconTheme->append_search_path("./icons");
 
-	//m_actions->add( Gtk::Action::create("Edit", "_Edit") );
-	m_actions->add(
-			Gtk::Action::create("Cut", Gtk::Stock::CUT),
-			sigc::mem_fun(m_actionsNode.get(), &vgGTK::node::ActionsNode::onCutNode) );
-	m_actions->add(
-			Gtk::Action::create("Copy", Gtk::Stock::COPY),
-			sigc::mem_fun(m_actionsNode.get(), &vgGTK::node::ActionsNode::onCopyNode) );
-	m_actions->add(
-			Gtk::Action::create("Paste", Gtk::Stock::PASTE),
-			sigc::mem_fun(m_actionsNode.get(), &vgGTK::node::ActionsNode::onPasteNode) );
-	m_actions->add(
-			Gtk::Action::create("Next", Gtk::Stock::GO_FORWARD),
-			Gtk::AccelKey("<control>Down"),
-			sigc::mem_fun(m_actionsNode.get(), &vgGTK::node::ActionsNode::onNextNode) );
-	m_actions->add(
-			Gtk::Action::create("Previous", Gtk::Stock::GO_BACK),
-			Gtk::AccelKey("<control>Up"),
-			sigc::mem_fun(m_actionsNode.get(), &vgGTK::node::ActionsNode::onPreviousNode) );
-	m_actions->add(
-			Gtk::Action::create("Delete", Gtk::Stock::DELETE),
-			Gtk::AccelKey("<control>Delete"),
-			sigc::mem_fun(m_actionsNode.get(), &vgGTK::node::ActionsNode::onRemoveNode) );
+	m_actionList.push_back( m_actionsRegistry.getAction( "CutNode" ) );
+	m_actionList.push_back( m_actionsRegistry.getAction( "CopyNode" ) );
+	m_actionList.push_back( m_actionsRegistry.getAction( "PasteNode" ) );
+	m_actionList.push_back( m_actionsRegistry.getAction( "NextNode" ) );
+	m_actionList.push_back( m_actionsRegistry.getAction( "PreviousNode" ) );
+	m_actionList.push_back( m_actionsRegistry.getAction( "RemoveNode" ) );
 
+	std::list< vgd::Shp< vgUI::actions::IActionUI > >::iterator it = m_actionList.begin();
+
+	for( it; it != m_actionList.end(); it++ )
+	{
+		Gtk::StockID stock = vgGTK::actions::getIcon( (*it)->getIcon() );
+		m_actions->add(
+				Gtk::Action::create( (*it)->getId(), stock, (*it)->getName(), (*it)->getName() ),
+				Gtk::AccelKey( (*it)->getAccelKey() ),
+				sigc::mem_fun( (*it)->getAction(), &vgAlg::actions::IAction::execute ) );
+	}
 
 	m_uiManager->insert_action_group( m_actions );
+
+	//modify action when selection changed.
+	vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_selection_changed.connect( boost::bind( &EditMenu::onSelectionChanged, this ) );
 }
 
 
@@ -83,6 +92,29 @@ Gtk::Menu * EditMenu::getMenu()
 Glib::RefPtr< Gtk::UIManager > EditMenu::getUIManager()
 {
 	return m_uiManager;
+}
+
+
+
+void EditMenu::onSelectionChanged()
+{
+	vgAlg::actions::input::INodeInput*		nodeInput;
+	vgAlg::actions::input::IParentInput*	parentInput;
+	
+	std::list< vgd::Shp< vgUI::actions::IActionUI > >::iterator it = m_actionList.begin();
+	
+	for( it; it != m_actionList.end(); it++ )
+	{
+		vgAlg::actions::IAction* action = (*it)->getAction(); 
+		if( nodeInput = dynamic_cast< vgAlg::actions::input::INodeInput* >( action ) )
+		{
+			nodeInput->setNode( vgAlg::actions::SelectedNode::getSelectedNodeObject()->getSelectedNode() );
+		}
+		if( parentInput = dynamic_cast< vgAlg::actions::input::IParentInput* >( action ) )
+		{
+			parentInput->setParent( vgAlg::actions::SelectedNode::getSelectedNodeObject()->getParentSelectedNode() );
+		}
+	}
 }
 
 

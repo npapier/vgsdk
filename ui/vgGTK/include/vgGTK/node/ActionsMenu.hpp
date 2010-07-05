@@ -11,13 +11,14 @@
 #include <gtkmm/actiongroup.h>
 #include <gtkmm/uimanager.h>
 
+#include <vgAlg/actions/HiddenNode.hpp>
+
 #include <vgd/Shp.hpp>
 #include <vgd/WeakPtr.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
 
-#include <vgGTK/node/ActionsNode.hpp>
-#include <vgGTK/node/HiddenNode.hpp>
+#include <vgGTK/ActionsRegistry.hpp>
 #include <vgGTK/node/InsertNode.hpp>
 
 #include <vgUI/Canvas.hpp>
@@ -28,6 +29,13 @@ namespace vgGTK
 
 namespace node
 {
+
+enum POPUP_LOCATION
+{
+	TREE,
+	NODE,
+	CANVAS
+};
 
 
 /**
@@ -45,28 +53,77 @@ struct VGGTK_API ActionsMenu
 
 	void setCanvas( vgUI::Canvas * canvas );
 
-/**
- * @brief Show the popup menu
- * 
- * @param event: the GTK event.
- *
- * @param node: the selected vgsdk node.
- *
- * @param tree: true if we are in the treeview.
- */
+	/**
+	 * @brief Show the popup menu
+	 * 
+	 * @param event	the GTK event.
+	 *
+	 * @param node	the selected vgsdk node.
+	 *
+	 * @param tree	true if we are in the treeview.
+	 */
 	void showPopup(GdkEventButton * event, POPUP_LOCATION location );
 
 private:
-	void hideAllMenu();											///< Hide all menu items.
-	void manageHiddenNodeMenu( int displayedNode );				///< Manage (adds delete, check menuitems) hidden node menu.
-	void showOnNodeMenu( int displayedNode );					///< Manage menu if a node is casted in canvas.
-	void showInTreeViewMenu( int displayedNode );				///< Manage menu if menu is popup in treeview.
+	/**
+	 * @brief Create a menu with a list of action.
+	 */
+	void manageMenu( std::list< vgd::Shp< vgUI::actions::IActionUI > > actionsList );
+
+	/**
+	 * @brief Call ManageMenu with hidden node action list.
+	 */
+	void manageHiddenNodeMenu();
+
+	/**
+	 * @brief Check if a menu has submenu/items, if not, hide the menu, show it otherwise.
+	 */
+	void ManageMenuVisibility( Gtk::Menu* menu, Gtk::MenuItem* menuItem = 0);
+
+	/**
+	 * @brief Create the filter with the current state.
+	 */
+	vgUI::actions::State	createState();
+
+	/**
+	 * @brief Apply state to all actions, hide/show them depending on current state.
+	 */
+	void					applyState();
+
+	/**
+	 * @brief Set required parameters for action.
+	 *
+	 * param action	action to define parameter.
+	 */
+	void					setParams( vgAlg::actions::IAction* action );
+
+	/**
+	 * @brief Check the number of node in the scene.
+	 * 
+	 * @return	Number of node in scene.
+	 */
+	int getTotalNumberOfShape();
+
+	/**
+	 * @brief Check the number of displayed node in the scene.
+	 * 
+	 * @return	Number of displayed node in scene.
+	 */
+	int	getDisplayedNodeNumber();
+
+
 
 	vgd::WeakPtr< vgd::node::Node >		m_currentNode;			///< current selected node.
 	vgd::WeakPtr< vgd::node::Group >	m_currentParentNode;	///< current parent of selected node.
 	vgUI::Canvas						*m_canvas;				///< canvas of the application
 
-	vgd::Shp< ActionsNode >				m_actionsNode;
+
+	POPUP_LOCATION						m_location;				///< Location of the menu (Canvas, TreeView...).
+
+	//new action manager variable
+	Gtk::Menu*															m_rootMenu;			///< The root menu.
+	vgGTK::ActionsRegistry												m_actionsRegistry;	///< Instance of the action UI registry.
+	std::map< vgd::Shp < vgUI::actions::IActionUI >, Gtk::MenuItem* >	m_actionMap;		///< Map with an action and its GTK MenuItem.
 
 	/**
 	 * @name	User Interface Management
@@ -75,13 +132,9 @@ private:
 	Glib::ustring							m_uiDefinition;		///< Defines the user interfaces.
 	Glib::RefPtr< Gtk::ActionGroup >		m_actions;			///< Holds all actions of the user interface.
 	Glib::RefPtr< Gtk::UIManager >			m_uiManager;		///< Manages the user inteface toolbar and menus.
-	Gtk::Menu								* m_hiddenMenu;		///< Menu of hidden nodes
-	Gtk::MenuItem							* m_hiddenMenuItem;	///< MenuItem of hidden nodes.
 	InsertNode								* m_insertNode;		///< Menu of insert nodes
 	Gtk::MenuItem							* m_insertMenuItem;	///< MenuItem of insert nodes.
 	//@}
-
-	POPUP_LOCATION						m_location;				///< Location of the menu (Canvas, TreeView...).
 };
 
 

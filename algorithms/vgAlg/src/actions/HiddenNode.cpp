@@ -3,24 +3,29 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgGTK/node/HiddenNode.hpp"
+#include "vgAlg/actions/HiddenNode.hpp"
 
 
-namespace vgGTK
+namespace vgAlg
 {
 
-namespace node
+namespace actions
 {
 	
+
 HiddenNode::HiddenNode(vgd::Shp< vgd::node::VertexShape > node ) :
 m_node( node )
 {
 }
 
+
+
 HiddenNode::~HiddenNode()
 {
 	m_node.reset();
 }
+
+
 
 void HiddenNode::hide()
 {
@@ -38,6 +43,8 @@ void HiddenNode::hide()
 	}
 }
 
+
+
 void HiddenNode::restorePrimitives()
 {
 	vgd::Shp< vgd::node::VertexShape > node = m_node.lock();
@@ -54,11 +61,15 @@ void HiddenNode::restorePrimitives()
 	}
 }
 
+
+
 vgd::Shp< vgd::node::VertexShape > HiddenNode::getNode()
 {
 	vgd::Shp< vgd::node::VertexShape > node = m_node.lock();
 	return node;
 }
+
+
 
 bool HiddenNode::hasNode()
 {
@@ -73,19 +84,9 @@ bool HiddenNode::hasNode()
 	}
 }
 
-Gtk::MenuItem * HiddenNode::getMenuItem()
-{
-	return m_hiddenMenuItem;
-}
 
 
+} // namespace actions
 
-void HiddenNode::setMenuItem( Gtk::MenuItem * menuItem )
-{
-	m_hiddenMenuItem = menuItem;
-}
-
-} // namespace node
-
-} // namespace vgGTK
+} // namespace vgAlg
 

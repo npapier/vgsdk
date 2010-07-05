@@ -3,19 +3,19 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGGTK_NODE_SELECTEDNODE_HPP_
-#define _VGGTK_NODE_SELECTEDNODE_HPP_
+#ifndef _VGALG_ACTIONS_SELECTEDNODE_HPP
+#define _VGALG_ACTIONS_SELECTEDNODE_HPP
 
-#include "vgGTK/vgGTK.hpp"
+#include "vgAlg/vgAlg.hpp"
 
 #include <vgd/node/Node.hpp>
-#include <vgGTK/node/HiddenNode.hpp>
-#include <sigc++/sigc++.h>
+#include <vgAlg/actions/HiddenNode.hpp>
+#include <boost/signal.hpp>
 
-namespace vgGTK
+namespace vgAlg
 {
 
-namespace node
+namespace actions
 {
 
 enum ActionOnNode
@@ -33,7 +33,7 @@ enum ActionOnNode
 /**
 * @brief	Singleton of current selected node.
 */
-struct VGGTK_API SelectedNode
+struct VGALG_API SelectedNode
 {
 
 	/**
@@ -75,7 +75,17 @@ struct VGGTK_API SelectedNode
 	*
 	* @return	The node list.
 	*/
-	vgd::Shp< std::list< vgd::Shp < HiddenNode > > > getHiddenNodeList();
+	vgd::Shp< std::list< vgd::Shp< HiddenNode > > > getHiddenNodeList();
+
+
+	/**
+	* @brief	Check if the hidden node is already hidden.
+	*
+	* @param node	the node to verify its visibility
+	*
+	* @return	true if node is hidden.
+	*/	
+	const bool isAlreadyHidden( vgd::Shp< vgd::node::Node > node ) const;
 
 	/**
 	* @brief	Get the current clipboarded node.
@@ -86,9 +96,9 @@ struct VGGTK_API SelectedNode
 	* @brief	Get the current clipboarded node.
 	*/
 	vgd::Shp< vgd::node::Node > getClipboardedNode();
-
-	sigc::signal< void, vgd::Shp< vgd::node::Node > > signal_selection_changed; ///< Signal emited when the selected node changes.
-	sigc::signal< void, ActionOnNode > signal_action_changed;					///< Signal emited when an action is called.
+	
+	boost::signal< void () >	signal_selection_changed;	///< Signal emited when the selected node changes.
+	boost::signal< void ( ActionOnNode ) >					signal_action_changed;		///< Signal emited when an action is called.
 
 private:
 	SelectedNode();
@@ -98,14 +108,14 @@ private:
 	vgd::WeakPtr< vgd::node::Node >						m_node;			///< Current selected node.
 	vgd::WeakPtr< vgd::node::Group >					m_parentNode;	///< Parnet of current selected node.
 
-	vgd::Shp< std::list< vgd::Shp < HiddenNode > > >	m_hiddenNodes; ///< List of hidden nodes.
+	vgd::Shp< std::list< vgd::Shp< HiddenNode > > >		m_hiddenNodes; ///< List of hidden nodes.
 
 	vgd::Shp< vgd::node::Node >							m_clipboardNode;///< Current clipboarded node.
 	
 };
 
-} // namespace node
+} // namespace actions
 
-} // namespace vgGTK
+} // namespace vgAlg
 
-#endif /*_VGGTK_NODE_SELECTEDNODE_HPP_*/
+#endif /*_VGALG_ACTIONS_SELECTEDNODE_HPP*/
