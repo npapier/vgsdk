@@ -3,12 +3,12 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGGTK_NODE_HIDDENNODE_HPP_
-#define _VGGTK_NODE_HIDDENNODE_HPP_
+#ifndef _VGALG_ACTIONS_HIDDENNODE_HPP_
+#define _VGALG_ACTIONS_HIDDENNODE_HPP_
 
-#include "vgGTK/vgGTK.hpp"
+#include "vgAlg/vgAlg.hpp"
 
-#include <gtkmm/menu.h>
+//#include <gtkmm/menu.h>
 
 #include <vgd/Shp.hpp>
 #include <vgd/WeakPtr.hpp>
@@ -16,17 +16,17 @@
 
 
 
-namespace vgGTK
+namespace vgAlg
 {
 
-namespace node
+namespace actions
 {
 
 /**
  * @brief	Structure that contains a hidden node.
  *			Node is hidden by deletting its primitives.
  */
-struct HiddenNode
+struct VGALG_API HiddenNode
 {
 	HiddenNode(vgd::Shp< vgd::node::VertexShape > node );
 
@@ -57,30 +57,15 @@ struct HiddenNode
 	*/
 	bool hasNode();
 
-	/**
-	* @brief	When a node is hidden, a menu item is created in "hidden node" sub menu.
-	*
-	* @return	The current menu item.
-	*/
-	Gtk::MenuItem * getMenuItem();
-
-	/**
-	* @brief	When a node is hidden, a menu item is created in "hidden node" sub menu.
-	*
-	* @param menuItem	the menu item used.
-	*/
-	void setMenuItem( Gtk::MenuItem * menuItem );
-
 private:
 	vgd::WeakPtr< vgd::node::VertexShape >	m_node;
 	std::vector< vgd::node::Primitive >		m_primitives;
-	Gtk::MenuItem							* m_hiddenMenuItem;
 };
 
 
 
-} // namespace node
+} // namespace actions
 
-} // namespace vgGTK
+} // namespace vgAlg
 
-#endif /*_VGGTK_NODE_ACTIONSNODE_HPP_*/
+#endif /*_VGALG_ACTIONS_HIDDENNODE_HPP_*/

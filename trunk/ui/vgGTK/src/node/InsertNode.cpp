@@ -19,15 +19,15 @@
 #include <vgd/node/Group.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
+#include <vgd/node/MatrixTransform.hpp>
 #include <vgd/node/OutputBuffers.hpp>
 #include <vgd/node/PointLight.hpp>
 #include <vgd/node/PostProcessing.hpp>
 #include <vgd/node/Separator.hpp>
 #include <vgd/node/SpotLight.hpp>
-#include <vgd/node/Sphere.hpp>
+#include <vgd/node/Transform.hpp>
 
-
-#include <vgGTK/node/SelectedNode.hpp>
+#include <vgAlg/actions/SelectedNode.hpp>
 
 namespace vgGTK
 {
@@ -43,11 +43,13 @@ namespace node
 								vgd::Shp< vgd::node::Group >,
 								vgd::Shp< vgd::node::LightModel >,
 								vgd::Shp< vgd::node::Material >,
+								vgd::Shp< vgd::node::MatrixTransform >,
 								vgd::Shp< vgd::node::OutputBuffers >,
 								vgd::Shp< vgd::node::PointLight >,
 								vgd::Shp< vgd::node::PostProcessing >,
 								vgd::Shp< vgd::node::Separator >,
-								vgd::Shp< vgd::node::SpotLight >
+								vgd::Shp< vgd::node::SpotLight >,
+								vgd::Shp< vgd::node::Transform >
 									> shapes;
 
 	static std::vector< std::string > names = boost::assign::list_of("ClipPlane")
@@ -58,11 +60,13 @@ namespace node
 																	("Group")
 																	("LightModel")
 																	("Material")
+																	("MatrixTransform")
 																	("OutputBuffers")
 																	("PointLight")
 																	("PostProcessing")
 																	("Separator")
-																	("SpotLight");
+																	("SpotLight")
+																	("Transform");
 
 struct CreateNodeList
 {
@@ -138,8 +142,8 @@ void InsertNode::onInsertNode( std::string name )
 	CreateNode createNode( name, this );
 	boost::mpl::for_each< shapes >( createNode );
 
-	vgd::Shp< vgd::node::Node > node = vgGTK::node::SelectedNode::getSelectedNodeObject()->getSelectedNode();
-	vgd::Shp< vgd::node::Group > parentGroup = vgGTK::node::SelectedNode::getSelectedNodeObject()->getParentSelectedNode();
+	vgd::Shp< vgd::node::Node > node = vgAlg::actions::SelectedNode::getSelectedNodeObject()->getSelectedNode();
+	vgd::Shp< vgd::node::Group > parentGroup = vgAlg::actions::SelectedNode::getSelectedNodeObject()->getParentSelectedNode();
 
 	if( node )
 	{
@@ -153,7 +157,7 @@ void InsertNode::onInsertNode( std::string name )
 		}
 	}
 
-	vgGTK::node::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
+	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
 }
 
 

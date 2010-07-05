@@ -3,12 +3,12 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgGTK/node/SelectedNode.hpp"
+#include "vgAlg/actions/SelectedNode.hpp"
 
-namespace vgGTK
+namespace vgAlg
 {
 
-namespace node
+namespace actions
 {
 
 vgd::Shp< SelectedNode > SelectedNode::m_selectedNode;
@@ -29,7 +29,7 @@ vgd::Shp< SelectedNode > SelectedNode::getSelectedNodeObject()
 
 SelectedNode::SelectedNode()
 {
-	m_hiddenNodes = vgd::makeShp( new std::list< vgd::Shp < HiddenNode > > );
+	m_hiddenNodes = vgd::makeShp( new std::list< vgd::Shp< HiddenNode > > );
 }
 
 
@@ -38,7 +38,7 @@ void SelectedNode::setSelectedNode( vgd::Shp< vgd::node::Node > node,  vgd::Shp<
 {
 	m_node = node;
 	m_parentNode = parent;
-	//signal_selection_changed.emit( node );
+	signal_selection_changed();
 }
 
 
@@ -61,14 +61,36 @@ vgd::Shp< vgd::node::Group > SelectedNode::getParentSelectedNode()
 
 void SelectedNode::setAction( ActionOnNode action )
 {
-	signal_action_changed.emit( action );
+	signal_action_changed( action );
 }
 
 
 
-vgd::Shp< std::list< vgd::Shp < HiddenNode > > > SelectedNode::getHiddenNodeList()
+vgd::Shp< std::list< vgd::Shp< HiddenNode > > > SelectedNode::getHiddenNodeList()
 {
 	return m_hiddenNodes;
+}
+
+
+
+const bool SelectedNode::isAlreadyHidden( vgd::Shp< vgd::node::Node > node ) const
+{
+	bool retVal = false;
+	
+	vgd::Shp< vgAlg::actions::HiddenNode > hidden;
+	
+	std::list< vgd::Shp< vgAlg::actions::HiddenNode > >::iterator it = m_hiddenNodes->begin();
+	for( it; it !=  m_hiddenNodes->end(); it++)
+	{
+		hidden = (*it);
+
+		if( hidden->getNode() == node )
+		{
+			return true;
+		}
+	}
+
+	return retVal;
 }
 
 
@@ -87,7 +109,7 @@ vgd::Shp< vgd::node::Node > SelectedNode::getClipboardedNode()
 
 
 
-} // namespace node
+} // namespace actions
 
-} // namespace vgGTK
+} // namespace vgAlg
 

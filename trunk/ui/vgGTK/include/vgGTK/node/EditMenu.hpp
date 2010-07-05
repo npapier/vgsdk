@@ -13,8 +13,10 @@
 #include <gtkmm/uimanager.h>
 
 #include <vgd/Shp.hpp>
+#include <vgd/node/Node.hpp>
 
-#include <vgGTK/node/ActionsNode.hpp>
+#include <vgGTK/ActionsRegistry.hpp>
+
 
 namespace vgGTK
 {
@@ -39,7 +41,7 @@ struct VGGTK_API EditMenu
 
 private:
 
-	vgd::Shp< ActionsNode >					m_actionsNode;	///< Actions class.
+	void onSelectionChanged();
 
 	/**
 	 * @name	User Interface Management
@@ -49,6 +51,9 @@ private:
 	Glib::RefPtr< Gtk::ActionGroup >		m_actions;			///< Holds all actions of the user interface.
 	Glib::RefPtr< Gtk::UIManager >			m_uiManager;		///< Manages the user inteface toolbar and menus.
 	//@}
+
+	vgGTK::ActionsRegistry								m_actionsRegistry;	///< Instance of the action UI registry.
+	std::list< vgd::Shp< vgUI::actions::IActionUI > >	m_actionList;		///< List of all action used in edit menu.
 };
 
 
