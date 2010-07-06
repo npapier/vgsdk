@@ -16,7 +16,6 @@ namespace actions
 {
 
 
-
 RemoveNode::RemoveNode( ) :
 IActionUI( "Edit/RemoveNode", "Remove", "RemoveNode", REMOVE, "<control>Delete", new vgAlg::actions::RemoveNode() )
 {

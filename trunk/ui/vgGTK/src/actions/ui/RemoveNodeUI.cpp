@@ -17,6 +17,8 @@ namespace actions
 namespace ui
 {
 
+META_ACTION_CPP( RemoveNodeUI, 15 );
+
 
 RemoveNodeUI::RemoveNodeUI()
 {

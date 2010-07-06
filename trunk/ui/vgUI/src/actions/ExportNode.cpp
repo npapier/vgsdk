@@ -15,8 +15,6 @@ namespace vgUI
 namespace actions
 {
 
-
-
 ExportNode::ExportNode( ) :
 IActionUI( "ExportNode", "Export", "ExportNode", EXPORT, "", new vgAlg::actions::ExportNode() )
 {

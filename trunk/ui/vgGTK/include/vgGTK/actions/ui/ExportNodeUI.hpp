@@ -8,6 +8,7 @@
 
 #include "vgGTK/vgGTK.hpp"
 
+#include <vgUI/actions/ActionsRegistry.hpp>
 #include <vgUI/actions/ExportNode.hpp>
 
 namespace vgGTK
@@ -26,6 +27,8 @@ namespace ui
  */
 	struct VGGTK_API ExportNodeUI : public vgUI::actions::ExportNode
 {
+	META_ACTION_HPP( ExportNodeUI );
+	
 	ExportNodeUI();
 };
 

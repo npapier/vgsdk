@@ -26,6 +26,8 @@
 #include <vgeGL/engine/Engine.hpp>
 #include <vgUI/actions/State.hpp>
 
+#include <vgGTK/actions/ui/ExportNodeUI.hpp>
+#include <vgGTK/actions/ui/RemoveNodeUI.hpp>
 
 
 namespace vgGTK
@@ -63,13 +65,15 @@ ActionsMenu::ActionsMenu( POPUP_LOCATION location )
 	m_insertMenuItem->property_visible() = false;
 
 
-
+	m_actionsRegistry = vgUI::actions::ActionsRegistry::getActionsRegistry();
+	vgd::Shp< vgUI::actions::ActionsRegistry >	actionsRegistry = m_actionsRegistry.lock();
+	
 	Gtk::Widget* rootWidget	= m_uiManager->get_widget("/popup");
 	m_rootMenu				= dynamic_cast< Gtk::Menu* >( rootWidget );
 
 	if( m_rootMenu )
 	{
-		manageMenu( m_actionsRegistry.getActionList() );
+		manageMenu( actionsRegistry->getActionMap() );
 	}
 }
 
@@ -180,12 +184,12 @@ void ActionsMenu::showPopup( GdkEventButton * event, POPUP_LOCATION location )
 
 
 
-void ActionsMenu::manageMenu( std::list< vgd::Shp< vgUI::actions::IActionUI > > actionsList )
+void ActionsMenu::manageMenu( std::map< int, vgd::Shp< vgUI::actions::IActionUI > > actionsMap )
 {
-	std::list< vgd::Shp< vgUI::actions::IActionUI > >::iterator it = actionsList.begin();
-	for( it; it != actionsList.end(); it++ )
+	std::map< int, vgd::Shp< vgUI::actions::IActionUI > >::iterator it = actionsMap.begin();
+	for( it; it != actionsMap.end(); it++ )
 	{
-		std::vector< std::string > contrib = (*it)->getMenuContribList();
+		std::vector< std::string > contrib = it->second->getMenuContribList();
 		Gtk::Menu* currentMenu = m_rootMenu;
 		for( uint i = 0; i < contrib.size(); i++ )
 		{
@@ -194,14 +198,14 @@ void ActionsMenu::manageMenu( std::list< vgd::Shp< vgUI::actions::IActionUI > > 
 			if( i == contrib.size() -1 )
 			{
 				//create menuitem and add to currentMenu;
-				if( m_actionMap.count( *it ) == 0 )
+				if( m_actionMap.count( it->second ) == 0 )
 				{
-					menuItem = new Gtk::MenuItem( (*it)->getName() );
-					menuItem->signal_activate().connect( sigc::mem_fun( (*it)->getAction(), &vgAlg::actions::IAction::execute ) );			
+					menuItem = new Gtk::MenuItem( it->second->getName() );
+					menuItem->signal_activate().connect( sigc::mem_fun( it->second->getAction(), &vgAlg::actions::IAction::execute ) );			
 					currentMenu->append( *menuItem );
 					currentMenu->show_all();
 
-					m_actionMap[ *it ] = menuItem;
+					m_actionMap[ it->second ] = menuItem;
 				}
 			}
 			else
@@ -404,7 +408,8 @@ void ActionsMenu::setParams( vgAlg::actions::IAction* action )
 
 void ActionsMenu::manageHiddenNodeMenu()
 {
-	manageMenu( m_actionsRegistry.getHiddenNodeActionList() );
+	vgd::Shp< vgUI::actions::ActionsRegistry >	actionsRegistry = m_actionsRegistry.lock();
+	manageMenu( actionsRegistry->getHiddenNodeActionMap() );
 }
 
 

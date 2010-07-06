@@ -15,6 +15,7 @@ namespace vgUI
 namespace actions
 {
 
+META_ACTION_CPP( PreviousNode, 14 )
 
 
 PreviousNode::PreviousNode( ) :

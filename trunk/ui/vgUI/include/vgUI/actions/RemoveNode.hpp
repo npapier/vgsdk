@@ -9,6 +9,7 @@
 
 #include "vgUI/vgUI.hpp"
 
+#include <vgUI/actions/ActionsRegistry.hpp>
 #include <vgUI/actions/IActionUI.hpp>
 
 namespace vgUI

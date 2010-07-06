@@ -9,6 +9,7 @@
 
 #include "vgUI/vgUI.hpp"
 
+#include <vgUI/actions/ActionsRegistry.hpp>
 #include <vgUI/actions/IActionUI.hpp>
 
 namespace vgUI
@@ -20,6 +21,8 @@ namespace actions
 
 struct VGUI_API HideNode : public IActionUI
 {
+	META_ACTION_HPP( HideNode );
+
 	HideNode();
 
 	virtual const bool isValide( State state ) const;
