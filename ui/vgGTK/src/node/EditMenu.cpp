@@ -47,15 +47,14 @@ EditMenu::EditMenu()
 	
 	m_uiManager->add_ui_from_string( m_uiDefinition );
 
-	Glib::RefPtr< Gtk::IconTheme > iconTheme = Gtk::IconTheme::get_default();
-	iconTheme->append_search_path("./icons");
+	vgd::Shp< vgUI::actions::ActionsRegistry > actionsRegistry = vgUI::actions::ActionsRegistry::getActionsRegistry();
 
-	m_actionList.push_back( m_actionsRegistry.getAction( "CutNode" ) );
-	m_actionList.push_back( m_actionsRegistry.getAction( "CopyNode" ) );
-	m_actionList.push_back( m_actionsRegistry.getAction( "PasteNode" ) );
-	m_actionList.push_back( m_actionsRegistry.getAction( "NextNode" ) );
-	m_actionList.push_back( m_actionsRegistry.getAction( "PreviousNode" ) );
-	m_actionList.push_back( m_actionsRegistry.getAction( "RemoveNode" ) );
+	m_actionList.push_back( actionsRegistry->getAction( "CutNode" ) );
+	m_actionList.push_back( actionsRegistry->getAction( "CopyNode" ) );
+	m_actionList.push_back( actionsRegistry->getAction( "PasteNode" ) );
+	m_actionList.push_back( actionsRegistry->getAction( "NextNode" ) );
+	m_actionList.push_back( actionsRegistry->getAction( "PreviousNode" ) );
+	m_actionList.push_back( actionsRegistry->getAction( "RemoveNode" ) );
 
 	std::list< vgd::Shp< vgUI::actions::IActionUI > >::iterator it = m_actionList.begin();
 

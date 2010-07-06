@@ -15,17 +15,12 @@ namespace vgUI
 namespace actions
 {
 
+META_ACTION_CPP( PasteNode, 12 )
 
 
 PasteNode::PasteNode( ) :
 IActionUI( "Edit/PasteNode", "Paste", "PasteNode", PASTE, "<control>V", new vgAlg::actions::PasteNode() )
 {
-	m_menuContrib = "Edit/PasteNode";
-	m_name = "Paste";
-	m_id = "PasteNode";
-	m_icon = PASTE;
-	m_accelKey = "<control>V";
-	m_action = vgd::makeShp( new vgAlg::actions::PasteNode() );
 }
 
 

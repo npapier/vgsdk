@@ -17,6 +17,8 @@ namespace actions
 namespace ui
 {
 
+META_ACTION_CPP( ExportNodeUI, 41 );
+
 
 ExportNodeUI::ExportNodeUI()
 {

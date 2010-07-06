@@ -18,9 +18,9 @@
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
 
-#include <vgGTK/ActionsRegistry.hpp>
 #include <vgGTK/node/InsertNode.hpp>
 
+#include <vgUI/actions/ActionsRegistry.hpp>
 #include <vgUI/Canvas.hpp>
 
 namespace vgGTK
@@ -68,7 +68,7 @@ private:
 	/**
 	 * @brief Create a menu with a list of action.
 	 */
-	void manageMenu( std::list< vgd::Shp< vgUI::actions::IActionUI > > actionsList );
+	void manageMenu( std::map< int, vgd::Shp< vgUI::actions::IActionUI > > actionsMap );
 
 	/**
 	 * @brief Call ManageMenu with hidden node action list.
@@ -122,7 +122,7 @@ private:
 
 	//new action manager variable
 	Gtk::Menu*															m_rootMenu;			///< The root menu.
-	vgGTK::ActionsRegistry												m_actionsRegistry;	///< Instance of the action UI registry.
+	vgd::WeakPtr< vgUI::actions::ActionsRegistry >						m_actionsRegistry;	///< Instance of the action UI registry.
 	std::map< vgd::Shp < vgUI::actions::IActionUI >, Gtk::MenuItem* >	m_actionMap;		///< Map with an action and its GTK MenuItem.
 
 	/**

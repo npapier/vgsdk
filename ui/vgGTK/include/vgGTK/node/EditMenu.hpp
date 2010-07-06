@@ -15,7 +15,7 @@
 #include <vgd/Shp.hpp>
 #include <vgd/node/Node.hpp>
 
-#include <vgGTK/ActionsRegistry.hpp>
+#include <vgUI/actions/ActionsRegistry.hpp>
 
 
 namespace vgGTK
@@ -52,7 +52,6 @@ private:
 	Glib::RefPtr< Gtk::UIManager >			m_uiManager;		///< Manages the user inteface toolbar and menus.
 	//@}
 
-	vgGTK::ActionsRegistry								m_actionsRegistry;	///< Instance of the action UI registry.
 	std::list< vgd::Shp< vgUI::actions::IActionUI > >	m_actionList;		///< List of all action used in edit menu.
 };
 

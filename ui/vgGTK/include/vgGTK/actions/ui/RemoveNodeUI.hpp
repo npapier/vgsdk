@@ -8,6 +8,8 @@
 
 #include "vgGTK/vgGTK.hpp"
 
+//#include <vgGTK/actions/ui/RegisterAction.hpp>
+#include <vgUI/actions/ActionsRegistry.hpp>
 #include <vgUI/actions/RemoveNode.hpp>
 
 namespace vgGTK
@@ -25,6 +27,8 @@ namespace ui
  */
 	struct VGGTK_API RemoveNodeUI : public vgUI::actions::RemoveNode
 {
+	META_ACTION_HPP( RemoveNodeUI );
+	
 	RemoveNodeUI();
 };
 
