@@ -94,7 +94,7 @@ int vglImporter::DoImport( const TCHAR * name, ImpInterface *ii, Interface *i, B
 	{
 		// Prompt the user with our dialogbox, and get all the options.
 		if ( !DialogBoxParam( hInstance, MAKEINTRESOURCE( IDD_PANEL ),
-			i->GetMAXHWnd(), vglImporterOptionsDlgProc, ( LPARAM )this ) )
+			i->GetMAXHWnd(), reinterpret_cast<DLGPROC>(vglImporterOptionsDlgProc), ( LPARAM )this ) )
 		{
 			return IMPEXP_CANCEL;
 		}

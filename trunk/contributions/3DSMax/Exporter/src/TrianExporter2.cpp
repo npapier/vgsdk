@@ -13,6 +13,9 @@
 #include <strclass.h>
 #include <IL/il.h>
 #include <IL/ilu.h>
+// undef because PI is already define by previous include (only in x64).
+#undef PI
+#undef PI_2
 #include <vgm/Utilities.hpp>
 
 
