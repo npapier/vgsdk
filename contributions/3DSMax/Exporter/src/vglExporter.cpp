@@ -199,7 +199,7 @@ int	vglExporter::DoExport( const TCHAR *name, ExpInterface *ei, Interface *i, BO
 	{
 		// Prompt the user with our dialogbox, and get all the options.
 		if ( !DialogBoxParam( hInstance, MAKEINTRESOURCE( IDD_PANEL ),
-			 i->GetMAXHWnd(), vglExporterOptionsDlgProc, ( LPARAM )this ) )
+			 i->GetMAXHWnd(), reinterpret_cast<DLGPROC>(vglExporterOptionsDlgProc), ( LPARAM )this ) ) //HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		{
 			return 1;
 		}
