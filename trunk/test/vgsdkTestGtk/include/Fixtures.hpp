@@ -27,6 +27,18 @@ class VgTestModel : public ::testing::TestWithParam<std::string>
 	virtual void TearDown();
 };
 
+
+/**
+* @brief Fixtures for test on COLLADA model (VgTestCollada testsuite)
+*/
+class VgTestCollada : public ::testing::TestWithParam<std::string>
+{
+	protected:
+	virtual void SetUp();
+
+	virtual void TearDown();
+};
+
 std::string files[];
 
 

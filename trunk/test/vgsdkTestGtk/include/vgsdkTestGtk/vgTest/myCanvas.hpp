@@ -65,6 +65,8 @@ namespace vgTest
 
 	const bool loadCollada( const Glib::ustring & pathfilename );
 
+	const bool loadOpenCollada( const Glib::ustring & pathfilename );
+
 	const bool loadObj( const Glib::ustring & pathfilename );
 
 	const bool loadTrian( const Glib::ustring & pathfilename );

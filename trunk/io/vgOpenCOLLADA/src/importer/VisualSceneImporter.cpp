@@ -49,9 +49,8 @@ m_mapMaterial( reader->getMapMaterial() )
 void VisualSceneImporter::createNode(const COLLADAFW::Node* node, vgd::Shp< vgd::node::Group > vgsdkNode, std::string name)
 {
 	vgd::Shp< vgd::node::Group > vgsdkSubNode;
-	//if direct child of the rootnode, we create a TransformSeparator (to prevent from geometry transformation..)
-	//@todo optimize it, don't put transformSeparator if not needed
-	if(true /*vgsdkNode == m_group*/)
+	//if current node contain one or more geometrical transformation, we create a TransformSeparator (to prevent from geometry transformation..)
+	if( node->getTransformations().getCount() > 0 )
 	{
 		vgsdkSubNode = vgd::node::TransformSeparator::create(node->getName());
 	}

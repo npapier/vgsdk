@@ -20,6 +20,8 @@
 #include <vgSDL/event/device/joystick.hpp>
 
 #include <vgObj/Loader.hpp>
+#include <vgOpenCOLLADA/importer/Loader.hpp>
+#include <vgOpenCOLLADA/convenience.hpp>
 #include <vgTrian/Loader.hpp>
 #include <vgd/basic/Image.hpp>
 
@@ -132,7 +134,7 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 	}
 	else if ( extension.compare( ".dae" ) == 0 )
 	{
-		bRetVal = loadCollada( pathfilename );
+		bRetVal = loadOpenCollada( pathfilename );
 	}
 	else if( extension.compare( ".obj" ) == 0 )
 	{
@@ -178,6 +180,32 @@ const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
 
 	return retVal;*/
 	return false;
+}
+
+const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename )
+{
+	// Load .dae
+	vgOpenCOLLADA::LOAD_TYPE loadType = vgOpenCOLLADA::LOAD_ALL;
+
+	vgOpenCOLLADA::importer::Loader loader(loadType);
+	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+	
+	try
+	{
+		retVal = loader.load( pathfilename.c_str() );
+	}
+	catch(std::runtime_error e)
+	{
+		return false;
+	}
+
+	if ( retVal.first )
+	{
+		// Setup scene
+		getScene()->addChild( retVal.second );
+	}
+
+	return retVal.first;
 }
 
 const bool myCanvas::loadObj( const Glib::ustring & pathfilename )

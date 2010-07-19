@@ -68,6 +68,19 @@ void SelectedNode::setAction( ActionOnNode action )
 
 vgd::Shp< std::list< vgd::Shp< HiddenNode > > > SelectedNode::getHiddenNodeList()
 {
+	std::list< vgd::Shp < vgAlg::actions::HiddenNode > >::iterator it = m_hiddenNodes->begin();
+	int i = 0;
+	for( it; it != m_hiddenNodes->end(); it++ )
+	{
+		if( !(*it)->getNode() )
+		{
+			std::list< vgd::Shp < vgAlg::actions::HiddenNode > >::iterator iter = it;
+			it++;
+			iter->reset();
+			m_hiddenNodes->erase( iter );
+		}
+	}
+
 	return m_hiddenNodes;
 }
 

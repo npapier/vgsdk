@@ -41,7 +41,12 @@ void ShowNode::execute()
 	hiddenNode->restorePrimitives();
 
 	vgAlg::actions::SelectedNode::getSelectedNodeObject()->getHiddenNodeList()->remove( hiddenNode );
-	vgDebug::get().logStatus( "Node %s restored.", hiddenNode->getNode()->getName().c_str() );
+
+	if( hiddenNode->getNode() )
+	{
+		vgDebug::get().logStatus( "Node %s restored.", hiddenNode->getNode()->getName().c_str() );
+	}
+
 	hiddenNode.reset();
 
 	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
