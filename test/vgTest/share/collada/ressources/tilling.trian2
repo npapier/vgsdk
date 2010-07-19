@@ -1,0 +1,39 @@
+vgsdkExporter100
+materialList 1
+material S
+ambient 0.588 0.588 0.588
+diffuse 0.588 0.588 0.588
+specular 0.9 0.9 0.9
+emission 0 0 0
+specularLevel 0
+glossiness 0.1
+transparency 0
+textureMaps 1
+texture Bitmap
+image trian2_cathedrale.png
+uvtrans
+1 0 0 0
+0 1 0 0
+0 0 1 0
+0 0 0 1
+texTiling uWrap vWrap 
+mesh P
+materialIndex 0
+vertex 4
+50 50 0
+-50 -50 0
+-50 50 0
+50 -50 0
+normal 4
+0 0 1
+0 0 1
+0 0 1
+0 0 1
+texCoord 4
+1 1
+0 0
+0 1
+1 0
+triangles 2
+0 1 2
+1 0 3

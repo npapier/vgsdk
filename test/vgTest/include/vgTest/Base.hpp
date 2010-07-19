@@ -8,6 +8,8 @@
 
 #include "vgTest/vgTest.hpp"
 
+#include <gtest/gtest.h>
+
 #include <list>
 #include <vgd/Shp.hpp>
 

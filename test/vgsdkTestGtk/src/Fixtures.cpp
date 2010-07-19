@@ -18,6 +18,19 @@ void VgTestModel::TearDown()
 
 INSTANTIATE_TEST_CASE_P(FileList, VgTestModel, testing::ValuesIn(vgTest::createModelList()));
 
+
+//Test Suite VgTestCollada
+void VgTestCollada::SetUp()
+{
+}
+
+void VgTestCollada::TearDown()
+{
+}
+
+INSTANTIATE_TEST_CASE_P(FileList, VgTestCollada, testing::ValuesIn(vgTest::createModelList( true )));
+
+
 //Test Suite VgTestShape
 void VgTestShape::SetUp()
 {
