@@ -9,7 +9,7 @@
 /** 
  * @namespace vgITK
  * 
- * @brief (V)ersatile (G)raphical ITK
+ * @brief (V)ersatile (G)raphical (ITK)
  *
  * vgITK is a collection of functions to :
  * - create an itk image from a vgsdk image (see vgd::basic::IImage). The buffer is shared and owned by vgsdk.

@@ -145,14 +145,14 @@ Video::Video( const std::string& pathFilename )
 		return;
 
 	// Determine required buffer size and allocate buffer
-	numBytes = avpicture_get_size(	PIX_FMT_RGBA32, //PIX_FMT_RGB24,
+	numBytes = avpicture_get_size(	PIX_FMT_RGBA, //PIX_FMT_RGB24,
 									pCodecCtx->width,
 									pCodecCtx->height );
 	// @todo uses new
 	buffer = static_cast< uint8_t * >( malloc(numBytes) );
 
 	// Assign appropriate parts of buffer to image planes in pFrameRGB
-	avpicture_fill((AVPicture *)pFrameRGB, buffer, PIX_FMT_RGBA32, //PIX_FMT_RGB24,
+	avpicture_fill((AVPicture *)pFrameRGB, buffer, PIX_FMT_RGBA, //PIX_FMT_RGB24,
 					pCodecCtx->width, pCodecCtx->height);
 
 	//
@@ -215,7 +215,7 @@ const bool Video::next()
 
 					img_convert_ctx = sws_getContext(
 											w, h, pCodecCtx->pix_fmt,
-											w, h, PIX_FMT_RGBA32/*PIX_FMT_RGB24*/,
+											w, h, PIX_FMT_RGBA/*PIX_FMT_RGB24*/,
 											SWS_BICUBIC, //SWS_FAST_BILINEAR, //SWS_BICUBIC,
 											NULL, NULL, NULL);
 
