@@ -25,7 +25,7 @@ struct VGUI_API PasteNode : public IActionUI
 
 	PasteNode();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

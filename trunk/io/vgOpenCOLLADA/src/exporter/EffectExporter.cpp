@@ -17,9 +17,10 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-EffectExporter::EffectExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap ) :
+EffectExporter::EffectExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings ) :
 COLLADASW::LibraryEffects ( streamWriter ),
-m_collectedMap( collectedMap )
+m_collectedMap( collectedMap ),
+m_exportSettings( exportSettings )
 {
 }
 
@@ -28,14 +29,22 @@ void EffectExporter::doExport()
 	vgDebug::get().logDebug("Exporting effects");
 	openLibrary();
 
-	typedef collectedMapType::right_map::const_iterator right_const_iterator;
-
-	for( right_const_iterator right_iter = m_collectedMap.right.begin(), iend = m_collectedMap.right.end();
-		 right_iter != iend; ++right_iter )
+	if( m_exportSettings.getExportLevel() > GEOMETRY )
 	{
-		vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial = right_iter->first;
+		typedef collectedMapType::right_map::const_iterator right_const_iterator;
+
+		for( right_const_iterator right_iter = m_collectedMap.right.begin(), iend = m_collectedMap.right.end();
+			 right_iter != iend; ++right_iter )
+		{
+			vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial = right_iter->first;
+			exportSimpleEffect( collectedMaterial );
+		}
+	}
+	else
+	{
+		vgd::Shp< vge::technique::CollectedMaterial > collectedMaterial = vgd::makeShp( new vge::technique::CollectedMaterial( vgd::node::Material::createWhole(), vgd::node::Texture2D::createWhole() ) );
 		exportSimpleEffect( collectedMaterial );
-	}	
+	}
 
 	closeLibrary();
 }
@@ -62,7 +71,7 @@ void EffectExporter::exportSimpleEffect( vgd::Shp< vge::technique::CollectedMate
 
 		exportColorEffect( material, effectProfile);
 
-		if( texture )
+		if( texture && m_exportSettings.getExportLevel() > MATERIAL )
 		{
 			exportTextureEffect( collectedMaterial, effectProfile );
 		}

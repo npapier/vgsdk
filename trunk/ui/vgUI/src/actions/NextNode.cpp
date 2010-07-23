@@ -25,7 +25,7 @@ IActionUI( "Edit/NextNode", "Next", "NextNode", NEXT, "<control>Down", new vgAlg
 
 
 
-const bool NextNode::isValide( State state ) const
+const bool NextNode::isValide( State state )
 {
 	if( state.getLocation() == TREE )
 	{

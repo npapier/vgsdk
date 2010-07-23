@@ -25,7 +25,7 @@ IActionUI( "Edit/CopyNode", "Copy", "CopyNode", COPY, "<control>C", new vgAlg::a
 
 
 
-const bool CopyNode::isValide( State state ) const
+const bool CopyNode::isValide( State state )
 {
 	return ( state.getSelectedNode() && !state.isRoot() );
 }

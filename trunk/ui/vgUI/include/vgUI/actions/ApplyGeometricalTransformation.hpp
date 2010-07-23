@@ -25,7 +25,7 @@ struct VGUI_API ApplyGeometricalTransformation : public IActionUI
 	
 	ApplyGeometricalTransformation();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

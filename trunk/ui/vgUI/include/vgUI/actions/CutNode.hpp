@@ -25,7 +25,7 @@ struct VGUI_API CutNode : public IActionUI
 	
 	CutNode();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

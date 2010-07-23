@@ -4,9 +4,9 @@
 // Author Maxime Peresson
 
 
-#include "vgUI/actions/ExportNode.hpp"
+#include "vgUI/actions/Triangulate.hpp"
 
-#include <vgAlg/actions/ExportNode.hpp>
+#include <vgAlg/actions/Triangulate.hpp>
 
 
 namespace vgUI
@@ -15,16 +15,19 @@ namespace vgUI
 namespace actions
 {
 
-ExportNode::ExportNode( ) :
-IActionUI( "ExportNode", "Export", "ExportNode", EXPORT, "", new vgAlg::actions::ExportNode() )
+META_ACTION_CPP( Triangulate, 25 )
+
+
+Triangulate::Triangulate( ) :
+IActionUI( "Transform/Triangulate", "Triangulate", "Triangulate", DEFAULT, "", new vgAlg::actions::Triangulate() )
 {
 }
 
 
 
-const bool ExportNode::isValide( State state ) const
+const bool Triangulate::isValide( State state )
 {
-	if( state.getSelectedNode() )
+	if( state.isShape() )
 	{
 		return true;
 	}

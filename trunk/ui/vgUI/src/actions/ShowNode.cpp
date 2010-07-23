@@ -31,7 +31,7 @@ m_hiddenNode( hiddenNode )
 
 
 
-const bool ShowNode::isValide( State state ) const
+const bool ShowNode::isValide( State state )
 {
 	vgd::Shp < vgAlg::actions::HiddenNode > hiddenNode = m_hiddenNode.lock();
 	if( hiddenNode )

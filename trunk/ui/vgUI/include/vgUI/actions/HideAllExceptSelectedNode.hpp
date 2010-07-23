@@ -25,7 +25,7 @@ struct VGUI_API HideAllExceptSelectedNode : public IActionUI
 
 	HideAllExceptSelectedNode();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

@@ -25,7 +25,7 @@ IActionUI( "Visibility/HideAllNode", "Hide all", "HideAllNode", DEFAULT, "", new
 
 
 
-const bool HideAllNode::isValide( State state ) const
+const bool HideAllNode::isValide( State state )
 {
 	if( state.getNumberOfDisplayedNode() > 0 )
 	{

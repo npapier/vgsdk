@@ -20,14 +20,23 @@ namespace ui
 META_ACTION_CPP( ExportNodeUI, 41 );
 
 
-ExportNodeUI::ExportNodeUI()
+ExportNodeUI::ExportNodeUI() :
+IActionUI( "ExportNode", "Export", "ExportNode", vgUI::actions::EXPORT, "", new vgGTK::actions::alg::ExportNode() )
 {
-	m_menuContrib = "ExportNode";
-	m_name = "Export";
-	m_id = "ExportNode";
-	m_icon = vgUI::actions::EXPORT;
-	m_accelKey = "";
-	m_action = vgd::makeShp( new vgGTK::actions::alg::ExportNode() );
+}
+
+
+
+const bool ExportNodeUI::isValide( vgUI::actions::State state )
+{
+        if( state.getSelectedNode() )
+        {
+                return true;
+        }
+        else
+        {
+                return false;
+        }
 }
 
 

@@ -11,8 +11,8 @@
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
 #include <vgd/node/Group.hpp>
-
 #include <vge/technique/CollectNode.hpp>
+#include <vgOpenCOLLADA/exporter/ExportSettings.hpp>
 
 #include "COLLADASWLibraryVisualScenes.h"
 
@@ -29,12 +29,13 @@ typedef vge::technique::collectedMapType	collectedMapType;
  */
 struct VGOPENCOLLADA_API VisualSceneExporter : public COLLADASW::LibraryVisualScenes
 {
-	VisualSceneExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap );
+	VisualSceneExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings );
 
 	void doExport();
 
 private:
 	collectedMapType				m_collectedMap;
+	ExportSettings					m_exportSettings;
 
 	static const std::string NODE_ID_PRAEFIX;
 };

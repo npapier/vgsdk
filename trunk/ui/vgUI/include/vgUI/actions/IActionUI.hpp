@@ -37,7 +37,7 @@ struct VGUI_API IActionUI
 	 *
 	 * @param filter	The filter with all information about current state.
 	 */
-	virtual const bool isValide( State state ) const = 0 ;
+	virtual const bool isValide( State state ) = 0 ;
 
 	const std::string					getMenuContrib() const;
 	const std::vector< std::string >	getMenuContribList() const;
@@ -46,6 +46,7 @@ struct VGUI_API IActionUI
 	const Icons							getIcon() const;
 	const std::string					getAccelKey() const;
 	vgAlg::actions::IAction*			getAction() const;
+
 
 protected:
 

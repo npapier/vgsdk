@@ -16,6 +16,8 @@
 
 #include <vge/technique/CollectNode.hpp>
 
+#include <vgOpenCOLLADA/exporter/ExportSettings.hpp>
+
 namespace vgOpenCOLLADA
 {
 
@@ -29,7 +31,7 @@ typedef vge::technique::collectedMapType	collectedMapType;
  */
 struct VGOPENCOLLADA_API ImageExporter : public COLLADASW::LibraryImages
 {
-	ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, std::string filepath );
+	ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, std::string filepath, ExportSettings exportSettings );
 
 	/**
 	 * @brief start exporting
@@ -39,6 +41,7 @@ struct VGOPENCOLLADA_API ImageExporter : public COLLADASW::LibraryImages
 private:
 	collectedMapType					m_collectedMap;
 	boost::filesystem::path				m_outputFilePath;
+	ExportSettings						m_exportSettings;
 	std::string							m_imageDirectory;
 	std::string							m_imageDirectoryName;
 };

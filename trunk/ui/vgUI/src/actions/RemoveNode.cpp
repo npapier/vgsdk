@@ -23,7 +23,7 @@ IActionUI( "Edit/RemoveNode", "Remove", "RemoveNode", REMOVE, "<control>Delete",
 
 
 
-const bool RemoveNode::isValide( State state ) const
+const bool RemoveNode::isValide( State state )
 {
 	if( state.getSelectedNode() && !state.isRoot() )
 	{

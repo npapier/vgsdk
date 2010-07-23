@@ -23,7 +23,7 @@ struct VGUI_API RemoveNode : public IActionUI
 {
 	RemoveNode();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

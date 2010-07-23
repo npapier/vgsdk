@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGUI_ACTIONS_EXPORTNODE_HPP
-#define _VGUI_ACTIONS_EXPORTNODE_HPP
+#ifndef _VGUI_ACTIONS_TRIANGULATE_HPP
+#define _VGUI_ACTIONS_TRIANGULATE_HPP
 
 
 #include "vgUI/vgUI.hpp"
@@ -19,11 +19,13 @@ namespace actions
 {
 
 
-struct VGUI_API ExportNode : public IActionUI
+struct VGUI_API Triangulate : public IActionUI
 {
-	ExportNode();
+	META_ACTION_HPP( Triangulate );
 
-	virtual const bool isValide( State state ) const;
+	Triangulate();
+
+	virtual const bool isValide( State state );
 
 };
 
@@ -31,4 +33,4 @@ struct VGUI_API ExportNode : public IActionUI
 
 } // namespace vgUI
 
-#endif //#ifndef _VGUI_ACTIONS_EXPORTNODE_HPP
+#endif //#ifndef _VGUI_ACTIONS_INVERTNORMALORIENTATION_HPP

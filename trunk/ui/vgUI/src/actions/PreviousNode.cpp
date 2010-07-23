@@ -25,7 +25,7 @@ IActionUI( "Edit/PreviousNode", "Previous", "PreviousNode", PREVIOUS, "<control>
 
 
 
-const bool PreviousNode::isValide( State state ) const
+const bool PreviousNode::isValide( State state )
 {
 	if( state.getLocation() == TREE )
 	{

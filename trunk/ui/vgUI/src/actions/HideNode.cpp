@@ -25,7 +25,7 @@ IActionUI( "Visibility/HideNode", "Hide", "HideNode", DEFAULT, "", new vgAlg::ac
 
 
 
-const bool HideNode::isValide( State state ) const
+const bool HideNode::isValide( State state )
 {
 	if( state.isShape() && !state.isHidden() )
 	{

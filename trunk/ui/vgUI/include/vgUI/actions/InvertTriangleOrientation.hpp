@@ -25,7 +25,7 @@ struct VGUI_API InvertTriangleOrientation : public IActionUI
 
 	InvertTriangleOrientation();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

@@ -3,16 +3,14 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGALG_ACTIONS_EXPORTNODE_HPP
-#define _VGALG_ACTIONS_EXPORTNODE_HPP
+#ifndef _VGALG_ACTIONS_TRIANGULATE_HPP
+#define _VGALG_ACTIONS_TRIANGULATE_HPP
 
 
 #include "vgAlg/vgAlg.hpp"
 
 #include <vgAlg/actions/IAction.hpp>
 #include <vgAlg/actions/input/INodeInput.hpp>
-#include <vgAlg/actions/input/IParentInput.hpp>
-#include <vgAlg/actions/input/IStringInput.hpp>
 
 
 namespace vgAlg
@@ -22,12 +20,12 @@ namespace actions
 {
 
 /**
- * @brief	Export the node.
+ * @brief	Triangulate primitives of the node.
  */
-struct VGALG_API ExportNode : public IAction, input::INodeInput, input::IParentInput, input::IStringInput
+struct VGALG_API Triangulate : public IAction, input::INodeInput
 {
 
-	ExportNode();
+	Triangulate();
 
 	virtual void execute();
 
@@ -37,4 +35,4 @@ struct VGALG_API ExportNode : public IAction, input::INodeInput, input::IParentI
 
 } // namespace vgAlg
 
-#endif //#ifndef _VGALG_ACTIONS_EXPORTNODE_HPP
+#endif //#ifndef _VGALG_ACTIONS_INVERTTRIANGLEORIENTATION_HPP

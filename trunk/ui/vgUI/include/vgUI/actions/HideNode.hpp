@@ -25,7 +25,7 @@ struct VGUI_API HideNode : public IActionUI
 
 	HideNode();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

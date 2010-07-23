@@ -15,6 +15,8 @@
 
 #include <vge/technique/CollectNode.hpp>
 
+#include <vgOpenCOLLADA/exporter/ExportSettings.hpp>
+
 #include "COLLADASWLibraryGeometries.h"
 #include "COLLADASWPrimitves.h"
 
@@ -31,7 +33,7 @@ typedef vge::technique::collectedMapType	collectedMapType;
  */
 struct VGOPENCOLLADA_API GeometryExporter : public COLLADASW::LibraryGeometries
 {
-	GeometryExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap );
+	GeometryExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings	exportSettings );
 
 	/**
 	 * @brief start exporting
@@ -141,6 +143,7 @@ struct VGOPENCOLLADA_API GeometryExporter : public COLLADASW::LibraryGeometries
 private:
 	collectedMapType					m_collectedMap;
 	std::string							m_currentGeometryName;
+	ExportSettings						m_exportSettings;
 	std::vector<std::string>			m_texCoordsList;
 
 	std::set< std::string >				m_geomIds;

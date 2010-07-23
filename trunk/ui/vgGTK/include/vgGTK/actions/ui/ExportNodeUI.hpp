@@ -9,7 +9,7 @@
 #include "vgGTK/vgGTK.hpp"
 
 #include <vgUI/actions/ActionsRegistry.hpp>
-#include <vgUI/actions/ExportNode.hpp>
+#include <vgUI/actions/IActionUI.hpp>
 
 namespace vgGTK
 {
@@ -25,11 +25,13 @@ namespace ui
 /**
  * @brief ActionUI to popup remove confirmation.
  */
-	struct VGGTK_API ExportNodeUI : public vgUI::actions::ExportNode
+	struct VGGTK_API ExportNodeUI : public vgUI::actions::IActionUI
 {
 	META_ACTION_HPP( ExportNodeUI );
 	
 	ExportNodeUI();
+
+	virtual const bool isValide( vgUI::actions::State state );
 };
 
 

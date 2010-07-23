@@ -44,6 +44,19 @@ VGALG_API void invertPrimitiveOrientation( vgd::Shp< vgd::node::VertexShape > ve
  */
 VGALG_API void invertNormalOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape );
 
+
+
+/**
+ * @brief Transform Quad primitives to Triangle.
+ * 
+ * @param vertexShape		the vertexShape node
+ * 
+ * This method transforms QUAD primitives to TRIANGLE.
+ */
+VGALG_API void triangulate( vgd::Shp< vgd::node::VertexShape > vertexShape );
+
+
+
 } // namespace node
 
 } //namespace vgAlg

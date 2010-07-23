@@ -25,7 +25,7 @@ IActionUI( "Transform/ApplyGeometricalTransformation", "ApplyGeometricalTransfor
 
 
 
-const bool ApplyGeometricalTransformation::isValide( State state ) const
+const bool ApplyGeometricalTransformation::isValide( State state )
 {
 	return true;
 }
