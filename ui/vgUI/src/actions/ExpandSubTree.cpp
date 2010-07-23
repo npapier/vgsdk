@@ -15,7 +15,7 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( ExpandSubTree, 40 )
+META_ACTION_CPP( ExpandSubTree, 2 )
 
 
 ExpandSubTree::ExpandSubTree( ) :
@@ -25,7 +25,7 @@ IActionUI( "ExpandSubTree", "Expand", "ExpandSubTree", DEFAULT, "", new vgAlg::a
 
 
 
-const bool ExpandSubTree::isValide( State state ) const
+const bool ExpandSubTree::isValide( State state )
 {
 	if( state.getLocation() == TREE && state.isGroup() )
 	{

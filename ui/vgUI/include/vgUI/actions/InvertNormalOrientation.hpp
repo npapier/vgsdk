@@ -25,7 +25,7 @@ struct VGUI_API InvertNormalOrientation : public IActionUI
 
 	InvertNormalOrientation();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

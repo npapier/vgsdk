@@ -4,18 +4,13 @@
 // Author Maxime Peresson
 
 
-#include "vgAlg/actions/ExportNode.hpp"
-
-#include <vgAlg/actions/SelectedNode.hpp>
-
-#include <vgd/node/Node.hpp>
-#include <vgd/Shp.hpp>
+#include "vgOpenCOLLADA/actions/ExportNode.hpp"
 
 #include <vgDebug/convenience.hpp>
 
 #include <vgOpenCOLLADA/exporter/SceneExporter.hpp>
 
-namespace vgAlg
+namespace vgOpenCOLLADA
 {
 
 namespace actions
@@ -39,12 +34,12 @@ void ExportNode::execute()
 
 	if( node->isAKindOf< vgd::node::Group >() )
 	{
-		vgOpenCOLLADA::exporter::SceneExporter exporter( m_stringParam, vgd::dynamic_pointer_cast< vgd::node::Group >( node ) );
+		vgOpenCOLLADA::exporter::SceneExporter exporter( m_exportSettings, vgd::dynamic_pointer_cast< vgd::node::Group >( node ) );
 		exportSuccess = exporter.doExport();
 	}
 	else
 	{
-		vgOpenCOLLADA::exporter::SceneExporter exporter( m_stringParam, parent );
+		vgOpenCOLLADA::exporter::SceneExporter exporter( m_exportSettings, parent );
 		exportSuccess = exporter.doExport();
 	}		
 	
@@ -60,6 +55,13 @@ void ExportNode::execute()
 
 
 
+void ExportNode::setExportSettings( vgOpenCOLLADA::exporter::ExportSettings exportSettings )
+{
+	m_exportSettings = exportSettings;
+}
+
+
+
 } // namespace actions
 
-} // namespace vgAlg
+} // namespace vgOpenCOLLADA

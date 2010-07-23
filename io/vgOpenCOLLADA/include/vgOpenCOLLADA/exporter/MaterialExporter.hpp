@@ -11,8 +11,8 @@
 #include <boost/bimap.hpp>
 
 #include <vgd/node/Group.hpp>
-
 #include <vge/technique/CollectNode.hpp>
+#include <vgOpenCOLLADA/exporter/ExportSettings.hpp>
 
 #include "COLLADASWLibraryMaterials.h"
 
@@ -31,7 +31,7 @@ struct SceneExporter;
  */
 struct VGOPENCOLLADA_API MaterialExporter : public COLLADASW::LibraryMaterials
 {
-	MaterialExporter(COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap );
+	MaterialExporter(COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings );
 
 	/**
 	 * @brief start exporting
@@ -40,6 +40,7 @@ struct VGOPENCOLLADA_API MaterialExporter : public COLLADASW::LibraryMaterials
 
 private:
 	collectedMapType	m_collectedMap;
+	ExportSettings		m_exportSettings;
 };
 
 } // namespace exporter

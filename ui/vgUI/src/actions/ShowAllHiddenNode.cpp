@@ -25,7 +25,7 @@ IActionUI( "Visibility/ShowAllHiddenNode", "Show all", "ShowAllHiddenNode", DEFA
 
 
 
-const bool ShowAllHiddenNode::isValide( State state ) const
+const bool ShowAllHiddenNode::isValide( State state )
 {
 	if( state.getNumberOfHiddenNode() > 0 )
 	{

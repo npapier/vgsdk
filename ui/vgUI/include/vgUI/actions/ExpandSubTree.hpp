@@ -25,7 +25,7 @@ struct VGUI_API ExpandSubTree : public IActionUI
 
 	ExpandSubTree();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

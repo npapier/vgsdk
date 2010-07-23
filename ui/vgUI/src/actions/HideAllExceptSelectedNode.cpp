@@ -25,7 +25,7 @@ IActionUI( "Visibility/HideAllExceptSelectedNode", "Hide all except selection", 
 
 
 
-const bool HideAllExceptSelectedNode::isValide( State state ) const
+const bool HideAllExceptSelectedNode::isValide( State state )
 {
 	if( state.getNumberOfDisplayedNode() > 1 && state.isShape() )
 	{

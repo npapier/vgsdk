@@ -25,7 +25,7 @@ struct VGUI_API SetOptionalToDefault : public IActionUI
 
 	SetOptionalToDefault();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

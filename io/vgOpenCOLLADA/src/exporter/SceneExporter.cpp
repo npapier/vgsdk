@@ -8,6 +8,9 @@
 #include <COLLADASWAsset.h>
 #include "COLLADASWScene.h"
 
+#include <vgAlg/actions/ApplyGeometricalTransformation.hpp>
+#include <vgAlg/actions/Triangulate.hpp>
+
 #include <vgDebug/Global.hpp>
 
 #include <vge/technique/CollectNode.hpp>
@@ -20,10 +23,11 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
-SceneExporter::SceneExporter( std::string filepath, vgd::Shp< vgd::node::Group > rootNode ) :
-m_streamWriter ( COLLADASW::NativeString (filepath), false ),
+SceneExporter::SceneExporter( ExportSettings exportSettings, vgd::Shp< vgd::node::Group > rootNode ) :
+m_streamWriter ( COLLADASW::NativeString ( exportSettings.getFilename() ), false ),
 m_rootNode ( rootNode ),
-m_outputFileUri( filepath )
+m_outputFileUri(  exportSettings.getFilename()  ),
+m_exportSettings( exportSettings )
 {
 }
 
@@ -45,6 +49,9 @@ bool SceneExporter::doExport()
 {
 	vgDebug::get().logDebug("Collecting nodes...");
 	collectNodes();
+
+	vgDebug::get().logDebug("Preparing scene to be exported...");
+	prepareExport();
 	
 	vgDebug::get().logDebug("Creating COLLADA document...");
 	m_streamWriter.startDocument();
@@ -74,13 +81,48 @@ bool SceneExporter::doExport()
 
 
 
+void SceneExporter::prepareExport()
+{
+	if( m_exportSettings.getApplyGeometricalTransformation() )
+	{
+		vgAlg::actions::ApplyGeometricalTransformation action;
+		action.setRoot( m_rootNode );
+		action.execute();
+	}
+
+	if( m_exportSettings.getTriangulate() )
+	{
+		typedef collectedMapType::left_map::const_iterator left_const_iterator;
+
+		for( left_const_iterator left_iter = m_collectedMap.left.begin(), iend = m_collectedMap.left.end();
+			 left_iter != iend; ++left_iter )
+		{
+			vgAlg::actions::Triangulate action;
+			action.setNode( left_iter->first->getShape() );
+			action.execute();
+		}		
+	}
+
+	if( m_exportSettings.getCounterClockwise() )
+	{
+
+	}
+
+	if( m_exportSettings.getEncrypt() )
+	{
+
+	}
+}
+
+
+
 void SceneExporter::loadExporter()
 {
-	m_effectExporter = new EffectExporter( &m_streamWriter, m_collectedMap );
-	m_materialExporter = new MaterialExporter( &m_streamWriter, m_collectedMap );
-	m_imageExporter = new ImageExporter( &m_streamWriter, m_collectedMap, m_outputFileUri );
-	m_geometryExporter = new GeometryExporter( &m_streamWriter, m_collectedMap );
-	m_visualSceneExporter = new VisualSceneExporter( &m_streamWriter, m_collectedMap );
+	m_effectExporter = new EffectExporter( &m_streamWriter, m_collectedMap, m_exportSettings );
+	m_materialExporter = new MaterialExporter( &m_streamWriter, m_collectedMap, m_exportSettings );
+	m_imageExporter = new ImageExporter( &m_streamWriter, m_collectedMap, m_outputFileUri, m_exportSettings );
+	m_geometryExporter = new GeometryExporter( &m_streamWriter, m_collectedMap, m_exportSettings );
+	m_visualSceneExporter = new VisualSceneExporter( &m_streamWriter, m_collectedMap, m_exportSettings );
 }
 
 
@@ -134,7 +176,10 @@ void SceneExporter::exportAsset()
 
 void SceneExporter::exportImage()
 {
-	m_imageExporter->doExport();
+	if( m_exportSettings.getExportLevel() > MATERIAL )
+	{
+		m_imageExporter->doExport();
+	}
 }
 
 

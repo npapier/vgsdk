@@ -25,7 +25,7 @@ struct VGUI_API PreviousNode : public IActionUI
 
 	PreviousNode();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

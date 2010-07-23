@@ -19,10 +19,11 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-ImageExporter::ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, std::string filepath ) 
+ImageExporter::ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, std::string filepath, ExportSettings exportSettings ) 
 :	COLLADASW::LibraryImages ( streamWriter ),
 	m_collectedMap( collectedMap ),
-	m_outputFilePath( filepath )
+	m_outputFilePath( filepath ),
+	m_exportSettings( exportSettings )
 {
 	std::string	fileName = m_outputFilePath.stem();
 	boost::filesystem::path	directory = m_outputFilePath.parent_path();

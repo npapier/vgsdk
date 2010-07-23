@@ -25,10 +25,11 @@ IActionUI( "GetNodeInTree", "Select", "GetNodeInTree", DEFAULT, "", new vgAlg::a
 
 
 
-const bool GetNodeInTree::isValide( State state ) const
+const bool GetNodeInTree::isValide( State state )
 {
 	if( state.getSelectedNode() && state.getLocation() == CANVAS )
 	{
+		m_name = "Select " + state.getSelectedNode()->getName();
 		return true;
 	}
 	else

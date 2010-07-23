@@ -25,7 +25,7 @@ IActionUI( "Edit/PasteNode", "Paste", "PasteNode", PASTE, "<control>V", new vgAl
 
 
 
-const bool PasteNode::isValide( State state ) const
+const bool PasteNode::isValide( State state )
 {
 	if( state.getLocation() == TREE && state.hasAClipboardedNode() )
 	{

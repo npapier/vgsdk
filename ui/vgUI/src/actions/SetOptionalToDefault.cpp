@@ -25,7 +25,7 @@ IActionUI( "Transform/SetOptionalToDefault", "SetOptionalToDefault", "SetOptiona
 
 
 
-const bool SetOptionalToDefault::isValide( State state ) const
+const bool SetOptionalToDefault::isValide( State state )
 {
 	if( state.getSelectedNode() )
 	{

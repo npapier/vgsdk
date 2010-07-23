@@ -25,7 +25,7 @@ struct VGUI_API GetNodeInTree : public IActionUI
 
 	GetNodeInTree();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

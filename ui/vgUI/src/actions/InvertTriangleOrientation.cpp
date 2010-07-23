@@ -25,7 +25,7 @@ IActionUI( "Transform/InvertTriangleOrientation", "InvertTriangleOrientation", "
 
 
 
-const bool InvertTriangleOrientation::isValide( State state ) const
+const bool InvertTriangleOrientation::isValide( State state )
 {
 	if( state.isShape() )
 	{

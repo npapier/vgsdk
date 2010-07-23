@@ -25,7 +25,7 @@ struct VGUI_API ShowAllHiddenNode : public IActionUI
 
 	ShowAllHiddenNode();
 
-	virtual const bool isValide( State state ) const;
+	virtual const bool isValide( State state );
 
 };
 

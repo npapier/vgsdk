@@ -25,7 +25,7 @@ IActionUI( "Transform/InvertNormalOrientation", "InvertNormalOrientation", "Inve
 
 
 
-const bool InvertNormalOrientation::isValide( State state ) const
+const bool InvertNormalOrientation::isValide( State state )
 {
 	if( state.isShape() )
 	{

@@ -15,6 +15,8 @@
 
 #include <vge/technique/CollectNode.hpp>
 
+#include <vgOpenCOLLADA/exporter/ExportSettings.hpp>
+
 #include <COLLADASWLibraryEffects.h>
 
 namespace vgOpenCOLLADA
@@ -30,7 +32,7 @@ typedef vge::technique::collectedMapType	collectedMapType;
  */
 struct VGOPENCOLLADA_API EffectExporter : public COLLADASW::LibraryEffects
 {
-	EffectExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap );
+	EffectExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings );
 
 	/**
 	 * @brief start exporting
@@ -65,6 +67,7 @@ struct VGOPENCOLLADA_API EffectExporter : public COLLADASW::LibraryEffects
 private:
 	collectedMapType				m_collectedMap;
 	std::string						m_currentEffectName;
+	ExportSettings					m_exportSettings;
 };
 
 } // namespace exporter

@@ -91,6 +91,106 @@ void invertNormalOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape )
 
 
 
+void triangulate( vgd::Shp< vgd::node::VertexShape > vertexShape )
+{
+	vgd::field::EditorRW< vgd::field::MFUInt32 > vertexIndexRW = vertexShape->getFVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::TMultiField< vgd::node::Primitive > > primitiveRW = vertexShape->getFPrimitiveRW();
+
+	int32 j = 0;
+
+	std::vector< std::vector< int32 > > triVextexIndex;
+	int32 currentTri = 0;
+
+	std::vector< std::vector< int32 > > quadVextexIndex;
+	int32 currentQuad = 0;
+
+	// For each primitive, do
+	for (uint32 i = 0; i < primitiveRW->size(); i++)
+	{
+		vgd::node::Primitive curPrim = (*primitiveRW)[i];
+		if (curPrim.getType() == vgd::node::Primitive::TRIANGLES)
+		{
+			std::vector< int32 > vertexIndex;
+			int32 numIndices = curPrim.getNumIndices();
+			
+			for(int32 i = 0; i < numIndices; i++)
+			{
+				// Retrieves indices
+				const int32 index = (*vertexIndexRW)[j];
+				vertexIndex.push_back( index );
+
+				j++;
+			}
+			triVextexIndex.push_back( vertexIndex );
+		}
+		else if (curPrim.getType() == vgd::node::Primitive::QUADS)
+		{
+			std::vector< int32 > vertexIndex;
+			int32 numQuads = curPrim.getNumIndices() / 4;
+			
+			for(int32 i = 0; i < numQuads; i++)
+			{
+				// Retrieves indices
+				const int32 indexA = (*vertexIndexRW)[j];
+				const int32 indexB = (*vertexIndexRW)[j+1];
+				const int32 indexC = (*vertexIndexRW)[j+2];
+				const int32 indexD = (*vertexIndexRW)[j+3];
+
+				vertexIndex.push_back( indexA );
+				vertexIndex.push_back( indexB );
+				vertexIndex.push_back( indexC );
+
+				vertexIndex.push_back( indexA );
+				vertexIndex.push_back( indexC );
+				vertexIndex.push_back( indexD );
+
+				j += 4;
+			}
+			quadVextexIndex.push_back( vertexIndex );
+		}
+	}
+
+	j = 0 ;
+	vertexIndexRW->clear();
+
+	// For each primitive, do
+	for (uint32 i = 0; i < primitiveRW->size(); i++)
+	{
+		vgd::node::Primitive curPrim = (*primitiveRW)[i];
+		curPrim.setIndex( j );
+		if (curPrim.getType() == vgd::node::Primitive::TRIANGLES)
+		{
+			std::vector< int32 > vextexIndex = triVextexIndex[ currentTri ];
+			int32 numIndices = vextexIndex.size();
+			for(int32 i = 0; i < numIndices; i++)
+			{
+				vertexIndexRW->push_back( vextexIndex[ i ] );
+				j++;
+			}
+
+			curPrim.setNumIndices( j );
+			currentTri++;
+		}
+		else if (curPrim.getType() == vgd::node::Primitive::QUADS)
+		{
+			std::vector< int32 > vextexIndex = quadVextexIndex[ currentQuad ];
+			int32 numIndices = vextexIndex.size();
+			for(int32 i = 0; i < numIndices; i++)
+			{
+				vertexIndexRW->push_back( vextexIndex[ i ] );
+				j++;
+			}
+
+			curPrim.setNumIndices( j );
+			curPrim.setType( vgd::node::Primitive::TRIANGLES );
+			(*primitiveRW)[i] = curPrim;
+			currentQuad++;
+		}
+	}
+}
+
+
+
 } // namespace node
 
 } // namespace vgAlg

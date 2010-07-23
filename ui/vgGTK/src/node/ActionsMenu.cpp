@@ -45,25 +45,24 @@ ActionsMenu::ActionsMenu( POPUP_LOCATION location )
 	m_uiDefinition =
 		"<ui>"
 		"  <popup name='popup'>"
-		"    <menu action='InsertNode'/>"
-		"    <separator/>"
+		//"    <menu action='InsertNode'/>"
+		//"    <separator/>"
 		"  </popup>"
 		"</ui>";
 
 	m_uiManager->insert_action_group( m_actions );
 	m_uiManager->add_ui_from_string( m_uiDefinition );
 
-	m_actions->add( Gtk::Action::create("InsertNode", "Insert Node") );
+	//m_actions->add( Gtk::Action::create("InsertNode", "Insert Node") );
 
 
-	Gtk::Widget		* insertWidget	= m_uiManager->get_widget("/popup/InsertNode");
-	m_insertMenuItem				= dynamic_cast< Gtk::MenuItem * >( insertWidget );
+	//Gtk::Widget		* insertWidget	= m_uiManager->get_widget("/popup/InsertNode");
+	//m_insertMenuItem				= dynamic_cast< Gtk::MenuItem * >( insertWidget );
 
-	m_insertNode					= new InsertNode();
+	//m_insertNode					= new InsertNode();
 
-	m_insertMenuItem->set_submenu( *m_insertNode->getMenu() );
-	m_insertMenuItem->property_visible() = false;
-
+	//m_insertMenuItem->set_submenu( *m_insertNode->getMenu() );
+	//m_insertMenuItem->property_visible() = false;
 
 	m_actionsRegistry = vgUI::actions::ActionsRegistry::getActionsRegistry();
 	vgd::Shp< vgUI::actions::ActionsRegistry >	actionsRegistry = m_actionsRegistry.lock();
@@ -75,6 +74,18 @@ ActionsMenu::ActionsMenu( POPUP_LOCATION location )
 	{
 		manageMenu( actionsRegistry->getActionMap() );
 	}
+
+	m_insertMenuItem = new Gtk::MenuItem( "Insert node" );	
+	m_insertMenuItem->set_name( "InsertNode" );
+
+	m_rootMenu->append( *m_insertMenuItem );
+
+	m_insertNode = new InsertNode();
+
+	m_insertMenuItem->set_submenu( *m_insertNode->getMenu() );
+	m_insertMenuItem->property_visible() = false;
+
+	m_rootMenu->show_all();
 }
 
 
@@ -369,6 +380,7 @@ void ActionsMenu::applyState()
 	{
 		if( it->first->isValide( state ) )
 		{
+			it->second->set_label( it->first->getName() );
 			it->second->show();
 			setParams( it->first->getAction() );
 		}

@@ -20,9 +20,10 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-GeometryExporter::GeometryExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap )
+GeometryExporter::GeometryExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings )
 :	COLLADASW::LibraryGeometries ( streamWriter ),
-	m_collectedMap( collectedMap )
+	m_collectedMap( collectedMap ),
+	m_exportSettings( exportSettings )
 {
 }
 
@@ -95,13 +96,13 @@ void GeometryExporter::exportMesh( vgd::Shp< vge::technique::CollectedShape > co
 	}
 
 	std::string currentGeometryMaterialSymbol;
-	if( collectedMaterial->getMaterial() )
+	if( collectedMaterial->getMaterial() && m_exportSettings.getExportLevel() > GEOMETRY )
 	{
 		currentGeometryMaterialSymbol = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( collectedMaterial->getMaterial()->getName() ) ) + "_symbol";
 	}
 	else
 	{
-		currentGeometryMaterialSymbol = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( "default" ) ) + "_symbol";
+		currentGeometryMaterialSymbol = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( "DefaultWhole" ) ) + "_symbol";
 	}
 	collectedMaterial->setMaterialSymbol( currentGeometryMaterialSymbol );
 
@@ -112,7 +113,10 @@ void GeometryExporter::exportMesh( vgd::Shp< vge::technique::CollectedShape > co
 
 	exportPositions( vertexShape );
 	exportNormals( vertexShape );
-	exportTexCoords( vertexShape );
+	if( m_exportSettings.getExportLevel() > MATERIAL )
+	{
+		exportTexCoords( vertexShape );
+	}
 	exportVerticies( m_currentGeometryName );
 
 	vgd::field::EditorRO< vgd::field::MFPrimitive > primitives = vertexShape->getFPrimitiveRO();

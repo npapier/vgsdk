@@ -25,7 +25,7 @@ IActionUI( "Edit/CutNode", "Cut", "CutNode", CUT, "<control>X", new vgAlg::actio
 
 
 
-const bool CutNode::isValide( State state ) const
+const bool CutNode::isValide( State state )
 {
 	if( state.getSelectedNode() && !state.isRoot() )
 	{
