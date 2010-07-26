@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -240,7 +240,7 @@ const bool Video::next()
 					pCodecCtx->width,
 					pCodecCtx->height,
 					1,
-					IImage::BGRA,
+					IImage::RGBA,
 					IImage::UINT8,
 					pFrameRGB->data[0] );
 
