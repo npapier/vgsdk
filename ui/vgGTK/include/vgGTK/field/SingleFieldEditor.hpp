@@ -55,10 +55,11 @@ struct SingleFieldEditor : public FieldEditor
 	
 		typedef vgd::field::TSingleField< typename Widget::ValueType > FieldType;
 
-		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
+		vgd::field::EditorRO< FieldType > fieldEditor = m_fieldManager->getFieldRO< FieldType >( m_fieldName );
+		m_backupValue = fieldEditor->getValue();
+		fieldEditor.release();
 	
-		m_widget.setValue( fieldEditor.get()->getValue() );
-		m_backupValue = fieldEditor.get()->getValue();
+		m_widget.setValue( m_backupValue );
 	}
 
 	void rollback()
@@ -94,9 +95,9 @@ private:
 	
 		typedef vgd::field::TSingleField< typename Widget::ValueType > FieldType;
 		
-		vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName );
+		vgd::field::EditorRW< FieldType > fieldEditor = m_fieldManager->getFieldRW< FieldType >( m_fieldName );
 	
-		fieldEditor.get()->setValue( value );
+		fieldEditor->setValue( value );
 	}
 };
 
