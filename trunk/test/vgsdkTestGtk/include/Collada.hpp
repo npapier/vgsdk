@@ -68,8 +68,7 @@ TEST_P(VgTestCollada, LoadTest)
 	else
 	{
 		// do the test
-		//base->compareScreenShots();
-		macroCompareScreenShots(base);
+		base->compareScreenShots();
 
 		std::vector< std::string >::iterator it;
 		it = find( failedModels.begin(), failedModels.end(), path.filename() );
@@ -80,8 +79,7 @@ TEST_P(VgTestCollada, LoadTest)
 		}
 	}
 
-	//base->getLog()->addToGtest();
-	PutInGtestReport(base)
+	base->getLog()->addToGtest();
 }
 
 

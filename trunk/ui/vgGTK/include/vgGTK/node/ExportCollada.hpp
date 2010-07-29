@@ -46,7 +46,7 @@ private:
 	Gtk::Frame					m_miscFrame;
 	Gtk::CheckButton			m_applyGeometricalTransformation;
 	Gtk::CheckButton			m_triangulate;
-	Gtk::CheckButton			m_counterClockwise;
+	Gtk::CheckButton			m_invertPrimitiveOrientation;
 	Gtk::CheckButton			m_encrypt;
 	Gtk::ComboBoxText			m_exportLevelCombo;
 

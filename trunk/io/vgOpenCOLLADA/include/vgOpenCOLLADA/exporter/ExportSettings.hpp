@@ -30,12 +30,12 @@ struct VGOPENCOLLADA_API ExportSettings
 {
 	ExportSettings();
 
-	ExportSettings(	bool applyGeometricalTransformation, bool triangulate,	bool counterClockwise, 
+	ExportSettings(	bool applyGeometricalTransformation, bool triangulate,	bool invertPrimitiveOrientation, 
 		bool encrypt, ExportLevel exportLevel );
 
 	bool			getApplyGeometricalTransformation();
 	bool			getTriangulate();
-	bool			getCounterClockwise();
+	bool			getInvertPrimitiveOrientation();
 	bool			getEncrypt();
 	ExportLevel		getExportLevel();
 	std::string		getFilename();
@@ -45,7 +45,7 @@ struct VGOPENCOLLADA_API ExportSettings
 private:
 	bool			m_applyGeometricalTransformation;
 	bool			m_triangulate;
-	bool			m_counterClockwise;
+	bool			m_invertPrimitiveOrientation;
 	bool			m_encrypt;
 	ExportLevel		m_exportLevel;
 	std::string		m_filename;

@@ -37,7 +37,7 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 {
 
 	TPrimitiveImporter( std::vector< vgm::Vec3f > positions, std::vector< vgm::Vec3f > normals,
-		std::vector< vgm::Vec2f > texCoords, LOAD_TYPE loadType,
+		std::vector< std::vector< vgm::Vec2f > > texCoords, LOAD_TYPE loadType,
 		vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial,
 		vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive ) :
 	m_positions( positions ),
@@ -114,7 +114,7 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 		{
 			m_vertexShape->createTexUnits( 2, 0, 1 );	// @todo FIXME multitexture multiTexcoord
 			m_vertexShape->setTexCoordBinding( 0, vgd::node::BIND_PER_VERTEX );
-			m_editTextCoords = m_vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( 0 );
+			m_editTextCoords = m_vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( m_texCoords.size() );
 			m_editTextCoords->clear();
 			m_editTextCoords->reserve( m_primitivesNumber );
 		}
@@ -141,9 +141,13 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 
 		if ( m_hasTextCoords )
 		{
-			hash_me.push_back( m_texCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][0] );
-			hash_me.push_back( m_texCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][1] );
-			hash_me.push_back( m_texCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ][2] );
+			for( int i = 0; i < m_texCoords.size(); ++i)
+			{
+				hash_me.push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ][0] );
+				hash_me.push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ][1] );
+				hash_me.push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ][2] );
+			}			
+
 		}
 
 
@@ -163,7 +167,10 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 
 			if ( m_hasTextCoords )
 			{
-				m_editTextCoords->push_back( m_texCoords[ m_primitives->getUVCoordIndicesArray()[0]->getIndices()[j] ] );
+				for( int i = 0; i < m_texCoords.size(); ++i)
+				{
+					m_editTextCoords->push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ] );
+				}
 			}
 			
 			m_editVertexIndex->push_back( m_editPositions->size()-1 );
@@ -173,10 +180,10 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 	}
 
 protected:
-	std::vector< vgm::Vec3f >	m_positions;
-	std::vector< vgm::Vec3f >	m_normals;
-	std::vector< vgm::Vec2f >	m_texCoords;
-	LOAD_TYPE					m_loadType;
+	std::vector< vgm::Vec3f >						m_positions;
+	std::vector< vgm::Vec3f >						m_normals;
+	std::vector< std::vector< vgm::Vec2f > >		m_texCoords;
+	LOAD_TYPE										m_loadType;
 
 	const PrimitiveType*							m_primitives;
 	const COLLADAFW::UIntValuesArray&				m_positionIndices;
@@ -206,7 +213,7 @@ struct VGOPENCOLLADA_API PrimitivePolygonsImporter : TPrimitiveImporter< COLLADA
 {
 
 	PrimitivePolygonsImporter( std::vector< vgm::Vec3f > positions, std::vector< vgm::Vec3f > normals,
-		std::vector< vgm::Vec2f > texCoords, LOAD_TYPE loadType,
+		std::vector< std::vector< vgm::Vec2f > > texCoords, LOAD_TYPE loadType,
 		vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial,
 		vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive ) :
 	TPrimitiveImporter( positions, normals, texCoords, loadType, mapShapeMaterial, group, meshPrimitive )

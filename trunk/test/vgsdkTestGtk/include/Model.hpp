@@ -117,12 +117,10 @@ TEST(vgsdkNodeTestingSuite, PerVertexColoring)
 	else
 	{
 		// do the test
-		//base->compareScreenShots();
-		macroCompareScreenShots(base);
+		base->compareScreenShots();
 	}
 
-	//base->getLog()->addToGtest();
-	PutInGtestReport(base)
+	base->getLog()->addToGtest();
 }
 //
 
@@ -161,12 +159,10 @@ TEST_P(VgTestModel, CompareTest)
 	else
 	{
 		// do the test
-		//base->compareScreenShots();
-		macroCompareScreenShots(base);
+		base->compareScreenShots();
 	}
 
-	//base->getLog()->addToGtest();
-	PutInGtestReport(base)
+	base->getLog()->addToGtest();
 }
 
 
@@ -201,12 +197,10 @@ TEST_P(VgTestModel, PerformanceModelTest)
 	else
 	{
 		// do the test
-		//base->compareScreenShots();
-		macroCompareScreenShots(base);
+		base->compareScreenShots();
 	}
 
-	//base->getLog()->addToGtest();
-	PutInGtestReport(base)
+	base->getLog()->addToGtest();
 }
 
 /**
