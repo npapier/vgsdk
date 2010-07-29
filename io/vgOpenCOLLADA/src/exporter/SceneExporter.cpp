@@ -9,7 +9,9 @@
 #include "COLLADASWScene.h"
 
 #include <vgAlg/actions/ApplyGeometricalTransformation.hpp>
+#include <vgAlg/actions/InvertTriangleOrientation.hpp>
 #include <vgAlg/actions/Triangulate.hpp>
+
 
 #include <vgDebug/Global.hpp>
 
@@ -90,20 +92,29 @@ void SceneExporter::prepareExport()
 		action.execute();
 	}
 
-	if( m_exportSettings.getTriangulate() )
+	if( m_exportSettings.getTriangulate() || m_exportSettings.getInvertPrimitiveOrientation() )
 	{
 		typedef collectedMapType::left_map::const_iterator left_const_iterator;
 
 		for( left_const_iterator left_iter = m_collectedMap.left.begin(), iend = m_collectedMap.left.end();
 			 left_iter != iend; ++left_iter )
 		{
-			vgAlg::actions::Triangulate action;
-			action.setNode( left_iter->first->getShape() );
-			action.execute();
+			if( m_exportSettings.getTriangulate() )
+			{
+				vgAlg::actions::Triangulate action;
+				action.setNode( left_iter->first->getShape() );
+				action.execute();
+			}
+			if( m_exportSettings.getInvertPrimitiveOrientation() )
+			{
+				vgAlg::actions::InvertTriangleOrientation action;
+				action.setNode( left_iter->first->getShape() );
+				action.execute();
+			}
 		}		
 	}
 
-	if( m_exportSettings.getCounterClockwise() )
+	if( m_exportSettings.getInvertPrimitiveOrientation() )
 	{
 
 	}

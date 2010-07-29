@@ -15,7 +15,7 @@ namespace exporter
 ExportSettings::ExportSettings() :
 m_applyGeometricalTransformation( false ),
 m_triangulate( false ),
-m_counterClockwise( false ),
+m_invertPrimitiveOrientation( false ),
 m_encrypt( false ),
 m_exportLevel( TEXTURE ),
 m_filename( "" )
@@ -24,11 +24,11 @@ m_filename( "" )
 
 
 
-ExportSettings::ExportSettings(	bool applyGeometricalTransformation, bool triangulate,	bool counterClockwise, 
+ExportSettings::ExportSettings(	bool applyGeometricalTransformation, bool triangulate,	bool invertPrimitiveOrientation, 
 							   bool encrypt, ExportLevel exportLevel ) :
 m_applyGeometricalTransformation( applyGeometricalTransformation ),
 m_triangulate( triangulate ),
-m_counterClockwise( counterClockwise ),
+m_invertPrimitiveOrientation( invertPrimitiveOrientation ),
 m_encrypt( encrypt ),
 m_exportLevel( exportLevel ),
 m_filename( "" )
@@ -51,9 +51,9 @@ bool ExportSettings::getTriangulate()
 
 
 
-bool ExportSettings::getCounterClockwise()
+bool ExportSettings::getInvertPrimitiveOrientation()
 {
-	return m_counterClockwise;
+	return m_invertPrimitiveOrientation;
 }
 
 

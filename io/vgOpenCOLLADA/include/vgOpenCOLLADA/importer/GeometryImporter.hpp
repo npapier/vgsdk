@@ -75,11 +75,11 @@ struct VGOPENCOLLADA_API GeometryImporter
 	bool importMeshPrimitives( vgd::Shp< vgd::node::Group > group );
 
 private:
-	COLLADAFW::Mesh*			m_mesh;
-	std::vector< vgm::Vec3f >	m_positions;
-	std::vector< vgm::Vec3f >	m_normals;
-	std::vector< vgm::Vec2f >	m_texCoords;
-	LOAD_TYPE					m_loadType;
+	COLLADAFW::Mesh*							m_mesh;
+	std::vector< vgm::Vec3f >					m_positions;
+	std::vector< vgm::Vec3f >					m_normals;
+	std::vector< std::vector< vgm::Vec2f > >	m_texCoords;
+	LOAD_TYPE									m_loadType;
 
 	vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > m_mapShapeMaterial;
 

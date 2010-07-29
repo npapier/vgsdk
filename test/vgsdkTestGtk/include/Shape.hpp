@@ -82,12 +82,10 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 	else
 	{
 		// do the test
-		//base->compareScreenShots();
-		macroCompareScreenShots(base);
+		base->compareScreenShots();
 	}
 
-	//base->getLog()->addToGtest();
-	PutInGtestReport(base)
+	base->getLog()->addToGtest();
 }
 
 /**
@@ -124,12 +122,10 @@ TEST_F(VgTestShape, StaticShapeTest)
 	else
 	{
 		// do the test
-		//base->compareScreenShots();
-		macroCompareScreenShots(base);
+		base->compareScreenShots();
 	}
 	
-	//base->getLog()->addToGtest();
-	PutInGtestReport(base)
+	base->getLog()->addToGtest();
 }
 
 #endif // #ifndef _VGTEST_SHAPE_HPP

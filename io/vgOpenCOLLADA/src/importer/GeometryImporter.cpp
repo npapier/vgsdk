@@ -105,21 +105,34 @@ void GeometryImporter::importMeshNormals()
 void GeometryImporter::importMeshUVCoords()
 {
 	const COLLADAFW::MeshVertexData& uvCoordinates = m_mesh->getUVCoords();
-	//const COLLADAFW::MeshVertexData::InputInfosArray& uvInputInfos = uvCoordinates.getInputInfosArray();
-	//COLLADAFW::MeshVertexData::InputInfos* inputInfo = uvInputInfos[ 0 ];
+	size_t num = uvCoordinates.getNumInputInfos();
+	COLLADAFW::MeshVertexData::InputInfos* inputInfo;
+	const COLLADAFW::MeshVertexData::InputInfosArray& uvInputInfos = uvCoordinates.getInputInfosArray();
+	int counter = 0;
 
-	int32 texCoordSize = (int)uvCoordinates.getValuesCount();
-	int32 texCoordStride = 3;//inputInfo->mStride;
-
-	const COLLADAFW::FloatArray* texCoordArray = uvCoordinates.getFloatValues();
-
-	int32 texCoordCount = texCoordSize / texCoordStride;
-
-	std::vector< vgm::Vec2f > texCoords;
-	for ( int i = 0; i < texCoordCount; ++i)
+	for( int i = 0; i < num; ++i )
 	{
-		m_texCoords.push_back(vgm::Vec2f( (float)(*texCoordArray)[texCoordStride*i], (float)(*texCoordArray)[texCoordStride*i + 1] ));
+		std::vector< vgm::Vec2f > texCoords;
+		inputInfo = uvInputInfos[ i ];
+
+		int32 texCoordSize = inputInfo->mLength;
+		int32 texCoordStride = inputInfo->mStride;
+
+		const COLLADAFW::FloatArray* texCoordArray = uvCoordinates.getFloatValues();
+
+		int32 texCoordCount = (texCoordSize / texCoordStride);
+
+		for ( int i = 0; i < texCoordCount; ++i)
+		{
+			texCoords.push_back(vgm::Vec2f( (float)(*texCoordArray)[texCoordStride*i + counter], (float)(*texCoordArray)[texCoordStride*i + 1 + counter] ));
+		}
+		
+		m_texCoords.push_back( texCoords );
+
+		counter += texCoordCount;
 	}
+
+
 }
 
 
