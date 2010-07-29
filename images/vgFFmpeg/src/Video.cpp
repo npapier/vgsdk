@@ -8,6 +8,7 @@
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavformat/avio.h>
 #include <libswscale/swscale.h>
 }
 
@@ -278,6 +279,18 @@ const vgd::basic::ImageInfo& Video::getCurrent()
 	return m_currentImage;
 }
 
+const bool Video::isOver()
+{
+    if( url_feof( pFormatCtx->pb ) )
+	{
+		return true;
+	}
+	return false; 
+}
 
+void Video::restart()
+{
+	av_seek_frame( pFormatCtx, 0, 0, AVSEEK_FLAG_ANY ); 
+}
 
 } // namespace vgFFmpeg

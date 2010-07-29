@@ -46,6 +46,9 @@ struct VGFFMPEG_API Video
 
 	const vgd::basic::ImageInfo& getCurrent();
 
+	const bool isOver();
+
+	void restart();
 
 
 protected:
