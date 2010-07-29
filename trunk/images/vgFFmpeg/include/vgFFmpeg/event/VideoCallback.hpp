@@ -48,6 +48,8 @@ struct VGFFMPEG_API VideoCallback : public vgd::event::TimerCallback
 	//@}
 
 
+	vgd::Shp< vgFFmpeg::Video > getVideo()				{ return m_video; }
+	void setVideo( const std::string& pathFilename )	{ m_video = vgd::makeShp( new vgFFmpeg::Video( pathFilename ) ); }
 
 protected:
 	/**
