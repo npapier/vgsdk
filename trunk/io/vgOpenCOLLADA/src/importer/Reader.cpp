@@ -267,8 +267,12 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 			vgd::Shp< vgd::node::Texture2D > texture = (*m_mapTextures)[sampler->getSourceImage().toAscii()];
 			//@TODO: tex must be a copy of the stored texture because one texture can be used in several materials with different parameters.
 			// cloneTexture function was created, but a function to clone Node may be better.
+
 			vgd::Shp< vgd::node::Texture2D > tex = cloneTexture( texture );
-			
+			tex->setMultiAttributeIndex ( i );
+			std::stringstream ss;
+			ss << "color *= texture2D(texMap2D[" << i << "], mgl_TexCoord[" << i << "].xy)";
+			tex->setFunction( ss.str() );
 			container->addChild( tex );
 
 			//WRAP_MODE_UNSPECIFIED=0,
