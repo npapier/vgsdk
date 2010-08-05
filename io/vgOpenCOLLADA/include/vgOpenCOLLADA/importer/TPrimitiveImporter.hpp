@@ -112,11 +112,14 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 
 		if ( m_hasTextCoords )
 		{
-			m_vertexShape->createTexUnits( 2, 0, 1 );	// @todo FIXME multitexture multiTexcoord
-			m_vertexShape->setTexCoordBinding( 0, vgd::node::BIND_PER_VERTEX );
-			m_editTextCoords = m_vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( m_texCoords.size() );
-			m_editTextCoords->clear();
-			m_editTextCoords->reserve( m_primitivesNumber );
+			for( int i = 0; i < m_texCoords.size(); ++i )
+			{
+				m_vertexShape->createTexUnits( 2, i, 1 );
+				m_vertexShape->setTexCoordBinding( i, vgd::node::BIND_PER_VERTEX );
+				m_editTextCoords.push_back( m_vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( i ) );
+				m_editTextCoords[i]->clear();
+				m_editTextCoords[i]->reserve( m_primitivesNumber );
+			}
 		}
 
 		m_editPrimitive = m_vertexShape->getFPrimitiveRW();
@@ -169,7 +172,7 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 			{
 				for( int i = 0; i < m_texCoords.size(); ++i)
 				{
-					m_editTextCoords->push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ] );
+					m_editTextCoords[i]->push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ] );
 				}
 			}
 			
@@ -194,7 +197,7 @@ protected:
 	vgd::field::EditorRW< vgd::field::MFUInt32 >	m_editVertexIndex;
 	vgd::field::EditorRW< vgd::field::MFVec3f >		m_editPositions;
 	vgd::field::EditorRW< vgd::field::MFVec3f >		m_editNormals;
-	vgd::field::EditorRW< vgd::field::MFVec2f >		m_editTextCoords;
+	std::vector< vgd::field::EditorRW< vgd::field::MFVec2f > >		m_editTextCoords;
 	vgd::field::EditorRW< vgd::field::MFPrimitive >	m_editPrimitive;
 
 	boost::unordered_map<std::size_t, int>			m_hashmap;
