@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2010 Nicolas Papier.
+// VGSDK - Copyright (C) 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Nicolas Papier
 
 #include "vgOpenCOLLADA/exporter/SceneExporter.hpp"
 
@@ -25,13 +26,12 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
-SceneExporter::SceneExporter( ExportSettings exportSettings, vgd::Shp< vgd::node::Group > rootNode ) :
-m_streamWriter ( COLLADASW::NativeString ( exportSettings.getFilename() ), false ),
-m_rootNode ( rootNode ),
-m_outputFileUri(  exportSettings.getFilename()  ),
-m_exportSettings( exportSettings )
-{
-}
+SceneExporter::SceneExporter( ExportSettings exportSettings, vgd::Shp< vgd::node::Group > rootNode )
+:	m_streamWriter ( COLLADASW::NativeString ( exportSettings.getFilename() ), false ),
+	m_rootNode ( rootNode ),
+	m_outputFileUri(  exportSettings.getFilename()  ),
+	m_exportSettings( exportSettings )
+{}
 
 
 
@@ -144,12 +144,12 @@ void SceneExporter::collectNodes()
 	using vge::visitor::NodeCollectorExtended;
 	vge::technique::CollectNode technique;
 
-	vgeGL::engine::Engine* engine = new vgeGL::engine::Engine();
-	engine->setTrace( true );
+	vge::engine::Engine engine;
+	engine.setTrace( true );
 	NodeCollectorExtended<> collector( true, false, NodeCollectorExtended<>::IGNORE_KIT );
 	m_rootNode->traverse( collector );
 
-	technique.apply( engine, collector.getTraverseElements() );
+	technique.apply( &engine, collector.getTraverseElements() );
 
 	m_collectedMap = technique.getCollectedMap();
 }

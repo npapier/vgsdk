@@ -194,6 +194,21 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	void paint3(	vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Node > node2, vgd::Shp< vgd::node::Node > node3,
 					const bool isPreTraverse = true,
 					const bool bTrace = true );
+
+
+	/**
+	 * @brief Sets if engine need to trace everything.
+	 *
+	 * @param trace		true if trace is enabled, false otherwise
+	 */	
+	void setTrace( const bool trace );
+
+	/**
+	 * @brief Tests if trace is active.
+	 *
+	 * @return true if active, false otherwise
+	 */
+	const bool isTraceEnabled() const;
 	//@}
 
 
@@ -571,7 +586,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 				--iEnd;
 			}
 
-			for( i;	i != iEnd; ++i )
+			for( ;	i != iEnd; ++i )
 			{
 				bDefined = vgd::field::getParameterValueFromOptionalField< ParameterType, ValueType >( (*i), strFieldName, value );
 
@@ -701,19 +716,6 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	void setNearFar( const vgm::Vec2f nearFar );
 
-	/**
-	 * @brief Sets if engine need to trace everything.
-	 *
-	 * @param trace	true if trace is enabled
-	 */	
-	void setTrace( const bool trace );
-
-	/**
-	 * @brief Tests if trace is active.
-	 *
-	 * @return true if active, false otherwise
-	 */
-	const bool isTraceEnabled() const;
 	//@}
 
 
@@ -727,32 +729,32 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	/**
 	 * @brief Returns the maximum viewport dimensions.
 	 */
-	virtual const vgm::Vec2i getMaxViewportSize() const = 0;
+	virtual const vgm::Vec2i getMaxViewportSize() const		{ return vgm::Vec2i(0,0); }
 
 	/**
 	 * @brief Returns the maximum number of lights.
 	 */
-	virtual const int getMaxLights() const = 0;
+	virtual const int getMaxLights() const					{ return 0; }
 	
 	/**
 	 * @brief Returns the maximum number of texture units.
 	 */
-	virtual const int getMaxTexUnits() const;
+	virtual const int getMaxTexUnits() const				{ return 0; }
 
 	/**
 	 * @brief Returns the maximum 1D/2D texture image dimension.
 	 */
-	virtual const int getMaxTexSize() const = 0;
+	virtual const int getMaxTexSize() const					{ return 0; }
 	
 	/**
 	 * @brief Returns the maximum 3D texture image dimension.
 	 */
-	virtual const int getMax3DTexSize() const = 0;
+	virtual const int getMax3DTexSize() const				{ return 0; }
 
 	/**
 	 * @brief Returns the maximum cube map texture image dimension.
 	 */
-	virtual const int getMaxCubeMapTexSize() const = 0;
+	virtual const int getMaxCubeMapTexSize() const			{ return 0; }
 	//@}
 
 
