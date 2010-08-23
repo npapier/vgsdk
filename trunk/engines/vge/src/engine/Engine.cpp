@@ -176,6 +176,20 @@ void Engine::paint3( vgd::Shp< vgd::node::Node > node1, vgd::Shp< vgd::node::Nod
 
 
 
+void Engine::setTrace( const bool trace )
+{
+	m_trace = trace;
+}
+
+
+
+const bool Engine::isTraceEnabled() const
+{
+	return m_trace;
+}
+
+
+
 void Engine::resetHandlers()
 {
 	clearHandlers();
@@ -506,26 +520,6 @@ const vgm::Vec2f Engine::getNearFar() const
 void Engine::setNearFar( const vgm::Vec2f nearFar )
 {
 	m_nearFar = nearFar;
-}
-
-
-const int Engine::getMaxTexUnits() const
-{ 
-	return 0;
-}
-
-
-
-void Engine::setTrace( const bool trace )
-{
-	m_trace = trace;
-}
-
-
-
-const bool Engine::isTraceEnabled() const
-{
-	return m_trace;
 }
 
 
