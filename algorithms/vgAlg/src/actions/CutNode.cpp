@@ -38,7 +38,7 @@ void CutNode::execute()
 	{
 		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setClipboardedNode( node );
 		parent->removeChild( node );
-		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
+		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 	}
 }
 

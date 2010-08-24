@@ -49,7 +49,7 @@ void ShowNode::execute()
 
 	hiddenNode.reset();
 
-	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
+	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 }
 
 

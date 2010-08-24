@@ -40,8 +40,8 @@ void RemoveNode::execute()
 		// vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REMOVE );
 		
 		parent->removeChild( node );
-		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
-		vgDebug::get().logStatus( "Node %s removed.", node->getName().c_str() );
+		vgLogStatus2( "Node %s removed.", node->getName().c_str() );
+		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 	}
 }
 

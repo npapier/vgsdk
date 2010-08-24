@@ -27,7 +27,6 @@ namespace actions
 
 HideAllNode::HideAllNode()
 {
-
 }
 
 
@@ -46,7 +45,6 @@ void HideAllNode::execute()
 		hideNode.setNode( (*it) );
 		hideNode.execute();
 	}
-
 }
 
 

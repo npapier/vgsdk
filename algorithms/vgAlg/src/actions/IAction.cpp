@@ -3,5 +3,4 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-
 #include "vgAlg/actions/IAction.hpp"

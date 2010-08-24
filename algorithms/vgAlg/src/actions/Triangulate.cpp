@@ -38,9 +38,8 @@ void Triangulate::execute()
 	if( node->isA< vgd::node::VertexShape >() )
 	{
 		vgAlg::node::triangulate( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( node ) );
+		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 	}
-
-	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
 }
 
 
