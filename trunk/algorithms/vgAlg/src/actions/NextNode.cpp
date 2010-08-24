@@ -46,7 +46,7 @@ void NextNode::execute()
 
 			vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::MOVE_NEXT );
 
-			//vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
+			vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 
 			//during refresh, selection change, we have to reselect it.
 			//vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );

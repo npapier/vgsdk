@@ -49,7 +49,7 @@ void PasteNode::execute()
 			}
 		}
 
-		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
+		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 	}
 }
 

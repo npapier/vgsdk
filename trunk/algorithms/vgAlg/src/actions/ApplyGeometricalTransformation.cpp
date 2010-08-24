@@ -37,7 +37,7 @@ void ApplyGeometricalTransformation::execute()
 	m_root->traverse( collector );
 	technique.apply( engine, collector.getTraverseElements() );
 
-	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
+	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 }
 
 

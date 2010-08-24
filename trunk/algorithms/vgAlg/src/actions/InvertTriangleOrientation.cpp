@@ -45,8 +45,12 @@ void InvertTriangleOrientation::execute()
 	{
 		vgAlg::node::invertTriangleOrientation( vgd::dynamic_pointer_cast< vgd::node::TriSet >( node ) );
 	}
+	else
+	{
+		vgLogDebug( "Unsupported node type in InvertTriangleOrientation::execute()" );
+	}
 
-	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
+	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 }
 
 

@@ -34,7 +34,7 @@ void SetOptionalToDefault::execute()
 	
 	node->setOptionalsToDefaults();
 
-	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
+	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 }
 
 

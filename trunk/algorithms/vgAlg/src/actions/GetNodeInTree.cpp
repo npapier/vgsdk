@@ -37,7 +37,7 @@ void GetNodeInTree::execute()
 	//During refresh, selection may change, so we reselect current node.
 	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
 	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
-	vgDebug::get().logStatus( "Node %s selected.", node->getName().c_str() );
+	vgLogStatus2( "Node %s selected.", node->getName().c_str() );
 }
 
 
