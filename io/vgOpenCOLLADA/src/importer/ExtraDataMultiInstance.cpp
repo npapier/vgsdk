@@ -15,8 +15,7 @@ namespace importer
 
 
 ExtraDataMultiInstance::ExtraDataMultiInstance() 
-    :	m_isOriginalIdField (false),
-		m_currentId( false )
+    :	m_isOriginalIdField (false)
 {
 }
 
@@ -28,10 +27,10 @@ ExtraDataMultiInstance::~ExtraDataMultiInstance()
 
 
 
-std::vector<MultiInstanceInfo> ExtraDataMultiInstance::findExtraInfo ( const std::string id ) const
+std::vector<MultiInstanceInfo> ExtraDataMultiInstance::findExtraInfo ( const COLLADAFW::UniqueId uniqueId ) const
 {
 	std::vector< MultiInstanceInfo > extraInfos;
-    ExtraInfosMap::const_iterator it = m_extraInfos.find ( id );
+    ExtraInfosMap::const_iterator it = m_extraInfos.find ( uniqueId );
     if ( it != m_extraInfos.end () )
     {
         extraInfos = it->second;
@@ -49,7 +48,8 @@ bool ExtraDataMultiInstance::parseElement (
 {
     if ( COLLADABU::Utils::equals ( "profile_vgsdk", profileName ) ) 
     {
-        return true;
+        m_currentExtraInfo.setUniqueId( uniqueId );
+		return true;
     }
 
     return false;
@@ -59,12 +59,7 @@ bool ExtraDataMultiInstance::parseElement (
 
 bool ExtraDataMultiInstance::elementBegin ( const GeneratedSaxParser::ParserChar* elementName, const GeneratedSaxParser::xmlChar** attributes ) 
 {
-	if ( COLLADABU::Utils::equals ( "name", std::string (elementName) ) )
-    {
-        m_currentId = true;
-		m_isOriginalIdField = true;
-    }
-	else if ( COLLADABU::Utils::equals ( "matrix", std::string (elementName) ) )
+	if ( COLLADABU::Utils::equals ( "matrix", std::string (elementName) ) )
     {
         m_isOriginalIdField = true;
     }
@@ -80,12 +75,7 @@ bool ExtraDataMultiInstance::elementEnd ( const GeneratedSaxParser::ParserChar* 
     {
         m_isOriginalIdField = false;
 
-		if( m_currentId )
-		{
-			m_currentId = false;
-			return true;
-		}
-        m_extraInfos[ m_currentExtraInfo.getId() ].push_back( m_currentExtraInfo );
+        m_extraInfos[ m_currentExtraInfo.getUniqueId() ].push_back( m_currentExtraInfo );
         m_currentExtraInfo.setMatrix ( "" );
     }
 
@@ -98,16 +88,7 @@ bool ExtraDataMultiInstance::textData ( const GeneratedSaxParser::ParserChar* te
 {
     if ( m_isOriginalIdField )
     {
-        if( m_currentId )
-		{
-			std::string name;
-			name.assign ( text, textLength );
-			m_currentExtraInfo.setId( name );
-		}
-		else
-		{
-			m_currentExtraInfo.setMatrix ( text, textLength );
-		}
+		m_currentExtraInfo.setMatrix ( text, textLength );
     }
     return true;
 }

@@ -37,7 +37,8 @@ struct Loader;
 enum samplerType
 {
 	DIFFUSE,
-	REFLECTIVE
+	REFLECTIVE,
+	BUMPMAPPING
 };
 
 /**

@@ -14,7 +14,6 @@ namespace exporter
 
 InstanceGeometry::InstanceGeometry( COLLADASW::StreamWriter * streamWriter )
 :	COLLADASW::InstanceGeometry ( streamWriter ),
-	m_name( "" ),
 	m_matrixCounter( 0 )
 {
 }
@@ -49,18 +48,6 @@ void InstanceGeometry::createMultipleInstances()
 	
 	m_extraTechnique.addExtraTechniques( mSW );
 }
-
-
-
-void InstanceGeometry::setName( std::string name )
-{
-	m_name = name;
-	std::stringstream ss;
-	ss << "<name>" << m_name << "</name>" << std::endl;
-	m_multipleInstancesText += ss.str();
-
-}
-
 
 
 } // namespace exporter

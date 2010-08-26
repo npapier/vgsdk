@@ -225,7 +225,7 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 			
 			//Create multiple instances if extra tag are present
 			const ExtraDataMultiInstance& callbackHandler = m_reader->getLoader()->getExtraDataMultiInstance();
-			std::vector< MultiInstanceInfo > extraInfos = callbackHandler.findExtraInfo( shapeName );
+			std::vector< MultiInstanceInfo > extraInfos = callbackHandler.findExtraInfo( node->getUniqueId() );
 			vgd::Shp< vgd::node::MultipleInstances > multipleInstances;
 			bool isMultipleInstances = false;
 			if( extraInfos.size() > 0 )

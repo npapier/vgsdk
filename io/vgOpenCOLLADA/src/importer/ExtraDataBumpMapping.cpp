@@ -16,8 +16,7 @@ namespace importer
 
 
 ExtraDataBumpMapping::ExtraDataBumpMapping() 
-    :	m_isOriginalIdField (false),
-		m_currentId( false )
+    :	m_isOriginalIdField (false)
 {
 }
 
@@ -29,10 +28,10 @@ ExtraDataBumpMapping::~ExtraDataBumpMapping()
 
 
 
-std::vector<BumpMappingInfo> ExtraDataBumpMapping::findExtraInfo ( const std::string id ) const
+std::vector<BumpMappingInfo> ExtraDataBumpMapping::findExtraInfo (const COLLADAFW::UniqueId uniqueId ) const
 {
 	std::vector< BumpMappingInfo > extraInfos;
-    ExtraInfosMap::const_iterator it = m_extraInfos.find ( id );
+    ExtraInfosMap::const_iterator it = m_extraInfos.find ( uniqueId );
     if ( it != m_extraInfos.end () )
     {
         extraInfos = it->second;
@@ -50,7 +49,8 @@ bool ExtraDataBumpMapping::parseElement (
 {
     if ( COLLADABU::Utils::equals ( "OpenCOLLADA3dsMax", profileName ) ) 
     {
-        return true;
+		m_currentId = uniqueId;
+		return true;
     }
 
     return false;
@@ -81,8 +81,8 @@ bool ExtraDataBumpMapping::elementBegin ( const GeneratedSaxParser::ParserChar* 
 			}
 		}
 		
-		m_extraInfos[ m_currentExtraInfo.getTexture() ].push_back( m_currentExtraInfo );
-
+		m_currentExtraInfo.setUniqueId( m_currentId );
+        m_extraInfos[ m_currentId ].push_back( m_currentExtraInfo );
 	}
 
     return true;
