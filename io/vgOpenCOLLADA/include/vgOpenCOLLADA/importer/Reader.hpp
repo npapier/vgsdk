@@ -8,10 +8,11 @@
 
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
-#include "vgOpenCOLLADA/convenience.hpp"
+#include "vgOpenCOLLADA/Settings.hpp"
 
 #include <boost/unordered_map.hpp>  
 
+#include <vgd/basic/Image.hpp>
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Switch.hpp>
@@ -33,12 +34,18 @@ namespace importer
 
 struct Loader;
 
+enum samplerType
+{
+	DIFFUSE,
+	REFLECTIVE
+};
+
 /**
  * @brief The COLLADA file reader frontend.
  */
 struct VGOPENCOLLADA_API Reader : public COLLADAFW::IWriter
 {
-	Reader( LOAD_TYPE type, Loader *loader );
+	Reader( vgOpenCOLLADA::Settings settings, Loader *loader );
 	virtual ~Reader() {};
 
 	virtual void start() {}
@@ -109,6 +116,11 @@ struct VGOPENCOLLADA_API Reader : public COLLADAFW::IWriter
 	std::pair< bool, vgd::Shp< vgd::node::Group > > getScene();
 
 	/**
+	 * @brief Apply post treatment set in Settings object like triangulate, invert primitive orientation, etc.
+	 */	
+	void applyPostTreatment();
+
+	/**
 	* @brief Clones a Texture node
 	*
 	* @param texture: a texture
@@ -129,15 +141,19 @@ struct VGOPENCOLLADA_API Reader : public COLLADAFW::IWriter
 
 	Loader*											getLoader(){ return m_loader; };
 
+	//Setters
+	void setImageMap( std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap );
+
 private:
 	COLLADABU::URI									m_inputFile;
-	LOAD_TYPE										m_loadType;
+	vgOpenCOLLADA::Settings							m_settings;
 	Loader											*m_loader;
 	std::pair< bool, vgd::Shp< vgd::node::Group > > m_scene;
 	vgd::Shp< vgd::node::Group >					m_group;
 	vgd::Shp< vgd::node::Switch >					m_switchMaterial;
 	vgd::Shp< vgd::node::Switch >					m_switchTexture;
 	vgd::Shp< vgd::node::Switch >					m_switchVertexShape;
+	std::map< std::string, vgd::Shp< vgd::basic::Image > > m_imageMap;
 
 	vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > m_mapShapeMaterial; //< vertexshape, id of its material >
 	vgd::Shp< boost::unordered_map< std::string, vgd::Shp< vgd::node::Group > > > m_mapMaterialEffect; //< id of its effect, group containing material >

@@ -36,8 +36,8 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
-VisualSceneImporter::VisualSceneImporter( LOAD_TYPE loadType, Reader *reader ) :
-m_loadType ( loadType ),
+VisualSceneImporter::VisualSceneImporter( vgOpenCOLLADA::Settings settings, Reader *reader ) :
+m_settings ( settings ),
 m_reader( reader ),
 m_switchMaterial ( reader->getSwitchMaterial() ),
 m_switchVertexShape ( reader->getSwitchVertexShape() ),
@@ -224,8 +224,8 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 			vertexShape->setName( shapeName );
 			
 			//Create multiple instances if extra tag are present
-			const ExtraDataCallbackHandler& callbackHandler = m_reader->getLoader()->getExtraDataCallbackHandler();
-			std::vector< ExtraInfo > extraInfos = callbackHandler.findExtraInfo( shapeName );
+			const ExtraDataMultiInstance& callbackHandler = m_reader->getLoader()->getExtraDataMultiInstance();
+			std::vector< MultiInstanceInfo > extraInfos = callbackHandler.findExtraInfo( shapeName );
 			vgd::Shp< vgd::node::MultipleInstances > multipleInstances;
 			bool isMultipleInstances = false;
 			if( extraInfos.size() > 0 )
@@ -241,7 +241,7 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 
 			bool hasMaterial = false;
 
-			if ( m_loadType > LOAD_GEOMETRY )
+			if ( m_settings.getLevel() > GEOMETRY )
 			{
 				if( m_mapShapeMaterial->find( vertexShape ) != m_mapShapeMaterial->end() )
 				{
@@ -299,11 +299,11 @@ void VisualSceneImporter::createNodeGeometry( const COLLADAFW::Node* node, vgd::
 
 
 
-void VisualSceneImporter::createMultipleInstances( vgd::Shp< vgd::node::MultipleInstances > multipleInstances, std::vector< ExtraInfo > extraInfos )
+void VisualSceneImporter::createMultipleInstances( vgd::Shp< vgd::node::MultipleInstances > multipleInstances, std::vector< MultiInstanceInfo > extraInfos )
 {
 	vgd::field::EditorRW< vgd::node::MultipleInstances::FMatrixType > matrixEdit = multipleInstances->getMatrixRW();
 
-	std::vector< ExtraInfo >::iterator extraIter = extraInfos.begin();
+	std::vector< MultiInstanceInfo >::iterator extraIter = extraInfos.begin();
 	for( extraIter; extraIter != extraInfos.end(); extraIter++)
 	{
 		std::string strMatrix = extraIter->getMatrix();

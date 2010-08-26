@@ -3,7 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgOpenCOLLADA/importer/ExtraDataCallbackHandler.hpp"
+#include "vgOpenCOLLADA/importer/ExtraDataMultiInstance.hpp"
 
 
 namespace vgOpenCOLLADA
@@ -14,7 +14,7 @@ namespace importer
 
 
 
-ExtraDataCallbackHandler::ExtraDataCallbackHandler() 
+ExtraDataMultiInstance::ExtraDataMultiInstance() 
     :	m_isOriginalIdField (false),
 		m_currentId( false )
 {
@@ -22,15 +22,15 @@ ExtraDataCallbackHandler::ExtraDataCallbackHandler()
 
 
 
-ExtraDataCallbackHandler::~ExtraDataCallbackHandler()
+ExtraDataMultiInstance::~ExtraDataMultiInstance()
 {
 }
 
 
 
-std::vector<ExtraInfo> ExtraDataCallbackHandler::findExtraInfo ( const std::string id ) const
+std::vector<MultiInstanceInfo> ExtraDataMultiInstance::findExtraInfo ( const std::string id ) const
 {
-	std::vector< ExtraInfo > extraInfos;
+	std::vector< MultiInstanceInfo > extraInfos;
     ExtraInfosMap::const_iterator it = m_extraInfos.find ( id );
     if ( it != m_extraInfos.end () )
     {
@@ -42,7 +42,7 @@ std::vector<ExtraInfo> ExtraDataCallbackHandler::findExtraInfo ( const std::stri
 
 
 
-bool ExtraDataCallbackHandler::parseElement ( 
+bool ExtraDataMultiInstance::parseElement ( 
     const GeneratedSaxParser::ParserChar* profileName, 
     const COLLADASaxFWL::StringHash& elementHash, 
     const COLLADAFW::UniqueId& uniqueId ) 
@@ -57,7 +57,7 @@ bool ExtraDataCallbackHandler::parseElement (
 
 
 
-bool ExtraDataCallbackHandler::elementBegin ( const GeneratedSaxParser::ParserChar* elementName, const GeneratedSaxParser::xmlChar** attributes ) 
+bool ExtraDataMultiInstance::elementBegin ( const GeneratedSaxParser::ParserChar* elementName, const GeneratedSaxParser::xmlChar** attributes ) 
 {
 	if ( COLLADABU::Utils::equals ( "name", std::string (elementName) ) )
     {
@@ -74,7 +74,7 @@ bool ExtraDataCallbackHandler::elementBegin ( const GeneratedSaxParser::ParserCh
 
 
 
-bool ExtraDataCallbackHandler::elementEnd ( const GeneratedSaxParser::ParserChar* elementName ) 
+bool ExtraDataMultiInstance::elementEnd ( const GeneratedSaxParser::ParserChar* elementName ) 
 {
     if ( m_isOriginalIdField )
     {
@@ -94,7 +94,7 @@ bool ExtraDataCallbackHandler::elementEnd ( const GeneratedSaxParser::ParserChar
 
 
 
-bool ExtraDataCallbackHandler::textData ( const GeneratedSaxParser::ParserChar* text, size_t textLength ) 
+bool ExtraDataMultiInstance::textData ( const GeneratedSaxParser::ParserChar* text, size_t textLength ) 
 {
     if ( m_isOriginalIdField )
     {

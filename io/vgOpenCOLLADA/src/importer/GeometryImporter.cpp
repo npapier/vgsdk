@@ -17,8 +17,8 @@ namespace vgOpenCOLLADA
 namespace importer
 {
 
-GeometryImporter::GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType, Reader *reader ) :
-m_loadType( loadType ),
+GeometryImporter::GeometryImporter( const COLLADAFW::Geometry* geometry, vgOpenCOLLADA::Settings settings, Reader *reader ) :
+m_settings( settings ),
 m_mapShapeMaterial( reader->getMapShapeMaterial() )
 {
 	m_mesh = (COLLADAFW::Mesh*) geometry;
@@ -152,12 +152,12 @@ bool GeometryImporter::importMeshPrimitives( vgd::Shp< vgd::node::Group > group 
 
 		if( meshPrimitive->getPrimitiveType() == COLLADAFW::MeshPrimitive::TRIANGLES )
 		{
-			TPrimitiveImporter< COLLADAFW::Triangles > importer( m_positions, m_normals, m_texCoords, m_loadType, m_mapShapeMaterial, group, meshPrimitive );
+			TPrimitiveImporter< COLLADAFW::Triangles > importer( m_positions, m_normals, m_texCoords, m_settings, m_mapShapeMaterial, group, meshPrimitive );
 			importer.importMeshPrimitives();
 		}
 		else if( meshPrimitive->getPrimitiveType() == COLLADAFW::MeshPrimitive::POLYGONS )
 		{
-			PrimitivePolygonsImporter importer( m_positions, m_normals, m_texCoords, m_loadType, m_mapShapeMaterial, group, meshPrimitive );
+			PrimitivePolygonsImporter importer( m_positions, m_normals, m_texCoords, m_settings, m_mapShapeMaterial, group, meshPrimitive );
 			importer.importMeshPrimitives();
 		}
 		else

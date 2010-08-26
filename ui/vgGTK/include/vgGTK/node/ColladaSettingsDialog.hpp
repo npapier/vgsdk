@@ -3,15 +3,15 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGGTK_NODE_EXPORTCOLLADADIALOG_HPP_
-#define _VGGTK_NODE_EXPORTCOLLADADIALOG_HPP_
+#ifndef _VGGTK_NODE_COLLADASETTINGSDIALOG_HPP_
+#define _VGGTK_NODE_COLLADASETTINGSDIALOG_HPP_
 
 #include <gtkmm/dialog.h>
 
 #include "vgGTK/vgGTK.hpp"
-#include <vgGTK/node/ExportCollada.hpp>
+#include <vgGTK/node/ColladaSettings.hpp>
 
-#include <vgOpenCOLLADA/exporter/ExportSettings.hpp>
+#include <vgOpenCOLLADA/Settings.hpp>
 
 
 namespace vgGTK
@@ -22,18 +22,18 @@ namespace node
 
 
 
-struct VGGTK_API ExportColladaDialog : public Gtk::Dialog
+struct VGGTK_API ColladaSettingsDialog : public Gtk::Dialog
 {
 	/**
 	 * @brief	Constructor
 	 */
-	ExportColladaDialog();
+	ColladaSettingsDialog();
 
-	vgOpenCOLLADA::exporter::ExportSettings getExportSettings();
+	vgOpenCOLLADA::Settings getSettings();
 
 private:
 
-	ExportCollada	m_exportCollada;
+	ColladaSettings	m_exportCollada;
 };
 
 
@@ -44,4 +44,4 @@ private:
 
 
 
-#endif // _VGGTK_NODE_EXPORTCOLLADADIALOG_HPP_
+#endif // _VGGTK_NODE_COLLADASETTINGSDIALOG_HPP_

@@ -3,7 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#include "vgGTK/node/ExportColladaDialog.hpp"
+#include "vgGTK/node/ColladaSettingsDialog.hpp"
 
 #include <gtkmm/stock.h>
 
@@ -17,7 +17,7 @@ namespace node
 
 
 
-ExportColladaDialog::ExportColladaDialog()
+ColladaSettingsDialog::ColladaSettingsDialog()
 :	Gtk::Dialog( "Collada Export Settings" )
 {
 	m_exportCollada.set_border_width( 12 );
@@ -29,9 +29,9 @@ ExportColladaDialog::ExportColladaDialog()
 
 
 
-vgOpenCOLLADA::exporter::ExportSettings ExportColladaDialog::getExportSettings()
+vgOpenCOLLADA::Settings ColladaSettingsDialog::getSettings()
 {
-	return m_exportCollada.getExportSettings();
+	return m_exportCollada.getSettings();
 }
 
 

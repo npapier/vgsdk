@@ -55,7 +55,7 @@ void ExportNode::execute()
 
 
 
-void ExportNode::setExportSettings( vgOpenCOLLADA::exporter::ExportSettings exportSettings )
+void ExportNode::setExportSettings( vgOpenCOLLADA::Settings exportSettings )
 {
 	m_exportSettings = exportSettings;
 }

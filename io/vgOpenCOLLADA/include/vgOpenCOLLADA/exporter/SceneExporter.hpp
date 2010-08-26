@@ -11,11 +11,11 @@
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
 #include "vgOpenCOLLADA/exporter/EffectExporter.hpp"
-#include "vgOpenCOLLADA/exporter/ExportSettings.hpp"
 #include "vgOpenCOLLADA/exporter/GeometryExporter.hpp"
 #include "vgOpenCOLLADA/exporter/ImageExporter.hpp"
 #include "vgOpenCOLLADA/exporter/MaterialExporter.hpp"
 #include "vgOpenCOLLADA/exporter/VisualSceneExporter.hpp"
+#include "vgOpenCOLLADA/Settings.hpp"
 
 #include <vgd/node/Group.hpp>
 
@@ -36,7 +36,7 @@ typedef vge::technique::collectedMapType	collectedMapType;
  */
 struct VGOPENCOLLADA_API SceneExporter
 {
-	SceneExporter( ExportSettings exportSettings, vgd::Shp< vgd::node::Group > rootNode );
+	SceneExporter( vgOpenCOLLADA::Settings exportSettings, vgd::Shp< vgd::node::Group > rootNode );
 
 	~SceneExporter();
 
@@ -107,7 +107,7 @@ private:
 	std::string getEnvironmentVariable( const std::string & variableName );
 
     COLLADASW::StreamWriter									m_streamWriter;
-	ExportSettings											m_exportSettings;
+	vgOpenCOLLADA::Settings									m_exportSettings;
 	std::string												m_outputFileUri;
 
 	vgd::Shp< vgd::node::Group >							m_rootNode;

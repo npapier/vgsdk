@@ -8,6 +8,7 @@
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
 #include <time.h>
+#include <vgAlg/actions/Decrypt.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgd/node/LightModel.hpp>
@@ -24,7 +25,7 @@
 #include <vgOpenCOLLADA/convenience.hpp>
 #include <vgTrian/Loader.hpp>
 #include <vgd/basic/Image.hpp>
-
+#include <vgio/helpers.hpp>
 
 namespace vgsdkTestGtk
 {
@@ -128,13 +129,17 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 	{
 		bRetVal = loadTrian( pathfilename );
 	}
-	else if ( extension.compare( ".trian2" ) == 0 )
+	else if ( extension.compare( ".trian2" ) == 0 || extension.compare( ".dae" ) == 0
+		|| extension.compare( ".crypt" ) == 0 || extension.compare( ".vgarch" ) == 0) //new way using registry
 	{
-		bRetVal = loadTrian2( pathfilename );
-	}
-	else if ( extension.compare( ".dae" ) == 0 )
-	{
-		bRetVal = loadOpenCollada( pathfilename );
+		std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+		retVal = vgio::load( pathfilename );
+		bRetVal = retVal.first;
+		if ( retVal.first )
+		{
+			// Setup scene
+			getScene()->addChild( retVal.second );
+		}
 	}
 	else if( extension.compare( ".obj" ) == 0 )
 	{
@@ -182,17 +187,39 @@ const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
 	return false;
 }
 
-const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename )
+const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename, bool crypted )
 {
 	// Load .dae
-	vgOpenCOLLADA::LOAD_TYPE loadType = vgOpenCOLLADA::LOAD_ALL;
-
-	vgOpenCOLLADA::importer::Loader loader(loadType);
+	vgOpenCOLLADA::importer::Loader loader;
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
 	
 	try
 	{
-		retVal = loader.load( pathfilename.c_str() );
+		if( crypted )
+		{
+			std::ifstream inFile;
+			inFile.open( pathfilename.c_str(), std::ifstream::in | std::ifstream::binary );
+			bool b = inFile.good();
+			inFile.seekg (0, std::ios::end);
+			int length = inFile.tellg();
+			inFile.seekg (0, std::ios::beg);
+
+			std::vector< char > inBuffer;
+			inBuffer.resize( length );
+			inFile.read( &inBuffer[0], length );
+			
+			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
+
+			vgAlg::actions::Decrypt decrypt;
+			decrypt.setInitialize( "vgsdkViewerGTK", inBuffer, outBuffer );
+			decrypt.execute();
+
+			retVal = loader.load( pathfilename.c_str(), outBuffer );
+		}
+		else
+		{
+			retVal = loader.load( pathfilename.c_str() );
+		}
 	}
 	catch(std::runtime_error e)
 	{
@@ -207,6 +234,8 @@ const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename )
 
 	return retVal.first;
 }
+
+
 
 const bool myCanvas::loadObj( const Glib::ustring & pathfilename )
 {
@@ -254,13 +283,44 @@ const bool myCanvas::loadTrian( const Glib::ustring & pathfilename )
 	return true;
 }
 
-const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename )
+const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename, bool crypted)
 {
 	// Load .trian
 	vgTrian::Loader loader;
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
 
-	retVal = loader.loadTrian2( pathfilename.c_str() );
+	try
+	{
+		if( crypted )
+		{
+			std::ifstream inFile;
+			inFile.open( pathfilename.c_str(), std::ifstream::in | std::ifstream::binary );
+			bool b = inFile.good();
+			inFile.seekg (0, std::ios::end);
+			int length = inFile.tellg();
+			inFile.seekg (0, std::ios::beg);
+
+			std::vector< char > inBuffer;
+			inBuffer.resize( length );
+			inFile.read( &inBuffer[0], length );
+			
+			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
+
+			vgAlg::actions::Decrypt decrypt;
+			decrypt.setInitialize( "vgsdkViewerGTK", inBuffer, outBuffer );
+			decrypt.execute();
+
+			retVal = loader.load( pathfilename.c_str(), outBuffer );
+		}
+		else
+		{
+			retVal = loader.load( pathfilename.c_str() );
+		}
+	}
+	catch(std::runtime_error e)
+	{
+		return false;
+	}
 
 	if ( !retVal.first )
 	{

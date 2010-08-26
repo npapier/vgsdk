@@ -17,7 +17,7 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-MaterialExporter::MaterialExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings ) :
+MaterialExporter::MaterialExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, vgOpenCOLLADA::Settings exportSettings ) :
 COLLADASW::LibraryMaterials ( streamWriter ),
 m_collectedMap ( collectedMap ),
 m_exportSettings( exportSettings )
@@ -29,7 +29,7 @@ void MaterialExporter::doExport()
 	vgDebug::get().logDebug("Exporting materials");
 	openLibrary();
 	
-	if( m_exportSettings.getExportLevel() > GEOMETRY )
+	if( m_exportSettings.getLevel() > GEOMETRY )
 	{
 		typedef collectedMapType::right_map::const_iterator right_const_iterator;
 

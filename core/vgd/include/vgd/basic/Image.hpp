@@ -77,6 +77,19 @@ struct VGD_API Image : public IImage
 	Image( std::string strFilename );
 
 	/**
+	 * @brief Image constructor from a file in memory.
+	 * 
+	 * @param strFilename		filename of image to load.
+	 * 
+	 * @param buffer			pointer to the image in memory.
+	 *
+	 * @param size				size of the buffer
+	 * 
+	 * @post voxelSize()	== vgm::Vec3f(1.f, 1.f, 1.f)
+	 */
+	Image( std::string strFilename, const void*	buffer, int size );
+
+	/**
 	 * @brief Image contructor from memory.
 	 * 
 	 * If \c pixels parameter is not 0, then the image data is copied from memory.
@@ -201,6 +214,19 @@ struct VGD_API Image : public IImage
 	 * @remarks All supported format of OpenIL. Main supported format are : bmp, dds, ico, gif, jpg, png, psd, psp, raw, tga, tif.
 	 */
 	bool	load( std::string strFilename );
+
+	/**
+	 * @brief Create an image from a file in memory.
+	 * 
+	 * @param strFilename		filename of image to load.
+	 *
+	 * @param buffer			pointer to image in memory
+	 *
+	 * @param size				size of the buffer
+	 * 
+	 * @remarks All supported format of OpenIL. Main supported format are : bmp, dds, ico, gif, jpg, png, psd, psp, raw, tga, tif.
+	 */
+	bool	load( std::string strFilename, const void* buffer, int size );
 
 	/**
 	 * @brief Create an image from memory.

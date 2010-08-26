@@ -151,22 +151,15 @@ std::string getNumberedImageName(std::string filename, int number)
 	return filename + "_" + zero + out.str() + ".png";
 }
 
-std::list< std::string > createModelList( bool collada )
+std::list< std::string > createModelList( std::string dir )
 {
 	boost::filesystem::path path;
 
-	if( collada )
-	{
-		path = sbf::path::getTopLevel(sbf::path::Share) / "vgTest" / "0-5" / "collada";
-	}
-	else
-	{
-		path = sbf::path::getTopLevel(sbf::path::Share) / "vgTest" / "0-5";
-	}	
+	path = sbf::path::getTopLevel(sbf::path::Share) / "vgTest" / "0-5" / dir;
 
 	vgio::FilenameCollector collector( path.string() );
 	
-	collector.setRegex(".*");
+	collector.setRegex(".*\.(obj|trian|trian2|dae|crypt|vgarch)");
 	collector.run();
 	return collector.getStringFilenames();
 }

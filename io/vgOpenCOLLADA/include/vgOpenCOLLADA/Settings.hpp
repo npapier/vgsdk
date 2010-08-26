@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGOPENCOLLADA_EXPORTER_EXPORTSETTINGS_HPP
-#define _VGOPENCOLLADA_EXPORTER_EXPORTSETTINGS_HPP
+#ifndef _VGOPENCOLLADA_SETTINGS_HPP
+#define _VGOPENCOLLADA_SETTINGS_HPP
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
 
@@ -13,10 +13,7 @@
 namespace vgOpenCOLLADA
 {
 
-namespace exporter
-{
-
-enum VGOPENCOLLADA_API ExportLevel
+enum VGOPENCOLLADA_API LEVEL
 {
 	GEOMETRY,
 	MATERIAL,
@@ -26,18 +23,22 @@ enum VGOPENCOLLADA_API ExportLevel
 /**
  * @brief Export settings.
  */
-struct VGOPENCOLLADA_API ExportSettings
+struct VGOPENCOLLADA_API Settings
 {
-	ExportSettings();
+	Settings();
 
-	ExportSettings(	bool applyGeometricalTransformation, bool triangulate,	bool invertPrimitiveOrientation, 
-		bool encrypt, ExportLevel exportLevel );
+	Settings(	bool applyGeometricalTransformation, bool triangulate,	bool invertPrimitiveOrientation, 
+		bool encrypt, bool reflective, bool bump, bool specular, int textureSize, LEVEL exportLevel );
 
 	bool			getApplyGeometricalTransformation();
 	bool			getTriangulate();
 	bool			getInvertPrimitiveOrientation();
 	bool			getEncrypt();
-	ExportLevel		getExportLevel();
+	bool			getReflective();
+	bool			getBump();
+	bool			getSpecular();
+	int				getTextureSize();
+	LEVEL			getLevel();
 	std::string		getFilename();
 
 	void			setFilename( std::string filename );
@@ -47,14 +48,16 @@ private:
 	bool			m_triangulate;
 	bool			m_invertPrimitiveOrientation;
 	bool			m_encrypt;
-	ExportLevel		m_exportLevel;
+	bool			m_reflective;
+	bool			m_bump;
+	bool			m_specular;
+	int				m_textureSize;
+	LEVEL			m_level;
 	std::string		m_filename;
 
 };
 
-} // namespace exporter
-
 } // namespace vgOpenCOLLADA
 
-#endif // _VGOPENCOLLADA_EXPORTER_EXPORTSETTINGS_HPP
+#endif // _VGOPENCOLLADA_SETTINGS_HPP
 

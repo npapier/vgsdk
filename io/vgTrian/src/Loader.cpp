@@ -5,6 +5,7 @@
 
 #include "vgTrian/Loader.hpp"
 
+#include <vgAlg/actions/Decrypt.hpp>
 #include <vgDebug/Global.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/basic/Image.hpp>
@@ -19,13 +20,15 @@
 #include <vgd/node/VertexShape.hpp>
 
 #include <vgio/Cache.hpp>
+#include <vgio/helpers.hpp>
+
 
 
 
 namespace vgTrian
 {
 
-
+META_LOADER_CPP( vgTrian::Loader, "trian" )
 
 std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const char* pathFilename, const bool bCCW )
 {
@@ -433,8 +436,14 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 
 
 
-std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *pathFilename,
-	bool bCCW ) //, const bool useCache )
+std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *pathFilename, bool bCCW ) //, const bool useCache )
+{
+	return load( pathFilename, bCCW );
+}
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > >		retVal;
 	retVal.first	= false;
@@ -443,7 +452,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 
 	vgd::Shp< vgd::node::Group > group;
 
-	vgd::basic::FilenameExtractor extractor( pathFilename );
+	vgd::basic::FilenameExtractor extractor( filePath.c_str() );
 	m_path						= extractor.getPath();
 	std::string filename		= extractor.getFilename();
 	std::string epathFilename	= extractor.getPathFilename();
@@ -457,21 +466,89 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 	retVal.second = group;
 
 	// open file
-	m_fp.open(pathFilename, std::ios::in);
+	std::fstream fp;
+	fp.open(filePath.c_str(), std::ios::in);
 
-	if (!m_fp.is_open())
+	if (!fp.is_open())
 	{
-		vgDebug::get().logDebug("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
+		vgDebug::get().logDebug("vgTrian::loadTrian2: Unable to open file %s", filePath );
 		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
 
 		return ( retVal );
 	}
 	else
 	{
-		vgDebug::get().logDebug("vgTrian::loadTrian2: load %s", pathFilename );
+		vgDebug::get().logDebug("vgTrian::loadTrian2: load %s", filePath );
 		//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s", pathFilename );
 	}
+
+	m_fp << fp.rdbuf();
+	fp.close();
+
+	retVal.first = loadTrian2( group );
+
+	if( retVal.first )
+	{
+		vgDebug::get().logDebug("vgTrian::loadTrian2: load %s done", filePath );
+		//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );
+	}
+	else
+	{
+		vgDebug::get().logDebug("vgTrian::loadTrian2: Unable to open file %s", filePath );
+		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
+	}
+	return retVal;
+}
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( std::string pathFilename, vgd::Shp< std::vector< char > > buffer, bool bCCW )
+{
+	std::pair< bool, vgd::Shp< vgd::node::Group > >		retVal;
+	retVal.first	= false;
+
+	vgd::Shp< vgd::node::Group > group = vgd::node::Group::create( pathFilename );
+	retVal.second = group;
+
+	std::string result = std::string( (*buffer).begin(), (*buffer).end() );
+	m_fp.str( result );
 	
+	vgd::basic::FilenameExtractor extractor( pathFilename.c_str() );
+	m_path						= extractor.getPath();
+	
+	if ( m_path.length() == 0 )
+	{
+		m_path = ".";
+	}
+
+	retVal.first = loadTrian2( group );
+
+	if( retVal.first )
+	{
+		vgDebug::get().logDebug("vgTrian::loadTrian2: load %s done", pathFilename.c_str() );
+		//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );
+	}
+	else
+	{
+		vgDebug::get().logDebug("vgTrian::loadTrian2: Unable to open file %s", pathFilename.c_str() );
+		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
+	}
+	return retVal;
+}
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW )
+{
+	m_imageMap = imageMap;
+	
+	return load( filePath, outBuffer, bCCW );
+}
+
+
+
+bool Loader::loadTrian2( vgd::Shp< vgd::node::Group > group )
+{
 	// VERSION
 	std::string version;
 	m_fp >> version;
@@ -480,7 +557,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 			(version.compare( "vglExporter100" ) != 0 )
 		) 
 	{
-		return retVal;
+		return false;
 	}
 	
 	// MATERIALS
@@ -540,16 +617,9 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *
 		}
 	}
 
-	retVal.first = true;
-	
-	vgDebug::get().logDebug("vgTrian::loadTrian2: load %s done", pathFilename );
-	//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );
-
-	//close file
 	m_fp.clear();
-	m_fp.close();
 
-	return retVal;
+	return true;
 }
 
 
@@ -686,7 +756,30 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		vgDebug::get().logDebug("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 		//vgDebug::get().logStatus("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 
-		vgd::Shp< vgd::basic::IImage > image = vgio::ImageCache::load( m_path + '/' + filename );
+		vgd::Shp< vgd::basic::IImage > image;
+
+		if( m_imageMap.size() > 0 )
+		{
+			image = m_imageMap[ filename ];
+		}
+		else
+		{
+			// Retrieves the extension of the given filename.
+			vgd::basic::FilenameExtractor	extractor( m_path + '/' + filename );
+			std::string						extension = extractor.getExtension();
+
+			std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); //to lowercase;
+			if( extension.compare( ".crypt" ) == 0 || extension.compare( ".crypt" ) == 0 )
+			{
+				image = vgio::loadCryptedImage(  m_path + '/' + filename, "vgsdkViewerGTK" ); //@todo get key from Settings.
+			}
+			else
+			{
+				image = vgio::ImageCache::load( m_path + '/' + filename );
+			}
+		}
+		
+		
 		/*if ( m_useCache )
 		{
 			image = vgio::ImageCache::load( m_path + '/' + filename );
@@ -969,6 +1062,13 @@ vgd::Shp< vgd::node::Material > Loader::loadWireColor( std::string nodeName )
 	material->setOpacity( 1.f - opacity );
 
 	return material;
+}
+
+
+
+vgd::Shp< vgio::ILoader > Loader::clone()
+{
+	return vgd::Shp< vgio::ILoader >( new Loader );
 }
 
 

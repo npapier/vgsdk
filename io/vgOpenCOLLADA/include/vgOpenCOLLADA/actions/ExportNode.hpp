@@ -13,7 +13,7 @@
 #include <vgAlg/actions/input/INodeInput.hpp>
 #include <vgAlg/actions/input/IParentInput.hpp>
 
-#include <vgOpenCOLLADA/exporter/ExportSettings.hpp>
+#include <vgOpenCOLLADA/Settings.hpp>
 
 namespace vgOpenCOLLADA
 {
@@ -31,11 +31,11 @@ struct VGOPENCOLLADA_API ExportNode : public vgAlg::actions::IAction, public vgA
 
 	virtual void execute();
 
-	void setExportSettings( vgOpenCOLLADA::exporter::ExportSettings exportSettings );
+	void setExportSettings( vgOpenCOLLADA::Settings exportSettings );
 
 private:
 
-	vgOpenCOLLADA::exporter::ExportSettings m_exportSettings;
+	vgOpenCOLLADA::Settings m_exportSettings;
 };
 
 } // namespace actions

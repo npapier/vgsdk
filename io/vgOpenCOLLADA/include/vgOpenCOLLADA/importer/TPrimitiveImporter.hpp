@@ -11,7 +11,7 @@
 
 #include <boost/unordered_map.hpp>  
 
-#include <vgOpenCOLLADA/convenience.hpp>
+#include <vgOpenCOLLADA/Settings.hpp>
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
@@ -37,13 +37,13 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 {
 
 	TPrimitiveImporter( std::vector< vgm::Vec3f > positions, std::vector< vgm::Vec3f > normals,
-		std::vector< std::vector< vgm::Vec2f > > texCoords, LOAD_TYPE loadType,
+		std::vector< std::vector< vgm::Vec2f > > texCoords, vgOpenCOLLADA::Settings settings,
 		vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial,
 		vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive ) :
 	m_positions( positions ),
 	m_normals( normals ),
 	m_texCoords( texCoords ),
-	m_loadType( loadType ),
+	m_settings( settings ),
 	m_mapShapeMaterial( mapShapeMaterial ),
 	m_group( group ),
 	m_primitives( (const PrimitiveType*) meshPrimitive ),
@@ -88,7 +88,7 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 	{
 		//check if mesh has texture coordinates.
 		m_hasTextCoords = false;
-		if( m_primitives->hasUVCoordIndices() && m_texCoords.size() > 0 && m_loadType > LOAD_MATERIAL)
+		if( m_primitives->hasUVCoordIndices() && m_texCoords.size() > 0 && m_settings.getLevel() == TEXTURE)
 		{
 			m_hasTextCoords = true;
 		}
@@ -186,7 +186,7 @@ protected:
 	std::vector< vgm::Vec3f >						m_positions;
 	std::vector< vgm::Vec3f >						m_normals;
 	std::vector< std::vector< vgm::Vec2f > >		m_texCoords;
-	LOAD_TYPE										m_loadType;
+	vgOpenCOLLADA::Settings							m_settings;
 
 	const PrimitiveType*							m_primitives;
 	const COLLADAFW::UIntValuesArray&				m_positionIndices;
@@ -216,10 +216,10 @@ struct VGOPENCOLLADA_API PrimitivePolygonsImporter : TPrimitiveImporter< COLLADA
 {
 
 	PrimitivePolygonsImporter( std::vector< vgm::Vec3f > positions, std::vector< vgm::Vec3f > normals,
-		std::vector< std::vector< vgm::Vec2f > > texCoords, LOAD_TYPE loadType,
+		std::vector< std::vector< vgm::Vec2f > > texCoords, vgOpenCOLLADA::Settings settings,
 		vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > mapShapeMaterial,
 		vgd::Shp< vgd::node::Group > group, const COLLADAFW::MeshPrimitive* meshPrimitive ) :
-	TPrimitiveImporter( positions, normals, texCoords, loadType, mapShapeMaterial, group, meshPrimitive )
+	TPrimitiveImporter( positions, normals, texCoords, settings, mapShapeMaterial, group, meshPrimitive )
 	{
 	}
 

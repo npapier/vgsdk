@@ -6,6 +6,7 @@
 #include "vgd/basic/Image.hpp"
 
 #include <boost/thread.hpp>
+#include <vgd/basic/FilenameExtractor.hpp>
 #include <vgDebug/convenience.hpp>
 
 #include "vgd/Shp.hpp"
@@ -86,6 +87,16 @@ Image::Image( std::string strFilename )
 	resetInformations();
 
 	load( strFilename );
+}
+
+
+
+Image::Image( std::string strFilename, const void* buffer, int size )
+:	m_iluintImgID(0)
+{
+	resetInformations();
+
+	load( strFilename, buffer, size );
 }
 
 
@@ -222,6 +233,49 @@ bool Image::load( std::string strFilename )
 		
 		vgDebug::get().logDebug("Image::load: Finish reading image %s (%i x %i).",
 								strFilename.c_str(), width(), height() );		
+
+		return true;
+	}
+}
+
+
+
+bool Image::load( std::string strFilename, const void* buffer, int size )
+{
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
+	destroy();
+
+	// Create a new image name.
+	ilGenImages(1, &m_iluintImgID);
+
+	// Bind this image name.
+	bind();
+
+	vgDebug::get().logDebug("Image::load: Start reading image %s.", strFilename.c_str() );
+	
+	// Retrieves the extension of the given filename.
+	vgd::basic::FilenameExtractor	extractor( strFilename.c_str() );
+	std::string						extension = extractor.getExtension();
+	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); //to lowercase;
+
+	ILenum type = IL_TYPE_UNKNOWN;
+
+	// Loads the image specified by strFilename into the ImgId image.
+	if ( ilLoadL( type, buffer, size ) == IL_FALSE )
+	{
+		reportILError();
+		
+		destroy();
+
+		return false;
+	}
+	else
+	{
+		updateInformations();
+		
+		vgDebug::get().logDebug("Image::load: Finish reading image %s (%i x %i).",
+								strFilename.c_str(), width(), height() );
 
 		return true;
 	}

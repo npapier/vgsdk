@@ -83,27 +83,37 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 	Gtk::FileFilter			trianFilter;
 	Gtk::FileFilter			colladaFilter;
 	Gtk::FileFilter			objFilter;
+	Gtk::FileFilter			vgarchFilter;
 
 	allFilter.set_name( "All supported files" );
 	allFilter.add_pattern( "*.trian" );
 	allFilter.add_pattern( "*.trian2" );
+	allFilter.add_pattern( "*.trian2.crypt" );
 	allFilter.add_pattern( "*.dae" );
+	allFilter.add_pattern( "*.dae.crypt" );
 	allFilter.add_pattern( "*.obj" );
+	allFilter.add_pattern( "*.vgarch" );
 
-	trianFilter.set_name( "Trian files (*.trian, *.trian2)" );
+	trianFilter.set_name( "Trian files (*.trian, *.trian2, *.trian2.crypt)" );
 	trianFilter.add_pattern( "*.trian" );
 	trianFilter.add_pattern( "*.trian2" );
+	trianFilter.add_pattern( "*.trian2.crypt" );
 
-	colladaFilter.set_name( "All collada files (*.dae)" );
+	colladaFilter.set_name( "All collada files (*.dae, *.dae.crypt)" );
 	colladaFilter.add_pattern( "*.dae" );
+	colladaFilter.add_pattern( "*.dae.crypt" );
 
 	objFilter.set_name( "Wavefront objects (*.obj)" );
 	objFilter.add_pattern( "*.obj" );
+
+	vgarchFilter.set_name( "Vgsdk compressed files (*.vgarch)" );
+	vgarchFilter.add_pattern( "*.vgarch" );
 
 	chooser.add_filter( allFilter );
 	chooser.add_filter( trianFilter );
 	chooser.add_filter( colladaFilter );
 	chooser.add_filter( objFilter );
+	chooser.add_filter( vgarchFilter );
 	chooser.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
 	chooser.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
 	chooser.set_select_multiple( true );
