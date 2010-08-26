@@ -11,7 +11,7 @@
 
 #include <boost/unordered_map.hpp>  
 
-#include <vgOpenCOLLADA/convenience.hpp>
+#include <vgOpenCOLLADA/Settings.hpp>
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
@@ -32,7 +32,7 @@ struct Reader;
  */
 struct VGOPENCOLLADA_API GeometryImporter
 {
-	GeometryImporter( const COLLADAFW::Geometry* geometry, LOAD_TYPE loadType, Reader *reader );
+	GeometryImporter( const COLLADAFW::Geometry* geometry, vgOpenCOLLADA::Settings settings, Reader *reader );
 	
 	/**
 	 * @brief Creates geometry.
@@ -47,9 +47,9 @@ struct VGOPENCOLLADA_API GeometryImporter
 	std::pair< bool, vgd::Shp< vgd::node::Group > > loadMesh();
 
 	/**
-	* @brief: Import all position for current mesh.
+	* @brief Import all position for current mesh.
 	*
-	* @return: a vector of every position of current mesh
+	* @return a vector of every position of current mesh
 	*/
 	void importMeshPositions();
 
@@ -79,7 +79,7 @@ private:
 	std::vector< vgm::Vec3f >					m_positions;
 	std::vector< vgm::Vec3f >					m_normals;
 	std::vector< std::vector< vgm::Vec2f > >	m_texCoords;
-	LOAD_TYPE									m_loadType;
+	vgOpenCOLLADA::Settings						m_settings;
 
 	vgd::Shp< boost::unordered_map< vgd::Shp< vgd::node::VertexShape >, int > > m_mapShapeMaterial;
 

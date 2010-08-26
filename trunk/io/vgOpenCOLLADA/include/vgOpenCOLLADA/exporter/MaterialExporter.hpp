@@ -12,7 +12,7 @@
 
 #include <vgd/node/Group.hpp>
 #include <vge/technique/CollectNode.hpp>
-#include <vgOpenCOLLADA/exporter/ExportSettings.hpp>
+#include <vgOpenCOLLADA/Settings.hpp>
 
 #include "COLLADASWLibraryMaterials.h"
 
@@ -31,7 +31,7 @@ struct SceneExporter;
  */
 struct VGOPENCOLLADA_API MaterialExporter : public COLLADASW::LibraryMaterials
 {
-	MaterialExporter(COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings );
+	MaterialExporter(COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, vgOpenCOLLADA::Settings exportSettings );
 
 	/**
 	 * @brief start exporting
@@ -39,8 +39,8 @@ struct VGOPENCOLLADA_API MaterialExporter : public COLLADASW::LibraryMaterials
 	void doExport();
 
 private:
-	collectedMapType	m_collectedMap;
-	ExportSettings		m_exportSettings;
+	collectedMapType			m_collectedMap;
+	vgOpenCOLLADA::Settings		m_exportSettings;
 };
 
 } // namespace exporter

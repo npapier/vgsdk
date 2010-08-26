@@ -42,6 +42,8 @@ EditMenu::EditMenu()
 		"      <menuitem action='PreviousNode'/>"
 		"      <separator/>"
 		"      <menuitem action='RemoveNode'/>"
+		"      <separator/>"
+		"      <menuitem action='EncryptFile'/>"
 		"    </popup>"
 		"</ui>";
 	
@@ -55,6 +57,7 @@ EditMenu::EditMenu()
 	m_actionList.push_back( actionsRegistry->getAction( "NextNode" ) );
 	m_actionList.push_back( actionsRegistry->getAction( "PreviousNode" ) );
 	m_actionList.push_back( actionsRegistry->getAction( "RemoveNode" ) );
+	m_actionList.push_back( actionsRegistry->getAction( "EncryptFile" ) );
 
 	std::list< vgd::Shp< vgUI::actions::IActionUI > >::iterator it = m_actionList.begin();
 

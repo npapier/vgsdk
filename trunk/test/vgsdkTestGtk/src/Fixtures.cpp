@@ -28,8 +28,19 @@ void VgTestCollada::TearDown()
 {
 }
 
-INSTANTIATE_TEST_CASE_P(FileList, VgTestCollada, testing::ValuesIn(vgTest::createModelList( true )));
+INSTANTIATE_TEST_CASE_P(FileList, VgTestCollada, testing::ValuesIn(vgTest::createModelList( "collada" )));
 
+
+//Test Suite VgTestCompression
+void VgTestCompression::SetUp()
+{
+}
+
+void VgTestCompression::TearDown()
+{
+}
+
+INSTANTIATE_TEST_CASE_P(FileList, VgTestCompression, testing::ValuesIn(vgTest::createModelList( "compression" )));
 
 //Test Suite VgTestShape
 void VgTestShape::SetUp()

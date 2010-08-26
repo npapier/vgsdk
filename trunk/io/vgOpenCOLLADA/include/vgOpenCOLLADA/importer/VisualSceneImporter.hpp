@@ -13,8 +13,8 @@
 
 #include <COLLADAFWNode.h>
 
-#include "vgOpenCOLLADA/convenience.hpp"
-#include "vgOpenCOLLADA/importer/ExtraDataCallbackHandler.hpp"
+#include "vgOpenCOLLADA/Settings.hpp"
+#include "vgOpenCOLLADA/importer/ExtraDataMultiInstance.hpp"
 
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
@@ -36,7 +36,7 @@ struct Reader;
  */
 struct VGOPENCOLLADA_API VisualSceneImporter
 {
-	VisualSceneImporter( LOAD_TYPE loadType, Reader *reader );
+	VisualSceneImporter( vgOpenCOLLADA::Settings settings, Reader *reader );
 
 	/**
 	 * @brief Return the whole scene
@@ -85,9 +85,9 @@ private:
 	 * 
 	 * @param extraInfos: matrix list for the multiple instance.
 	 */
-	void createMultipleInstances( vgd::Shp< vgd::node::MultipleInstances > multipleInstances, std::vector< ExtraInfo > extraInfos );
+	void createMultipleInstances( vgd::Shp< vgd::node::MultipleInstances > multipleInstances, std::vector< MultiInstanceInfo > extraInfos );
 
-	LOAD_TYPE						m_loadType;
+	vgOpenCOLLADA::Settings			m_settings;
 	Reader							*m_reader;
 	vgd::Shp< vgd::node::Switch >	m_switchMaterial;
 	vgd::Shp< vgd::node::Switch >	m_switchVertexShape;

@@ -1,0 +1,7 @@
+description	= '(V)ersatile (G)raphical PhysicFS'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+libs		= [ 'vgBase 0-5', 'vgd 0-5' ]
+deps		= [ '../../core' ]
+uses		= [ 'physfs', 'boost' ]

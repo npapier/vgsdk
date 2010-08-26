@@ -20,7 +20,7 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-GeometryExporter::GeometryExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings )
+GeometryExporter::GeometryExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, vgOpenCOLLADA::Settings exportSettings )
 :	COLLADASW::LibraryGeometries ( streamWriter ),
 	m_collectedMap( collectedMap ),
 	m_exportSettings( exportSettings )
@@ -96,7 +96,7 @@ void GeometryExporter::exportMesh( vgd::Shp< vge::technique::CollectedShape > co
 	}
 
 	std::string currentGeometryMaterialSymbol;
-	if( collectedMaterial->getMaterial() && m_exportSettings.getExportLevel() > GEOMETRY )
+	if( collectedMaterial->getMaterial() && m_exportSettings.getLevel() > GEOMETRY )
 	{
 		currentGeometryMaterialSymbol = COLLADASW::Utils::checkNCName( COLLADASW::NativeString( collectedMaterial->getMaterial()->getName() ) ) + "_symbol";
 	}
@@ -113,7 +113,7 @@ void GeometryExporter::exportMesh( vgd::Shp< vge::technique::CollectedShape > co
 
 	exportPositions( vertexShape );
 	exportNormals( vertexShape );
-	if( m_exportSettings.getExportLevel() > MATERIAL )
+	if( m_exportSettings.getLevel() > MATERIAL )
 	{
 		exportTexCoords( vertexShape );
 	}

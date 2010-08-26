@@ -10,7 +10,7 @@
 
 #include <vgOpenCOLLADA/actions/ExportNode.hpp>
 
-#include <vgGTK/node/ExportColladaDialog.hpp>
+#include <vgGTK/node/ColladaSettingsDialog.hpp>
 
 namespace vgGTK
 {
@@ -40,13 +40,13 @@ void ExportNode::execute()
 	vgd::Shp< vgd::node::Node > node = m_node.lock();
 	vgd::Shp< vgd::node::Group > parent = m_parent.lock();
 
-	vgGTK::node::ExportColladaDialog dialog;
+	vgGTK::node::ColladaSettingsDialog dialog;
 	dialog.show_all();
 
-	vgOpenCOLLADA::exporter::ExportSettings  exportSettings;
+	vgOpenCOLLADA::Settings  exportSettings;
 	if( dialog.run() == Gtk::RESPONSE_OK )
 	{
-		exportSettings = dialog.getExportSettings();
+		exportSettings = dialog.getSettings();
 	}
 	else
 	{
@@ -71,7 +71,6 @@ void ExportNode::execute()
 		vgOpenCOLLADA::actions::ExportNode exportNode;
 		exportNode.setNode( node );
 		exportNode.setParent( parent );
-		//exportNode.setStringParam( chooser.get_filename() );
 		exportSettings.setFilename( chooser.get_filename() );
 		exportNode.setExportSettings( exportSettings );
 		exportNode.execute();

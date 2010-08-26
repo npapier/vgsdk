@@ -17,7 +17,7 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-EffectExporter::EffectExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings ) :
+EffectExporter::EffectExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, vgOpenCOLLADA::Settings exportSettings ) :
 COLLADASW::LibraryEffects ( streamWriter ),
 m_collectedMap( collectedMap ),
 m_exportSettings( exportSettings )
@@ -29,7 +29,7 @@ void EffectExporter::doExport()
 	vgDebug::get().logDebug("Exporting effects");
 	openLibrary();
 
-	if( m_exportSettings.getExportLevel() > GEOMETRY )
+	if( m_exportSettings.getLevel() > GEOMETRY )
 	{
 		typedef collectedMapType::right_map::const_iterator right_const_iterator;
 
@@ -71,7 +71,7 @@ void EffectExporter::exportSimpleEffect( vgd::Shp< vge::technique::CollectedMate
 
 		exportColorEffect( material, effectProfile);
 
-		if( texture && m_exportSettings.getExportLevel() > MATERIAL )
+		if( texture && m_exportSettings.getLevel() > MATERIAL )
 		{
 			exportTextureEffect( collectedMaterial, effectProfile );
 		}

@@ -24,7 +24,7 @@ namespace exporter
 
 const std::string VisualSceneExporter::NODE_ID_PRAEFIX = "node-";
 
-VisualSceneExporter::VisualSceneExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, ExportSettings exportSettings ) :
+VisualSceneExporter::VisualSceneExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, vgOpenCOLLADA::Settings exportSettings ) :
 COLLADASW::LibraryVisualScenes ( streamWriter ),
 m_collectedMap ( collectedMap ),
 m_exportSettings( exportSettings )
@@ -87,11 +87,11 @@ void VisualSceneExporter::doExport()
 
 		instanceGeometry.setUrl ( "#" + geomName );
 
-		if ( left_iter->second->getMaterial() && m_exportSettings.getExportLevel() > GEOMETRY )
+		if ( left_iter->second->getMaterial() && m_exportSettings.getLevel() > GEOMETRY )
 		{
 			COLLADASW::InstanceMaterial instanceMaterial( left_iter->second->getMaterialSymbol(), "#"+left_iter->second->getMaterialId() );
 			
-			if( left_iter->second->getTexture() && m_exportSettings.getExportLevel() > MATERIAL )
+			if( left_iter->second->getTexture() && m_exportSettings.getLevel() > MATERIAL )
 			{
 				COLLADASW::BindVertexInput bindVertexInput("CHANNEL1", "TEXTCOORD", 1); //@todo manage multi texture		
 				instanceMaterial.push_back( bindVertexInput );

@@ -12,15 +12,6 @@
 namespace vgOpenCOLLADA
 {
 
-enum LOAD_TYPE
-{
-	LOAD_GEOMETRY,
-	LOAD_MATERIAL,
-	LOAD_TEXTURE,
-	LOAD_ALL
-};
-
-
 } // namespace vgOpenCOLLADA
 
 #endif // _VGOPENCOLLADA_CONVENIENCE_HPP

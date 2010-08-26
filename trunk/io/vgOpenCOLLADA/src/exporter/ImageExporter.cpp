@@ -19,7 +19,7 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 	
-ImageExporter::ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, std::string filepath, ExportSettings exportSettings ) 
+ImageExporter::ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedMapType collectedMap, std::string filepath, vgOpenCOLLADA::Settings exportSettings ) 
 :	COLLADASW::LibraryImages ( streamWriter ),
 	m_collectedMap( collectedMap ),
 	m_outputFilePath( filepath ),
@@ -57,6 +57,20 @@ void ImageExporter::doExport()
 			vgd::basic::Image image( (*loadedImage.get()) );
 			
 			//Save image.
+			int maxSize = m_exportSettings.getTextureSize();
+			bool mustResize = false;
+			if( image.width() > maxSize || image.height() > maxSize || image.depth() > maxSize )
+			{
+				vgm::Vec3i  size( std::min<int>( image.width(), maxSize), std::min<int>( image.height(), maxSize), std::min<int>( image.depth(), maxSize) );
+				image.scale( size, vgd::basic::Image::FILTER_SCALE_MITCHELL );
+			}
+
+			if( m_exportSettings.getEncrypt() == true )
+			{
+				//ILGetData to get pointer to the file?
+				//encrypt image
+			}
+
 			std::string imageName = m_imageDirectory + "/" + texture->getName() + ".png";
 			image.save( imageName );
 

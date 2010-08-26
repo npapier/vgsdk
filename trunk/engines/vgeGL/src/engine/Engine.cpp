@@ -17,7 +17,7 @@
 #include <vge/handler/Handler.hpp>
 #include <vge/handler/HandlerRegistry.hpp>
 #include "vgeGL/engine/ProgramGenerator.hpp"
-#include <vgio/FilenameCollector.hpp>
+//#include <vgio/FilenameCollector.hpp>
 
 
 
@@ -433,64 +433,64 @@ vgd::Shp< ProgramGenerator > Engine::getGLSLProgramGenerator()
 
 
 
-void Engine::loadShaders( const std::string& path, const std::string& regex )
-{
-	using vgio::FilenameCollector;
+//void Engine::loadShaders( const std::string& path, const std::string& regex )
+//{
+	//using vgio::FilenameCollector;
 
-	FilenameCollector filenameCollector( path );
-	filenameCollector.setRegex( regex );
-	const FilenameCollector::StringList& filenames = filenameCollector.run();
+	//FilenameCollector filenameCollector( path );
+	//filenameCollector.setRegex( regex );
+	//const FilenameCollector::StringList& filenames = filenameCollector.run();
 
-	for( std::list< std::string >::const_iterator	i		= filenames.begin(),
-													iEnd	= filenames.end();
-		i != iEnd;
-		++i )
-	{
-		using ::glo::GLSLProgram;
+	//for( std::list< std::string >::const_iterator	i		= filenames.begin(),
+	//												iEnd	= filenames.end();
+	//	i != iEnd;
+	//	++i )
+	//{
+	//	using ::glo::GLSLProgram;
 
-		// Gets the filename
-		const std::string filename( *i );
+	//	// Gets the filename
+	//	const std::string filename( *i );
 
-		// Loads file
-		const std::string shaderString = GLSLProgram::loadFile( filename );
+	//	// Loads file
+	//	const std::string shaderString = GLSLProgram::loadFile( filename );
 
-		if ( !shaderString.empty() )
-		{
-			// File not empty, creates the shader
-			vgDebug::get().logDebug( "vgeGL.Engine: Loads shader %s", filename.c_str() );
+	//	if ( !shaderString.empty() )
+	//	{
+	//		// File not empty, creates the shader
+	//		vgDebug::get().logDebug( "vgeGL.Engine: Loads shader %s", filename.c_str() );
 
-			///@todo Creates glo::GLSLShader
-			GLSLProgram *program = new GLSLProgram;
+	//		///@todo Creates glo::GLSLShader
+	//		GLSLProgram *program = new GLSLProgram;
 
-			// Determines the type of shader in the file from extension
-			const bool isAVertexShader = (filename.rfind( "_vs.glsl" ) != std::string::npos );
-			
-			const GLSLProgram::ShaderType shaderType = isAVertexShader ? GLSLProgram::VERTEX : GLSLProgram::FRAGMENT;
+	//		// Determines the type of shader in the file from extension
+	//		const bool isAVertexShader = (filename.rfind( "_vs.glsl" ) != std::string::npos );
+	//		
+	//		const GLSLProgram::ShaderType shaderType = isAVertexShader ? GLSLProgram::VERTEX : GLSLProgram::FRAGMENT;
 
-			const bool addShaderRetVal = program->addShader( shaderString.c_str(), shaderType, true );
+	//		const bool addShaderRetVal = program->addShader( shaderString.c_str(), shaderType, true );
 
-			if ( addShaderRetVal )
-			{
-				// Adds it to the GLSL manager
-				getGLSLManager().add( filename, program );
-				vgDebug::get().logDebug( "vgeGL.Engine: Shader %s successfully registered in GLSLManager", filename.c_str() );
-			}
-			else
-			{
-				vgDebug::get().logDebug( "vgeGL.Engine: Fails to registered shader %s", filename.c_str() );
+	//		if ( addShaderRetVal )
+	//		{
+	//			// Adds it to the GLSL manager
+	//			getGLSLManager().add( filename, program );
+	//			vgDebug::get().logDebug( "vgeGL.Engine: Shader %s successfully registered in GLSLManager", filename.c_str() );
+	//		}
+	//		else
+	//		{
+	//			vgDebug::get().logDebug( "vgeGL.Engine: Fails to registered shader %s", filename.c_str() );
 
-				//const std::string infoLog = program->getInfoLog( program->getProgramObject() );??????????????????????? FIXME
-				//vgDebug::get().logDebug( "Engine:\n%s\n", infoLog.c_str() );
+	//			//const std::string infoLog = program->getInfoLog( program->getProgramObject() );??????????????????????? FIXME
+	//			//vgDebug::get().logDebug( "Engine:\n%s\n", infoLog.c_str() );
 
-				delete program;
-			}
-		}
-		else
-		{
-			vgDebug::get().logDebug( "vgeGL.Engine: Empty shader %s", filename.c_str() );
-		}
-	}
-}
+	//			delete program;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		vgDebug::get().logDebug( "vgeGL.Engine: Empty shader %s", filename.c_str() );
+	//	}
+	//}
+//}
 
 
 

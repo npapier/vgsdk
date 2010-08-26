@@ -26,7 +26,7 @@ namespace vgOpenCOLLADA
 namespace exporter
 {
 
-SceneExporter::SceneExporter( ExportSettings exportSettings, vgd::Shp< vgd::node::Group > rootNode )
+SceneExporter::SceneExporter( vgOpenCOLLADA::Settings exportSettings, vgd::Shp< vgd::node::Group > rootNode )
 :	m_streamWriter ( COLLADASW::NativeString ( exportSettings.getFilename() ), false ),
 	m_rootNode ( rootNode ),
 	m_outputFileUri(  exportSettings.getFilename()  ),
@@ -114,11 +114,6 @@ void SceneExporter::prepareExport()
 		}		
 	}
 
-	if( m_exportSettings.getInvertPrimitiveOrientation() )
-	{
-
-	}
-
 	if( m_exportSettings.getEncrypt() )
 	{
 
@@ -187,7 +182,7 @@ void SceneExporter::exportAsset()
 
 void SceneExporter::exportImage()
 {
-	if( m_exportSettings.getExportLevel() > MATERIAL )
+	if( m_exportSettings.getLevel() > MATERIAL )
 	{
 		m_imageExporter->doExport();
 	}

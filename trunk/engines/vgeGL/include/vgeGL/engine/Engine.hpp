@@ -452,7 +452,7 @@ public:
 	 * @param path		path from where files would be searched
 	 * @param regex		regular expression used to filter files to load
 	 */
-	void loadShaders( const std::string& path, const std::string& regex );
+	//void loadShaders( const std::string& path, const std::string& regex );
 	//@}
 
 

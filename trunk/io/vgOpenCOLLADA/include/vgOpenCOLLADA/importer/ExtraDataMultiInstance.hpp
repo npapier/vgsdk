@@ -3,8 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGOPENCOLLADA_IMPORTER_EXTRADATACALLBACKHANLDER_HPP
-#define _VGOPENCOLLADA_IMPORTER_EXTRADATACALLBACKHANLDER_HPP
+#ifndef _VGOPENCOLLADA_IMPORTER_EXTRADATAMULTIINSTANCE_HPP
+#define _VGOPENCOLLADA_IMPORTER_EXTRADATAMULTIINSTANCE_HPP
 
 
 #include "vgOpenCOLLADA/vgOpenCOLLADA.hpp"
@@ -21,12 +21,12 @@ namespace importer
 /**
  * @brief Container class for Extra data information.
  */
-struct ExtraInfo
+struct MultiInstanceInfo
 {
 
-    ExtraInfo () {}
+    MultiInstanceInfo () {}
 
-    virtual ~ExtraInfo () {}
+    virtual ~MultiInstanceInfo () {}
 
 	/**
 	 * @brief Get/set the id of the node which the extra depends.
@@ -55,20 +55,21 @@ private:
 
 
 /**
- * @brief Implementation of an extra data callback handler with the callback handler interface.
+ * @brief	Implementation of an extra data callback handler with the callback handler interface
+ *			to support multiple instance.
  * @see DAE2MAExtraDataCallbackHandler.h (from OpenCOLLADA)
  */
-struct ExtraDataCallbackHandler : public COLLADASaxFWL::IExtraDataCallbackHandler
+struct ExtraDataMultiInstance : public COLLADASaxFWL::IExtraDataCallbackHandler
 {
 
-	ExtraDataCallbackHandler();
+	ExtraDataMultiInstance();
 
-	virtual ~ExtraDataCallbackHandler();
+	virtual ~ExtraDataMultiInstance();
 
 	/**
 	 * @brief Returns the extra info with the searched id.
 	 */
-    std::vector<ExtraInfo> findExtraInfo ( const std::string id ) const;
+    std::vector<MultiInstanceInfo> findExtraInfo ( const std::string id ) const;
 
 	/**
 	 * @brief Method to ask, if the current callback handler want to read the data of the given extra element.
@@ -88,19 +89,19 @@ struct ExtraDataCallbackHandler : public COLLADASaxFWL::IExtraDataCallbackHandle
 private:
 
     /** Disable default copy ctor. */
-	ExtraDataCallbackHandler( const ExtraDataCallbackHandler& pre );
+	ExtraDataMultiInstance( const ExtraDataMultiInstance& pre );
 
     /** Disable default assignment operator. */
-	const ExtraDataCallbackHandler& operator= ( const ExtraDataCallbackHandler& pre );
+	const ExtraDataMultiInstance& operator= ( const ExtraDataMultiInstance& pre );
 
-	typedef std::map<std::string, std::vector<ExtraInfo> > ExtraInfosMap;
+	typedef std::map<std::string, std::vector<MultiInstanceInfo> > ExtraInfosMap;
 
-    bool			m_isOriginalIdField;	///< True, if the current text field is the original id field.
-	bool			m_currentId;			///< True, if the current text field is the dependent node name.
+    bool				m_isOriginalIdField;	///< True, if the current text field is the original id field.
+	bool				m_currentId;			///< True, if the current text field is the dependent node name.
 
-    ExtraInfo		m_currentExtraInfo;		///< Current extra data.
+    MultiInstanceInfo	m_currentExtraInfo;		///< Current extra data.
 
-    ExtraInfosMap	m_extraInfos;			///< map of all extra data.
+    ExtraInfosMap		m_extraInfos;			///< map of all extra data.
 };
 
 
@@ -108,4 +109,4 @@ private:
 
 } // namespace vgOpenCOLLADA
 
-#endif // _VGOPENCOLLADA_IMPORTER_EXTRADATACALLBACKHANLDER_HPP
+#endif // _VGOPENCOLLADA_IMPORTER_EXTRADATAMULTIINSTANCE_HPP

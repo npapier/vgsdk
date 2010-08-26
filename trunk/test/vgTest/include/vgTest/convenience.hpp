@@ -54,7 +54,7 @@ VGTEST_API std::string getNumberedImageName(std::string filename, int number);
  * @brief Create list of model based on files in local/share/vgTest/
  * @return list of file path
  */
-VGTEST_API std::list< std::string > createModelList( bool collada = false );
+VGTEST_API std::list< std::string > createModelList( std::string dir = "" );
 
 } //namespace vgTest
 
