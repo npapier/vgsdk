@@ -29,10 +29,10 @@ struct BumpMappingInfo
     virtual ~BumpMappingInfo () {}
 
 	/**
-	 * @brief Get/set the id of the node which the extra depends.
+	 * @brief Get/set the uniqueId of the node which the extra depends.
 	 */
-    //const std::string getId () const { return mId; }
-    //void setId ( const std::string val ) { mId = val; }
+    const COLLADAFW::UniqueId getUniqueId () const { return mUniqueId; }
+    void setUniqueId ( const COLLADAFW::UniqueId val ) { mUniqueId = val; }
 
 	/**
 	 * @brief Get/set the texture id.
@@ -56,6 +56,7 @@ struct BumpMappingInfo
     }
 
 private:
+	COLLADAFW::UniqueId	mUniqueId;	///< The unique Id of the currently parsed extra data element.
 	std::string		mTexture;	///< The texture id.
     std::string		mChannel;	///< The channel of the texture.
 };
@@ -77,7 +78,7 @@ struct ExtraDataBumpMapping : public COLLADASaxFWL::IExtraDataCallbackHandler
 	/**
 	 * @brief Returns the extra info with the searched id.
 	 */
-    std::vector<BumpMappingInfo> findExtraInfo ( const std::string id ) const;
+    std::vector<BumpMappingInfo> findExtraInfo ( const COLLADAFW::UniqueId uniqueId ) const;
 
 	/**
 	 * @brief Method to ask, if the current callback handler want to read the data of the given extra element.
@@ -102,10 +103,10 @@ private:
     /** Disable default assignment operator. */
 	const ExtraDataBumpMapping& operator= ( const ExtraDataBumpMapping& pre );
 
-	typedef std::map<std::string, std::vector<BumpMappingInfo> > ExtraInfosMap;
+	typedef std::map<COLLADAFW::UniqueId, std::vector<BumpMappingInfo> > ExtraInfosMap;
 
-    bool			m_isOriginalIdField;	///< True, if the current text field is the original id field.
-	bool			m_currentId;			///< True, if the current text field is the dependent node name.
+    bool					m_isOriginalIdField;	///< True, if the current text field is the original id field.
+	COLLADAFW::UniqueId		m_currentId;			///< True, if the current text field is the dependent node name.
 
     BumpMappingInfo	m_currentExtraInfo;		///< Current extra data.
 

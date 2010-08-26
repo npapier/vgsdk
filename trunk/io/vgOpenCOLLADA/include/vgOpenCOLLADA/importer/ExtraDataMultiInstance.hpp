@@ -29,10 +29,10 @@ struct MultiInstanceInfo
     virtual ~MultiInstanceInfo () {}
 
 	/**
-	 * @brief Get/set the id of the node which the extra depends.
+	 * @brief Get/set the uniqueId of the node which the extra depends.
 	 */
-    const std::string getId () const { return mId; }
-    void setId ( const std::string val ) { mId = val; }
+    const COLLADAFW::UniqueId getUniqueId () const { return mUniqueId; }
+    void setUniqueId ( const COLLADAFW::UniqueId val ) { mUniqueId = val; }
 
 	/**
 	 * @brief Get/set the matrix for Multiple Instances.
@@ -47,8 +47,8 @@ struct MultiInstanceInfo
 
 private:
 
-    std::string		mId;		///< The unique Id of the currently parsed extra data element.
-	std::string		mMatrix;	///< The text value of the current matrix.
+	COLLADAFW::UniqueId	mUniqueId;	///< The unique Id of the currently parsed extra data element.
+	std::string			mMatrix;	///< The text value of the current matrix.
 
 };
 
@@ -69,7 +69,7 @@ struct ExtraDataMultiInstance : public COLLADASaxFWL::IExtraDataCallbackHandler
 	/**
 	 * @brief Returns the extra info with the searched id.
 	 */
-    std::vector<MultiInstanceInfo> findExtraInfo ( const std::string id ) const;
+    std::vector<MultiInstanceInfo> findExtraInfo ( const COLLADAFW::UniqueId uniqueId ) const;
 
 	/**
 	 * @brief Method to ask, if the current callback handler want to read the data of the given extra element.
@@ -94,10 +94,9 @@ private:
     /** Disable default assignment operator. */
 	const ExtraDataMultiInstance& operator= ( const ExtraDataMultiInstance& pre );
 
-	typedef std::map<std::string, std::vector<MultiInstanceInfo> > ExtraInfosMap;
+	typedef std::map<COLLADAFW::UniqueId, std::vector<MultiInstanceInfo> > ExtraInfosMap;
 
     bool				m_isOriginalIdField;	///< True, if the current text field is the original id field.
-	bool				m_currentId;			///< True, if the current text field is the dependent node name.
 
     MultiInstanceInfo	m_currentExtraInfo;		///< Current extra data.
 

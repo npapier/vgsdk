@@ -255,6 +255,14 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 		samplerMap[ effectCommon->getReflective().getTexture().getSamplerId() ] = REFLECTIVE;
 	}
 
+	//bump mapping
+	const ExtraDataBumpMapping& callbackHandler = m_loader->getExtraDataBumpMapping();
+	std::vector< BumpMappingInfo > extraInfos = callbackHandler.findExtraInfo( effect->getUniqueId() );
+	if( extraInfos.size > 0 )
+	{
+		samplerMap[ effectCommon->getReflective().getTexture().getSamplerId() ] = BUMPMAPPING;
+	}
+
 	if ( m_settings.getLevel() == TEXTURE )
 	{
 		//@todo: it dont pass over sampler which are not used, how to use sampler in extra? (like bump mapping)
@@ -288,11 +296,10 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 				case REFLECTIVE:
 					//@todo set texture to be "reflective"
 					break;
+				case BUMPMAPPING:
+					//@todo set texture to be "bumpmapping"
+					break;
 				default:
-					//@todo: manage bump mapping
-					//std::string sampler_name = texture->getName();
-					//const ExtraDataBumpMapping& callbackHandler = m_loader->getExtraDataBumpMapping();
-					//std::vector< BumpMappingInfo > extraInfos = callbackHandler.findExtraInfo( sampler_name );
 					break;
 			}
 

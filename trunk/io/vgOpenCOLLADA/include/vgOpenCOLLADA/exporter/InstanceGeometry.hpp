@@ -27,13 +27,11 @@ struct InstanceGeometry : public COLLADASW::InstanceGeometry
 
 	InstanceGeometry( COLLADASW::StreamWriter * streamWriter );
 
-	void setName( std::string name );
 	void addMultipleInstanceMatrix( vgm::MatrixR matrix );
 	void createMultipleInstances();
 
 private:
 	COLLADASW::BaseExtraTechnique	m_extraTechnique;
-	std::string						m_name;
 	int								m_matrixCounter;
 	std::string						m_multipleInstancesText;
 

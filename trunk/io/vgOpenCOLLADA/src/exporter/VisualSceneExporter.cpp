@@ -74,7 +74,6 @@ void VisualSceneExporter::doExport()
 		{
 			vgd::Shp< vgd::node::MultipleInstances > multipleInstances = vgd::dynamic_pointer_cast< vgd::node::MultipleInstances >(  left_iter->first->getShape() );
 			
-			instanceGeometry.setName( nodeName );
 			vgd::field::EditorRO< vgd::node::MultipleInstances::FMatrixType > matrixEdit = multipleInstances->getMatrixRO();
 			for( uint it = 0; it < matrixEdit->size(); it++ )
 			{
