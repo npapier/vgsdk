@@ -121,13 +121,13 @@ E73214A2822139CA62B343CC5B65587310DD908D0C241B2263C2CF80DA
 
 */
 
-#ifndef _VGPHYSICFS_BLOWFISH_HPP
-#define _VGPHYSICFS_BLOWFISH_HPP
+#ifndef _VGPHYSFS_BLOWFISH_HPP
+#define _VGPHYSFS_BLOWFISH_HPP
 
 
-#include "vgPhysicFS/vgPhysicFS.hpp"
+#include "vgPhysfs/vgPhysfs.hpp"
 
-namespace vgPhysicFS
+namespace vgPhysfs
 {
 
 //Block Structure
@@ -141,7 +141,7 @@ struct SBlock
 	unsigned int m_uil, m_uir;
 };
 
-class VGPHYSICFS_API CBlowFish
+class VGPHYSFS_API CBlowFish
 {
 public:
 	enum { ECB=0, CBC=1, CFB=2 };
@@ -189,7 +189,7 @@ inline unsigned int CBlowFish::F(unsigned int ui)
 }
 
 
-} // namespace vgPhysicFS
+} // namespace vgPhysfs
 
-#endif // _VGPHYSICFS_BLOWFISH_HPP
+#endif // _VGPHYSFS_BLOWFISH_HPP
 

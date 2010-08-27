@@ -8,9 +8,9 @@
 
 #include <cstring>
 #include <exception>
-#include <vgPhysicFS/Blowfish.hpp>
+#include <vgPhysfs/Blowfish.hpp>
 
-namespace vgPhysicFS
+namespace vgPhysfs
 {
 
 
@@ -608,4 +608,4 @@ void CBlowFish::Decrypt(const unsigned char* in, unsigned char* out, size_t n, i
 	}
 }
 
-} // namespace vgPhysicFS
+} // namespace vgPhysfs

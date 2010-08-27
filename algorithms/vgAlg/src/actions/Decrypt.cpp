@@ -6,7 +6,7 @@
 
 #include "vgAlg/actions/Decrypt.hpp"
 
-#include <vgPhysicFS/BlowFish.hpp>
+#include <vgPhysfs/BlowFish.hpp>
 
 namespace vgAlg
 {
@@ -26,7 +26,7 @@ Decrypt::Decrypt()
 void Decrypt::execute()
 {
 	//Initialization
-	vgPhysicFS::CBlowFish oBlowFish( (unsigned char*)m_key.c_str(), m_key.size() );
+	vgPhysfs::CBlowFish oBlowFish( (unsigned char*)m_key.c_str(), m_key.size() );
 
 	//Decryption
 	oBlowFish.Decrypt( (unsigned char*)&m_inBuffer[0], (unsigned char*)&(*m_outBuffer)[0], m_inBuffer.size() );

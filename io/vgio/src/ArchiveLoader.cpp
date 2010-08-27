@@ -40,7 +40,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > ArchiveLoader::load( const std::
 	m_root = vgd::node::Group::create( filePath );
 	retVal.second = m_root;
 
-	m_compression.reset( new vgPhysicFS::Archive( filePath ) );
+	m_compression.reset( new vgPhysfs::Archive( filePath ) );
 
 	m_directoryList = m_compression->getDirectoryList();
 	loadImages();
@@ -70,12 +70,12 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > ArchiveLoader::load( const std::
 			pathFilename = pathFilename.substr( 0, pathFilename.size() - 6 ); //remove ".crypt" extension
 		}
 
-		std::pair< bool, vgd::Shp< vgio::ILoader > > loader = vgio::getLoaderByFilename( pathFilename );
+		vgd::Shp< vgio::ILoader > loader = vgio::getLoaderByFilename( pathFilename );
 
-		if( loader.first )
+		if( loader )
 		{	
 			std::pair< bool, vgd::Shp< vgd::node::Group > > retModel;
-			retModel = loader.second->load( pathFilename.c_str(), inBuffer, m_imageMap );
+			retModel = loader->load( pathFilename.c_str(), inBuffer, m_imageMap );
 			if( retModel.first )
 			{
 				m_root->addChild( retModel.second );

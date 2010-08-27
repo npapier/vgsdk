@@ -29,7 +29,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > load( std::string filePath )
 	std::string						extension = extractor.getExtension();
 	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); //to lowercase;
 
-	std::pair< bool, vgd::Shp< vgio::ILoader > > loader;
+	vgd::Shp< vgio::ILoader > loader;
 
 	if ( extension.compare( ".crypt" ) == 0 ) //load crypted file ==> from memory
 	{
@@ -61,9 +61,9 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > load( std::string filePath )
 		filePath = extractor.getPath() + "/" + extractor.getFilenameWithoutExtension();
 		loader = getLoaderByFilename( filePath );
 
-		if( loader.first )
+		if( loader )
 		{
-			retVal = loader.second->load( filePath, outBuffer );
+			retVal = loader->load( filePath, outBuffer );
 		}
 		else
 		{
@@ -74,9 +74,9 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > load( std::string filePath )
 	{
 		loader = getLoaderByFilename( filePath );
 
-		if( loader.first )
+		if( loader )
 		{
-			retVal = loader.second->load( filePath );
+			retVal = loader->load( filePath );
 		}
 		else
 		{
@@ -89,10 +89,9 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > load( std::string filePath )
 
 
 
-std::pair< bool, vgd::Shp< vgio::ILoader > > getLoaderByFilename( std::string filename )
+vgd::Shp< vgio::ILoader > getLoaderByFilename( std::string filename )
 {
-	std::pair< bool, vgd::Shp< vgio::ILoader > > retVal;
-	retVal.first = true;
+	vgd::Shp< vgio::ILoader > retVal;
 	
 	// Retrieves the extension of the given filename.
 	vgd::basic::FilenameExtractor	extractor( filename.c_str() );
@@ -104,26 +103,24 @@ std::pair< bool, vgd::Shp< vgio::ILoader > > getLoaderByFilename( std::string fi
 	//@todo modifying train and obj loader to respect ILoader Interface.
 	if ( /* extension.compare( ".trian" ) == 0 || */extension.compare( ".trian2" ) == 0 )
 	{
-		retVal.second = LoaderRegistry::getLoaderRegistry()->getLoader( "trian");
+		retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "trian");
 	}
 	else if ( extension.compare( ".dae" ) == 0 )
 	{
-		retVal.second = LoaderRegistry::getLoaderRegistry()->getLoader( "collada");
+		retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "collada");
 	}
 	else if( extension.compare( ".obj" ) == 0 )
 	{
 		//retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "obj");
 		vgDebug::get().logWarning( "Unknown file extension in %s.", filename.c_str() );
-		retVal.first = false;
 	}
 	else if( extension.compare( ".vgarch" ) == 0 )
 	{
-		retVal.second = LoaderRegistry::getLoaderRegistry()->getLoader( "vgarch");
+		retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "vgarch");
 	}
 	else
 	{
 		vgDebug::get().logWarning( "Unknown file extension in %s.", filename.c_str() );
-		retVal.first = false;
 	}
 
 	return retVal;

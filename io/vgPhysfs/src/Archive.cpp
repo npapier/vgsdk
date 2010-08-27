@@ -4,11 +4,11 @@
 // Author Maxime Peresson
 
 
-#include "vgPhysicFS/Archive.hpp"
+#include "vgPhysfs/Archive.hpp"
 
 #include <vgd/basic/FilenameExtractor.hpp>
 
-namespace vgPhysicFS
+namespace vgPhysfs
 {
 
 
@@ -128,4 +128,4 @@ void Archive::closeFile()
 
 
 
-} // namespace vgPhysicFS
+} // namespace vgPhysfs

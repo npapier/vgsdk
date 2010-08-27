@@ -1,4 +1,4 @@
-description	= '(V)ersatile (G)raphical PhysicFS'
+description	= '(V)ersatile (G)raphical Physfs'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'

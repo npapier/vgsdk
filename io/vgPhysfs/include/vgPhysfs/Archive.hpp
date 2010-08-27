@@ -3,10 +3,10 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-#ifndef _VGPHYSICFS_ARCHIVE_HPP
-#define _VGPHYSICFS_ARCHIVE_HPP
+#ifndef _VGPHYSFS_ARCHIVE_HPP
+#define _VGPHYSFS_ARCHIVE_HPP
 
-#include "vgPhysicFS/vgPhysicFS.hpp"
+#include "vgPhysfs/vgPhysfs.hpp"
 
 #include <vgd/Shp.hpp>
 
@@ -14,13 +14,13 @@
 #include <string>
 #include <vector>
 
-namespace vgPhysicFS
+namespace vgPhysfs
 {
 
 /**
  * @brief Open and extract compressed files.
  */
-struct VGPHYSICFS_API Archive 
+struct VGPHYSFS_API Archive 
 {
 	/**
 	 * @brief	Open an archive.
@@ -73,6 +73,6 @@ private:
 	PHYSFS_file*	m_currentFile;
 };
 
-} // namespace vgPhysicFS
+} // namespace vgPhysfs
 
-#endif //#ifndef _VGPHYSICFS_ARCHIVE_HPP
+#endif //#ifndef _VGPHYSFS_ARCHIVE_HPP

@@ -2,5 +2,5 @@ description	= '(V)ersatile (G)raphical (I)nput and (O)utput'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
-libs		= [ 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgPhysicFS 0-5' ]
+libs		= [ 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgPhysfs 0-5' ]
 deps		= [ '../../core', '../../algorithms' ]
