@@ -258,7 +258,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	//bump mapping
 	const ExtraDataBumpMapping& callbackHandler = m_loader->getExtraDataBumpMapping();
 	std::vector< BumpMappingInfo > extraInfos = callbackHandler.findExtraInfo( effect->getUniqueId() );
-	if( extraInfos.size > 0 )
+	if( extraInfos.size() > 0 )
 	{
 		samplerMap[ effectCommon->getReflective().getTexture().getSamplerId() ] = BUMPMAPPING;
 	}
