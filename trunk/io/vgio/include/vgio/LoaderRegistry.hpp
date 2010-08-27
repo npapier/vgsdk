@@ -20,7 +20,7 @@ namespace vgio
 {
 
 /**
- * @brief	Reference all actions drawable in a menu.
+ * @brief	Reference all loaders.
  */
 struct VGIO_API LoaderRegistry
 {
@@ -39,13 +39,13 @@ struct VGIO_API LoaderRegistry
 	std::map< std::string, vgd::Shp< vgio::ILoader > > getLoaderMap() const;
 
 	/**
-	 * @brief	Add an action to the current list.
+	 * @brief	Add a loader to the current list.
 	 *
-	 * @param action	the loader to add.
+	 * @param loader	the loader to add.
 	 *
 	 * @param type		the type of loader.
 	 */
-	void addLoader( vgd::Shp< vgio::ILoader > action, std::string type);
+	void addLoader( vgd::Shp< vgio::ILoader > loader, std::string type);
 
 	/**
 	 * @brief	Get a loader by its type.
@@ -75,7 +75,7 @@ struct RegisterLoader
 	 */	
 	RegisterLoader( std::string type )
 	{
-		// Register the new action in ActionsRegistry.
+		// Register the new loader in LoaderRegistry.
  		vgd::Shp< loaderType > loader( new loaderType() );
 		
 		LoaderRegistry::getLoaderRegistry()->addLoader( loader, type );

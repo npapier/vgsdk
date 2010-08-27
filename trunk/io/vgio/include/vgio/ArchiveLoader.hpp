@@ -13,7 +13,7 @@
 #include <vgd/node/Group.hpp>
 #include <vgio/ILoader.hpp>
 #include <vgio/LoaderRegistry.hpp>
-#include <vgPhysicFS/Archive.hpp>
+#include <vgPhysfs/Archive.hpp>
 
 #include <vector>
 
@@ -63,7 +63,7 @@ private:
 	 */
 	void loadImages();
 
-	vgd::Shp< vgPhysicFS::Archive >							m_compression;
+	vgd::Shp< vgPhysfs::Archive >							m_compression;
 	vgd::Shp< vgd::node::Group >							m_root;
 	std::vector< std::string >								m_directoryList;
 	std::map< std::string, vgd::Shp< vgd::basic::Image > >	m_imageMap;

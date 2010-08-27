@@ -76,17 +76,17 @@ void EncryptFile::execute()
 	Gtk::FileFilter			saveJpgFilter;
 	Gtk::FileFilter			savePngFilter;
 
-	saveDaeFilter.set_name( "COLLADA Encrypted file (*.VGDAE)" );
-	saveDaeFilter.add_pattern( "*.VGDAE" );
+	saveDaeFilter.set_name( "COLLADA Encrypted file (*.dae.crypt)" );
+	saveDaeFilter.add_pattern( "*.dae.crypt" );
 
-	saveTrianFilter.set_name( "Trian2 Encrypted file (*.VGtrian2)" );
-	saveTrianFilter.add_pattern( "*.VGtrian2" );
+	saveTrianFilter.set_name( "Trian2 Encrypted file (*.trian2.crypt)" );
+	saveTrianFilter.add_pattern( "*.trian2.crypt" );
 
-	saveJpgFilter.set_name( "Jpg Encrypted file (*.VGjpg)" );
-	saveJpgFilter.add_pattern( "*.VGjpg" );
+	saveJpgFilter.set_name( "Jpg Encrypted file (*.jpg.crypt)" );
+	saveJpgFilter.add_pattern( "*.jpg.crypt" );
 
-	savePngFilter.set_name( "PNG Encrypted file (*.VGpng)" );
-	savePngFilter.add_pattern( "*.VGpng" );
+	savePngFilter.set_name( "PNG Encrypted file (*.png.crypt)" );
+	savePngFilter.add_pattern( "*.png.crypt" );
 
 	saveChooser.add_filter( saveDaeFilter );
 	saveChooser.add_filter( saveTrianFilter );

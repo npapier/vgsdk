@@ -290,6 +290,10 @@ const bool myCanvas::reloadScene()
 
 const bool myCanvas::load( const Glib::ustring & pathfilename )
 {
+//
+	// Load .trian
+	vgTrian::Loader loader;
+//
 	// Changes the cursor
 	get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
 
@@ -318,194 +322,194 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 }
 
 
-
-const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
-{
-/*	// Load .dae
-	vgCollada::Reader reader;
-	const bool retVal = reader.load( pathfilename.c_str() );
-
-	if ( retVal )
-	{
-		// Setup scene
-		getScene()->addChild( reader.getRoot() );
-	}
-
-	return retVal;*/
-	return false;
-}
-
-const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename, bool crypted )
-{
-	// Load .dae
-	vgGTK::node::ColladaSettingsDialog dialog;
-	dialog.show_all();
-
-	vgOpenCOLLADA::Settings  settings;
-	if( dialog.run() == Gtk::RESPONSE_OK )
-	{
-		settings = dialog.getSettings();
-	}
-	else
-	{
-		return false;
-	}
-	dialog.hide_all();
-
-	vgOpenCOLLADA::importer::Loader loader( settings );
-	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
-	
-	try
-	{
-		if( crypted )
-		{
-			std::ifstream inFile;
-			inFile.open( pathfilename.c_str(), std::ifstream::in | std::ifstream::binary );
-			bool b = inFile.good();
-			inFile.seekg (0, std::ios::end);
-			int length = inFile.tellg();
-			inFile.seekg (0, std::ios::beg);
-
-			std::vector< char > inBuffer;
-			inBuffer.resize( length );
-			inFile.read( &inBuffer[0], length );
-			
-			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
-
-			vgAlg::actions::Decrypt decrypt;
-			decrypt.setInitialize( "vgsdkViewerGTK", inBuffer, outBuffer );
-			decrypt.execute();
-
-			retVal = loader.load( pathfilename.c_str(), outBuffer );
-		}
-		else
-		{
-			retVal = loader.load( pathfilename.c_str() );
-		}
-	}
-	catch(std::runtime_error e)
-	{
-		return false;
-	}
-
-	if ( retVal.first )
-	{
-		// Setup scene
-		getScene()->addChild( retVal.second );
-	}
-
-	return retVal.first;
-}
-
-
-const bool myCanvas::loadObj( const Glib::ustring & pathfilename )
-{
-	// Load .obj
-	vgObj::Loader loader;
-	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > retVal;
-
-	retVal = loader.loadObj( pathfilename.c_str() );
-
-	if ( !retVal.first )
-	{
-		return false;
-	}
-
-	// Setup scene
-	using vgd::node::Material;
-
-	vgd::Shp< Material > material = Material::create("material");
-	material->setDiffuse( vgm::Vec3f(204.f/255.f, 251.f/255.f, 51.f/255.f) );
-	material->setSpecular( vgm::Vec3f(1.f, 1.f, 1.f) );
-	material->setShininess( 1.f );
-
-	getScene()->addChild( material );
-	getScene()->addChild( retVal.second );
-	//(retVal.second)->computeNormals();
-
-	return true;
-}
-
-
-
-const bool myCanvas::loadTrian( const Glib::ustring & pathfilename )
-{
-	// Load .trian
-	vgTrian::Loader loader;
-	std::pair< bool, vgd::Shp< vgd::node::TriSet > > retVal = loader.loadTrian( std::string(pathfilename.c_str()) );
-
-	if ( !retVal.first )
-	{
-		return false;
-	}
-
-	// Setup scene
-	using vgd::node::Material;
-
-	vgd::Shp< Material > material = Material::create("material");
-	material->setDiffuse( vgm::Vec3f(204.f/255.f, 51.f/255.f, 51.f/255.f) );
-	material->setSpecular( vgm::Vec3f(1.f, 1.f, 1.f) );
-	material->setShininess( 1.f );
-
-	getScene()->addChild( material );
-	getScene()->addChild( retVal.second );
-	(retVal.second)->computeNormals();
-
-	return true;
-}
-
-
-
-const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename, bool crypted )
-{
-	// Load .trian
-	vgTrian::Loader loader;
-	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
-
-	try
-	{
-		if( crypted )
-		{
-			std::ifstream inFile;
-			inFile.open( pathfilename.c_str(), std::ifstream::in | std::ifstream::binary );
-			bool b = inFile.good();
-			inFile.seekg (0, std::ios::end);
-			int length = inFile.tellg();
-			inFile.seekg (0, std::ios::beg);
-
-			std::vector< char > inBuffer;
-			inBuffer.resize( length );
-			inFile.read( &inBuffer[0], length );
-			
-			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
-
-			vgAlg::actions::Decrypt decrypt;
-			decrypt.setInitialize( "vgsdkViewerGTK", inBuffer, outBuffer );
-			decrypt.execute();
-
-			retVal = loader.load( pathfilename.c_str(), outBuffer );
-		}
-		else
-		{
-			retVal = loader.load( pathfilename.c_str() );
-		}
-	}
-	catch(std::runtime_error e)
-	{
-		return false;
-	}
-
-	if ( !retVal.first )
-	{
-		return false;
-	}
-
-	// Setup scene
-	getScene()->addChild( retVal.second );
-
-	return true;
-}
-
+//
+//const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
+//{
+///*	// Load .dae
+//	vgCollada::Reader reader;
+//	const bool retVal = reader.load( pathfilename.c_str() );
+//
+//	if ( retVal )
+//	{
+//		// Setup scene
+//		getScene()->addChild( reader.getRoot() );
+//	}
+//
+//	return retVal;*/
+//	return false;
+//}
+//
+//const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename, bool crypted )
+//{
+//	// Load .dae
+//	vgGTK::node::ColladaSettingsDialog dialog;
+//	dialog.show_all();
+//
+//	vgOpenCOLLADA::Settings  settings;
+//	if( dialog.run() == Gtk::RESPONSE_OK )
+//	{
+//		settings = dialog.getSettings();
+//	}
+//	else
+//	{
+//		return false;
+//	}
+//	dialog.hide_all();
+//
+//	vgOpenCOLLADA::importer::Loader loader( settings );
+//	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+//	
+//	try
+//	{
+//		if( crypted )
+//		{
+//			std::ifstream inFile;
+//			inFile.open( pathfilename.c_str(), std::ifstream::in | std::ifstream::binary );
+//			bool b = inFile.good();
+//			inFile.seekg (0, std::ios::end);
+//			int length = inFile.tellg();
+//			inFile.seekg (0, std::ios::beg);
+//
+//			std::vector< char > inBuffer;
+//			inBuffer.resize( length );
+//			inFile.read( &inBuffer[0], length );
+//			
+//			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
+//
+//			vgAlg::actions::Decrypt decrypt;
+//			decrypt.setInitialize( "vgsdkViewerGTK", inBuffer, outBuffer );
+//			decrypt.execute();
+//
+//			retVal = loader.load( pathfilename.c_str(), outBuffer );
+//		}
+//		else
+//		{
+//			retVal = loader.load( pathfilename.c_str() );
+//		}
+//	}
+//	catch(std::runtime_error e)
+//	{
+//		return false;
+//	}
+//
+//	if ( retVal.first )
+//	{
+//		// Setup scene
+//		getScene()->addChild( retVal.second );
+//	}
+//
+//	return retVal.first;
+//}
+//
+//
+//const bool myCanvas::loadObj( const Glib::ustring & pathfilename )
+//{
+//	// Load .obj
+//	vgObj::Loader loader;
+//	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > retVal;
+//
+//	retVal = loader.loadObj( pathfilename.c_str() );
+//
+//	if ( !retVal.first )
+//	{
+//		return false;
+//	}
+//
+//	// Setup scene
+//	using vgd::node::Material;
+//
+//	vgd::Shp< Material > material = Material::create("material");
+//	material->setDiffuse( vgm::Vec3f(204.f/255.f, 251.f/255.f, 51.f/255.f) );
+//	material->setSpecular( vgm::Vec3f(1.f, 1.f, 1.f) );
+//	material->setShininess( 1.f );
+//
+//	getScene()->addChild( material );
+//	getScene()->addChild( retVal.second );
+//	//(retVal.second)->computeNormals();
+//
+//	return true;
+//}
+//
+//
+//
+//const bool myCanvas::loadTrian( const Glib::ustring & pathfilename )
+//{
+//	// Load .trian
+//	vgTrian::Loader loader;
+//	std::pair< bool, vgd::Shp< vgd::node::TriSet > > retVal = loader.loadTrian( std::string(pathfilename.c_str()) );
+//
+//	if ( !retVal.first )
+//	{
+//		return false;
+//	}
+//
+//	// Setup scene
+//	using vgd::node::Material;
+//
+//	vgd::Shp< Material > material = Material::create("material");
+//	material->setDiffuse( vgm::Vec3f(204.f/255.f, 51.f/255.f, 51.f/255.f) );
+//	material->setSpecular( vgm::Vec3f(1.f, 1.f, 1.f) );
+//	material->setShininess( 1.f );
+//
+//	getScene()->addChild( material );
+//	getScene()->addChild( retVal.second );
+//	(retVal.second)->computeNormals();
+//
+//	return true;
+//}
+//
+//
+//
+//const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename, bool crypted )
+//{
+//	// Load .trian
+//	vgTrian::Loader loader;
+//	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+//
+//	try
+//	{
+//		if( crypted )
+//		{
+//			std::ifstream inFile;
+//			inFile.open( pathfilename.c_str(), std::ifstream::in | std::ifstream::binary );
+//			bool b = inFile.good();
+//			inFile.seekg (0, std::ios::end);
+//			int length = inFile.tellg();
+//			inFile.seekg (0, std::ios::beg);
+//
+//			std::vector< char > inBuffer;
+//			inBuffer.resize( length );
+//			inFile.read( &inBuffer[0], length );
+//			
+//			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
+//
+//			vgAlg::actions::Decrypt decrypt;
+//			decrypt.setInitialize( "vgsdkViewerGTK", inBuffer, outBuffer );
+//			decrypt.execute();
+//
+//			retVal = loader.load( pathfilename.c_str(), outBuffer );
+//		}
+//		else
+//		{
+//			retVal = loader.load( pathfilename.c_str() );
+//		}
+//	}
+//	catch(std::runtime_error e)
+//	{
+//		return false;
+//	}
+//
+//	if ( !retVal.first )
+//	{
+//		return false;
+//	}
+//
+//	// Setup scene
+//	getScene()->addChild( retVal.second );
+//
+//	return true;
+//}
+//
 
 
 vgd::Shp< vgeGL::technique::Technique > myCanvas::createMultiViewSingleTechnique()

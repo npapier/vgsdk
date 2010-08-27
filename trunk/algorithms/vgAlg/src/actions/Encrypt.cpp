@@ -6,7 +6,7 @@
 
 #include <vgAlg/actions/Encrypt.hpp>
 
-#include <vgPhysicFS/BlowFish.hpp>
+#include <vgPhysfs/BlowFish.hpp>
 
 
 namespace vgAlg
@@ -27,7 +27,7 @@ Encrypt::Encrypt()
 void Encrypt::execute()
 {
 	//Initialization
-	vgPhysicFS::CBlowFish oBlowFish( (unsigned char*)m_key.c_str(), m_key.size() );
+	vgPhysfs::CBlowFish oBlowFish( (unsigned char*)m_key.c_str(), m_key.size() );
 
 	//Encryption
 	oBlowFish.Encrypt( (unsigned char*)&m_inBuffer[0], (unsigned char*)&(*m_outBuffer)[0], m_inBuffer.size() );

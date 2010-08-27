@@ -34,8 +34,10 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > VGIO_API load( std::string fileP
  * @brief	Get the correct loader by filename.
  *
  * @param	filename	the filename to load.
+ *
+ * @return	the correct loader.
  */
-std::pair< bool, vgd::Shp< vgio::ILoader > > VGIO_API getLoaderByFilename( std::string filename );
+vgd::Shp< vgio::ILoader > VGIO_API getLoaderByFilename( std::string filename );
 
 
 /**
