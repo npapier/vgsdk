@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Nicolas Papier
 
 #include "vgAlg/actions/SelectedNode.hpp"
 
@@ -28,9 +29,8 @@ vgd::Shp< SelectedNode > SelectedNode::getSelectedNodeObject()
 
 
 SelectedNode::SelectedNode()
-{
-	m_hiddenNodes = vgd::makeShp( new std::list< vgd::Shp< HiddenNode > > );
-}
+: m_hiddenNodes( vgd::makeShp( new HiddenNodeList() ) )
+{}
 
 
 
@@ -68,17 +68,20 @@ void SelectedNode::setAction( ActionOnNode action )
 
 vgd::Shp< std::list< vgd::Shp< HiddenNode > > > SelectedNode::getHiddenNodeList()
 {
-	std::list< vgd::Shp < vgAlg::actions::HiddenNode > >::iterator it = m_hiddenNodes->begin();
-	int i = 0;
-	for( it; it != m_hiddenNodes->end(); it++ )
+	HiddenNodeList::iterator it		= m_hiddenNodes->begin();
+	HiddenNodeList::iterator itEnd	= m_hiddenNodes->end();
+
+	while( it != itEnd )
 	{
-		if( !(*it)->getNode() )
+		vgd::Shp< HiddenNode > hiddenNode = (*it);
+
+		if ( hiddenNode->getNode() == 0 )
 		{
-			std::list< vgd::Shp < vgAlg::actions::HiddenNode > >::iterator iter = it;
-			it++;
-			iter->reset();
-			m_hiddenNodes->erase( iter );
+			it = m_hiddenNodes->erase( it );
+			continue;
 		}
+
+		++it;
 	}
 
 	return m_hiddenNodes;
@@ -90,17 +93,19 @@ const bool SelectedNode::isAlreadyHidden( vgd::Shp< vgd::node::Node > node ) con
 {
 	bool retVal = false;
 	
-	vgd::Shp< vgAlg::actions::HiddenNode > hidden;
+	HiddenNodeList::iterator it		= m_hiddenNodes->begin();
+	HiddenNodeList::iterator itEnd	= m_hiddenNodes->end();
 	
-	std::list< vgd::Shp< vgAlg::actions::HiddenNode > >::iterator it = m_hiddenNodes->begin();
-	for( it; it !=  m_hiddenNodes->end(); it++)
+	while( it != itEnd)
 	{
-		hidden = (*it);
+		vgd::Shp< HiddenNode > hidden( *it );
 
 		if( hidden->getNode() == node )
 		{
 			return true;
 		}
+
+		++it;
 	}
 
 	return retVal;

@@ -45,7 +45,7 @@ namespace graph
 /**
  * @brief	Implements a gtkmm Widget that provide a ready to use vgSDK graph browser.
  */
-struct VGGTK_API Browser : public Gtk::VBox
+struct VGGTK_API Browser : public Gtk::VBox, public boost::signals::trackable
 {
 	/**
 	 * @brief	Constructor
