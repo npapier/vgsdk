@@ -29,7 +29,7 @@ namespace node
 /**
  * @brief Popup menu to edit node.
  */
-struct VGGTK_API EditMenu
+struct VGGTK_API EditMenu : public boost::signals::trackable
 {
 	EditMenu();
 

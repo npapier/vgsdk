@@ -35,6 +35,7 @@ enum ActionOnNode
 */
 struct VGALG_API SelectedNode
 {
+	typedef std::list< vgd::Shp< HiddenNode > > HiddenNodeList; ///< type definition for hidden node list
 
 	/**
 	* @brief	Get the instance of SelectedNode.
@@ -75,7 +76,7 @@ struct VGALG_API SelectedNode
 	*
 	* @return	The node list.
 	*/
-	vgd::Shp< std::list< vgd::Shp< HiddenNode > > > getHiddenNodeList();
+	vgd::Shp< HiddenNodeList > getHiddenNodeList();
 
 
 	/**
@@ -96,8 +97,9 @@ struct VGALG_API SelectedNode
 	* @brief	Get the current clipboarded node.
 	*/
 	vgd::Shp< vgd::node::Node > getClipboardedNode();
-	
-	boost::signal< void () >	signal_selection_changed;	///< Signal emited when the selected node changes.
+
+	//
+	boost::signal< void () >								signal_selection_changed;	///< Signal emited when the selected node changes.
 	boost::signal< void ( ActionOnNode ) >					signal_action_changed;		///< Signal emited when an action is called.
 
 private:

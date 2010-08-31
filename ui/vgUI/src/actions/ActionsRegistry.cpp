@@ -85,15 +85,16 @@ std::map< int, vgd::Shp< vgUI::actions::IActionUI > > ActionsRegistry::getHidden
 
 	std::list< vgd::Shp < vgAlg::actions::HiddenNode > >::iterator it = hiddenNodes->begin();
 	int i = 0;
-	for( it; it != hiddenNodes->end(); it++ )
+	while( it != hiddenNodes->end()  )
 	{
 		if( m_hiddenNodeMap.count( (*it) ) == 0 )
 		{
 			vgd::Shp< vgUI::actions::IActionUI > action = vgd::makeShp( new vgUI::actions::ShowNode( (*it) ) );
 			hiddenNodeActionMap[ i ] = action;
 			m_hiddenNodeMap[ (*it) ] = action;
-			i++;
+			++i;
 		}
+		++it;
 	}
 
 	return hiddenNodeActionMap;

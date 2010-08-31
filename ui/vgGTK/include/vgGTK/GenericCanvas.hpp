@@ -59,7 +59,7 @@ namespace vgGTK
  * @todo	Implement/debug vgSDK finalization.
  */
 template< typename BaseCanvasType >
-struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public event::SignalHandler
+struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public event::SignalHandler, public boost::signals::trackable
 {
 
 	/**
@@ -279,7 +279,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 				topLevel->unfullscreen();
 				topLevel->set_decorated(true);
 
-				// Desctivated !
+				// Desactivated !
 				// Each application is responsible to manage widget visibility in order to provide a proper full-screen mode.
 				//
 				//topLevel->get_child()->show_all();	
@@ -326,7 +326,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	*
 	* @param show	true to enable menu, false otherwise.
 	*/
-	void setShowMenu(bool show)
+	void setShowMenu( const bool show )
 	{
 		if( m_showMenu != show)
 		{
@@ -344,7 +344,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		}
 	}
 
-	bool getShowMenu()
+	const bool getShowMenu() const
 	{
 		return m_showMenu;
 	}
