@@ -111,6 +111,8 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	// MAIN
 	m_code2 +=
+	"\n"	
+	"invariant gl_Position;\n"
 	"\n"
 	"void main( void )\n"
 	"{\n";
@@ -124,9 +126,13 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing
 
+	//gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex;
 	m_code2 +=
-	"	gl_Position	= ftransform();\n"
+	"	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
 	"\n";
+/*	m_code2 +=
+	"	gl_Position	= ftransform();\n"
+	"\n";*/
 
 	m_code2 +=
 	"	ecPosition	= gl_ModelViewMatrix * gl_Vertex;\n"

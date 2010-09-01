@@ -41,7 +41,9 @@ namespace node
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
  * @ingroup g_multiAttributeNodes
+ * @ingroup g_autoMultiAttributeNodes
  * @ingroup g_shapeNodes
+ * @ingroup g_layerplan
  */
 struct VGD_API Overlay : public vgd::node::LayerPlan
 {

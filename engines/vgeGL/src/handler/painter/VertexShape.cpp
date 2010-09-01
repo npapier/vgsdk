@@ -31,6 +31,7 @@
 #include "vgeGL/engine/VertexShaderGenerator.hpp"
 
 #include "vgeGL/handler/painter/DrawStyle.hpp"
+#include "vgeGL/handler/painter/OutputBufferProperty.hpp"
 
 #include "vgeGL/rc/GLSLProgram.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
@@ -187,6 +188,10 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				// Compiles and links
 				const bool compileVSRetVal = program->addShader( vs.c_str(),pg->getVertexShaderGenerator()->getShaderType(), false );
 				const bool compileFSRetVal = program->addShader( fs.c_str(), pg->getFragmentShaderGenerator()->getShaderType(), false );
+
+				namespace vgeGLPainter = vgeGL::handler::painter;
+				vgeGLPainter::OutputBufferProperty::bindFragDataLocations( pGLEngine, program );
+
 				const bool linkRetVal = program->link();
 
 #ifdef _DEBUG
@@ -900,6 +905,7 @@ void VertexShape::configureTexCoord( vgd::node::VertexShape * vertexShape, const
 			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
 	{
 		glClientActiveTexture( GL_TEXTURE0_ARB + unit );
+		//glClientActiveTextureARB( GL_TEXTURE0_ARB + unit );
 
 		const GLvoid *pArray;
 		switch ( texCoordDim )
@@ -953,6 +959,7 @@ void VertexShape::configureTexCoord( vgd::node::VertexShape * vertexShape, const
 	else
 	{
 		glClientActiveTexture( GL_TEXTURE0_ARB + unit );
+		//glClientActiveTextureARB( GL_TEXTURE0_ARB + unit );
 		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	}
 }

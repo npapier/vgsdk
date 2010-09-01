@@ -60,6 +60,12 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 
 	// DECLARATIONS
+	const std::string& fragmentOutputDeclarationStage = state.getShaderStage( GLSLState::FRAGMENT_OUTPUT_DECLARATION );
+	if ( !fragmentOutputDeclarationStage.empty() )
+	{
+		m_decl += fragmentOutputDeclarationStage;
+	}
+
 	if ( state.isPerPixelLightingEnabled() )
 	{
 		if ( state.isEnabled( GLSLState::FLAT_SHADING ) )

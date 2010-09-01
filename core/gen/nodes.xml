@@ -91,6 +91,7 @@
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
 			<ingroup>g_shapeNodes</ingroup>
+			<ingroup>g_layerplan</ingroup>
 		</doxygen>
 
 		<df name = "image" linkToFields="image"></df>
@@ -115,7 +116,7 @@
 
 	<!-- @todo generalizes for all MultiAttribute -->
 	<!-- @todo Underlay -->
-	<node name= "Overlay" inherits = "LayerPlan" >
+	<node name= "Overlay" inherits = "LayerPlan">
 		<doxygen>
 			<docBrief>Specialized layer plan drawn at the end of the rendering.</docBrief>
 			<doc>This node behaves as a MultiAttribute node with an automatic index.</doc>
@@ -123,7 +124,9 @@
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
 			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_autoMultiAttributeNodes</ingroup>
 			<ingroup>g_shapeNodes</ingroup>
+			<ingroup>g_layerplan</ingroup>
 		</doxygen>
 	</node>
 
@@ -385,26 +388,77 @@
 	</node>
 
 
+<!--@todo debug blit when scaleDownUp -->
+	<node name = "OutputBufferProperty" inherits = "MultiAttribute">
+		<doxygen>
+			<docBrief>Definition of the format, type and output command of an output buffer</docBrief>
+			<doc>@todo</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_autoMultiAttributeNodes</ingroup>
+			<ingroup>g_frameBufferNodes</ingroup>
+
+			<ingroup>g_postProcessing</ingroup>
+		</doxygen>
+
+		<sf name = "format" doc = "Specifies the format used by the buffer.">
+			<type name = "enum">
+				<enum default="RGB">
+					<value name="RGB" doc="@todo"/>
+					<value name="RGBA" doc="@todo"/>
+					<value name="LUMINANCE" doc="@todo"/>
+					<value name="LUMINANCE_ALPHA" doc="@todo"/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name = "type" doc = "Specifies the type used by the buffer.">
+			<type name = "enum">
+				<enum default = "INTEGER">
+					<value name="INTEGER" doc="@todo"/>
+					<value name="FLOAT16" doc="@todo"/>
+					<value name="FLOAT32" doc="@todo"/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name = "command" doc = "Specifies the pre-defined assign command execute by the fragment program.">
+			<type name = "enum">
+				<enum default = "COLOR">
+					<value name="COLOR" doc="@todo"/>
+					<value name="NORMAL" doc="@todo"/>
+					<value name="POSITION" doc="@todo"/>
+					<value name="DEPTH" doc="@todo"/>
+					<value name="LINEAR_DEPTH" doc="@todo"/>
+					<value name="CUSTOM" doc="@todo"/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name = "customCommand" doc = "Specifies the pre-defined assign command execute by the fragment program. Example : output = color.rgba; or output = vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z );">
+			<type name = "string" namespace = "std"></type>
+		</sf>
+	</node>
+
+
 	<node name = "OutputBuffers" inherits = "SingleAttribute">
 		<doxygen>
 			<docBrief>Select which buffers to use for drawing</docBrief>
 			<doc>This node affect subsequent shapes in the scene graph.</doc>
 			<doc>But if this node is under a separator, it does not affect any objects outside that separator.</doc>
-			<doc>@todo Adds support for more than 2 different output buffers</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
 			<ingroup>g_frameBufferNodes</ingroup>
+
+			<ingroup>g_postProcessing</ingroup>
 		</doxygen>
 
-		<sf name = "output" doc = "Specifies the buffers used for rendering.">
-			<type name="enum">
-				<enum default="BUFFERS0">
-					<value name="BUFFERS0" doc="Selects color buffer 0 and a depth buffer 0"/>
-					<value name="BUFFERS1" doc="Selects color buffer 1 and a depth buffer 1"/>
-					<value name="BUFFERS2" doc="Selects color buffer 2 and a depth buffer 2"/>
-				</enum>
-			</type>
-		</sf>
+		<mf name = "current" doc = "Specifies the buffers used for rendering. The selection is done using multi-attribute index of OutputBufferProperty nodes.\n @remark The same index may not appear more then once.">
+			<type name="int"></type>
+		</mf>
+
+		<includehpp>vgd/include/vgd/node/OutputBuffers.hpp</includehpp>
+		<includecpp>vgd/src/node/OutputBuffers.cpp</includecpp>
 	</node>
 
 
@@ -457,8 +511,11 @@
 			<doc>Post-processing effect is applied to the previously rendered scene using COLOR and/or NORMAL buffer(s)</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_autoMultiAttributeNodes</ingroup>
 			<ingroup>g_texturingNodes</ingroup>
 			<ingroup>g_frameBufferNodes</ingroup>
+
+			<ingroup>g_postProcessing</ingroup>
 		</doxygen>
 
 		<sf name = "filter" doc = "Specifies the filter to apply to the input buffers.">

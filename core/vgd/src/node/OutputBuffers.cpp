@@ -50,7 +50,7 @@ OutputBuffers::OutputBuffers( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FOutputType(getFOutput()) );
+	addField( new FCurrentType(getFCurrent()) );
 
 	// Sets link(s)
 
@@ -62,7 +62,6 @@ OutputBuffers::OutputBuffers( const std::string nodeName ) :
 void OutputBuffers::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setOutput( BUFFERS0 );
 }
 
 
@@ -74,29 +73,41 @@ void OutputBuffers::setOptionalsToDefaults()
 
 
 
-// Output
-const OutputBuffers::OutputValueType OutputBuffers::getOutput() const
+// Current
+vgd::field::EditorRO< OutputBuffers::FCurrentType > OutputBuffers::getCurrentRO() const
 {
-	return getFieldRO<FOutputType>(getFOutput())->getValue();
+	return getFieldRO<FCurrentType>( getFCurrent() );
 }
 
 
 
-void OutputBuffers::setOutput( const OutputValueType value )
+vgd::field::EditorRW< OutputBuffers::FCurrentType > OutputBuffers::getCurrentRW()
 {
-	getFieldRW<FOutputType>(getFOutput())->setValue( value );
+	return getFieldRW<FCurrentType>( getFCurrent() );
 }
 
 
 
 // Field name accessor(s)
-const std::string OutputBuffers::getFOutput( void )
+const std::string OutputBuffers::getFCurrent( void )
 {
-	return "f_output";
+	return "f_current";
 }
 
 
 
+void OutputBuffers::setCurrent( const int which )
+{
+	using vgd::field::EditorRW;
+
+	EditorRW< FCurrentType > current = getCurrentRW();
+	current->clear();	
+	if ( which >= 0 )
+	{
+		current->push_back( which );
+	}
+	// else nothing to do
+}
 IMPLEMENT_INDEXABLE_CLASS_CPP( , OutputBuffers );
 
 

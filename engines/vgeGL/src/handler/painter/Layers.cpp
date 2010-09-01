@@ -520,7 +520,7 @@ uniform sampler2D imageMap; \
  \
 void main(void) \
 { \
-	vec4	imageColor		= texture2D(imageMap, gl_TexCoord[0].st); \
+	vec4	imageColor		= texture(imageMap, gl_TexCoord[0].st); \
  \
 	gl_FragColor = imageColor; \
 }";
@@ -536,8 +536,8 @@ uniform sampler1D paletteMap; \
  \
 void main(void) \
 { \
-	vec4	imageColor		= texture2D(imageMap, gl_TexCoord[0].st); \
-	vec4	paletteColor	= texture1D(paletteMap, imageColor.x); \
+	vec4	imageColor		= texture(imageMap, gl_TexCoord[0].st); \
+	vec4	paletteColor	= texture(paletteMap, imageColor.x); \
  \
 	gl_FragColor = paletteColor; \
 }";
@@ -553,9 +553,9 @@ uniform sampler2D scissorMap; \
  \
 void main(void) \
 { \
-	vec4	imageColor		= texture2D(imageMap, gl_TexCoord[0].st); \
+	vec4	imageColor		= texture(imageMap, gl_TexCoord[0].st); \
  \
-	vec4	scissorColor	= texture2D(scissorMap, gl_TexCoord[0].st); \
+	vec4	scissorColor	= texture(scissorMap, gl_TexCoord[0].st); \
  \
 	gl_FragColor = vec4(imageColor.rgb, min(scissorColor.r, imageColor.a) ); \
 }";
@@ -573,10 +573,10 @@ uniform sampler2D scissorMap; \
  \
 void main(void) \
 { \
-	vec4	imageColor		= texture2D(imageMap, gl_TexCoord[0].st); \
-	vec4	paletteColor	= texture1D(paletteMap, imageColor.x); \
+	vec4	imageColor		= texture(imageMap, gl_TexCoord[0].st); \
+	vec4	paletteColor	= texture(paletteMap, imageColor.x); \
  \
-	vec4	scissorColor	= texture2D(scissorMap, gl_TexCoord[0].st); \
+	vec4	scissorColor	= texture(scissorMap, gl_TexCoord[0].st); \
  \
 	gl_FragColor = vec4(paletteColor.rgb, min(scissorColor.r, paletteColor.a));\
 }";
