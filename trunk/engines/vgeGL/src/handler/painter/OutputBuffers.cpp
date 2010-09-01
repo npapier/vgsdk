@@ -39,7 +39,6 @@ const vge::handler::Handler::TargetVector OutputBuffers::getTargets() const
 
 
 
-// @todo takes care of Separator
 void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
@@ -49,31 +48,35 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 	vgd::node::OutputBuffers *outputBuffers = static_cast< vgd::node::OutputBuffers* >(node);
 
 	// Updates engine state
-	using vgeGL::engine::GLSLState;
-	GLSLState& glslState = glEngine->getGLSLState();
-
 	vgd::Shp< glo::FrameBufferObject >	fbo = glEngine->getOutputBuffers();
 
 	if (	glEngine->isGLSLEnabled() &&
-			fbo && fbo->isBound() && (fbo->getDrawBuffers().size() > 1)	)
+			fbo && fbo->isBound() )
 	{
-		// glsl, post-processing and several draw buffers are enabled, then select output buffers
-// @todo moves into PostProcessing handler.
-		assert( fbo->isBound() );
+		// glsl and engine contains active output buffers, then select output buffers
 
-		std::vector< int >	drawBuffers	= fbo->getDrawBuffers();
-		const int			output		= outputBuffers->getOutput().value() - vgd::node::OutputBuffers::BUFFERS0;
-		// @todo FIXME hard-coded
-		drawBuffers[0] = output;
-		//drawBuffers[0] = output * 2;
-		//drawBuffers[1] = output * 2 + 1;
+		// By default, all drawing operations into color buffers are disabled
+		std::vector< int > drawBuffers( fbo->getNumOfColors(), -1 );
+
+		// Fills the drawBuffers mapping from output buffers node
+		using vgd::field::EditorRO;
+		typedef vgd::node::OutputBuffers::FCurrentType FCurrentType;
+
+		EditorRO< FCurrentType > current = outputBuffers->getCurrentRO();
+
+		for( uint i=0; i < current->size(); ++i )
+		{
+			const int outputBufferIndex = (*current)[i];
+			drawBuffers[outputBufferIndex] = outputBufferIndex;
+		}
 
 		// Modifies the draw buffers
 		fbo->setDrawBuffers( drawBuffers );
 	}
 	//else nothing to do
 
-	//vgeGL::rc::applyUsingDisplayList< vgd::node::OutputBuffers, OutputBuffers >( engine, node, this ); @todo
+// @todo cache mechanism
+	//vgeGL::rc::applyUsingDisplayList< vgd::node::OutputBuffers, OutputBuffers >( engine, node, this );
 
 	// Validates node df
 	node->getDirtyFlag(node->getDFNode())->validate();

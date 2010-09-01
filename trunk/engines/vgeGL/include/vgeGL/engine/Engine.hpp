@@ -22,7 +22,6 @@ namespace glo
 	struct FrameBufferObject;
 	struct GLSLProgram;
 	struct IResource;
-//	struct Texture; 
 }
 
 namespace vgd 
@@ -242,11 +241,30 @@ public:
 	 */
 	UniformState& getUniformState();
 
+	//@}
 
-	// @todo doc, new section
+
+	/**
+	 * @name Engine resource
+	 *
+	 * @todo takes care of glPush/PopAttrib()/Separator for getOutputBuffers()->getFullDrawBuffers()
+	 */
+	//@{
+
+	/**
+	 * @brief Retrieves the output buffers owned by the engine.
+	 *
+	 * @return an OpenGL framebuffer object containing the output buffers
+	 */
 	vgd::Shp< glo::FrameBufferObject > getOutputBuffers() const;
-	// @todo doc
+
+	/**
+	 * @brief Sets the output buffers owned by the engine.
+	 *
+	 * @param buffers	an OpenGL framebuffer object containing the output buffers, or an empty framebuffer object.
+	 */
 	void setOutputBuffers( vgd::Shp< glo::FrameBufferObject > buffers = vgd::Shp< glo::FrameBufferObject >() );
+
 	//@}
 
 

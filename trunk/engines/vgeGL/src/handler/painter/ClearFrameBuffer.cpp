@@ -44,25 +44,20 @@ void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
 	// Updates engine state
-	using vgeGL::engine::GLSLState;
-	GLSLState& glslState = glEngine->getGLSLState();
-
-	vgd::Shp< glo::FrameBufferObject >	fbo						= glEngine->getOutputBuffers();
+	vgd::Shp< glo::FrameBufferObject > fbo = glEngine->getOutputBuffers();
 
 	if (	glEngine->isGLSLEnabled() &&
-			fbo && fbo->isBound() && (fbo->getDrawBuffers().size() > 1)	)
+			fbo && fbo->isBound() )
 	{
-		// glsl, post-processing and several draw buffers are enabled, then clears all output buffers
+		// glsl and engine contains active output buffers, then clears all output buffers
 
-// @todo move into PostProcessing handler.
-		// applyPPForClearFrameBuffer()
-		const std::vector< int > drawBuffersBackup = fbo->getDrawBuffers();
+		// Backups current draw buffers
+		const std::vector< int > drawBuffersBackup = fbo->getFullDrawBuffers();
+
+		// Clears all draw buffers attached to fbo
 		fbo->setDrawBuffersToAll();
-
-		//
 		vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
 
-		// unappplyPP()
 		// Restores the draw buffers
 		fbo->setDrawBuffers( drawBuffersBackup );
 	}

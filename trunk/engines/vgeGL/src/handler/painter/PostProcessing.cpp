@@ -90,7 +90,7 @@ const std::string colorToMonochrome =
 "\n"
 "float colorToMonochrome( sampler2D texMap, vec2 texCoord )\n"
 "{\n"
-"	vec4 color = texture2D( texMap, texCoord );\n"
+"	vec4 color = texture( texMap, texCoord );\n"
 "	return colorToMonochrome(color);\n"
 "}\n"
 "\n\n\n";
@@ -108,7 +108,7 @@ const std::string colorToSepia =
 "const vec3 grayXfer	= vec3( 0.3, 0.59, 0.11 );\n"
 "vec4 colorToSepia( sampler2D texMap, vec2 texCoord, float desaturate, float toning )\n"
 "{\n"
-"	vec4	color		= texture2D( texMap, texCoord );\n"
+"	vec4	color		= texture( texMap, texCoord );\n"
 "\n"
 "	vec3	sceneColor	= lightColor * color.rgb;\n"
 "	float	gray		= dot( grayXfer, sceneColor );\n"
@@ -131,7 +131,7 @@ const std::string applyColorToSepia(
 const std::string colorInverse =
 "vec4 colorInverse( sampler2D texMap, vec2 texCoord )\n"
 "{\n"
-"	vec4 color = texture2D( texMap, texCoord );\n"
+"	vec4 color = texture( texMap, texCoord );\n"
 "	return vec4(1.0) - color;\n"
 "}\n"
 "\n\n\n";
@@ -146,7 +146,7 @@ const std::string applyColorInverse(
 const std::string scaleAndBias =
 "vec4 scaleAndBias( sampler2D texMap, vec2 texCoord, vec4 scale, vec4 bias )\n"
 "{\n"
-"	vec4 color = texture2D( texMap, texCoord );\n"
+"	vec4 color = texture( texMap, texCoord );\n"
 "	return (color * scale) + bias;\n"
 "}\n"
 "\n\n\n";
@@ -166,7 +166,7 @@ const std::string blurHoriz =
 "	vec4 color = vec4(0.0);\n"
 "	for( int i = 0; i < 13; ++i )\n"
 "	{\n"
-"		color += texture2D( texMap, texCoord + horizKernel13[i].xy/texSize ) * gaussianWeights13[i];\n"
+"		color += texture( texMap, texCoord + horizKernel13[i].xy/texSize ) * gaussianWeights13[i];\n"
 "	}\n"
 "	return color;\n"
 "}\n"
@@ -187,7 +187,7 @@ const std::string blurVert =
 "	vec4 color = vec4(0.0);\n"
 "	for( int i = 0; i < 13; ++i )\n"
 "	{\n"
-"		color += texture2D( texMap, texCoord + vertKernel13[i].xy/texSize ) * gaussianWeights13[i];\n"
+"		color += texture( texMap, texCoord + vertKernel13[i].xy/texSize ) * gaussianWeights13[i];\n"
 "	}\n"
 "	return color;\n"
 "}\n"
@@ -235,12 +235,12 @@ const std::string colorEdgeDetect =
 "vec4 colorEdgeDetect( sampler2D texMap, vec2 texCoord )\n"
 "{\n"
 "	vec2 texSize = textureSize( texMap, 0 );\n"	
-"	vec4 orig = texture2D( texMap, texCoord );\n"
+"	vec4 orig = texture( texMap, texCoord );\n"
 "	vec4 sum = vec4(0);\n"
 "\n"
 "	for( int i = 0; i < 4; ++i )\n"
 "	{\n"
-"		sum += ( abs( orig - texture2D( texMap, texCoord + kernel4[i]/texSize ) ) - 0.5 ) * 1.2 + 0.5;\n"
+"		sum += ( abs( orig - texture( texMap, texCoord + kernel4[i]/texSize ) ) - 0.5 ) * 1.2 + 0.5;\n"
 "	}\n"
 "	return vec4( clamp( colorToMonochrome(sum), 0.0, 1.0 ) * 5.0 );\n"
 "}\n"
@@ -269,7 +269,7 @@ const std::string downFilter4 =
 "	vec4 color = vec4(0);\n"
 "	for( int i = 0; i < 16; ++i )\n"
 "	{\n"
-"		color += texture2D( texMap, texCoord + downFilter4Kernel[i]/texSize );\n"
+"		color += texture( texMap, texCoord + downFilter4Kernel[i]/texSize );\n"
 "	}\n"
 "	return color / 16.0;\n"
 "}\n"
@@ -287,7 +287,7 @@ const std::string upFilter4 =
 "// Performs up filtering to scale the image to its original size\n"
 "vec4 upFilter4( sampler2D texMap, vec2 texCoord )\n"
 "{\n"
-"	return texture2D( texMap, texCoord );\n"
+"	return texture( texMap, texCoord );\n"
 "}\n"
 "\n\n\n";
 
@@ -302,14 +302,16 @@ const std::string applyUpFilter4(
 const std::string over  =
 "vec4 over( sampler2D texMap0, sampler2D texMap1, vec2 texCoord )"
 "{\n"
-"	vec4 color0 = texture2D( texMap0, texCoord );\n"
-"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	vec4 color0 = texture( texMap0, texCoord );\n"
+"	vec4 color1 = texture( texMap1, texCoord );\n"
 "	if ( length(color0.rgb) > 0 )\n"
 "	{\n"
+//"		return vec4(color0.rgb, color0.r);\n"
 "		return color0;\n"
 "	}\n"
 "	else\n"
 "	{\n"
+//"		return vec4(color1.rgb, color1.r);\n"
 "		return color1;\n"
 "	}\n"
 "}\n"
@@ -327,8 +329,8 @@ const std::string applyOver(
 const std::string add =
 "vec4 add( sampler2D texMap0, sampler2D texMap1, vec2 texCoord )"
 "{\n"
-"	vec4 color0 = texture2D( texMap0, texCoord );\n"
-"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	vec4 color0 = texture( texMap0, texCoord );\n"
+"	vec4 color1 = texture( texMap1, texCoord );\n"
 "	return color0 + color1;\n"
 "}\n"
 "\n\n\n";
@@ -344,8 +346,8 @@ const std::string applyAdd(
 const std::string sub =
 "vec4 sub( sampler2D texMap0, sampler2D texMap1, vec2 texCoord )"
 "{\n"
-"	vec4 color0 = texture2D( texMap0, texCoord );\n"
-"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	vec4 color0 = texture( texMap0, texCoord );\n"
+"	vec4 color1 = texture( texMap1, texCoord );\n"
 "	return color0 - color1;\n"
 "}\n"
 "\n\n\n";
@@ -361,8 +363,8 @@ const std::string applySub(
 const std::string mixAndScale =
 "vec4 mixAndScale( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, float a, float scale )"
 "{\n"
-"	vec4 color0 = texture2D( texMap0, texCoord );\n"
-"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	vec4 color0 = texture( texMap0, texCoord );\n"
+"	vec4 color1 = texture( texMap1, texCoord );\n"
 "	return mix(color0, color1, a) * scale;\n"
 "}\n"
 "\n\n\n";
@@ -378,8 +380,8 @@ const std::string applyMixAndScale(
 const std::string alphamixAndScale =
 "vec4 alphamixAndScale( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, float scale )"
 "{\n"
-"	vec4 color0 = texture2D( texMap0, texCoord );\n"
-"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	vec4 color0 = texture( texMap0, texCoord );\n"
+"	vec4 color1 = texture( texMap1, texCoord );\n"
 "	return mix(color0, color1, color1.a) * scale;\n"
 "}\n"
 "\n\n\n";
@@ -395,8 +397,8 @@ const std::string applyAlphamixAndScale(
 const std::string combine2AndScale =
 "vec4 combine2AndScale( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, float a, float b, float scale )"
 "{\n"
-"	vec4 color0 = texture2D( texMap0, texCoord );\n"
-"	vec4 color1 = texture2D( texMap1, texCoord );\n"
+"	vec4 color0 = texture( texMap0, texCoord );\n"
+"	vec4 color1 = texture( texMap1, texCoord );\n"
 "	return (color0 * a + color1 * b) * scale;\n"
 "}\n"
 "\n\n\n";
@@ -412,9 +414,9 @@ const std::string applyCombine2AndScale(
 const std::string combine3AndScale =
 "vec4 combine3AndScale( sampler2D texMap0, sampler2D texMap1, sampler2D texMap2, vec2 texCoord, vec4 param )"
 "{\n"
-"	vec4 color0 = texture2D( texMap0, texCoord );\n"
-"	vec4 color1 = texture2D( texMap1, texCoord );\n"
-"	vec4 color2 = texture2D( texMap2, texCoord );\n"
+"	vec4 color0 = texture( texMap0, texCoord );\n"
+"	vec4 color1 = texture( texMap1, texCoord );\n"
+"	vec4 color2 = texture( texMap2, texCoord );\n"
 "	return (color0 * param[0] + color1 * param[1] + color2 * param[2] ) * param[3];\n"
 "}\n"
 "\n\n\n";
@@ -485,13 +487,12 @@ void PostProcessing::apply( vge::engine::Engine * engine, vgd::node::Node * node
 	if ( glEngine->isGLSLEnabled() )
 	{
 		using vgeGL::engine::GLSLState;
-
 		GLSLState& glslState = glEngine->getGLSLState();
 
 		vgd::Shp< GLSLState::PostProcessingState > postProcessingState( new GLSLState::PostProcessingState(postProcessingNode) );
 
-		const uint unit = postProcessingNode->getMultiAttributeIndex();
-		glslState.postProcessing.setState( unit, postProcessingState );
+		const int multiAttributeIndex = computeMultiAttributeIndex( postProcessingNode, glslState.postProcessing );
+		glslState.postProcessing.setState( multiAttributeIndex, postProcessingState );
 	}
 
 	// Validates node df
@@ -592,7 +593,7 @@ std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::Post
 	}
 	else if ( filter == vgd::node::PostProcessing::NO_FILTER )
 	{
-		return std::make_pair( "", "color = texture2D( texMap2D[0], mgl_TexCoord[0].xy );\n" );
+		return std::make_pair( "", "color = texture( texMap2D[0], mgl_TexCoord[0].xy );\n" );
 	}
 	else if ( filter == vgd::node::PostProcessing::CUSTOM_FILTER )
 	{
@@ -602,7 +603,7 @@ std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::Post
 		if ( apply.empty() )
 		{
 			vgLogDebug("PostProcessing.filter is equal to CUSTOM_FILTER, but no custom filter is defined.");
-			return std::make_pair( "", "color = texture2D( texMap2D[0], mgl_TexCoord[0].xy );\n" );
+			return std::make_pair( "", "color = texture( texMap2D[0], mgl_TexCoord[0].xy );\n" );
 		}
 		else
 		{

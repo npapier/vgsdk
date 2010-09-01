@@ -21,6 +21,7 @@
 #include <vgd/node/Material.hpp>
 #include <vgd/node/MatrixTransform.hpp>
 #include <vgd/node/OutputBuffers.hpp>
+#include <vgd/node/OutputBufferProperty.hpp>
 #include <vgd/node/PointLight.hpp>
 #include <vgd/node/PostProcessing.hpp>
 #include <vgd/node/Separator.hpp>
@@ -45,6 +46,7 @@ namespace node
 								vgd::Shp< vgd::node::Material >,
 								vgd::Shp< vgd::node::MatrixTransform >,
 								vgd::Shp< vgd::node::OutputBuffers >,
+								vgd::Shp< vgd::node::OutputBufferProperty >,
 								vgd::Shp< vgd::node::PointLight >,
 								vgd::Shp< vgd::node::PostProcessing >,
 								vgd::Shp< vgd::node::Separator >,
@@ -62,6 +64,7 @@ namespace node
 																	("Material")
 																	("MatrixTransform")
 																	("OutputBuffers")
+																	("OutputBufferProperty")
 																	("PointLight")
 																	("PostProcessing")
 																	("Separator")

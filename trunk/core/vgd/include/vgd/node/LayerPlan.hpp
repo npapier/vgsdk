@@ -43,6 +43,7 @@ namespace node
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
  * @ingroup g_shapeNodes
+ * @ingroup g_layerplan
  */
 struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 {

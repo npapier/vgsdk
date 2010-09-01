@@ -8,6 +8,7 @@
 
 #include "vge/vge.hpp"
 
+#include "vge/basic/TUnitContainer.hpp"
 #include "vge/handler/painter/Attribute.hpp"
 
 
@@ -27,6 +28,22 @@ namespace painter
  */
 struct VGE_API MultiAttribute : public Attribute
 {
+	template< typename MultiAttributeNode, typename State >
+	const int computeMultiAttributeIndex( const MultiAttributeNode * node, vge::basic::TUnitContainer< State >& container )
+	{
+		int multiAttributeIndex = node->getMultiAttributeIndex();
+
+		if ( multiAttributeIndex == -1 )
+		{
+			// Automatic computation of multi attribute index
+			multiAttributeIndex = container.getNum();
+			assert( container.getState(multiAttributeIndex) == 0 );
+			// @todo better error handling (container.getMax())
+		}
+		// else nothing to do
+
+		return multiAttributeIndex;
+	}
 };
 
 

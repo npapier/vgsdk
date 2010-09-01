@@ -55,14 +55,8 @@ void Overlay::apply( vge::engine::Engine* baseEngine, vgd::node::Node * node )
 
 		vgd::Shp< GLSLState::OverlayState > overlayState( new GLSLState::OverlayState(overlay) );
 
-		const int multiAttributeIndex = overlay->getMultiAttributeIndex();
-		if ( multiAttributeIndex == -1 )
-		{
-			// Automatic computation of multi attribute index.
-			const int unit = glslState.overlays.getNum();
-			assert( glslState.overlays.getState(unit) == 0 );
-			glslState.overlays.setState( unit, overlayState );
-		}
+		const int multiAttributeIndex = computeMultiAttributeIndex( overlay, glslState.overlays );
+		glslState.overlays.setState( multiAttributeIndex, overlayState );
 	}
 
 	// Validates node df

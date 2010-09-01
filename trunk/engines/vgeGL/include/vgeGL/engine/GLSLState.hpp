@@ -24,6 +24,7 @@ namespace vgd
 	namespace node
 	{
 		struct Light;
+		struct OutputBufferProperty;
 		struct Overlay;
 		struct Program;
 		struct PostProcessing;
@@ -494,6 +495,37 @@ struct GLSLState : public TBitSet< 14 >
 	//@}
 
 
+	/**
+	 * @name OutputBufferProperty units
+	 */
+	//@{
+	 
+	/**
+	 * @brief OutputBufferProperty unit state structure
+	 */
+	struct OutputBufferPropertyState
+	{
+		/**
+		 * @brief Default constructor
+		 */
+		OutputBufferPropertyState( vgd::node::OutputBufferProperty * node )
+		: m_node(node)
+		{}
+
+		vgd::node::OutputBufferProperty * getNode() const { return m_node; }
+
+	private:
+		vgd::node::OutputBufferProperty * m_node;
+	};
+
+	/**
+	 * @brief OutputBufferProperty unit container
+	 */
+	typedef vge::basic::TUnitContainer< OutputBufferPropertyState > OutputBufferPropertyStateContainer;
+	OutputBufferPropertyStateContainer outputBufferProperties;
+
+	//@}
+
 
 	/**
 	 * @brief Returns the last encountered Program node
@@ -516,7 +548,8 @@ struct GLSLState : public TBitSet< 14 >
 
 	enum ShaderStage
 	{
-		FRAGMENT_OUTPUT = 0,		///< Fragment Shader Outputs stage (example: gl_FragData[1] = ...)
+		FRAGMENT_OUTPUT_DECLARATION = 0,	///< Declarations needed by FRAGMENT_OUTPUT
+		FRAGMENT_OUTPUT = 1,				///< Fragment Shader Outputs stage (example: gl_FragData[1] = ...)
 
 		//
 		MAX_SHADERSTAGE

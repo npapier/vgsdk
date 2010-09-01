@@ -127,7 +127,6 @@ const bool Manager::remove( vgd::node::Node *pNode )
 	else
 	{
 		// Not found
-		
 		return false;
 	}
 }

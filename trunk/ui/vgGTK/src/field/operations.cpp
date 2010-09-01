@@ -166,7 +166,8 @@ vgd::Shp< FieldEditor > createEditor( const std::type_info & fieldType )
 		result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec3f > >() );
 	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec4f >) )
 		result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec4f > >()		);
-	else if	( fieldType == typeid(vgd::field::TMultiField< uint32 >)	)			result.reset( new MultiFieldEditor2< adapter::MFNumberAdapter< uint32 > >()	);
+	else if	( fieldType == typeid(vgd::field::TMultiField< uint >)	)				result.reset( new MultiFieldEditor2< adapter::MFNumberAdapter< uint32 > >()	);
+	else if	( fieldType == typeid(vgd::field::TMultiField< int >)	)				result.reset( new MultiFieldEditor2< adapter::MFNumberAdapter< int > >()	);
 	else if	( fieldType == typeid(vgd::field::TMultiField< vgd::node::Primitive >)	)	result.reset( new MultiFieldEditor2< adapter::MFPrimitiveAdapter >()				);
 	
 	return result;

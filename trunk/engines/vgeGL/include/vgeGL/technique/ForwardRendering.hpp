@@ -65,6 +65,9 @@ private:
 	vgd::Shp< ShadowMappingInput >				m_shadowMappingInput;
 
 	//
+	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
+	vgd::Shp< OutputBufferPropertyStateContainer > m_outputBufferProperties;
+
 	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 	vgd::Shp< PostProcessingStateContainer > m_postProcessing;
 	float m_lastCurrentScaleForVertex;
@@ -73,14 +76,17 @@ private:
 	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo );
 
 	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
-	vgd::Shp< OverlayStateContainer > m_overlays;	
+	vgd::Shp< OverlayStateContainer > m_overlays;
+
 
 	/**
 	 * @name Buffers
 	 */
 	//@{
 
-	void initializeBuffers( vgeGL::engine::Engine * engine );
+	void initializeEngineBuffers( vgeGL::engine::Engine * engine, vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties );
+
+	void initializePostProcessingBuffers( vgeGL::engine::Engine * engine );
 
 	vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer0;
 	vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer1;
@@ -89,8 +95,6 @@ private:
 	vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo0;
 	vgd::Shp< vgeGL::rc::FrameBufferObject >		m_fbo1;
 	vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo;
-	int m_normalIndex;
-	int m_positionIndex;
 
 // @todo removes
 	std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures0;	///< textures for FBO 0
@@ -104,7 +108,7 @@ private:
 	vgd::Shp< vgd::node::Texture2D >				m_blackTexture2D; // @todo moves in Engine or in a repository ?
 	//@}
 
-	enum AttachmentType
+	/*enum AttachmentType
 	{
 		// COLOR FORMATS
 		COLOR_RGB,
@@ -116,17 +120,17 @@ private:
 		COLOR_LUMINANCE,
 		COLOR_LUMINANCE_16F,
 		COLOR_LUMINANCE_32F,
+// @todo COLOR_LUMINANCE_ALPHA ?
 		COLOR_LUMINANCE_ALPHA_16F,
 		COLOR_LUMINANCE_ALPHA_32F,
 		// DEPTH FORMATS
 		DEPTH,
 		DEPTH_COMPONENT_24 // @todo others DEPTH_COMPONENT*
-	};
+	};*/
 
 // @todo only glo FBO
-	typedef std::pair< vgd::Shp< vgd::node::FrameBuffer >, vgd::Shp< vgeGL::rc::FrameBufferObject > > createsFBORetValType;
-	typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;
-	createsFBORetValType createsFBO( vgeGL::engine::Engine * engine, std::vector< AttachmentType > attachments, std::back_insert_iterator< TextureContainer > backInserter );
+	//typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;
+	//createsFBORetValType createsFBO( vgeGL::engine::Engine * engine, std::vector< AttachmentType > attachments, std::back_insert_iterator< TextureContainer > backInserter );
 };
 
 
