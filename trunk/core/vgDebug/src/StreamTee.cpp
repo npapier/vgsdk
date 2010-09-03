@@ -60,11 +60,22 @@ namespace vgDebug
 
 StreamTee::StreamTee( std::ostream * tee, std::ostream * first, std::ostream * second )
 :	m_tee( tee ),
-	m_first( second?tee:first ),
-	m_second( second?first:second ),
+	m_first( second?first:tee ),
+	m_second( second?second:first ),
 	m_oldFromStreambuf( tee->rdbuf() )
 {
-	m_tee->rdbuf( new teebuf( m_first->rdbuf(), m_second->rdbuf() ) );
+	if(m_first->rdbuf()&&m_second->rdbuf())
+	{
+		m_tee->rdbuf( new teebuf( m_first->rdbuf(), m_second->rdbuf() ) );
+	}
+	else if( m_second->rdbuf() )
+	{
+		m_tee->rdbuf( m_second->rdbuf() );
+	}
+	else if( m_first->rdbuf() )
+	{
+		m_tee->rdbuf( m_first->rdbuf() );
+	}
 }
 
 
