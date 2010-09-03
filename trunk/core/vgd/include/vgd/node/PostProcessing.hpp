@@ -31,7 +31,7 @@ namespace node
  * - SFEnum \c input2 = INPUT2_NONE<br>
  *   Specifies the third input buffer used by the filter.<br>
  *<br>
- * - SFEnum \c input0 = PREVIOUS_COLOR0<br>
+ * - SFEnum \c input0 = PREVIOUS0<br>
  *   Specifies the first input buffer used by the filter.<br>
  *<br>
  * - SFEnum \c input1 = INPUT1_NONE<br>
@@ -51,9 +51,6 @@ namespace node
  *<br>
  * - SFString \c customFilterApply = empty<br>
  *   Specifies the code calling the filter defined by customFilterDefinition.<br>
- *<br>
- * - SFEnum \c output = OUTPUT_TMP0<br>
- *   Specifices the output buffer used by the filter.<br>
  *<br>
  * - OFFloat \c [param1f0] = 0.0<br>
  *   Specifies the first 1f parameter used by the filter.<br>
@@ -101,16 +98,16 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		INPUT2_ORIGINAL_POSITION = 347,	///< 
-		INPUT2_ORIGINAL_NORMAL = 346,	///< 
-		INPUT2_ORIGINAL_COLOR2 = 344,	///< 
-		INPUT2_ORIGINAL_COLOR0 = 340,	///< 
-		INPUT2_ORIGINAL_COLOR1 = 342,	///< 
-		INPUT2_NONE = 349,	///< 
-		INPUT2_PREVIOUS_COLOR0 = 348,	///< 
-		INPUT2_ORIGINAL_DEPTH0 = 341,	///< 
-		INPUT2_ORIGINAL_DEPTH1 = 343,	///< 
-		INPUT2_ORIGINAL_DEPTH2 = 345,	///< 
+		INPUT2_PREVIOUS0 = 347,	///< 
+		INPUT2_OUTPUT_BUFFER0 = 339,	///< 
+		INPUT2_OUTPUT_BUFFER1 = 340,	///< 
+		INPUT2_OUTPUT_BUFFER2 = 341,	///< 
+		INPUT2_OUTPUT_BUFFER3 = 342,	///< 
+		INPUT2_OUTPUT_BUFFER4 = 343,	///< 
+		INPUT2_OUTPUT_BUFFER5 = 344,	///< 
+		INPUT2_OUTPUT_BUFFER6 = 345,	///< 
+		INPUT2_OUTPUT_BUFFER7 = 346,	///< 
+		INPUT2_NONE = 348,	///< 
 		DEFAULT_INPUT2 = INPUT2_NONE	///< 
 	};
 
@@ -138,6 +135,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
+			retVal.push_back( 339 );
 			retVal.push_back( 340 );
 			retVal.push_back( 341 );
 			retVal.push_back( 342 );
@@ -147,7 +145,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 346 );
 			retVal.push_back( 347 );
 			retVal.push_back( 348 );
-			retVal.push_back( 349 );
 
 			return retVal;
 		}
@@ -156,15 +153,15 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "INPUT2_ORIGINAL_COLOR0" );
-			retVal.push_back( "INPUT2_ORIGINAL_DEPTH0" );
-			retVal.push_back( "INPUT2_ORIGINAL_COLOR1" );
-			retVal.push_back( "INPUT2_ORIGINAL_DEPTH1" );
-			retVal.push_back( "INPUT2_ORIGINAL_COLOR2" );
-			retVal.push_back( "INPUT2_ORIGINAL_DEPTH2" );
-			retVal.push_back( "INPUT2_ORIGINAL_NORMAL" );
-			retVal.push_back( "INPUT2_ORIGINAL_POSITION" );
-			retVal.push_back( "INPUT2_PREVIOUS_COLOR0" );
+			retVal.push_back( "INPUT2_OUTPUT_BUFFER0" );
+			retVal.push_back( "INPUT2_OUTPUT_BUFFER1" );
+			retVal.push_back( "INPUT2_OUTPUT_BUFFER2" );
+			retVal.push_back( "INPUT2_OUTPUT_BUFFER3" );
+			retVal.push_back( "INPUT2_OUTPUT_BUFFER4" );
+			retVal.push_back( "INPUT2_OUTPUT_BUFFER5" );
+			retVal.push_back( "INPUT2_OUTPUT_BUFFER6" );
+			retVal.push_back( "INPUT2_OUTPUT_BUFFER7" );
+			retVal.push_back( "INPUT2_PREVIOUS0" );
 			retVal.push_back( "INPUT2_NONE" );
 
 			return retVal;
@@ -201,18 +198,17 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		ORIGINAL_POSITION = 326,	///< 
-		NONE = 329,	///< 
-		ORIGINAL_NORMAL = 325,	///< 
-		ORIGINAL_DEPTH2 = 324,	///< 
-		ORIGINAL_COLOR0 = 319,	///< 
-		ORIGINAL_COLOR1 = 321,	///< 
-		ORIGINAL_DEPTH0 = 320,	///< 
-		ORIGINAL_DEPTH1 = 322,	///< 
-		ORIGINAL_COLOR2 = 323,	///< 
-		PREVIOUS_COLOR0 = 327,	///< 
-		PREVIOUS_COLOR1 = 328,	///< 
-		DEFAULT_INPUT0 = PREVIOUS_COLOR0	///< 
+		NONE = 328,	///< 
+		PREVIOUS0 = 327,	///< 
+		OUTPUT_BUFFER6 = 325,	///< 
+		OUTPUT_BUFFER7 = 326,	///< 
+		OUTPUT_BUFFER4 = 323,	///< 
+		OUTPUT_BUFFER5 = 324,	///< 
+		OUTPUT_BUFFER2 = 321,	///< 
+		OUTPUT_BUFFER3 = 322,	///< 
+		OUTPUT_BUFFER0 = 319,	///< 
+		OUTPUT_BUFFER1 = 320,	///< 
+		DEFAULT_INPUT0 = PREVIOUS0	///< 
 	};
 
 	/**
@@ -249,7 +245,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 326 );
 			retVal.push_back( 327 );
 			retVal.push_back( 328 );
-			retVal.push_back( 329 );
 
 			return retVal;
 		}
@@ -258,16 +253,15 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "ORIGINAL_COLOR0" );
-			retVal.push_back( "ORIGINAL_DEPTH0" );
-			retVal.push_back( "ORIGINAL_COLOR1" );
-			retVal.push_back( "ORIGINAL_DEPTH1" );
-			retVal.push_back( "ORIGINAL_COLOR2" );
-			retVal.push_back( "ORIGINAL_DEPTH2" );
-			retVal.push_back( "ORIGINAL_NORMAL" );
-			retVal.push_back( "ORIGINAL_POSITION" );
-			retVal.push_back( "PREVIOUS_COLOR0" );
-			retVal.push_back( "PREVIOUS_COLOR1" );
+			retVal.push_back( "OUTPUT_BUFFER0" );
+			retVal.push_back( "OUTPUT_BUFFER1" );
+			retVal.push_back( "OUTPUT_BUFFER2" );
+			retVal.push_back( "OUTPUT_BUFFER3" );
+			retVal.push_back( "OUTPUT_BUFFER4" );
+			retVal.push_back( "OUTPUT_BUFFER5" );
+			retVal.push_back( "OUTPUT_BUFFER6" );
+			retVal.push_back( "OUTPUT_BUFFER7" );
+			retVal.push_back( "PREVIOUS0" );
 			retVal.push_back( "NONE" );
 
 			return retVal;
@@ -304,16 +298,16 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		INPUT1_ORIGINAL_DEPTH2 = 335,	///< 
-		INPUT1_ORIGINAL_NORMAL = 336,	///< 
-		INPUT1_ORIGINAL_COLOR2 = 334,	///< 
-		INPUT1_ORIGINAL_COLOR1 = 332,	///< 
-		INPUT1_ORIGINAL_COLOR0 = 330,	///< 
-		INPUT1_ORIGINAL_DEPTH1 = 333,	///< 
-		INPUT1_ORIGINAL_DEPTH0 = 331,	///< 
-		INPUT1_PREVIOUS_COLOR0 = 338,	///< 
-		INPUT1_ORIGINAL_POSITION = 337,	///< 
-		INPUT1_NONE = 339,	///< 
+		INPUT1_OUTPUT_BUFFER5 = 334,	///< 
+		INPUT1_OUTPUT_BUFFER4 = 333,	///< 
+		INPUT1_OUTPUT_BUFFER7 = 336,	///< 
+		INPUT1_OUTPUT_BUFFER6 = 335,	///< 
+		INPUT1_OUTPUT_BUFFER1 = 330,	///< 
+		INPUT1_OUTPUT_BUFFER0 = 329,	///< 
+		INPUT1_OUTPUT_BUFFER3 = 332,	///< 
+		INPUT1_OUTPUT_BUFFER2 = 331,	///< 
+		INPUT1_NONE = 338,	///< 
+		INPUT1_PREVIOUS0 = 337,	///< 
 		DEFAULT_INPUT1 = INPUT1_NONE	///< 
 	};
 
@@ -341,6 +335,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
+			retVal.push_back( 329 );
 			retVal.push_back( 330 );
 			retVal.push_back( 331 );
 			retVal.push_back( 332 );
@@ -350,7 +345,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 336 );
 			retVal.push_back( 337 );
 			retVal.push_back( 338 );
-			retVal.push_back( 339 );
 
 			return retVal;
 		}
@@ -359,15 +353,15 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< std::string > retVal;
 
-			retVal.push_back( "INPUT1_ORIGINAL_COLOR0" );
-			retVal.push_back( "INPUT1_ORIGINAL_DEPTH0" );
-			retVal.push_back( "INPUT1_ORIGINAL_COLOR1" );
-			retVal.push_back( "INPUT1_ORIGINAL_DEPTH1" );
-			retVal.push_back( "INPUT1_ORIGINAL_COLOR2" );
-			retVal.push_back( "INPUT1_ORIGINAL_DEPTH2" );
-			retVal.push_back( "INPUT1_ORIGINAL_NORMAL" );
-			retVal.push_back( "INPUT1_ORIGINAL_POSITION" );
-			retVal.push_back( "INPUT1_PREVIOUS_COLOR0" );
+			retVal.push_back( "INPUT1_OUTPUT_BUFFER0" );
+			retVal.push_back( "INPUT1_OUTPUT_BUFFER1" );
+			retVal.push_back( "INPUT1_OUTPUT_BUFFER2" );
+			retVal.push_back( "INPUT1_OUTPUT_BUFFER3" );
+			retVal.push_back( "INPUT1_OUTPUT_BUFFER4" );
+			retVal.push_back( "INPUT1_OUTPUT_BUFFER5" );
+			retVal.push_back( "INPUT1_OUTPUT_BUFFER6" );
+			retVal.push_back( "INPUT1_OUTPUT_BUFFER7" );
+			retVal.push_back( "INPUT1_PREVIOUS0" );
 			retVal.push_back( "INPUT1_NONE" );
 
 			return retVal;
@@ -666,79 +660,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field output
-	 */
-	//@{
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum
-	{
-		OUTPUT_TMP0 = 350,	///< 
-		DEFAULT_OUTPUT = OUTPUT_TMP0	///< 
-	};
-
-	/**
-	 * @brief Type definition of the value contained by field named \c output.
-	 */
-	struct OutputValueType : public vgd::field::Enum
-	{
-		OutputValueType()
-		{}
-
-		OutputValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		OutputValueType( const OutputValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		OutputValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 350 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "OUTPUT_TMP0" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c output
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FOutputType;
-
-
-	/**
-	 * @brief Gets the value of field named \c output.
-	 */
-	const OutputValueType getOutput() const;
-
-	/**
-	 * @brief Sets the value of field named \c output.
-	 */
-	void setOutput( const OutputValueType value );
-
-	//@}
-
-
-
-	/**
 	 * @name Accessors to field param1f0
 	 */
 	//@{
@@ -837,13 +758,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @return the name of field \c customFilterApply.
 	 */
 	static const std::string getFCustomFilterApply( void );
-
-	/**
-	 * @brief Returns the name of field \c output.
-	 *
-	 * @return the name of field \c output.
-	 */
-	static const std::string getFOutput( void );
 
 	/**
 	 * @brief Returns the name of field \c param1f0.
