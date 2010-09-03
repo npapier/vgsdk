@@ -53,85 +53,76 @@ namespace
 
 
 vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessing::Input0ValueType input,
-	std::vector< vgd::Shp< vgd::node::Texture2D > >* originalTexture,
-	std::vector< vgd::Shp< vgd::node::Texture2D > >* inputTexture )
+	std::vector< vgd::Shp< vgd::node::Texture2D > >* outputBufferTexture,
+	std::vector< vgd::Shp< vgd::node::Texture2D > >* previousTexture )
 {
 	using vgd::node::PostProcessing;
 	vgd::Shp< vgd::node::Texture2D > retVal;
 
-	switch ( input.value() )
+	//
+	const int	inputValue = input.value();
+	int			outputBufferIndex	= -1;
+	int			previousBufferIndex	= -1;
+
+	// OUTPUT_BUFFER
+	if (	(PostProcessing::OUTPUT_BUFFER0 <= inputValue) &&
+			(inputValue <= PostProcessing::OUTPUT_BUFFER7)	)
 	{
-		case PostProcessing::ORIGINAL_COLOR0:
-		case PostProcessing::INPUT1_ORIGINAL_COLOR0:
-		case PostProcessing::INPUT2_ORIGINAL_COLOR0:
-			retVal = (*originalTexture)[0];
-			break;
-
-		case PostProcessing::ORIGINAL_DEPTH0:
-		case PostProcessing::INPUT1_ORIGINAL_DEPTH0:
-		case PostProcessing::INPUT2_ORIGINAL_DEPTH0:
-			retVal = (*originalTexture)[0];
-			break;
-
-		case PostProcessing::ORIGINAL_COLOR1:
-		case PostProcessing::INPUT1_ORIGINAL_COLOR1:
-		case PostProcessing::INPUT2_ORIGINAL_COLOR1:
-			retVal = (*originalTexture)[1];
-			break;
-
-		case PostProcessing::ORIGINAL_DEPTH1:
-		case PostProcessing::INPUT1_ORIGINAL_DEPTH1:
-		case PostProcessing::INPUT2_ORIGINAL_DEPTH1:
-			retVal = (*originalTexture)[1];
-			break;
-
-		case PostProcessing::ORIGINAL_COLOR2:
-		case PostProcessing::INPUT1_ORIGINAL_COLOR2:
-		case PostProcessing::INPUT2_ORIGINAL_COLOR2:
-			retVal = (*originalTexture)[2];
-			break;
-
-		case PostProcessing::ORIGINAL_DEPTH2:
-		case PostProcessing::INPUT1_ORIGINAL_DEPTH2:
-		case PostProcessing::INPUT2_ORIGINAL_DEPTH2:
-			retVal = (*originalTexture)[2];
-			break;
-/*			
-		//
-		case PostProcessing::ORIGINAL_NORMAL:
-		case PostProcessing::INPUT1_ORIGINAL_NORMAL:
-		case PostProcessing::INPUT2_ORIGINAL_NORMAL:
-			retVal = (*originalTexture)[normalIndex];
-			break;
-
-		case PostProcessing::ORIGINAL_POSITION:
-		case PostProcessing::INPUT1_ORIGINAL_POSITION:
-		case PostProcessing::INPUT2_ORIGINAL_POSITION:
-			retVal = (*originalTexture)[positionIndex];
-			break;
-*/
-		case PostProcessing::PREVIOUS_COLOR0:
-		case PostProcessing::INPUT1_PREVIOUS_COLOR0:
-		case PostProcessing::INPUT2_PREVIOUS_COLOR0:
-			retVal = (*inputTexture)[0];
-			break;
-
-/*		case PostProcessing::PREVIOUS_COLOR1:
-		case PostProcessing::INPUT1_PREVIOUS_COLOR1:
-		case PostProcessing::INPUT2_PREVIOUS_COLOR1:
-			retVal = (*inputTexture)[1];
-			break;*/
-
-		case PostProcessing::NONE:
-		case PostProcessing::INPUT1_NONE:
-		case PostProcessing::INPUT2_NONE:
-			// @todo returns black texture
-			break;
-
-		default:
-			assert( false && "Unexpected value" );
+		outputBufferIndex = inputValue - PostProcessing::OUTPUT_BUFFER0;
+	}
+	else if (	(PostProcessing::INPUT1_OUTPUT_BUFFER0 <= inputValue) &&
+				(inputValue <= PostProcessing::INPUT1_OUTPUT_BUFFER7)	)
+	{
+		outputBufferIndex = inputValue - PostProcessing::INPUT1_OUTPUT_BUFFER0;
+	}
+	else if (	(PostProcessing::INPUT2_OUTPUT_BUFFER0 <= inputValue) &&
+				(inputValue <= PostProcessing::INPUT2_OUTPUT_BUFFER7)	)
+	{
+		outputBufferIndex = inputValue - PostProcessing::INPUT2_OUTPUT_BUFFER0;
+	}
+	// PREVIOUS
+	else if (	(PostProcessing::PREVIOUS0 == inputValue) ||
+				(PostProcessing::INPUT1_PREVIOUS0 == inputValue) ||
+				(PostProcessing::INPUT2_PREVIOUS0 == inputValue)	)
+	{
+		previousBufferIndex = 0;
+	}
+	// NONE
+	else if (	(PostProcessing::NONE == inputValue) ||
+				(PostProcessing::INPUT1_NONE == inputValue) ||
+				(PostProcessing::INPUT2_NONE == inputValue)	)
+	{
+		// @todo returns black texture
+	}
+	else
+	{
+		assert( false && "Unexpected value" );
 	}
 
+	// Final processing
+	if ( outputBufferIndex >= 0 )
+	{
+		if ( outputBufferIndex < static_cast< int >(outputBufferTexture->size()) )
+		{
+			retVal = (*outputBufferTexture)[outputBufferIndex];
+		}
+		else
+		{
+			vgLogDebug2("Out of range OUTPUT_BUFFER%i", outputBufferIndex);
+		}
+	}
+	else if ( previousBufferIndex >= 0 )
+	{
+		if ( previousBufferIndex < static_cast< int >(previousTexture->size()) )
+		{
+			retVal = (*previousTexture)[previousBufferIndex];
+		}
+		else
+		{
+			vgLogDebug2("Out of range PREVIOUS%i", previousBufferIndex);
+		}
+	}
+	
 	return retVal;
 }
 
@@ -1389,7 +1380,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			inputs2.push_back( postProcessingNode->getInput2() );
 
 			// Ouput
-			output.push_back( postProcessingNode->getOutput().value() - vgd::node::PostProcessing::OUTPUT_TMP0 );
+			//output.push_back( postProcessingNode->getOutput().value() - vgd::node::PostProcessing::OUTPUT_TMP0 );
 
 			// Creates Program node
 			vgd::Shp< Program > program = Program::create("program");
@@ -1587,7 +1578,8 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		// render
 		//lfbo1->bind();
 		lfbo1->setDrawBuffer();
-		lfbo1->setDrawBuffers( output[i] );
+		lfbo1->setDrawBuffers( 0 );
+		//lfbo1->setDrawBuffers( output[i] );
 
 		if ( inputTexture0 && !inputTexture1 && !inputTexture2 )
 		{

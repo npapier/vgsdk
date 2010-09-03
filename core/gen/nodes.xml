@@ -567,17 +567,17 @@
 
 		<sf name = "input0" doc = "Specifies the first input buffer used by the filter.">
 			<type name = "enum">
-				<enum default = "PREVIOUS_COLOR0">
-					<value name="ORIGINAL_COLOR0" doc=""/>
-					<value name="ORIGINAL_DEPTH0" doc=""/>
-					<value name="ORIGINAL_COLOR1" doc=""/>
-					<value name="ORIGINAL_DEPTH1" doc=""/>
-					<value name="ORIGINAL_COLOR2" doc=""/>
-					<value name="ORIGINAL_DEPTH2" doc=""/>
-					<value name="ORIGINAL_NORMAL" doc=""/>
-					<value name="ORIGINAL_POSITION" doc=""/>
-					<value name="PREVIOUS_COLOR0" doc=""/>
-					<value name="PREVIOUS_COLOR1" doc=""/>
+				<enum default = "PREVIOUS0">
+					<value name="OUTPUT_BUFFER0" doc=""/>
+					<value name="OUTPUT_BUFFER1" doc=""/>
+					<value name="OUTPUT_BUFFER2" doc=""/>
+					<value name="OUTPUT_BUFFER3" doc=""/>
+					<value name="OUTPUT_BUFFER4" doc=""/>
+					<value name="OUTPUT_BUFFER5" doc=""/>
+					<value name="OUTPUT_BUFFER6" doc=""/>
+					<value name="OUTPUT_BUFFER7" doc=""/>
+					<value name="PREVIOUS0" doc=""/>
+<!-- @todo 			<value name="PREVIOUS1" doc=""/> -->
 					<value name="NONE" doc=""/>
 				</enum>
 			</type>
@@ -586,16 +586,16 @@
 		<sf name = "input1" doc = "Specifies the second input buffer used by the filter.">
 			<type name = "enum">
 				<enum default = "INPUT1_NONE">
-					<value name="INPUT1_ORIGINAL_COLOR0" doc=""/>
-					<value name="INPUT1_ORIGINAL_DEPTH0" doc=""/>
-					<value name="INPUT1_ORIGINAL_COLOR1" doc=""/>
-					<value name="INPUT1_ORIGINAL_DEPTH1" doc=""/>
-					<value name="INPUT1_ORIGINAL_COLOR2" doc=""/>
-					<value name="INPUT1_ORIGINAL_DEPTH2" doc=""/>
-					<value name="INPUT1_ORIGINAL_NORMAL" doc=""/>
-					<value name="INPUT1_ORIGINAL_POSITION" doc=""/>
-					<value name="INPUT1_PREVIOUS_COLOR0" doc=""/>
-					<!--<value name="INPUT1_PREVIOUS_COLOR1" doc=""/>@todo re-enables-->
+					<value name="INPUT1_OUTPUT_BUFFER0" doc=""/>
+					<value name="INPUT1_OUTPUT_BUFFER1" doc=""/>
+					<value name="INPUT1_OUTPUT_BUFFER2" doc=""/>
+					<value name="INPUT1_OUTPUT_BUFFER3" doc=""/>
+					<value name="INPUT1_OUTPUT_BUFFER4" doc=""/>
+					<value name="INPUT1_OUTPUT_BUFFER5" doc=""/>
+					<value name="INPUT1_OUTPUT_BUFFER6" doc=""/>
+					<value name="INPUT1_OUTPUT_BUFFER7" doc=""/>
+					<value name="INPUT1_PREVIOUS0" doc=""/>
+<!-- @todo 			<value name="INPUT1_PREVIOUS1" doc=""/> -->
 					<value name="INPUT1_NONE" doc=""/>
 				</enum>
 			</type>
@@ -604,20 +604,21 @@
 		<sf name = "input2" doc = "Specifies the third input buffer used by the filter.">
 			<type name = "enum">
 				<enum default = "INPUT2_NONE">
-					<value name="INPUT2_ORIGINAL_COLOR0" doc=""/>
-					<value name="INPUT2_ORIGINAL_DEPTH0" doc=""/>
-					<value name="INPUT2_ORIGINAL_COLOR1" doc=""/>
-					<value name="INPUT2_ORIGINAL_DEPTH1" doc=""/>
-					<value name="INPUT2_ORIGINAL_COLOR2" doc=""/>
-					<value name="INPUT2_ORIGINAL_DEPTH2" doc=""/>
-					<value name="INPUT2_ORIGINAL_NORMAL" doc=""/>
-					<value name="INPUT2_ORIGINAL_POSITION" doc=""/>
-					<value name="INPUT2_PREVIOUS_COLOR0" doc=""/>
-					<!--<value name="INPUT2_PREVIOUS_COLOR1" doc=""/>@todo re-enables-->
+					<value name="INPUT2_OUTPUT_BUFFER0" doc=""/>
+					<value name="INPUT2_OUTPUT_BUFFER1" doc=""/>
+					<value name="INPUT2_OUTPUT_BUFFER2" doc=""/>
+					<value name="INPUT2_OUTPUT_BUFFER3" doc=""/>
+					<value name="INPUT2_OUTPUT_BUFFER4" doc=""/>
+					<value name="INPUT2_OUTPUT_BUFFER5" doc=""/>
+					<value name="INPUT2_OUTPUT_BUFFER6" doc=""/>
+					<value name="INPUT2_OUTPUT_BUFFER7" doc=""/>
+					<value name="INPUT2_PREVIOUS0" doc=""/>
+<!-- @todo 			<value name="INPUT2_PREVIOUS1" doc=""/> -->
 					<value name="INPUT2_NONE" doc=""/>
 				</enum>
 			</type>
 		</sf>
+
 			<!-- TODO enum for input1 should be the same as input0 => specify enum at node level
 			<type name = "enum">
 				<enum default = "INPUT1_PREVIOUS_COLOR">
@@ -641,14 +642,14 @@
 			<type name = "Vec4f" namespace = "vgm" default = "0.0, 0.0, 0.0, 0.0"></type>
 		</of>
 
-		<sf name ="output" doc = "Specifices the output buffer used by the filter.">
+<!--	<sf name ="output" doc = "Specifices the output buffer used by the filter.">
 			<type name = "enum">
 				<enum default = "OUTPUT_TMP0">
-					<value name="OUTPUT_TMP0" doc=""/>
+					<value name="OUTPUT_TMP0" doc=""/> -->
 					<!--<value name="OUTPUT_TMP1" doc=""/> @todo re-enables-->
-				</enum>
+<!--				</enum>
 			</type>
-		</sf>
+		</sf>-->
 
 <!-- convolution filter and param [] -->
 <!-- custom filter -->
