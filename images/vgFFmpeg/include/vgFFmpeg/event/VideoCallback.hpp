@@ -55,7 +55,7 @@ protected:
 	/**
 	 * @brief Updates the vgsdk node with a video frame
 	 */
-	void apply( const vgd::Shp< vgd::event::TimerEvent > event );
+	void apply( vgd::Shp< vgd::event::TimerEvent > event );
 
 
 	void beginExecution();
