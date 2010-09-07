@@ -61,7 +61,7 @@ vgd::Shp< vgd::node::Group > VideoCallback::setVideoPlaybackInTexture2D()
 
 
 
-void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
+void VideoCallback::apply( vgd::Shp< vgd::event::TimerEvent > event )
 {
 	// Tests if there is an ouput defined
 	if ( m_output == NO_OUTPUT )
