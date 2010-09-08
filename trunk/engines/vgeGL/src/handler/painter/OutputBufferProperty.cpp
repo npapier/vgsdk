@@ -132,11 +132,11 @@ const std::string getCommandString( vgd::node::OutputBufferProperty * outputBuff
 			break;
 
 		case OutputBufferProperty::NORMAL:
-			retVal = "vec4(normal, 1.0)";
+			retVal = "normal, 1.0";
 			break;
 
 		case OutputBufferProperty::POSITION:
-			retVal = "vec4(ecPosition.xyz, 1.0)";
+			retVal = "ecPosition.xyz, 1.0";
 			break;
 
 		case OutputBufferProperty::DEPTH:
@@ -148,7 +148,7 @@ const std::string getCommandString( vgd::node::OutputBufferProperty * outputBuff
 //"	float near	= nearFar[0];\n"
 //"	float far	= nearFar[1];\n"
 //"	float linearDepth = (2.0 * near)/(far + near - gl_FragCoord.z * (far-near));\n"
-			retVal = "vec4( (-ecPosition.z-nearFar[0])/(nearFar[1]-nearFar[0]) )";
+			retVal = "(-ecPosition.z-nearFar[0])/(nearFar[1]-nearFar[0])";
 			break;
 
 		case OutputBufferProperty::CUSTOM:
