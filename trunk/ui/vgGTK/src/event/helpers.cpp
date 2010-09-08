@@ -111,9 +111,9 @@ const int getKeyboardButton( const GdkEventKey * event )
 //	KeyboardButtonEvent::KEY_START
 //	KeyboardButtonEvent::KEY_LBUTTON
 //	KeyboardButtonEvent::KEY_RBUTTON
-//	KeyboardButtonEvent::KEY_CANCEL
+	case GDK_Cancel:	return KeyboardButtonEvent::KEY_CANCEL;
 //	KeyboardButtonEvent::KEY_MBUTTON
-//	KeyboardButtonEvent::KEY_CLEAR
+	case GDK_Clear:		return KeyboardButtonEvent::KEY_CLEAR;
 
 	case GDK_Shift_L:	return KeyboardButtonEvent::KEY_SHIFT;
 	case GDK_Shift_R:	return KeyboardButtonEvent::KEY_SHIFT;
@@ -185,31 +185,31 @@ const int getKeyboardButton( const GdkEventKey * event )
 //	KeyboardButtonEvent::KEY_PAGEUP
 //	KeyboardButtonEvent::KEY_PAGEDOWN
 //
-//	KeyboardButtonEvent::KEY_NUMPAD_SPACE
-//	KeyboardButtonEvent::KEY_NUMPAD_TAB
-//	KeyboardButtonEvent::KEY_NUMPAD_ENTER
-//	KeyboardButtonEvent::KEY_NUMPAD_F1
-//	KeyboardButtonEvent::KEY_NUMPAD_F2
-//	KeyboardButtonEvent::KEY_NUMPAD_F3
-//	KeyboardButtonEvent::KEY_NUMPAD_F4
-//	KeyboardButtonEvent::KEY_NUMPAD_HOME
-//	KeyboardButtonEvent::KEY_NUMPAD_LEFT
-//	KeyboardButtonEvent::KEY_NUMPAD_UP
-//	KeyboardButtonEvent::KEY_NUMPAD_RIGHT
-//	KeyboardButtonEvent::KEY_NUMPAD_DOWN
-//	KeyboardButtonEvent::KEY_NUMPAD_PRIOR
-//	KeyboardButtonEvent::KEY_NUMPAD_PAGEUP
-//	KeyboardButtonEvent::KEY_NUMPAD_NEXT
-//	KeyboardButtonEvent::KEY_NUMPAD_PAGEDOWN
-//	KeyboardButtonEvent::KEY_NUMPAD_END
-//	KeyboardButtonEvent::KEY_NUMPAD_BEGIN
-//	KeyboardButtonEvent::KEY_NUMPAD_INSERT
-//	KeyboardButtonEvent::KEY_NUMPAD_DELETE
-//	KeyboardButtonEvent::KEY_NUMPAD_EQUAL
-//	KeyboardButtonEvent::KEY_NUMPAD_MULTIPLY
-//	KeyboardButtonEvent::KEY_NUMPAD_SEPARATOR
-//	KeyboardButtonEvent::KEY_NUMPAD_DECIMAL
-//	KeyboardButtonEvent::KEY_NUMPAD_DIVIDE
+	case GDK_KP_Space:		return KeyboardButtonEvent::KEY_NUMPAD_SPACE;
+	case GDK_KP_Tab:		return KeyboardButtonEvent::KEY_NUMPAD_TAB;
+	case GDK_KP_Enter:		return KeyboardButtonEvent::KEY_NUMPAD_ENTER;
+	case GDK_KP_F1:			return KeyboardButtonEvent::KEY_NUMPAD_F1;
+	case GDK_KP_F2:			return KeyboardButtonEvent::KEY_NUMPAD_F2;
+	case GDK_KP_F3:			return KeyboardButtonEvent::KEY_NUMPAD_F3;
+	case GDK_KP_F4:			return KeyboardButtonEvent::KEY_NUMPAD_F4;
+	case GDK_KP_Home:		return KeyboardButtonEvent::KEY_NUMPAD_HOME;
+	case GDK_KP_Left:		return KeyboardButtonEvent::KEY_NUMPAD_LEFT;
+	case GDK_KP_Up:			return KeyboardButtonEvent::KEY_NUMPAD_UP;
+	case GDK_KP_Right:		return KeyboardButtonEvent::KEY_NUMPAD_RIGHT;
+	case GDK_KP_Down:		return KeyboardButtonEvent::KEY_NUMPAD_DOWN;
+	case GDK_KP_Prior:		return KeyboardButtonEvent::KEY_NUMPAD_PRIOR;
+//	case GDK_KP_Page_Up:	return KeyboardButtonEvent::KEY_NUMPAD_PAGEUP;
+	case GDK_KP_Next:		return KeyboardButtonEvent::KEY_NUMPAD_NEXT;
+//	case GDK_KP_Page_Down:	return KeyboardButtonEvent::KEY_NUMPAD_PAGEDOWN;
+	case GDK_KP_End:		return KeyboardButtonEvent::KEY_NUMPAD_END;
+	case GDK_KP_Begin:		return KeyboardButtonEvent::KEY_NUMPAD_BEGIN;
+	case GDK_KP_Insert:		return KeyboardButtonEvent::KEY_NUMPAD_INSERT;
+	case GDK_KP_Delete:		return KeyboardButtonEvent::KEY_NUMPAD_DELETE;
+	case GDK_KP_Equal:		return KeyboardButtonEvent::KEY_NUMPAD_EQUAL;
+	case GDK_KP_Multiply:	return KeyboardButtonEvent::KEY_NUMPAD_MULTIPLY;
+	case GDK_KP_Separator:	return KeyboardButtonEvent::KEY_NUMPAD_SEPARATOR;
+	case GDK_KP_Decimal:	return KeyboardButtonEvent::KEY_NUMPAD_DECIMAL;
+	case GDK_KP_Divide:		return KeyboardButtonEvent::KEY_NUMPAD_DIVIDE;
 
 	case GDK_0:		return '0';
 	case GDK_1:		return '1';
