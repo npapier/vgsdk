@@ -33,6 +33,19 @@ vgd::Shp< MultipleInstances > MultipleInstances::create( const std::string nodeN
 
 
 
+vgd::Shp< MultipleInstances > MultipleInstances::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< MultipleInstances > node = MultipleInstances::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< MultipleInstances > MultipleInstances::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

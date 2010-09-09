@@ -33,6 +33,19 @@ vgd::Shp< PostProcessing > PostProcessing::create( const std::string nodeName )
 
 
 
+vgd::Shp< PostProcessing > PostProcessing::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< PostProcessing > node = PostProcessing::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< PostProcessing > PostProcessing::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

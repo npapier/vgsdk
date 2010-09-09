@@ -48,6 +48,16 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	static vgd::Shp< CullFace > create( const std::string nodeName = "NoName" );
 
 	/**
+	 * @brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values and
+	 * sets the \c multiAttributeIndex of the multi-attribute.
+	 *
+	 * @param index		zero-based index of the multi-attribute
+	 */
+	static vgd::Shp< CullFace > create( const std::string nodeName, const uint8 index );
+	
+	/**
 	 *@brief Node factory
 	 *
 	 * Creates a node with all fields sets to defaults values (optionals fields too).

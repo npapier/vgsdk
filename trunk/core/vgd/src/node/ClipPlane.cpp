@@ -33,6 +33,19 @@ vgd::Shp< ClipPlane > ClipPlane::create( const std::string nodeName )
 
 
 
+vgd::Shp< ClipPlane > ClipPlane::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< ClipPlane > node = ClipPlane::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< ClipPlane > ClipPlane::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

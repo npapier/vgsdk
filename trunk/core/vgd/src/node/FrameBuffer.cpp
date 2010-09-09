@@ -33,6 +33,19 @@ vgd::Shp< FrameBuffer > FrameBuffer::create( const std::string nodeName )
 
 
 
+vgd::Shp< FrameBuffer > FrameBuffer::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< FrameBuffer > node = FrameBuffer::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< FrameBuffer > FrameBuffer::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

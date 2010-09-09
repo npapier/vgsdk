@@ -33,6 +33,19 @@ vgd::Shp< CullFace > CullFace::create( const std::string nodeName )
 
 
 
+vgd::Shp< CullFace > CullFace::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< CullFace > node = CullFace::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< CullFace > CullFace::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

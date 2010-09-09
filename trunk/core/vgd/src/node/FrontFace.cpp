@@ -33,6 +33,19 @@ vgd::Shp< FrontFace > FrontFace::create( const std::string nodeName )
 
 
 
+vgd::Shp< FrontFace > FrontFace::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< FrontFace > node = FrontFace::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< FrontFace > FrontFace::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

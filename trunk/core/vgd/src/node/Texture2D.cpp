@@ -33,6 +33,19 @@ vgd::Shp< Texture2D > Texture2D::create( const std::string nodeName )
 
 
 
+vgd::Shp< Texture2D > Texture2D::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< Texture2D > node = Texture2D::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< Texture2D > Texture2D::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

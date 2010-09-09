@@ -33,6 +33,19 @@ vgd::Shp< Camera > Camera::create( const std::string nodeName )
 
 
 
+vgd::Shp< Camera > Camera::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< Camera > node = Camera::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< Camera > Camera::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */
