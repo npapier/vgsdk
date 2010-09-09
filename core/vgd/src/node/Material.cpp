@@ -33,6 +33,19 @@ vgd::Shp< Material > Material::create( const std::string nodeName )
 
 
 
+vgd::Shp< Material > Material::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< Material > node = Material::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< Material > Material::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

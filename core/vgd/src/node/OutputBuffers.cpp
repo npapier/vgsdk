@@ -33,6 +33,19 @@ vgd::Shp< OutputBuffers > OutputBuffers::create( const std::string nodeName )
 
 
 
+vgd::Shp< OutputBuffers > OutputBuffers::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< OutputBuffers > node = OutputBuffers::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< OutputBuffers > OutputBuffers::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

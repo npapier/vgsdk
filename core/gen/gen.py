@@ -75,6 +75,16 @@ def generateFactoriesHeader( fd, node ) :
 	static vgd::Shp< nodeType > create( const std::string nodeName = "NoName" );
 
 	/**
+	 * @brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values and
+	 * sets the \c multiAttributeIndex of the multi-attribute.
+	 *
+	 * @param index		zero-based index of the multi-attribute
+	 */
+	static vgd::Shp< nodeType > create( const std::string nodeName, const uint8 index );
+	
+	/**
 	 *@brief Node factory
 	 *
 	 * Creates a node with all fields sets to defaults values (optionals fields too).
@@ -96,6 +106,19 @@ def generateFactoriesImpl( fd, node ) :
 
 	/* Sets fields to their default values */
 	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< nodeType > nodeType::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< nodeType > node = nodeType::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
 
 	return node;
 }

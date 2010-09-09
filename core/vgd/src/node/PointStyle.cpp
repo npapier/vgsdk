@@ -33,6 +33,19 @@ vgd::Shp< PointStyle > PointStyle::create( const std::string nodeName )
 
 
 
+vgd::Shp< PointStyle > PointStyle::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< PointStyle > node = PointStyle::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< PointStyle > PointStyle::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

@@ -33,6 +33,19 @@ vgd::Shp< PointLight > PointLight::create( const std::string nodeName )
 
 
 
+vgd::Shp< PointLight > PointLight::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< PointLight > node = PointLight::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< PointLight > PointLight::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

@@ -33,6 +33,19 @@ vgd::Shp< LightModel > LightModel::create( const std::string nodeName )
 
 
 
+vgd::Shp< LightModel > LightModel::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< LightModel > node = LightModel::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
 vgd::Shp< LightModel > LightModel::createWhole( const std::string nodeName )
 {
 	/* Creates a new node */

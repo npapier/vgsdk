@@ -274,6 +274,13 @@ struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager
 	 * @return Always zero except for real MultiAttribute classes.
 	 */
 	virtual int8		getMultiAttributeIndex() const;
+
+	/**
+	 * @brief Sets the \c multiAttributeIndex of the multi-attribute.
+	 *
+	 * @param index		zero-based index of the multi-attribute
+	 */
+	virtual void 		setMultiAttributeIndex( const int8 index );
 	//@}
 
 

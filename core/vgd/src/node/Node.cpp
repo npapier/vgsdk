@@ -176,6 +176,12 @@ int8 Node::getMultiAttributeIndex() const
 
 
 
+void Node::setMultiAttributeIndex( const int8 index )
+{
+}
+
+
+
 const std::string Node::getFName()
 {
 	return "f_name";
