@@ -43,7 +43,7 @@ private:
     {
         int const r1 = sb1->pubsync();
         int const r2 = sb2->pubsync();
-        return r1 == 0 && r2 == 0 ? 0 : -1;
+        return r1 == 0 || r2 == 0 ? 0 : -1;
     }   
 private:
     std::streambuf * sb1;
