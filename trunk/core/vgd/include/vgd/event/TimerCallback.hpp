@@ -94,16 +94,16 @@ struct TimerCallback
 	 * @param event	the event that has triggered the callback execution
 	 * @return true to stop futur execution of this callback, false to continue.
 	 */
-	VGD_API const bool operator() ( vgd::Shp< vgd::event::TimerEvent > event );
+	VGD_API const bool operator() ( const vgd::Shp< vgd::event::TimerEvent > event );
 
 	/**
 	 * @brief Implements the user part of the timer callback
 	 *
 	 * @param event	the event that has triggered the callback execution
 	 *
-	 * @remarks Overriddes this method to customize this callback.
+	 * @remarks Overrides this method to customize this callback.
 	 */
-	VGD_API virtual void apply( vgd::Shp< vgd::event::TimerEvent > event )=0;
+	VGD_API virtual void apply( const vgd::Shp< vgd::event::TimerEvent > event )=0;
 
 	/**
 	 * @brief Implements the user part of the first execution of the timer callback

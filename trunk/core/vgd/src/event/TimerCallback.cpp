@@ -81,7 +81,7 @@ void TimerCallback::setNode( vgd::Shp< vgd::node::Node > node )
 
 
 
-const bool TimerCallback::operator() ( vgd::Shp< vgd::event::TimerEvent > event )
+const bool TimerCallback::operator() ( const vgd::Shp< vgd::event::TimerEvent > event )
 {
 	if ( m_firstExecution.isInvalid() )
 	{
@@ -308,4 +308,3 @@ const uint TimerCallback::getTLoopCount() const
 } // namespace event
 
 } // namespace vgd
-
