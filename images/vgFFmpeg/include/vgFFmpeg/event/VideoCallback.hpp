@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGFFMPEG_VIDEOCALLBACK_HPP
 #define _VGFFMPEG_VIDEOCALLBACK_HPP
@@ -48,10 +49,18 @@ struct VGFFMPEG_API VideoCallback : public vgd::event::TimerCallback
 	//@}
 
 
-	vgd::Shp< vgFFmpeg::Video > getVideo()				{ return m_video; }
-	void setVideo( const std::string& pathFilename )	{ m_video = vgd::makeShp( new vgFFmpeg::Video( pathFilename ) ); }
+	/**
+	 * @brief	Retrieves the current video.
+	 */
+	vgd::Shp< vgFFmpeg::Video > getVideo()	{ return m_video; }
+
+	/**
+	 * @brief	Assignes the new video.
+	 */
+	void setVideo( const std::string& pathFilename );
 
 protected:
+
 	/**
 	 * @brief Updates the vgsdk node with a video frame
 	 */
@@ -64,8 +73,7 @@ protected:
 
 private:
 
-	void update( const vgd::Shp< vgd::event::TimerEvent > event );
-
+	
 	vgd::Shp< vgFFmpeg::Video > m_video;		///< The video stream
 
 	enum PlayBackOutput
@@ -74,6 +82,16 @@ private:
 		TEXTURE2D
 	};
 	PlayBackOutput m_output;
+
+
+	/**
+	 * @name	Helpers
+	 */
+	//@{
+	void update( const vgd::Shp< vgd::event::TimerEvent > event );
+	void updateAspectRatio();										///< Updates outputs to match video's aspect ratio.
+	//@}
+
 };
 
 
