@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGFFMPEG_VIDEO_HPP
 #define _VGFFMPEG_VIDEO_HPP
@@ -38,6 +39,16 @@ struct VGFFMPEG_API Video
 	 * @brief Destructor
 	 */
 	~Video();
+
+	/**
+	 * @brief	Retrieves the width.
+	 */
+	const int getWidth() const;
+
+	/**
+	 * @brief	Retrieves the height.
+	 */
+	const int getHeight() const;
 
 
 

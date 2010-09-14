@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgFFmpeg/event/VideoCallback.hpp"
 
@@ -10,11 +11,18 @@
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Quad.hpp>
 #include <vgd/node/Texture2D.hpp>
+#include <vgd/visitor/helpers.hpp>
 
 
 
 namespace vgFFmpeg
 {
+
+
+static const std::string	GROUP_NODE_NAME("VideoPlayback");
+static const std::string	TEX2D_NODE_NAME("VideoPlayback.frame");
+static const std::string	QUAD_NODE_NAME("VideoPlayback.shape");
+
 
 
 
@@ -40,9 +48,10 @@ vgd::Shp< vgd::node::Group > VideoCallback::setVideoPlaybackInTexture2D()
 	using vgd::node::Quad;
 	using vgd::node::Texture2D;
 
-	vgd::Shp< Group >		group	= Group::create("VideoPlayback");
-	vgd::Shp< Texture2D >	tex2D	= Texture2D::create("VideoPlayback.frame");
-	vgd::Shp< Quad >		quad	= Quad::create("VideoPlayback.shape");
+	vgd::Shp< Group >		group	= Group::create( GROUP_NODE_NAME );
+	vgd::Shp< Texture2D >	tex2D	= Texture2D::create( TEX2D_NODE_NAME );
+	vgd::Shp< Quad >		quad	= Quad::create( QUAD_NODE_NAME );
+
 	group->addChilds( tex2D, quad );
 
 	tex2D->setWrap( Texture2D::WRAP_S, Texture2D::CLAMP_TO_EDGE );
@@ -53,8 +62,10 @@ vgd::Shp< vgd::node::Group > VideoCallback::setVideoPlaybackInTexture2D()
 
 	quad->initializeTexUnits( 1, vgd::basic::TOP_LEFT, false /* cw */ );
 
-	setNode( tex2D );
+	setNode( group );
 	m_output = TEXTURE2D;
+
+	updateAspectRatio();
 
 	return group;
 }
@@ -77,6 +88,14 @@ void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 
 
 
+void VideoCallback::setVideo( const std::string & pathFilename )
+{
+	m_video = vgd::makeShp( new vgFFmpeg::Video( pathFilename ) );
+	updateAspectRatio();
+}
+
+
+
 void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 {
 	// Decodes the next frame	
@@ -91,7 +110,11 @@ void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 
 		// Updates texture2D
 		using vgd::node::Texture2D;
-		vgd::Shp< Texture2D > texture = vgd::dynamic_pointer_cast< Texture2D >( getNode() );
+		using vgd::node::Group;
+
+		vgd::Shp< Group >		group	= vgd::dynamic_pointer_cast< Group >( getNode() );
+		vgd::Shp< Texture2D >	texture	= vgd::visitor::findFirstByName< Texture2D >( group, TEX2D_NODE_NAME );
+
 		if ( texture )
 		{
 			texture->setImage( image );
@@ -99,6 +122,24 @@ void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 
 		event->scheduleRefreshForced();
 	}
+}
+
+
+
+void VideoCallback::updateAspectRatio()
+{
+	using vgd::node::Group;
+	using vgd::node::Quad;
+
+	vgd::Shp< Group >	group	= vgd::dynamic_pointer_cast< Group >( getNode() );
+
+	if( group && m_video )
+	{
+		vgd::Shp< Quad >	quad = vgd::visitor::findFirstByName< Quad >( group, QUAD_NODE_NAME );
+		
+		quad->initializeGeometry(1.f, (float) m_video->getHeight() / m_video->getWidth() );
+	}
+	// Else, nothing to do.
 }
 
 
@@ -117,8 +158,9 @@ void VideoCallback::endExecution()
 		assert( getNode() );
 
 		using vgd::node::Group;
-		vgd::Shp< Group > videoOutputGroup = getNode()->getParent();
-		vgd::Shp< Group > container = videoOutputGroup->getParent();
+
+		vgd::Shp< Group > videoOutputGroup	= vgd::dynamic_pointer_cast< Group >( getNode() );
+		vgd::Shp< Group > container			= videoOutputGroup->getParent();
 
 		if ( container )
 		{

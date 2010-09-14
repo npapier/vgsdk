@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgFFmpeg/Video.hpp"
 
@@ -177,6 +178,20 @@ Video::~Video()
 
 	// Close the video file
 	av_close_input_file(pFormatCtx);
+}
+
+
+
+const int Video::getWidth() const
+{
+	return pCodecCtx ? pCodecCtx->width : 0;
+}
+
+
+
+const int Video::getHeight() const
+{
+	return pCodecCtx ? pCodecCtx->height : 0;
 }
 
 
