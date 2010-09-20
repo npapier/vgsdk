@@ -5,6 +5,9 @@
 
 #include "vgd/basic/FilenameExtractor.hpp"
 
+#include <algorithm>
+#include <fstream>
+
 
 
 namespace vgd
