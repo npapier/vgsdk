@@ -22,8 +22,10 @@ namespace actions
 
 /**
  * @brief	Decrypt a file with blowfish algorithm.
+ *
+ * @ingroup g_archCrypto
  */
-	struct VGALG_API Decrypt : public vgAlg::actions::IAction
+struct VGALG_API Decrypt : public vgAlg::actions::IAction
 {
 
 	Decrypt();
