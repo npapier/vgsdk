@@ -21,13 +21,20 @@ namespace vgio
 
 
 /**
+ * @brief Reads the file and stores it in the returned vector.
+ *
+ * @return an empty vector if an error occurs, otherwise a vector with the data.
+ */
+VGIO_API vgd::Shp< std::vector< char > > readFile( const std::string filePath );
+
+/**
  * @brief	Load a file.
  *
  * @param	filePath	the file path to load.
  *
  * @return true if successful, false otherwise and a smart pointer on node if sucessful.
  */
-std::pair< bool, vgd::Shp< vgd::node::Group > > VGIO_API load( std::string filePath );
+VGIO_API std::pair< bool, vgd::Shp< vgd::node::Group > > load( std::string filePath );
 
 
 /**
@@ -37,7 +44,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > VGIO_API load( std::string fileP
  *
  * @return	the correct loader.
  */
-vgd::Shp< vgio::ILoader > VGIO_API getLoaderByFilename( std::string filename );
+VGIO_API vgd::Shp< vgio::ILoader > getLoaderByFilename( std::string filename );
 
 
 /**
@@ -45,7 +52,7 @@ vgd::Shp< vgio::ILoader > VGIO_API getLoaderByFilename( std::string filename );
  *
  * @param	filePath	the file path to load..
  */
-vgd::Shp< vgd::basic::Image > VGIO_API loadCryptedImage( std::string filePath, std::string key );
+VGIO_API vgd::Shp< vgd::basic::Image > loadCryptedImage( std::string filePath, std::string key );
 
 
 

@@ -19,6 +19,8 @@ namespace vgPhysfs
 
 /**
  * @brief Open and extract compressed files.
+ *
+ * @ingroup g_archCrypto
  */
 struct VGPHYSFS_API Archive 
 {

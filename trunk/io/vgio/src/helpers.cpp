@@ -1,8 +1,8 @@
-// VGSDK - Copyright (C) 2010, Maxime Peresson.
+// VGSDK - Copyright (C) 2010, Maxime Peresson, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
-
+// Author Nicolas Papier
 
 #include "vgio/helpers.hpp"
 
@@ -20,40 +20,56 @@ namespace vgio
 
 
 
+vgd::Shp< std::vector< char > > readFile( const std::string filePath )
+{
+	// Get file in memory
+	vgd::Shp< std::vector< char > > retVal( new std::vector< char > );	
+
+	std::ifstream inFile( filePath.c_str(), std::ifstream::in | std::ifstream::binary );
+	if( inFile.good() )
+	{
+		// Computes length
+		inFile.seekg (0, std::ios::end);
+		const int length = inFile.tellg();
+		inFile.seekg (0, std::ios::beg);
+
+		// Reads into retVal
+		retVal->resize( length );
+		inFile.read( &(*retVal)[0], length );
+
+		if ( inFile.fail() )
+		{
+			retVal->resize(0);
+		}
+	}
+
+	return retVal;
+}
+
+
+
 std::pair< bool, vgd::Shp< vgd::node::Group > > load( std::string filePath )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
 
 	// Retrieves the extension of the given filename.
-	vgd::basic::FilenameExtractor	extractor( filePath.c_str() );
-	std::string						extension = extractor.getExtension();
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); //to lowercase;
+	vgd::basic::FilenameExtractor	extractor( filePath );
+	std::string						extension = extractor.getLowerCaseExtension();
 
 	vgd::Shp< vgio::ILoader > loader;
 
 	if ( extension.compare( ".crypt" ) == 0 ) //load crypted file ==> from memory
 	{
-		//Get file in memory.
-		std::ifstream inFile;
-		vgd::Shp< std::vector< char > > inBuffer( new std::vector< char > );
-		inFile.open( filePath.c_str(), std::ifstream::in | std::ifstream::binary );
+		vgd::Shp< std::vector< char > > inBuffer = readFile( filePath );
 
-		if( inFile.good() )
-		{
-			inFile.seekg (0, std::ios::end);
-			int length = inFile.tellg();
-			inFile.seekg (0, std::ios::beg);
-
-			inBuffer->resize( length );
-			inFile.read( &(*inBuffer)[0], length );
-		}
-		else
+		if( inBuffer->empty() )
 		{
 			retVal.first = false;
 			return retVal;
 		}
-		
+
 		vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
+
 		vgAlg::actions::Decrypt decrypt;
 		decrypt.setInitialize( "vgsdkViewerGTK", (*inBuffer.get()), outBuffer );
 		decrypt.execute();
@@ -94,13 +110,11 @@ vgd::Shp< vgio::ILoader > getLoaderByFilename( std::string filename )
 	vgd::Shp< vgio::ILoader > retVal;
 	
 	// Retrieves the extension of the given filename.
-	vgd::basic::FilenameExtractor	extractor( filename.c_str() );
-	std::string						extension = extractor.getExtension();
-
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); //to lowercase;
+	vgd::basic::FilenameExtractor	extractor( filename );
+	std::string						extension = extractor.getLowerCaseExtension();
 
 	// Get the right loader, depending on the found extension.
-	//@todo modifying train and obj loader to respect ILoader Interface.
+	//@todo modifying trian and obj loader to respect ILoader Interface.
 	if ( /* extension.compare( ".trian" ) == 0 || */extension.compare( ".trian2" ) == 0 )
 	{
 		retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "trian");
@@ -130,37 +144,31 @@ vgd::Shp< vgio::ILoader > getLoaderByFilename( std::string filename )
 
 vgd::Shp< vgd::basic::Image > loadCryptedImage( std::string filePath, std::string key )
 {
-	vgd::Shp< vgd::basic::Image > img;
-	vgd::Shp< std::vector< char > > inBuffer( new std::vector< char > );
+	using vgd::basic::Image;
+	vgd::Shp< Image > image;
 
-	std::ifstream inFile;
-	inFile.open( filePath.c_str(), std::ifstream::in | std::ifstream::binary );
-	if( inFile.good() )
+	// Reads raw data of image
+	vgd::Shp< std::vector< char > > inBuffer = readFile( filePath );
+
+	if( inBuffer->empty()  )
 	{
-		inFile.seekg (0, std::ios::end);
-		int length = inFile.tellg();
-		inFile.seekg (0, std::ios::beg);
-
-		inBuffer->resize( length );
-		inFile.read( &(*inBuffer)[0], length );
-
+		assert( false && "Unable to load image file" );
+	}
+	else
+	{
+		// Decrypt image
 		vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
 
 		vgAlg::actions::Decrypt decrypt;
 		decrypt.setInitialize( key, (*inBuffer.get()), outBuffer );
 		decrypt.execute();
 
-		inBuffer = outBuffer;
-		
-		void *pixel = &(*inBuffer)[0];
+		void *pixel = &(*outBuffer)[0];
 
-		img = vgd::Shp< vgd::basic::Image >( new vgd::basic::Image( filePath, pixel, inBuffer->size() ) );
+		image = vgd::makeShp( new Image( filePath, pixel, outBuffer->size() ) );
 	}
-	else
-	{
-		assert( false && "Unable to load image file" );
-	}
-	return img;
+
+	return image;
 }
 
 

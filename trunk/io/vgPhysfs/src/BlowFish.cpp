@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////////////////////
 ///
 // BlowFish.cpp
@@ -6,9 +5,12 @@
 //    Implementation of Bruce Schneier's BLOWFISH algorithm from "Applied 
 //    Cryptography", Second Edition.
 
+#include <vgPhysfs/Blowfish.hpp>
+
 #include <cstring>
 #include <exception>
-#include <vgPhysfs/Blowfish.hpp>
+
+
 
 namespace vgPhysfs
 {
@@ -292,6 +294,26 @@ const unsigned int CBlowFish::scm_auiInitS[4][256] = {
 	 0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6}
 };
 
+
+
+//Extract low order byte
+namespace
+{
+/*inline */unsigned char Byte(unsigned int ui)
+{
+	return (unsigned char)(ui & 0xff);
+}
+}
+
+
+//Function F
+/*inline*/ unsigned int CBlowFish::F(unsigned int ui)
+{
+	return ((m_auiS[0][Byte(ui>>24)] + m_auiS[1][Byte(ui>>16)]) ^ m_auiS[2][Byte(ui>>8)]) + m_auiS[3][Byte(ui)];
+}
+
+
+
 //Constructor - Initialize the P and S boxes for a given Key
 CBlowFish::CBlowFish(unsigned char* ucKey, size_t keysize, const SBlock& roChain) : m_oChain0(roChain), m_oChain(roChain)
 {
@@ -378,7 +400,7 @@ void CBlowFish::Decrypt(SBlock& block)
 }
 
 //Semi-Portable Byte Shuffling
-inline void BytesToBlock(unsigned char const* p, SBlock& b)
+inline void CBlowFish::BytesToBlock(unsigned char const* p, CBlowFish::SBlock& b)
 {
 	unsigned int y;
 	//Left
@@ -409,7 +431,7 @@ inline void BytesToBlock(unsigned char const* p, SBlock& b)
 	b.m_uir |= y;
 }
 
-inline void BlockToBytes(SBlock const& b, unsigned char* p)
+inline void CBlowFish::BlockToBytes(CBlowFish::SBlock const& b, unsigned char* p)
 {
 	unsigned int y;
 	//Right

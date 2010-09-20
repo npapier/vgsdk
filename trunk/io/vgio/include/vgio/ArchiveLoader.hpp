@@ -24,6 +24,8 @@ namespace vgio
 
 /**
  * @brief Support of .vgarch files
+ *
+ * @ingroup g_archCrypto
  * 
  */
 struct VGIO_API ArchiveLoader : public ILoader
