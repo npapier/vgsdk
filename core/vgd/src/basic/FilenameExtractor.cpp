@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -41,6 +41,18 @@ std::string FilenameExtractor::getExtension() const
 	}
 
 	return ( extension );
+}
+
+
+
+std::string FilenameExtractor::getLowerCaseExtension() const
+{
+	std::string extension = getExtension();
+
+	// to lowercase
+	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+	return extension;
 }
 
 
