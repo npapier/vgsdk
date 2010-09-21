@@ -71,7 +71,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > load( std::string filePath )
 		vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
 
 		vgAlg::actions::Decrypt decrypt;
-		decrypt.setInitialize( "vgsdkViewerGTK", (*inBuffer.get()), outBuffer );
+		decrypt.setInitialize( "vgsdkViewerGTK", inBuffer, outBuffer );
 		decrypt.execute();
 
 		filePath = extractor.getPath() + "/" + extractor.getFilenameWithoutExtension();
@@ -160,7 +160,7 @@ vgd::Shp< vgd::basic::Image > loadCryptedImage( std::string filePath, std::strin
 		vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
 
 		vgAlg::actions::Decrypt decrypt;
-		decrypt.setInitialize( key, (*inBuffer.get()), outBuffer );
+		decrypt.setInitialize( key, inBuffer, outBuffer );
 		decrypt.execute();
 
 		void *pixel = &(*outBuffer)[0];
@@ -174,3 +174,4 @@ vgd::Shp< vgd::basic::Image > loadCryptedImage( std::string filePath, std::strin
 
 
 } // namespace vgio
+

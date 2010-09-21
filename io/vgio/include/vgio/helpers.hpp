@@ -9,9 +9,6 @@
 
 #include "vgio/vgio.hpp"
 
-#include <list>
-#include <map>
-
 #include <vgio/ILoader.hpp>
 #include <vgd/Shp.hpp>
 
