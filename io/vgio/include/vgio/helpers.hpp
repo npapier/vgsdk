@@ -21,8 +21,10 @@ namespace vgio
  * @brief Reads the file and stores it in the returned vector.
  *
  * @return an empty vector if an error occurs, otherwise a vector with the data.
+ *
+ * @ingroup g_archCrypto
  */
-VGIO_API vgd::Shp< std::vector< char > > readFile( const std::string filePath );
+VGIO_API vgd::Shp< std::vector<char> > readFile( const std::string filePath );
 
 /**
  * @brief	Load a file.
