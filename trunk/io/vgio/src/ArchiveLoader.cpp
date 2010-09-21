@@ -63,7 +63,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > ArchiveLoader::load( const std::
 			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
 
 			vgAlg::actions::Decrypt decrypt;
-			decrypt.setInitialize( m_encryptionKey, (*inBuffer.get()), outBuffer );
+			decrypt.setInitialize( m_encryptionKey, inBuffer, outBuffer );
 			decrypt.execute();
 
 			inBuffer = outBuffer;
@@ -136,7 +136,7 @@ void ArchiveLoader::loadImages()
 					vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
 
 					vgAlg::actions::Decrypt decrypt;
-					decrypt.setInitialize( m_encryptionKey, (*inBuffer.get()), outBuffer );
+					decrypt.setInitialize( m_encryptionKey, inBuffer, outBuffer );
 					decrypt.execute();
 
 					inBuffer = outBuffer;
@@ -162,4 +162,5 @@ vgd::Shp< vgio::ILoader > ArchiveLoader::clone()
 
 
 
-} // namespace vgVz
+} // namespace vgio
+

@@ -256,8 +256,7 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	
 	// Retrieves the extension of the given filename.
 	vgd::basic::FilenameExtractor	extractor( strFilename.c_str() );
-	std::string						extension = extractor.getExtension();
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); //to lowercase;
+	std::string						extension = extractor.getLowerCaseExtension();
 
 	ILenum type = IL_TYPE_UNKNOWN;
 

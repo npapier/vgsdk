@@ -24,16 +24,12 @@ namespace alg
 
 
 EncryptFile::EncryptFile()
-{
-
-}
+{}
 
 
 
 EncryptFile::~EncryptFile()
-{
-
-}
+{}
 
 
 
@@ -132,11 +128,11 @@ void EncryptFile::execute()
 				int length = inFile.tellg();
 				inFile.seekg (0, std::ios::beg);
 
-				std::vector< char > inBuffer;
-				inBuffer.resize( length );
-				inFile.read( &inBuffer[0], length );
-				
-				vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
+				vgd::Shp< std::vector<char> > inBuffer( new std::vector<char> );
+				inBuffer->resize( length );
+				inFile.read( &(*inBuffer)[0], length );
+
+				vgd::Shp< std::vector<char> > outBuffer( new std::vector<char> );
 				vgAlg::actions::Encrypt encrypt;
 
 				encrypt.setInitialize( key, inBuffer, outBuffer );
