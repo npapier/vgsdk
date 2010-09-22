@@ -187,6 +187,7 @@ const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
 	return false;
 }
 
+// @todo share code with vgio::helpers.cpp
 const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename, bool crypted )
 {
 	// Load .dae
@@ -197,18 +198,13 @@ const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename, bool c
 	{
 		if( crypted )
 		{
-			std::ifstream inFile;
-			inFile.open( pathfilename.c_str(), std::ifstream::in | std::ifstream::binary );
-			bool b = inFile.good();
-			inFile.seekg (0, std::ios::end);
-			int length = inFile.tellg();
-			inFile.seekg (0, std::ios::beg);
+			vgd::Shp< std::vector<char> > inBuffer = vgio::readFile( pathfilename );
+			if( inBuffer->empty() )
+			{
+				return false;
+			}
 
-			std::vector< char > inBuffer;
-			inBuffer.resize( length );
-			inFile.read( &inBuffer[0], length );
-			
-			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
+			vgd::Shp< std::vector< char > > outBuffer( new std::vector<char> );
 
 			vgAlg::actions::Decrypt decrypt;
 			decrypt.setInitialize( "vgsdkViewerGTK", inBuffer, outBuffer );
@@ -283,6 +279,7 @@ const bool myCanvas::loadTrian( const Glib::ustring & pathfilename )
 	return true;
 }
 
+// @todo share code with vgio::helpers.cpp
 const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename, bool crypted)
 {
 	// Load .trian
@@ -293,17 +290,12 @@ const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename, bool crypte
 	{
 		if( crypted )
 		{
-			std::ifstream inFile;
-			inFile.open( pathfilename.c_str(), std::ifstream::in | std::ifstream::binary );
-			bool b = inFile.good();
-			inFile.seekg (0, std::ios::end);
-			int length = inFile.tellg();
-			inFile.seekg (0, std::ios::beg);
+			vgd::Shp< std::vector<char> > inBuffer = vgio::readFile( pathfilename );
+			if( inBuffer->empty() )
+			{
+				return false;
+			}
 
-			std::vector< char > inBuffer;
-			inBuffer.resize( length );
-			inFile.read( &inBuffer[0], length );
-			
 			vgd::Shp< std::vector< char > > outBuffer( new std::vector< char > );
 
 			vgAlg::actions::Decrypt decrypt;
