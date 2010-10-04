@@ -56,7 +56,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 		m_code1 = shaderStr;
 
-		return true;		
+		return true;
 	}
 
 	// DECLARATIONS
@@ -128,9 +128,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		"	color = gl_Color;\n" +
 			textureLookup +
 		"	color += gl_SecondaryColor;\n"
-//		"	gl_FragData[0] = vec4(color.rgb, gl_Color.a);\n";
-//		"	gl_FragData[0] = vec4(color.rgb, 1);\n";
-		"	color = vec4(color.rgb, 1);\n";
+		"	color = vec4(color.rgb, gl_Color.a);\n";
 	}
 	else
 	{
@@ -151,19 +149,13 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			"	{\n"
 			"		color = accumColor;\n" +
 					textureLookup +
-//			"		gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n"
-//			"		gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, 1 );\n"
-			"		color = vec4( (color + accumSecondaryColor).rgb, 1 );\n"
-//			"		gl_FragData[0] = color + accumSecondaryColor;\n"
+			"		color = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n"
 			"	}\n"
 			"	else\n"
 			"	{\n"
 			"		color = accumBackColor ;\n" +
 					textureLookup +
-//			"		gl_FragData[0] = vec4( (color + accumBackSecondaryColor).rgb, gl_Color.a );\n"
-//			"		gl_FragData[0] = vec4( (color + accumBackSecondaryColor).rgb, 1 );\n"
-			"		color = vec4( (color + accumBackSecondaryColor).rgb, 1 );\n"
-//			"		gl_FragData[0] = color + accumBackSecondaryColor;\n"
+			"		color = vec4( (color + accumBackSecondaryColor).rgb, gl_Color.a );\n"
 			"	}\n";
 		}
 		else
@@ -171,10 +163,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			m_code2 +=
 			"	color = accumColor;\n" +
 				textureLookup +
-//			"	gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n";
-//			"	gl_FragData[0] = vec4( (color + accumSecondaryColor).rgb, 1 );\n"; // @todo FIXME gl_FrontMaterial.diffuse.a <=> gl_Color.a ? 
-			"	color = vec4( (color + accumSecondaryColor).rgb, 1 );\n"; // @todo FIXME gl_FrontMaterial.diffuse.a <=> gl_Color.a ? 
-//			"	gl_FragData[0] = color + accumSecondaryColor;\n";
+			"	color = vec4( (color + accumSecondaryColor).rgb, gl_Color.a );\n"; // @todo FIXME gl_FrontMaterial.diffuse.a <=> gl_Color.a ? 
 		}
 	}
 
