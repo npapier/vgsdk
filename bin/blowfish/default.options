@@ -1,0 +1,15 @@
+# project settings
+#description		= ''
+#vcsUse				= 'yes' # no
+#defines			= []
+type				= 'exec'	# exec, static, shared, none
+#version			= '0-0'
+#postfix			= ''
+#generateInfoFile	= False
+deps				= ['../../core/vgDebug', '../../io/vgPhysfs']
+uses				= ['boost']
+libs				= ['vgDebug 0-5', 'vgPhysfs 0-5']
+#stdlibs			= []
+#test				= 'none' # gtest
+#console			= True
+#runParams			= []
