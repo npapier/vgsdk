@@ -423,9 +423,8 @@ bool Reader::writeImage( const COLLADAFW::Image* image )
 		path = COLLADABU::URI::uriDecode(path);
 		// Retrieves the extension of the given filename.
 		vgd::basic::FilenameExtractor	extractor( path );
-		std::string						extension = extractor.getExtension();
+		std::string						extension = extractor.getLowerCaseExtension();
 
-		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); //to lowercase;
 		if( extension.compare( ".crypt" ) == 0 )
 		{
 			img = vgio::loadCryptedImage( path, "vgsdkViewerGTK" ); //@todo get key from Settings.
@@ -436,9 +435,11 @@ bool Reader::writeImage( const COLLADAFW::Image* image )
 		}		
 	}
 
-	int maxSize = m_settings.getTextureSize();
+	uint maxSize = m_settings.getTextureSize();
 	bool mustResize = false;
-	if( img->width() > maxSize || img->height() > maxSize || img->depth() > maxSize )
+	if(	(img->width() > maxSize) ||
+		(img->height() > maxSize) ||
+		(img->depth() > maxSize)	)
 	{
 		vgm::Vec3i  size( std::min<int>( img->width(), maxSize), std::min<int>( img->height(), maxSize), std::min<int>( img->depth(), maxSize) );
 		img->scale( size, vgd::basic::Image::FILTER_SCALE_MITCHELL );

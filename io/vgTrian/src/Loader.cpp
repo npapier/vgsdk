@@ -1068,7 +1068,7 @@ vgd::Shp< vgd::node::Material > Loader::loadWireColor( std::string nodeName )
 
 vgd::Shp< vgio::ILoader > Loader::clone()
 {
-	return vgd::Shp< vgio::ILoader >( new Loader );
+	return vgd::makeShp( new Loader() );
 }
 
 
