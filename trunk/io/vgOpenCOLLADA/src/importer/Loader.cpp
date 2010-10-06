@@ -14,8 +14,8 @@ namespace importer
 META_LOADER_CPP( vgOpenCOLLADA::importer::Loader, "collada" )
 
 
-Loader::Loader( vgOpenCOLLADA::Settings settings ) throw (std::runtime_error) :
-	m_reader( settings, this ),
+Loader::Loader( vgOpenCOLLADA::Settings settings ) throw (std::runtime_error)
+:	m_reader( settings, this ),
 	m_saxLoader( &m_errorHandler ),
 	m_root( &m_saxLoader, &m_reader )
 {
