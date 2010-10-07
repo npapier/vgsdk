@@ -26,10 +26,10 @@ Decrypt::Decrypt()
 void Decrypt::execute()
 {
 	//Initialization
-	vgPhysfs::CBlowFish oBlowFish( (unsigned char*)m_key.c_str(), m_key.size() );
+	vgPhysfs::Blowfish oBlowFish( m_key );
 
 	//Decryption
-	oBlowFish.Decrypt( (unsigned char*)&(*m_inBuffer)[0], (unsigned char*)&(*m_outBuffer)[0], m_inBuffer->size() );
+	oBlowFish.decrypt( (unsigned char*)&(*m_inBuffer)[0], (unsigned char*)&(*m_outBuffer)[0], m_inBuffer->size() );
 }
 
 
@@ -40,7 +40,7 @@ void Decrypt::setInitialize( const std::string key, vgd::Shp< std::vector<char> 
 	m_inBuffer	= inBuffer;
 	m_outBuffer = outBuffer;
 
-	int length_read = ( ( m_inBuffer->size() + 7 ) &~7 ); //lenght must be a multiple of 8
+	const int length_read = ( ( m_inBuffer->size() + 7 ) &~7 ); //lenght must be a multiple of 8
 	m_inBuffer->resize( length_read );
 	m_outBuffer->resize( length_read );
 }
