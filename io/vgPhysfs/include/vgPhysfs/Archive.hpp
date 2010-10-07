@@ -20,6 +20,8 @@ namespace vgPhysfs
 /**
  * @brief Open and extract compressed files.
  *
+ * @todo Support several archives and mount point
+ * 
  * @ingroup g_archCrypto
  */
 struct VGPHYSFS_API Archive 
