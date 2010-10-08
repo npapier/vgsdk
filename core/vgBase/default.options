@@ -1,5 +1,5 @@
 description	= '(V)ersatile (G)raphical (B)ase'
 vcsUse		= 'no'
-type		= 'static'
+type		= 'shared'
 version		= '0-5'
 uses		= [ 'boost' ]
