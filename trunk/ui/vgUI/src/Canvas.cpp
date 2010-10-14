@@ -101,15 +101,14 @@ Canvas::Canvas()
 :	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 	// m_gleLogSystem
 	// m_gleLogFile
-	m_gleContext				( getGleOutputStream()	),
-	m_sharedCanvas				( 0						),
-	m_bLocalInitializedVGSDK	( false					),
-	m_scheduleScreenshot		( false					),
-	m_videoCapture				( false					),
-	m_debugEvents				( false					),
-	m_frameBase					( 0						),
+	m_gleContext				( getGleOutputStream()			),
+	m_sharedCanvas				( 0								),
+	m_scheduleScreenshot		( false							),
+	m_videoCapture				( false							),
+	m_debugEvents				( false							),
+	m_frameBase					( 0								),
 	// m_timeBase
-	m_fps						( -1					)
+	m_fps						( -1							)
 {
 	// Updates the number of canvas
 	assert( getCanvasCount() == 0 && "This is not the first canvas." );
@@ -128,15 +127,14 @@ Canvas::Canvas(	const Canvas *sharedCanvas )
 :	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 	// m_gleLogSystem
 	// m_gleLogFile
-	m_gleContext				( getGleOutputStream()	),
-	m_sharedCanvas				( 0						),
-	m_bLocalInitializedVGSDK	( false					),
-	m_scheduleScreenshot		( false					),
-	m_videoCapture				( false					),
-	m_debugEvents				( false					),
-	m_frameBase					( 0						),
+	m_gleContext				( getGleOutputStream()			),
+	m_sharedCanvas				( 0								),
+	m_scheduleScreenshot		( false							),
+	m_videoCapture				( false							),
+	m_debugEvents				( false							),
+	m_frameBase					( 0								),
 	// m_timeBase
-	m_fps						( -1					)
+	m_fps						( -1							)
 {
 	// Updates the number of canvas
 	assert( getCanvasCount() >= 1 && "This is the first canvas." );
@@ -438,12 +436,6 @@ const bool Canvas::isOpenGLObjectsShared() const
 
 
 
-const bool Canvas::isVGSDKLocalyInitialized() const
-{
-	return m_bLocalInitializedVGSDK;
-}
-
-
 void Canvas::refresh( const RefreshType type, const WaitType wait )
 {
 	if ( type == REFRESH_IF_NEEDED )
@@ -615,16 +607,64 @@ const bool Canvas::startVGSDK()
 	if ( startOpenGLContext() == false )
 	{
 		// No current OpenGL context
-		vgLogWarning("No current OpenGL context.");
+		vgLogMessage("No current OpenGL context.");
 		vgLogMessage("vgSDK startup aborted...\n");
 		return false;
 	}
 
 	assert( isCurrent() && "OpenGL context must have been set current." );
 
-	if ( !m_bLocalInitializedVGSDK )
+	using boost::logic::indeterminate;
+	if ( indeterminate( hasVGSDK() ) )
 	{
 		vgLogMessage("Start vgSDK...");
+
+		// Checks OpenGL requirements for vgsdk
+		// Two modes :
+		// - "compatibility" mode requested by disabling GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 2.0
+		// - full mode requested by enabled GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 3.0).
+
+		//vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
+		//vgLogMessage3("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
+		//vgLogMessage2("OpenGL %f found", gleGetOpenGLVersion() );
+		//vgLogMessage2("GLSL %f found", gleGetGLSLVersion() );
+
+		if ( getGLEngine()->isGLSLEnabled() == false )
+		{
+			// Checks compatibility mode
+			vgLogMessage("Checks OpenGL requirements for vgsdk compatibility mode (i.e. OpenGL version >= 2.0)...");
+			vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
+			if ( gleGetOpenGLMajorVersion() >= 2 )
+			{
+				vgLogMessage("The vgsdk compatibility mode is enabled.");
+				m_hasVGSDK = true;
+			}
+			else
+			{
+				vgLogMessage("Unable to activate the vgsdk compatibility mode.");
+				m_hasVGSDK = false;
+				return m_hasVGSDK;
+			}
+		}
+		else
+		{
+			// Checks full mode
+			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 3.0, GLSL version >= 1.3)...");
+			vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
+			vgLogMessage3("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
+
+			if (	(gleGetOpenGLVersion() >= 3.f) && (gleGetGLSLVersion() >= 1.3f ) )
+			{
+				vgLogMessage("You have the full requirements for vgsdk.");
+				m_hasVGSDK = true;
+			}
+			else
+			{
+				vgLogMessage("You don't have the full requirements for vgsdk.");
+				m_hasVGSDK = false;
+				return m_hasVGSDK;
+			}
+		}
 
 		// Initializes vgeGL
 		getGLEngine()->reset();
@@ -638,50 +678,17 @@ const bool Canvas::startVGSDK()
 		//m_engine->evaluateTopStateWithoutTrace( paint, true /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
 		//m_engine->evaluateTopStateWithoutTrace( paint, false /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
 
-		//
-		m_bLocalInitializedVGSDK = true;
-
-		// Checks OpenGL requirements for vgsdk
-		// @todo Checks GLSL requirements (glGetString(GL_SHADING_LANGUAGE_VERSION)).
-		if ( m_gleContext.isGL_VERSION_2_1 == false )
-		{
-			vgLogWarning("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 2.1");
-			// vgLogWarning("You don't have the basic requirements for vgsdk, i.e. at least OpenGL version 2.1");
-		}
-		else if ( m_gleContext.isGL_VERSION_3_0 == false )
-		{
-			vgLogWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 3.0");
-			// vgLogWarning("You don't have the full requirements for vgsdk, i.e. at least OpenGL version 3.0");
-		}
-		else
-		{
-			assert( m_gleContext.isGL_VERSION_3_0 );
-			vgLogMessage("You have the full requirements for vgsdk (OpenGL version > 3.0).");
-		}
-
-		vgLogDebug("vgSDK startup completed.\n");
+		vgLogMessage("vgSDK startup completed.\n");
 	}
 
-	return true;
+	return hasVGSDK();
 }
 
 
 
 const bool Canvas::shutdownVGSDK()
 {
-	//
-	if ( !m_bLocalInitializedVGSDK )
-	{
-		// Nothing to do, already shutdown.
-		vgLogDebug/*logMessage*/("vgSDK already shutdown.\n");
-
-		return false;
-	}
-	else
-	{
-		vgLogDebug/*logMessage*/("Shutdown vgSDK...");
-		m_bLocalInitializedVGSDK = false;
-	}
+	using boost::logic::indeterminate;
 
 	// Leaves the fullscreen mode.
 	if( isFullscreen() )
@@ -689,6 +696,30 @@ const bool Canvas::shutdownVGSDK()
 		vgLogDebug/*logMessage*/("Leaving fullscreen...");
 		setFullscreen( false );
 	}
+
+	//
+	if ( indeterminate(hasVGSDK()) )
+	{
+		// Nothing to do
+		vgLogDebug/*logMessage*/("vgSDK shutdown: nothing to do, because already shutdown or never started.\n");
+
+		return false;
+	}
+	else if ( !hasVGSDK() )
+	{
+		// Nothing to do
+		shutdownOpenGLContext();
+
+		vgLogDebug/*logMessage*/("vgSDK shutdown: nothing to do, because vgSDK startup failed. Checks OpenGL requirements.\n");
+
+		m_hasVGSDK = boost::logic::indeterminate;
+		return false;
+	}
+
+	m_hasVGSDK = boost::logic::indeterminate;
+
+	// Do the shutdown
+	vgLogDebug/*logMessage*/("Shutdown vgSDK...");
 
 	// Last canvas is about to be destroy
 	if ( m_canvasCount == 1 )
@@ -735,6 +766,8 @@ const bool Canvas::shutdownVGSDK()
 	else
 	{
 		// Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
+		shutdownOpenGLContext();
+
 		vgLogDebug("vgSDK shutdown completed (delayed to the last canvas).\n");
 		return false;
 	}

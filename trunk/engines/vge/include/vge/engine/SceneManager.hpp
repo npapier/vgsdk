@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,6 +6,7 @@
 #ifndef _VGE_ENGINE_SCENEMANAGER_HPP
 #define _VGE_ENGINE_SCENEMANAGER_HPP
 
+#include <boost/logic/tribool.hpp>
 #include <fstream>
 #include <vgd/node/Group.hpp>
 #include <vgd/visitor/helpers.hpp>
@@ -28,11 +29,11 @@ namespace engine
  * This class provides some methods to :
  *
  * - Manage a scene graph :
- * 	- Set/get root node.
- * 	- Search nodes in the scene graph with some predicates.
+ * - Set/get root node.
+ * - Search nodes in the scene graph with some predicates.
  * - Compute/update all bounding box in the scene graph.
  * - Write the graphviz graph of the scene graph with writeGraphviz(). This is very useful to show the scene graph
- * 	topology, the name and the type of each node in the scene graph.
+ *   topology, the name and the type of each node in the scene graph.
  * - paint()/resize() methods for doing rendering from the GUI (see vgUI and specialization like vgGTK) and the method bench() for doing benchmarks.
  * 
  * @remarks \c Paint service is only available in vgeGL. So paint/resize/bench don't do the whole work.
@@ -271,6 +272,11 @@ struct VGE_API SceneManager
 
 
 	/**
+	 * @name vgsdk startup/shutdown
+	 */
+	//@{
+
+	/**
 	 * @brief Calls this method before using vgsdk.
 	 *
 	 * @return true if vgsdk could be used, false otherwise.
@@ -284,6 +290,15 @@ struct VGE_API SceneManager
 	 */
 	virtual const bool shutdownVGSDK()=0;
 
+	/**
+	 * @brief Tests vgsdk initialization state.
+	 *
+	 * @return true if vgsdk has been successfully initialized, false if vgsdk has not been successfully initialized,
+	 * indeterminate if vgsdk is not initialized.
+	 */
+	virtual const boost::logic::tribool hasVGSDK() const;
+	//@}
+
 
 protected:
 
@@ -294,7 +309,7 @@ protected:
 	 */
 	virtual const uint increaseFrameCount();
 
-
+	boost::logic::tribool m_hasVGSDK;			///< see hasVGSDK()
 private:
 
 	/**
