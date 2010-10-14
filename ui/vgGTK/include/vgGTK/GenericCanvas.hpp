@@ -50,6 +50,40 @@ namespace vgGTK
 
 
 
+namespace
+{
+
+void drawWarningMessage( Cairo::RefPtr<Cairo::Context> cr, GdkEventExpose * event )
+{
+	// clear
+	cr->save();
+	cr->set_operator( Cairo::OPERATOR_CLEAR );
+	cr->paint();
+	cr->restore();
+
+	// draw text
+	const float centerY = static_cast<float>(event->area.height) / 2.f;
+
+	cr->save();
+	cr->select_font_face( "serif", Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_BOLD );
+	cr->set_font_size( 32.f );
+	cr->set_source_rgb( 1.f, 1.f, 1.f );
+
+	const std::string text1( "Unable to draw scene." );
+	cr->move_to( 5.f, centerY - 32.f );
+	cr->show_text( text1 );
+
+	const std::string text2( "Please check the requirements for the graphics card and its driver." );
+	cr->move_to( 5.f, centerY );
+	cr->show_text( text2 );
+
+	cr->restore();
+}
+
+}
+
+
+
 /**
  * @brief	Implements a generic rendering canvas based on Gtk::DrawingArea.
  *
@@ -124,7 +158,6 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	 * @brief	Destructor
 	 */
 	virtual ~GenericCanvas();
-
 
 	/**
 	 * @name	Overrides
@@ -282,7 +315,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 				// Desactivated !
 				// Each application is responsible to manage widget visibility in order to provide a proper full-screen mode.
 				//
-				//topLevel->get_child()->show_all();	
+				//topLevel->get_child()->show_all();
 			}
 
 			// Refresh the window again.
@@ -399,6 +432,7 @@ protected:
 			m_glc						= glc_create( drawable );
 			if ( m_glc == 0 )
 			{
+				glc_gtkmm_drawable_destroy( drawable );
 				vgLogWarning("Unable to create the glc context.");
 				return false;
 			}
@@ -449,6 +483,11 @@ protected:
 	{
 		if ( m_glc != 0 )
 		{
+			// Cleans gle context
+			BaseCanvasType::getGleContext().clear();
+			gleSetCurrent(0);
+			vgLogDebug("gle context cleaned.");
+
 #ifdef USE_GLC
 			// Deletes glc context
 			glc_destroy( m_glc );
@@ -457,10 +496,6 @@ protected:
 #else
 			m_glc = 0;
 #endif
-			// Cleans gle context
-			BaseCanvasType::getGleContext().clear();
-			gleSetCurrent(0);
-			vgLogDebug("gle context cleaned.");
 
 			return true;
 		}
@@ -470,6 +505,7 @@ protected:
 		}
 	}
 
+	const bool hasAnOpenGLContext() const { return m_glc != 0; }
 	//@}
 
 
@@ -515,6 +551,15 @@ protected:
 		{
 			BaseCanvasType::paint( v2iSize, BaseCanvasType::getBoundingBoxUpdate() );
 			unsetCurrent();
+		}
+		else
+		{
+			Glib::RefPtr<Gdk::Window> window = get_window();
+			if ( window )
+			{
+				Cairo::RefPtr<Cairo::Context> cr = window->create_cairo_context();
+				drawWarningMessage( cr, event);
+			}
 		}
 
 		// Default gtk processing

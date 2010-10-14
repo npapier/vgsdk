@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,13 +17,15 @@ namespace engine
 {
 
 
-SceneManager::SceneManager( vgd::Shp< vge::engine::Engine > engine ) :
-	m_root					(	vgd::node::Group::create("ROOT") ),
-	m_engine				(	engine	),
+SceneManager::SceneManager( vgd::Shp< vge::engine::Engine > engine )
+:	m_hasVGSDK				( boost::logic::indeterminate		),
+
+	m_root					( vgd::node::Group::create("ROOT")	),
+	m_engine				( engine							),
 	//m_collectorExt
-	m_updateBoundingBox		( 	true	),
-	m_numberOfFrames		(	1		),
-	m_frameCount			(	0		)
+	m_updateBoundingBox		( true	),
+	m_numberOfFrames		( 1		),
+	m_frameCount			( 0		)
 {}
 
 
@@ -210,6 +212,13 @@ const uint SceneManager::increaseFrameCount()
 	++m_frameCount;
 
 	return m_frameCount;
+}
+
+
+
+const boost::logic::tribool SceneManager::hasVGSDK() const
+{
+	return m_hasVGSDK;
 }
 
 

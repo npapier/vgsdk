@@ -10,7 +10,6 @@
 #include <boost/date_time/posix_time/posix_time.hpp> // @todo uses vgsdk time classes
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
-
 #include <gle/OpenGLExtensionsGen.hpp>
 #include <vgd/event/Device.hpp>
 #include <vgDebug/convenience.hpp>
@@ -53,8 +52,9 @@ namespace vgUI
  * - debug overlay with runtime informations like fps
  *
  * @ingroup g_vgUIGroup
+ * @ingroup g_layerplan
  */
-	struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::Device
+struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::Device
 {
 	/**
 	 * @name gle log accessors
@@ -202,15 +202,6 @@ namespace vgUI
 	 */
 	const bool isOpenGLObjectsShared() const;
 
-
-protected:
-	/**
-	 * @brief Determines whether vgsdk is locally initialized or not.
-	 *
-	 * @return true if Vgsdk is localy initialized, false otherwise
-	 */
-	const bool isVGSDKLocalyInitialized() const;
-public:
 
 
 	/**
@@ -433,6 +424,8 @@ public:
 
 	/**
 	 * @name	Debugging helpers
+	 *
+	 * @ingroup g_layerplan
 	 */
 	//@{
 
@@ -440,6 +433,8 @@ public:
 	 * @brief Enables or disables the rendering of the debug overlay depending on the value of the parameter \c isEnabled.
 	 *
 	 * @param isEnabled		true when debug overlay must be rendered, false otherwise
+	 *
+	 * @ingroup g_layerplan
 	 */
 	void setDebugOverlay( const bool isEnabled = true );
 
@@ -447,6 +442,8 @@ public:
 	 * @brief Determines whether the rendering of the debug overlay is enabled.
 	 *
 	 * @return true if the rendering of the debug overlay is enabled, false otherwise
+	 *
+	 * @ingroup g_layerplan
 	 */
 	const bool isDebugOverlay() const;
 
@@ -528,19 +525,11 @@ protected:
 	// @todo documentation
 	gle::OpenGLExtensionsGen& getGleContext();
 
-	/**
-	 * @brief Calls this method before using vgsdk.
-	 *
-	 * @return true if vgsdk could be used. OpenGL, glc, gle, vge, vgeGL are ready to be used, false otherwise.
-	 */
-	virtual const bool startVGSDK();
 
-	/**
-	 * @brief Calls this method when you no longer need vgsdk.
-	 *
-	 * @return true if vgsdk shutdown has been completed successfuly, false otherwise.
-	 */
-	virtual const bool shutdownVGSDK();
+	// Overridden
+	const bool startVGSDK();
+	// Overridden
+	const bool shutdownVGSDK();
 
 
 private:
@@ -574,8 +563,7 @@ private:
 	 */
 	static std::ostream* getGleOutputStream();
 
-	const Canvas *	m_sharedCanvas;				///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
-	bool			m_bLocalInitializedVGSDK;	///< Boolean value set if initializeVGSDK() has already been called for this instance of Canvas.
+	const Canvas *			m_sharedCanvas;		///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 
 	bool				m_scheduleScreenshot;		///< Boolean value telling if a screen capture should be done at the end of next rendering.
 	std::string			m_screenshotFilename;		///< name of file used for the screenshot
