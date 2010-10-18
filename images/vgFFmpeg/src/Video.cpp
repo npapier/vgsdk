@@ -286,6 +286,10 @@ const bool Video::next()
 	return false;
 }
 
+void Video::seek( int64_t time )
+{
+	av_seek_frame(pFormatCtx, videoStream, time*AV_TIME_BASE, AVSEEK_FLAG_FRAME);
+}
 
 
 const vgd::basic::ImageInfo& Video::getCurrent()

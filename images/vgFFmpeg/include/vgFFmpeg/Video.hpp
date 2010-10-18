@@ -50,6 +50,10 @@ struct VGFFMPEG_API Video
 	 */
 	const int getHeight() const;
 
+	/**
+	 * @brief Set video position to the given time (in second).
+	 */
+	void seek(int64 time);
 
 
 
