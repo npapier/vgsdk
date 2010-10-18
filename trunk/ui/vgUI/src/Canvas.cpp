@@ -389,7 +389,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		if ( elapsedTimeBetweenFPSComputation.total_milliseconds() > 1000 )
 		{
 			const uint numberOfFrames = getFrameCount() - m_frameBase;
-			setFPS( numberOfFrames * 1000 / elapsedTimeBetweenFPSComputation.total_milliseconds() );
+			setFPS( numberOfFrames * 1000 / (const int)elapsedTimeBetweenFPSComputation.total_milliseconds() );
 
 			// Resets fps attributes
 			m_frameBase	= getFrameCount();
@@ -862,7 +862,8 @@ std::ostream* Canvas::getGleOutputStream()
 		// Opens gle.txt if not already done
 		if ( m_gleLogFile.is_open() == false )
 		{
-			m_gleLogFile.open("../var/gle.txt");
+			boost::filesystem::path glePath = sbf::path::get(sbf::path::Var) / "gle.txt";
+			m_gleLogFile.open( glePath.file_string().c_str() );
 		}
 
 		return &m_gleLogFile;
