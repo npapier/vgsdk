@@ -119,8 +119,7 @@ void Engine::reset()
 
 		// Do some initialization
 		// and don't do the same for any others instances if populateNodeRegistry returns true
-		m_firstInstance = true;
-		//m_firstInstance = (populateNodeRegistry() == false);
+		m_firstInstance = (populateNodeRegistry() == false);
 	}
 
 	//if ( m_firstInstance == false )
