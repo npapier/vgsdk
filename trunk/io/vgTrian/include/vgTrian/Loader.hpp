@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGTRIAN_LOADER_HPP
 #define _VGTRIAN_LOADER_HPP
@@ -10,9 +11,9 @@
 
 #include <vgio/ILoader.hpp>
 #include <vgio/LoaderRegistry.hpp>
+#include <vgio/Media.hpp>
 
 #include <fstream>
-#include <sstream>
 #include <string>
 #include <utility>
 
@@ -86,18 +87,29 @@ struct VGTRIAN_API Loader : public vgio::ILoader
 	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, const bool bCCW = false );
 
 	/**
+	 * @brief	Loads a model from a file.
+	 *
+	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
+	 */
+	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const vgio::Media & media, const std::string & filePath, const bool bCCW = false );
+
+	/**
 	 * @brief Load a model from a file in memory.
+	 *
+	 * @todo	DEPRECATED
 	 * 
 	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
 	 */
-	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, const bool bCCW = false );
+	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > buffer, const bool bCCW = false );
 
 	/**
 	 * @brief Load a model from a file in memory and the list of image already load in memory.
+	 *
+	 * @todo	DEPRECATED
 	 * 
 	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
 	 */
-	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW = false );
+	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > buffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW = false );
 
 
 	/**
@@ -106,7 +118,7 @@ struct VGTRIAN_API Loader : public vgio::ILoader
 	 * @todo	remove it and only use load function.
 	 */
 	// * param useCache		true to use cache system for image
-	std::pair< bool, vgd::Shp< vgd::node::Group > >	loadTrian2( const char *pathFilename, bool bCCW = false );
+	//std::pair< bool, vgd::Shp< vgd::node::Group > >	loadTrian2( const char *pathFilename, bool bCCW = false );
 	//, const bool useCache = false );
 
 
@@ -131,26 +143,16 @@ private:
 	 * 
 	 * @todo create TriSet(with neighbours) insteed of VertexShape.
 	 */	
-	bool loadTrian2( vgd::Shp< vgd::node::Group > group );
+	const bool loadTrian2( const vgio::Media & media, std::istream & in, vgd::Shp< vgd::node::Group > group );
+	vgd::Shp< vgd::node::Switch > loadMaterials( const vgio::Media & media, std::istream & in );
+	void loadTextureMaps( const vgio::Media & media, std::istream & in, vgd::Shp< vgd::node::Group > group );
+	vgd::Shp< vgd::node::VertexShape > loadMesh( std::istream & in, const std::string & meshName );
+	vgd::Shp< vgd::node::Material > loadWireColor( std::istream & in, const std::string & nodeName );
 
-	vgd::Shp< vgd::node::Switch >		loadMaterials	();
-	
-	void								loadTextureMaps( vgd::Shp< vgd::node::Group > group );
-
-	vgd::Shp< vgd::node::VertexShape >	loadMesh		( std::string meshName );
-	
-	vgd::Shp< vgd::node::Material >		loadWireColor	( std::string nodeName );
-
-
-
-	std::stringstream	m_fp;
 
 //	bool				m_useCache;			///< true to use cache system for image, false otherwise
 
-	/**
-	 * @brief Path for the file.
-	 */
-	std::string			m_path; 
+	std::string			m_path;		///< Path for the file.
 	
 	//@}
 
