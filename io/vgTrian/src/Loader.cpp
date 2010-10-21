@@ -1,9 +1,12 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgTrian/Loader.hpp"
+
+#include <sstream>
 
 #include <vgAlg/actions/Decrypt.hpp>
 #include <vgDebug/Global.hpp>
@@ -20,6 +23,7 @@
 #include <vgd/node/VertexShape.hpp>
 
 #include <vgio/Cache.hpp>
+#include <vgio/FileSystem.hpp>
 #include <vgio/helpers.hpp>
 
 
@@ -436,14 +440,14 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 
 
 
-std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *pathFilename, bool bCCW ) //, const bool useCache )
+/*std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::loadTrian2( const char *pathFilename, bool bCCW ) //, const bool useCache )
 {
 	return load( pathFilename, bCCW );
-}
+}*/
 
 
 
-std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW )
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media & media, const std::string & filePath, const bool bCCW )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > >		retVal;
 	retVal.first	= false;
@@ -465,11 +469,10 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 	group = vgd::node::Group::create( epathFilename );
 	retVal.second = group;
 
-	// open file
-	std::fstream fp;
-	fp.open(filePath.c_str(), std::ios::in);
+	// Open file
+	vgd::Shp< std::istream >	in = media.open( filePath );
 
-	if (!fp.is_open())
+	if (!in)
 	{
 		vgDebug::get().logDebug("vgTrian::loadTrian2: Unable to open file %s", filePath );
 		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
@@ -482,10 +485,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 		//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s", pathFilename );
 	}
 
-	m_fp << fp.rdbuf();
-	fp.close();
-
-	retVal.first = loadTrian2( group );
+	retVal.first = loadTrian2( media, *in, group );
 
 	if( retVal.first )
 	{
@@ -502,7 +502,14 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 
 
 
-std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( std::string pathFilename, vgd::Shp< std::vector< char > > buffer, bool bCCW )
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW )
+{
+	return load( vgio::FileSystem(), filePath, bCCW );
+}
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( const std::string pathFilename, vgd::Shp< std::vector< char > > buffer, bool bCCW )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > >		retVal;
 	retVal.first	= false;
@@ -510,8 +517,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( std::string pathFi
 	vgd::Shp< vgd::node::Group > group = vgd::node::Group::create( pathFilename );
 	retVal.second = group;
 
-	std::string result = std::string( (*buffer).begin(), (*buffer).end() );
-	m_fp.str( result );
+	std::stringstream	in( std::string(buffer->begin(), buffer->end()) );
 	
 	vgd::basic::FilenameExtractor extractor( pathFilename.c_str() );
 	m_path						= extractor.getPath();
@@ -521,7 +527,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( std::string pathFi
 		m_path = ".";
 	}
 
-	retVal.first = loadTrian2( group );
+	retVal.first = loadTrian2( vgio::FileSystem(), in, group );
 
 	if( retVal.first )
 	{
@@ -547,11 +553,11 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( const std::string 
 
 
 
-bool Loader::loadTrian2( vgd::Shp< vgd::node::Group > group )
+const bool Loader::loadTrian2( const vgio::Media & media, std::istream & in, vgd::Shp< vgd::node::Group > group )
 {
 	// VERSION
 	std::string version;
-	m_fp >> version;
+	in >> version;
 	
 	if (	(version.compare( "vgsdkExporter100" ) != 0) &&
 			(version.compare( "vglExporter100" ) != 0 )
@@ -561,7 +567,7 @@ bool Loader::loadTrian2( vgd::Shp< vgd::node::Group > group )
 	}
 	
 	// MATERIALS
-	vgd::Shp< vgd::node::Switch > switchMaterial = loadMaterials();
+	vgd::Shp< vgd::node::Switch > switchMaterial = loadMaterials( media, in );
 	
 	if ( switchMaterial->getNumChildren() > 0 )
 	{
@@ -569,12 +575,12 @@ bool Loader::loadTrian2( vgd::Shp< vgd::node::Group > group )
 	}
 
 	// NODE
-	while ( !m_fp.eof() )
+	while ( !in.eof() )
 	{
 		std::string name;
 		int			integer;
 		
-		m_fp >> name;
+		in >> name;
 		if ( name.compare("") == 0 )
 		{
 			break;
@@ -584,15 +590,15 @@ bool Loader::loadTrian2( vgd::Shp< vgd::node::Group > group )
 			// mesh GeoSphere01
 			std::string meshName;
 			
-			m_fp >> meshName;
+			in >> meshName;
 			
 			vgDebug::get().logDebug("vgTrian::loadTrian2: load mesh %s", meshName.c_str() );
 			//vgDebug::get().logStatus("vgTrian::loadTrian2: load mesh %s", meshName.c_str() );
 			
-			m_fp >> name;
+			in >> name;
 			if ( name == "materialIndex" )
 			{
-				m_fp >> integer;
+				in >> integer;
 			
 				group->addChild( switchMaterial->getAbstractChild( integer ) );
 			}
@@ -600,10 +606,10 @@ bool Loader::loadTrian2( vgd::Shp< vgd::node::Group > group )
 			{
 				std::string	matName( meshName );
 				matName		+= "wireColor";
-				group->addChild( loadWireColor( matName ) );
+				group->addChild( loadWireColor( in, matName ) );
 			}
 
-			vgd::Shp< vgd::node::VertexShape > vertexShape = loadMesh( meshName );
+			vgd::Shp< vgd::node::VertexShape > vertexShape = loadMesh( in, meshName );
 			if ( vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX )
 			{
 				vertexShape->computeNormals();
@@ -617,14 +623,12 @@ bool Loader::loadTrian2( vgd::Shp< vgd::node::Group > group )
 		}
 	}
 
-	m_fp.clear();
-
 	return true;
 }
 
 
 
-vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
+vgd::Shp< vgd::node::Switch > Loader::loadMaterials( const vgio::Media & media, std::istream & in )
 {
 	vgd::Shp< vgd::node::Switch > switchGroup = vgd::node::Switch::create("materials");
 	
@@ -632,14 +636,14 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 	std::string name;
 	int32 materialCount;
 		
-	m_fp >> name;
+	in >> name;
 	if ( name != "materialList" )
 	{
 		assert( false && "materialList missing ?" );
 		return switchGroup;
 	}
 	
-	m_fp >> materialCount;
+	in >> materialCount;
 	
 	//material Bricks_Bricks_1
 	//ambient 0.1 0.1 0.1
@@ -656,14 +660,14 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 		std::string	name;
 		std::string matName;
 
-		m_fp >> name;
+		in >> name;
 		if ( name != "material" )
 		{
 			assert( false );
 			continue;
 		}
 		
-		m_fp >> matName;
+		in >> matName;
 		vgd::Shp< vgd::node::Group > container = vgd::node::Group::create( matName );
 		switchGroup->addChild( container );
 		
@@ -675,47 +679,47 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 		vgm::Vec3f color;
 				
 		// ambient
-		m_fp >> name >> color[0] >> color[1] >> color[2];
+		in >> name >> color[0] >> color[1] >> color[2];
 		assert( name == "ambient" );
 
 		material->setAmbient( color );
 		
 		// diffuse
-		m_fp >> name >> color[0] >> color[1] >> color[2];
+		in >> name >> color[0] >> color[1] >> color[2];
 		assert( name == "diffuse" );
 
 		material->setDiffuse( color );
 		
 		// specular
-		m_fp >> name >> color[0] >> color[1] >> color[2];
+		in >> name >> color[0] >> color[1] >> color[2];
 		assert( name == "specular" );
 
 		material->setSpecular( color );
 		
 		// emission
-		m_fp >> name >> color[0] >> color[1] >> color[2];
+		in >> name >> color[0] >> color[1] >> color[2];
 		assert( name == "emission" );
 
 		material->setEmission( color );
 		
 		// specularLevel/glosiness
 		float	real;
-		m_fp >> name >> real;
+		in >> name >> real;
 		assert( name == "specularLevel" );
 		// FIXME not used.
 		
-		m_fp >> name >> real;
+		in >> name >> real;
 		assert( name == "glossiness" );
 		
 		material->setShininess( real );
 
 		// transparency
-		m_fp >> name >> real;
+		in >> name >> real;
 		assert( name == "transparency" );
 		
 		material->setOpacity( 1.f - real );
 
-		loadTextureMaps( container );
+		loadTextureMaps( media, in, container );
 	}
 	
 	return ( switchGroup );
@@ -723,13 +727,13 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials()
 
 
 
-void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
+void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd::Shp< vgd::node::Group > group )
 {
 	// textureMaps 2
 	std::string name;
 	int			textureMapSize;
 		
-	m_fp >> name >> textureMapSize;
+	in >> name >> textureMapSize;
 	assert( name == "textureMaps" );
 	
 	for(	int i=0;
@@ -737,17 +741,17 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 			++i )
 	{
 		// texture Bitmap
-		m_fp >> name;
+		in >> name;
 		assert( name == "texture" );
 		
-		m_fp >> name;
+		in >> name;
 		assert( name == "Bitmap" );
 		
 		// BITMAP TEXTURE
 
 		// image Brkrun.JPG
 		std::string	filename;
-		m_fp >> name >> filename;
+		in >> name >> filename;
 		assert( name == "image" );
 
 		vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( filename );
@@ -764,19 +768,8 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		}
 		else
 		{
-			// Retrieves the extension of the given filename.
-			vgd::basic::FilenameExtractor	extractor( m_path + '/' + filename );
-			std::string						extension = extractor.getExtension();
-
-			std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); //to lowercase;
-			if( extension.compare( ".crypt" ) == 0 || extension.compare( ".crypt" ) == 0 )
-			{
-				image = vgio::loadCryptedImage(  m_path + '/' + filename, "vgsdkViewerGTK" ); //@todo get key from Settings.
-			}
-			else
-			{
-				image = vgio::ImageCache::load( m_path + '/' + filename );
-			}
+			// Gathers the image from the cache.
+			image = vgio::ImageCache::load( media, m_path + '/' + filename );
 		}
 		
 		
@@ -812,12 +805,12 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		// uvtrans 1 0 0 0   0 1 0 0   0 0 1 0   0 0 0 0
 		vgm::MatrixR	matrix;
 		
-		m_fp >> name;
+		in >> name;
 		assert( name == "uvtrans" );
-		m_fp >> matrix[0][0] >> matrix[0][1] >> matrix[0][2] >> matrix[0][3];
-		m_fp >> matrix[1][0] >> matrix[1][1] >> matrix[1][2] >> matrix[1][3];
-		m_fp >> matrix[2][0] >> matrix[2][1] >> matrix[2][2] >> matrix[2][3];
-		m_fp >> matrix[3][0] >> matrix[3][1] >> matrix[3][2] >> matrix[3][3];
+		in >> matrix[0][0] >> matrix[0][1] >> matrix[0][2] >> matrix[0][3];
+		in >> matrix[1][0] >> matrix[1][1] >> matrix[1][2] >> matrix[1][3];
+		in >> matrix[2][0] >> matrix[2][1] >> matrix[2][2] >> matrix[2][3];
+		in >> matrix[3][0] >> matrix[3][1] >> matrix[3][2] >> matrix[3][3];
 				
 //		TransformSeparator  = texture
 		if ( true /*!matrix.isIdentity()*/ )
@@ -844,11 +837,11 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		}
 
 		// texTiling uWrap vWrap
-		m_fp >> name;
+		in >> name;
 		assert( name == "texTiling" );
 
 		//
-		m_fp >> name;
+		in >> name;
 		
 		if ( name == "uWrap" )
 		{
@@ -868,7 +861,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 		}
 		
 		//
-		m_fp >> name;
+		in >> name;
 		
 		if ( name == "vWrap" )
 		{
@@ -893,7 +886,7 @@ void Loader::loadTextureMaps( vgd::Shp< vgd::node::Group > group )
 
 
 
-vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
+vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::istream & in, const std::string & meshName )
 {
 	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::node::VertexShape::create( meshName );
 
@@ -902,13 +895,13 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 
 	// VERTEX
 	
-	m_fp >> fieldName;
+	in >> fieldName;
 	
 	if ( fieldName == "vertex" )
 	{
 		// read nb of vertices
 		int32 vertexSize;
-		m_fp >> vertexSize;
+		in >> vertexSize;
 
 		vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= vertexShape->getFVertexRW();
 
@@ -923,12 +916,12 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 				++i)
 		{
 			float x, y, z;
-			m_fp >> x >> y >> z;
+			in >> x >> y >> z;
 			vertex->push_back( vgm::Vec3f(x,y,z) );
 		}
 		
 		// next field
-		m_fp >> fieldName;
+		in >> fieldName;
 	}
 
 
@@ -938,7 +931,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 	{
 		// read nb of normals
 		int32 normalSize;
-		m_fp >> normalSize;
+		in >> normalSize;
 		
 		vgd::field::EditorRW< vgd::field::MFVec3f >	normal = vertexShape->getFNormalRW();
 
@@ -951,14 +944,14 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 				++i )
 		{
 			float x, y, z;
-			m_fp >> x >> y >> z;
+			in >> x >> y >> z;
 			normal->push_back( vgm::Vec3f(x,y,z).getNormalized() );
 		}
 		
 		vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
 		
 		// next field
-		m_fp >> fieldName;
+		in >> fieldName;
 	}
 
 
@@ -968,7 +961,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 	{
 		// read nb of texCoord
 		int32 texCoordSize;
-		m_fp >> texCoordSize;
+		in >> texCoordSize;
 
 		vertexShape->createTexUnits( 2, 0, 1 );											// ??????????FIXME multitexture multiTexcoord
 		
@@ -984,14 +977,14 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 				++i )
 		{
 			float x, y;
-			m_fp >> x >> y;
+			in >> x >> y;
 			texCoord->push_back( vgm::Vec2f(x,y) );
 		}
 		
 		vertexShape->setTexCoordBinding( 0, vgd::node::BIND_PER_VERTEX );
 
 		// next field
-		m_fp >> fieldName;
+		in >> fieldName;
 	}
 
 
@@ -1001,7 +994,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 	{
 		// read nb of faces
 		int32 i32NumTriangles;
-		m_fp >> i32NumTriangles;
+		in >> i32NumTriangles;
 
 		// reserve memory for edges.
 		// and neighbours FIXME
@@ -1019,7 +1012,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 			int32 lEdge2;
 			int32 lEdge3;
 
-			m_fp >> lEdge1 >> lEdge2 >> lEdge3;
+			in >> lEdge1 >> lEdge2 >> lEdge3;
 
 			vertexIndex->push_back(lEdge1);
 			vertexIndex->push_back(lEdge2);
@@ -1043,16 +1036,16 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::string meshName )
 
 
 
-vgd::Shp< vgd::node::Material > Loader::loadWireColor( std::string nodeName )
+vgd::Shp< vgd::node::Material > Loader::loadWireColor( std::istream & in, const std::string & nodeName )
 {
 	// color : already readed.
 	// 0.52549 0.431373 0.0313725 0
 
 	std::string	name;
 	vgm::Vec3f	color3;
-	float			opacity;
+	float		opacity;
 
-	m_fp >> color3[0] >> color3[1] >> color3[2] >> opacity;
+	in >> color3[0] >> color3[1] >> color3[2] >> opacity;
 
 	vgd::Shp< vgd::node::Material > material;
 
