@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Guillaume Brocker
 
 #ifndef _VGOPENCOLLADA_IMPORTER_LOADER_HPP
 #define _VGOPENCOLLADA_IMPORTER_LOADER_HPP
@@ -15,7 +16,6 @@
 #include <vgOpenCOLLADA/importer/ExtraDataBumpMapping.hpp>
 #include <vgOpenCOLLADA/importer/Reader.hpp>
 
-
 #include <string>
 
 #include <vgio/ILoader.hpp>
@@ -26,6 +26,10 @@
 
 #include <COLLADAFWRoot.h>
 #include <COLLADASaxFWLLoader.h>
+
+namespace vgio {
+	struct Media;
+}
 
 
 namespace vgOpenCOLLADA
@@ -52,6 +56,13 @@ struct VGOPENCOLLADA_API Loader : public vgio::ILoader
 	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, const bool bCCW = false ) throw( std::runtime_error );
 
 	/**
+	 * @brief Create and return the whole scene using the Reader class (sax parser).
+	 * 
+	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
+	 */
+	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const vgio::Media & media, const std::string filePath, const bool bCCW = false ) throw( std::runtime_error );
+
+	/**
 	 * @brief Create and return the whole scene using the Reader class (sax parser) and a file in memory.
 	 * 
 	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
@@ -67,10 +78,12 @@ struct VGOPENCOLLADA_API Loader : public vgio::ILoader
 		
 	const ExtraDataMultiInstance&	getExtraDataMultiInstance();
 	const ExtraDataBumpMapping&		getExtraDataBumpMapping();
+	const vgio::Media *				getMedia() const;	///< Retrieves the optionnal media to use for loading.
 
 	virtual vgd::Shp< vgio::ILoader > clone();
 
 private:
+	const vgio::Media			* m_media;		///< Points to the optional media used for loading data.
 	Reader						m_reader;
 	ErrorHandler				m_errorHandler;
 	COLLADASaxFWL::Loader		m_saxLoader;

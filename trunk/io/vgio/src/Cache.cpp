@@ -101,7 +101,7 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 
 		if ( iimage )
 		{
-			retVal.reset( new vgd::basic::ImageInfo(*iimage) );
+			retVal.reset( iimage );
 			vgLogDebug2("vgio: load image %s done.", pathFilename.c_str() );
 		}
 		else
@@ -137,7 +137,7 @@ vgd::basic::IImage * ImageCache::loadImage( const Media & media, const std::stri
 		return 0;
 	}
 
-	// Builds the imge from loaded data and returns it.
+	// Builds the imgae from loaded data and returns it.
 	return new vgd::basic::Image( pathFilename, &buffer[0], buffer.size() );
 }
 
