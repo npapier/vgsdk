@@ -26,8 +26,8 @@ struct StreamHeader
 };
 
 static const std::string	encryptedExtension(".encrypted");
-static const std::string	headerSignature("DTBlow01");
-static const std::string	bufferSignature("DigitalT");
+static const std::string	headerSignature("vgBlow01");
+static const std::string	bufferSignature("vgBuffer");
 
 
 

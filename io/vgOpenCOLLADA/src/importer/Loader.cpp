@@ -2,8 +2,13 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Guillaume Brocker
 
 #include "vgOpenCOLLADA/importer/Loader.hpp"
+
+#include <vgio/FileSystem.hpp>
+
+
 
 namespace vgOpenCOLLADA
 {
@@ -15,7 +20,8 @@ META_LOADER_CPP( vgOpenCOLLADA::importer::Loader, "collada" )
 
 
 Loader::Loader( vgOpenCOLLADA::Settings settings ) throw (std::runtime_error)
-:	m_reader( settings, this ),
+:	m_media( 0 ),
+	m_reader( settings, this ),
 	m_saxLoader( &m_errorHandler ),
 	m_root( &m_saxLoader, &m_reader )
 {
@@ -30,26 +36,46 @@ Loader::Loader( vgOpenCOLLADA::Settings settings ) throw (std::runtime_error)
 
 std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW ) throw (std::runtime_error)
 {
+	return load( vgio::FileSystem(), filePath, bCCW );
+}
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media & media, const std::string filePath, const bool bCCW ) throw (std::runtime_error)
+{
 	COLLADAFW::String colladaFileURI = COLLADABU::URI::nativePathToUri(filePath);
 
 	m_saxLoader.registerExtraDataCallbackHandler ( &m_extraDataMultiInstance );
 	m_saxLoader.registerExtraDataCallbackHandler ( &m_extraDataBumpMapping );
 
-	bool loadResult = m_root.loadDocument(colladaFileURI);
+	m_media = &media;
 
-	if( loadResult )
+
+	// Loads the collada file in memory.
+	std::vector< char >	buffer;
+
+	if( ! media.load( filePath, buffer ) )
 	{
-		if ( m_reader.getScene().second )
-		{
-			return m_reader.getScene();
-		}
-		else
-		{
-			throw std::runtime_error("Scene-import failed.");
-		}
+		m_media = 0;
+		throw std::runtime_error("Scene-import failed.");
+	}
+
+	// Parses the collada file.
+	if( ! m_root.loadDocument(colladaFileURI, &buffer[0], buffer.size() ) )
+	{
+		m_media = 0;
+		throw std::runtime_error("Scene-import failed.");
+	}
+
+	// Checks the result.
+	if ( m_reader.getScene().second )
+	{
+		m_media = 0;
+		return m_reader.getScene();
 	}
 	else
 	{
+		m_media = 0;
 		throw std::runtime_error("Scene-import failed.");
 	}
 }
@@ -103,6 +129,13 @@ const ExtraDataMultiInstance& Loader::getExtraDataMultiInstance()
 const ExtraDataBumpMapping& Loader::getExtraDataBumpMapping()
 {
 	return m_extraDataBumpMapping;
+}
+
+
+
+const vgio::Media * Loader::getMedia() const
+{
+	return m_media;
 }
 
 

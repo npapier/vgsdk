@@ -418,21 +418,20 @@ bool Reader::writeImage( const COLLADAFW::Image* image )
 	{
 		//@todo manage full path. Only works with relative path atm.
 		std::string path = m_inputFile.getPathDir() + image->getImageURI().getPath().substr(1);
+		
 		path = path.substr(1); //removes first /
-
 		path = COLLADABU::URI::uriDecode(path);
-		// Retrieves the extension of the given filename.
-		vgd::basic::FilenameExtractor	extractor( path );
-		std::string						extension = extractor.getLowerCaseExtension();
 
-		if( extension.compare( ".crypt" ) == 0 )
+		const vgio::Media	* media = m_loader->getMedia();
+
+		if( media )
 		{
-			img = vgio::loadCryptedImage( path, "vgsdkViewerGTK" ); //@todo get key from Settings.
+			img.reset( new vgd::basic::Image(*vgio::ImageCache::load(*media, path)) );
 		}
 		else
 		{
-			img.reset( new vgd::basic::Image ( path ) );
-		}		
+			img.reset( new vgd::basic::Image(*vgio::ImageCache::load(path)) );
+		}
 	}
 
 	uint maxSize = m_settings.getTextureSize();
