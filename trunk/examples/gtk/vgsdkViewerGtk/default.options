@@ -5,7 +5,7 @@ version		= '0-5'
 uses 		=	[	#'boost',
 					#'cairo',
 					#'colladadom',
-					'gtkmm',
+					'gtkmm', 'gtkmmext',
 					#'itk',
 					'opencollada',
 					#'openil',
@@ -15,7 +15,7 @@ uses 		=	[	#'boost',
 				]
 libs		=	[
 					#'glContext 0-0', 'glc_gtk 0-0', 'glc_gtkmm 0-0',
-					#'gle 0-3', 'glo 0-3',
+					'displayDriverConnector 0-1', #'gle 0-3', 'glo 0-3',
 					'vgBase 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgd 0-5',
 					'vgAlg 0-5',
 					'vgio 0-5', 'vgOpenCOLLADA 0-5', 'vgTrian 0-5', 'vgPhysfs 0-5',
@@ -28,3 +28,4 @@ libs		=	[
 				]
 deps		= [ '../../../../vgsdk' ]
 #deps		= [ '../../../core', '../../../engines', '../../../io', '../../../ui/vgGTK' ]
+#console = False
