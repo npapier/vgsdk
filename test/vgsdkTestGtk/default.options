@@ -5,7 +5,7 @@ version		= '0-5'
 uses 		=	[	'boost',
 					#'cairo',
 					#'colladadom',
-					'gtkmm',
+					'gtkmm', 'gtkmmext',
 					#'itk',
 					#'openil',
 					'opengl',
