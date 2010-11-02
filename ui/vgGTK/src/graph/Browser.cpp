@@ -13,14 +13,7 @@
 #include <boost/bind.hpp>
 #include <boost/signal.hpp>
 
-#include <gtkmm/action.h>
-#include <gtkmm/cellrenderertext.h>
-#include <gtkmm/filechooserdialog.h>
-#include <gtkmm/iconfactory.h>
-#include <gtkmm/messagedialog.h>
-#include <gtkmm/scrolledwindow.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/toolbar.h>
+#include <gtkmm.h>
 
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>

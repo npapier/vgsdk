@@ -1,16 +1,18 @@
-// VGSDK - Copyright (C) 2009, Guillaume Brocker.
+// VGSDK - Copyright (C) 2009, 2010, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #include "vgGTK/ResolutionDialog.hpp"
 
 #include <boost/lexical_cast.hpp>
-
+#include <glibmm/i18n.h>
 #include <glibmm/regex.h>
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
 #include <gtkmm/stock.h>
+#include <vgUI/helpers.hpp>
 
 
 
@@ -20,7 +22,7 @@ namespace vgGTK
 
 
 ResolutionDialog::ResolutionDialog( Gtk::Widget * widget )
-:	Dialog			( "Resolution" ),
+:	Dialog			( _("Resolution") ),
 	m_resetButton	( Gtk::Stock::UNDO ),
 	m_applyButton	( Gtk::Stock::APPLY ),
 	m_widget		( widget ),
@@ -28,7 +30,7 @@ ResolutionDialog::ResolutionDialog( Gtk::Widget * widget )
 	m_newResolution	( 0, 0 )
 {
 	// Creates the main layout.
-	Gtk::Label	* label = Gtk::manage( new Gtk::Label("Select, in the list bellow, a resolution to apply, \nor specify your own.", 0, 0) );
+	Gtk::Label	* label = Gtk::manage( new Gtk::Label(_("Select, in the list bellow, a resolution to apply, \nor specify your own."), 0, 0) );
 	Gtk::VBox	* box	= Gtk::manage( new Gtk::VBox(false, 8) );
 	
 	box->set_border_width( 12 );
@@ -52,10 +54,10 @@ ResolutionDialog::ResolutionDialog( Gtk::Widget * widget )
 	
 	
 	// Fills the resolution box with predefined resolutions.
-	m_resolutions.append_text("1024x768");
-	m_resolutions.append_text("800x600");
-	m_resolutions.append_text("720x576");
-	m_resolutions.append_text("640x480");
+	m_resolutions.append_text(_("1024x768"));
+	m_resolutions.append_text(_("800x600"));
+	m_resolutions.append_text(_("720x576"));
+	m_resolutions.append_text(_("640x480"));
 	
 	
 	// Shows the whole things
@@ -128,7 +130,8 @@ const bool ResolutionDialog::resolutionFromString( const Glib::ustring & str, in
 
 const Glib::ustring ResolutionDialog::resolutionToString( const int width, const int height )
 {
-	return Glib::ustring::compose("%1x%2", width, height);
+	Glib::ustring retVal = vgUI::compose( "%1%x%2%", width, height );
+	return retVal;
 }
 
 
