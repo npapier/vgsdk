@@ -13,6 +13,7 @@
 #include <gtkmm/stock.h>
 
 #include <vgUI/Canvas.hpp>
+#include <vgUI/helpers.hpp>
 
 #include "vgGTK/graph/convenience.hpp"
 #include "vgGTK/field/FieldEditor.hpp"
@@ -81,8 +82,8 @@ FieldEditorDialog::FieldEditorDialog( Gtk::Window & parent, vgd::Shp< vgd::field
 	{
 		const Glib::ustring	fieldTypeName	= m_fieldManager->getFieldType(m_fieldName).name();
 		Gtk::Label			* message		= Gtk::manage( new Gtk::Label() );
-		
-		message->set_text( Glib::ustring::compose("%1 is not supported yet.", fieldTypeName) );
+
+		message->set_text( vgUI::compose("%1% is not supported yet.", fieldTypeName) );
 		contentBox->add( *message );
 	}
 
@@ -212,7 +213,7 @@ void FieldEditorDialog::refreshLabel()
 {
 	const std::string	name = vgGTK::graph::getFieldAsString(m_fieldManager, "f_name");
 
-	m_label.set_markup( Glib::ustring::compose("<big><b>%1.%2</b></big>", name.empty() ? "Unamed" : name, m_fieldName) );
+	m_label.set_markup( vgUI::compose( "<big><b>%1%.%2%</b></big>", name.empty() ? "Unamed" : name, m_fieldName) );
 }
 
 
