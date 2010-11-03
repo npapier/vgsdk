@@ -90,7 +90,18 @@ const std::string compose( const std::string str, const T0 param0, const T1 para
 
 
 
-// @todo format()
+/**
+ * @brief Format the given argument to its string representation.
+ *
+ * This function could be used to replace Glib::ustring::format(), but I/O manipulators are not supported.
+ */
+template< typename T0 >
+const std::string format( const T0 param0 )
+{
+	Format format( "%1%");
+	format % param0;
+	return format.str();
+}
 
 
 
