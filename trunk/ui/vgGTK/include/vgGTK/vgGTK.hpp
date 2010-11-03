@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -18,6 +18,28 @@
 
 
 #ifdef _WIN32
+
+// GTKMM_BEGIN_CLASS()
+// struct myGtkClass : public Gtk::VBox {};
+// GTKMM_END_CLASS()
+#define GTKMM_BEGIN_CLASS()	__pragma( warning(push) ) \
+							__pragma( warning(disable:4939) ) \
+							__pragma( vtordisp(on) )
+
+#define GTKMM_END_CLASS()	__pragma( vtordisp(off) ) \
+							__pragma( warning(pop) )
+
+// boost::format() segv with /vd2 compiler option needed by gtkmm (i.e. uses=['gtkmmext'])
+// GTKMM_BEGIN_DISABLED()
+// boost::format() no more segv inside GTKMM_BEGIN_DISABLED() and GTKMM_END_DISABLED()
+// GTKMM_END_DISABLED()
+#define GTKMM_BEGIN_DISABLED()	__pragma( warning(push) ) \
+								__pragma( warning(disable:4939) ) \
+								__pragma( vtordisp(off) )
+
+#define GTKMM_END_DISABLED()	__pragma( vtordisp(on) ) \
+								__pragma( warning(pop) )
+
 
 	#ifdef VGGTK_EXPORTS
 	#define VGGTK_API	__declspec(dllexport)
@@ -43,7 +65,6 @@
 	#define VGGTK_CLASS_API
 
 #endif
-
 
 
 
