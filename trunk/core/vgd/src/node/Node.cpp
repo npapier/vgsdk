@@ -7,7 +7,15 @@
 
 #include "vgd/node/Group.hpp"
 #include "vgd/node/detail/Node.hpp"
+#include <boost/thread/thread.hpp>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
+namespace
+{
+boost::thread::id g_lockedID = boost::thread::id();
+}
 
 
 namespace vgd
@@ -205,10 +213,25 @@ Node::ConnectionType Node::connect( DestructorSignalType::slot_function_type slo
 
 vgd::graph::Graph& Node::graph()
 {
+	if( g_lockedID != boost::thread::id() && boost::this_thread::get_id() != g_lockedID )
+	{
+		std::cerr << "Access to vgsdk graph from wrong thread" << std::endl;
+#if ( defined _WIN32 ) && ( defined _DEBUG )
+		//DebugBreak();
+#endif
+	}
+
 	// Graph data
 	static vgd::graph::Graph m_graph;
 
 	return m_graph;
+}
+
+
+
+void Node::lockGraph()
+{
+	g_lockedID = boost::this_thread::get_id();
 }
 
 

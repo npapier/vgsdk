@@ -145,6 +145,16 @@ typedef std::set< vgd::Shp<vgd::node::Node> >		NodeSet;
  */
 struct VGD_API Node : public vgd::basic::Object, public vgd::field::FieldManager, public vgd::EnableShpFromThis<Node>
 {
+	/**
+	 * @brief Lock access to graph for the calling thread.
+	 *
+	 * During all the subsequent accesses to graph() method, the
+	 * calling thread id will be compared to this one's and a warning
+	 * message will be displayed if the two are different.
+	 */
+	static void	lockGraph();
+
+
 	// META_NODE_HPP( Node ); abstract class.
 	
 	/**
