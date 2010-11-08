@@ -99,7 +99,7 @@ int main( int argc, char ** argv )
 		}
 
 		// Decrypts and store clear data.
-		std::vector< char >	inBuffer;
+		std::vector< char > inBuffer;
 		std::vector< char > outBuffer;
 		
 		if( vgPhysfs::decrypt(key, in, inBuffer, outBuffer) )
@@ -114,6 +114,6 @@ int main( int argc, char ** argv )
 		vgLogMessage( "Unknown command." );
 		showUsage( "blowfish" /*argv[0]*/ );
 	}
-	
+
 	return 0;
 }
