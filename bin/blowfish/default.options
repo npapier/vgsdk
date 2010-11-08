@@ -1,15 +1,10 @@
-# project settings
-#description		= ''
-#vcsUse				= 'yes' # no
-#defines			= []
-type				= 'exec'	# exec, static, shared, none
+description			= 'Encrypts or decrypts files using the blowfish algorithm'
+vcsUse				= 'no'
+type				= 'exec'
 #version			= '0-0'
-#postfix			= ''
 #generateInfoFile	= False
 deps				= ['../../core/vgDebug', '../../io/vgPhysfs']
 uses				= ['boost']
 libs				= ['vgDebug 0-5', 'vgPhysfs 0-5']
-#stdlibs			= []
-#test				= 'none' # gtest
 #console			= True
 #runParams			= []
