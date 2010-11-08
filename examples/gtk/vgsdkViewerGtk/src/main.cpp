@@ -6,17 +6,10 @@
 
 #include <cassert>
 
-#include <gtk/gtk.h>
+#include <displayDriverConnector/displayDriverConnector.hpp>
 
+#include <gtk/gtk.h>
 #include <gtkmm.h>
-#include <gtkmm/container.h>
-#include <gtkmm/drawingarea.h>
-#include <gtkmm/menu.h>
-#include <gtkmm/menuitem.h>
-#include <gtkmm/paned.h>
-#include <gtkmm/recentchoosermenu.h>
-#include <gtkmm/recentmanager.h>
-#include <gtkmm/treeview.h>
 
 #include <vgDebug/Global.hpp>
 #include <vgGTK/event/sdl.hpp>
@@ -172,9 +165,14 @@ const Glib::ustring & createDefaultUI()
 }
 
 
-
 int main( int argc, char ** argv )
 {
+	// Retrieves and prints informations about primary display adapter
+	ddc_display_device_info_t displayDevice;
+	ddc_get_primary_display_device_informations( &displayDevice );
+
+	ddc_print_display_device_info( &displayDevice );
+
 	// Glib thread system initialization.
 	//Glib::thread_init();
 
@@ -220,6 +218,7 @@ int main( int argc, char ** argv )
 	Gtk::Widget				* recentWidget		= uiManager->get_widget("/DefaultMenuBar/File/Recent");
 	Gtk::MenuItem			* recentMenuItem	= dynamic_cast< Gtk::MenuItem * >( recentWidget );
 
+#if GTKMM_VERSION == 2160
 	Gtk::RecentChooserMenu	* recentChooserMenu	= Gtk::manage( new Gtk::RecentChooserMenu(Gtk::RecentManager::get_default()) );
 	Gtk::RecentFilter		* recentFilter		= Gtk::manage( new Gtk::RecentFilter() );
 
@@ -232,6 +231,7 @@ int main( int argc, char ** argv )
 
 	recentFilter->add_application( Glib::get_application_name() );
 	recentChooserMenu->add_filter( *recentFilter );
+#endif
 
 	Gtk::Widget		* editWidget		= uiManager->get_widget("/DefaultMenuBar/EditMenu");
 	Gtk::MenuItem	* editMenuItem		= dynamic_cast< Gtk::MenuItem * >( editWidget );
@@ -280,8 +280,7 @@ int main( int argc, char ** argv )
 	hpaned.pack2( hbox, true, true );
 	
 	window.show_all();
-	
-	
+
 	// Activates the first manipulation binding action.
 	Glib::RefPtr< Gtk::Action >	manipulationBindingAction = uiManager->get_action("/DefaultMenuBar/Settings/MouseAndKeyboardManipulation");
 	
@@ -302,7 +301,6 @@ int main( int argc, char ** argv )
 	{
 		showProperties->set_active(true);
 	}
-
 
 	// Gives the canvas' root node to the properties.
 	properties.setCanvas( canvas );
