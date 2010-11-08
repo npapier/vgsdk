@@ -9,6 +9,7 @@
 #include "vgGTK/field/adapter/MFAdapter.hpp"
 
 #include <vector>
+#include <vgUI/helpers.hpp>
 
 
 
@@ -45,7 +46,7 @@ struct MFVectorAdapter : public MFAdapter< VectorType >
 	{
 		for( unsigned int i = 0; i < m_columns.size(); ++i )
 		{
-			view.append_column_editable( Glib::ustring::compose("%1",i), m_columns[i] );
+			view.append_column_editable( vgUI::compose("%1%",i), m_columns[i] );
 		}
 	}
 	

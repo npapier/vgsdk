@@ -19,6 +19,7 @@
 #include <gtkmm/treeview.h>
 
 #include <vgd/field/TMultiField.hpp>
+#include <vgUI/helpers.hpp>
 
 #include "vgGTK/field/FieldEditor.hpp"
 
@@ -159,7 +160,7 @@ struct MultiFieldEditor2 : public FieldEditor, public Gtk::Table
 
 		
 		// Updates the status label to show the number of elements.
-		m_status.set_label( Glib::ustring::compose("%1 elements", fieldEditor->size()) );
+		m_status.set_label( vgUI::compose("%1% elements", fieldEditor->size()) );
 
 
 		// Sends a change notification.
@@ -195,7 +196,7 @@ struct MultiFieldEditor2 : public FieldEditor, public Gtk::Table
 
 
 		// Updates the status label to show the number of elements.
-		m_status.set_label( Glib::ustring::compose("%1 elements", fieldEditor->size()) );
+		m_status.set_label( vgUI::compose("%1% elements", fieldEditor->size()) );
 
 
 		// Sends a change notification.

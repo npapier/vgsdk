@@ -130,7 +130,7 @@ struct Number : public Widget< NumberType >, public Gtk::SpinButton
 
 	void setValue( const int & value )
 	{
-		set_text( Glib::ustring::compose("%1", value) );
+		set_text( vgUI::compose("%1%", value) );
 	}
 
 	const bool validate()
@@ -172,7 +172,7 @@ struct Number : public Widget< NumberType >, public Gtk::SpinButton
 
 	void setValue( const int & value )
 	{
-		set_text( Glib::ustring::compose("%1", value) );
+		set_text( vgUI::compose("%1%", value) );
 	}
 
 	const bool validate()

@@ -12,6 +12,8 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/stock.h>
 
+#include <vgUI/helpers.hpp>
+
 
 
 namespace vgGTK
@@ -95,7 +97,7 @@ void UserSettings::onLevelChanged()
 	if( level >= 0 )
 	{
 		m_settings.setLevel( level );
-		m_description.set_markup( Glib::ustring::compose("<i>%1</i>", m_settings.getDescription(level)) );
+		m_description.set_markup( vgUI::compose("<i>%1%</i>", m_settings.getDescription(level)) );
 		m_signalChanged.emit();
 	}
 	else
