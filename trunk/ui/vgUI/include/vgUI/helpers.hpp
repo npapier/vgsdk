@@ -2,12 +2,14 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGUI_HELPERS_HPP
 #define _VGUI_HELPERS_HPP
 
 #include <string>
 #include <boost/format.hpp>
+#include <vgBase/Type.hpp>
 #include "vgUI/vgUI.hpp"
 
 
@@ -27,6 +29,8 @@ struct VGUI_API Format
 	const std::string str() const;
 
 	Format& operator %( const int param );
+	Format& operator %( const uint32 param );
+	Format& operator %( const unsigned int param );
 	Format& operator %( const float param );
 	Format& operator %( const std::string param );
 

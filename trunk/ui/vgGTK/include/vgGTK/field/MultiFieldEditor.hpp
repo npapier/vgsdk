@@ -16,6 +16,7 @@
 #include <gtkmm/widget.h>
 #include <vgd/field/FieldManager.hpp>
 #include <vgd/field/TMultiField.hpp>
+#include <vgUI/helpers.hpp>
 
 #include "vgGTK/field/FieldEditor.hpp"
 
@@ -144,7 +145,7 @@ struct MultiFieldEditor : public FieldEditor, public Gtk::VBox
 		const unsigned int	upperBound = (m_values.size() >= m_visibleRows) ? (m_values.size() - m_visibleRows - 1) : 0;
 		
 		m_scrollbar.set_range( 0, upperBound );
-		m_status.set_text( Glib::ustring::compose("Element Count: %1", m_values.size()) );
+		m_status.set_text( vgUI::compose("Element Count: %1%", m_values.size()) );
 
 		// Refreshes the widgets.
 		refreshWidgetsFromValues();
@@ -250,7 +251,7 @@ private:
 				++curValue, ++curWidget
 				)
 		{
-			curWidget->first->set_text( Glib::ustring::compose("%1", std::distance(m_values.begin(), curValue) ) );
+			curWidget->first->set_text( vgUI::compose("%1%", std::distance(m_values.begin(), curValue) ) );
 			curWidget->second->setValue( *curValue );
 			curWidget->second->set_sensitive( true );
 		}
