@@ -163,8 +163,8 @@ void String::setValue( const std::string & value )
 		m_entry.set_width_chars( newWidth > 80 ? 80 : newWidth );
 	}
 
-	// If the new value containes some cariage returns, then switch in multi-line edition mode.
-	const bool	goMultiLine = value.find_first_of("\r\n") != std::string::npos;
+	// If the new value containes at least one cariage return, then switch in multi-line edition mode.
+	const bool	goMultiLine = value.find_first_of("\n") != std::string::npos;
 
 	m_multiLineButton.set_active( goMultiLine );
 	setMultiLine( goMultiLine );
