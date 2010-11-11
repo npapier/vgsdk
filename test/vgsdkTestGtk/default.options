@@ -26,5 +26,5 @@ libs		=	[
 					'vgEgg 0-5',
 					'vgTest 0-5'
 				]
-deps		= [ '../../../vgsdk' ]
+deps		= [ '../../../vgsdk', '../vgTest' ]
 test		= 'gtest'
