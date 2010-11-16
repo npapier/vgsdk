@@ -20,6 +20,7 @@
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vgd/event/MouseWheelEvent.hpp>
 #include <vgd/event/SizeEvent.hpp>
+#include <vgd/event/TimerEvent.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/event/detail/helpers.hpp>
 #include <vgd/node/MultiSwitch.hpp>
@@ -222,6 +223,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		const MouseButtonEvent                * mouseButtonEvent    = dynamic_cast<MouseButtonEvent*>(event.get());
 		const Location2Event                  * location2Event      = dynamic_cast<Location2Event*>(event.get());
 		const MouseWheelEvent                 * mouseWheelEvent     = dynamic_cast<MouseWheelEvent*>(event.get());
+		const TimerEvent                      * timerEvent          = dynamic_cast<TimerEvent*>(event.get());
 
 		if( keyboardButtonEvent != 0 )
 		{
@@ -258,6 +260,10 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 					toString( mouseWheelEvent->getAxis() ).c_str(),
 					mouseWheelEvent->getDelta()
 				);
+		}
+		else if ( timerEvent != 0 )
+		{
+			// Skip
 		}
 		else
 		{
@@ -862,7 +868,7 @@ std::ostream* Canvas::getGleOutputStream()
 		// Opens gle.txt if not already done
 		if ( m_gleLogFile.is_open() == false )
 		{
-			boost::filesystem::path glePath = sbf::path::get(sbf::path::Var) / "gle.txt";
+			boost::filesystem::path glePath = sbf::path::getSafe(sbf::path::Var) / "gle.txt";
 			m_gleLogFile.open( glePath.file_string().c_str() );
 		}
 
