@@ -102,7 +102,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	GenericCanvas()
 //#ifdef USE_GLC
 	:	m_glc( 0 ),
-		m_showMenu( false )
+		m_showMenu( false ),
+		m_fullscreen( false )
 //#endif
 	{
 		// vgLogDebug("Creates vgGTK::Canvas.");
@@ -131,7 +132,8 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	:	vgUI::Canvas( sharedCanvas ),
 //#ifdef USE_GLC
 		m_glc( 0 ),
-		m_showMenu( false )
+		m_showMenu( false ),
+		m_fullscreen( false )
 //#endif
 	{
 		// vgLogDebug("Creates vgGTK::Canvas.");
@@ -276,6 +278,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	{
 		// Retrieves the top level window.
 		Gtk::Window	* topLevel	= dynamic_cast< Gtk::Window * >( get_toplevel() );
+		m_fullscreen = wantFullscreen; // will set it when the context is initialized
 
 		if( !topLevel )
 		{
@@ -353,6 +356,11 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 #endif
 	}
 	//@}
+
+	const bool getFullscreenSetting()
+	{
+		return m_fullscreen;
+	}
 
 	/**
 	* @brief enable/disable popup menu
@@ -626,6 +634,7 @@ private:
 
 	sigc::connection	m_actionNodeConnection; ///< The connect to the popup menu mouse event.
 	bool				m_showMenu;
+	bool				m_fullscreen;
 
 	/**
 	 * @brief	Hides the cursor.
