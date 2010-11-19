@@ -115,7 +115,11 @@ vgd::Shp< vgio::ILoader > getLoaderByFilename( std::string filename )
 
 	// Get the right loader, depending on the found extension.
 	//@todo modifying trian and obj loader to respect ILoader Interface.
-	if ( /* extension.compare( ".trian" ) == 0 || */extension.compare( ".trian2" ) == 0 )
+	if (extension.compare( ".trian2" ) == 0 )
+	{
+		retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "trian2");
+	}
+	else if ( extension.compare( ".trian" ) == 0 )
 	{
 		retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "trian");
 	}

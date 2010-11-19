@@ -32,7 +32,7 @@
 namespace vgTrian
 {
 
-META_LOADER_CPP( vgTrian::Loader, "trian" )
+META_LOADER_CPP( vgTrian::Loader, "trian2" )
 
 std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const char* pathFilename, const bool bCCW )
 {
