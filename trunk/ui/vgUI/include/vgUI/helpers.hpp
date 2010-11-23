@@ -30,7 +30,6 @@ struct VGUI_API Format
 
 	Format& operator %( const int param );
 	Format& operator %( const uint32 param );
-	Format& operator %( const unsigned int param );
 	Format& operator %( const float param );
 	Format& operator %( const std::string param );
 

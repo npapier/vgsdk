@@ -37,13 +37,6 @@ Format& Format::operator %( const uint32 param )
 }
 
 
-Format& Format::operator %( const unsigned int param )
-{
-	m_converter % param;
-	return (*this);
-}
-
-
 Format& Format::operator %( const float param )
 {
 	m_converter % param;
