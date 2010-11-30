@@ -5,6 +5,7 @@
 // Author Guillaume Brocker
 
 #include "vgFFmpeg/Video.hpp"
+#include <iostream>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -286,7 +287,18 @@ const bool Video::next()
 	return false;
 }
 
-void Video::seek( float time )
+const float Video::getDuration() const
+{
+	if(pFormatCtx && 	pFormatCtx->streams[videoStream] )
+	{
+		const int num = pFormatCtx->streams[videoStream]->time_base.num;
+		const int den = pFormatCtx->streams[videoStream]->time_base.den;
+		return pFormatCtx->streams[videoStream]->duration * num / (float)den;
+	}
+	return 0;
+}
+
+void Video::seek( const float time )
 {
 	av_seek_frame(pFormatCtx, -1, (int64_t)(time*AV_TIME_BASE), AVSEEK_FLAG_FRAME);
 }
