@@ -286,9 +286,9 @@ const bool Video::next()
 	return false;
 }
 
-void Video::seek( int64_t time )
+void Video::seek( float time )
 {
-	av_seek_frame(pFormatCtx, -1, time*AV_TIME_BASE, AVSEEK_FLAG_FRAME);
+	av_seek_frame(pFormatCtx, -1, (int64_t)(time*AV_TIME_BASE), AVSEEK_FLAG_FRAME);
 }
 
 

@@ -53,7 +53,7 @@ struct VGFFMPEG_API Video
 	/**
 	 * @brief Set video position to the given time (in second).
 	 */
-	void seek(int64 time);
+	void seek(float time);
 
 
 
