@@ -868,7 +868,7 @@ std::ostream* Canvas::getGleOutputStream()
 		// Opens gle.txt if not already done
 		if ( m_gleLogFile.is_open() == false )
 		{
-			boost::filesystem::path glePath = sbf::path::getSafe(sbf::path::Var) / "gle.txt";
+			boost::filesystem::path glePath = getGlePath() / "gle.txt";
 			m_gleLogFile.open( glePath.file_string().c_str() );
 		}
 
@@ -885,6 +885,9 @@ std::ostream* Canvas::getGleOutputStream()
 	}
 }
 
-
+boost::filesystem::path Canvas::getGlePath()
+{
+	return sbf::path::getSafe(sbf::path::Var);
+}
 
 } // namespace vgUI

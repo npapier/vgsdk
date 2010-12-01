@@ -84,6 +84,13 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 */
 	static const GleLogSystem getGleLogSystem();
 
+	/**
+	 * @brief Gets Gle Path.
+	 *
+	 * @return a path.
+	 */
+	static boost::filesystem::path getGlePath();
+
 	//@}
 
 
