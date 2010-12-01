@@ -83,12 +83,12 @@ private:
 	};
 	PlayBackOutput m_output;
 
+	void update( const vgd::Shp< vgd::event::TimerEvent > event ); ///< override
 
 	/**
 	 * @name	Helpers
 	 */
 	//@{
-	void update( const vgd::Shp< vgd::event::TimerEvent > event );
 	void updateAspectRatio();										///< Updates outputs to match video's aspect ratio.
 	//@}
 
