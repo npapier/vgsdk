@@ -136,8 +136,11 @@ void VideoCallback::updateAspectRatio()
 	if( group && m_video )
 	{
 		vgd::Shp< Quad >	quad = vgd::visitor::findFirstByName< Quad >( group, QUAD_NODE_NAME );
-		
-		quad->initializeGeometry(1.f, (float) m_video->getHeight() / m_video->getWidth() );
+
+		if ( quad )
+		{
+			quad->initializeGeometry(1.f, (float) m_video->getHeight() / m_video->getWidth() );
+		}
 	}
 	// Else, nothing to do.
 }

@@ -287,9 +287,10 @@ const bool Video::next()
 	return false;
 }
 
+
 const float Video::getDuration() const
 {
-	if(pFormatCtx && 	pFormatCtx->streams[videoStream] )
+	if( pFormatCtx && pFormatCtx->streams[videoStream] )
 	{
 		const int num = pFormatCtx->streams[videoStream]->time_base.num;
 		const int den = pFormatCtx->streams[videoStream]->time_base.den;
@@ -297,6 +298,7 @@ const float Video::getDuration() const
 	}
 	return 0;
 }
+
 
 void Video::seek( const float time )
 {
@@ -310,18 +312,17 @@ const vgd::basic::ImageInfo& Video::getCurrent()
 	return m_currentImage;
 }
 
+
 const bool Video::isOver()
 {
-    if( url_feof( pFormatCtx->pb ) )
-	{
-		return true;
-	}
-	return false; 
+	return url_feof( pFormatCtx->pb );
 }
+
 
 void Video::restart()
 {
 	av_seek_frame( pFormatCtx, 0, 0, AVSEEK_FLAG_ANY ); 
 }
+
 
 } // namespace vgFFmpeg
