@@ -830,7 +830,23 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	}
 
 	// TEX COORD
-	// nothing to do
+	if ( pGLEngine->isTextureMappingEnabled() )
+	{
+		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
+		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
+				i != iEnd;
+				++i )
+		{
+			const uint unit = *i;
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+
+			if (	texUnitState /*&&
+					(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF)*/	)
+			{
+				configureTexCoord( pVertexShape, unit, 0 );
+			}
+		}
+	}
 
 	// @todo Optimizes numTexUnits == 1 case
 	/*const uint numTexUnits = pVertexShape->getNumTexUnits();
