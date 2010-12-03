@@ -11,6 +11,16 @@
 #include "vgd/Shp.hpp"
 #include "vgd/field/Types.hpp"
 
+#include <boost/thread/thread.hpp>
+#include <iostream>
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+namespace
+{
+boost::thread::id g_lockedID = boost::thread::id();
+}
 
 
 namespace vgd
@@ -56,6 +66,25 @@ FieldManager::~FieldManager()
 void FieldManager::destroy()
 {}
 
+
+
+void FieldManager::lockFieldAccess()
+{
+	g_lockedID = boost::this_thread::get_id();
+}
+
+const bool FieldManager::ensureFieldAccess(const std::string& strFieldName) const
+{
+	if( g_lockedID != boost::thread::id() && boost::this_thread::get_id() != g_lockedID )
+	{
+		std::cerr << "Access to field " << strFieldName << " from wrong thread" << std::endl;
+#if ( defined _WIN32 ) && ( defined _DEBUG )
+		DebugBreak();
+#endif
+		return false;
+	}
+	return true;
+}
 
 
 /**
