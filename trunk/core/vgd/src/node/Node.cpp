@@ -232,6 +232,7 @@ vgd::graph::Graph& Node::graph()
 void Node::lockGraph()
 {
 	g_lockedID = boost::this_thread::get_id();
+	field::FieldManager::lockFieldAccess();
 }
 
 

@@ -449,6 +449,14 @@ protected:
 	//@}
 
 
+	/**
+	 * @brief Lock field access to the current thread.
+	 *
+	 * Similar to what is done with vgd::node::Node.
+	 */
+
+	static void lockFieldAccess();
+
 
 private:
 
@@ -463,6 +471,7 @@ private:
 	template < typename T >
 	const vgd::Shp< T > getField( const std::string strFieldName ) const
 	{
+		ensureFieldAccess(strFieldName);
 		MapField::const_iterator iField = m_fields.find( strFieldName );
 
 		if ( iField != m_fields.end() )
@@ -489,6 +498,7 @@ private:
 	template < typename T >
 	vgd::Shp< T > getField( const std::string strFieldName )
 	{
+		ensureFieldAccess(strFieldName);
 		MapField::iterator iField = m_fields.find( strFieldName );
 
 		if ( iField != m_fields.end() )
@@ -516,6 +526,14 @@ private:
 	void destroy();
 
 	void copy( const FieldManager& rSrc );
+
+	/**
+	 * @brief Check that the current thread is the thread that has
+	 * been locked for field access through the lockFieldAccess
+	 * method.
+	*/
+	const bool ensureFieldAccess(const std::string& strFieldName) const;
+
 
 	/**
 	 * @name Data
