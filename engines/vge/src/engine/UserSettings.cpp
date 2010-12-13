@@ -168,7 +168,7 @@ const int UserSettings::getLevelCount() const
 
 
 void UserSettings::loadLevels()
-{	
+{
 	namespace bfs = boost::filesystem;
 	namespace bpt = boost::property_tree;
 	

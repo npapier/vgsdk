@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -169,6 +169,8 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	void transform( const vgm::Vec3f translation );
 
 	void transform( const vgm::Rotation rotation );
+
+	void scale( const vgm::Vec3f scale );
 
 	/**
 	* @brief	Check the texture coordinates dimension and call the template texutureTransform method to

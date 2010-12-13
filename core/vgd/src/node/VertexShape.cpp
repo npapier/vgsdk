@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, 2008, 2009, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -329,6 +329,17 @@ void VertexShape::transform( const vgm::Rotation rotation )
 		i->normalize();
 	}
 }
+
+
+
+void VertexShape::scale( const vgm::Vec3f scale )
+{
+	vgm::MatrixR transformation;
+	transformation.setScale( scale );
+
+	transform(transformation, true);
+}
+
 
 
 void VertexShape::textureTransform( const vgm::MatrixR& matrix, const int texUnit )
