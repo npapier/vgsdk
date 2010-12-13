@@ -217,6 +217,26 @@ struct TMultiField : public AbstractField
 		return m_vectorMF.back();
 	}
 
+
+
+	const T * ptr() const
+	{
+		assert( checkRO() );
+
+		assert( m_vectorMF.size() >= 1 );
+
+		return &m_vectorMF.front();
+	}
+
+
+	T * ptr()
+	{
+		assert( checkRW() );
+
+		assert( m_vectorMF.size() >= 1 );
+
+		return &m_vectorMF.front();
+	}
 	//@}
 
 
