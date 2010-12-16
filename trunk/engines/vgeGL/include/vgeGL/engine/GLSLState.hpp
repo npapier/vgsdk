@@ -93,7 +93,7 @@ void TBitSet<size>::reset()
  *
  * @todo uses TUnitContainer
  */
-struct GLSLState : public TBitSet< 14 >
+struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 {
 	enum BitSetIndexType
 	{
@@ -158,6 +158,13 @@ struct GLSLState : public TBitSet< 14 >
 	 */
 	void reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled );
 
+	/**
+	 * @name TBitSet
+	 */
+	//{@
+	void setEnabled( const uint index, const bool enabled = true );
+	void reset();
+	//@}
 
 	/**
 	 * @name Lighting state

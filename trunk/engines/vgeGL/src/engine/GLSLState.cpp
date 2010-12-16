@@ -67,7 +67,8 @@ const std::string& GLSLState::toString( const BitSetIndexType bitSetIndexType )
 
 
 GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
-:	postProcessing(16),
+:	DirtyFlag( "GLSLState" ),
+	postProcessing(16),
 	overlays(8),
 	outputBufferProperties(8),
 	m_light(maxLightUnits),
@@ -141,6 +142,24 @@ void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits, const b
 	setIlluminationInShadow( 0.4f ); // @todo Adds const float DEFAULT_ILLUMINATIONINSHADOW in node
 
 	setShadowSamplerUsageEnabled( isShadowSamplerUsageEnabled );
+
+	//dirty();
+}
+
+
+
+void GLSLState::setEnabled( const uint index, const bool enabled )
+{
+	vgeGL::engine::TBitSet< 14 >::setEnabled( index, enabled );
+	dirty(); // @todo only if !=
+}
+
+
+
+void GLSLState::reset()
+{
+	vgeGL::engine::TBitSet< 14 >::reset();
+	dirty();
 }
 
 
@@ -230,6 +249,7 @@ vgd::Shp< GLSLState::LightState > GLSLState::setLight( const uint indexLightUnit
 	assert( m_numLight >= 0 );
 	assert( m_numLight <= m_light.size() );
 
+	dirty(); // @todo OPTME
 	return oldLight;
 }
 
@@ -291,6 +311,7 @@ vgd::Shp< GLSLState::TexUnitState > GLSLState::setTexture( const uint indexTexUn
 	assert( m_numTexture >= 0 );
 	assert( m_numTexture <= m_texture.size() );
 
+	dirty(); // @todo OPTME
 	return oldTexture;
 }
 
@@ -351,6 +372,7 @@ vgd::node::Program * GLSLState::getProgram() const
 void GLSLState::setProgram( vgd::node::Program * program )
 {
 	m_program = program;
+	dirty();
 }
 
 
@@ -358,6 +380,7 @@ void GLSLState::setProgram( vgd::node::Program * program )
 void GLSLState::setShaderStage( const ShaderStage shaderStage, const std::string& glslCode )
 {
 	m_shaderStage[shaderStage] = glslCode;
+	dirty();
 }
 
 
@@ -379,6 +402,7 @@ const bool GLSLState::isShadowSamplerUsageEnabled() const
 void GLSLState::setShadowSamplerUsageEnabled( const bool enabled )
 {
 	m_isShadowSamplerEnabled = enabled;
+	dirty();
 }
 
 
