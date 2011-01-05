@@ -9,7 +9,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
-#include <gtest/gtest.h>
 
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
@@ -17,6 +16,7 @@
 #include <vgTest/convenience.hpp>
 
 #include "Fixtures.hpp"
+#include "gtest.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
@@ -30,7 +30,7 @@
 /**
 * @brief Compare a generated image and a reference image
 */
-TEST_P(VgTestCompression, LoadTest)
+TEST_P(VgTestCompression, DISABLED_LoadTest)
 {	
 	const ::testing::TestInfo* const test_info =
 	  ::testing::UnitTest::GetInstance()->current_test_info();
