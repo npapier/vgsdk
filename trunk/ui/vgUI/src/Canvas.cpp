@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/logic/tribool.hpp>
 #include <glo/GLSLProgram.hpp>
 #include <sbf/path.hpp>
 #include <vgCairo/helpers.hpp>
@@ -195,6 +196,88 @@ Canvas::~Canvas()
 
 
 
+void Canvas::setVerticalSynchronization( const bool enabled )
+{
+	assert( isCurrent() && "OpenGL context not current" );
+
+#ifdef _WIN32
+	if ( isWGL_EXT_swap_control() )
+	{
+		wglSwapIntervalEXT( enabled ? 1 : 0 );
+	}
+	else
+	{
+		vgLogDebug("WGL_EXT_swap_control not supported.");
+	}
+#elif __MACOSX__
+	#error "Platform not yet supported."
+#else
+	if ( isGLX_EXT_swap_control )
+	{
+		Display *dpy = glXGetCurrentDisplay();
+		GLXDrawable drawable = getXGetCurrentDrawable();
+		if ( drawable )
+		{
+			glXSwapIntervalEXT(dpy, drawable, enabled ? 1 : 0 ); 
+		}
+		else
+		{
+			vgLogDebug("Unable to retrieve drawable");
+		}
+	}
+	else
+	{
+		vgLogDebug("GLX_EXT_swap_control not supported.");
+	}
+#endif
+}
+
+
+
+const bool Canvas::isVerticalSynchronizationEnabled() const
+{
+	assert( isCurrent() && "OpenGL context not current" );
+
+#ifdef _WIN32
+	if ( isWGL_EXT_swap_control() )
+	{
+		const int retVal = wglGetSwapIntervalEXT();
+		return (retVal != 0);
+	}
+	else
+	{
+		vgLogDebug("WGL_EXT_swap_control not supported.");
+		return true;
+	}
+#elif __MACOSX__
+	#error "Platform not yet supported."
+#else
+	if ( isGLX_EXT_swap_control )
+	{
+		Display *dpy = glXGetCurrentDisplay();
+		GLXDrawable drawable = getXGetCurrentDrawable();
+		if ( drawable )
+		{
+			uint swapInterval;
+			glXQueryDrawable( dpy, drawable, GLX_SWAP_INTERVAL_EXT, &swapInterval );
+			return (swapInterval != 0);
+		}
+		else
+		{
+			vgLogDebug("Unable to retrieve drawable");
+			return true;
+		}
+	}
+	else
+	{
+		vgLogDebug("GLX_EXT_swap_control not supported.");
+		return true;
+	}
+#endif
+}
+
+
+
 void Canvas::switchFullscreen()
 {
 	setFullscreen( !isFullscreen() );
@@ -280,6 +363,19 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	assert( isCurrent() && "OpenGL context must have been set current." );
 
 	doInitialize();
+
+	boost::logic::tribool vsyncState = boost::logic::indeterminate;
+
+	// paint() must do several renderings => This is a bench
+	// So, disable V-SYNC
+	if ( getNumberOfFrames() > 1 )
+	{
+		// Saves vsync state
+		vsyncState = isVerticalSynchronizationEnabled();
+
+		// Disables vsync
+		setVerticalSynchronization( false );
+	}
 
 	while( getNumberOfFrames() > 0 )
 	{
@@ -409,6 +505,12 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		std::cout << "paintDuration:" << m_paintDuration.total_milliseconds() << std::endl;
 */
 		setNumberOfFrames( getNumberOfFrames()-1 );
+	}
+
+	// Restores previous state of vsync if needed
+	if ( !boost::logic::indeterminate(vsyncState) )
+	{
+		setVerticalSynchronization( vsyncState );
 	}
 
 	// Reset the number of frame to render next time to 1.
@@ -684,6 +786,17 @@ const bool Canvas::startVGSDK()
 		//m_engine->evaluateTopStateWithoutTrace( paint, true /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
 		//m_engine->evaluateTopStateWithoutTrace( paint, false /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
 
+		// Logs V-Sync state
+		if ( isVerticalSynchronizationEnabled() )
+		{
+			vgLogDebug("Vertical synchronization enabled");
+		}
+		else
+		{
+			vgLogDebug("Vertical synchronization disabled");
+		}
+
+		//
 		vgLogMessage("vgSDK startup completed.\n");
 	}
 
@@ -885,9 +998,11 @@ std::ostream* Canvas::getGleOutputStream()
 	}
 }
 
+
 boost::filesystem::path Canvas::getGlePath()
 {
 	return sbf::path::getSafe(sbf::path::Var);
 }
+
 
 } // namespace vgUI

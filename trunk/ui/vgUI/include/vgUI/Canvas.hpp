@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -85,9 +85,9 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	static const GleLogSystem getGleLogSystem();
 
 	/**
-	 * @brief Gets Gle Path.
+	 * @brief Gets the path to gle.txt file
 	 *
-	 * @return a path.
+	 * @return a path
 	 */
 	static boost::filesystem::path getGlePath();
 
@@ -95,13 +95,13 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 
 
 	/**
-	 * @name	Constructors & Destructor
+	 * @name	Constructors and destructor
 	 */
 	//@{
 	/**
 	 * @brief	Construct a Canvas with its own OpenGL context.
 	 *
-	 * @pre	getCanvasCount() == 0
+	 * @pre		getCanvasCount() == 0
 	 * @post	getCanvasCount() == 1
 	 */
 	Canvas();
@@ -113,7 +113,7 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 *
 	 * @pre	getCanvasCount() >= 1
 	 */
-	Canvas(	const Canvas * sharedCanvas );
+	Canvas( const Canvas * sharedCanvas );
 
 	/**
 	 * @brief	Virtual destructor
@@ -131,6 +131,7 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 * @name	Rendering Context
 	 */
 	//@{
+
 	/**
 	 * @brief Sets the current OpenGL context to this window.
 	 *
@@ -150,14 +151,42 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 *
 	 * @return true if the OpenGL context has been made current, false otherwise.
 	 */
-	virtual const bool isCurrent() = 0;
+	virtual const bool isCurrent() const = 0;
 
 	/**
 	 * @brief Performs an OpenGL swap buffer command.
 	 */
 	virtual void swapBuffer() = 0;
 
+	//@}
 
+
+	/**
+	 * @name OpenGL swap control
+	 */
+	//@{
+
+	/**
+	 * @brief Sets the vertical synchronization state of the current OpenGL context
+	 *
+	 * @pre isCurrent() == true
+	 */
+	void setVerticalSynchronization( const bool enabled = true );
+
+	/**
+	 * @brief Tests if the vertival synchronization is enabled
+	 *
+	 * @pre isCurrent() == true
+	 */
+	const bool isVerticalSynchronizationEnabled() const;
+	
+	//@}
+
+
+	/**
+	 * @name Fullscreen
+	 */
+	//@{
 
 	/**
 	 * @brief Enables/disables fullscreen mode.
@@ -179,7 +208,8 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 * @remarks To check if mode switching occurs, checks return value of isFullscreen()
 	 */
 	virtual void switchFullscreen();
-	///@}
+
+	//@}
 
 
 
