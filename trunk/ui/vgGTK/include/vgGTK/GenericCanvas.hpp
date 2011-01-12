@@ -200,7 +200,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		return retVal;
 	}
 
-
+//#define USE_GDEBUGGER
 	const bool unsetCurrent()
 	{
 		//vgLogDebug("vgGTK::Canvas::unsetCurrent");
@@ -213,17 +213,21 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		const bool retVal = true;
 #else
 
+	#ifdef USE_GDEBUGGER
+		// code path to be able to modify/recompile GLSL shaders in gDEBugger.
+		const bool retVal = true;
+		gleSetCurrent( 0 );
+	#else
+		// normal code path
 		const bool retVal = (m_glc != 0) ? glc_unset_current( m_glc ) : false;
 		gleSetCurrent( 0 );
-
-		// To be able to modify/recompile GLSL shaders in gDEBugger.
-		//const bool retVal = true;
+	#endif
 #endif
 		return retVal;
 	}
 
 
-	const bool isCurrent()
+	const bool isCurrent() const
 	{
 		//vgLogDebug("vgGTK::Canvas::isCurrent");
 
