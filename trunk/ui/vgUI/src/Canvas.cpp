@@ -29,12 +29,32 @@
 #include <vgd/visitor/helpers.hpp>
 #include <vgDebug/convenience.hpp>
 #include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vgeGL/engine/Engine.hpp>
 
 
 
 namespace vgUI
 {
+
+
+
+namespace
+{
+
+void logDebugVerticalSynchronizationState( Canvas * canvas )
+{
+	if ( canvas->isVerticalSynchronizationEnabled() )
+	{
+		vgLogDebug("Vertical synchronization is enabled");
+	}
+	else
+	{
+		vgLogDebug("Vertical synchronization is disabled");
+	}
+}
+
+}
 
 
 
@@ -103,14 +123,15 @@ Canvas::Canvas()
 :	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 	// m_gleLogSystem
 	// m_gleLogFile
-	m_gleContext				( getGleOutputStream()			),
-	m_sharedCanvas				( 0								),
-	m_scheduleScreenshot		( false							),
-	m_videoCapture				( false							),
-	m_debugEvents				( false							),
-	m_frameBase					( 0								),
+	m_gleContext					( getGleOutputStream()			),
+	m_sharedCanvas					( 0								),
+	m_initialVerticalSynchronization( true							),
+	m_scheduleScreenshot			( false							),
+	m_videoCapture					( false							),
+	m_debugEvents					( false							),
+	m_frameBase						( 0								),
 	// m_timeBase
-	m_fps						( -1							)
+	m_fps							( -1							)
 {
 	// Updates the number of canvas
 	assert( getCanvasCount() == 0 && "This is not the first canvas." );
@@ -129,14 +150,15 @@ Canvas::Canvas(	const Canvas *sharedCanvas )
 :	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 	// m_gleLogSystem
 	// m_gleLogFile
-	m_gleContext				( getGleOutputStream()			),
-	m_sharedCanvas				( 0								),
-	m_scheduleScreenshot		( false							),
-	m_videoCapture				( false							),
-	m_debugEvents				( false							),
-	m_frameBase					( 0								),
+	m_gleContext					( getGleOutputStream()			),
+	m_sharedCanvas					( sharedCanvas					),
+	m_initialVerticalSynchronization( true							),
+	m_scheduleScreenshot			( false							),
+	m_videoCapture					( false							),
+	m_debugEvents					( false							),
+	m_frameBase						( 0								),
 	// m_timeBase
-	m_fps						( -1							)
+	m_fps							( -1							)
 {
 	// Updates the number of canvas
 	assert( getCanvasCount() >= 1 && "This is the first canvas." );
@@ -196,8 +218,31 @@ Canvas::~Canvas()
 
 
 
+void Canvas::setInitialVerticalSynchronization( const bool enabled )
+{
+	m_initialVerticalSynchronization = enabled;
+}
+
+
+
+const bool Canvas::hasVerticalSynchronizationControl() const
+{
+	assert( isCurrent() && "OpenGL context not current" );
+
+#ifdef _WIN32
+	return isWGL_EXT_swap_control();
+#elif __MACOSX__
+	#error "Platform not yet supported."
+#else
+	return isGLX_EXT_swap_control();
+#endif
+}
+
+
+
 void Canvas::setVerticalSynchronization( const bool enabled )
 {
+	assert( hasVerticalSynchronizationControl() && "Vertical synchronization control is not available" );
 	assert( isCurrent() && "OpenGL context not current" );
 
 #ifdef _WIN32
@@ -212,7 +257,7 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 #elif __MACOSX__
 	#error "Platform not yet supported."
 #else
-	if ( isGLX_EXT_swap_control )
+	if ( isGLX_EXT_swap_control() )
 	{
 		Display *dpy = glXGetCurrentDisplay();
 		GLXDrawable drawable = getXGetCurrentDrawable();
@@ -236,6 +281,7 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 
 const bool Canvas::isVerticalSynchronizationEnabled() const
 {
+	assert( hasVerticalSynchronizationControl() && "Vertical synchronization control is not available" );
 	assert( isCurrent() && "OpenGL context not current" );
 
 #ifdef _WIN32
@@ -247,7 +293,7 @@ const bool Canvas::isVerticalSynchronizationEnabled() const
 	else
 	{
 		vgLogDebug("WGL_EXT_swap_control not supported.");
-		return true;
+		return false;
 	}
 #elif __MACOSX__
 	#error "Platform not yet supported."
@@ -265,13 +311,13 @@ const bool Canvas::isVerticalSynchronizationEnabled() const
 		else
 		{
 			vgLogDebug("Unable to retrieve drawable");
-			return true;
+			return false;
 		}
 	}
 	else
 	{
 		vgLogDebug("GLX_EXT_swap_control not supported.");
-		return true;
+		return false;
 	}
 #endif
 }
@@ -786,14 +832,41 @@ const bool Canvas::startVGSDK()
 		//m_engine->evaluateTopStateWithoutTrace( paint, true /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
 		//m_engine->evaluateTopStateWithoutTrace( paint, false /*isPreTraverse*/ ); //FIXME BUG BECAUSE SEPARATOR is evaluated pre and not post...
 
-		// Logs V-Sync state
-		if ( isVerticalSynchronizationEnabled() )
+		// *** Vertical synchronization ***
+		if ( hasVerticalSynchronizationControl() )
 		{
-			vgLogDebug("Vertical synchronization enabled");
+			// Logs V-Sync state
+			logDebugVerticalSynchronizationState( this );
+
+			// Sets initial V-Sync state
+			if ( isVerticalSynchronizationEnabled() != m_initialVerticalSynchronization )
+			{
+				setVerticalSynchronization( m_initialVerticalSynchronization );
+
+				// Success ?
+				if ( isVerticalSynchronizationEnabled() == m_initialVerticalSynchronization )
+				{
+					if ( m_initialVerticalSynchronization )
+					{
+						vgLogDebug("Enables vertical synchronization");
+					}
+					else
+					{
+						vgLogDebug("Disables vertical synchronization");
+					}
+				}
+				else
+				{
+					vgLogDebug("Unable to modify the vertical synchronization.");
+					vgLogDebug("Checks 'Wait for vertical refresh' or something similar in the settings of your graphic card.");
+					vgLogDebug("It is certainly set to 'Always off' or 'Always on'");
+				}
+			}
+			// else nothing to do
 		}
 		else
 		{
-			vgLogDebug("Vertical synchronization disabled");
+			vgLogDebug("No control of the vertical synchronization (EXT_swap_control)");
 		}
 
 		//

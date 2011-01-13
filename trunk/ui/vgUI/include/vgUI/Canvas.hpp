@@ -167,19 +167,38 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	//@{
 
 	/**
+	 * @brief Sets the initial vertical synchronization state of this canvas
+	 *
+	 * At the end of the vgsdk startup (see startVGSDK()), the OpenGL context is configured using the setting
+	 * given by this method. By default, vertical synchronization is enabled (if swap control is available and
+	 * not overridden by driver).
+	 */
+	void setInitialVerticalSynchronization( const bool enabled );
+
+
+	/**
+	 * @brief Tests if vertical synchronization control is available
+	 *
+	 * @pre isCurrent()
+	 *
+	 * @return true if available, false otherwise
+	 */
+	const bool hasVerticalSynchronizationControl() const;
+
+	/**
 	 * @brief Sets the vertical synchronization state of the current OpenGL context
 	 *
-	 * @pre isCurrent() == true
+	 * @pre hasVerticalSynchronizationControl() and isCurrent()
 	 */
 	void setVerticalSynchronization( const bool enabled = true );
 
 	/**
-	 * @brief Tests if the vertival synchronization is enabled
+	 * @brief Tests if the vertical synchronization is enabled
 	 *
-	 * @pre isCurrent() == true
+	 * @pre hasVerticalSynchronizationControl() and isCurrent()
 	 */
 	const bool isVerticalSynchronizationEnabled() const;
-	
+
 	//@}
 
 
@@ -600,18 +619,20 @@ private:
 	 */
 	static std::ostream* getGleOutputStream();
 
-	const Canvas *			m_sharedCanvas;		///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
+	const Canvas *		m_sharedCanvas;						///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 
-	bool				m_scheduleScreenshot;		///< Boolean value telling if a screen capture should be done at the end of next rendering.
-	std::string			m_screenshotFilename;		///< name of file used for the screenshot
-	bool				m_videoCapture;				///< Boolean value telling if the video capture is enabled.
+	bool				m_initialVerticalSynchronization;	///< the initial vertical synchronization state of this canvas
 
-	bool				m_debugEvents;				///< Boolean value telling if events should be debugged or not.
+	bool				m_scheduleScreenshot;				///< Boolean value telling if a screen capture should be done at the end of next rendering.
+	std::string			m_screenshotFilename;				///< name of file used for the screenshot
+	bool				m_videoCapture;						///< Boolean value telling if the video capture is enabled.
+
+	bool				m_debugEvents;						///< Boolean value telling if events should be debugged or not.
 
 protected: // @todo FIXME
 	vgd::Shp< vgd::node::MultiSwitch >		m_debugOverlayContainer;	///< A reference on the overlay container node used internally by vgSDK
 private:
-	vgd::Shp< vgd::node::LayerPlan >		m_overlayForFPS;	///< A reference on the layer plan used to render fps
+	vgd::Shp< vgd::node::LayerPlan >		m_overlayForFPS;			///< A reference on the layer plan used to render fps
 
 	/**
 	 * @name Attributes used to compute fps
