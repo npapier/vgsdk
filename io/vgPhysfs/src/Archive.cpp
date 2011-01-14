@@ -114,7 +114,7 @@ void Archive::getFile( std::string filename, vgd::Shp< std::vector< char > > buf
 	//buffer.reset( new std::vector< char > );
 	buffer->resize( PHYSFS_fileLength( m_currentFile ) );
 	int length_read = PHYSFS_read( m_currentFile, &(*buffer)[0], 1, PHYSFS_fileLength( m_currentFile ));
-	//length_read = ( ( length_read + 7 ) &~7 ); //lenght must be a multiple of 8
+	//length_read = ( ( length_read + 7 ) &~7 ); //length must be a multiple of 8
 
 	buffer->resize( length_read );
 }

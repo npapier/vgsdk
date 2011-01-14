@@ -41,7 +41,7 @@ void Encrypt::setInitialize( const std::string key, vgd::Shp< std::vector<char> 
 	m_inBuffer	= inBuffer;
 	m_outBuffer	= outBuffer;
 
-	const int length_read = ( ( m_inBuffer->size() + 7 ) &~7 ); //lenght must be a multiple of 8
+	const int length_read = ( ( m_inBuffer->size() + 7 ) &~7 ); //length must be a multiple of 8
 	m_inBuffer->resize( length_read );
 	m_outBuffer->resize( length_read );
 }

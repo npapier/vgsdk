@@ -491,7 +491,7 @@ vgm::Vec4f		out5b( in5 );
 	T		normalize( void );
 
 	/**
-	 * @brief Returns normalized vector(unit lenght).
+	 * @brief Returns normalized vector(unit length).
 	 */
 	Vector	getNormalized( void ) const;
 
