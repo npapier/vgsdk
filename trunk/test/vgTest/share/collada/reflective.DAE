@@ -161,8 +161,8 @@
           <plane>
             <density>1</density>
             <generateuvs>1</generateuvs>
-            <lenght>100</lenght>
-            <lenghtsegments>1</lenghtsegments>
+            <length>100</length>
+            <lengthsegments>1</lengthsegments>
             <scale>1</scale>
             <width>100</width>
             <widthsegments>1</widthsegments>
