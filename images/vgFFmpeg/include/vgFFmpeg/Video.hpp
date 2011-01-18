@@ -55,6 +55,12 @@ struct VGFFMPEG_API Video
 	 */
 	const float getDuration() const;
 
+
+	/**
+	 * @brief get current position.
+	 */
+	const float getPosition() const;
+
 	/**
 	 * @brief Set video position to the given time (in seconds).
 	 */
@@ -85,6 +91,7 @@ protected:
 	uint8 /*uint8_t*/ *	buffer;
 
 	uint i;
+	int64 currentPos;
 
 	vgd::basic::ImageInfo m_currentImage;
 };
