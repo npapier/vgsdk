@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -174,6 +174,10 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	vgd::Shp< Engine::GLSLActivationState > glslActivationState = engine->getGLSLActivationState();
 	engine->sethCurrentProgram();
 
+	// Saves texture mapping state and disables it
+	const bool isTextureMappingEnabledBak = engine->isTextureMappingEnabled();
+	engine->setTextureMappingEnabled(false);
+
 	setPassDescription("RayCasting::apply()");
 	beginPass();
 
@@ -298,6 +302,9 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 
 	//
 	finishEval();
+
+	// Restores texture mapping state
+	engine->setTextureMappingEnabled( isTextureMappingEnabledBak );
 
 	// Restores GLSL activation state
 	engine->setGLSLActivationState( glslActivationState );
