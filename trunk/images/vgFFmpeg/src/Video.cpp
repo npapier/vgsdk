@@ -275,6 +275,7 @@ const bool Video::next()
 				//m_currentImage.save("video.png");*/
 
 				//
+				currentPos = packet.dts;
 				av_free_packet( &packet );// @todo not very cute (DUPLICATED)
 				return true;
 			}
@@ -294,11 +295,17 @@ const float Video::getDuration() const
 	{
 		const int num = pFormatCtx->streams[videoStream]->time_base.num;
 		const int den = pFormatCtx->streams[videoStream]->time_base.den;
-		return pFormatCtx->streams[videoStream]->duration * num / (float)den;
+		return pFormatCtx->streams[videoStream]->duration * ( num / (float)den );
 	}
 	return 0;
 }
 
+const float Video::getPosition() const
+{
+	const int num = pFormatCtx->streams[videoStream]->time_base.num;
+	const int den = pFormatCtx->streams[videoStream]->time_base.den;
+	return (float)currentPos*num/den;
+}
 
 void Video::seek( const float time )
 {
