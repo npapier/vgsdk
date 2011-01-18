@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -116,12 +116,14 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 					glslState.dirty();
 				}
 			}
-			//else
-			//{
+			else
+			{
 				//texUnitState->setTexCoordDim( 0 );
-				//vgLogDebug3(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
-				//				pVertexShape->getName().c_str(), unit );
-			//}
+#ifdef _DEBUG
+				vgLogDebug3(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
+								pVertexShape->getName().c_str(), unit );
+#endif
+			}
 		}
 	}
 
@@ -658,13 +660,11 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 			const vgd::Shp< GLSLState::TexUnitState > current = glslState.getTexture( unit );
 
 			// Empty texture unit, so do nothing
-#ifdef _DEBUG
 			if ( current == 0 )
 			{
-				assert( false );
 				continue;
 			}
-#endif
+
 			const vgd::node::Texture *	textureNode	= current->getTextureNode();
 			glo::Texture *				texture		= current->getTexture();
 			const uint8					texCoordDim	= current->getTexCoordDim();
