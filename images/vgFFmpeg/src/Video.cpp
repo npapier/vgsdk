@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -72,7 +72,8 @@ Video::Video( const std::string& pathFilename )
 	numBytes(0),
 	buffer(0),
 
-	i(0)
+	i(0),
+	currentPos(0)
 	// m_currentImage
 {
 	// Open video file
@@ -197,6 +198,49 @@ const int Video::getHeight() const
 
 
 
+const float Video::getDuration() const
+{
+	if( pFormatCtx && pFormatCtx->streams[videoStream] )
+	{
+		const int num = pFormatCtx->streams[videoStream]->time_base.num;
+		const int den = pFormatCtx->streams[videoStream]->time_base.den;
+
+		return pFormatCtx->streams[videoStream]->duration * ( num / (float)den );
+	}
+	return 0;
+}
+
+
+const float Video::getPosition() const
+{
+	if( pFormatCtx && pFormatCtx->streams[videoStream] )
+	{
+		const int num = pFormatCtx->streams[videoStream]->time_base.num;
+		const int den = pFormatCtx->streams[videoStream]->time_base.den;
+
+		return currentPos*(num/(float)den);
+	}
+}
+
+
+const bool Video::isOver()
+{
+	return url_feof( pFormatCtx->pb );
+}
+
+
+void Video::seek( const float time )
+{
+	av_seek_frame(pFormatCtx, -1, (int64_t)(time*AV_TIME_BASE), AVSEEK_FLAG_FRAME);
+}
+
+
+void Video::restart()
+{
+	av_seek_frame( pFormatCtx, 0, 0, AVSEEK_FLAG_ANY ); 
+}
+
+
 const bool Video::next()
 {
 	if ( pFormatCtx == 0 )
@@ -289,46 +333,10 @@ const bool Video::next()
 }
 
 
-const float Video::getDuration() const
-{
-	if( pFormatCtx && pFormatCtx->streams[videoStream] )
-	{
-		const int num = pFormatCtx->streams[videoStream]->time_base.num;
-		const int den = pFormatCtx->streams[videoStream]->time_base.den;
-		return pFormatCtx->streams[videoStream]->duration * ( num / (float)den );
-	}
-	return 0;
-}
-
-const float Video::getPosition() const
-{
-	const int num = pFormatCtx->streams[videoStream]->time_base.num;
-	const int den = pFormatCtx->streams[videoStream]->time_base.den;
-	return (float)currentPos*num/den;
-}
-
-void Video::seek( const float time )
-{
-	av_seek_frame(pFormatCtx, -1, (int64_t)(time*AV_TIME_BASE), AVSEEK_FLAG_FRAME);
-}
-
-
 const vgd::basic::ImageInfo& Video::getCurrent()
 {
 	assert( m_currentImage.isEmpty() == false && "Current image is empty." );
 	return m_currentImage;
-}
-
-
-const bool Video::isOver()
-{
-	return url_feof( pFormatCtx->pb );
-}
-
-
-void Video::restart()
-{
-	av_seek_frame( pFormatCtx, 0, 0, AVSEEK_FLAG_ANY ); 
 }
 
 

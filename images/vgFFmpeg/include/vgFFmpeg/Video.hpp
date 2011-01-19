@@ -31,6 +31,11 @@ namespace vgFFmpeg
 struct VGFFMPEG_API Video
 {
 	/**
+	 * @name Constructor and destructor
+	 */
+	//@{
+
+	/**
 	 * @brief Constructor
 	 */
 	Video( const std::string& pathFilename );
@@ -39,6 +44,13 @@ struct VGFFMPEG_API Video
 	 * @brief Destructor
 	 */
 	~Video();
+	//@}
+
+
+	/**
+	 * @name Accessors
+	 */
+	//@{
 
 	/**
 	 * @brief	Retrieves the width.
@@ -50,31 +62,43 @@ struct VGFFMPEG_API Video
 	 */
 	const int getHeight() const;
 
+
 	/**
 	 * @brief	Retrieves video duration (in seconds).
 	 */
 	const float getDuration() const;
 
-
 	/**
-	 * @brief get current position.
+	 * @brief	Retrieves the current position.
 	 */
 	const float getPosition() const;
 
+	// @todo doc
+	const bool isOver();
+	//@}
+
+
+	/**
+	 * @name Actions
+	 */
+	//@{
 	/**
 	 * @brief Set video position to the given time (in seconds).
 	 */
-	void seek(const float time);
+	void seek( const float time );
 
-
-
-	const bool next();
-
-	const vgd::basic::ImageInfo& getCurrent();
-
-	const bool isOver();
-
+	// @todo doc
 	void restart();
+	//@}
+
+
+	/**
+	 * @name Decoding method
+	 */
+	//@{
+	const bool next();
+	const vgd::basic::ImageInfo& getCurrent();
+	//@}
 
 
 protected:
@@ -88,7 +112,7 @@ protected:
 	AVFrame	*pFrameRGB;
 
 	int					numBytes;
-	uint8 /*uint8_t*/ *	buffer;
+	uint8 *				buffer;
 
 	uint i;
 	int64 currentPos;
