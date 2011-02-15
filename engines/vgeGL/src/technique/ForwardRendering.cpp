@@ -296,13 +296,12 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 	}
 	else if ( shadowQuality == LightModel::HIGH )
 	{
-		drawingSurface *= 2;
 		drawingSurface = vgm::nextPower2(drawingSurface);
 	}
 	else if ( shadowQuality == LightModel::VERY_HIGH )
 	{
-		drawingSurface *= 3;
 		drawingSurface = vgm::nextPower2(drawingSurface);
+		drawingSurface *= 2;
 	}
 
 	// Takes care of the maximum viewport size
@@ -559,7 +558,7 @@ std::pair< vgd::basic::IImage::Type, vgd::node::Texture::InternalFormatValueType
 ForwardRendering::ForwardRendering()
 :	m_shadowMappingInput( new ShadowMappingInput() )
 {
-	// Initializes Quad for PostProcessing	
+	// Initializes Quad for PostProcessing
 	if ( !m_quad1 )
 	{
 		m_quad1 = vgd::node::Quad::create("ForwardRendering.fullscreenQuad1Tex");
@@ -928,13 +927,16 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 				fbo->bind();
 			}
 
+			// Saves texture mapping state
 			const bool isTextureMappingEnabledBak = engine->isTextureMappingEnabled();
+
 // @todo FIXME : This should work on NV GPU !!!
 			if ( !engine->getGLSLState().isShadowSamplerUsageEnabled() )
 			//if ( gleGetCurrent()->getDriverProvider() == gle::OpenGLExtensions::ATI_DRIVERS )
 			{
 				engine->disregardIfIsAKindOf<vgd::node::Texture>();
 				// pre-configuration
+				// Disables texture mapping
 				engine->setTextureMappingEnabled(false);
 			}
 
@@ -1025,6 +1027,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 									image->pixels() );*/
 
 			endPass();
+			// Restores texture mapping state
 			engine->setTextureMappingEnabled( isTextureMappingEnabledBak );
 		}
 		//engine->setTextureMappingEnabled(isTextureMappingEnabled);
