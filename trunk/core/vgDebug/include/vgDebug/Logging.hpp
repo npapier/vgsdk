@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -36,6 +36,7 @@ struct VGDEBUG_API Logging : public ILogging
 	void logSysError	( const char *szFormat, ... ) const;
 
 	void logDebug		( const char *szFormat, ... ) const;
+	void logDebug		( const char *szFormat, va_list args ) const;
 	void logTrace		( const char *szFormat, ... ) const;
 
 	void flush			() const;
