@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier and Clement Forest
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier and Clement Forest
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 #define _VGDEBUG_HELPERS_HPP
 
 #include "vgDebug/Global.hpp"
+#include "vgDebug/ILogging.hpp"
 
 namespace sbf { struct Module; }
 
@@ -33,16 +34,27 @@ namespace sbf { struct Module; }
 #define vgLogMessage3( arg1, arg2, arg3 )		vgDebug::get().logMessage( (arg1), (arg2), (arg3) )
 
 #ifdef _DEBUG
-#define vgLogDebug( arg1 )						vgDebug::get().logDebug( (arg1) )
-#define vgLogDebug2( arg1, arg2 )				vgDebug::get().logDebug( (arg1), (arg2) )
-#define vgLogDebug3( arg1, arg2, arg3 )			vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
-#define vgLogDebug4( arg1, arg2, arg3, arg4 )	vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4) )
+#define vgLogDebug( arg1 )							vgDebug::get().logDebug( (arg1) )
+#define vgLogDebug2( arg1, arg2 )					vgDebug::get().logDebug( (arg1), (arg2) )
+#define vgLogDebug3( arg1, arg2, arg3 )				vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
+#define vgLogDebug4( arg1, arg2, arg3, arg4 )		vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4) )
+#define vgLogDebug5( arg1, arg2, arg3, arg4, arg5 )	vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4), (arg5) )
 #else
-#define vgLogDebug( arg1 )						vgDebug::get().logDebug( (arg1) )
-#define vgLogDebug2( arg1, arg2 )				vgDebug::get().logDebug( (arg1), (arg2) )
-#define vgLogDebug3( arg1, arg2, arg3 )			vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
-#define vgLogDebug4( arg1, arg2, arg3, arg4 )	vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4) )
+#define vgLogDebug( arg1 )							vgDebug::get().logDebug( (arg1) )
+#define vgLogDebug2( arg1, arg2 )					vgDebug::get().logDebug( (arg1), (arg2) )
+#define vgLogDebug3( arg1, arg2, arg3 )				vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
+#define vgLogDebug4( arg1, arg2, arg3, arg4 )		vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4) )
+#define vgLogDebug5( arg1, arg2, arg3, arg4, arg5 )	vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4), (arg5) )
 #endif
+
+
+
+#define vgAssert( expression )										vgDebug::get().logAssert( (expression), "", (#expression), __FILE__, __LINE__ )
+#define vgAssert2( expression, message )							vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__ )
+#define vgAssert3( expression, message, arg1 )						vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1) )
+#define vgAssert4( expression, message, arg1, arg2 )				vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2) )
+#define vgAssert5( expression, message, arg1, arg2, arg3 )			vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2), (arg3) )
+#define vgAssert6( expression, message, arg1, arg2, arg3, arg4 )	vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2), (arg3), (arg4) )
 
 
 

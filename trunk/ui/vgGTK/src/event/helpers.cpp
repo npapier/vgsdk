@@ -8,7 +8,7 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <vgd/event/KeyboardButtonEvent.hpp>
-#include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
 
 
 

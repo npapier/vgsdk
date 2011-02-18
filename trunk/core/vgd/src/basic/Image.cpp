@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,7 @@
 
 #include <boost/thread.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
-#include <vgDebug/convenience.hpp>
+#include <vgDebug/helpers.hpp>
 
 #include "vgd/Shp.hpp"
 
@@ -216,7 +216,7 @@ bool Image::load( std::string strFilename )
 	// Bind this image name.
 	bind();
 
-	vgDebug::get().logDebug("Image::load: Start reading image %s.", strFilename.c_str() );
+	vgLogDebug2("Image::load: Start reading image %s.", strFilename.c_str() );
 	
 	// Loads the image specified by strFilename into the ImgId image.
 	if ( ilLoadImage( const_cast<char*>( strFilename.c_str() ) ) == IL_FALSE )
@@ -231,8 +231,9 @@ bool Image::load( std::string strFilename )
 	{
 		updateInformations();
 		
-		vgDebug::get().logDebug("Image::load: Finish reading image %s (%i x %i).",
-								strFilename.c_str(), width(), height() );		
+		vgLogDebug4(	"Image::load: Finish reading image %s (%i x %i).",
+						strFilename.c_str(), 
+						width(), height() );
 
 		return true;
 	}
@@ -252,8 +253,8 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	// Bind this image name.
 	bind();
 
-	vgDebug::get().logDebug("Image::load: Start reading image %s.", strFilename.c_str() );
-	
+	vgLogDebug2("Image::load: Start reading image %s.", strFilename.c_str() );
+
 	// Retrieves the extension of the given filename.
 	vgd::basic::FilenameExtractor	extractor( strFilename.c_str() );
 	std::string						extension = extractor.getLowerCaseExtension();
@@ -273,8 +274,8 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	{
 		updateInformations();
 		
-		vgDebug::get().logDebug("Image::load: Finish reading image %s (%i x %i).",
-								strFilename.c_str(), width(), height() );
+		vgLogDebug4("Image::load: Finish reading image %s (%i x %i).",
+					strFilename.c_str(), width(), height() );
 
 		return true;
 	}
@@ -762,29 +763,29 @@ bool Image::reportILError() const
 		switch ( error )
 		{
 			case IL_COULD_NOT_OPEN_FILE:
-				vgDebug::get().logDebug("Image: Could not open file" );
+				vgLogDebug("Image: Could not open file" );
 				//TRACE("IL_COULD_NOT_OPEN_FILE : ");
 				break;
 
 			case IL_ILLEGAL_OPERATION:
-				vgDebug::get().logDebug("Image: Illegal operation" );
+				vgLogDebug("Image: Illegal operation" );
 				//TRACE("IL_ILLEGAL_OPERATION : ");
 				break;
 
 			case IL_INVALID_EXTENSION:
-				vgDebug::get().logDebug("Image: Invalid extension" );
+				vgLogDebug("Image: Invalid extension" );
 				//TRACE("IL_INVALID_EXTENSION : ");
 				break;
 
 			case IL_INVALID_PARAM:
-				vgDebug::get().logDebug("Image: Invalid param" );
+				vgLogDebug("Image: Invalid param" );
 				//TRACE("IL_INVALID_PARAM : ");
 				break;
 			
 			default:
-				vgDebug::get().logDebug("Image: Unknown error" );
+				vgLogDebug("Image: Unknown error" );
 		}
-		
+
 		return true;
 	}
 }

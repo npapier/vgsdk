@@ -5,7 +5,7 @@
 
 #include "vgOpenCOLLADA/exporter/GeometryExporter.hpp"
 
-#include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vgd/node/MultipleInstances.hpp>
 #include <vgd/visitor/helpers.hpp>
 

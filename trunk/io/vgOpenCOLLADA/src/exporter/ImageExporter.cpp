@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010 Nicolas Papier, Maxime Peresson.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -9,7 +9,7 @@
 
 #include <sbf/path.hpp>
 
-#include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vgd/basic/Image.hpp>
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Clement Forest
+// VGSDK - Copyright (C) 2010, 2011, Clement Forest, Nicolas Papier
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Clement Forest
@@ -32,7 +32,6 @@ std::string				g_logFileSuffix;
 std::string				g_currentLogFile;
 
 boost::filesystem::path	g_logDirectory;
-
 }
 
 
@@ -132,4 +131,3 @@ void Log::logBasicInfo(int argc, char** argv, const sbf::Module& module)
 
 
 } // namespace vgDebug
-

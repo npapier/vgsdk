@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -109,6 +109,13 @@ void Logging::logDebug( const char *szFormat, ... ) const
 	g_logv( G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, szFormat, marker );
 
 	va_end( marker );
+}
+
+
+
+void Logging::logDebug( const char *szFormat, va_list args ) const
+{
+	g_logv( G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, szFormat, args );
 }
 
 
