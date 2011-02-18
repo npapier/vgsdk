@@ -14,7 +14,7 @@
 #include <vgAlg/actions/Triangulate.hpp>
 
 
-#include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
 
 #include <vge/technique/CollectNode.hpp>
 #include <vgeGL/engine/Engine.hpp>

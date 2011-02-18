@@ -12,7 +12,7 @@
 #include <vgd/Shp.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/node/VertexShape.hpp>
-#include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
 
 
 

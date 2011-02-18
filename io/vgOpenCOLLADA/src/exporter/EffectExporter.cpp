@@ -7,7 +7,7 @@
 
 #include <COLLADASWSampler.h>
 
-#include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vgd/visitor/helpers.hpp>
 
 
