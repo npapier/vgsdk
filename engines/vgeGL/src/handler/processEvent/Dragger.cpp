@@ -8,7 +8,7 @@
 
 #include <GL/glu.h>
 
-#include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/Location2Event.hpp>
 #include <vgd/event/Motion3Event.hpp>
