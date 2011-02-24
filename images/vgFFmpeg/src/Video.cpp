@@ -207,7 +207,10 @@ const float Video::getDuration() const
 
 		return pFormatCtx->streams[videoStream]->duration * ( num / (float)den );
 	}
-	return 0;
+	else
+	{
+		return 0.f;
+	}
 }
 
 
@@ -219,6 +222,10 @@ const float Video::getPosition() const
 		const int den = pFormatCtx->streams[videoStream]->time_base.den;
 
 		return currentPos*(num/(float)den);
+	}
+	else
+	{
+		return 0.f;
 	}
 }
 
