@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #ifndef _VGGTK_FIELD_OPTIONALFIELDEDITOR_HPP_
 #define _VGGTK_FIELD_OPTIONALFIELDEDITOR_HPP_
@@ -72,11 +73,11 @@ struct OptionalFieldEditor : public FieldEditor
 
 		if( m_widget.hasValue() )
 		{
-			fieldEditor.get()->setValue( m_widget.getValue() );
+			fieldEditor->setValue( m_widget.getValue() );
 		}
 		else
 		{
-			fieldEditor.get()->eraseValue();
+			fieldEditor->eraseValue();
 		}
 	}
 	
@@ -91,7 +92,7 @@ struct OptionalFieldEditor : public FieldEditor
 		typename Widget::ValueType			value;
 		bool								hasValue;
 
-		hasValue = fieldEditor.get()->getValue( value );
+		hasValue = fieldEditor->getValue( value );
 
 		if( hasValue )
 		{
@@ -116,12 +117,14 @@ struct OptionalFieldEditor : public FieldEditor
 
 		if( m_backupValue )
 		{
-			fieldEditor.get()->setValue( *m_backupValue );
+			fieldEditor->setValue( *m_backupValue );
+			fieldEditor.release();
 			m_widget.setValue( *m_backupValue );
 		}
 		else
 		{
-			fieldEditor.get()->eraseValue();
+			fieldEditor->eraseValue();
+			fieldEditor.release();
 			m_widget.clear();
 		}
 	}
@@ -140,7 +143,7 @@ struct OptionalFieldEditor : public FieldEditor
 
 		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
 
-		return fieldEditor.get()->hasValue() == false || m_widget.validate();
+		return fieldEditor->hasValue() == false || m_widget.validate();
 	}
 
 private:
