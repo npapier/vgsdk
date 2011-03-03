@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 
 #include "vgd/field/IFieldObserver.hpp"
 #include "vgd/field/Types.hpp"
+#include <vgDebug/helpers.hpp>
 
 
 
@@ -32,7 +33,7 @@ AbstractField::~AbstractField()
 {
 	//notify( DESTROY ); /// @todo FIXME
 
-	assert( m_editingMode == NONE );
+	vgAssert( m_editingMode == NONE );
 }
 
 
@@ -53,7 +54,7 @@ const std::list< IFieldObserver* >& AbstractField::getObservers() const
 
 const bool AbstractField::findObserver( IFieldObserver *pFieldObserver ) const
 {
-	assert( m_editingMode >= NONE );
+	vgAssert( m_editingMode >= NONE );
 
 	TListObserver::const_iterator iter;
 	iter = std::find( getObservers().begin(), getObservers().end(), pFieldObserver );
@@ -65,8 +66,8 @@ const bool AbstractField::findObserver( IFieldObserver *pFieldObserver ) const
 
 void AbstractField::attach( IFieldObserver* pObserver ) const
 {
-	assert( m_editingMode >= NONE );
-	assert( !findObserver(pObserver) );
+	vgAssert( m_editingMode >= NONE );
+	vgAssert( !findObserver(pObserver) );
 
 	m_listObservers.push_back( pObserver );
 }
@@ -75,8 +76,8 @@ void AbstractField::attach( IFieldObserver* pObserver ) const
 
 void AbstractField::detach( IFieldObserver* pObserver ) const
 {
-	assert( m_editingMode >= NONE );
-	assert( findObserver(pObserver) );
+	vgAssert( m_editingMode >= NONE );
+	vgAssert( findObserver(pObserver) );
 
 	m_listObservers.remove( pObserver );
 }
@@ -85,7 +86,7 @@ void AbstractField::detach( IFieldObserver* pObserver ) const
 
 void AbstractField::detach() const
 {
-	assert( m_editingMode >= NONE );
+	vgAssert( m_editingMode >= NONE );
 
 	m_listObservers.clear();
 }
@@ -94,7 +95,7 @@ void AbstractField::detach() const
 
 void AbstractField::sendNotify( const Event& event ) const
 {
-	assert( m_editingMode >= NONE );
+	vgAssert( m_editingMode >= NONE );
 
     // notify all observers.
     for(	TListObserver::const_iterator i = getObservers().begin();
@@ -102,7 +103,7 @@ void AbstractField::sendNotify( const Event& event ) const
         	i++ )
     {
     	IFieldObserver *pFieldObserver = *i;
-    	assert( pFieldObserver != 0 );
+    	vgAssert( pFieldObserver != 0 );
     	
     	pFieldObserver->updateField( *this, event );
     }
@@ -115,7 +116,7 @@ void AbstractField::sendNotify( const Event& event ) const
 	switch ( event )
 	{
 		default:
-			assert( false && "Do something." );
+			vgAssert( false && "Do something." );
 	}
 }*/
 
@@ -123,7 +124,7 @@ void AbstractField::sendNotify( const Event& event ) const
 
 const bool AbstractField::isSubject() const
 {
-	assert( m_editingMode == NONE );
+	vgAssert( m_editingMode == NONE );
 
 	return ( getObservers().size() > 0 );
 }
@@ -138,7 +139,7 @@ const bool AbstractField::startEditingRO() const
 	}
 	else
 	{
-		assert( m_editingMode >= NONE );
+		vgAssert( m_editingMode >= NONE );
 
 		incrementEditingMode();
 
@@ -181,9 +182,9 @@ const bool AbstractField::finishEditing() const
 	}
 	else
 	{
-		assert( m_editingMode == NONE );
+		vgAssert( m_editingMode == NONE );
 
-		assert( false && "Internal error. Must never occurs." );
+		vgAssert2( false, "Internal error. Must never occurs." );
 
 		return false;
 	}
@@ -217,24 +218,24 @@ const bool AbstractField::checkRW() const
 
 void AbstractField::incrementEditingMode() const
 {
-	assert( m_editingMode >= NONE );
+	vgAssert( m_editingMode >= NONE );
 
 	const int editingMode = static_cast<int>(m_editingMode) + 1;
 	m_editingMode = static_cast<EditingMode>( editingMode );
 
-	assert( m_editingMode >= NONE );
+	vgAssert( m_editingMode >= NONE );
 }
 
 
 
 void AbstractField::decrementEditingMode() const
 {
-	assert( m_editingMode > NONE );
+	vgAssert( m_editingMode > NONE );
 
 	const int editingMode = static_cast<int>(m_editingMode) - 1;
 	m_editingMode = static_cast<EditingMode>( editingMode );
 
-	assert( m_editingMode >= NONE );
+	vgAssert( m_editingMode >= NONE );
 }
 
 

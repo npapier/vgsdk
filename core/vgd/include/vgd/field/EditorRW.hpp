@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,7 +6,7 @@
 #ifndef _VGD_FIELD_EDITORRW_HPP
 #define _VGD_FIELD_EDITORRW_HPP
 
-#include <cassert>
+#include <vgDebug/helpers.hpp>
 
 
 
@@ -51,11 +51,11 @@ struct EditorRW
 		{
 			bool bRetVal;
 			bRetVal = m_pField->startEditingRW();
-			assert(bRetVal);
+			vgAssert(bRetVal);
 		}
 		else
 		{
-			assert( false );
+			vgAssert( false );
 		}
 	}
 
@@ -134,7 +134,7 @@ struct EditorRW
 			bool bRetVal;
 			bRetVal	= m_pField->finishEditing();
 			m_pField	= 0;
-			assert( bRetVal );
+			vgAssert( bRetVal );
 		}
 	}
 	//@}
