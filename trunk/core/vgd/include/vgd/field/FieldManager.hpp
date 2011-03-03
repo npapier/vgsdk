@@ -233,7 +233,7 @@ protected:
 	/**
 	 * @brief Typedef for the field container.
 	 *
-	 * string						: name of field.
+	 * string					: name of field.
 	 * vgd::Shp<AbstractField>	: reference to the field.
 	 */
 	typedef std::map< std::string, vgd::Shp<AbstractField>	>	MapField;
