@@ -17,8 +17,8 @@ namespace basic
 
 
 
-Object::Object() :
-	m_pUserData(0)
+Object::Object() 
+:	m_pUserData(0)
 {
 }
 

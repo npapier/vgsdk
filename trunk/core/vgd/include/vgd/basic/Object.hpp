@@ -12,9 +12,11 @@
 
 namespace vgd
 {
-	
+
 namespace basic
 {
+
+
 
 /**
  * @brief Base class interface for objects.
@@ -22,7 +24,7 @@ namespace basic
 struct VGD_API Object
 {
 	/**
-	 * @name Constructor/destructor.
+	 * @name Constructor/destructor
 	 */
 	//@{
 
@@ -43,7 +45,7 @@ struct VGD_API Object
 	 * @name RTTI(run-time type identification) facilities.
 	 */
 	//@{
-	
+
 	/**
 	 * @brief Returns the name of the object's class type.
 	 */
@@ -70,8 +72,7 @@ struct VGD_API Object
 	bool	isA() const
 	{
 #ifdef _MSC_VER
-		int	retVal;
-		retVal = (typeid(*this) == typeid(T));
+		int	retVal = (typeid(*this) == typeid(T));
 
 		return ( retVal != 0 );
 #else
@@ -84,7 +85,7 @@ struct VGD_API Object
 
 
 	/**
-	 * @name Accessor methods.
+	 * @name Accessor methods
 	 */
 	//@{
 
@@ -93,29 +94,29 @@ struct VGD_API Object
 	 * 
 	 * @remarks Destruction of user data is not done in vgsdk.
 	 */
-    void*		getUserData() const		{ return ( m_pUserData ); }
+	void*	getUserData() const		{ return ( m_pUserData ); }
 
 	/**
 	 * @brief Sets the user data.
 	 * 
 	 * @remarks Destruction of user data is not done in vgsdk.
 	 */
-    void			setUserData( void *pUserData )	{ m_pUserData = pUserData; }
+	void	setUserData( void *pUserData )	{ m_pUserData = pUserData; }
 	//@}
 
 
 
 private:
 	/**
-	 * @name Data.
+	 * @name Data
 	 */
 	//@{
 	
 	/**
-     * @brief Pointer on user data.
-     */
-    void*			m_pUserData;
-    //@}
+	* @brief Pointer on user data.
+	*/
+	void *m_pUserData;
+	//@}
 };
 
 
