@@ -5,12 +5,15 @@
 
 #include "vgd/node/Node.hpp"
 
+#include <boost/thread/thread.hpp>
 #include "vgd/node/Group.hpp"
 #include "vgd/node/detail/Node.hpp"
-#include <boost/thread/thread.hpp>
+
 #ifdef _WIN32
-#include <windows.h>
+ #include <windows.h>
 #endif
+
+
 
 namespace
 {
@@ -216,9 +219,14 @@ vgd::graph::Graph& Node::graph()
 	if( g_lockedID != boost::thread::id() && boost::this_thread::get_id() != g_lockedID )
 	{
 		std::cerr << "Access to vgsdk graph from wrong thread" << std::endl;
-#if ( defined _WIN32 ) && ( defined _DEBUG )
-		//DebugBreak();
-#endif
+		vgAssert2( false, "Access to vgsdk graph from wrong thread" );
+/*#if ( defined _WIN32 ) && ( defined _DEBUG )
+		if ( IsDebuggerPresent() )
+		{
+			DebugBreak();
+		}
+		//else nothing to do
+#endif*/
 	}
 
 	// Graph data
