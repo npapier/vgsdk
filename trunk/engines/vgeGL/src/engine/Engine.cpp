@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -32,7 +32,7 @@ namespace engine
 // CONSTRUCTORS
 Engine::Engine()
 :	m_isTextureMappingEnabled(true),
-	m_isDisplayListEnabled(true),
+	m_isDisplayListEnabled(false),
 	m_isShadowSamplerEnabled(true),
 
 	m_glManager("GL object manager"),
@@ -78,7 +78,7 @@ void Engine::reset()
 
 	// Configures engine
 	setTextureMappingEnabled();
-	setDisplayListEnabled();
+	setDisplayListEnabled( false );
 
 	switch ( driverProvider )
 	{
