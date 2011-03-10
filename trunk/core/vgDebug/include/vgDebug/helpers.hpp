@@ -55,6 +55,7 @@ namespace sbf { struct Module; }
 #define vgAssert4( expression, message, arg1, arg2 )				vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2) )
 #define vgAssert5( expression, message, arg1, arg2, arg3 )			vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2), (arg3) )
 #define vgAssert6( expression, message, arg1, arg2, arg3, arg4 )	vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2), (arg3), (arg4) )
+#define vgAssertN( expression, message, ... )						vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, __VA_ARGS__ )
 
 
 
