@@ -32,7 +32,8 @@ namespace engine
 // CONSTRUCTORS
 Engine::Engine()
 :	m_isTextureMappingEnabled(true),
-	m_isDisplayListEnabled(false),
+	m_isDisplayListEnabled(true),
+	m_isVertexBufferObjectEnabled(true),
 	m_isShadowSamplerEnabled(true),
 
 	m_glManager("GL object manager"),
@@ -78,7 +79,8 @@ void Engine::reset()
 
 	// Configures engine
 	setTextureMappingEnabled();
-	setDisplayListEnabled( false );
+	setDisplayListEnabled( true );
+	setVertexBufferObjectEnabled( true );
 
 	switch ( driverProvider )
 	{
@@ -185,9 +187,9 @@ void Engine::setToDefaults()
 	{
 		(*i_handler)->setToDefaults();
 	}
-	
+
 	//
-	vgLogDebug3( "vgeGL.Engine: MAX VIEWPORT SIZE		= %i x %i", getMaxViewportSize()[0],  getMaxViewportSize()[1] );
+	vgLogDebug3( "vgeGL.Engine: MAX VIEWPORT SIZE			= %i x %i", getMaxViewportSize()[0],  getMaxViewportSize()[1] );
 
 	vgLogDebug2( "vgeGL.Engine: MAX_LIGHTS			= %i", getMaxLights() );
 
@@ -305,9 +307,11 @@ const bool Engine::isTextureMappingEnabled() const
 
 
 
-void Engine::setTextureMappingEnabled( const bool enabled )
+const bool Engine::setTextureMappingEnabled( const bool enabled )
 {
+	const bool retVal = m_isTextureMappingEnabled;
 	m_isTextureMappingEnabled = enabled;
+	return retVal;
 }
 
 
@@ -322,6 +326,20 @@ const bool Engine::isDisplayListEnabled() const
 void Engine::setDisplayListEnabled( const bool enabled )
 {
 	m_isDisplayListEnabled = enabled;
+}
+
+
+
+const bool Engine::isVertexBufferObjectEnabled() const
+{
+	return m_isVertexBufferObjectEnabled;
+}
+
+
+
+void Engine::setVertexBufferObjectEnabled( const bool enabled )
+{
+	m_isVertexBufferObjectEnabled = enabled;
 }
 
 

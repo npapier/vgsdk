@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -320,8 +320,9 @@ public:
 	 * @brief Enables or disables the texture mapping depending on the value of the parameter isEnabled.
 	 *
 	 * @param isEnabled		true when the texture mapping must be enabled, false otherwise
+	 * @return the texture mapping state before calling this method
 	 */
-	void setTextureMappingEnabled( const bool enabled = true );
+	const bool setTextureMappingEnabled( const bool enabled = true );
 
 
 	/**
@@ -337,6 +338,21 @@ public:
 	 * @param isEnabled		true when the display list caching mechanism must be enabled, false otherwise
 	 */
 	void setDisplayListEnabled( const bool enabled = true );
+
+
+	/**
+	 * @brief Determines whether the vertex buffer object usage is enabled.
+	 *
+	 * @return true if the vertex buffer object usage is enabled, false otherwise
+	 */
+	const bool isVertexBufferObjectEnabled() const;
+
+	/**
+	 * @brief Enables or disables the vertex buffer object usage depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the vertex buffer object usage must be enabled, false otherwise
+	 */
+	void setVertexBufferObjectEnabled( const bool enabled = true );
 
 
 	/**
@@ -673,9 +689,10 @@ protected:
 
 private:
 
-	bool m_isTextureMappingEnabled;		//< true if texture mapping is enabled, false otherwise
-	bool m_isDisplayListEnabled;		//< true if engine must used display list, false otherwise
-	bool m_isShadowSamplerEnabled;		//< true if engine must used shadow sampler, false otherwise
+	bool m_isTextureMappingEnabled;			//< true if texture mapping is enabled, false otherwise
+	bool m_isDisplayListEnabled;			//< true if engine must used display list, false otherwise
+	bool m_isVertexBufferObjectEnabled;		//< true if engine must used VBO, false otherwise
+	bool m_isShadowSamplerEnabled;			//< true if engine must used shadow sampler, false otherwise
 
 	/**
 	 * @name Cache implementations specifics capabilities

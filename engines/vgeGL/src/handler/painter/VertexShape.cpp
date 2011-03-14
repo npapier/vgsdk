@@ -35,6 +35,88 @@
 
 #include "vgeGL/rc/GLSLProgram.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
+#include "vgeGL/rc/VertexShape.hpp"
+
+/*
+supported field (VBO):
+TEXCOORD
+NORMAL
+VERTEX
+VERTEX INDEX
+*/
+
+namespace
+{
+
+
+const GLenum convertDeformableHint2GLUsage( vgd::node::VertexShape * node )
+{
+	const vgd::node::VertexShape::DeformableHintValueType deformableHint = node->getDeformableHint();
+
+	if ( deformableHint == vgd::node::VertexShape::STATIC )
+	{
+		return GL_STATIC_DRAW;
+	}
+	else if ( vgd::node::VertexShape::STREAM )
+	{
+		return GL_STREAM_DRAW;
+	}
+	else if ( vgd::node::VertexShape::DYNAMIC )
+	{
+		return GL_DYNAMIC_DRAW;
+	}
+	else
+	{
+		vgAssert2( false, "Internal error." );
+		return GL_DYNAMIC_DRAW;
+	}
+}
+
+
+
+void updateArrayBuffer( glo::ArrayBuffer& buffer, GLsizeiptr size, const GLvoid * ptr, const GLenum bufferUsage )
+{
+	if ( buffer.isEmpty() )
+	{
+		buffer.generate();
+		buffer.bind();
+		buffer.bufferData( size, ptr, bufferUsage );
+	}
+	else
+	{
+		buffer.bind();
+		buffer.bufferSubData( 0, size, ptr );
+	}
+}
+
+void updateElementArrayBuffer( glo::ElementArrayBuffer& buffer, GLsizeiptr size, const GLvoid * ptr, const GLenum bufferUsage )
+{
+	if ( buffer.isEmpty() )
+	{
+		buffer.generate();
+		buffer.bind();
+		buffer.bufferData( size, ptr, bufferUsage );
+	}
+	else
+	{
+		buffer.bind();
+		buffer.bufferSubData( 0, size, ptr );
+	}
+}
+
+
+template< typename ValueType >
+void updateTexCoordArrayBuffer( vgd::node::VertexShape * vertexShape, const uint unit, vgeGL::rc::VertexShape * rc, const GLenum bufferUsage )
+{
+	using vgd::field::EditorRO;
+	typedef vgd::field::TMultiField< ValueType > ValueContainerType;
+
+	EditorRO< ValueContainerType > texCoord = vertexShape->getFTexCoordRO< ValueContainerType >( unit );
+	updateArrayBuffer( rc->texCoord[unit], texCoord->size()*sizeof(ValueType), texCoord->ptr(), bufferUsage );
+}
+
+
+}
 
 
 
@@ -315,11 +397,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			GLSLProgram * program = pGLEngine->getGLSLManager().get< GLSLProgram >( fullCode );
 			if ( program != pGLEngine->getCurrentProgram() )
 			{
-#if ( defined _WIN32 ) && ( defined _DEBUG )
-			DebugBreak();
-#else
-			assert( program == pGLEngine->getCurrentProgram() && "glslState->isValid() should be dirty." );
-#endif
+				vgAssert2( program == pGLEngine->getCurrentProgram(), "glslState->isValid() should be dirty." );
 			}
 #endif
 		}
@@ -472,8 +550,10 @@ void VertexShape::setToDefaults()
  */
 void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::VertexShape* vertexShape )
 {
+	paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
+
 //glPushClientAttrib( GL_CLIENT_ALL_ATTRIB_BITS );
-	const vgd::node::VertexShape::DeformableHintValueType deformableHint = vertexShape->getDeformableHint();
+	//const vgd::node::VertexShape::DeformableHintValueType deformableHint = vertexShape->getDeformableHint();
 
 	/* ImmediateMode */
 	//paint( pGLEngine, pVertexShape );
@@ -483,11 +563,20 @@ void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::
 
 	/* Vertex Array */
 	/* Vertex Array in DL */
-	if ( deformableHint == vgd::node::VertexShape::STATIC )
+	/*if ( deformableHint == vgd::node::VertexShape::STATIC )
 	{
-		paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
+//		paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
 // @todo Reenabled display list usage or uses VAO
-//		paint(engine, vertexShape, vgeGL::engine::VertexArrayDisplayListMethod() ); @todo don't work on Radeon
+		const vgd::node::MultipleInstances * multipleInstances = engine->getGLState().getMultipleInstances();
+		if ( multipleInstances )
+		{
+			paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
+		}
+		else
+		{
+			paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
+			//paint(engine, vertexShape, vgeGL::engine::VertexArrayDisplayListMethod() ); // @todo don't work on Radeon
+		}
 	}
 	else
 	{
@@ -495,7 +584,7 @@ void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::
 					(deformableHint == vgd::node::VertexShape::STREAM)	);
 
 		paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
-	}
+	}*/
 	
 	/* Vertex Arrays in VBO */
 	//paintVBO				( pGLEngine, pVertexShape );
@@ -581,6 +670,11 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 	// VERTEX-VERTEXINDEX-PRIMITIVE
 	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives( pVertexShape->getFPrimitiveRO() );
 
+	/*if ( primitives->size() > 1 )
+	{
+		vgLogDebug3("primitive count %i for vertex shape %s", primitives->size(), pVertexShape->getName().c_str() );
+	}*/
+
 	//int indexPrim = 0;
 	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
 													ie	= primitives->end();
@@ -601,9 +695,148 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 
 
+// submit a primitive of VertexShape
+// using VertexArray stored in buffer objects
+// @todo VertexArrayMethod => ?
 void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape,
 							const vgd::node::Primitive& primitive,
 							const vgeGL::engine::VertexArrayMethod& /*method*/ )
+{
+	vgeGL::engine::Engine * engine = pGLEngine;
+	vgd::node::VertexShape *node = pVertexShape;
+
+	typedef vgeGL::rc::VertexShape GLResourceType;
+
+	// RC
+	// Gets the resource manager
+	vgeGL::engine::Engine::GLManagerType& manager = engine->getGLManager();
+
+	// Gets node dirty flag
+	vgd::field::DirtyFlag * nodeDF = node->getDirtyFlag( node->getDFNode() );
+
+	// Gets resource associated to the given node
+	::glo::IResource 	* resource			= manager.getAbstract( node );
+	GLResourceType		* castedResource	= dynamic_cast< GLResourceType * >(resource);
+
+	// STEP 1
+	// Sometimes GLResourceType must be changed for a given node (display list to/from vbo for example).
+	// is it the case now ?
+	if ( ( castedResource == 0 ) && ( resource != 0 ) )
+	{
+		// There is a resource, but not with the expected type.
+		// Dynamic change of handler ? or node that must be process differently (static, dynamic for VertexShape) ?
+
+		// Removes the resource from the manager
+		manager.remove( node );
+		resource = 0;
+		vgAssert2( (resource == 0) && (castedResource==0), "Internal error." );
+	}
+	// else if resource != 0 && castedResource != 0 => see step 2
+	// else if resource == 0 && castedResource == 0 => see step 2
+	// else if resource == 0 && castedResource != 0 => impossible
+
+	// STEP 2
+	vgAssert2(	(resource==0 && castedResource==0) ||
+				(resource!=0 && castedResource!=0), "Internal error." );
+
+	// Creates resource if needed
+	if ( resource == 0 )
+	{
+		vgAssert2( castedResource == 0, "Internal error." );
+
+		// Creates the resource
+		castedResource = new GLResourceType();
+		resource = castedResource;
+
+		// Adds the resource to the manager
+		manager.add( node, castedResource );
+	}
+	// else reuses the resource => nothing to do
+
+	vgAssert2( resource!=0 && castedResource!=0, "Internal error." );
+
+	// STEP 3
+	// What else ? synchronization and/or binding part of the work
+	if ( nodeDF->isDirty() )
+	{
+		// Node has been invalidated
+
+//		// Binds the resource
+//		handler->bind( engine, node, castedResource );
+
+		// Updates resource
+		/*handler->*/update( engine, node, castedResource );
+
+		submit(	engine, node,
+				primitive, // @todo not cute
+				castedResource );
+		// Checks if synchronize() method have validated the node dirty flag
+		// assert( nodeDF->isValid() );	not always validated by synchronize, so don't check
+	}
+	else
+	{
+		// No modifications in the node
+
+		// Binds the resource
+		//handler->bind( engine, node, castedResource );
+		/*handler->*/submit(	engine, node,
+								primitive, // @todo not cute
+								castedResource );
+	}
+}
+
+
+
+// @todo take care of deformable hint modification
+void VertexShape::update(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape,
+							vgeGL::rc::VertexShape * rc )
+{
+	// Do nothing if VBO is not enabled
+	if ( pGLEngine->isVertexBufferObjectEnabled() == false )	return;
+
+	// Updates all VBO
+	const GLenum bufferUsage = convertDeformableHint2GLUsage( pVertexShape );
+
+	// TEXCOORD
+	//if ( pGLEngine->isTextureMappingEnabled ) // always update texCoord array(s) even if pGLEngine->isTextureMappingEnabled() == false
+	vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
+	for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
+			i != iEnd;
+			++i )
+	{
+		const uint unit = *i;
+		const uint8 texCoordDim	= pVertexShape->getTexCoordDim(unit);
+		updateTexCoord( pVertexShape, unit,  texCoordDim, rc );
+	}
+
+
+	// NORMAL
+	if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
+	{
+		vgd::field::EditorRO< vgd::field::MFVec3f > normal;
+		normal = pVertexShape->getFNormalRO();
+		updateArrayBuffer( rc->normal, normal->size()*sizeof(vgm::Vec3f), normal->ptr(), bufferUsage );
+	}
+
+
+	// VERTEX
+	vgd::field::EditorRO< vgd::field::MFVec3f > vertex;
+	vertex = pVertexShape->getFVertexRO();
+	updateArrayBuffer( rc->vertex, vertex->size()*sizeof(vgm::Vec3f), vertex->ptr(), bufferUsage );
+
+
+	// VERTEX INDEX
+	vgd::field::EditorRO< vgd::field::MFUInt32 > vertexIndex;
+	vertexIndex = pVertexShape->getFVertexIndexRO();
+	updateElementArrayBuffer( rc->vertexIndex, vertexIndex->size()*sizeof(uint32), vertexIndex->ptr(), GL_STATIC_DRAW /*bufferUsage adds hints in VertexShape node*/ );
+
+	// @todo multiple instances data
+}
+
+
+
+void VertexShape::submit(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
+							vgeGL::rc::VertexShape * rc )
 {
 	//
 	using vgeGL::engine::GLSLState;
@@ -611,32 +844,20 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 
 	//
 	vgd::field::EditorRO< vgd::field::MFVec3f >		normal;
-	vgd::field::EditorRO< vgd::field::MFVec4f >		color4;
-	vgd::field::EditorRO< vgd::field::MFVec4f >		secondaryColor4;
-	vgd::field::EditorRO< vgd::field::MFUInt8 >		edgeFlag;
+	//vgd::field::EditorRO< vgd::field::MFVec4f >		color4;
+	//vgd::field::EditorRO< vgd::field::MFVec4f >		secondaryColor4;
+	//vgd::field::EditorRO< vgd::field::MFUInt8 >		edgeFlag;
 
 	vgd::field::EditorRO< vgd::field::MFVec3f >		vertex;
 	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex;
 
 	//
-	const GLvoid	*pArray;
+	const GLvoid *pArray = 0;
 
 	//
 	glo::GLSLProgram * program = pGLEngine->gethCurrentProgram();
 
 	// *** Step 1 : Setup arrays. ***
-
-	// EDGE FLAG
-// @todo disable EDGE_FLAG in vgd::node::VertexShape
-	/*if ( pVertexShape->getEdgeFlagBinding() == vgd::node::BIND_PER_VERTEX )
-	{
-		edgeFlag = pVertexShape->getFEdgeFlagRO();
-
-		pArray = static_cast< const GLvoid* >( &((*edgeFlag)[0]) );
-
-		glEdgeFlagPointer( 0, pArray );
-		glEnableClientState( GL_EDGE_FLAG_ARRAY );
-	}*/
 
 	// TEX COORD and uniform sampler (from VertexShape.texCoord*/TexGen and Texture)
 	// Texture |	VertexShape.texCoord |	TexGen	=> action (sampler(S), vertex array(VA), warning (W) )
@@ -704,11 +925,11 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 					else if ( usage == vgd::node::Texture::IMAGE )
 					{
 						//program->setUniform1i( "texMap2D[" + strUnit + "]", unit );
-						configureTexCoord( pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */ );
+						configureTexCoord( pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */, rc, pGLEngine->isVertexBufferObjectEnabled() );
 					}
 					else
 					{
-						assert( false );
+						vgAssert( false );
 					}
 				}
 				else
@@ -719,7 +940,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 					{
 						texture->enable();
 					}
-					configureTexCoord( pVertexShape, unit,  texCoordDim );
+					configureTexCoord( pVertexShape, unit,  texCoordDim, rc, pGLEngine->isVertexBufferObjectEnabled() );
 				}
 			}
 		}
@@ -801,29 +1022,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 */
 
 
-	// SECONDARY COLOR4
-	// @todo disable SECONDARY_COLOR4 in vgd::node::VertexShape
-	/*if ( pVertexShape->getSecondaryColor4Binding() == vgd::node::BIND_PER_VERTEX )
-	{
-		if ( isGL_EXT_secondary_color() )
-		{
-			glEnable( GL_COLOR_MATERIAL );
-
-			secondaryColor4 = pVertexShape->getFSecondaryColor4RO();
-			
-			pArray = static_cast< const GLvoid* >( secondaryColor4->begin()->getValue() );
-			
-			glSecondaryColorPointerEXT( 4, GL_FLOAT, 0, pArray );
-			
-			glEnableClientState( GL_SECONDARY_COLOR_ARRAY );
-		}
-		else
-		{
-			vgLogWarning( "GL_EXT_secondary_color not supported" );
-		}
-	}*/
-
-	// COLOR4
+/*	// COLOR4
 	if ( pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX )
 	{
 		glEnable( GL_COLOR_MATERIAL );
@@ -838,24 +1037,32 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 		glColorPointer( 4, GL_FLOAT, 0, pArray );
 
 		glEnableClientState( GL_COLOR_ARRAY );
-	}
+	}*/
 
 	// NORMAL
 	if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
 	{
-		normal = pVertexShape->getFNormalRO();
-		
-		pArray = static_cast< const GLvoid* >( normal->ptr() );
-		
+		if ( pGLEngine->isVertexBufferObjectEnabled() )
+		{
+			rc->normal.bind();
+		}
+		else
+		{
+			pArray = static_cast< const GLvoid* >( pVertexShape->getFNormalRO()->ptr() );
+		}
 		glNormalPointer( GL_FLOAT, 0, pArray );
-		
 		glEnableClientState( GL_NORMAL_ARRAY );
 	}
 
 	// VERTEX
-	vertex = pVertexShape->getFVertexRO();
-
-	pArray = static_cast< const GLvoid* >( vertex->ptr() );
+	if ( pGLEngine->isVertexBufferObjectEnabled() )
+	{
+		rc->vertex.bind();
+	}
+	else
+	{
+		pArray = static_cast< const GLvoid* >( pVertexShape->getFVertexRO()->ptr() );
+	}
 
 	glVertexPointer( 3, GL_FLOAT, 0, pArray );
 	glEnableClientState( GL_VERTEX_ARRAY );
@@ -865,8 +1072,14 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	assert( primitive.getType() != vgd::node::Primitive::NONE );
 	const GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
 
-	vertexIndex	= pVertexShape->getFVertexIndexRO();
-	pArray		= reinterpret_cast< const GLvoid* >( &(*vertexIndex)[primitive.getIndex()] );
+	if ( pGLEngine->isVertexBufferObjectEnabled() )
+	{
+		rc->vertexIndex.bind();
+	}
+	else
+	{
+		pArray = reinterpret_cast< const GLvoid* >( &(*pVertexShape->getFVertexIndexRO())[primitive.getIndex()] );
+	}
 
 	const vgd::node::MultipleInstances * multipleInstances = pGLEngine->getGLState().getMultipleInstances();
 
@@ -897,6 +1110,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 
 			// RENDER
 			glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+			//glDrawRangeElements( primitiveType, 0, vertex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 		}
 
 		//
@@ -908,20 +1122,18 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 	else
 	{
 		// RENDER
-		//glDrawRangeElements( primitiveType, 0, vertexIndex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+		//glDrawRangeElements( primitiveType, 0, vertex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 		glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 		// or glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+	}
+	if ( pGLEngine->isVertexBufferObjectEnabled() )
+	{
+		rc->vertexIndex.unbind();
 	}
 
 	// *** Step 3 : Disable arrays ***
 
 // @todo disable EDGE_FLAG in vgd::node::VertexShape
-	// EDGE FLAG
-	/*if ( pVertexShape->getEdgeFlagBinding() == vgd::node::BIND_PER_VERTEX )
-	{
-		glDisableClientState( GL_EDGE_FLAG_ARRAY );
-	}*/
-
 	// TEX COORD
 	if ( pGLEngine->isTextureMappingEnabled() )
 	{
@@ -936,7 +1148,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 			if (	texUnitState /*&&
 					(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF)*/	)
 			{
-				configureTexCoord( pVertexShape, unit, 0 );
+				configureTexCoord( pVertexShape, unit, 0, rc, pGLEngine->isVertexBufferObjectEnabled() );
 			}
 		}
 	}
@@ -979,39 +1191,74 @@ void VertexShape::paint(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSha
 		}
 	}*/
 
-	// SECONDARY COLOR4
-	// @todo disable SECONDARY_COLOR4 in vgd::node::VertexShape
-	/*if ( pVertexShape->getSecondaryColor4Binding() == vgd::node::BIND_PER_VERTEX )
-	{
-		if ( isGL_EXT_secondary_color() )
-		{		
-			glDisableClientState( GL_SECONDARY_COLOR_ARRAY );
-			
-			glDisable( GL_COLOR_MATERIAL );
-		}
-	}*/
-
-	// COLOR4
+	/*// COLOR4
 	if ( pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX )
 	{
 		glDisableClientState( GL_COLOR_ARRAY );
 		
 		glDisable( GL_COLOR_MATERIAL );
-	}
+	}*/
 
 	// NORMAL
 	if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
 	{
 		glDisableClientState( GL_NORMAL_ARRAY );
+		if ( pGLEngine->isVertexBufferObjectEnabled() && rc->normal.isBound() )
+		{
+			rc->normal.unbind();
+		}
 	}
 
 	// VERTEX
 	glDisableClientState( GL_VERTEX_ARRAY );
+	if ( pGLEngine->isVertexBufferObjectEnabled() && rc->vertex.isBound() )
+	{
+		rc->vertex.unbind();
+	}
 }
 
 
 
-void VertexShape::configureTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim )
+// @todo buffer usage GL_STATIC_DRAW must be configurable
+void VertexShape::updateTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc )
+{
+	if (	texCoordDim > 0 /*&&
+			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX*/ )
+	{
+		// Resize texCoord ArrayBuffer vector if needed
+		if ( unit >= rc->texCoord.size() )
+		{
+			rc->texCoord.resize( unit + 1 );
+		}
+
+		if ( texCoordDim == 2 )
+		{
+			updateTexCoordArrayBuffer< vgm::Vec2f >( vertexShape, unit, rc, GL_STATIC_DRAW );
+		}
+		else if ( texCoordDim == 1 )
+		{
+			updateTexCoordArrayBuffer< float >( vertexShape, unit, rc, GL_STATIC_DRAW );
+		}
+		else if ( texCoordDim == 3 )
+		{
+			updateTexCoordArrayBuffer< vgm::Vec3f >( vertexShape, unit, rc, GL_STATIC_DRAW );
+		}
+		else if ( texCoordDim == 4 )
+		{
+			updateTexCoordArrayBuffer< vgm::Vec4f >( vertexShape, unit, rc, GL_STATIC_DRAW );
+		}
+		else
+		{
+			// NOT SUPPORTED
+			vgAssertN( false, "VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
+		}
+	}
+	// else nothing to do
+}
+
+
+
+void VertexShape::configureTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc, const bool isVertexBufferObjectEnabled )
 {
 	if (	texCoordDim > 0 &&
 			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
@@ -1019,57 +1266,44 @@ void VertexShape::configureTexCoord( vgd::node::VertexShape * vertexShape, const
 		glClientActiveTexture( GL_TEXTURE0_ARB + unit );
 		//glClientActiveTextureARB( GL_TEXTURE0_ARB + unit );
 
-		const GLvoid *pArray;
-		switch ( texCoordDim )
+		const GLvoid *pArray = 0;
+		if ( isVertexBufferObjectEnabled )
 		{
-			case 2:
+			rc->texCoord[unit].bind();
+		}
+		else
+		{
+			if ( texCoordDim == 2 )
 			{
-				vgd::field::EditorRO< vgd::field::MFVec2f >	texCoord;
-				texCoord = vertexShape->getFTexCoordRO< vgd::field::MFVec2f >( unit );
-				pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
-				glTexCoordPointer( 2, GL_FLOAT, 0, pArray );
-				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-				break;
+				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec2f >( unit )->ptr() );
 			}
-
-			case 3:
+			else if ( texCoordDim == 1 )
 			{
-				vgd::field::EditorRO< vgd::field::MFVec3f >	texCoord;
-				texCoord = vertexShape->getFTexCoordRO< vgd::field::MFVec3f >( unit );
-				pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
-				glTexCoordPointer( 3, GL_FLOAT, 0, pArray );
-				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-				break;
+				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFFloat >( unit )->ptr() );
 			}
-
-			case 1:
+			else if ( texCoordDim == 3 )
 			{
-				vgd::field::EditorRO< vgd::field::MFFloat >	texCoord;
-				texCoord = vertexShape->getFTexCoordRO< vgd::field::MFFloat >( unit );
-				pArray = static_cast< const GLvoid* >( &(*texCoord)[0] );
-				glTexCoordPointer( 1, GL_FLOAT, 0, pArray );
-				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-				break;
+				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec3f >( unit )->ptr() );
 			}
-
-			case 4:
+			else if ( texCoordDim == 4 )
 			{
-				vgd::field::EditorRO< vgd::field::MFVec4f >	texCoord;
-				texCoord = vertexShape->getFTexCoordRO< vgd::field::MFVec4f >( unit );
-				pArray = static_cast< const GLvoid* >( texCoord->begin()->getValue() );
-				glTexCoordPointer( 4, GL_FLOAT, 0, pArray );
-				glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-				break;
+				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec4f >( unit )->ptr() );
 			}
-
-			default:
+			else
+			{
 				// NOT SUPPORTED
-				vgLogDebug4("VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
-				assert( false && "Unexpected dimension for texCoord." );
-		} // switch
+				vgAssertN( false, "VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
+			}
+		}
+		glTexCoordPointer( texCoordDim, GL_FLOAT, 0, pArray );
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	}
 	else
 	{
+		if ( isVertexBufferObjectEnabled && rc->texCoord[unit].isBound() )
+		{
+			rc->texCoord[unit].unbind();
+		}
 		glClientActiveTexture( GL_TEXTURE0_ARB + unit );
 		//glClientActiveTextureARB( GL_TEXTURE0_ARB + unit );
 		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -1081,6 +1315,7 @@ void VertexShape::configureTexCoord( vgd::node::VertexShape * vertexShape, const
 void VertexShape::paint(	vgeGL::engine::Engine *engine, vgd::node::VertexShape *vertexShape,
 							const vgeGL::engine::VertexArrayDisplayListMethod& /*method*/ )
 {
+	assert( false );
 	// USE DISPLAY LIST
 	vgeGL::rc::applyUsingDisplayList< vgd::node::VertexShape, VertexShape, vgeGL::engine::VertexArrayMethod >( 
 		engine, vertexShape, this );
