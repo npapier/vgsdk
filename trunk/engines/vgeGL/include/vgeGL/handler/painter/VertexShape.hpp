@@ -33,6 +33,10 @@ namespace vgeGL
 		struct Engine;
 	}
 
+	namespace rc
+	{
+		struct VertexShape;
+	}
 }
 
 
@@ -102,7 +106,10 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	void	paint(	vgeGL::engine::Engine*, vgd::node::VertexShape*, const vgd::node::Primitive&, 
 					const vgeGL::engine::VertexArrayMethod& );
 
-	void configureTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim );
+	void updateTexCoord(	vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim,
+							vgeGL::rc::VertexShape * rc );
+	void configureTexCoord(	vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim,
+							vgeGL::rc::VertexShape * rc, const bool isVertexBufferObjectEnabled );
 
 
 	// VERTEX ARRAY IN DISPLAY LIST
@@ -113,7 +120,11 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 					const vgeGL::engine::VertexArrayDisplayListMethod& );
 
 
-
+	//
+	void update(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape,
+					vgeGL::rc::VertexShape * rc );
+	void submit(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
+					vgeGL::rc::VertexShape * rc );
 //	// VERTEX ARRAY IN VBO
 //	/**
 //	 * @brief Render all primitives with vertex array.
