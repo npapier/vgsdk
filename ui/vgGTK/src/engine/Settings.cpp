@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -27,12 +27,12 @@ namespace engine
 
 Settings::Settings()
 :	m_canvas( 0 )
-
 {
 	// Creates child widgets.
 	m_glslButton								= Gtk::manage( new Gtk::CheckButton("Use GLSL pipeline") );
 	m_disableTexture							= Gtk::manage( new Gtk::CheckButton("Disable texture") );
 	m_disableDisplayList						= Gtk::manage( new Gtk::CheckButton("Disable display list") );
+	m_disableVBO								= Gtk::manage( new Gtk::CheckButton("Disable VBO") );
 	Gtk::Button		* benchButton				= Gtk::manage( new Gtk::Button("Bench") );
 
 	m_showFPS									= Gtk::manage( new Gtk::CheckButton("Show counters (fps and frame)") );
@@ -47,6 +47,9 @@ Settings::Settings()
 	pack_start( *m_glslButton, Gtk::PACK_SHRINK );
 	pack_start( *m_disableTexture, Gtk::PACK_SHRINK );
 	pack_start( *m_disableDisplayList, Gtk::PACK_SHRINK );
+	pack_start( *m_disableVBO, Gtk::PACK_SHRINK );
+
+	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK );
 	pack_start( *m_showFPS, Gtk::PACK_SHRINK );
 	pack_start( *m_debugEvents, Gtk::PACK_SHRINK );
 
@@ -61,6 +64,7 @@ Settings::Settings()
 	m_glslButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onGLSL) );
 	m_disableTexture->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableTexture) );
 	m_disableDisplayList->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableDisplayList ) );
+	m_disableVBO->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableVBO ) );
 
 	benchButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onBench) );
 
@@ -88,6 +92,7 @@ void Settings::setCanvas( vgUI::Canvas * canvas )
 		m_glslButton->set_active( m_canvas->getGLEngine()->isGLSLEnabled() );
 		m_disableTexture->set_active( !m_canvas->getGLEngine()->isTextureMappingEnabled() );
 		m_disableDisplayList->set_active( !m_canvas->getGLEngine()->isDisplayListEnabled() );
+		m_disableVBO->set_active( !m_canvas->getGLEngine()->isVertexBufferObjectEnabled() );
 		m_showFPS->set_active( m_canvas->isDebugOverlay() );
 	}
 }
@@ -136,6 +141,61 @@ void Settings::onDisableDisplayList()
 
 	m_canvas->getGLEngine()->setDisplayListEnabled( !m_disableDisplayList->get_active() );
 
+	typedef vge::visitor::NodeCollectorExtended<> NodeCollectorExtended;
+	NodeCollectorExtended nodeCollector;
+	m_canvas->getRoot()->traverse( nodeCollector );
+
+	typedef vge::visitor::TraverseElementVector TraverseElementVector;
+	TraverseElementVector * traverseElements = nodeCollector.getTraverseElements();
+
+	TraverseElementVector::iterator i, iEnd;
+	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
+			i != iEnd;
+			++i )
+	{
+		vgd::node::Node * node = i->first;
+		node->getDirtyFlag( node->getDFNode() )->dirty();
+	}
+	/*vgd::Shp< vgd::node::NodeList > nodeList;
+	nodeList = vgd::visitor::find( m_canvas->getRoot(), vgd::visitor::predicate::True() );
+	using vgd::node::NodeList;
+
+	for( NodeList::const_iterator	i		= nodeList->begin(),
+									iEnd	= nodeList->end();
+		i != iEnd;
+		++i )
+	{
+		vgd::Shp< vgd::node::Node > node = *i;
+		node->getDirtyFlag( node->getDFNode() )->dirty();
+	}*/
+
+	m_canvas->refreshForced();
+}
+
+
+
+void Settings::onDisableVBO()
+{
+	assert( m_canvas != 0 );
+
+	m_canvas->getGLEngine()->setVertexBufferObjectEnabled( !m_disableVBO->get_active() );
+	typedef vge::visitor::NodeCollectorExtended<> NodeCollectorExtended;
+	NodeCollectorExtended nodeCollector;
+	m_canvas->getRoot()->traverse( nodeCollector );
+
+	typedef vge::visitor::TraverseElementVector TraverseElementVector;
+	TraverseElementVector * traverseElements = nodeCollector.getTraverseElements();
+
+	TraverseElementVector::iterator i, iEnd;
+	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
+			i != iEnd;
+			++i )
+	{
+		vgd::node::Node * node = i->first;
+		node->getDirtyFlag( node->getDFNode() )->dirty();
+	}
+	//
+	
 	m_canvas->refreshForced();
 }
 
