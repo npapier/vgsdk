@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -60,6 +60,7 @@ private:
 
 	void onDisableTexture();
 	void onDisableDisplayList();
+	void onDisableVBO();
 
 	void onBench();
 
@@ -78,6 +79,7 @@ private:
 	Gtk::CheckButton	* m_glslButton;			///< Button to enable/disable glsl rendering pipeline
 	Gtk::CheckButton	* m_disableTexture;		///< Button to disable texture
 	Gtk::CheckButton	* m_disableDisplayList;	///< Button to disable display list
+	Gtk::CheckButton	* m_disableVBO;			///< Button to disable VBO
 	Gtk::CheckButton	* m_showFPS;			///< Widget to choose which debug overlay must be displayed
 	Gtk::CheckButton	* m_debugEvents;		///< Button to enable/disable event logging
 	Gtk::CheckButton	* m_captureButton;		///< Widget to enable screenshot/video capture hotkey
