@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -11,10 +11,12 @@
 #include <boost/tuple/tuple.hpp>
 
 #include <vgd/Shp.hpp>
+#include <vgd/field/Enum.hpp>
 #include <vgd/field/FieldManager.hpp>
 #include <vgd/field/TAccessors.hpp>
 #include "vgd/field/TOptionalField.hpp"
 #include <vgd/node/Node.hpp>
+#include <vgDebug/helpers.hpp>
 
 #include "vge/engine/MultiMatrixStack.hpp"
 #include "vge/service/Service.hpp"
@@ -201,7 +203,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 *
 	 * @param trace		true if trace is enabled, false otherwise
 	 */	
-	void setTrace( const bool trace );
+	void setTrace( const bool trace = true );
 
 	/**
 	 * @brief Tests if trace is active.
@@ -356,11 +358,11 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
-	 * brief Gets the desired node list to the top of the state stack
+	 * @brief Retrieves the desired node list from the top of the state stack
 	 * 
-	 * selected by his type and his multi-attribute index.
+	 * The return node list is selected by the given \c nodeType and \c multiAttributeIndex.
 	 * 
-	 * return Pointer on the desired node list or 0 if not found.
+	 * @return Pointer on the desired node list or 0 if not found.
 	 */
 	template< typename nodeType >
 	const NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 ) const
@@ -371,7 +373,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		const MultiState&	multiState		(	topState[nodeClassIndex]			);
 
 		MultiState::const_iterator iter( multiState.find( multiAttributeIndex ) );
-		
+
 		if ( iter != multiState.end() )
 		{
 			// Found
@@ -384,11 +386,11 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	}
 
 	/**
-	 *@brief Gets the desired node list to the top of the state stack
+	 * @brief Retrieves the desired node list from the top of the state stack
 	 * 
-	 * selected by his type and his multi-attribute index.
+	 * The return node list is selected by the given \c nodeType and \c multiAttributeIndex.
 	 * 
-	 * return Pointer on the desired node list or 0 if not found.
+	 * @return Pointer on the desired node list or 0 if not found.
 	 */
 	template< typename nodeType >
 	NodeList*		getNodeListFromStateStackTop( const int8 multiAttributeIndex = 0 )
@@ -412,18 +414,18 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	}
 
 	/**
-	 * brief Gets the desired node to the top of the state stack
+	 * @brief Retrieves the desired node from the top of the state stack
 	 * 
-	 * selected by his type and his multi-attribute index.
+	 * The return node is selected by the given \c nodeType and \c multiAttributeIndex.
 	 * 
-	 * return Pointer on the desired node or 0 if not found.
+	 * @return Pointer on the desired node or 0 if not found.
 	 */
-	/*template< typename nodeType >
-	nodeType*		getStateStackTopDeprecated( const int8 multiAttributeIndex = 0 )
+	template< typename nodeType >
+	nodeType*		getStateStackTop( const int8 multiAttributeIndex = 0 )
 	{
 		NodeList *pNodeList = getNodeListFromStateStackTop< nodeType >( multiAttributeIndex );
 
-		if ( pNodeList != 0 )
+		if ( pNodeList )
 		{
 			return dynamic_cast<nodeType*>(pNodeList->back());
 		}
@@ -431,51 +433,60 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		{
 			return 0;
 		}
-	}*/
+	}
 
 
 
 	/**
-	 * brief Gets the desired field value from the top of the state stack
+	 * @brief Retrieves the desired optional field \c value from the top of the state stack
 	 * 
-	 * Gets the desired field value from a node (selected by his type and multi-attribute index) from the top of the
-	 * state stack that contains a value in its vgd::field::TOptionalField< ValueType > field named strFieldName.
+	 * The desired field is selected using the given \c NodeType, \c multiAttributeIndex, \c strFieldName and \c ValueType.
+	 * @return the desired value
 	 *
-	 * return true if found, false otherwise.
+	 * @todo new parameter: check default node => false to ignore default node (iEnd++)
 	 */
-	/*template< typename NodeType, typename ValueType >
-	const bool getStateStackTopDeprecated(	const std::string& strFieldName,
-											ValueType& value,
-											const int8 multiAttributeIndex = 0 ) const
+	template< typename NodeType, typename ValueType >
+	const ValueType getOF(	const std::string& strFieldName,
+							const int8 multiAttributeIndex = 0 ) const
 	{
-		bool bDefined(	false	);
+		ValueType retVal;
 
 		const NodeList *nodeList = getNodeListFromStateStackTop< NodeType >( multiAttributeIndex );
+		vgAssert2( nodeList != 0, "Empty node list. Internal error" );
+		vgAssert3( nodeList->front()->isField( strFieldName ), "The given fieldname %s is unknown", strFieldName.c_str() );
 
-		if ( nodeList != 0 )
+		for( NodeList::const_reverse_iterator	i			= nodeList->rbegin(),
+												iEnd		= nodeList->rend();
+				i != iEnd;
+				++i )
 		{
-			for( NodeList::const_reverse_iterator	i			= nodeList->rbegin(),
-													iEnd		= nodeList->rend();
-					i != iEnd;
-					++i )
+			using vgd::field::EditorRO;
+			typedef vgd::field::TOptionalField<ValueType> MyOptionalField;
+
+			const vgd::node::Node * node = *i;
+
+			EditorRO< MyOptionalField > editRO = node->template getFieldRO< MyOptionalField >( strFieldName );
+			const bool bDefined = editRO->getValue( retVal );
+
+			if ( bDefined )
 			{
-				using vgd::field::EditorRO;
-				typedef vgd::field::TOptionalField<ValueType> MyOptionalField;
-
-				const vgd::node::Node * node = *i;
-
-				EditorRO< MyOptionalField > editRO = node->template getFieldRO< MyOptionalField >( strFieldName );
-				bDefined = editRO->getValue( value );
-
-				if ( bDefined )
-				{
-					break;
-				}
+				return retVal;
 			}
 		}
 
-		return bDefined;
-	}*/
+		vgAssert3( false, "Unable to find field %s", strFieldName.c_str() );
+		return retVal;
+	}
+
+	/**
+	 * @see Helpers for getOF()
+	 */
+	template< typename NodeType >
+	const vgd::field::Enum getOFEnum(	const std::string& strFieldName,
+										const int8 multiAttributeIndex = 0 ) const
+	{
+		return getOF< NodeType, vgd::field::Enum >( strFieldName, multiAttributeIndex );
+	}
 
 
 
