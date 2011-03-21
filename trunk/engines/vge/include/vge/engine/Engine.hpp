@@ -173,6 +173,9 @@ struct VGE_API Engine : public vgd::field::FieldManager
 					const bool isPreTraverse = true,
 					const bool bTrace = true );
 
+	void paint(		const vge::visitor::TraverseElement & element,
+					const bool bTrace = true );
+
 	void paint(		vgd::Shp< vgd::node::Node > node,
 					const bool isPreTraverse = true,
 					const bool bTrace = true );
