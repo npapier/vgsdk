@@ -126,6 +126,13 @@ void Engine::evaluate(	const vgd::Shp< vge::service::Service > service,
 
 
 
+void Engine::paint( const vge::visitor::TraverseElement & element, const bool bTrace )
+{
+	evaluate( m_paintService, element, bTrace );
+}
+
+
+
 void Engine::paint(		vgd::Shp< vgd::node::Node > node,
 						const bool isPreTraverse,
 						const bool bTrace )
