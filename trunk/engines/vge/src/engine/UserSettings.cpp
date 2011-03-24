@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -178,7 +178,7 @@ void UserSettings::loadLevels()
 	try
 	{
 		// Loads the detail level defitions.
-		bpt::ini_parser::read_ini( path.file_string(), m_levels );
+		bpt::ini_parser::read_ini( path.string(), m_levels );
 
 		// Walks through levels to collect graphic cards.
 		for( bpt::ptree::iterator i = m_levels.begin(); i != m_levels.end(); ++i )
@@ -197,7 +197,7 @@ void UserSettings::loadLevels()
 	}
 	catch( bpt::ini_parser::ini_parser_error & )
 	{
-		vgLogError2( "Error while reading detail level definitions file %s", path.native_file_string().c_str() );
+		vgLogError2( "Error while reading detail level definitions file %s", path.string().c_str() );
 	}
 }
 

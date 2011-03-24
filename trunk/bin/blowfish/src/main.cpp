@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -44,7 +44,7 @@ int main( int argc, char ** argv )
 	inPath = boost::filesystem::path( argv[3] );
 	if( !boost::filesystem::exists(inPath) )
 	{
-		vgLogMessage2( "Invalid input path ", inPath.file_string().c_str() );
+		vgLogMessage2( "Invalid input path ", inPath.string().c_str() );
 		return 0;
 	}
 
@@ -62,9 +62,9 @@ int main( int argc, char ** argv )
 			outPath = vgPhysfs::getEncryptedPath( inPath );
 		}
 
-		std::ifstream		in( inPath.file_string().c_str(), std::ios::binary );
+		std::ifstream		in( inPath.string().c_str(), std::ios::binary );
 		std::vector< char > inBuffer;
-		std::ofstream		out( outPath.file_string().c_str(), std::ios::binary|std::ios::trunc );
+		std::ofstream		out( outPath.string().c_str(), std::ios::binary|std::ios::trunc );
 
 		in.seekg( 0, std::ios::end );
 		inBuffer.resize( in.tellg() );
@@ -85,12 +85,12 @@ int main( int argc, char ** argv )
 			}
 			else
 			{
-				outPath = outPath.file_string() + ".decrypted";
+				outPath = outPath.string() + ".decrypted";
 			}
 		}
 			
 		// Opens the stream and checks if it contains crypted data.
-		std::ifstream		in( inPath.file_string().c_str(), std::ios::binary );
+		std::ifstream		in( inPath.string().c_str(), std::ios::binary );
 
 		if( ! vgPhysfs::isEncrypted(in) )
 		{
@@ -104,7 +104,7 @@ int main( int argc, char ** argv )
 		
 		if( vgPhysfs::decrypt(key, in, inBuffer, outBuffer) )
 		{
-			std::ofstream	out( outPath.file_string().c_str(), std::ios::binary|std::ios::trunc );
+			std::ofstream	out( outPath.string().c_str(), std::ios::binary|std::ios::trunc );
 
 			out.write( &outBuffer[0], outBuffer.size() );
 		}

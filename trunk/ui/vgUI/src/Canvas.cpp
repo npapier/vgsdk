@@ -74,7 +74,7 @@ void Canvas::Screenshot::save( const std::string path, const std::string filenam
 	}
 
 	// Output image
-	const std::string output = (bfs::path(path) / lFilename).file_string();
+	const std::string output = (bfs::path(path) / lFilename).string();
 
 	// Removes image if needed
 	if ( bfs::exists( output ) )
@@ -465,17 +465,17 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 			// Path
 			const boost::filesystem::path path = sbf::path::get(sbf::path::Var) / "screenshots";
-			shot.mkdirs( path.file_string() );
+			shot.mkdirs( path.string() );
 
 			if ( m_screenshotFilename.size() > 0 )
 			{
 				// A filename has been specified
-				shot.save( path.file_string(), m_screenshotFilename );
+				shot.save( path.string(), m_screenshotFilename );
 			}
 			else
 			{
 				// No filename has been specified, so constructs a filename using 'frame' and frame counter.
-				shot.save( path.file_string() );
+				shot.save( path.string() );
 			}
 
 			//
@@ -1055,7 +1055,7 @@ std::ostream* Canvas::getGleOutputStream()
 		if ( m_gleLogFile.is_open() == false )
 		{
 			boost::filesystem::path glePath = getGlePath() / "gle.txt";
-			m_gleLogFile.open( glePath.file_string().c_str() );
+			m_gleLogFile.open( glePath.string().c_str() );
 		}
 
 		return &m_gleLogFile;

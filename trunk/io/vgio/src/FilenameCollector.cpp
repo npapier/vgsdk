@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgio/FilenameCollector.hpp"
 
@@ -15,13 +16,13 @@ namespace vgio
 
 
 FilenameCollector::FilenameCollector( const std::string& path )
-:	m_path	(	path, ::boost::filesystem::no_check	)
+:	m_path( path )
 {}
 
 
 
 FilenameCollector::FilenameCollector( const ::boost::filesystem::path& path )
-:	m_path	(	path	)
+:	m_path( path )
 {}
 
 

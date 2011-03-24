@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -33,7 +33,7 @@ static const std::string	bufferSignature("vgBuffer");
 
 const std::string getDecryptedPath( const std::string & path )
 {
-	return getDecryptedPath( boost::filesystem::path(path) ).file_string();
+	return getDecryptedPath( boost::filesystem::path(path) ).string();
 }
 
 
@@ -54,14 +54,14 @@ const boost::filesystem::path getDecryptedPath( const boost::filesystem::path & 
 
 const std::string getEncryptedPath( const std::string & path )
 {
-	return getEncryptedPath( boost::filesystem::path(path) ).file_string();
+	return getEncryptedPath( boost::filesystem::path(path) ).string();
 }
 
 
 
 const boost::filesystem::path getEncryptedPath( const boost::filesystem::path & path )
 {
-	const std::string	extension = path.extension();
+	const std::string	extension = path.extension().string();
 
 	if( extension != encryptedExtension )
 	{
