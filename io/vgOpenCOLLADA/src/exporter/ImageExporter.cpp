@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Guillaume Brocker
 
 #include "vgOpenCOLLADA/exporter/ImageExporter.hpp"
 
@@ -25,7 +26,7 @@ ImageExporter::ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedM
 	m_outputFilePath( filepath ),
 	m_exportSettings( exportSettings )
 {
-	std::string	fileName = m_outputFilePath.stem();
+	std::string	fileName = m_outputFilePath.stem().string();
 	boost::filesystem::path	directory = m_outputFilePath.parent_path();
 
 	m_imageDirectoryName = "/" + fileName + "_images";

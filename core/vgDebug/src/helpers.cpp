@@ -2,6 +2,7 @@
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Clement Forest
+// Author Guillaume Brocker
 
 #include "vgDebug/helpers.hpp"
 
@@ -75,7 +76,7 @@ void Log::logStandardOutputs( const sbf::Module& module )
 	ss << g_logFilePrefix << bpx::second_clock::local_time() << g_logFileSuffix;
 	g_currentLogFile = ss.str();
 
-	static std::ofstream logFile( (g_logDirectory / g_currentLogFile ).file_string().c_str() );
+	static std::ofstream logFile( (g_logDirectory / g_currentLogFile ).string().c_str() );
 	if(logFile.good())
 	{
 		outRedirection.reset(new vgDebug::StreamRedirection(&std::cout, &logFile));
@@ -99,8 +100,8 @@ void Log::limitLogFileHistory( const int maxNumber )
 	{
 		bfs::path currentPath( *i );
 		if( (!bfs::is_directory( currentPath ) )
-			&& ( currentPath.filename().compare(0,g_logFilePrefix.size(),g_logFilePrefix) == 0 )
-			&& ( currentPath.filename().compare(currentPath.filename().size()-g_logFileSuffix.size(),g_logFileSuffix.size(),g_logFileSuffix) == 0 )
+			&& ( currentPath.filename().string().compare(0,g_logFilePrefix.size(),g_logFilePrefix) == 0 )
+			&& ( currentPath.filename().string().compare(currentPath.filename().string().size()-g_logFileSuffix.size(),g_logFileSuffix.size(),g_logFileSuffix) == 0 )
 			&& ( currentPath.filename() != g_currentLogFile) )
 		{
 			existingLogFiles.insert( currentPath );
@@ -126,7 +127,7 @@ void Log::logBasicInfo(int argc, char** argv, const sbf::Module& module)
 	}
 	std::clog << std::endl;
 	// Current directory
-	std::clog << "In directory " << boost::filesystem::initial_path().file_string() << std::endl;
+	std::clog << "In directory " << boost::filesystem::initial_path().string() << std::endl;
 }
 
 

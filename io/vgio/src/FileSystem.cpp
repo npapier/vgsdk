@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -38,7 +38,7 @@ vgd::Shp< std::istream > FileSystem::open( const boost::filesystem::path & path 
 
 	if( boost::filesystem::exists(clearPath) )
 	{
-		return vgd::Shp< std::istream >( new std::ifstream(clearPath.file_string().c_str(), std::ios::binary) );
+		return vgd::Shp< std::istream >( new std::ifstream(clearPath.string().c_str(), std::ios::binary) );
 	}
 	else
 	{
@@ -63,7 +63,7 @@ vgd::Shp< std::istream > FileSystem::open( const boost::filesystem::path & path 
 
 
 		// Tryes the first key.
-		std::ifstream		inStream( cryptedPath.file_string().c_str(), std::ios::binary );
+		std::ifstream		inStream( cryptedPath.string().c_str(), std::ios::binary );
 		std::vector< char >	cryptBuffer;
 		std::vector< char > clearBuffer;
 		bool				decrypted;

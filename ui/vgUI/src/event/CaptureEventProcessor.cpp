@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgUI/event/CaptureEventProcessor.hpp"
 
@@ -77,7 +78,7 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 				ss << second_clock::local_time();
 
 				const bfs::path path = sbf::path::get(sbf::path::Var) / bfs::path("videos") / ss.str();
-				const std::string strPath = path.file_string();
+				const std::string strPath = path.string();
 
 				// Flushs the video
 				getCanvas()->m_video.mkdirs( strPath );
