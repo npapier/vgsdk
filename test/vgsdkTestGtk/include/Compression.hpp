@@ -37,7 +37,7 @@ TEST_P(VgTestCompression, DISABLED_LoadTest)
 
 	//std::string filename = vgTest::getImageName(test_info->name());
 	boost::filesystem::path path( GetParam() );
-	std::string filename = vgTest::getImageName( path.filename() );
+	std::string filename = vgTest::getImageName( path.filename().string() );
 
 	vgd::ScopedPtr< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );	
 
