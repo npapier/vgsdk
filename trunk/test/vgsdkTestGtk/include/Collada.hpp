@@ -9,7 +9,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
-#include <gtest/gtest.h>
 
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
@@ -17,6 +16,7 @@
 #include <vgTest/convenience.hpp>
 
 #include "Fixtures.hpp"
+#include "gtest.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
@@ -41,7 +41,7 @@ TEST_P(VgTestCollada, LoadTest)
 
 	//std::string filename = vgTest::getImageName(test_info->name());
 	boost::filesystem::path path( GetParam() );
-	std::string filename = vgTest::getImageName( path.filename() );
+	std::string filename = vgTest::getImageName( path.filename().string() );
 
 	vgd::ScopedPtr< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );	
 
