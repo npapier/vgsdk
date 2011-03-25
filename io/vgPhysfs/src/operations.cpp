@@ -65,9 +65,9 @@ const boost::filesystem::path getEncryptedPath( const boost::filesystem::path & 
 
 	if( extension != encryptedExtension )
 	{
-		boost::filesystem::path	result( path );
-
-		result.replace_extension( extension + encryptedExtension );
+		//boost::filesystem::path	result( path );
+		//result.replace_extension( extension + encryptedExtension ); // Ticket Boost 5118
+		boost::filesystem::path	result( path.string()+encryptedExtension );
 		return result;
 	}
 	else
