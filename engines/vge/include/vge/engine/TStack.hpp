@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 
 #include <deque>
 #include <vgBase/Type.hpp>
+#include <vgd/Shp.hpp>
 
 
 
@@ -121,8 +122,18 @@ struct TStack
 
 	//@}
 
-private:
+protected:
 	Container m_container; ///< underlying container used to implement stack
+};
+
+
+
+template< typename T >
+struct TStackShp : public TStack< vgd::Shp< T > >
+{
+	TStackShp();
+
+	void push();
 };
 
 
