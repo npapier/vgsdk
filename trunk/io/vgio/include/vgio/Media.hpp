@@ -49,15 +49,44 @@ struct VGIO_API Media
 	virtual const bool exists( const boost::filesystem::path & ) const = 0;
 
 	/**
-	 * @brief	Loads the given path as file into the given buffer.
-	 */
-	const bool load( const boost::filesystem::path & path, std::vector< char > & buffer ) const;
-	
-	/**
 	 * @brief	Opens the given path as a file and return the corresponding input stream.
 	 */
 	virtual vgd::Shp< std::istream > open( const boost::filesystem::path & ) const = 0;
 	//@}
+
+	/**
+	 * @brief	Loads the given path as file into the given buffer.
+	 */
+	template< typename C >
+	const bool load( const boost::filesystem::path & path, C & buffer ) const
+	{
+		// Opens the input stream.
+		vgd::Shp< std::istream >	in = open(path);
+	
+		if( !in )
+		{
+			buffer.resize(0);
+			return false;
+		}
+	
+
+		// Loads the stream content.
+		in->seekg( 0, std::ios::end );
+		buffer.resize( in->tellg() );
+		in->seekg( 0, std::ios::beg );
+		in->read( &buffer[0], buffer.size() );
+ 
+		if( in->fail() )
+		{
+			buffer.resize(0);
+			return false;
+		}
+
+
+		// Job's done.
+		return true;
+	}
+
 
 protected:
 
