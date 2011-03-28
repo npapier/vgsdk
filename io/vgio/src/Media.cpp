@@ -44,35 +44,5 @@ const bool Media::hasCryptoKey( const CryptoKeyType & key )
 
 
 
-const bool Media::load( const boost::filesystem::path & path, std::vector< char > & buffer ) const
-{
-	// Opens the input stream.
-	vgd::Shp< std::istream >	in = open(path);
-	
-	if( !in )
-	{
-		buffer.resize(0);
-		return false;
-	}
-	
-
-	// Loads the stream content.
-	in->seekg( 0, std::ios::end );
-	buffer.resize( in->tellg() );
-	in->seekg( 0, std::ios::beg );
-	in->read( &buffer[0], buffer.size() );
-
-	if( in->fail() )
-	{
-		buffer.resize(0);
-		return false;
-	}
-
-
-	// Job's done.
-	return true;
-}
-
-
 
 } // namespace vgio
