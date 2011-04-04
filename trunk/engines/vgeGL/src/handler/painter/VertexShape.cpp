@@ -76,9 +76,14 @@ const GLenum convertDeformableHint2GLUsage( vgd::node::VertexShape * node )
 
 void updateArrayBuffer( glo::ArrayBuffer& buffer, GLsizeiptr size, const GLvoid * ptr, const GLenum bufferUsage )
 {
-	if ( buffer.isEmpty() )
+	const bool useBufferData =	buffer.isEmpty()					||	// current buffer is empty
+								size > buffer.getSize()				||	// data store must be expanded
+								bufferUsage != buffer.getUsage();		// buffer usage has been modified
+
+	if ( buffer.isEmpty() ) buffer.generate();
+
+	if ( useBufferData )
 	{
-		buffer.generate();
 		buffer.bind();
 		buffer.bufferData( size, ptr, bufferUsage );
 	}
@@ -91,9 +96,14 @@ void updateArrayBuffer( glo::ArrayBuffer& buffer, GLsizeiptr size, const GLvoid 
 
 void updateElementArrayBuffer( glo::ElementArrayBuffer& buffer, GLsizeiptr size, const GLvoid * ptr, const GLenum bufferUsage )
 {
-	if ( buffer.isEmpty() )
+	const bool useBufferData =	buffer.isEmpty()					||	// current buffer is empty
+								size > buffer.getSize()				||	// data store must be expanded
+								bufferUsage != buffer.getUsage();		// buffer usage has been modified
+
+	if ( buffer.isEmpty() ) buffer.generate();
+
+	if ( useBufferData )
 	{
-		buffer.generate();
 		buffer.bind();
 		buffer.bufferData( size, ptr, bufferUsage );
 	}
