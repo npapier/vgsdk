@@ -209,7 +209,10 @@ void Settings::onBench()
 
 	if ( fps >= 0 )
 	{
-		m_canvas->bench( 100 );// @todo FIXME bench( fps * 2 );
+		m_canvas->refreshForced();
+		m_canvas->refreshForced();
+		const int paintCount = 5 * 1000 / m_canvas->getFrameTime();
+		m_canvas->bench( paintCount );
 		m_canvas->refreshForced();
 	}
 }
