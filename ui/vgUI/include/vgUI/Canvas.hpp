@@ -49,7 +49,7 @@ namespace vgUI
  * - switch to/from fullscreen mode
  * - Screenshot and video capture
  * - event debugging helpers
- * - debug overlay with runtime informations like fps
+ * - debug overlay with runtime informations like fps, frame time and frame count
  *
  * @ingroup g_vgUIGroup
  * @ingroup g_layerplan
@@ -528,6 +528,13 @@ public:
 	 */
 	const int getFPS() const;
 
+	/**
+	 * @brief Returns the time taken to render the last frame
+	 *
+	 * @return the time taken to render the last frame in ms
+	 */
+	const int getFrameTime() const;
+
 
 
 protected:
@@ -542,6 +549,13 @@ protected:
 	 * @return the new counter value
 	 */
 	virtual const int setFPS( const int newFPS );
+
+	/**
+	 * @brief Sets the time taken to render the last frame
+	 *
+	 * @param newFrameTime	the new value
+	 */
+	void setFrameTime( const int newFrameTime );
 
 
 
@@ -639,6 +653,8 @@ private:
 	 */
 	//@{
 	uint						m_frameBase;
+	int							m_frameTime;	///< the time taken to render the last frame
+
 	boost::posix_time::ptime	m_timeBase;
 	int							m_fps;
 	//@}

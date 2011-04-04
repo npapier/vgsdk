@@ -6,6 +6,7 @@
 
 #include "vgUI/Canvas.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 
@@ -27,8 +28,6 @@
 #include <vgd/node/MultiSwitch.hpp>
 #include <vgd/node/Overlay.hpp>
 #include <vgd/visitor/helpers.hpp>
-#include <vgDebug/convenience.hpp>
-#include <vgDebug/Global.hpp>
 #include <vgDebug/helpers.hpp>
 #include <vgeGL/engine/Engine.hpp>
 
@@ -130,6 +129,7 @@ Canvas::Canvas()
 	m_videoCapture					( false							),
 	m_debugEvents					( false							),
 	m_frameBase						( 0								),
+	m_frameTime						( -1							),
 	// m_timeBase
 	m_fps							( -1							)
 {
@@ -157,6 +157,7 @@ Canvas::Canvas(	const Canvas *sharedCanvas )
 	m_videoCapture					( false							),
 	m_debugEvents					( false							),
 	m_frameBase						( 0								),
+	m_frameTime						( -1							),
 	// m_timeBase
 	m_fps							( -1							)
 {
@@ -430,9 +431,8 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		//
 		namespace bpt = boost::posix_time;
 
-		bpt::ptime beginPaint = bpt::microsec_clock::universal_time();
-
 		// Initializes attributes used by fps computation
+		bpt::ptime beginPaint = bpt::microsec_clock::universal_time();
 		if ( m_timeBase.is_not_a_date_time() )
 		{
 			m_frameBase	= getFrameCount();
@@ -531,6 +531,8 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		swapBuffer();
 
 		bpt::ptime endPaint = bpt::microsec_clock::universal_time();
+
+		setFrameTime( (endPaint - beginPaint).total_milliseconds() );
 
 		// Computes fps
 		bpt::time_duration elapsedTimeBetweenFPSComputation = endPaint - m_timeBase;
@@ -707,6 +709,12 @@ const int Canvas::getFPS() const
 
 
 
+const int Canvas::getFrameTime() const
+{
+	return m_frameTime;
+}
+
+
 const int Canvas::setFPS( const int newFPS )
 {
 	m_fps = newFPS;
@@ -714,6 +722,12 @@ const int Canvas::setFPS( const int newFPS )
 	return m_fps;
 }
 
+
+
+void Canvas::setFrameTime( const int newFrameTime )
+{
+	m_frameTime = newFrameTime;
+}
 
 
 gle::OpenGLExtensionsGen& Canvas::getGleContext()
@@ -1007,14 +1021,36 @@ void Canvas::updateFPSOverlay()
 
 	cairo_select_font_face( cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD );
 
-	cairo_set_font_size( cr, 24.f );
+	cairo_set_font_size( cr, 18.f );
 	cairo_set_source_rgb( cr, 1.f, 1.f, 1.f );
-	cairo_move_to( cr, 5.f, 24.f );
+	cairo_move_to( cr, 4.f, 23.f );
 
-	const std::string strFrameCount = boost::lexical_cast< std::string >( getFrameCount() );
-	const std::string strFPS = getFPS() >= 0 ? boost::lexical_cast< std::string >( getFPS() ) : "na";
+	const std::string strFrameCount	= boost::lexical_cast< std::string >( getFrameCount() );
+	std::string strFrameTime;
+	if ( getFrameTime() >= 0 )
+	{
+		const std::string strTmp = boost::lexical_cast< std::string >( getFrameTime() );
+		const std::string strSpace( std::max(0, 3-(int)strTmp.size()), '0' );
+		strFrameTime = strSpace + strTmp;
+	}
+	else
+	{
+		strFrameTime = " na";
+	}
 
-	cairo_show_text( cr, (strFPS + " " + strFrameCount).c_str() );
+	std::string strFPS;
+	if ( getFPS() >= 0 )
+	{
+		const std::string strTmp = boost::lexical_cast< std::string >( getFPS() );
+		const std::string strSpace( std::max(0, 3-(int)strTmp.size()), '0' );
+		strFPS = strSpace + strTmp;
+	}
+	else
+	{
+		strFPS = " na";
+	}
+
+	cairo_show_text( cr, (strFrameTime + " " + strFPS + " " + strFrameCount).c_str() );
 
 	cairo_restore(cr);
 
