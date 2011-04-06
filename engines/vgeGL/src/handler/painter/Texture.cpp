@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -321,9 +321,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 	if ( engine->isTextureMappingEnabled() == false )
 	{
 		// Texture mapping is disabled, so do nothing
-		// Validates node
-		vgd::field::DirtyFlag* pDFNode = node->getDirtyFlag( node->getDFNode() );
-		pDFNode->validate();
+		// Don't validate node, because OpenGL part is not synchronized
 		return;
 	}
 
