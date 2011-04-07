@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 #ifndef _VGTRIAN_TRIANLOADER_HPP
 #define _VGTRIAN_TRIANLOADER_HPP
 
+#include <vgBase/Type.hpp>
 #include "vgTrian/vgTrian.hpp"
 
 #include <vgio/ILoader.hpp>
@@ -26,137 +27,58 @@ namespace vgTrian
 
 
 /**
- * @brief Support of .trian files
- * 
- * @todo computeNormals for trian file (see vgd::node::VertexShape). 
- * @todo Support of vgd::node::TriSet
- * @todo Uses boost::filesystem
- * 
- * @todo remove char* and use std::string instead
+ * @brief Reading and writing .trian files
  */
 struct VGTRIAN_API TrianLoader : public vgio::ILoader
 {
 	META_LOADER_HPP( vgTrian::TrianLoader )
-	
-	/**
-	 * @brief Loads a mesh from .trian (in ascii).
-	 * 
-	 * Create vertex, edge tables, but don't create normals(nor neighbours).
-	 *
-	 * @param pathFilename	the name of file to read.
-	 * @param bCCW		true to specify conter-clockwise ordering for triangle
-	 * 
-	 * @return true if successful, false otherwise and a smart pointer on node if sucessful.
-	 * 
-	 * @deprecated Uses loadTrian method that creates a TriSet node.
-	 */
-		//std::pair< bool, vgd::Shp< vgd::node::VertexShape > > loadTrian( const char *pathFilename, const bool bCCW = false );
 
 	/**
 	 * @brief Loads a mesh from .trian (in ascii).
 	 * 
-	 * Create vertex, edge tables, but don't create normals(nor neighbours).
+	 * Creates a VertexShape with \c vertex and \c vertexIndex fields initialized. Normals are computed.
 	 *
-	 * @param pathFilename	the name of file to read.
+	 * @param in		input stream to read
+	 * @param group		group to save the mesh
 	 * @param bCCW		true to specify conter-clockwise ordering for triangle
 	 * 
-	 * @return true if successful, false otherwise and a smart pointer on node if sucessful.
-	 * 
-	 * @todo create TriSet(with neighbours) insteed of VertexShape.
+	 * @return true if successful, false otherwise.
+	 *
+	 * @todo Support of neighbours
 	 */
-		//std::pair< bool, vgd::Shp< vgd::node::TriSet > > loadTrian( const std::string& pathFilename, const bool bCCW = false );
+	const bool loadTrian( std::istream & in, vgd::Shp< vgd::node::Group > group, const bool bCCW );
+
+	/**
+	 * @brief Helper method to load a mesh from .trian (in ascii).
+	 *
+	 * @param pathFilename		the name of file to read
+	 * @param bCCW				true to specify conter-clockwise ordering for triangle
+	 *
+	 * @return the newly construct VertexShape if successful, an empty smart pointer otherwise
+	 */
+	vgd::Shp< vgd::node::VertexShape > loadTrian( const std::string& pathFilename, const bool bCCW );
+
 
 	/**
 	 * @brief Saves a triset in a .trian (in ascii).
 	 * 
-	 * @param triset			the shape to save
-	 * @param pathFilename	the name of file to read.
-	 * @param bCCW		true to specify conter-clockwise ordering for triangle
+	 * @param shape				the shape to save
+	 * @param pathFilename		the name of file to read
+	 * @param bCCW				true to specify conter-clockwise ordering for triangle
 	 * 
 	 * @return true if successful, false otherwise.
 	 * 
 	 * @todo Support of neighbours
 	 */
-	const bool saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::string& pathFilename, const bool bCCW = true );
+	const bool saveTrian( vgd::Shp< vgd::node::VertexShape > shape, const std::string& pathFilename, const bool bCCW = true );
 
-	/**
-	 * @brief Load a model from file.
-	 * 
-	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
-	 */	
-		std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, const bool bCCW = false );
 
-	/**
-	 * @brief	Loads a model from a file.
-	 *
-	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
-	 */
+	// ILoader interface
+	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, const bool bCCW = false );
 	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const vgio::Media & media, const std::string & filePath, const bool bCCW = false );
-
-	/**
-	 * @brief Load a model from a file in memory.
-	 *
-	 * @todo	DEPRECATED
-	 * 
-	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
-	 */
-		std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > buffer, const bool bCCW = false );
-
-	/**
-	 * @brief Load a model from a file in memory and the list of image already load in memory.
-	 *
-	 * @todo	DEPRECATED
-	 * 
-	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
-	 */
-	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > buffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW = false );
-
-
-	/**
-	 * @brief Same as load function.
-	 *
-	 * @todo	remove it and only use load function.
-	 */
-	// * param useCache		true to use cache system for image
-	//std::pair< bool, vgd::Shp< vgd::node::Group > >	loadTrian2( const char *pathFilename, bool bCCW = false );
-	//, const bool useCache = false );
-
-
-	virtual vgd::Shp< vgio::ILoader > clone();
-
-private:
-	/**
-	 * @name Used by loadTrian2.
-	 */
-	//@{
-
-	/**
-	 * @brief Loads a mesh from .trian2 (in ascii) : stringstream already initilized from one of the load method.
-	 * 
-	 * Create vertex, edge tables...., but don't create normals(nor neighbours).
-	 *
-	 * @param group	group to save the mesh.
-	 *
-	 * @return true if successful, false otherwise.
-	 * 
-	 * @remark Experimental format (files .trian2 are created by 3DSMax vgsdkExporter plugins).
-	 * 
-	 * @todo create TriSet(with neighbours) insteed of VertexShape.
-	 */	
-	const bool loadTrian( const vgio::Media & media, std::istream & in, vgd::Shp< vgd::node::Group > group, bool BCCW );
-	//vgd::Shp< vgd::node::Switch > loadMaterials( const vgio::Media & media, std::istream & in );
-	//void loadTextureMaps( const vgio::Media & media, std::istream & in, vgd::Shp< vgd::node::Group > group );
-	//vgd::Shp< vgd::node::VertexShape > loadMesh( std::istream & in, const std::string & meshName );
-	//vgd::Shp< vgd::node::Material > loadWireColor( std::istream & in, const std::string & nodeName );
-
-
-//	bool				m_useCache;			///< true to use cache system for image, false otherwise
-
-	std::string			m_path;		///< Path for the file.
-	
-	//@}
-
-	//std::map< std::string, vgd::Shp< vgd::basic::Image > > m_imageMap;
+	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > buffer, const bool bCCW = false );
+	std::pair< bool, vgd::Shp< vgd::node::Group > > vgDEPRECATED( load( const std::string filePath, vgd::Shp< std::vector< char > > buffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW = false ) );
+	vgd::Shp< vgio::ILoader > clone();
 };
 
 
