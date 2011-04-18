@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 
 #include "vge/engine/Engine.hpp"
 #include "vge/pass/Pass.hpp"
+#include "vge/service/Painter.hpp"
 
 
 
@@ -24,7 +25,11 @@ Technique::Technique()
 	//m_passIsolationMask	(	PassIsolationMask(0)	),
 
 	m_engine			(	0	),
-	m_traverseElements	(	0	)
+	m_traverseElements	(	0	),
+
+	m_paintService		(	vge::service::Painter::create() )
+
+	//m_passDescription
 {}
 
 
@@ -201,6 +206,14 @@ vge::visitor::TraverseElementVector *Technique::getTraverseElements() const
 {
 	return m_traverseElements;
 }
+
+
+
+vgd::Shp< vge::service::Service > Technique::paintService()
+{
+	return m_paintService;
+}
+
 
 
 /*vge::engine::Engine * Technique::getEngine() const

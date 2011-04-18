@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<!--	VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+<!--	VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 	Distributed under the terms of the GNU Library General Public License (LGPL)
 	as published by the Free Software Foundation.
 	Author Nicolas Papier -->
@@ -11,29 +11,54 @@
 			inherits="GeometricalTransformation ProjectionTransformation">
 		<doxygen>
 			<docBrief>Camera node used to set the projection matrix, viewport and scissor box. Camera position and orientation could be specified too.</docBrief>
-			<doc>Sets up the projection with an user defined matrix for the viewing frustum (into the world coordinate system). </doc>
-			<doc>Sets up the camera position and orientation with 4x4 matrix from lookAt field.</doc>
-			<doc>Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting. </doc>
+			<doc>Sets up the rendering mode (monoscopic and 3D stereoscopic) using \c mode field.</doc>
+			<doc>In stereoscopic mode, \c projectionRight (resp. \c projectionLeft) and \c lookAtRight (resp. \c lookAtLeft) specifies the right (resp. left) eye.</doc>
+			<doc>Sets up the \c projection with an user defined matrix for the viewing frustum (into the world coordinate system).</doc>
+			<doc>Sets up the camera position and orientation with 4x4 matrix from \c lookAt field.</doc>
+			<doc>Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting.</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
 			<ingroup>g_transformationNodes</ingroup>
 		</doxygen>
+
 		<!-- projection and lookAt renames into intrinsics and extrinsics -->
-		<sf name="projection" doc="Determines the projection matrix.">
+
+		<sf name="projectionLeft" doc="Determines the projection matrix for monoscopic rendering or for the left eye if stereo is enabled.">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
-		<sf name="lookAt"
-			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera.\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
+		<sf name="lookAtLeft"
+			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera for monoscopic rendering or for the left eye if stereo is enabled.\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
+
+		<sf name="projectionRight" doc="Determines the projection matrix for the right eye (used only if stereo is enabled).">
+			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
+		</sf>
+		<sf name="lookAtRight"
+			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
+			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
+		</sf>
+
 		<of name="viewport" doc="Determines the viewport.">
 			<type name="Rectangle2i" namespace="vgm" default="0, 0, 1600, 1200"/>
 		</of>
 		<of name="scissor" doc="Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.">
 			<type name="Rectangle2i" namespace="vgm" default=""/>
 		</of>
+
+		<sf name="mode" doc="Specifies the camera mode (monoscopic or stereoscopic mode).\nWhen you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\nStereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.">
+			<type name="enum">
+				<enum default="MONOSCOPIC">
+					<value name="MONOSCOPIC" doc="Non stereoscopic rendering. \c projectionLeft, \c lookAtLeft, \c viewport and \c scissor fields are used to define the camera."/>
+					<value name="ANAGLYPH" doc="Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera."/>
+					<!-- @todo QBS -->
+				</enum>
+			</type>
+		</sf>
+
 		<includehpp>vgd/include/vgd/node/Camera.hpp</includehpp>
 		<includecpp>vgd/src/node/Camera.cpp</includecpp>
+
 	</node>
 
 

@@ -23,15 +23,43 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 
 
 
+// LOOKAT/LOOKATLEFT
+const Camera::LookAtValueType Camera::getLookAt() const
+{
+	return getLookAtLeft();
+}
+
+
+void Camera::setLookAt( const LookAtValueType value )
+{
+	setLookAtLeft(value);
+}
+
+
+
+// PROJECTION/PROJECTIONLEFT
+const Camera::ProjectionValueType Camera::getProjection() const
+{
+	return getProjectionLeft();
+}
+
+
+void Camera::setProjection( const ProjectionValueType value )
+{
+	setProjectionLeft( value );
+}
+
+
+
 // Matrix
 const Camera::MatrixValueType Camera::getMatrix() const
 {
-	return getFieldRO<FMatrixType>(getFProjection())->getValue();
+	return getFieldRO<FMatrixType>(getFProjectionLeft())->getValue();
 }
 
 
 
 void Camera::setMatrix( const MatrixValueType value )
 {
-	getFieldRW<FMatrixType>(getFProjection())->setValue( value );
+	getFieldRW<FMatrixType>(getFProjectionLeft())->setValue( value );
 }

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,6 +9,7 @@
 #include <vgd/node/Light.hpp>
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 
 
 
@@ -24,6 +25,22 @@ namespace painter
 
 
 //META_HANDLER_CPP( Light );
+
+
+
+void Light::updateUnitState( vgeGL::engine::Engine * engine, vgd::node::Light * light, vgd::Shp< vgeGL::engine::LightState > lightState )
+{
+	// ON
+	vgd::node::Light::OnValueType on;
+	bool bDefined = light->getOn( on );
+	if ( bDefined )		lightState->setOn( on );
+
+	// CASTSHADOW
+	if ( engine->isShadowEnabled() )
+	{
+		lightState->setCastShadow( light->getCastShadow() );
+	}
+}
 
 
 

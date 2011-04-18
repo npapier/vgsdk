@@ -11,7 +11,6 @@
 #include <vge/rc/TManager.hpp>
 
 #include "vgeGL/basic/UniformContainer.hpp"
-#include "vgeGL/engine/GLSLState.hpp"
 
 // for GLState
 #include <vgd/node/DrawStyle.hpp>
@@ -32,7 +31,7 @@ namespace vgd
 
 namespace vgeGL 
 { 
-	namespace engine { struct ProgramGenerator; } 
+	namespace engine { struct GLSLState; struct ProgramGenerator; } 
 }
 
 
@@ -162,9 +161,10 @@ public:
 	 */
 	//@{
 
-	typedef vge::engine::TStack< GLState >		GLStateStack;	///< Type definition for the stack of GLState
-	typedef vge::engine::TStack< GLSLState >	GLSLStateStack; ///< Type definition for the stack of GLSLState
-	typedef vgeGL::basic::UniformContainer		UniformState;	///< Type definition for the uniform variables state
+	typedef vge::engine::TStackShp< GLState >		GLStateStack;	///< Type definition for the stack of GLState
+	typedef vge::engine::TStackShp< GLSLState >		GLSLStateStack; ///< Type definition for the stack of GLSLState
+
+	typedef vgeGL::basic::UniformContainer			UniformState;	///< Type definition for the uniform variables state
 
 	/**
 	 * @brief Retrieves the OpenGL state stack.
@@ -310,6 +310,23 @@ public:
 	//@{
 
 	/**
+	 * @brief Determines whether the lighting is enabled.
+	 *
+	 * @return true if lighting is enabled, false otherwise
+	 */
+	const bool isLightingEnabled() const;
+
+	/**
+	 * @brief Enables or disables the lighting depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the lighting must be enabled, false otherwise
+	 *
+	 * @return the lighting state before calling this method
+	 */
+	const bool setLightingEnabled( const bool enabled = true );
+
+
+	/**
 	 * @brief Determines whether the texture mapping is enabled.
 	 *
 	 * @return true if texture mapping is enabled, false otherwise
@@ -356,6 +373,21 @@ public:
 
 
 	/**
+	 * @brief Determines whether the depth pre-pass is enabled.
+	 *
+	 * @return true if depth pre-pass is enabled, false otherwise.
+	 */
+	const bool isDepthPrePassEnabled() const;
+
+	/**
+	 * @brief Enables or disables the depth pre-pass depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the depth pre-pass must be enabled, false otherwise
+	 */
+	void setDepthPrePassEnabled( const bool enabled = true );
+
+
+	/**
 	 * @brief Determines whether the shadow sampler usage is enabled.
 	 *
 	 * @return true if shadow sampler usage is enabled, false otherwise.
@@ -368,6 +400,23 @@ public:
 	 * @param isEnabled		true when the shadow sampler usage must be enabled, false otherwise
 	 */
 	void setShadowSamplerUsageEnabled( const bool enabled = true );
+
+
+	/**
+	 * @brief Determines whether the shadow computation is enabled.
+	 *
+	 * @return true if the shadow computation is enabled, false otherwise.
+	 */
+	const bool isShadowEnabled() const;
+
+	/**
+	 * @brief Enables or disables the shadow computation depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the shadow computation must be enabled, false otherwise
+	 * @return the shadow computation state before calling this method
+	 */
+	const bool setShadowEnabled( const bool enabled = true );
+
 	//@}
 
 
@@ -429,7 +478,8 @@ public:
 	const vgd::Shp< GLSLActivationState > getGLSLActivationState() const;
 
 	/**
-	 * @brief */
+	 * @brief
+	 */
 	void setGLSLActivationState( const vgd::Shp< GLSLActivationState > state );
 
 
@@ -479,12 +529,12 @@ public:
 
 // @todo remove me
 	/**
-	 * @brief Loads shaders from files
+	 * brief Loads shaders from files
 	 *
 	 * This method loads shaders from files and registers them in the GLSL manager (see getGLSLManager()).
 	 *
-	 * @param path		path from where files would be searched
-	 * @param regex		regular expression used to filter files to load
+	 * param path		path from where files would be searched
+	 * param regex		regular expression used to filter files to load
 	 */
 	//void loadShaders( const std::string& path, const std::string& regex );
 	//@}
@@ -689,10 +739,13 @@ protected:
 
 private:
 
+	bool m_isLightingEnabled;				//< true if lighting is enabled, false otherwise
 	bool m_isTextureMappingEnabled;			//< true if texture mapping is enabled, false otherwise
 	bool m_isDisplayListEnabled;			//< true if engine must used display list, false otherwise
 	bool m_isVertexBufferObjectEnabled;		//< true if engine must used VBO, false otherwise
+	bool m_isDepthPrePassEnabled;			//< true if engine must do the depth pre-pass, false otherwise
 	bool m_isShadowSamplerEnabled;			//< true if engine must used shadow sampler, false otherwise
+	bool m_isShadowEnabled;					//< true if engine must compute shadow, false otherwise
 
 	/**
 	 * @name Cache implementations specifics capabilities
@@ -734,15 +787,9 @@ private:
 
 
 
-	/**
-	 * @brief The stack of OpenGL rendering state.
-	 */
-	vge::engine::TStack< GLState > m_glStateStack;
+	GLStateStack						m_glStateStack;		///< store the stack of OpenGL rendering state
 
-	/**
-	 * @brief The stack of GLSL rendering state.
-	 */
-	vge::engine::TStack< GLSLState > m_glslStateStack;
+	GLSLStateStack						m_glslStateStack;	///< store the stack of GLSL rendering state
 
 	UniformState						m_uniformState;		///< store the current uniform state
 

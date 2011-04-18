@@ -89,21 +89,21 @@ struct GLSLHelpers
 		std::string retVal;
 
 		// DIRECTIONAL_LIGHT
-		if ( state.isEnabled( GLSLState::DIRECTIONAL_LIGHT ) )
+		if ( state.isEnabled( DIRECTIONAL_LIGHT ) )
 		{
 			const std::string& directionalLight = GLSLHelpers::generateFunction_directionalLight( state, false );
 			retVal += directionalLight + '\n';
 		}
 
 		// POINT_LIGHT
-		if ( state.isEnabled( GLSLState::POINT_LIGHT ) )
+		if ( state.isEnabled( POINT_LIGHT ) )
 		{
 			const std::string& pointLight = GLSLHelpers::generateFunction_pointLight( state, false );
 			retVal += pointLight + '\n';
 		}
 
 		// SPOT_LIGHT_CASTING_SHADOW
-		if (	state.isEnabled( GLSLState::SPOT_LIGHT_CASTING_SHADOW ) &&
+		if (	state.isEnabled( SPOT_LIGHT_CASTING_SHADOW ) &&
 				state.getShadowType() != vgd::node::LightModel::SHADOW_OFF )
 		{
 			const std::string& spotLightFront	= GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, true /*castShadow*/);
@@ -111,7 +111,7 @@ struct GLSLHelpers
 			retVal += spotLightFront + '\n';
 			// retVal += spotLightBack; @todo
 		}
-		else if ( state.isEnabled( GLSLState::SPOT_LIGHT ) )
+		else if ( state.isEnabled( SPOT_LIGHT ) )
 		// SPOT_LIGHT
 		{
 			const std::string& spotLightFront = GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, false /*castShadow*/ );
@@ -310,7 +310,7 @@ struct GLSLHelpers
 						"	{\n"
 						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize );\n"
 						"		count++;\n"
-						"	}\n"						
+						"	}\n"
 						"shadowFactor /= count;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_32UM )
@@ -493,7 +493,7 @@ struct GLSLHelpers
 				"\n"
 				"void spotLightFrontShadow( int i, sampler2DShadow texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
 				"{\n"
-				"	float shadowFactor;\n";			
+				"	float shadowFactor;\n";
 			}
 			else
 			{
@@ -501,7 +501,7 @@ struct GLSLHelpers
 				"\n"
 				"void spotLightFrontShadow( int i, sampler2D texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
 				"{\n"
-				"	float shadowFactor;\n";			
+				"	float shadowFactor;\n";
 			}
 
 			spotLightFrontShadow += shadowString;
@@ -552,21 +552,15 @@ struct GLSLHelpers
 		// For each light, do
 		uint		lightCastingShadowCount	= 0;
 		uint		i						= 0;
-		const uint	iEnd					= state.getMaxLight();
+		const uint	iEnd					= state.lights.getMax();
 
 		for( uint foundLight = 0; i != iEnd; ++i )
 		{
-			const vgd::Shp< GLSLState::LightState > currentLightState = state.getLight(i);
+			const vgd::Shp< LightState > currentLightState = state.lights.getState(i);
 
 			if ( currentLightState )
 			{
-				const vgd::node::Light * currentLight = currentLightState->getLightNode();
-				assert( currentLight != 0 );
-
-				bool onValue;
-				bool isDefined = currentLight->getOn( onValue );
-
-				if ( isDefined && onValue )
+				if ( currentLightState->getOn() )
 				{
 					const std::string iStr = vgd::basic::toString( i );
 
@@ -574,21 +568,21 @@ struct GLSLHelpers
 
 					switch ( lightType )
 					{
-						case GLSLState::DIRECTIONAL_LIGHT:
+						case DIRECTIONAL_LIGHT:
 							flightFront		+= "	directionalLightFront( " + iStr + ", normal );\n";
 							flightBack		+= "	directionalLightFront( " + iStr + ", normal );\n";
 							//currentLightBack	+= "	directionalLightBack( " + iStr + ", -normal );\n";
 							break;
 
-						case GLSLState::POINT_LIGHT:
+						case POINT_LIGHT:
 							flightFront		+= "	pointLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
 							flightBack		+= "	pointLightFront( " + iStr + ", ecPosition3, normal, eye );\n";
 							//currentLightBack	+= "	pointLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
 							break;
 
-						case GLSLState::SPOT_LIGHT:
+						case SPOT_LIGHT:
 							if (	state.getShadowType() != vgd::node::LightModel::SHADOW_OFF && 
-									currentLight->getCastShadow() )
+									currentLightState->getCastShadow() )
 							{
 								const std::string	texCoordShadowIndexStr	= vgd::basic::toString(lightCastingShadowCount);
 								const std::string	texMapIndexStr			= state.getPrivateTexUnit(lightCastingShadowCount);
@@ -624,7 +618,7 @@ struct GLSLHelpers
 
 				//
 				++foundLight;
-				if ( foundLight == state.getNumLight() )
+				if ( foundLight == state.lights.getNum() )
 				{
 					break;
 				}
@@ -657,7 +651,7 @@ struct GLSLHelpers
 				"	// Several pre-computations\n"
 				"	vec3 ecPosition3	= (vec3(ecPosition)) / ecPosition.w;\n";
 
-			if ( state.isEnabled(GLSLState::LOCAL_VIEWER) )
+			if ( state.isEnabled(LOCAL_VIEWER) )
 			{
 				flight +=
 				"	vec3 eye			= -normalize(ecPosition3);\n"
@@ -836,11 +830,11 @@ struct GLSLHelpers
 		"{\n";
 
 		uint		i		= 0;
-		const uint	iEnd	= state.getMaxTexture();
+		const uint	iEnd	= state.textures.getMax();
 
 		for( uint foundTexture = 0; i != iEnd; ++i )
 		{
-			const vgd::Shp< GLSLState::TexUnitState >  current = state.getTexture( i );
+			const vgd::Shp< GLSLState::TexUnitState >  current = state.textures.getState( i );
 
 			if ( current )
 			{
@@ -909,7 +903,7 @@ struct GLSLHelpers
 
 				//
 				++foundTexture;
-				if ( foundTexture == state.getNumTexture() )
+				if ( foundTexture == state.textures.getNum() )
 				{
 					break;
 				}
@@ -949,11 +943,11 @@ struct GLSLHelpers
 		vgd::node::Texture * shadowTextureNode	= 0;
 
 		uint		i		= 0;
-		const uint	iEnd	= state.getMaxTexture();
+		const uint	iEnd	= state.textures.getMax();
 
 		for( uint foundTexture = 0; i != iEnd; ++i )
 		{
-			const vgd::Shp< GLSLState::TexUnitState > current = state.getTexture( i );
+			const vgd::Shp< GLSLState::TexUnitState > current = state.textures.getState( i );
 
 			// Empty texture unit, so do nothing
 			if ( current == 0 )	continue;
@@ -983,7 +977,7 @@ struct GLSLHelpers
 
 			//
 			++foundTexture;
-			if ( foundTexture == state.getNumTexture() )
+			if ( foundTexture == state.textures.getNum() )
 			{
 				break;
 			}
@@ -1009,7 +1003,7 @@ struct GLSLHelpers
 			{
 				// @todo OPTME: sparse array => consume more memory
 				decl += "uniform sampler2D texMap2D[";
-				decl += vgd::basic::toString(state.getMaxTexture());
+				decl += vgd::basic::toString(state.textures.getMax());
 				decl += "];\n";
 			}		
 		}
@@ -1086,8 +1080,8 @@ struct GLSLHelpers
 	//			"	newCoordWDivided.z -= 0.0005;\n" // ATI(ok), NV (nok) ?
 	//			"	newCoordWDivided.z += 0.0005;\n" // ATI ?, NV ?
 
-				"	float distanceFromLight = texture2DProj( map, newCoord ).z;\n"
-	//			"	float distanceFromLight = texture2D( map, newCoordWDivided.st ).z;\n"
+				"	float distanceFromLight = textureProj( map, newCoord ).z;\n"
+	//			"	float distanceFromLight = texture( map, newCoordWDivided.st ).z;\n"
 				"	float shadow;\n"
 	//			"	float shadow = 1.0;\n"
 				"	if ( coord.w > 0.0 )\n"
@@ -1109,15 +1103,27 @@ struct GLSLHelpers
 				"\n";*/
 			}
 		}
-		/*// @todo FIXME remove me
-		else
+		// @todo FIXME remove me 
+		/*else
 		{
-			code +=
-			"\n"
-			"float lookupShadowMap( sampler2D map, vec4 coord, vec2 offset )\n"
-			"{\n"
-			"	return 0.0;\n"
-			"}\n\n";
+			if ( state.isShadowSamplerUsageEnabled() )
+			{
+				code +=
+				"\n"
+				"float lookupShadowMap( sampler2DShadow map, vec4 coord, vec2 offset )\n"
+				"{\n"
+				"	return 0.0;\n"
+				"}\n\n";
+			}
+			else
+			{
+				code +=
+				"\n"
+				"float lookupShadowMap( sampler2D map, vec4 coord, vec2 offset )\n"
+				"{\n"
+				"	return 0.0;\n"
+				"}\n\n";
+			}
 		}*/
 
 		return std::make_pair(decl, code);
@@ -1130,11 +1136,11 @@ struct GLSLHelpers
 		std::string retVal;
 
 		uint		i		= 0;
-		const uint	iEnd	= state.getMaxTexture();
+		const uint	iEnd	= state.textures.getMax();
 
 		for( uint foundTexture = 0; i != iEnd; ++i )
 		{
-			const vgd::Shp< GLSLState::TexUnitState > current = state.getTexture( i );
+			const vgd::Shp< GLSLState::TexUnitState > current = state.textures.getState( i );
 
 			// Empty texture unit, so do nothing
 			if ( current == 0 ) continue;
@@ -1158,7 +1164,7 @@ struct GLSLHelpers
 
 			//
 			++foundTexture;
-			if ( foundTexture == state.getNumTexture() )
+			if ( foundTexture == state.textures.getNum() )
 			{
 				break;
 			}

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,9 +47,9 @@ void TextureMatrixTransform::apply ( vge::engine::Engine* pEngine, vgd::node::No
 
 	assert( dynamic_cast< vgd::node::TextureMatrixTransform* >(pNode) != 0 );
 	vgd::node::TextureMatrixTransform *pCastedNode = static_cast< vgd::node::TextureMatrixTransform* >(pNode);
-	
+
 	vge::handler::TextureMatrixTransform::apply( pEngine, pCastedNode );
-	
+
 	paint( pGLEngine, pCastedNode );
 }
 
@@ -71,20 +71,25 @@ void TextureMatrixTransform::setToDefaults()
 
 void TextureMatrixTransform::paint ( vgeGL::engine::Engine *pGLEngine, vgd::node::TextureMatrixTransform *pNode )
 {
-	// TEXTURE MATRIX
-	// Get the transformation.
-	int32	indexMultiAttribute = pNode->getMultiAttributeIndex();
+	if ( pGLEngine->isTextureMappingEnabled() )
+	{
+		// TEXTURE MATRIX
+		// Get the transformation.
+		int32	indexMultiAttribute = pNode->getMultiAttributeIndex();
 
-	vgm::MatrixR& current( pGLEngine->getTextureMatrix().getTop( indexMultiAttribute ) );
+		vgm::MatrixR& current( pGLEngine->getTextureMatrix().getTop( indexMultiAttribute ) );
 
-	pGLEngine->activeTexture( indexMultiAttribute );
-	glMatrixMode( GL_TEXTURE );
+		pGLEngine->activeTexture( indexMultiAttribute );
+		glMatrixMode( GL_TEXTURE );
 
-	// Update OpenGL.
-	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
+		// Update OpenGL.
+		glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
 
-	// Validates node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();
+		// Validates node
+		pNode->getDirtyFlag(pNode->getDFNode())->validate();
+	}
+
+
 }
 
 

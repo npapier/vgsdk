@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,8 +7,8 @@
 #define _VGEGL_HANDLER_PAINTER_CLEARFRAMEBUFFER_HPP
 
 #include "vgeGL/vgeGL.hpp"
-
 #include <vge/handler/painter/SingleAttribute.hpp>
+#include "vgeGL/engine/Engine.hpp"
 
 namespace vgd
 {
@@ -53,12 +53,14 @@ struct VGEGL_API ClearFrameBuffer : public vge::handler::painter::SingleAttribut
 
 	const TargetVector					getTargets()	const;
 
-	void	apply		( vge::engine::Engine*, vgd::node::Node* );
+	void	apply	( vge::engine::Engine*, vgd::node::Node* );
 	void	unapply	( vge::engine::Engine*, vgd::node::Node* );
 
 	void	setToDefaults();
 	
-	void	paint		( vgeGL::engine::Engine*, vgd::node::ClearFrameBuffer* );
+	void	paint	( vgeGL::engine::Engine*, vgd::node::ClearFrameBuffer* );
+
+	static void applyBufferUsagePolicy( const vge::engine::BufferUsagePolicy policy, vgd::Shp< glo::FrameBufferObject > fbo );
 };
 
 

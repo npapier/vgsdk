@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -84,79 +84,171 @@ void TBitSet<size>::reset()
 }
 
 
+/**
+ * @brief Index for GLSLState bitset
+ */
+enum GLSLStateIndex
+{
+	// LightModel node
+	LIGHTING = 0,
+	PER_PIXEL_LIGHTING,
+	LOCAL_VIEWER,
+	TWO_SIDED_LIGHTING,			///< Lighting must operate in two-sided mode
+
+	// Light node
+	DIRECTIONAL_LIGHT,
+	POINT_LIGHT,
+	SPOT_LIGHT,
+	SPOT_LIGHT_CASTING_SHADOW,
+
+	// ClipPlane node
+	CLIPPING_PLANE,				///< True when at least one ClipPlane node has been traversed
+
+	// DrawStyle node
+	FLAT_SHADING,				///< True when DrawStyle.shape implies a flat shading (instead of smooth shading)
+
+	// PointStyle node
+	POINT_STYLE,				///< True when at least one PointStyle node has been traversed
+
+	// Program node
+	PROGRAM,					///< True when at least one Program node has been traversed
+
+	// VertexShape node
+	COLOR4_BIND_PER_VERTEX,
+
+	// PostProcessing
+	IGNORE_POST_PROCESSING,		///< see LightModel.ignorePostProcessing
+
+	//
+	MAX_BITSETINDEXTYPE
+};
+
+
+/**
+ * @brief Light unit state
+ */
+struct LightState
+{
+	/**
+	 * @brief Constructor
+	 *
+	 * @todo default value from Node @todo improves Node api
+	 */
+	LightState( const int type )
+	:	//m_modelViewMatrix,
+
+		m_on(false),
+		m_castShadow(false),
+
+		//m_position
+
+		m_cutOffAngle(90.f),
+		//m_direction
+
+		m_type(type)
+	{
+		assert( m_type == DIRECTIONAL_LIGHT || m_type == POINT_LIGHT || m_type == SPOT_LIGHT );
+
+		m_modelViewMatrix.setInvalid();
+		m_position.setInvalid();
+		m_direction.setInvalid();
+	}
+
+	//
+	void setModelViewMatrix( const vgm::MatrixR& matrix ) 	{ m_modelViewMatrix = matrix; }
+	const vgm::MatrixR& getModelViewMatrix() const			{ return m_modelViewMatrix; }
+
+
+	// Light
+	void setOn( const bool on )								{ m_on = on; }
+	const bool getOn() const								{ return m_on; }
+
+	void setCastShadow( const bool castShadow )				{ m_castShadow = castShadow; }
+	const bool getCastShadow() const						{ return m_castShadow; }
+
+	// vgm::Vec4f	ambient;
+	// vgm::Vec4f	diffuse;
+	// vgm::Vec4f	specular;
+
+	// // PointLight
+	void setPosition( const vgm::Vec3f& position )			{ m_position = position; }
+	const vgm::Vec3f& getPosition() const					{ return m_position; }
+
+	// // SpotLight
+	void setCutOffAngle( const float cutOffAngle )			{ m_cutOffAngle = cutOffAngle; }
+	const float getCutOffAngle() const						{ return m_cutOffAngle; }
+
+	// float		dropOffRate;
+
+	// // SpotLight-DirectionalLight
+	void setDirection( const vgm::Vec3f& direction )		{ m_direction = direction; }
+	const vgm::Vec3f& getDirection() const					{ return m_direction; }
+
+	/**
+	 * @brief Returns the light type
+	 */
+	const int getLightType() const							{ return m_type; }
+	void setLightType( const int lightType )				{ m_type = lightType; }
+
+
+private:
+	vgm::MatrixR		m_modelViewMatrix;
+
+	bool				m_on;
+	bool				m_castShadow;
+
+	vgm::Vec3f			m_position;
+	
+	float				m_cutOffAngle;
+	vgm::Vec3f			m_direction;
+
+	int					m_type;
+};
+
 
 /**
  * @brief GLSL rendering state
  *
  * This class is a specialized container for GLSL rendering state used by program/shader generators 
  * to take care of the rendering state given by the scene graph.
- *
- * @todo uses TUnitContainer
  */
-struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
+struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 {
-	enum BitSetIndexType
-	{
-		// LightModel node
-		LIGHTING = 0,
-		PER_PIXEL_LIGHTING,
-		LOCAL_VIEWER,
-		TWO_SIDED_LIGHTING,			///< Lighting must operate in two-sided mode
-
-		// Light node
-		DIRECTIONAL_LIGHT,
-		POINT_LIGHT,
-		SPOT_LIGHT,
-		SPOT_LIGHT_CASTING_SHADOW,
-
-		// ClipPlane node
-		CLIPPING_PLANE,				///< True when at least one ClipPlane node has been traversed
-
-		// DrawStyle node
-		FLAT_SHADING,				///< True when DrawStyle.shape implies a flat shading (instead of smooth shading)
-
-		// PointStyle node
-		POINT_STYLE,				///< True when at least one PointStyle node has been traversed
-
-		// Program node
-		PROGRAM,					///< True when at least one Program node has been traversed
-
-		// VertexShape node
-		COLOR4_BIND_PER_VERTEX,
-
-		// PostProcessing
-		IGNORE_POST_PROCESSING,		///< see LightModel.ignorePostProcessing
-
-		//
-		MAX_BITSETINDEXTYPE
-	};
-
 	/**
 	 * @brief Returns the string representation of the given BitSetIndexType value.
 	 *
 	 * @pre bitSetIndexType >= 0 and bitSetIndexType < MAX_BITSETINDEXTYPE
 	 */
-	static const std::string& toString( const BitSetIndexType bitSetIndexType );
+	static const std::string& toString( const GLSLStateIndex bitSetIndexType );
 
 
 
 	/**
 	 * @brief Default constructor
 	 *
-	 * @param maxLightUnits					the maximum number of light units
 	 * @param maxTexUnits					the maximum number of texture units
 	 * @param isShadowSamplerUsageEnabled	true if shadow sampler usage is enabled, false otherwise
 	 */
-	GLSLState( const uint maxLightUnits = 0, const uint maxTexUnits = 0, const bool isShadowSamplerUsageEnabled = true );
+	GLSLState( const uint maxTexUnits = 0, const bool isShadowSamplerUsageEnabled = true );
+
+	/**
+	 * @brief Copy constructor
+	 */
+	GLSLState( const GLSLState& src );
+
+	/**
+	 * @brief Assign operator
+	 */
+	GLSLState& operator = ( const GLSLState& src );
 
 	/**
 	 * @brief Resets to the default state.
 	 *
-	 * @param maxLightUnits		the maximum number of light units
 	 * @param maxTexUnits		the maximum number of texture units
 	 * @param isShadowSamplerUsageEnabled	true if shadow sampler usage is enabled, false otherwise
 	 */
-	void reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled );
+	void reset( const bool isShadowSamplerUsageEnabled );
+
 
 	/**
 	 * @name TBitSet
@@ -165,6 +257,7 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 	void setEnabled( const uint index, const bool enabled = true );
 	void reset();
 	//@}
+
 
 	/**
 	 * @name Lighting state
@@ -193,96 +286,40 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 
 
 	/**
-	 * @name Light unit state
+	 * @name Dirty flag accessors
 	 */
 	//@{
 
 	/**
-	 * @brief Light unit state
+	 * @brief Test this flag.
+	 *
+	 * @return true if this flag is dirty, false otherwise.
 	 */
-	struct LightState
-	{
-		/**
-		 * @brief Constructor
-		 */
-		LightState( vgd::node::Light * light, const int type )
-		:	m_light(light),
-			m_type(type)
-		{
-			assert( m_light != 0 );
-			assert( m_type == DIRECTIONAL_LIGHT || m_type == POINT_LIGHT || m_type == SPOT_LIGHT );
-		}
-
-		/**
-		 * @brief Returns light node
-		 */
-		const vgd::node::Light *getLightNode() const	{ return m_light; }
-
-		/**
-		 * @brief Returns light node
-		 */
-		vgd::node::Light *getLightNode()				{ return m_light; }
-
-
-		/**
-		 * @brief Returns light node
-		 */
-		const vgd::node::SpotLight *getSpotLightNode() const;
-
-		/**
-		 * @brief Returns the light type
-		 */
-		const int getLightType() const					{ return m_type; }
-
-		// @todo api
-		vgm::MatrixR lightMODELVIEWMatrix;
-		vgm::MatrixR lightViewMatrix;
-	private:
-		vgd::node::Light *	m_light;
-		int					m_type;
-	};
+	const bool	isDirty() const;
 
 	/**
-	 * @brief Retrieves light state for the desired light unit.
+	 * @brief Test this flag.
 	 *
-	 * @param indexLightUnit		the index of the light unit
-	 *
-	 * @return The light state for the given light unit or an empty shared pointer.
+	 * @return true if this flag is valid, false otherwise.
 	 */
-	const vgd::Shp< LightState > getLight( const uint indexLightUnit = 0 ) const;
+	const bool	isValid() const;
 
 	/**
-	 * @brief Retrieves light state for the desired light unit.
-	 *
-	 * @param indexLightUnit		the index of the light unit
-	 *
-	 * @return The light state for the given light unit or an empty shared pointer.
+	 * @brief Set this flag to valid or dirty.
+	 * 
+	 * @param setToValid	true if this flag must be set to valid, false for invalidating(dirty) it.
 	 */
-	vgd::Shp< LightState > getLight( const uint indexLightUnit = 0 );
+	void		validate( const bool setToValid = true );
+
+	//@}
+
 
 	/**
-	 * @brief Sets light state for the given light unit.
-	 *
-	 * @param indexLightUnit		the index of the light unit
-	 * @param lightState			the light state
-	 *
-	 * @return The previous light state for the given light unit.
+	 * @name Light unit state
 	 */
-	vgd::Shp< LightState > setLight( const uint indexLightUnit, vgd::Shp< LightState > lightState = vgd::Shp< LightState >() );
-
-	/**
-	 * @brief Retrieves the number of light state in all light units.
-	 *
-	 * @return The number of light state in all light units.
-	 */
-	const uint getNumLight() const;
-
-	/**
-	 * @brief Retrieves the number of light units.
-	 *
-	 * @return The number of light units.
-	 */
-	const uint getMaxLight() const;
+	//@{
+	typedef vge::basic::TUnitContainer< LightState > LightStateContainer;	///< definition of light state container
+	LightStateContainer lights;												///< array of light state. The zero-based index selects the light unit.
 	//@}
 
 
@@ -343,47 +380,8 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 		vgd::node::TexGen *		m_texGenNode;
 	};
 
-	/**
-	 * @brief Retrieves state for the desired texture unit.
-	 *
-	 * @param indexTexUnit		the index of the texture unit
-	 *
-	 * @return The state for the given texture unit or an empty shared pointer.
-	*/
-	const vgd::Shp< TexUnitState > getTexture( const uint indexTexUnit = 0 ) const;
-
-	/**
-	 * @brief Retrieves state for the desired texture unit.
-	 *
-	 * @param indexTexUnit		the index of the texture unit
-	 *
-	 * @return The state for the given texture unit or an empty shared pointer.
-	*/
-	vgd::Shp< TexUnitState > getTexture( const uint indexTexUnit = 0 );
-
-	/**
-	 * @brief Sets state for the given texture unit.
-	 *
-	 * @param indexTexUnit		the index of the texture unit
-	 * @param texture			the texture state
-	 *
-	 * @return The previous texture state for the given texture unit.
-	*/
-	vgd::Shp< TexUnitState > setTexture( const uint indexTexUnit, vgd::Shp< TexUnitState > textureState = vgd::Shp< TexUnitState >() );
-
-	/**
-	 * @brief Retrieves the number of texture state in all texture units.
-	 *
-	 * @return The number of texture state in all texture units.
-	 */
-	const uint getNumTexture() const;
-
-	/**
-	 * @brief Retrieves the number of texture units.
-	 *
-	 * @return The number of texture units
-	 */
-	const uint getMaxTexture() const;
+	typedef vge::basic::TUnitContainer< TexUnitState > TextureStateContainer;	///< definition of texture state container
+	TextureStateContainer textures;												///< array of texture state. The zero-based index selects the texture unit.
 
 	//@}
 
@@ -464,7 +462,7 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 	 * @brief Post-processing unit container
 	 */
 	typedef vge::basic::TUnitContainer< PostProcessingState > PostProcessingStateContainer;
-	PostProcessingStateContainer postProcessing;
+	PostProcessingStateContainer postProcessing;												///< array of post-processing state. The zero-based index selects the post-processing unit.
 
 	//@}
 
@@ -497,7 +495,7 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 	 * @brief Overlay unit container
 	 */
 	typedef vge::basic::TUnitContainer< OverlayState > OverlayStateContainer;
-	OverlayStateContainer overlays;
+	OverlayStateContainer overlays;												///< array of overlay state. The zero-based index selects the overlay unit.
 
 	//@}
 
@@ -529,7 +527,7 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 	 * @brief OutputBufferProperty unit container
 	 */
 	typedef vge::basic::TUnitContainer< OutputBufferPropertyState > OutputBufferPropertyStateContainer;
-	OutputBufferPropertyStateContainer outputBufferProperties;
+	OutputBufferPropertyStateContainer outputBufferProperties;				///< array of output buffer state. The zero-based index selects the output buffer property unit.
 
 	//@}
 
@@ -584,6 +582,10 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 
 
 	/**
+	 * @name Shadow accessors
+	 */
+	//@{
+	/**
 	 * @brief Returns the last encountered value of LightModel.shadow
 	 */
 	const vgd::node::LightModel::ShadowValueType getShadowType() const { return m_lightModelShadow; }
@@ -605,7 +607,7 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 	// @todo must be an uniform
 	const float getIlluminationInShadow() const { return m_illuminationInShadow; }
 	void setIlluminationInShadow( const float illuminationInShadow ) { m_illuminationInShadow = illuminationInShadow; }
-
+	//@}
 
 
 	/**
@@ -622,26 +624,25 @@ struct GLSLState : public TBitSet< 14 >, public vgd::field::DirtyFlag
 	 */
 	void setShadowSamplerUsageEnabled( const bool enabled = true );
 
-	
 
 private:
-	vgd::node::Program *							m_program;				///< the last encountered Program node
+	void copy( const GLSLState& src );
+	void release();
 
-	std::vector< std::string >						m_shaderStage;			///< container of glsl code for custom shader stage
+	vgd::field::DirtyFlag							m_dirtyFlag;			///< internal dirty flag to catch any modification
 
-	vgd::node::LightModel::ShadowValueType			m_lightModelShadow;		///< Last encountered value of LightModel.shadow field
-	float											m_samplingSize;			///< @todo doc
-	vgd::node::LightModel::ShadowMapTypeValueType	m_shadowMapType;		///< @todo doc
-	float											m_illuminationInShadow;	///< @todo doc
-	bool											m_isShadowSamplerEnabled;		//< true if engine must used shadow sampler, false otherwise
+	void init( const bool isShadowSamplerEnabled );
+	vgd::node::Program *							m_program;					///< the last encountered Program node
+	// @todo TUnitContainer m_shaderStage;
+	// @todo 
+	std::vector< std::string >						m_shaderStage;				///< container of glsl code for custom shader stage
+	vgd::node::LightModel::ShadowValueType			m_lightModelShadow;			///< Last encountered value of LightModel.shadow field
+	float											m_samplingSize;				///< @todo doc
+	vgd::node::LightModel::ShadowMapTypeValueType	m_shadowMapType;			///< @todo doc
+	float											m_illuminationInShadow;		///< @todo doc
+	bool											m_isShadowSamplerEnabled;	///< true if engine must used shadow sampler, false otherwise
 
-	std::vector< vgd::Shp< LightState > >			m_light;		///< array of light state. The zero-based index selects the light unit.
-	uint											m_numLight;		///< number of light state in all light units.
-
-	std::vector< vgd::Shp< TexUnitState > >			m_texture;		///< array of texture state. The zero-based index selects the texture unit.
-	uint											m_numTexture;	///< number of texture state in all light units.
-
-	static const std::string m_indexString[];						///< array containing the string representation for BitSetIndexType.
+	static const std::string m_indexString[];									///< array containing the string representation for BitSetIndexType.
 };
 
 

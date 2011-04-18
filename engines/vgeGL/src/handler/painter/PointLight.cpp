@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 
 #include <vgd/node/PointLight.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -45,21 +46,10 @@ void PointLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	assert( dynamic_cast< vgd::node::PointLight* >(node) != 0 );
 	vgd::node::PointLight *pointLight = static_cast< vgd::node::PointLight* >(node);
 
-	if ( glEngine->isGLSLEnabled() )
-	{
-		// Retrieves GLSL state
-		using vgeGL::engine::GLSLState;
-		typedef vgeGL::engine::GLSLState::LightState LightState;
+	//
+	updateGLSLState( glEngine, pointLight, glEngine->getGLSLState() );
 
-		GLSLState& state = glEngine->getGLSLState();
-
-		// Updates GLSL state
-		state.setEnabled( GLSLState::POINT_LIGHT );
-
-		vgd::Shp< LightState > lightState( new LightState(pointLight, GLSLState::POINT_LIGHT) );
-		state.setLight(	node->getMultiAttributeIndex(), lightState );
-	}
-
+	//
 	vgeGL::rc::applyUsingDisplayList<vgd::node::PointLight, PointLight>( engine, node, this );
 }
 
@@ -77,7 +67,58 @@ void PointLight::setToDefaults()
 
 
 
-void PointLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::PointLight *pPointLight )
+void PointLight::updateGLSLState( vgeGL::engine::Engine * engine, vgd::node::PointLight * light, vgeGL::engine::GLSLState& glslState )
+{
+	using vgeGL::engine::GLSLState;
+	typedef vgeGL::engine::LightState LightState;
+
+	// Updates GLSL state
+	glslState.setEnabled( vgeGL::engine::POINT_LIGHT );
+
+/* @todo
+	if ( !glslState.isEnabled( vgeGL::engine::POINT_LIGHT_CASTING_SHADOW ) )
+	{
+		const bool castShadow = light->getCastShadow();
+		if ( castShadow )	glslState.setEnabled( vgeGL::engine::POINT_LIGHT_CASTING_SHADOW );
+	}
+*/
+
+	// Light state
+	const uint unit = light->getMultiAttributeIndex();
+
+	vgd::Shp< LightState > lightState = glslState.lights.getState( unit );
+
+	if ( !lightState )
+	{
+		// Creates a new unit state
+		// type
+		lightState.reset( new LightState(vgeGL::engine::POINT_LIGHT) );
+		glslState.lights.setState( unit, lightState );
+	}
+	else
+	{
+		// type
+		lightState->setLightType( vgeGL::engine::POINT_LIGHT );
+		glslState.lights.dirty();
+	}
+
+	updateUnitState( engine, light, lightState );
+}
+
+
+
+void PointLight::updateUnitState( vgeGL::engine::Engine * engine, vgd::node::PointLight * light, vgd::Shp< vgeGL::engine::LightState > lightState )
+{
+	Light::updateUnitState( engine, light, lightState );
+
+	// POSITION
+	vgd::node::PointLight::PositionValueType position;
+	const bool bDefined = light->getPosition( position );
+	if ( bDefined )		lightState->setPosition( position );
+}
+
+
+void PointLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::PointLight *pPointLight )
 {
 	// render Light fields.
 	Light::paint( pGLEngine, pPointLight );
@@ -89,7 +130,7 @@ void PointLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::PointLight 
 
 	lightIndex	= GL_LIGHT0 + pPointLight->getMultiAttributeIndex();
 
-	bDefined		= pPointLight->getPosition( position );
+	bDefined	= pPointLight->getPosition( position );
 
 	if ( bDefined )
 	{

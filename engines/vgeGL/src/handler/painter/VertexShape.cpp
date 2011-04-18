@@ -195,7 +195,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		{
 			const uint unit = *i;
 
-			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
 
 			if (	texUnitState &&
 					(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF)	)
@@ -205,7 +205,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				{
 					// @toto glslState.setTexCoordDim( 0/*Unit*/, 2 /* Dim */ ); that invalidate DF
 					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
-					glslState.dirty();
+					glslState.textures.dirty();
 				}
 			}
 			else
@@ -299,11 +299,11 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				// n		 ?				?		=> none, W(print warning if needed).
 			// @todo not texture, but VertexShape.texCoord | TexGen
 				uint		i		= 0;
-				const uint	iEnd	= pGLEngine->isTextureMappingEnabled() ? glslState.getMaxTexture() : 0;
+				const uint	iEnd	= pGLEngine->isTextureMappingEnabled() ? glslState.textures.getMax() : 0;
 
 				for( uint foundTexture = 0; i != iEnd; ++i )
 				{
-					const vgd::Shp< GLSLState::TexUnitState > current = glslState.getTexture( i );
+					const vgd::Shp< GLSLState::TexUnitState > current = glslState.textures.getState( i );
 
 					// Empty texture unit, so do nothing
 					if ( current == 0 )	continue;
@@ -354,7 +354,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 							}
 							else
 							{
-								assert( false );
+								vgAssert( false );
 							}
 						}
 						else
@@ -371,7 +371,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 					//
 					++foundTexture;
-					if ( foundTexture == glslState.getNumTexture() )
+					if ( foundTexture == glslState.textures.getNum() )
 					{
 						break;
 					}
@@ -528,7 +528,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		{
 			const uint unit = *i;
 
-			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
 	
 			if (	(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF) &&
 					texUnitState	)
@@ -888,7 +888,7 @@ void VertexShape::submit(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSh
 				++i )
 		{
 			const uint unit = *i;
-			const vgd::Shp< GLSLState::TexUnitState > current = glslState.getTexture( unit );
+			const vgd::Shp< GLSLState::TexUnitState > current = glslState.textures.getState( unit );
 
 			// Empty texture unit, so do nothing
 			if ( current == 0 )
@@ -986,7 +986,7 @@ void VertexShape::submit(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSh
 //	glMatrixMode( GL_TEXTURE );
 //	glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
 /*
-			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
 			if ( texUnitState )
 			{
 				// Retrieves current texture object from engine
@@ -1153,7 +1153,7 @@ void VertexShape::submit(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSh
 				++i )
 		{
 			const uint unit = *i;
-			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
 
 			if (	texUnitState /*&&
 					(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF)*/	)
@@ -1177,7 +1177,7 @@ void VertexShape::submit(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSh
 			{
 				// Retrieves current texture object from engine
 				::glo::Texture * texture;
-				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.getTexture( unit );
+				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
 				if ( texUnitState )
 				{
 					texture = texUnitState->getTexture();

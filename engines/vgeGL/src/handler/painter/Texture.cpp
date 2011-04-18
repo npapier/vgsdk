@@ -13,6 +13,7 @@
 #include <vgm/VectorOperations.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 
 
 
@@ -360,7 +361,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 
 		GLSLState& glslState = engine->getGLSLState();
 
-		vgd::Shp< TexUnitState > texUnitState( glslState.getTexture( texUnit ) );
+		vgd::Shp< TexUnitState > texUnitState( glslState.textures.getState( texUnit ) );
 		if ( texUnitState )
 		{
 			// Updates the existing texture unit state
@@ -370,7 +371,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 		{
 			// Creates the new texture unit state
 			texUnitState.reset( new GLSLState::TexUnitState(node, texture) );
-			glslState.setTexture( texUnit, texUnitState );
+			glslState.textures.setState( texUnit, texUnitState );
 		}
 //
 
@@ -408,7 +409,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 
 		GLSLState& glslState = engine->getGLSLState();
 
-		vgd::Shp< TexUnitState > texUnitState( glslState.getTexture( texUnit ) );
+		vgd::Shp< TexUnitState > texUnitState( glslState.textures.getState( texUnit ) );
 		if ( texUnitState )
 		{
 			// Updates the existing texture unit state
@@ -418,7 +419,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 		{
 			// Creates the new texture unit state
 			texUnitState.reset( new GLSLState::TexUnitState(node, texture) );
-			glslState.setTexture( texUnit, texUnitState );
+			glslState.textures.setState( texUnit, texUnitState );
 		}
 //
 

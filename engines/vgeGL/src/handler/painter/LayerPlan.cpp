@@ -152,9 +152,11 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
 	pGLEngine->sethCurrentProgram();
 
+	const bool isTextureMappingEnabledBAK = pGLEngine->setTextureMappingEnabled(true);
+
 	pGLEngine->paint( rcRoot->getRoot(), true );
 
-	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();	
+	const vgm::Vec2i drawingSurfaceSize = pGLEngine->getDrawingSurfaceSize();
 	const vgm::Rectangle2i viewport( 0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1] );
 	pGLEngine->begin2DRendering( &viewport, false );
 
@@ -192,6 +194,8 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	pGLEngine->end2DRendering( false );
 
 	pGLEngine->paint( rcRoot->getRoot(), false );
+
+	pGLEngine->setTextureMappingEnabled(isTextureMappingEnabledBAK);
 
 	// Restores GLSL activation state
 	pGLEngine->setGLSLActivationState( glslActivationState );

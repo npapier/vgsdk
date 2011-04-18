@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 #include <vge/service/Painter.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/handler/painter/VertexShape.hpp"
 
 
@@ -77,14 +78,14 @@ void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 				case DrawStyle::HIDDEN_LINE:
 				case DrawStyle::FLAT_HIDDEN_LINE:
 					// Updates GLSL state
-					state.setEnabled( GLSLState::FLAT_SHADING );
+					state.setEnabled( vgeGL::engine::FLAT_SHADING );
 					break;
 
 				case DrawStyle::SMOOTH:
 				case DrawStyle::SMOOTH_HIDDEN_LINE:
 				case DrawStyle::NEIGHBOUR:
 					// Updates GLSL state
-					state.setEnabled( GLSLState::FLAT_SHADING, false );
+					state.setEnabled( vgeGL::engine::FLAT_SHADING, false );
 					break;
 
 				default:
@@ -302,55 +303,57 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 
 		case DrawStyle::NEIGHBOUR: ///@todo support Neighbour option
 		case DrawStyle::SMOOTH:
-		
 			///@todo FIXME OPTME
 			//glPushAttrib( GL_ALL_ATTRIB_BITS );
 
 			// FIXME move to engine.
 			// POLYGON_MODE
-			GLint polygonMode[2];
+#ifdef _DEBUG
+/*			GLint polygonMode[2];
 			glGetIntegerv( GL_POLYGON_MODE, polygonMode );
-
-			bool	bRestorePolygonMode;
+			//bool	bRestorePolygonMode;
 			if (	(polygonMode[0] != GL_FILL) ||
 					(polygonMode[1] != GL_FILL) )
 			{
+				assert( false && "Unexpected GL_POLYGON_MODE value ! ");
 				glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-				bRestorePolygonMode = true;
-			}
-			else
-			{ 
-				bRestorePolygonMode = false;
-			}
-			
+				//bRestorePolygonMode = true;
+			}*/
+			//else
+			//{ 
+			//	bRestorePolygonMode = false;
+			//}
+
 			// SHADE_MODEL
-			GLint shadeModel;
+/*			GLint shadeModel;
 			glGetIntegerv( GL_SHADE_MODEL, &shadeModel );
 			
-			bool bRestoreShadeModel;
+			//bool bRestoreShadeModel;
 			if ( shadeModel != GL_SMOOTH )
 			{
-				bRestoreShadeModel = true;
+				assert( false && "Unexpected GL_SHADE_MODEL value ! ");
+				//bRestoreShadeModel = true;
 				glShadeModel( GL_SMOOTH );
-			}
-			else
-			{
-				bRestoreShadeModel = false;
-			}
+			}*/
+			//else
+			//{
+			//	bRestoreShadeModel = false;
+			//}
+#endif
 
 			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
-			
+
 			//
-			if ( bRestoreShadeModel )
-			{
-				glShadeModel( shadeModel );
-			}
+			//if ( bRestoreShadeModel )
+			//{
+			//	glShadeModel( shadeModel );
+			//}
 			
-			if ( bRestorePolygonMode )
-			{
-				glPolygonMode( GL_FRONT,polygonMode[0] );
-				glPolygonMode( GL_BACK,	polygonMode[1] );
-			}
+			//if ( bRestorePolygonMode )
+			//{
+			//	glPolygonMode( GL_FRONT,polygonMode[0] );
+			//	glPolygonMode( GL_BACK,	polygonMode[1] );
+			//}
 
 			///@todo FIXME OPTME
 			//glPopAttrib();

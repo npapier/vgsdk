@@ -8,6 +8,7 @@
 #include <vgd/node/ClipPlane.hpp>
 #include <vgDebug/convenience.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -50,7 +51,7 @@ void ClipPlane::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	if ( glEngine->isGLSLEnabled() )
 	{
 		using vgeGL::engine::GLSLState;
-		glEngine->getGLSLState().setEnabled( GLSLState::CLIPPING_PLANE );
+		glEngine->getGLSLState().setEnabled( vgeGL::engine::CLIPPING_PLANE );
 	}
 
 	vgeGL::rc::applyUsingDisplayList< vgd::node::ClipPlane, ClipPlane >( engine, node, this );

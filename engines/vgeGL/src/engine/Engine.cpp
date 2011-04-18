@@ -6,6 +6,7 @@
 #include "vgeGL/engine/Engine.hpp"
 
 #include <gle/OpenGLExtensionsGen.hpp>
+#include <glo/FrameBufferObject.hpp>
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
 #include <vgd/basic/Image.hpp>
@@ -16,6 +17,7 @@
 #include <vgDebug/convenience.hpp>
 #include <vge/handler/Handler.hpp>
 #include <vge/handler/HandlerRegistry.hpp>
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/engine/ProgramGenerator.hpp"
 //#include <vgio/FilenameCollector.hpp>
 
@@ -31,10 +33,13 @@ namespace engine
 
 // CONSTRUCTORS
 Engine::Engine()
-:	m_isTextureMappingEnabled(true),
+:	m_isLightingEnabled(true),
+	m_isTextureMappingEnabled(true),
 	m_isDisplayListEnabled(true),
 	m_isVertexBufferObjectEnabled(true),
+	m_isDepthPrePassEnabled(true),
 	m_isShadowSamplerEnabled(true),
+	m_isShadowEnabled(true),
 
 	m_glManager("GL object manager"),
 	m_glslManager("GLSL Program Manager"),
@@ -78,9 +83,11 @@ void Engine::reset()
 	const gle::OpenGLExtensions::DriverProviderType driverProvider = gleGetCurrent()->getDriverProvider();
 
 	// Configures engine
+	setLightingEnabled();
 	setTextureMappingEnabled();
-	setDisplayListEnabled( true );
-	setVertexBufferObjectEnabled( true );
+	setDisplayListEnabled();
+	setVertexBufferObjectEnabled();
+	setDepthPrePassEnabled();
 
 	switch ( driverProvider )
 	{
@@ -100,6 +107,8 @@ void Engine::reset()
 			setShadowSamplerUsageEnabled( false );
 	}
 
+	setShadowEnabled();
+
 	//
 	m_currentProgram	= 0;
 
@@ -108,8 +117,8 @@ void Engine::reset()
 	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
 
 	//
-	getGLStateStack().clear( GLState() );
-	getGLSLStateStack().clear( GLSLState(getMaxLights(), getMaxTexUnits(), isShadowSamplerUsageEnabled() ) );
+	getGLStateStack().clear( vgd::makeShp(new GLState()) );
+	getGLSLStateStack().clear( vgd::makeShp(new GLSLState(getMaxTexUnits(), isShadowSamplerUsageEnabled()) ) );
 	getUniformState().clear();
 	setOutputBuffers();
 
@@ -241,23 +250,27 @@ Engine::GLSLStateStack& Engine::getGLSLStateStack()
 
 const GLState& Engine::getGLState() const
 {
-	return m_glStateStack.getTop();
+	const vgd::Shp< GLState > glState = m_glStateStack.getTop();
+	return *glState;
 }
 
 GLState& Engine::getGLState()
 {
-	return m_glStateStack.getTop();
+	vgd::Shp< GLState > glState = m_glStateStack.getTop();
+	return *glState;
 }
 
 
 const GLSLState& Engine::getGLSLState() const
 {
-	return m_glslStateStack.getTop();
+	const vgd::Shp< GLSLState > glslState = m_glslStateStack.getTop();
+	return *glslState;
 }
 
 GLSLState& Engine::getGLSLState()
 {
-	return m_glslStateStack.getTop();
+	vgd::Shp< GLSLState > glslState = m_glslStateStack.getTop();
+	return *glslState;
 }
 
 
@@ -296,6 +309,22 @@ Engine::GLManagerType& Engine::getGLManager()
 Engine::GLSLProgramManagerType& Engine::getGLSLManager()
 {
 	return m_glslManager;
+}
+
+
+
+const bool Engine::isLightingEnabled() const
+{
+	return m_isLightingEnabled;
+}
+
+
+
+const bool Engine::setLightingEnabled( const bool enabled )
+{
+	const bool retVal = m_isLightingEnabled;
+	m_isLightingEnabled = enabled;
+	return retVal;
 }
 
 
@@ -344,6 +373,20 @@ void Engine::setVertexBufferObjectEnabled( const bool enabled )
 
 
 
+const bool Engine::isDepthPrePassEnabled() const
+{
+	return m_isDepthPrePassEnabled;
+}
+
+
+
+void Engine::setDepthPrePassEnabled( const bool enabled )
+{
+	m_isDepthPrePassEnabled = enabled;
+}
+
+
+
 const bool Engine::isShadowSamplerUsageEnabled() const
 {
 	return m_isShadowSamplerEnabled;
@@ -354,6 +397,22 @@ const bool Engine::isShadowSamplerUsageEnabled() const
 void Engine::setShadowSamplerUsageEnabled( const bool enabled )
 {
 	m_isShadowSamplerEnabled = enabled;
+}
+
+
+
+const bool Engine::isShadowEnabled() const
+{
+	return m_isShadowEnabled;
+}
+
+
+
+const bool Engine::setShadowEnabled( const bool enabled )
+{
+	const bool retVal = m_isShadowEnabled;
+	m_isShadowEnabled = enabled;
+	return retVal;
 }
 
 
@@ -559,10 +618,10 @@ void Engine::resetMatrices()
 	glMatrixMode( GL_PROJECTION );
 
 	glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-	
+
 	// TEXTURE
 	for(	int32	index	= 0,
-					iMax	= getTextureMatrix().size();
+					iMax	= isTextureMappingEnabled() ? getTextureMatrix().size() : 0;
 			index < iMax;
 			++index )
 	{
@@ -905,7 +964,7 @@ void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport, const 
 
 	glMatrixMode( GL_TEXTURE );
 	for(	int8	i		= 0,
-					iMax	= 3; // static_cast< int8 >(getMaxTexUnits()); @todo FIXME
+					iMax	= 1; //static_cast< int8 >(getMaxTexUnits()); // @todo OPTME
 			i < iMax;
 			++i )
 	{
@@ -922,7 +981,7 @@ void Engine::end2DRendering( const bool popAttribs )
 	// Matrix stacks
 	glMatrixMode( GL_TEXTURE );
 	for(	int8	i		= 0,
-					iMax	= 3; // static_cast< int8 >(getMaxTexUnits()); @todo FIXME
+					iMax	= 1; //static_cast< int8 >(getMaxTexUnits()); // @todo OPTME
 			i < iMax;
 			++i )
 	{
@@ -949,6 +1008,8 @@ void Engine::push()
 {
 	getGLSLStateStack().push();
 	getGLStateStack().push();
+
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 	glPushAttrib( GL_ALL_ATTRIB_BITS );
 
 	vge::engine::Engine::push();
@@ -959,7 +1020,9 @@ void Engine::pop()
 {
 	vge::engine::Engine::pop();
 
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 	glPopAttrib();
+
 	getGLStateStack().pop();
 	getGLSLStateStack().pop();
 
