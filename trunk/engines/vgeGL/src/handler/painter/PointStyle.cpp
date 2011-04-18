@@ -7,6 +7,7 @@
 
 #include <vgd/node/PointStyle.hpp>
 #include <vgDebug/convenience.hpp>
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -53,7 +54,7 @@ void PointStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 		GLSLState& state = glEngine->getGLSLState();
 
 		// Updates GLSLState
-		state.setEnabled( GLSLState::POINT_STYLE, true );
+		state.setEnabled( vgeGL::engine::POINT_STYLE, true );
 
 		//
 		glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
@@ -76,7 +77,7 @@ void PointStyle::setToDefaults()
 	glPointSize( 1.f );
 
 	GLfloat coef[3] = { 1.f, 0.f, 0.f };
-	glPointParameterfv( GL_POINT_DISTANCE_ATTENUATION, coef );
+	glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION, coef );
 
 	glDisable( GL_POINT_SMOOTH );
 
@@ -106,11 +107,11 @@ void PointStyle::paint( vgeGL::engine::Engine *, vgd::node::PointStyle * node )
 
 		GLfloat coef[3] = { distanceAttenuation[0], distanceAttenuation[1], distanceAttenuation[2] };
 
-		glPointParameterfv( GL_POINT_DISTANCE_ATTENUATION, coef ); //&distanceAttenuation[0] );
+		glPointParameterfvARB( GL_POINT_DISTANCE_ATTENUATION, coef ); //&distanceAttenuation[0] );
 
 		//
-		glPointParameterf( GL_POINT_SIZE_MIN, 1.f );
-		glPointParameterf( GL_POINT_SIZE_MAX, 8192.f );
+		glPointParameterfARB( GL_POINT_SIZE_MIN, 1.f );
+		glPointParameterfARB( GL_POINT_SIZE_MAX, 8192.f );
 
 		// glPointParameterf( GL_POINT_FADE_THRESHOLD_SIZE, 3.0f );
 	}

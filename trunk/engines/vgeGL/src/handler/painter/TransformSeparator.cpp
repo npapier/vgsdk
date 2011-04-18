@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -64,7 +64,7 @@ void TransformSeparator::apply ( vge::engine::Engine* pEngine, vgd::node::Node *
 	vge::handler::TransformSeparator::apply( pEngine, pCastedNode );
 	
 	// Validate node
-	pNode->getDirtyFlag(pNode->getDFNode())->validate();	
+	pNode->getDirtyFlag(pNode->getDFNode())->validate();
 }
 
 
@@ -82,8 +82,9 @@ void TransformSeparator::unapply ( vge::engine::Engine* pEngine, vgd::node::Node
 
 	// Restore matrix in OpenGL.
 	const int8 mask	( pCastedNode->getMask() );
-	
-	if ( mask & vgd::node::TransformSeparator::TEXTURE_MATRIX_BIT )
+
+	if (	(mask & vgd::node::TransformSeparator::TEXTURE_MATRIX_BIT) &&
+			pGLEngine->isTextureMappingEnabled()	)
 	{
 		for(	uint32	i		= 0,
 							iMax	= pEngine->getMaxTexUnits();

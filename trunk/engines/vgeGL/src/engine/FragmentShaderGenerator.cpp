@@ -46,7 +46,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_decl += "uniform vec2 nearFar;\n\n";
 
 	// Test if custom program must be installed
-	if ( state.isEnabled( GLSLState::PROGRAM ) )
+	if ( state.isEnabled( PROGRAM ) )
 	{
 		vgd::node::Program * program = state.getProgram();
 		assert( program );
@@ -68,7 +68,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	if ( state.isPerPixelLightingEnabled() )
 	{
-		if ( state.isEnabled( GLSLState::FLAT_SHADING ) )
+		if ( state.isEnabled( FLAT_SHADING ) )
 		{
 			m_decl += 
 			"flat varying vec4 ecPosition;\n"
@@ -80,7 +80,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			"varying vec4 ecPosition;\n"
 			"varying vec3 ecNormal;\n\n";
 
-			/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+			/*if ( state.isEnabled( COLOR4_BIND_PER_VERTEX ) )
 			{
 				m_decl += "varying vec4 mglColor;\n\n";
 			}*/
@@ -90,7 +90,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing
 
-	const bool has_ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
+	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
 
 	std::pair< std::string, std::string > code_ftexgen;
 	std::pair< std::string, std::string > code_samplers;

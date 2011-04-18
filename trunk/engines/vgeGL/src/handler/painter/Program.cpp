@@ -51,7 +51,7 @@ void Program::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	using vgeGL::engine::GLSLState;
 	GLSLState& state = glEngine->getGLSLState();
 
-	state.setEnabled( GLSLState::PROGRAM );
+	state.setEnabled( vgeGL::engine::PROGRAM );
 	state.setProgram( castedNode );
 
 	// Validates node

@@ -11,6 +11,7 @@
 #include <vge/service/ProcessEvent.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 
 
 

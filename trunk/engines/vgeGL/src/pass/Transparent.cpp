@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 #include <vgd/node/Material.hpp>
 #include <vgd/node/Shape.hpp>
 #include <vgeGL/engine/Engine.hpp>
+#include "vgeGL/engine/GLSLState.hpp"
 #include <vgm/operations.hpp>
 
 
@@ -26,20 +27,9 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 							vge::visitor::TraverseElementVector* traverseElements,
 							vgd::Shp< vge::service::Service > service )
 {
-	// @todo
-	engine->resetMatrices();
-
-	engine->getGLSLStateStack().push();
-	engine->getGLStateStack().push();
-	engine->pushStateStack();
-	glPushAttrib( GL_ALL_ATTRIB_BITS );
-	//
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-	glDepthMask(GL_FALSE);
 
-	engine->disregardIfIsA< vgd::node::ClearFrameBuffer >();
 	engine->disregardIfIsAKindOf< vgd::node::Kit >(); ///< Nothing to do for nodekit in transparent pass. FIXME ?
 
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
@@ -61,11 +51,8 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 				{
 					// Incoming shape is transparent (but not totally), it must be rendered
 					// glPushAttrib( GL_ALL_ATTRIB_BITS );
-					// glEnable(GL_BLEND);
-					// glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-					// glDepthMask(GL_FALSE);
 
-					engine->evaluate( service, i->first, i->second );
+					engine->evaluate( service, *i );
 
 					// glPopAttrib();
 				}
@@ -75,19 +62,9 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 		}
 		else
 		{
-			engine->evaluate( service, i->first, i->second );
+			engine->evaluate( service, *i );
 		}
 	}
-
-	engine->regardIfIsAKindOf< vgd::node::Kit >();
-	engine->regardIfIsA< vgd::node::ClearFrameBuffer >();
-
-	// @todo
-	glPopAttrib();
-	engine->popStateStack();
-	engine->getGLStateStack().pop();
-	engine->getGLSLStateStack().pop();
-	//
 }
 
 
@@ -95,3 +72,4 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 } // namespace pass
 
 } // namespace vgeGL
+

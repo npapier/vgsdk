@@ -8,6 +8,7 @@
 #include <vgDebug/convenience.hpp>
 #include <vgd/node/PostProcessing.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 
 
 
@@ -484,7 +485,7 @@ void PostProcessing::apply( vge::engine::Engine * engine, vgd::node::Node * node
 	vgd::node::PostProcessing *postProcessingNode = static_cast< vgd::node::PostProcessing* >(node);
 
 	// Updates engine state
-	if ( glEngine->isGLSLEnabled() )
+	if ( glEngine->isGLSLEnabled() /*&& glEngine->isTextureMappingEnabled() */)
 	{
 		using vgeGL::engine::GLSLState;
 		GLSLState& glslState = glEngine->getGLSLState();

@@ -6,6 +6,7 @@
 #include "vgeGL/technique/Technique.hpp"
 
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/engine/ProgramGenerator.hpp"
 //#include "vgeGL/engine/ShaderGenerator.hpp"
 #include "vgeGL/pass/Pass.hpp"
@@ -31,16 +32,16 @@ void Technique::beginPass( const PassIsolationMask isolationMask )
 	if ( isGL_GREMEDY_string_marker() )
 	{
 		std::stringstream ss;
-		ss << "beginPass(" << m_passDescription << ")";
+		ss << "initializePass()";
 		glStringMarkerGREMEDY( 0, ss.str().c_str() );
 	}
 
 	//
-	using vgeGL::engine::GLState;	
+	using vgeGL::engine::GLState;
 	using vgeGL::engine::GLSLState;
 
 	assert( m_engine->getGLStateStack().getSize() == 1 );
-	assert( m_engine->getGLSLStateStack().getSize() == 1 );	
+	assert( m_engine->getGLSLStateStack().getSize() == 1 );
 
 	vge::technique::Technique::beginPass(isolationMask);
 
@@ -53,7 +54,7 @@ void Technique::beginPass( const PassIsolationMask isolationMask )
 	if ( isGL_GREMEDY_string_marker() )
 	{
 		std::stringstream ss;
-		ss << "BEGIN:" << m_passDescription;
+		ss << "BEGIN: " << m_passDescription;
 		glStringMarkerGREMEDY( 0, ss.str().c_str() );
 	}
 }
@@ -65,18 +66,20 @@ void Technique::endPass()
 	if ( isGL_GREMEDY_string_marker() )
 	{
 		std::stringstream ss;
-		ss << "END:" << m_passDescription;
+		ss << "END: " << m_passDescription;
 		glStringMarkerGREMEDY( 0, ss.str().c_str() );
 		m_passDescription.clear();
 	}
 
 	vge::technique::Technique::endPass();
 
+	// @todo doc
+	dynamic_cast<vgeGL::engine::Engine*>(getEngine())->setOutputBuffers();
+
 	if ( isGL_GREMEDY_string_marker() )
 	{
 		std::stringstream ss;
-		ss << "endPass(" << m_passDescription << ")";
-		glStringMarkerGREMEDY( 0, ss.str().c_str() );
+		glStringMarkerGREMEDY( 0, "endPass" );
 	}
 }
 
@@ -94,8 +97,8 @@ void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::Traver
 	using vgeGL::engine::GLState;
 	using vgeGL::engine::GLSLState;
 
-	engine->getGLStateStack().clear( GLState() );
-	engine->getGLSLStateStack().clear( GLSLState(engine->getMaxLights(), engine->getMaxTexUnits(), engine->isShadowSamplerUsageEnabled() ) );
+	engine->getGLStateStack().clear( vgd::makeShp(new GLState()) );
+	engine->getGLSLStateStack().clear( vgd::makeShp(new GLSLState(engine->getMaxTexUnits(), engine->isShadowSamplerUsageEnabled())) );
 
 	if ( engine->isGLSLEnabled() )
 	{

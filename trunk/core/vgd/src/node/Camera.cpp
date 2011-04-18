@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -64,9 +64,12 @@ Camera::Camera( const std::string nodeName ) :
 	vgd::node::ProjectionTransformation()
 {
 	// Adds field(s)
+	addField( new FProjectionLeftType(getFProjectionLeft()) );
+	addField( new FLookAtLeftType(getFLookAtLeft()) );
+	addField( new FLookAtRightType(getFLookAtRight()) );
+	addField( new FProjectionRightType(getFProjectionRight()) );
 	addField( new FScissorType(getFScissor()) );
-	addField( new FLookAtType(getFLookAt()) );
-	addField( new FProjectionType(getFProjection()) );
+	addField( new FModeType(getFMode()) );
 	addField( new FViewportType(getFViewport()) );
 
 	// Sets link(s)
@@ -80,8 +83,11 @@ void Camera::setToDefaults( void )
 {
 	GeometricalTransformation::setToDefaults();
 	ProjectionTransformation::setToDefaults();
-	setLookAt( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
-	setProjection( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
+	setProjectionLeft( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
+	setLookAtLeft( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
+	setLookAtRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
+	setProjectionRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
+	setMode( MONOSCOPIC );
 }
 
 
@@ -92,6 +98,66 @@ void Camera::setOptionalsToDefaults()
 	ProjectionTransformation::setOptionalsToDefaults();
 
 	setViewport( vgm::Rectangle2i(0, 0, 1600, 1200) );
+}
+
+
+
+// ProjectionLeft
+const Camera::ProjectionLeftValueType Camera::getProjectionLeft() const
+{
+	return getFieldRO<FProjectionLeftType>(getFProjectionLeft())->getValue();
+}
+
+
+
+void Camera::setProjectionLeft( const ProjectionLeftValueType value )
+{
+	getFieldRW<FProjectionLeftType>(getFProjectionLeft())->setValue( value );
+}
+
+
+
+// LookAtLeft
+const Camera::LookAtLeftValueType Camera::getLookAtLeft() const
+{
+	return getFieldRO<FLookAtLeftType>(getFLookAtLeft())->getValue();
+}
+
+
+
+void Camera::setLookAtLeft( const LookAtLeftValueType value )
+{
+	getFieldRW<FLookAtLeftType>(getFLookAtLeft())->setValue( value );
+}
+
+
+
+// LookAtRight
+const Camera::LookAtRightValueType Camera::getLookAtRight() const
+{
+	return getFieldRO<FLookAtRightType>(getFLookAtRight())->getValue();
+}
+
+
+
+void Camera::setLookAtRight( const LookAtRightValueType value )
+{
+	getFieldRW<FLookAtRightType>(getFLookAtRight())->setValue( value );
+}
+
+
+
+// ProjectionRight
+const Camera::ProjectionRightValueType Camera::getProjectionRight() const
+{
+	return getFieldRO<FProjectionRightType>(getFProjectionRight())->getValue();
+}
+
+
+
+void Camera::setProjectionRight( const ProjectionRightValueType value )
+{
+	getFieldRW<FProjectionRightType>(getFProjectionRight())->setValue( value );
 }
 
 
@@ -124,32 +190,17 @@ const bool Camera::hasScissor() const
 
 
 
-// LookAt
-const Camera::LookAtValueType Camera::getLookAt() const
+// Mode
+const Camera::ModeValueType Camera::getMode() const
 {
-	return getFieldRO<FLookAtType>(getFLookAt())->getValue();
+	return getFieldRO<FModeType>(getFMode())->getValue();
 }
 
 
 
-void Camera::setLookAt( const LookAtValueType value )
+void Camera::setMode( const ModeValueType value )
 {
-	getFieldRW<FLookAtType>(getFLookAt())->setValue( value );
-}
-
-
-
-// Projection
-const Camera::ProjectionValueType Camera::getProjection() const
-{
-	return getFieldRO<FProjectionType>(getFProjection())->getValue();
-}
-
-
-
-void Camera::setProjection( const ProjectionValueType value )
-{
-	getFieldRW<FProjectionType>(getFProjection())->setValue( value );
+	getFieldRW<FModeType>(getFMode())->setValue( value );
 }
 
 
@@ -183,6 +234,34 @@ const bool Camera::hasViewport() const
 
 
 // Field name accessor(s)
+const std::string Camera::getFProjectionLeft( void )
+{
+	return "f_projectionLeft";
+}
+
+
+
+const std::string Camera::getFLookAtLeft( void )
+{
+	return "f_lookAtLeft";
+}
+
+
+
+const std::string Camera::getFLookAtRight( void )
+{
+	return "f_lookAtRight";
+}
+
+
+
+const std::string Camera::getFProjectionRight( void )
+{
+	return "f_projectionRight";
+}
+
+
+
 const std::string Camera::getFScissor( void )
 {
 	return "f_scissor";
@@ -190,16 +269,9 @@ const std::string Camera::getFScissor( void )
 
 
 
-const std::string Camera::getFLookAt( void )
+const std::string Camera::getFMode( void )
 {
-	return "f_lookAt";
-}
-
-
-
-const std::string Camera::getFProjection( void )
-{
-	return "f_projection";
+	return "f_mode";
 }
 
 
@@ -236,17 +308,45 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 
 
 
+// LOOKAT/LOOKATLEFT
+const Camera::LookAtValueType Camera::getLookAt() const
+{
+	return getLookAtLeft();
+}
+
+
+void Camera::setLookAt( const LookAtValueType value )
+{
+	setLookAtLeft(value);
+}
+
+
+
+// PROJECTION/PROJECTIONLEFT
+const Camera::ProjectionValueType Camera::getProjection() const
+{
+	return getProjectionLeft();
+}
+
+
+void Camera::setProjection( const ProjectionValueType value )
+{
+	setProjectionLeft( value );
+}
+
+
+
 // Matrix
 const Camera::MatrixValueType Camera::getMatrix() const
 {
-	return getFieldRO<FMatrixType>(getFProjection())->getValue();
+	return getFieldRO<FMatrixType>(getFProjectionLeft())->getValue();
 }
 
 
 
 void Camera::setMatrix( const MatrixValueType value )
 {
-	getFieldRW<FMatrixType>(getFProjection())->setValue( value );
+	getFieldRW<FMatrixType>(getFProjectionLeft())->setValue( value );
 }
 IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
 

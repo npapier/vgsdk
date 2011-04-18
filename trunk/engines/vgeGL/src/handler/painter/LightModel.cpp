@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,7 +12,7 @@
 #include <vge/service/Painter.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
-
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -56,76 +56,91 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	bool isDefined;
 
 	// MODEL
-	vgd::node::LightModel::ModelValueType modelValue;
-	isDefined = lightModel->getModel( modelValue );
-
-	if ( isDefined )
+	if ( glEngine->isLightingEnabled() )
 	{
-		// Updates GLSLState
-		// LIGHTING
-		state.setLightingEnabled( modelValue != vgd::node::LightModel::LIGHTING_OFF );
+		vgd::node::LightModel::ModelValueType modelValue;
+		isDefined = lightModel->getModel( modelValue );
 
-		// PER_PIXEL_LIGHTING
-		state.setPerPixelLightingEnabled( modelValue == vgd::node::LightModel::STANDARD_PER_PIXEL );
+		if ( isDefined )
+		{
+			// Updates GLSLState
+			// LIGHTING
+			state.setLightingEnabled( modelValue != vgd::node::LightModel::LIGHTING_OFF );
+
+			// PER_PIXEL_LIGHTING
+			state.setPerPixelLightingEnabled( modelValue == vgd::node::LightModel::STANDARD_PER_PIXEL );
+		}
+
+		// LOCAL_VIEWER
+		vgd::node::LightModel::ViewerValueType viewerValue;
+		isDefined = lightModel->getViewer( viewerValue );
+
+		if ( isDefined )
+		{
+			// Updates GLSLState
+			state.setEnabled( vgeGL::engine::LOCAL_VIEWER, viewerValue == vgd::node::LightModel::AT_EYE );
+		}
+
+		// TWO_SIDED_LIGHTING
+		vgd::node::LightModel::TwoSidedValueType twoSidedValue;
+		isDefined = lightModel->getTwoSided( twoSidedValue );
+
+		if ( isDefined )
+		{
+			// Updates GLSLState
+			state.setTwoSidedLightingEnabled( twoSidedValue );
+		}
 	}
-
-	// LOCAL_VIEWER
-	vgd::node::LightModel::ViewerValueType viewerValue;
-	isDefined = lightModel->getViewer( viewerValue );
-
-	if ( isDefined )
+	else
 	{
-		// Updates GLSLState
-		state.setEnabled( GLSLState::LOCAL_VIEWER, viewerValue == vgd::node::LightModel::AT_EYE );
-	}
-
-	// TWO_SIDED_LIGHTING
-	vgd::node::LightModel::TwoSidedValueType twoSidedValue;
-	isDefined = lightModel->getTwoSided( twoSidedValue );
-
-	if ( isDefined )
-	{
-		// Updates GLSLState
-		state.setTwoSidedLightingEnabled( twoSidedValue );
+		// NO LIGHTING
+		state.setLightingEnabled( false );
 	}
 
 	// SHADOW
-	vgd::node::LightModel::ShadowValueType shadow;
-	isDefined = lightModel->getShadow( shadow );
-
-	if ( isDefined )
+	if ( glEngine->isTextureMappingEnabled() && glEngine->isShadowEnabled() )
 	{
-		// Updates GLSLState
-		// SHADOW
-		state.setShadowType( shadow );
+		vgd::node::LightModel::ShadowValueType shadow;
+		isDefined = lightModel->getShadow( shadow );
 
-		// SAMPLING SIZE
-		vgd::node::LightModel::SamplingSizeValueType samplingSize = lightModel->getSamplingSize();
-		state.setSamplingSize( samplingSize );
-
-		// SHADOW QUALITY ?
-
-		// SHADOW MAP TYPE
-		vgd::node::LightModel::ShadowMapTypeValueType shadowMapType = lightModel->getShadowMapType();
-		state.setShadowMapType( shadowMapType );
-
-		// ILLUMINATION IN SHADOW
-		vgd::node::LightModel::IlluminationInShadowValueType illuminationInShadow = lightModel->getIlluminationInShadow();
-		state.setIlluminationInShadow( illuminationInShadow );
-
-		// USESHADOWSAMPLERS
-		if ( lightModel->hasUseShadowSamplers() )
+		if ( isDefined )
 		{
-			vgd::node::LightModel::UseShadowSamplersValueType useShadowSamplers;
-			lightModel->getUseShadowSamplers(useShadowSamplers);
-			state.setShadowSamplerUsageEnabled( useShadowSamplers );
+			// Updates GLSLState
+			// SHADOW
+			state.setShadowType( shadow );
+
+			// SAMPLING SIZE
+			vgd::node::LightModel::SamplingSizeValueType samplingSize = lightModel->getSamplingSize();
+			state.setSamplingSize( samplingSize );
+
+			// SHADOW QUALITY ?
+
+			// SHADOW MAP TYPE
+			vgd::node::LightModel::ShadowMapTypeValueType shadowMapType = lightModel->getShadowMapType();
+			state.setShadowMapType( shadowMapType );
+
+			// ILLUMINATION IN SHADOW
+			vgd::node::LightModel::IlluminationInShadowValueType illuminationInShadow = lightModel->getIlluminationInShadow();
+			state.setIlluminationInShadow( illuminationInShadow );
+
+			// USESHADOWSAMPLERS
+			if ( lightModel->hasUseShadowSamplers() )
+			{
+				vgd::node::LightModel::UseShadowSamplersValueType useShadowSamplers;
+				lightModel->getUseShadowSamplers(useShadowSamplers);
+				state.setShadowSamplerUsageEnabled( useShadowSamplers );
+			}
 		}
+	}
+	else
+	{
+		state.setShadowType( vgd::node::LightModel::SHADOW_OFF );
 	}
 
 	// POSTPROCESSING
 	if ( lightModel->getIgnorePostProcessing() )
 	{
-		state.setEnabled( GLSLState::IGNORE_POST_PROCESSING );
+		state.setEnabled( vgeGL::engine::IGNORE_POST_PROCESSING );
 	}
 
 	//
@@ -179,7 +194,7 @@ void LightModel::paint( vgeGL::engine::Engine * engine, vgd::node::LightModel *n
 				break;
 
 			default:
-				assert( false && "Unknown LightModel.model value." );
+				vgAssert2( false, "Unknown LightModel.model value." );
 		}
 	}
 

@@ -50,7 +50,7 @@ struct VGEGL_API OutputBufferProperty : public vge::handler::painter::MultiAttri
 	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
 	typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;
 	static void paint(	vgeGL::engine::Engine * engine,
-						vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties,
+						OutputBufferPropertyStateContainer * outputBufferProperties,
 						std::back_insert_iterator< TextureContainer > backInserter );
 
 	/**
@@ -60,12 +60,12 @@ struct VGEGL_API OutputBufferProperty : public vge::handler::painter::MultiAttri
 
 	typedef std::pair< vgd::Shp< vgd::node::FrameBuffer >, vgd::Shp< vgeGL::rc::FrameBufferObject > > createsFBORetValType;
 	static createsFBORetValType createsFBO(	vgeGL::engine::Engine * engine,
-		vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties,
+		OutputBufferPropertyStateContainer * outputBufferProperties,
 		std::back_insert_iterator< TextureContainer > backInserter,
 		const bool addDepth = false );
 
-	static const std::string getFragmentOutputDeclarationStageString( vgeGL::engine::Engine * engine, vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties );
-	static const std::string getFragmentOutputStageString( vgeGL::engine::Engine * engine, vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties );
+	static const std::string getFragmentOutputDeclarationStageString( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
+	static const std::string getFragmentOutputStageString( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
 
 	static void bindFragDataLocations(	vgeGL::engine::Engine * engine, glo::GLSLProgram * program );
 };

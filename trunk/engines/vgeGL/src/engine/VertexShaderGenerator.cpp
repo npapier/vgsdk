@@ -43,7 +43,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_decl += "uniform vec2 nearFar;\n\n";
 
 	// Test if custom program must be installed
-	if ( state.isEnabled( GLSLState::PROGRAM ) )
+	if ( state.isEnabled( PROGRAM ) )
 	{
 		vgd::node::Program * program = state.getProgram();
 		assert( program );
@@ -65,7 +65,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		}
 		else
 		{
-			if ( state.isEnabled( GLSLState::FLAT_SHADING ) )
+			if ( state.isEnabled( FLAT_SHADING ) )
 			{
 				m_decl += 
 				"flat varying vec4 ecPosition;\n" // @todo really flat ?
@@ -86,7 +86,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing to do
 
-	const bool has_ftexgen = state.getNumTexture() > 0;	// @todo Should be the number of texCoord in VertexShape
+	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
 
 	std::pair< std::string, std::string > code_ftexgen;
 	if ( has_ftexgen )
@@ -211,13 +211,13 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	/*if (	glIsEnabled(GL_CLIP_PLANE0) || glIsEnabled(GL_CLIP_PLANE1) ||
 		glIsEnabled(GL_CLIP_PLANE2) || glIsEnabled(GL_CLIP_PLANE3) ||
 		glIsEnabled(GL_CLIP_PLANE4) || glIsEnabled(GL_CLIP_PLANE5)	)*/
-	if ( state.isEnabled( GLSLState::CLIPPING_PLANE ) )
+	if ( state.isEnabled( CLIPPING_PLANE ) )
 	{
 		m_code2 += "	gl_ClipVertex = ecPosition;\n";
 	}
 
 	// POINT SIZE
-	if ( state.isEnabled( GLSLState::POINT_STYLE ) )
+	if ( state.isEnabled( POINT_STYLE ) )
 	{
 		m_code1 += GLSLHelpers::generate_fpoint( state ) + "\n";
 		m_code2 += "	gl_PointSize = fpoint( length(ecPosition) );\n"; // , 1.0 );\n";
@@ -225,7 +225,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	m_code2 += "}\n";
 
-	if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
+	if ( state.isEnabled( COLOR4_BIND_PER_VERTEX ) )
 	{
 		boost::algorithm::replace_all( m_code1, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"
 		boost::algorithm::replace_all( m_code2, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"

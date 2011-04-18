@@ -76,7 +76,7 @@ void Overlay::setToDefaults()
 
 
 // @todo Uses glsl for Overlay
-void Overlay::paint( vgeGL::engine::Engine * engine, vgd::Shp< OverlayStateContainer > overlays )
+void Overlay::paint( vgeGL::engine::Engine * engine, OverlayStateContainer * overlays )
 {
 	typedef vgeGL::engine::GLSLState::OverlayState OverlayState;
 

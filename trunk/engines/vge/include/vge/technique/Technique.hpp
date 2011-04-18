@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,7 +16,7 @@ namespace vge
 
 	namespace pass { struct Pass; }
 
-	namespace service { struct Service; }
+	namespace service { struct Painter; struct Service; }
 }
 
 
@@ -72,7 +72,8 @@ namespace technique
  * }
  * @endcode
  * 
- * @todo cleans this class (see commented code).
+ * @todo cleans this class (see commented code)
+ *
  * @todo more documentation...
  * @todo virtual void push(); and virtual void pop();
  */
@@ -239,6 +240,12 @@ protected:
 
 	vge::visitor::TraverseElementVector	*getTraverseElements() const;
 	/*virtual vge::engine::Engine * getEngine() const;*/
+
+	/**
+	 * @brief Retrieves an instance of paint service
+	 */
+	vgd::Shp< vge::service::Service > paintService();
+
 private:
 	/**
 	 * @name Internal data
@@ -250,6 +257,9 @@ private:
 
 	vge::engine::Engine	*					m_engine;
 	vge::visitor::TraverseElementVector	*	m_traverseElements;
+
+	vgd::Shp< vge::service::Service >		m_paintService;
+
 protected:
 	std::string								m_passDescription;
 	//@}

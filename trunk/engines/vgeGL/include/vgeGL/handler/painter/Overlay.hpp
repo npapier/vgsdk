@@ -41,7 +41,7 @@ struct VGEGL_API Overlay : public vgeGL::handler::painter::LayerPlan
 	void setToDefaults();
 
 	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
-	static void paint( vgeGL::engine::Engine *, vgd::Shp< OverlayStateContainer > overlays );
+	static void paint( vgeGL::engine::Engine *, OverlayStateContainer * overlays );
 };
 
 

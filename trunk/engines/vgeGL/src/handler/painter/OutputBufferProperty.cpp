@@ -218,7 +218,7 @@ void OutputBufferProperty::setToDefaults()
 
 void OutputBufferProperty::paint(
 	vgeGL::engine::Engine * engine,
-	vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties,
+	OutputBufferPropertyStateContainer * outputBufferProperties,
 	std::back_insert_iterator< TextureContainer > backInserter )
 {
 	typedef vgeGL::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
@@ -373,7 +373,7 @@ vgd::Shp< vgd::node::Texture2D > OutputBufferProperty::createTexture2D( vgeGL::e
 
 
 OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vgeGL::engine::Engine * engine,
-	vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties,
+	OutputBufferPropertyStateContainer * outputBufferProperties,
 	std::back_insert_iterator< TextureContainer > backInserter,
 	const bool addDepth )
 {
@@ -442,7 +442,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 
 const std::string OutputBufferProperty::getFragmentOutputDeclarationStageString(
 	vgeGL::engine::Engine * engine,
-	vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties )
+	OutputBufferPropertyStateContainer * outputBufferProperties )
 {
 	typedef vgeGL::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
 
@@ -478,7 +478,7 @@ const std::string OutputBufferProperty::getFragmentOutputDeclarationStageString(
 
 const std::string OutputBufferProperty::getFragmentOutputStageString(
 	vgeGL::engine::Engine * engine,
-	vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties )
+	OutputBufferPropertyStateContainer * outputBufferProperties )
 {
 	typedef vgeGL::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
 

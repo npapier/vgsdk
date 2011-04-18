@@ -8,6 +8,7 @@
 #include <vgd/node/TexGenEyeLinear.hpp>
 #include <vgDebug/convenience.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -49,7 +50,10 @@ void TexGenEyeLinear::apply( vge::engine::Engine * engine, vgd::node::Node * nod
 
 	TexGen::apply( glEngine, texGen );
 
-	vgeGL::rc::applyUsingDisplayList< vgd::node::TexGenEyeLinear, TexGenEyeLinear >( engine, node, this );
+	if ( glEngine->isTextureMappingEnabled() )
+	{
+		vgeGL::rc::applyUsingDisplayList< vgd::node::TexGenEyeLinear, TexGenEyeLinear >( engine, node, this );
+	}
 }
 
 

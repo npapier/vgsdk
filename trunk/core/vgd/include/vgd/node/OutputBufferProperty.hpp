@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -90,12 +90,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		LINEAR_DEPTH = 296,	///< @todo
-		NORMAL = 293,	///< @todo
-		COLOR = 292,	///< @todo
-		CUSTOM = 297,	///< @todo
-		DEPTH = 295,	///< @todo
-		POSITION = 294,	///< @todo
+		LINEAR_DEPTH = 298,	///< @todo
+		NORMAL = 295,	///< @todo
+		COLOR = 294,	///< @todo
+		CUSTOM = 299,	///< @todo
+		DEPTH = 297,	///< @todo
+		POSITION = 296,	///< @todo
 		DEFAULT_COMMAND = COLOR	///< @todo
 	};
 
@@ -123,12 +123,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 292 );
-			retVal.push_back( 293 );
 			retVal.push_back( 294 );
 			retVal.push_back( 295 );
 			retVal.push_back( 296 );
 			retVal.push_back( 297 );
+			retVal.push_back( 298 );
+			retVal.push_back( 299 );
 
 			return retVal;
 		}
@@ -178,9 +178,9 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		FLOAT16 = 290,	///< @todo
-		INTEGER = 289,	///< @todo
-		FLOAT32 = 291,	///< @todo
+		FLOAT16 = 292,	///< @todo
+		INTEGER = 291,	///< @todo
+		FLOAT32 = 293,	///< @todo
 		DEFAULT_TYPE = INTEGER	///< @todo
 	};
 
@@ -208,9 +208,9 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 289 );
-			retVal.push_back( 290 );
 			retVal.push_back( 291 );
+			retVal.push_back( 292 );
+			retVal.push_back( 293 );
 
 			return retVal;
 		}
@@ -287,10 +287,10 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum
 	{
-		LUMINANCE_ALPHA = 288,	///< @todo
-		RGB = 285,	///< @todo
-		LUMINANCE = 287,	///< @todo
-		RGBA = 286,	///< @todo
+		LUMINANCE_ALPHA = 290,	///< @todo
+		RGB = 287,	///< @todo
+		LUMINANCE = 289,	///< @todo
+		RGBA = 288,	///< @todo
 		DEFAULT_FORMAT = RGB	///< @todo
 	};
 
@@ -318,10 +318,10 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 285 );
-			retVal.push_back( 286 );
 			retVal.push_back( 287 );
 			retVal.push_back( 288 );
+			retVal.push_back( 289 );
+			retVal.push_back( 290 );
 
 			return retVal;
 		}

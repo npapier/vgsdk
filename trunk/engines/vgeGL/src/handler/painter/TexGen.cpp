@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 #include <vgd/node/TexGen.hpp>
 #include <vgDebug/convenience.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 //#include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -33,18 +34,19 @@ void TexGen::apply( vgeGL::engine::Engine * engine, vgd::node::TexGen * texGen )
 
 	GLSLState& glslState = engine->getGLSLState();
 
-	vgd::Shp< TexUnitState > texUnitState( glslState.getTexture( texUnit ) );
+	vgd::Shp< TexUnitState > texUnitState( glslState.textures.getState( texUnit ) );
 	if ( texUnitState )
 	{
 		// Updates the existing texture unit state
 		texUnitState->setTexGenNode( texGen );
-		texUnitState->setTexCoordDim( 2 /* @todo FIXME not always 2 */ );
+		texUnitState->setTexCoordDim( 2 ); // @todo FIXME not always 2
 	}
 	else
 	{
 		// Creates the new texture unit state
-		texUnitState.reset( new GLSLState::TexUnitState(0, 0, 2 /*@todo FIXME not always 2*/, texGen) );
-		glslState.setTexture( texUnit, texUnitState );
+		//texUnitState.reset( new GLSLState::TexUnitState(0, 0, 2 @todo FIXME not always 2, texGen) );
+		texUnitState.reset( new GLSLState::TexUnitState(0, 0, 2, texGen) );
+		glslState.textures.setState( texUnit, texUnitState );
 	}
 }
 

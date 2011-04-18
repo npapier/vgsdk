@@ -41,7 +41,7 @@ const bool GeometryShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_decl += "uniform vec2 nearFar;\n\n";
 
 	// Test if custom program must be installed
-	if ( state.isEnabled( GLSLState::PROGRAM ) )
+	if ( state.isEnabled( PROGRAM ) )
 	{
 		vgd::node::Program * program = state.getProgram();
 		assert( program );

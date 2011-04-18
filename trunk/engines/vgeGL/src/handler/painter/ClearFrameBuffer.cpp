@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -20,7 +20,7 @@ namespace handler
 
 namespace painter
 {
-	
+
 
 
 META_HANDLER_CPP( ClearFrameBuffer );
@@ -33,7 +33,7 @@ const vge::handler::Handler::TargetVector ClearFrameBuffer::getTargets() const
 
 	targets.push_back( vgd::node::ClearFrameBuffer::getClassIndexStatic() );
 
-	return ( targets );
+	return targets;
 }
 
 
@@ -44,32 +44,22 @@ void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
 	// Updates engine state
-	vgd::Shp< glo::FrameBufferObject > fbo = glEngine->getOutputBuffers();
+	const vge::engine::BufferUsagePolicy	bup = engine->getBufferUsagePolicy();
+	vgd::Shp< glo::FrameBufferObject >		fbo = glEngine->getOutputBuffers();
 
-	if (	glEngine->isGLSLEnabled() &&
-			fbo && fbo->isBound() )
+	if ( fbo )
 	{
-		// glsl and engine contains active output buffers, then clears all output buffers
-
-		// Backups current draw buffers
-		const std::vector< int > drawBuffersBackup = fbo->getFullDrawBuffers();
-
-		// Clears all draw buffers attached to fbo
-		fbo->setDrawBuffersToAll();
-		vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
-
-		// Restores the draw buffers
-		fbo->setDrawBuffers( drawBuffersBackup );
+		fbo->bind();
 	}
-	else
-	{
-		vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
-	}
+
+	applyBufferUsagePolicy( bup, fbo );
+
+	vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
 }
 
 
 
-void ClearFrameBuffer::unapply ( vge::engine::Engine*, vgd::node::Node* )
+void ClearFrameBuffer::unapply( vge::engine::Engine*, vgd::node::Node* )
 {}
 
 
@@ -79,18 +69,25 @@ void ClearFrameBuffer::setToDefaults()
 	glClearColor( 0.f, 0.f, 0.f, 0.f );
 	glClearAccum( 0.f, 0.f, 0.f, 0.f );
 	glClearDepth( 1.0f );
+
+	glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
+	glDrawBuffer( GL_BACK );
+
+	glDepthMask( GL_TRUE );
+	glDepthFunc( GL_LEQUAL );
+	glEnable( GL_DEPTH_TEST );
 }
 
 
 
-void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuffer *pFrameBuffer )
+void ClearFrameBuffer::paint( vgeGL::engine::Engine * engine, vgd::node::ClearFrameBuffer * framebuffer )
 {
 	// CLEAR COLOR
 	vgm::Vec4f	clearValue;
 	bool		defined;
 	
 	//
-	defined = pFrameBuffer->getClear( vgd::node::ClearFrameBuffer::COLOR, clearValue );
+	defined = framebuffer->getClear( vgd::node::ClearFrameBuffer::COLOR, clearValue );
 	
 	if ( defined )
 	{
@@ -103,7 +100,7 @@ void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuf
 	}
 
 	//
-	defined = pFrameBuffer->getClear( vgd::node::ClearFrameBuffer::ACCUM, clearValue );
+	defined = framebuffer->getClear( vgd::node::ClearFrameBuffer::ACCUM, clearValue );
 	
 	if ( defined )
 	{
@@ -113,12 +110,11 @@ void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuf
 			clearValue[2],
 			clearValue[3]
 			);
-	}	
+	}
 
+/* @todo Generates ClearFrameBuffer node and remove clearMask
 	// CLEAR MASK
-	int32 clearMask = pFrameBuffer->getClearMask();
-	
-	GLbitfield clearMaskGL = 0;
+	const int32 clearMask = framebuffer->getClearMask();
 	
 	if ( clearMask & vgd::node::ClearFrameBuffer::COLOR_BUFFER_BIT )
 	{
@@ -144,9 +140,151 @@ void ClearFrameBuffer::paint ( vgeGL::engine::Engine *, vgd::node::ClearFrameBuf
 	{
 		glClear( clearMaskGL );
 	}
-
+*/
 	// Validates node
-	pFrameBuffer->getDirtyFlag(pFrameBuffer->getDFNode())->validate();
+	framebuffer->getDirtyFlag(framebuffer->getDFNode())->validate();
+}
+
+
+
+// @todo cache in DL
+void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePolicy policy, vgd::Shp< glo::FrameBufferObject > fbo )
+{
+	switch ( policy )
+	{
+		case vge::engine::BUP_NOT_DEFINED:
+			vgAssertN( false, "BUP_NOT_DEFINED not expected" );
+			return;
+
+		case vge::engine::BUP_ONLY_DEPTH:
+			if ( fbo )
+			{
+				// 1) disable writing to color buffer
+				fbo->renderDepthOnly();
+
+				// 2) enable writing to depth buffer
+				glDepthMask( GL_TRUE );
+			}
+			else
+			{
+				// 1) disable writing to color buffer
+				glDrawBuffer( GL_NONE );
+
+				// 2) enable writing to depth buffer
+				glDepthMask( GL_TRUE );
+			}
+
+			// set depth function
+			glDepthFunc( GL_LEQUAL );
+			glEnable( GL_DEPTH_TEST );
+
+			// Clears buffer
+			glClear( GL_DEPTH_BUFFER_BIT );
+			break;
+
+		case vge::engine::BUP_ONLY_COLOR:
+			if ( fbo )
+			{
+				// 1) enable writing to color buffer already done by OutputBuffers node
+
+				// 2) disable writing to depth buffer
+				glDepthMask( GL_FALSE );
+
+				// 3) clear buffers
+				// Backups current draw buffers
+				//std::vector< int > drawBuffersBackup = fbo->getFullDrawBuffers();
+
+				// Clears all draw buffers
+				fbo->setDrawBuffersToAll();
+				glClear( GL_COLOR_BUFFER_BIT );
+
+				// Restores the draw buffers
+				//fbo->setDrawBuffers( drawBuffersBackup );
+
+				fbo->setDrawBuffer(0);
+			}
+			else
+			{
+				// 1) enable writing to color buffer
+				glDrawBuffer( GL_BACK );
+
+				// 2) disable writing to depth buffer
+				glDepthMask( GL_FALSE );
+
+				// 3) clear buffer
+				glClear( GL_COLOR_BUFFER_BIT );
+			}
+
+			// set depth function
+			glDepthFunc( GL_EQUAL );
+			glEnable( GL_DEPTH_TEST );
+			break;
+
+		case vge::engine::BUP_COLOR_AND_DEPTH:
+			if ( fbo )
+			{
+				// 1) enable writing to color buffer already done by OutputBuffers node
+
+				// 2) enable writing to depth buffer
+				glDepthMask( GL_TRUE );
+
+				// 3) clear buffers
+				// Backups current draw buffers
+				//std::vector< int > drawBuffersBackup = fbo->getFullDrawBuffers();
+
+				// Clears all draw buffers
+				fbo->setDrawBuffersToAll();
+				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+				// Restores the draw buffers
+				//fbo->setDrawBuffers( drawBuffersBackup );
+
+				fbo->setDrawBuffer(0);
+			}
+			else
+			{
+				// 1) enable writing to color buffer
+				glDrawBuffer( GL_BACK );
+
+				// 2) enable writing to depth buffer
+				glDepthMask( GL_TRUE );
+
+				// 3) clear buffers
+				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+			}
+
+			// set depth function
+			glDepthFunc( GL_LEQUAL );
+			glEnable( GL_DEPTH_TEST );
+			break;
+
+		case vge::engine::BUP_ONLY_COLOR_NO_CLEAR:
+			if ( fbo )
+			{
+				// 1) enable writing to color buffer already done by OutputBuffers node
+
+				// 2) disable writing to depth buffer
+				glDepthMask( GL_FALSE );
+
+				fbo->setDrawBuffer(0);
+			}
+			else
+			{
+				// 1) enable writing to color buffer
+				glDrawBuffer( GL_BACK );
+
+				// 2) enable writing to depth buffer
+				glDepthMask( GL_FALSE );
+			}
+
+			// set depth function
+			glDepthFunc( GL_LEQUAL );
+			glEnable( GL_DEPTH_TEST );
+			break;
+
+		default:
+			vgAssertN( false, "Unexpected value for buffer rendering policy %i", policy );
+	}
 }
 
 

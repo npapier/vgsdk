@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,8 +6,9 @@
 #ifndef _VGEGL_TECHNIQUE_FORWARDRENDERING_HPP
 #define _VGEGL_TECHNIQUE_FORWARDRENDERING_HPP
 
-#include <iterator>
-#include <utility>
+#include <vgd/node/Camera.hpp>
+#include <vgd/node/LightModel.hpp>
+#include <vgd/node/TransformDragger.hpp>
 #include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/technique/Main.hpp"
 
@@ -61,45 +62,88 @@ struct VGEGL_CLASS_API ForwardRendering : public Main
 	VGEGL_API void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
 
 private:
-	//
-	vgd::Shp< ShadowMappingInput >				m_shadowMappingInput;
+	void passInformationsCollector( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+	void passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+		vgd::Shp< vgeGL::rc::FrameBufferObject > configureShadowMap( vgeGL::engine::Engine * engine, const uint currentLightIndex );
+	void passDepthOnly( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 
-	//
+	// LightModel
+	vgd::node::LightModel *							lightModel;
+	vgd::node::LightModel::ShadowValueType			shadowType;
+	vgd::node::LightModel::ShadowMapTypeValueType	shadowMapType;
+
+	// VIEW MATRIX and PROJECTION MATRIX
+	vgd::node::Camera *				camera;
+	vgd::node::TransformDragger *	transformDragger;
+
+	vgm::MatrixR	transformDraggerMatrix;
+	vgm::MatrixR	invTransformDraggerMatrix;
+
+	vgm::MatrixR	viewMatrix;
+	vgm::MatrixR	invViewMatrix;
+
+	vgd::Shp< vgeGL::engine::GLSLState > glslStateFinal;
+
+	// SHADOW MAPPING
+	vgd::Shp< ShadowMappingInput >				m_shadowMappingInput;
+	bool isShadowEnabled;
+
+	std::vector< vgm::MatrixR >					lightLookAt;
+
+
+	void stageConfigureShadowMapping( vgeGL::engine::Engine * engine );
+
+	// POST-PROCESSING
+	bool drawingSurfaceSizeChanged;
+	bool hasOutputBufferProperties;
 	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
-	vgd::Shp< OutputBufferPropertyStateContainer > m_outputBufferProperties;
+	OutputBufferPropertyStateContainer * m_outputBufferProperties;
+	bool isPostProcessingEnabled;
 
 	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
-	vgd::Shp< PostProcessingStateContainer > m_postProcessing;
+	PostProcessingStateContainer * m_postProcessing;
 	float m_lastCurrentScaleForVertex;
+
+	void stageInitializePostProcessingBuffers( vgeGL::engine::Engine * engine );
+		void initializePostProcessingBuffers( vgeGL::engine::Engine * engine );
+		vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer0;
+		vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo0;
+		std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures0;	///< textures for FBO 0
+
+		vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer1;
+		vgd::Shp< vgeGL::rc::FrameBufferObject >		m_fbo1;
+		std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures1;	///< textures for FBO 1
+	void stageConfigurePostProcessing( vgeGL::engine::Engine * engine );
+	void stagePostProcessing( vgeGL::engine::Engine * engine );
 
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > applyPostProcessing( vgeGL::engine::Engine * engine, const vgd::Shp< vgeGL::rc::FrameBufferObject > fbo0, const vgd::Shp< vgeGL::rc::FrameBufferObject > fbo1 );
 	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo );
 
+	// OVERLAY
 	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
-	vgd::Shp< OverlayStateContainer > m_overlays;
+	OverlayStateContainer * m_overlays;
+
+	bool renderOverlays;
+	void stageOverlays( vgeGL::engine::Engine * engine );
 
 
+//
 	/**
 	 * @name Buffers
 	 */
 	//@{
 
-	void initializeEngineBuffers( vgeGL::engine::Engine * engine, vgd::Shp< OutputBufferPropertyStateContainer > outputBufferProperties );
+	void stageInitializeOutputBuffers( vgeGL::engine::Engine * engine );
+	void initializeEngineBuffers( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
+		vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer;
+		vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo;
+		std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures;		///< textures for FBO
 
-	void initializePostProcessingBuffers( vgeGL::engine::Engine * engine );
 
-	vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer0;
-	vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer1;
-	vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer;
 
-	vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo0;
-	vgd::Shp< vgeGL::rc::FrameBufferObject >		m_fbo1;
-	vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo;
 
-// @todo removes
-	std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures0;	///< textures for FBO 0
-	std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures1;	///< textures for FBO 1
-	std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures;		///< textures for FBO
+
+
 
 	vgd::Shp< vgd::node::Quad >						m_quad1;
 	vgd::Shp< vgd::node::Quad >						m_quad2;
@@ -140,3 +184,4 @@ private:
 } // namespace vgeGL
 
 #endif //#ifndef _VGEGL_TECHNIQUE_FORWARDRENDERING_HPP
+

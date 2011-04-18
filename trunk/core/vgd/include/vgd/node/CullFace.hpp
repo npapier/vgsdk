@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -78,10 +78,10 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	 */
 	enum
 	{
-		DISABLED = 256,	///< Facet culling is disabled
-		FRONT = 258,	///< Front-facing facets are culled
-		BACK = 257,	///< Back-facing facets are culled
-		FRONT_AND_BACK = 259,	///< Front-facing and back-facing facets are culled
+		DISABLED = 258,	///< Facet culling is disabled
+		FRONT = 260,	///< Front-facing facets are culled
+		BACK = 259,	///< Back-facing facets are culled
+		FRONT_AND_BACK = 261,	///< Front-facing and back-facing facets are culled
 		DEFAULT_MODE = DISABLED	///< Facet culling is disabled
 	};
 
@@ -109,10 +109,10 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 256 );
-			retVal.push_back( 257 );
 			retVal.push_back( 258 );
 			retVal.push_back( 259 );
+			retVal.push_back( 260 );
+			retVal.push_back( 261 );
 
 			return retVal;
 		}

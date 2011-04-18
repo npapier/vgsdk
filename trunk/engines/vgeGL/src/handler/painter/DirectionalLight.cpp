@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 
 #include <vgd/node/DirectionalLight.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -45,21 +46,10 @@ void DirectionalLight::apply( vge::engine::Engine * engine, vgd::node::Node * no
 	assert( dynamic_cast< vgd::node::DirectionalLight* >(node) != 0 );
 	vgd::node::DirectionalLight *directionalLight = static_cast< vgd::node::DirectionalLight* >(node);
 
-	if ( glEngine->isGLSLEnabled() )
-	{
-		// Retrieves GLSL state
-		using vgeGL::engine::GLSLState;
-		typedef vgeGL::engine::GLSLState::LightState LightState;
+	//
+	updateGLSLState( glEngine, directionalLight, glEngine->getGLSLState() );
 
-		GLSLState& state = glEngine->getGLSLState();
-
-		// Updates GLSL state
-		state.setEnabled( GLSLState::DIRECTIONAL_LIGHT );
-
-		vgd::Shp< LightState > lightState( new LightState(directionalLight, GLSLState::DIRECTIONAL_LIGHT) );
-		state.setLight(	node->getMultiAttributeIndex(), lightState );
-	}
-
+	//
 	vgeGL::rc::applyUsingDisplayList<vgd::node::DirectionalLight, DirectionalLight>( engine, node, this );
 }
 
@@ -77,7 +67,58 @@ void DirectionalLight::setToDefaults()
 
 
 
-void DirectionalLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::DirectionalLight *pDirectionalLight )
+void DirectionalLight::updateGLSLState( vgeGL::engine::Engine * engine, vgd::node::DirectionalLight * light, vgeGL::engine::GLSLState& glslState )
+{
+	using vgeGL::engine::GLSLState;
+	typedef vgeGL::engine::LightState LightState;
+
+	// Updates GLSL state
+	glslState.setEnabled( vgeGL::engine::DIRECTIONAL_LIGHT );
+
+	/* @todo
+	if ( !glslState.isEnabled( vgeGL::engine::DIRECTIONAL_LIGHT_CASTING_SHADOW ) )
+	{
+		const bool castShadow = light->getCastShadow();
+		if ( castShadow )	glslState.setEnabled( vgeGL::engine::DIRECTIONAL_LIGHT_CASTING_SHADOW );
+	}
+	*/
+
+	// Light state
+	const uint unit = light->getMultiAttributeIndex();
+
+	vgd::Shp< LightState > lightState = glslState.lights.getState( unit );
+
+	if ( !lightState )
+	{
+		// Creates a new unit state
+		// type
+		lightState.reset( new LightState(vgeGL::engine::DIRECTIONAL_LIGHT) );
+		glslState.lights.setState( unit, lightState );
+	}
+	else
+	{
+		// type
+		lightState->setLightType( vgeGL::engine::DIRECTIONAL_LIGHT );
+		glslState.lights.dirty();
+	}
+
+	updateUnitState( engine, light, lightState );
+}
+
+
+void DirectionalLight::updateUnitState( vgeGL::engine::Engine * engine, vgd::node::DirectionalLight * light, vgd::Shp< vgeGL::engine::LightState > lightState )
+{
+	Light::updateUnitState( engine, light, lightState );
+
+	// Updates unit state
+	// DIRECTION field
+	vgd::node::DirectionalLight::DirectionValueType direction;
+	bool bDefined = light->getDirection( direction );
+	if ( bDefined )		lightState->setDirection( direction );
+}
+
+
+void DirectionalLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::DirectionalLight *pDirectionalLight )
 {
 	// render Light fields.
 	Light::paint( pGLEngine, pDirectionalLight );
@@ -89,7 +130,7 @@ void DirectionalLight::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::Direc
 
 	lightIndex	= GL_LIGHT0 + pDirectionalLight->getMultiAttributeIndex();
 
-	bDefined		= pDirectionalLight->getDirection( direction );
+	bDefined	= pDirectionalLight->getDirection( direction );
 
 	if ( bDefined )
 	{

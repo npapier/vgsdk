@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 
 #include <vgd/node/SpotLight.hpp>
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 
@@ -45,86 +46,8 @@ void SpotLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	assert( dynamic_cast< vgd::node::SpotLight* >(node) != 0 );
 	vgd::node::SpotLight *spotLight = static_cast< vgd::node::SpotLight* >(node);
 
-	using vgeGL::engine::GLSLState;
-	typedef vgeGL::engine::GLSLState::LightState LightState;
-
-	// *** Retrieves GLSL state ***
-	GLSLState& state = glEngine->getGLSLState();
-
-	vgd::Shp< LightState > lightState;
-	/* lightState = state.getLight( node->getMultiAttributeIndex() );
-	if ( lightState->getLightType() != GLSLState::SPOT_LIGHT )
-	{
-		lightState.reset();
-	}*/
-
-	// *** Computes light informations ***
-	const vgm::MatrixR& current( glEngine->getGeometricalMatrix().getTop() );
-
-	// fields
-	bool isDefined;
-	vgd::node::SpotLight::PositionValueType		position;
-	vgd::node::SpotLight::DirectionValueType	direction;
-
-	isDefined = spotLight->getPosition( position );
-	assert( isDefined );
-	/* @todo
-	if ( !isDefined )
-	{
-		// from light state
-		isDefined = lightState->getSpotLightNode()->getPosition( position );
-
-		if ( !isDefined )
-		{
-			// from default value of the engine
-			// @todo getPosition() that returns the value for the field if field is defined, else default value. 
-			// @todo or getPosition( position, default) like in python dict. <<< this one is my preferred api.
-			position = vgm::Vec3f(0.f, 0.f, 1.f);
-		}
-	}*/
-
-	isDefined = spotLight->getDirection( direction );
-	assert( isDefined );
-	/* @todo
-	if ( !isDefined )
-	{
-		// from light state
-		isDefined = lightState->getSpotLightNode()->getDirection( direction );
-
-		if ( !isDefined )
-		{
-			// from default value of the engine
-			direction = vgm::Vec3f(0.f, 0.f, -1.f);
-		}
-	}*/
-
-	// @todo but only with MODEL_MATRIX
-	//current.multVecMatrix( position, position );
-	//current.multVecMatrix( direction, direction );
-
-	const vgm::Vec3f	eye		( position );
-	const vgm::Vec3f	center	( position + direction );
-	vgm::Vec3f			up		( 0.f, 1.f, 0.f );
-
-	if ( direction.dot( up ) > 0.5f )
-	{
-		up.setValue( 1.f, 0.f, 0.f );
-	}
-
-	// Updates GLSL state
-	const bool castShadow = spotLight->getCastShadow();
-	if ( castShadow )
-	{
-		state.setEnabled( GLSLState::SPOT_LIGHT_CASTING_SHADOW );
-	}
-
-	state.setEnabled( GLSLState::SPOT_LIGHT );
-	lightState.reset( new LightState(spotLight, GLSLState::SPOT_LIGHT) );
-	// @todo api in light state
-	lightState->lightViewMatrix.setLookAt( eye, center, up );
-	lightState->lightMODELVIEWMatrix = current;
-
-	state.setLight(	node->getMultiAttributeIndex(), lightState );
+	//
+	updateGLSLState( glEngine, spotLight, glEngine->getGLSLState() );
 
 	//
 	vgeGL::rc::applyUsingDisplayList<vgd::node::SpotLight, SpotLight>( engine, node, this );
@@ -143,14 +66,72 @@ void SpotLight::setToDefaults()
 
 
 
+void SpotLight::updateGLSLState( vgeGL::engine::Engine * engine, vgd::node::SpotLight * spotLight, vgeGL::engine::GLSLState& glslState )
+{
+	using vgeGL::engine::GLSLState;
+	typedef vgeGL::engine::LightState LightState;
+
+	// Updates GLSL state
+	glslState.setEnabled( vgeGL::engine::SPOT_LIGHT );
+
+	if ( !glslState.isEnabled( vgeGL::engine::SPOT_LIGHT_CASTING_SHADOW ) )
+	{
+		const bool castShadow = spotLight->getCastShadow();
+		if ( castShadow )	glslState.setEnabled( vgeGL::engine::SPOT_LIGHT_CASTING_SHADOW );
+	}
+
+	// Light state
+	const uint unit = spotLight->getMultiAttributeIndex();
+
+	vgd::Shp< LightState > lightState = glslState.lights.getState( unit );
+
+	if ( !lightState )
+	{
+		// Creates a new unit state
+		// type
+		lightState.reset( new LightState(vgeGL::engine::SPOT_LIGHT) );
+		glslState.lights.setState( unit, lightState );
+	}
+	else
+	{
+		// type
+		lightState->setLightType( vgeGL::engine::SPOT_LIGHT );
+		glslState.lights.dirty();
+	}
+
+	updateUnitState( engine, spotLight, lightState );
+}
+
+
+void SpotLight::updateUnitState( vgeGL::engine::Engine * engine, vgd::node::SpotLight * spotLight, vgd::Shp< vgeGL::engine::LightState > lightState )
+{
+	PointLight::updateUnitState( engine, spotLight, lightState );
+
+	// Updates unit state
+	// lightModelViewMatrix
+	lightState->setModelViewMatrix( engine->getGeometricalMatrix().getTop() );
+
+	// CUTOFFANGLE
+	vgd::node::SpotLight::CutOffAngleValueType cutOffAngle;
+	bool bDefined = spotLight->getCutOffAngle( cutOffAngle );
+	if ( bDefined )		lightState->setCutOffAngle( cutOffAngle );
+
+	// DIRECTION field
+	vgd::node::SpotLight::DirectionValueType direction;
+	bDefined = spotLight->getDirection( direction );
+	if ( bDefined )		lightState->setDirection( direction );
+}
+
+
+
 void SpotLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SpotLight *pSpotLight )
 {
 	// Handles PointLight and Light fields
 	PointLight::paint( pGLEngine, pSpotLight );
 
 	// Computes the light index
-	const GLenum	lightIndex = GL_LIGHT0 + pSpotLight->getMultiAttributeIndex();	
-	
+	const GLenum lightIndex = GL_LIGHT0 + pSpotLight->getMultiAttributeIndex();
+
 	// Handles SpotLight fields
 	using vgd::node::SpotLight;
 	bool			bDefined;
@@ -159,12 +140,12 @@ void SpotLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SpotLight *p
 	SpotLight::DirectionValueType direction;
 
 	bDefined = pSpotLight->getDirection( direction );
-		
+
 	if ( bDefined )
 	{
 		glLightfv( lightIndex, GL_SPOT_DIRECTION, direction.getValue() );
 	}
-	
+
 	// CUTOFFANGLE field
 	SpotLight::CutOffAngleValueType cutOffAngle;
 
@@ -172,8 +153,8 @@ void SpotLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SpotLight *p
 	
 	if ( bDefined )
 	{
-		assert(	((cutOffAngle >= 0.f) && (cutOffAngle <= 90.f )) ||
-				(cutOffAngle == 180.f) && "Unexpected value for cutOffAngle");
+		vgAssertN(	((cutOffAngle >= 0.f) && (cutOffAngle <= 90.f )) ||
+					(cutOffAngle == 180.f), "Unexpected value for cutOffAngle %f", cutOffAngle);
 
 		glLightfv( lightIndex, GL_SPOT_CUTOFF, &cutOffAngle );
 	}
@@ -182,10 +163,10 @@ void SpotLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SpotLight *p
 	SpotLight::DropOffRateValueType dropOffRate;
 
 	bDefined = pSpotLight->getDropOffRate( dropOffRate );
-	
+
 	if ( bDefined )
 	{
-		assert(	(dropOffRate >= 0.f) && (dropOffRate <= 1.f) && "Unexpected value for dropOffRate" );
+		vgAssertN(	(dropOffRate >= 0.f) && (dropOffRate <= 1.f), "Unexpected value for dropOffRate %f", dropOffRate );
 
 		SpotLight::DropOffRateValueType dropOffRateGL = dropOffRate * 128.f;
 

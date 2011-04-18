@@ -19,6 +19,41 @@
 
 
 	/**
+	 * @name Helpers
+	 */
+	//@{
+
+	typedef LookAtLeftValueType LookAtValueType;
+
+	/**
+	 * @brief Gets the value of field named \c lookAtLeft.
+	 */
+	const LookAtValueType getLookAt() const;
+
+	/**
+	 * @brief Sets the value of field named \c lookAtLeft.
+	 */
+	void setLookAt( const LookAtValueType value );
+
+
+
+	typedef ProjectionLeftValueType ProjectionValueType;
+
+	/**
+	 * @brief Gets the value of field named \c projectionLeft.
+	 */
+	const ProjectionValueType getProjection() const;
+
+	/**
+	 * @brief Sets the value of field named \c projectionLeft.
+	 */
+	void setProjection( const ProjectionValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field matrix
 	 * @deprecated
 	 */

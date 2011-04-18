@@ -1,14 +1,12 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgeGL/engine/GLSLState.hpp"
 
-#include <glo/Texture.hpp>
 #include <vgd/basic/toString.hpp>
 #include <vgd/node/LightModel.hpp>
-#include <vgd/node/SpotLight.hpp>
 #include "vgeGL/engine/Engine.hpp"
 
 
@@ -18,14 +16,6 @@ namespace vgeGL
 
 namespace engine
 {
-
-
-
-// LightState
-const vgd::node::SpotLight *GLSLState::LightState::getSpotLightNode() const
-{
-	return dynamic_cast< vgd::node::SpotLight * >(m_light);
-}
 
 
 
@@ -56,110 +46,97 @@ const std::string GLSLState::m_indexString[] =
 
 
 
-const std::string& GLSLState::toString( const BitSetIndexType bitSetIndexType )
+const std::string& GLSLState::toString( const GLSLStateIndex bitSetIndexType )
 {
-	assert( bitSetIndexType >= 0 && "Out of range index." );
-	assert( bitSetIndexType < MAX_BITSETINDEXTYPE && "Out of range index." );
+	vgAssertN( bitSetIndexType >= 0, "Out of range index." );
+	vgAssertN( bitSetIndexType < MAX_BITSETINDEXTYPE, "Out of range index." );
 
 	return m_indexString[bitSetIndexType];
 }
 
 
 
-GLSLState::GLSLState( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
-:	DirtyFlag( "GLSLState" ),
-	postProcessing(16),
-	overlays(8),
-	outputBufferProperties(8),
-	m_light(maxLightUnits),
-	m_numLight(0),
-	m_texture(maxTexUnits),
-	m_numTexture(0)
+GLSLState::GLSLState( const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
+:	//lights(),
+	textures(maxTexUnits),
+	//postProcessing(),
+	//overlays(),
+	//outputBufferProperties()
+	m_dirtyFlag( "GLSLState" )
 {
-	reset( maxLightUnits, maxTexUnits, isShadowSamplerUsageEnabled );
+	init( isShadowSamplerUsageEnabled );
 }
 
 
-void GLSLState::reset( const uint maxLightUnits, const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
+GLSLState::GLSLState( const GLSLState& src )
+:	lights					(	src.lights					),
+	textures				(	src.textures				),
+	postProcessing			(	src.postProcessing			),
+	overlays				(	src.overlays				),
+	outputBufferProperties	(	src.outputBufferProperties	),
+
+	m_dirtyFlag				(	src.m_dirtyFlag				),
+
+	m_program				(	src.m_program				),
+	m_shaderStage			(	src.m_shaderStage			),
+	m_lightModelShadow		(	src.m_lightModelShadow		),
+	m_samplingSize			(	src.m_samplingSize			),
+	m_shadowMapType			(	src.m_shadowMapType			),
+	m_illuminationInShadow	(	src.m_illuminationInShadow	),
+	m_isShadowSamplerEnabled(	src.m_isShadowSamplerEnabled)
+{}
+
+
+
+GLSLState& GLSLState::operator = ( const GLSLState& src )
+{
+	if ( this != &src )
+	{
+		release();
+		copy( src );
+	}
+	// else nothing to do, self assign
+
+	return *this;
+}
+
+
+
+void GLSLState::reset( const bool isShadowSamplerUsageEnabled )
 {
 	// TBitSet
-	vgeGL::engine::TBitSet< 14 >::reset();
+	vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >::reset();
 
-	// LIGHT
-	for(	uint	i		= 0,
-					iEnd	= m_light.size();
-			i != iEnd;
-			++i )
-	{
-		if ( getLight(i) != 0 )
-		{
-			setLight( i );
-
-			if ( getNumLight() == 0 )
-			{
-				break;
-			}
-		}
-	}
-	assert( m_numLight == 0 );
-
-	m_light.resize( maxLightUnits );
-
-	// TEXTURE
-	for(	uint	i		= 0,
-					iEnd	= m_texture.size();
-			i != iEnd;
-			++i )
-	{
-		if ( getTexture(i) != 0 )
-		{
-			setTexture( i );
-
-			if ( getNumTexture() == 0 )
-			{
-				break;
-			}
-		}
-	}
-	assert( m_numTexture == 0 );
-
-	m_texture.resize( maxTexUnits );
-
-	// POST PROCESSING / OVERLAY / OUTPUT BUFFER PROPERTY
+	// LIGHT / TEXTURE / POST PROCESSING / OVERLAY / OUTPUT BUFFER PROPERTY
+	lights.clear();
+	textures.clear();
 	postProcessing.clear();
 	overlays.clear();
 	outputBufferProperties.clear();
 
-	// @todo others ( at this time default values for others are initialized by GLSLState::update() )
-	setProgram( 0 );
+	m_dirtyFlag.dirty();
 
-	m_shaderStage.clear();
-	m_shaderStage.resize( MAX_SHADERSTAGE );
-
-	setShadowType( vgd::node::LightModel::DEFAULT_SHADOW );
-	setSamplingSize( 1.f );
-	setShadowMapType( vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE );
-	setIlluminationInShadow( 0.4f ); // @todo Adds const float DEFAULT_ILLUMINATIONINSHADOW in node
-
-	setShadowSamplerUsageEnabled( isShadowSamplerUsageEnabled );
-
-	//dirty();
+	init( isShadowSamplerUsageEnabled );
 }
 
 
 
 void GLSLState::setEnabled( const uint index, const bool enabled )
 {
-	vgeGL::engine::TBitSet< 14 >::setEnabled( index, enabled );
-	dirty(); // @todo only if !=
+	if ( isEnabled(index) != enabled )
+	{
+		vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >::setEnabled( index, enabled );
+		m_dirtyFlag.dirty();
+	}
+	//else nothing to do
 }
 
 
 
 void GLSLState::reset()
 {
-	vgeGL::engine::TBitSet< 14 >::reset();
-	dirty();
+	vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >::reset();
+	m_dirtyFlag.dirty();
 }
 
 
@@ -206,133 +183,42 @@ void GLSLState::setPerPixelLightingEnabled( const bool enabled )
 }
 
 
-
-const vgd::Shp< GLSLState::LightState > GLSLState::getLight( const uint indexLightUnit ) const
+const bool GLSLState::isDirty() const
 {
-	assert( indexLightUnit >= 0 && "Invalid light unit index." );
-	assert( indexLightUnit < m_light.size() && "Invalid light unit index." );
-
-	return m_light[indexLightUnit];
+	return	m_dirtyFlag.isDirty()				||
+			textures.isDirty()					||
+			lights.isDirty()					||
+			outputBufferProperties.isDirty()	||
+			postProcessing.isDirty()			||
+			overlays.isDirty();
 }
 
 
-
-vgd::Shp< GLSLState::LightState > GLSLState::getLight( const uint indexLightUnit )
+const bool GLSLState::isValid() const
 {
-	assert( indexLightUnit >= 0 && "Invalid light unit index." );
-	assert( indexLightUnit < m_light.size() && "Invalid light unit index." );
-
-	return m_light[indexLightUnit];
+	return	m_dirtyFlag.isValid()				&&
+			textures.isValid()					&&
+			lights.isValid()					&&
+			outputBufferProperties.isValid() 	&&
+			postProcessing.isValid()			&&
+			overlays.isValid();
 }
 
 
-
-vgd::Shp< GLSLState::LightState > GLSLState::setLight( const uint indexLightUnit, vgd::Shp< LightState > lightState )
+void GLSLState::validate( const bool setToValid )
 {
-	assert( indexLightUnit >= 0 && "Invalid light unit index." );
-	assert( indexLightUnit < m_light.size() && "Invalid light unit index." );
-
-	// Sets the light
-	vgd::Shp< LightState > oldLight = m_light[indexLightUnit];
-
-	m_light[indexLightUnit] = lightState;
-
-	// Updates light count
-	if ( oldLight )
-	{
-		m_numLight += ( lightState != 0 ) ? 0 : -1;
-	}
-	else
-	{
-		m_numLight += ( lightState != 0 ) ? 1 : 0;
-	}
-	assert( m_numLight >= 0 );
-	assert( m_numLight <= m_light.size() );
-
-	dirty(); // @todo OPTME
-	return oldLight;
+	m_dirtyFlag.validate( setToValid );
+	textures.validate( setToValid );
+	lights.validate( setToValid );
+	outputBufferProperties.validate( setToValid );
+	postProcessing.validate( setToValid );
+	overlays.validate( setToValid );
 }
-
-
-
-const uint GLSLState::getNumLight() const
-{
-	return m_numLight;
-}
-
-
-
-const uint GLSLState::getMaxLight() const
-{
-	return m_light.size();
-}
-
-
-
-const vgd::Shp< GLSLState::TexUnitState > GLSLState::getTexture( const uint indexTexUnit ) const
-{
-	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
-	assert( indexTexUnit < m_texture.size() && "Invalid texture unit index." );
-
-	return m_texture[indexTexUnit];
-}
-
-
-
-vgd::Shp< GLSLState::TexUnitState > GLSLState::getTexture( const uint indexTexUnit )
-{
-	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
-	assert( indexTexUnit < m_texture.size() && "Invalid texture unit index." );
-
-	return m_texture[indexTexUnit];
-}
-
-
-
-vgd::Shp< GLSLState::TexUnitState > GLSLState::setTexture( const uint indexTexUnit, vgd::Shp< TexUnitState > texture )
-{
-	assert( indexTexUnit >= 0 && "Invalid texture unit index." );
-	assert( indexTexUnit < m_texture.size() && "Invalid texture unit index." );
-
-	// Sets the texture
-	vgd::Shp< TexUnitState > oldTexture = m_texture[indexTexUnit];
-
-	m_texture[indexTexUnit] = texture;
-
-	// Updates texture count
-	if ( oldTexture )
-	{
-		m_numTexture += ( texture != 0 ) ? 0 : -1;
-	}
-	else
-	{
-		m_numTexture += ( texture != 0 ) ? 1 : 0;
-	}
-	assert( m_numTexture >= 0 );
-	assert( m_numTexture <= m_texture.size() );
-
-	dirty(); // @todo OPTME
-	return oldTexture;
-}
-
-
-
-const uint GLSLState::getNumTexture() const
-{
-	return m_numTexture;
-}
-
-
-const uint GLSLState::getMaxTexture() const
-{
-	return m_texture.size();
-}
-
 
 
 const uint GLSLState::getPrivateTexUnitIndex( const uint index ) const
 {
-	const uint retVal = (getMaxTexture()-1) - index;
+	const uint retVal = (textures.getMax()-1) - index;
 	return retVal;
 }
 
@@ -348,7 +234,7 @@ const std::string GLSLState::getPrivateTexUnit( const uint index ) const
 
 const uint GLSLState::getPrivateIndex( const uint privateTexUnitIndex )
 {
-	const uint retVal = (getMaxTexture()-1) - privateTexUnitIndex;
+	const uint retVal = (textures.getMax()-1) - privateTexUnitIndex;
 	return retVal;
 }
 
@@ -371,16 +257,22 @@ vgd::node::Program * GLSLState::getProgram() const
 
 void GLSLState::setProgram( vgd::node::Program * program )
 {
-	m_program = program;
-	dirty();
+	if ( m_program != program )
+	{
+		m_program = program;
+		m_dirtyFlag.dirty();
+	}
 }
 
 
 
 void GLSLState::setShaderStage( const ShaderStage shaderStage, const std::string& glslCode )
 {
-	m_shaderStage[shaderStage] = glslCode;
-	dirty();
+	if ( m_shaderStage[shaderStage] != glslCode )
+	{
+		m_shaderStage[shaderStage] = glslCode;
+		m_dirtyFlag.dirty();
+	}
 }
 
 
@@ -401,10 +293,60 @@ const bool GLSLState::isShadowSamplerUsageEnabled() const
 
 void GLSLState::setShadowSamplerUsageEnabled( const bool enabled )
 {
-	m_isShadowSamplerEnabled = enabled;
-	dirty();
+	if ( m_isShadowSamplerEnabled == enabled )
+	{
+		m_isShadowSamplerEnabled = enabled;
+		m_dirtyFlag.dirty();
+	}
 }
 
+
+
+void GLSLState::copy( const GLSLState& src )
+{
+	lights					= src.lights;
+	textures				= src.textures;
+	postProcessing			= src.postProcessing;
+	overlays				= src.overlays;
+	outputBufferProperties	= src.outputBufferProperties;
+
+	m_dirtyFlag				= src.m_dirtyFlag;
+
+	m_program					= src.m_program;
+	m_shaderStage				= src.m_shaderStage;
+	m_lightModelShadow			= src.m_lightModelShadow;
+	m_samplingSize				= src.m_samplingSize;
+	m_shadowMapType				= src.m_shadowMapType;
+	m_illuminationInShadow		= src.m_illuminationInShadow;
+	m_isShadowSamplerEnabled	= src.m_isShadowSamplerEnabled;
+}
+
+
+
+void GLSLState::release()
+{
+	lights.clear();
+	textures.clear();
+	postProcessing.clear();
+	overlays.clear();
+	outputBufferProperties.clear();
+
+	m_shaderStage.clear();
+}
+
+
+
+void GLSLState::init( const bool isShadowSamplerEnabled )
+{
+	m_program					= 0;
+	m_shaderStage.clear();
+	m_shaderStage.resize( MAX_SHADERSTAGE );
+	m_lightModelShadow			= vgd::node::LightModel::DEFAULT_SHADOW;
+	m_samplingSize				= 1.f;
+	m_shadowMapType				= vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE;
+	m_illuminationInShadow		= 0.4f;
+	m_isShadowSamplerEnabled	= isShadowSamplerEnabled;
+}
 
 
 } // namespace engine

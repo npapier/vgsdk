@@ -48,6 +48,21 @@ namespace engine
 
 
 /**
+ * @brief Defines read/write mask of color buffers and depth buffer and the depth function
+ */
+enum BufferUsagePolicy
+{
+	BUP_NOT_DEFINED,		///< no policy
+	BUP_ONLY_COLOR_NO_CLEAR,///< enables writing to color buffer(s) and disables writing to depth buffer. But only draw if the depth of the incoming fragment is less or equal to the depth already in the depth buffer. Disables the cleaning of buffers done in ClearFrameBuffer handler. Transparency is the typical use case
+	BUP_ONLY_DEPTH,			///< disables writing to color buffer(s) and enables writing to depth buffer
+	BUP_ONLY_COLOR,			///< enables writing to color buffer(s) and disables writing to depth buffer. But only draw if the depth of the incoming fragment matches the depth already in the depth buffer
+	BUP_COLOR_AND_DEPTH,	///< enables writing to color buffer(s) and enables writing to depth buffer
+	BUP_DEFAULT = BUP_COLOR_AND_DEPTH
+};
+
+
+
+/**
  * @brief Evaluate scene graph.
  * 
  * First scene graphs are traversed by NodeCollectorExtended. Next each Node(Shape or Attribute) are evaluated by the 
@@ -667,12 +682,11 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	//@{
 
+
 	/**
 	 * @brief Returns the drawing surface size
 	 * 
 	 * @return the drawing surface size in pixels
-	 *
-	 * @remarks The drawing surface size is typically the window size.
 	 */
 	const vgm::Vec2i getDrawingSurfaceSize() const;
 
@@ -681,8 +695,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * 
 	 * @param	drawingSurfaceSize		the drawing surface size 
 	 *
-	 * @remarks The drawing surface size is typically the window size.
-	* 
+	 * @remarks The drawing surface size is typically the window size (see vge::SceneManager::resize()).
 	 */
 	void setDrawingSurfaceSize( const vgm::Vec2i drawingSurfaceSize );
 
@@ -698,9 +711,10 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Sets the camera
 	 *
 	 * @param camera	the camera to set
+	 *
+	 * @see vge::handler::Camera
 	 */
 	void setCamera( const vgd::node::Camera * camera );
-
 
 	/**
 	 * @brief Returns the viewport
@@ -713,6 +727,8 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Sets the viewport
 	 *
 	 * @param viewport	the viewport value
+	 *
+	 * @see vge::handler::Camera
 	 */
 	void setViewport( const vgm::Rectangle2i& viewport );
 
@@ -727,8 +743,27 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Sets the vector containing respectively the distances to the near and far depth clipping planes.
 	 *
 	 * @param nearFar	the vector containing near-far values
+	 *
+	 * @see vge::handler::Camera
 	 */
 	void setNearFar( const vgm::Vec2f nearFar );
+
+
+	/**
+	 * @brief Returns the current buffer usage policy.
+	 *
+	 * @return the current buffer usage policy
+	 */
+	const BufferUsagePolicy getBufferUsagePolicy() const;
+
+	/**
+	 * @brief Sets the current buffer usage policy
+	 *
+	 * This policy is used by ClearFrameBuffer handler to setup color/depth mask and depth function.
+	 *
+	 * @remark This state is typically modified by technique between two passes.
+	 */
+	void setBufferUsagePolicy( const BufferUsagePolicy policy );
 
 	//@}
 
@@ -891,10 +926,12 @@ protected:
 	static const int32					StateStack_SizeHint;
 
 
-	vgm::Vec2i						m_drawingSurfaceSize;	///< the drawing surface size (window size)
-	const vgd::node::Camera *		m_camera;				///< the last encountered Camera node
-	vgm::Rectangle2i				m_viewport;				///< the value of \c viewport field for the last encountered Camera node with this field defined
-	vgm::Vec2f						m_nearFar;				///< a vector containing respectively the distances to the near and far depth clipping planes
+	vgm::Vec2i						m_drawingSurfaceSize;		///< the drawing surface size (window size)
+	const vgd::node::Camera *		m_camera;					///< the last encountered Camera node
+	vgm::Rectangle2i				m_viewport;					///< the value of \c viewport field for the last encountered Camera node with this field defined
+	vgm::Vec2f						m_nearFar;					///< a vector containing respectively the distances to the near and far depth clipping planes
+	BufferUsagePolicy				m_bufferUsagePolicy;		///< the current buffer usage policy
+
 	const vgd::Shp< vge::service::Service > m_paintService;	///< a reference on paint service object used by render() methods
 
 	bool							m_trace;

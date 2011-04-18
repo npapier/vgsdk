@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,8 +7,9 @@
 #define _VGE_BASIC_TUNITCONTAINER_HPP
 
 #include <vector>
+#include <vgd/field/DirtyFlag.hpp>
 #include <vgd/Shp.hpp>
-#include <vge/vge.hpp>
+#include <vgDebug/helpers.hpp>
 
 
 
@@ -21,15 +22,14 @@ namespace basic
 
 
 /**
- * @brief Specialized container to manage a state per unit
+ * @brief Specialized container containing a state per unit
+ *
+ * This container is conceptually similar to std::vector with unit similar to vector index and state similar to vector value.
  *
  * @todo iterators
- * @todo uses this class in GLSLState for textures and lights
- *
- * @todo resize(m_state)
  */
 template< typename UnitState >
-struct TUnitContainer
+struct TUnitContainer : public vgd::field::DirtyFlag
 {
 	/**
 	 * @name Constructors
@@ -40,34 +40,13 @@ struct TUnitContainer
 	/**
 	 * @brief Default constructor
 	 *
-	 * @param size	the number of units
+	 * @param size			the number of units
 	 */
-	TUnitContainer( const uint size )
-	:	m_unit(size),
-		m_num(0)
+	TUnitContainer( const uint size = 0 )
+	:	DirtyFlag(""),
+		m_unit		( size		),
+		m_num		( 0			)
 	{}
-
-
-	/**
-	 * @brief Copy constructor
-	 */
-	TUnitContainer( const TUnitContainer& value )
-	{
-		copy(value);
-	}
-
-	/**
-	 * @brief Assign operator
-	 */
-	TUnitContainer& operator =( const TUnitContainer& value )
-	{
-		if ( this != &value )
-		{
-			// remove() not needed
-			copy( value );
-		}
-		return (*this);
-	}
 
 	//@}
 
@@ -83,26 +62,25 @@ struct TUnitContainer
 	 */
 	void clear()
 	{
-		// Fast for sparse container
-		// @todo OPTME for full or almost full container
-		for(	uint	i		= 0,
-						iEnd	= m_unit.size();
-				i != iEnd;
-				++i )
-		{
-			if ( getState(i) )
-			{
-				setState( i );
+		dirty();
 
-				if ( getNum() == 0 )
-				{
-					break;
-				}
-			}
-		}
-		assert( getNum() == 0 );
+		const int size = m_unit.size();
+		m_unit.clear();
+		m_unit.resize( size );
+
+		m_num = 0;
 	}
 
+
+	/**
+	 * @brief Tests existence of the desired unit in the container
+	 *
+	 * @return true if the unit exists, otherwise returns false
+	 */
+	const bool hasState( const uint indexUnit = 0 ) const
+	{
+		return indexUnit < m_unit.size();
+	}
 
 	/**
 	 * @brief Retrieves the desired unit state.
@@ -113,8 +91,7 @@ struct TUnitContainer
 	 */
 	const vgd::Shp< UnitState > getState( const uint indexUnit = 0 ) const
 	{
-		assert( indexUnit >= 0 && "Invalid unit index." );
-		assert( indexUnit < m_unit.size() && "Invalid unit index." );
+		expandSize( indexUnit );
 
 		return m_unit[indexUnit];
 	}
@@ -129,8 +106,7 @@ struct TUnitContainer
 	 */
 	vgd::Shp< UnitState > getState( const uint indexUnit = 0 )
 	{
-		assert( indexUnit >= 0 && "Invalid unit index." );
-		assert( indexUnit < m_unit.size() && "Invalid unit index." );
+		expandSize( indexUnit );
 
 		return m_unit[indexUnit];
 	}
@@ -146,8 +122,7 @@ struct TUnitContainer
 	 */
 	vgd::Shp< UnitState > setState( const uint indexUnit, vgd::Shp< UnitState > state = vgd::Shp< UnitState >() )
 	{
-		assert( indexUnit >= 0 && "Invalid unit index." );
-		assert( indexUnit < m_unit.size() && "Invalid unit index." );
+		expandSize( indexUnit );
 
 		// Saves the previous state and sets the new one
 		vgd::Shp< UnitState > oldState = m_unit[indexUnit];
@@ -166,6 +141,10 @@ struct TUnitContainer
 		assert( m_num >= 0 );
 		assert( m_num <= m_unit.size() );
 
+		// Updates dirty flags
+		dirty();
+
+		// Returns old value
 		return oldState;
 	}
 
@@ -203,8 +182,20 @@ struct TUnitContainer
 	 * @brief Retrieves the number of state units.
 	 *
 	 * @return The number of state units
+	 *
+	 * @todo deprecated
 	 */
 	const uint getMax() const
+	{
+		return size();
+	}
+
+	/**
+	 * @brief Retrieves the number of state units.
+	 *
+	 * @return The number of state units
+	 */
+	const uint size() const
 	{
 		return m_unit.size();
 	}
@@ -212,17 +203,18 @@ struct TUnitContainer
 
 private:
 
-	/**
-	 * @brief Code for copy constructor
-	 */
-	void copy( const TUnitContainer& value )
+	void expandSize( const uint indexUnit ) const
 	{
-		m_unit	= value.m_unit;
-		m_num	= value.m_num;
+		if ( indexUnit >= m_unit.size() )
+		{
+			// Expand the container
+			const_cast<TUnitContainer*>(this)->m_unit.resize( indexUnit + 2 );
+		}
 	}
 
-	std::vector< vgd::Shp<UnitState> >	m_unit;		///< array storing the state of each unit. This array uses a zero-based index to select the desired unit.
-	uint								m_num;		///< the number of defined states in all units
+	typedef std::vector< vgd::Shp<UnitState> > ContainerType;
+	ContainerType	m_unit;			///< array storing the state of each unit. This array uses a zero-based index to select the desired unit.
+	uint			m_num;			///< the number of defined states in all units
 };
 
 
