@@ -278,17 +278,6 @@ void Settings::onClearGLResources()
 	assert( m_canvas != 0 );
 
 	// @todo
-	if ( m_canvas->startOpenGLContext() )
-	{
-		m_canvas->getGLEngine()->getGLManager().clear();
-		m_canvas->getGLEngine()->getGLSLManager().clear();
-		dirtyAllNodes( m_canvas );
-		m_canvas->refreshForced();
-	}
-	else
-	{
-		vgAssertN( false, "Unable to clear OpenGL resource. Context not current" );
-	}
 }
 
 
