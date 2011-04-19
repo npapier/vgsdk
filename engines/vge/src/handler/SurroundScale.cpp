@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,29 +47,37 @@ void SurroundScale::apply( vge::engine::Engine *pEngine, vgd::node::SurroundScal
 	if ( pSurroundedGroup.get() != 0 )
 	{
 		// Surround node is a group.
-		
+
 		// Step 1 : Collect nodes.
 		vge::visitor::NodeCollectorExtended<> collector;
 		pSurroundedGroup->traverse( collector );
 	
 		// Step 2 : Compute bounding box for the surrounded groug
-		// FIXME optme : always recompute !!!
-		// FIXME see vgd::node::SurroundScale todo
+		// @todo optme : always recompute !!!
+		// @todo FIXME see vgd::node::SurroundScale
 		vge::technique::ComputeBoundingBox computeBB;
-	   
+
 		// FIXME : push/pop is expensive => use another ready to use engine ?
-		pEngine->pushStateStack();
-		pEngine->getGeometricalMatrix().pushAll();
-		pEngine->getProjectionMatrix().pushAll();
-		pEngine->getTextureMatrix().pushAll();
-	   
+
+		const bool isTraceEnabledBak = pEngine->isTraceEnabled();
+		pEngine->setTrace(false);
+
+		//pEngine->push();
+		 //pEngine->pushStateStack();
+		 pEngine->getGeometricalMatrix().pushAll();
+		 pEngine->getProjectionMatrix().pushAll();
+		 //pEngine->getTextureMatrix().pushAll();
+
 		computeBB.apply( pEngine, collector.getTraverseElements() );
-	
-		pEngine->getTextureMatrix().popAll();      
-		pEngine->getProjectionMatrix().popAll();
-		pEngine->getGeometricalMatrix().popAll();
-		pEngine->popStateStack();
-	   
+
+		 //pEngine->getTextureMatrix().popAll();      
+		 pEngine->getProjectionMatrix().popAll();
+		 pEngine->getGeometricalMatrix().popAll();
+		 //pEngine->popStateStack();
+		//pEngine->pop();
+
+		pEngine->setTrace( isTraceEnabledBak );
+
 		// Step 3 : Compute the transformation.
 		const vgm::Box3f& box	= pSurroundedGroup->getBoundingBox();
 		if ( !box.isEmpty() )
@@ -82,7 +90,7 @@ void SurroundScale::apply( vge::engine::Engine *pEngine, vgd::node::SurroundScal
 		}
 		else
 		{
-			matrix.setIdentity();			
+			matrix.setIdentity();
 		}
 	}
 	else if ( pSurrounded.get() != 0 )
@@ -106,7 +114,7 @@ void SurroundScale::apply( vge::engine::Engine *pEngine, vgd::node::SurroundScal
 	{
 		// Compose and update engine.
 		vgm::MatrixR& 		current(	pEngine->getGeometricalMatrix().getTop() );
-		
+
 		current		= matrix * current;
 	}
 	else
