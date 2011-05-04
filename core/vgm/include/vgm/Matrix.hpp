@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -50,6 +50,7 @@
 #ifndef _VGM_MATRIX_HPP
 #define _VGM_MATRIX_HPP
 
+#include "vgm/operations.hpp"
 #include "vgm/vgm.hpp"
 #include "vgm/Rectangle.hpp"
 #include "vgm/Rotation.hpp"
@@ -744,7 +745,7 @@ struct VGM_API MatrixR
 	//@}
 
 	/**
-	 * @name Comparison methods.
+	 * @name Comparison methods
 	 */
 	//@{
 
@@ -761,7 +762,7 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Equality comparison within given tolerance, for each component.
 	 */
-	bool		equals( const MatrixR& m, const float tolerance ) const;
+	bool		equals( const MatrixR& m, const float tolerance = vgm::Epsilon<float>::value() ) const;
 	//@}
 
 private:

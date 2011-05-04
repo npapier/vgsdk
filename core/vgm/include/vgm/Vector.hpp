@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -566,7 +566,7 @@ vgm::Vec4f		out5b( in5 );
 	/**
 	 * @brief Equality comparison within given tolerance, for each component.
 	 */
-	bool			equals( const Vector& v, const float tolerance ) const;
+	bool			equals( const Vector& v, const float tolerance = vgm::Epsilon<T>::value() ) const;
 	//@}
 
 
