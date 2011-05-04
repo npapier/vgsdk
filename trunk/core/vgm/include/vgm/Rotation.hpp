@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -328,7 +328,7 @@ struct VGM_API Rotation
 	 *
 	 * Tolerance is the square of the length of the maximum distance between the two quaternion vectors.
 	 */
-	bool				equals( const Rotation& r, float tolerance ) const;
+	bool				equals( const Rotation& r, float tolerance = vgm::Epsilon<float>::value() ) const;
 	//@}
 
 private:
