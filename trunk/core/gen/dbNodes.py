@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -142,7 +142,7 @@ class Enum ( Type ):
 # @todo comments in generated code
 		definitionOfFieldNameType = """
 	/**
-	 * @brief Type definition of the value contained by field named \c %s.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct FieldNameType : public vgd::field::Enum
 	{
@@ -176,7 +176,7 @@ class Enum ( Type ):
 %s
 			return retVal;
 		}
-	};""" % (self.fieldName, strValues, strStrings)
+	};""" % (strValues, strStrings)
 
 		str += definitionOfFieldNameType.replace( "FieldNameType", self.FieldName + "ValueType" )		# @todo ValueType => Type
 
@@ -638,6 +638,7 @@ class Node :
 
 		self.dirtyFlags	= {}
 
+		self.enums		= []
 		self.fields		= {}
 
 		self.codeDeclaration	= ''
@@ -648,6 +649,9 @@ class Node :
 			self.dirtyFlags[newDF.name] = newDF
 		else:
 			print ("Unable to add dirty flag named {0}.".format(newDF.name))
+
+	def addEnum( self, newEnum ) :
+		self.enums.append( newEnum )
 
 	def addField( self, newField ) :
 		if newField.name not in self.fields :

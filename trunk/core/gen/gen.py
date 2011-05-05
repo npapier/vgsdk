@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -263,6 +263,11 @@ def generateNodeHeader( fd, node ) :
 
 	# begin class declaration
 	fd.write( "\n{\n" )
+
+	# Enumeration definition
+	for enum in node.enums:
+		str = enum.generateTYPEDEF()
+		fd.write( str + '\n' * 4 )
 
 	# META_NODE_HPP.factories
 	if not node.abstract:

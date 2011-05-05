@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -13,8 +13,8 @@ from dbNodes import *
 
 
 
-currentNodeName = None
-currentFieldName = None
+currentNodeName = ""
+currentFieldName = ""
 
 
 
@@ -32,9 +32,16 @@ def handleEnum( domEnum ) :
 	if attrDefault == None :
 		raise StandardError("Enum without default value.")
 
+	# [name]
+	attrName = domEnum.getAttributeNode("name")
+
 	global currentNodeName
 	global currentFieldName
-	enum = Enum( currentNodeName, currentFieldName )
+
+	if attrName == None:
+		enum = Enum( currentNodeName, currentFieldName )
+	else:
+		enum = Enum( currentNodeName, attrName.value )
 
 	# value
 	domValues = domEnum.getElementsByTagName("value")
@@ -290,6 +297,12 @@ def handleNode( domNode ) :
 		df = handleDF( domDF )
 		print "DFDF", df.name, df.linkToFields
 		node.addDirtyFlag( df )
+
+	# Handles enumeration definition
+	for domChild in domNode.childNodes:
+		if domChild.nodeName == 'enum':
+			enum = handleEnum( domChild )
+			node.addEnum( enum )
 
 	# Handles sf (single field)
 	domSingleFields = domNode.getElementsByTagName("sf")
