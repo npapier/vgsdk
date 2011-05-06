@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -278,6 +278,12 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	 */
 	const bool setFullscreen( const bool wantFullscreen = true )
 	{
+		if ( wantFullscreen == isFullscreen() )
+		{
+			// Nothing to do
+			return true;
+		}
+
 		// Retrieves the top level window.
 		Gtk::Window	* topLevel	= dynamic_cast< Gtk::Window * >( get_toplevel() );
 		
