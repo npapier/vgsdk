@@ -130,6 +130,10 @@ const bool TrianLoader::loadTrian( std::istream & in, vgd::Shp< vgd::node::Group
 	vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );
 	primitive->push_back( prim );
 
+	vertex.release();
+	vertexIndex.release();
+
+	//
 	vertexShape->computeNormals();
 
 	group->addChild( vertexShape );
