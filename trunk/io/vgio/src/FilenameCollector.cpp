@@ -16,13 +16,15 @@ namespace vgio
 
 
 FilenameCollector::FilenameCollector( const std::string& path )
-:	m_path( path )
+:	m_path( path ),
+	m_searchProperties(REGULAR_FILE)
 {}
 
 
 
 FilenameCollector::FilenameCollector( const ::boost::filesystem::path& path )
-:	m_path( path )
+:	m_path( path ),
+	m_searchProperties(REGULAR_FILE)
 {}
 
 
@@ -33,16 +35,25 @@ void FilenameCollector::setRegex( const std::string& regex )
 }
 
 
-
 const FilenameCollector::StringList& FilenameCollector::run()
+{
+	m_filenames.clear();
+	m_stringFilenames.clear();
+	run( m_path );
+	return getStringFilenames();
+}
+
+
+void FilenameCollector::run( const boost::filesystem::path& path)
 {
 	namespace fs = boost::filesystem;
 
-	for( fs::directory_iterator i( m_path ); i != fs::directory_iterator(); ++i )
+	for( fs::directory_iterator i( path ); i != fs::directory_iterator(); ++i )
 	{
 		fs::path current (*i);
-		
-		if ( !fs::is_directory( current ) )
+		fs::file_type file_type = fs::status(current).type();
+		if ( ( ( file_type == fs::regular_file ) && ( m_searchProperties & REGULAR_FILE ) ) ||
+			 ( ( file_type == fs::directory_file ) && ( m_searchProperties & DIRECTORY_FILE ) ) )
 		{
 			if ( m_regex.empty() )
 			{
@@ -61,10 +72,12 @@ const FilenameCollector::StringList& FilenameCollector::run()
 				// else no matching, nothing to do
 			}
 		}
-		// else is_directory() == true, nothing to do
+		// if search is recursive, search in subdirectories
+		if( ( file_type == fs::directory_file ) && ( m_searchProperties & RECURSIVE_SEARCH ) )
+		{
+			run( current );
+		}
 	}
-	
-	return getStringFilenames();
 }
 
 
@@ -81,6 +94,9 @@ const FilenameCollector::StringList& FilenameCollector::getStringFilenames() con
 	return m_stringFilenames;
 }
 
-
+void FilenameCollector::setSearchProperties( const int properties )
+{
+	m_searchProperties = SearchProperty( properties );
+}
 
 } // namespace vgio
