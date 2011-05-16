@@ -29,6 +29,17 @@ namespace vgio
  */
 struct VGIO_API FilenameCollector
 {
+	
+	/**
+	 * @brief Search property.
+	 */
+	enum SearchProperty
+	{
+		REGULAR_FILE = 1, //< Search for regular files
+		DIRECTORY_FILE = 2, //< Search for directory files
+		RECURSIVE_SEARCH = 4 //< Search in sub directories
+	};
+
 	/**
 	 * @brief Typedef for list of path
 	 */
@@ -81,9 +92,22 @@ struct VGIO_API FilenameCollector
 	 */
 	const StringList& getStringFilenames() const;
 
+	/**
+	 * @brief Set search properties
+	 * @param properties A combination of SearchProperty
+	 */
+	void setSearchProperties(const int properties);
+
 
 
 private:
+
+	/**
+	 * @brief Collects the desired filenames.
+	 *
+	 * Used internally for recursive search
+	 */
+	void run(const boost::filesystem::path& path);
 
 	/**
 	 * @name Input parameters
@@ -91,6 +115,7 @@ private:
 	//@{
 	::boost::filesystem::path	m_path;				//< the path from where filenames must be collected
 	::boost::regex				m_regex;			//< the boost regular expression to filter collected filenames
+	SearchProperty				m_searchProperties; //< the type of search that is being done
 	//@}
 
 	/**
