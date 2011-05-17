@@ -32,8 +32,6 @@ namespace engine
  * - Set/get root node.
  * - Search nodes in the scene graph with some predicates.
  * - Compute/update all bounding box in the scene graph.
- * - Write the graphviz graph of the scene graph with writeGraphviz(). This is very useful to show the scene graph
- *   topology, the name and the type of each node in the scene graph.
  * - paint()/resize() methods for doing rendering from the GUI (see vgUI and specialization like vgGTK) and the method bench() for doing benchmarks.
  * 
  * @remarks \c Paint service is only available in vgeGL. So paint/resize/bench don't do the whole work.
@@ -168,29 +166,6 @@ struct VGE_API SceneManager
 
 
 	/**
-	 * @name Debug service
-	 */
-	//@{
-	
-	/**
-	 * @brief Write the graph into a output stream in graphviz dot format.
-	 * 
-	 * @param bGeneratePNG	true if you want to use \c dot program to generate the picture of the scene graph
-	 * @param pofstream		if null, an ofstream("sceneGraph.dot") is used, otherwise use the passed output stream.
-	 * 
-	 * @remark To generate png, Graphviz must be in your path.
-	 * 
-	 * @sa vgd::node::Group::writeGraphviz
-	 *
-	 * @deprecated At least for gtk user interface.
-	 */
-	 void writeGraphviz( bool bGeneratePNG = false, std::ofstream *pofstream = 0 );
-
-	//@}
-
-
-
-	/**
 	 * @name Rendering methods
 	 */
 	//@{
@@ -297,6 +272,7 @@ struct VGE_API SceneManager
 	 * indeterminate if vgsdk is not initialized.
 	 */
 	virtual const boost::logic::tribool hasVGSDK() const;
+
 	//@}
 
 

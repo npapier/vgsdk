@@ -186,22 +186,6 @@ struct VGD_API Group : public IGroup, public IBoundingBox, public Node
 
 
 	/**
-	 * @name Debugging methods
-	 */
-	//@{
-
-	/**
-	 * @brief Write the scene graph in \c Graphviz format.
-	 * 
-	 * This is to write a BGL graph(scene graph) object into a output stream in graphviz dot format so that users can make 
-	 * use of AT&T graphviz to draw a picture with nice layout.
-	 */
-	void	writeGraphviz( std::ostream& out = std::cout ) const;
-	//@}
-
-
-
-	/**
 	 * @name Dirty flags enumeration
 	 */
 	//@{

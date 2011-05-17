@@ -364,13 +364,6 @@ void Group::invalidateBoundingBox( bool bInvalidate )
 
 
 
-void Group::writeGraphviz( std::ostream& out ) const
-{
-	graph().writeGraphviz( this, out );
-}
-
-
-
 const std::string Group::getDFChildren( void )
 {
 	return "df_children";
