@@ -12,7 +12,7 @@ namespace vgd { template<class T> struct Shp; }
 
 namespace vge
 {
-	namespace engine { struct Engine; }
+	namespace engine { struct Engine; struct SceneManager; }
 
 	namespace pass { struct Pass; }
 
@@ -99,12 +99,55 @@ struct VGE_API Technique
 
 
 	/**
-	 * @brief Must be overridden to implements the technique.
-	 * 
+	 * @name Input parameters accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Sets input parameters of the technique
+	 *
+	 * @pre engine != 0 and valid
+	 * @pre traverseElements != 0 and valid
+	 *
 	 * @param engine			engine used during evaluation
 	 * @param traverseElements	elements to evaluate
+	 * @param sceneManager		a scene manager (containing scene graph root, engine and vgsdk startup/shutdown api)
 	 */
-	virtual void apply( vge::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
+	void setParameters( vge::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements, vge::engine::SceneManager * sceneManager = 0 );
+
+
+	/**
+	 * @brief Returns the engine
+	 *
+	 * @return a reference on the engine
+	 */
+	vge::engine::Engine * engine() const;
+
+	/**
+	 * @brief Returns collected nodes
+	 *
+	 * @return the traverse element vector
+	 */
+	vge::visitor::TraverseElementVector * traverseElements() const;
+
+	/**
+	 * @brief Returns the scene manager
+	 *
+	 * @return a reference on the scene manager
+	 */
+	vge::engine::SceneManager * sceneManager() const;
+
+	//@}
+
+
+
+	/**
+	 * @brief Must be overridden to implements the technique.
+	 * 
+	 * @param engine			engine used during evaluation	@todo remove me
+	 * @param traverseElements	elements to evaluate			@todo remove me
+	 */
+	virtual void apply( vge::engine::Engine * engine/*ignored*/, vge::visitor::TraverseElementVector* traverseElements /* ignored */) = 0;
 
 
 
@@ -255,8 +298,9 @@ private:
 	bool									m_inPass;
 	std::vector<PassIsolationMask>			m_passIsolationMask;
 
-	vge::engine::Engine	*					m_engine;
-	vge::visitor::TraverseElementVector	*	m_traverseElements;
+	vge::engine::Engine *					m_engine;
+	vge::visitor::TraverseElementVector *	m_traverseElements;
+	vge::engine::SceneManager *				m_sceneManager;
 
 	vgd::Shp< vge::service::Service >		m_paintService;
 

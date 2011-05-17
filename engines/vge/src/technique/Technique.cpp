@@ -26,6 +26,7 @@ Technique::Technique()
 
 	m_engine			(	0	),
 	m_traverseElements	(	0	),
+	m_sceneManager		(	0	),
 
 	m_paintService		(	vge::service::Painter::create() )
 
@@ -41,17 +42,47 @@ Technique::~Technique()
 
 
 
-void Technique::prepareEval( vge::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements )
+void Technique::setParameters( vge::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements, vge::engine::SceneManager * sceneManager )
+{
+	vgAssert( engine != 0 );
+	vgAssert( traverseElements != 0 );
+	// sceneManager could be null
+
+	m_engine			= engine;
+	m_traverseElements	= traverseElements;
+	m_sceneManager		= sceneManager;
+}
+
+
+vge::engine::Engine * Technique::engine() const
+{
+	return m_engine;
+}
+
+
+vge::visitor::TraverseElementVector * Technique::traverseElements() const
+{
+	return m_traverseElements;
+}
+
+
+vge::engine::SceneManager * Technique::sceneManager() const
+{
+	return m_sceneManager;
+}
+
+
+void Technique::prepareEval( vge::engine::Engine * lengine, vge::visitor::TraverseElementVector* ltraverseElements )
 {
 	m_currentPass = 0;
 	assert( !m_inPass && "prepareEval() called inside a pass." );
 	m_passIsolationMask.resize(0);//	= PassIsolationMask(0);
 
-	m_engine			= engine;
-	m_traverseElements	= traverseElements;
+	vgAssert( engine() == lengine );
+	vgAssert( traverseElements() == ltraverseElements );
 
 	//
-	engine->resetStateStack(); // @todo resetEval(); ? see Technique::prepareEval in vgeGL
+	engine()->resetStateStack(); // @todo resetEval(); ? see Technique::prepareEval in vgeGL
 }
 
 
