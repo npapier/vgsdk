@@ -5,6 +5,7 @@
 
 #include "vgeGL/event/DefaultEventProcessor.hpp"
 
+#include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/engine/SceneManager.hpp"
 #include "vgeGL/technique/ProcessEvent.hpp"
 
@@ -35,7 +36,11 @@ const bool DefaultEventProcessor::onEvent( vgd::Shp<vgd::event::Event> event )
 	// Propagate the incoming event into scene graph for processing
 	vgeGL::technique::ProcessEvent processEvent;
 	processEvent.setEvent( event );
-	
+
+	processEvent.setParameters(
+		getSceneManager()->getGLEngine().get(),
+		getSceneManager()->getNodeCollector().getTraverseElements() );
+
 	processEvent.apply(
 		getSceneManager()->getGLEngine().get(),
 		getSceneManager()->getNodeCollector().getTraverseElements() );

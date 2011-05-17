@@ -7,6 +7,7 @@
 #define _VGD_NODE_CAMERA_HPP
 
 #include "vgd/field/Enum.hpp"
+#include "vgd/field/Float.hpp"
 #include "vgd/field/MatrixR.hpp"
 #include "vgd/field/Rectangle2i.hpp"
 #include "vgd/node/GeometricalTransformation.hpp"
@@ -32,10 +33,10 @@ namespace node
  *   Determines the projection matrix for monoscopic rendering or for the left eye if stereo is enabled.<br>
  *<br>
  * - SFMatrixR \c lookAtLeft = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
- *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera for monoscopic rendering or for the left eye if stereo is enabled.\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
+ *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera for monoscopic rendering or for the left eye if stereo is enabled.\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
  *<br>
  * - SFMatrixR \c lookAtRight = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
- *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
+ *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
  *<br>
  * - SFMatrixR \c projectionRight = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the projection matrix for the right eye (used only if stereo is enabled).<br>
@@ -44,7 +45,10 @@ namespace node
  *   Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.<br>
  *<br>
  * - SFEnum \c mode = MONOSCOPIC<br>
- *   Specifies the camera mode (monoscopic or stereoscopic mode).\nWhen you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\nStereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
+ *   Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
+ *<br>
+ * - SFFloat \c eyeSeparation = 0.f<br>
+ *   todo<br>
  *<br>
  * - OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
  *   Determines the viewport.<br>
@@ -56,6 +60,62 @@ namespace node
  */
 struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd::node::ProjectionTransformation
 {
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum EyeUsagePolicy 
+	{
+		EYE_LEFT = 256,	///< the left eye
+		EYE_RIGHT = 257,	///< the right eye
+		EYE_BOTH = 258,	///< the left eye and right eye
+		DEFAULT_EYEUSAGEPOLICY = EYE_BOTH	///< the left eye and right eye
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct EyeUsagePolicyValueType : public vgd::field::Enum
+	{
+		EyeUsagePolicyValueType()
+		{}
+
+		EyeUsagePolicyValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		EyeUsagePolicyValueType( const EyeUsagePolicyValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		EyeUsagePolicyValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 256 );
+			retVal.push_back( 257 );
+			retVal.push_back( 258 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "EYE_LEFT" );
+			retVal.push_back( "EYE_RIGHT" );
+			retVal.push_back( "EYE_BOTH" );
+
+			return retVal;
+		}
+	};
+
+
+
 	/**
 	 * @name Factories
 	 */
@@ -256,15 +316,16 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	/**
 	 * @brief Definition of symbolic values
 	 */
-	enum
+	enum  
 	{
-		MONOSCOPIC = 256,	///< Non stereoscopic rendering. \c projectionLeft, \c lookAtLeft, \c viewport and \c scissor fields are used to define the camera.
-		ANAGLYPH = 257,	///< Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera.
-		DEFAULT_MODE = MONOSCOPIC	///< Non stereoscopic rendering. \c projectionLeft, \c lookAtLeft, \c viewport and \c scissor fields are used to define the camera.
+		MONOSCOPIC = 259,	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
+		ANAGLYPH = 261,	///< @todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera.
+		QUAD_BUFFER = 260,	///< Stereoscopic rendering using quad buffer (i.e. active stereo using shutter glasses, or passive stereo using polarized projectors and glasses). Scene is viewer for left and right eyes. All fields are used to define the camera.
+		DEFAULT_MODE = MONOSCOPIC	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c mode.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct ModeValueType : public vgd::field::Enum
 	{
@@ -287,8 +348,9 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 256 );
-			retVal.push_back( 257 );
+			retVal.push_back( 259 );
+			retVal.push_back( 260 );
+			retVal.push_back( 261 );
 
 			return retVal;
 		}
@@ -298,6 +360,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 			std::vector< std::string > retVal;
 
 			retVal.push_back( "MONOSCOPIC" );
+			retVal.push_back( "QUAD_BUFFER" );
 			retVal.push_back( "ANAGLYPH" );
 
 			return retVal;
@@ -319,6 +382,36 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Sets the value of field named \c mode.
 	 */
 	void setMode( const ModeValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field eyeSeparation
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c eyeSeparation.
+	 */
+	typedef float EyeSeparationValueType;
+
+	/**
+	 * @brief Type definition of the field named \c eyeSeparation
+	 */
+	typedef vgd::field::TSingleField< EyeSeparationValueType > FEyeSeparationType;
+
+
+	/**
+	 * @brief Gets the value of field named \c eyeSeparation.
+	 */
+	const EyeSeparationValueType getEyeSeparation() const;
+
+	/**
+	 * @brief Sets the value of field named \c eyeSeparation.
+	 */
+	void setEyeSeparation( const EyeSeparationValueType value );
 
 	//@}
 
@@ -411,6 +504,13 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFMode( void );
 
 	/**
+	 * @brief Returns the name of field \c eyeSeparation.
+	 *
+	 * @return the name of field \c eyeSeparation.
+	 */
+	static const std::string getFEyeSeparation( void );
+
+	/**
 	 * @brief Returns the name of field \c viewport.
 	 *
 	 * @return the name of field \c viewport.
@@ -438,7 +538,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Apply the viewport transformation (as defined in OpenGL specification) to a vertex.
 	 *
 	 * @param vertex	vertex to transform
-	 * @return vertex transformed
+	 * @return the transformed vertex
 	 *
 	 * @pre hasViewport()
 	 */
@@ -455,12 +555,16 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef LookAtLeftValueType LookAtValueType;
 
 	/**
-	 * @brief Gets the value of field named \c lookAtLeft.
+	 * @brief Gets the value of field named \c lookAtLeft or \c lookAtRight depending of the given eye usage policy.
+	 *
+	 * @return	Returns \c lookAtLeft if eyeUsagePolicy is EYE_LEFT.
+	 *			Returns \c lookAtRight if eyeUsagePolicy is EYE_RIGHT.
+	 *			Returns \c lookAtLeft if eyeUsagePolicy is EYE_BOTH (but in this case, the precondition getLookAtLeft() == getLookAtRight() must be verified).
 	 */
-	const LookAtValueType getLookAt() const;
+	const LookAtValueType getLookAt( const EyeUsagePolicyValueType eyeUsagePolicy = EyeUsagePolicyValueType(EYE_BOTH) ) const;
 
 	/**
-	 * @brief Sets the value of field named \c lookAtLeft.
+	 * @brief Sets the value of field named \c lookAtLeft and \c lookAtRight
 	 */
 	void setLookAt( const LookAtValueType value );
 
@@ -469,12 +573,19 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef ProjectionLeftValueType ProjectionValueType;
 
 	/**
-	 * @brief Gets the value of field named \c projectionLeft.
+	 * @brief Gets the value of field named \c projectionLeft or \c projectionRight depending of the given eye usage policy.
+	 *
+	 * @return	Returns \c projectionLeft if eyeUsagePolicy is EYE_LEFT.
+	 *			Returns \c projectionRight if eyeUsagePolicy is EYE_RIGHT.
+	 *			Returns \c projectionLeft if eyeUsagePolicy is EYE_BOTH (but in this case, the precondition getProjectionLeft() == getProjectionRight() must be verified).
 	 */
-	const ProjectionValueType getProjection() const;
+	const ProjectionValueType getProjection( const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
 
 	/**
-	 * @brief Sets the value of field named \c projectionLeft.
+	 * @brief Sets the value of field named \c projectionLeft and \c projectionRight
+	 *
+	 * depends on \c mode field
+	 * @todo doc
 	 */
 	void setProjection( const ProjectionValueType value );
 
@@ -512,6 +623,28 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @deprecated
 	 */
 	vgDEPRECATED( void setMatrix( const MatrixValueType value ) );
+
+	//@}
+
+
+
+	/**
+	 * @name High-level accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering
+	 *
+	 * The first three parameters defines a 3D geometric transformation applied to monoscopic eye.
+	 * The position of monoscopic eye is slightly shift along the X axis using \c eyeSeparation value to define left eye and right eye.
+	 *
+	 * @param lookAtEye		the position of the eye point
+	 * @param lookAtCenter	the position of the reference point
+	 * @param lookAtUp		the direction of the up vector
+	 * @param eyeSeparation	the distance between the two eyes
+	 */
+	void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
 
 	//@}
 

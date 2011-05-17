@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -27,8 +27,11 @@ namespace engine
 
 
 SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > engine ) :
-	::vge::engine::SceneManager	(	engine										),
-	m_GLEngine					(	engine										),
+	::vge::engine::SceneManager		(	engine										),
+	m_GLEngine						(	engine										),
+	//m_requestedGLContextProperties
+	m_hasCurrentGLContextProperties	(	false										),
+	//m_currentGLContextProperties
 	m_paintTechnique			(	new vgeGL::technique::ForwardRendering()	),
 	m_bCallInitialize			(	false										)
 {
@@ -89,6 +92,7 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 //vgLogDebug2( "pt3: %i", paintTime.getElapsedTime().ms() );
 
 	time.restart();
+	paintTechnique->setParameters( getGLEngine().get(), getNodeCollector().getTraverseElements(), this );
 	paintTechnique->apply( getGLEngine().get(), getNodeCollector().getTraverseElements() );
 //	vgLogDebug2( "paintTechnique->apply(): %i", time.getElapsedTime().ms() );
 //vgLogDebug2( "pt4: %i", paintTime.getElapsedTime().ms() );
@@ -265,6 +269,7 @@ const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32
 	// CAST A RAY
 	updateNodeCollector();
 
+	m_rayCasting.setParameters( getGLEngine().get(), getNodeCollector().getTraverseElements() );
 	m_rayCasting.apply(	getGLEngine().get(), getNodeCollector().getTraverseElements(), x, y );
 
 	if ( m_rayCasting.getHitsSize() == 0 )
@@ -298,6 +303,28 @@ vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 const vgeGL::technique::RayCasting& SceneManager::getRayCastingTechnique() const
 {
 	return m_rayCasting;
+}
+
+
+
+void SceneManager::setRequestedGLContextProperties( const GLContextProperties properties )
+{
+	m_requestedGLContextProperties = properties;
+}
+
+
+
+const bool SceneManager::getGLContextProperties( GLContextProperties& properties ) const
+{
+	if ( m_hasCurrentGLContextProperties )
+	{
+		properties = m_currentGLContextProperties;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 

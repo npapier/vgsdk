@@ -76,15 +76,15 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	/**
 	 * @brief Definition of symbolic values
 	 */
-	enum
+	enum  
 	{
-		CCW = 262,	///< (C)ounter-(C)lock(W)ise ordering
-		CW = 263,	///< (C)lock(W)ise ordering
+		CCW = 266,	///< (C)ounter-(C)lock(W)ise ordering
+		CW = 267,	///< (C)lock(W)ise ordering
 		DEFAULT_ORIENTATION = CCW	///< (C)ounter-(C)lock(W)ise ordering
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c orientation.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct OrientationValueType : public vgd::field::Enum
 	{
@@ -107,8 +107,8 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 262 );
-			retVal.push_back( 263 );
+			retVal.push_back( 266 );
+			retVal.push_back( 267 );
 
 			return retVal;
 		}

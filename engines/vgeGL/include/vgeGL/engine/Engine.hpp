@@ -48,6 +48,11 @@ namespace engine
 {
 
 
+const GLuint VERTEX_INDEX = 0;
+const GLuint NORMAL_INDEX = 1;
+const GLuint TEXCOORD_INDEX = 2;
+const GLuint TEXCOORD_INDEX_MAX = 3;
+
 /**
  * @brief GL rendering state
  *
@@ -162,7 +167,7 @@ public:
 	//@{
 
 	typedef vge::engine::TStackShp< GLState >		GLStateStack;	///< Type definition for the stack of GLState
-	typedef vge::engine::TStackShp< GLSLState >		GLSLStateStack; ///< Type definition for the stack of GLSLState
+	typedef vge::engine::TStackShp< GLSLState  >	GLSLStateStack; ///< Type definition for the stack of GLSLState
 
 	typedef vgeGL::basic::UniformContainer			UniformState;	///< Type definition for the uniform variables state
 

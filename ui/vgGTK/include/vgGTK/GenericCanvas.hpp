@@ -438,6 +438,10 @@ protected:
 				return false;
 			}
 
+			// Sets the desired propetry for the context
+			const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
+			drawable->stereo = requestedProperties.enableQuadBufferStereo();
+
 			// Next, creates the glc context
 			m_glc						= glc_create( drawable );
 			if ( m_glc == 0 )
@@ -467,6 +471,22 @@ protected:
 				return false;
 			}
 #endif
+
+			// Analyses current OpenGL context
+			GLboolean glbool;
+			glGetBooleanv( GL_STEREO, &glbool );
+			if ( glbool )
+			{
+				vgLogMessage("OpenGL context with stereo support");
+				m_currentGLContextProperties = vgeGL::engine::GLContextProperties(true);
+			}
+			else
+			{
+				m_currentGLContextProperties = vgeGL::engine::GLContextProperties(false);
+				vgLogMessage("OpenGL context without stereo support");
+			}
+			m_hasCurrentGLContextProperties = true;
+
 			// Finally, initializes gle and sets it current
 			vgLogMessage("Start gle initialization...");
 			BaseCanvasType::getGleContext().clear();

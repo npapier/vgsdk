@@ -36,7 +36,7 @@ namespace node
  *   Determines the image to display in the layer plan. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
  *<br>
  * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
- *   Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n- A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.<br>
+ *   Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n - A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.<br>
  *<br>
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes

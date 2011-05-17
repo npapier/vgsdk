@@ -31,7 +31,8 @@ Engine::Engine()
 {
 	m_viewport.setInvalid();
 	m_nearFar.setInvalid();
-	m_bufferUsagePolicy = BUP_NOT_DEFINED;
+	m_bufferUsagePolicy	= BUP_NOT_DEFINED;
+	m_eyeUsagePolicy	= vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY;
 
 	reset();
 }
@@ -62,7 +63,8 @@ void Engine::resetEval()
 	m_camera = 0;
 	m_viewport.setInvalid();
 	m_nearFar.setInvalid();
-	m_bufferUsagePolicy = BUP_DEFAULT;
+	m_bufferUsagePolicy	= BUP_DEFAULT;
+	m_eyeUsagePolicy	= vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY;
 }
 
 
@@ -140,7 +142,7 @@ void Engine::paint(		vgd::Shp< vgd::node::Node > node,
 						const bool bTrace )
 {
 	evaluate( m_paintService, node.get(), isPreTraverse, bTrace );
-}
+ }
 
 
 
@@ -541,6 +543,19 @@ const BufferUsagePolicy Engine::getBufferUsagePolicy() const
 void Engine::setBufferUsagePolicy( const BufferUsagePolicy policy )
 {
 	m_bufferUsagePolicy = policy;
+}
+
+
+
+const EyeUsagePolicy Engine::getEyeUsagePolicy() const
+{
+	return m_eyeUsagePolicy;
+}
+
+
+void Engine::setEyeUsagePolicy( const EyeUsagePolicy policy )
+{
+	m_eyeUsagePolicy = policy;
 }
 
 

@@ -90,6 +90,8 @@ void SceneManager::computeBoundingBox( vge::visitor::NodeCollectorExtended<> * p
 	vge::technique::ComputeBoundingBox computeBB;
 	//computeBB.setRoot( getRoot() );
 
+	computeBB.setParameters( getEngine().get(), getNodeCollector().getTraverseElements() );
+
 	if ( pCollectorExt == 0 )
 	{
 		updateNodeCollector();
@@ -100,29 +102,6 @@ void SceneManager::computeBoundingBox( vge::visitor::NodeCollectorExtended<> * p
 	else
 	{
 		computeBB.apply( m_engine.get(), pCollectorExt->getTraverseElements() );
-	}
-}
-
-
-
-void SceneManager::writeGraphviz( bool bGeneratePNG, std::ofstream *pofstream )
-{
-	// Write graphwiz.
-	if ( pofstream == 0 )
-	{
-		std::string str("sceneGraph.dot");
-		std::ofstream stream(str.c_str());
-		
-		getRoot()->writeGraphviz( stream );
-	}
-	else
-	{
-		getRoot()->writeGraphviz( *pofstream );
-	}
-
-	if ( bGeneratePNG )
-	{
-		system("dot -Tpng -osceneGraph.png sceneGraph.dot");
 	}
 }
 

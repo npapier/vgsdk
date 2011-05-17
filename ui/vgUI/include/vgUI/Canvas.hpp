@@ -592,6 +592,7 @@ protected:
 	 */
 	virtual const bool shutdownOpenGLContext() = 0;
 
+
 	// @todo documentation
 	gle::OpenGLExtensionsGen& getGleContext();
 
@@ -604,13 +605,7 @@ protected:
 
 private:
 
-	/**
-	 * @brief gle main object to be able to access OpenGL extensions.
-	 */
-	gle::OpenGLExtensionsGen	m_gleContext;
-
-
-private:
+	gle::OpenGLExtensionsGen	m_gleContext;	///< gle main object to be able to access OpenGL extensions.
 
 	/**
 	 * @brief Resets scene graph

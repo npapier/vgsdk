@@ -29,6 +29,9 @@ namespace node
  * This node specifies current lighting mode (off/standard per vertex lighting/standard per pixel lighting) and some options of the lighting model. 
  *
  * New fields defined by this node :
+ * - OFEnum \c [shadowFiltering] = LINEAR<br>
+ *   Defines depth map hardware filtering (not the filtering done in shaders).<br>
+ *<br>
  * - SFEnum \c shadowMapType = INT32<br>
  *<br>
  * - SFFloat \c illuminationInShadow = 0.4f<br>
@@ -39,11 +42,13 @@ namespace node
  *<br>
  * - SFFloat \c samplingSize = 1.0<br>
  *<br>
- * - SFBool \c ignorePostProcessing = false<br>
- *   true to ignore the whole post-processing stage, false to do post-processing stage if at least one PostProcessing node is defined.<br>
+ * - SFEnum \c option2 = CHOICE0<br>
  *<br>
  * - OFEnum \c [shadowQuality] = MEDIUM<br>
  *   Specifies the quality of the shadow computation<br>
+ *<br>
+ * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
+ *   Sets the ambient RGBA intensity of the entire scene.<br>
  *<br>
  * - OFEnum \c [viewer] = AT_INFINITY<br>
  *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
@@ -51,8 +56,8 @@ namespace node
  * - OFBool \c [useShadowSamplers] = true<br>
  *   True to use GLSL shadowSampler, false to use traditionnal texture sampler.<br>
  *<br>
- * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
- *   Sets the ambient RGBA intensity of the entire scene.<br>
+ * - SFBool \c ignorePostProcessing = false<br>
+ *   true to ignore the whole post-processing stage, false to do post-processing stage if at least one PostProcessing node is defined.<br>
  *<br>
  * - OFEnum \c [model] = STANDARD_PER_VERTEX<br>
  *   Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.<br>
@@ -61,6 +66,10 @@ namespace node
  *<br>
  * - OFEnum \c [shadow] = SHADOW_OFF<br>
  *   Specifies the algorithm used to compute shadow.<br>
+ *<br>
+ * - SFBool \c option0 = false<br>
+ *<br>
+ * - SFBool \c option1 = false<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -103,6 +112,91 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field shadowFiltering
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		NEAREST = 296,	///< 
+		LINEAR = 297,	///< 
+		DEFAULT_SHADOWFILTERING = LINEAR	///< 
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct ShadowFilteringValueType : public vgd::field::Enum
+	{
+		ShadowFilteringValueType()
+		{}
+
+		ShadowFilteringValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ShadowFilteringValueType( const ShadowFilteringValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		ShadowFilteringValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 296 );
+			retVal.push_back( 297 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "NEAREST" );
+			retVal.push_back( "LINEAR" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c shadowFiltering
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FShadowFilteringType;
+
+
+	/**
+	 * @brief Gets the value of field named \c shadowFiltering.
+	 */
+	const bool getShadowFiltering( ShadowFilteringValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c shadowFiltering.
+ 	 */
+	void setShadowFiltering( const ShadowFilteringValueType& value );
+
+	/**
+	 * @brief Erases the field named \c shadowFiltering.
+	 */
+	void eraseShadowFiltering();
+
+	/**
+	 * @brief Tests if the value of field named \c shadowFiltering has been initialized.
+	 */
+	const bool hasShadowFiltering() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field shadowMapType
 	 */
 	//@{
@@ -110,17 +204,17 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	/**
 	 * @brief Definition of symbolic values
 	 */
-	enum
+	enum  
 	{
-		INT24 = 265,	///< see Texture.internalFormat documentation
-		INT32 = 266,	///< see Texture.internalFormat documentation
-		INT16 = 264,	///< see Texture.internalFormat documentation
-		FLOAT32 = 267,	///< see Texture.internalFormat documentation
+		INT24 = 269,	///< see Texture.internalFormat documentation
+		INT32 = 270,	///< see Texture.internalFormat documentation
+		INT16 = 268,	///< see Texture.internalFormat documentation
+		FLOAT32 = 271,	///< see Texture.internalFormat documentation
 		DEFAULT_SHADOWMAPTYPE = INT32	///< see Texture.internalFormat documentation
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c shadowMapType.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct ShadowMapTypeValueType : public vgd::field::Enum
 	{
@@ -143,10 +237,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 264 );
-			retVal.push_back( 265 );
-			retVal.push_back( 266 );
-			retVal.push_back( 267 );
+			retVal.push_back( 268 );
+			retVal.push_back( 269 );
+			retVal.push_back( 270 );
+			retVal.push_back( 271 );
 
 			return retVal;
 		}
@@ -284,30 +378,85 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field ignorePostProcessing
+	 * @name Accessors to field option2
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c ignorePostProcessing.
+	 * @brief Definition of symbolic values
 	 */
-	typedef bool IgnorePostProcessingValueType;
+	enum  
+	{
+		CHOICE4 = 276,	///< 
+		CHOICE0 = 272,	///< 
+		CHOICE1 = 273,	///< 
+		CHOICE2 = 274,	///< 
+		CHOICE3 = 275,	///< 
+		DEFAULT_OPTION2 = CHOICE0	///< 
+	};
 
 	/**
-	 * @brief Type definition of the field named \c ignorePostProcessing
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
-	typedef vgd::field::TSingleField< IgnorePostProcessingValueType > FIgnorePostProcessingType;
+	struct Option2ValueType : public vgd::field::Enum
+	{
+		Option2ValueType()
+		{}
+
+		Option2ValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		Option2ValueType( const Option2ValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		Option2ValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 272 );
+			retVal.push_back( 273 );
+			retVal.push_back( 274 );
+			retVal.push_back( 275 );
+			retVal.push_back( 276 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "CHOICE0" );
+			retVal.push_back( "CHOICE1" );
+			retVal.push_back( "CHOICE2" );
+			retVal.push_back( "CHOICE3" );
+			retVal.push_back( "CHOICE4" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c option2
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FOption2Type;
 
 
 	/**
-	 * @brief Gets the value of field named \c ignorePostProcessing.
+	 * @brief Gets the value of field named \c option2.
 	 */
-	const IgnorePostProcessingValueType getIgnorePostProcessing() const;
+	const Option2ValueType getOption2() const;
 
 	/**
-	 * @brief Sets the value of field named \c ignorePostProcessing.
+	 * @brief Sets the value of field named \c option2.
 	 */
-	void setIgnorePostProcessing( const IgnorePostProcessingValueType value );
+	void setOption2( const Option2ValueType value );
 
 	//@}
 
@@ -321,17 +470,17 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	/**
 	 * @brief Definition of symbolic values
 	 */
-	enum
+	enum  
 	{
-		HIGH = 285,	///< High resolution shadow map
-		VERY_HIGH = 286,	///< Very high resolution shadow map
-		MEDIUM = 284,	///< Medium resolution shadow map
-		LOW = 283,	///< Low resolution shadow map
+		HIGH = 294,	///< High resolution shadow map
+		VERY_HIGH = 295,	///< Very high resolution shadow map
+		MEDIUM = 293,	///< Medium resolution shadow map
+		LOW = 292,	///< Low resolution shadow map
 		DEFAULT_SHADOWQUALITY = MEDIUM	///< Medium resolution shadow map
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c shadowQuality.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct ShadowQualityValueType : public vgd::field::Enum
 	{
@@ -354,10 +503,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 283 );
-			retVal.push_back( 284 );
-			retVal.push_back( 285 );
-			retVal.push_back( 286 );
+			retVal.push_back( 292 );
+			retVal.push_back( 293 );
+			retVal.push_back( 294 );
+			retVal.push_back( 295 );
 
 			return retVal;
 		}
@@ -405,6 +554,45 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field ambient
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c ambient.
+	 */
+	typedef vgm::Vec4f AmbientValueType;
+
+	/**
+	 * @brief Type definition of the field named \c ambient
+	 */
+	typedef vgd::field::TOptionalField< AmbientValueType > FAmbientType;
+
+
+	/**
+	 * @brief Gets the value of field named \c ambient.
+	 */
+	const bool getAmbient( AmbientValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c ambient.
+ 	 */
+	void setAmbient( const AmbientValueType& value );
+
+	/**
+	 * @brief Erases the field named \c ambient.
+	 */
+	void eraseAmbient();
+
+	/**
+	 * @brief Tests if the value of field named \c ambient has been initialized.
+	 */
+	const bool hasAmbient() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field viewer
 	 */
 	//@{
@@ -412,15 +600,15 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	/**
 	 * @brief Definition of symbolic values
 	 */
-	enum
+	enum  
 	{
-		AT_INFINITY = 271,	///< Specular reflections are computed from the origin of the eye coordinate system
-		AT_EYE = 272,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
+		AT_INFINITY = 280,	///< Specular reflections are computed from the origin of the eye coordinate system
+		AT_EYE = 281,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
 		DEFAULT_VIEWER = AT_INFINITY	///< Specular reflections are computed from the origin of the eye coordinate system
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c viewer.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct ViewerValueType : public vgd::field::Enum
 	{
@@ -443,8 +631,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 271 );
-			retVal.push_back( 272 );
+			retVal.push_back( 280 );
+			retVal.push_back( 281 );
 
 			return retVal;
 		}
@@ -529,40 +717,31 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field ambient
+	 * @name Accessors to field ignorePostProcessing
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c ambient.
+	 * @brief Type definition of the value contained by field named \c ignorePostProcessing.
 	 */
-	typedef vgm::Vec4f AmbientValueType;
+	typedef bool IgnorePostProcessingValueType;
 
 	/**
-	 * @brief Type definition of the field named \c ambient
+	 * @brief Type definition of the field named \c ignorePostProcessing
 	 */
-	typedef vgd::field::TOptionalField< AmbientValueType > FAmbientType;
+	typedef vgd::field::TSingleField< IgnorePostProcessingValueType > FIgnorePostProcessingType;
 
 
 	/**
-	 * @brief Gets the value of field named \c ambient.
+	 * @brief Gets the value of field named \c ignorePostProcessing.
 	 */
-	const bool getAmbient( AmbientValueType& value ) const;
+	const IgnorePostProcessingValueType getIgnorePostProcessing() const;
 
 	/**
-	 * @brief Sets the value of field named \c ambient.
- 	 */
-	void setAmbient( const AmbientValueType& value );
-
-	/**
-	 * @brief Erases the field named \c ambient.
+	 * @brief Sets the value of field named \c ignorePostProcessing.
 	 */
-	void eraseAmbient();
+	void setIgnorePostProcessing( const IgnorePostProcessingValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c ambient has been initialized.
-	 */
-	const bool hasAmbient() const;
 	//@}
 
 
@@ -575,16 +754,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	/**
 	 * @brief Definition of symbolic values
 	 */
-	enum
+	enum  
 	{
-		STANDARD_PER_PIXEL = 270,	///< Lighting is computed per pixel
-		LIGHTING_OFF = 268,	///< No lighting
-		STANDARD_PER_VERTEX = 269,	///< Lighting is computed per vertex
+		STANDARD_PER_PIXEL = 279,	///< Lighting is computed per pixel
+		LIGHTING_OFF = 277,	///< No lighting
+		STANDARD_PER_VERTEX = 278,	///< Lighting is computed per vertex
 		DEFAULT_MODEL = STANDARD_PER_VERTEX	///< Lighting is computed per vertex
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c model.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct ModelValueType : public vgd::field::Enum
 	{
@@ -607,9 +786,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 268 );
-			retVal.push_back( 269 );
-			retVal.push_back( 270 );
+			retVal.push_back( 277 );
+			retVal.push_back( 278 );
+			retVal.push_back( 279 );
 
 			return retVal;
 		}
@@ -693,23 +872,23 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	/**
 	 * @brief Definition of symbolic values
 	 */
-	enum
+	enum  
 	{
-		SHADOW_MAPPING_16U = 277,	///< Sixteen uniform samples
-		SHADOW_MAPPING = 274,	///< Shadows are computed using shadow mapping algorithm
-		SHADOW_OFF = 273,	///< Shadows are not computed
-		SHADOW_MAPPING_16UM = 278,	///< Sixteen unifrom samples
-		SHADOW_MAPPING_64UM = 282,	///< Sixty four uniform samples
-		SHADOW_MAPPING_32UM = 280,	///< Thirty two uniform samples
-		SHADOW_MAPPING_4U = 275,	///< Four uniform samples
-		SHADOW_MAPPING_64U = 281,	///< Sixty four uniform samples
-		SHADOW_MAPPING_32U = 279,	///< Thirty two uniform samples
-		SHADOW_MAPPING_4DM = 276,	///< Four dithered samples
+		SHADOW_MAPPING_16U = 286,	///< Sixteen uniform samples
+		SHADOW_MAPPING = 283,	///< Shadows are computed using shadow mapping algorithm
+		SHADOW_OFF = 282,	///< Shadows are not computed
+		SHADOW_MAPPING_16UM = 287,	///< Sixteen unifrom samples
+		SHADOW_MAPPING_64UM = 291,	///< Sixty four uniform samples
+		SHADOW_MAPPING_32UM = 289,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4U = 284,	///< Four uniform samples
+		SHADOW_MAPPING_64U = 290,	///< Sixty four uniform samples
+		SHADOW_MAPPING_32U = 288,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4DM = 285,	///< Four dithered samples
 		DEFAULT_SHADOW = SHADOW_OFF	///< Shadows are not computed
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c shadow.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct ShadowValueType : public vgd::field::Enum
 	{
@@ -732,16 +911,16 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 273 );
-			retVal.push_back( 274 );
-			retVal.push_back( 275 );
-			retVal.push_back( 276 );
-			retVal.push_back( 277 );
-			retVal.push_back( 278 );
-			retVal.push_back( 279 );
-			retVal.push_back( 280 );
-			retVal.push_back( 281 );
 			retVal.push_back( 282 );
+			retVal.push_back( 283 );
+			retVal.push_back( 284 );
+			retVal.push_back( 285 );
+			retVal.push_back( 286 );
+			retVal.push_back( 287 );
+			retVal.push_back( 288 );
+			retVal.push_back( 289 );
+			retVal.push_back( 290 );
+			retVal.push_back( 291 );
 
 			return retVal;
 		}
@@ -795,9 +974,76 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field option0
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c option0.
+	 */
+	typedef bool Option0ValueType;
+
+	/**
+	 * @brief Type definition of the field named \c option0
+	 */
+	typedef vgd::field::TSingleField< Option0ValueType > FOption0Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c option0.
+	 */
+	const Option0ValueType getOption0() const;
+
+	/**
+	 * @brief Sets the value of field named \c option0.
+	 */
+	void setOption0( const Option0ValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field option1
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c option1.
+	 */
+	typedef bool Option1ValueType;
+
+	/**
+	 * @brief Type definition of the field named \c option1
+	 */
+	typedef vgd::field::TSingleField< Option1ValueType > FOption1Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c option1.
+	 */
+	const Option1ValueType getOption1() const;
+
+	/**
+	 * @brief Sets the value of field named \c option1.
+	 */
+	void setOption1( const Option1ValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c shadowFiltering.
+	 *
+	 * @return the name of field \c shadowFiltering.
+	 */
+	static const std::string getFShadowFiltering( void );
 
 	/**
 	 * @brief Returns the name of field \c shadowMapType.
@@ -828,11 +1074,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	static const std::string getFSamplingSize( void );
 
 	/**
-	 * @brief Returns the name of field \c ignorePostProcessing.
+	 * @brief Returns the name of field \c option2.
 	 *
-	 * @return the name of field \c ignorePostProcessing.
+	 * @return the name of field \c option2.
 	 */
-	static const std::string getFIgnorePostProcessing( void );
+	static const std::string getFOption2( void );
 
 	/**
 	 * @brief Returns the name of field \c shadowQuality.
@@ -840,6 +1086,13 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c shadowQuality.
 	 */
 	static const std::string getFShadowQuality( void );
+
+	/**
+	 * @brief Returns the name of field \c ambient.
+	 *
+	 * @return the name of field \c ambient.
+	 */
+	static const std::string getFAmbient( void );
 
 	/**
 	 * @brief Returns the name of field \c viewer.
@@ -856,11 +1109,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	static const std::string getFUseShadowSamplers( void );
 
 	/**
-	 * @brief Returns the name of field \c ambient.
+	 * @brief Returns the name of field \c ignorePostProcessing.
 	 *
-	 * @return the name of field \c ambient.
+	 * @return the name of field \c ignorePostProcessing.
 	 */
-	static const std::string getFAmbient( void );
+	static const std::string getFIgnorePostProcessing( void );
 
 	/**
 	 * @brief Returns the name of field \c model.
@@ -882,6 +1135,20 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c shadow.
 	 */
 	static const std::string getFShadow( void );
+
+	/**
+	 * @brief Returns the name of field \c option0.
+	 *
+	 * @return the name of field \c option0.
+	 */
+	static const std::string getFOption0( void );
+
+	/**
+	 * @brief Returns the name of field \c option1.
+	 *
+	 * @return the name of field \c option1.
+	 */
+	static const std::string getFOption1( void );
 
 	//@}
 

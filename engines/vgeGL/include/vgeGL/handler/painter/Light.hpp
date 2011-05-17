@@ -40,7 +40,7 @@ namespace painter
 struct VGEGL_API Light : public vge::handler::painter::MultiAttribute
 {
 	//META_HANDLER_HPP( Light );
-	
+
 	void	setToDefaults();
 
 protected:

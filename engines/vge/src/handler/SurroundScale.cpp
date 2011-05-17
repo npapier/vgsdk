@@ -68,6 +68,7 @@ void SurroundScale::apply( vge::engine::Engine *pEngine, vgd::node::SurroundScal
 		 pEngine->getProjectionMatrix().pushAll();
 		 //pEngine->getTextureMatrix().pushAll();
 
+		computeBB.setParameters( pEngine, collector.getTraverseElements() );
 		computeBB.apply( pEngine, collector.getTraverseElements() );
 
 		 //pEngine->getTextureMatrix().popAll();      

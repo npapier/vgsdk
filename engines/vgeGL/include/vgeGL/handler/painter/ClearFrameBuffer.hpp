@@ -6,7 +6,6 @@
 #ifndef _VGEGL_HANDLER_PAINTER_CLEARFRAMEBUFFER_HPP
 #define _VGEGL_HANDLER_PAINTER_CLEARFRAMEBUFFER_HPP
 
-#include "vgeGL/vgeGL.hpp"
 #include <vge/handler/painter/SingleAttribute.hpp>
 #include "vgeGL/engine/Engine.hpp"
 
@@ -51,16 +50,16 @@ struct VGEGL_API ClearFrameBuffer : public vge::handler::painter::SingleAttribut
 {
 	META_HANDLER_HPP( ClearFrameBuffer );
 
-	const TargetVector					getTargets()	const;
+	const TargetVector getTargets() const;
 
-	void	apply	( vge::engine::Engine*, vgd::node::Node* );
-	void	unapply	( vge::engine::Engine*, vgd::node::Node* );
+	void apply( vge::engine::Engine*, vgd::node::Node* );
+	void unapply( vge::engine::Engine*, vgd::node::Node* );
 
-	void	setToDefaults();
-	
-	void	paint	( vgeGL::engine::Engine*, vgd::node::ClearFrameBuffer* );
+	void setToDefaults();
 
-	static void applyBufferUsagePolicy( const vge::engine::BufferUsagePolicy policy, vgd::Shp< glo::FrameBufferObject > fbo );
+	void paint( vgeGL::engine::Engine*, vgd::node::ClearFrameBuffer* );
+
+	static void applyBufferUsagePolicy( const vge::engine::BufferUsagePolicy policy, const vge::engine::EyeUsagePolicy eyePolicy, vgd::Shp< glo::FrameBufferObject > fbo );
 };
 
 

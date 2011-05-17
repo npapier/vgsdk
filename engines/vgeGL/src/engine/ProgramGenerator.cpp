@@ -58,7 +58,7 @@ void ProgramGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing to do
 
-	// assert( isValid() );
+	//assert( isValid() );
 }
 
 

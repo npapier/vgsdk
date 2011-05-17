@@ -63,18 +63,22 @@ LightModel::LightModel( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FShadowFilteringType(getFShadowFiltering()) );
 	addField( new FShadowMapTypeType(getFShadowMapType()) );
 	addField( new FIlluminationInShadowType(getFIlluminationInShadow()) );
 	addField( new FTwoSidedType(getFTwoSided()) );
 	addField( new FSamplingSizeType(getFSamplingSize()) );
-	addField( new FIgnorePostProcessingType(getFIgnorePostProcessing()) );
+	addField( new FOption2Type(getFOption2()) );
 	addField( new FShadowQualityType(getFShadowQuality()) );
+	addField( new FAmbientType(getFAmbient()) );
 	addField( new FViewerType(getFViewer()) );
 	addField( new FUseShadowSamplersType(getFUseShadowSamplers()) );
-	addField( new FAmbientType(getFAmbient()) );
+	addField( new FIgnorePostProcessingType(getFIgnorePostProcessing()) );
 	addField( new FModelType(getFModel()) );
 	addField( new FShadowPolygonOffsetType(getFShadowPolygonOffset()) );
 	addField( new FShadowType(getFShadow()) );
+	addField( new FOption0Type(getFOption0()) );
+	addField( new FOption1Type(getFOption1()) );
 
 	// Sets link(s)
 
@@ -89,8 +93,11 @@ void LightModel::setToDefaults( void )
 	setShadowMapType( INT32 );
 	setIlluminationInShadow( 0.4f );
 	setSamplingSize( 1.0 );
+	setOption2( CHOICE0 );
 	setIgnorePostProcessing( false );
 	setShadowPolygonOffset( vgm::Vec2f(4.f, 16.f) );
+	setOption0( false );
+	setOption1( false );
 }
 
 
@@ -98,13 +105,42 @@ void LightModel::setToDefaults( void )
 void LightModel::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setShadowFiltering( LINEAR );
 	setTwoSided( false );
 	setShadowQuality( MEDIUM );
+	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setViewer( AT_INFINITY );
 	setUseShadowSamplers( true );
-	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setModel( STANDARD_PER_VERTEX );
 	setShadow( SHADOW_OFF );
+}
+
+
+
+// ShadowFiltering
+const bool LightModel::getShadowFiltering( ShadowFilteringValueType& value ) const
+{
+	return getFieldRO<FShadowFilteringType>(getFShadowFiltering())->getValue( value );
+}
+
+
+
+void LightModel::setShadowFiltering( const ShadowFilteringValueType& value )
+{
+	getFieldRW<FShadowFilteringType>(getFShadowFiltering())->setValue( value );
+}
+
+
+
+void LightModel::eraseShadowFiltering()
+{
+	getFieldRW<FShadowFilteringType>(getFShadowFiltering())->eraseValue();
+}
+
+
+const bool LightModel::hasShadowFiltering() const
+{
+	return getFieldRO<FShadowFilteringType>(getFShadowFiltering())->hasValue();
 }
 
 
@@ -182,17 +218,17 @@ void LightModel::setSamplingSize( const SamplingSizeValueType value )
 
 
 
-// IgnorePostProcessing
-const LightModel::IgnorePostProcessingValueType LightModel::getIgnorePostProcessing() const
+// Option2
+const LightModel::Option2ValueType LightModel::getOption2() const
 {
-	return getFieldRO<FIgnorePostProcessingType>(getFIgnorePostProcessing())->getValue();
+	return getFieldRO<FOption2Type>(getFOption2())->getValue();
 }
 
 
 
-void LightModel::setIgnorePostProcessing( const IgnorePostProcessingValueType value )
+void LightModel::setOption2( const Option2ValueType value )
 {
-	getFieldRW<FIgnorePostProcessingType>(getFIgnorePostProcessing())->setValue( value );
+	getFieldRW<FOption2Type>(getFOption2())->setValue( value );
 }
 
 
@@ -221,6 +257,34 @@ void LightModel::eraseShadowQuality()
 const bool LightModel::hasShadowQuality() const
 {
 	return getFieldRO<FShadowQualityType>(getFShadowQuality())->hasValue();
+}
+
+
+
+// Ambient
+const bool LightModel::getAmbient( AmbientValueType& value ) const
+{
+	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
+}
+
+
+
+void LightModel::setAmbient( const AmbientValueType& value )
+{
+	getFieldRW<FAmbientType>(getFAmbient())->setValue( value );
+}
+
+
+
+void LightModel::eraseAmbient()
+{
+	getFieldRW<FAmbientType>(getFAmbient())->eraseValue();
+}
+
+
+const bool LightModel::hasAmbient() const
+{
+	return getFieldRO<FAmbientType>(getFAmbient())->hasValue();
 }
 
 
@@ -281,30 +345,17 @@ const bool LightModel::hasUseShadowSamplers() const
 
 
 
-// Ambient
-const bool LightModel::getAmbient( AmbientValueType& value ) const
+// IgnorePostProcessing
+const LightModel::IgnorePostProcessingValueType LightModel::getIgnorePostProcessing() const
 {
-	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
+	return getFieldRO<FIgnorePostProcessingType>(getFIgnorePostProcessing())->getValue();
 }
 
 
 
-void LightModel::setAmbient( const AmbientValueType& value )
+void LightModel::setIgnorePostProcessing( const IgnorePostProcessingValueType value )
 {
-	getFieldRW<FAmbientType>(getFAmbient())->setValue( value );
-}
-
-
-
-void LightModel::eraseAmbient()
-{
-	getFieldRW<FAmbientType>(getFAmbient())->eraseValue();
-}
-
-
-const bool LightModel::hasAmbient() const
-{
-	return getFieldRO<FAmbientType>(getFAmbient())->hasValue();
+	getFieldRW<FIgnorePostProcessingType>(getFIgnorePostProcessing())->setValue( value );
 }
 
 
@@ -380,7 +431,44 @@ const bool LightModel::hasShadow() const
 
 
 
+// Option0
+const LightModel::Option0ValueType LightModel::getOption0() const
+{
+	return getFieldRO<FOption0Type>(getFOption0())->getValue();
+}
+
+
+
+void LightModel::setOption0( const Option0ValueType value )
+{
+	getFieldRW<FOption0Type>(getFOption0())->setValue( value );
+}
+
+
+
+// Option1
+const LightModel::Option1ValueType LightModel::getOption1() const
+{
+	return getFieldRO<FOption1Type>(getFOption1())->getValue();
+}
+
+
+
+void LightModel::setOption1( const Option1ValueType value )
+{
+	getFieldRW<FOption1Type>(getFOption1())->setValue( value );
+}
+
+
+
 // Field name accessor(s)
+const std::string LightModel::getFShadowFiltering( void )
+{
+	return "f_shadowFiltering";
+}
+
+
+
 const std::string LightModel::getFShadowMapType( void )
 {
 	return "f_shadowMapType";
@@ -409,9 +497,9 @@ const std::string LightModel::getFSamplingSize( void )
 
 
 
-const std::string LightModel::getFIgnorePostProcessing( void )
+const std::string LightModel::getFOption2( void )
 {
-	return "f_ignorePostProcessing";
+	return "f_option2";
 }
 
 
@@ -419,6 +507,13 @@ const std::string LightModel::getFIgnorePostProcessing( void )
 const std::string LightModel::getFShadowQuality( void )
 {
 	return "f_shadowQuality";
+}
+
+
+
+const std::string LightModel::getFAmbient( void )
+{
+	return "f_ambient";
 }
 
 
@@ -437,9 +532,9 @@ const std::string LightModel::getFUseShadowSamplers( void )
 
 
 
-const std::string LightModel::getFAmbient( void )
+const std::string LightModel::getFIgnorePostProcessing( void )
 {
-	return "f_ambient";
+	return "f_ignorePostProcessing";
 }
 
 
@@ -461,6 +556,20 @@ const std::string LightModel::getFShadowPolygonOffset( void )
 const std::string LightModel::getFShadow( void )
 {
 	return "f_shadow";
+}
+
+
+
+const std::string LightModel::getFOption0( void )
+{
+	return "f_option0";
+}
+
+
+
+const std::string LightModel::getFOption1( void )
+{
+	return "f_option1";
 }
 
 
