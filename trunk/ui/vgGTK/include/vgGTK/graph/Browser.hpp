@@ -41,7 +41,6 @@ namespace graph
 {
 
 
-
 /**
  * @brief	Implements a gtkmm Widget that provide a ready to use vgSDK graph browser.
  */
@@ -162,7 +161,6 @@ private:
 	void onExportScene();									///< Handles the action that will export the selected.
 	void onFullRefresh();									///< Handles the action that will perfrom a refresh of the whole tree.
 	void onRemoveNode();									///< Handles the action that will remove the selected node from it parent.
-	void onSaveAs();										///< Handles the action that will allow the user to save the graph.
 	void onSelectionChanged();								///< Handles notification about a selection change.
 	void onActionChanged( vgAlg::actions::ActionOnNode action );
 	//@}
@@ -174,7 +172,6 @@ private:
 	 */
 	void textCellDataFunc( const Gtk::TreeModelColumn< Glib::ustring > & textColumn, Gtk::CellRenderer * renderer, const Gtk::TreeModel::iterator & row );
 };
-
 
 
 

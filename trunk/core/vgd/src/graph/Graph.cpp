@@ -5,8 +5,6 @@
 
 #include "vgd/graph/Graph.hpp"
 
-#include <boost/graph/graphviz.hpp>
-
 #include "vgd/node/Node.hpp"
 #include "vgd/node/Group.hpp"
 
@@ -441,15 +439,6 @@ const int32 Graph::findChild( const vgd::node::Node* pSourceNode, const vgd::nod
 	}
 	
 	return ( getNumChildren(pSourceNode) );
-}
-
-
-
-void Graph::writeGraphviz( const vgd::node::Node* pSourceNode, std::ostream& out ) /*const*/
-{
-	boost::write_graphviz(out , bglGraph(),
-		my_make_vertex_label_writer(getVertexNamePropertyMap()),
-		my_make_edge_label_writer(getEdgeNamePropertyMap()) );
 }
 
 
