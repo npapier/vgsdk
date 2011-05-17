@@ -32,6 +32,7 @@
 #include <vgd/node/Texture2D.hpp>
 #include <vgd/node/TexGenEyeLinear.hpp>
 #include <vgDebug/convenience.hpp>
+#include <vge/engine/SceneManager.hpp>
 #include <vge/service/Painter.hpp>
 #include <vgeGL/handler/painter/PostProcessing.hpp>
 #include <vgm/VectorOperations.hpp>
@@ -175,22 +176,23 @@ const std::string applyNormalEdgeDetect(
 
 ////
 const std::string declarations =
-"uniform sampler2D texMap2D[3];\n"
-"\n"
-"varying vec4 mgl_TexCoord[3];\n"
-"\n";
+	"uniform sampler2D texMap2D[3];\n"
+	"varying vec4 mgl_TexCoord[3];\n"
+	"\n"
+	"uniform float param1f0;\n"
+	"uniform vec4 param4f0;\n"
+	"uniform vec4 param4f1;\n"
+	"\n";
+
 
 
 
 const std::string vertexProgram =
-"invariant gl_Position;\n"
-"\n"
 "void main( void )\n"
 "{\n"
 "	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
-//"	gl_Position	= ftransform();\n"
 "\n"
-"	INLINE_FTEXGEN\n"
+"INLINE_FTEXGEN\n"
 "}\n";
 
 
@@ -375,6 +377,7 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 				m_lights.push_back( LightInfo(current, projection ) );
 
 				// Initializes private nodes for shadow mapping
+				using vgd::node::Texture;
 				vgd::Shp< vgd::node::Texture2D > lightDepthMap;
 				if ( m_recycleLightDepthMap.size() > 0 )
 				{
@@ -385,21 +388,32 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 				}
 				else
 				{
-					using vgd::node::Texture;
+					// node part
 					lightDepthMap = vgd::node::Texture2D::create("depthMap.spotLight" + vgd::basic::toString(i));
 
 					lightDepthMap->setWrap( Texture::WRAP_S, Texture::CLAMP );
 					lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP );
 
-					//lightDepthMap->setMipmap( true );
-					//lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR_MIPMAP_LINEAR );
-					//lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
-
-					lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-					//lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
-					lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
-
 					lightDepthMap->setUsage( Texture::SHADOW );
+				}
+
+				//
+				LightModel::ShadowFilteringValueType shadowFiltering = engine->getOFEnum< LightModel >( LightModel::getFShadowFiltering() );
+
+				switch ( shadowFiltering.value() )
+				{
+					case LightModel::NEAREST:
+						lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
+						lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+						break;
+
+					case LightModel::LINEAR:
+						lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+						lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+						break;
+
+					default:
+						vgAssertN( false, "Unexpected value %i", shadowFiltering.value() );
 				}
 
 				m_lightDepthMap.push_back( lightDepthMap );
@@ -704,6 +718,7 @@ void regardForGeometryOnly( vgeGL::engine::Engine * engine )
 
 	engine->regardIfIsAKindOf<vgd::node::SingleTransformation>();
 	engine->regardIfIsA<vgd::node::ClearFrameBuffer>();
+	engine->regardIfIsA<vgd::node::CullFace>();
 	engine->regardIfIsA<vgd::node::FrontFace>();
 	engine->regardIfIsA<vgd::node::Material >(); // to update GLState.opacity
 
@@ -950,6 +965,9 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	if ( !camera )		vgLogDebug("You must have a Camera node in the scene graph.");
 	if ( !lightModel || !camera )	return;
 
+	// STEREO
+	isStereoEnabled = camera->getMode() != vgd::node::Camera::MONOSCOPIC;
+
 	// POST-PROCESSING
 	// POST-PROCESSING.outputbuffers
 	// Checks outputBufferProperties
@@ -1094,16 +1112,6 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 	engine->setTextureMappingEnabled(textureMappingEnabledBak);
 	engine->disregardIfIsA<vgd::node::Texture2D>();
 
-	// Updates Texture2D rc
-	vgd::Shp< vgeGL::rc::Texture2D > lightDepthMap = m_shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
-	if ( engine->getGLSLState().isShadowSamplerUsageEnabled() ) // @todo OPTME not each time
-	{
-		lightDepthMap->bind();
-		lightDepthMap->parameter( GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB );
-		lightDepthMap->parameter( GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL );
-		lightDepthMap->parameter( GL_DEPTH_TEXTURE_MODE, GL_INTENSITY );//GL_LUMINANCE );
-	}
-
 	// Updates FBO
 // @todo moves
 	// Lookups or creates fbo
@@ -1119,6 +1127,8 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 
 		// Enables render to depth texture
 		fbo->bind();
+
+		vgd::Shp< vgeGL::rc::Texture2D > lightDepthMap = m_shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
 		fbo->attachDepth( lightDepthMap );
 
 		fbo->renderDepthOnly();
@@ -1186,10 +1196,10 @@ void ForwardRendering::stageConfigureShadowMapping( vgeGL::engine::Engine * engi
 	// @todo Improves vgd::node::Texture to be able to use it directly
 
 			// *** Updates Texture ***
-			vgd::Shp< vgd::node::Texture2D > texture2D = m_shadowMappingInput->getLightDepthMap( currentLightIndex );
-			if ( texture2D->getMultiAttributeIndex() != currentTexUnit )	texture2D->setMultiAttributeIndex( currentTexUnit );
+			vgd::Shp< vgd::node::Texture2D > lightDepthMap = m_shadowMappingInput->getLightDepthMap( currentLightIndex );
+			if ( lightDepthMap->getMultiAttributeIndex() != currentTexUnit )	lightDepthMap->setMultiAttributeIndex( currentTexUnit );
+			engine->paint( lightDepthMap );
 	// @todo setFunction()
-			engine->paint( texture2D );
 
 			// *** Updates TexGen ***
 			vgd::Shp< vgd::node::TexGenEyeLinear > texGen = m_shadowMappingInput->getTexGen( currentLightIndex );
@@ -1250,6 +1260,68 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 	passInformationsCollector( engine, traverseElements);
 	engine->setTrace( false );
+
+	// STEREO
+	engine->setEyeUsagePolicy( vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY );
+	if ( isStereoEnabled )
+	{
+	const std::string defaultFragmentOutputStage = 
+	"\n"
+	"	gl_FragData[0] = color;\n";
+
+		engine->setEyeUsagePolicy( vgd::node::Camera::EYE_LEFT );
+			beginPass();
+			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, defaultFragmentOutputStage ); // @todo in GLSLState constructor ?
+
+			engine->setBufferUsagePolicy( vge::engine::BUP_COLOR_AND_DEPTH );
+
+			// First pass : OPAQUE PASS (draw opaque shape)
+			const bool mustDoTransparencyPass = evaluateOpaquePass( paintService(), PassIsolationMask(0), true );
+			endPass();
+		engine->setEyeUsagePolicy( vgd::node::Camera::EYE_RIGHT );
+			beginPass();
+			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, defaultFragmentOutputStage ); // @todo in GLSLState constructor ?
+
+			engine->setBufferUsagePolicy( vge::engine::BUP_COLOR_AND_DEPTH );
+
+			// First pass : OPAQUE PASS (draw opaque shape)
+			/*const bool mustDoTransparencyPass = */evaluateOpaquePass( paintService(), PassIsolationMask(0), true );
+			endPass();
+
+				//
+	finishEval();
+	return;
+	}
+	// @todo vgeGL::SceneManager * sceneManager();
+	
+	/*if ( isStereoEnabled )
+	{
+		// @todo OPTME
+		GLboolean glbool;
+		glGetBooleanv( GL_STEREO, &glbool );
+
+		if ( glbool == GL_FALSE )
+		{
+			// Request a stereo context
+			vgLogDebug("Reinitializes vgsdk for stereoscopic rendering...");
+			sceneManager()->shutdownVGSDK();
+			sceneManager()->startVGSDK( true );
+// @todo dirtyAllDF
+
+			// Report if a stereo context has been initialized
+			glGetBooleanv( GL_STEREO, &glbool );
+			if ( glbool == GL_TRUE )
+			{
+				vgLogDebug("vgsdk stereoscopic context initialized done.");
+			}
+			else
+			{
+				vgLogDebug("Unable to initialize a stereoscopic context for vgsdk");
+			}
+		}
+		// else nothing to do
+	}
+	// else @todo remove if needed stereo context*/
 
 	// SHADOW MAP(S)
 	passUpdateShadowMaps( engine, traverseElements );
@@ -1501,10 +1573,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			// Parameters
 
 			// Builds declaration section of the shaders (depends of post-processing node param* fields)
-			std::string currentDeclaration = 
-			"uniform float param1f0;\n"
-			"uniform vec4 param4f0;\n"
-			"uniform vec4 param4f1;\n\n";
+			std::string currentDeclaration = declarations;
 
 			// param1f0
 			if ( postProcessingNode->hasParam1f0() )
@@ -1545,8 +1614,6 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 				params4f1.push_back( vgm::Vec4f::getInvalid() );
 			}
 
-			currentDeclaration += declarations;
-
 			// Inputs
 			inputs0.push_back( postProcessingNode->getInput0() );
 			inputs1.push_back( postProcessingNode->getInput1() );
@@ -1569,22 +1636,22 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			// Builds Vertex shader
 			std::string vertexShader;
 			if ( postProcessingNode->getInput2() != vgd::node::PostProcessing::INPUT2_NONE )
-			{			
+			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					vertexProgram, "INLINE_FTEXGEN",	"mgl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;"
-														"mgl_TexCoord[1] = gl_TextureMatrix[1] * gl_MultiTexCoord1;"
-														"mgl_TexCoord[2] = gl_TextureMatrix[2] * gl_MultiTexCoord2;" );
+					vertexProgram, "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+														"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
+														"	mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
 			}
 			else if ( postProcessingNode->getInput1() != vgd::node::PostProcessing::INPUT1_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					vertexProgram, "INLINE_FTEXGEN",	"mgl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;"
-														"mgl_TexCoord[1] = gl_TextureMatrix[1] * gl_MultiTexCoord1;" );
+					vertexProgram, "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+														"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
 			}
 			else
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					vertexProgram, "INLINE_FTEXGEN", "mgl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;" );
+					vertexProgram, "INLINE_FTEXGEN", "	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
 			}
 
 			currentScaleForVertex *= scale.second;
@@ -1770,7 +1837,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		{
 			vgLogDebug("Found a PostProcessing node without any input textures.");
 		}
-		lfbo1->unbind();
+		//lfbo1->unbind();
 
 		lfbo0.swap( lfbo1 );
 		std::swap( ltex0, ltex1 );

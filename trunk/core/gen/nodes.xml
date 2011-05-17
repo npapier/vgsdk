@@ -7,6 +7,8 @@
 
 <nodes>
 
+<!-- todo defines an enum here -->
+
 	<node	name = "Camera"
 			inherits="GeometricalTransformation ProjectionTransformation">
 		<doxygen>
@@ -21,13 +23,20 @@
 			<ingroup>g_transformationNodes</ingroup>
 		</doxygen>
 
+		<!--Defines which eye(s) must be considered (mainly used in ClearFrameBuffer and Camera). -->
+		<enum name="EyeUsagePolicy"	default="EYE_BOTH">
+			<value name="EYE_LEFT"	doc="the left eye"/>
+			<value name="EYE_RIGHT"	doc="the right eye"/>
+			<value name="EYE_BOTH"	doc="the left eye and right eye"/>
+		</enum>
+
 		<!-- projection and lookAt renames into intrinsics and extrinsics -->
 
 		<sf name="projectionLeft" doc="Determines the projection matrix for monoscopic rendering or for the left eye if stereo is enabled.">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
 		<sf name="lookAtLeft"
-			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera for monoscopic rendering or for the left eye if stereo is enabled.\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
+			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera for monoscopic rendering or for the left eye if stereo is enabled.\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
 
@@ -35,7 +44,7 @@
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
 		<sf name="lookAtRight"
-			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\nNote that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\nBy default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
+			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
 
@@ -46,14 +55,18 @@
 			<type name="Rectangle2i" namespace="vgm" default=""/>
 		</of>
 
-		<sf name="mode" doc="Specifies the camera mode (monoscopic or stereoscopic mode).\nWhen you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\nStereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.">
+		<sf name="mode" doc="Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.">
 			<type name="enum">
 				<enum default="MONOSCOPIC">
-					<value name="MONOSCOPIC" doc="Non stereoscopic rendering. \c projectionLeft, \c lookAtLeft, \c viewport and \c scissor fields are used to define the camera."/>
-					<value name="ANAGLYPH" doc="Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera."/>
-					<!-- @todo QBS -->
+					<value name="MONOSCOPIC" doc="Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too."/>
+					<value name="QUAD_BUFFER" doc="Stereoscopic rendering using quad buffer (i.e. active stereo using shutter glasses, or passive stereo using polarized projectors and glasses). Scene is viewer for left and right eyes. All fields are used to define the camera."/>
+					<value name="ANAGLYPH" doc="@todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera."/>
 				</enum>
 			</type>
+		</sf>
+
+		<sf name="eyeSeparation" doc="todo">
+			<type name = "float" default = "0.f"></type>
 		</sf>
 
 		<includehpp>vgd/include/vgd/node/Camera.hpp</includehpp>
@@ -125,7 +138,7 @@
 			<type name="Vec2f" namespace="vgm" default = "0.f, 0.f"></type>
 		</sf>
 
-		<sf name = "size" doc="Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n- A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.">
+		<sf name = "size" doc="Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n - A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.">
 			<type name="Vec2f" namespace="vgm" default ="1.f, 1.f"></type>
 		</sf>
 
@@ -329,6 +342,36 @@
 		<of name="useShadowSamplers" doc="True to use GLSL shadowSampler, false to use traditionnal texture sampler.">
 			<type name="bool" default="true"/>
 		</of>
+
+		<of name="shadowFiltering" doc="Defines depth map hardware filtering (not the filtering done in shaders).">
+			<type name="enum">
+				<enum default="LINEAR">
+					<value name="NEAREST"	doc=""/>
+					<value name="LINEAR"	doc=""/>
+				</enum>
+			</type>
+		</of>
+
+		<sf name="option0" doc="">
+			<type name="bool" default="false"/>
+		</sf>
+
+		<sf name="option1" doc="">
+			<type name="bool" default="false"/>
+		</sf>
+
+		<sf name="option2" doc="">
+			<type name="enum">
+				<enum default="CHOICE0">
+					<value name="CHOICE0" doc=""/>
+					<value name="CHOICE1" doc=""/>
+					<value name="CHOICE2" doc=""/>
+					<value name="CHOICE3" doc=""/>
+					<value name="CHOICE4" doc=""/>
+				</enum>
+			</type>
+		</sf>
+
 <!-- EngineProperty/properties/style -->
 		<sf name="ignorePostProcessing" doc="true to ignore the whole post-processing stage, false to do post-processing stage if at least one PostProcessing node is defined.">
 			<type name="bool" default="false"/>
@@ -547,7 +590,7 @@
 			<type name = "enum">
 				<enum default="NO_FILTER">
 					<value name="COLOR_TO_MONOCHROME" doc="Converts colored value to black and white"/>
-					<value name="COLOR_TO_SEPIA" doc="Converts colored value to sepia.\nSets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1]."/>
+					<value name="COLOR_TO_SEPIA" doc="Converts colored value to sepia.\n Sets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1]."/>
 					<value name="COLOR_INVERSE" doc="Inverts the colored value"/>
 
 					<value name="SCALE_AND_BIAS" doc="Each of the color components is multiplied by a scale factor, then added to a bias factor using the following formula : output = input0 * param4f0 + param4f1."/>
@@ -568,10 +611,10 @@
 					<value name="ADD" doc="Combines two images into one using the following formula : image1 + image2"/>
 					<value name="SUB" doc="Combines two images into one using the following formula : image1 - image2"/>
 
-					<value name="MIX_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]"/>
-					<value name="ALPHAMIX_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = image2.a\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param1f0. The alpha channel of the output is image2.a"/>
-					<value name="COMBINE2_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]"/>
-					<value name="COMBINE3_AND_SCALE" doc="Combines three images into one by blending them linearly using the following formula : image1 * a + image2 * b + image3 * c with a = param4f0[0], b = param4f0[1] and c = param4f0[2].\nThen the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[3]"/>
+					<value name="MIX_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]"/>
+					<value name="ALPHAMIX_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = image2.a\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param1f0. The alpha channel of the output is image2.a"/>
+					<value name="COMBINE2_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]"/>
+					<value name="COMBINE3_AND_SCALE" doc="Combines three images into one by blending them linearly using the following formula : image1 * a + image2 * b + image3 * c with a = param4f0[0], b = param4f0[1] and c = param4f0[2].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[3]"/>
 
 					<value name="DOF" doc="@todo"/>
 

@@ -70,6 +70,7 @@ Camera::Camera( const std::string nodeName ) :
 	addField( new FProjectionRightType(getFProjectionRight()) );
 	addField( new FScissorType(getFScissor()) );
 	addField( new FModeType(getFMode()) );
+	addField( new FEyeSeparationType(getFEyeSeparation()) );
 	addField( new FViewportType(getFViewport()) );
 
 	// Sets link(s)
@@ -88,6 +89,7 @@ void Camera::setToDefaults( void )
 	setLookAtRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setProjectionRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setMode( MONOSCOPIC );
+	setEyeSeparation( 0.f );
 }
 
 
@@ -205,6 +207,21 @@ void Camera::setMode( const ModeValueType value )
 
 
 
+// EyeSeparation
+const Camera::EyeSeparationValueType Camera::getEyeSeparation() const
+{
+	return getFieldRO<FEyeSeparationType>(getFEyeSeparation())->getValue();
+}
+
+
+
+void Camera::setEyeSeparation( const EyeSeparationValueType value )
+{
+	getFieldRW<FEyeSeparationType>(getFEyeSeparation())->setValue( value );
+}
+
+
+
 // Viewport
 const bool Camera::getViewport( ViewportValueType& value ) const
 {
@@ -276,6 +293,13 @@ const std::string Camera::getFMode( void )
 
 
 
+const std::string Camera::getFEyeSeparation( void )
+{
+	return "f_eyeSeparation";
+}
+
+
+
 const std::string Camera::getFViewport( void )
 {
 	return "f_viewport";
@@ -308,30 +332,132 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 
 
 
-// LOOKAT/LOOKATLEFT
-const Camera::LookAtValueType Camera::getLookAt() const
+// LOOKAT
+const Camera::LookAtValueType Camera::getLookAt( const EyeUsagePolicyValueType eyeUsagePolicy ) const
 {
-	return getLookAtLeft();
+	vgm::MatrixR matrix;
+
+	switch ( eyeUsagePolicy.value() )
+	{
+		case EYE_LEFT:
+			matrix = getLookAtLeft();
+			break;
+
+		case EYE_RIGHT:
+			matrix = getLookAtRight();
+			break;
+
+		case EYE_BOTH:
+		{
+			const Camera::LookAtValueType left	= getLookAtLeft();
+			const Camera::LookAtValueType right	= getLookAtRight();
+
+			vgAssertN( left.equals(right), "lookAtLeft != lookAtRight" );
+			matrix = left;
+			break;
+		}
+
+		//case DEFAULT_EYEUSAGEPOLICY: = EYE_BOTH
+		default:
+			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
+			matrix.setIdentity();
+	}
+
+	return matrix;
 }
+
 
 
 void Camera::setLookAt( const LookAtValueType value )
 {
-	setLookAtLeft(value);
+	if ( getMode() == MONOSCOPIC )
+	{
+		setLookAtLeft( value );
+		setLookAtRight( value );
+	}
+	else
+	{
+		const vgm::Vec3f halfEyeSeparation( getEyeSeparation() / 2.f, 0.f, 0.f );
+
+		// LEFT
+		vgm::MatrixR lookAtLeft;
+		lookAtLeft.setTranslate( - halfEyeSeparation );
+		lookAtLeft = value * lookAtLeft;
+
+		setLookAtLeft( lookAtLeft );
+
+		// RIGHT
+		vgm::MatrixR lookAtRight;
+		lookAtRight.setTranslate( halfEyeSeparation );
+		lookAtRight = value * lookAtRight;
+
+		setLookAtRight( lookAtRight );
+	}
 }
 
 
 
-// PROJECTION/PROJECTIONLEFT
-const Camera::ProjectionValueType Camera::getProjection() const
+// PROJECTION
+const Camera::ProjectionValueType Camera::getProjection( const EyeUsagePolicyValueType eyeUsagePolicy ) const
 {
-	return getProjectionLeft();
+	vgm::MatrixR matrix;
+
+	switch ( eyeUsagePolicy.value() )
+	{
+		case EYE_LEFT:
+			matrix = getProjectionLeft();
+			break;
+
+		case EYE_RIGHT:
+			matrix = getProjectionRight();
+			break;
+
+		case EYE_BOTH:
+		{
+			const Camera::ProjectionValueType left	= getProjectionLeft();
+			const Camera::ProjectionValueType right	= getProjectionRight();
+
+			vgAssertN( left.equals(right), "projectionLeft != projectionRight" );
+
+			matrix = left;
+			break;
+		}
+
+		default:
+			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
+			matrix.setIdentity();
+	}
+
+	return matrix;
 }
+
 
 
 void Camera::setProjection( const ProjectionValueType value )
 {
-	setProjectionLeft( value );
+/*	if ( getMode() == MONOSCOPIC )
+	{*/
+		setProjectionLeft( value );
+		setProjectionRight( value );
+/*	}
+	else
+	{
+		const vgm::Vec3f halfEyeSeparation( getEyeSeparation() / 2.f, 0.f, 0.f );
+
+		// LEFT
+		vgm::MatrixR projectionLeft;
+		projectionLeft.setTranslate( - halfEyeSeparation );
+		projectionLeft = value * projectionLeft;
+
+		setProjectionLeft( projectionLeft );
+
+		// RIGHT
+		vgm::MatrixR projectionRight;
+		projectionRight.setTranslate( halfEyeSeparation );
+		projectionRight = value * projectionRight;
+
+		setProjectionRight( projectionRight );
+	}*/
 }
 
 
@@ -347,6 +473,31 @@ const Camera::MatrixValueType Camera::getMatrix() const
 void Camera::setMatrix( const MatrixValueType value )
 {
 	getFieldRW<FMatrixType>(getFProjectionLeft())->setValue( value );
+}
+
+
+
+// High-level
+void Camera::sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation )
+{
+	vgm::MatrixR lookAt;
+	lookAt.setLookAt( lookAtEye, lookAtCenter, lookAtUp );
+
+	const vgm::Vec3f halfEyeSeparation( eyeSeparation / 2.f, 0.f, 0.f );
+
+	// LEFT
+	vgm::MatrixR lookAtLeft;
+	lookAtLeft.setTranslate( - halfEyeSeparation );
+	lookAtLeft = lookAt * lookAtLeft;
+
+	setLookAtLeft( lookAtLeft );
+
+	// RIGHT
+	vgm::MatrixR lookAtRight;
+	lookAtRight.setTranslate( halfEyeSeparation );
+	lookAtRight = lookAt * lookAtRight;
+
+	setLookAtRight( lookAtRight );
 }
 IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
 

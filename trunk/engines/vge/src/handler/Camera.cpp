@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -22,9 +22,11 @@ namespace handler
 void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 {
 	// Updates engine
+
+	//	CAMERA node
 	engine->setCamera( camera );
 
-	// VIEWPORT
+	//	VIEWPORT field
 	bool bDefined;
 	vgm::Rectangle2i viewportValue;
 
@@ -42,7 +44,7 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 	// Updates engine
 
 	// Computes near and far from the projection matrix.
-	const vgm::MatrixR projectionMatrix = camera->getProjection();
+	const vgm::MatrixR projectionMatrix = camera->getProjection( engine->getEyeUsagePolicy() );
 	if ( !projectionMatrix.isIdentity() )
 	{
 		const double c = projectionMatrix[2][2];
@@ -72,15 +74,17 @@ void Camera::unapply( vge::engine::Engine *engine, vgd::node::Camera *camera )
 void Camera::applyMatrix( vge::engine::Engine *engine, vgd::node::Camera *camera )
 {
 	// PROJECTION MATRIX
-	// Gets the transformation
-	const vgm::MatrixR& matrix( camera->getProjection() );
-	
+
+	const vge::engine::EyeUsagePolicy eyePolicy = engine->getEyeUsagePolicy();
+	const vgm::MatrixR matrix = camera->getProjection( eyePolicy );
+
+	// Updates engine
 	if ( camera->getComposeTransformation() )
 	{
 		// Composes and updates engine
-		vgm::MatrixR& 		current(	engine->getProjectionMatrix().getTop() );
+		vgm::MatrixR& current( engine->getProjectionMatrix().getTop() );
 
-		current		= matrix * current;
+		current = matrix * current;
 	}
 	else
 	{
@@ -94,11 +98,23 @@ void Camera::applyMatrix( vge::engine::Engine *engine, vgd::node::Camera *camera
 void Camera::applyLookAt( vge::engine::Engine *engine, vgd::node::Camera *camera )
 {
 	// GEOMETRICAL MATRIX
-	// Gets the transformation
-	const vgm::MatrixR& matrix( camera->getLookAt() );
+
+	const vge::engine::EyeUsagePolicy eyePolicy = engine->getEyeUsagePolicy();
+	const vgm::MatrixR matrix = camera->getLookAt( eyePolicy );
 
 	// Updates engine
-	engine->getGeometricalMatrix().setTop( matrix );
+	if ( camera->getComposeTransformation() )
+	{
+		// Composes and updates engine
+		vgm::MatrixR& current( engine->getGeometricalMatrix().getTop() );
+
+		current = matrix * current;
+	}
+	else
+	{
+		// Updates engine
+		engine->getGeometricalMatrix().setTop( matrix );
+	}
 }
 
 

@@ -8,6 +8,7 @@
 
 #include <glo/ArrayBuffer.hpp>
 #include <glo/ElementArrayBuffer.hpp>
+#include <glo/VertexArrayObject.hpp>
 #include <vector>
 
 #include "vge/rc/IResource.hpp"
@@ -32,6 +33,8 @@ struct VGEGL_API VertexShape : public vge::rc::IResource, public glo::IResource
 	glo::ArrayBuffer					normal;
 	std::vector< glo::ArrayBuffer >		texCoord;
 	glo::ElementArrayBuffer				vertexIndex;
+
+	glo::VertexArrayObject				vao;
 };
 
 

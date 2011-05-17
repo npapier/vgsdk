@@ -84,6 +84,9 @@ private:
 
 	vgd::Shp< vgeGL::engine::GLSLState > glslStateFinal;
 
+	// STEREO
+	bool isStereoEnabled;
+
 	// SHADOW MAPPING
 	vgd::Shp< ShadowMappingInput >				m_shadowMappingInput;
 	bool isShadowEnabled;
@@ -184,4 +187,3 @@ private:
 } // namespace vgeGL
 
 #endif //#ifndef _VGEGL_TECHNIQUE_FORWARDRENDERING_HPP
-

@@ -15,7 +15,7 @@
 #include <vgd/field/FieldManager.hpp>
 #include <vgd/field/TAccessors.hpp>
 #include "vgd/field/TOptionalField.hpp"
-#include <vgd/node/Node.hpp>
+#include <vgd/node/Camera.hpp>
 #include <vgDebug/helpers.hpp>
 
 #include "vge/engine/MultiMatrixStack.hpp"
@@ -29,7 +29,7 @@ namespace vgd { namespace node { struct Camera; } }
 /**
  * @namespace vge::engine
  * 
- * @brief Engine evaluate scene graph with handlers.
+ * @brief Engine evaluate scene graph with handlers
  */
 
 
@@ -59,6 +59,12 @@ enum BufferUsagePolicy
 	BUP_COLOR_AND_DEPTH,	///< enables writing to color buffer(s) and enables writing to depth buffer
 	BUP_DEFAULT = BUP_COLOR_AND_DEPTH
 };
+
+
+/**
+ * @brief Defines which eye(s) must be considered (mainly used in ClearFrameBuffer and Camera).
+ */
+typedef vgd::node::Camera::EyeUsagePolicy EyeUsagePolicy;
 
 
 
@@ -220,7 +226,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Sets if engine need to trace everything.
 	 *
 	 * @param trace		true if trace is enabled, false otherwise
-	 */	
+	 */
 	void setTrace( const bool trace = true );
 
 	/**
@@ -765,6 +771,23 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	void setBufferUsagePolicy( const BufferUsagePolicy policy );
 
+
+	/**
+	 * @brief Returns the current eye usage policy.
+	 *
+	 * @return the current eye usage policy
+	 */
+	const EyeUsagePolicy getEyeUsagePolicy() const;
+
+	/**
+	 * @brief Sets the current eye usage policy
+	 *
+	 * This policy is used by ClearFrameBuffer handler and Camera handler.
+	 *
+	 * @remark This state is typically modified by technique between two passes.
+	 */
+	void setEyeUsagePolicy( const EyeUsagePolicy policy );
+
 	//@}
 
 
@@ -931,6 +954,7 @@ protected:
 	vgm::Rectangle2i				m_viewport;					///< the value of \c viewport field for the last encountered Camera node with this field defined
 	vgm::Vec2f						m_nearFar;					///< a vector containing respectively the distances to the near and far depth clipping planes
 	BufferUsagePolicy				m_bufferUsagePolicy;		///< the current buffer usage policy
+	EyeUsagePolicy					m_eyeUsagePolicy;			///< the current eye usage policy
 
 	const vgd::Shp< vge::service::Service > m_paintService;	///< a reference on paint service object used by render() methods
 

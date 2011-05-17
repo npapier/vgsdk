@@ -179,6 +179,14 @@ void Texture::paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *p
 		}
 	}
 
+	// USAGE
+	if ( pNode->getUsage() == vgd::node::Texture::SHADOW )
+	{
+		pResource->parameter( GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_REF_TO_TEXTURE );
+		pResource->parameter( GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL );
+		//pResource->parameter( GL_DEPTH_TEXTURE_MODE, GL_INTENSITY );
+	}
+
 /*	// BORDER_COLOR
 	vgm::Vec4f v4;
 	bDefined = pNode->getBorderColor( v4 );

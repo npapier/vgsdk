@@ -36,14 +36,13 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code1.clear();
 	m_code2.clear();
 
-	m_decl +=	"#version 130\n"
+	m_decl += GLSLHelpers::getVersionDecl();
 //				"#pragma optimize (on)\n"
 //				"#pragma debug (off)\n"	
 //				"#pragma optimize (off)\n"
 //				"#pragma debug (on)\n"
-				"\n";
-
-	m_decl += "uniform vec2 nearFar;\n\n";
+				//"\n";
+	m_decl += GLSLHelpers::getVGSDKUniformDecl();
 
 	// Test if custom program must be installed
 	if ( state.isEnabled( PROGRAM ) )
@@ -71,18 +70,18 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		if ( state.isEnabled( FLAT_SHADING ) )
 		{
 			m_decl += 
-			"flat varying vec4 ecPosition;\n"
-			"flat varying vec3 ecNormal;\n\n";
+			"flat in vec4 ecPosition;\n"
+			"flat in vec3 ecNormal;\n\n";
 		}
 		else
 		{
 			m_decl += 
-			"varying vec4 ecPosition;\n"
-			"varying vec3 ecNormal;\n\n";
+			"in vec4 ecPosition;\n"
+			"in vec3 ecNormal;\n\n";
 
 			/*if ( state.isEnabled( COLOR4_BIND_PER_VERTEX ) )
 			{
-				m_decl += "varying vec4 mglColor;\n\n";
+				m_decl += "in vec4 mglColor;\n\n";
 			}*/
 		}
 
@@ -96,7 +95,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	std::pair< std::string, std::string > code_samplers;
 	if ( has_ftexgen )
 	{
-		code_ftexgen = GLSLHelpers::generateFunction_ftexgen(state); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
+		code_ftexgen = GLSLHelpers::generateFunction_ftexgen( state, "in" ); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
 		m_decl += code_ftexgen.first;
 
 		code_samplers = GLSLHelpers::generate_samplers( state );

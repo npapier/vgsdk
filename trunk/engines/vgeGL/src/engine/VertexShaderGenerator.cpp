@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -38,9 +38,24 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code1.clear();
 	m_code2.clear();
 
-	m_decl += "#version 130\n\n";
+	// DECLARATIONS
+	m_decl += GLSLHelpers::getVersionDecl();
+	m_decl += GLSLHelpers::getVGSDKUniformDecl();
 
-	m_decl += "uniform vec2 nearFar;\n\n";
+	const std::string vertexIndexStr	= vgd::basic::toString( vgeGL::engine::VERTEX_INDEX );
+	const std::string normalIndexStr	= vgd::basic::toString( vgeGL::engine::NORMAL_INDEX );
+	const std::string texCoord0IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX );
+	const std::string texCoord1IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX + 1 );
+	const std::string texCoord2IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX + 2 );
+
+	m_decl += "layout(location = " + vertexIndexStr + ") in vec4 mgl_Vertex;\n";
+	m_decl += "layout(location = " + normalIndexStr + ") in vec3 mgl_Normal;\n";
+	m_decl += "layout(location = " + texCoord0IndexStr + ") in vec4 mgl_MultiTexCoord0;\n";
+	m_decl += "layout(location = " + texCoord1IndexStr + ") in vec4 mgl_MultiTexCoord1;\n";
+	m_decl += "layout(location = " + texCoord2IndexStr + ") in vec4 mgl_MultiTexCoord2;\n\n";
+
+	// out vec4 gl_Position;
+	m_decl += "invariant gl_Position;\n\n";
 
 	// Test if custom program must be installed
 	if ( state.isEnabled( PROGRAM ) )
@@ -56,7 +71,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		return true;
 	}
 
-	// DECLARATIONS
 	if ( state.isLightingEnabled() )
 	{
 		if ( state.isPerVertexLightingEnabled() )
@@ -68,18 +82,18 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			if ( state.isEnabled( FLAT_SHADING ) )
 			{
 				m_decl += 
-				"flat varying vec4 ecPosition;\n" // @todo really flat ?
-				"flat varying vec3 ecNormal;\n\n";
+				"flat out vec4 ecPosition;\n" // @todo really flat ?
+				"flat out vec3 ecNormal;\n\n";
 			}
 			else
 			{
 				m_decl += 
-				"varying vec4 ecPosition;\n"
-				"varying vec3 ecNormal;\n\n";
+				"out vec4 ecPosition;\n"
+				"out vec3 ecNormal;\n\n";
 
 				/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
 				{
-					m_decl += "varying vec4 mglColor;\n\n";
+					m_decl += "out vec4 mglColor;\n\n";
 				}*/
 			}
 		}
@@ -91,7 +105,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	std::pair< std::string, std::string > code_ftexgen;
 	if ( has_ftexgen )
 	{
-		code_ftexgen = GLSLHelpers::generateFunction_ftexgen(state);
+		code_ftexgen = GLSLHelpers::generateFunction_ftexgen(state, "out" );
 		m_decl += code_ftexgen.first;
 	}
 
@@ -111,8 +125,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	// MAIN
 	m_code2 +=
-	"\n"	
-	"invariant gl_Position;\n"
 	"\n"
 	"void main( void )\n"
 	"{\n";
@@ -126,16 +138,16 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing
 
-	//gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex;
+	//gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * mgl_Vertex;
 	m_code2 +=
-	"	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
+	"	gl_Position = gl_ModelViewProjectionMatrix * mgl_Vertex;\n"
 	"\n";
 /*	m_code2 +=
 	"	gl_Position	= ftransform();\n"
 	"\n";*/
 
 	m_code2 +=
-	"	ecPosition	= gl_ModelViewMatrix * gl_Vertex;\n"
+	"	ecPosition	= gl_ModelViewMatrix * mgl_Vertex;\n"
 	"	ecNormal	= fnormal();\n"
 	"\n";
 

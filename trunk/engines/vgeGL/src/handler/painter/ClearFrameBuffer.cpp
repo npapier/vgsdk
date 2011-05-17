@@ -45,6 +45,7 @@ void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node
 
 	// Updates engine state
 	const vge::engine::BufferUsagePolicy	bup = engine->getBufferUsagePolicy();
+	const vge::engine::EyeUsagePolicy		eup = engine->getEyeUsagePolicy();
 	vgd::Shp< glo::FrameBufferObject >		fbo = glEngine->getOutputBuffers();
 
 	if ( fbo )
@@ -52,7 +53,7 @@ void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node
 		fbo->bind();
 	}
 
-	applyBufferUsagePolicy( bup, fbo );
+	applyBufferUsagePolicy( bup, eup, fbo );
 
 	vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
 }
@@ -148,9 +149,32 @@ void ClearFrameBuffer::paint( vgeGL::engine::Engine * engine, vgd::node::ClearFr
 
 
 // @todo cache in DL
-void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePolicy policy, vgd::Shp< glo::FrameBufferObject > fbo )
+void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePolicy bufferPolicy, const vge::engine::EyeUsagePolicy eyePolicy, vgd::Shp< glo::FrameBufferObject > fbo )
 {
-	switch ( policy )
+	// Computes which draw buffer to use from eye policy
+	GLenum drawBufferFromEyePolicy = GL_NONE;
+
+	switch ( eyePolicy )
+	{
+		case vgd::node::Camera::EYE_LEFT:
+			drawBufferFromEyePolicy = GL_BACK_LEFT;
+			break;
+
+		case vgd::node::Camera::EYE_RIGHT:
+			drawBufferFromEyePolicy = GL_BACK_RIGHT;
+			break;
+
+		case vgd::node::Camera::EYE_BOTH:
+			drawBufferFromEyePolicy = GL_BACK;
+			break;
+
+		//case EYE_DEFAULT:
+		default:
+			vgAssertN( false, "Unexpected value for eye usage policy %i", eyePolicy );
+	}
+
+	// Apply buffer policy and eye policy
+	switch ( bufferPolicy )
 	{
 		case vge::engine::BUP_NOT_DEFINED:
 			vgAssertN( false, "BUP_NOT_DEFINED not expected" );
@@ -206,7 +230,7 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 			else
 			{
 				// 1) enable writing to color buffer
-				glDrawBuffer( GL_BACK );
+				glDrawBuffer( drawBufferFromEyePolicy );
 
 				// 2) disable writing to depth buffer
 				glDepthMask( GL_FALSE );
@@ -244,7 +268,7 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 			else
 			{
 				// 1) enable writing to color buffer
-				glDrawBuffer( GL_BACK );
+				glDrawBuffer( drawBufferFromEyePolicy );
 
 				// 2) enable writing to depth buffer
 				glDepthMask( GL_TRUE );
@@ -271,7 +295,7 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 			else
 			{
 				// 1) enable writing to color buffer
-				glDrawBuffer( GL_BACK );
+				glDrawBuffer( drawBufferFromEyePolicy );
 
 				// 2) enable writing to depth buffer
 				glDepthMask( GL_FALSE );
@@ -283,7 +307,7 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 			break;
 
 		default:
-			vgAssertN( false, "Unexpected value for buffer rendering policy %i", policy );
+			vgAssertN( false, "Unexpected value for buffer rendering policy %i", bufferPolicy );
 	}
 }
 

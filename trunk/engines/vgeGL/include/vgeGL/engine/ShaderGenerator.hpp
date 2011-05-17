@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -42,6 +42,21 @@ struct GLSLHelpers
 	// @todo Flags class in vgd::basic
 
 
+
+	//
+	static const std::string& getVersionDecl()
+	{
+		static const std::string retVal = "#version 330 compatibility\n\n";
+
+		return retVal;
+	}
+
+	static const std::string& getVGSDKUniformDecl()
+	{
+		static const std::string retVal = "uniform vec2 nearFar;\n\n";
+
+		return retVal;
+	}
 
 	// LIGHTING
 	static const std::string& generate_lightAccumulators( const GLSLState& state )
@@ -797,7 +812,7 @@ struct GLSLHelpers
 			"vec3 fnormal(void)\n"
 			"{\n"
 			"	//Compute the normal\n"
-			"	vec3 normal = gl_NormalMatrix * gl_Normal;\n"
+			"	vec3 normal = gl_NormalMatrix * mgl_Normal;\n"
 			"	normal = normalize(normal);\n"	// glIsEnabled(GL_NORMALIZE)	//@todo not if PerPixelLighting
 //			"	normal = normal * gl_NormalScale;\n"		// glIsEnabled(GL_RESCALE_NORMAL)
 			"	return normal;\n"
@@ -817,7 +832,8 @@ struct GLSLHelpers
 
 	// TEXTURE
 	// @todo class to store varying variables (vertex output, fragment input in glsl 1.3)
-	static std::pair< std::string, std::string > generateFunction_ftexgen( const vgeGL::engine::GLSLState& state )
+	// @param storageQualifierDecl	'out' for vertex shader, 'in' for fragment shader.
+	static std::pair< std::string, std::string > generateFunction_ftexgen( const vgeGL::engine::GLSLState& state, const std::string storageQualifierDecl )
 	{
 		std::string decl;
 		std::string code;
@@ -841,7 +857,7 @@ struct GLSLHelpers
 				const vgd::node::Texture *			textureNode	= current->getTextureNode();
 				if ( textureNode == 0 )
 				{
-					vgLogDebug("generateFunction_ftexgen(): No texture node !");
+					vgAssertN( false, "generateFunction_ftexgen(): No texture node !" );
 					continue;
 				}
 				vgd::node::Texture::UsageValueType	usage		= textureNode->getUsage();
@@ -866,7 +882,7 @@ struct GLSLHelpers
 					}
 					else
 					{
-						assert( usage == vgd::node::Texture::IMAGE );
+						vgAssert( usage == vgd::node::Texture::IMAGE );
 
 						const std::string strIndex = vgd::basic::toString( mgl_TexCoordCount );
 						++mgl_TexCoordCount;
@@ -888,7 +904,7 @@ struct GLSLHelpers
 						++mgl_TexCoordShadowCount;
 
 						code +=
-						"	mgl_TexCoordShadow[" + strIndex + "] = gl_TextureMatrix[" + strUnit +"] * gl_MultiTexCoord" + strUnit + ";\n";
+						"	mgl_TexCoordShadow[" + strIndex + "] = gl_TextureMatrix[" + strUnit +"] * mgl_MultiTexCoord" + strUnit + ";\n";
 					}
 					else
 					{
@@ -896,7 +912,7 @@ struct GLSLHelpers
 						++mgl_TexCoordCount;
 
 						code +=
-						"	mgl_TexCoord[" + strIndex + "] = gl_TextureMatrix[" + strUnit +"] * gl_MultiTexCoord" + strUnit + ";\n";
+						"	mgl_TexCoord[" + strIndex + "] = gl_TextureMatrix[" + strUnit +"] * mgl_MultiTexCoord" + strUnit + ";\n";
 					}
 				}
 				// else nothing to do
@@ -916,12 +932,12 @@ struct GLSLHelpers
 
 		if ( mgl_TexCoordCount > 0 )
 		{
-			decl += "varying vec4 mgl_TexCoord[" + vgd::basic::toString(mgl_TexCoordCount) + "];\n";
+			decl += storageQualifierDecl + " vec4 mgl_TexCoord[" + vgd::basic::toString(mgl_TexCoordCount) + "];\n";
 		}
 
 		if ( mgl_TexCoordShadowCount > 0 )
 		{
-			decl += "varying vec4 mgl_TexCoordShadow[" + vgd::basic::toString(mgl_TexCoordShadowCount) + "];\n";
+			decl += storageQualifierDecl + " vec4 mgl_TexCoordShadow[" + vgd::basic::toString(mgl_TexCoordShadowCount) + "];\n";
 		}
 
 		decl += "\n";
@@ -988,14 +1004,14 @@ struct GLSLHelpers
 		{
 			if ( sampler2DCount > 0 )
 			{
-				decl += "uniform sampler2D texMap2D[" + vgd::basic::toString(sampler2DCount) + "];\n";
+				decl += "uniform sampler2D texMap2D[" + vgd::basic::toString(sampler2DCount) + "];\n\n";
 			}
 
 			if ( sampler2DShadowCount > 0 )
 			{
 				//decl += "uniform sampler2D texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
-				decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
-			}		
+				decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n\n";
+			}
 		}
 		else
 		{
@@ -1004,8 +1020,8 @@ struct GLSLHelpers
 				// @todo OPTME: sparse array => consume more memory
 				decl += "uniform sampler2D texMap2D[";
 				decl += vgd::basic::toString(state.textures.getMax());
-				decl += "];\n";
-			}		
+				decl += "];\n\n";
+			}
 		}
 
 		// Updates code for lookupShadowMap()
@@ -1059,9 +1075,10 @@ struct GLSLHelpers
 				code +=
 				"\n"
 				"	vec4 newCoord = vec4(coord.xy + (offset / mapSize * coord.w), coord.z, coord.w );\n"
-				"	float depth = shadow2DProj( map, newCoord ).r;\n"
+				"	float depth = textureProj( map, newCoord );\n"
 				"\n"
-				"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
+//				"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
+				"	return max( illuminationInShadow, depth);\n"
 				"}\n"
 				"\n";
 			}

@@ -76,17 +76,17 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	/**
 	 * @brief Definition of symbolic values
 	 */
-	enum
+	enum  
 	{
-		DISABLED = 258,	///< Facet culling is disabled
-		FRONT = 260,	///< Front-facing facets are culled
-		BACK = 259,	///< Back-facing facets are culled
-		FRONT_AND_BACK = 261,	///< Front-facing and back-facing facets are culled
+		DISABLED = 262,	///< Facet culling is disabled
+		FRONT = 264,	///< Front-facing facets are culled
+		BACK = 263,	///< Back-facing facets are culled
+		FRONT_AND_BACK = 265,	///< Front-facing and back-facing facets are culled
 		DEFAULT_MODE = DISABLED	///< Facet culling is disabled
 	};
 
 	/**
-	 * @brief Type definition of the value contained by field named \c mode.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
 	struct ModeValueType : public vgd::field::Enum
 	{
@@ -109,10 +109,10 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 258 );
-			retVal.push_back( 259 );
-			retVal.push_back( 260 );
-			retVal.push_back( 261 );
+			retVal.push_back( 262 );
+			retVal.push_back( 263 );
+			retVal.push_back( 264 );
+			retVal.push_back( 265 );
 
 			return retVal;
 		}

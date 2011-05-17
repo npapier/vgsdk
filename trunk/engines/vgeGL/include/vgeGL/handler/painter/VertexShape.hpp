@@ -11,32 +11,20 @@
 #include "vgeGL/engine/Settings.hpp"
 #include "vgeGL/vgeGL.hpp"
 
+namespace glo { struct GLSLProgram; }
+
 namespace vgd
 {
-	namespace node
-	{
-		struct Primitive;
-		struct VertexShape;
-	}
+	namespace node { struct Primitive; struct VertexShape; }
 }
 
-namespace vgm
-{
-	struct Box3f;
-}
+namespace vgm { struct Box3f; }
 
 namespace vgeGL
 {
+	namespace engine { struct Engine; }
 
-	namespace engine
-	{
-		struct Engine;
-	}
-
-	namespace rc
-	{
-		struct VertexShape;
-	}
+	namespace rc { struct VertexShape; }
 }
 
 
@@ -64,7 +52,9 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	const TargetVector getTargets()	const;
 
 	void apply( vge::engine::Engine*, vgd::node::Node* );
-	
+
+	void setSamplers( vgeGL::engine::Engine * pGLEngine, glo::GLSLProgram * program );
+
 	void unapply( vge::engine::Engine*, vgd::node::Node* );
 
 	void setToDefaults();
@@ -108,23 +98,23 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 
 	void updateTexCoord(	vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim,
 							vgeGL::rc::VertexShape * rc );
-	void configureTexCoord(	vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim,
+	void configureTexCoord(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim,
 							vgeGL::rc::VertexShape * rc, const bool isVertexBufferObjectEnabled );
 
 
 	// VERTEX ARRAY IN DISPLAY LIST
-	/**
-	 * @brief Render all primitives in display list (vertex array encapsulate in a display list).
-	 */
-	void	paint(	vgeGL::engine::Engine*, vgd::node::VertexShape*,
-					const vgeGL::engine::VertexArrayDisplayListMethod& );
 
 
 	//
 	void update(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape,
 					vgeGL::rc::VertexShape * rc );
-	void submit(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
-					vgeGL::rc::VertexShape * rc );
+
+	void configureRenderingArrays(		vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape,
+										vgeGL::rc::VertexShape * rc );
+	void unconfigureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
+										vgeGL::rc::VertexShape * rc );
+	void renderArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
+						vgeGL::rc::VertexShape * rc );
 //	// VERTEX ARRAY IN VBO
 //	/**
 //	 * @brief Render all primitives with vertex array.

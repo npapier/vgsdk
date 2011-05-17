@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -28,6 +28,28 @@ namespace engine
 
 
 /**
+ * @brief Properties of an OpenGL context
+ */
+struct VGEGL_API GLContextProperties
+{
+	/**
+	 * @brief Default constructor
+	 *
+	 * @param enableQuadBufferStereo	true if quad buffer stereo (for stereoscopic rendering) is enabled, false otherwise.
+	 */
+	GLContextProperties( const bool enableQuadBufferStereo = false )
+	:	m_enableQuadBufferStereo( enableQuadBufferStereo )
+	{}
+
+	const bool enableQuadBufferStereo() const { return m_enableQuadBufferStereo; }
+
+	private:
+	bool m_enableQuadBufferStereo;
+};
+
+
+
+/**
  * @brief Bridge between the scene graph and the GUI toolkit.
  * 
  * This class provides some methods to :
@@ -44,6 +66,8 @@ namespace engine
  * - Casts ray under the mouse cursor.
  * - Renders an overlay after the rendering of the scene graph. The typical use case is to draw a logo over the GUI window.
  * - Renders an underlay just after the clearing of the whole framebuffer in the MultiMain technique. This layer is only used by the MultiMain technique.
+ *
+ * @ingroup g_layerplan
  */
 struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::DeviceListener, public vgeGL::itf::IUnderlay
 {
@@ -356,27 +380,48 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 */
 	const vgeGL::technique::RayCasting& getRayCastingTechnique() const;
 	//@}
-	
-	
+
+
 
 	/**
 	 * @name OpenGL context management methods
-	 * 
+	 *
 	 * @todo setGLContextCurrent();
 	 */
 	//@{
+
+
+	/**
+	 * @brief Sets the requested properties for the OpenGL context
+	 *
+	 * @param properties	OpenGL context properties requested
+	 *
+	 * @remark	Called this method before OpenGL context has been created (see startOpenGLContext()/startVGSDK()), otherwise
+	 * 			it will be ignored
+	 */
+	void setRequestedGLContextProperties( const GLContextProperties properties );
+
+	/**
+	 * @brief Returns the current properties of the OpenGL context allocated
+	 *
+	 * @param properties	the OpenGL context properties allocated (if any)
+	 *
+	 * @return true if an OpenGL context has been already allocated and \c properties output parameter is assigned, false otherwise
+	 */
+	const bool getGLContextProperties( GLContextProperties& properties ) const;
+
 
 	/**
 	 * @brief Tests if there is a current OpenGL context.
 	 * 
 	 * @return true if there is a current OpenGL context, false if not.
 	 */
-	const bool	isGLContextCurrent() const;
+	const bool isGLContextCurrent() const;
 
 	//@}
 
 
-	
+
 	/**
 	 * @name Accessors to some vgsdk objects
 	 */
@@ -432,6 +477,8 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	/**
 	 * @brief Sets the current overlay.
 	 * @param overlay	the layer plan to use for overlay
+	 *
+	 * @ingroup g_layerplan	 
 	 */
 	void setOverlay( vgd::Shp< vgd::node::LayerPlan > overlay );
 
@@ -439,6 +486,8 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @brief Returns the current overlay.
 	 *
 	 * @return the installed overlay
+	 *
+	 * @ingroup g_layerplan	 
 	 */
 	vgd::Shp< vgd::node::LayerPlan > getOverlay();
 
@@ -448,6 +497,8 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @param underlay	the layer plan to use for underlay
 	 *
 	 * @see vgeGL::technique::MultiMain
+	 *
+	 * @ingroup g_layerplan	 
 	 */
 	void setUnderlay( vgd::Shp< vgd::node::LayerPlan > underlay );
 
@@ -457,6 +508,8 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @return the installed underlay
 	 *
 	 * @see vgeGL::technique::MultiMain
+	 *
+	 * @ingroup g_layerplan	 
 	 */
 	vgd::Shp< vgd::node::LayerPlan > getUnderlay();
 	//@}
@@ -473,6 +526,13 @@ protected:
 	 * @brief Main evaluation engine.
 	 */
 	vgd::Shp< vgeGL::engine::Engine >		m_GLEngine;
+
+
+	GLContextProperties						m_requestedGLContextProperties;
+
+	bool									m_hasCurrentGLContextProperties;
+	GLContextProperties						m_currentGLContextProperties;
+
 
 
 	/**
@@ -498,21 +558,13 @@ protected:
 	typedef vgd::Shp< ::vgeGL::event::IEventProcessor >		ElementOfEventProcessorContainer;
 	typedef std::vector< ElementOfEventProcessorContainer >	EventProcessorContainer;
 	
-	/**
-	 * @brief Event processor container.
-	 */
-	EventProcessorContainer	m_eventProcessors;
+	EventProcessorContainer	m_eventProcessors;		///< event processor container
 
 	vgd::Shp< ::vgeGL::event::TimerEventProcessor > m_timerEventProcessor;
 	//@}
 
-	/**
-	 * @name Overlay/underlay
-	 */
-	//@{
-	vgd::Shp< vgd::node::LayerPlan > m_overlay;
-	vgd::Shp< vgd::node::LayerPlan > m_underlay;
-	//@}
+	vgd::Shp< vgd::node::LayerPlan > m_overlay;		///< reference to the current overlay
+	vgd::Shp< vgd::node::LayerPlan > m_underlay;	///< reference to the current underlay
 };
 
 
