@@ -292,6 +292,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 
 		// Paints the window
 		vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
+		paintTechnique->setParameters( this->engine(), currentTraverseElements, sceneManager() );
 		paintTechnique->apply( engine, currentTraverseElements );
 
 		// Draws the window decoration
