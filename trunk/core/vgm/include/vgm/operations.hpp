@@ -82,22 +82,45 @@ struct Epsilon<double>
 /**
  * @brief Equality comparison within tolerance
  */
-VGM_API const bool equals( const float value1, const float value2 );
+template< typename T >
+const bool equals( const T value1, const T value2 )
+{
+	const T diff = fabs( value1 - value2 );
+
+	return diff <= vgm::Epsilon<T>::value();
+}
 
 /**
  * @brief Inequality comparison within tolerance
  */
-VGM_API const bool notEquals( const float value1, const float value2 );
+template< typename T >
+const bool notEquals( const T value1, const T value2 )
+{
+	const T diff = fabs( value1 - value2 );
+
+	return diff > vgm::Epsilon<T>::value();
+}
 
 /**
- * @brief Equality comparison within tolerance
+ * @brief Returns true if value1 > value2 within tolerance
  */
-VGM_API const bool equals( const double value1, const double value2 );
+template< typename T >
+const bool greaterThan( const T value1, const T value2 )
+{
+	const double diff = value1 - value2;
+
+	return diff > vgm::Epsilon<T>::value();
+}
 
 /**
- * @brief Inequality comparison within tolerance
+ * @brief Returns true if value1 >= value2 within tolerance
  */
-VGM_API const bool notEquals( const double value1, const double value2 );
+template< typename T >
+const bool greaterThanEqual( const T value1, const T value2 )
+{
+	return greaterThan( value1, value2 ) || equals( value1, value2 );
+}
+
 
 //@}
 
