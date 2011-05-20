@@ -817,11 +817,12 @@ const bool Canvas::startVGSDK()
 		else
 		{
 			// Checks full mode
-			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 3.0, GLSL version >= 1.3)...");
+			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 3.3, GLSL version >= 3.3)...");
 			vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 			vgLogMessage3("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
 
-			if (	(gleGetOpenGLVersion() >= 3.f) && (gleGetGLSLVersion() >= 1.3f ) )
+			if (	vgm::greaterThanEqual(gleGetOpenGLVersion(), 3.3f) &&
+					vgm::greaterThanEqual(gleGetGLSLVersion(), 3.3f) )
 			{
 				vgLogMessage("You have the full requirements for vgsdk.");
 				m_hasVGSDK = true;
