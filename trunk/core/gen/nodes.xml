@@ -293,7 +293,10 @@
 					<value name="SHADOW_OFF"			doc="Shadows are not computed"/>
 					<value name="SHADOW_MAPPING"		doc="Shadows are computed using shadow mapping algorithm"/>
 					<value name="SHADOW_MAPPING_4U"		doc="Four uniform samples"/>
+					<value name="SHADOW_MAPPING_4UM"	doc="Four uniform samples"/>
 					<value name="SHADOW_MAPPING_4DM"	doc="Four dithered samples"/>
+					<value name="SHADOW_MAPPING_9U"		doc="Nine uniform samples"/>
+					<value name="SHADOW_MAPPING_9UM"	doc="Nine unifrom samples"/>
 					<value name="SHADOW_MAPPING_16U"	doc="Sixteen uniform samples"/>
 					<value name="SHADOW_MAPPING_16UM"	doc="Sixteen unifrom samples"/>
 					<value name="SHADOW_MAPPING_32U"	doc="Thirty two uniform samples"/>
@@ -309,7 +312,7 @@
 			<type name="float" default="1.0"/>
 		</sf>
 		
-		<of name="shadowQuality" doc="Specifies the quality of the shadow computation">
+		<of name="shadowMapSize" doc="Specifies the size of the shadow map">
 			<type name="enum">
 				<enum default="MEDIUM">
 					<value name="LOW"		doc="Low resolution shadow map"/>

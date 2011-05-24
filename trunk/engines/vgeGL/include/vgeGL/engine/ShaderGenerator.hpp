@@ -255,27 +255,57 @@ struct GLSLHelpers
 
 
 
-	static const std::string generate_shadowFactorComputation( const vgd::node::LightModel::ShadowValueType shadowType, const float samplingSize )
+	static const std::string generate_fcomputeShadowFactor( const GLSLState& state, const vgd::node::LightModel::ShadowValueType shadowType, const float samplingSize )
 	{
-		std::string retVal = "const float samplingSize = " + boost::lexical_cast<std::string>( samplingSize ) + ";\n";
+		using vgd::node::LightModel;
 
-		using vgd::node::LightModel;		
+		const std::string flookupShadowMap =	"float lookupShadowMap( sampler2DShadow map, vec2 mapSize, vec4 texCoord, vec2 offset )\n"
+												"{\n"
+												"	vec4 texCoordOffset = vec4(texCoord.xy + (offset / mapSize * texCoord.w), texCoord.z, texCoord.w );\n"
+												"	return textureProj( map, texCoordOffset );\n"
+												"}\n\n";
+
+		std::string retVal =	"float computeShadowFactor( sampler2DShadow texMap, vec4 texCoord )\n"
+								"{\n"
+								"	float shadowFactor;\n";
+
+		// mapSize
+		retVal +=				"	vec2 mapSize = vec2( textureSize( texMap, 0) );\n";
+
+		// samplingSize
+		retVal += 				"	const float samplingSize = " + boost::lexical_cast<std::string>( samplingSize ) + ";\n";
+
+		//
+		retVal +=				"// Computes shadow factor\n";
+
 		if ( shadowType == LightModel::SHADOW_OFF )
 		{
-			retVal =	"shadowFactor = 0.0;\n";
+			retVal += 	"shadowFactor = 0.0;\n";
 		}
 		else if ( shadowType ==LightModel::SHADOW_MAPPING )
 		{
 			// 1X
-			retVal =	"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(0,0) );\n";
+			retVal +=	"shadowFactor = lookupShadowMap( texMap, mapSize, texCoord, vec2(0,0) );\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_4U )
 		{
 			// 4X uniform
-			retVal +=	"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(-0.5, -0.5) * samplingSize );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, -0.5) * samplingSize );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(-0.5, 0.5) * samplingSize );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, 0.5) * samplingSize );\n"
+			retVal +=	"shadowFactor = lookupShadowMap( texMap, mapSize, texCoord, vec2(-0.5, -0.5) * samplingSize );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, -0.5) * samplingSize );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, 0.5) * samplingSize );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(-0.5, 0.5) * samplingSize );\n"
+						"shadowFactor *= 0.25;\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_4UM )
+		{
+			// 4X uniform
+			// with modulo
+			retVal +=	"// use modulo to vary the sample pattern\n"
+						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"shadowFactor = lookupShadowMap( texMap, mapSize, texCoord, vec2(-0.5, -0.5) * samplingSize + o );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, -0.5) * samplingSize + o );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, 0.5) * samplingSize + o );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(-0.5, 0.5) * samplingSize + o );\n"
 						"shadowFactor *= 0.25;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_4DM )
@@ -284,11 +314,34 @@ struct GLSLHelpers
 			// with modulo
 			retVal +=	"// use modulo to vary the sample pattern\n"
 						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"shadowFactor = lookupShadowMap( texMapShadow, texCoordShadow, vec2(-1.5, 1.5) * samplingSize  + o );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, 1.5) * samplingSize  + o );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(-1.5, -0.5) * samplingSize  + o );\n"
-						"shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(0.5, -0.5) * samplingSize  + o );\n"
+						"shadowFactor = lookupShadowMap( texMap, mapSize, texCoord, vec2(-1.5, 1.5) * samplingSize  + o );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, 1.5) * samplingSize  + o );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(-1.5, -0.5) * samplingSize  + o );\n"
+						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, -0.5) * samplingSize  + o );\n"
 						"shadowFactor *= 0.25;\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_9U )
+		{
+			// 9X uniform
+			retVal +=	"shadowFactor = 0.0;\n"
+						"float x, y;\n"
+						"for( y = -1; y <= 1; y += 1.0 )\n"
+						"	for( x = -1; x <= 1; x += 1.0 )\n"
+						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
+						"shadowFactor /= 9.0;\n";
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_9UM )
+		{
+			// 9X uniform
+			// with modulo
+			retVal +=	"// use modulo to vary the sample pattern\n"
+						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"shadowFactor = 0.0;\n"
+						"float x, y;\n"
+						"for( y = -1; y <= 1; y += 1.0 )\n"
+						"	for( x = -1; x <= 1; x += 1.0 )\n"
+						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize + o );\n"
+						"shadowFactor /= 9.0;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_16U )
 		{
@@ -297,7 +350,7 @@ struct GLSLHelpers
 						"float x, y;\n"
 						"for( y = -1.5; y <= 1.5; y += 1.0 )\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 )\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize );\n"
+						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
 						"shadowFactor /= 16.0;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_16UM )
@@ -310,7 +363,7 @@ struct GLSLHelpers
 						"float x, y;\n"
 						"for( y = -1.5; y <= 1.5; y += 1.0 )\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 )\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize  + o);\n"
+						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize  + o);\n"
 						"shadowFactor /= 16.0;\n";
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_32U )
@@ -323,7 +376,7 @@ struct GLSLHelpers
 						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
 						"	{\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize );\n"
+						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
 						"		count++;\n"
 						"	}\n"
 						"shadowFactor /= count;\n";
@@ -341,7 +394,7 @@ struct GLSLHelpers
 						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
 						"	{\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize + o );\n"
+						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize + o );\n"
 						"		count++;\n"
 						"	}\n"						
 						"shadowFactor /= count;\n";
@@ -356,7 +409,7 @@ struct GLSLHelpers
 						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
 						"	{\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize );\n"
+						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
 						"		count++;\n"
 						"	}\n"						
 						"shadowFactor /= count;\n";
@@ -374,18 +427,27 @@ struct GLSLHelpers
 						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
 						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
 						"	{\n"
-						"		shadowFactor += lookupShadowMap( texMapShadow, texCoordShadow, vec2(x, y) * samplingSize + o );\n"
+						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize + o );\n"
 						"		count++;\n"
 						"	}\n"						
 						"shadowFactor /= count;\n";
 		}		
 		else
 		{
-			assert( false && "Unexpected value." );
+			vgAssertN( false, "Unexpected value." );
 			retVal =	"shadowFactor = 0.0;\n";
 		}
 
-		return retVal;
+		retVal +=				"//\n";
+
+		// illuminationInShadow
+		const float illuminationInShadow = state.getIlluminationInShadow();
+		retVal +=		"	const float illuminationInShadow = " + boost::lexical_cast<std::string>(illuminationInShadow) + ";\n"; // @todo should be a uniform param
+		retVal += 		"	shadowFactor = max( illuminationInShadow, shadowFactor);\n"
+						"	return shadowFactor;\n"
+						"}\n\n";
+
+		return flookupShadowMap + retVal;
 	}
 
 	// @todo removes /*&*/
@@ -395,7 +457,7 @@ struct GLSLHelpers
 
 		static LightModel::ShadowValueType	shadowType		= LightModel::SHADOW_OFF;
 		static float						samplingSize	= 1.f;
-		static std::string					shadowString	= generate_shadowFactorComputation( LightModel::SHADOW_OFF, 1.f );
+		static std::string					shadowString	= generate_fcomputeShadowFactor( state, LightModel::SHADOW_OFF, 1.f );
 
 		static std::string					retValFront;
 		static std::string					retValBack;
@@ -408,7 +470,7 @@ struct GLSLHelpers
 		{
 			shadowType = incomingShadowType;
 			samplingSize = incomingSamplingSize;
-			shadowString = generate_shadowFactorComputation( shadowType, samplingSize );
+			shadowString = generate_fcomputeShadowFactor( state, shadowType, samplingSize );
 		}
 
 		//
@@ -447,7 +509,7 @@ struct GLSLHelpers
 			"	spotDot = dot(-VP, normalize(gl_LightSource[i].spotDirection));\n"
 
 			"	float cosOuterCone = cos( radians(gl_LightSource[i].spotCutoff) );\n"
-			"	float cosInnerCone = cos( radians(gl_LightSource[i].spotCutoff * 0.8) );" // @todo 0.5 must be a param
+			"	float cosInnerCone = cos( radians(gl_LightSource[i].spotCutoff * 0.8) );" // @todo 0.8 must be a param
 			"\n"
 			"	spotAttenuation = 1.0 - smoothstep( cosInnerCone, cosOuterCone, spotDot );\n"
 			"\n"
@@ -508,18 +570,13 @@ struct GLSLHelpers
 				"\n"
 				"void spotLightFrontShadow( int i, sampler2DShadow texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
 				"{\n"
-				"	float shadowFactor;\n";
+				"	float shadowFactor = computeShadowFactor( texMapShadow, texCoordShadow );\n";
 			}
 			else
 			{
-				spotLightFrontShadow =
-				"\n"
-				"void spotLightFrontShadow( int i, sampler2D texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
-				"{\n"
-				"	float shadowFactor;\n";
+				vgAssert( false );
 			}
 
-			spotLightFrontShadow += shadowString;
 			spotLightFrontShadow +=
 				"\n"
 				"	spotLightFront( i, ecPosition3, normal, eye, shadowFactor );\n"
@@ -533,11 +590,11 @@ struct GLSLHelpers
 		// @todo not always included shadow code
 		if ( useBackMaterial )
 		{
-			return retValBack + spotLightBackShadow;
+			return shadowString + retValBack + spotLightBackShadow;
 		}
 		else
 		{
-			return retValFront + spotLightFrontShadow;
+			return shadowString + retValFront + spotLightFrontShadow;
 		}
 	}
 
@@ -1025,7 +1082,7 @@ struct GLSLHelpers
 		}
 
 		// Updates code for lookupShadowMap()
-		if ( sampler2DShadowCount > 0 )
+		/*if ( sampler2DShadowCount > 0 )
 		{
 			if ( state.isShadowSamplerUsageEnabled() )
 			{
@@ -1042,9 +1099,9 @@ struct GLSLHelpers
 				"{\n";
 			}
 
-			const float illuminationInShadow = state.getIlluminationInShadow();
-			code += 
-			"	const float illuminationInShadow = " + boost::lexical_cast<std::string>(illuminationInShadow) + ";\n"; // @todo should be a uniform param
+//			const float illuminationInShadow = state.getIlluminationInShadow();
+//			code += 
+//			"	const float illuminationInShadow = " + boost::lexical_cast<std::string>(illuminationInShadow) + ";\n"; // @todo should be a uniform param
 
 			if ( isGL_VERSION_3_0() )
 			{
@@ -1075,10 +1132,12 @@ struct GLSLHelpers
 				code +=
 				"\n"
 				"	vec4 newCoord = vec4(coord.xy + (offset / mapSize * coord.w), coord.z, coord.w );\n"
+//				"	float depth = shadow2DProj( map, newCoord ).r;\n"
 				"	float depth = textureProj( map, newCoord );\n"
 				"\n"
 //				"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
-				"	return max( illuminationInShadow, depth);\n"
+//				"	return max( illuminationInShadow, depth);\n"
+				"	return depth;\n"
 				"}\n"
 				"\n";
 			}
@@ -1113,13 +1172,13 @@ struct GLSLHelpers
 				"}\n"
 				"\n";
 	//
-	/*			"	float depth = shadow2DProj( map, newCoord ).r;\n"
-				"\n"
-				"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
-				"}\n"
-				"\n";*/
+	//			"	float depth = shadow2DProj( map, newCoord ).r;\n"
+	//			"\n"
+	//			"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
+	//			"}\n"
+	//			"\n";
 			}
-		}
+		}*/
 		// @todo FIXME remove me 
 		/*else
 		{
@@ -1143,7 +1202,7 @@ struct GLSLHelpers
 			}
 		}*/
 
-		return std::make_pair(decl, code);
+		return std::make_pair(decl, ""/*code*/);
 	}
 
 

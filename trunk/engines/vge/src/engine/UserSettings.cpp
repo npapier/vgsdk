@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #include "vge/engine/UserSettings.hpp"
 
@@ -79,7 +80,7 @@ void UserSettings::apply( vge::engine::SceneManager & sm ) const
 
 	// Skips when no light model node has been found.
 	vgd::Shp< vgd::node::LightModel >	lightModel = sm.findFirstByType< vgd::node::LightModel >();
-	
+
 	if( !lightModel )
 	{
 		return;
@@ -87,20 +88,24 @@ void UserSettings::apply( vge::engine::SceneManager & sm ) const
 
 
 	// Moves to the right sub-tree.
-	bpt::ptree::const_iterator	i = m_levels.begin();
-	std::advance( i, m_level );
+	bpt::ptree::const_iterator i = m_levels.begin();
 
-	assert( i != m_levels.end() );
+	if ( m_level < m_levels.size() )
+	{
+		std::advance( i, m_level );
+	}
 
 	// Gathers definitions from selected level and apply them.
 	using namespace vgd::node;
 
-	const LightModel::ShadowValueType			shadow( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow") );
-	const LightModel::ShadowQualityValueType	shadowQuality( getTreeAttributeAsEnum< LightModel::ShadowQualityValueType >(i->second, "shadowQuality") );
-	const LightModel::ShadowMapTypeValueType	shadowMapType( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType") );
+	const LightModel::ShadowValueType			shadow			( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow")					);
+	const LightModel::ShadowFilteringValueType	shadowFiltering	( getTreeAttributeAsEnum< LightModel::ShadowFilteringValueType >(i->second, "shadowFiltering")	);
+	const LightModel::ShadowMapSizeValueType	shadowMapSize	( getTreeAttributeAsEnum< LightModel::ShadowMapSizeValueType >(i->second, "shadowMapSize")		);
+	const LightModel::ShadowMapTypeValueType	shadowMapType	( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType")		);
 
 	if( shadow.isValid() )			lightModel->setShadow( shadow );
-	if( shadowQuality.isValid() )	lightModel->setShadowQuality( shadowQuality );
+	if( shadowFiltering.isValid() )	lightModel->setShadowFiltering( shadowFiltering );
+	if( shadowMapSize.isValid() )	lightModel->setShadowMapSize( shadowMapSize );
 	if( shadowMapType.isValid() )	lightModel->setShadowMapType( shadowMapType );
 }
 
@@ -111,7 +116,7 @@ const std::string UserSettings::getName( const unsigned int level ) const
 	namespace bpt = boost::property_tree;
 
 	bpt::ptree::const_iterator	i = m_levels.begin();
-	
+
 	// Moves to the appropriate node and if one, gets the description.
 	std::advance( i, level );
 	if( i != m_levels.end() )
@@ -231,7 +236,7 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 {
 	// Gathers the light model node.
 	vgd::Shp< vgd::node::LightModel >	lightModel = sm.findFirstByType< vgd::node::LightModel >();
-	
+
 	if( !lightModel )
 	{
 		setLevel( -1 );
@@ -242,32 +247,35 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 	// Gathers node settings.
 	using vgd::node::LightModel;
 
-	LightModel::ShadowValueType			nodeShadow;
-	LightModel::ShadowQualityValueType	nodeShadowQuality;
-	LightModel::ShadowMapTypeValueType	nodeShadowMapType;
+	LightModel::ShadowValueType				nodeShadow;
+	LightModel::ShadowFilteringValueType	nodeShadowFiltering;
+	LightModel::ShadowMapSizeValueType		nodeShadowMapSize;
+	LightModel::ShadowMapTypeValueType		nodeShadowMapType;
 
 	lightModel->getShadow( nodeShadow );
-	lightModel->getShadowQuality( nodeShadowQuality );
+	lightModel->getShadowFiltering( nodeShadowFiltering );
+	lightModel->getShadowMapSize( nodeShadowMapSize );
 	nodeShadowMapType = lightModel->getShadowMapType();
 
-	
+
 	// Walks through levels.
 	namespace bpt = boost::property_tree;
 
 	for( bpt::ptree::const_iterator	i = m_levels.begin(); i != m_levels.end(); ++i )
 	{
-		// Gathers current level settings.
-		const LightModel::ShadowValueType			levelShadow( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow") );
-		const LightModel::ShadowQualityValueType	levelShadowQuality( getTreeAttributeAsEnum< LightModel::ShadowQualityValueType >(i->second, "shadowQuality") );
-		const LightModel::ShadowMapTypeValueType	levelShadowMapType( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType") );
+		const LightModel::ShadowValueType			levelShadow				( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow")					);
+		const LightModel::ShadowFilteringValueType	levelShadowFiltering	( getTreeAttributeAsEnum< LightModel::ShadowFilteringValueType >(i->second, "shadowFiltering")	);
+		const LightModel::ShadowMapSizeValueType	levelShadowMapSize		( getTreeAttributeAsEnum< LightModel::ShadowMapSizeValueType >(i->second, "shadowMapSize")		);
+		const LightModel::ShadowMapTypeValueType	levelShadowMapType		( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType")		);
 
 
 		// Tests if the current level matches the light model settings.
 		bool	matches = true;
 
-		if( levelShadow.isValid() )			matches = matches && levelShadow == nodeShadow ;
-		if( levelShadowQuality.isValid() )	matches = matches && levelShadowQuality == nodeShadowQuality;
-		if( levelShadowMapType.isValid() )	matches = matches && levelShadowMapType == nodeShadowMapType;
+		if( levelShadow.isValid() )				matches = matches && levelShadow == nodeShadow ;
+		if( levelShadowFiltering.isValid() )	matches = matches && levelShadowFiltering == nodeShadowFiltering ;
+		if( levelShadowMapSize.isValid() )		matches = matches && levelShadowMapSize == nodeShadowMapSize;
+		if( levelShadowMapType.isValid() )		matches = matches && levelShadowMapType == nodeShadowMapType;
 
 
 		// If the current level is matching, assignes it.

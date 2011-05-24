@@ -86,13 +86,13 @@ void ClipPlane::paint( vgeGL::engine::Engine * engine, vgd::node::ClipPlane * no
 		{
 			glEnable( index );
 
-            // PLANE
-            vgd::node::ClipPlane::PlaneValueType planeValue = node->getPlane();
+			// PLANE
+			vgd::node::ClipPlane::PlaneValueType planeValue = node->getPlane();
 
-            vgm::Vec4d planeEquation( planeValue.getNormal() );
-            planeEquation[3] = planeValue.getDistanceFromOrigin();
+			vgm::Vec4d planeEquation( planeValue.getNormal() );
+			planeEquation[3] = planeValue.getDistanceFromOrigin();
 
-            glClipPlane( index, planeEquation.getValue() );
+			glClipPlane( index, planeEquation.getValue() );
 		}
 		else
 		{
