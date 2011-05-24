@@ -29,6 +29,9 @@ namespace node
  * This node specifies current lighting mode (off/standard per vertex lighting/standard per pixel lighting) and some options of the lighting model. 
  *
  * New fields defined by this node :
+ * - OFEnum \c [shadowMapSize] = MEDIUM<br>
+ *   Specifies the size of the shadow map<br>
+ *<br>
  * - OFEnum \c [shadowFiltering] = LINEAR<br>
  *   Defines depth map hardware filtering (not the filtering done in shaders).<br>
  *<br>
@@ -43,9 +46,6 @@ namespace node
  * - SFFloat \c samplingSize = 1.0<br>
  *<br>
  * - SFEnum \c option2 = CHOICE0<br>
- *<br>
- * - OFEnum \c [shadowQuality] = MEDIUM<br>
- *   Specifies the quality of the shadow computation<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
  *   Sets the ambient RGBA intensity of the entire scene.<br>
@@ -112,6 +112,97 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field shadowMapSize
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		HIGH = 297,	///< High resolution shadow map
+		VERY_HIGH = 298,	///< Very high resolution shadow map
+		MEDIUM = 296,	///< Medium resolution shadow map
+		LOW = 295,	///< Low resolution shadow map
+		DEFAULT_SHADOWMAPSIZE = MEDIUM	///< Medium resolution shadow map
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct ShadowMapSizeValueType : public vgd::field::Enum
+	{
+		ShadowMapSizeValueType()
+		{}
+
+		ShadowMapSizeValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ShadowMapSizeValueType( const ShadowMapSizeValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		ShadowMapSizeValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 295 );
+			retVal.push_back( 296 );
+			retVal.push_back( 297 );
+			retVal.push_back( 298 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "LOW" );
+			retVal.push_back( "MEDIUM" );
+			retVal.push_back( "HIGH" );
+			retVal.push_back( "VERY_HIGH" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c shadowMapSize
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FShadowMapSizeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c shadowMapSize.
+	 */
+	const bool getShadowMapSize( ShadowMapSizeValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c shadowMapSize.
+ 	 */
+	void setShadowMapSize( const ShadowMapSizeValueType& value );
+
+	/**
+	 * @brief Erases the field named \c shadowMapSize.
+	 */
+	void eraseShadowMapSize();
+
+	/**
+	 * @brief Tests if the value of field named \c shadowMapSize has been initialized.
+	 */
+	const bool hasShadowMapSize() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field shadowFiltering
 	 */
 	//@{
@@ -121,8 +212,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		NEAREST = 296,	///< 
-		LINEAR = 297,	///< 
+		NEAREST = 299,	///< 
+		LINEAR = 300,	///< 
 		DEFAULT_SHADOWFILTERING = LINEAR	///< 
 	};
 
@@ -150,8 +241,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 296 );
-			retVal.push_back( 297 );
+			retVal.push_back( 299 );
+			retVal.push_back( 300 );
 
 			return retVal;
 		}
@@ -458,97 +549,6 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	void setOption2( const Option2ValueType value );
 
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field shadowQuality
-	 */
-	//@{
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum  
-	{
-		HIGH = 294,	///< High resolution shadow map
-		VERY_HIGH = 295,	///< Very high resolution shadow map
-		MEDIUM = 293,	///< Medium resolution shadow map
-		LOW = 292,	///< Low resolution shadow map
-		DEFAULT_SHADOWQUALITY = MEDIUM	///< Medium resolution shadow map
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct ShadowQualityValueType : public vgd::field::Enum
-	{
-		ShadowQualityValueType()
-		{}
-
-		ShadowQualityValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		ShadowQualityValueType( const ShadowQualityValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		ShadowQualityValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 292 );
-			retVal.push_back( 293 );
-			retVal.push_back( 294 );
-			retVal.push_back( 295 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "LOW" );
-			retVal.push_back( "MEDIUM" );
-			retVal.push_back( "HIGH" );
-			retVal.push_back( "VERY_HIGH" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c shadowQuality
-	 */
-	typedef vgd::field::TOptionalField< vgd::field::Enum > FShadowQualityType;
-
-
-	/**
-	 * @brief Gets the value of field named \c shadowQuality.
-	 */
-	const bool getShadowQuality( ShadowQualityValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c shadowQuality.
- 	 */
-	void setShadowQuality( const ShadowQualityValueType& value );
-
-	/**
-	 * @brief Erases the field named \c shadowQuality.
-	 */
-	void eraseShadowQuality();
-
-	/**
-	 * @brief Tests if the value of field named \c shadowQuality has been initialized.
-	 */
-	const bool hasShadowQuality() const;
 	//@}
 
 
@@ -874,16 +874,19 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		SHADOW_MAPPING_16U = 286,	///< Sixteen uniform samples
+		SHADOW_MAPPING_4UM = 285,	///< Four uniform samples
 		SHADOW_MAPPING = 283,	///< Shadows are computed using shadow mapping algorithm
 		SHADOW_OFF = 282,	///< Shadows are not computed
-		SHADOW_MAPPING_16UM = 287,	///< Sixteen unifrom samples
-		SHADOW_MAPPING_64UM = 291,	///< Sixty four uniform samples
-		SHADOW_MAPPING_32UM = 289,	///< Thirty two uniform samples
+		SHADOW_MAPPING_9UM = 288,	///< Nine unifrom samples
+		SHADOW_MAPPING_9U = 287,	///< Nine uniform samples
 		SHADOW_MAPPING_4U = 284,	///< Four uniform samples
-		SHADOW_MAPPING_64U = 290,	///< Sixty four uniform samples
-		SHADOW_MAPPING_32U = 288,	///< Thirty two uniform samples
-		SHADOW_MAPPING_4DM = 285,	///< Four dithered samples
+		SHADOW_MAPPING_64UM = 294,	///< Sixty four uniform samples
+		SHADOW_MAPPING_16U = 289,	///< Sixteen uniform samples
+		SHADOW_MAPPING_32UM = 292,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4DM = 286,	///< Four dithered samples
+		SHADOW_MAPPING_64U = 293,	///< Sixty four uniform samples
+		SHADOW_MAPPING_32U = 291,	///< Thirty two uniform samples
+		SHADOW_MAPPING_16UM = 290,	///< Sixteen unifrom samples
 		DEFAULT_SHADOW = SHADOW_OFF	///< Shadows are not computed
 	};
 
@@ -921,6 +924,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 			retVal.push_back( 289 );
 			retVal.push_back( 290 );
 			retVal.push_back( 291 );
+			retVal.push_back( 292 );
+			retVal.push_back( 293 );
+			retVal.push_back( 294 );
 
 			return retVal;
 		}
@@ -932,7 +938,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 			retVal.push_back( "SHADOW_OFF" );
 			retVal.push_back( "SHADOW_MAPPING" );
 			retVal.push_back( "SHADOW_MAPPING_4U" );
+			retVal.push_back( "SHADOW_MAPPING_4UM" );
 			retVal.push_back( "SHADOW_MAPPING_4DM" );
+			retVal.push_back( "SHADOW_MAPPING_9U" );
+			retVal.push_back( "SHADOW_MAPPING_9UM" );
 			retVal.push_back( "SHADOW_MAPPING_16U" );
 			retVal.push_back( "SHADOW_MAPPING_16UM" );
 			retVal.push_back( "SHADOW_MAPPING_32U" );
@@ -1039,6 +1048,13 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	//@{
 
 	/**
+	 * @brief Returns the name of field \c shadowMapSize.
+	 *
+	 * @return the name of field \c shadowMapSize.
+	 */
+	static const std::string getFShadowMapSize( void );
+
+	/**
 	 * @brief Returns the name of field \c shadowFiltering.
 	 *
 	 * @return the name of field \c shadowFiltering.
@@ -1079,13 +1095,6 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c option2.
 	 */
 	static const std::string getFOption2( void );
-
-	/**
-	 * @brief Returns the name of field \c shadowQuality.
-	 *
-	 * @return the name of field \c shadowQuality.
-	 */
-	static const std::string getFShadowQuality( void );
 
 	/**
 	 * @brief Returns the name of field \c ambient.

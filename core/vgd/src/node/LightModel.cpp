@@ -63,13 +63,13 @@ LightModel::LightModel( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FShadowMapSizeType(getFShadowMapSize()) );
 	addField( new FShadowFilteringType(getFShadowFiltering()) );
 	addField( new FShadowMapTypeType(getFShadowMapType()) );
 	addField( new FIlluminationInShadowType(getFIlluminationInShadow()) );
 	addField( new FTwoSidedType(getFTwoSided()) );
 	addField( new FSamplingSizeType(getFSamplingSize()) );
 	addField( new FOption2Type(getFOption2()) );
-	addField( new FShadowQualityType(getFShadowQuality()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FViewerType(getFViewer()) );
 	addField( new FUseShadowSamplersType(getFUseShadowSamplers()) );
@@ -105,14 +105,42 @@ void LightModel::setToDefaults( void )
 void LightModel::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setShadowMapSize( MEDIUM );
 	setShadowFiltering( LINEAR );
 	setTwoSided( false );
-	setShadowQuality( MEDIUM );
 	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setViewer( AT_INFINITY );
 	setUseShadowSamplers( true );
 	setModel( STANDARD_PER_VERTEX );
 	setShadow( SHADOW_OFF );
+}
+
+
+
+// ShadowMapSize
+const bool LightModel::getShadowMapSize( ShadowMapSizeValueType& value ) const
+{
+	return getFieldRO<FShadowMapSizeType>(getFShadowMapSize())->getValue( value );
+}
+
+
+
+void LightModel::setShadowMapSize( const ShadowMapSizeValueType& value )
+{
+	getFieldRW<FShadowMapSizeType>(getFShadowMapSize())->setValue( value );
+}
+
+
+
+void LightModel::eraseShadowMapSize()
+{
+	getFieldRW<FShadowMapSizeType>(getFShadowMapSize())->eraseValue();
+}
+
+
+const bool LightModel::hasShadowMapSize() const
+{
+	return getFieldRO<FShadowMapSizeType>(getFShadowMapSize())->hasValue();
 }
 
 
@@ -229,34 +257,6 @@ const LightModel::Option2ValueType LightModel::getOption2() const
 void LightModel::setOption2( const Option2ValueType value )
 {
 	getFieldRW<FOption2Type>(getFOption2())->setValue( value );
-}
-
-
-
-// ShadowQuality
-const bool LightModel::getShadowQuality( ShadowQualityValueType& value ) const
-{
-	return getFieldRO<FShadowQualityType>(getFShadowQuality())->getValue( value );
-}
-
-
-
-void LightModel::setShadowQuality( const ShadowQualityValueType& value )
-{
-	getFieldRW<FShadowQualityType>(getFShadowQuality())->setValue( value );
-}
-
-
-
-void LightModel::eraseShadowQuality()
-{
-	getFieldRW<FShadowQualityType>(getFShadowQuality())->eraseValue();
-}
-
-
-const bool LightModel::hasShadowQuality() const
-{
-	return getFieldRO<FShadowQualityType>(getFShadowQuality())->hasValue();
 }
 
 
@@ -462,6 +462,13 @@ void LightModel::setOption1( const Option1ValueType value )
 
 
 // Field name accessor(s)
+const std::string LightModel::getFShadowMapSize( void )
+{
+	return "f_shadowMapSize";
+}
+
+
+
 const std::string LightModel::getFShadowFiltering( void )
 {
 	return "f_shadowFiltering";
@@ -500,13 +507,6 @@ const std::string LightModel::getFSamplingSize( void )
 const std::string LightModel::getFOption2( void )
 {
 	return "f_option2";
-}
-
-
-
-const std::string LightModel::getFShadowQuality( void )
-{
-	return "f_shadowQuality";
 }
 
 

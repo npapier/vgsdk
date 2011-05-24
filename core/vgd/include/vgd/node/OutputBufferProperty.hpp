@@ -90,12 +90,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		LINEAR_DEPTH = 309,	///< @todo
-		NORMAL = 306,	///< @todo
-		COLOR = 305,	///< @todo
-		CUSTOM = 310,	///< @todo
-		DEPTH = 308,	///< @todo
-		POSITION = 307,	///< @todo
+		LINEAR_DEPTH = 312,	///< @todo
+		NORMAL = 309,	///< @todo
+		COLOR = 308,	///< @todo
+		CUSTOM = 313,	///< @todo
+		DEPTH = 311,	///< @todo
+		POSITION = 310,	///< @todo
 		DEFAULT_COMMAND = COLOR	///< @todo
 	};
 
@@ -123,12 +123,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 305 );
-			retVal.push_back( 306 );
-			retVal.push_back( 307 );
 			retVal.push_back( 308 );
 			retVal.push_back( 309 );
 			retVal.push_back( 310 );
+			retVal.push_back( 311 );
+			retVal.push_back( 312 );
+			retVal.push_back( 313 );
 
 			return retVal;
 		}
@@ -178,9 +178,9 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		FLOAT16 = 303,	///< @todo
-		INTEGER = 302,	///< @todo
-		FLOAT32 = 304,	///< @todo
+		FLOAT16 = 306,	///< @todo
+		INTEGER = 305,	///< @todo
+		FLOAT32 = 307,	///< @todo
 		DEFAULT_TYPE = INTEGER	///< @todo
 	};
 
@@ -208,9 +208,9 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 302 );
-			retVal.push_back( 303 );
-			retVal.push_back( 304 );
+			retVal.push_back( 305 );
+			retVal.push_back( 306 );
+			retVal.push_back( 307 );
 
 			return retVal;
 		}
@@ -287,10 +287,10 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		LUMINANCE_ALPHA = 301,	///< @todo
-		RGB = 298,	///< @todo
-		LUMINANCE = 300,	///< @todo
-		RGBA = 299,	///< @todo
+		LUMINANCE_ALPHA = 304,	///< @todo
+		RGB = 301,	///< @todo
+		LUMINANCE = 303,	///< @todo
+		RGBA = 302,	///< @todo
 		DEFAULT_FORMAT = RGB	///< @todo
 	};
 
@@ -318,10 +318,10 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 298 );
-			retVal.push_back( 299 );
-			retVal.push_back( 300 );
 			retVal.push_back( 301 );
+			retVal.push_back( 302 );
+			retVal.push_back( 303 );
+			retVal.push_back( 304 );
 
 			return retVal;
 		}

@@ -301,28 +301,28 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 
 	// Computes shadow map size
 	vgm::Vec2i drawingSurface = engine->getDrawingSurfaceSize();
-	LightModel::ShadowQualityValueType shadowQuality = engine->getOFEnum< LightModel >( LightModel::getFShadowQuality() );
-	if ( shadowQuality == LightModel::LOW )
+	LightModel::ShadowMapSizeValueType shadowMapSize = engine->getOFEnum< LightModel >( LightModel::getFShadowMapSize() );
+	if ( shadowMapSize == LightModel::LOW )
 	{
 		drawingSurface /= 2;
 		drawingSurface = vgm::nextPower2(drawingSurface);
 	}
-	else if ( shadowQuality == LightModel::MEDIUM )
+	else if ( shadowMapSize == LightModel::MEDIUM )
 	{
 		// nothing to do
 	}
-	else if ( shadowQuality == LightModel::HIGH )
+	else if ( shadowMapSize == LightModel::HIGH )
 	{
 		drawingSurface = vgm::nextPower2(drawingSurface);
 	}
-	else if ( shadowQuality == LightModel::VERY_HIGH )
+	else if ( shadowMapSize == LightModel::VERY_HIGH )
 	{
-		drawingSurface = vgm::nextPower2(drawingSurface);
 		drawingSurface *= 2;
+		drawingSurface = vgm::nextPower2(drawingSurface);
 	}
 	else
 	{
-		vgAssertN( false, "Unexpected LightModel.shadowQuality" );
+		vgAssertN( false, "Unexpected LightModel.shadowMapSize" );
 	}
 
 	// Takes care of the maximum viewport size
