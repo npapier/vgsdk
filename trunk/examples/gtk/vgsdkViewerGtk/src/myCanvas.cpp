@@ -13,6 +13,7 @@
 #include <vgAlg/actions/Decrypt.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/basic/Image.hpp>
+#include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
 #include <vgd/node/MultiSwitch.hpp>
@@ -55,7 +56,6 @@ myCanvas::myCanvas()
 	createOptionalNode( CLEAR_FRAME_BUFFER );
 	createOptionalNode( DRAW_STYLE );
 
-
 	using vgd::node::LightModel;
 	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( createOptionalNode( LIGHT_MODEL ) );
 	lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
@@ -64,29 +64,13 @@ myCanvas::myCanvas()
 
 	// SHADOW configuration
 
-	// no shadow
-	/*lightModel->setShadow( LightModel::SHADOW_OFF );*/
-
-	// basic shadow (compatible with OpenGL 2.x, i.e. NVidia/GeForce 7).
-	/*lightModel->setShadow( LightModel::SHADOW_MAPPING_4DM );
-	lightModel->setShadowQuality( LightModel::MEDIUM );
+	/*lightModel->setShadowFiltering( LightModel::LINEAR );
+	lightModel->setShadow( LightModel::SHADOW_MAPPING_9U );
+	lightModel->setShadowMapSize( LightModel::MEDIUM );
 	lightModel->setShadowMapType( LightModel::INT32 );
-	lightModel->setIlluminationInShadow( 0.4f );*/
-
-	// GeForce 8
-	lightModel->setShadow( LightModel::SHADOW_MAPPING_16UM );
-	lightModel->setShadowQuality( LightModel::MEDIUM );
-	lightModel->setShadowMapType( LightModel::INT32 );
-	lightModel->setIlluminationInShadow( 0.4f );
-
-	// Radeon 5870
-/*	lightModel->setShadow( LightModel::SHADOW_MAPPING_32UM );
-	lightModel->setShadowQuality( LightModel::HIGH );
-	lightModel->setShadowMapType( LightModel::INT32 ); // FLOAT ?
 	lightModel->setIlluminationInShadow( 0.4f );*/
 
 	// END SHADOW configuration
-
 
 	// Get the reference of the default technique
 	m_viewModeTechniques.resize( VIEW_MODE_COUNT );
