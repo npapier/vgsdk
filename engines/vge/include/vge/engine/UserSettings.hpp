@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #ifndef _VGE_ENGINE_USERSETTINGS_HPP_
 #define _VGE_ENGINE_USERSETTINGS_HPP_
@@ -36,11 +37,6 @@ struct VGE_API UserSettings
 	 * @brief	Constructor
 	 */
 	UserSettings();
-	
-	/**
-	 * @brief	Constructor
-	 */
-	UserSettings( const UserSettings & );
 
 	/**
 	 * @brief	Constructor
@@ -118,8 +114,6 @@ struct VGE_API UserSettings
 	 * @brief	Assigns a graphic card that will be used to determine the appropriate defailt level
 	 */
 	void setGraphicCard( const std::string & card );
-
-	const UserSettings & operator=( const UserSettings & );
 
 private:
 

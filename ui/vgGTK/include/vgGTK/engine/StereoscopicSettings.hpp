@@ -1,0 +1,69 @@
+// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// Distributed under the terms of the GNU Library General Public License (LGPL)
+// as published by the Free Software Foundation.
+// Author Nicolas Papier
+
+#ifndef _VGGTK_ENGINE_STEREOSCOPICSETTINGS_HPP_
+#define _VGGTK_ENGINE_STEREOSCOPICSETTINGS_HPP_
+
+#include <gtkmm.h>
+
+#include <vge/engine/StereoscopicSettings.hpp>
+#include "vgGTK/vgGTK.hpp"
+
+#include "vgGTK/Container.hpp"
+
+
+
+namespace vgGTK
+{
+
+namespace engine
+{
+
+
+
+/**
+ * @brief	A widget that allows to configure stereoscopic settings.
+ */
+struct VGGTK_API StereoscopicSettings : public Gtk::VBox, public vgGTK::ContainerElement
+{
+	/**
+	 * @brief	Constructor
+	 */
+	StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicSettings > settings );
+
+	/**
+	 * @brief	Retrieves the user settings.
+	 */
+	const vgd::Shp< vge::engine::StereoscopicSettings > get() const;
+
+
+private:
+
+	//
+	vgd::Shp< vge::engine::StereoscopicSettings > m_settings;	///< The settings to configure.
+
+	// EYE SEPARATION
+	Gtk::Label					m_eyeSeparationLabel;			///< The label for eye separation
+	Gtk::HScale					m_eyeSeparation;				///< The slider to choose the eye separation.
+
+	/**
+	 * @name	Signal Handlers
+	 */
+	//@{
+	void onEyeSeparationChanged();		///< Handles eye separation changes.
+	//@}
+
+	void refresh();
+};
+
+
+
+} // namespace engine
+
+} // namespace vgGTK
+
+
+
+#endif // _VGGTK_ENGINE_STEREOSCOPICSETTINGS_HPP_
