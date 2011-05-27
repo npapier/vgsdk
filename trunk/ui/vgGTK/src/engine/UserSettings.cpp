@@ -1,19 +1,13 @@
-// VGSDK - Copyright (C) 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #include "vgGTK/engine/UserSettings.hpp"
 
-#include <gtkmm/alignment.h>
-#include <gtkmm/dialog.h>
-#include <gtkmm/label.h>
-#include <gtkmm/listviewtext.h>
-#include <gtkmm/scrolledwindow.h>
-#include <gtkmm/stock.h>
-
+#include <vge/engine/UserSettings.hpp>
 #include <vgUI/helpers.hpp>
-
 
 
 namespace vgGTK
@@ -24,7 +18,8 @@ namespace engine
 
 
 
-UserSettings::UserSettings()
+UserSettings::UserSettings( vgd::Shp< vge::engine::UserSettings > settings )
+:	m_settings( settings ? settings : vgd::makeShp(new vge::engine::UserSettings() ) )
 {
 	Gtk::Label	* label		= Gtk::manage( new Gtk::Label() );
 	Gtk::HBox	* levelBox	= Gtk::manage( new Gtk::HBox() );
@@ -57,35 +52,32 @@ UserSettings::UserSettings()
 
 
 	// Fills the combo with available levels.
-	const int	levelCount = m_settings.getLevelCount();
+	const int	levelCount = m_settings->getLevelCount();
 
 	for( int i = 0; i != levelCount; ++i )
 	{
-		m_levelCombo.append_text( m_settings.getName(i) );
+		m_levelCombo.append_text( m_settings->getName(i) );
 	}
+
+	//
+	refreshLevel();
+	signalChanged().emit();
 }
 
 
 
-const vge::engine::UserSettings & UserSettings::get() const
+const vgd::Shp< vge::engine::UserSettings > UserSettings::get() const
 {
 	return m_settings;
 }
 
 
 
-sigc::signal< void > & UserSettings::signalChanged()
-{
-	return m_signalChanged;
-}
-
-
-
-void UserSettings::set( const vge::engine::UserSettings & settings )
+void UserSettings::set( const vgd::Shp< vge::engine::UserSettings > settings )
 {
 	m_settings = settings;
 	refreshLevel();
-	m_signalChanged.emit();
+	signalChanged().emit();
 }
 
 
@@ -96,9 +88,9 @@ void UserSettings::onLevelChanged()
 
 	if( level >= 0 )
 	{
-		m_settings.setLevel( level );
-		m_description.set_markup( vgUI::compose("<i>%1%</i>", m_settings.getDescription(level)) );
-		m_signalChanged.emit();
+		m_settings->setLevel( level );
+		m_description.set_markup( vgUI::compose("<i>%1%</i>", m_settings->getDescription(level)) );
+		signalChanged().emit();
 	}
 	else
 	{
@@ -148,7 +140,7 @@ void UserSettings::onSelectCardClicked()
 
 	// Fills the list with available graphic cards.
 	typedef std::vector< std::string >	StringVector;
-	const StringVector					cards = m_settings.getGraphicCards< StringVector >();
+	const StringVector					cards = m_settings->getGraphicCards< StringVector >();
 
 	for( StringVector::const_iterator i = cards.begin(); i != cards.end(); ++i )
 	{
@@ -163,9 +155,9 @@ void UserSettings::onSelectCardClicked()
 
 		if( selection.size() == 1 )
 		{
-			m_settings.setGraphicCard( list.get_text(selection.front()) );
+			m_settings->setGraphicCard( list.get_text(selection.front()) );
 			refreshLevel();
-			m_signalChanged.emit();
+			signalChanged().emit();
 		}
 	}
 }
@@ -174,7 +166,7 @@ void UserSettings::onSelectCardClicked()
 
 void UserSettings::refreshLevel()
 {
-	const int	level	= m_settings.getLevel();
+	const int	level	= m_settings->getLevel();
 
 	m_levelCombo.set_active( level );
 }

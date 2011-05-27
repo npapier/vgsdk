@@ -1,17 +1,18 @@
-// VGSDK - Copyright (C) 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #ifndef _VGGTK_ENGINE_USERSETTINGS_HPP_
 #define _VGGTK_ENGINE_USERSETTINGS_HPP_
 
-#include <gtkmm/box.h>
-#include <gtkmm/comboboxtext.h>
+#include <gtkmm.h>
 
-#include <vge/engine/UserSettings.hpp>
+#include "vgGTK/Container.hpp"
 
-#include "vgGTK/vgGTK.hpp"
+namespace vge { namespace engine { struct UserSettings; } }
+
 
 
 namespace vgGTK
@@ -25,35 +26,36 @@ namespace engine
 /**
  * @brief	A widget that allows to configure high level settings.
  */
-struct VGGTK_API UserSettings : public Gtk::VBox
+struct VGGTK_API UserSettings : public Gtk::VBox, public vgGTK::ContainerElement
 {
 	/**
 	 * @brief	Constructor
 	 */
-	UserSettings();
+	UserSettings( vgd::Shp< vge::engine::UserSettings > settings = vgd::Shp< vge::engine::UserSettings >() );
+
+
 
 	/**
 	 * @brief	Retrieves the user settings.
 	 */
-	const vge::engine::UserSettings & get() const;
+	const vgd::Shp< vge::engine::UserSettings > get() const;
 	
 	/**
 	 * @brief	Set the user settings.
 	 */
-	void set( const vge::engine::UserSettings & );
+	void set( const vgd::Shp< vge::engine::UserSettings > settings );
 
 	/**
-	 * @brief	Signal emited when the settings changed.
+	 * @brief Refreshes the level selection widget.
 	 */
-	sigc::signal< void > & signalChanged();
+	void refreshLevel();
 
 private:
 
-	vge::engine::UserSettings	m_settings;			///< The settings to configure.
-	Gtk::ComboBoxText			m_levelCombo;		///< The scale use to select a level.
-	Gtk::Button					m_selectCard;		///< The button to select a graphic card.
-	Gtk::Label					m_description;		///< The label showing the selected level's description.
-	sigc::signal< void >		m_signalChanged;	///< The signal emited when on setting changes.
+	vgd::Shp< vge::engine::UserSettings >	m_settings;			///< The settings to configure.
+	Gtk::ComboBoxText						m_levelCombo;		///< The scale use to select a level.
+	Gtk::Button								m_selectCard;		///< The button to select a graphic card.
+	Gtk::Label								m_description;		///< The label showing the selected level's description.
 
 	/**
 	 * @name	Signal Handlers
@@ -61,13 +63,6 @@ private:
 	//@{
 	void onLevelChanged();		///< Handles level changes.
 	void onSelectCardClicked();	///< Handles clicks on the select card button.
-	//@}
-
-	/**
-	 * @name	Helpers
-	 */
-	//@{
-	void refreshLevel();	///< Refreshes the level selection widget.
 	//@}
 };
 

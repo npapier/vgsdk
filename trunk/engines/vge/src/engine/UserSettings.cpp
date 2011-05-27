@@ -49,15 +49,6 @@ UserSettings::UserSettings()
 
 
 
-UserSettings::UserSettings( const UserSettings & other )
-:	m_level( other.m_level ),
-	m_card( other.m_card )
-{
-	loadLevels();
-}
-
-
-
 UserSettings::UserSettings( const vge::engine::SceneManager & sm )
 :	m_level( -1 )
 {
@@ -287,19 +278,6 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 			break;
 		}
 	}
-}
-
-
-
-const UserSettings & UserSettings::operator=( const UserSettings & other )
-{
-	if( &other != this )
-	{
-		m_level = other.m_level;
-		m_card  = other.m_card;
-	}
-
-	return *this;
 }
 
 

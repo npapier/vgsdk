@@ -1,11 +1,10 @@
-// VGSDK - Copyright (C) 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #include "vgGTK/engine/UserSettingsDialog.hpp"
-
-#include <gtkmm/stock.h>
 
 
 
@@ -17,29 +16,37 @@ namespace engine
 
 
 
-UserSettingsDialog::UserSettingsDialog( Gtk::Window * toplevel, vge::engine::UserSettings settings )
-:	Gtk::Dialog( "Settings", *toplevel )
+UserSettingsDialog::UserSettingsDialog( Gtk::Window * toplevel, vgd::Shp< vge::engine::UserSettings > settings )
+:	Gtk::Dialog( "Render settings", *toplevel ),
+	m_userSettingsGUI( settings )
 {
-	m_userSettings.set_border_width( 12 );
-	m_userSettings.set( settings );
+	m_userSettingsGUI.set_border_width( 12 );
 
-	add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
-	add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-	get_vbox()->add( m_userSettings );
+	//add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+	//add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+
+	get_vbox()->add( m_userSettingsGUI );
 }
 
 
 
-const vge::engine::UserSettings & UserSettingsDialog::get() const
+vgGTK::engine::UserSettings& UserSettingsDialog::getGUI()
 {
-	return m_userSettings.get();
+	return m_userSettingsGUI;
 }
 
 
 
-void UserSettingsDialog::set( vge::engine::UserSettings & settings )
+const vgd::Shp< vge::engine::UserSettings > UserSettingsDialog::get() const
 {
-	m_userSettings.set( settings );
+	return m_userSettingsGUI.get();
+}
+
+
+
+void UserSettingsDialog::set( vgd::Shp< vge::engine::UserSettings > settings )
+{
+	m_userSettingsGUI.set( settings );
 }
 
 
