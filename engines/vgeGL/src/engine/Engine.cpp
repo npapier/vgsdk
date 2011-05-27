@@ -89,6 +89,8 @@ void Engine::reset()
 	setVertexBufferObjectEnabled();
 	setDepthPrePassEnabled();
 
+	setShadowSamplerUsageEnabled( true );
+	/*
 	switch ( driverProvider )
 	{
 		case gle::OpenGLExtensions::NVIDIA_DRIVERS:
@@ -105,7 +107,7 @@ void Engine::reset()
 		default:
 			vgLogMessage("Engine: Disabled usage of shadow samplers on UNKNOWN GPU.");
 			setShadowSamplerUsageEnabled( false );
-	}
+	}*/
 
 	setShadowEnabled();
 
