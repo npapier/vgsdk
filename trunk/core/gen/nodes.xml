@@ -342,10 +342,6 @@
 			<type name="Vec2f" namespace="vgm" default="4.f, 16.f"></type>
 		</sf>
 
-		<of name="useShadowSamplers" doc="True to use GLSL shadowSampler, false to use traditionnal texture sampler.">
-			<type name="bool" default="true"/>
-		</of>
-
 		<of name="shadowFiltering" doc="Defines depth map hardware filtering (not the filtering done in shaders).">
 			<type name="enum">
 				<enum default="LINEAR">

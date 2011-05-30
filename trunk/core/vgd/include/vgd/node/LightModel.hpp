@@ -53,9 +53,6 @@ namespace node
  * - OFEnum \c [viewer] = AT_INFINITY<br>
  *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
  *<br>
- * - OFBool \c [useShadowSamplers] = true<br>
- *   True to use GLSL shadowSampler, false to use traditionnal texture sampler.<br>
- *<br>
  * - SFBool \c ignorePostProcessing = false<br>
  *   true to ignore the whole post-processing stage, false to do post-processing stage if at least one PostProcessing node is defined.<br>
  *<br>
@@ -678,45 +675,6 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field useShadowSamplers
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c useShadowSamplers.
-	 */
-	typedef bool UseShadowSamplersValueType;
-
-	/**
-	 * @brief Type definition of the field named \c useShadowSamplers
-	 */
-	typedef vgd::field::TOptionalField< UseShadowSamplersValueType > FUseShadowSamplersType;
-
-
-	/**
-	 * @brief Gets the value of field named \c useShadowSamplers.
-	 */
-	const bool getUseShadowSamplers( UseShadowSamplersValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c useShadowSamplers.
- 	 */
-	void setUseShadowSamplers( const UseShadowSamplersValueType& value );
-
-	/**
-	 * @brief Erases the field named \c useShadowSamplers.
-	 */
-	void eraseUseShadowSamplers();
-
-	/**
-	 * @brief Tests if the value of field named \c useShadowSamplers has been initialized.
-	 */
-	const bool hasUseShadowSamplers() const;
-	//@}
-
-
-
-	/**
 	 * @name Accessors to field ignorePostProcessing
 	 */
 	//@{
@@ -1109,13 +1067,6 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c viewer.
 	 */
 	static const std::string getFViewer( void );
-
-	/**
-	 * @brief Returns the name of field \c useShadowSamplers.
-	 *
-	 * @return the name of field \c useShadowSamplers.
-	 */
-	static const std::string getFUseShadowSamplers( void );
 
 	/**
 	 * @brief Returns the name of field \c ignorePostProcessing.

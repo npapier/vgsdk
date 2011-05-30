@@ -72,7 +72,6 @@ LightModel::LightModel( const std::string nodeName ) :
 	addField( new FOption2Type(getFOption2()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FViewerType(getFViewer()) );
-	addField( new FUseShadowSamplersType(getFUseShadowSamplers()) );
 	addField( new FIgnorePostProcessingType(getFIgnorePostProcessing()) );
 	addField( new FModelType(getFModel()) );
 	addField( new FShadowPolygonOffsetType(getFShadowPolygonOffset()) );
@@ -110,7 +109,6 @@ void LightModel::setOptionalsToDefaults()
 	setTwoSided( false );
 	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setViewer( AT_INFINITY );
-	setUseShadowSamplers( true );
 	setModel( STANDARD_PER_VERTEX );
 	setShadow( SHADOW_OFF );
 }
@@ -317,34 +315,6 @@ const bool LightModel::hasViewer() const
 
 
 
-// UseShadowSamplers
-const bool LightModel::getUseShadowSamplers( UseShadowSamplersValueType& value ) const
-{
-	return getFieldRO<FUseShadowSamplersType>(getFUseShadowSamplers())->getValue( value );
-}
-
-
-
-void LightModel::setUseShadowSamplers( const UseShadowSamplersValueType& value )
-{
-	getFieldRW<FUseShadowSamplersType>(getFUseShadowSamplers())->setValue( value );
-}
-
-
-
-void LightModel::eraseUseShadowSamplers()
-{
-	getFieldRW<FUseShadowSamplersType>(getFUseShadowSamplers())->eraseValue();
-}
-
-
-const bool LightModel::hasUseShadowSamplers() const
-{
-	return getFieldRO<FUseShadowSamplersType>(getFUseShadowSamplers())->hasValue();
-}
-
-
-
 // IgnorePostProcessing
 const LightModel::IgnorePostProcessingValueType LightModel::getIgnorePostProcessing() const
 {
@@ -521,13 +491,6 @@ const std::string LightModel::getFAmbient( void )
 const std::string LightModel::getFViewer( void )
 {
 	return "f_viewer";
-}
-
-
-
-const std::string LightModel::getFUseShadowSamplers( void )
-{
-	return "f_useShadowSamplers";
 }
 
 

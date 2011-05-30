@@ -227,9 +227,8 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	 * @brief Default constructor
 	 *
 	 * @param maxTexUnits					the maximum number of texture units
-	 * @param isShadowSamplerUsageEnabled	true if shadow sampler usage is enabled, false otherwise
 	 */
-	GLSLState( const uint maxTexUnits = 0, const bool isShadowSamplerUsageEnabled = true );
+	GLSLState( const uint maxTexUnits = 0 );
 
 	/**
 	 * @brief Copy constructor
@@ -243,11 +242,8 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 	/**
 	 * @brief Resets to the default state.
-	 *
-	 * @param maxTexUnits		the maximum number of texture units
-	 * @param isShadowSamplerUsageEnabled	true if shadow sampler usage is enabled, false otherwise
 	 */
-	void reset( const bool isShadowSamplerUsageEnabled );
+	void resetToDefault();
 
 
 	/**
@@ -610,28 +606,13 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	//@}
 
 
-	/**
-	 * @brief Determines whether the shadow sampler usage is enabled.
-	 *
-	 * @return true if shadow sampler usage is enabled, false otherwise.
-	 */
-	const bool isShadowSamplerUsageEnabled() const;
-
-	/**
-	 * @brief Enables or disables the shadow sampler usage depending on the value of the parameter isEnabled.
-	 *
-	 * @param isEnabled		true when the shadow sampler usage must be enabled, false otherwise
-	 */
-	void setShadowSamplerUsageEnabled( const bool enabled = true );
-
-
 private:
 	void copy( const GLSLState& src );
 	void release();
 
 	vgd::field::DirtyFlag							m_dirtyFlag;			///< internal dirty flag to catch any modification
 
-	void init( const bool isShadowSamplerEnabled );
+	void init();
 	vgd::node::Program *							m_program;					///< the last encountered Program node
 	// @todo TUnitContainer m_shaderStage;
 	// @todo 

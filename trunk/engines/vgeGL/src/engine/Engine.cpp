@@ -38,7 +38,6 @@ Engine::Engine()
 	m_isDisplayListEnabled(true),
 	m_isVertexBufferObjectEnabled(true),
 	m_isDepthPrePassEnabled(true),
-	m_isShadowSamplerEnabled(true),
 	m_isShadowEnabled(true),
 
 	m_glManager("GL object manager"),
@@ -89,25 +88,20 @@ void Engine::reset()
 	setVertexBufferObjectEnabled();
 	setDepthPrePassEnabled();
 
-	setShadowSamplerUsageEnabled( true );
-	/*
 	switch ( driverProvider )
 	{
 		case gle::OpenGLExtensions::NVIDIA_DRIVERS:
-			vgLogMessage("Engine: Enabled usage of shadow samplers on NVIDIA GPU.");
-			setShadowSamplerUsageEnabled( true );
+			vgLogMessage("Engine: Detected NVIDIA GPU.");
 			break;
 
 		case gle::OpenGLExtensions::ATI_DRIVERS:
-			vgLogMessage("Engine: Disabled usage of shadow samplers on ATI GPU.");
-			setShadowSamplerUsageEnabled( false );
+			vgLogMessage("Engine: Detected ATI GPU.");
 			break;
 
 		case gle::OpenGLExtensions::UNKNOWN_DRIVERS:
 		default:
-			vgLogMessage("Engine: Disabled usage of shadow samplers on UNKNOWN GPU.");
-			setShadowSamplerUsageEnabled( false );
-	}*/
+			vgLogMessage("Engine: Unknown GPU encountered.");
+	}
 
 	setShadowEnabled();
 
@@ -120,7 +114,7 @@ void Engine::reset()
 
 	//
 	getGLStateStack().clear( vgd::makeShp(new GLState()) );
-	getGLSLStateStack().clear( vgd::makeShp(new GLSLState(getMaxTexUnits(), isShadowSamplerUsageEnabled()) ) );
+	getGLSLStateStack().clear( vgd::makeShp(new GLSLState(getMaxTexUnits()) ) );
 	getUniformState().clear();
 	setOutputBuffers();
 
@@ -389,20 +383,6 @@ void Engine::setDepthPrePassEnabled( const bool enabled )
 
 
 
-const bool Engine::isShadowSamplerUsageEnabled() const
-{
-	return m_isShadowSamplerEnabled;
-}
-
-
-
-void Engine::setShadowSamplerUsageEnabled( const bool enabled )
-{
-	m_isShadowSamplerEnabled = enabled;
-}
-
-
-
 const bool Engine::isShadowEnabled() const
 {
 	return m_isShadowEnabled;
@@ -595,7 +575,7 @@ void Engine::resetMatrices()
 
 	// STEP 1 : call method from vge::engine::Engine
 	vge::engine::Engine::resetMatrices();
-	
+
 	// STEP 2 : update OpenGL
 	if ( /*!isGLContextCurrent() &&*/ gleGetCurrent() == 0 )
 	{
