@@ -1265,6 +1265,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	engine->setEyeUsagePolicy( vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY );
 	if ( isStereoEnabled )
 	{
+		const bool shadowBAK = engine->setShadowEnabled(false);
 	const std::string defaultFragmentOutputStage = 
 	"\n"
 	"	gl_FragData[0] = color;\n";
@@ -1278,6 +1279,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			// First pass : OPAQUE PASS (draw opaque shape)
 			const bool mustDoTransparencyPass = evaluateOpaquePass( paintService(), PassIsolationMask(0), true );
 			endPass();
+
 		engine->setEyeUsagePolicy( vgd::node::Camera::EYE_RIGHT );
 			beginPass();
 			engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT, defaultFragmentOutputStage ); // @todo in GLSLState constructor ?
@@ -1289,6 +1291,8 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 			endPass();
 
 				//
+
+	engine->setShadowEnabled(shadowBAK);
 	finishEval();
 	return;
 	}
