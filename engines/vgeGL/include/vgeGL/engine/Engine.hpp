@@ -48,10 +48,15 @@ namespace engine
 {
 
 
-const GLuint VERTEX_INDEX = 0;
-const GLuint NORMAL_INDEX = 1;
-const GLuint TEXCOORD_INDEX = 2;
-const GLuint TEXCOORD_INDEX_MAX = 3;
+enum
+{
+	VERTEX_INDEX = 0,
+	NORMAL_INDEX,
+	TEXCOORD_INDEX,
+	TEXCOORD1_INDEX,
+	TEXCOORD_INDEX_MAX
+};
+
 
 /**
  * @brief GL rendering state
@@ -390,21 +395,6 @@ public:
 	 * @param isEnabled		true when the depth pre-pass must be enabled, false otherwise
 	 */
 	void setDepthPrePassEnabled( const bool enabled = true );
-
-
-	/**
-	 * @brief Determines whether the shadow sampler usage is enabled.
-	 *
-	 * @return true if shadow sampler usage is enabled, false otherwise.
-	 */
-	const bool isShadowSamplerUsageEnabled() const;
-
-	/**
-	 * @brief Enables or disables the shadow sampler usage depending on the value of the parameter isEnabled.
-	 *
-	 * @param isEnabled		true when the shadow sampler usage must be enabled, false otherwise
-	 */
-	void setShadowSamplerUsageEnabled( const bool enabled = true );
 
 
 	/**
@@ -749,7 +739,6 @@ private:
 	bool m_isDisplayListEnabled;			//< true if engine must used display list, false otherwise
 	bool m_isVertexBufferObjectEnabled;		//< true if engine must used VBO, false otherwise
 	bool m_isDepthPrePassEnabled;			//< true if engine must do the depth pre-pass, false otherwise
-	bool m_isShadowSamplerEnabled;			//< true if engine must used shadow sampler, false otherwise
 	bool m_isShadowEnabled;					//< true if engine must compute shadow, false otherwise
 
 	/**

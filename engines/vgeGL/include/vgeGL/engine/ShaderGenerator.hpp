@@ -563,21 +563,11 @@ struct GLSLHelpers
 
 		//if ( castShadow )
 		//{
-			std::string spotLightFrontShadow;
-			if ( state.isShadowSamplerUsageEnabled() )
-			{
-				spotLightFrontShadow =
+			std::string spotLightFrontShadow = 
 				"\n"
 				"void spotLightFrontShadow( int i, sampler2DShadow texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
 				"{\n"
-				"	float shadowFactor = computeShadowFactor( texMapShadow, texCoordShadow );\n";
-			}
-			else
-			{
-				vgAssert( false );
-			}
-
-			spotLightFrontShadow +=
+				"	float shadowFactor = computeShadowFactor( texMapShadow, texCoordShadow );\n"
 				"\n"
 				"	spotLightFront( i, ecPosition3, normal, eye, shadowFactor );\n"
 				"}\n\n";
@@ -661,16 +651,8 @@ struct GLSLHelpers
 								const std::string&	texMapShadowIndexStr	= texCoordShadowIndexStr;
 								++lightCastingShadowCount;
 
-								if ( state.isShadowSamplerUsageEnabled() )
-								{
-									flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + texMapShadowIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
-									flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + texMapShadowIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
-								}
-								else
-								{
-									flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2D[" + texMapIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
-									flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2D[" +  texMapIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
-								}
+								flightFront		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + texMapShadowIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
+								flightBack		+= "	spotLightFrontShadow( " + iStr + ", texMap2DShadow[" + texMapShadowIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
 
 								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
 							}
@@ -1006,7 +988,6 @@ struct GLSLHelpers
 	static std::pair< std::string, std::string >  generate_samplers( const vgeGL::engine::GLSLState& state )
 	{
 		std::string decl;
-		std::string code;
 
 		uint sampler2DCount						= 0;
 		uint sampler2DShadowCount				= 0;
@@ -1057,150 +1038,16 @@ struct GLSLHelpers
 		}
 
 		// Updates samplers declarations
-		if ( state.isShadowSamplerUsageEnabled() )
+		if ( sampler2DCount > 0 )
 		{
-			if ( sampler2DCount > 0 )
-			{
-				decl += "uniform sampler2D texMap2D[" + vgd::basic::toString(sampler2DCount) + "];\n\n";
-			}
-
-			if ( sampler2DShadowCount > 0 )
-			{
-				//decl += "uniform sampler2D texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
-				decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n\n";
-			}
-		}
-		else
-		{
-			if ( sampler2DCount + sampler2DShadowCount > 0 )
-			{
-				// @todo OPTME: sparse array => consume more memory
-				decl += "uniform sampler2D texMap2D[";
-				decl += vgd::basic::toString(state.textures.getMax());
-				decl += "];\n\n";
-			}
+			decl += "uniform sampler2D texMap2D[" + vgd::basic::toString(sampler2DCount) + "];\n\n";
 		}
 
-		// Updates code for lookupShadowMap()
-		/*if ( sampler2DShadowCount > 0 )
+		if ( sampler2DShadowCount > 0 )
 		{
-			if ( state.isShadowSamplerUsageEnabled() )
-			{
-				code +=
-				"\n"
-				"float lookupShadowMap( sampler2DShadow map, vec4 coord, vec2 offset )\n"
-				"{\n";
-			}
-			else
-			{
-				code +=
-				"\n"
-				"float lookupShadowMap( sampler2D map, vec4 coord, vec2 offset )\n"
-				"{\n";
-			}
-
-//			const float illuminationInShadow = state.getIlluminationInShadow();
-//			code += 
-//			"	const float illuminationInShadow = " + boost::lexical_cast<std::string>(illuminationInShadow) + ";\n"; // @todo should be a uniform param
-
-			if ( isGL_VERSION_3_0() )
-			{
-				code +=
-			"	vec2 mapSize = vec2( textureSize( map, 0) );\n"; // @todo mapSize*samplingSize, samplingSize should be a param of LightModel
-			}
-			else
-			{
-				if ( shadowTextureNode->hasImage() )
-				{
-					vgd::Shp< vgd::basic::IImage > iimage;
-					shadowTextureNode->getImage( iimage );
-					const std::string widthStr = boost::lexical_cast<std::string>( iimage->width() );
-					const std::string heightStr = boost::lexical_cast<std::string>( iimage->height() );
-					code +=
-						"	vec2 mapSize = vec2( " + widthStr + ", " + heightStr + " );\n";
-				}
-				else
-				{
-					assert( false && "Texture node without image used for shadow !" );
-					code +=
-						"	vec2 mapSize = vec2( 1.0, 1.0 );\n";
-				}
-			}
-
-			if ( state.isShadowSamplerUsageEnabled() )
-			{
-				code +=
-				"\n"
-				"	vec4 newCoord = vec4(coord.xy + (offset / mapSize * coord.w), coord.z, coord.w );\n"
-//				"	float depth = shadow2DProj( map, newCoord ).r;\n"
-				"	float depth = textureProj( map, newCoord );\n"
-				"\n"
-//				"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
-//				"	return max( illuminationInShadow, depth);\n"
-				"	return depth;\n"
-				"}\n"
-				"\n";
-			}
-			else
-			{
-				code +=
-				"\n"
-				"	vec4 newCoord = vec4(coord.xy + (offset / mapSize * coord.w), coord.z, coord.w );\n"
-	//
-				"	vec4 newCoordWDivided = newCoord/newCoord.w;\n"
-	// Used to lower moiré pattern and self-shadowing
-	//:)			"	newCoordWDivided.z += 0.00005;\n" // ATI
-	//:)			"	newCoordWDivided.z += 0.0005;\n" // NV
-				//"	newCoordWDivided.z += 0.00005;\n" // ATI
-
-	//			"	newCoordWDivided.z -= 0.0005;\n" // ATI(ok), NV (nok) ?
-	//			"	newCoordWDivided.z += 0.0005;\n" // ATI ?, NV ?
-
-				"	float distanceFromLight = textureProj( map, newCoord ).z;\n"
-	//			"	float distanceFromLight = texture( map, newCoordWDivided.st ).z;\n"
-				"	float shadow;\n"
-	//			"	float shadow = 1.0;\n"
-				"	if ( coord.w > 0.0 )\n"
-				"	{\n"
-				"	shadow = distanceFromLight < newCoordWDivided.z ? illuminationInShadow : 1.0;\n"
-				"	}\n"
-				"	else\n"
-				"	{\n"
-				"		shadow = 1.0;\n"
-				"	}\n"
-				"	return shadow;\n"
-				"}\n"
-				"\n";
-	//
-	//			"	float depth = shadow2DProj( map, newCoord ).r;\n"
-	//			"\n"
-	//			"	return depth != 1.0 ? illuminationInShadow : 1.0;\n"
-	//			"}\n"
-	//			"\n";
-			}
-		}*/
-		// @todo FIXME remove me 
-		/*else
-		{
-			if ( state.isShadowSamplerUsageEnabled() )
-			{
-				code +=
-				"\n"
-				"float lookupShadowMap( sampler2DShadow map, vec4 coord, vec2 offset )\n"
-				"{\n"
-				"	return 0.0;\n"
-				"}\n\n";
-			}
-			else
-			{
-				code +=
-				"\n"
-				"float lookupShadowMap( sampler2D map, vec4 coord, vec2 offset )\n"
-				"{\n"
-				"	return 0.0;\n"
-				"}\n\n";
-			}
-		}*/
+			//decl += "uniform sampler2D texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n";
+			decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n\n";
+		}
 
 		return std::make_pair(decl, ""/*code*/);
 	}

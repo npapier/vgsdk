@@ -56,7 +56,7 @@ const std::string& GLSLState::toString( const GLSLStateIndex bitSetIndexType )
 
 
 
-GLSLState::GLSLState( const uint maxTexUnits, const bool isShadowSamplerUsageEnabled )
+GLSLState::GLSLState( const uint maxTexUnits )
 :	//lights(),
 	textures(maxTexUnits),
 	//postProcessing(),
@@ -64,7 +64,7 @@ GLSLState::GLSLState( const uint maxTexUnits, const bool isShadowSamplerUsageEna
 	//outputBufferProperties()
 	m_dirtyFlag( "GLSLState" )
 {
-	init( isShadowSamplerUsageEnabled );
+	init();
 }
 
 
@@ -82,8 +82,7 @@ GLSLState::GLSLState( const GLSLState& src )
 	m_lightModelShadow		(	src.m_lightModelShadow		),
 	m_samplingSize			(	src.m_samplingSize			),
 	m_shadowMapType			(	src.m_shadowMapType			),
-	m_illuminationInShadow	(	src.m_illuminationInShadow	),
-	m_isShadowSamplerEnabled(	src.m_isShadowSamplerEnabled)
+	m_illuminationInShadow	(	src.m_illuminationInShadow	)
 {}
 
 
@@ -102,7 +101,7 @@ GLSLState& GLSLState::operator = ( const GLSLState& src )
 
 
 
-void GLSLState::reset( const bool isShadowSamplerUsageEnabled )
+void GLSLState::resetToDefault()
 {
 	// TBitSet
 	vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >::reset();
@@ -114,9 +113,9 @@ void GLSLState::reset( const bool isShadowSamplerUsageEnabled )
 	overlays.clear();
 	outputBufferProperties.clear();
 
-	m_dirtyFlag.dirty();
+	init();
 
-	init( isShadowSamplerUsageEnabled );
+	m_dirtyFlag.dirty();
 }
 
 
@@ -284,24 +283,6 @@ const std::string& GLSLState::getShaderStage( const ShaderStage shaderStage ) co
 
 
 
-const bool GLSLState::isShadowSamplerUsageEnabled() const
-{
-	return m_isShadowSamplerEnabled;
-}
-
-
-
-void GLSLState::setShadowSamplerUsageEnabled( const bool enabled )
-{
-	if ( m_isShadowSamplerEnabled == enabled )
-	{
-		m_isShadowSamplerEnabled = enabled;
-		m_dirtyFlag.dirty();
-	}
-}
-
-
-
 void GLSLState::copy( const GLSLState& src )
 {
 	lights					= src.lights;
@@ -318,7 +299,6 @@ void GLSLState::copy( const GLSLState& src )
 	m_samplingSize				= src.m_samplingSize;
 	m_shadowMapType				= src.m_shadowMapType;
 	m_illuminationInShadow		= src.m_illuminationInShadow;
-	m_isShadowSamplerEnabled	= src.m_isShadowSamplerEnabled;
 }
 
 
@@ -336,7 +316,7 @@ void GLSLState::release()
 
 
 
-void GLSLState::init( const bool isShadowSamplerEnabled )
+void GLSLState::init()
 {
 	m_program					= 0;
 	m_shaderStage.clear();
@@ -345,7 +325,6 @@ void GLSLState::init( const bool isShadowSamplerEnabled )
 	m_samplingSize				= 1.f;
 	m_shadowMapType				= vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE;
 	m_illuminationInShadow		= 0.4f;
-	m_isShadowSamplerEnabled	= isShadowSamplerEnabled;
 }
 
 
