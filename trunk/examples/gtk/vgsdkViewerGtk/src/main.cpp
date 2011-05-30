@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -12,6 +12,8 @@
 #include <gtkmm.h>
 
 #include <vgDebug/Global.hpp>
+#include <vgDebug/helpers.hpp>
+#include <vgDebug/StdStreamsToFiles.hpp>
 #include <vgGTK/event/sdl.hpp>
 #include <vgGTK/Logging.hpp>
 #include <vgGTK/node/EditMenu.hpp>
@@ -94,8 +96,8 @@ Glib::RefPtr< Gtk::ActionGroup > createDefaultActionGroup( Glib::RefPtr< Gtk::UI
 			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::settingManipulationBinding), canvas, 2) );
 
 	actions->add(
-			Gtk::Action::create("UserSettings", Gtk::Stock::PROPERTIES, "User Settings"),
-			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::userSettings), topLevel, canvas) );
+			Gtk::Action::create("RenderSettings", Gtk::Stock::PROPERTIES, "Render Settings"),
+			sigc::bind(sigc::ptr_fun(&vgsdkViewerGtk::renderSettings), topLevel, canvas) );
 
 	actions->add( Gtk::Action::create("Help", "_Help") );
 	actions->add(
@@ -135,7 +137,7 @@ const Glib::ustring & createDefaultUI()
 		"      <menuitem action='MouseOnlyManipulation'/>"
 		"      <menuitem action='MouseAndKeyboardManipulation'/>"
 		"      <separator/>"
-		"      <menuitem action='UserSettings'/>"
+		"      <menuitem action='RenderSettings'/>"
 		"    </menu>"
 		"    <menu action='Help'>"
 		"      <menuitem action='About'/>"
@@ -147,7 +149,7 @@ const Glib::ustring & createDefaultUI()
 		"    <toolitem action='Add'/>"
 		"    <separator/>"
 		"    <toolitem action='Properties'/>"
-		"    <toolitem action='UserSettings'/>"
+		"    <toolitem action='RenderSettings'/>"
 		"    <separator/>"
 		"    <toolitem action='ViewAll'/>"
 		"    <toolitem action='FullScreen'/>"
@@ -290,7 +292,7 @@ int main( int argc, char ** argv )
 	}
 	else
 	{
-		vgDebug::get().logWarning("Unable to initialize manipulation bindings.");
+		vgLogWarning("Unable to initialize manipulation bindings.");
 	}
 
 

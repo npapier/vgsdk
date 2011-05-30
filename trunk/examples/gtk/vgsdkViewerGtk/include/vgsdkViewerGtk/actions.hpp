@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -141,7 +141,7 @@ void statusbarLogHandler( const gchar *log_domain, GLogLevelFlags log_level, con
 /**
  * @brief	Configure user engine's settings
  */
-void userSettings( Gtk::Window * toplevel, myCanvas * canvas );
+void renderSettings( Gtk::Window * toplevel, myCanvas * canvas );
 
 
 } // namespace vgsdkViewerGtk
