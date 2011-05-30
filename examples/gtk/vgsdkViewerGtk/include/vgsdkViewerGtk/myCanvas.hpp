@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -11,6 +11,8 @@
 #include <glibmm/ustring.h>
 #include <vgeGL/technique/Technique.hpp>
 #include <vgGTK/BasicManipulator.hpp>
+
+namespace vgGTK { namespace engine { struct UserSettingsDialog; } }
 
 
 
@@ -120,6 +122,8 @@ struct myCanvas : public vgGTK::BasicManipulator
 	//@}
 
 
+	vgd::Shp< vgGTK::engine::UserSettingsDialog > getRenderSettingsDialog();
+
 private:
 
 	/**
@@ -127,11 +131,6 @@ private:
 	 */
 	//@{
 	const bool load( const Glib::ustring & pathfilename );
-	//const bool loadCollada( const Glib::ustring & pathfilename );
-	//const bool loadOpenCollada( const Glib::ustring & pathfilename, bool crypted = false );
-	//const bool loadObj( const Glib::ustring & pathfilename );
-	//const bool loadTrian( const Glib::ustring & pathfilename );
-	//const bool loadTrian2( const Glib::ustring & pathfilename, bool crypted = false );
 	//@}
 
 
@@ -148,6 +147,8 @@ private:
 	TechniqueContainer	m_viewModeTechniques;	///< Contains all view mode techniques.
 
 	Strings				m_filenames;			///< Contains the paths of the files currently loaded.
+
+	vgd::Shp< vgGTK::engine::UserSettingsDialog >	m_renderSettingsDialog; ///< rendering settings dialog
 };
 
 

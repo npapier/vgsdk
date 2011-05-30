@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -13,6 +13,7 @@
 #include <vgAlg/actions/Decrypt.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/basic/Image.hpp>
+#include <vgd/node/Camera.hpp>
 #include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
@@ -24,6 +25,8 @@
 #include <vgeGL/engine/Engine.hpp>
 #include <vgeGL/technique/MultiMain.hpp>
 #include <vgDebug/convenience.hpp>
+#include <vge/engine/UserSettings.hpp>
+#include <vgGTK/engine/UserSettingsDialog.hpp>
 #include <vgGTK/node/ColladaSettingsDialog.hpp>
 #include <vgio/helpers.hpp>
 #include <vgObj/Loader.hpp>
@@ -33,9 +36,24 @@
 
 #include "vgsdkViewerGtk/actions.hpp"
 
-#ifdef MY_WORK
-#include "vgsdkViewerGtk/my.hpp"
-#endif
+
+
+
+namespace
+{
+
+void onRenderSettingsSignalChanged( vgsdkViewerGtk::myCanvas * canvas )
+{
+	vgd::Shp< vgGTK::engine::UserSettingsDialog >	renderSettings	= canvas->getRenderSettingsDialog();
+
+	// Applies the render settings
+	renderSettings->get()->apply( *canvas );
+
+	// Refreshs the canvas
+	canvas->refreshForced();
+}
+
+}
 
 
 
@@ -139,6 +157,9 @@ bool myCanvas::onKeyPressed( GdkEventKey * event )
 
 void myCanvas::initialize()
 {
+	// Configures the rendering.
+	vgd::Shp< vgGTK::engine::UserSettingsDialog > renderSettingsDialog = getRenderSettingsDialog();
+
 	// SETUP
 
 	// SCENE
@@ -268,6 +289,29 @@ const bool myCanvas::reloadScene()
 	get_root_window()->set_cursor();
 
 	return retVal;
+}
+
+
+
+vgd::Shp< vgGTK::engine::UserSettingsDialog > myCanvas::getRenderSettingsDialog()
+{
+	if ( !m_renderSettingsDialog )
+	{
+		// Creates dialog
+		Gtk::Window * toplevel = dynamic_cast< Gtk::Window * >( get_toplevel() );
+		m_renderSettingsDialog.reset( new vgGTK::engine::UserSettingsDialog(toplevel) );
+
+		// Initializes the render settings level
+		m_renderSettingsDialog->get()->setLevel( 2 );
+		m_renderSettingsDialog->getGUI().refreshLevel();
+		// Applies the render settings
+		m_renderSettingsDialog->get()->apply( *this );
+
+		// Connects to signals
+		m_renderSettingsDialog->getGUI().signalChanged().connect( sigc::bind(sigc::ptr_fun(&onRenderSettingsSignalChanged), this) ); // do refresh
+	}
+
+	return m_renderSettingsDialog;
 }
 
 
