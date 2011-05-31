@@ -34,7 +34,8 @@ namespace engine
 
 
 StereoscopicSettings::StereoscopicSettings()
-//:	m_eyeSeparation( 0.f )
+//:	m_isEnabled
+//:	m_eyeSeparation
 {
 	load();
 }
@@ -61,8 +62,19 @@ void StereoscopicSettings::apply( vge::engine::SceneManager & sm ) const
 
 void StereoscopicSettings::apply( vgd::Shp< vgd::node::Camera > camera ) const
 {
-	// Apply stereoscopic paramaters to scene graph
-	camera->setMode( vgd::node::Camera::QUAD_BUFFER );
+	// Apply stereoscopic parameters to scene graph
+
+	// isEnabled
+	if ( isEnabled() )
+	{
+		camera->setMode( vgd::node::Camera::QUAD_BUFFER );
+	}
+	else
+	{
+		camera->setMode( vgd::node::Camera::MONOSCOPIC );
+	}
+
+	// Eye separation
 	camera->setEyeSeparation( m_eyeSeparation );
 }
 
@@ -86,16 +98,20 @@ void StereoscopicSettings::load()
 		boost::property_tree::ptree settings;
 		bpt::ini_parser::read_ini( path.string(), settings );
 
+		// IS ENABLED
+		bool isEnabled = settings.get< bool >( "isEnabled", true );
+		setEnabled( isEnabled );
+
 		// EYE SEPARATION
-		float eyeSeparation = settings.get< float >( "eyeSeparation" );
+		float eyeSeparation = settings.get< float >( "eyeSeparation", 0.f );
 		if ( eyeSeparation >= 0.f )
 		{
-			m_eyeSeparation = eyeSeparation;
+			setEyeSeparation( eyeSeparation );
 		}
 		else
 		{
 			vgLogError2( "Invalid eye separation in file %s", path.string().c_str() );
-			m_eyeSeparation = 0.f;
+			setEyeSeparation( 0.f );
 		}
 	}
 	catch( bpt::ini_parser::ini_parser_error & )
@@ -119,6 +135,9 @@ void StereoscopicSettings::save()
 		// Creates the settings ptree.
 		boost::property_tree::ptree settings;
 
+		// IS ENABLED
+		settings.put( "isEnabled", m_isEnabled );
+
 		// EYE SEPARATION
 		if ( m_eyeSeparation >= 0.f )
 		{
@@ -139,6 +158,27 @@ void StereoscopicSettings::save()
 	}
 }
 
+
+const bool StereoscopicSettings::isEnabled() const
+{
+	return m_isEnabled;
+}
+
+void StereoscopicSettings::setEnabled( const bool enabled )
+{
+	m_isEnabled = enabled;
+}
+
+
+const float StereoscopicSettings::getEyeSeparation() const
+{
+	return m_eyeSeparation;
+}
+
+void StereoscopicSettings::setEyeSeparation( const float eyeSeparation )
+{
+	m_eyeSeparation = eyeSeparation;
+}
 
 
 

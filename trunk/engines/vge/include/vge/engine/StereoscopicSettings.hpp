@@ -61,13 +61,17 @@ struct VGE_API StereoscopicSettings
 	 * @name Accessors
 	 */
 	//@{
-	const float getEyeSeparation() const					{ return m_eyeSeparation; }
-	void setEyeSeparation( const float eyeSeparation )		{ m_eyeSeparation = eyeSeparation; }
+	const bool isEnabled() const;
+	void setEnabled( const bool enabled = true );
+
+	const float getEyeSeparation() const;
+	void setEyeSeparation( const float eyeSeparation );
 	//@}
 
 
 private:
-	float m_eyeSeparation;					///< The eye separation to use in Camera node
+	bool	m_isEnabled;						///< Enabled/disabled stereoscopic rendering
+	float	m_eyeSeparation;					///< The eye separation to use in Camera node
 };
 
 

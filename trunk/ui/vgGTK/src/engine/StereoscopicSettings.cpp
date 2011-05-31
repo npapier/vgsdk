@@ -18,8 +18,12 @@ namespace engine
 
 
 StereoscopicSettings::StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicSettings > settings )
-:	m_settings( settings )
+:	m_settings( settings ),
+	m_enabled( "Enable stereoscopic rendering" )
 {
+	// IS ENABLED
+	m_enabled.signal_clicked().connect( sigc::mem_fun(this, &StereoscopicSettings::onEnabled) );
+
 	// EYE SEPARATION
 	// label
 	m_eyeSeparationLabel.set_alignment(0.f, 0.f);
@@ -32,6 +36,7 @@ StereoscopicSettings::StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicS
 
 	// Fills box
 	set_spacing( 12 );
+	pack_start( m_enabled, Gtk::PACK_SHRINK );
 	pack_start( m_eyeSeparationLabel, Gtk::PACK_SHRINK );
 	pack_start( m_eyeSeparation, Gtk::PACK_SHRINK );
 
@@ -48,10 +53,18 @@ const vgd::Shp< vge::engine::StereoscopicSettings > StereoscopicSettings::get() 
 
 
 
+void StereoscopicSettings::onEnabled()
+{
+	get()->setEnabled( m_enabled.get_active() );
+
+	signalChanged().emit();
+}
+
+
 void StereoscopicSettings::onEyeSeparationChanged()
 {
 	const float eyeSeparation = static_cast< float >( m_eyeSeparation.get_value() );
-	m_settings->setEyeSeparation( eyeSeparation );
+	get()->setEyeSeparation( eyeSeparation );
 
 	signalChanged().emit();
 }
@@ -60,6 +73,7 @@ void StereoscopicSettings::onEyeSeparationChanged()
 
 void StereoscopicSettings::refresh()
 {
+	m_enabled.set_active( get()->isEnabled() );
 	m_eyeSeparation.set_value( get()->getEyeSeparation() );
 }
 
