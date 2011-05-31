@@ -44,6 +44,9 @@ private:
 	//
 	vgd::Shp< vge::engine::StereoscopicSettings > m_settings;	///< The settings to configure.
 
+	// IS ENABLED
+	Gtk::CheckButton			m_enabled;						///< The check button to enable/disable stereoscopic rendering
+
 	// EYE SEPARATION
 	Gtk::Label					m_eyeSeparationLabel;			///< The label for eye separation
 	Gtk::HScale					m_eyeSeparation;				///< The slider to choose the eye separation.
@@ -52,6 +55,7 @@ private:
 	 * @name	Signal Handlers
 	 */
 	//@{
+	void onEnabled();					///< Handles isEnabled changes.
 	void onEyeSeparationChanged();		///< Handles eye separation changes.
 	//@}
 
