@@ -8,7 +8,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/assign/list_of.hpp>
-#include <gtest/gtest.h>
 #include <map>
 
 #include <sbf/path.hpp>
@@ -22,6 +21,7 @@
 #include <vector>
 
 #include "Fixtures.hpp"
+#include <gtest.hpp>
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
@@ -37,7 +37,7 @@
 /**
 * @brief Test performance with different complexity
 */
-TEST_P(VgTestShape, PerformanceShapeTest)
+TEST_P(VgTestShape, DISABLED_PerformanceShapeTest)
 {
 	const ::testing::TestInfo* const test_info =
 	  ::testing::UnitTest::GetInstance()->current_test_info();
@@ -92,7 +92,7 @@ TEST_P(VgTestShape, PerformanceShapeTest)
 * @brief Test if it crash when we add a static object
 */
 static vgd::Shp<vgd::node::Sphere> objStatic = vgd::node::Sphere::create("sphere");
-TEST_F(VgTestShape, StaticShapeTest)
+TEST_F(VgTestShape, DISABLED_StaticShapeTest)
 {
 	const ::testing::TestInfo* const test_info =
 	  ::testing::UnitTest::GetInstance()->current_test_info();
