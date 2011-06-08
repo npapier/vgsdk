@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -21,7 +21,7 @@ namespace pass
 
 
 Opaque::Opaque()
-: 	m_mustDoTransparencyPass( false )
+:	m_mustDoTransparencyPass( false )
 {}
 
 
@@ -30,16 +30,6 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 					vge::visitor::TraverseElementVector* traverseElements,
 					vgd::Shp< vge::service::Service > service )
 {
-	// @todo
-//	engine->resetMatrices();
-
-	engine->push();
-	/*getGLSLStateStack().push();
-	engine->getGLStateStack().push();
-	engine->pushStateStack();
-	glPushAttrib( GL_ALL_ATTRIB_BITS );*/
-	//
-
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 
 	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
@@ -48,12 +38,10 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 	{
 		if ( (i->first)->isAKindOf< vgd::node::Shape >() )
 		{
-			const float opacityDiff = fabs( engine->getGLState().getOpacity() - 1.f );
-
-			if ( opacityDiff < vgm::Epsilon<float>::value() )
+			if ( vgm::equals( engine->getGLState().getOpacity(), 1.f ) )
 			{
 				// object is opaque, draw it.
-				engine->evaluate( service, i->first, i->second );
+				engine->evaluate( service, *i );
 			}
 			else
 			{
@@ -62,17 +50,9 @@ void Opaque::apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engi
 		}
 		else
 		{
-			engine->evaluate( service, i->first, i->second );
+			engine->evaluate( service, *i );
 		}
 	}
-
-	// @todo
-	engine->pop();
-	/*glPopAttrib();
-	engine->popStateStack();
-	engine->getGLStateStack().pop();
-	engine->getGLSLStateStack().pop();*/
-	//
 }
 
 

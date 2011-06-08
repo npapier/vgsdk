@@ -1059,8 +1059,10 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 				lightLookAt[currentLightIndex] );
 
 			// shadows only for opaque objects
-			passOpaqueWithGivenCamera( engine, traverseElements, fromLightCamera );
-			//passPaintWithGivenCamera( engine, traverseElements, fromLightCamera );
+			// passOpaqueWithGivenCamera( engine, traverseElements, fromLightCamera );
+
+			// shadows for all objects
+			passPaintWithGivenCamera( engine, traverseElements, fromLightCamera );
 
 			// Re-enable rendering to the window
 //			fbo->unbind();
