@@ -6,6 +6,7 @@
 #include "vgeGL/pass/Transparent.hpp"
 
 #include <vgd/node/ClearFrameBuffer.hpp>
+#include <vgd/node/CullFace.hpp>
 #include <vgd/node/Kit.hpp>
 #include <vgd/node/Material.hpp>
 #include <vgd/node/Shape.hpp>
@@ -27,10 +28,17 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 							vge::visitor::TraverseElementVector* traverseElements,
 							vgd::Shp< vge::service::Service > service )
 {
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+	// Configures blending
+	glEnable( GL_BLEND );
+	//glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-	engine->disregardIfIsAKindOf< vgd::node::Kit >(); ///< Nothing to do for nodekit in transparent pass. FIXME ?
+	// Configures culling
+	engine->disregardIfIsA< vgd::node::CullFace >();
+	glEnable( GL_CULL_FACE );
+	glCullFace( GL_BACK );
+
+	engine->disregardIfIsAKindOf< vgd::node::Kit >(); ///< Nothing to do for nodekit in transparent pass. @todo FIXME ?
 
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
@@ -42,12 +50,11 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 			using vgd::node::Material;
 
 			const float opacity = engine->getGLState().getOpacity();
-			const float opacityDelta = fabs( opacity - 1.f );
 
-			if ( opacityDelta > vgm::Epsilon<float>::value() )
+			if ( vgm::notEquals( opacity, 1.f ) )
 			{
 				// Incoming shape is not opaque
-				if ( opacity > vgm::Epsilon<float>::value() )
+				if ( vgm::notEquals( opacity, 0.f ) )
 				{
 					// Incoming shape is transparent (but not totally), it must be rendered
 					// glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -65,6 +72,12 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 			engine->evaluate( service, *i );
 		}
 	}
+
+	// Restores culling
+	glDisable( GL_CULL_FACE );
+
+	// Restores  blending
+	glDisable( GL_BLEND );
 }
 
 
@@ -72,4 +85,3 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 } // namespace pass
 
 } // namespace vgeGL
-
