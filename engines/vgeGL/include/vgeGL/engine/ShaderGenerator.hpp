@@ -455,21 +455,26 @@ struct GLSLHelpers
 	{
 		using vgd::node::LightModel;
 
-		static LightModel::ShadowValueType	shadowType		= LightModel::SHADOW_OFF;
-		static float						samplingSize	= 1.f;
-		static std::string					shadowString	= generate_fcomputeShadowFactor( state, LightModel::SHADOW_OFF, 1.f );
+		static LightModel::ShadowValueType	shadowType				= LightModel::SHADOW_OFF;
+		static float						samplingSize			= 1.f;
+		static float						illuminationInShadow	= state.getIlluminationInShadow();
+		static std::string					shadowString			= generate_fcomputeShadowFactor( state, LightModel::SHADOW_OFF, 1.f );
 
 		static std::string					retValFront;
 		static std::string					retValBack;
 
 		// Updates shadow factor computation string
-		LightModel::ShadowValueType	incomingShadowType		= state.getShadowType();
-		const float					incomingSamplingSize	= state.getSamplingSize();
+		LightModel::ShadowValueType	incomingShadowType				= state.getShadowType();
+		const float					incomingSamplingSize			= state.getSamplingSize();
+		const float					incomingIlluminationInShadow	= state.getIlluminationInShadow();
 		if (	(incomingShadowType != shadowType ) ||
-				(incomingSamplingSize != samplingSize )	)
+				(incomingSamplingSize != samplingSize) ||
+				(incomingIlluminationInShadow != illuminationInShadow )	)
 		{
-			shadowType = incomingShadowType;
-			samplingSize = incomingSamplingSize;
+			shadowType				= incomingShadowType;
+			samplingSize			= incomingSamplingSize;
+			illuminationInShadow	= incomingIlluminationInShadow;
+
 			shadowString = generate_fcomputeShadowFactor( state, shadowType, samplingSize );
 		}
 
