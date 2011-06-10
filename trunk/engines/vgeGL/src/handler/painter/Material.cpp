@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,7 +47,7 @@ void Material::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 	// Updates GLState
 	// OPACITY
-	const float	opacity = material->getOpacity();
+	const float opacity = material->getOpacity();
 	glEngine->getGLState().setOpacity( opacity );
 
 	// DIFFUSE
@@ -63,7 +63,11 @@ void Material::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::Material, Material >( engine, node, this );
-	//paint( glEngine, castedNode );
+
+	// DIFFUSE/OPACITY
+	const vgm::Vec3f& color3 = glEngine->getGLState().getDiffuse();
+	vgm::Vec4f color4( color3[0], color3[1], color3[2], opacity );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, color4.getValue() );
 }
 
 
@@ -82,7 +86,7 @@ void Material::setToDefaults()
 	color4.setValue( 0.2f, 0.2f, 0.2f, 0.f );
 	glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, color4.getValue() );
 
-	color4.setValue( 0.8f, 0.8f, 0.8f, 0.f );
+	color4.setValue( 0.8f, 0.8f, 0.8f, 1.f );
 	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, color4.getValue() );
 
 	color4.null();
@@ -95,38 +99,17 @@ void Material::setToDefaults()
 
 
 
-void Material::paint( vgeGL::engine::Engine *, vgd::node::Material * material )
+void Material::paint( vgeGL::engine::Engine * engine, vgd::node::Material * material )
 {
-/*	// Default values
-	const vgm::Vec3f	defaultAmbient		( 0.2f, 0.2f, 0.2f 	);
-	const vgm::Vec3f	defaultDiffuse		( 0.8f, 0.8f, 0.8f 	);
-	const vgm::Vec3f	defaultSpecular		( 0.f, 0.f, 0.f 	);
-	const vgm::Vec3f	defaultEmission		( 0.f, 0.f, 0.f 	);
-
-	const float			defaultShininess	( 0.f				);
-*/
 	//
 	bool		bDefined;
 	vgm::Vec3f	color3;
 	vgm::Vec4f	color4;
 
 	// OPACITY
-	const float	opacity = material->getOpacity();
+	const float opacity = material->getOpacity();
 
-	// SHININESS
-	float shininess;
-	bDefined = material->getShininess( shininess );
-
-	if ( bDefined )
-	{
-		assert( shininess >= 0.f && "Negative shininess." );
-		assert( shininess <= 1.f && "Shininess superior to 1." );
-
-		shininess *= 128.f;
-		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, shininess );
-	}
-
-	// COLOR
+	// AMBIENT
 	bDefined = material->getAmbient( color3 );
 
 	if ( bDefined )
@@ -135,13 +118,10 @@ void Material::paint( vgeGL::engine::Engine *, vgd::node::Material * material )
 		glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, color4.getValue() );
 	}
 
-	//
-	bDefined = material->getDiffuse( color3 );
+	// DIFFUSE/OPACITY
+	// not done here (see apply()).
 
-	color4.setValue( color3[0], color3[1], color3[2], opacity );
-	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, color4.getValue() );
-
-	//
+	// SPECULAR
 	bDefined = material->getSpecular( color3 );
 
 	if ( bDefined )
@@ -150,7 +130,20 @@ void Material::paint( vgeGL::engine::Engine *, vgd::node::Material * material )
 		glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, color4.getValue() );
 	}
 
-	//
+	// SHININESS
+	float shininess;
+	bDefined = material->getShininess( shininess );
+
+	if ( bDefined )
+	{
+		vgAssertN( shininess >= 0.f,  "Negative shininess." );
+		vgAssertN( shininess <= 1.f, "Shininess superior to 1." );
+
+		shininess *= 128.f;
+		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, shininess );
+	}
+
+	// EMISSION
 	bDefined = material->getEmission( color3 );
 
 	if ( bDefined )

@@ -35,7 +35,7 @@ namespace vgeGL
 
 namespace vgeGL
 {
-	
+
 namespace handler
 {
 
@@ -45,7 +45,7 @@ namespace painter
 
 
 /**
- * @brief Send render commands for the Matrial node.
+ * @brief Send render commands for the Material node.
  * 
  * @todo OPT: Don't set always material for GL_FRONT_AND_BACK.
  */
@@ -53,14 +53,14 @@ struct VGEGL_API Material : public vge::handler::painter::SingleAttribute
 {
 	META_HANDLER_HPP( Material  );
 
-	const TargetVector					getTargets()	const;
+	const TargetVector getTargets()	const;
 
-	void	apply		( vge::engine::Engine*, vgd::node::Node* );
-	void	unapply	( vge::engine::Engine*, vgd::node::Node* );
+	void	apply( vge::engine::Engine*, vgd::node::Node* );
+	void	unapply( vge::engine::Engine*, vgd::node::Node* );
 	
 	void	setToDefaults();
 
-	void	paint		( vgeGL::engine::Engine*, vgd::node::Material* );
+	void	paint( vgeGL::engine::Engine*, vgd::node::Material* );
 };
 
 
