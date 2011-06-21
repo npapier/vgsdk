@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -201,14 +201,13 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 	}
 
 	// Clears the frame buffer
-	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
-	engine->evaluate( paint, clearFrameBuffer, true, false );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	// Renders underlay
 	if ( getUnderlay() )
 	{
 		// Renders underlay
-		engine->evaluate( paint, getUnderlay().get(), true, false );
+		engine->evaluate( paintService(), getUnderlay().get(), true, false );
 	}
 
 	// Renders each window from back to front (i.e. in z-order from 0 to n with n > 0 ).
