@@ -30,7 +30,7 @@
 /**
 * @brief Compare a generated image and a reference image
 */
-TEST_P(VgTestCollada, LoadTest)
+TEST_P(VgTestCollada, DISABLED_LoadTest)
 {	
 	//list of untested models, add to make them fail!
 	std::vector< std::string > failedModels;
