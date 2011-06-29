@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,7 +6,9 @@
 #include "vge/handler/cbb/Shape.hpp"
 
 #include <vgd/node/Box.hpp>
+#include <vgd/node/Grid.hpp>
 #include <vgd/node/Quad.hpp>
+#include <vgd/node/MultipleInstances.hpp>
 #include <vgd/node/Shape.hpp>
 #include <vgd/node/Sphere.hpp>
 #include <vgd/node/TriSet.hpp>
@@ -38,9 +40,11 @@ const Handler::TargetVector Shape::getTargets()	const
 {
 	TargetVector targets;
 
-	targets.reserve( 7 );
+	targets.reserve( 9 );
 	targets.push_back( vgd::node::Box::getClassIndexStatic() );
+	targets.push_back( vgd::node::Grid::getClassIndexStatic() );
 	targets.push_back( vgd::node::Quad::getClassIndexStatic() );
+	targets.push_back( vgd::node::MultipleInstances::getClassIndexStatic() );
 	targets.push_back( vgd::node::Sphere::getClassIndexStatic() );
 	targets.push_back( vgd::node::TriSet::getClassIndexStatic() );
 	targets.push_back( vgd::node::VertexShape::getClassIndexStatic() );

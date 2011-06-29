@@ -601,14 +601,14 @@ Vec3f Box3f::getClosestPoint( const Vec3f& point )
 		if (result[0] > 1.0)	result[0] = 1.0;
 		if (result[1] > 1.0)	result[1] = 1.0;
 		if (result[2] > 1.0)	result[2] = 1.0;
-		
-		// snap to appropriate side	    
+
+		// snap to appropriate side
 		if ((mag[0] > mag[1]) && (mag[0] >  mag[2])) 
 		{
 			result[0] = 1.0;
 		}
 		else if ((mag[1] > mag[0]) && (mag[1] >  mag[2])) 
-		{	    
+		{
 			result[1] = 1.0;
 		}
 		else if ((mag[2] > mag[0]) && (mag[2] >  mag[1])) 
@@ -643,13 +643,13 @@ Vec3f Box3f::getClosestPoint( const Vec3f& point )
 			assert( false );
 			// Can't determine vector to point.
 		}
-		
+
 		// Now make everything point the right way
 		for (int32 i=0; i < 3; i++)
 		{
 			if (vec[i] < 0.0)	result[i] = -result[i];
 		}
-		
+
 		// scale back up and move to center
 		result[0] *= halfX;
 		result[1] *= halfY;
