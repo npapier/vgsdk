@@ -1,9 +1,11 @@
-// VGSDK - Copyright (C) 2004, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/node/IBoundingBox.hpp"
+
+#include <vgDebug/helpers.hpp>
 
 
 
@@ -30,7 +32,7 @@ IBoundingBox::~IBoundingBox()
 
 const vgm::Box3f& IBoundingBox::getBoundingBox() const
 {
-	assert( isBoundingBoxValid() );
+	vgAssert( isBoundingBoxValid() );
 
 	return m_boundingBox;
 }
@@ -39,7 +41,7 @@ const vgm::Box3f& IBoundingBox::getBoundingBox() const
 
 const vgm::MatrixR& IBoundingBox::getTransformation() const
 {
-	assert( isBoundingBoxValid() );
+	vgAssert( isBoundingBoxValid() );
 
 	return m_transformation;
 }
@@ -70,7 +72,7 @@ void IBoundingBox::reset()
 
 vgm::XfBox3f IBoundingBox::getXfBoundingBox() const
 {
-	assert( isBoundingBoxValid() );
+	vgAssert( isBoundingBoxValid() );
 
 	vgm::XfBox3f xfBox(m_boundingBox);
 	xfBox.setTransform( m_transformation );

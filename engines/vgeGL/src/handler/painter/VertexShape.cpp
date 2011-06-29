@@ -13,6 +13,7 @@
 #include <vgd/node/Box.hpp>
 // @todo Move DrawStyle stuff to drawStyle handler (FIXME)
 #include <vgd/node/DrawStyle.hpp>
+#include <vgd/node/Grid.hpp>
 #include <vgd/node/Quad.hpp>
 #include <vgd/node/MultipleInstances.hpp>
 #include <vgd/node/Sphere.hpp>
@@ -142,9 +143,10 @@ const vge::handler::Handler::TargetVector VertexShape::getTargets() const
 {
 	vge::handler::Handler::TargetVector targets;
 
-	targets.reserve( 5 );
+	targets.reserve( 6 );
 
 	targets.push_back( vgd::node::Box::getClassIndexStatic() );
+	targets.push_back( vgd::node::Grid::getClassIndexStatic() );
 	targets.push_back( vgd::node::Quad::getClassIndexStatic() );
 	targets.push_back( vgd::node::Sphere::getClassIndexStatic() );
 	targets.push_back( vgd::node::TriSet::getClassIndexStatic() );
@@ -1519,26 +1521,26 @@ void VertexShape::drawNormals( vgd::node::VertexShape *pVertexShape, const float
 		}
 		//assert( primitive.getType() == vgd::node::Primitive::TRIANGLES );
 		//GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
-	
+
 		glBegin( GL_LINES );
-	
+
 		const int32 i32Max = primitive.getIndex() + primitive.getNumIndices();
-	
+
 		for( int32 i32I = primitive.getIndex(); i32I<i32Max; i32I++ )
 		{
 			int32 i32VertexIndex;
 			i32VertexIndex = (*vertexIndex)[i32I];
 
 			vgm::Vec3f	normalSource;
-			vgm::Vec3f	normalDestination;			
-			
+			vgm::Vec3f	normalDestination;
+
 			normalSource		= (*vertex)[i32VertexIndex];
 			normalDestination	= normalSource + (*normal)[ i32VertexIndex ] * normalLength;
 
 			glVertex3fv( normalSource.getValue() );
 			glVertex3fv( normalDestination.getValue() );
 		}
-	
+
 		glEnd();
 		// Finish rendering the primitive.
 	}
