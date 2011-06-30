@@ -672,12 +672,12 @@ const int Engine::getMaxTexUnits() const
 		{
 			// @todo
 			glGetIntegerv( GL_MAX_TEXTURE_UNITS, &m_maxTexUnits );
-			m_maxTexUnits = 3;
+			m_maxTexUnits = 5;
 		}
 		else
 		{
 			vgLogDebug("Engine::getMaxTexUnits(): OpenGL context not current, so return arbitrary value 2.");
-			return 3;
+			return 5;
 		}
 	}
 
