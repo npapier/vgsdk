@@ -81,6 +81,13 @@ const TimeDuration Time::getElapsedTime() const
 
 
 
+const bool Time::isPaused() const
+{
+	return !m_pauseTime.is_not_a_date_time();
+}
+
+
+
 const TimeDuration Time::operator - ( const Time& t2 ) const
 {
 	assert( isValid() && "Time is invalid." );
