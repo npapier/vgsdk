@@ -70,6 +70,12 @@ struct VGD_API Time
 	 */
 	const TimeDuration getElapsedTime() const;
 
+
+	/**
+	 * @brief Check if the time point is paused or not.
+	 */
+	const bool isPaused() const;
+
 	//@}
 
 
