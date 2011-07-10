@@ -22,6 +22,7 @@ namespace handler
 void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 {
 	// Updates engine
+	const vge::engine::EyeUsagePolicy eyePolicy = engine->getEyeUsagePolicy();
 
 	//	CAMERA node
 	engine->setCamera( camera );
@@ -30,7 +31,7 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 	bool bDefined;
 	vgm::Rectangle2i viewportValue;
 
-	bDefined = camera->getViewport( viewportValue );
+	bDefined = camera->gethViewport( viewportValue, eyePolicy );
 
 	if ( bDefined )
 	{

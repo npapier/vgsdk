@@ -92,10 +92,10 @@ void LightModel::setToDefaults( void )
 	setShadowMapType( INT32 );
 	setIlluminationInShadow( 0.4f );
 	setSamplingSize( 1.0 );
-	setOption2( CHOICE0 );
+	setOption2( false );
 	setIgnorePostProcessing( false );
 	setShadowPolygonOffset( vgm::Vec2f(4.f, 16.f) );
-	setOption0( false );
+	setOption0( CHOICE0 );
 	setOption1( false );
 }
 

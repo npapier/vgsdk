@@ -26,6 +26,8 @@ namespace handler
 
 void SurroundScale::apply( vge::engine::Engine *pEngine, vgd::node::SurroundScale *pNode )
 {
+	return;
+	// @todo FIXME: the following code invalidates the ROOT node boundingBox dirty flag !!!
 	if ( pNode->getSurround().get() == 0 )
 	{
 		// nothing to do

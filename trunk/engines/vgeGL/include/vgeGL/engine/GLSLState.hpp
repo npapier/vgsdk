@@ -549,8 +549,9 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 	enum ShaderStage
 	{
-		FRAGMENT_OUTPUT_DECLARATION = 0,	///< Declarations needed by FRAGMENT_OUTPUT
-		FRAGMENT_OUTPUT = 1,				///< Fragment Shader Outputs stage (example: gl_FragData[1] = ...)
+		VERTEX_GL_POSITION_COMPUTATION = 0,
+		FRAGMENT_OUTPUT_DECLARATION,		///< Declarations needed by FRAGMENT_OUTPUT
+		FRAGMENT_OUTPUT,					///< Fragment Shader Outputs stage (example: gl_FragData[1] = ...)
 
 		//
 		MAX_SHADERSTAGE
@@ -576,6 +577,14 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	//@}
 
 
+
+	/**
+	 * @name Light model accessors
+	 */
+	//@{
+	const vgd::node::LightModel::Option0ValueType getOption0() const			{ return m_option0; }
+	void setOption0( const vgd::node::LightModel::Option0ValueType value )	{ m_option0 = value; }
+	//@}
 
 	/**
 	 * @name Shadow accessors
@@ -617,6 +626,7 @@ private:
 	// @todo TUnitContainer m_shaderStage;
 	// @todo 
 	std::vector< std::string >						m_shaderStage;				///< container of glsl code for custom shader stage
+	vgd::node::LightModel::Option0ValueType			m_option0;					///< Last encountered value of LightModel.option0 field
 	vgd::node::LightModel::ShadowValueType			m_lightModelShadow;			///< Last encountered value of LightModel.shadow field
 	float											m_samplingSize;				///< @todo doc
 	vgd::node::LightModel::ShadowMapTypeValueType	m_shadowMapType;			///< @todo doc

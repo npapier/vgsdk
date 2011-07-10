@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -45,17 +45,25 @@ const vgd::basic::IImage::Format convertToIImageFormat( const vgd::node::OutputB
 		case OutputBufferProperty::RGB:
 			retVal = IImage::RGB;
 			break;
+
 		case OutputBufferProperty::RGBA:
 			retVal = IImage::RGBA;
 			break;
+
 		case OutputBufferProperty::LUMINANCE:
 			retVal = IImage::LUMINANCE;
 			break;
+
 		case OutputBufferProperty::LUMINANCE_ALPHA:
 			retVal = IImage::LUMINANCE_ALPHA;
 			break;
+
+		case OutputBufferProperty::LUMINANCE_FOR_DEPTH:
+			retVal = IImage::LUMINANCE;
+			break;
+
 		default:
-			assert( "Unexpected value" );
+			vgAssertN( false, "Unexpected value" );
 			retVal = IImage::RGBA;
 	}
 	return retVal;
@@ -74,17 +82,25 @@ const std::string convertToGLSLFormat( const vgd::node::OutputBufferProperty::Fo
 		case OutputBufferProperty::RGB:
 			retVal = "vec3";
 			break;
+
 		case OutputBufferProperty::RGBA:
 			retVal = "vec4";
 			break;
+
 		case OutputBufferProperty::LUMINANCE:
 			retVal = "float";
 			break;
+
 		case OutputBufferProperty::LUMINANCE_ALPHA:
 			retVal = "vec2";
 			break;
+
+		case OutputBufferProperty::LUMINANCE_FOR_DEPTH:
+			retVal = "float";
+			break;
+
 		default:
-			assert( "Unexpected value" );
+			vgAssertN( false, "Unexpected value" );
 	}
 
 	return retVal;
@@ -111,9 +127,128 @@ const vgd::basic::IImage::Type convertToIImageType( const vgd::node::OutputBuffe
 			break;
 
 		default:
-			assert( "Unexpected value" );
+			vgAssertN( false, "Unexpected value" );
 			retVal = IImage::UINT8;
 	}
+	return retVal;
+}
+
+
+const vgd::node::Texture::InternalFormatValueType convertToInternalFormatValueType(
+	const vgd::node::OutputBufferProperty::FormatValueType	format,
+	const vgd::node::OutputBufferProperty::TypeValueType	type )
+{
+	using vgd::node::Texture;
+	using vgd::node::OutputBufferProperty;
+
+	Texture::InternalFormatValueType retVal = Texture::AUTOMATIC;
+
+	// RGB
+	if ( format == OutputBufferProperty::RGB )
+	{
+		switch ( type.value() )
+		{
+			case OutputBufferProperty::INTEGER:
+				break;
+
+			case OutputBufferProperty::FLOAT16:
+				retVal = Texture::RGB_16F;
+				break;
+
+			case OutputBufferProperty::FLOAT32:
+				retVal = Texture::RGB_32F;
+				break;
+
+			default:
+				vgAssertN( false, "Unexpected value" );
+		}
+	}
+	// RGBA
+	else if ( format == OutputBufferProperty::RGBA )
+	{
+		switch ( type.value() )
+		{
+			case OutputBufferProperty::INTEGER:
+				break;
+
+			case OutputBufferProperty::FLOAT16:
+				retVal = Texture::RGBA_16F;
+				break;
+
+			case OutputBufferProperty::FLOAT32:
+				retVal = Texture::RGBA_32F;
+				break;
+
+			default:
+				vgAssertN( false, "Unexpected value" );
+		}
+	}
+	// LUMINANCE
+	else if ( format == OutputBufferProperty::LUMINANCE )
+	{
+		switch ( type.value() )
+		{
+			case OutputBufferProperty::INTEGER:
+				break;
+
+			case OutputBufferProperty::FLOAT16:
+				retVal = Texture::LUMINANCE_16F;
+				break;
+
+			case OutputBufferProperty::FLOAT32:
+				retVal = Texture::LUMINANCE_32F;
+				break;
+
+			default:
+				vgAssertN( false, "Unexpected value" );
+		}
+	}
+	// LUMINANCE_ALPHA
+	else if ( format == OutputBufferProperty::LUMINANCE_ALPHA )
+	{
+		switch ( type.value() )
+		{
+			case OutputBufferProperty::INTEGER:
+				break;
+
+			case OutputBufferProperty::FLOAT16:
+				retVal = Texture::LUMINANCE_ALPHA_16F;
+				break;
+
+			case OutputBufferProperty::FLOAT32:
+				retVal = Texture::LUMINANCE_ALPHA_32F;
+				break;
+
+			default:
+				vgAssertN( false, "Unexpected value" );
+		}
+	}
+	// LUMINANCE_FOR_DEPTH
+	else if ( format == OutputBufferProperty::LUMINANCE_FOR_DEPTH )
+	{
+		switch ( type.value() )
+		{
+			case OutputBufferProperty::INTEGER:
+				retVal = Texture::DEPTH_COMPONENT_32;
+				break;
+
+			case OutputBufferProperty::FLOAT16:
+				retVal = Texture::LUMINANCE_16F;
+				break;
+
+			case OutputBufferProperty::FLOAT32:
+				retVal = Texture::LUMINANCE_32F;
+				break;
+
+			default:
+				vgAssertN( false, "Unexpected value" );
+		}
+	}
+	else
+	{
+		vgAssertN( false, "Unexpected format" );
+	}
+
 	return retVal;
 }
 
@@ -238,7 +373,7 @@ void OutputBufferProperty::paint(
 				vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( engine, outputBufferProperty );
 				backInserter = texture;
 				++backInserter;
-	
+
 				// Validates node df
 				outputBufferProperty->getDirtyFlag(outputBufferProperty->getDFNode())->validate();
 			}
@@ -258,112 +393,64 @@ vgd::Shp< vgd::node::Texture2D > OutputBufferProperty::createTexture2D( vgeGL::e
 
 	// WRAP, FILTER
 // @todo sethDefault();
-	texture->setWrap( Texture::WRAP_S, Texture::CLAMP );
-	texture->setWrap( Texture::WRAP_T, Texture::CLAMP );
-	//texture->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-	//texture->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
-	texture->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-	texture->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+	texture->setWrap( Texture::WRAP_S, Texture::CLAMP_TO_EDGE );
+	texture->setWrap( Texture::WRAP_T, Texture::CLAMP_TO_EDGE );
+	texture->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
+	texture->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+	//texture->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+	//texture->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
 
 	// IMAGE
 	using vgd::basic::ImageInfo;
 
 // @todo should work with ImageInfo(0, 0, 0, ....) see Texture handlers
-	vgd::Shp< ImageInfo > image( new ImageInfo(	engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1], 1 ) );
-	texture->setImage( image );
 
-	// IMAGE FORMAT / IMAGE TYPE / TEXTURE INTERNAL FORMAT
-	if ( node )
+	// IMAGE WIDTH / IMAGE HEIGHT
+	float width		= static_cast< float >( engine->getDrawingSurfaceSize()[0] );
+	float height	= static_cast< float >( engine->getDrawingSurfaceSize()[1] );
+
+	const OutputBufferProperty::SizeSemanticValueType	sizeSemantic	= node->getSizeSemantic();
+	const vgm::Vec2f									sizeRequested	= node->getSize();
+
+	if ( sizeSemantic == OutputBufferProperty::SCALE_FACTOR )
 	{
-		const OutputBufferProperty::FormatValueType	format	= node->getFormat();
-		const OutputBufferProperty::TypeValueType	type	= node->getType();
-
-		// IMAGE FORMAT
-		image->format()	= convertToIImageFormat( format );
-
-		// IMAGE TYPE
-		image->type()	= convertToIImageType( type );
-
-		// TEXTURE INTERNAL FORMAT
-		if ( format == OutputBufferProperty::RGB )
-		{
-			switch ( type.value() )
-			{
-				//case OutputBufferProperty::INTEGER: // @todo TBT warning from cl ?
-				//	break;
-				case OutputBufferProperty::FLOAT16:
-					texture->setInternalFormat( Texture::RGB_16F);
-					break;
-				case OutputBufferProperty::FLOAT32:
-					texture->setInternalFormat( Texture::RGB_32F);
-					break;
-			}
-		}
-		else if ( format == OutputBufferProperty::RGBA )
-		{
-			switch ( type.value() )
-			{
-				case OutputBufferProperty::INTEGER:
-					break;
-				case OutputBufferProperty::FLOAT16:
-					texture->setInternalFormat( Texture::RGBA_16F);
-					break;
-				case OutputBufferProperty::FLOAT32:
-					texture->setInternalFormat( Texture::RGBA_32F);
-					break;
-			}
-		}
-		else if ( format == OutputBufferProperty::LUMINANCE )
-		{
-			switch ( type.value() )
-			{
-				case OutputBufferProperty::INTEGER:
-					break;
-				case OutputBufferProperty::FLOAT16:
-					texture->setInternalFormat( Texture::LUMINANCE_16F);
-					break;
-				case OutputBufferProperty::FLOAT32:
-					texture->setInternalFormat( Texture::LUMINANCE_32F);
-					break;
-			}
-		}
-		else if ( format == OutputBufferProperty::LUMINANCE_ALPHA )
-		{
-			switch ( type.value() )
-			{
-				case OutputBufferProperty::INTEGER:
-					break;
-				case OutputBufferProperty::FLOAT16:
-					texture->setInternalFormat( Texture::LUMINANCE_ALPHA_16F);
-					break;
-				case OutputBufferProperty::FLOAT32:
-					texture->setInternalFormat( Texture::LUMINANCE_ALPHA_32F);
-					break;
-			}
-		}
-		else
-		{
-			assert( "Unexpected format" );
-		}
+		width	*= sizeRequested[0];
+		height	*= sizeRequested[1];
 	}
 	else
 	{
-		using vgd::basic::IImage;
-
-		//
-		image->format() = IImage::LUMINANCE;
-		image->type()	= IImage::UINT8; // UINT32
-		texture->setInternalFormat( Texture::DEPTH_COMPONENT_24 );
+		vgAssert( sizeSemantic == OutputBufferProperty::PIXEL_SIZE );
+		width	= sizeRequested[0];
+		height	= sizeRequested[1];
 	}
 
+	// Creates image for texture
+	vgd::Shp< ImageInfo > image( new ImageInfo( (uint)width, (uint)height, 1 ) );
+	texture->setImage( image );
+
+	// IMAGE FORMAT / IMAGE TYPE / TEXTURE INTERNAL FORMAT
+	const OutputBufferProperty::FormatValueType	format	= node->getFormat();
+	const OutputBufferProperty::TypeValueType	type	= node->getType();
+
+	// IMAGE FORMAT
+	image->format()	= convertToIImageFormat( format );
+
+	// IMAGE TYPE
+	image->type()	= convertToIImageType( type );
+
+	// TEXTURE INTERNAL FORMAT
+	Texture::InternalFormatValueType internalFormat = convertToInternalFormatValueType( format, type );
+	texture->setInternalFormat( internalFormat );
+
 	// TEXTURE USAGE
-	if ( node )
-	{	
+	if ( format != OutputBufferProperty::LUMINANCE_FOR_DEPTH )
+	{
 		texture->setUsage( Texture::IMAGE );
 	}
 	else
 	{
 // @todo Adds DEPTH usage
+		image->type() = vgd::basic::IImage::INT32;
 		texture->setUsage( Texture::SHADOW );
 	}
 
@@ -392,7 +479,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 	fbo->generate();
 	fbo->bind();
 
-	// Creates texture
+	// Creates texture(s)
 	std::vector< vgd::Shp< vgd::node::Texture2D > > textureContainer;
 	vgeGL::handler::painter::OutputBufferProperty::paint( engine, outputBufferProperties, std::back_inserter(textureContainer) );
 
@@ -407,18 +494,25 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 		// Attaching images
 		engine->paint( textureNode );
 		vgd::Shp< vgeGL::rc::Texture2D > texture2D = rcManager.getShp< vgeGL::rc::Texture2D >( textureNode );
+		vgAssertN( texture2D, "No texture2D" );
 
 		fbo->attachColor( texture2D, i );
 	}
 
 	if ( addDepth )
 	{
+		vgd::Shp< vgd::node::OutputBufferProperty > obuf = vgd::node::OutputBufferProperty::create("depth");
+		obuf->setFormat( vgd::node::OutputBufferProperty::LUMINANCE_FOR_DEPTH );
+		obuf->setType( vgd::node::OutputBufferProperty::INTEGER );
+		obuf->setSizeSemantic( outputBufferProperties->getState(0)->getNode()->getSizeSemantic() );
+		obuf->setSize( outputBufferProperties->getState(0)->getNode()->getSize() );
+
 		vgd::Shp< vgd::node::Texture2D > depthTextureNode;
-		depthTextureNode = vgeGL::handler::painter::OutputBufferProperty::createTexture2D( engine, 0 );
+		depthTextureNode = vgeGL::handler::painter::OutputBufferProperty::createTexture2D( engine, obuf.get() );
 
 		// Attaching images
 		engine->paint( depthTextureNode );
-		vgd::Shp< vgeGL::rc::Texture2D > depthTexture = rcManager.getShp< vgeGL::rc::Texture2D >( depthTextureNode );		
+		vgd::Shp< vgeGL::rc::Texture2D > depthTexture = rcManager.getShp< vgeGL::rc::Texture2D >( depthTextureNode );
 
 		fbo->attachDepth( depthTexture );
 	}

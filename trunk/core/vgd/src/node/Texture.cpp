@@ -21,15 +21,20 @@ Texture::Texture( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FFunctionType(getFFunction()) );
+	addField( new FFragmentFunctionType(getFFragmentFunction()) );
+	addField( new FWrapType(getFWrap()) );
 	addField( new FImageType(getFImage()) );
 	addField( new FMipmapType(getFMipmap()) );
 	addField( new FFilterType(getFFilter()) );
-	addField( new FWrapType(getFWrap()) );
+	addField( new FVertexFunctionType(getFVertexFunction()) );
 	addField( new FInternalFormatType(getFInternalFormat()) );
 	addField( new FUsageType(getFUsage()) );
 
+	// Adds dirty flag(s)
+	addDirtyFlag(getDFImage());
+
 	// Sets link(s)
+	link( getFImage(), getDFImage() );
 
 	link( getDFNode() );
 }
@@ -49,43 +54,68 @@ void Texture::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
 
+	setWrap( WRAP_T, REPEAT );
+	setWrap( WRAP_S, REPEAT );
+	setWrap( WRAP_R, REPEAT );
+
 
 	setMipmap( false );
 	setFilter( MIN_FILTER, LINEAR );
 	setFilter( MAG_FILTER, LINEAR );
 
-	setWrap( WRAP_T, REPEAT );
-	setWrap( WRAP_S, REPEAT );
-	setWrap( WRAP_R, REPEAT );
 
 }
 
 
 
-// Function
-const bool Texture::getFunction( FunctionValueType& value ) const
+// FragmentFunction
+const bool Texture::getFragmentFunction( FragmentFunctionValueType& value ) const
 {
-	return getFieldRO<FFunctionType>(getFFunction())->getValue( value );
+	return getFieldRO<FFragmentFunctionType>(getFFragmentFunction())->getValue( value );
 }
 
 
 
-void Texture::setFunction( const FunctionValueType& value )
+void Texture::setFragmentFunction( const FragmentFunctionValueType& value )
 {
-	getFieldRW<FFunctionType>(getFFunction())->setValue( value );
+	getFieldRW<FFragmentFunctionType>(getFFragmentFunction())->setValue( value );
 }
 
 
 
-void Texture::eraseFunction()
+void Texture::eraseFragmentFunction()
 {
-	getFieldRW<FFunctionType>(getFFunction())->eraseValue();
+	getFieldRW<FFragmentFunctionType>(getFFragmentFunction())->eraseValue();
 }
 
 
-const bool Texture::hasFunction() const
+const bool Texture::hasFragmentFunction() const
 {
-	return getFieldRO<FFunctionType>(getFFunction())->hasValue();
+	return getFieldRO<FFragmentFunctionType>(getFFragmentFunction())->hasValue();
+}
+
+
+
+// Wrap
+const bool Texture::getWrap( const WrapParameterType param, WrapValueType& value ) const
+{
+	return (
+		vgd::field::getParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param), value )
+		);
+}
+
+
+
+void Texture::setWrap( const WrapParameterType param, WrapValueType value )
+{
+	vgd::field::setParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param), value );
+}
+
+
+
+void Texture::eraseWrap( const WrapParameterType param )
+{
+	vgd::field::eraseParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param) );
 }
 
 
@@ -170,26 +200,30 @@ void Texture::eraseFilter( const FilterParameterType param )
 
 
 
-// Wrap
-const bool Texture::getWrap( const WrapParameterType param, WrapValueType& value ) const
+// VertexFunction
+const bool Texture::getVertexFunction( VertexFunctionValueType& value ) const
 {
-	return (
-		vgd::field::getParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param), value )
-		);
+	return getFieldRO<FVertexFunctionType>(getFVertexFunction())->getValue( value );
 }
 
 
 
-void Texture::setWrap( const WrapParameterType param, WrapValueType value )
+void Texture::setVertexFunction( const VertexFunctionValueType& value )
 {
-	vgd::field::setParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param), value );
+	getFieldRW<FVertexFunctionType>(getFVertexFunction())->setValue( value );
 }
 
 
 
-void Texture::eraseWrap( const WrapParameterType param )
+void Texture::eraseVertexFunction()
 {
-	vgd::field::eraseParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param) );
+	getFieldRW<FVertexFunctionType>(getFVertexFunction())->eraseValue();
+}
+
+
+const bool Texture::hasVertexFunction() const
+{
+	return getFieldRO<FVertexFunctionType>(getFVertexFunction())->hasValue();
 }
 
 
@@ -225,9 +259,16 @@ void Texture::setUsage( const UsageValueType value )
 
 
 // Field name accessor(s)
-const std::string Texture::getFFunction( void )
+const std::string Texture::getFFragmentFunction( void )
 {
-	return "f_function";
+	return "f_fragmentFunction";
+}
+
+
+
+const std::string Texture::getFWrap( void )
+{
+	return "f_wrap";
 }
 
 
@@ -253,9 +294,9 @@ const std::string Texture::getFFilter( void )
 
 
 
-const std::string Texture::getFWrap( void )
+const std::string Texture::getFVertexFunction( void )
 {
-	return "f_wrap";
+	return "f_vertexFunction";
 }
 
 
@@ -274,26 +315,56 @@ const std::string Texture::getFUsage( void )
 
 
 
-// FUNCTION
+// DIRTY FLAG(S)
+const std::string Texture::getDFImage()
+{
+	return "df_image";
+}
+
+
+// Function
+const bool Texture::getFunction( FunctionValueType& value ) const
+{
+	return getFragmentFunction( value );
+}
+
+
+
+void Texture::setFunction( const FunctionValueType& value )
+{
+	setFragmentFunction( value );
+}
+
+
+
+void Texture::eraseFunction()
+{
+	eraseFragmentFunction();
+}
+
+
+const bool Texture::hasFunction() const
+{
+	return hasFragmentFunction();
+}
+
+
+// High level accessor to FUNCTION
 void Texture::sethFunction( OldFunctionValueType value )
 {
-	const std::string strIndex = vgd::basic::toString( getMultiAttributeIndex() );
-
 	if ( value == FUN_REPLACE )
 	{
-		std::string function = "color = texture(texMap2D[" + strIndex + "], mgl_TexCoord[" + strIndex + "].xy);\n";
-//		std::string function = "color = texture(texMap2D[" + strIndex + "], gl_TexCoord[" + strIndex + "].xy);\n";
+		const std::string function = "color = texture(texMap2D[MAI], mgl_TexCoord[MAI].xy);\n";
 		setFunction( function );
 	}
 	else if ( value == FUN_MODULATE )
 	{
-		std::string function = "color *= texture(texMap2D[" + strIndex + "], mgl_TexCoord[" + strIndex + "].xy);\n";
-//		std::string function = "color *= texture(texMap2D[" + strIndex + "], gl_TexCoord[" + strIndex + "].xy);\n";
+		const std::string function = "color *= texture(texMap2D[MAI], mgl_TexCoord[MAI].xy);\n";
 		setFunction( function );
 	}
 	else
 	{
-		assert( false );
+		vgAssertN( false, "Not yet implemented" );
 	}
 }
 } // namespace node

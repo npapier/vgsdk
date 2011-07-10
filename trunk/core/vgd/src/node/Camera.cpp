@@ -71,6 +71,7 @@ Camera::Camera( const std::string nodeName ) :
 	addField( new FScissorType(getFScissor()) );
 	addField( new FModeType(getFMode()) );
 	addField( new FEyeSeparationType(getFEyeSeparation()) );
+	addField( new FImageShiftType(getFImageShift()) );
 	addField( new FViewportType(getFViewport()) );
 
 	// Sets link(s)
@@ -90,6 +91,7 @@ void Camera::setToDefaults( void )
 	setProjectionRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setMode( MONOSCOPIC );
 	setEyeSeparation( 0.f );
+	setImageShift( 0.f );
 }
 
 
@@ -222,6 +224,21 @@ void Camera::setEyeSeparation( const EyeSeparationValueType value )
 
 
 
+// ImageShift
+const Camera::ImageShiftValueType Camera::getImageShift() const
+{
+	return getFieldRO<FImageShiftType>(getFImageShift())->getValue();
+}
+
+
+
+void Camera::setImageShift( const ImageShiftValueType value )
+{
+	getFieldRW<FImageShiftType>(getFImageShift())->setValue( value );
+}
+
+
+
 // Viewport
 const bool Camera::getViewport( ViewportValueType& value ) const
 {
@@ -296,6 +313,13 @@ const std::string Camera::getFMode( void )
 const std::string Camera::getFEyeSeparation( void )
 {
 	return "f_eyeSeparation";
+}
+
+
+
+const std::string Camera::getFImageShift( void )
+{
+	return "f_imageShift";
 }
 
 
@@ -478,7 +502,42 @@ void Camera::setMatrix( const MatrixValueType value )
 
 
 // High-level
-void Camera::sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation )
+const bool Camera::gethViewport( ViewportValueType& viewport, const EyeUsagePolicyValueType eyeUsagePolicy ) const
+{
+	// Retrieves viewport field
+	bool hasViewport = getViewport( viewport );
+
+	if ( hasViewport )
+	{
+		const float halfImageShift = getImageShift()/2.f;
+
+		switch ( eyeUsagePolicy.value() )
+		{
+			case EYE_LEFT:
+				viewport[0] -= static_cast< int >( halfImageShift );
+				break;
+
+			case EYE_RIGHT:
+				viewport[0] += static_cast< int >( halfImageShift );
+				break;
+
+			case EYE_BOTH:
+				// Nothing to do
+				break;
+
+			default:
+				vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
+		}
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/*void Camera::sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation )
 {
 	vgm::MatrixR lookAt;
 	lookAt.setLookAt( lookAtEye, lookAtCenter, lookAtUp );
@@ -499,7 +558,7 @@ void Camera::sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3
 
 	setLookAtRight( lookAtRight );
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
+*/IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
 
 
 

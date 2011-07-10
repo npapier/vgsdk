@@ -8,6 +8,7 @@
 
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/String.hpp"
+#include "vgd/field/Vec2f.hpp"
 #include "vgd/node/MultiAttribute.hpp"
 
 
@@ -21,22 +22,28 @@ namespace node
 
 
 /**
- * @brief Definition of the format, type and output command of an output buffer
+ * @brief Definition of the size, format, type and output command of an output buffer
  *
  * @todo 
  *
  * New fields defined by this node :
- * - SFEnum \c command = COLOR<br>
- *   Specifies the pre-defined assign command execute by the fragment program.<br>
- *<br>
- * - SFEnum \c type = INTEGER<br>
- *   Specifies the type used by the buffer.<br>
+ * - SFEnum \c sizeSemantic = SCALE_FACTOR<br>
+ *   Specifies the semantic of the size field.<br>
  *<br>
  * - SFString \c customCommand = empty<br>
  *   Specifies the pre-defined assign command execute by the fragment program. Example : output = color.rgba; or output = vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z );<br>
  *<br>
  * - SFEnum \c format = RGB<br>
  *   Specifies the format used by the buffer.<br>
+ *<br>
+ * - SFEnum \c command = COLOR<br>
+ *   Specifies the pre-defined assign command execute by the fragment program.<br>
+ *<br>
+ * - SFEnum \c type = INTEGER<br>
+ *   Specifies the type used by the buffer.<br>
+ *<br>
+ * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
+ *   Specifies the size of the output buffer (in pixel or scale factors). See sizeSemantic field for more informations.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -81,6 +88,197 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field sizeSemantic
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		SCALE_FACTOR = 301,	///< The width of the output buffer is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component)
+		PIXEL_SIZE = 302,	///< The size field specifies the size of the output buffer in pixels.
+		DEFAULT_SIZESEMANTIC = SCALE_FACTOR	///< The width of the output buffer is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component)
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct SizeSemanticValueType : public vgd::field::Enum
+	{
+		SizeSemanticValueType()
+		{}
+
+		SizeSemanticValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		SizeSemanticValueType( const SizeSemanticValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		SizeSemanticValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 301 );
+			retVal.push_back( 302 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "SCALE_FACTOR" );
+			retVal.push_back( "PIXEL_SIZE" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c sizeSemantic
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FSizeSemanticType;
+
+
+	/**
+	 * @brief Gets the value of field named \c sizeSemantic.
+	 */
+	const SizeSemanticValueType getSizeSemantic() const;
+
+	/**
+	 * @brief Sets the value of field named \c sizeSemantic.
+	 */
+	void setSizeSemantic( const SizeSemanticValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field customCommand
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c customCommand.
+	 */
+	typedef std::string CustomCommandValueType;
+
+	/**
+	 * @brief Type definition of the field named \c customCommand
+	 */
+	typedef vgd::field::TSingleField< CustomCommandValueType > FCustomCommandType;
+
+
+	/**
+	 * @brief Gets the value of field named \c customCommand.
+	 */
+	const CustomCommandValueType getCustomCommand() const;
+
+	/**
+	 * @brief Sets the value of field named \c customCommand.
+	 */
+	void setCustomCommand( const CustomCommandValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field format
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		LUMINANCE_ALPHA = 306,	///< @todo
+		RGB = 303,	///< @todo
+		LUMINANCE = 305,	///< @todo
+		RGBA = 304,	///< @todo
+		LUMINANCE_FOR_DEPTH = 307,	///< if type is INTEGER, then DEPTH_COMPONENT_24 is used.
+		DEFAULT_FORMAT = RGB	///< @todo
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct FormatValueType : public vgd::field::Enum
+	{
+		FormatValueType()
+		{}
+
+		FormatValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		FormatValueType( const FormatValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		FormatValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 303 );
+			retVal.push_back( 304 );
+			retVal.push_back( 305 );
+			retVal.push_back( 306 );
+			retVal.push_back( 307 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "RGB" );
+			retVal.push_back( "RGBA" );
+			retVal.push_back( "LUMINANCE" );
+			retVal.push_back( "LUMINANCE_ALPHA" );
+			retVal.push_back( "LUMINANCE_FOR_DEPTH" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c format
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FFormatType;
+
+
+	/**
+	 * @brief Gets the value of field named \c format.
+	 */
+	const FormatValueType getFormat() const;
+
+	/**
+	 * @brief Sets the value of field named \c format.
+	 */
+	void setFormat( const FormatValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field command
 	 */
 	//@{
@@ -90,12 +288,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		LINEAR_DEPTH = 312,	///< @todo
-		NORMAL = 309,	///< @todo
-		COLOR = 308,	///< @todo
-		CUSTOM = 313,	///< @todo
-		DEPTH = 311,	///< @todo
-		POSITION = 310,	///< @todo
+		LINEAR_DEPTH = 315,	///< @todo
+		NORMAL = 312,	///< @todo
+		COLOR = 311,	///< @todo
+		CUSTOM = 316,	///< @todo
+		DEPTH = 314,	///< @todo
+		POSITION = 313,	///< @todo
 		DEFAULT_COMMAND = COLOR	///< @todo
 	};
 
@@ -123,12 +321,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 308 );
-			retVal.push_back( 309 );
-			retVal.push_back( 310 );
 			retVal.push_back( 311 );
 			retVal.push_back( 312 );
 			retVal.push_back( 313 );
+			retVal.push_back( 314 );
+			retVal.push_back( 315 );
+			retVal.push_back( 316 );
 
 			return retVal;
 		}
@@ -178,9 +376,9 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		FLOAT16 = 306,	///< @todo
-		INTEGER = 305,	///< @todo
-		FLOAT32 = 307,	///< @todo
+		FLOAT16 = 309,	///< @todo
+		INTEGER = 308,	///< @todo
+		FLOAT32 = 310,	///< @todo
 		DEFAULT_TYPE = INTEGER	///< @todo
 	};
 
@@ -208,9 +406,9 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 305 );
-			retVal.push_back( 306 );
-			retVal.push_back( 307 );
+			retVal.push_back( 308 );
+			retVal.push_back( 309 );
+			retVal.push_back( 310 );
 
 			return retVal;
 		}
@@ -248,112 +446,30 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field customCommand
+	 * @name Accessors to field size
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c customCommand.
+	 * @brief Type definition of the value contained by field named \c size.
 	 */
-	typedef std::string CustomCommandValueType;
+	typedef vgm::Vec2f SizeValueType;
 
 	/**
-	 * @brief Type definition of the field named \c customCommand
+	 * @brief Type definition of the field named \c size
 	 */
-	typedef vgd::field::TSingleField< CustomCommandValueType > FCustomCommandType;
-
-
-	/**
-	 * @brief Gets the value of field named \c customCommand.
-	 */
-	const CustomCommandValueType getCustomCommand() const;
-
-	/**
-	 * @brief Sets the value of field named \c customCommand.
-	 */
-	void setCustomCommand( const CustomCommandValueType value );
-
-	//@}
-
+	typedef vgd::field::TSingleField< SizeValueType > FSizeType;
 
 
 	/**
-	 * @name Accessors to field format
+	 * @brief Gets the value of field named \c size.
 	 */
-	//@{
+	const SizeValueType getSize() const;
 
 	/**
-	 * @brief Definition of symbolic values
+	 * @brief Sets the value of field named \c size.
 	 */
-	enum  
-	{
-		LUMINANCE_ALPHA = 304,	///< @todo
-		RGB = 301,	///< @todo
-		LUMINANCE = 303,	///< @todo
-		RGBA = 302,	///< @todo
-		DEFAULT_FORMAT = RGB	///< @todo
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct FormatValueType : public vgd::field::Enum
-	{
-		FormatValueType()
-		{}
-
-		FormatValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		FormatValueType( const FormatValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		FormatValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 301 );
-			retVal.push_back( 302 );
-			retVal.push_back( 303 );
-			retVal.push_back( 304 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "RGB" );
-			retVal.push_back( "RGBA" );
-			retVal.push_back( "LUMINANCE" );
-			retVal.push_back( "LUMINANCE_ALPHA" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c format
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FFormatType;
-
-
-	/**
-	 * @brief Gets the value of field named \c format.
-	 */
-	const FormatValueType getFormat() const;
-
-	/**
-	 * @brief Sets the value of field named \c format.
-	 */
-	void setFormat( const FormatValueType value );
+	void setSize( const SizeValueType value );
 
 	//@}
 
@@ -363,6 +479,27 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c sizeSemantic.
+	 *
+	 * @return the name of field \c sizeSemantic.
+	 */
+	static const std::string getFSizeSemantic( void );
+
+	/**
+	 * @brief Returns the name of field \c customCommand.
+	 *
+	 * @return the name of field \c customCommand.
+	 */
+	static const std::string getFCustomCommand( void );
+
+	/**
+	 * @brief Returns the name of field \c format.
+	 *
+	 * @return the name of field \c format.
+	 */
+	static const std::string getFFormat( void );
 
 	/**
 	 * @brief Returns the name of field \c command.
@@ -379,18 +516,11 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	static const std::string getFType( void );
 
 	/**
-	 * @brief Returns the name of field \c customCommand.
+	 * @brief Returns the name of field \c size.
 	 *
-	 * @return the name of field \c customCommand.
+	 * @return the name of field \c size.
 	 */
-	static const std::string getFCustomCommand( void );
-
-	/**
-	 * @brief Returns the name of field \c format.
-	 *
-	 * @return the name of field \c format.
-	 */
-	static const std::string getFFormat( void );
+	static const std::string getFSize( void );
 
 	//@}
 

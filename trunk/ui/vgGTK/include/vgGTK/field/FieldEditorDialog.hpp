@@ -93,7 +93,7 @@ private:
 	/**
 	 * @brief	Refreshes the label.
 	 */
-	void refreshLabel();	
+	void refreshLabel();
 	
 	/**
 	 * @name	Signal Handlers

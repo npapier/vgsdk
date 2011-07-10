@@ -63,6 +63,13 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 		if ( isDefined )
 		{
+// @todo STANDARD_PER_VERTEX
+			if ( modelValue == vgd::node::LightModel::STANDARD_PER_VERTEX )
+			{
+				vgLogDebug( "LightModel::STANDARD_PER_VERTEX is temporarily disabled. Reverts to standard per pixel lighting." );
+				modelValue = vgd::node::LightModel::STANDARD_PER_PIXEL;
+			}
+// end todo
 			// Updates GLSLState
 			// LIGHTING
 			state.setLightingEnabled( modelValue != vgd::node::LightModel::LIGHTING_OFF );
@@ -134,6 +141,9 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	{
 		state.setEnabled( vgeGL::engine::IGNORE_POST_PROCESSING );
 	}
+
+	// OPTION0
+	state.setOption0( lightModel->getOption0() );
 
 	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );

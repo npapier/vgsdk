@@ -23,9 +23,9 @@ namespace node
 
 
 /**
- * @brief A single stage of a post-processing stage.
+ * @brief A single stage of a post-processing pipeline.
  *
- * This node defines a single stage of a post-processing stage. Post-processing effect is applied to the previously rendered scene using COLOR and/or NORMAL buffer(s) 
+ * This node defines a single stage of a post-processing pipeline, i.e. a \c filter function applied on each pixel of the drawing surface with up to 3 input buffers and several parameters. Typical use-case of post-processing pipeline is to apply effect to the the previously rendered scene like depth of field, bloom and so on. 
  *
  * New fields defined by this node :
  * - SFEnum \c input2 = INPUT2_NONE<br>
@@ -51,6 +51,9 @@ namespace node
  *<br>
  * - SFString \c customFilterApply = empty<br>
  *   Specifies the code calling the filter defined by customFilterDefinition.<br>
+ *<br>
+ * - SFEnum \c output = OUTPUT_TMP0<br>
+ *   Specifices the output buffer used by the filter.<br>
  *<br>
  * - OFFloat \c [param1f0] = 0.0<br>
  *   Specifies the first 1f parameter used by the filter.<br>
@@ -108,16 +111,16 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		INPUT2_PREVIOUS0 = 363,	///< 
-		INPUT2_OUTPUT_BUFFER0 = 355,	///< 
-		INPUT2_OUTPUT_BUFFER1 = 356,	///< 
-		INPUT2_OUTPUT_BUFFER2 = 357,	///< 
-		INPUT2_OUTPUT_BUFFER3 = 358,	///< 
-		INPUT2_OUTPUT_BUFFER4 = 359,	///< 
-		INPUT2_OUTPUT_BUFFER5 = 360,	///< 
-		INPUT2_OUTPUT_BUFFER6 = 361,	///< 
-		INPUT2_OUTPUT_BUFFER7 = 362,	///< 
-		INPUT2_NONE = 364,	///< 
+		INPUT2_PREVIOUS0 = 366,	///< 
+		INPUT2_OUTPUT_BUFFER0 = 358,	///< 
+		INPUT2_OUTPUT_BUFFER1 = 359,	///< 
+		INPUT2_OUTPUT_BUFFER2 = 360,	///< 
+		INPUT2_OUTPUT_BUFFER3 = 361,	///< 
+		INPUT2_OUTPUT_BUFFER4 = 362,	///< 
+		INPUT2_OUTPUT_BUFFER5 = 363,	///< 
+		INPUT2_OUTPUT_BUFFER6 = 364,	///< 
+		INPUT2_OUTPUT_BUFFER7 = 365,	///< 
+		INPUT2_NONE = 367,	///< 
 		DEFAULT_INPUT2 = INPUT2_NONE	///< 
 	};
 
@@ -145,9 +148,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 355 );
-			retVal.push_back( 356 );
-			retVal.push_back( 357 );
 			retVal.push_back( 358 );
 			retVal.push_back( 359 );
 			retVal.push_back( 360 );
@@ -155,6 +155,9 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 362 );
 			retVal.push_back( 363 );
 			retVal.push_back( 364 );
+			retVal.push_back( 365 );
+			retVal.push_back( 366 );
+			retVal.push_back( 367 );
 
 			return retVal;
 		}
@@ -208,16 +211,16 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		NONE = 344,	///< 
-		PREVIOUS0 = 343,	///< 
-		OUTPUT_BUFFER6 = 341,	///< 
-		OUTPUT_BUFFER7 = 342,	///< 
-		OUTPUT_BUFFER4 = 339,	///< 
-		OUTPUT_BUFFER5 = 340,	///< 
-		OUTPUT_BUFFER2 = 337,	///< 
-		OUTPUT_BUFFER3 = 338,	///< 
-		OUTPUT_BUFFER0 = 335,	///< 
-		OUTPUT_BUFFER1 = 336,	///< 
+		NONE = 347,	///< 
+		PREVIOUS0 = 346,	///< 
+		OUTPUT_BUFFER6 = 344,	///< 
+		OUTPUT_BUFFER7 = 345,	///< 
+		OUTPUT_BUFFER4 = 342,	///< 
+		OUTPUT_BUFFER5 = 343,	///< 
+		OUTPUT_BUFFER2 = 340,	///< 
+		OUTPUT_BUFFER3 = 341,	///< 
+		OUTPUT_BUFFER0 = 338,	///< 
+		OUTPUT_BUFFER1 = 339,	///< 
 		DEFAULT_INPUT0 = PREVIOUS0	///< 
 	};
 
@@ -245,9 +248,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 335 );
-			retVal.push_back( 336 );
-			retVal.push_back( 337 );
 			retVal.push_back( 338 );
 			retVal.push_back( 339 );
 			retVal.push_back( 340 );
@@ -255,6 +255,9 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 342 );
 			retVal.push_back( 343 );
 			retVal.push_back( 344 );
+			retVal.push_back( 345 );
+			retVal.push_back( 346 );
+			retVal.push_back( 347 );
 
 			return retVal;
 		}
@@ -308,16 +311,16 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		INPUT1_OUTPUT_BUFFER5 = 350,	///< 
-		INPUT1_OUTPUT_BUFFER4 = 349,	///< 
-		INPUT1_OUTPUT_BUFFER7 = 352,	///< 
-		INPUT1_OUTPUT_BUFFER6 = 351,	///< 
-		INPUT1_OUTPUT_BUFFER1 = 346,	///< 
-		INPUT1_OUTPUT_BUFFER0 = 345,	///< 
-		INPUT1_OUTPUT_BUFFER3 = 348,	///< 
-		INPUT1_OUTPUT_BUFFER2 = 347,	///< 
-		INPUT1_NONE = 354,	///< 
-		INPUT1_PREVIOUS0 = 353,	///< 
+		INPUT1_OUTPUT_BUFFER5 = 353,	///< 
+		INPUT1_OUTPUT_BUFFER4 = 352,	///< 
+		INPUT1_OUTPUT_BUFFER7 = 355,	///< 
+		INPUT1_OUTPUT_BUFFER6 = 354,	///< 
+		INPUT1_OUTPUT_BUFFER1 = 349,	///< 
+		INPUT1_OUTPUT_BUFFER0 = 348,	///< 
+		INPUT1_OUTPUT_BUFFER3 = 351,	///< 
+		INPUT1_OUTPUT_BUFFER2 = 350,	///< 
+		INPUT1_NONE = 357,	///< 
+		INPUT1_PREVIOUS0 = 356,	///< 
 		DEFAULT_INPUT1 = INPUT1_NONE	///< 
 	};
 
@@ -345,9 +348,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 345 );
-			retVal.push_back( 346 );
-			retVal.push_back( 347 );
 			retVal.push_back( 348 );
 			retVal.push_back( 349 );
 			retVal.push_back( 350 );
@@ -355,6 +355,9 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 352 );
 			retVal.push_back( 353 );
 			retVal.push_back( 354 );
+			retVal.push_back( 355 );
+			retVal.push_back( 356 );
+			retVal.push_back( 357 );
 
 			return retVal;
 		}
@@ -438,27 +441,27 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		COLOR_INVERSE = 316,	///< Inverts the colored value
-		OVER = 325,	///< Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition
-		SUB = 327,	///< Combines two images into one using the following formula : image1 - image2
-		BLUR_VERT = 319,	///< Blurs an image vertically using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0
-		CUSTOM_FILTER = 334,	///< The filter defined by field customFilterDefinition is applied using field customFilterApply.
-		BLOOM_HORIZ = 320,	///< Amplifies and blurs an image horizontally using weights that follow a gaussian distribution
-		COLOR_TO_MONOCHROME = 314,	///< Converts colored value to black and white
-		DOF = 332,	///< @todo
-		MIX_AND_SCALE = 328,	///< Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]
-		NO_FILTER = 333,	///< No filter is applied
-		COMBINE2_AND_SCALE = 330,	///< Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]
-		ADD = 326,	///< Combines two images into one using the following formula : image1 + image2
-		DOWN_FILTER4 = 323,	///< Scales images down 4 times with a high-pass filter
-		UP_FILTER4 = 324,	///< Scales images up 4 times
-		BLOOM_VERT = 321,	///< Amplifies and blurs an image vertically using weights that follow a gaussian distribution
-		ALPHAMIX_AND_SCALE = 329,	///< Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = image2.a\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param1f0. The alpha channel of the output is image2.a
-		SCALE_AND_BIAS = 317,	///< Each of the color components is multiplied by a scale factor, then added to a bias factor using the following formula : output = input0 * param4f0 + param4f1.
-		COMBINE3_AND_SCALE = 331,	///< Combines three images into one by blending them linearly using the following formula : image1 * a + image2 * b + image3 * c with a = param4f0[0], b = param4f0[1] and c = param4f0[2].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[3]
-		COLOR_TO_SEPIA = 315,	///< Converts colored value to sepia.\n Sets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1].
-		BLUR_HORIZ = 318,	///< Blurs an image horizontally using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0.
-		COLOR_EDGE_DETECT = 322,	///< Detects edges and highlights them
+		COLOR_INVERSE = 319,	///< Inverts the colored value
+		OVER = 328,	///< Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition
+		SUB = 330,	///< Combines two images into one using the following formula : image1 - image2
+		BLUR_VERT = 322,	///< Blurs an image vertically using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0
+		CUSTOM_FILTER = 337,	///< The filter defined by field customFilterDefinition is applied using field customFilterApply.
+		BLOOM_HORIZ = 323,	///< Amplifies and blurs an image horizontally using weights that follow a gaussian distribution
+		COLOR_TO_MONOCHROME = 317,	///< Converts colored value to black and white
+		DOF = 335,	///< @todo
+		MIX_AND_SCALE = 331,	///< Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]
+		NO_FILTER = 336,	///< No filter is applied
+		COMBINE2_AND_SCALE = 333,	///< Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]
+		ADD = 329,	///< Combines two images into one using the following formula : image1 + image2
+		DOWN_FILTER4 = 326,	///< Scales images down 4 times with a high-pass filter
+		UP_FILTER4 = 327,	///< Scales images up 4 times
+		BLOOM_VERT = 324,	///< Amplifies and blurs an image vertically using weights that follow a gaussian distribution
+		ALPHAMIX_AND_SCALE = 332,	///< Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = image2.a\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param1f0. The alpha channel of the output is image2.a
+		SCALE_AND_BIAS = 320,	///< Each of the color components is multiplied by a scale factor, then added to a bias factor using the following formula : output = input0 * param4f0 + param4f1.
+		COMBINE3_AND_SCALE = 334,	///< Combines three images into one by blending them linearly using the following formula : image1 * a + image2 * b + image3 * c with a = param4f0[0], b = param4f0[1] and c = param4f0[2].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[3]
+		COLOR_TO_SEPIA = 318,	///< Converts colored value to sepia.\n Sets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1].
+		BLUR_HORIZ = 321,	///< Blurs an image horizontally using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0.
+		COLOR_EDGE_DETECT = 325,	///< Detects edges and highlights them
 		DEFAULT_FILTER = NO_FILTER	///< No filter is applied
 	};
 
@@ -486,9 +489,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 314 );
-			retVal.push_back( 315 );
-			retVal.push_back( 316 );
 			retVal.push_back( 317 );
 			retVal.push_back( 318 );
 			retVal.push_back( 319 );
@@ -507,6 +507,9 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 332 );
 			retVal.push_back( 333 );
 			retVal.push_back( 334 );
+			retVal.push_back( 335 );
+			retVal.push_back( 336 );
+			retVal.push_back( 337 );
 
 			return retVal;
 		}
@@ -670,6 +673,103 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field output
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		OUTPUT_OUTPUT_BUFFER7 = 376,	///< 
+		OUTPUT_OUTPUT_BUFFER6 = 375,	///< 
+		OUTPUT_OUTPUT_BUFFER5 = 374,	///< 
+		OUTPUT_OUTPUT_BUFFER4 = 373,	///< 
+		OUTPUT_OUTPUT_BUFFER3 = 372,	///< 
+		OUTPUT_OUTPUT_BUFFER2 = 371,	///< 
+		OUTPUT_OUTPUT_BUFFER1 = 370,	///< 
+		OUTPUT_OUTPUT_BUFFER0 = 369,	///< 
+		OUTPUT_TMP0 = 368,	///< Post-processing internal buffer.
+		DEFAULT_OUTPUT = OUTPUT_TMP0	///< Post-processing internal buffer.
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct OutputValueType : public vgd::field::Enum
+	{
+		OutputValueType()
+		{}
+
+		OutputValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		OutputValueType( const OutputValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		OutputValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 368 );
+			retVal.push_back( 369 );
+			retVal.push_back( 370 );
+			retVal.push_back( 371 );
+			retVal.push_back( 372 );
+			retVal.push_back( 373 );
+			retVal.push_back( 374 );
+			retVal.push_back( 375 );
+			retVal.push_back( 376 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "OUTPUT_TMP0" );
+			retVal.push_back( "OUTPUT_OUTPUT_BUFFER0" );
+			retVal.push_back( "OUTPUT_OUTPUT_BUFFER1" );
+			retVal.push_back( "OUTPUT_OUTPUT_BUFFER2" );
+			retVal.push_back( "OUTPUT_OUTPUT_BUFFER3" );
+			retVal.push_back( "OUTPUT_OUTPUT_BUFFER4" );
+			retVal.push_back( "OUTPUT_OUTPUT_BUFFER5" );
+			retVal.push_back( "OUTPUT_OUTPUT_BUFFER6" );
+			retVal.push_back( "OUTPUT_OUTPUT_BUFFER7" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c output
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FOutputType;
+
+
+	/**
+	 * @brief Gets the value of field named \c output.
+	 */
+	const OutputValueType getOutput() const;
+
+	/**
+	 * @brief Sets the value of field named \c output.
+	 */
+	void setOutput( const OutputValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field param1f0
 	 */
 	//@{
@@ -768,6 +868,13 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @return the name of field \c customFilterApply.
 	 */
 	static const std::string getFCustomFilterApply( void );
+
+	/**
+	 * @brief Returns the name of field \c output.
+	 *
+	 * @return the name of field \c output.
+	 */
+	static const std::string getFOutput( void );
 
 	/**
 	 * @brief Returns the name of field \c param1f0.

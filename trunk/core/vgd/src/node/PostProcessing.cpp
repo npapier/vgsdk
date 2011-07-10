@@ -71,6 +71,7 @@ PostProcessing::PostProcessing( const std::string nodeName ) :
 	addField( new FParam4f1Type(getFParam4f1()) );
 	addField( new FParam4f0Type(getFParam4f0()) );
 	addField( new FCustomFilterApplyType(getFCustomFilterApply()) );
+	addField( new FOutputType(getFOutput()) );
 	addField( new FParam1f0Type(getFParam1f0()) );
 
 	// Sets link(s)
@@ -89,6 +90,7 @@ void PostProcessing::setToDefaults( void )
 
 	setFilter( NO_FILTER );
 
+	setOutput( OUTPUT_TMP0 );
 }
 
 
@@ -249,6 +251,21 @@ void PostProcessing::setCustomFilterApply( const CustomFilterApplyValueType valu
 
 
 
+// Output
+const PostProcessing::OutputValueType PostProcessing::getOutput() const
+{
+	return getFieldRO<FOutputType>(getFOutput())->getValue();
+}
+
+
+
+void PostProcessing::setOutput( const OutputValueType value )
+{
+	getFieldRW<FOutputType>(getFOutput())->setValue( value );
+}
+
+
+
 // Param1f0
 const bool PostProcessing::getParam1f0( Param1f0ValueType& value ) const
 {
@@ -330,6 +347,13 @@ const std::string PostProcessing::getFParam4f0( void )
 const std::string PostProcessing::getFCustomFilterApply( void )
 {
 	return "f_customFilterApply";
+}
+
+
+
+const std::string PostProcessing::getFOutput( void )
+{
+	return "f_output";
 }
 
 

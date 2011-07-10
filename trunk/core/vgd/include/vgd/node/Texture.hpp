@@ -28,8 +28,11 @@ namespace node
  * This node defines texture parameters (wrapping, filter for minifying and magnification, mipmapping and function). Be carefull, data referenced by image must be available when texture is update. This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface) @remarks When The scene graph is evaluated by vgeGL, there are a size constraint one texture that you should keep in mind.\n When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage(to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n - Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping.\n - GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping.\n - GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce 8 could do  8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n @remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n @todo More docs\n 
  *
  * New fields defined by this node :
- * - OFString \c [function] = empty<br>
- *   Example similar to old FUN_MODULATE: color *= texture2D(texUnitX, gl_TexCoord[X].xy);<br>
+ * - OFString \c [fragmentFunction] = empty<br>
+ *   Fragment texturing function.<br>
+ *<br>
+ * - PAFEnum \c wrap = REPEAT<br>
+ *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
  *<br>
  * - OFIImageShp \c [image] = empty<br>
  *   Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
@@ -40,8 +43,8 @@ namespace node
  * - PAFEnum \c filter = LINEAR<br>
  *   The texture minifying function (MIN_FILTER) is used whenever the pixel being textured maps to an area greater than one texture element. The texture magnification function (MAG_FILTER) is used when the pixel being textured maps to an area less than or equal to one texture element.<br>
  *<br>
- * - PAFEnum \c wrap = REPEAT<br>
- *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
+ * - OFString \c [vertexFunction] = empty<br>
+ *   Vertex texturing function.<br>
  *<br>
  * - SFEnum \c internalFormat = AUTOMATIC<br>
  *   Specifies the desired internal format used by the GPU.<br>
@@ -58,40 +61,189 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field function
+	 * @name Accessors to field fragmentFunction
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c function.
+	 * @brief Type definition of the value contained by field named \c fragmentFunction.
 	 */
-	typedef std::string FunctionValueType;
+	typedef std::string FragmentFunctionValueType;
 
 	/**
-	 * @brief Type definition of the field named \c function
+	 * @brief Type definition of the field named \c fragmentFunction
 	 */
-	typedef vgd::field::TOptionalField< FunctionValueType > FFunctionType;
+	typedef vgd::field::TOptionalField< FragmentFunctionValueType > FFragmentFunctionType;
 
 
 	/**
-	 * @brief Gets the value of field named \c function.
+	 * @brief Gets the value of field named \c fragmentFunction.
 	 */
-	const bool getFunction( FunctionValueType& value ) const;
+	const bool getFragmentFunction( FragmentFunctionValueType& value ) const;
 
 	/**
-	 * @brief Sets the value of field named \c function.
+	 * @brief Sets the value of field named \c fragmentFunction.
  	 */
-	void setFunction( const FunctionValueType& value );
+	void setFragmentFunction( const FragmentFunctionValueType& value );
 
 	/**
-	 * @brief Erases the field named \c function.
+	 * @brief Erases the field named \c fragmentFunction.
 	 */
-	void eraseFunction();
+	void eraseFragmentFunction();
 
 	/**
-	 * @brief Tests if the value of field named \c function has been initialized.
+	 * @brief Tests if the value of field named \c fragmentFunction has been initialized.
 	 */
-	const bool hasFunction() const;
+	const bool hasFragmentFunction() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field wrap
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the parameter contained by field named \c wrap.
+	 */
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		WRAP_T = 393,	///< 
+		WRAP_S = 392,	///< 
+		WRAP_R = 394,	///< 
+		DEFAULT_WRAPPARAMETER = WRAP_S	///< 
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct WrapParameterType : public vgd::field::Enum
+	{
+		WrapParameterType()
+		{}
+
+		WrapParameterType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		WrapParameterType( const WrapParameterType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		WrapParameterType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 392 );
+			retVal.push_back( 393 );
+			retVal.push_back( 394 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "WRAP_S" );
+			retVal.push_back( "WRAP_T" );
+			retVal.push_back( "WRAP_R" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		CLAMP = 396,	///< 
+		REPEAT = 395,	///< 
+		MIRRORED_REPEAT = 399,	///< 
+		CLAMP_TO_EDGE = 397,	///< 
+		CLAMP_TO_BORDER = 398,	///< 
+		ONCE = 400,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
+		DEFAULT_WRAP = REPEAT	///< 
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct WrapValueType : public vgd::field::Enum
+	{
+		WrapValueType()
+		{}
+
+		WrapValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		WrapValueType( const WrapValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		WrapValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 395 );
+			retVal.push_back( 396 );
+			retVal.push_back( 397 );
+			retVal.push_back( 398 );
+			retVal.push_back( 399 );
+			retVal.push_back( 400 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "REPEAT" );
+			retVal.push_back( "CLAMP" );
+			retVal.push_back( "CLAMP_TO_EDGE" );
+			retVal.push_back( "CLAMP_TO_BORDER" );
+			retVal.push_back( "MIRRORED_REPEAT" );
+			retVal.push_back( "ONCE" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c wrap
+	 */
+	typedef vgd::field::TPairAssociativeField< WrapParameterType, WrapValueType > FWrapType;
+
+
+	/**
+	 * @brief Gets the value of field named \c wrap.
+	 */
+	const bool getWrap( const WrapParameterType param, WrapValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c wrap.
+ 	 */
+	void setWrap( const WrapParameterType param, WrapValueType value );
+
+	/**
+	 * @brief Erases the field named \c wrap.
+	 */
+	void eraseWrap( const WrapParameterType param );
 	//@}
 
 
@@ -187,8 +339,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		MIN_FILTER = 389,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
-		MAG_FILTER = 390,	///< Choose one value among NEAREST or LINEAR (default).
+		MIN_FILTER = 401,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
+		MAG_FILTER = 402,	///< Choose one value among NEAREST or LINEAR (default).
 		DEFAULT_FILTERPARAMETER = MAG_FILTER	///< Choose one value among NEAREST or LINEAR (default).
 	};
 
@@ -216,8 +368,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 389 );
-			retVal.push_back( 390 );
+			retVal.push_back( 401 );
+			retVal.push_back( 402 );
 
 			return retVal;
 		}
@@ -238,12 +390,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		NEAREST = 391,	///< 
-		LINEAR = 392,	///< 
-		LINEAR_MIPMAP_NEAREST = 394,	///< 
-		NEAREST_MIPMAP_NEAREST = 393,	///< 
-		LINEAR_MIPMAP_LINEAR = 396,	///< 
-		NEAREST_MIPMAP_LINEAR = 395,	///< 
+		NEAREST = 403,	///< 
+		LINEAR = 404,	///< 
+		LINEAR_MIPMAP_NEAREST = 406,	///< 
+		NEAREST_MIPMAP_NEAREST = 405,	///< 
+		LINEAR_MIPMAP_LINEAR = 408,	///< 
+		NEAREST_MIPMAP_LINEAR = 407,	///< 
 		DEFAULT_FILTER = LINEAR	///< 
 	};
 
@@ -271,12 +423,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 391 );
-			retVal.push_back( 392 );
-			retVal.push_back( 393 );
-			retVal.push_back( 394 );
-			retVal.push_back( 395 );
-			retVal.push_back( 396 );
+			retVal.push_back( 403 );
+			retVal.push_back( 404 );
+			retVal.push_back( 405 );
+			retVal.push_back( 406 );
+			retVal.push_back( 407 );
+			retVal.push_back( 408 );
 
 			return retVal;
 		}
@@ -321,150 +473,40 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field wrap
+	 * @name Accessors to field vertexFunction
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the parameter contained by field named \c wrap.
+	 * @brief Type definition of the value contained by field named \c vertexFunction.
 	 */
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum  
-	{
-		WRAP_T = 381,	///< 
-		WRAP_S = 380,	///< 
-		WRAP_R = 382,	///< 
-		DEFAULT_WRAPPARAMETER = WRAP_S	///< 
-	};
+	typedef std::string VertexFunctionValueType;
 
 	/**
-	 * @brief Type definition of a container for the previous symbolic values
+	 * @brief Type definition of the field named \c vertexFunction
 	 */
-	struct WrapParameterType : public vgd::field::Enum
-	{
-		WrapParameterType()
-		{}
-
-		WrapParameterType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		WrapParameterType( const WrapParameterType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		WrapParameterType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 380 );
-			retVal.push_back( 381 );
-			retVal.push_back( 382 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "WRAP_S" );
-			retVal.push_back( "WRAP_T" );
-			retVal.push_back( "WRAP_R" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum  
-	{
-		CLAMP = 384,	///< 
-		REPEAT = 383,	///< 
-		MIRRORED_REPEAT = 387,	///< 
-		CLAMP_TO_EDGE = 385,	///< 
-		CLAMP_TO_BORDER = 386,	///< 
-		ONCE = 388,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
-		DEFAULT_WRAP = REPEAT	///< 
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct WrapValueType : public vgd::field::Enum
-	{
-		WrapValueType()
-		{}
-
-		WrapValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		WrapValueType( const WrapValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		WrapValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 383 );
-			retVal.push_back( 384 );
-			retVal.push_back( 385 );
-			retVal.push_back( 386 );
-			retVal.push_back( 387 );
-			retVal.push_back( 388 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "REPEAT" );
-			retVal.push_back( "CLAMP" );
-			retVal.push_back( "CLAMP_TO_EDGE" );
-			retVal.push_back( "CLAMP_TO_BORDER" );
-			retVal.push_back( "MIRRORED_REPEAT" );
-			retVal.push_back( "ONCE" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c wrap
-	 */
-	typedef vgd::field::TPairAssociativeField< WrapParameterType, WrapValueType > FWrapType;
+	typedef vgd::field::TOptionalField< VertexFunctionValueType > FVertexFunctionType;
 
 
 	/**
-	 * @brief Gets the value of field named \c wrap.
+	 * @brief Gets the value of field named \c vertexFunction.
 	 */
-	const bool getWrap( const WrapParameterType param, WrapValueType& value ) const;
+	const bool getVertexFunction( VertexFunctionValueType& value ) const;
 
 	/**
-	 * @brief Sets the value of field named \c wrap.
+	 * @brief Sets the value of field named \c vertexFunction.
  	 */
-	void setWrap( const WrapParameterType param, WrapValueType value );
+	void setVertexFunction( const VertexFunctionValueType& value );
 
 	/**
-	 * @brief Erases the field named \c wrap.
+	 * @brief Erases the field named \c vertexFunction.
 	 */
-	void eraseWrap( const WrapParameterType param );
+	void eraseVertexFunction();
+
+	/**
+	 * @brief Tests if the value of field named \c vertexFunction has been initialized.
+	 */
+	const bool hasVertexFunction() const;
 	//@}
 
 
@@ -479,19 +521,19 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		DEPTH_COMPONENT_16 = 368,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
-		RGB_32F = 373,	///< A three component buffer. A 32-bit float is used to encode a texel.
-		LUMINANCE_ALPHA_32F = 379,	///< A two component buffer. A 32-bit float is used to encode a texel.
-		LUMINANCE_16F = 376,	///< A single component buffer. A 16-bit float is used to encode a texel.
-		LUMINANCE_32F = 377,	///< A single component buffer. A 32-bit float is used to encode a texel.
-		RGBA_32F = 375,	///< A four component buffer. A 32-bit float is used to encode a texel.
-		DEPTH_COMPONENT_32F = 371,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
-		RGBA_16F = 374,	///< A four component buffer. A 16-bit float is used to encode a texel.
-		LUMINANCE_ALPHA_16F = 378,	///< A two component buffer. A 16-bit float is used to encode a texel.
-		DEPTH_COMPONENT_24 = 369,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
-		AUTOMATIC = 367,	///< Choosed automatically an internal format matching the image format used by the texture.
-		RGB_16F = 372,	///< A three component buffer. A 16-bit float is used to encode a texel.
-		DEPTH_COMPONENT_32 = 370,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
+		DEPTH_COMPONENT_16 = 380,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
+		RGB_32F = 385,	///< A three component buffer. A 32-bit float is used to encode a texel.
+		LUMINANCE_ALPHA_32F = 391,	///< A two component buffer. A 32-bit float is used to encode a texel.
+		LUMINANCE_16F = 388,	///< A single component buffer. A 16-bit float is used to encode a texel.
+		LUMINANCE_32F = 389,	///< A single component buffer. A 32-bit float is used to encode a texel.
+		RGBA_32F = 387,	///< A four component buffer. A 32-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32F = 383,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
+		RGBA_16F = 386,	///< A four component buffer. A 16-bit float is used to encode a texel.
+		LUMINANCE_ALPHA_16F = 390,	///< A two component buffer. A 16-bit float is used to encode a texel.
+		DEPTH_COMPONENT_24 = 381,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
+		AUTOMATIC = 379,	///< Choosed automatically an internal format matching the image format used by the texture.
+		RGB_16F = 384,	///< A three component buffer. A 16-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32 = 382,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
 		DEFAULT_INTERNALFORMAT = AUTOMATIC	///< Choosed automatically an internal format matching the image format used by the texture.
 	};
 
@@ -519,19 +561,19 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 367 );
-			retVal.push_back( 368 );
-			retVal.push_back( 369 );
-			retVal.push_back( 370 );
-			retVal.push_back( 371 );
-			retVal.push_back( 372 );
-			retVal.push_back( 373 );
-			retVal.push_back( 374 );
-			retVal.push_back( 375 );
-			retVal.push_back( 376 );
-			retVal.push_back( 377 );
-			retVal.push_back( 378 );
 			retVal.push_back( 379 );
+			retVal.push_back( 380 );
+			retVal.push_back( 381 );
+			retVal.push_back( 382 );
+			retVal.push_back( 383 );
+			retVal.push_back( 384 );
+			retVal.push_back( 385 );
+			retVal.push_back( 386 );
+			retVal.push_back( 387 );
+			retVal.push_back( 388 );
+			retVal.push_back( 389 );
+			retVal.push_back( 390 );
+			retVal.push_back( 391 );
 
 			return retVal;
 		}
@@ -588,8 +630,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		IMAGE = 365,	///< Simple image mapping
-		SHADOW = 366,	///< Shadow mapping
+		IMAGE = 377,	///< Simple image mapping
+		SHADOW = 378,	///< Shadow mapping
 		DEFAULT_USAGE = IMAGE	///< Simple image mapping
 	};
 
@@ -617,8 +659,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 365 );
-			retVal.push_back( 366 );
+			retVal.push_back( 377 );
+			retVal.push_back( 378 );
 
 			return retVal;
 		}
@@ -660,11 +702,18 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c function.
+	 * @brief Returns the name of field \c fragmentFunction.
 	 *
-	 * @return the name of field \c function.
+	 * @return the name of field \c fragmentFunction.
 	 */
-	static const std::string getFFunction( void );
+	static const std::string getFFragmentFunction( void );
+
+	/**
+	 * @brief Returns the name of field \c wrap.
+	 *
+	 * @return the name of field \c wrap.
+	 */
+	static const std::string getFWrap( void );
 
 	/**
 	 * @brief Returns the name of field \c image.
@@ -688,11 +737,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	static const std::string getFFilter( void );
 
 	/**
-	 * @brief Returns the name of field \c wrap.
+	 * @brief Returns the name of field \c vertexFunction.
 	 *
-	 * @return the name of field \c wrap.
+	 * @return the name of field \c vertexFunction.
 	 */
-	static const std::string getFWrap( void );
+	static const std::string getFVertexFunction( void );
 
 	/**
 	 * @brief Returns the name of field \c internalFormat.
@@ -716,8 +765,50 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	//@{
 
+	/**
+	 * @brief Returns name of dirty flag that is invalidate when \c image field is modified.
+	 */
+	static const std::string getDFImage();
 
 	//@}
+	/**
+	 * @name Accessors to field functionFragment
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c functionFragment.
+	 */
+	typedef FragmentFunctionValueType FunctionValueType;
+
+	/**
+	 * @brief Type definition of the field named \c functionFragment
+	 */
+	typedef FFragmentFunctionType FFunctionType;
+
+	/**
+	 * @brief Gets the value of field named \c functionFragment.
+	 */
+	const bool getFunction( FunctionValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c functionFragment.
+ 	 */
+	void setFunction( const FunctionValueType& value );
+
+	/**
+	 * @brief Erases the field named \c functionFragment.
+	 */
+	void eraseFunction();
+
+	/**
+	 * @brief Tests if the value of field named \c functionFragment has been initialized.
+	 */
+	const bool hasFunction() const;
+	//@}
+
+
+
 	/**
 	 * @name High-level accessors
 	 */

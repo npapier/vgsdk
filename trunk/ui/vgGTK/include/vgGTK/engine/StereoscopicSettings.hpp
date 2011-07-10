@@ -51,12 +51,17 @@ private:
 	Gtk::Label					m_eyeSeparationLabel;			///< The label for eye separation
 	Gtk::HScale					m_eyeSeparation;				///< The slider to choose the eye separation.
 
+	// IMAGE SHIFT
+	Gtk::Label					m_imageShiftLabel;				///< The label for image shift.
+	Gtk::HScale					m_imageShift;					///< The slider to choose the image shift.
+
 	/**
 	 * @name	Signal Handlers
 	 */
 	//@{
 	void onEnabled();					///< Handles isEnabled changes.
 	void onEyeSeparationChanged();		///< Handles eye separation changes.
+	void onImageShiftChanged();			///< Handles image shift changes.
 	//@}
 
 	void refresh();

@@ -904,6 +904,20 @@ void Engine::activeTexture( const vgd::node::Texture * textureNode )
 
 
 
+void Engine::clearTextureUnits()
+{
+	for(	int32	index	= 0,
+					iMax	= isTextureMappingEnabled() ? getTextureMatrix().size() : 0;
+			index < iMax;
+			++index )
+	{
+		activeTexture( index );
+		glBindTexture( GL_TEXTURE_2D, 0 );
+	}
+}
+
+
+
 void Engine::begin2DRendering( const vgm::Rectangle2i * optionalViewport, const bool pushAttribs )
 {
 	// OpenGL attributes

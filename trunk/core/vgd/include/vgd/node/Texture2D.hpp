@@ -26,8 +26,11 @@ namespace node
  * No new field defined by this node.
  *
  * Inherited fields from Texture:
- * - OFString \c [function] = empty<br>
- *   Example similar to old FUN_MODULATE: color *= texture2D(texUnitX, gl_TexCoord[X].xy);<br>
+ * - OFString \c [fragmentFunction] = empty<br>
+ *   Fragment texturing function.<br>
+ *<br>
+ * - PAFEnum \c wrap = REPEAT<br>
+ *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
  *<br>
  * - OFIImageShp \c [image] = empty<br>
  *   Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
@@ -38,8 +41,8 @@ namespace node
  * - PAFEnum \c filter = LINEAR<br>
  *   The texture minifying function (MIN_FILTER) is used whenever the pixel being textured maps to an area greater than one texture element. The texture magnification function (MAG_FILTER) is used when the pixel being textured maps to an area less than or equal to one texture element.<br>
  *<br>
- * - PAFEnum \c wrap = REPEAT<br>
- *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
+ * - OFString \c [vertexFunction] = empty<br>
+ *   Vertex texturing function.<br>
  *<br>
  * - SFEnum \c internalFormat = AUTOMATIC<br>
  *   Specifies the desired internal format used by the GPU.<br>

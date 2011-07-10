@@ -13,8 +13,8 @@
 #include "vgeGL/technique/Main.hpp"
 
 namespace glo { struct FrameBufferObject; struct Texture2D; }
-namespace vgd { namespace node { struct FrameBuffer; struct Quad; struct Texture2D; } }
-namespace vgeGL { namespace rc { struct FrameBufferObject; } }
+namespace vgd { namespace node { struct Fluid; struct Grid; struct FrameBuffer; struct Quad; struct Texture2D; } }
+namespace vgeGL { namespace rc { struct Fluid; struct FrameBufferObject; } }
 
 
 namespace vgeGL
@@ -96,30 +96,99 @@ private:
 
 	void stageConfigureShadowMapping( vgeGL::engine::Engine * engine );
 
-	// POST-PROCESSING
-	bool drawingSurfaceSizeChanged;
+
+	// FLUID
+	bool				isFluidEnabled;
+
+	vgd::node::Fluid *	fluid;
+	vgm::MatrixR		fluidModelViewMatrix;
+
+	// helpers
+	vgd::Shp< vgeGL::rc::Fluid > getFluidRC( vgeGL::engine::Engine * engine );
+	void stageInitializeFluidPostProcessing( vgd::Shp< vgeGL::rc::Fluid > fluidRC );
+	void stageInitializeFluidRC( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
+
+	//
+	void stageInitializeFluid( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
+
+	void stageFluidUpdateSceneHeightMap( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
+
+	void stageFluidSimulation( vgeGL::engine::Engine * engine );
+
+
+// @todo separate outputbuffers and post-processing
+	// POST-PROCESSING (and OutputBuffers)
+struct PostProcessingPipelineRC
+{
+	// FBO 0 and 1 for TMP|PREVIOUS buffers
+	vgd::Shp< vgd::node::FrameBuffer >				frameBuffer0;
+	vgd::Shp< vgeGL::rc::FrameBufferObject > 		fbo0;
+	std::vector< vgd::Shp< vgd::node::Texture2D > >	textures0;	///< textures for FBO 0
+
+	vgd::Shp< vgd::node::FrameBuffer >				frameBuffer1;
+	vgd::Shp< vgeGL::rc::FrameBufferObject >		fbo1;
+	std::vector< vgd::Shp< vgd::node::Texture2D > >	textures1;	///< textures for FBO 1
+
+	vgd::Shp< vgeGL::rc::FrameBufferObject >		outputFbo;
+};
+
+/*struct PostProcessingRC
+{
+	vgd::node::PostProcessing::Input0ValueType input0;
+	vgd::node::PostProcessing::Input1ValueType input1;
+	vgd::node::PostProcessing::Input2ValueType input2;
+
+	float 		param1f0;
+	vgm::Vec4f	param4f0;
+	vgm::Vec4f	param4f1;
+
+	vgd::node::PostProcessing::OutputValueType output;
+
+	float		scale;
+
+	//std::pair< std::string, std::string > filter;
+	vgd::Shp< Program > program;
+	float m_lastCurrentScaleForVertex; // for blit()
+
+};*/
+
+	//std::vector< PostProcessingRC > postProcessingsRC;
+
+	PostProcessingPipelineRC pppRC;
+
+	// for info pass
 	bool hasOutputBufferProperties;
+		// input for post-processing
 	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
 	OutputBufferPropertyStateContainer * m_outputBufferProperties;
-	bool isPostProcessingEnabled;
 
+	bool isPostProcessingEnabled;
+		// input for post-processing
 	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 	PostProcessingStateContainer * m_postProcessing;
+
+	// OutputBuffers/PostProcessing
+	bool drawingSurfaceSizeChanged;		// @todo must be computed in info pass (generic information).
+
+	//
 	float m_lastCurrentScaleForVertex;
 
+	// Initializes fbo 0 and 1 internal buffers for ping-pong rendering (i.e. PREVIOUS0, OUTPUT_TMP0)
 	void stageInitializePostProcessingBuffers( vgeGL::engine::Engine * engine );
-		void initializePostProcessingBuffers( vgeGL::engine::Engine * engine );
-		vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer0;
-		vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo0;
-		std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures0;	///< textures for FBO 0
 
-		vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer1;
-		vgd::Shp< vgeGL::rc::FrameBufferObject >		m_fbo1;
-		std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures1;	///< textures for FBO 1
+
+	// Configures fragment shader stages FRAGMENT_OUTPUT_DECLARATION and FRAGMENT_OUTPUT
 	void stageConfigurePostProcessing( vgeGL::engine::Engine * engine );
+
+	// Apply the post-processing and blits the result.
 	void stagePostProcessing( vgeGL::engine::Engine * engine );
 
-	const vgd::Shp< vgeGL::rc::FrameBufferObject > applyPostProcessing( vgeGL::engine::Engine * engine, const vgd::Shp< vgeGL::rc::FrameBufferObject > fbo0, const vgd::Shp< vgeGL::rc::FrameBufferObject > fbo1 );
+	// post-processing core details
+	const vgd::Shp< vgeGL::rc::FrameBufferObject > applyPostProcessing(
+		vgeGL::engine::Engine * engine,
+		std::vector< vgd::Shp< vgd::node::Texture2D > >&	outputBuffers,
+		PostProcessingStateContainer *						postProcessingContainer );
+
 	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo );
 
 	// OVERLAY

@@ -36,6 +36,7 @@ namespace engine
 StereoscopicSettings::StereoscopicSettings()
 //:	m_isEnabled
 //:	m_eyeSeparation
+//:	m_imageShift
 {
 	load();
 }
@@ -76,6 +77,9 @@ void StereoscopicSettings::apply( vgd::Shp< vgd::node::Camera > camera ) const
 
 	// Eye separation
 	camera->setEyeSeparation( m_eyeSeparation );
+
+	// Image shift
+	camera->setImageShift( m_imageShift );
 }
 
 
@@ -110,8 +114,20 @@ void StereoscopicSettings::load()
 		}
 		else
 		{
-			vgLogError2( "Invalid eye separation in file %s", path.string().c_str() );
+			vgLogDebug2( "Invalid eye separation in file %s. Uses zero.", path.string().c_str() );
 			setEyeSeparation( 0.f );
+		}
+
+		// IMAGE SHIFT
+		float imageShift = settings.get< float >( "imageShift", 0.f );
+		if ( isImageShiftValid() )
+		{
+			setImageShift( imageShift );
+		}
+		else
+		{
+			vgLogDebug2( "Invalid image shift in file %s. Uses zero.", path.string().c_str() );
+			setImageShift( 0.f );
 		}
 	}
 	catch( bpt::ini_parser::ini_parser_error & )
@@ -146,7 +162,18 @@ void StereoscopicSettings::save()
 		else
 		{
 			settings.put( "eyeSeparation", 0.f );
-			vgLogError2( "Invalid eye separation %f. Uses zero.", m_eyeSeparation );
+			vgLogDebug2( "Invalid eye separation %f. Uses zero.", m_eyeSeparation );
+		}
+
+		// IMAGE SHIFT
+		if ( isImageShiftValid() )
+		{
+			settings.put( "imageShift", m_imageShift );
+		}
+		else
+		{
+			settings.put( "imageShift", 0.f );
+			vgLogDebug2( "Invalid image shift %f. Uses zero.", m_imageShift );
 		}
 
 		// Saves the settings
@@ -178,6 +205,27 @@ const float StereoscopicSettings::getEyeSeparation() const
 void StereoscopicSettings::setEyeSeparation( const float eyeSeparation )
 {
 	m_eyeSeparation = eyeSeparation;
+}
+
+
+
+const float StereoscopicSettings::getImageShift() const
+{
+	return m_imageShift;
+}
+
+void StereoscopicSettings::setImageShift( const float imageShift)
+{
+	m_imageShift = imageShift;
+}
+
+
+
+const bool StereoscopicSettings::isImageShiftValid()
+{
+	const bool retVal =	(getImageShift() >= 0.f) &&
+						(getImageShift() <= 100.f);
+	return retVal;
 }
 
 

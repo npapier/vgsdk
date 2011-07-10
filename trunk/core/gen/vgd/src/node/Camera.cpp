@@ -169,7 +169,42 @@ void Camera::setMatrix( const MatrixValueType value )
 
 
 // High-level
-void Camera::sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation )
+const bool Camera::gethViewport( ViewportValueType& viewport, const EyeUsagePolicyValueType eyeUsagePolicy ) const
+{
+	// Retrieves viewport field
+	bool hasViewport = getViewport( viewport );
+
+	if ( hasViewport )
+	{
+		const float halfImageShift = getImageShift()/2.f;
+
+		switch ( eyeUsagePolicy.value() )
+		{
+			case EYE_LEFT:
+				viewport[0] -= static_cast< int >( halfImageShift );
+				break;
+
+			case EYE_RIGHT:
+				viewport[0] += static_cast< int >( halfImageShift );
+				break;
+
+			case EYE_BOTH:
+				// Nothing to do
+				break;
+
+			default:
+				vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
+		}
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/*void Camera::sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation )
 {
 	vgm::MatrixR lookAt;
 	lookAt.setLookAt( lookAtEye, lookAtCenter, lookAtUp );
@@ -190,3 +225,4 @@ void Camera::sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3
 
 	setLookAtRight( lookAtRight );
 }
+*/

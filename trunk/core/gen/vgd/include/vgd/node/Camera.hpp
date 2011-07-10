@@ -105,16 +105,21 @@
 	//@{
 
 	/**
-	 * @brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering
+	 * @brief Returns the value of field named \c viewport modified (if needed) by taking care of the given eye usage policy, the \c mode field and the \c imageShift field.
+	 */
+	const bool gethViewport( ViewportValueType& value, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
+
+	/**
+	 * brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering
 	 *
 	 * The first three parameters defines a 3D geometric transformation applied to monoscopic eye.
 	 * The position of monoscopic eye is slightly shift along the X axis using \c eyeSeparation value to define left eye and right eye.
 	 *
-	 * @param lookAtEye		the position of the eye point
-	 * @param lookAtCenter	the position of the reference point
-	 * @param lookAtUp		the direction of the up vector
-	 * @param eyeSeparation	the distance between the two eyes
+	 * param lookAtEye		the position of the eye point
+	 * param lookAtCenter	the position of the reference point
+	 * param lookAtUp		the direction of the up vector
+	 * param eyeSeparation	the distance between the two eyes
 	 */
-	void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
+	//void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
 
 	//@}

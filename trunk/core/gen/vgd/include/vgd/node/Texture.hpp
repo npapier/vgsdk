@@ -1,4 +1,42 @@
 	/**
+	 * @name Accessors to field functionFragment
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c functionFragment.
+	 */
+	typedef FragmentFunctionValueType FunctionValueType;
+
+	/**
+	 * @brief Type definition of the field named \c functionFragment
+	 */
+	typedef FFragmentFunctionType FFunctionType;
+
+	/**
+	 * @brief Gets the value of field named \c functionFragment.
+	 */
+	const bool getFunction( FunctionValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c functionFragment.
+ 	 */
+	void setFunction( const FunctionValueType& value );
+
+	/**
+	 * @brief Erases the field named \c functionFragment.
+	 */
+	void eraseFunction();
+
+	/**
+	 * @brief Tests if the value of field named \c functionFragment has been initialized.
+	 */
+	const bool hasFunction() const;
+	//@}
+
+
+
+	/**
 	 * @name High-level accessors
 	 */
 	//@{

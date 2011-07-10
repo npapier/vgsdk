@@ -297,6 +297,38 @@ public:
 	GLManagerType& getGLManager();
 
 	/**
+	 * @brief Returns the resource associated to the given node in the OpenGL manager
+	 *
+	 * @param node		the node that is associated to resource to lookup
+	 *
+	 * @return the desired resource
+	 */
+	template< typename ResourceType >
+	vgd::Shp< ResourceType > getRCShp( vgd::node::Node * node )
+	{
+		// Gets the resource manager
+		GLManagerType& manager = getGLManager();
+
+		// Do the request
+		vgd::Shp< ResourceType > rc = manager.getShp< ResourceType >( node );
+		return rc;
+	}
+
+	/**
+	 * @brief Returns the resource associated to the given node in the OpenGL manager
+	 *
+	 * @param node		the node that is associated to resource to lookup
+	 *
+	 * @return the desired resource
+	 */
+	template< typename ResourceType >
+	vgd::Shp< ResourceType > getRCShp( vgd::Shp< vgd::node::Node > node )
+	{
+		return getRCShp< ResourceType >( node.get() );
+	}
+
+
+	/**
 	 * @brief Typedef for the glsl program manager
 	 * 
 	 * This manager associates a single string to a single glo::GLSLProgram
@@ -653,6 +685,11 @@ public:
 	 * @param textureNode	the texture node (used to know which texture unit must be activated, i.e. getMultiAttributeIndex())
 	 */
 	static void activeTexture( const vgd::node::Texture * textureNode );
+
+	/**
+	 * @brief Binds the default 2D texture for each texture units.
+	 */
+	void clearTextureUnits();
 
 	/**
 	 * @brief Configures OpenGL for 2D rendering.

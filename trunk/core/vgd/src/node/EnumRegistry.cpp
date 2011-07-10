@@ -84,135 +84,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 332 ) != m_toString.end() )
+	if ( m_toString.find( 335 ) != m_toString.end() )
 	{
-		vgLogDebug("(332, DOF) already in m_toString enum registry");
-		assert( false && "(332, DOF) already in registry" );
+		vgLogDebug("(335, DOF) already in m_toString enum registry");
+		assert( false && "(335, DOF) already in registry" );
 	}
 	#endif
 
-	m_toString[ 332 ] = std::string("DOF");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 321 ) != m_toString.end() )
-	{
-		vgLogDebug("(321, BLOOM_VERT) already in m_toString enum registry");
-		assert( false && "(321, BLOOM_VERT) already in registry" );
-	}
-	#endif
-
-	m_toString[ 321 ] = std::string("BLOOM_VERT");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 287 ) != m_toString.end() )
-	{
-		vgLogDebug("(287, SHADOW_MAPPING_9U) already in m_toString enum registry");
-		assert( false && "(287, SHADOW_MAPPING_9U) already in registry" );
-	}
-	#endif
-
-	m_toString[ 287 ] = std::string("SHADOW_MAPPING_9U");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 389 ) != m_toString.end() )
-	{
-		vgLogDebug("(389, MIN_FILTER) already in m_toString enum registry");
-		assert( false && "(389, MIN_FILTER) already in registry" );
-	}
-	#endif
-
-	m_toString[ 389 ] = std::string("MIN_FILTER");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 326 ) != m_toString.end() )
-	{
-		vgLogDebug("(326, ADD) already in m_toString enum registry");
-		assert( false && "(326, ADD) already in registry" );
-	}
-	#endif
-
-	m_toString[ 326 ] = std::string("ADD");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 308 ) != m_toString.end() )
-	{
-		vgLogDebug("(308, COLOR) already in m_toString enum registry");
-		assert( false && "(308, COLOR) already in registry" );
-	}
-	#endif
-
-	m_toString[ 308 ] = std::string("COLOR");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 381 ) != m_toString.end() )
-	{
-		vgLogDebug("(381, WRAP_T) already in m_toString enum registry");
-		assert( false && "(381, WRAP_T) already in registry" );
-	}
-	#endif
-
-	m_toString[ 381 ] = std::string("WRAP_T");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 257 ) != m_toString.end() )
-	{
-		vgLogDebug("(257, EYE_RIGHT) already in m_toString enum registry");
-		assert( false && "(257, EYE_RIGHT) already in registry" );
-	}
-	#endif
-
-	m_toString[ 257 ] = std::string("EYE_RIGHT");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 385 ) != m_toString.end() )
-	{
-		vgLogDebug("(385, CLAMP_TO_EDGE) already in m_toString enum registry");
-		assert( false && "(385, CLAMP_TO_EDGE) already in registry" );
-	}
-	#endif
-
-	m_toString[ 385 ] = std::string("CLAMP_TO_EDGE");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 380 ) != m_toString.end() )
-	{
-		vgLogDebug("(380, WRAP_S) already in m_toString enum registry");
-		assert( false && "(380, WRAP_S) already in registry" );
-	}
-	#endif
-
-	m_toString[ 380 ] = std::string("WRAP_S");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 382 ) != m_toString.end() )
-	{
-		vgLogDebug("(382, WRAP_R) already in m_toString enum registry");
-		assert( false && "(382, WRAP_R) already in registry" );
-	}
-	#endif
-
-	m_toString[ 382 ] = std::string("WRAP_R");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 295 ) != m_toString.end() )
-	{
-		vgLogDebug("(295, LOW) already in m_toString enum registry");
-		assert( false && "(295, LOW) already in registry" );
-	}
-	#endif
-
-	m_toString[ 295 ] = std::string("LOW");
+	m_toString[ 335 ] = std::string("DOF");
 
 	//
 	#ifdef _DEBUG
@@ -224,28 +103,6 @@ void EnumRegistry::initialize()
 	#endif
 
 	m_toString[ 276 ] = std::string("CHOICE4");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 273 ) != m_toString.end() )
-	{
-		vgLogDebug("(273, CHOICE1) already in m_toString enum registry");
-		assert( false && "(273, CHOICE1) already in registry" );
-	}
-	#endif
-
-	m_toString[ 273 ] = std::string("CHOICE1");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 272 ) != m_toString.end() )
-	{
-		vgLogDebug("(272, CHOICE0) already in m_toString enum registry");
-		assert( false && "(272, CHOICE0) already in registry" );
-	}
-	#endif
-
-	m_toString[ 272 ] = std::string("CHOICE0");
 
 	//
 	#ifdef _DEBUG
@@ -271,6 +128,138 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
+	if ( m_toString.find( 273 ) != m_toString.end() )
+	{
+		vgLogDebug("(273, CHOICE1) already in m_toString enum registry");
+		assert( false && "(273, CHOICE1) already in registry" );
+	}
+	#endif
+
+	m_toString[ 273 ] = std::string("CHOICE1");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 272 ) != m_toString.end() )
+	{
+		vgLogDebug("(272, CHOICE0) already in m_toString enum registry");
+		assert( false && "(272, CHOICE0) already in registry" );
+	}
+	#endif
+
+	m_toString[ 272 ] = std::string("CHOICE0");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 401 ) != m_toString.end() )
+	{
+		vgLogDebug("(401, MIN_FILTER) already in m_toString enum registry");
+		assert( false && "(401, MIN_FILTER) already in registry" );
+	}
+	#endif
+
+	m_toString[ 401 ] = std::string("MIN_FILTER");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 329 ) != m_toString.end() )
+	{
+		vgLogDebug("(329, ADD) already in m_toString enum registry");
+		assert( false && "(329, ADD) already in registry" );
+	}
+	#endif
+
+	m_toString[ 329 ] = std::string("ADD");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 311 ) != m_toString.end() )
+	{
+		vgLogDebug("(311, COLOR) already in m_toString enum registry");
+		assert( false && "(311, COLOR) already in registry" );
+	}
+	#endif
+
+	m_toString[ 311 ] = std::string("COLOR");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 393 ) != m_toString.end() )
+	{
+		vgLogDebug("(393, WRAP_T) already in m_toString enum registry");
+		assert( false && "(393, WRAP_T) already in registry" );
+	}
+	#endif
+
+	m_toString[ 393 ] = std::string("WRAP_T");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 257 ) != m_toString.end() )
+	{
+		vgLogDebug("(257, EYE_RIGHT) already in m_toString enum registry");
+		assert( false && "(257, EYE_RIGHT) already in registry" );
+	}
+	#endif
+
+	m_toString[ 257 ] = std::string("EYE_RIGHT");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 397 ) != m_toString.end() )
+	{
+		vgLogDebug("(397, CLAMP_TO_EDGE) already in m_toString enum registry");
+		assert( false && "(397, CLAMP_TO_EDGE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 397 ] = std::string("CLAMP_TO_EDGE");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 392 ) != m_toString.end() )
+	{
+		vgLogDebug("(392, WRAP_S) already in m_toString enum registry");
+		assert( false && "(392, WRAP_S) already in registry" );
+	}
+	#endif
+
+	m_toString[ 392 ] = std::string("WRAP_S");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 394 ) != m_toString.end() )
+	{
+		vgLogDebug("(394, WRAP_R) already in m_toString enum registry");
+		assert( false && "(394, WRAP_R) already in registry" );
+	}
+	#endif
+
+	m_toString[ 394 ] = std::string("WRAP_R");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 295 ) != m_toString.end() )
+	{
+		vgLogDebug("(295, LOW) already in m_toString enum registry");
+		assert( false && "(295, LOW) already in registry" );
+	}
+	#endif
+
+	m_toString[ 295 ] = std::string("LOW");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 324 ) != m_toString.end() )
+	{
+		vgLogDebug("(324, BLOOM_VERT) already in m_toString enum registry");
+		assert( false && "(324, BLOOM_VERT) already in registry" );
+	}
+	#endif
+
+	m_toString[ 324 ] = std::string("BLOOM_VERT");
+
+	//
+	#ifdef _DEBUG
 	if ( m_toString.find( 296 ) != m_toString.end() )
 	{
 		vgLogDebug("(296, MEDIUM) already in m_toString enum registry");
@@ -293,14 +282,25 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 331 ) != m_toString.end() )
+	if ( m_toString.find( 287 ) != m_toString.end() )
 	{
-		vgLogDebug("(331, COMBINE3_AND_SCALE) already in m_toString enum registry");
-		assert( false && "(331, COMBINE3_AND_SCALE) already in registry" );
+		vgLogDebug("(287, SHADOW_MAPPING_9U) already in m_toString enum registry");
+		assert( false && "(287, SHADOW_MAPPING_9U) already in registry" );
 	}
 	#endif
 
-	m_toString[ 331 ] = std::string("COMBINE3_AND_SCALE");
+	m_toString[ 287 ] = std::string("SHADOW_MAPPING_9U");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 307 ) != m_toString.end() )
+	{
+		vgLogDebug("(307, LUMINANCE_FOR_DEPTH) already in m_toString enum registry");
+		assert( false && "(307, LUMINANCE_FOR_DEPTH) already in registry" );
+	}
+	#endif
+
+	m_toString[ 307 ] = std::string("LUMINANCE_FOR_DEPTH");
 
 	//
 	#ifdef _DEBUG
@@ -315,14 +315,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 370 ) != m_toString.end() )
+	if ( m_toString.find( 382 ) != m_toString.end() )
 	{
-		vgLogDebug("(370, DEPTH_COMPONENT_32) already in m_toString enum registry");
-		assert( false && "(370, DEPTH_COMPONENT_32) already in registry" );
+		vgLogDebug("(382, DEPTH_COMPONENT_32) already in m_toString enum registry");
+		assert( false && "(382, DEPTH_COMPONENT_32) already in registry" );
 	}
 	#endif
 
-	m_toString[ 370 ] = std::string("DEPTH_COMPONENT_32");
+	m_toString[ 382 ] = std::string("DEPTH_COMPONENT_32");
 
 	//
 	#ifdef _DEBUG
@@ -337,113 +337,113 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 396 ) != m_toString.end() )
+	if ( m_toString.find( 408 ) != m_toString.end() )
 	{
-		vgLogDebug("(396, LINEAR_MIPMAP_LINEAR) already in m_toString enum registry");
-		assert( false && "(396, LINEAR_MIPMAP_LINEAR) already in registry" );
+		vgLogDebug("(408, LINEAR_MIPMAP_LINEAR) already in m_toString enum registry");
+		assert( false && "(408, LINEAR_MIPMAP_LINEAR) already in registry" );
 	}
 	#endif
 
-	m_toString[ 396 ] = std::string("LINEAR_MIPMAP_LINEAR");
+	m_toString[ 408 ] = std::string("LINEAR_MIPMAP_LINEAR");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 383 ) != m_toString.end() )
+	if ( m_toString.find( 395 ) != m_toString.end() )
 	{
-		vgLogDebug("(383, REPEAT) already in m_toString enum registry");
-		assert( false && "(383, REPEAT) already in registry" );
+		vgLogDebug("(395, REPEAT) already in m_toString enum registry");
+		assert( false && "(395, REPEAT) already in registry" );
 	}
 	#endif
 
-	m_toString[ 383 ] = std::string("REPEAT");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 376 ) != m_toString.end() )
-	{
-		vgLogDebug("(376, LUMINANCE_16F) already in m_toString enum registry");
-		assert( false && "(376, LUMINANCE_16F) already in registry" );
-	}
-	#endif
-
-	m_toString[ 376 ] = std::string("LUMINANCE_16F");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 320 ) != m_toString.end() )
-	{
-		vgLogDebug("(320, BLOOM_HORIZ) already in m_toString enum registry");
-		assert( false && "(320, BLOOM_HORIZ) already in registry" );
-	}
-	#endif
-
-	m_toString[ 320 ] = std::string("BLOOM_HORIZ");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 330 ) != m_toString.end() )
-	{
-		vgLogDebug("(330, COMBINE2_AND_SCALE) already in m_toString enum registry");
-		assert( false && "(330, COMBINE2_AND_SCALE) already in registry" );
-	}
-	#endif
-
-	m_toString[ 330 ] = std::string("COMBINE2_AND_SCALE");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 319 ) != m_toString.end() )
-	{
-		vgLogDebug("(319, BLUR_VERT) already in m_toString enum registry");
-		assert( false && "(319, BLUR_VERT) already in registry" );
-	}
-	#endif
-
-	m_toString[ 319 ] = std::string("BLUR_VERT");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 348 ) != m_toString.end() )
-	{
-		vgLogDebug("(348, INPUT1_OUTPUT_BUFFER3) already in m_toString enum registry");
-		assert( false && "(348, INPUT1_OUTPUT_BUFFER3) already in registry" );
-	}
-	#endif
-
-	m_toString[ 348 ] = std::string("INPUT1_OUTPUT_BUFFER3");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 384 ) != m_toString.end() )
-	{
-		vgLogDebug("(384, CLAMP) already in m_toString enum registry");
-		assert( false && "(384, CLAMP) already in registry" );
-	}
-	#endif
-
-	m_toString[ 384 ] = std::string("CLAMP");
+	m_toString[ 395 ] = std::string("REPEAT");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 388 ) != m_toString.end() )
 	{
-		vgLogDebug("(388, ONCE) already in m_toString enum registry");
-		assert( false && "(388, ONCE) already in registry" );
+		vgLogDebug("(388, LUMINANCE_16F) already in m_toString enum registry");
+		assert( false && "(388, LUMINANCE_16F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 388 ] = std::string("ONCE");
+	m_toString[ 388 ] = std::string("LUMINANCE_16F");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 394 ) != m_toString.end() )
+	if ( m_toString.find( 323 ) != m_toString.end() )
 	{
-		vgLogDebug("(394, LINEAR_MIPMAP_NEAREST) already in m_toString enum registry");
-		assert( false && "(394, LINEAR_MIPMAP_NEAREST) already in registry" );
+		vgLogDebug("(323, BLOOM_HORIZ) already in m_toString enum registry");
+		assert( false && "(323, BLOOM_HORIZ) already in registry" );
 	}
 	#endif
 
-	m_toString[ 394 ] = std::string("LINEAR_MIPMAP_NEAREST");
+	m_toString[ 323 ] = std::string("BLOOM_HORIZ");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 333 ) != m_toString.end() )
+	{
+		vgLogDebug("(333, COMBINE2_AND_SCALE) already in m_toString enum registry");
+		assert( false && "(333, COMBINE2_AND_SCALE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 333 ] = std::string("COMBINE2_AND_SCALE");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 322 ) != m_toString.end() )
+	{
+		vgLogDebug("(322, BLUR_VERT) already in m_toString enum registry");
+		assert( false && "(322, BLUR_VERT) already in registry" );
+	}
+	#endif
+
+	m_toString[ 322 ] = std::string("BLUR_VERT");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 351 ) != m_toString.end() )
+	{
+		vgLogDebug("(351, INPUT1_OUTPUT_BUFFER3) already in m_toString enum registry");
+		assert( false && "(351, INPUT1_OUTPUT_BUFFER3) already in registry" );
+	}
+	#endif
+
+	m_toString[ 351 ] = std::string("INPUT1_OUTPUT_BUFFER3");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 396 ) != m_toString.end() )
+	{
+		vgLogDebug("(396, CLAMP) already in m_toString enum registry");
+		assert( false && "(396, CLAMP) already in registry" );
+	}
+	#endif
+
+	m_toString[ 396 ] = std::string("CLAMP");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 400 ) != m_toString.end() )
+	{
+		vgLogDebug("(400, ONCE) already in m_toString enum registry");
+		assert( false && "(400, ONCE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 400 ] = std::string("ONCE");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 406 ) != m_toString.end() )
+	{
+		vgLogDebug("(406, LINEAR_MIPMAP_NEAREST) already in m_toString enum registry");
+		assert( false && "(406, LINEAR_MIPMAP_NEAREST) already in registry" );
+	}
+	#endif
+
+	m_toString[ 406 ] = std::string("LINEAR_MIPMAP_NEAREST");
 
 	//
 	#ifdef _DEBUG
@@ -458,14 +458,25 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 305 ) != m_toString.end() )
+	if ( m_toString.find( 308 ) != m_toString.end() )
 	{
-		vgLogDebug("(305, INTEGER) already in m_toString enum registry");
-		assert( false && "(305, INTEGER) already in registry" );
+		vgLogDebug("(308, INTEGER) already in m_toString enum registry");
+		assert( false && "(308, INTEGER) already in registry" );
 	}
 	#endif
 
-	m_toString[ 305 ] = std::string("INTEGER");
+	m_toString[ 308 ] = std::string("INTEGER");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 334 ) != m_toString.end() )
+	{
+		vgLogDebug("(334, COMBINE3_AND_SCALE) already in m_toString enum registry");
+		assert( false && "(334, COMBINE3_AND_SCALE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 334 ] = std::string("COMBINE3_AND_SCALE");
 
 	//
 	#ifdef _DEBUG
@@ -480,25 +491,36 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 369 ) != m_toString.end() )
+	if ( m_toString.find( 381 ) != m_toString.end() )
 	{
-		vgLogDebug("(369, DEPTH_COMPONENT_24) already in m_toString enum registry");
-		assert( false && "(369, DEPTH_COMPONENT_24) already in registry" );
+		vgLogDebug("(381, DEPTH_COMPONENT_24) already in m_toString enum registry");
+		assert( false && "(381, DEPTH_COMPONENT_24) already in registry" );
 	}
 	#endif
 
-	m_toString[ 369 ] = std::string("DEPTH_COMPONENT_24");
+	m_toString[ 381 ] = std::string("DEPTH_COMPONENT_24");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 366 ) != m_toString.end() )
+	if ( m_toString.find( 302 ) != m_toString.end() )
 	{
-		vgLogDebug("(366, SHADOW) already in m_toString enum registry");
-		assert( false && "(366, SHADOW) already in registry" );
+		vgLogDebug("(302, PIXEL_SIZE) already in m_toString enum registry");
+		assert( false && "(302, PIXEL_SIZE) already in registry" );
 	}
 	#endif
 
-	m_toString[ 366 ] = std::string("SHADOW");
+	m_toString[ 302 ] = std::string("PIXEL_SIZE");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 378 ) != m_toString.end() )
+	{
+		vgLogDebug("(378, SHADOW) already in m_toString enum registry");
+		assert( false && "(378, SHADOW) already in registry" );
+	}
+	#endif
+
+	m_toString[ 378 ] = std::string("SHADOW");
 
 	//
 	#ifdef _DEBUG
@@ -513,91 +535,113 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 387 ) != m_toString.end() )
+	if ( m_toString.find( 399 ) != m_toString.end() )
 	{
-		vgLogDebug("(387, MIRRORED_REPEAT) already in m_toString enum registry");
-		assert( false && "(387, MIRRORED_REPEAT) already in registry" );
+		vgLogDebug("(399, MIRRORED_REPEAT) already in m_toString enum registry");
+		assert( false && "(399, MIRRORED_REPEAT) already in registry" );
 	}
 	#endif
 
-	m_toString[ 387 ] = std::string("MIRRORED_REPEAT");
+	m_toString[ 399 ] = std::string("MIRRORED_REPEAT");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 372 ) != m_toString.end() )
+	if ( m_toString.find( 384 ) != m_toString.end() )
 	{
-		vgLogDebug("(372, RGB_16F) already in m_toString enum registry");
-		assert( false && "(372, RGB_16F) already in registry" );
+		vgLogDebug("(384, RGB_16F) already in m_toString enum registry");
+		assert( false && "(384, RGB_16F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 372 ] = std::string("RGB_16F");
+	m_toString[ 384 ] = std::string("RGB_16F");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 304 ) != m_toString.end() )
+	if ( m_toString.find( 306 ) != m_toString.end() )
 	{
-		vgLogDebug("(304, LUMINANCE_ALPHA) already in m_toString enum registry");
-		assert( false && "(304, LUMINANCE_ALPHA) already in registry" );
+		vgLogDebug("(306, LUMINANCE_ALPHA) already in m_toString enum registry");
+		assert( false && "(306, LUMINANCE_ALPHA) already in registry" );
 	}
 	#endif
 
-	m_toString[ 304 ] = std::string("LUMINANCE_ALPHA");
+	m_toString[ 306 ] = std::string("LUMINANCE_ALPHA");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 309 ) != m_toString.end() )
+	if ( m_toString.find( 312 ) != m_toString.end() )
 	{
-		vgLogDebug("(309, NORMAL) already in m_toString enum registry");
-		assert( false && "(309, NORMAL) already in registry" );
+		vgLogDebug("(312, NORMAL) already in m_toString enum registry");
+		assert( false && "(312, NORMAL) already in registry" );
 	}
 	#endif
 
-	m_toString[ 309 ] = std::string("NORMAL");
+	m_toString[ 312 ] = std::string("NORMAL");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 374 ) != m_toString.end() )
+	if ( m_toString.find( 373 ) != m_toString.end() )
 	{
-		vgLogDebug("(374, RGBA_16F) already in m_toString enum registry");
-		assert( false && "(374, RGBA_16F) already in registry" );
+		vgLogDebug("(373, OUTPUT_OUTPUT_BUFFER4) already in m_toString enum registry");
+		assert( false && "(373, OUTPUT_OUTPUT_BUFFER4) already in registry" );
 	}
 	#endif
 
-	m_toString[ 374 ] = std::string("RGBA_16F");
+	m_toString[ 373 ] = std::string("OUTPUT_OUTPUT_BUFFER4");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 343 ) != m_toString.end() )
+	if ( m_toString.find( 368 ) != m_toString.end() )
 	{
-		vgLogDebug("(343, PREVIOUS0) already in m_toString enum registry");
-		assert( false && "(343, PREVIOUS0) already in registry" );
+		vgLogDebug("(368, OUTPUT_TMP0) already in m_toString enum registry");
+		assert( false && "(368, OUTPUT_TMP0) already in registry" );
 	}
 	#endif
 
-	m_toString[ 343 ] = std::string("PREVIOUS0");
+	m_toString[ 368 ] = std::string("OUTPUT_TMP0");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 328 ) != m_toString.end() )
+	if ( m_toString.find( 386 ) != m_toString.end() )
 	{
-		vgLogDebug("(328, MIX_AND_SCALE) already in m_toString enum registry");
-		assert( false && "(328, MIX_AND_SCALE) already in registry" );
+		vgLogDebug("(386, RGBA_16F) already in m_toString enum registry");
+		assert( false && "(386, RGBA_16F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 328 ] = std::string("MIX_AND_SCALE");
+	m_toString[ 386 ] = std::string("RGBA_16F");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 365 ) != m_toString.end() )
+	if ( m_toString.find( 346 ) != m_toString.end() )
 	{
-		vgLogDebug("(365, IMAGE) already in m_toString enum registry");
-		assert( false && "(365, IMAGE) already in registry" );
+		vgLogDebug("(346, PREVIOUS0) already in m_toString enum registry");
+		assert( false && "(346, PREVIOUS0) already in registry" );
 	}
 	#endif
 
-	m_toString[ 365 ] = std::string("IMAGE");
+	m_toString[ 346 ] = std::string("PREVIOUS0");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 331 ) != m_toString.end() )
+	{
+		vgLogDebug("(331, MIX_AND_SCALE) already in m_toString enum registry");
+		assert( false && "(331, MIX_AND_SCALE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 331 ] = std::string("MIX_AND_SCALE");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 377 ) != m_toString.end() )
+	{
+		vgLogDebug("(377, IMAGE) already in m_toString enum registry");
+		assert( false && "(377, IMAGE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 377 ] = std::string("IMAGE");
 
 	//
 	#ifdef _DEBUG
@@ -612,25 +656,25 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 368 ) != m_toString.end() )
+	if ( m_toString.find( 380 ) != m_toString.end() )
 	{
-		vgLogDebug("(368, DEPTH_COMPONENT_16) already in m_toString enum registry");
-		assert( false && "(368, DEPTH_COMPONENT_16) already in registry" );
+		vgLogDebug("(380, DEPTH_COMPONENT_16) already in m_toString enum registry");
+		assert( false && "(380, DEPTH_COMPONENT_16) already in registry" );
 	}
 	#endif
 
-	m_toString[ 368 ] = std::string("DEPTH_COMPONENT_16");
+	m_toString[ 380 ] = std::string("DEPTH_COMPONENT_16");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 378 ) != m_toString.end() )
+	if ( m_toString.find( 390 ) != m_toString.end() )
 	{
-		vgLogDebug("(378, LUMINANCE_ALPHA_16F) already in m_toString enum registry");
-		assert( false && "(378, LUMINANCE_ALPHA_16F) already in registry" );
+		vgLogDebug("(390, LUMINANCE_ALPHA_16F) already in m_toString enum registry");
+		assert( false && "(390, LUMINANCE_ALPHA_16F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 378 ] = std::string("LUMINANCE_ALPHA_16F");
+	m_toString[ 390 ] = std::string("LUMINANCE_ALPHA_16F");
 
 	//
 	#ifdef _DEBUG
@@ -645,124 +689,124 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 301 ) != m_toString.end() )
-	{
-		vgLogDebug("(301, RGB) already in m_toString enum registry");
-		assert( false && "(301, RGB) already in registry" );
-	}
-	#endif
-
-	m_toString[ 301 ] = std::string("RGB");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 329 ) != m_toString.end() )
-	{
-		vgLogDebug("(329, ALPHAMIX_AND_SCALE) already in m_toString enum registry");
-		assert( false && "(329, ALPHAMIX_AND_SCALE) already in registry" );
-	}
-	#endif
-
-	m_toString[ 329 ] = std::string("ALPHAMIX_AND_SCALE");
-
-	//
-	#ifdef _DEBUG
 	if ( m_toString.find( 303 ) != m_toString.end() )
 	{
-		vgLogDebug("(303, LUMINANCE) already in m_toString enum registry");
-		assert( false && "(303, LUMINANCE) already in registry" );
+		vgLogDebug("(303, RGB) already in m_toString enum registry");
+		assert( false && "(303, RGB) already in registry" );
 	}
 	#endif
 
-	m_toString[ 303 ] = std::string("LUMINANCE");
+	m_toString[ 303 ] = std::string("RGB");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 337 ) != m_toString.end() )
+	if ( m_toString.find( 332 ) != m_toString.end() )
 	{
-		vgLogDebug("(337, OUTPUT_BUFFER2) already in m_toString enum registry");
-		assert( false && "(337, OUTPUT_BUFFER2) already in registry" );
+		vgLogDebug("(332, ALPHAMIX_AND_SCALE) already in m_toString enum registry");
+		assert( false && "(332, ALPHAMIX_AND_SCALE) already in registry" );
 	}
 	#endif
 
-	m_toString[ 337 ] = std::string("OUTPUT_BUFFER2");
+	m_toString[ 332 ] = std::string("ALPHAMIX_AND_SCALE");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 336 ) != m_toString.end() )
+	if ( m_toString.find( 305 ) != m_toString.end() )
 	{
-		vgLogDebug("(336, OUTPUT_BUFFER1) already in m_toString enum registry");
-		assert( false && "(336, OUTPUT_BUFFER1) already in registry" );
+		vgLogDebug("(305, LUMINANCE) already in m_toString enum registry");
+		assert( false && "(305, LUMINANCE) already in registry" );
 	}
 	#endif
 
-	m_toString[ 336 ] = std::string("OUTPUT_BUFFER1");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 335 ) != m_toString.end() )
-	{
-		vgLogDebug("(335, OUTPUT_BUFFER0) already in m_toString enum registry");
-		assert( false && "(335, OUTPUT_BUFFER0) already in registry" );
-	}
-	#endif
-
-	m_toString[ 335 ] = std::string("OUTPUT_BUFFER0");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 342 ) != m_toString.end() )
-	{
-		vgLogDebug("(342, OUTPUT_BUFFER7) already in m_toString enum registry");
-		assert( false && "(342, OUTPUT_BUFFER7) already in registry" );
-	}
-	#endif
-
-	m_toString[ 342 ] = std::string("OUTPUT_BUFFER7");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 341 ) != m_toString.end() )
-	{
-		vgLogDebug("(341, OUTPUT_BUFFER6) already in m_toString enum registry");
-		assert( false && "(341, OUTPUT_BUFFER6) already in registry" );
-	}
-	#endif
-
-	m_toString[ 341 ] = std::string("OUTPUT_BUFFER6");
+	m_toString[ 305 ] = std::string("LUMINANCE");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 340 ) != m_toString.end() )
 	{
-		vgLogDebug("(340, OUTPUT_BUFFER5) already in m_toString enum registry");
-		assert( false && "(340, OUTPUT_BUFFER5) already in registry" );
+		vgLogDebug("(340, OUTPUT_BUFFER2) already in m_toString enum registry");
+		assert( false && "(340, OUTPUT_BUFFER2) already in registry" );
 	}
 	#endif
 
-	m_toString[ 340 ] = std::string("OUTPUT_BUFFER5");
+	m_toString[ 340 ] = std::string("OUTPUT_BUFFER2");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 339 ) != m_toString.end() )
 	{
-		vgLogDebug("(339, OUTPUT_BUFFER4) already in m_toString enum registry");
-		assert( false && "(339, OUTPUT_BUFFER4) already in registry" );
+		vgLogDebug("(339, OUTPUT_BUFFER1) already in m_toString enum registry");
+		assert( false && "(339, OUTPUT_BUFFER1) already in registry" );
 	}
 	#endif
 
-	m_toString[ 339 ] = std::string("OUTPUT_BUFFER4");
+	m_toString[ 339 ] = std::string("OUTPUT_BUFFER1");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 306 ) != m_toString.end() )
+	if ( m_toString.find( 338 ) != m_toString.end() )
 	{
-		vgLogDebug("(306, FLOAT16) already in m_toString enum registry");
-		assert( false && "(306, FLOAT16) already in registry" );
+		vgLogDebug("(338, OUTPUT_BUFFER0) already in m_toString enum registry");
+		assert( false && "(338, OUTPUT_BUFFER0) already in registry" );
 	}
 	#endif
 
-	m_toString[ 306 ] = std::string("FLOAT16");
+	m_toString[ 338 ] = std::string("OUTPUT_BUFFER0");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 345 ) != m_toString.end() )
+	{
+		vgLogDebug("(345, OUTPUT_BUFFER7) already in m_toString enum registry");
+		assert( false && "(345, OUTPUT_BUFFER7) already in registry" );
+	}
+	#endif
+
+	m_toString[ 345 ] = std::string("OUTPUT_BUFFER7");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 344 ) != m_toString.end() )
+	{
+		vgLogDebug("(344, OUTPUT_BUFFER6) already in m_toString enum registry");
+		assert( false && "(344, OUTPUT_BUFFER6) already in registry" );
+	}
+	#endif
+
+	m_toString[ 344 ] = std::string("OUTPUT_BUFFER6");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 343 ) != m_toString.end() )
+	{
+		vgLogDebug("(343, OUTPUT_BUFFER5) already in m_toString enum registry");
+		assert( false && "(343, OUTPUT_BUFFER5) already in registry" );
+	}
+	#endif
+
+	m_toString[ 343 ] = std::string("OUTPUT_BUFFER5");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 342 ) != m_toString.end() )
+	{
+		vgLogDebug("(342, OUTPUT_BUFFER4) already in m_toString enum registry");
+		assert( false && "(342, OUTPUT_BUFFER4) already in registry" );
+	}
+	#endif
+
+	m_toString[ 342 ] = std::string("OUTPUT_BUFFER4");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 309 ) != m_toString.end() )
+	{
+		vgLogDebug("(309, FLOAT16) already in m_toString enum registry");
+		assert( false && "(309, FLOAT16) already in registry" );
+	}
+	#endif
+
+	m_toString[ 309 ] = std::string("FLOAT16");
 
 	//
 	#ifdef _DEBUG
@@ -777,36 +821,36 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 391 ) != m_toString.end() )
+	if ( m_toString.find( 403 ) != m_toString.end() )
 	{
-		vgLogDebug("(391, NEAREST) already in m_toString enum registry");
-		assert( false && "(391, NEAREST) already in registry" );
+		vgLogDebug("(403, NEAREST) already in m_toString enum registry");
+		assert( false && "(403, NEAREST) already in registry" );
 	}
 	#endif
 
-	m_toString[ 391 ] = std::string("NEAREST");
+	m_toString[ 403 ] = std::string("NEAREST");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 367 ) != m_toString.end() )
+	if ( m_toString.find( 379 ) != m_toString.end() )
 	{
-		vgLogDebug("(367, AUTOMATIC) already in m_toString enum registry");
-		assert( false && "(367, AUTOMATIC) already in registry" );
+		vgLogDebug("(379, AUTOMATIC) already in m_toString enum registry");
+		assert( false && "(379, AUTOMATIC) already in registry" );
 	}
 	#endif
 
-	m_toString[ 367 ] = std::string("AUTOMATIC");
+	m_toString[ 379 ] = std::string("AUTOMATIC");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 338 ) != m_toString.end() )
+	if ( m_toString.find( 341 ) != m_toString.end() )
 	{
-		vgLogDebug("(338, OUTPUT_BUFFER3) already in m_toString enum registry");
-		assert( false && "(338, OUTPUT_BUFFER3) already in registry" );
+		vgLogDebug("(341, OUTPUT_BUFFER3) already in m_toString enum registry");
+		assert( false && "(341, OUTPUT_BUFFER3) already in registry" );
 	}
 	#endif
 
-	m_toString[ 338 ] = std::string("OUTPUT_BUFFER3");
+	m_toString[ 341 ] = std::string("OUTPUT_BUFFER3");
 
 	//
 	#ifdef _DEBUG
@@ -821,14 +865,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 395 ) != m_toString.end() )
+	if ( m_toString.find( 407 ) != m_toString.end() )
 	{
-		vgLogDebug("(395, NEAREST_MIPMAP_LINEAR) already in m_toString enum registry");
-		assert( false && "(395, NEAREST_MIPMAP_LINEAR) already in registry" );
+		vgLogDebug("(407, NEAREST_MIPMAP_LINEAR) already in m_toString enum registry");
+		assert( false && "(407, NEAREST_MIPMAP_LINEAR) already in registry" );
 	}
 	#endif
 
-	m_toString[ 395 ] = std::string("NEAREST_MIPMAP_LINEAR");
+	m_toString[ 407 ] = std::string("NEAREST_MIPMAP_LINEAR");
 
 	//
 	#ifdef _DEBUG
@@ -865,36 +909,36 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 316 ) != m_toString.end() )
+	if ( m_toString.find( 319 ) != m_toString.end() )
 	{
-		vgLogDebug("(316, COLOR_INVERSE) already in m_toString enum registry");
-		assert( false && "(316, COLOR_INVERSE) already in registry" );
+		vgLogDebug("(319, COLOR_INVERSE) already in m_toString enum registry");
+		assert( false && "(319, COLOR_INVERSE) already in registry" );
 	}
 	#endif
 
-	m_toString[ 316 ] = std::string("COLOR_INVERSE");
+	m_toString[ 319 ] = std::string("COLOR_INVERSE");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 390 ) != m_toString.end() )
+	if ( m_toString.find( 402 ) != m_toString.end() )
 	{
-		vgLogDebug("(390, MAG_FILTER) already in m_toString enum registry");
-		assert( false && "(390, MAG_FILTER) already in registry" );
+		vgLogDebug("(402, MAG_FILTER) already in m_toString enum registry");
+		assert( false && "(402, MAG_FILTER) already in registry" );
 	}
 	#endif
 
-	m_toString[ 390 ] = std::string("MAG_FILTER");
+	m_toString[ 402 ] = std::string("MAG_FILTER");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 354 ) != m_toString.end() )
+	if ( m_toString.find( 357 ) != m_toString.end() )
 	{
-		vgLogDebug("(354, INPUT1_NONE) already in m_toString enum registry");
-		assert( false && "(354, INPUT1_NONE) already in registry" );
+		vgLogDebug("(357, INPUT1_NONE) already in m_toString enum registry");
+		assert( false && "(357, INPUT1_NONE) already in registry" );
 	}
 	#endif
 
-	m_toString[ 354 ] = std::string("INPUT1_NONE");
+	m_toString[ 357 ] = std::string("INPUT1_NONE");
 
 	//
 	#ifdef _DEBUG
@@ -909,14 +953,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 363 ) != m_toString.end() )
+	if ( m_toString.find( 366 ) != m_toString.end() )
 	{
-		vgLogDebug("(363, INPUT2_PREVIOUS0) already in m_toString enum registry");
-		assert( false && "(363, INPUT2_PREVIOUS0) already in registry" );
+		vgLogDebug("(366, INPUT2_PREVIOUS0) already in m_toString enum registry");
+		assert( false && "(366, INPUT2_PREVIOUS0) already in registry" );
 	}
 	#endif
 
-	m_toString[ 363 ] = std::string("INPUT2_PREVIOUS0");
+	m_toString[ 366 ] = std::string("INPUT2_PREVIOUS0");
 
 	//
 	#ifdef _DEBUG
@@ -942,14 +986,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 314 ) != m_toString.end() )
+	if ( m_toString.find( 317 ) != m_toString.end() )
 	{
-		vgLogDebug("(314, COLOR_TO_MONOCHROME) already in m_toString enum registry");
-		assert( false && "(314, COLOR_TO_MONOCHROME) already in registry" );
+		vgLogDebug("(317, COLOR_TO_MONOCHROME) already in m_toString enum registry");
+		assert( false && "(317, COLOR_TO_MONOCHROME) already in registry" );
 	}
 	#endif
 
-	m_toString[ 314 ] = std::string("COLOR_TO_MONOCHROME");
+	m_toString[ 317 ] = std::string("COLOR_TO_MONOCHROME");
 
 	//
 	#ifdef _DEBUG
@@ -964,91 +1008,91 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 347 ) != m_toString.end() )
-	{
-		vgLogDebug("(347, INPUT1_OUTPUT_BUFFER2) already in m_toString enum registry");
-		assert( false && "(347, INPUT1_OUTPUT_BUFFER2) already in registry" );
-	}
-	#endif
-
-	m_toString[ 347 ] = std::string("INPUT1_OUTPUT_BUFFER2");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 346 ) != m_toString.end() )
-	{
-		vgLogDebug("(346, INPUT1_OUTPUT_BUFFER1) already in m_toString enum registry");
-		assert( false && "(346, INPUT1_OUTPUT_BUFFER1) already in registry" );
-	}
-	#endif
-
-	m_toString[ 346 ] = std::string("INPUT1_OUTPUT_BUFFER1");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 345 ) != m_toString.end() )
-	{
-		vgLogDebug("(345, INPUT1_OUTPUT_BUFFER0) already in m_toString enum registry");
-		assert( false && "(345, INPUT1_OUTPUT_BUFFER0) already in registry" );
-	}
-	#endif
-
-	m_toString[ 345 ] = std::string("INPUT1_OUTPUT_BUFFER0");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 352 ) != m_toString.end() )
-	{
-		vgLogDebug("(352, INPUT1_OUTPUT_BUFFER7) already in m_toString enum registry");
-		assert( false && "(352, INPUT1_OUTPUT_BUFFER7) already in registry" );
-	}
-	#endif
-
-	m_toString[ 352 ] = std::string("INPUT1_OUTPUT_BUFFER7");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 351 ) != m_toString.end() )
-	{
-		vgLogDebug("(351, INPUT1_OUTPUT_BUFFER6) already in m_toString enum registry");
-		assert( false && "(351, INPUT1_OUTPUT_BUFFER6) already in registry" );
-	}
-	#endif
-
-	m_toString[ 351 ] = std::string("INPUT1_OUTPUT_BUFFER6");
-
-	//
-	#ifdef _DEBUG
 	if ( m_toString.find( 350 ) != m_toString.end() )
 	{
-		vgLogDebug("(350, INPUT1_OUTPUT_BUFFER5) already in m_toString enum registry");
-		assert( false && "(350, INPUT1_OUTPUT_BUFFER5) already in registry" );
+		vgLogDebug("(350, INPUT1_OUTPUT_BUFFER2) already in m_toString enum registry");
+		assert( false && "(350, INPUT1_OUTPUT_BUFFER2) already in registry" );
 	}
 	#endif
 
-	m_toString[ 350 ] = std::string("INPUT1_OUTPUT_BUFFER5");
+	m_toString[ 350 ] = std::string("INPUT1_OUTPUT_BUFFER2");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 349 ) != m_toString.end() )
 	{
-		vgLogDebug("(349, INPUT1_OUTPUT_BUFFER4) already in m_toString enum registry");
-		assert( false && "(349, INPUT1_OUTPUT_BUFFER4) already in registry" );
+		vgLogDebug("(349, INPUT1_OUTPUT_BUFFER1) already in m_toString enum registry");
+		assert( false && "(349, INPUT1_OUTPUT_BUFFER1) already in registry" );
 	}
 	#endif
 
-	m_toString[ 349 ] = std::string("INPUT1_OUTPUT_BUFFER4");
+	m_toString[ 349 ] = std::string("INPUT1_OUTPUT_BUFFER1");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 312 ) != m_toString.end() )
+	if ( m_toString.find( 348 ) != m_toString.end() )
 	{
-		vgLogDebug("(312, LINEAR_DEPTH) already in m_toString enum registry");
-		assert( false && "(312, LINEAR_DEPTH) already in registry" );
+		vgLogDebug("(348, INPUT1_OUTPUT_BUFFER0) already in m_toString enum registry");
+		assert( false && "(348, INPUT1_OUTPUT_BUFFER0) already in registry" );
 	}
 	#endif
 
-	m_toString[ 312 ] = std::string("LINEAR_DEPTH");
+	m_toString[ 348 ] = std::string("INPUT1_OUTPUT_BUFFER0");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 355 ) != m_toString.end() )
+	{
+		vgLogDebug("(355, INPUT1_OUTPUT_BUFFER7) already in m_toString enum registry");
+		assert( false && "(355, INPUT1_OUTPUT_BUFFER7) already in registry" );
+	}
+	#endif
+
+	m_toString[ 355 ] = std::string("INPUT1_OUTPUT_BUFFER7");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 354 ) != m_toString.end() )
+	{
+		vgLogDebug("(354, INPUT1_OUTPUT_BUFFER6) already in m_toString enum registry");
+		assert( false && "(354, INPUT1_OUTPUT_BUFFER6) already in registry" );
+	}
+	#endif
+
+	m_toString[ 354 ] = std::string("INPUT1_OUTPUT_BUFFER6");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 353 ) != m_toString.end() )
+	{
+		vgLogDebug("(353, INPUT1_OUTPUT_BUFFER5) already in m_toString enum registry");
+		assert( false && "(353, INPUT1_OUTPUT_BUFFER5) already in registry" );
+	}
+	#endif
+
+	m_toString[ 353 ] = std::string("INPUT1_OUTPUT_BUFFER5");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 352 ) != m_toString.end() )
+	{
+		vgLogDebug("(352, INPUT1_OUTPUT_BUFFER4) already in m_toString enum registry");
+		assert( false && "(352, INPUT1_OUTPUT_BUFFER4) already in registry" );
+	}
+	#endif
+
+	m_toString[ 352 ] = std::string("INPUT1_OUTPUT_BUFFER4");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 315 ) != m_toString.end() )
+	{
+		vgLogDebug("(315, LINEAR_DEPTH) already in m_toString enum registry");
+		assert( false && "(315, LINEAR_DEPTH) already in registry" );
+	}
+	#endif
+
+	m_toString[ 315 ] = std::string("LINEAR_DEPTH");
 
 	//
 	#ifdef _DEBUG
@@ -1074,25 +1118,25 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 317 ) != m_toString.end() )
+	if ( m_toString.find( 320 ) != m_toString.end() )
 	{
-		vgLogDebug("(317, SCALE_AND_BIAS) already in m_toString enum registry");
-		assert( false && "(317, SCALE_AND_BIAS) already in registry" );
+		vgLogDebug("(320, SCALE_AND_BIAS) already in m_toString enum registry");
+		assert( false && "(320, SCALE_AND_BIAS) already in registry" );
 	}
 	#endif
 
-	m_toString[ 317 ] = std::string("SCALE_AND_BIAS");
+	m_toString[ 320 ] = std::string("SCALE_AND_BIAS");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 375 ) != m_toString.end() )
+	if ( m_toString.find( 387 ) != m_toString.end() )
 	{
-		vgLogDebug("(375, RGBA_32F) already in m_toString enum registry");
-		assert( false && "(375, RGBA_32F) already in registry" );
+		vgLogDebug("(387, RGBA_32F) already in m_toString enum registry");
+		assert( false && "(387, RGBA_32F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 375 ] = std::string("RGBA_32F");
+	m_toString[ 387 ] = std::string("RGBA_32F");
 
 	//
 	#ifdef _DEBUG
@@ -1118,69 +1162,69 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 325 ) != m_toString.end() )
+	if ( m_toString.find( 328 ) != m_toString.end() )
 	{
-		vgLogDebug("(325, OVER) already in m_toString enum registry");
-		assert( false && "(325, OVER) already in registry" );
+		vgLogDebug("(328, OVER) already in m_toString enum registry");
+		assert( false && "(328, OVER) already in registry" );
 	}
 	#endif
 
-	m_toString[ 325 ] = std::string("OVER");
+	m_toString[ 328 ] = std::string("OVER");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 307 ) != m_toString.end() )
+	if ( m_toString.find( 310 ) != m_toString.end() )
 	{
-		vgLogDebug("(307, FLOAT32) already in m_toString enum registry");
-		assert( false && "(307, FLOAT32) already in registry" );
+		vgLogDebug("(310, FLOAT32) already in m_toString enum registry");
+		assert( false && "(310, FLOAT32) already in registry" );
 	}
 	#endif
 
-	m_toString[ 307 ] = std::string("FLOAT32");
+	m_toString[ 310 ] = std::string("FLOAT32");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 344 ) != m_toString.end() )
+	if ( m_toString.find( 347 ) != m_toString.end() )
 	{
-		vgLogDebug("(344, NONE) already in m_toString enum registry");
-		assert( false && "(344, NONE) already in registry" );
+		vgLogDebug("(347, NONE) already in m_toString enum registry");
+		assert( false && "(347, NONE) already in registry" );
 	}
 	#endif
 
-	m_toString[ 344 ] = std::string("NONE");
+	m_toString[ 347 ] = std::string("NONE");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 302 ) != m_toString.end() )
+	if ( m_toString.find( 304 ) != m_toString.end() )
 	{
-		vgLogDebug("(302, RGBA) already in m_toString enum registry");
-		assert( false && "(302, RGBA) already in registry" );
+		vgLogDebug("(304, RGBA) already in m_toString enum registry");
+		assert( false && "(304, RGBA) already in registry" );
 	}
 	#endif
 
-	m_toString[ 302 ] = std::string("RGBA");
+	m_toString[ 304 ] = std::string("RGBA");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 313 ) != m_toString.end() )
+	if ( m_toString.find( 316 ) != m_toString.end() )
 	{
-		vgLogDebug("(313, CUSTOM) already in m_toString enum registry");
-		assert( false && "(313, CUSTOM) already in registry" );
+		vgLogDebug("(316, CUSTOM) already in m_toString enum registry");
+		assert( false && "(316, CUSTOM) already in registry" );
 	}
 	#endif
 
-	m_toString[ 313 ] = std::string("CUSTOM");
+	m_toString[ 316 ] = std::string("CUSTOM");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 386 ) != m_toString.end() )
+	if ( m_toString.find( 398 ) != m_toString.end() )
 	{
-		vgLogDebug("(386, CLAMP_TO_BORDER) already in m_toString enum registry");
-		assert( false && "(386, CLAMP_TO_BORDER) already in registry" );
+		vgLogDebug("(398, CLAMP_TO_BORDER) already in m_toString enum registry");
+		assert( false && "(398, CLAMP_TO_BORDER) already in registry" );
 	}
 	#endif
 
-	m_toString[ 386 ] = std::string("CLAMP_TO_BORDER");
+	m_toString[ 398 ] = std::string("CLAMP_TO_BORDER");
 
 	//
 	#ifdef _DEBUG
@@ -1195,14 +1239,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 327 ) != m_toString.end() )
+	if ( m_toString.find( 330 ) != m_toString.end() )
 	{
-		vgLogDebug("(327, SUB) already in m_toString enum registry");
-		assert( false && "(327, SUB) already in registry" );
+		vgLogDebug("(330, SUB) already in m_toString enum registry");
+		assert( false && "(330, SUB) already in registry" );
 	}
 	#endif
 
-	m_toString[ 327 ] = std::string("SUB");
+	m_toString[ 330 ] = std::string("SUB");
 
 	//
 	#ifdef _DEBUG
@@ -1217,6 +1261,83 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
+	if ( m_toString.find( 372 ) != m_toString.end() )
+	{
+		vgLogDebug("(372, OUTPUT_OUTPUT_BUFFER3) already in m_toString enum registry");
+		assert( false && "(372, OUTPUT_OUTPUT_BUFFER3) already in registry" );
+	}
+	#endif
+
+	m_toString[ 372 ] = std::string("OUTPUT_OUTPUT_BUFFER3");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 371 ) != m_toString.end() )
+	{
+		vgLogDebug("(371, OUTPUT_OUTPUT_BUFFER2) already in m_toString enum registry");
+		assert( false && "(371, OUTPUT_OUTPUT_BUFFER2) already in registry" );
+	}
+	#endif
+
+	m_toString[ 371 ] = std::string("OUTPUT_OUTPUT_BUFFER2");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 370 ) != m_toString.end() )
+	{
+		vgLogDebug("(370, OUTPUT_OUTPUT_BUFFER1) already in m_toString enum registry");
+		assert( false && "(370, OUTPUT_OUTPUT_BUFFER1) already in registry" );
+	}
+	#endif
+
+	m_toString[ 370 ] = std::string("OUTPUT_OUTPUT_BUFFER1");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 369 ) != m_toString.end() )
+	{
+		vgLogDebug("(369, OUTPUT_OUTPUT_BUFFER0) already in m_toString enum registry");
+		assert( false && "(369, OUTPUT_OUTPUT_BUFFER0) already in registry" );
+	}
+	#endif
+
+	m_toString[ 369 ] = std::string("OUTPUT_OUTPUT_BUFFER0");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 376 ) != m_toString.end() )
+	{
+		vgLogDebug("(376, OUTPUT_OUTPUT_BUFFER7) already in m_toString enum registry");
+		assert( false && "(376, OUTPUT_OUTPUT_BUFFER7) already in registry" );
+	}
+	#endif
+
+	m_toString[ 376 ] = std::string("OUTPUT_OUTPUT_BUFFER7");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 375 ) != m_toString.end() )
+	{
+		vgLogDebug("(375, OUTPUT_OUTPUT_BUFFER6) already in m_toString enum registry");
+		assert( false && "(375, OUTPUT_OUTPUT_BUFFER6) already in registry" );
+	}
+	#endif
+
+	m_toString[ 375 ] = std::string("OUTPUT_OUTPUT_BUFFER6");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 374 ) != m_toString.end() )
+	{
+		vgLogDebug("(374, OUTPUT_OUTPUT_BUFFER5) already in m_toString enum registry");
+		assert( false && "(374, OUTPUT_OUTPUT_BUFFER5) already in registry" );
+	}
+	#endif
+
+	m_toString[ 374 ] = std::string("OUTPUT_OUTPUT_BUFFER5");
+
+	//
+	#ifdef _DEBUG
 	if ( m_toString.find( 285 ) != m_toString.end() )
 	{
 		vgLogDebug("(285, SHADOW_MAPPING_4UM) already in m_toString enum registry");
@@ -1228,91 +1349,91 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 311 ) != m_toString.end() )
+	if ( m_toString.find( 314 ) != m_toString.end() )
 	{
-		vgLogDebug("(311, DEPTH) already in m_toString enum registry");
-		assert( false && "(311, DEPTH) already in registry" );
+		vgLogDebug("(314, DEPTH) already in m_toString enum registry");
+		assert( false && "(314, DEPTH) already in registry" );
 	}
 	#endif
 
-	m_toString[ 311 ] = std::string("DEPTH");
+	m_toString[ 314 ] = std::string("DEPTH");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 355 ) != m_toString.end() )
+	if ( m_toString.find( 358 ) != m_toString.end() )
 	{
-		vgLogDebug("(355, INPUT2_OUTPUT_BUFFER0) already in m_toString enum registry");
-		assert( false && "(355, INPUT2_OUTPUT_BUFFER0) already in registry" );
+		vgLogDebug("(358, INPUT2_OUTPUT_BUFFER0) already in m_toString enum registry");
+		assert( false && "(358, INPUT2_OUTPUT_BUFFER0) already in registry" );
 	}
 	#endif
 
-	m_toString[ 355 ] = std::string("INPUT2_OUTPUT_BUFFER0");
+	m_toString[ 358 ] = std::string("INPUT2_OUTPUT_BUFFER0");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 377 ) != m_toString.end() )
+	if ( m_toString.find( 389 ) != m_toString.end() )
 	{
-		vgLogDebug("(377, LUMINANCE_32F) already in m_toString enum registry");
-		assert( false && "(377, LUMINANCE_32F) already in registry" );
+		vgLogDebug("(389, LUMINANCE_32F) already in m_toString enum registry");
+		assert( false && "(389, LUMINANCE_32F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 377 ] = std::string("LUMINANCE_32F");
+	m_toString[ 389 ] = std::string("LUMINANCE_32F");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 357 ) != m_toString.end() )
+	if ( m_toString.find( 360 ) != m_toString.end() )
 	{
-		vgLogDebug("(357, INPUT2_OUTPUT_BUFFER2) already in m_toString enum registry");
-		assert( false && "(357, INPUT2_OUTPUT_BUFFER2) already in registry" );
+		vgLogDebug("(360, INPUT2_OUTPUT_BUFFER2) already in m_toString enum registry");
+		assert( false && "(360, INPUT2_OUTPUT_BUFFER2) already in registry" );
 	}
 	#endif
 
-	m_toString[ 357 ] = std::string("INPUT2_OUTPUT_BUFFER2");
+	m_toString[ 360 ] = std::string("INPUT2_OUTPUT_BUFFER2");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 322 ) != m_toString.end() )
+	if ( m_toString.find( 325 ) != m_toString.end() )
 	{
-		vgLogDebug("(322, COLOR_EDGE_DETECT) already in m_toString enum registry");
-		assert( false && "(322, COLOR_EDGE_DETECT) already in registry" );
+		vgLogDebug("(325, COLOR_EDGE_DETECT) already in m_toString enum registry");
+		assert( false && "(325, COLOR_EDGE_DETECT) already in registry" );
 	}
 	#endif
 
-	m_toString[ 322 ] = std::string("COLOR_EDGE_DETECT");
+	m_toString[ 325 ] = std::string("COLOR_EDGE_DETECT");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 393 ) != m_toString.end() )
+	if ( m_toString.find( 405 ) != m_toString.end() )
 	{
-		vgLogDebug("(393, NEAREST_MIPMAP_NEAREST) already in m_toString enum registry");
-		assert( false && "(393, NEAREST_MIPMAP_NEAREST) already in registry" );
+		vgLogDebug("(405, NEAREST_MIPMAP_NEAREST) already in m_toString enum registry");
+		assert( false && "(405, NEAREST_MIPMAP_NEAREST) already in registry" );
 	}
 	#endif
 
-	m_toString[ 393 ] = std::string("NEAREST_MIPMAP_NEAREST");
+	m_toString[ 405 ] = std::string("NEAREST_MIPMAP_NEAREST");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 321 ) != m_toString.end() )
+	{
+		vgLogDebug("(321, BLUR_HORIZ) already in m_toString enum registry");
+		assert( false && "(321, BLUR_HORIZ) already in registry" );
+	}
+	#endif
+
+	m_toString[ 321 ] = std::string("BLUR_HORIZ");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 318 ) != m_toString.end() )
 	{
-		vgLogDebug("(318, BLUR_HORIZ) already in m_toString enum registry");
-		assert( false && "(318, BLUR_HORIZ) already in registry" );
+		vgLogDebug("(318, COLOR_TO_SEPIA) already in m_toString enum registry");
+		assert( false && "(318, COLOR_TO_SEPIA) already in registry" );
 	}
 	#endif
 
-	m_toString[ 318 ] = std::string("BLUR_HORIZ");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 315 ) != m_toString.end() )
-	{
-		vgLogDebug("(315, COLOR_TO_SEPIA) already in m_toString enum registry");
-		assert( false && "(315, COLOR_TO_SEPIA) already in registry" );
-	}
-	#endif
-
-	m_toString[ 315 ] = std::string("COLOR_TO_SEPIA");
+	m_toString[ 318 ] = std::string("COLOR_TO_SEPIA");
 
 	//
 	#ifdef _DEBUG
@@ -1327,14 +1448,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 392 ) != m_toString.end() )
+	if ( m_toString.find( 404 ) != m_toString.end() )
 	{
-		vgLogDebug("(392, LINEAR) already in m_toString enum registry");
-		assert( false && "(392, LINEAR) already in registry" );
+		vgLogDebug("(404, LINEAR) already in m_toString enum registry");
+		assert( false && "(404, LINEAR) already in registry" );
 	}
 	#endif
 
-	m_toString[ 392 ] = std::string("LINEAR");
+	m_toString[ 404 ] = std::string("LINEAR");
 
 	//
 	#ifdef _DEBUG
@@ -1360,14 +1481,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 379 ) != m_toString.end() )
+	if ( m_toString.find( 391 ) != m_toString.end() )
 	{
-		vgLogDebug("(379, LUMINANCE_ALPHA_32F) already in m_toString enum registry");
-		assert( false && "(379, LUMINANCE_ALPHA_32F) already in registry" );
+		vgLogDebug("(391, LUMINANCE_ALPHA_32F) already in m_toString enum registry");
+		assert( false && "(391, LUMINANCE_ALPHA_32F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 379 ] = std::string("LUMINANCE_ALPHA_32F");
+	m_toString[ 391 ] = std::string("LUMINANCE_ALPHA_32F");
 
 	//
 	#ifdef _DEBUG
@@ -1415,25 +1536,25 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 324 ) != m_toString.end() )
+	if ( m_toString.find( 327 ) != m_toString.end() )
 	{
-		vgLogDebug("(324, UP_FILTER4) already in m_toString enum registry");
-		assert( false && "(324, UP_FILTER4) already in registry" );
+		vgLogDebug("(327, UP_FILTER4) already in m_toString enum registry");
+		assert( false && "(327, UP_FILTER4) already in registry" );
 	}
 	#endif
 
-	m_toString[ 324 ] = std::string("UP_FILTER4");
+	m_toString[ 327 ] = std::string("UP_FILTER4");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 371 ) != m_toString.end() )
+	if ( m_toString.find( 383 ) != m_toString.end() )
 	{
-		vgLogDebug("(371, DEPTH_COMPONENT_32F) already in m_toString enum registry");
-		assert( false && "(371, DEPTH_COMPONENT_32F) already in registry" );
+		vgLogDebug("(383, DEPTH_COMPONENT_32F) already in m_toString enum registry");
+		assert( false && "(383, DEPTH_COMPONENT_32F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 371 ] = std::string("DEPTH_COMPONENT_32F");
+	m_toString[ 383 ] = std::string("DEPTH_COMPONENT_32F");
 
 	//
 	#ifdef _DEBUG
@@ -1448,47 +1569,47 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 323 ) != m_toString.end() )
+	if ( m_toString.find( 326 ) != m_toString.end() )
 	{
-		vgLogDebug("(323, DOWN_FILTER4) already in m_toString enum registry");
-		assert( false && "(323, DOWN_FILTER4) already in registry" );
+		vgLogDebug("(326, DOWN_FILTER4) already in m_toString enum registry");
+		assert( false && "(326, DOWN_FILTER4) already in registry" );
 	}
 	#endif
 
-	m_toString[ 323 ] = std::string("DOWN_FILTER4");
+	m_toString[ 326 ] = std::string("DOWN_FILTER4");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 334 ) != m_toString.end() )
+	if ( m_toString.find( 337 ) != m_toString.end() )
 	{
-		vgLogDebug("(334, CUSTOM_FILTER) already in m_toString enum registry");
-		assert( false && "(334, CUSTOM_FILTER) already in registry" );
+		vgLogDebug("(337, CUSTOM_FILTER) already in m_toString enum registry");
+		assert( false && "(337, CUSTOM_FILTER) already in registry" );
 	}
 	#endif
 
-	m_toString[ 334 ] = std::string("CUSTOM_FILTER");
+	m_toString[ 337 ] = std::string("CUSTOM_FILTER");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 310 ) != m_toString.end() )
+	if ( m_toString.find( 313 ) != m_toString.end() )
 	{
-		vgLogDebug("(310, POSITION) already in m_toString enum registry");
-		assert( false && "(310, POSITION) already in registry" );
+		vgLogDebug("(313, POSITION) already in m_toString enum registry");
+		assert( false && "(313, POSITION) already in registry" );
 	}
 	#endif
 
-	m_toString[ 310 ] = std::string("POSITION");
+	m_toString[ 313 ] = std::string("POSITION");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 373 ) != m_toString.end() )
+	if ( m_toString.find( 385 ) != m_toString.end() )
 	{
-		vgLogDebug("(373, RGB_32F) already in m_toString enum registry");
-		assert( false && "(373, RGB_32F) already in registry" );
+		vgLogDebug("(385, RGB_32F) already in m_toString enum registry");
+		assert( false && "(385, RGB_32F) already in registry" );
 	}
 	#endif
 
-	m_toString[ 373 ] = std::string("RGB_32F");
+	m_toString[ 385 ] = std::string("RGB_32F");
 
 	//
 	#ifdef _DEBUG
@@ -1514,14 +1635,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 356 ) != m_toString.end() )
+	if ( m_toString.find( 359 ) != m_toString.end() )
 	{
-		vgLogDebug("(356, INPUT2_OUTPUT_BUFFER1) already in m_toString enum registry");
-		assert( false && "(356, INPUT2_OUTPUT_BUFFER1) already in registry" );
+		vgLogDebug("(359, INPUT2_OUTPUT_BUFFER1) already in m_toString enum registry");
+		assert( false && "(359, INPUT2_OUTPUT_BUFFER1) already in registry" );
 	}
 	#endif
 
-	m_toString[ 356 ] = std::string("INPUT2_OUTPUT_BUFFER1");
+	m_toString[ 359 ] = std::string("INPUT2_OUTPUT_BUFFER1");
 
 	//
 	#ifdef _DEBUG
@@ -1536,80 +1657,91 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 358 ) != m_toString.end() )
+	if ( m_toString.find( 361 ) != m_toString.end() )
 	{
-		vgLogDebug("(358, INPUT2_OUTPUT_BUFFER3) already in m_toString enum registry");
-		assert( false && "(358, INPUT2_OUTPUT_BUFFER3) already in registry" );
+		vgLogDebug("(361, INPUT2_OUTPUT_BUFFER3) already in m_toString enum registry");
+		assert( false && "(361, INPUT2_OUTPUT_BUFFER3) already in registry" );
 	}
 	#endif
 
-	m_toString[ 358 ] = std::string("INPUT2_OUTPUT_BUFFER3");
+	m_toString[ 361 ] = std::string("INPUT2_OUTPUT_BUFFER3");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 353 ) != m_toString.end() )
+	if ( m_toString.find( 356 ) != m_toString.end() )
 	{
-		vgLogDebug("(353, INPUT1_PREVIOUS0) already in m_toString enum registry");
-		assert( false && "(353, INPUT1_PREVIOUS0) already in registry" );
+		vgLogDebug("(356, INPUT1_PREVIOUS0) already in m_toString enum registry");
+		assert( false && "(356, INPUT1_PREVIOUS0) already in registry" );
 	}
 	#endif
 
-	m_toString[ 353 ] = std::string("INPUT1_PREVIOUS0");
+	m_toString[ 356 ] = std::string("INPUT1_PREVIOUS0");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 360 ) != m_toString.end() )
+	if ( m_toString.find( 363 ) != m_toString.end() )
 	{
-		vgLogDebug("(360, INPUT2_OUTPUT_BUFFER5) already in m_toString enum registry");
-		assert( false && "(360, INPUT2_OUTPUT_BUFFER5) already in registry" );
+		vgLogDebug("(363, INPUT2_OUTPUT_BUFFER5) already in m_toString enum registry");
+		assert( false && "(363, INPUT2_OUTPUT_BUFFER5) already in registry" );
 	}
 	#endif
 
-	m_toString[ 360 ] = std::string("INPUT2_OUTPUT_BUFFER5");
-
-	//
-	#ifdef _DEBUG
-	if ( m_toString.find( 359 ) != m_toString.end() )
-	{
-		vgLogDebug("(359, INPUT2_OUTPUT_BUFFER4) already in m_toString enum registry");
-		assert( false && "(359, INPUT2_OUTPUT_BUFFER4) already in registry" );
-	}
-	#endif
-
-	m_toString[ 359 ] = std::string("INPUT2_OUTPUT_BUFFER4");
+	m_toString[ 363 ] = std::string("INPUT2_OUTPUT_BUFFER5");
 
 	//
 	#ifdef _DEBUG
 	if ( m_toString.find( 362 ) != m_toString.end() )
 	{
-		vgLogDebug("(362, INPUT2_OUTPUT_BUFFER7) already in m_toString enum registry");
-		assert( false && "(362, INPUT2_OUTPUT_BUFFER7) already in registry" );
+		vgLogDebug("(362, INPUT2_OUTPUT_BUFFER4) already in m_toString enum registry");
+		assert( false && "(362, INPUT2_OUTPUT_BUFFER4) already in registry" );
 	}
 	#endif
 
-	m_toString[ 362 ] = std::string("INPUT2_OUTPUT_BUFFER7");
+	m_toString[ 362 ] = std::string("INPUT2_OUTPUT_BUFFER4");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 361 ) != m_toString.end() )
+	if ( m_toString.find( 365 ) != m_toString.end() )
 	{
-		vgLogDebug("(361, INPUT2_OUTPUT_BUFFER6) already in m_toString enum registry");
-		assert( false && "(361, INPUT2_OUTPUT_BUFFER6) already in registry" );
+		vgLogDebug("(365, INPUT2_OUTPUT_BUFFER7) already in m_toString enum registry");
+		assert( false && "(365, INPUT2_OUTPUT_BUFFER7) already in registry" );
 	}
 	#endif
 
-	m_toString[ 361 ] = std::string("INPUT2_OUTPUT_BUFFER6");
+	m_toString[ 365 ] = std::string("INPUT2_OUTPUT_BUFFER7");
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 333 ) != m_toString.end() )
+	if ( m_toString.find( 364 ) != m_toString.end() )
 	{
-		vgLogDebug("(333, NO_FILTER) already in m_toString enum registry");
-		assert( false && "(333, NO_FILTER) already in registry" );
+		vgLogDebug("(364, INPUT2_OUTPUT_BUFFER6) already in m_toString enum registry");
+		assert( false && "(364, INPUT2_OUTPUT_BUFFER6) already in registry" );
 	}
 	#endif
 
-	m_toString[ 333 ] = std::string("NO_FILTER");
+	m_toString[ 364 ] = std::string("INPUT2_OUTPUT_BUFFER6");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 336 ) != m_toString.end() )
+	{
+		vgLogDebug("(336, NO_FILTER) already in m_toString enum registry");
+		assert( false && "(336, NO_FILTER) already in registry" );
+	}
+	#endif
+
+	m_toString[ 336 ] = std::string("NO_FILTER");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 301 ) != m_toString.end() )
+	{
+		vgLogDebug("(301, SCALE_FACTOR) already in m_toString enum registry");
+		assert( false && "(301, SCALE_FACTOR) already in registry" );
+	}
+	#endif
+
+	m_toString[ 301 ] = std::string("SCALE_FACTOR");
 
 	//
 	#ifdef _DEBUG
@@ -1624,93 +1756,126 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 364 ) != m_toString.end() )
+	if ( m_toString.find( 367 ) != m_toString.end() )
 	{
-		vgLogDebug("(364, INPUT2_NONE) already in m_toString enum registry");
-		assert( false && "(364, INPUT2_NONE) already in registry" );
+		vgLogDebug("(367, INPUT2_NONE) already in m_toString enum registry");
+		assert( false && "(367, INPUT2_NONE) already in registry" );
 	}
 	#endif
 
-	m_toString[ 364 ] = std::string("INPUT2_NONE");
+	m_toString[ 367 ] = std::string("INPUT2_NONE");
 
 	// Initializes m_toEnum map
 
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 332 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 335 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(332, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(332, FilterValueType) already in registry" );
+		vgLogDebug("(335, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(335, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 332 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(332) );
+	m_toEnum[ 335 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(335) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 321 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 276 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(321, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(321, FilterValueType) already in registry" );
+		vgLogDebug("(276, Option0ValueType) already in m_toEnum enum registry");
+		assert( false && "(276, Option0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 321 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(321) );
+	m_toEnum[ 276 ] = vgd::makeShp( new vgd::node::LightModel::Option0ValueType(276) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 287 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 275 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(287, ShadowValueType) already in m_toEnum enum registry");
-		assert( false && "(287, ShadowValueType) already in registry" );
+		vgLogDebug("(275, Option0ValueType) already in m_toEnum enum registry");
+		assert( false && "(275, Option0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 287 ] = vgd::makeShp( new vgd::node::LightModel::ShadowValueType(287) );
+	m_toEnum[ 275 ] = vgd::makeShp( new vgd::node::LightModel::Option0ValueType(275) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 389 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 274 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(389, FilterParameterType) already in m_toEnum enum registry");
-		assert( false && "(389, FilterParameterType) already in registry" );
+		vgLogDebug("(274, Option0ValueType) already in m_toEnum enum registry");
+		assert( false && "(274, Option0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 389 ] = vgd::makeShp( new vgd::node::Texture::FilterParameterType(389) );
+	m_toEnum[ 274 ] = vgd::makeShp( new vgd::node::LightModel::Option0ValueType(274) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 326 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 273 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(326, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(326, FilterValueType) already in registry" );
+		vgLogDebug("(273, Option0ValueType) already in m_toEnum enum registry");
+		assert( false && "(273, Option0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 326 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(326) );
+	m_toEnum[ 273 ] = vgd::makeShp( new vgd::node::LightModel::Option0ValueType(273) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 308 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 272 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(308, CommandValueType) already in m_toEnum enum registry");
-		assert( false && "(308, CommandValueType) already in registry" );
+		vgLogDebug("(272, Option0ValueType) already in m_toEnum enum registry");
+		assert( false && "(272, Option0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 308 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(308) );
+	m_toEnum[ 272 ] = vgd::makeShp( new vgd::node::LightModel::Option0ValueType(272) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 381 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 401 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(381, WrapParameterType) already in m_toEnum enum registry");
-		assert( false && "(381, WrapParameterType) already in registry" );
+		vgLogDebug("(401, FilterParameterType) already in m_toEnum enum registry");
+		assert( false && "(401, FilterParameterType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 381 ] = vgd::makeShp( new vgd::node::Texture::WrapParameterType(381) );
+	m_toEnum[ 401 ] = vgd::makeShp( new vgd::node::Texture::FilterParameterType(401) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 329 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(329, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(329, FilterValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 329 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(329) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 311 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(311, CommandValueType) already in m_toEnum enum registry");
+		assert( false && "(311, CommandValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 311 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(311) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 393 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(393, WrapParameterType) already in m_toEnum enum registry");
+		assert( false && "(393, WrapParameterType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 393 ] = vgd::makeShp( new vgd::node::Texture::WrapParameterType(393) );
 	
 	//
 	#ifdef _DEBUG
@@ -1725,36 +1890,36 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 385 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 397 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(385, WrapValueType) already in m_toEnum enum registry");
-		assert( false && "(385, WrapValueType) already in registry" );
+		vgLogDebug("(397, WrapValueType) already in m_toEnum enum registry");
+		assert( false && "(397, WrapValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 385 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(385) );
+	m_toEnum[ 397 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(397) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 380 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 392 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(380, WrapParameterType) already in m_toEnum enum registry");
-		assert( false && "(380, WrapParameterType) already in registry" );
+		vgLogDebug("(392, WrapParameterType) already in m_toEnum enum registry");
+		assert( false && "(392, WrapParameterType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 380 ] = vgd::makeShp( new vgd::node::Texture::WrapParameterType(380) );
+	m_toEnum[ 392 ] = vgd::makeShp( new vgd::node::Texture::WrapParameterType(392) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 382 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 394 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(382, WrapParameterType) already in m_toEnum enum registry");
-		assert( false && "(382, WrapParameterType) already in registry" );
+		vgLogDebug("(394, WrapParameterType) already in m_toEnum enum registry");
+		assert( false && "(394, WrapParameterType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 382 ] = vgd::makeShp( new vgd::node::Texture::WrapParameterType(382) );
+	m_toEnum[ 394 ] = vgd::makeShp( new vgd::node::Texture::WrapParameterType(394) );
 	
 	//
 	#ifdef _DEBUG
@@ -1769,58 +1934,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 276 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 324 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(276, Option2ValueType) already in m_toEnum enum registry");
-		assert( false && "(276, Option2ValueType) already in registry" );
+		vgLogDebug("(324, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(324, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 276 ] = vgd::makeShp( new vgd::node::LightModel::Option2ValueType(276) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 273 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(273, Option2ValueType) already in m_toEnum enum registry");
-		assert( false && "(273, Option2ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 273 ] = vgd::makeShp( new vgd::node::LightModel::Option2ValueType(273) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 272 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(272, Option2ValueType) already in m_toEnum enum registry");
-		assert( false && "(272, Option2ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 272 ] = vgd::makeShp( new vgd::node::LightModel::Option2ValueType(272) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 275 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(275, Option2ValueType) already in m_toEnum enum registry");
-		assert( false && "(275, Option2ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 275 ] = vgd::makeShp( new vgd::node::LightModel::Option2ValueType(275) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 274 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(274, Option2ValueType) already in m_toEnum enum registry");
-		assert( false && "(274, Option2ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 274 ] = vgd::makeShp( new vgd::node::LightModel::Option2ValueType(274) );
+	m_toEnum[ 324 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(324) );
 	
 	//
 	#ifdef _DEBUG
@@ -1846,14 +1967,25 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 331 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 287 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(331, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(331, FilterValueType) already in registry" );
+		vgLogDebug("(287, ShadowValueType) already in m_toEnum enum registry");
+		assert( false && "(287, ShadowValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 331 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(331) );
+	m_toEnum[ 287 ] = vgd::makeShp( new vgd::node::LightModel::ShadowValueType(287) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 307 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(307, FormatValueType) already in m_toEnum enum registry");
+		assert( false && "(307, FormatValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 307 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::FormatValueType(307) );
 	
 	//
 	#ifdef _DEBUG
@@ -1868,14 +2000,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 370 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 382 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(370, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(370, InternalFormatValueType) already in registry" );
+		vgLogDebug("(382, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(382, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 370 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(370) );
+	m_toEnum[ 382 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(382) );
 	
 	//
 	#ifdef _DEBUG
@@ -1890,113 +2022,113 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 396 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 408 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(396, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(396, FilterValueType) already in registry" );
+		vgLogDebug("(408, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(408, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 396 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(396) );
+	m_toEnum[ 408 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(408) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 383 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 395 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(383, WrapValueType) already in m_toEnum enum registry");
-		assert( false && "(383, WrapValueType) already in registry" );
+		vgLogDebug("(395, WrapValueType) already in m_toEnum enum registry");
+		assert( false && "(395, WrapValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 383 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(383) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 376 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(376, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(376, InternalFormatValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 376 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(376) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 320 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(320, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(320, FilterValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 320 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(320) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 330 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(330, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(330, FilterValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 330 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(330) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 319 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(319, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(319, FilterValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 319 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(319) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 348 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(348, Input1ValueType) already in m_toEnum enum registry");
-		assert( false && "(348, Input1ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 348 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(348) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 384 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(384, WrapValueType) already in m_toEnum enum registry");
-		assert( false && "(384, WrapValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 384 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(384) );
+	m_toEnum[ 395 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(395) );
 	
 	//
 	#ifdef _DEBUG
 	if ( m_toEnum.find( 388 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(388, WrapValueType) already in m_toEnum enum registry");
-		assert( false && "(388, WrapValueType) already in registry" );
+		vgLogDebug("(388, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(388, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 388 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(388) );
+	m_toEnum[ 388 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(388) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 394 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 323 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(394, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(394, FilterValueType) already in registry" );
+		vgLogDebug("(323, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(323, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 394 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(394) );
+	m_toEnum[ 323 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(323) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 333 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(333, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(333, FilterValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 333 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(333) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 322 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(322, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(322, FilterValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 322 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(322) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 351 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(351, Input1ValueType) already in m_toEnum enum registry");
+		assert( false && "(351, Input1ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 351 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(351) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 396 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(396, WrapValueType) already in m_toEnum enum registry");
+		assert( false && "(396, WrapValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 396 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(396) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 400 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(400, WrapValueType) already in m_toEnum enum registry");
+		assert( false && "(400, WrapValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 400 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(400) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 406 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(406, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(406, FilterValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 406 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(406) );
 	
 	//
 	#ifdef _DEBUG
@@ -2011,14 +2143,25 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 305 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 308 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(305, TypeValueType) already in m_toEnum enum registry");
-		assert( false && "(305, TypeValueType) already in registry" );
+		vgLogDebug("(308, TypeValueType) already in m_toEnum enum registry");
+		assert( false && "(308, TypeValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 305 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::TypeValueType(305) );
+	m_toEnum[ 308 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::TypeValueType(308) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 334 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(334, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(334, FilterValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 334 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(334) );
 	
 	//
 	#ifdef _DEBUG
@@ -2033,25 +2176,36 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 369 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 381 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(369, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(369, InternalFormatValueType) already in registry" );
+		vgLogDebug("(381, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(381, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 369 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(369) );
+	m_toEnum[ 381 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(381) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 366 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 302 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(366, UsageValueType) already in m_toEnum enum registry");
-		assert( false && "(366, UsageValueType) already in registry" );
+		vgLogDebug("(302, SizeSemanticValueType) already in m_toEnum enum registry");
+		assert( false && "(302, SizeSemanticValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 366 ] = vgd::makeShp( new vgd::node::Texture::UsageValueType(366) );
+	m_toEnum[ 302 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::SizeSemanticValueType(302) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 378 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(378, UsageValueType) already in m_toEnum enum registry");
+		assert( false && "(378, UsageValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 378 ] = vgd::makeShp( new vgd::node::Texture::UsageValueType(378) );
 	
 	//
 	#ifdef _DEBUG
@@ -2066,91 +2220,113 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 387 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 399 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(387, WrapValueType) already in m_toEnum enum registry");
-		assert( false && "(387, WrapValueType) already in registry" );
+		vgLogDebug("(399, WrapValueType) already in m_toEnum enum registry");
+		assert( false && "(399, WrapValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 387 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(387) );
+	m_toEnum[ 399 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(399) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 372 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 384 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(372, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(372, InternalFormatValueType) already in registry" );
+		vgLogDebug("(384, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(384, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 372 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(372) );
+	m_toEnum[ 384 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(384) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 304 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 306 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(304, FormatValueType) already in m_toEnum enum registry");
-		assert( false && "(304, FormatValueType) already in registry" );
+		vgLogDebug("(306, FormatValueType) already in m_toEnum enum registry");
+		assert( false && "(306, FormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 304 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::FormatValueType(304) );
+	m_toEnum[ 306 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::FormatValueType(306) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 309 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 312 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(309, CommandValueType) already in m_toEnum enum registry");
-		assert( false && "(309, CommandValueType) already in registry" );
+		vgLogDebug("(312, CommandValueType) already in m_toEnum enum registry");
+		assert( false && "(312, CommandValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 309 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(309) );
+	m_toEnum[ 312 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(312) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 374 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 373 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(374, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(374, InternalFormatValueType) already in registry" );
+		vgLogDebug("(373, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(373, OutputValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 374 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(374) );
+	m_toEnum[ 373 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(373) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 343 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 368 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(343, Input0ValueType) already in m_toEnum enum registry");
-		assert( false && "(343, Input0ValueType) already in registry" );
+		vgLogDebug("(368, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(368, OutputValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 343 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(343) );
+	m_toEnum[ 368 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(368) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 328 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 386 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(328, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(328, FilterValueType) already in registry" );
+		vgLogDebug("(386, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(386, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 328 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(328) );
+	m_toEnum[ 386 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(386) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 365 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 346 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(365, UsageValueType) already in m_toEnum enum registry");
-		assert( false && "(365, UsageValueType) already in registry" );
+		vgLogDebug("(346, Input0ValueType) already in m_toEnum enum registry");
+		assert( false && "(346, Input0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 365 ] = vgd::makeShp( new vgd::node::Texture::UsageValueType(365) );
+	m_toEnum[ 346 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(346) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 331 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(331, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(331, FilterValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 331 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(331) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 377 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(377, UsageValueType) already in m_toEnum enum registry");
+		assert( false && "(377, UsageValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 377 ] = vgd::makeShp( new vgd::node::Texture::UsageValueType(377) );
 	
 	//
 	#ifdef _DEBUG
@@ -2165,25 +2341,25 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 368 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 380 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(368, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(368, InternalFormatValueType) already in registry" );
+		vgLogDebug("(380, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(380, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 368 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(368) );
+	m_toEnum[ 380 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(380) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 378 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 390 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(378, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(378, InternalFormatValueType) already in registry" );
+		vgLogDebug("(390, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(390, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 378 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(378) );
+	m_toEnum[ 390 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(390) );
 	
 	//
 	#ifdef _DEBUG
@@ -2198,28 +2374,6 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 301 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(301, FormatValueType) already in m_toEnum enum registry");
-		assert( false && "(301, FormatValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 301 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::FormatValueType(301) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 329 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(329, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(329, FilterValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 329 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(329) );
-	
-	//
-	#ifdef _DEBUG
 	if ( m_toEnum.find( 303 ) != m_toEnum.end() )
 	{
 		vgLogDebug("(303, FormatValueType) already in m_toEnum enum registry");
@@ -2231,58 +2385,25 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 337 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 332 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(337, Input0ValueType) already in m_toEnum enum registry");
-		assert( false && "(337, Input0ValueType) already in registry" );
+		vgLogDebug("(332, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(332, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 337 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(337) );
+	m_toEnum[ 332 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(332) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 336 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 305 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(336, Input0ValueType) already in m_toEnum enum registry");
-		assert( false && "(336, Input0ValueType) already in registry" );
+		vgLogDebug("(305, FormatValueType) already in m_toEnum enum registry");
+		assert( false && "(305, FormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 336 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(336) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 335 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(335, Input0ValueType) already in m_toEnum enum registry");
-		assert( false && "(335, Input0ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 335 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(335) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 342 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(342, Input0ValueType) already in m_toEnum enum registry");
-		assert( false && "(342, Input0ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 342 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(342) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 341 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(341, Input0ValueType) already in m_toEnum enum registry");
-		assert( false && "(341, Input0ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 341 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(341) );
+	m_toEnum[ 305 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::FormatValueType(305) );
 	
 	//
 	#ifdef _DEBUG
@@ -2308,14 +2429,69 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 306 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 338 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(306, TypeValueType) already in m_toEnum enum registry");
-		assert( false && "(306, TypeValueType) already in registry" );
+		vgLogDebug("(338, Input0ValueType) already in m_toEnum enum registry");
+		assert( false && "(338, Input0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 306 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::TypeValueType(306) );
+	m_toEnum[ 338 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(338) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 345 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(345, Input0ValueType) already in m_toEnum enum registry");
+		assert( false && "(345, Input0ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 345 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(345) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 344 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(344, Input0ValueType) already in m_toEnum enum registry");
+		assert( false && "(344, Input0ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 344 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(344) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 343 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(343, Input0ValueType) already in m_toEnum enum registry");
+		assert( false && "(343, Input0ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 343 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(343) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 342 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(342, Input0ValueType) already in m_toEnum enum registry");
+		assert( false && "(342, Input0ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 342 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(342) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 309 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(309, TypeValueType) already in m_toEnum enum registry");
+		assert( false && "(309, TypeValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 309 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::TypeValueType(309) );
 	
 	//
 	#ifdef _DEBUG
@@ -2330,36 +2506,36 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 391 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 403 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(391, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(391, FilterValueType) already in registry" );
+		vgLogDebug("(403, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(403, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 391 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(391) );
+	m_toEnum[ 403 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(403) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 367 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 379 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(367, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(367, InternalFormatValueType) already in registry" );
+		vgLogDebug("(379, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(379, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 367 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(367) );
+	m_toEnum[ 379 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(379) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 338 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 341 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(338, Input0ValueType) already in m_toEnum enum registry");
-		assert( false && "(338, Input0ValueType) already in registry" );
+		vgLogDebug("(341, Input0ValueType) already in m_toEnum enum registry");
+		assert( false && "(341, Input0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 338 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(338) );
+	m_toEnum[ 341 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(341) );
 	
 	//
 	#ifdef _DEBUG
@@ -2374,14 +2550,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 395 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 407 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(395, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(395, FilterValueType) already in registry" );
+		vgLogDebug("(407, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(407, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 395 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(395) );
+	m_toEnum[ 407 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(407) );
 	
 	//
 	#ifdef _DEBUG
@@ -2418,36 +2594,36 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 316 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 319 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(316, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(316, FilterValueType) already in registry" );
+		vgLogDebug("(319, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(319, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 316 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(316) );
+	m_toEnum[ 319 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(319) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 390 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 402 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(390, FilterParameterType) already in m_toEnum enum registry");
-		assert( false && "(390, FilterParameterType) already in registry" );
+		vgLogDebug("(402, FilterParameterType) already in m_toEnum enum registry");
+		assert( false && "(402, FilterParameterType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 390 ] = vgd::makeShp( new vgd::node::Texture::FilterParameterType(390) );
+	m_toEnum[ 402 ] = vgd::makeShp( new vgd::node::Texture::FilterParameterType(402) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 354 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 357 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(354, Input1ValueType) already in m_toEnum enum registry");
-		assert( false && "(354, Input1ValueType) already in registry" );
+		vgLogDebug("(357, Input1ValueType) already in m_toEnum enum registry");
+		assert( false && "(357, Input1ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 354 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(354) );
+	m_toEnum[ 357 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(357) );
 	
 	//
 	#ifdef _DEBUG
@@ -2462,14 +2638,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 363 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 366 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(363, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(363, Input2ValueType) already in registry" );
+		vgLogDebug("(366, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(366, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 363 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(363) );
+	m_toEnum[ 366 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(366) );
 	
 	//
 	#ifdef _DEBUG
@@ -2495,14 +2671,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 314 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 317 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(314, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(314, FilterValueType) already in registry" );
+		vgLogDebug("(317, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(317, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 314 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(314) );
+	m_toEnum[ 317 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(317) );
 	
 	//
 	#ifdef _DEBUG
@@ -2514,61 +2690,6 @@ void EnumRegistry::initialize()
 	#endif
 
 	m_toEnum[ 286 ] = vgd::makeShp( new vgd::node::LightModel::ShadowValueType(286) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 347 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(347, Input1ValueType) already in m_toEnum enum registry");
-		assert( false && "(347, Input1ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 347 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(347) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 346 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(346, Input1ValueType) already in m_toEnum enum registry");
-		assert( false && "(346, Input1ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 346 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(346) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 345 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(345, Input1ValueType) already in m_toEnum enum registry");
-		assert( false && "(345, Input1ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 345 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(345) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 352 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(352, Input1ValueType) already in m_toEnum enum registry");
-		assert( false && "(352, Input1ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 352 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(352) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 351 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(351, Input1ValueType) already in m_toEnum enum registry");
-		assert( false && "(351, Input1ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 351 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(351) );
 	
 	//
 	#ifdef _DEBUG
@@ -2594,14 +2715,69 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 312 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 348 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(312, CommandValueType) already in m_toEnum enum registry");
-		assert( false && "(312, CommandValueType) already in registry" );
+		vgLogDebug("(348, Input1ValueType) already in m_toEnum enum registry");
+		assert( false && "(348, Input1ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 312 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(312) );
+	m_toEnum[ 348 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(348) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 355 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(355, Input1ValueType) already in m_toEnum enum registry");
+		assert( false && "(355, Input1ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 355 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(355) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 354 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(354, Input1ValueType) already in m_toEnum enum registry");
+		assert( false && "(354, Input1ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 354 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(354) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 353 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(353, Input1ValueType) already in m_toEnum enum registry");
+		assert( false && "(353, Input1ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 353 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(353) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 352 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(352, Input1ValueType) already in m_toEnum enum registry");
+		assert( false && "(352, Input1ValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 352 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(352) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 315 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(315, CommandValueType) already in m_toEnum enum registry");
+		assert( false && "(315, CommandValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 315 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(315) );
 	
 	//
 	#ifdef _DEBUG
@@ -2627,25 +2803,25 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 317 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 320 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(317, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(317, FilterValueType) already in registry" );
+		vgLogDebug("(320, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(320, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 317 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(317) );
+	m_toEnum[ 320 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(320) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 375 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 387 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(375, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(375, InternalFormatValueType) already in registry" );
+		vgLogDebug("(387, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(387, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 375 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(375) );
+	m_toEnum[ 387 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(387) );
 	
 	//
 	#ifdef _DEBUG
@@ -2671,69 +2847,69 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 325 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 328 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(325, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(325, FilterValueType) already in registry" );
+		vgLogDebug("(328, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(328, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 325 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(325) );
+	m_toEnum[ 328 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(328) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 307 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 310 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(307, TypeValueType) already in m_toEnum enum registry");
-		assert( false && "(307, TypeValueType) already in registry" );
+		vgLogDebug("(310, TypeValueType) already in m_toEnum enum registry");
+		assert( false && "(310, TypeValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 307 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::TypeValueType(307) );
+	m_toEnum[ 310 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::TypeValueType(310) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 344 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 347 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(344, Input0ValueType) already in m_toEnum enum registry");
-		assert( false && "(344, Input0ValueType) already in registry" );
+		vgLogDebug("(347, Input0ValueType) already in m_toEnum enum registry");
+		assert( false && "(347, Input0ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 344 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(344) );
+	m_toEnum[ 347 ] = vgd::makeShp( new vgd::node::PostProcessing::Input0ValueType(347) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 302 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 304 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(302, FormatValueType) already in m_toEnum enum registry");
-		assert( false && "(302, FormatValueType) already in registry" );
+		vgLogDebug("(304, FormatValueType) already in m_toEnum enum registry");
+		assert( false && "(304, FormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 302 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::FormatValueType(302) );
+	m_toEnum[ 304 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::FormatValueType(304) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 313 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 316 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(313, CommandValueType) already in m_toEnum enum registry");
-		assert( false && "(313, CommandValueType) already in registry" );
+		vgLogDebug("(316, CommandValueType) already in m_toEnum enum registry");
+		assert( false && "(316, CommandValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 313 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(313) );
+	m_toEnum[ 316 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(316) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 386 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 398 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(386, WrapValueType) already in m_toEnum enum registry");
-		assert( false && "(386, WrapValueType) already in registry" );
+		vgLogDebug("(398, WrapValueType) already in m_toEnum enum registry");
+		assert( false && "(398, WrapValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 386 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(386) );
+	m_toEnum[ 398 ] = vgd::makeShp( new vgd::node::Texture::WrapValueType(398) );
 	
 	//
 	#ifdef _DEBUG
@@ -2748,14 +2924,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 327 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 330 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(327, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(327, FilterValueType) already in registry" );
+		vgLogDebug("(330, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(330, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 327 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(327) );
+	m_toEnum[ 330 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(330) );
 	
 	//
 	#ifdef _DEBUG
@@ -2770,6 +2946,83 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
+	if ( m_toEnum.find( 372 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(372, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(372, OutputValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 372 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(372) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 371 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(371, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(371, OutputValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 371 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(371) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 370 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(370, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(370, OutputValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 370 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(370) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 369 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(369, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(369, OutputValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 369 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(369) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 376 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(376, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(376, OutputValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 376 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(376) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 375 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(375, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(375, OutputValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 375 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(375) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 374 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(374, OutputValueType) already in m_toEnum enum registry");
+		assert( false && "(374, OutputValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 374 ] = vgd::makeShp( new vgd::node::PostProcessing::OutputValueType(374) );
+	
+	//
+	#ifdef _DEBUG
 	if ( m_toEnum.find( 285 ) != m_toEnum.end() )
 	{
 		vgLogDebug("(285, ShadowValueType) already in m_toEnum enum registry");
@@ -2781,69 +3034,80 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 311 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 314 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(311, CommandValueType) already in m_toEnum enum registry");
-		assert( false && "(311, CommandValueType) already in registry" );
+		vgLogDebug("(314, CommandValueType) already in m_toEnum enum registry");
+		assert( false && "(314, CommandValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 311 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(311) );
+	m_toEnum[ 314 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(314) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 355 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 358 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(355, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(355, Input2ValueType) already in registry" );
+		vgLogDebug("(358, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(358, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 355 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(355) );
+	m_toEnum[ 358 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(358) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 377 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 389 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(377, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(377, InternalFormatValueType) already in registry" );
+		vgLogDebug("(389, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(389, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 377 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(377) );
+	m_toEnum[ 389 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(389) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 357 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 360 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(357, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(357, Input2ValueType) already in registry" );
+		vgLogDebug("(360, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(360, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 357 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(357) );
+	m_toEnum[ 360 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(360) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 322 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 325 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(322, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(322, FilterValueType) already in registry" );
+		vgLogDebug("(325, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(325, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 322 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(322) );
+	m_toEnum[ 325 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(325) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 393 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 405 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(393, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(393, FilterValueType) already in registry" );
+		vgLogDebug("(405, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(405, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 393 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(393) );
+	m_toEnum[ 405 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(405) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 321 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(321, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(321, FilterValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 321 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(321) );
 	
 	//
 	#ifdef _DEBUG
@@ -2858,17 +3122,6 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 315 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(315, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(315, FilterValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 315 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(315) );
-	
-	//
-	#ifdef _DEBUG
 	if ( m_toEnum.find( 284 ) != m_toEnum.end() )
 	{
 		vgLogDebug("(284, ShadowValueType) already in m_toEnum enum registry");
@@ -2880,14 +3133,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 392 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 404 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(392, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(392, FilterValueType) already in registry" );
+		vgLogDebug("(404, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(404, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 392 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(392) );
+	m_toEnum[ 404 ] = vgd::makeShp( new vgd::node::Texture::FilterValueType(404) );
 	
 	//
 	#ifdef _DEBUG
@@ -2913,14 +3166,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 379 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 391 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(379, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(379, InternalFormatValueType) already in registry" );
+		vgLogDebug("(391, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(391, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 379 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(379) );
+	m_toEnum[ 391 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(391) );
 	
 	//
 	#ifdef _DEBUG
@@ -2968,25 +3221,25 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 324 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 327 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(324, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(324, FilterValueType) already in registry" );
+		vgLogDebug("(327, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(327, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 324 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(324) );
+	m_toEnum[ 327 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(327) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 371 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 383 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(371, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(371, InternalFormatValueType) already in registry" );
+		vgLogDebug("(383, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(383, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 371 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(371) );
+	m_toEnum[ 383 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(383) );
 	
 	//
 	#ifdef _DEBUG
@@ -3001,47 +3254,47 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 323 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 326 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(323, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(323, FilterValueType) already in registry" );
+		vgLogDebug("(326, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(326, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 323 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(323) );
+	m_toEnum[ 326 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(326) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 334 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 337 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(334, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(334, FilterValueType) already in registry" );
+		vgLogDebug("(337, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(337, FilterValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 334 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(334) );
+	m_toEnum[ 337 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(337) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 310 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 313 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(310, CommandValueType) already in m_toEnum enum registry");
-		assert( false && "(310, CommandValueType) already in registry" );
+		vgLogDebug("(313, CommandValueType) already in m_toEnum enum registry");
+		assert( false && "(313, CommandValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 310 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(310) );
+	m_toEnum[ 313 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::CommandValueType(313) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 373 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 385 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(373, InternalFormatValueType) already in m_toEnum enum registry");
-		assert( false && "(373, InternalFormatValueType) already in registry" );
+		vgLogDebug("(385, InternalFormatValueType) already in m_toEnum enum registry");
+		assert( false && "(385, InternalFormatValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 373 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(373) );
+	m_toEnum[ 385 ] = vgd::makeShp( new vgd::node::Texture::InternalFormatValueType(385) );
 	
 	//
 	#ifdef _DEBUG
@@ -3067,14 +3320,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 356 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 359 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(356, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(356, Input2ValueType) already in registry" );
+		vgLogDebug("(359, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(359, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 356 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(356) );
+	m_toEnum[ 359 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(359) );
 	
 	//
 	#ifdef _DEBUG
@@ -3089,47 +3342,36 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 358 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 361 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(358, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(358, Input2ValueType) already in registry" );
+		vgLogDebug("(361, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(361, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 358 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(358) );
+	m_toEnum[ 361 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(361) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 353 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 356 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(353, Input1ValueType) already in m_toEnum enum registry");
-		assert( false && "(353, Input1ValueType) already in registry" );
+		vgLogDebug("(356, Input1ValueType) already in m_toEnum enum registry");
+		assert( false && "(356, Input1ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 353 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(353) );
+	m_toEnum[ 356 ] = vgd::makeShp( new vgd::node::PostProcessing::Input1ValueType(356) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 360 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 363 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(360, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(360, Input2ValueType) already in registry" );
+		vgLogDebug("(363, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(363, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 360 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(360) );
-	
-	//
-	#ifdef _DEBUG
-	if ( m_toEnum.find( 359 ) != m_toEnum.end() )
-	{
-		vgLogDebug("(359, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(359, Input2ValueType) already in registry" );
-	}
-	#endif
-
-	m_toEnum[ 359 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(359) );
+	m_toEnum[ 363 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(363) );
 	
 	//
 	#ifdef _DEBUG
@@ -3144,25 +3386,47 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 361 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 365 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(361, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(361, Input2ValueType) already in registry" );
+		vgLogDebug("(365, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(365, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 361 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(361) );
+	m_toEnum[ 365 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(365) );
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 333 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 364 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(333, FilterValueType) already in m_toEnum enum registry");
-		assert( false && "(333, FilterValueType) already in registry" );
+		vgLogDebug("(364, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(364, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 333 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(333) );
+	m_toEnum[ 364 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(364) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 336 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(336, FilterValueType) already in m_toEnum enum registry");
+		assert( false && "(336, FilterValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 336 ] = vgd::makeShp( new vgd::node::PostProcessing::FilterValueType(336) );
+	
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 301 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(301, SizeSemanticValueType) already in m_toEnum enum registry");
+		assert( false && "(301, SizeSemanticValueType) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 301 ] = vgd::makeShp( new vgd::node::OutputBufferProperty::SizeSemanticValueType(301) );
 	
 	//
 	#ifdef _DEBUG
@@ -3177,14 +3441,14 @@ void EnumRegistry::initialize()
 	
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 364 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 367 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(364, Input2ValueType) already in m_toEnum enum registry");
-		assert( false && "(364, Input2ValueType) already in registry" );
+		vgLogDebug("(367, Input2ValueType) already in m_toEnum enum registry");
+		assert( false && "(367, Input2ValueType) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 364 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(364) );
+	m_toEnum[ 367 ] = vgd::makeShp( new vgd::node::PostProcessing::Input2ValueType(367) );
 	
 }
 

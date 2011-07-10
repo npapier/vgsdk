@@ -63,10 +63,12 @@ OutputBufferProperty::OutputBufferProperty( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FCommandType(getFCommand()) );
-	addField( new FTypeType(getFType()) );
+	addField( new FSizeSemanticType(getFSizeSemantic()) );
 	addField( new FCustomCommandType(getFCustomCommand()) );
 	addField( new FFormatType(getFFormat()) );
+	addField( new FCommandType(getFCommand()) );
+	addField( new FTypeType(getFType()) );
+	addField( new FSizeType(getFSize()) );
 
 	// Sets link(s)
 
@@ -78,10 +80,12 @@ OutputBufferProperty::OutputBufferProperty( const std::string nodeName ) :
 void OutputBufferProperty::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setCommand( COLOR );
-	setType( INTEGER );
+	setSizeSemantic( SCALE_FACTOR );
 
 	setFormat( RGB );
+	setCommand( COLOR );
+	setType( INTEGER );
+	setSize( vgm::Vec2f(1.f, 1.f) );
 }
 
 
@@ -93,32 +97,17 @@ void OutputBufferProperty::setOptionalsToDefaults()
 
 
 
-// Command
-const OutputBufferProperty::CommandValueType OutputBufferProperty::getCommand() const
+// SizeSemantic
+const OutputBufferProperty::SizeSemanticValueType OutputBufferProperty::getSizeSemantic() const
 {
-	return getFieldRO<FCommandType>(getFCommand())->getValue();
+	return getFieldRO<FSizeSemanticType>(getFSizeSemantic())->getValue();
 }
 
 
 
-void OutputBufferProperty::setCommand( const CommandValueType value )
+void OutputBufferProperty::setSizeSemantic( const SizeSemanticValueType value )
 {
-	getFieldRW<FCommandType>(getFCommand())->setValue( value );
-}
-
-
-
-// Type
-const OutputBufferProperty::TypeValueType OutputBufferProperty::getType() const
-{
-	return getFieldRO<FTypeType>(getFType())->getValue();
-}
-
-
-
-void OutputBufferProperty::setType( const TypeValueType value )
-{
-	getFieldRW<FTypeType>(getFType())->setValue( value );
+	getFieldRW<FSizeSemanticType>(getFSizeSemantic())->setValue( value );
 }
 
 
@@ -153,17 +142,55 @@ void OutputBufferProperty::setFormat( const FormatValueType value )
 
 
 
-// Field name accessor(s)
-const std::string OutputBufferProperty::getFCommand( void )
+// Command
+const OutputBufferProperty::CommandValueType OutputBufferProperty::getCommand() const
 {
-	return "f_command";
+	return getFieldRO<FCommandType>(getFCommand())->getValue();
 }
 
 
 
-const std::string OutputBufferProperty::getFType( void )
+void OutputBufferProperty::setCommand( const CommandValueType value )
 {
-	return "f_type";
+	getFieldRW<FCommandType>(getFCommand())->setValue( value );
+}
+
+
+
+// Type
+const OutputBufferProperty::TypeValueType OutputBufferProperty::getType() const
+{
+	return getFieldRO<FTypeType>(getFType())->getValue();
+}
+
+
+
+void OutputBufferProperty::setType( const TypeValueType value )
+{
+	getFieldRW<FTypeType>(getFType())->setValue( value );
+}
+
+
+
+// Size
+const OutputBufferProperty::SizeValueType OutputBufferProperty::getSize() const
+{
+	return getFieldRO<FSizeType>(getFSize())->getValue();
+}
+
+
+
+void OutputBufferProperty::setSize( const SizeValueType value )
+{
+	getFieldRW<FSizeType>(getFSize())->setValue( value );
+}
+
+
+
+// Field name accessor(s)
+const std::string OutputBufferProperty::getFSizeSemantic( void )
+{
+	return "f_sizeSemantic";
 }
 
 
@@ -178,6 +205,27 @@ const std::string OutputBufferProperty::getFCustomCommand( void )
 const std::string OutputBufferProperty::getFFormat( void )
 {
 	return "f_format";
+}
+
+
+
+const std::string OutputBufferProperty::getFCommand( void )
+{
+	return "f_command";
+}
+
+
+
+const std::string OutputBufferProperty::getFType( void )
+{
+	return "f_type";
+}
+
+
+
+const std::string OutputBufferProperty::getFSize( void )
+{
+	return "f_size";
 }
 
 
