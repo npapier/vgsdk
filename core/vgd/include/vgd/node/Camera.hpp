@@ -48,7 +48,10 @@ namespace node
  *   Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
  *<br>
  * - SFFloat \c eyeSeparation = 0.f<br>
- *   todo<br>
+ *   Sets the distance between the left and right eye.<br>
+ *<br>
+ * - SFFloat \c imageShift = 0.f<br>
+ *   Sets the additional horizontal shift between the left and right image. This value must be between 0 and 100. 0 means no shift at all. 100 corresponds to a shift of 1/8 of the drawing surface.<br>
  *<br>
  * - OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
  *   Determines the viewport.<br>
@@ -418,6 +421,36 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
+	 * @name Accessors to field imageShift
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c imageShift.
+	 */
+	typedef float ImageShiftValueType;
+
+	/**
+	 * @brief Type definition of the field named \c imageShift
+	 */
+	typedef vgd::field::TSingleField< ImageShiftValueType > FImageShiftType;
+
+
+	/**
+	 * @brief Gets the value of field named \c imageShift.
+	 */
+	const ImageShiftValueType getImageShift() const;
+
+	/**
+	 * @brief Sets the value of field named \c imageShift.
+	 */
+	void setImageShift( const ImageShiftValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field viewport
 	 */
 	//@{
@@ -509,6 +542,13 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @return the name of field \c eyeSeparation.
 	 */
 	static const std::string getFEyeSeparation( void );
+
+	/**
+	 * @brief Returns the name of field \c imageShift.
+	 *
+	 * @return the name of field \c imageShift.
+	 */
+	static const std::string getFImageShift( void );
 
 	/**
 	 * @brief Returns the name of field \c viewport.
@@ -634,17 +674,26 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	//@{
 
 	/**
-	 * @brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering
+	 * @brief Returns the value of field named \c viewport modified (if needed) by taking care of the given eye usage policy, the \c mode field and the \c imageShift field.
+	 */
+	const bool gethViewport( ViewportValueType& value, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
+
+// stereoscopy.pdf slide 24 for explanation of
+// slide 32
+// two eyes looking at a parallel direction
+
+	/**
+	 * brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering
 	 *
 	 * The first three parameters defines a 3D geometric transformation applied to monoscopic eye.
 	 * The position of monoscopic eye is slightly shift along the X axis using \c eyeSeparation value to define left eye and right eye.
 	 *
-	 * @param lookAtEye		the position of the eye point
-	 * @param lookAtCenter	the position of the reference point
-	 * @param lookAtUp		the direction of the up vector
-	 * @param eyeSeparation	the distance between the two eyes
+	 * param lookAtEye		the position of the eye point
+	 * param lookAtCenter	the position of the reference point
+	 * param lookAtUp		the direction of the up vector
+	 * param eyeSeparation	the distance between the two eyes
 	 */
-	void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
+	//void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
 
 	//@}
 

@@ -107,8 +107,12 @@ class Type :
 class Enum ( Type ):
 
 	def __init__( self, nodeName, fieldName ):
-		Type.__init__( self, "enum", nodeName, fieldName )
+		Type.__init__( self, 'enum', nodeName, fieldName )
+		self.typename = ''	# enum typename {...};
 		self.values = {}	# enum_string, enum_doc
+
+	def setTypename( self, value ):
+		self.typename = value
 
 	def addValue( self, value, docValue = "" ):
 		if value not in self.values :
@@ -185,7 +189,7 @@ class Enum ( Type ):
 	#
 	def _generateDefinition( self ):
 		# begin definition
-		str = "enum\n\t{\n"
+		str = "enum %s \n\t{\n" % self.typename
 		# values
 		for (value, docValue) in self.values.iteritems() :
 			valueID = EnumRegistry.getID(self.nodeName, self.fieldName, value)

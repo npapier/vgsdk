@@ -94,6 +94,8 @@ void Camera::setToDefaults()
 
 void Camera::paint( vgeGL::engine::Engine *engine, vgd::node::Camera *node )
 {
+	const vge::engine::EyeUsagePolicy eyePolicy = engine->getEyeUsagePolicy();
+
 	// PROJECTION MATRIX
 	// Gets the transformation
 	vgm::MatrixR& currentProj = engine->getProjectionMatrix().getTop();
@@ -120,7 +122,8 @@ void Camera::paint( vgeGL::engine::Engine *engine, vgd::node::Camera *node )
 	bool bDefined;
 	vgm::Rectangle2i viewportValue;
 
-	bDefined = node->getViewport( viewportValue );
+	bDefined = node->gethViewport( viewportValue, eyePolicy );
+
 	if ( bDefined )
 	{
 		glViewport(	viewportValue.x(), viewportValue.y(),

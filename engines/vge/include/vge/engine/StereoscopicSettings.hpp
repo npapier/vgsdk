@@ -66,12 +66,32 @@ struct VGE_API StereoscopicSettings
 
 	const float getEyeSeparation() const;
 	void setEyeSeparation( const float eyeSeparation );
+
+	/**
+	 * @brief Returns the current image shift.
+	 */
+	const float getImageShift() const;
+
+	/**
+	 * @brief Sets the current image shift.
+	 *
+	 * @param imageShift	set a value from 0 to 100 meaning respectively no shift and a shift of 1/8 of the drawing surface.
+	 */
+	void setImageShift( const float imageShift );
 	//@}
 
 
 private:
 	bool	m_isEnabled;						///< Enabled/disabled stereoscopic rendering
 	float	m_eyeSeparation;					///< The eye separation to use in Camera node
+	float	m_imageShift;						///< The image shift to use in Camera node
+
+	/**
+	 * @brief Tests if image shift is valid
+	 *
+	 * @return true if 0 <= getImageShift() <= 100
+	 */
+	const bool isImageShiftValid();
 };
 
 

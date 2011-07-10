@@ -34,11 +34,23 @@ StereoscopicSettings::StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicS
 	m_eyeSeparation.set_range( 0.f, 10.f );
 	m_eyeSeparation.signal_value_changed().connect( sigc::mem_fun(this, &StereoscopicSettings::onEyeSeparationChanged) );
 
+	// IMAGE SHIFT
+	// label
+	m_imageShiftLabel.set_alignment(0.f, 0.f);
+	m_imageShiftLabel.set_text( "Image shift (from no shift to 1/8 of the image width)." );
+
+	// slider
+	m_imageShift.set_value( 0.f );
+	m_imageShift.set_range( 0.f, 100.f );
+	m_imageShift.signal_value_changed().connect( sigc::mem_fun(this, &StereoscopicSettings::onImageShiftChanged) );
+
 	// Fills box
 	set_spacing( 12 );
 	pack_start( m_enabled, Gtk::PACK_SHRINK );
 	pack_start( m_eyeSeparationLabel, Gtk::PACK_SHRINK );
 	pack_start( m_eyeSeparation, Gtk::PACK_SHRINK );
+	pack_start( m_imageShiftLabel, Gtk::PACK_SHRINK );
+	pack_start( m_imageShift, Gtk::PACK_SHRINK );
 
 	// Updates GUI from settings
 	refresh();
@@ -71,10 +83,21 @@ void StereoscopicSettings::onEyeSeparationChanged()
 
 
 
+void StereoscopicSettings::onImageShiftChanged()
+{
+	const float imageShift = static_cast< float >( m_imageShift.get_value() );
+	get()->setImageShift( imageShift );
+
+	signalChanged().emit();
+}
+
+
+
 void StereoscopicSettings::refresh()
 {
 	m_enabled.set_active( get()->isEnabled() );
 	m_eyeSeparation.set_value( get()->getEyeSeparation() );
+	m_imageShift.set_value( get()->getImageShift() );
 }
 
 

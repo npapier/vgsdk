@@ -42,6 +42,7 @@ def handleEnum( domEnum ) :
 		enum = Enum( currentNodeName, currentFieldName )
 	else:
 		enum = Enum( currentNodeName, attrName.value )
+		enum.setTypename( attrName.value )
 
 	# value
 	domValues = domEnum.getElementsByTagName("value")

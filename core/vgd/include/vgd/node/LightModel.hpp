@@ -45,7 +45,7 @@ namespace node
  *<br>
  * - SFFloat \c samplingSize = 1.0<br>
  *<br>
- * - SFEnum \c option2 = CHOICE0<br>
+ * - SFBool \c option2 = false<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
  *   Sets the ambient RGBA intensity of the entire scene.<br>
@@ -64,7 +64,7 @@ namespace node
  * - OFEnum \c [shadow] = SHADOW_OFF<br>
  *   Specifies the algorithm used to compute shadow.<br>
  *<br>
- * - SFBool \c option0 = false<br>
+ * - SFEnum \c option0 = CHOICE0<br>
  *<br>
  * - SFBool \c option1 = false<br>
  *<br>
@@ -471,69 +471,14 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Definition of symbolic values
+	 * @brief Type definition of the value contained by field named \c option2.
 	 */
-	enum  
-	{
-		CHOICE4 = 276,	///< 
-		CHOICE0 = 272,	///< 
-		CHOICE1 = 273,	///< 
-		CHOICE2 = 274,	///< 
-		CHOICE3 = 275,	///< 
-		DEFAULT_OPTION2 = CHOICE0	///< 
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct Option2ValueType : public vgd::field::Enum
-	{
-		Option2ValueType()
-		{}
-
-		Option2ValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		Option2ValueType( const Option2ValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		Option2ValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 272 );
-			retVal.push_back( 273 );
-			retVal.push_back( 274 );
-			retVal.push_back( 275 );
-			retVal.push_back( 276 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "CHOICE0" );
-			retVal.push_back( "CHOICE1" );
-			retVal.push_back( "CHOICE2" );
-			retVal.push_back( "CHOICE3" );
-			retVal.push_back( "CHOICE4" );
-
-			return retVal;
-		}
-	};
+	typedef bool Option2ValueType;
 
 	/**
 	 * @brief Type definition of the field named \c option2
 	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FOption2Type;
+	typedef vgd::field::TSingleField< Option2ValueType > FOption2Type;
 
 
 	/**
@@ -946,14 +891,69 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c option0.
+	 * @brief Definition of symbolic values
 	 */
-	typedef bool Option0ValueType;
+	enum  
+	{
+		CHOICE4 = 276,	///< 
+		CHOICE0 = 272,	///< 
+		CHOICE1 = 273,	///< 
+		CHOICE2 = 274,	///< 
+		CHOICE3 = 275,	///< 
+		DEFAULT_OPTION0 = CHOICE0	///< 
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct Option0ValueType : public vgd::field::Enum
+	{
+		Option0ValueType()
+		{}
+
+		Option0ValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		Option0ValueType( const Option0ValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		Option0ValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 272 );
+			retVal.push_back( 273 );
+			retVal.push_back( 274 );
+			retVal.push_back( 275 );
+			retVal.push_back( 276 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "CHOICE0" );
+			retVal.push_back( "CHOICE1" );
+			retVal.push_back( "CHOICE2" );
+			retVal.push_back( "CHOICE3" );
+			retVal.push_back( "CHOICE4" );
+
+			return retVal;
+		}
+	};
 
 	/**
 	 * @brief Type definition of the field named \c option0
 	 */
-	typedef vgd::field::TSingleField< Option0ValueType > FOption0Type;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FOption0Type;
 
 
 	/**

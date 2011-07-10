@@ -79,6 +79,7 @@ GLSLState::GLSLState( const GLSLState& src )
 
 	m_program				(	src.m_program				),
 	m_shaderStage			(	src.m_shaderStage			),
+	m_option0				(	src.m_option0				),
 	m_lightModelShadow		(	src.m_lightModelShadow		),
 	m_samplingSize			(	src.m_samplingSize			),
 	m_shadowMapType			(	src.m_shadowMapType			),
@@ -295,6 +296,7 @@ void GLSLState::copy( const GLSLState& src )
 
 	m_program					= src.m_program;
 	m_shaderStage				= src.m_shaderStage;
+	m_option0					= src.m_option0;
 	m_lightModelShadow			= src.m_lightModelShadow;
 	m_samplingSize				= src.m_samplingSize;
 	m_shadowMapType				= src.m_shadowMapType;
@@ -319,8 +321,21 @@ void GLSLState::release()
 void GLSLState::init()
 {
 	m_program					= 0;
+
+	// SHADER STAGE
 	m_shaderStage.clear();
 	m_shaderStage.resize( MAX_SHADERSTAGE );
+
+	//setShaderStage( VERTEX_GL_POSITION_COMPUTATION, defaultVertexGLPositionComputation );
+	const std::string defaultVertexGLPositionComputation(	"	gl_Position = gl_ModelViewProjectionMatrix * position;\n" );
+	m_shaderStage[VERTEX_GL_POSITION_COMPUTATION] = defaultVertexGLPositionComputation;
+
+	//setShaderStage( FRAGMENT_OUTPUT, defaultFragmentOutput );
+	const std::string defaultFragmentOutput(				"	gl_FragData[0] = color;\n"	);
+	m_shaderStage[FRAGMENT_OUTPUT] = defaultFragmentOutput;
+
+	//
+	m_option0					= vgd::node::LightModel::DEFAULT_OPTION0;
 	m_lightModelShadow			= vgd::node::LightModel::DEFAULT_SHADOW;
 	m_samplingSize				= 1.f;
 	m_shadowMapType				= vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE;

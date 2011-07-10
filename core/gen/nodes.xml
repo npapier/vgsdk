@@ -9,8 +9,8 @@
 
 <!-- todo defines an enum here -->
 
-	<node	name = "Camera"
-			inherits="GeometricalTransformation ProjectionTransformation">
+	<node	name		= "Camera"
+			inherits	= "GeometricalTransformation ProjectionTransformation">
 		<doxygen>
 			<docBrief>Camera node used to set the projection matrix, viewport and scissor box. Camera position and orientation could be specified too.</docBrief>
 			<doc>Sets up the rendering mode (monoscopic and 3D stereoscopic) using \c mode field.</doc>
@@ -51,6 +51,7 @@
 		<of name="viewport" doc="Determines the viewport.">
 			<type name="Rectangle2i" namespace="vgm" default="0, 0, 1600, 1200"/>
 		</of>
+
 		<of name="scissor" doc="Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.">
 			<type name="Rectangle2i" namespace="vgm" default=""/>
 		</of>
@@ -65,7 +66,11 @@
 			</type>
 		</sf>
 
-		<sf name="eyeSeparation" doc="todo">
+		<sf name="eyeSeparation" doc="Sets the distance between the left and right eye.">
+			<type name = "float" default = "0.f"></type>
+		</sf>
+
+		<sf name="imageShift" doc="Sets the additional horizontal shift between the left and right image. This value must be between 0 and 100. 0 means no shift at all. 100 corresponds to a shift of 1/8 of the drawing surface.">
 			<type name = "float" default = "0.f"></type>
 		</sf>
 
@@ -117,6 +122,35 @@
 			</type>
 		</sf>
 	</node>
+
+
+	<node name = "Fluid" inherits = "Shape" >
+		<doxygen>
+			<docBrief>Fluid allow the simulation of liquids</docBrief>
+			<doc>Liquids are simulated using several height maps (sceneHeightMap computed from \c scene, fluidHeightMap containing height of the fluid and deltaHeightMap to add/remove liquid).</doc>
+			<doc>A tessellated quad with displacement mapping is used for the rendering.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_shapeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+		</doxygen>
+
+		<sf name="scene" doc="Specifies the root of the scene graph used by the fluid simulation.">
+			<type name = "NodeWkp" namespace = "vgd::node"></type>
+		</sf>
+
+		<sf name="gravity" doc="Specifies the direction of the gravity (the first three components) and the intensity (the last component).">
+			<type name="Vec4f" namespace="vgm" default = "0.f, -1.f, 0.f, 9.8f"></type>
+		</sf>
+
+
+		<sf name="heightMapSize" doc="Specifies the size of the textures used to store scene and fluid height map.">
+			<type name="Vec2i" namespace="vgm" default = "256, 256"></type>
+		</sf>
+
+		<includehpp>vgd/include/vgd/node/Fluid.hpp</includehpp>
+		<includecpp>vgd/src/node/Fluid.cpp</includecpp>
+	</node>
+
 
 
 	<node name = "LayerPlan" inherits = "MultiAttribute" > <!-- @todo not a real MultiAttribute -->
@@ -352,14 +386,6 @@
 		</of>
 
 		<sf name="option0" doc="">
-			<type name="bool" default="false"/>
-		</sf>
-
-		<sf name="option1" doc="">
-			<type name="bool" default="false"/>
-		</sf>
-
-		<sf name="option2" doc="">
 			<type name="enum">
 				<enum default="CHOICE0">
 					<value name="CHOICE0" doc=""/>
@@ -369,6 +395,14 @@
 					<value name="CHOICE4" doc=""/>
 				</enum>
 			</type>
+		</sf>
+
+		<sf name="option1" doc="">
+			<type name="bool" default="false"/>
+		</sf>
+
+		<sf name="option2" doc="">
+			<type name="bool" default="false"/>
 		</sf>
 
 <!-- EngineProperty/properties/style -->
@@ -458,7 +492,7 @@
 <!--@todo debug blit when scaleDownUp -->
 	<node name = "OutputBufferProperty" inherits = "MultiAttribute">
 		<doxygen>
-			<docBrief>Definition of the format, type and output command of an output buffer</docBrief>
+			<docBrief>Definition of the size, format, type and output command of an output buffer</docBrief>
 			<doc>@todo</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_multiAttributeNodes</ingroup>
@@ -468,6 +502,19 @@
 			<ingroup>g_postProcessing</ingroup>
 		</doxygen>
 
+		<sf name = "sizeSemantic" doc = "Specifies the semantic of the size field.">
+			<type name = "enum">
+				<enum default="SCALE_FACTOR">
+					<value name= "SCALE_FACTOR"	doc="The width of the output buffer is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component)"/>
+					<value name= "PIXEL_SIZE"	doc="The size field specifies the size of the output buffer in pixels."/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name = "size" doc = "Specifies the size of the output buffer (in pixel or scale factors). See sizeSemantic field for more informations.">
+			<type name = "Vec2f" namespace="vgm" default="1.f, 1.f"></type>
+		</sf>
+
 		<sf name = "format" doc = "Specifies the format used by the buffer.">
 			<type name = "enum">
 				<enum default="RGB">
@@ -475,10 +522,12 @@
 					<value name="RGBA" doc="@todo"/>
 					<value name="LUMINANCE" doc="@todo"/>
 					<value name="LUMINANCE_ALPHA" doc="@todo"/>
+					<value name="LUMINANCE_FOR_DEPTH" doc="if type is INTEGER, then DEPTH_COMPONENT_24 is used."/>
 				</enum>
 			</type>
 		</sf>
 
+<!-- @todo INTEGER8, 16, 24, 32 -->
 		<sf name = "type" doc = "Specifies the type used by the buffer.">
 			<type name = "enum">
 				<enum default = "INTEGER">
@@ -505,6 +554,7 @@
 		<sf name = "customCommand" doc = "Specifies the pre-defined assign command execute by the fragment program. Example : output = color.rgba; or output = vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z );">
 			<type name = "string" namespace = "std"></type>
 		</sf>
+
 	</node>
 
 
@@ -573,9 +623,10 @@
 
 	<node name = "PostProcessing" inherits = "MultiAttribute" >
 		<doxygen>
-			<docBrief>A single stage of a post-processing stage.</docBrief>
-			<doc>This node defines a single stage of a post-processing stage.</doc>
-			<doc>Post-processing effect is applied to the previously rendered scene using COLOR and/or NORMAL buffer(s)</doc>
+			<docBrief>A single stage of a post-processing pipeline.</docBrief>
+			<doc>This node defines a single stage of a post-processing pipeline, i.e. a \c filter function applied on each pixel of the drawing surface</doc>
+			<doc>with up to 3 input buffers, several parameters and one output buffer.</doc>
+			<doc>Typical use-case of post-processing pipeline is to apply effect to the the previously rendered scene like depth of field, bloom and so on.</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_multiAttributeNodes</ingroup>
 			<ingroup>g_autoMultiAttributeNodes</ingroup>
@@ -632,6 +683,9 @@
 			<type name="string" namespace="std"/>
 		</sf>
 
+<!-- TODO rename PREVIOUS0 => TMP0 -->
+<!-- TODO enum for input1, input2 should be the same as input0 => specify enum at node level -->
+<!-- TODO input from texture -->
 		<sf name = "input0" doc = "Specifies the first input buffer used by the filter.">
 			<type name = "enum">
 				<enum default = "PREVIOUS0">
@@ -686,17 +740,7 @@
 			</type>
 		</sf>
 
-			<!-- TODO enum for input1 should be the same as input0 => specify enum at node level
-			<type name = "enum">
-				<enum default = "INPUT1_PREVIOUS_COLOR">
-					<value name="INPUT1_ORIGINAL_COLOR" doc=""/>
-					<value name="INPUT1_ORIGINAL_NORMAL" doc=""/>
-					<value name="INPUT1_PREVIOUS_COLOR" doc=""/>
-					<value name="INPUT1_NONE" doc=""/>
-				</enum>
-			</type>-->
-<!--input from texture-->
-<!--alpha_if_not_black-->
+
 		<of name = "param1f0" doc = "Specifies the first 1f parameter used by the filter.">
 			<type name = "float" default = "0.0"></type>
 		</of>
@@ -709,17 +753,25 @@
 			<type name = "Vec4f" namespace = "vgm" default = "0.0, 0.0, 0.0, 0.0"></type>
 		</of>
 
-<!--	<sf name ="output" doc = "Specifices the output buffer used by the filter.">
+
+		<sf name ="output" doc = "Specifices the output buffer used by the filter.">
 			<type name = "enum">
 				<enum default = "OUTPUT_TMP0">
-					<value name="OUTPUT_TMP0" doc=""/> -->
+					<value name="OUTPUT_TMP0" doc= "Post-processing internal buffer."/>
 					<!--<value name="OUTPUT_TMP1" doc=""/> @todo re-enables-->
-<!--				</enum>
+					<value name="OUTPUT_OUTPUT_BUFFER0" doc=""/>
+					<value name="OUTPUT_OUTPUT_BUFFER1" doc=""/>
+					<value name="OUTPUT_OUTPUT_BUFFER2" doc=""/>
+					<value name="OUTPUT_OUTPUT_BUFFER3" doc=""/>
+					<value name="OUTPUT_OUTPUT_BUFFER4" doc=""/>
+					<value name="OUTPUT_OUTPUT_BUFFER5" doc=""/>
+					<value name="OUTPUT_OUTPUT_BUFFER6" doc=""/>
+					<value name="OUTPUT_OUTPUT_BUFFER7" doc=""/>
+-				</enum>
 			</type>
-		</sf>-->
+		</sf>
 
 <!-- convolution filter and param [] -->
-<!-- custom filter -->
 <!-- filter0, filter1, filter2 -->
 <!-- ouput0, output1.... -->
 	</node>
@@ -801,6 +853,8 @@
 			<ingroup>g_abstractNodes</ingroup>
 		</doxygen>
 
+		<df name = "image" linkToFields="image"></df>
+
 		<of name = "image" doc = "Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.">
 			<type name = "IImageShp" namespace = "vgd::basic"></type>
 		</of>
@@ -852,9 +906,14 @@
 		</of>
 
 <!-- @todo Choose a value among FUN_REPLACE, FUN_MODULATE, FUN_DECAL, FUN_BLEND, FUN_ADD and FUN_COMBINE. -->
-		<of name = "function" doc="Example similar to old FUN_MODULATE: color *= texture2D(texUnitX, gl_TexCoord[X].xy);" >
+		<of name = "vertexFunction" doc="Vertex texturing function.">
 			<type name="string" namespace="std"/>
 		</of>
+
+		<of name = "fragmentFunction" doc="Fragment texturing function." >
+			<type name="string" namespace="std"/>
+		</of>
+
 
 		<sf name = "usage" doc="Indicating the expected usage pattern of the texture.">
 			<type name="enum">
