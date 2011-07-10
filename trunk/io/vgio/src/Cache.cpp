@@ -137,7 +137,7 @@ vgd::basic::IImage * ImageCache::loadImage( const Media & media, const std::stri
 		return 0;
 	}
 
-	// Builds the imgae from loaded data and returns it.
+	// Builds the image from loaded data and returns it.
 	return new vgd::basic::Image( pathFilename, &buffer[0], buffer.size() );
 }
 
