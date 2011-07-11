@@ -107,7 +107,7 @@
 	/**
 	 * @brief Returns the value of field named \c viewport modified (if needed) by taking care of the given eye usage policy, the \c mode field and the \c imageShift field.
 	 */
-	const bool gethViewport( ViewportValueType& value, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
+	const bool gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
 
 	/**
 	 * brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering

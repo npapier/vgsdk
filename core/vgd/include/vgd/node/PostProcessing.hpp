@@ -25,7 +25,7 @@ namespace node
 /**
  * @brief A single stage of a post-processing pipeline.
  *
- * This node defines a single stage of a post-processing pipeline, i.e. a \c filter function applied on each pixel of the drawing surface with up to 3 input buffers and several parameters. Typical use-case of post-processing pipeline is to apply effect to the the previously rendered scene like depth of field, bloom and so on. 
+ * This node defines a single stage of a post-processing pipeline, i.e. a \c filter function applied on each pixel of the drawing surface with up to 3 input buffers, several parameters and one output buffer. Typical use-case of post-processing pipeline is to apply effect to the the previously rendered scene like depth of field, bloom and so on. 
  *
  * New fields defined by this node :
  * - SFEnum \c input2 = INPUT2_NONE<br>
