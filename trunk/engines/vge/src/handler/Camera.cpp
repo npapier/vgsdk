@@ -31,7 +31,7 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 	bool bDefined;
 	vgm::Rectangle2i viewportValue;
 
-	bDefined = camera->gethViewport( viewportValue, eyePolicy );
+	bDefined = camera->gethViewport( viewportValue, engine->getDrawingSurfaceSize()[0], eyePolicy );
 
 	if ( bDefined )
 	{

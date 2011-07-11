@@ -502,14 +502,16 @@ void Camera::setMatrix( const MatrixValueType value )
 
 
 // High-level
-const bool Camera::gethViewport( ViewportValueType& viewport, const EyeUsagePolicyValueType eyeUsagePolicy ) const
+const bool Camera::gethViewport( ViewportValueType& viewport, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy ) const
 {
 	// Retrieves viewport field
 	bool hasViewport = getViewport( viewport );
 
 	if ( hasViewport )
 	{
-		const float halfImageShift = getImageShift()/2.f;
+		const float drawingSurfaceWidthf = static_cast< float >( drawingSurfaceWidth );
+
+		const float halfImageShift = (drawingSurfaceWidthf/16.f) * getImageShift()/100.f;
 
 		switch ( eyeUsagePolicy.value() )
 		{

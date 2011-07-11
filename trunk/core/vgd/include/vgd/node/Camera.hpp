@@ -676,11 +676,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	/**
 	 * @brief Returns the value of field named \c viewport modified (if needed) by taking care of the given eye usage policy, the \c mode field and the \c imageShift field.
 	 */
-	const bool gethViewport( ViewportValueType& value, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
-
-// stereoscopy.pdf slide 24 for explanation of
-// slide 32
-// two eyes looking at a parallel direction
+	const bool gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
 
 	/**
 	 * brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering
