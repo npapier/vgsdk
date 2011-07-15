@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <vgBase/Type.hpp>
+#include <vgd/vgd.hpp>
 
 
 
@@ -33,10 +34,10 @@ const std::string toString( const T& value )
 }
 
 template<>
-const std::string toString( const int8& value );
+VGD_API const std::string toString( const int8& value );
 
 template<>
-const std::string toString( const uint8& value );
+VGD_API const std::string toString( const uint8& value );
 
 
 
