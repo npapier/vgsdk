@@ -419,6 +419,23 @@ struct VGM_API MatrixR
 		 float zNear, float zFar );
 		 
 	/**
+	 * @brief Test if the matrix is a frustum matrix.
+	 */
+	const bool isFrustum() const;
+
+	/**
+	 * @brief Decomposes a frustum matrix into its left, right,
+	 * bottom, top, zNear and zFar components.
+	 *
+	 * If the matrix is not a frustum matrix, the result is
+	 * undefined. An assert is raised in debug mode.
+	 */
+	void	getFrustum(
+		 float& left, float& right,
+		 float& bottom, float& top,
+		 float& zNear, float& zFar ) const;
+
+	/**
 	 * @brief Left multiply the current matrix by the given frustum matrix.
 	 * 
 	 * @sa setFrustum()
@@ -469,6 +486,22 @@ struct VGM_API MatrixR
 	 * The matrix is exactly the same as the one sets by the GLU function \c gluPerspective.
 	 */
 	void setPerspective( float fovy, float aspect, float zNear, float zFar );
+
+	/**
+	 * @brief Test if the matrix is a perspective matrix made by setPerspective (ie. centered to zero)
+	 *
+	 * To test if it is a perspective matrix not centered to 0 use isFrustum.
+	 */
+	const bool isPerspective() const;
+
+	/**
+	 * @brief Decomposes a perspective matrix into its fovy, zNear and
+	 * zFar components.
+	 *
+	 * If the matrix is not a frustum matrix, the result is
+	 * undefined. An assert is raised in debug mode.
+	 */
+	void getPerspective( float& fovy, float& aspect, float& zNear, float& zFar ) const;
 
 	/**
 	 * @brief Left multiply the current matrix by the given perspective matrix.
