@@ -839,6 +839,59 @@ void MatrixR::setFrustum(
 
 
 
+const bool MatrixR::isFrustum() const
+{
+	if( ( matrix[0][1] !=  0.f )
+		|| ( matrix[0][2] !=  0.f )
+		|| ( matrix[0][3] !=  0.f )
+		|| ( matrix[1][0] !=  0.f )
+		|| ( matrix[1][2] !=  0.f )
+		|| ( matrix[1][3] !=  0.f )
+		|| ( matrix[2][3] != -1.f )
+		|| ( matrix[3][0] !=  0.f )
+		|| ( matrix[3][1] !=  0.f )
+		|| ( matrix[3][3] !=  0.f ) )
+	{
+		return false;
+	}
+	const float x = matrix[0][0];
+	const float y = matrix[1][1];
+	const float c = matrix[2][2];
+	const float d = matrix[3][2];
+	if( ( x == 0.f ) || ( y == 0.f ) || ( c == 1.f ) || ( c == -1.f ) || ( d == 0 ) )
+	{
+		return false;
+	}
+	return true;
+}
+
+
+
+void MatrixR::getFrustum(
+		 float& left, float& right,
+		 float& bottom, float& top,
+		 float& zNear, float& zFar ) const
+{
+	assert( isFrustum() );
+
+	const float x = matrix[0][0];
+	const float y = matrix[1][1];
+	const float a = matrix[2][0];
+	const float b = matrix[2][1];
+	const float c = matrix[2][2];
+	const float d = matrix[3][2];
+
+	zFar	= d / ( c + 1.f );
+	zNear	= d / ( c - 1.f );
+	left	= zNear * ( a - 1.f ) / x;
+	right	= zNear * ( a + 1.f ) / x;
+	bottom	= zNear * ( b - 1.f ) / y;
+	top		= zNear * ( b + 1.f ) / y;
+
+}
+
+
+
 void MatrixR::frustum(
 		 float left, float right,
 		 float bottom, float top,
@@ -901,7 +954,32 @@ void MatrixR::setPerspective( float fovy, float aspect, float zNear, float zFar 
 	xmin = ymin * aspect;
 	xmax = ymax * aspect;
 
+
 	setFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
+}
+
+
+
+const bool MatrixR::isPerspective() const
+{
+	const float a = matrix[0][2];
+	const float b = matrix[1][2];
+	return ( isFrustum() && ( a == 0 ) && ( b == 0 ) );
+}
+
+
+
+void MatrixR::getPerspective( float& fovy, float& aspect, float& zNear, float& zFar ) const
+{
+	float xmin, xmax, ymin, ymax;
+
+	getFrustum(  xmin, xmax, ymin, ymax, zNear, zFar );
+
+
+	aspect	= ( xmax - xmin ) / ( ymax - ymin );
+
+	fovy	= static_cast<float>( 360.f / vgm::PI * atan( ( ymax - ymin ) / 2.f ) );
+
 }
 
 
