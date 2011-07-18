@@ -228,3 +228,19 @@ const bool Camera::gethViewport( ViewportValueType& viewport, const int drawingS
 	setLookAtRight( lookAtRight );
 }
 */
+
+void Camera::sethFovy( const FovyValueType fovy)
+{
+	Camera::AspectValueType aspect;
+	Camera::ZNearValueType zNear;
+	Camera::ZFarValueType zFar;
+
+	setFovy( fovy );
+
+	if ( getAspect( aspect ) && getZNear( zNear ) && getZFar( zFar ) )
+	{
+		vgm::MatrixR matrix;
+		matrix.setPerspective( fovy, aspect, zNear, zFar );
+		setProjection( matrix );
+	}
+}

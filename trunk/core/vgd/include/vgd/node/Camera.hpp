@@ -29,8 +29,14 @@ namespace node
  * Sets up the rendering mode (monoscopic and 3D stereoscopic) using \c mode field. In stereoscopic mode, \c projectionRight (resp. \c projectionLeft) and \c lookAtRight (resp. \c lookAtLeft) specifies the right (resp. left) eye. Sets up the \c projection with an user defined matrix for the viewing frustum (into the world coordinate system). Sets up the camera position and orientation with 4x4 matrix from \c lookAt field. Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting. 
  *
  * New fields defined by this node :
+ * - OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
+ *   Determines the viewport.<br>
+ *<br>
  * - SFMatrixR \c projectionLeft = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the projection matrix for monoscopic rendering or for the left eye if stereo is enabled.<br>
+ *<br>
+ * - OFFloat \c [zFar] = 3996.f<br>
+ *   Farest visible z for the camera<br>
  *<br>
  * - SFMatrixR \c lookAtLeft = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera for monoscopic rendering or for the left eye if stereo is enabled.\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
@@ -47,14 +53,20 @@ namespace node
  * - SFEnum \c mode = MONOSCOPIC<br>
  *   Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
  *<br>
+ * - OFFloat \c [aspect] = 1<br>
+ *   Aspect ratio of the camera<br>
+ *<br>
  * - SFFloat \c eyeSeparation = 0.f<br>
  *   Sets the distance between the left and right eye.<br>
  *<br>
  * - SFFloat \c imageShift = 0.f<br>
  *   Sets the additional horizontal shift between the left and right image. This value must be between 0 and 100. 0 means no shift at all. 100 corresponds to a shift of 1/8 of the drawing surface.<br>
  *<br>
- * - OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
- *   Determines the viewport.<br>
+ * - OFFloat \c [zNear] = 0.01f<br>
+ *   Nearest visible z for the camera.<br>
+ *<br>
+ * - SFFloat \c fovy = 45.f<br>
+ *   Field of view angle for the Y direction for the camera. In the case of a perspective camera.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -153,6 +165,45 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
+	 * @name Accessors to field viewport
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c viewport.
+	 */
+	typedef vgm::Rectangle2i ViewportValueType;
+
+	/**
+	 * @brief Type definition of the field named \c viewport
+	 */
+	typedef vgd::field::TOptionalField< ViewportValueType > FViewportType;
+
+
+	/**
+	 * @brief Gets the value of field named \c viewport.
+	 */
+	const bool getViewport( ViewportValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c viewport.
+ 	 */
+	void setViewport( const ViewportValueType& value );
+
+	/**
+	 * @brief Erases the field named \c viewport.
+	 */
+	void eraseViewport();
+
+	/**
+	 * @brief Tests if the value of field named \c viewport has been initialized.
+	 */
+	const bool hasViewport() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field projectionLeft
 	 */
 	//@{
@@ -178,6 +229,45 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 */
 	void setProjectionLeft( const ProjectionLeftValueType value );
 
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field zFar
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c zFar.
+	 */
+	typedef float ZFarValueType;
+
+	/**
+	 * @brief Type definition of the field named \c zFar
+	 */
+	typedef vgd::field::TOptionalField< ZFarValueType > FZFarType;
+
+
+	/**
+	 * @brief Gets the value of field named \c zFar.
+	 */
+	const bool getZFar( ZFarValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c zFar.
+ 	 */
+	void setZFar( const ZFarValueType& value );
+
+	/**
+	 * @brief Erases the field named \c zFar.
+	 */
+	void eraseZFar();
+
+	/**
+	 * @brief Tests if the value of field named \c zFar has been initialized.
+	 */
+	const bool hasZFar() const;
 	//@}
 
 
@@ -391,6 +481,45 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
+	 * @name Accessors to field aspect
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c aspect.
+	 */
+	typedef float AspectValueType;
+
+	/**
+	 * @brief Type definition of the field named \c aspect
+	 */
+	typedef vgd::field::TOptionalField< AspectValueType > FAspectType;
+
+
+	/**
+	 * @brief Gets the value of field named \c aspect.
+	 */
+	const bool getAspect( AspectValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c aspect.
+ 	 */
+	void setAspect( const AspectValueType& value );
+
+	/**
+	 * @brief Erases the field named \c aspect.
+	 */
+	void eraseAspect();
+
+	/**
+	 * @brief Tests if the value of field named \c aspect has been initialized.
+	 */
+	const bool hasAspect() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field eyeSeparation
 	 */
 	//@{
@@ -451,40 +580,70 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
-	 * @name Accessors to field viewport
+	 * @name Accessors to field zNear
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c viewport.
+	 * @brief Type definition of the value contained by field named \c zNear.
 	 */
-	typedef vgm::Rectangle2i ViewportValueType;
+	typedef float ZNearValueType;
 
 	/**
-	 * @brief Type definition of the field named \c viewport
+	 * @brief Type definition of the field named \c zNear
 	 */
-	typedef vgd::field::TOptionalField< ViewportValueType > FViewportType;
+	typedef vgd::field::TOptionalField< ZNearValueType > FZNearType;
 
 
 	/**
-	 * @brief Gets the value of field named \c viewport.
+	 * @brief Gets the value of field named \c zNear.
 	 */
-	const bool getViewport( ViewportValueType& value ) const;
+	const bool getZNear( ZNearValueType& value ) const;
 
 	/**
-	 * @brief Sets the value of field named \c viewport.
+	 * @brief Sets the value of field named \c zNear.
  	 */
-	void setViewport( const ViewportValueType& value );
+	void setZNear( const ZNearValueType& value );
 
 	/**
-	 * @brief Erases the field named \c viewport.
+	 * @brief Erases the field named \c zNear.
 	 */
-	void eraseViewport();
+	void eraseZNear();
 
 	/**
-	 * @brief Tests if the value of field named \c viewport has been initialized.
+	 * @brief Tests if the value of field named \c zNear has been initialized.
 	 */
-	const bool hasViewport() const;
+	const bool hasZNear() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field fovy
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c fovy.
+	 */
+	typedef float FovyValueType;
+
+	/**
+	 * @brief Type definition of the field named \c fovy
+	 */
+	typedef vgd::field::TSingleField< FovyValueType > FFovyType;
+
+
+	/**
+	 * @brief Gets the value of field named \c fovy.
+	 */
+	const FovyValueType getFovy() const;
+
+	/**
+	 * @brief Sets the value of field named \c fovy.
+	 */
+	void setFovy( const FovyValueType value );
+
 	//@}
 
 
@@ -495,11 +654,25 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	//@{
 
 	/**
+	 * @brief Returns the name of field \c viewport.
+	 *
+	 * @return the name of field \c viewport.
+	 */
+	static const std::string getFViewport( void );
+
+	/**
 	 * @brief Returns the name of field \c projectionLeft.
 	 *
 	 * @return the name of field \c projectionLeft.
 	 */
 	static const std::string getFProjectionLeft( void );
+
+	/**
+	 * @brief Returns the name of field \c zFar.
+	 *
+	 * @return the name of field \c zFar.
+	 */
+	static const std::string getFZFar( void );
 
 	/**
 	 * @brief Returns the name of field \c lookAtLeft.
@@ -537,6 +710,13 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFMode( void );
 
 	/**
+	 * @brief Returns the name of field \c aspect.
+	 *
+	 * @return the name of field \c aspect.
+	 */
+	static const std::string getFAspect( void );
+
+	/**
 	 * @brief Returns the name of field \c eyeSeparation.
 	 *
 	 * @return the name of field \c eyeSeparation.
@@ -551,11 +731,18 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFImageShift( void );
 
 	/**
-	 * @brief Returns the name of field \c viewport.
+	 * @brief Returns the name of field \c zNear.
 	 *
-	 * @return the name of field \c viewport.
+	 * @return the name of field \c zNear.
 	 */
-	static const std::string getFViewport( void );
+	static const std::string getFZNear( void );
+
+	/**
+	 * @brief Returns the name of field \c fovy.
+	 *
+	 * @return the name of field \c fovy.
+	 */
+	static const std::string getFFovy( void );
 
 	//@}
 
@@ -690,6 +877,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * param eyeSeparation	the distance between the two eyes
 	 */
 	//void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
+
+	/**
+	 * @brief Sets the value of the field named \c fovy and recompute the projection matrix in case the camera is perspective.
+	 */
+	void sethFovy( const FovyValueType fovy);
 
 	//@}
 

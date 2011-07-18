@@ -64,15 +64,19 @@ Camera::Camera( const std::string nodeName ) :
 	vgd::node::ProjectionTransformation()
 {
 	// Adds field(s)
+	addField( new FViewportType(getFViewport()) );
 	addField( new FProjectionLeftType(getFProjectionLeft()) );
+	addField( new FZFarType(getFZFar()) );
 	addField( new FLookAtLeftType(getFLookAtLeft()) );
 	addField( new FLookAtRightType(getFLookAtRight()) );
 	addField( new FProjectionRightType(getFProjectionRight()) );
 	addField( new FScissorType(getFScissor()) );
 	addField( new FModeType(getFMode()) );
+	addField( new FAspectType(getFAspect()) );
 	addField( new FEyeSeparationType(getFEyeSeparation()) );
 	addField( new FImageShiftType(getFImageShift()) );
-	addField( new FViewportType(getFViewport()) );
+	addField( new FZNearType(getFZNear()) );
+	addField( new FFovyType(getFFovy()) );
 
 	// Sets link(s)
 
@@ -92,6 +96,7 @@ void Camera::setToDefaults( void )
 	setMode( MONOSCOPIC );
 	setEyeSeparation( 0.f );
 	setImageShift( 0.f );
+	setFovy( 45.f );
 }
 
 
@@ -100,8 +105,39 @@ void Camera::setOptionalsToDefaults()
 {
 	GeometricalTransformation::setOptionalsToDefaults();
 	ProjectionTransformation::setOptionalsToDefaults();
-
 	setViewport( vgm::Rectangle2i(0, 0, 1600, 1200) );
+	setZFar( 3996.f );
+
+	setAspect( 1 );
+	setZNear( 0.01f );
+}
+
+
+
+// Viewport
+const bool Camera::getViewport( ViewportValueType& value ) const
+{
+	return getFieldRO<FViewportType>(getFViewport())->getValue( value );
+}
+
+
+
+void Camera::setViewport( const ViewportValueType& value )
+{
+	getFieldRW<FViewportType>(getFViewport())->setValue( value );
+}
+
+
+
+void Camera::eraseViewport()
+{
+	getFieldRW<FViewportType>(getFViewport())->eraseValue();
+}
+
+
+const bool Camera::hasViewport() const
+{
+	return getFieldRO<FViewportType>(getFViewport())->hasValue();
 }
 
 
@@ -117,6 +153,34 @@ const Camera::ProjectionLeftValueType Camera::getProjectionLeft() const
 void Camera::setProjectionLeft( const ProjectionLeftValueType value )
 {
 	getFieldRW<FProjectionLeftType>(getFProjectionLeft())->setValue( value );
+}
+
+
+
+// ZFar
+const bool Camera::getZFar( ZFarValueType& value ) const
+{
+	return getFieldRO<FZFarType>(getFZFar())->getValue( value );
+}
+
+
+
+void Camera::setZFar( const ZFarValueType& value )
+{
+	getFieldRW<FZFarType>(getFZFar())->setValue( value );
+}
+
+
+
+void Camera::eraseZFar()
+{
+	getFieldRW<FZFarType>(getFZFar())->eraseValue();
+}
+
+
+const bool Camera::hasZFar() const
+{
+	return getFieldRO<FZFarType>(getFZFar())->hasValue();
 }
 
 
@@ -209,6 +273,34 @@ void Camera::setMode( const ModeValueType value )
 
 
 
+// Aspect
+const bool Camera::getAspect( AspectValueType& value ) const
+{
+	return getFieldRO<FAspectType>(getFAspect())->getValue( value );
+}
+
+
+
+void Camera::setAspect( const AspectValueType& value )
+{
+	getFieldRW<FAspectType>(getFAspect())->setValue( value );
+}
+
+
+
+void Camera::eraseAspect()
+{
+	getFieldRW<FAspectType>(getFAspect())->eraseValue();
+}
+
+
+const bool Camera::hasAspect() const
+{
+	return getFieldRO<FAspectType>(getFAspect())->hasValue();
+}
+
+
+
 // EyeSeparation
 const Camera::EyeSeparationValueType Camera::getEyeSeparation() const
 {
@@ -239,38 +331,67 @@ void Camera::setImageShift( const ImageShiftValueType value )
 
 
 
-// Viewport
-const bool Camera::getViewport( ViewportValueType& value ) const
+// ZNear
+const bool Camera::getZNear( ZNearValueType& value ) const
 {
-	return getFieldRO<FViewportType>(getFViewport())->getValue( value );
+	return getFieldRO<FZNearType>(getFZNear())->getValue( value );
 }
 
 
 
-void Camera::setViewport( const ViewportValueType& value )
+void Camera::setZNear( const ZNearValueType& value )
 {
-	getFieldRW<FViewportType>(getFViewport())->setValue( value );
+	getFieldRW<FZNearType>(getFZNear())->setValue( value );
 }
 
 
 
-void Camera::eraseViewport()
+void Camera::eraseZNear()
 {
-	getFieldRW<FViewportType>(getFViewport())->eraseValue();
+	getFieldRW<FZNearType>(getFZNear())->eraseValue();
 }
 
 
-const bool Camera::hasViewport() const
+const bool Camera::hasZNear() const
 {
-	return getFieldRO<FViewportType>(getFViewport())->hasValue();
+	return getFieldRO<FZNearType>(getFZNear())->hasValue();
+}
+
+
+
+// Fovy
+const Camera::FovyValueType Camera::getFovy() const
+{
+	return getFieldRO<FFovyType>(getFFovy())->getValue();
+}
+
+
+
+void Camera::setFovy( const FovyValueType value )
+{
+	getFieldRW<FFovyType>(getFFovy())->setValue( value );
 }
 
 
 
 // Field name accessor(s)
+const std::string Camera::getFViewport( void )
+{
+	return "f_viewport";
+}
+
+
+
 const std::string Camera::getFProjectionLeft( void )
 {
 	return "f_projectionLeft";
+}
+
+
+
+const std::string Camera::getFZFar( void )
+{
+	return "f_zFar";
 }
 
 
@@ -310,6 +431,13 @@ const std::string Camera::getFMode( void )
 
 
 
+const std::string Camera::getFAspect( void )
+{
+	return "f_aspect";
+}
+
+
+
 const std::string Camera::getFEyeSeparation( void )
 {
 	return "f_eyeSeparation";
@@ -324,9 +452,16 @@ const std::string Camera::getFImageShift( void )
 
 
 
-const std::string Camera::getFViewport( void )
+const std::string Camera::getFZNear( void )
 {
-	return "f_viewport";
+	return "f_zNear";
+}
+
+
+
+const std::string Camera::getFFovy( void )
+{
+	return "f_fovy";
 }
 
 
@@ -560,7 +695,24 @@ const bool Camera::gethViewport( ViewportValueType& viewport, const int drawingS
 
 	setLookAtRight( lookAtRight );
 }
-*/IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
+*/
+
+void Camera::sethFovy( const FovyValueType fovy)
+{
+	Camera::AspectValueType aspect;
+	Camera::ZNearValueType zNear;
+	Camera::ZFarValueType zFar;
+
+	setFovy( fovy );
+
+	if( getAspect( aspect ) && getZNear( zNear ) && getZFar( zFar ) )
+	{
+		vgm::MatrixR matrix;
+		matrix.setPerspective( fovy, aspect, zNear, zFar );
+		setProjection( matrix );
+	}
+}
+IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
 
 
 

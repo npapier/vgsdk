@@ -122,4 +122,10 @@
 	 */
 	//void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
 
+	/**
+	 * @brief Sets the value of the field named \c fovy and recompute the projection matrix using the value of aspect zNear and zFar optional fields if they are presents.
+	 * Otherwise, only sets the fovy field.
+	 */
+	void sethFovy( const FovyValueType fovy);
+
 	//@}
