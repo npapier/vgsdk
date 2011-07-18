@@ -47,6 +47,18 @@
 			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
+		<sf name="fovy" doc="Field of view angle for the Y direction for the camera. In the case of a perspective camera.">
+			<type name="float" default="45.f"></type>
+		</sf>
+		<of name="aspect" doc="Aspect ratio of the camera">
+			<type name="float" default="1"></type>
+		</of>
+		<of name="zNear" doc="Nearest visible z for the camera.">
+			<type name="float" default="0.01f"></type>
+		</of>
+		<of name="zFar" doc="Farest visible z for the camera">
+			<type name="float" default="3996.f"></type>
+		</of>
 
 		<of name="viewport" doc="Determines the viewport.">
 			<type name="Rectangle2i" namespace="vgm" default="0, 0, 1600, 1200"/>

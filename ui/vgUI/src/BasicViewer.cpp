@@ -435,7 +435,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	{
 		case CAMERA_PERSPECTIVE:
 			matrix.setPerspective(
-							45.f,
+							m_camera->getFovy(),
 							windowAspectRatio,
 							minDepth,
 							maxDepth
@@ -509,6 +509,9 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	}
 
 	m_camera->setProjection( matrix );
+	m_camera->setAspect( windowAspectRatio );
+	m_camera->setZNear( minDepth );
+	m_camera->setZFar( maxDepth );
 
 	m_camera->setViewport( vgm::Rectangle2i( 0, 0, size[0], size[1] ) );
 }
