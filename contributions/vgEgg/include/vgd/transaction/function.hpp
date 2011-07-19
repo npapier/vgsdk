@@ -5,6 +5,24 @@
 #include <vgd/Shp.hpp>
 #include <vgd/transaction/Transaction.hpp>
 
+namespace
+{
+template < typename T >
+struct NotARef
+{
+	typedef T Type;
+};
+
+template < typename T >
+struct NotARef< T& >
+{
+	typedef T Type;
+};
+
+
+}
+
+
 namespace vgd
 {
 namespace transaction
@@ -70,7 +88,7 @@ protected:
 	/**
 	 * @brief The first Argument.
 	 */
-	T1 m_t1;
+	typename NotARef< T1 >::Type m_t1;
 };
 
 /**
@@ -105,11 +123,11 @@ protected:
 	/**
 	 * @brief The first Argument.
 	 */
-	T1 m_t1;
+	typename NotARef< T1 >::Type m_t1;
 	/**
 	 * @brief The second Argument.
 	 */
-	T2 m_t2;
+	typename NotARef< T2 >::Type m_t2;
 };
 
 
@@ -146,15 +164,15 @@ protected:
 	/**
 	 * @brief The first Argument.
 	 */
-	T1 m_t1;
+	typename NotARef< T1 >::Type m_t1;
 	/**
 	 * @brief The second Argument.
 	 */
-	T2 m_t2;
+	typename NotARef< T2 >::Type m_t2;
 	/**
 	 * @brief The third Argument.
 	 */
-	T3 m_t3;
+	typename NotARef< T3 >::Type m_t3;
 };
 
 
