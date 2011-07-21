@@ -33,7 +33,7 @@ void RemoveNode::execute()
 	vgd::Shp< vgd::node::Node > node = m_node.lock();
 	vgd::Shp< vgd::node::Group > parent = m_parent.lock();		
 	
-	if( node )
+	if( node && parent )
 	{
 		// vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
 		// vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::SELECT );
