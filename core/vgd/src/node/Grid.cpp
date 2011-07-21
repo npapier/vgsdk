@@ -44,7 +44,7 @@ void Grid::setOptionalsToDefaults()
 
 
 
-void Grid::initializeGeometry( const float width, const float height, const int widthSlices, const int heightSlices )
+void Grid::initializeGeometry( const float width, const float height, const int widthSlices, const int heightSlices, const bool ccw )
 {
 	vgAssert( widthSlices >= 1 );
 	vgAssert( heightSlices >= 1 );
@@ -74,10 +74,20 @@ void Grid::initializeGeometry( const float width, const float height, const int 
 
 		for( int x=0; x < widthSlices; ++x )
 		{
-			vertex->push_back( leftBottom );
-			vertex->push_back( rightBottom );
-			vertex->push_back( rightTop );
-			vertex->push_back( leftTop );
+			if ( ccw )
+			{
+				vertex->push_back( leftBottom );
+				vertex->push_back( rightBottom );
+				vertex->push_back( rightTop );
+				vertex->push_back( leftTop );
+			}
+			else
+			{
+				vertex->push_back( leftBottom );
+				vertex->push_back( leftTop );
+				vertex->push_back( rightTop );
+				vertex->push_back( rightBottom );
+			}
 
 			leftBottom[0]	+= fStepX;
 			rightBottom[0]	+= fStepX;
@@ -116,16 +126,16 @@ void Grid::initializeGeometry( const float width, const float height, const int 
 
 
 
-void Grid::initializeTexUnits( const int32 numTexUnits, const int widthSlices, const int heightSlices )
+void Grid::initializeTexUnits( const int32 numTexUnits, const int widthSlices, const int heightSlices, const bool ccw )
 {
 	createTexUnits( 2, 0, numTexUnits );
 
-	resetTextureCoordinates( numTexUnits, widthSlices, heightSlices );
+	resetTextureCoordinates( numTexUnits, widthSlices, heightSlices, ccw );
 }
 
 
 
-void Grid::resetTextureCoordinates( const int32 numTexUnits, const int widthSlices, const int heightSlices )
+void Grid::resetTextureCoordinates( const int32 numTexUnits, const int widthSlices, const int heightSlices, const bool ccw )
 {
 	for(	int i = 0;
 			i < numTexUnits;
@@ -156,10 +166,20 @@ void Grid::resetTextureCoordinates( const int32 numTexUnits, const int widthSlic
 
 			for( int x=0; x < widthSlices; ++x )
 			{
-				texCoord->push_back( leftBottom );
-				texCoord->push_back( rightBottom );
-				texCoord->push_back( rightTop );
-				texCoord->push_back( leftTop );
+				if ( ccw )
+				{
+					texCoord->push_back( leftBottom );
+					texCoord->push_back( rightBottom );
+					texCoord->push_back( rightTop );
+					texCoord->push_back( leftTop );
+				}
+				else
+				{
+					texCoord->push_back( leftBottom );
+					texCoord->push_back( leftTop );
+					texCoord->push_back( rightTop );
+					texCoord->push_back( rightBottom );
+				}
 
 				leftBottom[0]	+= fStepX;
 				rightBottom[0]	+= fStepX;
