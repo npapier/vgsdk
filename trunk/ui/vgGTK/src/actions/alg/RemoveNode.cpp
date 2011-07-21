@@ -38,18 +38,21 @@ void RemoveNode::execute()
 {
 	vgd::Shp< vgd::node::Node > node = m_node.lock();
 	vgd::Shp< vgd::node::Group > parent = m_parent.lock();	
-	
-	// Asks the user to confirm the node removal.
-	const Glib::ustring	nodeName = node->getName();
-	Gtk::MessageDialog	messageDialog("<big><b>Do you really want to remove the node <i>" + nodeName + "</i> ?</b></big>\n\nThis can break then rendering or may even cause the program to crash.", true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO );
-	
-	if( messageDialog.run() == Gtk::RESPONSE_YES )
-	{
-		::vgAlg::actions::RemoveNode removeNode;
 
-		removeNode.setNode( node );
-		removeNode.setParent( parent );
-		removeNode.execute();
+	if( node && parent )
+	{
+		// Asks the user to confirm the node removal.
+		const Glib::ustring	nodeName = node->getName();
+		Gtk::MessageDialog	messageDialog("<big><b>Do you really want to remove the node <i>" + nodeName + "</i> ?</b></big>\n\nThis can break then rendering or may even cause the program to crash.", true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO );
+
+		if( messageDialog.run() == Gtk::RESPONSE_YES )
+		{
+			::vgAlg::actions::RemoveNode removeNode;
+
+			removeNode.setNode( node );
+			removeNode.setParent( parent );
+			removeNode.execute();
+		}
 	}
 }
 
