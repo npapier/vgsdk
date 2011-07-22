@@ -121,7 +121,7 @@ void EffectExporter::exportColorEffect( vgd::Shp< vgd::node::Material > material
 	if( material->hasShininess() )
 	{
 		material->getShininess( real );
-		effectProfile.setShininess ( real );
+		effectProfile.setShininess ( real * 128.f );
 	}
 
     //effectProfile.setTransparent ( COLLADASW::ColorOrTexture ( COLLADASW::Color::WHITE ) );
