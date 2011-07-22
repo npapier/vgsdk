@@ -231,7 +231,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 		material->setEmission( color );
 	}
 
-	//// specularLevel/glosiness
+	//// specularLevel/glossiness
 	float real = 1.f;
 	real = effectCommon->getShininess().getFloatValue();
 	if( real <= 1 && real >= 0 )
@@ -240,9 +240,9 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	}
 	else
 	{
-		//@todo if > 1 ==> it uses Blinn Phong equation. How to use it? (p. 244 COLLADA Spec).
+		//@todo if > 1 ==> it uses Blinn Phong equation. (p. 244 COLLADA Spec).
 		///material->setShininess( real );
-		material->setShininess( vgm::clamp<float>( real, 0.f, 1.f ) );
+		material->setShininess( vgm::clamp( real / 128.f , 0.f, 1.f ) );
 	}
 
 	//// transparency
