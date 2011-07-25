@@ -35,6 +35,7 @@ void ApplyGeometricalTransformation::execute()
 	vgeGL::engine::Engine* engine = new vgeGL::engine::Engine();
 	NodeCollectorExtended<> collector( true, false, NodeCollectorExtended<>::IGNORE_KIT );
 	m_root->traverse( collector );
+	technique.setParameters( engine, collector.getTraverseElements() );
 	technique.apply( engine, collector.getTraverseElements() );
 
 	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
