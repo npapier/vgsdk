@@ -8,10 +8,9 @@
 
 #include "vgd/field/NodeWkp.hpp"
 #include "vgd/field/String.hpp"
-#include "vgd/field/Vec2f.hpp"
 #include "vgd/field/Vec2i.hpp"
-#include "vgd/field/Vec3f.hpp"
 #include "vgd/field/Vec4f.hpp"
+#include "vgd/field/Vec5f.hpp"
 #include "vgd/node/Shape.hpp"
 
 
@@ -30,11 +29,11 @@ namespace node
  * Liquids are simulated using several height maps (sceneHeightMap computed from \c scene, fluidHeightMap containing height of the fluid). A tessellated quad with displacement mapping is used for the rendering. 
  *
  * New fields defined by this node :
+ * - MFVec5f \c emittersOrDrainers = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
+ *   Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 2.<br>
+ *<br>
  * - SFVec2i \c heightMapSize = vgm::Vec2i(256, 256)<br>
  *   Specifies the size of the textures used to store scene and fluid height map.<br>
- *<br>
- * - SFVec2f \c emitterOrDrainerProperties1 = vgm::Vec2f(0.f, 0.f)<br>
- *   Specifies the radius and intensity of a fluid emitter or drainer.<br>
  *<br>
  * - SFVec4f \c gravity = vgm::Vec4f(0.f, -1.f, 0.f, 9.8f)<br>
  *   Specifies the direction of the gravity (the first three components) and the intensity (the last component).<br>
@@ -45,17 +44,8 @@ namespace node
  * - SFString \c simulationPass0 = empty<br>
  *   Specifies the first stage of the simulation.<br>
  *<br>
- * - SFVec2f \c emitterOrDrainerProperties0 = vgm::Vec2f(0.f, 0.f)<br>
- *   Specifies the radius and intensity of a fluid emitter or drainer.<br>
- *<br>
  * - SFNodeWkp \c scene = empty<br>
  *   Specifies the root of the scene graph used by the fluid simulation.<br>
- *<br>
- * - SFVec3f \c emitterOrDrainerPosition0 = vgm::Vec3f(0.f, 0.f, 0.f)<br>
- *   Specifies the position of a fluid emitter or drainer.<br>
- *<br>
- * - SFVec3f \c emitterOrDrainerPosition1 = vgm::Vec3f(0.f, 0.f, 0.f)<br>
- *   Specifies the position of a fluid emitter or drainer.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -98,6 +88,38 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
+	 * @name Accessors to field emittersOrDrainers
+	 *
+	 * @todo getEmittersOrDrainers( const bool rw = false ) ?
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c emittersOrDrainers.
+	 */
+	typedef vgm::Vec5f EmittersOrDrainersValueType;
+
+	/**
+	 * @brief Type definition of the field named \c emittersOrDrainers
+	 */
+	typedef vgd::field::TMultiField< EmittersOrDrainersValueType > FEmittersOrDrainersType;
+
+
+	/**
+	 * @brief Gets a read-only editor on the multi field named \c emittersOrDrainers.
+	 */
+	vgd::field::EditorRO< FEmittersOrDrainersType > getEmittersOrDrainersRO() const;
+
+	/**
+	 * @brief Gets a read-write editor on the multi field named \c emittersOrDrainers.
+	 */
+	vgd::field::EditorRW< FEmittersOrDrainersType > getEmittersOrDrainersRW();
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field heightMapSize
 	 */
 	//@{
@@ -122,36 +144,6 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Sets the value of field named \c heightMapSize.
 	 */
 	void setHeightMapSize( const HeightMapSizeValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field emitterOrDrainerProperties1
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c emitterOrDrainerProperties1.
-	 */
-	typedef vgm::Vec2f EmitterOrDrainerProperties1ValueType;
-
-	/**
-	 * @brief Type definition of the field named \c emitterOrDrainerProperties1
-	 */
-	typedef vgd::field::TSingleField< EmitterOrDrainerProperties1ValueType > FEmitterOrDrainerProperties1Type;
-
-
-	/**
-	 * @brief Gets the value of field named \c emitterOrDrainerProperties1.
-	 */
-	const EmitterOrDrainerProperties1ValueType getEmitterOrDrainerProperties1() const;
-
-	/**
-	 * @brief Sets the value of field named \c emitterOrDrainerProperties1.
-	 */
-	void setEmitterOrDrainerProperties1( const EmitterOrDrainerProperties1ValueType value );
 
 	//@}
 
@@ -248,36 +240,6 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
-	 * @name Accessors to field emitterOrDrainerProperties0
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c emitterOrDrainerProperties0.
-	 */
-	typedef vgm::Vec2f EmitterOrDrainerProperties0ValueType;
-
-	/**
-	 * @brief Type definition of the field named \c emitterOrDrainerProperties0
-	 */
-	typedef vgd::field::TSingleField< EmitterOrDrainerProperties0ValueType > FEmitterOrDrainerProperties0Type;
-
-
-	/**
-	 * @brief Gets the value of field named \c emitterOrDrainerProperties0.
-	 */
-	const EmitterOrDrainerProperties0ValueType getEmitterOrDrainerProperties0() const;
-
-	/**
-	 * @brief Sets the value of field named \c emitterOrDrainerProperties0.
-	 */
-	void setEmitterOrDrainerProperties0( const EmitterOrDrainerProperties0ValueType value );
-
-	//@}
-
-
-
-	/**
 	 * @name Accessors to field scene
 	 */
 	//@{
@@ -308,69 +270,16 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
-	 * @name Accessors to field emitterOrDrainerPosition0
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c emitterOrDrainerPosition0.
-	 */
-	typedef vgm::Vec3f EmitterOrDrainerPosition0ValueType;
-
-	/**
-	 * @brief Type definition of the field named \c emitterOrDrainerPosition0
-	 */
-	typedef vgd::field::TSingleField< EmitterOrDrainerPosition0ValueType > FEmitterOrDrainerPosition0Type;
-
-
-	/**
-	 * @brief Gets the value of field named \c emitterOrDrainerPosition0.
-	 */
-	const EmitterOrDrainerPosition0ValueType getEmitterOrDrainerPosition0() const;
-
-	/**
-	 * @brief Sets the value of field named \c emitterOrDrainerPosition0.
-	 */
-	void setEmitterOrDrainerPosition0( const EmitterOrDrainerPosition0ValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field emitterOrDrainerPosition1
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c emitterOrDrainerPosition1.
-	 */
-	typedef vgm::Vec3f EmitterOrDrainerPosition1ValueType;
-
-	/**
-	 * @brief Type definition of the field named \c emitterOrDrainerPosition1
-	 */
-	typedef vgd::field::TSingleField< EmitterOrDrainerPosition1ValueType > FEmitterOrDrainerPosition1Type;
-
-
-	/**
-	 * @brief Gets the value of field named \c emitterOrDrainerPosition1.
-	 */
-	const EmitterOrDrainerPosition1ValueType getEmitterOrDrainerPosition1() const;
-
-	/**
-	 * @brief Sets the value of field named \c emitterOrDrainerPosition1.
-	 */
-	void setEmitterOrDrainerPosition1( const EmitterOrDrainerPosition1ValueType value );
-
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c emittersOrDrainers.
+	 *
+	 * @return the name of field \c emittersOrDrainers.
+	 */
+	static const std::string getFEmittersOrDrainers( void );
 
 	/**
 	 * @brief Returns the name of field \c heightMapSize.
@@ -378,13 +287,6 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @return the name of field \c heightMapSize.
 	 */
 	static const std::string getFHeightMapSize( void );
-
-	/**
-	 * @brief Returns the name of field \c emitterOrDrainerProperties1.
-	 *
-	 * @return the name of field \c emitterOrDrainerProperties1.
-	 */
-	static const std::string getFEmitterOrDrainerProperties1( void );
 
 	/**
 	 * @brief Returns the name of field \c gravity.
@@ -408,32 +310,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	static const std::string getFSimulationPass0( void );
 
 	/**
-	 * @brief Returns the name of field \c emitterOrDrainerProperties0.
-	 *
-	 * @return the name of field \c emitterOrDrainerProperties0.
-	 */
-	static const std::string getFEmitterOrDrainerProperties0( void );
-
-	/**
 	 * @brief Returns the name of field \c scene.
 	 *
 	 * @return the name of field \c scene.
 	 */
 	static const std::string getFScene( void );
-
-	/**
-	 * @brief Returns the name of field \c emitterOrDrainerPosition0.
-	 *
-	 * @return the name of field \c emitterOrDrainerPosition0.
-	 */
-	static const std::string getFEmitterOrDrainerPosition0( void );
-
-	/**
-	 * @brief Returns the name of field \c emitterOrDrainerPosition1.
-	 *
-	 * @return the name of field \c emitterOrDrainerPosition1.
-	 */
-	static const std::string getFEmitterOrDrainerPosition1( void );
 
 	//@}
 
@@ -443,10 +324,6 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 */
 	//@{
 
-	/**
-	 * @brief Returns name of dirty flag that is invalidate when \c emitterOrDrainer field is modified.
-	 */
-	static const std::string getDFEmitterordrainer();
 
 	//@}
 

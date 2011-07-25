@@ -1766,27 +1766,36 @@ void ForwardRendering::stageInitializeFluidRC( vgeGL::engine::Engine * engine, v
 
 void ForwardRendering::stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC )
 {
+	// Retrieves emittersOrDrainers multi-field.
+	using vgd::field::EditorRO;
+	using vgd::node::Fluid;
+
+	const uint maxEmittersOrDrainers = 2;
+	EditorRO< Fluid::FEmittersOrDrainersType > emittersOrDrainers = fluid->getEmittersOrDrainersRO();
+	vgAssertN( emittersOrDrainers->size() <= maxEmittersOrDrainers, "Too many emitters/drainers in fluid node named %s", fluid->getName().c_str() );
+
 	// Retrieves fluid.pass1
 	using vgd::node::PostProcessing;
-
 	vgd::Shp< PostProcessing > pass1 = fluidRC->postProcessingGroup->getChild< PostProcessing >( 2 );
 
-	// position.xyz
-	vgm::Vec3f pos;
-	// radius, intensity
-	vgm::Vec2f prop;
+	// For each emitter/drainer, update post-processing
+	const int iEnd = std::min( maxEmittersOrDrainers, emittersOrDrainers->size() );
+	for( int i = 0; i < iEnd; ++i )
+	{
+		const vgm::Vec5f prop = (*emittersOrDrainers)[i];
 
-	// emitter or drainer 0
-	pos		= fluid->getEmitterOrDrainerPosition0();
-	prop	= fluid->getEmitterOrDrainerProperties0();
-	pass1->setParam4f0( vgm::Vec4f( pos[0], pos[1], pos[2], prop[0] ) );
-	pass1->setParam1f0( prop[1] );
-
-	// emitter or drainer 1
-	pos		= fluid->getEmitterOrDrainerPosition1();
-	prop	= fluid->getEmitterOrDrainerProperties1();
-	pass1->setParam4f1( vgm::Vec4f( pos[0], pos[1], pos[2], prop[0] ) );
-	pass1->setParam1f1( prop[1] );
+		if ( i==0 )
+		{
+			pass1->setParam4f0( vgm::Vec4f( prop[0], prop[1], prop[2], prop[3] ) );
+			pass1->setParam1f0( prop[4] );
+		}
+		else
+		{
+			vgAssert( i == 1 );
+			pass1->setParam4f1( vgm::Vec4f( prop[0], prop[1], prop[2], prop[3] ) );
+			pass1->setParam1f1( prop[4] );
+		}
+	}
 }
 
 

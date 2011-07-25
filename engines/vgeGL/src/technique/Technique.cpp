@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -44,6 +44,8 @@ void Technique::beginPass( const PassIsolationMask isolationMask )
 	assert( m_engine->getGLSLStateStack().getSize() == 1 );
 
 	vge::technique::Technique::beginPass(isolationMask);
+
+	m_engine->clearTextureUnits();
 
 	assert( m_engine->getGLStateStack().getSize() == 2 );
 	assert( m_engine->getGLSLStateStack().getSize() == 2 );

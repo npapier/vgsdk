@@ -37,7 +37,7 @@ Engine::Engine()
 	m_isTextureMappingEnabled(true),
 	m_isDisplayListEnabled(true),
 	m_isVertexBufferObjectEnabled(true),
-	m_isDepthPrePassEnabled(true),
+	m_isDepthPrePassEnabled(false),
 	m_isShadowEnabled(true),
 
 	m_glManager("GL object manager"),
@@ -86,7 +86,7 @@ void Engine::reset()
 	setTextureMappingEnabled();
 	setDisplayListEnabled();
 	setVertexBufferObjectEnabled();
-	setDepthPrePassEnabled();
+	setDepthPrePassEnabled( false );
 
 	switch ( driverProvider )
 	{
