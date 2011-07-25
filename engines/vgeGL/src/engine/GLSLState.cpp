@@ -69,21 +69,23 @@ GLSLState::GLSLState( const uint maxTexUnits )
 
 
 GLSLState::GLSLState( const GLSLState& src )
-:	lights					(	src.lights					),
-	textures				(	src.textures				),
-	postProcessing			(	src.postProcessing			),
-	overlays				(	src.overlays				),
-	outputBufferProperties	(	src.outputBufferProperties	),
+:	vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >	(	src							),
 
-	m_dirtyFlag				(	src.m_dirtyFlag				),
+	lights											(	src.lights					),
+	textures										(	src.textures				),
+	postProcessing									(	src.postProcessing			),
+	overlays										(	src.overlays				),
+	outputBufferProperties							(	src.outputBufferProperties	),
 
-	m_program				(	src.m_program				),
-	m_shaderStage			(	src.m_shaderStage			),
-	m_option0				(	src.m_option0				),
-	m_lightModelShadow		(	src.m_lightModelShadow		),
-	m_samplingSize			(	src.m_samplingSize			),
-	m_shadowMapType			(	src.m_shadowMapType			),
-	m_illuminationInShadow	(	src.m_illuminationInShadow	)
+	m_dirtyFlag										(	src.m_dirtyFlag				),
+
+	m_program										(	src.m_program				),
+	m_shaderStage									(	src.m_shaderStage			),
+	m_option0										(	src.m_option0				),
+	m_lightModelShadow								(	src.m_lightModelShadow		),
+	m_samplingSize									(	src.m_samplingSize			),
+	m_shadowMapType									(	src.m_shadowMapType			),
+	m_illuminationInShadow							(	src.m_illuminationInShadow	)
 {}
 
 
@@ -286,6 +288,8 @@ const std::string& GLSLState::getShaderStage( const ShaderStage shaderStage ) co
 
 void GLSLState::copy( const GLSLState& src )
 {
+	m_bitset				= src.m_bitset;
+
 	lights					= src.lights;
 	textures				= src.textures;
 	postProcessing			= src.postProcessing;
@@ -329,6 +333,14 @@ void GLSLState::init()
 	//setShaderStage( VERTEX_GL_POSITION_COMPUTATION, defaultVertexGLPositionComputation );
 	const std::string defaultVertexGLPositionComputation(	"	gl_Position = gl_ModelViewProjectionMatrix * position;\n" );
 	m_shaderStage[VERTEX_GL_POSITION_COMPUTATION] = defaultVertexGLPositionComputation;
+
+	//setShaderStage( VERTEX_ECPOSITION_COMPUTATION, defaultVertexECPositionComputation );
+	const std::string defaultVertexECPositionComputation(	"	ecPosition	= gl_ModelViewMatrix * position;\n" );
+	m_shaderStage[VERTEX_ECPOSITION_COMPUTATION] = defaultVertexECPositionComputation;
+
+	//setShaderStage( VERTEX_ECNORMAL_COMPUTATION, defaultVertexECNormalComputation );
+	const std::string defaultVertexECNormalComputation(	"	ecNormal	= fnormal();\n" );
+	m_shaderStage[VERTEX_ECNORMAL_COMPUTATION] = defaultVertexECNormalComputation;
 
 	//setShaderStage( FRAGMENT_OUTPUT, defaultFragmentOutput );
 	const std::string defaultFragmentOutput(				"	gl_FragData[0] = color;\n"	);

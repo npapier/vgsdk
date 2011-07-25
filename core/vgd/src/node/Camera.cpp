@@ -705,7 +705,7 @@ void Camera::sethFovy( const FovyValueType fovy)
 
 	setFovy( fovy );
 
-	if( getAspect( aspect ) && getZNear( zNear ) && getZFar( zFar ) )
+	if ( getAspect( aspect ) && getZNear( zNear ) && getZFar( zFar ) )
 	{
 		vgm::MatrixR matrix;
 		matrix.setPerspective( fovy, aspect, zNear, zFar );
