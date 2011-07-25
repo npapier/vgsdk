@@ -53,8 +53,8 @@ void Grid::initializeGeometry( const float width, const float height, const int 
 	const float fSizeX = 0.5f * width;
 	const float fSizeY = 0.5f * height;
 
-	const float fStepX = width / widthSlices;
-	const float fStepY = height / heightSlices;
+	const float fStepX = width / static_cast<float>(widthSlices);
+	const float fStepY = height / static_cast<float>(heightSlices);
 
 	// VERTEX
 	vgd::field::EditorRW< vgd::field::MFVec3f > vertex = getFVertexRW();
@@ -147,8 +147,8 @@ void Grid::resetTextureCoordinates( const int32 numTexUnits, const int widthSlic
 		const float fSizeX = 1.f;
 		const float fSizeY = 1.f;
 
-		const float fStepX = 1.f / widthSlices;
-		const float fStepY = 1.f / heightSlices;
+		const float fStepX = 1.f / static_cast<float>(widthSlices);
+		const float fStepY = 1.f / static_cast<float>(heightSlices);
 
 		texCoord->clear();
 

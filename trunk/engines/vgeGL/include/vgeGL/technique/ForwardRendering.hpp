@@ -104,9 +104,11 @@ private:
 	vgm::MatrixR		fluidModelViewMatrix;
 
 	// helpers
+	float positionMapScaleFactor;
 	vgd::Shp< vgeGL::rc::Fluid > getFluidRC( vgeGL::engine::Engine * engine );
-	void stageInitializeFluidPostProcessing( vgd::Shp< vgeGL::rc::Fluid > fluidRC );
+	void stageInitializeFluidPostProcessing( vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
 	void stageInitializeFluidRC( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
+	void stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
 
 	//
 	void stageInitializeFluid( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );

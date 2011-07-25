@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -75,6 +75,15 @@ const std::string saturate =
 "	return clamp( value, 0.0, 1.0);\n"
 "}\n"
 "\n";
+
+
+
+//////////////
+// Identity //
+//////////////
+
+const std::string applyIdentity( 
+	"	color = texture( texMap2D[0], mgl_TexCoord[0].xy);\n" );
 
 
 /////////////////////////////////////////////
@@ -516,7 +525,11 @@ void PostProcessing::setToDefaults()
 
 std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::PostProcessing * postProcessing, const vgd::node::PostProcessing::FilterValueType& filter )
 {
-	if ( filter == vgd::node::PostProcessing::COLOR_TO_MONOCHROME )
+	if ( filter == vgd::node::PostProcessing::IDENTITY )
+	{
+		return std::make_pair( std::string(""), applyIdentity );
+	}
+	else if ( filter == vgd::node::PostProcessing::COLOR_TO_MONOCHROME )
 	{
 		return std::make_pair( colorToMonochrome, applyColorToMonochrome );
 	}
@@ -614,7 +627,7 @@ std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::Post
 									saturate + colorToMonochrome + blurHoriz + blurVert + bloomHoriz + bloomVert + colorEdgeDetect +
 									definition, apply );
 		}
-	}	
+	}
 	else
 	{
 		assert( false );

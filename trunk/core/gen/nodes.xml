@@ -139,12 +139,14 @@
 	<node name = "Fluid" inherits = "Shape" >
 		<doxygen>
 			<docBrief>Fluid allow the simulation of liquids</docBrief>
-			<doc>Liquids are simulated using several height maps (sceneHeightMap computed from \c scene, fluidHeightMap containing height of the fluid and deltaHeightMap to add/remove liquid).</doc>
+			<doc>Liquids are simulated using several height maps (sceneHeightMap computed from \c scene, fluidHeightMap containing height of the fluid).</doc>
 			<doc>A tessellated quad with displacement mapping is used for the rendering.</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_shapeNodes</ingroup>
 			<ingroup>g_propertiesNodes</ingroup>
 		</doxygen>
+
+		<df name = "emitterOrDrainer" linkToFields="emitterOrDrainerPosition0 emitterOrDrainerProperties0 emitterOrDrainerPosition1 emitterOrDrainerProperties1"></df>
 
 		<sf name="scene" doc="Specifies the root of the scene graph used by the fluid simulation.">
 			<type name = "NodeWkp" namespace = "vgd::node"></type>
@@ -158,6 +160,32 @@
 		<sf name="heightMapSize" doc="Specifies the size of the textures used to store scene and fluid height map.">
 			<type name="Vec2i" namespace="vgm" default = "256, 256"></type>
 		</sf>
+
+		<sf name="simulationPass0" doc="Specifies the first stage of the simulation.">
+			<type name="string" namespace="std" default = ""></type>
+		</sf>
+
+		<sf name="simulationPass1" doc="Specifies the second stage of the simulation.">
+			<type name="string" namespace="std" default = ""></type>
+		</sf>
+
+
+		<sf name="emitterOrDrainerPosition0" doc="Specifies the position of a fluid emitter or drainer.">
+			<type name="Vec3f" namespace="vgm" default = "0.f, 0.f, 0.f"></type>
+		</sf>
+
+		<sf name="emitterOrDrainerProperties0" doc="Specifies the radius and intensity of a fluid emitter or drainer.">
+			<type name="Vec2f" namespace="vgm" default = "0.f, 0.f"></type>
+		</sf>
+
+		<sf name="emitterOrDrainerPosition1" doc="Specifies the position of a fluid emitter or drainer.">
+			<type name="Vec3f" namespace="vgm" default = "0.f, 0.f, 0.f"></type>
+		</sf>
+
+		<sf name="emitterOrDrainerProperties1" doc="Specifies the radius and intensity of a fluid emitter or drainer.">
+			<type name="Vec2f" namespace="vgm" default = "0.f, 0.f"></type>
+		</sf>
+
 
 		<includehpp>vgd/include/vgd/node/Fluid.hpp</includehpp>
 		<includecpp>vgd/src/node/Fluid.cpp</includecpp>
@@ -651,16 +679,18 @@
 		<sf name = "filter" doc = "Specifies the filter to apply to the input buffers.">
 			<type name = "enum">
 				<enum default="NO_FILTER">
+					<value name="IDENTITY"	doc="Identity filter, so the resulting image is the input image."/>
+
 					<value name="COLOR_TO_MONOCHROME" doc="Converts colored value to black and white"/>
 					<value name="COLOR_TO_SEPIA" doc="Converts colored value to sepia.\n Sets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1]."/>
 					<value name="COLOR_INVERSE" doc="Inverts the colored value"/>
 
 					<value name="SCALE_AND_BIAS" doc="Each of the color components is multiplied by a scale factor, then added to a bias factor using the following formula : output = input0 * param4f0 + param4f1."/>
 
-					<value name="BLUR_HORIZ" doc="Blurs an image horizontally using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0."/>
-					<value name="BLUR_VERT" doc="Blurs an image vertically using weights that follow a Gaussian distribution. Bloom scale could be specify using param1f0"/>
-					<value name="BLOOM_HORIZ" doc="Amplifies and blurs an image horizontally using weights that follow a gaussian distribution"/>
-					<value name="BLOOM_VERT" doc="Amplifies and blurs an image vertically using weights that follow a gaussian distribution"/>
+					<value name="BLUR_HORIZ" doc="Blurs an image horizontally using weights that follow a gaussian distribution."/>
+					<value name="BLUR_VERT" doc="Blurs an image vertically using weights that follow a gaussian distribution."/>
+					<value name="BLOOM_HORIZ" doc="Amplifies and blurs an image horizontally using weights that follow a gaussian distribution. Bloom scale could be specify using param1f0."/>
+					<value name="BLOOM_VERT" doc="Amplifies and blurs an image vertically using weights that follow a gaussian distribution. Bloom scale could be specify using param1f0."/>
 
 					<value name="COLOR_EDGE_DETECT" doc="Detects edges and highlights them"/>
 
@@ -680,7 +710,7 @@
 
 					<value name="DOF" doc="@todo"/>
 
-					<value name="NO_FILTER" doc="No filter is applied"/>
+					<value name="NO_FILTER"	doc="No filter is applied"/>
 
 					<value name="CUSTOM_FILTER" doc="The filter defined by field customFilterDefinition is applied using field customFilterApply."/>
 				</enum>
@@ -754,6 +784,10 @@
 
 
 		<of name = "param1f0" doc = "Specifies the first 1f parameter used by the filter.">
+			<type name = "float" default = "0.0"></type>
+		</of>
+
+		<of name = "param1f1" doc = "Specifies the second 1f parameter used by the filter.">
 			<type name = "float" default = "0.0"></type>
 		</of>
 
@@ -866,6 +900,7 @@
 		</doxygen>
 
 		<df name = "image" linkToFields="image"></df>
+		<df name = "parameters" linkToFields="wrap filter mipmap usage"></df>
 
 		<of name = "image" doc = "Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.">
 			<type name = "IImageShp" namespace = "vgd::basic"></type>

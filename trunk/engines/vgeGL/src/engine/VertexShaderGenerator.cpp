@@ -40,19 +40,15 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	// DECLARATIONS
 	m_decl += GLSLHelpers::getVersionDecl();
+
+	// UNIFORMS
 	m_decl += GLSLHelpers::getVGSDKUniformDecl();
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
+	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "out" );
+	std::pair< std::string, std::string > code_samplers	= GLSLHelpers::generate_samplers( state );
 
-	std::pair< std::string, std::string > code_ftexgen;
-	std::pair< std::string, std::string > code_samplers;
-	if ( has_ftexgen )
-	{
-		code_ftexgen = GLSLHelpers::generateFunction_ftexgen(state, "out" );
-		code_samplers = GLSLHelpers::generate_samplers( state );
-
-		m_decl += code_samplers.first;
-	}
+	m_decl += code_samplers.first;
 
 	// INPUTS
 	m_decl += "// INPUTS\n";
@@ -78,7 +74,11 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	// out vec4 gl_Position;
 	m_decl += "// VARIANCE QUALIFIER\n";
-	m_decl += "invariant gl_Position;\n";
+	m_decl += "invariant gl_Position;\n\n";
+
+	// VERTEX_DECLARATIONS
+	const std::string vertexDeclaration = state.getShaderStage( GLSLState::VERTEX_DECLARATIONS );
+	if ( !vertexDeclaration.empty() )	m_decl += vertexDeclaration + "\n";
 
 	// Test if custom program must be installed
 	if ( state.isEnabled( PROGRAM ) )
@@ -95,7 +95,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		return true;
 	}
 
-	// DECLARATIONS
+	// DECLARATIONS for lighting
 	if ( state.isLightingEnabled() )
 	{
 		if ( state.isPerVertexLightingEnabled() )
@@ -144,7 +144,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	"void main( void )\n"
 	"{\n"
 	"	// position is a copy of mgl_Vertex for vertex texturing (mgl_Vertex is read-only).\n"
-	"	vec4	position = mgl_Vertex;\n"
+	"	vec4 position = mgl_Vertex;\n"
 	"\n";
 
 	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
@@ -156,6 +156,18 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing
 
+	// gl_Position = gl_ModelViewProjectionMatrix * position;
+	m_code2 += state.getShaderStage( GLSLState::VERTEX_GL_POSITION_COMPUTATION );
+
+	// ecPosition	= gl_ModelViewMatrix * position;
+	m_code2 += state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION );
+
+	// ecNormal	= fnormal();
+	m_code2 += state.getShaderStage( GLSLState::VERTEX_ECNORMAL_COMPUTATION ) + "\n";
+
+	// TEXGEN
+	if ( has_ftexgen )		m_code2 += "	ftexgen( ecPosition, ecNormal );\n";
+
 	// TEXTURE LOOKUP
 	if ( has_ftexgen )
 	{
@@ -163,14 +175,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		const std::string textureLookup = GLSLHelpers::generate_vertexShader_texLookups( state );
 		m_code2 += textureLookup;
 	}
-
-	// gl_Position = gl_ModelViewProjectionMatrix * position;
-	m_code2 += state.getShaderStage( GLSLState::VERTEX_GL_POSITION_COMPUTATION );
-
-	m_code2 +=
-		"	ecPosition	= gl_ModelViewMatrix * position;\n"
-		"	ecNormal	= fnormal();\n"
-		"\n";
 
 	if ( state.isLightingEnabled() )
 	{
@@ -225,9 +229,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			"	gl_BackSecondaryColor	= vec4(0.0, 0.0, 0.0, 1.0);\n";
 		}
 	}
-
-	// TEXGEN
-	if ( has_ftexgen )		m_code2 += "	ftexgen( ecPosition, ecNormal );\n";
 
 	/*if ( glIsEnabled(GL_FOG) )
 	{

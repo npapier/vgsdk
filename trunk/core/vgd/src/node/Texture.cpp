@@ -32,9 +32,14 @@ Texture::Texture( const std::string nodeName ) :
 
 	// Adds dirty flag(s)
 	addDirtyFlag(getDFImage());
+	addDirtyFlag(getDFParameters());
 
 	// Sets link(s)
 	link( getFImage(), getDFImage() );
+	link( getFWrap(), getDFParameters() );
+	link( getFFilter(), getDFParameters() );
+	link( getFMipmap(), getDFParameters() );
+	link( getFUsage(), getDFParameters() );
 
 	link( getDFNode() );
 }
@@ -319,6 +324,12 @@ const std::string Texture::getFUsage( void )
 const std::string Texture::getDFImage()
 {
 	return "df_image";
+}
+
+
+const std::string Texture::getDFParameters()
+{
+	return "df_parameters";
 }
 
 

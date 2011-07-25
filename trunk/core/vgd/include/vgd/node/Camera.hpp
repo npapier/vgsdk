@@ -865,6 +865,10 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 */
 	const bool gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
 
+// stereoscopy.pdf slide 24 for explanation of
+// slide 32
+// two eyes looking at a parallel direction
+
 	/**
 	 * brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering
 	 *
@@ -879,7 +883,8 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	//void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
 
 	/**
-	 * @brief Sets the value of the field named \c fovy and recompute the projection matrix in case the camera is perspective.
+	 * @brief Sets the value of the field named \c fovy and recompute the projection matrix using the value of aspect zNear and zFar optional fields if they are presents.
+	 * Otherwise, only sets the fovy field.
 	 */
 	void sethFovy( const FovyValueType fovy);
 

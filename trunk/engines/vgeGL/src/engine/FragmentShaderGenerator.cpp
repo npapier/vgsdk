@@ -43,22 +43,17 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 //				"#pragma optimize (off)\n"
 //				"#pragma debug (on)\n"
 				//"\n";
+
+	// UNIFORMS
 	m_decl += GLSLHelpers::getVGSDKUniformDecl();
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
-
-	std::pair< std::string, std::string > code_ftexgen;
-	std::pair< std::string, std::string > code_samplers;
-	//if ( has_ftexgen )
-	{
-		code_ftexgen = GLSLHelpers::generateFunction_ftexgen( state, "in" ); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
-		code_samplers = GLSLHelpers::generate_samplers( state );
-	}
+	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "in" ); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
+	std::pair< std::string, std::string > code_samplers	= GLSLHelpers::generate_samplers( state );
 
 	m_decl += code_samplers.first;
 
 	// INPUTS
-
 	m_decl += "// INPUTS\n";
 	m_decl += code_ftexgen.first;
 	m_code1 += code_samplers.second;
@@ -68,6 +63,10 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	{
 		m_decl += fragmentOutputDeclarationStage;
 	}
+
+	// FRAGMENT_DECLARATIONS
+	const std::string fragmentDeclaration = state.getShaderStage( GLSLState::FRAGMENT_DECLARATIONS );
+	if ( !fragmentDeclaration.empty() )	m_decl += fragmentDeclaration;
 
 	// Test if custom program must be installed
 	if ( state.isEnabled( PROGRAM ) )
