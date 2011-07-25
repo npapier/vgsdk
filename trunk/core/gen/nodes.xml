@@ -146,8 +146,6 @@
 			<ingroup>g_propertiesNodes</ingroup>
 		</doxygen>
 
-		<df name = "emitterOrDrainer" linkToFields="emitterOrDrainerPosition0 emitterOrDrainerProperties0 emitterOrDrainerPosition1 emitterOrDrainerProperties1"></df>
-
 		<sf name="scene" doc="Specifies the root of the scene graph used by the fluid simulation.">
 			<type name = "NodeWkp" namespace = "vgd::node"></type>
 		</sf>
@@ -170,21 +168,9 @@
 		</sf>
 
 
-		<sf name="emitterOrDrainerPosition0" doc="Specifies the position of a fluid emitter or drainer.">
-			<type name="Vec3f" namespace="vgm" default = "0.f, 0.f, 0.f"></type>
-		</sf>
-
-		<sf name="emitterOrDrainerProperties0" doc="Specifies the radius and intensity of a fluid emitter or drainer.">
-			<type name="Vec2f" namespace="vgm" default = "0.f, 0.f"></type>
-		</sf>
-
-		<sf name="emitterOrDrainerPosition1" doc="Specifies the position of a fluid emitter or drainer.">
-			<type name="Vec3f" namespace="vgm" default = "0.f, 0.f, 0.f"></type>
-		</sf>
-
-		<sf name="emitterOrDrainerProperties1" doc="Specifies the radius and intensity of a fluid emitter or drainer.">
-			<type name="Vec2f" namespace="vgm" default = "0.f, 0.f"></type>
-		</sf>
+		<mf name="emittersOrDrainers" doc="Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 2.">
+			<type name="Vec5f" namespace="vgm" default = "0.f, 0.f, 0.f, 0.f, 0.f"></type>
+		</mf>
 
 
 		<includehpp>vgd/include/vgd/node/Fluid.hpp</includehpp>

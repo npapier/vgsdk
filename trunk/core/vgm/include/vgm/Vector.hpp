@@ -736,7 +736,7 @@ const vgm::Vector< Out, OutSize > VectorCast( const Vector< In, InSize > & in );
 typedef Vector<	double, 2 > Vec2d;
 
 /**
- * @brief 3D vector class used to store 3D vectors and points.
+ * @brief 3d vector class used to store 3d vectors and points.
  *
  * This class is used throughout vgsdk for arguments and return values.
  * 
@@ -752,6 +752,13 @@ typedef Vector< double, 3 > Vec3d;
 typedef Vector<	double, 4 > Vec4d;
 
 /**
+ * @brief 5d vector class used to store 5d vectors and points.
+ * 
+ * @ingroup LinearAlgebra
+ */
+typedef Vector<	double, 5 > Vec5d;
+
+/**
  * @brief 2d vector class used to store 2d vectors and points.
  * 
  * @ingroup LinearAlgebra
@@ -759,7 +766,7 @@ typedef Vector<	double, 4 > Vec4d;
 typedef Vector<	float, 2 > Vec2f;
 
 /**
- * @brief 3D vector class used to store 3D vectors and points.
+ * @brief 3d vector class used to store 3d vectors and points.
  *
  * This class is used throughout vgsdk for arguments and return values.
  * 
@@ -775,6 +782,13 @@ typedef Vector< float, 3 > Vec3f;
 typedef Vector<	float, 4 > Vec4f;
 
 /**
+ * @brief 5d vector class used to store 5d vectors and points.
+ * 
+ * @ingroup LinearAlgebra
+ */
+typedef Vector<	float, 5 > Vec5f;
+
+/**
  * @brief 2d vector class used to store 2d vectors and points.
  * 
  * @ingroup LinearAlgebra
@@ -782,7 +796,7 @@ typedef Vector<	float, 4 > Vec4f;
 typedef Vector<	int32, 2 > Vec2i;
 
 /**
- * @brief 3D vector class used to store 3D vectors and points.
+ * @brief 3d vector class used to store 3d vectors and points.
  *
  * This class is used throughout vgsdk for arguments and return values.
  * 
@@ -796,6 +810,13 @@ typedef Vector< int32, 3 > Vec3i;
  * @ingroup LinearAlgebra
  */
 typedef Vector<	int32, 4 > Vec4i;
+
+/**
+ * @brief 5d vector class used to store 5d vectors and points.
+ * 
+ * @ingroup LinearAlgebra
+ */
+typedef Vector<	int32, 5 > Vec5i;
 
 
 
