@@ -144,6 +144,7 @@ void SceneExporter::collectNodes()
 	NodeCollectorExtended<> collector( true, false, NodeCollectorExtended<>::IGNORE_KIT );
 	m_rootNode->traverse( collector );
 
+	technique.setParameters( &engine, collector.getTraverseElements() );
 	technique.apply( &engine, collector.getTraverseElements() );
 
 	m_collectedMap = technique.getCollectedMap();
