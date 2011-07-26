@@ -32,7 +32,6 @@ ImageExporter::ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedM
 	m_imageDirectoryName = "/" + fileName + "_images";
 
 	m_imageDirectory = directory.string() + m_imageDirectoryName;
-	sbf::path::mkdirs( m_imageDirectory );
 }
 
 
@@ -71,6 +70,9 @@ void ImageExporter::doExport()
 				//ILGetData to get pointer to the file?
 				//encrypt image
 			}
+
+			// Creates directory if needed
+			sbf::path::mkdirs( m_imageDirectory );
 
 			std::string imageName = m_imageDirectory + "/" + texture->getName() + ".png";
 			image.save( imageName );
