@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -69,6 +69,11 @@ struct UniformVisitor : public boost::static_visitor<>
 	void operator() ( vgm::Vec4f value ) const
 	{
 		m_engine->getCurrentProgram()->setUniform4fv( m_name, value.getValue() );
+	}
+
+	void operator() ( vgm::MatrixR value ) const
+	{
+		m_engine->getCurrentProgram()->setUniformMatrix4fv( m_name, reinterpret_cast< GLfloat * >(value.getValue()) );
 	}
 	//@}
 

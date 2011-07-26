@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker and Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Guillaume Brocker and Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -166,12 +166,15 @@ vgd::Shp< FieldEditor > createEditor( const std::type_info & fieldType )
 		result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec3f > >() );
 	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec4f >) )
 		result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec4f > >()		);
+	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec5f >) )
+		result.reset( new MultiFieldEditor2< adapter::MFVectorAdapter< vgm::Vec5f > >()		);
 	else if	( fieldType == typeid(vgd::field::TMultiField< uint >)	)				result.reset( new MultiFieldEditor2< adapter::MFNumberAdapter< uint32 > >()	);
 	else if	( fieldType == typeid(vgd::field::TMultiField< int >)	)				result.reset( new MultiFieldEditor2< adapter::MFNumberAdapter< int > >()	);
 	else if	( fieldType == typeid(vgd::field::TMultiField< vgd::node::Primitive >)	)	result.reset( new MultiFieldEditor2< adapter::MFPrimitiveAdapter >()				);
 	
 	return result;
 }
+
 
 
 

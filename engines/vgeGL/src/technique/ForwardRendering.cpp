@@ -244,6 +244,7 @@ const std::string declarations =
 	"uniform float param1f1;\n"
 	"uniform vec4 param4f0;\n"
 	"uniform vec4 param4f1;\n"
+	"uniform mat4 param4x4f0;\n"
 	"\n";
 
 
@@ -1478,7 +1479,7 @@ void ForwardRendering::stageInitializeFluidPostProcessing( vgd::node::Fluid * fl
 		p->setCustomFilterDefinition( fluid->getSimulationPass1() );
 		p->setCustomFilterApply(
 		"	color = apply(	texMap2D[0], texMap2D[1], texMap2D[2], mgl_TexCoord[0].xy,\n"
-		"					param4f0.xyz, vec2(param4f0.w, param1f0), param4f1.xyz, vec2(param4f1.w, param1f1) );\n"
+		"					param4x4f0, param4f0 );\n"
 		);
 
 		group->addChild( p );
@@ -1770,7 +1771,7 @@ void ForwardRendering::stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engin
 	using vgd::field::EditorRO;
 	using vgd::node::Fluid;
 
-	const uint maxEmittersOrDrainers = 2;
+	const uint maxEmittersOrDrainers = 4;
 	EditorRO< Fluid::FEmittersOrDrainersType > emittersOrDrainers = fluid->getEmittersOrDrainersRO();
 	vgAssertN( emittersOrDrainers->size() <= maxEmittersOrDrainers, "Too many emitters/drainers in fluid node named %s", fluid->getName().c_str() );
 
@@ -1779,23 +1780,23 @@ void ForwardRendering::stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engin
 	vgd::Shp< PostProcessing > pass1 = fluidRC->postProcessingGroup->getChild< PostProcessing >( 2 );
 
 	// For each emitter/drainer, update post-processing
+	vgm::MatrixR	param4x4f0;
+	param4x4f0.setNull();
+	vgm::Vec4f		param4f0;
+	param4f0.setNull();
+
 	const int iEnd = std::min( maxEmittersOrDrainers, emittersOrDrainers->size() );
+	//const int iEnd = emittersOrDrainers->size();
 	for( int i = 0; i < iEnd; ++i )
 	{
-		const vgm::Vec5f prop = (*emittersOrDrainers)[i];
+		const vgm::Vec5f properties = (*emittersOrDrainers)[i];
 
-		if ( i==0 )
-		{
-			pass1->setParam4f0( vgm::Vec4f( prop[0], prop[1], prop[2], prop[3] ) );
-			pass1->setParam1f0( prop[4] );
-		}
-		else
-		{
-			vgAssert( i == 1 );
-			pass1->setParam4f1( vgm::Vec4f( prop[0], prop[1], prop[2], prop[3] ) );
-			pass1->setParam1f1( prop[4] );
-		}
+		param4x4f0.setRow( i, vgm::Vec4f(properties) );
+		param4f0[i] = properties[4];
 	}
+
+	pass1->setParam4x4f0( param4x4f0 );
+	pass1->setParam4f0( param4f0 );
 }
 
 
@@ -2300,6 +2301,8 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 	std::vector< float >										params1f1;
 	std::vector< vgm::Vec4f >									params4f0;
 	std::vector< vgm::Vec4f >									params4f1;
+	std::vector< vgm::MatrixR >									params4x4f0;
+
 	std::vector< vgd::node::PostProcessing::Input0ValueType >	inputs0;
 	std::vector< vgd::node::PostProcessing::Input1ValueType >	inputs1;
 	std::vector< vgd::node::PostProcessing::Input2ValueType >	inputs2;
@@ -2379,6 +2382,19 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			else
 			{
 				params4f1.push_back( vgm::Vec4f::getInvalid() );
+			}
+
+			// param4x4f0
+			if ( postProcessingNode->hasParam4x4f0() )
+			{
+				vgm::MatrixR value;
+				postProcessingNode->getParam4x4f0(value);
+
+				params4x4f0.push_back( value );
+			}
+			else
+			{
+				params4x4f0.push_back( vgm::MatrixR::getInvalid() );
 			}
 
 			// Inputs
@@ -2563,6 +2579,14 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		{
 			vgAssertN( !engine->getUniformState().isUniform( "param4f1"), "Uniform param4f1 already used" );
 			engine->getUniformState().addUniform( "param4f1", param4f1 );
+		}
+
+		// param4x4f0
+		const vgm::MatrixR param4x4f0 = params4x4f0[i];
+		if ( param4x4f0.isValid() )
+		{
+			vgAssertN( !engine->getUniformState().isUniform( "param4x4f0"), "Uniform param4x4f0 already used" );
+			engine->getUniformState().addUniform( "param4x4f0", param4x4f0 );
 		}
 
 		// input0

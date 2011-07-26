@@ -8,6 +8,7 @@
 
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
+#include "vgd/field/MatrixR.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/field/Vec4f.hpp"
 #include "vgd/node/MultiAttribute.hpp"
@@ -48,6 +49,9 @@ namespace node
  *<br>
  * - OFVec4f \c [param4f0] = vgm::Vec4f(0.0, 0.0, 0.0, 0.0)<br>
  *   Specifies the first 4f parameter used by the filter.<br>
+ *<br>
+ * - OFMatrixR \c [param4x4f0] = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
+ *   Specifies the first 4x4f parameter used by the filter.<br>
  *<br>
  * - SFString \c customFilterApply = empty<br>
  *   Specifies the code calling the filter defined by customFilterDefinition.<br>
@@ -649,6 +653,45 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field param4x4f0
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c param4x4f0.
+	 */
+	typedef vgm::MatrixR Param4x4f0ValueType;
+
+	/**
+	 * @brief Type definition of the field named \c param4x4f0
+	 */
+	typedef vgd::field::TOptionalField< Param4x4f0ValueType > FParam4x4f0Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c param4x4f0.
+	 */
+	const bool getParam4x4f0( Param4x4f0ValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c param4x4f0.
+ 	 */
+	void setParam4x4f0( const Param4x4f0ValueType& value );
+
+	/**
+	 * @brief Erases the field named \c param4x4f0.
+	 */
+	void eraseParam4x4f0();
+
+	/**
+	 * @brief Tests if the value of field named \c param4x4f0 has been initialized.
+	 */
+	const bool hasParam4x4f0() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field customFilterApply
 	 */
 	//@{
@@ -906,6 +949,13 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @return the name of field \c param4f0.
 	 */
 	static const std::string getFParam4f0( void );
+
+	/**
+	 * @brief Returns the name of field \c param4x4f0.
+	 *
+	 * @return the name of field \c param4x4f0.
+	 */
+	static const std::string getFParam4x4f0( void );
 
 	/**
 	 * @brief Returns the name of field \c customFilterApply.

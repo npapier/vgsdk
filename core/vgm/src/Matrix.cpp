@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -531,6 +531,65 @@ bool MatrixR::isIdentity() const
 		(matrix[3][1] == 0.0) &&
 		(matrix[3][2] == 0.0) &&
 		(matrix[3][3] == 1.0) );
+}
+
+
+
+void MatrixR::setNull()
+{
+	matrix[0][0] = 0.0;
+	matrix[0][1] = 0.0;
+	matrix[0][2] = 0.0;
+	matrix[0][3] = 0.0;
+
+	matrix[1][0] = 0.0;
+	matrix[1][1] = 0.0;
+	matrix[1][2] = 0.0;
+	matrix[1][3] = 0.0;
+
+	matrix[2][0] = 0.0;
+	matrix[2][1] = 0.0;
+	matrix[2][2] = 0.0;
+	matrix[2][3] = 0.0;
+
+	matrix[3][0] = 0.0;
+	matrix[3][1] = 0.0;
+	matrix[3][2] = 0.0;
+	matrix[3][3] = 0.0;
+}
+
+
+
+MatrixR MatrixR::getNull()
+{
+	return MatrixR(
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0, 0.0);
+}
+
+
+
+bool MatrixR::isNull() const
+{
+	return ( 
+		(matrix[0][0] == 0.0) &&
+		(matrix[0][1] == 0.0) &&
+		(matrix[0][2] == 0.0) &&
+		(matrix[0][3] == 0.0) &&
+		(matrix[1][0] == 0.0) &&
+		(matrix[1][1] == 0.0) &&
+		(matrix[1][2] == 0.0) &&
+		(matrix[1][3] == 0.0) &&
+		(matrix[2][0] == 0.0) &&
+		(matrix[2][1] == 0.0) &&
+		(matrix[2][2] == 0.0) &&
+		(matrix[2][3] == 0.0) &&
+		(matrix[3][0] == 0.0) &&
+		(matrix[3][1] == 0.0) &&
+		(matrix[3][2] == 0.0) &&
+		(matrix[3][3] == 0.0) );
 }
 
 

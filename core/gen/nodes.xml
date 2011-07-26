@@ -168,7 +168,7 @@
 		</sf>
 
 
-		<mf name="emittersOrDrainers" doc="Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 2.">
+		<mf name="emittersOrDrainers" doc="Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 4.">
 			<type name="Vec5f" namespace="vgm" default = "0.f, 0.f, 0.f, 0.f, 0.f"></type>
 		</mf>
 
@@ -785,6 +785,9 @@
 			<type name = "Vec4f" namespace = "vgm" default = "0.0, 0.0, 0.0, 0.0"></type>
 		</of>
 
+		<of name = "param4x4f0" doc = "Specifies the first 4x4f parameter used by the filter.">
+			<type name = "MatrixR" namespace = "vgm" default = "vgm::MatrixR::getIdentity()"></type>
+		</of>
 
 		<sf name ="output" doc = "Specifices the output buffer used by the filter.">
 			<type name = "enum">

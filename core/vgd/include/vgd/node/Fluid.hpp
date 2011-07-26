@@ -30,7 +30,7 @@ namespace node
  *
  * New fields defined by this node :
  * - MFVec5f \c emittersOrDrainers = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
- *   Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 2.<br>
+ *   Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 4.<br>
  *<br>
  * - SFVec2i \c heightMapSize = vgm::Vec2i(256, 256)<br>
  *   Specifies the size of the textures used to store scene and fluid height map.<br>

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -125,6 +125,27 @@ void Vector<T,N>::null( void )
 	}
 }
 
+
+
+template< typename T, int N >
+void Vector<T,N>::setNull( void )
+{
+	for (int32 i =0; i<N; i++)
+	{
+		m_tCoord[i]= (T)0;
+	}
+}
+
+
+
+template< typename T, int N >
+const Vector<T,N> Vector<T,N>::getNull()
+{
+	Vector<T,N>	vector;
+	vector.setNull();
+
+	return vector;
+}
 
 
 template< typename T, int N >

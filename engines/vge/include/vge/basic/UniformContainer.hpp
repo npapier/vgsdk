@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,6 +12,8 @@
 #include <utility>
 #include <vge/vge.hpp>
 #include <vgm/Vector.hpp>
+#include <vgm/Matrix.hpp>
+
 
 
 namespace vge
@@ -87,7 +89,7 @@ struct VGE_API UniformContainer
 		RetValType retVal = m_container.insert( std::make_pair(name, value) );
 		if ( !retVal.second )
 		{
-			assert( false && "Unable to add this uniform. Uniform name must be unique." );
+			vgAssertN( false, "Unable to add uniform named '%s'. Uniform name must be unique.", name.c_str() );
 			return false;
 		}
 		else
@@ -130,7 +132,7 @@ struct VGE_API UniformContainer
 	template< typename T >
 	void setUniform( const std::string& name, const T& value )
 	{
-		assert( isUniform(name) && "Uniform not found" );
+		vgAssertN( isUniform(name), "Uniform named '%s' not found", name.c_str() );
 
 		ContainerType::const_iterator iUniform = m_container.find( name );
 		if ( iUniform != m_container.end() )
@@ -141,18 +143,20 @@ struct VGE_API UniformContainer
 		else
 		{
 			// Not found
-			assert( false && "Uniform not found" );
+			vgAssertN( false, "Uniform not found" );
 		}
 	}
 
-	
 	// @todo getUniform()
 	// @todo dirty flags
 	//void destroy();							///< code for destructor
 	//void copy( const UniformContainer& src );	///< code for copy constructor
 
 	typedef std::string KeyType;
-	typedef boost::variant< float, vgm::Vec2f, vgm::Vec3f, vgm::Vec4f > ValueType;
+	typedef boost::variant<
+		float,
+		vgm::Vec2f, vgm::Vec3f, vgm::Vec4f,
+		vgm::MatrixR > ValueType;
 	typedef std::map< KeyType, ValueType > ContainerType;
 
 	typedef ContainerType::const_iterator	ConstIteratorType;
@@ -164,7 +168,7 @@ struct VGE_API UniformContainer
 private:
 	ContainerType m_container;			///< container of uniform variables a map< name,value >.
 
-	typedef std::pair< ContainerType::iterator, bool > RetValType;	
+	typedef std::pair< ContainerType::iterator, bool > RetValType;
 };
 
 
