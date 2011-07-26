@@ -90,6 +90,7 @@ void SceneExporter::prepareExport()
 		vgAlg::actions::ApplyGeometricalTransformation action;
 		action.setRoot( m_rootNode );
 		action.execute();
+		collectNodes();
 	}
 
 	if( m_exportSettings.getTriangulate() || m_exportSettings.getInvertPrimitiveOrientation() )
