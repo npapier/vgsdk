@@ -395,7 +395,17 @@ vgm::Vec4f		out5b( in5 );
 	/**
 	 * @brief Set the vector to null.
 	 */
-	void		null( void );
+	vgDEPRECATED( void		null( void ) ); 
+
+	/**
+	 * @brief Set the vector to null.
+	 */
+	void		setNull( void );
+
+	/**
+	 * @brief Returns a null vector.
+	 */
+	static const Vector getNull();
 
 	/**
 	 * @brief Test if the vector is null.
@@ -408,12 +418,12 @@ vgm::Vec4f		out5b( in5 );
 	 * @author	Guillaume Brocker
 	 */
 	void setInvalid( void );
-	
+
 	/**
 	 * @brief Returns an invalid vector
 	 */
 	static const Vector getInvalid();
-	
+
 	/**
 	 * @brief Tests if the vector is invalid.
 	 * 

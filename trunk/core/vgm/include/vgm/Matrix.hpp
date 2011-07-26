@@ -287,7 +287,24 @@ struct VGM_API MatrixR
 	 * @brief Check if this matrix is identity.
 	 */
 	bool					isIdentity() const;
-	
+
+
+	/**
+	 * @brief Sets matrix to be null.
+	 */
+	void					setNull();
+
+	/**
+	 * @brief Returns a null matrix 
+	 */
+	static MatrixR			getNull();
+
+	/**
+	 * @brief Check if this matrix is null.
+	 */
+	bool					isNull() const;
+
+
 	/**
 	 * @brief Invalidates the matrix.
 	 * 
