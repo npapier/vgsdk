@@ -267,7 +267,7 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 				vgd::Wkp< vgd::node::Node >,
 				vgd::Wkp< vgd::node::Group >,
 				vgd::Shp< vgd::node::Node >,
-				vgd::Shp< vgd::node::Group >,
+				vgd::Shp< vgd::node::Group >
 			> vgd_t;
 
 			typedef mpl::copy< bool_t, mpl::front_inserter< enum_t > >::type	l2;
