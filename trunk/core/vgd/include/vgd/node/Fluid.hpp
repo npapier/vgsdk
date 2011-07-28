@@ -7,6 +7,7 @@
 #define _VGD_NODE_FLUID_HPP
 
 #include "vgd/field/Bool.hpp"
+#include "vgd/field/Float.hpp"
 #include "vgd/field/IImageShp.hpp"
 #include "vgd/field/NodeWkp.hpp"
 #include "vgd/field/String.hpp"
@@ -37,6 +38,9 @@ namespace node
  * - SFVec2i \c heightMapSize = vgm::Vec2i(256, 256)<br>
  *   Specifies the size of the textures used to store scene and fluid height map.<br>
  *<br>
+ * - SFNodeWkp \c scene = empty<br>
+ *   Specifies the root of the scene graph used by the fluid simulation.<br>
+ *<br>
  * - SFBool \c requestFeedback = false<br>
  *   True to request a feedback in field fluidPositionFeedback during the next rendering. This field is automatically reset to false after the completion of the feedback.<br>
  *<br>
@@ -49,8 +53,20 @@ namespace node
  * - SFString \c simulationPass0 = empty<br>
  *   Specifies the first stage of the simulation.<br>
  *<br>
- * - SFNodeWkp \c scene = empty<br>
- *   Specifies the root of the scene graph used by the fluid simulation.<br>
+ * - SFFloat \c cellSize = 1.0<br>
+ *   @todo<br>
+ *<br>
+ * - SFFloat \c damping = 0.4<br>
+ *   @todo<br>
+ *<br>
+ * - SFFloat \c timeStep = 0.1<br>
+ *   @todo<br>
+ *<br>
+ * - SFVec5f \c feedbackInformations = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
+ *   @todo<br>
+ *<br>
+ * - SFFloat \c css = 1.0<br>
+ *   @todo<br>
  *<br>
  * - SFIImageShp \c fluidPositionFeedback = empty<br>
  *   @todo<br>
@@ -152,6 +168,36 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Sets the value of field named \c heightMapSize.
 	 */
 	void setHeightMapSize( const HeightMapSizeValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field scene
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c scene.
+	 */
+	typedef vgd::node::NodeWkp SceneValueType;
+
+	/**
+	 * @brief Type definition of the field named \c scene
+	 */
+	typedef vgd::field::TSingleField< SceneValueType > FSceneType;
+
+
+	/**
+	 * @brief Gets the value of field named \c scene.
+	 */
+	const SceneValueType getScene() const;
+
+	/**
+	 * @brief Sets the value of field named \c scene.
+	 */
+	void setScene( const SceneValueType value );
 
 	//@}
 
@@ -278,30 +324,150 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
-	 * @name Accessors to field scene
+	 * @name Accessors to field cellSize
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c scene.
+	 * @brief Type definition of the value contained by field named \c cellSize.
 	 */
-	typedef vgd::node::NodeWkp SceneValueType;
+	typedef float CellSizeValueType;
 
 	/**
-	 * @brief Type definition of the field named \c scene
+	 * @brief Type definition of the field named \c cellSize
 	 */
-	typedef vgd::field::TSingleField< SceneValueType > FSceneType;
+	typedef vgd::field::TSingleField< CellSizeValueType > FCellSizeType;
 
 
 	/**
-	 * @brief Gets the value of field named \c scene.
+	 * @brief Gets the value of field named \c cellSize.
 	 */
-	const SceneValueType getScene() const;
+	const CellSizeValueType getCellSize() const;
 
 	/**
-	 * @brief Sets the value of field named \c scene.
+	 * @brief Sets the value of field named \c cellSize.
 	 */
-	void setScene( const SceneValueType value );
+	void setCellSize( const CellSizeValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field damping
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c damping.
+	 */
+	typedef float DampingValueType;
+
+	/**
+	 * @brief Type definition of the field named \c damping
+	 */
+	typedef vgd::field::TSingleField< DampingValueType > FDampingType;
+
+
+	/**
+	 * @brief Gets the value of field named \c damping.
+	 */
+	const DampingValueType getDamping() const;
+
+	/**
+	 * @brief Sets the value of field named \c damping.
+	 */
+	void setDamping( const DampingValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field timeStep
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c timeStep.
+	 */
+	typedef float TimeStepValueType;
+
+	/**
+	 * @brief Type definition of the field named \c timeStep
+	 */
+	typedef vgd::field::TSingleField< TimeStepValueType > FTimeStepType;
+
+
+	/**
+	 * @brief Gets the value of field named \c timeStep.
+	 */
+	const TimeStepValueType getTimeStep() const;
+
+	/**
+	 * @brief Sets the value of field named \c timeStep.
+	 */
+	void setTimeStep( const TimeStepValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field feedbackInformations
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c feedbackInformations.
+	 */
+	typedef vgm::Vec5f FeedbackInformationsValueType;
+
+	/**
+	 * @brief Type definition of the field named \c feedbackInformations
+	 */
+	typedef vgd::field::TSingleField< FeedbackInformationsValueType > FFeedbackInformationsType;
+
+
+	/**
+	 * @brief Gets the value of field named \c feedbackInformations.
+	 */
+	const FeedbackInformationsValueType getFeedbackInformations() const;
+
+	/**
+	 * @brief Sets the value of field named \c feedbackInformations.
+	 */
+	void setFeedbackInformations( const FeedbackInformationsValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field css
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c css.
+	 */
+	typedef float CssValueType;
+
+	/**
+	 * @brief Type definition of the field named \c css
+	 */
+	typedef vgd::field::TSingleField< CssValueType > FCssType;
+
+
+	/**
+	 * @brief Gets the value of field named \c css.
+	 */
+	const CssValueType getCss() const;
+
+	/**
+	 * @brief Sets the value of field named \c css.
+	 */
+	void setCss( const CssValueType value );
 
 	//@}
 
@@ -357,6 +523,13 @@ struct VGD_API Fluid : public vgd::node::Shape
 	static const std::string getFHeightMapSize( void );
 
 	/**
+	 * @brief Returns the name of field \c scene.
+	 *
+	 * @return the name of field \c scene.
+	 */
+	static const std::string getFScene( void );
+
+	/**
 	 * @brief Returns the name of field \c requestFeedback.
 	 *
 	 * @return the name of field \c requestFeedback.
@@ -385,11 +558,39 @@ struct VGD_API Fluid : public vgd::node::Shape
 	static const std::string getFSimulationPass0( void );
 
 	/**
-	 * @brief Returns the name of field \c scene.
+	 * @brief Returns the name of field \c cellSize.
 	 *
-	 * @return the name of field \c scene.
+	 * @return the name of field \c cellSize.
 	 */
-	static const std::string getFScene( void );
+	static const std::string getFCellSize( void );
+
+	/**
+	 * @brief Returns the name of field \c damping.
+	 *
+	 * @return the name of field \c damping.
+	 */
+	static const std::string getFDamping( void );
+
+	/**
+	 * @brief Returns the name of field \c timeStep.
+	 *
+	 * @return the name of field \c timeStep.
+	 */
+	static const std::string getFTimeStep( void );
+
+	/**
+	 * @brief Returns the name of field \c feedbackInformations.
+	 *
+	 * @return the name of field \c feedbackInformations.
+	 */
+	static const std::string getFFeedbackInformations( void );
+
+	/**
+	 * @brief Returns the name of field \c css.
+	 *
+	 * @return the name of field \c css.
+	 */
+	static const std::string getFCss( void );
 
 	/**
 	 * @brief Returns the name of field \c fluidPositionFeedback.

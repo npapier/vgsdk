@@ -34,15 +34,9 @@ void Fluid::sethSimulationPassToDefault()
 			"				vec4 param0, float damping )\n"
 			"{\n"
 			"	float cellSize	= param0.x;\n"
-			//"	const float cellSize	= 1.0;\n"
-			"	float css			= param0.y;\n"
-			//"	const float css			= 1.0;\n"
-			"	float gravity		= param0.z;\n"
-			//"	const float gravity		= 10.0;\n"
+			"	float css		= param0.y;\n"
+			"	float gravity	= param0.z;\n"
 			"	float timeStep	= param0.w;\n"
-			//"	const float timeStep	= 0.1;\n"
-			//"	const float damping		= 0.999;\n"
-			//"	const float damping		= 0.4;\n"
 			"\n"
 			"	vec2 left	= vec2(-1.0, 0.0);\n"
 			"	vec2 right	= vec2(1.0, 0.0);\n"
@@ -50,32 +44,61 @@ void Fluid::sethSimulationPassToDefault()
 			"	vec2 bottom	= vec2(0.0, -1.0);\n"
 			"\n"
 			"	vec2 scenePositionMapSize = textureSize( scenePositionMap, 0 );\n"
-			"	vec4 scenePositionC	= texture( scenePositionMap, texCoord );\n"
-			"	if ( (scenePositionC.x == 0.0) && (scenePositionC.y == 0.0) && (scenePositionC.z == 0.0) )\n"
+
+			"	float scenePositionC	= texture( scenePositionMap, texCoord ).z;\n"
+			"	if ( scenePositionC == 0.0 )\n"
 			"	{\n"
 			"		return vec4(0.0);\n"
 			"	}\n"
-			"	vec4 scenePositionL	= texture( scenePositionMap, texCoord + left/scenePositionMapSize );\n"
-			"	if ( (scenePositionL.x == 0.0) && (scenePositionL.y == 0.0) && (scenePositionL.z == 0.0) )\n"
+			"	float scenePositionL	= texture( scenePositionMap, texCoord + left/scenePositionMapSize ).z;\n"
+			"	if ( scenePositionL == 0.0 )\n"
 			"	{\n"
 			"		return vec4(0.0);\n"
 			"	}\n"
-			"	vec4 scenePositionR	= texture( scenePositionMap, texCoord + right/scenePositionMapSize );\n"
-			"	if ( (scenePositionR.x == 0.0) && (scenePositionR.y == 0.0) && (scenePositionR.z == 0.0) )\n"
+			"	float scenePositionR	= texture( scenePositionMap, texCoord + right/scenePositionMapSize ).z;\n"
+			"	if ( scenePositionR == 0.0 )\n"
 			"	{\n"
 			"		return vec4(0.0);\n"
 			"	}\n"
-			"	vec4 scenePositionT	= texture( scenePositionMap, texCoord + top/scenePositionMapSize );\n"
-			"	if ( (scenePositionT.x == 0.0) && (scenePositionT.y == 0.0) && (scenePositionT.z == 0.0) )\n"
+			"	float scenePositionT	= texture( scenePositionMap, texCoord + top/scenePositionMapSize ).z;\n"
+			"	if ( scenePositionT == 0.0 )\n"
 			"	{\n"
 			"		return vec4(0.0);\n"
 			"	}\n"
-			"	vec4 scenePositionB	= texture( scenePositionMap, texCoord + bottom/scenePositionMapSize );\n"
-			"	if ( (scenePositionB.x == 0.0) && (scenePositionB.y == 0.0) && (scenePositionB.z == 0.0) )\n"
+			"	float scenePositionB	= texture( scenePositionMap, texCoord + bottom/scenePositionMapSize ).z;\n"
+			"	if ( scenePositionB == 0.0 )\n"
 			"	{\n"
 			"		return vec4(0.0);\n"
 			"	}\n"
-			"	vec4 scenePosition	= vec4( scenePositionL.z, scenePositionR.z, scenePositionT.z, scenePositionB.z );\n"
+
+			// "	vec4 scenePositionC	= texture( scenePositionMap, texCoord );\n"
+			// "	if ( /*(scenePositionC.x == 0.0) && (scenePositionC.y == 0.0) && */(scenePositionC.z == 0.0) )\n"
+			// "	{\n"
+			// "		return vec4(0.0);\n"
+			// "	}\n"
+			// "	vec4 scenePositionL	= texture( scenePositionMap, texCoord + left/scenePositionMapSize );\n"
+			// "	if ( /*(scenePositionL.x == 0.0) && (scenePositionL.y == 0.0) && */(scenePositionL.z == 0.0) )\n"
+			// "	{\n"
+			// "		return vec4(0.0);\n"
+			// "	}\n"
+			// "	vec4 scenePositionR	= texture( scenePositionMap, texCoord + right/scenePositionMapSize );\n"
+			// "	if ( /*(scenePositionR.x == 0.0) && (scenePositionR.y == 0.0) && */(scenePositionR.z == 0.0) )\n"
+			// "	{\n"
+			// "		return vec4(0.0);\n"
+			// "	}\n"
+			// "	vec4 scenePositionT	= texture( scenePositionMap, texCoord + top/scenePositionMapSize );\n"
+			// "	if ( /*(scenePositionT.x == 0.0) && (scenePositionT.y == 0.0) && */(scenePositionT.z == 0.0) )\n"
+			// "	{\n"
+			// "		return vec4(0.0);\n"
+			// "	}\n"
+			// "	vec4 scenePositionB	= texture( scenePositionMap, texCoord + bottom/scenePositionMapSize );\n"
+			// "	if ( /*(scenePositionB.x == 0.0) && (scenePositionB.y == 0.0) && */(scenePositionB.z == 0.0) )\n"
+			// "	{\n"
+			// "		return vec4(0.0);\n"
+			// "	}\n"
+
+			//"	vec4 scenePosition	= vec4( scenePositionL.z, scenePositionR.z, scenePositionT.z, scenePositionB.z );\n"
+			"	vec4 scenePosition	= vec4( scenePositionL, scenePositionR, scenePositionT, scenePositionB );\n"
 			"\n"
 			"	vec2	fluidHMSize = textureSize( fluidHM, 0 );\n"
 			"	float	fluidHeightC	= texture( fluidHM, texCoord ).x;\n"
@@ -89,12 +112,10 @@ void Fluid::sethSimulationPassToDefault()
 			"	float	fluidHeightB	= texture( fluidHM, texCoord + bottom/fluidHMSize ).x;\n"
 			"	vec4	fluidHeight		= vec4( fluidHeightL, fluidHeightR, fluidHeightT, fluidHeightB );\n"
 			"\n"
-			"	float	totalHC = scenePositionC.z + fluidHeightC;\n"
+//			"	float	totalHC = scenePositionC.z + fluidHeightC;\n"
+			"	float	totalHC = scenePositionC + fluidHeightC;\n"
 			"	vec4	totalH	= scenePosition + fluidHeight;\n"
 			"	vec4	heightDiff	= vec4(totalHC) - totalH;\n"
-			"\n"
-			"//	vec4	stepHD = step(1.0/256.0, heightDiff);\n"
-			"//	heightDiff *= stepHD;\n"
 			"\n"
 			"	vec4	oldOutflow = texture( previousOutflow, texCoord );\n"
 			"	vec4	accel		= gravity * heightDiff / cellSize;\n"
@@ -116,52 +137,8 @@ void Fluid::sethSimulationPassToDefault()
 			"		}\n"
 			"	}\n"
 			"	return outflow;\n"
-
-
-
-			"\n"
-			"	//vec4	oldOutflow = texture( previousOutflow, texCoord );\n"
-			"\n"
-			"//	vec4 param = min(abs(heightDiff), (vec4(fluidHeightC) + fluidHeight)/2.0);\n"
-			"//	vec4	outflow = damping * oldOutflow + clamp(0.1 * heightDiff * param, vec4(0), vec4(0.1) );\n"
-			"//	outflow = max( vec4(0.0), outflow );\n"
-			//"	vec4	outflow = damping * oldOutflow + min( heightDiff, vec4(16.0/256.0) );\n"
-			"//	return clamp(heightDiff/8.0,vec4(0),vec4(2.));\n"
-			//"	return clamp(heightDiff/8.0,vec4(0),vec4(1.));\n"
-			//"	return outflow;\n"
-			"\n"
 			"}\n"
 			"\n\n\n" );
-/*	vec4	accel		= gravity * heightDiff / cellSize;
-
-	vec4	oldOutflow = texture( previousOutflow, texCoord );
-	vec4 outflow = damping * oldOutflow + accel;
-	outflow = max( vec4(0.0), outflow );
-	float maxFluid = 1*1*fluidHeightC;
-	float fluidOut = (outflow.x + outflow.y + outflow.z + outflow.w ) * 1.0;
-	if ( fluidOut == 0.0 )
-	{
-		outflow = vec4(0);
-	}
-	else
-	{
-		float fluidScaleFactor = maxFluid / fluidOut;
-		if ( fluidScaleFactor < 1.0 )
-		{
-			outflow *= fluidScaleFactor;
-		}
-	}
-	return clamp( outflow, vec4(0), vec4(2) );
-//	vec4 param = min(abs(heightDiff), (vec4(fluidHeightC) + fluidHeight)/2.0);
-	//vec4	outflow = damping * oldOutflow + clamp(0.1 * heightDiff * param, vec4(0), vec4(0.1) );
-
-	//return clamp(heightDiff/8.0,vec4(0),vec4(1.));*/
-
-	/*vec4 param = min( abs(heightDiff), (vec4(fluidHeightC) + fluidHeight)/3.0);
-	vec4	oldOutflow = texture( previousOutflow, texCoord );
-	vec4	outflow = damping * oldOutflow + clamp(0.1 * heightDiff * param, vec4(0), vec4(0.1) );
-	outflow = max( vec4(0.0), outflow );
-	return outflow;*/
 
 	setSimulationPass1(
 			"// OUTPUT BUFFER 0 : scene position map\n"
