@@ -1451,11 +1451,6 @@ void ForwardRendering::stageInitializeFluidPostProcessing( vgd::node::Fluid * fl
 		p->setCustomFilterApply(
 		"	color = apply( texMap2D[0], texMap2D[1], texMap2D[2], mgl_TexCoord[0].xy, param4f0, param1f0 );\n"
 		);
-// @todo real param from Fluid
-		// cellSize, css, gravity, timeStep
-		p->setParam4f0( vgm::Vec4f(1.f, 1.f, 10.f, 0.1f) );
-		// damping
-		p->setParam1f0( 0.4 );
 
 		group->addChild( p );
 		fluidRC->postProcessing.setState( 0, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
@@ -1790,6 +1785,18 @@ void ForwardRendering::stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engin
 }
 
 
+void ForwardRendering::stageUpdateFluidSimulationParameters( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC )
+{
+	// Retrieves fluid.pass0
+	using vgd::node::PostProcessing;
+	vgd::Shp< PostProcessing > pass0 = fluidRC->postProcessingGroup->getChild< PostProcessing >( 0 );
+
+	pass0->setParam4f0(
+		vgm::Vec4f(	fluid->getCellSize(), fluid->getCss(),
+					fluid->getGravity()[3], fluid->getTimeStep() ) );
+	pass0->setParam1f0( fluid->getDamping() );
+}
+
 
 void ForwardRendering::stageInitializeFluid( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements )
 {
@@ -1855,6 +1862,9 @@ void ForwardRendering::stageInitializeFluid( vgeGL::engine::Engine * engine, vge
 
 		// Updates fluid emitters and drainers.
 		stageUpdateFluidEmittersAndDrainers( engine, fluid, fluidRC );
+
+		// Updates fluid simulation parameters
+		stageUpdateFluidSimulationParameters( engine, fluid, fluidRC );
 	}
 	// else nothing to do
 }
@@ -1937,17 +1947,21 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 	const float			sceneBBSizeMax	= vgm::max( sceneBBSize[0], sceneBBSize[1], sceneBBSize[2] );
 
 	vgm::MatrixR cameraProjection;
-	const float projectionSize = sceneBBSizeMax * 1.42f;
+	const float projectionSize = sceneBBSizeMax * 1.05f;/* * 1.42f */
 	cameraProjection.setOrtho(
 			-projectionSize/2.f, projectionSize/2.f,
 			-projectionSize/2.f, projectionSize/2.f,
-			0.1f/*projectionSize/2048.f*/, projectionSize * 2.f );
-			//projectionSize/2048.f, projectionSize * 4.f );
+			projectionSize/2048.f, projectionSize * 4.f );
 
 	vgm::Vec3f			gravity		( fluid->getGravity() );
 	gravity.normalize();
 	const vgm::Vec3f	position	( sceneBBCenter + sceneBBSizeMax /*/2.f*1.42f*/ * gravity );
 
+	// Updates fluid.feedbackInformations
+	vgm::Vec5f feedbackInformations( position );
+	feedbackInformations[3] = projectionSize;
+	feedbackInformations[4] = projectionSize;
+	fluid->setFeedbackInformations( feedbackInformations );
 	vgm::MatrixR identity = vgm::MatrixR::getIdentity();
 
 	vgd::Shp< glo::Texture2D > color0 = fluidRC->fbo->getColorAsTexture2D();
@@ -1979,6 +1993,10 @@ void ForwardRendering::stageFluidSimulation( vgeGL::engine::Engine * engine )
 	{
 		using vgd::basic::Image;
 		vgd::Shp< Image > image = getImage( fluidRC->postProcessingFBO, 4 );
+		/*namespace bfs = boost::filesystem;
+		image->convertTo( Image::RGB, Image::UINT8 );
+		bfs::remove( "D:\\fluid.png" );
+		image->save("D:\\fluid.png");*/
 
 		fluid->setFluidPositionFeedback( image );
 		fluid->setRequestFeedback( false );

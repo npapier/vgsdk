@@ -167,6 +167,19 @@
 			<type name="string" namespace="std" default = ""></type>
 		</sf>
 
+		<sf name="cellSize" doc="@todo">
+			<type name="float" default="1.0"></type>
+		</sf>
+		<sf name="css" doc="@todo">
+			<type name="float" default="1.0"></type>
+		</sf>
+		<sf name="timeStep" doc="@todo">
+			<type name="float" default="0.1"></type>
+		</sf>
+		<sf name="damping" doc="@todo">
+			<type name="float" default="0.4"></type>
+		</sf>
+
 
 		<mf name="emittersOrDrainers" doc="Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 4.">
 			<type name="Vec5f" namespace="vgm" default = "0.f, 0.f, 0.f, 0.f, 0.f"></type>
@@ -175,6 +188,10 @@
 
 -		<sf name="requestFeedback" doc="True to request a feedback in field fluidPositionFeedback during the next rendering. This field is automatically reset to false after the completion of the feedback.">
 			<type name="bool" default = "false"></type>
+		</sf>
+
+		<sf name="feedbackInformations" doc="@todo">
+			<type name="Vec5f" namespace="vgm" default = "0.f, 0.f, 0.f, 0.f, 0.f"></type>
 		</sf>
 
 		<sf name="fluidPositionFeedback" doc="@todo">

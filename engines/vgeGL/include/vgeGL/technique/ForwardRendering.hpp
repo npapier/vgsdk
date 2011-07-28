@@ -109,6 +109,7 @@ private:
 	void stageInitializeFluidPostProcessing( vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
 	void stageInitializeFluidRC( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
 	void stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
+	void stageUpdateFluidSimulationParameters( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
 
 	//
 	void stageInitializeFluid( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
