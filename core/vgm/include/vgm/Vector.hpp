@@ -237,9 +237,25 @@ vgm::Vec4f		out5b( in5 );
 		m_tCoord[1] = c2;
 		m_tCoord[2] = c3;
 		m_tCoord[3] = c4;
-	}	
+	}
+
+	/**
+ 	 * @brief Constructor from 5 components.
+ 	 * 
+ 	 * @remarks only if dimension is equal to 5.
+ 	 */
+	Vector( const T c1, const T c2, const T c3, const T c4, const T c5 )
+	{
+		assert(N==5);
+
+		m_tCoord[0] = c1;
+		m_tCoord[1] = c2;
+		m_tCoord[2] = c3;
+		m_tCoord[3] = c4;
+		m_tCoord[4] = c5;
+	}
 	//@}
-	 
+	
 
 
 	/**
