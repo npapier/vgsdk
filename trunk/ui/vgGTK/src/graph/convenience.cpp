@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -22,6 +22,7 @@
 #include <vgd/field/Float.hpp>
 #include <vgd/field/Matrix.hpp>
 #include <vgd/field/NodeShp.hpp>
+#include <vgd/field/NodeWkp.hpp>
 
 #include <vgd/field/Plane.hpp>
 #include <vgd/field/Primitive.hpp>
@@ -219,8 +220,8 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 				// int_t
 				int8,	uint8,
 				int16,	uint16,
-				int32,	uint32,
-				int,	uint
+				int32,	uint32
+//				int,	uint
 			> int_t;
 
 			typedef mpl::list<
@@ -248,9 +249,9 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 
 			typedef mpl::list<
 				// Vector_t	@todo vgm::Vector< *, *>
-				vgm::Vec2i, vgm::Vec3i, vgm::Vec4i,
-				vgm::Vec2f, vgm::Vec3f, vgm::Vec4f,
-				vgm::Vec2d, vgm::Vec3d, vgm::Vec4d
+				vgm::Vec2i, vgm::Vec3i, vgm::Vec4i, vgm::Vec5i,
+				vgm::Vec2f, vgm::Vec3f, vgm::Vec4f, vgm::Vec5f,
+				vgm::Vec2d, vgm::Vec3d, vgm::Vec4d, vgm::Vec5d
 			> Vector_t;
 
 			typedef mpl::list<
@@ -263,8 +264,10 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 			typedef mpl::list<
 				// vgd types
 				vgd::Shp< vgd::basic::IImage >,
+				vgd::Wkp< vgd::node::Node >,
+				vgd::Wkp< vgd::node::Group >,
+				vgd::Shp< vgd::node::Node >,
 				vgd::Shp< vgd::node::Group >,
-				vgd::Shp< vgd::node::Node >
 			> vgd_t;
 
 			typedef mpl::copy< bool_t, mpl::front_inserter< enum_t > >::type	l2;
