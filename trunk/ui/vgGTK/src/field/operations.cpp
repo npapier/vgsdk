@@ -112,18 +112,24 @@ vgd::Shp< FieldEditor > createEditor( const std::type_info & fieldType )
 		result.reset( new SingleFieldEditor< widget::Vector<int32, 3> >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec4i >) )
 		result.reset( new SingleFieldEditor< widget::Vector<int32, 4> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec5i >) )
+		result.reset( new SingleFieldEditor< widget::Vector<int32, 5> >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec2f >) )
 		result.reset( new SingleFieldEditor< widget::Vector<float, 2> >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec3f >) )
 		result.reset( new SingleFieldEditor< widget::Vector<float, 3> >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec4f >) )
 		result.reset( new SingleFieldEditor< widget::Vector<float, 4> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec5f >) )
+		result.reset( new SingleFieldEditor< widget::Vector<float, 5> >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec2d >) )
 		result.reset( new SingleFieldEditor< widget::Vector<double, 2> >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec3d >) )
 		result.reset( new SingleFieldEditor< widget::Vector<double, 3> >() );
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec4d >) )
 		result.reset( new SingleFieldEditor< widget::Vector<double, 4> >() );
+	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::Vec5d >) )
+		result.reset( new SingleFieldEditor< widget::Vector<double, 5> >() );
 
 	// @todo Plane, Rotation
 	else if ( fieldType == typeid(vgd::field::TSingleField< vgm::MatrixR >) )
