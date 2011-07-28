@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -171,7 +171,14 @@ std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group
 
 std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::basic::IImage > & iimage )
 {
-	os << *iimage;
+	if ( iimage )
+	{
+		os << *iimage;
+	}
+	else
+	{
+		os << "empty";
+	}
 
 	return os;
 }

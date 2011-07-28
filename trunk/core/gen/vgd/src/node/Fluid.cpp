@@ -176,7 +176,7 @@ void Fluid::sethSimulationPassToDefault()
 			"{\n"
 			"	if ( fluidEmitterOrDrainerIntensity == 0 )\n"
 			"	{\n"
-			"		return 0;\n"
+			"		return 0.0;\n"
 			"	}\n"
 			"\n"
 			"	vec3	emitterOrDrainerPosition	= fluidEmitterOrDrainer.xyz;\n"
@@ -186,7 +186,7 @@ void Fluid::sethSimulationPassToDefault()
 			"	{\n"
 			"		return fluidEmitterOrDrainerIntensity;\n" // @todo better function
 			"	}\n"
-			"	return 0;\n"
+			"	return 0.0;\n"
 			"}\n"
 			"\n"
 			"// PASS1 : compute new fluid height texture(3) from (1) & (2)\n"

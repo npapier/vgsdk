@@ -1520,7 +1520,7 @@ void ForwardRendering::stageInitializeFluidPostProcessing( vgd::node::Fluid * fl
 			"		float fluidHeight = texture( fluidHM, texCoord ).x;\n"
 			"		if ( fluidHeight == 0 )\n"
 			"		{\n"
-			"			return sceneVertex;\n"
+			"			return vec4(0);\n"
 			"		}\n"
 			"		else\n"
 			"		{\n"
@@ -1690,6 +1690,19 @@ void ForwardRendering::stageInitializeFluidRC( vgeGL::engine::Engine * engine, v
 	boost::tie( fluidRC->frameBuffer, fluidRC->fbo ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, myOutputBufferProperties.get(), std::back_inserter(fluidRC->heightMaps), true );
 
 	//
+	fluidRC->postProcessingFBO.reset( new vgeGL::rc::FrameBufferObject() );
+	fluidRC->postProcessingFBO->generate();
+	fluidRC->postProcessingFBO->bind();
+	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(0), 0 );
+	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(1), 1 );
+	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(2), 2 );
+	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(3), 3 );
+	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(4), 4 );
+	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(5), 5 );
+	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(6), 6 );
+	fluidRC->postProcessingFBO->unbind();
+
+	//
 	fluidRC->fbo->bind();
 	fluidRC->fbo->setDrawBuffersToAll();
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -1729,28 +1742,6 @@ void ForwardRendering::stageInitializeFluidRC( vgeGL::engine::Engine * engine, v
 //	fluidRC->fbo->attachColor( aGLO, 1 );
 	//
 
-	//
-	/*fluidRC->postProcessingFBO.reset( new vgeGL::rc::FrameBufferObject() );
-	fluidRC->postProcessingFBO->generate();
-	fluidRC->postProcessingFBO->bind();
-	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(0), 0 );
-	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(1), 1 );
-	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(2), 2 );
-	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(3), 3 );
-	fluidRC->postProcessingFBO->unbind();*/
-
-	// Initializes fluid height map
-	//vgd::Shp< glo::Texture2D > fluidHeightMap = fluidRC->fbo->getColorAsTexture2D(1);
-	//vgd::Shp< glo::Texture2D > fluidPositionMap = fluidRC->fbo->getColorAsTexture2D(2);
-
-
-
-
-
-	/*fluidHeightMap->bind();
-	fluidHeightMap->clearImage();			// @todo TBT
-	fluidHeightMap->unbind();*/
-
 	// Initializes grid and separator
 	fluidRC->grid = vgd::node::Grid::create("fluid.grid");
 	const int	widthSlice	= static_cast<int>( (fluid->getHeightMapSize()[0]-1) * positionMapScaleFactor );
@@ -1786,7 +1777,6 @@ void ForwardRendering::stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engin
 	param4f0.setNull();
 
 	const int iEnd = std::min( maxEmittersOrDrainers, emittersOrDrainers->size() );
-	//const int iEnd = emittersOrDrainers->size();
 	for( int i = 0; i < iEnd; ++i )
 	{
 		const vgm::Vec5f properties = (*emittersOrDrainers)[i];
@@ -1983,6 +1973,16 @@ void ForwardRendering::stageFluidSimulation( vgeGL::engine::Engine * engine )
 	if ( !isFluidEnabled || !fluidRC )	return;
 
 	applyPostProcessing( engine, fluidRC->heightMaps, &(fluidRC->postProcessing) );
+
+// @todo framework to capture texture image and display in an overlay
+	if ( fluid->getRequestFeedback() )
+	{
+		using vgd::basic::Image;
+		vgd::Shp< Image > image = getImage( fluidRC->postProcessingFBO, 4 );
+
+		fluid->setFluidPositionFeedback( image );
+		fluid->setRequestFeedback( false );
+	}
 }
 
 

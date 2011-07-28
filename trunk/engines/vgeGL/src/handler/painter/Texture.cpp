@@ -12,6 +12,7 @@
 #include <vgDebug/convenience.hpp>
 #include <vgm/VectorOperations.hpp>
 
+#include "vgeGL/basic/helpers.hpp"
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/engine/GLSLState.hpp"
 
@@ -82,14 +83,14 @@ const GLenum convertInternalFormatToGLInternalFormat( const vgd::node::Texture::
 	else if ( internalFormat == Texture::LUMINANCE_ALPHA_32F )
 	{
 		return GL_LUMINANCE_ALPHA32F_ARB;
-	}	
+	}
 	else if ( internalFormat ==  Texture::AUTOMATIC )
 	{
 		return defaultGLInternalFormat;
 	}
 	else
 	{
-		assert( false && "Unexpected value in convertInternalFormatToGLInternalFormat()" );
+		vgAssertN( false, "Unexpected value in convertInternalFormatToGLInternalFormat()" );
 		return GL_DEPTH_COMPONENT;
 	}
 }
@@ -438,6 +439,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 		{
 			// Specifies texture image
 			glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+			//glPixelStorei( GL_PACK_ALIGNMENT, 1 );
 
 			// Specifies a texture image
 			// @todo Support of level-of-detail number
@@ -523,8 +525,8 @@ void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture 
 								pixels );
 	}
 
-	/*vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
-	pDFIImages->validate();*/
+	vgd::field::DirtyFlag * pDFImage = pNode->getDirtyFlag( pNode->getDFImage() );
+	pDFImage->validate();
 }
 
 
@@ -536,8 +538,7 @@ Texture::State Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::n
 	State state;
 
 	// Tests if 'iimage' field is valid
-	//vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFIImages() );
-	vgd::field::DirtyFlag * pDFIImages = pNode->getDirtyFlag( pNode->getDFNode() ); // @todo DFIImages()
+	vgd::field::DirtyFlag * pDFImage = pNode->getDirtyFlag( pNode->getDFImage() );
 
 	// Gets texture.iimage
 	//const bool imageFieldDefined = 	pNode->getIImages( vgd::node::Texture::DEFAULT_IIMAGES, texInfo.iimage );
@@ -552,7 +553,7 @@ Texture::State Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::n
 							( (texInfo.iimage != 0 ) && (texInfo.iimage->isEmpty()) );
 
 	// Computes current state
-	if ( pDFIImages->isValid() )
+	if ( pDFImage->isValid() )
 	{
 		if ( noImage )
 		{
@@ -617,7 +618,7 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 	assert( texInfo.texDimension == 1 || texInfo.texDimension == 2 || texInfo.texDimension == 3 );
 
 	boost::tie(texInfo.internalFormat, texInfo.format ) = chooseFormats( image, pNode );
-	texInfo.type										= convertMyType2GL( image->type() );
+	texInfo.type										= vgeGL::basic::convertMyType2GL( image->type() );
 
 	// Takes care of POT/NPOT image (by using GL_ARB_texture_non_power_of_two or by resizing incoming image)
 	// @todo Support of GL_ARB_texture_rectangle
@@ -755,8 +756,7 @@ void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd
 											::glo::Texture *pTexture )
 {
 	// TEXTURE PARAMETERS
-	//vgd::field::DirtyFlag* pDFParameters = pNode->getDirtyFlag( pNode->getDFParameters() );	 // @todo DFParameters
-	vgd::field::DirtyFlag* pDFParameters = pNode->getDirtyFlag( pNode->getDFNode() );
+	vgd::field::DirtyFlag* pDFParameters = pNode->getDirtyFlag( pNode->getDFParameters() );
 
 	if ( pDFParameters->isDirty() )
 	{
@@ -767,7 +767,7 @@ void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd
 		paintParams( pGLEngine, pNode, pTexture );
 
 		// Validates DF
-		//pDFParameters->validate();
+		pDFParameters->validate();
 	}
 	// else nothing to do
 
@@ -831,7 +831,7 @@ const boost::tuple< GLint, GLenum > Texture::chooseFormats( vgd::Shp< vgd::basic
 		assert( usage.value() == vgd::node::Texture::IMAGE && "Unexpected value for usage field." );
 
 		const GLint		components	= iimage->components();
-		const GLenum	format		= convertMyFormat2GL( iimage->format() );
+		const GLenum	format		= vgeGL::basic::convertMyFormat2GL( iimage->format() );
 
 		const vgd::node::Texture::InternalFormatValueType internalFormat = texture->getInternalFormat();
 
@@ -842,93 +842,6 @@ const boost::tuple< GLint, GLenum > Texture::chooseFormats( vgd::Shp< vgd::basic
 }
 
 
-
-GLenum Texture::convertMyFormat2GL( const vgd::basic::IImage::Format format )
-{
-	GLenum glformat;
-	
-	switch ( format )
-	{
-		case vgd::basic::IImage::RGB:
-			glformat = GL_RGB;
-			break;
-
-		case vgd::basic::IImage::RGBA:
-			glformat = GL_RGBA;
-			break;
-
-		case vgd::basic::IImage::BGR:
-			glformat = GL_BGR_EXT;
-			break;
-
-		case vgd::basic::IImage::BGRA:
-			glformat = GL_BGRA_EXT;
-			break;
-
-		case vgd::basic::IImage::LUMINANCE:
-		case vgd::basic::IImage::COLOR_INDEX:
-			glformat = GL_LUMINANCE;
-			break;
-			
-		case vgd::basic::IImage::LUMINANCE_ALPHA:
-			glformat = GL_LUMINANCE_ALPHA;
-			break;
-
-		default:
-			assert(false && "Unknown or unsupported format." );
-			glformat = GL_RGBA;
-	}
-
-	return ( glformat );
-}
-
-
-
-GLenum Texture::convertMyType2GL( const vgd::basic::IImage::Type type )
-{
-	GLenum gltype;
-
-	switch ( type )
-	{
-		case vgd::basic::IImage::UINT8:
-			gltype = GL_UNSIGNED_BYTE;
-			break;
-
-		case vgd::basic::IImage::INT8:
-			gltype = GL_BYTE;
-			break;
-
-		case vgd::basic::IImage::UINT16:
-			gltype = GL_UNSIGNED_SHORT;
-			break;
-
-		case vgd::basic::IImage::INT16:
-			gltype = GL_SHORT;
-			break;
-
-		case vgd::basic::IImage::UINT32:
-			gltype = GL_UNSIGNED_INT;
-			break;
-
-		case vgd::basic::IImage::INT32:
-			gltype = GL_INT;
-			break;
-
-		case vgd::basic::IImage::FLOAT:
-			gltype = GL_FLOAT;
-			break;
-
-		case vgd::basic::IImage::NO_TYPE:
-		case vgd::basic::IImage::DOUBLE:
-		default:
-			assert(false && "Unknown or unsupported type.");
-			gltype = GL_UNSIGNED_BYTE;
-	}
-	
-	return ( gltype );
-}
-
-		
 
 GLenum Texture::m_wrapParameter[] = {
 	GL_TEXTURE_WRAP_S,

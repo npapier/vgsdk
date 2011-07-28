@@ -208,23 +208,6 @@ protected:
 	 */
 	const boost::tuple< GLint, GLenum > chooseFormats( vgd::Shp< vgd::basic::IImage >, vgd::node::Texture * );
 
-	/**
-	 * @name Helpers
-	 */
-	//@{
-
-	/**
-	 * @brief Convert IImage format to the OpenGL equivalent format.
-	 */
-	static GLenum convertMyFormat2GL( const vgd::basic::IImage::Format format );
-	
-	/**
-	 * @brief Convert IImage type to the OpenGL equivalent type.
-	 */
-	static GLenum convertMyType2GL( const vgd::basic::IImage::Type type );
-
-	//@}
-
 private:
 	static GLenum	m_wrapParameter[];
 	static GLint	m_wrapValue[];
