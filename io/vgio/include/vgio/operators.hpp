@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -165,7 +165,7 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TMultiField< T
 
 		if( field.size() > limit )
 		{
-			os << ", ..." << std::endl << "size: " << field.size();
+			os << ", ..." << std::endl << field.size() << " elements";
 		}
 	}
 
@@ -270,13 +270,6 @@ std::ostream & operator << ( std::ostream & os, const vgd::field::TOptionalField
 /**
  * @brief	Writes into an output stream the given node.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group > & node );
-
-
-
-/**
- * @brief	Writes into an output stream the given node.
- */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::basic::IImage > & iimage );
 
 
@@ -286,6 +279,12 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::ba
  */
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node > & node );
 
+
+
+/**
+ * @brief	Writes into an output stream the given node.
+ */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Wkp< vgd::node::Node > & node );
 
 
 /**

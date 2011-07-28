@@ -6,6 +6,7 @@
 
 #include "vgio/operators.hpp"
 
+#include <vgd/Wkp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgm/operations.hpp>
 #include <vgm/Utilities.hpp>
@@ -160,15 +161,6 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::Binding & bindi
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group > & node )
-{
-	os << node->getName();
-
-	return os;
-}
-
-
-
 std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::basic::IImage > & iimage )
 {
 	if ( iimage )
@@ -194,6 +186,19 @@ std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node 
 
 
 
+std::ostream & operator << ( std::ostream & os, const vgd::Wkp< vgd::node::Node > & node )
+{
+	vgd::Shp< vgd::node::Node > nodeShp = node.lock();
+	if ( nodeShp )
+	{
+		os << nodeShp->getName();
+	}
+	else
+	{
+		os << "-";
+	}
+	return os;
+}
 
 
 
