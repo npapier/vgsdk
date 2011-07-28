@@ -11,7 +11,8 @@
 #include <vgm/Matrix.hpp>
 
 
-
+namespace glo { struct FrameBufferObject; }
+namespace vgd { namespace basic { struct Image; } }
 namespace vgd { namespace node { struct Camera; } }
 
 namespace vgeGL { namespace engine { struct Engine; } }
@@ -24,6 +25,9 @@ namespace vgeGL
 namespace technique
 {
 
+
+// @todo getImage( texture );
+vgd::Shp< vgd::basic::Image > getImage( vgd::Shp< glo::FrameBufferObject > fbo, const int index );
 
 vgd::Shp< vgd::node::Camera > setupRenderFromCamera(
 		const vgm::Vec3f cameraPositionO, const vgm::Vec3f cameraDirectionO, const vgm::MatrixR cameraModelViewMatrix,

@@ -65,10 +65,12 @@ Fluid::Fluid( const std::string nodeName ) :
 	// Adds field(s)
 	addField( new FEmittersOrDrainersType(getFEmittersOrDrainers()) );
 	addField( new FHeightMapSizeType(getFHeightMapSize()) );
+	addField( new FRequestFeedbackType(getFRequestFeedback()) );
 	addField( new FGravityType(getFGravity()) );
 	addField( new FSimulationPass1Type(getFSimulationPass1()) );
 	addField( new FSimulationPass0Type(getFSimulationPass0()) );
 	addField( new FSceneType(getFScene()) );
+	addField( new FFluidPositionFeedbackType(getFFluidPositionFeedback()) );
 
 	// Sets link(s)
 
@@ -81,7 +83,9 @@ void Fluid::setToDefaults( void )
 {
 	Shape::setToDefaults();
 	setHeightMapSize( vgm::Vec2i(256, 256) );
+	setRequestFeedback( false );
 	setGravity( vgm::Vec4f(0.f, -1.f, 0.f, 9.8f) );
+
 
 
 
@@ -122,6 +126,21 @@ const Fluid::HeightMapSizeValueType Fluid::getHeightMapSize() const
 void Fluid::setHeightMapSize( const HeightMapSizeValueType value )
 {
 	getFieldRW<FHeightMapSizeType>(getFHeightMapSize())->setValue( value );
+}
+
+
+
+// RequestFeedback
+const Fluid::RequestFeedbackValueType Fluid::getRequestFeedback() const
+{
+	return getFieldRO<FRequestFeedbackType>(getFRequestFeedback())->getValue();
+}
+
+
+
+void Fluid::setRequestFeedback( const RequestFeedbackValueType value )
+{
+	getFieldRW<FRequestFeedbackType>(getFRequestFeedback())->setValue( value );
 }
 
 
@@ -186,6 +205,21 @@ void Fluid::setScene( const SceneValueType value )
 
 
 
+// FluidPositionFeedback
+const Fluid::FluidPositionFeedbackValueType Fluid::getFluidPositionFeedback() const
+{
+	return getFieldRO<FFluidPositionFeedbackType>(getFFluidPositionFeedback())->getValue();
+}
+
+
+
+void Fluid::setFluidPositionFeedback( const FluidPositionFeedbackValueType value )
+{
+	getFieldRW<FFluidPositionFeedbackType>(getFFluidPositionFeedback())->setValue( value );
+}
+
+
+
 // Field name accessor(s)
 const std::string Fluid::getFEmittersOrDrainers( void )
 {
@@ -197,6 +231,13 @@ const std::string Fluid::getFEmittersOrDrainers( void )
 const std::string Fluid::getFHeightMapSize( void )
 {
 	return "f_heightMapSize";
+}
+
+
+
+const std::string Fluid::getFRequestFeedback( void )
+{
+	return "f_requestFeedback";
 }
 
 
@@ -225,6 +266,13 @@ const std::string Fluid::getFSimulationPass0( void )
 const std::string Fluid::getFScene( void )
 {
 	return "f_scene";
+}
+
+
+
+const std::string Fluid::getFFluidPositionFeedback( void )
+{
+	return "f_fluidPositionFeedback";
 }
 
 
@@ -407,7 +455,7 @@ void Fluid::sethSimulationPassToDefault()
 			"{\n"
 			"	if ( fluidEmitterOrDrainerIntensity == 0 )\n"
 			"	{\n"
-			"		return 0;\n"
+			"		return 0.0;\n"
 			"	}\n"
 			"\n"
 			"	vec3	emitterOrDrainerPosition	= fluidEmitterOrDrainer.xyz;\n"
@@ -417,7 +465,7 @@ void Fluid::sethSimulationPassToDefault()
 			"	{\n"
 			"		return fluidEmitterOrDrainerIntensity;\n" // @todo better function
 			"	}\n"
-			"	return 0;\n"
+			"	return 0.0;\n"
 			"}\n"
 			"\n"
 			"// PASS1 : compute new fluid height texture(3) from (1) & (2)\n"

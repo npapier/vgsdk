@@ -6,6 +6,8 @@
 #ifndef _VGD_NODE_FLUID_HPP
 #define _VGD_NODE_FLUID_HPP
 
+#include "vgd/field/Bool.hpp"
+#include "vgd/field/IImageShp.hpp"
 #include "vgd/field/NodeWkp.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/field/Vec2i.hpp"
@@ -35,6 +37,9 @@ namespace node
  * - SFVec2i \c heightMapSize = vgm::Vec2i(256, 256)<br>
  *   Specifies the size of the textures used to store scene and fluid height map.<br>
  *<br>
+ * - SFBool \c requestFeedback = false<br>
+ *   True to request a feedback in field fluidPositionFeedback during the next rendering. This field is automatically reset to false after the completion of the feedback.<br>
+ *<br>
  * - SFVec4f \c gravity = vgm::Vec4f(0.f, -1.f, 0.f, 9.8f)<br>
  *   Specifies the direction of the gravity (the first three components) and the intensity (the last component).<br>
  *<br>
@@ -46,6 +51,9 @@ namespace node
  *<br>
  * - SFNodeWkp \c scene = empty<br>
  *   Specifies the root of the scene graph used by the fluid simulation.<br>
+ *<br>
+ * - SFIImageShp \c fluidPositionFeedback = empty<br>
+ *   @todo<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -144,6 +152,36 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Sets the value of field named \c heightMapSize.
 	 */
 	void setHeightMapSize( const HeightMapSizeValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field requestFeedback
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c requestFeedback.
+	 */
+	typedef bool RequestFeedbackValueType;
+
+	/**
+	 * @brief Type definition of the field named \c requestFeedback
+	 */
+	typedef vgd::field::TSingleField< RequestFeedbackValueType > FRequestFeedbackType;
+
+
+	/**
+	 * @brief Gets the value of field named \c requestFeedback.
+	 */
+	const RequestFeedbackValueType getRequestFeedback() const;
+
+	/**
+	 * @brief Sets the value of field named \c requestFeedback.
+	 */
+	void setRequestFeedback( const RequestFeedbackValueType value );
 
 	//@}
 
@@ -270,6 +308,36 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
+	 * @name Accessors to field fluidPositionFeedback
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c fluidPositionFeedback.
+	 */
+	typedef vgd::basic::IImageShp FluidPositionFeedbackValueType;
+
+	/**
+	 * @brief Type definition of the field named \c fluidPositionFeedback
+	 */
+	typedef vgd::field::TSingleField< FluidPositionFeedbackValueType > FFluidPositionFeedbackType;
+
+
+	/**
+	 * @brief Gets the value of field named \c fluidPositionFeedback.
+	 */
+	const FluidPositionFeedbackValueType getFluidPositionFeedback() const;
+
+	/**
+	 * @brief Sets the value of field named \c fluidPositionFeedback.
+	 */
+	void setFluidPositionFeedback( const FluidPositionFeedbackValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Field name accessors
 	 */
 	//@{
@@ -287,6 +355,13 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @return the name of field \c heightMapSize.
 	 */
 	static const std::string getFHeightMapSize( void );
+
+	/**
+	 * @brief Returns the name of field \c requestFeedback.
+	 *
+	 * @return the name of field \c requestFeedback.
+	 */
+	static const std::string getFRequestFeedback( void );
 
 	/**
 	 * @brief Returns the name of field \c gravity.
@@ -315,6 +390,13 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @return the name of field \c scene.
 	 */
 	static const std::string getFScene( void );
+
+	/**
+	 * @brief Returns the name of field \c fluidPositionFeedback.
+	 *
+	 * @return the name of field \c fluidPositionFeedback.
+	 */
+	static const std::string getFFluidPositionFeedback( void );
 
 	//@}
 

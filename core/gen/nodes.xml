@@ -173,6 +173,15 @@
 		</mf>
 
 
+-		<sf name="requestFeedback" doc="True to request a feedback in field fluidPositionFeedback during the next rendering. This field is automatically reset to false after the completion of the feedback.">
+			<type name="bool" default = "false"></type>
+		</sf>
+
+		<sf name="fluidPositionFeedback" doc="@todo">
+			<type name = "IImageShp" namespace = "vgd::basic"></type>
+		</sf>
+
+
 		<includehpp>vgd/include/vgd/node/Fluid.hpp</includehpp>
 		<includecpp>vgd/src/node/Fluid.cpp</includecpp>
 	</node>
