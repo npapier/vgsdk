@@ -9,6 +9,7 @@
 #include "vgd/field/Bool.hpp"
 #include "vgd/field/Float.hpp"
 #include "vgd/field/IImageShp.hpp"
+#include "vgd/field/MatrixR.hpp"
 #include "vgd/field/NodeWkp.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/field/Vec2i.hpp"
@@ -32,6 +33,9 @@ namespace node
  * Liquids are simulated using several height maps (sceneHeightMap computed from \c scene, fluidHeightMap containing height of the fluid). A tessellated quad with displacement mapping is used for the rendering. 
  *
  * New fields defined by this node :
+ * - SFFloat \c opacity = 0.6<br>
+ *   @todo<br>
+ *<br>
  * - MFVec5f \c emittersOrDrainers = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
  *   Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 4.<br>
  *<br>
@@ -56,11 +60,17 @@ namespace node
  * - SFFloat \c cellSize = 1.0<br>
  *   @todo<br>
  *<br>
- * - SFFloat \c damping = 0.4<br>
+ * - SFMatrixR \c feedbackInformationsBis = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
+ *   @todo<br>
+ *<br>
+ * - SFFloat \c damping = 0.8<br>
  *   @todo<br>
  *<br>
  * - SFFloat \c timeStep = 0.1<br>
  *   @todo<br>
+ *<br>
+ * - SFFloat \c thickness = 1.0<br>
+ *   fluid thickness factor (only visual)<br>
  *<br>
  * - SFVec5f \c feedbackInformations = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
  *   @todo<br>
@@ -106,6 +116,36 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
 	static vgd::Shp< Fluid > createWhole( const std::string nodeName = "DefaultWhole" );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field opacity
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c opacity.
+	 */
+	typedef float OpacityValueType;
+
+	/**
+	 * @brief Type definition of the field named \c opacity
+	 */
+	typedef vgd::field::TSingleField< OpacityValueType > FOpacityType;
+
+
+	/**
+	 * @brief Gets the value of field named \c opacity.
+	 */
+	const OpacityValueType getOpacity() const;
+
+	/**
+	 * @brief Sets the value of field named \c opacity.
+	 */
+	void setOpacity( const OpacityValueType value );
 
 	//@}
 
@@ -354,6 +394,36 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
+	 * @name Accessors to field feedbackInformationsBis
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c feedbackInformationsBis.
+	 */
+	typedef vgm::MatrixR FeedbackInformationsBisValueType;
+
+	/**
+	 * @brief Type definition of the field named \c feedbackInformationsBis
+	 */
+	typedef vgd::field::TSingleField< FeedbackInformationsBisValueType > FFeedbackInformationsBisType;
+
+
+	/**
+	 * @brief Gets the value of field named \c feedbackInformationsBis.
+	 */
+	const FeedbackInformationsBisValueType getFeedbackInformationsBis() const;
+
+	/**
+	 * @brief Sets the value of field named \c feedbackInformationsBis.
+	 */
+	void setFeedbackInformationsBis( const FeedbackInformationsBisValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field damping
 	 */
 	//@{
@@ -408,6 +478,36 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Sets the value of field named \c timeStep.
 	 */
 	void setTimeStep( const TimeStepValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field thickness
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c thickness.
+	 */
+	typedef float ThicknessValueType;
+
+	/**
+	 * @brief Type definition of the field named \c thickness
+	 */
+	typedef vgd::field::TSingleField< ThicknessValueType > FThicknessType;
+
+
+	/**
+	 * @brief Gets the value of field named \c thickness.
+	 */
+	const ThicknessValueType getThickness() const;
+
+	/**
+	 * @brief Sets the value of field named \c thickness.
+	 */
+	void setThickness( const ThicknessValueType value );
 
 	//@}
 
@@ -509,6 +609,13 @@ struct VGD_API Fluid : public vgd::node::Shape
 	//@{
 
 	/**
+	 * @brief Returns the name of field \c opacity.
+	 *
+	 * @return the name of field \c opacity.
+	 */
+	static const std::string getFOpacity( void );
+
+	/**
 	 * @brief Returns the name of field \c emittersOrDrainers.
 	 *
 	 * @return the name of field \c emittersOrDrainers.
@@ -565,6 +672,13 @@ struct VGD_API Fluid : public vgd::node::Shape
 	static const std::string getFCellSize( void );
 
 	/**
+	 * @brief Returns the name of field \c feedbackInformationsBis.
+	 *
+	 * @return the name of field \c feedbackInformationsBis.
+	 */
+	static const std::string getFFeedbackInformationsBis( void );
+
+	/**
 	 * @brief Returns the name of field \c damping.
 	 *
 	 * @return the name of field \c damping.
@@ -577,6 +691,13 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @return the name of field \c timeStep.
 	 */
 	static const std::string getFTimeStep( void );
+
+	/**
+	 * @brief Returns the name of field \c thickness.
+	 *
+	 * @return the name of field \c thickness.
+	 */
+	static const std::string getFThickness( void );
 
 	/**
 	 * @brief Returns the name of field \c feedbackInformations.

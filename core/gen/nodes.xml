@@ -177,9 +177,15 @@
 			<type name="float" default="0.1"></type>
 		</sf>
 		<sf name="damping" doc="@todo">
-			<type name="float" default="0.4"></type>
+			<type name="float" default="0.8"></type>
 		</sf>
 
+		<sf name="thickness" doc="fluid thickness factor (only visual)">
+			<type name="float" default="1.0"></type>
+		</sf>
+		<sf name="opacity" doc="@todo">
+			<type name="float" default="0.6"></type>
+		</sf>
 
 		<mf name="emittersOrDrainers" doc="Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 4.">
 			<type name="Vec5f" namespace="vgm" default = "0.f, 0.f, 0.f, 0.f, 0.f"></type>
@@ -192,6 +198,10 @@
 
 		<sf name="feedbackInformations" doc="@todo">
 			<type name="Vec5f" namespace="vgm" default = "0.f, 0.f, 0.f, 0.f, 0.f"></type>
+		</sf>
+
+		<sf name="feedbackInformationsBis" doc="@todo">
+			<type name="MatrixR" namespace="vgm" default = "vgm::MatrixR::getIdentity()"></type>
 		</sf>
 
 		<sf name="fluidPositionFeedback" doc="@todo">
