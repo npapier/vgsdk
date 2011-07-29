@@ -5,6 +5,8 @@
 
 #include "vgeGL/handler/painter/Fluid.hpp"
 
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/lexical_cast.hpp>
 #include <vgDebug/convenience.hpp>
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Fluid.hpp>
@@ -105,7 +107,8 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 
 		const std::string ecPosition_gl_Position_displacementMapping =
 		"	vec4 sceneVertex = texture( texMap2D[0], (gl_TextureMatrix[0] * mgl_MultiTexCoord0).xy);\n"
-		"	if ( (sceneVertex.x == 0) && (sceneVertex.y == 0) && (sceneVertex.z == 0) )\n"
+		"	if ( sceneVertex.z == 0 )\n"
+//		"	if ( (sceneVertex.x == 0) && (sceneVertex.y == 0) && (sceneVertex.z == 0) )\n"
 		"	{\n"
 		"		ecPosition = vec4(0, 0, 0, -1);\n"
 		"		gl_Position = vec4(0, 0, 0, -1);\n"
@@ -125,15 +128,15 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 		"	ecNormal = gl_NormalMatrix * normal.xyz;\n" );
 
 		glslState.setShaderStage( GLSLState::FRAGMENT_DECLARATIONS, "in float fluidHeight;\n" );
-		glslState.setShaderStage( GLSLState::FRAGMENT_OUTPUT,
-		"	if ( fluidHeight == 0 )\n"
+
+		std::string fragmentOutputStr = 
+		"	if ( fluidHeight <= OPACITY )\n"
 		"	{\n"
 		"		discard;\n"
 		"	}\n"
-		"	else\n"
+		/*"	else\n"
 		"	{\n"
-		//"		const float p = 0.0;\n"
-		"		const float p = 0.6;\n"
+		"		const float p = OPACITY;\n"
 		"		float alpha;\n"
 		"		if ( fluidHeight >= p )\n"
 		"		{\n"
@@ -143,9 +146,14 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 		"		{\n"
 		"			alpha = fluidHeight/p;\n"
 		"		}\n"
-		"		gl_FragData[0] = vec4(color.rgb, alpha);\n"
-		"	}\n"
-		"\n");
+		"		gl_FragData[0] = vec4(color.rgb, alpha);\n"*/
+		"		gl_FragData[0] = color;\n"
+		//"	}\n"
+		"\n";
+
+		const std::string opacityStr = boost::lexical_cast<std::string>( fluid->getOpacity() );
+		boost::algorithm::replace_all( fragmentOutputStr, "OPACITY", opacityStr );
+		glslState.setShaderStage( GLSLState::FRAGMENT_OUTPUT, fragmentOutputStr );
 
 		// fluid position map
 		vgd::Shp< vgd::node::Texture2D > fluidPositionMap = fluidRC->heightMaps[4];
@@ -170,9 +178,13 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 
 		// fluid height map
 		vgd::Shp< vgd::node::Texture2D > fluidHeightMap = fluidRC->heightMaps[1];
-		if ( fluidHeightMap->getMultiAttributeIndex() != 2 ) fluidHeightMap->setMultiAttributeIndex( 2 );
-		fluidHeightMap->setVertexFunction(
-			"	fluidHeight = texture( texMap2D[2], mgl_TexCoord[0].xy ).x;\n" );
+		if ( fluidHeightMap->getMultiAttributeIndex() != 2 )
+		{
+			fluidHeightMap->setMultiAttributeIndex( 2 );
+			fluidHeightMap->setVertexFunction(
+				"	fluidHeight = texture( texMap2D[2], mgl_TexCoord[0].xy ).x;\n" );
+		}
+
 // @todo done in FRAGMENT_OUTPUT but could be better done here => fluidHeightMap->setFragmentFunction( "	color = vec4( color.rgb, fluidHeight );\n" );
 // @todo optme
 //		fluidHeightMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );

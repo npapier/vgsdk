@@ -1501,31 +1501,62 @@ void ForwardRendering::stageInitializeFluidPostProcessing( vgd::node::Fluid * fl
 		p->setOutput( PostProcessing::OUTPUT_OUTPUT_BUFFER4 );
 		p->setFilter( PostProcessing::CUSTOM_FILTER );
 		p->setCustomFilterDefinition(
-			"vec4 apply( sampler2D scenePositionMap, sampler2D fluidHM, vec2 texCoord )\n"
+			"vec4 apply( sampler2D scenePositionMap, sampler2D fluidHM, vec2 texCoord, float thickness )\n"
 			"{\n"
-			"	const float thickness = 1.5;\n"			// @todo uniform
-			"	vec4 gravity = vec4( 0, 0, -1, 0 );\n" // @todo uniform from fluid
+			"	vec2 left	= vec2(-1.0, 0.0);\n"
+			"	vec2 right	= vec2(1.0, 0.0);\n"
+			"	vec2 top	= vec2(0.0, 1.0);\n"
+			"	vec2 bottom	= vec2(0.0, -1.0);\n"
+			"\n"
+			"	vec4 gravity = vec4( 0, 0, -1, 0 );\n"	// @todo uniform from fluid
+			"\n"
 			"	vec4 sceneVertex = texture( scenePositionMap, texCoord );\n"
-			"	if ( (sceneVertex.x == 0) && (sceneVertex.y == 0) && (sceneVertex.z == 0) )\n"
+//			"	if ( (sceneVertex.x == 0) && (sceneVertex.y == 0) && (sceneVertex.z == 0) )\n"
+			"	if ( sceneVertex.z == 0.0 )\n"
 			"	{\n"
-			"		return sceneVertex;\n"
+			"		return vec4(0.0);\n"
 			"	}\n"
 			"	else\n"
 			"	{\n"
-			"		float fluidHeight = texture( fluidHM, texCoord ).x;\n"
-			"		if ( fluidHeight == 0 )\n"
+			"		float fluidHeightC = texture( fluidHM, texCoord ).x;\n"
+			"		if ( fluidHeightC == 0.0 )\n"
 			"		{\n"
-			"			return vec4(0);\n"
+			"			vec2	fluidHMSize		= textureSize( fluidHM, 0 );\n"
+			"			float	fluidHeightL	= texture( fluidHM, texCoord + left/fluidHMSize ).x;\n"
+			"			float	fluidHeightR	= texture( fluidHM, texCoord + right/fluidHMSize ).x;\n"
+			"			float	fluidHeightT	= texture( fluidHM, texCoord + top/fluidHMSize ).x;\n"
+			"			float	fluidHeightB	= texture( fluidHM, texCoord + bottom/fluidHMSize ).x;\n"
+			"			float	fluidHeightSum	= fluidHeightL + fluidHeightR + fluidHeightT + fluidHeightB;\n"
+			"			if ( fluidHeightSum == 0.0 )	return vec4(0.0);\n"
+
+			"			// fluidHeightSum != 0\n"
+			"			vec2 scenePositionMapSize = textureSize( scenePositionMap, 0 );\n"
+//			"			float scenePositionC	= texture( scenePositionMap, texCoord ).z;\n"
+			"			float scenePositionL	= texture( scenePositionMap, texCoord + left/scenePositionMapSize ).z;\n"
+			"			float scenePositionR	= texture( scenePositionMap, texCoord + right/scenePositionMapSize ).z;\n"
+			"			float scenePositionT	= texture( scenePositionMap, texCoord + top/scenePositionMapSize ).z;\n"
+			"			float scenePositionB	= texture( scenePositionMap, texCoord + bottom/scenePositionMapSize ).z;\n"
+			"\n"
+			"			float newHeight = sceneVertex.z + fluidHeightC * thickness;\n"
+			"			newHeight = min( newHeight, scenePositionL + fluidHeightL * thickness );\n"
+			"			newHeight = min( newHeight, scenePositionR + fluidHeightR * thickness );\n"
+			"			newHeight = min( newHeight, scenePositionT + fluidHeightT * thickness );\n"
+			"			newHeight = min( newHeight, scenePositionB + fluidHeightB * thickness );\n"
+			"\n"
+			"			return vec4( sceneVertex.xy, newHeight, 0 );\n"
+//			"			return sceneVertex + gravity * 100.0;\n" // @todo 100 must be infinity
+//			"			return sceneVertex + gravity * 2.0;\n" // @todo 100 must be infinity
+//			"			return sceneVertex;\n"
 			"		}\n"
 			"		else\n"
 			"		{\n"
-			"			return vec4(sceneVertex.xy, sceneVertex.z + fluidHeight * thickness, 0 );\n"
+			"			return vec4(sceneVertex.xy, sceneVertex.z + fluidHeightC * thickness, 0 );\n"
 			"		}\n"
 			"	}\n"
 			"}\n"
 			"\n\n\n" );
 		p->setCustomFilterApply(
-		"	color = apply( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy );\n"
+		"	color = apply( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param1f0 );\n"
 		);
 
 		group->addChild( p );
@@ -1618,8 +1649,8 @@ void ForwardRendering::stageInitializeFluidRC( vgeGL::engine::Engine * engine, v
 	vgd::Shp< OutputBufferProperty > obufProperty2 = OutputBufferProperty::create("fluid.outputFlowTexture", 2);
 
 	obufProperty2->setFormat( OutputBufferProperty::RGBA );
-//	obufProperty2->setType( OutputBufferProperty::INTEGER );
-	obufProperty2->setType( OutputBufferProperty::FLOAT16 );
+	obufProperty2->setType( OutputBufferProperty::INTEGER );
+//	obufProperty2->setType( OutputBufferProperty::FLOAT16 );
 
 	obufProperty2->setSizeSemantic( OutputBufferProperty::PIXEL_SIZE );
 	obufProperty2->setSize( heightMapSize );
@@ -1653,7 +1684,8 @@ void ForwardRendering::stageInitializeFluidRC( vgeGL::engine::Engine * engine, v
 	// OUTPUT BUFFER 5 : fluid normal map
 	vgd::Shp< OutputBufferProperty > obufProperty5 = OutputBufferProperty::create("normalMap", 5);
 
-	obufProperty5->setFormat( OutputBufferProperty::RGBA );
+	obufProperty5->setFormat( OutputBufferProperty::RGB );
+	//obufProperty5->setFormat( OutputBufferProperty::RGBA );
 //	obufProperty5->setType( OutputBufferProperty::INTEGER );
 	obufProperty5->setType( OutputBufferProperty::FLOAT16 );
 
@@ -1669,8 +1701,8 @@ void ForwardRendering::stageInitializeFluidRC( vgeGL::engine::Engine * engine, v
 	vgd::Shp< OutputBufferProperty > obufProperty6 = OutputBufferProperty::create("fluid.previousOutputFlowTexture", 6);
 
 	obufProperty6->setFormat( OutputBufferProperty::RGBA );
-	//obufProperty6->setType( OutputBufferProperty::INTEGER );
-	obufProperty6->setType( OutputBufferProperty::FLOAT16 );
+	obufProperty6->setType( OutputBufferProperty::INTEGER );
+	//obufProperty6->setType( OutputBufferProperty::FLOAT16 );
 
 	obufProperty6->setSizeSemantic( OutputBufferProperty::PIXEL_SIZE );
 	obufProperty6->setSize( heightMapSize );
@@ -1709,33 +1741,20 @@ void ForwardRendering::stageInitializeFluidRC( vgeGL::engine::Engine * engine, v
 	fluidRC->fbo->detachColor( 6 );
 	fluidRC->fbo->unbind();
 
-//
-/*	using vgd::node::Texture;
-	fluidRC->heightMaps[0]->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-	fluidRC->heightMaps[0]->setFilter( Texture::MAG_FILTER, Texture::LINEAR );*/
-//
+
 // for debug
 	/*using vgd::node::Texture;
 	fluidRC->heightMaps[1] = vgd::node::Texture2D::create("attachment1");
 	fluidRC->heightMaps[1]->setWrap( Texture::WRAP_S, Texture::CLAMP_TO_EDGE );
 	fluidRC->heightMaps[1]->setWrap( Texture::WRAP_T, Texture::CLAMP_TO_EDGE );
 	fluidRC->heightMaps[1]->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-	fluidRC->heightMaps[1]->setFilter( Texture::MAG_FILTER, Texture::NEAREST );*/
+	fluidRC->heightMaps[1]->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
 
-	/*using vgd::basic::Image;
-	vgd::Shp< vgd::basic::Image > image( new vgd::basic::Image("d:\\ulis_gbr_lum.png") );
-	image->convertTo( Image::LUMINANCE, image->type() );
-	image->scale( vgm::Vec3i( fluid->getHeightMapSize()[0], fluid->getHeightMapSize()[1], 1) );
-	fluidRC->heightMaps[1]->setImage( image );
-	engine->paint( fluidRC->heightMaps[1] );*/
+	fluidRC->heightMaps[0]->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+	fluidRC->heightMaps[0]->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+	*/
 
 	engine->clearTextureUnits();
-
-	//vgd::Shp< vgeGL::rc::Texture2D > aGLO = engine->getRCShp< vgeGL::rc::Texture2D >( fluidRC->heightMaps[1] );
-//	fluidRC->fbo->bind();
-//	fluidRC->fbo->detachColor( 1 );
-//	fluidRC->fbo->attachColor( aGLO, 1 );
-	//
 
 	// Initializes grid and separator
 	fluidRC->grid = vgd::node::Grid::create("fluid.grid");
@@ -1757,7 +1776,7 @@ void ForwardRendering::stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engin
 	using vgd::field::EditorRO;
 	using vgd::node::Fluid;
 
-	const uint maxEmittersOrDrainers = 4;
+	const uint maxEmittersOrDrainers =		 4;
 	EditorRO< Fluid::FEmittersOrDrainersType > emittersOrDrainers = fluid->getEmittersOrDrainersRO();
 	vgAssertN( emittersOrDrainers->size() <= maxEmittersOrDrainers, "Too many emitters/drainers in fluid node named %s", fluid->getName().c_str() );
 
@@ -1795,6 +1814,11 @@ void ForwardRendering::stageUpdateFluidSimulationParameters( vgeGL::engine::Engi
 		vgm::Vec4f(	fluid->getCellSize(), fluid->getCss(),
 					fluid->getGravity()[3], fluid->getTimeStep() ) );
 	pass0->setParam1f0( fluid->getDamping() );
+
+	// Retrieves fluid.finalPositionMap
+	vgd::Shp< PostProcessing > finalPositionMap = fluidRC->postProcessingGroup->getChild< PostProcessing >( 4 );
+
+	finalPositionMap->setParam1f0( fluid->getThickness() );
 }
 
 
@@ -1901,9 +1925,12 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 	engine->setOutputBuffers( fluidRC->fbo );
 
 	using vgeGL::engine::GLSLState;
+	engine->getGLSLState().setShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION,
+		"	ecPosition	= position;\n" );
 	engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT,
 			"\n"
-			"	gl_FragData[0] = gl_ModelViewMatrixInverse * ecPosition;\n" // @todo OPTME
+			"	gl_FragData[0] = ecPosition;\n"
+//			"	gl_FragData[0] = gl_ModelViewMatrixInverse * ecPosition;\n" // @todo OPTME
 //			"	gl_FragData[0] = color;\n" // for debugging
  		);
 
@@ -1962,8 +1989,9 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 	feedbackInformations[3] = projectionSize;
 	feedbackInformations[4] = projectionSize;
 	fluid->setFeedbackInformations( feedbackInformations );
-	vgm::MatrixR identity = vgm::MatrixR::getIdentity();
+	fluid->setFeedbackInformationsBis( cameraProjection );
 
+	vgm::MatrixR identity = vgm::MatrixR::getIdentity();
 	vgd::Shp< glo::Texture2D > color0 = fluidRC->fbo->getColorAsTexture2D();
 	vgm::MatrixR cameraLookAt;
 	vgd::Shp< vgd::node::Camera> newCamera = setupRenderFromCamera(

@@ -63,6 +63,7 @@ Fluid::Fluid( const std::string nodeName ) :
 	vgd::node::Shape( nodeName )
 {
 	// Adds field(s)
+	addField( new FOpacityType(getFOpacity()) );
 	addField( new FEmittersOrDrainersType(getFEmittersOrDrainers()) );
 	addField( new FHeightMapSizeType(getFHeightMapSize()) );
 	addField( new FSceneType(getFScene()) );
@@ -71,8 +72,10 @@ Fluid::Fluid( const std::string nodeName ) :
 	addField( new FSimulationPass1Type(getFSimulationPass1()) );
 	addField( new FSimulationPass0Type(getFSimulationPass0()) );
 	addField( new FCellSizeType(getFCellSize()) );
+	addField( new FFeedbackInformationsBisType(getFFeedbackInformationsBis()) );
 	addField( new FDampingType(getFDamping()) );
 	addField( new FTimeStepType(getFTimeStep()) );
+	addField( new FThicknessType(getFThickness()) );
 	addField( new FFeedbackInformationsType(getFFeedbackInformations()) );
 	addField( new FCssType(getFCss()) );
 	addField( new FFluidPositionFeedbackType(getFFluidPositionFeedback()) );
@@ -87,6 +90,7 @@ Fluid::Fluid( const std::string nodeName ) :
 void Fluid::setToDefaults( void )
 {
 	Shape::setToDefaults();
+	setOpacity( 0.6 );
 	setHeightMapSize( vgm::Vec2i(256, 256) );
 
 	setRequestFeedback( false );
@@ -94,8 +98,10 @@ void Fluid::setToDefaults( void )
 
 
 	setCellSize( 1.0 );
-	setDamping( 0.4 );
+	setFeedbackInformationsBis( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
+	setDamping( 0.8 );
 	setTimeStep( 0.1 );
+	setThickness( 1.0 );
 	setFeedbackInformations( vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f) );
 	setCss( 1.0 );
 
@@ -106,6 +112,21 @@ void Fluid::setToDefaults( void )
 void Fluid::setOptionalsToDefaults()
 {
 	Shape::setOptionalsToDefaults();
+}
+
+
+
+// Opacity
+const Fluid::OpacityValueType Fluid::getOpacity() const
+{
+	return getFieldRO<FOpacityType>(getFOpacity())->getValue();
+}
+
+
+
+void Fluid::setOpacity( const OpacityValueType value )
+{
+	getFieldRW<FOpacityType>(getFOpacity())->setValue( value );
 }
 
 
@@ -230,6 +251,21 @@ void Fluid::setCellSize( const CellSizeValueType value )
 
 
 
+// FeedbackInformationsBis
+const Fluid::FeedbackInformationsBisValueType Fluid::getFeedbackInformationsBis() const
+{
+	return getFieldRO<FFeedbackInformationsBisType>(getFFeedbackInformationsBis())->getValue();
+}
+
+
+
+void Fluid::setFeedbackInformationsBis( const FeedbackInformationsBisValueType value )
+{
+	getFieldRW<FFeedbackInformationsBisType>(getFFeedbackInformationsBis())->setValue( value );
+}
+
+
+
 // Damping
 const Fluid::DampingValueType Fluid::getDamping() const
 {
@@ -256,6 +292,21 @@ const Fluid::TimeStepValueType Fluid::getTimeStep() const
 void Fluid::setTimeStep( const TimeStepValueType value )
 {
 	getFieldRW<FTimeStepType>(getFTimeStep())->setValue( value );
+}
+
+
+
+// Thickness
+const Fluid::ThicknessValueType Fluid::getThickness() const
+{
+	return getFieldRO<FThicknessType>(getFThickness())->getValue();
+}
+
+
+
+void Fluid::setThickness( const ThicknessValueType value )
+{
+	getFieldRW<FThicknessType>(getFThickness())->setValue( value );
 }
 
 
@@ -306,6 +357,13 @@ void Fluid::setFluidPositionFeedback( const FluidPositionFeedbackValueType value
 
 
 // Field name accessor(s)
+const std::string Fluid::getFOpacity( void )
+{
+	return "f_opacity";
+}
+
+
+
 const std::string Fluid::getFEmittersOrDrainers( void )
 {
 	return "f_emittersOrDrainers";
@@ -362,6 +420,13 @@ const std::string Fluid::getFCellSize( void )
 
 
 
+const std::string Fluid::getFFeedbackInformationsBis( void )
+{
+	return "f_feedbackInformationsBis";
+}
+
+
+
 const std::string Fluid::getFDamping( void )
 {
 	return "f_damping";
@@ -372,6 +437,13 @@ const std::string Fluid::getFDamping( void )
 const std::string Fluid::getFTimeStep( void )
 {
 	return "f_timeStep";
+}
+
+
+
+const std::string Fluid::getFThickness( void )
+{
+	return "f_thickness";
 }
 
 
@@ -496,7 +568,7 @@ void Fluid::sethSimulationPassToDefault()
 			// "		return vec4(0.0);\n"
 			// "	}\n"
 
-			//"	vec4 scenePosition	= vec4( scenePositionL.z, scenePositionR.z, scenePositionT.z, scenePositionB.z );\n"
+//			"	vec4 scenePosition	= vec4( scenePositionL.z, scenePositionR.z, scenePositionT.z, scenePositionB.z );\n"
 			"	vec4 scenePosition	= vec4( scenePositionL, scenePositionR, scenePositionT, scenePositionB );\n"
 			"\n"
 			"	vec2	fluidHMSize = textureSize( fluidHM, 0 );\n"
@@ -550,10 +622,10 @@ void Fluid::sethSimulationPassToDefault()
 			"\n"
 			"float computeFluidEmitterOrDrainer( vec3 scenePosition, vec4 fluidEmitterOrDrainer, float fluidEmitterOrDrainerIntensity )\n"
 			"{\n"
-			"	if ( fluidEmitterOrDrainerIntensity == 0 )\n"
-			"	{\n"
-			"		return 0.0;\n"
-			"	}\n"
+//			"	if ( fluidEmitterOrDrainerIntensity == 0 )\n"
+//			"	{\n"
+//			"		return 0.0;\n"
+//			"	}\n"
 			"\n"
 			"	vec3	emitterOrDrainerPosition	= fluidEmitterOrDrainer.xyz;\n"
 			"	float	emitterOrDrainerRadius		= fluidEmitterOrDrainer.w;\n"
@@ -586,22 +658,44 @@ void Fluid::sethSimulationPassToDefault()
 			"\n"
 			"	vec2 outputFlowMapSize = textureSize( outputFlowMap, 0 );\n"
 			"	vec4 outputFlowC	= texture( outputFlowMap, texCoord );\n"
-			"	vec4 outputFlowL	= texture( outputFlowMap, texCoord + left/outputFlowMapSize );\n"
+
+			/*"	vec4 outputFlowL	= texture( outputFlowMap, texCoord + left/outputFlowMapSize );\n"
 			"	vec4 outputFlowR	= texture( outputFlowMap, texCoord + right/outputFlowMapSize );\n"
 			"	vec4 outputFlowT	= texture( outputFlowMap, texCoord + top/outputFlowMapSize );\n"
-			"	vec4 outputFlowB	= texture( outputFlowMap, texCoord + bottom/outputFlowMapSize );\n"
+			"	vec4 outputFlowB	= texture( outputFlowMap, texCoord + bottom/outputFlowMapSize );\n"*/
+
+			"	float outputFlowL	= texture( outputFlowMap, texCoord + left/outputFlowMapSize ).y;\n"
+			"	float outputFlowR	= texture( outputFlowMap, texCoord + right/outputFlowMapSize ).x;\n"
+			"	float outputFlowT	= texture( outputFlowMap, texCoord + top/outputFlowMapSize ).w;\n"
+			"	float outputFlowB	= texture( outputFlowMap, texCoord + bottom/outputFlowMapSize ).z;\n"
+
 			"\n"
-			"	float inflows	= outputFlowL.y + outputFlowR.x + outputFlowT.w + outputFlowB.z;\n"
+//			"	float inflows	= outputFlowL.y + outputFlowR.x + outputFlowT.w + outputFlowB.z;\n"
+			"	float inflows	= outputFlowL + outputFlowR + outputFlowT + outputFlowB;\n"
 			"	float outflows	= outputFlowC.x + outputFlowC.y + outputFlowC.z + outputFlowC.w;\n"
 			"\n"
-			"	vec4 scenePositionC = texture( scenePositionMap, texCoord );\n"
+			"	vec3 scenePositionC = texture( scenePositionMap, texCoord ).xyz;\n"
 			"	// FLUID EMITTER or DRAINER\n"
 			"	float emitOrDrainFluid = 0.0;\n"
 			"\n"
+
+			/*"	for( int i = 0; i < 4; ++i )\n"
+			"	{\n"
+			"		if ( emitterOrDrainerIntensity[i] == 0.0 )\n"
+			"		{\n"
+			"			break;\n"
+			"		}\n"
+			"		emitOrDrainFluid += computeFluidEmitterOrDrainer( scenePositionC, emitterOrDrainer[i], emitterOrDrainerIntensity[i] );\n"
+			"	}\n"*/
+
 			"	for( int i = 0; i < 4; ++i )\n"
 			"	{\n"
-			"		emitOrDrainFluid += computeFluidEmitterOrDrainer( scenePositionC.xyz, emitterOrDrainer[i], emitterOrDrainerIntensity[i] );\n"
+			"		if ( emitterOrDrainerIntensity[i] != 0.0 )\n"
+			"		{\n"
+			"			emitOrDrainFluid += computeFluidEmitterOrDrainer( scenePositionC, emitterOrDrainer[i], emitterOrDrainerIntensity[i] );\n"
+			"		}\n"
 			"	}\n"
+
 			"\n"
 			"	return vec4(fluidHeightC + (timeStep *(inflows - outflows + emitOrDrainFluid )) );\n"
 			"}\n"
