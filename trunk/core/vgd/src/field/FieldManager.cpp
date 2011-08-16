@@ -80,7 +80,7 @@ const bool FieldManager::ensureFieldAccess(const std::string& strFieldName) cons
 	if( g_lockedID != boost::thread::id() && boost::this_thread::get_id() != g_lockedID )
 	{
 		std::cerr << "Access to field " << strFieldName << " from wrong thread" << std::endl;
-		vgAssert3( false, "Access to field %s from wrong thread", strFieldName.c_str() );
+		vgAssertN( false, "Access to field %s from wrong thread", strFieldName.c_str() );
 /*#if ( defined _WIN32 ) && ( defined _DEBUG )
 		if ( IsDebuggerPresent() )
 		{
@@ -176,12 +176,12 @@ const bool FieldManager::addField( AbstractField* pField )
 
 	if ( retVal.second == false )
 	{
-		vgAssert2( false, "Unable to add this field. Field name must be unique." );
+		vgAssertN( false, "Unable to add this field. Field name must be unique." );
 		return false;
 	}
 
 	// STEP 2 : Add link between field and field manager.
-	vgAssert2( pField->findObserver( this ) == false, "The added field is already observed by this manager of fields." );
+	vgAssertN( pField->findObserver( this ) == false, "The added field is already observed by this manager of fields." );
 
 	pField->attach( this );
 
@@ -192,7 +192,7 @@ const bool FieldManager::addField( AbstractField* pField )
 
 const bool FieldManager::removeField( const std::string strFieldName )
 {
-	vgAssert2( checkField( strFieldName ), "Unknown field name." );
+	vgAssertN( checkField( strFieldName ), "Unknown field name." );
 
 	// STEP 1 : Find the field.
 	vgd::Shp<AbstractField>	shpAField = getField<AbstractField>( strFieldName );
@@ -204,7 +204,7 @@ const bool FieldManager::removeField( const std::string strFieldName )
 	}
 
 	// STEP 2 : Remove link between field and field manager
-	vgAssert2( shpAField->findObserver( this ) == true, "The removed field is not observed by this manager of fields." );
+	vgAssertN( shpAField->findObserver( this ) == true, "The removed field is not observed by this manager of fields." );
 	shpAField->detach( this );
 
 	// STEP 3 : Remove links between this field and all dirty flags.
@@ -233,7 +233,7 @@ void FieldManager::updateField( const AbstractField& rField, const Event event )
 			break;
 
 		default:
-			vgAssert2( false, "Unknown event" );
+			vgAssertN( false, "Unknown event" );
 	}
 }
 
@@ -256,7 +256,7 @@ void FieldManager::updateFrom( const std::string strFieldName )
 		}
 		else
 		{
-			vgAssert2( false, "Dirty flag not founded" );
+			vgAssertN( false, "Dirty flag not founded" );
 		}
 
 		++iter;
@@ -267,8 +267,8 @@ void FieldManager::updateFrom( const std::string strFieldName )
 
 const bool FieldManager::link( const std::string strFieldName, const std::string strDirtyFlagName )
 {
-	vgAssert2( checkField( strFieldName ), "Unknown field name." );
-	vgAssert2( checkDirtyFlag( strDirtyFlagName ), "Unknown dirty flag name." );
+	vgAssertN( checkField( strFieldName ), "Unknown field name." );
+	vgAssertN( checkDirtyFlag( strDirtyFlagName ), "Unknown dirty flag name." );
 
 	// add link(in field manager) between field and dirty flag.
 	// so fieldManager know how to propagate update message from
@@ -284,7 +284,7 @@ const bool FieldManager::link( const std::string strFieldName, const std::string
 
 const bool FieldManager::link( const std::string strDirtyFlagName )
 {
-	vgAssert2( checkDirtyFlag( strDirtyFlagName ), "Unknown dirty flag name." );
+	vgAssertN( checkDirtyFlag( strDirtyFlagName ), "Unknown dirty flag name." );
 
 	bool bRetVal = true;
 
@@ -303,12 +303,12 @@ const bool FieldManager::link( const std::string strDirtyFlagName )
 
 const bool FieldManager::unlink( const std::string strFieldName, const std::string strDirtyFlagName )
 {
-	vgAssert2( checkField( strFieldName ), "Unknown field name." );
-	vgAssert2( checkDirtyFlag( strDirtyFlagName ), "Unknown dirty flag name." );
+	vgAssertN( checkField( strFieldName ), "Unknown field name." );
+	vgAssertN( checkDirtyFlag( strDirtyFlagName ), "Unknown dirty flag name." );
 
 	// STEP 1 : Remove link(in field manager) between field and dirty flag.
 	bool bRetVal = m_fieldsToDirtyFlags.remove( strFieldName, strDirtyFlagName );
-	// vgAssert2( bRetVal, "nothing to unlinked, because link doesn't exist." );
+	// vgAssertN( bRetVal, "nothing to unlinked, because link doesn't exist." );
 
 	return bRetVal;
 }
@@ -317,7 +317,7 @@ const bool FieldManager::unlink( const std::string strFieldName, const std::stri
 
 const bool FieldManager::unlinkField( const std::string strFieldName )
 {
-	vgAssert2( checkField( strFieldName ), "Unknown field name." );
+	vgAssertN( checkField( strFieldName ), "Unknown field name." );
 
 	bool bRetVal = m_fieldsToDirtyFlags.removeField( strFieldName );
 
