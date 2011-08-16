@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -482,7 +482,7 @@ private:
 		else
 		{
 			// Not found
-			assert( false );
+			vgAssert( false );
 			return vgd::Shp<T>( static_cast<T*>(0) );
 		}
 	}
