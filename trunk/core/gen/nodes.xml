@@ -92,6 +92,19 @@
 	</node>
 
 
+	<node name = "ClearFrameBuffer" inherits = "SingleAttribute" >
+		<doxygen>
+			<docBrief>Node clearing the framebuffer</docBrief>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_frameBufferNodes</ingroup>
+		</doxygen>
+		<of name = "clearColor" doc="Specifies the clear color.">
+			<type name="Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"></type>
+		</of>
+	</node>
+
+
 	<node name = "ClipPlane" inherits = "MultiAttribute" >
 		<doxygen>
 			<docBrief>Clipping plane node</docBrief>
