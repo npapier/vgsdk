@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,12 +6,7 @@
 #ifndef _VGD_NODE_CLEARFRAMEBUFFER_HPP
 #define _VGD_NODE_CLEARFRAMEBUFFER_HPP
 
-#include "vgd/vgd.hpp"
-
-#include <vgm/Vector.hpp>
-
-#include "vgd/field/Integer.hpp"
-#include "vgd/field/TPairAssociativeField.hpp"
+#include "vgd/field/Vec4f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
 
@@ -25,152 +20,139 @@ namespace node
 
 
 /**
- * @brief Node to clear framebuffer.
+ * @brief Node clearing the framebuffer
  *
- * New fields added by this node :
+ * 
  *
- * - SFInt8 clearMask		= (COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT)\n
- * 		Buffers to be cleared.
- * 
- * - PAFVec4f \c [clear]
- * 	- COLOR	= (0 0 0 0 )\n
- * 		The clear color.
- * 	- ACCUM	= (0 0 0 0 )\n
- * 		The clear accumulation color.
- * 
+ * New fields defined by this node :
+ * - OFVec4f \c [clearColor] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
+ *   Specifies the clear color.<br>
+ *<br>
+ *
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes
  * @ingroup g_frameBufferNodes
- * 
- * @todo clear values for the stencil, depth.
  */
 struct VGD_API ClearFrameBuffer : public vgd::node::SingleAttribute
 {
-	META_NODE_HPP( ClearFrameBuffer );
-
-
-
 	/**
-	 * @name Accessors to field clearMask.
-	 */
-	//@{
-	
-	/**
-	 * @brief Enumeration of masks values.
-	 */
-	enum
-	{
-		COLOR_BUFFER_BIT		= 1<<0,			/*!< The buffers currently enabled for color writing. */
-		DEPTH_BUFFER_BIT		= 1<<1,			/*!< The depth buffer. */
-		ACCUM_BUFFER_BIT		= 1<<2,			/*!< The accumulation buffer. */
-		STENCIL_BUFFER_BIT	= 1<<3			/*!< The stencil buffer. */
-	};
-	
-	/**
-	 * @brief Typedef for the \c clearMask field.
-	 */	
-	typedef vgd::field::SFInt8	FClearMaskType;
-		
-	/**
-	 * @brief Typedef for the \c clearMask value.
-	 */
-	typedef int8					ClearMaskValueType;	
-	
-	/**
-	 * @brief Gets the masks that indicate the buffers to be cleared.
-	 */
-	int8	getClearMask() const;
-	
-	/**
-	 * @brief Sets the masks that indicate the buffers to be cleared.
-	 * 
-	 * @param mask		Bitwise OR operators of masks that indicate the buffers to be cleared.
-	 */
-	void	setClearMask( const int8 mask );
-	//@}
-
-	
-	
-	/**
-	 * @name Accessors to field clear.
+	 * @name Factories
 	 */
 	//@{
 
 	/**
-	 * @brief Enumeration of the \c clear parameters.
+	 * @brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values
 	 */
-	typedef enum
-	{
-		COLOR		= 1,
-		ACCUM
-	} ClearParameterType;
+	static vgd::Shp< ClearFrameBuffer > create( const std::string nodeName = "NoName" );
 
 	/**
-	 * @brief Typedef for the \c clear value.
+	 * @brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values and
+	 * sets the \c multiAttributeIndex of the multi-attribute.
+	 *
+	 * @param index		zero-based index of the multi-attribute
 	 */
-	typedef vgm::Vec4f ClearValueType;
-
-	/**
-	 * @brief Typedef for the \c clear field.
-	 */	
-	typedef vgd::field::TPairAssociativeField< ClearParameterType, ClearValueType > FClearType;
-
-	/**
-	 * @brief Gets the clear value for the color or accumulation buffers.
-	 */
-	bool			getClear( const ClearParameterType param, ClearValueType& value ) const;
-
-	/**
-	 * @brief Sets the clear value for the color or accumulation buffers.
-	 */
-	void 			setClear( const ClearParameterType param, ClearValueType value );
+	static vgd::Shp< ClearFrameBuffer > create( const std::string nodeName, const uint8 index );
 	
 	/**
-	 * @brief Erase the clear value for the color or accumulation buffers.
+	 *@brief Node factory
+	 *
+	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
-	void 			eraseClear( const ClearParameterType param );
+	static vgd::Shp< ClearFrameBuffer > createWhole( const std::string nodeName = "DefaultWhole" );
+
 	//@}
 
 
 
 	/**
-	 * @name Fields names enumeration.
+	 * @name Accessors to field clearColor
 	 */
 	//@{
-	
-	/**
-	 * @brief Returns the name of field \c clearMask.
-	 * 
-	 * @return the name of field \c clearMask.
-	 */
-	static const std::string getFClearMask( void );
 
 	/**
-	 * @brief Returns the name of field \c clear.
-	 * 
-	 * @return the name of field \c clear.
+	 * @brief Type definition of the value contained by field named \c clearColor.
 	 */
-	static const std::string getFClear( void );
+	typedef vgm::Vec4f ClearColorValueType;
+
+	/**
+	 * @brief Type definition of the field named \c clearColor
+	 */
+	typedef vgd::field::TOptionalField< ClearColorValueType > FClearColorType;
+
+
+	/**
+	 * @brief Gets the value of field named \c clearColor.
+	 */
+	const bool getClearColor( ClearColorValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c clearColor.
+ 	 */
+	void setClearColor( const ClearColorValueType& value );
+
+	/**
+	 * @brief Erases the field named \c clearColor.
+	 */
+	void eraseClearColor();
+
+	/**
+	 * @brief Tests if the value of field named \c clearColor has been initialized.
+	 */
+	const bool hasClearColor() const;
 	//@}
-	
-	
+
+
+
+	/**
+	 * @name Field name accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the name of field \c clearColor.
+	 *
+	 * @return the name of field \c clearColor.
+	 */
+	static const std::string getFClearColor( void );
+
+	//@}
+
+
+	/**
+	 * @name Dirty flags enumeration
+	 */
+	//@{
+
+
+	//@}
+
+
+
+	/**
+	 * @name Constructor and initializer methods
+	 */
+	//@{
+
+	void	setToDefaults( void );
+
+	void	setOptionalsToDefaults();
+
+	//@}
 
 protected:
 	/**
-	 * @name Constructor.
-	 */
-	//@{
-
-	/**
-	 * @brief Default constructor.
+	 * @brief Default constructor
 	 */
 	ClearFrameBuffer( const std::string nodeName );
 
-	void	setToDefaults( void );
-	
-	void	setOptionalsToDefaults();	
-
-	//@}
+public:
+	IMPLEMENT_INDEXABLE_CLASS_HPP( , ClearFrameBuffer );
+private:
+	static const vgd::basic::RegisterNode<ClearFrameBuffer> m_registrationInstance;
 };
 
 

@@ -53,9 +53,9 @@ void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node
 		fbo->bind();
 	}
 
-	applyBufferUsagePolicy( bup, eup, fbo );
-
 	vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
+
+	applyBufferUsagePolicy( bup, eup, fbo );
 }
 
 
@@ -68,7 +68,6 @@ void ClearFrameBuffer::unapply( vge::engine::Engine*, vgd::node::Node* )
 void ClearFrameBuffer::setToDefaults()
 {
 	glClearColor( 0.f, 0.f, 0.f, 0.f );
-	glClearAccum( 0.f, 0.f, 0.f, 0.f );
 	glClearDepth( 1.0f );
 
 	glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
@@ -86,13 +85,12 @@ void ClearFrameBuffer::paint( vgeGL::engine::Engine * engine, vgd::node::ClearFr
 	// CLEAR COLOR
 	vgm::Vec4f	clearValue;
 	bool		defined;
-	
-	//
-	defined = framebuffer->getClear( vgd::node::ClearFrameBuffer::COLOR, clearValue );
-	
+
+	defined = framebuffer->getClearColor( clearValue );
+
 	if ( defined )
 	{
-		glClearColor( 
+		glClearColor(
 			clearValue[0],
 			clearValue[1],
 			clearValue[2],
@@ -100,48 +98,6 @@ void ClearFrameBuffer::paint( vgeGL::engine::Engine * engine, vgd::node::ClearFr
 			);
 	}
 
-	//
-	defined = framebuffer->getClear( vgd::node::ClearFrameBuffer::ACCUM, clearValue );
-	
-	if ( defined )
-	{
-		glClearAccum( 
-			clearValue[0],
-			clearValue[1],
-			clearValue[2],
-			clearValue[3]
-			);
-	}
-
-/* @todo Generates ClearFrameBuffer node and remove clearMask
-	// CLEAR MASK
-	const int32 clearMask = framebuffer->getClearMask();
-	
-	if ( clearMask & vgd::node::ClearFrameBuffer::COLOR_BUFFER_BIT )
-	{
-		clearMaskGL |= GL_COLOR_BUFFER_BIT;
-	}
-	
-	if ( clearMask & vgd::node::ClearFrameBuffer::DEPTH_BUFFER_BIT )
-	{
-		clearMaskGL |= GL_DEPTH_BUFFER_BIT;
-	}
-	
-	if ( clearMask & vgd::node::ClearFrameBuffer:: ACCUM_BUFFER_BIT )
-	{
-		clearMaskGL |= GL_ACCUM_BUFFER_BIT;
-	}
-	
-	if ( clearMask & vgd::node::ClearFrameBuffer::STENCIL_BUFFER_BIT )
-	{
-		clearMaskGL |= GL_STENCIL_BUFFER_BIT;
-	}
-
-	if ( clearMask != 0 )
-	{
-		glClear( clearMaskGL );
-	}
-*/
 	// Validates node
 	framebuffer->getDirtyFlag(framebuffer->getDFNode())->validate();
 }
@@ -240,7 +196,7 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 			}
 
 			// set depth function
-			glDepthFunc( GL_EQUAL );
+			glDepthFunc( GL_EQUAL );			// @todo GL_LEQUAL ? => similar to BUP_ONLY_COLOR_NO_CLEAR but with clear
 			glEnable( GL_DEPTH_TEST );
 			break;
 

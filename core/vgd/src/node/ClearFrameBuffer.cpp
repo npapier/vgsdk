@@ -1,11 +1,9 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/node/ClearFrameBuffer.hpp"
-
-#include <string>
 
 #include "vgd/node/detail/Node.hpp"
 
@@ -19,19 +17,56 @@ namespace node
 
 
 
-META_NODE_CPP( ClearFrameBuffer );
+vgd::Shp< ClearFrameBuffer > ClearFrameBuffer::create( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< ClearFrameBuffer > node( new ClearFrameBuffer(nodeName) );
+
+	/* Adds a vertex (i.e. a node) to boost::graph */
+	graph().addNode( node );
+
+	/* Sets fields to their default values */
+	node->setToDefaults();
+
+	return node;
+}
+
+
+
+vgd::Shp< ClearFrameBuffer > ClearFrameBuffer::create( const std::string nodeName, const uint8 index )
+{
+	/* Creates a new node */
+	vgd::Shp< ClearFrameBuffer > node = ClearFrameBuffer::create(nodeName);
+
+	/* Sets index of multi-attributes */
+	node->setMultiAttributeIndex(index);
+
+	return node;
+}
+
+
+
+vgd::Shp< ClearFrameBuffer > ClearFrameBuffer::createWhole( const std::string nodeName )
+{
+	/* Creates a new node */
+	vgd::Shp< ClearFrameBuffer > node = ClearFrameBuffer::create(nodeName);
+
+	/* Sets optional fields to their default values */
+	node->setOptionalsToDefaults();
+
+	return node;
+}
 
 
 
 ClearFrameBuffer::ClearFrameBuffer( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
-	// Add field
-	addField( new FClearMaskType(getFClearMask()) );
+	// Adds field(s)
+	addField( new FClearColorType(getFClearColor()) );
 
-	addField( new FClearType(getFClear()) );
+	// Sets link(s)
 
-	// Links
 	link( getDFNode() );
 }
 
@@ -40,8 +75,6 @@ ClearFrameBuffer::ClearFrameBuffer( const std::string nodeName ) :
 void ClearFrameBuffer::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	
-	setClearMask( COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT );
 }
 
 
@@ -49,65 +82,56 @@ void ClearFrameBuffer::setToDefaults( void )
 void ClearFrameBuffer::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	
-	setClear( COLOR, vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
-	setClear( ACCUM, vgm::Vec4f( 0.f, 0.f, 0.f, 0.f ) );
+	setClearColor( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
 }
 
 
 
-// CLEAR MASK
-int8 ClearFrameBuffer::getClearMask() const
+// ClearColor
+const bool ClearFrameBuffer::getClearColor( ClearColorValueType& value ) const
 {
-	return ( getFieldRO<FClearMaskType>(getFClearMask())->getValue() );
+	return getFieldRO<FClearColorType>(getFClearColor())->getValue( value );
 }
 
 
 
-void ClearFrameBuffer::setClearMask( const int8 mask )
+void ClearFrameBuffer::setClearColor( const ClearColorValueType& value )
 {
-	getFieldRW<FClearMaskType>(getFClearMask())->setValue( mask );
+	getFieldRW<FClearColorType>(getFClearColor())->setValue( value );
 }
 
 
 
-// CLEAR
-bool ClearFrameBuffer::getClear( const ClearParameterType param, ClearValueType& value ) const
+void ClearFrameBuffer::eraseClearColor()
 {
-	return ( 
-		vgd::field::getParameterValue< ClearParameterType, ClearValueType >( this, getFClear(), param, value )
-		);
+	getFieldRW<FClearColorType>(getFClearColor())->eraseValue();
 }
 
 
-
-void ClearFrameBuffer::setClear( const ClearParameterType param, ClearValueType value )
+const bool ClearFrameBuffer::hasClearColor() const
 {
-	vgd::field::setParameterValue< ClearParameterType, ClearValueType >( this, getFClear(), param, value );
+	return getFieldRO<FClearColorType>(getFClearColor())->hasValue();
 }
 
 
-void ClearFrameBuffer::eraseClear( const ClearParameterType param )
+
+// Field name accessor(s)
+const std::string ClearFrameBuffer::getFClearColor( void )
 {
-	vgd::field::eraseParameterValue< ClearParameterType, ClearValueType >( this, getFClear(), param );
+	return "f_clearColor";
 }
 
 
 
-const std::string ClearFrameBuffer::getFClearMask( void )
-{
-	return ( "f_clearMask" );
-}
+IMPLEMENT_INDEXABLE_CLASS_CPP( , ClearFrameBuffer );
 
 
 
-const std::string ClearFrameBuffer::getFClear( void )
-{
-	return ( "f_clear" );
-}
+const vgd::basic::RegisterNode<ClearFrameBuffer> ClearFrameBuffer::m_registrationInstance;
 
 
 
 } // namespace node
 
 } // namespace vgd
+
