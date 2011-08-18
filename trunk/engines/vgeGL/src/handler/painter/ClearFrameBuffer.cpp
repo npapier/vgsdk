@@ -196,7 +196,7 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 			}
 
 			// set depth function
-			glDepthFunc( GL_EQUAL );			// @todo GL_LEQUAL ? => similar to BUP_ONLY_COLOR_NO_CLEAR but with clear
+			glDepthFunc( GL_EQUAL );
 			glEnable( GL_DEPTH_TEST );
 			break;
 
