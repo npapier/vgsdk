@@ -770,8 +770,17 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @pre hasViewport()
 	 */
 	const vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
-	//@}
 
+	/**
+	 * @brief Apply the viewport transformation (as defined in OpenGL specification) to a vertex.
+	 *
+	 * @param viewport	the viewport used to compute the transformation
+	 * @param vertex	vertex to transform
+	 * @return the transformed vertex
+	 */
+	static const vgm::Vec3f applyViewport( const vgm::Rectangle2i& viewport, const vgm::Vec3f& vertex );
+
+	//@}
 
 
 	/**
@@ -864,10 +873,6 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Returns the value of field named \c viewport modified (if needed) by taking care of the given eye usage policy, the \c mode field and the \c imageShift field.
 	 */
 	const bool gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
-
-// stereoscopy.pdf slide 24 for explanation of
-// slide 32
-// two eyes looking at a parallel direction
 
 	/**
 	 * brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering

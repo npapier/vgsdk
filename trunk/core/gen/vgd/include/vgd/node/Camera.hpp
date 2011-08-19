@@ -14,8 +14,17 @@
 	 * @pre hasViewport()
 	 */
 	const vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
-	//@}
 
+	/**
+	 * @brief Apply the viewport transformation (as defined in OpenGL specification) to a vertex.
+	 *
+	 * @param viewport	the viewport used to compute the transformation
+	 * @param vertex	vertex to transform
+	 * @return the transformed vertex
+	 */
+	static const vgm::Vec3f applyViewport( const vgm::Rectangle2i& viewport, const vgm::Vec3f& vertex );
+
+	//@}
 
 
 	/**
