@@ -473,6 +473,13 @@ const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 	vgm::Rectangle2i viewport;
 	getViewport( viewport );
 
+	return applyViewport( viewport, vertex );
+}
+
+
+
+const vgm::Vec3f Camera::applyViewport( const vgm::Rectangle2i& viewport, const vgm::Vec3f& vertex )
+{
 	const vgm::Vec2f o(	static_cast<float>(viewport.x()) + static_cast<float>(viewport.width()) * 0.5f,
 						static_cast<float>(viewport.y()) + static_cast<float>(viewport.height()) * 0.5f );
 
