@@ -571,6 +571,11 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	void setShaderStage( const ShaderStage shaderStage, const std::string& glslCode );
 
 	/**
+	 * @brief Sets the default glsl code for all shader stages.
+	 */
+	void resetShaderStages();
+
+	/**
 	 * @brief Returns the glsl code for a specific stage.
 	 *
 	 * @param shaderStage	selector of the stage

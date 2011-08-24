@@ -22,7 +22,7 @@
 #include <vgd/node/VertexShape.hpp>
 
 #include <vgDebug/convenience.hpp>
-#include <vgDebug/StdStreamsToFiles.hpp>
+//#include <vgDebug/StdStreamsToFiles.hpp>
 #include <vgm/Box.hpp>
 
 #include "vgeGL/engine/GLSLState.hpp"
@@ -165,10 +165,10 @@ const vge::handler::Handler::TargetVector VertexShape::getTargets() const
  */
 void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
+	vgAssert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
 	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
 
-	assert( dynamic_cast< vgd::node::VertexShape* >(pNode) != 0 );
+	vgAssert( dynamic_cast< vgd::node::VertexShape* >(pNode) != 0 );
 	vgd::node::VertexShape *pVertexShape = static_cast< vgd::node::VertexShape* >(pNode);
 
 	// GLSL STATE UPDATE
@@ -284,24 +284,37 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				program = new glo::GLSLProgram;
 
 				// Compiles and links
+				std::string vsInfoLog;
+				std::string fsInfoLog;
+				std::string linkInfoLog;
 				const bool compileVSRetVal = program->addShader( vs.c_str(),pg->getVertexShaderGenerator()->getShaderType(), false );
+				if ( !compileVSRetVal )	vsInfoLog = program->getInfoLog();
+
 				const bool compileFSRetVal = program->addShader( fs.c_str(), pg->getFragmentShaderGenerator()->getShaderType(), false );
+				if ( !compileFSRetVal )	fsInfoLog = program->getInfoLog();
+
 //				const bool compileGSRetVal = program->addShader( fs.c_str(), pg->getGeometryShaderGenerator()->getShaderType(), false );
 
 				namespace vgeGLPainter = vgeGL::handler::painter;
 				vgeGLPainter::OutputBufferProperty::bindFragDataLocations( pGLEngine, program );
 
 				const bool linkRetVal = program->link();
+				if ( !linkRetVal )	linkInfoLog = program->getInfoLog();
 
-				if ( !compileVSRetVal )	std::cout << "VERTEX shader compilation fails" << std::endl;
-				if ( !compileFSRetVal )	std::cout << "FRAGMENT shader compilation fails" << std::endl;
-
-				if ( !compileVSRetVal || !compileFSRetVal )
+				if ( !compileVSRetVal || !compileFSRetVal || !linkRetVal )
 				{
 					std::cout << "=======================================================================================\n" << std::endl;
+
 					std::cout << "Vertex shader\n" << "=============\n" << std::endl << vs << std::endl;
 					std::cout << "Fragment shader\n" << "===============\n" << std::endl << fs << std::endl;
 					std::cout << "\n\n\n";
+
+					// if ( !vsInfoLog.empty() )	std::cout << vsInfoLog << std::endl;
+					// if ( !fsInfoLog.empty() )	std::cout << fsInfoLog << std::endl;
+					// if ( !linkInfoLog.empty() )	std::cout << linkInfoLog << std::endl;
+					std::cout << "Vertex shader info log:" << std::endl << vsInfoLog << std::endl;
+					std::cout << "Fragment shader info log:" << std::endl << fsInfoLog << std::endl;
+					std::cout << "Link info log:" << std::endl << linkInfoLog << std::endl;
 				}
 
 				if ( linkRetVal )
@@ -489,7 +502,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 					break;
 
 				default:
-					assert( false && "Unknown DrawStyle.boundingBox value." );
+					vgAssertN( false, "Unknown DrawStyle.boundingBox value." );
 			}
 
 			///@todo FIXME OPTME
@@ -578,7 +591,7 @@ void VertexShape::setSamplers( vgeGL::engine::Engine * pGLEngine, glo::GLSLProgr
 		{
 			if ( program )
 			{
-				assert( program->isInUse() );
+				vgAssert( program->isInUse() );
 
 				const vgd::node::Texture::UsageValueType usage = textureNode->getUsage();
 
@@ -705,12 +718,12 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 	if (	(pVertexShape->getEdgeFlagBinding() != vgd::node::BIND_OFF ) &&
 			(pVertexShape->getEdgeFlagBinding() != vgd::node::BIND_PER_VERTEX ) )
 	{
-		assert( "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for edgeflag." );
+		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for edgeflag." );
 		return;
 	}
 
 	// TEX COORD
-	assert(	(pVertexShape->getNumTexUnits() > 1 &&
+	vgAssert(	(pVertexShape->getNumTexUnits() > 1 &&
 			isGL_ARB_multitexture() && "MultiTexture not currently supported.") ||
 			(pVertexShape->getNumTexUnits() <= 1) );
 
@@ -721,7 +734,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 		if (	(pVertexShape->getTexCoordBinding( i ) != vgd::node::BIND_OFF ) &&
 				(pVertexShape->getTexCoordBinding( i ) != vgd::node::BIND_PER_VERTEX ) )
 		{
-			assert( "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for textures coordinates." );
+			vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for textures coordinates." );
 			return;
 		}
 	}
@@ -730,7 +743,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 	if (	(pVertexShape->getSecondaryColor4Binding() != vgd::node::BIND_OFF ) &&
 			(pVertexShape->getSecondaryColor4Binding() != vgd::node::BIND_PER_VERTEX ) )
 	{
-		assert( "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for secondaryColor4." );
+		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for secondaryColor4." );
 		return;
 	}
 
@@ -738,7 +751,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 	if (	(pVertexShape->getColor4Binding() != vgd::node::BIND_OFF ) &&
 			(pVertexShape->getColor4Binding() != vgd::node::BIND_PER_VERTEX ) )
 	{
-		assert( "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for color4." );
+		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for color4." );
 		return;
 	}
 	
@@ -746,7 +759,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 	if (	(pVertexShape->getNormalBinding() != vgd::node::BIND_OFF ) &&
 			(pVertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX ) )
 	{
-		assert( "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for normal." );
+		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for normal." );
 		return;
 	}
 #endif
@@ -977,7 +990,7 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 			//{
 				if ( program )
 				{
-					assert( program->isInUse() );
+					vgAssert( program->isInUse() );
 
 					//switch ( textureNode->getUsage().value() )
 					//{
@@ -1223,7 +1236,7 @@ void VertexShape::renderArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::Ve
 
 	rc->vao.bind();
 
-	assert( primitive.getType() != vgd::node::Primitive::NONE );
+	vgAssert( primitive.getType() != vgd::node::Primitive::NONE );
 	const GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
 
 	if ( pGLEngine->isVertexBufferObjectEnabled() )
@@ -1500,9 +1513,9 @@ void VertexShape::drawNormals( vgd::node::VertexShape *pVertexShape, const float
 		return;
 	}
 
-	assert( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX );
-	assert( normal->size() > 0 );
-	assert( normal->size() == vertex->size() );
+	vgAssert( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX );
+	vgAssert( normal->size() > 0 );
+	vgAssert( normal->size() == vertex->size() );
 	
 	
 	int32 i32IndexPrim=0;	
