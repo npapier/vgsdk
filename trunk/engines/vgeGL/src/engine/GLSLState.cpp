@@ -279,6 +279,31 @@ void GLSLState::setShaderStage( const ShaderStage shaderStage, const std::string
 
 
 
+void GLSLState::resetShaderStages()
+{
+	// SHADER STAGE
+	m_shaderStage.clear();
+	m_shaderStage.resize( MAX_SHADERSTAGE );
+
+	//setShaderStage( VERTEX_GL_POSITION_COMPUTATION, defaultVertexGLPositionComputation );
+	const std::string defaultVertexGLPositionComputation(	"	gl_Position = gl_ModelViewProjectionMatrix * position;\n" );
+	m_shaderStage[VERTEX_GL_POSITION_COMPUTATION] = defaultVertexGLPositionComputation;
+
+	//setShaderStage( VERTEX_ECPOSITION_COMPUTATION, defaultVertexECPositionComputation );
+	const std::string defaultVertexECPositionComputation(	"	ecPosition	= gl_ModelViewMatrix * position;\n" );
+	m_shaderStage[VERTEX_ECPOSITION_COMPUTATION] = defaultVertexECPositionComputation;
+
+	//setShaderStage( VERTEX_ECNORMAL_COMPUTATION, defaultVertexECNormalComputation );
+	const std::string defaultVertexECNormalComputation(	"	ecNormal	= fnormal();\n" );
+	m_shaderStage[VERTEX_ECNORMAL_COMPUTATION] = defaultVertexECNormalComputation;
+
+	//setShaderStage( FRAGMENT_OUTPUT, defaultFragmentOutput );
+	const std::string defaultFragmentOutput(				"	gl_FragData[0] = color;\n"	);
+	m_shaderStage[FRAGMENT_OUTPUT] = defaultFragmentOutput;
+}
+
+
+
 const std::string& GLSLState::getShaderStage( const ShaderStage shaderStage ) const
 {
 	return m_shaderStage[shaderStage];
@@ -326,25 +351,7 @@ void GLSLState::init()
 {
 	m_program					= 0;
 
-	// SHADER STAGE
-	m_shaderStage.clear();
-	m_shaderStage.resize( MAX_SHADERSTAGE );
-
-	//setShaderStage( VERTEX_GL_POSITION_COMPUTATION, defaultVertexGLPositionComputation );
-	const std::string defaultVertexGLPositionComputation(	"	gl_Position = gl_ModelViewProjectionMatrix * position;\n" );
-	m_shaderStage[VERTEX_GL_POSITION_COMPUTATION] = defaultVertexGLPositionComputation;
-
-	//setShaderStage( VERTEX_ECPOSITION_COMPUTATION, defaultVertexECPositionComputation );
-	const std::string defaultVertexECPositionComputation(	"	ecPosition	= gl_ModelViewMatrix * position;\n" );
-	m_shaderStage[VERTEX_ECPOSITION_COMPUTATION] = defaultVertexECPositionComputation;
-
-	//setShaderStage( VERTEX_ECNORMAL_COMPUTATION, defaultVertexECNormalComputation );
-	const std::string defaultVertexECNormalComputation(	"	ecNormal	= fnormal();\n" );
-	m_shaderStage[VERTEX_ECNORMAL_COMPUTATION] = defaultVertexECNormalComputation;
-
-	//setShaderStage( FRAGMENT_OUTPUT, defaultFragmentOutput );
-	const std::string defaultFragmentOutput(				"	gl_FragData[0] = color;\n"	);
-	m_shaderStage[FRAGMENT_OUTPUT] = defaultFragmentOutput;
+	resetShaderStages();
 
 	//
 	m_option0					= vgd::node::LightModel::DEFAULT_OPTION0;

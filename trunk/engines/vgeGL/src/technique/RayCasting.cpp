@@ -253,7 +253,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 				// preTraverse
 				assert( cameraAlreadyTraversed && "Kit before the Camera !" );
 
-				glLoadName( currentGLName );	
+				glLoadName( currentGLName );
 				glPushName( currentGLName );
 				++currentGLName;
 				m_pNodes->push_back( i->first );
