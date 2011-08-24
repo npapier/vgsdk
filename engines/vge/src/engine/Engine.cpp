@@ -296,27 +296,27 @@ void Engine::install( vgd::Shp< vge::handler::Handler > shpHandler )
 
 
 
-void Engine::regard()
+void Engine::regard( const bool enabled )
 {
 	for(	uint32		i		= 0,
 						iEnd	= static_cast<uint32>(m_regarded.size());
 			i != iEnd;
 			++i )
 	{
-		m_regarded[ i ] = true;
+		m_regarded[ i ] = enabled;
 	}
 }
 
 
 
-void Engine::disregard()
+void Engine::disregard(  const bool disabled )
 {
 	for(	uint32		i		= 0,
 						iEnd	= static_cast<uint32>(m_regarded.size());
 			i != iEnd;
 			++i )
 	{
-		m_regarded[ i ] = false;
+		m_regarded[ i ] = !disabled;
 	}
 }
 

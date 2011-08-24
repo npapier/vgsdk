@@ -277,37 +277,49 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 	/**
 	 * @brief Activate the evaluation process for all node type.
+	 *
+	 * @param enabled	true to activate the evalutation, false to desactivate it
 	 */
-	void regard();
+	void regard( const bool enabled = true );
 
 	/**
 	 * @brief Activate the evaluation process for a specific node type.
+	 *
+	 * @param enabled	true to activate the evalutation, false to desactivate it
 	 */
 	template< typename nodeType >
-	void regardIfIsA();
+	void regardIfIsA( const bool enabled = true );
 	
 	/**
 	 * @brief Activate the evaluation process for all node that inherit from the specified node type.
+	 *
+	 * @param enabled	true to activate the evalutation, false to desactivate it
 	 */
 	template< typename nodeType >
-	void regardIfIsAKindOf();
-	
+	void regardIfIsAKindOf( const bool enabled = true );
+
 	/**
 	 * @brief Desactivate the evaluation process for all node type.
+	 *
+	 * @param disabled	true to desactivate the evalutation, false to activate it
 	 */
-	void disregard();
+	void disregard( const bool disabled = true );
 
 	/**
 	 * @brief Desactivate the evaluation process for a specific node type.
+	 *
+	 * @param disabled	true to desactivate the evalutation, false to activate it
 	 */
 	template< typename nodeType >
-	void disregardIfIsA();
+	void disregardIfIsA( const bool disabled = true );
 	
 	/**
 	 * @brief Desactivate the evaluation process for all node that inherit from the specified node type.
+	 *
+	 * @param disabled	true to desactivate the evalutation, false to activate it
 	 */
 	template< typename nodeType >
-	void disregardIfIsAKindOf();
+	void disregardIfIsAKindOf( const bool disabled = true );
 	
 	/**
 	 * @brief Return if the evaluation process for a specific node type is enabled.
@@ -964,16 +976,16 @@ protected:
 
 
 template< typename nodeType >
-void Engine::regardIfIsA()
+void Engine::regardIfIsA( const bool enabled )
 {
 	const int32 indexNode( nodeType::getClassIndexStatic() );
-	m_regarded[ indexNode ] = true;
+	m_regarded[ indexNode ] = enabled;
 }
 
 
 
 template< typename nodeType >
-void Engine::regardIfIsAKindOf()
+void Engine::regardIfIsAKindOf( const bool enabled )
 {
 	vgd::basic::ClassRegistry< vgd::node::Node >& nodeRegistry(	vgd::node::Node::getClassRegistry() );
 	
@@ -987,7 +999,7 @@ void Engine::regardIfIsAKindOf()
 		if ( node->template isAKindOf<nodeType>() )
 		{
 			const int32 indexNode( node->getClassIndex() );
-			m_regarded[ indexNode ] = true;
+			m_regarded[ indexNode ] = enabled;
 		}
 	}
 }
@@ -995,16 +1007,16 @@ void Engine::regardIfIsAKindOf()
 
 
 template< typename nodeType >
-void Engine::disregardIfIsA()
+void Engine::disregardIfIsA( const bool disabled )
 {
 	const int32 indexNode( nodeType::getClassIndexStatic() );
-	m_regarded[ indexNode ] = false;
+	m_regarded[ indexNode ] = !disabled;
 }
 
 
 
 template< typename nodeType >
-void Engine::disregardIfIsAKindOf()
+void Engine::disregardIfIsAKindOf( const bool disabled )
 {
 	vgd::basic::ClassRegistry< vgd::node::Node >& nodeRegistry(	vgd::node::Node::getClassRegistry() );
 	
@@ -1018,7 +1030,7 @@ void Engine::disregardIfIsAKindOf()
 		if ( node->template isAKindOf<nodeType>() )
 		{
 			const int32 indexNode( node->getClassIndex() );
-			m_regarded[ indexNode ] = false;
+			m_regarded[ indexNode ] = !disabled;
 		}
 	}
 }
@@ -1029,7 +1041,7 @@ template< typename nodeType >
 bool Engine::isRegardedIfIsA() const
 {
 	const int32 indexNode( nodeType::getClassIndexStatic() );
-	
+
 	return ( m_regarded[ indexNode ] );
 }
 
