@@ -276,53 +276,53 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	void install( vgd::Shp< vge::handler::Handler > shpHandler );
 
 	/**
-	 * @brief Activate the evaluation process for all node type.
+	 * @brief Activates the evaluation process for all node type.
 	 *
-	 * @param enabled	true to activate the evalutation, false to desactivate it
+	 * @param enabled	true to activate the evaluation, false to deactivate it
 	 */
 	void regard( const bool enabled = true );
 
 	/**
-	 * @brief Activate the evaluation process for a specific node type.
+	 * @brief Activates the evaluation process for a specific node type.
 	 *
-	 * @param enabled	true to activate the evalutation, false to desactivate it
+	 * @param enabled	true to activate the evaluation, false to deactivate it
 	 */
 	template< typename nodeType >
 	void regardIfIsA( const bool enabled = true );
 	
 	/**
-	 * @brief Activate the evaluation process for all node that inherit from the specified node type.
+	 * @brief Activates the evaluation process for all node that inherit from the specified node type.
 	 *
-	 * @param enabled	true to activate the evalutation, false to desactivate it
+	 * @param enabled	true to activate the evaluation, false to deactivate it
 	 */
 	template< typename nodeType >
 	void regardIfIsAKindOf( const bool enabled = true );
 
 	/**
-	 * @brief Desactivate the evaluation process for all node type.
+	 * @brief Deactivates the evaluation process for all node type.
 	 *
-	 * @param disabled	true to desactivate the evalutation, false to activate it
+	 * @param disabled	true to deactivate the evaluation, false to activate it
 	 */
 	void disregard( const bool disabled = true );
 
 	/**
-	 * @brief Desactivate the evaluation process for a specific node type.
+	 * @brief Deactivates the evaluation process for a specific node type.
 	 *
-	 * @param disabled	true to desactivate the evalutation, false to activate it
+	 * @param disabled	true to deactivate the evaluation, false to activate it
 	 */
 	template< typename nodeType >
 	void disregardIfIsA( const bool disabled = true );
 	
 	/**
-	 * @brief Desactivate the evaluation process for all node that inherit from the specified node type.
+	 * @brief Deactivates the evaluation process for all node that inherit from the specified node type.
 	 *
-	 * @param disabled	true to desactivate the evalutation, false to activate it
+	 * @param disabled	true to deactivate the evaluation, false to activate it
 	 */
 	template< typename nodeType >
 	void disregardIfIsAKindOf( const bool disabled = true );
 	
 	/**
-	 * @brief Return if the evaluation process for a specific node type is enabled.
+	 * @brief Returns if the evaluation process for a specific node type is enabled.
 	 * 
 	 * @return true if evaluation is enabled.
 	 */
