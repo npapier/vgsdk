@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -27,12 +27,11 @@ static const std::string	QUAD_NODE_NAME("VideoPlayback.shape");
 
 
 VideoCallback::VideoCallback( const std::string& pathFilename )
-:	m_video( new vgFFmpeg::Video( pathFilename ) ),
-	m_output( NO_OUTPUT )
+:	m_output( NO_OUTPUT )
 {
+	setVideo( pathFilename );
+
 	setExecutionDuration( 0 );
-	// @todo
-	//setFrequency( 20 );
 	setTDuration( 0 );
 
 	setTDirection( FORWARD );
@@ -91,6 +90,8 @@ void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 void VideoCallback::setVideo( const std::string & pathFilename )
 {
 	m_video = vgd::makeShp( new vgFFmpeg::Video( pathFilename ) );
+
+	setFrequency( m_video->getFrameRate() );
 	updateAspectRatio();
 }
 
@@ -98,7 +99,7 @@ void VideoCallback::setVideo( const std::string & pathFilename )
 
 void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 {
-	// Decodes the next frame	
+	// Decodes the next frame
 	const bool retVal = m_video->next();
 
 	if ( retVal )
