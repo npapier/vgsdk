@@ -28,6 +28,8 @@ namespace event
  *
  * @ingroup g_time
  *
+ * @todo stop() => call stop() follow by getTimerEventProcessor()->remove( callback );
+ *
  * @todo isCallable(), isActive or isPlaying()
  * @todo functor
  * @todo delay()
@@ -281,7 +283,7 @@ private:
 
 
 	/**
-	 * @name Callback parametrization
+	 * @name Callback parameterization
 	 */
 	//@{
 	vgd::basic::TimeDuration	m_executionDuration;
