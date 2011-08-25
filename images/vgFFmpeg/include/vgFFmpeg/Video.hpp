@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -64,6 +64,13 @@ struct VGFFMPEG_API Video
 
 
 	/**
+	 * @brief	Retrieves the fps.
+	 */
+	const float getFrameRate() const;
+
+
+
+	/**
 	 * @brief	Retrieves video duration (in seconds).
 	 */
 	const float getDuration() const;
@@ -105,6 +112,7 @@ protected:
 	AVFormatContext *	pFormatCtx;
 	int					videoStream;
 
+	// video
 	AVCodecContext	*pCodecCtx;
 	AVCodec			*pCodec;
 
