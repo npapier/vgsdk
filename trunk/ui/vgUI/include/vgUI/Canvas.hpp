@@ -628,7 +628,9 @@ private:
 	 */
 	static std::ostream* getGleOutputStream();
 
+protected:
 	const Canvas *		m_sharedCanvas;						///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
+private:
 
 	bool				m_initialVerticalSynchronization;	///< the initial vertical synchronization state of this canvas
 

@@ -109,7 +109,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
 		grab_focus();
-		
+
 #ifdef USE_GTKGLEXT
 		setGlCapability( GTK_WIDGET(gobj()) );
 //#else
@@ -122,13 +122,12 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 
 	/**
 	 * @brief	Constructor that builds a canvas with an OpenGL context sharing resources with
-	 * 		the given canvas.
+	 * 			the given canvas.
 	 *
 	 * @param	sharedCanvas	a pointer to the canvas for sharing
 	 */
-	template< typename SharedCanvasType >
-	GenericCanvas( const SharedCanvasType * sharedCanvas )
-	:	vgUI::Canvas( sharedCanvas ),
+	GenericCanvas( const vgUI::Canvas * sharedCanvas )
+	:	BaseCanvasType( sharedCanvas ),
 //#ifdef USE_GLC
 		m_glc( 0 ),
 		m_showMenu( false )
@@ -138,15 +137,13 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
 		grab_focus();
-		
+
 #ifdef USE_GTKGLEXT
 		GdkGLContext * glContext = gtk_widget_get_gl_context( GTK_WIDGET(sharedCanvas->gobj()) );
-		assert( glContext != 0 && "Shared canvas has no OpenGL capability." );
+		vgAssertN( glContext != 0, "Shared canvas has no OpenGL capability." );
 
 		setGlCapability( GTK_WIDGET(gobj()), glContext );
 #else
-		// @todo sharing
-		assert( false && "Sharing not yet implemented !!!" );
 #endif
 		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
 
@@ -442,8 +439,9 @@ protected:
 			const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
 			drawable->stereo = requestedProperties.enableQuadBufferStereo();
 
-			// Next, creates the glc context
-			m_glc						= glc_create( drawable );
+			// Next, creates the glc context (shared or not)
+			m_glc = glc_create_shared( drawable, m_sharedCanvas ? dynamic_cast< const GenericCanvas * >(m_sharedCanvas)->m_glc : 0 );
+
 			if ( m_glc == 0 )
 			{
 				glc_gtkmm_drawable_destroy( drawable );

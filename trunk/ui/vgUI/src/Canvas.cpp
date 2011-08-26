@@ -134,7 +134,7 @@ Canvas::Canvas()
 	m_fps							( -1							)
 {
 	// Updates the number of canvas
-	assert( getCanvasCount() == 0 && "This is not the first canvas." );
+	vgAssertN( getCanvasCount() == 0, "Only the first canvas must be created with this constructor. Uses constructor with the following signature instead Canvas( const Canvas * )." );
 	++m_canvasCount;
 
 	// Resets the scene graph
@@ -146,7 +146,7 @@ Canvas::Canvas()
 
 
 
-Canvas::Canvas(	const Canvas *sharedCanvas )
+Canvas::Canvas( const Canvas *sharedCanvas )
 :	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 	// m_gleLogSystem
 	// m_gleLogFile
@@ -162,7 +162,7 @@ Canvas::Canvas(	const Canvas *sharedCanvas )
 	m_fps							( -1							)
 {
 	// Updates the number of canvas
-	assert( getCanvasCount() >= 1 && "This is the first canvas." );
+	vgAssertN( getCanvasCount() >= 1, "The first canvas must be created with the following constructor Canvas()." );
 	++m_canvasCount;
 
 	// Resets the scene graph

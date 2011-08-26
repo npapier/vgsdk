@@ -68,7 +68,7 @@ struct VGUI_API BasicViewer : public Canvas
 	 *
 	 * @param	sharedCanvas	a pointer to a canvas that will share OpenGL resources
 	 */
-	BasicViewer( Canvas * sharedCanvas );
+	BasicViewer( const vgUI::Canvas * sharedCanvas );
 
 	virtual void resetSceneGraph();
 	//@}

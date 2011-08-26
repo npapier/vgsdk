@@ -61,7 +61,7 @@ struct VGUI_API BasicManipulator : public BasicViewer
 	 *
 	 * @param	parent	a pointer to the parent window.
 	 */
-	BasicManipulator( Canvas * pSharedCanvas );
+	BasicManipulator( const vgUI::Canvas * pSharedCanvas );
 	//@}
 
 
