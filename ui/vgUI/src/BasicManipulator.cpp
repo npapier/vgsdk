@@ -30,7 +30,7 @@ BasicManipulator::BasicManipulator()
 
 
 
-BasicManipulator::BasicManipulator( Canvas * pSharedCanvas )
+BasicManipulator::BasicManipulator( const vgUI::Canvas * pSharedCanvas )
 :	BasicViewer( pSharedCanvas ),
 	m_sceneTransform( vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
 {

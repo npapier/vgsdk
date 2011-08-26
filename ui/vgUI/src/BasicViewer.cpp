@@ -36,8 +36,8 @@ BasicViewer::BasicViewer()
 
 
 
-BasicViewer::BasicViewer( Canvas * sharedCanvas )
-:	Canvas( sharedCanvas ),
+BasicViewer::BasicViewer( const vgUI::Canvas * sharedCanvas )
+:	vgUI::Canvas( sharedCanvas ),
 	m_cameraType( CAMERA_DEFAULT )
 {
 	// Resets the scene graph
