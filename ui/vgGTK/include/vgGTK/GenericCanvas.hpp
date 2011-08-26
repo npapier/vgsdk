@@ -402,6 +402,10 @@ protected:
 		
 		if( window )
 		{
+			if( !window->is_visible() )
+			{
+				window->show();
+			}
 			window->invalidate_region( get_window()->get_visible_region(), false );
 			gdk_window_process_all_updates();
 		}
@@ -414,6 +418,10 @@ protected:
 		
 		if( window )
 		{
+			if( !window->is_visible() )
+			{
+				window->show();
+			}
 			window->invalidate_region( get_window()->get_visible_region(), false );
 		}
 	}
