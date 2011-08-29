@@ -50,6 +50,9 @@ struct VGGTK_API UserSettings : public Gtk::VBox, public vgGTK::ContainerElement
 	 */
 	void refreshLevel();
 
+protected:
+	virtual vgd::Shp< Gtk::Dialog >			createSelectionDialog(); ///< Creates an empty dialog box, skinned by the application if necessary
+
 private:
 
 	vgd::Shp< vge::engine::UserSettings >	m_settings;			///< The settings to configure.

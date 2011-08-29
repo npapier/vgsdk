@@ -98,14 +98,22 @@ void UserSettings::onLevelChanged()
 	}
 }
 
+vgd::Shp< Gtk::Dialog > UserSettings::createSelectionDialog()
+{
+	vgd::Shp< Gtk::Dialog > dialog ( new Gtk::Dialog() );
+	dialog->set_has_separator( false );
+	dialog->add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+	dialog->add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+	dialog->set_title( "Graphic card selection" );
+	dialog->set_transient_for( *dynamic_cast< Gtk::Window* >( get_toplevel() ) );
 
+	return dialog;
+}
 
 void UserSettings::onSelectCardClicked()
 {
 	// Builds the main dialog layout.
-	Gtk::Window	* toplevel = dynamic_cast< Gtk::Window* >( get_toplevel() );
-
-	Gtk::Dialog			dialog;
+	vgd::Shp< Gtk::Dialog >	dialog;
 	Gtk::VBox			box;
 	Gtk::Label			label;
 	Gtk::ListViewText	list( 1 );
@@ -129,13 +137,9 @@ void UserSettings::onSelectCardClicked()
 	box.set_spacing( 12 );
 	box.set_border_width( 12 );
 
-	dialog.get_vbox()->add( box );
-	dialog.set_has_separator( false );
-	dialog.add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
-	dialog.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
-	dialog.set_title( "Graphic card selection" );
-	dialog.set_transient_for( *toplevel );
-	dialog.show_all();
+	dialog = createSelectionDialog();
+	dialog->get_vbox()->add( box );
+	dialog->show_all();
 
 
 	// Fills the list with available graphic cards.
@@ -149,7 +153,7 @@ void UserSettings::onSelectCardClicked()
 	
 
 	// Runs the dialog.
-	if( dialog.run() == Gtk::RESPONSE_OK )
+	if( dialog->run() == Gtk::RESPONSE_OK )
 	{
 		const Gtk::ListViewText::SelectionList	selection = list.get_selected();
 
