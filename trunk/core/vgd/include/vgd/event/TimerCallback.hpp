@@ -277,7 +277,7 @@ struct TimerCallback
 	//@}
 
 
-private:
+protected:
 
 	vgd::Shp< vgd::node::Node >	m_node;				///< the node reference stored by this callback.
 

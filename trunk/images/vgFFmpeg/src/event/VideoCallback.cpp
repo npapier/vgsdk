@@ -13,6 +13,7 @@
 #include <vgd/node/Texture2D.hpp>
 #include <vgd/visitor/helpers.hpp>
 
+//#define ENABLED_VIDEO_DEBUG
 
 
 namespace vgFFmpeg
@@ -73,8 +74,10 @@ vgd::Shp< vgd::node::Group > VideoCallback::setVideoPlaybackInTexture2D()
 
 void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 {
+	// Tests if video is in paused
 	// Tests if there is an ouput defined
-	if ( m_output == NO_OUTPUT )
+	if ( m_video->isPaused() ||
+		m_output == NO_OUTPUT )
 	{
 		return;
 	}
@@ -91,7 +94,15 @@ void VideoCallback::setVideo( const std::string & pathFilename )
 {
 	m_video = vgd::makeShp( new vgFFmpeg::Video( pathFilename ) );
 
-	setFrequency( m_video->getFrameRate() );
+#ifdef ENABLED_VIDEO_DEBUG
+	const int64 frameRate		= static_cast<int64>( m_video->getFrameRate() );
+	const int64 timePerFrame	= static_cast<int>( 1000/frameRate );
+
+	vgLogDebug2("frameRate=%i i/s", frameRate );
+	vgLogDebug2("timePerFrame=%i ms", timePerFrame );
+#endif
+
+	setFrequency( m_video->getFrameRate() * 1.1f );
 	updateAspectRatio();
 }
 
@@ -99,30 +110,129 @@ void VideoCallback::setVideo( const std::string & pathFilename )
 
 void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 {
-	// Decodes the next frame
-	const bool retVal = m_video->next();
+	const int64 frameRate		= static_cast<int64>( m_video->getFrameRate() );
+	const int64 timePerFrame	= static_cast<int>( 1000/frameRate );
 
-	if ( retVal )
+	// Buffering
+	doVideoStreamBuffering( 1 );
+
+	// Retrieves texture node
+	using vgd::node::Texture2D;
+	using vgd::node::Group;
+	vgd::Shp< Group >		group	= vgd::dynamic_pointer_cast< Group >( getNode() );
+	vgd::Shp< Texture2D >	texture	= vgd::visitor::findFirstByName< Texture2D >( group, TEX2D_NODE_NAME );
+	if ( !texture )
 	{
-		// Retrieves the frame image
-		using vgd::basic::Image;
-		vgd::Shp< Image > image( new Image( m_video->getCurrent() ) );
-		//vgd::basic::ImageUtilities::setAlpha( image.get(), 1.f );
-
-		// Updates texture2D
-		using vgd::node::Texture2D;
-		using vgd::node::Group;
-
-		vgd::Shp< Group >		group	= vgd::dynamic_pointer_cast< Group >( getNode() );
-		vgd::Shp< Texture2D >	texture	= vgd::visitor::findFirstByName< Texture2D >( group, TEX2D_NODE_NAME );
-
-		if ( texture )
-		{
-			texture->setImage( image );
-		}
-
-		event->scheduleRefreshForced();
+		vgAssertN( false, "No texture for video" );
+		return;
 	}
+
+	// Process the next image
+	while( true )
+	{
+		vgd::Shp< ImageFrame > imageFrame = m_video->getImage();
+
+		if ( !imageFrame )
+		{
+			if ( m_video->isOver() )
+			{
+#ifdef ENABLED_VIDEO_DEBUG
+				vgLogDebug2(  "update(): Video %s is over", m_video->getPathFilename().c_str() );
+#endif
+				m_video->pause();
+				//setExecutionDuration(1); // sets execution duration to 1ms to end this callback
+				break;
+			}
+			else
+			{
+#ifdef ENABLED_VIDEO_DEBUG
+				vgLogDebug( "Need buffering" );
+				vgLogDebug2( "beforeBuffering:getImageQueueSize()=%i", m_video->getImageQueueSize() );
+#endif
+				doVideoStreamBuffering( 1 );
+#ifdef ENABLED_VIDEO_DEBUG
+				vgLogDebug2( "afterBuffering:getImageQueueSize()=%i", m_video->getImageQueueSize() );
+#endif
+				continue;
+			}
+		}
+		else
+		{
+			const int64 deltaAllowed = timePerFrame/2;
+
+			const int64 imageTime	= imageFrame->getPosition();
+			const int64 currentTime	= getVideo()->getPlayingElapsedTime();
+
+			const int64 difference = currentTime - imageTime;
+			if ( difference > 0 )
+			{
+				// image behind
+				if ( difference < deltaAllowed )
+				{
+#ifdef ENABLED_VIDEO_DEBUG
+					vgLogDebug3("image behind:show(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
+#endif
+					texture->setImage( imageFrame->getImage() );
+					event->scheduleRefreshForced();
+					break;
+				}
+				else
+				{
+#ifdef ENABLED_VIDEO_DEBUG
+					vgLogDebug3("image behind:skip(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
+#endif
+					continue;
+				}
+			}
+			else
+			{
+				// image ahead
+				if ( -difference < deltaAllowed )
+				{
+#ifdef ENABLED_VIDEO_DEBUG
+					vgLogDebug3("image ahead:show(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
+#endif
+					texture->setImage( imageFrame->getImage() );
+					event->scheduleRefreshForced();
+					break;
+				}
+				else
+				{
+#ifdef ENABLED_VIDEO_DEBUG
+					vgLogDebug3("image ahead:wait(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
+#endif
+					SDL_Delay( -difference );
+#ifdef ENABLED_VIDEO_DEBUG
+					const int64 newCurrentTime	= getVideo()->getPlayingElapsedTime();
+					vgLogDebug3("image ahead:showAfterWait(currentTime,imageTime)=%i,%i", (int)newCurrentTime, (int)imageTime );
+#endif
+					texture->setImage( imageFrame->getImage() );
+					event->scheduleRefreshForced();
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+
+void VideoCallback::doVideoStreamBuffering( const int bufferInSecond )
+{
+	while ( m_video->getImageQueueSize() < m_video->getFrameRate() * bufferInSecond )
+	{
+		// Reads/decodes a new packet from video stream
+		const bool processPacketRetVal = m_video->processPacket();
+		if ( !processPacketRetVal )
+		{
+#ifdef ENABLED_VIDEO_DEBUG
+			vgLogDebug( "update:processPacket() fails. EOF ?" );
+			vgLogDebug2( "update:begin:getImageQueueSize()=%i", m_video->getImageQueueSize() );
+#endif
+			break;
+		}
+	}
+	//vgLogDebug2( "update:begin:getImageQueueSize()=%i", m_video->getImageQueueSize() );
 }
 
 
@@ -173,7 +283,6 @@ void VideoCallback::endExecution()
 		// else nothing to do
 	}
 }
-
 
 
 } // namespace vgFFmpeg
