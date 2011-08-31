@@ -2,6 +2,6 @@ description	= '(V)ersatile (G)raphical (FFmpeg)'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
-uses		= [ 'gstffmpeg' ]
+uses		= [ 'gstffmpeg', 'sdl' ]
 libs		= [ 'vgDebug 0-5', 'vgd 0-5' ]
 deps		= [ '../../core/vgDebug', '../../core/vgd' ]
