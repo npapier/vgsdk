@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -28,9 +28,9 @@ void Timer::connect( Gtk::Widget * widget )
 	sigc::slot<bool> mySlot = sigc::bind( ::sigc::mem_fun(this, &Timer::onTimeout), 1 );
 
 #ifdef _DEBUG
-	store( Glib::signal_timeout().connect( mySlot, 1000/5 ) );
+	store( Glib::signal_timeout().connect( mySlot, 1000/15 ) );
 #else
-	store( Glib::signal_timeout().connect( mySlot, 1000/25 ) );
+	store( Glib::signal_timeout().connect( mySlot, 1000/30 ) );
 #endif
 
 	SignalHandler::connect( widget );

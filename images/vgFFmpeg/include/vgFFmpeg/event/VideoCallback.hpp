@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -73,7 +73,7 @@ protected:
 
 private:
 
-	
+
 	vgd::Shp< vgFFmpeg::Video > m_video;		///< The video stream
 
 	enum PlayBackOutput
@@ -89,6 +89,8 @@ private:
 	 * @name	Helpers
 	 */
 	//@{
+	void doVideoStreamBuffering( const int bufferInSecond );
+
 	void updateAspectRatio();										///< Updates outputs to match video's aspect ratio.
 	//@}
 
