@@ -67,8 +67,8 @@ protected:
 	void apply( const vgd::Shp< vgd::event::TimerEvent > event );
 
 
-	void beginExecution();
-	void endExecution();
+	void beginExecution( const vgd::Shp< vgd::event::TimerEvent > event );
+	void endExecution( const vgd::Shp< vgd::event::TimerEvent > event );
 
 
 private:
@@ -84,6 +84,7 @@ private:
 	PlayBackOutput m_output;
 
 	void update( const vgd::Shp< vgd::event::TimerEvent > event ); ///< override
+	const bool update();
 
 	/**
 	 * @name	Helpers

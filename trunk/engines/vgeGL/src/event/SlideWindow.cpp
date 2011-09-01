@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -78,7 +78,7 @@ void SlideWindow::apply( vgd::Shp< vgd::event::TimerEvent > event )
 }
 
 
-void SlideWindow::endExecution()
+void SlideWindow::endExecution( const vgd::Shp< vgd::event::TimerEvent > event )
 {
 	// Sets each window to its final state
 	for( uint i=0; i < m_window.size(); ++i )
@@ -91,6 +91,9 @@ void SlideWindow::endExecution()
 		m_window[i].window->setGeometry( geomRECT );
 		m_window[i].window->setVisible( m_window[i].visible );
 	}
+
+	// Schedules a refresh
+	event->scheduleRefreshForced();
 }
 
 

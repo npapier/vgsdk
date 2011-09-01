@@ -74,13 +74,20 @@ vgd::Shp< vgd::node::Group > VideoCallback::setVideoPlaybackInTexture2D()
 
 void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 {
-	// Tests if video is in paused
 	// Tests if there is an ouput defined
-	if ( m_video->isPaused() ||
-		m_output == NO_OUTPUT )
+	if ( m_output == NO_OUTPUT )
 	{
 		return;
 	}
+
+	// Tests if video is in paused
+	if ( m_video->isPaused() )
+	{
+		// Schedules a refresh
+		event->scheduleRefreshForced();
+		return;
+	}
+
 
 	// @todo takes care of t to play video at the real speed
 	//const float t = getTf();
@@ -92,6 +99,8 @@ void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 
 void VideoCallback::setVideo( const std::string & pathFilename )
 {
+	vgLogDebug2("VideoCallback::setVideo( %s )", pathFilename.c_str() );
+
 	m_video = vgd::makeShp( new vgFFmpeg::Video( pathFilename ) );
 
 #ifdef ENABLED_VIDEO_DEBUG
@@ -110,6 +119,18 @@ void VideoCallback::setVideo( const std::string & pathFilename )
 
 void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 {
+	const bool mustScheduleRefreshForced = update();
+	if ( mustScheduleRefreshForced )
+	{
+		event->scheduleRefreshForced();
+	}
+}
+
+
+const bool VideoCallback::update()
+{
+	bool mustScheduleRefreshForced = false;
+
 	const int64 frameRate		= static_cast<int64>( m_video->getFrameRate() );
 	const int64 timePerFrame	= static_cast<int>( 1000/frameRate );
 
@@ -124,7 +145,7 @@ void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 	if ( !texture )
 	{
 		vgAssertN( false, "No texture for video" );
-		return;
+		return false;
 	}
 
 	// Process the next image
@@ -173,7 +194,7 @@ void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 					vgLogDebug3("image behind:show(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
 #endif
 					texture->setImage( imageFrame->getImage() );
-					event->scheduleRefreshForced();
+					mustScheduleRefreshForced = true;
 					break;
 				}
 				else
@@ -193,7 +214,7 @@ void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 					vgLogDebug3("image ahead:show(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
 #endif
 					texture->setImage( imageFrame->getImage() );
-					event->scheduleRefreshForced();
+					mustScheduleRefreshForced = true;
 					break;
 				}
 				else
@@ -207,18 +228,22 @@ void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
 					vgLogDebug3("image ahead:showAfterWait(currentTime,imageTime)=%i,%i", (int)newCurrentTime, (int)imageTime );
 #endif
 					texture->setImage( imageFrame->getImage() );
-					event->scheduleRefreshForced();
+					mustScheduleRefreshForced = true;
 					break;
 				}
 			}
 		}
 	}
+
+	return mustScheduleRefreshForced;
 }
 
 
 
 void VideoCallback::doVideoStreamBuffering( const int bufferInSecond )
 {
+	if ( !m_video ) return;
+
 	while ( m_video->getImageQueueSize() < m_video->getFrameRate() * bufferInSecond )
 	{
 		// Reads/decodes a new packet from video stream
@@ -258,14 +283,23 @@ void VideoCallback::updateAspectRatio()
 
 
 
-void VideoCallback::beginExecution()
+void VideoCallback::beginExecution( const vgd::Shp< vgd::event::TimerEvent > event )
 {
-	//update( event ); // @todo 
+	// Buffering
+	vgLogDebug("VideoCallback::beginExecution()");
+	doVideoStreamBuffering( 1 );
+
+	const bool mustScheduleRefreshForced = update();
+	if ( mustScheduleRefreshForced )
+	{
+		// Schedules a refresh
+		event->scheduleRefreshForced();
+	}
 }
 
 
 
-void VideoCallback::endExecution()
+void VideoCallback::endExecution( const vgd::Shp< vgd::event::TimerEvent > event )
 {
 	if ( m_output == TEXTURE2D )
 	{
@@ -281,6 +315,9 @@ void VideoCallback::endExecution()
 			container->removeChild( videoOutputGroup );
 		}
 		// else nothing to do
+
+		// Schedules a refresh
+		event->scheduleRefreshForced();
 	}
 }
 

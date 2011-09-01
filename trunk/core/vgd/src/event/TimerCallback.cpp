@@ -24,7 +24,7 @@ namespace event
 TimerCallback::TimerCallback()
 :	//m_node
 
-	m_executionDuration( 1000  ),
+	m_executionDuration( 1000 ),
 	m_frequency( 25.f ),
 
 	m_tDuration(1000),
@@ -89,9 +89,9 @@ const bool TimerCallback::operator() ( const vgd::Shp< vgd::event::TimerEvent > 
 		m_firstExecution.restart();
 
 		//
-		m_lastExecution = m_firstExecution;
-		m_elapsedTimeFrom0 = m_firstExecution.getElapsedTime();
-		beginExecution();
+		m_lastExecution		= m_firstExecution;
+		m_elapsedTimeFrom0	= m_firstExecution.getElapsedTime();
+		beginExecution( event );
 		apply( event );
 	}
 	else
@@ -116,12 +116,11 @@ const bool TimerCallback::operator() ( const vgd::Shp< vgd::event::TimerEvent > 
 	if ( retVal )
 	{
 		// This is the last execution of this callback
-		endExecution();
+		endExecution( event );
 	}
 
 	return retVal;
 }
-
 
 
 void TimerCallback::setExecutionDuration( const vgd::basic::TimeDuration duration )
@@ -183,8 +182,8 @@ const double TimerCallback::getTd()
 		else
 		{
 			value = vgm::Utilities::linearInterpolation(
-				0.f,					beginT,
-				getTDuration().ms(),	endT,
+				0.f,					static_cast< float >(beginT),
+				getTDuration().ms(),	static_cast< float >(endT),
 				static_cast< float >( m_elapsedTimeFrom0.ms() ) );
 
 			value = glm::saturate( value );
@@ -195,7 +194,7 @@ const double TimerCallback::getTd()
 		const uint loopDuration = getTDuration().ms();
 		const uint loopCount	= m_elapsedTimeFrom0.ms() / loopDuration;
 
-		if ( loopCount < m_tLoopCount /*don't use getTLoopCount(), because it could returned 0 instead of numeric_limits<>::max() */ )
+		if ( loopCount < m_tLoopCount /* don't use getTLoopCount(), because it could returned 0 instead of numeric_limits<>::max() */ )
 		{
 			float moduloTInMS = static_cast< float >( m_elapsedTimeFrom0.ms() % loopDuration );
 
