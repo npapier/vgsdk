@@ -45,7 +45,7 @@ struct SlideWindow : public vgeGL::event::TimerCallback
 	 * @pre window != 0
 	 */
 	VGEGL_API void add(	vgd::Shp< vgeGL::technique::MultiMain::Window > window,
-				const vgm::Rectangle2f	destination, const bool visible );
+						const vgm::Rectangle2f	destination, const bool visible );
 
 	/**
 	 * @name Overridden method
@@ -53,7 +53,7 @@ struct SlideWindow : public vgeGL::event::TimerCallback
 	//@{
 	VGEGL_API void apply( const vgd::Shp< vgd::event::TimerEvent > event );
 
-	VGEGL_API void endExecution();
+	VGEGL_API void endExecution( const vgd::Shp< vgd::event::TimerEvent > event );
 	//@}
 
 protected:

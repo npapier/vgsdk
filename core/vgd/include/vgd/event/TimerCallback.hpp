@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -39,6 +39,11 @@ namespace event
 struct TimerCallback
 {
 	/**
+	 * @name Constructor and destructor
+	 */
+	//@{
+
+	/**
 	 * @brief	Default constructor
 	 *
 	 * @post getNode() == 0
@@ -66,7 +71,13 @@ struct TimerCallback
 	 * @brief	Virtual destructor
 	 */
 	VGD_API virtual ~TimerCallback();
+	//@}
 
+
+	/**
+	 * @name Node accessor
+	 */
+	//@{
 
 	/**
 	 * @brief Retrieves the node reference stored by this callback
@@ -82,6 +93,8 @@ struct TimerCallback
 	 */
 	VGD_API void setNode( vgd::Shp< vgd::node::Node > node );
 
+	//@}
+
 
 	/**
 	 * @name Callback implementation
@@ -93,7 +106,7 @@ struct TimerCallback
 	 *
 	 * This callback method is called by TimerEventProcessor class when it receives a time event.
 	 *
-	 * @param event	the event that has triggered the callback execution
+	 * @param event		the event that has triggered the callback execution
 	 * @return true to stop futur execution of this callback, false to continue.
 	 */
 	VGD_API const bool operator() ( const vgd::Shp< vgd::event::TimerEvent > event );
@@ -101,7 +114,7 @@ struct TimerCallback
 	/**
 	 * @brief Implements the user part of the timer callback
 	 *
-	 * @param event	the event that has triggered the callback execution
+	 * @param event		the event that has triggered the callback execution
 	 *
 	 * @remarks Overrides this method to customize this callback.
 	 */
@@ -110,16 +123,20 @@ struct TimerCallback
 	/**
 	 * @brief Implements the user part of the first execution of the timer callback
 	 *
+	 * @param event		the event that has triggered the callback execution
+	 *
 	 * By default, this method does nothing. Overriddes this method to customize this callback.
 	 */
-	VGD_API virtual void beginExecution() {}
+	VGD_API virtual void beginExecution( const vgd::Shp< vgd::event::TimerEvent > event ) {}
 
 	/**
 	 * @brief Implements the user part of the last execution of the timer callback
 	 *
+	 * @param event		the event that has triggered the callback execution
+	 *
 	 * By default, this method does nothing. Overriddes this method to customize this callback.
 	 */
-	VGD_API virtual void endExecution() {}
+	VGD_API virtual void endExecution( const vgd::Shp< vgd::event::TimerEvent > event ) {}
 
 	//@}
 
