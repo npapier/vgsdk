@@ -65,23 +65,69 @@ struct PacketQueue
 		nb_packets(0),
 		size(0),
 		mutex( SDL_CreateMutex() ),
-		cond(  SDL_CreateCond() )
+		cond(  SDL_CreateCond() ),
+		m_abortRequest(false)
 	{}
+
 
 	~PacketQueue()
 	{
+		// @todo delete first_pkt, last_pkt
+		abort();
+
 		if ( mutex )	SDL_DestroyMutex( mutex );
 		if ( cond )		SDL_DestroyCond( cond );
 	}
+
+
+	void play()
+	{
+		vgLogDebug("SDL_OpenAudio");
+		if( SDL_OpenAudio(&wanted_spec, &spec) < 0)
+		{
+			vgAssertN( false, "SDL_OpenAudio: %s\n", SDL_GetError() );
+		}
+		else
+		{
+			SDL_PauseAudio(0);
+		}
+
+		abort( false );
+	}
+
+
+	void pause()
+	{
+		abort();
+
+		vgLogDebug("SDL_CloseAudio");
+		SDL_CloseAudio();
+	}
+
+
+	void abort( const bool newState = true )
+	{
+		SDL_LockMutex( mutex );
+
+		m_abortRequest = newState;
+		SDL_CondSignal( cond );
+
+		SDL_UnlockMutex( mutex );
+	}
+
 
 	AVPacketList *first_pkt, *last_pkt;
 	int nb_packets;
 	int size;
 	SDL_mutex *mutex;
 	SDL_cond *cond;
+	bool m_abortRequest;
+
+	SDL_AudioSpec wanted_spec, spec;
 };
 
 vgd::Shp< PacketQueue > audioq;
+
 
 int packet_queue_put(PacketQueue *q, AVPacket *pkt){
   AVPacketList *pkt1;
@@ -111,7 +157,6 @@ int packet_queue_put(PacketQueue *q, AVPacket *pkt){
 }
 
 
-bool audioPause = true;
 int quit = 0;
 int decode_interrupt_cb(void) {
   return quit;
@@ -129,7 +174,7 @@ static int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block)
   
   for(;;) {
     
-    if(quit) {
+    if(quit || q->m_abortRequest) {
       ret = -1;
       break;
     }
@@ -187,11 +232,6 @@ int audio_decode_frame(AVCodecContext *aCodecCtx, uint8_t *audio_buf, int buf_si
     }
     if(pkt.data)
       av_free_packet(&pkt);
-
-	if ( audioPause )
-	{
-		return -1;
-	}
 
     if(quit){
       return -1;
@@ -395,23 +435,19 @@ Video::Video( const std::string& pathFilename )
 		}
 
 		// Set audio settings from codec info
-		wanted_spec.freq = aCodecCtx->sample_rate;
-		wanted_spec.format = AUDIO_S16SYS;
-		wanted_spec.channels = aCodecCtx->channels;
-		wanted_spec.silence = 0;
-		wanted_spec.samples = SDL_AUDIO_BUFFER_SIZE;
-		wanted_spec.callback = sdl_audio_callback;
-		wanted_spec.userdata = aCodecCtx;
-
-		vgLogDebug("SDL_OpenAudio");
 		audioq.reset( new PacketQueue() );
-		if( SDL_OpenAudio(&wanted_spec, &spec) < 0)
-		{
-			vgAssertN( false, "SDL_OpenAudio: %s\n", SDL_GetError() );
-		}
+
+		SDL_AudioSpec& wantedSpec = audioq->wanted_spec;
+		wantedSpec.freq = aCodecCtx->sample_rate;
+		wantedSpec.format = AUDIO_S16SYS;
+		wantedSpec.channels = aCodecCtx->channels;
+		wantedSpec.silence = 0;
+		wantedSpec.samples = SDL_AUDIO_BUFFER_SIZE;
+		wantedSpec.callback = sdl_audio_callback;
+		wantedSpec.userdata = aCodecCtx;
 
 		m_time.restart();
-		pause();
+		m_time.pause();
 	}
 }
 
@@ -547,19 +583,23 @@ void Video::pause( const bool newState )
 {
 	if ( newState )
 	{
-		// pause
-		audioPause = true;
-		//SDL_PauseAudio(1); @todo
-
-		if ( !m_time.isPaused() )	m_time.pause();
+		if ( !m_time.isPaused() )
+		{
+			// pause
+			audioq->pause();
+			m_time.pause();
+		}
+		// else nothing to do
 	}
 	else
 	{
-		// unpause
-		audioPause = false;
-		SDL_PauseAudio(0);
-
-		if ( m_time.isPaused() )	m_time.resume();
+		if ( m_time.isPaused() )
+		{
+			// unpause
+			audioq->play();
+			m_time.resume();
+		}
+		// else nothing to do
 	}
 }
 
@@ -582,20 +622,12 @@ void Video::restart()
 
 	pause();
 
-	vgLogDebug("SDL_CloseAudio");
-	SDL_CloseAudio();
-	audioq.reset( new PacketQueue() );
-
-	vgLogDebug("SDL_OpenAudio");
-	if( SDL_OpenAudio(&wanted_spec, &spec) < 0)
-	{
-		vgAssertN( false, "SDL_OpenAudio: %s\n", SDL_GetError() );
-	}
-
 	av_seek_frame( pFormatCtx, 0, 0, AVSEEK_FLAG_ANY ); 
 	imageQueue.clear();
 
 	m_time.restart();
+	m_time.pause();
+
 	play();
 }
 

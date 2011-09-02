@@ -21,6 +21,8 @@ namespace vgFFmpeg
 /**
  * @brief Callback updating texture node from a video stream.
  *
+ * To automatically restart the video when it is over, just sets TLoopMode to LOOP.
+ *
  * @todo Updates LayerPlan...
  */
 struct VGFFMPEG_API VideoCallback : public vgd::event::TimerCallback
@@ -59,8 +61,23 @@ struct VGFFMPEG_API VideoCallback : public vgd::event::TimerCallback
 	 */
 	void setVideo( const std::string& pathFilename );
 
-protected:
 
+	/**
+	 * @brief	Sets the waiting time before restarting the video.
+	 *
+	 * @param	duration		duration in milliseconds
+	 */
+	void setReplayWaitingTime( const int duration );
+
+	/**
+	 * @brief Retrieves the waiting time before restarting the video.
+	 *
+	 * @return the duration in milliseconds
+	 */
+	const int getReplayWaitingTime() const;
+
+
+protected:
 	/**
 	 * @brief Updates the vgsdk node with a video frame
 	 */
@@ -85,6 +102,9 @@ private:
 
 	void update( const vgd::Shp< vgd::event::TimerEvent > event ); ///< override
 	const bool update();
+
+	vgd::basic::Time	m_videoOver;				///< used to compute the elapsed time before restarting the video
+	int					m_replayWaitingTime;		///< the waiting time before restarting the video
 
 	/**
 	 * @name	Helpers

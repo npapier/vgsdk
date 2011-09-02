@@ -28,7 +28,9 @@ static const std::string	QUAD_NODE_NAME("VideoPlayback.shape");
 
 
 VideoCallback::VideoCallback( const std::string& pathFilename )
-:	m_output( NO_OUTPUT )
+:	m_output( NO_OUTPUT ),
+	m_videoOver(false),
+	m_replayWaitingTime(1)
 {
 	setVideo( pathFilename );
 
@@ -80,11 +82,30 @@ void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 		return;
 	}
 
+	// Tests if video is over and video restart has been requested
+	if ( m_videoOver.isValid() )
+	{
+		vgAssert( m_video->isOver() );
+		if ( m_videoOver.getElapsedTime() > getReplayWaitingTime() )
+		{
+#ifdef ENABLED_VIDEO_DEBUG
+			vgLogDebug2( "Video is over since %i ms. Calls restart()", m_videoOver.getElapsedTime().ms() );
+#endif
+			m_video->restart();
+			m_videoOver.setInvalid();
+		}
+		else
+		{
+			return;
+		}
+	}
+	//else nothing to do
+
 	// Tests if video is in paused
 	if ( m_video->isPaused() )
 	{
 		// Schedules a refresh
-		event->scheduleRefreshForced();
+		event->scheduleRefreshForced(); // @todo improves to be not refreshing in pause(): to have a refresh when returning onto the overview
 		return;
 	}
 
@@ -115,6 +136,17 @@ void VideoCallback::setVideo( const std::string & pathFilename )
 	updateAspectRatio();
 }
 
+
+void VideoCallback::setReplayWaitingTime( const int duration )
+{
+	m_replayWaitingTime = duration;
+}
+
+
+const int VideoCallback::getReplayWaitingTime() const
+{
+	return m_replayWaitingTime;
+}
 
 
 void VideoCallback::update( const vgd::Shp< vgd::event::TimerEvent > event )
@@ -157,10 +189,18 @@ const bool VideoCallback::update()
 		{
 			if ( m_video->isOver() )
 			{
+				vgLogDebug2(  "update(): Video %s is over.", m_video->getPathFilename().c_str() );
+				if ( getTLoopMode() == LOOP )
+				{
+					m_videoOver.restart();
+				}
+				else
+				{
 #ifdef ENABLED_VIDEO_DEBUG
-				vgLogDebug2(  "update(): Video %s is over", m_video->getPathFilename().c_str() );
+					vgLogDebug2(  "update(): Video %s is over. Calls pause().", m_video->getPathFilename().c_str() );
 #endif
-				m_video->pause();
+					m_video->pause();
+				}
 				//setExecutionDuration(1); // sets execution duration to 1ms to end this callback
 				break;
 			}
