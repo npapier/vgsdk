@@ -277,7 +277,6 @@ protected:
 	// audio
 	AVCodecContext		*aCodecCtx;
 	AVCodec				*aCodec;
-	SDL_AudioSpec		wanted_spec, spec;
 
 	// decode video
 	AVFrame	*pFrame; 
