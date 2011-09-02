@@ -195,7 +195,7 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 		color[2] = (float)effectCommon->getAmbient().getColor().getBlue();
 		material->setAmbient( color );
 	}
-	
+
 	//// diffuse
 	if( effectCommon->getDiffuse().getType() == COLLADAFW::ColorOrTexture::COLOR )
 	{
@@ -246,9 +246,8 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	}
 
 	//// transparency
-	real = (float)effectCommon->getOpacity().getColor().getAlpha(); //by default (opaque="A_ONE")Takes the transparency information from the color’s alpha channel, where the value 1.0 is opaque. 
-	material->setOpacity( real );
-	
+	material->setOpacity( 1.f );
+
 	//// reflective
 	if( effectCommon->getReflective().getType() == COLLADAFW::ColorOrTexture::TEXTURE )
 	{
