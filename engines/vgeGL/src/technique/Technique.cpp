@@ -40,15 +40,15 @@ void Technique::beginPass( const PassIsolationMask isolationMask )
 	using vgeGL::engine::GLState;
 	using vgeGL::engine::GLSLState;
 
-	assert( m_engine->getGLStateStack().getSize() == 1 );
-	assert( m_engine->getGLSLStateStack().getSize() == 1 );
+	vgAssert( m_engine->getGLStateStack().getSize() == 1 );
+	vgAssert( m_engine->getGLSLStateStack().getSize() == 1 );
 
 	vge::technique::Technique::beginPass(isolationMask);
 
 	m_engine->clearTextureUnits();
 
-	assert( m_engine->getGLStateStack().getSize() == 2 );
-	assert( m_engine->getGLSLStateStack().getSize() == 2 );
+	vgAssert( m_engine->getGLStateStack().getSize() == 2 );
+	vgAssert( m_engine->getGLSLStateStack().getSize() == 2 );
 
 	//m_engine->getGLStateStack().clear( GLState() );
 	//m_engine->getGLSLState().reset( m_engine->getMaxLights(), m_engine->getMaxTexUnits() );
@@ -114,8 +114,8 @@ void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::Traver
 void Technique::evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service,
 								const PassIsolationMask isolationMask, const bool nestedPass )
 {
-	assert( pass != 0 );
-	assert( service != 0 );
+	vgAssert( pass != 0 );
+	vgAssert( service != 0 );
 
 	if ( nestedPass )
 	{
@@ -126,8 +126,8 @@ void Technique::evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::s
 		beginPass( isolationMask );
 	}
 
-	assert( m_engine != 0 );
-	assert( getTraverseElements() != 0 );
+	vgAssert( m_engine != 0 );
+	vgAssert( getTraverseElements() != 0 );
 
 	pass->apply( this, m_engine, getTraverseElements(), service );
 
@@ -152,14 +152,14 @@ vge::engine::Engine * Technique::getEngine() const
 
 void Technique::prepareEval( vge::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector* /*traverseElements*/ )
 {
-	assert( false );
+	vgAssert( false );
 }
 
 
 
 void Technique::apply( vge::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector* /*traverseElements*/ )
 {
-	assert( false) ;
+	vgAssert( false) ;
 }
 
 
