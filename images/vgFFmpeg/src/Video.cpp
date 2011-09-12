@@ -480,7 +480,7 @@ Video::~Video()
 	av_free(pFrame);
 
 	// Close the codec
-	avcodec_close(aCodecCtx);
+	if ( aCodecCtx )	avcodec_close(aCodecCtx);
 	// @todo img_convert_ctx
 	avcodec_close(pCodecCtx);
 
