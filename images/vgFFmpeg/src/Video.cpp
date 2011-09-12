@@ -445,10 +445,11 @@ Video::Video( const std::string& pathFilename )
 		wantedSpec.samples = SDL_AUDIO_BUFFER_SIZE;
 		wantedSpec.callback = sdl_audio_callback;
 		wantedSpec.userdata = aCodecCtx;
-
-		m_time.restart();
-		m_time.pause();
 	}
+
+	//
+	m_time.restart();
+	m_time.pause();
 }
 
 
@@ -586,7 +587,7 @@ void Video::pause( const bool newState )
 		if ( !m_time.isPaused() )
 		{
 			// pause
-			audioq->pause();
+			if ( audioq )	audioq->pause();
 			m_time.pause();
 		}
 		// else nothing to do
@@ -596,7 +597,7 @@ void Video::pause( const bool newState )
 		if ( m_time.isPaused() )
 		{
 			// unpause
-			audioq->play();
+			if ( audioq )	audioq->play();
 			m_time.resume();
 		}
 		// else nothing to do
