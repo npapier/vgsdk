@@ -4,5 +4,5 @@ vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
 libs		= [ 'gle 0-3', 'glo 0-3', 'sbf 0-0', 'vgAlg 0-5', 'vgCairo 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgm 0-5' ]
-uses		= [ 'cairo' ]
+uses		= [ 'boost', 'cairo' ]
 deps		= [ '../../dependencies/gle', '../../dependencies/glo', '../../core', '../../engines', '../../images/vgCairo' ]
