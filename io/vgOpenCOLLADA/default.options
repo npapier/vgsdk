@@ -3,5 +3,5 @@ vcsUse				= 'no'
 type				= 'shared'
 version				= '0-5'
 deps				= ['../../core', '../vgio', '../../engines/vge', '../../algorithms']
-uses				= [ 'opencollada' ]
+uses				= [ 'boost', 'opencollada' ]
 libs				= [ 'sbf 0-0', 'vgAlg 0-5', 'vgBase 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgm 0-5', 'vgio 0-5', 'vgPhysfs 0-5' ]
