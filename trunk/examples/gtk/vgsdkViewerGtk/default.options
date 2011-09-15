@@ -2,7 +2,7 @@ description	= 'Collada viewer using vgSDK'
 vcsUse		= 'no'
 type		= 'exec'
 version		= '0-5'
-uses 		=	[	#'boost',
+uses 		=	[	'boost',
 					#'bullet',
 					#'cairo',
 					#'colladadom',
