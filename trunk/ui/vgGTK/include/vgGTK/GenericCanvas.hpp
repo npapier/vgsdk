@@ -335,7 +335,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		// Updates the current state.
 		if ( m_glc )
 		{
-			return glc_drawable_set_fullscreen( m_glc, wantFullscreen ) != 0;
+			return glc_drawable_set_fullscreen( m_glc, wantFullscreen, false /*no action on compositing window manager*/) != 0;
 		}
 		else
 		{
