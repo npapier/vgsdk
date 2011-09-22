@@ -7,6 +7,7 @@
 
 #include <glo/GLSLProgram.hpp>
 #include <vgDebug/convenience.hpp>
+#include <vgd/basic/toString.hpp>
 #include <vgd/basic/IImage.hpp>
 #include <vgd/basic/ImageInfo.hpp>
 #include <vgd/field/DirtyFlag.hpp>
@@ -389,7 +390,8 @@ vgd::Shp< vgd::node::Texture2D > OutputBufferProperty::createTexture2D( vgeGL::e
 	using vgd::node::Texture;
 
 	//
-	vgd::Shp< vgd::node::Texture2D > texture = vgd::node::Texture2D::create( "attachment" );
+	const std::string nodeIndexStr = vgd::basic::toString( node->getMultiAttributeIndex() );
+	vgd::Shp< vgd::node::Texture2D > texture = vgd::node::Texture2D::create( "attachment" + nodeIndexStr );
 
 	// WRAP, FILTER
 // @todo sethDefault();
