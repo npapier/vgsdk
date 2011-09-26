@@ -378,6 +378,16 @@ void OutputBufferProperty::paint(
 				// Validates node df
 				outputBufferProperty->getDirtyFlag(outputBufferProperty->getDFNode())->validate();
 			}
+			else
+			{
+				vgAssertN( false, "Internal error" );
+			}
+		}
+		else
+		{
+			vgd::Shp< vgd::node::Texture2D > texture;
+			backInserter = texture;
+			++backInserter;
 		}
 	}
 }
@@ -486,6 +496,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 	vgeGL::handler::painter::OutputBufferProperty::paint( engine, outputBufferProperties, std::back_inserter(textureContainer) );
 
 	// For each texture, do attachment
+	int firstValidIndex = -1;
 	for( uint i=0; i < textureContainer.size(); ++i )
 	{
 		vgd::Shp< vgd::node::Texture2D > textureNode = textureContainer[i];
@@ -493,21 +504,28 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 		backInserter = textureNode;
 		++backInserter;
 
-		// Attaching images
-		engine->paint( textureNode );
-		vgd::Shp< vgeGL::rc::Texture2D > texture2D = rcManager.getShp< vgeGL::rc::Texture2D >( textureNode );
-		vgAssertN( texture2D, "No texture2D" );
+		if ( textureNode )
+		{
+			// Attaching images
+			engine->paint( textureNode );
+			vgd::Shp< vgeGL::rc::Texture2D > texture2D = rcManager.getShp< vgeGL::rc::Texture2D >( textureNode );
+			vgAssertN( texture2D, "No texture2D" );
 
-		fbo->attachColor( texture2D, i );
+			fbo->attachColor( texture2D, i );
+			if ( firstValidIndex == -1 )	firstValidIndex = i;
+		}
+		// else nothing to do
 	}
+
+	vgAssert( firstValidIndex >= 0 );
 
 	if ( addDepth )
 	{
 		vgd::Shp< vgd::node::OutputBufferProperty > obuf = vgd::node::OutputBufferProperty::create("depth");
 		obuf->setFormat( vgd::node::OutputBufferProperty::LUMINANCE_FOR_DEPTH );
 		obuf->setType( vgd::node::OutputBufferProperty::INTEGER );
-		obuf->setSizeSemantic( outputBufferProperties->getState(0)->getNode()->getSizeSemantic() );
-		obuf->setSize( outputBufferProperties->getState(0)->getNode()->getSize() );
+		obuf->setSizeSemantic( outputBufferProperties->getState(firstValidIndex)->getNode()->getSizeSemantic() );
+		obuf->setSize( outputBufferProperties->getState(firstValidIndex)->getNode()->getSize() );
 
 		vgd::Shp< vgd::node::Texture2D > depthTextureNode;
 		depthTextureNode = vgeGL::handler::painter::OutputBufferProperty::createTexture2D( engine, obuf.get() );
@@ -547,7 +565,7 @@ const std::string OutputBufferProperty::getFragmentOutputDeclarationStageString(
 	if (!outputBufferProperties)
 	{
 		return retVal;
-	}	
+	}
 
 	uint numFound = 0;
 	for( uint i = 0; numFound < outputBufferProperties->getNum(); ++i )
