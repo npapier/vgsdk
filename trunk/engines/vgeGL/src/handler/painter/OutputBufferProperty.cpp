@@ -385,6 +385,7 @@ void OutputBufferProperty::paint(
 		}
 		else
 		{
+			//vgAssertN( false, "No output buffer property %i", i );
 			vgd::Shp< vgd::node::Texture2D > texture;
 			backInserter = texture;
 			++backInserter;
@@ -580,6 +581,11 @@ const std::string OutputBufferProperty::getFragmentOutputDeclarationStageString(
 			{
 				const std::string formatType = convertToGLSLFormat( outputBufferProperty->getFormat() );
 				retVal += "out " + formatType + " outputBuffer" + vgd::basic::toString(i) + ";\n";
+				const std::string customDeclaration = outputBufferProperty->getCustomDeclaration();
+				if ( !customDeclaration.empty() )
+				{
+					retVal += "\n" + outputBufferProperty->getCustomDeclaration() + "\n";
+				}
 			}
 		}
 	}

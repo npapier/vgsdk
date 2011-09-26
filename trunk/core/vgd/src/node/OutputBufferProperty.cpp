@@ -68,6 +68,7 @@ OutputBufferProperty::OutputBufferProperty( const std::string nodeName ) :
 	addField( new FFormatType(getFFormat()) );
 	addField( new FCommandType(getFCommand()) );
 	addField( new FTypeType(getFType()) );
+	addField( new FCustomDeclarationType(getFCustomDeclaration()) );
 	addField( new FSizeType(getFSize()) );
 
 	// Sets link(s)
@@ -85,6 +86,7 @@ void OutputBufferProperty::setToDefaults( void )
 	setFormat( RGB );
 	setCommand( COLOR );
 	setType( INTEGER );
+
 	setSize( vgm::Vec2f(1.f, 1.f) );
 }
 
@@ -172,6 +174,21 @@ void OutputBufferProperty::setType( const TypeValueType value )
 
 
 
+// CustomDeclaration
+const OutputBufferProperty::CustomDeclarationValueType OutputBufferProperty::getCustomDeclaration() const
+{
+	return getFieldRO<FCustomDeclarationType>(getFCustomDeclaration())->getValue();
+}
+
+
+
+void OutputBufferProperty::setCustomDeclaration( const CustomDeclarationValueType value )
+{
+	getFieldRW<FCustomDeclarationType>(getFCustomDeclaration())->setValue( value );
+}
+
+
+
 // Size
 const OutputBufferProperty::SizeValueType OutputBufferProperty::getSize() const
 {
@@ -219,6 +236,13 @@ const std::string OutputBufferProperty::getFCommand( void )
 const std::string OutputBufferProperty::getFType( void )
 {
 	return "f_type";
+}
+
+
+
+const std::string OutputBufferProperty::getFCustomDeclaration( void )
+{
+	return "f_customDeclaration";
 }
 
 

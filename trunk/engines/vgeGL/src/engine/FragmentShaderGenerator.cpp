@@ -58,21 +58,11 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_decl += code_ftexgen.first;
 	m_code1 += code_samplers.second;
 
-	const std::string& fragmentOutputDeclarationStage = state.getShaderStage( GLSLState::FRAGMENT_OUTPUT_DECLARATION );
-	if ( !fragmentOutputDeclarationStage.empty() )
-	{
-		m_decl += fragmentOutputDeclarationStage;
-	}
-
-	// FRAGMENT_DECLARATIONS
-	const std::string fragmentDeclaration = state.getShaderStage( GLSLState::FRAGMENT_DECLARATIONS );
-	if ( !fragmentDeclaration.empty() )	m_decl += fragmentDeclaration;
-
 	// Test if custom program must be installed
 	if ( state.isEnabled( PROGRAM ) )
 	{
 		vgd::node::Program * program = state.getProgram();
-		assert( program );
+		vgAssert( program );
 
 		std::string shaderStr;
 		program->getShader( vgd::node::Program::FRAGMENT, shaderStr );
@@ -102,9 +92,20 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			}*/
 		}
 
+		m_decl += "// LOCAL VARIABLES\n";
 		m_decl += GLSLHelpers::generate_lightAccumulators( state ) + '\n';
 	}
 	// else nothing
+
+	// OUTPUT
+	m_decl += "// OUTPUTS\n";
+
+	// FRAGMENT_DECLARATIONS
+	const std::string fragmentDeclaration = state.getShaderStage( GLSLState::FRAGMENT_DECLARATIONS );
+	if ( !fragmentDeclaration.empty() )				m_decl += fragmentDeclaration;
+
+	const std::string& fragmentOutputDeclarationStage = state.getShaderStage( GLSLState::FRAGMENT_OUTPUT_DECLARATION );
+	if ( !fragmentOutputDeclarationStage.empty() )	m_decl += fragmentOutputDeclarationStage;
 
 	// FUNCTIONS
 	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() )

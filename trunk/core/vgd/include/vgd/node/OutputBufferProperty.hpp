@@ -31,7 +31,7 @@ namespace node
  *   Specifies the semantic of the size field.<br>
  *<br>
  * - SFString \c customCommand = empty<br>
- *   Specifies the pre-defined assign command execute by the fragment program. Example : output = color.rgba; or output = vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z );<br>
+ *   Specifies the assign command execute by the fragment program. Example : color.rgba; or vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z ); or computeMyCustomValue( ecPosition );<br>
  *<br>
  * - SFEnum \c format = RGB<br>
  *   Specifies the format used by the buffer.<br>
@@ -41,6 +41,9 @@ namespace node
  *<br>
  * - SFEnum \c type = INTEGER<br>
  *   Specifies the type used by the buffer.<br>
+ *<br>
+ * - SFString \c customDeclaration = empty<br>
+ *   Specifies the declaration to copy at the beginning of the fragment program when command field is CUSTOM.<br>
  *<br>
  * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
  *   Specifies the size of the output buffer (in pixel or scale factors). See sizeSemantic field for more informations.<br>
@@ -446,6 +449,36 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field customDeclaration
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c customDeclaration.
+	 */
+	typedef std::string CustomDeclarationValueType;
+
+	/**
+	 * @brief Type definition of the field named \c customDeclaration
+	 */
+	typedef vgd::field::TSingleField< CustomDeclarationValueType > FCustomDeclarationType;
+
+
+	/**
+	 * @brief Gets the value of field named \c customDeclaration.
+	 */
+	const CustomDeclarationValueType getCustomDeclaration() const;
+
+	/**
+	 * @brief Sets the value of field named \c customDeclaration.
+	 */
+	void setCustomDeclaration( const CustomDeclarationValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field size
 	 */
 	//@{
@@ -514,6 +547,13 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 * @return the name of field \c type.
 	 */
 	static const std::string getFType( void );
+
+	/**
+	 * @brief Returns the name of field \c customDeclaration.
+	 *
+	 * @return the name of field \c customDeclaration.
+	 */
+	static const std::string getFCustomDeclaration( void );
 
 	/**
 	 * @brief Returns the name of field \c size.

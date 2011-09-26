@@ -626,7 +626,11 @@
 			</type>
 		</sf>
 
-		<sf name = "customCommand" doc = "Specifies the pre-defined assign command execute by the fragment program. Example : output = color.rgba; or output = vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z );">
+		<sf name = "customDeclaration" doc = "Specifies the declaration to copy at the beginning of the fragment program when command field is CUSTOM.">
+			<type name = "string" namespace = "std"></type>
+		</sf>
+
+		<sf name = "customCommand" doc = "Specifies the assign command execute by the fragment program. Example : color.rgba; or vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z ); or computeMyCustomValue( ecPosition );">
 			<type name = "string" namespace = "std"></type>
 		</sf>
 
