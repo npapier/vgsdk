@@ -1,11 +1,13 @@
-// VGSDK - Copyright (C) 2009, Clement Forest and Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, Clement Forest and Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Clement Forest
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgSDL/event/EventHandler.hpp"
 
+#include <SDL.h>
 #include <SDL_version.h>
 #include "vgSDL/event/device/Mouse.hpp"
 #include "vgSDL/event/device/Joystick.hpp"
