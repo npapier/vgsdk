@@ -124,7 +124,7 @@ Image::Image(	const uint32		components,
 				const void*			pixels ) 
 :	m_iluintImgID(0)
 {
-	assert( components == computeNumComponents( format ) );
+	vgAssert( components == computeNumComponents( format ) );
 
 	resetInformations();
 
@@ -141,7 +141,7 @@ Image::Image(	const uint32	components,
 				const Type		type 	)
 :	m_iluintImgID(0)
 {
-	assert( components == computeNumComponents( format ) );	
+	vgAssert( components == computeNumComponents( format ) );
 		
 	resetInformations();
 		
@@ -157,7 +157,7 @@ Image::Image( const IImage& image )
 	resetInformations();
 
 	const bool retVal = create(	image );
-	assert( retVal && "Error during image construction/copying." );
+	vgAssertN( retVal, "Error during image construction/copying." );
 }
 
 
@@ -330,10 +330,10 @@ bool Image::create(	const uint32		components,
 					const Type			type,
 					const void*			pixels )
 {
-	assert( components == computeNumComponents( format ) );	
+	vgAssert( components == computeNumComponents( format ) );
 
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
-	
+
 	destroy();
 
 	// Create a new image name.
@@ -374,10 +374,10 @@ bool Image::create(	const uint32		components,
 					const Format		format,
 					const Type			type )
 {
-	assert( components == computeNumComponents( format ) );	
-		
+	vgAssert( components == computeNumComponents( format ) );
+
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
-		
+
 	destroy();
 
 	// Create a new image name.
@@ -432,7 +432,7 @@ bool Image::create( const IImage& image )
 
 	voxelSize() = image.voxelSize();
 
-	assert( bRetVal );
+	vgAssert( bRetVal );
 
 	return bRetVal;
 }
@@ -566,8 +566,8 @@ const void* Image::pixels() const
 
 void* Image::editPixels()
 {
-	assert( !m_edit && "Image already edited." );
-	
+	vgAssertN( !m_edit, "Image already edited." );
+
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );	
 
 	bind();
@@ -580,7 +580,7 @@ void* Image::editPixels()
 
 void Image::editPixelsDone()
 {
-	assert( m_edit && "Image not currently edited" );
+	vgAssertN( m_edit, "Image not currently edited" );
 
 	m_edit = false;
 }
@@ -633,7 +633,7 @@ const void* Image::palettePixels() const
 
 void* Image::paletteEditPixels()
 {
-	assert( !m_edit && "Image already edited." );
+	vgAssertN( !m_edit, "Image already edited." );
 
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
 
@@ -647,7 +647,7 @@ void* Image::paletteEditPixels()
 
 void Image::paletteEditPixelsDone()
 {
-	assert( m_edit && "Image not currently edited" );
+	vgAssertN( m_edit, "Image not currently edited" );
 
 	m_edit = false;
 }
@@ -656,7 +656,7 @@ void Image::paletteEditPixelsDone()
 
 void Image::setPalette( const void *palette, uint32 size, const Format format )
 {
-	assert( !m_edit && "Image already edited." );
+	vgAssertN( !m_edit, "Image already edited." );
 
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
 
@@ -721,7 +721,7 @@ void Image::copy( const Image& src )
 	
 	src.bind();
 
-	assert( m_iluintImgID == 0 && "Try to copy on a non empty image" );
+	vgAssertN( m_iluintImgID == 0, "Try to copy on a non empty image" );
 
 	m_iluintImgID	= ilCloneCurImage();
 	updateInformations();
@@ -827,7 +827,7 @@ Image::Format Image::convertILFormat2My( ILenum format ) const
 			break;
 
 		default:
-			assert(false && "Unsupported format");
+			vgAssertN(false, "Unsupported format");
 			f = NO_FORMAT;
 	}
 
@@ -864,8 +864,8 @@ Image::Format Image::convertILPalFormat2My( ILenum format ) const
 
 		case IL_PAL_RGB32:
 		case IL_PAL_BGR32:
-		default:		
-			assert(false && "Unsupported palette format");
+		default:
+			vgAssertN(false, "Unsupported palette format");
 			retVal = NO_FORMAT;
 	}
 
@@ -909,7 +909,7 @@ ILenum Image::convertMyFormat2IL( Format format ) const
 			break;
 
 		default:
-			assert(false && "Unsupported format");
+			vgAssertN(false, "Unsupported format");
 			ilformat = IL_RGB;
 	}
 
@@ -944,7 +944,7 @@ ILenum Image::convertMyFormat2ILPal( Format format	) const
 		case LUMINANCE_ALPHA:
 		case COLOR_INDEX:
 		default:
-			assert(false && "Unsupported format");
+			vgAssertN(false, "Unsupported format");
 			ilformat = IL_PAL_RGBA32;
 	}
 	
@@ -992,7 +992,7 @@ Image::Type Image::convertILType2My( ILenum myType ) const
 			break;
 
 		default:
-			assert(false && "Unsupported type");
+			vgAssertN(false, "Unsupported type");
 			type = NO_TYPE;
 	}
 	
@@ -1041,7 +1041,7 @@ ILenum Image::convertMyType2IL( Type myType ) const
 
 		case NO_TYPE:		
 		default:
-			assert(false && "Unsupported type");
+			vgAssertN(false, "Unsupported type");
 			type = IL_UNSIGNED_BYTE;
 	}
 	
