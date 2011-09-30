@@ -74,7 +74,7 @@ struct MTQueue
 		SDL_LockMutex( mutex );
 
 		vgd::Shp< T > retVal;
-		while( !quit )
+		while( true ) ///@todo while(!quit )
 		{
 			if ( data.size() > 0 )
 			{
