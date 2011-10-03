@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -30,28 +30,14 @@ BasicManipulator::BasicManipulator()
 
 BasicManipulator::~BasicManipulator()
 {
-	// Disconnects GTK devices to the widget so they no more receive GTK events
-	m_keyboard->disconnect();
-	m_mouse->disconnect();
-	m_timer->disconnect();
-
-	// Removes devices
-	removeDevice( m_keyboard );
-	removeDevice( m_mouse );
-	removeDevice( m_timer );
-
-	// Removes joystick (if present)
-	if ( m_joystick )
-	{
-		removeDevice( m_joystick );
-	}
+	uninitDevices();
 }
 
 
 
 void BasicManipulator::initDevices()
 {
-	assert( m_keyboard == 0 && m_mouse == 0 && m_timer == 0 && m_joystick == 0 );
+	vgAssert( m_keyboard == 0 && m_mouse == 0 && m_timer == 0 && m_joystick == 0 );
 
 	// Creates device instances.
 	m_keyboard.reset( new vgGTK::event::device::Keyboard() );
@@ -80,6 +66,30 @@ void BasicManipulator::initDevices()
 	}
 }
 
+
+void BasicManipulator::uninitDevices()
+{
+	// Disconnects GTK devices to the widget so they no more receive GTK events
+	m_keyboard->disconnect();
+	m_mouse->disconnect();
+	m_timer->disconnect();
+
+	// Removes devices
+	removeDevice( m_keyboard );
+	removeDevice( m_mouse );
+	removeDevice( m_timer );
+
+	// Removes joystick (if present)
+	if ( m_joystick )
+	{
+		removeDevice( m_joystick );
+	}
+
+	m_keyboard.reset();
+	m_mouse.reset();
+	m_timer.reset();
+	m_joystick.reset();
+}
 
 
 } // namespace vgGTK
