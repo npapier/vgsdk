@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -63,7 +63,8 @@ struct VGGTK_API BasicManipulator : public GenericCanvas< vgUI::BasicManipulator
 	~BasicManipulator();
 	//@}
 
-
+	void initDevices();		///< Initializes device instances and perform listening connections.
+	void uninitDevices();	///< Uninitializes device instances and stop listening connections.
 private:
 
 	vgd::Shp< vgGTK::event::device::Keyboard >	m_keyboard;	///< The GTK keyboard device.
@@ -71,7 +72,6 @@ private:
 	vgd::Shp< vgGTK::event::device::Timer >		m_timer;	///< The GTK timer device.
 	vgd::Shp< vgSDL::event::device::Joystick >	m_joystick;	///< References the joystick used to control the scene.
 
-	void initDevices();	///< Initializes device instances and perform listening connections.
 };
 
 
