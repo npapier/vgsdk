@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010 Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -16,7 +16,7 @@ m_encrypt( false ),
 m_reflective( true ),
 m_bump( true ),
 m_specular( true ),
-m_textureSize( 2048 ),
+m_textureSize( 8096 ),
 m_level( TEXTURE ),
 m_filename( "" )
 {
