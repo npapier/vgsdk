@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -65,7 +65,7 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 			vgLogDebug2("vgio: load image %s", pathFilename.c_str() );
 			iimage = loadImage( media, pathFilename );
 
-			if ( iimage )
+			if ( iimage && !iimage->isEmpty() )
 			{
 				// Loading successes
 				const bool addingRetVal = getInstance()->add( pathFilename, iimage );
@@ -99,7 +99,7 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 		vgLogDebug2("vgio: load image %s", pathFilename.c_str() );
 		iimage = loadImage( media, pathFilename );
 
-		if ( iimage )
+		if ( iimage && !iimage->isEmpty() )
 		{
 			retVal.reset( iimage );
 			vgLogDebug2("vgio: load image %s done.", pathFilename.c_str() );
@@ -124,21 +124,27 @@ vgd::basic::IImage * ImageCache::loadImage( const Media & media, const std::stri
 	if( ! media.exists(pathFilename) )
 	{
 		vgLogDebug2("vgio: image %s not found", pathFilename.c_str() );
-		return 0;
+		return result;
 	}
 
 	// Loads the image data.
 	std::vector< char >	buffer;
-	bool				loadSuccess;
+	const bool			loadSuccess = media.load( pathFilename, buffer );
 
-	loadSuccess = media.load( pathFilename, buffer );
-	if( !loadSuccess )
+	if( loadSuccess )
 	{
-		return 0;
+		// Builds the image from loaded data and returns it.
+		result = new vgd::basic::Image();
+		const bool loadRetVal = result->load( pathFilename, &buffer[0], buffer.size() );
+		if ( !loadRetVal )
+		{
+			delete result;
+			result = 0;
+		}
+		//else nothing to do
 	}
 
-	// Builds the image from loaded data and returns it.
-	return new vgd::basic::Image( pathFilename, &buffer[0], buffer.size() );
+	return result;
 }
 
 
