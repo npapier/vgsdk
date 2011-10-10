@@ -47,6 +47,7 @@
 			doc="Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).">
 			<type name="MatrixR" namespace="vgm" default="vgm::MatrixR::getIdentity()"></type>
 		</sf>
+
 		<sf name="fovy" doc="Field of view angle for the Y direction for the camera. In the case of a perspective camera.">
 			<type name="float" default="45.f"></type>
 		</sf>
@@ -84,6 +85,10 @@
 
 		<sf name="imageShift" doc="Sets the additional horizontal shift between the left and right image. This value must be between 0 and 100. 0 means no shift at all. 100 corresponds to a shift of 1/8 of the drawing surface.">
 			<type name = "float" default = "0.f"></type>
+		</sf>
+
+		<sf name="rightEye" doc="Sets to true to enabled the right eye in stereoscopic mode. Setting this field to false is helpful for debugging.">
+			<type name = "bool" default = "true"></type>
 		</sf>
 
 		<includehpp>vgd/include/vgd/node/Camera.hpp</includehpp>

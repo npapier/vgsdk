@@ -91,6 +91,9 @@ struct VGE_API StereoscopicSettings
 	 *						shift of 1/8 of the drawing surface in the right direction. 0 means no shift at all.
 	 */
 	void setImageShift( const float imageShift );
+
+	const bool isRightEyeEnabled() const;
+	void setRightEyeEnabled( const bool enabled = true );
 	//@}
 
 
@@ -98,6 +101,7 @@ private:
 	bool	m_isEnabled;						///< Enabled/disabled stereoscopic rendering
 	float	m_eyeSeparation;					///< The eye separation to use in Camera node
 	float	m_imageShift;						///< The image shift to use in Camera node
+	bool	m_isRightEyeEnabled;				///< Enabled/disabled right eye rendering in stereoscopic mode
 
 
 	/**

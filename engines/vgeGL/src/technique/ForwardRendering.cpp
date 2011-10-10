@@ -2084,6 +2084,12 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 			// First pass : OPAQUE PASS (draw opaque shape)
 			/*const bool mustDoTransparencyPass = */evaluateOpaquePass( paintService(), PassIsolationMask(0), true );
+
+			if ( camera->getRightEye() == false )
+			{
+				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+			}
+
 			endPass();
 
 		// OVERLAYS
