@@ -6,6 +6,7 @@
 #ifndef _VGD_NODE_CAMERA_HPP
 #define _VGD_NODE_CAMERA_HPP
 
+#include "vgd/field/Bool.hpp"
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
 #include "vgd/field/MatrixR.hpp"
@@ -55,6 +56,9 @@ namespace node
  *<br>
  * - OFFloat \c [aspect] = 1<br>
  *   Aspect ratio of the camera<br>
+ *<br>
+ * - SFBool \c rightEye = true<br>
+ *   Sets to true to enabled the right eye in stereoscopic mode. Setting this field to false is helpful for debugging.<br>
  *<br>
  * - SFFloat \c eyeSeparation = 0.f<br>
  *   Sets the distance between the left and right eye.<br>
@@ -520,6 +524,36 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
+	 * @name Accessors to field rightEye
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c rightEye.
+	 */
+	typedef bool RightEyeValueType;
+
+	/**
+	 * @brief Type definition of the field named \c rightEye
+	 */
+	typedef vgd::field::TSingleField< RightEyeValueType > FRightEyeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c rightEye.
+	 */
+	const RightEyeValueType getRightEye() const;
+
+	/**
+	 * @brief Sets the value of field named \c rightEye.
+	 */
+	void setRightEye( const RightEyeValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field eyeSeparation
 	 */
 	//@{
@@ -715,6 +749,13 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @return the name of field \c aspect.
 	 */
 	static const std::string getFAspect( void );
+
+	/**
+	 * @brief Returns the name of field \c rightEye.
+	 *
+	 * @return the name of field \c rightEye.
+	 */
+	static const std::string getFRightEye( void );
 
 	/**
 	 * @brief Returns the name of field \c eyeSeparation.

@@ -73,6 +73,7 @@ Camera::Camera( const std::string nodeName ) :
 	addField( new FScissorType(getFScissor()) );
 	addField( new FModeType(getFMode()) );
 	addField( new FAspectType(getFAspect()) );
+	addField( new FRightEyeType(getFRightEye()) );
 	addField( new FEyeSeparationType(getFEyeSeparation()) );
 	addField( new FImageShiftType(getFImageShift()) );
 	addField( new FZNearType(getFZNear()) );
@@ -94,6 +95,7 @@ void Camera::setToDefaults( void )
 	setLookAtRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setProjectionRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setMode( MONOSCOPIC );
+	setRightEye( true );
 	setEyeSeparation( 0.f );
 	setImageShift( 0.f );
 	setFovy( 45.f );
@@ -301,6 +303,21 @@ const bool Camera::hasAspect() const
 
 
 
+// RightEye
+const Camera::RightEyeValueType Camera::getRightEye() const
+{
+	return getFieldRO<FRightEyeType>(getFRightEye())->getValue();
+}
+
+
+
+void Camera::setRightEye( const RightEyeValueType value )
+{
+	getFieldRW<FRightEyeType>(getFRightEye())->setValue( value );
+}
+
+
+
 // EyeSeparation
 const Camera::EyeSeparationValueType Camera::getEyeSeparation() const
 {
@@ -434,6 +451,13 @@ const std::string Camera::getFMode( void )
 const std::string Camera::getFAspect( void )
 {
 	return "f_aspect";
+}
+
+
+
+const std::string Camera::getFRightEye( void )
+{
+	return "f_rightEye";
 }
 
 

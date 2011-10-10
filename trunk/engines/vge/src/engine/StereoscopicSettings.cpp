@@ -37,6 +37,7 @@ StereoscopicSettings::StereoscopicSettings()
 //:	m_isEnabled
 //:	m_eyeSeparation
 //:	m_imageShift
+: m_isRightEyeEnabled(true)
 {
 	load();
 }
@@ -76,10 +77,13 @@ void StereoscopicSettings::apply( vgd::Shp< vgd::node::Camera > camera ) const
 	}
 
 	// Eye separation
-	camera->setEyeSeparation( m_eyeSeparation );
+	camera->setEyeSeparation( getEyeSeparation() );
 
 	// Image shift
-	camera->setImageShift( m_imageShift );
+	camera->setImageShift( getImageShift() );
+
+	// Right eye enabled
+	camera->setRightEye( isRightEyeEnabled() );
 }
 
 
@@ -129,6 +133,9 @@ void StereoscopicSettings::load()
 			vgLogDebug2( "Invalid image shift in file %s. Uses zero.", path.string().c_str() );
 			setImageShift( 0.f );
 		}
+
+		// RIGHT EYE
+		// only useful for debugging, so not serialized
 	}
 	catch( bpt::ini_parser::ini_parser_error & )
 	{
@@ -176,6 +183,9 @@ void StereoscopicSettings::save()
 			vgLogDebug2( "Invalid image shift %f. Uses zero.", m_imageShift );
 		}
 
+		// RIGHT EYE
+		// only useful for debugging, so not serialized
+
 		// Saves the settings
 		bpt::ini_parser::write_ini( path.string(), settings );
 	}
@@ -217,6 +227,18 @@ const float StereoscopicSettings::getImageShift() const
 void StereoscopicSettings::setImageShift( const float imageShift)
 {
 	m_imageShift = imageShift;
+}
+
+
+
+const bool StereoscopicSettings::isRightEyeEnabled() const
+{
+	return m_isRightEyeEnabled;
+}
+
+void StereoscopicSettings::setRightEyeEnabled( const bool enabled )
+{
+	m_isRightEyeEnabled = enabled;
 }
 
 
