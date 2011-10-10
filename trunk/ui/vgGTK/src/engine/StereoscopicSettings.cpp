@@ -19,7 +19,8 @@ namespace engine
 
 StereoscopicSettings::StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicSettings > settings )
 :	m_settings( settings ),
-	m_enabled( "Enable stereoscopic rendering" )
+	m_enabled( "Enable stereoscopic rendering" ),
+	m_rightEye( "Disable right eye rendering (for debug)" )
 {
 	// IS ENABLED
 	m_enabled.signal_clicked().connect( sigc::mem_fun(this, &StereoscopicSettings::onEnabled) );
@@ -46,6 +47,9 @@ StereoscopicSettings::StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicS
 	m_imageShift.set_range( -100.f, 100.f );
 	m_imageShift.signal_value_changed().connect( sigc::mem_fun(this, &StereoscopicSettings::onImageShiftChanged) );
 
+	// RIGHT EYE
+	m_rightEye.signal_clicked().connect( sigc::mem_fun(this, &StereoscopicSettings::onRightEye) );
+
 	// Fills box
 	set_spacing( 12 );
 	pack_start( m_enabled, Gtk::PACK_SHRINK );
@@ -53,6 +57,7 @@ StereoscopicSettings::StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicS
 	pack_start( m_eyeSeparation, Gtk::PACK_SHRINK );
 	pack_start( m_imageShiftLabel, Gtk::PACK_SHRINK );
 	pack_start( m_imageShift, Gtk::PACK_SHRINK );
+	pack_start( m_rightEye, Gtk::PACK_SHRINK );
 
 	// Updates GUI from settings
 	refresh();
@@ -95,11 +100,21 @@ void StereoscopicSettings::onImageShiftChanged()
 
 
 
+void StereoscopicSettings::onRightEye()
+{
+	get()->setRightEyeEnabled( !m_rightEye.get_active() );
+
+	signalChanged().emit();
+}
+
+
+
 void StereoscopicSettings::refresh()
 {
 	m_enabled.set_active( get()->isEnabled() );
 	m_eyeSeparation.set_value( get()->getEyeSeparation() );
 	m_imageShift.set_value( get()->getImageShift() );
+	m_rightEye.set_active( !get()->isRightEyeEnabled() );
 }
 
 

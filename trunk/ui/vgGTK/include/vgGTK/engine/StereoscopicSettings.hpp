@@ -55,6 +55,9 @@ private:
 	Gtk::Label					m_imageShiftLabel;				///< The label for image shift.
 	Gtk::HScale					m_imageShift;					///< The slider to choose the image shift.
 
+	// RIGHT EYE
+	Gtk::CheckButton			m_rightEye;						///< The check button to enable/disable right eye rendering in stereoscopic mode.
+
 	/**
 	 * @name	Signal Handlers
 	 */
@@ -62,6 +65,7 @@ private:
 	void onEnabled();					///< Handles isEnabled changes.
 	void onEyeSeparationChanged();		///< Handles eye separation changes.
 	void onImageShiftChanged();			///< Handles image shift changes.
+	void onRightEye();					///< Handles right eye changes.
 	//@}
 
 	void refresh();
