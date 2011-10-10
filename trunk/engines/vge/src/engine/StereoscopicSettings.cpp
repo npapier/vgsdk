@@ -108,7 +108,7 @@ void StereoscopicSettings::load()
 
 		// EYE SEPARATION
 		float eyeSeparation = settings.get< float >( "eyeSeparation", 0.f );
-		if ( eyeSeparation >= 0.f )
+		if ( isEyeSeparationValid(eyeSeparation) )
 		{
 			setEyeSeparation( eyeSeparation );
 		}
@@ -120,7 +120,7 @@ void StereoscopicSettings::load()
 
 		// IMAGE SHIFT
 		float imageShift = settings.get< float >( "imageShift", 0.f );
-		if ( isImageShiftValid() )
+		if ( isImageShiftValid(imageShift) )
 		{
 			setImageShift( imageShift );
 		}
@@ -155,7 +155,7 @@ void StereoscopicSettings::save()
 		settings.put( "isEnabled", m_isEnabled );
 
 		// EYE SEPARATION
-		if ( m_eyeSeparation >= 0.f )
+		if ( isEyeSeparationValid(m_eyeSeparation) )
 		{
 			settings.put( "eyeSeparation", m_eyeSeparation );
 		}
@@ -166,7 +166,7 @@ void StereoscopicSettings::save()
 		}
 
 		// IMAGE SHIFT
-		if ( isImageShiftValid() )
+		if ( isImageShiftValid(m_imageShift) )
 		{
 			settings.put( "imageShift", m_imageShift );
 		}
@@ -221,10 +221,20 @@ void StereoscopicSettings::setImageShift( const float imageShift)
 
 
 
-const bool StereoscopicSettings::isImageShiftValid()
+const bool StereoscopicSettings::isEyeSeparationValid( const float eyeSeparation )
 {
-	const bool retVal =	(getImageShift() >= 0.f) &&
-						(getImageShift() <= 100.f);
+	//const bool retVal =	(eyeSeparation >= 0);
+	//return retVal;
+
+	return true;
+}
+
+
+
+const bool StereoscopicSettings::isImageShiftValid( const float imageShift )
+{
+	const bool retVal =	(imageShift >= -100.f) &&
+						(imageShift <= 100.f);
 	return retVal;
 }
 
