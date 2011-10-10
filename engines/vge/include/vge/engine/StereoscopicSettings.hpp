@@ -64,7 +64,19 @@ struct VGE_API StereoscopicSettings
 	const bool isEnabled() const;
 	void setEnabled( const bool enabled = true );
 
+	/**
+	 * @brief Returns the distance between the left and right eye
+	 *
+	 * @return the distance between the left and right eye
+	 */
 	const float getEyeSeparation() const;
+
+	/**
+	 * @brief Sets the distance between the left and right eye
+	 *
+	 * @param eyeSeparation		set a value greater than zero to translate the left eye in the left direction of eyeSeparation/2.
+	 *		A value less than zero to translate the left eye in the right direction of eyeSeparation/2.
+	 */
 	void setEyeSeparation( const float eyeSeparation );
 
 	/**
@@ -75,7 +87,8 @@ struct VGE_API StereoscopicSettings
 	/**
 	 * @brief Sets the current image shift.
 	 *
-	 * @param imageShift	set a value from 0 to 100 meaning respectively no shift and a shift of 1/8 of the drawing surface.
+	 * @param imageShift	set a value from -100 to 100 meaning respectively shift of 1/8 of the drawing surface in the left direction,
+	 *						shift of 1/8 of the drawing surface in the right direction. 0 means no shift at all.
 	 */
 	void setImageShift( const float imageShift );
 	//@}
@@ -86,12 +99,20 @@ private:
 	float	m_eyeSeparation;					///< The eye separation to use in Camera node
 	float	m_imageShift;						///< The image shift to use in Camera node
 
+
+	/**
+	 * @brief Tests if eye separation is valid
+	 *
+	 * @return Always true
+	 */
+	const bool isEyeSeparationValid( const float eyeSeparation );
+
 	/**
 	 * @brief Tests if image shift is valid
 	 *
-	 * @return true if 0 <= getImageShift() <= 100
+	 * @return true if -100 <= getImageShift() <= 100
 	 */
-	const bool isImageShiftValid();
+	const bool isImageShiftValid( const float imageShift );
 };
 
 
