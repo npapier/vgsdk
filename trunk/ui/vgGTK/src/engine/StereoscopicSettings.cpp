@@ -31,7 +31,8 @@ StereoscopicSettings::StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicS
 
 	// slider
 	m_eyeSeparation.set_value( 0.f );
-	m_eyeSeparation.set_range( 0.f, 10.f );
+	m_eyeSeparation.add_mark( 0.f, Gtk::POS_BOTTOM, "No eye separation" );
+	m_eyeSeparation.set_range( -10.f, 10.f );
 	m_eyeSeparation.signal_value_changed().connect( sigc::mem_fun(this, &StereoscopicSettings::onEyeSeparationChanged) );
 
 	// IMAGE SHIFT
@@ -41,7 +42,8 @@ StereoscopicSettings::StereoscopicSettings( vgd::Shp< vge::engine::StereoscopicS
 
 	// slider
 	m_imageShift.set_value( 0.f );
-	m_imageShift.set_range( 0.f, 100.f );
+	m_imageShift.add_mark( 0.f, Gtk::POS_BOTTOM, "No shift" );
+	m_imageShift.set_range( -100.f, 100.f );
 	m_imageShift.signal_value_changed().connect( sigc::mem_fun(this, &StereoscopicSettings::onImageShiftChanged) );
 
 	// Fills box
