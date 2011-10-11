@@ -915,18 +915,6 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 */
 	const bool gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
 
-	/**
-	 * brief Sets at once \c lookAtLeft and \c lookAtRight fields for stereoscopic rendering
-	 *
-	 * The first three parameters defines a 3D geometric transformation applied to monoscopic eye.
-	 * The position of monoscopic eye is slightly shift along the X axis using \c eyeSeparation value to define left eye and right eye.
-	 *
-	 * param lookAtEye		the position of the eye point
-	 * param lookAtCenter	the position of the reference point
-	 * param lookAtUp		the direction of the up vector
-	 * param eyeSeparation	the distance between the two eyes
-	 */
-	//void sethLookAtLeftAndRight( const vgm::Vec3f lookAtEye, const vgm::Vec3f lookAtCenter, const vgm::Vec3f lookAtUp, const float eyeSeparation );
 
 	/**
 	 * @brief Sets the value of the field named \c fovy and recompute the projection matrix using the value of aspect zNear and zFar optional fields if they are presents.
