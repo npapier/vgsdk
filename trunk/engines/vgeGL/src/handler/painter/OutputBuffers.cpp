@@ -69,7 +69,7 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 				// glsl and engine contains active output buffers, then select output buffers
 
 				// By default, all drawing operations into color buffers are disabled
-				std::vector< int > drawBuffers( fbo->getNumOfColors(), -1 );
+				std::vector< int > drawBuffers( fbo->getMaxColorAttachements(), -1 );
 
 				// Fills the drawBuffers mapping from output buffers node
 				using vgd::field::EditorRO;
