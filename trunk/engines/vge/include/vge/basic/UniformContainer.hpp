@@ -164,8 +164,6 @@ struct VGE_API UniformContainer
 		{
 			// Found
 			iUniform->second = value;
-
-			dirty();
 		}
 		else
 		{
