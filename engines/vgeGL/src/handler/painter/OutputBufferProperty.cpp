@@ -579,8 +579,10 @@ const std::string OutputBufferProperty::getFragmentOutputDeclarationStageString(
 			vgd::node::OutputBufferProperty * outputBufferProperty = outputBufferPropertyState->getNode();
 			if ( outputBufferProperty )
 			{
-				const std::string formatType = convertToGLSLFormat( outputBufferProperty->getFormat() );
-				retVal += "out " + formatType + " outputBuffer" + vgd::basic::toString(i) + ";\n";
+				const std::string formatType	= convertToGLSLFormat( outputBufferProperty->getFormat() );
+				const std::string indexStr		= vgd::basic::toString(i);
+				// "layout(location = I) out type outputBufferI;" 
+				retVal += "layout(location = " + indexStr + ") out " + formatType + " outputBuffer" + indexStr + ";\n";
 				const std::string customDeclaration = outputBufferProperty->getCustomDeclaration();
 				if ( !customDeclaration.empty() )
 				{

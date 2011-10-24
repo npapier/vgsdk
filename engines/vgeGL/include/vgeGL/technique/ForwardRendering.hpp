@@ -10,6 +10,7 @@
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/TransformDragger.hpp>
 #include "vgeGL/engine/GLSLState.hpp"
+#include "vgeGL/technique/DepthOfField.hpp"
 #include "vgeGL/technique/Main.hpp"
 
 namespace glo { struct FrameBufferObject; struct Texture2D; }
@@ -24,10 +25,10 @@ namespace technique
 {
 
 
-namespace
-{
-	struct ShadowMappingInput;
-}
+
+struct ShadowMappingInput;
+
+
 
 /**
  * @brief Forward rendering technique.
@@ -160,12 +161,14 @@ struct PostProcessingPipelineRC
 	PostProcessingPipelineRC pppRC;
 
 	// for info pass
+public: // for modification by technique::DepthOfField
 	bool hasOutputBufferProperties;
 		// input for post-processing
 	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
 	OutputBufferPropertyStateContainer * m_outputBufferProperties;
 
 	bool isPostProcessingEnabled;
+private:
 		// input for post-processing
 	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 	PostProcessingStateContainer * m_postProcessing;
@@ -186,6 +189,7 @@ struct PostProcessingPipelineRC
 	// Apply the post-processing and blits the result.
 	void stagePostProcessing( vgeGL::engine::Engine * engine );
 
+public: // for technique::DepthOfField
 	// post-processing core details
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > applyPostProcessing(
 		vgeGL::engine::Engine * engine,
@@ -193,6 +197,7 @@ struct PostProcessingPipelineRC
 		PostProcessingStateContainer *						postProcessingContainer );
 
 	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo );
+private:
 
 	// OVERLAY
 	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
@@ -212,6 +217,7 @@ struct PostProcessingPipelineRC
 	void initializeEngineBuffers( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
 		vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer;
 		vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo;
+public: // for technique::DepthOfField
 		std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures;		///< textures for FBO
 
 
@@ -227,25 +233,7 @@ struct PostProcessingPipelineRC
 	vgd::Shp< vgd::node::Texture2D >				m_blackTexture2D; // @todo moves in Engine or in a repository ?
 	//@}
 
-	/*enum AttachmentType
-	{
-		// COLOR FORMATS
-		COLOR_RGB,
-		COLOR_RGB_16F,
-		COLOR_RGB_32F,
-		COLOR_RGBA,
-		COLOR_RGBA_16F,
-		COLOR_RGBA_32F,
-		COLOR_LUMINANCE,
-		COLOR_LUMINANCE_16F,
-		COLOR_LUMINANCE_32F,
-// @todo COLOR_LUMINANCE_ALPHA ?
-		COLOR_LUMINANCE_ALPHA_16F,
-		COLOR_LUMINANCE_ALPHA_32F,
-		// DEPTH FORMATS
-		DEPTH,
-		DEPTH_COMPONENT_24 // @todo others DEPTH_COMPONENT*
-	};*/
+	vgeGL::technique::DepthOfField dof;
 
 // @todo only glo FBO
 	//typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;

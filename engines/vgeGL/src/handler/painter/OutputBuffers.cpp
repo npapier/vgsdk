@@ -5,6 +5,7 @@
 
 #include "vgeGL/handler/painter/OutputBuffers.hpp"
 
+#include <boost/tuple/tuple.hpp>
 #include <glo/FrameBufferObject.hpp>
 #include <vgd/node/OutputBuffers.hpp>
 #include <vgDebug/convenience.hpp>
@@ -75,11 +76,25 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 				using vgd::field::EditorRO;
 				typedef vgd::node::OutputBuffers::FCurrentType FCurrentType;
 
-				EditorRO< FCurrentType > current = outputBuffers->getCurrentRO();
-
-				for( uint i=0; i < current->size(); ++i )
+				if ( outputBuffers )
 				{
-					const int outputBufferIndex = (*current)[i];
+					EditorRO< FCurrentType > current = outputBuffers->getCurrentRO();
+
+					for( uint i=0; i < current->size(); ++i )
+					{
+						const int outputBufferIndex = (*current)[i];
+						drawBuffers[outputBufferIndex] = outputBufferIndex;
+					}
+				}
+				// else nothing to do
+
+				// Overrides the drawbuffers mapping from engine
+				vgd::basic::IndexContainerConstIterator i, iEnd;
+				for(	boost::tie(i, iEnd) = glEngine->getCurrentPrivateOutputBuffersIterators();
+						i != iEnd;
+						++i )
+				{
+					const int outputBufferIndex = (*i);
 					drawBuffers[outputBufferIndex] = outputBufferIndex;
 				}
 
@@ -117,7 +132,10 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 	//vgeGL::rc::applyUsingDisplayList< vgd::node::OutputBuffers, OutputBuffers >( engine, node, this );
 
 	// Validates node df
-	node->getDirtyFlag(node->getDFNode())->validate();
+	if ( node )
+	{
+		node->getDirtyFlag(node->getDFNode())->validate();
+	}
 }
 
 

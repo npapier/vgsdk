@@ -76,7 +76,7 @@ void Technique::endPass()
 	vge::technique::Technique::endPass();
 
 	// @todo doc
-	dynamic_cast<vgeGL::engine::Engine*>(getEngine())->setOutputBuffers();
+	//dynamic_cast<vgeGL::engine::Engine*>(getEngine())->setOutputBuffers();
 
 	if ( isGL_GREMEDY_string_marker() )
 	{
@@ -101,6 +101,11 @@ void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::Traver
 
 	engine->getGLStateStack().clear( vgd::makeShp(new GLState()) );
 	engine->getGLSLStateStack().clear( vgd::makeShp(new GLSLState(engine->getMaxTexUnits())) );
+
+	// @todo doc
+	vgeGL::engine::Engine * glEngine = dynamic_cast<vgeGL::engine::Engine*>(getEngine());
+	glEngine->setOutputBuffers();
+	glEngine->setCurrentPrivateOutputBuffers();
 
 	if ( engine->isGLSLEnabled() )
 	{
