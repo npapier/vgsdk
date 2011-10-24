@@ -147,6 +147,34 @@ struct VGE_API UniformContainer
 		}
 	}
 
+
+	/**
+	 * @brief Sets the value of an uniform variable
+	 *
+	 * @param name		name of the uniform variable
+	 * @param value		value of the uniform variable
+	 *
+	 * @post isDirty()
+	 */
+	template< typename T >
+	void sethUniform( const std::string& name, const T& value )
+	{
+		ContainerType::iterator iUniform = m_container.find( name );
+		if ( iUniform != m_container.end() )
+		{
+			// Found
+			iUniform->second = value;
+
+			dirty();
+		}
+		else
+		{
+			// Not found
+			addUniform(name,value);
+		}
+	}
+
+
 	// @todo getUniform()
 	// @todo dirty flags
 	//void destroy();							///< code for destructor
