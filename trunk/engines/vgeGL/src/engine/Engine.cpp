@@ -49,6 +49,7 @@ Engine::Engine()
 	//m_glslStateStack()
 	//m_uniformState
 	//m_outputBuffers
+	//m_currentPrivateOutputBuffers
 	m_glslProgramGenerator( new ProgramGenerator() )
 {
 	// Connects OpenGL manager to node destruction signal.
@@ -117,6 +118,7 @@ void Engine::reset()
 	getGLSLStateStack().clear( vgd::makeShp(new GLSLState(getMaxTexUnits()) ) );
 	getUniformState().clear();
 	setOutputBuffers();
+	setCurrentPrivateOutputBuffers();
 
 	if ( m_firstInstance )
 	{
@@ -290,6 +292,50 @@ vgd::Shp< glo::FrameBufferObject > Engine::getOutputBuffers() const
 void Engine::setOutputBuffers( vgd::Shp< glo::FrameBufferObject > buffers )
 {
 	m_outputBuffers = buffers;
+}
+
+
+
+// CURRENT PRIVATE OUTPUT BUFFERS
+void Engine::setCurrentPrivateOutputBuffers( const int which )
+{
+	m_currentPrivateOutputBuffers.clear();
+
+	if ( which >= 0 )
+	{
+		m_currentPrivateOutputBuffers.push_back( which );
+	}
+	// else nothing to do
+}
+
+
+void Engine::setCurrentPrivateOutputBuffers( const int which0, const int which1 )
+{
+	m_currentPrivateOutputBuffers.clear();
+
+	if ( which0 >= 0 )
+	{
+		m_currentPrivateOutputBuffers.push_back( which0 );
+	}
+	// else nothing to do
+
+	if ( which1 >= 0 )
+	{
+		m_currentPrivateOutputBuffers.push_back( which1 );
+	}
+	// else nothing to do
+}
+
+
+const vgd::basic::IndexContainer& Engine::getCurrentPrivateOutputBuffers() const
+{
+	return m_currentPrivateOutputBuffers;
+}
+
+
+vgd::basic::IndexContainerConstIterators Engine::getCurrentPrivateOutputBuffersIterators() const
+{
+	return std::make_pair( m_currentPrivateOutputBuffers.begin(), m_currentPrivateOutputBuffers.end() );
 }
 
 

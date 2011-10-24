@@ -154,6 +154,52 @@
 	</node>
 
 
+	<node name = "DepthOfField" inherits = "SingleAttribute" >
+		<doxygen>
+			<docBrief>Built-in post-processing effect depth of field</docBrief>
+			<doc>Real camera lenses, due to their physical properties, blurs parts of a scene at certain depths, while maintaining sharpness in others areas.</doc>
+			<doc>This built-in post-processing effect simulates a thin lens camera</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_frameBufferNodes</ingroup>
+		</doxygen>
+
+		<sf name="cameraModel" doc="Sets the camera model.">
+			<type name="enum">
+				<enum default="PINHOLE">
+					<value name="PINHOLE" doc="todo"/>
+					<value name="THIN_LENS" doc="todo"/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name="focus" doc="Sets the focal distance. Objects on the focal plane (i.e. at focus distance) are in perfect focus.">
+			<type name = "float" default = "0.f"></type>
+		</sf>
+
+		<sf name="focusToFar" doc="Sets the distance from focus to far. Must be greater than zero.">
+			<type name = "float" default = "1.f"></type>
+		</sf>
+
+		<sf name="focusToNear" doc="Sets the distance from focus to near. Must be greater than zero.">
+			<type name = "float" default = "1.f"></type>
+		</sf>
+
+		<sf name="farMaximumBlurriness" doc="Sets the maximum blurriness for object(s) in [focus, far]. 0 means no blur at all. 1 means maximum blurriness.">
+			<type name = "float" default = "0.5f"></type>
+		</sf>
+
+		<sf name="nearMaximumBlurriness" doc="Sets the maximum blurriness for object(s) in [near, focus]. 0 means no blur at all. 1 means maximum blurriness.">
+			<type name = "float" default = "0.5f"></type>
+		</sf>
+
+		<sf name="sampling" doc="Sets the number of samples (must be 1, 2, 3, 4, 5, 6, 7 or 8).">
+			<type name = "int" default = "8"></type>
+		</sf>
+
+	</node>
+
+
 	<node name = "Fluid" inherits = "Shape" >
 		<doxygen>
 			<docBrief>Fluid allow the simulation of liquids</docBrief>

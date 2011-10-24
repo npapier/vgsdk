@@ -49,6 +49,8 @@
 #include "vgeGL/rc/Texture2D.hpp"
 #include "vgeGL/rc/FrameBufferObject.hpp"
 #include "vgeGL/technique/helpers.hpp"
+#include "vgeGL/technique/PostProcessing.hpp"
+#include "vgeGL/technique/ShadowMapping.hpp"
 
 // ALL
 // @todo installs new handler intead of doing test on node type
@@ -72,605 +74,6 @@ namespace technique
 
 namespace
 {
-
-
-
-// BEGIN POSTPROCESSING
-vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessing::Input0ValueType input,
-	std::vector< vgd::Shp< vgd::node::Texture2D > >* outputBufferTexture,
-	std::vector< vgd::Shp< vgd::node::Texture2D > >* tmpBuffers )
-{
-	using vgd::node::PostProcessing;
-
-	vgd::Shp< vgd::node::Texture2D > retVal;
-
-	//
-	const int	inputValue = input.value();
-	int			outputBufferIndex	= -1;
-	int			tmpBufferIndex		= -1;
-
-	// OUTPUT_BUFFER
-	if (	(PostProcessing::OUTPUT_BUFFER0 <= inputValue) &&
-			(inputValue <= PostProcessing::OUTPUT_BUFFER7)	)
-	{
-		outputBufferIndex = inputValue - PostProcessing::OUTPUT_BUFFER0;
-	}
-	else if (	(PostProcessing::INPUT1_OUTPUT_BUFFER0 <= inputValue) &&
-				(inputValue <= PostProcessing::INPUT1_OUTPUT_BUFFER7)	)
-	{
-		outputBufferIndex = inputValue - PostProcessing::INPUT1_OUTPUT_BUFFER0;
-	}
-	else if (	(PostProcessing::INPUT2_OUTPUT_BUFFER0 <= inputValue) &&
-				(inputValue <= PostProcessing::INPUT2_OUTPUT_BUFFER7)	)
-	{
-		outputBufferIndex = inputValue - PostProcessing::INPUT2_OUTPUT_BUFFER0;
-	}
-	// PREVIOUS
-	else if (	(PostProcessing::PREVIOUS0 == inputValue) ||
-				(PostProcessing::INPUT1_PREVIOUS0 == inputValue) ||
-				(PostProcessing::INPUT2_PREVIOUS0 == inputValue)	)
-	{
-		tmpBufferIndex = 0;
-	}
-	// NONE
-	else if (	(PostProcessing::NONE == inputValue) ||
-				(PostProcessing::INPUT1_NONE == inputValue) ||
-				(PostProcessing::INPUT2_NONE == inputValue)	)
-	{
-		// @todo returns black texture
-	}
-	else
-	{
-		vgAssertN( false, "Unexpected value" );
-	}
-
-	// Computes the returned texture node
-	if ( outputBufferIndex >= 0 )
-	{
-		if ( outputBufferIndex < static_cast< int >(outputBufferTexture->size()) )
-		{
-			retVal = (*outputBufferTexture)[outputBufferIndex];
-		}
-		else
-		{
-			vgAssertN( false, "Out of range OUTPUT_BUFFER%i", outputBufferIndex );
-		}
-	}
-	else if ( tmpBufferIndex >= 0 )
-	{
-		if ( tmpBufferIndex < static_cast< int >(tmpBuffers->size()) )
-		{
-			retVal = (*tmpBuffers)[tmpBufferIndex];
-		}
-		else
-		{
-			vgAssertN( false, "Out of range PREVIOUS%i", tmpBufferIndex );
-		}
-	}
-
-	return retVal;
-}
-
-
-vgd::Shp< vgd::node::Texture2D > getOutputTexture( const vgd::node::PostProcessing::OutputValueType output,
-	std::vector< vgd::Shp< vgd::node::Texture2D > >* outputBufferTexture,
-	std::vector< vgd::Shp< vgd::node::Texture2D > >* tmpBuffers )
-{
-	using vgd::node::PostProcessing;
-
-	vgd::Shp< vgd::node::Texture2D > retVal;
-
-	//
-	const int	outputValue = output.value();
-	int			outputBufferIndex	= -1;
-	int			tmpBufferIndex		= -1;
-
-	// OUTPOUT_OUTPUT_BUFFER
-	if (	(PostProcessing::OUTPUT_OUTPUT_BUFFER0 <= outputValue) &&
-			(outputValue <= PostProcessing::OUTPUT_OUTPUT_BUFFER7)	)
-	{
-		outputBufferIndex = outputValue - PostProcessing::OUTPUT_OUTPUT_BUFFER0;
-	}
-	// TMP
-	else if ( PostProcessing::OUTPUT_TMP0 )
-	{
-		tmpBufferIndex = 0;
-	}
-	else
-	{
-		vgAssertN( false, "Unexpected value" );
-	}
-
-	// Computes the returned texture node
-	if ( outputBufferIndex >= 0 )
-	{
-		if ( outputBufferIndex < static_cast< int >(outputBufferTexture->size()) )
-		{
-			retVal = (*outputBufferTexture)[outputBufferIndex];
-		}
-		else
-		{
-			vgAssertN( false, "Out of range OUTPUT_OUTPUT_BUFFER%i", outputBufferIndex );
-		}
-	}
-	else if ( tmpBufferIndex >= 0 )
-	{
-		if ( tmpBufferIndex < static_cast< int >(tmpBuffers->size()) )
-		{
-			retVal = (*tmpBuffers)[tmpBufferIndex];
-		}
-		else
-		{
-			vgAssertN( false, "Out of range OUTPUT_TMP%i", tmpBufferIndex );
-		}
-	}
-
-	return retVal;
-}
-
-
-//// Filters
-// Detects edges and highlights them (using NORMAL buffer)
-// @todo debug
-const std::string normalEdgeDetect =
-"vec2 normalEdgeDetectKernel4[4] = vec2[4](\n"
-"vec2(0, 1), vec2(1, 0), vec2(0, -1), vec2(-1, 0)\n"
-");\n"
-"\n"
-"// Performs edge detection and highlighting.\n"
-"vec4 normalEdgeDetect( sampler2D texMap, vec2 texCoord )\n"
-"{\n"
-"	vec2 texSize = textureSize( texMap, 0 );\n"
-"	vec4 orig = texture( texMap, texCoord );\n"
-"	vec4 sum = vec4(0);\n"
-"	for( int i = 0; i < 4; ++i )\n"
-"	{\n"
-"		float computedDot = dot( orig.xyz, texture( texMap, texCoord + normalEdgeDetectKernel4[i]/texSize ).xyz );\n"
-"		sum += vec4( clamp( 1.0 - computedDot, 0.0, 1.0 ));\n"
-"	}\n"
-"	return vec4(sum.xyz, 1);\n"
-"}\n"
-"\n\n\n";
-const std::string applyNormalEdgeDetect(
-	"	color = normalEdgeDetect( texMap2D[0], mgl_TexCoord[0].xy );\n" );
-
-
-
-
-////
-const std::string declarations =
-	"// UNIFORM for PostProcessing\n"
-	"uniform float param1f0;\n"
-	"uniform float param1f1;\n"
-	"uniform vec4 param4f0;\n"
-	"uniform vec4 param4f1;\n"
-	"uniform mat4 param4x4f0;\n"
-	"\n";
-
-
-
-
-const std::string vertexProgram =
-"void main( void )\n"
-"{\n"
-"	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
-"\n"
-"INLINE_FTEXGEN\n"
-"}\n";
-
-
-
-const std::string fragmentProgram =
-"void main( void )\n"
-"{\n"
-"	vec4 color = vec4(0);\n"
-"	INLINE_POST_PROCESSING"
-"	gl_FragColor = color;\n"
-"}\n";
-// END POSTPROCESSING
-
-
-
-
-
-// BEGIN SHADOW
-/**
- * @brief Input informations for shadow mapping
- *
- * @todo Light* and MatrixR are the informations needed to compute all shadow mapping input for a light. BoundingBox of root to adjust projection
- */
-struct ShadowMappingInput
-{
-	struct LightInfo
-	{
-		typedef vgeGL::engine::LightState LightState;
-
-		LightInfo( const vgd::Shp< LightState > lightState, const vgm::MatrixR projection )
-		:	m_lightState(lightState),
-			m_lightProjectionMatrix( projection)
-		{}
-
-		vgd::Shp< LightState > m_lightState;
-
-		vgm::MatrixR m_lightProjectionMatrix;
-	};
-
-
-
-
-	ShadowMappingInput()
-	{}
-
-	/**
-	 * @brief "Default" constructor
-	 *
-	 * @param engine		the engine where informations on the current state would be extracted.
-	 * @param shadowType	
-	 */
-	void reset( const vgeGL::engine::Engine * engine, const vgd::node::LightModel::ShadowValueType shadowType );
-
-	/**
-	 * @name Accessors
-	 */
-	//@{
-	const LightInfo& getLight( const uint index ) const;
-
-	/**
-	 * @brief Returns number of lights casting shadow.
-	 */
-	const uint getNumLight() const;
-
-
-	const vgm::MatrixR& getLightProjectionMatrix( const uint index ) const;
-
-	vgd::Shp< vgd::node::Texture2D > getLightDepthMap( const uint index );
-	vgd::Shp< vgeGL::rc::Texture2D > getLightDepthMap( const uint index, vgeGL::engine::Engine * engine );
-
-	vgd::Shp< vgd::node::Texture2D > getLightAlphaMap( const uint index );
-	vgd::Shp< vgeGL::rc::Texture2D > getLightAlphaMap( const uint index, vgeGL::engine::Engine * engine );
-
-	vgd::Shp< vgd::node::TexGenEyeLinear > getTexGen( const uint index );
-
-	// @todo != size for shadow map per light casting shadow
-	const vgm::Vec2i getShadowMapSize() const;
-
-	//@}
-
-
-	std::vector< vgd::Shp< vgd::node::FrameBuffer > >		m_fbo;
-	std::vector< vgd::Shp< vgd::node::FrameBuffer > >		m_recycleFbo;
-
-	//std::vector< vgd::Shp< vgeGL::rc::FrameBuffer > >		m_fbo;
-private:
-	//std::vector< vgd::Shp< vgeGL::rc::FrameBuffer > >		m_recycleFbo;
-	vgm::Vec2i												m_shadowMapSize;
-// @todo only one vector
-	std::vector< LightInfo >								m_lights;
-
-	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_recycleLightDepthMap;
-	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_lightDepthMap;
-	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_recycleLightAlphaMap;
-	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_lightAlphaMap;
-	std::vector< vgd::Shp< vgd::node::TexGenEyeLinear > >	m_recycleTexGen;
-	std::vector< vgd::Shp< vgd::node::TexGenEyeLinear > >	m_texGen;
-};
-
-
-
-void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
-								const vgd::node::LightModel::ShadowValueType shadowType )
-{
-	using vgd::node::LightModel;
-
-	// Retrieves GLSLState from engine
-	using vgeGL::engine::GLSLState;
-	using vgeGL::engine::LightState;
-	const GLSLState& state = engine->getGLSLState();
-
-	// Computes shadow map size
-	vgm::Vec2i drawingSurface = engine->getDrawingSurfaceSize();
-	LightModel::ShadowMapSizeValueType shadowMapSize = engine->getOFEnum< LightModel >( LightModel::getFShadowMapSize() );
-	if ( shadowMapSize == LightModel::LOW )
-	{
-		drawingSurface /= 2;
-		drawingSurface = vgm::nextPower2(drawingSurface);
-	}
-	else if ( shadowMapSize == LightModel::MEDIUM )
-	{
-		// nothing to do
-	}
-	else if ( shadowMapSize == LightModel::HIGH )
-	{
-		drawingSurface = vgm::nextPower2(drawingSurface);
-	}
-	else if ( shadowMapSize == LightModel::VERY_HIGH )
-	{
-		drawingSurface *= 2;
-		drawingSurface = vgm::nextPower2(drawingSurface);
-	}
-	else
-	{
-		vgAssertN( false, "Unexpected LightModel.shadowMapSize" );
-	}
-
-	// Takes care of the maximum viewport size
-	m_shadowMapSize.setValue(	std::min(engine->getMaxViewportSize()[0], drawingSurface[0]),
-								std::min(engine->getMaxViewportSize()[1], drawingSurface[1])	);
-
-	// Lights informations
-	m_lights.clear();
-
-	m_fbo.swap( m_recycleFbo );
-	m_fbo.clear();
-
-	m_lightDepthMap.swap( m_recycleLightDepthMap );
-	m_lightDepthMap.clear();
-
-	m_lightAlphaMap.swap( m_recycleLightAlphaMap );
-	m_lightAlphaMap.clear();
-
-	m_texGen.swap( m_recycleTexGen );
-	m_texGen.clear();
-
-	uint		i		= 0;
-	const uint	iEnd	= state.lights.getMax();
-
-	for( uint numLightFound = 0; (i != iEnd) && (numLightFound != state.lights.getNum()); ++i )
-	{
-		const vgd::Shp< LightState > current = state.lights.getState( i );
-
-		// Skip this light unit ?
-		if (	!current ||
-				!current->getCastShadow() )
-		{
-			continue;
-		}
-
-		if ( current->getLightType() == vgeGL::engine::SPOT_LIGHT )
-		{
-			// Computes light informations
-			const bool castShadow = current->getCastShadow();
-
-			if ( castShadow )
-			{
-				// LIGHT MATRICES
-				const float cutOffAngle = current->getCutOffAngle();
-
-// @todo FIXME check scene size
-				const vgm::Vec2f nearFar = engine->getNearFar();
-				vgAssert( nearFar.isValid() );
-
-				vgm::MatrixR projection;
-				projection.setPerspective(	cutOffAngle * 2.f,
-											static_cast<float>(m_shadowMapSize[0])/static_cast<float>(m_shadowMapSize[1]),
-											nearFar[0], nearFar[1] );
-
-				m_lights.push_back( LightInfo(current, projection ) );
-
-				// Initializes private nodes for shadow mapping
-				using vgd::node::Texture;
-				// depth map
-				vgd::Shp< vgd::node::Texture2D > lightDepthMap;
-				if ( m_recycleLightDepthMap.size() > 0 )
-				{
-					lightDepthMap = m_recycleLightDepthMap.back();
-#ifdef _DEBUG
-					lightDepthMap->setName("depthMap.spotLight" + vgd::basic::toString(i));
-#endif
-				}
-				else
-				{
-					// node part
-					lightDepthMap = vgd::node::Texture2D::create("depthMap.spotLight" + vgd::basic::toString(i));
-
-					lightDepthMap->setWrap( Texture::WRAP_S, Texture::CLAMP );
-					lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP );
-
-					lightDepthMap->setUsage( Texture::SHADOW );
-				}
-
-				//
-				LightModel::ShadowFilteringValueType shadowFiltering = engine->getOFEnum< LightModel >( LightModel::getFShadowFiltering() );
-
-				switch ( shadowFiltering.value() )
-				{
-					case LightModel::NEAREST:
-						lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-						lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
-						break;
-
-					case LightModel::LINEAR:
-						lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-						lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
-						break;
-
-					default:
-						vgAssertN( false, "Unexpected value %i", shadowFiltering.value() );
-				}
-
-				m_lightDepthMap.push_back( lightDepthMap );
-
-				// ALPHA MAP
-				vgd::Shp< vgd::node::Texture2D > lightAlphaMap;
-				if ( m_recycleLightAlphaMap.size() > 0 )
-				{
-					lightAlphaMap = m_recycleLightAlphaMap.back();
-#ifdef _DEBUG
-					lightAlphaMap->setName("alphaMap.spotLight" + vgd::basic::toString(i));
-#endif
-				}
-				else
-				{
-					// node part
-					lightAlphaMap = vgd::node::Texture2D::create("alphaMap.spotLight" + vgd::basic::toString(i));
-
-					lightAlphaMap->setWrap( Texture::WRAP_S, Texture::CLAMP );
-					lightAlphaMap->setWrap( Texture::WRAP_T, Texture::CLAMP );
-				}
-
-				switch ( shadowFiltering.value() )
-				{
-					case LightModel::NEAREST:
-						lightAlphaMap->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-						lightAlphaMap->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
-						break;
-
-					case LightModel::LINEAR:
-						lightAlphaMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-						lightAlphaMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
-						break;
-
-					default:
-						vgAssertN( false, "Unexpected value %i", shadowFiltering.value() );
-				}
-
-				m_lightAlphaMap.push_back( lightAlphaMap );
-
-				//
-				if ( m_recycleFbo.size() > 0 )
-				{
-					m_fbo.push_back( m_recycleFbo.back() );
-				}
-				else
-				{
-					m_fbo.push_back( vgd::node::FrameBuffer::create("FBO for depth light POV") );
-				}
-
-				// TexGen
-				if ( m_recycleTexGen.size() > 0 )
-				{
-					vgd::Shp< vgd::node::TexGenEyeLinear > texGen = m_recycleTexGen.back();
-					//texGen->setParameters( vgm::MatrixR::getIdentity() );
-					m_texGen.push_back( texGen );
-				}
-				else
-				{
-					vgd::Shp< vgd::node::TexGenEyeLinear > texGen = vgd::node::TexGenEyeLinear::create("ForwardRendering.texGenForShadow");
-					texGen->setParameters( vgm::MatrixR::getIdentity() );
-					m_texGen.push_back( texGen );
-				}
-			}
-		}
-		else
-		{
-			//vgLogDebug2( "ShadowMappingInput::ShadowMappingInput: Light %s not yet supported by shadow mapping.", current->getLightNode()->getName().c_str() );
-			vgAssertN( false, "ShadowMappingInput::ShadowMappingInput: Light not yet supported by shadow mapping." );
-		}
-
-		++numLightFound;
-	}
-}
-
-
-const ShadowMappingInput::LightInfo& ShadowMappingInput::getLight( const uint index ) const
-{
-	vgAssertN( index < getNumLight(), "Out of range index %i/%i", index, getNumLight() );
-	return m_lights[index];
-}
-
-
-const uint ShadowMappingInput::getNumLight() const
-{
-	return m_lights.size();
-}
-
-
-const vgm::MatrixR& ShadowMappingInput::getLightProjectionMatrix( const uint index ) const
-{
-	vgAssertN( index < getNumLight(), "ShadowMappingInput::getLightProjectionMatrix(): Out of range index." );
-
-	return m_lights[index].m_lightProjectionMatrix;
-}
-
-
-vgd::Shp< vgd::node::Texture2D > ShadowMappingInput::getLightDepthMap( const uint index )
-{
-	vgAssertN( index < getNumLight(), "ShadowMappingInput::getLightDepthMap(): Out of range index." );
-
-	return m_lightDepthMap[index];
-}
-
-
-vgd::Shp< vgeGL::rc::Texture2D > ShadowMappingInput::getLightDepthMap( const uint index, vgeGL::engine::Engine * engine )
-{
-	vgd::Shp< vgd::node::Texture2D > texture2DNode = getLightDepthMap(index);
-	return engine->getRCShp< vgeGL::rc::Texture2D >( texture2DNode );
-}
-
-
-
-vgd::Shp< vgd::node::Texture2D > ShadowMappingInput::getLightAlphaMap( const uint index )
-{
-	vgAssertN( index < getNumLight(), "ShadowMappingInput::getLightAlphaMap(): Out of range index." );
-
-	return m_lightAlphaMap[index];
-}
-
-
-vgd::Shp< vgeGL::rc::Texture2D > ShadowMappingInput::getLightAlphaMap( const uint index, vgeGL::engine::Engine * engine )
-{
-	vgd::Shp< vgd::node::Texture2D > texture2DNode = getLightAlphaMap(index);
-	return engine->getRCShp< vgeGL::rc::Texture2D >( texture2DNode );
-}
-
-
-
-vgd::Shp< vgd::node::TexGenEyeLinear > ShadowMappingInput::getTexGen( const uint index )
-{
-	vgAssertN( index < getNumLight(), "ShadowMappingInput::getTexGen(): Out of range index." );
-
-	return m_texGen[index];
-}
-
-
-
-const vgm::Vec2i ShadowMappingInput::getShadowMapSize() const
-{
-	return m_shadowMapSize;
-}
-
-
-
-
-//
-std::pair< vgd::basic::IImage::Type, vgd::node::Texture::InternalFormatValueType > convertShadowMapType2IImageType( const vgd::node::LightModel::ShadowMapTypeValueType shadowMapType )
-{
-	using vgd::basic::IImage;
-	using vgd::node::LightModel;
-	using vgd::node::Texture;
-
-	std::pair< IImage::Type, Texture::InternalFormatValueType > retVal;
-
-	if ( shadowMapType == LightModel::FLOAT32 )
-	{
-		retVal.first	= IImage::FLOAT;
-		retVal.second	= Texture::DEPTH_COMPONENT_32F;
-	}
-	else if ( shadowMapType == LightModel::INT32 )
-	{
-		retVal.first	= IImage::INT32;
-		retVal.second	= Texture::DEPTH_COMPONENT_32;
-	}
-	else if ( shadowMapType == LightModel::INT24 )
-	{
-		retVal.first	= IImage::INT32;
-		retVal.second	= Texture::DEPTH_COMPONENT_24;
-	}			
-	else if ( shadowMapType == LightModel::INT16 )
-	{
-		retVal.first	= IImage::INT16;
-		retVal.second	= Texture::DEPTH_COMPONENT_16;
-	}
-	else
-	{
-		vgAssert( false );
-		retVal.first	= IImage::INT32;
-		retVal.second	= Texture::DEPTH_COMPONENT_24;
-	}
-
-	return retVal;
-}
-// END SHADOW
 
 
 
@@ -1010,16 +413,29 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	fluid = 0;
 	fluidModelViewMatrix.setIdentity();
 
+
 // for postprocessing
 	engine->regardIfIsAKindOf<vgd::node::OutputBufferProperty>();
 	engine->regardIfIsAKindOf<vgd::node::Overlay>();
 	engine->regardIfIsAKindOf<vgd::node::PostProcessing>();
+
+	//
+	dof.reset();
+	dof.stageCollectInformationsBegin( engine );
 
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
 			i != iEnd;
 			++i )
 	{
+		//
+		const bool dofRetVal = dof.collectInformationsCallback( i );
+		if ( dofRetVal )
+		{
+			continue;
+		}
+		// else nothing to do
+
 		// FLUID
 		if ( i->first->isA< vgd::node::Fluid >() && i->second )
 		{
@@ -1094,6 +510,7 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	// POST-PROCESSING.outputbuffers
 	// Checks outputBufferProperties
 	hasOutputBufferProperties = glslStateFinal->outputBufferProperties.isNotEmpty();
+	m_lastCurrentScaleForVertex = 1.f;
 
 	if (	glslStateFinal->outputBufferProperties.getNum() > 1 &&
 			glslStateFinal->postProcessing.isEmpty() )
@@ -1119,6 +536,9 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 
 	// Saves the overlays state
 	m_overlays = &(glslStateFinal->overlays);
+
+	//
+	dof.stageCollectInformationsEnd( engine );
 
 	endPass();
 
@@ -1994,7 +1414,7 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 	vgm::MatrixR identity = vgm::MatrixR::getIdentity();
 	vgd::Shp< glo::Texture2D > color0 = fluidRC->fbo->getColorAsTexture2D();
 	vgm::MatrixR cameraLookAt;
-	vgd::Shp< vgd::node::Camera> newCamera = setupRenderFromCamera(
+	vgd::Shp< vgd::node::Camera > newCamera = setupRenderFromCamera(
 		position, vgm::Vec3f(-fluid->getGravity()), identity,
 		"SceneHeightMapCamera", cameraProjection, vgm::Vec2i( color0->getWidth(), color0->getHeight() ), //fluid->getHeightMapSize(),
 		identity, identity,
@@ -2054,12 +1474,16 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	// Searches the first LightModel node
 	// (and active lights at this state) and the camera.
 	/////////////////////////////////////////////////////////
-
+// STAGE 1
 	engine->setTrace();
 	prepareEval( engine, traverseElements );
 
 	passInformationsCollector( engine, traverseElements);
 	engine->setTrace( false );
+
+// STAGE 2
+	// RC
+	dof.stageInitializeRC( this, engine );
 
 	// STEREO
 	engine->setEyeUsagePolicy( vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY );
@@ -2133,6 +1557,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	}
 	// else @todo remove if needed stereo context*/
 
+// STAGE 3
 	// SHADOW MAP(S)
 	passUpdateShadowMaps( engine, traverseElements );
 
@@ -2141,11 +1566,16 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	stageFluidUpdateSceneHeightMap( engine, traverseElements );
 	stageFluidSimulation( engine );
 
+	// DOF
+	// must be done before stageInitializeOutputBuffers()
+	dof.stagePrePaint( this, engine );
+
 	// OUTPUT BUFFERS init
 	stageInitializeOutputBuffers( engine );
 
 	// POST PROCESSING init
 	stageInitializePostProcessingBuffers( engine );
+
 
 	// DEPTH ONLY PASS
 	if ( engine->isDepthPrePassEnabled() )		passDepthOnly( engine, traverseElements );
@@ -2163,7 +1593,12 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 	if ( isShadowEnabled )	description += " with shadow";
 	if ( isPostProcessingEnabled )	description += " and post-processing";
-	setPassDescription( description);
+	if ( dof.isEnabled() )
+	{
+		description += ", ";
+		description += typeid(dof).name();
+	}
+	setPassDescription( description );
 
 	beginPass();
 
@@ -2176,8 +1611,14 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	// POST-PROCESSSING
 	stageConfigurePostProcessing( engine );
 
+	// DOF
+	dof.stageBeginPaint( this, engine );
+
 		// First pass : OPAQUE PASS (draw opaque shape)
 		const bool mustDoTransparencyPass = evaluateOpaquePass( paintService(), PassIsolationMask(0), true );
+		dof.stagePaint( this, engine );
+
+	dof.stageEndPaint( this, engine );
 
 	endPass();
 
@@ -2203,20 +1644,29 @@ stageInitializeOutputBuffers( engine );
 
 		// Second pass : TRANSPARENT PASS (draw transparent shape)
 
+	// DOF
+	dof.stageBeginPaint( this, engine );
+
 		//m_fbo->setDrawBuffers( 0 );
 		evaluateTransparentPass( paintService(), PassIsolationMask(0)/*PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK)*/, true );
+		dof.stagePaint( this, engine );
+
+		dof.stageEndPaint( this, engine );
 
 		endPass();
 
-engine->setBufferUsagePolicy( vge::engine::BUP_NOT_DEFINED );
+		engine->setBufferUsagePolicy( vge::engine::BUP_NOT_DEFINED );
 	}
 
 
-
-
+	// DOF
+	dof.stagePostPaint( this, engine );
 
 	// POST-PROCESSING
-	stagePostProcessing( engine );
+	if ( !dof.isEnabled() )
+	{
+		stagePostProcessing( engine );
+	}
 
 /*			// First pass : OPAQUE PASS (draw opaque shape)
 			const bool mustDoTransparencyPass = evaluateOpaquePass( paintService() );
@@ -2285,7 +1735,7 @@ void ForwardRendering::stageInitializePostProcessingBuffers( vgeGL::engine::Engi
 
 void ForwardRendering::stageConfigurePostProcessing( vgeGL::engine::Engine * engine )
 {
-	if ( isPostProcessingEnabled )
+	if ( hasOutputBufferProperties || isPostProcessingEnabled )
 	{
 		namespace vgeGLPainter = vgeGL::handler::painter;
 		using vgeGL::engine::GLSLState;
@@ -2377,12 +1827,12 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		if ( current )
 		{
 			vgd::node::PostProcessing * postProcessingNode = current->getNode();
-			vgAssert( postProcessingNode );
+			vgAssert( postProcessingNode != 0 );
 
 			// Parameters
 
 			// Builds declaration section of the shaders (depends of post-processing node param* fields)
-			std::string currentDeclaration = declarations;
+			std::string currentDeclaration = getPostProcessingDeclarations();
 
 			// param1f0
 			if ( postProcessingNode->hasParam1f0() )
@@ -2473,20 +1923,20 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			if ( postProcessingNode->getInput2() != vgd::node::PostProcessing::INPUT2_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					vertexProgram, "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
 														"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
 														"	mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
 			}
 			else if ( postProcessingNode->getInput1() != vgd::node::PostProcessing::INPUT1_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					vertexProgram, "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
 														"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
 			}
 			else
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					vertexProgram, "INLINE_FTEXGEN", "	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN", "	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
 			}
 
 			currentScaleForVertex *= scale.second;
@@ -2508,7 +1958,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 			// Builds Fragment shader
 			std::string fragmentShader = currentDeclaration + filter.first +
-				boost::algorithm::replace_first_copy( fragmentProgram, "INLINE_POST_PROCESSING", filter.second );
+				boost::algorithm::replace_first_copy( getPostProcessingFragmentProgram(), "INLINE_POST_PROCESSING", filter.second );
 
 			if ( vgm::notEquals( currentScaleForTexCoord, 1.f ) )
 			{
@@ -2560,8 +2010,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 	currentScaleForTexCoord	= 1.f;
 	currentScaleForVertex	= 1.f;
 
-	pppRC.outputFbo->bind(); // @todo OPTME
-	pppRC.outputFbo->setDrawBuffer();
+	pppRC.outputFbo->bind();
 
 	for( uint i=0; i < programs.size(); ++i )
 	{
@@ -2584,12 +2033,12 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 		pppRC.outputFbo->detachColor();
 		pppRC.outputFbo->attachColor( outputTextureGLO );
-
+		pppRC.outputFbo->setDrawBuffer();
 
 		currentScaleForVertex *= scales[i];
 		glViewport( 0, 0,
-					outputTextureGLO->getWidth() * currentScaleForVertex,
-					outputTextureGLO->getHeight() * currentScaleForVertex );
+					(uint)(outputTextureGLO->getWidth() * currentScaleForVertex),
+					(uint)(outputTextureGLO->getHeight() * currentScaleForVertex) );
 
 //engine->begin2DRendering( &lviewport, false );
 // @todo a light version of begin2DRendering
@@ -2727,13 +2176,13 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 // @todo glo api : blit( fboSrc, fboDst, COLOR:DEPTH:STENCIL ) LINEAR or NEAREST,  blit( ..., srcRect, ..., dstRext... ).
 void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo )
 {
+	fbo->bind();
 	fbo->setReadBuffer();
 	glo::FrameBufferObject::setDrawToDefaultFrameBuffer();
 
 // @todo removes warnings
-	glBlitFramebuffer(	0, 0, engine->getDrawingSurfaceSize()[0] * m_lastCurrentScaleForVertex, engine->getDrawingSurfaceSize()[1] * m_lastCurrentScaleForVertex,
-//						0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1],
-						0, 0, engine->getDrawingSurfaceSize()[0] * m_lastCurrentScaleForVertex, engine->getDrawingSurfaceSize()[1] * m_lastCurrentScaleForVertex,
+	glBlitFramebuffer(	0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1],
+						0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1],
 						GL_COLOR_BUFFER_BIT, GL_NEAREST );
 	glo::FrameBufferObject::setReadToDefaultFrameBuffer();
 }

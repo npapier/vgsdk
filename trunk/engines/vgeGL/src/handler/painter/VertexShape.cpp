@@ -295,8 +295,8 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 //				const bool compileGSRetVal = program->addShader( fs.c_str(), pg->getGeometryShaderGenerator()->getShaderType(), false );
 
-				namespace vgeGLPainter = vgeGL::handler::painter;
-				vgeGLPainter::OutputBufferProperty::bindFragDataLocations( pGLEngine, program );
+				//namespace vgeGLPainter = vgeGL::handler::painter;
+				//vgeGLPainter::OutputBufferProperty::bindFragDataLocations( pGLEngine, program );
 
 				const bool linkRetVal = program->link();
 				if ( !linkRetVal )	linkInfoLog = program->getInfoLog();

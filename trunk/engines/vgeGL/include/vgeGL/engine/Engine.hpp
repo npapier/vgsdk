@@ -6,6 +6,7 @@
 #ifndef _VGEGL_ENGINE_ENGINE_HPP
 #define _VGEGL_ENGINE_ENGINE_HPP
 
+#include <vgd/basic/IndexContainer.hpp>
 #include <vge/engine/Engine.hpp>
 #include <vge/engine/TStack.hpp>
 #include <vge/rc/TManager.hpp>
@@ -274,6 +275,44 @@ public:
 	 * @param buffers	an OpenGL framebuffer object containing the output buffers, or an empty framebuffer object.
 	 */
 	void setOutputBuffers( vgd::Shp< glo::FrameBufferObject > buffers = vgd::Shp< glo::FrameBufferObject >() );
+
+	//@}
+
+
+	/**
+	 * @name Current private output buffers
+	 *
+	 * Drawing buffers are selected by using vgd::node::OutputBuffers. vgsdk may require additionnal buffers internally.
+	 * Uses the following methods to fulfilled this requirement.
+	 */
+	//@{
+
+	/**
+	 * @brief Specifies which private buffer must be used for rendering.
+	 *
+	 * @param which		index of output buffer. Default value -1 means no buffer.
+	 */
+	void setCurrentPrivateOutputBuffers( const int which = -1 );
+
+	/**
+	 * @brief Specifies which private buffers must be used for rendering.
+	 *
+	 * @param which0		index of first output buffer.
+	 * @param which1		index of second output buffer.
+	 */
+	void setCurrentPrivateOutputBuffers( const int which0, const int which1 );
+
+	/**
+	 * @brief Retrieves the current private output buffers
+	 *
+	 * @return a container with index of current private output buffers.
+	 */
+	const vgd::basic::IndexContainer& getCurrentPrivateOutputBuffers() const;
+
+	/**
+	 * @brief Retrieves begin and end iterators on current private output buffers.
+	 */
+	vgd::basic::IndexContainerConstIterators getCurrentPrivateOutputBuffersIterators() const;
 
 	//@}
 
@@ -818,14 +857,15 @@ private:
 
 
 
-	GLStateStack						m_glStateStack;		///< store the stack of OpenGL rendering state
+	GLStateStack						m_glStateStack;			///< store the stack of OpenGL rendering state
 
-	GLSLStateStack						m_glslStateStack;	///< store the stack of GLSL rendering state
+	GLSLStateStack						m_glslStateStack;		///< store the stack of GLSL rendering state
 
-	UniformState						m_uniformState;		///< store the current uniform state
+	UniformState						m_uniformState;			///< store the current uniform state
 
-	vgd::Shp< glo::FrameBufferObject >	m_outputBuffers;	///< store the output buffers (see OutputBuffers, ForwardRendering and PostProcessing nodes).
+	vgd::Shp< glo::FrameBufferObject >	m_outputBuffers;		///< store the output buffers (see OutputBuffers, ForwardRendering and PostProcessing nodes).
 
+	vgd::basic::IndexContainer m_currentPrivateOutputBuffers;	///< Index of current private output buffers
 
 	/**
 	 * @brief OpenGL GLSL program generator.
