@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier and Maxime Peresson.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier and Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -13,8 +13,10 @@
 
 #include <vgd/node/ClipPlane.hpp>
 #include <vgd/node/CullFace.hpp>
+#include <vgd/node/DepthOfField.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/DrawStyle.hpp>
+#include <vgd/node/Fluid.hpp>
 #include <vgd/node/FrontFace.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/LightModel.hpp>
@@ -38,8 +40,10 @@ namespace node
 
 	typedef boost::mpl::vector<	vgd::Shp< vgd::node::ClipPlane >, 
 								vgd::Shp< vgd::node::CullFace >,
+								vgd::Shp< vgd::node::DepthOfField >,
 								vgd::Shp< vgd::node::DirectionalLight >,
 								vgd::Shp< vgd::node::DrawStyle >,
+								vgd::Shp< vgd::node::Fluid >,
 								vgd::Shp< vgd::node::FrontFace >,
 								vgd::Shp< vgd::node::Group >,
 								vgd::Shp< vgd::node::LightModel >,
@@ -56,8 +60,10 @@ namespace node
 
 	static std::vector< std::string > names = boost::assign::list_of("ClipPlane")
 																	("CullFace")
+																	("DepthOfField")
 																	("DirectionalLight")
 																	("DrawStyle")
+																	("Fluid")
 																	("FrontFace")
 																	("Group")
 																	("LightModel")
@@ -125,7 +131,7 @@ InsertNode::InsertNode()
 	for( uint i = 0; i < names.size(); i++ )
 	{
 		Gtk::MenuItem	* item = new Gtk::MenuItem( names[i] );
-		item->signal_activate().connect( sigc::bind<0>( sigc::mem_fun(this, &InsertNode::onInsertNode), m_classNames[i] ) );			
+		item->signal_activate().connect( sigc::bind<0>( sigc::mem_fun(this, &InsertNode::onInsertNode), m_classNames[i] ) );
 		m_insertMenu->append( *item );
 	}
 	m_insertMenu->show_all();
