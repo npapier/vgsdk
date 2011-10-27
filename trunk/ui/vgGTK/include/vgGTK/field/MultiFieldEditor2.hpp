@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -145,7 +145,7 @@ struct MultiFieldEditor2 : public FieldEditor, public Gtk::Table
 		// Gets the editor of the field.
 		typedef vgd::field::TMultiField< typename MFAdapter::value_type > FieldType;
 
-		vgd::field::EditorRO< FieldType >	fieldEditor	= m_fieldManager->getFieldRO< FieldType >( m_fieldName );
+		vgd::field::EditorRO< FieldType > fieldEditor = m_fieldManager->getFieldRO< FieldType >( m_fieldName );
 
 
 		// Copies values from the field into the local edition model and backup of the data.
@@ -162,6 +162,8 @@ struct MultiFieldEditor2 : public FieldEditor, public Gtk::Table
 		// Updates the status label to show the number of elements.
 		m_status.set_label( vgUI::compose("%1% elements", fieldEditor->size()) );
 
+		// Releases field editor
+		fieldEditor.release();
 
 		// Sends a change notification.
 		m_freezeChangedNotify = false;
@@ -198,6 +200,8 @@ struct MultiFieldEditor2 : public FieldEditor, public Gtk::Table
 		// Updates the status label to show the number of elements.
 		m_status.set_label( vgUI::compose("%1% elements", fieldEditor->size()) );
 
+		// Releases field editor
+		fieldEditor.release();
 
 		// Sends a change notification.
 		m_freezeChangedNotify = false;
