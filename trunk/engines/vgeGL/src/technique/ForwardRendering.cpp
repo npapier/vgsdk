@@ -579,6 +579,9 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 				currentLightIndex < m_shadowMappingInput->getNumLight();
 				++currentLightIndex )
 		{
+			// Backups current output buffers
+			vgd::Shp< glo::FrameBufferObject > outputBuffersBak = engine->getOutputBuffers();
+
 //			setPassDescription("Depth from light POV");
 			setPassDescription("Depth/alpha from light POV");
 			beginPass( static_cast< PassIsolationMask >(RESET_MATRICES | PUSH_POP_STATE) );
@@ -617,6 +620,9 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 //			fbo->unbind();
 
 			endPass();
+
+			// Restores output buffers
+			engine->setOutputBuffers( outputBuffersBak );
 		}
 
 		// Restores engine state
