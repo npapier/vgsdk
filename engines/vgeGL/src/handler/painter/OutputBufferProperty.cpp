@@ -635,35 +635,6 @@ const std::string OutputBufferProperty::getFragmentOutputStageString(
 
 
 
-void OutputBufferProperty::bindFragDataLocations( vgeGL::engine::Engine * engine, glo::GLSLProgram * program )
-{
-	OutputBufferPropertyStateContainer &outputBufferProperties = engine->getGLSLState().outputBufferProperties;
-
-	typedef vgeGL::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
-
-	GLhandleARB programName = program->getProgramObject();
-
-	uint numFound = 0;
-	for( uint i = 0; numFound < outputBufferProperties.getNum(); ++i )
-	{
-		vgd::Shp< OutputBufferPropertyState > outputBufferPropertyState = outputBufferProperties.getState(i);
-
-		if ( outputBufferPropertyState )
-		{
-			++numFound;
-			vgd::node::OutputBufferProperty * outputBufferProperty = outputBufferPropertyState->getNode();
-			if ( outputBufferProperty )
-			{
-				std::string name("outputBuffer");
-				name += vgd::basic::toString(i);
-				glBindFragDataLocationEXT( programName, i, name.c_str() );
-			}
-		}
-	}
-}
-
-
-
 } // namespace painter
 
 } // namespace handler

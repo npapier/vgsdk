@@ -166,7 +166,7 @@
 
 		<sf name="cameraModel" doc="Sets the camera model.">
 			<type name="enum">
-				<enum default="PINHOLE">
+				<enum default="THIN_LENS">
 					<value name="PINHOLE" doc="todo"/>
 					<value name="THIN_LENS" doc="todo"/>
 				</enum>
@@ -663,6 +663,11 @@
 				</enum>
 			</type>
 		</sf>
+
+		<sf name = "current" doc = "Specifies if this output buffer must be used for drawing by default. See vgd::node::OutputBuffer to alter this initial state.">
+			<type name = "bool" default = "true"></type>
+		</sf>
+
 
 		<sf name = "command" doc = "Specifies the pre-defined assign command execute by the fragment program.">
 			<type name = "enum">

@@ -7,6 +7,7 @@
 
 #include <glo/FrameBufferObject.hpp>
 #include <vgd/node/ClearFrameBuffer.hpp>
+#include <vgd/node/OutputBufferProperty.hpp>
 
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
@@ -20,6 +21,58 @@ namespace handler
 
 namespace painter
 {
+
+
+
+// @todo move in helpers.hpp
+void updateCurrentDrawBuffers(	const vgeGL::engine::Engine::OutputBufferPropertyStateContainer& outputBuffersProperties,
+								std::vector< int >& currentDrawBuffers )
+{
+	uint		count	= 0;
+
+	uint		i		= 0;
+	const uint	iEnd	= outputBuffersProperties.getMax();
+
+	while( i != iEnd )
+	{
+		using vgeGL::engine::GLSLState;
+		typedef GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
+
+		const vgd::Shp< OutputBufferPropertyState > state = outputBuffersProperties.getState(i);
+
+		if ( state )
+		{
+			++count;
+
+			vgd::node::OutputBufferProperty * node = state->getNode();
+			vgAssert( node );
+
+			if ( node->getCurrent() )
+			{
+				// This output buffer is current, i.e. used for drawing by default.
+				vgAssert( node->getMultiAttributeIndex() == i );
+				currentDrawBuffers[i] = i;
+			}
+			else
+			{
+				// This output buffer is not current
+				vgAssert( currentDrawBuffers[i] == -1 );
+			}
+		}
+		else
+		{
+			// no output buffer property
+			vgAssert( currentDrawBuffers[i] == -1 );
+		}
+
+		//
+		if ( count == outputBuffersProperties.getNum() )
+		{
+			break;
+		}
+		++i;
+	}
+}
 
 
 
@@ -46,16 +99,9 @@ void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node
 	// Updates engine state
 	const vge::engine::BufferUsagePolicy	bup = engine->getBufferUsagePolicy();
 	const vge::engine::EyeUsagePolicy		eup = engine->getEyeUsagePolicy();
-	vgd::Shp< glo::FrameBufferObject >		fbo = glEngine->getOutputBuffers();
-
-	if ( fbo )
-	{
-		fbo->bind();
-	}
-
 	vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
 
-	applyBufferUsagePolicy( bup, eup, fbo );
+	applyBufferUsagePolicy( glEngine, bup, eup );
 }
 
 
@@ -105,8 +151,30 @@ void ClearFrameBuffer::paint( vgeGL::engine::Engine * engine, vgd::node::ClearFr
 
 
 // @todo cache in DL
-void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePolicy bufferPolicy, const vge::engine::EyeUsagePolicy eyePolicy, vgd::Shp< glo::FrameBufferObject > fbo )
+void ClearFrameBuffer::applyBufferUsagePolicy( vgeGL::engine::Engine * engine, const vge::engine::BufferUsagePolicy bufferPolicy, const vge::engine::EyeUsagePolicy eyePolicy )
 {
+	// Binds engine output buffers
+	vgd::Shp< glo::FrameBufferObject > fbo = engine->getOutputBuffers();
+	if ( fbo )
+	{
+		fbo->bind();
+	}
+
+	typedef vgeGL::engine::Engine::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer; // <=> vge::basic::TUnitContainer< OutputBufferPropertyState >
+	const OutputBufferPropertyStateContainer& outputBuffersProperties = engine->getOutputBufferProperties();
+
+	// By default, all drawing operations into color buffers are disabled
+	std::vector< int > currentDrawBuffers( fbo ? fbo->getMaxColorAttachements() : 0, -1 );
+
+	if ( fbo )
+	{
+		// Computes the current draw buffers (from OutputBufferProperty nodes).
+		updateCurrentDrawBuffers( outputBuffersProperties, currentDrawBuffers );
+
+		// Updates the current draw buffers using private draw buffers
+		engine->updateFromCurrentPrivateDrawBuffers( currentDrawBuffers );
+	}
+
 	// Computes which draw buffer to use from eye policy
 	GLenum drawBufferFromEyePolicy = GL_NONE;
 
@@ -129,6 +197,7 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 			vgAssertN( false, "Unexpected value for eye usage policy %i", eyePolicy );
 	}
 
+
 	// Apply buffer policy and eye policy
 	switch ( bufferPolicy )
 	{
@@ -141,18 +210,16 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 			{
 				// 1) disable writing to color buffer
 				fbo->renderDepthOnly();
-
-				// 2) enable writing to depth buffer
-				glDepthMask( GL_TRUE );
 			}
 			else
 			{
 				// 1) disable writing to color buffer
 				glDrawBuffer( GL_NONE );
 
-				// 2) enable writing to depth buffer
-				glDepthMask( GL_TRUE );
 			}
+
+			// 2) enable writing to depth buffer
+			glDepthMask( GL_TRUE );
 
 			// set depth function
 			glDepthFunc( GL_LEQUAL );
@@ -165,23 +232,14 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 		case vge::engine::BUP_ONLY_COLOR:
 			if ( fbo )
 			{
-				// 1) enable writing to color buffer already done by OutputBuffers node
+				// 1) enable writing to current draw buffer(s).
+				fbo->setDrawBuffers( currentDrawBuffers );
 
 				// 2) disable writing to depth buffer
 				glDepthMask( GL_FALSE );
 
 				// 3) clear buffers
-				// Backups current draw buffers
-				//std::vector< int > drawBuffersBackup = fbo->getFullDrawBuffers();
-
-				// Clears all draw buffers
-				fbo->setDrawBuffersToAll();
 				glClear( GL_COLOR_BUFFER_BIT );
-
-				// Restores the draw buffers
-				//fbo->setDrawBuffers( drawBuffersBackup );
-
-				fbo->setDrawBuffer(0);
 			}
 			else
 			{
@@ -203,23 +261,14 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 		case vge::engine::BUP_COLOR_AND_DEPTH:
 			if ( fbo )
 			{
-				// 1) enable writing to color buffer already done by OutputBuffers node
+				// 1) enable writing to current draw buffer(s).
+				fbo->setDrawBuffers( currentDrawBuffers );
 
 				// 2) enable writing to depth buffer
 				glDepthMask( GL_TRUE );
 
 				// 3) clear buffers
-				// Backups current draw buffers
-				//std::vector< int > drawBuffersBackup = fbo->getFullDrawBuffers();
-
-				// Clears all draw buffers
-				fbo->setDrawBuffersToAll();
 				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-				// Restores the draw buffers
-				//fbo->setDrawBuffers( drawBuffersBackup );
-
-				fbo->setDrawBuffer(0);
 			}
 			else
 			{
@@ -241,12 +290,11 @@ void ClearFrameBuffer::applyBufferUsagePolicy( const vge::engine::BufferUsagePol
 		case vge::engine::BUP_ONLY_COLOR_NO_CLEAR:
 			if ( fbo )
 			{
-				// 1) enable writing to color buffer already done by OutputBuffers node
+				// 1) enable writing to current draw buffer(s).
+				fbo->setDrawBuffers( currentDrawBuffers );
 
 				// 2) disable writing to depth buffer
 				glDepthMask( GL_FALSE );
-
-				fbo->setDrawBuffer(0);
 			}
 			else
 			{

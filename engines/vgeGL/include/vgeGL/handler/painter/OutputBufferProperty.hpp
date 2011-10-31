@@ -66,8 +66,6 @@ struct VGEGL_API OutputBufferProperty : public vge::handler::painter::MultiAttri
 
 	static const std::string getFragmentOutputDeclarationStageString( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
 	static const std::string getFragmentOutputStageString( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
-
-	static void bindFragDataLocations(	vgeGL::engine::Engine * engine, glo::GLSLProgram * program );
 };
 
 

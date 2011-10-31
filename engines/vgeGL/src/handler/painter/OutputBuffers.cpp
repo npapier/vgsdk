@@ -49,7 +49,7 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 	vgd::node::OutputBuffers *outputBuffers = static_cast< vgd::node::OutputBuffers* >(node);
 
 	// Updates engine state
-	const vge::engine::BufferUsagePolicy	bup = engine->getBufferUsagePolicy();
+	const vge::engine::BufferUsagePolicy	bup = glEngine->getBufferUsagePolicy();
 	vgd::Shp< glo::FrameBufferObject >		fbo = glEngine->getOutputBuffers();
 
 	if ( fbo )
@@ -76,27 +76,16 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 				using vgd::field::EditorRO;
 				typedef vgd::node::OutputBuffers::FCurrentType FCurrentType;
 
-				if ( outputBuffers )
-				{
-					EditorRO< FCurrentType > current = outputBuffers->getCurrentRO();
+				EditorRO< FCurrentType > current = outputBuffers->getCurrentRO();
 
-					for( uint i=0; i < current->size(); ++i )
-					{
-						const int outputBufferIndex = (*current)[i];
-						drawBuffers[outputBufferIndex] = outputBufferIndex;
-					}
-				}
-				// else nothing to do
-
-				// Overrides the drawbuffers mapping from engine
-				vgd::basic::IndexContainerConstIterator i, iEnd;
-				for(	boost::tie(i, iEnd) = glEngine->getCurrentPrivateOutputBuffersIterators();
-						i != iEnd;
-						++i )
+				for( uint i=0; i < current->size(); ++i )
 				{
-					const int outputBufferIndex = (*i);
+					const int outputBufferIndex = (*current)[i];
 					drawBuffers[outputBufferIndex] = outputBufferIndex;
 				}
+
+				// Updates the current draw buffers using private draw buffers
+				glEngine->updateFromCurrentPrivateDrawBuffers( drawBuffers );
 
 				// Modifies the draw buffers
 				fbo->setDrawBuffers( drawBuffers );
@@ -132,10 +121,7 @@ void OutputBuffers::apply( vge::engine::Engine * engine, vgd::node::Node * node 
 	//vgeGL::rc::applyUsingDisplayList< vgd::node::OutputBuffers, OutputBuffers >( engine, node, this );
 
 	// Validates node df
-	if ( node )
-	{
-		node->getDirtyFlag(node->getDFNode())->validate();
-	}
+	node->getDirtyFlag(node->getDFNode())->validate();
 }
 
 

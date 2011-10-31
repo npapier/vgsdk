@@ -10,8 +10,8 @@
 #include <vge/engine/Engine.hpp>
 #include <vge/engine/TStack.hpp>
 #include <vge/rc/TManager.hpp>
-
 #include "vgeGL/basic/UniformContainer.hpp"
+#include "vgeGL/engine/GLSLState.hpp"
 
 // for GLState
 #include <vgd/node/DrawStyle.hpp>
@@ -256,6 +256,44 @@ public:
 
 
 	/**
+	 * @name Global state
+	 *
+	 * 'Global state' means the value of a state at the end of the scene graph traversing.
+	 *
+	 * These state is filled by the first pass of the rendering (see ForwardRendering technique).
+	 */
+	//@{
+
+	/**
+	 * @brief Retrieves the global GLSL state
+	 *
+	 * @return the global GLSL state owned by the engine
+	 */
+	const vgd::Shp< vgeGL::engine::GLSLState > getGlobalGLSLState() const;
+
+	/**
+	 * @brief Sets the global GLSL state
+	 *
+	 * @param state		a reference on the GLSL state that must be copy to become the global GLSL state.
+	 */
+	void setGlobalGLSLState( vgeGL::engine::GLSLState& state );
+
+
+	// typedef vge::basic::TUnitContainer< OutputBufferPropertyState > OutputBufferPropertyStateContainer;
+	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
+
+	/**
+	 * @brief Retrieves the array of output buffer property state.
+	 *
+	 * @return the container of output buffer property state.
+	 */
+	const OutputBufferPropertyStateContainer& getOutputBufferProperties() const;
+
+	//@}
+
+
+
+	/**
 	 * @name Engine resource
 	 *
 	 * @todo takes care of glPush/PopAttrib()/Separator for getOutputBuffers()->getFullDrawBuffers()
@@ -301,6 +339,14 @@ public:
 	 * @param which1		index of second output buffer.
 	 */
 	void setCurrentPrivateOutputBuffers( const int which0, const int which1 );
+
+
+	/**
+	 * @brief Updates the given 'drawBuffers' with the current private output buffer(s)
+	 *
+	 * @param drawBuffers
+	 */
+	void updateFromCurrentPrivateDrawBuffers( std::vector< int >& drawBuffers ) const;
 
 	/**
 	 * @brief Retrieves the current private output buffers
@@ -862,6 +908,8 @@ private:
 	GLSLStateStack						m_glslStateStack;		///< store the stack of GLSL rendering state
 
 	UniformState						m_uniformState;			///< store the current uniform state
+
+	vgd::Shp< vgeGL::engine::GLSLState > m_globalGLSLState;		///< store the global GLSL state
 
 	vgd::Shp< glo::FrameBufferObject >	m_outputBuffers;		///< store the output buffers (see OutputBuffers, ForwardRendering and PostProcessing nodes).
 
