@@ -87,7 +87,7 @@ void DepthOfField::setToDefaults( void )
 	setSampling( 8 );
 	setFocusToNear( 1.f );
 	setNearMaximumBlurriness( 0.5f );
-	setCameraModel( PINHOLE );
+	setCameraModel( THIN_LENS );
 }
 
 

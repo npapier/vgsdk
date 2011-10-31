@@ -45,7 +45,7 @@ namespace node
  * - SFFloat \c nearMaximumBlurriness = 0.5f<br>
  *   Sets the maximum blurriness for object(s) in [near, focus]. 0 means no blur at all. 1 means maximum blurriness.<br>
  *<br>
- * - SFEnum \c cameraModel = PINHOLE<br>
+ * - SFEnum \c cameraModel = THIN_LENS<br>
  *   Sets the camera model.<br>
  *<br>
  *
@@ -280,7 +280,7 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	{
 		THIN_LENS = 267,	///< todo
 		PINHOLE = 266,	///< todo
-		DEFAULT_CAMERAMODEL = PINHOLE	///< todo
+		DEFAULT_CAMERAMODEL = THIN_LENS	///< todo
 	};
 
 	/**

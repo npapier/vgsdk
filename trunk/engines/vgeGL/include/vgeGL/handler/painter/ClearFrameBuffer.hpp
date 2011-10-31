@@ -59,7 +59,7 @@ struct VGEGL_API ClearFrameBuffer : public vge::handler::painter::SingleAttribut
 
 	void paint( vgeGL::engine::Engine*, vgd::node::ClearFrameBuffer* );
 
-	static void applyBufferUsagePolicy( const vge::engine::BufferUsagePolicy policy, const vge::engine::EyeUsagePolicy eyePolicy, vgd::Shp< glo::FrameBufferObject > fbo );
+	static void applyBufferUsagePolicy( vgeGL::engine::Engine * engine, const vge::engine::BufferUsagePolicy policy, const vge::engine::EyeUsagePolicy eyePolicy );
 };
 
 

@@ -6,6 +6,7 @@
 #ifndef _VGD_NODE_OUTPUTBUFFERPROPERTY_HPP
 #define _VGD_NODE_OUTPUTBUFFERPROPERTY_HPP
 
+#include "vgd/field/Bool.hpp"
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/field/Vec2f.hpp"
@@ -35,6 +36,9 @@ namespace node
  *<br>
  * - SFEnum \c format = RGB<br>
  *   Specifies the format used by the buffer.<br>
+ *<br>
+ * - SFBool \c current = true<br>
+ *   Specifies if this output buffer must be used for drawing by default. See vgd::node::OutputBuffer to alter this initial state.<br>
  *<br>
  * - SFEnum \c command = COLOR<br>
  *   Specifies the pre-defined assign command execute by the fragment program.<br>
@@ -276,6 +280,36 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 * @brief Sets the value of field named \c format.
 	 */
 	void setFormat( const FormatValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field current
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c current.
+	 */
+	typedef bool CurrentValueType;
+
+	/**
+	 * @brief Type definition of the field named \c current
+	 */
+	typedef vgd::field::TSingleField< CurrentValueType > FCurrentType;
+
+
+	/**
+	 * @brief Gets the value of field named \c current.
+	 */
+	const CurrentValueType getCurrent() const;
+
+	/**
+	 * @brief Sets the value of field named \c current.
+	 */
+	void setCurrent( const CurrentValueType value );
 
 	//@}
 
@@ -533,6 +567,13 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 * @return the name of field \c format.
 	 */
 	static const std::string getFFormat( void );
+
+	/**
+	 * @brief Returns the name of field \c current.
+	 *
+	 * @return the name of field \c current.
+	 */
+	static const std::string getFCurrent( void );
 
 	/**
 	 * @brief Returns the name of field \c command.

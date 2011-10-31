@@ -66,6 +66,7 @@ OutputBufferProperty::OutputBufferProperty( const std::string nodeName ) :
 	addField( new FSizeSemanticType(getFSizeSemantic()) );
 	addField( new FCustomCommandType(getFCustomCommand()) );
 	addField( new FFormatType(getFFormat()) );
+	addField( new FCurrentType(getFCurrent()) );
 	addField( new FCommandType(getFCommand()) );
 	addField( new FTypeType(getFType()) );
 	addField( new FCustomDeclarationType(getFCustomDeclaration()) );
@@ -84,6 +85,7 @@ void OutputBufferProperty::setToDefaults( void )
 	setSizeSemantic( SCALE_FACTOR );
 
 	setFormat( RGB );
+	setCurrent( true );
 	setCommand( COLOR );
 	setType( INTEGER );
 
@@ -140,6 +142,21 @@ const OutputBufferProperty::FormatValueType OutputBufferProperty::getFormat() co
 void OutputBufferProperty::setFormat( const FormatValueType value )
 {
 	getFieldRW<FFormatType>(getFFormat())->setValue( value );
+}
+
+
+
+// Current
+const OutputBufferProperty::CurrentValueType OutputBufferProperty::getCurrent() const
+{
+	return getFieldRO<FCurrentType>(getFCurrent())->getValue();
+}
+
+
+
+void OutputBufferProperty::setCurrent( const CurrentValueType value )
+{
+	getFieldRW<FCurrentType>(getFCurrent())->setValue( value );
 }
 
 
@@ -222,6 +239,13 @@ const std::string OutputBufferProperty::getFCustomCommand( void )
 const std::string OutputBufferProperty::getFFormat( void )
 {
 	return "f_format";
+}
+
+
+
+const std::string OutputBufferProperty::getFCurrent( void )
+{
+	return "f_current";
 }
 
 

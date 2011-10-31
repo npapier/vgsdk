@@ -48,6 +48,7 @@ Engine::Engine()
 	// m_glStateStack()
 	//m_glslStateStack()
 	//m_uniformState
+	//m_globalGLSLState
 	//m_outputBuffers
 	//m_currentPrivateOutputBuffers
 	m_glslProgramGenerator( new ProgramGenerator() )
@@ -117,6 +118,7 @@ void Engine::reset()
 	getGLStateStack().clear( vgd::makeShp(new GLState()) );
 	getGLSLStateStack().clear( vgd::makeShp(new GLSLState(getMaxTexUnits()) ) );
 	getUniformState().clear();
+	m_globalGLSLState.reset();
 	setOutputBuffers();
 	setCurrentPrivateOutputBuffers();
 
@@ -284,6 +286,24 @@ Engine::UniformState& Engine::getUniformState()
 
 
 
+const vgd::Shp< vgeGL::engine::GLSLState > Engine::getGlobalGLSLState() const
+{
+	return m_globalGLSLState;
+}
+
+
+void Engine::setGlobalGLSLState( vgeGL::engine::GLSLState& state )
+{
+	m_globalGLSLState.reset( new vgeGL::engine::GLSLState( state ) );
+}
+
+
+const Engine::OutputBufferPropertyStateContainer& Engine::getOutputBufferProperties() const
+{
+	return m_globalGLSLState->outputBufferProperties;
+}
+
+
 vgd::Shp< glo::FrameBufferObject > Engine::getOutputBuffers() const
 {
 	return m_outputBuffers;
@@ -324,6 +344,19 @@ void Engine::setCurrentPrivateOutputBuffers( const int which0, const int which1 
 		m_currentPrivateOutputBuffers.push_back( which1 );
 	}
 	// else nothing to do
+}
+
+
+void Engine::updateFromCurrentPrivateDrawBuffers( std::vector< int >& drawBuffers ) const
+{
+	vgd::basic::IndexContainerConstIterator i, iEnd;
+	for(	boost::tie(i, iEnd) = getCurrentPrivateOutputBuffersIterators();
+			i != iEnd;
+			++i )
+	{
+		const int outputBufferIndex = (*i);
+		drawBuffers[outputBufferIndex] = outputBufferIndex;
+	}
 }
 
 

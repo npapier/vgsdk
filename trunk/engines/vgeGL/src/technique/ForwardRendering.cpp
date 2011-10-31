@@ -497,7 +497,8 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 
 	// Copy the glsl state at the end of the pass
 	using vgeGL::engine::GLSLState;
-	glslStateFinal.reset( new GLSLState( engine->getGLSLState() ) );
+	engine->setGlobalGLSLState( engine->getGLSLState() );
+	glslStateFinal = engine->getGlobalGLSLState();
 
 	if ( !lightModel )	vgLogDebug("You must have a LightModel node in the scene graph.");
 	if ( !camera )		vgLogDebug("You must have a Camera node in the scene graph.");
@@ -599,6 +600,7 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 			vgd::Shp< vgeGL::rc::FrameBufferObject > fbo = configureShadowMap( engine, currentLightIndex );
 			if ( !fbo )	continue;
 			engine->setOutputBuffers( fbo );
+			engine->setCurrentPrivateOutputBuffers( 0 );
 
 			// RENDER FROM LIGHT
 			using vgeGL::engine::LightState;
