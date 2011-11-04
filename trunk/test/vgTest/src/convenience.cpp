@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2011, Maxime Peresson, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Nicolas Papier
 
 #include "vgTest/convenience.hpp"
 
@@ -9,8 +10,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 
+#include <gtest/gtest.h>
 #include <sbf/path.hpp>
-
 #include <sstream>
 
 #include <vgd/Shp.hpp>
@@ -120,6 +121,13 @@ std::string getImageName(std::string testName)
 	return testName + ".png";
 }
 
+std::string getImageName()
+{
+	const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
+	const std::string filename = getImageName( test_info->name() );
+	return filename;
+}
+
 std::string getDatedImageName(std::string filename)
 {
 	using namespace boost::posix_time;
@@ -159,7 +167,7 @@ std::list< std::string > createModelList( std::string dir )
 
 	vgio::FilenameCollector collector( path.string() );
 	
-	collector.setRegex(".*\.(obj|trian|trian2|dae|crypt|vgarch)");
+	collector.setRegex(".*\\.(obj|trian|trian2|dae|crypt|vgarch)");
 	collector.run();
 	return collector.getStringFilenames();
 }
