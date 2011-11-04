@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2011, Maxime Peresson, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Nicolas Papier
 
 #ifndef _VGTEST_CONVENIENCE_HPP
 #define _VGTEST_CONVENIENCE_HPP
@@ -33,9 +34,14 @@ VGTEST_API int compare(std::string pathRef, std::string pathCap, std::string pat
 
 /**
  * @brief Create image name based on test name.
- * @param filename test name
+ * @param filename		test name
  */
 VGTEST_API std::string getImageName(std::string testName);
+
+/**
+ * @brief Create image name based on the current running test.
+ */
+VGTEST_API std::string getImageName();
 
 /**
  * @brief Add current date to image filename

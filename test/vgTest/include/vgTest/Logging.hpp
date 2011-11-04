@@ -11,6 +11,8 @@
 #include <map>
 #include <string>
 
+#include "vgTest/vgTest.hpp"
+
 //Used because addToGtest don't work. Problem posted in gtest mailing-list
 #define PutInGtestReport(base) \
 	std::map<std::string, std::string> log = base->getLog()->getLog(); \
@@ -37,7 +39,7 @@ struct VGTEST_API Logging
 	 * @brief Add a string to the logging map
 	 */
 	void add(std::string key, std::string value);
-	
+
 	/**
 	 * @brief Add something to the logging map
 	 */
@@ -74,6 +76,8 @@ struct VGTEST_API Logging
 private:
 	std::map<std::string, std::string> m_log;
 };
+
+
 
 } // namespace vgTest
 
