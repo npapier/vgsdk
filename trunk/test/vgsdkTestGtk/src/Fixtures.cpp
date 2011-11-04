@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -21,6 +21,18 @@ void VgTestModel::TearDown()
 }
 
 INSTANTIATE_TEST_CASE_P(FileList, VgTestModel, testing::ValuesIn(vgTest::createModelList()));
+
+
+//Test Suite VgTestShadow
+void VgTestShadow::SetUp()
+{
+}
+
+void VgTestShadow::TearDown()
+{
+}
+
+INSTANTIATE_TEST_CASE_P(ShadowList, VgTestShadow, testing::ValuesIn(shadowType));
 
 
 //Test Suite VgTestCollada

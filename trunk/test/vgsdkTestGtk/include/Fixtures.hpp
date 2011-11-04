@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Nicolas Papier, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 #include <boost/assign/list_of.hpp>
 #include <vector>
 
+#include <vgd/node/LightModel.hpp>
 #include <vgd/node/VertexShape.hpp>
 
 #include "gtest.hpp"
@@ -28,7 +29,7 @@ protected:
 	virtual void TearDown() {}
 };
 
- /**
+/**
 * @brief Fixtures for test on models (VgTestModel testsuite)
 */
 class VgTestModel : public ::testing::TestWithParam<std::string>
@@ -38,6 +39,23 @@ class VgTestModel : public ::testing::TestWithParam<std::string>
 
 	virtual void TearDown();
 };
+
+
+/**
+* @brief Fixtures for shadow tests (VgTestShadow testsuite)
+*/
+class VgTestShadow : public ::testing::TestWithParam<vgd::node::LightModel::ShadowValueType>
+{
+protected:
+	virtual void SetUp();
+	virtual void TearDown();
+};
+
+using namespace boost::assign;
+
+static std::vector<vgd::node::LightModel::ShadowValueType> shadowType = list_of(vgd::field::Enum(vgd::node::LightModel::SHADOW_OFF ))
+	(vgd::node::LightModel::SHADOW_MAPPING)
+	(vgd::node::LightModel::SHADOW_MAPPING_9U);
 
 
 /**
@@ -78,8 +96,6 @@ class VgTestShape : public ::testing::TestWithParam<vgsdkTestGtk::vgTest::Perfor
 };
 
 //param to test
-using namespace boost::assign;
-
 static std::vector<int> level = list_of(4)(5);
 
 static std::vector<vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType> boundingBoxPolicy = list_of(vgd::field::Enum(vgd::node::VertexShape::AUTOMATIC))
