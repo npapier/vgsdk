@@ -19,6 +19,7 @@ description = {
 	
 	#for specialized tests
 	'Description' : "Test description",
+	'Parameters' : "Test input parameters",
 	'Shape' : "The shape used",
 	'Object' : "The object used",
 	'Scene' : "The scene used",

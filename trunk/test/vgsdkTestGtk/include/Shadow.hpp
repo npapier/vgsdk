@@ -41,7 +41,7 @@ TEST_P(VgTestShadow, ShadowMapping)
 	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( base->getCanvas()->createOptionalNode( vgUI::BasicViewer::LIGHT_MODEL ) );
 
 	LightModel::ShadowValueType shadow = GetParam();
-	base->getLog()->add("shadow", shadow.str());
+	base->getLog()->add("Parameters", shadow.str());
 
 	lightModel->setShadow( shadow );
 	lightModel->setShadowFiltering( LightModel::LINEAR );
