@@ -576,12 +576,13 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 		// For each light, updates shadow map
 		lightLookAt.resize( m_shadowMappingInput->getNumLight() );
 
+		// Backups current output buffers
+		vgd::Shp< glo::FrameBufferObject > outputBuffersBak = engine->getOutputBuffers();
+
 		for(	uint currentLightIndex = 0;
 				currentLightIndex < m_shadowMappingInput->getNumLight();
 				++currentLightIndex )
 		{
-			// Backups current output buffers
-			vgd::Shp< glo::FrameBufferObject > outputBuffersBak = engine->getOutputBuffers();
 
 //			setPassDescription("Depth from light POV");
 			setPassDescription("Depth/alpha from light POV");
@@ -622,10 +623,10 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 //			fbo->unbind();
 
 			endPass();
-
-			// Restores output buffers
-			engine->setOutputBuffers( outputBuffersBak );
 		}
+
+		// Restores output buffers
+		engine->setOutputBuffers( outputBuffersBak );
 
 		// Restores engine state
 		unconfigureGeometryOnly( engine, geometryOnlyState );
@@ -1347,10 +1348,15 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 
 	engine->setBufferUsagePolicy( vge::engine::BUP_COLOR_AND_DEPTH );
 
+	// Backups current output buffers
+	vgd::Shp< glo::FrameBufferObject > outputBuffersBak = engine->getOutputBuffers();
+
 	setPassDescription("Update scene height map");
 	beginPass( static_cast< PassIsolationMask >(RESET_MATRICES | PUSH_POP_STATE) );
 
 	engine->setOutputBuffers( fluidRC->fbo );
+	engine->setCurrentPrivateOutputBuffers( 0 );
+	
 
 	using vgeGL::engine::GLSLState;
 	engine->getGLSLState().setShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION,
@@ -1358,6 +1364,7 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 	engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT,
 			"\n"
 			"	gl_FragData[0] = ecPosition;\n"
+			//"	outputBuffer0 = ecPosition;\n"
 //			"	gl_FragData[0] = gl_ModelViewMatrixInverse * ecPosition;\n" // @todo OPTME
 //			"	gl_FragData[0] = color;\n" // for debugging
  		);
@@ -1431,6 +1438,10 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 	// Rendering of scene height map
 	passPaint( engine, collector.getTraverseElements(), newCamera );
 	endPass();
+
+	// Restores output buffers
+	engine->setOutputBuffers( outputBuffersBak );
+	engine->setCurrentPrivateOutputBuffers();
 
 	// Restores engine state
 	unconfigureGeometryOnly( engine, geometryOnlyState );
@@ -1932,19 +1943,19 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
 					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
-														"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
-														"	mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
+																		"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
+																		"	mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
 			}
 			else if ( postProcessingNode->getInput1() != vgd::node::PostProcessing::INPUT1_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
 					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
-														"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
+																		"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
 			}
 			else
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					getPostProcessingVertexProgram(), "INLINE_FTEXGEN", "	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
 			}
 
 			currentScaleForVertex *= scale.second;
@@ -2002,9 +2013,13 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 	// Post-processing rendering draw code //
 	/////////////////////////////////////////
 
+	const vgm::Rectangle2i	viewport				( 0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1] );
+
 	// Enables texture mapping
 	const bool				isTextureMappingEnabled	( engine->setTextureMappingEnabled() );
-	const vgm::Rectangle2i	viewport				( 0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1] );
+
+	// Backups current output buffers
+	vgd::Shp< glo::FrameBufferObject > outputBuffersBak = engine->getOutputBuffers();
 
 	setPassDescription("Post-processing stage");
 	beginPass();
@@ -2174,6 +2189,10 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 	engine->end2DRendering( false );
 	endPass();
+
+	// Restores output buffers
+	engine->setOutputBuffers( outputBuffersBak );
+
 	engine->setTextureMappingEnabled( isTextureMappingEnabled );
 
 	return lfbo0;
