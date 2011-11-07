@@ -17,7 +17,7 @@
 #include <vgd/node/Quad.hpp>
 #include <vgd/node/Material.hpp>
 #include <vgd/node/Sphere.hpp>
-#include <vgd/node/Switch.hpp>
+#include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Transform.hpp>
 #include <vgm/Utilities.hpp>
 #include <vgGTK/BasicManipulator.hpp>
@@ -34,19 +34,36 @@ TEST_P(VgTestShadow, ShadowMapping)
 	// prerun Gtk
 	vgd::Shp< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );
 
-	base->getLog()->add("Description", "Rendering 4 spheres and a quad with shadow mapping.");
+	std::string description("Rendering 4 spheres and a quad with shadow mapping");
 
-	// prepare scene
 	using vgd::node::LightModel;
-	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( base->getCanvas()->createOptionalNode( vgUI::BasicViewer::LIGHT_MODEL ) );
-
 	LightModel::ShadowValueType shadow = GetParam();
+	description += " (" + shadow.str() + ").";
+	base->getLog()->add( "Description", description );
 	base->getLog()->add("Parameters", shadow.str());
+
+	// PREPARE SCENE
+	// LightModel
+	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( base->getCanvas()->createOptionalNode( vgUI::BasicViewer::LIGHT_MODEL ) );
 
 	lightModel->setShadow( shadow );
 	lightModel->setShadowFiltering( LightModel::LINEAR );
 	lightModel->setShadowMapSize( LightModel::HIGH );
 	lightModel->setShadowMapType( LightModel::INT32 );
+
+	// Lights
+	base->getCanvas()->destroyOptionalNode( vgGTK::BasicManipulator::LIGHTS );
+
+	using vgd::node::SpotLight;
+	vgd::Shp< SpotLight > spot = SpotLight::create("spot");
+	spot->setOn( true );
+	spot->setPosition( vgm::Vec3f(0.f, 0.f, 28.f) );
+	spot->setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
+	spot->setCutOffAngle( 45.f );
+	spot->setCastShadow( true );
+
+	const int lightModelIndex = base->getCanvas()->getSetup()->findChild( lightModel );
+	base->getCanvas()->getSetup()->insertChild( spot, lightModelIndex );
 
 	using vgd::node::Quad;
 	using vgd::node::Material;
@@ -92,16 +109,6 @@ TEST_P(VgTestShadow, ShadowMapping)
 	sphere->initializeGeometry( 3 );
 	sphere->transform( vgm::Vec3f( 3.f, -3.f, 5.f ) );
 	base->addObject( sphere );
-
-//
-	base->getCanvas()->destroyOptionalNode( vgGTK::BasicManipulator::LIGHTS );
-	using vgd::node::Switch;
-	vgd::Shp< Switch > lightSwitcher = base->getCanvas()->createOptionalNodeAs<Switch>( vgGTK::BasicManipulator::LIGHTS );
-	if ( lightSwitcher )
-	{
-		lightSwitcher->setWhichChild( 1 );
-	}
-//
 
 	// Transform
 	using vgd::node::Transform;
