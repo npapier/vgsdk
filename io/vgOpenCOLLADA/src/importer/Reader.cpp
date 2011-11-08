@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -246,7 +246,17 @@ bool Reader::writeEffect( const COLLADAFW::Effect* effect )
 	}
 
 	//// transparency
-	material->setOpacity( 1.f );
+	const COLLADAFW::ColorOrTexture& opacity = effectCommon->getOpacity();
+	if ( opacity.isColor() )
+	{
+		//by default (opaque="A_ONE")Takes the transparency information from the color’s alpha channel, where the value 1.0 is opaque. 
+		material->setOpacity( opacity.getColor().getAlpha() );
+	}
+	else
+	{
+		material->setOpacity( 1.f );
+	}
+
 
 	//// reflective
 	if( effectCommon->getReflective().getType() == COLLADAFW::ColorOrTexture::TEXTURE )
