@@ -389,7 +389,7 @@ void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * 
 	}
 	else
 	{
-		assert( state == IIMAGE_DIRTY );
+		vgAssert( state == IIMAGE_DIRTY );
 
 		computeTexInfo( engine, node, texture, texInfo );
 
@@ -583,7 +583,7 @@ Texture::State Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::n
 
 void Texture::computeTexInfo( vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo )
 {
-	assert( texInfo.iimage != 0 );
+	vgAssert( texInfo.iimage != 0 );
 
 	computeTexImageParams(	pNode, pTexture, texInfo );
 	clampTexImageSize(		pGLEngine, pTexture, texInfo );
