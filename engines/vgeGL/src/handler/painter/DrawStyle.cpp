@@ -360,7 +360,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			break;
 
 		default:
-			assert( false && "Unknown DrawStyle.shape value." );
+			vgAssertN( false, "Unknown DrawStyle.shape value." );
 	}
 }
 
