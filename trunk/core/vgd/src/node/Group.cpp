@@ -308,13 +308,13 @@ bool Group::computeBoundingBox( const vgm::MatrixR& /* transformation */)
 
 		for(	NodeList::iterator i = children.begin(),
 				iend = children.end();
-				
+
 				i != iend;
-				
+
 				++i )
 		{
 			vgd::Shp< vgd::node::IBoundingBox > ibb( vgd::dynamic_pointer_cast< vgd::node::IBoundingBox >( *i ) );
-				
+
 			if ( ibb.get() == 0 )
 			{
 				continue;
@@ -323,9 +323,9 @@ bool Group::computeBoundingBox( const vgm::MatrixR& /* transformation */)
 			if ( ibb->isBoundingBoxValid() )
 			{
 				vgm::Box3f box;
-				
+
 				box = ibb->getProjectXfBoundingBox();
-				
+
 				if ( !box.isEmpty() )
 				{
 					m_boundingBox.extendBy( box );
@@ -333,18 +333,18 @@ bool Group::computeBoundingBox( const vgm::MatrixR& /* transformation */)
 			}
 			else
 			{
-				assert( false && "Invalid child bounding box." );
+				vgAssertN( false, "Invalid child bounding box." );
 			}
 		}
-	
+
 		pDirtyFlag->validate();
 	}
-	
+
 	if ( bInvalidateParents )
 	{
 		invalidateParentsBoundingBoxDirtyFlag();
 	}
-	
+
 	return bRetVal;
 }
 
