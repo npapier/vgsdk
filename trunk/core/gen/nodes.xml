@@ -803,8 +803,6 @@
 					<value name="COMBINE2_AND_SCALE" doc="Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]"/>
 					<value name="COMBINE3_AND_SCALE" doc="Combines three images into one by blending them linearly using the following formula : image1 * a + image2 * b + image3 * c with a = param4f0[0], b = param4f0[1] and c = param4f0[2].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[3]"/>
 
-					<value name="DOF" doc="@todo"/>
-
 					<value name="NO_FILTER"	doc="No filter is applied"/>
 
 					<value name="CUSTOM_FILTER" doc="The filter defined by field customFilterDefinition is applied using field customFilterApply."/>
@@ -822,7 +820,6 @@
 
 <!-- TODO rename PREVIOUS0 => TMP0 -->
 <!-- TODO enum for input1, input2 should be the same as input0 => specify enum at node level -->
-<!-- TODO input from texture -->
 		<sf name = "input0" doc = "Specifies the first input buffer used by the filter.">
 			<type name = "enum">
 				<enum default = "PREVIOUS0">
@@ -834,6 +831,7 @@
 					<value name="OUTPUT_BUFFER5" doc=""/>
 					<value name="OUTPUT_BUFFER6" doc=""/>
 					<value name="OUTPUT_BUFFER7" doc=""/>
+					<value name="TEXTURE0" doc=""/>
 					<value name="PREVIOUS0" doc=""/>
 <!-- @todo 			<value name="PREVIOUS1" doc=""/> -->
 					<value name="NONE" doc=""/>
@@ -852,6 +850,7 @@
 					<value name="INPUT1_OUTPUT_BUFFER5" doc=""/>
 					<value name="INPUT1_OUTPUT_BUFFER6" doc=""/>
 					<value name="INPUT1_OUTPUT_BUFFER7" doc=""/>
+					<value name="INPUT1_TEXTURE0" doc=""/>
 					<value name="INPUT1_PREVIOUS0" doc=""/>
 <!-- @todo 			<value name="INPUT1_PREVIOUS1" doc=""/> -->
 					<value name="INPUT1_NONE" doc=""/>
@@ -870,12 +869,18 @@
 					<value name="INPUT2_OUTPUT_BUFFER5" doc=""/>
 					<value name="INPUT2_OUTPUT_BUFFER6" doc=""/>
 					<value name="INPUT2_OUTPUT_BUFFER7" doc=""/>
+					<value name="INPUT2_TEXTURE0" doc=""/>
 					<value name="INPUT2_PREVIOUS0" doc=""/>
 <!-- @todo 			<value name="INPUT2_PREVIOUS1" doc=""/> -->
 					<value name="INPUT2_NONE" doc=""/>
 				</enum>
 			</type>
 		</sf>
+
+
+		<of name="texture0" doc = "Specifies the texture available through input buffer used by the filter when TEXTURE0 is specified. Must be a Texture2D node.">
+			<type name = "NodeWkp" namespace = "vgd::node"></type><!-- todo TextureWkp -->
+		</of>
 
 
 		<of name = "param1f0" doc = "Specifies the first 1f parameter used by the filter.">
