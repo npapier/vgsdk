@@ -9,6 +9,7 @@
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
 #include "vgd/field/MatrixR.hpp"
+#include "vgd/field/NodeWkp.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/field/Vec4f.hpp"
 #include "vgd/node/MultiAttribute.hpp"
@@ -47,8 +48,8 @@ namespace node
  * - OFVec4f \c [param4f1] = vgm::Vec4f(0.0, 0.0, 0.0, 0.0)<br>
  *   Specifies the second 4f parameter used by the filter.<br>
  *<br>
- * - OFVec4f \c [param4f0] = vgm::Vec4f(0.0, 0.0, 0.0, 0.0)<br>
- *   Specifies the first 4f parameter used by the filter.<br>
+ * - OFNodeWkp \c [texture0] = empty<br>
+ *   Specifies the texture available through input buffer used by the filter when TEXTURE0 is specified. Must be a Texture2D node.<br>
  *<br>
  * - OFMatrixR \c [param4x4f0] = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Specifies the first 4x4f parameter used by the filter.<br>
@@ -64,6 +65,9 @@ namespace node
  *<br>
  * - OFFloat \c [param1f1] = 0.0<br>
  *   Specifies the second 1f parameter used by the filter.<br>
+ *<br>
+ * - OFVec4f \c [param4f0] = vgm::Vec4f(0.0, 0.0, 0.0, 0.0)<br>
+ *   Specifies the first 4f parameter used by the filter.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -118,16 +122,17 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		INPUT2_PREVIOUS0 = 369,	///< 
-		INPUT2_OUTPUT_BUFFER0 = 361,	///< 
-		INPUT2_OUTPUT_BUFFER1 = 362,	///< 
-		INPUT2_OUTPUT_BUFFER2 = 363,	///< 
-		INPUT2_OUTPUT_BUFFER3 = 364,	///< 
-		INPUT2_OUTPUT_BUFFER4 = 365,	///< 
-		INPUT2_OUTPUT_BUFFER5 = 366,	///< 
-		INPUT2_OUTPUT_BUFFER6 = 367,	///< 
-		INPUT2_OUTPUT_BUFFER7 = 368,	///< 
-		INPUT2_NONE = 370,	///< 
+		INPUT2_TEXTURE0 = 370,	///< 
+		INPUT2_PREVIOUS0 = 371,	///< 
+		INPUT2_OUTPUT_BUFFER0 = 362,	///< 
+		INPUT2_OUTPUT_BUFFER1 = 363,	///< 
+		INPUT2_OUTPUT_BUFFER2 = 364,	///< 
+		INPUT2_OUTPUT_BUFFER3 = 365,	///< 
+		INPUT2_OUTPUT_BUFFER4 = 366,	///< 
+		INPUT2_OUTPUT_BUFFER5 = 367,	///< 
+		INPUT2_OUTPUT_BUFFER6 = 368,	///< 
+		INPUT2_OUTPUT_BUFFER7 = 369,	///< 
+		INPUT2_NONE = 372,	///< 
 		DEFAULT_INPUT2 = INPUT2_NONE	///< 
 	};
 
@@ -155,7 +160,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 361 );
 			retVal.push_back( 362 );
 			retVal.push_back( 363 );
 			retVal.push_back( 364 );
@@ -165,6 +169,8 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 368 );
 			retVal.push_back( 369 );
 			retVal.push_back( 370 );
+			retVal.push_back( 371 );
+			retVal.push_back( 372 );
 
 			return retVal;
 		}
@@ -181,6 +187,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( "INPUT2_OUTPUT_BUFFER5" );
 			retVal.push_back( "INPUT2_OUTPUT_BUFFER6" );
 			retVal.push_back( "INPUT2_OUTPUT_BUFFER7" );
+			retVal.push_back( "INPUT2_TEXTURE0" );
 			retVal.push_back( "INPUT2_PREVIOUS0" );
 			retVal.push_back( "INPUT2_NONE" );
 
@@ -219,15 +226,16 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	enum  
 	{
 		NONE = 350,	///< 
+		TEXTURE0 = 348,	///< 
 		PREVIOUS0 = 349,	///< 
-		OUTPUT_BUFFER6 = 347,	///< 
-		OUTPUT_BUFFER7 = 348,	///< 
-		OUTPUT_BUFFER4 = 345,	///< 
-		OUTPUT_BUFFER5 = 346,	///< 
-		OUTPUT_BUFFER2 = 343,	///< 
-		OUTPUT_BUFFER3 = 344,	///< 
-		OUTPUT_BUFFER0 = 341,	///< 
-		OUTPUT_BUFFER1 = 342,	///< 
+		OUTPUT_BUFFER6 = 346,	///< 
+		OUTPUT_BUFFER7 = 347,	///< 
+		OUTPUT_BUFFER4 = 344,	///< 
+		OUTPUT_BUFFER5 = 345,	///< 
+		OUTPUT_BUFFER2 = 342,	///< 
+		OUTPUT_BUFFER3 = 343,	///< 
+		OUTPUT_BUFFER0 = 340,	///< 
+		OUTPUT_BUFFER1 = 341,	///< 
 		DEFAULT_INPUT0 = PREVIOUS0	///< 
 	};
 
@@ -255,6 +263,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
+			retVal.push_back( 340 );
 			retVal.push_back( 341 );
 			retVal.push_back( 342 );
 			retVal.push_back( 343 );
@@ -281,6 +290,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( "OUTPUT_BUFFER5" );
 			retVal.push_back( "OUTPUT_BUFFER6" );
 			retVal.push_back( "OUTPUT_BUFFER7" );
+			retVal.push_back( "TEXTURE0" );
 			retVal.push_back( "PREVIOUS0" );
 			retVal.push_back( "NONE" );
 
@@ -326,8 +336,9 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		INPUT1_OUTPUT_BUFFER0 = 351,	///< 
 		INPUT1_OUTPUT_BUFFER3 = 354,	///< 
 		INPUT1_OUTPUT_BUFFER2 = 353,	///< 
-		INPUT1_NONE = 360,	///< 
-		INPUT1_PREVIOUS0 = 359,	///< 
+		INPUT1_TEXTURE0 = 359,	///< 
+		INPUT1_NONE = 361,	///< 
+		INPUT1_PREVIOUS0 = 360,	///< 
 		DEFAULT_INPUT1 = INPUT1_NONE	///< 
 	};
 
@@ -365,6 +376,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 358 );
 			retVal.push_back( 359 );
 			retVal.push_back( 360 );
+			retVal.push_back( 361 );
 
 			return retVal;
 		}
@@ -381,6 +393,7 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( "INPUT1_OUTPUT_BUFFER5" );
 			retVal.push_back( "INPUT1_OUTPUT_BUFFER6" );
 			retVal.push_back( "INPUT1_OUTPUT_BUFFER7" );
+			retVal.push_back( "INPUT1_TEXTURE0" );
 			retVal.push_back( "INPUT1_PREVIOUS0" );
 			retVal.push_back( "INPUT1_NONE" );
 
@@ -448,28 +461,27 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		SUB = 333,	///< Combines two images into one using the following formula : image1 - image2
-		OVER = 331,	///< Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition
-		DOF = 338,	///< @todo
-		COMBINE2_AND_SCALE = 336,	///< Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]
-		DOWN_FILTER4 = 329,	///< Scales images down 4 times with a high-pass filter
 		COLOR_INVERSE = 322,	///< Inverts the colored value
-		MIX_AND_SCALE = 334,	///< Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]
-		BLOOM_HORIZ = 326,	///< Amplifies and blurs an image horizontally using weights that follow a gaussian distribution. Bloom scale could be specify using param1f0.
-		SCALE_AND_BIAS = 323,	///< Each of the color components is multiplied by a scale factor, then added to a bias factor using the following formula : output = input0 * param4f0 + param4f1.
-		COMBINE3_AND_SCALE = 337,	///< Combines three images into one by blending them linearly using the following formula : image1 * a + image2 * b + image3 * c with a = param4f0[0], b = param4f0[1] and c = param4f0[2].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[3]
+		OVER = 331,	///< Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition
+		SUB = 333,	///< Combines two images into one using the following formula : image1 - image2
 		BLUR_VERT = 325,	///< Blurs an image vertically using weights that follow a gaussian distribution.
-		CUSTOM_FILTER = 340,	///< The filter defined by field customFilterDefinition is applied using field customFilterApply.
+		CUSTOM_FILTER = 339,	///< The filter defined by field customFilterDefinition is applied using field customFilterApply.
+		BLOOM_HORIZ = 326,	///< Amplifies and blurs an image horizontally using weights that follow a gaussian distribution. Bloom scale could be specify using param1f0.
 		COLOR_TO_MONOCHROME = 320,	///< Converts colored value to black and white
+		MIX_AND_SCALE = 334,	///< Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = param4f0[0].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[1]
+		NO_FILTER = 338,	///< No filter is applied
+		COMBINE2_AND_SCALE = 336,	///< Combines two images into one by blending them linearly using the following formula : image1 * a + image2 * b with a = param4f0[0] and b = param4f0[1].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[2]
+		UP_FILTER4 = 330,	///< Scales images up 4 times
 		ADD = 332,	///< Combines two images into one using the following formula : image1 + image2
+		DOWN_FILTER4 = 329,	///< Scales images down 4 times with a high-pass filter
+		BLUR_HORIZ = 324,	///< Blurs an image horizontally using weights that follow a gaussian distribution.
 		BLOOM_VERT = 327,	///< Amplifies and blurs an image vertically using weights that follow a gaussian distribution. Bloom scale could be specify using param1f0.
 		ALPHAMIX_AND_SCALE = 335,	///< Combines two images into one by blending them linearly using the following formula : image1 * (1-a) + image2 * a with a = image2.a\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param1f0. The alpha channel of the output is image2.a
+		SCALE_AND_BIAS = 323,	///< Each of the color components is multiplied by a scale factor, then added to a bias factor using the following formula : output = input0 * param4f0 + param4f1.
+		COMBINE3_AND_SCALE = 337,	///< Combines three images into one by blending them linearly using the following formula : image1 * a + image2 * b + image3 * c with a = param4f0[0], b = param4f0[1] and c = param4f0[2].\n Then the resulting image is multiplied by a scale factor : previousComputation *=scale with scale = param4f0[3]
 		COLOR_TO_SEPIA = 321,	///< Converts colored value to sepia.\n Sets desaturate parameter(default 0.5f, min 0.0f, max 1.0f) into param4f0[0]. Sets toning parameter ( default 1.f, min 0.0f, max 1.0f) into param4f0[1].
 		IDENTITY = 319,	///< Identity filter, so the resulting image is the input image.
 		COLOR_EDGE_DETECT = 328,	///< Detects edges and highlights them
-		NO_FILTER = 339,	///< No filter is applied
-		BLUR_HORIZ = 324,	///< Blurs an image horizontally using weights that follow a gaussian distribution.
-		UP_FILTER4 = 330,	///< Scales images up 4 times
 		DEFAULT_FILTER = NO_FILTER	///< No filter is applied
 	};
 
@@ -518,7 +530,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 337 );
 			retVal.push_back( 338 );
 			retVal.push_back( 339 );
-			retVal.push_back( 340 );
 
 			return retVal;
 		}
@@ -546,7 +557,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( "ALPHAMIX_AND_SCALE" );
 			retVal.push_back( "COMBINE2_AND_SCALE" );
 			retVal.push_back( "COMBINE3_AND_SCALE" );
-			retVal.push_back( "DOF" );
 			retVal.push_back( "NO_FILTER" );
 			retVal.push_back( "CUSTOM_FILTER" );
 
@@ -614,40 +624,40 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field param4f0
+	 * @name Accessors to field texture0
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c param4f0.
+	 * @brief Type definition of the value contained by field named \c texture0.
 	 */
-	typedef vgm::Vec4f Param4f0ValueType;
+	typedef vgd::node::NodeWkp Texture0ValueType;
 
 	/**
-	 * @brief Type definition of the field named \c param4f0
+	 * @brief Type definition of the field named \c texture0
 	 */
-	typedef vgd::field::TOptionalField< Param4f0ValueType > FParam4f0Type;
+	typedef vgd::field::TOptionalField< Texture0ValueType > FTexture0Type;
 
 
 	/**
-	 * @brief Gets the value of field named \c param4f0.
+	 * @brief Gets the value of field named \c texture0.
 	 */
-	const bool getParam4f0( Param4f0ValueType& value ) const;
+	const bool getTexture0( Texture0ValueType& value ) const;
 
 	/**
-	 * @brief Sets the value of field named \c param4f0.
+	 * @brief Sets the value of field named \c texture0.
  	 */
-	void setParam4f0( const Param4f0ValueType& value );
+	void setTexture0( const Texture0ValueType& value );
 
 	/**
-	 * @brief Erases the field named \c param4f0.
+	 * @brief Erases the field named \c texture0.
 	 */
-	void eraseParam4f0();
+	void eraseTexture0();
 
 	/**
-	 * @brief Tests if the value of field named \c param4f0 has been initialized.
+	 * @brief Tests if the value of field named \c texture0 has been initialized.
 	 */
-	const bool hasParam4f0() const;
+	const bool hasTexture0() const;
 	//@}
 
 
@@ -731,15 +741,15 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		OUTPUT_OUTPUT_BUFFER7 = 379,	///< 
-		OUTPUT_OUTPUT_BUFFER6 = 378,	///< 
-		OUTPUT_OUTPUT_BUFFER5 = 377,	///< 
-		OUTPUT_OUTPUT_BUFFER4 = 376,	///< 
-		OUTPUT_OUTPUT_BUFFER3 = 375,	///< 
-		OUTPUT_OUTPUT_BUFFER2 = 374,	///< 
-		OUTPUT_OUTPUT_BUFFER1 = 373,	///< 
-		OUTPUT_OUTPUT_BUFFER0 = 372,	///< 
-		OUTPUT_TMP0 = 371,	///< Post-processing internal buffer.
+		OUTPUT_OUTPUT_BUFFER7 = 381,	///< 
+		OUTPUT_OUTPUT_BUFFER6 = 380,	///< 
+		OUTPUT_OUTPUT_BUFFER5 = 379,	///< 
+		OUTPUT_OUTPUT_BUFFER4 = 378,	///< 
+		OUTPUT_OUTPUT_BUFFER3 = 377,	///< 
+		OUTPUT_OUTPUT_BUFFER2 = 376,	///< 
+		OUTPUT_OUTPUT_BUFFER1 = 375,	///< 
+		OUTPUT_OUTPUT_BUFFER0 = 374,	///< 
+		OUTPUT_TMP0 = 373,	///< Post-processing internal buffer.
 		DEFAULT_OUTPUT = OUTPUT_TMP0	///< Post-processing internal buffer.
 	};
 
@@ -767,8 +777,6 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 371 );
-			retVal.push_back( 372 );
 			retVal.push_back( 373 );
 			retVal.push_back( 374 );
 			retVal.push_back( 375 );
@@ -776,6 +784,8 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 			retVal.push_back( 377 );
 			retVal.push_back( 378 );
 			retVal.push_back( 379 );
+			retVal.push_back( 380 );
+			retVal.push_back( 381 );
 
 			return retVal;
 		}
@@ -897,6 +907,45 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
+	 * @name Accessors to field param4f0
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c param4f0.
+	 */
+	typedef vgm::Vec4f Param4f0ValueType;
+
+	/**
+	 * @brief Type definition of the field named \c param4f0
+	 */
+	typedef vgd::field::TOptionalField< Param4f0ValueType > FParam4f0Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c param4f0.
+	 */
+	const bool getParam4f0( Param4f0ValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c param4f0.
+ 	 */
+	void setParam4f0( const Param4f0ValueType& value );
+
+	/**
+	 * @brief Erases the field named \c param4f0.
+	 */
+	void eraseParam4f0();
+
+	/**
+	 * @brief Tests if the value of field named \c param4f0 has been initialized.
+	 */
+	const bool hasParam4f0() const;
+	//@}
+
+
+
+	/**
 	 * @name Field name accessors
 	 */
 	//@{
@@ -944,11 +993,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	static const std::string getFParam4f1( void );
 
 	/**
-	 * @brief Returns the name of field \c param4f0.
+	 * @brief Returns the name of field \c texture0.
 	 *
-	 * @return the name of field \c param4f0.
+	 * @return the name of field \c texture0.
 	 */
-	static const std::string getFParam4f0( void );
+	static const std::string getFTexture0( void );
 
 	/**
 	 * @brief Returns the name of field \c param4x4f0.
@@ -984,6 +1033,13 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @return the name of field \c param1f1.
 	 */
 	static const std::string getFParam1f1( void );
+
+	/**
+	 * @brief Returns the name of field \c param4f0.
+	 *
+	 * @return the name of field \c param4f0.
+	 */
+	static const std::string getFParam4f0( void );
 
 	//@}
 

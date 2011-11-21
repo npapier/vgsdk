@@ -69,12 +69,13 @@ PostProcessing::PostProcessing( const std::string nodeName ) :
 	addField( new FCustomFilterDefinitionType(getFCustomFilterDefinition()) );
 	addField( new FFilterType(getFFilter()) );
 	addField( new FParam4f1Type(getFParam4f1()) );
-	addField( new FParam4f0Type(getFParam4f0()) );
+	addField( new FTexture0Type(getFTexture0()) );
 	addField( new FParam4x4f0Type(getFParam4x4f0()) );
 	addField( new FCustomFilterApplyType(getFCustomFilterApply()) );
 	addField( new FOutputType(getFOutput()) );
 	addField( new FParam1f0Type(getFParam1f0()) );
 	addField( new FParam1f1Type(getFParam1f1()) );
+	addField( new FParam4f0Type(getFParam4f0()) );
 
 	// Sets link(s)
 
@@ -101,10 +102,11 @@ void PostProcessing::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
 	setParam4f1( vgm::Vec4f(0.0, 0.0, 0.0, 0.0) );
-	setParam4f0( vgm::Vec4f(0.0, 0.0, 0.0, 0.0) );
+
 	setParam4x4f0( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setParam1f0( 0.0 );
 	setParam1f1( 0.0 );
+	setParam4f0( vgm::Vec4f(0.0, 0.0, 0.0, 0.0) );
 }
 
 
@@ -212,30 +214,30 @@ const bool PostProcessing::hasParam4f1() const
 
 
 
-// Param4f0
-const bool PostProcessing::getParam4f0( Param4f0ValueType& value ) const
+// Texture0
+const bool PostProcessing::getTexture0( Texture0ValueType& value ) const
 {
-	return getFieldRO<FParam4f0Type>(getFParam4f0())->getValue( value );
+	return getFieldRO<FTexture0Type>(getFTexture0())->getValue( value );
 }
 
 
 
-void PostProcessing::setParam4f0( const Param4f0ValueType& value )
+void PostProcessing::setTexture0( const Texture0ValueType& value )
 {
-	getFieldRW<FParam4f0Type>(getFParam4f0())->setValue( value );
+	getFieldRW<FTexture0Type>(getFTexture0())->setValue( value );
 }
 
 
 
-void PostProcessing::eraseParam4f0()
+void PostProcessing::eraseTexture0()
 {
-	getFieldRW<FParam4f0Type>(getFParam4f0())->eraseValue();
+	getFieldRW<FTexture0Type>(getFTexture0())->eraseValue();
 }
 
 
-const bool PostProcessing::hasParam4f0() const
+const bool PostProcessing::hasTexture0() const
 {
-	return getFieldRO<FParam4f0Type>(getFParam4f0())->hasValue();
+	return getFieldRO<FTexture0Type>(getFTexture0())->hasValue();
 }
 
 
@@ -354,6 +356,34 @@ const bool PostProcessing::hasParam1f1() const
 
 
 
+// Param4f0
+const bool PostProcessing::getParam4f0( Param4f0ValueType& value ) const
+{
+	return getFieldRO<FParam4f0Type>(getFParam4f0())->getValue( value );
+}
+
+
+
+void PostProcessing::setParam4f0( const Param4f0ValueType& value )
+{
+	getFieldRW<FParam4f0Type>(getFParam4f0())->setValue( value );
+}
+
+
+
+void PostProcessing::eraseParam4f0()
+{
+	getFieldRW<FParam4f0Type>(getFParam4f0())->eraseValue();
+}
+
+
+const bool PostProcessing::hasParam4f0() const
+{
+	return getFieldRO<FParam4f0Type>(getFParam4f0())->hasValue();
+}
+
+
+
 // Field name accessor(s)
 const std::string PostProcessing::getFInput2( void )
 {
@@ -397,9 +427,9 @@ const std::string PostProcessing::getFParam4f1( void )
 
 
 
-const std::string PostProcessing::getFParam4f0( void )
+const std::string PostProcessing::getFTexture0( void )
 {
-	return "f_param4f0";
+	return "f_texture0";
 }
 
 
@@ -435,6 +465,13 @@ const std::string PostProcessing::getFParam1f0( void )
 const std::string PostProcessing::getFParam1f1( void )
 {
 	return "f_param1f1";
+}
+
+
+
+const std::string PostProcessing::getFParam4f0( void )
+{
+	return "f_param4f0";
 }
 
 

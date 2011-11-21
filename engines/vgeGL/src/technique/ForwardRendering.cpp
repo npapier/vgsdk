@@ -1808,7 +1808,9 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 	//////////////////////////
 	// Constructs resources //
 	//////////////////////////
+	using vgd::node::PostProcessing;
 	using vgd::node::Program;
+	using vgd::node::Texture;
 	using vgd::node::Texture2D;
 	using vgeGL::engine::GLSLState;
 
@@ -1818,19 +1820,22 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		pppRC.outputFbo->generate();
 	}
 
-	std::vector< float >										params1f0;
-	std::vector< float >										params1f1;
-	std::vector< vgm::Vec4f >									params4f0;
-	std::vector< vgm::Vec4f >									params4f1;
-	std::vector< vgm::MatrixR >									params4x4f0;
+	std::vector< float >							params1f0;
+	std::vector< float >							params1f1;
+	std::vector< vgm::Vec4f >						params4f0;
+	std::vector< vgm::Vec4f >						params4f1;
+	std::vector< vgm::MatrixR >						params4x4f0;
 
-	std::vector< vgd::node::PostProcessing::Input0ValueType >	inputs0;
-	std::vector< vgd::node::PostProcessing::Input1ValueType >	inputs1;
-	std::vector< vgd::node::PostProcessing::Input2ValueType >	inputs2;
-	std::vector< vgd::node::PostProcessing::OutputValueType >	output;
+	std::vector< vgd::Shp< Texture2D > >			textures0;
 
-	std::vector< vgd::Shp< Program > >							programs;
-	std::vector< float >										scales;
+	std::vector< PostProcessing::Input0ValueType >	inputs0;
+	std::vector< PostProcessing::Input1ValueType >	inputs1;
+	std::vector< PostProcessing::Input2ValueType >	inputs2;
+
+	std::vector< PostProcessing::OutputValueType >	output;
+
+	std::vector< vgd::Shp< Program > >				programs;
+	std::vector< float >							scales;
 
 
 	uint		i		= 0;
@@ -1916,6 +1921,25 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			else
 			{
 				params4x4f0.push_back( vgm::MatrixR::getInvalid() );
+			}
+
+			// texture0
+			if ( postProcessingNode->hasTexture0() )
+			{
+				vgd::Wkp< vgd::node::Node > value;
+				postProcessingNode->getTexture0( value );
+
+				vgd::Shp< vgd::node::Node > node = value.lock();
+				vgAssert( node );
+
+				vgd::Shp< Texture2D > texture = vgd::dynamic_pointer_cast< Texture2D >( node );
+				vgAssertN( texture, "Field texture0 of PostProcessing node named %s is invalid.", node->getName().c_str() );
+
+				textures0.push_back( texture );
+			}
+			else
+			{
+				textures0.push_back( vgd::makeShp( (vgd::node::Texture2D*)0 ) );
 			}
 
 			// Inputs
@@ -2044,6 +2068,9 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		vgd::Shp< Program >	program = programs[i];
 		engine->paint( program );
 
+		std::vector< vgd::Shp< vgd::node::Texture2D > > textures;
+		textures.push_back( textures0[i] );
+
 		// output
 		vgd::Shp< vgd::node::Texture2D > outputTexture		= getOutputTexture( output[i], &outputBuffers, ltex1 );
 		vgd::Shp< vgeGL::rc::Texture2D > outputTextureGLO	= engine->getRCShp< vgeGL::rc::Texture2D >( outputTexture );
@@ -2114,7 +2141,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		}
 
 		// input0
-		vgd::Shp< Texture2D > inputTexture0 = getInputTexture( inputs0[i], &outputBuffers, ltex0 );
+		vgd::Shp< Texture2D > inputTexture0 = getInputTexture( inputs0[i], &outputBuffers, textures0, ltex0 );
 		if ( inputTexture0 )
 		{
 			if ( inputTexture0->getMultiAttributeIndex() != 0 )		inputTexture0->setMultiAttributeIndex(0);
@@ -2127,7 +2154,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		}
 
 		// input1
-		vgd::Shp< Texture2D > inputTexture1 = getInputTexture( inputs1[i], &outputBuffers, ltex0 );
+		vgd::Shp< Texture2D > inputTexture1 = getInputTexture( inputs1[i], &outputBuffers, textures0, ltex0 );
 		if ( inputTexture1 )
 		{
 			if ( inputTexture1->getMultiAttributeIndex() != 1 )		inputTexture1->setMultiAttributeIndex(1);
@@ -2140,7 +2167,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		}
 
 		// input2
-		vgd::Shp< Texture2D > inputTexture2 = getInputTexture( inputs2[i], &outputBuffers, ltex0 );
+		vgd::Shp< Texture2D > inputTexture2 = getInputTexture( inputs2[i], &outputBuffers, textures0, ltex0 );
 		if ( inputTexture2 )
 		{
 			if ( inputTexture2->getMultiAttributeIndex() != 2 )		inputTexture2->setMultiAttributeIndex(2);

@@ -17,6 +17,7 @@ namespace technique
 
 vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessing::Input0ValueType input,
 	std::vector< vgd::Shp< vgd::node::Texture2D > >* outputBufferTexture,
+	std::vector< vgd::Shp< vgd::node::Texture2D > >& texturesBuffers,
 	std::vector< vgd::Shp< vgd::node::Texture2D > >* tmpBuffers )
 {
 	using vgd::node::PostProcessing;
@@ -26,6 +27,7 @@ vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessin
 	//
 	const int	inputValue = input.value();
 	int			outputBufferIndex	= -1;
+	int			textureIndex		= -1;
 	int			tmpBufferIndex		= -1;
 
 	// OUTPUT_BUFFER
@@ -43,6 +45,22 @@ vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessin
 				(inputValue <= PostProcessing::INPUT2_OUTPUT_BUFFER7)	)
 	{
 		outputBufferIndex = inputValue - PostProcessing::INPUT2_OUTPUT_BUFFER0;
+	}
+	// TEXTURE
+	if (	(PostProcessing::TEXTURE0 <= inputValue) &&
+			(inputValue <= PostProcessing::TEXTURE0)	)
+	{
+		textureIndex = inputValue - PostProcessing::TEXTURE0;
+	}
+	else if (	(PostProcessing::INPUT1_TEXTURE0 <= inputValue) &&
+				(inputValue <= PostProcessing::INPUT1_TEXTURE0)	)
+	{
+		textureIndex = inputValue - PostProcessing::INPUT1_TEXTURE0;
+	}
+	else if (	(PostProcessing::INPUT2_TEXTURE0 <= inputValue) &&
+				(inputValue <= PostProcessing::INPUT2_TEXTURE0)	)
+	{
+		textureIndex = inputValue - PostProcessing::INPUT2_TEXTURE0;
 	}
 	// PREVIOUS
 	else if (	(PostProcessing::PREVIOUS0 == inputValue) ||
@@ -73,6 +91,17 @@ vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessin
 		else
 		{
 			vgAssertN( false, "Out of range OUTPUT_BUFFER%i", outputBufferIndex );
+		}
+	}
+	else if ( textureIndex >= 0 )
+	{
+		if ( textureIndex < static_cast< int >(texturesBuffers.size()) )
+		{
+			retVal = texturesBuffers[textureIndex];
+		}
+		else
+		{
+			vgAssertN( false, "Out of range TEXTURE%i", textureIndex );
 		}
 	}
 	else if ( tmpBufferIndex >= 0 )

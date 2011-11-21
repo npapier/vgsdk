@@ -20,6 +20,7 @@ namespace technique
 
 vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessing::Input0ValueType input,
 	std::vector< vgd::Shp< vgd::node::Texture2D > >* outputBufferTexture,
+	std::vector< vgd::Shp< vgd::node::Texture2D > >& texturesBuffers,
 	std::vector< vgd::Shp< vgd::node::Texture2D > >* tmpBuffers );
 
 vgd::Shp< vgd::node::Texture2D > getOutputTexture( const vgd::node::PostProcessing::OutputValueType output,

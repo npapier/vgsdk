@@ -435,24 +435,6 @@ const std::string applyCombine3AndScale(
 	"	color = combine3AndScale( texMap2D[0], texMap2D[1], texMap2D[2], mgl_TexCoord[0].xy, param4f0 );\n" );
 
 
-/////////
-// DOF //
-/////////
-
-const std::string dof =
-"vec4 dof( sampler2D texMap0, sampler2D texMap1, sampler2D texMap2, vec2 texCoord, vec4 focalPlane )"
-"{\n"
-"	vec4 colorOrig = texture2D( texMap0, texCoord );\n"
-"	vec4 colorBlur = texture2D( texMap1, texCoord );\n"
-"	vec4 position = texture2D( texMap2, texCoord );\n"
-"\n"
-"	float blur = dot( position, focalPlane );\n"
-"	return mix(colorOrig, colorBlur, saturate(abs(blur)));\n"
-"}\n"
-"\n\n\n";
-
-const std::string applyDOF(
-	"	color = dof( texMap2D[0], texMap2D[1], texMap2D[2], mgl_TexCoord[0].xy, param4f0 );\n" );
 
 }
 
@@ -600,10 +582,6 @@ std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::Post
 	else if ( filter == vgd::node::PostProcessing::COMBINE3_AND_SCALE )
 	{
 		return std::make_pair( combine3AndScale, applyCombine3AndScale );
-	}	
-	else if ( filter == vgd::node::PostProcessing::DOF )
-	{
-		return std::make_pair( saturate + dof, applyDOF );
 	}
 	else if ( filter == vgd::node::PostProcessing::NO_FILTER )
 	{
