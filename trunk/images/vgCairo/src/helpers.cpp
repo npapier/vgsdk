@@ -1,9 +1,11 @@
-// VGSDK - Copyright (C) 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgCairo/helpers.hpp"
+
+#include <vgm/vgm.hpp>
 
 
 
@@ -29,6 +31,15 @@ void rounded_rectangle( cairo_t * cr, const float x, const float y, const float 
 	cairo_curve_to(cr, x,y+height,x,y+height,x,y+height-radius);					// Curve to G
 	cairo_line_to(cr, x,y+radius);													// Line to H
 	cairo_curve_to(cr, x,y,x,y,x+radius,y);											// Curve to A
+}
+
+
+
+void ellipse( cairo_t * cr, const float x, const float y, const float width, const float height )
+{
+	cairo_translate( cr, x + width / 2.f, y + height / 2.f );
+	cairo_scale( cr, width / 2.f, height / 2.f );
+	cairo_arc( cr, 0.f, 0.f, 1.f, 0.f, 2.f * vgm::PI );
 }
 
 
