@@ -6,7 +6,6 @@
 #include "vge/engine/Engine.hpp"
 
 #include <vgd/node/Camera.hpp>
-#include <vgDebug/Global.hpp>
 
 #include "vge/handler/Handler.hpp"
 #include "vge/handler/HandlerRegistry.hpp"

@@ -89,7 +89,7 @@ void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 		if ( m_videoOver.getElapsedTime() > getReplayWaitingTime() )
 		{
 #ifdef ENABLED_VIDEO_DEBUG
-			vgLogDebug2( "Video is over since %i ms. Calls restart()", m_videoOver.getElapsedTime().ms() );
+			vgLogDebug( "Video is over since %i ms. Calls restart()", m_videoOver.getElapsedTime().ms() );
 #endif
 			m_video->restart();
 			m_videoOver.setInvalid();
@@ -120,7 +120,7 @@ void VideoCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
 
 void VideoCallback::setVideo( const std::string & pathFilename )
 {
-	vgLogDebug2("VideoCallback::setVideo( %s )", pathFilename.c_str() );
+	vgLogDebug("VideoCallback::setVideo( %s )", pathFilename.c_str() );
 
 	m_video = vgd::makeShp( new vgFFmpeg::Video( pathFilename ) );
 
@@ -128,8 +128,8 @@ void VideoCallback::setVideo( const std::string & pathFilename )
 	const int64 frameRate		= static_cast<int64>( m_video->getFrameRate() );
 	const int64 timePerFrame	= static_cast<int>( 1000/frameRate );
 
-	vgLogDebug2("frameRate=%i i/s", frameRate );
-	vgLogDebug2("timePerFrame=%i ms", timePerFrame );
+	vgLogDebug("frameRate=%i i/s", frameRate );
+	vgLogDebug("timePerFrame=%i ms", timePerFrame );
 #endif
 
 	setFrequency( m_video->getFrameRate() * 1.1f );
@@ -189,7 +189,7 @@ const bool VideoCallback::update()
 		{
 			if ( m_video->isOver() )
 			{
-				vgLogDebug2(  "update(): Video %s is over.", m_video->getPathFilename().c_str() );
+				vgLogDebug(  "update(): Video %s is over.", m_video->getPathFilename().c_str() );
 				if ( getTLoopMode() == LOOP )
 				{
 					m_videoOver.restart();
@@ -197,7 +197,7 @@ const bool VideoCallback::update()
 				else
 				{
 #ifdef ENABLED_VIDEO_DEBUG
-					vgLogDebug2(  "update(): Video %s is over. Calls pause().", m_video->getPathFilename().c_str() );
+					vgLogDebug(  "update(): Video %s is over. Calls pause().", m_video->getPathFilename().c_str() );
 #endif
 					m_video->pause();
 				}
@@ -208,11 +208,11 @@ const bool VideoCallback::update()
 			{
 #ifdef ENABLED_VIDEO_DEBUG
 				vgLogDebug( "Need buffering" );
-				vgLogDebug2( "beforeBuffering:getImageQueueSize()=%i", m_video->getImageQueueSize() );
+				vgLogDebug( "beforeBuffering:getImageQueueSize()=%i", m_video->getImageQueueSize() );
 #endif
 				doVideoStreamBuffering( 1 );
 #ifdef ENABLED_VIDEO_DEBUG
-				vgLogDebug2( "afterBuffering:getImageQueueSize()=%i", m_video->getImageQueueSize() );
+				vgLogDebug( "afterBuffering:getImageQueueSize()=%i", m_video->getImageQueueSize() );
 #endif
 				continue;
 			}
@@ -231,7 +231,7 @@ const bool VideoCallback::update()
 				if ( difference < deltaAllowed )
 				{
 #ifdef ENABLED_VIDEO_DEBUG
-					vgLogDebug3("image behind:show(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
+					vgLogDebug("image behind:show(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
 #endif
 					texture->setImage( imageFrame->getImage() );
 					mustScheduleRefreshForced = true;
@@ -240,7 +240,7 @@ const bool VideoCallback::update()
 				else
 				{
 #ifdef ENABLED_VIDEO_DEBUG
-					vgLogDebug3("image behind:skip(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
+					vgLogDebug("image behind:skip(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
 #endif
 					continue;
 				}
@@ -251,7 +251,7 @@ const bool VideoCallback::update()
 				if ( -difference < deltaAllowed )
 				{
 #ifdef ENABLED_VIDEO_DEBUG
-					vgLogDebug3("image ahead:show(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
+					vgLogDebug("image ahead:show(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
 #endif
 					texture->setImage( imageFrame->getImage() );
 					mustScheduleRefreshForced = true;
@@ -260,12 +260,12 @@ const bool VideoCallback::update()
 				else
 				{
 #ifdef ENABLED_VIDEO_DEBUG
-					vgLogDebug3("image ahead:wait(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
+					vgLogDebug("image ahead:wait(currentTime,imageTime)=%i,%i", (int)currentTime, (int)imageTime );
 #endif
 					SDL_Delay( -difference );
 #ifdef ENABLED_VIDEO_DEBUG
 					const int64 newCurrentTime	= getVideo()->getPlayingElapsedTime();
-					vgLogDebug3("image ahead:showAfterWait(currentTime,imageTime)=%i,%i", (int)newCurrentTime, (int)imageTime );
+					vgLogDebug("image ahead:showAfterWait(currentTime,imageTime)=%i,%i", (int)newCurrentTime, (int)imageTime );
 #endif
 					texture->setImage( imageFrame->getImage() );
 					mustScheduleRefreshForced = true;
@@ -292,12 +292,12 @@ void VideoCallback::doVideoStreamBuffering( const int bufferInSecond )
 		{
 #ifdef ENABLED_VIDEO_DEBUG
 			vgLogDebug( "update:processPacket() fails. EOF ?" );
-			vgLogDebug2( "update:begin:getImageQueueSize()=%i", m_video->getImageQueueSize() );
+			vgLogDebug( "update:begin:getImageQueueSize()=%i", m_video->getImageQueueSize() );
 #endif
 			break;
 		}
 	}
-	//vgLogDebug2( "update:begin:getImageQueueSize()=%i", m_video->getImageQueueSize() );
+	//vgLogDebug( "update:begin:getImageQueueSize()=%i", m_video->getImageQueueSize() );
 }
 
 

@@ -7,8 +7,10 @@
 #ifndef _VGDEBUG_HELPERS_HPP
 #define _VGDEBUG_HELPERS_HPP
 
-#include "vgDebug/Global.hpp"
-#include "vgDebug/ILogging.hpp"
+#include "vgDebug/vgDebug.hpp"
+
+#include <sbf/debug/GlobalLogger.hpp>
+#include <sbf/debug/ILogging.hpp>
 
 namespace sbf { struct Module; }
 
@@ -17,45 +19,24 @@ namespace sbf { struct Module; }
 ///@todo Disables some log function in debug
 ///@todo Completes vgX mapping to vgDebug::get().X()
 
-#define vgLogError( arg1 )						vgDebug::get().logError( (arg1) )
-#define vgLogError2( arg1, arg2 )				vgDebug::get().logError( (arg1), (arg2) )
-#define vgLogError3( arg1, arg2, arg3 )			vgDebug::get().logError( (arg1), (arg2), (arg3) )
+#define vgLogError( arg1, ... )						sbf::debug::get().logError( (arg1), __VA_ARGS__ )
 
-#define vgLogWarning( arg1 )					vgDebug::get().logWarning( (arg1) )
-#define vgLogWarning2( arg1, arg2 )				vgDebug::get().logWarning( (arg1), (arg2) )
-#define vgLogWarning3( arg1, arg2, arg3 )		vgDebug::get().logWarning( (arg1), (arg2), (arg3) )
+#define vgLogWarning( arg1, ... )					sbf::debug::get().logWarning( (arg1), __VA_ARGS__ )
 
-#define vgLogStatus( arg1 )						vgDebug::get().logStatus( (arg1) )
-#define vgLogStatus2( arg1, arg2 )				vgDebug::get().logStatus( (arg1), (arg2) )
-#define vgLogStatus3( arg1, arg2, arg3 )		vgDebug::get().logStatus( (arg1), (arg2), (arg3) )
+#define vgLogStatus( arg1, ... )					sbf::debug::get().logStatus( (arg1), __VA_ARGS__ )
 
-#define vgLogMessage( arg1 )					vgDebug::get().logMessage( (arg1) )
-#define vgLogMessage2( arg1, arg2 )				vgDebug::get().logMessage( (arg1), (arg2) )
-#define vgLogMessage3( arg1, arg2, arg3 )		vgDebug::get().logMessage( (arg1), (arg2), (arg3) )
+#define vgLogMessage( arg1, ... )					sbf::debug::get().logMessage( (arg1), __VA_ARGS__ )
 
 #ifdef _DEBUG
-#define vgLogDebug( arg1 )							vgDebug::get().logDebug( (arg1) )
-#define vgLogDebug2( arg1, arg2 )					vgDebug::get().logDebug( (arg1), (arg2) )
-#define vgLogDebug3( arg1, arg2, arg3 )				vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
-#define vgLogDebug4( arg1, arg2, arg3, arg4 )		vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4) )
-#define vgLogDebug5( arg1, arg2, arg3, arg4, arg5 )	vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4), (arg5) )
+#define vgLogDebug( arg1, ... )						sbf::debug::get().logDebug( (arg1), __VA_ARGS__ )
 #else
-#define vgLogDebug( arg1 )							vgDebug::get().logDebug( (arg1) )
-#define vgLogDebug2( arg1, arg2 )					vgDebug::get().logDebug( (arg1), (arg2) )
-#define vgLogDebug3( arg1, arg2, arg3 )				vgDebug::get().logDebug( (arg1), (arg2), (arg3) )
-#define vgLogDebug4( arg1, arg2, arg3, arg4 )		vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4) )
-#define vgLogDebug5( arg1, arg2, arg3, arg4, arg5 )	vgDebug::get().logDebug( (arg1), (arg2), (arg3), (arg4), (arg5) )
+#define vgLogDebug( arg1, ... )						sbf::debug::get().logDebug( (arg1), __VA_ARGS__ )
 #endif
 
 
 
-#define vgAssert( expression )										vgDebug::get().logAssert( (expression), "", (#expression), __FILE__, __LINE__ )
-#define vgAssert2( expression, message )							vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__ )
-#define vgAssert3( expression, message, arg1 )						vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1) )
-#define vgAssert4( expression, message, arg1, arg2 )				vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2) )
-#define vgAssert5( expression, message, arg1, arg2, arg3 )			vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2), (arg3) )
-#define vgAssert6( expression, message, arg1, arg2, arg3, arg4 )	vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, (arg1), (arg2), (arg3), (arg4) )
-#define vgAssertN( expression, message, ... )						vgDebug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, __VA_ARGS__ )
+#define vgAssert( expression )						sbf::debug::get().logAssert( (expression), "", (#expression), __FILE__, __LINE__ )
+#define vgAssertN( expression, message, ... )		sbf::debug::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, __VA_ARGS__ )
 
 
 

@@ -299,7 +299,7 @@ const int getKeyboardButton( const GdkEventKey * event )
 	case GDK_z: return 'z';
 
 	default:
-		vgDebug::get().logDebug( "Unsupported keyboard key %c (%x).", event->keyval, event->keyval );
+		vgLogDebug( "Unsupported keyboard key %c (%x).", event->keyval, event->keyval );
 		return 0;
 	}
 }

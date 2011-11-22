@@ -13,7 +13,7 @@
 
 #include <sbf/path.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include "vgUI/Canvas.hpp"
 
 

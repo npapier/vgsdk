@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/TexGenEyeLinear.hpp"
 
 #include <vgd/node/TexGenEyeLinear.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"

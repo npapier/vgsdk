@@ -8,7 +8,7 @@
 #include <vgd/node/Camera.hpp>
 #include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/LayerPlan.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include <vge/pass/ForEach.hpp>
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"

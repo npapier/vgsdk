@@ -184,7 +184,7 @@ const bool AbstractField::finishEditing() const
 	{
 		vgAssert( m_editingMode == NONE );
 
-		vgAssert2( false, "Internal error. Must never occurs." );
+		vgAssertN( false, "Internal error. Must never occurs." );
 
 		return false;
 	}

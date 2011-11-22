@@ -13,7 +13,8 @@
 
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/basic/Image.hpp>
-#include <vgDebug/convenience.hpp>
+
+#include <vgDebug/helpers.hpp>
 
 namespace vgio
 {
@@ -130,7 +131,7 @@ vgd::Shp< vgio::ILoader > getLoaderByFilename( std::string filename )
 	else if( extension.compare( ".obj" ) == 0 )
 	{
 		//retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "obj");
-		vgDebug::get().logWarning( "Unknown file extension in %s.", filename.c_str() );
+		vgLogWarning( "Unknown file extension in %s.", filename.c_str() );
 	}
 	else if( extension.compare( ".vgarch" ) == 0 )
 	{
@@ -138,7 +139,7 @@ vgd::Shp< vgio::ILoader > getLoaderByFilename( std::string filename )
 	}
 	else
 	{
-		vgDebug::get().logWarning( "Unknown file extension in %s.", filename.c_str() );
+		vgLogWarning( "Unknown file extension in %s.", filename.c_str() );
 	}
 
 	return retVal;

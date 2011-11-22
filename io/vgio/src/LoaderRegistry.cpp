@@ -7,7 +7,7 @@
 #include "vgio/LoaderRegistry.hpp"
 
 #include <vgd/basic/FilenameExtractor.hpp>
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgio
 {

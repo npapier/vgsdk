@@ -7,7 +7,7 @@
 
 #include <gtkmm.h>
 #include <iostream>
-#include <sbf/GlobalLogger.hpp>
+#include <sbf/debug/GlobalLogger.hpp>
 #include <vgDebug/helpers.hpp>
 #include <vgGTK/Logging.hpp>
 
@@ -30,7 +30,7 @@ namespace
 void initLogging( int argc, char** argv, const sbf::Module& module, const int maxNumberOfLogFiles )
 {
 	// Installs the GTK-based logging system.
-	sbf::GlobalLogger::set< vgGTK::Logging >();
+	sbf::debug::GlobalLogger::set< vgGTK::Logging >();
 	//vgDebug::set< vgGTK::Logging >();
 
 	// Redirects it together with standard outputs to a log file.

@@ -49,13 +49,13 @@ SceneExporter::~SceneExporter()
 
 bool SceneExporter::doExport()
 {
-	vgDebug::get().logDebug("Collecting nodes...");
+	vgLogDebug("Collecting nodes...");
 	collectNodes();
 
-	vgDebug::get().logDebug("Preparing scene to be exported...");
+	vgLogDebug("Preparing scene to be exported...");
 	prepareExport();
 	
-	vgDebug::get().logDebug("Creating COLLADA document...");
+	vgLogDebug("Creating COLLADA document...");
 	m_streamWriter.startDocument();
 
 	loadExporter();
@@ -75,7 +75,7 @@ bool SceneExporter::doExport()
 	exportScene();
 
 	m_streamWriter.endDocument();
-	vgDebug::get().logDebug("COLLADA document created!");
+	vgLogDebug("COLLADA document created!");
 	
 	//@todo: check if export finish well.
 	return true;

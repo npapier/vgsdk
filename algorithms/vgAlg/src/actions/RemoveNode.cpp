@@ -11,7 +11,7 @@
 #include <vgd/node/Node.hpp>
 #include <vgd/Shp.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {
@@ -40,7 +40,7 @@ void RemoveNode::execute()
 		// vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REMOVE );
 		
 		parent->removeChild( node );
-		vgLogStatus2( "Node %s removed.", node->getName().c_str() );
+		vgLogStatus( "Node %s removed.", node->getName().c_str() );
 		vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( REFRESH );
 	}
 }

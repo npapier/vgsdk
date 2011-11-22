@@ -18,7 +18,7 @@
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
 #include <vgd/node/TriSet.hpp>
-#include <vgDebug/Global.hpp>
+
 #include <vgUI/Canvas.hpp>
 
 #include <vgGTK/actions/alg/ExportNode.hpp>

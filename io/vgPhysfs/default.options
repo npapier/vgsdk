@@ -2,6 +2,6 @@ description	= '(V)ersatile (G)raphical (Physfs)'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
-libs		= [ 'vgBase 0-5', 'vgd 0-5', 'vgDebug 0-5' ]
+libs		= [ 'vgBase 0-5', 'vgd 0-5', 'vgDebug 0-5', 'sbf 0-0' ]
 deps		= [ '../../core' ]
 uses		= [ 'blowfish', 'boost', 'physfs' ]

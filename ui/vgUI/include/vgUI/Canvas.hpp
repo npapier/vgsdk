@@ -12,7 +12,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <gle/OpenGLExtensionsGen.hpp>
 #include <vgd/event/Device.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include <vgeGL/engine/SceneManager.hpp>
 
 #include "vgUI/vgUI.hpp"
@@ -344,8 +344,8 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 
 			if ( bfs::exists( path ) == false )
 			{
-				vgLogDebug2( "Creates %s", path.c_str() );
-				vgLogStatus2( "Creates %s", path.c_str() );
+				vgLogDebug( "Creates %s", path.c_str() );
+				vgLogStatus( "Creates %s", path.c_str() );
 
 				bfs::create_directories( path );
 			}
@@ -417,8 +417,8 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 
 			if ( bfs::exists( path ) == false )
 			{
-				vgLogDebug2( "Creates %s", path.c_str() );
-				vgLogStatus2( "Creates %s", path.c_str() );
+				vgLogDebug( "Creates %s", path.c_str() );
+				vgLogStatus( "Creates %s", path.c_str() );
 
 				bfs::create_directories( path );
 			}

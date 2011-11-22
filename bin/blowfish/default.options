@@ -5,6 +5,6 @@ type				= 'exec'
 #generateInfoFile	= False
 deps				= ['../../core/vgDebug', '../../io/vgPhysfs']
 uses				= ['boost']
-libs				= ['vgDebug 0-5', 'vgPhysfs 0-5']
+libs				= ['vgDebug 0-5', 'vgPhysfs 0-5', 'sbf 0-0']
 #console			= True
 #runParams			= []

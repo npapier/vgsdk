@@ -20,7 +20,7 @@
 #include <vgAlg/node/TriSet.hpp>
 #include <vgAlg/node/VertexShape.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 #include <vgd/node/TriSet.hpp>
 #include <vge/technique/ApplyGeometricalTransformations.hpp>
 #include <vgeGL/engine/Engine.hpp>

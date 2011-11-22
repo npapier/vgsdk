@@ -216,7 +216,7 @@ bool Image::load( std::string strFilename )
 	// Bind this image name.
 	bind();
 
-	vgLogDebug2("Image::load: Start reading image %s.", strFilename.c_str() );
+	vgLogDebug("Image::load: Start reading image %s.", strFilename.c_str() );
 	
 	// Loads the image specified by strFilename into the ImgId image.
 	if ( ilLoadImage( const_cast<char*>( strFilename.c_str() ) ) == IL_FALSE )
@@ -231,7 +231,7 @@ bool Image::load( std::string strFilename )
 	{
 		updateInformations();
 		
-		vgLogDebug4(	"Image::load: Finish reading image %s (%i x %i).",
+		vgLogDebug(	"Image::load: Finish reading image %s (%i x %i).",
 						strFilename.c_str(), 
 						width(), height() );
 
@@ -253,7 +253,7 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	// Bind this image name.
 	bind();
 
-	vgLogDebug2("Image::load: Start reading image %s.", strFilename.c_str() );
+	vgLogDebug("Image::load: Start reading image %s.", strFilename.c_str() );
 
 	// Retrieves the extension of the given filename.
 	vgd::basic::FilenameExtractor	extractor( strFilename.c_str() );
@@ -274,7 +274,7 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	{
 		updateInformations();
 		
-		vgLogDebug4("Image::load: Finish reading image %s (%i x %i).",
+		vgLogDebug("Image::load: Finish reading image %s (%i x %i).",
 					strFilename.c_str(), width(), height() );
 
 		return true;

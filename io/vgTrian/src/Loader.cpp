@@ -9,7 +9,7 @@
 #include <sstream>
 
 #include <vgAlg/actions/Decrypt.hpp>
-#include <vgDebug/Global.hpp>
+
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/basic/Image.hpp>
 
@@ -56,15 +56,15 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 
 	if (!fp.good())
 	{
-		vgLogDebug2("vgTrian::loadTrian: Unable to open file %s", pathFilename );
-		//vgDebug::get().logStatus("vgTrian::loadTrian: Unable to open file %s", pathFilename );
+		vgLogDebug("vgTrian::loadTrian: Unable to open file %s", pathFilename );
+		//vgLogStatus("vgTrian::loadTrian: Unable to open file %s", pathFilename );
 
 		return ( retVal );
 	}
 	else
 	{
-		vgLogDebug2("vgTrian::loadTrian: load %s", pathFilename );
-		//vgDebug::get().logStatus("vgTrian::loadTrian: load %s", pathFilename );
+		vgLogDebug("vgTrian::loadTrian: load %s", pathFilename );
+		//vgLogStatus("vgTrian::loadTrian: load %s", pathFilename );
 	}
 
 	// read nb of vertices
@@ -169,8 +169,8 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 	//
 	retVal.first = true;
 
-	vgLogDebug2("vgTrian::loadTrian: load %s done.", pathFilename );
-	//vgDebug::get().logStatus("vgTrian::loadTrian: load %s done.", pathFilename );
+	vgLogDebug("vgTrian::loadTrian: load %s done.", pathFilename );
+	//vgLogStatus("vgTrian::loadTrian: load %s done.", pathFilename );
 
 	return retVal;
 }
@@ -199,15 +199,15 @@ std::pair< bool, vgd::Shp< vgd::node::TriSet > > Loader::loadTrian( const std::s
 
 	if (!fp.good())
 	{
-		vgLogDebug2("vgTrian::loadTrian: Unable to open file %s", pathFilename.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian: Unable to open file %s", pathFilename.c_str() );
+		vgLogDebug("vgTrian::loadTrian: Unable to open file %s", pathFilename.c_str() );
+		//vgLogStatus("vgTrian::loadTrian: Unable to open file %s", pathFilename.c_str() );
 
 		return ( retVal );
 	}
 	else
 	{
-		vgLogDebug2("vgTrian::loadTrian: load %s", pathFilename.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian: load %s", pathFilename.c_str() );
+		vgLogDebug("vgTrian::loadTrian: load %s", pathFilename.c_str() );
+		//vgLogStatus("vgTrian::loadTrian: load %s", pathFilename.c_str() );
 	}
 
 	// read nb of vertices
@@ -312,8 +312,8 @@ std::pair< bool, vgd::Shp< vgd::node::TriSet > > Loader::loadTrian( const std::s
 	//
 	retVal.first = true;
 
-	vgLogDebug2("vgTrian::loadTrian: load %s done.", pathFilename.c_str() );
-	//vgDebug::get().logStatus("vgTrian::loadTrian: load %s done.", pathFilename.c_str() );
+	vgLogDebug("vgTrian::loadTrian: load %s done.", pathFilename.c_str() );
+	//vgLogStatus("vgTrian::loadTrian: load %s done.", pathFilename.c_str() );
 
 	return retVal;
 }
@@ -337,15 +337,15 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 
 	if (!fp.good())
 	{
-		vgLogDebug2("vgTrian::saveTrian: Unable to open file %s", pathFilename.c_str() );
-		//vgDebug::get().logStatus("vgTrian::saveTrian: Unable to open file %s", pathFilename.c_str() );
+		vgLogDebug("vgTrian::saveTrian: Unable to open file %s", pathFilename.c_str() );
+		//vgLogStatus("vgTrian::saveTrian: Unable to open file %s", pathFilename.c_str() );
 
 		return retVal;
 	}
 	else
 	{
-		vgLogDebug2("vgTrian::saveTrian: saved %s", pathFilename.c_str() );
-		//vgDebug::get().logStatus("vgTrian::saveTrian: save %s", pathFilename.c_str() );
+		vgLogDebug("vgTrian::saveTrian: saved %s", pathFilename.c_str() );
+		//vgLogStatus("vgTrian::saveTrian: save %s", pathFilename.c_str() );
 	}
 
 	// write nb of vertices
@@ -432,8 +432,8 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 	//
 	retVal = true;
 
-	vgLogDebug2("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
-	//vgDebug::get().logStatus("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
+	vgLogDebug("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
+	//vgLogStatus("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
 
 	return retVal;
 }
@@ -474,28 +474,28 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media 
 
 	if (!in)
 	{
-		vgLogDebug2("vgTrian::loadTrian2: Unable to open file %s", filePath.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
+		vgLogDebug("vgTrian::loadTrian2: Unable to open file %s", filePath.c_str() );
+		//vgLogStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
 
 		return ( retVal );
 	}
 	else
 	{
-		vgLogDebug2("vgTrian::loadTrian2: load %s", filePath.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s", pathFilename );
+		vgLogDebug("vgTrian::loadTrian2: load %s", filePath.c_str() );
+		//vgLogStatus("vgTrian::loadTrian2: load %s", pathFilename );
 	}
 
 	retVal.first = loadTrian2( media, *in, group );
 
 	if( retVal.first )
 	{
-		vgLogDebug2("vgTrian::loadTrian2: load %s done", filePath.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );
+		vgLogDebug("vgTrian::loadTrian2: load %s done", filePath.c_str() );
+		//vgLogStatus("vgTrian::loadTrian2: load %s done", pathFilename );
 	}
 	else
 	{
-		vgLogDebug2("vgTrian::loadTrian2: Unable to open file %s", filePath.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
+		vgLogDebug("vgTrian::loadTrian2: Unable to open file %s", filePath.c_str() );
+		//vgLogStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
 	}
 	return retVal;
 }
@@ -531,13 +531,13 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( const std::string 
 
 	if( retVal.first )
 	{
-		vgLogDebug2("vgTrian::loadTrian2: load %s done", pathFilename.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: load %s done", pathFilename );
+		vgLogDebug("vgTrian::loadTrian2: load %s done", pathFilename.c_str() );
+		//vgLogStatus("vgTrian::loadTrian2: load %s done", pathFilename );
 	}
 	else
 	{
-		vgLogDebug2("vgTrian::loadTrian2: Unable to open file %s", pathFilename.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
+		vgLogDebug("vgTrian::loadTrian2: Unable to open file %s", pathFilename.c_str() );
+		//vgLogStatus("vgTrian::loadTrian2: Unable to open file %s", pathFilename );
 	}
 	return retVal;
 }
@@ -592,8 +592,8 @@ const bool Loader::loadTrian2( const vgio::Media & media, std::istream & in, vgd
 			
 			in >> meshName;
 			
-			vgLogDebug2("vgTrian::loadTrian2: load mesh %s", meshName.c_str() );
-			//vgDebug::get().logStatus("vgTrian::loadTrian2: load mesh %s", meshName.c_str() );
+			vgLogDebug("vgTrian::loadTrian2: load mesh %s", meshName.c_str() );
+			//vgLogStatus("vgTrian::loadTrian2: load mesh %s", meshName.c_str() );
 			
 			in >> name;
 			if ( name == "materialIndex" )
@@ -671,8 +671,8 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials( const vgio::Media & media, 
 		vgd::Shp< vgd::node::Group > container = vgd::node::Group::create( matName );
 		switchGroup->addChild( container );
 		
-		vgLogDebug2("vgTrian::loadTrian2: load material %s", matName.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: load material %s", matName.c_str() );
+		vgLogDebug("vgTrian::loadTrian2: load material %s", matName.c_str() );
+		//vgLogStatus("vgTrian::loadTrian2: load material %s", matName.c_str() );
 
 		vgd::Shp< vgd::node::Material > material = vgd::node::Material::create( matName );
 		container->addChild( material );
@@ -757,8 +757,8 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( filename );
 		tex->setMultiAttributeIndex( (int8)i );
 
-		vgLogDebug3("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
-		//vgDebug::get().logStatus("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
+		vgLogDebug("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
+		//vgLogStatus("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 
 		vgd::Shp< vgd::basic::IImage > image;
 
@@ -776,7 +776,7 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		/*if ( m_useCache )
 		{
 			image = vgio::ImageCache::load( m_path + '/' + filename );
-			vgDebug::get().logDebug("vgTrian::loadTrian2: image %s/%s found in cache.", m_path.c_str(), filename.c_str() );
+			vgLogDebug("vgTrian::loadTrian2: image %s/%s found in cache.", m_path.c_str(), filename.c_str() );
 		}
 		else
 		{

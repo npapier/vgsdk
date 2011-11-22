@@ -7,7 +7,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Fluid.hpp>
 #include <vgd/node/Grid.hpp>

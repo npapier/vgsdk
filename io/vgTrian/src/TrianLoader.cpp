@@ -177,13 +177,13 @@ const bool TrianLoader::saveTrian( vgd::Shp< vgd::node::VertexShape > shape, con
 
 	if (!fp.good())
 	{
-		vgLogDebug2("vgTrian::saveTrian: Unable to open file %s", pathFilename.c_str() );
+		vgLogDebug("vgTrian::saveTrian: Unable to open file %s", pathFilename.c_str() );
 
 		return retVal;
 	}
 	else
 	{
-		vgLogDebug2("vgTrian::saveTrian: saved %s", pathFilename.c_str() );
+		vgLogDebug("vgTrian::saveTrian: saved %s", pathFilename.c_str() );
 	}
 
 	// write nb of vertices
@@ -269,8 +269,8 @@ const bool TrianLoader::saveTrian( vgd::Shp< vgd::node::VertexShape > shape, con
 	//
 	retVal = true;
 
-	vgLogDebug2("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
-	//vgDebug::get().logStatus("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
+	vgLogDebug("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
+	//vgLogStatus("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
 
 	return retVal;
 }
@@ -309,21 +309,21 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > TrianLoader::load( const vgio::M
 
 	if (!in)
 	{
-		vgLogDebug2("Unable to open file %s", filePath.c_str() );
+		vgLogDebug("Unable to open file %s", filePath.c_str() );
 
 		return retVal;
 	}
 	else
 	{
-		vgLogDebug2("load %s", filePath.c_str() );
+		vgLogDebug("load %s", filePath.c_str() );
 		retVal.first = loadTrian( *in, group, bCCW );
 		if ( retVal.first )
 		{
-			vgLogDebug2("load %s done", filePath.c_str() );
+			vgLogDebug("load %s done", filePath.c_str() );
 		}
 		else
 		{
-			vgLogDebug2("Error during loading %s", filePath.c_str() );
+			vgLogDebug("Error during loading %s", filePath.c_str() );
 		}
 		return retVal;
 	}
@@ -353,11 +353,11 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > TrianLoader::load( const std::st
 
 	if ( retVal.first )
 	{
-		vgLogDebug2("load %s done", pathFilename.c_str() );
+		vgLogDebug("load %s done", pathFilename.c_str() );
 	}
 	else
 	{
-		vgLogDebug2("Error during loading %s", pathFilename.c_str() );
+		vgLogDebug("Error during loading %s", pathFilename.c_str() );
 	}
 	return retVal;
 }

@@ -10,7 +10,7 @@
 #include <vgd/event/device/Mouse.hpp>
 #include <vgd/event/device/Timer.hpp>
 #include <vgd/event/MouseWheelEvent.hpp>
-#include <vgDebug/Global.hpp>
+
 
 
 

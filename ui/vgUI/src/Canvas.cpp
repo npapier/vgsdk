@@ -68,8 +68,8 @@ void Canvas::Screenshot::save( const std::string path, const std::string filenam
 	// User feedback
 	if ( feedback )
 	{
-		vgLogDebug2( "Screenshot done in file %s", lFilename.c_str() );
-		vgLogStatus2( "Screenshot done in file %s", lFilename.c_str() );
+		vgLogDebug( "Screenshot done in file %s", lFilename.c_str() );
+		vgLogStatus( "Screenshot done in file %s", lFilename.c_str() );
 	}
 
 	// Output image
@@ -357,7 +357,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 
 		if( keyboardButtonEvent != 0 )
 		{
-			vgLogDebug3(
+			vgLogDebug(
 					"KeyboardButtonEvent (%s, %s)",
 					toString( keyboardButtonEvent->getButtonID() ).c_str(),
 					toString( keyboardButtonEvent->getState() ).c_str()
@@ -365,7 +365,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( mouseButtonEvent != 0 )
 		{
-			vgLogDebug3(
+			vgLogDebug(
 					"MouseButtonEvent (%s,%s)",
 					toString( mouseButtonEvent->getButtonID() ).c_str(),
 					toString( mouseButtonEvent->getState() ).c_str()
@@ -373,7 +373,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( location2Event != 0 )
 		{
-			vgDebug::get().logDebug(
+			vgLogDebug(
 					"Location2Event ( previousLocation(%.2f,%.2f), location(%.2f,%.2f), size(%.2f,%.2f)",
 					location2Event->getPreviousLocation()[0],
 					location2Event->getPreviousLocation()[1],
@@ -385,7 +385,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( mouseWheelEvent != 0 )
 		{
-			vgLogDebug3(
+			vgLogDebug(
 					"MouseWheelEvent (%s, %d)",
 					toString( mouseWheelEvent->getAxis() ).c_str(),
 					mouseWheelEvent->getDelta()
@@ -617,7 +617,7 @@ void Canvas::refreshIfNeeded( const WaitType wait )
 		// Do the refresh
 
 		// Useful for debugging wrong dirty flags
-		//vgLogDebug2("refreshIfNeeded(): because of node named %s\n", result->getName().c_str() );
+		//vgLogDebug("refreshIfNeeded(): because of node named %s\n", result->getName().c_str() );
 
 		refreshForced( wait );
 	}
@@ -794,14 +794,14 @@ const bool Canvas::startVGSDK()
 
 		//vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 		//vgLogMessage3("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
-		//vgLogMessage2("OpenGL %f found", gleGetOpenGLVersion() );
-		//vgLogMessage2("GLSL %f found", gleGetGLSLVersion() );
+		//vgLogMessage("OpenGL %f found", gleGetOpenGLVersion() );
+		//vgLogMessage("GLSL %f found", gleGetGLSLVersion() );
 
 		if ( getGLEngine()->isGLSLEnabled() == false )
 		{
 			// Checks compatibility mode
 			vgLogMessage("Checks OpenGL requirements for vgsdk compatibility mode (i.e. OpenGL version >= 2.0)...");
-			vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
+			vgLogMessage("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 			if ( gleGetOpenGLMajorVersion() >= 2 )
 			{
 				vgLogMessage("The vgsdk compatibility mode is enabled.");
@@ -818,8 +818,8 @@ const bool Canvas::startVGSDK()
 		{
 			// Checks full mode
 			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 3.3, GLSL version >= 3.3)...");
-			vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
-			vgLogMessage3("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
+			vgLogMessage("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
+			vgLogMessage("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
 
 			if (	vgm::greaterThanEqual(gleGetOpenGLVersion(), 3.3f) &&
 					vgm::greaterThanEqual(gleGetGLSLVersion(), 3.3f) )

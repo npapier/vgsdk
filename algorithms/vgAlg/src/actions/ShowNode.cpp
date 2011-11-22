@@ -11,7 +11,7 @@
 
 #include <vgd/node/Node.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {
@@ -44,7 +44,7 @@ void ShowNode::execute()
 
 	if( hiddenNode->getNode() )
 	{
-		vgDebug::get().logStatus( "Node %s restored.", hiddenNode->getNode()->getName().c_str() );
+		vgLogStatus( "Node %s restored.", hiddenNode->getNode()->getName().c_str() );
 	}
 
 	hiddenNode.reset();

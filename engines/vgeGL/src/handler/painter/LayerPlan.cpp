@@ -5,7 +5,7 @@
 
 #include "vgeGL/handler/painter/LayerPlan.hpp"
 
-#include <vgDebug/convenience.hpp>
+
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Quad.hpp>
 #include <vgd/node/LayerPlan.hpp>

@@ -27,7 +27,7 @@
 #include <vgd/visitor/helpers.hpp>
 #include <vgd/visitor/predicate/ByRegexName.hpp>
 #include <vgd/visitor/predicate/ByType.hpp>
-#include <vgDebug/Global.hpp>
+
 #include <vgm/Utilities.hpp>
 #include <vgio/Cache.hpp>
 #include <vgio/helpers.hpp>

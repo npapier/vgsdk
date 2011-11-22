@@ -34,7 +34,7 @@ void GeometryExporter::doExport()
 	openLibrary();
 
 	//export all
-	vgDebug::get().logDebug("Exporting geometry...");
+	vgLogDebug("Exporting geometry...");
 	
 	typedef collectedMapType::left_map::const_iterator left_const_iterator;
 

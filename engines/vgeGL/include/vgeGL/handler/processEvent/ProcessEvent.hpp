@@ -7,7 +7,7 @@
 #define _VGEGL_HANDLER_PROCESSEVENT_PROCESSEVENT_HPP
 
 #include <vge/handler/Handler.hpp>
-#include <vgDebug/Global.hpp>
+
 
 #include "vgeGL/vgeGL.hpp"
 

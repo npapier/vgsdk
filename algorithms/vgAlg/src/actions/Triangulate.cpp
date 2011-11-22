@@ -14,7 +14,7 @@
 #include <vgd/node/VertexShape.hpp>
 #include <vgd/Shp.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {

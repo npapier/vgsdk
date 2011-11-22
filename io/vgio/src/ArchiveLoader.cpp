@@ -9,7 +9,7 @@
 
 #include <vgAlg/actions/Decrypt.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
-#include <vgDebug/convenience.hpp>
+
 
 #include <vgio/helpers.hpp>
 

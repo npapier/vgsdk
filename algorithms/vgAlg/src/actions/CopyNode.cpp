@@ -11,7 +11,7 @@
 #include <vgd/node/Node.hpp>
 #include <vgd/Shp.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {

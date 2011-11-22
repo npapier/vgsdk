@@ -11,7 +11,7 @@
 #include <vge/technique/ApplyGeometricalTransformations.hpp>
 #include <vgeGL/engine/Engine.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {

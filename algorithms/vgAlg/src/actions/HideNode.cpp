@@ -8,7 +8,7 @@
 
 #include <vgAlg/actions/SelectedNode.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {
@@ -42,7 +42,7 @@ void HideNode::execute()
 
 	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( vgAlg::actions::REFRESH );
 
-	vgLogStatus2( "Node %s hidden.", node->getName().c_str() );
+	vgLogStatus( "Node %s hidden.", node->getName().c_str() );
 }
 
 
