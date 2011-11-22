@@ -26,7 +26,7 @@ m_exportSettings( exportSettings )
 
 void MaterialExporter::doExport()
 {
-	vgDebug::get().logDebug("Exporting materials");
+	vgLogDebug("Exporting materials");
 	openLibrary();
 	
 	if( m_exportSettings.getLevel() > GEOMETRY )

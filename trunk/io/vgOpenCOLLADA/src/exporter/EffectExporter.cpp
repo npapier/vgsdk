@@ -26,7 +26,7 @@ m_exportSettings( exportSettings )
 
 void EffectExporter::doExport()
 {
-	vgDebug::get().logDebug("Exporting effects");
+	vgLogDebug("Exporting effects");
 	openLibrary();
 
 	if( m_exportSettings.getLevel() > GEOMETRY )

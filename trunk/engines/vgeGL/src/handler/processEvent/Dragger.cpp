@@ -149,7 +149,7 @@ void Dragger::logDebug( vgd::Shp< vgd::event::Event > event )
 
 	if( keyboardButtonEvent != 0 )
 	{
-		vgDebug::get().logDebug(
+		vgLogDebug(
 			"KeyboardButtonEvent (%d,%d)",
 			keyboardButtonEvent->getButtonID(),
 			keyboardButtonEvent->getState()
@@ -157,7 +157,7 @@ void Dragger::logDebug( vgd::Shp< vgd::event::Event > event )
 	}
 	else if( mouseButtonEvent != 0 )
 	{
-		vgDebug::get().logDebug(
+		vgLogDebug(
 			"MouseButtonEvent (%d,%d)",
 			mouseButtonEvent->getButtonID(),
 			mouseButtonEvent->getState()
@@ -165,7 +165,7 @@ void Dragger::logDebug( vgd::Shp< vgd::event::Event > event )
 	}
 	else if( location2Event != 0 )
 	{
-		vgDebug::get().logDebug(
+		vgLogDebug(
 			"Location2Event ( previousLocation(%f,%f), location(%f,%f), size(%f,%f)",
 			location2Event->getPreviousLocation()[0],
 			location2Event->getPreviousLocation()[1],
@@ -177,7 +177,7 @@ void Dragger::logDebug( vgd::Shp< vgd::event::Event > event )
 	}
 	else if( mouseWheelEvent != 0 )
 	{
-		vgDebug::get().logDebug(
+		vgLogDebug(
 			"MouseWheelEvent (%d,%d)",
 			mouseWheelEvent->getAxis(),
 			mouseWheelEvent->getDelta()
@@ -185,7 +185,7 @@ void Dragger::logDebug( vgd::Shp< vgd::event::Event > event )
 	}
 	else
 	{
-		vgDebug::get().logDebug("Unknown event");
+		vgLogDebug("Unknown event");
 	}
 }
 

@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/CullFace.hpp"
 
 #include <vgd/node/CullFace.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 

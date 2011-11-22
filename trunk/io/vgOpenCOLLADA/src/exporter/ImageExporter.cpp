@@ -38,7 +38,7 @@ ImageExporter::ImageExporter( COLLADASW::StreamWriter * streamWriter, collectedM
 
 void ImageExporter::doExport()
 {
-	vgDebug::get().logDebug("Exporting images");
+	vgLogDebug("Exporting images");
 	openLibrary();
 
 	typedef collectedMapType::right_map::const_iterator right_const_iterator;

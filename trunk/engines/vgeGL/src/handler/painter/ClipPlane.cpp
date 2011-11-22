@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/ClipPlane.hpp"
 
 #include <vgd/node/ClipPlane.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"

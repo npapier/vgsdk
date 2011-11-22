@@ -4,5 +4,5 @@ type		= 'shared'
 version		= '0-5'
 uses		= [ 'boost' ]
 defines		= [ 'VGD_EXPORTS', 'VGEGL_EXPORTS', 'VGOBJ_EXPORTS', 'VGM_EXPORTS' ]
-libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgm 0-5' ]
+libs		= [ 'gle 0-3', 'glo 0-3', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgm 0-5', 'sbf 0-0' ]
 deps		= [ '../../core', '../../engines', '../../dependencies/gle', '../../dependencies/glo' ]

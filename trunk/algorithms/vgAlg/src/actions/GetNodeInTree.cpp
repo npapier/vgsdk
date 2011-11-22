@@ -11,7 +11,7 @@
 #include <vgd/node/Node.hpp>
 #include <vgd/Shp.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {
@@ -37,7 +37,7 @@ void GetNodeInTree::execute()
 	//During refresh, selection may change, so we reselect current node.
 	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
 	vgAlg::actions::SelectedNode::getSelectedNodeObject()->setAction( SELECT );
-	vgLogStatus2( "Node %s selected.", node->getName().c_str() );
+	vgLogStatus( "Node %s selected.", node->getName().c_str() );
 }
 
 

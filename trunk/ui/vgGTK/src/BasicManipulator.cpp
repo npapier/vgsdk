@@ -62,7 +62,7 @@ void BasicManipulator::initDevices()
 	}
 	else
 	{
-		vgDebug::get().logWarning( "No joystick found." );
+		vgLogWarning( "No joystick found." );
 	}
 }
 

@@ -7,7 +7,6 @@
 #define _VGE_HANDLER_PAINTER_PAINTER_HPP
 
 #include "vge/vge.hpp"
-#include <vgDebug/Global.hpp>
 
 #include "vge/handler/Handler.hpp"
 

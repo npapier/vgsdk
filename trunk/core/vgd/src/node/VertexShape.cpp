@@ -10,8 +10,6 @@
 #include "vgd/node/Group.hpp"
 #include "vgd/node/detail/Node.hpp"
 
-#include <vgDebug/convenience.hpp>
-
 
 
 namespace vgd
@@ -370,7 +368,7 @@ void VertexShape::textureTransform( const vgm::MatrixR& matrix, const int texUni
 	}
 	else
 	{
-		vgDebug::get().logDebug( "No texture coordinates found for this index." );
+		//vgLogDebug( "No texture coordinates found for this index." );
 	}
 }
 

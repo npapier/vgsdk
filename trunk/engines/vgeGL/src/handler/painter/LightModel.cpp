@@ -7,7 +7,7 @@
 
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/LightModel.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include <vge/rc/Manager.hpp>
 #include <vge/service/Painter.hpp>
 
@@ -196,7 +196,7 @@ void LightModel::paint( vgeGL::engine::Engine * engine, vgd::node::LightModel *n
 				break;
 
 			default:
-				vgAssert2( false, "Unknown LightModel.model value." );
+				vgAssertN( false, "Unknown LightModel.model value." );
 		}
 	}
 

@@ -15,7 +15,6 @@
 
 #include <sbf/path.hpp>
 
-#include <vgDebug/convenience.hpp>
 #include <vgd/field/Enum.hpp>
 #include <vgd/node/LightModel.hpp>
 
@@ -193,7 +192,7 @@ void UserSettings::loadLevels()
 	}
 	catch( bpt::ini_parser::ini_parser_error & )
 	{
-		vgLogError2( "Error while reading detail level definitions file %s", path.string().c_str() );
+		vgLogError( "Error while reading detail level definitions file %s", path.string().c_str() );
 	}
 }
 

@@ -7,7 +7,7 @@
 #ifndef _VGGTK_LOGGING_HPP
 #define _VGGTK_LOGGING_HPP
 
-#include <sbf/ILogging.hpp>
+#include <sbf/debug/ILogging.hpp>
 
 #include "vgGTK/vgGTK.hpp"
 
@@ -19,7 +19,7 @@ namespace vgGTK
 /**
  * @brief Implements a logging facility based on GLib message logs.
  */
-struct VGGTK_API Logging : public sbf::ILogging
+	struct VGGTK_API Logging : public sbf::debug::ILogging
 {
 	/**
 	 * @name Overrides

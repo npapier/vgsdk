@@ -35,7 +35,6 @@
 #include <vgd/node/TextureTransformation.hpp>
 #include <vgd/node/Texture2D.hpp>
 #include <vgd/node/TexGenEyeLinear.hpp>
-#include <vgDebug/convenience.hpp>
 #include <vge/engine/SceneManager.hpp>
 #include <vge/service/Painter.hpp>
 #include <vge/technique/ComputeBoundingBox.hpp>
@@ -719,7 +718,7 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 		const std::string fboStatus = fbo->getStatusString();
 		if ( fboStatus.size() > 0 )
 		{
-			vgLogError2( "ForwardRendering::apply(): %s", fboStatus.c_str() );
+			vgLogError( "ForwardRendering::apply(): %s", fboStatus.c_str() );
 			fbo.reset();
 			return fbo;
 		}

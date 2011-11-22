@@ -45,7 +45,7 @@ const bool DefaultEventProcessor::onEvent( vgd::Shp<vgd::event::Event> event )
 		getSceneManager()->getGLEngine().get(),
 		getSceneManager()->getNodeCollector().getTraverseElements() );
 
-	//vgDebug::get().logDebug("SceneManager::onEvent:%s", typeid(*event.get()).name() );
+	//vgLogDebug("SceneManager::onEvent:%s", typeid(*event.get()).name() );
 
 	return false;
 }

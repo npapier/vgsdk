@@ -7,6 +7,8 @@
 #include "vgFFmpeg/Video.hpp"
 #include <iostream>
 
+#include <vgDebug/helpers.hpp>
+
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -15,7 +17,7 @@ extern "C" {
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <vgDebug/convenience.hpp>
+
 
 
 
@@ -332,7 +334,7 @@ Video::Video( const std::string& pathFilename )
 	if ( av_open_input_file(&pFormatCtx, pathFilename.c_str(), NULL, 0, NULL)!=0 )
 	{
 		// Couldn't open file
-		vgLogDebug2( "vgFFmpeg: Couldn't open file %s", pathFilename.c_str() );
+		vgLogDebug( "vgFFmpeg: Couldn't open file %s", pathFilename.c_str() );
 		return;
 		//throw std::exception("vgFFmpeg: Couldn't open file.");
 	}

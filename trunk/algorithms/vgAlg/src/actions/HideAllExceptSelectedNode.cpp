@@ -15,7 +15,7 @@
 #include <vgd/visitor/predicate/ByKindOfType.hpp>
 #include <vgd/visitor/helpers.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {

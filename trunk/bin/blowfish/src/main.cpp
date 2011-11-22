@@ -8,7 +8,8 @@
 #include <vector>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <vgDebug/convenience.hpp>
+
+#include <vgDebug/helpers.hpp>
 #include <vgPhysfs/operations.hpp>
 
 
@@ -17,7 +18,7 @@
 void showUsage( const char * program )
 {
 	vgLogMessage( "This program encrypts or decrypts files using the blowfish algorithm." );
-	vgLogMessage2( "%s <encrypt|decrypt> <key> <input path> {output path}", program );
+	vgLogMessage( "%s <encrypt|decrypt> <key> <input path> {output path}", program );
 }
 
 
@@ -44,7 +45,7 @@ int main( int argc, char ** argv )
 	inPath = boost::filesystem::path( argv[3] );
 	if( !boost::filesystem::exists(inPath) )
 	{
-		vgLogMessage2( "Invalid input path ", inPath.string().c_str() );
+		vgLogMessage( "Invalid input path ", inPath.string().c_str() );
 		return 0;
 	}
 

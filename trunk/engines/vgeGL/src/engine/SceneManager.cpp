@@ -8,7 +8,7 @@
 #include <vgd/basic/Time.hpp>
 #include <vgd/basic/TimeDuration.hpp>
 #include <vgd/node/LayerPlan.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/event/DefaultEventProcessor.hpp"
@@ -64,14 +64,14 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	// Calls paint() provided by vge
 	vgd::basic::Time time;
 	::vge::engine::SceneManager::paint( size, bUpdateBoundingBox );
-//	vgLogDebug2( "::vge::engine::SceneManager::paint(): %i", time.getElapsedTime().ms() );
-//vgLogDebug2( "pt1: %i", paintTime.getElapsedTime().ms() );
+//	vgLogDebug( "::vge::engine::SceneManager::paint(): %i", time.getElapsedTime().ms() );
+//vgLogDebug( "pt1: %i", paintTime.getElapsedTime().ms() );
 	// Updates node collector if not done by vge
 	if ( bUpdateBoundingBox == false )
 	{
 		vgd::basic::Time time;
 		updateNodeCollector();
-//		vgLogDebug2( "updateNodeCollector(): %i", time.getElapsedTime().ms() );
+//		vgLogDebug( "updateNodeCollector(): %i", time.getElapsedTime().ms() );
 	}
 
 	// Renders scene graph
@@ -83,29 +83,29 @@ void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 		// Transferts underlay to the rendering technique
 		iunderlay->setUnderlay( getUnderlay() );
 	}
-//	vgLogDebug2( "iunderlay: %i", time.getElapsedTime().ms() );
-//vgLogDebug2( "pt2: %i", paintTime.getElapsedTime().ms() );
+//	vgLogDebug( "iunderlay: %i", time.getElapsedTime().ms() );
+//vgLogDebug( "pt2: %i", paintTime.getElapsedTime().ms() );
 
 	//time.restart();
 	//getGLEngine()->resetEval();
-//	vgLogDebug2( "getGLEngine()->resetEval(): %i", time.getElapsedTime().ms() );
-//vgLogDebug2( "pt3: %i", paintTime.getElapsedTime().ms() );
+//	vgLogDebug( "getGLEngine()->resetEval(): %i", time.getElapsedTime().ms() );
+//vgLogDebug( "pt3: %i", paintTime.getElapsedTime().ms() );
 
 	time.restart();
 	paintTechnique->setParameters( getGLEngine().get(), getNodeCollector().getTraverseElements(), this );
 	paintTechnique->apply( getGLEngine().get(), getNodeCollector().getTraverseElements() );
-//	vgLogDebug2( "paintTechnique->apply(): %i", time.getElapsedTime().ms() );
-//vgLogDebug2( "pt4: %i", paintTime.getElapsedTime().ms() );
+//	vgLogDebug( "paintTechnique->apply(): %i", time.getElapsedTime().ms() );
+//vgLogDebug( "pt4: %i", paintTime.getElapsedTime().ms() );
 	// Renders overlay
 	if ( getOverlay() )
 	{
 		time.restart();
 		vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 		getGLEngine()->evaluate( paint, getOverlay().get(), true, false );
-//		vgLogDebug2( "getGLEngine()->evaluate() for overlay: %i", time.getElapsedTime().ms() );
+//		vgLogDebug( "getGLEngine()->evaluate() for overlay: %i", time.getElapsedTime().ms() );
 	}
-//vgLogDebug2( "pt5: %i", paintTime.getElapsedTime().ms() );
-//	vgLogDebug2( "End SceneManager::paint: %i", paintTime.getElapsedTime().ms() );
+//vgLogDebug( "pt5: %i", paintTime.getElapsedTime().ms() );
+//	vgLogDebug( "End SceneManager::paint: %i", paintTime.getElapsedTime().ms() );
 }
 
 

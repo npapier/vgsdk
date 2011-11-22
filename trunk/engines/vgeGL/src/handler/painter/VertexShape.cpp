@@ -21,7 +21,7 @@
 #include <vgd/node/TriSet.hpp>
 #include <vgd/node/VertexShape.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 //#include <vgDebug/StdStreamsToFiles.hpp>
 #include <vgm/Box.hpp>
 
@@ -68,7 +68,7 @@ const GLenum convertDeformableHint2GLUsage( vgd::node::VertexShape * node )
 	}
 	else
 	{
-		vgAssert2( false, "Internal error." );
+		vgAssertN( false, "Internal error." );
 		return GL_DYNAMIC_DRAW;
 	}
 }
@@ -243,7 +243,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			{
 				texUnitState->setTexCoordDim( 0 );
 #ifdef _DEBUG
-				vgLogDebug3(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
+				vgLogDebug(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
 								pVertexShape->getName().c_str(), unit );
 #endif
 			}
@@ -353,7 +353,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				{
 					vgLogDebug("Program link succeeded");
 					vgLogDebug("Creates a new GLSL program.");
-					vgLogDebug2("GLSL managed program count : %i", pGLEngine->getGLSLManager().getNum());
+					vgLogDebug("GLSL managed program count : %i", pGLEngine->getGLSLManager().getNum());
 				}
 #endif*/
 			}
@@ -402,7 +402,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			GLSLProgram * program = pGLEngine->getGLSLManager().get< GLSLProgram >( fullCode );
 			if ( program != pGLEngine->getCurrentProgram() )
 			{
-				vgAssert2( program == pGLEngine->getCurrentProgram(), "glslState->isValid() should be dirty." );
+				vgAssertN( program == pGLEngine->getCurrentProgram(), "glslState->isValid() should be dirty." );
 			}
 #endif
 		}
@@ -769,7 +769,7 @@ void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShap
 
 	/*if ( primitives->size() > 1 )
 	{
-		vgLogDebug3("primitive count %i for vertex shape %s", primitives->size(), pVertexShape->getName().c_str() );
+		vgLogDebug("primitive count %i for vertex shape %s", primitives->size(), pVertexShape->getName().c_str() );
 	}*/
 
 	//int indexPrim = 0;
@@ -821,20 +821,20 @@ void VertexShape::paint(	vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 		// Removes the resource from the manager
 		manager.remove( node );
 		resource = 0;
-		vgAssert2( (resource == 0) && (castedResource==0), "Internal error." );
+		vgAssertN( (resource == 0) && (castedResource==0), "Internal error." );
 	}
 	// else if resource != 0 && castedResource != 0 => see step 2
 	// else if resource == 0 && castedResource == 0 => see step 2
 	// else if resource == 0 && castedResource != 0 => impossible
 
 	// STEP 2
-	vgAssert2(	(resource==0 && castedResource==0) ||
+	vgAssertN(	(resource==0 && castedResource==0) ||
 				(resource!=0 && castedResource!=0), "Internal error." );
 
 	// Creates resource if needed
 	if ( resource == 0 )
 	{
-		vgAssert2( castedResource == 0, "Internal error." );
+		vgAssertN( castedResource == 0, "Internal error." );
 
 		// Creates the resource
 		castedResource = new GLResourceType();
@@ -845,7 +845,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 	}
 	// else reuses the resource => nothing to do
 
-	vgAssert2( resource!=0 && castedResource!=0, "Internal error." );
+	vgAssertN( resource!=0 && castedResource!=0, "Internal error." );
 
 	// STEP 3
 	// What else ? synchronization and/or binding part of the work

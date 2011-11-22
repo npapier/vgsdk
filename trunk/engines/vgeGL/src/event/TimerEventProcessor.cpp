@@ -77,7 +77,7 @@ const bool TimerEventProcessor::onEvent( vgd::Shp<vgd::event::Event> event )
 	using ::vgd::event::TimerEvent;
 	vgd::Shp< TimerEvent > timerEvent = vgd::dynamic_pointer_cast< TimerEvent >( event );
 
-	//vgDebug::get().logDebug("TimerEventProcessor::onEvent:%s", typeid(*event.get()).name() );
+	//vgLogDebug("TimerEventProcessor::onEvent:%s", typeid(*event.get()).name() );
 
 	if ( timerEvent )
 	{

@@ -10,7 +10,8 @@
 #include <vgd/basic/IImage.hpp>
 #include <vgd/basic/Image.hpp>
 #include <vgd/basic/ImageInfo.hpp>
-#include <vgDebug/convenience.hpp>
+
+#include <vgDebug/helpers.hpp>
 
 #include "vgio/FileSystem.hpp"
 #include "vgio/Media.hpp"
@@ -62,14 +63,14 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 
 		if ( iimage == 0 )
 		{
-			vgLogDebug2("vgio: load image %s", pathFilename.c_str() );
+			vgLogDebug("vgio: load image %s", pathFilename.c_str() );
 			iimage = loadImage( media, pathFilename );
 
 			if ( iimage && !iimage->isEmpty() )
 			{
 				// Loading successes
 				const bool addingRetVal = getInstance()->add( pathFilename, iimage );
-				vgLogDebug2("vgio: image %s added to cache.", pathFilename.c_str() );
+				vgLogDebug("vgio: image %s added to cache.", pathFilename.c_str() );
 				assert( addingRetVal );
 
 				// Returns a copy of the image.
@@ -78,13 +79,13 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 			else
 			{
 				// Loading fails
-				vgLogDebug2("vgio: load image %s fails", pathFilename.c_str() );
+				vgLogDebug("vgio: load image %s fails", pathFilename.c_str() );
 			}
 		}
 		else
 		{
 			// A match is found for the key in cache. So returns a copy of it.
-			vgLogDebug2("vgio: image %s found in cache.", pathFilename.c_str() );
+			vgLogDebug("vgio: image %s found in cache.", pathFilename.c_str() );
 			retVal.reset( new vgd::basic::ImageInfo(*iimage) );
 		}
 
@@ -96,18 +97,18 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 		vgd::Shp< vgd::basic::IImage >	retVal;
 		vgd::basic::IImage				* iimage;
 
-		vgLogDebug2("vgio: load image %s", pathFilename.c_str() );
+		vgLogDebug("vgio: load image %s", pathFilename.c_str() );
 		iimage = loadImage( media, pathFilename );
 
 		if ( iimage && !iimage->isEmpty() )
 		{
 			retVal.reset( iimage );
-			vgLogDebug2("vgio: load image %s done.", pathFilename.c_str() );
+			vgLogDebug("vgio: load image %s done.", pathFilename.c_str() );
 		}
 		else
 		{
 			// Loading fails
-			vgLogDebug2("vgio: load image %s fails", pathFilename.c_str() );
+			vgLogDebug("vgio: load image %s fails", pathFilename.c_str() );
 		}
 
 		return retVal;
@@ -123,7 +124,7 @@ vgd::basic::IImage * ImageCache::loadImage( const Media & media, const std::stri
 	// Checks the existance of the given image.
 	if( ! media.exists(pathFilename) )
 	{
-		vgLogDebug2("vgio: image %s not found", pathFilename.c_str() );
+		vgLogDebug("vgio: image %s not found", pathFilename.c_str() );
 		return result;
 	}
 

@@ -13,7 +13,7 @@
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Light.hpp>
 #include <vgd/node/Texture.hpp>
-#include <vgDebug/convenience.hpp>
+
 
 #include "vgeGL/engine/GLSLState.hpp"
 

@@ -33,7 +33,7 @@ m_exportSettings( exportSettings )
 
 void VisualSceneExporter::doExport()
 {
-	vgDebug::get().logDebug("Exporting visual scenes");
+	vgLogDebug("Exporting visual scenes");
 	openLibrary();
 
 	openVisualScene( "scene" );

@@ -9,7 +9,7 @@
 #include <vgd/basic/Image.hpp>
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Texture.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include <vgm/VectorOperations.hpp>
 
 #include "vgeGL/basic/helpers.hpp"
@@ -488,7 +488,7 @@ void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture 
 	if ( texInfo.resizeForTex )
 	{
 		// RESCALE IMAGE
-		vgDebug::get().logDebug("vgeGL.Texture: Performance warning : Incoming image size %i %i %i used as texture is resized %i %i %i.",
+		vgLogDebug("vgeGL.Texture: Performance warning : Incoming image size %i %i %i used as texture is resized %i %i %i.",
 								texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2],
 								texInfo.texSize[0], texInfo.texSize[1], texInfo.texSize[2] );
 
@@ -626,14 +626,14 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 	{
 		// NPOT image
 		#ifdef _DEBUG
-		//vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
+		//vgLogDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
 		//						texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
 		#endif
 
 		if ( isGL_ARB_texture_non_power_of_two() )
 		{
 			#ifdef _DEBUG
-			//vgDebug::get().logDebug("vgeGL.Texture: GL_ARB_texture_non_power_of_two is supported and used.");
+			//vgLogDebug("vgeGL.Texture: GL_ARB_texture_non_power_of_two is supported and used.");
 			#endif
 			texInfo.texSize			= texInfo.imageSize;
 			texInfo.resizeForTex	= false;
@@ -641,9 +641,9 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 		else
 		{
 			#ifdef _DEBUG
-			vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
+			vgLogDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
 									texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
-			vgDebug::get().logDebug("vgeGL.Texture: Incoming image must be resized.");
+			vgLogDebug("vgeGL.Texture: Incoming image must be resized.");
 			#endif
 
 			texInfo.texSize			= texInfo.imageSizePOT;
@@ -654,7 +654,7 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 	{
 		// POT image
 		#ifdef _DEBUG
-		//vgDebug::get().logDebug("vgeGL.Texture: Incoming image size %i %i %i (pot)",
+		//vgLogDebug("vgeGL.Texture: Incoming image size %i %i %i (pot)",
 		//						texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
 		#endif
 

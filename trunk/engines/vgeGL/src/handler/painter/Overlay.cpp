@@ -5,7 +5,7 @@
 
 #include "vgeGL/handler/painter/Overlay.hpp"
 
-#include <vgDebug/convenience.hpp>
+
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/Overlay.hpp>
 #include "vgeGL/engine/Engine.hpp"

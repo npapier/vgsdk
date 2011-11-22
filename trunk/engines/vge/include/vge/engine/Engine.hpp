@@ -488,8 +488,8 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		ValueType retVal;
 
 		const NodeList *nodeList = getNodeListFromStateStackTop< NodeType >( multiAttributeIndex );
-		vgAssert2( nodeList != 0, "Empty node list. Internal error" );
-		vgAssert3( nodeList->front()->isField( strFieldName ), "The given fieldname %s is unknown", strFieldName.c_str() );
+		vgAssertN( nodeList != 0, "Empty node list. Internal error" );
+		vgAssertN( nodeList->front()->isField( strFieldName ), "The given fieldname %s is unknown", strFieldName.c_str() );
 
 		for( NodeList::const_reverse_iterator	i			= nodeList->rbegin(),
 												iEnd		= nodeList->rend();
@@ -510,7 +510,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 			}
 		}
 
-		vgAssert3( false, "Unable to find field %s", strFieldName.c_str() );
+		vgAssertN( false, "Unable to find field %s", strFieldName.c_str() );
 		return retVal;
 	}
 

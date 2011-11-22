@@ -5,7 +5,7 @@
 
 #include "vgeGL/handler/painter/PostProcessing.hpp"
 
-#include <vgDebug/convenience.hpp>
+
 #include <vgd/node/PostProcessing.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/engine/GLSLState.hpp"

@@ -11,7 +11,6 @@
 
 #include <sbf/path.hpp>
 
-#include <vgDebug/convenience.hpp>
 #include <vgd/node/Camera.hpp>
 
 #include "vge/engine/SceneManager.hpp"
@@ -118,7 +117,7 @@ void StereoscopicSettings::load()
 		}
 		else
 		{
-			vgLogDebug2( "Invalid eye separation in file %s. Uses zero.", path.string().c_str() );
+			vgLogDebug( "Invalid eye separation in file %s. Uses zero.", path.string().c_str() );
 			setEyeSeparation( 0.f );
 		}
 
@@ -130,7 +129,7 @@ void StereoscopicSettings::load()
 		}
 		else
 		{
-			vgLogDebug2( "Invalid image shift in file %s. Uses zero.", path.string().c_str() );
+			vgLogDebug( "Invalid image shift in file %s. Uses zero.", path.string().c_str() );
 			setImageShift( 0.f );
 		}
 
@@ -139,7 +138,7 @@ void StereoscopicSettings::load()
 	}
 	catch( bpt::ini_parser::ini_parser_error & )
 	{
-		vgLogError2( "Error while reading file %s", path.string().c_str() );
+		vgLogError( "Error while reading file %s", path.string().c_str() );
 	}
 }
 
@@ -169,7 +168,7 @@ void StereoscopicSettings::save()
 		else
 		{
 			settings.put( "eyeSeparation", 0.f );
-			vgLogDebug2( "Invalid eye separation %f. Uses zero.", m_eyeSeparation );
+			vgLogDebug( "Invalid eye separation %f. Uses zero.", m_eyeSeparation );
 		}
 
 		// IMAGE SHIFT
@@ -180,7 +179,7 @@ void StereoscopicSettings::save()
 		else
 		{
 			settings.put( "imageShift", 0.f );
-			vgLogDebug2( "Invalid image shift %f. Uses zero.", m_imageShift );
+			vgLogDebug( "Invalid image shift %f. Uses zero.", m_imageShift );
 		}
 
 		// RIGHT EYE
@@ -191,7 +190,7 @@ void StereoscopicSettings::save()
 	}
 	catch( bpt::ini_parser::ini_parser_error & )
 	{
-		vgLogError2( "Error while writing file %s", path.string().c_str() );
+		vgLogError( "Error while writing file %s", path.string().c_str() );
 	}
 }
 

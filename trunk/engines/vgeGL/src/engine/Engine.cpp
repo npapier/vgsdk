@@ -14,7 +14,7 @@
 #include <vgd/node/Texture2D.hpp>
 //#include <vgd/node/TextureCubeMap.hpp>
 #include <vgd/node/TextureMatrixTransform.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include <vge/handler/Handler.hpp>
 #include <vge/handler/HandlerRegistry.hpp>
 #include "vgeGL/engine/GLSLState.hpp"
@@ -80,7 +80,7 @@ void Engine::reset()
 	}
 
 	// Detects drivers provider
-	vgLogMessage2( "%s driver found", gleGetCurrent()->getDriverProviderString().c_str() );	
+	vgLogMessage( "%s driver found", gleGetCurrent()->getDriverProviderString().c_str() );	
 	const gle::OpenGLExtensions::DriverProviderType driverProvider = gleGetCurrent()->getDriverProvider();
 
 	// Configures engine
@@ -198,20 +198,20 @@ void Engine::setToDefaults()
 	}
 
 	//
-	vgLogDebug3( "vgeGL.Engine: MAX VIEWPORT SIZE			= %i x %i", getMaxViewportSize()[0],  getMaxViewportSize()[1] );
+	vgLogDebug( "vgeGL.Engine: MAX VIEWPORT SIZE			= %i x %i", getMaxViewportSize()[0],  getMaxViewportSize()[1] );
 
-	vgLogDebug2( "vgeGL.Engine: MAX_LIGHTS			= %i", getMaxLights() );
+	vgLogDebug( "vgeGL.Engine: MAX_LIGHTS			= %i", getMaxLights() );
 
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
 
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS = %i", getMaxVertexTexImageUnits() );
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS = %i", getMaxCombinedTexImageUnits() );
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_IMAGE_UNITS = %i", getMaxTexImageUnits() );
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_ARB = %i", getMaxGeometryTexImageUnits() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS = %i", getMaxVertexTexImageUnits() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS = %i", getMaxCombinedTexImageUnits() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_IMAGE_UNITS = %i", getMaxTexImageUnits() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_ARB = %i", getMaxGeometryTexImageUnits() );
 
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
-	vgLogDebug2( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
 
 	// MARKER
 	if ( isGL_GREMEDY_string_marker() )
@@ -594,7 +594,7 @@ vgd::Shp< ProgramGenerator > Engine::getGLSLProgramGenerator()
 	//	if ( !shaderString.empty() )
 	//	{
 	//		// File not empty, creates the shader
-	//		vgDebug::get().logDebug( "vgeGL.Engine: Loads shader %s", filename.c_str() );
+	//		vgLogDebug( "vgeGL.Engine: Loads shader %s", filename.c_str() );
 
 	//		///@todo Creates glo::GLSLShader
 	//		GLSLProgram *program = new GLSLProgram;
@@ -610,21 +610,21 @@ vgd::Shp< ProgramGenerator > Engine::getGLSLProgramGenerator()
 	//		{
 	//			// Adds it to the GLSL manager
 	//			getGLSLManager().add( filename, program );
-	//			vgDebug::get().logDebug( "vgeGL.Engine: Shader %s successfully registered in GLSLManager", filename.c_str() );
+	//			vgLogDebug( "vgeGL.Engine: Shader %s successfully registered in GLSLManager", filename.c_str() );
 	//		}
 	//		else
 	//		{
-	//			vgDebug::get().logDebug( "vgeGL.Engine: Fails to registered shader %s", filename.c_str() );
+	//			vgLogDebug( "vgeGL.Engine: Fails to registered shader %s", filename.c_str() );
 
 	//			//const std::string infoLog = program->getInfoLog( program->getProgramObject() );??????????????????????? FIXME
-	//			//vgDebug::get().logDebug( "Engine:\n%s\n", infoLog.c_str() );
+	//			//vgLogDebug( "Engine:\n%s\n", infoLog.c_str() );
 
 	//			delete program;
 	//		}
 	//	}
 	//	else
 	//	{
-	//		vgDebug::get().logDebug( "vgeGL.Engine: Empty shader %s", filename.c_str() );
+	//		vgLogDebug( "vgeGL.Engine: Empty shader %s", filename.c_str() );
 	//	}
 	//}
 //}

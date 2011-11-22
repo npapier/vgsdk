@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/OutputBufferProperty.hpp"
 
 #include <glo/GLSLProgram.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include <vgd/basic/toString.hpp>
 #include <vgd/basic/IImage.hpp>
 #include <vgd/basic/ImageInfo.hpp>
@@ -542,7 +542,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 	std::string fboStatus = fbo->getStatusString();
 	if ( fboStatus.size() > 0 )
 	{
-		vgLogError2( "OutputBufferProperty::createsFBO(): %s", fboStatus.c_str() );
+		vgLogError( "OutputBufferProperty::createsFBO(): %s", fboStatus.c_str() );
 		// return retVal;
 		// @todo better error management
 	}

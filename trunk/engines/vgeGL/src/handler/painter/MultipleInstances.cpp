@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/MultipleInstances.hpp"
 
 #include <vgd/node/MultipleInstances.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 
 

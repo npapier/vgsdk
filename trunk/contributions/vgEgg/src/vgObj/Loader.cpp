@@ -150,12 +150,12 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 	//fopen_s(&file, pathFilename, "r");
 	if(!fp.good())
 	{
-		vgDebug::get().logDebug("vgObj::loadObj: Unable to open file %s", pathFilename );
+		vgLogDebug("vgObj::loadObj: Unable to open file %s", pathFilename );
 		return ( retVal );
 	}
 	else
 	{
-		vgDebug::get().logDebug("vgObj::loadObj: load %s", pathFilename );
+		vgLogDebug("vgObj::loadObj: load %s", pathFilename );
 	}
 
 
@@ -210,7 +210,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 				break;
 
 			default:
-				vgDebug::get().logDebug("vgObj::loadObj : Unknown token %c%s", token, line.c_str() );
+				vgLogDebug("vgObj::loadObj : Unknown token %c%s", token, line.c_str() );
 				break;
 			}
 			break;

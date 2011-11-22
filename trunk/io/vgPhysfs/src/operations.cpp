@@ -7,7 +7,8 @@
 #include <vector>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <vgDebug/convenience.hpp>
+
+#include <vgDebug/helpers.hpp>
 
 #include "vgPhysfs/BlowFish.hpp"
 #include "vgPhysfs/operations.hpp"

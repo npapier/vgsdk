@@ -14,7 +14,9 @@
 #include <map>
 
 #include <vgd/Shp.hpp>
-#include <vgDebug/convenience.hpp>
+
+#include <vgDebug/helpers.hpp>
+
 #include <vgio/ILoader.hpp>
 
 
@@ -81,7 +83,7 @@ struct RegisterLoader
  		vgd::Shp< loaderType > loader( new loaderType() );
 		
 		LoaderRegistry::getLoaderRegistry()->addLoader( loader, type );
-		vgLogDebug2( "Adds in loader registry : %s", type.c_str() );
+		vgLogDebug( "Adds in loader registry : %s", type.c_str() );
 	}
 };
 

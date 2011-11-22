@@ -12,7 +12,7 @@
 #include <vgd/node/Group.hpp>
 #include <vgd/Shp.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 
 namespace vgAlg
 {

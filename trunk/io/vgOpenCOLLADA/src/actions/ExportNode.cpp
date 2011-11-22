@@ -6,7 +6,7 @@
 
 #include "vgOpenCOLLADA/actions/ExportNode.hpp"
 
-#include <vgDebug/convenience.hpp>
+
 
 #include <vgOpenCOLLADA/exporter/SceneExporter.hpp>
 
@@ -45,11 +45,11 @@ void ExportNode::execute()
 	
 	if( exportSuccess )
 	{
-		vgDebug::get().logStatus( "Node %s exported.", node->getName().c_str() );
+		vgLogStatus( "Node %s exported.", node->getName().c_str() );
 	}
 	else
 	{
-		vgDebug::get().logStatus( "Node %s failed to export.", node->getName().c_str() );
+		vgLogStatus( "Node %s failed to export.", node->getName().c_str() );
 	}
 }
 

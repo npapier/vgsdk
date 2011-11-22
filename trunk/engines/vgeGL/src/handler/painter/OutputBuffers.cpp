@@ -8,7 +8,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <glo/FrameBufferObject.hpp>
 #include <vgd/node/OutputBuffers.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include "vgeGL/engine/Engine.hpp"
 
 

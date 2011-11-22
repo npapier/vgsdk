@@ -5,7 +5,6 @@
 
 #include "vgd/node/EnumRegistry.hpp"
 
-#include <vgDebug/convenience.hpp>
 #include <vgd/Shp.hpp>
 #include <vgd/field/Enum.hpp>
 #include <vgd/node/Camera.hpp>

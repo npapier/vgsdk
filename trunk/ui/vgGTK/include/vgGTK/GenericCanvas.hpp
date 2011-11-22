@@ -18,7 +18,7 @@
 
 #include <vgAlg/actions/SelectedNode.hpp>
 
-#include <vgDebug/convenience.hpp>
+
 #include <vgUI/Canvas.hpp>
 
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>

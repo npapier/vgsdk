@@ -6,7 +6,7 @@
 #include "vgeGL/handler/painter/PointStyle.hpp"
 
 #include <vgd/node/PointStyle.hpp>
-#include <vgDebug/convenience.hpp>
+
 #include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 

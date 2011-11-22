@@ -219,7 +219,7 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 		}
 		else
 		{
-			//vgLogDebug2( "ShadowMappingInput::ShadowMappingInput: Light %s not yet supported by shadow mapping.", current->getLightNode()->getName().c_str() );
+			//vgLogDebug( "ShadowMappingInput::ShadowMappingInput: Light %s not yet supported by shadow mapping.", current->getLightNode()->getName().c_str() );
 			vgAssertN( false, "ShadowMappingInput::ShadowMappingInput: Light not yet supported by shadow mapping." );
 		}
 
