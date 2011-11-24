@@ -47,8 +47,8 @@ vgd::Shp< vgd::node::Texture2D > getInputTexture( const vgd::node::PostProcessin
 		outputBufferIndex = inputValue - PostProcessing::INPUT2_OUTPUT_BUFFER0;
 	}
 	// TEXTURE
-	if (	(PostProcessing::TEXTURE0 <= inputValue) &&
-			(inputValue <= PostProcessing::TEXTURE0)	)
+	else if (	(PostProcessing::TEXTURE0 <= inputValue) &&
+				(inputValue <= PostProcessing::TEXTURE0)	)
 	{
 		textureIndex = inputValue - PostProcessing::TEXTURE0;
 	}
