@@ -149,7 +149,7 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 	{
 		bRetVal = false;
 
-		vgDebug::get().logWarning( "Unknown file extension in %s.", pathfilename.c_str() );
+		vgLogWarning( "Unknown file extension in %s.", pathfilename.c_str() );
 	}
 
 
@@ -157,12 +157,12 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 	if ( bRetVal )
 	{
 		// Shows in the log that the file has been loaded.
-		vgDebug::get().logStatus( "File %s loaded.", pathfilename.c_str() );
+		vgLogStatus( "File %s loaded.", pathfilename.c_str() );
 	}
 	else
 	{
 		// Shows in the log that something has gone wrong.
-		vgDebug::get().logWarning( "Unable to load file %s.", pathfilename.c_str() );
+		vgLogWarning( "Unable to load file %s.", pathfilename.c_str() );
 	}
 
 	// Changes the cursor

@@ -6,7 +6,8 @@
 #include "vgsdkTestGtk/vgTest/TestEnvironment.hpp"
 
 #include <gtkmm.h>
-#include <vgDebug/convenience.hpp>
+#include <sbf/log/GlobalLogger.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vgGTK/event/sdl.hpp>
 #include <vgGTK/Logging.hpp>
 
@@ -37,7 +38,7 @@ TestEnvironment::TestEnvironment( int argc, char **argv )
 		m_kit = new Gtk::Main( m_argc, m_argv );
 
 		// Installs the GTK-based logging.
-		vgDebug::set< vgGTK::Logging >();
+		sbf::log::set< vgGTK::Logging >();
 
 		// Another initialization thing.
 		vgGTK::event::initSDL();
