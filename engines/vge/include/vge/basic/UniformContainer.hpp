@@ -180,6 +180,7 @@ struct VGE_API UniformContainer
 
 	typedef std::string KeyType;
 	typedef boost::variant<
+		int,
 		float,
 		vgm::Vec2f, vgm::Vec3f, vgm::Vec4f,
 		vgm::MatrixR > ValueType;
@@ -187,8 +188,12 @@ struct VGE_API UniformContainer
 
 	typedef ContainerType::const_iterator	ConstIteratorType;
 
+	/**
+	 * @brief Returns a pair (begin, end) containing iterators on ContainerType.
+	 *
+	 * @return a pair containing the (begin, end) interators to traverse this container
+	 */
 	std::pair< ConstIteratorType, ConstIteratorType > getIterators() const;
-
 
 
 private:
