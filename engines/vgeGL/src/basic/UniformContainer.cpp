@@ -51,6 +51,11 @@ struct UniformVisitor : public boost::static_visitor<>
 	 */
 	//@{
 
+	void operator() ( int value ) const
+	{
+		m_engine->getCurrentProgram()->setUniform1i( m_name, value );
+	}
+
 	void operator() ( float value ) const
 	{
 		m_engine->getCurrentProgram()->setUniform1f( m_name, value );
