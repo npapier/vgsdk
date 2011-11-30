@@ -24,7 +24,7 @@
 #include <gtkmm/toggleaction.h>
 #include <gtkmm/window.h>
 
-#include <vgDebug/convenience.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vge/engine/UserSettings.hpp>
 #include <vgGTK/ResolutionDialog.hpp>
 #include <vgGTK/engine/UserSettingsDialog.hpp>
@@ -397,7 +397,7 @@ void dragDataReceived( myCanvas * canvas, const Glib::RefPtr<Gdk::DragContext>& 
 		}
 		else
 		{
-			vgLogWarning2( "\"%s\": missing or invalid file path.", filename.c_str() );
+			vgLogWarning( "\"%s\": missing or invalid file path.", filename.c_str() );
 		}
 
 		// Moves the match start forward.

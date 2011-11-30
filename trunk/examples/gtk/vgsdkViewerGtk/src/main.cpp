@@ -11,7 +11,7 @@
 #include <gtk/gtk.h>
 #include <gtkmm.h>
 
-#include <vgDebug/Global.hpp>
+#include <sbf/log/GlobalLogger.hpp>
 #include <vgDebug/helpers.hpp>
 #include <vgDebug/StdStreamsToFiles.hpp>
 #include <vgGTK/event/sdl.hpp>
@@ -182,7 +182,9 @@ int main( int argc, char ** argv )
 	Gtk::Main	kit( &argc, &argv );
 
 	// Installs the GTK-based logging.
-	vgDebug::set< vgGTK::Logging >();
+	sbf::log::set< vgGTK::Logging >();
+	vgDebug::StdStreamsToFiles redirection( "vgsdkViewer.cout.txt", "vgsdkViewer.cerr.txt", vgDebug::StdStreamsToFiles::TRUNCATE );
+	//vgDebug::setAssertEnabled(false);
 
 	// Another initialization thing.
 	vgGTK::event::initSDL();
