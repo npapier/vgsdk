@@ -65,8 +65,14 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	// Updates engine state
 	if ( glEngine->isGLSLEnabled() )
 	{
-		assert( !glEngine->getUniformState().isUniform( "nearFar") && "Uniform nearFar already used" );
-		glEngine->getUniformState().addUniform( "nearFar", glEngine->getNearFar() );
+		// random
+		glEngine->setUniformRandom();
+
+		// time
+		glEngine->setUniformTime();
+
+		// nearFar
+		glEngine->setUniformNearFar();
 	}
 
 	paint( glEngine, pCastedNode );

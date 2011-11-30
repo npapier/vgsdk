@@ -11,6 +11,7 @@
 #include <boost/tuple/tuple.hpp>
 
 #include <vgd/Shp.hpp>
+#include <vgd/basic/Time.hpp>
 #include <vgd/field/Enum.hpp>
 #include <vgd/field/FieldManager.hpp>
 #include <vgd/field/TAccessors.hpp>
@@ -275,6 +276,14 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	void install( vgd::Shp< vge::handler::Handler > shpHandler );
 
+	//@}
+
+
+	/**
+	 * @name regard/disregard handler(s)
+	 */
+	//@{
+
 	/**
 	 * @brief Activates the evaluation process for all node type.
 	 *
@@ -391,7 +400,25 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	void setStateStackTop( vgd::node::Node *pNode );
 
+	/**
+	 * @brief Adds an element(a copy of the current top) to the top of the state stack.
+	 */
+	void pushStateStack();
 
+	/**
+	 * @brief Removes the element from the top of the stack.
+	 * 
+	 * @return true if sucessful, false if size of the stack is already zero.
+	 */
+	bool popStateStack();
+
+	//@}
+
+
+	/**
+	 * @name State stack accessors
+	 */
+	//@{
 
 	/**
 	 * @brief Retrieves the desired node list from the top of the state stack
@@ -647,19 +674,6 @@ struct VGE_API Engine : public vgd::field::FieldManager
 		return bDefined;
 	}
 
-
-	/**
-	 * @brief Adds an element(a copy of the current top) to the top of the state stack.
-	 */
-	void pushStateStack();
-
-	/**
-	 * @brief Removes the element from the top of the stack.
-	 * 
-	 * @return true if sucessful, false if size of the stack is already zero.
-	 */
-	bool popStateStack();
-
 	//@}
 
 
@@ -699,6 +713,15 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @name Built-in state accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the elapsed time between the creation of the engine and the call of this method.
+	 *
+	 * Use cases: input value for a random generator, time based animation and so on.
+	 *
+	 * @return a time duration object measuring the elapsed time between the creation of the engine and the call of this method.
+	 */
+	const vgd::basic::TimeDuration getElapsedTime() const;
 
 
 	/**
@@ -961,6 +984,7 @@ protected:
 	static const int32					StateStack_SizeHint;
 
 
+	vgd::basic::Time				m_constructorTime;			///< the time point of the constructor call
 	vgm::Vec2i						m_drawingSurfaceSize;		///< the drawing surface size (window size)
 	const vgd::node::Camera *		m_camera;					///< the last encountered Camera node
 	vgm::Rectangle2i				m_viewport;					///< the value of \c viewport field for the last encountered Camera node with this field defined

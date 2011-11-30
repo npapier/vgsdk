@@ -54,7 +54,9 @@ struct GLSLHelpers
 	static const std::string& getVGSDKUniformDecl()
 	{
 		static const std::string retVal =	"// UNIFORMS\n"
-											"uniform vec2 nearFar;\n\n";
+											"uniform float	random;\n"
+											"uniform int	time;\n"
+											"uniform vec2	nearFar;\n\n";
 
 		return retVal;
 	}

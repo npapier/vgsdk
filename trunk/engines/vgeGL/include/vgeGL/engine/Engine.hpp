@@ -256,6 +256,35 @@ public:
 
 
 	/**
+	 * @name Uniforms
+	 */
+	//@{
+
+	/**
+	 * @brief Initializes 'random' uniform with a random value between 0 and 1.
+	 *
+	 * @pre !getUniformState().isUniform( "random" )
+	 */
+	void setUniformRandom();
+
+	/**
+	 * @brief Initializes 'time' uniform with getElapsedTime().ms()
+	 *
+	 * @pre !getUniformState().isUniform( "time" )
+	 */
+	void setUniformTime();
+
+	/**
+	 * @brief Initializes 'nearFar' uniform with getNearFar()
+	 *
+	 * @pre !getUniformState().isUniform( "nearFar" )
+	 */
+	void setUniformNearFar();
+
+	//@}
+
+
+	/**
 	 * @name Global state
 	 *
 	 * 'Global state' means the value of a state at the end of the scene graph traversing.

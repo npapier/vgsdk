@@ -2092,12 +2092,14 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 //engine->begin2DRendering( &lviewport, false );
 // @todo a light version of begin2DRendering
 
-		// nearFar
-		const vgm::Vec2f nearFar = engine->getNearFar();
-		vgAssert( nearFar.isValid() );
+		// random
+		engine->setUniformRandom();
 
-		vgAssertN( !engine->getUniformState().isUniform( "nearFar"), "Uniform nearFar already used" );
-		engine->getUniformState().addUniform( "nearFar", nearFar );
+		// time
+		engine->setUniformTime();
+
+		// nearFar
+		engine->setUniformNearFar();
 
 		// param1f0
 		const float param1f0 = params1f0[i];
