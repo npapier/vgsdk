@@ -23,7 +23,8 @@ namespace engine
 
 
 Engine::Engine()
-:	m_drawingSurfaceSize(0, 0),
+:	//m_constructorTime(),
+	m_drawingSurfaceSize(0, 0),
 	m_camera( 0 ),
 	m_paintService( new vge::service::Painter() ),
 	m_trace( false )
@@ -485,6 +486,13 @@ MultiMatrixStack& Engine::getGeometricalMatrix()
 MultiMatrixStack& Engine::getTextureMatrix()
 {
 	return m_textures;
+}
+
+
+
+const vgd::basic::TimeDuration Engine::getElapsedTime() const
+{
+	return m_constructorTime.getElapsedTime();
 }
 
 

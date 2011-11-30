@@ -286,6 +286,34 @@ Engine::UniformState& Engine::getUniformState()
 
 
 
+void Engine::setUniformRandom()
+{
+	const int random	= rand();
+	const float fRandom	= static_cast<float>(random) / 32767.f;
+	vgAssertN( !getUniformState().isUniform( "random" ), "Uniform 'random' already used" );
+	getUniformState().addUniform( "random", fRandom );
+}
+
+
+void Engine::setUniformTime()
+{
+	const vgd::basic::TimeDuration duration = getElapsedTime();
+	vgAssertN( !getUniformState().isUniform( "time" ), "Uniform 'time' already used" );
+	getUniformState().addUniform( "time", static_cast<int>(duration.ms()) );
+}
+
+
+void Engine::setUniformNearFar()
+{
+	const vgm::Vec2f nearFar = getNearFar();
+	vgAssert( nearFar.isValid() );
+
+	vgAssertN( !getUniformState().isUniform( "nearFar"), "Uniform 'nearFar' already used" );
+	getUniformState().addUniform( "nearFar", nearFar );
+}
+
+
+
 const vgd::Shp< vgeGL::engine::GLSLState > Engine::getGlobalGLSLState() const
 {
 	return m_globalGLSLState;
