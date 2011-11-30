@@ -24,7 +24,7 @@
 #include <vgd/node/Transform.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgeGL/technique/MultiMain.hpp>
-#include <vgDebug/convenience.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vge/engine/UserSettings.hpp>
 #include <vgGTK/engine/UserSettingsDialog.hpp>
 #include <vgGTK/node/ColladaSettingsDialog.hpp>
@@ -197,7 +197,7 @@ void myCanvas::clearScene()
 // @todo
 //	resetSceneGraph();
 	getScene()->removeAllChildren();
-	vgDebug::get().logStatus( "Scene cleared." );
+	vgLogStatus( "Scene cleared." );
 
 	// Changes the cursor
 	get_root_window()->set_cursor();
@@ -335,12 +335,12 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 		getScene()->addChild( retVal.second );
 
 		// Shows in the log that the file has been loaded.
-		vgDebug::get().logStatus( "File %s loaded.", pathfilename.c_str() );
+		vgLogStatus( "File %s loaded.", pathfilename.c_str() );
 	}
 	else
 	{
 		// Shows in the log that something has gone wrong.
-		vgDebug::get().logWarning( "Unable to load file %s.", pathfilename.c_str() );
+		vgLogWarning( "Unable to load file %s.", pathfilename.c_str() );
 	}
 
 	// Changes the cursor
