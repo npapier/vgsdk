@@ -23,31 +23,6 @@ namespace technique
 
 
 
-// SUBTECHNIQUE
-SubTechnique::SubTechnique()
-: m_isEnabled( false )
-{}
-
-void SubTechnique::reset()
-{
-	m_isEnabled = false;
-}
-
-
-const bool SubTechnique::isEnabled() const
-{
-	return m_isEnabled;
-}
-
-const bool SubTechnique::setEnabled( const bool enabled )
-{
-	const bool oldState = isEnabled();
-	m_isEnabled = enabled;
-	return oldState;
-}
-
-
-
 // DEPTHOFFIELD
 namespace
 {
