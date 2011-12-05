@@ -344,7 +344,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 // @todo CLEAN
 	/**
-	 * name States management
+	 * @name States management
 	 * 
 	 * todo Should go in a new class ?
 	 * todo push(Node), pop(Node).
@@ -352,7 +352,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	//@{
 
 	/**
-	 * brief Resets completely the state stack.
+	 * @brief Resets completely the state stack.
 	 * 
 	 * This method call clearStateStack() and after call initializeStateStack().
 	 * 

@@ -615,6 +615,31 @@
 	</node>
 
 
+	<node name = "Noise" inherits = "SingleAttribute">
+		<doxygen>
+			<docBrief>Built-in post-processing effect adding noise</docBrief>
+			<doc>Most digital cameras acquired images with noise.</doc>
+			<doc>This built-in post-processing effect simulates dominant source of noise, i.e. the photon noise.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_frameBufferNodes</ingroup>
+		</doxygen>
+
+		<sf name="noiseModel" doc="Sets the noise model.">
+			<type name="enum">
+				<enum default="PHOTON">
+					<value name="NO" doc="No noise simulation"/>
+					<value name="PHOTON" doc="Photon noise simulation"/>
+				</enum>
+			</type>
+		</sf>
+
+		<sf name="factors" doc="Sets the linear and constant factor used to generate noise.">
+			<type name = "Vec2f" namespace="vgm" default = "0.1, 0.1"></type>
+		</sf>
+	</node>
+
+
 <!--@todo debug blit when scaleDownUp -->
 	<node name = "OutputBufferProperty" inherits = "MultiAttribute">
 		<doxygen>

@@ -31,19 +31,6 @@ namespace
 
 
 
-DepthOfField::DepthOfField()
-: m_dof(0)
-{}
-
-
-void DepthOfField::reset()
-{
-	SubTechnique::reset();
-
-	m_dof = 0;
-}
-
-
 void DepthOfField::stageCollectInformationsBegin( vgeGL::engine::Engine * engine )
 {
 	engine->regardIfIsA< vgd::node::DepthOfField >();
@@ -54,8 +41,8 @@ const bool DepthOfField::collectInformationsCallback( vge::visitor::TraverseElem
 {
 	if ( iterator->first->isA< vgd::node::DepthOfField >() && iterator->second )
 	{
-		m_dof = dynamic_cast< vgd::node::DepthOfField * >( iterator->first );
-		if ( m_dof->getCameraModel() == vgd::node::DepthOfField::THIN_LENS )
+		setNode( iterator->first );
+		if ( getDOFNode()->getCameraModel() == vgd::node::DepthOfField::THIN_LENS )
 		{
 			setEnabled();
 		}
@@ -67,15 +54,6 @@ const bool DepthOfField::collectInformationsCallback( vge::visitor::TraverseElem
 	}
 }
 
-
-vgd::Shp< vgeGL::rc::DepthOfField > DepthOfField::getRC( vgeGL::engine::Engine * engine )
-{
-	vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
-
-	vgd::Shp< vgeGL::rc::DepthOfField > rc = rcManager.getShp< vgeGL::rc::DepthOfField >( m_dof );
-
-	return rc;
-}
 
 
 void DepthOfField::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::DepthOfField > rc )
@@ -269,60 +247,15 @@ void DepthOfField::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * 
 	using vgd::node::PostProcessing;
 	vgd::Shp< PostProcessing > final = rc->rootPostProcessing->getChild< PostProcessing >( 4 );
 
-	const float sampling = static_cast<float>(m_dof->getSampling());
+	const float sampling = static_cast<float>(getDOFNode()->getSampling());
 	final->setParam1f0( sampling );
 }
 
 
 void DepthOfField::stageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
 {
-	if ( isEnabled() )
-	{
-		// Tests if rc must be created and/or updated ?
-		bool callUpdateRC;
-
-		vgd::Shp< glo::IResource > rc = getRC( engine );
-
-		if ( !rc )
-		{
-			// Creates resource
-			rc.reset( new vgeGL::rc::DepthOfField ); // @todo a template parameter of DepthOfField
-
-			// Register node and its resource into manager
-			vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
-			rcManager.add( m_dof, rc );				// @todo getNode/setNode() in SubTechnique
-
-			// RC must be initialized
-			callUpdateRC = true;
-		}
-		else
-		{
-			// Tests if rc is up to date ?
-			const bool isUpdated = isRCUpdated( rc );
-			callUpdateRC = !isUpdated;
-		}
-
-		// Updates RC ?
-		if ( callUpdateRC )
-		{
-			updateRC( technique, engine, rc );
-		}
-		// else nothing to do
-	}
-	// else nothing to do
+	templateStageInitializeRC<vgeGL::rc::DepthOfField>( technique, engine );
 }
-
-
-
-const bool DepthOfField::isRCUpdated( vgd::Shp< glo::IResource > genericRC )
-{
-	if ( !isEnabled() ) return true;
-
-	// Gets node dirty flag
-	vgd::field::DirtyFlag * nodeDF = m_dof->getDirtyFlag( m_dof->getDFNode() );
-	return nodeDF->isValid();
-}
-
 
 
 void DepthOfField::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
@@ -339,7 +272,7 @@ void DepthOfField::updateRC( vgeGL::technique::ForwardRendering * technique, vge
 
 	if ( !rc->rootPostProcessing )
 	{
-		stageInitializePostProcessing( m_dof, rc );
+		stageInitializePostProcessing( getDOFNode(), rc );
 	}
 
 	stageUpdatePostProcessingParameters( engine, rc );
@@ -351,7 +284,7 @@ void DepthOfField::stagePrePaint( vgeGL::technique::ForwardRendering * technique
 {
 	if ( !isEnabled() ) return;
 
-	vgd::Shp< vgeGL::rc::DepthOfField > rc = vgd::dynamic_pointer_cast< vgeGL::rc::DepthOfField >( getRC(engine) );
+	vgd::Shp< vgeGL::rc::DepthOfField > rc = getRC< vgeGL::rc::DepthOfField >(engine);
 	vgAssert( rc );
 
 	stageInitializeOutputBuffers( technique, engine, rc );
@@ -359,26 +292,25 @@ void DepthOfField::stagePrePaint( vgeGL::technique::ForwardRendering * technique
 	// Sets uniforms
 
 	// focus
-	vgAssertN( !engine->getUniformState().isUniform( "d_focus" ), "Uniform named d_focus not found" );
-	engine->getUniformState().sethUniform( "d_focus", m_dof->getFocus() );
+	vgAssertN( !engine->getUniformState().isUniform( "d_focus" ), "Uniform named 'd_focus' not found" );
+	engine->getUniformState().sethUniform( "d_focus", getDOFNode()->getFocus() );
 
 	// focusToFar
-	vgAssertN( !engine->getUniformState().isUniform( "d_focusToFar" ), "Uniform named d_focusToFar not found" );
-	engine->getUniformState().sethUniform( "d_focusToFar", m_dof->getFocusToFar() );
+	vgAssertN( !engine->getUniformState().isUniform( "d_focusToFar" ), "Uniform named 'd_focusToFar' not found" );
+	engine->getUniformState().sethUniform( "d_focusToFar", getDOFNode()->getFocusToFar() );
 
 	// focusToNear
-	vgAssertN( !engine->getUniformState().isUniform( "d_focusToNear" ), "Uniform named d_focusToNear not found" );
-	engine->getUniformState().sethUniform( "d_focusToNear", m_dof->getFocusToNear() );
+	vgAssertN( !engine->getUniformState().isUniform( "d_focusToNear" ), "Uniform named 'd_focusToNear' not found" );
+	engine->getUniformState().sethUniform( "d_focusToNear", getDOFNode()->getFocusToNear() );
 
 	// farMaximumBlurriness
-	vgAssertN( !engine->getUniformState().isUniform( "far_clamp" ), "Uniform named far_clamp not found" );
-	engine->getUniformState().sethUniform( "far_clamp", m_dof->getFarMaximumBlurriness() );
+	vgAssertN( !engine->getUniformState().isUniform( "far_clamp" ), "Uniform named 'far_clamp' not found" );
+	engine->getUniformState().sethUniform( "far_clamp", getDOFNode()->getFarMaximumBlurriness() );
 
 	// nearMaximumBlurriness
-	vgAssertN( !engine->getUniformState().isUniform( "near_clamp" ), "Uniform named near_clamp not found" );
-	engine->getUniformState().sethUniform( "near_clamp", -m_dof->getNearMaximumBlurriness() );
+	vgAssertN( !engine->getUniformState().isUniform( "near_clamp" ), "Uniform named 'near_clamp' not found" );
+	engine->getUniformState().sethUniform( "near_clamp", -getDOFNode()->getNearMaximumBlurriness() );
 }
-
 
 
 void DepthOfField::stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::DepthOfField > rc )
@@ -422,13 +354,18 @@ void DepthOfField::stagePostPaint( vgeGL::technique::ForwardRendering * techniqu
 {
 	if ( !isEnabled() ) return;
 
-	vgd::Shp< vgeGL::rc::DepthOfField > rc = vgd::dynamic_pointer_cast< vgeGL::rc::DepthOfField >( getRC(engine) );
+	vgd::Shp< vgeGL::rc::DepthOfField > rc = getRC< vgeGL::rc::DepthOfField >(engine);
 	vgAssert( rc );
 
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, technique->m_textures, &(rc->postProcessing) );
 	technique->blit( engine, finalBuffers );
 }
 
+
+vgd::node::DepthOfField * DepthOfField::getDOFNode() const
+{
+	return static_cast< vgd::node::DepthOfField * >( getNode() );
+}
 
 
 } // namespace technique

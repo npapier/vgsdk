@@ -17,12 +17,14 @@ namespace technique
 
 // SUBTECHNIQUE
 SubTechnique::SubTechnique()
-: m_isEnabled( false )
+:	m_isEnabled	( false	),
+	m_node		( 0		)
 {}
 
 void SubTechnique::reset()
 {
-	m_isEnabled = false;
+	m_isEnabled	= false;
+	m_node		= 0;
 }
 
 
@@ -38,6 +40,31 @@ const bool SubTechnique::setEnabled( const bool enabled )
 	return oldState;
 }
 
+
+const bool SubTechnique::isRCUpdated( vgd::Shp< glo::IResource > genericRC )
+{
+	if ( !isEnabled() )
+	{
+		return true;
+	}
+	else
+	{
+		// Gets node dirty flag
+		vgd::field::DirtyFlag * nodeDF = getNode()->getDirtyFlag( getNode()->getDFNode() );
+		return nodeDF->isValid();
+	}
+}
+
+
+vgd::node::Node * SubTechnique::getNode() const
+{
+	return m_node;
+}
+
+void SubTechnique::setNode( vgd::node::Node * node )
+{
+	m_node = node;
+}
 
 
 } // namespace technique

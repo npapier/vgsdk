@@ -10,8 +10,8 @@
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/TransformDragger.hpp>
 #include "vgeGL/engine/GLSLState.hpp"
-#include "vgeGL/technique/DepthOfField.hpp"
 #include "vgeGL/technique/Main.hpp"
+#include "vgeGL/technique/SubTechnique.hpp"
 
 namespace glo { struct FrameBufferObject; struct Texture2D; }
 namespace vgd { namespace node { struct Fluid; struct Grid; struct FrameBuffer; struct Quad; struct Texture2D; } }
@@ -169,7 +169,7 @@ public: // for modification by technique::DepthOfField
 
 	bool isPostProcessingEnabled;
 private:
-		// input for post-processing
+	// input for post-processing
 	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 	PostProcessingStateContainer * m_postProcessing;
 
@@ -233,7 +233,11 @@ public: // for technique::DepthOfField
 	vgd::Shp< vgd::node::Texture2D >				m_blackTexture2D; // @todo moves in Engine or in a repository ?
 	//@}
 
-	vgeGL::technique::DepthOfField dof;
+	typedef vgd::Shp< vgeGL::technique::SubTechnique > SubTechniqueShp;
+	typedef std::vector< SubTechniqueShp > TechniqueContainer;
+	typedef TechniqueContainer::const_iterator TechniqueContainerConstIterator;
+	typedef TechniqueContainer::iterator TechniqueContainerIterator;
+	TechniqueContainer m_subtechniques;
 
 // @todo only glo FBO
 	//typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;

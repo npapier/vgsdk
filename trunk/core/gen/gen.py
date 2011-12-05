@@ -556,7 +556,7 @@ private:
 		generateCopyright(fcpp)
 		fcpp.write("""#include "vgd/node/EnumRegistry.hpp"
 
-#include <vgDebug/convenience.hpp>
+#include <vgDebug/helpers.hpp>
 #include <vgd/Shp.hpp>
 #include <vgd/field/Enum.hpp>
 """)
