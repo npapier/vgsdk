@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <boost/assign/std/vector.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/foreach.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <vgeGL/rc/GLSLProgram.hpp>
 #include <strstream>
@@ -50,6 +51,10 @@
 #include "vgeGL/technique/helpers.hpp"
 #include "vgeGL/technique/PostProcessing.hpp"
 #include "vgeGL/technique/ShadowMapping.hpp"
+
+// sub-techniques
+#include "vgeGL/technique/Noise.hpp"
+#include "vgeGL/technique/DepthOfField.hpp"
 
 // ALL
 // @todo installs new handler intead of doing test on node type
@@ -286,6 +291,10 @@ ForwardRendering::ForwardRendering()
 		vgd::Shp< Image > image( new Image( 1, 1, 1, Image::LUMINANCE, Image::UINT8, &imageData ) );
 		m_blackTexture2D->setImage( image );
 	}
+
+	// Initializes sub-techniques
+	m_subtechniques.push_back( vgd::makeShp( new vgeGL::technique::DepthOfField() ) );
+	m_subtechniques.push_back( vgd::makeShp( new vgeGL::technique::Noise() ) );
 }
 
 
@@ -419,17 +428,31 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	engine->regardIfIsAKindOf<vgd::node::PostProcessing>();
 
 	//
-	dof.reset();
-	dof.stageCollectInformationsBegin( engine );
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+	{
+		subtechnique->reset();
+		subtechnique->stageCollectInformationsBegin( engine );
+	}
 
 	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
 	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
 			i != iEnd;
 			++i )
 	{
-		//
-		const bool dofRetVal = dof.collectInformationsCallback( i );
-		if ( dofRetVal )
+		bool retVal;
+		BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+		{
+			//
+			retVal = subtechnique->collectInformationsCallback( i );
+			if ( retVal )
+			{
+				// Found, so stop foreach.
+				break;
+			}
+			// else nothing to do
+		}
+
+		if ( retVal )
 		{
 			continue;
 		}
@@ -538,7 +561,10 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	m_overlays = &(glslStateFinal->overlays);
 
 	//
-	dof.stageCollectInformationsEnd( engine );
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+	{
+		subtechnique->stageCollectInformationsEnd( engine );
+	}
 
 	endPass();
 
@@ -1501,7 +1527,10 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 // STAGE 2
 	// RC
-	dof.stageInitializeRC( this, engine );
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+	{
+		subtechnique->stageInitializeRC( this, engine );
+	}
 
 	// STEREO
 	engine->setEyeUsagePolicy( vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY );
@@ -1584,9 +1613,11 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	stageFluidUpdateSceneHeightMap( engine, traverseElements );
 	stageFluidSimulation( engine );
 
-	// DOF
-	// must be done before stageInitializeOutputBuffers()
-	dof.stagePrePaint( this, engine );
+	// DepthOfField and Noise stagePrePaint() must be done before stageInitializeOutputBuffers()
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+	{
+		subtechnique->stagePrePaint( this, engine );
+	}
 
 	// OUTPUT BUFFERS init
 	stageInitializeOutputBuffers( engine );
@@ -1611,10 +1642,13 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 	if ( isShadowEnabled )	description += " with shadow";
 	if ( isPostProcessingEnabled )	description += " and post-processing";
-	if ( dof.isEnabled() )
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
 	{
-		description += ", ";
-		description += typeid(dof).name();
+		if ( subtechnique->isEnabled() )
+		{
+			description += ", ";
+			description += typeid(*subtechnique).name();
+		}
 	}
 	setPassDescription( description );
 
@@ -1629,14 +1663,22 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	// POST-PROCESSSING
 	stageConfigurePostProcessing( engine );
 
-	// DOF
-	dof.stageBeginPaint( this, engine );
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+	{
+		subtechnique->stageBeginPaint( this, engine );
+	}
 
 		// First pass : OPAQUE PASS (draw opaque shape)
 		const bool mustDoTransparencyPass = evaluateOpaquePass( paintService(), PassIsolationMask(0), true );
-		dof.stagePaint( this, engine );
+		BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+		{
+			subtechnique->stagePaint( this, engine );
+		}
 
-	dof.stageEndPaint( this, engine );
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+	{
+		subtechnique->stageEndPaint( this, engine );
+	}
 
 	endPass();
 
@@ -1662,14 +1704,22 @@ stageInitializeOutputBuffers( engine );
 
 		// Second pass : TRANSPARENT PASS (draw transparent shape)
 
-	// DOF
-	dof.stageBeginPaint( this, engine );
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+	{
+		subtechnique->stageBeginPaint( this, engine );
+	}
 
 		//m_fbo->setDrawBuffers( 0 );
 		evaluateTransparentPass( paintService(), PassIsolationMask(0)/*PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK)*/, true );
-		dof.stagePaint( this, engine );
+		BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+		{
+			subtechnique->stagePaint( this, engine );
+		}
 
-		dof.stageEndPaint( this, engine );
+		BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+		{
+			subtechnique->stageEndPaint( this, engine );
+		}
 
 		endPass();
 
@@ -1677,14 +1727,18 @@ stageInitializeOutputBuffers( engine );
 	}
 
 
-	// DOF
-	dof.stagePostPaint( this, engine );
+	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+	{
+		subtechnique->stagePostPaint( this, engine );
+	}
 
 	// POST-PROCESSING
-	if ( !dof.isEnabled() )
+// @todo enable it
+	//stagePostProcessing( engine );
+/*	if ( !dof.isEnabled() )
 	{
 		stagePostProcessing( engine );
-	}
+	}*/
 
 /*			// First pass : OPAQUE PASS (draw opaque shape)
 			const bool mustDoTransparencyPass = evaluateOpaquePass( paintService() );
@@ -2238,6 +2292,7 @@ void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc
 // @todo removes warnings
 	glBlitFramebuffer(	0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1],
 						0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1],
+//						0, 0, engine->getDrawingSurfaceSize()[0] * m_lastCurrentScaleForVertex, engine->getDrawingSurfaceSize()[1] * m_lastCurrentScaleForVertex,
 						GL_COLOR_BUFFER_BIT, GL_NEAREST );
 	glo::FrameBufferObject::setReadToDefaultFrameBuffer();
 }

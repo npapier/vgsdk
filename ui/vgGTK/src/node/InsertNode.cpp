@@ -22,6 +22,7 @@
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
 #include <vgd/node/MatrixTransform.hpp>
+#include <vgd/node/Noise.hpp>
 #include <vgd/node/OutputBuffers.hpp>
 #include <vgd/node/OutputBufferProperty.hpp>
 #include <vgd/node/PointLight.hpp>
@@ -49,6 +50,7 @@ namespace node
 								vgd::Shp< vgd::node::LightModel >,
 								vgd::Shp< vgd::node::Material >,
 								vgd::Shp< vgd::node::MatrixTransform >,
+								vgd::Shp< vgd::node::Noise >,
 								vgd::Shp< vgd::node::OutputBuffers >,
 								vgd::Shp< vgd::node::OutputBufferProperty >,
 								vgd::Shp< vgd::node::PointLight >,
@@ -69,6 +71,7 @@ namespace node
 																	("LightModel")
 																	("Material")
 																	("MatrixTransform")
+																	("Noise")
 																	("OutputBuffers")
 																	("OutputBufferProperty")
 																	("PointLight")

@@ -3,14 +3,14 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGEGL_TECHNIQUE_DEPTHOFFIELD_HPP
-#define _VGEGL_TECHNIQUE_DEPTHOFFIELD_HPP
+#ifndef _VGEGL_TECHNIQUE_NOISE_HPP
+#define _VGEGL_TECHNIQUE_NOISE_HPP
 
 #include "vgeGL/technique/SubTechnique.hpp"
 
 namespace glo { struct IResource; }
-namespace vgd { namespace node { struct DepthOfField; } }
-namespace vgeGL { namespace rc { struct DepthOfField; } }
+namespace vgd { namespace node { struct Noise; } }
+namespace vgeGL { namespace rc { struct Noise; } }
 namespace vgeGL { namespace technique { struct ForwardRendering; } }
 
 
@@ -23,7 +23,12 @@ namespace technique
 
 
 
-struct VGEGL_API DepthOfField : public SubTechnique
+/**
+ * @brief Technique implementing noise.
+ *
+ * @see vgd::node::Noise
+ */
+struct VGEGL_API Noise : public SubTechnique
 {
 	/**
 	 * @name Stage 1
@@ -39,18 +44,20 @@ struct VGEGL_API DepthOfField : public SubTechnique
 	 */
 	//@{
 
-	// colorBuffer and blurFactorBuffer of rc
-	void stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::DepthOfField > rc );
+	// colorBuffer of rc
+	void stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::Noise > rc );
+
+	// randomTexture
+	void stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc );
 
 	// rootPostProcessing and postProcessing of rc
-	void stageInitializePostProcessing( vgd::node::DepthOfField * node, vgd::Shp< vgeGL::rc::DepthOfField > rc );
+	void stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vgeGL::rc::Noise > rc );
 
-	// updates parameters of post-processing : final.numberOfTaps
-	void stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::DepthOfField > rc );
+	// updates parameters of post-processing : factors
+	void stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc );
 
 
 	void stageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
-
 	void updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
 
 	//@}
@@ -64,9 +71,10 @@ struct VGEGL_API DepthOfField : public SubTechnique
 	void stagePrePaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
 
 	// hasOutputBufferProperties and m_outputBufferProperties of technique
-	void stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::DepthOfField > rc );
+	void stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc );
 
 	//@}
+
 
 
 	/**
@@ -80,7 +88,7 @@ struct VGEGL_API DepthOfField : public SubTechnique
 
 
 private:
-	vgd::node::DepthOfField * getDOFNode() const;
+	vgd::node::Noise * getNoiseNode() const;
 };
 
 
@@ -89,4 +97,4 @@ private:
 
 } // namespace vgeGL
 
-#endif //#ifndef _VGEGL_TECHNIQUE_DEPTHOFFIELD_HPP
+#endif //#ifndef _VGEGL_TECHNIQUE_NOISE_HPP
