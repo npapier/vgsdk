@@ -227,4 +227,8 @@ void Camera::sethFovy( const FovyValueType fovy)
 		matrix.setPerspective( fovy, aspect, zNear, zFar );
 		setProjection( matrix );
 	}
+	else
+	{
+		vgAssertN( false, "sethFovy() called before zNear, zFar and aspect have been initialized.");
+	}
 }
