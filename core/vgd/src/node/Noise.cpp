@@ -76,7 +76,7 @@ Noise::Noise( const std::string nodeName ) :
 void Noise::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setFactors( vgm::Vec2f(0.1, 0.1) );
+	setFactors( vgm::Vec2f(0.025, 0.025) );
 	setNoiseModel( PHOTON );
 }
 

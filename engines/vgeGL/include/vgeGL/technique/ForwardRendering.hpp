@@ -168,6 +168,12 @@ public: // for modification by technique::DepthOfField
 	OutputBufferPropertyStateContainer * m_outputBufferProperties;
 
 	bool isPostProcessingEnabled;
+
+	// @todo moves in Engine
+	const bool hasDrawingSurfaceSizeChanged() const
+	{
+		return drawingSurfaceSizeChanged;
+	}
 private:
 	// input for post-processing
 	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
@@ -196,7 +202,8 @@ public: // for technique::DepthOfField
 		std::vector< vgd::Shp< vgd::node::Texture2D > >&	outputBuffers,
 		PostProcessingStateContainer *						postProcessingContainer );
 
-	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo );
+	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source );
+	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source, vgd::Shp< vgeGL::rc::FrameBufferObject > destination );
 private:
 
 	// OVERLAY
@@ -215,9 +222,9 @@ private:
 
 	void stageInitializeOutputBuffers( vgeGL::engine::Engine * engine );
 	void initializeEngineBuffers( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
+public: // for subtechniques (DepthOfField and co)
 		vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer;
 		vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo;
-public: // for technique::DepthOfField
 		std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures;		///< textures for FBO
 
 

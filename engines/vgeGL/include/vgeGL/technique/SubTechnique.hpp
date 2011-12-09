@@ -151,7 +151,7 @@ struct VGEGL_API SubTechnique
 			else
 			{
 				// Tests if rc is up to date ?
-				const bool isUpdated = isRCUpdated( rc );
+				const bool isUpdated = isRCUpdated( technique, engine, rc );
 				callUpdateRC = !isUpdated;
 			}
 
@@ -177,7 +177,7 @@ struct VGEGL_API SubTechnique
 	 * Returns always true, if this technique is disabled.
 	 * Otherwise returns the validity of dirty flag for the node of this technique (see getNode()).
 	 */
-	virtual const bool isRCUpdated( vgd::Shp< glo::IResource > rc );
+	virtual const bool isRCUpdated( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
 
 	/**
 	 * @brief

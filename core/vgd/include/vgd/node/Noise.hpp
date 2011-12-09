@@ -26,7 +26,7 @@ namespace node
  * Most digital cameras acquired images with noise. This built-in post-processing effect simulates dominant source of noise, i.e. the photon noise. 
  *
  * New fields defined by this node :
- * - SFVec2f \c factors = vgm::Vec2f(0.1, 0.1)<br>
+ * - SFVec2f \c factors = vgm::Vec2f(0.025, 0.025)<br>
  *   Sets the linear and constant factor used to generate noise.<br>
  *<br>
  * - SFEnum \c noiseModel = PHOTON<br>
