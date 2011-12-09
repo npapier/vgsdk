@@ -41,7 +41,7 @@ const bool SubTechnique::setEnabled( const bool enabled )
 }
 
 
-const bool SubTechnique::isRCUpdated( vgd::Shp< glo::IResource > genericRC )
+const bool SubTechnique::isRCUpdated( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
 {
 	if ( !isEnabled() )
 	{

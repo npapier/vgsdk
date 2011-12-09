@@ -83,18 +83,23 @@ void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::S
 	//image->save("noise.png");
 
 	// 2D texture containing noise image
-	using vgd::node::Texture2D;
-	vgd::Shp< Texture2D > texture2D = Texture2D::create("vgsdk:noise:randomTexture");
-	texture2D->setImage( image );
-	//texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
-	//texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
-	texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::NEAREST );
-	texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::NEAREST );
+	if ( !rc->randomTexture )
+	{
+		using vgd::node::Texture2D;
+		vgd::Shp< Texture2D > texture2D = Texture2D::create("vgsdk:noise:randomTexture");
 
-	texture2D->setWrap( Texture2D::WRAP_S, Texture2D::REPEAT );
-	texture2D->setWrap( Texture2D::WRAP_T, Texture2D::REPEAT );
+		//texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
+		//texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
+		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::NEAREST );
+		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::NEAREST );
 
-	rc->randomTexture = texture2D;
+		texture2D->setWrap( Texture2D::WRAP_S, Texture2D::REPEAT );
+		texture2D->setWrap( Texture2D::WRAP_T, Texture2D::REPEAT );
+
+		rc->randomTexture = texture2D;
+	}
+
+	rc->randomTexture->setImage( image );
 }
 
 
@@ -157,6 +162,24 @@ void Noise::stageInitializeRC( vgeGL::technique::ForwardRendering * technique, v
 }
 
 
+const bool Noise::isRCUpdated( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
+{
+	if ( !isEnabled() )
+	{
+		return true;
+	}
+	else
+	{
+		// Gets node dirty flag
+		vgd::field::DirtyFlag * nodeDF = getNode()->getDirtyFlag( getNode()->getDFNode() );
+
+		bool isRCUpdated =	nodeDF->isValid() &&
+							!technique->hasDrawingSurfaceSizeChanged();
+		return isRCUpdated;
+	}
+}
+
+
 void Noise::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
 {
 	if ( !isEnabled() ) return;
@@ -164,21 +187,25 @@ void Noise::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::eng
 	vgd::Shp< vgeGL::rc::Noise > rc = vgd::dynamic_pointer_cast< vgeGL::rc::Noise >( genericRC );
 	vgAssert( rc );
 
+	// color buffer
 	if ( !rc->colorBuffer )
 	{
 		stageInitializeOutputBuffersNodes( rc );
 	}
 
-	if ( !rc->randomTexture )
+	// random texture
+	if ( !rc->randomTexture || technique->hasDrawingSurfaceSizeChanged() )
 	{
 		stageInitializeRandomTexture( engine, rc );
 	}
 
+	// post processing nodes
 	if ( !rc->rootPostProcessing )
 	{
 		stageInitializePostProcessing( getNoiseNode(), rc );
 	}
 
+	// post processing parameters
 	stageUpdatePostProcessingParameters( engine, rc );
 }
 
@@ -227,7 +254,7 @@ void Noise::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeG
 	vgAssert( rc );
 
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, technique->m_textures, &(rc->postProcessing) );
-	technique->blit( engine, finalBuffers );
+	technique->blit( engine, finalBuffers, technique->m_fbo );
 }
 
 

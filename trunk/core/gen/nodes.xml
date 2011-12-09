@@ -635,7 +635,7 @@
 		</sf>
 
 		<sf name="factors" doc="Sets the linear and constant factor used to generate noise.">
-			<type name = "Vec2f" namespace="vgm" default = "0.1, 0.1"></type>
+			<type name = "Vec2f" namespace="vgm" default = "0.025, 0.025"></type>
 		</sf>
 	</node>
 

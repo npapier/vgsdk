@@ -1734,11 +1734,7 @@ stageInitializeOutputBuffers( engine );
 
 	// POST-PROCESSING
 // @todo enable it
-	//stagePostProcessing( engine );
-/*	if ( !dof.isEnabled() )
-	{
-		stagePostProcessing( engine );
-	}*/
+	stagePostProcessing( engine );
 
 /*			// First pass : OPAQUE PASS (draw opaque shape)
 			const bool mustDoTransparencyPass = evaluateOpaquePass( paintService() );
@@ -1830,10 +1826,9 @@ void ForwardRendering::stageConfigurePostProcessing( vgeGL::engine::Engine * eng
 
 void ForwardRendering::stagePostProcessing( vgeGL::engine::Engine * engine )
 {
-	if ( isPostProcessingEnabled )
+	if ( isPostProcessingEnabled && m_postProcessing->getNum()>0 )
 	{
 		const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = applyPostProcessing( engine, m_textures, m_postProcessing );
-
 		blit( engine, finalBuffers );
 	}
 	else
@@ -2283,10 +2278,10 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 
 // @todo glo api : blit( fboSrc, fboDst, COLOR:DEPTH:STENCIL ) LINEAR or NEAREST,  blit( ..., srcRect, ..., dstRext... ).
-void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > fbo )
+void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source )
 {
-	fbo->bind();
-	fbo->setReadBuffer();
+	source->bind();
+	source->setReadBuffer();
 	glo::FrameBufferObject::setDrawToDefaultFrameBuffer();
 
 // @todo removes warnings
@@ -2297,6 +2292,26 @@ void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc
 	glo::FrameBufferObject::setReadToDefaultFrameBuffer();
 }
 
+
+void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source, vgd::Shp< vgeGL::rc::FrameBufferObject > destination )
+{
+	source->bindToRead();
+	source->setReadBuffer();
+
+	const std::vector< int > destinationDrawBuffers = destination->getFullDrawBuffers();
+	destination->bindToDraw();
+	destination->setDrawBuffer();
+
+	glBlitFramebuffer(	0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1],
+						0, 0, engine->getDrawingSurfaceSize()[0], engine->getDrawingSurfaceSize()[1],
+//						0, 0, engine->getDrawingSurfaceSize()[0] * m_lastCurrentScaleForVertex, engine->getDrawingSurfaceSize()[1] * m_lastCurrentScaleForVertex,
+						GL_COLOR_BUFFER_BIT, GL_NEAREST );
+
+	// Restores
+	glo::FrameBufferObject::setReadToDefaultFrameBuffer();
+
+	destination->setDrawBuffers( destinationDrawBuffers );
+}
 
 
 void ForwardRendering::stageOverlays( vgeGL::engine::Engine * engine )
@@ -2317,26 +2332,3 @@ void ForwardRendering::stageOverlays( vgeGL::engine::Engine * engine )
 
 } // namespace vgeGL
 
-/*// Copies FBO into FBO 0
-			// @todo glo api
-			vgd::Shp< glo::Texture2D > texSrc;
-			vgd::Shp< glo::Texture2D > texDst;
-
-			//
-			texSrc = m_fbo->getColorAsTexture2D(0);
-			texSrc->bind();
-			const GLint internalFormat = texSrc->getInternalFormat();
-
-			texDst = m_fbo0->getColorAsTexture2D(0);
-			m_fbo->setReadBuffer(0);
-			texDst->bind();
-// ???			
-			glCopyTexImage2D( GL_TEXTURE_2D, 0, internalFormat, 0, 0, texSrc->getWidth(), texSrc->getHeight(), 0 );
-
-			//
-			texSrc = m_fbo->getColorAsTexture2D(1);
-			texDst = m_fbo0->getColorAsTexture2D(1);
-			m_fbo->setReadBuffer(1);
-			texDst->bind();
-
-			glCopyTexImage2D( GL_TEXTURE_2D, 0, internalFormat, 0, 0, texSrc->getWidth(), texSrc->getHeight(), 0 );*/
