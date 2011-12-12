@@ -238,7 +238,7 @@ void Graph::getChildren( const vgd::node::Node* pSourceNode, vgd::node::NodeList
 	const detail::EdgeNamePropertyMap& edgeNamePM = getEdgeNamePropertyMap();
 
 	detail::bglGraphTraits::out_edge_iterator	out_i, out_end;
-	for(	tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
+	for(	boost::tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
 			out_i != out_end;
 			++out_i )
 	{
@@ -256,7 +256,7 @@ void Graph::getEnabledChildren(	const vgd::node::Node* pSourceNode, vgd::node::N
 	const detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
 
 	detail::bglGraphTraits::out_edge_iterator	out_i, out_end;
-	for(	tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
+	for(	boost::tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
 			out_i != out_end;
 			++out_i )
 	{
@@ -288,7 +288,7 @@ vgd::Shp< vgd::node::Group > Graph::getParent( const vgd::node::Node* pTargetNod
 	const detail::VertexNamePropertyMap&	vertexNamePM = getVertexNamePropertyMap();
 
 	detail::bglGraphTraits::in_edge_iterator	in_i, in_end;
-	tie(in_i, in_end) = in_edges(pTargetNode->vertexDescriptor(), bglGraph());
+	boost::tie(in_i, in_end) = in_edges(pTargetNode->vertexDescriptor(), bglGraph());
 
 	if ( in_i != in_end )
 	{
@@ -308,7 +308,7 @@ void Graph::getParents( const vgd::node::Node* pTargetNode,	vgd::node::NodeList&
 	const detail::VertexNamePropertyMap&	vertexNamePM = getVertexNamePropertyMap();
 
 	detail::bglGraphTraits::in_edge_iterator	in_i, in_end;
-	for(	tie(in_i, in_end) = in_edges(pTargetNode->vertexDescriptor(), bglGraph());
+	for(	boost::tie(in_i, in_end) = in_edges(pTargetNode->vertexDescriptor(), bglGraph());
 			in_i != in_end;
 			++in_i )
 	{
@@ -329,7 +329,7 @@ void Graph::getEnabledParents(	const vgd::node::Node* pTargetNode, vgd::node::No
 	const detail::EdgeNamePropertyMap&		edgeNamePM		= getEdgeNamePropertyMap();
 
 	detail::bglGraphTraits::in_edge_iterator		in_i, in_end;
-	for(	tie(in_i, in_end) = in_edges(pTargetNode->vertexDescriptor(), bglGraph());
+	for(	boost::tie(in_i, in_end) = in_edges(pTargetNode->vertexDescriptor(), bglGraph());
 			in_i != in_end;
 			++in_i )
 	{
@@ -361,7 +361,7 @@ void Graph::setEdges( const vgd::node::Node* pSourceNode, const bool isEnable )
 	const detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
 
 	detail::bglGraphTraits::out_edge_iterator		out_i, out_end;
-	for(	tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
+	for(	boost::tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
 			out_i != out_end;
 			++out_i )
 	{
@@ -377,7 +377,7 @@ void Graph::setEdges( const vgd::node::Node* pSourceNode, const std::set< int >&
 	const detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
 
 	detail::bglGraphTraits::out_edge_iterator	out_i, out_end;
-	for(	tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
+	for(	boost::tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
 			out_i != out_end;
 			++out_i )
 	{
@@ -404,7 +404,7 @@ void Graph::setEdgesNegate( const vgd::node::Node* pSourceNode )
 	const detail::EdgeNamePropertyMap&	edgeNamePM = getEdgeNamePropertyMap();
 
 	detail::bglGraphTraits::out_edge_iterator		out_i, out_end;
-	for(	tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
+	for(	boost::tie(out_i, out_end) = out_edges(pSourceNode->vertexDescriptor(), bglGraph());
 			out_i != out_end;
 			++out_i )
 	{
@@ -465,7 +465,7 @@ const bool Graph::bgl_isOutEdgesPacked( vertex_descriptor vertexDescriptor ) con
 
 	const detail::EdgeNamePropertyMap&			edgeNamePM = getEdgeNamePropertyMap();
 
-	for (	i32I = 0, tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
+	for (	i32I = 0, boost::tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
 			out_i != out_end;
 			++out_i, i32I++)
 	{
@@ -490,7 +490,7 @@ void Graph::bgl_packOutEdges( vertex_descriptor vertexDescriptor )
 
 	detail::EdgeNamePropertyMap&			edgeNamePM = getEdgeNamePropertyMap();
 
-	for(	ui32I = 0, tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
+	for(	ui32I = 0, boost::tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
 			out_i != out_end;
 			++out_i, ui32I++ )
 	{
@@ -510,7 +510,7 @@ void Graph::bgl_makePlaceInOutEdges( vertex_descriptor vertexDescriptor, const u
 	detail::bglGraphTraits::out_edge_iterator	out_i;
 	detail::bglGraphTraits::out_edge_iterator	out_end;
 
-	for(	ui32I = 0, tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
+	for(	ui32I = 0, boost::tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
 			out_i != out_end;
 			++out_i, ui32I++ )
 	{
@@ -550,7 +550,7 @@ void Graph::bgl_removeAllOutEdges( vertex_descriptor vertexDescriptor )
 	detail::bglGraphTraits::out_edge_iterator		out_i, out_end;
 
 	// collect children vertex descriptor.
-	for(	tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
+	for(	boost::tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
 			out_i != out_end;
 			++out_i )
 	{
@@ -592,7 +592,7 @@ Graph::bgl_removeOutEdge( vertex_descriptor vertexDescriptor, const uint32 edgeN
 	detail::bglGraphTraits::out_edge_iterator		out_i;
 	detail::bglGraphTraits::out_edge_iterator		out_end;
 
-	for(	ui32I = 0, tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
+	for(	ui32I = 0, boost::tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
 			out_i != out_end;
 			++out_i, ++ui32I )
 	{
@@ -666,7 +666,7 @@ Graph::bgl_findOutEdgeWithEdgeName( vertex_descriptor vertexDescriptor, const ui
 	detail::bglGraphTraits::out_edge_iterator	out_i;
 	detail::bglGraphTraits::out_edge_iterator	out_end;
 
-	for(	ui32I = 0, tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
+	for(	ui32I = 0, boost::tie(out_i, out_end) = out_edges(vertexDescriptor, bglGraph());
 			out_i != out_end;
 			++out_i, ui32I++ )
 	{
@@ -693,7 +693,7 @@ Graph::bgl_findOutEdge( vertex_descriptor vertexDescriptorSource, vertex_descrip
 	detail::bglGraphTraits::out_edge_iterator		out_i;
 	detail::bglGraphTraits::out_edge_iterator		out_end;
 
-	for(	tie(out_i, out_end) = out_edges(vertexDescriptorSource, bglGraph());
+	for(	boost::tie(out_i, out_end) = out_edges(vertexDescriptorSource, bglGraph());
 			out_i != out_end;
 			++out_i )
 	{
