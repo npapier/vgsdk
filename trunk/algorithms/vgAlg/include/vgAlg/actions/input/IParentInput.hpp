@@ -32,7 +32,7 @@ struct VGALG_API IParentInput
 
 
 protected:
-	vgd::WeakPtr< vgd::node::Group > m_parent;
+	vgd::Wkp< vgd::node::Group > m_parent;
 };
 
 } // namespace input

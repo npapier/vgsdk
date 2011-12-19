@@ -32,7 +32,7 @@ struct VGALG_API INodeInput
 
 
 protected:
-	vgd::WeakPtr< vgd::node::Node > m_node;
+	vgd::Wkp< vgd::node::Node > m_node;
 };
 
 } // namespace input
