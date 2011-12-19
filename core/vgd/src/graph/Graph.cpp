@@ -116,7 +116,7 @@ Graph::~Graph()
 void Graph::addNode( vgd::Shp< vgd::node::Node > node )
 {
 	// Creates the vertex property
-	vgd::WeakPtr<vgd::node::Node> wkpNode( node );
+	vgd::Wkp<vgd::node::Node> wkpNode( node );
 
 	// Is there a vertex to recycle ?
 	if ( m_freeVertexDescriptors.empty() )
