@@ -34,7 +34,7 @@ struct VGALG_API IHiddenNodeInput
 
 
 protected:
-	vgd::WeakPtr < vgAlg::actions::HiddenNode > m_hiddenNode;
+	vgd::Wkp< vgAlg::actions::HiddenNode > m_hiddenNode;
 };
 
 } // namespace input

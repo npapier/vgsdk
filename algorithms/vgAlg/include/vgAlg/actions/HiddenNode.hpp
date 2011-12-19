@@ -11,7 +11,7 @@
 //#include <gtkmm/menu.h>
 
 #include <vgd/Shp.hpp>
-#include <vgd/WeakPtr.hpp>
+#include <vgd/Wkp.hpp>
 #include <vgd/node/VertexShape.hpp>
 
 
@@ -58,7 +58,7 @@ struct VGALG_API HiddenNode
 	bool hasNode();
 
 private:
-	vgd::WeakPtr< vgd::node::VertexShape >	m_node;
+	vgd::Wkp< vgd::node::VertexShape >		m_node;
 	std::vector< vgd::node::Primitive >		m_primitives;
 };
 

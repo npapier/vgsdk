@@ -107,8 +107,8 @@ private:
 
 	static vgd::Shp< SelectedNode >						m_selectedNode;	///< Singleton of SelectedNode.
 
-	vgd::WeakPtr< vgd::node::Node >						m_node;			///< Current selected node.
-	vgd::WeakPtr< vgd::node::Group >					m_parentNode;	///< Parnet of current selected node.
+	vgd::Wkp< vgd::node::Node >							m_node;			///< Current selected node.
+	vgd::Wkp< vgd::node::Group >						m_parentNode;	///< Parnet of current selected node.
 
 	vgd::Shp< std::list< vgd::Shp< HiddenNode > > >		m_hiddenNodes; ///< List of hidden nodes.
 
