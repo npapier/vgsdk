@@ -13,7 +13,7 @@
 
 #include "vgd/vgd.hpp"
 #include "vgd/Shp.hpp"
-#include "vgd/WeakPtr.hpp"
+#include "vgd/Wkp.hpp"
 
 namespace vgd
 {
@@ -177,7 +177,7 @@ private:
 /**
  * @brief Vertex name used to store reference to node.
  */
-typedef boost::property<boost::vertex_name_t,	vgd::WeakPtr<vgd::node::Node> >	VertexProperty;
+typedef boost::property<boost::vertex_name_t,	vgd::Wkp<vgd::node::Node> >	VertexProperty;
 
 /**
  * @brief Edge name used to store edge ordering and enable/disable state.
