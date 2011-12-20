@@ -6,7 +6,7 @@
 #ifndef _VGSDL_EVENT_DEVICE_MOUSE_HPP_
 #define _VGSDL_EVENT_DEVICE_MOUSE_HPP_
 
-#include <vgd/WeakPtr.hpp>
+#include <vgd/Wkp.hpp>
 #include <vgd/event/device/Mouse.hpp>
 #include <vgd/event/Location2.hpp>
 
@@ -80,7 +80,7 @@ private:
 	 */
 	::vgd::event::Location2::Location	m_previousLocation;
 
-	typedef std::vector< vgd::WeakPtr< Mouse >  >	MiceCollection;
+	typedef std::vector< vgd::Wkp< Mouse >  >	MiceCollection;
 
 	/**
 	 * @brief The collection of joystick already in use.
