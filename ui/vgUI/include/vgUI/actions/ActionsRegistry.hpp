@@ -78,7 +78,7 @@ private:
 	*				40-~: other
 	*/
 	std::map< int, vgd::Shp< vgUI::actions::IActionUI > > m_actionMap; ///< the map of UI action (key = order of menu)
-	std::map< vgd::WeakPtr< vgAlg::actions::HiddenNode >, vgd::Shp< vgUI::actions::IActionUI > >	m_hiddenNodeMap; ///< the map of hidden node and its related UI action
+	std::map< vgd::Wkp< vgAlg::actions::HiddenNode >, vgd::Shp< vgUI::actions::IActionUI > >	m_hiddenNodeMap; ///< the map of hidden node and its related UI action
 };
 
 
