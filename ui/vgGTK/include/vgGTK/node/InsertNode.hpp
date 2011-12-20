@@ -13,7 +13,7 @@
 #include <gtkmm/uimanager.h>
 
 #include <vgd/Shp.hpp>
-#include <vgd/WeakPtr.hpp>
+#include <vgd/Wkp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
 
@@ -78,8 +78,8 @@ private:
 	//@}
 
 	vgd::Shp< vgd::node::Node >			m_createdNode;			///< node to add.
-	vgd::WeakPtr< vgd::node::Node >		m_currentNode;			///< current selected node.
-	vgd::WeakPtr< vgd::node::Group >	m_currentParentNode;	///< current parent of selected node.
+	vgd::Wkp< vgd::node::Node >			m_currentNode;			///< current selected node.
+	vgd::Wkp< vgd::node::Group >		m_currentParentNode;	///< current parent of selected node.
 	std::vector< std::string >			m_classNames;			///< typeid name list of all creatable nodes.
 
 };

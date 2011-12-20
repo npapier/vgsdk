@@ -23,7 +23,7 @@ namespace alg
 /**
  * @brief Encrpyt a file.
  */
-	struct VGGTK_API EncryptFile : public vgAlg::actions::IAction
+struct VGGTK_API EncryptFile : public vgAlg::actions::IAction
 {
 	EncryptFile();
 
