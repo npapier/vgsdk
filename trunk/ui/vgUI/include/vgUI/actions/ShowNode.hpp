@@ -29,7 +29,7 @@ struct VGUI_API ShowNode : public IActionUI
 	virtual const bool isValide( State state );
 
 private:
-	vgd::WeakPtr < vgAlg::actions::HiddenNode > m_hiddenNode;
+	vgd::Wkp< vgAlg::actions::HiddenNode > m_hiddenNode;
 
 };
 
