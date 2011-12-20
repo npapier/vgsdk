@@ -14,7 +14,7 @@
 #include <vgAlg/actions/HiddenNode.hpp>
 
 #include <vgd/Shp.hpp>
-#include <vgd/WeakPtr.hpp>
+#include <vgd/Wkp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
 
@@ -113,16 +113,16 @@ private:
 
 
 
-	vgd::WeakPtr< vgd::node::Node >		m_currentNode;			///< current selected node.
-	vgd::WeakPtr< vgd::node::Group >	m_currentParentNode;	///< current parent of selected node.
-	vgUI::Canvas						*m_canvas;				///< canvas of the application
+	vgd::Wkp< vgd::node::Node >		m_currentNode;			///< current selected node.
+	vgd::Wkp< vgd::node::Group >	m_currentParentNode;	///< current parent of selected node.
+	vgUI::Canvas					*m_canvas;				///< canvas of the application
 
 
 	POPUP_LOCATION						m_location;				///< Location of the menu (Canvas, TreeView...).
 
 	//new action manager variable
 	Gtk::Menu*															m_rootMenu;			///< The root menu.
-	vgd::WeakPtr< vgUI::actions::ActionsRegistry >						m_actionsRegistry;	///< Instance of the action UI registry.
+	vgd::Wkp< vgUI::actions::ActionsRegistry >							m_actionsRegistry;	///< Instance of the action UI registry.
 	std::map< vgd::Shp < vgUI::actions::IActionUI >, Gtk::MenuItem* >	m_actionMap;		///< Map with an action and its GTK MenuItem.
 
 	/**

@@ -24,7 +24,7 @@ namespace ui
 /**
  * @brief ActionUI to popup remove confirmation.
  */
-	struct VGGTK_API EncryptFileUI : public vgUI::actions::EncryptFile
+struct VGGTK_API EncryptFileUI : public vgUI::actions::EncryptFile
 {
 	META_ACTION_HPP( EncryptFileUI );
 	
