@@ -15,7 +15,7 @@
 #include <SDL_joystick.h>
 
 #include <vgd/Shp.hpp>
-#include <vgd/WeakPtr.hpp>
+#include <vgd/Wkp.hpp>
 #include <vgd/event/device/Joystick.hpp>
 
 #include "vgSDL/vgSDL.hpp"
@@ -212,7 +212,7 @@ private:
 	 */
 	Joystick( SDL_Joystick* joystick, const uint identifier = 0 );
 
-	typedef std::vector< vgd::WeakPtr< Joystick >  >	JoyCollection;
+	typedef std::vector< vgd::Wkp< Joystick >  >	JoyCollection;
 
 	static JoyCollection	m_joyCache;		///< The collection of joystick already in use.
 	SDL_Joystick			* m_joystick;	///< The wrapped SDL joystick structure.
