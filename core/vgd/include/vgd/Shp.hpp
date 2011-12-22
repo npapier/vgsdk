@@ -115,7 +115,7 @@ template<class T, class U> inline bool operator<(Shp<T> const & a, Shp<U> const 
  */
 template<class T> inline void swap(Shp<T> & a, Shp<T> & b)
 {
-	boost::swap(a,b);
+	std::swap(a,b);
 }
 
 

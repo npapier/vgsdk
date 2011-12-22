@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -52,24 +52,13 @@
 
 
 
-namespace vgd
-{
-
-namespace visitor
-{
-
-namespace internal
-{
-
-//using namespace boost;								// modification for vgsdk, but has been disabled (because the scope of this directive seems to be not weel respected by cl7.1)
-
-//namespace boost {									// modification for vgsdk
+namespace boost {									// modification for vgsdk
 
   template <class Visitor, class Graph>
-  class DFSVisitorConcept {
+  class vgsdkDFSVisitorConcept {
   
-  DFSVisitorConcept() {} 						// modification for vgsdk
-//  DFSVisitorConcept( DFS) {} 							// modification for vgsdk   
+  vgsdkDFSVisitorConcept() {} 						// modification for vgsdk
+//  vgsdkDFSVisitorConcept( DFS) {} 							// modification for vgsdk   
 												// to remove warnings (level 4) C4510 and C4610 under VS7.x.
   public:
     void constraints() {
@@ -93,16 +82,14 @@ namespace internal
   namespace detail {
 
     template <class IncidenceGraph, class DFSVisitor, class ColorMap>
-    void depth_first_visit_impl
+    void vgsdk_depth_first_visit_impl
       (const IncidenceGraph& g,
        typename boost::graph_traits<IncidenceGraph>::vertex_descriptor u, 
        DFSVisitor& vis,  // pass-by-reference here, important!
        ColorMap color)
     {
-      using namespace boost;												// modification for vgsdk
-
       function_requires<IncidenceGraphConcept<IncidenceGraph> >();
-      function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
+      function_requires<vgsdkDFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
       typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
       function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
       typedef typename property_traits<ColorMap>::value_type ColorValue;
@@ -118,11 +105,11 @@ namespace internal
 
 	        ColorValue v_color = get(color, v);
 	        if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
-	          depth_first_visit_impl(g, v, vis, color);
+	          vgsdk_depth_first_visit_impl(g, v, vis, color);
 	        } else if (v_color == Color::gray()) vis.back_edge(*ei, g);
 	        else
 	        {
-	        	depth_first_visit_impl(g, v, vis, color);					// ADD 3 : vgsdk modification
+	        	vgsdk_depth_first_visit_impl(g, v, vis, color);					// ADD 3 : vgsdk modification
 	        	
 	        	vis.forward_or_cross_edge(*ei, g);
 	        }
@@ -133,33 +120,44 @@ namespace internal
     }
   } // namespace detail
 
+} // namespace boost
+
+
+
+namespace vgd
+{
+
+namespace visitor
+{
+
+namespace internal
+{
+
   template <class VertexListGraph, class DFSVisitor, class ColorMap, 
             class Vertex>
   void
   depth_first_search(const VertexListGraph& g, DFSVisitor& vis, ColorMap color,		// vgsdk modification(add ref to visitors)
                      Vertex start_vertex)
   {
-    using namespace boost;															// modification for vgsdk
+    boost::function_requires<boost::vgsdkDFSVisitorConcept<DFSVisitor, VertexListGraph> >();
+    typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
+    typedef boost::color_traits<ColorValue> Color;
 
-    function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
-    typedef typename property_traits<ColorMap>::value_type ColorValue;
-    typedef color_traits<ColorValue> Color;
-
-    typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+    typename boost::graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
+    for (std::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       put(color, *ui, Color::white());       vis.initialize_vertex(*ui, g);
     }
 
     /*if (start_vertex != *vertices(g).first){*/ vis.start_vertex(start_vertex, g);					// vgsdk modification
-      detail::depth_first_visit_impl(g, start_vertex, vis, color);
+      boost::detail::vgsdk_depth_first_visit_impl(g, start_vertex, vis, color);
     /*}*/																				// vgsdk modification
 
 	if ( vis.visitForest() ) 														// vgsdk: ADD 1
 	{
-	    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+	    for (std::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
 	      ColorValue u_color = get(color, *ui);
 	      if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
-	        detail::depth_first_visit_impl(g, *ui, vis, color);
+	        boost::detail::vgsdk_depth_first_visit_impl(g, *ui, vis, color);
 	      }
 	    }
 	}																			// vgsdk: ADD 1
@@ -285,11 +283,9 @@ namespace internal
      typename boost::graph_traits<IncidenceGraph>::vertex_descriptor u, 
      DFSVisitor vis, ColorMap color)
   {
-    detail::depth_first_visit_impl(g, u, vis, color);
+    detail::vgsdk_depth_first_visit_impl(g, u, vis, color);
   }*/
 
-
-//} // namespace boost			// begin: modification for vgsdk
 
 } // namespace internal
 
