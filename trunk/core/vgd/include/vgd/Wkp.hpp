@@ -62,7 +62,7 @@ template<class T, class U> inline bool operator<(Wkp<T> const & a, Wkp<U> const 
  */
 template<class T> void swap(Wkp<T> & a, Wkp<T> & b)
 {
-	boost::swap(a,b);
+	std::swap(a,b);
 }
 
 
