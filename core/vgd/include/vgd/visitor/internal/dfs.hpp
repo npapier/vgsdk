@@ -144,7 +144,7 @@ namespace internal
     typedef boost::color_traits<ColorValue> Color;
 
     typename boost::graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-    for (std::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       put(color, *ui, Color::white());       vis.initialize_vertex(*ui, g);
     }
 
@@ -154,7 +154,7 @@ namespace internal
 
 	if ( vis.visitForest() ) 														// vgsdk: ADD 1
 	{
-	    for (std::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+	    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
 	      ColorValue u_color = get(color, *ui);
 	      if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
 	        boost::detail::vgsdk_depth_first_visit_impl(g, *ui, vis, color);
