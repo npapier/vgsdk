@@ -130,8 +130,8 @@ vgd::Shp< vgio::ILoader > getLoaderByFilename( std::string filename )
 	}
 	else if( extension.compare( ".obj" ) == 0 )
 	{
-		//retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "obj");
-		vgLogWarning( "Unknown file extension in %s.", filename.c_str() );
+		retVal = LoaderRegistry::getLoaderRegistry()->getLoader( "obj");
+		//vgLogWarning( "Unknown file extension in %s.", filename.c_str() );
 	}
 	else if( extension.compare( ".vgarch" ) == 0 )
 	{
