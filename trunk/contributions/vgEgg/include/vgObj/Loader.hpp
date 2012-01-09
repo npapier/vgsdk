@@ -9,7 +9,10 @@
 
 #include <utility>
 
+#include <vgio/ILoader.hpp>
 #include "vgObj/vgObj.hpp"
+#include <vgio/LoaderRegistry.hpp>
+#include <vgio/Media.hpp>
 
 namespace vgd
 {
@@ -39,17 +42,45 @@ namespace vgObj
  *
  * @todo add support for lines and textures.
  */
-struct VGOBJ_API Loader
+struct VGOBJ_API Loader : public vgio::ILoader
 {
+	META_LOADER_HPP( vgObj::Loader )
+
+
 	/**
 	 * @brief Loads a vgsdk mesh from .obj (in ascii).
-	 *
-	 * @param pathFilename the name of file to read.
-	 * @param bCCW Counter Clock Wise computation of normals.
-	 *
-	 * @return true if successful, false otherwise.
+	 * 
+	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
+	 */	
+	virtual std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, const bool bCCW = false );
+
+	/**
+	 * @brief Loads a vgsdk mesh from .obj (in ascii).
+	 * 
+	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
 	 */
-	std::pair< bool, vgd::Shp< vgd::node::VertexShape > >	loadObj( const char *pathFilename, bool bCCW = false );
+		virtual std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, const bool bCCW = false );
+
+	/**
+	 * @brief Load a model from a file in memory and the list of image already loaded in memory.
+	 * 
+	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
+	 */
+	virtual std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW = false );
+
+
+	virtual vgd::Shp< ILoader > clone();
+
+protected:
+
+	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const vgio::Media & media, const std::string & filePath, const bool bCCW );
+
+	/**
+	 * @brief Load obj object from the given istream.
+	 */
+	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > loadObj( std::istream & in, vgd::Shp< vgd::node::Group > group, const bool bCCW );
+
+
 };
 
 

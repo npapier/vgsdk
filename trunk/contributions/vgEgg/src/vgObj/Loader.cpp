@@ -11,19 +11,22 @@
 
 #include <vgd/Shp.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
+#include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
-#include <vgDebug/helpers.hpp>
 
+#include <vgio/FileSystem.hpp>
+#include <vgio/helpers.hpp>
+#include <vgio/LoaderRegistry.hpp>
 
 
 namespace
 {
-void computeTrianglesNormals(vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt32 > &vertexIndex, vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> &normals, int32 beginIndex, int32 numTris)
+void computeTrianglesNormals( vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt32 > &vertexIndex, vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > &normals, int32 beginIndex, int32 numTris )
 {
 	vgm::Vec3f faceNormal;
 	vgm::Vec3f v1, v2;	
 
-	for(int32 i=0; i < numTris; i++)
+	for( int32 i=0; i < numTris; i++ )
 	{
 		// compute face normal
 		int32 indexA, indexB, indexC;
@@ -45,12 +48,12 @@ void computeTrianglesNormals(vgd::field::EditorRO< vgd::field::MFVec3f > &vertic
 }
 
 
-void computeQuadsNormals(vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt32 > &vertexIndex, vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> &normals, int32 beginIndex, int32 numQuads)
+void computeQuadsNormals( vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt32 > &vertexIndex, vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > &normals, int32 beginIndex, int32 numQuads )
 {
 	vgm::Vec3f faceNormal;
 	vgm::Vec3f v1, v2;	
 
-	for(int32 i=0; i < numQuads; i++)
+	for( int32 i=0; i < numQuads; i++ )
 	{
 		// compute face normal
 		int32 indexA, indexB, indexC, indexD;
@@ -73,9 +76,9 @@ void computeQuadsNormals(vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, 
 	}
 }
 
-void computeNormals(vgd::Shp<vgd::node::VertexShape> vertexShape)
+void computeNormals( vgd::Shp<vgd::node::VertexShape> vertexShape )
 {
-	vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> normals = vertexShape->getFNormalRW();
+	vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > normals = vertexShape->getFNormalRW();
 	vgd::field::EditorRO< vgd::field::MFVec3f > verticesRO = vertexShape->getFVertexRO();
 	vgd::field::EditorRO< vgd::field::MFUInt32 > vertexIndexRO = vertexShape->getFVertexIndexRO();
 	vgd::field::EditorRO< vgd::field::MFPrimitive > primitiveRO = vertexShape->getFPrimitiveRO();
@@ -86,30 +89,30 @@ void computeNormals(vgd::Shp<vgd::node::VertexShape> vertexShape)
 	int32 numVertices;
 	numVertices	= verticesRO->size();
 
-	normals->resize(numVertices);
-	for (int j=0; j<numVertices;++j)
+	normals->resize( numVertices );
+	for ( int j=0; j < numVertices; ++j )
 	{
-		(*normals)[j].null();
+		(*normals)[j].setNull();
 	}
 
-	for (unsigned int i=0; i<primitiveRO->size(); i++)
+	for ( unsigned int i=0; i<primitiveRO->size(); i++ )
 	{
 		vgd::node::Primitive curPrim = (*primitiveRO)[i];
 		int32 beginIndex = curPrim.getIndex();
 
-		if (curPrim.getType() == vgd::node::Primitive::TRIANGLES)
+		if ( curPrim.getType() == vgd::node::Primitive::TRIANGLES )
 		{
 			int32 numTris = curPrim.getNumIndices() / 3;
-			computeTrianglesNormals(verticesRO, vertexIndexRO, normals, beginIndex, numTris);
+			computeTrianglesNormals( verticesRO, vertexIndexRO, normals, beginIndex, numTris );
 		}
-		else if (curPrim.getType() == vgd::node::Primitive::QUADS)
+		else if ( curPrim.getType() == vgd::node::Primitive::QUADS )
 		{
 			int32 numQuads = curPrim.getNumIndices() / 4;
-			computeQuadsNormals(verticesRO, vertexIndexRO, normals, beginIndex, numQuads);
+			computeQuadsNormals( verticesRO, vertexIndexRO, normals, beginIndex, numQuads );
 		}
 	}
 	// normalize normals
-	for(int32 i=0; i < numVertices; i++)
+	for( int32 i=0; i < numVertices; i++ )
 	{
 		(*normals)[i].normalize();
 	}
@@ -126,38 +129,124 @@ void computeNormals(vgd::Shp<vgd::node::VertexShape> vertexShape)
 namespace vgObj
 {
 
+META_LOADER_CPP( vgObj::Loader, "obj" )
 
 
-std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const char *pathFilename, bool bCCW )
+
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW ) throw ( std::runtime_error )
+{
+	return load( vgio::FileSystem(), filePath, bCCW );
+}
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media & media, const std::string & filePath, const bool bCCW )
+{
+	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+	retVal.first = false;
+
+	vgd::Shp< vgd::node::Group > group;
+
+	vgd::basic::FilenameExtractor extractor( filePath.c_str() );
+	std::string path			= extractor.getPath();
+	std::string filename		= extractor.getFilename();
+	std::string epathFilename	= extractor.getPathFilename();
+
+	if ( path.length() == 0 )
+	{
+		path = ".";
+	}
+
+	group = vgd::node::Group::create( epathFilename );
+	retVal.second = group;
+
+	// Open file
+	vgd::Shp< std::istream > in = media.open( filePath );
+
+	if (!in)
+	{
+		vgLogDebug("Unable to open file %s", filePath.c_str() );
+
+		return retVal;
+	}
+	else
+	{
+		vgLogDebug("load %s", filePath.c_str() );
+		retVal.first = loadObj( *in, group, bCCW ).first;
+		if ( retVal.first )
+		{
+			vgLogDebug("load %s done", filePath.c_str() );
+		}
+		else
+		{
+			vgLogDebug("Error during loading %s", filePath.c_str() );
+		}
+		return retVal;
+	}
+}
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string pathFilename, vgd::Shp< std::vector< char > > buffer, const bool bCCW )
+{
+	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+	retVal.first = false;
+
+	vgd::Shp< vgd::node::Group > group = vgd::node::Group::create( pathFilename );
+	retVal.second = group;
+
+	std::stringstream in( std::string(buffer->begin(), buffer->end()) );
+
+	vgd::basic::FilenameExtractor extractor( pathFilename.c_str() );
+	std::string path = extractor.getPath();
+
+	if ( path.length() == 0 )
+	{
+		path = ".";
+	}
+
+	retVal.first = loadObj( in, group, bCCW ).first;
+
+	if ( retVal.first )
+	{
+		vgLogDebug("load %s done", pathFilename.c_str() );
+	}
+	else
+	{
+		vgLogDebug("Error during loading %s", pathFilename.c_str() );
+	}
+	return retVal;
+}
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW )
+{
+	vgAssertN( false, "Deprecated and no more supported" );
+	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+	retVal.first = false;
+
+ 	return retVal;
+}
+
+
+
+
+vgd::Shp< vgio::ILoader > Loader::clone()
+{
+	return vgd::makeShp( new Loader() );
+}
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( std::istream & in, vgd::Shp< vgd::node::Group > group, const bool bCCW )
 {
 
 
 	std::pair< bool, vgd::Shp< vgd::node::VertexShape > >		retVal;
 
 
-	vgd::basic::FilenameExtractor extractor( pathFilename );
-	std::string							epathFilename;
-	epathFilename	= extractor.getPathFilename();
-
-
-	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::node::VertexShape::create( epathFilename );
+	vgd::Shp< vgd::node::VertexShape > vertexShape = vgd::node::VertexShape::create( group->getName() );
 	retVal.first	= false;
 	retVal.second = vertexShape;
-
-	// open file
-	std::ifstream fp( pathFilename, std::ios::in);
-	//FILE *file;
-	//fopen_s(&file, pathFilename, "r");
-	if(!fp.good())
-	{
-		vgLogDebug("vgObj::loadObj: Unable to open file %s", pathFilename );
-		return ( retVal );
-	}
-	else
-	{
-		vgLogDebug("vgObj::loadObj: load %s", pathFilename );
-	}
-
 
 	vgd::field::EditorRW<vgd::node::VertexShape::FVertexType> vertices=vertexShape->getFVertexRW();
 	vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> normals=vertexShape->getFNormalRW();
@@ -173,11 +262,11 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 		QUAD
 	} lastPrimitive=NONE, currentPrimitive;
 
-	while (!fp.eof())
+	while (!in.eof())
 	{
 		std::string line;
 		char token, token2;
-		std::getline(fp,line);
+		std::getline(in,line);
 		std::istringstream ls(line);
 		ls >> std::noskipws >> token >> token2 >> std::skipws;
 		switch (token)
@@ -226,11 +315,13 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 			// face
 
 			nbFaces=0;
-			while(!ls.eof())
+			while( !ls.eof() )
 			{
 				int vertex,texture,normal;
 				vgm::Vec3i info;
 				ls >> vertex;
+				if( ls.eof() ) // Protect from ^M end of line characters that confuse previous test
+					continue;
 				vertex--; // la numérotation débute à 1 dans le .obj
 				vertexIndices->push_back(vertex);
 				++nbFaces;
@@ -295,7 +386,8 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( const cha
 	normals.release();
 	vertexIndices.release();
 //	if (emptynormal)
-	computeNormals(vertexShape);
+	computeNormals( vertexShape );
+	group->addChild( vertexShape );
 	retVal.first=true;
 	return retVal;
 }

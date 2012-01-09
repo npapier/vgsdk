@@ -321,6 +321,7 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 //
 	// Load .trian
 	vgTrian::Loader loader;
+	vgObj::Loader loader2; // This is only to force the register of obj loader
 //
 	// Changes the cursor
 	get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
