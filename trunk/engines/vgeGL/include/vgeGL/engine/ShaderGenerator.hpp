@@ -54,7 +54,7 @@ struct GLSLHelpers
 	static const std::string& getVGSDKUniformDecl()
 	{
 		static const std::string retVal =	"// UNIFORMS\n"
-											"uniform float	random;\n"
+											"uniform vec4	random;\n"
 											"uniform int	time;\n"
 											"uniform vec2	nearFar;\n\n";
 
@@ -1283,6 +1283,138 @@ struct GLSLHelpers
 	}
 	str += "    return derivedSize;\n    }\n";*/
 	}
+
+
+	/**
+	 * @brief Returns GLSL textureless classic 2D noise cnoise() and an RSL-style periodic variant pnoise()
+	 *
+	 * Classic Perlin noise, periodic variant : float pnoise(vec2 P, vec2 rep)
+	 * Classic Perlin noise\n : float cnoise(vec2 P)
+	 *
+	 * The motivation for these functions not using any textures is ease of use, self-sufficiency and scalability for massively parallel execution.
+	 *
+	 * @remark Support on OpenGL 2.1, OpenGL 3.x and 4.x, OpenGL ES 2.x and WebGL 1.0
+	 * @remark See LICENSE_webgl-noise
+	 */
+	static const std::string& get_pnoise_cnoise()
+	{
+		static const std::string retVal =
+		"// GLSL textureless classic 2D noise cnoise,\n"
+		"// with an RSL-style periodic variant pnoise.\n"
+		"// Author:  Stefan Gustavson (stefan.gustavson@liu.se)\n"
+		"// Version: 2011-08-22\n"
+		"//\n"
+		"// Many thanks to Ian McEwan of Ashima Arts for the\n"
+		"// ideas for permutation and gradient selection.\n"
+		"//\n"
+		"// Copyright (c) 2011 Stefan Gustavson. All rights reserved.\n"
+		"// Distributed under the MIT license. See LICENSE file.\n"
+		"// https://github.com/ashima/webgl-noise\n"
+		"//\n"
+		"\n"
+		"vec4 mod289(vec4 x)\n"
+		"{\n"
+		"  return x - floor(x * (1.0 / 289.0)) * 289.0;\n"
+		"}\n"
+		"\n"
+		"vec4 permute(vec4 x)\n"
+		"{\n"
+		"  return mod289(((x*34.0)+1.0)*x);\n"
+		"}\n"
+		"\n"
+		"vec4 taylorInvSqrt(vec4 r)\n"
+		"{\n"
+		"  return 1.79284291400159 - 0.85373472095314 * r;\n"
+		"}\n"
+		"\n"
+		"vec2 fade(vec2 t) {\n"
+		"  return t*t*t*(t*(t*6.0-15.0)+10.0);\n"
+		"}\n"
+		"\n"
+		"// Classic Perlin noise\n"
+		"float cnoise(vec2 P)\n"
+		"{\n"
+		"  vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);\n"
+		"  vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);\n"
+		"  Pi = mod289(Pi); // To avoid truncation effects in permutation\n"
+		"  vec4 ix = Pi.xzxz;\n"
+		"  vec4 iy = Pi.yyww;\n"
+		"  vec4 fx = Pf.xzxz;\n"
+		"  vec4 fy = Pf.yyww;\n"
+		"\n"
+		"  vec4 i = permute(permute(ix) + iy);\n"
+		"\n"
+		"  vec4 gx = fract(i * (1.0 / 41.0)) * 2.0 - 1.0 ;\n"
+		"  vec4 gy = abs(gx) - 0.5 ;\n"
+		"  vec4 tx = floor(gx + 0.5);\n"
+		"  gx = gx - tx;\n"
+		"\n"
+		"  vec2 g00 = vec2(gx.x,gy.x);\n"
+		"  vec2 g10 = vec2(gx.y,gy.y);\n"
+		"  vec2 g01 = vec2(gx.z,gy.z);\n"
+		"  vec2 g11 = vec2(gx.w,gy.w);\n"
+		"\n"
+		"  vec4 norm = taylorInvSqrt(vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));\n"
+		"  g00 *= norm.x;\n"
+		"  g01 *= norm.y;\n"
+		"  g10 *= norm.z;\n"
+		"  g11 *= norm.w;\n"
+		"\n"
+		"  float n00 = dot(g00, vec2(fx.x, fy.x));\n"
+		"  float n10 = dot(g10, vec2(fx.y, fy.y));\n"
+		"  float n01 = dot(g01, vec2(fx.z, fy.z));\n"
+		"  float n11 = dot(g11, vec2(fx.w, fy.w));\n"
+		"\n"
+		"  vec2 fade_xy = fade(Pf.xy);\n"
+		"  vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);\n"
+		"  float n_xy = mix(n_x.x, n_x.y, fade_xy.y);\n"
+		"  return 2.3 * n_xy;\n"
+		"}\n"
+		"\n"
+		"// Classic Perlin noise, periodic variant\n"
+		"float pnoise(vec2 P, vec2 rep)\n"
+		"{\n"
+		"  vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);\n"
+		"  vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);\n"
+		"  Pi = mod(Pi, rep.xyxy); // To create noise with explicit period\n"
+		"  Pi = mod289(Pi);        // To avoid truncation effects in permutation\n"
+		"  vec4 ix = Pi.xzxz;\n"
+		"  vec4 iy = Pi.yyww;\n"
+		"  vec4 fx = Pf.xzxz;\n"
+		"  vec4 fy = Pf.yyww;\n"
+		"\n"
+		"  vec4 i = permute(permute(ix) + iy);\n"
+		"\n"
+		"  vec4 gx = fract(i * (1.0 / 41.0)) * 2.0 - 1.0 ;\n"
+		"  vec4 gy = abs(gx) - 0.5 ;\n"
+		"  vec4 tx = floor(gx + 0.5);\n"
+		"  gx = gx - tx;\n"
+		"\n"
+		"  vec2 g00 = vec2(gx.x,gy.x);\n"
+		"  vec2 g10 = vec2(gx.y,gy.y);\n"
+		"  vec2 g01 = vec2(gx.z,gy.z);\n"
+		"  vec2 g11 = vec2(gx.w,gy.w);\n"
+		"\n"
+		"  vec4 norm = taylorInvSqrt(vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));\n"
+		"  g00 *= norm.x;\n"
+		"  g01 *= norm.y;\n"
+		"  g10 *= norm.z;\n"
+		"  g11 *= norm.w;\n"
+		"\n"
+		"  float n00 = dot(g00, vec2(fx.x, fy.x));\n"
+		"  float n10 = dot(g10, vec2(fx.y, fy.y));\n"
+		"  float n01 = dot(g01, vec2(fx.z, fy.z));\n"
+		"  float n11 = dot(g11, vec2(fx.w, fy.w));\n"
+		"\n"
+		"  vec2 fade_xy = fade(Pf.xy);\n"
+		"  vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);\n"
+		"  float n_xy = mix(n_x.x, n_x.y, fade_xy.y);\n"
+		"  return 2.3 * n_xy;\n"
+		"}\n";
+
+		return retVal;
+	}
+
 };
 
 

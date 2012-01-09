@@ -637,6 +637,14 @@
 		<sf name="factors" doc="Sets the linear and constant factor used to generate noise.">
 			<type name = "Vec2f" namespace="vgm" default = "0.025, 0.025"></type>
 		</sf>
+
+		<sf name="channelsSeparated" doc="Sets to true to use a different random value for each channel, false to use the same random value.">
+			<type name = "bool" default = "false"></type>
+		</sf>
+
+		<sf name="useTextureLessRandom" doc="Sets to true to generate random values without using a texture, false to use a texture.">
+			<type name = "bool" default = "false"></type>
+		</sf>
 	</node>
 
 

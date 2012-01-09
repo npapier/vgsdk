@@ -288,17 +288,21 @@ Engine::UniformState& Engine::getUniformState()
 
 void Engine::setUniformRandom()
 {
-	const int random	= rand();
-	const float fRandom	= static_cast<float>(random) / 32767.f;
-	vgAssertN( !getUniformState().isUniform( "random" ), "Uniform 'random' already used" );
-	getUniformState().addUniform( "random", fRandom );
+	vgm::Vec4f random(
+		static_cast<float>(rand()) / 32767.f,
+		static_cast<float>(rand()) / 32767.f,
+		static_cast<float>(rand()) / 32767.f,
+		static_cast<float>(rand()) / 32767.f );
+
+	vgAssertN( !getUniformState().isUniform( "random" ), "Uniform named 'random' already used" );
+	getUniformState().addUniform( "random", random );
 }
 
 
 void Engine::setUniformTime()
 {
 	const vgd::basic::TimeDuration duration = getElapsedTime();
-	vgAssertN( !getUniformState().isUniform( "time" ), "Uniform 'time' already used" );
+	vgAssertN( !getUniformState().isUniform( "time" ), "Uniform named 'time' already used" );
 	getUniformState().addUniform( "time", static_cast<int>(duration.ms()) );
 }
 
@@ -308,7 +312,7 @@ void Engine::setUniformNearFar()
 	const vgm::Vec2f nearFar = getNearFar();
 	vgAssert( nearFar.isValid() );
 
-	vgAssertN( !getUniformState().isUniform( "nearFar"), "Uniform 'nearFar' already used" );
+	vgAssertN( !getUniformState().isUniform( "nearFar"), "Uniform named 'nearFar' already used" );
 	getUniformState().addUniform( "nearFar", nearFar );
 }
 

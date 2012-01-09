@@ -261,7 +261,7 @@ public:
 	//@{
 
 	/**
-	 * @brief Initializes 'random' uniform with a random value between 0 and 1.
+	 * @brief Initializes 'random' uniform with 4 random values between 0 and 1.
 	 *
 	 * @pre !getUniformState().isUniform( "random" )
 	 */
