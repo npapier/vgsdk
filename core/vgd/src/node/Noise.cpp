@@ -63,6 +63,8 @@ Noise::Noise( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FChannelsSeparatedType(getFChannelsSeparated()) );
+	addField( new FUseTextureLessRandomType(getFUseTextureLessRandom()) );
 	addField( new FFactorsType(getFFactors()) );
 	addField( new FNoiseModelType(getFNoiseModel()) );
 
@@ -76,6 +78,8 @@ Noise::Noise( const std::string nodeName ) :
 void Noise::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
+	setChannelsSeparated( false );
+	setUseTextureLessRandom( false );
 	setFactors( vgm::Vec2f(0.025, 0.025) );
 	setNoiseModel( PHOTON );
 }
@@ -85,6 +89,36 @@ void Noise::setToDefaults( void )
 void Noise::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+}
+
+
+
+// ChannelsSeparated
+const Noise::ChannelsSeparatedValueType Noise::getChannelsSeparated() const
+{
+	return getFieldRO<FChannelsSeparatedType>(getFChannelsSeparated())->getValue();
+}
+
+
+
+void Noise::setChannelsSeparated( const ChannelsSeparatedValueType value )
+{
+	getFieldRW<FChannelsSeparatedType>(getFChannelsSeparated())->setValue( value );
+}
+
+
+
+// UseTextureLessRandom
+const Noise::UseTextureLessRandomValueType Noise::getUseTextureLessRandom() const
+{
+	return getFieldRO<FUseTextureLessRandomType>(getFUseTextureLessRandom())->getValue();
+}
+
+
+
+void Noise::setUseTextureLessRandom( const UseTextureLessRandomValueType value )
+{
+	getFieldRW<FUseTextureLessRandomType>(getFUseTextureLessRandom())->setValue( value );
 }
 
 
@@ -120,6 +154,20 @@ void Noise::setNoiseModel( const NoiseModelValueType value )
 
 
 // Field name accessor(s)
+const std::string Noise::getFChannelsSeparated( void )
+{
+	return "f_channelsSeparated";
+}
+
+
+
+const std::string Noise::getFUseTextureLessRandom( void )
+{
+	return "f_useTextureLessRandom";
+}
+
+
+
 const std::string Noise::getFFactors( void )
 {
 	return "f_factors";

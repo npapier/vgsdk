@@ -6,6 +6,7 @@
 #ifndef _VGD_NODE_NOISE_HPP
 #define _VGD_NODE_NOISE_HPP
 
+#include "vgd/field/Bool.hpp"
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/Vec2f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
@@ -26,6 +27,12 @@ namespace node
  * Most digital cameras acquired images with noise. This built-in post-processing effect simulates dominant source of noise, i.e. the photon noise. 
  *
  * New fields defined by this node :
+ * - SFBool \c channelsSeparated = false<br>
+ *   Sets to true to use a different random value for each channel, false to use the same random value.<br>
+ *<br>
+ * - SFBool \c useTextureLessRandom = false<br>
+ *   Sets to true to generate random values without using a texture, false to use a texture.<br>
+ *<br>
  * - SFVec2f \c factors = vgm::Vec2f(0.025, 0.025)<br>
  *   Sets the linear and constant factor used to generate noise.<br>
  *<br>
@@ -67,6 +74,66 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
 	static vgd::Shp< Noise > createWhole( const std::string nodeName = "DefaultWhole" );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field channelsSeparated
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c channelsSeparated.
+	 */
+	typedef bool ChannelsSeparatedValueType;
+
+	/**
+	 * @brief Type definition of the field named \c channelsSeparated
+	 */
+	typedef vgd::field::TSingleField< ChannelsSeparatedValueType > FChannelsSeparatedType;
+
+
+	/**
+	 * @brief Gets the value of field named \c channelsSeparated.
+	 */
+	const ChannelsSeparatedValueType getChannelsSeparated() const;
+
+	/**
+	 * @brief Sets the value of field named \c channelsSeparated.
+	 */
+	void setChannelsSeparated( const ChannelsSeparatedValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field useTextureLessRandom
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c useTextureLessRandom.
+	 */
+	typedef bool UseTextureLessRandomValueType;
+
+	/**
+	 * @brief Type definition of the field named \c useTextureLessRandom
+	 */
+	typedef vgd::field::TSingleField< UseTextureLessRandomValueType > FUseTextureLessRandomType;
+
+
+	/**
+	 * @brief Gets the value of field named \c useTextureLessRandom.
+	 */
+	const UseTextureLessRandomValueType getUseTextureLessRandom() const;
+
+	/**
+	 * @brief Sets the value of field named \c useTextureLessRandom.
+	 */
+	void setUseTextureLessRandom( const UseTextureLessRandomValueType value );
 
 	//@}
 
@@ -182,6 +249,20 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c channelsSeparated.
+	 *
+	 * @return the name of field \c channelsSeparated.
+	 */
+	static const std::string getFChannelsSeparated( void );
+
+	/**
+	 * @brief Returns the name of field \c useTextureLessRandom.
+	 *
+	 * @return the name of field \c useTextureLessRandom.
+	 */
+	static const std::string getFUseTextureLessRandom( void );
 
 	/**
 	 * @brief Returns the name of field \c factors.
