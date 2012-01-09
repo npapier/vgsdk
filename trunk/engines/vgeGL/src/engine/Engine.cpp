@@ -830,43 +830,43 @@ const int Engine::getMaxCubeMapTexSize() const
 
 
 
-/*const int Engine::getMaxVertexTexImageUnits() const
+const int Engine::getMaxVertexTexImageUnits() const
 {
 	GLint value;
 	glGetIntegerv( GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &value );
 
 	return value;
-}*/
+}
 
 
 
-/*const int Engine::getMaxCombinedTexImageUnits() const
+const int Engine::getMaxCombinedTexImageUnits() const
 {
 	GLint value;
 	glGetIntegerv( GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value );
 
 	return value;
-}*/
+}
 
 
 
-/*const int Engine::getMaxTexImageUnits() const
+const int Engine::getMaxTexImageUnits() const
 {
 	GLint value;
 	glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &value );
 
 	return value;
-}*/
+}
 
 
 
-/*const int Engine::getMaxGeometryTexImageUnits() const
+const int Engine::getMaxGeometryTexImageUnits() const
 {
 	GLint value;
 	glGetIntegerv( GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_ARB, &value );
 
 	return value;
-}*/
+}
 
 
 
