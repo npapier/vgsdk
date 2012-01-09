@@ -666,9 +666,6 @@ vgd::Shp< ProgramGenerator > Engine::getGLSLProgramGenerator()
 const bool Engine::isGLContextCurrent() const
 {
 	return gleIsOpenGLCurrent();
-	// @todo FIXME should found a smarter method to test if OpenGL is current.
-	//const GLubyte *pString = glGetString(GL_EXTENSIONS);
-	//return ( pString != 0 );
 }
 
 
@@ -833,43 +830,43 @@ const int Engine::getMaxCubeMapTexSize() const
 
 
 
-const int Engine::getMaxVertexTexImageUnits() const
+/*const int Engine::getMaxVertexTexImageUnits() const
 {
 	GLint value;
 	glGetIntegerv( GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &value );
 
 	return value;
-}
+}*/
 
 
 
-const int Engine::getMaxCombinedTexImageUnits() const
+/*const int Engine::getMaxCombinedTexImageUnits() const
 {
 	GLint value;
 	glGetIntegerv( GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value );
 
 	return value;
-}
+}*/
 
 
 
-const int Engine::getMaxTexImageUnits() const
+/*const int Engine::getMaxTexImageUnits() const
 {
 	GLint value;
 	glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &value );
 
 	return value;
-}
+}*/
 
 
 
-const int Engine::getMaxGeometryTexImageUnits() const
+/*const int Engine::getMaxGeometryTexImageUnits() const
 {
 	GLint value;
 	glGetIntegerv( GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_ARB, &value );
 
 	return value;
-}
+}*/
 
 
 
@@ -935,6 +932,7 @@ const GLenum Engine::getGLDepthTextureFormatFromDepthBits() /*const */
 
 
 
+// @todo use getImage()
 vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer() const
 {
 	// Reads back the framebuffer color values
@@ -958,6 +956,7 @@ vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer() const
 
 
 
+// @todo move into gle ?
 void Engine::setGLEnable( const GLenum capability, const bool isEnabled ) /*const*/
 {
 	if ( isEnabled )
@@ -1133,7 +1132,7 @@ void Engine::pop()
 	getGLStateStack().pop();
 	getGLSLStateStack().pop();
 
-	getUniformState().clear();
+	getUniformState().clear(); // @todo push/pop too
 }
 
 
