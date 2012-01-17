@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2010 Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Nicolas Papier
 
 #ifndef _VGOPENCOLLADA_EXPORTER_GEOMETRYEXPORTER_HPP
 #define _VGOPENCOLLADA_EXPORTER_GEOMETRYEXPORTER_HPP
@@ -96,12 +97,12 @@ struct VGOPENCOLLADA_API GeometryExporter : public COLLADASW::LibraryGeometries
 		primitive.setMaterial( materialSymbol );
 
 		int offset = 0;
-		primitive.getInputList().push_back( COLLADASW::Input( COLLADASW::VERTEX, "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::VERTICES_ID_SUFFIX, offset++ ) );
-		primitive.getInputList().push_back( COLLADASW::Input( COLLADASW::NORMAL, "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::NORMALS_SOURCE_ID_SUFFIX, offset++ ) );
+		primitive.getInputList().push_back( COLLADASW::Input( COLLADASW::InputSemantic::VERTEX, "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::VERTICES_ID_SUFFIX, offset++ ) );
+		primitive.getInputList().push_back( COLLADASW::Input( COLLADASW::InputSemantic::NORMAL, "#" + m_currentGeometryName + COLLADASW::LibraryGeometries::NORMALS_SOURCE_ID_SUFFIX, offset++ ) );
 
 		for( uint i = 0; i < m_texCoordsList.size(); i++ )
 		{
-			primitive.getInputList().push_back( COLLADASW::Input( COLLADASW::TEXCOORD, m_texCoordsList[i], offset++, i+1 ) );
+			primitive.getInputList().push_back( COLLADASW::Input( COLLADASW::InputSemantic::TEXCOORD, m_texCoordsList[i], offset++, i+1 ) );
 		}
 
 		exportVCount( numberOfFaces, &primitive );
