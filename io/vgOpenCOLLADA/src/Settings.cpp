@@ -8,36 +8,34 @@
 namespace vgOpenCOLLADA
 {
 
-Settings::Settings() :
-m_applyGeometricalTransformation( false ),
-m_triangulate( false ),
-m_invertPrimitiveOrientation( false ),
-m_encrypt( false ),
-m_reflective( true ),
-m_bump( true ),
-m_specular( true ),
-m_textureSize( 8096 ),
-m_level( TEXTURE ),
-m_filename( "" )
-{
-}
+Settings::Settings()
+:	m_applyGeometricalTransformation( false ),
+	m_triangulate( false ),
+	m_invertPrimitiveOrientation( false ),
+	m_encrypt( false ),
+	m_reflective( true ),
+	m_bump( true ),
+	m_specular( true ),
+	m_textureSize( 8096 ),
+	m_level( TEXTURE ),
+	m_filename( "" )
+{}
 
 
 
 Settings::Settings(	bool applyGeometricalTransformation, bool triangulate,	bool invertPrimitiveOrientation, 
-							   bool encrypt, bool reflective, bool bump, bool specular, int textureSize, LEVEL level ) :
-m_applyGeometricalTransformation( applyGeometricalTransformation ),
-m_triangulate( triangulate ),
-m_invertPrimitiveOrientation( invertPrimitiveOrientation ),
-m_encrypt( encrypt ),
-m_reflective( reflective ),
-m_bump( bump ),
-m_specular( specular ),
-m_textureSize( textureSize ),
-m_level( level ),
-m_filename( "" )
-{
-}
+					bool encrypt, bool reflective, bool bump, bool specular, int textureSize, LEVEL level )
+:	m_applyGeometricalTransformation( applyGeometricalTransformation ),
+	m_triangulate( triangulate ),
+	m_invertPrimitiveOrientation( invertPrimitiveOrientation ),
+	m_encrypt( encrypt ),
+	m_reflective( reflective ),
+	m_bump( bump ),
+	m_specular( specular ),
+	m_textureSize( textureSize ),
+	m_level( level ),
+	m_filename( "" )
+{}
 
 
 

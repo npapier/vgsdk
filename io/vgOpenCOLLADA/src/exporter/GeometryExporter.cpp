@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2010 Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Nicolas Papier
 
 #include "vgOpenCOLLADA/exporter/GeometryExporter.hpp"
 
@@ -9,10 +10,10 @@
 #include <vgd/node/MultipleInstances.hpp>
 #include <vgd/visitor/helpers.hpp>
 
-#include "COLLADASWSource.h"
 #include "COLLADASWBaseInputElement.h"
 #include "COLLADASWControlVertices.h"
 #include "COLLADASWConstants.h"
+#include "COLLADASWSource.h"
 
 namespace vgOpenCOLLADA
 {
@@ -237,7 +238,7 @@ void GeometryExporter::exportVerticies( std::string meshName )
 {
 	COLLADASW::VerticesElement vertices( mSW );
 	vertices.setId( meshName + COLLADASW::LibraryGeometries::VERTICES_ID_SUFFIX );
-	vertices.getInputList().push_back( COLLADASW::Input( COLLADASW::POSITION, "#" + meshName + COLLADASW::LibraryGeometries::POSITIONS_SOURCE_ID_SUFFIX ) );
+	vertices.getInputList().push_back( COLLADASW::Input( COLLADASW::InputSemantic::POSITION, "#" + meshName + COLLADASW::LibraryGeometries::POSITIONS_SOURCE_ID_SUFFIX ) );
 	vertices.add();
 }
 
