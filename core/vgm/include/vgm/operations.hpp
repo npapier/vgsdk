@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -121,6 +121,23 @@ const bool greaterThanEqual( const T value1, const T value2 )
 	return greaterThan( value1, value2 ) || equals( value1, value2 );
 }
 
+/**
+ * @brief Returns true if value1 < value2 within tolerance
+ */
+template< typename T >
+const bool lessThan( const T value1, const T value2 )
+{
+	return greaterThan( value2, value1 );
+}
+
+/**
+ * @brief Returns true if value1 <= value2 within tolerance
+ */
+template< typename T >
+const bool lessThanEqual( const T value1, const T value2 )
+{
+	return greaterThanEqual( value2, value1 );
+}
 
 //@}
 
