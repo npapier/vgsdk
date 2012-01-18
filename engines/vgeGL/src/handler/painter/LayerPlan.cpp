@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2009, 2010, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,6 +16,7 @@
 #include <vgeGL/rc/Root.hpp>
 //#include "vgeGL/rc/TDisplayListHelper.hpp"
 #include "vgeGL/rc/Texture2D.hpp"
+#include <vgm/operations.hpp>
 
 
 
@@ -48,10 +49,10 @@ const vge::handler::Handler::TargetVector LayerPlan::getTargets() const
 
 void LayerPlan::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
+	vgAssert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
 	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
 
-	assert( dynamic_cast< vgd::node::LayerPlan* >(pNode) != 0 );
+	vgAssert( dynamic_cast< vgd::node::LayerPlan* >(pNode) != 0 );
 	vgd::node::LayerPlan *pCastedNode = static_cast< vgd::node::LayerPlan* >(pNode);
 
 	paint( pGLEngine, pCastedNode );
@@ -97,14 +98,14 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 	if ( resource )
 	{
-		assert( rcRoot != 0 );
+		vgAssert( rcRoot != 0 );
 
 		texture2D	= rcRoot->getRoot()->getChild< Texture2D >(0);
 		quad		= rcRoot->getRoot()->getChild< Quad >(1);
 	}
 	else
 	{
-		assert( rcRoot == 0 );
+		vgAssert( rcRoot == 0 );
 
 		// No resource (this is the first evaluation), create it.
 		rcRoot = new vgeGL::rc::Root;
@@ -136,10 +137,8 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	const vgm::Vec2f	layerPlanPosition	= layerPlan->getPosition();
 	const vgm::Vec2f	layerPlanSize		= layerPlan->getSize();
 
-	assert( layerPlanSize[0] + vgm::Epsilon<float>().value() > 0.f );
-	assert( layerPlanSize[0] - vgm::Epsilon<float>().value() <= 1.f );
-	assert( layerPlanSize[1] + vgm::Epsilon<float>().value() > 0.f );
-	assert( layerPlanSize[1] - vgm::Epsilon<float>().value() <= 1.f );
+	vgAssertN( vgm::greaterThanEqual(layerPlanSize[0], 0.f), "%s node with size[0] < 0 : %f", layerPlan->getName().c_str(), layerPlanSize[0] );
+	vgAssertN( vgm::greaterThanEqual(layerPlanSize[1], 0.f), "%s node with size[1] < 0 : %f", layerPlan->getName().c_str(), layerPlanSize[1] );
 
 	vgm::MatrixR current;
 	current.setTranslate( vgm::Vec3f(layerPlanPosition) );
