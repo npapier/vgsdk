@@ -111,51 +111,26 @@ const bool myCanvas::appendToScene( const Strings & pathfilenames, const bool mu
 	return retVal;
 }
 
+
 const bool myCanvas::load( const Glib::ustring & pathfilename )
 {
+// FIXME
+	// Load .trian
+	vgTrian::Loader loader; // @todo must be here to be registered in LoaderRegistry
+// FIXME
+
 	// Changes the cursor
 	//get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
 
-	// Retrieves the extension of the given filename.
-	vgd::basic::FilenameExtractor	extractor( pathfilename.c_str() );
-	Glib::ustring					extension = extractor.getExtension();
-	bool							bRetVal;
+	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
 
-	extension = extension.lowercase();
+	retVal = vgio::load( pathfilename );
 
-
-	// Invokes the right loader, depending on the found extension.
-	if ( extension.compare( ".trian" ) == 0 )
+	if ( retVal.first )
 	{
-		bRetVal = loadTrian( pathfilename );
-	}
-	else if ( extension.compare( ".trian2" ) == 0 || extension.compare( ".dae" ) == 0
-		|| extension.compare( ".crypt" ) == 0 || extension.compare( ".vgarch" ) == 0) //new way using registry
-	{
-		std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
-		retVal = vgio::load( pathfilename );
-		bRetVal = retVal.first;
-		if ( retVal.first )
-		{
-			// Setup scene
-			getScene()->addChild( retVal.second );
-		}
-	}
-	else if( extension.compare( ".obj" ) == 0 )
-	{
-		bRetVal = loadObj( pathfilename );
-	}
-	else
-	{
-		bRetVal = false;
+		// Setup scene
+		getScene()->addChild( retVal.second );
 
-		vgLogWarning( "Unknown file extension in %s.", pathfilename.c_str() );
-	}
-
-
-	// Perform post loading actions that depend on the result.
-	if ( bRetVal )
-	{
 		// Shows in the log that the file has been loaded.
 		vgLogStatus( "File %s loaded.", pathfilename.c_str() );
 	}
@@ -168,24 +143,9 @@ const bool myCanvas::load( const Glib::ustring & pathfilename )
 	// Changes the cursor
 	//get_root_window()->set_cursor();
 
-	return bRetVal;
+	return retVal.first;
 }
 
-const bool myCanvas::loadCollada( const Glib::ustring & pathfilename )
-{
-/*	// Load .dae
-	vgCollada::Reader reader;
-	const bool retVal = reader.load( pathfilename.c_str() );
-
-	if ( retVal )
-	{
-		// Setup scene
-		getScene()->addChild( reader.getRoot() );
-	}
-
-	return retVal;*/
-	return false;
-}
 
 // @todo share code with vgio::helpers.cpp
 const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename, bool crypted )
@@ -231,53 +191,6 @@ const bool myCanvas::loadOpenCollada( const Glib::ustring & pathfilename, bool c
 	return retVal.first;
 }
 
-
-
-const bool myCanvas::loadObj( const Glib::ustring & pathfilename )
-{
-	// Load .obj
-	vgObj::Loader loader;
-	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > retVal;
-
-	retVal = loader.loadObj( pathfilename.c_str() );
-
-	if ( !retVal.first )
-	{
-		return false;
-	}
-
-	// Setup scene
-	getScene()->addChild( retVal.second );
-	//(retVal.second)->computeNormals();
-
-	return true;
-}
-
-const bool myCanvas::loadTrian( const Glib::ustring & pathfilename )
-{
-	// Load .trian
-	vgTrian::Loader loader;
-	std::pair< bool, vgd::Shp< vgd::node::TriSet > > retVal = loader.loadTrian( std::string(pathfilename.c_str()) );
-
-	if ( !retVal.first )
-	{
-		return false;
-	}
-
-	// Setup scene
-	using vgd::node::Material;
-
-	vgd::Shp< Material > material = Material::create("material");
-	material->setDiffuse( vgm::Vec3f(204.f/255.f, 51.f/255.f, 51.f/255.f) );
-	material->setSpecular( vgm::Vec3f(1.f, 1.f, 1.f) );
-	material->setShininess( 1.f );
-
-	getScene()->addChild( material );
-	getScene()->addChild( retVal.second );
-	(retVal.second)->computeNormals();
-
-	return true;
-}
 
 // @todo share code with vgio::helpers.cpp
 const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename, bool crypted)
@@ -325,7 +238,7 @@ const bool myCanvas::loadTrian2( const Glib::ustring & pathfilename, bool crypte
 	return true;
 }
 
+
 } // namespace vgTest
 
 } //namespace vgsdkTestGtk
-
