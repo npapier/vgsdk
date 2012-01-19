@@ -24,7 +24,7 @@ namespace vgTest
  * @brief	Implements a BasicManipulator with some content loading features.
  *
  */
-	struct myCanvas : public vgGTK::TBasicManipulator< vgsdkTestGtk::vgTest::TestManipulator >
+struct myCanvas : public vgGTK::TBasicManipulator< vgsdkTestGtk::vgTest::TestManipulator >
 {
 	typedef std::vector< Glib::ustring > Strings;	///< Defines a collection of strings.
 
@@ -63,13 +63,7 @@ namespace vgTest
 
 	const bool load( const Glib::ustring & pathfilename );
 
-	const bool loadCollada( const Glib::ustring & pathfilename );
-
 	const bool loadOpenCollada( const Glib::ustring & pathfilename, bool crypted = false );
-
-	const bool loadObj( const Glib::ustring & pathfilename );
-
-	const bool loadTrian( const Glib::ustring & pathfilename );
 
 	const bool loadTrian2( const Glib::ustring & pathfilename, bool crypted = false );
 
