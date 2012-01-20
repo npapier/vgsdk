@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -30,6 +30,7 @@ namespace vgUI
  * - adjust the camera position and frustum to be able to view the entire scene (see viewAll method).
  * - adjust camera when window is resized (see resize() method).
  * - manage default lights
+ * - load 3d files (collada, obj and so on).
  *
  * @remarks Camera behavior (mainly viewAll and resize methods ) can be overridden if the default behavior does'nt meet
  * your needs.
@@ -40,7 +41,6 @@ namespace vgUI
  * \li the optional draw style node named \c DRAW_STYLE
  * \li the optional light model node named \c LIGHT_MODEL 
  * \li the optional default light group named \c LIGHTS
- * \li the view transformation named \c VIEW_TRANSFORM.
  * \li the camera node named \c CAMERA
  * \li the optional underlay container named \c UNDERLAY_CONTAINER
  * \li and the overlay container (see getOverlayContainer() method).
@@ -48,6 +48,7 @@ namespace vgUI
  * The second child of the root is a group node, named \c SCENE that must contains the real scene (mesh, material...).
  *
  * @ingroup g_vgUIGroup
+ * @ingroup g_layerplan 
  *
  * @todo More documentation on SETUP nodes and more generic.
  * @todo populateSetupGroup( Full | Light).
@@ -145,15 +146,6 @@ struct VGUI_API BasicViewer : public Canvas
 	const vgd::Shp< vgd::node::Group > getSetup() const;
 
 	/**
-	 * @brief Returns the view transformation node.
-	 *
-	 * @return the view transformation node.
-	 */
-	vgDEPRECATED( vgd::Shp< vgd::node::MatrixTransform > getViewTransformation() );
-
-	vgDEPRECATED( const vgd::Shp< vgd::node::MatrixTransform > getViewTransformation() const );
-
-	/**
 	 * @brief Returns scene group node.
 	 */
 	vgd::Shp< vgd::node::Group > getScene();
@@ -164,6 +156,8 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @brief Returns the overlay container node
 	 *
 	 * @return the overlay container multi switch
+	 *
+	 * @ingroup g_layerplan
 	 */
 	vgd::Shp< vgd::node::MultiSwitch > getOverlayContainer();
 
@@ -193,6 +187,8 @@ struct VGUI_API BasicViewer : public Canvas
 	 * 
 	 * @see		destroyOptionalNode
 	 * @see		getOptionalNode
+	 *
+	 * @ingroup g_layerplan
 	 */
 	vgd::Shp< vgd::node::Node > createOptionalNode( const OptionalNodeType type );
 
@@ -284,6 +280,16 @@ struct VGUI_API BasicViewer : public Canvas
 	//@}
 
 
+	/**
+	 * @brief Loads the given file.
+	 *
+	 * The objects containing in the loaded file are added to the scene graph.
+	 *
+	 * @param filePath	the file path to load
+	 *
+	 * @return true if successful, false otherwise.
+	 */
+	const bool load( const std::string filePath );
 
 
 
@@ -332,7 +338,6 @@ private:
 	vgd::Shp< vgd::node::MultiSwitch >		m_overlayContainer;	///< A reference on the overlay container node.
 	vgd::Shp< vgd::node::Group > 			m_setup;			///< A reference on the setup group node.
 	vgd::Shp< vgd::node::Camera >			m_camera;			///< A reference on the camera.
-	vgd::Shp< vgd::node::MatrixTransform >	m_viewTransform;	///< A reference on the view transformation.
 	vgd::Shp< vgd::node::Group >			m_scene;			///< A reference on the scene group node.
 	CameraType								m_cameraType;		///< The camera type that should be used.
 };
