@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -68,10 +68,8 @@ myCanvas::myCanvas()
 	set_size_request( 1024, 768 );
 	//set_size_request( 512, 512 );
 
-
 	// Scene graph initialization.
 	createOptionalNode( LIGHTS );
-	createOptionalNode( CLEAR_FRAME_BUFFER );
 	createOptionalNode( DRAW_STYLE );
 
 	using vgd::node::LightModel;
@@ -79,16 +77,9 @@ myCanvas::myCanvas()
 	lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
 	lightModel->setViewer( LightModel::AT_EYE );
 
-
-	// SHADOW configuration
-
-	/*lightModel->setShadowFiltering( LightModel::LINEAR );
-	lightModel->setShadow( LightModel::SHADOW_MAPPING_9U );
-	lightModel->setShadowMapSize( LightModel::MEDIUM );
-	lightModel->setShadowMapType( LightModel::INT32 );
-	lightModel->setIlluminationInShadow( 0.4f );*/
-
-	// END SHADOW configuration
+	using vgd::node::ClearFrameBuffer;
+	vgd::Shp< ClearFrameBuffer > clear = createOptionalNodeAs< ClearFrameBuffer >( CLEAR_FRAME_BUFFER );
+	//clear->setClear( ClearFrameBuffer::COLOR, vgm::Vec4f(0.1f, 0.f, 0.f, 0.f) );
 
 	// Get the reference of the default technique
 	m_viewModeTechniques.resize( VIEW_MODE_COUNT );
@@ -169,6 +160,7 @@ void myCanvas::initialize()
 
 	//
 	viewAll();
+	refreshForced();
 }
 
 
@@ -318,36 +310,19 @@ vgd::Shp< vgGTK::engine::UserSettingsDialog > myCanvas::getRenderSettingsDialog(
 
 const bool myCanvas::load( const Glib::ustring & pathfilename )
 {
-//
 	// Load .trian
-	vgTrian::Loader loader;
-	vgObj::Loader loader2; // This is only to force the register of obj loader
-//
+	vgTrian::Loader loader; // @todo must be here to be registered in LoaderRegistry
+	vgObj::Loader loader2; // This is only to force the register of obj loader 
+
 	// Changes the cursor
 	get_root_window()->set_cursor( Gdk::Cursor(Gdk::WATCH) );
 
-	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
-
-	retVal = vgio::load( pathfilename );
-
-	if ( retVal.first )
-	{
-		// Setup scene
-		getScene()->addChild( retVal.second );
-
-		// Shows in the log that the file has been loaded.
-		vgLogStatus( "File %s loaded.", pathfilename.c_str() );
-	}
-	else
-	{
-		// Shows in the log that something has gone wrong.
-		vgLogWarning( "Unable to load file %s.", pathfilename.c_str() );
-	}
+	const bool retVal = BasicManipulator::load( pathfilename );
 
 	// Changes the cursor
 	get_root_window()->set_cursor();
 
-	return retVal.first;
+	return retVal;
 }
 
 
