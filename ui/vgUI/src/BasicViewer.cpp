@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,8 +16,9 @@
 #include <vgd/node/PointLight.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Switch.hpp>
-
+#include <vgd/node/TransformSeparator.hpp>
 #include <vgd/visitor/helpers.hpp>
+#include <vgio/helpers.hpp>
 #include <vgm/operations.hpp>
 
 
@@ -63,9 +64,7 @@ void BasicViewer::privateResetSceneGraph()
 	m_overlayContainer		= vgd::node::MultiSwitch::create(	"OVERLAY_CONTAINER"			);
 
 	m_camera			= vgd::node::Camera::create(			"CAMERA"				);
-	m_viewTransform		= vgd::node::MatrixTransform::create(	"VIEW_TRANSFORM"		);
 	m_camera->setComposeTransformation( false );
-	m_viewTransform->setComposeTransformation( true /*false*/ );
 
 	// Constructs scene graph
 	getRoot()->addChild( m_setup );
@@ -75,7 +74,11 @@ void BasicViewer::privateResetSceneGraph()
 
 	// Populates SETUP
 	getSetup()->addChild( m_camera );
-	getSetup()->addChild( m_viewTransform );
+
+	//
+	vgm::MatrixR matrix;
+	matrix.setOrtho( -1.f, 1.f, -1.f, 1.f, 0.01f, 2.f );
+	m_camera->setProjection( matrix );
 }
 
 
@@ -96,9 +99,7 @@ const BasicViewer::CameraType BasicViewer::getCameraType() const
 
 void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 {
-
 	// Initializes VIEWTRANSFORM
-	m_viewTransform->setMatrix( vgm::MatrixR::getIdentity() );
 	m_camera->setLookAt( vgm::MatrixR::getIdentity() );
 
 	// Compute bounding box and some informations
@@ -136,7 +137,6 @@ void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
 	}
 
 	// Setup the scene position.
-	// m_viewTransform->setMatrix( matrix );
 	m_camera->setLookAt( matrix );
 }
 
@@ -161,17 +161,6 @@ vgd::Shp< vgd::node::Camera > BasicViewer::getCamera()
 const vgd::Shp< vgd::node::Camera > BasicViewer::getCamera() const
 {
 	return m_camera;
-}
-
-
-vgd::Shp< vgd::node::MatrixTransform > BasicViewer::getViewTransformation()
-{
-	return m_viewTransform;
-}
-
-const vgd::Shp< vgd::node::MatrixTransform > BasicViewer::getViewTransformation() const
-{
-	return m_viewTransform;
 }
 
 
@@ -210,9 +199,12 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 		switch( type )
 		{
 		case CLEAR_FRAME_BUFFER:
-			existingNode = vgd::node::ClearFrameBuffer::create("CLEAR_FRAME_BUFFER");
+		{
+			vgd::Shp< vgd::node::ClearFrameBuffer > clearFrameBuffer = vgd::node::ClearFrameBuffer::create("CLEAR_FRAME_BUFFER");
+			existingNode = clearFrameBuffer;
 			getSetup()->addChild( existingNode );
-			break;
+		}
+		break;
 
 		case DRAW_STYLE:
 			existingNode = vgd::node::DrawStyle::create("DRAW_STYLE");
@@ -226,7 +218,26 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 
 		case LIGHTS:
 		{
+			//
+			vgm::MatrixR matrixBak = m_camera->getLookAt();
+			m_camera->setLookAt( vgm::MatrixR::getIdentity() );
+			vgm::Box3f	box;
+			vgm::Vec3f	boxCenter;
+			float		boxMax;
+			computeSceneBoundingBox( box, boxCenter, boxMax );
+			m_camera->setLookAt( matrixBak );
+			vgm::Vec3f boxMin	= box.getMin(); 
+			vgm::Vec3f boxSize	= box.getSize();
+
+			//
+			const vgm::Vec3f positionSpot1( boxCenter + vgm::Vec3f(0.f, 0.f, boxSize[2])*3.f );
+			const vgm::Vec3f positionSpot2( boxMin + vgm::Vec3f(boxSize[0]/4.f, boxSize[1]/2.f, 0.f ) );
+			const vgm::Vec3f positionSpot3( boxMin + vgm::Vec3f(boxSize[0]/2.f, boxSize[1]/2.f, 0.f ) );
+
 			using vgd::node::Group;
+
+			using vgd::node::MatrixTransform;
+			using vgd::node::TransformSeparator;
 
 			// CREATES LIGHTS
 			// Creates and switches on the directional lights.
@@ -235,32 +246,33 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			light1->setOn( true );
 			light1->setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
 
-			/*vgd::Shp< DirectionalLight > light2 = DirectionalLight::create("defaultLight2");
-			light2->setMultiAttributeIndex( 1 );
-			light2->setOn( true );
-			light2->setDirection( vgm::Vec3f(0.f, 0.f, 1.f) );*/
-
 			// Creates and switches on the spot light.
+
 			using vgd::node::SpotLight;
 			vgd::Shp< SpotLight > spotLight1 = SpotLight::create("spotLight1");
 			spotLight1->setOn( true );
-			spotLight1->setPosition( vgm::Vec3f(0.f, 0.f, 2.f) );
-			spotLight1->setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
-			spotLight1->setCutOffAngle( 10.f );
+			spotLight1->setPosition( positionSpot1 );
+			spotLight1->setDirection( boxCenter - positionSpot1 );
+			spotLight1->setCutOffAngle( 45.f );
 			//spotLight1->setDropOffRate( 0.5f );
+			spotLight1->setCastShadow( true );
 
 			vgd::Shp< SpotLight > spotLight2 = SpotLight::create("spotLight2");
 			spotLight2->setOn( true );
-			spotLight2->setPosition( vgm::Vec3f(-2.f, 0.f, 2.f) );
-			spotLight2->setDirection( vgm::Vec3f(2.f, 0.f, -2.f) );
-			spotLight2->setCutOffAngle( 25.f );
+			spotLight2->setPosition( positionSpot2 );
+			spotLight2->setDirection( boxCenter - positionSpot2 );
+			spotLight2->setCutOffAngle( 15.f );
+			spotLight2->setCutOffAngle( 45.f );
+			spotLight2->setCastShadow( true );
 
 			vgd::Shp< SpotLight > spotLight3 = SpotLight::create("spotLight3");
 			spotLight3->setMultiAttributeIndex( 1 );
 			spotLight3->setOn( true );
-			spotLight3->setPosition( vgm::Vec3f(2.f, 0.f, 2.f) );
-			spotLight3->setDirection( vgm::Vec3f(-2.f, 0.f, -2.f) );
-			spotLight3->setCutOffAngle( 25.f );
+			spotLight3->setPosition( positionSpot3 );
+			spotLight3->setDirection( boxCenter - positionSpot3 );
+			spotLight3->setCutOffAngle( 15.f );
+			spotLight3->setCutOffAngle( 45.f );
+			spotLight3->setCastShadow( true );
 
 			// Creates and switches on the point light.
 			using vgd::node::PointLight;
@@ -272,16 +284,17 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			// Creates the group that will contain the directional lights.
 			vgd::Shp< Group > directionalLights = Group::create("DIRECTIONAL_LIGHT");
 			directionalLights->addChild( light1 );
-			//directionalLights->addChild( light2 );
 
 			// Creates the group that will contain the spot light.
-			vgd::Shp< Group > spotLights = Group::create("SPOT_LIGHT");
-			spotLights->addChild( spotLight1 );
+			vgd::Shp< TransformSeparator > spotLight = TransformSeparator::create("SPOT_LIGHT");
+			vgd::Shp< MatrixTransform > matrixTransform = MatrixTransform::create("SPOT_MOVE");
+			spotLight->addChild( matrixTransform );
+			spotLight->addChild( spotLight1 );
 
 			// Creates the group that will contain the spot light.
-			vgd::Shp< Group > spotLights2 = Group::create("SPOT_LIGHTS");
-			spotLights2->addChild( spotLight2 );
-			spotLights2->addChild( spotLight3 );
+			vgd::Shp< Group > spotLights = Group::create("SPOT_LIGHTS");
+			spotLights->addChild( spotLight2 );
+			spotLights->addChild( spotLight3 );
 
 			// Creates the group that will contain the point light.
 			vgd::Shp< Group > pointLights = Group::create("POINT_LIGHT");
@@ -292,14 +305,22 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			vgd::Shp< Switch > lightSwitcher = Switch::create("LIGHTS");
 			lightSwitcher->setWhichChild(0);
 			lightSwitcher->addChild( directionalLights );
+			lightSwitcher->addChild( spotLight );
 			lightSwitcher->addChild( spotLights );
 			lightSwitcher->addChild( pointLights );
-			lightSwitcher->addChild( spotLights2 );
 
-			// Inserts the default lights before the camera node.
-			const int32	insertIndex = m_setup->findChild( m_camera );
-			getSetup()->insertChild( lightSwitcher, insertIndex );
-
+			// Inserts the default lights before LightModel node.
+			using vgd::node::LightModel;
+			vgd::Shp< LightModel > lightModel = getOptionalNodeAs< LightModel >( LIGHT_MODEL );
+			if ( lightModel )
+			{
+				const int insertIndex = m_setup->findChild( lightModel );
+				getSetup()->insertChild( lightSwitcher, insertIndex );
+			}
+			else
+			{
+				getSetup()->addChild( lightSwitcher );
+			}
 			existingNode = lightSwitcher;
 			break;
 		}
@@ -516,6 +537,29 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	m_camera->setViewport( vgm::Rectangle2i( 0, 0, size[0], size[1] ) );
 }
 
+
+const bool BasicViewer::load( const std::string filePath )
+{
+	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+
+	retVal = vgio::load( filePath );
+
+	if ( retVal.first )
+	{
+		// Setup scene
+		getScene()->addChild( retVal.second );
+
+		// Shows in the log that the file has been loaded.
+		vgLogStatus( "File %s loaded.", filePath.c_str() );
+	}
+	else
+	{
+		// Shows in the log that something has gone wrong.
+		vgLogWarning( "Unable to load file %s.", filePath.c_str() );
+	}
+
+	return retVal.first;
+}
 
 
 void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCollectorExt,

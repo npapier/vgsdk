@@ -20,6 +20,7 @@ namespace vgsdkTestGtk
 
 namespace vgTest
 {
+
 /**
  * @brief	Implements a BasicManipulator with some content loading features.
  *
@@ -60,12 +61,6 @@ struct myCanvas : public vgGTK::TBasicManipulator< vgsdkTestGtk::vgTest::TestMan
 	 * @return	true on success, false otherwise
 	 */
 	const bool appendToScene( const Strings & filenames, const bool viewAll = true );
-
-	const bool load( const Glib::ustring & pathfilename );
-
-	const bool loadOpenCollada( const Glib::ustring & pathfilename, bool crypted = false );
-
-	const bool loadTrian2( const Glib::ustring & pathfilename, bool crypted = false );
 
 
 private:
