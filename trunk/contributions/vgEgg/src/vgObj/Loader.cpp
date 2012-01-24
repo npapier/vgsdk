@@ -320,7 +320,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( std::istr
 				int vertex,texture,normal;
 				vgm::Vec3i info;
 				ls >> vertex;
-				if( ls.eof() ) // Protect from ^M end of line characters that confuse previous test
+				if( ls.fail() ) // Protect from ^M end of line characters that confuse previous test
 					continue;
 				vertex--; // la numérotation débute à 1 dans le .obj
 				vertexIndices->push_back(vertex);
