@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, 2012, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -13,7 +13,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/algorithm/string/trim.hpp>
 
-#include <sbf/path.hpp>
+#include <sbf/pkg/Module.hpp>
 
 #include <vgd/field/Enum.hpp>
 #include <vgd/node/LightModel.hpp>
@@ -168,7 +168,7 @@ void UserSettings::loadLevels()
 	namespace bpt = boost::property_tree;
 	
 	// Gets the path of the detail level definitions.
-	const bfs::path	path = sbf::path::get(sbf::path::Share) / "user-settings.ini";
+	const bfs::path	path = sbf::pkg::Module::get()->getPath(sbf::pkg::SharePath) / "user-settings.ini";
 
 	try
 	{

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,8 +12,11 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
+
 #include <glo/GLSLProgram.hpp>
-#include <sbf/path.hpp>
+
+#include <sbf/pkg/Module.hpp>
+
 #include <vgCairo/helpers.hpp>
 #include <vgCairo/ImageSurface.hpp>
 #include <vgd/basic/Image.hpp>
@@ -464,7 +467,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			Screenshot shot( getFrameCount(), capturedImage );
 
 			// Path
-			const boost::filesystem::path path = sbf::path::get(sbf::path::Var) / "screenshots";
+			const boost::filesystem::path path = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / "screenshots";
 			shot.mkdirs( path.string() );
 
 			if ( m_screenshotFilename.size() > 0 )
@@ -1111,7 +1114,7 @@ std::ostream* Canvas::getGleOutputStream()
 
 boost::filesystem::path Canvas::getGlePath()
 {
-	return sbf::path::getSafe(sbf::path::Var);
+	return sbf::pkg::Module::get()->getPathSafe(sbf::pkg::VarPath);
 }
 
 

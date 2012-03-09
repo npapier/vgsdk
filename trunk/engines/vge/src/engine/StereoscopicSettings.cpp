@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vge/engine/StereoscopicSettings.hpp"
 
@@ -9,7 +10,7 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include <sbf/path.hpp>
+#include <sbf/pkg/Module.hpp>
 
 #include <vgd/node/Camera.hpp>
 
@@ -94,8 +95,8 @@ void StereoscopicSettings::load()
 
 	// Gets the path of the settings file.
 	// Loads for 'var' if exists, otherwise from 'share'.
-	const bfs::path varPath = sbf::path::get(sbf::path::Var) / SETTINGS_FILENAME;
-	const bfs::path sharePath = sbf::path::get(sbf::path::Share) / SETTINGS_FILENAME;
+	const bfs::path varPath = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / SETTINGS_FILENAME;
+	const bfs::path sharePath = sbf::pkg::Module::get()->getPath(sbf::pkg::SharePath) / SETTINGS_FILENAME;
 
 	const bfs::path path = bfs::exists( varPath ) ? varPath : sharePath;
 
@@ -150,7 +151,7 @@ void StereoscopicSettings::save()
 	namespace bpt = boost::property_tree;
 
 	// Gets the path of the settings file.
-	const bfs::path path = sbf::path::getSafe(sbf::path::Var) / SETTINGS_FILENAME;
+	const bfs::path path = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / SETTINGS_FILENAME;
 
 	try
 	{

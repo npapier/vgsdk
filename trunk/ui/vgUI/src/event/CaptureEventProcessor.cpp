@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,10 +8,12 @@
 
 #include <sstream>
 #include <locale>
-#include "boost/date_time/local_time/local_time.hpp"
+
+#include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <sbf/path.hpp>
+#include <sbf/pkg/Module.hpp>
+
 #include <vgd/event/KeyboardButtonEvent.hpp>
 
 #include "vgUI/Canvas.hpp"
@@ -77,7 +79,7 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 				outputFacet->format("%A-%d-%m-%Y_%Hh%Mm%Ss");
 				ss << second_clock::local_time();
 
-				const bfs::path path = sbf::path::get(sbf::path::Var) / bfs::path("videos") / ss.str();
+				const bfs::path path = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / bfs::path("videos") / ss.str();
 				const std::string strPath = path.string();
 
 				// Flushs the video
