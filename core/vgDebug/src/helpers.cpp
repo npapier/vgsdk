@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2011, Clement Forest, Nicolas Papier
+// VGSDK - Copyright (C) 2010, 2011, 2012, Clement Forest, Nicolas Papier
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Clement Forest
@@ -13,8 +13,7 @@
 #include <boost/filesystem/path.hpp>
 #include <fstream>
 #include <iostream>
-#include <sbf/Module.hpp>
-#include <sbf/path.hpp>
+#include <sbf/pkg/Module.hpp>
 #include <set>
 #include <vgd/Shp.hpp>
 #include <vgDebug/StreamRedirection.hpp>
@@ -42,7 +41,7 @@ namespace vgDebug
 
 
 
-void Log::logStandardOutputs( const sbf::Module& module )
+void Log::logStandardOutputs( boost::shared_ptr< sbf::pkg::Module > module )
 {
 	namespace bfs = boost::filesystem;
  	namespace bpx = boost::posix_time;
@@ -53,7 +52,7 @@ void Log::logStandardOutputs( const sbf::Module& module )
  	logRedirection.reset();
 
 	// Creates log directory
-	g_logDirectory = sbf::path::getSafe(sbf::path::Var, module) / "log";
+	g_logDirectory = module->getPathSafe(sbf::pkg::VarPath) / "log";
 	try 
 	{
 		boost::filesystem::create_directory(g_logDirectory);
@@ -65,7 +64,7 @@ void Log::logStandardOutputs( const sbf::Module& module )
 	}
 
 	// log-ulis2-0-2010-11-16_15h25m48s.txt
-	g_logFilePrefix = std::string("log_") + module.getName() + module.getVersion() + "_";
+	g_logFilePrefix = std::string("log_") + module->getName() + module->getVersion() + "_";
 	g_logFileSuffix = ".txt";
 
 	std::stringstream ss;
@@ -118,9 +117,9 @@ void Log::limitLogFileHistory( const int maxNumber )
 }
 
 
-void Log::logBasicInfo(int argc, char** argv, const sbf::Module& module)
+void Log::logBasicInfo(int argc, char** argv, boost::shared_ptr< sbf::pkg::Module > module)
 {
-	std::clog << "Starting " << module.getName() << sbf::Module::get().getVersion() << " as ";
+	std::clog << "Starting " << module->getName() << module->getVersion() << " as ";
 	for(int i=0;i<argc;++i)
 	{
 		std::clog << argv[i] <<" ";

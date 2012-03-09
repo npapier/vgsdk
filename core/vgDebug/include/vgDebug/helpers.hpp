@@ -1,8 +1,9 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier and Clement Forest
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier and Clement Forest
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 // Author Clement Forest
+// Author Guillaume Brocker
 
 #ifndef _VGDEBUG_HELPERS_HPP
 #define _VGDEBUG_HELPERS_HPP
@@ -12,7 +13,7 @@
 #include <sbf/log/GlobalLogger.hpp>
 #include <sbf/log/ILogging.hpp>
 
-namespace sbf { struct Module; }
+namespace sbf { namespace pkg { struct Module; } }
 
 
 
@@ -53,7 +54,7 @@ struct Log
  * @brief Redirect standard output in a log-YYYY-MM-DD-HH-mm-ss.txt
  * file located in the var directory of the given module.
  */
-static void VGDEBUG_API logStandardOutputs(const sbf::Module& module);
+static void VGDEBUG_API logStandardOutputs( boost::shared_ptr< sbf::pkg::Module > module );
 
 
 /**
@@ -65,7 +66,7 @@ static void VGDEBUG_API limitLogFileHistory( const int maxNumber );
 /**
  * @brief Log basic info to log file (argument, initial directory, ...
  */
-static void VGDEBUG_API logBasicInfo( int argc, char** argv, const sbf::Module& module );
+static void VGDEBUG_API logBasicInfo( int argc, char** argv, boost::shared_ptr< sbf::pkg::Module > module );
 
 };
 

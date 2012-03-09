@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier, Maxime Peresson.
+// VGSDK - Copyright (C) 2010, 2011, 2012, Nicolas Papier, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -8,7 +8,7 @@
 
 #include <COLLADASWImage.h>
 
-#include <sbf/path.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include <vgDebug/helpers.hpp>
 #include <vgd/basic/Image.hpp>
@@ -72,7 +72,7 @@ void ImageExporter::doExport()
 			}
 
 			// Creates directory if needed
-			sbf::path::mkdirs( m_imageDirectory );
+			boost::filesystem::create_directories( m_imageDirectory );
 
 			std::string imageName = m_imageDirectory + "/" + texture->getName() + ".png";
 			image.save( imageName );

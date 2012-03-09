@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgGTK/helpers.hpp"
 
@@ -27,7 +28,7 @@ namespace
 
 
 
-void initLogging( int argc, char** argv, const sbf::Module& module, const int maxNumberOfLogFiles )
+void initLogging( int argc, char** argv, const boost::shared_ptr< sbf::pkg::Module > module, const int maxNumberOfLogFiles )
 {
 	// Installs the GTK-based logging system.
 	sbf::log::GlobalLogger::set< vgGTK::Logging >();
