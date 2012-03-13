@@ -1,8 +1,9 @@
-// VGSDK - Copyright (C) 2009, 2011, Maxime Peresson, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, 2012, Maxime Peresson, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgTest/convenience.hpp"
 
@@ -11,7 +12,7 @@
 #include <boost/filesystem.hpp>
 
 #include <gtest/gtest.h>
-#include <sbf/path.hpp>
+#include <sbf/pkg/Module.hpp>
 #include <sstream>
 
 #include <vgd/Shp.hpp>
@@ -163,7 +164,7 @@ std::list< std::string > createModelList( std::string dir )
 {
 	boost::filesystem::path path;
 
-	path = sbf::path::getTopLevel(sbf::path::Share) / "vgTest" / "0-5" / dir;
+	path = sbf::pkg::Module::get("vgTest","0-5")->getPath(sbf::pkg::SharePath) / dir;
 
 	vgio::FilenameCollector collector( path.string() );
 	

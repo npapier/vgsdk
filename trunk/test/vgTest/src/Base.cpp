@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2010, 2012, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -10,8 +10,7 @@
 
 #include <gtest/gtest.h>
 
-#include <sbf/Module.hpp>
-#include <sbf/path.hpp>
+#include <sbf/pkg/Module.hpp>
 #include <vgTest/convenience.hpp>
 
 
@@ -55,9 +54,9 @@ vgd::Shp< vgTest::Logging > Base::getLog()
 const std::string Base::getReferencePath() const
 {
 	// @todo Replace the hard coded path
-	boost::filesystem::path path = sbf::path::getTopLevel(sbf::path::Var) / "vgUI" / "0-5" / "references/";
+	boost::filesystem::path path = sbf::pkg::Module::get("vgUI","0-5")->getPath(sbf::pkg::VarPath) / "references/";
 
-	if (sbf::path::mkdirs(path.string()))
+	if (boost::filesystem::create_directories(path.string()))
 	{
 		std::cout << "Reference path created" << std::endl;
 	}
@@ -69,16 +68,16 @@ const std::string Base::getScreenShotPath() const
 {
 	// @todo Replace the hard coded path
 
-	boost::filesystem::path path = sbf::path::getTopLevel(sbf::path::Var) / "vgUI" / "0-5" / "screenshots/";
+	boost::filesystem::path path = sbf::pkg::Module::get("vgUI","0-5")->getPath(sbf::pkg::VarPath) / "screenshots/";
 	return path.string();
 }
 
 const std::string Base::getDifferencePath() const
 {
 	// @todo Replace the hard coded path
-	boost::filesystem::path path = sbf::path::getTopLevel(sbf::path::Var) / "vgUI" / "0-5" / "differences/";
+	boost::filesystem::path path = sbf::pkg::Module::get("vgUI","0-5")->getPath(sbf::pkg::VarPath) / "differences/";
 
-	if (sbf::path::mkdirs(path.string()))
+	if (boost::filesystem::create_directories(path.string()))
 	{
 		std::cout << "Differences path created" << std::endl;
 	}
