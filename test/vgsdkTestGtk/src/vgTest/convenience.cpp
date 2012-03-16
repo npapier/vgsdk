@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2012, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Guillaume Brocker
 
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 
@@ -9,7 +10,6 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 
-#include <sbf/path.hpp>
 #include <sstream>
 #include <vgd/basic/Image.hpp>
 #include <vgd/Shp.hpp>

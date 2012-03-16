@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2012, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Guillaume Brocker
 
 #include <gtest/gtest.h>
 #include "vgsdkTestGtk/vgTest/TestEnvironment.hpp"
@@ -10,9 +11,10 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/program_options.hpp>
 
-#include <sbf/path.hpp>
+#include <sbf/pkg/Package.hpp>
 
 
 int main(int argc, char **argv) 
@@ -21,9 +23,9 @@ int main(int argc, char **argv)
 	std::vector<std::string> vec;
 	boost::algorithm::split(vec, argv[0], boost::algorithm::is_any_of("\\"));
 	std::string appName = vec[vec.size()-1];
-	std::string xmlPath = sbf::path::getTopLevel(sbf::path::Var).string() + "\\googletest\\0-0\\";
+	std::string xmlPath = sbf::pkg::Package::current()->getPath(sbf::pkg::VarPath).string() + "\\googletest\\0-0\\";
 	boost::algorithm::replace_all(xmlPath, "/", "\\");
-	sbf::path::mkdirs(xmlPath);
+	boost::filesystem::create_directories(xmlPath);
 
     try {
 		namespace po = boost::program_options;

@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2009, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2012, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Guillaume Brocker
 
 #ifndef _VGTEST_SHAPE_HPP
 #define _VGTEST_SHAPE_HPP
@@ -10,7 +11,6 @@
 #include <boost/assign/list_of.hpp>
 #include <map>
 
-#include <sbf/path.hpp>
 #include <string>
 #include <vgd/node/Sphere.hpp>
 #include <vgd/node/VertexShape.hpp>
