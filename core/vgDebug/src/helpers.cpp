@@ -16,16 +16,16 @@
 #include <sbf/pkg/Module.hpp>
 #include <set>
 #include <vgd/Shp.hpp>
-#include <vgDebug/StreamRedirection.hpp>
+#include <vgDebug/StreamTee.hpp>
 
 
 
 namespace
 {
 
-vgd::Shp<vgDebug::StreamRedirection> outRedirection;
-vgd::Shp<vgDebug::StreamRedirection> errRedirection;
-vgd::Shp<vgDebug::StreamRedirection> logRedirection;
+vgd::Shp<vgDebug::StreamTee> outRedirection;
+vgd::Shp<vgDebug::StreamTee> errRedirection;
+vgd::Shp<vgDebug::StreamTee> logRedirection;
 
 std::string				g_logFilePrefix;
 std::string				g_logFileSuffix;
@@ -78,9 +78,9 @@ void Log::logStandardOutputs( boost::shared_ptr< sbf::pkg::Module > module )
 	static std::ofstream logFile( (g_logDirectory / g_currentLogFile ).string().c_str() );
 	if(logFile.good())
 	{
-		outRedirection.reset(new vgDebug::StreamRedirection(&std::cout, &logFile));
-		errRedirection.reset(new vgDebug::StreamRedirection(&std::cerr, &logFile));
-		logRedirection.reset(new vgDebug::StreamRedirection(&std::clog, &logFile));
+		outRedirection.reset(new vgDebug::StreamTee(&std::cout, &logFile));
+		errRedirection.reset(new vgDebug::StreamTee(&std::cerr, &logFile));
+		logRedirection.reset(new vgDebug::StreamTee(&std::clog, &logFile));
 	}
 }
 
