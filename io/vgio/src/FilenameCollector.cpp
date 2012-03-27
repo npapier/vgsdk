@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 #include "vgio/FilenameCollector.hpp"
 
 #include <boost/filesystem/operations.hpp>
+#include <vgDebug/helpers.hpp>
 
 
 
@@ -46,6 +47,14 @@ const FilenameCollector::StringList& FilenameCollector::run()
 
 void FilenameCollector::run( const boost::filesystem::path& path)
 {
+	vgAssert( boost::filesystem::exists(path) );
+
+	// Skips processing if the given path is not valid.
+	if( !boost::filesystem::exists(path) )
+	{
+		return;
+	}
+
 	namespace fs = boost::filesystem;
 
 	for( fs::directory_iterator i( path ); i != fs::directory_iterator(); ++i )
