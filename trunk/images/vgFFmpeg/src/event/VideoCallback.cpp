@@ -122,6 +122,7 @@ void VideoCallback::setVideo( const std::string & pathFilename )
 {
 	vgLogDebug("VideoCallback::setVideo( %s )", pathFilename.c_str() );
 
+	m_video.reset();
 	m_video = vgd::makeShp( new vgFFmpeg::Video( pathFilename ) );
 
 #ifdef ENABLED_VIDEO_DEBUG
