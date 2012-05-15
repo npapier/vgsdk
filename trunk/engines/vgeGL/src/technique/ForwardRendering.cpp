@@ -2134,9 +2134,11 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		pppRC.outputFbo->setDrawBuffer();
 
 		currentScaleForVertex *= scales[i];
-		glViewport( 0, 0,
-					(uint)(outputTextureGLO->getWidth() * currentScaleForVertex),
-					(uint)(outputTextureGLO->getHeight() * currentScaleForVertex) );
+		const GLsizei width = vgm::round(outputTextureGLO->getWidth() * currentScaleForVertex);
+		const GLsizei height = vgm::round(outputTextureGLO->getHeight() * currentScaleForVertex);
+
+		glViewport( 0, 0, width, height );
+		glScissor( 0, 0, width, height );
 
 //engine->begin2DRendering( &lviewport, false );
 // @todo a light version of begin2DRendering
