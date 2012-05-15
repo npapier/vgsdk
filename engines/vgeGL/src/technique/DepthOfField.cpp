@@ -131,15 +131,12 @@ void DepthOfField::stageInitializePostProcessing( vgd::node::DepthOfField * node
 
 	p = PostProcessing::create("vgsdk:dof:down");
 	p->setInput0( PostProcessing::OUTPUT_BUFFER0 );
-	//p->setFilter( PostProcessing::IDENTITY );
 	p->setFilter( PostProcessing::DOWN_FILTER4 );
-	//p->setOutput( PostProcessing::OUTPUT_TMP0 );
 	ppGroup->addChild( p );
-//	rc->postProcessing.setState( 0, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
+	rc->postProcessing.setState( 0, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
 
 	p = PostProcessing::create("vgsdk:dof:blurH", 1);
-p->setInput0( PostProcessing::OUTPUT_BUFFER0 );
-//	p->setInput0( PostProcessing::PREVIOUS0 );
+	//p->setInput0( PostProcessing::OUTPUT_BUFFER0 );
 	p->setFilter( PostProcessing::BLUR_HORIZ  );
 	ppGroup->addChild( p );
 	rc->postProcessing.setState( 1, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
@@ -152,7 +149,7 @@ p->setInput0( PostProcessing::OUTPUT_BUFFER0 );
 	p = PostProcessing::create("vgsdk:dof:up", 3);
 	p->setFilter( PostProcessing::UP_FILTER4 );
 	ppGroup->addChild( p );
-//	rc->postProcessing.setState( 3, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
+	rc->postProcessing.setState( 3, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
 
 	p = PostProcessing::create("vgsdk:dof:final", 4);
 	p->setInput0( PostProcessing::OUTPUT_BUFFER0 );										// color
