@@ -6,7 +6,7 @@
 #include "vgd/event/TimerCallback.hpp"
 
 #include <algorithm>
-#include <glm/GLM_GTX_compatibility.h>
+#include <glm/gtx/compatibility.hpp>
 #include <limits>
 #include "vgd/event/TimerEvent.hpp"
 #include "vgm/Utilities.hpp"
