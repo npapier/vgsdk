@@ -93,7 +93,7 @@ struct VGD_API Image : public IImage
 	 * @brief Image contructor from memory.
 	 * 
 	 * If \c pixels parameter is not 0, then the image data is copied from memory.
-	 * Otherwise the image would only contain zero values.
+	 * Otherwise the image is not initialized.
 	 * 
 	 * @param width		width of the image.
 	 * @param height		height of the image.
@@ -232,7 +232,7 @@ struct VGD_API Image : public IImage
 	 * @brief Create an image from memory.
 	 * 
 	 * If \c pixels parameter is not 0, then the image data is copied from memory.
-	 * Otherwise the image would only contain zero values.
+	 * Otherwise the image is not initialized.
 	 * 
 	 * @param width		width of the image.
 	 * @param height		height of the image.
