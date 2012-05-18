@@ -85,7 +85,7 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @return true if this child is in the set of children to traverse, false otherwise.
 	 */
-	bool isChildChoosen( const int32 index ) const;
+	bool isChildChosen( const int32 index ) const;
 
 	/**
 	 * @brief Adds a new child to the set of children to traverse.
@@ -94,7 +94,7 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @remark A chosen child is never insert more than once.
 	 */
-	void addToChoosenChildren( const int32 index );
+	void addToChosenChildren( const int32 index );
 
 	/**
 	 * @brief Removes a child from the set of children to traverse.
@@ -103,12 +103,12 @@ struct VGD_API MultiSwitch : public Group
 	 * 
 	 * @remark Removed only if already inserted, if not inserted nothing is done.
 	 */	
-	void removeFromChoosenChildren( const int32 index );
+	void removeFromChosenChildren( const int32 index );
 
 	/**
 	 * @brief Clears the set of children to traverse.
 	 */
-	void clearChoosenChildren( void );
+	void clearChosenChildren( void );
 	//@}
 
 
