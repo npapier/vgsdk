@@ -46,7 +46,7 @@ void MultiSwitch::setToDefaults( void )
 	Group::setToDefaults();
 
 	setWhichChild( MULTI_SWITCH_DEFAULT );
-	clearChoosenChildren();
+	clearChosenChildren();
 }
 
 
@@ -74,7 +74,7 @@ void MultiSwitch::setWhichChild( const int32 whichChild )
 
 
 
-bool MultiSwitch::isChildChoosen( const int32 index ) const
+bool MultiSwitch::isChildChosen( const int32 index ) const
 {
 	assert( checkChildIndex(index) && "index is out of range." );
 
@@ -85,14 +85,15 @@ bool MultiSwitch::isChildChoosen( const int32 index ) const
 
 
 
-void MultiSwitch::addToChoosenChildren( const int32 index )
+void MultiSwitch::addToChosenChildren( const int32 index )
 {
 	assert( checkChildIndex(index) && "index is out of range." );
 
-	if ( !isChildChoosen(index) )
+	if ( !isChildChosen(index) )
 	{
 		vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
 		chosenChild->push_back( index );
+		chosenChild.release();
 
 		updateGraph();
 	}
@@ -100,7 +101,7 @@ void MultiSwitch::addToChoosenChildren( const int32 index )
 
 
 
-void MultiSwitch::removeFromChoosenChildren( const int32 index )
+void MultiSwitch::removeFromChosenChildren( const int32 index )
 {
 	assert( checkChildIndex(index) && "index is out of range." );
 
@@ -111,6 +112,7 @@ void MultiSwitch::removeFromChoosenChildren( const int32 index )
 	{
 		// Found index in chosenChild
 		chosenChild->erase( indexChosenChild );
+		chosenChild.release();
 
 		updateGraph();
 	}
@@ -119,11 +121,12 @@ void MultiSwitch::removeFromChoosenChildren( const int32 index )
 
 
 
-void MultiSwitch::clearChoosenChildren( void )
+void MultiSwitch::clearChosenChildren( void )
 {
 	vgd::field::EditorRW<vgd::field::MFInt32> chosenChild = getFieldRW<vgd::field::MFInt32>(getFChosenChild());
 
 	chosenChild->clear();
+	chosenChild.release();
 
 	updateGraph();
 }
