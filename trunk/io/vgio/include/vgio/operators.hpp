@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -47,44 +47,44 @@ VGIO_API void configure( std::ostream & os );
 
 
 /**
- * @brief	Writes into an output stream the textual representation of the draw style nodes bounding box parameter.
+ * brief	Writes into an output stream the textual representation of the draw style nodes bounding box parameter.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxParameterType & boundingBoxParameter );
+//VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxParameterType & boundingBoxParameter );
 
 
 
 /**
- * @brief	Writes into an output stream the textual representation of the draw style nodes bounding box parameter value.
+ * brief	Writes into an output stream the textual representation of the draw style nodes bounding box parameter value.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxValueType & boundingBoxValue );
+//VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxValueType & boundingBoxValue );
 
 
 
 /**
- * @brief	Writes into an output stream the textual representation of the draw style nodes normal length parameter.
+ * brief	Writes into an output stream the textual representation of the draw style nodes normal length parameter.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::NormalLengthParameterType & normalLengthParameter );
+//VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::NormalLengthParameterType & normalLengthParameter );
 
 
 
 /**
- * @brief	Writes into an output stream the textual representation of the draw style nodes shape parameter.
+ * brief	Writes into an output stream the textual representation of the draw style nodes shape parameter.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeParameterType & shapeParameter );
+//VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeParameterType & shapeParameter );
 
 
 
 /**
- * @brief	Writes into an output stream the textual representation of the draw style nodes shape parameter value.
+ * brief	Writes into an output stream the textual representation of the draw style nodes shape parameter value.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeValueType & shapeValue );
+//VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeValueType & shapeValue );
 
 
 
 /**
- * @brief	Writes into an output stream the textual representation of the draw style nodes show orientation parameter type.
+ * brief	Writes into an output stream the textual representation of the draw style nodes show orientation parameter type.
  */
-VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShowOrientationParameterType & showOrientationParameter );
+//VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShowOrientationParameterType & showOrientationParameter );
 
 
 
