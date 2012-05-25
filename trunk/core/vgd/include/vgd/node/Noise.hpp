@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -179,8 +179,8 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		PHOTON = 304,	///< Photon noise simulation
-		NO = 303,	///< No noise simulation
+		PHOTON = 317,	///< Photon noise simulation
+		NO = 316,	///< No noise simulation
 		DEFAULT_NOISEMODEL = PHOTON	///< Photon noise simulation
 	};
 
@@ -208,8 +208,8 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 303 );
-			retVal.push_back( 304 );
+			retVal.push_back( 316 );
+			retVal.push_back( 317 );
 
 			return retVal;
 		}

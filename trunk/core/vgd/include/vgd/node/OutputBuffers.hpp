@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -134,6 +134,15 @@ struct VGD_API OutputBuffers : public vgd::node::SingleAttribute
 	 * @param which		index of output buffer. Default value -1 means no buffer.
 	 */
 	void setCurrent( const int which = -1 );
+
+
+	/**
+	 * @brief Specifies which buffers must be used for rendering.
+	 *
+	 * @param which0		index of first output buffer.
+	 * @param which1		index of second output buffer.
+	 */
+	void setCurrent( const int which0, const int which1 );
 	//@}
 
 
