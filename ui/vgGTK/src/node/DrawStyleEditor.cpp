@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -41,10 +41,7 @@ DrawStyleEditor::DrawStyleEditor( vgd::Shp< vgd::node::DrawStyle > drawStyle, vg
 	m_shapeBox					( 0 ),
 	m_lastShowOrientationValue	( true ),
 	m_showOrientationButton		( 0 ),
-	m_showOrientationValueButton( 0 ),
-	m_lastBoundingBoxValue		( vgd::node::DrawStyle::DEFAULT_BOUNDING_BOX ),
-	m_boundingBoxButton			( 0 ),
-	m_boundingBoxBox			( 0 )
+	m_showOrientationValueButton( 0 )
 {
 	createContent();
 	refreshWidgets();
@@ -59,15 +56,11 @@ void DrawStyleEditor::createContent()
 	
 	// Shape configuration widgets.
 	const ShapeBox::ValueContainer	shapeValues = 
-		list_of< ShapeBox::Value >(DrawStyle::NONE, "None")
-		(DrawStyle::POINT, "Point")
-		(DrawStyle::FLAT, "Flat")
+		list_of< ShapeBox::Value >(DrawStyle::FLAT, "Flat")
 		(DrawStyle::SMOOTH, "Smooth")
 		(DrawStyle::WIREFRAME, "Wireframe")
 		(DrawStyle::HIDDEN_LINE, "Hidden Line")
-		(DrawStyle::FLAT_HIDDEN_LINE, "Flat Hidden Line")
-		(DrawStyle::SMOOTH_HIDDEN_LINE, "Smooth Hidden Line")
-		(DrawStyle::NEIGHBOUR, "Neighbour");
+		(DrawStyle::FLAT_HIDDEN_LINE, "Flat Hidden Line");
 
 	m_shapeButton	= Gtk::manage( new Gtk::CheckButton("Shape") );
 	m_shapeBox		= Gtk::manage( new ShapeBox(shapeValues, sigc::mem_fun(this, &DrawStyleEditor::onShapeValue)) );
@@ -114,33 +107,14 @@ void DrawStyleEditor::createContent()
 	
 	m_showOrientationButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onShowOrientation) );
 	m_showOrientationValueButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onShowOrientationValue) );
-		
-	
-	// Bounding box widgets.
-	const BoundingBoxBox::ValueContainer	boundingBoxValues =
-		list_of< BoundingBoxBox::Value >(DrawStyle::NO_BOUNDING_BOX, "None")
-		(DrawStyle::OBJECT_SPACE, "Object Space")
-		(DrawStyle::AA_OBJECT_SPACE, "AA Object Space")
-		(DrawStyle::OBJECT_AND_AA_OBJECT_SPACE, "Object and AA Object Space");
-	
-	m_boundingBoxButton	= Gtk::manage( new Gtk::CheckButton("Bounding Box") );
-	m_boundingBoxBox	= Gtk::manage( new BoundingBoxBox(boundingBoxValues, sigc::mem_fun(this, &DrawStyleEditor::onBoundingBoxValue)) );
-	
-	m_boundingBoxBox->set_border_width( 12 );
 
-	pack_start( *m_boundingBoxButton, Gtk::PACK_SHRINK );
-	pack_start( *m_boundingBoxBox, Gtk::PACK_SHRINK );
-	
-	m_boundingBoxButton->signal_clicked().connect( sigc::mem_fun(this, &DrawStyleEditor::onBoundingBox) );
-	
-	
+
 	// Tooltips
 	Gtk::Tooltips	* tooltips = Gtk::manage( new Gtk::Tooltips() );
-	
+
 	tooltips->set_tip( *m_shapeButton, "Specifies the drawing style of shapes" );
 	tooltips->set_tip( *m_normalLengthButton, "Specifies the normal length to show" );
 	tooltips->set_tip( *m_showOrientationButton, "Specifies the triangle orientation feedback to show" );
-	tooltips->set_tip( *m_boundingBoxButton, "Specifies the bounding box drawing style" );
 }
 
 
@@ -217,21 +191,6 @@ void DrawStyleEditor::refreshWidgets()
 		{
 			m_showOrientationValueButton->set_active( showOrientation );
 		}
-
-		
-		// Bounding box
-		vgd::node::DrawStyle::BoundingBoxValueType	boundingBox;
-		bool										hasBoundingBox;
-		
-		hasBoundingBox = m_drawStyle->getBoundingBox( boundingBox );
-		
-		m_boundingBoxButton->set_sensitive( true );
-		m_boundingBoxButton->set_active( hasBoundingBox );
-		m_boundingBoxBox->set_sensitive( hasBoundingBox );
-		if( hasBoundingBox )
-		{
-			m_boundingBoxBox->setValue( boundingBox );
-		}
 	}
 	else
 	{
@@ -246,41 +205,7 @@ void DrawStyleEditor::refreshWidgets()
 		// Show orientation
 		m_showOrientationButton->set_sensitive( false );
 		m_showOrientationValueButton->set_sensitive( false );
-		
-		// Bounding box
-		m_boundingBoxButton->set_sensitive( false );
-		m_boundingBoxBox->set_sensitive( false );
 	}
-}
-
-
-
-void DrawStyleEditor::onBoundingBox()
-{
-	assert( m_drawStyle );
-	assert( m_boundingBoxButton );
-	
-	if( m_boundingBoxButton->get_active() )
-	{
-		m_drawStyle->setBoundingBox( m_lastBoundingBoxValue );
-	}
-	else
-	{
-		m_drawStyle->getBoundingBox( m_lastBoundingBoxValue );
-		m_drawStyle->eraseBoundingBox();
-	}
-	refreshWidgets();
-	refreshCanvas();
-}
-
-
-
-void DrawStyleEditor::onBoundingBoxValue( const vgd::node::DrawStyle::BoundingBoxValueType boundingBox )
-{
-	assert( m_drawStyle );
-	
-	m_drawStyle->setBoundingBox( boundingBox );
-	refreshCanvas();
 }
 
 
