@@ -79,7 +79,7 @@ struct VGEGL_API GLState
 		m_shape( vgd::node::DrawStyle::DEFAULT_SHAPE ),
 		m_normalLength( 0.f ),
 		m_showOrientation( false ),
-		m_boundingBox( vgd::node::DrawStyle::DEFAULT_BOUNDING_BOX ),
+		m_boundingBox( vgd::node::DrawStyle::DEFAULT_BOUNDINGBOX ),
 
 		//
 		m_multipleInstances(0)
