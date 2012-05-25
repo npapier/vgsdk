@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -62,7 +62,6 @@ struct VGGTK_API DrawStyleEditor : public Gtk::VBox
 	
 protected:
 	
-	typedef internal::EnumBox< vgd::node::DrawStyle::BoundingBoxValueType >	BoundingBoxBox;
 	typedef internal::EnumBox< vgd::node::DrawStyle::ShapeValueType >		ShapeBox;
 		
 	vgd::Shp< vgd::node::DrawStyle >				m_drawStyle;					///< Refefences the DrawStyle node to edit
@@ -80,17 +79,11 @@ protected:
 	vgd::node::DrawStyle::ShowOrientationValueType	m_lastShowOrientationValue;		///< Holds the last show orientation value
 	Gtk::CheckButton								* m_showOrientationButton;		///< References the widget used to control the show orentation field
 	Gtk::CheckButton								* m_showOrientationValueButton;	///< References the widget used to edit show orientation values
-	
-	vgd::node::DrawStyle::BoundingBoxValueType		m_lastBoundingBoxValue;			///< Holds the last bouding box field value
-	Gtk::CheckButton								* m_boundingBoxButton;			///< References the widgets used to control the bounding box field
-	BoundingBoxBox									* m_boundingBoxBox;				///< Reference the widget used to edit bouding box values
-	
+
 	/**
 	 * @name	Signal Handlers
 	 */
 	//@{
-	virtual void onBoundingBox();
-	virtual void onBoundingBoxValue( const vgd::node::DrawStyle::BoundingBoxValueType boundingBox );
 	virtual void onNormalLength();
 	virtual void onNormalLengthValue();
 	virtual void onShape();
