@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -118,10 +118,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		HIGH = 299,	///< High resolution shadow map
-		VERY_HIGH = 300,	///< Very high resolution shadow map
-		MEDIUM = 298,	///< Medium resolution shadow map
-		LOW = 297,	///< Low resolution shadow map
+		HIGH = 312,	///< High resolution shadow map
+		VERY_HIGH = 313,	///< Very high resolution shadow map
+		MEDIUM = 311,	///< Medium resolution shadow map
+		LOW = 310,	///< Low resolution shadow map
 		DEFAULT_SHADOWMAPSIZE = MEDIUM	///< Medium resolution shadow map
 	};
 
@@ -149,10 +149,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 297 );
-			retVal.push_back( 298 );
-			retVal.push_back( 299 );
-			retVal.push_back( 300 );
+			retVal.push_back( 310 );
+			retVal.push_back( 311 );
+			retVal.push_back( 312 );
+			retVal.push_back( 313 );
 
 			return retVal;
 		}
@@ -209,8 +209,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		NEAREST = 301,	///< 
-		LINEAR = 302,	///< 
+		NEAREST = 314,	///< 
+		LINEAR = 315,	///< 
 		DEFAULT_SHADOWFILTERING = LINEAR	///< 
 	};
 
@@ -238,8 +238,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 301 );
-			retVal.push_back( 302 );
+			retVal.push_back( 314 );
+			retVal.push_back( 315 );
 
 			return retVal;
 		}
@@ -294,10 +294,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		INT24 = 271,	///< see Texture.internalFormat documentation
-		INT32 = 272,	///< see Texture.internalFormat documentation
-		INT16 = 270,	///< see Texture.internalFormat documentation
-		FLOAT32 = 273,	///< see Texture.internalFormat documentation
+		INT24 = 284,	///< see Texture.internalFormat documentation
+		INT32 = 285,	///< see Texture.internalFormat documentation
+		INT16 = 283,	///< see Texture.internalFormat documentation
+		FLOAT32 = 286,	///< see Texture.internalFormat documentation
 		DEFAULT_SHADOWMAPTYPE = INT32	///< see Texture.internalFormat documentation
 	};
 
@@ -325,10 +325,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 270 );
-			retVal.push_back( 271 );
-			retVal.push_back( 272 );
-			retVal.push_back( 273 );
+			retVal.push_back( 283 );
+			retVal.push_back( 284 );
+			retVal.push_back( 285 );
+			retVal.push_back( 286 );
 
 			return retVal;
 		}
@@ -544,8 +544,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		AT_INFINITY = 282,	///< Specular reflections are computed from the origin of the eye coordinate system
-		AT_EYE = 283,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
+		AT_INFINITY = 295,	///< Specular reflections are computed from the origin of the eye coordinate system
+		AT_EYE = 296,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
 		DEFAULT_VIEWER = AT_INFINITY	///< Specular reflections are computed from the origin of the eye coordinate system
 	};
 
@@ -573,8 +573,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 282 );
-			retVal.push_back( 283 );
+			retVal.push_back( 295 );
+			retVal.push_back( 296 );
 
 			return retVal;
 		}
@@ -659,9 +659,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		STANDARD_PER_PIXEL = 281,	///< Lighting is computed per pixel
-		LIGHTING_OFF = 279,	///< No lighting
-		STANDARD_PER_VERTEX = 280,	///< Lighting is computed per vertex
+		STANDARD_PER_PIXEL = 294,	///< Lighting is computed per pixel
+		LIGHTING_OFF = 292,	///< No lighting
+		STANDARD_PER_VERTEX = 293,	///< Lighting is computed per vertex
 		DEFAULT_MODEL = STANDARD_PER_VERTEX	///< Lighting is computed per vertex
 	};
 
@@ -689,9 +689,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 279 );
-			retVal.push_back( 280 );
-			retVal.push_back( 281 );
+			retVal.push_back( 292 );
+			retVal.push_back( 293 );
+			retVal.push_back( 294 );
 
 			return retVal;
 		}
@@ -777,19 +777,19 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		SHADOW_MAPPING_4UM = 287,	///< Four uniform samples
-		SHADOW_MAPPING = 285,	///< Shadows are computed using shadow mapping algorithm
-		SHADOW_OFF = 284,	///< Shadows are not computed
-		SHADOW_MAPPING_9UM = 290,	///< Nine unifrom samples
-		SHADOW_MAPPING_9U = 289,	///< Nine uniform samples
-		SHADOW_MAPPING_4U = 286,	///< Four uniform samples
-		SHADOW_MAPPING_64UM = 296,	///< Sixty four uniform samples
-		SHADOW_MAPPING_16U = 291,	///< Sixteen uniform samples
-		SHADOW_MAPPING_32UM = 294,	///< Thirty two uniform samples
-		SHADOW_MAPPING_4DM = 288,	///< Four dithered samples
-		SHADOW_MAPPING_64U = 295,	///< Sixty four uniform samples
-		SHADOW_MAPPING_32U = 293,	///< Thirty two uniform samples
-		SHADOW_MAPPING_16UM = 292,	///< Sixteen unifrom samples
+		SHADOW_MAPPING_4UM = 300,	///< Four uniform samples
+		SHADOW_MAPPING = 298,	///< Shadows are computed using shadow mapping algorithm
+		SHADOW_OFF = 297,	///< Shadows are not computed
+		SHADOW_MAPPING_9UM = 303,	///< Nine unifrom samples
+		SHADOW_MAPPING_9U = 302,	///< Nine uniform samples
+		SHADOW_MAPPING_4U = 299,	///< Four uniform samples
+		SHADOW_MAPPING_64UM = 309,	///< Sixty four uniform samples
+		SHADOW_MAPPING_16U = 304,	///< Sixteen uniform samples
+		SHADOW_MAPPING_32UM = 307,	///< Thirty two uniform samples
+		SHADOW_MAPPING_4DM = 301,	///< Four dithered samples
+		SHADOW_MAPPING_64U = 308,	///< Sixty four uniform samples
+		SHADOW_MAPPING_32U = 306,	///< Thirty two uniform samples
+		SHADOW_MAPPING_16UM = 305,	///< Sixteen unifrom samples
 		DEFAULT_SHADOW = SHADOW_OFF	///< Shadows are not computed
 	};
 
@@ -817,19 +817,19 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 284 );
-			retVal.push_back( 285 );
-			retVal.push_back( 286 );
-			retVal.push_back( 287 );
-			retVal.push_back( 288 );
-			retVal.push_back( 289 );
-			retVal.push_back( 290 );
-			retVal.push_back( 291 );
-			retVal.push_back( 292 );
-			retVal.push_back( 293 );
-			retVal.push_back( 294 );
-			retVal.push_back( 295 );
-			retVal.push_back( 296 );
+			retVal.push_back( 297 );
+			retVal.push_back( 298 );
+			retVal.push_back( 299 );
+			retVal.push_back( 300 );
+			retVal.push_back( 301 );
+			retVal.push_back( 302 );
+			retVal.push_back( 303 );
+			retVal.push_back( 304 );
+			retVal.push_back( 305 );
+			retVal.push_back( 306 );
+			retVal.push_back( 307 );
+			retVal.push_back( 308 );
+			retVal.push_back( 309 );
 
 			return retVal;
 		}
@@ -895,11 +895,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		CHOICE4 = 278,	///< 
-		CHOICE0 = 274,	///< 
-		CHOICE1 = 275,	///< 
-		CHOICE2 = 276,	///< 
-		CHOICE3 = 277,	///< 
+		CHOICE4 = 291,	///< 
+		CHOICE0 = 287,	///< 
+		CHOICE1 = 288,	///< 
+		CHOICE2 = 289,	///< 
+		CHOICE3 = 290,	///< 
 		DEFAULT_OPTION0 = CHOICE0	///< 
 	};
 
@@ -927,11 +927,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 274 );
-			retVal.push_back( 275 );
-			retVal.push_back( 276 );
-			retVal.push_back( 277 );
-			retVal.push_back( 278 );
+			retVal.push_back( 287 );
+			retVal.push_back( 288 );
+			retVal.push_back( 289 );
+			retVal.push_back( 290 );
+			retVal.push_back( 291 );
 
 			return retVal;
 		}

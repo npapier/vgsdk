@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<!--	VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+<!--	VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 	Distributed under the terms of the GNU Library General Public License (LGPL)
 	as published by the Free Software Foundation.
 	Author Nicolas Papier -->
@@ -197,6 +197,56 @@
 			<type name = "int" default = "8"></type>
 		</sf>
 
+	</node>
+
+
+	<node name = "DrawStyle" inherits = "SingleAttribute" >
+		<doxygen>
+			<docBrief>Drawing style definition node</docBrief>
+			<doc>The DrawStyle node specifies the current drawing style (flat, smooth, hidden-lines...) for all subsequent shape nodes in a scene graph and if normals, orientation or bounding box must be render.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+		</doxygen>
+
+		<of name="shape" doc="Sets the drawing style of Shape. Choose one value among NONE, POINT, FLAT, SMOOTH, WIREFRAME, HIDDEN_LINE, FLAT_HIDDEN_LINE, SMOOTH_HIDDEN_LINE or NEIGHBOUR.">
+			<type name="enum">
+				<enum default="SMOOTH">
+					<value name="NO_SHAPE" doc=""/>
+					<value name="POINT" doc=""/>
+					<value name="FLAT" doc=""/>
+					<value name="SMOOTH" doc=""/>
+					<value name="WIREFRAME" doc=""/>
+					<value name="HIDDEN_LINE" doc=""/>
+					<value name="FLAT_HIDDEN_LINE" doc=""/>
+					<value name="SMOOTH_HIDDEN_LINE" doc=""/>
+					<value name="NEIGHBOUR" doc=""/>
+				</enum>
+			</type>
+		</of>
+
+		<of name="normalLength" doc="Sets this field to zero to disable normals rendering (or a better way is to remove this field). Others values indicates the length of the rendered normals.">
+			<type name = "float" default="0.f"></type>
+		</of>
+
+		<of name="tangentLength" doc="Sets this field to zero to disable tangents rendering (or a better way is to remove this field). Others values indicates the length of the rendered tangents.">
+			<type name = "float" default="0.f"></type>
+		</of>
+
+		<of name="showOrientation" doc="Sets the field to true to render an half-arrow on each edge of triangles in order to show the triangle orientation (CW or CCW). The center of each triangle is drawn with a big point. A red arrow is drawn on the first edge, a green arrow on the second and a blue arrow on the third.">
+			<type name = "bool" default="false"/>
+		</of>
+
+		<of name="boundingBox" doc="Sets the bounding box drawing style. Choose one value among NO_BOUNDING_BOX, OBJECT_SPACE, AA_OBJECT_SPACE or OBJECT_AND_AA_OBJECT_SPACE.">
+			<type name="enum">
+				<enum default="NO_BOUNDING_BOX">
+					<value name="NO_BOUNDING_BOX" doc=""/>
+					<value name="OBJECT_SPACE" doc=""/>
+					<value name="AA_OBJECT_SPACE" doc=""/>
+					<value name="OBJECT_AND_AA_OBJECT_SPACE" doc=""/>
+				</enum>
+			</type>
+		</of>
 	</node>
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -118,6 +118,26 @@ void OutputBuffers::setCurrent( const int which )
 	if ( which >= 0 )
 	{
 		current->push_back( which );
+	}
+	// else nothing to do
+}
+
+
+void OutputBuffers::setCurrent( const int which0, const int which1 )
+{
+	using vgd::field::EditorRW;
+
+	EditorRW< FCurrentType > current = getCurrentRW();
+	current->clear();
+	if ( which0 >= 0 )
+	{
+		current->push_back( which0 );
+	}
+	// else nothing to do
+
+	if ( which1 >= 0 )
+	{
+		current->push_back( which1 );
 	}
 	// else nothing to do
 }
