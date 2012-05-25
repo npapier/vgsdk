@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -26,7 +26,7 @@ void configure( std::ostream & os )
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxParameterType & boundingBoxParameter )
+/*std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxParameterType & boundingBoxParameter )
 {
 	switch(boundingBoxParameter)
 	{
@@ -35,11 +35,11 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Boun
 	}
 	
 	return os;	
-}
+}*/
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxValueType & boundingBoxValue )
+/*std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::BoundingBoxValueType & boundingBoxValue )
 {
 	switch(boundingBoxValue)
 	{
@@ -51,11 +51,11 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Boun
 	}
 	
 	return os;
-}
+}*/
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::NormalLengthParameterType & normalLengthParameter )
+/*std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::NormalLengthParameterType & normalLengthParameter )
 {
 	switch(normalLengthParameter)
 	{
@@ -64,11 +64,11 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Norm
 	}
 	
 	return os;
-}
+}*/
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeParameterType & shapeParameter )
+/*std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeParameterType & shapeParameter )
 {
 	switch(shapeParameter)
 	{
@@ -77,11 +77,11 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Shap
 	}
 	
 	return os;
-}
+}*/
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeValueType & shapeValue )
+/*std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShapeValueType & shapeValue )
 {
 	switch(shapeValue)
 	{
@@ -98,11 +98,11 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Shap
 	}
 	
 	return os;
-}
+}*/
 
 
 
-std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShowOrientationParameterType & showOrientationParameter )
+/*std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::ShowOrientationParameterType & showOrientationParameter )
 {
 	switch( showOrientationParameter )
 	{
@@ -111,7 +111,7 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::DrawStyle::Show
 	}
 
 	return os;
-}
+}*/
 
 
 
