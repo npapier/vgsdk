@@ -424,7 +424,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	DrawStyle::BoundingBoxValueType		bbValue					= pGLEngine->getGLState().getBoundingBox();
 
 	const bool additionalProperties =	(normalLength > 0.f) || showOrientationValue ||
-										(bbValue != vgd::node::DrawStyle::NONE);
+										(bbValue != vgd::node::DrawStyle::NO_BOUNDING_BOX);
 
 	if ( additionalProperties )
 	{
@@ -466,7 +466,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		}
 
 		// *** DRAWSTYLE.boundingBox ***
-		if ( bbValue != vgd::node::DrawStyle::NONE )
+		if ( bbValue != vgd::node::DrawStyle::NO_BOUNDING_BOX )
 		{
 			// FIXME optimize me
 			glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -479,9 +479,9 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			glLineWidth( 2.f );
 			// END FIXME
 
-			switch ( bbValue )
+			switch ( bbValue.value() )
 			{
-				case vgd::node::DrawStyle::NONE:
+				case vgd::node::DrawStyle::NO_BOUNDING_BOX:
 					break;
 
 				case vgd::node::DrawStyle::OBJECT_SPACE:

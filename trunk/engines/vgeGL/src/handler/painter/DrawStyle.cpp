@@ -69,9 +69,9 @@ void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 			using vgeGL::engine::GLSLState;
 			GLSLState& state = glEngine->getGLSLState();
 
-			switch ( shapeValue )
+			switch ( shapeValue.value() )
 			{
-				case DrawStyle::NONE:
+				case DrawStyle::NO_SHAPE:
 				case DrawStyle::POINT:
 				case DrawStyle::FLAT:
 				case DrawStyle::WIREFRAME:
@@ -155,9 +155,9 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 	// *** DRAWSTYLE.shape ***
 	const DrawStyle::ShapeValueType shapeValue = glEngine->getGLState().getShape();
 
-	switch ( shapeValue )
+	switch ( shapeValue.value() )
 	{
-		case DrawStyle::NONE:
+		case DrawStyle::NO_SHAPE:
 			break;
 
 		case DrawStyle::POINT:
