@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>edit-copy.png</file>
+        <file>edit-cut.png</file>
+        <file>edit-delete.png</file>
+        <file>edit-paste.png</file>
+        <file>go-next-ltr.png</file>
+        <file>go-previous-ltr.png</file>
+        <file>gtk-ok.png</file>
+        <file>expand.xpm</file>
+        <file>view-refresh.png</file>
+    </qresource>
+</RCC>
