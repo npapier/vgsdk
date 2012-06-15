@@ -1,0 +1,50 @@
+// VGSDK - Copyright (C) 2008, 2009, 2010, Guillaume Brocker, Nicolas Papier.
+// Distributed under the terms of the GNU Library General Public License (LGPL)
+// as published by the Free Software Foundation.
+// Author Guillaume Brocker
+// Author Nicolas Papier
+
+#ifndef _VGQT_FIELD_WIDGET_VECTOR_HPP_
+#define _VGQT_FIELD_WIDGET_VECTOR_HPP_
+
+#include <QHBoxLayout>
+
+#include <QDoubleSpinBox>
+
+namespace vgQt
+{
+
+namespace field
+{
+
+namespace widget
+{
+
+/**
+ * @brief	Implements a widget for the edition of a vector.
+ */
+
+struct Vector : public QHBoxLayout
+{
+Q_OBJECT
+public:
+    Vector(int N);
+
+protected:
+    std::vector< QDoubleSpinBox* > m_elements;	///< Holds all edition widgets.
+
+public Q_SLOTS:
+    void clear();
+
+Q_SIGNALS:
+    void signalChanged();
+
+};
+
+} // namespace widget
+
+} // namespace field
+
+} // namespace vgQt
+
+#endif // _VGQT_FIELD_WIDGET_NUMBER_HPP_
