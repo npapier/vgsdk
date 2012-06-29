@@ -5,6 +5,7 @@ version		= '0-5'
 # uncomment OS used for compilation
 # windows version
 libs		= [ 'glc 0-0', 'glc_qt 0-0', 'gle 0-3', 'sbf 0-0', 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgio 0-5', 'vgm 0-5', 'vgOpenCOLLADA 0-5', 'vgUI 0-5', 'vgSDL 0-5' ]
+stdlibs		= ['ScintillaEdit3']
 # linux version
 #libs		= [ 'gle 0-3', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgio 0-5', 'vgm 0-5', 'vgUI 0-5', 'vgSDL 0-5' ]
 uses		= [ 'boost', 'opengl', 'opencollada', 'qt' ]

@@ -44,7 +44,7 @@ private:
      * @name	Widget whose resolution is being edited
      */
     //@{
-    QMainWindow*					m_widget;			///< Points to the widget o edit.
+    QWidget*					m_widget;			///< Points to the widget o edit.
     const std::pair< int, int >	m_oldResolution;        ///< Holds the original widget resolution.
     std::pair< int, int >		m_newResolution;        ///< Holds the resolution to apply on the widget.
     //@}
