@@ -89,30 +89,37 @@ void Log::limitLogFileHistory( const int maxNumber )
 {
 	namespace bfs = boost::filesystem;
 
-	if( ( !bfs::exists( g_logDirectory ) )
-		|| ( !bfs::is_directory( g_logDirectory ) ) )
-		return;
-
-	// Retreive log files
-	std::set<bfs::path> existingLogFiles;
-	for(bfs::directory_iterator i(g_logDirectory); i != bfs::directory_iterator(); ++i )
+	try
 	{
-		bfs::path currentPath( *i );
-		if( (!bfs::is_directory( currentPath ) )
-			&& ( currentPath.filename().string().compare(0,g_logFilePrefix.size(),g_logFilePrefix) == 0 )
-			&& ( currentPath.filename().string().compare(currentPath.filename().string().size()-g_logFileSuffix.size(),g_logFileSuffix.size(),g_logFileSuffix) == 0 )
-			&& ( currentPath.filename() != g_currentLogFile) )
+		if( ( !bfs::exists( g_logDirectory ) )
+			|| ( !bfs::is_directory( g_logDirectory ) ) )
+			return;
+
+		// Retreive log files
+		std::set<bfs::path> existingLogFiles;
+		for(bfs::directory_iterator i(g_logDirectory); i != bfs::directory_iterator(); ++i )
 		{
-			existingLogFiles.insert( currentPath );
+			bfs::path currentPath( *i );
+			if( (!bfs::is_directory( currentPath ) )
+				&& ( currentPath.filename().string().compare(0,g_logFilePrefix.size(),g_logFilePrefix) == 0 )
+				&& ( currentPath.filename().string().compare(currentPath.filename().string().size()-g_logFileSuffix.size(),g_logFileSuffix.size(),g_logFileSuffix) == 0 )
+				&& ( currentPath.filename() != g_currentLogFile) )
+			{
+				existingLogFiles.insert( currentPath );
+			}
+		}
+		// remove superfluous files
+		int nbToRemove = std::max(0,(int)existingLogFiles.size()-5);
+		for(int i=1;i<=nbToRemove;++i)
+		{
+			std::clog << "Removing log file " << *existingLogFiles.begin() << std::endl;
+			bfs::remove(*existingLogFiles.begin());
+			existingLogFiles.erase( existingLogFiles.begin() );
 		}
 	}
-	// remove superfluous files
-	int nbToRemove = std::max(0,(int)existingLogFiles.size()-5);
-	for(int i=1;i<=nbToRemove;++i)
+	catch( const std::exception & e )
 	{
-		std::clog << "Removing log file " << *existingLogFiles.begin() << std::endl;
-		bfs::remove(*existingLogFiles.begin());
-		existingLogFiles.erase( existingLogFiles.begin() );
+		std::cerr << "Error while limiting log file history. " << e.what() << std::endl;
 	}
 }
 
