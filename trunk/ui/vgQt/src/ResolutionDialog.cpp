@@ -16,17 +16,17 @@ namespace vgQt
 
 ResolutionDialog::ResolutionDialog( QMainWindow* widget )
     : QDialog(widget),
-      m_widget(widget),
+      m_widget(widget->centralWidget()),
       m_resetButton(new QPushButton("Undo")),
       m_applyButton(new QPushButton("Apply")),
       m_resolutions(new QComboBox()),
-      m_oldResolution	( widget->width(), widget->height() ),
-      m_newResolution	( widget->width(), widget->height() )
+      m_oldResolution	( m_widget->width(), m_widget->height() ),
+      m_newResolution	( m_widget->width(), m_widget->height() )
 
 {
     QVBoxLayout* layout = new QVBoxLayout();
     QLabel* label = new QLabel("Select, in the list bellow, a resolution to apply, \nor specify your own.");
-    m_resolutions->addItem(resolutionToString(widget->width(), widget->height()));
+    m_resolutions->addItem(resolutionToString(m_widget->width(), m_widget->height()));
     m_resolutions->addItem("1024x768");
     m_resolutions->addItem("800x600");
     m_resolutions->addItem("720x576");
@@ -54,13 +54,16 @@ ResolutionDialog::ResolutionDialog( QMainWindow* widget )
 
 void ResolutionDialog::applyResolution( const int width, const int height )
 {
-    m_widget->resize(width, height);
+	int mainWindowWidth = ((QWidget*) m_widget->parent())->width();
+	int mainWindowHeight = ((QWidget*) m_widget->parent())->height();
+	
+	((QWidget*) m_widget->parent())->resize( mainWindowWidth - m_widget->width() + width, mainWindowHeight - m_widget->height() + height );
 }
 
 
 void ResolutionDialog::resetClicked()
 {
-    m_widget->resize(m_oldResolution.first, m_oldResolution.second);
+	applyResolution(m_oldResolution.first, m_oldResolution.second);
 }
 
 void ResolutionDialog::applyClicked()
