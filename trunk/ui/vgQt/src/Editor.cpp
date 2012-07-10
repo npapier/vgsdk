@@ -129,7 +129,7 @@ void Editor::setLanguage( Language language)
                 " dvec3 dvec4 else EmitVertex enable EndPrimitive enum equal exp exp2 extern external" \
                 " faceforward false filter fixed flat float floor for fract fvec2 fvec3 fvec4 fwidth gl_ClipDistance" \
                 " gl_DepthRangeParameters gl_FragCoord gl_FragDepth GL_FRAGMENT_PRECISION_HIGH gl_FrontFacing" \
-                " gl_InstanceID gl_Layer gl_MaxClipDistances gl_MaxCombinedTextureImageUnits gl_MaxDrawBuffers" \
+                " gl_InstanceID gl_InvocationID gl_Layer gl_MaxClipDistances gl_MaxCombinedTextureImageUnits gl_MaxDrawBuffers" \
                 " gl_MaxFragmentInputComponents gl_MaxFragmentUniformComponents gl_MaxGeometryInputComponents" \
                 " gl_MaxGeometryOutputComponents gl_MaxGeometryOutputVertices gl_MaxGeometryTextureImageUnits" \
                 " gl_MaxGeometryTotalOutputComponents gl_MaxGeometryUniformComponents gl_MaxGeometryVaryingComponents" \
@@ -154,11 +154,17 @@ void Editor::setLanguage( Language language)
                 " uimage3D uimageBuffer uimageCube uint uniform union unsigned usampler1D usampler1DArray usampler2D usampler2DArray" \
                 " usampler2DMS usampler2DMSArray usampler2DRect usampler3D usamplerBuffer usamplerCube using uvec2 uvec3 uvec4" \
                 " vec2 vec3 vec4 void volatile warn while";
-        setKeyWords(0, customKeywords.c_str());
-        styleSetFore(5, 0xff0000);
-        styleSetBold(5, true);
-        styleSetFore(10, 0x1d0ccf); // operator
 
+        setKeyWords(0, customKeywords.c_str());
+		styleSetFore(1, 0x007f00); // multiline comment 
+        styleSetFore(2, 0x007f00); // comment inline
+        styleSetFore(4, 0xff9900); // number
+        styleSetFore(5, 0xff0000);
+        styleSetBold(5, false);
+        styleSetFore(6, 0x007f00); // string
+        styleSetFore(9, 0xff0000); // preprocessor
+        styleSetFore(10, 0x1d0ccf); // operator
+        styleSetFore(19, 0x0000ff); // global class
 
         break;
     }
