@@ -4,8 +4,8 @@ type		= 'shared'
 version		= '0-5'
 # uncomment OS used for compilation
 # windows version
-libs		= [ 'glc 0-0', 'glc_qt 0-0', 'gle 0-3', 'sbf 0-0', 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgio 0-5', 'vgm 0-5', 'vgOpenCOLLADA 0-5', 'vgUI 0-5', 'vgSDL 0-5' ]
+libs		= [ 'glc 0-0', 'glc_qt 0-0', 'gle 0-3', 'sbf 0-0', 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgio 0-5', 'vgm 0-5', 'vgOpenCOLLADA 0-5', 'vgUI 0-5', 'vgSDL 0-5', 'glo 0-3' ]
 # linux version
 #libs		= [ 'gle 0-3', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgio 0-5', 'vgm 0-5', 'vgUI 0-5', 'vgSDL 0-5' ]
 uses		= [ 'boost', 'opengl', 'opencollada', 'qt', 'scintilla' ]
-deps		= [ '../../dependencies/glContext/glc_qt', '../../dependencies/gle', '../../core', '../../engines', '../../io/vgio', '../vgUI', '../vgSDL' ]
+deps		= [ '../../dependencies/glContext/glc_qt', '../../dependencies/gle', '../../dependencies/glo', '../../core', '../../engines', '../../io/vgio', '../vgUI', '../vgSDL' ]
