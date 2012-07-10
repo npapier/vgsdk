@@ -332,19 +332,20 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 				properties->programName = "Program " + oss.str();
 
-				properties->shadersName.resize(2);
+				const uint numShaders = 5;
+				properties->shadersName.resize(numShaders);
 				properties->shadersName[glo::GLSLProgram::VERTEX] = "Vertex Shader ";
 				properties->shadersName[glo::GLSLProgram::FRAGMENT] = "Fragment Shader ";
 
-				properties->shaders.resize(2);
+				properties->shaders.resize(numShaders);
 				properties->shaders[glo::GLSLProgram::VERTEX] = vs;
 				properties->shaders[glo::GLSLProgram::FRAGMENT] = fs;
 
-				properties->shadersLog.resize(2);
+				properties->shadersLog.resize(numShaders);
 				properties->shadersLog[glo::GLSLProgram::VERTEX] = vsInfoLog;
 				properties->shadersLog[glo::GLSLProgram::FRAGMENT] = fsInfoLog;
 
-				properties->objectName.resize(2);
+				properties->objectName.resize(numShaders);
 				properties->objectName[glo::GLSLProgram::VERTEX] = program->getName(glo::GLSLProgram::VERTEX);
 				properties->objectName[glo::GLSLProgram::FRAGMENT] = program->getName(glo::GLSLProgram::FRAGMENT);
 
