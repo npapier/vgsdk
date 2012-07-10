@@ -42,6 +42,7 @@ Engine::Engine()
 
 	m_glManager("GL object manager"),
 	m_glslManager("GLSL Program Manager"),
+	m_glslManagerExt("GLSL Program ManagerExt"),
 
 	m_isGLSLEnabled(true),
 	m_currentProgram(0),
@@ -418,6 +419,10 @@ Engine::GLSLProgramManagerType& Engine::getGLSLManager()
 	return m_glslManager;
 }
 
+Engine::GLSLProgramManagerExtType&	Engine::getGLSLManagerExt()
+{
+	return m_glslManagerExt;
+}
 
 
 const bool Engine::isLightingEnabled() const

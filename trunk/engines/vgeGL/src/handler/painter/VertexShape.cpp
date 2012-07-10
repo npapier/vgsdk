@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, 2011, 2012 Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Alexandre Di Pino
 
 #include "vgeGL/handler/painter/VertexShape.hpp"
 
@@ -37,6 +38,8 @@
 #include "vgeGL/rc/GLSLProgram.hpp"
 #include "vgeGL/rc/TDisplayListHelper.hpp"
 #include "vgeGL/rc/VertexShape.hpp"
+
+#include <sstream>
 
 /*
 supported field (VBO):
@@ -174,7 +177,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	// GLSL STATE UPDATE
 	using vgeGL::engine::GLSLState;
 	GLSLState& glslState = pGLEngine->getGLSLState();
-
+	
 	// Updates GLSL state with vertex shape info
 // @todo uncomment GLSLState::COLOR4_BIND_PER_VERTEX
 	// glslState.setEnabled( GLSLState::COLOR4_BIND_PER_VERTEX, pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX );
@@ -287,13 +290,13 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				std::string vsInfoLog;
 				std::string fsInfoLog;
 				std::string linkInfoLog;
-				const bool compileVSRetVal = program->addShader( vs.c_str(),pg->getVertexShaderGenerator()->getShaderType(), false );
-				if ( !compileVSRetVal )	vsInfoLog = program->getInfoLog();
+				const bool compileVSRetVal = program->addShader( vs.c_str(), pg->getVertexShaderGenerator()->getShaderType(), false );
+				if ( !compileVSRetVal )	vsInfoLog = program->getLogError(pg->getVertexShaderGenerator()->getShaderType());//*/program->getInfoLog();
 
 				const bool compileFSRetVal = program->addShader( fs.c_str(), pg->getFragmentShaderGenerator()->getShaderType(), false );
-				if ( !compileFSRetVal )	fsInfoLog = program->getInfoLog();
+				if ( !compileFSRetVal )	fsInfoLog = program->getLogError(pg->getFragmentShaderGenerator()->getShaderType());//*/program->getInfoLog();
 
-//				const bool compileGSRetVal = program->addShader( fs.c_str(), pg->getGeometryShaderGenerator()->getShaderType(), false );
+				//const bool compileGSRetVal = program->addShader( fs.c_str(), pg->getGeometryShaderGenerator()->getShaderType(), false );
 
 				//namespace vgeGLPainter = vgeGL::handler::painter;
 				//vgeGLPainter::OutputBufferProperty::bindFragDataLocations( pGLEngine, program );
@@ -307,6 +310,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 					std::cout << "Vertex shader\n" << "=============\n" << std::endl << vs << std::endl;
 					std::cout << "Fragment shader\n" << "===============\n" << std::endl << fs << std::endl;
+
 					std::cout << "\n\n\n";
 
 					// if ( !vsInfoLog.empty() )	std::cout << vsInfoLog << std::endl;
@@ -314,8 +318,40 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 					// if ( !linkInfoLog.empty() )	std::cout << linkInfoLog << std::endl;
 					std::cout << "Vertex shader info log:" << std::endl << vsInfoLog << std::endl;
 					std::cout << "Fragment shader info log:" << std::endl << fsInfoLog << std::endl;
+
 					std::cout << "Link info log:" << std::endl << linkInfoLog << std::endl;
 				}
+
+				vgeGL::engine::Engine::ProgramProperties*	properties = new vgeGL::engine::Engine::ProgramProperties;
+
+				std::ostringstream	oss;
+				const int programValue = (int)program->getProgramObject();
+				oss << programValue;
+
+				properties->pProgram = program;
+
+				properties->programName = "Program " + oss.str();
+
+				properties->shadersName.resize(2);
+				properties->shadersName[glo::GLSLProgram::VERTEX] = "Vertex Shader ";
+				properties->shadersName[glo::GLSLProgram::FRAGMENT] = "Fragment Shader ";
+
+				properties->shaders.resize(2);
+				properties->shaders[glo::GLSLProgram::VERTEX] = vs;
+				properties->shaders[glo::GLSLProgram::FRAGMENT] = fs;
+
+				properties->shadersLog.resize(2);
+				properties->shadersLog[glo::GLSLProgram::VERTEX] = vsInfoLog;
+				properties->shadersLog[glo::GLSLProgram::FRAGMENT] = fsInfoLog;
+
+				properties->objectName.resize(2);
+				properties->objectName[glo::GLSLProgram::VERTEX] = program->getName(glo::GLSLProgram::VERTEX);
+				properties->objectName[glo::GLSLProgram::FRAGMENT] = program->getName(glo::GLSLProgram::FRAGMENT);
+
+				properties->linkLog = linkInfoLog;
+
+				const uint managerLength = pGLEngine->getGLSLManagerExt().getNum();
+				pGLEngine->getGLSLManagerExt().add( managerLength + 1 , properties );
 
 				if ( linkRetVal )
 				{
