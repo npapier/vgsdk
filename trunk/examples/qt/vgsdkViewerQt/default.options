@@ -11,6 +11,7 @@ uses 		=	[	'boost',
 					'opencollada',
 					#'openil',
 					#'opengl',
+					'scintilla',
 					#'physx',
 					#'wx', 'wxgl'
 				]
