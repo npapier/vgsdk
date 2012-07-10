@@ -10,6 +10,7 @@
 #include <vgQt/graph/Browser.hpp>
 #include "vgsdkViewerQt/MyCanvas.hpp"
 #include "vgsdkViewerQt/DockProperties.hpp"
+#include <vgQt/engine/ShadersEditor.hpp>
 #include <QMainWindow>
 #include <QDockWidget>
 
@@ -62,6 +63,8 @@ public Q_SLOTS:
      */
     void showHideProperties();
 
+	void showShadersEditor();
+	
     /**
      * @brief	Configure user engine's settings
      */
@@ -122,16 +125,18 @@ protected:
      * This will ask the user to chose one or more objects to load
      */
     void loadFile( bool clearScene );
-
+    void closeEvent(QCloseEvent *event);
+	
 private:
     vgsdkViewerQt::DockProperties*  m_properties;
     MyCanvas*                       m_canvas;
     bool                            m_isFullScreen;
 
-    QToolBar*   m_toolBar;
-    QAction*    m_actionProperties;
-    QAction*    m_actionMouseAndKeyboard;
-    QMenu*      m_recentFileMenu;
+    QToolBar*						m_toolBar;
+    QAction*						m_actionProperties;
+    QAction*						m_actionMouseAndKeyboard;
+    QMenu*							m_recentFileMenu;
+	vgQt::engine::ShadersEditor*	m_shaderEditor;
 };
 
 } // namespace vgsdkViewerQt
