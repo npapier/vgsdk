@@ -242,11 +242,11 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 			{
 				InfoLog += m_program->getInfoLog();
 			}
-			//@ TODO correct
-			//else	
-			//{	
-			//	m_canvas->refreshForced();
-			//}
+			else
+			{
+				// Async refresh
+				m_canvas->refreshForced();
+			}
 		}
 
 		//Set the new shader name
