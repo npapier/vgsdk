@@ -139,15 +139,10 @@ public:
         }
     }
 
-    void sendRefresh()
-    {
-        if ( CanvasT::startVGSDK() )
-        {
-            const vgm::Vec2i v2iSize( width(), height() );
-            CanvasT::paint( v2iSize, CanvasT::getBoundingBoxUpdate() );
-            unsetCurrent();
-        }
-    }
+	void sendRefresh()
+	{
+		update();
+	}
 
     const bool startOpenGLContext()
     {
