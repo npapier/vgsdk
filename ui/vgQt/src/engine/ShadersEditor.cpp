@@ -23,7 +23,6 @@ namespace engine
 ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 :	QWidget(parent), 
 	m_currentType(vgQt::engine::NONE),
-	m_program(0), 
 	m_itemSaved(0), 
 	m_managerSaved(0), 
 	m_shaderSaved(0),
@@ -99,7 +98,7 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 	{
 		if (m_currentType == PROGRAM_SHADER)
 		{
-			m_editorLog->setPlainText(m_managerSaved->linkLog.c_str());
+			m_editorLog->setPlainText(m_managerSaved->getLinkLog().c_str());
 		}
 	}
 
@@ -107,40 +106,36 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 	{
 		for ( uint program = 1; program <= progLength; program++ )
 		{
-			shaderEditorManager manager = m_engine->getGLSLManagerExt().get< vgeGL::engine::Engine::ProgramProperties >( program );
-			const uint shaderNameSize = manager->shadersName.size();
-
+			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >( program );
+			const uint shaderNameSize = glo::GLSLProgram::MAX_SHADER_INDEX;
+			
 			if (m_currentType == PROGRAM_SHADER)
 			{
-				m_editorLog->setPlainText(manager->linkLog.c_str());
+				m_editorLog->setPlainText(manager->getLinkLog().c_str());
 			}
 
 			for (uint i = 0; i < shaderNameSize; i++)
 			{
 				std::ostringstream	oss;
-				oss << manager->objectName[i];
-				const std::string name = manager->shadersName[i] + oss.str();
+				oss << manager->getName((glo::GLSLProgram::ShaderType)i);
+				const std::string name = m_stringShaderType[i] + oss.str();
 
 				//If clicked value exist on the manager, save all needed data
 				if (itemName == name) 	
 				{
 					QString actualShader =  m_textEditor->getText(m_textEditor->textLength());
 					
-					if ( manager->shaders[i].c_str() == actualShader.toStdString() )
+					if ( manager->getShaderCode((glo::GLSLProgram::ShaderType)i).c_str() == actualShader.toStdString() )
 					{
 						return;
 					}
 
 					m_itemSaved = item;
-					m_program = manager->pProgram;
 					m_managerSaved = manager;
 					m_shaderSaved = i;
 					m_newText = true;
-					m_textEditor->setText( manager->shaders[i].c_str() );
-
-					std::string log("");
-				
-					m_editorLog->setPlainText(manager->shadersLog[i].c_str());
+					m_textEditor->setText( manager->getShaderCode((glo::GLSLProgram::ShaderType)i).c_str() );
+					m_editorLog->setPlainText(manager->getLogError((glo::GLSLProgram::ShaderType)i).c_str());
 					break;
 				}
 			}
@@ -169,35 +164,31 @@ void ShadersEditor::refreshUI()
 
 		while ( program <= progLength )
 		{
-			vgeGL::engine::Engine::ProgramProperties* manager = m_engine->getGLSLManagerExt().get< vgeGL::engine::Engine::ProgramProperties >(program);
-
-			manager->shadersName[glo::GLSLProgram::VERTEX] = "Vertex Shader ";
-			manager->shadersName[glo::GLSLProgram::TESSELATION_CONTROL] = "Tessellation Control Shader ";
-			manager->shadersName[glo::GLSLProgram::TESSELATION_EVALUATION] = "Tessellation Evaluation Shader ";
-			manager->shadersName[glo::GLSLProgram::GEOMETRY] = "Geometry Shader ";
-			manager->shadersName[glo::GLSLProgram::FRAGMENT] = "Fragment Shader ";
+			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(program);
 
 			std::ostringstream	ossP;
-			ossP << (int)manager->pProgram->getProgramObject();
-			manager->programName = "Program " + ossP.str();
-			QListWidgetItem* prog = new QListWidgetItem(tr( manager->programName.c_str() ), m_shaderList.get(), vgQt::engine::PROGRAM_SHADER);
+			ossP << (int)manager->getProgramObject();
+
+			std::string prgName =  "Program " + ossP.str();
+			QListWidgetItem* prog = new QListWidgetItem(tr( prgName.c_str() ), m_shaderList.get(), vgQt::engine::PROGRAM_SHADER);
 			prog->setFont(font);
 
 			//Add Shader name on shader list
-			for (uint i = 0; i < manager->shadersName.size(); ++i)
+			for (uint i = 0; i < glo::GLSLProgram::MAX_SHADER_INDEX; ++i)
 			{
 				std::string tmp;
 				std::ostringstream	oss;
 
-				tmp = manager->shadersName[i];
-				if ( manager->objectName[i] != 0 )
+				tmp = m_stringShaderType[i];
+				if ( manager->getName((glo::GLSLProgram::ShaderType)i) != 0 )
 				{
-					oss << manager->objectName[i];
+					oss << manager->getName((glo::GLSLProgram::ShaderType)i);
 					tmp += oss.str();
 					QListWidgetItem* listShader = new QListWidgetItem(tr(tmp.c_str()), m_shaderList.get(), vgQt::engine::DEFAULT_SHADER_TYPE + i );
 
 					QFont	fontError("Helvetica");
-					if (manager->shadersLog[i] != "")
+
+					if (manager->getLogError((glo::GLSLProgram::ShaderType)i) != "")
 					{
 						fontError.setItalic(true);
 					}
@@ -209,13 +200,13 @@ void ShadersEditor::refreshUI()
 			std::string log("");
 
 			//Draw the compilation log
-			for (uint i = 0; i < manager->shadersLog.size(); ++i)
+			for (uint i = 0; i < glo::GLSLProgram::MAX_SHADER_INDEX; ++i)
 			{
-				log += manager->shadersLog[i];
+				log += manager->getLogError((glo::GLSLProgram::ShaderType)i);
 				log += "\n";
 			}
 
-			log += manager->linkLog;
+			log += manager->getLinkLog();
 
 			//Set the log compilation in the log screen
 			m_editorLog->setPlainText(log.c_str());
@@ -242,7 +233,7 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 		return;
 	}
 
-	if ( m_program && m_managerSaved && m_itemSaved 
+	if (m_managerSaved && m_itemSaved 
 		&& ( ( notificationType & SC_MOD_INSERTTEXT ) || ( notificationType & SC_MOD_DELETETEXT ) ) )
 	{
 		int len = m_textEditor->textLength();
@@ -252,47 +243,40 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 		QString	tmp = m_textEditor->getText(len + 1);
 		const std::string shader = tmp.toStdString();
 		
-		if ( m_managerSaved->shaders[m_shaderSaved] == shader )
+		if ( m_managerSaved->getShaderCode((glo::GLSLProgram::ShaderType)m_shaderSaved) == shader )
 		{
 			return;
 		}
 
-		m_managerSaved->shaders[m_shaderSaved] = shader;
-
 		//Compile the modify shader
-		const bool compileRetVal = m_program->addShader( shader.c_str(), type, false );
+		const bool compileRetVal = m_managerSaved->addShader( shader.c_str(), type, false);
 
 		if ( !compileRetVal )	
 		{
-			InfoLog = m_program->getLogError(type);
-			m_managerSaved->shadersLog[type] = m_program->getLogError(type);
+			InfoLog = m_managerSaved->getLogError(type);
 			fontError.setItalic(true);
 		}
 		else
 		{
-			m_managerSaved->shadersLog[type] = "";
+			m_managerSaved->setLogError(type, "");
 			//Linking
-			const bool linkRetVal = m_program->link();
+			const bool linkRetVal = m_managerSaved->link();
 
 			if ( !linkRetVal )	
 			{
-				InfoLog += m_program->getInfoLog();
-				m_managerSaved->linkLog = m_program->getInfoLog();
+				InfoLog += m_managerSaved->getInfoLog();
 			}
 			else
 			{
-				m_managerSaved->linkLog = "";
-
 				// Async refresh
 				m_canvas->refreshForced();
 			}
 		}
 
 		//Set the new shader name
-		std::string newName(m_managerSaved->shadersName[type]);
-		const int programNumber = m_program->getName(type);
+		const int programNumber = m_managerSaved->getName(type);
 		oss << programNumber;
-		newName += oss.str();
+		std::string newName = m_stringShaderType[type] + oss.str();
 
 		//Set the new name in the shader list
 		if ( m_itemSaved )	
@@ -300,11 +284,10 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 			m_itemSaved->setText( QString(newName.c_str()) );
 			m_itemSaved->setFont(fontError);
 		}
-		m_managerSaved->objectName[m_shaderSaved] = programNumber;
 
 		if ( m_currentType == PROGRAM_SHADER )
 		{
-			m_editorLog->setPlainText(m_managerSaved->linkLog.c_str());
+			m_editorLog->setPlainText(m_managerSaved->getLinkLog().c_str());
 			return;
 		}
 		else
@@ -342,6 +325,15 @@ void ShadersEditor::onTop( int in )
 
 #endif
 }
+
+const std::string ShadersEditor::m_stringShaderType[] =
+{
+	"Vertex Shader ",
+	"Tessellation Control Shader ", 
+	"Tessellation Evaluation Shader ",
+	"Geometry Shader ",
+	"Fragment Shader "
+};
 
 
 

@@ -350,9 +350,12 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				properties->objectName[glo::GLSLProgram::FRAGMENT] = program->getName(glo::GLSLProgram::FRAGMENT);
 
 				properties->linkLog = linkInfoLog;
-
-				const uint managerLength = pGLEngine->getGLSLManagerExt().getNum();
-				pGLEngine->getGLSLManagerExt().add( managerLength + 1 , properties );
+				std::ostringstream	oss;
+				int programValue = (int)program->getProgramObject();
+				unsigned int managerLength = pGLEngine->getGLSLManagerExt().getNum();
+				oss << programValue;
+								
+				pGLEngine->getGLSLManagerExt().add( managerLength + 1 , program );
 
 				if ( linkRetVal )
 				{
