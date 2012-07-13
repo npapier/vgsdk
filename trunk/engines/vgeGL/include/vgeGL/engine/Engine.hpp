@@ -454,23 +454,12 @@ public:
 	 */
 	GLSLProgramManagerType& getGLSLManager();
 
-	struct ProgramProperties
-	{
-		glo::GLSLProgram *			pProgram;
-		std::string					programName;
-		std::vector< std::string >	shadersName;
-		std::vector< unsigned int >	objectName;
-		std::vector< std::string >	shaders;
-		std::vector< std::string >	shadersLog;
-		std::string					linkLog;
-	};
-
 	/**
 	 * @brief Typedef for the glsl program manager
 	 * 
-	 * This manager associates program id to a single glo::GLSLProgram
+	 * This manager associates an id to a single glo::GLSLProgram
 	 */
-	typedef vge::rc::TManager< int, ProgramProperties > GLSLProgramManagerExtType;
+	typedef vge::rc::TManager< int, glo::GLSLProgram > GLSLProgramManagerExtType;
 
 	/**
 	 * @brief Gets the glsl program manager.
