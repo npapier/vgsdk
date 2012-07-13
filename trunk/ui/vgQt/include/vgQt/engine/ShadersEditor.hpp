@@ -107,20 +107,19 @@ private:
 	vgd::Shp< QCheckBox >		m_stayTop;
 	vgd::Shp< QListWidget >		m_shaderList;
 
-	//Item Saved
-	typedef	vgeGL::engine::Engine::ProgramProperties* shaderEditorManager;
-
 	vgUI::Canvas*					m_canvas;
 	vgd::Shp<vgeGL::engine::Engine>	m_engine;
 
 	eShaderType					m_currentType;
-	glo::GLSLProgram*			m_program;
 	QListWidgetItem*			m_itemSaved;
-	shaderEditorManager			m_managerSaved;
+	glo::GLSLProgram*			m_managerSaved;
 	int							m_shaderSaved;
 
 	bool						m_newText;
+
+	static const std::string	m_stringShaderType[];
 };
+
 
 
 } // namespace engine
