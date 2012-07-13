@@ -322,39 +322,12 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 					std::cout << "Link info log:" << std::endl << linkInfoLog << std::endl;
 				}
 
-				vgeGL::engine::Engine::ProgramProperties*	properties = new vgeGL::engine::Engine::ProgramProperties;
 
-				std::ostringstream	oss;
-				const int programValue = (int)program->getProgramObject();
-				oss << programValue;
-
-				properties->pProgram = program;
-
-				properties->programName = "Program " + oss.str();
-
-				const uint numShaders = 5;
-				properties->shadersName.resize(numShaders);
-				properties->shadersName[glo::GLSLProgram::VERTEX] = "Vertex Shader ";
-				properties->shadersName[glo::GLSLProgram::FRAGMENT] = "Fragment Shader ";
-
-				properties->shaders.resize(numShaders);
-				properties->shaders[glo::GLSLProgram::VERTEX] = vs;
-				properties->shaders[glo::GLSLProgram::FRAGMENT] = fs;
-
-				properties->shadersLog.resize(numShaders);
-				properties->shadersLog[glo::GLSLProgram::VERTEX] = vsInfoLog;
-				properties->shadersLog[glo::GLSLProgram::FRAGMENT] = fsInfoLog;
-
-				properties->objectName.resize(numShaders);
-				properties->objectName[glo::GLSLProgram::VERTEX] = program->getName(glo::GLSLProgram::VERTEX);
-				properties->objectName[glo::GLSLProgram::FRAGMENT] = program->getName(glo::GLSLProgram::FRAGMENT);
-
-				properties->linkLog = linkInfoLog;
 				std::ostringstream	oss;
 				int programValue = (int)program->getProgramObject();
 				unsigned int managerLength = pGLEngine->getGLSLManagerExt().getNum();
 				oss << programValue;
-								
+
 				pGLEngine->getGLSLManagerExt().add( managerLength + 1 , program );
 
 				if ( linkRetVal )
