@@ -284,7 +284,8 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			if ( program == 0 )
 			{
 				// Not found in cache, so creates a new one
-				program = new glo::GLSLProgram;
+				vgd::Shp< GLSLProgram > shpProgram( new glo::GLSLProgram );
+				program = shpProgram.get();
 
 				// Compiles and links
 				std::string vsInfoLog;
@@ -298,6 +299,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 				//const bool compileGSRetVal = program->addShader( fs.c_str(), pg->getGeometryShaderGenerator()->getShaderType(), false );
 
+				// no more needed
 				//namespace vgeGLPainter = vgeGL::handler::painter;
 				//vgeGLPainter::OutputBufferProperty::bindFragDataLocations( pGLEngine, program );
 
@@ -323,17 +325,17 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				}
 
 
-				std::ostringstream	oss;
-				int programValue = (int)program->getProgramObject();
-				unsigned int managerLength = pGLEngine->getGLSLManagerExt().getNum();
+				std::ostringstream oss;
+				const int programValue = static_cast<int>( program->getProgramObject() );
+				const uint managerLength = pGLEngine->getGLSLManagerExt().getNum();
 				oss << programValue;
 
-				pGLEngine->getGLSLManagerExt().add( managerLength + 1 , program );
+				pGLEngine->getGLSLManagerExt().add( managerLength + 1 , shpProgram );
 
 				if ( linkRetVal )
 				{
 					//std::cout << "Program link" << std::endl;
-					pGLEngine->getGLSLManager().add( fullCode, program );
+					pGLEngine->getGLSLManager().add( fullCode, shpProgram );
 				}
 				/*else
 				{
