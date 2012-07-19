@@ -213,6 +213,20 @@ OutResourceType* TManager< KeyType, ResourceType >::get( const KeyType& key )
 	}
 }
 
+template< typename KeyType, typename ResourceType >
+template< typename OutputIterator >
+void TManager< KeyType, ResourceType >::getKeys( OutputIterator& key )
+{
+	typename ResourcesMap::const_iterator	it;
+
+	for (	it = m_resources.begin(); 
+			it != m_resources.end(); 
+			++it)
+	{
+		*key++ = it->first;
+	}
+}
+
 
 
 template< typename KeyType, typename ResourceType >

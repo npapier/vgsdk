@@ -327,10 +327,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 				std::ostringstream oss;
 				const int programValue = static_cast<int>( program->getProgramObject() );
-				const uint managerLength = pGLEngine->getGLSLManagerExt().getNum();
-				oss << programValue;
-
-				pGLEngine->getGLSLManagerExt().add( managerLength + 1 , shpProgram );
+				pGLEngine->getGLSLManagerExt().add( programValue , shpProgram );
 
 				if ( linkRetVal )
 				{

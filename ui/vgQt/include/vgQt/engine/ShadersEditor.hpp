@@ -116,8 +116,6 @@ private:
 	int							m_shaderSaved;
 
 	bool						m_newText;
-
-	static const std::string	m_stringShaderType[];
 };
 
 

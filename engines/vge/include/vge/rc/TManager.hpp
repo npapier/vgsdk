@@ -147,6 +147,14 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	OutResourceType * get( const KeyType& key );
 
 	/**
+	 * @brief Retrieves all keys and store them using the given output iterator.
+	 * 
+	 * @param key	an STL compliant output iterator
+	 */
+	template< typename OutputIterator >
+	void getKeys( OutputIterator& key );
+
+	/**
 	 * @brief Helper around OutResourceType * get( const KeyType& key )
 	 *
 	 * @remark Works only if KeyType type is vgd::node::Node*

@@ -4,6 +4,7 @@
 // Author Alexandre Di Pino
 
 #include "vgQt/engine/ShadersEditor.hpp"
+#include <vgd/field/FieldManager.hpp>
 #include <QListWidgetItem>
 #include <sstream>
 
@@ -104,9 +105,15 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 
 	if ( progLength > 0 )
 	{
-		for ( uint program = 1; program <= progLength; program++ )
+		std::vector<int> keys;
+		typedef std::back_insert_iterator< std::vector<int> >	InsertIterator;
+		InsertIterator keys_it( keys );
+		m_engine->getGLSLManagerExt().getKeys( keys_it );
+
+		for ( std::vector<int>::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
 		{
-			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >( program );
+			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
+
 			const uint shaderNameSize = glo::GLSLProgram::MAX_SHADER_INDEX;
 			
 			if (m_currentType == PROGRAM_SHADER)
@@ -117,15 +124,16 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 			for (uint i = 0; i < shaderNameSize; i++)
 			{
 				std::ostringstream	oss;
-				oss << manager->getName((glo::GLSLProgram::ShaderType)i);
-				const std::string name = m_stringShaderType[i] + oss.str();
+				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
+				oss << manager->getName(type);
+				const std::string name = manager->convertShaderType2String(type) + " " + oss.str();
 
 				//If clicked value exist on the manager, save all needed data
 				if (itemName == name) 	
 				{
 					QString actualShader =  m_textEditor->getText(m_textEditor->textLength());
 					
-					if ( manager->getShaderCode((glo::GLSLProgram::ShaderType)i).c_str() == actualShader.toStdString() )
+					if ( manager->getShaderCode(type).c_str() == actualShader.toStdString() )
 					{
 						return;
 					}
@@ -134,8 +142,8 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 					m_managerSaved = manager;
 					m_shaderSaved = i;
 					m_newText = true;
-					m_textEditor->setText( manager->getShaderCode((glo::GLSLProgram::ShaderType)i).c_str() );
-					m_editorLog->setPlainText(manager->getLogError((glo::GLSLProgram::ShaderType)i).c_str());
+					m_textEditor->setText( manager->getShaderCode(type).c_str() );
+					m_editorLog->setPlainText(manager->getLogError(type).c_str());
 					break;
 				}
 			}
@@ -149,6 +157,7 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 void ShadersEditor::refreshUI()
 {
 	blockSignals(true);
+
 	const uint progLength = m_engine->getGLSLManagerExt().getNum();
 	m_itemSaved = 0;
 
@@ -157,14 +166,16 @@ void ShadersEditor::refreshUI()
 
 	if ( progLength > 0 )
 	{
-		uint program = 1;
-
 		//Clear all the elements
 		m_shaderList->clear();
+		std::vector<int> keys;
+		typedef std::back_insert_iterator< std::vector<int> >	InsertIterator;
+		InsertIterator keys_it( keys );
+		m_engine->getGLSLManagerExt().getKeys( keys_it );
 
-		while ( program <= progLength )
+		for ( std::vector<int>::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
 		{
-			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(program);
+			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
 
 			std::ostringstream	ossP;
 			ossP << (int)manager->getProgramObject();
@@ -178,17 +189,18 @@ void ShadersEditor::refreshUI()
 			{
 				std::string tmp;
 				std::ostringstream	oss;
+				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
 
-				tmp = m_stringShaderType[i];
-				if ( manager->getName((glo::GLSLProgram::ShaderType)i) != 0 )
+				tmp = manager->convertShaderType2String(type) + " ";
+				if ( manager->getName(type) != 0 )
 				{
-					oss << manager->getName((glo::GLSLProgram::ShaderType)i);
+					oss << manager->getName(type);
 					tmp += oss.str();
 					QListWidgetItem* listShader = new QListWidgetItem(tr(tmp.c_str()), m_shaderList.get(), vgQt::engine::DEFAULT_SHADER_TYPE + i );
 
 					QFont	fontError("Helvetica");
 
-					if (manager->getLogError((glo::GLSLProgram::ShaderType)i) != "")
+					if (manager->getLogError(type) != "")
 					{
 						fontError.setItalic(true);
 					}
@@ -202,7 +214,8 @@ void ShadersEditor::refreshUI()
 			//Draw the compilation log
 			for (uint i = 0; i < glo::GLSLProgram::MAX_SHADER_INDEX; ++i)
 			{
-				log += manager->getLogError((glo::GLSLProgram::ShaderType)i);
+				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
+				log += manager->getLogError(type);
 				log += "\n";
 			}
 
@@ -210,7 +223,6 @@ void ShadersEditor::refreshUI()
 
 			//Set the log compilation in the log screen
 			m_editorLog->setPlainText(log.c_str());
-			program++;
 		}
 	}
 	blockSignals(false);
@@ -242,13 +254,14 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 
 		QString	tmp = m_textEditor->getText(len + 1);
 		const std::string shader = tmp.toStdString();
-		
+		m_canvas->setCurrent();
 		if ( m_managerSaved->getShaderCode((glo::GLSLProgram::ShaderType)m_shaderSaved) == shader )
 		{
 			return;
 		}
 
 		//Compile the modify shader
+
 		const bool compileRetVal = m_managerSaved->addShader( shader.c_str(), type, false);
 
 		if ( !compileRetVal )	
@@ -276,7 +289,7 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 		//Set the new shader name
 		const int programNumber = m_managerSaved->getName(type);
 		oss << programNumber;
-		std::string newName = m_stringShaderType[type] + oss.str();
+		std::string newName = m_managerSaved->convertShaderType2String(type) + " " + oss.str();
 
 		//Set the new name in the shader list
 		if ( m_itemSaved )	
@@ -325,15 +338,6 @@ void ShadersEditor::onTop( int in )
 
 #endif
 }
-
-const std::string ShadersEditor::m_stringShaderType[] =
-{
-	"Vertex Shader ",
-	"Tessellation Control Shader ", 
-	"Tessellation Evaluation Shader ",
-	"Geometry Shader ",
-	"Fragment Shader "
-};
 
 
 
