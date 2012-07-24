@@ -38,6 +38,7 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	m_layout( new QHBoxLayout ),
 	m_refresh( new QPushButton("Refresh", this)),
 	m_shaderList( new QListWidget ),
+	m_versionList( new QComboBox ),
 	m_stayTop( new QCheckBox("Stay on Top", this) )
 {
 	m_engine = m_canvas->getGLEngine();
@@ -55,6 +56,18 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 
 	m_editorLog->setReadOnly(true);
 	m_editorLog->setMaximumWidth(200);
+
+	m_versionList->addItem("OpenGL 2.1 / GLSL 1.2", "1.2");
+	m_versionList->addItem("OpenGL 3.0 / GLSL 1.3", "1.3");
+	m_versionList->addItem("OpenGL 3.1 / GLSL 1.4", "1.4");
+	m_versionList->addItem("OpenGL 3.2 / GLSL 1.5", "1.5");
+	m_versionList->addItem("OpenGL 3.3 / GLSL 3.3", "3.3");
+	m_versionList->addItem("OpenGL 4.0 / GLSL 4.0", "4.0");
+	m_versionList->addItem("OpenGL 4.1 / GLSL 4.1", "4.1");
+	m_versionList->addItem("OpenGL 4.2 / GLSL 4.2", "4.2");
+	m_versionList->setCurrentIndex( m_textEditor->getGLSLVersion() );
+
+	m_progLayout->addWidget(m_versionList.get());
 
 	m_progLayout->addWidget(m_shaderList.get());
 	m_progLayout->setAlignment(Qt::AlignTop);
@@ -79,8 +92,10 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	              const QByteArray &, int , int , int ) ), this, SLOT( compile(int , int , int , int ,
 	              const QByteArray &, int , int , int ) ) );
 	connect(m_stayTop.get(), SIGNAL( stateChanged ( int ) ), this, SLOT( onTop( int ) ) );
+	connect(m_versionList.get(), SIGNAL(currentIndexChanged (int) ), this, SLOT( versionChanged (int) ) );
 
 	refreshUI();
+
 }
 
 
@@ -94,6 +109,13 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 
 	const uint progLength = m_engine->getGLSLManagerExt().getNum();
 	m_currentType = (eShaderType)item->type();
+
+	m_canvas->setCurrent();
+
+	gle::GLSL_VERSION_LANGUAGE version = gle::glslVersionToEnum(gle::getCurrentGLSLVersion());
+
+	m_textEditor->setGLSLVersion( version );
+	m_versionList->setCurrentIndex( static_cast<int>(version) );
 
 	if (m_managerSaved)
 	{
@@ -337,6 +359,14 @@ void ShadersEditor::onTop( int in )
 	this->setWindowFlags( value );
 
 #endif
+}
+
+
+
+void ShadersEditor::versionChanged(int index)
+{
+	std::string value = m_versionList->itemData( index ).toString().toStdString();
+	m_textEditor->setGLSLVersion( gle::glslVersionToEnum(value ) );
 }
 
 

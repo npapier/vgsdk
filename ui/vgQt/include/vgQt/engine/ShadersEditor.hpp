@@ -12,6 +12,7 @@
 #include <glo/GLSLProgram.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgUI/Canvas.hpp>
+#include <gle/GLSLLanguage.hpp>
 
 #include <QWidget>
 #include <QPlainTextEdit>
@@ -23,6 +24,7 @@
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QCheckBox>
+#include <QComboBox>
 
 namespace vgUI
 {
@@ -90,6 +92,11 @@ public Q_SLOTS:
 	 */
 	void onTop( int );
 
+	/**
+	 * @brief Use this Q_SLOTS when you change the GLSL version value
+	 */
+	void versionChanged( int );
+
 private:
 
 	//GUI element
@@ -106,6 +113,8 @@ private:
 	vgd::Shp< QPushButton >		m_refresh;
 	vgd::Shp< QCheckBox >		m_stayTop;
 	vgd::Shp< QListWidget >		m_shaderList;
+
+	vgd::Shp< QComboBox >		m_versionList;
 
 	vgUI::Canvas*					m_canvas;
 	vgd::Shp<vgeGL::engine::Engine>	m_engine;

@@ -1,19 +1,27 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Alexandre Di Pino
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Bryan Schuller
+// Author Alexandre Di Pino
 
 #include "vgQt/Editor.hpp"
 
 #include <QDebug>
 #include <QAction>
+#include <QSignalMapper>
+
+#include <sstream>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <list>
 
 static const int MARGIN_SCRIPT_FOLD_INDEX = 1;
 
 Editor::Editor(QWidget* parent) :
     ScintillaEdit(parent),
-    customKeywords("")
+	m_version(static_cast<gle::GLSL_VERSION_LANGUAGE>(static_cast<int>(gle::MAX_VERSION_LANGUAGE) - 1))
 {
     styleClearAll();
     setMarginWidthN(0,25); // par défaut la marge 0 est le nombre de ligne
@@ -23,12 +31,46 @@ Editor::Editor(QWidget* parent) :
     connect(this, SIGNAL(charAdded(int)), this, SLOT(colourise()));
     connect(this, SIGNAL(charAdded(int)), this, SLOT(showSuggestions()));
 
+	// Defined the variable autocompletion shortcut
+    QAction* keywordAction = new QAction(this);
+    keywordAction->setShortcut(QKeySequence(tr("Ctrl+Shift+K") ));
+    keywordAction->setShortcutContext(Qt::WidgetShortcut);
+    addAction(keywordAction);
+
+	// Defined the function autocompletion shortcut
+    QAction* functionAction = new QAction(this);
+    functionAction->setShortcut(QKeySequence(tr("Ctrl+Shift+F") ));
+    functionAction->setShortcutContext(Qt::WidgetShortcut);
+    addAction(functionAction);
+
+	// Defined the builtin variable autocompletion shortcut
+    QAction* variableAction = new QAction(this);
+    variableAction->setShortcut(QKeySequence(tr("Ctrl+Shift+V") ));
+    variableAction->setShortcutContext(Qt::WidgetShortcut);
+    addAction(variableAction);
+
+	// Use all keywords autocompletion
     QAction* action = new QAction(this);
     action->setShortcut(QKeySequence(tr("Ctrl+Space") ));
     action->setShortcutContext(Qt::WidgetShortcut);
     addAction(action);
 
-    connect(action, SIGNAL( triggered() ), this, SLOT(showSuggestionsForced()));
+	QSignalMapper* signalMapper = new QSignalMapper(this);
+
+	// Set a signalmapper to pass an argument
+	connect(keywordAction, SIGNAL( triggered() ), signalMapper, SLOT(map()));
+	connect(functionAction, SIGNAL( triggered() ), signalMapper, SLOT(map()));
+	connect(variableAction, SIGNAL( triggered() ), signalMapper, SLOT(map()));
+	connect(action, SIGNAL( triggered() ), signalMapper, SLOT(map()));
+
+ 	// 0, 1, 2 and 3 are the values used to check what shortcut it is
+	signalMapper->setMapping(keywordAction, 0);
+	signalMapper->setMapping(functionAction, 1);
+	signalMapper->setMapping(variableAction, 2);
+	signalMapper->setMapping(action, 3);
+
+	// Connect to the signal function
+	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(showSuggestionsForced(int)) );
 }
 
 void Editor::setLanguage( Language language)
@@ -62,7 +104,7 @@ void Editor::setLanguage( Language language)
                 " template this throw true try typedef typeid typename union unsigned using" \
                 " virtual void volatile wchar_t while xor xor_eq";
 
-        setKeyWords(0, customKeywords.c_str());
+        //setKeyWords(0, customKeywords.c_str());
 
         styleSetFore(1, 0x007f00); // multiline comment 
         styleSetFore(2, 0x007f00); // comment inline
@@ -98,7 +140,7 @@ void Editor::setLanguage( Language language)
         customKeywords = "and as assert break class continue def del elif else except exec" \
                 " False finally for from global if import in is lambda None nonlocal" \
                 " not or pass print raise return True try while with yield";
-        setKeyWords(0, customKeywords.c_str());
+       // setKeyWords(0, customKeywords.c_str());
 
         styleSetFore(0, 0x808080);
         styleSetFore(1, 0x007F00);
@@ -123,39 +165,9 @@ void Editor::setLanguage( Language language)
     case(GLSL):
         setLexerLanguage("cpp");
         setStyleBits(5);
-        customKeywords = " abs acos acosh active all all any asin asinh asm atan atanh bool break bvec2 bvec3 bvec4" \
-                " case cast ceil centroid clamp class column_major common const continue core cos cosh" \
-                " cross default degrees determinant dFdx dFdy disable discard distance do dot double dvec2" \
-                " dvec3 dvec4 else EmitVertex enable EndPrimitive enum equal exp exp2 extern external" \
-                " faceforward false filter fixed flat float floor for fract fvec2 fvec3 fvec4 fwidth gl_ClipDistance" \
-                " gl_DepthRangeParameters gl_FragCoord gl_FragDepth GL_FRAGMENT_PRECISION_HIGH gl_FrontFacing" \
-                " gl_InstanceID gl_InvocationID gl_Layer gl_MaxClipDistances gl_MaxCombinedTextureImageUnits gl_MaxDrawBuffers" \
-                " gl_MaxFragmentInputComponents gl_MaxFragmentUniformComponents gl_MaxGeometryInputComponents" \
-                " gl_MaxGeometryOutputComponents gl_MaxGeometryOutputVertices gl_MaxGeometryTextureImageUnits" \
-                " gl_MaxGeometryTotalOutputComponents gl_MaxGeometryUniformComponents gl_MaxGeometryVaryingComponents" \
-                " gl_MaxTextureImageUnits gl_MaxVertexAttribs gl_MaxVertexOutputComponents gl_MaxVertexTextureImageUnits" \
-                " gl_MaxVertexUniformComponents gl_PerVertex gl_PointCoord gl_PointSize gl_Position gl_PrimitiveID gl_PrimitiveID" \
-                " gl_PrimitiveIDIn gl_VertexID goto greaterThan greaterThanEqual half highp hvec2 hvec3 hvec4 if iimage1D iimage1DArray" \
-                " iimage2D iimage2DArray iimage3D iimageBuffer iimageCube image1D image1DArray image1DArrayShadow image1DShadow" \
-                " image2D image2DArray image2DArrayShadow image2DShadow image3D imageBuffer imageCube in inline inout input" \
-                " int interface invariant inverse inversesqrt isampler1D isampler1DArray isampler2D isampler2DArray isampler2DMS" \
-                " isampler2DMSArray isampler2DRect isampler3D isamplerBuffer isamplerCube isinf isnan ivec2 ivec3 ivec4 layout" \
-                " length lessThan lessThanEqual line_strip lines lines_adjacency log log2 long lowp mat2 mat2x2 mat2x3 mat2x4" \
-                " mat3 mat3x2 mat3x3 mat3x4 mat4 mat4x2 mat4x3 mat4x4 matrixCompMult max max_vertices mediump min mix mod" \
-                " modf namespace noinline noise1 noise2 noise3 noise4 noperspective normalize not notEqual origin_upper_left" \
-                " out outerProduct output packed partition pixel_center_integer points pow precision public radians reflect" \
-                " refract require return round roundEven row_major sampler1D sampler1DArray sampler1DArrayShadow sampler1DShadow" \
-                " sampler2D sampler2DArray sampler2DArrayShadow sampler2DMS sampler2DMSArray sampler2DRect sampler2DRectShadow" \
-                " sampler2DShadow sampler3D sampler3DRect samplerBuffer samplerCube samplerCubeShadow shared short sign sin sinh" \
-                " sizeof smooth smoothstep sqrt static std140 step struct superp switch tan tanh template texelFetch texelFetchOffset" \
-                " texture textureGrad textureGradOffset textureLod textureLodOffset textureOffset textureProj textureProjGrad" \
-                " textureProjGradOffset textureProjLod textureProjLodOffset textureProjOffset textureSize this transpose" \
-                " triangle_strip triangles triangles_adjacency true trunc typedef uimage1D uimage1DArray uimage2D uimage2DArray" \
-                " uimage3D uimageBuffer uimageCube uint uniform union unsigned usampler1D usampler1DArray usampler2D usampler2DArray" \
-                " usampler2DMS usampler2DMSArray usampler2DRect usampler3D usamplerBuffer usamplerCube using uvec2 uvec3 uvec4" \
-                " vec2 vec3 vec4 void volatile warn while";
 
-        setKeyWords(0, customKeywords.c_str());
+		setGLSLVersion(m_version);
+
 		styleSetFore(1, 0x007f00); // multiline comment 
         styleSetFore(2, 0x007f00); // comment inline
         styleSetFore(4, 0xff9900); // number
@@ -168,6 +180,48 @@ void Editor::setLanguage( Language language)
 
         break;
     }
+}
+
+void Editor::setGLSLVersion(gle::GLSL_VERSION_LANGUAGE version)
+{
+	m_version = version;
+	std::list< std::string > vKeywords = gle::getGLSLKeywords(m_version);
+	std::list< std::string > fKeywords = gle::getGLSLFunctions(m_version);
+	std::list< std::string > bKeywords = gle::getGLSLVariables(m_version);
+	std::list<std::string > allKeywords = gle::getAllKeywords(m_version);
+
+	m_keywords.clear();
+	m_functions.clear();
+	m_variables.clear();
+	m_allkeywords.clear();
+
+	typedef std::list< std::string >::const_iterator KeywordsIterator;
+
+	for ( KeywordsIterator it = vKeywords.begin(); it != vKeywords.end(); ++it)
+	{
+		m_keywords += *it + " ";
+	}
+
+	for ( KeywordsIterator it = fKeywords.begin(); it != fKeywords.end(); ++it)
+	{
+		m_functions += *it + " ";
+	}
+
+	for ( KeywordsIterator it = bKeywords.begin(); it != bKeywords.end(); ++it)
+	{
+		m_variables += *it + " ";
+	}
+
+	for ( KeywordsIterator it = allKeywords.begin(); it != allKeywords.end(); ++it)
+	{
+		m_allkeywords += *it + " ";
+	}
+   // setKeyWords(0, customKeywords.c_str());
+}
+
+const gle::GLSL_VERSION_LANGUAGE Editor::getGLSLVersion() const
+{
+	return m_version;
 }
 
 void Editor::onMarginClicked(int position, int modifiers, int margin)
@@ -197,11 +251,28 @@ void Editor::showSuggestions()
     }
 }
 
-void Editor::showSuggestionsForced()
+void Editor::showSuggestionsForced(int i)
 {
     int pos = currentPos();
     int lengthEntered = pos - wordStartPosition(pos, true);
-    autoCShow(lengthEntered, customKeywords.c_str());
+	
+	switch(i)
+	{
+	case 0:
+		customKeywords = m_keywords;
+		break;
+	case 1:
+		customKeywords = m_functions;
+		break;
+	case 2:
+		customKeywords = m_variables;
+		break;
+	case 3:
+		customKeywords = m_allkeywords;
+		break;
+	}
+
+	autoCShow(lengthEntered, customKeywords.c_str());
 }
 
 /*
