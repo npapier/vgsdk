@@ -93,7 +93,6 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	              const QByteArray &, int , int , int ) ) );
 	connect(m_stayTop.get(), SIGNAL( stateChanged ( int ) ), this, SLOT( onTop( int ) ) );
 	connect(m_versionList.get(), SIGNAL(currentIndexChanged (int) ), this, SLOT( versionChanged (int) ) );
-
 	refreshUI();
 
 }
@@ -371,6 +370,19 @@ void ShadersEditor::versionChanged(int index)
 
 
 
+bool ShadersEditor::event(QEvent * e)
+{
+	if (e->type() == QEvent::WindowActivate)
+	{
+		refreshUI();
+		return true;
+	}
+	return QWidget::event(e);
+}
+
+
+
 } // namespace engine
 
 } // namespace vgQt
+
