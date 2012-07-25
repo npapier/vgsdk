@@ -97,6 +97,10 @@ public Q_SLOTS:
 	 */
 	void versionChanged( int );
 
+protected:
+
+	 bool event(QEvent * e);
+
 private:
 
 	//GUI element
