@@ -20,6 +20,8 @@ TreeView::TreeView( QWidget *parent ) : QTreeWidget( parent )
     QStringList titles;
     titles << "Name" << "Type" << "Active" << "Shared";
     setHeaderLabels( titles );
+
+	setColumnWidth(0, 300); 
 }
 
 void TreeView::refresh()
