@@ -5,7 +5,9 @@
 
 #include "vgQt/engine/ShadersEditor.hpp"
 #include <vgd/field/FieldManager.hpp>
+#include <QBrush>
 #include <QListWidgetItem>
+#include <boost/regex.hpp>
 #include <sstream>
 
 #ifdef WIN32
@@ -22,40 +24,50 @@ namespace engine
 
 
 ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
-:	QWidget(parent), 
-	m_currentType(vgQt::engine::NONE),
-	m_itemSaved(0), 
-	m_managerSaved(0), 
-	m_shaderSaved(0),
-	m_newText(false),
-	m_canvas(canvas),
+:	QMainWindow(parent),
+	m_upDock( new QDockWidget("Shader", this) ),
+	m_bottomDock( new QDockWidget("Log", this) ),
+	m_upWidget( new QWidget(m_upDock) ),
+	m_bottomWidget( new QWidget(m_bottomDock) ),
 	m_textEditor( new Editor(this) ),
-	m_editorLog( new QPlainTextEdit(this) ),
-	m_progLayout( new QVBoxLayout ),
-	m_buttonLayout( new QVBoxLayout ),
-	m_logLayout( new QVBoxLayout ),
-	m_rightLayout( new QVBoxLayout ),
-	m_layout( new QHBoxLayout ),
-	m_refresh( new QPushButton("Refresh", this)),
-	m_shaderList( new QListWidget ),
-	m_versionList( new QComboBox ),
-	m_stayTop( new QCheckBox("Stay on Top", this) )
+	m_editorLog( new QPlainTextEdit(m_bottomWidget) ),
+	m_mode( new QGroupBox("Mode", m_upDock) ),
+	m_core( new QRadioButton("Core", m_upDock) ),
+	m_compatibility( new QRadioButton("Compatibility", m_upDock) ),
+	m_stayTop( new QCheckBox("Stay on Top", m_bottomWidget) ),
+	m_shaderList( new QListWidget(m_upDock) ),
+	m_versionList( new QComboBox(m_upDock) ),
+	m_currentProgram(0),
+	m_itemType(glo::GLSLProgram::VERTEX),
+	m_managerSaved(0),
+	m_currentShader(0),
+	m_canvas(canvas),
+	m_newText(false)
 {
 	m_engine = m_canvas->getGLEngine();
+
 	resize(1024, 768);
+
 	setWindowTitle(tr("Shaders Viewer"));
 
-	m_refresh->setShortcut(tr("F6"));
-	m_refresh->setToolTip("Shortcut : 'F6'");
+	setCentralWidget(m_textEditor);
+
+	QVBoxLayout* m_progLayout = new QVBoxLayout;
+	QVBoxLayout* m_buttonLayout = new QVBoxLayout;
+	QVBoxLayout* m_logLayout = new QVBoxLayout;
+	QHBoxLayout* m_radioLayout = new QHBoxLayout;
+
+	m_upDock->setWidget(m_upWidget);
+	m_bottomDock->setWidget(m_bottomWidget);
+
+	addDockWidget(Qt::RightDockWidgetArea, m_upDock);
+	addDockWidget(Qt::RightDockWidgetArea, m_bottomDock);
+
+	m_core->setChecked(true);
 
 	m_textEditor->setLanguage(Editor::GLSL);
 
-	m_shaderList->setMaximumWidth(200);
-
-	m_layout->addWidget(m_textEditor.get());
-
 	m_editorLog->setReadOnly(true);
-	m_editorLog->setMaximumWidth(200);
 
 	m_versionList->addItem("OpenGL 2.1 / GLSL 1.2", "1.2");
 	m_versionList->addItem("OpenGL 3.0 / GLSL 1.3", "1.3");
@@ -67,34 +79,89 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	m_versionList->addItem("OpenGL 4.2 / GLSL 4.2", "4.2");
 	m_versionList->setCurrentIndex( m_textEditor->getGLSLVersion() );
 
-	m_progLayout->addWidget(m_versionList.get());
+	m_radioLayout->addWidget(m_core);
+	m_radioLayout->addWidget(m_compatibility);
 
-	m_progLayout->addWidget(m_shaderList.get());
+	m_mode->setLayout(m_radioLayout);
+
+	m_progLayout->addWidget(m_versionList);
+	m_progLayout->addWidget(m_mode);
+	m_progLayout->addWidget(m_shaderList);
 	m_progLayout->setAlignment(Qt::AlignTop);
 
-	m_buttonLayout->addWidget(m_refresh.get());
-	m_buttonLayout->addWidget(m_stayTop.get());
+	m_buttonLayout->addWidget(m_stayTop);
 	m_buttonLayout->setAlignment(Qt::AlignAbsolute);
-	
-	m_logLayout->addWidget(m_editorLog.get());
+
+	m_logLayout->addWidget(m_editorLog);
 	m_logLayout->setAlignment(Qt::AlignBottom);
 
-	m_rightLayout->addLayout(m_progLayout.get());
-	m_rightLayout->addLayout(m_logLayout.get());
-	m_rightLayout->addLayout(m_buttonLayout.get());
-	
-	m_layout->addLayout(m_rightLayout.get());
-	setLayout(m_layout.get());
-	
-	connect(m_shaderList.get(), SIGNAL(itemClicked ( QListWidgetItem * )), this, SLOT( checkText(  QListWidgetItem * ) ));
-	connect(m_refresh.get(), SIGNAL( clicked() ), this, SLOT( refreshUI() ) );
-	connect(m_textEditor.get(), SIGNAL( modified(int , int , int , int ,
+	m_logLayout->addLayout(m_buttonLayout);
+
+	m_upWidget->setLayout(m_progLayout);
+	m_bottomWidget->setLayout(m_logLayout);
+
+	m_upWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	m_bottomWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+
+	connect(m_shaderList, SIGNAL(itemClicked ( QListWidgetItem * )), this, SLOT( checkText(  QListWidgetItem * ) ));
+	connect(m_textEditor, SIGNAL( modified(int , int , int , int ,
 	              const QByteArray &, int , int , int ) ), this, SLOT( compile(int , int , int , int ,
 	              const QByteArray &, int , int , int ) ) );
-	connect(m_stayTop.get(), SIGNAL( stateChanged ( int ) ), this, SLOT( onTop( int ) ) );
-	connect(m_versionList.get(), SIGNAL(currentIndexChanged (int) ), this, SLOT( versionChanged (int) ) );
-	refreshUI();
+	connect(m_stayTop, SIGNAL( stateChanged ( int ) ), this, SLOT( onTop( int ) ) );
+	connect(m_versionList, SIGNAL(currentIndexChanged (int) ), this, SLOT( versionChanged (int) ) );
 
+	connect(m_core, SIGNAL( clicked( bool )), this, SLOT( modeCore( bool ) ) );
+	connect(m_compatibility, SIGNAL( clicked( bool )), this, SLOT( modeCompatibility( bool ) ) );
+
+	refreshUI();
+}
+
+
+
+void ShadersEditor::checkVersionOnShader(const std::string& shader)
+{
+	boost::regex expression(
+		".*#version"				//check version
+		"[[:space:]]+"				//check space and tabulation
+		"(\\d{3})"					//capture version
+		"[[:space:]]+"				//check space and tabulation
+		"(compatibility|core).*"	//capture mode
+		);
+
+	boost::cmatch matches;
+	std::string myversion;
+	std::string mode;
+
+	if (boost::regex_match(shader.c_str(), matches, expression))
+	{
+		for (unsigned int i = 1; i < matches.size(); i++)
+		{
+			std::string tmpversion(matches[i].first, matches[i].second);
+			if ( i == 1 )
+			{
+				myversion += tmpversion[0];
+				myversion += ".";
+				myversion += tmpversion[1];
+			}
+			else if ( i == 2 )
+			{
+				mode = tmpversion;
+			}
+		}
+
+		if (mode == "compatibility")
+		{
+			m_compatibility->setChecked(true);
+			m_core->setChecked(false);
+			m_versionList->setCurrentIndex( static_cast<int>(gle::glslVersionToEnum(myversion)) );
+		}
+		else if (mode == "core")
+		{
+			m_core->setChecked(true);
+			m_compatibility->setChecked(false);
+			m_versionList->setCurrentIndex( static_cast<int>(gle::glslVersionToEnum(myversion)) );
+		}
+	}
 }
 
 
@@ -102,13 +169,13 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 void ShadersEditor::checkText(QListWidgetItem *item)
 {
 	blockSignals(true);
+
 	std::vector<std::string>::iterator	shaderName;
 	std::vector<std::string>::iterator	shaderString;
 	const std::string itemName = item->text().toStdString();
 
 	const uint progLength = m_engine->getGLSLManagerExt().getNum();
-	m_currentType = (eShaderType)item->type();
-
+	
 	m_canvas->setCurrent();
 
 	gle::GLSL_VERSION_LANGUAGE version = gle::glslVersionToEnum(gle::getCurrentGLSLVersion());
@@ -116,30 +183,26 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 	m_textEditor->setGLSLVersion( version );
 	m_versionList->setCurrentIndex( static_cast<int>(version) );
 
-	if (m_managerSaved)
-	{
-		if (m_currentType == PROGRAM_SHADER)
-		{
-			m_editorLog->setPlainText(m_managerSaved->getLinkLog().c_str());
-		}
-	}
-
 	if ( progLength > 0 )
 	{
 		std::vector<int> keys;
 		typedef std::back_insert_iterator< std::vector<int> >	InsertIterator;
 		InsertIterator keys_it( keys );
 		m_engine->getGLSLManagerExt().getKeys( keys_it );
+		m_currentShader = item->type() - 1000;
+
 
 		for ( std::vector<int>::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
 		{
 			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
 
-			const uint shaderNameSize = glo::GLSLProgram::MAX_SHADER_INDEX;
-			
-			if (m_currentType == PROGRAM_SHADER)
+			const uint shaderNameSize = glo::GLSLProgram::MAX_SHADER_INDEX - 1;
+
+			if ( m_currentShader == manager->getProgramObject() )
 			{
 				m_editorLog->setPlainText(manager->getLinkLog().c_str());
+				m_currentProgram = manager->getProgramObject();
+				return;
 			}
 
 			for (uint i = 0; i < shaderNameSize; i++)
@@ -150,18 +213,17 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 				const std::string name = manager->convertShaderType2String(type) + " " + oss.str();
 
 				//If clicked value exist on the manager, save all needed data
-				if (itemName == name) 	
+				if (itemName == name)
 				{
 					QString actualShader =  m_textEditor->getText(m_textEditor->textLength());
-					
-					if ( manager->getShaderCode(type).c_str() == actualShader.toStdString() )
-					{
-						return;
-					}
 
-					m_itemSaved = item;
+					if ( manager->getShaderCode(type).c_str() == actualShader.toStdString() )	return;
+
+					checkVersionOnShader(manager->getShaderCode(type).c_str());
+					m_currentProgram = manager->getProgramObject();
+					m_currentShader = manager->getName(type);
+					m_itemType = type;
 					m_managerSaved = manager;
-					m_shaderSaved = i;
 					m_newText = true;
 					m_textEditor->setText( manager->getShaderCode(type).c_str() );
 					m_editorLog->setPlainText(manager->getLogError(type).c_str());
@@ -180,10 +242,13 @@ void ShadersEditor::refreshUI()
 	blockSignals(true);
 
 	const uint progLength = m_engine->getGLSLManagerExt().getNum();
-	m_itemSaved = 0;
+
+	QBrush brush(Qt::red);
 
 	QFont	font("Helvetica");
 	font.setBold(true);
+
+	if (isVisible() == false)	return;
 
 	if ( progLength > 0 )
 	{
@@ -202,7 +267,11 @@ void ShadersEditor::refreshUI()
 			ossP << (int)manager->getProgramObject();
 
 			std::string prgName =  "Program " + ossP.str();
-			QListWidgetItem* prog = new QListWidgetItem(tr( prgName.c_str() ), m_shaderList.get(), vgQt::engine::PROGRAM_SHADER);
+			QListWidgetItem* prog = new QListWidgetItem(tr( prgName.c_str() ), m_shaderList, (int)manager->getProgramObject() + 1000);
+			if (manager->getInfoLog() != "")
+			{
+				prog->setForeground(brush);
+			}
 			prog->setFont(font);
 
 			//Add Shader name on shader list
@@ -212,21 +281,21 @@ void ShadersEditor::refreshUI()
 				std::ostringstream	oss;
 				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
 
-				tmp = manager->convertShaderType2String(type) + " ";
-				if ( manager->getName(type) != 0 )
+				if (type < glo::GLSLProgram::PROGRAM)
 				{
-					oss << manager->getName(type);
-					tmp += oss.str();
-					QListWidgetItem* listShader = new QListWidgetItem(tr(tmp.c_str()), m_shaderList.get(), vgQt::engine::DEFAULT_SHADER_TYPE + i );
+					tmp = manager->convertShaderType2String(type) + " ";
 
-					QFont	fontError("Helvetica");
-
-					if (manager->getLogError(type) != "")
+					if ( manager->getName(type) != 0 )
 					{
-						fontError.setItalic(true);
-					}
+						oss << manager->getName(type);
+						tmp += oss.str();
+						QListWidgetItem* listShader = new QListWidgetItem(tr(tmp.c_str()), m_shaderList, manager->getName(type) + 1000 );
 
-					listShader->setFont(fontError);
+						if (manager->getLogError(type) != "")
+						{
+							listShader->setForeground(brush);
+						}
+					}
 				}
 			}
 
@@ -236,8 +305,10 @@ void ShadersEditor::refreshUI()
 			for (uint i = 0; i < glo::GLSLProgram::MAX_SHADER_INDEX; ++i)
 			{
 				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
-				log += manager->getLogError(type);
-				log += "\n";
+				if (type < glo::GLSLProgram::PROGRAM)
+				{
+					log += manager->getLogError(type) + "\n";
+				}
 			}
 
 			log += manager->getLinkLog();
@@ -246,6 +317,7 @@ void ShadersEditor::refreshUI()
 			m_editorLog->setPlainText(log.c_str());
 		}
 	}
+
 	blockSignals(false);
 }
 
@@ -257,8 +329,7 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 	std::ostringstream	oss;
 
 	std::string InfoLog("");
-	QFont	fontError("Helvetica");
-	const glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)(m_currentType - 1000) ;
+	//QFont	fontError("Helvetica");
 
 	if ( m_newText )
 	{
@@ -266,70 +337,55 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 		return;
 	}
 
-	if (m_managerSaved && m_itemSaved 
+	if (m_currentProgram && m_managerSaved
 		&& ( ( notificationType & SC_MOD_INSERTTEXT ) || ( notificationType & SC_MOD_DELETETEXT ) ) )
 	{
-		int len = m_textEditor->textLength();
 
-		if ( len == 0 )	return;
-
-		QString	tmp = m_textEditor->getText(len + 1);
-		const std::string shader = tmp.toStdString();
-		m_canvas->setCurrent();
-		if ( m_managerSaved->getShaderCode((glo::GLSLProgram::ShaderType)m_shaderSaved) == shader )
+		if ( m_currentProgram == (int)m_managerSaved->getProgramObject() )
 		{
-			return;
-		}
-
-		//Compile the modify shader
-
-		const bool compileRetVal = m_managerSaved->addShader( shader.c_str(), type, false);
-
-		if ( !compileRetVal )	
-		{
-			InfoLog = m_managerSaved->getLogError(type);
-			fontError.setItalic(true);
-		}
-		else
-		{
-			m_managerSaved->setLogError(type, "");
-			//Linking
-			const bool linkRetVal = m_managerSaved->link();
-
-			if ( !linkRetVal )	
+			if ( m_currentShader == m_currentProgram )
 			{
-				InfoLog += m_managerSaved->getInfoLog();
+				m_editorLog->setPlainText(m_managerSaved->getLinkLog().c_str());
+				return;
+			}
+
+			int len = m_textEditor->textLength();
+
+			if ( len == 0 )	return;
+
+			QString	tmp = m_textEditor->getText(len + 1);
+			const std::string shader = tmp.toStdString();
+			m_canvas->setCurrent();
+			if ( m_managerSaved->getShaderCode((glo::GLSLProgram::ShaderType)m_itemType) == shader )	return;
+
+			//Compile the modify shader
+			const bool compileRetVal = m_managerSaved->addShader( shader.c_str(), m_itemType, false);
+
+			if ( !compileRetVal )
+			{
+				InfoLog = m_managerSaved->getLogError(m_itemType);
+
+				//fontError.setItalic(true);
 			}
 			else
 			{
-				// Async refresh
-				m_canvas->refreshForced();
+				m_managerSaved->setLogError(m_itemType, "");
+				//Linking
+				const bool linkRetVal = m_managerSaved->link();
+
+				if ( !linkRetVal )
+				{
+					InfoLog += m_managerSaved->getInfoLog();
+				}
+				else
+				{
+					// Async refresh
+					m_canvas->refreshForced();
+				}
 			}
-		}
-
-		//Set the new shader name
-		const int programNumber = m_managerSaved->getName(type);
-		oss << programNumber;
-		std::string newName = m_managerSaved->convertShaderType2String(type) + " " + oss.str();
-
-		//Set the new name in the shader list
-		if ( m_itemSaved )	
-		{
-			m_itemSaved->setText( QString(newName.c_str()) );
-			m_itemSaved->setFont(fontError);
-		}
-
-		if ( m_currentType == PROGRAM_SHADER )
-		{
-			m_editorLog->setPlainText(m_managerSaved->getLinkLog().c_str());
-			return;
-		}
-		else
-		{
-			//Set the log error in the shader log
+			refreshUI();
 			m_editorLog->setPlainText(InfoLog.c_str());
 		}
-
 	}
 }
 
@@ -340,8 +396,8 @@ void ShadersEditor::onTop( int in )
 #ifdef WIN32
 
 	//
-	//Needed because the Qt function on Windows calls setParent() when changing the flags for a window, 
-	//causing the widget to be hidden. 
+	//Needed because the Qt function on Windows calls setParent() when changing the flags for a window,
+	//causing the widget to be hidden.
 	//
 	if (in)
 	{
@@ -353,7 +409,7 @@ void ShadersEditor::onTop( int in )
 	}
 
 #else
-	
+
 	Qt::WindowFlags value = ( in == Qt::Unchecked ) ? Qt::Widget : (Qt::Widget | Qt::WindowStaysOnTopHint );
 	this->setWindowFlags( value );
 
@@ -365,7 +421,28 @@ void ShadersEditor::onTop( int in )
 void ShadersEditor::versionChanged(int index)
 {
 	std::string value = m_versionList->itemData( index ).toString().toStdString();
-	m_textEditor->setGLSLVersion( gle::glslVersionToEnum(value ) );
+	if ( m_core->isChecked() )
+	{
+		m_textEditor->setGLSLVersion( gle::glslVersionToEnum( value ) );
+	}
+	else
+	{
+		m_textEditor->setGLSLVersionCompatibility( gle::glslVersionToEnum( value ) );
+	}
+}
+
+
+
+void ShadersEditor::modeCore( bool )
+{
+	m_textEditor->setGLSLVersion(m_textEditor->getGLSLVersion());
+}
+
+
+
+void ShadersEditor::modeCompatibility( bool )
+{
+	m_textEditor->setGLSLVersionCompatibility(m_textEditor->getGLSLVersion());
 }
 
 
@@ -377,7 +454,7 @@ bool ShadersEditor::event(QEvent * e)
 		refreshUI();
 		return true;
 	}
-	return QWidget::event(e);
+	return QMainWindow::event(e);
 }
 
 
