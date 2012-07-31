@@ -14,17 +14,21 @@
 #include <vgUI/Canvas.hpp>
 #include <gle/GLSLLanguage.hpp>
 
-#include <QWidget>
-#include <QPlainTextEdit>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QListWidget>
-#include <QFrame>
-#include <QDockWidget>
-#include <QMainWindow>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDockWidget>
+#include <QFrame>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QPlainTextEdit>
+#include <QListWidget>
+#include <QMainWindow>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSplitter>
+#include <QVBoxLayout>
+#include <QWidget>
+
 
 namespace vgUI
 {
@@ -56,13 +60,25 @@ enum eShaderType
 };
 
 
-class VGQT_API ShadersEditor : public QWidget
+class VGQT_API ShadersEditor : public QMainWindow
 {
 Q_OBJECT
 
 public:
+
+	/**
+	 * @brief Constructor
+	 */
 	ShadersEditor(vgUI::Canvas* canvas, QWidget *parent = 0);
-	
+
+	/**
+	 * @brief Check if the shader contain a #version
+	 *
+	 * @param shader	the current shader.
+	 *
+	 */
+	void checkVersionOnShader(const std::string& shader);
+
 public Q_SLOTS:
 
 	/**
@@ -97,38 +113,49 @@ public Q_SLOTS:
 	 */
 	void versionChanged( int );
 
+	/**
+	 * @brief Use this Q_SLOTS when you change the GLSL mode to core
+	 */
+	void modeCore( bool );
+
+	/**
+	 * @brief Use this Q_SLOTS when you change the GLSL mode to compatibility
+	 */
+	void modeCompatibility( bool );
+
 protected:
 
 	 bool event(QEvent * e);
 
 private:
-
 	//GUI element
-	vgd::Shp< Editor >			m_textEditor;
-	vgd::Shp< QPlainTextEdit >	m_editorLog;
-	
-	vgd::Shp< QHBoxLayout >		m_layout;
-	
-	vgd::Shp< QVBoxLayout >		m_rightLayout;
-	vgd::Shp< QVBoxLayout >		m_progLayout;
-	vgd::Shp< QVBoxLayout >		m_buttonLayout;
-	vgd::Shp< QVBoxLayout >		m_logLayout;
-	
-	vgd::Shp< QPushButton >		m_refresh;
-	vgd::Shp< QCheckBox >		m_stayTop;
-	vgd::Shp< QListWidget >		m_shaderList;
+	QDockWidget*		m_upDock;
+	QDockWidget*		m_bottomDock;
 
-	vgd::Shp< QComboBox >		m_versionList;
+	QWidget*			m_upWidget;
+	QWidget*			m_bottomWidget;
+
+	Editor*				m_textEditor;
+	QPlainTextEdit*		m_editorLog;
+
+	QGroupBox*			m_mode;
+	QRadioButton*		m_core;
+	QRadioButton*		m_compatibility;
+
+	QCheckBox*			m_stayTop;
+
+	QListWidget*		m_shaderList;
+	QComboBox*			m_versionList;
 
 	vgUI::Canvas*					m_canvas;
 	vgd::Shp<vgeGL::engine::Engine>	m_engine;
 
-	eShaderType					m_currentType;
-	QListWidgetItem*			m_itemSaved;
-	glo::GLSLProgram*			m_managerSaved;
-	int							m_shaderSaved;
+	int								m_currentProgram;
+	glo::GLSLProgram::ShaderType	m_itemType;
+	glo::GLSLProgram*				m_managerSaved;
+	int								m_currentShader;
 
-	bool						m_newText;
+	bool							m_newText;
 };
 
 

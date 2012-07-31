@@ -11,13 +11,44 @@
 #include <QAction>
 #include <QSignalMapper>
 
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <set>
 #include <sstream>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <list>
+
+//#include <boost/container/list.hpp>
+#include <boost/foreach.hpp>
+#include <boost/range/algorithm.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/regex.hpp>
 
 static const int MARGIN_SCRIPT_FOLD_INDEX = 1;
+
+namespace
+{
+/**
+ * @brief	Case insensitive comparison of two string
+ *
+ * @param	first the first string to compare
+ *
+ * @param	second the second string to compare
+ *
+ * @return	true if first < second
+ */
+const bool compareNoCase(std::string first, std::string second)
+{
+	std::transform(first.begin(), first.end(), first.begin(), tolower);
+	std::transform(second.begin(), second.end(), second.begin(), tolower);
+
+	int i = first.compare(0, second.length(), second);
+
+	return ( (i < 0 ) ? true : false );
+}
+
+}
 
 Editor::Editor(QWidget* parent) :
     ScintillaEdit(parent),
@@ -55,6 +86,12 @@ Editor::Editor(QWidget* parent) :
     action->setShortcutContext(Qt::WidgetShortcut);
     addAction(action);
 
+	// Use all keywords autocompletion
+    QAction* textAction = new QAction(this);
+    textAction->setShortcut(QKeySequence(tr("Ctrl+Return") ));
+    textAction->setShortcutContext(Qt::WidgetShortcut);
+    addAction(textAction);
+
 	QSignalMapper* signalMapper = new QSignalMapper(this);
 
 	// Set a signalmapper to pass an argument
@@ -63,11 +100,15 @@ Editor::Editor(QWidget* parent) :
 	connect(variableAction, SIGNAL( triggered() ), signalMapper, SLOT(map()));
 	connect(action, SIGNAL( triggered() ), signalMapper, SLOT(map()));
 
+	connect(textAction, SIGNAL( triggered() ), signalMapper, SLOT(map()));
+
  	// 0, 1, 2 and 3 are the values used to check what shortcut it is
 	signalMapper->setMapping(keywordAction, 0);
 	signalMapper->setMapping(functionAction, 1);
 	signalMapper->setMapping(variableAction, 2);
 	signalMapper->setMapping(action, 3);
+	signalMapper->setMapping(textAction, 4);
+
 
 	// Connect to the signal function
 	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(showSuggestionsForced(int)) );
@@ -182,41 +223,105 @@ void Editor::setLanguage( Language language)
     }
 }
 
+const std::string Editor::sortDictionnary(const std::string dictionnary, const bool resorted)
+{
+	std::string retVal("");
+	boost::char_separator<char> sep(" ");
+    boost::tokenizer<boost::char_separator<char>> tokens(dictionnary, sep);
+
+	if (!resorted)
+	{
+		return dictionnary;
+		/*BOOST_FOREACH(std::string t, tokens)
+		{
+			retVal += t + " ";
+		}*/
+	}
+	else
+	{
+		std::set<std::string> tmpValue;
+
+		BOOST_FOREACH(std::string t, tokens)
+		{
+			tmpValue.insert(t);
+		}
+
+		std::set<std::string, const bool(*)(std::string, std::string)> newset(tmpValue.begin(), tmpValue.end(), compareNoCase);
+
+		for (std::set<std::string, const bool(*)(std::string, std::string)>::const_iterator it = newset.begin(); it != newset.end(); ++it)
+		{
+			retVal += *it + " ";
+		}
+	}
+	return retVal;
+}
+
+const std::string Editor::getTextKeywords(const int size)
+{
+	QString tmptext = getText(textLength());
+	std::string text = tmptext.toStdString();
+	boost::regex expression("^[0-9 ]+$");
+	boost::cmatch matches;
+
+	std::string retVal("");
+	boost::char_separator<char> sep(" \n()\t*-+.\\;|/,=");
+    boost::tokenizer<boost::char_separator<char>> tokens(text, sep);
+
+	std::set<std::string> tmpValue;
+
+	BOOST_FOREACH(std::string t, tokens)
+	{
+		if (t.size() >= size && (boost::regex_match(t.c_str(), matches, expression) == false))
+		{
+			tmpValue.insert(t);
+		}
+	}
+
+	std::set<std::string, const bool(*)(std::string, std::string)> newset(tmpValue.begin(), tmpValue.end(), compareNoCase);
+
+	for (std::set<std::string, const bool(*)(std::string, std::string)>::const_iterator it = newset.begin(); it != newset.end(); ++it)
+	{
+		retVal += *it + " ";
+	}
+
+	return retVal;
+}
+
 void Editor::setGLSLVersion(gle::GLSL_VERSION_LANGUAGE version)
 {
 	m_version = version;
-	std::list< std::string > vKeywords = gle::getGLSLKeywords(m_version);
-	std::list< std::string > fKeywords = gle::getGLSLFunctions(m_version);
-	std::list< std::string > bKeywords = gle::getGLSLVariables(m_version);
-	std::list<std::string > allKeywords = gle::getAllKeywords(m_version);
 
 	m_keywords.clear();
 	m_functions.clear();
 	m_variables.clear();
 	m_allkeywords.clear();
 
-	typedef std::list< std::string >::const_iterator KeywordsIterator;
+	m_keywords =  sortDictionnary(gle::getGLSLKeywords(m_version), false);
+	m_functions = sortDictionnary(gle::getGLSLFunctions(m_version), false);
+	m_variables = sortDictionnary(gle::getGLSLVariables(m_version), false);
+	m_allkeywords = sortDictionnary(gle::getAllKeywords(m_version), true);
+}
 
-	for ( KeywordsIterator it = vKeywords.begin(); it != vKeywords.end(); ++it)
+void Editor::setGLSLVersionCompatibility(gle::GLSL_VERSION_LANGUAGE version)
+{
+	m_version = version;
+
+	m_keywords.clear();
+	m_functions.clear();
+	m_variables.clear();
+	m_allkeywords.clear();
+
+	for (int i = 0 ; i <= static_cast<int>(version); ++i)
 	{
-		m_keywords += *it + " ";
+		m_keywords +=  gle::getGLSLKeywords(static_cast<gle::GLSL_VERSION_LANGUAGE>(i)) + " ";
+		m_functions += gle::getGLSLFunctions(static_cast<gle::GLSL_VERSION_LANGUAGE>(i)) + " ";
+		m_variables += gle::getGLSLVariables(static_cast<gle::GLSL_VERSION_LANGUAGE>(i)) + " ";
 	}
 
-	for ( KeywordsIterator it = fKeywords.begin(); it != fKeywords.end(); ++it)
-	{
-		m_functions += *it + " ";
-	}
-
-	for ( KeywordsIterator it = bKeywords.begin(); it != bKeywords.end(); ++it)
-	{
-		m_variables += *it + " ";
-	}
-
-	for ( KeywordsIterator it = allKeywords.begin(); it != allKeywords.end(); ++it)
-	{
-		m_allkeywords += *it + " ";
-	}
-   // setKeyWords(0, customKeywords.c_str());
+	m_keywords =  sortDictionnary(m_keywords, true);
+	m_functions = sortDictionnary(m_functions, true);
+	m_variables = sortDictionnary(m_variables, true);
+	m_allkeywords = sortDictionnary(m_keywords + m_functions + m_variables, true);
 }
 
 const gle::GLSL_VERSION_LANGUAGE Editor::getGLSLVersion() const
@@ -269,6 +374,9 @@ void Editor::showSuggestionsForced(int i)
 		break;
 	case 3:
 		customKeywords = m_allkeywords;
+		break;
+	case 4:
+		customKeywords = getTextKeywords(2);
 		break;
 	}
 

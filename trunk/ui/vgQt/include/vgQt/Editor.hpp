@@ -31,6 +31,8 @@ public:
 	 */
     void setLanguage( Language language);
 
+
+	const std::string getTextKeywords(const int size);
 	/**
 	 * @brief	Set the GLSL version to the lexer
 	 *
@@ -39,11 +41,21 @@ public:
 	void setGLSLVersion(gle::GLSL_VERSION_LANGUAGE version);
 
 	/**
+	 * @brief	Set the GLSL version to the lexer (Compatibility mode)
+	 *
+	 * @param	version	the GLSL version
+	 */
+	void setGLSLVersionCompatibility(gle::GLSL_VERSION_LANGUAGE version);
+
+	/**
 	 * @brief	Get the current GLSL version setted to the lexer
 	 *
 	 * @return	the GLSL version
 	 */
 	const gle::GLSL_VERSION_LANGUAGE getGLSLVersion() const;
+
+private:
+	const std::string sortDictionnary(const std::string dictionnary, const bool resorted);
 
 private:
 	std::string customKeywords;
