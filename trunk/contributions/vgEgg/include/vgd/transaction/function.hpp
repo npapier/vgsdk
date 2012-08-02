@@ -68,23 +68,41 @@ protected:
 
 
 /**
+ * @name Non-member Function
+ */
+//@{
+/**
  * @brief Template factory for functions with no args.
  */
 template < typename T0 >
 vgd::Shp< function > createFunctionTransaction( boost::function< T0() > f )
 {
-	return function::create(f);
+	return function::create( f );
 }
 
 /**
- * @name Non-member Function
+ * @brief Template factory for functions with no args.
  */
-//@{
+template < typename T0 >
+vgd::Shp< function > createFunctionTransaction( T0 f () )
+{
+	return function::create( f );
+}
+
 /**
  * @brief Template factory for functions with one single arg.
  */
 template < typename T0, typename T1, typename P1 >
 vgd::Shp< function > createFunctionTransaction( boost::function< T0 ( T1 ) > f, P1 p1 )
+{
+	return function::create( boost::bind( f, p1 ) );
+}
+
+/**
+ * @brief Template factory for functions with one single arg.
+ */
+template < typename T0, typename T1, typename P1 >
+vgd::Shp< function > createFunctionTransaction( T0 f ( T1 ), P1 p1 )
 {
 	return function::create( boost::bind( f, p1 ) );
 }
@@ -99,10 +117,28 @@ vgd::Shp< function > createFunctionTransaction( boost::function< T0 ( T1, T2 ) >
 }
 
 /**
+ * @brief Template factory for functions with two args.
+ */
+template < typename T0, typename T1, typename T2, typename P1, typename P2 >
+vgd::Shp< function > createFunctionTransaction( T0 f ( T1, T2 ), P1 p1, P2 p2 )
+{
+	return function::create( boost::bind( f, p1, p2 ) );
+}
+
+/**
  * @brief Template factory for functions with three args.
  */
 template < typename T0, typename T1, typename T2, typename T3, typename P1, typename P2, typename P3 >
 vgd::Shp<function > createFunctionTransaction( boost::function< T0 ( T1, T2, T3 ) > f, P1 p1, P2 p2, P3 p3 )
+{
+	return function::create( boost::bind( f, p1, p2, p3 ) );
+}
+
+/**
+ * @brief Template factory for functions with three args.
+ */
+template < typename T0, typename T1, typename T2, typename T3, typename P1, typename P2, typename P3 >
+vgd::Shp<function > createFunctionTransaction( T0 f ( T1, T2, T3 ), P1 p1, P2 p2, P3 p3 )
 {
 	return function::create( boost::bind( f, p1, p2, p3 ) );
 }
