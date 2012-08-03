@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QListWidgetItem>
 #include <QMenuBar>
+#include <QTimer>
 #include <boost/regex.hpp>
 #include <sstream>
 
@@ -34,6 +35,7 @@ namespace engine
 ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 :	//QMainWindow(),
 	m_findMenu( new QWidget(this)),
+	m_goToMenu( new QWidget(this)),
 	m_upDock( new QDockWidget("Shader", this) ),
 	m_bottomDock( new QDockWidget("Log", this) ),
 	m_upWidget( new QWidget(m_upDock) ),
@@ -43,7 +45,6 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	m_mode( new QGroupBox("Mode", m_upDock) ),
 	m_core( new QRadioButton("Core", m_upDock) ),
 	m_compatibility( new QRadioButton("Compatibility", m_upDock) ),
-	m_stayTop( new QCheckBox("Stay on Top", m_bottomWidget) ),
 	m_shaderList( new QListWidget(m_upDock) ),
 	m_versionList( new QComboBox(m_upDock) ),
 	m_currentProgram(0),
@@ -60,6 +61,8 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	setWindowTitle(tr("Shaders Viewer"));
 
 	createFindAndReplaceMenu();
+	createGoToLineMenu();
+
 	setCentralWidget(m_textEditor);
 
 	m_file = menuBar()->addMenu("&File");
@@ -70,8 +73,14 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	QAction* menuFindReplace = m_edit->addAction("&Find/Replace");
 	menuFindReplace->setShortcut(QKeySequence("Ctrl+F"));
 
+	QAction* menuGoToLine = m_edit->addAction("&Go To...");
+	menuGoToLine->setShortcut(QKeySequence("Ctrl+G"));
+
+	m_menuStayTop = m_edit->addAction("&Always on Top");
+	m_menuStayTop->setCheckable(true);
+
+
 	QVBoxLayout* m_progLayout = new QVBoxLayout;
-	QVBoxLayout* m_buttonLayout = new QVBoxLayout;
 	QVBoxLayout* m_logLayout = new QVBoxLayout;
 	QHBoxLayout* m_radioLayout = new QHBoxLayout;
 
@@ -107,13 +116,8 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	m_progLayout->addWidget(m_shaderList);
 	m_progLayout->setAlignment(Qt::AlignTop);
 
-	m_buttonLayout->addWidget(m_stayTop);
-	m_buttonLayout->setAlignment(Qt::AlignAbsolute);
-
 	m_logLayout->addWidget(m_editorLog);
 	m_logLayout->setAlignment(Qt::AlignBottom);
-
-	m_logLayout->addLayout(m_buttonLayout);
 
 	m_upWidget->setLayout(m_progLayout);
 	m_bottomWidget->setLayout(m_logLayout);
@@ -123,12 +127,14 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 
 	connect(menuQuit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(menuFindReplace, SIGNAL(triggered()), this, SLOT(findAndReplaceMenu()));
+	connect(menuGoToLine, SIGNAL(triggered()), this, SLOT(goToMenu()));
+	connect(m_menuStayTop, SIGNAL(toggled(bool)) , this, SLOT(onTop(bool)));
 
 	connect(m_shaderList, SIGNAL(itemClicked ( QListWidgetItem * )), this, SLOT( checkText(  QListWidgetItem * ) ));
 	connect(m_textEditor, SIGNAL( modified(int , int , int , int ,
 	              const QByteArray &, int , int , int ) ), this, SLOT( compile(int , int , int , int ,
 	              const QByteArray &, int , int , int ) ) );
-	connect(m_stayTop, SIGNAL( stateChanged ( int ) ), this, SLOT( onTop( int ) ) );
+
 	connect(m_versionList, SIGNAL(currentIndexChanged (int) ), this, SLOT( versionChanged (int) ) );
 
 	connect(m_core, SIGNAL( clicked( bool )), this, SLOT( modeCore( bool ) ) );
@@ -137,14 +143,16 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	refreshUI();
 }
 
+
+
 void ShadersEditor::createFindAndReplaceMenu()
 {
-	m_findMenu->setWindowFlags(Qt::Tool);
+	m_findMenu->setWindowFlags(Qt::Window);
 	m_findMenu->setWindowTitle("Find/Replace");
-	
+
 	QVBoxLayout* layout = new QVBoxLayout;
 	QLabel* findLabel = new QLabel("Find what:", m_findMenu);
-	QLabel* replaceLabel = new QLabel("Replace with:", m_findMenu);	
+	QLabel* replaceLabel = new QLabel("Replace with:", m_findMenu);
 	m_findText = new QLineEdit(this);
 	m_replaceText = new QLineEdit(this);
 	m_findAction = new QPushButton("Find Next", this);
@@ -167,13 +175,58 @@ void ShadersEditor::createFindAndReplaceMenu()
 	connect(m_replaceAllAction, SIGNAL(clicked(bool) ), this, SLOT(replaceAllSelected(bool)) );
 }
 
+
+
+void ShadersEditor::createGoToLineMenu()
+{
+	m_goToMenu->setWindowFlags(Qt::Window);
+	m_goToMenu->setWindowTitle("Go To...");
+
+	QVBoxLayout* layout = new QVBoxLayout;
+	QLabel* findLabel = new QLabel("You want to go to:", m_goToMenu);
+	m_line = new QLineEdit(this);
+
+	layout->addWidget(findLabel);
+	layout->addWidget(m_line);
+	m_goToMenu->setLayout(layout);
+	m_goToMenu->hide();
+
+	connect(m_line, SIGNAL(textChanged( const QString &)), this, SLOT(gotoLine(const QString &)));
+}
+
+
+
+void ShadersEditor::gotoLine(const QString & lineNumber)
+{
+	if (lineNumber.size() > 0)
+	{
+		bool itsOk;
+		int value = lineNumber.toInt(&itsOk, 10);
+
+		if (itsOk)
+		{
+			value--;
+
+			if (m_textEditor->lineCount() < value)
+			{
+				value = m_textEditor->lineCount();
+			}
+
+			m_textEditor->gotoLine(value);
+			m_textEditor->setSelection(m_textEditor->positionFromLine(value), m_textEditor->lineEndPosition(value));
+		}
+	}
+}
+
+
+
 void ShadersEditor::replaceCurrent(bool check)
 {
 	Q_UNUSED(check);
 
 	std::vector<QPair<int, int>> value = m_textEditor->find(m_findText->text().toStdString());
 	const int i = m_textEditor->getCurrentSelection();
-	
+
 	if (i < value.size() )
 	{
 		m_textEditor->setSelection(value[i].first, value[i].second);
@@ -182,6 +235,8 @@ void ShadersEditor::replaceCurrent(bool check)
 		setNextSelection(true);
 	}
 }
+
+
 
 void ShadersEditor::replaceAllSelected(bool check)
 {
@@ -201,6 +256,8 @@ void ShadersEditor::replaceAllSelected(bool check)
 	}
 }
 
+
+
 void ShadersEditor::setNextSelection(bool check)
 {
 	Q_UNUSED(check);
@@ -212,6 +269,8 @@ void ShadersEditor::setNextSelection(bool check)
 	}
 }
 
+
+
 void ShadersEditor::findWithMenu(const QString &text)
 {
 	if (text.size() >= 1)
@@ -220,10 +279,12 @@ void ShadersEditor::findWithMenu(const QString &text)
 		m_textEditor->selectText(text.toStdString(), true);
 	}
 	else
-	{	
+	{
 		m_textEditor->clearSelections();
 	}
 }
+
+
 
 void ShadersEditor::checkErrorLine(const std::string& log)
 {
@@ -238,7 +299,7 @@ void ShadersEditor::checkErrorLine(const std::string& log)
 		regex = ".*\\d\\("
 				"(\\d+)"
 				"\\)"
-				"[[:space:]]+: error.*";	// like 0(28) : error 
+				"[[:space:]]+: error.*";	// like 0(28) : error
 	}
 	else
 	{
@@ -264,6 +325,8 @@ void ShadersEditor::checkErrorLine(const std::string& log)
 		}
 	}
 }
+
+
 
 void ShadersEditor::checkVersionOnShader(const std::string& shader)
 {
@@ -323,7 +386,7 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 	const std::string itemName = item->text().toStdString();
 
 	const uint progLength = m_engine->getGLSLManagerExt().getNum();
-	
+
 	m_canvas->setCurrent();
 
 	gle::GLSL_VERSION_LANGUAGE version = gle::glslVersionToEnum(gle::getCurrentGLSLVersion());
@@ -349,6 +412,7 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 			{
 				m_editorLog->setPlainText(manager->getLinkLog().c_str());
 				m_currentProgram = manager->getProgramObject();
+				m_textEditor->setText("");
 				return;
 			}
 
@@ -494,6 +558,7 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 			if ( m_currentShader == m_currentProgram )
 			{
 				m_editorLog->setPlainText(m_managerSaved->getLinkLog().c_str());
+				m_textEditor->setText("");
 				return;
 			}
 
@@ -541,7 +606,7 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 
 
 
-void ShadersEditor::onTop( int in )
+void ShadersEditor::onTop( bool in )
 {
 #ifdef WIN32
 
@@ -560,7 +625,7 @@ void ShadersEditor::onTop( int in )
 
 #else
 
-	Qt::WindowFlags value = ( in == Qt::Unchecked ) ? Qt::Widget : (Qt::Widget | Qt::WindowStaysOnTopHint );
+	Qt::WindowFlags value = ( in == false ) ? Qt::Widget : (Qt::Widget | Qt::WindowStaysOnTopHint );
 	this->setWindowFlags( value );
 
 #endif
@@ -597,10 +662,39 @@ void ShadersEditor::modeCompatibility( bool )
 
 
 
+void ShadersEditor::goToMenu()
+{
+	if (m_goToMenu->isVisible() == false)
+	{
+		m_goToMenu->show();
+		m_goToMenu->setFocus();
+		m_goToMenu->setWindowState( Qt::WindowActive );
+		m_line->setFocus();
+	}
+	else
+	{
+		m_goToMenu->hide();
+	}
+}
+
+
+
 void ShadersEditor::findAndReplaceMenu()
 {
-	m_findMenu->show();
+	if (m_findMenu->isVisible() == false)
+	{
+		m_findMenu->show();
+		m_findMenu->setFocus();
+		m_findMenu->setWindowState( Qt::WindowActive );
+		m_findText->setFocus();
+	}
+	else
+	{
+		m_findMenu->hide();
+	}
+
 }
+
 
 
 bool ShadersEditor::event(QEvent * e)
