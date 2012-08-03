@@ -93,6 +93,8 @@ public:
 	 */
 	void createFindAndReplaceMenu();
 
+	void createGoToLineMenu();
+
 public Q_SLOTS:
 
 	/**
@@ -119,7 +121,7 @@ public Q_SLOTS:
 	/**
 	 * @brief Use this Q_SLOTS when you need the window on top.
 	 */
-	void onTop( int );
+	void onTop( bool );
 
 	/**
 	 * @brief Use this Q_SLOTS when you change the GLSL version value
@@ -140,6 +142,8 @@ public Q_SLOTS:
 	 * @brief Use this Q_SLOTS to open the find and replace menu
 	 */
 	void findAndReplaceMenu();
+
+	void goToMenu();
 
 	/**
 	 * @brief Use this Q_SLOTS to find a word in the editor
@@ -163,6 +167,8 @@ public Q_SLOTS:
 	 */
 	void replaceCurrent(bool check);
 
+	void gotoLine(const QString & lineNumber);
+
 protected:
 
 	 bool event(QEvent * e);
@@ -176,6 +182,11 @@ private:
 	QPushButton*		m_findAction;
 	QPushButton*		m_replaceAction;
 	QPushButton*		m_replaceAllAction;
+
+	QAction*			m_menuStayTop;
+
+	QWidget*			m_goToMenu;
+	QLineEdit*			m_line;
 
 	QMenu*				m_file;
 	QMenu*				m_edit;
@@ -192,8 +203,6 @@ private:
 	QGroupBox*			m_mode;
 	QRadioButton*		m_core;
 	QRadioButton*		m_compatibility;
-
-	QCheckBox*			m_stayTop;
 
 	QListWidget*		m_shaderList;
 	QComboBox*			m_versionList;
