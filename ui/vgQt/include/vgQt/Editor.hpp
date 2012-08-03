@@ -19,6 +19,7 @@ class Editor : public ScintillaEdit
 
 public:
     enum Language { CPP, PYTHON, GLSL };
+
 	/**
 	 * @brief	Constructor
 	 */
@@ -54,8 +55,55 @@ public:
 	 */
 	const gle::GLSL_VERSION_LANGUAGE getGLSLVersion() const;
 
+	/**
+	 * @brief	Set a red marker on a line
+	 *
+	 * @param	line the line number
+	 */
+	void setLineMarker(int line);
+
+	/**
+	 * @brief	Clear all error marker
+	 */
+	void clearAllUnderligned();
+
+	/**
+	 * @brief	Select one or several word
+	 *
+	 * @param	text the text to find
+	 *
+	 * @param	seeAll true if select all same word on the text editorm false otherwise
+	 */
+	void selectText(const std::string& text, const bool seeAll);
+
+	/**
+	 * @brief	Set the current selection if you have several same word
+	 *
+	 * @param	i the current selection
+	 */
+	void setCurrentSelection(const int i);
+
+	/**
+	 * @brief	Get the current selection if you have several same word
+	 */
+	const int getCurrentSelection();
+
+
+	/**
+	 * @brief	Find a word and return a vector of position
+	 *
+	 * @param	word the word to find in the editor
+	 */
+	const std::vector<QPair<int, int>> find(const std::string& word);
+
 private:
-	const std::string sortDictionnary(const std::string dictionnary, const bool resorted);
+
+	/**
+	 * @brief	Sort a simple string by alphabetical order
+	 *
+	 * @param	dictionnary the dictionnary non sorted
+	 */
+	const std::string sortDictionnary(const std::string dictionnary/*, const bool resorted*/);
 
 private:
 	std::string customKeywords;
@@ -63,7 +111,7 @@ private:
 	std::string m_functions;
 	std::string m_variables;
 	std::string m_allkeywords;
-
+	int			m_currentSelection;
 	gle::GLSL_VERSION_LANGUAGE m_version;
 
 private Q_SLOTS:
@@ -71,6 +119,7 @@ private Q_SLOTS:
     void onMarginClicked(int position, int modifiers, int margin);
     void showSuggestions();
     void showSuggestionsForced(int i);
+	void onDoubleClick(int position, int line);
 };
 
 #endif // _VGQT_EDITOR_HPP_

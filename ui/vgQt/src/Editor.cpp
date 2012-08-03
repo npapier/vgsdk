@@ -7,8 +7,9 @@
 
 #include "vgQt/Editor.hpp"
 
-#include <QDebug>
 #include <QAction>
+#include <QDebug>
+#include <QPair>
 #include <QSignalMapper>
 
 #include <algorithm>
@@ -45,7 +46,7 @@ const bool compareNoCase(std::string first, std::string second)
 
 	int i = first.compare(0, second.length(), second);
 
-	return ( (i < 0 ) ? true : false );
+	return ( ( i < 0 ) ? true : false );
 }
 
 }
@@ -54,6 +55,7 @@ Editor::Editor(QWidget* parent) :
     ScintillaEdit(parent),
 	m_version(static_cast<gle::GLSL_VERSION_LANGUAGE>(static_cast<int>(gle::MAX_VERSION_LANGUAGE) - 1))
 {
+	m_currentSelection = 0;
     styleClearAll();
     setMarginWidthN(0,25); // par défaut la marge 0 est le nombre de ligne
     autoCSetIgnoreCase(true);
@@ -93,6 +95,8 @@ Editor::Editor(QWidget* parent) :
     addAction(textAction);
 
 	QSignalMapper* signalMapper = new QSignalMapper(this);
+
+	connect(this, SIGNAL(doubleClick(int, int)), this, SLOT(onDoubleClick(int, int)));
 
 	// Set a signalmapper to pass an argument
 	connect(keywordAction, SIGNAL( triggered() ), signalMapper, SLOT(map()));
@@ -223,36 +227,125 @@ void Editor::setLanguage( Language language)
     }
 }
 
-const std::string Editor::sortDictionnary(const std::string dictionnary, const bool resorted)
+void Editor::selectText(const std::string& text, const bool seeAll)
+{
+	setAdditionalCaretsVisible(false);
+	bool firstSelection = true;
+	bool firstLoop = true;
+	std::vector<QPair<int, int>> value = find(text);
+
+	if (m_currentSelection >= value.size())	m_currentSelection = 0;
+
+	int i = m_currentSelection;
+
+	while( (i != m_currentSelection || firstLoop) && (value.size() > 0))
+	{
+		if (firstSelection)
+		{
+			setSelection(value[i].first, value[i].second);
+			firstSelection = false;
+		}
+		else
+		{
+			if (seeAll)	addSelection(value[i].first, value[i].second);
+		}
+
+		i--;
+
+		if (i < 0)
+		{
+			i = value.size() - 1;
+			firstLoop = false;
+		}
+	}
+}
+
+const std::vector<QPair<int, int>> Editor::find(const std::string& word)
+{
+	std::vector<QPair<int, int>> retVal;
+	const int textLenght = textLength();
+	int i = 0;
+
+	while ( i < textLenght  )
+	{
+		QPair<int, int> textPosition = findText(SCFIND_MATCHCASE, word.c_str(), i, textLenght);
+
+		if ( textPosition.second == textLenght )
+		{
+			QString verifyText = get_text_range(textPosition.first, textPosition.second);
+			if (verifyText.toStdString() != word)	break;
+		}
+
+		i = textPosition.second;
+		retVal.push_back(textPosition);
+	}
+
+	return retVal;
+}
+
+void Editor::onDoubleClick(int position, int line)
+{
+	QString	tmp = getSelText();
+	selectText(tmp.toStdString(), true);
+}
+
+void Editor::setLineMarker(int line)
+{
+	indicSetStyle(1, INDIC_STRAIGHTBOX);
+
+	int positionBegin = positionFromLine(line - 1);
+
+	while (	get_text_range(positionBegin, positionBegin + 1) == " " || 
+			get_text_range(positionBegin, positionBegin + 1) == "\t")
+	{
+		positionBegin++;
+	}
+
+	const int positionEnd = lineEndPosition(line - 1);
+
+	setIndicatorCurrent(1);
+	indicSetFore(1,  255 | (0 << 8) | (0 << 16));
+	indicatorFillRange(positionBegin, positionEnd - positionBegin);
+}
+
+void Editor::clearAllUnderligned()
+{
+	indicatorClearRange(0, textLength());
+	m_currentSelection = 0;
+}
+
+void Editor::setCurrentSelection(const int i)
+{
+	m_currentSelection = i;
+}
+
+const int Editor::getCurrentSelection()
+{
+	return m_currentSelection;
+}
+
+
+const std::string Editor::sortDictionnary(const std::string dictionnary/*, const bool resorted*/)
 {
 	std::string retVal("");
 	boost::char_separator<char> sep(" ");
     boost::tokenizer<boost::char_separator<char>> tokens(dictionnary, sep);
 
-	if (!resorted)
+	std::set<std::string> tmpValue;
+
+	BOOST_FOREACH(std::string t, tokens)
 	{
-		return dictionnary;
-		/*BOOST_FOREACH(std::string t, tokens)
-		{
-			retVal += t + " ";
-		}*/
+		tmpValue.insert(t);
 	}
-	else
+
+	typedef std::set<std::string, const bool(*)(std::string, std::string)> SetComparator;
+	SetComparator newset(tmpValue.begin(), tmpValue.end(), compareNoCase);
+
+	for (SetComparator::const_iterator it = newset.begin(); it != newset.end(); ++it)
 	{
-		std::set<std::string> tmpValue;
-
-		BOOST_FOREACH(std::string t, tokens)
-		{
-			tmpValue.insert(t);
-		}
-
-		std::set<std::string, const bool(*)(std::string, std::string)> newset(tmpValue.begin(), tmpValue.end(), compareNoCase);
-
-		for (std::set<std::string, const bool(*)(std::string, std::string)>::const_iterator it = newset.begin(); it != newset.end(); ++it)
-		{
-			retVal += *it + " ";
-		}
+		retVal += *it + " ";
 	}
+
 	return retVal;
 }
 
@@ -277,9 +370,10 @@ const std::string Editor::getTextKeywords(const int size)
 		}
 	}
 
-	std::set<std::string, const bool(*)(std::string, std::string)> newset(tmpValue.begin(), tmpValue.end(), compareNoCase);
+	typedef std::set<std::string, const bool(*)(std::string, std::string)> SetComparator;
+	SetComparator newset(tmpValue.begin(), tmpValue.end(), compareNoCase);
 
-	for (std::set<std::string, const bool(*)(std::string, std::string)>::const_iterator it = newset.begin(); it != newset.end(); ++it)
+	for (SetComparator::const_iterator it = newset.begin(); it != newset.end(); ++it)
 	{
 		retVal += *it + " ";
 	}
@@ -296,10 +390,10 @@ void Editor::setGLSLVersion(gle::GLSL_VERSION_LANGUAGE version)
 	m_variables.clear();
 	m_allkeywords.clear();
 
-	m_keywords =  sortDictionnary(gle::getGLSLKeywords(m_version), false);
-	m_functions = sortDictionnary(gle::getGLSLFunctions(m_version), false);
-	m_variables = sortDictionnary(gle::getGLSLVariables(m_version), false);
-	m_allkeywords = sortDictionnary(gle::getAllKeywords(m_version), true);
+	m_keywords =  gle::getGLSLKeywords(m_version);
+	m_functions = gle::getGLSLFunctions(m_version);
+	m_variables = gle::getGLSLVariables(m_version);
+	m_allkeywords = sortDictionnary(gle::getAllKeywords(m_version));
 }
 
 void Editor::setGLSLVersionCompatibility(gle::GLSL_VERSION_LANGUAGE version)
@@ -318,10 +412,10 @@ void Editor::setGLSLVersionCompatibility(gle::GLSL_VERSION_LANGUAGE version)
 		m_variables += gle::getGLSLVariables(static_cast<gle::GLSL_VERSION_LANGUAGE>(i)) + " ";
 	}
 
-	m_keywords =  sortDictionnary(m_keywords, true);
-	m_functions = sortDictionnary(m_functions, true);
-	m_variables = sortDictionnary(m_variables, true);
-	m_allkeywords = sortDictionnary(m_keywords + m_functions + m_variables, true);
+	m_keywords =  sortDictionnary(m_keywords);
+	m_functions = sortDictionnary(m_functions);
+	m_variables = sortDictionnary(m_variables);
+	m_allkeywords = sortDictionnary(m_keywords + m_functions + m_variables);
 }
 
 const gle::GLSL_VERSION_LANGUAGE Editor::getGLSLVersion() const

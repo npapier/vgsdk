@@ -21,8 +21,10 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QPlainTextEdit>
+#include <QLineEdit>
 #include <QListWidget>
 #include <QMainWindow>
+#include <QMenu>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSplitter>
@@ -75,9 +77,21 @@ public:
 	 * @brief Check if the shader contain a #version
 	 *
 	 * @param shader	the current shader.
-	 *
 	 */
 	void checkVersionOnShader(const std::string& shader);
+
+	/**
+	 * @brief Check if the shader contain error
+	 *
+	 * @param log	the current shader.
+	 */
+	void checkErrorLine(const std::string& log);
+
+
+	/**
+	 * @brief Create the find and replace menu (open with Ctrl + F).
+	 */
+	void createFindAndReplaceMenu();
 
 public Q_SLOTS:
 
@@ -85,7 +99,6 @@ public Q_SLOTS:
 	 * @brief Use this Q_SLOTS to set text in the text editor aream depens on a QListWidgetItem
 	 *
 	 * @param item	the QListWidgetItem who refer the shader.
-	 *
 	 */
 	void checkText(QListWidgetItem *item);
 
@@ -123,12 +136,50 @@ public Q_SLOTS:
 	 */
 	void modeCompatibility( bool );
 
+	/**
+	 * @brief Use this Q_SLOTS to open the find and replace menu
+	 */
+	void findAndReplaceMenu();
+
+	/**
+	 * @brief Use this Q_SLOTS to find a word in the editor
+	 *
+	 * @param text	the text to find
+	 */
+	void findWithMenu(const QString &text);
+
+	/**
+	 * @brief Use this Q_SLOTS to go to the next selection
+	 */
+	void setNextSelection(bool check);
+
+	/**
+	 * @brief Use this Q_SLOTS to replace all selected word by an other.
+	 */
+	void replaceAllSelected(bool check);
+
+	/**
+	 * @brief Use this Q_SLOTS to replace the current
+	 */
+	void replaceCurrent(bool check);
+
 protected:
 
 	 bool event(QEvent * e);
 
 private:
+
 	//GUI element
+	QWidget*			m_findMenu;
+	QLineEdit*			m_findText;
+	QLineEdit*			m_replaceText;
+	QPushButton*		m_findAction;
+	QPushButton*		m_replaceAction;
+	QPushButton*		m_replaceAllAction;
+
+	QMenu*				m_file;
+	QMenu*				m_edit;
+
 	QDockWidget*		m_upDock;
 	QDockWidget*		m_bottomDock;
 
