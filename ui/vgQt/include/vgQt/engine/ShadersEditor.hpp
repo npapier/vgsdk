@@ -8,28 +8,20 @@
 
 
 #include "vgQt/vgQt.hpp"
-#include "vgQt/Editor.hpp"
+#include "vgQt/TextEditor.hpp"
+
 #include <glo/GLSLProgram.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgUI/Canvas.hpp>
 #include <gle/GLSLLanguage.hpp>
 
-#include <QCheckBox>
 #include <QComboBox>
 #include <QDockWidget>
-#include <QFrame>
 #include <QGroupBox>
-#include <QHBoxLayout>
 #include <QPlainTextEdit>
-#include <QLineEdit>
 #include <QListWidget>
 #include <QMainWindow>
-#include <QMenu>
-#include <QPushButton>
 #include <QRadioButton>
-#include <QSplitter>
-#include <QVBoxLayout>
-#include <QWidget>
 
 
 namespace vgUI
@@ -62,8 +54,9 @@ enum eShaderType
 };
 
 
-class VGQT_API ShadersEditor : public QMainWindow
+class VGQT_API ShadersEditor : public vgQt::TextEditor
 {
+
 Q_OBJECT
 
 public:
@@ -87,14 +80,6 @@ public:
 	 */
 	void checkErrorLine(const std::string& log);
 
-
-	/**
-	 * @brief Create the find and replace menu (open with Ctrl + F).
-	 */
-	void createFindAndReplaceMenu();
-
-	void createGoToLineMenu();
-
 public Q_SLOTS:
 
 	/**
@@ -115,13 +100,8 @@ public Q_SLOTS:
 	 * By default, the shader editor compile when you change a letter in the editor.
 	 *
 	 */
-	void compile(int notificationType, int position, int length, int linesAdded,
-	              const QByteArray &text, int line, int foldNow, int foldPrev);
-
-	/**
-	 * @brief Use this Q_SLOTS when you need the window on top.
-	 */
-	void onTop( bool );
+	void compile(	int notificationType, int position, int length, int linesAdded,
+					const QByteArray &text, int line, int foldNow, int foldPrev);
 
 	/**
 	 * @brief Use this Q_SLOTS when you change the GLSL version value
@@ -138,37 +118,6 @@ public Q_SLOTS:
 	 */
 	void modeCompatibility( bool );
 
-	/**
-	 * @brief Use this Q_SLOTS to open the find and replace menu
-	 */
-	void findAndReplaceMenu();
-
-	void goToMenu();
-
-	/**
-	 * @brief Use this Q_SLOTS to find a word in the editor
-	 *
-	 * @param text	the text to find
-	 */
-	void findWithMenu(const QString &text);
-
-	/**
-	 * @brief Use this Q_SLOTS to go to the next selection
-	 */
-	void setNextSelection(bool check);
-
-	/**
-	 * @brief Use this Q_SLOTS to replace all selected word by an other.
-	 */
-	void replaceAllSelected(bool check);
-
-	/**
-	 * @brief Use this Q_SLOTS to replace the current
-	 */
-	void replaceCurrent(bool check);
-
-	void gotoLine(const QString & lineNumber);
-
 protected:
 
 	 bool event(QEvent * e);
@@ -176,36 +125,20 @@ protected:
 private:
 
 	//GUI element
-	QWidget*			m_findMenu;
-	QLineEdit*			m_findText;
-	QLineEdit*			m_replaceText;
-	QPushButton*		m_findAction;
-	QPushButton*		m_replaceAction;
-	QPushButton*		m_replaceAllAction;
+	QDockWidget*	m_upDock;
+	QDockWidget*	m_bottomDock;
 
-	QAction*			m_menuStayTop;
+	QWidget*		m_upWidget;
+	QWidget*		m_bottomWidget;
 
-	QWidget*			m_goToMenu;
-	QLineEdit*			m_line;
+	QPlainTextEdit*	m_editorLog;
 
-	QMenu*				m_file;
-	QMenu*				m_edit;
+	QGroupBox*		m_mode;
+	QRadioButton*	m_core;
+	QRadioButton*	m_compatibility;
 
-	QDockWidget*		m_upDock;
-	QDockWidget*		m_bottomDock;
-
-	QWidget*			m_upWidget;
-	QWidget*			m_bottomWidget;
-
-	Editor*				m_textEditor;
-	QPlainTextEdit*		m_editorLog;
-
-	QGroupBox*			m_mode;
-	QRadioButton*		m_core;
-	QRadioButton*		m_compatibility;
-
-	QListWidget*		m_shaderList;
-	QComboBox*			m_versionList;
+	QListWidget*	m_shaderList;
+	QComboBox*		m_versionList;
 
 	vgUI::Canvas*					m_canvas;
 	vgd::Shp<vgeGL::engine::Engine>	m_engine;
@@ -214,8 +147,6 @@ private:
 	glo::GLSLProgram::ShaderType	m_itemType;
 	glo::GLSLProgram*				m_managerSaved;
 	int								m_currentShader;
-
-	bool							m_newText;
 };
 
 

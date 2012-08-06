@@ -4,24 +4,18 @@
 // Author Alexandre Di Pino
 
 #include "vgQt/engine/ShadersEditor.hpp"
+
 #include <vgd/field/FieldManager.hpp>
+
 #include <QBrush>
-#include <QLabel>
 #include <QListWidgetItem>
-#include <QMenuBar>
 #include <QTimer>
-#include <boost/regex.hpp>
-#include <sstream>
 
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/range/algorithm.hpp>
+#include <boost/regex.hpp>
 #include <boost/tokenizer.hpp>
-
-#include <vector>
-
-#ifdef WIN32
-#include <windows.h>
-#endif
 
 
 namespace vgQt
@@ -33,14 +27,11 @@ namespace engine
 
 
 ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
-:	//QMainWindow(),
-	m_findMenu( new QWidget(this)),
-	m_goToMenu( new QWidget(this)),
+:	vgQt::TextEditor("Shaders Viewer"),
 	m_upDock( new QDockWidget("Shader", this) ),
 	m_bottomDock( new QDockWidget("Log", this) ),
 	m_upWidget( new QWidget(m_upDock) ),
 	m_bottomWidget( new QWidget(m_bottomDock) ),
-	m_textEditor( new Editor(this) ),
 	m_editorLog( new QPlainTextEdit(m_bottomWidget) ),
 	m_mode( new QGroupBox("Mode", m_upDock) ),
 	m_core( new QRadioButton("Core", m_upDock) ),
@@ -51,34 +42,11 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	m_itemType(glo::GLSLProgram::VERTEX),
 	m_managerSaved(0),
 	m_currentShader(0),
-	m_canvas(canvas),
-	m_newText(false)
+	m_canvas(canvas)
 {
 	m_engine = m_canvas->getGLEngine();
 
 	resize(1024, 768);
-
-	setWindowTitle(tr("Shaders Viewer"));
-
-	createFindAndReplaceMenu();
-	createGoToLineMenu();
-
-	setCentralWidget(m_textEditor);
-
-	m_file = menuBar()->addMenu("&File");
-	QAction* menuQuit = m_file->addAction("&Exit");
-	menuQuit->setShortcut(QKeySequence("Ctrl+Q"));
-
-	m_edit = menuBar()->addMenu("&Edit");
-	QAction* menuFindReplace = m_edit->addAction("&Find/Replace");
-	menuFindReplace->setShortcut(QKeySequence("Ctrl+F"));
-
-	QAction* menuGoToLine = m_edit->addAction("&Go To...");
-	menuGoToLine->setShortcut(QKeySequence("Ctrl+G"));
-
-	m_menuStayTop = m_edit->addAction("&Always on Top");
-	m_menuStayTop->setCheckable(true);
-
 
 	QVBoxLayout* m_progLayout = new QVBoxLayout;
 	QVBoxLayout* m_logLayout = new QVBoxLayout;
@@ -125,15 +93,11 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	m_upWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 	m_bottomWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
 
-	connect(menuQuit, SIGNAL(triggered()), this, SLOT(close()));
-	connect(menuFindReplace, SIGNAL(triggered()), this, SLOT(findAndReplaceMenu()));
-	connect(menuGoToLine, SIGNAL(triggered()), this, SLOT(goToMenu()));
-	connect(m_menuStayTop, SIGNAL(toggled(bool)) , this, SLOT(onTop(bool)));
-
 	connect(m_shaderList, SIGNAL(itemClicked ( QListWidgetItem * )), this, SLOT( checkText(  QListWidgetItem * ) ));
-	connect(m_textEditor, SIGNAL( modified(int , int , int , int ,
-	              const QByteArray &, int , int , int ) ), this, SLOT( compile(int , int , int , int ,
-	              const QByteArray &, int , int , int ) ) );
+	connect(m_textEditor, 
+			SIGNAL( modified(int, int, int, int, const QByteArray &, int, int, int) ), 
+			this,
+			SLOT( compile(int, int, int, int,const QByteArray &, int, int, int) ) );
 
 	connect(m_versionList, SIGNAL(currentIndexChanged (int) ), this, SLOT( versionChanged (int) ) );
 
@@ -141,147 +105,6 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	connect(m_compatibility, SIGNAL( clicked( bool )), this, SLOT( modeCompatibility( bool ) ) );
 
 	refreshUI();
-}
-
-
-
-void ShadersEditor::createFindAndReplaceMenu()
-{
-	m_findMenu->setWindowFlags(Qt::Window);
-	m_findMenu->setWindowTitle("Find/Replace");
-
-	QVBoxLayout* layout = new QVBoxLayout;
-	QLabel* findLabel = new QLabel("Find what:", m_findMenu);
-	QLabel* replaceLabel = new QLabel("Replace with:", m_findMenu);
-	m_findText = new QLineEdit(this);
-	m_replaceText = new QLineEdit(this);
-	m_findAction = new QPushButton("Find Next", this);
-	m_replaceAction = new QPushButton("Replace", this);
-	m_replaceAllAction = new QPushButton("Replace All", this);
-
-	layout->addWidget(findLabel);
-	layout->addWidget(m_findText);
-	layout->addWidget(m_findAction);
-	layout->addWidget(replaceLabel);
-	layout->addWidget(m_replaceText);
-	layout->addWidget(m_replaceAction);
-	layout->addWidget(m_replaceAllAction);
-	m_findMenu->setLayout(layout);
-	m_findMenu->hide();
-
-	connect(m_findText, SIGNAL(textChanged ( const QString &)), this, SLOT(findWithMenu(const QString &)));
-	connect(m_findAction, SIGNAL(clicked( bool )), this, SLOT(setNextSelection(bool)));
-	connect(m_replaceAction, SIGNAL(clicked(bool) ), this, SLOT(replaceCurrent(bool)) );
-	connect(m_replaceAllAction, SIGNAL(clicked(bool) ), this, SLOT(replaceAllSelected(bool)) );
-}
-
-
-
-void ShadersEditor::createGoToLineMenu()
-{
-	m_goToMenu->setWindowFlags(Qt::Window);
-	m_goToMenu->setWindowTitle("Go To...");
-
-	QVBoxLayout* layout = new QVBoxLayout;
-	QLabel* findLabel = new QLabel("You want to go to:", m_goToMenu);
-	m_line = new QLineEdit(this);
-
-	layout->addWidget(findLabel);
-	layout->addWidget(m_line);
-	m_goToMenu->setLayout(layout);
-	m_goToMenu->hide();
-
-	connect(m_line, SIGNAL(textChanged( const QString &)), this, SLOT(gotoLine(const QString &)));
-}
-
-
-
-void ShadersEditor::gotoLine(const QString & lineNumber)
-{
-	if (lineNumber.size() > 0)
-	{
-		bool itsOk;
-		int value = lineNumber.toInt(&itsOk, 10);
-
-		if (itsOk)
-		{
-			value--;
-
-			if (m_textEditor->lineCount() < value)
-			{
-				value = m_textEditor->lineCount();
-			}
-
-			m_textEditor->gotoLine(value);
-			m_textEditor->setSelection(m_textEditor->positionFromLine(value), m_textEditor->lineEndPosition(value));
-		}
-	}
-}
-
-
-
-void ShadersEditor::replaceCurrent(bool check)
-{
-	Q_UNUSED(check);
-
-	std::vector<QPair<int, int>> value = m_textEditor->find(m_findText->text().toStdString());
-	const int i = m_textEditor->getCurrentSelection();
-
-	if (i < value.size() )
-	{
-		m_textEditor->setSelection(value[i].first, value[i].second);
-
-		m_textEditor->replaceSel(m_replaceText->text().toStdString().c_str());
-		setNextSelection(true);
-	}
-}
-
-
-
-void ShadersEditor::replaceAllSelected(bool check)
-{
-	Q_UNUSED(check);
-
-	const std::string textReplace = m_replaceText->text().toStdString();
-	const std::string textToFind = m_findText->text().toStdString();
-	std::vector<QPair<int, int>> value = m_textEditor->find(textToFind);
-
-	while (value.size() != 0)
-	{
-		m_textEditor->setSelection(value[0].first, value[0].second);
-
-		m_textEditor->replaceSel(textReplace.c_str());
-		m_textEditor->clearSelections();
-		value = m_textEditor->find(textToFind);
-	}
-}
-
-
-
-void ShadersEditor::setNextSelection(bool check)
-{
-	Q_UNUSED(check);
-
-	m_textEditor->setCurrentSelection(m_textEditor->getCurrentSelection() + 1);
-	if (m_findText->text().size() >= 1)
-	{
-		m_textEditor->selectText(m_findText->text().toStdString(), false);
-	}
-}
-
-
-
-void ShadersEditor::findWithMenu(const QString &text)
-{
-	if (text.size() >= 1)
-	{
-		m_textEditor->setCurrentSelection(0);
-		m_textEditor->selectText(text.toStdString(), true);
-	}
-	else
-	{
-		m_textEditor->clearSelections();
-	}
 }
 
 
@@ -303,6 +126,7 @@ void ShadersEditor::checkErrorLine(const std::string& log)
 	}
 	else
 	{
+		vgAssertN(false, "Check error not supported on this GPU");
 		return;
 	}
 
@@ -318,10 +142,7 @@ void ShadersEditor::checkErrorLine(const std::string& log)
 		if(boost::regex_match(t.c_str(), matches, expression))
 		{
 			std::string tmpversion(matches[1].first, matches[1].second);
-			std::istringstream iss(tmpversion);
-			int value;
-			iss >> value;
-			m_textEditor->setLineMarker(value);
+			m_textEditor->setLineMarker( boost::lexical_cast<int>( tmpversion ));
 		}
 	}
 }
@@ -461,7 +282,7 @@ void ShadersEditor::refreshUI()
 	QFont	font("Helvetica");
 	font.setBold(true);
 
-	if (isVisible() == false)	return;
+	if (!isVisible())	return;
 
 	if ( progLength > 0 )
 	{
@@ -481,10 +302,12 @@ void ShadersEditor::refreshUI()
 
 			std::string prgName =  "Program " + ossP.str();
 			QListWidgetItem* prog = new QListWidgetItem(tr( prgName.c_str() ), m_shaderList, (int)manager->getProgramObject() + 1000);
-			if (manager->getInfoLog() != "")
+
+			if (!manager->getLinkSuccess())
 			{
 				prog->setForeground(brush);
 			}
+
 			prog->setFont(font);
 
 			//Add Shader name on shader list
@@ -504,7 +327,7 @@ void ShadersEditor::refreshUI()
 						tmp += oss.str();
 						QListWidgetItem* listShader = new QListWidgetItem(tr(tmp.c_str()), m_shaderList, manager->getName(type) + 1000 );
 
-						if (manager->getLogError(type) != "")
+						if (manager->getLogError(type).size() > 0)
 						{
 							listShader->setForeground(brush);
 						}
@@ -537,12 +360,11 @@ void ShadersEditor::refreshUI()
 
 
 void ShadersEditor::compile(int notificationType, int position, int length, int linesAdded,
-	              const QByteArray &text, int line, int foldNow, int foldPrev)
+							const QByteArray &text, int line, int foldNow, int foldPrev)
 {
 	std::ostringstream	oss;
 
 	std::string InfoLog("");
-	//QFont	fontError("Helvetica");
 
 	if ( m_newText )
 	{
@@ -579,7 +401,6 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 			{
 				InfoLog = m_managerSaved->getLogError(m_itemType);
 				checkErrorLine(m_managerSaved->getLogError(m_itemType));
-				//fontError.setItalic(true);
 			}
 			else
 			{
@@ -602,33 +423,6 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 			m_editorLog->setPlainText(InfoLog.c_str());
 		}
 	}
-}
-
-
-
-void ShadersEditor::onTop( bool in )
-{
-#ifdef WIN32
-
-	//
-	//Needed because the Qt function on Windows calls setParent() when changing the flags for a window,
-	//causing the widget to be hidden.
-	//
-	if (in)
-	{
-		SetWindowPos(this->winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-	}
-	else
-	{
-		SetWindowPos(this->winId(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-	}
-
-#else
-
-	Qt::WindowFlags value = ( in == false ) ? Qt::Widget : (Qt::Widget | Qt::WindowStaysOnTopHint );
-	this->setWindowFlags( value );
-
-#endif
 }
 
 
@@ -658,41 +452,6 @@ void ShadersEditor::modeCore( bool )
 void ShadersEditor::modeCompatibility( bool )
 {
 	m_textEditor->setGLSLVersionCompatibility(m_textEditor->getGLSLVersion());
-}
-
-
-
-void ShadersEditor::goToMenu()
-{
-	if (m_goToMenu->isVisible() == false)
-	{
-		m_goToMenu->show();
-		m_goToMenu->setFocus();
-		m_goToMenu->setWindowState( Qt::WindowActive );
-		m_line->setFocus();
-	}
-	else
-	{
-		m_goToMenu->hide();
-	}
-}
-
-
-
-void ShadersEditor::findAndReplaceMenu()
-{
-	if (m_findMenu->isVisible() == false)
-	{
-		m_findMenu->show();
-		m_findMenu->setFocus();
-		m_findMenu->setWindowState( Qt::WindowActive );
-		m_findText->setFocus();
-	}
-	else
-	{
-		m_findMenu->hide();
-	}
-
 }
 
 
