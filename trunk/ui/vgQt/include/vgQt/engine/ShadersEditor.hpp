@@ -64,7 +64,7 @@ public:
 	/**
 	 * @brief Constructor
 	 */
-	ShadersEditor(vgUI::Canvas* canvas, QWidget *parent = 0);
+	ShadersEditor(QWidget *parent);
 
 	/**
 	 * @brief Check if the shader contain a #version
@@ -79,6 +79,13 @@ public:
 	 * @param log	the current shader.
 	 */
 	void checkErrorLine(const std::string& log);
+
+	/**
+	 * @brief Set the canvas to get GLSL information.
+	 *
+	 * @param	canvas the canva who contain the current engine.
+	 */
+	void setCanvas(vgUI::Canvas* canvas);
 
 public Q_SLOTS:
 
@@ -117,6 +124,11 @@ public Q_SLOTS:
 	 * @brief Use this Q_SLOTS when you change the GLSL mode to compatibility
 	 */
 	void modeCompatibility( bool );
+
+	/**
+	 * @brief Use this Q_SLOTS to change the widget visibility
+	 */
+	void changeVisibility();
 
 protected:
 

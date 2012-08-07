@@ -63,8 +63,6 @@ public Q_SLOTS:
      */
     void showHideProperties();
 
-	void showShadersEditor();
-	
     /**
      * @brief	Configure user engine's settings
      */
@@ -136,7 +134,6 @@ private:
     QAction*						m_actionProperties;
     QAction*						m_actionMouseAndKeyboard;
     QMenu*							m_recentFileMenu;
-	vgQt::engine::ShadersEditor*	m_shaderEditor;
 };
 
 } // namespace vgsdkViewerQt

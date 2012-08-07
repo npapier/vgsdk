@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *actionViewAll = new QAction(QIcon(":/images/zoom-fit-best.png"), "View All", this);
     QAction *actionFullScreen = new QAction(QIcon(":/images/view-fullscreen.png"), "Full Screen", this);
     QAction *actionResolution = new QAction(QIcon(":/images/resolution-16.xpm"), "Set Resolution", this);
-	QAction *actionShadersEditor = new QAction("Shader's Editor", this);
+	QAction *actionShadersEditor = new QAction("Shader Editor", this);
     m_actionProperties = new QAction(QIcon(":/images/document-properties.png"), "&Properties", this);
     m_actionProperties->setCheckable(true);
     QAction *actionRenderSettings = new QAction(QIcon(":/images/document-properties.png"), "Render Settings", this);
@@ -167,7 +167,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     // View Menu
-	connect(actionShadersEditor, SIGNAL(triggered()), this, SLOT(showShadersEditor()));
     connect(m_actionProperties, SIGNAL(triggered()), this, SLOT(showHideProperties()));
     connect(actionViewAll, SIGNAL(triggered()), this, SLOT(viewAll()));
     connect(actionFullScreen, SIGNAL(triggered()), this, SLOT(fullscreen()));
@@ -176,7 +175,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionLeftSidedViews, SIGNAL(triggered()), this, SLOT(onLeftSidedViews()));
     connect(actionFourViews, SIGNAL(triggered()), this, SLOT(onFourViews()));
 
-    // Settings Menu
+	// Settings Menu
     connect(actionMouseOnly, SIGNAL(triggered()), this, SLOT(settingManipulationBinding()));
     connect(m_actionMouseAndKeyboard, SIGNAL(triggered()), this, SLOT(settingManipulationBinding()));
     connect(actionRenderSettings, SIGNAL(triggered()), this, SLOT(renderSettings()));
@@ -190,8 +189,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_properties = new vgsdkViewerQt::DockProperties(this);
     m_properties->setCanvas(m_canvas) ;
 
-	m_shaderEditor = new vgQt::engine::ShadersEditor( m_canvas );
-	m_shaderEditor->setVisible(false);
+	connect(actionShadersEditor, 
+			SIGNAL(triggered()), 
+			m_properties->getShaderEditor(), 
+			SLOT(changeVisibility()));
 
     addDockWidget(Qt::LeftDockWidgetArea, m_properties);
 
@@ -293,19 +294,6 @@ void MainWindow::showFullScreen()
     m_toolBar->setVisible(false);
     QMainWindow::showFullScreen();
     m_canvas->showFullScreen();
-}
-
-void MainWindow::showShadersEditor()
-{
-	if (m_shaderEditor->isVisible())
-	{
-		m_shaderEditor->setVisible(false);
-	}
-	else
-	{
-		m_shaderEditor->refreshUI();
-		m_shaderEditor->setVisible(true);
-	}
 }
 
 void MainWindow::showNormal()
@@ -493,7 +481,7 @@ void MainWindow::addFileInHistory(QString filename)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	m_shaderEditor->close();
+	m_properties->getShaderEditor()->close();
 }
 
 } // namespace vgsdkViewerQt

@@ -11,11 +11,11 @@
 #include <vgd/node/Group.hpp>
 
 #include <vgAlg/actions/SelectedNode.hpp>
+#include <vgQt/engine/ShadersEditor.hpp>
 
 #include "vgQt/graph/TreeModelColumnRecord.hpp"
 #include "vgQt/graph/TreeView.hpp"
 #include "vgQt/graph/FieldManagerEditor.hpp"
-
 #include "vgQt/node/ActionsMenu.hpp"
 
 #include <QLabel>
@@ -63,6 +63,11 @@ public:
      */
     void refreshTree();
 
+    /**
+     * @brief	Get pointer to the Shader Editor.
+     */
+	vgQt::engine::ShadersEditor* getShadersEditor() { return m_shadersEditor; }
+
 private:
 
     /**
@@ -82,6 +87,7 @@ private:
     //@{
     TreeView * m_treeView;         ///< The treeview widget that shows the vgSDK graph.
     FieldManagerEditor * m_editor;  ///< Allows to edit the fields of the selected node.
+	vgQt::engine::ShadersEditor*	m_shadersEditor;
     //@}
 
     /**
