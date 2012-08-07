@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008-2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -11,7 +11,7 @@
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <gle/OpenGLExtensionsGen.hpp>
-#include <vgd/event/Device.hpp>
+#include <vgd/event/Source.hpp>
 
 #include <vgeGL/engine/SceneManager.hpp>
 
@@ -54,7 +54,7 @@ namespace vgUI
  * @ingroup g_vgUIGroup
  * @ingroup g_layerplan
  */
-struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::Device
+struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::Source
 {
 	/**
 	 * @name gle log accessors

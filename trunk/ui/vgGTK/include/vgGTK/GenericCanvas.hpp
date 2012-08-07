@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -18,14 +18,17 @@
 
 #include <vgAlg/actions/SelectedNode.hpp>
 
-
 #include <vgUI/Canvas.hpp>
 
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
-#include "vgGTK/vgGTK.hpp"
 
-#include <vgGTK/event/SignalHandler.hpp>
-#include <vgGTK/node/ActionsMenu.hpp>
+#include <vgSDL/event/device/Joystick.hpp>
+
+#include "vgGTK/vgGTK.hpp"
+#include "vgGTK/event/device/Keyboard.hpp"
+#include "vgGTK/event/device/Mouse.hpp"
+#include "vgGTK/event/device/Timer.hpp"
+#include "vgGTK/node/ActionsMenu.hpp"
 
 #ifdef WIN32
 	#define	USE_GLC
@@ -93,7 +96,7 @@ void drawWarningMessage( Cairo::RefPtr<Cairo::Context> cr, GdkEventExpose * even
  * @todo	Implement/debug vgSDK finalization.
  */
 template< typename BaseCanvasType >
-struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public event::SignalHandler, public boost::signals::trackable
+struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public boost::signals::trackable
 {
 
 	/**
@@ -114,8 +117,6 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		setGlCapability( GTK_WIDGET(gobj()) );
 //#else
 #endif
-		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
-
 		//vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
 		vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( boost::bind( &GenericCanvas::onActionChanged, this, _1 ) );
 	}
@@ -145,8 +146,6 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 		setGlCapability( GTK_WIDGET(gobj()), glContext );
 #else
 #endif
-		store( signal_focus_in_event().connect( ::sigc::mem_fun(this, &GenericCanvas::onFocusEvent) )	);
-
 		//vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
 		vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( boost::bind( &GenericCanvas::onActionChanged, this, _1 ) );
 	}
@@ -160,6 +159,40 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public ev
 	 * @name	Overrides
 	 */
 	//@{
+	void initDevices( const uint devices )
+	{
+		// Creates device instances so we will receive vgd events.
+		if ( devices & Keyboard )
+		{
+			addDevice( vgd::makeShp(new vgGTK::event::device::Keyboard(this)) );
+		}
+
+		if ( devices & Mouse )
+		{
+			addDevice( vgd::makeShp(new vgGTK::event::device::Mouse(this)) );
+		}
+
+		if ( devices & Timer )
+		{
+			addDevice( vgd::makeShp(new vgGTK::event::device::Timer()) );
+		}
+
+		if ( devices & Joystick )
+		{
+			vgd::Shp< vgSDL::event::device::Joystick >	joystick = vgSDL::event::device::Joystick::get(0);
+
+			// Adds joystick (if present)
+			if( joystick )
+			{
+				addDevice( joystick );
+			}
+			else
+			{
+				vgLogWarning( "No joystick found." );
+			}
+		}
+	}
+
 	const bool setCurrent()
 	{
 		//vgLogDebug("vgGTK::Canvas::setCurrent");
@@ -603,6 +636,13 @@ protected:
 	}
 
 
+	bool on_focus_in_event( GdkEventFocus * event )
+	{
+		vgd::event::detail::GlobalButtonStateSet::clear();
+		return Gtk::DrawingArea::on_focus_in_event( event );
+	}
+
+
 // Applications should manage that.
 /*	bool on_key_release_event( GdkEventKey * event )
 	{
@@ -728,12 +768,6 @@ private:
 //#else
 	glc_t			*m_glc;
 //#endif
-
-	bool onFocusEvent( GdkEventFocus * event )
-	{
-		vgd::event::detail::GlobalButtonStateSet::clear();
-		return false;
-	}
 
 	bool onCursorTimeout()
 	{

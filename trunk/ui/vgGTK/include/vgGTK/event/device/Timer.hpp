@@ -1,15 +1,16 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGGTK_EVENT_DEVICE_TIMER_HPP_
 #define _VGGTK_EVENT_DEVICE_TIMER_HPP_
 
 #include <vgd/event/device/Timer.hpp>
+#include <sigc++/trackable.h>
 
-#include "vgGTK/event/SignalHandler.hpp"
-
+#include "vgGTK/vgGTK.hpp"
 
 
 namespace vgGTK
@@ -24,22 +25,18 @@ namespace device
 
 
 /**
- * @brief	Implements a timer event device for GTK widgets.
+ * @brief	Implements a timer device that will GTK's timer API to produce vgSDK timer events.
  *
  * @ingroup g_time
  *
  * @todo onIdle()
  */
-struct VGGTK_API Timer : public ::vgd::event::device::Timer, public vgGTK::event::SignalHandler
+struct VGGTK_API Timer : public vgd::event::device::Timer, public sigc::trackable
 {
-
-	/**
-	 * @name	Overrides
+	/** 
+	 * @brief	Constructor
 	 */
-	//@{
-	void connect( Gtk::Widget * widget );
-	//@}
-
+	Timer();
 
 private:
 

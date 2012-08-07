@@ -4,12 +4,16 @@
 // Author Guillaume Brocker
 // Author Bryan Schuller
 
-#include <vgQt/event/device/Keyboard.hpp>
-#include <vgQt/event/helpers.hpp>
+#include "vgQt/event/device/Keyboard.hpp"
+
+#include <QKeyEvent>
+
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/Shp.hpp>
-#include <QKeyEvent>
+
+#include "vgQt/event/helpers.hpp"
+
 
 namespace vgQt
 {
@@ -20,43 +24,44 @@ namespace event
 namespace device
 {
 
-void Keyboard::connect( QWidget *widget )
-{
-    QObject::connect(widget,SIGNAL(key( QKeyEvent * )), this, SLOT(onKeyEvent( QKeyEvent * )));
 
-    Device::connect( widget );
-}
-
-bool Keyboard::onKeyEvent( QKeyEvent * event )
+void Keyboard::onEvent( QEvent * event )
 {
+	// Skips processing if the event is not related to the keyboard.
+	if (event->type() != QEvent::KeyPress || event->type() != QEvent::KeyRelease)
+	{
+		return;
+	}
+
+
+	// Retrieves the effective event object.
+	QKeyEvent	* keyEvent = static_cast< QKeyEvent* >(event);
+
+
     // We ignore the tab key since it causes state update problem
     // due to the focus lost of teh canvas.
-    if( event->key() == Qt::Key_Tab )
+    if( keyEvent->key() == Qt::Key_Tab )
     {
-        return false;
+        return;
     }
 
     // Update global button states
-    updateGlobalButtonStates( event );
+    updateGlobalButtonStates( keyEvent );
 
-    // Creates the event.
+    // Creates the keyEvent.
     using namespace ::vgd::event;
 
-    KeyboardButtonEvent	* keyboardEvent;
-    keyboardEvent = new KeyboardButtonEvent(
+    KeyboardButtonEvent	* keyboardEvent = new KeyboardButtonEvent(
             this,
             vgd::event::detail::GlobalButtonStateSet::get(),
-            getKeyboardButton(event),
-            getButtonState(event));
+            getKeyboardButton(keyEvent),
+            getButtonState(keyEvent)
+		);
 
-
-    // Fires the event to the listeners.
+    // Fires the keyEvent to the listeners.
     this->fireEvent( vgd::makeShp(keyboardEvent) );
-
-
-    // Job's done.
-    return false;
 }
+
 
 } // namespace device
 } // namespace event

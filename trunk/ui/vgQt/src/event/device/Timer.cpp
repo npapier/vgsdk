@@ -4,13 +4,14 @@
 // Author Guillaume Brocker
 // Author Bryan Schuller
 
+#include "vgQt/event/device/Timer.hpp"
+
+#include <QTimer>
+
 #include <vgd/Shp.hpp>
 #include <vgd/event/TimerEvent.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 
-#include <vgQt/event/device/Timer.hpp>
-
-#include <QTimer>
 
 namespace vgQt
 {
@@ -21,19 +22,18 @@ namespace event
 namespace device
 {
 
-void Timer::connect( QWidget *widget )
+Timer::Timer()
 {
     QTimer *timer = new QTimer(this);
-    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
 
 #ifdef _DEBUG
     timer->start(1000/15);
 #else
     timer->start(1000/30);
 #endif
-
-    Device::connect( widget );
 }
+
 
 bool Timer::onTimeout()
 {
@@ -48,6 +48,7 @@ bool Timer::onTimeout()
     // Job's done, but keep going (do not disconnect yet)
     return true;
 }
+
 
 } // namespace device
 } // namespace event

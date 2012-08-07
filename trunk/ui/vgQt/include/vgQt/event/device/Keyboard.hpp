@@ -8,10 +8,10 @@
 #define _VGQT_EVENT_DEVICE_KEYBOARD_HPP_
 
 #include <vgd/event/device/Keyboard.hpp>
-#include <QKeyEvent>
-#include <vgQt/event/device/Device.hpp>
 
 #include "vgQt/vgQt.hpp"
+#include "vgQt/event/device/IDevice.hpp"
+
 
 namespace vgQt
 {
@@ -26,24 +26,16 @@ namespace device
  * @brief	Implements a keyboard event device for Qt widgets.
  *
  * @remark	This device will not handle the @code tab key since it can involve inconsistancy in the global
- *		button state set due to the focus lost.
+ *			button state set due to the focus lost.
  */
-struct VGQT_API Keyboard : public Device, public vgd::event::device::Keyboard
+struct VGQT_API Keyboard : public vgd::event::device::Keyboard, public IDevice
 {
-    Q_OBJECT
-public:
     /**
-     * @name	Overrides
-     */
-    void connect( QWidget * widget );
-
-public Q_SLOTS:
-    /**
-     * @brief	Handles any key event notifications (press or release).
+     * @brief	Handles the givent Qt event in order to eventually translate it into a vgSDK keyboard event.
      *
-     * @remark Will skip @code tab key events to avoid inconsistancy problems due to the focus lost.
+     * @remark	Will skip @code tab key events to avoid inconsistancy problems due to the focus lost.
      */
-    bool onKeyEvent( QKeyEvent * event );
+    void onEvent( QEvent * event );
 };
 
 } // namespace device

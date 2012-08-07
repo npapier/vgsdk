@@ -39,8 +39,13 @@ enum POPUP_LOCATION
  */
 class VGQT_API ActionsMenu : public QMenu
 {
-Q_OBJECT
+	Q_OBJECT
+
 public :
+
+	/**
+	 * @brief	Constructor
+	 */
     ActionsMenu( QWidget* parent, POPUP_LOCATION location );
 
     void setCanvas( vgUI::Canvas * canvas );
@@ -48,6 +53,7 @@ public :
     void showPopup( QPoint point, POPUP_LOCATION location );
 
 private :
+
     /**
      * @brief Create a menu with a list of action.
      */
@@ -66,23 +72,26 @@ private :
      * @return	Number of displayed node in scene.
      */
     int getDisplayedNodeNumber();
+
     /**
      * @brief Call ManageMenu with hidden node action list.
      */
     void manageHiddenNodeMenu();
+
     /**
      * @brief Check if a menu has submenu/items, if not, hide the menu, show it otherwise.
      */
     void manageMenuVisibility( QMenu* menu );
+
     /**
      * @brief Create the filter with the current state.
      */
-    vgUI::actions::State	createState();
+    vgUI::actions::State createState();
 
     /**
      * @brief Apply state to all actions, hide/show them depending on current state.
      */
-    void					applyState();
+    void applyState();
 
     void setParams( vgAlg::actions::IAction* action );
 
@@ -94,15 +103,17 @@ private :
     vgd::Wkp< vgd::node::Node >		m_currentNode;			///< current selected node.
     vgd::Wkp< vgd::node::Group >	m_currentParentNode;	///< current parent of selected node.
 
-    vgd::Wkp< vgUI::actions::ActionsRegistry >							m_actionsRegistry;	///< Instance of the action UI registry.
+    vgd::Wkp< vgUI::actions::ActionsRegistry >					m_actionsRegistry;	///< Instance of the action UI registry.
     std::map< vgd::Shp < vgUI::actions::IActionUI >, QAction* >	m_actionMap;		///< Map with an action and its QT Menu.
 
-    vgUI::Canvas					*m_canvas;				///< canvas of the application
-    QMenu* m_insertMenuItem;
-    POPUP_LOCATION						m_location;				///< Location of the menu (Canvas, TreeView...).
+    vgUI::Canvas	*m_canvas;				///< canvas of the application
+    QMenu*			m_insertMenuItem;
+    POPUP_LOCATION	m_location;				///< Location of the menu (Canvas, TreeView...).
 
 public Q_SLOTS:
-    void onBoutonPressEvent(QMouseEvent* event, QPoint globalPosition, int height);
+
+    void onCanvasMenuRequested(QPoint);
+
     void refresh();
 };
 

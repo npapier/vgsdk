@@ -4,11 +4,10 @@
 // Author Guillaume Brocker
 // Author Bryan Schuller
 
-#ifndef _VGQT_EVENT_SIGNALHANDLER_HPP_
-#define _VGQT_EVENT_SIGNALHANDLER_HPP_
+#ifndef _VGQT_EVENT_DEVICE_IDEVICE_HPP_
+#define _VGQT_EVENT_DEVICE_IDEVICE_HPP_
 
-#include <QWidget>
-#include <QObject>
+#include <QEvent>
 
 #include "vgQt/vgQt.hpp"
 
@@ -21,20 +20,21 @@ namespace event
 namespace device
 {
 
-struct VGQT_API Device : public QObject
-{
-public:
-    Device();
-    virtual ~Device();
-    void connect( QWidget *widget );
-    void disconnect();
 
-protected:
-    QWidget	* m_connectedWidget;	///< A pointer to the widget the device is connected to.
+/**
+ * @brief	Defines the interface for Qt specific devices.
+ */
+struct VGQT_API IDevice
+{
+	/**
+	 * @brief	Handles the givent Qt event in order to eventually translate it into a vgSDK event.
+	 */
+	virtual void onEvent( QEvent* ) = 0;
 };
+
 
 } // namespace device
 } // namespace event
 } // namespace vgQt
 
-#endif _VGQT_EVENT_SIGNALHANDLER_HPP_
+#endif _VGQT_EVENT_DEVICE_IDEVICE_HPP_

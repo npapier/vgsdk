@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,7 @@
 #ifndef _VGEGL_ENGINE_SCENEMANAGER_HPP
 #define _VGEGL_ENGINE_SCENEMANAGER_HPP
 
-#include <vgd/event/DeviceListener.hpp>
+#include <vgd/event/DeviceManager.hpp>
 #include <vge/engine/SceneManager.hpp>
 
 #include "vgeGL/event/IEventProcessor.hpp"
@@ -69,7 +69,7 @@ struct VGEGL_API GLContextProperties
  *
  * @ingroup g_layerplan
  */
-struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::DeviceListener, public vgeGL::itf::IUnderlay
+struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::DeviceManager, public vgeGL::itf::IUnderlay
 {
 	/**
 	 * @name Constructors/Destructor
