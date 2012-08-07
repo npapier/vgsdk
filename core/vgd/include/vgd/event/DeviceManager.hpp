@@ -1,10 +1,10 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 
-#ifndef _VGD_EVENT_DEVICELISTENER_HPP_
-#define _VGD_EVENT_DEVICELISTENER_HPP_
+#ifndef _VGD_EVENT_DEVICEMANAGER_HPP_
+#define _VGD_EVENT_DEVICEMANAGER_HPP_
 
 #include <set>
 
@@ -31,23 +31,34 @@ namespace event
 
 
 /**
- * @brief	Implements a listener that manages a collection of devices it is attached to.
+ * @brief	Implements a device manager that is also listening to the devices it owns.
  *
- * The DeviceListener will attach it-self to specified devices and detaches from devices being removed. It also
+ * The manager will attach it-self to specified devices and detaches from devices being removed. It also
  * detaches it-self upon detruction.
  *
- * @remark	Although the DeviceListener will not attached to a device that is passed twice, you must ensure to not
+ * @remark	Although the manager will not attached to a device that is passed twice, you must ensure to not
  *		pass two Device instances wrapping the same real device, or may result in unpredicted behaviours.
  */
-struct VGD_API DeviceListener : public Listener
+struct VGD_API DeviceManager : public Listener
 {
+	/**
+	 * @brief	Defines devices flags
+	 */
+	enum Devices
+	{
+		Keyboard	= 1<<0,
+		Mouse		= 1<<1,
+		Timer		= 1<<2,
+		Joystick	= 1<<3,
+	};
+
 	/**
 	 * @brief	Destructor
 	 */
-	~DeviceListener();
+	virtual ~DeviceManager();
 
 	/**
-	 * @name	Device Management
+	 * @name	Devices management
 	 */
 	//@{
 	/**
@@ -84,6 +95,17 @@ struct VGD_API DeviceListener : public Listener
 	 * @brief	Tells if the listener is connected to the given device.
 	 */
 	const bool hasDevice( vgd::Shp< vgd::event::Device > device ) const;
+
+	/**
+	 * @brief	Initializes all default devices.
+	 *
+	 * The default implementation does nothing, so sub-classes may override this method in order to specialze the default behaviour.
+	 *
+	 * @param	devices	a set of flags to specify what devices to create (default is all)
+	 *
+	 * @remark	This method must not be called twice until uninitDevices method has been called.
+	 */
+	virtual void initDevices( const uint devices = Keyboard|Mouse|Timer|Joystick);
 	
 	/**
 	 * @brief	Removes the given device.
@@ -91,9 +113,14 @@ struct VGD_API DeviceListener : public Listener
 	 * The listener will automatically disconnect from the device and will not receive any more event from it.
 	 */
 	void removeDevice( vgd::Shp< vgd::event::Device > device );
+
+	/**
+	 * @brief	Unitializes all devices.
+	 */
+	virtual void uninitDevices();
 	//@}
 
-private:
+protected:
 
 	typedef std::set< vgd::Shp< vgd::event::Device > >	DeviceContainer;
 
@@ -108,4 +135,4 @@ private:
 
 
 
-#endif // _VGD_EVENT_DEVICELISTENER_HPP_
+#endif // _VGD_EVENT_DEVICEMANAGER_HPP_

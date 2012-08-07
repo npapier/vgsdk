@@ -5,35 +5,15 @@
 // Author Bryan Schuller
 
 
-#include "vgQt/event/device/Device.hpp"
+#include "vgQt/event/device/IDevice.hpp"
 
 
 namespace vgQt
 {
-
 namespace event
 {
-
 namespace device
 {
-
-Device::Device()
-{
-}
-
-Device::~Device()
-{
-}
-
-void Device::connect( QWidget *widget )
-{
-    m_connectedWidget = widget;
-}
-
-void Device::disconnect()
-{
-    m_connectedWidget = 0;
-}
 
 } // namespace device
 } // namespace event

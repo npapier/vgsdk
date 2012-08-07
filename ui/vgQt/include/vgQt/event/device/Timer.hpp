@@ -7,9 +7,8 @@
 #ifndef _VGQT_EVENT_DEVICE_TIMER_HPP_
 #define _VGQT_EVENT_DEVICE_TIMER_HPP_
 
+#include <QObject>
 #include <vgd/event/device/Timer.hpp>
-#include <QWidget>
-#include <vgQt/event/device/Device.hpp>
 
 #include "vgQt/vgQt.hpp"
 
@@ -22,11 +21,16 @@ namespace event
 namespace device
 {
 
-struct VGQT_API Timer : public Device, public vgd::event::device::Timer
+struct VGQT_API Timer : public QObject, public vgd::event::device::Timer
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
-    void connect( QWidget * widget );
+
+	/**
+	 * @brief	Constructor
+	 */
+	Timer();
 
 public Q_SLOTS:
     bool onTimeout();

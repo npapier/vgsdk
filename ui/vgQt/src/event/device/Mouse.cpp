@@ -24,27 +24,43 @@ namespace event
 namespace device
 {
 
-Mouse::Mouse( const uint identifier )
+Mouse::Mouse( const QWidget * widget, const uint identifier )
 :	::vgd::event::device::Mouse(identifier),
+	m_widget( widget ),
     m_previousLocation( std::numeric_limits<float>::max(), std::numeric_limits<float>::max() )
 {}
 
-void Mouse::connect( QWidget *widget )
-{
-    QObject::connect(widget,SIGNAL(wheel( QWheelEvent * )), this, SLOT(onScrollEvent( QWheelEvent * )));
-    QObject::connect(widget,SIGNAL(clic( QMouseEvent * )), this, SLOT(onButtonEvent( QMouseEvent * )));
-    QObject::connect(widget,SIGNAL(move( QMouseEvent * )), this, SLOT(onMotionNotifyEvent( QMouseEvent * )));
 
-    Device::connect( widget );
+void Mouse::onEvent( QEvent * event )
+{
+	switch( event->type() )
+	{
+	case QEvent::MouseButtonPress:
+	case QEvent::MouseButtonRelease:
+		onButtonEvent( static_cast< QMouseEvent* >(event) );
+		break;
+
+	case QEvent::MouseMove:
+		onMoveEvent( static_cast< QMouseEvent* >(event) );
+		break;
+
+	case QEvent::Wheel:
+		onWheelEvent( static_cast< QWheelEvent* >(event) );
+		break;
+
+	default:
+		break; // Nothing to do.
+	}
 }
 
-bool Mouse::onButtonEvent( QMouseEvent * event )
+
+void Mouse::onButtonEvent( QMouseEvent * event )
 {
     // Update global button states
     updateGlobalButtonStates( event );
 
     // update the position
-    m_previousLocation = getLocation(m_connectedWidget, event);
+    m_previousLocation = getLocation(m_widget, event);
 
     // Processes normal buttons (left, middle and right).
     if( event->button() == Qt::LeftButton || event->button() == Qt::RightButton || event->button() == Qt::MiddleButton )
@@ -56,24 +72,25 @@ bool Mouse::onButtonEvent( QMouseEvent * event )
                 vgd::event::detail::GlobalButtonStateSet::get(),
                 getButtonId(event),
                 getButtonState(event),
-                getLocation(m_connectedWidget, event),
-                getSize(m_connectedWidget)
+                getLocation(m_widget, event),
+                getSize(m_widget)
              );
+
         this->fireEvent( vgd::makeShp(mouseButtonEvent) );
     }
     else
     {
         assert( false && "Unsupported mouse button." );
     }
-    return false;
 }
 
-bool Mouse::onMotionNotifyEvent( QMouseEvent * event )
+
+void Mouse::onMoveEvent( QMouseEvent * event )
 {
     // Fires the notification.
     using ::vgd::event::Location2Event;
 
-    const Location2Event::Location	location = getLocation(m_connectedWidget, event);
+    const Location2Event::Location	location = getLocation(m_widget, event);
     Location2Event					* locationEvent = 0;
 
     locationEvent = new vgd::event::Location2Event(
@@ -81,18 +98,17 @@ bool Mouse::onMotionNotifyEvent( QMouseEvent * event )
             vgd::event::detail::GlobalButtonStateSet::get(),
             location,
             m_previousLocation,
-            getSize(m_connectedWidget)
+            getSize(m_widget)
         );
 
     this->fireEvent( vgd::makeShp(locationEvent) );
 
     // Update previous location
     m_previousLocation = location;
-
-    return false;
 }
 
-bool Mouse::onScrollEvent( QWheelEvent * event )
+
+void Mouse::onWheelEvent( QWheelEvent * event )
 {
     // Processes mouse wheel events.
 
@@ -108,9 +124,8 @@ bool Mouse::onScrollEvent( QWheelEvent * event )
             vgd::event::MouseWheelEvent::VERTICAL,
             delta
         );
-    this->fireEvent( vgd::makeShp(mouseWheelEvent) );
 
-    return false;
+    this->fireEvent( vgd::makeShp(mouseWheelEvent) );
 }
 
 } // namespace device

@@ -11,7 +11,11 @@
 #include <glc_qt/glc_qt.hpp>
 
 #include <vgd/Shp.hpp>
+
 #include "vgQt/node/ActionsMenu.hpp"
+#include "vgQT/event/device/Keyboard.hpp"
+#include "vgQT/event/device/Mouse.hpp"
+#include "vgQT/event/device/Timer.hpp"
 
 #include <QWidget>
 
@@ -30,7 +34,7 @@ struct GenericCanvas : public QWidget, public CanvasT
 
 public:
 
-    explicit GenericCanvas(QWidget *parent = 0)
+    explicit GenericCanvas( QWidget * parent = 0 )
     : QWidget(parent),
       m_glc( 0 ),
       m_actionsMenu( new vgQt::node::ActionsMenu( this, vgQt::node::CANVAS))
@@ -46,6 +50,40 @@ public:
     {
         CanvasT::shutdownVGSDK ();
     }
+
+	void initDevices( const uint devices )
+	{
+		// Creates device instances so we will receive vgd events.
+		if ( devices & Keyboard )
+		{
+			addDevice( vgd::makeShp(new vgQt::event::device::Keyboard()) );
+		}
+
+		if ( devices & Mouse )
+		{
+			addDevice( vgd::makeShp(new vgQt::event::device::Mouse(this)) );
+		}
+
+		if ( devices & Timer )
+		{
+			addDevice( vgd::makeShp(new vgQt::event::device::Timer()) );
+		}
+
+		//if ( devices & Joystick )
+		//{
+		//	vgd::Shp< vgSDL::event::device::Joystick >	joystick = vgSDL::event::device::Joystick::get(0);
+		//
+		//	// Adds joystick (if present)
+		//	if( joystick )
+		//	{
+		//		addDevice( joystick );
+		//	}
+		//	else
+		//	{
+		//		vgLogWarning( "No joystick found." );
+		//	}
+		//}
+	}
 
     const bool setCurrent()
     {

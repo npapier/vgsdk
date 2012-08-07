@@ -1,9 +1,15 @@
-// VGSDK - Copyright (C) 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include "vgGTK/event/device/Timer.hpp"
+
+#include <glibmm/main.h>
+
+#include <sigc++/slot.h>
+#include <sigc++/adaptors/bind.h>
 
 #include <vgd/Shp.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
@@ -22,18 +28,16 @@ namespace device
 
 
 
-void Timer::connect( Gtk::Widget * widget )
+Timer::Timer()
 {
 	// Connects the slot to the Glib::signal_timeout()
 	sigc::slot<bool> mySlot = sigc::bind( ::sigc::mem_fun(this, &Timer::onTimeout), 1 );
 
 #ifdef _DEBUG
-	store( Glib::signal_timeout().connect( mySlot, 1000/15 ) );
+	Glib::signal_timeout().connect( mySlot, 1000/15 );
 #else
-	store( Glib::signal_timeout().connect( mySlot, 1000/30 ) );
+	Glib::signal_timeout().connect( mySlot, 1000/30 );
 #endif
-
-	SignalHandler::connect( widget );
 }
 
 

@@ -1,9 +1,9 @@
-// VGSDK - Copyright (C) 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 
-#include "vgd/event/DeviceListener.hpp"
+#include "vgd/event/DeviceManager.hpp"
 
 #include "vgd/event/Device.hpp"
 
@@ -16,18 +16,13 @@ namespace event
 {
 
 
-
-DeviceListener::~DeviceListener()
+DeviceManager::~DeviceManager()
 {
-	for( DeviceContainer::iterator i = m_devices.begin(); i != m_devices.end(); ++i )
-	{
-		(*i)->detachEventListener( this );
-	}
+	uninitDevices();
 }
 
 
-
-void DeviceListener::addDevice( vgd::Shp< vgd::event::Device > device )
+void DeviceManager::addDevice( vgd::Shp< vgd::event::Device > device )
 {
 	if ( m_devices.find(device) == m_devices.end() )
 	{
@@ -37,15 +32,17 @@ void DeviceListener::addDevice( vgd::Shp< vgd::event::Device > device )
 }
 
 
-
-const bool DeviceListener::hasDevice( vgd::Shp< vgd::event::Device > device ) const
+const bool DeviceManager::hasDevice( vgd::Shp< vgd::event::Device > device ) const
 {
 	return m_devices.find(device) != m_devices.end();
 }
 
 
+void DeviceManager::initDevices( const uint devices )
+{}
 
-void DeviceListener::removeDevice( vgd::Shp< vgd::event::Device > device )
+
+void DeviceManager::removeDevice( vgd::Shp< vgd::event::Device > device )
 {
 	DeviceContainer::iterator	found = m_devices.find( device );
 	
@@ -56,6 +53,15 @@ void DeviceListener::removeDevice( vgd::Shp< vgd::event::Device > device )
 	}
 }
 
+
+void DeviceManager::uninitDevices()
+{
+	for( DeviceContainer::iterator i = m_devices.begin(); i != m_devices.end(); ++i )
+	{
+		(*i)->detachEventListener( this );
+	}
+	m_devices.clear();
+}
 
 
 } // namespace event

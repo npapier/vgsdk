@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -6,14 +6,12 @@
 
 #include "vgGTK/event/device/Keyboard.hpp"
 
-#include <iostream>
 #include <gdk/gdkkeysyms.h>
 #include <vgd/Shp.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 
 #include "vgGTK/event/helpers.hpp"
-
 
 
 namespace vgGTK
@@ -26,12 +24,10 @@ namespace device
 {
 
 
-void Keyboard::connect( Gtk::Widget * widget )
+Keyboard::Keyboard( Gtk::Widget * widget )
 {
-	store( widget->signal_key_press_event()  .connect( ::sigc::mem_fun(this, &Keyboard::onKeyEvent) )	);
-	store( widget->signal_key_release_event().connect( ::sigc::mem_fun(this, &Keyboard::onKeyEvent) )	);
-
-	SignalHandler::connect( widget );
+	widget->signal_key_press_event()  .connect( ::sigc::mem_fun(this, &Keyboard::onKeyEvent) );
+	widget->signal_key_release_event().connect( ::sigc::mem_fun(this, &Keyboard::onKeyEvent) );
 }
 
 

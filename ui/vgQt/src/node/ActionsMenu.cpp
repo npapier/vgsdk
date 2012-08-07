@@ -61,40 +61,40 @@ void ActionsMenu::initActions()
     vgUI::actions::RegisterAction< actions::ui::RemoveNodeUI > action3(15);
 }
 
-void ActionsMenu::onBoutonPressEvent(QMouseEvent* event, QPoint globalPosition, int height)
+void ActionsMenu::onCanvasMenuRequested(QPoint point)
 {
-        vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
-        node.reset();
+	assert( m_canvas );
 
-        if( event->button() == Qt::RightButton )
+	// Actually, the canvas is based on a QWidget. So we can retrieve the widget for later use.
+	QWidget	* widget = dynamic_cast< QWidget* >( m_canvas );
+	
+    // Retrieves the eventual node currently under the mouse pointer.
+    vgd::node::Node *castNode = m_canvas->castRay( point.x(), widget->height() - point.y() );
+
+    if ( castNode )
+    {
+        vgd::Shp< vgd::node::Node > currentNode = castNode->shpFromThis();
+
+        vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode( currentNode, currentNode->getParent() );
+        showPopup( widget->mapToGlobal(point), NODE );
+    }
+    else
+    {
+		vgd::Shp< vgd::node::Node > node = m_currentNode.lock();
+		node.reset();
+	
+        if( node )
         {
-            // Retrieves some properties of the window.
-            vgd::node::Node *castNode = m_canvas->castRay( event->x(), height - event->y() );
-
-            if ( castNode )
-            {
-                vgd::Shp< vgd::node::Node > currentNode = castNode->shpFromThis();
-
-                vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode( currentNode, currentNode->getParent() );
-                showPopup(globalPosition, NODE);
-            }
-            else
-            {
-                if( node )
-                {
-                    vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode(  node, node->getParent() );
-                    showPopup(globalPosition, CANVAS);
-                }
-                else
-                {
-                    // vgd::Shp< vgd::node::Group > parent;
-                    vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
-                    showPopup(globalPosition, CANVAS);
-                }
-            }
+            vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode(  node, node->getParent() );
+            showPopup( widget->mapToGlobal(point), CANVAS );
         }
-        // else do nothing.
-        return;
+        else
+        {
+            // vgd::Shp< vgd::node::Group > parent;
+            vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode( node );
+            showPopup( widget->mapToGlobal(point), CANVAS );
+        }
+    }
 }
 
 void ActionsMenu::setCanvas( vgUI::Canvas * canvas )
