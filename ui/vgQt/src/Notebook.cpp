@@ -29,5 +29,10 @@ void Notebook::setCanvas( vgUI::BasicManipulator* canvas )
     m_properties->setCanvas( canvas );
 }
 
+graph::Browser* Notebook::getBrowser()
+{
+	return m_graphBrowser;
+}
+
 } // namespace vgQt
 

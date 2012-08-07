@@ -26,7 +26,7 @@ namespace engine
 
 
 
-ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
+ShadersEditor::ShadersEditor(QWidget *parent)
 :	vgQt::TextEditor("Shaders Viewer"),
 	m_upDock( new QDockWidget("Shader", this) ),
 	m_bottomDock( new QDockWidget("Log", this) ),
@@ -42,10 +42,8 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	m_itemType(glo::GLSLProgram::VERTEX),
 	m_managerSaved(0),
 	m_currentShader(0),
-	m_canvas(canvas)
+	m_canvas(0)
 {
-	m_engine = m_canvas->getGLEngine();
-
 	resize(1024, 768);
 
 	QVBoxLayout* m_progLayout = new QVBoxLayout;
@@ -72,7 +70,6 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 	m_versionList->addItem("OpenGL 4.0 / GLSL 4.0", "4.0");
 	m_versionList->addItem("OpenGL 4.1 / GLSL 4.1", "4.1");
 	m_versionList->addItem("OpenGL 4.2 / GLSL 4.2", "4.2");
-	m_versionList->setCurrentIndex( m_textEditor->getGLSLVersion() );
 
 	m_radioLayout->addWidget(m_core);
 	m_radioLayout->addWidget(m_compatibility);
@@ -103,7 +100,13 @@ ShadersEditor::ShadersEditor(vgUI::Canvas* canvas, QWidget *parent)
 
 	connect(m_core, SIGNAL( clicked( bool )), this, SLOT( modeCore( bool ) ) );
 	connect(m_compatibility, SIGNAL( clicked( bool )), this, SLOT( modeCompatibility( bool ) ) );
+}
 
+
+
+void ShadersEditor::changeVisibility()
+{
+	setVisible ( (isVisible()) ? false : true );
 	refreshUI();
 }
 
@@ -145,6 +148,14 @@ void ShadersEditor::checkErrorLine(const std::string& log)
 			m_textEditor->setLineMarker( boost::lexical_cast<int>( tmpversion ));
 		}
 	}
+}
+
+
+
+void ShadersEditor::setCanvas(vgUI::Canvas* canvas)
+{
+	m_canvas = canvas;
+	m_engine = m_canvas->getGLEngine();
 }
 
 

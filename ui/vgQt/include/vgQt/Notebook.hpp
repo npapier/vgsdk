@@ -53,11 +53,15 @@ struct VGQT_API Notebook : QTabWidget
      */
     void setCanvas( vgUI::BasicManipulator* canvas );
 
+    /**
+     * @brief	Get pointer to the browser
+     */
+	graph::Browser* getBrowser();
 
 private:
 
-    graph::Browser*		m_graphBrowser;		///< the graph browser widget
-    Properties*			m_properties;
+	graph::Browser*					m_graphBrowser;		///< the graph browser widget
+	Properties*						m_properties;
 };
 
 

@@ -35,6 +35,11 @@ public:
      */
     void setCanvas( MyCanvas *canvas );
 
+    /**
+     * @brief	Get the current shader editor.
+     */
+	vgQt::engine::ShadersEditor* getShaderEditor() { return m_notebook->getBrowser()->getShadersEditor() ;}
+
 protected:
     void hideEvent ( QHideEvent * event );
     void showEvent ( QShowEvent * event );

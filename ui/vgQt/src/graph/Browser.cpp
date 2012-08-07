@@ -198,6 +198,8 @@ Browser::Browser(QWidget *parent) : QWidget(parent)
     m_treeView = new TreeView( this );
     m_editor = new FieldManagerEditor( this );
     m_path = new QLabel( tr("/"), this );
+	m_shadersEditor = new vgQt::engine::ShadersEditor(this);
+	m_shadersEditor->setVisible(false);
 
     QHBoxLayout *layoutButtons = new QHBoxLayout();
     QPushButton *expandButton = new QPushButton(QIcon(":/images/expand.xpm"), "" );
@@ -206,8 +208,18 @@ Browser::Browser(QWidget *parent) : QWidget(parent)
     QPushButton *synchronizeButton = new QPushButton(QIcon(":/images/view-refresh.png"), "" );
     synchronizeButton->setFlat(true);
     synchronizeButton->setFocusPolicy(Qt::NoFocus);
-    layoutButtons->addWidget( synchronizeButton );
+
+	QPushButton * shaderEditorButton = new QPushButton(QIcon(":/images/edit-paste.png"), "Shader Editor");
+	shaderEditorButton->setFlat(true);
+
+	QFrame* line = new QFrame();
+	line->setFrameShape(QFrame::VLine);
+	line->setFrameShadow(QFrame::Raised);
+	
+	layoutButtons->addWidget( synchronizeButton );
     layoutButtons->addWidget( expandButton );
+	layoutButtons->addWidget( line );
+	layoutButtons->addWidget( shaderEditorButton );
     layoutButtons->addStretch();
 
     QSplitter *splitter = new QSplitter( this );
@@ -227,6 +239,7 @@ Browser::Browser(QWidget *parent) : QWidget(parent)
     // The buttons
     connect(synchronizeButton, SIGNAL(clicked()), this, SLOT(onFullRefresh()));
     connect(expandButton, SIGNAL(clicked()), this, SLOT(onExpandAll()));
+	connect(shaderEditorButton, SIGNAL(clicked()), m_shadersEditor, SLOT(changeVisibility()));
 
     setLayout(layout);
 
@@ -379,6 +392,7 @@ void Browser::setCanvas( vgUI::Canvas * canvas )
     m_editor->setFieldManager( vgd::Shp< vgd::field::FieldManager >() );
     m_actionsMenu = new vgQt::node::ActionsMenu(this, vgQt::node::TREE);
     m_actionsMenu->setCanvas( m_canvas );
+	m_shadersEditor->setCanvas( m_canvas );
 }
 
 void Browser::setRoot( vgd::Shp< vgd::node::Group > root )
