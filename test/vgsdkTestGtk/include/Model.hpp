@@ -19,6 +19,7 @@
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
 // vgsdkNodeTestingSuite
+#include <vgd/basic/Image.hpp>
 #include <vgd/node/Quad.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>

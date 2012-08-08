@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, Guillaume Brocker, Nicolas Papier, Maxime Peresson.
+// VGSDK - Copyright (C) 2008, 2009, 2012, Guillaume Brocker, Nicolas Papier, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -11,7 +11,7 @@
 #include <glibmm/ustring.h>
 #include <vector>
 
-#include <vgGTK/TBasicManipulator.hpp>
+#include <vgGTK/BasicManipulator.hpp>
 
 #include "vgsdkTestGtk/vgTest/TestManipulator.hpp"
 
