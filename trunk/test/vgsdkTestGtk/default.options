@@ -14,9 +14,8 @@ uses 		=	[	'boost',
 					#'physx',
 					#'wx', 'wxgl'
 				]
-libs		=	[
-					'sbf 0-0',
-					'glc 0-0', 'glc_gtk 0-0', 'glc_gtkmm 0-0',
+libs		=	[	'sbf 0-0',
+					'glc 0-0', 'glc_gtkmm 0-0',
 					'gle 0-3', #'glo 0-3',
 					'vgBase 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgd 0-5',
 					'vgAlg 0-5',
@@ -27,5 +26,5 @@ libs		=	[
 					'vgEgg 0-5',
 					'vgTest 0-5'
 				]
-deps		= [ '../../../vgsdk', '../vgTest' ]
+deps		= [ '../../../vgsdk', '../../ui/vgGTK', '../vgTest' ]
 test		= 'gtest'
