@@ -28,7 +28,7 @@ namespace device
 void Keyboard::onEvent( QEvent * event )
 {
 	// Skips processing if the event is not related to the keyboard.
-	if (event->type() != QEvent::KeyPress || event->type() != QEvent::KeyRelease)
+	if (event->type() != QEvent::KeyPress && event->type() != QEvent::KeyRelease)
 	{
 		return;
 	}
