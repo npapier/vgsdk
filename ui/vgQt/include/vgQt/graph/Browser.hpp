@@ -11,7 +11,6 @@
 #include <vgd/node/Group.hpp>
 
 #include <vgAlg/actions/SelectedNode.hpp>
-#include <vgQt/engine/ShadersEditor.hpp>
 
 #include "vgQt/graph/TreeModelColumnRecord.hpp"
 #include "vgQt/graph/TreeView.hpp"
@@ -27,11 +26,18 @@ namespace vgUI {
     struct Canvas;
 }
 
+namespace vgQt {
+	namespace engine {
+		struct ShadersEditor;
+	}
+}
+
 namespace vgQt
 {
 
 namespace graph
 {
+
 
 class VGQT_API Browser : public QWidget
 {

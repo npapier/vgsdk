@@ -14,6 +14,7 @@
 
 #include "vgQt/graph/FieldManagerEditor.hpp"
 #include "vgQt/graph/TreeView.hpp"
+#include "vgQt/engine/ShadersEditor.hpp"
 
 #include <QTableWidget>
 #include <QVBoxLayout>
