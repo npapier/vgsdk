@@ -27,12 +27,10 @@ namespace engine
 
 
 ShadersEditor::ShadersEditor(QWidget *parent)
-:	vgQt::TextEditor("Shaders Viewer"),
+:	vgQt::TextEditorMainWindow("Shaders Viewer"),
 	m_upDock( new QDockWidget("Shader", this) ),
 	m_bottomDock( new QDockWidget("Log", this) ),
-	m_upWidget( new QWidget(m_upDock) ),
-	m_bottomWidget( new QWidget(m_bottomDock) ),
-	m_editorLog( new QPlainTextEdit(m_bottomWidget) ),
+	m_editorLog( new QPlainTextEdit(m_bottomDock) ),
 	m_mode( new QGroupBox("Mode", m_upDock) ),
 	m_core( new QRadioButton("Core", m_upDock) ),
 	m_compatibility( new QRadioButton("Compatibility", m_upDock) ),
@@ -44,24 +42,36 @@ ShadersEditor::ShadersEditor(QWidget *parent)
 	m_currentShader(0),
 	m_canvas(0)
 {
+	// Resize the window
 	resize(1024, 768);
 
+	// Create all needed layout
 	QVBoxLayout* m_progLayout = new QVBoxLayout;
 	QVBoxLayout* m_logLayout = new QVBoxLayout;
 	QHBoxLayout* m_radioLayout = new QHBoxLayout;
 
-	m_upDock->setWidget(m_upWidget);
-	m_bottomDock->setWidget(m_bottomWidget);
+	// Create widgets for the dock
+	QWidget* upWidget = new QWidget(m_upDock) ;
+	QWidget* bottomWidget =  new QWidget(m_bottomDock) ;
 
+	// Set widgets on the dock
+	m_upDock->setWidget(upWidget);
+	m_bottomDock->setWidget(bottomWidget);
+
+	// Add dock on the mainwindow
 	addDockWidget(Qt::RightDockWidgetArea, m_upDock);
 	addDockWidget(Qt::RightDockWidgetArea, m_bottomDock);
 
+	// Set by default the core api
 	m_core->setChecked(true);
 
+	// Set the text editor language
 	m_textEditor->setLanguage(Editor::GLSL);
 
+	// Set the editor log read only
 	m_editorLog->setReadOnly(true);
 
+	// Adds all versions of OpenGL on the combobox
 	m_versionList->addItem("OpenGL 2.1 / GLSL 1.2", "1.2");
 	m_versionList->addItem("OpenGL 3.0 / GLSL 1.3", "1.3");
 	m_versionList->addItem("OpenGL 3.1 / GLSL 1.4", "1.4");
@@ -70,7 +80,9 @@ ShadersEditor::ShadersEditor(QWidget *parent)
 	m_versionList->addItem("OpenGL 4.0 / GLSL 4.0", "4.0");
 	m_versionList->addItem("OpenGL 4.1 / GLSL 4.1", "4.1");
 	m_versionList->addItem("OpenGL 4.2 / GLSL 4.2", "4.2");
+	m_versionList->addItem("OpenGL 4.3 / GLSL 4.3", "4.3");
 
+	// Attach widgets on the mainwindow
 	m_radioLayout->addWidget(m_core);
 	m_radioLayout->addWidget(m_compatibility);
 
@@ -84,15 +96,16 @@ ShadersEditor::ShadersEditor(QWidget *parent)
 	m_logLayout->addWidget(m_editorLog);
 	m_logLayout->setAlignment(Qt::AlignBottom);
 
-	m_upWidget->setLayout(m_progLayout);
-	m_bottomWidget->setLayout(m_logLayout);
+	upWidget->setLayout(m_progLayout);
+	bottomWidget->setLayout(m_logLayout);
 
-	m_upWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-	m_bottomWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+	upWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+	bottomWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
 
+	// Connect widget witch SLOT
 	connect(m_shaderList, SIGNAL(itemClicked ( QListWidgetItem * )), this, SLOT( checkText(  QListWidgetItem * ) ));
-	connect(m_textEditor, 
-			SIGNAL( modified(int, int, int, int, const QByteArray &, int, int, int) ), 
+	connect(m_textEditor,
+			SIGNAL( modified(int, int, int, int, const QByteArray &, int, int, int) ),
 			this,
 			SLOT( compile(int, int, int, int,const QByteArray &, int, int, int) ) );
 
@@ -103,7 +116,7 @@ ShadersEditor::ShadersEditor(QWidget *parent)
 }
 
 
-
+// Change visibility of the shaders editor and refresh the shader list
 void ShadersEditor::changeVisibility()
 {
 	setVisible ( (isVisible()) ? false : true );
@@ -111,10 +124,11 @@ void ShadersEditor::changeVisibility()
 }
 
 
-
+// Check if the log contain error. If true, set a marker on the text editor margin
 void ShadersEditor::checkErrorLine(const std::string& log)
 {
 	std::string regex;
+	// Choose regex between Ati driver and Nvidia driver.
 	if (gleGetCurrent()->getDriverProvider() == gle::OpenGLExtensions::ATI_DRIVERS)
 	{
 		regex = ".*\\d+:"
@@ -145,13 +159,14 @@ void ShadersEditor::checkErrorLine(const std::string& log)
 		if(boost::regex_match(t.c_str(), matches, expression))
 		{
 			std::string tmpversion(matches[1].first, matches[1].second);
+			// Adds a marker
 			m_textEditor->setLineMarker( boost::lexical_cast<int>( tmpversion ));
 		}
 	}
 }
 
 
-
+// Set the current canvas
 void ShadersEditor::setCanvas(vgUI::Canvas* canvas)
 {
 	m_canvas = canvas;
@@ -159,7 +174,7 @@ void ShadersEditor::setCanvas(vgUI::Canvas* canvas)
 }
 
 
-
+// Check if the current shader contain a #version. If true, set the version on the text editor
 void ShadersEditor::checkVersionOnShader(const std::string& shader)
 {
 	boost::regex expression(
@@ -226,6 +241,7 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 	m_textEditor->setGLSLVersion( version );
 	m_versionList->setCurrentIndex( static_cast<int>(version) );
 
+	// If GLSL Manager contain shaders
 	if ( progLength > 0 )
 	{
 		std::vector<int> keys;
@@ -234,20 +250,25 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 		m_engine->getGLSLManagerExt().getKeys( keys_it );
 		m_currentShader = item->type() - 1000;
 
+		// Iterate all widget
 		for ( std::vector<int>::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
 		{
 			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
 
 			const uint shaderNameSize = glo::GLSLProgram::MAX_SHADER_INDEX - 1;
 
+			// If the clicked element is a program
 			if ( m_currentShader == manager->getProgramObject() )
 			{
+				// Set link log
 				m_editorLog->setPlainText(manager->getLinkLog().c_str());
 				m_currentProgram = manager->getProgramObject();
+				// Erase the text editor
 				m_textEditor->setText("");
 				return;
 			}
 
+			// Else, set the shader on the window and save all needed data
 			for (uint i = 0; i < shaderNameSize; i++)
 			{
 				std::ostringstream	oss;
@@ -255,23 +276,23 @@ void ShadersEditor::checkText(QListWidgetItem *item)
 				oss << manager->getName(type);
 				const std::string name = manager->convertShaderType2String(type) + " " + oss.str();
 
-				//If clicked value exist on the manager, save all needed data
+				// If clicked value exist on the manager, save all needed data
 				if (itemName == name)
 				{
 					QString actualShader =  m_textEditor->getText(m_textEditor->textLength());
 
 					if ( manager->getShaderCode(type).c_str() == actualShader.toStdString() )	return;
 
-					checkVersionOnShader(manager->getShaderCode(type).c_str());
-					m_currentProgram = manager->getProgramObject();
-					m_currentShader = manager->getName(type);
-					m_itemType = type;
-					m_managerSaved = manager;
-					m_newText = true;
-					m_textEditor->setText( manager->getShaderCode(type).c_str() );
-					m_editorLog->setPlainText(manager->getLogError(type).c_str());
-					findWithMenu(m_findText->text());
-					checkErrorLine(manager->getLogError(type));
+					checkVersionOnShader(manager->getShaderCode(type).c_str());		// Check the version
+					m_currentProgram = manager->getProgramObject();					// Save the current program
+					m_currentShader = manager->getName(type);						// Save the current shader, save also if is a program
+					m_itemType = type;												// Save the shader type
+					m_managerSaved = manager;										// Save the current GLSL Manager
+					m_newText = true;												// New text is set on the editor
+					m_textEditor->setText( manager->getShaderCode(type).c_str() );	// Set the shader on the editor
+					m_editorLog->setPlainText(manager->getLogError(type).c_str());	// Set the log
+					findWithMenu(m_findText->text());								// Set selection if a current word is needed to find
+					checkErrorLine(manager->getLogError(type));						// Check line error and higlight this
 					break;
 				}
 			}
@@ -293,8 +314,10 @@ void ShadersEditor::refreshUI()
 	QFont	font("Helvetica");
 	font.setBold(true);
 
+	// If the editor is not visible, bypass
 	if (!isVisible())	return;
 
+	// If GLSL Manager contain
 	if ( progLength > 0 )
 	{
 		//Clear all the elements
@@ -311,11 +334,13 @@ void ShadersEditor::refreshUI()
 			std::ostringstream	ossP;
 			ossP << (int)manager->getProgramObject();
 
+			// Adds the program element on the shader list
 			std::string prgName =  "Program " + ossP.str();
 			QListWidgetItem* prog = new QListWidgetItem(tr( prgName.c_str() ), m_shaderList, (int)manager->getProgramObject() + 1000);
 
 			if (!manager->getLinkSuccess())
 			{
+				// If program doesnt link, set color to red
 				prog->setForeground(brush);
 			}
 
@@ -334,10 +359,12 @@ void ShadersEditor::refreshUI()
 
 					if ( manager->getName(type) != 0 )
 					{
+						// Adds the shader element on the shader list
 						oss << manager->getName(type);
 						tmp += oss.str();
 						QListWidgetItem* listShader = new QListWidgetItem(tr(tmp.c_str()), m_shaderList, manager->getName(type) + 1000 );
 
+						// If shader contain erroe, set background to red
 						if (manager->getLogError(type).size() > 0)
 						{
 							listShader->setForeground(brush);
@@ -348,7 +375,7 @@ void ShadersEditor::refreshUI()
 
 			std::string log("");
 
-			//Draw the compilation log
+			//Construct the compilation log
 			for (uint i = 0; i < glo::GLSLProgram::MAX_SHADER_INDEX; ++i)
 			{
 				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
@@ -377,12 +404,14 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 
 	std::string InfoLog("");
 
+	// If new text is set on the text editor, do nothing
 	if ( m_newText )
 	{
 		m_newText = false;
 		return;
 	}
 
+	// If text are insert or remove on the text editor
 	if (m_currentProgram && m_managerSaved
 		&& ( ( notificationType & SC_MOD_INSERTTEXT ) || ( notificationType & SC_MOD_DELETETEXT ) ) )
 	{
@@ -410,6 +439,7 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 
 			if ( !compileRetVal )
 			{
+				//Construct the shader log
 				InfoLog = m_managerSaved->getLogError(m_itemType);
 				checkErrorLine(m_managerSaved->getLogError(m_itemType));
 			}
@@ -421,6 +451,7 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 
 				if ( !linkRetVal )
 				{
+					//Construct the link log
 					InfoLog += m_managerSaved->getInfoLog();
 					checkErrorLine(m_managerSaved->getInfoLog());
 				}
@@ -431,6 +462,7 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 				}
 			}
 			refreshUI();
+			//Set log on the editor log widget
 			m_editorLog->setPlainText(InfoLog.c_str());
 		}
 	}
@@ -469,6 +501,7 @@ void ShadersEditor::modeCompatibility( bool )
 
 bool ShadersEditor::event(QEvent * e)
 {
+	// If the Shader editor is focus, refresh the shader list
 	if (e->type() == QEvent::WindowActivate)
 	{
 		refreshUI();
