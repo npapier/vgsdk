@@ -103,11 +103,6 @@ public Q_SLOTS:
      */
     void onHistoryClicked();
 
-    /**
-     * @brief	Handle the Escape key event when the canvas is in fullscreen
-     */
-    void onKeyPressed(QKeyEvent* event);
-
 protected:
     /**
      * @name Drag&Drop handler
