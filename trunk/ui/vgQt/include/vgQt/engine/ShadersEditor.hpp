@@ -8,7 +8,7 @@
 
 
 #include "vgQt/vgQt.hpp"
-#include "vgQt/TextEditor.hpp"
+#include "vgQt/TextEditorMainWindow.hpp"
 
 #include <glo/GLSLProgram.hpp>
 #include <vgeGL/engine/Engine.hpp>
@@ -54,7 +54,7 @@ enum eShaderType
 };
 
 
-class VGQT_API ShadersEditor : public vgQt::TextEditor
+class VGQT_API ShadersEditor : public vgQt::TextEditorMainWindow
 {
 
 Q_OBJECT
@@ -137,28 +137,25 @@ protected:
 private:
 
 	//GUI element
-	QDockWidget*	m_upDock;
-	QDockWidget*	m_bottomDock;
+	QDockWidget*	m_upDock;							//>> Up right dock
+	QDockWidget*	m_bottomDock;						//>> Bottom right dock
 
-	QWidget*		m_upWidget;
-	QWidget*		m_bottomWidget;
+	QPlainTextEdit*	m_editorLog;						//>> Editor log widget
 
-	QPlainTextEdit*	m_editorLog;
+	QGroupBox*		m_mode;								//>> Group box contain core and compatibility button
+	QRadioButton*	m_core;								//>> Choose the core api
+	QRadioButton*	m_compatibility;					//>> Choose the compatibility api
 
-	QGroupBox*		m_mode;
-	QRadioButton*	m_core;
-	QRadioButton*	m_compatibility;
+	QListWidget*	m_shaderList;						//>> ShaderList Widget
+	QComboBox*		m_versionList;						//>> ComboBox contain all OpenGL version
 
-	QListWidget*	m_shaderList;
-	QComboBox*		m_versionList;
+	vgUI::Canvas*					m_canvas;			//>> The current canvas
+	vgd::Shp<vgeGL::engine::Engine>	m_engine;			//>> The 3d engine
 
-	vgUI::Canvas*					m_canvas;
-	vgd::Shp<vgeGL::engine::Engine>	m_engine;
-
-	int								m_currentProgram;
-	glo::GLSLProgram::ShaderType	m_itemType;
-	glo::GLSLProgram*				m_managerSaved;
-	int								m_currentShader;
+	int								m_currentProgram;	//>> The current program on the text editor
+	glo::GLSLProgram::ShaderType	m_itemType;			//>> The type of shader on the text editor
+	glo::GLSLProgram*				m_managerSaved;		//>> The current GLSLProgram
+	int								m_currentShader;	//>> The current shader on the text editor
 };
 
 
