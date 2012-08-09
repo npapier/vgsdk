@@ -35,8 +35,13 @@ struct TBasicManipulator : public GenericCanvas< T >
 	TBasicManipulator( QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick )
 	:    GenericCanvas< T >(parent)
 	{
+		// Configures the focus policy.
+		setFocusPolicy( (Qt::FocusPolicy) (Qt::TabFocus|Qt::ClickFocus|Qt::WheelFocus) );
+		
+		// Initializes devices.
 		initDevices( devices );
 
+		// Initializes the contextual menu.
 		m_actionsMenu->setCanvas(this);
 		connect(this, SIGNAL(customContextMenuRequested(QPoint)), m_actionsMenu.get(), SLOT(onCanvasMenuRequested(QPoint)));
 	}

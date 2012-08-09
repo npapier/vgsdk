@@ -28,8 +28,12 @@ namespace vgsdkViewerQt
 {
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent),
-      m_isFullScreen(false)
+:	QMainWindow(parent),
+    m_isFullScreen(false),
+	m_toolBar(0),
+	m_actionProperties(0),
+	m_actionMouseAndKeyboard(0),
+	m_recentFileMenu(0)
 {
     // The style for the treeView
     setStyleSheet("QTreeView::branch:has-siblings:!adjoins-item {border-image: url(:/images/stylesheet-vline.png) 0;}"
@@ -197,7 +201,6 @@ MainWindow::MainWindow(QWidget *parent)
     addDockWidget(Qt::LeftDockWidgetArea, m_properties);
 
     connect(m_properties, SIGNAL(visibilityChanged()), this, SLOT(onPropertiesVisibilityChanged()));
-    connect(m_canvas, SIGNAL(key(QKeyEvent*)), this, SLOT(onKeyPressed(QKeyEvent*)));
 }
 
 void MainWindow::fileOpen()
@@ -274,26 +277,17 @@ void MainWindow::viewAll()
 void MainWindow::fullscreen()
 {
     const bool isFullscreen = m_canvas->isFullscreen();
+	
     m_canvas->switchFullscreen();
     // Configures the layout.
-    if ( isFullscreen )
-    {
-        // Exit fullscreen mode
-        showNormal();
-    }
-    else
-    {
-        // Enter fullscreen mode
-        showFullScreen();
-    }
+    isFullscreen ? showNormal() : showFullScreen();
 }
 
 void MainWindow::showFullScreen()
 {
     menuBar()->setVisible(false);
     m_toolBar->setVisible(false);
-    QMainWindow::showFullScreen();
-    m_canvas->showFullScreen();
+	QMainWindow::showFullScreen();
 }
 
 void MainWindow::showNormal()
@@ -410,18 +404,12 @@ void MainWindow::onHistoryClicked()
     m_canvas->doRefresh();
 }
 
-void MainWindow::onKeyPressed(QKeyEvent* event)
-{
-    if( m_canvas->isFullscreen() && event->key() == Qt::Key_Escape)
-    {
-        fullscreen();
-    }
-}
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
     event->acceptProposedAction();
 }
+
 
 void MainWindow::dropEvent(QDropEvent *event)
 {
