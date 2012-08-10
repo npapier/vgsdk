@@ -62,7 +62,12 @@ vgd::Shp< Joystick > Joystick::find( const int index )
 vgd::Shp< Joystick > Joystick::get( const int index )
 {
 	assert( index >= 0 );
-	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
+
+	if( SDL_WasInit(SDL_INIT_JOYSTICK) != SDL_INIT_JOYSTICK )
+	{
+		std::cerr << "SDL joystick not initialized !" << std::endl;
+		return vgd::Shp< Joystick >();
+	}
 
 	// Adjusts the cache size to the number of joysticks.
 	m_joyCache.resize( SDL_NumJoysticks() );
@@ -71,7 +76,7 @@ vgd::Shp< Joystick > Joystick::get( const int index )
 	// Let's look for a joystick in the cache.
 	vgd::Shp< Joystick >	result = find(index);
 
-	if( ! result && (index<(int)m_joyCache.size()))
+	if( ! result && (index < static_cast<int>( m_joyCache.size() ) ) )
 	{
 		result = create(index);
 		if(result)
@@ -93,7 +98,7 @@ void Joystick::handleEvent( const SDL_JoyAxisEvent & event )
 		using ::vgd::event::AxisEvent;
 		using ::vgd::event::detail::GlobalButtonStateSet;
 
-		const float value		= normalize((const short)event.value);
+		const float value		= normalize( static_cast<const short>(event.value) );
 		AxisEvent	* myEvent	= 0;
 
 		myEvent = new AxisEvent(
