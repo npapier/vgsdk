@@ -7,7 +7,7 @@
 #include "vgSDL/event/device/Joystick.hpp"
 
 #include <limits>
-
+#include <iostream>
 #include <SDL.h>
 
 #include <vgd/event/AxisEvent.hpp>
