@@ -23,17 +23,20 @@ namespace vgQt
 namespace engine
 {
 
+
 /**
  * @brief	A widget that allows to configure high level settings.
  */
 struct VGQT_API UserSettings : public QVBoxLayout
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
+
     /**
      * @brief	Constructor
      */
-    UserSettings( vgd::Shp< vge::engine::UserSettings > settings );
+    UserSettings( const vgd::Shp< vge::engine::UserSettings > settings );
 
     /**
      * @brief	Retrieves the user settings.
@@ -45,21 +48,26 @@ public:
      */
     void set( const vgd::Shp< vge::engine::UserSettings > settings );
 
-    /**
-     * @brief	Refreshes the level using the user settings.
-     */
-    void refreshLevel();
+Q_SIGNALS:
 
-public Q_SLOTS:
-    void onLevelChanged();
-    void onSelectCardClicked();
+	void changed();	///< Emitted when the user settings have changed.
 
-private :
+private:
+
     vgd::Shp< vge::engine::UserSettings >	m_settings;			///< The settings to configure.
     QLabel*                                 m_description;
     QPushButton*                            m_selectCard;
     QComboBox*                              m_levelCombo;
+
+	void refreshLevel(); ///< Refreshes the level using the user settings.
+
+private Q_SLOTS:
+
+    void onLevelChanged();
+    void onSelectCardClicked();
+
 };
+
 
 } // namespace engine
 

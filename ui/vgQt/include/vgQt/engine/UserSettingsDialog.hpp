@@ -23,26 +23,38 @@ namespace engine
 /**
  * @brief A dialog containing UserSettings gui
  */
-struct UserSettingsDialog : public QDialog
+struct VGQT_API UserSettingsDialog : public QDialog
 {
+	Q_OBJECT
+
+public:
+
     /**
      * @brief	Constructor
      */
-    VGQT_API UserSettingsDialog( QWidget* parent, vgd::Shp< vge::engine::UserSettings > settings = vgd::Shp< vge::engine::UserSettings >() );
+    UserSettingsDialog( QWidget* parent, vgd::Shp< vge::engine::UserSettings > settings = vgd::Shp< vge::engine::UserSettings >() );
 
     /**
      * @brief	Retrieves the user settings.
      */
-    VGQT_API const vgd::Shp< vge::engine::UserSettings > UserSettingsDialog::get() const;
+    const vgd::Shp< vge::engine::UserSettings > get() const;
 
     /**
      * @brief	Assignes the user settings.
      */
-    VGQT_API void UserSettingsDialog::set( vgd::Shp< vge::engine::UserSettings > settings );
+    void set( vgd::Shp< vge::engine::UserSettings > settings );
 
+Q_SIGNALS:
+
+	void changed();	///< Emitted when the user settings have changed
 
 private :
+
     UserSettings* m_userSettingsGUI;
+
+private Q_SLOTS:
+
+	void onSettingsChanged();
 };
 
 } // namespace engine

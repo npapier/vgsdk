@@ -15,7 +15,6 @@ namespace vgsdkViewerQt
 {
 
 MyCanvas::MyCanvas()
-    : m_renderSettingsDialog( 0 )
 {
     // Scene graph initialization.
     createOptionalNode( LIGHTS );
@@ -75,15 +74,6 @@ void MyCanvas::keyPressEvent(QKeyEvent * event)
     }
 }
 
-vgQt::engine::UserSettingsDialog* MyCanvas::getRenderSettingsDialog( QWidget* parent )
-{
-    if ( !m_renderSettingsDialog )
-    {
-        m_renderSettingsDialog = new vgQt::engine::UserSettingsDialog(parent);
-    }
-
-    return m_renderSettingsDialog;
-}
 
 const bool MyCanvas::appendToScene( const QString filename, const bool viewAllAfterLoading)
 {
