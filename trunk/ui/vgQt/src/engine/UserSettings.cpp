@@ -16,7 +16,7 @@ namespace engine
 {
 
 UserSettings::UserSettings( vgd::Shp< vge::engine::UserSettings > settings )
-    :	m_settings( settings ? settings : vgd::makeShp(new vge::engine::UserSettings() ) )
+:	m_settings( settings ? settings : vgd::makeShp(new vge::engine::UserSettings() ) )
 {
     QLabel* label = new QLabel("To configure rendering settings according to your hardware capabilities,\n select a detail level in the list below.\n\nYou can also activate the appropriate detail level by\n selecting your graphic card in advanced mode.");
     m_description = new QLabel();
@@ -46,16 +46,19 @@ UserSettings::UserSettings( vgd::Shp< vge::engine::UserSettings > settings )
     onLevelChanged();
 }
 
+
 const vgd::Shp< vge::engine::UserSettings > UserSettings::get() const
 {
     return m_settings;
 }
+
 
 void UserSettings::set( const vgd::Shp< vge::engine::UserSettings > settings )
 {
     m_settings = settings;
     refreshLevel();
 }
+
 
 void UserSettings::onLevelChanged()
 {
@@ -70,7 +73,10 @@ void UserSettings::onLevelChanged()
     {
         m_description->setText( "No detail level selected." );
     }
+
+	Q_EMIT changed();
 }
+
 
 void UserSettings::onSelectCardClicked()
 {
@@ -116,13 +122,16 @@ void UserSettings::onSelectCardClicked()
         }
     }
     dialog->deleteLater();
+	Q_EMIT changed();
 }
+
 
 void UserSettings::refreshLevel()
 {
     const int	level	= m_settings->getLevel();
     m_levelCombo->setCurrentIndex( level );
 }
+
 
 } // namespace engine
 

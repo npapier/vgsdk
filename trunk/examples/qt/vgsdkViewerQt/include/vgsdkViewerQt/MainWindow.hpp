@@ -14,6 +14,12 @@
 #include <QMainWindow>
 #include <QDockWidget>
 
+namespace vgQt {
+	namespace engine {
+		struct UserSettingsDialog;
+	}
+}
+
 namespace vgsdkViewerQt
 {
 
@@ -67,6 +73,11 @@ public Q_SLOTS:
      * @brief	Configure user engine's settings
      */
     void renderSettings();
+	
+	/**
+	 * @brief	Render settings have changed
+	 */
+	void renderSettingsChanged();
 
     /**
      * @brief	Updates the resolution of the window.
@@ -125,10 +136,11 @@ private:
     MyCanvas*                       m_canvas;
     bool                            m_isFullScreen;
 
-    QToolBar*						m_toolBar;
-    QAction*						m_actionProperties;
-    QAction*						m_actionMouseAndKeyboard;
-    QMenu*							m_recentFileMenu;
+    QToolBar*							m_toolBar;
+    QAction*							m_actionProperties;
+    QAction*							m_actionMouseAndKeyboard;
+    QMenu*								m_recentFileMenu;
+	vgQt::engine::UserSettingsDialog	* m_renderSettingsDialog;    
 };
 
 } // namespace vgsdkViewerQt

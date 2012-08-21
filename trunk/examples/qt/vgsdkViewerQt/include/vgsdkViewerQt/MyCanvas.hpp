@@ -8,7 +8,7 @@
 #define _VGSDKVIEWERQT_MYCANVAS_HPP_
 
 #include <vgQt/BasicManipulator.hpp>
-#include <vgQt/engine/UserSettingsDialog.hpp>
+
 
 namespace vgsdkViewerQt
 {
@@ -70,8 +70,6 @@ public:
      */
     const bool appendToScene( const QList<QString> filenames, const bool viewAllAfterLoading = true);
 
-    vgQt::engine::UserSettingsDialog* getRenderSettingsDialog(QWidget* parent);
-
     const bool isEmpty() const;
     const bool reloadScene();
 
@@ -88,7 +86,6 @@ private:
     typedef std::vector< vgd::Shp< vgeGL::technique::Technique > > TechniqueContainer;
     TechniqueContainer	m_viewModeTechniques;	///< Contains all view mode techniques.
 
-    vgQt::engine::UserSettingsDialog* m_renderSettingsDialog; ///< rendering settings dialog
     QList<QString> m_filenames; ///< Contains the paths of the files currently loaded.
 
     void keyPressEvent(QKeyEvent * event);

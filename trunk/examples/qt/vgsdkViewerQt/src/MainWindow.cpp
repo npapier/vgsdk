@@ -10,6 +10,7 @@
 #include <vgd/node/LightModel.hpp>
 #include <vgTrian/Loader.hpp>
 #include <vgObj/Loader.hpp>
+#include <vgQt/engine/UserSettingsDialog.hpp>
 #include <vgQt/node/EditMenu.hpp>
 #include <vgQt/ResolutionDialog.hpp>
 #include <vgQt/AboutDialog.hpp>
@@ -27,13 +28,15 @@
 namespace vgsdkViewerQt
 {
 
+
 MainWindow::MainWindow(QWidget *parent)
 :	QMainWindow(parent),
     m_isFullScreen(false),
 	m_toolBar(0),
 	m_actionProperties(0),
 	m_actionMouseAndKeyboard(0),
-	m_recentFileMenu(0)
+	m_recentFileMenu(0),
+	m_renderSettingsDialog(0)
 {
     // The style for the treeView
     setStyleSheet("QTreeView::branch:has-siblings:!adjoins-item {border-image: url(:/images/stylesheet-vline.png) 0;}"
@@ -318,17 +321,19 @@ void MainWindow::settingManipulationBinding()
 
 void MainWindow::renderSettings()
 {
-    vgQt::engine::UserSettingsDialog* renderSettings = m_canvas->getRenderSettingsDialog(this);
+	if( !m_renderSettingsDialog )
+	{
+		m_renderSettingsDialog = new vgQt::engine::UserSettingsDialog(this);
+		m_renderSettingsDialog->set( vgd::makeShp(new vge::engine::UserSettings(*m_canvas)) );
+		connect( m_renderSettingsDialog, SIGNAL(changed()), this, SLOT(renderSettingsChanged()) );
+	}
 
-    // Show or hide dialog
-    if( renderSettings->isVisible() )
-    {
-        renderSettings->setVisible(false);
-    }
-    else
-    {
-        renderSettings->setVisible(true);
-    }
+	m_renderSettingsDialog->show();
+}
+
+void MainWindow::renderSettingsChanged()
+{
+	m_renderSettingsDialog->get()->apply( *m_canvas );
 }
 
 void MainWindow::setResolution()

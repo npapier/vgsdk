@@ -12,6 +12,7 @@ namespace vgQt
 namespace engine
 {
 
+
 UserSettingsDialog::UserSettingsDialog( QWidget* parent, vgd::Shp< vge::engine::UserSettings > settings )
     : QDialog(parent)
 {
@@ -19,7 +20,9 @@ UserSettingsDialog::UserSettingsDialog( QWidget* parent, vgd::Shp< vge::engine::
 
     setWindowTitle("Render Settings");
     setLayout( m_userSettingsGUI );
+	connect( m_userSettingsGUI, SIGNAL(changed()), this, SLOT(onSettingsChanged()) );
 }
+
 
 const vgd::Shp< vge::engine::UserSettings > UserSettingsDialog::get() const
 {
@@ -27,11 +30,17 @@ const vgd::Shp< vge::engine::UserSettings > UserSettingsDialog::get() const
 }
 
 
+void UserSettingsDialog::onSettingsChanged()
+{
+	Q_EMIT changed();
+}
+
 
 void UserSettingsDialog::set( vgd::Shp< vge::engine::UserSettings > settings )
 {
     m_userSettingsGUI->set( settings );
 }
+
 
 } // namespace engine
 
