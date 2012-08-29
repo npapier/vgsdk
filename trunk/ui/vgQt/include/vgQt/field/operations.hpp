@@ -49,4 +49,4 @@ FieldEditor* createEditor( const std::type_info & fieldType );
 
 
 
-#endif // _VGGTK_FIELD_OPERATIONS_HPP_
+#endif // _VGQT_FIELD_OPERATIONS_HPP_

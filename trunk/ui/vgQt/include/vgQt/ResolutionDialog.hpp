@@ -72,7 +72,7 @@ public Q_SLOTS:
 
 
 
-} // namespace vgGTK
+} // namespace vgQt
 
 
 
