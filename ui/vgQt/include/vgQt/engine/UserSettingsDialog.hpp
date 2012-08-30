@@ -29,33 +29,38 @@ struct VGQT_API UserSettingsDialog : public QDialog
 
 public:
 
-    /**
-     * @brief	Constructor
-     */
-    UserSettingsDialog( QWidget* parent, vgd::Shp< vge::engine::UserSettings > settings = vgd::Shp< vge::engine::UserSettings >() );
+	/**
+	 * @brief	Constructor
+	 */
+	UserSettingsDialog( QWidget* parent, vgd::Shp< vge::engine::UserSettings > settings = vgd::Shp< vge::engine::UserSettings >() );
 
-    /**
-     * @brief	Retrieves the user settings.
-     */
-    const vgd::Shp< vge::engine::UserSettings > get() const;
+	/**
+	 * @brief	Retrieves the user settings GUI.
+	 */
+	vgQt::engine::UserSettings* getGUI();
 
-    /**
-     * @brief	Assignes the user settings.
-     */
-    void set( vgd::Shp< vge::engine::UserSettings > settings );
+
+	/**
+	 * @brief	Retrieves the user settings.
+	 */
+	const vgd::Shp< vge::engine::UserSettings > get() const;
+
+	/**
+	 * @brief	Assignes the user settings.
+	 */
+	void set( vgd::Shp< vge::engine::UserSettings > settings );
+
 
 Q_SIGNALS:
-
 	void changed();	///< Emitted when the user settings have changed
 
-private :
-
-    UserSettings* m_userSettingsGUI;
-
 private Q_SLOTS:
-
 	void onSettingsChanged();
+
+private :
+	UserSettings* m_userSettingsGUI;
 };
+
 
 } // namespace engine
 

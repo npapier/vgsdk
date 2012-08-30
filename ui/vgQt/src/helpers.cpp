@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2012, Clément Forest.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Clément Forest

@@ -1,6 +1,7 @@
-// VGSDK - Copyright (C) 2008, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2012, Clément Forest, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
+// Author Nicolas Papier
 // Author Clément Forest
 
 #ifndef _VGQT_LOGGING_HPP
@@ -18,7 +19,7 @@ namespace vgQt
 /**
  * @brief Implements a logging facility based on Qt message logs.
  */
-	struct VGQT_API Logging : public sbf::log::ILogging
+struct VGQT_API Logging : public sbf::log::ILogging
 {
 	/**
 	 * @name Overrides

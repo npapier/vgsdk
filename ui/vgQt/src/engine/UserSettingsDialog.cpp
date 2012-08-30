@@ -14,19 +14,25 @@ namespace engine
 
 
 UserSettingsDialog::UserSettingsDialog( QWidget* parent, vgd::Shp< vge::engine::UserSettings > settings )
-    : QDialog(parent)
+	: QDialog(parent)
 {
-    m_userSettingsGUI = new UserSettings( settings );
+	m_userSettingsGUI = new UserSettings( settings );
 
-    setWindowTitle("Render Settings");
-    setLayout( m_userSettingsGUI );
+	setWindowTitle("Render Settings");
+	setLayout( m_userSettingsGUI );
 	connect( m_userSettingsGUI, SIGNAL(changed()), this, SLOT(onSettingsChanged()) );
+}
+
+
+vgQt::engine::UserSettings* UserSettingsDialog::getGUI()
+{
+	return m_userSettingsGUI;
 }
 
 
 const vgd::Shp< vge::engine::UserSettings > UserSettingsDialog::get() const
 {
-    return m_userSettingsGUI->get();
+	return m_userSettingsGUI->get();
 }
 
 
@@ -38,7 +44,7 @@ void UserSettingsDialog::onSettingsChanged()
 
 void UserSettingsDialog::set( vgd::Shp< vge::engine::UserSettings > settings )
 {
-    m_userSettingsGUI->set( settings );
+	m_userSettingsGUI->set( settings );
 }
 
 
