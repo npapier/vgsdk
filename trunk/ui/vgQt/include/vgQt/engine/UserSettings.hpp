@@ -48,6 +48,8 @@ public:
      */
     void set( const vgd::Shp< vge::engine::UserSettings > settings );
 
+	void refreshLevel(); ///< Refreshes the level using the user settings.
+
 Q_SIGNALS:
 
 	void changed();	///< Emitted when the user settings have changed.
@@ -59,7 +61,6 @@ private:
     QPushButton*                            m_selectCard;
     QComboBox*                              m_levelCombo;
 
-	void refreshLevel(); ///< Refreshes the level using the user settings.
 
 private Q_SLOTS:
 
