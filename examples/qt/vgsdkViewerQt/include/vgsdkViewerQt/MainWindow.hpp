@@ -69,6 +69,11 @@ public Q_SLOTS:
      */
     void showHideProperties();
 
+	/**
+	 * @brief Retrieves the render settings dialog.
+	 */
+	vgQt::engine::UserSettingsDialog * getRenderSettingsDialog();
+
     /**
      * @brief	Configure user engine's settings
      */
