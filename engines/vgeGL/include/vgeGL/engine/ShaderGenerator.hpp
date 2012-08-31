@@ -265,19 +265,51 @@ struct GLSLHelpers
 		std::string retValShadow =
 						"float shadowFiltering( sampler2DShadow texMap, vec2 mapSize, vec4 texCoord, float samplingSize )\n"
 						"{\n"
-						"	float shadowFactor;\n\n";
+						"	float shadowFactor = 0.0;\n\n";
 
 		std::string retVal =
 						"float shadowFiltering( sampler2D texMap, vec2 mapSize, vec4 texCoord, float samplingSize )\n"
 						"{\n"
-						"	float shadowFactor;\n\n";
+						"	float shadowFactor = 1.0;\n\n";
+
+		// uniform
+		const std::string tplShadowFilteringU =
+						"	float x, y;\n"
+						"	for( y = -RANGE; y <= RANGE; y += STEP )\n"
+						"		for( x = -RANGE; x <= RANGE; x += STEP )\n"
+						"			shadowFactor += lookupMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
+						"	shadowFactor /= DIVISOR;\n";
+
+		const std::string tplCasterFilteringU =
+						"	float x, y;\n"
+						"	for( y = -RANGE; y <= RANGE; y += STEP )\n"
+						"		for( x = -RANGE; x <= RANGE; x += STEP )\n"
+						"			shadowFactor = min( shadowFactor, lookupMap(texMap, mapSize, texCoord, vec2(x, y) * samplingSize * 2.0) );\n";
+
+		// uniform with modulo
+		const std::string tplShadowFilteringUM =
+						"	// use modulo to vary the sample pattern\n"
+						"	vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"	float x, y;\n"
+						"	for( y = -RANGE; y <= RANGE; y += STEP )\n"
+						"		for( x = -RANGE; x <= RANGE; x += STEP )\n"
+						"			shadowFactor += lookupMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize + o );\n"
+						"	shadowFactor /= DIVISOR;\n";
+
+		const std::string tplCasterFilteringUM =
+						"	// use modulo to vary the sample pattern\n"
+						"	vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
+						"	float x, y;\n"
+						"	for( y = -RANGE; y <= RANGE; y += STEP )\n"
+						"		for( x = -RANGE; x <= RANGE; x += STEP )\n"
+						"			shadowFactor = min( shadowFactor, lookupMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize * 2.0 + o ) );\n";
 
 		std::string shadowFiltering;
 		std::string casterFiltering;
+
 		if ( shadowType == LightModel::SHADOW_OFF )
 		{
-			shadowFiltering =	"	shadowFactor = 0.0;\n";
-			casterFiltering = shadowFiltering;
+			// nothing to do
 		}
 		else if ( shadowType ==LightModel::SHADOW_MAPPING )
 		{
@@ -287,157 +319,157 @@ struct GLSLHelpers
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_4U )
 		{
-/*			// 4X uniform
-			retVal +=	"shadowFactor = lookupShadowMap( texMap, mapSize, texCoord, vec2(-0.5, -0.5) * samplingSize );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, -0.5) * samplingSize );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, 0.5) * samplingSize );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(-0.5, 0.5) * samplingSize );\n"
-						"shadowFactor *= 0.25;\n";*/
+			// 4X uniform
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "0.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "4.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "0.5" );
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_4UM )
 		{
-/*			// 4X uniform
-			// with modulo
-			retVal +=	"// use modulo to vary the sample pattern\n"
-						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"shadowFactor = lookupShadowMap( texMap, mapSize, texCoord, vec2(-0.5, -0.5) * samplingSize + o );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, -0.5) * samplingSize + o );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, 0.5) * samplingSize + o );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(-0.5, 0.5) * samplingSize + o );\n"
-						"shadowFactor *= 0.25;\n";*/
+			// 4X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "0.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "4.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "0.5" );
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_4DM )
 		{
-/*			// 4X dither
-			// with modulo
-			retVal +=	"// use modulo to vary the sample pattern\n"
-						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"shadowFactor = lookupShadowMap( texMap, mapSize, texCoord, vec2(-1.5, 1.5) * samplingSize  + o );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, 1.5) * samplingSize  + o );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(-1.5, -0.5) * samplingSize  + o );\n"
-						"shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(0.5, -0.5) * samplingSize  + o );\n"
-						"shadowFactor *= 0.25;\n";*/
+			// 4X dithered with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "1.5" );
+			boost::algorithm::replace_all( shadowFiltering, "STEP", "2.0" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "4.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "1.5" );
+			boost::algorithm::replace_all( casterFiltering, "STEP", "2.0" );
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_9U )
 		{
-// @todo OPTME remove samplingSize ?
-// @todo samplingSize independant of filtering
 			// 9X uniform
-			shadowFiltering =
-						"	shadowFactor = 0.0;\n"
-						"	float x, y;\n"
-						"	for( y = -1; y <= 1; y += 1.0 )\n"
-						"		for( x = -1; x <= 1; x += 1.0 )\n"
-						"			shadowFactor += lookupMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
-						"	shadowFactor /= 9.0;\n";
-			casterFiltering =
-						"	shadowFactor = 1.0;\n"
-						"	float x, y;\n"
-						"	for( y = -1; y <= 1; y += 1.0 )\n"
-						"		for( x = -1; x <= 1; x += 1.0 )\n"
-						"			shadowFactor = min( shadowFactor, lookupMap(texMap, mapSize, texCoord, vec2(x, y) * samplingSize * 2.0) );\n";
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "1.0" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "9.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "1.0" );
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_9UM )
 		{
-/*			// 9X uniform
-			// with modulo
-			retVal +=	"// use modulo to vary the sample pattern\n"
-						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"shadowFactor = 0.0;\n"
-						"float x, y;\n"
-						"for( y = -1; y <= 1; y += 1.0 )\n"
-						"	for( x = -1; x <= 1; x += 1.0 )\n"
-						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize + o );\n"
-						"shadowFactor /= 9.0;\n";*/
+			// 9X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "1.0" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "9.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "1.0" );
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_16U )
 		{
-/*			// 16X uniform
-			retVal +=	"shadowFactor = 0.0;\n"
-						"float x, y;\n"
-						"for( y = -1.5; y <= 1.5; y += 1.0 )\n"
-						"	for( x = -1.5; x <= 1.5; x += 1.0 )\n"
-						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
-						"shadowFactor /= 16.0;\n";*/
+			// 16X uniform
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "1.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "16.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "1.5" );
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_16UM )
 		{
-/*			// 16X uniform
-			// with modulo
-			retVal +=	"// use modulo to vary the sample pattern\n"
-						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"shadowFactor = 0.0;\n"
-						"float x, y;\n"
-						"for( y = -1.5; y <= 1.5; y += 1.0 )\n"
-						"	for( x = -1.5; x <= 1.5; x += 1.0 )\n"
-						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize  + o);\n"
-						"shadowFactor /= 16.0;\n";*/
+			// 16X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "1.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "16.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "1.5" );
 		}
-		else if ( shadowType == LightModel::SHADOW_MAPPING_32U )
+		else if ( shadowType == LightModel::SHADOW_MAPPING_25U )
 		{
-/*			// 32X uniform
-			retVal +=	"shadowFactor = 0.0;\n"
-						"float x, y;\n"
-						"float coeff = sqrt(2.0);\n"
-						"int count = 0;\n"
-						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
-						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
-						"	{\n"
-						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
-						"		count++;\n"
-						"	}\n"
-						"shadowFactor /= count;\n";*/
+			// 25X uniform
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "2.0" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "25.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "2.0" );
 		}
-		else if ( shadowType == LightModel::SHADOW_MAPPING_32UM )
+		else if ( shadowType == LightModel::SHADOW_MAPPING_25UM )
 		{
-/*			// 32X dither
-			// with modulo
-			retVal +=	"// use modulo to vary the sample pattern\n"
-						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"shadowFactor = 0.0;\n"
-						"float x, y;\n"
-						"float coeff = sqrt(2.0);\n"
-						"int count = 0;\n"
-						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
-						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
-						"	{\n"
-						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize + o );\n"
-						"		count++;\n"
-						"	}\n"
-						"shadowFactor /= count;\n";*/
+			// 25X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "2.0" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "25.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "2.0" );
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_36U )
+		{
+			// 36X uniform
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "2.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "36.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "2.5" );
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_36UM )
+		{
+			// 36X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "2.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "36.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "2.5" );
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_64U )
 		{
-/*			// 64X uniform
-			retVal +=	"shadowFactor = 0.0;\n"
-						"float x, y;\n"
-						"float coeff = 2.0;\n"
-						"int count = 0;\n"
-						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
-						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
-						"	{\n"
-						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize );\n"
-						"		count++;\n"
-						"	}\n"
-						"shadowFactor /= count;\n";*/
+			// 64X uniform
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "3.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "64.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "3.5" );
 		}
 		else if ( shadowType == LightModel::SHADOW_MAPPING_64UM )
 		{
-/*			// 64X dither
-			// with modulo
-			retVal +=	"// use modulo to vary the sample pattern\n"
-						"vec2 o = mod(floor(gl_FragCoord.xy), 2.0);\n"
-						"shadowFactor = 0.0;\n"
-						"float x, y;\n"
-						"float coeff = 2.0;\n"
-						"int count = 0;\n"
-						"for( y = -1.5; y <= 1.5; y += 1.0 / coeff)\n"
-						"	for( x = -1.5; x <= 1.5; x += 1.0 / coeff)\n"
-						"	{\n"
-						"		shadowFactor += lookupShadowMap( texMap, mapSize, texCoord, vec2(x, y) * samplingSize + o );\n"
-						"		count++;\n"
-						"	}\n"
-						"shadowFactor /= count;\n";*/
+			// 64X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "3.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "64.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "3.5" );
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_144U )
+		{
+			// 144X uniform
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "5.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "144.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "5.5" );
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_144UM )
+		{
+			// 144X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "5.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "144.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "5.5" );
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_225U )
+		{
+			// 225X uniform
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "7.0" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "225.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "7.0" );
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_225UM )
+		{
+			// 225X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "7.0" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "225.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "7.0" );
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_256U )
+		{
+			// 256X uniform
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringU, "RANGE", "7.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "256.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringU, "RANGE", "7.5" );
+		}
+		else if ( shadowType == LightModel::SHADOW_MAPPING_256UM )
+		{
+			// 256X uniform with modulo
+			shadowFiltering = boost::algorithm::replace_all_copy( tplShadowFilteringUM, "RANGE", "7.5" );
+			boost::algorithm::replace_all( shadowFiltering, "DIVISOR", "256.0" );
+
+			casterFiltering = boost::algorithm::replace_all_copy( tplCasterFilteringUM, "RANGE", "7.5" );
 		}
 		else
 		{
@@ -445,6 +477,10 @@ struct GLSLHelpers
 			shadowFiltering =	"shadowFactor = 0.0;\n";
 			casterFiltering = shadowFiltering;
 		}
+
+		// If not yet replaced
+		boost::algorithm::replace_all( shadowFiltering, "STEP", "1.0" );
+		boost::algorithm::replace_all( casterFiltering, "STEP", "1.0" );
 
 		const std::string end =
 						"	return shadowFactor;\n"
