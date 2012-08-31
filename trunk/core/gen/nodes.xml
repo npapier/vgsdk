@@ -502,17 +502,25 @@
 				<enum default="SHADOW_OFF">
 					<value name="SHADOW_OFF"			doc="Shadows are not computed"/>
 					<value name="SHADOW_MAPPING"		doc="Shadows are computed using shadow mapping algorithm"/>
-					<value name="SHADOW_MAPPING_4U"		doc="Four uniform samples"/>
-					<value name="SHADOW_MAPPING_4UM"	doc="Four uniform samples"/>
-					<value name="SHADOW_MAPPING_4DM"	doc="Four dithered samples"/>
-					<value name="SHADOW_MAPPING_9U"		doc="Nine uniform samples"/>
-					<value name="SHADOW_MAPPING_9UM"	doc="Nine unifrom samples"/>
-					<value name="SHADOW_MAPPING_16U"	doc="Sixteen uniform samples"/>
-					<value name="SHADOW_MAPPING_16UM"	doc="Sixteen unifrom samples"/>
-					<value name="SHADOW_MAPPING_32U"	doc="Thirty two uniform samples"/>
-					<value name="SHADOW_MAPPING_32UM"	doc="Thirty two uniform samples"/>
-					<value name="SHADOW_MAPPING_64U"	doc="Sixty four uniform samples"/>
-					<value name="SHADOW_MAPPING_64UM"	doc="Sixty four uniform samples"/>
+					<value name="SHADOW_MAPPING_4U"		doc="Shadows are computed using shadow mapping algorithm pcf using four uniform samples"/>
+					<value name="SHADOW_MAPPING_4UM"	doc="Shadows are computed using shadow mapping algorithm pcf using four uniform samples"/>
+					<value name="SHADOW_MAPPING_4DM"	doc="Shadows are computed using shadow mapping algorithm pcf using four dithered samples"/>
+					<value name="SHADOW_MAPPING_9U"		doc="Shadows are computed using shadow mapping algorithm pcf using nine uniform samples"/>
+					<value name="SHADOW_MAPPING_9UM"	doc="Shadows are computed using shadow mapping algorithm pcf using nine uniform samples"/>
+					<value name="SHADOW_MAPPING_16U"	doc="Shadows are computed using shadow mapping algorithm pcf using sixteen uniform samples"/>
+					<value name="SHADOW_MAPPING_16UM"	doc="Shadows are computed using shadow mapping algorithm pcf using sixteen uniform samples"/>
+					<value name="SHADOW_MAPPING_25U"	doc="Shadows are computed using shadow mapping algorithm pcf using twenty five uniform samples"/>
+					<value name="SHADOW_MAPPING_25UM"	doc="Shadows are computed using shadow mapping algorithm pcf using twenty five uniform samples"/>
+					<value name="SHADOW_MAPPING_36U"	doc="Shadows are computed using shadow mapping algorithm pcf using thirty six uniform samples"/>
+					<value name="SHADOW_MAPPING_36UM"	doc="Shadows are computed using shadow mapping algorithm pcf using thirty six uniform samples"/>
+					<value name="SHADOW_MAPPING_64U"	doc="Shadows are computed using shadow mapping algorithm pcf using sixty four uniform samples"/>
+					<value name="SHADOW_MAPPING_64UM"	doc="Shadows are computed using shadow mapping algorithm pcf using sixty four uniform samples"/>
+					<value name="SHADOW_MAPPING_144U"	doc="Shadows are computed using shadow mapping algorithm pcf using 144 uniform samples"/>
+					<value name="SHADOW_MAPPING_144UM"	doc="Shadows are computed using shadow mapping algorithm pcf using 144 uniform samples"/>
+					<value name="SHADOW_MAPPING_225U"	doc="Shadows are computed using shadow mapping algorithm pcf using 225 uniform samples"/>
+					<value name="SHADOW_MAPPING_225UM"	doc="Shadows are computed using shadow mapping algorithm pcf using 225 uniform samples"/>
+					<value name="SHADOW_MAPPING_256U"	doc="Shadows are computed using shadow mapping algorithm pcf using 256 uniform samples"/>
+					<value name="SHADOW_MAPPING_256UM"	doc="Shadows are computed using shadow mapping algorithm pcf using 256 uniform samples"/>
 					<!-- @todo custom -->
 				</enum>
 			</type>
