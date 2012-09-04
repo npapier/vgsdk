@@ -5,8 +5,8 @@ Introduction
 
 The version number of vgSDK could be found in file VERSION.
 vgSDK, the shortcut for Versatile Graphical Software Development Kit, is a library to do graphical jobs.
-For more information on this library, see the subdirectory doc or the online documentation available at 
-http://download.gna.org/vgsdk/documentation/XXX/html/(replace XXX with the version number found in file VERSION).
+For more information on this library, see the links to online documentation available at 
+http://code.google.com/p/vgsdk/ or the subdirectory doc.
 
 The NEWS file tersely lists features that are new in this release.
 
@@ -20,8 +20,7 @@ If we've forgotten you in the above list, please contact us!
 
 This library is free software. You can redistribute it and/or modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation, either version 2.1 of the License, or any later version.
-For more information, see the file COPYING and COPYING.LESSER.
-See LICENSE_webgl-noise too.
+For more information, see the file COPYING, COPYING.LESSER and webgl-noise too (in license sub-directory)
 
 See file INSTALL for an explanation of the installation procedure.
 To compile vgSDK, see doxygen documentation.
@@ -30,8 +29,6 @@ Reporting Bugs
 ==============
 
 Visit our project page at http://code.google.com/p/vgsdk/
-Visit our Gna! project page at http://gna.org/projects/vgsdk
-
 
 Enjoy!
 Nicolas Papier
