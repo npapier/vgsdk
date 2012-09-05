@@ -22,15 +22,9 @@
 
 #include "vgQt/vgQt.hpp"
 
-namespace vgUI {
-    struct Canvas;
-}
+namespace vgUI { struct Canvas; }
+namespace vgQt { namespace engine { class ShadersEditor; } }
 
-namespace vgQt {
-	namespace engine {
-		struct ShadersEditor;
-	}
-}
 
 namespace vgQt
 {
