@@ -1,8 +1,9 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Bryan Schuller
+// Author Nicolas Papier
 
 #include "vgsdkViewerQt/MainWindow.hpp"
 #include "vgsdkViewerQt/MyCanvas.hpp"
@@ -24,6 +25,8 @@
 #include <QUrl>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QSettings>
+
 
 namespace vgsdkViewerQt
 {
@@ -62,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	// The toolbar
 	m_toolBar = addToolBar("Toolbar");
+	m_toolBar->setObjectName( "vgsdkViewerQt.Toolbar" );
 	m_toolBar->setMovable(false);
 	m_toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
@@ -171,7 +175,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionOpen, SIGNAL(triggered()), this, SLOT(fileOpen()));
 	connect(actionAdd, SIGNAL(triggered()), this, SLOT(addFile()));
 	connect(actionReload, SIGNAL(triggered()), this, SLOT(fileReload()));
-	connect(actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
+	connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
 	// View Menu
 	connect(m_actionProperties, SIGNAL(triggered()), this, SLOT(showHideProperties()));
@@ -204,48 +208,38 @@ MainWindow::MainWindow(QWidget *parent)
 	addDockWidget(Qt::LeftDockWidgetArea, m_properties);
 
 	connect(m_properties, SIGNAL(visibilityChanged()), this, SLOT(onPropertiesVisibilityChanged()));
+
+	readSettings();
 }
 
-void MainWindow::fileOpen()
+
+void MainWindow::showFullScreen()
 {
-	loadFile(true);
+	menuBar()->setVisible(false);
+	m_toolBar->setVisible(false);
+	QMainWindow::showFullScreen();
 }
 
-void MainWindow::addFile()
+void MainWindow::showNormal()
 {
-	loadFile(false);
+	menuBar()->setVisible(true);
+	m_toolBar->setVisible(true);
+	QMainWindow::showNormal();
 }
 
-void MainWindow::loadFile(bool clearScene)
-{
-	vgTrian::Loader loader; // @todo must be here to be registered in LoaderRegistry
-	vgObj::Loader loader2; // This is only to force the register of obj loader
 
-	QStringList file = QFileDialog::getOpenFileNames(
-							this,
-							"Choose file(s)",
-							"",
-				"All supported files (*.trian *.trian2 *.trian2.crypt *.dae *.dae.crypt *.obj *.vgarch);;Trian files (*.trian, *.trian2, *.trian2.crypt);;All collada files (*.dae, *.dae.crypt);;Wavefront objects (*.obj);;Vgsdk compressed files (*.vgarch)");
-	if(file.size() > 0)
+vgQt::engine::UserSettingsDialog * MainWindow::getRenderSettingsDialog()
+{
+	if( !m_renderSettingsDialog )
 	{
-		// Clears the canvas if requested.
-		if( clearScene )
-		{
-			m_canvas->clearScene();
-		}
-
-		Q_FOREACH(QString fileName, file)
-		{
-			bool success = false;
-			success = m_canvas->appendToScene( fileName );
-			if (success)
-			{
-				// We add it in the recent file history
-				addFileInHistory(fileName);
-			}
-		}
+		m_renderSettingsDialog = new vgQt::engine::UserSettingsDialog(this);
+		m_renderSettingsDialog->set( vgd::makeShp(new vge::engine::UserSettings(*m_canvas)) );
+		connect( m_renderSettingsDialog, SIGNAL(changed()), this, SLOT(renderSettingsChanged()) );
 	}
+
+	return m_renderSettingsDialog;
 }
+
 
 void MainWindow::fileNew()
 {
@@ -262,6 +256,19 @@ void MainWindow::fileNew()
 	}
 }
 
+
+void MainWindow::fileOpen()
+{
+	loadFile(true);
+}
+
+
+void MainWindow::addFile()
+{
+	loadFile(false);
+}
+
+
 void MainWindow::fileReload()
 {
 	if ( !m_canvas->isEmpty() )
@@ -271,11 +278,19 @@ void MainWindow::fileReload()
 	}
 }
 
+
+void MainWindow::showHideProperties()
+{
+	m_properties->isVisible() ? m_properties->setVisible(false) : m_properties->setVisible(true);
+}
+
+
 void MainWindow::viewAll()
 {
 	m_canvas->viewAll();
 	m_canvas->refresh();
 }
+
 
 void MainWindow::fullscreen()
 {
@@ -286,19 +301,29 @@ void MainWindow::fullscreen()
 	isFullscreen ? showNormal() : showFullScreen();
 }
 
-void MainWindow::showFullScreen()
+
+void MainWindow::setResolution()
 {
-	menuBar()->setVisible(false);
-	m_toolBar->setVisible(false);
-	QMainWindow::showFullScreen();
+	vgQt::ResolutionDialog*	dialog = new vgQt::ResolutionDialog( this );
+	dialog->exec();
 }
 
-void MainWindow::showNormal()
+
+void MainWindow::onSingleView()
 {
-	menuBar()->setVisible(true);
-	m_toolBar->setVisible(true);
-	QMainWindow::showNormal();
+	m_canvas->setViewMode(MyCanvas::SINGLE_VIEW);
 }
+
+void MainWindow::onLeftSidedViews()
+{
+	m_canvas->setViewMode(MyCanvas::LEFT_SIDED_VIEWS);
+}
+
+void MainWindow::onFourViews()
+{
+	m_canvas->setViewMode(MyCanvas::SQUARED_VIEWS);
+}
+
 
 void MainWindow::settingManipulationBinding()
 {
@@ -319,17 +344,6 @@ void MainWindow::settingManipulationBinding()
 	}
 }
 
-vgQt::engine::UserSettingsDialog * MainWindow::getRenderSettingsDialog()
-{
-	if( !m_renderSettingsDialog )
-	{
-		m_renderSettingsDialog = new vgQt::engine::UserSettingsDialog(this);
-		m_renderSettingsDialog->set( vgd::makeShp(new vge::engine::UserSettings(*m_canvas)) );
-		connect( m_renderSettingsDialog, SIGNAL(changed()), this, SLOT(renderSettingsChanged()) );
-	}
-
-	return m_renderSettingsDialog;
-}
 
 void MainWindow::renderSettings()
 {
@@ -344,36 +358,6 @@ void MainWindow::renderSettingsChanged()
 	m_canvas->refresh();
 }
 
-void MainWindow::setResolution()
-{
-	vgQt::ResolutionDialog*	dialog = new vgQt::ResolutionDialog( this );
-	dialog->exec();
-}
-
-void MainWindow::showHideProperties()
-{
-	m_properties->isVisible() ? m_properties->setVisible(false) : m_properties->setVisible(true);
-}
-
-void MainWindow::onPropertiesVisibilityChanged()
-{
-	m_properties->isVisible() ? m_actionProperties->setChecked(true) : m_actionProperties->setChecked(false);
-}
-
-void MainWindow::onSingleView()
-{
-	m_canvas->setViewMode(MyCanvas::SINGLE_VIEW);
-}
-
-void MainWindow::onLeftSidedViews()
-{
-	m_canvas->setViewMode(MyCanvas::LEFT_SIDED_VIEWS);
-}
-
-void MainWindow::onFourViews()
-{
-	m_canvas->setViewMode(MyCanvas::SQUARED_VIEWS);
-}
 
 void MainWindow::helpAbout()
 {
@@ -396,19 +380,19 @@ void MainWindow::helpAbout()
 	aboutDialog->exec();
 }
 
+
+
+void MainWindow::onPropertiesVisibilityChanged()
+{
+	m_properties->isVisible() ? m_actionProperties->setChecked(true) : m_actionProperties->setChecked(false);
+}
+
+
 void MainWindow::onHistoryClicked()
 {
 	QAction* action = (QAction*) sender();
 
-	QMessageBox* dialog = new QMessageBox();
-	dialog->setText("Clear scene prior loading new files ?");
-	dialog->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	dialog->setDefaultButton(QMessageBox::No);
-
-	if(dialog->exec() == QMessageBox::Yes)
-	{
-		m_canvas->clearScene();
-	}
+	m_canvas->clearScene();
 
 	m_canvas->appendToScene(action->text(), false);
 	addFileInHistory(action->text());
@@ -450,10 +434,53 @@ void MainWindow::dropEvent(QDropEvent *event)
 	}
 }
 
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+	writeSettings();
+
+	m_properties->getShaderEditor()->close();
+	QMainWindow::closeEvent(event);
+}
+
+
+void MainWindow::loadFile(bool clearScene)
+{
+	vgTrian::Loader loader; // @todo must be here to be registered in LoaderRegistry
+	vgObj::Loader loader2; // This is only to force the register of obj loader
+
+	QStringList file = QFileDialog::getOpenFileNames(
+							this,
+							"Choose file(s)",
+							"",
+				"All supported files (*.trian *.trian2 *.trian2.crypt *.dae *.dae.crypt *.obj *.vgarch);;Trian files (*.trian, *.trian2, *.trian2.crypt);;All collada files (*.dae, *.dae.crypt);;Wavefront objects (*.obj);;Vgsdk compressed files (*.vgarch)");
+	if(file.size() > 0)
+	{
+		// Clears the canvas if requested.
+		if( clearScene )
+		{
+			m_canvas->clearScene();
+		}
+
+		Q_FOREACH(QString fileName, file)
+		{
+			bool success = false;
+			success = m_canvas->appendToScene( fileName );
+			if (success)
+			{
+				// We add it in the recent file history
+				addFileInHistory(fileName);
+			}
+		}
+	}
+}
+
+
 void MainWindow::addFileInHistory(QString filename)
 {
 	filename.replace("\\","/");
 
+	// Removes any action named filename or "Empty"
 	Q_FOREACH(QAction* action, m_recentFileMenu->actions())
 	{
 		if (action->text() == filename || action->text() == "Empty")
@@ -462,14 +489,15 @@ void MainWindow::addFileInHistory(QString filename)
 		}
 	}
 
-	// Max 10 files in the history
-	if(m_recentFileMenu->actions().size() == 10)
+	// maxRecentScenes files in the history
+	if(m_recentFileMenu->actions().size() == maxRecentScenes)
 	{
 		m_recentFileMenu->removeAction(m_recentFileMenu->actions().last());
 	}
 
+	// New action for filename
 	QAction* action = new QAction(filename, m_recentFileMenu);
-	if(m_recentFileMenu->actions().size() > 0)
+	if ( m_recentFileMenu->actions().size() > 0 )
 	{
 		m_recentFileMenu->insertAction(m_recentFileMenu->actions().first(), action);
 	}
@@ -480,9 +508,41 @@ void MainWindow::addFileInHistory(QString filename)
 	connect(action, SIGNAL(triggered()), this, SLOT(onHistoryClicked()));
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+
+void MainWindow::readSettings()
 {
-	m_properties->getShaderEditor()->close();
+    QSettings settings("vgsdk", "vgsdkViewerQt");
+
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("state").toByteArray());
+
+	// Path of the recent scenes
+	QStringList recentScenes = settings.value("recentScenes").toStringList();
+	Q_FOREACH(QString filename, recentScenes)
+	{
+		addFileInHistory(filename);
+	}
 }
+
+
+void MainWindow::writeSettings()
+{
+    QSettings settings("vgsdk", "vgsdkViewerQt");
+
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("state", saveState());
+
+	//
+	QStringList recentScenes;
+	Q_FOREACH(QAction* action, m_recentFileMenu->actions())
+	{
+		if (action->text() != "Empty")
+		{
+			recentScenes << action->text();
+		}
+	}
+    settings.setValue("recentScenes", recentScenes);
+}
+
 
 } // namespace vgsdkViewerQt
