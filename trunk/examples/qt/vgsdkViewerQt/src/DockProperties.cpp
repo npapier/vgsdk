@@ -14,6 +14,7 @@ DockProperties::DockProperties(QWidget *parent)
     : QDockWidget( "Properties", parent ),
       m_notebook( new vgQt::Notebook(this) )
 {
+	setObjectName( "vgsdkViewerQt.Properties" );
     setAllowedAreas(Qt::LeftDockWidgetArea);
     setFeatures(QDockWidget::DockWidgetClosable);
     setWidget(m_notebook);
