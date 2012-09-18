@@ -81,13 +81,13 @@ DepthOfField::DepthOfField( const std::string nodeName ) :
 void DepthOfField::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setFocusToFar( 1.f );
-	setFarMaximumBlurriness( 0.5f );
-	setFocus( 0.f );
-	setSampling( 8 );
-	setFocusToNear( 1.f );
-	setNearMaximumBlurriness( 0.5f );
-	setCameraModel( THIN_LENS );
+	setFocusToFar( (1.f) );
+	setFarMaximumBlurriness( (0.5f) );
+	setFocus( (0.f) );
+	setSampling( (8) );
+	setFocusToNear( (1.f) );
+	setNearMaximumBlurriness( (0.5f) );
+	setCameraModel( (THIN_LENS) );
 }
 
 
@@ -100,6 +100,11 @@ void DepthOfField::setOptionalsToDefaults()
 
 
 // FocusToFar
+
+const DepthOfField::FocusToFarValueType DepthOfField::DEFAULT_FOCUSTOFAR = (1.f);
+
+
+
 const DepthOfField::FocusToFarValueType DepthOfField::getFocusToFar() const
 {
 	return getFieldRO<FFocusToFarType>(getFFocusToFar())->getValue();
@@ -115,6 +120,11 @@ void DepthOfField::setFocusToFar( const FocusToFarValueType value )
 
 
 // FarMaximumBlurriness
+
+const DepthOfField::FarMaximumBlurrinessValueType DepthOfField::DEFAULT_FARMAXIMUMBLURRINESS = (0.5f);
+
+
+
 const DepthOfField::FarMaximumBlurrinessValueType DepthOfField::getFarMaximumBlurriness() const
 {
 	return getFieldRO<FFarMaximumBlurrinessType>(getFFarMaximumBlurriness())->getValue();
@@ -130,6 +140,11 @@ void DepthOfField::setFarMaximumBlurriness( const FarMaximumBlurrinessValueType 
 
 
 // Focus
+
+const DepthOfField::FocusValueType DepthOfField::DEFAULT_FOCUS = (0.f);
+
+
+
 const DepthOfField::FocusValueType DepthOfField::getFocus() const
 {
 	return getFieldRO<FFocusType>(getFFocus())->getValue();
@@ -145,6 +160,11 @@ void DepthOfField::setFocus( const FocusValueType value )
 
 
 // Sampling
+
+const DepthOfField::SamplingValueType DepthOfField::DEFAULT_SAMPLING = (8);
+
+
+
 const DepthOfField::SamplingValueType DepthOfField::getSampling() const
 {
 	return getFieldRO<FSamplingType>(getFSampling())->getValue();
@@ -160,6 +180,11 @@ void DepthOfField::setSampling( const SamplingValueType value )
 
 
 // FocusToNear
+
+const DepthOfField::FocusToNearValueType DepthOfField::DEFAULT_FOCUSTONEAR = (1.f);
+
+
+
 const DepthOfField::FocusToNearValueType DepthOfField::getFocusToNear() const
 {
 	return getFieldRO<FFocusToNearType>(getFFocusToNear())->getValue();
@@ -175,6 +200,11 @@ void DepthOfField::setFocusToNear( const FocusToNearValueType value )
 
 
 // NearMaximumBlurriness
+
+const DepthOfField::NearMaximumBlurrinessValueType DepthOfField::DEFAULT_NEARMAXIMUMBLURRINESS = (0.5f);
+
+
+
 const DepthOfField::NearMaximumBlurrinessValueType DepthOfField::getNearMaximumBlurriness() const
 {
 	return getFieldRO<FNearMaximumBlurrinessType>(getFNearMaximumBlurriness())->getValue();
@@ -190,6 +220,7 @@ void DepthOfField::setNearMaximumBlurriness( const NearMaximumBlurrinessValueTyp
 
 
 // CameraModel
+
 const DepthOfField::CameraModelValueType DepthOfField::getCameraModel() const
 {
 	return getFieldRO<FCameraModelType>(getFCameraModel())->getValue();

@@ -8,6 +8,7 @@
 
 #include "vgd/field/Bool.hpp"
 #include "vgd/field/Enum.hpp"
+#include "vgd/field/Float.hpp"
 #include "vgd/field/IImageShp.hpp"
 #include "vgd/field/String.hpp"
 #include "vgd/node/MultiAttribute.hpp"
@@ -28,28 +29,31 @@ namespace node
  * This node defines texture parameters (wrapping, filter for minifying and magnification, mipmapping and function). Be carefull, data referenced by image must be available when texture is update. This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface) @remarks When The scene graph is evaluated by vgeGL, there are a size constraint one texture that you should keep in mind.\n When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage(to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n - Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping.\n - GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping.\n - GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce 8 could do  8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n @remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n @todo More docs\n 
  *
  * New fields defined by this node :
- * - OFString \c [fragmentFunction] = empty<br>
+ * - OFFloat \c [maxAnisotropy] = (1.f)<br>
+ *   Specifies the maximum degree of anisotropy. If not defined the value returned by Engine::getDefaultMaxAnisotropy() is used.<br>
+ *<br>
+ * - OFString \c [fragmentFunction] = std::string()<br>
  *   Fragment texturing function.<br>
  *<br>
- * - PAFEnum \c wrap = REPEAT<br>
+ * - PAFEnum \c wrap = (REPEAT)<br>
  *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
  *<br>
- * - OFIImageShp \c [image] = empty<br>
+ * - OFIImageShp \c [image] = vgd::basic::IImageShp()<br>
  *   Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
  *<br>
- * - OFBool \c [mipmap] = false<br>
+ * - OFBool \c [mipmap] = (false)<br>
  *   Specifies if all levels of a mipmap array should be automatically updated when any modification to the image field (the base level of mipmap) is done.<br>
  *<br>
- * - PAFEnum \c filter = LINEAR<br>
+ * - PAFEnum \c filter = (LINEAR)<br>
  *   The texture minifying function (MIN_FILTER) is used whenever the pixel being textured maps to an area greater than one texture element. The texture magnification function (MAG_FILTER) is used when the pixel being textured maps to an area less than or equal to one texture element.<br>
  *<br>
- * - OFString \c [vertexFunction] = empty<br>
+ * - OFString \c [vertexFunction] = std::string()<br>
  *   Vertex texturing function.<br>
  *<br>
- * - SFEnum \c internalFormat = AUTOMATIC<br>
+ * - SFEnum \c internalFormat = (AUTOMATIC)<br>
  *   Specifies the desired internal format used by the GPU.<br>
  *<br>
- * - SFEnum \c usage = IMAGE<br>
+ * - SFEnum \c usage = (IMAGE)<br>
  *   Indicating the expected usage pattern of the texture.<br>
  *<br>
  *
@@ -57,6 +61,50 @@ namespace node
  */
 struct VGD_API Texture : public vgd::node::MultiAttribute
 {
+
+
+
+	/**
+	 * @name Accessors to field maxAnisotropy
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c maxAnisotropy.
+	 */
+	typedef float MaxAnisotropyValueType;
+
+	/**
+	 * @brief The default value of field named \c maxAnisotropy.
+	 */
+	static const MaxAnisotropyValueType DEFAULT_MAXANISOTROPY;
+
+	/**
+	 * @brief Type definition of the field named \c maxAnisotropy
+	 */
+	typedef vgd::field::TOptionalField< MaxAnisotropyValueType > FMaxAnisotropyType;
+
+
+	/**
+	 * @brief Gets the value of field named \c maxAnisotropy.
+	 */
+	const bool getMaxAnisotropy( MaxAnisotropyValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c maxAnisotropy.
+ 	 */
+	void setMaxAnisotropy( const MaxAnisotropyValueType& value );
+
+	/**
+	 * @brief Erases the field named \c maxAnisotropy.
+	 */
+	void eraseMaxAnisotropy();
+
+	/**
+	 * @brief Tests if the value of field named \c maxAnisotropy has been initialized.
+	 */
+	const bool hasMaxAnisotropy() const;
+	//@}
 
 
 
@@ -69,6 +117,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c fragmentFunction.
 	 */
 	typedef std::string FragmentFunctionValueType;
+
+	/**
+	 * @brief The default value of field named \c fragmentFunction.
+	 */
+	static const FragmentFunctionValueType DEFAULT_FRAGMENTFUNCTION;
 
 	/**
 	 * @brief Type definition of the field named \c fragmentFunction
@@ -112,9 +165,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		WRAP_T = 421,	///< 
-		WRAP_S = 420,	///< 
-		WRAP_R = 422,	///< 
+		WRAP_T = 427,	///< 
+		WRAP_S = 426,	///< 
+		WRAP_R = 428,	///< 
 		DEFAULT_WRAPPARAMETER = WRAP_S	///< 
 	};
 
@@ -142,9 +195,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 420 );
-			retVal.push_back( 421 );
-			retVal.push_back( 422 );
+			retVal.push_back( 426 );
+			retVal.push_back( 427 );
+			retVal.push_back( 428 );
 
 			return retVal;
 		}
@@ -166,12 +219,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		CLAMP = 424,	///< 
-		REPEAT = 423,	///< 
-		MIRRORED_REPEAT = 427,	///< 
-		CLAMP_TO_EDGE = 425,	///< 
-		CLAMP_TO_BORDER = 426,	///< 
-		ONCE = 428,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
+		CLAMP = 430,	///< 
+		REPEAT = 429,	///< 
+		MIRRORED_REPEAT = 433,	///< 
+		CLAMP_TO_EDGE = 431,	///< 
+		CLAMP_TO_BORDER = 432,	///< 
+		ONCE = 434,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
 		DEFAULT_WRAP = REPEAT	///< 
 	};
 
@@ -199,12 +252,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 423 );
-			retVal.push_back( 424 );
-			retVal.push_back( 425 );
-			retVal.push_back( 426 );
-			retVal.push_back( 427 );
-			retVal.push_back( 428 );
+			retVal.push_back( 429 );
+			retVal.push_back( 430 );
+			retVal.push_back( 431 );
+			retVal.push_back( 432 );
+			retVal.push_back( 433 );
+			retVal.push_back( 434 );
 
 			return retVal;
 		}
@@ -259,6 +312,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	typedef vgd::basic::IImageShp ImageValueType;
 
 	/**
+	 * @brief The default value of field named \c image.
+	 */
+	static const ImageValueType DEFAULT_IMAGE;
+
+	/**
 	 * @brief Type definition of the field named \c image
 	 */
 	typedef vgd::field::TOptionalField< ImageValueType > FImageType;
@@ -296,6 +354,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c mipmap.
 	 */
 	typedef bool MipmapValueType;
+
+	/**
+	 * @brief The default value of field named \c mipmap.
+	 */
+	static const MipmapValueType DEFAULT_MIPMAP;
 
 	/**
 	 * @brief Type definition of the field named \c mipmap
@@ -339,8 +402,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		MIN_FILTER = 429,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
-		MAG_FILTER = 430,	///< Choose one value among NEAREST or LINEAR (default).
+		MIN_FILTER = 435,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
+		MAG_FILTER = 436,	///< Choose one value among NEAREST or LINEAR (default).
 		DEFAULT_FILTERPARAMETER = MAG_FILTER	///< Choose one value among NEAREST or LINEAR (default).
 	};
 
@@ -368,8 +431,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 429 );
-			retVal.push_back( 430 );
+			retVal.push_back( 435 );
+			retVal.push_back( 436 );
 
 			return retVal;
 		}
@@ -390,12 +453,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		NEAREST = 431,	///< 
-		LINEAR = 432,	///< 
-		LINEAR_MIPMAP_NEAREST = 434,	///< 
-		NEAREST_MIPMAP_NEAREST = 433,	///< 
-		LINEAR_MIPMAP_LINEAR = 436,	///< 
-		NEAREST_MIPMAP_LINEAR = 435,	///< 
+		NEAREST = 437,	///< 
+		LINEAR = 438,	///< 
+		LINEAR_MIPMAP_NEAREST = 440,	///< 
+		NEAREST_MIPMAP_NEAREST = 439,	///< 
+		LINEAR_MIPMAP_LINEAR = 442,	///< 
+		NEAREST_MIPMAP_LINEAR = 441,	///< 
 		DEFAULT_FILTER = LINEAR	///< 
 	};
 
@@ -423,12 +486,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 431 );
-			retVal.push_back( 432 );
-			retVal.push_back( 433 );
-			retVal.push_back( 434 );
-			retVal.push_back( 435 );
-			retVal.push_back( 436 );
+			retVal.push_back( 437 );
+			retVal.push_back( 438 );
+			retVal.push_back( 439 );
+			retVal.push_back( 440 );
+			retVal.push_back( 441 );
+			retVal.push_back( 442 );
 
 			return retVal;
 		}
@@ -483,6 +546,11 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	typedef std::string VertexFunctionValueType;
 
 	/**
+	 * @brief The default value of field named \c vertexFunction.
+	 */
+	static const VertexFunctionValueType DEFAULT_VERTEXFUNCTION;
+
+	/**
 	 * @brief Type definition of the field named \c vertexFunction
 	 */
 	typedef vgd::field::TOptionalField< VertexFunctionValueType > FVertexFunctionType;
@@ -521,19 +589,19 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		DEPTH_COMPONENT_16 = 408,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
-		RGB_32F = 413,	///< A three component buffer. A 32-bit float is used to encode a texel.
-		LUMINANCE_ALPHA_32F = 419,	///< A two component buffer. A 32-bit float is used to encode a texel.
-		LUMINANCE_16F = 416,	///< A single component buffer. A 16-bit float is used to encode a texel.
-		LUMINANCE_32F = 417,	///< A single component buffer. A 32-bit float is used to encode a texel.
-		RGBA_32F = 415,	///< A four component buffer. A 32-bit float is used to encode a texel.
-		DEPTH_COMPONENT_32F = 411,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
-		RGBA_16F = 414,	///< A four component buffer. A 16-bit float is used to encode a texel.
-		LUMINANCE_ALPHA_16F = 418,	///< A two component buffer. A 16-bit float is used to encode a texel.
-		DEPTH_COMPONENT_24 = 409,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
-		AUTOMATIC = 407,	///< Choosed automatically an internal format matching the image format used by the texture.
-		RGB_16F = 412,	///< A three component buffer. A 16-bit float is used to encode a texel.
-		DEPTH_COMPONENT_32 = 410,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
+		DEPTH_COMPONENT_16 = 414,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
+		RGB_32F = 419,	///< A three component buffer. A 32-bit float is used to encode a texel.
+		LUMINANCE_ALPHA_32F = 425,	///< A two component buffer. A 32-bit float is used to encode a texel.
+		LUMINANCE_16F = 422,	///< A single component buffer. A 16-bit float is used to encode a texel.
+		LUMINANCE_32F = 423,	///< A single component buffer. A 32-bit float is used to encode a texel.
+		RGBA_32F = 421,	///< A four component buffer. A 32-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32F = 417,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
+		RGBA_16F = 420,	///< A four component buffer. A 16-bit float is used to encode a texel.
+		LUMINANCE_ALPHA_16F = 424,	///< A two component buffer. A 16-bit float is used to encode a texel.
+		DEPTH_COMPONENT_24 = 415,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
+		AUTOMATIC = 413,	///< Choosed automatically an internal format matching the image format used by the texture.
+		RGB_16F = 418,	///< A three component buffer. A 16-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32 = 416,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
 		DEFAULT_INTERNALFORMAT = AUTOMATIC	///< Choosed automatically an internal format matching the image format used by the texture.
 	};
 
@@ -561,12 +629,6 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 407 );
-			retVal.push_back( 408 );
-			retVal.push_back( 409 );
-			retVal.push_back( 410 );
-			retVal.push_back( 411 );
-			retVal.push_back( 412 );
 			retVal.push_back( 413 );
 			retVal.push_back( 414 );
 			retVal.push_back( 415 );
@@ -574,6 +636,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 			retVal.push_back( 417 );
 			retVal.push_back( 418 );
 			retVal.push_back( 419 );
+			retVal.push_back( 420 );
+			retVal.push_back( 421 );
+			retVal.push_back( 422 );
+			retVal.push_back( 423 );
+			retVal.push_back( 424 );
+			retVal.push_back( 425 );
 
 			return retVal;
 		}
@@ -630,8 +698,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		IMAGE = 405,	///< Simple image mapping
-		SHADOW = 406,	///< Shadow mapping
+		IMAGE = 411,	///< Simple image mapping
+		SHADOW = 412,	///< Shadow mapping
 		DEFAULT_USAGE = IMAGE	///< Simple image mapping
 	};
 
@@ -659,8 +727,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 405 );
-			retVal.push_back( 406 );
+			retVal.push_back( 411 );
+			retVal.push_back( 412 );
 
 			return retVal;
 		}
@@ -700,6 +768,13 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c maxAnisotropy.
+	 *
+	 * @return the name of field \c maxAnisotropy.
+	 */
+	static const std::string getFMaxAnisotropy( void );
 
 	/**
 	 * @brief Returns the name of field \c fragmentFunction.

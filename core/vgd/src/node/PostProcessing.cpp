@@ -70,12 +70,13 @@ PostProcessing::PostProcessing( const std::string nodeName ) :
 	addField( new FFilterType(getFFilter()) );
 	addField( new FParam4f1Type(getFParam4f1()) );
 	addField( new FTexture0Type(getFTexture0()) );
-	addField( new FParam4x4f0Type(getFParam4x4f0()) );
+	addField( new FInput0SamplingType(getFInput0Sampling()) );
 	addField( new FCustomFilterApplyType(getFCustomFilterApply()) );
 	addField( new FOutputType(getFOutput()) );
 	addField( new FParam1f0Type(getFParam1f0()) );
 	addField( new FParam1f1Type(getFParam1f1()) );
 	addField( new FParam4f0Type(getFParam4f0()) );
+	addField( new FParam4x4f0Type(getFParam4x4f0()) );
 
 	// Sets link(s)
 
@@ -87,13 +88,14 @@ PostProcessing::PostProcessing( const std::string nodeName ) :
 void PostProcessing::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setInput2( INPUT2_NONE );
-	setInput0( PREVIOUS0 );
-	setInput1( INPUT1_NONE );
-
-	setFilter( NO_FILTER );
-
-	setOutput( OUTPUT_TMP0 );
+	setInput2( (INPUT2_NONE) );
+	setInput0( (PREVIOUS0) );
+	setInput1( (INPUT1_NONE) );
+	setCustomFilterDefinition( std::string() );
+	setFilter( (NO_FILTER) );
+	setInput0Sampling( (INPUT0SAMPLING_NONE) );
+	setCustomFilterApply( std::string() );
+	setOutput( (OUTPUT_TMP0) );
 }
 
 
@@ -102,16 +104,17 @@ void PostProcessing::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
 	setParam4f1( vgm::Vec4f(0.0, 0.0, 0.0, 0.0) );
-
-	setParam4x4f0( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
-	setParam1f0( 0.0 );
-	setParam1f1( 0.0 );
+	setTexture0( vgd::node::NodeWkp() );
+	setParam1f0( (0.0) );
+	setParam1f1( (0.0) );
 	setParam4f0( vgm::Vec4f(0.0, 0.0, 0.0, 0.0) );
+	setParam4x4f0( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 }
 
 
 
 // Input2
+
 const PostProcessing::Input2ValueType PostProcessing::getInput2() const
 {
 	return getFieldRO<FInput2Type>(getFInput2())->getValue();
@@ -127,6 +130,7 @@ void PostProcessing::setInput2( const Input2ValueType value )
 
 
 // Input0
+
 const PostProcessing::Input0ValueType PostProcessing::getInput0() const
 {
 	return getFieldRO<FInput0Type>(getFInput0())->getValue();
@@ -142,6 +146,7 @@ void PostProcessing::setInput0( const Input0ValueType value )
 
 
 // Input1
+
 const PostProcessing::Input1ValueType PostProcessing::getInput1() const
 {
 	return getFieldRO<FInput1Type>(getFInput1())->getValue();
@@ -157,6 +162,11 @@ void PostProcessing::setInput1( const Input1ValueType value )
 
 
 // CustomFilterDefinition
+
+const PostProcessing::CustomFilterDefinitionValueType PostProcessing::DEFAULT_CUSTOMFILTERDEFINITION = std::string();
+
+
+
 const PostProcessing::CustomFilterDefinitionValueType PostProcessing::getCustomFilterDefinition() const
 {
 	return getFieldRO<FCustomFilterDefinitionType>(getFCustomFilterDefinition())->getValue();
@@ -172,6 +182,7 @@ void PostProcessing::setCustomFilterDefinition( const CustomFilterDefinitionValu
 
 
 // Filter
+
 const PostProcessing::FilterValueType PostProcessing::getFilter() const
 {
 	return getFieldRO<FFilterType>(getFFilter())->getValue();
@@ -187,6 +198,11 @@ void PostProcessing::setFilter( const FilterValueType value )
 
 
 // Param4f1
+
+const PostProcessing::Param4f1ValueType PostProcessing::DEFAULT_PARAM4F1 = vgm::Vec4f(0.0, 0.0, 0.0, 0.0);
+
+
+
 const bool PostProcessing::getParam4f1( Param4f1ValueType& value ) const
 {
 	return getFieldRO<FParam4f1Type>(getFParam4f1())->getValue( value );
@@ -215,6 +231,11 @@ const bool PostProcessing::hasParam4f1() const
 
 
 // Texture0
+
+const PostProcessing::Texture0ValueType PostProcessing::DEFAULT_TEXTURE0 = vgd::node::NodeWkp();
+
+
+
 const bool PostProcessing::getTexture0( Texture0ValueType& value ) const
 {
 	return getFieldRO<FTexture0Type>(getFTexture0())->getValue( value );
@@ -242,35 +263,28 @@ const bool PostProcessing::hasTexture0() const
 
 
 
-// Param4x4f0
-const bool PostProcessing::getParam4x4f0( Param4x4f0ValueType& value ) const
+// Input0Sampling
+
+const PostProcessing::Input0SamplingValueType PostProcessing::getInput0Sampling() const
 {
-	return getFieldRO<FParam4x4f0Type>(getFParam4x4f0())->getValue( value );
+	return getFieldRO<FInput0SamplingType>(getFInput0Sampling())->getValue();
 }
 
 
 
-void PostProcessing::setParam4x4f0( const Param4x4f0ValueType& value )
+void PostProcessing::setInput0Sampling( const Input0SamplingValueType value )
 {
-	getFieldRW<FParam4x4f0Type>(getFParam4x4f0())->setValue( value );
-}
-
-
-
-void PostProcessing::eraseParam4x4f0()
-{
-	getFieldRW<FParam4x4f0Type>(getFParam4x4f0())->eraseValue();
-}
-
-
-const bool PostProcessing::hasParam4x4f0() const
-{
-	return getFieldRO<FParam4x4f0Type>(getFParam4x4f0())->hasValue();
+	getFieldRW<FInput0SamplingType>(getFInput0Sampling())->setValue( value );
 }
 
 
 
 // CustomFilterApply
+
+const PostProcessing::CustomFilterApplyValueType PostProcessing::DEFAULT_CUSTOMFILTERAPPLY = std::string();
+
+
+
 const PostProcessing::CustomFilterApplyValueType PostProcessing::getCustomFilterApply() const
 {
 	return getFieldRO<FCustomFilterApplyType>(getFCustomFilterApply())->getValue();
@@ -286,6 +300,7 @@ void PostProcessing::setCustomFilterApply( const CustomFilterApplyValueType valu
 
 
 // Output
+
 const PostProcessing::OutputValueType PostProcessing::getOutput() const
 {
 	return getFieldRO<FOutputType>(getFOutput())->getValue();
@@ -301,6 +316,11 @@ void PostProcessing::setOutput( const OutputValueType value )
 
 
 // Param1f0
+
+const PostProcessing::Param1f0ValueType PostProcessing::DEFAULT_PARAM1F0 = (0.0);
+
+
+
 const bool PostProcessing::getParam1f0( Param1f0ValueType& value ) const
 {
 	return getFieldRO<FParam1f0Type>(getFParam1f0())->getValue( value );
@@ -329,6 +349,11 @@ const bool PostProcessing::hasParam1f0() const
 
 
 // Param1f1
+
+const PostProcessing::Param1f1ValueType PostProcessing::DEFAULT_PARAM1F1 = (0.0);
+
+
+
 const bool PostProcessing::getParam1f1( Param1f1ValueType& value ) const
 {
 	return getFieldRO<FParam1f1Type>(getFParam1f1())->getValue( value );
@@ -357,6 +382,11 @@ const bool PostProcessing::hasParam1f1() const
 
 
 // Param4f0
+
+const PostProcessing::Param4f0ValueType PostProcessing::DEFAULT_PARAM4F0 = vgm::Vec4f(0.0, 0.0, 0.0, 0.0);
+
+
+
 const bool PostProcessing::getParam4f0( Param4f0ValueType& value ) const
 {
 	return getFieldRO<FParam4f0Type>(getFParam4f0())->getValue( value );
@@ -380,6 +410,39 @@ void PostProcessing::eraseParam4f0()
 const bool PostProcessing::hasParam4f0() const
 {
 	return getFieldRO<FParam4f0Type>(getFParam4f0())->hasValue();
+}
+
+
+
+// Param4x4f0
+
+const PostProcessing::Param4x4f0ValueType PostProcessing::DEFAULT_PARAM4X4F0 = vgm::MatrixR(vgm::MatrixR::getIdentity());
+
+
+
+const bool PostProcessing::getParam4x4f0( Param4x4f0ValueType& value ) const
+{
+	return getFieldRO<FParam4x4f0Type>(getFParam4x4f0())->getValue( value );
+}
+
+
+
+void PostProcessing::setParam4x4f0( const Param4x4f0ValueType& value )
+{
+	getFieldRW<FParam4x4f0Type>(getFParam4x4f0())->setValue( value );
+}
+
+
+
+void PostProcessing::eraseParam4x4f0()
+{
+	getFieldRW<FParam4x4f0Type>(getFParam4x4f0())->eraseValue();
+}
+
+
+const bool PostProcessing::hasParam4x4f0() const
+{
+	return getFieldRO<FParam4x4f0Type>(getFParam4x4f0())->hasValue();
 }
 
 
@@ -434,9 +497,9 @@ const std::string PostProcessing::getFTexture0( void )
 
 
 
-const std::string PostProcessing::getFParam4x4f0( void )
+const std::string PostProcessing::getFInput0Sampling( void )
 {
-	return "f_param4x4f0";
+	return "f_input0Sampling";
 }
 
 
@@ -472,6 +535,13 @@ const std::string PostProcessing::getFParam1f1( void )
 const std::string PostProcessing::getFParam4f0( void )
 {
 	return "f_param4f0";
+}
+
+
+
+const std::string PostProcessing::getFParam4x4f0( void )
+{
+	return "f_param4x4f0";
 }
 
 

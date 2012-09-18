@@ -26,10 +26,10 @@ namespace node
  * The object, defined by the shape field, is instanciated once per matrix available in the field named matrix. The matrix is concatenated to the current geometrical transformation matrix. This allows the user to put multiple copies of the same data in different locations easily and efficiently. @todo really implements vgd::node::IBoundingBox interface. useful ? 
  *
  * New fields defined by this node :
- * - SFNodeShp \c shape = empty<br>
+ * - SFNodeShp \c shape = vgd::node::NodeShp()<br>
  *   The object to instanciate multiple times.<br>
  *<br>
- * - MFMatrixR \c matrix = empty<br>
+ * - MFMatrixR \c matrix = vgm::MatrixR()<br>
  *   The array of matrices used to transform the object in different locations<br>
  *<br>
  *
@@ -81,6 +81,11 @@ struct VGD_API MultipleInstances : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c shape.
 	 */
 	typedef vgd::node::NodeShp ShapeValueType;
+
+	/**
+	 * @brief The default value of field named \c shape.
+	 */
+	static const ShapeValueType DEFAULT_SHAPE;
 
 	/**
 	 * @brief Type definition of the field named \c shape

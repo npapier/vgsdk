@@ -180,6 +180,23 @@ void Texture::paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *p
 		}
 	}
 
+	// MAXANISOTROPY
+	if ( pNode->hasMaxAnisotropy() )
+	{
+		float value;
+		pNode->getMaxAnisotropy( value );
+
+		vgAssert( isGL_EXT_texture_filter_anisotropic() );
+		pResource->setMaxAnisotropy( value );
+	}
+	else
+	{
+		const float value = pEngine->getDefaultMaxAnisotropy();
+
+		vgAssert( isGL_EXT_texture_filter_anisotropic() );
+		pResource->setMaxAnisotropy( value );
+	}
+
 	// USAGE
 	if ( pNode->getUsage() == vgd::node::Texture::SHADOW )
 	{

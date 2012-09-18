@@ -27,13 +27,13 @@ namespace node
  * This node defines a layer plan that could be displayed just before the rendering (UNDERLAY) or just after (OVERLAY). In fact, the behavior depends of its position in the scene graph. It could even be displayed at any time during the rendering. @todo More advanced transformation (a field \c matrixTransform) @todo Support multiple layer planes at the same time and do rendering in one pass. => This class should be a multiattribute. 
  *
  * New fields defined by this node :
- * - SFFloat \c alphaScale = 1.f<br>
+ * - SFFloat \c alphaScale = (1.f)<br>
  *   Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor. After this operation, the alpha component is clamped to the range [0, 1].<br>
  *<br>
  * - SFVec2f \c position = vgm::Vec2f(0.f, 0.f)<br>
  *   Sets the position of the layer plan in normalized window coordinates system. @see g_coordinatesSystem<br>
  *<br>
- * - SFIImageShp \c image = empty<br>
+ * - SFIImageShp \c image = vgd::basic::IImageShp()<br>
  *   Determines the image to display in the layer plan. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
  *<br>
  * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
@@ -91,6 +91,11 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	typedef float AlphaScaleValueType;
 
 	/**
+	 * @brief The default value of field named \c alphaScale.
+	 */
+	static const AlphaScaleValueType DEFAULT_ALPHASCALE;
+
+	/**
 	 * @brief Type definition of the field named \c alphaScale
 	 */
 	typedef vgd::field::TSingleField< AlphaScaleValueType > FAlphaScaleType;
@@ -119,6 +124,11 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c position.
 	 */
 	typedef vgm::Vec2f PositionValueType;
+
+	/**
+	 * @brief The default value of field named \c position.
+	 */
+	static const PositionValueType DEFAULT_POSITION;
 
 	/**
 	 * @brief Type definition of the field named \c position
@@ -151,6 +161,11 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	typedef vgd::basic::IImageShp ImageValueType;
 
 	/**
+	 * @brief The default value of field named \c image.
+	 */
+	static const ImageValueType DEFAULT_IMAGE;
+
+	/**
 	 * @brief Type definition of the field named \c image
 	 */
 	typedef vgd::field::TSingleField< ImageValueType > FImageType;
@@ -179,6 +194,11 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c size.
 	 */
 	typedef vgm::Vec2f SizeValueType;
+
+	/**
+	 * @brief The default value of field named \c size.
+	 */
+	static const SizeValueType DEFAULT_SIZE;
 
 	/**
 	 * @brief Type definition of the field named \c size

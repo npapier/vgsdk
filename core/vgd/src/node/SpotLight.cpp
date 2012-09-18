@@ -84,14 +84,19 @@ void SpotLight::setToDefaults( void )
 void SpotLight::setOptionalsToDefaults()
 {
 	PointLight::setOptionalsToDefaults();
-	setDropOffRate( 0.f );
+	setDropOffRate( (0.f) );
 	setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
-	setCutOffAngle( 90.f );
+	setCutOffAngle( (90.f) );
 }
 
 
 
 // DropOffRate
+
+const SpotLight::DropOffRateValueType SpotLight::DEFAULT_DROPOFFRATE = (0.f);
+
+
+
 const bool SpotLight::getDropOffRate( DropOffRateValueType& value ) const
 {
 	return getFieldRO<FDropOffRateType>(getFDropOffRate())->getValue( value );
@@ -120,6 +125,11 @@ const bool SpotLight::hasDropOffRate() const
 
 
 // Direction
+
+const SpotLight::DirectionValueType SpotLight::DEFAULT_DIRECTION = vgm::Vec3f(0.f, 0.f, -1.f);
+
+
+
 const bool SpotLight::getDirection( DirectionValueType& value ) const
 {
 	return getFieldRO<FDirectionType>(getFDirection())->getValue( value );
@@ -148,6 +158,11 @@ const bool SpotLight::hasDirection() const
 
 
 // CutOffAngle
+
+const SpotLight::CutOffAngleValueType SpotLight::DEFAULT_CUTOFFANGLE = (90.f);
+
+
+
 const bool SpotLight::getCutOffAngle( CutOffAngleValueType& value ) const
 {
 	return getFieldRO<FCutOffAngleType>(getFCutOffAngle())->getValue( value );

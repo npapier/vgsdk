@@ -79,6 +79,11 @@ struct VGD_API ClearFrameBuffer : public vgd::node::SingleAttribute
 	typedef vgm::Vec4f ClearColorValueType;
 
 	/**
+	 * @brief The default value of field named \c clearColor.
+	 */
+	static const ClearColorValueType DEFAULT_CLEARCOLOR;
+
+	/**
 	 * @brief Type definition of the field named \c clearColor
 	 */
 	typedef vgd::field::TOptionalField< ClearColorValueType > FClearColorType;

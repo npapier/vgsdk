@@ -88,6 +88,11 @@ void PointLight::setOptionalsToDefaults()
 
 
 // Position
+
+const PointLight::PositionValueType PointLight::DEFAULT_POSITION = vgm::Vec3f(0.f, 0.f, 1.f);
+
+
+
 const bool PointLight::getPosition( PositionValueType& value ) const
 {
 	return getFieldRO<FPositionType>(getFPosition())->getValue( value );

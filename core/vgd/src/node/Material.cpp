@@ -80,7 +80,7 @@ Material::Material( const std::string nodeName ) :
 void Material::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setOpacity( 1.f );
+	setOpacity( (1.f) );
 }
 
 
@@ -88,7 +88,7 @@ void Material::setToDefaults( void )
 void Material::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setShininess( 0.f );
+	setShininess( (0.f) );
 	setEmission( vgm::Vec3f(0.f, 0.f, 0.f) );
 	setSpecular( vgm::Vec3f(0.f, 0.f, 0.f) );
 	setAmbient( vgm::Vec3f(0.2f, 0.2f, 0.2f) );
@@ -98,6 +98,11 @@ void Material::setOptionalsToDefaults()
 
 
 // Opacity
+
+const Material::OpacityValueType Material::DEFAULT_OPACITY = (1.f);
+
+
+
 const Material::OpacityValueType Material::getOpacity() const
 {
 	return getFieldRO<FOpacityType>(getFOpacity())->getValue();
@@ -113,6 +118,11 @@ void Material::setOpacity( const OpacityValueType value )
 
 
 // Shininess
+
+const Material::ShininessValueType Material::DEFAULT_SHININESS = (0.f);
+
+
+
 const bool Material::getShininess( ShininessValueType& value ) const
 {
 	return getFieldRO<FShininessType>(getFShininess())->getValue( value );
@@ -141,6 +151,11 @@ const bool Material::hasShininess() const
 
 
 // Emission
+
+const Material::EmissionValueType Material::DEFAULT_EMISSION = vgm::Vec3f(0.f, 0.f, 0.f);
+
+
+
 const bool Material::getEmission( EmissionValueType& value ) const
 {
 	return getFieldRO<FEmissionType>(getFEmission())->getValue( value );
@@ -169,6 +184,11 @@ const bool Material::hasEmission() const
 
 
 // Specular
+
+const Material::SpecularValueType Material::DEFAULT_SPECULAR = vgm::Vec3f(0.f, 0.f, 0.f);
+
+
+
 const bool Material::getSpecular( SpecularValueType& value ) const
 {
 	return getFieldRO<FSpecularType>(getFSpecular())->getValue( value );
@@ -197,6 +217,11 @@ const bool Material::hasSpecular() const
 
 
 // Ambient
+
+const Material::AmbientValueType Material::DEFAULT_AMBIENT = vgm::Vec3f(0.2f, 0.2f, 0.2f);
+
+
+
 const bool Material::getAmbient( AmbientValueType& value ) const
 {
 	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
@@ -225,6 +250,11 @@ const bool Material::hasAmbient() const
 
 
 // Diffuse
+
+const Material::DiffuseValueType Material::DEFAULT_DIFFUSE = vgm::Vec3f(0.8f, 0.8f, 0.8f);
+
+
+
 const bool Material::getDiffuse( DiffuseValueType& value ) const
 {
 	return getFieldRO<FDiffuseType>(getFDiffuse())->getValue( value );

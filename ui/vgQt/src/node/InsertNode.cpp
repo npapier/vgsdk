@@ -13,6 +13,7 @@
 #include <vgd/node/DepthOfField.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/DrawStyle.hpp>
+#include <vgd/node/EngineProperties.hpp>
 #include <vgd/node/Fluid.hpp>
 #include <vgd/node/FrontFace.hpp>
 #include <vgd/node/Group.hpp>
@@ -44,6 +45,7 @@ typedef boost::mpl::vector<	vgd::Shp< vgd::node::ClipPlane >,
                             vgd::Shp< vgd::node::DepthOfField >,
                             vgd::Shp< vgd::node::DirectionalLight >,
                             vgd::Shp< vgd::node::DrawStyle >,
+                            vgd::Shp< vgd::node::EngineProperties >,
                             vgd::Shp< vgd::node::Fluid >,
                             vgd::Shp< vgd::node::FrontFace >,
                             vgd::Shp< vgd::node::Group >,
@@ -65,6 +67,7 @@ static std::vector< std::string > names = boost::assign::list_of("ClipPlane")
                                                                 ("DepthOfField")
                                                                 ("DirectionalLight")
                                                                 ("DrawStyle")
+                                                                ("EngineProperties")
                                                                 ("Fluid")
                                                                 ("FrontFace")
                                                                 ("Group")

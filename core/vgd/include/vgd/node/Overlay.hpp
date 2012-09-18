@@ -26,13 +26,13 @@ namespace node
  * No new field defined by this node.
  *
  * Inherited fields from LayerPlan:
- * - SFFloat \c alphaScale = 1.f<br>
+ * - SFFloat \c alphaScale = (1.f)<br>
  *   Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor. After this operation, the alpha component is clamped to the range [0, 1].<br>
  *<br>
  * - SFVec2f \c position = vgm::Vec2f(0.f, 0.f)<br>
  *   Sets the position of the layer plan in normalized window coordinates system. @see g_coordinatesSystem<br>
  *<br>
- * - SFIImageShp \c image = empty<br>
+ * - SFIImageShp \c image = vgd::basic::IImageShp()<br>
  *   Determines the image to display in the layer plan. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
  *<br>
  * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>

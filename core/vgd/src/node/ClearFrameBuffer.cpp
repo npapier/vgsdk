@@ -88,6 +88,11 @@ void ClearFrameBuffer::setOptionalsToDefaults()
 
 
 // ClearColor
+
+const ClearFrameBuffer::ClearColorValueType ClearFrameBuffer::DEFAULT_CLEARCOLOR = vgm::Vec4f(0.f, 0.f, 0.f, 0.f);
+
+
+
 const bool ClearFrameBuffer::getClearColor( ClearColorValueType& value ) const
 {
 	return getFieldRO<FClearColorType>(getFClearColor())->getValue( value );

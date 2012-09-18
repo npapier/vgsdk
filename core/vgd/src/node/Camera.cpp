@@ -94,11 +94,11 @@ void Camera::setToDefaults( void )
 	setLookAtLeft( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setLookAtRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setProjectionRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
-	setMode( MONOSCOPIC );
-	setRightEye( true );
-	setEyeSeparation( 0.f );
-	setImageShift( 0.f );
-	setFovy( 45.f );
+	setMode( (MONOSCOPIC) );
+	setRightEye( (true) );
+	setEyeSeparation( (0.f) );
+	setImageShift( (0.f) );
+	setFovy( (45.f) );
 }
 
 
@@ -108,15 +108,20 @@ void Camera::setOptionalsToDefaults()
 	GeometricalTransformation::setOptionalsToDefaults();
 	ProjectionTransformation::setOptionalsToDefaults();
 	setViewport( vgm::Rectangle2i(0, 0, 1600, 1200) );
-	setZFar( 3996.f );
-
-	setAspect( 1 );
-	setZNear( 0.01f );
+	setZFar( (3996.f) );
+	setScissor( vgm::Rectangle2i(0, 0, 1600, 1200) );
+	setAspect( (1) );
+	setZNear( (0.01f) );
 }
 
 
 
 // Viewport
+
+const Camera::ViewportValueType Camera::DEFAULT_VIEWPORT = vgm::Rectangle2i(0, 0, 1600, 1200);
+
+
+
 const bool Camera::getViewport( ViewportValueType& value ) const
 {
 	return getFieldRO<FViewportType>(getFViewport())->getValue( value );
@@ -145,6 +150,11 @@ const bool Camera::hasViewport() const
 
 
 // ProjectionLeft
+
+const Camera::ProjectionLeftValueType Camera::DEFAULT_PROJECTIONLEFT = vgm::MatrixR(vgm::MatrixR::getIdentity());
+
+
+
 const Camera::ProjectionLeftValueType Camera::getProjectionLeft() const
 {
 	return getFieldRO<FProjectionLeftType>(getFProjectionLeft())->getValue();
@@ -160,6 +170,11 @@ void Camera::setProjectionLeft( const ProjectionLeftValueType value )
 
 
 // ZFar
+
+const Camera::ZFarValueType Camera::DEFAULT_ZFAR = (3996.f);
+
+
+
 const bool Camera::getZFar( ZFarValueType& value ) const
 {
 	return getFieldRO<FZFarType>(getFZFar())->getValue( value );
@@ -188,6 +203,11 @@ const bool Camera::hasZFar() const
 
 
 // LookAtLeft
+
+const Camera::LookAtLeftValueType Camera::DEFAULT_LOOKATLEFT = vgm::MatrixR(vgm::MatrixR::getIdentity());
+
+
+
 const Camera::LookAtLeftValueType Camera::getLookAtLeft() const
 {
 	return getFieldRO<FLookAtLeftType>(getFLookAtLeft())->getValue();
@@ -203,6 +223,11 @@ void Camera::setLookAtLeft( const LookAtLeftValueType value )
 
 
 // LookAtRight
+
+const Camera::LookAtRightValueType Camera::DEFAULT_LOOKATRIGHT = vgm::MatrixR(vgm::MatrixR::getIdentity());
+
+
+
 const Camera::LookAtRightValueType Camera::getLookAtRight() const
 {
 	return getFieldRO<FLookAtRightType>(getFLookAtRight())->getValue();
@@ -218,6 +243,11 @@ void Camera::setLookAtRight( const LookAtRightValueType value )
 
 
 // ProjectionRight
+
+const Camera::ProjectionRightValueType Camera::DEFAULT_PROJECTIONRIGHT = vgm::MatrixR(vgm::MatrixR::getIdentity());
+
+
+
 const Camera::ProjectionRightValueType Camera::getProjectionRight() const
 {
 	return getFieldRO<FProjectionRightType>(getFProjectionRight())->getValue();
@@ -233,6 +263,11 @@ void Camera::setProjectionRight( const ProjectionRightValueType value )
 
 
 // Scissor
+
+const Camera::ScissorValueType Camera::DEFAULT_SCISSOR = vgm::Rectangle2i(0, 0, 1600, 1200);
+
+
+
 const bool Camera::getScissor( ScissorValueType& value ) const
 {
 	return getFieldRO<FScissorType>(getFScissor())->getValue( value );
@@ -261,6 +296,7 @@ const bool Camera::hasScissor() const
 
 
 // Mode
+
 const Camera::ModeValueType Camera::getMode() const
 {
 	return getFieldRO<FModeType>(getFMode())->getValue();
@@ -276,6 +312,11 @@ void Camera::setMode( const ModeValueType value )
 
 
 // Aspect
+
+const Camera::AspectValueType Camera::DEFAULT_ASPECT = (1);
+
+
+
 const bool Camera::getAspect( AspectValueType& value ) const
 {
 	return getFieldRO<FAspectType>(getFAspect())->getValue( value );
@@ -304,6 +345,11 @@ const bool Camera::hasAspect() const
 
 
 // RightEye
+
+const Camera::RightEyeValueType Camera::DEFAULT_RIGHTEYE = (true);
+
+
+
 const Camera::RightEyeValueType Camera::getRightEye() const
 {
 	return getFieldRO<FRightEyeType>(getFRightEye())->getValue();
@@ -319,6 +365,11 @@ void Camera::setRightEye( const RightEyeValueType value )
 
 
 // EyeSeparation
+
+const Camera::EyeSeparationValueType Camera::DEFAULT_EYESEPARATION = (0.f);
+
+
+
 const Camera::EyeSeparationValueType Camera::getEyeSeparation() const
 {
 	return getFieldRO<FEyeSeparationType>(getFEyeSeparation())->getValue();
@@ -334,6 +385,11 @@ void Camera::setEyeSeparation( const EyeSeparationValueType value )
 
 
 // ImageShift
+
+const Camera::ImageShiftValueType Camera::DEFAULT_IMAGESHIFT = (0.f);
+
+
+
 const Camera::ImageShiftValueType Camera::getImageShift() const
 {
 	return getFieldRO<FImageShiftType>(getFImageShift())->getValue();
@@ -349,6 +405,11 @@ void Camera::setImageShift( const ImageShiftValueType value )
 
 
 // ZNear
+
+const Camera::ZNearValueType Camera::DEFAULT_ZNEAR = (0.01f);
+
+
+
 const bool Camera::getZNear( ZNearValueType& value ) const
 {
 	return getFieldRO<FZNearType>(getFZNear())->getValue( value );
@@ -377,6 +438,11 @@ const bool Camera::hasZNear() const
 
 
 // Fovy
+
+const Camera::FovyValueType Camera::DEFAULT_FOVY = (45.f);
+
+
+
 const Camera::FovyValueType Camera::getFovy() const
 {
 	return getFieldRO<FFovyType>(getFFovy())->getValue();

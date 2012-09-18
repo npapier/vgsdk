@@ -85,15 +85,20 @@ void PointStyle::setToDefaults( void )
 void PointStyle::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setSmooth( false );
+	setSmooth( (false) );
 	setDistanceAttenuation( vgm::Vec3f(1.f, 0.f, 0.f) );
-	setPointSprite( false );
-	setSize( 1.f );
+	setPointSprite( (false) );
+	setSize( (1.f) );
 }
 
 
 
 // Smooth
+
+const PointStyle::SmoothValueType PointStyle::DEFAULT_SMOOTH = (false);
+
+
+
 const bool PointStyle::getSmooth( SmoothValueType& value ) const
 {
 	return getFieldRO<FSmoothType>(getFSmooth())->getValue( value );
@@ -122,6 +127,11 @@ const bool PointStyle::hasSmooth() const
 
 
 // DistanceAttenuation
+
+const PointStyle::DistanceAttenuationValueType PointStyle::DEFAULT_DISTANCEATTENUATION = vgm::Vec3f(1.f, 0.f, 0.f);
+
+
+
 const bool PointStyle::getDistanceAttenuation( DistanceAttenuationValueType& value ) const
 {
 	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->getValue( value );
@@ -150,6 +160,11 @@ const bool PointStyle::hasDistanceAttenuation() const
 
 
 // PointSprite
+
+const PointStyle::PointSpriteValueType PointStyle::DEFAULT_POINTSPRITE = (false);
+
+
+
 const bool PointStyle::getPointSprite( PointSpriteValueType& value ) const
 {
 	return getFieldRO<FPointSpriteType>(getFPointSprite())->getValue( value );
@@ -178,6 +193,11 @@ const bool PointStyle::hasPointSprite() const
 
 
 // Size
+
+const PointStyle::SizeValueType PointStyle::DEFAULT_SIZE = (1.f);
+
+
+
 const bool PointStyle::getSize( SizeValueType& value ) const
 {
 	return getFieldRO<FSizeType>(getFSize())->getValue( value );

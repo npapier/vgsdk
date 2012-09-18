@@ -30,7 +30,7 @@ namespace node
  *
  *
  * Inherited fields from TexGen:
- * - SFBool \c on = true<br>
+ * - SFBool \c on = (true)<br>
  *   Specifies if the texture generation is enabled or disabled.<br>
  *<br>
  * @ingroup g_nodes
@@ -81,6 +81,11 @@ struct VGD_API TexGenEyeLinear : public vgd::node::TexGen
 	 * @brief Type definition of the value contained by field named \c parameters.
 	 */
 	typedef vgm::MatrixR ParametersValueType;
+
+	/**
+	 * @brief The default value of field named \c parameters.
+	 */
+	static const ParametersValueType DEFAULT_PARAMETERS;
 
 	/**
 	 * @brief Type definition of the field named \c parameters

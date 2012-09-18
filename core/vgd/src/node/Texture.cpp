@@ -21,6 +21,7 @@ Texture::Texture( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FMaxAnisotropyType(getFMaxAnisotropy()) );
 	addField( new FFragmentFunctionType(getFFragmentFunction()) );
 	addField( new FWrapType(getFWrap()) );
 	addField( new FImageType(getFImage()) );
@@ -39,6 +40,7 @@ Texture::Texture( const std::string nodeName ) :
 	link( getFWrap(), getDFParameters() );
 	link( getFFilter(), getDFParameters() );
 	link( getFMipmap(), getDFParameters() );
+	link( getFMaxAnisotropy(), getDFParameters() );
 	link( getFUsage(), getDFParameters() );
 
 	link( getDFNode() );
@@ -49,8 +51,8 @@ Texture::Texture( const std::string nodeName ) :
 void Texture::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setInternalFormat( AUTOMATIC );
-	setUsage( IMAGE );
+	setInternalFormat( (AUTOMATIC) );
+	setUsage( (IMAGE) );
 }
 
 
@@ -58,22 +60,61 @@ void Texture::setToDefaults( void )
 void Texture::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
+	setMaxAnisotropy( (1.f) );
+	setFragmentFunction( std::string() );
+	setWrap( WRAP_T, (REPEAT) );
+	setWrap( WRAP_S, (REPEAT) );
+	setWrap( WRAP_R, (REPEAT) );
 
-	setWrap( WRAP_T, REPEAT );
-	setWrap( WRAP_S, REPEAT );
-	setWrap( WRAP_R, REPEAT );
+	setImage( vgd::basic::IImageShp() );
+	setMipmap( (false) );
+	setFilter( MIN_FILTER, (LINEAR) );
+	setFilter( MAG_FILTER, (LINEAR) );
+
+	setVertexFunction( std::string() );
+}
 
 
-	setMipmap( false );
-	setFilter( MIN_FILTER, LINEAR );
-	setFilter( MAG_FILTER, LINEAR );
+
+// MaxAnisotropy
+
+const Texture::MaxAnisotropyValueType Texture::DEFAULT_MAXANISOTROPY = (1.f);
 
 
+
+const bool Texture::getMaxAnisotropy( MaxAnisotropyValueType& value ) const
+{
+	return getFieldRO<FMaxAnisotropyType>(getFMaxAnisotropy())->getValue( value );
+}
+
+
+
+void Texture::setMaxAnisotropy( const MaxAnisotropyValueType& value )
+{
+	getFieldRW<FMaxAnisotropyType>(getFMaxAnisotropy())->setValue( value );
+}
+
+
+
+void Texture::eraseMaxAnisotropy()
+{
+	getFieldRW<FMaxAnisotropyType>(getFMaxAnisotropy())->eraseValue();
+}
+
+
+const bool Texture::hasMaxAnisotropy() const
+{
+	return getFieldRO<FMaxAnisotropyType>(getFMaxAnisotropy())->hasValue();
 }
 
 
 
 // FragmentFunction
+
+const Texture::FragmentFunctionValueType Texture::DEFAULT_FRAGMENTFUNCTION = std::string();
+
+
+
 const bool Texture::getFragmentFunction( FragmentFunctionValueType& value ) const
 {
 	return getFieldRO<FFragmentFunctionType>(getFFragmentFunction())->getValue( value );
@@ -126,6 +167,11 @@ void Texture::eraseWrap( const WrapParameterType param )
 
 
 // Image
+
+const Texture::ImageValueType Texture::DEFAULT_IMAGE = vgd::basic::IImageShp();
+
+
+
 const bool Texture::getImage( ImageValueType& value ) const
 {
 	return getFieldRO<FImageType>(getFImage())->getValue( value );
@@ -154,6 +200,11 @@ const bool Texture::hasImage() const
 
 
 // Mipmap
+
+const Texture::MipmapValueType Texture::DEFAULT_MIPMAP = (false);
+
+
+
 const bool Texture::getMipmap( MipmapValueType& value ) const
 {
 	return getFieldRO<FMipmapType>(getFMipmap())->getValue( value );
@@ -206,6 +257,11 @@ void Texture::eraseFilter( const FilterParameterType param )
 
 
 // VertexFunction
+
+const Texture::VertexFunctionValueType Texture::DEFAULT_VERTEXFUNCTION = std::string();
+
+
+
 const bool Texture::getVertexFunction( VertexFunctionValueType& value ) const
 {
 	return getFieldRO<FVertexFunctionType>(getFVertexFunction())->getValue( value );
@@ -234,6 +290,7 @@ const bool Texture::hasVertexFunction() const
 
 
 // InternalFormat
+
 const Texture::InternalFormatValueType Texture::getInternalFormat() const
 {
 	return getFieldRO<FInternalFormatType>(getFInternalFormat())->getValue();
@@ -249,6 +306,7 @@ void Texture::setInternalFormat( const InternalFormatValueType value )
 
 
 // Usage
+
 const Texture::UsageValueType Texture::getUsage() const
 {
 	return getFieldRO<FUsageType>(getFUsage())->getValue();
@@ -264,6 +322,13 @@ void Texture::setUsage( const UsageValueType value )
 
 
 // Field name accessor(s)
+const std::string Texture::getFMaxAnisotropy( void )
+{
+	return "f_maxAnisotropy";
+}
+
+
+
 const std::string Texture::getFFragmentFunction( void )
 {
 	return "f_fragmentFunction";

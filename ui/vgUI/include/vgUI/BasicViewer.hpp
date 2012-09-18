@@ -40,6 +40,7 @@ namespace vgUI
  * \li the optional frame buffer clearing node named \c CLEAR_FRAME_BUFFER
  * \li the optional draw style node named \c DRAW_STYLE
  * \li the optional light model node named \c LIGHT_MODEL 
+ * \li the optional engine properties node named \c ENGINE_PROPERTIES
  * \li the optional default light group named \c LIGHTS
  * \li the camera node named \c CAMERA
  * \li the optional underlay container named \c UNDERLAY_CONTAINER
@@ -174,6 +175,7 @@ struct VGUI_API BasicViewer : public Canvas
 		CLEAR_FRAME_BUFFER,	///< ClearFrameBuffer optional node
 		DRAW_STYLE,			///< DrawStyle optional node
 		LIGHT_MODEL,		///< LightModel optional node
+		ENGINE_PROPERTIES,	///< EngineProperties optional node
 		LIGHTS,				///< Group optional node containing default lights
 		UNDERLAY_CONTAINER	///< Container node containing underlay (see LayerPlan node).
 	};

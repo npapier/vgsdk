@@ -27,25 +27,25 @@ namespace node
  * Real camera lenses, due to their physical properties, blurs parts of a scene at certain depths, while maintaining sharpness in others areas. This built-in post-processing effect simulates a thin lens camera 
  *
  * New fields defined by this node :
- * - SFFloat \c focusToFar = 1.f<br>
+ * - SFFloat \c focusToFar = (1.f)<br>
  *   Sets the distance from focus to far. Must be greater than zero.<br>
  *<br>
- * - SFFloat \c farMaximumBlurriness = 0.5f<br>
+ * - SFFloat \c farMaximumBlurriness = (0.5f)<br>
  *   Sets the maximum blurriness for object(s) in [focus, far]. 0 means no blur at all. 1 means maximum blurriness.<br>
  *<br>
- * - SFFloat \c focus = 0.f<br>
+ * - SFFloat \c focus = (0.f)<br>
  *   Sets the focal distance. Objects on the focal plane (i.e. at focus distance) are in perfect focus.<br>
  *<br>
- * - SFInt \c sampling = 8<br>
+ * - SFInt \c sampling = (8)<br>
  *   Sets the number of samples (must be 1, 2, 3, 4, 5, 6, 7 or 8).<br>
  *<br>
- * - SFFloat \c focusToNear = 1.f<br>
+ * - SFFloat \c focusToNear = (1.f)<br>
  *   Sets the distance from focus to near. Must be greater than zero.<br>
  *<br>
- * - SFFloat \c nearMaximumBlurriness = 0.5f<br>
+ * - SFFloat \c nearMaximumBlurriness = (0.5f)<br>
  *   Sets the maximum blurriness for object(s) in [near, focus]. 0 means no blur at all. 1 means maximum blurriness.<br>
  *<br>
- * - SFEnum \c cameraModel = THIN_LENS<br>
+ * - SFEnum \c cameraModel = (THIN_LENS)<br>
  *   Sets the camera model.<br>
  *<br>
  *
@@ -99,6 +99,11 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	typedef float FocusToFarValueType;
 
 	/**
+	 * @brief The default value of field named \c focusToFar.
+	 */
+	static const FocusToFarValueType DEFAULT_FOCUSTOFAR;
+
+	/**
 	 * @brief Type definition of the field named \c focusToFar
 	 */
 	typedef vgd::field::TSingleField< FocusToFarValueType > FFocusToFarType;
@@ -127,6 +132,11 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c farMaximumBlurriness.
 	 */
 	typedef float FarMaximumBlurrinessValueType;
+
+	/**
+	 * @brief The default value of field named \c farMaximumBlurriness.
+	 */
+	static const FarMaximumBlurrinessValueType DEFAULT_FARMAXIMUMBLURRINESS;
 
 	/**
 	 * @brief Type definition of the field named \c farMaximumBlurriness
@@ -159,6 +169,11 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	typedef float FocusValueType;
 
 	/**
+	 * @brief The default value of field named \c focus.
+	 */
+	static const FocusValueType DEFAULT_FOCUS;
+
+	/**
 	 * @brief Type definition of the field named \c focus
 	 */
 	typedef vgd::field::TSingleField< FocusValueType > FFocusType;
@@ -187,6 +202,11 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c sampling.
 	 */
 	typedef int SamplingValueType;
+
+	/**
+	 * @brief The default value of field named \c sampling.
+	 */
+	static const SamplingValueType DEFAULT_SAMPLING;
 
 	/**
 	 * @brief Type definition of the field named \c sampling
@@ -219,6 +239,11 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	typedef float FocusToNearValueType;
 
 	/**
+	 * @brief The default value of field named \c focusToNear.
+	 */
+	static const FocusToNearValueType DEFAULT_FOCUSTONEAR;
+
+	/**
 	 * @brief Type definition of the field named \c focusToNear
 	 */
 	typedef vgd::field::TSingleField< FocusToNearValueType > FFocusToNearType;
@@ -247,6 +272,11 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c nearMaximumBlurriness.
 	 */
 	typedef float NearMaximumBlurrinessValueType;
+
+	/**
+	 * @brief The default value of field named \c nearMaximumBlurriness.
+	 */
+	static const NearMaximumBlurrinessValueType DEFAULT_NEARMAXIMUMBLURRINESS;
 
 	/**
 	 * @brief Type definition of the field named \c nearMaximumBlurriness

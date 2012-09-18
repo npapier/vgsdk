@@ -33,7 +33,7 @@ TexGen::TexGen( const std::string nodeName ) :
 void TexGen::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setOn( true );
+	setOn( (true) );
 }
 
 
@@ -46,6 +46,11 @@ void TexGen::setOptionalsToDefaults()
 
 
 // On
+
+const TexGen::OnValueType TexGen::DEFAULT_ON = (true);
+
+
+
 const TexGen::OnValueType TexGen::getOn() const
 {
 	return getFieldRO<FOnType>(getFOn())->getValue();

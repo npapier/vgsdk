@@ -78,10 +78,10 @@ Noise::Noise( const std::string nodeName ) :
 void Noise::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setChannelsSeparated( false );
-	setUseTextureLessRandom( false );
+	setChannelsSeparated( (false) );
+	setUseTextureLessRandom( (false) );
 	setFactors( vgm::Vec2f(0.025, 0.025) );
-	setNoiseModel( PHOTON );
+	setNoiseModel( (PHOTON) );
 }
 
 
@@ -94,6 +94,11 @@ void Noise::setOptionalsToDefaults()
 
 
 // ChannelsSeparated
+
+const Noise::ChannelsSeparatedValueType Noise::DEFAULT_CHANNELSSEPARATED = (false);
+
+
+
 const Noise::ChannelsSeparatedValueType Noise::getChannelsSeparated() const
 {
 	return getFieldRO<FChannelsSeparatedType>(getFChannelsSeparated())->getValue();
@@ -109,6 +114,11 @@ void Noise::setChannelsSeparated( const ChannelsSeparatedValueType value )
 
 
 // UseTextureLessRandom
+
+const Noise::UseTextureLessRandomValueType Noise::DEFAULT_USETEXTURELESSRANDOM = (false);
+
+
+
 const Noise::UseTextureLessRandomValueType Noise::getUseTextureLessRandom() const
 {
 	return getFieldRO<FUseTextureLessRandomType>(getFUseTextureLessRandom())->getValue();
@@ -124,6 +134,11 @@ void Noise::setUseTextureLessRandom( const UseTextureLessRandomValueType value )
 
 
 // Factors
+
+const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec2f(0.025, 0.025);
+
+
+
 const Noise::FactorsValueType Noise::getFactors() const
 {
 	return getFieldRO<FFactorsType>(getFFactors())->getValue();
@@ -139,6 +154,7 @@ void Noise::setFactors( const FactorsValueType value )
 
 
 // NoiseModel
+
 const Noise::NoiseModelValueType Noise::getNoiseModel() const
 {
 	return getFieldRO<FNoiseModelType>(getFNoiseModel())->getValue();

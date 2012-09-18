@@ -115,6 +115,7 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	 */
 	//@{
 
+
 	/**
 	 * @brief Gets the resource associated to the given key.
 	 * 
@@ -133,6 +134,7 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	 */
 	vgd::Shp< ResourceType > getAbstractShp( const KeyType& key );
 
+
 	/**
 	 * @brief Gets the resource associated to the given key.
 	 * 
@@ -147,14 +149,6 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	OutResourceType * get( const KeyType& key );
 
 	/**
-	 * @brief Retrieves all keys and store them using the given output iterator.
-	 * 
-	 * @param key	an STL compliant output iterator
-	 */
-	template< typename OutputIterator >
-	void getKeys( OutputIterator& key );
-
-	/**
 	 * @brief Helper around OutResourceType * get( const KeyType& key )
 	 *
 	 * @remark Works only if KeyType type is vgd::node::Node*
@@ -164,6 +158,7 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	{
 		return get<OutResourceType>( key.get() );
 	}
+
 
 	/**
 	 * @brief Gets the resource associated to the given key.
@@ -189,6 +184,7 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 		return getShp<OutResourceType>( key.get() );
 	}
 
+
 	/**
 	 * @brief Returns the number of resources owned by this manager.
 	 *
@@ -196,6 +192,39 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	 */
 	const uint getNum() const;
 
+
+	/**
+	 * @brief Retrieves all keys and store them using the given output iterator.
+	 * 
+	 * @param key	an STL compliant output iterator
+	 */
+	template< typename OutputIterator >
+	void getKeys( OutputIterator& key );
+
+	/**
+	 * @brief Appends all keys at the end of the given container.
+	 *
+	 * @remark Helper around template< typename OutputIterator > void getKeys( OutputIterator& key )
+	 */
+	template< typename KeysContainer >
+	void gethKeys( KeysContainer& keys );
+
+
+	/**
+	 * @brief Retrieves all values and store them using the given output iterator.
+	 * 
+	 * @param value		an STL compliant output iterator
+	 */
+	template< typename OutputIterator >
+	void getValues( OutputIterator& values );
+
+	/**
+	 * @brief Appends all valus at the end of the given container.
+	 *
+	 * @remark Helper around template< typename OutputIterator > void getValues( OutputIterator& values )
+	 */
+	template< typename ValuesContainer >
+	void gethValues( ValuesContainer& values );
 	//@}
 
 

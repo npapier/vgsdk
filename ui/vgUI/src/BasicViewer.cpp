@@ -11,6 +11,7 @@
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/LightModel.hpp>
+#include <vgd/node/EngineProperties.hpp>
 #include <vgd/node/MatrixTransform.hpp>
 #include <vgd/node/MultiSwitch.hpp>
 #include <vgd/node/PointLight.hpp>
@@ -216,6 +217,11 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			getSetup()->addChild( existingNode );
 			break;
 
+		case ENGINE_PROPERTIES:
+			existingNode = vgd::node::EngineProperties::create("ENGINE_PROPERTIES");
+			getSetup()->addChild( existingNode );
+			break;
+
 		case LIGHTS:
 		{
 			//
@@ -385,6 +391,10 @@ const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const Option
 
 		case LIGHT_MODEL:
 			optionalNodeName = "LIGHT_MODEL";
+			break;
+
+		case ENGINE_PROPERTIES:
+			optionalNodeName = "ENGINE_PROPERTIES";
 			break;
 
 		case LIGHTS:

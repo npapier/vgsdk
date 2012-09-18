@@ -37,7 +37,7 @@ Light::Light( const std::string nodeName ) :
 void Light::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setCastShadow( false );
+	setCastShadow( (false) );
 }
 
 
@@ -46,7 +46,7 @@ void Light::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
 	setSpecular( vgm::Vec4f(1.f, 1.f, 1.f, 0.f) );
-	setOn( false );
+	setOn( (false) );
 	setAmbient( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
 	setDiffuse( vgm::Vec4f(1.f, 1.f, 1.f, 0.f) );
 }
@@ -54,6 +54,11 @@ void Light::setOptionalsToDefaults()
 
 
 // Specular
+
+const Light::SpecularValueType Light::DEFAULT_SPECULAR = vgm::Vec4f(1.f, 1.f, 1.f, 0.f);
+
+
+
 const bool Light::getSpecular( SpecularValueType& value ) const
 {
 	return getFieldRO<FSpecularType>(getFSpecular())->getValue( value );
@@ -82,6 +87,11 @@ const bool Light::hasSpecular() const
 
 
 // On
+
+const Light::OnValueType Light::DEFAULT_ON = (false);
+
+
+
 const bool Light::getOn( OnValueType& value ) const
 {
 	return getFieldRO<FOnType>(getFOn())->getValue( value );
@@ -110,6 +120,11 @@ const bool Light::hasOn() const
 
 
 // Ambient
+
+const Light::AmbientValueType Light::DEFAULT_AMBIENT = vgm::Vec4f(0.f, 0.f, 0.f, 0.f);
+
+
+
 const bool Light::getAmbient( AmbientValueType& value ) const
 {
 	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
@@ -138,6 +153,11 @@ const bool Light::hasAmbient() const
 
 
 // Diffuse
+
+const Light::DiffuseValueType Light::DEFAULT_DIFFUSE = vgm::Vec4f(1.f, 1.f, 1.f, 0.f);
+
+
+
 const bool Light::getDiffuse( DiffuseValueType& value ) const
 {
 	return getFieldRO<FDiffuseType>(getFDiffuse())->getValue( value );
@@ -166,6 +186,11 @@ const bool Light::hasDiffuse() const
 
 
 // CastShadow
+
+const Light::CastShadowValueType Light::DEFAULT_CASTSHADOW = (false);
+
+
+
 const Light::CastShadowValueType Light::getCastShadow() const
 {
 	return getFieldRO<FCastShadowType>(getFCastShadow())->getValue();

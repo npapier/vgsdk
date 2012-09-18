@@ -50,7 +50,7 @@ void updateCurrentDrawBuffers(	const vgeGL::engine::Engine::OutputBufferProperty
 			if ( node->getCurrent() )
 			{
 				// This output buffer is current, i.e. used for drawing by default.
-				vgAssert( node->getMultiAttributeIndex() == i );
+				vgAssert( (node->getMultiAttributeIndex() == i) || (node->getMultiAttributeIndex() == -1) );
 				currentDrawBuffers[i] = i;
 			}
 			else
