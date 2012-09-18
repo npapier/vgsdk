@@ -29,44 +29,44 @@ namespace node
  * This node specifies current lighting mode (off/standard per vertex lighting/standard per pixel lighting) and some options of the lighting model. 
  *
  * New fields defined by this node :
- * - OFEnum \c [shadowMapSize] = MEDIUM<br>
+ * - OFEnum \c [shadowMapSize] = (MEDIUM)<br>
  *   Specifies the size of the shadow map<br>
  *<br>
- * - OFEnum \c [shadowFiltering] = LINEAR<br>
+ * - OFEnum \c [shadowFiltering] = (LINEAR)<br>
  *   Defines depth map hardware filtering (not the filtering done in shaders).<br>
  *<br>
- * - SFEnum \c shadowMapType = INT32<br>
+ * - SFEnum \c shadowMapType = (INT32)<br>
  *<br>
- * - SFFloat \c illuminationInShadow = 0.4f<br>
+ * - SFFloat \c illuminationInShadow = (0.4f)<br>
  *   value=[0,1] : 0 full attenuation in shadow, 1 no attenuation in shadow<br>
  *<br>
- * - OFBool \c [twoSided] = false<br>
+ * - OFBool \c [twoSided] = (false)<br>
  *   Specifies whether one- or two-sided lighting calculations are done for polygons and triangles.<br>
  *<br>
- * - SFFloat \c samplingSize = 1.0<br>
+ * - SFFloat \c samplingSize = (1.0)<br>
  *<br>
- * - SFBool \c option2 = false<br>
+ * - SFBool \c option2 = (false)<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
  *   Sets the ambient RGBA intensity of the entire scene.<br>
  *<br>
- * - OFEnum \c [viewer] = AT_INFINITY<br>
+ * - OFEnum \c [viewer] = (AT_INFINITY)<br>
  *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
  *<br>
- * - SFBool \c ignorePostProcessing = false<br>
+ * - SFBool \c ignorePostProcessing = (false)<br>
  *   true to ignore the whole post-processing stage, false to do post-processing stage if at least one PostProcessing node is defined.<br>
  *<br>
- * - OFEnum \c [model] = STANDARD_PER_VERTEX<br>
+ * - OFEnum \c [model] = (STANDARD_PER_VERTEX)<br>
  *   Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.<br>
  *<br>
  * - SFVec2f \c shadowPolygonOffset = vgm::Vec2f(4.f, 16.f)<br>
  *<br>
- * - OFEnum \c [shadow] = SHADOW_OFF<br>
+ * - OFEnum \c [shadow] = (SHADOW_OFF)<br>
  *   Specifies the algorithm used to compute shadow.<br>
  *<br>
- * - SFEnum \c option0 = CHOICE0<br>
+ * - SFEnum \c option0 = (CHOICE0)<br>
  *<br>
- * - SFBool \c option1 = false<br>
+ * - SFBool \c option1 = (false)<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -377,6 +377,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	typedef float IlluminationInShadowValueType;
 
 	/**
+	 * @brief The default value of field named \c illuminationInShadow.
+	 */
+	static const IlluminationInShadowValueType DEFAULT_ILLUMINATIONINSHADOW;
+
+	/**
 	 * @brief Type definition of the field named \c illuminationInShadow
 	 */
 	typedef vgd::field::TSingleField< IlluminationInShadowValueType > FIlluminationInShadowType;
@@ -405,6 +410,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c twoSided.
 	 */
 	typedef bool TwoSidedValueType;
+
+	/**
+	 * @brief The default value of field named \c twoSided.
+	 */
+	static const TwoSidedValueType DEFAULT_TWOSIDED;
 
 	/**
 	 * @brief Type definition of the field named \c twoSided
@@ -446,6 +456,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	typedef float SamplingSizeValueType;
 
 	/**
+	 * @brief The default value of field named \c samplingSize.
+	 */
+	static const SamplingSizeValueType DEFAULT_SAMPLINGSIZE;
+
+	/**
 	 * @brief Type definition of the field named \c samplingSize
 	 */
 	typedef vgd::field::TSingleField< SamplingSizeValueType > FSamplingSizeType;
@@ -476,6 +491,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	typedef bool Option2ValueType;
 
 	/**
+	 * @brief The default value of field named \c option2.
+	 */
+	static const Option2ValueType DEFAULT_OPTION2;
+
+	/**
 	 * @brief Type definition of the field named \c option2
 	 */
 	typedef vgd::field::TSingleField< Option2ValueType > FOption2Type;
@@ -504,6 +524,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c ambient.
 	 */
 	typedef vgm::Vec4f AmbientValueType;
+
+	/**
+	 * @brief The default value of field named \c ambient.
+	 */
+	static const AmbientValueType DEFAULT_AMBIENT;
 
 	/**
 	 * @brief Type definition of the field named \c ambient
@@ -630,6 +655,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	typedef bool IgnorePostProcessingValueType;
 
 	/**
+	 * @brief The default value of field named \c ignorePostProcessing.
+	 */
+	static const IgnorePostProcessingValueType DEFAULT_IGNOREPOSTPROCESSING;
+
+	/**
 	 * @brief Type definition of the field named \c ignorePostProcessing
 	 */
 	typedef vgd::field::TSingleField< IgnorePostProcessingValueType > FIgnorePostProcessingType;
@@ -746,6 +776,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c shadowPolygonOffset.
 	 */
 	typedef vgm::Vec2f ShadowPolygonOffsetValueType;
+
+	/**
+	 * @brief The default value of field named \c shadowPolygonOffset.
+	 */
+	static const ShadowPolygonOffsetValueType DEFAULT_SHADOWPOLYGONOFFSET;
 
 	/**
 	 * @brief Type definition of the field named \c shadowPolygonOffset
@@ -1003,6 +1038,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c option1.
 	 */
 	typedef bool Option1ValueType;
+
+	/**
+	 * @brief The default value of field named \c option1.
+	 */
+	static const Option1ValueType DEFAULT_OPTION1;
 
 	/**
 	 * @brief Type definition of the field named \c option1

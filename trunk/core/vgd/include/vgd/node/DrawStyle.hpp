@@ -27,19 +27,19 @@ namespace node
  * The DrawStyle node specifies the current drawing style (flat, smooth, hidden-lines...) for all subsequent shape nodes in a scene graph and if normals, orientation or bounding box must be render. 
  *
  * New fields defined by this node :
- * - OFBool \c [showOrientation] = false<br>
+ * - OFBool \c [showOrientation] = (false)<br>
  *   Sets the field to true to render an half-arrow on each edge of triangles in order to show the triangle orientation (CW or CCW). The center of each triangle is drawn with a big point. A red arrow is drawn on the first edge, a green arrow on the second and a blue arrow on the third.<br>
  *<br>
- * - OFEnum \c [boundingBox] = NO_BOUNDING_BOX<br>
+ * - OFEnum \c [boundingBox] = (NO_BOUNDING_BOX)<br>
  *   Sets the bounding box drawing style. Choose one value among NO_BOUNDING_BOX, OBJECT_SPACE, AA_OBJECT_SPACE or OBJECT_AND_AA_OBJECT_SPACE.<br>
  *<br>
- * - OFEnum \c [shape] = SMOOTH<br>
+ * - OFEnum \c [shape] = (SMOOTH)<br>
  *   Sets the drawing style of Shape. Choose one value among NONE, POINT, FLAT, SMOOTH, WIREFRAME, HIDDEN_LINE, FLAT_HIDDEN_LINE, SMOOTH_HIDDEN_LINE or NEIGHBOUR.<br>
  *<br>
- * - OFFloat \c [normalLength] = 0.f<br>
+ * - OFFloat \c [normalLength] = (0.f)<br>
  *   Sets this field to zero to disable normals rendering (or a better way is to remove this field). Others values indicates the length of the rendered normals.<br>
  *<br>
- * - OFFloat \c [tangentLength] = 0.f<br>
+ * - OFFloat \c [tangentLength] = (0.f)<br>
  *   Sets this field to zero to disable tangents rendering (or a better way is to remove this field). Others values indicates the length of the rendered tangents.<br>
  *<br>
  *
@@ -91,6 +91,11 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c showOrientation.
 	 */
 	typedef bool ShowOrientationValueType;
+
+	/**
+	 * @brief The default value of field named \c showOrientation.
+	 */
+	static const ShowOrientationValueType DEFAULT_SHOWORIENTATION;
 
 	/**
 	 * @brief Type definition of the field named \c showOrientation
@@ -329,6 +334,11 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 	typedef float NormalLengthValueType;
 
 	/**
+	 * @brief The default value of field named \c normalLength.
+	 */
+	static const NormalLengthValueType DEFAULT_NORMALLENGTH;
+
+	/**
 	 * @brief Type definition of the field named \c normalLength
 	 */
 	typedef vgd::field::TOptionalField< NormalLengthValueType > FNormalLengthType;
@@ -366,6 +376,11 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c tangentLength.
 	 */
 	typedef float TangentLengthValueType;
+
+	/**
+	 * @brief The default value of field named \c tangentLength.
+	 */
+	static const TangentLengthValueType DEFAULT_TANGENTLENGTH;
 
 	/**
 	 * @brief Type definition of the field named \c tangentLength

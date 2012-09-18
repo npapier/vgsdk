@@ -30,44 +30,47 @@ namespace node
  * This node defines a single stage of a post-processing pipeline, i.e. a \c filter function applied on each pixel of the drawing surface with up to 3 input buffers, several parameters and one output buffer. Typical use-case of post-processing pipeline is to apply effect to the the previously rendered scene like depth of field, bloom and so on. 
  *
  * New fields defined by this node :
- * - SFEnum \c input2 = INPUT2_NONE<br>
+ * - SFEnum \c input2 = (INPUT2_NONE)<br>
  *   Specifies the third input buffer used by the filter.<br>
  *<br>
- * - SFEnum \c input0 = PREVIOUS0<br>
+ * - SFEnum \c input0 = (PREVIOUS0)<br>
  *   Specifies the first input buffer used by the filter.<br>
  *<br>
- * - SFEnum \c input1 = INPUT1_NONE<br>
+ * - SFEnum \c input1 = (INPUT1_NONE)<br>
  *   Specifies the second input buffer used by the filter.<br>
  *<br>
- * - SFString \c customFilterDefinition = empty<br>
+ * - SFString \c customFilterDefinition = std::string()<br>
  *   Specifies the code implementing the filter.<br>
  *<br>
- * - SFEnum \c filter = NO_FILTER<br>
+ * - SFEnum \c filter = (NO_FILTER)<br>
  *   Specifies the filter to apply to the input buffers.<br>
  *<br>
  * - OFVec4f \c [param4f1] = vgm::Vec4f(0.0, 0.0, 0.0, 0.0)<br>
  *   Specifies the second 4f parameter used by the filter.<br>
  *<br>
- * - OFNodeWkp \c [texture0] = empty<br>
+ * - OFNodeWkp \c [texture0] = vgd::node::NodeWkp()<br>
  *   Specifies the texture available through input buffer used by the filter when TEXTURE0 is specified. Must be a Texture2D node.<br>
  *<br>
- * - OFMatrixR \c [param4x4f0] = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
- *   Specifies the first 4x4f parameter used by the filter.<br>
+ * - SFEnum \c input0Sampling = (INPUT0SAMPLING_NONE)<br>
+ *   Specifies the sampling state (filter and max anisotropy) of input0 field.<br>
  *<br>
- * - SFString \c customFilterApply = empty<br>
+ * - SFString \c customFilterApply = std::string()<br>
  *   Specifies the code calling the filter defined by customFilterDefinition.<br>
  *<br>
- * - SFEnum \c output = OUTPUT_TMP0<br>
+ * - SFEnum \c output = (OUTPUT_TMP0)<br>
  *   Specifices the output buffer used by the filter.<br>
  *<br>
- * - OFFloat \c [param1f0] = 0.0<br>
+ * - OFFloat \c [param1f0] = (0.0)<br>
  *   Specifies the first 1f parameter used by the filter.<br>
  *<br>
- * - OFFloat \c [param1f1] = 0.0<br>
+ * - OFFloat \c [param1f1] = (0.0)<br>
  *   Specifies the second 1f parameter used by the filter.<br>
  *<br>
  * - OFVec4f \c [param4f0] = vgm::Vec4f(0.0, 0.0, 0.0, 0.0)<br>
  *   Specifies the first 4f parameter used by the filter.<br>
+ *<br>
+ * - OFMatrixR \c [param4x4f0] = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
+ *   Specifies the first 4x4f parameter used by the filter.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -122,17 +125,17 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		INPUT2_TEXTURE0 = 393,	///< 
-		INPUT2_PREVIOUS0 = 394,	///< 
-		INPUT2_OUTPUT_BUFFER0 = 385,	///< 
-		INPUT2_OUTPUT_BUFFER1 = 386,	///< 
-		INPUT2_OUTPUT_BUFFER2 = 387,	///< 
-		INPUT2_OUTPUT_BUFFER3 = 388,	///< 
-		INPUT2_OUTPUT_BUFFER4 = 389,	///< 
-		INPUT2_OUTPUT_BUFFER5 = 390,	///< 
-		INPUT2_OUTPUT_BUFFER6 = 391,	///< 
-		INPUT2_OUTPUT_BUFFER7 = 392,	///< 
-		INPUT2_NONE = 395,	///< 
+		INPUT2_TEXTURE0 = 399,	///< 
+		INPUT2_PREVIOUS0 = 400,	///< 
+		INPUT2_OUTPUT_BUFFER0 = 391,	///< 
+		INPUT2_OUTPUT_BUFFER1 = 392,	///< 
+		INPUT2_OUTPUT_BUFFER2 = 393,	///< 
+		INPUT2_OUTPUT_BUFFER3 = 394,	///< 
+		INPUT2_OUTPUT_BUFFER4 = 395,	///< 
+		INPUT2_OUTPUT_BUFFER5 = 396,	///< 
+		INPUT2_OUTPUT_BUFFER6 = 397,	///< 
+		INPUT2_OUTPUT_BUFFER7 = 398,	///< 
+		INPUT2_NONE = 401,	///< 
 		DEFAULT_INPUT2 = INPUT2_NONE	///< 
 	};
 
@@ -160,17 +163,17 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 385 );
-			retVal.push_back( 386 );
-			retVal.push_back( 387 );
-			retVal.push_back( 388 );
-			retVal.push_back( 389 );
-			retVal.push_back( 390 );
 			retVal.push_back( 391 );
 			retVal.push_back( 392 );
 			retVal.push_back( 393 );
 			retVal.push_back( 394 );
 			retVal.push_back( 395 );
+			retVal.push_back( 396 );
+			retVal.push_back( 397 );
+			retVal.push_back( 398 );
+			retVal.push_back( 399 );
+			retVal.push_back( 400 );
+			retVal.push_back( 401 );
 
 			return retVal;
 		}
@@ -328,17 +331,17 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		INPUT1_OUTPUT_BUFFER5 = 379,	///< 
-		INPUT1_OUTPUT_BUFFER4 = 378,	///< 
-		INPUT1_OUTPUT_BUFFER7 = 381,	///< 
-		INPUT1_OUTPUT_BUFFER6 = 380,	///< 
-		INPUT1_OUTPUT_BUFFER1 = 375,	///< 
-		INPUT1_OUTPUT_BUFFER0 = 374,	///< 
-		INPUT1_OUTPUT_BUFFER3 = 377,	///< 
-		INPUT1_OUTPUT_BUFFER2 = 376,	///< 
-		INPUT1_TEXTURE0 = 382,	///< 
-		INPUT1_NONE = 384,	///< 
-		INPUT1_PREVIOUS0 = 383,	///< 
+		INPUT1_OUTPUT_BUFFER5 = 385,	///< 
+		INPUT1_OUTPUT_BUFFER4 = 384,	///< 
+		INPUT1_OUTPUT_BUFFER7 = 387,	///< 
+		INPUT1_OUTPUT_BUFFER6 = 386,	///< 
+		INPUT1_OUTPUT_BUFFER1 = 381,	///< 
+		INPUT1_OUTPUT_BUFFER0 = 380,	///< 
+		INPUT1_OUTPUT_BUFFER3 = 383,	///< 
+		INPUT1_OUTPUT_BUFFER2 = 382,	///< 
+		INPUT1_TEXTURE0 = 388,	///< 
+		INPUT1_NONE = 390,	///< 
+		INPUT1_PREVIOUS0 = 389,	///< 
 		DEFAULT_INPUT1 = INPUT1_NONE	///< 
 	};
 
@@ -366,17 +369,17 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 374 );
-			retVal.push_back( 375 );
-			retVal.push_back( 376 );
-			retVal.push_back( 377 );
-			retVal.push_back( 378 );
-			retVal.push_back( 379 );
 			retVal.push_back( 380 );
 			retVal.push_back( 381 );
 			retVal.push_back( 382 );
 			retVal.push_back( 383 );
 			retVal.push_back( 384 );
+			retVal.push_back( 385 );
+			retVal.push_back( 386 );
+			retVal.push_back( 387 );
+			retVal.push_back( 388 );
+			retVal.push_back( 389 );
+			retVal.push_back( 390 );
 
 			return retVal;
 		}
@@ -430,6 +433,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c customFilterDefinition.
 	 */
 	typedef std::string CustomFilterDefinitionValueType;
+
+	/**
+	 * @brief The default value of field named \c customFilterDefinition.
+	 */
+	static const CustomFilterDefinitionValueType DEFAULT_CUSTOMFILTERDEFINITION;
 
 	/**
 	 * @brief Type definition of the field named \c customFilterDefinition
@@ -595,6 +603,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	typedef vgm::Vec4f Param4f1ValueType;
 
 	/**
+	 * @brief The default value of field named \c param4f1.
+	 */
+	static const Param4f1ValueType DEFAULT_PARAM4F1;
+
+	/**
 	 * @brief Type definition of the field named \c param4f1
 	 */
 	typedef vgd::field::TOptionalField< Param4f1ValueType > FParam4f1Type;
@@ -634,6 +647,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	typedef vgd::node::NodeWkp Texture0ValueType;
 
 	/**
+	 * @brief The default value of field named \c texture0.
+	 */
+	static const Texture0ValueType DEFAULT_TEXTURE0;
+
+	/**
 	 * @brief Type definition of the field named \c texture0
 	 */
 	typedef vgd::field::TOptionalField< Texture0ValueType > FTexture0Type;
@@ -663,40 +681,89 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field param4x4f0
+	 * @name Accessors to field input0Sampling
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c param4x4f0.
+	 * @brief Definition of symbolic values
 	 */
-	typedef vgm::MatrixR Param4x4f0ValueType;
+	enum  
+	{
+		LINEAR_MAXANISOTROPY1 = 376,	///< Linear sampling mode (minification and magnification) using 1 for maximum anisotropy
+		INPUT0SAMPLING_NONE = 374,	///< No changes to the sampling state
+		LINEAR_MAXANISOTROPY4 = 377,	///< Linear sampling mode (minification and magnification) using 4 for maximum anisotropy
+		LINEAR_MAXANISOTROPY8 = 378,	///< Linear sampling mode (minification and magnification) using 8 for maximum anisotropy
+		NEAREST_MAXANISOTROPY1 = 375,	///< Nearest sampling mode (minification and magnification) using 1 for maximum anisotropy
+		LINEAR_MAXANISOTROPY16 = 379,	///< Linear sampling mode (minification and magnification) using 16 for maximum anisotropy
+		DEFAULT_INPUT0SAMPLING = INPUT0SAMPLING_NONE	///< No changes to the sampling state
+	};
 
 	/**
-	 * @brief Type definition of the field named \c param4x4f0
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
-	typedef vgd::field::TOptionalField< Param4x4f0ValueType > FParam4x4f0Type;
+	struct Input0SamplingValueType : public vgd::field::Enum
+	{
+		Input0SamplingValueType()
+		{}
+
+		Input0SamplingValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		Input0SamplingValueType( const Input0SamplingValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		Input0SamplingValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 374 );
+			retVal.push_back( 375 );
+			retVal.push_back( 376 );
+			retVal.push_back( 377 );
+			retVal.push_back( 378 );
+			retVal.push_back( 379 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "INPUT0SAMPLING_NONE" );
+			retVal.push_back( "NEAREST_MAXANISOTROPY1" );
+			retVal.push_back( "LINEAR_MAXANISOTROPY1" );
+			retVal.push_back( "LINEAR_MAXANISOTROPY4" );
+			retVal.push_back( "LINEAR_MAXANISOTROPY8" );
+			retVal.push_back( "LINEAR_MAXANISOTROPY16" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c input0Sampling
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FInput0SamplingType;
 
 
 	/**
-	 * @brief Gets the value of field named \c param4x4f0.
+	 * @brief Gets the value of field named \c input0Sampling.
 	 */
-	const bool getParam4x4f0( Param4x4f0ValueType& value ) const;
+	const Input0SamplingValueType getInput0Sampling() const;
 
 	/**
-	 * @brief Sets the value of field named \c param4x4f0.
- 	 */
-	void setParam4x4f0( const Param4x4f0ValueType& value );
-
-	/**
-	 * @brief Erases the field named \c param4x4f0.
+	 * @brief Sets the value of field named \c input0Sampling.
 	 */
-	void eraseParam4x4f0();
+	void setInput0Sampling( const Input0SamplingValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c param4x4f0 has been initialized.
-	 */
-	const bool hasParam4x4f0() const;
 	//@}
 
 
@@ -710,6 +777,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c customFilterApply.
 	 */
 	typedef std::string CustomFilterApplyValueType;
+
+	/**
+	 * @brief The default value of field named \c customFilterApply.
+	 */
+	static const CustomFilterApplyValueType DEFAULT_CUSTOMFILTERAPPLY;
 
 	/**
 	 * @brief Type definition of the field named \c customFilterApply
@@ -741,15 +813,15 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		OUTPUT_OUTPUT_BUFFER7 = 404,	///< 
-		OUTPUT_OUTPUT_BUFFER6 = 403,	///< 
-		OUTPUT_OUTPUT_BUFFER5 = 402,	///< 
-		OUTPUT_OUTPUT_BUFFER4 = 401,	///< 
-		OUTPUT_OUTPUT_BUFFER3 = 400,	///< 
-		OUTPUT_OUTPUT_BUFFER2 = 399,	///< 
-		OUTPUT_OUTPUT_BUFFER1 = 398,	///< 
-		OUTPUT_OUTPUT_BUFFER0 = 397,	///< 
-		OUTPUT_TMP0 = 396,	///< Post-processing internal buffer.
+		OUTPUT_OUTPUT_BUFFER7 = 410,	///< 
+		OUTPUT_OUTPUT_BUFFER6 = 409,	///< 
+		OUTPUT_OUTPUT_BUFFER5 = 408,	///< 
+		OUTPUT_OUTPUT_BUFFER4 = 407,	///< 
+		OUTPUT_OUTPUT_BUFFER3 = 406,	///< 
+		OUTPUT_OUTPUT_BUFFER2 = 405,	///< 
+		OUTPUT_OUTPUT_BUFFER1 = 404,	///< 
+		OUTPUT_OUTPUT_BUFFER0 = 403,	///< 
+		OUTPUT_TMP0 = 402,	///< Post-processing internal buffer.
 		DEFAULT_OUTPUT = OUTPUT_TMP0	///< Post-processing internal buffer.
 	};
 
@@ -777,15 +849,15 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 396 );
-			retVal.push_back( 397 );
-			retVal.push_back( 398 );
-			retVal.push_back( 399 );
-			retVal.push_back( 400 );
-			retVal.push_back( 401 );
 			retVal.push_back( 402 );
 			retVal.push_back( 403 );
 			retVal.push_back( 404 );
+			retVal.push_back( 405 );
+			retVal.push_back( 406 );
+			retVal.push_back( 407 );
+			retVal.push_back( 408 );
+			retVal.push_back( 409 );
+			retVal.push_back( 410 );
 
 			return retVal;
 		}
@@ -839,6 +911,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	typedef float Param1f0ValueType;
 
 	/**
+	 * @brief The default value of field named \c param1f0.
+	 */
+	static const Param1f0ValueType DEFAULT_PARAM1F0;
+
+	/**
 	 * @brief Type definition of the field named \c param1f0
 	 */
 	typedef vgd::field::TOptionalField< Param1f0ValueType > FParam1f0Type;
@@ -876,6 +953,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c param1f1.
 	 */
 	typedef float Param1f1ValueType;
+
+	/**
+	 * @brief The default value of field named \c param1f1.
+	 */
+	static const Param1f1ValueType DEFAULT_PARAM1F1;
 
 	/**
 	 * @brief Type definition of the field named \c param1f1
@@ -917,6 +999,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	typedef vgm::Vec4f Param4f0ValueType;
 
 	/**
+	 * @brief The default value of field named \c param4f0.
+	 */
+	static const Param4f0ValueType DEFAULT_PARAM4F0;
+
+	/**
 	 * @brief Type definition of the field named \c param4f0
 	 */
 	typedef vgd::field::TOptionalField< Param4f0ValueType > FParam4f0Type;
@@ -941,6 +1028,50 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @brief Tests if the value of field named \c param4f0 has been initialized.
 	 */
 	const bool hasParam4f0() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field param4x4f0
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c param4x4f0.
+	 */
+	typedef vgm::MatrixR Param4x4f0ValueType;
+
+	/**
+	 * @brief The default value of field named \c param4x4f0.
+	 */
+	static const Param4x4f0ValueType DEFAULT_PARAM4X4F0;
+
+	/**
+	 * @brief Type definition of the field named \c param4x4f0
+	 */
+	typedef vgd::field::TOptionalField< Param4x4f0ValueType > FParam4x4f0Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c param4x4f0.
+	 */
+	const bool getParam4x4f0( Param4x4f0ValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c param4x4f0.
+ 	 */
+	void setParam4x4f0( const Param4x4f0ValueType& value );
+
+	/**
+	 * @brief Erases the field named \c param4x4f0.
+	 */
+	void eraseParam4x4f0();
+
+	/**
+	 * @brief Tests if the value of field named \c param4x4f0 has been initialized.
+	 */
+	const bool hasParam4x4f0() const;
 	//@}
 
 
@@ -1000,11 +1131,11 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	static const std::string getFTexture0( void );
 
 	/**
-	 * @brief Returns the name of field \c param4x4f0.
+	 * @brief Returns the name of field \c input0Sampling.
 	 *
-	 * @return the name of field \c param4x4f0.
+	 * @return the name of field \c input0Sampling.
 	 */
-	static const std::string getFParam4x4f0( void );
+	static const std::string getFInput0Sampling( void );
 
 	/**
 	 * @brief Returns the name of field \c customFilterApply.
@@ -1040,6 +1171,13 @@ struct VGD_API PostProcessing : public vgd::node::MultiAttribute
 	 * @return the name of field \c param4f0.
 	 */
 	static const std::string getFParam4f0( void );
+
+	/**
+	 * @brief Returns the name of field \c param4x4f0.
+	 *
+	 * @return the name of field \c param4x4f0.
+	 */
+	static const std::string getFParam4x4f0( void );
 
 	//@}
 

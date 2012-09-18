@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,6 +6,7 @@
 #include "vge/engine/Engine.hpp"
 
 #include <vgd/node/Camera.hpp>
+#include <vgd/node/EngineProperties.hpp>
 
 #include "vge/handler/Handler.hpp"
 #include "vge/handler/HandlerRegistry.hpp"
@@ -33,8 +34,12 @@ Engine::Engine()
 	m_nearFar.setInvalid();
 	m_bufferUsagePolicy	= BUP_NOT_DEFINED;
 	m_eyeUsagePolicy	= vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY;
+	m_defaultMaxAnisotropy = vgd::node::EngineProperties::DEFAULT_MAXANISOTROPY;
 
 	reset();
+
+	// Initialize random seed
+	// srand( time(NULL) );
 }
 
 
@@ -63,8 +68,9 @@ void Engine::resetEval()
 	m_camera = 0;
 	m_viewport.setInvalid();
 	m_nearFar.setInvalid();
-	m_bufferUsagePolicy	= BUP_DEFAULT;
-	m_eyeUsagePolicy	= vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY;
+	m_bufferUsagePolicy		= BUP_DEFAULT;
+	m_eyeUsagePolicy		= vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY;
+	m_defaultMaxAnisotropy	= vgd::node::EngineProperties::DEFAULT_MAXANISOTROPY;
 }
 
 
@@ -563,6 +569,18 @@ const EyeUsagePolicy Engine::getEyeUsagePolicy() const
 void Engine::setEyeUsagePolicy( const EyeUsagePolicy policy )
 {
 	m_eyeUsagePolicy = policy;
+}
+
+
+
+const float Engine::getDefaultMaxAnisotropy() const
+{
+	return m_defaultMaxAnisotropy;
+}
+
+void Engine::setDefaultMaxAnisotropy( const float value )
+{
+	m_defaultMaxAnisotropy = value;
 }
 
 

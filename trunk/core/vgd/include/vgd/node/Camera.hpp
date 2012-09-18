@@ -36,7 +36,7 @@ namespace node
  * - SFMatrixR \c projectionLeft = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the projection matrix for monoscopic rendering or for the left eye if stereo is enabled.<br>
  *<br>
- * - OFFloat \c [zFar] = 3996.f<br>
+ * - OFFloat \c [zFar] = (3996.f)<br>
  *   Farest visible z for the camera<br>
  *<br>
  * - SFMatrixR \c lookAtLeft = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
@@ -48,28 +48,28 @@ namespace node
  * - SFMatrixR \c projectionRight = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the projection matrix for the right eye (used only if stereo is enabled).<br>
  *<br>
- * - OFRectangle2i \c [scissor] = empty<br>
+ * - OFRectangle2i \c [scissor] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
  *   Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.<br>
  *<br>
- * - SFEnum \c mode = MONOSCOPIC<br>
+ * - SFEnum \c mode = (MONOSCOPIC)<br>
  *   Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
  *<br>
- * - OFFloat \c [aspect] = 1<br>
+ * - OFFloat \c [aspect] = (1)<br>
  *   Aspect ratio of the camera<br>
  *<br>
- * - SFBool \c rightEye = true<br>
+ * - SFBool \c rightEye = (true)<br>
  *   Sets to true to enabled the right eye in stereoscopic mode. Setting this field to false is helpful for debugging.<br>
  *<br>
- * - SFFloat \c eyeSeparation = 0.f<br>
+ * - SFFloat \c eyeSeparation = (0.f)<br>
  *   Sets the distance between the left and right eye.<br>
  *<br>
- * - SFFloat \c imageShift = 0.f<br>
+ * - SFFloat \c imageShift = (0.f)<br>
  *   Sets the additional horizontal shift between the left and right image. This value must be between 0 and 100. 0 means no shift at all. 100 corresponds to a shift of 1/8 of the drawing surface.<br>
  *<br>
- * - OFFloat \c [zNear] = 0.01f<br>
+ * - OFFloat \c [zNear] = (0.01f)<br>
  *   Nearest visible z for the camera.<br>
  *<br>
- * - SFFloat \c fovy = 45.f<br>
+ * - SFFloat \c fovy = (45.f)<br>
  *   Field of view angle for the Y direction for the camera. In the case of a perspective camera.<br>
  *<br>
  *
@@ -179,6 +179,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef vgm::Rectangle2i ViewportValueType;
 
 	/**
+	 * @brief The default value of field named \c viewport.
+	 */
+	static const ViewportValueType DEFAULT_VIEWPORT;
+
+	/**
 	 * @brief Type definition of the field named \c viewport
 	 */
 	typedef vgd::field::TOptionalField< ViewportValueType > FViewportType;
@@ -218,6 +223,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef vgm::MatrixR ProjectionLeftValueType;
 
 	/**
+	 * @brief The default value of field named \c projectionLeft.
+	 */
+	static const ProjectionLeftValueType DEFAULT_PROJECTIONLEFT;
+
+	/**
 	 * @brief Type definition of the field named \c projectionLeft
 	 */
 	typedef vgd::field::TSingleField< ProjectionLeftValueType > FProjectionLeftType;
@@ -246,6 +256,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Type definition of the value contained by field named \c zFar.
 	 */
 	typedef float ZFarValueType;
+
+	/**
+	 * @brief The default value of field named \c zFar.
+	 */
+	static const ZFarValueType DEFAULT_ZFAR;
 
 	/**
 	 * @brief Type definition of the field named \c zFar
@@ -287,6 +302,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef vgm::MatrixR LookAtLeftValueType;
 
 	/**
+	 * @brief The default value of field named \c lookAtLeft.
+	 */
+	static const LookAtLeftValueType DEFAULT_LOOKATLEFT;
+
+	/**
 	 * @brief Type definition of the field named \c lookAtLeft
 	 */
 	typedef vgd::field::TSingleField< LookAtLeftValueType > FLookAtLeftType;
@@ -315,6 +335,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Type definition of the value contained by field named \c lookAtRight.
 	 */
 	typedef vgm::MatrixR LookAtRightValueType;
+
+	/**
+	 * @brief The default value of field named \c lookAtRight.
+	 */
+	static const LookAtRightValueType DEFAULT_LOOKATRIGHT;
 
 	/**
 	 * @brief Type definition of the field named \c lookAtRight
@@ -347,6 +372,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef vgm::MatrixR ProjectionRightValueType;
 
 	/**
+	 * @brief The default value of field named \c projectionRight.
+	 */
+	static const ProjectionRightValueType DEFAULT_PROJECTIONRIGHT;
+
+	/**
 	 * @brief Type definition of the field named \c projectionRight
 	 */
 	typedef vgd::field::TSingleField< ProjectionRightValueType > FProjectionRightType;
@@ -375,6 +405,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Type definition of the value contained by field named \c scissor.
 	 */
 	typedef vgm::Rectangle2i ScissorValueType;
+
+	/**
+	 * @brief The default value of field named \c scissor.
+	 */
+	static const ScissorValueType DEFAULT_SCISSOR;
 
 	/**
 	 * @brief Type definition of the field named \c scissor
@@ -495,6 +530,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef float AspectValueType;
 
 	/**
+	 * @brief The default value of field named \c aspect.
+	 */
+	static const AspectValueType DEFAULT_ASPECT;
+
+	/**
 	 * @brief Type definition of the field named \c aspect
 	 */
 	typedef vgd::field::TOptionalField< AspectValueType > FAspectType;
@@ -534,6 +574,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef bool RightEyeValueType;
 
 	/**
+	 * @brief The default value of field named \c rightEye.
+	 */
+	static const RightEyeValueType DEFAULT_RIGHTEYE;
+
+	/**
 	 * @brief Type definition of the field named \c rightEye
 	 */
 	typedef vgd::field::TSingleField< RightEyeValueType > FRightEyeType;
@@ -562,6 +607,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Type definition of the value contained by field named \c eyeSeparation.
 	 */
 	typedef float EyeSeparationValueType;
+
+	/**
+	 * @brief The default value of field named \c eyeSeparation.
+	 */
+	static const EyeSeparationValueType DEFAULT_EYESEPARATION;
 
 	/**
 	 * @brief Type definition of the field named \c eyeSeparation
@@ -594,6 +644,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	typedef float ImageShiftValueType;
 
 	/**
+	 * @brief The default value of field named \c imageShift.
+	 */
+	static const ImageShiftValueType DEFAULT_IMAGESHIFT;
+
+	/**
 	 * @brief Type definition of the field named \c imageShift
 	 */
 	typedef vgd::field::TSingleField< ImageShiftValueType > FImageShiftType;
@@ -622,6 +677,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Type definition of the value contained by field named \c zNear.
 	 */
 	typedef float ZNearValueType;
+
+	/**
+	 * @brief The default value of field named \c zNear.
+	 */
+	static const ZNearValueType DEFAULT_ZNEAR;
 
 	/**
 	 * @brief Type definition of the field named \c zNear
@@ -661,6 +721,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Type definition of the value contained by field named \c fovy.
 	 */
 	typedef float FovyValueType;
+
+	/**
+	 * @brief The default value of field named \c fovy.
+	 */
+	static const FovyValueType DEFAULT_FOVY;
 
 	/**
 	 * @brief Type definition of the field named \c fovy

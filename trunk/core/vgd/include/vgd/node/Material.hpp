@@ -26,10 +26,10 @@ namespace node
  * The Material node specifies current surface material properties for all subsequent shapes nodes  and is used by the lighting equations during rendering. The field \c opacity (alpha value) is used in the lighting computation only for the diffuse alpha component. The field \c transparency is not optional because it is used by others fields (in OpenGL ambient and others use 4 floats). 
  *
  * New fields defined by this node :
- * - SFFloat \c opacity = 1.f<br>
+ * - SFFloat \c opacity = (1.f)<br>
  *   Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.<br>
  *<br>
- * - OFFloat \c [shininess] = 0.f<br>
+ * - OFFloat \c [shininess] = (0.f)<br>
  *   Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).<br>
  *<br>
  * - OFVec3f \c [emission] = vgm::Vec3f(0.f, 0.f, 0.f)<br>
@@ -95,6 +95,11 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	typedef float OpacityValueType;
 
 	/**
+	 * @brief The default value of field named \c opacity.
+	 */
+	static const OpacityValueType DEFAULT_OPACITY;
+
+	/**
 	 * @brief Type definition of the field named \c opacity
 	 */
 	typedef vgd::field::TSingleField< OpacityValueType > FOpacityType;
@@ -123,6 +128,11 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c shininess.
 	 */
 	typedef float ShininessValueType;
+
+	/**
+	 * @brief The default value of field named \c shininess.
+	 */
+	static const ShininessValueType DEFAULT_SHININESS;
 
 	/**
 	 * @brief Type definition of the field named \c shininess
@@ -164,6 +174,11 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	typedef vgm::Vec3f EmissionValueType;
 
 	/**
+	 * @brief The default value of field named \c emission.
+	 */
+	static const EmissionValueType DEFAULT_EMISSION;
+
+	/**
 	 * @brief Type definition of the field named \c emission
 	 */
 	typedef vgd::field::TOptionalField< EmissionValueType > FEmissionType;
@@ -201,6 +216,11 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c specular.
 	 */
 	typedef vgm::Vec3f SpecularValueType;
+
+	/**
+	 * @brief The default value of field named \c specular.
+	 */
+	static const SpecularValueType DEFAULT_SPECULAR;
 
 	/**
 	 * @brief Type definition of the field named \c specular
@@ -242,6 +262,11 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	typedef vgm::Vec3f AmbientValueType;
 
 	/**
+	 * @brief The default value of field named \c ambient.
+	 */
+	static const AmbientValueType DEFAULT_AMBIENT;
+
+	/**
 	 * @brief Type definition of the field named \c ambient
 	 */
 	typedef vgd::field::TOptionalField< AmbientValueType > FAmbientType;
@@ -279,6 +304,11 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c diffuse.
 	 */
 	typedef vgm::Vec3f DiffuseValueType;
+
+	/**
+	 * @brief The default value of field named \c diffuse.
+	 */
+	static const DiffuseValueType DEFAULT_DIFFUSE;
 
 	/**
 	 * @brief Type definition of the field named \c diffuse

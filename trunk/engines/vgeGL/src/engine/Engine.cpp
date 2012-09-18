@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -731,6 +731,32 @@ void Engine::resetMatrices()
 }
 
 
+void Engine::setDefaultMaxAnisotropy( const float value )
+{
+	vge::engine::Engine::setDefaultMaxAnisotropy( value );
+
+	// Invalidates Texture.parameters dirty flags.
+	GLManagerType& manager = getGLManager();
+
+	typedef std::vector< vgd::node::Node * > ContainerType;
+	typedef ContainerType::iterator ContainerIterator;
+
+	ContainerType nodes;
+	manager.gethKeys( nodes );
+
+	for( ContainerIterator	i	= nodes.begin(),
+							iEnd= nodes.end();
+		i != iEnd;
+		++i )
+	{
+		vgd::node::Texture * texture = dynamic_cast< vgd::node::Texture * >( *i );
+		if ( texture )
+		{
+			vgd::field::DirtyFlag* parametersDF = texture->getDirtyFlag( texture->getDFParameters() );
+			parametersDF->dirty();
+		}
+	}
+}
 
 const vgm::Vec2i Engine::getMaxViewportSize() const
 {

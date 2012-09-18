@@ -26,7 +26,7 @@ namespace node
  * All subsequent shapes in the scene graph will be clipped to the half-space defined by the \c plane field. The half-space is the side of the plane in the direction of the plane normal. Any number of clipping planes may be active simultaneously, although the graphics library may place a limit on this number during rendering (i.e. 6 for OpenGL). 
  *
  * New fields defined by this node :
- * - OFBool \c [on] = true<br>
+ * - OFBool \c [on] = (true)<br>
  *   Specifies if the clipping plane is enabled or disabled.<br>
  *<br>
  * - SFPlane \c plane = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f )<br>
@@ -83,6 +83,11 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	typedef bool OnValueType;
 
 	/**
+	 * @brief The default value of field named \c on.
+	 */
+	static const OnValueType DEFAULT_ON;
+
+	/**
 	 * @brief Type definition of the field named \c on
 	 */
 	typedef vgd::field::TOptionalField< OnValueType > FOnType;
@@ -120,6 +125,11 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c plane.
 	 */
 	typedef vgm::Plane PlaneValueType;
+
+	/**
+	 * @brief The default value of field named \c plane.
+	 */
+	static const PlaneValueType DEFAULT_PLANE;
 
 	/**
 	 * @brief Type definition of the field named \c plane

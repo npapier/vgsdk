@@ -34,7 +34,7 @@ namespace node
  * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
  *   Specular intensity of the light.<br>
  *<br>
- * - OFBool \c [on] = false<br>
+ * - OFBool \c [on] = (false)<br>
  *   Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
@@ -43,7 +43,7 @@ namespace node
  * - OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
  *   Diffuse intensity of the light.<br>
  *<br>
- * - SFBool \c castShadow = false<br>
+ * - SFBool \c castShadow = (false)<br>
  *   Indicating that this light casts a shadow.<br>
  *<br>
  * @ingroup g_nodes
@@ -94,6 +94,11 @@ struct VGD_API DirectionalLight : public vgd::node::Light
 	 * @brief Type definition of the value contained by field named \c direction.
 	 */
 	typedef vgm::Vec3f DirectionValueType;
+
+	/**
+	 * @brief The default value of field named \c direction.
+	 */
+	static const DirectionValueType DEFAULT_DIRECTION;
 
 	/**
 	 * @brief Type definition of the field named \c direction

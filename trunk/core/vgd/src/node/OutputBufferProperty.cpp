@@ -82,13 +82,13 @@ OutputBufferProperty::OutputBufferProperty( const std::string nodeName ) :
 void OutputBufferProperty::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setSizeSemantic( SCALE_FACTOR );
-
-	setFormat( RGB );
-	setCurrent( true );
-	setCommand( COLOR );
-	setType( INTEGER );
-
+	setSizeSemantic( (SCALE_FACTOR) );
+	setCustomCommand( std::string() );
+	setFormat( (RGB) );
+	setCurrent( (true) );
+	setCommand( (COLOR) );
+	setType( (INTEGER) );
+	setCustomDeclaration( std::string() );
 	setSize( vgm::Vec2f(1.f, 1.f) );
 }
 
@@ -102,6 +102,7 @@ void OutputBufferProperty::setOptionalsToDefaults()
 
 
 // SizeSemantic
+
 const OutputBufferProperty::SizeSemanticValueType OutputBufferProperty::getSizeSemantic() const
 {
 	return getFieldRO<FSizeSemanticType>(getFSizeSemantic())->getValue();
@@ -117,6 +118,11 @@ void OutputBufferProperty::setSizeSemantic( const SizeSemanticValueType value )
 
 
 // CustomCommand
+
+const OutputBufferProperty::CustomCommandValueType OutputBufferProperty::DEFAULT_CUSTOMCOMMAND = std::string();
+
+
+
 const OutputBufferProperty::CustomCommandValueType OutputBufferProperty::getCustomCommand() const
 {
 	return getFieldRO<FCustomCommandType>(getFCustomCommand())->getValue();
@@ -132,6 +138,7 @@ void OutputBufferProperty::setCustomCommand( const CustomCommandValueType value 
 
 
 // Format
+
 const OutputBufferProperty::FormatValueType OutputBufferProperty::getFormat() const
 {
 	return getFieldRO<FFormatType>(getFFormat())->getValue();
@@ -147,6 +154,11 @@ void OutputBufferProperty::setFormat( const FormatValueType value )
 
 
 // Current
+
+const OutputBufferProperty::CurrentValueType OutputBufferProperty::DEFAULT_CURRENT = (true);
+
+
+
 const OutputBufferProperty::CurrentValueType OutputBufferProperty::getCurrent() const
 {
 	return getFieldRO<FCurrentType>(getFCurrent())->getValue();
@@ -162,6 +174,7 @@ void OutputBufferProperty::setCurrent( const CurrentValueType value )
 
 
 // Command
+
 const OutputBufferProperty::CommandValueType OutputBufferProperty::getCommand() const
 {
 	return getFieldRO<FCommandType>(getFCommand())->getValue();
@@ -177,6 +190,7 @@ void OutputBufferProperty::setCommand( const CommandValueType value )
 
 
 // Type
+
 const OutputBufferProperty::TypeValueType OutputBufferProperty::getType() const
 {
 	return getFieldRO<FTypeType>(getFType())->getValue();
@@ -192,6 +206,11 @@ void OutputBufferProperty::setType( const TypeValueType value )
 
 
 // CustomDeclaration
+
+const OutputBufferProperty::CustomDeclarationValueType OutputBufferProperty::DEFAULT_CUSTOMDECLARATION = std::string();
+
+
+
 const OutputBufferProperty::CustomDeclarationValueType OutputBufferProperty::getCustomDeclaration() const
 {
 	return getFieldRO<FCustomDeclarationType>(getFCustomDeclaration())->getValue();
@@ -207,6 +226,11 @@ void OutputBufferProperty::setCustomDeclaration( const CustomDeclarationValueTyp
 
 
 // Size
+
+const OutputBufferProperty::SizeValueType OutputBufferProperty::DEFAULT_SIZE = vgm::Vec2f(1.f, 1.f);
+
+
+
 const OutputBufferProperty::SizeValueType OutputBufferProperty::getSize() const
 {
 	return getFieldRO<FSizeType>(getFSize())->getValue();

@@ -90,21 +90,21 @@ Fluid::Fluid( const std::string nodeName ) :
 void Fluid::setToDefaults( void )
 {
 	Shape::setToDefaults();
-	setOpacity( 0.6 );
+	setOpacity( (0.6) );
 	setHeightMapSize( vgm::Vec2i(256, 256) );
-
-	setRequestFeedback( false );
+	setScene( vgd::node::NodeWkp() );
+	setRequestFeedback( (false) );
 	setGravity( vgm::Vec4f(0.f, -1.f, 0.f, 9.8f) );
-
-
-	setCellSize( 1.0 );
+	setSimulationPass1( std::string() );
+	setSimulationPass0( std::string() );
+	setCellSize( (1.0) );
 	setFeedbackInformationsBis( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
-	setDamping( 0.8 );
-	setTimeStep( 0.1 );
-	setThickness( 1.0 );
+	setDamping( (0.8) );
+	setTimeStep( (0.1) );
+	setThickness( (1.0) );
 	setFeedbackInformations( vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f) );
-	setCss( 1.0 );
-
+	setCss( (1.0) );
+	setFluidPositionFeedback( vgd::basic::IImageShp() );
 }
 
 
@@ -117,6 +117,11 @@ void Fluid::setOptionalsToDefaults()
 
 
 // Opacity
+
+const Fluid::OpacityValueType Fluid::DEFAULT_OPACITY = (0.6);
+
+
+
 const Fluid::OpacityValueType Fluid::getOpacity() const
 {
 	return getFieldRO<FOpacityType>(getFOpacity())->getValue();
@@ -147,6 +152,11 @@ vgd::field::EditorRW< Fluid::FEmittersOrDrainersType > Fluid::getEmittersOrDrain
 
 
 // HeightMapSize
+
+const Fluid::HeightMapSizeValueType Fluid::DEFAULT_HEIGHTMAPSIZE = vgm::Vec2i(256, 256);
+
+
+
 const Fluid::HeightMapSizeValueType Fluid::getHeightMapSize() const
 {
 	return getFieldRO<FHeightMapSizeType>(getFHeightMapSize())->getValue();
@@ -162,6 +172,11 @@ void Fluid::setHeightMapSize( const HeightMapSizeValueType value )
 
 
 // Scene
+
+const Fluid::SceneValueType Fluid::DEFAULT_SCENE = vgd::node::NodeWkp();
+
+
+
 const Fluid::SceneValueType Fluid::getScene() const
 {
 	return getFieldRO<FSceneType>(getFScene())->getValue();
@@ -177,6 +192,11 @@ void Fluid::setScene( const SceneValueType value )
 
 
 // RequestFeedback
+
+const Fluid::RequestFeedbackValueType Fluid::DEFAULT_REQUESTFEEDBACK = (false);
+
+
+
 const Fluid::RequestFeedbackValueType Fluid::getRequestFeedback() const
 {
 	return getFieldRO<FRequestFeedbackType>(getFRequestFeedback())->getValue();
@@ -192,6 +212,11 @@ void Fluid::setRequestFeedback( const RequestFeedbackValueType value )
 
 
 // Gravity
+
+const Fluid::GravityValueType Fluid::DEFAULT_GRAVITY = vgm::Vec4f(0.f, -1.f, 0.f, 9.8f);
+
+
+
 const Fluid::GravityValueType Fluid::getGravity() const
 {
 	return getFieldRO<FGravityType>(getFGravity())->getValue();
@@ -207,6 +232,11 @@ void Fluid::setGravity( const GravityValueType value )
 
 
 // SimulationPass1
+
+const Fluid::SimulationPass1ValueType Fluid::DEFAULT_SIMULATIONPASS1 = std::string();
+
+
+
 const Fluid::SimulationPass1ValueType Fluid::getSimulationPass1() const
 {
 	return getFieldRO<FSimulationPass1Type>(getFSimulationPass1())->getValue();
@@ -222,6 +252,11 @@ void Fluid::setSimulationPass1( const SimulationPass1ValueType value )
 
 
 // SimulationPass0
+
+const Fluid::SimulationPass0ValueType Fluid::DEFAULT_SIMULATIONPASS0 = std::string();
+
+
+
 const Fluid::SimulationPass0ValueType Fluid::getSimulationPass0() const
 {
 	return getFieldRO<FSimulationPass0Type>(getFSimulationPass0())->getValue();
@@ -237,6 +272,11 @@ void Fluid::setSimulationPass0( const SimulationPass0ValueType value )
 
 
 // CellSize
+
+const Fluid::CellSizeValueType Fluid::DEFAULT_CELLSIZE = (1.0);
+
+
+
 const Fluid::CellSizeValueType Fluid::getCellSize() const
 {
 	return getFieldRO<FCellSizeType>(getFCellSize())->getValue();
@@ -252,6 +292,11 @@ void Fluid::setCellSize( const CellSizeValueType value )
 
 
 // FeedbackInformationsBis
+
+const Fluid::FeedbackInformationsBisValueType Fluid::DEFAULT_FEEDBACKINFORMATIONSBIS = vgm::MatrixR(vgm::MatrixR::getIdentity());
+
+
+
 const Fluid::FeedbackInformationsBisValueType Fluid::getFeedbackInformationsBis() const
 {
 	return getFieldRO<FFeedbackInformationsBisType>(getFFeedbackInformationsBis())->getValue();
@@ -267,6 +312,11 @@ void Fluid::setFeedbackInformationsBis( const FeedbackInformationsBisValueType v
 
 
 // Damping
+
+const Fluid::DampingValueType Fluid::DEFAULT_DAMPING = (0.8);
+
+
+
 const Fluid::DampingValueType Fluid::getDamping() const
 {
 	return getFieldRO<FDampingType>(getFDamping())->getValue();
@@ -282,6 +332,11 @@ void Fluid::setDamping( const DampingValueType value )
 
 
 // TimeStep
+
+const Fluid::TimeStepValueType Fluid::DEFAULT_TIMESTEP = (0.1);
+
+
+
 const Fluid::TimeStepValueType Fluid::getTimeStep() const
 {
 	return getFieldRO<FTimeStepType>(getFTimeStep())->getValue();
@@ -297,6 +352,11 @@ void Fluid::setTimeStep( const TimeStepValueType value )
 
 
 // Thickness
+
+const Fluid::ThicknessValueType Fluid::DEFAULT_THICKNESS = (1.0);
+
+
+
 const Fluid::ThicknessValueType Fluid::getThickness() const
 {
 	return getFieldRO<FThicknessType>(getFThickness())->getValue();
@@ -312,6 +372,11 @@ void Fluid::setThickness( const ThicknessValueType value )
 
 
 // FeedbackInformations
+
+const Fluid::FeedbackInformationsValueType Fluid::DEFAULT_FEEDBACKINFORMATIONS = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f);
+
+
+
 const Fluid::FeedbackInformationsValueType Fluid::getFeedbackInformations() const
 {
 	return getFieldRO<FFeedbackInformationsType>(getFFeedbackInformations())->getValue();
@@ -327,6 +392,11 @@ void Fluid::setFeedbackInformations( const FeedbackInformationsValueType value )
 
 
 // Css
+
+const Fluid::CssValueType Fluid::DEFAULT_CSS = (1.0);
+
+
+
 const Fluid::CssValueType Fluid::getCss() const
 {
 	return getFieldRO<FCssType>(getFCss())->getValue();
@@ -342,6 +412,11 @@ void Fluid::setCss( const CssValueType value )
 
 
 // FluidPositionFeedback
+
+const Fluid::FluidPositionFeedbackValueType Fluid::DEFAULT_FLUIDPOSITIONFEEDBACK = vgd::basic::IImageShp();
+
+
+
 const Fluid::FluidPositionFeedbackValueType Fluid::getFluidPositionFeedback() const
 {
 	return getFieldRO<FFluidPositionFeedbackType>(getFFluidPositionFeedback())->getValue();

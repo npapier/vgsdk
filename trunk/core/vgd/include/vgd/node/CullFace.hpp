@@ -25,7 +25,7 @@ namespace node
  * The CullFace node specifies whether front-facing and/or back-facing facets can be culled. Facets include triangles, quadrilaterals, polygons and rectangles. FrontFace node specifies which of the clockwise and counterclockwise facets are front-facing and back-facing. See vgd::node::FrontFace. 
  *
  * New fields defined by this node :
- * - SFEnum \c mode = DISABLED<br>
+ * - SFEnum \c mode = (DISABLED)<br>
  *   Specifies whether front-facing and/or back-facing facets can be culled.<br>
  *<br>
  *

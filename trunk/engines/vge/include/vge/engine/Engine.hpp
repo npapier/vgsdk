@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -823,6 +823,22 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 */
 	void setEyeUsagePolicy( const EyeUsagePolicy policy );
 
+
+	/**
+	 * @brief Returns the default maximum degree of anisotropy.
+	 */
+	const float getDefaultMaxAnisotropy() const;
+
+	/**
+	 * @brief Sets the default maximum degree of anisotropy.
+	 *
+	 * @param value		Preconditions not verified here, but when used by glo::Texture.
+	 *
+	 * @remark This state is modified by EngineProperties and Texture handlers.
+	 * @see glo::Texture
+	 */
+	virtual void setDefaultMaxAnisotropy( const float value );
+
 	//@}
 
 
@@ -991,6 +1007,7 @@ protected:
 	vgm::Vec2f						m_nearFar;					///< a vector containing respectively the distances to the near and far depth clipping planes
 	BufferUsagePolicy				m_bufferUsagePolicy;		///< the current buffer usage policy
 	EyeUsagePolicy					m_eyeUsagePolicy;			///< the current eye usage policy
+	float							m_defaultMaxAnisotropy;		///< the current default maximum degree of anisotropy
 
 	const vgd::Shp< vge::service::Service > m_paintService;	///< a reference on paint service object used by render() methods
 

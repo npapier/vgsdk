@@ -88,6 +88,11 @@ void TexGenEyeLinear::setOptionalsToDefaults()
 
 
 // Parameters
+
+const TexGenEyeLinear::ParametersValueType TexGenEyeLinear::DEFAULT_PARAMETERS = vgm::MatrixR(vgm::MatrixR::getIdentity());
+
+
+
 const bool TexGenEyeLinear::getParameters( ParametersValueType& value ) const
 {
 	return getFieldRO<FParametersType>(getFParameters())->getValue( value );

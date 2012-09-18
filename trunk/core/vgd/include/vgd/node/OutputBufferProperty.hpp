@@ -28,25 +28,25 @@ namespace node
  * @todo 
  *
  * New fields defined by this node :
- * - SFEnum \c sizeSemantic = SCALE_FACTOR<br>
+ * - SFEnum \c sizeSemantic = (SCALE_FACTOR)<br>
  *   Specifies the semantic of the size field.<br>
  *<br>
- * - SFString \c customCommand = empty<br>
+ * - SFString \c customCommand = std::string()<br>
  *   Specifies the assign command execute by the fragment program. Example : color.rgba; or vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z ); or computeMyCustomValue( ecPosition );<br>
  *<br>
- * - SFEnum \c format = RGB<br>
+ * - SFEnum \c format = (RGB)<br>
  *   Specifies the format used by the buffer.<br>
  *<br>
- * - SFBool \c current = true<br>
+ * - SFBool \c current = (true)<br>
  *   Specifies if this output buffer must be used for drawing by default. See vgd::node::OutputBuffer to alter this initial state.<br>
  *<br>
- * - SFEnum \c command = COLOR<br>
+ * - SFEnum \c command = (COLOR)<br>
  *   Specifies the pre-defined assign command execute by the fragment program.<br>
  *<br>
- * - SFEnum \c type = INTEGER<br>
+ * - SFEnum \c type = (INTEGER)<br>
  *   Specifies the type used by the buffer.<br>
  *<br>
- * - SFString \c customDeclaration = empty<br>
+ * - SFString \c customDeclaration = std::string()<br>
  *   Specifies the declaration to copy at the beginning of the fragment program when command field is CUSTOM.<br>
  *<br>
  * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
@@ -181,6 +181,11 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	typedef std::string CustomCommandValueType;
 
 	/**
+	 * @brief The default value of field named \c customCommand.
+	 */
+	static const CustomCommandValueType DEFAULT_CUSTOMCOMMAND;
+
+	/**
 	 * @brief Type definition of the field named \c customCommand
 	 */
 	typedef vgd::field::TSingleField< CustomCommandValueType > FCustomCommandType;
@@ -294,6 +299,11 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c current.
 	 */
 	typedef bool CurrentValueType;
+
+	/**
+	 * @brief The default value of field named \c current.
+	 */
+	static const CurrentValueType DEFAULT_CURRENT;
 
 	/**
 	 * @brief Type definition of the field named \c current
@@ -493,6 +503,11 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	typedef std::string CustomDeclarationValueType;
 
 	/**
+	 * @brief The default value of field named \c customDeclaration.
+	 */
+	static const CustomDeclarationValueType DEFAULT_CUSTOMDECLARATION;
+
+	/**
 	 * @brief Type definition of the field named \c customDeclaration
 	 */
 	typedef vgd::field::TSingleField< CustomDeclarationValueType > FCustomDeclarationType;
@@ -521,6 +536,11 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c size.
 	 */
 	typedef vgm::Vec2f SizeValueType;
+
+	/**
+	 * @brief The default value of field named \c size.
+	 */
+	static const SizeValueType DEFAULT_SIZE;
 
 	/**
 	 * @brief Type definition of the field named \c size

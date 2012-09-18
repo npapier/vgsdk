@@ -25,7 +25,7 @@ namespace node
  * 
  *
  * New fields defined by this node :
- * - SFBool \c on = true<br>
+ * - SFBool \c on = (true)<br>
  *   Specifies if the texture generation is enabled or disabled.<br>
  *<br>
  *
@@ -45,6 +45,11 @@ struct VGD_API TexGen : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c on.
 	 */
 	typedef bool OnValueType;
+
+	/**
+	 * @brief The default value of field named \c on.
+	 */
+	static const OnValueType DEFAULT_ON;
 
 	/**
 	 * @brief Type definition of the field named \c on

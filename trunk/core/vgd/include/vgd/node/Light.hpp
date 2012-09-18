@@ -29,7 +29,7 @@ namespace node
  * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
  *   Specular intensity of the light.<br>
  *<br>
- * - OFBool \c [on] = false<br>
+ * - OFBool \c [on] = (false)<br>
  *   Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
@@ -38,7 +38,7 @@ namespace node
  * - OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
  *   Diffuse intensity of the light.<br>
  *<br>
- * - SFBool \c castShadow = false<br>
+ * - SFBool \c castShadow = (false)<br>
  *   Indicating that this light casts a shadow.<br>
  *<br>
  *
@@ -58,6 +58,11 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c specular.
 	 */
 	typedef vgm::Vec4f SpecularValueType;
+
+	/**
+	 * @brief The default value of field named \c specular.
+	 */
+	static const SpecularValueType DEFAULT_SPECULAR;
 
 	/**
 	 * @brief Type definition of the field named \c specular
@@ -99,6 +104,11 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	typedef bool OnValueType;
 
 	/**
+	 * @brief The default value of field named \c on.
+	 */
+	static const OnValueType DEFAULT_ON;
+
+	/**
 	 * @brief Type definition of the field named \c on
 	 */
 	typedef vgd::field::TOptionalField< OnValueType > FOnType;
@@ -136,6 +146,11 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c ambient.
 	 */
 	typedef vgm::Vec4f AmbientValueType;
+
+	/**
+	 * @brief The default value of field named \c ambient.
+	 */
+	static const AmbientValueType DEFAULT_AMBIENT;
 
 	/**
 	 * @brief Type definition of the field named \c ambient
@@ -177,6 +192,11 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	typedef vgm::Vec4f DiffuseValueType;
 
 	/**
+	 * @brief The default value of field named \c diffuse.
+	 */
+	static const DiffuseValueType DEFAULT_DIFFUSE;
+
+	/**
 	 * @brief Type definition of the field named \c diffuse
 	 */
 	typedef vgd::field::TOptionalField< DiffuseValueType > FDiffuseType;
@@ -214,6 +234,11 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	 * @brief Type definition of the value contained by field named \c castShadow.
 	 */
 	typedef bool CastShadowValueType;
+
+	/**
+	 * @brief The default value of field named \c castShadow.
+	 */
+	static const CastShadowValueType DEFAULT_CASTSHADOW;
 
 	/**
 	 * @brief Type definition of the field named \c castShadow

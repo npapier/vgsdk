@@ -75,7 +75,7 @@ FrontFace::FrontFace( const std::string nodeName ) :
 void FrontFace::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setOrientation( CCW );
+	setOrientation( (CCW) );
 }
 
 
@@ -88,6 +88,7 @@ void FrontFace::setOptionalsToDefaults()
 
 
 // Orientation
+
 const FrontFace::OrientationValueType FrontFace::getOrientation() const
 {
 	return getFieldRO<FOrientationType>(getFOrientation())->getValue();

@@ -1,10 +1,9 @@
-// VGSDK - Copyright (C) 2007, 2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2010, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include <vgd/Shp.hpp>
-
 
 
 namespace vge
@@ -213,21 +212,6 @@ OutResourceType* TManager< KeyType, ResourceType >::get( const KeyType& key )
 	}
 }
 
-template< typename KeyType, typename ResourceType >
-template< typename OutputIterator >
-void TManager< KeyType, ResourceType >::getKeys( OutputIterator& key )
-{
-	typename ResourcesMap::const_iterator	it;
-
-	for (	it = m_resources.begin(); 
-			it != m_resources.end(); 
-			++it)
-	{
-		*key++ = it->first;
-	}
-}
-
-
 
 template< typename KeyType, typename ResourceType >
 template< typename OutResourceType >
@@ -254,6 +238,52 @@ template< typename KeyType, typename ResourceType >
 const uint TManager< KeyType, ResourceType >::getNum() const
 {
 	return static_cast< const uint >( m_resources.size() );
+}
+
+
+template< typename KeyType, typename ResourceType >
+template< typename OutputIterator >
+void TManager< KeyType, ResourceType >::getKeys( OutputIterator& key )
+{
+	typename ResourcesMap::const_iterator	it;
+
+	for (	it = m_resources.begin(); 
+			it != m_resources.end(); 
+			++it)
+	{
+		*key++ = it->first;
+	}
+}
+
+template< typename KeyType, typename ResourceType >
+template< typename KeysContainer >
+void TManager< KeyType, ResourceType >::gethKeys( KeysContainer& keys )
+{
+	std::back_insert_iterator< KeysContainer > backInserter( keys );
+	getKeys( backInserter );
+}
+
+
+template< typename KeyType, typename ResourceType >
+template< typename OutputIterator >
+void TManager< KeyType, ResourceType >::getValues( OutputIterator& key )
+{
+	typename ResourcesMap::const_iterator	it;
+
+	for (	it = m_resources.begin(); 
+			it != m_resources.end(); 
+			++it)
+	{
+		*key++ = it->second;
+	}
+}
+
+template< typename KeyType, typename ResourceType >
+template< typename ValuesContainer >
+void TManager< KeyType, ResourceType >::gethValues( ValuesContainer& values )
+{
+	std::back_insert_iterator< ValuesContainer > backInserter( values );
+	getValues( backInserter );
 }
 
 

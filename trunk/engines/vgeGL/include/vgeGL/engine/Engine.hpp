@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -711,9 +711,14 @@ public:
 
 
 
-	// overridden method
+	/**
+	 * @name Overridden methods
+	 */
+	//@{
 	void resetMatrices();
 
+	void setDefaultMaxAnisotropy( const float value );
+	//@}
 
 
 	/**
@@ -943,23 +948,20 @@ private:
 
 
 
-	GLStateStack						m_glStateStack;			///< store the stack of OpenGL rendering state
+	GLStateStack							m_glStateStack;					///< store the stack of OpenGL rendering state
 
-	GLSLStateStack						m_glslStateStack;		///< store the stack of GLSL rendering state
+	GLSLStateStack							m_glslStateStack;				///< store the stack of GLSL rendering state
 
-	UniformState						m_uniformState;			///< store the current uniform state
+	UniformState							m_uniformState;					///< store the current uniform state
 
-	vgd::Shp< vgeGL::engine::GLSLState > m_globalGLSLState;		///< store the global GLSL state
+	vgd::Shp< vgeGL::engine::GLSLState >	m_globalGLSLState;				///< store the global GLSL state
 
-	vgd::Shp< glo::FrameBufferObject >	m_outputBuffers;		///< store the output buffers (see OutputBuffers, ForwardRendering and PostProcessing nodes).
+	vgd::Shp< glo::FrameBufferObject >		m_outputBuffers;				///< store the output buffers (see OutputBuffers, ForwardRendering and PostProcessing nodes).
 
-	vgd::basic::IndexContainer m_currentPrivateOutputBuffers;	///< Index of current private output buffers
+	vgd::basic::IndexContainer				m_currentPrivateOutputBuffers;	///< Index of current private output buffers
 
-	/**
-	 * @brief OpenGL GLSL program generator.
-	 */
-	vgd::Shp< ProgramGenerator >	m_glslProgramGenerator;
 
+	vgd::Shp< ProgramGenerator >			m_glslProgramGenerator;	///< OpenGL GLSL program generator
 
 
 	static bool m_firstInstance; ///< Used to know if this instance is the first one or not (for doiing some initializations).

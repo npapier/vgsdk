@@ -33,7 +33,7 @@ namespace node
  * Liquids are simulated using several height maps (sceneHeightMap computed from \c scene, fluidHeightMap containing height of the fluid). A tessellated quad with displacement mapping is used for the rendering. 
  *
  * New fields defined by this node :
- * - SFFloat \c opacity = 0.6<br>
+ * - SFFloat \c opacity = (0.6)<br>
  *   @todo<br>
  *<br>
  * - MFVec5f \c emittersOrDrainers = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
@@ -42,43 +42,43 @@ namespace node
  * - SFVec2i \c heightMapSize = vgm::Vec2i(256, 256)<br>
  *   Specifies the size of the textures used to store scene and fluid height map.<br>
  *<br>
- * - SFNodeWkp \c scene = empty<br>
+ * - SFNodeWkp \c scene = vgd::node::NodeWkp()<br>
  *   Specifies the root of the scene graph used by the fluid simulation.<br>
  *<br>
- * - SFBool \c requestFeedback = false<br>
+ * - SFBool \c requestFeedback = (false)<br>
  *   True to request a feedback in field fluidPositionFeedback during the next rendering. This field is automatically reset to false after the completion of the feedback.<br>
  *<br>
  * - SFVec4f \c gravity = vgm::Vec4f(0.f, -1.f, 0.f, 9.8f)<br>
  *   Specifies the direction of the gravity (the first three components) and the intensity (the last component).<br>
  *<br>
- * - SFString \c simulationPass1 = empty<br>
+ * - SFString \c simulationPass1 = std::string()<br>
  *   Specifies the second stage of the simulation.<br>
  *<br>
- * - SFString \c simulationPass0 = empty<br>
+ * - SFString \c simulationPass0 = std::string()<br>
  *   Specifies the first stage of the simulation.<br>
  *<br>
- * - SFFloat \c cellSize = 1.0<br>
+ * - SFFloat \c cellSize = (1.0)<br>
  *   @todo<br>
  *<br>
  * - SFMatrixR \c feedbackInformationsBis = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   @todo<br>
  *<br>
- * - SFFloat \c damping = 0.8<br>
+ * - SFFloat \c damping = (0.8)<br>
  *   @todo<br>
  *<br>
- * - SFFloat \c timeStep = 0.1<br>
+ * - SFFloat \c timeStep = (0.1)<br>
  *   @todo<br>
  *<br>
- * - SFFloat \c thickness = 1.0<br>
+ * - SFFloat \c thickness = (1.0)<br>
  *   fluid thickness factor (only visual)<br>
  *<br>
  * - SFVec5f \c feedbackInformations = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
  *   @todo<br>
  *<br>
- * - SFFloat \c css = 1.0<br>
+ * - SFFloat \c css = (1.0)<br>
  *   @todo<br>
  *<br>
- * - SFIImageShp \c fluidPositionFeedback = empty<br>
+ * - SFIImageShp \c fluidPositionFeedback = vgd::basic::IImageShp()<br>
  *   @todo<br>
  *<br>
  *
@@ -130,6 +130,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c opacity.
 	 */
 	typedef float OpacityValueType;
+
+	/**
+	 * @brief The default value of field named \c opacity.
+	 */
+	static const OpacityValueType DEFAULT_OPACITY;
 
 	/**
 	 * @brief Type definition of the field named \c opacity
@@ -194,6 +199,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	typedef vgm::Vec2i HeightMapSizeValueType;
 
 	/**
+	 * @brief The default value of field named \c heightMapSize.
+	 */
+	static const HeightMapSizeValueType DEFAULT_HEIGHTMAPSIZE;
+
+	/**
 	 * @brief Type definition of the field named \c heightMapSize
 	 */
 	typedef vgd::field::TSingleField< HeightMapSizeValueType > FHeightMapSizeType;
@@ -222,6 +232,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c scene.
 	 */
 	typedef vgd::node::NodeWkp SceneValueType;
+
+	/**
+	 * @brief The default value of field named \c scene.
+	 */
+	static const SceneValueType DEFAULT_SCENE;
 
 	/**
 	 * @brief Type definition of the field named \c scene
@@ -254,6 +269,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	typedef bool RequestFeedbackValueType;
 
 	/**
+	 * @brief The default value of field named \c requestFeedback.
+	 */
+	static const RequestFeedbackValueType DEFAULT_REQUESTFEEDBACK;
+
+	/**
 	 * @brief Type definition of the field named \c requestFeedback
 	 */
 	typedef vgd::field::TSingleField< RequestFeedbackValueType > FRequestFeedbackType;
@@ -282,6 +302,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c gravity.
 	 */
 	typedef vgm::Vec4f GravityValueType;
+
+	/**
+	 * @brief The default value of field named \c gravity.
+	 */
+	static const GravityValueType DEFAULT_GRAVITY;
 
 	/**
 	 * @brief Type definition of the field named \c gravity
@@ -314,6 +339,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	typedef std::string SimulationPass1ValueType;
 
 	/**
+	 * @brief The default value of field named \c simulationPass1.
+	 */
+	static const SimulationPass1ValueType DEFAULT_SIMULATIONPASS1;
+
+	/**
 	 * @brief Type definition of the field named \c simulationPass1
 	 */
 	typedef vgd::field::TSingleField< SimulationPass1ValueType > FSimulationPass1Type;
@@ -342,6 +372,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c simulationPass0.
 	 */
 	typedef std::string SimulationPass0ValueType;
+
+	/**
+	 * @brief The default value of field named \c simulationPass0.
+	 */
+	static const SimulationPass0ValueType DEFAULT_SIMULATIONPASS0;
 
 	/**
 	 * @brief Type definition of the field named \c simulationPass0
@@ -374,6 +409,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	typedef float CellSizeValueType;
 
 	/**
+	 * @brief The default value of field named \c cellSize.
+	 */
+	static const CellSizeValueType DEFAULT_CELLSIZE;
+
+	/**
 	 * @brief Type definition of the field named \c cellSize
 	 */
 	typedef vgd::field::TSingleField< CellSizeValueType > FCellSizeType;
@@ -402,6 +442,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c feedbackInformationsBis.
 	 */
 	typedef vgm::MatrixR FeedbackInformationsBisValueType;
+
+	/**
+	 * @brief The default value of field named \c feedbackInformationsBis.
+	 */
+	static const FeedbackInformationsBisValueType DEFAULT_FEEDBACKINFORMATIONSBIS;
 
 	/**
 	 * @brief Type definition of the field named \c feedbackInformationsBis
@@ -434,6 +479,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	typedef float DampingValueType;
 
 	/**
+	 * @brief The default value of field named \c damping.
+	 */
+	static const DampingValueType DEFAULT_DAMPING;
+
+	/**
 	 * @brief Type definition of the field named \c damping
 	 */
 	typedef vgd::field::TSingleField< DampingValueType > FDampingType;
@@ -462,6 +512,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c timeStep.
 	 */
 	typedef float TimeStepValueType;
+
+	/**
+	 * @brief The default value of field named \c timeStep.
+	 */
+	static const TimeStepValueType DEFAULT_TIMESTEP;
 
 	/**
 	 * @brief Type definition of the field named \c timeStep
@@ -494,6 +549,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	typedef float ThicknessValueType;
 
 	/**
+	 * @brief The default value of field named \c thickness.
+	 */
+	static const ThicknessValueType DEFAULT_THICKNESS;
+
+	/**
 	 * @brief Type definition of the field named \c thickness
 	 */
 	typedef vgd::field::TSingleField< ThicknessValueType > FThicknessType;
@@ -522,6 +582,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c feedbackInformations.
 	 */
 	typedef vgm::Vec5f FeedbackInformationsValueType;
+
+	/**
+	 * @brief The default value of field named \c feedbackInformations.
+	 */
+	static const FeedbackInformationsValueType DEFAULT_FEEDBACKINFORMATIONS;
 
 	/**
 	 * @brief Type definition of the field named \c feedbackInformations
@@ -554,6 +619,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	typedef float CssValueType;
 
 	/**
+	 * @brief The default value of field named \c css.
+	 */
+	static const CssValueType DEFAULT_CSS;
+
+	/**
 	 * @brief Type definition of the field named \c css
 	 */
 	typedef vgd::field::TSingleField< CssValueType > FCssType;
@@ -582,6 +652,11 @@ struct VGD_API Fluid : public vgd::node::Shape
 	 * @brief Type definition of the value contained by field named \c fluidPositionFeedback.
 	 */
 	typedef vgd::basic::IImageShp FluidPositionFeedbackValueType;
+
+	/**
+	 * @brief The default value of field named \c fluidPositionFeedback.
+	 */
+	static const FluidPositionFeedbackValueType DEFAULT_FLUIDPOSITIONFEEDBACK;
 
 	/**
 	 * @brief Type definition of the field named \c fluidPositionFeedback

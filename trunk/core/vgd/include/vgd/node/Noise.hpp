@@ -27,16 +27,16 @@ namespace node
  * Most digital cameras acquired images with noise. This built-in post-processing effect simulates dominant source of noise, i.e. the photon noise. 
  *
  * New fields defined by this node :
- * - SFBool \c channelsSeparated = false<br>
+ * - SFBool \c channelsSeparated = (false)<br>
  *   Sets to true to use a different random value for each channel, false to use the same random value.<br>
  *<br>
- * - SFBool \c useTextureLessRandom = false<br>
+ * - SFBool \c useTextureLessRandom = (false)<br>
  *   Sets to true to generate random values without using a texture, false to use a texture.<br>
  *<br>
  * - SFVec2f \c factors = vgm::Vec2f(0.025, 0.025)<br>
  *   Sets the linear and constant factor used to generate noise.<br>
  *<br>
- * - SFEnum \c noiseModel = PHOTON<br>
+ * - SFEnum \c noiseModel = (PHOTON)<br>
  *   Sets the noise model.<br>
  *<br>
  *
@@ -90,6 +90,11 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	typedef bool ChannelsSeparatedValueType;
 
 	/**
+	 * @brief The default value of field named \c channelsSeparated.
+	 */
+	static const ChannelsSeparatedValueType DEFAULT_CHANNELSSEPARATED;
+
+	/**
 	 * @brief Type definition of the field named \c channelsSeparated
 	 */
 	typedef vgd::field::TSingleField< ChannelsSeparatedValueType > FChannelsSeparatedType;
@@ -120,6 +125,11 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	typedef bool UseTextureLessRandomValueType;
 
 	/**
+	 * @brief The default value of field named \c useTextureLessRandom.
+	 */
+	static const UseTextureLessRandomValueType DEFAULT_USETEXTURELESSRANDOM;
+
+	/**
 	 * @brief Type definition of the field named \c useTextureLessRandom
 	 */
 	typedef vgd::field::TSingleField< UseTextureLessRandomValueType > FUseTextureLessRandomType;
@@ -148,6 +158,11 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	 * @brief Type definition of the value contained by field named \c factors.
 	 */
 	typedef vgm::Vec2f FactorsValueType;
+
+	/**
+	 * @brief The default value of field named \c factors.
+	 */
+	static const FactorsValueType DEFAULT_FACTORS;
 
 	/**
 	 * @brief Type definition of the field named \c factors

@@ -86,16 +86,21 @@ void DrawStyle::setToDefaults( void )
 void DrawStyle::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setShowOrientation( false );
-	setBoundingBox( NO_BOUNDING_BOX );
-	setShape( SMOOTH );
-	setNormalLength( 0.f );
-	setTangentLength( 0.f );
+	setShowOrientation( (false) );
+	setBoundingBox( (NO_BOUNDING_BOX) );
+	setShape( (SMOOTH) );
+	setNormalLength( (0.f) );
+	setTangentLength( (0.f) );
 }
 
 
 
 // ShowOrientation
+
+const DrawStyle::ShowOrientationValueType DrawStyle::DEFAULT_SHOWORIENTATION = (false);
+
+
+
 const bool DrawStyle::getShowOrientation( ShowOrientationValueType& value ) const
 {
 	return getFieldRO<FShowOrientationType>(getFShowOrientation())->getValue( value );
@@ -124,6 +129,7 @@ const bool DrawStyle::hasShowOrientation() const
 
 
 // BoundingBox
+
 const bool DrawStyle::getBoundingBox( BoundingBoxValueType& value ) const
 {
 	return getFieldRO<FBoundingBoxType>(getFBoundingBox())->getValue( value );
@@ -152,6 +158,7 @@ const bool DrawStyle::hasBoundingBox() const
 
 
 // Shape
+
 const bool DrawStyle::getShape( ShapeValueType& value ) const
 {
 	return getFieldRO<FShapeType>(getFShape())->getValue( value );
@@ -180,6 +187,11 @@ const bool DrawStyle::hasShape() const
 
 
 // NormalLength
+
+const DrawStyle::NormalLengthValueType DrawStyle::DEFAULT_NORMALLENGTH = (0.f);
+
+
+
 const bool DrawStyle::getNormalLength( NormalLengthValueType& value ) const
 {
 	return getFieldRO<FNormalLengthType>(getFNormalLength())->getValue( value );
@@ -208,6 +220,11 @@ const bool DrawStyle::hasNormalLength() const
 
 
 // TangentLength
+
+const DrawStyle::TangentLengthValueType DrawStyle::DEFAULT_TANGENTLENGTH = (0.f);
+
+
+
 const bool DrawStyle::getTangentLength( TangentLengthValueType& value ) const
 {
 	return getFieldRO<FTangentLengthType>(getFTangentLength())->getValue( value );

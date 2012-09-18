@@ -75,7 +75,7 @@ CullFace::CullFace( const std::string nodeName ) :
 void CullFace::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setMode( DISABLED );
+	setMode( (DISABLED) );
 }
 
 
@@ -88,6 +88,7 @@ void CullFace::setOptionalsToDefaults()
 
 
 // Mode
+
 const CullFace::ModeValueType CullFace::getMode() const
 {
 	return getFieldRO<FModeType>(getFMode())->getValue();

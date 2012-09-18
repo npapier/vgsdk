@@ -88,6 +88,11 @@ void DirectionalLight::setOptionalsToDefaults()
 
 
 // Direction
+
+const DirectionalLight::DirectionValueType DirectionalLight::DEFAULT_DIRECTION = vgm::Vec3f(0.f, 0.f, -1.f);
+
+
+
 const bool DirectionalLight::getDirection( DirectionValueType& value ) const
 {
 	return getFieldRO<FDirectionType>(getFDirection())->getValue( value );

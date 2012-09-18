@@ -76,7 +76,7 @@ MultipleInstances::MultipleInstances( const std::string nodeName ) :
 void MultipleInstances::setToDefaults( void )
 {
 	Shape::setToDefaults();
-
+	setShape( vgd::node::NodeShp() );
 }
 
 
@@ -89,6 +89,11 @@ void MultipleInstances::setOptionalsToDefaults()
 
 
 // Shape
+
+const MultipleInstances::ShapeValueType MultipleInstances::DEFAULT_SHAPE = vgd::node::NodeShp();
+
+
+
 const MultipleInstances::ShapeValueType MultipleInstances::getShape() const
 {
 	return getFieldRO<FShapeType>(getFShape())->getValue();

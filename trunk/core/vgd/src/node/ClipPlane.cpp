@@ -84,12 +84,17 @@ void ClipPlane::setToDefaults( void )
 void ClipPlane::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
-	setOn( true );
+	setOn( (true) );
 }
 
 
 
 // On
+
+const ClipPlane::OnValueType ClipPlane::DEFAULT_ON = (true);
+
+
+
 const bool ClipPlane::getOn( OnValueType& value ) const
 {
 	return getFieldRO<FOnType>(getFOn())->getValue( value );
@@ -118,6 +123,11 @@ const bool ClipPlane::hasOn() const
 
 
 // Plane
+
+const ClipPlane::PlaneValueType ClipPlane::DEFAULT_PLANE = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f );
+
+
+
 const ClipPlane::PlaneValueType ClipPlane::getPlane() const
 {
 	return getFieldRO<FPlaneType>(getFPlane())->getValue();

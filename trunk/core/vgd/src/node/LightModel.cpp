@@ -89,14 +89,14 @@ LightModel::LightModel( const std::string nodeName ) :
 void LightModel::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setShadowMapType( INT32 );
-	setIlluminationInShadow( 0.4f );
-	setSamplingSize( 1.0 );
-	setOption2( false );
-	setIgnorePostProcessing( false );
+	setShadowMapType( (INT32) );
+	setIlluminationInShadow( (0.4f) );
+	setSamplingSize( (1.0) );
+	setOption2( (false) );
+	setIgnorePostProcessing( (false) );
 	setShadowPolygonOffset( vgm::Vec2f(4.f, 16.f) );
-	setOption0( CHOICE0 );
-	setOption1( false );
+	setOption0( (CHOICE0) );
+	setOption1( (false) );
 }
 
 
@@ -104,18 +104,19 @@ void LightModel::setToDefaults( void )
 void LightModel::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setShadowMapSize( MEDIUM );
-	setShadowFiltering( LINEAR );
-	setTwoSided( false );
+	setShadowMapSize( (MEDIUM) );
+	setShadowFiltering( (LINEAR) );
+	setTwoSided( (false) );
 	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
-	setViewer( AT_INFINITY );
-	setModel( STANDARD_PER_VERTEX );
-	setShadow( SHADOW_OFF );
+	setViewer( (AT_INFINITY) );
+	setModel( (STANDARD_PER_VERTEX) );
+	setShadow( (SHADOW_OFF) );
 }
 
 
 
 // ShadowMapSize
+
 const bool LightModel::getShadowMapSize( ShadowMapSizeValueType& value ) const
 {
 	return getFieldRO<FShadowMapSizeType>(getFShadowMapSize())->getValue( value );
@@ -144,6 +145,7 @@ const bool LightModel::hasShadowMapSize() const
 
 
 // ShadowFiltering
+
 const bool LightModel::getShadowFiltering( ShadowFilteringValueType& value ) const
 {
 	return getFieldRO<FShadowFilteringType>(getFShadowFiltering())->getValue( value );
@@ -172,6 +174,7 @@ const bool LightModel::hasShadowFiltering() const
 
 
 // ShadowMapType
+
 const LightModel::ShadowMapTypeValueType LightModel::getShadowMapType() const
 {
 	return getFieldRO<FShadowMapTypeType>(getFShadowMapType())->getValue();
@@ -187,6 +190,11 @@ void LightModel::setShadowMapType( const ShadowMapTypeValueType value )
 
 
 // IlluminationInShadow
+
+const LightModel::IlluminationInShadowValueType LightModel::DEFAULT_ILLUMINATIONINSHADOW = (0.4f);
+
+
+
 const LightModel::IlluminationInShadowValueType LightModel::getIlluminationInShadow() const
 {
 	return getFieldRO<FIlluminationInShadowType>(getFIlluminationInShadow())->getValue();
@@ -202,6 +210,11 @@ void LightModel::setIlluminationInShadow( const IlluminationInShadowValueType va
 
 
 // TwoSided
+
+const LightModel::TwoSidedValueType LightModel::DEFAULT_TWOSIDED = (false);
+
+
+
 const bool LightModel::getTwoSided( TwoSidedValueType& value ) const
 {
 	return getFieldRO<FTwoSidedType>(getFTwoSided())->getValue( value );
@@ -230,6 +243,11 @@ const bool LightModel::hasTwoSided() const
 
 
 // SamplingSize
+
+const LightModel::SamplingSizeValueType LightModel::DEFAULT_SAMPLINGSIZE = (1.0);
+
+
+
 const LightModel::SamplingSizeValueType LightModel::getSamplingSize() const
 {
 	return getFieldRO<FSamplingSizeType>(getFSamplingSize())->getValue();
@@ -245,6 +263,11 @@ void LightModel::setSamplingSize( const SamplingSizeValueType value )
 
 
 // Option2
+
+const LightModel::Option2ValueType LightModel::DEFAULT_OPTION2 = (false);
+
+
+
 const LightModel::Option2ValueType LightModel::getOption2() const
 {
 	return getFieldRO<FOption2Type>(getFOption2())->getValue();
@@ -260,6 +283,11 @@ void LightModel::setOption2( const Option2ValueType value )
 
 
 // Ambient
+
+const LightModel::AmbientValueType LightModel::DEFAULT_AMBIENT = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f);
+
+
+
 const bool LightModel::getAmbient( AmbientValueType& value ) const
 {
 	return getFieldRO<FAmbientType>(getFAmbient())->getValue( value );
@@ -288,6 +316,7 @@ const bool LightModel::hasAmbient() const
 
 
 // Viewer
+
 const bool LightModel::getViewer( ViewerValueType& value ) const
 {
 	return getFieldRO<FViewerType>(getFViewer())->getValue( value );
@@ -316,6 +345,11 @@ const bool LightModel::hasViewer() const
 
 
 // IgnorePostProcessing
+
+const LightModel::IgnorePostProcessingValueType LightModel::DEFAULT_IGNOREPOSTPROCESSING = (false);
+
+
+
 const LightModel::IgnorePostProcessingValueType LightModel::getIgnorePostProcessing() const
 {
 	return getFieldRO<FIgnorePostProcessingType>(getFIgnorePostProcessing())->getValue();
@@ -331,6 +365,7 @@ void LightModel::setIgnorePostProcessing( const IgnorePostProcessingValueType va
 
 
 // Model
+
 const bool LightModel::getModel( ModelValueType& value ) const
 {
 	return getFieldRO<FModelType>(getFModel())->getValue( value );
@@ -359,6 +394,11 @@ const bool LightModel::hasModel() const
 
 
 // ShadowPolygonOffset
+
+const LightModel::ShadowPolygonOffsetValueType LightModel::DEFAULT_SHADOWPOLYGONOFFSET = vgm::Vec2f(4.f, 16.f);
+
+
+
 const LightModel::ShadowPolygonOffsetValueType LightModel::getShadowPolygonOffset() const
 {
 	return getFieldRO<FShadowPolygonOffsetType>(getFShadowPolygonOffset())->getValue();
@@ -374,6 +414,7 @@ void LightModel::setShadowPolygonOffset( const ShadowPolygonOffsetValueType valu
 
 
 // Shadow
+
 const bool LightModel::getShadow( ShadowValueType& value ) const
 {
 	return getFieldRO<FShadowType>(getFShadow())->getValue( value );
@@ -402,6 +443,7 @@ const bool LightModel::hasShadow() const
 
 
 // Option0
+
 const LightModel::Option0ValueType LightModel::getOption0() const
 {
 	return getFieldRO<FOption0Type>(getFOption0())->getValue();
@@ -417,6 +459,11 @@ void LightModel::setOption0( const Option0ValueType value )
 
 
 // Option1
+
+const LightModel::Option1ValueType LightModel::DEFAULT_OPTION1 = (false);
+
+
+
 const LightModel::Option1ValueType LightModel::getOption1() const
 {
 	return getFieldRO<FOption1Type>(getFOption1())->getValue();

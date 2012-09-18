@@ -82,9 +82,9 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 void LayerPlan::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setAlphaScale( 1.f );
+	setAlphaScale( (1.f) );
 	setPosition( vgm::Vec2f(0.f, 0.f) );
-
+	setImage( vgd::basic::IImageShp() );
 	setSize( vgm::Vec2f(1.f, 1.f) );
 }
 
@@ -98,6 +98,11 @@ void LayerPlan::setOptionalsToDefaults()
 
 
 // AlphaScale
+
+const LayerPlan::AlphaScaleValueType LayerPlan::DEFAULT_ALPHASCALE = (1.f);
+
+
+
 const LayerPlan::AlphaScaleValueType LayerPlan::getAlphaScale() const
 {
 	return getFieldRO<FAlphaScaleType>(getFAlphaScale())->getValue();
@@ -113,6 +118,11 @@ void LayerPlan::setAlphaScale( const AlphaScaleValueType value )
 
 
 // Position
+
+const LayerPlan::PositionValueType LayerPlan::DEFAULT_POSITION = vgm::Vec2f(0.f, 0.f);
+
+
+
 const LayerPlan::PositionValueType LayerPlan::getPosition() const
 {
 	return getFieldRO<FPositionType>(getFPosition())->getValue();
@@ -128,6 +138,11 @@ void LayerPlan::setPosition( const PositionValueType value )
 
 
 // Image
+
+const LayerPlan::ImageValueType LayerPlan::DEFAULT_IMAGE = vgd::basic::IImageShp();
+
+
+
 const LayerPlan::ImageValueType LayerPlan::getImage() const
 {
 	return getFieldRO<FImageType>(getFImage())->getValue();
@@ -143,6 +158,11 @@ void LayerPlan::setImage( const ImageValueType value )
 
 
 // Size
+
+const LayerPlan::SizeValueType LayerPlan::DEFAULT_SIZE = vgm::Vec2f(1.f, 1.f);
+
+
+
 const LayerPlan::SizeValueType LayerPlan::getSize() const
 {
 	return getFieldRO<FSizeType>(getFSize())->getValue();

@@ -26,13 +26,13 @@ namespace node
  * This node defines a spotlight style light source. A spotlight is placed at a fixed \c position in 3-space and illuminates in a cone along a particular \c direction. The illumination is within a cone whose angle is given by the \c cutOffAngle field. The intensity of the illumination drops off exponentially as a ray of light diverges from this direction toward the edges of the cone. The rate of drop-off and the angle of the cone are controlled by the \c dropOffRate and \c cutOffAngle fields. All shape nodes that come after this light in the scene graph are illuminated by this light. The light's location is affected by the current geometrical transformation. 
  *
  * New fields defined by this node :
- * - OFFloat \c [dropOffRate] = 0.f<br>
+ * - OFFloat \c [dropOffRate] = (0.f)<br>
  *   Rate of intensity drop-off per change in angle from primary direction. 0 means constant intensity, 1 means very sharp drop-off.<br>
  *<br>
  * - OFVec3f \c [direction] = vgm::Vec3f(0.f, 0.f, -1.f)<br>
  *   The direction (center axis of cone) of the light in homogeneous object coordinates.<br>
  *<br>
- * - OFFloat \c [cutOffAngle] = 90.f<br>
+ * - OFFloat \c [cutOffAngle] = (90.f)<br>
  *   The angle (in degree) outside of which intensity is zero, measured from the center axis of the cone to an edge. This value must be inside [0, 90] or be equal to 180 (like PointLight node).<br>
  *<br>
  *
@@ -46,7 +46,7 @@ namespace node
  * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
  *   Specular intensity of the light.<br>
  *<br>
- * - OFBool \c [on] = false<br>
+ * - OFBool \c [on] = (false)<br>
  *   Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.<br>
  *<br>
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
@@ -55,7 +55,7 @@ namespace node
  * - OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
  *   Diffuse intensity of the light.<br>
  *<br>
- * - SFBool \c castShadow = false<br>
+ * - SFBool \c castShadow = (false)<br>
  *   Indicating that this light casts a shadow.<br>
  *<br>
  * @ingroup g_nodes
@@ -108,6 +108,11 @@ struct VGD_API SpotLight : public vgd::node::PointLight
 	typedef float DropOffRateValueType;
 
 	/**
+	 * @brief The default value of field named \c dropOffRate.
+	 */
+	static const DropOffRateValueType DEFAULT_DROPOFFRATE;
+
+	/**
 	 * @brief Type definition of the field named \c dropOffRate
 	 */
 	typedef vgd::field::TOptionalField< DropOffRateValueType > FDropOffRateType;
@@ -147,6 +152,11 @@ struct VGD_API SpotLight : public vgd::node::PointLight
 	typedef vgm::Vec3f DirectionValueType;
 
 	/**
+	 * @brief The default value of field named \c direction.
+	 */
+	static const DirectionValueType DEFAULT_DIRECTION;
+
+	/**
 	 * @brief Type definition of the field named \c direction
 	 */
 	typedef vgd::field::TOptionalField< DirectionValueType > FDirectionType;
@@ -184,6 +194,11 @@ struct VGD_API SpotLight : public vgd::node::PointLight
 	 * @brief Type definition of the value contained by field named \c cutOffAngle.
 	 */
 	typedef float CutOffAngleValueType;
+
+	/**
+	 * @brief The default value of field named \c cutOffAngle.
+	 */
+	static const CutOffAngleValueType DEFAULT_CUTOFFANGLE;
 
 	/**
 	 * @brief Type definition of the field named \c cutOffAngle
