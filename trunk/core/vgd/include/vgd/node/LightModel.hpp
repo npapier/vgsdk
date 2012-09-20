@@ -118,10 +118,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		HIGH = 320,	///< High resolution shadow map
-		VERY_HIGH = 321,	///< Very high resolution shadow map
-		MEDIUM = 319,	///< Medium resolution shadow map
-		LOW = 318,	///< Low resolution shadow map
+		HIGH = 322,	///< High resolution shadow map
+		VERY_HIGH = 323,	///< Very high resolution shadow map
+		MEDIUM = 321,	///< Medium resolution shadow map
+		LOW = 320,	///< Low resolution shadow map
 		DEFAULT_SHADOWMAPSIZE = MEDIUM	///< Medium resolution shadow map
 	};
 
@@ -149,10 +149,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 318 );
-			retVal.push_back( 319 );
 			retVal.push_back( 320 );
 			retVal.push_back( 321 );
+			retVal.push_back( 322 );
+			retVal.push_back( 323 );
 
 			return retVal;
 		}
@@ -209,8 +209,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		NEAREST = 322,	///< 
-		LINEAR = 323,	///< 
+		NEAREST = 324,	///< 
+		LINEAR = 325,	///< 
 		DEFAULT_SHADOWFILTERING = LINEAR	///< 
 	};
 
@@ -238,8 +238,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 322 );
-			retVal.push_back( 323 );
+			retVal.push_back( 324 );
+			retVal.push_back( 325 );
 
 			return retVal;
 		}
@@ -294,10 +294,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		INT24 = 284,	///< see Texture.internalFormat documentation
-		INT32 = 285,	///< see Texture.internalFormat documentation
-		INT16 = 283,	///< see Texture.internalFormat documentation
-		FLOAT32 = 286,	///< see Texture.internalFormat documentation
+		INT24 = 286,	///< see Texture.internalFormat documentation
+		INT32 = 287,	///< see Texture.internalFormat documentation
+		INT16 = 285,	///< see Texture.internalFormat documentation
+		FLOAT32 = 288,	///< see Texture.internalFormat documentation
 		DEFAULT_SHADOWMAPTYPE = INT32	///< see Texture.internalFormat documentation
 	};
 
@@ -325,10 +325,10 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 283 );
-			retVal.push_back( 284 );
 			retVal.push_back( 285 );
 			retVal.push_back( 286 );
+			retVal.push_back( 287 );
+			retVal.push_back( 288 );
 
 			return retVal;
 		}
@@ -569,8 +569,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		AT_INFINITY = 295,	///< Specular reflections are computed from the origin of the eye coordinate system
-		AT_EYE = 296,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
+		AT_INFINITY = 297,	///< Specular reflections are computed from the origin of the eye coordinate system
+		AT_EYE = 298,	///< Specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates
 		DEFAULT_VIEWER = AT_INFINITY	///< Specular reflections are computed from the origin of the eye coordinate system
 	};
 
@@ -598,8 +598,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 295 );
-			retVal.push_back( 296 );
+			retVal.push_back( 297 );
+			retVal.push_back( 298 );
 
 			return retVal;
 		}
@@ -689,9 +689,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		STANDARD_PER_PIXEL = 294,	///< Lighting is computed per pixel
-		LIGHTING_OFF = 292,	///< No lighting
-		STANDARD_PER_VERTEX = 293,	///< Lighting is computed per vertex
+		STANDARD_PER_PIXEL = 296,	///< Lighting is computed per pixel
+		LIGHTING_OFF = 294,	///< No lighting
+		STANDARD_PER_VERTEX = 295,	///< Lighting is computed per vertex
 		DEFAULT_MODEL = STANDARD_PER_VERTEX	///< Lighting is computed per vertex
 	};
 
@@ -719,9 +719,9 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 292 );
-			retVal.push_back( 293 );
 			retVal.push_back( 294 );
+			retVal.push_back( 295 );
+			retVal.push_back( 296 );
 
 			return retVal;
 		}
@@ -812,27 +812,27 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		SHADOW_MAPPING_25U = 306,	///< Shadows are computed using shadow mapping algorithm pcf using twenty five uniform samples
-		SHADOW_MAPPING_36U = 308,	///< Shadows are computed using shadow mapping algorithm pcf using thirty six uniform samples
-		SHADOW_MAPPING_4UM = 300,	///< Shadows are computed using shadow mapping algorithm pcf using four uniform samples
-		SHADOW_MAPPING_256UM = 317,	///< Shadows are computed using shadow mapping algorithm pcf using 256 uniform samples
-		SHADOW_MAPPING = 298,	///< Shadows are computed using shadow mapping algorithm
-		SHADOW_MAPPING_64UM = 311,	///< Shadows are computed using shadow mapping algorithm pcf using sixty four uniform samples
-		SHADOW_OFF = 297,	///< Shadows are not computed
-		SHADOW_MAPPING_9UM = 303,	///< Shadows are computed using shadow mapping algorithm pcf using nine uniform samples
-		SHADOW_MAPPING_9U = 302,	///< Shadows are computed using shadow mapping algorithm pcf using nine uniform samples
-		SHADOW_MAPPING_4U = 299,	///< Shadows are computed using shadow mapping algorithm pcf using four uniform samples
-		SHADOW_MAPPING_25UM = 307,	///< Shadows are computed using shadow mapping algorithm pcf using twenty five uniform samples
-		SHADOW_MAPPING_16U = 304,	///< Shadows are computed using shadow mapping algorithm pcf using sixteen uniform samples
-		SHADOW_MAPPING_225U = 314,	///< Shadows are computed using shadow mapping algorithm pcf using 225 uniform samples
-		SHADOW_MAPPING_225UM = 315,	///< Shadows are computed using shadow mapping algorithm pcf using 225 uniform samples
-		SHADOW_MAPPING_4DM = 301,	///< Shadows are computed using shadow mapping algorithm pcf using four dithered samples
-		SHADOW_MAPPING_144U = 312,	///< Shadows are computed using shadow mapping algorithm pcf using 144 uniform samples
-		SHADOW_MAPPING_64U = 310,	///< Shadows are computed using shadow mapping algorithm pcf using sixty four uniform samples
-		SHADOW_MAPPING_256U = 316,	///< Shadows are computed using shadow mapping algorithm pcf using 256 uniform samples
-		SHADOW_MAPPING_36UM = 309,	///< Shadows are computed using shadow mapping algorithm pcf using thirty six uniform samples
-		SHADOW_MAPPING_16UM = 305,	///< Shadows are computed using shadow mapping algorithm pcf using sixteen uniform samples
-		SHADOW_MAPPING_144UM = 313,	///< Shadows are computed using shadow mapping algorithm pcf using 144 uniform samples
+		SHADOW_MAPPING_25U = 308,	///< Shadows are computed using shadow mapping algorithm pcf using twenty five uniform samples
+		SHADOW_MAPPING_36U = 310,	///< Shadows are computed using shadow mapping algorithm pcf using thirty six uniform samples
+		SHADOW_MAPPING_4UM = 302,	///< Shadows are computed using shadow mapping algorithm pcf using four uniform samples
+		SHADOW_MAPPING_256UM = 319,	///< Shadows are computed using shadow mapping algorithm pcf using 256 uniform samples
+		SHADOW_MAPPING = 300,	///< Shadows are computed using shadow mapping algorithm
+		SHADOW_MAPPING_64UM = 313,	///< Shadows are computed using shadow mapping algorithm pcf using sixty four uniform samples
+		SHADOW_OFF = 299,	///< Shadows are not computed
+		SHADOW_MAPPING_9UM = 305,	///< Shadows are computed using shadow mapping algorithm pcf using nine uniform samples
+		SHADOW_MAPPING_9U = 304,	///< Shadows are computed using shadow mapping algorithm pcf using nine uniform samples
+		SHADOW_MAPPING_4U = 301,	///< Shadows are computed using shadow mapping algorithm pcf using four uniform samples
+		SHADOW_MAPPING_25UM = 309,	///< Shadows are computed using shadow mapping algorithm pcf using twenty five uniform samples
+		SHADOW_MAPPING_16U = 306,	///< Shadows are computed using shadow mapping algorithm pcf using sixteen uniform samples
+		SHADOW_MAPPING_225U = 316,	///< Shadows are computed using shadow mapping algorithm pcf using 225 uniform samples
+		SHADOW_MAPPING_225UM = 317,	///< Shadows are computed using shadow mapping algorithm pcf using 225 uniform samples
+		SHADOW_MAPPING_4DM = 303,	///< Shadows are computed using shadow mapping algorithm pcf using four dithered samples
+		SHADOW_MAPPING_144U = 314,	///< Shadows are computed using shadow mapping algorithm pcf using 144 uniform samples
+		SHADOW_MAPPING_64U = 312,	///< Shadows are computed using shadow mapping algorithm pcf using sixty four uniform samples
+		SHADOW_MAPPING_256U = 318,	///< Shadows are computed using shadow mapping algorithm pcf using 256 uniform samples
+		SHADOW_MAPPING_36UM = 311,	///< Shadows are computed using shadow mapping algorithm pcf using thirty six uniform samples
+		SHADOW_MAPPING_16UM = 307,	///< Shadows are computed using shadow mapping algorithm pcf using sixteen uniform samples
+		SHADOW_MAPPING_144UM = 315,	///< Shadows are computed using shadow mapping algorithm pcf using 144 uniform samples
 		DEFAULT_SHADOW = SHADOW_OFF	///< Shadows are not computed
 	};
 
@@ -860,8 +860,6 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 297 );
-			retVal.push_back( 298 );
 			retVal.push_back( 299 );
 			retVal.push_back( 300 );
 			retVal.push_back( 301 );
@@ -881,6 +879,8 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 			retVal.push_back( 315 );
 			retVal.push_back( 316 );
 			retVal.push_back( 317 );
+			retVal.push_back( 318 );
+			retVal.push_back( 319 );
 
 			return retVal;
 		}
@@ -954,11 +954,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		CHOICE4 = 291,	///< 
-		CHOICE0 = 287,	///< 
-		CHOICE1 = 288,	///< 
-		CHOICE2 = 289,	///< 
-		CHOICE3 = 290,	///< 
+		CHOICE4 = 293,	///< 
+		CHOICE0 = 289,	///< 
+		CHOICE1 = 290,	///< 
+		CHOICE2 = 291,	///< 
+		CHOICE3 = 292,	///< 
 		DEFAULT_OPTION0 = CHOICE0	///< 
 	};
 
@@ -986,11 +986,11 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 287 );
-			retVal.push_back( 288 );
 			retVal.push_back( 289 );
 			retVal.push_back( 290 );
 			retVal.push_back( 291 );
+			retVal.push_back( 292 );
+			retVal.push_back( 293 );
 
 			return retVal;
 		}

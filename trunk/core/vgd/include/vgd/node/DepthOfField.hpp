@@ -308,8 +308,8 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		THIN_LENS = 267,	///< todo
-		PINHOLE = 266,	///< todo
+		THIN_LENS = 269,	///< todo
+		PINHOLE = 268,	///< todo
 		DEFAULT_CAMERAMODEL = THIN_LENS	///< todo
 	};
 
@@ -337,8 +337,8 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 266 );
-			retVal.push_back( 267 );
+			retVal.push_back( 268 );
+			retVal.push_back( 269 );
 
 			return retVal;
 		}
