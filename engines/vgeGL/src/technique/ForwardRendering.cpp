@@ -53,6 +53,7 @@
 #include "vgeGL/technique/ShadowMapping.hpp"
 
 // sub-techniques
+#include "vgeGL/technique/Antialiasing.hpp"
 #include "vgeGL/technique/Noise.hpp"
 #include "vgeGL/technique/DepthOfField.hpp"
 
@@ -293,6 +294,7 @@ ForwardRendering::ForwardRendering()
 	}
 
 	// Initializes sub-techniques
+	m_subtechniques.push_back( vgd::makeShp( new vgeGL::technique::Antialiasing() ) );
 	m_subtechniques.push_back( vgd::makeShp( new vgeGL::technique::DepthOfField() ) );
 	m_subtechniques.push_back( vgd::makeShp( new vgeGL::technique::Noise() ) );
 }
@@ -1613,7 +1615,7 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 	stageFluidUpdateSceneHeightMap( engine, traverseElements );
 	stageFluidSimulation( engine );
 
-	// DepthOfField and Noise stagePrePaint() must be done before stageInitializeOutputBuffers()
+	// Antialiasing, DepthOfField and Noise stagePrePaint() must be done before stageInitializeOutputBuffers()
 	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
 	{
 		subtechnique->stagePrePaint( this, engine );
@@ -1876,9 +1878,10 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 	std::vector< vgd::Shp< Texture2D > >			textures0;
 
-	std::vector< PostProcessing::Input0ValueType >	inputs0;
-	std::vector< PostProcessing::Input1ValueType >	inputs1;
-	std::vector< PostProcessing::Input2ValueType >	inputs2;
+	std::vector< PostProcessing::Input0ValueType >			inputs0;
+	std::vector< PostProcessing::Input0SamplingValueType >	inputs0Sampling;
+	std::vector< PostProcessing::Input1ValueType >			inputs1;
+	std::vector< PostProcessing::Input2ValueType >			inputs2;
 
 	std::vector< PostProcessing::OutputValueType >	output;
 
@@ -1992,6 +1995,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 			// Inputs
 			inputs0.push_back( postProcessingNode->getInput0() );
+			inputs0Sampling.push_back( postProcessingNode->getInput0Sampling() );
 			inputs1.push_back( postProcessingNode->getInput1() );
 			inputs2.push_back( postProcessingNode->getInput2() );
 
@@ -2197,6 +2201,48 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		if ( inputTexture0 )
 		{
 			if ( inputTexture0->getMultiAttributeIndex() != 0 )		inputTexture0->setMultiAttributeIndex(0);
+
+			using vgd::node::Texture;
+			const PostProcessing::Input0SamplingValueType input0Sampling = inputs0Sampling[i];
+			switch ( input0Sampling.value() )
+			{
+				case PostProcessing::INPUT0SAMPLING_NONE:
+					break;
+					// @todo test state of this sampling after using another one (like LINEAR_MAXANISOTROPY4)
+
+				case PostProcessing::NEAREST_MAXANISOTROPY1:
+					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
+					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+					inputTexture0->setMaxAnisotropy( 1.f );
+					break;
+
+				case PostProcessing::LINEAR_MAXANISOTROPY1:
+					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+					inputTexture0->setMaxAnisotropy( 1.f );
+					break;
+
+				case PostProcessing::LINEAR_MAXANISOTROPY4:
+					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+					inputTexture0->setMaxAnisotropy( 4.f );
+					break;
+
+				case PostProcessing::LINEAR_MAXANISOTROPY8:
+					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+					inputTexture0->setMaxAnisotropy( 8.f );
+					break;
+
+				case PostProcessing::LINEAR_MAXANISOTROPY16:
+					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
+					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+					inputTexture0->setMaxAnisotropy( 16.f );
+					break;
+				default:
+				vgAssert(false);
+			}
+
 			engine->paint( inputTexture0 );
 		}
 		else

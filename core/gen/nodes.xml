@@ -7,6 +7,43 @@
 
 <nodes>
 
+	<node name = "Antialiasing" inherits = "SingleAttribute">
+		<doxygen>
+			<docBrief>Built-in antialiasing support</docBrief>
+			<doc>Antialiasing (AA) is the process of smoothing edges so they dont appear jagged.</doc>
+			<doc>The technique currently supported is FXAA version 1 designed by Timothy Lottes of NVIDIA.</doc>
+			<doc>FXAA is short for Fast Approximate Anti-Aliasing.</doc>
+			<doc>Below is a description of FXAA in much more detail from Timothy Lottes.</doc>
+			<doc>FXAA was designed to be a fast post-process shader based anti-aliasing method which can improve image quality</doc>
+			<doc>when an application cannot afford to use hardware anti-aliasing methods like MSAA or CSAA.</doc>
+			<doc>FXAA is not designed to replace MSAA/CSAA or any other hardware AA method, but rather just offer another option.</doc>
+			<doc>FXAA is an interesting option for a game which is using deferred rendering and doesn't have MSAA support, </doc>
+			<doc>or for a notebook which cannot run 4xMSAA fast enough in a specific game.</doc>
+			<doc>But for games which have native MSAA support on higher-end machines, the 4xMSAA option will have higher quality.</doc>
+			<doc>As a post-process filter running without multiple samples per pixel, FXAA has some limitations as to what quality it can reach.</doc>
+			<doc>FXAA can improve the quality along edges, but it does not do a good job on near horizontal or near vertical edges.</doc>
+			<doc>Since FXAA runs without MSAA, it also attempts to find areas of the image which might cause jittering in motion and </doc>
+			<doc>reduces the contrast to reduce the jittering in motion (compared to no-AA). This effect can look like a softening of the image.</doc>
+			<doc>FXAA does not mix with MSAA/CSAA. FXAA is designed to find edges on no-AA images, </doc>
+			<doc>and the MSAA gradient steps confuse the FXAA filter. That being said some developers like DICE with Battlefield3 on Windows, </doc>
+			<doc>decided to offer an FXAA option even with MSAA turned on, and this can increase quality on things like trees and bushes which </doc>
+			<doc>use a technique called "alpha test" which doesn't mix as well with MSAA.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_frameBufferNodes</ingroup>
+		</doxygen>
+
+		<sf name="technique" doc="The antialiasing technique to be used.">
+			<type name="enum">
+				<enum default="FXAA1">
+					<value name="NONE" doc="No antialiasing"/>
+					<value name="FXAA1" doc="Fast Approximate Anti-Aliasing (FXAA) version 1"/>
+				</enum>
+			</type>
+		</sf>
+	</node>
+
+
 <!-- todo defines an enum here -->
 
 	<node	name		= "Camera"

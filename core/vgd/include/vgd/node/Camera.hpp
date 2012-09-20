@@ -84,9 +84,9 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 */
 	enum EyeUsagePolicy 
 	{
-		EYE_LEFT = 256,	///< the left eye
-		EYE_RIGHT = 257,	///< the right eye
-		EYE_BOTH = 258,	///< the left eye and right eye
+		EYE_LEFT = 258,	///< the left eye
+		EYE_RIGHT = 259,	///< the right eye
+		EYE_BOTH = 260,	///< the left eye and right eye
 		DEFAULT_EYEUSAGEPOLICY = EYE_BOTH	///< the left eye and right eye
 	};
 
@@ -114,9 +114,9 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 256 );
-			retVal.push_back( 257 );
 			retVal.push_back( 258 );
+			retVal.push_back( 259 );
+			retVal.push_back( 260 );
 
 			return retVal;
 		}
@@ -450,9 +450,9 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 */
 	enum  
 	{
-		MONOSCOPIC = 259,	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
-		ANAGLYPH = 261,	///< @todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera.
-		QUAD_BUFFER = 260,	///< Stereoscopic rendering using quad buffer (i.e. active stereo using shutter glasses, or passive stereo using polarized projectors and glasses). Scene is viewer for left and right eyes. All fields are used to define the camera.
+		MONOSCOPIC = 261,	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
+		ANAGLYPH = 263,	///< @todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera.
+		QUAD_BUFFER = 262,	///< Stereoscopic rendering using quad buffer (i.e. active stereo using shutter glasses, or passive stereo using polarized projectors and glasses). Scene is viewer for left and right eyes. All fields are used to define the camera.
 		DEFAULT_MODE = MONOSCOPIC	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
 	};
 
@@ -480,9 +480,9 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 259 );
-			retVal.push_back( 260 );
 			retVal.push_back( 261 );
+			retVal.push_back( 262 );
+			retVal.push_back( 263 );
 
 			return retVal;
 		}

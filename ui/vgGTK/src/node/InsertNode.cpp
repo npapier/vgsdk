@@ -1,37 +1,17 @@
-// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier and Maxime Peresson.
+// VGSDK - Copyright (C) 2010, 2011, 2012, Nicolas Papier and Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Nicolas Papier
 
+#include "vgUI/node/InsertNode.hpp"
 #include "vgGTK/node/InsertNode.hpp"
 
-#include <boost/assign.hpp>
-#include <boost/mpl/vector.hpp>
 #include <boost/mpl/for_each.hpp>
-
 #include <gtkmm/menu.h>
-
-#include <vgd/node/ClipPlane.hpp>
-#include <vgd/node/CullFace.hpp>
-#include <vgd/node/DepthOfField.hpp>
-#include <vgd/node/DirectionalLight.hpp>
-#include <vgd/node/DrawStyle.hpp>
-#include <vgd/node/Fluid.hpp>
-#include <vgd/node/FrontFace.hpp>
-#include <vgd/node/Group.hpp>
-#include <vgd/node/LightModel.hpp>
-#include <vgd/node/Material.hpp>
-#include <vgd/node/MatrixTransform.hpp>
-#include <vgd/node/Noise.hpp>
-#include <vgd/node/OutputBuffers.hpp>
-#include <vgd/node/OutputBufferProperty.hpp>
-#include <vgd/node/PointLight.hpp>
-#include <vgd/node/PostProcessing.hpp>
-#include <vgd/node/Separator.hpp>
-#include <vgd/node/SpotLight.hpp>
-#include <vgd/node/Transform.hpp>
-
 #include <vgAlg/actions/SelectedNode.hpp>
+
+
 
 namespace vgGTK
 {
@@ -39,46 +19,8 @@ namespace vgGTK
 namespace node
 {
 
-	typedef boost::mpl::vector<	vgd::Shp< vgd::node::ClipPlane >, 
-								vgd::Shp< vgd::node::CullFace >,
-								vgd::Shp< vgd::node::DepthOfField >,
-								vgd::Shp< vgd::node::DirectionalLight >,
-								vgd::Shp< vgd::node::DrawStyle >,
-								vgd::Shp< vgd::node::Fluid >,
-								vgd::Shp< vgd::node::FrontFace >,
-								vgd::Shp< vgd::node::Group >,
-								vgd::Shp< vgd::node::LightModel >,
-								vgd::Shp< vgd::node::Material >,
-								vgd::Shp< vgd::node::MatrixTransform >,
-								vgd::Shp< vgd::node::Noise >,
-								vgd::Shp< vgd::node::OutputBuffers >,
-								vgd::Shp< vgd::node::OutputBufferProperty >,
-								vgd::Shp< vgd::node::PointLight >,
-								vgd::Shp< vgd::node::PostProcessing >,
-								vgd::Shp< vgd::node::Separator >,
-								vgd::Shp< vgd::node::SpotLight >,
-								vgd::Shp< vgd::node::Transform >
-									> shapes;
-
-	static std::vector< std::string > names = boost::assign::list_of("ClipPlane")
-																	("CullFace")
-																	("DepthOfField")
-																	("DirectionalLight")
-																	("DrawStyle")
-																	("Fluid")
-																	("FrontFace")
-																	("Group")
-																	("LightModel")
-																	("Material")
-																	("MatrixTransform")
-																	("Noise")
-																	("OutputBuffers")
-																	("OutputBufferProperty")
-																	("PointLight")
-																	("PostProcessing")
-																	("Separator")
-																	("SpotLight")
-																	("Transform");
+namespace
+{
 
 struct CreateNodeList
 {
@@ -121,6 +63,8 @@ private:
 	InsertNode* m_insertNode;
 };
 
+}
+
 
 
 InsertNode::InsertNode()
@@ -129,11 +73,11 @@ InsertNode::InsertNode()
 	m_insertMenu->items().clear();
 
 	CreateNodeList createNodeList( this );
-	boost::mpl::for_each< shapes >( createNodeList );
+	boost::mpl::for_each< vgUI::node::insertNodeShapes >( createNodeList );
 
-	for( uint i = 0; i < names.size(); i++ )
+	for( uint i = 0; i < vgUI::node::getInsertNodeNames().size(); i++ )
 	{
-		Gtk::MenuItem	* item = new Gtk::MenuItem( names[i] );
+		Gtk::MenuItem	* item = new Gtk::MenuItem( vgUI::node::getInsertNodeNames()[i] );
 		item->signal_activate().connect( sigc::bind<0>( sigc::mem_fun(this, &InsertNode::onInsertNode), m_classNames[i] ) );
 		m_insertMenu->append( *item );
 	}
@@ -152,7 +96,7 @@ InsertNode::~InsertNode()
 void InsertNode::onInsertNode( std::string name )
 {
 	CreateNode createNode( name, this );
-	boost::mpl::for_each< shapes >( createNode );
+	boost::mpl::for_each< vgUI::node::insertNodeShapes >( createNode );
 
 	vgd::Shp< vgd::node::Node > node = vgAlg::actions::SelectedNode::getSelectedNodeObject()->getSelectedNode();
 	vgd::Shp< vgd::node::Group > parentGroup = vgAlg::actions::SelectedNode::getSelectedNodeObject()->getParentSelectedNode();
