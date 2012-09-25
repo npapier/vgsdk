@@ -159,7 +159,6 @@ void Engine::setToDefaults()
 
 	// GLOBAL INITIALIZATION
 	glEnable( GL_LIGHTING );
-	glEnable( GL_DEPTH_TEST );
 
 	if ( false /*isGL_EXT_rescale_normal() */)		// @todo uncomment and test with GLSL
 	{
@@ -204,11 +203,6 @@ void Engine::setToDefaults()
 	vgLogDebug( "vgeGL.Engine: MAX_LIGHTS			= %i", getMaxLights() );
 
 	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
-
-	vgLogDebug( "vgeGL.Engine: GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS = %i", getMaxVertexTexImageUnits() );
-	vgLogDebug( "vgeGL.Engine: GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS = %i", getMaxCombinedTexImageUnits() );
-	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_IMAGE_UNITS = %i", getMaxTexImageUnits() );
-	vgLogDebug( "vgeGL.Engine: GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_ARB = %i", getMaxGeometryTexImageUnits() );
 
 	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
 	vgLogDebug( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
@@ -861,46 +855,6 @@ const int Engine::getMaxCubeMapTexSize() const
 
 
 
-const int Engine::getMaxVertexTexImageUnits() const
-{
-	GLint value;
-	glGetIntegerv( GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &value );
-
-	return value;
-}
-
-
-
-const int Engine::getMaxCombinedTexImageUnits() const
-{
-	GLint value;
-	glGetIntegerv( GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value );
-
-	return value;
-}
-
-
-
-const int Engine::getMaxTexImageUnits() const
-{
-	GLint value;
-	glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS, &value );
-
-	return value;
-}
-
-
-
-const int Engine::getMaxGeometryTexImageUnits() const
-{
-	GLint value;
-	glGetIntegerv( GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS_ARB, &value );
-
-	return value;
-}
-
-
-
 void Engine::getGLViewport( vgm::Rectangle2i& viewport ) /*const*/
 {
 	GLint viewportGL[4];
@@ -1045,10 +999,19 @@ void Engine::activeTexture( const vgd::node::Texture * textureNode )
 
 
 
-void Engine::clearTextureUnits()
+void Engine::clearTextureUnits( const int begin, const int end )
 {
-	for(	int32	index	= 0,
-					iMax	= isTextureMappingEnabled() ? getTextureMatrix().size() : 0;
+	int32 iMax;
+	if (end == -1)
+	{
+		iMax = isTextureMappingEnabled() ? getTextureMatrix().size() : 0;
+	}
+	else
+	{
+		iMax = end;
+	}
+
+	for(	int32	index	= begin;
 			index < iMax;
 			++index )
 	{

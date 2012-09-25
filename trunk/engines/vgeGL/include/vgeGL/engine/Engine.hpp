@@ -733,10 +733,6 @@ public:
 	const int getMax3DTexSize() const;
 	const int getMaxCubeMapTexSize() const;
 
-	const int getMaxVertexTexImageUnits() const;
-	const int getMaxCombinedTexImageUnits() const;
-	const int getMaxTexImageUnits() const;
-	const int getMaxGeometryTexImageUnits() const;
 	//@}
 
 
@@ -818,8 +814,11 @@ public:
 
 	/**
 	 * @brief Binds the default 2D texture for each texture units.
+	 *
+	 * @param begin		index of the first texture unit to bind to the default 2D texture
+	 * @param end		index of the last texture unit plus one to bind to the default 2D texture (-1 for all texture units).
 	 */
-	void clearTextureUnits();
+	void clearTextureUnits( const int begin = 0, const int end = -1);
 
 	/**
 	 * @brief Configures OpenGL for 2D rendering.
