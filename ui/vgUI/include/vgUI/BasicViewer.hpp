@@ -318,7 +318,10 @@ protected:
 	void computeSceneBoundingBox(	vgm::Box3f& box, vgm::Vec3f& center,
 									float& max );
 
-
+	/**
+	 * @brief Configures the camera according to the rendering window size and the defined camera type.
+	 */
+	void configureCamera();
 
 private:
 
