@@ -87,6 +87,8 @@ void BasicViewer::privateResetSceneGraph()
 void BasicViewer::setCameraType( const CameraType typeOfCamera )
 {
 	m_cameraType = typeOfCamera;
+	configureCamera();
+	refresh();
 }
 
 
@@ -96,6 +98,129 @@ const BasicViewer::CameraType BasicViewer::getCameraType() const
 	return m_cameraType;
 }
 
+
+void BasicViewer::configureCamera()
+{
+	// Compute bounding box and some informations
+	vgm::Box3f	box;
+	vgm::Vec3f	center;
+	float		max;
+
+	computeSceneBoundingBox( box, center, max );
+
+	// Get additionnal informations.
+	float width, height, depth;
+
+	if ( !box.isEmpty() )
+	{
+		box.getSize( width, height, depth );
+	}
+	else
+	{
+		width = height = depth = 999.f;
+
+		max = 999.f;
+	}
+
+	float	minDepth = max / 2048.f; // r = 2048 in r = far/near.
+	float	maxDepth = 4.f * max;
+
+	//
+	if ( height == 0.f )
+	{
+		return;
+	}
+
+	const vgm::Vec2i	drawingSize			= getEngine()->getDrawingSurfaceSize();
+	const float			sceneAspectRatio	= width/height;
+	const float			windowAspectRatio	= static_cast<float>(drawingSize[0])/static_cast<float>(drawingSize[1]);
+
+	vgm::MatrixR matrix;
+
+	switch ( getCameraType() )
+	{
+		case CAMERA_PERSPECTIVE:
+			matrix.setPerspective(
+							m_camera->getFovy(),
+							windowAspectRatio,
+							minDepth,
+							maxDepth
+							);
+			break;
+
+		case CAMERA_ORTHOGRAPHIC:
+		{
+			if ( windowAspectRatio < sceneAspectRatio )
+			{
+				matrix.setOrtho(
+								-width / 2.f,
+								width / 2.f,
+
+								-width / 2.f / windowAspectRatio,
+								width / 2.f / windowAspectRatio,
+
+								minDepth,
+								maxDepth
+								);
+			}
+			else
+			{
+				matrix.setOrtho(
+								-height / 2.f * windowAspectRatio,
+								height / 2.f * windowAspectRatio,
+
+								-height / 2.f,
+								height / 2.f,
+
+								minDepth,
+								maxDepth
+								);
+			}
+			break;
+		}
+
+//		{
+//			if ( width > height )
+//			{
+//				matrix.setOrtho(
+//								-width / 2.f,
+//								width / 2.f,
+//
+//								-width / 2.f / windowAspectRatio,
+//								width / 2.f / windowAspectRatio,
+//
+//								minDepth,
+//								maxDepth
+//								);
+//			}
+//			else
+//			{
+//				matrix.setOrtho(
+//								-height / 2.f * windowAspectRatio,
+//								height / 2.f * windowAspectRatio,
+//
+//								-height / 2.f,
+//								height / 2.f,
+//
+//								minDepth,
+//								maxDepth
+//								);
+//			}
+//
+//			break;
+//		}
+
+		default:
+			assert( false && "Unknwon camera type." );
+	}
+
+	m_camera->setProjection( matrix );
+	m_camera->setAspect( windowAspectRatio );
+	m_camera->setZNear( minDepth );
+	m_camera->setZFar( maxDepth );
+
+	m_camera->setViewport( vgm::Rectangle2i( 0, 0, drawingSize[0], drawingSize[1] ) );
+}
 
 
 void BasicViewer::viewAll( const CameraDistanceHints cameraDistance )
@@ -181,6 +306,7 @@ vgd::Shp< vgd::node::MultiSwitch > BasicViewer::getOverlayContainer()
 {
 	return m_overlayContainer;
 }
+
 
 const vgd::Shp< vgd::node::MultiSwitch > BasicViewer::getOverlayContainer() const
 {
@@ -427,124 +553,8 @@ void BasicViewer::resize( const vgm::Vec2i size )
 	// Calls resize() provided by Canvas
 	::vgUI::Canvas::resize( size );
 
-	// Compute bounding box and some informations
-	vgm::Box3f	box;
-	vgm::Vec3f	center;
-	float		max;
-
-	computeSceneBoundingBox( box, center, max );
-
-	// Get additionnal informations.
-	float width, height, depth;
-
-	if ( !box.isEmpty() )
-	{
-		box.getSize( width, height, depth );
-	}
-	else
-	{
-		width = height = depth = 999.f;
-
-		max = 999.f;
-	}
-
-	float	minDepth = max / 2048.f; // r = 2048 in r = far/near.
-	float	maxDepth = 4.f * max;
-
-	//
-	if ( height == 0.f )
-	{
-		return;
-	}
-
-	const float sceneAspectRatio	= width/height;
-	const float windowAspectRatio	= static_cast<float>(size[0])/static_cast<float>(size[1]);
-
-	vgm::MatrixR matrix;
-
-	switch ( getCameraType() )
-	{
-		case CAMERA_PERSPECTIVE:
-			matrix.setPerspective(
-							m_camera->getFovy(),
-							windowAspectRatio,
-							minDepth,
-							maxDepth
-							);
-			break;
-
-		case CAMERA_ORTHOGRAPHIC:
-		{
-			if ( windowAspectRatio < sceneAspectRatio )
-			{
-				matrix.setOrtho(
-								-width / 2.f,
-								width / 2.f,
-
-								-width / 2.f / windowAspectRatio,
-								width / 2.f / windowAspectRatio,
-
-								minDepth,
-								maxDepth
-								);
-			}
-			else
-			{
-				matrix.setOrtho(
-								-height / 2.f * windowAspectRatio,
-								height / 2.f * windowAspectRatio,
-
-								-height / 2.f,
-								height / 2.f,
-
-								minDepth,
-								maxDepth
-								);
-			}
-			break;
-		}
-
-//		{
-//			if ( width > height )
-//			{
-//				matrix.setOrtho(
-//								-width / 2.f,
-//								width / 2.f,
-//
-//								-width / 2.f / windowAspectRatio,
-//								width / 2.f / windowAspectRatio,
-//
-//								minDepth,
-//								maxDepth
-//								);
-//			}
-//			else
-//			{
-//				matrix.setOrtho(
-//								-height / 2.f * windowAspectRatio,
-//								height / 2.f * windowAspectRatio,
-//
-//								-height / 2.f,
-//								height / 2.f,
-//
-//								minDepth,
-//								maxDepth
-//								);
-//			}
-//
-//			break;
-//		}
-
-		default:
-			assert( false && "Unknwon camera type." );
-	}
-
-	m_camera->setProjection( matrix );
-	m_camera->setAspect( windowAspectRatio );
-	m_camera->setZNear( minDepth );
-	m_camera->setZFar( maxDepth );
-
-	m_camera->setViewport( vgm::Rectangle2i( 0, 0, size[0], size[1] ) );
+	// Configures the camera.
+	configureCamera();
 }
 
 
