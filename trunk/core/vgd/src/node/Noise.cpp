@@ -66,6 +66,7 @@ Noise::Noise( const std::string nodeName ) :
 	addField( new FChannelsSeparatedType(getFChannelsSeparated()) );
 	addField( new FUseTextureLessRandomType(getFUseTextureLessRandom()) );
 	addField( new FFactorsType(getFFactors()) );
+	addField( new FRandomTextureScaleFactorsType(getFRandomTextureScaleFactors()) );
 	addField( new FNoiseModelType(getFNoiseModel()) );
 
 	// Sets link(s)
@@ -80,7 +81,8 @@ void Noise::setToDefaults( void )
 	SingleAttribute::setToDefaults();
 	setChannelsSeparated( (false) );
 	setUseTextureLessRandom( (false) );
-	setFactors( vgm::Vec2f(0.025, 0.025) );
+	setFactors( vgm::Vec2f(0.025f, 0.025f) );
+	setRandomTextureScaleFactors( vgm::Vec2f(1.f, 1.f) );
 	setNoiseModel( (PHOTON) );
 }
 
@@ -135,7 +137,7 @@ void Noise::setUseTextureLessRandom( const UseTextureLessRandomValueType value )
 
 // Factors
 
-const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec2f(0.025, 0.025);
+const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec2f(0.025f, 0.025f);
 
 
 
@@ -149,6 +151,26 @@ const Noise::FactorsValueType Noise::getFactors() const
 void Noise::setFactors( const FactorsValueType value )
 {
 	getFieldRW<FFactorsType>(getFFactors())->setValue( value );
+}
+
+
+
+// RandomTextureScaleFactors
+
+const Noise::RandomTextureScaleFactorsValueType Noise::DEFAULT_RANDOMTEXTURESCALEFACTORS = vgm::Vec2f(1.f, 1.f);
+
+
+
+const Noise::RandomTextureScaleFactorsValueType Noise::getRandomTextureScaleFactors() const
+{
+	return getFieldRO<FRandomTextureScaleFactorsType>(getFRandomTextureScaleFactors())->getValue();
+}
+
+
+
+void Noise::setRandomTextureScaleFactors( const RandomTextureScaleFactorsValueType value )
+{
+	getFieldRW<FRandomTextureScaleFactorsType>(getFRandomTextureScaleFactors())->setValue( value );
 }
 
 
@@ -187,6 +209,13 @@ const std::string Noise::getFUseTextureLessRandom( void )
 const std::string Noise::getFFactors( void )
 {
 	return "f_factors";
+}
+
+
+
+const std::string Noise::getFRandomTextureScaleFactors( void )
+{
+	return "f_randomTextureScaleFactors";
 }
 
 

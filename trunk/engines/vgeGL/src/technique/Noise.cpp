@@ -69,7 +69,10 @@ void Noise::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::Noise > rc )
 void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc )
 {
 	// noise image
-	const vgm::Vec2i size = engine->getDrawingSurfaceSize();
+	const vgm::Vec2f randomTextureScaleFactors	( noise->getRandomTextureScaleFactors() );
+	const vgm::Vec2f drawingSurfaceSize			( engine->getDrawingSurfaceSize() );
+	const vgm::Vec2i size(	drawingSurfaceSize[0] * randomTextureScaleFactors[0],
+							drawingSurfaceSize[1] * randomTextureScaleFactors[1] );
 
 	using vgd::basic::Image;
 	vgd::Shp< Image > image( new Image(size[0], size[1], 1, Image::LUMINANCE, Image::UINT8) );
@@ -90,8 +93,6 @@ void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::S
 		using vgd::node::Texture2D;
 		vgd::Shp< Texture2D > texture2D = Texture2D::create("vgsdk:noise:randomTexture");
 
-		//texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
-		//texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
 		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::NEAREST );
 		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::NEAREST );
 
@@ -282,9 +283,13 @@ void Noise::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::eng
 	}
 
 	// random texture
-	if ( !rc->randomTexture || technique->hasDrawingSurfaceSizeChanged() )
+	vgd::field::DirtyFlag * dfNode = getNoiseNode()->getDirtyFlag(getNoiseNode()->getDFNode());
+	if (	!rc->randomTexture ||
+			technique->hasDrawingSurfaceSizeChanged() ||
+			dfNode->isDirty() )
 	{
-		stageInitializeRandomTexture( engine, rc );
+		stageInitializeRandomTexture( engine, rc, getNoiseNode() );
+		dfNode->validate();
 	}
 
 	// post processing nodes
