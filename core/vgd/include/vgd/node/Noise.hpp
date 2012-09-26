@@ -33,8 +33,11 @@ namespace node
  * - SFBool \c useTextureLessRandom = (false)<br>
  *   Sets to true to generate random values without using a texture, false to use a texture.<br>
  *<br>
- * - SFVec2f \c factors = vgm::Vec2f(0.025, 0.025)<br>
+ * - SFVec2f \c factors = vgm::Vec2f(0.025f, 0.025f)<br>
  *   Sets the linear and constant factor used to generate noise.<br>
+ *<br>
+ * - SFVec2f \c randomTextureScaleFactors = vgm::Vec2f(1.f, 1.f)<br>
+ *   The random texture is the 2d image containing random values used to compute noise (only if useTextureLessRandom is false). The width of the random texture is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component). The size of noise pixels can be modified using this field.<br>
  *<br>
  * - SFEnum \c noiseModel = (PHOTON)<br>
  *   Sets the noise model.<br>
@@ -185,6 +188,41 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field randomTextureScaleFactors
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c randomTextureScaleFactors.
+	 */
+	typedef vgm::Vec2f RandomTextureScaleFactorsValueType;
+
+	/**
+	 * @brief The default value of field named \c randomTextureScaleFactors.
+	 */
+	static const RandomTextureScaleFactorsValueType DEFAULT_RANDOMTEXTURESCALEFACTORS;
+
+	/**
+	 * @brief Type definition of the field named \c randomTextureScaleFactors
+	 */
+	typedef vgd::field::TSingleField< RandomTextureScaleFactorsValueType > FRandomTextureScaleFactorsType;
+
+
+	/**
+	 * @brief Gets the value of field named \c randomTextureScaleFactors.
+	 */
+	const RandomTextureScaleFactorsValueType getRandomTextureScaleFactors() const;
+
+	/**
+	 * @brief Sets the value of field named \c randomTextureScaleFactors.
+	 */
+	void setRandomTextureScaleFactors( const RandomTextureScaleFactorsValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field noiseModel
 	 */
 	//@{
@@ -285,6 +323,13 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	 * @return the name of field \c factors.
 	 */
 	static const std::string getFFactors( void );
+
+	/**
+	 * @brief Returns the name of field \c randomTextureScaleFactors.
+	 *
+	 * @return the name of field \c randomTextureScaleFactors.
+	 */
+	static const std::string getFRandomTextureScaleFactors( void );
 
 	/**
 	 * @brief Returns the name of field \c noiseModel.

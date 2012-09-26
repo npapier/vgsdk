@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -48,7 +48,7 @@ struct VGEGL_API Noise : public SubTechnique
 	void stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::Noise > rc );
 
 	// randomTexture
-	void stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc );
+	void stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc, vgd::node::Noise * noise );
 
 	// rootPostProcessing and postProcessing of rc
 	void stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vgeGL::rc::Noise > rc );

@@ -133,7 +133,7 @@ vgd::Shp< vgd::node::Texture2D > getOutputTexture( const vgd::node::PostProcessi
 	int			outputBufferIndex	= -1;
 	int			tmpBufferIndex		= -1;
 
-	// OUTPOUT_OUTPUT_BUFFER
+	// OUTPUT_OUTPUT_BUFFER
 	if (	(PostProcessing::OUTPUT_OUTPUT_BUFFER0 <= outputValue) &&
 			(outputValue <= PostProcessing::OUTPUT_OUTPUT_BUFFER7)	)
 	{

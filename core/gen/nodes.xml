@@ -745,11 +745,15 @@
 		</sf>
 
 		<sf name="factors" doc="Sets the linear and constant factor used to generate noise.">
-			<type name = "Vec2f" namespace="vgm" default = "0.025, 0.025"></type>
+			<type name = "Vec2f" namespace="vgm" default = "0.025f, 0.025f"></type>
 		</sf>
 
 		<sf name="channelsSeparated" doc="Sets to true to use a different random value for each channel, false to use the same random value.">
 			<type name = "bool" default = "false"></type>
+		</sf>
+
+		<sf name="randomTextureScaleFactors" doc="The random texture is the 2d image containing random values used to compute noise (only if useTextureLessRandom is false). The width of the random texture is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component). The size of noise pixels can be modified using this field.">
+			<type name = "Vec2f" namespace="vgm" default = "1.f, 1.f"></type>
 		</sf>
 
 		<sf name="useTextureLessRandom" doc="Sets to true to generate random values without using a texture, false to use a texture.">
