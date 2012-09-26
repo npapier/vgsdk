@@ -66,7 +66,7 @@ void Noise::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::Noise > rc )
 }
 
 
-void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc )
+void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc, vgd::node::Noise * noise )
 {
 	// noise image
 	const vgm::Vec2f randomTextureScaleFactors	( noise->getRandomTextureScaleFactors() );
