@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2012, Alexandre Di Pino
+// VGSDK - Copyright (C) 2012, Alexandre Di Pino, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Alexandre Di Pino
+// Author Nicolas Papier
 
 #include "vgQt/engine/ShadersEditor.hpp"
 
@@ -9,7 +10,6 @@
 
 #include <QBrush>
 #include <QListWidgetItem>
-#include <QTimer>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -24,6 +24,31 @@ namespace vgQt
 namespace engine
 {
 
+
+
+namespace
+{
+
+const std::string buildLog( glo::GLSLProgram * program )
+{
+	// For each shader type, do
+	std::string log;
+	for (uint i = 0; i < glo::GLSLProgram::PROGRAM; ++i)
+	{
+		typedef glo::GLSLProgram::ShaderType ShaderType;
+		const ShaderType type = static_cast<ShaderType>(i);
+
+		// Construct the compilation log
+		const std::string logError( program->getLogError(type) );
+		if ( logError.size() > 0 )	log +=  logError + "\n";
+	}
+
+	if ( program->getLinkLog().size() > 0 ) log += program->getLinkLog();
+
+	return log;
+}
+
+}
 
 
 ShadersEditor::ShadersEditor(QWidget *parent)
@@ -103,7 +128,7 @@ ShadersEditor::ShadersEditor(QWidget *parent)
 	bottomWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
 
 	// Connect widget witch SLOT
-	connect(m_shaderList, SIGNAL(itemClicked ( QListWidgetItem * )), this, SLOT( checkText(  QListWidgetItem * ) ));
+	connect(m_shaderList, SIGNAL(itemClicked ( QListWidgetItem * )), this, SLOT( selectItemInShaderList(  QListWidgetItem * ) ));
 	connect(m_textEditor,
 			SIGNAL( modified(int, int, int, int, const QByteArray &, int, int, int) ),
 			this,
@@ -219,81 +244,83 @@ void ShadersEditor::checkVersionOnShader(const std::string& shader)
 			m_compatibility->setChecked(false);
 			m_versionList->setCurrentIndex( static_cast<int>(gle::glslVersionToEnum(myversion)) );
 		}
+		else
+		{
+			vgAssert(false);
+		}
 	}
 }
 
 
 
-void ShadersEditor::checkText(QListWidgetItem *item)
+void ShadersEditor::selectItemInShaderList(QListWidgetItem *item)
 {
 	blockSignals(true);
 
-	std::vector<std::string>::iterator	shaderName;
-	std::vector<std::string>::iterator	shaderString;
 	const std::string itemName = item->text().toStdString();
-
-	const uint progLength = m_engine->getGLSLManagerExt().getNum();
 
 	m_canvas->setCurrent();
 
 	gle::GLSL_VERSION_LANGUAGE version = gle::glslVersionToEnum(gle::getCurrentGLSLVersion());
-
 	m_textEditor->setGLSLVersion( version );
 	m_versionList->setCurrentIndex( static_cast<int>(version) );
 
-	// If GLSL Manager contain shaders
-	if ( progLength > 0 )
+	// If GLSL Manager extended is not empty
+	const uint numProgram = m_engine->getGLSLManagerExt().getNum();
+	if ( numProgram > 0 )
 	{
-		std::vector<int> keys;
-		typedef std::back_insert_iterator< std::vector<int> >	InsertIterator;
-		InsertIterator keys_it( keys );
-		m_engine->getGLSLManagerExt().getKeys( keys_it );
 		m_currentShader = item->type() - 1000;
 
-		// Iterate all widget
-		for ( std::vector<int>::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
+		KeysContainer keys;
+		m_engine->getGLSLManagerExt().gethKeys( keys );
+
+		for ( KeysContainer::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
 		{
-			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
+			glo::GLSLProgram* glslProgram = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
 
-			const uint shaderNameSize = glo::GLSLProgram::MAX_SHADER_INDEX - 1;
-
-			// If the clicked element is a program
-			if ( m_currentShader == manager->getProgramObject() )
+			// If the selected element is a program
+			if ( m_currentShader == glslProgram->getProgramObject() )
 			{
 				// Set link log
-				m_editorLog->setPlainText(manager->getLinkLog().c_str());
-				m_currentProgram = manager->getProgramObject();
+				const std::string log = buildLog( glslProgram );
+
+				m_editorLog->setPlainText( log.c_str());
+
+				m_currentProgram = glslProgram->getProgramObject();
+
 				// Erase the text editor
 				m_textEditor->setText("");
 				return;
 			}
-
-			// Else, set the shader on the window and save all needed data
-			for (uint i = 0; i < shaderNameSize; i++)
+			else // selected element is a shader
 			{
-				std::ostringstream	oss;
-				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
-				oss << manager->getName(type);
-				const std::string name = manager->convertShaderType2String(type) + " " + oss.str();
-
-				// If clicked value exist on the manager, save all needed data
-				if (itemName == name)
+				for (uint i = 0; i < glo::GLSLProgram::PROGRAM; i++)
 				{
-					QString actualShader =  m_textEditor->getText(m_textEditor->textLength());
+					typedef glo::GLSLProgram::ShaderType ShaderType;
+					const ShaderType type = static_cast<ShaderType>(i);
 
-					if ( manager->getShaderCode(type).c_str() == actualShader.toStdString() )	return;
+					// Found selected element
+					// see shaderName construction in refreshUI()
+					const std::string shaderName = " " + glslProgram->convertShaderType2String(type) + " " + boost::lexical_cast<std::string>( glslProgram->getName(type) );
+					if ( itemName == shaderName )
+					{
 
-					checkVersionOnShader(manager->getShaderCode(type).c_str());		// Check the version
-					m_currentProgram = manager->getProgramObject();					// Save the current program
-					m_currentShader = manager->getName(type);						// Save the current shader, save also if is a program
-					m_itemType = type;												// Save the shader type
-					m_managerSaved = manager;										// Save the current GLSL Manager
-					m_newText = true;												// New text is set on the editor
-					m_textEditor->setText( manager->getShaderCode(type).c_str() );	// Set the shader on the editor
-					m_editorLog->setPlainText(manager->getLogError(type).c_str());	// Set the log
-					findWithMenu(m_findText->text());								// Set selection if a current word is needed to find
-					checkErrorLine(manager->getLogError(type));						// Check line error and higlight this
-					break;
+						QString actualShader = m_textEditor->getText(m_textEditor->textLength());
+
+						if ( glslProgram->getShaderCode(type).c_str() == actualShader.toStdString() )	return;
+
+						checkVersionOnShader(glslProgram->getShaderCode(type).c_str());		// Check the version
+						m_currentProgram = glslProgram->getProgramObject();					// Save the current program
+						m_currentShader = glslProgram->getName(type);						// Save the current shader, save also if is a program
+						m_itemType = type;													// Save the shader type
+						m_managerSaved = glslProgram;										// Save the current GLSL Manager
+						m_newText = true;													// New text is set on the editor
+						m_textEditor->setText( glslProgram->getShaderCode(type).c_str() );	// Set the shader on the editor
+						m_editorLog->setPlainText(glslProgram->getLogError(type).c_str());	// Set the log
+						findWithMenu(m_findText->text());									// Set selection if a current word is needed to find
+						checkErrorLine(glslProgram->getLogError(type));						// Check line error and higlight this
+						break;
+					}
 				}
 			}
 		}
@@ -307,88 +334,49 @@ void ShadersEditor::refreshUI()
 {
 	blockSignals(true);
 
-	const uint progLength = m_engine->getGLSLManagerExt().getNum();
+	// If the editor is not visible, bypass
+	if (!isVisible())	return;
 
-	QBrush brush(Qt::red);
+	QBrush	brush(Qt::red);
 
 	QFont	font("Helvetica");
 	font.setBold(true);
 
-	// If the editor is not visible, bypass
-	if (!isVisible())	return;
-
-	// If GLSL Manager contain
-	if ( progLength > 0 )
+	// If GLSL Manager extended is not empty
+	const uint numProgram = m_engine->getGLSLManagerExt().getNum();
+	if ( numProgram > 0 )
 	{
 		//Clear all the elements
 		m_shaderList->clear();
-		std::vector<int> keys;
-		typedef std::back_insert_iterator< std::vector<int> >	InsertIterator;
-		InsertIterator keys_it( keys );
-		m_engine->getGLSLManagerExt().getKeys( keys_it );
 
-		for ( std::vector<int>::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
+		KeysContainer keys;
+		m_engine->getGLSLManagerExt().gethKeys( keys );
+
+		for ( KeysContainer::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
 		{
-			glo::GLSLProgram* manager = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
-
-			std::ostringstream	ossP;
-			ossP << (int)manager->getProgramObject();
+			glo::GLSLProgram* glslProgram = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
 
 			// Adds the program element on the shader list
-			std::string prgName =  "Program " + ossP.str();
-			QListWidgetItem* prog = new QListWidgetItem(tr( prgName.c_str() ), m_shaderList, (int)manager->getProgramObject() + 1000);
-
-			if (!manager->getLinkSuccess())
-			{
-				// If program doesnt link, set color to red
-				prog->setForeground(brush);
-			}
-
+			const std::string progName =  "Program " + boost::lexical_cast<std::string>( glslProgram->getProgramObject() );
+			QListWidgetItem* prog = new QListWidgetItem(tr( progName.c_str() ), m_shaderList, static_cast<int>(glslProgram->getProgramObject()) + 1000);
 			prog->setFont(font);
+			if (!glslProgram->getLinkSuccess())	prog->setForeground(brush); // If program doesnt link, set color to red
 
-			//Add Shader name on shader list
-			for (uint i = 0; i < glo::GLSLProgram::MAX_SHADER_INDEX; ++i)
+			// For each shader type, do
+			for (uint i = 0; i < glo::GLSLProgram::PROGRAM; ++i)
 			{
-				std::string tmp;
-				std::ostringstream	oss;
-				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
+				typedef glo::GLSLProgram::ShaderType ShaderType;
+				const ShaderType type = static_cast<ShaderType>(i);
 
-				if (type < glo::GLSLProgram::PROGRAM)
+				// Adds shader name on shader list
+				if ( glslProgram->getShaderCode(type).size() > 0 )
 				{
-					tmp = manager->convertShaderType2String(type) + " ";
-
-					if ( manager->getName(type) != 0 )
-					{
-						// Adds the shader element on the shader list
-						oss << manager->getName(type);
-						tmp += oss.str();
-						QListWidgetItem* listShader = new QListWidgetItem(tr(tmp.c_str()), m_shaderList, manager->getName(type) + 1000 );
-
-						// If shader contain erroe, set background to red
-						if (manager->getLogError(type).size() > 0)
-						{
-							listShader->setForeground(brush);
-						}
-					}
+					// see shaderName construction in selectItemInShaderList()
+					const std::string shaderName = " " + glslProgram->convertShaderType2String(type) + " " + boost::lexical_cast<std::string>( glslProgram->getName(type) );
+					QListWidgetItem* listShader = new QListWidgetItem(tr(shaderName.c_str()), m_shaderList, glslProgram->getName(type) + 1000 );
+					if (glslProgram->getLogError(type).size() > 0)	listShader->setForeground(brush); // If shader contain error, set background to red
 				}
 			}
-
-			std::string log("");
-
-			//Construct the compilation log
-			for (uint i = 0; i < glo::GLSLProgram::MAX_SHADER_INDEX; ++i)
-			{
-				glo::GLSLProgram::ShaderType type = (glo::GLSLProgram::ShaderType)i;
-				if (type < glo::GLSLProgram::PROGRAM)
-				{
-					log += manager->getLogError(type) + "\n";
-				}
-			}
-
-			log += manager->getLinkLog();
-
-			//Set the log compilation in the log screen
-			m_editorLog->setPlainText(log.c_str());
 		}
 	}
 
@@ -515,4 +503,3 @@ bool ShadersEditor::event(QEvent * e)
 } // namespace engine
 
 } // namespace vgQt
-
