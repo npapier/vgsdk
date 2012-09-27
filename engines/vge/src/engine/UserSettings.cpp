@@ -16,6 +16,8 @@
 #include <sbf/pkg/Module.hpp>
 
 #include <vgd/field/Enum.hpp>
+#include <vgd/node/Antialiasing.hpp>
+#include <vgd/node/EngineProperties.hpp>
 #include <vgd/node/LightModel.hpp>
 
 #include "vge/engine/SceneManager.hpp"
@@ -30,6 +32,9 @@ namespace engine
 
 
 
+namespace
+{
+
 template< typename EnumType >
 const EnumType getTreeAttributeAsEnum( const boost::property_tree::ptree & ptree, const std::string & attrName )
 {
@@ -38,6 +43,13 @@ const EnumType getTreeAttributeAsEnum( const boost::property_tree::ptree & ptree
 	return EnumType().fromString(attrStr);
 }
 
+const float getTreeAttributeAsFloat( const boost::property_tree::ptree & ptree, const std::string & attrName )
+{
+	const float retVal = ptree.get< float >( attrName );
+	return retVal;
+}
+
+}
 
 
 UserSettings::UserSettings()
@@ -67,36 +79,71 @@ void UserSettings::apply( vge::engine::SceneManager & sm ) const
 		return;
 	}
 
-
-	// Skips when no light model node has been found.
-	vgd::Shp< vgd::node::LightModel >	lightModel = sm.findFirstByType< vgd::node::LightModel >();
-
-	if( !lightModel )
-	{
-		return;
-	}
-
-
 	// Moves to the right sub-tree.
 	bpt::ptree::const_iterator i = m_levels.begin();
 
-	if ( m_level < m_levels.size() )
+	if ( static_cast<uint>(m_level) < m_levels.size() )
 	{
 		std::advance( i, m_level );
 	}
 
-	// Gathers definitions from selected level and apply them.
-	using namespace vgd::node;
+	// Gathers definitions from selected level
+	using vgd::node::Antialiasing;
+	using vgd::node::EngineProperties;
+	using vgd::node::LightModel;
 
-	const LightModel::ShadowValueType			shadow			( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow")					);
-	const LightModel::ShadowFilteringValueType	shadowFiltering	( getTreeAttributeAsEnum< LightModel::ShadowFilteringValueType >(i->second, "shadowFiltering")	);
-	const LightModel::ShadowMapSizeValueType	shadowMapSize	( getTreeAttributeAsEnum< LightModel::ShadowMapSizeValueType >(i->second, "shadowMapSize")		);
-	const LightModel::ShadowMapTypeValueType	shadowMapType	( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType")		);
+	//	shadow related values
+	const LightModel::ShadowValueType				shadow			( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow")					);
+	const LightModel::ShadowFilteringValueType		shadowFiltering	( getTreeAttributeAsEnum< LightModel::ShadowFilteringValueType >(i->second, "shadowFiltering")	);
+	const LightModel::ShadowMapSizeValueType		shadowMapSize	( getTreeAttributeAsEnum< LightModel::ShadowMapSizeValueType >(i->second, "shadowMapSize")		);
+	const LightModel::ShadowMapTypeValueType		shadowMapType	( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType")		);
 
-	if( shadow.isValid() )			lightModel->setShadow( shadow );
-	if( shadowFiltering.isValid() )	lightModel->setShadowFiltering( shadowFiltering );
-	if( shadowMapSize.isValid() )	lightModel->setShadowMapSize( shadowMapSize );
-	if( shadowMapType.isValid() )	lightModel->setShadowMapType( shadowMapType );
+	//	maximum anisotropy value
+	const EngineProperties::MaxAnisotropyValueType	maxAnisotropy	( getTreeAttributeAsFloat(i->second, "maxAnisotropy") );
+
+	//	antialiasing technique
+	const Antialiasing::TechniqueValueType			aaTechnique		( getTreeAttributeAsEnum< Antialiasing::TechniqueValueType >(i->second, "antialiasing")	);
+
+	// Retrieves several nodes used to apply user settings to scene graph
+	vgd::Shp< Antialiasing >		antialiasing		= sm.findFirstByType< Antialiasing >();
+	vgd::Shp< EngineProperties >	engineProperties	= sm.findFirstByType< EngineProperties >();
+	vgd::Shp< LightModel >			lightModel			= sm.findFirstByType< LightModel >();
+
+	//	shadow settings
+	if ( lightModel )
+	{
+		if( shadow.isValid() )			lightModel->setShadow( shadow );
+		if( shadowFiltering.isValid() )	lightModel->setShadowFiltering( shadowFiltering );
+		if( shadowMapSize.isValid() )	lightModel->setShadowMapSize( shadowMapSize );
+		if( shadowMapType.isValid() )	lightModel->setShadowMapType( shadowMapType );
+	}
+	else
+	{
+		vgAssert( "No LightModel node in scene graph." );
+	}
+
+	//	maximum anisotropy
+	if ( engineProperties )
+	{
+		engineProperties->setMaxAnisotropy( maxAnisotropy );
+	}
+	else
+	{
+		vgAssert( "No EngineProperties node in scene graph." );
+	}
+
+	//	antialiasing
+	if ( antialiasing )
+	{
+		if ( aaTechnique.isValid() )
+		{
+			antialiasing->setTechnique( aaTechnique );
+		}
+	}
+	else
+	{
+		vgAssert( "No Antialiasing node in scene graph." );
+	}
 }
 
 
@@ -224,49 +271,78 @@ void UserSettings::setLevel( const int level )
 
 void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 {
-	// Gathers the light model node.
-	vgd::Shp< vgd::node::LightModel >	lightModel = sm.findFirstByType< vgd::node::LightModel >();
+	using vgd::node::Antialiasing;
+	using vgd::node::EngineProperties;
+	using vgd::node::LightModel;
 
-	if( !lightModel )
+	// Retrieves several nodes
+	vgd::Shp< Antialiasing >		antialiasing		= sm.findFirstByType< Antialiasing >();
+	vgd::Shp< EngineProperties >	engineProperties	= sm.findFirstByType< EngineProperties >();
+	vgd::Shp< LightModel >			lightModel			= sm.findFirstByType< LightModel >();
+
+	if( !antialiasing || !engineProperties || !lightModel )
 	{
 		setLevel( -1 );
 		return;
 	}
 
+	// Gathers node settings
+	bool isDefined;
 
-	// Gathers node settings.
-	using vgd::node::LightModel;
-
+	//	shadow related values
 	LightModel::ShadowValueType				nodeShadow;
 	LightModel::ShadowFilteringValueType	nodeShadowFiltering;
 	LightModel::ShadowMapSizeValueType		nodeShadowMapSize;
 	LightModel::ShadowMapTypeValueType		nodeShadowMapType;
 
-	lightModel->getShadow( nodeShadow );
-	lightModel->getShadowFiltering( nodeShadowFiltering );
-	lightModel->getShadowMapSize( nodeShadowMapSize );
+	isDefined = lightModel->getShadow( nodeShadow );
+	isDefined = isDefined && lightModel->getShadowFiltering( nodeShadowFiltering );
+	isDefined = isDefined && lightModel->getShadowMapSize( nodeShadowMapSize );
 	nodeShadowMapType = lightModel->getShadowMapType();
 
+	//	maximum anisotropy value
+	EngineProperties::MaxAnisotropyValueType	nodeMaxAnisotropy;
+	isDefined = isDefined && engineProperties->getMaxAnisotropy( nodeMaxAnisotropy );
+
+	//	antialiasing technique
+	const Antialiasing::TechniqueValueType nodeAaTechnique = antialiasing->getTechnique();
+
+	if (!isDefined)
+	{
+		return;
+	}
 
 	// Walks through levels.
 	namespace bpt = boost::property_tree;
 
 	for( bpt::ptree::const_iterator	i = m_levels.begin(); i != m_levels.end(); ++i )
 	{
-		const LightModel::ShadowValueType			levelShadow				( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow")					);
-		const LightModel::ShadowFilteringValueType	levelShadowFiltering	( getTreeAttributeAsEnum< LightModel::ShadowFilteringValueType >(i->second, "shadowFiltering")	);
-		const LightModel::ShadowMapSizeValueType	levelShadowMapSize		( getTreeAttributeAsEnum< LightModel::ShadowMapSizeValueType >(i->second, "shadowMapSize")		);
-		const LightModel::ShadowMapTypeValueType	levelShadowMapType		( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType")		);
+		//	shadow related values
+		const LightModel::ShadowValueType				levelShadow			( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow")					);
+		const LightModel::ShadowFilteringValueType		levelShadowFiltering( getTreeAttributeAsEnum< LightModel::ShadowFilteringValueType >(i->second, "shadowFiltering")	);
+		const LightModel::ShadowMapSizeValueType		levelShadowMapSize	( getTreeAttributeAsEnum< LightModel::ShadowMapSizeValueType >(i->second, "shadowMapSize")		);
+		const LightModel::ShadowMapTypeValueType		levelShadowMapType	( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType")		);
 
+		//	maximum anisotropy value
+		const EngineProperties::MaxAnisotropyValueType	levelMaxAnisotropy	( getTreeAttributeAsFloat(i->second, "maxAnisotropy") );
 
-		// Tests if the current level matches the light model settings.
+		//	antialiasing technique
+		const Antialiasing::TechniqueValueType			levelAaTechnique	( getTreeAttributeAsEnum< Antialiasing::TechniqueValueType >(i->second, "antialiasing")	);
+
+		// Tests if the current level matches the nodes settings.
 		bool	matches = true;
 
+		//	shadow
 		if( levelShadow.isValid() )				matches = matches && levelShadow == nodeShadow ;
 		if( levelShadowFiltering.isValid() )	matches = matches && levelShadowFiltering == nodeShadowFiltering ;
 		if( levelShadowMapSize.isValid() )		matches = matches && levelShadowMapSize == nodeShadowMapSize;
 		if( levelShadowMapType.isValid() )		matches = matches && levelShadowMapType == nodeShadowMapType;
 
+		//	maximum anisotropy
+		matches = matches && levelMaxAnisotropy == nodeMaxAnisotropy;
+
+		//	antialiasing
+		if( levelAaTechnique.isValid() )		matches = matches && levelAaTechnique == nodeAaTechnique;
 
 		// If the current level is matching, assignes it.
 		if( matches )
