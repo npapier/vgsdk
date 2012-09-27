@@ -90,11 +90,11 @@ public:
 public Q_SLOTS:
 
 	/**
-	 * @brief Use this Q_SLOTS to set text in the text editor aream depens on a QListWidgetItem
+	 * @brief Use this Q_SLOTS to set text in the text editor area depends on a QListWidgetItem
 	 *
 	 * @param item	the QListWidgetItem who refer the shader.
 	 */
-	void checkText(QListWidgetItem *item);
+	void selectItemInShaderList(QListWidgetItem *item);
 
 	/**
 	 * @brief Use this Q_SLOTS to refresh the shader manager.
@@ -151,6 +151,9 @@ private:
 
 	vgUI::Canvas*					m_canvas;			//>> The current canvas
 	vgd::Shp<vgeGL::engine::Engine>	m_engine;			//>> The 3d engine
+
+	typedef std::vector<int> KeysContainer;
+	typedef std::back_insert_iterator< KeysContainer >	KeysBackInserter;
 
 	int								m_currentProgram;	//>> The current program on the text editor
 	glo::GLSLProgram::ShaderType	m_itemType;			//>> The type of shader on the text editor

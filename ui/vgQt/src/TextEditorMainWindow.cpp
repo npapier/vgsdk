@@ -24,8 +24,7 @@ namespace vgQt
 
 
 TextEditorMainWindow::TextEditorMainWindow(const std::string& title, QWidget* parent)
-:
-	m_findMenu( new QWidget(this)),
+:	m_findMenu( new QWidget(this)),
 	m_goToMenu( new QWidget(this)),
 	m_styleMenu( new QWidget(this)),
 	m_textEditor( new Editor(this)),
