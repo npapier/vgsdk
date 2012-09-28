@@ -7,6 +7,7 @@
 #define _VGEGL_RC_NOISE_HPP
 
 #include <glo/IResource.hpp>
+#include <vgd/basic/Time.hpp>
 #include <vgd/Shp.hpp>
 #include <vge/rc/IResource.hpp>
 #include "vgeGL/engine/GLSLState.hpp"
@@ -28,6 +29,15 @@ namespace rc
  */
 struct VGEGL_API Noise : public vge::rc::IResource, public glo::IResource
 {
+	/**
+	 * @brief Default constructor
+	 */
+	Noise()
+	:	lastRandomUniformUpdate	( false						),
+		lastUsedRandomValue		( vgm::Vec4f::getInvalid()	),
+		lastUsedTimeValue		( 0							)
+	{}
+
 	// Output buffers
 	vgd::Shp< vgd::node::OutputBufferProperty >	colorBuffer;
 
@@ -39,6 +49,11 @@ struct VGEGL_API Noise : public vge::rc::IResource, public glo::IResource
 
 	vgd::Shp< vgd::node::Group >					rootPostProcessing;
 	PostProcessingStateContainer					postProcessing;
+
+	// Data used to implement Noise.frequency
+	vgd::basic::Time	lastRandomUniformUpdate;
+	vgm::Vec4f			lastUsedRandomValue;
+	uint64				lastUsedTimeValue;
 };
 
 

@@ -71,21 +71,21 @@ void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::S
 	// noise image
 	const vgm::Vec2f randomTextureScaleFactors	( noise->getRandomTextureScaleFactors() );
 	const vgm::Vec2f drawingSurfaceSize			( engine->getDrawingSurfaceSize() );
-	const vgm::Vec2i size(	drawingSurfaceSize[0] * randomTextureScaleFactors[0],
-							drawingSurfaceSize[1] * randomTextureScaleFactors[1] );
+	const vgm::Vec2i size(	static_cast< int >(drawingSurfaceSize[0] * randomTextureScaleFactors[0]),
+							static_cast< int >(drawingSurfaceSize[1] * randomTextureScaleFactors[1]) );
 
 	using vgd::basic::Image;
 	vgd::Shp< Image > image( new Image(size[0], size[1], 1, Image::LUMINANCE, Image::UINT8) );
 
 	uint8 * iPixel = static_cast< uint8 * >( image->editPixels() );
 
-	for(uint count=0; count< size[0]*size[1]; ++count)
+	const uint endCount = size[0]*size[1];
+	for(uint count=0; count< endCount; ++count)
 	{
 		*iPixel = rand() % 256;
 		++iPixel;
 	}
 	image->editPixelsDone();
-	// for debug: image->save("noise.png");
 
 	// 2D texture containing noise image
 	if ( !rc->randomTexture )
@@ -113,29 +113,24 @@ void Noise::stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vg
 	using vgd::node::PostProcessing;
 	using vgeGL::engine::GLSLState;
 
-	vgd::Shp< Group > ppGroup = Group::create( "vgsdk:noise:postProcessing" );
+	// Creates post processing nodes and pipeline
+	if ( !rc->rootPostProcessing )
+	{
+		vgd::Shp< Group > ppGroup = Group::create( "vgsdk:noise:postProcessing" );
 
-	vgd::Shp< PostProcessing > p;
+		vgd::Shp< PostProcessing > p = PostProcessing::create("vgsdk:noise:apply");
+		p->setInput0( PostProcessing::OUTPUT_BUFFER0 );
+		p->setInput1( PostProcessing::INPUT1_TEXTURE0 );
+		p->setTexture0( rc->randomTexture );
+		p->setFilter( PostProcessing::CUSTOM_FILTER );
 
-	p = PostProcessing::create("vgsdk:noise:apply");
-	p->setInput0( PostProcessing::OUTPUT_BUFFER0 );
-	p->setInput1( PostProcessing::INPUT1_TEXTURE0 );
-	p->setTexture0( rc->randomTexture );
-	p->setFilter( PostProcessing::CUSTOM_FILTER );
+		ppGroup->addChild( p );
 
-	ppGroup->addChild( p );
-	rc->postProcessing.setState( 0, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
-
-	rc->rootPostProcessing = ppGroup;
-}
-
-
-void Noise::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc )
-{
-	if ( !isEnabled() )	return;
+		rc->postProcessing.setState( 0, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
+		rc->rootPostProcessing = ppGroup;
+	}
 
 	// Retrieves noise post-processing
-	using vgd::node::PostProcessing;
 	vgd::Shp< PostProcessing > noisePP = rc->rootPostProcessing->getChild< PostProcessing >( 0 );
 
 	// Sets the custom filter
@@ -186,9 +181,9 @@ void Noise::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine,
 		{
 			boost::algorithm::replace_all( customFilterDefinition, "NOISE0",
 				"	vec4 noise0 = vec4(	\n"
-				"			cnoise( 512 * texCoord + vec2(0,time) ),\n"
-				"			cnoise( 512 * texCoord + vec2(time,143) ),\n"
-				"			cnoise( 512 * texCoord + vec2(-170,time) ),\n"
+				"			cnoise( 512 * texCoord + vec2(0, time) ),\n"
+				"			cnoise( 512 * texCoord + vec2(time, 143) ),\n"
+				"			cnoise( 512 * texCoord + vec2(-170, time) ),\n"
 				"			0.f );\n"
 				"	noise0 = 0.5 * noise0 + vec4(0.5);\n"
 				);
@@ -211,7 +206,7 @@ void Noise::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine,
 		if ( getNoiseNode()->getUseTextureLessRandom() )
 		{
 			boost::algorithm::replace_all( customFilterDefinition, "NOISE0",
-				"	float noise0 = cnoise( 512 * texCoord + vec2(0,time) );\n"
+				"	float noise0 = cnoise( 512 * texCoord + vec2(0, time) );\n"
 				"	noise0 = 0.5 * noise0 + 0.5;\n"
 				);
 		}
@@ -226,9 +221,7 @@ void Noise::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine,
 	}
 
 	boost::algorithm::replace_all( customFilterDefinition, "COLOR",
-		"//	color = noise0;\n"
 		"	color = color * ( vec4(1) + linearFactor * noise0 ) + (constantFactor * noise1);\n" );
-
 
 	if ( noisePP->getCustomFilterDefinition() != customFilterDefinition )
 	{
@@ -239,8 +232,16 @@ void Noise::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine,
 	{
 		noisePP->setCustomFilterApply( customFilterApply );
 	}
+}
+
+
+void Noise::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc )
+{
+	if ( !isEnabled() )	return;
 
 	//
+	using vgd::node::PostProcessing;
+	vgd::Shp< PostProcessing > noisePP = rc->rootPostProcessing->getChild< PostProcessing >( 0 );
 	const vgm::Vec4f factors( getNoiseNode()->getFactors() );
 	noisePP->setParam4f0( factors );
 }
@@ -282,24 +283,29 @@ void Noise::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::eng
 		stageInitializeOutputBuffersNodes( rc );
 	}
 
-	// random texture
 	vgd::field::DirtyFlag * dfNode = getNoiseNode()->getDirtyFlag(getNoiseNode()->getDFNode());
+	// random texture
 	if (	!rc->randomTexture ||
 			technique->hasDrawingSurfaceSizeChanged() ||
 			dfNode->isDirty() )
 	{
 		stageInitializeRandomTexture( engine, rc, getNoiseNode() );
-		dfNode->validate();
 	}
 
 	// post processing nodes
-	if ( !rc->rootPostProcessing )
+	if (	!rc->rootPostProcessing ||
+			dfNode->isDirty() )
 	{
 		stageInitializePostProcessing( getNoiseNode(), rc );
 	}
 
 	// post processing parameters
-	stageUpdatePostProcessingParameters( engine, rc );
+	if ( dfNode->isDirty() )
+	{
+		stageUpdatePostProcessingParameters( engine, rc );
+	}
+
+	dfNode->validate();
 }
 
 
@@ -338,7 +344,6 @@ void Noise::stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * t
 }
 
 
-
 void Noise::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
 {
 	if ( !isEnabled() ) return;
@@ -346,7 +351,33 @@ void Noise::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeG
 	vgd::Shp< vgeGL::rc::Noise > rc = getRC< vgeGL::rc::Noise >(engine);
 	vgAssert( rc );
 
+	// Sets uniforms
+	//	Test if random values have to be updated
+	float noiseFrequency;
+	const bool hasFrequency = getNoiseNode()->getFrequency( noiseFrequency );
+
+	if (	!hasFrequency ||
+			rc->lastRandomUniformUpdate.isInvalid() ||
+			rc->lastRandomUniformUpdate.getElapsedTime().ms() >= static_cast<uint64>(1000.f / noiseFrequency)	)
+	{
+		rc->lastUsedRandomValue = vgm::Vec4f(
+			static_cast<float>(rand()) / 32767.f,
+			static_cast<float>(rand()) / 32767.f,
+			static_cast<float>(rand()) / 32767.f,
+			static_cast<float>(rand()) / 32767.f );
+
+		rc->lastUsedTimeValue = engine->getElapsedTime().ms();
+
+		rc->lastRandomUniformUpdate.restart();
+	}
+
+	engine->getUniformState().sethUniform( "random", rc->lastUsedRandomValue );
+	engine->getUniformState().sethUniform( "time", static_cast<int>(rc->lastUsedTimeValue) );
+
+	// Apply post-processing
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, technique->m_textures, &(rc->postProcessing) );
+
+	// Blit
 	technique->blit( engine, finalBuffers, technique->m_fbo );
 }
 

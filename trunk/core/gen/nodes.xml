@@ -756,6 +756,10 @@
 			<type name = "Vec2f" namespace="vgm" default = "1.f, 1.f"></type>
 		</sf>
 
+		<of name="frequency" doc="If not defined, noise effect is applied on each new frame, otherwise noise effect is applied at the given frequency in Hz. But, if the rendering is not performed at a frequency equal of greater than the given one, the real frequency could be less.">
+			<type name = "float" default = "25"></type>
+		</of>
+
 		<sf name="useTextureLessRandom" doc="Sets to true to generate random values without using a texture, false to use a texture.">
 			<type name = "bool" default = "false"></type>
 		</sf>

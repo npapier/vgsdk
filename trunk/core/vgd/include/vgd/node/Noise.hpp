@@ -8,6 +8,7 @@
 
 #include "vgd/field/Bool.hpp"
 #include "vgd/field/Enum.hpp"
+#include "vgd/field/Float.hpp"
 #include "vgd/field/Vec2f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
@@ -30,11 +31,14 @@ namespace node
  * - SFBool \c channelsSeparated = (false)<br>
  *   Sets to true to use a different random value for each channel, false to use the same random value.<br>
  *<br>
+ * - SFVec2f \c factors = vgm::Vec2f(0.025f, 0.025f)<br>
+ *   Sets the linear and constant factor used to generate noise.<br>
+ *<br>
  * - SFBool \c useTextureLessRandom = (false)<br>
  *   Sets to true to generate random values without using a texture, false to use a texture.<br>
  *<br>
- * - SFVec2f \c factors = vgm::Vec2f(0.025f, 0.025f)<br>
- *   Sets the linear and constant factor used to generate noise.<br>
+ * - OFFloat \c [frequency] = (25)<br>
+ *   If not defined, noise effect is applied on each new frame, otherwise noise effect is applied at the given frequency in Hz. But, if the rendering is not performed at a frequency equal of greater than the given one, the real frequency could be less.<br>
  *<br>
  * - SFVec2f \c randomTextureScaleFactors = vgm::Vec2f(1.f, 1.f)<br>
  *   The random texture is the 2d image containing random values used to compute noise (only if useTextureLessRandom is false). The width of the random texture is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component). The size of noise pixels can be modified using this field.<br>
@@ -118,6 +122,41 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field factors
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c factors.
+	 */
+	typedef vgm::Vec2f FactorsValueType;
+
+	/**
+	 * @brief The default value of field named \c factors.
+	 */
+	static const FactorsValueType DEFAULT_FACTORS;
+
+	/**
+	 * @brief Type definition of the field named \c factors
+	 */
+	typedef vgd::field::TSingleField< FactorsValueType > FFactorsType;
+
+
+	/**
+	 * @brief Gets the value of field named \c factors.
+	 */
+	const FactorsValueType getFactors() const;
+
+	/**
+	 * @brief Sets the value of field named \c factors.
+	 */
+	void setFactors( const FactorsValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field useTextureLessRandom
 	 */
 	//@{
@@ -153,36 +192,45 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field factors
+	 * @name Accessors to field frequency
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c factors.
+	 * @brief Type definition of the value contained by field named \c frequency.
 	 */
-	typedef vgm::Vec2f FactorsValueType;
+	typedef float FrequencyValueType;
 
 	/**
-	 * @brief The default value of field named \c factors.
+	 * @brief The default value of field named \c frequency.
 	 */
-	static const FactorsValueType DEFAULT_FACTORS;
+	static const FrequencyValueType DEFAULT_FREQUENCY;
 
 	/**
-	 * @brief Type definition of the field named \c factors
+	 * @brief Type definition of the field named \c frequency
 	 */
-	typedef vgd::field::TSingleField< FactorsValueType > FFactorsType;
+	typedef vgd::field::TOptionalField< FrequencyValueType > FFrequencyType;
 
 
 	/**
-	 * @brief Gets the value of field named \c factors.
+	 * @brief Gets the value of field named \c frequency.
 	 */
-	const FactorsValueType getFactors() const;
+	const bool getFrequency( FrequencyValueType& value ) const;
 
 	/**
-	 * @brief Sets the value of field named \c factors.
-	 */
-	void setFactors( const FactorsValueType value );
+	 * @brief Sets the value of field named \c frequency.
+ 	 */
+	void setFrequency( const FrequencyValueType& value );
 
+	/**
+	 * @brief Erases the field named \c frequency.
+	 */
+	void eraseFrequency();
+
+	/**
+	 * @brief Tests if the value of field named \c frequency has been initialized.
+	 */
+	const bool hasFrequency() const;
 	//@}
 
 
@@ -311,6 +359,13 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	static const std::string getFChannelsSeparated( void );
 
 	/**
+	 * @brief Returns the name of field \c factors.
+	 *
+	 * @return the name of field \c factors.
+	 */
+	static const std::string getFFactors( void );
+
+	/**
 	 * @brief Returns the name of field \c useTextureLessRandom.
 	 *
 	 * @return the name of field \c useTextureLessRandom.
@@ -318,11 +373,11 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	static const std::string getFUseTextureLessRandom( void );
 
 	/**
-	 * @brief Returns the name of field \c factors.
+	 * @brief Returns the name of field \c frequency.
 	 *
-	 * @return the name of field \c factors.
+	 * @return the name of field \c frequency.
 	 */
-	static const std::string getFFactors( void );
+	static const std::string getFFrequency( void );
 
 	/**
 	 * @brief Returns the name of field \c randomTextureScaleFactors.
