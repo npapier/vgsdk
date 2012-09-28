@@ -64,8 +64,9 @@ Noise::Noise( const std::string nodeName ) :
 {
 	// Adds field(s)
 	addField( new FChannelsSeparatedType(getFChannelsSeparated()) );
-	addField( new FUseTextureLessRandomType(getFUseTextureLessRandom()) );
 	addField( new FFactorsType(getFFactors()) );
+	addField( new FUseTextureLessRandomType(getFUseTextureLessRandom()) );
+	addField( new FFrequencyType(getFFrequency()) );
 	addField( new FRandomTextureScaleFactorsType(getFRandomTextureScaleFactors()) );
 	addField( new FNoiseModelType(getFNoiseModel()) );
 
@@ -80,8 +81,8 @@ void Noise::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
 	setChannelsSeparated( (false) );
-	setUseTextureLessRandom( (false) );
 	setFactors( vgm::Vec2f(0.025f, 0.025f) );
+	setUseTextureLessRandom( (false) );
 	setRandomTextureScaleFactors( vgm::Vec2f(1.f, 1.f) );
 	setNoiseModel( (PHOTON) );
 }
@@ -91,6 +92,7 @@ void Noise::setToDefaults( void )
 void Noise::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setFrequency( (25) );
 }
 
 
@@ -115,6 +117,26 @@ void Noise::setChannelsSeparated( const ChannelsSeparatedValueType value )
 
 
 
+// Factors
+
+const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec2f(0.025f, 0.025f);
+
+
+
+const Noise::FactorsValueType Noise::getFactors() const
+{
+	return getFieldRO<FFactorsType>(getFFactors())->getValue();
+}
+
+
+
+void Noise::setFactors( const FactorsValueType value )
+{
+	getFieldRW<FFactorsType>(getFFactors())->setValue( value );
+}
+
+
+
 // UseTextureLessRandom
 
 const Noise::UseTextureLessRandomValueType Noise::DEFAULT_USETEXTURELESSRANDOM = (false);
@@ -135,22 +157,35 @@ void Noise::setUseTextureLessRandom( const UseTextureLessRandomValueType value )
 
 
 
-// Factors
+// Frequency
 
-const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec2f(0.025f, 0.025f);
+const Noise::FrequencyValueType Noise::DEFAULT_FREQUENCY = (25);
 
 
 
-const Noise::FactorsValueType Noise::getFactors() const
+const bool Noise::getFrequency( FrequencyValueType& value ) const
 {
-	return getFieldRO<FFactorsType>(getFFactors())->getValue();
+	return getFieldRO<FFrequencyType>(getFFrequency())->getValue( value );
 }
 
 
 
-void Noise::setFactors( const FactorsValueType value )
+void Noise::setFrequency( const FrequencyValueType& value )
 {
-	getFieldRW<FFactorsType>(getFFactors())->setValue( value );
+	getFieldRW<FFrequencyType>(getFFrequency())->setValue( value );
+}
+
+
+
+void Noise::eraseFrequency()
+{
+	getFieldRW<FFrequencyType>(getFFrequency())->eraseValue();
+}
+
+
+const bool Noise::hasFrequency() const
+{
+	return getFieldRO<FFrequencyType>(getFFrequency())->hasValue();
 }
 
 
@@ -199,6 +234,13 @@ const std::string Noise::getFChannelsSeparated( void )
 
 
 
+const std::string Noise::getFFactors( void )
+{
+	return "f_factors";
+}
+
+
+
 const std::string Noise::getFUseTextureLessRandom( void )
 {
 	return "f_useTextureLessRandom";
@@ -206,9 +248,9 @@ const std::string Noise::getFUseTextureLessRandom( void )
 
 
 
-const std::string Noise::getFFactors( void )
+const std::string Noise::getFFrequency( void )
 {
-	return "f_factors";
+	return "f_frequency";
 }
 
 
