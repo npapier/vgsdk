@@ -2138,8 +2138,8 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		pppRC.outputFbo->setDrawBuffer();
 
 		currentScaleForVertex *= scales[i];
-		const GLsizei width = vgm::round(outputTextureGLO->getWidth() * currentScaleForVertex);
-		const GLsizei height = vgm::round(outputTextureGLO->getHeight() * currentScaleForVertex);
+		const GLsizei width		= static_cast<GLsizei>( vgm::round(outputTextureGLO->getWidth() * currentScaleForVertex) );
+		const GLsizei height	= static_cast<GLsizei>( vgm::round(outputTextureGLO->getHeight() * currentScaleForVertex) );
 
 		glViewport( 0, 0, width, height );
 		glScissor( 0, 0, width, height );
@@ -2148,13 +2148,13 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 // @todo a light version of begin2DRendering
 
 		// random
-		engine->setUniformRandom();
+		if ( !engine->getUniformState().isUniform("random") )	engine->setUniformRandom();
 
 		// time
-		engine->setUniformTime();
+		if ( !engine->getUniformState().isUniform("time") )		engine->setUniformTime();
 
 		// nearFar
-		engine->setUniformNearFar();
+		if ( !engine->getUniformState().isUniform("nearFar") )	engine->setUniformNearFar();
 
 		// param1f0
 		const float param1f0 = params1f0[i];
