@@ -92,12 +92,12 @@ class Type :
 			return self.name
 
 	def generateDefaultValue( self ):
-		if len(self.defaultValue) == 0 :
-			return ""
-		else :
-			if len(self.namespace) > 0 :
-				return self.namespace + "::" + self.name + "(" + self.defaultValue + ")"
-			else :
+		if len(self.namespace) > 0 :
+			return self.namespace + '::' + self.name + '(' + self.defaultValue + ')'
+		else:
+			if len(self.defaultValue)>0:
+				return '(' + self.defaultValue + ')'
+			else:
 				return self.defaultValue
 
 	def getNormalizedName( self ):
@@ -225,6 +225,21 @@ class DirtyFlag:
 #########
 # FIELD #
 #########
+
+
+declDefautFieldname = """
+	/**
+	 * @brief The default value of field named \c fieldName.
+	 */
+	static const FieldNameValueType DEFAULT_FIELDNAME;\n"""
+
+defDefaultFieldname = """
+const NewNode::FieldNameValueType NewNode::DEFAULT_FIELDNAME = {defaultValue};
+
+
+"""
+
+
 class Field :
 
 	def __init__( self, name, doc ) :
@@ -266,7 +281,7 @@ class SingleField ( Field ) :
 	//@{
 
 TYPEDEF_FIELDNAMEVALUETYPE
-
+DECL_DEFAULT_FIELDNAME
 	/**
 	 * @brief Type definition of the field named \c fieldName
 	 */
@@ -287,18 +302,22 @@ TYPEDEF_FIELDNAMEVALUETYPE
 
 		if self.type.name == "enum":
 			str = str.replace( "InternalFieldNameValueType", "vgd::field::Enum" )
+			str = str.replace( 'DECL_DEFAULT_FIELDNAME', '' )
 		else:
 			str = str.replace( "InternalFieldNameValueType", "FieldNameValueType" )
+			str = str.replace( 'DECL_DEFAULT_FIELDNAME', declDefautFieldname )
 
 		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF() )		# @todo ValueType => Type
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.getFieldName() )
+		str = str.replace( "FIELDNAME", self.getFieldName().upper() )
 		str = str.replace( "FieldType", self.type.name )
 
 		return str
 
 	def generateAccessorsImpl( self, nodeName ) :
 		str = """// FieldName
+DEF_DEFAULT_FIELDNAME
 const NewNode::FieldNameValueType NewNode::getFieldName() const
 {
 	return getFieldRO<FFieldNameType>(getFFieldName())->getValue();
@@ -312,8 +331,13 @@ void NewNode::setFieldName( const FieldNameValueType value )
 }
 \n\n\n"""
 
+		if self.type.name == "enum":
+			str = str.replace( 'DEF_DEFAULT_FIELDNAME', '' )
+		else:
+			str = str.replace( 'DEF_DEFAULT_FIELDNAME', defDefaultFieldname.format(defaultValue=self.type.generateDefaultValue()) )
 		str = str.replace( "NewNode", nodeName )
 		str = str.replace( "FieldName", self.getFieldName() )
+		str = str.replace( "FIELDNAME", self.getFieldName().upper() )
 
 		return str
 
@@ -344,7 +368,7 @@ class OptionalField ( Field ) :
 	//@{
 
 TYPEDEF_FIELDNAMEVALUETYPE
-
+DECL_DEFAULT_FIELDNAME
 	/**
 	 * @brief Type definition of the field named \c fieldName
 	 */
@@ -374,18 +398,22 @@ TYPEDEF_FIELDNAMEVALUETYPE
 
 		if self.type.name == "enum":
 			str = str.replace( "InternalFieldNameValueType", "vgd::field::Enum" )
+			str = str.replace( 'DECL_DEFAULT_FIELDNAME', '' )
 		else:
 			str = str.replace( "InternalFieldNameValueType", "FieldNameValueType" )
+			str = str.replace( 'DECL_DEFAULT_FIELDNAME', declDefautFieldname )
 
 		str = str.replace( "TYPEDEF_FIELDNAMEVALUETYPE", self.type.generateTYPEDEF() )	# @todo ValueType => Type
 		str = str.replace( "fieldName", self.name )
 		str = str.replace( "FieldName", self.getFieldName() )
+		str = str.replace( "FIELDNAME", self.getFieldName().upper() )
 
 		return str
 
 
 	def generateAccessorsImpl( self, nodeName ) :
 		str = """// FieldName
+DEF_DEFAULT_FIELDNAME
 const bool NewNode::getFieldName( FieldNameValueType& value ) const
 {
 	return getFieldRO<FFieldNameType>(getFFieldName())->getValue( value );
@@ -412,8 +440,14 @@ const bool NewNode::hasFieldName() const
 }
 \n\n\n"""
 
+		if self.type.name == "enum":
+			str = str.replace( 'DEF_DEFAULT_FIELDNAME', '' )
+		else:
+			str = str.replace( 'DEF_DEFAULT_FIELDNAME', '\nconst NewNode::FieldNameValueType NewNode::DEFAULT_FIELDNAME = {defaultValue};\n\n\n'.format(defaultValue=self.type.generateDefaultValue()) )
+
 		str = str.replace( "NewNode", nodeName )
 		str = str.replace( "FieldName", self.getFieldName() )
+		str = str.replace( "FIELDNAME", self.getFieldName().upper() )
 
 		return str
 
