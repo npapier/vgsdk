@@ -449,12 +449,16 @@ void MainWindow::loadFile(bool clearScene)
 	vgTrian::Loader loader; // @todo must be here to be registered in LoaderRegistry
 	vgObj::Loader loader2; // This is only to force the register of obj loader
 
-	QStringList file = QFileDialog::getOpenFileNames(
+	// Prompts a file selection dialog to the user.
+	static QString		dir;
+	const QStringList	files = QFileDialog::getOpenFileNames(
 							this,
 							"Choose file(s)",
-							"",
-				"All supported files (*.trian *.trian2 *.trian2.crypt *.dae *.dae.crypt *.obj *.vgarch);;Trian files (*.trian, *.trian2, *.trian2.crypt);;All collada files (*.dae, *.dae.crypt);;Wavefront objects (*.obj);;Vgsdk compressed files (*.vgarch)");
-	if(file.size() > 0)
+							dir,
+							"All supported files (*.trian *.trian2 *.trian2.crypt *.dae *.dae.crypt *.obj *.vgarch);;Trian files (*.trian, *.trian2, *.trian2.crypt);;All collada files (*.dae, *.dae.crypt);;Wavefront objects (*.obj);;Vgsdk compressed files (*.vgarch)");
+
+	// Loads files selected by the user.
+	if( !files.empty() )
 	{
 		// Clears the canvas if requested.
 		if( clearScene )
@@ -462,7 +466,12 @@ void MainWindow::loadFile(bool clearScene)
 			m_canvas->clearScene();
 		}
 
-		Q_FOREACH(QString fileName, file)
+		// Keep track of the directory where the files are located,
+		// so the next time the dialog is prompted, it will be pointing at tha location.
+		dir = QDir::fromNativeSeparators( files.front() );
+		dir = dir.section( '/', 0, -2 );
+
+		Q_FOREACH(QString fileName, files)
 		{
 			bool success = false;
 			success = m_canvas->appendToScene( fileName );
