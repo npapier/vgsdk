@@ -21,6 +21,7 @@
 #include <vgd/node/LightModel.hpp>
 
 #include "vge/engine/SceneManager.hpp"
+#include "vgm/operations.hpp"
 
 
 
@@ -260,9 +261,9 @@ void UserSettings::setGraphicCard( const std::string & card )
 
 void UserSettings::setLevel( const int level )
 {
-	if( level >= -1 && level < static_cast< int >(m_levels.size()) )
+	if( level >= -1 )
 	{
-		m_level = level;
+		m_level = vgm::clamp(level, -1, static_cast< int >(m_levels.size())-1 );
 		m_card.clear();
 	}
 }
