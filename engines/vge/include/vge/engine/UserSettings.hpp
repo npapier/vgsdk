@@ -101,7 +101,9 @@ struct VGE_API UserSettings
 	}
 
 	/**
-	 * @brief	Assigns a new detail level.
+	 * @brief	Assigns a new detail level
+	 *
+	 * @remark if level >= getLevelCount() then the greatest level available is used (i.e. getLevelCount()-1).
 	 */
 	void setLevel( const int level );
 
