@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Alexandre Di Pino
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -25,15 +25,15 @@ public:
 	 */
     Editor( QWidget * parent = 0 );
 
+
 	/**
-	 * @brief	Set Current Language 
+	 * @brief	Set current language
 	 *
-	 * @param	language enum to set the language
+	 * @param language		enum to set the language
 	 */
-    void setLanguage( Language language);
+    void setLanguage( Language language );
 
 
-	const std::string getTextKeywords(const int size);
 	/**
 	 * @brief	Set the GLSL version to the lexer
 	 *
@@ -55,6 +55,7 @@ public:
 	 */
 	const gle::GLSL_VERSION_LANGUAGE getGLSLVersion() const;
 
+
 	/**
 	 * @brief	Set a red marker on a line
 	 *
@@ -66,6 +67,7 @@ public:
 	 * @brief	Clear all error marker
 	 */
 	void clearAllUnderligned();
+
 
 	/**
 	 * @brief	Select one or several word
@@ -96,6 +98,12 @@ public:
 	 */
 	const std::vector<QPair<int, int>> find(const std::string& word);
 
+
+	/**
+	 @brief Get all keywords of the current text
+	 */
+	const std::string getTextKeywords(const int size);
+
 private:
 
 	/**
@@ -106,13 +114,13 @@ private:
 	const std::string sortDictionnary(const std::string dictionnary/*, const bool resorted*/);
 
 private:
-	std::string customKeywords;
-	std::string m_keywords;
-	std::string m_functions;
-	std::string m_variables;
-	std::string m_allkeywords;
-	int			m_currentSelection;
-	gle::GLSL_VERSION_LANGUAGE m_version;
+	std::string					customKeywords;
+	std::string					m_keywords;
+	std::string					m_functions;
+	std::string					m_variables;
+	std::string					m_allkeywords;
+	int							m_currentSelection;
+	gle::GLSL_VERSION_LANGUAGE	m_version;
 
 private Q_SLOTS:
     void colourise();

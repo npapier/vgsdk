@@ -93,6 +93,9 @@ ShadersEditor::ShadersEditor(QWidget *parent)
 	// Set the text editor language
 	m_textEditor->setLanguage(Editor::GLSL);
 
+	// Set the default zoom
+	m_textEditor->zoomIn();
+
 	// Set the editor log read only
 	m_editorLog->setReadOnly(true);
 

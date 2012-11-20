@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012 Alexandre Di Pino.
+// VGSDK - Copyright (C) 2012, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Alexandre Di Pino
@@ -914,8 +914,8 @@ namespace vgQt
 			constructTheme();
 		}
 		return color_foreground[name];
-	}	
-	
+	}
+
 	const std::map<int, int>&	getThemeBackground(const std::string& name)
 	{
 		if (color_background.size() == 0)
@@ -923,5 +923,5 @@ namespace vgQt
 			constructTheme();
 		}
 		return color_background[name];
-	}	
+	}
 }

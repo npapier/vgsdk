@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Alexandre Di Pino
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -20,7 +20,6 @@
 #include <sstream>
 #include <string>
 
-//#include <boost/container/list.hpp>
 #include <boost/foreach.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/tokenizer.hpp>
@@ -30,6 +29,7 @@ static const int MARGIN_SCRIPT_FOLD_INDEX = 1;
 
 namespace
 {
+
 /**
  * @brief	Case insensitive comparison of two string
  *
@@ -52,10 +52,15 @@ const bool compareNoCase(std::string first, std::string second)
 }
 
 Editor::Editor(QWidget* parent) :
-    ScintillaEdit(parent),
+	ScintillaEdit(parent),
+	//customKeywords
+	//m_keywords
+	//m_functions
+	//m_variables
+	//m_allkeywords
+	m_currentSelection(0),
 	m_version(static_cast<gle::GLSL_VERSION_LANGUAGE>(static_cast<int>(gle::MAX_VERSION_LANGUAGE) - 1))
 {
-	m_currentSelection = 0;
     styleClearAll();
     setMarginWidthN(0,25); // par défaut la marge 0 est le nombre de ligne
     autoCSetIgnoreCase(true);
@@ -76,7 +81,7 @@ Editor::Editor(QWidget* parent) :
     functionAction->setShortcutContext(Qt::WidgetShortcut);
     addAction(functionAction);
 
-	// Defined the builtin variable autocompletion shortcut
+	// Defined the builtin built-in variable autocompletion shortcut
     QAction* variableAction = new QAction(this);
     variableAction->setShortcut(QKeySequence(tr("Ctrl+Shift+V") ));
     variableAction->setShortcutContext(Qt::WidgetShortcut);
@@ -163,7 +168,6 @@ void Editor::setLanguage( Language language)
 
         break;
 
-
     case(PYTHON):
         setLexerLanguage("python");
         setStyleBits(5);
@@ -207,6 +211,7 @@ void Editor::setLanguage( Language language)
         styleSetFore(35, 0x0000FF);
 
         break;
+
     case(GLSL):
         setLexerLanguage("cpp");
         setStyleBits(5);

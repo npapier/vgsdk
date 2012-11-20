@@ -1,11 +1,13 @@
-// VGSDK - Copyright (C) 2012, Alexandre Di Pino
+// VGSDK - Copyright (C) 2012, Alexandre Di Pino, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Alexandre Di Pino
+// Author Nicolas Papier
 
 #include "vgQt/TextEditorMainWindow.hpp"
 #include "vgQt/Theme.hpp"
 #include <QColor>
+#include <QDialog>
 #include <QLabel>
 #include <QMenuBar>
 #include <QVBoxLayout>
@@ -25,7 +27,7 @@ namespace vgQt
 
 TextEditorMainWindow::TextEditorMainWindow(const std::string& title, QWidget* parent)
 :	m_findMenu( new QWidget(this)),
-	m_goToMenu( new QWidget(this)),
+	m_goToMenu( new QDialog(this)),
 	m_styleMenu( new QWidget(this)),
 	m_textEditor( new Editor(this)),
 	m_newText(false)
@@ -329,6 +331,7 @@ void TextEditorMainWindow::goToMenu()
 		m_goToMenu->show();
 		m_goToMenu->setFocus();
 		m_goToMenu->setWindowState( Qt::WindowActive );
+		m_line->clear();
 		m_line->setFocus();
 	}
 	else
