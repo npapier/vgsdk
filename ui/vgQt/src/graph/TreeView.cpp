@@ -1,8 +1,9 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Bryan Schuller
+// Author Nicolas Papier
 
 #include "vgQt/graph/TreeView.hpp"
 #include "vgQt/graph/TreeModelFillVisitor.hpp"
@@ -16,12 +17,13 @@ namespace graph
 
 TreeView::TreeView( QWidget *parent ) : QTreeWidget( parent )
 {
-    setColumnCount( 4 );
+    setColumnCount( 3 );
     QStringList titles;
-    titles << "Name" << "Type" << "Active" << "Shared";
+    titles << "Name" << "Type" << "Shared";
     setHeaderLabels( titles );
 
-	setColumnWidth(0, 300); 
+	setColumnWidth(0, 320);
+	setColumnWidth(1, 200);
 }
 
 void TreeView::refresh()

@@ -1,8 +1,9 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Bryan Schuller
+// Author Nicolas Papier
 
 #ifndef _VGQT_GRAPH_TREEMODELFILLVISITOR_HPP_
 #define _VGQT_GRAPH_TREEMODELFILLVISITOR_HPP_
@@ -76,17 +77,12 @@ struct TreeModelFillVisitor : public vgd::visitor::Traverse< boost::null_visitor
 
         current->setText(1, type ); // Type
 
+		current->setDisabled( !m_active );	// Active
 
-        QCheckBox *checkbox = new QCheckBox( m_treeView ); // Active
-        checkbox->setChecked( m_active );
+        QCheckBox *checkbox = new QCheckBox( m_treeView ); // Shared
+        checkbox->setChecked( shared );
         checkbox->setEnabled( false );
         m_treeView->setItemWidget( current, 2, checkbox );
-
-
-        QCheckBox *checkbox2 = new QCheckBox( m_treeView ); // Shared
-        checkbox2->setChecked( shared );
-        checkbox2->setEnabled( false );
-        m_treeView->setItemWidget( current, 3, checkbox2 );
 
 
         m_ancestors.append( current );
