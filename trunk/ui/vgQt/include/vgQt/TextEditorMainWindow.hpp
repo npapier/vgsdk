@@ -84,6 +84,7 @@ public Q_SLOTS:
 	 * @brief Use this Q_SLOTS to go at the specified line
 	 */
 	void gotoLine(const QString & lineNumber);
+	void gotoLine();
 
 	/**
 	 * @brief Use this Q_SLOTS to open the Goto line menu

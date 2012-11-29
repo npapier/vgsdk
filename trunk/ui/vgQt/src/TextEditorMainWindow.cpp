@@ -26,7 +26,7 @@ namespace vgQt
 
 
 TextEditorMainWindow::TextEditorMainWindow(const std::string& title, QWidget* parent)
-:	m_findMenu( new QWidget(this)),
+:	m_findMenu( new QDialog(this)),
 	m_goToMenu( new QDialog(this)),
 	m_styleMenu( new QWidget(this)),
 	m_textEditor( new Editor(this)),
@@ -153,6 +153,7 @@ void TextEditorMainWindow::createGoToLineMenu()
 	m_goToMenu->hide();
 
 	connect(m_line, SIGNAL(textChanged( const QString &)), this, SLOT(gotoLine(const QString &)));
+	connect(m_line, SIGNAL(returnPressed()), this, SLOT(gotoLine()));
 }
 
 
@@ -226,6 +227,14 @@ void TextEditorMainWindow::gotoLine(const QString & lineNumber)
 	{
 		m_textEditor->clearSelections();
 	}
+}
+
+
+
+void TextEditorMainWindow::gotoLine()
+{
+	const QString lineNumber = m_line->text();
+	gotoLine( lineNumber );
 }
 
 
@@ -331,7 +340,7 @@ void TextEditorMainWindow::goToMenu()
 		m_goToMenu->show();
 		m_goToMenu->setFocus();
 		m_goToMenu->setWindowState( Qt::WindowActive );
-		m_line->clear();
+		m_line->selectAll();
 		m_line->setFocus();
 	}
 	else
