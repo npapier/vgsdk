@@ -7,12 +7,8 @@
 #define _VGD_FIELD_STRING_HPP
 
 #include <string>
+#include "vgd/field/containers.hpp"
 
-#include "vgd/vgd.hpp"
-#include "vgd/field/TSingleField.hpp"
-#include "vgd/field/TMultiField.hpp"
-#include "vgd/field/TSingleAssociativeField.hpp"
-#include "vgd/field/TPairAssociativeField.hpp"
 
 
 
@@ -30,13 +26,14 @@ namespace field
 //@{
 typedef TSingleField< std::string >					SFString;
 
+typedef TOptionalField< std::string  >					OFString;
+
 typedef TMultiField< std::string  >					MFString;
 
 typedef TSingleAssociativeField< std::string >		SAFString;
 
 // typedef TPairAssociativeField< std::string >		PAFString;
 //@}
-
 
 
 } // namespace field
