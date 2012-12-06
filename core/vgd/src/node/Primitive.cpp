@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -64,6 +64,12 @@ const int32 Primitive::getNumIndices() const
 	return ( m_numIndices );
 }
 
+
+
+void Primitive::addToNumIndices( const int32 value )
+{
+	m_numIndices += value;
+}
 
 
 } // namespace node

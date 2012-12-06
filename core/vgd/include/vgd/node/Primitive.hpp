@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -118,6 +118,15 @@ struct VGD_API Primitive
 	 * @brief Gets number of indices.
 	 */
 	const int32 getNumIndices() const;
+
+	/**
+	 * @brief Adds the given value to the number of indices.
+	 *
+	 * @param value		the value to add
+	 * @post getNumIndices() += value
+	 */
+	void addToNumIndices( const int32 value );
+
 	//@}
 
 
