@@ -284,7 +284,7 @@ struct VGM_API MatrixR
 	static MatrixR			getIdentity();
 
 	/**
-	 * @brief Check if this matrix is identity.
+	 * @brief Check if this matrix is identity (with tolerance).
 	 */
 	bool					isIdentity() const;
 
@@ -300,7 +300,7 @@ struct VGM_API MatrixR
 	static MatrixR			getNull();
 
 	/**
-	 * @brief Check if this matrix is null.
+	 * @brief Check if this matrix is null (with tolerance).
 	 */
 	bool					isNull() const;
 
