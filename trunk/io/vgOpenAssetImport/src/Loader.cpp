@@ -15,6 +15,7 @@
 #include <vgd/node/MatrixTransform.hpp>
 #include <vgd/node/Switch.hpp>
 #include <vgd/node/Texture2D.hpp>
+#include <vgd/node/TransformSeparator.hpp>
 #include <vgd/node/VertexShape.hpp>
 
 
@@ -88,6 +89,7 @@ const vgd::node::Primitive::Type numIndices2Primitive( const uint numIndices )
 }
 
 
+// @todo check wrapping modes
 vgd::node::Texture::WrapValueType toEnum( const aiTextureMapMode mapMode )
 {
 	using vgd::node::Texture;
@@ -155,7 +157,7 @@ vgd::Shp< vgd::node::Texture2D > createTexture2D(	const boost::filesystem::path 
 	texture->setWrap( Texture2D::WRAP_T, toEnum(mapV) );
 
 	// FUNCTION
-	texture->sethFunction( vgd::node::Texture2D::FUN_MODULATE );
+	texture->sethFunction( vgd::node::Texture2D::FUN_MODULATE ); // @todo
 	return texture;
 }
 
@@ -213,7 +215,7 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 	// SHININESS
 	if ( aiMat->Get( AI_MATKEY_SHININESS, valuef ) == AI_SUCCESS )
 	{
-		material->setShininess( valuef );
+		material->setShininess( vgm::clamp(valuef, 0.f, 1.f) );
 	}
 
 	// OPACITY
@@ -244,9 +246,9 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 
 		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( pathFilename, 1, str, mapU, mapV );
 		group->addChild( texture );
-	}
+	}*/
 
-	// SPECULAR TEXTURE
+	/*// SPECULAR TEXTURE
 	if ( aiMat->Get( AI_MATKEY_TEXTURE(aiTextureType_SPECULAR, 0), str ) == AI_SUCCESS )
 	{
 		aiMat->Get( AI_MATKEY_MAPPINGMODE_U(aiTextureType_SPECULAR, 0), mapU );
@@ -255,6 +257,11 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( pathFilename, 2, str, mapU, mapV );
 		group->addChild( texture );
 	}*/
+
+	// @todo aiTextureType_AMBIENT
+	// @todo aiTextureType_OPACITY
+	// @todo aiTextureType_LIGHTMAP
+	// @todo others textures
 
 	return group;
 }
@@ -348,7 +355,7 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 	// TEX COORDS
 	for( uint j = 0, jEnd=mesh->GetNumUVChannels(); j != jEnd; ++j )
 	{
-		vgAssert( mesh->mNumUVComponents[j] == 2 );
+		vgAssert( mesh->mNumUVComponents[j] == 2 ); // @todo support of 1 and 3
 		vertexShape->createTexUnits( mesh->mNumUVComponents[j], j );
 		vertexShape->setTexCoordBinding( j, vgd::node::BIND_PER_VERTEX );
 
@@ -374,6 +381,8 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 		//vertexShape->setTangentBinding( vgd::node::BIND_PER_VERTEX ); @todo
 	}
 
+	// @todo bitangents
+
 	return vertexShape;
 }
 
@@ -389,24 +398,32 @@ vgd::Shp< vgd::node::Group > recursiveImport(	const aiScene * aiscene, const aiN
 												vgd::Shp< vgd::node::Switch > materials )
 {
 	using vgd::node::Group;
+	using vgd::node::TransformSeparator;
 	using vgd::node::MatrixTransform;
 
 	// Container node
-	vgd::Shp< Group > group = Group::create( ainode->mName.C_Str() );
+	vgd::Shp< Group > group;
 
 	// Transformation
 	aiMatrix4x4 aim = ainode->mTransformation;
 	aim.Transpose();
-	const vgm::MatrixR m(&aim[0][0]);
+	const vgm::MatrixR m(static_cast<float*>(&aim[0][0]));
 
 	if ( !m.isIdentity() )
 	{
-		vgd::Shp< MatrixTransform > matrixTransform = MatrixTransform::create("");
-		group->addChild( matrixTransform );
+		// has a transformation
+		group = TransformSeparator::create( ainode->mName.C_Str() );
 
+		vgd::Shp< MatrixTransform > matrixTransform = MatrixTransform::create("");
 		matrixTransform->setMatrix( m );
+
+		group->addChild( matrixTransform );
 	}
-	//else nothing to do
+	else
+	{
+		// no transformation
+		group = Group::create( ainode->mName.C_Str() );
+	}
 
 	// For each mesh
 	for( uint i = 0, iEnd = ainode->mNumMeshes; i != iEnd; ++i )
@@ -424,7 +441,10 @@ vgd::Shp< vgd::node::Group > recursiveImport(	const aiScene * aiscene, const aiN
 	{
 		vgd::Shp< Group > childrenGroup = 
 			recursiveImport( aiscene, ainode->mChildren[i], meshes, materials );
-		group->addChild( childrenGroup );
+		if ( childrenGroup->getNumChildren() > 0 )
+		{
+			group->addChild( childrenGroup );
+		}
 	}
 
 	return group;
@@ -484,6 +504,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 	{
 		using vgd::node::Group;
 		using vgd::node::Switch;
+		using vgd::node::TransformSeparator;
 		using vgd::node::VertexShape;
 
 		// Now we can access the file's contents.
@@ -492,7 +513,6 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 
 		// Import all materials
 		vgd::Shp< Switch > materials = Switch::create( "MATERIALS LIBRARY" );
-		//materials->setWhichChild( Switch::SWITCH_ALL );
 		group->addChild( materials );
 
 		for( uint i = 0, iEnd = scene->mNumMaterials; i != iEnd; ++i )
@@ -504,7 +524,6 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 
 		// Import all meshes
 		vgd::Shp< Switch > meshes = Switch::create( "MESHES LIBRARY" );
-		//meshes->setWhichChild( Switch::SWITCH_ALL );					// @todo
 		group->addChild( meshes );
 
 		for( uint i = 0, iEnd = scene->mNumMeshes; i != iEnd; ++i )
@@ -516,10 +535,14 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 			}
 		}
 
+		// @todo lights, cameras, animations...
+
 		// Traverse the assimp scene graph
+		using vgd::node::Group;
 		vgd::Shp< Group > worldInstance = recursiveImport( scene, scene->mRootNode, meshes, materials );
 		worldInstance->setName( m_pathFilename.filename().string() + ":" + worldInstance->getName() );
 
+		//
 		group->insertChild( worldInstance );
 	}
 
@@ -537,6 +560,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+	vgAssert( false );
 	return retVal;
 }
 
@@ -548,4 +572,3 @@ vgd::Shp< vgio::ILoader > Loader::clone()
 
 
 } // namespace vgOpenAssetImport
-
