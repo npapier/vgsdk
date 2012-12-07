@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -514,23 +514,23 @@ MatrixR MatrixR::getIdentity()
 
 bool MatrixR::isIdentity() const
 {
-	return ( 
-		(matrix[0][0] == 1.0) &&
-		(matrix[0][1] == 0.0) &&
-		(matrix[0][2] == 0.0) &&
-		(matrix[0][3] == 0.0) &&
-		(matrix[1][0] == 0.0) &&
-		(matrix[1][1] == 1.0) &&
-		(matrix[1][2] == 0.0) &&
-		(matrix[1][3] == 0.0) &&
-		(matrix[2][0] == 0.0) &&
-		(matrix[2][1] == 0.0) &&
-		(matrix[2][2] == 1.0) &&
-		(matrix[2][3] == 0.0) &&
-		(matrix[3][0] == 0.0) &&
-		(matrix[3][1] == 0.0) &&
-		(matrix[3][2] == 0.0) &&
-		(matrix[3][3] == 1.0) );
+	return (
+		vgm::equals(matrix[0][0], 1.f) &&
+		vgm::equals(matrix[0][1], 0.f) &&
+		vgm::equals(matrix[0][2], 0.f) &&
+		vgm::equals(matrix[0][3], 0.f) &&
+		vgm::equals(matrix[1][0], 0.f) &&
+		vgm::equals(matrix[1][1], 1.f) &&
+		vgm::equals(matrix[1][2], 0.f) &&
+		vgm::equals(matrix[1][3], 0.f) &&
+		vgm::equals(matrix[2][0], 0.f) &&
+		vgm::equals(matrix[2][1], 0.f) &&
+		vgm::equals(matrix[2][2], 1.f) &&
+		vgm::equals(matrix[2][3], 0.f) &&
+		vgm::equals(matrix[3][0], 0.f) &&
+		vgm::equals(matrix[3][1], 0.f) &&
+		vgm::equals(matrix[3][2], 0.f) &&
+		vgm::equals(matrix[3][3], 1.f) );
 }
 
 
@@ -574,22 +574,22 @@ MatrixR MatrixR::getNull()
 bool MatrixR::isNull() const
 {
 	return ( 
-		(matrix[0][0] == 0.0) &&
-		(matrix[0][1] == 0.0) &&
-		(matrix[0][2] == 0.0) &&
-		(matrix[0][3] == 0.0) &&
-		(matrix[1][0] == 0.0) &&
-		(matrix[1][1] == 0.0) &&
-		(matrix[1][2] == 0.0) &&
-		(matrix[1][3] == 0.0) &&
-		(matrix[2][0] == 0.0) &&
-		(matrix[2][1] == 0.0) &&
-		(matrix[2][2] == 0.0) &&
-		(matrix[2][3] == 0.0) &&
-		(matrix[3][0] == 0.0) &&
-		(matrix[3][1] == 0.0) &&
-		(matrix[3][2] == 0.0) &&
-		(matrix[3][3] == 0.0) );
+		vgm::equals(matrix[0][0], 0.f) &&
+		vgm::equals(matrix[0][1], 0.f) &&
+		vgm::equals(matrix[0][2], 0.f) &&
+		vgm::equals(matrix[0][3], 0.f) &&
+		vgm::equals(matrix[1][0], 0.f) &&
+		vgm::equals(matrix[1][1], 0.f) &&
+		vgm::equals(matrix[1][2], 0.f) &&
+		vgm::equals(matrix[1][3], 0.f) &&
+		vgm::equals(matrix[2][0], 0.f) &&
+		vgm::equals(matrix[2][1], 0.f) &&
+		vgm::equals(matrix[2][2], 0.f) &&
+		vgm::equals(matrix[2][3], 0.f) &&
+		vgm::equals(matrix[3][0], 0.f) &&
+		vgm::equals(matrix[3][1], 0.f) &&
+		vgm::equals(matrix[3][2], 0.f) &&
+		vgm::equals(matrix[3][3], 0.f) );
 }
 
 
