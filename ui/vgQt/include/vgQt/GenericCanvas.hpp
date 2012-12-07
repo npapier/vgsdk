@@ -9,6 +9,7 @@
 
 #include <glc/glc.hpp>
 #include <glc_qt/glc_qt.hpp>
+#include <gle/Wrapper.hpp>
 
 #include <vgd/Shp.hpp>
 
