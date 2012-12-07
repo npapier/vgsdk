@@ -1,4 +1,4 @@
-description		= '(V)ersatile (G)raphical (OpenAssetImport)'
+description	= '(V)ersatile (G)raphical (OpenAssetImport)'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
