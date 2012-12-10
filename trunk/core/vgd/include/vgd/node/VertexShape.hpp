@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2004-2007, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, 2010, 2012 Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Alexandre Di Pino
 
 #ifndef _VGD_NODE_VERTEXSHAPE_HPP
 #define _VGD_NODE_VERTEXSHAPE_HPP
@@ -18,7 +19,6 @@
 #include "vgd/field/Vector.hpp"
 #include "vgd/itf/ITransformation.hpp"
 #include "vgd/node/Shape.hpp"
-
 
 
 
@@ -48,6 +48,7 @@ namespace node
  * 
  * - fields used by the lighting equation or by materials.
  * 	- MFVec3f \c normal				= empty\n
+ * 	- MFVec3f \c tangent			= empty\n
  * 	- MFVec4f \c color4				= empty\n
  * 	- MFVec4f \c secondaryColor4	= empty\n
  * 	- MFVec2f \c texCoord			= empty\n
@@ -56,6 +57,7 @@ namespace node
  * 
  * - fields for bindings :
  * 	- SFBinding \c normalBinding 			= BIND_OFF\n
+ * 	- SFBinding \c tangentBinding 			= BIND_OFF\n
  * 	- SFBinding \c color4Binding			= BIND_OFF\n
  * 	- SFBinding \c secondaryColor4Binding	= BIND_OFF\n
  * 	- SFBinding \c texCoordBinding			= BIND_OFF\n
@@ -65,7 +67,9 @@ namespace node
  * - SFEnum \c deformableHint = STATIC\n
  * 		Specifies a symbolic constant indicating the usage of this shape. 
  * 		Choose one value among STATIC, DYNAMIC and STREAM.
- * 
+ *
+ * - SFFloat tessellationLevel = 0.f\n
+ * - SFFloat tessellationBias = 0.f\n
  * - SFEnum \c boundingBoxUpdatePolicy = AUTOMATIC\n
  * 		Choose one value among AUTOMATIC or ONCE.
  * 
@@ -97,6 +101,7 @@ namespace node
  * @ingroup g_shapeNodes
  * @ingroup g_texturingNodes
  */
+
 struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node::Shape
 {
 	META_NODE_HPP( VertexShape );
@@ -108,15 +113,14 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	 */
 	//@{
 
-	/**
-	 * @brief Computes mesh normals (one normal per vertex)
-	 */
-	void			computeNormals();
-
 	// @todo vgm::Box3f computeAndRetrivesBoundingBox();
 	//@}
 
+	/**
+	* @brief Standard Computes mesh normals (one normal per vertex)
+	*/
 
+	void			computeNormals( );
 
 	/**
 	 * @name Bounding box.
@@ -246,6 +250,28 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 
 	vgd::field::EditorRO< FNormalType >		getFNormalRO() const;
 	vgd::field::EditorRW< FNormalType >		getFNormalRW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field tangent.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c tangent field.
+	 */	
+	typedef vgd::field::MFVec3f	FTangentType;
+
+	/**
+	 * @brief Typedef for the \c tangent value.
+	 */
+	typedef vgm::Vec3f			TangentValueType;
+
+	vgd::field::EditorRO< FTangentType >		getFTangentRO() const;
+	vgd::field::EditorRW< FTangentType >		getFTangentRW();
 
 	//@}
 
@@ -544,6 +570,27 @@ public:
 
 
 	/**
+	 * @name Accessors to field tangentBinding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c tangentBinding field.
+	 */	
+	typedef vgd::field::SFBinding		FTangentBindingType;
+
+	/**
+	 * @brief Typedef for the \c tangentBinding value.
+	 */
+	typedef vgd::node::Binding			TangentBindingValueType;
+
+	const vgd::node::Binding	getTangentBinding() const;
+	void 						setTangentBinding( const vgd::node::Binding );
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field color4Binding.
 	 */
 	//@{
@@ -670,6 +717,51 @@ public:
 
 
 	/**
+	 * @name Accessors to field tessellation level.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c tessellation level field.
+	 */	
+	typedef vgd::field::SFFloat	FTessellationLevelType;
+
+	/**
+	 * @brief Typedef for the \c tessellation level value.
+	 */	
+	typedef float				TessellationLevelValueType;
+
+	vgd::field::EditorRO< FTessellationLevelType >	getTessellationLevelRO() const;
+	vgd::field::EditorRW< FTessellationLevelType >	getTessellationLevelRW();
+
+	void											setTessellationLevel(const float level);
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field tessellation bias.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c tessellation bias field.
+	 */	
+	typedef vgd::field::SFFloat	FTessellationBiasType;
+
+	/**
+	 * @brief Typedef for the \c tessellation bias value.
+	 */	
+	typedef float				TessellationBiasValueType;
+
+	vgd::field::EditorRO< FTessellationBiasType >	getTessellationBiasRO() const;
+	vgd::field::EditorRW< FTessellationBiasType >	getTessellationBiasRW();
+
+	void											setTessellationBias(const float bias);
+	//@}
+
+
+	/**
 	 * @name Accessors to field boundingBoxUpdatePolicy
 	 */
 	//@{
@@ -754,6 +846,20 @@ public:
 	 */
 	static const std::string getFNormal( void );
 
+	/**
+	 * @brief Returns the name of field \c tangent.
+	 * 
+	 * @return the name of field \c tangent.
+	 */
+	static const std::string VertexShape::getFTangent( void );
+
+	///**
+	// * @brief Returns the name of field \c tangent handidness.
+	// * 
+	// * @return the name of field \c tangent handidness.
+	// */
+	//static const std::string VertexShape::getFTangentHandidness( void );
+
 //	/**
 //	 * @brief Returns the name of field \c color3.
 //	 * 
@@ -828,6 +934,13 @@ public:
 	 */
 	static const std::string getFNormalBinding( void );
 
+	/**
+	 * @brief Returns the name of field \c tangent \c binding.
+	 * 
+	 * @return the name of field \c tangent \c binding.
+	 */
+	static const std::string getFTangentBinding( void );
+
 //	/**
 //	 * @brief Returns the name of field \c color3 \c binding.
 //	 * 
@@ -883,7 +996,21 @@ public:
 	 * @return the name of field \c deformableHint.
 	 */
 	static const std::string getFDeformableHint();
-	
+
+	/**
+	 * @brief Returns the name of field \c tessellation level.
+	 * 
+	 * @return the name of field \c tessellation level.
+	 */
+	static const std::string getFTessellationLevel( void );
+
+	/**
+	 * @brief Returns the name of field \c tessellation bias.
+	 * 
+	 * @return the name of field \c tessellation bias.
+	 */
+	static const std::string getFTessellationBias( void );
+
 	/**
 	 * @brief Returns the name of field \c boundingBoxUpdatePolicy.
 	 * 
@@ -926,3 +1053,4 @@ private:
 } // namespace vgd
 
 #endif // #ifndef _VGD_NODE_VERTEXSHAPE_HPP
+
