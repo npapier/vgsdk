@@ -808,7 +808,7 @@ const vgd::node::Binding VertexShape::getTangentBinding() const
 
 
 
-void VertexShape::setTangetBinding( const vgd::node::Binding binding )
+void VertexShape::setTangentBinding( const vgd::node::Binding binding )
 {
 	return ( getFieldRW< FTangentBindingType >(getFTangentBinding())->setValue( binding ) );
 }
