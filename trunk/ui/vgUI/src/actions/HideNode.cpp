@@ -15,7 +15,7 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( HideNode, 32 )
+META_ACTION_CPP( HideNode, 52 )
 
 
 HideNode::HideNode( ) :

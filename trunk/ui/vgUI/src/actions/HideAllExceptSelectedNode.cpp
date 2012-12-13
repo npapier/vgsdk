@@ -15,7 +15,7 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( HideAllExceptSelectedNode, 30 )
+META_ACTION_CPP( HideAllExceptSelectedNode, 50 )
 
 
 HideAllExceptSelectedNode::HideAllExceptSelectedNode( ) :

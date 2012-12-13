@@ -15,11 +15,12 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( SetOptionalToDefault, 23 )
+
+META_ACTION_CPP( SetOptionalToDefault, 32 )
 
 
 SetOptionalToDefault::SetOptionalToDefault( ) :
-IActionUI( "Transform/SetOptionalToDefault", "SetOptionalToDefault", "SetOptionalToDefault", DEFAULT, "", new vgAlg::actions::SetOptionalToDefault() )
+IActionUI( "Transform/Fields/SetOptionalToDefault", "SetOptionalToDefault", "SetOptionalToDefault", DEFAULT, "", new vgAlg::actions::SetOptionalToDefault() )
 {
 }
 

@@ -15,7 +15,7 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( Triangulate, 25 )
+META_ACTION_CPP( Triangulate, 33 )
 
 
 Triangulate::Triangulate( ) :

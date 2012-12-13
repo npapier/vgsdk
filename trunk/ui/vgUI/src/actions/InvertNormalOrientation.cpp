@@ -15,11 +15,11 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( InvertNormalOrientation, 21 )
+META_ACTION_CPP( InvertNormalOrientation, 20 )
 
 
 InvertNormalOrientation::InvertNormalOrientation( ) :
-IActionUI( "Transform/InvertNormalOrientation", "InvertNormalOrientation", "InvertNormalOrientation", DEFAULT, "", new vgAlg::actions::InvertNormalOrientation() )
+IActionUI( "Transform/Normals/InvertNormalOrientation", "InvertNormalOrientation", "InvertNormalOrientation", DEFAULT, "", new vgAlg::actions::InvertNormalOrientation() )
 {
 }
 
@@ -27,14 +27,7 @@ IActionUI( "Transform/InvertNormalOrientation", "InvertNormalOrientation", "Inve
 
 const bool InvertNormalOrientation::isValide( State state )
 {
-	if( state.isShape() )
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return state.isShape();
 }
 
 

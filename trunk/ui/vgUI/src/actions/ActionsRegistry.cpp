@@ -50,11 +50,17 @@ std::map< int, vgd::Shp< vgUI::actions::IActionUI > > ActionsRegistry::getAction
 
 
 
-void ActionsRegistry::addAction( vgd::Shp< vgUI::actions::IActionUI > action, int key)
+void ActionsRegistry::addAction( vgd::Shp< vgUI::actions::IActionUI > action, const int key )
 {
-	assert( m_actionMap.find(key) == m_actionMap.end() && "ActionUI key already used." );
-
-	m_actionMap[ key ] = action;
+	//vgAssertN( m_actionMap.find(key) == m_actionMap.end(), "ActionUI key %i already used.", key );
+	if ( m_actionMap.find(key) != m_actionMap.end() )
+	{
+		std::cout << "ActionsRegistry::addAction() fails for given " << typeid(*action).name() << ". ActionUI key " << key << " already used." << std::endl;
+	}
+	else
+	{
+		m_actionMap[ key ] = action;
+	}
 }
 
 
