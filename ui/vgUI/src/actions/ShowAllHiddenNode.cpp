@@ -15,7 +15,7 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( ShowAllHiddenNode, 33 )
+META_ACTION_CPP( ShowAllHiddenNode, 53 )
 
 
 ShowAllHiddenNode::ShowAllHiddenNode( ) :

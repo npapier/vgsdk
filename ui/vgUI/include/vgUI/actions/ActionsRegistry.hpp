@@ -30,7 +30,7 @@ struct VGUI_API ActionsRegistry
 	/**
 	* @brief	Get the instance of SelectedNode.
 	*/
-	static vgd::Shp< ActionsRegistry > getActionsRegistry();	
+	static vgd::Shp< ActionsRegistry > getActionsRegistry();
 	
 	~ActionsRegistry();
 
@@ -48,7 +48,7 @@ struct VGUI_API ActionsRegistry
 	 *
 	 * @param action	the key to order action in menu.
 	 */
-	void addAction( vgd::Shp< vgUI::actions::IActionUI > action, int key);
+	void addAction( vgd::Shp< vgUI::actions::IActionUI > action, const int key);
 
 	/**
 	 * @brief	Get an action by its id.
@@ -73,9 +73,9 @@ private:
 	*			key: order to display action:
 	*				1: select node
 	*				10-19: edit menu
-	*				20-29: transform menu
-	*				30-39: visibility
-	*				40-~: other
+	*				20-39: transform menu
+	*				40-49: visibility
+	*				50-~: other
 	*/
 	std::map< int, vgd::Shp< vgUI::actions::IActionUI > > m_actionMap; ///< the map of UI action (key = order of menu)
 	std::map< vgd::Wkp< vgAlg::actions::HiddenNode >, vgd::Shp< vgUI::actions::IActionUI > >	m_hiddenNodeMap; ///< the map of hidden node and its related UI action
@@ -94,11 +94,11 @@ struct RegisterAction
 	 *
 	 * @param key	the key to order the action in menu.
 	 */	
-	RegisterAction( int key )
+	RegisterAction( const int key )
 	{
 		// Register the new action in ActionsRegistry.
  		vgd::Shp< actionType > action( new actionType() );
-		
+
 		ActionsRegistry::getActionsRegistry()->addAction( action, key );
 	}
 };

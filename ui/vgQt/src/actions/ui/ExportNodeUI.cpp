@@ -20,20 +20,12 @@ META_ACTION_CPP( ExportNodeUI, 41 )
 
 ExportNodeUI::ExportNodeUI() :
 IActionUI( "ExportNode", "Export", "ExportNode", vgUI::actions::EXPORT, "", new vgQt::actions::alg::ExportNode() )
-{
-}
+{}
 
 
 const bool ExportNodeUI::isValide( vgUI::actions::State state )
 {
-        if( state.getSelectedNode() )
-        {
-                return true;
-        }
-        else
-        {
-                return false;
-        }
+	return state.getSelectedNode();
 }
 
 

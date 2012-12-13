@@ -15,7 +15,7 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( ApplyGeometricalTransformation, 20 )
+META_ACTION_CPP( ApplyGeometricalTransformation, 36 )
 
 
 ApplyGeometricalTransformation::ApplyGeometricalTransformation( ) :

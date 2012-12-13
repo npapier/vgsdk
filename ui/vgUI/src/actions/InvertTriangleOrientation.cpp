@@ -15,26 +15,18 @@ namespace vgUI
 namespace actions
 {
 
-META_ACTION_CPP( InvertTriangleOrientation, 22 )
+META_ACTION_CPP( InvertTriangleOrientation, 30 )
 
 
 InvertTriangleOrientation::InvertTriangleOrientation( ) :
 IActionUI( "Transform/InvertTriangleOrientation", "InvertTriangleOrientation", "InvertTriangleOrientation", DEFAULT, "", new vgAlg::actions::InvertTriangleOrientation() )
-{
-}
+{}
 
 
 
 const bool InvertTriangleOrientation::isValide( State state )
 {
-	if( state.isShape() )
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return state.isShape();
 }
 
 

@@ -6,7 +6,6 @@
 #ifndef _VGUI_ACTIONS_IACTIONUI_HPP
 #define _VGUI_ACTIONS_IACTIONUI_HPP
 
-
 #include "vgUI/vgUI.hpp"
 
 #include <vgAlg/actions/IAction.hpp>
@@ -24,7 +23,7 @@ namespace actions
 
 /**
  * @brief	Interface for all UI Action.
- *			An UI Action contain all attribut to create a menuitem.
+ *			An UI Action contains all attributes to create a menu item.
  */
 struct VGUI_API IActionUI
 {
