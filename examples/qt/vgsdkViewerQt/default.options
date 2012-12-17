@@ -21,7 +21,7 @@ libs		=	[
 					'sbf 0-0',
 					'vgBase 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgd 0-5',
 					'vgAlg 0-5',
-					'vgio 0-5', 'vgOpenCOLLADA 0-5', 'vgTrian 0-5', 'vgPhysfs 0-5',
+					'vgio 0-5', 'vgOpenAssetImport 0-5', 'vgOpenCOLLADA 0-5', 'vgTrian 0-5', 'vgPhysfs 0-5',
 					#'vgBullet 0-0',
 					'vge 0-5','vgeGL 0-5',
 					'vgUI 0-5',

@@ -8,9 +8,11 @@
 #include "vgsdkViewerQt/MainWindow.hpp"
 #include "vgsdkViewerQt/MyCanvas.hpp"
 
+#include <boost/lexical_cast.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgTrian/Loader.hpp>
 #include <vgObj/Loader.hpp>
+#include <vgOpenAssetImport/Loader.hpp>
 #include <vgQt/engine/UserSettingsDialog.hpp>
 #include <vgQt/node/EditMenu.hpp>
 #include <vgQt/ResolutionDialog.hpp>
@@ -111,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent)
 	actionQuit->setShortcut(QKeySequence("Ctrl+Q"));
 	actionFullScreen->setShortcut(QKeySequence("F11"));
 	actionShadersEditor->setShortcut(QKeySequence("Ctrl+Shift+S"));
-	
+
 	menuFile->addAction(actionNew);
 	menuFile->addAction(actionOpen);
 	menuFile->addAction(actionAdd);
@@ -446,8 +448,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::loadFile(bool clearScene)
 {
-	vgTrian::Loader loader; // @todo must be here to be registered in LoaderRegistry
-	vgObj::Loader loader2; // This is only to force the register of obj loader
+	vgTrian::Loader				loader;		// @todo must be here to be registered in LoaderRegistry
+	vgObj::Loader				loader2;	// This is only to force the register of obj loader
+	vgOpenAssetImport::Loader	loader3;	// This is only to force the register of assimp loader
 
 	// Prompts a file selection dialog to the user.
 	static QString		dir;
@@ -485,14 +488,15 @@ void MainWindow::loadFile(bool clearScene)
 }
 
 
-void MainWindow::addFileInHistory(QString filename)
+void MainWindow::addFileInHistory( const QString filename, const bool addAtTheBeginning )
 {
-	filename.replace("\\","/");
+	QString lFilename(filename);
+	lFilename.replace("\\","/");
 
 	// Removes any action named filename or "Empty"
 	Q_FOREACH(QAction* action, m_recentFileMenu->actions())
 	{
-		if (action->text() == filename || action->text() == "Empty")
+		if (action->text() == lFilename || action->text() == "Empty")
 		{
 			m_recentFileMenu->removeAction(action);
 		}
@@ -505,15 +509,33 @@ void MainWindow::addFileInHistory(QString filename)
 	}
 
 	// New action for filename
-	QAction* action = new QAction(filename, m_recentFileMenu);
-	if ( m_recentFileMenu->actions().size() > 0 )
+	QAction* action = new QAction(lFilename, m_recentFileMenu);
+	if ( addAtTheBeginning )
 	{
-		m_recentFileMenu->insertAction(m_recentFileMenu->actions().first(), action);
+		if ( m_recentFileMenu->actions().size() > 0 )
+		{
+			m_recentFileMenu->insertAction(m_recentFileMenu->actions().first(), action);
+		}
+		else
+		{
+			m_recentFileMenu->addAction(action);
+		}
 	}
 	else
 	{
 		m_recentFileMenu->addAction(action);
 	}
+
+	// Removes shortcuts
+	int i = 1;
+	Q_FOREACH(QAction* action, m_recentFileMenu->actions())
+	{
+		const std::string seq( "Ctrl+" + boost::lexical_cast<std::string>(i) );
+		action->setShortcut( QKeySequence(seq.c_str()) );
+		++i;
+	}
+
+	//
 	connect(action, SIGNAL(triggered()), this, SLOT(onHistoryClicked()));
 }
 
@@ -529,7 +551,7 @@ void MainWindow::readSettings()
 	QStringList recentScenes = settings.value("recentScenes").toStringList();
 	Q_FOREACH(QString filename, recentScenes)
 	{
-		addFileInHistory(filename);
+		addFileInHistory(filename, false/*addAtTheEnd*/);
 	}
 }
 

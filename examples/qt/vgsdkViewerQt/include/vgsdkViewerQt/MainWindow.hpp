@@ -144,7 +144,7 @@ protected:
      */
     void loadFile( bool clearScene );
 
-    void addFileInHistory(QString filename);
+    void addFileInHistory( const QString filename, const bool addAtTheBeginning = true );
 	void readSettings();
 	void writeSettings();
 

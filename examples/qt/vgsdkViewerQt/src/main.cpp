@@ -13,19 +13,22 @@
 #include <QApplication>
 
 
+
+
 int main(int argc, char *argv[])
 {
-	QApplication app(argc, argv);
+    QApplication app(argc, argv);
 
-	// Installs the GTK-based logging.
-	sbf::log::set< sbf::log::Logging >();
+    // Installs the GTK-based logging.
+    sbf::log::set< sbf::log::Logging >();
 
-	vgsdkViewerQt::MainWindow mainWindow;
+    vgsdkViewerQt::MainWindow mainWindow;
 	mainWindow.setWindowIcon( QIcon(":/images/vgsdkViewerQt.ico") );
 	mainWindow.setWindowIconText( "setWindowIconText" );
+
 	mainWindow.show();
 	mainWindow.getRenderSettingsDialog()->get()->setLevel(2);
 	mainWindow.renderSettingsChanged();
 
-	return app.exec();
+    return app.exec();
 }
