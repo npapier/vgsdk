@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,6 +8,7 @@
 
 #include <sstream>
 
+#include <vgAlg/node/VertexShape.hpp>
 #include <vgDebug/helpers.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 
@@ -134,7 +135,7 @@ const bool TrianLoader::loadTrian( std::istream & in, vgd::Shp< vgd::node::Group
 	vertexIndex.release();
 
 	//
-	vertexShape->computeNormals();
+	vgAlg::node::computeNormals( vertexShape );
 
 	group->addChild( vertexShape );
 

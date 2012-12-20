@@ -24,64 +24,6 @@ namespace node
 META_NODE_CPP( VertexShape );
 
 
-void VertexShape::computeNormals()
-{
-	vgm::Vec3f faceNormal;		// a temp face normal
-	vgm::Vec3f v1, v2;			// temp vectors
-	int32 numTris;
-	int32 numVertices;
-	
-	numTris		= getFVertexIndexRO()->size()/3;	// number of triangles	
-	numVertices	= getFVertexRO()->size();			// number of vertices
-
-	int32 i;
-	int32 j=0;
-
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= getFVertexIndexRO();
-	vgd::field::EditorRW< vgd::field::MFVec3f >		normals		= getFNormalRW();
-
-	normals->resize(0);
-	normals->reserve(numVertices);
-
-	// initialize normals to (0,0,0) if there are no normals
-	for(i=0; i < numVertices; i++)
-	{
-		normals->push_back( vgm::Vec3f( 0.f, 0.f, 0.f ) );
-	}
-
-	// compute vertices normals
-	for(i=0; i < numTris; ++i)
-	{
-		// compute face normal
-		int32 indexA, indexB, indexC;
-
-		indexA = (*vertexIndex)[j];
-		indexB = (*vertexIndex)[j+1];
-		indexC = (*vertexIndex)[j+2];
-
-			v1 = (*vertices)[indexB] - (*vertices)[indexA];
-			v2 = (*vertices)[indexC] - (*vertices)[indexA];
-			faceNormal = v1.cross(v2);
-
-			// add this face normal to each vertex normal
-			(*normals)[indexA]	+= faceNormal;
-			(*normals)[indexB]	+= faceNormal;
-			(*normals)[indexC]	+= faceNormal;
-
-		j += 3;
-	}
-
-	// normalize normals
-	for(i=0; i < numVertices; i++)
-	{
-		(*normals)[i].normalize();
-	}
-
-	setNormalBinding( vgd::node::BIND_PER_VERTEX );
-	//vgLogDebug("VertexShape::computeNormals() for %s", getName().c_str() );
-}
-
 
 void VertexShape::invalidateParentsBoundingBoxDirtyFlag() 
 {
@@ -429,15 +371,16 @@ void VertexShape::setToDefaults( void )
 {
 	Shape::setToDefaults();
 
-	setNormalBinding( 				vgd::node::BIND_OFF );
-	setColor4Binding( 				vgd::node::BIND_OFF );
-	setSecondaryColor4Binding(		vgd::node::BIND_OFF );
-	setEdgeFlagBinding(				vgd::node::BIND_OFF );
-	
+	setNormalBinding( 			vgd::node::BIND_OFF );
+	setTangentBinding(			vgd::node::BIND_OFF );
+	setColor4Binding( 			vgd::node::BIND_OFF );
+	setSecondaryColor4Binding(	vgd::node::BIND_OFF );
+	setEdgeFlagBinding(			vgd::node::BIND_OFF );
+
 	setDeformableHint( DEFAULT_DEFORMABLE_HINT );
-	
+
 	setBoundingBoxUpdatePolicy( DEFAULT_BOUNDINGBOX_UPDATE_POLICY );
-	
+
 	setTessellationLevel(0.f);
 	setTessellationBias(0.f);
 
