@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -11,11 +11,14 @@
 
 #include <vgOpenCOLLADA/importer/TPrimitiveImporter.hpp>
 
+
+
 namespace vgOpenCOLLADA
 {
 
 namespace importer
 {
+
 
 GeometryImporter::GeometryImporter( const COLLADAFW::Geometry* geometry, vgOpenCOLLADA::Settings settings, Reader *reader ) :
 m_settings( settings ),
@@ -23,7 +26,6 @@ m_mapShapeMaterial( reader->getMapShapeMaterial() )
 {
 	m_mesh = (COLLADAFW::Mesh*) geometry;
 }
-
 
 
 std::pair< bool, vgd::Shp< vgd::node::Group > > GeometryImporter::loadMesh()
@@ -52,7 +54,6 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > GeometryImporter::loadMesh()
 }
 
 
-
 void GeometryImporter::importMeshPositions()
 {
 	const COLLADAFW::MeshVertexData& meshPositions = m_mesh->getPositions();
@@ -62,19 +63,20 @@ void GeometryImporter::importMeshPositions()
 		throw std::runtime_error("Position Data types are not float!");
 	}
 
-	int32 positionsSize = (int)meshPositions.getValuesCount();
-	int32 positionsStride = 3;
+	const int positionsSize = (int)meshPositions.getValuesCount();
+	const int32 positionsStride = 3; // Positions have always a stride of three (XYZ parameters).
 
 	const COLLADAFW::FloatArray* positionsArray = meshPositions.getFloatValues();
 
-	int32 positionsCount = positionsSize / positionsStride;
-
-	for ( int i = 0; i < positionsCount; ++i)
+	const int iEnd = positionsSize / positionsStride;
+	m_positions.reserve( iEnd );
+	for ( int i = 0; i < iEnd; ++i)
 	{
-		m_positions.push_back(vgm::Vec3f( (float)(*positionsArray)[3*i],	(float)(*positionsArray)[3*i + 1], (float)(*positionsArray)[3*i + 2] ));
+		m_positions.push_back(
+				vgm::Vec3f( (float)(*positionsArray)[3*i], (float)(*positionsArray)[3*i + 1], (float)(*positionsArray)[3*i + 2] )
+				);
 	}
 }
-
 
 
 void GeometryImporter::importMeshNormals()
@@ -86,53 +88,50 @@ void GeometryImporter::importMeshNormals()
 		throw std::runtime_error("Normal Data types are not float!");
 	}
 
-	int32 normalsSize = (int)meshNormals.getValuesCount();
-	int32 normalsStride = 3;
+	const int normalsSize = (int)meshNormals.getValuesCount();
+	const int32 normalsStride = 3; // Normals have always a stride of three (XYZ parameters).
 
 	const COLLADAFW::FloatArray* normalsArray = meshNormals.getFloatValues();
 
-	int32 normalsCount = normalsSize / normalsStride;
-
-	std::vector< vgm::Vec3f > normals;
-	for ( int i = 0; i < normalsCount; ++i)
+	const int iEnd = normalsSize / normalsStride;
+	m_normals.reserve( iEnd );
+	for ( int i = 0; i < iEnd; ++i)
 	{
-		m_normals.push_back(vgm::Vec3f( (float)(*normalsArray)[3*i],	(float)(*normalsArray)[3*i + 1], (float)(*normalsArray)[3*i + 2] ));
+		m_normals.push_back(
+			vgm::Vec3f( (float)(*normalsArray)[3*i], (float)(*normalsArray)[3*i + 1], (float)(*normalsArray)[3*i + 2])
+			);
 	}
 }
 
 
-
 void GeometryImporter::importMeshUVCoords()
 {
-	const COLLADAFW::MeshVertexData& uvCoordinates = m_mesh->getUVCoords();
-	size_t num = uvCoordinates.getNumInputInfos();
-	COLLADAFW::MeshVertexData::InputInfos* inputInfo;
-	const COLLADAFW::MeshVertexData::InputInfosArray& uvInputInfos = uvCoordinates.getInputInfosArray();
+	const COLLADAFW::MeshVertexData& uvCoordinates						= m_mesh->getUVCoords();
+	const COLLADAFW::FloatArray* texCoordArray							= uvCoordinates.getFloatValues();
+
 	int counter = 0;
-
-	for( int i = 0; i < num; ++i )
+	const COLLADAFW::MeshVertexData::InputInfosArray&	inputInfos		= uvCoordinates.getInputInfosArray();
+	const int											numInputInfos	= uvCoordinates.getNumInputInfos();
+	for( int currentInputInfo = 0; currentInputInfo < numInputInfos; ++currentInputInfo )
 	{
-		std::vector< vgm::Vec2f > texCoords;
-		inputInfo = uvInputInfos[ i ];
+		COLLADAFW::MeshVertexData::InputInfos* inputInfo = inputInfos[ currentInputInfo ];
 
-		int32 texCoordSize = inputInfo->mLength;
-		int32 texCoordStride = inputInfo->mStride;
+		m_texCoords.resize( m_texCoords.size()+1 );
+		std::vector< vgm::Vec2f >& texCoords = m_texCoords[m_texCoords.size()-1];
 
-		const COLLADAFW::FloatArray* texCoordArray = uvCoordinates.getFloatValues();
-
-		int32 texCoordCount = (texCoordSize / texCoordStride);
-
+		const int texCoordSize		= inputInfo->mLength;
+		const int texCoordStride	= inputInfo->mStride;
+		const int texCoordCount		= texCoordSize / texCoordStride;
+		texCoords.reserve( texCoordCount );
 		for ( int i = 0; i < texCoordCount; ++i)
 		{
-			texCoords.push_back(vgm::Vec2f( (float)(*texCoordArray)[texCoordStride*i + counter], (float)(*texCoordArray)[texCoordStride*i + 1 + counter] ));
+			texCoords.push_back(
+				vgm::Vec2f( (float)(*texCoordArray)[texCoordStride*i + counter], (float)(*texCoordArray)[texCoordStride*i + 1 + counter] )
+					);
 		}
-		
-		m_texCoords.push_back( texCoords );
 
 		counter += texCoordCount;
 	}
-
-
 }
 
 
