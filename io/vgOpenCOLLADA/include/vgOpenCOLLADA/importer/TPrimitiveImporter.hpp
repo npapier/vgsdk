@@ -15,7 +15,7 @@
 #include <vgd/Shp.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/VertexShape.hpp>
-
+#include <vgAlg/node/VertexShape.hpp>
 #include <COLLADAFWMeshPrimitive.h>
 #include <COLLADAFWMesh.h>
 
@@ -73,11 +73,10 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 
 		if ( m_vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX )
 		{
-			m_vertexShape->computeNormals();
+			vgAlg::node::computeNormals( m_vertexShape );
 		}
 
 		m_group->addChild( m_vertexShape );
-
 	}
 
 
@@ -149,12 +148,11 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 				hash_me.push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ][0] );
 				hash_me.push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ][1] );
 				hash_me.push_back( m_texCoords[i][ m_primitives->getUVCoordIndicesArray()[i]->getIndices()[j] ][2] );
-			}			
-
+			}
 		}
 
 
-		//create hash with vecotr of each coordinate.
+		//create hash with vector of each coordinate.
 		std::size_t hash = boost::hash_range(hash_me.begin(), hash_me.end());
 
 		//if hash exist, adds index of existing set to vertex index.
@@ -275,11 +273,10 @@ struct VGOPENCOLLADA_API PrimitivePolygonsImporter : TPrimitiveImporter< COLLADA
 
 		if ( m_vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX )
 		{
-			m_vertexShape->computeNormals();
+			vgAlg::node::computeNormals( m_vertexShape );
 		}
 
 		m_group->addChild( m_vertexShape );
-
 	}
 
 };
