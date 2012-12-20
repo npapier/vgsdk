@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include <vgAlg/actions/Decrypt.hpp>
+#include <vgAlg/node/VertexShape.hpp>
 
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/basic/Image.hpp>
@@ -25,8 +26,6 @@
 #include <vgio/Cache.hpp>
 #include <vgio/FileSystem.hpp>
 #include <vgio/helpers.hpp>
-
-
 
 
 namespace vgTrian
@@ -612,10 +611,11 @@ const bool Loader::loadTrian2( const vgio::Media & media, std::istream & in, vgd
 			vgd::Shp< vgd::node::VertexShape > vertexShape = loadMesh( in, meshName );
 			if ( vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX )
 			{
-				vertexShape->computeNormals();
+				vgAlg::node::computeNormals( vertexShape );
 			}
-		
+
 			group->addChild( vertexShape );
+			
 		}
 		else
 		{
@@ -754,8 +754,7 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		in >> name >> filename;
 		assert( name == "image" );
 
-		vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( filename );
-		tex->setMultiAttributeIndex( (int8)i );
+		vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( filename, (int8)i );
 
 		vgLogDebug("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 		//vgLogStatus("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
@@ -817,23 +816,17 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		{
 			using vgd::node::TextureMatrixTransform;
 			vgd::Shp< TextureMatrixTransform > texTransform = TextureMatrixTransform::create( filename );
-
 			texTransform->setMultiAttributeIndex( (int8)i );
+
 			texTransform->setComposeTransformation( false );
 			texTransform->setMatrix( matrix );
-			
-			if ( i == 0 )																							// add only the first texture map ??? FIXME
-			{
-				group->addChild( texTransform );
-				group->addChild( tex );
-			}
+
+			group->addChild( texTransform );
+			group->addChild( tex );
 		}
 		else
 		{
-			if ( i == 0 )									// add only the first texture map ??? FIXME
-			{
-				group->addChild( tex );
-			}
+			group->addChild( tex );
 		}
 
 		// texTiling uWrap vWrap

@@ -267,7 +267,7 @@ void computeNormals( vgd::Shp< vgd::node::VertexShape > vertexShape )
 
 
 	// Normalization stage
-	if ( vgAlg::node::getNormalizationMethod() != vgAlg::node::NO_COMPUTE_NORMAL )
+	if ( vgAlg::node::getNormalizationMethod() != vgAlg::node::NO_COMPUTE_NORMALIZATION )
 	{
 		normalizeField(normals);
 	}
@@ -333,7 +333,7 @@ void computeTangents( vgd::Shp< vgd::node::VertexShape > vertexShape )
 	}
 
 	// Normalization stage
-	if ( vgAlg::node::getNormalizationMethod() != vgAlg::node::NO_COMPUTE_NORMAL )
+	if ( vgAlg::node::getNormalizationMethod() != vgAlg::node::NO_COMPUTE_NORMALIZATION )
 	{
 		normalizeField(tangents);
 	}

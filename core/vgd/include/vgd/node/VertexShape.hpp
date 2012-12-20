@@ -117,12 +117,6 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	//@}
 
 	/**
-	* @brief Standard Computes mesh normals (one normal per vertex)
-	*/
-
-	void			computeNormals( );
-
-	/**
 	 * @name Bounding box.
 	 */
 	//@{
