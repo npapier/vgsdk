@@ -49,10 +49,13 @@ namespace engine
 {
 
 
+
 enum
 {
 	VERTEX_INDEX = 0,
 	NORMAL_INDEX,
+	TANGENT_INDEX,
+	VERTEXINDEX_INDEX,
 	TEXCOORD_INDEX,
 	TEXCOORD1_INDEX,
 	TEXCOORD_INDEX_MAX
@@ -78,6 +81,7 @@ struct VGEGL_API GLState
 		// DRAWSTYLE
 		m_shape( vgd::node::DrawStyle::DEFAULT_SHAPE ),
 		m_normalLength( 0.f ),
+		m_tangentLength( 0.f ),
 		m_showOrientation( false ),
 		m_boundingBox( vgd::node::DrawStyle::DEFAULT_BOUNDINGBOX ),
 
@@ -95,6 +99,9 @@ struct VGEGL_API GLState
 	// DRAWSTYLE
 	void setShape( const vgd::node::DrawStyle::ShapeValueType& shape )										{ m_shape = shape; }
 	const vgd::node::DrawStyle::ShapeValueType& getShape() const											{ return m_shape; }
+
+	void setTangentLength( const vgd::node::DrawStyle::TangentLengthValueType& tangentLength )				{ m_tangentLength = tangentLength; }
+	const vgd::node::DrawStyle::TangentLengthValueType& getTangentLength() const							{ return m_tangentLength; }
 
 	void setNormalLength( const vgd::node::DrawStyle::NormalLengthValueType& normalLength )					{ m_normalLength = normalLength; }
 	const vgd::node::DrawStyle::NormalLengthValueType& getNormalLength() const								{ return m_normalLength; }
@@ -115,6 +122,7 @@ private:
 
 	vgd::node::DrawStyle::ShapeValueType			m_shape;
 	vgd::node::DrawStyle::NormalLengthValueType		m_normalLength;
+	vgd::node::DrawStyle::TangentLengthValueType	m_tangentLength;
 	vgd::node::DrawStyle::ShowOrientationValueType	m_showOrientation;
 	vgd::node::DrawStyle::BoundingBoxValueType		m_boundingBox;
 
@@ -164,7 +172,6 @@ public:
 	virtual void setToDefaults();
 
 	//@}
-
 
 
 	/**
@@ -409,7 +416,7 @@ public:
 	 * @brief Gets the OpenGL objects manager
 	 */
 	GLManagerType& getGLManager();
-
+	
 	/**
 	 * @brief Returns the resource associated to the given node in the OpenGL manager
 	 *
@@ -457,7 +464,7 @@ public:
 	/**
 	 * @brief Typedef for the glsl program manager
 	 * 
-	 * This manager associates an id to a single glo::GLSLProgram
+	 * This manager associates a single string to a single glo::GLSLProgram
 	 */
 	typedef vge::rc::TManager< int, glo::GLSLProgram > GLSLProgramManagerExtType;
 
@@ -906,7 +913,6 @@ private:
 	bool m_isVertexBufferObjectEnabled;		//< true if engine must used VBO, false otherwise
 	bool m_isDepthPrePassEnabled;			//< true if engine must do the depth pre-pass, false otherwise
 	bool m_isShadowEnabled;					//< true if engine must compute shadow, false otherwise
-
 	/**
 	 * @name Cache implementations specifics capabilities
 	 */

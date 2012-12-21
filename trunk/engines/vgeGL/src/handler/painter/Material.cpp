@@ -138,6 +138,7 @@ void Material::paint( vgeGL::engine::Engine * engine, vgd::node::Material * mate
 	{
 		vgAssertN( shininess >= 0.f,  "Negative shininess." );
 		vgAssertN( shininess <= 1.f, "Shininess superior to 1." );
+		shininess = vgm::clamp( shininess, 0.f, 1.f );
 
 		shininess *= 128.f;
 		glMaterialf( GL_FRONT_AND_BACK, GL_SHININESS, shininess );

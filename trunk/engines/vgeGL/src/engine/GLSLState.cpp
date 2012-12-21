@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,6 +16,17 @@ namespace vgeGL
 
 namespace engine
 {
+
+
+
+namespace
+{
+	static const std::string defaultVertexGLPositionComputation = "	gl_Position = gl_ModelViewProjectionMatrix * position;\n";
+	static const std::string defaultVertexECPositionComputation = "	ecPosition	= gl_ModelViewMatrix * position;\n";
+	static const std::string defaultVertexECNormalComputation	= "	ecNormal	= normalize( gl_NormalMatrix * normal );\n";
+
+	static const std::string defaultFragmentOutput				= "	gl_FragData[0] = color;\n";
+}
 
 
 
@@ -41,7 +52,11 @@ const std::string GLSLState::m_indexString[] =
 
 		"COLOR4_BIND_PER_VERTEX",
 
-		"IGNORE_POST_PROCESSING"
+		"IGNORE_POST_PROCESSING",
+
+		"BUMP_MAPPING",
+
+		"TESSELLATION"
 	};
 
 
@@ -83,9 +98,7 @@ GLSLState::GLSLState( const GLSLState& src )
 	m_shaderStage									(	src.m_shaderStage			),
 	m_option0										(	src.m_option0				),
 	m_lightModelShadow								(	src.m_lightModelShadow		),
-	m_samplingSize									(	src.m_samplingSize			),
-	m_shadowMapType									(	src.m_shadowMapType			),
-	m_illuminationInShadow							(	src.m_illuminationInShadow	)
+	m_shadowMapType									(	src.m_shadowMapType			)
 {}
 
 
@@ -182,6 +195,26 @@ const bool GLSLState::isPerVertexLightingEnabled() const
 void GLSLState::setPerPixelLightingEnabled( const bool enabled )
 {
 	setEnabled( PER_PIXEL_LIGHTING, enabled );
+}
+
+const bool GLSLState::isBumpMappingEnabled() const
+{
+	return isEnabled(BUMP_MAPPING);
+}
+
+void GLSLState::setBumpMappingEnabled( const bool value )
+{
+	setEnabled( BUMP_MAPPING, value );
+}
+
+const bool GLSLState::isTessellationEnabled() const
+{
+	return isEnabled(TESSELLATION);
+}
+
+void GLSLState::setTessellationEnabled( const bool enabled )
+{
+	setEnabled( TESSELLATION, enabled );
 }
 
 
@@ -286,19 +319,17 @@ void GLSLState::resetShaderStages()
 	m_shaderStage.resize( MAX_SHADERSTAGE );
 
 	//setShaderStage( VERTEX_GL_POSITION_COMPUTATION, defaultVertexGLPositionComputation );
-	const std::string defaultVertexGLPositionComputation(	"	gl_Position = gl_ModelViewProjectionMatrix * position;\n" );
 	m_shaderStage[VERTEX_GL_POSITION_COMPUTATION] = defaultVertexGLPositionComputation;
 
 	//setShaderStage( VERTEX_ECPOSITION_COMPUTATION, defaultVertexECPositionComputation );
-	const std::string defaultVertexECPositionComputation(	"	ecPosition	= gl_ModelViewMatrix * position;\n" );
 	m_shaderStage[VERTEX_ECPOSITION_COMPUTATION] = defaultVertexECPositionComputation;
 
+
 	//setShaderStage( VERTEX_ECNORMAL_COMPUTATION, defaultVertexECNormalComputation );
-	const std::string defaultVertexECNormalComputation(	"	ecNormal	= fnormal();\n" );
 	m_shaderStage[VERTEX_ECNORMAL_COMPUTATION] = defaultVertexECNormalComputation;
 
+
 	//setShaderStage( FRAGMENT_OUTPUT, defaultFragmentOutput );
-	const std::string defaultFragmentOutput(				"	gl_FragData[0] = color;\n"	);
 	m_shaderStage[FRAGMENT_OUTPUT] = defaultFragmentOutput;
 }
 
@@ -327,9 +358,7 @@ void GLSLState::copy( const GLSLState& src )
 	m_shaderStage				= src.m_shaderStage;
 	m_option0					= src.m_option0;
 	m_lightModelShadow			= src.m_lightModelShadow;
-	m_samplingSize				= src.m_samplingSize;
 	m_shadowMapType				= src.m_shadowMapType;
-	m_illuminationInShadow		= src.m_illuminationInShadow;
 }
 
 
@@ -356,9 +385,7 @@ void GLSLState::init()
 	//
 	m_option0					= vgd::node::LightModel::DEFAULT_OPTION0;
 	m_lightModelShadow			= vgd::node::LightModel::DEFAULT_SHADOW;
-	m_samplingSize				= 1.f;
 	m_shadowMapType				= vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE;
-	m_illuminationInShadow		= 0.4f;
 }
 
 

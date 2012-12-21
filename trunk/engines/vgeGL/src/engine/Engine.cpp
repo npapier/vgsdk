@@ -22,13 +22,11 @@
 //#include <vgio/FilenameCollector.hpp>
 
 
-
 namespace vgeGL
 {
 
 namespace engine
 {
-
 
 
 // CONSTRUCTORS
@@ -417,7 +415,6 @@ Engine::GLSLProgramManagerExtType&	Engine::getGLSLManagerExt()
 {
 	return m_glslManagerExt;
 }
-
 
 const bool Engine::isLightingEnabled() const
 {

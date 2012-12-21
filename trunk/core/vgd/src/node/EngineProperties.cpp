@@ -63,7 +63,10 @@ EngineProperties::EngineProperties( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FTessellationBiasType(getFTessellationBias()) );
 	addField( new FMaxAnisotropyType(getFMaxAnisotropy()) );
+	addField( new FTessellationFactorType(getFTessellationFactor()) );
+	addField( new FTessellationType(getFTessellation()) );
 
 	// Sets link(s)
 
@@ -75,6 +78,9 @@ EngineProperties::EngineProperties( const std::string nodeName ) :
 void EngineProperties::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
+	setTessellationBias( (0.55f) );
+	setTessellationFactor( (2.0f) );
+	setTessellation( (false) );
 }
 
 
@@ -83,6 +89,26 @@ void EngineProperties::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
 	setMaxAnisotropy( (1.f) );
+}
+
+
+
+// TessellationBias
+
+const EngineProperties::TessellationBiasValueType EngineProperties::DEFAULT_TESSELLATIONBIAS = (0.55f);
+
+
+
+const EngineProperties::TessellationBiasValueType EngineProperties::getTessellationBias() const
+{
+	return getFieldRO<FTessellationBiasType>(getFTessellationBias())->getValue();
+}
+
+
+
+void EngineProperties::setTessellationBias( const TessellationBiasValueType value )
+{
+	getFieldRW<FTessellationBiasType>(getFTessellationBias())->setValue( value );
 }
 
 
@@ -120,10 +146,71 @@ const bool EngineProperties::hasMaxAnisotropy() const
 
 
 
+// TessellationFactor
+
+const EngineProperties::TessellationFactorValueType EngineProperties::DEFAULT_TESSELLATIONFACTOR = (2.0f);
+
+
+
+const EngineProperties::TessellationFactorValueType EngineProperties::getTessellationFactor() const
+{
+	return getFieldRO<FTessellationFactorType>(getFTessellationFactor())->getValue();
+}
+
+
+
+void EngineProperties::setTessellationFactor( const TessellationFactorValueType value )
+{
+	getFieldRW<FTessellationFactorType>(getFTessellationFactor())->setValue( value );
+}
+
+
+
+// Tessellation
+
+const EngineProperties::TessellationValueType EngineProperties::DEFAULT_TESSELLATION = (false);
+
+
+
+const EngineProperties::TessellationValueType EngineProperties::getTessellation() const
+{
+	return getFieldRO<FTessellationType>(getFTessellation())->getValue();
+}
+
+
+
+void EngineProperties::setTessellation( const TessellationValueType value )
+{
+	getFieldRW<FTessellationType>(getFTessellation())->setValue( value );
+}
+
+
+
 // Field name accessor(s)
+const std::string EngineProperties::getFTessellationBias( void )
+{
+	return "f_tessellationBias";
+}
+
+
+
 const std::string EngineProperties::getFMaxAnisotropy( void )
 {
 	return "f_maxAnisotropy";
+}
+
+
+
+const std::string EngineProperties::getFTessellationFactor( void )
+{
+	return "f_tessellationFactor";
+}
+
+
+
+const std::string EngineProperties::getFTessellation( void )
+{
+	return "f_tessellation";
 }
 
 

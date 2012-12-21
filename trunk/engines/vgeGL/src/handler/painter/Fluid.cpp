@@ -124,8 +124,8 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 		glslState.setShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION, "" );
 
 		glslState.setShaderStage( GLSLState::VERTEX_ECNORMAL_COMPUTATION,
-		"	vec4 normal = texture( texMap2D[1], (gl_TextureMatrix[0] * mgl_MultiTexCoord0).xy );\n"
-		"	ecNormal = gl_NormalMatrix * normal.xyz;\n" );
+		"	vec3 normal = texture( texMap2D[1], (gl_TextureMatrix[0] * mgl_MultiTexCoord0).xy ).xyz;\n"
+		"	ecNormal = gl_NormalMatrix * normal;\n" );
 
 		glslState.setShaderStage( GLSLState::FRAGMENT_DECLARATIONS, "in float fluidHeight;\n" );
 

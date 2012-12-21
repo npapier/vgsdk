@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -37,40 +37,21 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code2.clear();
 
 	// DECLARATIONS
-	m_decl += GLSLHelpers::getVersionDecl();
-//				"#pragma optimize (on)\n"
-//				"#pragma debug (off)\n"	
-//				"#pragma optimize (off)\n"
-//				"#pragma debug (on)\n"
-				//"\n";
+	m_decl += GLSLHelpers::getVersionDecl( state );
+	m_decl += GLSLHelpers::getDefines( state );
 
 	// UNIFORMS
 	m_decl += GLSLHelpers::getVGSDKUniformDecl();
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
-	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "in" ); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
+
+	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "in", "In", false ); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
 	std::pair< std::string, std::string > code_samplers	= GLSLHelpers::generate_samplers( state );
 
 	m_decl += code_samplers.first;
 
 	// INPUTS
 	m_decl += "// INPUTS\n";
-	m_decl += code_ftexgen.first;
-	m_code1 += code_samplers.second;
-
-	// Test if custom program must be installed
-	if ( state.isEnabled( PROGRAM ) )
-	{
-		vgd::node::Program * program = state.getProgram();
-		vgAssert( program );
-
-		std::string shaderStr;
-		program->getShader( vgd::node::Program::FRAGMENT, shaderStr );
-
-		m_code1 = shaderStr;
-
-		return true;
-	}
 
 	if ( state.isPerPixelLightingEnabled() )
 	{
@@ -78,24 +59,31 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		{
 			m_decl += 
 			"flat in vec4 ecPosition;\n"
-			"flat in vec3 ecNormal;\n\n";
+			"flat in vec3 ecNormal;\n";
 		}
 		else
 		{
 			m_decl += 
 			"in vec4 ecPosition;\n"
-			"in vec3 ecNormal;\n\n";
-
-			/*if ( state.isEnabled( COLOR4_BIND_PER_VERTEX ) )
-			{
-				m_decl += "in vec4 mglColor;\n\n";
-			}*/
+			"in vec3 ecNormal;\n";
 		}
 
-		m_decl += "// LOCAL VARIABLES\n";
-		m_decl += GLSLHelpers::generate_lightAccumulators( state ) + '\n';
+		if ( state.isBumpMappingEnabled() )
+		{
+			m_decl += GLSLHelpers::generate_declarationsForBumpmapping( false );
+		}
+		else
+		{
+			m_decl += "\n";
+		}
 	}
-	// else nothing
+
+	m_decl += code_ftexgen.first;
+	m_decl +=
+		"// for compatibility\n"
+		"#define mgl_TexCoord In.mgl_TexCoord\n"
+		"\n";
+	m_code1 += code_samplers.second;
 
 	// OUTPUT
 	m_decl += "// OUTPUTS\n";
@@ -107,22 +95,61 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	const std::string& fragmentOutputDeclarationStage = state.getShaderStage( GLSLState::FRAGMENT_OUTPUT_DECLARATION );
 	if ( !fragmentOutputDeclarationStage.empty() )	m_decl += fragmentOutputDeclarationStage;
 
+	// LOCAL VARIABLES
+	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() )
+	{
+		m_decl +=
+			"\n"
+			"// LOCAL VARIABLES\n";
+		m_decl += GLSLHelpers::generate_lightAccumulators( state );
+	}
+
 	// FUNCTIONS
+	m_code1 +=
+		"\n"
+		"// FUNCTIONS\n";
+	m_code1 += GLSLHelpers::generateFunction_eyeVectorRelated( state );
+
 	if ( state.isLightingEnabled() && state.isPerPixelLightingEnabled() )
 	{
 		m_code1 += GLSLHelpers::generateFunctions_lights( state ) + '\n';
 		m_code1 += GLSLHelpers::generateFunction_flight( state ) + '\n';
 	}
 
+	// Test if custom program must be installed
+	if ( state.isEnabled( PROGRAM ) )
+	{
+		vgd::node::Program * program = state.getProgram();
+		vgAssert( program != 0 );
+
+		if ( program->getFragmentUse() )
+		{
+			m_code1 = program->getFragment();
+			//m_decl.clear();
+			//m_code2.clear();
+			return true;
+		}
+	}
+
+
 	// MAIN
-	m_code2 += 
+	m_code2 +=
+	"// MAIN function\n"
 	"void main( void )\n"
 	"{\n"
 	"	vec4 color;\n";
 
 	// texture lookup
 	std::string textureLookup;
-	if ( has_ftexgen ) textureLookup += GLSLHelpers::generate_fragmentShader_texLookups( state );
+
+	if ( state.isTessellationEnabled() )
+	{
+
+	}
+	else
+	{
+		if ( has_ftexgen ) textureLookup += GLSLHelpers::generate_fragmentShader_texLookups( state );
+	}
 
 	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{
@@ -139,11 +166,18 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		assert( state.isPerPixelLightingEnabled() );
 
 		// Calls flight()
-		m_code2 +=
-		"\n"
-		"	vec3 normal = normalize(ecNormal);\n"
-		"	flight( ecPosition, normal );\n"
-		"\n";
+		if ( state.isBumpMappingEnabled() == true && state.isPerPixelLightingEnabled())
+		{
+			m_code2 += "	// Lookup normal from normal map, move from [0,1] to [-1, 1] range and normalize.\n";
+			m_code2 += "	vec3 tsNormal = 2.0 * texture(texMap2D[1], mgl_TexCoord[0].st).xyz - 1.0;\n"; // @todo texMap2D[1] for normalMap not generic
+			m_code2 += "	tsNormal = normalize(tsNormal);\n\n";
+			m_code2 +=  "	flight( ecPosition, tsNormal );\n\n";
+		}
+		else
+		{
+			m_code2 += "	vec3 normal = normalize(ecNormal);\n";
+			m_code2 +=  "	flight( ecPosition, normal );\n\n";
+		}
 
 		if ( state.isTwoSidedLightingEnabled() )
 		{
@@ -164,8 +198,8 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		else
 		{
 			m_code2 +=
-			"	color = accumColor;\n" +
-				textureLookup +
+			"	color = accumColor;\n"
+			"	" + textureLookup +
 			"	color = vec4( (color + accumSecondaryColor).rgb, gl_FrontMaterial.diffuse.a );\n"; // @todo FIXME gl_FrontMaterial.diffuse.a <=> gl_Color.a ? 
 		}
 	}
@@ -205,6 +239,9 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	m_code2 += "}\n";
 
+
+
+
 	return true;
 }
 
@@ -213,4 +250,3 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 } // namespace engine
 
 } // namespace vgeGL
-

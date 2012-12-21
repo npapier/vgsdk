@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -31,6 +31,7 @@ struct VGEGL_API VertexShape : public vge::rc::IResource, public glo::IResource
 {
 	glo::ArrayBuffer					vertex;
 	glo::ArrayBuffer					normal;
+	glo::ArrayBuffer					tangent;
 	std::vector< glo::ArrayBuffer >		texCoord;
 	glo::ElementArrayBuffer				vertexIndex;
 

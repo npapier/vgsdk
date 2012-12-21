@@ -21,6 +21,8 @@ namespace vgeGL { namespace engine
 	struct GeometryShaderGenerator;
 	struct ShaderGenerator;
 	struct VertexShaderGenerator;
+	struct TessellationControlShaderGenerator;
+	struct TessellationEvaluationShaderGenerator;
 } }
 
 
@@ -60,6 +62,11 @@ struct VGEGL_API ProgramGenerator : public vgd::field::DirtyFlag
 	vgd::Shp< GeometryShaderGenerator >			getGeometryShaderGenerator();
 	const vgd::Shp< GeometryShaderGenerator >	getGeometryShaderGenerator() const;
 
+	vgd::Shp< TessellationControlShaderGenerator >	getTessellationControlShaderGenerator();
+	const vgd::Shp< TessellationControlShaderGenerator >	getTessellationControlShaderGenerator() const;
+
+	vgd::Shp< TessellationEvaluationShaderGenerator >	getTessellationEvaluationShaderGenerator();
+	const vgd::Shp< TessellationEvaluationShaderGenerator >	getTessellationEvaluationShaderGenerator() const;
 
 private:
 	typedef std::vector< vgd::Shp<ShaderGenerator> > GeneratorContainer;
@@ -68,6 +75,8 @@ private:
 	vgd::Shp< VertexShaderGenerator		>	m_vertex;
 	vgd::Shp< FragmentShaderGenerator	>	m_fragment;
 	vgd::Shp< GeometryShaderGenerator	>	m_geometry;
+	vgd::Shp< TessellationControlShaderGenerator > m_tessControl;
+	vgd::Shp< TessellationEvaluationShaderGenerator > m_tessEval;
 };
 
 
