@@ -65,6 +65,10 @@ struct VGEGL_API DrawStyle : public vge::handler::painter::SingleAttribute
 
 	static void paintVertexShapeNormals(vgeGL::engine::Engine *, vgd::node::VertexShape *,
 										vgeGL::handler::painter::VertexShape * );
+
+	static void paintVertexShapeTangents(vgeGL::engine::Engine *, vgd::node::VertexShape *,
+										 vgeGL::handler::painter::VertexShape * );
+
 	//@}
 };
 

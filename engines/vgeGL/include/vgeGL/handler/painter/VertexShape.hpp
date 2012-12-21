@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 #define _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_HPP
 
 #include <vge/handler/painter/Shape.hpp>
+#include <vgd/node/VertexShape.hpp>
 
 #include "vgeGL/engine/Settings.hpp"
 #include "vgeGL/vgeGL.hpp"
@@ -61,48 +62,7 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 
 
 
-	void paintMethodChooser( vgeGL::engine::Engine*, vgd::node::VertexShape* );
-
-
-
-//	// IMMEDIATE MODE
-//	/**
-//	 * @brief Render all primitives in immediate mode.
-//	 */
-//	void	paint( vgeGL::engine::Engine*, vgd::node::VertexShape* );
-//	
-//	/**
-//	 * @brief Render one primitive in immediate mode.
-//	 */
-//	void	paint( vgeGL::engine::Engine*, vgd::node::VertexShape*, const vgd::node::Primitive& );
-
-
-
-//	// DISPLAY LIST
-//	/**
-//	 * @brief Render all primitives in display lists (immediate mode encapsulate in a display list).
-//	 */
-//	void	paintDisplayList( vgeGL::engine::Engine*, vgd::node::VertexShape* );
-
-
-
-	// VERTEX ARRAY
-	/**
-	 * @brief Render all primitives with vertex array.
-	 */
-	void	paint(	vgeGL::engine::Engine*, vgd::node::VertexShape*, 
-					const vgeGL::engine::VertexArrayMethod& );
-
-	void	paint(	vgeGL::engine::Engine*, vgd::node::VertexShape*, const vgd::node::Primitive&, 
-					const vgeGL::engine::VertexArrayMethod& );
-
-	void updateTexCoord(	vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim,
-							vgeGL::rc::VertexShape * rc );
-	void configureTexCoord(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim,
-							vgeGL::rc::VertexShape * rc, const bool isVertexBufferObjectEnabled );
-
-
-	// VERTEX ARRAY IN DISPLAY LIST
+	void paint(	vgeGL::engine::Engine*, vgd::node::VertexShape* );
 
 
 	//
@@ -111,35 +71,11 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 
 	void configureRenderingArrays(		vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape,
 										vgeGL::rc::VertexShape * rc );
+
 	void unconfigureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
 										vgeGL::rc::VertexShape * rc );
-	void renderArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
-						vgeGL::rc::VertexShape * rc );
-//	// VERTEX ARRAY IN VBO
-//	/**
-//	 * @brief Render all primitives with vertex array.
-//	 * 
-//	 * @param pVBO		zero to use plain VertexArray,
-//	 * 					not zero to use VertexBufferObject.
-//	 * 
-//	 * @remarks If VertexBufferObject is empty (pVBO->isEmpty()), than paintVertexArray() generate and initialize VBO,
-//	 * otherwise paintVertexArray() use only VBO contains by VertexBufferObject.
-//	 */
-//	void	paintVBOVertexArray(	vgeGL::engine::Engine*, vgd::node::VertexShape*, 
-//									vgeGL::rc::VertexBufferObject* pVBO = 0);
-//
-//	/**
-//	 * @brief Render one primitive with vertex array.
-//	 */
-//	void	paintVBOVertexArray(	vgeGL::engine::Engine *pEngine, vgd::node::VertexShape *pVertexShape,
-//									const vgd::node::Primitive& primitive, vgeGL::rc::VertexBufferObject* pVBO = 0 );
-//
-//	/**
-//	 * @brief Render all primitives with VBO (Vertex Buffer Object).
-//	 */
-//	void	paintVBO( vgeGL::engine::Engine*, vgd::node::VertexShape* );
 
-
+	void renderArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, vgeGL::rc::VertexShape * rc );
 
 	/**
 	 * @name Rendering some basic objects.
@@ -150,7 +86,8 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	void 	drawXfBoundingBox	( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
 
 	void	drawBox3f	( const vgm::Box3f& box );
-	void	drawNormals	( vgd::node::VertexShape *pCastedNode, const float normalLength );
+	void	drawAbstractNormals(	vgd::node::VertexShape *vertexShape,
+									vgd::field::EditorRO< vgd::field::MFVec3f >& normal, const float normalLength );
 
 	/**
 	 * @brief Draw 3 points (one Red, one Green and one Blue) for the first triangle of each primitive in the same order

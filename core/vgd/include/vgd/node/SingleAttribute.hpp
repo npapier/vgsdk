@@ -9,7 +9,6 @@
 #include "vgd/node/Attribute.hpp"
 
 
-
 namespace vgd
 {
 

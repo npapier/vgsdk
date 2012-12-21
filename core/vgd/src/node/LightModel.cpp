@@ -71,6 +71,7 @@ LightModel::LightModel( const std::string nodeName ) :
 	addField( new FSamplingSizeType(getFSamplingSize()) );
 	addField( new FOption2Type(getFOption2()) );
 	addField( new FAmbientType(getFAmbient()) );
+	addField( new FBumpMappingType(getFBumpMapping()) );
 	addField( new FViewerType(getFViewer()) );
 	addField( new FIgnorePostProcessingType(getFIgnorePostProcessing()) );
 	addField( new FModelType(getFModel()) );
@@ -93,6 +94,7 @@ void LightModel::setToDefaults( void )
 	setIlluminationInShadow( (0.4f) );
 	setSamplingSize( (1.0) );
 	setOption2( (false) );
+	setBumpMapping( (false) );
 	setIgnorePostProcessing( (false) );
 	setShadowPolygonOffset( vgm::Vec2f(4.f, 16.f) );
 	setOption0( (CHOICE0) );
@@ -315,6 +317,26 @@ const bool LightModel::hasAmbient() const
 
 
 
+// BumpMapping
+
+const LightModel::BumpMappingValueType LightModel::DEFAULT_BUMPMAPPING = (false);
+
+
+
+const LightModel::BumpMappingValueType LightModel::getBumpMapping() const
+{
+	return getFieldRO<FBumpMappingType>(getFBumpMapping())->getValue();
+}
+
+
+
+void LightModel::setBumpMapping( const BumpMappingValueType value )
+{
+	getFieldRW<FBumpMappingType>(getFBumpMapping())->setValue( value );
+}
+
+
+
 // Viewer
 
 const bool LightModel::getViewer( ViewerValueType& value ) const
@@ -531,6 +553,13 @@ const std::string LightModel::getFOption2( void )
 const std::string LightModel::getFAmbient( void )
 {
 	return "f_ambient";
+}
+
+
+
+const std::string LightModel::getFBumpMapping( void )
+{
+	return "f_bumpMapping";
 }
 
 

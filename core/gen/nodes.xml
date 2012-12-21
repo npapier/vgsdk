@@ -290,7 +290,7 @@
 	<node name = "EngineProperties" inherits = "SingleAttribute" >
 		<doxygen>
 			<docBrief>Definition of several properties of vgsdk engine</docBrief>
-			<doc>This node defines the default anisotropy used during texture filtering.</doc>
+			<doc>This node defines the default anisotropy used during texture filtering, global tessellation properties.</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
 		</doxygen>
@@ -298,7 +298,21 @@
 		<of name = "maxAnisotropy" doc="Specifies the engine default maximum degree of anisotropy (see vgd::node::Texture).">
 			<type name="float" default="1.f"/>
 		</of>
-	 	<!-- setDrawingSurfaceSize, getViewport -->
+
+
+		<sf name="tessellation" doc="Specifies if the tessellation is enabled or disabled.">
+			<type name="bool" default="false"/>
+		</sf>
+
+		<sf name="tessellationFactor" doc="Specifies the tessellation level used by the tessellation control shaders to tessellate the incoming primitive (only used if tessellation is enabled).">
+			<type name="float" default="2.0f"></type>
+		</sf>
+
+		<sf name="tessellationBias" doc="Specifies the tessellation bias used by the Phong Tessellation algorithm (only used if tessellation is enabled).">
+			<type name="float" default="0.55f"></type>
+		</sf>
+
+
 	</node>
 
 
@@ -620,6 +634,12 @@
 				</enum>
 			</type>
 		</of>
+
+
+		<sf name="bumpMapping" doc="Specifies if the bumpmapping computation is enabled or disabled. This is a technique in computer graphics for simulating bumps and wrinkles on the surface of an object.">
+			<type name="bool" default="false"/>
+		</sf>
+
 
 		<sf name="option0" doc="">
 			<type name="enum">
@@ -1091,6 +1111,61 @@
 	</node>
 
 
+	<node name = "Program" inherits = "SingleAttribute">
+		<doxygen>
+				<docBrief>OpenGL Shading Language program definition node</docBrief>
+				<doc>The Program node specifies the current shaders used during the rendering.</doc>
+				<doc>The developer can write vertex, tessellation control, tessellation evaluation, geometry and/or fragment shaders in a high level language as defined</doc>
+				<doc>in the OpenGL Shading Language specification.</doc>
+				<doc>This node is only interpret during the rendering pass.</doc>
+				<doc>todo shaders documentation</doc>
+				<doc>todo shader could be string or file => begining of string for file "file:", and nothing special for string</doc>
+				<doc>uniform parameters ? and others ?</doc>
+				<ingroup>g_nodes</ingroup>
+				<ingroup>g_coloringAndLightingNodes</ingroup>
+				<ingroup>g_singleAttributeNodes</ingroup>
+			</doxygen>	
+
+			<sf name="vertex" doc="A vertex shader replaces the transformation, texture coordinate generation and lighting parts of OpenGL, and it also adds texture access at the vertex level.">
+				<type name="string" namespace="std" default = ""></type>
+			</sf>
+			
+			<sf name="vertexUse" doc="Specifies if vertex shader is enabled or disabled.">
+				<type name = "bool" default = "true"></type>
+			</sf>
+
+			<sf name="tessellationControl" doc="A tessellation control shader transforms the input coordinates to a regular surface representation. 
+			It also computes the required tessellation level based on distance to the eye, screen space spanning, hull curvature, or displacement roughness.  
+			There is one invocation per output vertex.">
+				<type name="string" namespace="std" default=""></type>
+			</sf>
+
+			<sf name="tessellationEvaluation" doc="A tessellation evaluation shader evaluates the surface in uvw coordinates.  
+			It interpolates attributes and applies displacements.  There is one invocation per generated vertex">
+				<type name="string" namespace="std" default=""></type>
+			</sf>
+
+			<sf name="tessellationUse" doc="Specifies if tessellationControl AND tessellationEvaluation are enabled or disabled.">
+				<type name = "bool" default = "false"></type>
+			</sf>
+
+			<sf name="geometry" doc="A geometry shader can generate new graphics primitives, such as points, lines, and triangles, from those primitives that were sent to the beginning of the graphics pipeline.">
+				<type name="string" namespace="std" default=""></type>
+			</sf>
+
+			<sf name="geometryUse" doc="Specifies if geometry shader is enabled or disabled.">
+				<type name = "bool" default = "false"></type>
+			</sf>			
+
+			<sf name="fragment" doc="A fragment shader replaces the OpenGL fixed-function texturing, color sum and fog stages.">
+				<type name="string" namespace="std" default = ""></type>
+			</sf>
+
+			<sf name="fragmentUse" doc="Specifies if fragment shader is enabled or disabled.">
+				<type name = "bool" default = "true"></type>
+			</sf>
+	</node>
+   
 	<node name = "SpotLight" inherits = "PointLight" >
 		<doxygen>
 			<docBrief>Node representing a spotlight source.</docBrief>

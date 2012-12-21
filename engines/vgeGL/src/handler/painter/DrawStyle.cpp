@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2009, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,6 +7,7 @@
 
 #include <vgd/field/DirtyFlag.hpp>
 #include <vgd/node/DrawStyle.hpp>
+#include <vgd/node/VertexShape.hpp>
 #include <vge/service/Painter.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
@@ -43,10 +44,10 @@ const vge::handler::Handler::TargetVector DrawStyle::getTargets() const
 
 void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
+	vgAssert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
-	assert( dynamic_cast< vgd::node::DrawStyle* >(node) != 0 );
+	vgAssert( dynamic_cast< vgd::node::DrawStyle* >(node) != 0 );
 	vgd::node::DrawStyle *drawStyle = static_cast< vgd::node::DrawStyle* >(node);
 
 	// *** DRAWSTYLE.shape ***
@@ -73,30 +74,35 @@ void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 			{
 				case DrawStyle::NO_SHAPE:
 				case DrawStyle::POINT:
-				case DrawStyle::FLAT:
+				case DrawStyle::SMOOTH:
 				case DrawStyle::WIREFRAME:
 				case DrawStyle::HIDDEN_LINE:
-				case DrawStyle::FLAT_HIDDEN_LINE:
-					// Updates GLSL state
-					state.setEnabled( vgeGL::engine::FLAT_SHADING );
-					break;
-
-				case DrawStyle::SMOOTH:
 				case DrawStyle::SMOOTH_HIDDEN_LINE:
 				case DrawStyle::NEIGHBOUR:
 					// Updates GLSL state
-					state.setEnabled( vgeGL::engine::FLAT_SHADING, false );
+					if ( state.isEnabled(vgeGL::engine::FLAT_SHADING) )
+					{
+						state.setEnabled(vgeGL::engine::FLAT_SHADING, false);
+					}
+					break;
+
+				case DrawStyle::FLAT:
+				case DrawStyle::FLAT_HIDDEN_LINE:
+					// Updates GLSL state
+					if ( !state.isEnabled(vgeGL::engine::FLAT_SHADING) )
+					{
+						state.setEnabled(vgeGL::engine::FLAT_SHADING);
+					}
 					break;
 
 				default:
-					assert( false && "Unknown DrawStyle.shape value." );
+					vgAssertN( false, "Unknown DrawStyle.shape value." );
 			}
 		}
 	}
 
 	// DRAWSTYLE.normalLength
 	vgd::node::DrawStyle::NormalLengthValueType	normalLengthValue;
-
 	isDefined = drawStyle->getNormalLength( normalLengthValue );
 
 	if ( isDefined )
@@ -105,9 +111,18 @@ void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 		glEngine->getGLState().setNormalLength( normalLengthValue );
 	}
 
+	// DRAWSTYLE.tangentLength
+	vgd::node::DrawStyle::TangentLengthValueType	tangentLengthValue;
+	isDefined = drawStyle->getTangentLength( tangentLengthValue );
+
+	if ( isDefined )
+	{
+		// Updates GLState
+		glEngine->getGLState().setTangentLength( tangentLengthValue );
+	}
+
 	// DRAWSTYLE.showOrientation
 	vgd::node::DrawStyle::ShowOrientationValueType showOrientationValue;
-
 	isDefined = drawStyle->getShowOrientation( showOrientationValue );
 
 	if ( isDefined )
@@ -118,7 +133,6 @@ void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 	// DRAWSTYLE.boundingBox
 	vgd::node::DrawStyle::BoundingBoxValueType boundingBoxValue;
-
 	isDefined = drawStyle->getBoundingBox( boundingBoxValue );
 
 	if ( isDefined )
@@ -167,7 +181,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glPointSize( 4.0 );
 			glPolygonMode( GL_FRONT_AND_BACK, GL_POINT );
 
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 
 			///@todo FIXME OPTME
 			glPopAttrib();
@@ -180,7 +194,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			glShadeModel(GL_FLAT);
 
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 			
 			///@todo FIXME OPTME
 			glPopAttrib();
@@ -194,7 +208,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 		
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 			
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 			
 			///@todo FIXME OPTME
 			glPopAttrib();
@@ -207,7 +221,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 	
 			//
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 
 			//
 			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -222,7 +236,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
 
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 
 			glDisable(GL_POLYGON_OFFSET_FILL);
 			
@@ -247,7 +261,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
 			
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 			
 			glPopAttrib();
 			
@@ -257,7 +271,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glEnable( GL_POLYGON_OFFSET_FILL );
 			glPolygonOffset( 1.0, 1.0 );
 
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 			
 			glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -282,7 +296,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR,	vMat );
 			glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS,	vMat );
 			
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 			
 			glPopAttrib();
 			
@@ -292,7 +306,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			glEnable( GL_POLYGON_OFFSET_FILL );
 			glPolygonOffset( 1.0, 1.0 );
 
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 			
 			glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -341,7 +355,7 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 			//}
 #endif
 
-			pVertexShapeHandler->paintMethodChooser( glEngine, pVertexShape );
+			pVertexShapeHandler->paint( glEngine, pVertexShape );
 
 			//
 			//if ( bRestoreShadeModel )
@@ -379,11 +393,33 @@ void DrawStyle::paintVertexShapeNormals(	vgeGL::engine::Engine *glEngine, vgd::n
 
 		glDisable( GL_LIGHTING );
 		glColor3f( 1.f, 1.f, 1.f );
-		// END FIXME
 
-		pVertexShapeHandler->drawNormals( pVertexShape, value );
-		
+		vgd::field::EditorRO< vgd::field::MFVec3f > normal = pVertexShape->getFNormalRO();
+		pVertexShapeHandler->drawAbstractNormals( pVertexShape, normal, value );
+
+		glPopAttrib();
+	}
+}
+
+
+
+void DrawStyle::paintVertexShapeTangents(	vgeGL::engine::Engine *glEngine, vgd::node::VertexShape *pVertexShape,
+											vgeGL::handler::painter::VertexShape *pVertexShapeHandler )
+{
+	// *** DRAWSTYLE.tangentLength ***
+	vgd::node::DrawStyle::TangentLengthValueType value = glEngine->getGLState().getTangentLength();
+
+	if ( value != 0.f )
+	{
 		///@todo FIXME OPTME
+		glPushAttrib( GL_ALL_ATTRIB_BITS );
+
+		glDisable( GL_LIGHTING );
+		glColor3f( 0.f, 1.f, 0.f );
+
+		vgd::field::EditorRO< vgd::field::MFVec3f > tangent = pVertexShape->getFTangentRO();
+		pVertexShapeHandler->drawAbstractNormals( pVertexShape, tangent, value );
+
 		glPopAttrib();
 	}
 }

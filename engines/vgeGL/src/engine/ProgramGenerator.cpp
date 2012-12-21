@@ -8,7 +8,8 @@
 #include "vgeGL/engine/FragmentShaderGenerator.hpp"
 #include "vgeGL/engine/GeometryShaderGenerator.hpp"
 #include "vgeGL/engine/VertexShaderGenerator.hpp"
-
+#include "vgeGL/engine/TessellationControlShaderGenerator.hpp"
+#include "vgeGL/engine/TessellationEvaluationShaderGenerator.hpp"
 
 
 namespace vgeGL
@@ -22,13 +23,17 @@ namespace engine
 ProgramGenerator::ProgramGenerator()
 :	DirtyFlag( "ProgramGenerator" ),
 	m_vertex(	vgd::makeShp(new VertexShaderGenerator()) ),
-	m_fragment(	vgd::makeShp(new FragmentShaderGenerator()) ),
-	m_geometry(	vgd::makeShp(new GeometryShaderGenerator()) )
+	m_tessControl( vgd::makeShp(new TessellationControlShaderGenerator()) ),
+	m_geometry(	vgd::makeShp(new GeometryShaderGenerator()) ), 
+	m_tessEval( vgd::makeShp(new TessellationEvaluationShaderGenerator()) ),
+	m_fragment(	vgd::makeShp(new FragmentShaderGenerator()) )
 {
-	m_generators.reserve(3);
+	m_generators.reserve(5);
 	m_generators.push_back( m_vertex );
-	m_generators.push_back( m_fragment );
+	m_generators.push_back( m_tessControl );
 	m_generators.push_back( m_geometry );
+	m_generators.push_back( m_tessEval );
+	m_generators.push_back( m_fragment );
 }
 
 
@@ -121,6 +126,29 @@ const vgd::Shp< GeometryShaderGenerator > ProgramGenerator::getGeometryShaderGen
 	return m_geometry;
 }
 
+
+vgd::Shp< TessellationControlShaderGenerator >	 ProgramGenerator::getTessellationControlShaderGenerator()
+{
+	return m_tessControl;
+}
+
+
+const vgd::Shp< TessellationControlShaderGenerator >	 ProgramGenerator::getTessellationControlShaderGenerator() const
+{
+	return m_tessControl;
+}
+
+
+vgd::Shp< TessellationEvaluationShaderGenerator >	 ProgramGenerator::getTessellationEvaluationShaderGenerator()
+{
+	return m_tessEval;
+}
+
+
+const vgd::Shp< TessellationEvaluationShaderGenerator >	 ProgramGenerator::getTessellationEvaluationShaderGenerator() const
+{
+	return m_tessEval;
+}
 
 
 } // namespace engine

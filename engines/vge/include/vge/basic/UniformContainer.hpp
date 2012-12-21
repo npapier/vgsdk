@@ -130,21 +130,25 @@ struct VGE_API UniformContainer
 	 * @pre isUniform(name)
 	 */	
 	template< typename T >
-	void setUniform( const std::string& name, const T& value )
+	const T setUniform( const std::string& name, const T& value )
 	{
 		vgAssertN( isUniform(name), "Uniform named '%s' not found", name.c_str() );
 
-		ContainerType::const_iterator iUniform = m_container.find( name );
+		ContainerType::iterator iUniform = m_container.find( name );
 		if ( iUniform != m_container.end() )
 		{
+			const T retVal = boost::get< const T >(iUniform->second);
 			// Found
 			iUniform->second = value;
+			return retVal;
 		}
 		else
 		{
 			// Not found
 			vgAssertN( false, "Uniform not found" );
 		}
+
+		return T();
 	}
 
 

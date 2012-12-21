@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, 2011, 2012 Nicolas Papier, Alexandre Di Pino.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, 2011, 2012, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -29,6 +29,8 @@
 #include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/engine/FragmentShaderGenerator.hpp"
 #include "vgeGL/engine/GeometryShaderGenerator.hpp"
+#include "vgeGL/engine/TessellationControlShaderGenerator.hpp"
+#include "vgeGL/engine/TessellationEvaluationShaderGenerator.hpp"
 #include "vgeGL/engine/ProgramGenerator.hpp"
 #include "vgeGL/engine/VertexShaderGenerator.hpp"
 
@@ -44,9 +46,12 @@
 /*
 supported field (VBO):
 TEXCOORD
+TANGENT
 NORMAL
 VERTEX
 VERTEX INDEX
+PRIMITIVE
+
 */
 
 namespace
@@ -78,7 +83,7 @@ const GLenum convertDeformableHint2GLUsage( vgd::node::VertexShape * node )
 
 
 
-void updateVAO( glo::VertexArrayObject& rc )
+void bindVAO( glo::VertexArrayObject& rc )
 {
 	const bool isEmpty = rc.isEmpty();
 
@@ -89,6 +94,7 @@ void updateVAO( glo::VertexArrayObject& rc )
 
 
 
+// Update data
 template< typename GLOArrayBufferType >
 void updateArrayBuffer( GLOArrayBufferType& buffer, GLsizeiptr size, const GLvoid * ptr, const GLenum bufferUsage )
 {
@@ -120,6 +126,111 @@ void updateTexCoordArrayBuffer( vgd::node::VertexShape * vertexShape, const uint
 
 	EditorRO< ValueContainerType > texCoord = vertexShape->getFTexCoordRO< ValueContainerType >( unit );
 	updateArrayBuffer( rc->texCoord[unit], texCoord->size()*sizeof(ValueType), texCoord->ptr(), bufferUsage );
+}
+
+
+
+void updateTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc )
+{
+	if (	texCoordDim > 0 /*&&
+			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX*/ )
+	{
+		// Resize texCoord ArrayBuffer vector if needed
+		if ( unit >= rc->texCoord.size() )
+		{
+			rc->texCoord.resize( unit + 1 );
+		}
+
+		if ( texCoordDim == 2 )
+		{
+			updateTexCoordArrayBuffer< vgm::Vec2f >( vertexShape, unit, rc, GL_STATIC_DRAW );
+		}
+		else if ( texCoordDim == 1 )
+		{
+			updateTexCoordArrayBuffer< float >( vertexShape, unit, rc, GL_STATIC_DRAW );
+		}
+		else if ( texCoordDim == 3 )
+		{
+			updateTexCoordArrayBuffer< vgm::Vec3f >( vertexShape, unit, rc, GL_STATIC_DRAW );
+		}
+		else if ( texCoordDim == 4 )
+		{
+			updateTexCoordArrayBuffer< vgm::Vec4f >( vertexShape, unit, rc, GL_STATIC_DRAW );
+		}
+		else
+		{
+			// NOT SUPPORTED
+			vgAssertN( false, "VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
+		}
+	}
+	// else nothing to do
+}
+
+
+// Configure arrays
+void configureTexCoord(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape * vertexShape,
+						const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc, const bool isVertexBufferObjectEnabled )
+{
+	if (	texCoordDim > 0 &&
+			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
+	{
+		// Compute informations
+		if ( !pGLEngine->isGLSLEnabled() ) glClientActiveTexture( GL_TEXTURE0_ARB + unit );
+		const GLvoid *pArray = 0;
+
+		if ( isVertexBufferObjectEnabled )
+		{
+			rc->texCoord[unit].bind();
+		}
+		else
+		{
+			if ( texCoordDim == 2 )
+			{
+				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec2f >( unit )->ptr() );
+			}
+			else if ( texCoordDim == 1 )
+			{
+				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFFloat >( unit )->ptr() );
+			}
+			else if ( texCoordDim == 3 )
+			{
+				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec3f >( unit )->ptr() );
+			}
+			else if ( texCoordDim == 4 )
+			{
+				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec4f >( unit )->ptr() );
+			}
+			else
+			{
+				// NOT SUPPORTED
+				vgAssertN( false, "VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
+			}
+		}
+
+		// Configure vertex attrib array
+		if ( pGLEngine->isGLSLEnabled() )
+		{
+			glEnableVertexAttribArray( vgeGL::engine::TEXCOORD_INDEX + unit );
+			glVertexAttribPointer( vgeGL::engine::TEXCOORD_INDEX + unit, texCoordDim, GL_FLOAT, GL_FALSE, 0, pArray );
+		}
+		else
+		{
+			glTexCoordPointer( texCoordDim, GL_FLOAT, 0, pArray );
+			glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+		}
+	}
+	else // texCoordDim > 0 && vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
+	{
+		if ( pGLEngine->isGLSLEnabled() )
+		{
+			glDisableVertexAttribArray( vgeGL::engine::TEXCOORD_INDEX + unit );
+		}
+		else
+		{
+			glClientActiveTexture( GL_TEXTURE0_ARB + unit );
+			glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+		}
+	}
 }
 
 
@@ -177,13 +288,65 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	// GLSL STATE UPDATE
 	using vgeGL::engine::GLSLState;
 	GLSLState& glslState = pGLEngine->getGLSLState();
-	
+
+	// TESSELLATION
+	const bool tessellationSaved = glslState.isTessellationEnabled();
+
+	//	Disable tessellation if at least one primitive is not a TRIANGLES
+	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives( pVertexShape->getFPrimitiveRO() );
+	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
+													ie	= primitives->end();
+			i != ie;
+			++i)
+	{
+		const vgd::node::Primitive& primitive(*i);
+
+		if (primitive.getType() != vgd::node::Primitive::TRIANGLES)
+		{
+			glslState.setTessellationEnabled(false);
+			break;
+		}
+	}
+
+	//	Test if global tessellation level and/or bias have to be overridden by vertex shape value(s)
+	float tessLevelSaved	= 0.f;
+	float tessBiasSaved		= 0.f;
+
+	bool localVersionOfUniformState = false;
+
+	if ( glslState.isTessellationEnabled() )
+	{
+		const float vsTessLevel	= pVertexShape->getTessellationLevelRO()->getValue();
+		if ( vgm::notEquals(vsTessLevel, 0.f) )
+		{
+			tessLevelSaved = pGLEngine->getUniformState().setUniform( "tessValue", vsTessLevel );
+			localVersionOfUniformState = true;
+		}
+
+		const float vsTessBias	= pVertexShape->getTessellationBiasRO()->getValue();
+		if ( vgm::notEquals(vsTessBias, 0.f) )
+		{
+			tessBiasSaved = pGLEngine->getUniformState().setUniform( "tessBias", vsTessBias);
+			localVersionOfUniformState = true;
+		}
+	}
+
+	// BUMPMAPPING
+	const bool bumpSaved = glslState.isBumpMappingEnabled();
+
+	//	Test if bumpmapping have to be disabled
+	if ( glslState.textures.getNum() < 2 )
+	{
+		glslState.setBumpMappingEnabled(false);
+	}
+
+
 	// Updates GLSL state with vertex shape info
-// @todo uncomment GLSLState::COLOR4_BIND_PER_VERTEX
-	// glslState.setEnabled( GLSLState::COLOR4_BIND_PER_VERTEX, pVertexShape->getColor4Binding() == vgd::node::BIND_PER_VERTEX );
 
 	// setTexCoordDim for texUnitState of glslState => MUST BE DONE for pg->generate() using generateFunction_ftexgen(), generate_samplers() and generate_texLookups()
 	// pGLEngine->getGLSLStateStack().push();
+
+
 	if ( pGLEngine->isTextureMappingEnabled() )
 	{
 		//
@@ -199,18 +362,18 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				)
 			{
 				const int32 dimTexCoord = pVertexShape->getTexCoordDim( i );
-				if (							(texUnitState->getTexCoordDim() != dimTexCoord)	)
+				if ( texUnitState->getTexCoordDim() != dimTexCoord )
 				{
 					// @toto glslState.setTexCoordDim( 0/*Unit*/, 2 /* Dim */ ); that invalidate DF
 					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
 					glslState.textures.dirty();
 				}
 			}
-			// else no state for the texture unit, so nothing to do
+			// else no state for the texture unit or texCoordDim from texGen node, so nothing to do
 #ifdef _DEBUG
 			else
 			{
-				if ( pVertexShape->getTexCoordDim( i ) > 0 )
+				if ( !texUnitState && pVertexShape->getTexCoordDim( i ) > 0 )
 				{
 					vgAssertN(	false, "VertexShape(%s).texCoord%i is not empty, but there is no texture",
 										pVertexShape->getName().c_str(), i );
@@ -218,42 +381,11 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			}
 #endif
 		}
-
-
-
-/*
-		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
-		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
-				i != iEnd;
-				++i )
-		{
-			const uint unit = *i;
-
-			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
-
-			if (	texUnitState &&
-					(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF)	)
-			{
-				
-				if ( texUnitState->getTexCoordDim() != dimTexCoord )
-				{
-					// @toto glslState.setTexCoordDim( 0 Unit, 2  Dim ); that invalidate DF
-					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
-					glslState.textures.dirty();
-				}
-			}
-			else
-			{
-				texUnitState->setTexCoordDim( 0 );
-#ifdef _DEBUG
-				vgLogDebug(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
-								pVertexShape->getName().c_str(), unit );
-#endif
-			}
-		}*/
 	}
 
+
 	// GLSL
+	const bool tessellationIsEnabled = glslState.isTessellationEnabled();
 	if ( pGLEngine->isGLSLEnabled() )
 	{
 		if ( glslState.isDirty() )
@@ -266,6 +398,9 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			// CACHE
 			const std::string	fullCode	= pg->getCode();
 			const std::string&	vs			= pg->getVertexShaderGenerator()->getCode();
+			std::string			tcs;
+			std::string 		tes;
+			std::string			gs;
 			const std::string&	fs			= pg->getFragmentShaderGenerator()->getCode();
 
 /*#ifdef _DEBUG
@@ -278,9 +413,9 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			std::cout << "Fragment shader\n" << std::endl << fs << std::endl;
 			std::cout << "\n\n\n";
 #endif*/
+
 			using glo::GLSLProgram;
 			GLSLProgram * program = pGLEngine->getGLSLManager().get< GLSLProgram >( fullCode );
-
 			if ( program == 0 )
 			{
 				// Not found in cache, so creates a new one
@@ -289,15 +424,36 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 				// Compiles and links
 				std::string vsInfoLog;
+				std::string tcsInfoLog;
+				std::string tesInfoLog;
+				std::string gsInfoLog;
 				std::string fsInfoLog;
+
 				std::string linkInfoLog;
+
 				const bool compileVSRetVal = program->addShader( vs.c_str(), pg->getVertexShaderGenerator()->getShaderType(), false );
-				if ( !compileVSRetVal )	vsInfoLog = program->getLogError(pg->getVertexShaderGenerator()->getShaderType());//*/program->getInfoLog();
+				if ( !compileVSRetVal )	vsInfoLog = program->getLogError( GLSLProgram::VERTEX );
+
+				bool compileTCSRetVal = true;
+				bool compileTESRetVal = true;
+
+				if ( tessellationIsEnabled )
+				{
+					tcs = pg->getTessellationControlShaderGenerator()->getCode();
+					tes = pg->getTessellationEvaluationShaderGenerator()->getCode();
+
+					compileTCSRetVal = program->addShader( tcs.c_str(), pg->getTessellationControlShaderGenerator()->getShaderType(), false );
+					if ( !compileTCSRetVal )	tcsInfoLog = program->getLogError( GLSLProgram::TESSELLATION_CONTROL );
+
+					compileTESRetVal = program->addShader( tes.c_str(), pg->getTessellationEvaluationShaderGenerator()->getShaderType(), false );
+					if ( !compileTESRetVal )	tesInfoLog = program->getLogError( GLSLProgram::TESSELLATION_EVALUATION );
+				}
+
+				const bool compileGSRetVal = true;/*program->addShader( gs.c_str(), pg->getGeometryShaderGenerator()->getShaderType(), false );
+				if ( !compileGSRetVal )	gsInfoLog = program->getLogError( GLSLProgram::GEOMETRY );*/
 
 				const bool compileFSRetVal = program->addShader( fs.c_str(), pg->getFragmentShaderGenerator()->getShaderType(), false );
-				if ( !compileFSRetVal )	fsInfoLog = program->getLogError(pg->getFragmentShaderGenerator()->getShaderType());//*/program->getInfoLog();
-
-				//const bool compileGSRetVal = program->addShader( fs.c_str(), pg->getGeometryShaderGenerator()->getShaderType(), false );
+				if ( !compileFSRetVal )	fsInfoLog = program->getLogError( GLSLProgram::FRAGMENT );
 
 				// no more needed
 				//namespace vgeGLPainter = vgeGL::handler::painter;
@@ -306,101 +462,64 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				const bool linkRetVal = program->link();
 				if ( !linkRetVal )	linkInfoLog = program->getInfoLog();
 
-				if ( !compileVSRetVal || !compileFSRetVal || !linkRetVal )
+				// Print informations if build and/or link fails
+				if ( !compileVSRetVal || !compileTCSRetVal || !compileTESRetVal || !compileGSRetVal || !compileFSRetVal || !linkRetVal )
 				{
 					std::cout << "=======================================================================================\n" << std::endl;
 
-					std::cout << "Vertex shader\n" << "=============\n" << std::endl << vs << std::endl;
-					std::cout << "Fragment shader\n" << "===============\n" << std::endl << fs << std::endl;
-
-					std::cout << "\n\n\n";
-
-					// if ( !vsInfoLog.empty() )	std::cout << vsInfoLog << std::endl;
-					// if ( !fsInfoLog.empty() )	std::cout << fsInfoLog << std::endl;
-					// if ( !linkInfoLog.empty() )	std::cout << linkInfoLog << std::endl;
+					std::cout << "Link info log:" << std::endl << linkInfoLog << std::endl;
 					std::cout << "Vertex shader info log:" << std::endl << vsInfoLog << std::endl;
 					std::cout << "Fragment shader info log:" << std::endl << fsInfoLog << std::endl;
 
-					std::cout << "Link info log:" << std::endl << linkInfoLog << std::endl;
+					if ( tessellationIsEnabled )
+					{
+						std::cout << "Tessellation Control shader info log:" << std::endl << tcsInfoLog << std::endl;
+						std::cout << "Tessellation Evaluation shader info log:" << std::endl << tesInfoLog << std::endl;
+					}
+					std::cout << "Geometry shader info log:" << std::endl << gsInfoLog << std::endl;
 				}
 
-
-				std::ostringstream oss;
+				//
 				const int programValue = static_cast<int>( program->getProgramObject() );
 				pGLEngine->getGLSLManagerExt().add( programValue , shpProgram );
+				pGLEngine->getGLSLManager().add( fullCode, shpProgram );
 
-				if ( linkRetVal )
+				if ( !compileVSRetVal || !compileTCSRetVal || !compileTESRetVal || !compileGSRetVal || !compileFSRetVal || !linkRetVal )
 				{
-					//std::cout << "Program link" << std::endl;
-					pGLEngine->getGLSLManager().add( fullCode, shpProgram );
+					// Don't render this vertex shape
+					pGLEngine->setCurrentProgram();
+					return;
 				}
-				/*else
-				{
-					std::cout << "Program link fails !" << std::endl;
-					std::cerr << "Program link fails !" << std::endl;
-
-					std::cout << fullCode << std::endl;
-
-
-					vgAssertN( false, "Program link fails !");
-					vgLogDebug( "Program link fails !" );
-					//std::cout << "Generates shaders\n" << std::endl;
-					//std::cout << "Vertex shader\n" << std::endl << vs << std::endl;
-					//std::cout << "Fragment shader\n" << std::endl << fs << std::endl;
-					//std::cout << "\n\n\n";
-					std::cerr << program->getInfoLog();
-				}*/
-
-/*#ifdef _DEBUG
-				if ( !compileVSRetVal )	vgLogDebug("VERTEX shader compilation fails");
-				if ( !compileFSRetVal )	vgLogDebug("FRAGMENT shader compilation fails");
-//				if ( !compileGSRetVal )	vgLogDebug("GEOMETRY shader compilation fails");
-
-				if ( !linkRetVal )
-				{
-					vgLogAssertN( false, "Program link fails !");
-					cerr << program->getInfoLog();
-				}
-				else
-				{
-					vgLogDebug("Program link succeeded");
-					vgLogDebug("Creates a new GLSL program.");
-					vgLogDebug("GLSL managed program count : %i", pGLEngine->getGLSLManager().getNum());
-				}
-#endif*/
 			}
 			// else uses GLSL program found in cache
 
-
-
-// @todo begin( OPTME only if new prog )
-			// Sets uniform(s)
+			// GLSL Program and samplers
 			if ( pGLEngine->gethCurrentProgram() != program )
 			{
-				//
+				//	PROGRAM
 				pGLEngine->sethCurrentProgram( program );
 
-				// SAMPLERS
+				//	SAMPLERS
 				setSamplers( pGLEngine, program );
-
-				// UNIFORM
-				if ( pGLEngine->getUniformState().getSize() > 0 )
-				{
-					pGLEngine->getUniformState().apply( pGLEngine );
-				}
 			}
 			// else nothing to do
 
+			// Sets uniform(s)
+			// 	UNIFORM
+			pGLEngine->getUniformState().apply( pGLEngine );
+
 			glslState.validate();
-// @todo end
 		}
 		else // if ( glslState->isDirty() )
 		{
 			// glslState is valid, so nothing to do
-//#define _DEBUG
-#ifdef _DEBUG
+
+			// Sets uniform(s)
+			// 	UNIFORM
+			if ( localVersionOfUniformState ) pGLEngine->getUniformState().apply( pGLEngine );
+
+#ifdef _VGSDK_DEBUG
 			// Checks if glslState->isValid() is the correct value
-			//vgLogDebug("glslState is valid");
 
 			// GENERATION
 			vgd::Shp< vgeGL::engine::ProgramGenerator > pg = pGLEngine->getGLSLProgramGenerator();
@@ -408,18 +527,18 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 			// CACHE
 			const std::string	fullCode	= pg->getCode();
-			const std::string&	vs			= pg->getVertexShaderGenerator()->getCode();
-			const std::string&	fs			= pg->getFragmentShaderGenerator()->getCode();
+
 			using glo::GLSLProgram;
 			GLSLProgram * program = pGLEngine->getGLSLManager().get< GLSLProgram >( fullCode );
 			if ( program != pGLEngine->getCurrentProgram() )
 			{
 				vgAssertN( program == pGLEngine->getCurrentProgram(), "glslState->isValid() should be dirty." );
 			}
+			//else nothing to do
 #endif
 		}
 	}
-	else
+	else // if ( pGLEngine->isGLSLEnabled() )
 	{
 		//pGLEngine->sethCurrentProgram();
 		vgeGL::rc::GLSLProgram::useFixedPaths();
@@ -432,10 +551,11 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	using vgd::node::DrawStyle;
 
 	DrawStyle::NormalLengthValueType	normalLength			= pGLEngine->getGLState().getNormalLength();
+	DrawStyle::TangentLengthValueType	tangentLength			= pGLEngine->getGLState().getTangentLength();
 	const bool							showOrientationValue	= pGLEngine->getGLState().getShowOrientation();
 	DrawStyle::BoundingBoxValueType		bbValue					= pGLEngine->getGLState().getBoundingBox();
 
-	const bool additionalProperties =	(normalLength > 0.f) || showOrientationValue ||
+	const bool additionalProperties =	(normalLength > 0.f) || (tangentLength > 0.f) ||showOrientationValue ||
 										(bbValue != vgd::node::DrawStyle::NO_BOUNDING_BOX);
 
 	if ( additionalProperties )
@@ -449,7 +569,19 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		// *** DRAWSTYLE.normalLength ***
 		if ( normalLength > 0.f )
 		{
-			::vgeGL::handler::painter::DrawStyle::paintVertexShapeNormals( pGLEngine, pVertexShape, this );
+			if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
+			{
+				::vgeGL::handler::painter::DrawStyle::paintVertexShapeNormals( pGLEngine, pVertexShape, this );
+			}
+		}
+
+		// *** DRAWSTYLE.tangentLength ***
+		if ( tangentLength > 0.f )
+		{
+			if ( pVertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX )
+			{
+				::vgeGL::handler::painter::DrawStyle::paintVertexShapeTangents( pGLEngine, pVertexShape, this );
+			}
 		}
 
 		// *** DRAWSTYLE.showOrientation ***
@@ -545,6 +677,24 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		}
 	}*/
 //	glPopAttrib();
+
+	// TESSELLATION
+	if ( vgm::notEquals(tessLevelSaved, 0.f) )
+	{
+		pGLEngine->getUniformState().setUniform( "tessValue", tessLevelSaved );
+	}
+
+	if ( vgm::notEquals(tessBiasSaved, 0.f) )
+	{
+		pGLEngine->getUniformState().setUniform( "tessBias", tessBiasSaved);
+	}
+	pGLEngine->getGLSLState().setTessellationEnabled(tessellationSaved);
+
+	// BUMP
+	pGLEngine->getGLSLState().setBumpMappingEnabled(bumpSaved);
+
+	// Restore uniforms
+	if ( localVersionOfUniformState ) pGLEngine->getUniformState().apply( pGLEngine );
 
 	// Validates node
 	pNode->getDirtyFlag(pNode->getDFNode())->validate();
@@ -650,167 +800,76 @@ void VertexShape::unapply ( vge::engine::Engine* , vgd::node::Node* )
 
 
 void VertexShape::setToDefaults()
-{}
-
-
-
-/**
- * @todo Use Settings (FIXME).
- */
-void VertexShape::paintMethodChooser( vgeGL::engine::Engine* engine, vgd::node::VertexShape* vertexShape )
 {
-	paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
-
-//glPushClientAttrib( GL_CLIENT_ALL_ATTRIB_BITS );
-	//const vgd::node::VertexShape::DeformableHintValueType deformableHint = vertexShape->getDeformableHint();
-
-	/* ImmediateMode */
-	//paint( pGLEngine, pVertexShape );
-
-	/* ImmediateMode in DL */
-	//paintDisplayList	( pGLEngine, pVertexShape ); 
-
-	/* Vertex Array */
-	/* Vertex Array in DL */
-	/*if ( deformableHint == vgd::node::VertexShape::STATIC )
-	{
-//		paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
-// @todo Reenabled display list usage or uses VAO
-		const vgd::node::MultipleInstances * multipleInstances = engine->getGLState().getMultipleInstances();
-		if ( multipleInstances )
-		{
-			paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
-		}
-		else
-		{
-			paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
-			//paint(engine, vertexShape, vgeGL::engine::VertexArrayDisplayListMethod() ); // @todo don't work on Radeon
-		}
-	}
-	else
-	{
-		assert( 	(deformableHint == vgd::node::VertexShape::DYNAMIC) ||
-					(deformableHint == vgd::node::VertexShape::STREAM)	);
-
-		paint(engine, vertexShape, vgeGL::engine::VertexArrayMethod() );
-	}*/
-	
-	/* Vertex Arrays in VBO */
-	//paintVBO				( pGLEngine, pVertexShape );
-	//paintVBOVertexArray	( pGLEngine, pVertexShape );
-
-//glPopClientAttrib();
 }
 
 
 
-/**
- * Support for vertex.
- * 
- * Support for normal				with BIND_OFF, BIND_PER_VERTEX.
- * Support for color4				with BIND_OFF, BIND_PER_VERTEX.
- * Support for secondaryColor4		with BIND_OFF, BIND_PER_VERTEX.
- * Support for texCoord				with BIND_OFF, BIND_PER_VERTEX.
- * Support for edgeFlag				with BIND_OFF, BIND_PER_VERTEX.
- * 
- * Support for primitive.
- * Support for vertexIndex.
- * 
- * Support for *Binding.
- * 
- * @todo Support BIND_OVERALL, BIND_PER_PRIMITIVE.
- */
-void VertexShape::paint(	vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pVertexShape,
-							const vgeGL::engine::VertexArrayMethod& method )
+void VertexShape::paint( vgeGL::engine::Engine * engine, vgd::node::VertexShape *vertexShape )
 {
 	// *** BIND_OVERALL ***
 	// Nothing to do, because not supported.
+
 #ifdef _DEBUG
-	// EDGE FLAG
-	if (	(pVertexShape->getEdgeFlagBinding() != vgd::node::BIND_OFF ) &&
-			(pVertexShape->getEdgeFlagBinding() != vgd::node::BIND_PER_VERTEX ) )
+// @todo test precond on vertex shape (size vertex, normal, texCoord...)
+	/*// EDGE FLAG
+	if (	(vertexShape->getEdgeFlagBinding() != vgd::node::BIND_OFF ) &&
+			(vertexShape->getEdgeFlagBinding() != vgd::node::BIND_PER_VERTEX ) )
 	{
 		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for edgeflag." );
 		return;
-	}
+	}*/
 
 	// TEX COORD
-	vgAssert(	(pVertexShape->getNumTexUnits() > 1 &&
-			isGL_ARB_multitexture() && "MultiTexture not currently supported.") ||
-			(pVertexShape->getNumTexUnits() <= 1) );
-
 	for(	int32 i=0;
-			i < pVertexShape->getNumTexUnits();
+			i < vertexShape->getNumTexUnits();
 			++i )
 	{
-		if (	(pVertexShape->getTexCoordBinding( i ) != vgd::node::BIND_OFF ) &&
-				(pVertexShape->getTexCoordBinding( i ) != vgd::node::BIND_PER_VERTEX ) )
+		if (	(vertexShape->getTexCoordBinding( i ) != vgd::node::BIND_OFF ) &&
+				(vertexShape->getTexCoordBinding( i ) != vgd::node::BIND_PER_VERTEX ) )
 		{
 			vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for textures coordinates." );
 			return;
 		}
 	}
 
-	// SECONDARY COLOR4
-	if (	(pVertexShape->getSecondaryColor4Binding() != vgd::node::BIND_OFF ) &&
-			(pVertexShape->getSecondaryColor4Binding() != vgd::node::BIND_PER_VERTEX ) )
+	/*// SECONDARY COLOR4
+	if (	(vertexShape->getSecondaryColor4Binding() != vgd::node::BIND_OFF ) &&
+			(vertexShape->getSecondaryColor4Binding() != vgd::node::BIND_PER_VERTEX ) )
 	{
 		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for secondaryColor4." );
 		return;
 	}
 
 	// COLOR4
-	if (	(pVertexShape->getColor4Binding() != vgd::node::BIND_OFF ) &&
-			(pVertexShape->getColor4Binding() != vgd::node::BIND_PER_VERTEX ) )
+	if (	(vertexShape->getColor4Binding() != vgd::node::BIND_OFF ) &&
+			(vertexShape->getColor4Binding() != vgd::node::BIND_PER_VERTEX ) )
 	{
 		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for color4." );
 		return;
+	}*/
+
+	// TANGENTS
+	if (	(vertexShape->getTangentBinding() != vgd::node::BIND_OFF ) &&
+			(vertexShape->getTangentBinding() != vgd::node::BIND_PER_VERTEX ) )
+	{
+		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for tangent." );
+		return;
 	}
-	
+
 	// NORMAL
-	if (	(pVertexShape->getNormalBinding() != vgd::node::BIND_OFF ) &&
-			(pVertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX ) )
+	if (	(vertexShape->getNormalBinding() != vgd::node::BIND_OFF ) &&
+			(vertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX ) )
 	{
 		vgAssertN( false, "Bindings other than BIND_OFF and BIN_PER_VERTEX are not supported for normal." );
 		return;
 	}
 #endif
 
-	// VERTEX-VERTEXINDEX-PRIMITIVE
-	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives( pVertexShape->getFPrimitiveRO() );
+	vgd::node::VertexShape * node = vertexShape;
 
-	/*if ( primitives->size() > 1 )
-	{
-		vgLogDebug("primitive count %i for vertex shape %s", primitives->size(), pVertexShape->getName().c_str() );
-	}*/
-
-	//int indexPrim = 0;
-	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
-													ie	= primitives->end();
-			i != ie;
-			++i/*, ++indexPrim*/)
-	{
-		const vgd::node::Primitive& primitive(*i);
-
-		// *** BIND_PER_PRIMITIVE ***
-		// Nothing to do, because not supported.
-
-		// render a primitive
-		paint( pGLEngine, pVertexShape, primitive, method );
-	}
-}
-
-
-
-// submit a primitive of VertexShape
-// using VertexArray stored in buffer objects
-// @todo VertexArrayMethod => ?
-void VertexShape::paint(	vgeGL::engine::Engine * engine, vgd::node::VertexShape * node,
-							const vgd::node::Primitive& primitive,
-							const vgeGL::engine::VertexArrayMethod& /*method*/ )
-{
+	// using VertexArray stored in buffer objects
 	typedef vgeGL::rc::VertexShape GLResourceType;
-
 	// RC
 	// Gets the resource manager
 	vgeGL::engine::Engine::GLManagerType& manager = engine->getGLManager();
@@ -825,7 +884,8 @@ void VertexShape::paint(	vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 	// STEP 1
 	// Sometimes GLResourceType must be changed for a given node (display list to/from vbo for example).
 	// is it the case now ?
-	if ( ( castedResource == 0 ) && ( resource != 0 ) )
+	if (	resource != 0 &&
+			castedResource == 0	)
 	{
 		// There is a resource, but not with the expected type.
 		// Dynamic change of handler ? or node that must be process differently (static, dynamic for VertexShape) ?
@@ -840,8 +900,9 @@ void VertexShape::paint(	vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 	// else if resource == 0 && castedResource != 0 => impossible
 
 	// STEP 2
-	vgAssertN(	(resource==0 && castedResource==0) ||
-				(resource!=0 && castedResource!=0), "Internal error." );
+	vgAssertN(	(resource!=0 && castedResource!=0) ||
+				(resource==0 && castedResource==0)
+				, "Internal error." );
 
 	// Creates resource if needed
 	if ( resource == 0 )
@@ -869,11 +930,9 @@ void VertexShape::paint(	vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 //		handler->bind( engine, node, castedResource );
 
 		// Updates resource
-		/*handler->*/update( engine, node, castedResource );
+		/*handler->*/update( engine, node, castedResource );		// creates opengl buffer and upload data
 		configureRenderingArrays( engine, node, castedResource );
-		/*handler->*/renderArrays(	engine, node,
-									primitive, // @todo not cute
-									castedResource );
+		/*handler->*/renderArrays(	engine, node, castedResource );
 		//unconfigureRenderingArrays( engine, node, primitive, castedResource );
 
 		// Checks if synchronize() method have validated the node dirty flag
@@ -888,9 +947,7 @@ void VertexShape::paint(	vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 
 		if ( !engine->isGLSLEnabled() ) configureRenderingArrays( engine, node, castedResource );
 
-		/*handler->*/renderArrays(	engine, node,
-									primitive, // @todo not cute
-									castedResource );
+		/*handler->*/renderArrays(	engine, node, castedResource );
 		//unconfigureRenderingArrays( engine, node, primitive, castedResource );
 	}
 }
@@ -904,7 +961,7 @@ void VertexShape::update(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSh
 	// VAO
 //	if ( true /*pGLEngine->isVertexArrayObjectEnabled()*/ ) // @todo
 //	{
-		updateVAO( rc->vao );
+		bindVAO( rc->vao );
 //	}
 
 	// Do nothing if VBO is not enabled
@@ -926,49 +983,36 @@ void VertexShape::update(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSh
 		updateTexCoord( pVertexShape, unit,  texCoordDim, rc );
 	}
 
+	// TANGENT
+	if ( pVertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX )
+	{
+		vgd::field::EditorRO< vgd::field::MFVec3f > tangent = pVertexShape->getFTangentRO();
+		updateArrayBuffer( rc->tangent, tangent->size()*sizeof(vgm::Vec3f), tangent->ptr(), bufferUsage );
+	}
 
 	// NORMAL
 	if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
 	{
-		vgd::field::EditorRO< vgd::field::MFVec3f > normal;
-		normal = pVertexShape->getFNormalRO();
+		vgd::field::EditorRO< vgd::field::MFVec3f > normal = pVertexShape->getFNormalRO();
 		updateArrayBuffer( rc->normal, normal->size()*sizeof(vgm::Vec3f), normal->ptr(), bufferUsage );
 	}
 
-
 	// VERTEX
-	vgd::field::EditorRO< vgd::field::MFVec3f > vertex;
-	vertex = pVertexShape->getFVertexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f > vertex = pVertexShape->getFVertexRO();
 	updateArrayBuffer( rc->vertex, vertex->size()*sizeof(vgm::Vec3f), vertex->ptr(), bufferUsage );
 
-
 	// VERTEX INDEX
-	vgd::field::EditorRO< vgd::field::MFUInt32 > vertexIndex;
-	vertexIndex = pVertexShape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt32 > vertexIndex = pVertexShape->getFVertexIndexRO();
 	updateArrayBuffer( rc->vertexIndex, vertexIndex->size()*sizeof(uint32), vertexIndex->ptr(), GL_STATIC_DRAW /*bufferUsage adds hints in VertexShape node*/ );
 
-	// @todo multiple instances data
 }
 
 
 void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape,
 											vgeGL::rc::VertexShape * rc )
 {
-	// GLSL state
-	using vgeGL::engine::GLSLState;
-	GLSLState& glslState = pGLEngine->getGLSLState();
-
-	//
-	vgd::field::EditorRO< vgd::field::MFVec3f >		normal;
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertex;
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex;
-
-	//
-	const GLvoid *pArray = 0;
-
-	//
-	glo::GLSLProgram * program = pGLEngine->gethCurrentProgram();
-
+	glo::GLSLProgram *	program	= pGLEngine->gethCurrentProgram();
+	const GLvoid *		pArray	= 0;
 
 	// *** Step 1 : Setup arrays. ***
 
@@ -1002,7 +1046,9 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 			//{
 				if ( program )
 				{
+#ifdef _VGSDK_DEBUG
 					vgAssert( program->isInUse() );
+#endif
 
 					//switch ( textureNode->getUsage().value() )
 					//{
@@ -1108,7 +1154,31 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 */
 
 
+	// TANGENT
+	vgd::field::EditorRO< vgd::field::MFVec3f > tangent;
+
+	if ( pVertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX )
+	{
+		if ( pGLEngine->isVertexBufferObjectEnabled() )
+		{
+			rc->tangent.bind();
+		}
+		else
+		{
+			pArray = static_cast< const GLvoid* >( pVertexShape->getFTangentRO()->ptr() );
+		}
+
+		glEnableVertexAttribArray( vgeGL::engine::TANGENT_INDEX );
+		glVertexAttribPointer( vgeGL::engine::TANGENT_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+	}
+	else
+	{
+		glDisableVertexAttribArray( vgeGL::engine::TANGENT_INDEX );
+	}
+
 	// NORMAL
+	vgd::field::EditorRO< vgd::field::MFVec3f > normal;
+
 	if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
 	{
 		if ( pGLEngine->isVertexBufferObjectEnabled() )
@@ -1131,6 +1201,8 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 	}
 
 	// VERTEX
+	vgd::field::EditorRO< vgd::field::MFVec3f > vertex;
+
 	if ( pGLEngine->isVertexBufferObjectEnabled() )
 	{
 		rc->vertex.bind();
@@ -1144,282 +1216,127 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 	//glEnableClientState( GL_VERTEX_ARRAY );
 	glEnableVertexAttribArray( vgeGL::engine::VERTEX_INDEX );
 	glVertexAttribPointer( vgeGL::engine::VERTEX_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+
+	// VERTEX INDEX
+	vgd::field::EditorRO< vgd::field::MFUInt32 > vertexIndex;
+
+	if ( pGLEngine->isVertexBufferObjectEnabled() )
+	{
+		rc->vertexIndex.bind();
+	}
+	else
+	{
+		pArray = static_cast< const GLvoid* >( pVertexShape->getFVertexIndexRO()->ptr() );
+	}
+	glEnableVertexAttribArray( vgeGL::engine::VERTEXINDEX_INDEX );
+	glVertexAttribPointer( vgeGL::engine::VERTEXINDEX_INDEX, 1, GL_UNSIGNED_INT, GL_FALSE, 0, pArray );
 }
 
 
 
-void VertexShape::unconfigureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
-												vgeGL::rc::VertexShape * rc )
+
+
+
+void VertexShape::renderArrays( vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, vgeGL::rc::VertexShape * rc )
 {
-	//
-	using vgeGL::engine::GLSLState;
-	GLSLState& glslState = pGLEngine->getGLSLState();
-
-	// @todo OPTME remove me
-	if ( pGLEngine->isVertexBufferObjectEnabled() )
+	// *** Step 1: Precondition: GLSL program in a good state to be able to render something ***
+	if ( pGLEngine->isGLSLEnabled() )
 	{
-		rc->vertexIndex.unbind();
-	}
-
-	// *** Step 3 : Disable arrays ***
-
-	// TEX COORD
-	if ( pGLEngine->isTextureMappingEnabled() )
-	{
-		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
-		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
-				i != iEnd;
-				++i )
+		if (pGLEngine->getCurrentProgram())
 		{
-			const uint unit = *i;
-			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
-
-			if (	texUnitState /*&&
-					(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF)*/	)
-			{
-				configureTexCoord( pGLEngine, pVertexShape, unit, 0, rc, pGLEngine->isVertexBufferObjectEnabled() );
-			}
+			if ( !pGLEngine->getCurrentProgram()->getLinkSuccess() )	return;
+		}
+		else
+		{
+			return;
 		}
 	}
+	// else nothing to do
 
+	// *** Step 2 : RENDERING ***
+	rc->vao.bind();
 
+	// For each primitive
+	using vgd::field::EditorRO;
+	using vgd::field::MFPrimitive;
+	EditorRO< MFPrimitive > primitives( pVertexShape->getFPrimitiveRO() );
 
-	// @todo Optimizes numTexUnits == 1 case
-	/*const uint numTexUnits = pVertexShape->getNumTexUnits();
-	if ( numTexUnits >= 1 )
+	for(	MFPrimitive::const_iterator	i	= primitives->begin(),
+										ie	= primitives->end();
+			i != ie;
+			++i	)
 	{
-		for(	int32 unit=pVertexShape->getNumTexUnits()-1;
-				unit>=0;
-				--unit )
-		{	
-			if ( pVertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
+		const vgd::node::Primitive&	primitive		= *i;
+		const GLenum				primitiveType	= m_primTypeArray[ primitive.getType() ];
+
+		if ( primitive.getType() == vgd::node::Primitive::NONE )	continue;
+
+		const GLvoid *pArray = pGLEngine->isVertexBufferObjectEnabled() ?
+			(uint32*)0 + primitive.getIndex() :
+			reinterpret_cast< const GLvoid* >( &(*pVertexShape->getFVertexIndexRO())[primitive.getIndex()] );
+
+		const vgd::node::MultipleInstances * multipleInstances = pGLEngine->getGLState().getMultipleInstances();
+		if ( multipleInstances )
+		{
+			// MATRIX
+			typedef vgd::node::MultipleInstances::FMatrixType FMatrixType;
+
+			EditorRO< FMatrixType > matrix = multipleInstances->getMatrixRO();
+
+			// Gets the geometrical matrix transformation.
+			const vgm::MatrixR backup( pGLEngine->getGeometricalMatrix().getTop() );
+
+			//
+			glMatrixMode( GL_MODELVIEW );
+
+			for(	FMatrixType::const_iterator	i		= matrix->begin(),
+												iEnd	= matrix->end();
+					i != iEnd;
+					++i	)
 			{
-				// Retrieves current texture object from engine
-				::glo::Texture * texture;
-				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
-				if ( texUnitState )
+				// Updates geometrical transformation
+				const vgm::MatrixR& iMatrix = *i;
+				const vgm::MatrixR current = iMatrix * backup;
+
+				glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
+
+				if ( pGLEngine->gethCurrentProgram() && pGLEngine->getGLSLState().isTessellationEnabled() )
 				{
-					texture = texUnitState->getTexture();
+					// RENDER
+					glDrawElements( GL_PATCHES, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 				}
 				else
 				{
-					texture = 0;
+					glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 				}
-
-				if ( texture != 0 )
-				{
-					if ( !program )
-					{
-						pGLEngine->activeTexture( unit );
-						texture->disable();
-					}
-					// nothing to do
-				}
-				//else nothing to do (see arrays setup).
 			}
-		}
-	}*/
 
-	// NORMAL
-	if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
-	{
-		glDisableClientState( GL_NORMAL_ARRAY );
-		if ( pGLEngine->isVertexBufferObjectEnabled() && rc->normal.isBound() )
-		{
-			rc->normal.unbind();
-		}
-	}
+			//
+			glLoadMatrixf( reinterpret_cast<const float*>( backup.getValue() ) );
 
-	// VERTEX
-	glDisableClientState( GL_VERTEX_ARRAY );
-	if ( pGLEngine->isVertexBufferObjectEnabled() && rc->vertex.isBound() )
-	{
-		rc->vertex.unbind();
-	}
-}
-
-
-
-void VertexShape::renderArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, const vgd::node::Primitive& primitive,
-								vgeGL::rc::VertexShape * rc )
-{
-	// *** Step 2 : RENDERING ***
-	const GLvoid *pArray = 0;
-
-	rc->vao.bind();
-
-	vgAssert( primitive.getType() != vgd::node::Primitive::NONE );
-	const GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
-
-	if ( pGLEngine->isVertexBufferObjectEnabled() )
-	{
-		//rc->vertexIndex.bind(); // @todo removeme
-	}
-	else
-	{
-		pArray = reinterpret_cast< const GLvoid* >( &(*pVertexShape->getFVertexIndexRO())[primitive.getIndex()] );
-	}
-
-	const vgd::node::MultipleInstances * multipleInstances = pGLEngine->getGLState().getMultipleInstances();
-
-	if ( multipleInstances )
-	{
-		// MATRIX
-		using vgd::field::EditorRO;
-		typedef vgd::node::MultipleInstances::FMatrixType FMatrixType;
-
-		EditorRO< FMatrixType > matrix = multipleInstances->getMatrixRO();
-
-		// Gets the geometrical matrix transformation.
-		const vgm::MatrixR backup( pGLEngine->getGeometricalMatrix().getTop() );
-
-		//
-		glMatrixMode( GL_MODELVIEW );
-
-		for(	FMatrixType::const_iterator	i		= matrix->begin(),
-											iEnd	= matrix->end();
-				i != iEnd;
-				++i	)
-		{
-			// Updates geometrical transformation
-			const vgm::MatrixR& iMatrix = *i;
-			const vgm::MatrixR current = iMatrix * backup;
-
-			glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-
-			// RENDER
-			glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
-			//glDrawRangeElements( primitiveType, 0, vertex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
-		}
-
-		//
-		glLoadMatrixf( reinterpret_cast<const float*>( backup.getValue() ) );
-
-		//
-		pGLEngine->getGLState().setMultipleInstances( 0 );
-	}
-	else
-	{
-		// RENDER
-		//glDrawRangeElements( primitiveType, 0, vertex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
-		glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
-		// or glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
-	}
-
-	rc->vao.unbind();
-}
-
-
-// @todo buffer usage GL_STATIC_DRAW must be configurable
-void VertexShape::updateTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc )
-{
-	if (	texCoordDim > 0 /*&&
-			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX*/ )
-	{
-		// Resize texCoord ArrayBuffer vector if needed
-		if ( unit >= rc->texCoord.size() )
-		{
-			rc->texCoord.resize( unit + 1 );
-		}
-
-		if ( texCoordDim == 2 )
-		{
-			updateTexCoordArrayBuffer< vgm::Vec2f >( vertexShape, unit, rc, GL_STATIC_DRAW );
-		}
-		else if ( texCoordDim == 1 )
-		{
-			updateTexCoordArrayBuffer< float >( vertexShape, unit, rc, GL_STATIC_DRAW );
-		}
-		else if ( texCoordDim == 3 )
-		{
-			updateTexCoordArrayBuffer< vgm::Vec3f >( vertexShape, unit, rc, GL_STATIC_DRAW );
-		}
-		else if ( texCoordDim == 4 )
-		{
-			updateTexCoordArrayBuffer< vgm::Vec4f >( vertexShape, unit, rc, GL_STATIC_DRAW );
+			//
+			pGLEngine->getGLState().setMultipleInstances( 0 );
 		}
 		else
 		{
-			// NOT SUPPORTED
-			vgAssertN( false, "VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
-		}
-	}
-	// else nothing to do
-}
-
-
-
-void VertexShape::configureTexCoord( vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc, const bool isVertexBufferObjectEnabled )
-{
-	if (	texCoordDim > 0 &&
-			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
-	{
-		if ( !pGLEngine->isGLSLEnabled() ) glClientActiveTexture( GL_TEXTURE0_ARB + unit );
-		//glClientActiveTextureARB( GL_TEXTURE0_ARB + unit );
-
-		const GLvoid *pArray = 0;
-		if ( isVertexBufferObjectEnabled )
-		{
-			rc->texCoord[unit].bind();
-		}
-		else
-		{
-			if ( texCoordDim == 2 )
+			if ( pGLEngine->gethCurrentProgram() && pGLEngine->getGLSLState().isTessellationEnabled() )
 			{
-				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec2f >( unit )->ptr() );
-			}
-			else if ( texCoordDim == 1 )
-			{
-				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFFloat >( unit )->ptr() );
-			}
-			else if ( texCoordDim == 3 )
-			{
-				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec3f >( unit )->ptr() );
-			}
-			else if ( texCoordDim == 4 )
-			{
-				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec4f >( unit )->ptr() );
+				glDrawElements( GL_PATCHES, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 			}
 			else
 			{
-				// NOT SUPPORTED
-				vgAssertN( false, "VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
+				glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+				//glDrawRangeElements( primitiveType, 0, vertex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 			}
+			// RENDER
+			//glDrawRangeElements( primitiveType, 0, vertex->size()-1, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+			//glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
+			// or glDrawElements( primitiveType, primitive.getNumIndices(), GL_UNSIGNED_INT, pArray );
 		}
-		if ( pGLEngine->isGLSLEnabled() )
-		{
-			glEnableVertexAttribArray( vgeGL::engine::TEXCOORD_INDEX + unit );
-			glVertexAttribPointer( vgeGL::engine::TEXCOORD_INDEX + unit, texCoordDim, GL_FLOAT, GL_FALSE, 0, pArray );
-		}
-		else
-		{
-			glTexCoordPointer( texCoordDim, GL_FLOAT, 0, pArray );
-			glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-		}
-	}
-	// else nothing to do
-	
-	else
-	{
-		if ( pGLEngine->isGLSLEnabled() )
-		{
-			glDisableVertexAttribArray( vgeGL::engine::TEXCOORD_INDEX + unit );
-		}
-		else
-		{
-			glClientActiveTexture( GL_TEXTURE0_ARB + unit );
-			//glClientActiveTextureARB( GL_TEXTURE0_ARB + unit );
-			glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-		}
-			
-		/*if ( isVertexBufferObjectEnabled && rc->texCoord[unit].isBound() )
-		{
-			rc->texCoord[unit].unbind();
-		}*/
+	} // for each primitive
 
-	}
+	rc->vao.unbind();
 }
-
 
 
 void VertexShape::drawBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexShape *pVertexShape )
@@ -1507,60 +1424,44 @@ void VertexShape::drawBox3f( const vgm::Box3f& box )
 
 
 
-/**
- * @todo Currently only draw normals on triangles and assert( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX );
- */
-void VertexShape::drawNormals( vgd::node::VertexShape *pVertexShape, const float normalLength )
+void VertexShape::drawAbstractNormals(	vgd::node::VertexShape *vertexShape,
+										vgd::field::EditorRO< vgd::field::MFVec3f >& normal, const float normalLength )
 {
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertex		= pVertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFVec3f >		normal		= pVertexShape->getFNormalRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= pVertexShape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertex		= vertexShape->getFVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives	= vertexShape->getFPrimitiveRO();
 
-	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives( pVertexShape->getFPrimitiveRO() );
-	
-	if (	(pVertexShape->getNormalBinding() != vgd::node::BIND_PER_VERTEX) ||
-			(normal->size() != vertex->size()) )
+	if (	normal->size() == 0 ||
+			normal->size() != vertex->size() )
 	{
 		// do nothing
 		return;
 	}
 
-	vgAssert( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX );
-	vgAssert( normal->size() > 0 );
-	vgAssert( normal->size() == vertex->size() );
-	
-	
-	int32 i32IndexPrim=0;	
+	// For each primitive:
 	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
 													ie	= primitives->end();
 			i != ie;
-			i++, i32IndexPrim++)
+			++i)
 	{
 		const vgd::node::Primitive& primitive(*i);
-	
+
 		// Start rendering the primitive.
-		if ( primitive.getType() == vgd::node::Primitive::NONE ) //!= vgd::node::Primitive::TRIANGLES )&&( primitive.getType() != vgd::node::Primitive::QUADS ))
+		if ( primitive.getType() == vgd::node::Primitive::NONE )
 		{
 			// Next primitive ?
 			continue;
 		}
-		//assert( primitive.getType() == vgd::node::Primitive::TRIANGLES );
-		//GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
 
 		glBegin( GL_LINES );
 
-		const int32 i32Max = primitive.getIndex() + primitive.getNumIndices();
-
-		for( int32 i32I = primitive.getIndex(); i32I<i32Max; i32I++ )
+		const uint i32Max = primitive.getIndex() + primitive.getNumIndices();
+		for( uint i32I = primitive.getIndex(); i32I<i32Max; ++i32I )
 		{
-			int32 i32VertexIndex;
-			i32VertexIndex = (*vertexIndex)[i32I];
+			const uint i32VertexIndex = (*vertexIndex)[i32I];
 
-			vgm::Vec3f	normalSource;
-			vgm::Vec3f	normalDestination;
-
-			normalSource		= (*vertex)[i32VertexIndex];
-			normalDestination	= normalSource + (*normal)[ i32VertexIndex ] * normalLength;
+			const vgm::Vec3f	normalSource		= (*vertex)[i32VertexIndex];
+			const vgm::Vec3f	normalDestination	= normalSource + (*normal)[ i32VertexIndex ] * normalLength;
 
 			glVertex3fv( normalSource.getValue() );
 			glVertex3fv( normalDestination.getValue() );
@@ -1570,7 +1471,6 @@ void VertexShape::drawNormals( vgd::node::VertexShape *pVertexShape, const float
 		// Finish rendering the primitive.
 	}
 }
-
 
 
 void VertexShape::drawTriangleOrientation( vgd::node::VertexShape *pVertexShape )

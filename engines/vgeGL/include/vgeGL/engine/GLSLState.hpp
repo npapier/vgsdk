@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -118,6 +118,11 @@ enum GLSLStateIndex
 
 	// PostProcessing
 	IGNORE_POST_PROCESSING,		///< see LightModel.ignorePostProcessing
+
+	//
+	BUMP_MAPPING,
+
+	TESSELLATION,
 
 	//
 	MAX_BITSETINDEXTYPE
@@ -596,6 +601,24 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	void setOption0( const vgd::node::LightModel::Option0ValueType value )	{ m_option0 = value; }
 	//@}
 
+
+	/**
+	 * @name Bump mapping accessors
+	 */
+	//@{
+	const bool isBumpMappingEnabled() const;
+	void setBumpMappingEnabled( const bool enabled = true );
+	//@}
+
+	/**
+	 * @name Tessellation accessors
+	 */
+	//@{
+	const bool isTessellationEnabled() const;
+	void setTessellationEnabled( const bool enabled = true );
+
+	//@}
+
 	/**
 	 * @name Shadow accessors
 	 */
@@ -613,15 +636,8 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	void setShadowType( const vgd::node::LightModel::ShadowValueType shadowType ) { m_lightModelShadow = shadowType; }
 
 	// @todo not here, because don't change generated shaders
-	void setSamplingSize( const float samplingSize )									{ m_samplingSize = samplingSize; }
-	const float getSamplingSize() const													{ return m_samplingSize; }
-
 	const vgd::node::LightModel::ShadowMapTypeValueType getShadowMapType() const		{ return m_shadowMapType; }
 	void setShadowMapType( const vgd::node::LightModel::ShadowMapTypeValueType type )	{ m_shadowMapType = type; }
-
-	// @todo must be an uniform
-	const float getIlluminationInShadow() const { return m_illuminationInShadow; }
-	void setIlluminationInShadow( const float illuminationInShadow ) { m_illuminationInShadow = illuminationInShadow; }
 	//@}
 
 
@@ -629,21 +645,18 @@ private:
 	void copy( const GLSLState& src );
 	void release();
 
-	vgd::field::DirtyFlag							m_dirtyFlag;			///< internal dirty flag to catch any modification
+	vgd::field::DirtyFlag								m_dirtyFlag;			///< internal dirty flag to catch any modification
 
 	void init();
-	vgd::node::Program *							m_program;					///< the last encountered Program node
+	vgd::node::Program *								m_program;					///< the last encountered Program node
 	// @todo TUnitContainer m_shaderStage;
 	// @todo 
-	std::vector< std::string >						m_shaderStage;				///< container of glsl code for custom shader stage
-	vgd::node::LightModel::Option0ValueType			m_option0;					///< Last encountered value of LightModel.option0 field
-	vgd::node::LightModel::ShadowValueType			m_lightModelShadow;			///< Last encountered value of LightModel.shadow field
-	float											m_samplingSize;				///< @todo doc
-	vgd::node::LightModel::ShadowMapTypeValueType	m_shadowMapType;			///< @todo doc
-	float											m_illuminationInShadow;		///< @todo doc
-	bool											m_isShadowSamplerEnabled;	///< true if engine must used shadow sampler, false otherwise
-
-	static const std::string m_indexString[];									///< array containing the string representation for BitSetIndexType.
+	std::vector< std::string >							m_shaderStage;				///< container of glsl code for custom shader stage
+	vgd::node::LightModel::Option0ValueType				m_option0;					///< Last encountered value of LightModel.option0 field
+	vgd::node::LightModel::ShadowValueType				m_lightModelShadow;			///< Last encountered value of LightModel.shadow field
+	vgd::node::LightModel::ShadowMapTypeValueType		m_shadowMapType;			///< @todo doc
+	bool												m_isShadowSamplerEnabled;	///< true if engine must used shadow sampler, false otherwise
+	static const std::string							m_indexString[];			///< array containing the string representation for BitSetIndexType.
 };
 
 

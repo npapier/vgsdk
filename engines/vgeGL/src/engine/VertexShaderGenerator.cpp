@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -39,13 +39,15 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code2.clear();
 
 	// DECLARATIONS
-	m_decl += GLSLHelpers::getVersionDecl();
+	m_decl += GLSLHelpers::getVersionDecl( state );
+	m_decl += GLSLHelpers::getDefines( state );
 
 	// UNIFORMS
 	m_decl += GLSLHelpers::getVGSDKUniformDecl();
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
-	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "out" );
+
+	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "out", "Out", false );
 	std::pair< std::string, std::string > code_samplers	= GLSLHelpers::generate_samplers( state );
 
 	m_decl += code_samplers.first;
@@ -56,77 +58,78 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// BEGIN: VERTEX SHADER SPECIFIC
 	const std::string vertexIndexStr	= vgd::basic::toString( vgeGL::engine::VERTEX_INDEX );
 	const std::string normalIndexStr	= vgd::basic::toString( vgeGL::engine::NORMAL_INDEX );
+	const std::string tangentIndexStr	= vgd::basic::toString( vgeGL::engine::TANGENT_INDEX );
 	const std::string texCoord0IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX );
 	const std::string texCoord1IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX + 1 );
 	const std::string texCoord2IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX + 2 );
 
 	m_decl += "layout(location = " + vertexIndexStr + ") in vec4 mgl_Vertex;\n";
 	m_decl += "layout(location = " + normalIndexStr + ") in vec3 mgl_Normal;\n";
+	m_decl += "layout(location = " + tangentIndexStr + ") in vec3 mgl_Tangent;\n";
 	m_decl += "layout(location = " + texCoord0IndexStr + ") in vec4 mgl_MultiTexCoord0;\n";
 	m_decl += "layout(location = " + texCoord1IndexStr + ") in vec4 mgl_MultiTexCoord1;\n";
 	m_decl += "layout(location = " + texCoord2IndexStr + ") in vec4 mgl_MultiTexCoord2;\n\n";
 	// END: VERTEX SHADER SPECIFIC
 
-	// OUTPUT
+	// OUTPUTS
 	m_decl += "// OUTPUTS\n";
+	if ( state.isTessellationEnabled() == false )
+	{
+		// out vec4 gl_Position;
+		m_decl +=
+				"// VARIANCE QUALIFIER (for out vec4 gl_Position;)\n"
+				"invariant gl_Position;\n\n";
+	}
 
-	if ( has_ftexgen )	m_decl += code_ftexgen.first;
 
-	// out vec4 gl_Position;
-	m_decl += "// VARIANCE QUALIFIER\n";
-	m_decl += "invariant gl_Position;\n\n";
 
 	// VERTEX_DECLARATIONS
 	const std::string vertexDeclaration = state.getShaderStage( GLSLState::VERTEX_DECLARATIONS );
 	if ( !vertexDeclaration.empty() )	m_decl += vertexDeclaration + "\n";
 
-	// Test if custom program must be installed
-	if ( state.isEnabled( PROGRAM ) )
-	{
-		vgd::node::Program * program = state.getProgram();
-		assert( program );
-
-		std::string shaderStr;
-		program->getShader( vgd::node::Program::VERTEX, shaderStr );
-
-		m_decl += "\n";
-		m_code1 = shaderStr;
-
-		return true;
-	}
-
 	// DECLARATIONS for lighting
 	if ( state.isLightingEnabled() )
 	{
-		if ( state.isPerVertexLightingEnabled() )
-		{
-			m_decl += GLSLHelpers::generate_lightAccumulators( state ) + "\n";
-		}
-		else
+		if ( !state.isPerVertexLightingEnabled() )
 		{
 			if ( state.isEnabled( FLAT_SHADING ) )
 			{
 				m_decl += 
-				"flat out vec4 ecPosition;\n" // @todo really flat ?
+				"flat out vec4 ecPosition;\n"
 				"flat out vec3 ecNormal;\n\n";
 			}
 			else
 			{
 				m_decl += 
 				"out vec4 ecPosition;\n"
-				"out vec3 ecNormal;\n\n";
-
-				/*if ( state.isEnabled( GLSLState::COLOR4_BIND_PER_VERTEX ) )
-				{
-					m_decl += "out vec4 mglColor;\n\n";
-				}*/
+				"out vec3 ecNormal;\n";
 			}
 		}
+		// else nothing to do
 	}
 	// else nothing to do
 
+	// DECLARATIONS for bumpmapping
+	if ( state.isBumpMappingEnabled() )	m_decl += GLSLHelpers::generate_declarationsForBumpmapping( true );
+
+	if ( has_ftexgen )	m_decl += "\n" + code_ftexgen.first;
+
+	// LOCAL VARIABLES
+	if ( state.isLightingEnabled() && state.isPerVertexLightingEnabled() )
+	{
+		m_decl +=
+			"\n"
+			"// LOCAL VARIABLES\n";
+		m_decl += GLSLHelpers::generate_lightAccumulators( state ) + "\n";
+	}
+
 	// FUNCTIONS
-	m_code1 += GLSLHelpers::generateFunction_fnormal( state );
+	m_code1 +=
+		"\n"
+		"// FUNCTIONS\n";
+	//m_code1 += GLSLHelpers::generateFunction_fnormal( state );
+	m_code1 += GLSLHelpers::generateFunction_ftangent( state );
+	m_code1 += GLSLHelpers::generateFunction_eyeVectorRelated( state );
 
 	if ( has_ftexgen )	m_code1 += code_ftexgen.second;
 
@@ -136,16 +139,34 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		m_code1 += GLSLHelpers::generateFunction_flight( state ) + "\n";
 	}
 
+
 // @todo generateFunction_fVertexAttrib()  and generate_vertexAttribDeclaration()
+
+	// Test if custom program must be installed
+	if ( state.isEnabled( PROGRAM ) )
+	{
+		vgd::node::Program * program = state.getProgram();
+		vgAssert( program != 0 );
+
+		if ( program->getVertexUse() )
+		{
+			m_code1 = program->getVertex();
+			return true;
+		}
+	}
 
 	// MAIN
 	m_code2 +=
 	"\n"
+	"// MAIN function\n"
 	"void main( void )\n"
 	"{\n"
 	"	// position is a copy of mgl_Vertex for vertex texturing (mgl_Vertex is read-only).\n"
-	"	vec4 position = mgl_Vertex;\n"
+	"	vec4 position = mgl_Vertex;\n"		// @todo rename position => vertex
+	"	// normal is a copy of mgl_Normal\n"
+	"	vec3 normal = mgl_Normal;\n"
 	"\n";
+
 
 	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{
@@ -156,17 +177,36 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 	// else nothing
 
-	// gl_Position = gl_ModelViewProjectionMatrix * position;
-	m_code2 += state.getShaderStage( GLSLState::VERTEX_GL_POSITION_COMPUTATION );
-
+	// gl_Position	= gl_ModelViewProjectionMatrix * position;
 	// ecPosition	= gl_ModelViewMatrix * position;
-	m_code2 += state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION );
+	// ecNormal		= normalize( gl_NormalMatrix * normal ); <=> ecNormal	= fnormal();
+	if ( state.isTessellationEnabled() )
+	{
+		m_code2 +=	"	gl_Position = position;\n"
+					"	ecPosition	= position;\n"
+					"	ecNormal	= normal;\n";
+	}
+	else
+	{
+		m_code2 += state.getShaderStage( GLSLState::VERTEX_GL_POSITION_COMPUTATION );
+		m_code2 += state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION ) + "\n";
+		m_code2 += state.getShaderStage( GLSLState::VERTEX_ECNORMAL_COMPUTATION ) + "\n";
+	}
 
-	// ecNormal	= fnormal();
-	m_code2 += state.getShaderStage( GLSLState::VERTEX_ECNORMAL_COMPUTATION ) + "\n";
+	// ftexgen() => mgl_TexCoord[...] = ...
+	if (	has_ftexgen &&
+			state.isTessellationEnabled() == false )
+	{
+		m_code2 += "	ftexgen( ecPosition, ecNormal );\n\n";
+	}
 
-	// TEXGEN
-	if ( has_ftexgen )		m_code2 += "	ftexgen( ecPosition, ecNormal );\n";
+	//
+	if ( state.isBumpMappingEnabled() )	//use to generate bump mapping function
+	{
+		m_code2 += GLSLHelpers::generate_bumpComputation( state ) + "\n";
+		
+
+	}
 
 	// TEXTURE LOOKUP
 	if ( has_ftexgen )
@@ -258,6 +298,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		boost::algorithm::replace_all( m_code1, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"
 		boost::algorithm::replace_all( m_code2, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"
 	}*/
+
 
 	return true;
 }

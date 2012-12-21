@@ -30,7 +30,7 @@ const vge::service::List EngineProperties::getServices() const
 {
 	vge::service::List list;
 
-	list.push_back( vge::service::Painter::create()				);
+	//list.push_back( vge::service::Painter::create()				);
 
 	return list;
 }

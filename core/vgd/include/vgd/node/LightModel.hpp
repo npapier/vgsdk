@@ -50,6 +50,9 @@ namespace node
  * - OFVec4f \c [ambient] = vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f)<br>
  *   Sets the ambient RGBA intensity of the entire scene.<br>
  *<br>
+ * - SFBool \c bumpMapping = (false)<br>
+ *   Specifies if the bumpmapping computation is enabled or disabled. This is a technique in computer graphics for simulating bumps and wrinkles on the surface of an object.<br>
+ *<br>
  * - OFEnum \c [viewer] = (AT_INFINITY)<br>
  *   Specifies how specular reflection angles are computed. Possible values : - AT_INFINITY specular reflections are computed from the origin of the eye coordinate system. - AT_EYE specular reflection angles take the view direction to be parallel to and in the direction of the -z axis, regardless of the location of the vertex in eye coordinates.<br>
  *<br>
@@ -555,6 +558,41 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @brief Tests if the value of field named \c ambient has been initialized.
 	 */
 	const bool hasAmbient() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field bumpMapping
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c bumpMapping.
+	 */
+	typedef bool BumpMappingValueType;
+
+	/**
+	 * @brief The default value of field named \c bumpMapping.
+	 */
+	static const BumpMappingValueType DEFAULT_BUMPMAPPING;
+
+	/**
+	 * @brief Type definition of the field named \c bumpMapping
+	 */
+	typedef vgd::field::TSingleField< BumpMappingValueType > FBumpMappingType;
+
+
+	/**
+	 * @brief Gets the value of field named \c bumpMapping.
+	 */
+	const BumpMappingValueType getBumpMapping() const;
+
+	/**
+	 * @brief Sets the value of field named \c bumpMapping.
+	 */
+	void setBumpMapping( const BumpMappingValueType value );
+
 	//@}
 
 
@@ -1124,6 +1162,13 @@ struct VGD_API LightModel : public vgd::node::SingleAttribute
 	 * @return the name of field \c ambient.
 	 */
 	static const std::string getFAmbient( void );
+
+	/**
+	 * @brief Returns the name of field \c bumpMapping.
+	 *
+	 * @return the name of field \c bumpMapping.
+	 */
+	static const std::string getFBumpMapping( void );
 
 	/**
 	 * @brief Returns the name of field \c viewer.

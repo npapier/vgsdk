@@ -181,13 +181,17 @@ void passOpaqueWithGivenCamera(	vgeGL::engine::Engine * engine, vge::visitor::Tr
 
 struct GeometryOnlyState
 {
-	GeometryOnlyState( const bool lIsLightingEnabled, const bool lIsTextureMappingEnabled )
+	GeometryOnlyState( const bool lIsLightingEnabled, const bool lIsTextureMappingEnabled, const bool lIsBumpMappingEnabled, const bool lIsTessellationEnabled )
 	:	isLightingEnabled		(	lIsLightingEnabled			),
-		isTextureMappingEnabled	(	lIsTextureMappingEnabled	)
+		isTextureMappingEnabled	(	lIsTextureMappingEnabled	),
+		isBumpMappingEnabled	(	lIsBumpMappingEnabled		),
+		isTessellationEnabled	(	lIsTessellationEnabled		)
 	{}
 
 	const bool isLightingEnabled;
 	const bool isTextureMappingEnabled;
+	const bool isBumpMappingEnabled;
+	const bool isTessellationEnabled;
 };
 
 
@@ -203,8 +207,13 @@ vgd::Shp< GeometryOnlyState > configureGeometryOnly( vgeGL::engine::Engine * eng
 	// Saves lighting state and texture mapping
 	const bool isLightingEnabledBak			= engine->setLightingEnabled(false);
 	const bool isTextureMappingEnabledBak	= engine->setTextureMappingEnabled(false);
+	const bool isBumpMappingEnabledBak		= engine->getGLSLState().isBumpMappingEnabled();
+	const bool isTessellationEnabledBak		= engine->getGLSLState().isTessellationEnabled();
 
-	return vgd::makeShp( new GeometryOnlyState(isLightingEnabledBak, isTextureMappingEnabledBak) );
+	engine->getGLSLState().setTessellationEnabled( false );
+	engine->getGLSLState().setBumpMappingEnabled( false );
+
+	return vgd::makeShp( new GeometryOnlyState(isLightingEnabledBak, isTextureMappingEnabledBak, isBumpMappingEnabledBak, isTessellationEnabledBak) );
 }
 
 void unconfigureGeometryOnly( vgeGL::engine::Engine * engine, vgd::Shp< GeometryOnlyState > state )
@@ -216,6 +225,8 @@ void unconfigureGeometryOnly( vgeGL::engine::Engine * engine, vgd::Shp< Geometry
 	// Restores texture mapping and lighting state
 	engine->setTextureMappingEnabled( state->isTextureMappingEnabled );
 	engine->setLightingEnabled( state->isLightingEnabled );
+	engine->getGLSLState().setBumpMappingEnabled( state->isBumpMappingEnabled );
+	engine->getGLSLState().setTessellationEnabled( state->isTessellationEnabled );
 }
 
 
@@ -403,6 +414,7 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	// Saves texture mapping
 	// To remove texture matrices initialization @todo not very cute @todo do the same for CPU transformation
 	const bool isTextureMappingEnabledBak = engine->setTextureMappingEnabled(false); // @todo TransformSeparator TextureMatrix/ push/pop texture mapping disabled
+	const bool isTessellationEnabledBak	 = engine->getGLSLState().isTessellationEnabled();
 
 	setPassDescription("Collects informations stage");
 	beginPass();
@@ -582,7 +594,6 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
 	lightLookAt.clear();
-
 	if ( shadowType != vgd::node::LightModel::SHADOW_OFF )
 	{
 		// Configures geometry only pass
@@ -709,6 +720,7 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 
 	// paint
 	const bool textureMappingEnabledBak = engine->setTextureMappingEnabled(true);
+	const bool isTessellationEnabledBak = engine->getGLSLState().isTessellationEnabled();
 	engine->regardIfIsA<vgd::node::Texture2D>();
 
 	engine->paint( alphaMap );
@@ -716,6 +728,7 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 
 
 	engine->setTextureMappingEnabled(textureMappingEnabledBak);
+
 	engine->disregardIfIsA<vgd::node::Texture2D>();
 
 	// Updates FBO
@@ -2018,20 +2031,20 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			if ( postProcessingNode->getInput2() != vgd::node::PostProcessing::INPUT2_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
-																		"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
-																		"	mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	Out.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+																		"	Out.mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
+																		"	Out.mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
 			}
 			else if ( postProcessingNode->getInput1() != vgd::node::PostProcessing::INPUT1_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
-																		"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	Out.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+																		"	Out.mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
 			}
 			else
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	Out.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
 			}
 
 			currentScaleForVertex *= scale.second;
@@ -2049,8 +2062,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			// else nothing to do*/
 
 // @todo OPTME reduce glsl code size
-			program->setShader( Program::VERTEX, currentDeclaration + vertexShader );
-
+			program->setVertex( currentDeclaration + vertexShader );
 			// Builds Fragment shader
 			std::string fragmentShader = currentDeclaration + filter.first +
 				boost::algorithm::replace_first_copy( getPostProcessingFragmentProgram(), "INLINE_POST_PROCESSING", filter.second );
@@ -2067,8 +2079,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			}
 			// else nothing to do
 
-			program->setShader( Program::FRAGMENT, fragmentShader );
-
+			program->setFragment( fragmentShader );
 			//
 			currentScaleForTexCoord *= scale.second;
 
@@ -2093,7 +2104,6 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 	// Enables texture mapping
 	const bool				isTextureMappingEnabled	( engine->setTextureMappingEnabled() );
-
 	// Backups current output buffers
 	vgd::Shp< glo::FrameBufferObject > outputBuffersBak = engine->getOutputBuffers();
 
