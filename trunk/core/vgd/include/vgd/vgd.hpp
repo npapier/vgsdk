@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2008, 2010, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -23,6 +23,16 @@
  * @defgroup g_shp Shp (shared pointer)
  * 
  * @ingroup g_vgd
+ */
+
+/**
+ * @defgroup g_io Input/output
+ */
+
+/**
+ * @defgroup g_ioHelpers Low level helpers
+ *
+ * @ingroup g_io
  */
 
 /**
