@@ -192,10 +192,8 @@ void VertexShape::invalidateBoundingBox( bool bInvalidate )
 
 void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 {
-	vgd::field::EditorRW< FVertexType > vertex	= getFVertexRW();
-	vgd::field::EditorRW< FNormalType > normal	= getFNormalRW();
-
 	// Transform each vertex.
+	vgd::field::EditorRW< FVertexType >		vertex		= getFVertexRW();
 	for(	FVertexType::iterator	i	= vertex->begin(),
 									ie	= vertex->end();
 			i != ie;
@@ -203,12 +201,13 @@ void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 	{
 		matrix.multVecMatrix( (*i), (*i) );
 	}
-	
+
 	// Transform each normal.
+	vgd::field::EditorRW< FNormalType >		normals		= getFNormalRW();
 	if ( normalize )
 	{
-		for(	FNormalType::iterator	i	= normal->begin(),
-										ie	= normal->end();
+		for(	FNormalType::iterator	i	= normals->begin(),
+										ie	= normals->end();
 				i != ie;
 				i++ )
 		{
@@ -218,8 +217,32 @@ void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 	}
 	else
 	{
-		for(	FNormalType::iterator	i	= normal->begin(),
-										ie	= normal->end();
+		for(	FNormalType::iterator	i	= normals->begin(),
+										ie	= normals->end();
+				i != ie;
+				i++ )
+		{
+			matrix.multDirMatrix( (*i), (*i) );
+		}
+	}
+
+	// Transform each tangent.
+	vgd::field::EditorRW< FTangentType >	tangents	= getFTangentRW();
+	if ( normalize )
+	{
+		for(	FTangentType::iterator	i	= tangents->begin(),
+										ie	= tangents->end();
+				i != ie;
+				i++ )
+		{
+			matrix.multDirMatrix( (*i), (*i) );
+			i->normalize();
+		}
+	}
+	else
+	{
+		for(	FTangentType::iterator	i	= tangents->begin(),
+										ie	= tangents->end();
 				i != ie;
 				i++ )
 		{
