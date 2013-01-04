@@ -81,6 +81,20 @@ protected:
 	std::pair< bool, vgd::Shp< vgd::node::VertexShape > > loadObj( std::istream & in, vgd::Shp< vgd::node::Group > group, const bool bCCW );
 
 
+	/**
+	 * @brief Empty constructor.
+	 *
+	 * To register this loader, the application must link with
+	 * vgEgg. To force this link, we usually create a dummy loader in
+	 * the application. However, if the loader does not have any
+	 * constructor nor any variable member, the creation is removed in
+	 * release mode by the compiler as an optimization, and the link
+	 * with vgEgg is not done. This creator is here to prevent this
+	 * optimisation to be done.
+	 */
+public:
+	Loader();
+
 };
 
 
