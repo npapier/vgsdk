@@ -242,8 +242,6 @@ vgd::Shp< vgio::ILoader > Loader::clone()
 
 std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( std::istream & in, vgd::Shp< vgd::node::Group > group, const bool bCCW )
 {
-	std::cerr << "Load OBJ" << std::endl;
-
 	std::pair< bool, vgd::Shp< vgd::node::VertexShape > >		retVal;
 
 
