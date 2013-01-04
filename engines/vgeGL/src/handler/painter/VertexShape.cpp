@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, 2011, 2012, Nicolas Papier, Alexandre Di Pino.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -335,7 +335,8 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	const bool bumpSaved = glslState.isBumpMappingEnabled();
 
 	//	Test if bumpmapping have to be disabled
-	if ( glslState.textures.getNum() < 2 )
+	if (	(pVertexShape->getTangentBinding() == vgd::node::BIND_OFF) ||	// no tangents
+			(glslState.textures.getNum() < 2) )								// not enough textures
 	{
 		glslState.setBumpMappingEnabled(false);
 	}
