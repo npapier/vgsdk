@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier, Alexandre Di Pino.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -1320,8 +1320,7 @@ struct GLSLHelpers
 		code  += 
 			"}\n\n";
 
-		const bool hasDecl = ( mgl_TexCoordCount > 0 || mgl_TexCoordShadowCount > 0 );
-		if ( hasDecl )	decl += interfaceQualifier + " TexCoord\n" + "{\n";
+		decl += interfaceQualifier + " TexCoord\n" + "{\n";
 
 		if ( mgl_TexCoordCount > 0 )
 		{
@@ -1344,7 +1343,7 @@ struct GLSLHelpers
 			decl += "	vec4 mgl_TexCoordShadow[2]; // default size\n";
 		}
 
-		if ( hasDecl )	decl += "} " + instanceName + ";\n\n";
+		decl += "} " + instanceName + ";\n\n";
 
 		return std::make_pair( decl, code );
 	}
