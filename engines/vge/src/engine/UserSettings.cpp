@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2011, 2012, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, 2012, 2013, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -47,6 +47,12 @@ const EnumType getTreeAttributeAsEnum( const boost::property_tree::ptree & ptree
 const float getTreeAttributeAsFloat( const boost::property_tree::ptree & ptree, const std::string & attrName )
 {
 	const float retVal = ptree.get< float >( attrName );
+	return retVal;
+}
+
+const bool getTreeAttributeAsBool( const boost::property_tree::ptree & ptree, const std::string & attrName )
+{
+	const bool retVal = ptree.get< bool >( attrName );
 	return retVal;
 }
 
@@ -103,20 +109,25 @@ void UserSettings::apply( vge::engine::SceneManager & sm ) const
 	const EngineProperties::MaxAnisotropyValueType	maxAnisotropy	( getTreeAttributeAsFloat(i->second, "maxAnisotropy") );
 
 	//	antialiasing technique
-	const Antialiasing::TechniqueValueType			aaTechnique		( getTreeAttributeAsEnum< Antialiasing::TechniqueValueType >(i->second, "antialiasing")	);
+	const Antialiasing::TechniqueValueType			aaTechnique		( getTreeAttributeAsEnum< Antialiasing::TechniqueValueType >(i->second, "antialiasing")			);
+
+	//	bumpmapping
+	const LightModel::BumpMappingValueType			bumpmapping		( getTreeAttributeAsBool(i->second, "bumpmapping") 												);
 
 	// Retrieves several nodes used to apply user settings to scene graph
 	vgd::Shp< Antialiasing >		antialiasing		= sm.findFirstByType< Antialiasing >();
 	vgd::Shp< EngineProperties >	engineProperties	= sm.findFirstByType< EngineProperties >();
 	vgd::Shp< LightModel >			lightModel			= sm.findFirstByType< LightModel >();
 
-	//	shadow settings
+	//	shadow settings and bump mapping
 	if ( lightModel )
 	{
 		if( shadow.isValid() )			lightModel->setShadow( shadow );
 		if( shadowFiltering.isValid() )	lightModel->setShadowFiltering( shadowFiltering );
 		if( shadowMapSize.isValid() )	lightModel->setShadowMapSize( shadowMapSize );
 		if( shadowMapType.isValid() )	lightModel->setShadowMapType( shadowMapType );
+
+		lightModel->setBumpMapping( bumpmapping );
 	}
 	else
 	{
@@ -290,7 +301,7 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 	// Gathers node settings
 	bool isDefined;
 
-	//	shadow related values
+	//	shadow and bump mapping related values
 	LightModel::ShadowValueType				nodeShadow;
 	LightModel::ShadowFilteringValueType	nodeShadowFiltering;
 	LightModel::ShadowMapSizeValueType		nodeShadowMapSize;
@@ -300,6 +311,8 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 	isDefined = isDefined && lightModel->getShadowFiltering( nodeShadowFiltering );
 	isDefined = isDefined && lightModel->getShadowMapSize( nodeShadowMapSize );
 	nodeShadowMapType = lightModel->getShadowMapType();
+
+	LightModel::BumpMappingValueType		nodeBumpMapping = lightModel->getBumpMapping();
 
 	//	maximum anisotropy value
 	EngineProperties::MaxAnisotropyValueType	nodeMaxAnisotropy;
@@ -318,11 +331,13 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 
 	for( bpt::ptree::const_iterator	i = m_levels.begin(); i != m_levels.end(); ++i )
 	{
-		//	shadow related values
+		//	shadow and bump mapping related values
 		const LightModel::ShadowValueType				levelShadow			( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow")					);
 		const LightModel::ShadowFilteringValueType		levelShadowFiltering( getTreeAttributeAsEnum< LightModel::ShadowFilteringValueType >(i->second, "shadowFiltering")	);
 		const LightModel::ShadowMapSizeValueType		levelShadowMapSize	( getTreeAttributeAsEnum< LightModel::ShadowMapSizeValueType >(i->second, "shadowMapSize")		);
 		const LightModel::ShadowMapTypeValueType		levelShadowMapType	( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType")		);
+
+		const LightModel::BumpMappingValueType			levelBumpMapping	( getTreeAttributeAsBool(i->second, "bumpmapping")												);
 
 		//	maximum anisotropy value
 		const EngineProperties::MaxAnisotropyValueType	levelMaxAnisotropy	( getTreeAttributeAsFloat(i->second, "maxAnisotropy") );
@@ -338,6 +353,9 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 		if( levelShadowFiltering.isValid() )	matches = matches && levelShadowFiltering == nodeShadowFiltering ;
 		if( levelShadowMapSize.isValid() )		matches = matches && levelShadowMapSize == nodeShadowMapSize;
 		if( levelShadowMapType.isValid() )		matches = matches && levelShadowMapType == nodeShadowMapType;
+
+		//	bump mapping
+		matches = matches && levelBumpMapping == nodeBumpMapping;
 
 		//	maximum anisotropy
 		matches = matches && levelMaxAnisotropy == nodeMaxAnisotropy;
