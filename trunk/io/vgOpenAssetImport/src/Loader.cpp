@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -53,6 +53,13 @@ vgm::Vec2f toVec2f( aiVector3D source )
 vgm::Vec3f toVec3f( aiColor3D source )
 {
 	vgm::Vec3f retVal( source.r, source.g, source.b );
+	return retVal;
+}
+
+
+aiVector3D toAiVector3D( vgm::Vec3f source )
+{
+	aiVector3D retVal( source[0], source[1], source[2] );
 	return retVal;
 }
 
@@ -238,7 +245,7 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 		group->addChild( texture );
 	}
 
-	/*// NORMALMAP TEXTURE
+	// NORMALMAP TEXTURE
 	if ( aiMat->Get( AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0), str ) == AI_SUCCESS )
 	{
 		aiMat->Get( AI_MATKEY_MAPPINGMODE_U(aiTextureType_NORMALS, 0), mapU );
@@ -246,7 +253,7 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 
 		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( pathFilename, 1, str, mapU, mapV );
 		group->addChild( texture );
-	}*/
+	}
 
 	/*// SPECULAR TEXTURE
 	if ( aiMat->Get( AI_MATKEY_TEXTURE(aiTextureType_SPECULAR, 0), str ) == AI_SUCCESS )
@@ -378,7 +385,7 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 			tangents->push_back( toVec3f(mesh->mTangents[i]) );
 		}
 
-		//vertexShape->setTangentBinding( vgd::node::BIND_PER_VERTEX ); @todo
+		vertexShape->setTangentBinding( vgd::node::BIND_PER_VERTEX );
 	}
 
 	// @todo bitangents
@@ -457,6 +464,19 @@ vgd::Shp< vgd::node::Group > recursiveImport(	const aiScene * aiscene, const aiN
 META_LOADER_CPP( vgOpenAssetImport::Loader, "openAssetImport" )
 
 
+Loader::Loader()
+: 	//m_pathFilename
+	//m_flags(0)
+	m_flags(aiProcess_CalcTangentSpace)
+{}
+
+
+void Loader::addPostProcessing( unsigned int flags )
+{
+	m_flags = flags;
+}
+
+
 std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
@@ -486,6 +506,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 	// Create an instance of the Importer class
 	Assimp::Importer importer;
 	const aiScene * scene = importer.ReadFile( filePath,
+		m_flags |
 		ppsteps | /* configurable pp steps */
 		//aiProcess_GenSmoothNormals		   | // generate smooth normal vectors if not existing
 		//aiProcess_SplitLargeMeshes         | // split large, unrenderable meshes into submeshes
