@@ -124,8 +124,8 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 		glslState.setShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION, "" );
 
 		glslState.setShaderStage( GLSLState::VERTEX_ECNORMAL_COMPUTATION,
-		"	vec3 normal = texture( texMap2D[1], (gl_TextureMatrix[0] * mgl_MultiTexCoord0).xy ).xyz;\n"
-		"	ecNormal = gl_NormalMatrix * normal;\n" );
+		"	normal = texture( texMap2D[1], (gl_TextureMatrix[0] * mgl_MultiTexCoord0).xy ).xyz;\n"
+		"	ecNormal	= normalize( gl_NormalMatrix * normal );\n" );
 
 		glslState.setShaderStage( GLSLState::FRAGMENT_DECLARATIONS, "in float fluidHeight;\n" );
 
@@ -182,7 +182,7 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 		{
 			fluidHeightMap->setMultiAttributeIndex( 2 );
 			fluidHeightMap->setVertexFunction(
-				"	fluidHeight = texture( texMap2D[2], mgl_TexCoord[0].xy ).x;\n" );
+				"	fluidHeight = texture( texMap2D[2], Out.mgl_TexCoord[0].xy ).x;\n" );
 		}
 
 // @todo done in FRAGMENT_OUTPUT but could be better done here => fluidHeightMap->setFragmentFunction( "	color = vec4( color.rgb, fluidHeight );\n" );
