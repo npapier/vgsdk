@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -81,7 +81,7 @@ void Noise::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
 	setChannelsSeparated( (false) );
-	setFactors( vgm::Vec2f(0.025f, 0.025f) );
+	setFactors( vgm::Vec4f(0.025f, 0.025f, 4.f, 1.f) );
 	setUseTextureLessRandom( (false) );
 	setRandomTextureScaleFactors( vgm::Vec2f(1.f, 1.f) );
 	setNoiseModel( (PHOTON) );
@@ -119,7 +119,7 @@ void Noise::setChannelsSeparated( const ChannelsSeparatedValueType value )
 
 // Factors
 
-const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec2f(0.025f, 0.025f);
+const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec4f(0.025f, 0.025f, 4.f, 1.f);
 
 
 

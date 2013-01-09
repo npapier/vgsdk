@@ -759,13 +759,13 @@
 			<type name="enum">
 				<enum default="PHOTON">
 					<value name="NO" doc="No noise simulation"/>
-					<value name="PHOTON" doc="Photon noise simulation"/>
+					<value name="PHOTON"	doc="Photon noise simulation"/>
 				</enum>
 			</type>
 		</sf>
 
-		<sf name="factors" doc="Sets the linear and constant factor used to generate noise.">
-			<type name = "Vec2f" namespace="vgm" default = "0.025f, 0.025f"></type>
+		<sf name="factors" doc="Sets the parameters of the noise function. color = (random0 * constantFactor) + color * ( vec4(1) + (random1 * modulateFactor * pow(1-luminance), powFactor)) ). First parameter is the constantFactor. Second parameter is the modulateFactor. Third parameter is the powFactor. Fourth parameter is used to raise random value(s) to the given power to modify the random function.">
+			<type name = "Vec4f" namespace="vgm" default = "0.025f, 0.025f, 4.f, 1.f"></type>
 		</sf>
 
 		<sf name="channelsSeparated" doc="Sets to true to use a different random value for each channel, false to use the same random value.">

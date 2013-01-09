@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,6 +10,7 @@
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/Float.hpp"
 #include "vgd/field/Vec2f.hpp"
+#include "vgd/field/Vec4f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
 
@@ -31,8 +32,8 @@ namespace node
  * - SFBool \c channelsSeparated = (false)<br>
  *   Sets to true to use a different random value for each channel, false to use the same random value.<br>
  *<br>
- * - SFVec2f \c factors = vgm::Vec2f(0.025f, 0.025f)<br>
- *   Sets the linear and constant factor used to generate noise.<br>
+ * - SFVec4f \c factors = vgm::Vec4f(0.025f, 0.025f, 4.f, 1.f)<br>
+ *   Sets the parameters of the noise function. color = (random0 * constantFactor) + color * ( vec4(1) + (random1 * modulateFactor * pow(1-luminance), powFactor)) ). First parameter is the constantFactor. Second parameter is the modulateFactor. Third parameter is the powFactor. Fourth parameter is used to raise random value(s) to the given power to modify the random function.<br>
  *<br>
  * - SFBool \c useTextureLessRandom = (false)<br>
  *   Sets to true to generate random values without using a texture, false to use a texture.<br>
@@ -129,7 +130,7 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	/**
 	 * @brief Type definition of the value contained by field named \c factors.
 	 */
-	typedef vgm::Vec2f FactorsValueType;
+	typedef vgm::Vec4f FactorsValueType;
 
 	/**
 	 * @brief The default value of field named \c factors.
