@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -74,15 +74,20 @@ void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::S
 	const vgm::Vec2i size(	static_cast< int >(drawingSurfaceSize[0] * randomTextureScaleFactors[0]),
 							static_cast< int >(drawingSurfaceSize[1] * randomTextureScaleFactors[1]) );
 
+	const float randomPow = noise->getFactors()[3];
+
 	using vgd::basic::Image;
 	vgd::Shp< Image > image( new Image(size[0], size[1], 1, Image::LUMINANCE, Image::UINT8) );
 
 	uint8 * iPixel = static_cast< uint8 * >( image->editPixels() );
-
 	const uint endCount = size[0]*size[1];
 	for(uint count=0; count< endCount; ++count)
 	{
-		*iPixel = rand() % 256;
+		// random is in [-1, 1]
+		const float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.f - 1.f;
+		const float randomSign = (random >= 0.f) ? 1.f : -1.f;
+		const float powRandom = randomSign * pow( abs(random), randomPow );
+		*iPixel = static_cast<uint8>( powRandom * 256.f / 2.f + 128.f );
 		++iPixel;
 	}
 	image->editPixelsDone();
@@ -134,45 +139,42 @@ void Noise::stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vg
 	vgd::Shp< PostProcessing > noisePP = rc->rootPostProcessing->getChild< PostProcessing >( 0 );
 
 	// Sets the custom filter
-	const std::string customFilterDefinitionWithNoiseFromTexture =
-		"vec4 apply( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, vec2 params )\n"
+	const std::string sharedCode = 
 		"{\n"
-		"	float linearFactor		= params.x;\n"
-		"	float constantFactor	= params.y;\n"
+		"	float constantFactor	= params.x;\n"
+		"	float modulateFactor	= params.y;\n"
+		"	float powFactor			= params.z;\n"
+		"	float noisePowFactor	= params.w;\n"
 		"\n"
 		"	vec4 color = texture( texMap0, texCoord );\n"
 		"	NOISE0\n"
+		//"	NOISEPOW\n"
+		"	noise0 = noise0 * 2 - 1;\n"
 		"	NOISE1\n"
 		"	COLOR\n"
 		"	return color;\n"
 		"}\n"
 		"\n\n\n";
 
+	const std::string customFilterDefinitionWithNoiseFromTexture =
+		"vec4 apply( sampler2D texMap0, sampler2D texMap1, vec2 texCoord, vec4 params )\n" +
+		sharedCode;
+
 	const std::string customFilterDefinitionWithTextureLessNoise =
-		"vec4 apply( sampler2D texMap0, vec2 texCoord, vec2 params )\n"
-		"{\n"
-		"	float linearFactor		= params.x;\n"
-		"	float constantFactor	= params.y;\n"
-		"\n"
-		"	vec4 color = texture( texMap0, texCoord );\n"
-		"	NOISE0\n"
-		"	NOISE1\n"
-		"	COLOR\n"
-		"	return color;\n"
-		"}\n"
-		"\n\n\n";
+		"vec4 apply( sampler2D texMap0, vec2 texCoord, vec4 params )\n"
+		+ sharedCode;
 
 	std::string customFilterDefinition;
 	std::string customFilterApply;
 	if ( getNoiseNode()->getUseTextureLessRandom() )
 	{
 		customFilterDefinition	= vgeGL::engine::GLSLHelpers::get_pnoise_cnoise() + customFilterDefinitionWithTextureLessNoise;
-		customFilterApply		= "	color = apply( texMap2D[0], mgl_TexCoord[0].xy, param4f0.xy );\n";
+		customFilterApply		= "	color = apply( texMap2D[0], mgl_TexCoord[0].xy, param4f0 );\n";
 	}
 	else
 	{
 		customFilterDefinition	= customFilterDefinitionWithNoiseFromTexture;
-		customFilterApply		= "	color = apply( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param4f0.xy );\n";
+		customFilterApply		= "	color = apply( texMap2D[0], texMap2D[1], mgl_TexCoord[0].xy, param4f0 );\n";
 	}
 
 	if ( getNoiseNode()->getChannelsSeparated() )
@@ -197,10 +199,14 @@ void Noise::stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vg
 				"						0.f );\n" );
 		}
 
+		// NOISE0POW
+		//boost::algorithm::replace_all( customFilterDefinition, "NOISEPOW",
+		//	"	noise0 = pow( noise0, vec4(noisePowFactor, noisePowFactor, noisePowFactor, noisePowFactor) );\n" );
+
+		// NOISE1
 		boost::algorithm::replace_all( customFilterDefinition, "NOISE1",
 			"	vec4 noise1 = noise0;\n" );
 	}
-//texture( texMap1, texCoord - random.zw) ).x;\n" // @todo test != between 1 noise or 2 noise values
 	else
 	{
 		if ( getNoiseNode()->getUseTextureLessRandom() )
@@ -216,12 +222,20 @@ void Noise::stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vg
 				"	float noise0 = texture( texMap1, texCoord + random.xy ).x;\n" );
 		}
 
+		// NOISE0POW
+		//boost::algorithm::replace_all( customFilterDefinition, "NOISEPOW",
+		//	"	noise0 = pow( noise0, noisePowFactor );\n" );
+
+		// NOISE1
 		boost::algorithm::replace_all( customFilterDefinition, "NOISE1",
 			"	float noise1 = noise0;\n" );
 	}
 
 	boost::algorithm::replace_all( customFilterDefinition, "COLOR",
-		"	color = color * ( vec4(1) + linearFactor * noise0 ) + (constantFactor * noise1);\n" );
+		"	float luminance = colorToMonochrome(color);\n"
+		"	float rluminance = 1-luminance;\n"
+		"	//	color = color * ( vec4(1) + linearFactor * noise0 ) + (constantFactor * noise1);\n"
+		"	color = (noise0 * constantFactor) + color + (noise1* modulateFactor * pow(rluminance, powFactor));\n" );
 
 	if ( noisePP->getCustomFilterDefinition() != customFilterDefinition )
 	{
