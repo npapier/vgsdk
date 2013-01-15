@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2012, Pierre-Jean Bensoussan, Nicolas Papier, Alexandre Di Pino.
+// VGSDK - Copyright (C) 2008, 2012, 2013, Pierre-Jean Bensoussan, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Pierre-Jean Bensoussan
@@ -232,8 +232,8 @@ void computeNormals( vgd::Shp< vgd::node::VertexShape > vertexShape )
 	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
 	vgd::field::EditorRW< vgd::field::MFVec3f >		normals		= vertexShape->getFNormalRW();
 
-	const int32 numVertices	= vertices->size();
-	const int32 numTris		= vertexIndex->size()/3;
+	const uint numVertices	= vertices->size();
+	const uint numTris		= vertexIndex->size()/3;
 
 	// Stage initialization of normals field
 	vgd::basic::Time init;
@@ -299,8 +299,8 @@ void computeTangents( vgd::Shp< vgd::node::VertexShape > vertexShape )
 	vgd::field::EditorRO< vgd::field::MFVec3f >		normals		= vertexShape->getFNormalRO();
 	vgd::field::EditorRO< vgd::field::MFVec2f >		textCoords	= vertexShape->getFTexCoordRO< vgd::field::MFVec2f >();
 
-	const int32 numVertices	= vertices->size();
-	const int32 numTris		= vertexIndex->size()/3;
+	const uint numVertices	= vertices->size();
+	const uint numTris		= vertexIndex->size()/3;
 
 	// Stage initialization of tangents field
 	vgd::basic::Time init;
@@ -399,6 +399,8 @@ void computeNormalsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertic
 }
 
 
+// Code based on Terathon Software 3D Graphics Library, 2001. http://www.terathon.com/code/tangent.html
+// Lengyel, Eric. “Computing Tangent Space Basis Vectors for an Arbitrary Mesh”.
 void computeTangentsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertices,
 								vgd::field::EditorRO< vgd::field::MFUInt32 >&	vertexIndex,
 								vgd::field::EditorRW< vgd::field::MFVec3f >&	tangents,
@@ -406,49 +408,76 @@ void computeTangentsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	verti
 								vgd::field::EditorRO< vgd::field::MFVec2f >&	texCoord,
 								const int32 numTris )
 {
-	vgm::Vec3f faceTangent;		// a temp face tangent
-	int32 indexA, indexB, indexC;
-	vgm::Vec3f v1, v2;
-	vgm::Vec2f t1, t2;
-	float coef;
-	int32 j = 0;
+	vgm::Vec3f * tan1 = new vgm::Vec3f[vertices->size()*2];
+	vgm::Vec3f * tan2 = tan1 + vertices->size();
+	memset(tan1, 0, vertices->size() * sizeof(vgm::Vec3f) * 2 );
 
-	int numVert = vertices->size();
-
-	for( int32 i = 0; i < numTris; ++i )
+	uint viI=0;	// (I)ndex in (v)ertex (i)ndex array
+	for( uint a=0; a < static_cast<uint>(numTris); ++a )
 	{
-		indexA = (*vertexIndex)[j];
-		indexB = (*vertexIndex)[j+1];
-		indexC = (*vertexIndex)[j+2];
+		const uint i1 = (*vertexIndex)[viI++];
+		const uint i2 = (*vertexIndex)[viI++];
+		const uint i3 = (*vertexIndex)[viI++];
 
-		// compute face normal
-		v1 = (*vertices)[indexB] - (*vertices)[indexA];
-		v2 = (*vertices)[indexC] - (*vertices)[indexA];
-		t1 = (*texCoord)[indexB] - (*texCoord)[indexA];
-		t2 = (*texCoord)[indexC] - (*texCoord)[indexA];
+		const vgm::Vec3f v1 = (*vertices)[i1];
+		const vgm::Vec3f v2 = (*vertices)[i2];
+		const vgm::Vec3f v3 = (*vertices)[i3];
 
-		coef = 1.f / (t1[0] * t2[1] - t1[1] * t2[0]);
+		const vgm::Vec2f w1 = (*texCoord)[i1];
+		const vgm::Vec2f w2 = (*texCoord)[i2];
+		const vgm::Vec2f w3 = (*texCoord)[i3];
 
-		faceTangent[0] = (t2[1] * v1[0] - t1[1] * v2[0]) * coef;
-		faceTangent[1] = (t2[1] * v1[1] - t1[1] * v2[1]) * coef;
-		faceTangent[2] = (t2[1] * v1[2] - t1[1] * v2[2]) * coef;
+		const float x1 = v2[0] - v1[0];
+		const float x2 = v3[0] - v1[0];
+		const float y1 = v2[1] - v1[1];
+		const float y2 = v3[1] - v1[1];
+		const float z1 = v2[2] - v1[2];
+		const float z2 = v3[2] - v1[2];
 
-		// add this face tangent to each vertex tangent
-		(*tangents)[indexA]	+= faceTangent;
-		(*tangents)[indexB]	+= faceTangent;
-		(*tangents)[indexC]	+= faceTangent;
+		const float s1 = w2[0] - w1[0];
+		const float s2 = w3[0] - w1[0];
+		const float t1 = w2[1] - w1[1];
+		const float t2 = w3[1] - w1[1];
 
-		j += 3;
-	}
+		const float r = 1.0F / (s1 * t2 - s2 * t1);
+		/*const*/ vgm::Vec3f sdir(	(t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r	);
+		/*const*/ vgm::Vec3f tdir(	(s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r	);
 
-	if ( getOrthogonalize() )
-	{
-		for( int32 i = 0; i < numVert; ++i)
+		// Take care of texture mirroring
+		const float area = (s2*t1) - (t2*s1);
+		if ( area < 0.f )
 		{
-			(*tangents)[i] =  (*tangents)[i] - (*normals)[i] * ((*normals)[i].dot((*tangents)[i]));
+			sdir.negate();
+			tdir.negate();
 		}
+
+		//
+		tan1[i1] += sdir;
+		tan1[i2] += sdir;
+		tan1[i3] += sdir;
+
+		tan2[i1] += tdir;
+		tan2[i2] += tdir;
+		tan2[i3] += tdir;
 	}
+
+	for (uint a=0; a < vertices->size(); ++a)
+	{
+		const vgm::Vec3f n = (*normals)[a];
+		const vgm::Vec3f t = tan1[a];
+
+		// Gram-Schmidt orthogonalize
+		(*tangents)[a] = (t - n * n.dot(t)); //.normalize() => Don't do normalization now.
+
+		// Calculate handedness
+		//const float handedness = ( (n.cross(t)).dot(tan2[a]) ) < 0.0F ? -1.0F : 1.0F;
+		//tangent[a].w = handedness;
+	}
+
+	delete [] tan1;
 }
+
+
 
 
 void normalizeFieldStandard( vgd::field::EditorRW< vgd::field::MFVec3f >& field )
