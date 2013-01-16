@@ -466,8 +466,7 @@ META_LOADER_CPP( vgOpenAssetImport::Loader, "openAssetImport" )
 
 Loader::Loader()
 : 	//m_pathFilename
-	//m_flags(0)
-	m_flags(aiProcess_CalcTangentSpace)
+	m_flags(0)
 {}
 
 
