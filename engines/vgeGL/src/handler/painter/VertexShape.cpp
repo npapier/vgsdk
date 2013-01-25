@@ -559,6 +559,9 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	const bool additionalProperties =	(normalLength > 0.f) || (tangentLength > 0.f) ||showOrientationValue ||
 										(bbValue != vgd::node::DrawStyle::NO_BOUNDING_BOX);
 
+	// Gets resource associated to the given node
+	vgeGL::rc::VertexShape * vertexShapeRC = pGLEngine->getGLManager().get< vgeGL::rc::VertexShape >( pVertexShape );
+
 	if ( additionalProperties )
 	{
 		// Makes a backup of GLSL activation state
@@ -567,34 +570,37 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
 		pGLEngine->sethCurrentProgram();
 
+		glPushAttrib( GL_ALL_ATTRIB_BITS );
+
+		glDisable( GL_LIGHTING );
+		glDisable( GL_TEXTURE_1D );
+		glDisable( GL_TEXTURE_2D );
+
+		glLineWidth( 2.f );
+
 		// *** DRAWSTYLE.normalLength ***
-		if ( normalLength > 0.f )
+		if (	normalLength != 0.f &&
+				pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX	)
 		{
-			if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
-			{
-				::vgeGL::handler::painter::DrawStyle::paintVertexShapeNormals( pGLEngine, pVertexShape, this );
-			}
+			glColor3f( 1.f, 1.f, 1.f );
+
+			vgd::field::EditorRO< vgd::field::MFVec3f > normals = pVertexShape->getFNormalRO();
+			drawVectorsFromVertices( pVertexShape, normals, normalLength, vertexShapeRC->drawNormalsVectors, vertexShapeRC->drawNormalsBuffer );
 		}
 
 		// *** DRAWSTYLE.tangentLength ***
-		if ( tangentLength > 0.f )
+		if (	tangentLength != 0.f &&
+				pVertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX	)
 		{
-			if ( pVertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX )
-			{
-				::vgeGL::handler::painter::DrawStyle::paintVertexShapeTangents( pGLEngine, pVertexShape, this );
-			}
+			glColor3f( 1.f, 1.f, 0.f );
+
+			vgd::field::EditorRO< vgd::field::MFVec3f > tangents = pVertexShape->getFTangentRO();
+			drawVectorsFromVertices( pVertexShape, tangents, tangentLength, vertexShapeRC->drawTangentsVectors, vertexShapeRC->drawTangentsBuffer );
 		}
 
 		// *** DRAWSTYLE.showOrientation ***
 		if ( showOrientationValue )
 		{
-			// FIXME optimize me
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-			glDisable( GL_LIGHTING );
-			//glColor3f( 1.f, 1.f, 1.f );
-			// END FIXME
-
 			//float vColor[4];
 			//glGetFloatv( GL_COLOR_CLEAR_VALUE, vColor );
 			//glColor4fv( vColor );
@@ -603,27 +609,13 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			//glDepthFunc( GL_EQUAL );
 
 			//glDisable( GL_DEPTH_TEST );
-			drawTriangleOrientation( pVertexShape );
 
-			//glDisable(GL_POLYGON_OFFSET_FILL);
-			///@todo FIXME OPTME
-			glPopAttrib();
+			drawTriangleOrientation( pVertexShape, vertexShapeRC );
 		}
 
 		// *** DRAWSTYLE.boundingBox ***
 		if ( bbValue != vgd::node::DrawStyle::NO_BOUNDING_BOX )
 		{
-			// FIXME optimize me
-			glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-			glDisable( GL_LIGHTING );
-
-			glDisable( GL_TEXTURE_1D );
-			glDisable( GL_TEXTURE_2D );
-
-			glLineWidth( 2.f );
-			// END FIXME
-
 			switch ( bbValue.value() )
 			{
 				case vgd::node::DrawStyle::NO_BOUNDING_BOX:
@@ -649,10 +641,10 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				default:
 					vgAssertN( false, "Unknown DrawStyle.boundingBox value." );
 			}
-
-			///@todo FIXME OPTME
-			glPopAttrib();
 		}
+
+		// Restore state
+		glPopAttrib();
 
 		// Restores GLSL activation state
 		pGLEngine->setGLSLActivationState( glslActivationState );
@@ -1425,150 +1417,164 @@ void VertexShape::drawBox3f( const vgm::Box3f& box )
 
 
 
-void VertexShape::drawAbstractNormals(	vgd::node::VertexShape *vertexShape,
-										vgd::field::EditorRO< vgd::field::MFVec3f >& normal, const float normalLength )
+void VertexShape::drawVectorsFromVertices(	vgd::node::VertexShape *vertexShape,
+											vgd::field::EditorRO< vgd::field::MFVec3f >& vectorsField, const float vectorsLength,
+											std::vector< vgm::Vec3f >& vectors, glo::ArrayBuffer& buffer	)
 {
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertex		= vertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
-	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives	= vertexShape->getFPrimitiveRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices		= vertexShape->getFVertexRO();
 
-	if (	normal->size() == 0 ||
-			normal->size() != vertex->size() )
+	if (	vectorsField->size() == 0 ||
+			vectorsField->size() != vertices->size() )
 	{
 		// do nothing
 		return;
 	}
 
+	vectors.resize( vertices->size() * 2 );
+	uint vectorsIndex = 0;
+
 	// For each primitive:
-	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
-													ie	= primitives->end();
-			i != ie;
+	for(	uint i = 0, iEnd = vertices->size();
+			i != iEnd;
 			++i)
 	{
-		const vgd::node::Primitive& primitive(*i);
+		const vgm::Vec3f vertex	= (*vertices)[i];
 
-		// Start rendering the primitive.
-		if ( primitive.getType() == vgd::node::Primitive::NONE )
-		{
-			// Next primitive ?
-			continue;
-		}
-
-		glBegin( GL_LINES );
-
-		const uint i32Max = primitive.getIndex() + primitive.getNumIndices();
-		for( uint i32I = primitive.getIndex(); i32I<i32Max; ++i32I )
-		{
-			const uint i32VertexIndex = (*vertexIndex)[i32I];
-
-			const vgm::Vec3f	normalSource		= (*vertex)[i32VertexIndex];
-			const vgm::Vec3f	normalDestination	= normalSource + (*normal)[ i32VertexIndex ] * normalLength;
-
-			glVertex3fv( normalSource.getValue() );
-			glVertex3fv( normalDestination.getValue() );
-		}
-
-		glEnd();
-		// Finish rendering the primitive.
+		vectors[vectorsIndex] = vertex;
+		++vectorsIndex;
+		vectors[vectorsIndex] = vertex + (*vectorsField)[i] * vectorsLength;
+		++vectorsIndex;
 	}
+
+	// Render all vectors from vertices for all primitives
+	glo::VertexArrayObject::bindToDefault();
+	glDisableVertexAttribArray( vgeGL::engine::VERTEX_INDEX );
+
+	updateArrayBuffer( buffer, vectors.size()*sizeof(vgm::Vec3f), &vectors.front(), GL_DYNAMIC_DRAW );
+	glVertexPointer( 3, GL_FLOAT, 0, 0 );
+	glEnableClientState( GL_VERTEX_ARRAY );
+
+	glDrawArrays( GL_LINES, 0, vectorsIndex );
 }
 
 
-void VertexShape::drawTriangleOrientation( vgd::node::VertexShape *pVertexShape )
+void VertexShape::drawTriangleOrientation( vgd::node::VertexShape *pVertexShape, vgeGL::rc::VertexShape * rc )
 {
+	std::vector< vgm::Vec3f >& drawCentersOfTrianglesVectors	= rc->drawCentersOfTrianglesVectors;
+	std::vector< vgm::Vec3f >& drawRedArrowVectors				= rc->drawRedArrowVectors;
+	std::vector< vgm::Vec3f >& drawGreenArrowVectors			= rc->drawGreenArrowVectors;
+	std::vector< vgm::Vec3f >& drawBlueArrowVectors				= rc->drawBlueArrowVectors;
+
 	vgd::field::EditorRO< vgd::field::MFVec3f >		vertex			= pVertexShape->getFVertexRO();
-	//vgd::field::EditorRO< vgd::field::MFVec3f >	normal			= pVertexShape->getFNormalRO();
+
 	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex		= pVertexShape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives		= pVertexShape->getFPrimitiveRO();
 
-	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives( pVertexShape->getFPrimitiveRO() );
-
-	//assert( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX );
-	//assert( normal->size() > 0 );
-	
-	int32 i32IndexPrim=0;	
 	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
 													ie	= primitives->end();
 		 i != ie;
-		 i++, i32IndexPrim++)
+		 ++i++	)
 	{
 		const vgd::node::Primitive& primitive(*i);
-	
+
 		// Start rendering the primitive.
 		if ( primitive.getType() != vgd::node::Primitive::TRIANGLES )
 		{
 			// Next primitive ?
+			vgAssertN( false, "Only vgd::node::Primitive::TRIANGLES is supported" );
 			continue;
 		}
-		//assert( primitive.getType() == vgd::node::Primitive::TRIANGLES );
-		//GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
-	
-		const int32 i32Max = primitive.getIndex() + primitive.getNumIndices();
-		
-		for( int32 i32I = primitive.getIndex(); i32I<i32Max; i32I++ )
-		{
-			int32 i32VertexIndexA;
-			i32VertexIndexA = (*vertexIndex)[i32I++];
 
-			int32 i32VertexIndexB;
-			i32VertexIndexB = (*vertexIndex)[i32I++];
-			
-			int32 i32VertexIndexC;
-			i32VertexIndexC = (*vertexIndex)[i32I];
-			
-			vgm::Vec3f	vA, vB, vC, vTriangleCenter,
-						vMiddle,				// center of [AB] or [BC] or [CA]
-						vTmp1, vTmp2, vTmp3;
-			
-			vA = (*vertex)[i32VertexIndexA];
-			vB = (*vertex)[i32VertexIndexB];
-			vC = (*vertex)[i32VertexIndexC];
-			
-			vTriangleCenter = (vA + vB + vC ) / 3.f;
-			
-			const float		fFactorArrowLength	= 0.6f;
+		//GLenum primitiveType = m_primTypeArray[ primitive.getType() ];
+
+		vgAssert( primitive.getNumIndices() % 3 == 0 );
+		drawCentersOfTrianglesVectors.resize( primitive.getNumIndices()/3 );
+		drawRedArrowVectors.resize(		primitive.getNumIndices()/3 * 2 );
+		drawGreenArrowVectors.resize(	primitive.getNumIndices()/3 * 2 );
+		drawBlueArrowVectors.resize(	primitive.getNumIndices()/3 * 2 );
+
+		const float fFactorArrowLength = 0.4f;
+
+		uint index = 0;
+		const uint iEnd = primitive.getIndex() + primitive.getNumIndices();
+		for(	uint i = primitive.getIndex();
+				i != iEnd;
+				// nothing
+			)
+		{
+			const uint vertexIndexA = (*vertexIndex)[i++];
+			const uint vertexIndexB = (*vertexIndex)[i++];
+			const uint vertexIndexC = (*vertexIndex)[i++];
+
+			const vgm::Vec3f vA = (*vertex)[vertexIndexA];
+			const vgm::Vec3f vB = (*vertex)[vertexIndexB];
+			const vgm::Vec3f vC = (*vertex)[vertexIndexC];
+
+			const vgm::Vec3f vTriangleCenter = (vA + vB + vC ) / 3.f;
 
 			// triangle center
-			glPointSize( 3.f );
-
-			glBegin( GL_POINTS );
-			
-			glColor3f( 1.f, 1.f, 1.f );
-
-			glVertex3fv( vTriangleCenter.getValue() );
-			
-			glEnd();
-			
-			//
-			glBegin( GL_LINES );
+			drawCentersOfTrianglesVectors[index/2] = vTriangleCenter;
 
 			// AB
-			glColor3f( 1.f, 0.f, 0.f );
-			
-			vTmp1 = vB + (vTriangleCenter - vB ) * fFactorArrowLength;
-
-			glVertex3fv( vB.getValue() );
-			glVertex3fv( vTmp1.getValue() );
+			drawRedArrowVectors[index]		= vB;
+			drawRedArrowVectors[index+1]	= vB + (vTriangleCenter - vB ) * fFactorArrowLength;
 
 			// BC
-			glColor3f( 0.f, 1.f, 0.f );
-			
-			vTmp1 = vC + (vTriangleCenter - vC ) * fFactorArrowLength;
+			drawGreenArrowVectors[index]	= vC;
+			drawGreenArrowVectors[index+1]	= vC + (vTriangleCenter - vC ) * fFactorArrowLength;
 
-			glVertex3fv( vC.getValue() );
-			glVertex3fv( vTmp1.getValue() );
-			
 			// CA
-			glColor3f( 0.f, 0.f, 1.f );
-			
-			vTmp1 = vA + (vTriangleCenter - vA ) * fFactorArrowLength;
+			drawBlueArrowVectors[index] = vA;
+			drawBlueArrowVectors[index+1] = vA + (vTriangleCenter - vA ) * fFactorArrowLength;
 
-			glVertex3fv( vA.getValue() );
-			glVertex3fv( vTmp1.getValue() );
-
-			//			
-			glEnd();
+			index += 2;
 		}
 	}
+
+	// Render calls
+	glo::VertexArrayObject::bindToDefault();
+	glDisableVertexAttribArray( vgeGL::engine::VERTEX_INDEX );
+
+	//	centers of triangles
+	updateArrayBuffer(	rc->drawCentersOfTrianglesBuffer,
+						drawCentersOfTrianglesVectors.size()*sizeof(vgm::Vec3f), &drawCentersOfTrianglesVectors.front(),
+						GL_DYNAMIC_DRAW );
+	glVertexPointer( 3, GL_FLOAT, 0, 0 );
+	glEnableClientState( GL_VERTEX_ARRAY );
+
+	glPointSize( 3.f );
+	glColor3f( 1.f, 1.f, 1.f );
+	glDrawArrays( GL_POINTS, 0, drawCentersOfTrianglesVectors.size() );
+
+	// AB
+	glColor3f( 1.f, 0.f, 0.f );
+	updateArrayBuffer(	rc->drawRedArrowBuffer,
+						drawRedArrowVectors.size()*sizeof(vgm::Vec3f), &drawRedArrowVectors.front(),
+						GL_DYNAMIC_DRAW );
+	glVertexPointer( 3, GL_FLOAT, 0, 0 );
+	//glEnableClientState( GL_VERTEX_ARRAY );
+
+	glDrawArrays( GL_LINES, 0, drawRedArrowVectors.size() );
+
+	// BC
+	glColor3f( 0.f, 1.f, 0.f );
+	updateArrayBuffer(	rc->drawGreenArrowBuffer,
+						drawGreenArrowVectors.size()*sizeof(vgm::Vec3f), &drawGreenArrowVectors.front(),
+						GL_DYNAMIC_DRAW );
+	glVertexPointer( 3, GL_FLOAT, 0, 0 );
+	//glEnableClientState( GL_VERTEX_ARRAY );
+
+	glDrawArrays( GL_LINES, 0, drawGreenArrowVectors.size() );
+
+	// CA
+	glColor3f( 0.f, 0.f, 1.f );
+	updateArrayBuffer(	rc->drawBlueArrowBuffer,
+						drawBlueArrowVectors.size()*sizeof(vgm::Vec3f), &drawBlueArrowVectors.front(),
+						GL_DYNAMIC_DRAW );
+	glVertexPointer( 3, GL_FLOAT, 0, 0 );
+	//glEnableClientState( GL_VERTEX_ARRAY );
+
+	glDrawArrays( GL_LINES, 0, drawBlueArrowVectors.size() );
 }
 
 

@@ -379,53 +379,6 @@ void DrawStyle::paintVertexShapeWithShapeProperty(
 }
 
 
-
-void DrawStyle::paintVertexShapeNormals(	vgeGL::engine::Engine *glEngine, vgd::node::VertexShape *pVertexShape,
-											vgeGL::handler::painter::VertexShape *pVertexShapeHandler )
-{
-	// *** DRAWSTYLE.normalLength ***
-	vgd::node::DrawStyle::NormalLengthValueType	value = glEngine->getGLState().getNormalLength();
-
-	if ( value != 0.f )
-	{
-		///@todo FIXME OPTME
-		glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-		glDisable( GL_LIGHTING );
-		glColor3f( 1.f, 1.f, 1.f );
-
-		vgd::field::EditorRO< vgd::field::MFVec3f > normal = pVertexShape->getFNormalRO();
-		pVertexShapeHandler->drawAbstractNormals( pVertexShape, normal, value );
-
-		glPopAttrib();
-	}
-}
-
-
-
-void DrawStyle::paintVertexShapeTangents(	vgeGL::engine::Engine *glEngine, vgd::node::VertexShape *pVertexShape,
-											vgeGL::handler::painter::VertexShape *pVertexShapeHandler )
-{
-	// *** DRAWSTYLE.tangentLength ***
-	vgd::node::DrawStyle::TangentLengthValueType value = glEngine->getGLState().getTangentLength();
-
-	if ( value != 0.f )
-	{
-		///@todo FIXME OPTME
-		glPushAttrib( GL_ALL_ATTRIB_BITS );
-
-		glDisable( GL_LIGHTING );
-		glColor3f( 0.f, 1.f, 0.f );
-
-		vgd::field::EditorRO< vgd::field::MFVec3f > tangent = pVertexShape->getFTangentRO();
-		pVertexShapeHandler->drawAbstractNormals( pVertexShape, tangent, value );
-
-		glPopAttrib();
-	}
-}
-
-
-
 } // namespace painter
 
 } // namespace handler
