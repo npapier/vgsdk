@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,8 +6,10 @@
 #ifndef _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_HPP
 #define _VGEGL_HANDLER_PAINTER_VERTEXSHAPE_HPP
 
+#include <glo/ArrayBuffer.hpp>
 #include <vge/handler/painter/Shape.hpp>
 #include <vgd/node/VertexShape.hpp>
+#include <vgm/Vector.hpp>
 
 #include "vgeGL/engine/Settings.hpp"
 #include "vgeGL/vgeGL.hpp"
@@ -86,8 +88,9 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	void 	drawXfBoundingBox	( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
 
 	void	drawBox3f	( const vgm::Box3f& box );
-	void	drawAbstractNormals(	vgd::node::VertexShape *vertexShape,
-									vgd::field::EditorRO< vgd::field::MFVec3f >& normal, const float normalLength );
+	void	drawVectorsFromVertices(	vgd::node::VertexShape *vertexShape,
+										vgd::field::EditorRO< vgd::field::MFVec3f >& vectorsField, const float vectorsLength,
+										std::vector< vgm::Vec3f >& vectors, glo::ArrayBuffer& buffer	);
 
 	/**
 	 * @brief Draw 3 points (one Red, one Green and one Blue) for the first triangle of each primitive in the same order
@@ -95,7 +98,7 @@ struct VGEGL_API VertexShape : public vge::handler::painter::Shape
 	 * 
 	 * @remarks Useful to know if triangles are in CCW or CW
 	 */
-	void 	drawTriangleOrientation( vgd::node::VertexShape *pCastedNode );
+	void 	drawTriangleOrientation( vgd::node::VertexShape *pVertexShape, vgeGL::rc::VertexShape * rc );
 	//@}
 
 protected:
