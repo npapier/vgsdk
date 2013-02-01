@@ -50,7 +50,6 @@ Settings::Settings()
     m_disableTexture = new QCheckBox("Disable texture");
     m_disableShadow = new QCheckBox("Disable shadow");
     m_disableDisplayList = new QCheckBox("Disable display list");
-    m_disableVBO = new QCheckBox("Disable VBO");
     m_disableDepthPrePass = new QCheckBox("Disable Depth pre-pass");
     m_showFPS = new QCheckBox("Show counters (fps and frame)");
     m_debugEvents = new QCheckBox("Log events");
@@ -63,7 +62,6 @@ Settings::Settings()
     addWidget(m_disableTexture);
     addWidget(m_disableShadow);
     addWidget(m_disableDisplayList);
-    addWidget(m_disableVBO);
     addWidget(m_disableDepthPrePass);
     addWidget(m_showFPS);
     addWidget(m_debugEvents);
@@ -79,7 +77,6 @@ Settings::Settings()
     connect(m_disableTexture, SIGNAL(clicked()), (Settings*) this, SLOT(onDisableTexture()));
     connect(m_disableShadow, SIGNAL(clicked()), (Settings*) this, SLOT(onDisableShadow()));
     connect(m_disableDisplayList, SIGNAL(clicked()), (Settings*) this, SLOT(onDisableDisplayList()));
-    connect(m_disableVBO, SIGNAL(clicked()), (Settings*) this, SLOT(onDisableVBO()));
     connect(m_disableDepthPrePass, SIGNAL(clicked()), (Settings*) this, SLOT(onDisableDepthPrePass()));
     connect(m_showFPS, SIGNAL(clicked()), (Settings*) this, SLOT(onShowFPS()));
     connect(m_debugEvents, SIGNAL(clicked()), (Settings*) this, SLOT(onDebugEvents()));
@@ -101,12 +98,12 @@ void Settings::setCanvas( vgUI::Canvas * canvas )
         m_disableTexture->setChecked( !m_canvas->getGLEngine()->isTextureMappingEnabled() );
         m_disableShadow->setChecked( !m_canvas->getGLEngine()->isShadowEnabled() );
         m_disableDisplayList->setChecked( !m_canvas->getGLEngine()->isDisplayListEnabled() );
-        m_disableVBO->setChecked( !m_canvas->getGLEngine()->isVertexBufferObjectEnabled() );
         m_disableDepthPrePass->setChecked( !m_canvas->getGLEngine()->isDepthPrePassEnabled() );
 
         m_showFPS->setChecked( m_canvas->isDebugOverlay() );
     }
 }
+
 void Settings::onGLSL()
 {
     assert( m_canvas != 0 );
@@ -124,6 +121,7 @@ void Settings::onDisableLighting()
 
     m_canvas->refreshForced();
 }
+
 void Settings::onDisableTexture()
 {
     assert( m_canvas != 0 );
@@ -133,6 +131,7 @@ void Settings::onDisableTexture()
 
     m_canvas->refreshForced();
 }
+
 void Settings::onDisableShadow()
 {
     assert( m_canvas != 0 );
@@ -142,6 +141,7 @@ void Settings::onDisableShadow()
 
     m_canvas->refreshForced();
 }
+
 void Settings::onDisableDisplayList()
 {
     assert( m_canvas != 0 );
@@ -152,16 +152,7 @@ void Settings::onDisableDisplayList()
 
     m_canvas->refreshForced();
 }
-void Settings::onDisableVBO()
-{
-    assert( m_canvas != 0 );
 
-    m_canvas->getGLEngine()->setVertexBufferObjectEnabled( !m_disableVBO->isChecked() );
-
-    dirtyAllNodes( m_canvas );
-
-    m_canvas->refreshForced();
-}
 void Settings::onDisableDepthPrePass()
 {
     assert( m_canvas != 0 );
