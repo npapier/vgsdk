@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -34,7 +34,6 @@ Engine::Engine()
 :	m_isLightingEnabled(true),
 	m_isTextureMappingEnabled(true),
 	m_isDisplayListEnabled(true),
-	m_isVertexBufferObjectEnabled(true),
 	m_isDepthPrePassEnabled(false),
 	m_isShadowEnabled(true),
 
@@ -86,7 +85,6 @@ void Engine::reset()
 	setLightingEnabled();
 	setTextureMappingEnabled();
 	setDisplayListEnabled();
-	setVertexBufferObjectEnabled();
 	setDepthPrePassEnabled( false );
 
 	switch ( driverProvider )
@@ -458,20 +456,6 @@ const bool Engine::isDisplayListEnabled() const
 void Engine::setDisplayListEnabled( const bool enabled )
 {
 	m_isDisplayListEnabled = enabled;
-}
-
-
-
-const bool Engine::isVertexBufferObjectEnabled() const
-{
-	return m_isVertexBufferObjectEnabled;
-}
-
-
-
-void Engine::setVertexBufferObjectEnabled( const bool enabled )
-{
-	m_isVertexBufferObjectEnabled = enabled;
 }
 
 

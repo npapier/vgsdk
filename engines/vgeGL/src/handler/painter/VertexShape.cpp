@@ -51,7 +51,6 @@ NORMAL
 VERTEX
 VERTEX INDEX
 PRIMITIVE
-
 */
 
 namespace
@@ -169,7 +168,7 @@ void updateTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, cons
 
 // Configure arrays
 void configureTexCoord(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape * vertexShape,
-						const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc, const bool isVertexBufferObjectEnabled )
+						const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc )
 {
 	if (	texCoordDim > 0 &&
 			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
@@ -178,34 +177,7 @@ void configureTexCoord(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShap
 		if ( !pGLEngine->isGLSLEnabled() ) glClientActiveTexture( GL_TEXTURE0_ARB + unit );
 		const GLvoid *pArray = 0;
 
-		if ( isVertexBufferObjectEnabled )
-		{
-			rc->texCoord[unit].bind();
-		}
-		else
-		{
-			if ( texCoordDim == 2 )
-			{
-				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec2f >( unit )->ptr() );
-			}
-			else if ( texCoordDim == 1 )
-			{
-				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFFloat >( unit )->ptr() );
-			}
-			else if ( texCoordDim == 3 )
-			{
-				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec3f >( unit )->ptr() );
-			}
-			else if ( texCoordDim == 4 )
-			{
-				pArray = static_cast< const GLvoid* >( vertexShape->getFTexCoordRO< vgd::field::MFVec4f >( unit )->ptr() );
-			}
-			else
-			{
-				// NOT SUPPORTED
-				vgAssertN( false, "VertexShape(%s).texCoord%u with dimension equal to %u", vertexShape->getName().c_str(), unit, texCoordDim );
-			}
-		}
+		rc->texCoord[unit].bind();
 
 		// Configure vertex attrib array
 		if ( pGLEngine->isGLSLEnabled() )
@@ -559,11 +531,11 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	const bool additionalProperties =	(normalLength > 0.f) || (tangentLength > 0.f) ||showOrientationValue ||
 										(bbValue != vgd::node::DrawStyle::NO_BOUNDING_BOX);
 
-	// Gets resource associated to the given node
-	vgeGL::rc::VertexShape * vertexShapeRC = pGLEngine->getGLManager().get< vgeGL::rc::VertexShape >( pVertexShape );
-
 	if ( additionalProperties )
 	{
+		// Gets resource associated to the given node
+		vgeGL::rc::VertexShape * vertexShapeRC = pGLEngine->getGLManager().get< vgeGL::rc::VertexShape >( pVertexShape );
+
 		// Makes a backup of GLSL activation state
 		using vgeGL::engine::Engine;
 
@@ -957,10 +929,6 @@ void VertexShape::update(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexSh
 		bindVAO( rc->vao );
 //	}
 
-	// Do nothing if VBO is not enabled
-	if ( pGLEngine->isVertexBufferObjectEnabled() == false )	return;
-
-
 	// Updates all VBO
 	const GLenum bufferUsage = convertDeformableHint2GLUsage( pVertexShape );
 
@@ -1046,7 +1014,7 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 					//switch ( textureNode->getUsage().value() )
 					//{
 						//case vgd::node::Texture::IMAGE:
-							configureTexCoord( pGLEngine, pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */, rc, pGLEngine->isVertexBufferObjectEnabled() );
+							configureTexCoord( pGLEngine, pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */, rc );
 							//break;
 
 						//case vgd::node::Texture::SHADOW:
@@ -1063,7 +1031,7 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 					const uint texCoordDim = pVertexShape->getTexCoordDim(unit);
 					//if ( texCoordDim > 0 )		texture->enable();
 					glEnable( GL_TEXTURE_2D );
-					configureTexCoord( pGLEngine, pVertexShape, unit,  texCoordDim, rc, pGLEngine->isVertexBufferObjectEnabled() );
+					configureTexCoord( pGLEngine, pVertexShape, unit,  texCoordDim, rc );
 				}
 			//}
 			// else nothing to do
@@ -1152,14 +1120,7 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 
 	if ( pVertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX )
 	{
-		if ( pGLEngine->isVertexBufferObjectEnabled() )
-		{
-			rc->tangent.bind();
-		}
-		else
-		{
-			pArray = static_cast< const GLvoid* >( pVertexShape->getFTangentRO()->ptr() );
-		}
+		rc->tangent.bind();
 
 		glEnableVertexAttribArray( vgeGL::engine::TANGENT_INDEX );
 		glVertexAttribPointer( vgeGL::engine::TANGENT_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
@@ -1174,14 +1135,7 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 
 	if ( pVertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
 	{
-		if ( pGLEngine->isVertexBufferObjectEnabled() )
-		{
-			rc->normal.bind();
-		}
-		else
-		{
-			pArray = static_cast< const GLvoid* >( pVertexShape->getFNormalRO()->ptr() );
-		}
+		rc->normal.bind();
 
 		//glNormalPointer( GL_FLOAT, 0, pArray );
 		//glEnableClientState( GL_NORMAL_ARRAY );
@@ -1196,14 +1150,7 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 	// VERTEX
 	vgd::field::EditorRO< vgd::field::MFVec3f > vertex;
 
-	if ( pGLEngine->isVertexBufferObjectEnabled() )
-	{
-		rc->vertex.bind();
-	}
-	else
-	{
-		pArray = static_cast< const GLvoid* >( pVertexShape->getFVertexRO()->ptr() );
-	}
+	rc->vertex.bind();
 
 	//glVertexPointer( 3, GL_FLOAT, 0, pArray );
 	//glEnableClientState( GL_VERTEX_ARRAY );
@@ -1213,19 +1160,11 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * pGLEngine, v
 	// VERTEX INDEX
 	vgd::field::EditorRO< vgd::field::MFUInt32 > vertexIndex;
 
-	if ( pGLEngine->isVertexBufferObjectEnabled() )
-	{
-		rc->vertexIndex.bind();
-	}
-	else
-	{
-		pArray = static_cast< const GLvoid* >( pVertexShape->getFVertexIndexRO()->ptr() );
-	}
+	rc->vertexIndex.bind();
+
 	glEnableVertexAttribArray( vgeGL::engine::VERTEXINDEX_INDEX );
 	glVertexAttribPointer( vgeGL::engine::VERTEXINDEX_INDEX, 1, GL_UNSIGNED_INT, GL_FALSE, 0, pArray );
 }
-
-
 
 
 
@@ -1264,9 +1203,7 @@ void VertexShape::renderArrays( vgeGL::engine::Engine * pGLEngine, vgd::node::Ve
 
 		if ( primitive.getType() == vgd::node::Primitive::NONE )	continue;
 
-		const GLvoid *pArray = pGLEngine->isVertexBufferObjectEnabled() ?
-			(uint32*)0 + primitive.getIndex() :
-			reinterpret_cast< const GLvoid* >( &(*pVertexShape->getFVertexIndexRO())[primitive.getIndex()] );
+		const GLvoid *pArray = (uint32*)0 + primitive.getIndex();
 
 		const vgd::node::MultipleInstances * multipleInstances = pGLEngine->getGLState().getMultipleInstances();
 		if ( multipleInstances )
