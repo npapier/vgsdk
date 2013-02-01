@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -532,21 +532,6 @@ public:
 
 
 	/**
-	 * @brief Determines whether the vertex buffer object usage is enabled.
-	 *
-	 * @return true if the vertex buffer object usage is enabled, false otherwise
-	 */
-	const bool isVertexBufferObjectEnabled() const;
-
-	/**
-	 * @brief Enables or disables the vertex buffer object usage depending on the value of the parameter isEnabled.
-	 *
-	 * @param isEnabled		true when the vertex buffer object usage must be enabled, false otherwise
-	 */
-	void setVertexBufferObjectEnabled( const bool enabled = true );
-
-
-	/**
 	 * @brief Determines whether the depth pre-pass is enabled.
 	 *
 	 * @return true if depth pre-pass is enabled, false otherwise.
@@ -910,7 +895,6 @@ private:
 	bool m_isLightingEnabled;				//< true if lighting is enabled, false otherwise
 	bool m_isTextureMappingEnabled;			//< true if texture mapping is enabled, false otherwise
 	bool m_isDisplayListEnabled;			//< true if engine must used display list, false otherwise
-	bool m_isVertexBufferObjectEnabled;		//< true if engine must used VBO, false otherwise
 	bool m_isDepthPrePassEnabled;			//< true if engine must do the depth pre-pass, false otherwise
 	bool m_isShadowEnabled;					//< true if engine must compute shadow, false otherwise
 	/**

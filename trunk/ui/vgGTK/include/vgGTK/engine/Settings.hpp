@@ -64,7 +64,6 @@ private:
 	void onDisableTexture();
 	void onDisableShadow();
 	void onDisableDisplayList();
-	void onDisableVBO();
 	void onDisableDepthPrePass();
 
 	void onBench();
@@ -88,7 +87,6 @@ private:
 	Gtk::CheckButton	* m_disableShadow;		///< Button to disable shadow in engine
 
 	Gtk::CheckButton	* m_disableDisplayList;	///< Button to disable display list in engine
-	Gtk::CheckButton	* m_disableVBO;			///< Button to disable VBO in engine
 	Gtk::CheckButton	* m_disableDepthPrePass;///< Button to disable depth pre-pass in engine
 
 	Gtk::CheckButton	* m_showFPS;			///< Widget to choose which debug overlay must be displayed

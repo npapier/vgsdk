@@ -57,7 +57,6 @@ private Q_SLOTS:
     void onDisableTexture();
     void onDisableShadow();
     void onDisableDisplayList();
-    void onDisableVBO();
     void onDisableDepthPrePass();
 
     void onBench();
@@ -77,7 +76,6 @@ private:
     QCheckBox	* m_disableShadow;		///< Button to disable shadow in engine
 
     QCheckBox	* m_disableDisplayList;	///< Button to disable display list in engine
-    QCheckBox	* m_disableVBO;			///< Button to disable VBO in engine
     QCheckBox	* m_disableDepthPrePass;///< Button to disable depth pre-pass in engine
 
     QCheckBox	* m_showFPS;			///< Widget to choose which debug overlay must be displayed

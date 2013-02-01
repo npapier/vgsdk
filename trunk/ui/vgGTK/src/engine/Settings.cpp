@@ -62,7 +62,6 @@ Settings::Settings()
 	m_disableTexture							= Gtk::manage( new Gtk::CheckButton("Disable texture") );
 	m_disableShadow								= Gtk::manage( new Gtk::CheckButton("Disable shadow") );
 	m_disableDisplayList						= Gtk::manage( new Gtk::CheckButton("Disable display list") );
-	m_disableVBO								= Gtk::manage( new Gtk::CheckButton("Disable VBO") );
 	m_disableDepthPrePass						= Gtk::manage( new Gtk::CheckButton("Disable Depth pre-pass") );
 
 	Gtk::Button		* benchButton				= Gtk::manage( new Gtk::Button("Bench") );
@@ -85,7 +84,6 @@ Settings::Settings()
 	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK );
 
 	pack_start( *m_disableDisplayList, Gtk::PACK_SHRINK );
-	pack_start( *m_disableVBO, Gtk::PACK_SHRINK );
 	pack_start( *m_disableDepthPrePass, Gtk::PACK_SHRINK );
 
 	pack_start( *Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK );
@@ -105,7 +103,6 @@ Settings::Settings()
 	m_disableTexture->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableTexture) );
 	m_disableShadow->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableShadow ) );
 	m_disableDisplayList->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableDisplayList ) );
-	m_disableVBO->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableVBO ) );
 	m_disableDepthPrePass->signal_clicked().connect( sigc::mem_fun(this, &Settings::onDisableDepthPrePass ) );
 
 	benchButton->signal_clicked().connect( sigc::mem_fun(this, &Settings::onBench) );
@@ -137,7 +134,6 @@ void Settings::setCanvas( vgUI::Canvas * canvas )
 		m_disableTexture->set_active( !m_canvas->getGLEngine()->isTextureMappingEnabled() );
 		m_disableShadow->set_active( !m_canvas->getGLEngine()->isShadowEnabled() );
 		m_disableDisplayList->set_active( !m_canvas->getGLEngine()->isDisplayListEnabled() );
-		m_disableVBO->set_active( !m_canvas->getGLEngine()->isVertexBufferObjectEnabled() );
 		m_disableDepthPrePass->set_active( !m_canvas->getGLEngine()->isDepthPrePassEnabled() );
 
 		m_showFPS->set_active( m_canvas->isDebugOverlay() );
@@ -197,19 +193,6 @@ void Settings::onDisableDisplayList()
 	assert( m_canvas != 0 );
 
 	m_canvas->getGLEngine()->setDisplayListEnabled( !m_disableDisplayList->get_active() );
-
-	dirtyAllNodes( m_canvas );
-
-	m_canvas->refreshForced();
-}
-
-
-
-void Settings::onDisableVBO()
-{
-	assert( m_canvas != 0 );
-
-	m_canvas->getGLEngine()->setVertexBufferObjectEnabled( !m_disableVBO->get_active() );
 
 	dirtyAllNodes( m_canvas );
 
