@@ -87,9 +87,12 @@ void EngineProperties::unapply( vge::engine::Engine *, vgd::node::Node * )
 void EngineProperties::setToDefaults()
 {
 	// TESSELLATION
-	glPatchParameteri(GL_PATCH_VERTICES, 3);
-	glPatchParameteri(GL_PATCH_DEFAULT_INNER_LEVEL, 3);
-	glPatchParameteri(GL_PATCH_DEFAULT_OUTER_LEVEL, 3);
+	if ( isGL_ARB_tessellation_shader() )
+	{
+		glPatchParameteri(GL_PATCH_VERTICES, 3);
+		glPatchParameteri(GL_PATCH_DEFAULT_INNER_LEVEL, 3);
+		glPatchParameteri(GL_PATCH_DEFAULT_OUTER_LEVEL, 3);
+	}
 }
 
 
