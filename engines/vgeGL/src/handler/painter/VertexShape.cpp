@@ -266,6 +266,10 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 	//	Disable tessellation if at least one primitive is not a TRIANGLES
 	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives( pVertexShape->getFPrimitiveRO() );
+
+	//		no primitives ? so, no rendering.
+	if (primitives->size()==0)	return;
+
 	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
 													ie	= primitives->end();
 			i != ie;
