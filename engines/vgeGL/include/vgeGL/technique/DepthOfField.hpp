@@ -70,6 +70,14 @@ struct VGEGL_API DepthOfField : public SubTechnique
 
 
 	/**
+	 * @name Stage 4 : Paint pass
+	 */
+	//@{
+	void stageBeginPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
+	//@}
+
+
+	/**
 	 * @name Stage 5
 	 */
 	//@{
