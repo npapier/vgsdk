@@ -285,28 +285,6 @@ void DepthOfField::stagePrePaint( vgeGL::technique::ForwardRendering * technique
 	vgAssert( rc );
 
 	stageInitializeOutputBuffers( technique, engine, rc );
-
-	// Sets uniforms
-
-	// focus
-	vgAssertN( !engine->getUniformState().isUniform( "d_focus" ), "Uniform named 'd_focus' not found" );
-	engine->getUniformState().sethUniform( "d_focus", getDOFNode()->getFocus() );
-
-	// focusToFar
-	vgAssertN( !engine->getUniformState().isUniform( "d_focusToFar" ), "Uniform named 'd_focusToFar' not found" );
-	engine->getUniformState().sethUniform( "d_focusToFar", getDOFNode()->getFocusToFar() );
-
-	// focusToNear
-	vgAssertN( !engine->getUniformState().isUniform( "d_focusToNear" ), "Uniform named 'd_focusToNear' not found" );
-	engine->getUniformState().sethUniform( "d_focusToNear", getDOFNode()->getFocusToNear() );
-
-	// farMaximumBlurriness
-	vgAssertN( !engine->getUniformState().isUniform( "far_clamp" ), "Uniform named 'far_clamp' not found" );
-	engine->getUniformState().sethUniform( "far_clamp", getDOFNode()->getFarMaximumBlurriness() );
-
-	// nearMaximumBlurriness
-	vgAssertN( !engine->getUniformState().isUniform( "near_clamp" ), "Uniform named 'near_clamp' not found" );
-	engine->getUniformState().sethUniform( "near_clamp", -getDOFNode()->getNearMaximumBlurriness() );
 }
 
 
@@ -345,6 +323,32 @@ void DepthOfField::stageInitializeOutputBuffers( vgeGL::technique::ForwardRender
 	}
 }
 
+
+
+void DepthOfField::stageBeginPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+{
+	// Sets uniforms
+
+	// focus
+	vgAssertN( !engine->getUniformState().isUniform( "d_focus" ), "Uniform named 'd_focus' not found" );
+	engine->getUniformState().sethUniform( "d_focus", getDOFNode()->getFocus() );
+
+	// focusToFar
+	vgAssertN( !engine->getUniformState().isUniform( "d_focusToFar" ), "Uniform named 'd_focusToFar' not found" );
+	engine->getUniformState().sethUniform( "d_focusToFar", getDOFNode()->getFocusToFar() );
+
+	// focusToNear
+	vgAssertN( !engine->getUniformState().isUniform( "d_focusToNear" ), "Uniform named 'd_focusToNear' not found" );
+	engine->getUniformState().sethUniform( "d_focusToNear", getDOFNode()->getFocusToNear() );
+
+	// farMaximumBlurriness
+	vgAssertN( !engine->getUniformState().isUniform( "far_clamp" ), "Uniform named 'far_clamp' not found" );
+	engine->getUniformState().sethUniform( "far_clamp", getDOFNode()->getFarMaximumBlurriness() );
+
+	// nearMaximumBlurriness
+	vgAssertN( !engine->getUniformState().isUniform( "near_clamp" ), "Uniform named 'near_clamp' not found" );
+	engine->getUniformState().sethUniform( "near_clamp", -getDOFNode()->getNearMaximumBlurriness() );
+}
 
 
 void DepthOfField::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
