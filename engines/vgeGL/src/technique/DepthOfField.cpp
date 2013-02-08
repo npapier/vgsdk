@@ -327,6 +327,8 @@ void DepthOfField::stageInitializeOutputBuffers( vgeGL::technique::ForwardRender
 
 void DepthOfField::stageBeginPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
 {
+	if ( !isEnabled() ) return;
+
 	// Sets uniforms
 
 	// focus
