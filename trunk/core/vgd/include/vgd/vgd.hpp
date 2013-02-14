@@ -103,6 +103,14 @@
  */
 
 /**
+ * @defgroup g_autoMultiAttributeNodes Automatic multi attribute nodes
+ * 
+ * @ingroup g_multiAttributeNodes
+ * @ingroup g_attributeNodes
+ * @ingroup g_nodes
+ */
+
+/**
  * @defgroup g_frameBufferNodes Frame Buffer Operations nodes
  * 
  * @ingroup g_nodes
