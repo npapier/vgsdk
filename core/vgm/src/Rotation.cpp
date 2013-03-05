@@ -110,6 +110,20 @@ const float* Rotation::getValue( void ) const
 
 
 
+const float& Rotation::operator []( unsigned int i ) const
+{
+	assert( i<= 3 );
+	return quat[i];
+}
+
+
+float& Rotation::operator []( unsigned int i )
+{
+	assert( i<= 3 );
+	return quat[i];
+}
+
+
 void Rotation::getValue(
 		float& q0, float& q1,
 		float& q2, float& q3 ) const

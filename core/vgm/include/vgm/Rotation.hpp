@@ -143,6 +143,16 @@ struct VGM_API Rotation
 	const float	*	getValue( void ) const;
 
 	/**
+	 * @brief Returns pointer to array of 4 components defining quaternion.
+	 */
+	const float&	operator []( unsigned int ) const;
+
+	/**
+	 * @brief Returns pointer to array of 4 components defining quaternion.
+	 */
+	float&			operator []( unsigned int );
+
+	/**
 	 * @brief Returns 4 individual components of rotation quaternion.
 	 */
 	void			getValue(
