@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -67,48 +67,48 @@ Plane::Plane( void )
 
 Plane::Plane( const Vec3f& p0, const Vec3f& p1, const Vec3f& p2 )
 {
-	normalVec = (p1 - p0).cross(p2 - p0);
-	normalVec.normalize();
-	distance = normalVec.dot(p0);
+	m_normalVec = (p1 - p0).cross(p2 - p0);
+	m_normalVec.normalize();
+	m_distance = m_normalVec.dot(p0);
 }
 
 
 
 Plane::Plane( const Vec3f& n, float d )
 {
-	normalVec = n;
-	normalVec.normalize();
-	distance = d;
+	m_normalVec = n;
+	m_normalVec.normalize();
+	m_distance = d;
 }
 
 
 
 Plane::Plane( const Vec3f& n, const Vec3f& p )
 {
-	normalVec = n;
-	normalVec.normalize();
-	distance = normalVec.dot(p);
+	m_normalVec = n;
+	m_normalVec.normalize();
+	m_distance = m_normalVec.dot(p);
 }
 
 
 
 const Vec3f& Plane::getNormal( void ) const
 {
-	return normalVec;
+	return m_normalVec;
 }
 
 
 
 float Plane::getDistanceFromOrigin( void ) const
 {
-	return distance;
+	return m_distance;
 }
 
 
 
 void Plane::offset( float d )
 {
-	distance += d;
+	m_distance += d;
 }
 
 
@@ -116,14 +116,14 @@ void Plane::offset( float d )
 void Plane::transform( const MatrixR& matrix )
 {
 	// Find the point on the plane along the normal from the origin
-	Vec3f	point = normalVec * distance;
+	Vec3f	point = m_normalVec * m_distance;
 
 	// Transform the plane normal by the matrix
 	// to get the new normal. Use the inverse transpose
 	// of the matrix so that normals are not scaled incorrectly.
 	MatrixR invTran = matrix.getInverse().getTranspose();
-	invTran.multDirMatrix(normalVec, normalVec);
-	normalVec.normalize();
+	invTran.multDirMatrix(m_normalVec, m_normalVec);
+	m_normalVec.normalize();
 
 	// Transform the point by the matrix
 	matrix.multVecMatrix(point, point);
@@ -131,7 +131,7 @@ void Plane::transform( const MatrixR& matrix )
 	// The new distance is the projected distance of the vector to the
 	// transformed point onto the (unit) transformed normal. This is
 	// just a dot product.
-	distance = point.dot(normalVec);
+	m_distance = point.dot(m_normalVec);
 }
 
 
@@ -143,12 +143,12 @@ bool Plane::intersect( const Line& l, Vec3f& intersection ) const
 	// solve for t:
 	//  n . (l.p + t * l.d) - d == 0
 
-	denom = normalVec.dot(l.getDirection());
+	denom = m_normalVec.dot(l.getDirection());
 	if ( denom == 0.0 )
 		return false;
 
 	//  t = - (n . l.p - d) / (n . l.d)
-	t = - (normalVec.dot(l.getPosition()) - distance) /  denom;
+	t = - (m_normalVec.dot(l.getPosition()) - m_distance) /  denom;
 
 	intersection = l.getPosition() + l.getDirection() * t;
 
@@ -241,18 +241,38 @@ const Vec3f Plane::intersect( Plane& p0, Plane& p1, Plane& p2) const
 }
 
 
+const vgm::Vec3f Plane::project( const vgm::Vec3f p ) const
+{
+	const vgm::Vec3f POntoThePlane = p - getNormal() * distance(p);
+	return POntoThePlane;
+}
 
-bool Plane::isInHalfSpace( const Vec3f& point ) const
+
+const float Plane::distance( const Vec3f& point ) const
+{
+	return point.dot(m_normalVec) - m_distance;
+}
+
+
+const bool Plane::isIn( const Vec3f& point, const float tolerance ) const
+{
+	const float dist = distance(point);
+
+	return vgm::equals( dist, 0.f, tolerance );
+}
+
+
+const bool Plane::isInHalfSpace( const Vec3f& point ) const
 {
 	// Multiply point by plane equation coefficients, compare distances
-	return point.dot(normalVec) >= distance;
+	return distance(point) >= m_distance;
 }
 
 
 
 bool Plane::operator ==( const Plane& p2 ) const
 {
-	return (distance == p2.distance && normalVec == p2.normalVec);
+	return (m_distance == p2.m_distance && m_normalVec == p2.m_normalVec);
 }
 
 bool Plane::operator !=( const Plane& p2 ) const

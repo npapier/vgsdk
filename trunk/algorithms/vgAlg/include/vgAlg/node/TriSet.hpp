@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,8 +12,10 @@ namespace vgd
 {
 	template<class T> struct Shp;
 	
-	namespace node { struct TriSet; }
+	namespace node { struct TriSet; struct VertexShape; }
 }
+
+
 
 namespace vgAlg
 {
@@ -21,6 +23,14 @@ namespace vgAlg
 namespace node
 {
 
+
+
+/**
+ * @brief Tests if the given shape is only composed of triangles.
+ *
+ * @return true if the given shape is only composed of triangles, false otherwise.
+ */
+const bool isATriSet( const vgd::node::VertexShape * vertexShape );
 
 
 /**
@@ -32,37 +42,6 @@ namespace node
  * of each triangles of the given shape.
  */
 VGALG_API void invertTriangleOrientation( vgd::Shp< vgd::node::TriSet > triset );
-
-
-
-/**
- * brief Tests if the given shape is valid.
- * 
- * param triset		the triset node to validate
- * 
- * return true if valid, false if not.
- */
-//const bool isValid( vgd::Shp< vgd::node::TriSet > triset ) const;
-
-
-
-/**
- * brief Computes the volume of the given shape.
- * 
- * param triset		the triset node
- * 
- * return the computed volume
- */
-//const double computeVolume( vgd::Shp< vgd::node::TriSet > triset ) const;
-
-
-
-/**
- * brief Returns if the number of hole is equal to zero
- * 
- * return true if there is no hole in the mesh
- */
-//bool isNumHoleEqualToZero();
 
 
 

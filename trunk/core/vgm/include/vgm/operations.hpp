@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -83,60 +83,60 @@ struct Epsilon<double>
  * @brief Equality comparison within tolerance
  */
 template< typename T >
-const bool equals( const T value1, const T value2 )
+const bool equals( const T value1, const T value2, const float tolerance = vgm::Epsilon<T>::value() )
 {
 	const T diff = fabs( value1 - value2 );
 
-	return diff <= vgm::Epsilon<T>::value();
+	return diff <= tolerance;
 }
 
 /**
  * @brief Inequality comparison within tolerance
  */
 template< typename T >
-const bool notEquals( const T value1, const T value2 )
+const bool notEquals( const T value1, const T value2, const float tolerance = vgm::Epsilon<T>::value() )
 {
 	const T diff = fabs( value1 - value2 );
 
-	return diff > vgm::Epsilon<T>::value();
+	return diff > tolerance;
 }
 
 /**
  * @brief Returns true if value1 > value2 within tolerance
  */
 template< typename T >
-const bool greaterThan( const T value1, const T value2 )
+const bool greaterThan( const T value1, const T value2, const float tolerance = vgm::Epsilon<T>::value() )
 {
 	const double diff = value1 - value2;
 
-	return diff > vgm::Epsilon<T>::value();
+	return diff > tolerance;
 }
 
 /**
  * @brief Returns true if value1 >= value2 within tolerance
  */
 template< typename T >
-const bool greaterThanEqual( const T value1, const T value2 )
+const bool greaterThanEqual( const T value1, const T value2, const float tolerance = vgm::Epsilon<T>::value() )
 {
-	return greaterThan( value1, value2 ) || equals( value1, value2 );
+	return greaterThan( value1, value2, tolerance ) || equals( value1, value2, tolerance );
 }
 
 /**
  * @brief Returns true if value1 < value2 within tolerance
  */
 template< typename T >
-const bool lessThan( const T value1, const T value2 )
+const bool lessThan( const T value1, const T value2, const float tolerance = vgm::Epsilon<T>::value() )
 {
-	return greaterThan( value2, value1 );
+	return greaterThan( value2, value1, tolerance );
 }
 
 /**
  * @brief Returns true if value1 <= value2 within tolerance
  */
 template< typename T >
-const bool lessThanEqual( const T value1, const T value2 )
+const bool lessThanEqual( const T value1, const T value2, const float tolerance = vgm::Epsilon<T>::value() )
 {
-	return greaterThanEqual( value2, value1 );
+	return greaterThanEqual( value2, value1, tolerance );
 }
 
 //@}

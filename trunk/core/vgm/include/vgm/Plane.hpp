@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -79,7 +79,7 @@ struct Line;
 struct VGM_API Plane
 {
 	/**
-	 * @name Constructors and destructor.
+	 * @name Constructors and destructor
 	 */
 	//@{
 	
@@ -110,9 +110,10 @@ struct VGM_API Plane
 	 */
 	Plane( const Vec3f& n, const Vec3f& p );
 	//@}
-	
+
+
 	/**
-	 * @name Plane accessors.
+	 * @name Plane accessors
 	 */
 	//@{
 
@@ -127,8 +128,9 @@ struct VGM_API Plane
 	float			getDistanceFromOrigin( void ) const;
 	//@}
 
+
 	/**
-	 * @name Transformation accessors.
+	 * @name Transformation accessors
 	 */
 	//@{
 	
@@ -143,8 +145,9 @@ struct VGM_API Plane
 	void	transform( const MatrixR& matrix );
 	//@}
 
+
 	/**
-	 * @name Intersection methods.
+	 * @name Intersection methods
 	 */
 	//@{
 
@@ -153,7 +156,7 @@ struct VGM_API Plane
 	 * false if line is parallel to plane.
 	 */
 	bool	intersect( const Line& l, Vec3f& intersection) const;
-					   
+
 	/**
 	 * @brief Returns the vector from intersection of three planes.
 	 * 
@@ -161,15 +164,39 @@ struct VGM_API Plane
 	 */
 	const Vec3f intersect( Plane& p0, Plane& p1, Plane& p2) const;
 
-	/**
-	 * @brief Returns true if the given point is within the half-space
-	 * defined by the plane.
-	 */
-	bool	isInHalfSpace( const Vec3f& point ) const;
-	//@}
 
 	/**
-	 * @name Comparison methods.
+	 * @brief Projects orthogonaly the given point onto the plane.
+	 *
+	 * @param P		the point to project
+	 * @return P projected onto the plane.
+	 */
+	const vgm::Vec3f project( const vgm::Vec3f p ) const;
+
+	/**
+	 * @brief Returns the distance from the given point to the plane along its normal.
+	 *
+	 * @return the distance
+	 */
+	const float distance( const Vec3f& point ) const;
+
+	/**
+	 * @brief Tests if the plane contained the given point.
+	 *
+	 * @return true if the plane contained the given point, false otherwise.
+	 */
+	const bool isIn( const Vec3f& point, const float tolerance = vgm::Epsilon<float>::value() ) const;
+
+	/**
+	 * @brief Returns true if the given point is within the half-space defined by the plane.
+	 */
+	const bool isInHalfSpace( const Vec3f& point ) const;
+
+	//@}
+
+
+	/**
+	 * @name Comparison methods
 	 */
 	//@{
 	
@@ -196,12 +223,12 @@ private:
 	/**
 	 * @brief Normal to the plane.
 	 */
-	Vec3f	normalVec;
+	Vec3f	m_normalVec;
 
 	/**
 	 * @brief Distance from origin to plane: distance * normalVec is on the plane.
 	 */
-	float	distance;
+	float	m_distance;
 	//@}
 };
 

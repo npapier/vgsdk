@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -93,6 +93,33 @@ struct Vector
 	/**
 	 * @brief Constructor from a glm vector
 	 *
+ 	 * @remarks only if dimension is equal to 2.
+ 	 */
+	Vector( const glm::vec2 v )
+	{
+		assert( N==2 );
+
+		m_tCoord[0] = v[0];
+		m_tCoord[1] = v[1];
+	}
+
+	/**
+	 * @brief Constructor from a glm vector
+	 *
+ 	 * @remarks only if dimension is equal to 3.
+ 	 */
+	Vector( const glm::vec3 v )
+	{
+		assert(N==3);
+
+		m_tCoord[0] = v[0];
+		m_tCoord[1] = v[1];
+		m_tCoord[2] = v[2];
+	}
+
+	/**
+	 * @brief Constructor from a glm vector
+	 *
  	 * @remarks only if dimension is equal to 4.
  	 */
 	Vector( const glm::vec4 v )
@@ -103,8 +130,7 @@ struct Vector
 		m_tCoord[1] = v[1];
 		m_tCoord[2] = v[2];
 		m_tCoord[3] = v[3];
-	}	
-
+	}
 
 	/**
 	 * @brief Constructor with value affectation from array of n components.
@@ -850,13 +876,14 @@ typedef Vector<	int32, 5 > Vec5i;
 
 
 
-// @todo others glm(*)
 /**
- * @brief Constructs a glm vector from a vgm::Vector
+ * @name Constructs a glm vector from a vgm::Vector
  */
+//@{
+VGM_API glm::vec2 glm( const vgm::Vec2f& v );
+VGM_API glm::vec3 glm( const vgm::Vec3f& v );
 VGM_API glm::vec4 glm( const vgm::Vec4f& v );
-
-
+//@}
 
 } // namespace vgm
 
