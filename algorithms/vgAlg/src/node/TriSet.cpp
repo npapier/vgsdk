@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -14,6 +14,25 @@ namespace vgAlg
 
 namespace node
 {
+
+
+
+const bool isATriSet( const vgd::node::VertexShape * vertexShape )
+{
+	vgd::field::EditorRO< vgd::field::TMultiField< vgd::node::Primitive > > primitiveRO = vertexShape->getFPrimitiveRO();
+
+	// For each primitive, do
+	for (uint32 i = 0; i < primitiveRO->size(); ++i)
+	{
+		const vgd::node::Primitive curPrim = (*primitiveRO)[i];
+
+		if (curPrim.getType() != vgd::node::Primitive::TRIANGLES)
+		{
+			return false;
+		}
+	}
+	return true;
+}
 
 
 
