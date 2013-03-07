@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,8 +16,10 @@ namespace basic
 
 
 Hit::Hit() :
-    m_fMinDepthValue(1.f), m_fMaxDepthValue(0.f), 
+    m_fMinDepthValue(1.f), m_fMaxDepthValue(0.f),
     m_vec3fMin( 0.f, 0.f, 0.f ),
+    m_vec3fMinO( 0.f, 0.f, 0.f ),
+    m_vec3fMinS( 0.f, 0.f, 0.f ),
     m_vec3fMax( 0.f, 0.f, 0.f )
 {}
 
@@ -67,16 +69,34 @@ std::list< GLuint >& Hit::stackName()
 
 const vgm::Vec3f& Hit::nearestVertex() const
 {
-	return ( m_vec3fMin );
+	return m_vec3fMin;
 }
 
+const vgm::Vec3f& Hit::nearestVertexO() const
+{
+	return m_vec3fMinO;
+}
+
+const vgm::Vec3f& Hit::nearestVertexS() const
+{
+	return m_vec3fMinS;
+}
 
 
 vgm::Vec3f& Hit::nearestVertex()
 {
-	return ( m_vec3fMin );
+	return m_vec3fMin;
 }
 
+vgm::Vec3f& Hit::nearestVertexO()
+{
+	return m_vec3fMinO;
+}
+
+vgm::Vec3f& Hit::nearestVertexS()
+{
+	return m_vec3fMinS;
+}
 
 
 const vgm::Vec3f& Hit::farthestVertex() const

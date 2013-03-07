@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -98,11 +98,39 @@ struct VGEGL_API Hit
 	const vgm::Vec3f& nearestVertex() const;
 
 	/**
+	 * @brief Nearest vertex in object space (i.e. at the minimum depth).
+	 *
+	 * @return nearest vertex.
+	 */
+	const vgm::Vec3f& nearestVertexO() const;
+
+	/**
+	 * @brief Nearest vertex in scene space (i.e. at the minimum depth).
+	 *
+	 * @return nearest vertex.
+	 */
+	const vgm::Vec3f& nearestVertexS() const;
+
+	/**
 	 * @brief Nearest vertex (i.e. at the minimum depth).
 	 *
 	 * @return nearest vertex.
 	 */
 	vgm::Vec3f& nearestVertex();
+
+	/**
+	 * @brief Nearest vertex in object space (i.e. at the minimum depth).
+	 *
+	 * @return nearest vertex.
+	 */
+	vgm::Vec3f& nearestVertexO();
+
+	/**
+	 * @brief Nearest vertex in scene space (i.e. at the minimum depth).
+	 *
+	 * @return nearest vertex.
+	 */
+	vgm::Vec3f& nearestVertexS();
 
 	/**
 	 * @brief Farthest vertex (i.e. at the minimum depth).
@@ -152,6 +180,8 @@ private:
 	//@{
 	
 	vgm::Vec3f m_vec3fMin;
+	vgm::Vec3f m_vec3fMinO;
+	vgm::Vec3f m_vec3fMinS;
 	vgm::Vec3f m_vec3fMax;
 
 	vgd::node::PNodeList	m_listStackNode;

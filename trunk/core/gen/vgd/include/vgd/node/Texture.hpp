@@ -48,6 +48,12 @@
 	 */
 	virtual const uint32 gethTextureDimension() const=0;
 
+
+	/**
+	 * @brief Sets default values for 'function', 'wrap' and 'filter'
+	 * function=FUN_REPLACE, WRAP*=CLAMP, FILTER*=LINEAR
+	 */
+	virtual void sethDefaults()=0;
 	//@}
 
 

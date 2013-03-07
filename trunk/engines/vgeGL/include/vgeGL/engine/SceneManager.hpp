@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,13 +8,14 @@
 #define _VGEGL_ENGINE_SCENEMANAGER_HPP
 
 #include <vgd/event/DeviceManager.hpp>
+#include <vgd/event/MouseButtonEvent.hpp>
 #include <vge/engine/SceneManager.hpp>
 
 #include "vgeGL/event/IEventProcessor.hpp"
 #include "vgeGL/itf/IUnderlay.hpp"
 #include "vgeGL/technique/RayCasting.hpp"
 
-namespace vgd { namespace node { struct LayerPlan; } }
+namespace vgd { namespace node { struct LayerPlan; struct VertexShape; } }
 namespace vgeGL { namespace event { struct TimerEventProcessor; } }
 
 
@@ -362,6 +363,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @remarks The returned hit reference is valid until the next ray casting.
 	 */
 	const vgeGL::basic::Hit* castRayForHit( const int32 x, const int32 y );
+	const vgeGL::basic::Hit* castRayForHit( const vgd::event::MouseButtonEvent mouseButtonEvent );
 
 	/**
 	 * @brief Cast a ray under mouse pointer.
@@ -372,7 +374,29 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @return the nearest node or a null reference.
 	 */
 	vgd::node::Node* castRay( const int32 x, const int32 y );
-	
+	vgd::node::Node* castRay( const vgd::event::MouseButtonEvent mouseButtonEvent );
+
+	/**
+	 * @brief Cast a ray under mouse pointer.
+	 *
+	 * @param x							x-coordinate of the mouse pointer
+	 * @param y							y-coordinate of the mouse pointer
+	 *
+	 * @param oHitShape					the nearest collided node
+	 * @param oHit						the nearest collided hit
+	 * @param iABC						the nearest collided triangle. The vector contains the three indices of the triangles (in oHitShape vertex shape).
+	 * @param barycentricCoordHitPoint	(u,v) barycentric coordinates of P in (A, AB, BC). A is a local origin.
+	 *
+	 * @return true if ray casting hit a triangle, false otherwise
+	 */
+	const bool castRay(	const int32 x, const int32 y,
+						const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
+						vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint );
+
+	const bool castRay(	const vgd::event::MouseButtonEvent mouseButtonEvent,
+						const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
+						vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint );
+
 	/**
 	 * @brief Returns a reference on the ray casting technique.
 	 * 

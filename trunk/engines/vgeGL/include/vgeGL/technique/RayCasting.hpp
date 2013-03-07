@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,7 +16,6 @@ namespace vgeGL
 
 namespace technique
 {
-
 
 
 /**
@@ -149,7 +148,7 @@ protected:
 	/**
 	 * @brief Returns reference to a node from the picking name.
 	 * 
-	 * @pre pickingName < m_pNodes->size().
+	 * @pre pickingName < m_shapes->size().
 	 */
 	vgd::node::Node*	searchNodeFromPickingName( const uint32 pickingName ) const;
 
@@ -170,8 +169,20 @@ protected:
 	double	m_matrixProjection[16];
 	double	m_matrixModelview[16];
 	// END FIXME
-	
-	vgd::Shp< vgd::node::PNodeVector >		m_pNodes;
+
+	struct ShapeInformations
+	{
+		ShapeInformations( vgd::node::Node * lshape = 0, const vgm::MatrixR lmodelview = vgm::MatrixR::getInvalid() )
+		:	shape		( lshape			),
+			modelview	( lmodelview	)
+		{}
+
+		vgd::node::Node *	shape;
+		vgm::MatrixR		modelview;
+	};
+
+	typedef std::vector< ShapeInformations > ShapeInformationsContainer;
+	ShapeInformationsContainer				m_shapes;
 
 	vgd::Shp< vgeGL::basic::HitList >		m_pHits;
 

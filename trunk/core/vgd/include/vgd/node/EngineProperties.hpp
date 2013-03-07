@@ -32,7 +32,7 @@ namespace node
  * - OFFloat \c [maxAnisotropy] = (1.f)<br>
  *   Specifies the engine default maximum degree of anisotropy (see vgd::node::Texture).<br>
  *<br>
- * - SFFloat \c tessellationFactor = (2.0f)<br>
+ * - SFFloat \c tessellationFactor = (1.0f)<br>
  *   Specifies the tessellation level used by the tessellation control shaders to tessellate the incoming primitive (only used if tessellation is enabled).<br>
  *<br>
  * - SFBool \c tessellation = (false)<br>

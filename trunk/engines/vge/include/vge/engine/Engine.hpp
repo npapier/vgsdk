@@ -791,6 +791,23 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
+	 * @brief Returns the geometrical matrix that is current when encountered the ClearFrameBuffer node.
+	 *
+	 * @return the geometrical matrix
+	 */
+	const vgm::MatrixR& getSceneGeometricalMatrix();
+
+	/**
+	 * @brief Sets the geometrical matrix that is current when encountered the ClearFrameBuffer node.
+	 *
+	 * @param geometricalMatrix		the geometrical matrix
+	 *
+	 * @see vgeGL::handler::ClearFrameBuffer
+	 */
+	void setSceneGeometricalMatrix( const vgm::MatrixR& geometricalMatrix );
+
+
+	/**
 	 * @brief Returns the current buffer usage policy.
 	 *
 	 * @return the current buffer usage policy
@@ -1005,6 +1022,7 @@ protected:
 	const vgd::node::Camera *		m_camera;					///< the last encountered Camera node
 	vgm::Rectangle2i				m_viewport;					///< the value of \c viewport field for the last encountered Camera node with this field defined
 	vgm::Vec2f						m_nearFar;					///< a vector containing respectively the distances to the near and far depth clipping planes
+	vgm::MatrixR					m_sceneGeometricalMatrix;	///< the geometrical matrix that is current when encountered the ClearFrameBuffer node
 	BufferUsagePolicy				m_bufferUsagePolicy;		///< the current buffer usage policy
 	EyeUsagePolicy					m_eyeUsagePolicy;			///< the current eye usage policy
 	float							m_defaultMaxAnisotropy;		///< the current default maximum degree of anisotropy

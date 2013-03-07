@@ -222,12 +222,6 @@ void CollectNode::addShape( vgd::Shp< vgd::node::Shape > shape, vgm::MatrixR mat
 			material->setAmbient( ambient );
 		}
 
-		vgd::node::Material::TransparencyValueType transparency;
-		if( engine->getStateStackTopFromSingleField< vgd::node::Material, vgd::node::Material::FTransparencyType, vgd::node::Material::TransparencyValueType >( "f_transparency", transparency ) )
-		{
-			material->setTransparency( transparency );
-		}
-
 		std::string matName;
 		if( engine->getStateStackTopFromSingleField< vgd::node::Material, vgd::field::TSingleField< std::string >, std::string >( "f_name", matName ) )
 		{	

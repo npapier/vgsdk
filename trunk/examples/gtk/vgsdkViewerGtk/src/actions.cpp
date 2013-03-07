@@ -148,8 +148,7 @@ void fileOpen( Gtk::Window * topLevel, myCanvas * canvas, const bool clearScene 
 				Gtk::RecentManager::get_default()->add_item( uri );
 			}
 		}
-
-
+		
 		// Refreshes the canvas content.
 		canvas->refresh();
 	}

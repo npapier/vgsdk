@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -87,6 +87,13 @@ void Technique::endPass()
 
 
 
+vgeGL::engine::Engine * Technique::glEngine() const
+{
+	return m_engine;
+}
+
+
+
 void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements )
 {
 	//
@@ -103,13 +110,11 @@ void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::Traver
 	engine->getGLSLStateStack().clear( vgd::makeShp(new GLSLState(engine->getMaxTexUnits())) );
 
 	// @todo doc
-	vgeGL::engine::Engine * glEngine = dynamic_cast<vgeGL::engine::Engine*>(getEngine());
-	glEngine->setOutputBuffers();
-	glEngine->setCurrentPrivateOutputBuffers();
+	engine->setOutputBuffers();
+	engine->setCurrentPrivateOutputBuffers();
 
 	if ( engine->isGLSLEnabled() )
 	{
-		//
 		engine->getGLSLProgramGenerator()->dirty();
 	}
 }
@@ -144,13 +149,6 @@ void Technique::evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::s
 	{
 		endPass();
 	}
-}
-
-
-
-vge::engine::Engine * Technique::getEngine() const
-{
-	return m_engine;
 }
 
 

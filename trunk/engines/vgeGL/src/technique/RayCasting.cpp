@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -36,7 +36,7 @@ RayCasting::RayCasting()
 	//m_oglViewport[4]
 	//m_matrixProjection[16];
 	//m_matrixModelview[16];
-	//m_pNodes
+	//m_shapes
 	//m_pHits
 	//m_iterNearestHit
 	//m_iterFarthestHit
@@ -58,8 +58,8 @@ void RayCasting::destroy()
 		delete[] m_pSelectBuffer;
 		m_pSelectBuffer = 0;
 	}
-	
-	m_pNodes.reset();
+
+	m_shapes.clear();
 	m_pHits.reset();
 }
 
@@ -194,8 +194,8 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	bool	cameraAlreadyTraversed = false;
 
 	// Init. database.
-	m_pNodes = vgd::Shp< vgd::node::PNodeVector >( new vgd::node::PNodeVector );
-	m_pNodes->reserve( traverseElements->size()/2 );											// heuristic FIXME is the good one ?
+	m_shapes.reserve( traverseElements->size()/2 );
+	m_shapes.clear();
 
 	// Init. opengl stack name.
 	GLuint currentGLName = 0;
@@ -256,8 +256,10 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 				glLoadName( currentGLName );
 				glPushName( currentGLName );
 				++currentGLName;
-				m_pNodes->push_back( i->first );
-			
+
+				const vgm::MatrixR& geometricalMatrix = engine->getGeometricalMatrix().getTop();
+				m_shapes.push_back( ShapeInformations(i->first, geometricalMatrix) );
+
 				engine->evaluate( paint, *i );
 			}
 			else
@@ -272,11 +274,13 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 			if ( i->second )
 			{
 				assert( cameraAlreadyTraversed && "Shape before the Camera !" );
-	
+
 				glLoadName( currentGLName );
 				++currentGLName;
-				m_pNodes->push_back( i->first );
-			
+
+				const vgm::MatrixR& geometricalMatrix = engine->getGeometricalMatrix().getTop();
+				m_shapes.push_back( ShapeInformations( i->first, geometricalMatrix ) );
+
 				// this is a shape, draw it.
 				engine->evaluate( paint, *i );
 			}
@@ -310,7 +314,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	engine->setGLSLActivationState( glslActivationState );
 
 	// Release memory.
-	m_pNodes.reset();
+	m_shapes.clear();
 }
 
 
@@ -318,8 +322,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 void RayCasting::fillHits( const uint32 gluintHitsSize )
 {
 	assert( m_pSelectBuffer != 0 );
-	assert( m_pNodes.get() != 0 );
-	
+
 	// Reset hit list.
 	m_pHits = vgd::Shp< vgeGL::basic::HitList >( new vgeGL::basic::HitList );
 
@@ -356,10 +359,11 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 		gluUnProject(	m_x, m_oglViewport[3]- m_y, fDepth,
 						m_matrixModelview, m_matrixProjection, m_oglViewport,
 						&dX, &dY, &dZ );															// FIXME
-		
+
 		hit.nearestVertex() = vgm::Vec3f(	static_cast<float>(dX),
 											static_cast<float>(dY),
 											static_cast<float>(dZ) );
+
 		++ptr;
 
 		// max
@@ -377,13 +381,41 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 											static_cast<float>(dY),
 											static_cast<float>(dZ) );
 		++ptr;
-		
+
 		// name
 		for(	uint32 ui32J=0;
 				ui32J<uintNumNames;
 				++ui32J )
 		{
 			i32PickingName	= *ptr;
+
+			if ( ui32J == 0 )
+			{
+				// min in object space
+				const vgm::MatrixR& modelviewO = m_shapes[i32PickingName].modelview;
+				vgm::RawMatrixd modelviewD;
+				modelviewO.getValue( modelviewD );
+
+				gluUnProject(	m_x, m_oglViewport[3]- m_y, hit.minDepthValue(),
+								(&modelviewD[0][0]), m_matrixProjection, m_oglViewport,
+								&dX, &dY, &dZ );
+
+				hit.nearestVertexO() = vgm::Vec3f(	static_cast<float>(dX),
+													static_cast<float>(dY),
+													static_cast<float>(dZ) );
+
+				// min in scene space
+				const vgm::MatrixR& modelviewS = glEngine()->getSceneGeometricalMatrix();
+				modelviewS.getValue( modelviewD );
+				gluUnProject(	m_x, m_oglViewport[3]- m_y, hit.minDepthValue(),
+								(&modelviewD[0][0]), m_matrixProjection, m_oglViewport,
+								&dX, &dY, &dZ );
+
+				hit.nearestVertexS() = vgm::Vec3f(	static_cast<float>(dX),
+													static_cast<float>(dY),
+													static_cast<float>(dZ) );
+			}
+
 			hit.stackName().push_back( i32PickingName );
 			hit.stackNode().push_back( searchNodeFromPickingName( i32PickingName ) );
 			++ptr;
@@ -412,9 +444,9 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 
 vgd::node::Node* RayCasting::searchNodeFromPickingName( const uint32 pickingName ) const
 {
-	assert( pickingName < m_pNodes->size() );
-	
-	return ( (*m_pNodes)[pickingName] );
+	vgAssert( pickingName < m_shapes.size() );
+
+	return m_shapes[pickingName].shape;
 }
 
 

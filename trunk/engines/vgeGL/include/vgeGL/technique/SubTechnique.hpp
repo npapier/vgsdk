@@ -205,6 +205,7 @@ struct VGEGL_API SubTechnique
 
 	// @todo think about opaque and transparent pass
 	// called after beginPass() of paint pass
+	// useful to initialize uniform(s)
 	virtual void stageBeginPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
 	{}
 

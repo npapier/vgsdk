@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -91,12 +91,18 @@ const vge::handler::Handler::TargetVector ClearFrameBuffer::getTargets() const
 
 
 
+// @todo move into vge::handler::ClearFrameBuffer
 void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node )
 {
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
 	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
 
 	// Updates engine state
+
+	const vgm::MatrixR& current( engine->getGeometricalMatrix().getTop() );
+	glEngine->setSceneGeometricalMatrix( current );
+
+	//
 	const vge::engine::BufferUsagePolicy	bup = engine->getBufferUsagePolicy();
 	const vge::engine::EyeUsagePolicy		eup = engine->getEyeUsagePolicy();
 	vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );

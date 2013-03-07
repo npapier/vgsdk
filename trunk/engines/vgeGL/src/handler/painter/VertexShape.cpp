@@ -1423,7 +1423,7 @@ void VertexShape::drawTriangleOrientation( vgd::node::VertexShape *pVertexShape,
 		{
 			// Next primitive ?
 			vgAssertN( false, "Only vgd::node::Primitive::TRIANGLES is supported" );
-			continue;
+			return;
 		}
 
 		//GLenum primitiveType = m_primTypeArray[ primitive.getType() ];

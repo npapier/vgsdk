@@ -69,6 +69,8 @@ struct VGEGL_CLASS_API Technique : public vge::technique::Technique
 	 */
 	/*virtual */void endPass();
 
+	VGEGL_API vgeGL::engine::Engine * glEngine() const;
+
 protected:
 	/**
 	 * @copydoc ::vge::technique::Technique::prepareEval(vge::engine::Engine*, vge::visitor::TraverseElementVector*)
@@ -81,8 +83,6 @@ protected:
 	VGEGL_API void evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service,
 									const PassIsolationMask isolationMask = PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK),
 									const bool nestedPass = false );
-
-	VGEGL_API vge::engine::Engine * getEngine() const;
 
 
 private:
