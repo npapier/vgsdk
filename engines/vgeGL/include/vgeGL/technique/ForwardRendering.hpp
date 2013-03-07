@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -120,6 +120,15 @@ private:
 	void stageFluidSimulation( vgeGL::engine::Engine * engine );
 
 
+	// DECAL
+	bool renderDecals;
+
+	typedef vgeGL::engine::GLSLState::DecalStateContainer DecalStateContainer;
+	DecalStateContainer * m_decals;
+
+	void stageDecals( vgeGL::engine::Engine * engine );
+
+
 // @todo separate outputbuffers and post-processing
 	// POST-PROCESSING (and OutputBuffers)
 struct PostProcessingPipelineRC
@@ -207,10 +216,11 @@ public: // for technique::DepthOfField
 private:
 
 	// OVERLAY
+	bool renderOverlays;
+
 	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
 	OverlayStateContainer * m_overlays;
 
-	bool renderOverlays;
 	void stageOverlays( vgeGL::engine::Engine * engine );
 
 

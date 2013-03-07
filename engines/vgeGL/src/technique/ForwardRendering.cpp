@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -17,6 +17,7 @@
 #include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/ClipPlane.hpp>
 #include <vgd/node/CullFace.hpp>
+#include <vgd/node/Decal.hpp>
 #include <vgd/node/Fluid.hpp>
 #include <vgd/node/Grid.hpp>
 #include <vgd/node/FrameBuffer.hpp>
@@ -43,6 +44,7 @@
 #include <vgm/VectorOperations.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/engine/GLSLState.hpp"
+#include "vgeGL/handler/painter/Decal.hpp"
 #include "vgeGL/handler/painter/OutputBufferProperty.hpp"
 #include "vgeGL/handler/painter/Overlay.hpp"
 #include "vgeGL/rc/Fluid.hpp"
@@ -184,8 +186,8 @@ struct GeometryOnlyState
 	GeometryOnlyState( const bool lIsLightingEnabled, const bool lIsTextureMappingEnabled, const bool lIsBumpMappingEnabled, const bool lIsTessellationEnabled )
 	:	isLightingEnabled		(	lIsLightingEnabled			),
 		isTextureMappingEnabled	(	lIsTextureMappingEnabled	),
-		isBumpMappingEnabled	(	lIsBumpMappingEnabled		),
-		isTessellationEnabled	(	lIsTessellationEnabled		)
+		isBumpMappingEnabled(	lIsBumpMappingEnabled			),
+		isTessellationEnabled(	lIsTessellationEnabled			)
 	{}
 
 	const bool isLightingEnabled;
@@ -435,7 +437,8 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	fluid = 0;
 	fluidModelViewMatrix.setIdentity();
 
-
+// for decal
+	engine->regardIfIsA<vgd::node::Decal>();
 // for postprocessing
 	engine->regardIfIsAKindOf<vgd::node::OutputBufferProperty>();
 	engine->regardIfIsAKindOf<vgd::node::Overlay>();
@@ -542,6 +545,14 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 
 	// STEREO
 	isStereoEnabled = camera->getMode() != vgd::node::Camera::MONOSCOPIC;
+
+	// DECAL
+	// Checks decals
+	renderDecals = glslStateFinal->decals.isNotEmpty();
+
+	// Saves the decals state
+	m_decals = &(glslStateFinal->decals);
+
 
 	// POST-PROCESSING
 	// POST-PROCESSING.outputbuffers
@@ -1685,15 +1696,19 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 		// First pass : OPAQUE PASS (draw opaque shape)
 		const bool mustDoTransparencyPass = evaluateOpaquePass( paintService(), PassIsolationMask(0), true );
+
 		BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
 		{
 			subtechnique->stagePaint( this, engine );
 		}
-
+ 
 	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
 	{
 		subtechnique->stageEndPaint( this, engine );
 	}
+
+	// DECALS
+	if ( !mustDoTransparencyPass )	stageDecals( engine );
 
 	endPass();
 
@@ -1736,6 +1751,9 @@ stageInitializeOutputBuffers( engine );
 			subtechnique->stageEndPaint( this, engine );
 		}
 
+		// DECALS
+		stageDecals( engine );
+
 		endPass();
 
 		engine->setBufferUsagePolicy( vge::engine::BUP_NOT_DEFINED );
@@ -1746,6 +1764,8 @@ stageInitializeOutputBuffers( engine );
 	{
 		subtechnique->stagePostPaint( this, engine );
 	}
+
+
 
 	// POST-PROCESSING
 // @todo enable it
@@ -2369,6 +2389,19 @@ void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc
 	glo::FrameBufferObject::setReadToDefaultFrameBuffer();
 
 	destination->setDrawBuffers( destinationDrawBuffers );
+}
+
+
+void ForwardRendering::stageDecals( vgeGL::engine::Engine * engine )
+{
+	// Renders decals
+	if ( renderDecals )
+	{
+		//setPassDescription("DECALS stage");
+		//beginPass();
+		vgeGL::handler::painter::Decal::paint( engine, m_decals );
+		//endPass();
+	}
 }
 
 
