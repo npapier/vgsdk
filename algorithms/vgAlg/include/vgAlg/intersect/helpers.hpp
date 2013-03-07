@@ -32,7 +32,7 @@ namespace intersect
  * @param oIndexA					first point of the triangle (ABC)
  * @param oIndexB					second point of the triangle (ABC)
  * @param oIndexC					third point of the triangle (ABC)
- * @param oBarycentricCoordOfP		(u,v) barycentric coordinates of O in (C, CA, CB). C is a local origin
+ * @param oBarycentricCoordOfP		(u,v) barycentric coordinates of P in (A, AB, BC). A is a local origin.
  * @param oDistance					fabs( ABC.distance(P) )
  *
  * @return true if a triangle was found, false otherwise.
