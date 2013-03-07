@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -32,9 +32,10 @@ Engine::Engine()
 {
 	m_viewport.setInvalid();
 	m_nearFar.setInvalid();
-	m_bufferUsagePolicy	= BUP_NOT_DEFINED;
-	m_eyeUsagePolicy	= vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY;
-	m_defaultMaxAnisotropy = vgd::node::EngineProperties::DEFAULT_MAXANISOTROPY;
+	m_sceneGeometricalMatrix.setInvalid();
+	m_bufferUsagePolicy		= BUP_NOT_DEFINED;
+	m_eyeUsagePolicy		= vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY;
+	m_defaultMaxAnisotropy	= vgd::node::EngineProperties::DEFAULT_MAXANISOTROPY;
 
 	reset();
 
@@ -68,6 +69,8 @@ void Engine::resetEval()
 	m_camera = 0;
 	m_viewport.setInvalid();
 	m_nearFar.setInvalid();
+	m_sceneGeometricalMatrix.setInvalid();
+
 	m_bufferUsagePolicy		= BUP_DEFAULT;
 	m_eyeUsagePolicy		= vgd::node::Camera::DEFAULT_EYEUSAGEPOLICY;
 	m_defaultMaxAnisotropy	= vgd::node::EngineProperties::DEFAULT_MAXANISOTROPY;
@@ -544,6 +547,17 @@ const vgm::Vec2f Engine::getNearFar() const
 void Engine::setNearFar( const vgm::Vec2f nearFar )
 {
 	m_nearFar = nearFar;
+}
+
+
+const vgm::MatrixR& Engine::getSceneGeometricalMatrix()
+{
+	return m_sceneGeometricalMatrix;
+}
+
+void Engine::setSceneGeometricalMatrix( const vgm::MatrixR& geometricalMatrix )
+{
+	m_sceneGeometricalMatrix = geometricalMatrix;
 }
 
 

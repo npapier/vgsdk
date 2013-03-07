@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -23,6 +23,7 @@ namespace vgd
 { 
 	namespace node
 	{
+		struct Decal;
 		struct Light;
 		struct OutputBufferProperty;
 		struct Overlay;
@@ -120,9 +121,9 @@ enum GLSLStateIndex
 	IGNORE_POST_PROCESSING,		///< see LightModel.ignorePostProcessing
 
 	//
-	BUMP_MAPPING,
+	BUMP_MAPPING,				///< see LightModel.bumpMapping
 
-	TESSELLATION,
+	TESSELLATION,				///< see EngineProperties.tessellation 
 
 	//
 	MAX_BITSETINDEXTYPE
@@ -437,10 +438,57 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 
 	/**
+	 * @name Decal units
+	 */
+	//@{
+
+	/**
+	 * @brief Basic unit state structure containing a reference on a node
+	 * @todo use everywhere this template class
+	 */
+	template< typename NodeType >
+	struct TNodeState
+	{
+		/**
+		 * @brief Default constructor
+		 */
+		TNodeState( const NodeType * node )
+		: m_node(node)
+		{}
+
+		const NodeType * getNode() const { return m_node; }
+
+	private:
+		const NodeType * m_node;
+	};
+
+	struct DecalState : public TNodeState< vgd::node::Decal >
+	{
+		DecalState( const vgd::node::Decal * node, const vgm::MatrixR& matrix )
+		:	TNodeState(node),
+			m_matrix( matrix )
+		{}
+
+		const vgm::MatrixR& getGeometricalMatrix() const		{ return m_matrix; }
+
+	private:
+		const vgm::MatrixR m_matrix;
+	};
+
+	/**
+	 * @brief Post-processing unit container
+	 */
+	typedef vge::basic::TUnitContainer< DecalState > DecalStateContainer;
+	DecalStateContainer decals;												///< array of decal state. The zero-based index selects the post-processing unit.
+
+	//@}
+
+
+	/**
 	 * @name Post-processing units
 	 */
 	//@{
-	 
+
 	/**
 	 * @brief Post-processing unit state structure
 	 */

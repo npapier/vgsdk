@@ -408,36 +408,6 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 		DIFFUSE
 	};
 
-	/**
-	 * @name Accessors to field transparency
-	 *
-	 * This accessors emulates the old interface of the field transparency using the new field opacity.
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c transparency.
-	 */
-	typedef float TransparencyValueType;
-
-	/**
-	 * @brief Type definition of the field named \c transparency
-	 */
-	typedef vgd::field::SFFloat FTransparencyType;
-
-
-	/**
-	 * @brief Gets the value of field named \c transparency.
-	 */
-	vgDEPRECATED( const TransparencyValueType getTransparency() const );
-
-	/**
-	 * @brief Sets the value of field named \c transparency.
-	 */
-	vgDEPRECATED( void setTransparency( const TransparencyValueType value ) );
-
-	//@}
-
 
 
 	/**

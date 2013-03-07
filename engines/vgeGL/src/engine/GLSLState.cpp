@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -74,6 +74,7 @@ const std::string& GLSLState::toString( const GLSLStateIndex bitSetIndexType )
 GLSLState::GLSLState( const uint maxTexUnits )
 :	//lights(),
 	textures(maxTexUnits),
+	//decals(),
 	//postProcessing(),
 	//overlays(),
 	//outputBufferProperties()
@@ -88,6 +89,7 @@ GLSLState::GLSLState( const GLSLState& src )
 
 	lights											(	src.lights					),
 	textures										(	src.textures				),
+	decals											(	src.decals					),
 	postProcessing									(	src.postProcessing			),
 	overlays										(	src.overlays				),
 	outputBufferProperties							(	src.outputBufferProperties	),
@@ -122,9 +124,10 @@ void GLSLState::resetToDefault()
 	// TBitSet
 	vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >::reset();
 
-	// LIGHT / TEXTURE / POST PROCESSING / OVERLAY / OUTPUT BUFFER PROPERTY
+	// LIGHT / TEXTURE /DECALS / POST PROCESSING / OVERLAY / OUTPUT BUFFER PROPERTY
 	lights.clear();
 	textures.clear();
+	decals.clear();
 	postProcessing.clear();
 	overlays.clear();
 	outputBufferProperties.clear();
@@ -224,6 +227,7 @@ const bool GLSLState::isDirty() const
 			textures.isDirty()					||
 			lights.isDirty()					||
 			outputBufferProperties.isDirty()	||
+			decals.isDirty()					||
 			postProcessing.isDirty()			||
 			overlays.isDirty();
 }
@@ -235,6 +239,7 @@ const bool GLSLState::isValid() const
 			textures.isValid()					&&
 			lights.isValid()					&&
 			outputBufferProperties.isValid() 	&&
+			decals.isValid()					&&
 			postProcessing.isValid()			&&
 			overlays.isValid();
 }
@@ -246,6 +251,7 @@ void GLSLState::validate( const bool setToValid )
 	textures.validate( setToValid );
 	lights.validate( setToValid );
 	outputBufferProperties.validate( setToValid );
+	decals.validate( setToValid );
 	postProcessing.validate( setToValid );
 	overlays.validate( setToValid );
 }
@@ -348,6 +354,7 @@ void GLSLState::copy( const GLSLState& src )
 
 	lights					= src.lights;
 	textures				= src.textures;
+	decals					= src.decals;
 	postProcessing			= src.postProcessing;
 	overlays				= src.overlays;
 	outputBufferProperties	= src.outputBufferProperties;
@@ -367,6 +374,7 @@ void GLSLState::release()
 {
 	lights.clear();
 	textures.clear();
+	decals.clear();
 	postProcessing.clear();
 	overlays.clear();
 	outputBufferProperties.clear();

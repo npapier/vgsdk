@@ -1,13 +1,15 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgeGL/engine/SceneManager.hpp"
 
+#include <vgAlg/intersect/helpers.hpp>
 #include <vgd/basic/Time.hpp>
 #include <vgd/basic/TimeDuration.hpp>
 #include <vgd/node/LayerPlan.hpp>
+#include <vgd/node/VertexShape.hpp>
 
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
@@ -282,12 +284,19 @@ const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32
 	}
 }
 
+const vgeGL::basic::Hit* SceneManager::castRayForHit( const vgd::event::MouseButtonEvent mouseButtonEvent )
+{
+	using vgd::event::MouseButtonEvent;
+	const MouseButtonEvent::Location mouseLocation = mouseButtonEvent.getLocation();
+
+	return castRayForHit( static_cast< int >(mouseLocation[0]), static_cast< int >(mouseLocation[1]) );
+}
 
 
 vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 {
 	const vgeGL::basic::Hit* hit = castRayForHit( x, y );
-	
+
 	if ( hit == 0 )
 	{
 		return 0;
@@ -298,6 +307,63 @@ vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 	}
 }
 
+vgd::node::Node* SceneManager::castRay( const vgd::event::MouseButtonEvent mouseButtonEvent )
+{
+	using vgd::event::MouseButtonEvent;
+	const MouseButtonEvent::Location mouseLocation = mouseButtonEvent.getLocation();
+
+	return castRay( static_cast< int >(mouseLocation[0]), static_cast< int >(mouseLocation[1]) );
+}
+
+
+const bool SceneManager::castRay(	const int32 x, const int32 y,
+									const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
+									vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint )
+{
+	// cast ray
+	oHitShape = dynamic_cast< const vgd::node::VertexShape *>(castRay(x, y));
+
+	if ( oHitShape )
+	{
+		// Hit
+		//vgLogDebug("Hit node name=%s", oHitShape->getName().c_str());
+
+		oHit = getRayCastingTechnique().getNearestHit();
+
+		// Compute picked triangle
+		float distance;
+		const bool found = vgAlg::intersect::getTriangle(	oHit.nearestVertexO(), oHitShape,
+															iABC[0], iABC[1], iABC[2], barycentricCoordHitPoint, distance );
+
+		if ( found )
+		{
+			//vgLogDebug("hit triangle (%i %i %i)", iABC[0], iABC[1], iABC[2]);
+			//vgLogDebug("(u,v)=%f %f", barycentricCoordHitPoint[0], barycentricCoordHitPoint[1] );
+			return true;
+		}
+		else
+		{
+			vgAssert( false );
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+const bool SceneManager::castRay(	const vgd::event::MouseButtonEvent mouseButtonEvent,
+									const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
+									vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint )
+{
+	using vgd::event::MouseButtonEvent;
+	const MouseButtonEvent::Location mouseLocation = mouseButtonEvent.getLocation();
+
+	return castRay( static_cast< int >(mouseLocation[0]), static_cast< int >(mouseLocation[1]),
+					oHitShape, oHit,
+					iABC, barycentricCoordHitPoint );
+}
 
 
 const vgeGL::technique::RayCasting& SceneManager::getRayCastingTechnique() const

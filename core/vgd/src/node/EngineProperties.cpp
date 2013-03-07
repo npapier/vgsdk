@@ -79,7 +79,7 @@ void EngineProperties::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
 	setTessellationBias( (0.55f) );
-	setTessellationFactor( (2.0f) );
+	setTessellationFactor( (1.0f) );
 	setTessellation( (false) );
 }
 
@@ -148,7 +148,7 @@ const bool EngineProperties::hasMaxAnisotropy() const
 
 // TessellationFactor
 
-const EngineProperties::TessellationFactorValueType EngineProperties::DEFAULT_TESSELLATIONFACTOR = (2.0f);
+const EngineProperties::TessellationFactorValueType EngineProperties::DEFAULT_TESSELLATIONFACTOR = (1.0f);
 
 
 

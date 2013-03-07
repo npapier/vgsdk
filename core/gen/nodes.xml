@@ -191,6 +191,39 @@
 	</node>
 
 
+	<node name = "Decal" inherits="MultiAttribute">
+		<doxygen>
+			<docBrief>Project a texture onto a shape.</docBrief>
+			<doc>Decals are typically used to create hit effects or to add local details to a shape.</doc>
+			<doc>TODO explain how the create the decal proxy geometry (the vertex shape)</doc>
+			<doc>TODO explain how to apply the texture to the vertex shape</doc>
+			<doc>TODO explain deferred rendering</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_multiAttributeNodes</ingroup>
+			<ingroup>g_autoMultiAttributeNodes</ingroup>
+			<ingroup>g_texturingNodes</ingroup>
+			<ingroup>g_shapeNodes</ingroup>
+		</doxygen>
+
+		<sf name = "texture" doc = "Texture to apply to the shape defined by field 'shape'">
+			<type name = "Texture2DShp" namespace = "vgd::node"></type>
+		</sf>
+
+		<sf name = "shape" doc = "Surface of the decal">
+			<type name = "VertexShapeShp" namespace = "vgd::node"></type>
+		</sf>
+
+		<sf name = "alphaTest" doc = "True to enable alpha test passing if the incoming alpha value is greater than 0, false to disable alpha test">
+			<type name = "bool" default="true"></type>
+		</sf>
+
+		<sf name = "blending" doc = "True to enable blending using function defined by glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), false to disable blending.">
+			<type name = "bool" default="false"></type>
+		</sf>
+		
+	</node>
+
+
 	<node name = "DepthOfField" inherits = "SingleAttribute" >
 		<doxygen>
 			<docBrief>Built-in post-processing effect depth of field</docBrief>
@@ -305,7 +338,7 @@
 		</sf>
 
 		<sf name="tessellationFactor" doc="Specifies the tessellation level used by the tessellation control shaders to tessellate the incoming primitive (only used if tessellation is enabled).">
-			<type name="float" default="2.0f"></type>
+			<type name="float" default="1.0f"></type>
 		</sf>
 
 		<sf name="tessellationBias" doc="Specifies the tessellation bias used by the Phong Tessellation algorithm (only used if tessellation is enabled).">
@@ -408,7 +441,7 @@
 			<ingroup>g_layerplan</ingroup>
 		</doxygen>
 
-		<df name = "image" linkToFields="image"></df>
+		<df name = "image" linkToFields="image alphaScale"></df>
 
 		<sf name = "position" doc="Sets the position of the layer plan in normalized window coordinates system. @see g_coordinatesSystem">
 			<type name="Vec2f" namespace="vgm" default = "0.f, 0.f"></type>
@@ -1229,14 +1262,16 @@
 			<docBrief>Abstract texture mapping node</docBrief>
 			<doc>This node defines texture parameters (wrapping, filter for minifying and magnification, mipmapping and function).</doc>
 			<doc>Be carefull, data referenced by image must be available when texture is update.</doc>
-			<doc>This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface)</doc>
-			<doc>@remarks When The scene graph is evaluated by vgeGL, there are a size constraint one texture that you should keep in mind.\n</doc>
-			<doc>When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage(to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n</doc>
+			<doc>This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface) and so on.</doc>
+			<doc>@remarks When the scene graph is evaluated, there are size constraints on texture that you should keep in mind.\n</doc>
+			<doc>When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage (to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n</doc>
 			<doc>- Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping.\n</doc>
 			<doc>- GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping.\n</doc>
 			<doc>- GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n</doc>
 			<doc>- GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n</doc>
-			<doc>- GeForce 8 could do  8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n</doc>
+			<doc>- GeForce 8 could do 8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n</doc>
+			<doc>- Radeon 5xxx/6xxx could do 16384^2 for 2D texturing, 8192^3 for 3D texturing and 16384^2 for cube mapping.\n</doc>
+			<doc>- GeForce 5xx/Quadro 4xxx could do 16384^2 for 2D texturing, 2048^3 for 3D texturing and 16384^2 for cube mapping.\n</doc>
 			<doc>@remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n</doc>
 			<doc>@todo More docs\n</doc>
 			<ingroup>g_abstractNodes</ingroup>

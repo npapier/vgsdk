@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Maxime Peresson.
+// VGSDK - Copyright (C) 2010, 2013, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -9,7 +9,7 @@
 #include <vgAlg/actions/SelectedNode.hpp>
 
 #include <vge/technique/ApplyGeometricalTransformations.hpp>
-#include <vgeGL/engine/Engine.hpp>
+#include <vge/engine/Engine.hpp>
 
 
 
@@ -32,7 +32,7 @@ void ApplyGeometricalTransformation::execute()
 {
 	using vge::visitor::NodeCollectorExtended;
 	vge::technique::ApplyGeometricalTransformations technique;
-	vgeGL::engine::Engine* engine = new vgeGL::engine::Engine();
+	vge::engine::Engine* engine = new vge::engine::Engine();
 	NodeCollectorExtended<> collector( true, false, NodeCollectorExtended<>::IGNORE_KIT );
 	m_root->traverse( collector );
 	technique.setParameters( engine, collector.getTraverseElements() );

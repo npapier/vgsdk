@@ -73,6 +73,7 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 
 	// Sets link(s)
 	link( getFImage(), getDFImage() );
+	link( getFAlphaScale(), getDFImage() );
 
 	link( getDFNode() );
 }

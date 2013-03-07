@@ -1,15 +1,3 @@
-// Transparency
-const Material::TransparencyValueType Material::getTransparency() const
-{
-	return getOpacity();
-}
-
-
-
-void Material::setTransparency( const TransparencyValueType value )
-{
-	setOpacity( value );
-}
 
 
 
