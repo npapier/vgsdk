@@ -30,9 +30,6 @@ namespace node
  * Sets up the rendering mode (monoscopic and 3D stereoscopic) using \c mode field. In stereoscopic mode, \c projectionRight (resp. \c projectionLeft) and \c lookAtRight (resp. \c lookAtLeft) specifies the right (resp. left) eye. Sets up the \c projection with an user defined matrix for the viewing frustum (into the world coordinate system). Sets up the camera position and orientation with 4x4 matrix from \c lookAt field. Note that some matrices (such as singular ones) may result in errors in bounding boxes, picking, and lighting. 
  *
  * New fields defined by this node :
- * - OFRectangle2i \c [viewport] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
- *   Determines the viewport.<br>
- *<br>
  * - SFMatrixR \c projectionLeft = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the projection matrix for monoscopic rendering or for the left eye if stereo is enabled.<br>
  *<br>
@@ -51,8 +48,8 @@ namespace node
  * - OFRectangle2i \c [scissor] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
  *   Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.<br>
  *<br>
- * - SFEnum \c mode = (MONOSCOPIC)<br>
- *   Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
+ * - SFRectangle2i \c viewport = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
+ *   Determines the viewport.<br>
  *<br>
  * - OFFloat \c [aspect] = (1)<br>
  *   Aspect ratio of the camera<br>
@@ -71,6 +68,9 @@ namespace node
  *<br>
  * - SFFloat \c fovy = (45.f)<br>
  *   Field of view angle for the Y direction for the camera. In the case of a perspective camera.<br>
+ *<br>
+ * - SFEnum \c mode = (MONOSCOPIC)<br>
+ *   Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -164,50 +164,6 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 */
 	static vgd::Shp< Camera > createWhole( const std::string nodeName = "DefaultWhole" );
 
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field viewport
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c viewport.
-	 */
-	typedef vgm::Rectangle2i ViewportValueType;
-
-	/**
-	 * @brief The default value of field named \c viewport.
-	 */
-	static const ViewportValueType DEFAULT_VIEWPORT;
-
-	/**
-	 * @brief Type definition of the field named \c viewport
-	 */
-	typedef vgd::field::TOptionalField< ViewportValueType > FViewportType;
-
-
-	/**
-	 * @brief Gets the value of field named \c viewport.
-	 */
-	const bool getViewport( ViewportValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c viewport.
- 	 */
-	void setViewport( const ViewportValueType& value );
-
-	/**
-	 * @brief Erases the field named \c viewport.
-	 */
-	void eraseViewport();
-
-	/**
-	 * @brief Tests if the value of field named \c viewport has been initialized.
-	 */
-	const bool hasViewport() const;
 	//@}
 
 
@@ -441,79 +397,35 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
-	 * @name Accessors to field mode
+	 * @name Accessors to field viewport
 	 */
 	//@{
 
 	/**
-	 * @brief Definition of symbolic values
+	 * @brief Type definition of the value contained by field named \c viewport.
 	 */
-	enum  
-	{
-		MONOSCOPIC = 261,	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
-		ANAGLYPH = 263,	///< @todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera.
-		QUAD_BUFFER = 262,	///< Stereoscopic rendering using quad buffer (i.e. active stereo using shutter glasses, or passive stereo using polarized projectors and glasses). Scene is viewer for left and right eyes. All fields are used to define the camera.
-		DEFAULT_MODE = MONOSCOPIC	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
-	};
+	typedef vgm::Rectangle2i ViewportValueType;
 
 	/**
-	 * @brief Type definition of a container for the previous symbolic values
+	 * @brief The default value of field named \c viewport.
 	 */
-	struct ModeValueType : public vgd::field::Enum
-	{
-		ModeValueType()
-		{}
-
-		ModeValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		ModeValueType( const ModeValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		ModeValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 261 );
-			retVal.push_back( 262 );
-			retVal.push_back( 263 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "MONOSCOPIC" );
-			retVal.push_back( "QUAD_BUFFER" );
-			retVal.push_back( "ANAGLYPH" );
-
-			return retVal;
-		}
-	};
+	static const ViewportValueType DEFAULT_VIEWPORT;
 
 	/**
-	 * @brief Type definition of the field named \c mode
+	 * @brief Type definition of the field named \c viewport
 	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FModeType;
+	typedef vgd::field::TSingleField< ViewportValueType > FViewportType;
 
 
 	/**
-	 * @brief Gets the value of field named \c mode.
+	 * @brief Gets the value of field named \c viewport.
 	 */
-	const ModeValueType getMode() const;
+	const ViewportValueType getViewport() const;
 
 	/**
-	 * @brief Sets the value of field named \c mode.
+	 * @brief Sets the value of field named \c viewport.
 	 */
-	void setMode( const ModeValueType value );
+	void setViewport( const ViewportValueType value );
 
 	//@}
 
@@ -748,16 +660,88 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
-	 * @name Field name accessors
+	 * @name Accessors to field mode
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c viewport.
-	 *
-	 * @return the name of field \c viewport.
+	 * @brief Definition of symbolic values
 	 */
-	static const std::string getFViewport( void );
+	enum  
+	{
+		MONOSCOPIC = 261,	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
+		ANAGLYPH = 263,	///< @todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera.
+		QUAD_BUFFER = 262,	///< Stereoscopic rendering using quad buffer (i.e. active stereo using shutter glasses, or passive stereo using polarized projectors and glasses). Scene is viewer for left and right eyes. All fields are used to define the camera.
+		DEFAULT_MODE = MONOSCOPIC	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct ModeValueType : public vgd::field::Enum
+	{
+		ModeValueType()
+		{}
+
+		ModeValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ModeValueType( const ModeValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		ModeValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 261 );
+			retVal.push_back( 262 );
+			retVal.push_back( 263 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "MONOSCOPIC" );
+			retVal.push_back( "QUAD_BUFFER" );
+			retVal.push_back( "ANAGLYPH" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c mode
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FModeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c mode.
+	 */
+	const ModeValueType getMode() const;
+
+	/**
+	 * @brief Sets the value of field named \c mode.
+	 */
+	void setMode( const ModeValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Field name accessors
+	 */
+	//@{
 
 	/**
 	 * @brief Returns the name of field \c projectionLeft.
@@ -802,11 +786,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFScissor( void );
 
 	/**
-	 * @brief Returns the name of field \c mode.
+	 * @brief Returns the name of field \c viewport.
 	 *
-	 * @return the name of field \c mode.
+	 * @return the name of field \c viewport.
 	 */
-	static const std::string getFMode( void );
+	static const std::string getFViewport( void );
 
 	/**
 	 * @brief Returns the name of field \c aspect.
@@ -850,6 +834,13 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 */
 	static const std::string getFFovy( void );
 
+	/**
+	 * @brief Returns the name of field \c mode.
+	 *
+	 * @return the name of field \c mode.
+	 */
+	static const std::string getFMode( void );
+
 	//@}
 
 
@@ -872,8 +863,6 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 *
 	 * @param vertex	vertex to transform
 	 * @return the transformed vertex
-	 *
-	 * @pre hasViewport()
 	 */
 	const vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
 
@@ -978,7 +967,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	/**
 	 * @brief Returns the value of field named \c viewport modified (if needed) by taking care of the given eye usage policy, the \c mode field and the \c imageShift field.
 	 */
-	const bool gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
+	void gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
 
 
 	/**

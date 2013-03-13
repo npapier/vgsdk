@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -50,6 +50,7 @@
 #ifndef _VGM_MATRIX_HPP
 #define _VGM_MATRIX_HPP
 
+#include <glm/glm.hpp>
 #include "vgm/operations.hpp"
 #include "vgm/vgm.hpp"
 #include "vgm/Rectangle.hpp"
@@ -105,6 +106,13 @@ struct VGM_API MatrixR
 	 * @warning Matrix is not initialized.
 	 */
 	MatrixR();
+
+	/**
+	 * @brief Constructor from a glm 4x4 matrix
+	 *
+	 * @param m		the glm matrix
+	 */
+	MatrixR( const glm::mat4 m );
 
 	/**
 	 * @brief Constructor given all 16 elements in row-major order.
@@ -594,6 +602,26 @@ struct VGM_API MatrixR
 	 * @sa setPick()
 	 */
 	void	pick( float x, float y, float width, float height, vgm::Rectangle2i viewport );
+
+
+	/**
+	 * @brief Map window coordinates to object coordinates
+	 *
+	 * @param winx			specifies the window coordinates to be mapped
+	 * @param winy			specifies the window coordinates to be mapped
+	 * @param winz			specifies the window coordinates to be mapped
+	 * @param modelMatrix	specifies the modelview matrix
+	 * @param projMatrix	specifies the projection matrix
+	 * @param viewport		specifies the viewport
+	 * @param oObject		returned computed object coordinates
+	 *
+	 * @remark see gluUnProject
+	 *
+	 * @todo project()
+	 */
+	static const bool unProject(	const double winx, const double winy, const double winz,
+									const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i viewport,
+									vgm::Vec3f& oObject );
 	//@}
 
 
@@ -813,6 +841,11 @@ struct VGM_API MatrixR
 	 * @brief Equality comparison within given tolerance, for each component.
 	 */
 	bool		equals( const MatrixR& m, const float tolerance = vgm::Epsilon<float>::value() ) const;
+
+	/**
+	 * @brief Difference comparison within given tolerance, for each component.
+	 */
+	bool		notEquals( const MatrixR& m, const float tolerance = vgm::Epsilon<float>::value() ) const;
 	//@}
 
 private:
@@ -860,6 +893,13 @@ Vec4f VGM_API operator*(const Vec4f& vec, const MatrixR& mat);
 Vec4f VGM_API operator*(const MatrixR& mat, const Vec4f& vec);
 
 
+
+/**
+ * @name Constructs a glm matrix from a vgm::MatrixR
+ */
+//@{
+VGM_API glm::mat4 glm( const vgm::MatrixR& m );
+//@}
 
 
 } // namespace vgm

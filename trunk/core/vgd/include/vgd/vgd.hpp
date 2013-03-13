@@ -59,6 +59,10 @@
  */
 
 /**
+ * @defgroup g_rayCasting Ray casting
+ */
+
+/**
  * @defgroup g_nodes Nodes
  * 
  * @ingroup g_vgd

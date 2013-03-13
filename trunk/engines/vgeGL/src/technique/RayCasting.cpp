@@ -5,19 +5,18 @@
 
 #include "vgeGL/technique/RayCasting.hpp"
 
-#include <GL/glu.h>
-
 #include <vgd/node/Camera.hpp>
+#include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/DrawStyle.hpp>
-#include <vgd/node/FrontFace.hpp>
+#include <vgd/node/GeometricalTransformation.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Kit.hpp>
 #include <vgd/node/Shape.hpp>
 #include <vge/engine/Engine.hpp>
-#include <vge/pass/ForEach.hpp>
 #include <vge/service/Painter.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
+#include "vgeGL/technique/helpers.hpp"
 
 
 
@@ -32,10 +31,12 @@ namespace technique
 RayCasting::RayCasting() 
 :	m_x					(	-1	),
 	m_y					(	-1	),
+	m_raySourceW		( vgm::Vec3f::getInvalid() ),
+	m_rayDirectionW		( vgm::Vec3f::getInvalid() ),
 	m_pSelectBuffer		(	0	)
-	//m_oglViewport[4]
-	//m_matrixProjection[16];
-	//m_matrixModelview[16];
+	//m_modelview
+	//m_projection
+	//m_viewport
 	//m_shapes
 	//m_pHits
 	//m_iterNearestHit
@@ -68,20 +69,29 @@ void RayCasting::destroy()
 void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 						const int32 x, const int32 y )
 {
-	// store x and y.
+	// store parameters
 	m_x = x;
 	m_y = y;
 
-	if ( m_pSelectBuffer == 0 )
-	{
-		m_pSelectBuffer = new GLuint[m_selectBufferSize];
-	}
-	memset( m_pSelectBuffer, m_selectBufferSize, sizeof(GLuint) );
+	m_raySourceW.setInvalid();
+	m_rayDirectionW.setInvalid();
 
 	//
-	glSelectBuffer( m_selectBufferSize, m_pSelectBuffer );
-	glRenderMode( GL_SELECT );
+	apply( engine, traverseElements );
+}
 
+
+void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+						const vgm::Vec3f raySource, const vgm::Vec3f rayDirection )
+{
+	// store parameters
+	m_x = 0;
+	m_y = 0;
+
+	m_raySourceW	= raySource;
+	m_rayDirectionW	= rayDirection;
+
+	//
 	apply( engine, traverseElements );
 }
 
@@ -90,8 +100,8 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 const uint32 RayCasting::getHitsSize() const
 {
 	uint32 size;
-	
-	if ( m_pHits.get() != 0 )
+
+	if ( m_pHits.get() )
 	{
 		size = static_cast<uint32>(m_pHits->size());
 	}
@@ -99,7 +109,7 @@ const uint32 RayCasting::getHitsSize() const
 	{
 		size = 0;
 	}
-	
+
 	return size;
 }
 
@@ -107,8 +117,8 @@ const uint32 RayCasting::getHitsSize() const
 
 const vgd::Shp< vgeGL::basic::HitList > RayCasting::getHits() const
 {
-	assert( getHitsSize() != 0 );
-	
+	vgAssert( getHitsSize() > 0 );
+
 	return m_pHits;
 }
 
@@ -116,8 +126,8 @@ const vgd::Shp< vgeGL::basic::HitList > RayCasting::getHits() const
 
 const vgeGL::basic::Hit& RayCasting::getNearestHit() const
 {
-	assert( getHitsSize() != 0 );
-	
+	vgAssert( getHitsSize() > 0 );
+
 	return ( *m_iterNearestHit );
 }
 
@@ -125,8 +135,8 @@ const vgeGL::basic::Hit& RayCasting::getNearestHit() const
 
 const vgeGL::basic::Hit& RayCasting::getFarthestHit() const
 {
-	assert( getHitsSize() != 0 );
-		
+	vgAssert( getHitsSize() > 0 );
+
 	return ( *m_iterFarthestHit );
 }
 
@@ -146,7 +156,7 @@ vgd::node::Node* RayCasting::getNearestHitNode() const
 		}
 		else
 		{
-			assert( false && "The nearest hit have an empty node stack." ); 
+			vgAssertN( false, "The nearest hit have an empty node stack." ); 
 			pNode = 0;
 		}
 	}
@@ -160,14 +170,25 @@ vgd::node::Node* RayCasting::getNearestHitNode() const
 
 
 
-void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+void RayCasting::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
+	//
+	if ( m_pSelectBuffer == 0 )
+	{
+		m_pSelectBuffer = new GLuint[m_selectBufferSize];
+	}
+	memset( m_pSelectBuffer, m_selectBufferSize, sizeof(GLuint) );
+
+	//
+	glSelectBuffer( m_selectBufferSize, m_pSelectBuffer );
+	glRenderMode( GL_SELECT );
+
+	//
 	vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 
 	prepareEval( engine, traverseElements );
 
 	// First pass : draw all shape.
-	// @todo Creates a Pass class
 
 	// Makes a backup of GLSL activation state
 	using vgeGL::engine::Engine;
@@ -184,6 +205,8 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	engine->disregard();
 
 	engine->regardIfIsAKindOf<vgd::node::SingleTransformation>();
+	//engine->regardIfIsAKindOf<vgd::node::CoordinateSystem>();
+	engine->regardIfIsAKindOf<vgd::node::ClearFrameBuffer>();
 	engine->regardIfIsA<vgd::node::DrawStyle>();
 
 	engine->regardIfIsAKindOf<vgd::node::Group>();
@@ -191,7 +214,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	engine->regardIfIsAKindOf<vgd::node::Shape>();
 
 	// Init.
-	bool	cameraAlreadyTraversed = false;
+	bool cameraAlreadyTraversed = false;
 
 	// Init. database.
 	m_shapes.reserve( traverseElements->size()/2 );
@@ -207,51 +230,85 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 			i != iEnd;
 			++i )
 	{
-		if ( (i->first)->isA< vgd::node::Camera >() )
+		// CAMERA
+		using vgd::node::Camera;
+
+		if ( (i->first)->isA< Camera >() )
 		{
+			Camera * incomingCamera = dynamic_cast< Camera *>( i->first);
+
 			if ( i->second )
 			{
 				// preTraverse
-				engine->evaluate( paint, *i );
+				vgd::Shp< Camera >	camera;
+				vgm::MatrixR		cameraLookAt;
+				const vgm::MatrixR& identity = vgm::MatrixR::getIdentity();
+
+				if ( m_raySourceW.isValid() )
+				{
+					// Setup Camera using m_raySourceW and m_rayDirectionW
+					vgAssert( m_rayDirectionW.isValid() );
+
+					// compute pick matrix
+					m_x = incomingCamera->getViewport()[2]/2;
+					m_y = incomingCamera->getViewport()[3]/2;
+
+					vgm::MatrixR pickMatrix;
+					pickMatrix.setPick( static_cast<float>(m_x), static_cast<float>(m_y), 1.f, 1.f, incomingCamera->getViewport() );
+
+					camera = setupRenderFromCamera(
+						m_raySourceW, m_rayDirectionW, identity,
+						"RAYCASTING.camera", incomingCamera->getProjectionLeft() * pickMatrix, incomingCamera->getViewport(),
+						identity, identity, cameraLookAt /* not used*/ );
+
+					//
+					engine->evaluate( paint, camera );
+
+					// Disabling TransformDragger (a side effect of the following method call).
+					engine->disregardIfIsAKindOf<vgd::node::GeometricalTransformation>();
+				}
+				else
+				{
+					// Setup Camera
+
+					// compute pick matrix
+					vgm::MatrixR pickMatrix;
+					pickMatrix.setPick(	static_cast<float>(m_x), static_cast<float>(m_y), 1.f, 1.f, incomingCamera->getViewport() );
+
+					camera = setupRenderFromCamera(
+						vgm::Vec3f::getNull(), vgm::Vec3f(0.f, 0.f, -1.f), incomingCamera->getLookAt().getInverse() /* ??? */,
+						"RAYCASTING.camera", incomingCamera->getProjectionLeft() * pickMatrix, incomingCamera->getViewport(),
+						identity, identity, cameraLookAt /* not used*/ );
+
+					//
+					engine->evaluate( paint, camera );
+				}
 			}
 			else
 			{
 				// postTraverse
-				assert( !cameraAlreadyTraversed && "Multiple camera node not supported." );			// FIXME
+				vgAssertN( !cameraAlreadyTraversed, "Multiple camera node not supported." );
 				cameraAlreadyTraversed = true;
-				
-				engine->evaluate( paint, *i );
-				
-				// getting some OpenGL informations : step 1
-				glGetIntegerv( GL_VIEWPORT, m_oglViewport );										// FIXME
-				
-				// compute pick matrix
-				vgm::MatrixR pickMatrix;
-				vgm::Rectangle2i viewport(	m_oglViewport[0], m_oglViewport[1],
-											m_oglViewport[2], m_oglViewport[3] );
-	
-				pickMatrix.setPick(	static_cast<float>(m_x), static_cast<float>(m_y), 1.f, 1.f, viewport );
-				
-				// update engine
-				vgm::MatrixR& current( engine->getProjectionMatrix().getTop() );
-				
-				current = current * pickMatrix;
 
-				// Update OpenGL.
-				glMatrixMode( GL_PROJECTION );
-				glLoadMatrixf( reinterpret_cast<const float*>( current.getValue() ) );
-				
-				// getting some OpenGL informations : step 2
-				glGetDoublev( GL_PROJECTION_MATRIX, m_matrixProjection );									// FIXME
-				glGetDoublev( GL_MODELVIEW_MATRIX,  m_matrixModelview );									// FIXME
+				// getting some OpenGL informations
+				m_modelview = engine->getGeometricalMatrix().getTop();
+				m_projection = engine->getProjectionMatrix().getTop();
+				m_viewport.setValue( engine->getViewport() );
 			}
 		}
+		// CLEARFRAMEBUFFER
+		else if ( (i->first)->isAKindOf< vgd::node::ClearFrameBuffer >() )
+		{
+			engine->regardIfIsAKindOf<vgd::node::SingleTransformation>();
+			engine->evaluate( paint, *i );
+		}
+		// KIT
 		else if ( (i->first)->isAKindOf< vgd::node::Kit >() )					// @todo Kit similar to Shape
 		{
 			if ( i->second )
 			{
 				// preTraverse
-				assert( cameraAlreadyTraversed && "Kit before the Camera !" );
+				vgAssertN( cameraAlreadyTraversed, "Kit before the Camera !" );
 
 				glLoadName( currentGLName );
 				glPushName( currentGLName );
@@ -269,11 +326,12 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 				glPopName();
 			}
 		}
+		// SHAPE
 		else if ( (i->first)->isAKindOf< vgd::node::Shape >() )
 		{
 			if ( i->second )
 			{
-				assert( cameraAlreadyTraversed && "Shape before the Camera !" );
+				vgAssertN( cameraAlreadyTraversed, "Shape before the Camera !" );
 
 				glLoadName( currentGLName );
 				++currentGLName;
@@ -289,6 +347,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 				engine->evaluate( paint, *i );
 			}
 		}
+		// OTHERS
 		else
 		{
 			engine->evaluate( paint, *i );
@@ -321,7 +380,7 @@ void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 
 void RayCasting::fillHits( const uint32 gluintHitsSize )
 {
-	assert( m_pSelectBuffer != 0 );
+	vgAssert( m_pSelectBuffer != 0 );
 
 	// Reset hit list.
 	m_pHits = vgd::Shp< vgeGL::basic::HitList >( new vgeGL::basic::HitList );
@@ -332,8 +391,6 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 	GLuint gluintZMax				= 0;
 	GLuint gluintZMaxForFarthest	= 0;
 	int32  i32PickingName			= -1;
-
-	double dX, dY, dZ;
 
 	// Explore opengl hits database.
 	GLuint *ptr = static_cast<GLuint*>( m_pSelectBuffer );
@@ -356,13 +413,9 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 
 		hit.minDepthValue() = fDepth;
 
-		gluUnProject(	m_x, m_oglViewport[3]- m_y, fDepth,
-						m_matrixModelview, m_matrixProjection, m_oglViewport,
-						&dX, &dY, &dZ );															// FIXME
-
-		hit.nearestVertex() = vgm::Vec3f(	static_cast<float>(dX),
-											static_cast<float>(dY),
-											static_cast<float>(dZ) );
+		vgm::MatrixR::unProject(	m_x, m_viewport[3]- m_y, fDepth,
+									m_modelview, m_projection, m_viewport,
+									hit.nearestVertex() );
 
 		++ptr;
 
@@ -373,13 +426,10 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 
 		hit.maxDepthValue() = fDepth;
 
-		gluUnProject(	m_x, m_oglViewport[3]- m_y, fDepth,
-						m_matrixModelview, m_matrixProjection, m_oglViewport,
-						&dX, &dY, &dZ );															// FIXME
+		vgm::MatrixR::unProject(	m_x, m_viewport[3]- m_y, fDepth,
+									m_modelview, m_projection, m_viewport,
+									hit.farthestVertex() );
 
-		hit.farthestVertex() = vgm::Vec3f(	static_cast<float>(dX),
-											static_cast<float>(dY),
-											static_cast<float>(dZ) );
 		++ptr;
 
 		// name
@@ -391,29 +441,21 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 
 			if ( ui32J == 0 )
 			{
+				using vgm::MatrixR;
+
 				// min in object space
-				const vgm::MatrixR& modelviewO = m_shapes[i32PickingName].modelview;
-				vgm::RawMatrixd modelviewD;
-				modelviewO.getValue( modelviewD );
+				const MatrixR& modelviewO = m_shapes[i32PickingName].modelview;
 
-				gluUnProject(	m_x, m_oglViewport[3]- m_y, hit.minDepthValue(),
-								(&modelviewD[0][0]), m_matrixProjection, m_oglViewport,
-								&dX, &dY, &dZ );
-
-				hit.nearestVertexO() = vgm::Vec3f(	static_cast<float>(dX),
-													static_cast<float>(dY),
-													static_cast<float>(dZ) );
+				MatrixR::unProject(	m_x, m_viewport[3]- m_y, hit.minDepthValue(),
+									modelviewO, m_projection, m_viewport,
+									hit.nearestVertexO() );
 
 				// min in scene space
-				const vgm::MatrixR& modelviewS = glEngine()->getSceneGeometricalMatrix();
-				modelviewS.getValue( modelviewD );
-				gluUnProject(	m_x, m_oglViewport[3]- m_y, hit.minDepthValue(),
-								(&modelviewD[0][0]), m_matrixProjection, m_oglViewport,
-								&dX, &dY, &dZ );
+				const MatrixR& modelviewS = glEngine()->getSceneGeometricalMatrix();
 
-				hit.nearestVertexS() = vgm::Vec3f(	static_cast<float>(dX),
-													static_cast<float>(dY),
-													static_cast<float>(dZ) );
+				MatrixR::unProject(	m_x, m_viewport[3]- m_y, hit.minDepthValue(),
+									modelviewS, m_projection, m_viewport,
+									hit.nearestVertexS() );
 			}
 
 			hit.stackName().push_back( i32PickingName );
@@ -452,52 +494,6 @@ vgd::node::Node* RayCasting::searchNodeFromPickingName( const uint32 pickingName
 
 
 const uint32 RayCasting::m_selectBufferSize = 4 * 1024;
-// @todo FIXME ?????
-//    /**
-//     * Sets the ray for source to destination in world-space(along which to pick)
-//	 *
-//     * @param vec3fRaySource : starting point for ray.
-//     * @param vec3fRayDestination : ray is cast to this point(but not stop at this point).
-//     */
-//    VGL_API void    start( const SbVec3f vec3fRaySource, const SbVec3f vec3fRayDestination );;
-//void CPicking::start( const SbVec3f vec3fRaySource, const SbVec3f vec3fRayDestination )
-//{
-//    // store value
-//    glGetIntegerv( GL_VIEWPORT, m_oglViewPort ); // FIXME OPTME
-//
-//    start( m_oglViewPort[2]/2, m_oglViewPort[3]/2 );
-//
-//    glLoadIdentity();
-//	
-//	// the ray segment from source to destination.
-//	SbVec3f vec3fSegmentRay		= vec3fRayDestination - vec3fRaySource;
-//
-//	SbVec3f vec3fDirectionRay	= vec3fSegmentRay;
-//	vec3fDirectionRay.normalize();
-//
-//	vgl::Vec3f vec3fDirectionRayTmp( vec3fDirectionRay[0], vec3fDirectionRay[1], vec3fDirectionRay[2] );
-//
-//	// Ray is not a "null segment".
-//	assert( vec3fSegmentRay.length() > 0 );
-//
-//	// Set position and orientation of camera.
-//	if (	!vec3fDirectionRayTmp.isColinear( vgl::Vec3f(0.f, 1.f, 0.f) )
-//		)
-//	{
-//		gluLookAt(	vec3fRaySource[0], vec3fRaySource[1], vec3fRaySource[2],
-//					vec3fRayDestination[0], vec3fRayDestination[1], vec3fRayDestination[2],
-//					0.f, 1.f, 0.f );
-//	}
-//	else
-//	{
-//		gluLookAt(	vec3fRaySource[0], vec3fRaySource[1], vec3fRaySource[2],
-//					vec3fRayDestination[0], vec3fRayDestination[1], vec3fRayDestination[2],
-//					1.f, 0.f, 0.f );
-//	}
-//
-//    // FIXME OPTME
-//    glGetDoublev( GL_MODELVIEW_MATRIX,  m_matrixModelview );
-//}
 
 
 

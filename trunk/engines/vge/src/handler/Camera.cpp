@@ -28,15 +28,10 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 	engine->setCamera( camera );
 
 	//	VIEWPORT field
-	bool bDefined;
 	vgm::Rectangle2i viewportValue;
+	camera->gethViewport( viewportValue, engine->getDrawingSurfaceSize()[0], eyePolicy );
 
-	bDefined = camera->gethViewport( viewportValue, engine->getDrawingSurfaceSize()[0], eyePolicy );
-
-	if ( bDefined )
-	{
-		engine->setViewport( viewportValue );
-	}
+	engine->setViewport( viewportValue );
 
 	//
 	applyMatrix( engine, camera );
@@ -54,7 +49,7 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 		const double near	= d / (c - 1.0);
 		const double far	= d / (1.0 + c);
 
-		engine->setNearFar( vgm::Vec2f(near, far) );
+		engine->setNearFar( vgm::Vec2f(static_cast<float>(near), static_cast<float>(far)) );
 	}
 	else
 	{

@@ -23,6 +23,8 @@ namespace basic
 
 /**
  * @brief Abstraction of an element in the OpenGL picking buffer.
+ *
+ * @ingroup g_rayCasting
  */
 struct VGEGL_API Hit
 {

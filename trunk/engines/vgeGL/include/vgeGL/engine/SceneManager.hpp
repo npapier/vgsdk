@@ -64,11 +64,12 @@ struct VGEGL_API GLContextProperties
  * 		But if you derived this class and add a Camera node, you should write this piece of code.
  * - Event handling (listen and process events with event processors).
  * - A time base animation system. @ref g_time
- * - Casts ray under the mouse cursor.
+ * - Casts ray under the mouse cursor and in the scene.
  * - Renders an overlay after the rendering of the scene graph. The typical use case is to draw a logo over the GUI window.
  * - Renders an underlay just after the clearing of the whole framebuffer in the MultiMain technique. This layer is only used by the MultiMain technique.
  *
  * @ingroup g_layerplan
+ * @ingroup g_rayCasting
  */
 struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::event::DeviceManager, public vgeGL::itf::IUnderlay
 {
@@ -353,7 +354,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	//@{
 
 	/**
-	 * @brief Cast a ray under mouse pointer.
+	 * @brief Cast a ray under mouse pointer
 	 * 
 	 * @param x  x-coordinate of the mouse pointer
 	 * @param y  y-coordinate of the mouse pointer
@@ -363,21 +364,35 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @remarks The returned hit reference is valid until the next ray casting.
 	 */
 	const vgeGL::basic::Hit* castRayForHit( const int32 x, const int32 y );
-	const vgeGL::basic::Hit* castRayForHit( const vgd::event::MouseButtonEvent mouseButtonEvent );
 
 	/**
-	 * @brief Cast a ray under mouse pointer.
+	 * @brief Cast a ray in the scene
+	 * 
+	 * @param raySourceW				starting point of the ray (in world space)
+	 * @param rayDirectionW				direction of the ray (in world space)
+	 * 
+	 * @return the nearest hit or a null reference.
+	 * 
+	 * @remarks The returned hit reference is valid until the next ray casting.
+	 */
+	const vgeGL::basic::Hit* castRayForHit( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW );
+
+
+
+	/**
+	 * @brief Cast a ray under mouse pointer
 	 * 
 	 * @param x  x-coordinate of the mouse pointer
 	 * @param y  y-coordinate of the mouse pointer
 	 * 
 	 * @return the nearest node or a null reference.
+	 *
+	 * @remark Helper using castRayForHit(x,y)
 	 */
 	vgd::node::Node* castRay( const int32 x, const int32 y );
-	vgd::node::Node* castRay( const vgd::event::MouseButtonEvent mouseButtonEvent );
 
 	/**
-	 * @brief Cast a ray under mouse pointer.
+	 * @brief Cast a ray under mouse pointer
 	 *
 	 * @param x							x-coordinate of the mouse pointer
 	 * @param y							y-coordinate of the mouse pointer
@@ -388,14 +403,13 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @param barycentricCoordHitPoint	(u,v) barycentric coordinates of P in (A, AB, BC). A is a local origin.
 	 *
 	 * @return true if ray casting hit a triangle, false otherwise
+	 *
+	 * @remark Helper using castRay(x,y) and vgAlg::intersect::getTriangle()
 	 */
 	const bool castRay(	const int32 x, const int32 y,
 						const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
 						vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint );
 
-	const bool castRay(	const vgd::event::MouseButtonEvent mouseButtonEvent,
-						const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
-						vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint );
 
 	/**
 	 * @brief Returns a reference on the ray casting technique.
@@ -403,6 +417,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * This reference could be used to access to the result of the last ray casting.
 	 */
 	const vgeGL::technique::RayCasting& getRayCastingTechnique() const;
+
 	//@}
 
 
