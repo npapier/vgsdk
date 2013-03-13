@@ -64,20 +64,20 @@ Camera::Camera( const std::string nodeName ) :
 	vgd::node::ProjectionTransformation()
 {
 	// Adds field(s)
-	addField( new FViewportType(getFViewport()) );
 	addField( new FProjectionLeftType(getFProjectionLeft()) );
 	addField( new FZFarType(getFZFar()) );
 	addField( new FLookAtLeftType(getFLookAtLeft()) );
 	addField( new FLookAtRightType(getFLookAtRight()) );
 	addField( new FProjectionRightType(getFProjectionRight()) );
 	addField( new FScissorType(getFScissor()) );
-	addField( new FModeType(getFMode()) );
+	addField( new FViewportType(getFViewport()) );
 	addField( new FAspectType(getFAspect()) );
 	addField( new FRightEyeType(getFRightEye()) );
 	addField( new FEyeSeparationType(getFEyeSeparation()) );
 	addField( new FImageShiftType(getFImageShift()) );
 	addField( new FZNearType(getFZNear()) );
 	addField( new FFovyType(getFFovy()) );
+	addField( new FModeType(getFMode()) );
 
 	// Sets link(s)
 
@@ -94,11 +94,12 @@ void Camera::setToDefaults( void )
 	setLookAtLeft( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setLookAtRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
 	setProjectionRight( vgm::MatrixR(vgm::MatrixR::getIdentity()) );
-	setMode( (MONOSCOPIC) );
+	setViewport( vgm::Rectangle2i(0, 0, 1600, 1200) );
 	setRightEye( (true) );
 	setEyeSeparation( (0.f) );
 	setImageShift( (0.f) );
 	setFovy( (45.f) );
+	setMode( (MONOSCOPIC) );
 }
 
 
@@ -107,44 +108,10 @@ void Camera::setOptionalsToDefaults()
 {
 	GeometricalTransformation::setOptionalsToDefaults();
 	ProjectionTransformation::setOptionalsToDefaults();
-	setViewport( vgm::Rectangle2i(0, 0, 1600, 1200) );
 	setZFar( (3996.f) );
 	setScissor( vgm::Rectangle2i(0, 0, 1600, 1200) );
 	setAspect( (1) );
 	setZNear( (0.01f) );
-}
-
-
-
-// Viewport
-
-const Camera::ViewportValueType Camera::DEFAULT_VIEWPORT = vgm::Rectangle2i(0, 0, 1600, 1200);
-
-
-
-const bool Camera::getViewport( ViewportValueType& value ) const
-{
-	return getFieldRO<FViewportType>(getFViewport())->getValue( value );
-}
-
-
-
-void Camera::setViewport( const ViewportValueType& value )
-{
-	getFieldRW<FViewportType>(getFViewport())->setValue( value );
-}
-
-
-
-void Camera::eraseViewport()
-{
-	getFieldRW<FViewportType>(getFViewport())->eraseValue();
-}
-
-
-const bool Camera::hasViewport() const
-{
-	return getFieldRO<FViewportType>(getFViewport())->hasValue();
 }
 
 
@@ -295,18 +262,22 @@ const bool Camera::hasScissor() const
 
 
 
-// Mode
+// Viewport
 
-const Camera::ModeValueType Camera::getMode() const
+const Camera::ViewportValueType Camera::DEFAULT_VIEWPORT = vgm::Rectangle2i(0, 0, 1600, 1200);
+
+
+
+const Camera::ViewportValueType Camera::getViewport() const
 {
-	return getFieldRO<FModeType>(getFMode())->getValue();
+	return getFieldRO<FViewportType>(getFViewport())->getValue();
 }
 
 
 
-void Camera::setMode( const ModeValueType value )
+void Camera::setViewport( const ViewportValueType value )
 {
-	getFieldRW<FModeType>(getFMode())->setValue( value );
+	getFieldRW<FViewportType>(getFViewport())->setValue( value );
 }
 
 
@@ -457,14 +428,23 @@ void Camera::setFovy( const FovyValueType value )
 
 
 
-// Field name accessor(s)
-const std::string Camera::getFViewport( void )
+// Mode
+
+const Camera::ModeValueType Camera::getMode() const
 {
-	return "f_viewport";
+	return getFieldRO<FModeType>(getFMode())->getValue();
 }
 
 
 
+void Camera::setMode( const ModeValueType value )
+{
+	getFieldRW<FModeType>(getFMode())->setValue( value );
+}
+
+
+
+// Field name accessor(s)
 const std::string Camera::getFProjectionLeft( void )
 {
 	return "f_projectionLeft";
@@ -507,9 +487,9 @@ const std::string Camera::getFScissor( void )
 
 
 
-const std::string Camera::getFMode( void )
+const std::string Camera::getFViewport( void )
 {
-	return "f_mode";
+	return "f_viewport";
 }
 
 
@@ -556,14 +536,16 @@ const std::string Camera::getFFovy( void )
 
 
 
+const std::string Camera::getFMode( void )
+{
+	return "f_mode";
+}
+
+
+
 const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 {
-	vgAssert( hasViewport() );
-
-	vgm::Rectangle2i viewport;
-	getViewport( viewport );
-
-	return applyViewport( viewport, vertex );
+	return applyViewport( getViewport(), vertex );
 }
 
 
@@ -733,40 +715,31 @@ void Camera::setMatrix( const MatrixValueType value )
 
 
 // High-level
-const bool Camera::gethViewport( ViewportValueType& viewport, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy ) const
+void Camera::gethViewport( ViewportValueType& viewport, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy ) const
 {
 	// Retrieves viewport field
-	bool hasViewport = getViewport( viewport );
+	viewport = getViewport();
 
-	if ( hasViewport )
+	const float drawingSurfaceWidthf = static_cast< float >( drawingSurfaceWidth );
+
+	const float halfImageShift = (drawingSurfaceWidthf/16.f) * getImageShift()/100.f;
+
+	switch ( eyeUsagePolicy.value() )
 	{
-		const float drawingSurfaceWidthf = static_cast< float >( drawingSurfaceWidth );
+		case EYE_LEFT:
+			viewport[0] -= static_cast< int >( halfImageShift );
+			break;
 
-		const float halfImageShift = (drawingSurfaceWidthf/16.f) * getImageShift()/100.f;
+		case EYE_RIGHT:
+			viewport[0] += static_cast< int >( halfImageShift );
+			break;
 
-		switch ( eyeUsagePolicy.value() )
-		{
-			case EYE_LEFT:
-				viewport[0] -= static_cast< int >( halfImageShift );
-				break;
+		case EYE_BOTH:
+			// Nothing to do
+			break;
 
-			case EYE_RIGHT:
-				viewport[0] += static_cast< int >( halfImageShift );
-				break;
-
-			case EYE_BOTH:
-				// Nothing to do
-				break;
-
-			default:
-				vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
-		}
-
-		return true;
-	}
-	else
-	{
-		return false;
+		default:
+			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
 	}
 }
 

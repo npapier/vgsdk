@@ -656,9 +656,10 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 			using vgeGL::engine::LightState;
 			const vgd::Shp< LightState > lightState = m_shadowMappingInput->getLight( currentLightIndex ).m_lightState;
 
+			const vgm::Rectangle2i viewport( 0, 0, m_shadowMappingInput->getShadowMapSize()[0], m_shadowMappingInput->getShadowMapSize()[1] );
 			vgd::Shp< vgd::node::Camera > fromLightCamera = setupRenderFromCamera(
 				lightState->getPosition(), lightState->getDirection(), lightState->getModelViewMatrix(),
-				"cameraFromLight", m_shadowMappingInput->getLightProjectionMatrix(currentLightIndex), m_shadowMappingInput->getShadowMapSize(),
+				"cameraFromLight", m_shadowMappingInput->getLightProjectionMatrix(currentLightIndex), viewport,
 				invViewMatrix, invTransformDraggerMatrix,
 				lightLookAt[currentLightIndex] );
 
@@ -1482,7 +1483,7 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 	vgm::MatrixR cameraLookAt;
 	vgd::Shp< vgd::node::Camera > newCamera = setupRenderFromCamera(
 		position, vgm::Vec3f(-fluid->getGravity()), identity,
-		"SceneHeightMapCamera", cameraProjection, vgm::Vec2i( color0->getWidth(), color0->getHeight() ), //fluid->getHeightMapSize(),
+		"SceneHeightMapCamera", cameraProjection, vgm::Rectangle2i(0, 0, color0->getWidth(), color0->getHeight()), //fluid->getHeightMapSize(),
 		identity, identity,
 		cameraLookAt );
 

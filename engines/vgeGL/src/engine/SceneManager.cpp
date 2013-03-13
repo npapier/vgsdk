@@ -284,13 +284,32 @@ const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32
 	}
 }
 
-const vgeGL::basic::Hit* SceneManager::castRayForHit( const vgd::event::MouseButtonEvent mouseButtonEvent )
-{
-	using vgd::event::MouseButtonEvent;
-	const MouseButtonEvent::Location mouseLocation = mouseButtonEvent.getLocation();
 
-	return castRayForHit( static_cast< int >(mouseLocation[0]), static_cast< int >(mouseLocation[1]) );
+
+const vgeGL::basic::Hit* SceneManager::castRayForHit( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW )
+{
+	if ( !startVGSDK() )
+	{
+		vgLogDebug("vgeGL::engine::SceneManager::castRayForHit(): startVGSDK fails !");
+		return 0;
+	}
+
+	// CAST A RAY
+	updateNodeCollector();
+
+	m_rayCasting.setParameters( getGLEngine().get(), getNodeCollector().getTraverseElements() );
+	m_rayCasting.apply(	getGLEngine().get(), getNodeCollector().getTraverseElements(), raySourceW, rayDirectionW );
+
+	if ( m_rayCasting.getHitsSize() == 0 )
+	{
+		return 0;
+	}
+	else
+	{
+		return &m_rayCasting.getNearestHit();
+	}
 }
+
 
 
 vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
@@ -305,14 +324,6 @@ vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 	{
 		return m_rayCasting.getNearestHitNode();
 	}
-}
-
-vgd::node::Node* SceneManager::castRay( const vgd::event::MouseButtonEvent mouseButtonEvent )
-{
-	using vgd::event::MouseButtonEvent;
-	const MouseButtonEvent::Location mouseLocation = mouseButtonEvent.getLocation();
-
-	return castRay( static_cast< int >(mouseLocation[0]), static_cast< int >(mouseLocation[1]) );
 }
 
 
@@ -351,18 +362,6 @@ const bool SceneManager::castRay(	const int32 x, const int32 y,
 	{
 		return false;
 	}
-}
-
-const bool SceneManager::castRay(	const vgd::event::MouseButtonEvent mouseButtonEvent,
-									const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
-									vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint )
-{
-	using vgd::event::MouseButtonEvent;
-	const MouseButtonEvent::Location mouseLocation = mouseButtonEvent.getLocation();
-
-	return castRay( static_cast< int >(mouseLocation[0]), static_cast< int >(mouseLocation[1]),
-					oHitShape, oHit,
-					iABC, barycentricCoordHitPoint );
 }
 
 

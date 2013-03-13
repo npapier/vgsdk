@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -66,7 +66,35 @@ namespace vgm
 #define ABS(a)		((a) < 0.0 ? -(a) : (a))
 
 MatrixR::MatrixR()
+{}
+
+
+
+MatrixR::MatrixR( const glm::mat4 m )
 {
+	// row 0
+	matrix[0][0] = m[0][0];
+	matrix[0][1] = m[0][1];
+	matrix[0][2] = m[0][2];
+	matrix[0][3] = m[0][3];
+
+	// row 1
+	matrix[1][0] = m[1][0];
+	matrix[1][1] = m[1][1];
+	matrix[1][2] = m[1][2];
+	matrix[1][3] = m[1][3];
+
+	// row 2
+	matrix[2][0] = m[2][0];
+	matrix[2][1] = m[2][1];
+	matrix[2][2] = m[2][2];
+	matrix[2][3] = m[2][3];
+
+	// row 3
+	matrix[3][0] = m[3][0];
+	matrix[3][1] = m[3][1];
+	matrix[3][2] = m[3][2];
+	matrix[3][3] = m[3][3];
 }
 
 
@@ -1112,7 +1140,7 @@ void MatrixR::setLookAt(	float eyex, float eyey, float eyez,
 	matrix[0][0] = x[0];		matrix[0][1] = y[0];		matrix[0][2] = z[0];		matrix[0][3] = 0.f;
 	matrix[1][0] = x[1];		matrix[1][1] = y[1];		matrix[1][2] = z[1];		matrix[1][3] = 0.f;
 	matrix[2][0] = x[2];		matrix[2][1] = y[2];		matrix[2][2] = z[2];		matrix[2][3] = 0.f;
-	matrix[3][0] = 0.f;		matrix[3][1] = 0.f;		matrix[3][2] = 0.f;		matrix[3][3] = 1.f;
+	matrix[3][0] = 0.f;			matrix[3][1] = 0.f;			matrix[3][2] = 0.f;			matrix[3][3] = 1.f;
 	
    /* Translate Eye to Origin */
 	MatrixR translation;
@@ -1179,6 +1207,32 @@ void MatrixR::pick( float x, float y, float width, float height, vgm::Rectangle2
 	matrix.setPick( x, y, width, height, viewport );
 
 	multLeft( matrix );
+}
+
+
+
+const bool MatrixR::unProject(
+	const double winx, const double winy, const double winz,
+	const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i viewport,
+	vgm::Vec3f& oObject )
+{
+	MatrixR finalMatrix = (modelMatrix * projMatrix);
+	finalMatrix.inverse();
+
+	// @todo if (!__gluInvertMatrixd(finalMatrix, finalMatrix)) return(GL_FALSE);
+
+	vgm::Vec3f in( static_cast<float>(winx), static_cast<float>(winy), static_cast<float>(winz) );
+
+	/* Map x and y from window coordinates */
+	in[0] = (in[0] - viewport[0]) / viewport[2];
+	in[1] = (in[1] - viewport[1]) / viewport[3];
+
+	/* Map to range -1 to 1 */
+	in = in * 2.f - vgm::Vec3f(1.f, 1.f, 1.f);
+
+	finalMatrix.multVecMatrix( in, oObject );
+
+	return (oObject[3] != 0.0);
 }
 
 
@@ -2160,6 +2214,12 @@ bool MatrixR::equals( const MatrixR& m, const float tolerance ) const
 }
 
 
+bool MatrixR::notEquals( const MatrixR& m, const float tolerance ) const
+{
+	return !equals(m, tolerance);
+}
+
+
 
 #define SB_JACOBI_RANK	3
 void MatrixR::jacobi3( float evalues[SB_JACOBI_RANK],
@@ -2427,6 +2487,18 @@ Vec4f operator*(const MatrixR&mat, const Vec4f&vec)
 			  vec[0]*mat[2][0]+vec[1]*mat[3][1]+vec[2]*mat[3][2]+vec[3]*mat[3][3]);
 		return ret;
 }
+
+
+
+glm::mat4 glm( const vgm::MatrixR& m )
+{
+	glm::mat4 retVal(	m[0][0], m[0][1], m[0][2], m[0][3],		// mat4.column 0 = m.row 0
+						m[1][0], m[1][1], m[1][2], m[1][3],		// column 1
+						m[2][0], m[2][1], m[2][2], m[2][3],		// column 2
+						m[3][0], m[3][1], m[3][2], m[3][3] );	// column 3
+	return retVal;
+}
+
 
 
 } // namespace vgm

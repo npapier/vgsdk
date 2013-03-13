@@ -282,7 +282,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 			return;
 		}
 		// Modifies the camera node
-		isCameraViewportDefined = camera->getViewport( cameraViewport );
+		cameraViewport = camera->getViewport();
 		isCameraScissorDefined = camera->getScissor( cameraScissor );
 		
 		const vgm::Rectangle2i newViewport2i(newViewport);
@@ -320,14 +320,7 @@ void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEle
 		}
 
 		// viewport
-		if ( isCameraViewportDefined )
-		{
-			camera->setViewport( cameraViewport );
-		}
-		else
-		{
-			camera->eraseViewport();
-		}
+		camera->setViewport( cameraViewport );
 	}
 
 

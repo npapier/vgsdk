@@ -325,7 +325,7 @@ const std::string Material::getFDiffuse( void )
 
 
 
-// Transparency
+
 
 
 // Color

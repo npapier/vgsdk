@@ -1,11 +1,6 @@
 const vgm::Vec3f Camera::applyViewport( const vgm::Vec3f& vertex )
 {
-	vgAssert( hasViewport() );
-
-	vgm::Rectangle2i viewport;
-	getViewport( viewport );
-
-	return applyViewport( viewport, vertex );
+	return applyViewport( getViewport(), vertex );
 }
 
 
@@ -175,40 +170,31 @@ void Camera::setMatrix( const MatrixValueType value )
 
 
 // High-level
-const bool Camera::gethViewport( ViewportValueType& viewport, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy ) const
+void Camera::gethViewport( ViewportValueType& viewport, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy ) const
 {
 	// Retrieves viewport field
-	bool hasViewport = getViewport( viewport );
+	viewport = getViewport();
 
-	if ( hasViewport )
+	const float drawingSurfaceWidthf = static_cast< float >( drawingSurfaceWidth );
+
+	const float halfImageShift = (drawingSurfaceWidthf/16.f) * getImageShift()/100.f;
+
+	switch ( eyeUsagePolicy.value() )
 	{
-		const float drawingSurfaceWidthf = static_cast< float >( drawingSurfaceWidth );
+		case EYE_LEFT:
+			viewport[0] -= static_cast< int >( halfImageShift );
+			break;
 
-		const float halfImageShift = (drawingSurfaceWidthf/16.f) * getImageShift()/100.f;
+		case EYE_RIGHT:
+			viewport[0] += static_cast< int >( halfImageShift );
+			break;
 
-		switch ( eyeUsagePolicy.value() )
-		{
-			case EYE_LEFT:
-				viewport[0] -= static_cast< int >( halfImageShift );
-				break;
+		case EYE_BOTH:
+			// Nothing to do
+			break;
 
-			case EYE_RIGHT:
-				viewport[0] += static_cast< int >( halfImageShift );
-				break;
-
-			case EYE_BOTH:
-				// Nothing to do
-				break;
-
-			default:
-				vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
-		}
-
-		return true;
-	}
-	else
-	{
-		return false;
+		default:
+			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
 	}
 }
 

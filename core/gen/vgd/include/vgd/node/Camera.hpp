@@ -10,8 +10,6 @@
 	 *
 	 * @param vertex	vertex to transform
 	 * @return the transformed vertex
-	 *
-	 * @pre hasViewport()
 	 */
 	const vgm::Vec3f applyViewport( const vgm::Vec3f& vertex );
 
@@ -116,7 +114,7 @@
 	/**
 	 * @brief Returns the value of field named \c viewport modified (if needed) by taking care of the given eye usage policy, the \c mode field and the \c imageShift field.
 	 */
-	const bool gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
+	void gethViewport( ViewportValueType& value, const int drawingSurfaceWidth, const EyeUsagePolicyValueType eyeUsagePolicy =  EyeUsagePolicyValueType(EYE_BOTH) ) const;
 
 
 	/**

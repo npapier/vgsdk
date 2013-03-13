@@ -125,20 +125,15 @@ void Camera::paint( vgeGL::engine::Engine *engine, vgd::node::Camera *node )
 
 
 	// VIEWPORT
-	bool bDefined;
-	vgm::Rectangle2i viewportValue;
+	const vgm::Rectangle2i& viewportValue = engine->getViewport();
 
-	bDefined = node->gethViewport( viewportValue, engine->getDrawingSurfaceSize()[0], eyePolicy );
-
-	if ( bDefined )
-	{
-		glViewport(	viewportValue.x(), viewportValue.y(),
-					viewportValue.width(), viewportValue.height() );
-	}
+	glViewport(	viewportValue.x(), viewportValue.y(),
+				viewportValue.width(), viewportValue.height() );
 
 
 
 	// SCISSOR
+	bool bDefined;
 	vgm::Rectangle2i  scissorValue;
 
 	bDefined = node->getScissor( scissorValue );

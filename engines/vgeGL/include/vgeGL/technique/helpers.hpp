@@ -31,7 +31,7 @@ vgd::Shp< vgd::basic::Image > getImage( vgd::Shp< glo::FrameBufferObject > fbo, 
 
 vgd::Shp< vgd::node::Camera > setupRenderFromCamera(
 		const vgm::Vec3f cameraPositionO, const vgm::Vec3f cameraDirectionO, const vgm::MatrixR cameraModelViewMatrix,
-		const std::string cameraName, const vgm::MatrixR cameraProjection, const vgm::Vec2i cameraViewport,
+		const std::string cameraName, const vgm::MatrixR cameraProjection, const vgm::Rectangle2i cameraViewport,
 		const vgm::MatrixR& invViewMatrix, const vgm::MatrixR& invTransformDraggerMatrix,
 		vgm::MatrixR& cameraLookAt );
 

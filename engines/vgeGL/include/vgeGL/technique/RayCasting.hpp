@@ -35,6 +35,8 @@ namespace technique
  *
  * @ingroup g_techniques_vgeGL
  * @ingroup g_techniques
+ *
+ * @ingroup g_rayCasting
  */
 struct VGEGL_API RayCasting : public Technique
 {
@@ -71,13 +73,24 @@ struct VGEGL_API RayCasting : public Technique
 	/**
 	 * @brief Cast a ray under mouse pointer
 	 * 
-	 * @param engine					engine used to evaluate scene graph.
+	 * @param engine					engine used to evaluate scene graph
 	 * @param traverseElements			element of the scene graph to evaluate
 	 * @param x							x-coordinate of the mouse pointer
 	 * @param y							y-coordinate of the mouse pointer
 	 */
 	void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 				const int32 x, const int32 y );
+
+	/**
+	 * @brief Cast a ray in the scene
+	 * 
+	 * @param engine					engine used to evaluate scene graph
+	 * @param traverseElements			element of the scene graph to evaluate
+	 * @param raySourceW				starting point of the ray (in world space)
+	 * @param rayDirectionW				direction of the ray (in world space)
+	 */
+	void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+				const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW );
 	//@}
 
 
@@ -101,7 +114,7 @@ struct VGEGL_API RayCasting : public Technique
 	 * 
 	 * @return the hits.
 	 */
-	const vgd::Shp< vgeGL::basic::HitList >	getHits() const;	
+	const vgd::Shp< vgeGL::basic::HitList >	getHits() const;
 
 	/**
 	 * @brief Returns the nearest hit.
@@ -155,20 +168,21 @@ protected:
 
 
 	/**
-	 * @name Ray casting data.
+	 * @name Ray casting data
 	 */
 	//@{
 	
 	int32		m_x;
 	int32		m_y;
 
+	vgm::Vec3f m_raySourceW;
+	vgm::Vec3f m_rayDirectionW;
+
 	GLuint*	m_pSelectBuffer;
-	
-	// FIXME to remove and use more vgsdk friendly types.
-	GLint	m_oglViewport[4];
-	double	m_matrixProjection[16];
-	double	m_matrixModelview[16];
-	// END FIXME
+
+	vgm::MatrixR	m_modelview;
+	vgm::MatrixR	m_projection;
+	vgm::Vec4i		m_viewport;
 
 	struct ShapeInformations
 	{
