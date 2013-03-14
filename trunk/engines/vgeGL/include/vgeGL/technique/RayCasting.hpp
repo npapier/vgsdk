@@ -19,19 +19,15 @@ namespace technique
 
 
 /**
- * @brief Cast a ray through a scene graph.
+ * @brief Cast a ray in the scene
  * 
  * The RayCasting technique does ray intersection with scene graphs.
  * It can be used to pass arbitrary rays through the scene for intersection detections or to cast ray under the mouse
  * pointer by using the castRay() method.
  * 
- * @remarks More than one vgd::node::Camera is prohibited.
  * @remarks RayCasting could be used on Kit, but on nested Kit ?
  * 
- * @todo Cast a ray throw the scene and not only under the mouse.
- * @todo More than one camera node in the scene graph is actually not supported.
  * @todo m_pSelectBuffer = new GLuint[4*1024]; => 1024*4 is an arbitrary buffer size.
- * @todo See FIXME in .cpp
  *
  * @ingroup g_techniques_vgeGL
  * @ingroup g_techniques
