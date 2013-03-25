@@ -500,6 +500,8 @@ struct VGM_API XfBox3f : private Box3f
 
 	const bool isInvalid( void ) const;
 
+	const bool isValid( void ) const;
+
 	void	makeEmpty();
 
 	bool	isEmpty() const;
