@@ -861,6 +861,13 @@ const bool XfBox3f::isInvalid( void ) const
 
 
 
+const bool XfBox3f::isValid( void ) const
+{
+	return Box3f::isValid();
+}
+
+
+
 void XfBox3f::makeEmpty()
 {
 	Box3f::makeEmpty();

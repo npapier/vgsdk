@@ -79,7 +79,7 @@ struct MatrixR;
 struct VGM_API Rotation
 {
 	/**
-	 * @name Constructors and destructor.
+	 * @name Constructors and destructor
 	 */
 	//@{
 
@@ -131,7 +131,7 @@ struct VGM_API Rotation
 
 
 	/**
-	 * @name Rotation accessors.
+	 * @name Rotation accessors
 	 *
 	 * The following methods return rotation values and other informations.
 	 */
@@ -143,14 +143,14 @@ struct VGM_API Rotation
 	const float	*	getValue( void ) const;
 
 	/**
-	 * @brief Returns pointer to array of 4 components defining quaternion.
+	 * @brief Returns a reference on a single component defining quaternion.
 	 */
-	const float&	operator []( unsigned int ) const;
+	const float&	operator []( const uint ) const;
 
 	/**
-	 * @brief Returns pointer to array of 4 components defining quaternion.
+	 * @brief Returns a reference on a single component defining quaternion.
 	 */
-	float&			operator []( unsigned int );
+	float&			operator []( const uint );
 
 	/**
 	 * @brief Returns 4 individual components of rotation quaternion.
@@ -253,7 +253,7 @@ struct VGM_API Rotation
 
 
 	/**
-	 * @name Rotation arithmetic.
+	 * @name Rotation arithmetic
 	 */
 	//@{
 
@@ -298,7 +298,7 @@ struct VGM_API Rotation
 
 
 	/**
-	 * @name Methods for applying rotation to objects.
+	 * @name Methods for applying rotation to objects
 	 */
 	//@{
 
@@ -319,7 +319,7 @@ struct VGM_API Rotation
 
 
 	/**
-	 * @name Comparison methods.
+	 * @name Comparison methods
 	 */
 	//@{
 
