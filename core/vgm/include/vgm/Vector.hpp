@@ -559,6 +559,12 @@ vgm::Vec4f		out5b( in5 );
 	 */
 	const float getAngle( const Vector& v ) const;
 
+	/**
+	 * @brief Tests if two vectors are collinear.
+	 *
+	 * @return true if the two vectors are collinear, false otherwise.
+	 */
+	const bool isCollinear( const Vector& v, const float tolerance = vgm::Epsilon<T>::value() ) const;
 
 
 	/**

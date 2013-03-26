@@ -71,11 +71,8 @@ struct Box3f;
  */
 struct VGM_API Line
 {
-
-
-
 	/**
-	 * @name Constructors and destructor.
+	 * @name Constructors and destructor
 	 */
 	//@{
 	Line();
@@ -90,7 +87,7 @@ struct VGM_API Line
 	//@}
 
 	/**
-	 * @name Accessors.
+	 * @name Accessors
 	 */
 	//@{
 	
@@ -105,19 +102,19 @@ struct VGM_API Line
 	void			setValue( const Vec3f& p0, const Vec3f& p1 );
 
 	/**
-	 * @brief Set the position of the line.
+	 * @brief Get the position of the line.
 	 */
 	const Vec3f&	getPosition( void ) const;
 	
 	/**
-	 * @brief Set the direction of the line.
+	 * @brief Get the direction of the line.
 	 */
 	const Vec3f&	getDirection( void ) const;
 	//@}
 
 
 	/**
-	 * @name Some useful computing methods.
+	 * @name Some useful computing methods
 	 */
 	//@{
 
@@ -143,7 +140,7 @@ struct VGM_API Line
 
 
 	/**
-	 * @name Intersection methods.
+	 * @name Intersection methods
 	 */
 	//@{
 
@@ -182,8 +179,8 @@ struct VGM_API Line
 	 * @brief Intersect the line with a line segment.
 	 * 
 	 * @param pickAngle		The angle which makes the cone.
-	 * @param v0				One endpoint of the line segment.
-	 * @param v1				The other endpoint of the line segment.
+	 * @param v0			One endpoint of the line segment.
+	 * @param v1			The other endpoint of the line segment.
 	 * @param intersection	The intersection point.
 	 *
 	 * The line is augmented with an angle to form a cone.
