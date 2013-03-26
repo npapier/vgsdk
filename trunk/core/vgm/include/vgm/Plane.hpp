@@ -75,6 +75,8 @@ struct Line;
  * distance, in that order.
  * 
  * @ingroup Geometry
+ *
+ * @todo valid/invalid
  */
 struct VGM_API Plane
 {
@@ -86,7 +88,7 @@ struct VGM_API Plane
 	/**
 	 * @brief Default constructor.
 	 */
-	Plane( void );
+	Plane();
 	
 	/**
 	 * @brief Construct a plane given 3 points.

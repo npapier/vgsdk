@@ -59,7 +59,7 @@ namespace vgm
 
 
 
-Plane::Plane( void )	
+Plane::Plane()
 {
 }
 

@@ -451,6 +451,14 @@ const float Vector<T,N>::getAngle( const Vector& v ) const
 
 
 template< typename T, int N >
+const bool Vector<T,N>::isCollinear( const Vector& v, const float tolerance ) const
+{
+	return cross(v).equals( getNull(), tolerance );
+}
+
+
+
+template< typename T, int N >
 Vector<T,N> Vector<T,N>::getClosestAxis() const
 {
 	Vec3f	axis(0.0, 0.0, 0.0), bestAxis;
