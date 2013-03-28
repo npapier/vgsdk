@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -223,9 +223,7 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRO() );
 
-		assert( m_vectorMF.size() >= 1 );
-
-		return &m_vectorMF.front();
+		return m_vectorMF.empty() ? 0 : &m_vectorMF.front();
 	}
 
 
@@ -233,9 +231,7 @@ struct TMultiField : public AbstractField
 	{
 		assert( checkRW() );
 
-		assert( m_vectorMF.size() >= 1 );
-
-		return &m_vectorMF.front();
+		return m_vectorMF.empty() ? 0 : &m_vectorMF.front();
 	}
 	//@}
 
