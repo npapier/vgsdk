@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2006, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2006, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -11,6 +11,20 @@
 
 namespace vgm
 {
+
+
+const float deg2rad( const float deg )
+{
+	return ( static_cast< float >(deg * (vgm::PI / 180.f)) );
+}
+
+
+
+const float rad2deg( const float rad )
+{
+	return ( static_cast< float >(rad * (180.f / vgm::PI)) );
+}
+
 
 
 const double round( const double inputValue )

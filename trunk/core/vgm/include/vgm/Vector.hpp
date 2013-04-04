@@ -88,7 +88,9 @@ struct Vector
 	 *
 	 * @warning vector is not initialized.
 	 */
-	Vector( void );
+	Vector();
+
+
 
 	/**
 	 * @brief Constructor from a glm vector
@@ -132,6 +134,8 @@ struct Vector
 		m_tCoord[3] = v[3];
 	}
 
+
+
 	/**
 	 * @brief Constructor with value affectation from array of n components.
 	 */
@@ -143,10 +147,12 @@ struct Vector
 	template< typename InType >
 	explicit Vector< T, N >( const InType* v );
 
+
 	/**
-	 * @brief Copy constructor.
+	 * @brief Copy constructor
 	 */
 	Vector( const Vector& v );
+
 
 	/**
 	 * @brief Constructor from another Vector
@@ -209,6 +215,17 @@ vgm::Vec4f		out5b( in5 );
 			m_tCoord[i] = static_cast< T >( 0 );
 		}
 	}
+
+
+	/**
+	 * @brief Construct of vector of N components using a vector of N-1 components and a value
+	 */
+	template< int InSize >
+	Vector( const Vector< T, InSize > v, const T c )
+	{
+		setValue( v, c );
+	}
+
 
 	/**
 	 * @brief Assign operator.
@@ -281,7 +298,7 @@ vgm::Vec4f		out5b( in5 );
 		m_tCoord[4] = c5;
 	}
 	//@}
-	
+
 
 
 	/**
@@ -316,6 +333,22 @@ vgm::Vec4f		out5b( in5 );
 	 * @brief Set value of vector from another one (with same dimension).
 	 */
 	void		setValue( const Vector& );
+
+	/**
+	 * @brief Set value of vector of N components using a vector of N-1 components and a value
+	 */
+	template< int InSize >
+	void setValue( const Vector< T, InSize > v, const T c )
+	{
+		assert( InSize == N - 1 );
+
+		for( uint i = 0; i < InSize; ++i )
+		{
+			m_tCoord[i] = v[i];
+		}
+
+		m_tCoord[InSize] = c;
+	}
 
 	/**
 	 * @brief Accesses indexed component of vector.
@@ -380,7 +413,7 @@ vgm::Vec4f		out5b( in5 );
 		m_tCoord[1] = c2;
 		m_tCoord[2] = c3;
 	}
-	
+
 	/**
 	 * @brief Get value of vector of 4 components.
 	 * 

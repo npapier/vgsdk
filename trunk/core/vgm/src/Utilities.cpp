@@ -1,9 +1,11 @@
-// VGSDK - Copyright (C) 2004-2006, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgm/Utilities.hpp"
+
+#include "vgm/operations.hpp"
 
 
 
@@ -25,14 +27,14 @@ int32 Utilities::nextPower2( const int32 num )
 
 float Utilities::deg2rad( const float deg )
 {
-	return ( static_cast< float >(deg * (vgm::PI / 180.f)) );
+	return vgm::deg2rad(deg);
 }
 
 
 
 float Utilities::rad2deg( const float rad )
 {
-	return ( static_cast< float >(rad * (180.f / vgm::PI)) );
+	return vgm::rad2deg(rad);
 }
 
 
