@@ -99,7 +99,7 @@ const Vec3f Triangle::getNormal() const
 {
 	const vgm::Vec3f normal( AB().cross( -CA() ) );
 
-	return normal;
+	return normal.getNormalized();
 }
 
 
@@ -142,7 +142,9 @@ const Vec3f TriangleP::computeCartesian( const Vec3f& baryCoord ) const
 {
 	if ( baryCoord[2] == std::numeric_limits<float>::max() )
 	{
-		const Vec3f retVal = baryCoord[0] * AB() + baryCoord[1] * BC();
+		const Vec3f retVal =	(1.f-baryCoord[0]) * A() + (baryCoord[0]) * B() +
+								(1.f-baryCoord[1]) * A() + (baryCoord[1]) * C();
+
 		return retVal;
 	}
 	else

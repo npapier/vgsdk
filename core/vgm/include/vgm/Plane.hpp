@@ -120,6 +120,30 @@ struct VGM_API Plane
 	//@{
 
 	/**
+	 * @brief Sets the plane given 3 points.
+	 * 
+	 * Orientation is computed by taking (p1 - p0) x (p2 - p0) and
+	 * pointing the normal in that direction.
+	 */
+	void setValue( const Vec3f& p0, const Vec3f& p1, const Vec3f& p2 );
+
+	/**
+	 * @brief Sets the plane given normal and distance from origin along normal.
+	 * 
+	 * Orientation is given by the normal vector n.
+	 */
+	void setValue( const Vec3f& n, float d );
+
+	/**
+	 * @brief Sets the plane given normal and a point to pass through
+	 * 
+	 * Orientation is given by the normal vector n.
+	 */
+	void setValue( const Vec3f& n, const Vec3f& p );
+
+
+
+	/**
 	 * @brief Returns normal vector to plane.
 	 */
 	const Vec3f&	getNormal( void ) const;
@@ -128,6 +152,11 @@ struct VGM_API Plane
 	 * @brief Returns distance from origin to plane.
 	 */
 	float			getDistanceFromOrigin( void ) const;
+
+	/**
+	 * @brief Returns the four values (a,b,c,d) defining the plan in cartesian equation ax + by + cz + d = 0
+	 */
+	const Vec4f getValue() const;
 	//@}
 
 

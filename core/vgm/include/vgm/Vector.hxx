@@ -6,9 +6,8 @@
 
 
 template< typename T, int N >
-Vector<T,N>::Vector( void )
-{
-}
+Vector<T,N>::Vector()
+{}
 
 
 

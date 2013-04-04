@@ -10,7 +10,6 @@
 #include "vgm/vgm.hpp"
 
 
-
 namespace vgm
 {
 
@@ -161,6 +160,31 @@ const T max( const T first, const T second, const T third )
 	
 	return secondMax;
 }
+
+
+
+/**
+ * @name Degree/radians functions
+ */
+//@{
+
+/**
+ * @brief Transform angle in degrees to angle in radians
+ *
+ * @param	deg		angle in degrees
+ * @return	angle in radians
+ */
+VGM_API const float deg2rad( const float deg );
+
+/**
+ * @brief Transform angle in radians to angle in degrees
+ *
+ * @param	rad		angle in radians
+ * @return	angle in degrees
+ */
+VGM_API const float rad2deg( const float rad );
+
+//@}
 
 
 

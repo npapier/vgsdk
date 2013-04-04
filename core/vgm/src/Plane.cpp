@@ -67,6 +67,27 @@ Plane::Plane()
 
 Plane::Plane( const Vec3f& p0, const Vec3f& p1, const Vec3f& p2 )
 {
+	setValue( p0, p1, p2 );
+}
+
+
+
+Plane::Plane( const Vec3f& n, float d )
+{
+	setValue( n, d );
+}
+
+
+
+Plane::Plane( const Vec3f& n, const Vec3f& p )
+{
+	setValue( n, p );
+}
+
+
+
+void Plane::setValue( const Vec3f& p0, const Vec3f& p1, const Vec3f& p2 )
+{
 	m_normalVec = (p1 - p0).cross(p2 - p0);
 	m_normalVec.normalize();
 	m_distance = m_normalVec.dot(p0);
@@ -74,7 +95,7 @@ Plane::Plane( const Vec3f& p0, const Vec3f& p1, const Vec3f& p2 )
 
 
 
-Plane::Plane( const Vec3f& n, float d )
+void Plane::setValue( const Vec3f& n, float d )
 {
 	m_normalVec = n;
 	m_normalVec.normalize();
@@ -83,7 +104,7 @@ Plane::Plane( const Vec3f& n, float d )
 
 
 
-Plane::Plane( const Vec3f& n, const Vec3f& p )
+void Plane::setValue( const Vec3f& n, const Vec3f& p )
 {
 	m_normalVec = n;
 	m_normalVec.normalize();
@@ -102,6 +123,14 @@ const Vec3f& Plane::getNormal( void ) const
 float Plane::getDistanceFromOrigin( void ) const
 {
 	return m_distance;
+}
+
+
+
+const Vec4f Plane::getValue() const
+{
+	const vgm::Vec4f retVal( m_normalVec[0], m_normalVec[1], m_normalVec[2], -m_distance );
+	return retVal;
 }
 
 
@@ -265,7 +294,7 @@ const bool Plane::isIn( const Vec3f& point, const float tolerance ) const
 const bool Plane::isInHalfSpace( const Vec3f& point ) const
 {
 	// Multiply point by plane equation coefficients, compare distances
-	return distance(point) >= m_distance;
+	return point.dot(m_normalVec) >= m_distance;
 }
 
 
