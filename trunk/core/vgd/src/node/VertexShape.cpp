@@ -981,9 +981,9 @@ const std::string VertexShape::getFSecondaryColor4( void )
 const std::string VertexShape::getFTexCoord( const int32 textureUnit )
 {
 	std::stringstream strStream;
-	
-	strStream << "f_texCoord" << textureUnit << std::ends;
-	
+
+	strStream << "f_texCoord" << textureUnit;
+
 	return ( strStream.str() );
 }
 
