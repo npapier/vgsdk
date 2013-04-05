@@ -39,7 +39,9 @@ namespace field
 
 FieldEditor* createEditor( const vgd::Shp< vgd::field::FieldManager > fieldManager, const QString fieldName )
 {
-    const std::type_info	& fieldType	= fieldManager->getFieldType(fieldName.toStdString());
+	const std::string		fieldNameStr	= fieldName.toStdString();
+	const std::type_info &	fieldType		= fieldManager->getFieldType(fieldNameStr);
+
     FieldEditor*		editor	= createEditor( fieldType );
 	
 	if( editor )
@@ -152,6 +154,8 @@ FieldEditor* createEditor( const std::type_info & fieldType )
         result = new OptionalFieldEditor< widget::SpecializedVector<int32, 4> >();
 // TMultiField
     // Vector
+	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec2f >) )
+        result = new MultiFieldEditor< adapter::MFVectorAdapter< vgm::Vec2f > >();
 	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec3f >) )
         result = new MultiFieldEditor< adapter::MFVectorAdapter< vgm::Vec3f > >();
 	else if	( fieldType == typeid(vgd::field::TMultiField< vgm::Vec4f >) )
