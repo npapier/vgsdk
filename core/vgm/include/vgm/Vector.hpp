@@ -226,6 +226,14 @@ vgm::Vec4f		out5b( in5 );
 		setValue( v, c );
 	}
 
+	/**
+	 * @brief Construct of vector of N components using a vector of N-2 components and two values
+	 */
+	template< int InSize >
+	Vector( const Vector< T, InSize > v, const T c3, const T c4 )
+	{
+		setValue( v, c3, c4 );
+	}
 
 	/**
 	 * @brief Assign operator.
@@ -348,6 +356,23 @@ vgm::Vec4f		out5b( in5 );
 		}
 
 		m_tCoord[InSize] = c;
+	}
+
+	/**
+	 * @brief Set value of vector of N components using a vector of N-2 components and two values
+	 */
+	template< int InSize >
+	void setValue( const Vector< T, InSize > v, const T c3, const T c4 )
+	{
+		vgAssert( InSize == N - 2 );
+
+		for( uint i = 0; i < InSize; ++i )
+		{
+			m_tCoord[i] = v[i];
+		}
+
+		m_tCoord[InSize] = c3;
+		m_tCoord[InSize+1] = c4;
 	}
 
 	/**

@@ -375,12 +375,12 @@ void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
 			assert( fBegin != fEnd );
 
 			float a, b;
-			vgm::Utilities::linearInterpolation( fBegin, fMin, fEnd, fMax, a, b );
+			vgm::linearInterpolation( fBegin, fMin, fEnd, fMax, a, b );
 			
 			while ( i <= iEnd )
 			{
 				// FIXME: optme this expression could be simplified and compute by only addition.
-				color = static_cast<uint8>( vgm::Utilities::linearInterpolation( a, b, static_cast<float>(i/4) ) );
+				color = static_cast<uint8>( vgm::linearInterpolation( a, b, static_cast<float>(i/4) ) );
 				
 				pPalette[i] = color;
 				++i;
@@ -404,12 +404,12 @@ void ImageUtilities::setupPalette(	const int32 minValue, const int32 maxValue,
 			assert( fBegin != fEnd );
 			
 			float a, b;
-			vgm::Utilities::linearInterpolation( fBegin, fMax, fEnd, fMin, a, b );
+			vgm::linearInterpolation( fBegin, fMax, fEnd, fMin, a, b );
 
 			while ( i <= iEnd )
 			{
 				// FIXME: optme this expression could be simplified and compute by only addition.
-				color = static_cast<uint8>( vgm::Utilities::linearInterpolation( a, b, static_cast<float>(i/4) ) );
+				color = static_cast<uint8>( vgm::linearInterpolation( a, b, static_cast<float>(i/4) ) );
 				
 				pPalette[i] = color;
 				++i;

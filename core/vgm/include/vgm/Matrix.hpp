@@ -81,7 +81,10 @@ typedef double	RawMatrixd[4][4];
  * But all matrices, created by this class, are the transposed of the OpenGL version.
  * So you can use it directly in OpenGL, but be careful with the order of composition (use left matrix multiplication
  * contrary to OpenGL).
- * 
+ *
+ * OpenGL convention is : vertexTransformed = M0 * M1 * ... * vertex
+ * vgm convention is : vertexTransformed = vertex * ... * M1 * M0
+ *
  * @warning Matrix is not initialized by all constructors.
  *
  * @todo More C++ friendly ( operator * (vec, matrix) )..., 	void print( FILE *fp ) const;

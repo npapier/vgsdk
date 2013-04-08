@@ -9,7 +9,7 @@
 #include <glm/gtx/compatibility.hpp>
 #include <limits>
 #include "vgd/event/TimerEvent.hpp"
-#include "vgm/Utilities.hpp"
+#include "vgm/operations.hpp"
 
 
 
@@ -181,7 +181,7 @@ const double TimerCallback::getTd()
 		}
 		else
 		{
-			value = vgm::Utilities::linearInterpolation(
+			value = vgm::linearInterpolation(
 				0.f,					static_cast< float >(beginT),
 				getTDuration().ms(),	static_cast< float >(endT),
 				static_cast< float >( m_elapsedTimeFrom0.ms() ) );
@@ -202,14 +202,14 @@ const double TimerCallback::getTd()
 			{
 				if ( moduloTInMS <= loopDuration / 2 )
 				{
-					value = vgm::Utilities::linearInterpolation(
+					value = vgm::linearInterpolation(
 						0.f,				beginT,
 						loopDuration / 2,	endT,
 						moduloTInMS );
 				}
 				else
 				{
-					value = vgm::Utilities::linearInterpolation(
+					value = vgm::linearInterpolation(
 						loopDuration /2,	endT,
 						loopDuration,		beginT,
 						moduloTInMS );
@@ -217,7 +217,7 @@ const double TimerCallback::getTd()
 			}
 			else
 			{
-				value = vgm::Utilities::linearInterpolation(
+				value = vgm::linearInterpolation(
 					0.f,			beginT,
 					loopDuration,	endT,
 					moduloTInMS );

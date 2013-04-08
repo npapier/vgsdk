@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -48,7 +48,7 @@ struct VGD_API WireBox : public vgd::node::WireShape
 	 * 
 	 * @remarks Called automatically during node creation.
 	 */
-	void initializeGeometry();
+	void initializeGeometry( const vgm::Box3f box = vgm::Box3f( vgm::Vec3f(-0.5f,-0.5f,-0.5f), vgm::Vec3f(0.5f,0.5f,0.5f) ) );
 	
 	//@}
 

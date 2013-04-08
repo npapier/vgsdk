@@ -5,7 +5,7 @@
 
 #include "vgd/basic/Windowing.hpp"
 
-#include <cassert>
+#include <vgDebug/helpers.hpp>
 #include "vgd/basic/IImage.hpp"
 
 
@@ -29,7 +29,7 @@ Windowing::Windowing( const int min, const int max )
 	m_highOutput	(   0 ),
 	m_highAlpha		(   0 )
 {
-	assert( m_min <= m_max );
+	vgAssert( m_min <= m_max );
 }
 
 
@@ -55,7 +55,7 @@ void Windowing::setOutputIntensities( const uint8 low, const uint8 min, const ui
 
 void Windowing::setWindow( const int min, const int max )
 {
-	assert( min <= max );
+	vgAssert( min <= max );
 
 	m_min = min;
 	m_max = max;
@@ -77,7 +77,7 @@ vgd::Shp< vgd::basic::IImage > Windowing::apply( const vgd::Shp< vgd::basic::IIm
 	case IImage::INT32:		return doApply<  int32 >( image );
 	case IImage::FLOAT:		return doApply<  float >( image );
 	case IImage::DOUBLE:	return doApply< double >( image );
-	default:				assert( false && "Unsupported image type." ); return Shp<vgd::basic::IImage>();
+	default:				vgAssertN( false, "Unsupported image type." ); return Shp<vgd::basic::IImage>();
 	}
 }
 

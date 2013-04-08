@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -98,10 +98,12 @@ struct VGM_API Box3f
 	 *
 	 * Constructors (\b xmin, \b ymin, \b zmin) and (\b xmax, \b ymax, and \b zmax) are the bounds of the box.
 	 * \b min and \b max are the corners of the diagonal that define the box.
+	 *
+	 * @deprecated
 	 */
-	Box3f(	float xmin, float ymin, float zmin,
-			float xmax, float ymax, float zmax);
-	
+	vgDEPRECATED( Box3f(	float xmin, float ymin, float zmin,
+							float xmax, float ymax, float zmax) ); 
+
 	/**
 	 * @brief Constructor given minimum and maximum points .
 	 *
@@ -127,28 +129,14 @@ struct VGM_API Box3f
 	 *
 	 * The minimum point is the corner of the box with the lowest X, Y, and Z values.
 	 */
-	const Vec3f&	getMin() const;
-
-	/**
-	 * @brief Returns the min point.
-	 *
-	 * The minimum point is the corner of the box with the lowest X, Y, and Z values.
-	 */
-	Vec3f&			getMin();
-	
-	/**
-	 * @brief Returns the max point.
-	 *
-	 * The maximum point is the corner of the box with the highest X, Y, and Z values.
-	 */
-	const Vec3f&	getMax() const;
+	const Vec3f& getMin() const;
 
 	/**
 	 * @brief Returns the max point.
 	 *
 	 * The maximum point is the corner of the box with the highest X, Y, and Z values.
 	 */
-	Vec3f&			getMax();
+	const Vec3f& getMax() const;
 	//@}
 
 
@@ -160,24 +148,36 @@ struct VGM_API Box3f
 	/**
 	 * @brief Returns the center of a box.
 	 */
-	Vec3f	getCenter() const;
+	const Vec3f getCenter() const;
+
+	/**
+	 * @brief Returns origin (minimum point) of box.
+	 *
+	 * Gets box origin which is the same as the minimum corner of the box.
+	 *
+	 * @deprecated
+	 */
+	vgDEPRECATED( void	getOrigin( float& originX, float& originY, float& originZ) const );
 
 	/**
 	 * @brief Returns origin (minimum point) of box.
 	 *
 	 * Gets box origin which is the same as the minimum corner of the box.
 	 */
-	void	getOrigin( float& originX, float& originY, float& originZ) const;
+	const vgm::Vec3f getOrigin() const;
+
+	/**
+	 * @brief Returns size of box.
+	 *
+	 * @deprecated
+	 */
+	vgDEPRECATED( void getSize( float& sizeX, float& sizeY, float& sizeZ) const );
 
 	/**
 	 * @brief Returns size of box.
 	 */
-	void	getSize( float& sizeX, float& sizeY, float& sizeZ) const;
-	
-	/**
-	 * @brief Returns size of box.
-	 */
-	vgm::Vec3f getSize() const;
+	const vgm::Vec3f getSize() const;
+
 
 	/**
 	 * @brief Invalidates the box.
@@ -200,6 +200,7 @@ struct VGM_API Box3f
 	 * @brief Tests if the box is valid.
 	 */
 	const bool isValid( void ) const;
+
 
 	/**
 	 * @brief Sets Box3f to contain nothing.
@@ -231,24 +232,26 @@ struct VGM_API Box3f
 	 * @brief Set bounds.
 	 *
 	 * Sets the corners of the box.
+	 *
+	 * @deprecated
 	 */
-	void	setBounds(
+	vgDEPRECATED( void	setBounds(
 		float xmin, float ymin, float zmin,
-		float xmax, float ymax, float zmax);
+		float xmax, float ymax, float zmax) );
 
 	/**
 	 * @brief Set bounds.
 	 *
 	 * Sets the corners of the box.
 	 */
-	void	setBounds( const Vec3f& min, const Vec3f& max);
+	void setBounds( const Vec3f& min, const Vec3f& max);
 
 	/**
 	 * @brief Get bounds.
 	 *
 	 * Gets the corners of the box.
 	 */
-	void	getBounds(
+	void getBounds(
 		float& xmin, float& ymin, float& zmin,
 		float& xmax, float& ymax, float& zmax) const;
 
@@ -257,7 +260,7 @@ struct VGM_API Box3f
 	 *
 	 * Gets the corners of the box.
 	 */
-	void	getBounds( Vec3f& min, Vec3f& max ) const;
+	void getBounds( Vec3f& min, Vec3f& max ) const;
 	//@}
 
 
@@ -346,8 +349,6 @@ struct VGM_API Box3f
 	 *
 	 * @todo documentation of cullBits.
 	 */
-	// set cullBits to 7 (SoGLRenderAction and SoSeparator will handle this
-	// automatically for render culling).
 	bool	outside(const MatrixR& MVP, int32& cullBits) const;
 
 	/**
@@ -355,7 +356,7 @@ struct VGM_API Box3f
 	 *
 	 * Returns the point on the center of the Z face if passed the center.
 	 */
-	Vec3f	getClosestPoint(const Vec3f& point);
+	const Vec3f getClosestPoint(const Vec3f& point);
 	//@}
 
 
@@ -383,6 +384,8 @@ struct VGM_API Box3f
 
 	/**
 	 * @name Comparison methods
+	 *
+	 * @todo equals(), notEquals()
 	 */
 	//@{
 
@@ -461,8 +464,8 @@ struct VGM_API XfBox3f : private Box3f
 	/**
 	 * @copydoc Box3f::Box3f(float,float,float,float,float,float)
 	 */
-	XfBox3f(	float xmin, float ymin, float zmin,
-				float xmax, float ymax, float zmax );
+	vgDEPRECATED( XfBox3f(	float xmin, float ymin, float zmin,
+							float xmax, float ymax, float zmax ) );
 
 	/**
 	 * @copydoc Box3f::Box3f(const Vec3f&,const Vec3f&)
@@ -486,24 +489,23 @@ struct VGM_API XfBox3f : private Box3f
 	 */
 	//@{
 
-	Vec3f	getCenter	() const;
+	/**
+	 * @remark Take care of transformation on the box
+	 */
+	const Vec3f getCenter() const;
 
-	void	getOrigin	( float& originX, float& originY, float&originZ) const;
+	vgDEPRECATED( void getOrigin ( float& originX, float& originY, float&originZ) const );
+	const vgm::Vec3f getOrigin() const;
 
-	void	getSize		( float& sizeX, float& sizeY, float& sizeZ) const;
-
-	vgm::Vec3f getSize() const;
+	vgDEPRECATED( void getSize( float& sizeX, float& sizeY, float& sizeZ) const );
+	const vgm::Vec3f getSize() const;
 
 	void setInvalid( void );
-
 	static const Box3f getInvalid();
-
 	const bool isInvalid( void ) const;
-
 	const bool isValid( void ) const;
 
 	void	makeEmpty();
-
 	bool	isEmpty() const;
 	//@}
 
@@ -660,9 +662,7 @@ private:
 	 */
 	//@{
 	const Vec3f&	getMin() const	{ return Box3f::getMin(); }
-	Vec3f&			getMin()		{ return Box3f::getMin(); }
 	const Vec3f&	getMax() const	{ return Box3f::getMax(); }
-	Vec3f&			getMax()		{ return Box3f::getMax(); }
 	//@}
 
 	/**
