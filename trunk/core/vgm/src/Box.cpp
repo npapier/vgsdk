@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -96,13 +96,6 @@ const Vec3f& Box3f::getMin() const
 
 
 
-Vec3f& Box3f::getMin()
-{
-	return m_min;
-}
-
-
-
 const Vec3f& Box3f::getMax() const 
 {
 	return m_max;
@@ -110,14 +103,7 @@ const Vec3f& Box3f::getMax() const
 
 
 
-Vec3f& Box3f::getMax()
-{
-	return m_max;
-}
-
-
-
-Vec3f Box3f::getCenter() const
+const Vec3f Box3f::getCenter() const
 {
 	return Vec3f(
 		0.5f * (m_min[0] + m_max[0]),
@@ -135,6 +121,13 @@ void Box3f::getOrigin( float& originX, float& originY, float& originZ) const
 }
 
 
+const vgm::Vec3f Box3f::getOrigin() const
+{
+	const vgm::Vec3f origin( m_min[0], m_min[1], m_min[2] );
+	return origin;
+}
+
+
 
 void Box3f::getSize( float& sizeX, float& sizeY, float& sizeZ) const
 {
@@ -144,8 +137,7 @@ void Box3f::getSize( float& sizeX, float& sizeY, float& sizeZ) const
 }
 
 
-
-vgm::Vec3f Box3f::getSize() const
+const vgm::Vec3f Box3f::getSize() const
 {
 	return ( vgm::Vec3f(	m_max[0] - m_min[0],
 							m_max[1] - m_min[1],
@@ -331,6 +323,42 @@ bool Box3f::intersect( const Box3f& bb ) const
 		(bb.m_max[0] >= m_min[0]) && (bb.m_min[0] <= m_max[0]) &&
 		(bb.m_max[1] >= m_min[1]) && (bb.m_min[1] <= m_max[1]) &&
 		(bb.m_max[2] >= m_min[2]) && (bb.m_min[2] <= m_max[2]));
+}
+
+
+
+void Box3f::getSpan( const Vec3f& direction, float& dMin, float& dMax) const
+{
+	int32		i;
+	Vec3f	points[8];
+	Vec3f	dir = direction;
+
+	dir.normalize();
+
+	/* Set up the eight points at the corners of the extent */
+	points[0][2] = points[2][2] = points[4][2] = points[6][2] = m_min[2];
+	points[1][2] = points[3][2] = points[5][2] = points[7][2] = m_max[2];
+
+	points[0][0] = points[1][0] = points[2][0] = points[3][0] = m_min[0];
+	points[4][0] = points[5][0] = points[6][0] = points[7][0] = m_max[0];
+
+	points[0][1] = points[1][1] = points[4][1] = points[5][1] = m_min[1];
+	points[2][1] = points[3][1] = points[6][1] = points[7][1] = m_max[1];
+
+	points[0][2] = points[2][2] = points[4][2] = points[6][2] = m_min[2];
+	points[1][2] = points[3][2] = points[5][2] = points[7][2] = m_max[2];
+	
+	dMin = std::numeric_limits<float>::max();
+	dMax = -std::numeric_limits<float>::max();
+
+	for (i = 0; i < 8; i++) 
+	{
+		float proj = points[i].dot(dir);
+		
+		if (proj < dMin)	dMin = proj;
+		
+		if (proj > dMax)	dMax = proj;
+	}
 }
 
 
@@ -555,7 +583,7 @@ bool Box3f::outside(const MatrixR& MVP, int32& cullBits) const
 
 
 
-Vec3f Box3f::getClosestPoint( const Vec3f& point )
+const Vec3f Box3f::getClosestPoint( const Vec3f& point )
 {
 	Vec3f result;
 	
@@ -678,42 +706,6 @@ float Box3f::getVolume() const
 
 
 
-void Box3f::getSpan( const Vec3f& direction, float& dMin, float& dMax) const
-{
-	int32		i;
-	Vec3f	points[8];
-	Vec3f	dir = direction;
-
-	dir.normalize();
-
-	/* Set up the eight points at the corners of the extent */
-	points[0][2] = points[2][2] = points[4][2] = points[6][2] = m_min[2];
-	points[1][2] = points[3][2] = points[5][2] = points[7][2] = m_max[2];
-
-	points[0][0] = points[1][0] = points[2][0] = points[3][0] = m_min[0];
-	points[4][0] = points[5][0] = points[6][0] = points[7][0] = m_max[0];
-
-	points[0][1] = points[1][1] = points[4][1] = points[5][1] = m_min[1];
-	points[2][1] = points[3][1] = points[6][1] = points[7][1] = m_max[1];
-
-	points[0][2] = points[2][2] = points[4][2] = points[6][2] = m_min[2];
-	points[1][2] = points[3][2] = points[5][2] = points[7][2] = m_max[2];
-	
-	dMin = std::numeric_limits<float>::max();
-	dMax = -std::numeric_limits<float>::max();
-
-	for (i = 0; i < 8; i++) 
-	{
-		float proj = points[i].dot(dir);
-		
-		if (proj < dMin)	dMin = proj;
-		
-		if (proj > dMax)	dMax = proj;
-	}
-}
-
-
-
 bool Box3f::operator ==( const Box3f& b2 ) const
 {
 	return ( (getMin() == b2.getMin()) && (getMax() == b2.getMax()) );
@@ -760,8 +752,7 @@ int32 Box3f::findQuadrant( float x, float y, float z,
 
 
 
-// XfBox3f.
-
+// XfBox3f
 XfBox3f::XfBox3f()
 {
 	xform.setIdentity();
@@ -807,7 +798,7 @@ XfBox3f::~XfBox3f()
 
 
 
-Vec3f XfBox3f::getCenter() const
+const Vec3f XfBox3f::getCenter() const
 {
 	Vec3f	p;
 
@@ -825,6 +816,12 @@ void XfBox3f::getOrigin( float& originX, float& originY, float& originZ) const
 }
 
 
+const vgm::Vec3f XfBox3f::getOrigin() const
+{
+	return Box3f::getOrigin();
+}
+
+
 
 void XfBox3f::getSize( float& sizeX, float& sizeY, float& sizeZ) const
 {
@@ -833,9 +830,9 @@ void XfBox3f::getSize( float& sizeX, float& sizeY, float& sizeZ) const
 
 
 
-vgm::Vec3f XfBox3f::getSize() const
+const vgm::Vec3f XfBox3f::getSize() const
 {
-	return ( Box3f::getSize() );
+	return Box3f::getSize();
 }
 
 

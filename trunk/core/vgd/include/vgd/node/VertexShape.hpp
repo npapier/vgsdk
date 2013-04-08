@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2007, 2010, 2012 Nicolas Papier, Alexandre Di Pino.
+// VGSDK - Copyright (C) 2004-2007, 2010, 2012, 2013, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -192,7 +192,7 @@ struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node:
 	{
 		vgd::field::EditorRW< T > texCoords	= getFTexCoordRW< T >( texUnit );
 
-		// Transform each vertex.
+		// Transform each texCoord
 		for(	T::iterator	i	= texCoords->begin(),
 							ie	= texCoords->end();
 				i != ie;

@@ -41,11 +41,12 @@
  * @ingroup g_vgd
  * 
  * Coordinates system :
- * 	- Object coordinates system :
- * 	- Eye coordinates system :
- * 	- Clip coordinates system :
- * 	- Normalized device coordinates :
- * 	- Window coordinates system :
+ *	- Object space :	variable postfix 'O'
+ *	- World space :		variable postfix 'W'
+ * 	- Eye space :		variable postfix 'E'
+ * 	- Clip space :		variable postfix 'C'
+ * 	- Normalized device spaces :	variable postfix 'N'
+ * 	- Window space :				variable postfix 'Win'
  *		The windows, in a graphical user interface, are a series of planes parallel to the surface of the monitor.
  *		The x-coordinate refers to the horizontal axis (left to right), the y-coordinate refers to the vertical axis (down to up) .
  *		The origin of this coordinates system is the bottom left corner of the window. Width and height are expressed in pixels.

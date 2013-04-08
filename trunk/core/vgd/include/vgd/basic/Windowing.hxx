@@ -8,7 +8,6 @@
 
 #include <vgd/basic/Image.hpp>
 #include <vgm/operations.hpp>
-#include <vgm/Utilities.hpp>
 
 
 
@@ -40,7 +39,7 @@ vgd::Shp< vgd::basic::IImage > Windowing::doApply( const vgd::Shp< vgd::basic::I
 	
 	if( windowMin != windowMax )
 	{
-		vgm::Utilities::linearInterpolation( windowMin, m_minOutput, windowMax, m_maxOutput, a, b );
+		vgm::linearInterpolation( windowMin, m_minOutput, windowMax, m_maxOutput, a, b );
 	}
 	
 	vgd::Shp< Image >	output( new Image(input->width(), input->height(), input->depth(), outputFormat, outputType) );
@@ -72,7 +71,7 @@ vgd::Shp< vgd::basic::IImage > Windowing::doApply( const vgd::Shp< vgd::basic::I
 		}
 		else
 		{
-			const float value			= vgm::Utilities::linearInterpolation( a, b, currentIntensity );
+			const float value			= vgm::linearInterpolation( a, b, currentIntensity );
 			const float valueClamped	= vgm::clamp( value, 0.f, 255.f );
 		
 			iOutput[0] = static_cast< OutputType >( valueClamped );

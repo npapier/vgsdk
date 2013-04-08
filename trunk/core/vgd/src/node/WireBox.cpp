@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -44,39 +44,40 @@ void WireBox::setOptionalsToDefaults()
 
 
 
-void WireBox::initializeGeometry()
+void WireBox::initializeGeometry( const vgm::Box3f box )
 {
 	// Initialize geometry.
 
 	// VERTEX
 	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = getFVertexRW();
-	const float fSize= 0.5f;
+	const vgm::Vec3f min = box.getMin();
+	const vgm::Vec3f max = box.getMax();
 	vertex->clear();
 	vertex->reserve( 24 );
 
 	// back
-	vertex->push_back( vgm::Vec3f(-fSize, -fSize, -fSize) );
-	vertex->push_back( vgm::Vec3f(fSize, -fSize, -fSize) );
-	vertex->push_back( vgm::Vec3f(fSize, fSize, -fSize) );
-	vertex->push_back( vgm::Vec3f(-fSize, fSize, -fSize) );
-		
+	vertex->push_back( vgm::Vec3f(min[0], min[1], min[2]) );
+	vertex->push_back( vgm::Vec3f(max[0], min[1], min[2]) );
+	vertex->push_back( vgm::Vec3f(max[0], max[1], min[2]) );
+	vertex->push_back( vgm::Vec3f(min[0], max[1], min[2]) );
+
 	// front
-	vertex->push_back( vgm::Vec3f(-fSize, -fSize, fSize) );
-	vertex->push_back( vgm::Vec3f(fSize, -fSize, fSize) );
-	vertex->push_back( vgm::Vec3f(fSize, fSize, fSize) );
-	vertex->push_back( vgm::Vec3f(-fSize, fSize, fSize) );
-	
+	vertex->push_back( vgm::Vec3f(min[0], min[1], max[2]) );
+	vertex->push_back( vgm::Vec3f(max[0], min[1], max[2]) );
+	vertex->push_back( vgm::Vec3f(max[0], max[1], max[2]) );
+	vertex->push_back( vgm::Vec3f(min[0], max[1], max[2]) );
+
 	// VERTEX INDEX
-	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex		= getFVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex = getFVertexIndexRW();
 	vertexIndex->clear();
 	vertexIndex->reserve( 16 );
-	
-	// front
+
+	// back
 	vertexIndex->push_back(0);
 	vertexIndex->push_back(1);
 	vertexIndex->push_back(2);
 	vertexIndex->push_back(3);
-	vertexIndex->push_back(0);	
+	vertexIndex->push_back(0);
 
 	// down
 	vertexIndex->push_back(4);
@@ -96,11 +97,11 @@ void WireBox::initializeGeometry()
 	vertexIndex->push_back(6);
 
 	// PRIMITIVE
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getFPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = getFPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::LINE_STRIP, 0, vertexIndex->size() );
 	primitive->clear();
 	primitive->push_back( prim );
-	
+
 	vertex.release();
 	vertexIndex.release();
 	primitive.release();

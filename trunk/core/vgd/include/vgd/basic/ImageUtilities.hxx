@@ -33,12 +33,10 @@ const ComponentType ImageUtilities::convertAlpha( const float alpha )
 	assert( alpha >= 0.f );
 	assert( alpha <= 1.f );
 	
-	using vgm::Utilities;
-	
 	return static_cast< ComponentType >( 
-		Utilities::linearInterpolation(	0.f, std::numeric_limits< ComponentType >::min(), 
-										1.f, std::numeric_limits< ComponentType >::max(),
-										alpha) ); 
+		vgm::linearInterpolation(	0.f, std::numeric_limits< ComponentType >::min(), 
+									1.f, std::numeric_limits< ComponentType >::max(),
+									alpha) ); 
 }
 
 

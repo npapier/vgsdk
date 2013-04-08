@@ -39,4 +39,43 @@ const float roundf( const float inputValue )
 }
 
 
+// LINEAR INTERPOLATION
+const float linearInterpolation( const float x1, const float y1, const float x2, const float y2, const float x )
+{
+	assert( x2-x1 != 0 );
+
+	// y = a*x + b
+	const float a = (y2 - y1) / (x2 - x1);
+
+	const float b = y1 - a*x1;
+
+	const float y = a*x+b;
+
+	return y;
+}
+
+
+
+void linearInterpolation(	const float x1, const float y1, const float x2, const float y2,
+							float& a, float& b )
+{
+	assert( x2-x1 != 0 );
+
+	// y = a*x + b
+	a = (y2 - y1) / (x2 - x1);
+
+	b = y1 - a*x1;
+}
+
+
+
+const float linearInterpolation( const float a, const float b, const float x )
+{
+	const float y = a*x+b;
+
+	return y;
+}
+
+
+
 } // namespace vgm
