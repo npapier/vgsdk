@@ -9,6 +9,7 @@
 #include <list>
 #include <vgd/node/Node.hpp>
 #include <vgm/Vector.hpp>
+#include <vgm/Matrix.hpp>
 #include "vgeGL/vgeGL.hpp"
 
 
@@ -148,6 +149,13 @@ struct VGEGL_API Hit
 	 */
 	vgm::Vec3f& farthestVertex();
 
+
+	const vgm::MatrixR& modelviewO() const			{ return m_modelviewO; }
+	vgm::MatrixR& modelviewO()						{ return m_modelviewO; }
+
+	const vgm::MatrixR& modelviewS() const			{ return m_modelviewS; }
+	vgm::MatrixR& modelviewS()						{ return m_modelviewS; }
+
 	/**
 	 * @brief The stack of node.
 	 * 
@@ -180,7 +188,10 @@ private:
 	 * @name Extended data.
 	 */
 	//@{
-	
+
+	vgm::MatrixR m_modelviewO;
+	vgm::MatrixR m_modelviewS;
+
 	vgm::Vec3f m_vec3fMin;
 	vgm::Vec3f m_vec3fMinO;
 	vgm::Vec3f m_vec3fMinS;

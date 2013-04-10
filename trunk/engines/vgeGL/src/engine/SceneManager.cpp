@@ -327,49 +327,87 @@ vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 }
 
 
-const bool SceneManager::castRay(	const int32 x, const int32 y,
-									const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
-									vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint )
+vgd::node::VertexShape * SceneManager::castRay(	const int32 x, const int32 y,
+												vgm::TriangleExt& oABCP )
 {
 	// cast ray
-	oHitShape = dynamic_cast< const vgd::node::VertexShape *>(castRay(x, y));
+	vgd::node::VertexShape * hitShape = dynamic_cast< vgd::node::VertexShape *>(castRay(x, y));
 
-	if ( oHitShape )
+	if ( hitShape )
 	{
 		// Hit
-		//vgLogDebug("Hit node name=%s", oHitShape->getName().c_str());
-
-		oHit = getRayCastingTechnique().getNearestHit();
+		const vgeGL::basic::Hit& hit = getRayCastingTechnique().getNearestHit();
 
 		// Compute picked triangle
-		float distance;
-		const bool found = vgAlg::intersect::getTriangle(	oHit.nearestVertexO(), oHitShape,
-															iABC[0], iABC[1], iABC[2], barycentricCoordHitPoint, distance );
+		float oDistance;
+		const bool found = vgAlg::intersect::getTriangle( hit.nearestVertexO(), hitShape, oABCP, oDistance );
+
+		if ( found )
+		{
+			return hitShape;
+		}
+		else
+		{
+			vgAssert( false );
+			return 0;
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
+vgd::node::VertexShape * SceneManager::castRay( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW, vgm::TriangleExt& oABCP )
+{
+	// cast ray
+	const vgeGL::basic::Hit * hit = castRayForHit(raySourceW, rayDirectionW);
+
+	if ( hit )
+	{
+		vgd::node::VertexShape * hitShape = dynamic_cast< vgd::node::VertexShape *>(getRayCastingTechnique().getNearestHitNode());
+
+		// Compute picked triangle
+		float oDistance;
+		const bool found = vgAlg::intersect::getTriangle( hit->nearestVertexO(), hitShape, oABCP, oDistance );
 
 		if ( found )
 		{
 			//vgLogDebug("hit triangle (%i %i %i)", iABC[0], iABC[1], iABC[2]);
 			//vgLogDebug("(u,v)=%f %f", barycentricCoordHitPoint[0], barycentricCoordHitPoint[1] );
-			return true;
+			return hitShape;
 		}
 		else
 		{
 			vgAssert( false );
-			return false;
+			return 0;
 		}
 	}
 	else
 	{
-		return false;
+		return 0;
 	}
 }
 
 
-const vgeGL::technique::RayCasting& SceneManager::getRayCastingTechnique() const
+vgd::node::VertexShape * SceneManager::getNearestHitNode()
+{
+	vgd::node::VertexShape * shape = dynamic_cast< vgd::node::VertexShape *>(getRayCastingTechnique().getNearestHitNode());
+	return shape;
+}
+
+const vgeGL::basic::Hit SceneManager::getNearestHit()
+{
+	const vgeGL::basic::Hit& hit = getRayCastingTechnique().getNearestHit();
+	return hit;
+}
+
+
+vgeGL::technique::RayCasting& SceneManager::getRayCastingTechnique()
 {
 	return m_rayCasting;
 }
-
 
 
 void SceneManager::setRequestedGLContextProperties( const GLContextProperties properties )

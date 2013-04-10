@@ -10,6 +10,7 @@
 #include <vgd/event/DeviceManager.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
 #include <vge/engine/SceneManager.hpp>
+#include <vgm/Triangle.hpp>
 
 #include "vgeGL/event/IEventProcessor.hpp"
 #include "vgeGL/itf/IUnderlay.hpp"
@@ -397,19 +398,39 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * @param x							x-coordinate of the mouse pointer
 	 * @param y							y-coordinate of the mouse pointer
 	 *
-	 * @param oHitShape					the nearest collided node
-	 * @param oHit						the nearest collided hit
-	 * @param iABC						the nearest collided triangle. The vector contains the three indices of the triangles (in oHitShape vertex shape).
-	 * @param barycentricCoordHitPoint	(u,v) barycentric coordinates of P in (A, AB, BC). A is a local origin.
+	 * @param oABCP						the nearest collided triangle, the three indices of the triangles (in the returned shape arrays) and the hit point P with barycentric coordinates (u,v) in (A, AB, BC). A is a local origin.
 	 *
-	 * @return true if ray casting hit a triangle, false otherwise
+	 * @return the nearest node if ray casting hit a triangle, otherwise a null reference
 	 *
 	 * @remark Helper using castRay(x,y) and vgAlg::intersect::getTriangle()
 	 */
-	const bool castRay(	const int32 x, const int32 y,
-						const vgd::node::VertexShape *& oHitShape, vgeGL::basic::Hit& oHit,
-						vgm::Vec3i& iABC, vgm::Vec2f& barycentricCoordHitPoint );
+	vgd::node::VertexShape * castRay( const int32 x, const int32 y, vgm::TriangleExt& oABCP );
 
+	/**
+	 * @brief Cast a ray in the scene
+	 *
+	 * @param raySourceW				starting point of the ray (in world space)
+	 * @param rayDirectionW				direction of the ray (in world space)
+	 *
+	 * @param oABCP						the nearest collided triangle, the three indices of the triangles (in the returned shape arrays) and the hit point P with barycentric coordinates (u,v) in (A, AB, BC). A is a local origin.
+	 *
+	 * @return the nearest node if ray casting hit a triangle, otherwise a null reference
+	 *
+	 * @remark Helper using castRayForHit(raySourceW,rayDirectionW) and vgAlg::intersect::getTriangle()
+	 */
+	vgd::node::VertexShape * castRay( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW, vgm::TriangleExt& oABCP );
+
+
+
+	/**
+	 * @brief Returns getRayCastingTechnique().getNearestHitNode()
+	 */
+	vgd::node::VertexShape * getNearestHitNode();
+
+	/**
+	 * @brief Returns getRayCastingTechnique).getNearestHit()
+	 */
+	const vgeGL::basic::Hit getNearestHit();
 
 	/**
 	 * @brief Returns a reference on the ray casting technique.
@@ -417,6 +438,7 @@ struct VGEGL_API SceneManager : public vge::engine::SceneManager, public vgd::ev
 	 * This reference could be used to access to the result of the last ray casting.
 	 */
 	const vgeGL::technique::RayCasting& getRayCastingTechnique() const;
+	vgeGL::technique::RayCasting& getRayCastingTechnique();
 
 	//@}
 
