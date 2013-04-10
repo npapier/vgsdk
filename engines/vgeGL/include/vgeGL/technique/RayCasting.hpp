@@ -6,8 +6,11 @@
 #ifndef _VGEGL_TECHNIQUE_RAYCASTING_HPP
 #define _VGEGL_TECHNIQUE_RAYCASTING_HPP
 
+#include <set>
 #include "vgeGL/basic/Hit.hpp"
 #include "vgeGL/technique/Technique.hpp"
+
+namespace vgd { namespace node { struct Shape; } }
 
 
 
@@ -59,6 +62,22 @@ struct VGEGL_API RayCasting : public Technique
 	void destroy();
 	//@}
 
+
+
+	/**
+	 * @name Exclusion list accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Adds a node to the exclusion list
+	 *
+	 * All nodes in the exclusion list are ignored by the ray casting technique.
+	 * The list is cleared after each ray casting.
+	 */
+	void addToExclusionList( vgd::node::Shape * node );
+
+	//@}
 
 
 	/**
@@ -167,7 +186,9 @@ protected:
 	 * @name Ray casting data
 	 */
 	//@{
-	
+
+	std::set< vgd::node::Shape * > m_exclusionList;
+
 	int32		m_x;
 	int32		m_y;
 

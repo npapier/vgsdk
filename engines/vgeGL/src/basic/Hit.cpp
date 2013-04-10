@@ -17,6 +17,8 @@ namespace basic
 
 Hit::Hit() :
     m_fMinDepthValue(1.f), m_fMaxDepthValue(0.f),
+	m_modelviewO( vgm::MatrixR::getInvalid() ),
+	m_modelviewS( vgm::MatrixR::getInvalid() ),
     m_vec3fMin( 0.f, 0.f, 0.f ),
     m_vec3fMinO( 0.f, 0.f, 0.f ),
     m_vec3fMinS( 0.f, 0.f, 0.f ),

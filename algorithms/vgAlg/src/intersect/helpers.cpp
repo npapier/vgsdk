@@ -9,7 +9,12 @@
 #include "vgAlg/node/TriSet.hpp"
 #include <vgDebug/helpers.hpp>
 #include <vgd/node/VertexShape.hpp>
+#include <vgm/Line.hpp>
 #include <vgm/Plane.hpp>
+#include <vgm/Segment.hpp>
+#include <vgm/Sphere.hpp>
+#include <vgm/Triangle.hpp>
+
 
 
 namespace vgAlg
@@ -20,7 +25,7 @@ namespace intersect
 
 
 const bool getTriangle( const vgm::Vec3f& P, const vgd::node::VertexShape * vertexShape,
-	int32& oIndexA, int32& oIndexB, int32& oIndexC, vgm::Vec2f& oBarycentricCoordOfP, float& oDistance )
+	vgm::TriangleExt& oABC, float& oDistance )
 {
 	bool retVal = false;
 
@@ -56,6 +61,7 @@ const bool getTriangle( const vgm::Vec3f& P, const vgd::node::VertexShape * vert
 		const float distanceABCAndP( ABC.distance( P ) );
 		const vgm::Vec3f PInABC = ABC.project(P);
 
+		vgm::Vec2f oBarycentricCoordOfP;
 		const bool hasIntersect = isPointPInTriangleABC( PInABC, A, B, C, oBarycentricCoordOfP );
 
 		if ( hasIntersect )
@@ -65,9 +71,8 @@ const bool getTriangle( const vgm::Vec3f& P, const vgd::node::VertexShape * vert
 			{
 				retVal = true;
 				distanceMin = absDistanceABCAndP;
-				oIndexA = iA;
-				oIndexB = iB;
-				oIndexC = iC;
+				const vgm::Vec3f baryCoordOfP( oBarycentricCoordOfP[0], oBarycentricCoordOfP[1], std::numeric_limits<float>::max() );
+				oABC.setValue( A, B, C, baryCoordOfP, vgm::Vec3i(iA, iB, iC) );
 			}
 			//else nothing to do
 		}
@@ -111,6 +116,148 @@ const bool isPointPInTriangleABC(	const vgm::Vec3f P, const vgm::Vec3f A, const 
 
 	// Check if point is in triangle
 	return (u >= 0) && (v >= 0) && (u + v <= 1);
+}
+
+
+const bool getTriangles(	const vgd::node::VertexShape * vertexShape, const vgm::Sphere& sphere,
+							std::vector< uint32 >& oTrianglesIndices )
+{
+	// check precond on vertex shape
+	const bool onlyTriangles = vgAlg::node::isATriSet(vertexShape);
+	if ( !onlyTriangles )
+	{
+		vgLogDebug("getTriangles() fails. Vertex shape named '%s' contains at least one primitives different from TRIANGLES.", vertexShape->getName().c_str());
+		return false;
+	}
+
+	// For each triangle,
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getFVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
+
+	const uint	iEndTriangle	= vertexIndex->size()/3;
+	uint		iVI				= 0;						// (i)ndex in (V)ertex (I)ndex array
+	for( uint iTriangle=0; iTriangle < iEndTriangle; ++iTriangle )
+	{
+		const uint iA = (*vertexIndex)[iVI++];
+		const uint iB = (*vertexIndex)[iVI++];
+		const uint iC = (*vertexIndex)[iVI++];
+
+		const vgm::Vec3f A = (*vertices)[iA];
+		const vgm::Vec3f B = (*vertices)[iB];
+		const vgm::Vec3f C = (*vertices)[iC];
+
+		const vgm::Plane ABC(A,B,C);
+
+		// First criterion
+		const float distanceABCAndSphereCenter( ABC.distance( sphere.getCenter() ) );
+		const float absDistanceABCAndSphereCenter = fabs(distanceABCAndSphereCenter);
+		if ( absDistanceABCAndSphereCenter <= sphere.getRadius() )
+		{
+			if ( sphere.isIn(A) || sphere.isIn(B) || sphere.isIn(C) )
+			{
+				oTrianglesIndices.push_back( iA );
+				oTrianglesIndices.push_back( iB );
+				oTrianglesIndices.push_back( iC );
+				continue;
+			}
+
+			// 
+			const vgm::Vec3f i1 = sphere.intersect( vgm::Line(A,B) );
+			const vgm::Segment AB(A,B);
+			if ( i1.isValid() && AB.isIn(i1) )
+			{
+				oTrianglesIndices.push_back( iA );
+				oTrianglesIndices.push_back( iB );
+				oTrianglesIndices.push_back( iC );
+				continue;
+			}
+
+			const vgm::Vec3f i2 = sphere.intersect( vgm::Line(B,C) );
+			const vgm::Segment BC(B,C);
+			if ( i2.isValid() && BC.isIn(i2) )
+			{
+				oTrianglesIndices.push_back( iA );
+				oTrianglesIndices.push_back( iB );
+				oTrianglesIndices.push_back( iC );
+				continue;
+			}
+
+			const vgm::Vec3f i3 = sphere.intersect( vgm::Line(C,A) );
+			const vgm::Segment CA(C,A);
+			if ( i3.isValid() && CA.isIn(i3) )
+			{
+				oTrianglesIndices.push_back( iA );
+				oTrianglesIndices.push_back( iB );
+				oTrianglesIndices.push_back( iC );
+				continue;
+			}
+		}
+	}
+
+	return oTrianglesIndices.size() > 0;
+}
+
+
+const bool getTriangles(	const vgd::node::VertexShape * vertexShape, const std::vector< uint32 >& trianglesIndicesToFilter,
+							const vgm::Plane& plane,
+							std::vector< uint32 >& oTrianglesIndices )
+{
+	// check precond on vertex shape
+	const bool onlyTriangles = vgAlg::node::isATriSet(vertexShape);
+	if ( !onlyTriangles )
+	{
+		vgLogDebug("getTriangles() fails. Vertex shape named '%s' contains at least one primitives different from TRIANGLES.", vertexShape->getName().c_str());
+		return false;
+	}
+
+	// For each triangle,
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getFVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
+
+	std::vector< uint32 >::const_iterator i;
+	std::vector< uint32 >::const_iterator iEnd;
+
+	if ( trianglesIndicesToFilter.size() == 0 )
+	{
+		// Iterate on vertexIndex field
+		i		= vertexIndex->begin();
+		iEnd	= vertexIndex->end();
+	}
+	else
+	{
+		// Iterate on trianglesIndicesToFilter
+		i		= trianglesIndicesToFilter.begin();
+		iEnd	= trianglesIndicesToFilter.end();
+	}
+	vertexIndex.release();
+
+	while ( i != iEnd  )
+	{
+		const uint iA = *i;
+		++i;
+		const uint iB = *i;
+		++i;
+		const uint iC = *i;
+		++i;
+
+		const vgm::Vec3f A = (*vertices)[iA];
+		const vgm::Vec3f B = (*vertices)[iB];
+		const vgm::Vec3f C = (*vertices)[iC];
+
+		// Test criterion
+		if (	plane.isInHalfSpace( A ) ||
+				plane.isInHalfSpace( B ) ||
+				plane.isInHalfSpace( C )	)
+		{
+				oTrianglesIndices.push_back( iA );
+				oTrianglesIndices.push_back( iB );
+				oTrianglesIndices.push_back( iC );
+				continue;
+		}
+		// else nothing to do
+	}
+
+	return true;
 }
 
 

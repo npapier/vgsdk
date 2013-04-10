@@ -7,6 +7,7 @@
 
 #include <vgd/node/Camera.hpp>
 #include <vgd/node/ClearFrameBuffer.hpp>
+#include <vgd/node/Decal.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/GeometricalTransformation.hpp>
 #include <vgd/node/Group.hpp>
@@ -29,7 +30,8 @@ namespace technique
 
 
 RayCasting::RayCasting() 
-:	m_x					(	-1	),
+:	//m_exclusionList
+	m_x					(	-1	),
 	m_y					(	-1	),
 	m_raySourceW		( vgm::Vec3f::getInvalid() ),
 	m_rayDirectionW		( vgm::Vec3f::getInvalid() ),
@@ -62,6 +64,13 @@ void RayCasting::destroy()
 
 	m_shapes.clear();
 	m_pHits.reset();
+}
+
+
+
+void RayCasting::addToExclusionList( vgd::node::Shape * node )
+{
+	m_exclusionList.insert( node );
 }
 
 
@@ -212,6 +221,7 @@ void RayCasting::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	engine->regardIfIsAKindOf<vgd::node::Group>();
 	engine->regardIfIsAKindOf<vgd::node::Kit>();
 	engine->regardIfIsAKindOf<vgd::node::Shape>();
+	engine->disregardIfIsAKindOf<vgd::node::Decal>();
 
 	// Init.
 	bool cameraAlreadyTraversed = false;
@@ -327,7 +337,9 @@ void RayCasting::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 			}
 		}
 		// SHAPE
-		else if ( (i->first)->isAKindOf< vgd::node::Shape >() )
+		else if (	(i->first)->isAKindOf< vgd::node::Shape >() &&
+					(m_exclusionList.find( dynamic_cast<vgd::node::Shape*>(i->first) ) == m_exclusionList.end() ) // test if current node is not in exclusion list
+					)
 		{
 			if ( i->second )
 			{
@@ -374,6 +386,9 @@ void RayCasting::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 
 	// Release memory.
 	m_shapes.clear();
+
+	// Erases all elements of exclusion list
+	m_exclusionList.clear();
 }
 
 
@@ -449,6 +464,7 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 				MatrixR::unProject(	m_x, m_viewport[3]- m_y, hit.minDepthValue(),
 									modelviewO, m_projection, m_viewport,
 									hit.nearestVertexO() );
+				hit.modelviewO() = modelviewO;
 
 				// min in scene space
 				const MatrixR& modelviewS = glEngine()->getSceneGeometricalMatrix();
@@ -456,6 +472,7 @@ void RayCasting::fillHits( const uint32 gluintHitsSize )
 				MatrixR::unProject(	m_x, m_viewport[3]- m_y, hit.minDepthValue(),
 									modelviewS, m_projection, m_viewport,
 									hit.nearestVertexS() );
+				hit.modelviewS() = modelviewS;
 			}
 
 			hit.stackName().push_back( i32PickingName );
