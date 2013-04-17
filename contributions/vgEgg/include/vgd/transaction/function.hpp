@@ -142,6 +142,24 @@ vgd::Shp<function > createFunctionTransaction( T0 f ( T1, T2, T3 ), P1 p1, P2 p2
 {
 	return function::create( boost::bind( f, p1, p2, p3 ) );
 }
+
+/**
+ * @brief Template factory for functions with four args.
+ */
+template < typename T0, typename T1, typename T2, typename T3, typename T4, typename P1, typename P2, typename P3, typename P4 >
+vgd::Shp<function > createFunctionTransaction( boost::function< T0 ( T1, T2, T3, T4 ) > f, P1 p1, P2 p2, P3 p3, P4 p4 )
+{
+	return function::create( boost::bind( f, p1, p2, p3, p4 ) );
+}
+
+/**
+ * @brief Template factory for functions with four args.
+ */
+template < typename T0, typename T1, typename T2, typename T3, typename T4, typename P1, typename P2, typename P3, typename P4 >
+vgd::Shp<function > createFunctionTransaction( T0 f ( T1, T2, T3, T4 ), P1 p1, P2 p2, P3 p3, P4 p4 )
+{
+	return function::create( boost::bind( f, p1, p2, p3, p4 ) );
+}
 //@}
 
 /**
@@ -160,8 +178,8 @@ vgd::Shp< function > createFunctionTransaction( B object, T0 ( C::*f )() )
 /**
  * @brief Template factory for member functions with one single arg.
  */
-template < typename B, typename C, typename T0, typename T1, typename P1 > vgd::Shp< function >
-createFunctionTransaction( B object, T0 ( C::*f )( T1 ), P1 p1 )
+template < typename B, typename C, typename T0, typename T1, typename P1 >
+vgd::Shp< function > createFunctionTransaction( B object, T0 ( C::*f )( T1 ), P1 p1 )
 {
 	return function::create( boost::bind( f, object, p1 ) );
 }
@@ -169,14 +187,14 @@ createFunctionTransaction( B object, T0 ( C::*f )( T1 ), P1 p1 )
 /**
  * @brief Template factory for member functions with two args.
  */
-template < typename B, typename C, typename T0, typename T1, typename T2, typename P1, typename P2 > vgd::Shp< function >
-createFunctionTransaction( B object, T0 ( C::*f )( T1, T2 ), P1 p1, P2 p2 )
+template < typename B, typename C, typename T0, typename T1, typename T2, typename P1, typename P2 >
+vgd::Shp< function > createFunctionTransaction( B object, T0 ( C::*f )( T1, T2 ), P1 p1, P2 p2 )
 {
 	return function::create( boost::bind( f, object, p1, p2 ) );
 }
 
 /**
- * @brief Template factory for member functions with two args.
+ * @brief Template factory for member functions with three args.
  */
 template < typename B, typename C, typename T0, typename T1, typename T2, typename T3, typename P1, typename P2, typename P3 >
 vgd::Shp< function > createFunctionTransaction( B object, T0 ( C::*f )( T1, T2, T3 ), P1 p1, P2 p2, P3 p3 )
@@ -184,15 +202,20 @@ vgd::Shp< function > createFunctionTransaction( B object, T0 ( C::*f )( T1, T2, 
 	return function::create( boost::bind(f ,object, p1, p2, p3 ) );
 }
 
+/**
+ * @brief Template factory for member functions with four args.
+ */
+template < typename B, typename C, typename T0, typename T1, typename T2, typename T3, typename T4, typename P1, typename P2, typename P3, typename P4 >
+vgd::Shp< function > createFunctionTransaction( B object, T0 ( C::*f )( T1, T2, T3, T4 ), P1 p1, P2 p2, P3 p3, P4 p4 )
+{
+	return function::create( boost::bind(f ,object, p1, p2, p3, p4 ) );
+}
 //@}
 
 
 
-
-
-
 } // namespace vgd
-} // namespace transaction
 
+} // namespace transaction
 
 #endif // _VGD_TRANSACTION_FUNCTION_HPP
