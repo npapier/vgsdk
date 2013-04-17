@@ -9,7 +9,7 @@
 
 #include <vgd/transaction/TransactionContainer.hpp>
 #include <vgd/Shp.hpp>
-#include <vgd/WeakPtr.hpp>
+#include <vgd/Wkp.hpp>
 
 namespace vgd
 {
@@ -80,7 +80,7 @@ struct VGD_API Group : public TransactionContainer
 	 * @brief The apply function.
 	 *
 	 * Conditionate the application of the transaction to the validity
-	 * of the WeakPtr.
+	 * of the Wkp.
 	 */
 	void apply();
 
@@ -88,7 +88,7 @@ protected:
 	/**
 	 * @brief The node.
 	 */
-	vgd::WeakPtr< vgd::node::IGroup > m_node;
+	vgd::Wkp< vgd::node::IGroup > m_node;
 };
 
 
