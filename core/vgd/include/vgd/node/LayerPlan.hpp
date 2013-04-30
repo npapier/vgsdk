@@ -24,7 +24,7 @@ namespace node
 /**
  * @brief Defines a single layer plan (overlay or underlay).
  *
- * This node defines a layer plan that could be displayed just before the rendering (UNDERLAY) or just after (OVERLAY). In fact, the behavior depends of its position in the scene graph. It could even be displayed at any time during the rendering. @todo More advanced transformation (a field \c matrixTransform) @todo Support multiple layer planes at the same time and do rendering in one pass. => This class should be a multiattribute. 
+ * This node defines a layer plan that could be displayed just before the rendering (UNDERLAY) or just after (OVERLAY). In fact, the behavior depends of its position in the scene graph. It could even be displayed at any time during the rendering. todo More advanced transformation (a field \c matrixTransform) todo Support multiple layer planes at the same time and do rendering in one pass. => This class should be a multiattribute. 
  *
  * New fields defined by this node :
  * - SFFloat \c alphaScale = (1.f)<br>

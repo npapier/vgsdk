@@ -147,7 +147,7 @@ void DepthOfField::stageInitializePostProcessing( vgd::node::DepthOfField * node
 	rc->postProcessing.setState( 2, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
 
 	p = PostProcessing::create("vgsdk:dof:up", 3);
-	p->setFilter( PostProcessing::UP_FILTER4 );
+	p->setFilter( PostProcessing::UP_FILTER4_LINEAR );
 	ppGroup->addChild( p );
 	rc->postProcessing.setState( 3, vgd::makeShp( new GLSLState::PostProcessingState(p.get()) ) );
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -77,6 +77,22 @@ const std::string saturate =
 "\n";
 
 
+
+const std::string texture2DBilinear =
+"vec4 texture2DBilinear( sampler2D texMap, vec2 uv )\n"
+"{\n"
+"	vec2 texSize = textureSize( texMap, 0 );\n"
+"	vec2 texelSize = 1.0/texSize;\n"
+"	vec4 tl = texture(texMap, uv);\n"
+"	vec4 tr = texture(texMap, uv + vec2(texelSize[0], 0));\n"
+"	vec4 bl = texture(texMap, uv + vec2(0, texelSize[1]));\n"
+"	vec4 br = texture(texMap, uv + vec2(texelSize[0] , texelSize[1]));\n"
+"	vec2 f = fract( uv.xy * texSize );\n"
+"	vec4 tA = mix( tl, tr, f.x );\n"
+"	vec4 tB = mix( bl, br, f.x );\n"
+"	return mix( tA, tB, f.y );\n"
+"}\n"
+"\n";
 
 //////////////
 // Identity //
@@ -260,6 +276,62 @@ const std::string applyColorEdgeDetect(
 	"	color = colorEdgeDetect( texMap2D[0], mgl_TexCoord[0].xy );\n" );
 
 
+/////////////////////////////
+// Apply 3x3 median filter //
+/////////////////////////////
+// See ShaderX6 Advanced rendering techniques, Chapter 3.3, A Fast, Small-Radius GPU Median Filter by Morgan McGuire
+
+const std::string median3x3 =
+"// Change these 2 defines to change precision\n"
+"#define vec vec4\n"
+"#define toVec(x) x.rgba\n"
+"\n"
+"#define s2(a, b)				temp = a; a = min(a, b); b = max(temp, b);\n"
+"#define mn3(a, b, c)			s2(a, b); s2(a, c);\n"
+"#define mx3(a, b, c)			s2(b, c); s2(a, c);\n"
+"// 3 exchanges\n"
+"#define mnmx3(a, b, c)			mx3(a, b, c); s2(a, b);\n"
+"// 4 exchanges\n"
+"#define mnmx4(a, b, c, d)		s2(a, b); s2(c, d); s2(a, c); s2(b, d);\n"
+"// 6 exchanges\n"
+"#define mnmx5(a, b, c, d, e)	s2(a, b); s2(c, d); mn3(a, c, e); mx3(b, d, e);\n"
+"// 7 exchanges\n"
+"#define mnmx6(a, b, c, d, e, f) s2(a, d); s2(b, e); s2(c, f); mn3(a, b, c); mx3(d, e, f);\n"
+"\n"
+"vec4 applyMedian3x3( sampler2D texMap, vec2 texCoord )\n"
+"{\n"
+"	vec2 texSize = textureSize( texMap, 0 );\n"
+"	vec2 texelSize = 1.0 / texSize;\n"
+"	vec v[9];\n"
+"\n"
+"	// Add the pixels which make up our window to the pixel array\n"
+"	for(int dX = -1; dX <= 1; ++dX)\n"
+"	{\n"
+"		for(int dY = -1; dY <= 1; ++dY)\n"
+"		{\n"
+"			vec2 offset = vec2(float(dX), float(dY));\n"
+"			// If a pixel in the window is located at (x+dX, y+dY), put it at index (dX + R)(2R + 1) + (dY + R) of the\n"
+"			// pixel array. This will fill the pixel array, with the top left pixel of the window at pixel[0] and the\n"
+"			// bottom right pixel of the window at pixel[N-1].\n"
+"			v[(dX + 1) * 3 + (dY + 1)] = toVec(texture(texMap, texCoord + offset * texelSize));\n"
+"		}\n"
+"	}\n"
+"	vec temp;\n"
+"\n"
+"	// Starting with a subset of size 6, remove the min and max each time\n"
+"	mnmx6(v[0], v[1], v[2], v[3], v[4], v[5]);\n"
+"	mnmx5(v[1], v[2], v[3], v[4], v[6]);\n"
+"	mnmx4(v[2], v[3], v[4], v[7]);\n"
+"	mnmx3(v[3], v[4], v[8]);\n"
+"	return v[4];\n"
+"}\n"
+"\n\n\n";
+
+
+const std::string applyMedian3x3( 
+	"	color = applyMedian3x3( texMap2D[0], mgl_TexCoord[0].xy );\n" );
+
+
 //////////////////
 // DOWN_FILTER4 //
 //////////////////
@@ -303,6 +375,23 @@ const std::string upFilter4 =
 
 const std::string applyUpFilter4( 
 	"	color = upFilter4( texMap2D[0], mgl_TexCoord[0].xy );\n" );
+
+
+//////////////////////////////
+// Scales images up 4 times //
+//////////////////////////////
+
+const std::string upFilter4Linear = 
+"// Performs up filtering to scale the image to its original size\n"
+"vec4 upFilter4Linear( sampler2D texMap, vec2 texCoord )\n"
+"{\n"
+"	return texture2DBilinear( texMap, texCoord );\n"
+"}\n"
+"\n\n\n";
+
+const std::string applyUpFilter4Linear( 
+	"	color = upFilter4Linear( texMap2D[0], mgl_TexCoord[0].xy );\n" );
+
 
 
 //////////
@@ -547,6 +636,10 @@ std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::Post
 	{
 		return std::make_pair( colorToMonochrome + kernel4 + colorEdgeDetect, applyColorEdgeDetect );
 	}
+	else if ( filter == vgd::node::PostProcessing::MEDIAN3x3 )
+	{
+		return std::make_pair( median3x3, applyMedian3x3 );
+	}
 	else if ( filter == vgd::node::PostProcessing::DOWN_FILTER4 )
 	{
 		return std::make_pair( downFilter4, applyDownFilter4 );
@@ -554,6 +647,10 @@ std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::Post
 	else if ( filter == vgd::node::PostProcessing::UP_FILTER4 )
 	{
 		return std::make_pair( upFilter4, applyUpFilter4 );
+	}
+	else if ( filter == vgd::node::PostProcessing::UP_FILTER4_LINEAR )
+	{
+		return std::make_pair( texture2DBilinear + upFilter4Linear, applyUpFilter4Linear );
 	}
 	else if ( filter == vgd::node::PostProcessing::OVER )
 	{
@@ -602,7 +699,7 @@ std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::Post
 			// @todo documentation for all conventions in shaders (texture.function, PostProcesing.custom*...)
 			// @todo doc about the predefined functions (horizKernel13 + ... + colorEdgeDetect)
 			return std::make_pair(	horizKernel13 + vertKernel13 + kernel4 + gaussianWeights13 +
-									saturate + colorToMonochrome + blurHoriz + blurVert + bloomHoriz + bloomVert + colorEdgeDetect +
+									saturate + texture2DBilinear + colorToMonochrome + blurHoriz + blurVert + bloomHoriz + bloomVert + colorEdgeDetect + applyMedian3x3 +
 									definition, apply );
 		}
 	}
@@ -622,6 +719,10 @@ std::pair< float, float > PostProcessing::getScale( const vgd::node::PostProcess
 		return std::make_pair( 1.f, 0.25f );
 	}
 	else if ( filter == vgd::node::PostProcessing::UP_FILTER4 )
+	{
+		return std::make_pair( 1.f, 4.f );
+	}
+	else if ( filter == vgd::node::PostProcessing::UP_FILTER4_LINEAR )
 	{
 		return std::make_pair( 1.f, 4.f );
 	}

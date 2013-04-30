@@ -113,7 +113,7 @@
 				<enum default="MONOSCOPIC">
 					<value name="MONOSCOPIC" doc="Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too."/>
 					<value name="QUAD_BUFFER" doc="Stereoscopic rendering using quad buffer (i.e. active stereo using shutter glasses, or passive stereo using polarized projectors and glasses). Scene is viewer for left and right eyes. All fields are used to define the camera."/>
-					<value name="ANAGLYPH" doc="@todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera."/>
+					<value name="ANAGLYPH" doc="todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera."/>
 				</enum>
 			</type>
 		</sf>
@@ -382,23 +382,23 @@
 			<type name="string" namespace="std" default = ""></type>
 		</sf>
 
-		<sf name="cellSize" doc="@todo">
+		<sf name="cellSize" doc="todo">
 			<type name="float" default="1.0"></type>
 		</sf>
-		<sf name="css" doc="@todo">
+		<sf name="css" doc="todo">
 			<type name="float" default="1.0"></type>
 		</sf>
-		<sf name="timeStep" doc="@todo">
+		<sf name="timeStep" doc="todo">
 			<type name="float" default="0.1"></type>
 		</sf>
-		<sf name="damping" doc="@todo">
+		<sf name="damping" doc="todo">
 			<type name="float" default="0.8"></type>
 		</sf>
 
 		<sf name="thickness" doc="fluid thickness factor (only visual)">
 			<type name="float" default="1.0"></type>
 		</sf>
-		<sf name="opacity" doc="@todo">
+		<sf name="opacity" doc="todo">
 			<type name="float" default="0.6"></type>
 		</sf>
 
@@ -411,15 +411,15 @@
 			<type name="bool" default = "false"></type>
 		</sf>
 
-		<sf name="feedbackInformations" doc="@todo">
+		<sf name="feedbackInformations" doc="todo">
 			<type name="Vec5f" namespace="vgm" default = "0.f, 0.f, 0.f, 0.f, 0.f"></type>
 		</sf>
 
-		<sf name="feedbackInformationsBis" doc="@todo">
+		<sf name="feedbackInformationsBis" doc="todo">
 			<type name="MatrixR" namespace="vgm" default = "vgm::MatrixR::getIdentity()"></type>
 		</sf>
 
-		<sf name="fluidPositionFeedback" doc="@todo">
+		<sf name="fluidPositionFeedback" doc="todo">
 			<type name = "IImageShp" namespace = "vgd::basic"></type>
 		</sf>
 
@@ -435,8 +435,8 @@
 			<docBrief>Defines a single layer plan (overlay or underlay).</docBrief>
 			<doc>This node defines a layer plan that could be displayed just before the rendering (UNDERLAY) or just after (OVERLAY).</doc>
 			<doc>In fact, the behavior depends of its position in the scene graph. It could even be displayed at any time during the rendering.</doc>
-			<doc>@todo More advanced transformation (a field \c matrixTransform)</doc>
-			<doc>@todo Support multiple layer planes at the same time and do rendering in one pass. => This class should be a multiattribute.</doc>
+			<doc>todo More advanced transformation (a field \c matrixTransform)</doc>
+			<doc>todo Support multiple layer planes at the same time and do rendering in one pass. => This class should be a multiattribute.</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
 			<ingroup>g_shapeNodes</ingroup>
@@ -850,10 +850,10 @@
 		<sf name = "format" doc = "Specifies the format used by the buffer.">
 			<type name = "enum">
 				<enum default="RGB">
-					<value name="RGB" doc="@todo"/>
-					<value name="RGBA" doc="@todo"/>
-					<value name="LUMINANCE" doc="@todo"/>
-					<value name="LUMINANCE_ALPHA" doc="@todo"/>
+					<value name="RGB" doc="todo"/>
+					<value name="RGBA" doc="todo"/>
+					<value name="LUMINANCE" doc="todo"/>
+					<value name="LUMINANCE_ALPHA" doc="todo"/>
 					<value name="LUMINANCE_FOR_DEPTH" doc="if type is INTEGER, then DEPTH_COMPONENT_24 is used."/>
 				</enum>
 			</type>
@@ -863,9 +863,9 @@
 		<sf name = "type" doc = "Specifies the type used by the buffer.">
 			<type name = "enum">
 				<enum default = "INTEGER">
-					<value name="INTEGER" doc="@todo"/>
-					<value name="FLOAT16" doc="@todo"/>
-					<value name="FLOAT32" doc="@todo"/>
+					<value name="INTEGER" doc="todo"/>
+					<value name="FLOAT16" doc="todo"/>
+					<value name="FLOAT32" doc="todo"/>
 				</enum>
 			</type>
 		</sf>
@@ -878,12 +878,12 @@
 		<sf name = "command" doc = "Specifies the pre-defined assign command execute by the fragment program.">
 			<type name = "enum">
 				<enum default = "COLOR">
-					<value name="COLOR" doc="@todo"/>
-					<value name="NORMAL" doc="@todo"/>
-					<value name="POSITION" doc="@todo"/>
-					<value name="DEPTH" doc="@todo"/>
-					<value name="LINEAR_DEPTH" doc="@todo"/>
-					<value name="CUSTOM" doc="@todo"/>
+					<value name="COLOR" doc="todo"/>
+					<value name="NORMAL" doc="todo"/>
+					<value name="POSITION" doc="todo"/>
+					<value name="DEPTH" doc="todo"/>
+					<value name="LINEAR_DEPTH" doc="todo"/>
+					<value name="CUSTOM" doc="todo"/>
 				</enum>
 			</type>
 		</sf>
@@ -995,12 +995,13 @@
 
 					<value name="COLOR_EDGE_DETECT" doc="Detects edges and highlights them"/>
 
+					<value name="MEDIAN3x3" doc="Apply a 3x3 median filter to input0"/>
+
 					<value name="DOWN_FILTER4" doc="Scales images down 4 times with a high-pass filter"/>
-					<value name="UP_FILTER4" doc="Scales images up 4 times"/>
+					<value name="UP_FILTER4" doc="Scales images up 4 times (filtering used similar to GL_NEAREST)"/>
+					<value name="UP_FILTER4_LINEAR" doc="Scales images up 4 times (filtering used similar to GL_LINEAR)"/>
 
-<!--					<value name="NORMAL_EDGE_DETECT" doc="Detects edges and highlights them (using NORMAL buffer)"/> -->
-
-					<value name="OVER" doc="Composes two images using an over filter. The input0 source is composited over the input1 source. @todo uses alpha instead black to decide composition"/>
+					<value name="OVER" doc="Composes two images using an over filter. The input0 source is composited over the input1 source (using PixelImage1 > 0 ? PixelImage1 : PixelImage2). todo uses alpha instead black to decide composition"/>
 					<value name="ADD" doc="Combines two images into one using the following formula : image1 + image2"/>
 					<value name="SUB" doc="Combines two images into one using the following formula : image1 - image2"/>
 
@@ -1045,7 +1046,6 @@
 			</type>
 		</sf>
 
-
 		<sf name = "input0Sampling" doc = "Specifies the sampling state (filter and max anisotropy) of input0 field.">
 			<type name = "enum">
 				<enum default = "INPUT0SAMPLING_NONE">
@@ -1058,6 +1058,7 @@
 				</enum>
 			</type>
 		</sf>
+
 
 		<sf name = "input1" doc = "Specifies the second input buffer used by the filter.">
 			<type name = "enum">
@@ -1077,6 +1078,7 @@
 				</enum>
 			</type>
 		</sf>
+
 
 		<sf name = "input2" doc = "Specifies the third input buffer used by the filter.">
 			<type name = "enum">
@@ -1275,7 +1277,6 @@
 			<doc>- Radeon 5xxx/6xxx could do 16384^2 for 2D texturing, 8192^3 for 3D texturing and 16384^2 for cube mapping.\n</doc>
 			<doc>- GeForce 5xx/Quadro 4xxx could do 16384^2 for 2D texturing, 2048^3 for 3D texturing and 16384^2 for cube mapping.\n</doc>
 			<doc>@remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n</doc>
-			<doc>@todo More docs\n</doc>
 			<ingroup>g_abstractNodes</ingroup>
 		</doxygen>
 

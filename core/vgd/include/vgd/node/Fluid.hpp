@@ -34,7 +34,7 @@ namespace node
  *
  * New fields defined by this node :
  * - SFFloat \c opacity = (0.6)<br>
- *   @todo<br>
+ *   todo<br>
  *<br>
  * - MFVec5f \c emittersOrDrainers = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
  *   Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 4.<br>
@@ -58,28 +58,28 @@ namespace node
  *   Specifies the first stage of the simulation.<br>
  *<br>
  * - SFFloat \c cellSize = (1.0)<br>
- *   @todo<br>
+ *   todo<br>
  *<br>
  * - SFMatrixR \c feedbackInformationsBis = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
- *   @todo<br>
+ *   todo<br>
  *<br>
  * - SFFloat \c damping = (0.8)<br>
- *   @todo<br>
+ *   todo<br>
  *<br>
  * - SFFloat \c timeStep = (0.1)<br>
- *   @todo<br>
+ *   todo<br>
  *<br>
  * - SFFloat \c thickness = (1.0)<br>
  *   fluid thickness factor (only visual)<br>
  *<br>
  * - SFVec5f \c feedbackInformations = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
- *   @todo<br>
+ *   todo<br>
  *<br>
  * - SFFloat \c css = (1.0)<br>
- *   @todo<br>
+ *   todo<br>
  *<br>
  * - SFIImageShp \c fluidPositionFeedback = vgd::basic::IImageShp()<br>
- *   @todo<br>
+ *   todo<br>
  *<br>
  *
  * @ingroup g_nodes
