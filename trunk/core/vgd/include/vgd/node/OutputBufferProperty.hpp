@@ -215,12 +215,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		LUMINANCE_ALPHA = 333,	///< @todo
-		RGB = 330,	///< @todo
-		LUMINANCE = 332,	///< @todo
-		RGBA = 331,	///< @todo
+		LUMINANCE_ALPHA = 333,	///< todo
+		RGB = 330,	///< todo
+		LUMINANCE = 332,	///< todo
+		RGBA = 331,	///< todo
 		LUMINANCE_FOR_DEPTH = 334,	///< if type is INTEGER, then DEPTH_COMPONENT_24 is used.
-		DEFAULT_FORMAT = RGB	///< @todo
+		DEFAULT_FORMAT = RGB	///< todo
 	};
 
 	/**
@@ -335,13 +335,13 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		LINEAR_DEPTH = 342,	///< @todo
-		NORMAL = 339,	///< @todo
-		COLOR = 338,	///< @todo
-		CUSTOM = 343,	///< @todo
-		DEPTH = 341,	///< @todo
-		POSITION = 340,	///< @todo
-		DEFAULT_COMMAND = COLOR	///< @todo
+		LINEAR_DEPTH = 342,	///< todo
+		NORMAL = 339,	///< todo
+		COLOR = 338,	///< todo
+		CUSTOM = 343,	///< todo
+		DEPTH = 341,	///< todo
+		POSITION = 340,	///< todo
+		DEFAULT_COMMAND = COLOR	///< todo
 	};
 
 	/**
@@ -423,10 +423,10 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		FLOAT16 = 336,	///< @todo
-		INTEGER = 335,	///< @todo
-		FLOAT32 = 337,	///< @todo
-		DEFAULT_TYPE = INTEGER	///< @todo
+		FLOAT16 = 336,	///< todo
+		INTEGER = 335,	///< todo
+		FLOAT32 = 337,	///< todo
+		DEFAULT_TYPE = INTEGER	///< todo
 	};
 
 	/**

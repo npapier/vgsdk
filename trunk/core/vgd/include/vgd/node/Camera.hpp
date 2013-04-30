@@ -670,7 +670,7 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	enum  
 	{
 		MONOSCOPIC = 261,	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
-		ANAGLYPH = 263,	///< @todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera.
+		ANAGLYPH = 263,	///< todo Stereoscopic rendering using red/cyan anaglyph. All fields are used to define the camera.
 		QUAD_BUFFER = 262,	///< Stereoscopic rendering using quad buffer (i.e. active stereo using shutter glasses, or passive stereo using polarized projectors and glasses). Scene is viewer for left and right eyes. All fields are used to define the camera.
 		DEFAULT_MODE = MONOSCOPIC	///< Non stereoscopic rendering. Scene is viewed for the one eye located at \c lookAtLeft and projected with \c projectionLeft along eye direction on near plane. \c viewport and \c scissor fields are used to define the camera too.
 	};

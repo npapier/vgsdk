@@ -26,7 +26,7 @@ namespace node
 /**
  * @brief Abstract texture mapping node
  *
- * This node defines texture parameters (wrapping, filter for minifying and magnification, mipmapping and function). Be carefull, data referenced by image must be available when texture is update. This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface) and so on. @remarks When the scene graph is evaluated, there are size constraints on texture that you should keep in mind.\n When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage (to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n - Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping.\n - GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping.\n - GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce 8 could do 8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n - Radeon 5xxx/6xxx could do 16384^2 for 2D texturing, 8192^3 for 3D texturing and 16384^2 for cube mapping.\n - GeForce 5xx/Quadro 4xxx could do 16384^2 for 2D texturing, 2048^3 for 3D texturing and 16384^2 for cube mapping.\n @remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n @todo More docs\n 
+ * This node defines texture parameters (wrapping, filter for minifying and magnification, mipmapping and function). Be carefull, data referenced by image must be available when texture is update. This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface) and so on. @remarks When the scene graph is evaluated, there are size constraints on texture that you should keep in mind.\n When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage (to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n - Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping.\n - GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping.\n - GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce 8 could do 8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n - Radeon 5xxx/6xxx could do 16384^2 for 2D texturing, 8192^3 for 3D texturing and 16384^2 for cube mapping.\n - GeForce 5xx/Quadro 4xxx could do 16384^2 for 2D texturing, 2048^3 for 3D texturing and 16384^2 for cube mapping.\n @remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n 
  *
  * New fields defined by this node :
  * - OFFloat \c [maxAnisotropy] = (1.f)<br>
@@ -165,9 +165,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		WRAP_T = 429,	///< 
-		WRAP_S = 428,	///< 
-		WRAP_R = 430,	///< 
+		WRAP_T = 431,	///< 
+		WRAP_S = 430,	///< 
+		WRAP_R = 432,	///< 
 		DEFAULT_WRAPPARAMETER = WRAP_S	///< 
 	};
 
@@ -195,9 +195,9 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 428 );
-			retVal.push_back( 429 );
 			retVal.push_back( 430 );
+			retVal.push_back( 431 );
+			retVal.push_back( 432 );
 
 			return retVal;
 		}
@@ -219,12 +219,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		CLAMP = 432,	///< 
-		REPEAT = 431,	///< 
-		MIRRORED_REPEAT = 435,	///< 
-		CLAMP_TO_EDGE = 433,	///< 
-		CLAMP_TO_BORDER = 434,	///< 
-		ONCE = 436,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
+		CLAMP = 434,	///< 
+		REPEAT = 433,	///< 
+		MIRRORED_REPEAT = 437,	///< 
+		CLAMP_TO_EDGE = 435,	///< 
+		CLAMP_TO_BORDER = 436,	///< 
+		ONCE = 438,	///< Don't set texture coordinates outside the interval [0.f, 1.f]
 		DEFAULT_WRAP = REPEAT	///< 
 	};
 
@@ -252,12 +252,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 431 );
-			retVal.push_back( 432 );
 			retVal.push_back( 433 );
 			retVal.push_back( 434 );
 			retVal.push_back( 435 );
 			retVal.push_back( 436 );
+			retVal.push_back( 437 );
+			retVal.push_back( 438 );
 
 			return retVal;
 		}
@@ -402,8 +402,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		MIN_FILTER = 437,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
-		MAG_FILTER = 438,	///< Choose one value among NEAREST or LINEAR (default).
+		MIN_FILTER = 439,	///< Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR.
+		MAG_FILTER = 440,	///< Choose one value among NEAREST or LINEAR (default).
 		DEFAULT_FILTERPARAMETER = MAG_FILTER	///< Choose one value among NEAREST or LINEAR (default).
 	};
 
@@ -431,8 +431,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 437 );
-			retVal.push_back( 438 );
+			retVal.push_back( 439 );
+			retVal.push_back( 440 );
 
 			return retVal;
 		}
@@ -453,12 +453,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		NEAREST = 439,	///< 
-		LINEAR = 440,	///< 
-		LINEAR_MIPMAP_NEAREST = 442,	///< 
-		NEAREST_MIPMAP_NEAREST = 441,	///< 
-		LINEAR_MIPMAP_LINEAR = 444,	///< 
-		NEAREST_MIPMAP_LINEAR = 443,	///< 
+		NEAREST = 441,	///< 
+		LINEAR = 442,	///< 
+		LINEAR_MIPMAP_NEAREST = 444,	///< 
+		NEAREST_MIPMAP_NEAREST = 443,	///< 
+		LINEAR_MIPMAP_LINEAR = 446,	///< 
+		NEAREST_MIPMAP_LINEAR = 445,	///< 
 		DEFAULT_FILTER = LINEAR	///< 
 	};
 
@@ -486,12 +486,12 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 439 );
-			retVal.push_back( 440 );
 			retVal.push_back( 441 );
 			retVal.push_back( 442 );
 			retVal.push_back( 443 );
 			retVal.push_back( 444 );
+			retVal.push_back( 445 );
+			retVal.push_back( 446 );
 
 			return retVal;
 		}
@@ -589,19 +589,19 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		DEPTH_COMPONENT_16 = 416,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
-		RGB_32F = 421,	///< A three component buffer. A 32-bit float is used to encode a texel.
-		LUMINANCE_ALPHA_32F = 427,	///< A two component buffer. A 32-bit float is used to encode a texel.
-		LUMINANCE_16F = 424,	///< A single component buffer. A 16-bit float is used to encode a texel.
-		LUMINANCE_32F = 425,	///< A single component buffer. A 32-bit float is used to encode a texel.
-		RGBA_32F = 423,	///< A four component buffer. A 32-bit float is used to encode a texel.
-		DEPTH_COMPONENT_32F = 419,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
-		RGBA_16F = 422,	///< A four component buffer. A 16-bit float is used to encode a texel.
-		LUMINANCE_ALPHA_16F = 426,	///< A two component buffer. A 16-bit float is used to encode a texel.
-		DEPTH_COMPONENT_24 = 417,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
-		AUTOMATIC = 415,	///< Choosed automatically an internal format matching the image format used by the texture.
-		RGB_16F = 420,	///< A three component buffer. A 16-bit float is used to encode a texel.
-		DEPTH_COMPONENT_32 = 418,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
+		DEPTH_COMPONENT_16 = 418,	///< a single component buffer used to store depth. A 16-bit integer is used to encode a texel.
+		RGB_32F = 423,	///< A three component buffer. A 32-bit float is used to encode a texel.
+		LUMINANCE_ALPHA_32F = 429,	///< A two component buffer. A 32-bit float is used to encode a texel.
+		LUMINANCE_16F = 426,	///< A single component buffer. A 16-bit float is used to encode a texel.
+		LUMINANCE_32F = 427,	///< A single component buffer. A 32-bit float is used to encode a texel.
+		RGBA_32F = 425,	///< A four component buffer. A 32-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32F = 421,	///< a single component buffer used to store depth. A 32-bit float is used to encode a texel.
+		RGBA_16F = 424,	///< A four component buffer. A 16-bit float is used to encode a texel.
+		LUMINANCE_ALPHA_16F = 428,	///< A two component buffer. A 16-bit float is used to encode a texel.
+		DEPTH_COMPONENT_24 = 419,	///< a single component buffer used to store depth. A 24-bit integer is used to encode a texel.
+		AUTOMATIC = 417,	///< Choosed automatically an internal format matching the image format used by the texture.
+		RGB_16F = 422,	///< A three component buffer. A 16-bit float is used to encode a texel.
+		DEPTH_COMPONENT_32 = 420,	///< a single component buffer used to store depth. A 32-bit integer is used to encode a texel.
 		DEFAULT_INTERNALFORMAT = AUTOMATIC	///< Choosed automatically an internal format matching the image format used by the texture.
 	};
 
@@ -629,8 +629,6 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 415 );
-			retVal.push_back( 416 );
 			retVal.push_back( 417 );
 			retVal.push_back( 418 );
 			retVal.push_back( 419 );
@@ -642,6 +640,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 			retVal.push_back( 425 );
 			retVal.push_back( 426 );
 			retVal.push_back( 427 );
+			retVal.push_back( 428 );
+			retVal.push_back( 429 );
 
 			return retVal;
 		}
@@ -698,8 +698,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		IMAGE = 413,	///< Simple image mapping
-		SHADOW = 414,	///< Shadow mapping
+		IMAGE = 415,	///< Simple image mapping
+		SHADOW = 416,	///< Shadow mapping
 		DEFAULT_USAGE = IMAGE	///< Simple image mapping
 	};
 
@@ -727,8 +727,8 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 413 );
-			retVal.push_back( 414 );
+			retVal.push_back( 415 );
+			retVal.push_back( 416 );
 
 			return retVal;
 		}
