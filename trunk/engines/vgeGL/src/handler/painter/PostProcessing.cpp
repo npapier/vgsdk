@@ -699,7 +699,7 @@ std::pair< std::string, std::string > PostProcessing::getFilter( vgd::node::Post
 			// @todo documentation for all conventions in shaders (texture.function, PostProcesing.custom*...)
 			// @todo doc about the predefined functions (horizKernel13 + ... + colorEdgeDetect)
 			return std::make_pair(	horizKernel13 + vertKernel13 + kernel4 + gaussianWeights13 +
-									saturate + texture2DBilinear + colorToMonochrome + blurHoriz + blurVert + bloomHoriz + bloomVert + colorEdgeDetect + applyMedian3x3 +
+									saturate + texture2DBilinear + colorToMonochrome + blurHoriz + blurVert + bloomHoriz + bloomVert + colorEdgeDetect + median3x3 +
 									definition, apply );
 		}
 	}
