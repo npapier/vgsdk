@@ -1,5 +1,9 @@
 /**
- * @mainpage Versatile Graphical Software Development Kit (vgSDK)
+ * @if vgsdk
+ * 		@mainpage Versatile Graphical Software Development Kit (vgSDK)
+ * @else
+ * 		@page Versatile Graphical Software Development Kit (vgSDK)
+ * @endif
  *
  * \image html vgsdk.png
  * 
