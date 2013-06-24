@@ -4,4 +4,3 @@ type		= 'shared'
 version		= '0-5'
 uses		= [ 'glm' ]
 deps		= ['../vgBase']
-libs		= ['vgDebug 0-5']
