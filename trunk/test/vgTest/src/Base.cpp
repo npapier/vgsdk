@@ -1,106 +1,95 @@
-// VGSDK - Copyright (C) 2009, 2010, 2012, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2010, 2012, 2013, Maxime Peresson, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #include "vgTest/Base.hpp"
 
 #include <boost/filesystem/operations.hpp>
-
 #include <gtest/gtest.h>
+#include "vgTest/convenience.hpp"
+#include "vgTest/Logging.hpp"
 
-#include <sbf/pkg/Module.hpp>
-#include <vgTest/convenience.hpp>
 
 
 namespace vgTest
 {
 
-Base::Base()
-:	m_quit ( false ),
-	m_filename( "test" ),
-	m_fileCounter( -1 ),
-	m_log( new Logging ),
-	m_screenshotFrequency ( 1 )
-{
-}
 
-Base::Base(const std::string& filename)
+Base::Base(const std::string filename, const boost::shared_ptr< sbf::pkg::Module > module )
 :	m_quit ( false ),
 	m_filename( filename ),
+	m_datedFilename( vgTest::getDatedImageName( filename ) ),
 	m_fileCounter( -1 ),
+	m_screenshotFrequency ( 1 ),
 	m_log( new Logging ),
-	m_screenshotFrequency ( 1 )
-{
-	m_datedFilename = vgTest::getDatedImageName(m_filename);
-}
+	m_module( module )
+{}
+
 
 Base::~Base()
 {
 	m_log.reset();
 }
 
-void Base::setQuit(const bool b)
+
+void Base::setQuit( const bool b )
 {
 	m_quit = b;
 }
+
 
 vgd::Shp< vgTest::Logging > Base::getLog()
 {
 	return m_log;
 }
 
-const std::string Base::getReferencePath() const
+
+const boost::filesystem::path Base::getReferencePath() const
 {
-	// @todo Replace the hard coded path
-	boost::filesystem::path path = sbf::pkg::Module::get("vgUI","0-5")->getPath(sbf::pkg::VarPath) / "references/";
+	namespace bfs = boost::filesystem;
+	const bfs::path path = m_module->getPath(sbf::pkg::VarPath) / "references";
 
-	if (boost::filesystem::create_directories(path.string()))
-	{
-		std::cout << "Reference path created" << std::endl;
-	}
-
-	return path.string();
+	return path;
 }
 
-const std::string Base::getScreenShotPath() const
-{
-	// @todo Replace the hard coded path
 
-	boost::filesystem::path path = sbf::pkg::Module::get("vgUI","0-5")->getPath(sbf::pkg::VarPath) / "screenshots/";
-	return path.string();
+const boost::filesystem::path Base::getScreenShotPath() const
+{
+	namespace bfs = boost::filesystem;
+	const bfs::path path = m_module->getPath(sbf::pkg::VarPath) / "screenshots";
+
+	return path;
 }
 
-const std::string Base::getDifferencePath() const
+
+const boost::filesystem::path Base::getDifferencePath() const
 {
-	// @todo Replace the hard coded path
-	boost::filesystem::path path = sbf::pkg::Module::get("vgUI","0-5")->getPath(sbf::pkg::VarPath) / "differences/";
+	namespace bfs = boost::filesystem;
+	const bfs::path path = m_module->getPath(sbf::pkg::VarPath) / "differences";
 
-	if (boost::filesystem::create_directories(path.string()))
-	{
-		std::cout << "Differences path created" << std::endl;
-	}
-
-	return path.string();	
+	return path;
 }
+
 
 const std::string Base::getImagesPath(const bool diff) const
 {
-	std::string imagePath = "references="+getReferencePath() + ";" + m_filename;
-	imagePath += "|screenshots="+getScreenShotPath() + ";" + m_datedFilename;
+	std::string imagePath = "references="+getReferencePath().string() + ";" + m_filename;
+	imagePath += "|screenshots="+getScreenShotPath().string() + ";" + m_datedFilename;
 
 	if (diff)
 	{
-		imagePath += "|differences="+getDifferencePath() + ";" + m_datedFilename;
+		imagePath += "|differences="+getDifferencePath().string() + ";" + m_datedFilename;
 	}
 	return imagePath;
 }
 
-const std::string	Base::getImagesPath(const std::list<int>& diff) const
+const std::string Base::getImagesPath(const std::list<int>& diff) const
 {
-	std::string references = "references="+getReferencePath() + ";";
-	std::string screenshots = "|screenshots="+getScreenShotPath() + ";";
+	std::string references = "references="+getReferencePath().string() + ";";
+	std::string screenshots = "|screenshots="+getScreenShotPath().string() + ";";
 	std::string differences = "";
 	for (int i = 0; i <= m_fileCounter; i++)
 	{
@@ -110,7 +99,7 @@ const std::string	Base::getImagesPath(const std::list<int>& diff) const
 	
 	if(!diff.empty()) 
 	{
-		differences = "|differences="+getDifferencePath() + ";";
+		differences = "|differences="+getDifferencePath().string() + ";";
 
 		std::list<int>::const_iterator it; 
 		for(it=diff.begin();it!=diff.end();it++)
@@ -121,7 +110,7 @@ const std::string	Base::getImagesPath(const std::list<int>& diff) const
 	return references + screenshots + differences;
 }
 
-const std::string	Base::getScreenShotName() const
+const std::string Base::getScreenShotName() const
 {
 	return m_filename;
 }
@@ -131,21 +120,34 @@ const std::string	Base::getDatedScreenShotName() const
 	return m_datedFilename;
 }
 
-const std::string	Base::getCountedDatedScreenShotName(bool n)
+const std::string Base::getCountedDatedScreenShotName(const bool n)
 {
 	if (n || m_fileCounter < 0)
 	{
 		++m_fileCounter;
 	}
-	std::string filename =  vgTest::getNumberedImageName(m_datedFilename, m_fileCounter);
+	const std::string filename = vgTest::getNumberedImageName(m_datedFilename, m_fileCounter);
 
 	return filename;
 }
+
+const std::string Base::getCountedScreenShotName(const bool n)
+{
+	if (n || m_fileCounter < 0)
+	{
+		++m_fileCounter;
+	}
+	const std::string filename = vgTest::getNumberedImageName(getScreenShotName(), m_fileCounter);
+
+	return filename;
+}
+
 
 const int Base::getFileCounter() const
 {
 	return m_fileCounter;
 }
+
 
 const int Base::getScreenshotFrenquency() const
 {
@@ -167,17 +169,21 @@ void Base::compareScreenShots() const
 {
 	std::list<int> differences;
 	for (int i = 0; i <= m_fileCounter; i++)
-	{		
-		if (!boost::filesystem::exists(getReferencePath() + vgTest::getNumberedImageName(getScreenShotName(), i)))
+	{
+		namespace bfs=boost::filesystem;
+		const bfs::path referencePathfilename( getReferencePath() / vgTest::getNumberedImageName(getScreenShotName(), i) );
+		if (!boost::filesystem::exists(referencePathfilename) )
 		{
-			FAIL() << "REFERENCES FILES : " + getReferencePath() + vgTest::getNumberedImageName(getScreenShotName(), i) + " IS NOT CREATED";
-		}			
-		
+			FAIL() << "REFERENCES FILES : " + referencePathfilename.string() + " IS NOT CREATED";
+		}
+
 		SCOPED_TRACE("Screenshot : " + vgTest::getNumberedImageName(getDatedScreenShotName(), i) + " Reference : " +  vgTest::getNumberedImageName(getScreenShotName(), i)); 
 
-		int diff = vgTest::compare(getReferencePath() + vgTest::getNumberedImageName(getScreenShotName(), i),
-			getScreenShotPath() + vgTest::getNumberedImageName(getDatedScreenShotName(), i),
-			getDifferencePath() + vgTest::getNumberedImageName(getDatedScreenShotName(), i));
+		const bfs::path screenshotPathfilename( getScreenShotPath() / vgTest::getNumberedImageName(getDatedScreenShotName(), i) );
+		const bfs::path differencePathfilename( getDifferencePath() / vgTest::getNumberedImageName(getDatedScreenShotName(), i) );
+		const int diff = vgTest::compare(	referencePathfilename.string(),
+											screenshotPathfilename.string(),
+											differencePathfilename.string() );
 
 		EXPECT_EQ( diff, 0 );
 
@@ -190,13 +196,6 @@ void Base::compareScreenShots() const
 	m_log->add("ImagePath", getImagesPath(differences));
 }
 
-void Base::moveToReference() const
-{
-	for (int i = 0; i <= m_fileCounter; i++)
-	{
-		vgTest::moveTo(getScreenShotPath() + vgTest::getNumberedImageName(getDatedScreenShotName(), i),
-			getReferencePath() + vgTest::getNumberedImageName(getScreenShotName(), i));
-	}
-}
+
 
 } // namespace vgTest

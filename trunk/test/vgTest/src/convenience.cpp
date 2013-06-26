@@ -23,6 +23,7 @@
 namespace vgTest
 {
 
+
 void moveTo(std::string from, std::string to)
 {
 	if (boost::filesystem::exists(to))
@@ -31,6 +32,7 @@ void moveTo(std::string from, std::string to)
 	}
 	boost::filesystem::rename(from, to);
 }
+
 
 int compare(std::string pathRef, std::string pathCap, std::string pathDif)
 {
@@ -102,18 +104,17 @@ int compare(std::string pathRef, std::string pathCap, std::string pathDif)
 		pdif += differenceImage->components();
 	}
 	
-	if( boost::filesystem::exists( pathDif ) )
-	{
-		boost::filesystem::remove( pathDif );
-	}
+	if( boost::filesystem::exists( pathDif ) )		boost::filesystem::remove( pathDif );
+
 	if( different > 0 )
 	{
 		std::cout << "Creating differences image: " << pathDif << std::endl;
 		differenceImage->save(pathDif);
 	}
-	
+
 	return different;
 }
+
 
 std::string getImageName(std::string testName)
 {
@@ -122,12 +123,14 @@ std::string getImageName(std::string testName)
 	return testName + ".png";
 }
 
+
 std::string getImageName()
 {
 	const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
 	const std::string filename = getImageName( test_info->name() );
 	return filename;
 }
+
 
 std::string getDatedImageName(std::string filename)
 {
@@ -147,6 +150,7 @@ std::string getDatedImageName(std::string filename)
 	return filename + ".png";
 }
 
+
 std::string getNumberedImageName(std::string filename, int number)
 {
 	boost::replace_all(filename, "/", "-");
@@ -160,6 +164,7 @@ std::string getNumberedImageName(std::string filename, int number)
 	return filename + "_" + zero + out.str() + ".png";
 }
 
+
 std::list< std::string > createModelList( std::string dir )
 {
 	boost::filesystem::path path;
@@ -172,5 +177,6 @@ std::list< std::string > createModelList( std::string dir )
 	collector.run();
 	return collector.getStringFilenames();
 }
+
 
 } //namespace vgTest
