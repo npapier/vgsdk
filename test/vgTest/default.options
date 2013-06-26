@@ -4,5 +4,5 @@ type				= 'shared'
 version				= '0-5'
 libs				= [ 'sbf 0-0', 'vgd 0-5', 'vgio 0-5' ]
 deps				= [ '../../core/vgd', '../../io/vgio' ]
-uses				= [ 'boost', 'gtest' ]
+uses				= [ 'boost' ]
 test				= 'gtest'

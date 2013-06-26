@@ -7,7 +7,7 @@
 #define _VGTEST_VGTEST_HPP
 
 /**
- * @defgroup g_vgTest vgTest - (V)ersatile (G)raphical (T)est framework
+ * @defgroup g_vgTest vgTest - (V)ersatile (G)raphical (Test) framework
  */
 
 
@@ -41,16 +41,11 @@
 /** 
  * @namespace vgTest
  * 
- * @brief (V)ersatile (G)raphical (T)est framework
+ * @brief (V)ersatile (G)raphical (Test) framework
  *
  * vgTest is the shared test library of vgsdk.
  * 
  * \b vgTest is open source (LGPL).
  */
-
-// namespace vgTest
-// {
-
-// } // namespace vgTest
 
 #endif // _VGTEST_VGTEST_HPP

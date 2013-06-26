@@ -7,10 +7,10 @@
 #ifndef _VGTEST_CONVENIENCE_HPP
 #define _VGTEST_CONVENIENCE_HPP
 
-#include "vgTest/vgTest.hpp"
-
 #include <iostream>
 #include <list>
+
+#include "vgTest/Logging.hpp"
 
 
 /**
@@ -20,7 +20,7 @@ namespace vgTest
 {
 
 /**
- * @brief Move the file to another directory. Used to move screenshot to reference dir.
+ * @brief Move the file to another directory. Used to move screenshot to reference directory.
  */
 VGTEST_API void moveTo(std::string from, std::string to);
 
@@ -61,6 +61,7 @@ VGTEST_API std::string getNumberedImageName(std::string filename, int number);
  * @return list of file path
  */
 VGTEST_API std::list< std::string > createModelList( std::string dir = "" );
+
 
 } //namespace vgTest
 
