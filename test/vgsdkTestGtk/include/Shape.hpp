@@ -75,7 +75,7 @@ TEST_P(VgTestShape, DISABLED_PerformanceShapeTest)
 	// run GTK
 	base->run();
 
-	if (vgsdkTestGtk::vgTest::getCreateReference())
+	/*if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
 		base->moveToReference();
 	}
@@ -83,7 +83,7 @@ TEST_P(VgTestShape, DISABLED_PerformanceShapeTest)
 	{
 		// do the test
 		base->compareScreenShots();
-	}
+	}*/
 
 	base->getLog()->addToGtest();
 }
@@ -115,7 +115,7 @@ TEST_F(VgTestShape, DISABLED_StaticShapeTest)
 	// run GTK
 	base->run();
 	
-	if (vgsdkTestGtk::vgTest::getCreateReference())
+	/*if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
 		base->moveToReference();
 	}
@@ -123,7 +123,7 @@ TEST_F(VgTestShape, DISABLED_StaticShapeTest)
 	{
 		// do the test
 		base->compareScreenShots();
-	}
+	}*/
 	
 	base->getLog()->addToGtest();
 }

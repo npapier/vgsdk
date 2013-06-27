@@ -57,7 +57,7 @@ TEST_P(VgTestCompression, DISABLED_LoadTest)
 	//run GTK
 	base->run();
 
-	if (vgsdkTestGtk::vgTest::getCreateReference())
+	/*if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
 		base->moveToReference();
 	}
@@ -65,7 +65,7 @@ TEST_P(VgTestCompression, DISABLED_LoadTest)
 	{
 		// do the test
 		base->compareScreenShots();
-	}
+	}*/
 
 	base->getLog()->addToGtest();
 }

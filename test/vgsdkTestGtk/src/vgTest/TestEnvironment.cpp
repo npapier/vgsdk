@@ -15,6 +15,7 @@
 namespace vgsdkTestGtk
 {
 
+
 namespace vgTest
 {
 
@@ -24,32 +25,33 @@ TestEnvironment::TestEnvironment( int argc, char **argv )
 	m_argv( argv )
 {}
 
-	TestEnvironment::~TestEnvironment()
-	{
-		//assert(false); // @todo really called ?
-	}
-	
-	void TestEnvironment::SetUp()
-	{
-		// Glib thread system initialization.
-		Glib::thread_init();
 
-		// Initializes the gtk system.
-		m_kit = new Gtk::Main( m_argc, m_argv );
+TestEnvironment::~TestEnvironment()
+{}
 
-		// Installs the GTK-based logging.
-		sbf::log::set< vgGTK::Logging >();
 
-		// Another initialization thing.
-		vgGTK::event::initSDL();
+void TestEnvironment::SetUp()
+{
+	// Glib thread system initialization.
+	Glib::thread_init();
 
-		// Set the human readable name of the application.
-		Glib::set_application_name("vgsdkTestGtk");
-	}
+	// Initializes the gtk system.
+	m_kit = new Gtk::Main( m_argc, m_argv );
 
-	void TestEnvironment::TearDown()
-	{
-	}
+	// Installs the GTK-based logging.
+	sbf::log::set< vgGTK::Logging >();
+
+	// Another initialization thing.
+	vgGTK::event::initSDL();
+
+	// Set the human readable name of the application.
+	Glib::set_application_name("vgsdkTestGtk");
+}
+
+
+void TestEnvironment::TearDown()
+{}
+
 
 } // namespace vgTest
 

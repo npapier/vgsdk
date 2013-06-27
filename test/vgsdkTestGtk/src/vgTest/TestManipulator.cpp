@@ -6,11 +6,10 @@
 #include "vgsdkTestGtk/vgTest/TestManipulator.hpp"
 
 #include <limits>
-
-#include <vgeGL/engine/Engine.hpp>
 #include <vgd/basic/Image.hpp>
 #include <vgd/basic/Time.hpp>
 #include <vgd/basic/TimeDuration.hpp>
+#include <vgeGL/engine/Engine.hpp>
 
 #include "vgsdkTestGtk/vgTest/ShapePerformanceTest.hpp"
 
@@ -20,57 +19,65 @@ namespace vgsdkTestGtk
 namespace vgTest
 {
 
-TestManipulator::TestManipulator() 
-:	m_type( vgsdkTestGtk::vgTest::NOTHING ),
+
+TestManipulator::TestManipulator()
+:	m_type( vgsdkTestGtk::vgTest::NOTHING ), 
+	m_base(0),
 	m_perf( false ),
 	m_screenShot( false ),
+	//m_customPerf
 	m_minDuration( std::numeric_limits<uint>::max() ),
 	m_maxDuration( std::numeric_limits<uint>::min() ),
 	m_averageDuration( 0 )
-{
-	//vgUI::BasicManipulator::BasicManipulator();
-}
+{}
+
 
 TestManipulator::TestManipulator( Canvas * pSharedCanvas )
 :	vgUI::BasicManipulator( pSharedCanvas ), 
 	m_type( vgsdkTestGtk::vgTest::NOTHING ), 
+	m_base(0),
 	m_perf( false ),
 	m_screenShot( false ),
+	//m_customPerf
 	m_minDuration( std::numeric_limits<uint>::max() ),
 	m_maxDuration( std::numeric_limits<uint>::min() ),
 	m_averageDuration( 0 )
+{}
+
+
+void TestManipulator::setType(const vgsdkTestGtk::vgTest::testType type)
 {
+	m_type = type;
 }
 
-TestManipulator::~TestManipulator()
+
+void TestManipulator::setBase(vgsdkTestGtk::vgTest::myBase *base)
 {
+	m_base = base;
 }
 
-void TestManipulator::setType(const vgsdkTestGtk::vgTest::testType t)
-{
-	m_type = t;
-}
-
-void TestManipulator::setBase(vgsdkTestGtk::vgTest::myBase *l)
-{
-	m_base = l;
-}
 
 void TestManipulator::setCustomPerf(const vgd::Shp<vgsdkTestGtk::vgTest::CustomPerformanceTest> customPerf)
 {
 	m_customPerf = customPerf;
 }
 
-//
+
 // Overriden from BasicManipulator
-//
 void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox)
 {
 	if (m_type == vgsdkTestGtk::vgTest::SCREENSHOT || m_type == vgsdkTestGtk::vgTest::SCREENSHOT_PERFORMANCE)
 	{
 		if (m_screenShot == false)
 		{
-			scheduleScreenshot(m_base->getCountedDatedScreenShotName());
+			if ( getCreateReference() )
+			{
+				scheduleScreenshot( m_base->getCountedScreenShotName(), sbf::pkg::Module::get(), "references" );
+			}
+			else
+			{
+				scheduleScreenshot( m_base->getCountedDatedScreenShotName(), sbf::pkg::Module::get(), "screenshots" );
+			}
 			m_screenShot = true;
 		}
 
@@ -85,12 +92,7 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 			}
 
 			vgd::basic::Time time;
-			
-		#ifdef _DEBUG
 			const uint testDuration = 1000;
-		#else
-			const uint testDuration = 1000;
-		#endif
 
 			vgd::basic::TimeDuration endTime(time.getElapsedTime().milliSeconds() + testDuration);
 
@@ -153,6 +155,7 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 		m_base->setQuit(true);
 	}
 }
+
 
 } // namespace vgTest
 

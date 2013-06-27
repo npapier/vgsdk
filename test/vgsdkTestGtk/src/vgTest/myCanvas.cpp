@@ -36,7 +36,8 @@ namespace vgTest
 myCanvas::myCanvas()
 {
 	// Initial window size
-	set_size_request( 1024, 768 );
+	//set_size_request( 1024, 768 );
+	set_size_request( 640, 480 );
 
 	// Configures engine
 	getGLEngine()->setGLSLEnabled();

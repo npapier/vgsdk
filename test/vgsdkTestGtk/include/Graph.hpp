@@ -6,32 +6,24 @@
 #ifndef _VGTEST_GRAPH_HPP
 #define _VGTEST_GRAPH_HPP
 
-#include <gtest/gtest.h>
-
 #include <vgd/node/Group.hpp>
 #include <vgd/ScopedPtr.hpp>
-#include <vgd/Shp.hpp>
 #include <vgTest/convenience.hpp>
 
 #include "Fixtures.hpp"
+#include "gtest.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
 
-
 /**
-* @brief VgTestGraph testsuite
-*/
-
-
-/**
-* @brief	Search an object in a scene graph
-*			Test when there is a loop in the scene graph
-*/
+ * @brief	Search an object in a scene graph
+ *			Test when there is a loop in the scene graph
+ */
 TEST(VgTestGraph, SearchInSceneGraph)
-{	
+{
 	RecordProperty("Description", "Search an object in a scene graph. Test when there is a loop in the scene graph");
-	
+
 	//Create / prepare scene
 	vgd::Shp<vgd::node::Group> root = vgd::node::Group::create("root");
 	vgd::Shp<vgd::node::Group> n1 = vgd::node::Group::create("n1");
@@ -45,12 +37,12 @@ TEST(VgTestGraph, SearchInSceneGraph)
 	n1->addChild(n12);
 
 	vgd::Shp<vgd::node::VertexShape> vs = vgd::node::VertexShape::create("Test");
-	
+
 	n12->addChild(vs);
 
 	//Test
 	vgd::Shp<vgd::node::VertexShape> vsOk = vgd::visitor::findFirstByName< vgd::node::VertexShape >(root, "Test");
-	EXPECT_EQ(vs, vsOk);	
+	EXPECT_EQ(vs, vsOk);
 
 	vgd::Shp<vgd::node::VertexShape> vsEmpty = vgd::visitor::findFirstByName< vgd::node::VertexShape >(root, "find nothing");
 	EXPECT_NE(vs, vsEmpty);

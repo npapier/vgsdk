@@ -6,14 +6,12 @@
 
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 
-#include <boost/algorithm/string.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/filesystem.hpp>
 
-#include <sstream>
-#include <vgd/basic/Image.hpp>
-#include <vgd/Shp.hpp>
-#include <vgio/FilenameCollector.hpp>
+
+namespace
+{
+	bool createReference = false;
+}
 
 
 namespace vgsdkTestGtk
@@ -22,15 +20,18 @@ namespace vgsdkTestGtk
 namespace vgTest
 {
 
+
 bool getCreateReference()
 {
 	return createReference;
 }
 
+
 void setCreateReference(bool createRef)
 {
 	createReference = createRef;
 }
+
 
 std::vector<vgsdkTestGtk::vgTest::Performance> getPerformance(const std::vector<int> level, 
 										const std::vector<vgd::node::VertexShape::DeformableHintValueType> deformableHint, 
@@ -55,4 +56,3 @@ std::vector<vgsdkTestGtk::vgTest::Performance> getPerformance(const std::vector<
 } //namespace vgTest
 
 } //namespace vgsdkTestGtk
-

@@ -22,7 +22,8 @@ namespace vgsdkTestGtk
 namespace vgTest
 {
 	struct myCanvas;
-	
+
+
 struct myBase : public ::vgTest::Base
 {
 	/**
@@ -36,45 +37,50 @@ struct myBase : public ::vgTest::Base
 	 * @param screenShot true take screeshot
 	 * @param name the screenshot name
 	 */
-	myBase(const std::string filename, const vgsdkTestGtk::vgTest::testType t);
+	myBase(const std::string filename, const vgsdkTestGtk::vgTest::testType type);
 
 	virtual ~myBase();
 
+
 	/**
-	 * @brief Run the Gtk main loop
+	 * @name Overridden methods
 	 */
-	void								run();
+	//@{
+	void run();
+	bool quit();
+	//@}
+
+
+	/**
+	 * @name Helpers
+	 */
+	//@{
+
+	/**
+	 * @brief Return the current canvas
+	 */
+	myCanvas *getCanvas() { return m_canvas; }
 
 	/**
 	 * @brief Add an object to the scene
 	 * 
 	 * @param the object file name
 	 */
-	void								addObject(const std::string filename);
+	void addObject(const std::string filename);
 
 	/**
 	 * @brief Add a node to the scene
 	 * 
 	 * @param node	the node to add
 	 */
-	void								addObject( const vgd::Shp<vgd::node::Node > node );
+	void addObject( const vgd::Shp<vgd::node::Node > node );
 
 	/**
 	 * @brief Add a list of node to the scene
 	 * 
 	 * @param nodeList	the nodes to add
 	 */
-	void								addObject(const std::list< vgd::Shp<vgd::node::Node> > nodeList );
-
-	/**
-	 * @brief Quit the Gtk main loop and destroy the canvas and window
-	 */
-	bool								quit();
-
-	/**
-	 * @brief Return the current canvas
-	 */
-	myCanvas							*getCanvas();
+	void addObject(const std::list< vgd::Shp<vgd::node::Node> > nodeList );
 
 	/**
 	 * @brief Return the setup from canvas
@@ -89,13 +95,13 @@ struct myBase : public ::vgTest::Base
 
 
 private:
-	
 	void								prerun();
+
 	/**
 	 * @brief Prerun the Gtk application : create canvas and window
 	 * @param true to take screenshot in the paint function
 	 */
-	void								prerun(const vgsdkTestGtk::vgTest::testType t);
+	void								prerun(const vgsdkTestGtk::vgTest::testType type /*= vgsdkTestGtk::vgTest::NOTHING*/ );
 
 
 	Gtk::Window							*m_window;
@@ -111,4 +117,3 @@ private:
 } //namespace vgsdkTestGtk
 
 #endif // #ifndef _VGSDKTESTGTK_VGTEST_MYBASE_HPP
-

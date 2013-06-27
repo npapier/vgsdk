@@ -6,8 +6,8 @@
 #ifndef _VGSDKTESTGTK_VGTEST_TESTMANIPULATOR_HPP
 #define _VGSDKTESTGTK_VGTEST_TESTMANIPULATOR_HPP
 
-#include <vgUI/BasicManipulator.hpp>
 #include <vgTest/convenience.hpp>
+#include <vgUI/BasicManipulator.hpp>
 
 #include "vgsdkTestGtk/vgTest/CustomPerformanceTest.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
@@ -22,22 +22,21 @@ namespace vgTest
 {
 
 /**
- * @brief Canvas for tests.
+ * @brief Canvas for tests
  */
 struct TestManipulator : public vgUI::BasicManipulator
 {
 	/**
-	 * @name Construction and initialisation.
+	 * @name Construction and initialisation
 	 */
 	//@{
 	/**
-	 * @brief Constructor.
+	 * @brief Constructor
 	 */
 	TestManipulator();
-	~TestManipulator();
 
-	void setType(const vgsdkTestGtk::vgTest::testType t);
-	void setBase(vgTest::myBase *l);
+	void setType(const vgsdkTestGtk::vgTest::testType type);
+	void setBase(vgTest::myBase * base);
 	void setCustomPerf(const vgd::Shp<vgsdkTestGtk::vgTest::CustomPerformanceTest> customPerf);
 
 	/**
@@ -49,10 +48,9 @@ struct TestManipulator : public vgUI::BasicManipulator
 	//@}
 
 	/**
-	 * @brief Function paint.
+	 * @brief Overriden
 	 */
 	void paint(const vgm::Vec2i size, const bool bUpdateBoundingBox);
-	//@}
 
 private :
 	vgsdkTestGtk::vgTest::testType							m_type;
