@@ -28,94 +28,6 @@
 #include <vgeGL/engine/Engine.hpp>
 
 
-
-/**
- * @brief Two shapes. First with a texture. Second without.
- */
-TEST(vgsdkNodeTestingSuite, TextureMappingPropagation)
-{
-	const ::testing::TestInfo* const test_info =
-	  ::testing::UnitTest::GetInstance()->current_test_info();
-
-	std::string filename = vgTest::getImageName(test_info->name());
-
-	// prerun Gtk
-	vgd::Shp< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );
-
-	base->getLog()->add("Description", "Test texture mapping propagation");
-
-	// prepare scene
-
-	// texture
-	using vgd::node::Texture;
-	vgd::Shp< vgd::node::Texture2D > blackTexture = vgd::node::Texture2D::create( "black" );
-	blackTexture->setWrap( Texture::WRAP_S, Texture::REPEAT );
-	blackTexture->setWrap( Texture::WRAP_T, Texture::REPEAT );
-	blackTexture->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-	blackTexture->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
-	blackTexture->sethFunction( Texture::FUN_MODULATE );
-
-	using vgd::basic::Image;
-	uint8 imageData = 0;
-	vgd::Shp< Image > image( new Image( 1, 1, 1, Image::LUMINANCE, Image::UINT8, &imageData ) );
-	blackTexture->setImage( image );
-
-	// First shape
-	using vgd::node::Quad;
-	vgd::Shp< Quad > quad1 = Quad::create("quad1");
-	quad1->initializeGeometry( 10.f, 10.f );
-	quad1->initializeTexUnits();
-
-	using vgd::node::Material;
-	vgd::Shp< Material > mat1 = Material::create("red");
-	mat1->setDiffuse( vgm::Vec3f( 1.f, 0.f, 0.f ) );
-
-	base->addObject( blackTexture );
-	base->addObject( mat1 );
-	base->addObject( quad1 );
-
-	// Second shape
-	vgd::Shp< Quad > quad2 = Quad::create("quad2");
-	quad2->initializeGeometry( 5.f, 5.f );
-	quad2->transform( vgm::Vec3f(0.f, 0.f, 10.f) );
-
-	using vgd::node::Material;
-	vgd::Shp< Material > mat2 = Material::create("green");
-	mat2->setDiffuse( vgm::Vec3f( 0.f, 1.f, 0.f ) );
-
-	base->addObject( mat2 );
-	base->addObject( quad2 );
-
-	//
-	base->getCanvas()->viewAll();
-
-	//run GTK
-	base->run();
-
-	// Finalized test
-	if (vgsdkTestGtk::vgTest::getCreateReference())
-	{
-		base->moveToReference();
-	}
-	else
-	{
-		// do the test
-		base->compareScreenShots();
-	}
-
-	base->getLog()->addToGtest();
-}
-
-
-
-
-
-
-
-
-
-
-
 /**
  * @brief Vertex coloring test
  * @todo Generalized => RenderingTest (others PerfTest... )
@@ -202,7 +114,7 @@ TEST(vgsdkNodeTestingSuite, DISABLED_PerVertexColoring)
 	base->run();
 
 	// Finalized test
-	if (vgsdkTestGtk::vgTest::getCreateReference())
+	/*if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
 		base->moveToReference();
 	}
@@ -210,7 +122,7 @@ TEST(vgsdkNodeTestingSuite, DISABLED_PerVertexColoring)
 	{
 		// do the test
 		base->compareScreenShots();
-	}
+	}*/
 
 	base->getLog()->addToGtest();
 }
@@ -244,7 +156,7 @@ TEST_P(VgTestModel, DISABLED_CompareTest)
 	//run GTK
 	base->run();
 
-	if (vgsdkTestGtk::vgTest::getCreateReference())
+	/*if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
 		base->moveToReference();
 	}
@@ -252,7 +164,7 @@ TEST_P(VgTestModel, DISABLED_CompareTest)
 	{
 		// do the test
 		base->compareScreenShots();
-	}
+	}*/
 
 	base->getLog()->addToGtest();
 }
@@ -282,7 +194,7 @@ TEST_P(VgTestModel, DISABLED_PerformanceModelTest)
 	//run GTK
 	base->run();
 
-	if (vgsdkTestGtk::vgTest::getCreateReference())
+	/*if (vgsdkTestGtk::vgTest::getCreateReference())
 	{
 		base->moveToReference();
 	}
@@ -290,7 +202,7 @@ TEST_P(VgTestModel, DISABLED_PerformanceModelTest)
 	{
 		// do the test
 		base->compareScreenShots();
-	}
+	}*/
 
 	base->getLog()->addToGtest();
 }

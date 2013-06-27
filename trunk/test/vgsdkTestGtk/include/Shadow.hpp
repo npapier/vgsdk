@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,11 +7,10 @@
 #define _VGSDKTESTGTK_SHADOW_HPP
 
 #include "gtest.hpp"
+#include "helpers.hpp"
 #include <vgTest/convenience.hpp>
 
 #include "Fixtures.hpp"
-#include "vgsdkTestGtk/vgTest/myBase.hpp"
-#include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
 // vgsdkNodeTestingSuite
 #include <vgd/node/Quad.hpp>
@@ -34,6 +33,7 @@ TEST_P(VgTestShadow, ShadowMapping)
 	// prerun Gtk
 	vgd::Shp< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );
 
+// @todo log()-add()
 	std::string description("Rendering 4 spheres and a quad with shadow mapping");
 
 	using vgd::node::LightModel;
@@ -65,6 +65,7 @@ TEST_P(VgTestShadow, ShadowMapping)
 	const int lightModelIndex = base->getCanvas()->getSetup()->findChild( lightModel );
 	base->getCanvas()->getSetup()->insertChild( spot, lightModelIndex );
 
+	//
 	using vgd::node::Quad;
 	using vgd::node::Material;
 	using vgd::node::Sphere;
@@ -121,17 +122,6 @@ TEST_P(VgTestShadow, ShadowMapping)
 
 	//run GTK
 	base->run();
-
-	// Finalized test
-	if ( vgsdkTestGtk::vgTest::getCreateReference() )
-	{
-		base->moveToReference();
-	}
-	else
-	{
-		// do the test
-		base->compareScreenShots();
-	}
 
 	base->getLog()->addToGtest();
 }

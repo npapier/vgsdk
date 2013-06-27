@@ -6,7 +6,6 @@
 #ifndef _VGSDKTESTGTK_VGTEST_CONVENIENCE_HPP
 #define _VGSDKTESTGTK_VGTEST_CONVENIENCE_HPP
 
-#include <iostream>
 #include <vector>
 #include <vgd/node/VertexShape.hpp>
 
@@ -21,9 +20,7 @@ namespace vgsdkTestGtk
 namespace vgTest
 {
 
-enum testType { NOTHING, SCREENSHOT, PERFORMANCE, SCREENSHOT_PERFORMANCE };
-
-static bool createReference = false;
+enum testType { NOTHING, SCREENSHOT, PERFORMANCE, SCREENSHOT_PERFORMANCE }; // @todo remove SCREENSHOT_PERFORMANCE and use a bitfield
 
 /**
  * @brief Return True if program is executed to create screenshot reference
@@ -39,8 +36,8 @@ void setCreateReference(bool createRef);
  * @brief Return a vector of all possibility of performance object
  */
 std::vector<vgsdkTestGtk::vgTest::Performance> getPerformance(	const std::vector<int> level, 
-													const std::vector<vgd::node::VertexShape::DeformableHintValueType> deformableHint, 
-													const std::vector<vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType> boundingBoxPolicy);
+																const std::vector<vgd::node::VertexShape::DeformableHintValueType> deformableHint, 
+																const std::vector<vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType> boundingBoxPolicy);
 
 } //namespace vgTest
 

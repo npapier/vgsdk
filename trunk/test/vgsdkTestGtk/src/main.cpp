@@ -1,33 +1,37 @@
-// VGSDK - Copyright (C) 2009, 2012, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2012, 2013, Maxime Peresson, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 // Author Guillaume Brocker
+// Author Nicolas Papier
 
 #include <gtest/gtest.h>
 #include "vgsdkTestGtk/vgTest/TestEnvironment.hpp"
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 
-#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 
 #include <sbf/pkg/Package.hpp>
+#include <sbf/pkg/Module.hpp>
 
 
+// @todo accepts gtest command-line option.
 int main(int argc, char **argv) 
 {
-	//get application name (without the full path)
-	std::vector<std::string> vec;
-	boost::algorithm::split(vec, argv[0], boost::algorithm::is_any_of("\\"));
-	std::string appName = vec[vec.size()-1];
-	std::string xmlPath = sbf::pkg::Package::current()->getPath(sbf::pkg::VarPath).string() + "\\googletest\\0-0\\";
-	boost::algorithm::replace_all(xmlPath, "/", "\\");
+	// get application name (without the full path)
+	namespace bfs=boost::filesystem;
+	const bfs::path pathFilename( argv[0] );
+	const std::string appName = pathFilename.filename().string();
+
+	const bfs::path bfsXmlPath = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / "googletest";
+	const std::string xmlPath = bfsXmlPath.string() + "\\";
 	boost::filesystem::create_directories(xmlPath);
 
-    try {
+	try
+	{
 		namespace po = boost::program_options;
 		po::options_description desc("Allowed options");
 		desc.add_options()

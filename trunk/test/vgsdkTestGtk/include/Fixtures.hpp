@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, 2010, 2011, 2012, 2013, Nicolas Papier, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -10,12 +10,59 @@
 #include <boost/assign/list_of.hpp>
 #include <vector>
 
+#include <vgd/node/Antialiasing.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/VertexShape.hpp>
 
 #include "gtest.hpp"
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 #include "vgsdkTestGtk/vgTest/Performance.hpp"
+
+
+using namespace boost::assign;
+
+
+/**
+ * @brief Fixtures for test on antialiasing (VgTestAntialiasing)
+ */
+class VgTestAntialiasing : public ::testing::TestWithParam<vgd::node::Antialiasing::TechniqueValueType>
+{
+protected:
+	virtual void SetUp() {}
+
+	virtual void TearDown() {}
+};
+
+
+/**
+ * @brief Fixtures for test on depth of field (VgTestDepthOfField)
+ */
+class VgTestDepthOfField : public ::testing::TestWithParam<bool>
+{
+protected:
+	virtual void SetUp() {}
+
+	virtual void TearDown() {}
+};
+
+
+/**
+* @brief Fixtures for shadow tests (VgTestShadow testsuite)
+*/
+class VgTestShadow : public ::testing::TestWithParam<vgd::node::LightModel::ShadowValueType>
+{
+protected:
+	virtual void SetUp() {}
+	virtual void TearDown() {}
+};
+
+static std::vector<vgd::node::LightModel::ShadowValueType> shadowType = list_of(vgd::field::Enum(vgd::node::LightModel::SHADOW_OFF ))
+	(vgd::node::LightModel::SHADOW_MAPPING)
+	(vgd::node::LightModel::SHADOW_MAPPING_9U);
+
+
+
+
 
 
 /**
@@ -29,34 +76,17 @@ protected:
 	virtual void TearDown() {}
 };
 
+
 /**
 * @brief Fixtures for test on models (VgTestModel testsuite)
 */
 class VgTestModel : public ::testing::TestWithParam<std::string>
 {
 	protected:
-	virtual void SetUp();
+	virtual void SetUp() {}
 
-	virtual void TearDown();
+	virtual void TearDown() {}
 };
-
-
-/**
-* @brief Fixtures for shadow tests (VgTestShadow testsuite)
-*/
-class VgTestShadow : public ::testing::TestWithParam<vgd::node::LightModel::ShadowValueType>
-{
-protected:
-	virtual void SetUp();
-	virtual void TearDown();
-};
-
-using namespace boost::assign;
-
-static std::vector<vgd::node::LightModel::ShadowValueType> shadowType = list_of(vgd::field::Enum(vgd::node::LightModel::SHADOW_OFF ))
-	(vgd::node::LightModel::SHADOW_MAPPING)
-	(vgd::node::LightModel::SHADOW_MAPPING_9U);
-
 
 /**
 * @brief Fixtures for test on COLLADA model (VgTestCollada testsuite)
@@ -64,11 +94,10 @@ static std::vector<vgd::node::LightModel::ShadowValueType> shadowType = list_of(
 class VgTestCollada : public ::testing::TestWithParam<std::string>
 {
 	protected:
-	virtual void SetUp();
+	virtual void SetUp() {}
 
-	virtual void TearDown();
+	virtual void TearDown() {}
 };
-
 
 /**
 * @brief Fixtures for test on compressed and/or crpyted model (VgTestCompression testsuite)

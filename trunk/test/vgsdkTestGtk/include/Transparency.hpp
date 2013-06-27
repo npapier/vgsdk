@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,13 +7,10 @@
 #define _VGSDKTESTGTK_TRANSPARENCY_HPP
 
 #include "gtest.hpp"
-
-#include <vgd/Shp.hpp>
+#include "helpers.hpp"
 #include <vgTest/convenience.hpp>
 
 #include "Fixtures.hpp"
-#include "vgsdkTestGtk/vgTest/myBase.hpp"
-#include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
 // vgsdkNodeTestingSuite
 #include <vgd/node/Material.hpp>
@@ -24,20 +21,18 @@
  */
 TEST_P(VgTestTransparency, Transparency)
 {
-	const ::testing::TestInfo* const test_info = ::testing::UnitTest::GetInstance()->current_test_info();
-
-	const std::string filename = vgTest::getImageName(test_info->name());
+	const std::string filename = vgTest::getImageName();
 
 	// prerun Gtk
 	vgd::Shp< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );
 
-	base->getLog()->add("Description", "Rendering a red sphere with different transparency level and a green sphere placed behind.");
+	// @todo log()-add()
+	std::string description("Rendering a red sphere with different transparency level and a green sphere placed behind.");
 
-	// prepare scene
-	/*using vgd::node::LightModel;
-	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( base->getCanvas()->createOptionalNode( vgUI::BasicViewer::LIGHT_MODEL ) );
-	lightModel->setTwoSided(true);*/
+	base->getLog()->add( "Description", description );
+	// @todo base->getLog()->add("Parameters", opacity.str());
 
+	// PREPARE SCENE
 	using vgd::node::Material;
 	using vgd::node::Sphere;
 
@@ -73,23 +68,11 @@ TEST_P(VgTestTransparency, Transparency)
 	base->addObject( material );
 	base->addObject( sphere );
 
-
 	// @todo base->run() do a viewAll()
 	base->getCanvas()->viewAll();
 
 	//run GTK
 	base->run();
-
-	// Finalized test
-	if (vgsdkTestGtk::vgTest::getCreateReference())
-	{
-		base->moveToReference();
-	}
-	else
-	{
-		// do the test
-		base->compareScreenShots();
-	}
 
 	base->getLog()->addToGtest();
 }

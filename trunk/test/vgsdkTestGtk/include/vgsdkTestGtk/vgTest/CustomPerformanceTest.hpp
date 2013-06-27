@@ -15,15 +15,12 @@ namespace vgTest
 /**
  * @brief Interface which provide function called at the begining/end of the test end before and after each paint.
  */
-
 struct CustomPerformanceTest
 {
 	virtual void begin()=0;
-
 	virtual void end()=0;
 
 	virtual void prePaint()=0;
-
 	virtual void postPaint()=0;
 };
 
@@ -32,4 +29,3 @@ struct CustomPerformanceTest
 } //namespace vgsdkTestGtk
 
 #endif // #ifndef _VGSDKTESTGTK_VGTEST_CUSTOMPERFORMANCETEST_HPP
-
