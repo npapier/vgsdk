@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008-2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008-2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -11,6 +11,7 @@
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <gle/OpenGLExtensionsGen.hpp>
+#include <sbf/pkg/Module.hpp>
 #include <vgd/event/Source.hpp>
 
 #include <vgeGL/engine/SceneManager.hpp>
@@ -445,8 +446,12 @@ public:
 	 * @brief Schedules a screen capture at the end of next rendering.
 	 *
 	 * @param filename	name of the file containing the screen capture
+	 * @param module	used to compute the root directory where the screen capture would be saved
+	 * @param subdir	used to compute the root directory where the screen capture would be saved
+	 *
+	 * The screen capture would be saved in a png file named 'var/subdir/filename' where var is the 'var' directory of the given module, subdir and filename are the given parameters.
 	 */
-	void scheduleScreenshot( const std::string filename = "" );
+	void scheduleScreenshot( const std::string filename = "", const boost::shared_ptr< sbf::pkg::Module > module = sbf::pkg::Module::get(), const std::string subdir = "screenshots" );
 
 	/**
 	 * @brief Tests if a screen capture is scheduled at the end of next rendering.
@@ -635,6 +640,7 @@ private:
 	bool				m_initialVerticalSynchronization;	///< the initial vertical synchronization state of this canvas
 
 	bool				m_scheduleScreenshot;				///< Boolean value telling if a screen capture should be done at the end of next rendering.
+	std::string			m_screenshotPath;					///< path used for the screenshot
 	std::string			m_screenshotFilename;				///< name of file used for the screenshot
 	bool				m_videoCapture;						///< Boolean value telling if the video capture is enabled.
 

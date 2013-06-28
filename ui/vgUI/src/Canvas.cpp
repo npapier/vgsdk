@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -467,18 +467,16 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			Screenshot shot( getFrameCount(), capturedImage );
 
 			// Path
-			const boost::filesystem::path path = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / "screenshots";
-			shot.mkdirs( path.string() );
-
+			shot.mkdirs( m_screenshotPath );
 			if ( m_screenshotFilename.size() > 0 )
 			{
 				// A filename has been specified
-				shot.save( path.string(), m_screenshotFilename );
+				shot.save( m_screenshotPath, m_screenshotFilename );
 			}
 			else
 			{
 				// No filename has been specified, so constructs a filename using 'frame' and frame counter.
-				shot.save( path.string() );
+				shot.save( m_screenshotPath );
 			}
 
 			//
@@ -643,9 +641,10 @@ void Canvas::refreshForced( const WaitType wait )
 
 
 
-void Canvas::scheduleScreenshot( const std::string filename )
+void Canvas::scheduleScreenshot( const std::string filename, boost::shared_ptr< sbf::pkg::Module > module, const std::string subdir )
 {
 	m_scheduleScreenshot	= true;
+	m_screenshotPath		= (module->getPath(sbf::pkg::VarPath) / subdir).string();
 	m_screenshotFilename	= filename;
 }
 
