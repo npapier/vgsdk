@@ -45,7 +45,7 @@ struct VGD_API TimeDuration
 	 *
 	 * @param milliSeconds	number of milliseconds
 	 */
-	TimeDuration( const int milliSeconds = 0 );
+	TimeDuration( const uint64 milliSeconds = 0 );
 
 	/**
 	 * @brief Constructor
