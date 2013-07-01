@@ -14,9 +14,9 @@
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/VertexShape.hpp>
 
-#include "gtest.hpp"
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 #include "vgsdkTestGtk/vgTest/Performance.hpp"
+#include <vgTest/gtest.hpp>
 
 
 using namespace boost::assign;

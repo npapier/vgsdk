@@ -26,8 +26,8 @@ TestManipulator::TestManipulator()
 	m_perf( false ),
 	m_screenShot( false ),
 	//m_customPerf
-	m_minDuration( std::numeric_limits<uint>::max() ),
-	m_maxDuration( std::numeric_limits<uint>::min() ),
+	m_minDuration( std::numeric_limits<uint64>::max() ),
+	m_maxDuration( std::numeric_limits<uint64>::min() ),
 	m_averageDuration( 0 )
 {}
 
@@ -39,8 +39,8 @@ TestManipulator::TestManipulator( Canvas * pSharedCanvas )
 	m_perf( false ),
 	m_screenShot( false ),
 	//m_customPerf
-	m_minDuration( std::numeric_limits<uint>::max() ),
-	m_maxDuration( std::numeric_limits<uint>::min() ),
+	m_minDuration( std::numeric_limits<uint64>::max() ),
+	m_maxDuration( std::numeric_limits<uint64>::min() ),
 	m_averageDuration( 0 )
 {}
 
@@ -92,11 +92,11 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 			}
 
 			vgd::basic::Time time;
-			const uint testDuration = 1000;
+			const uint64 testDuration = 1000;
 
 			vgd::basic::TimeDuration endTime(time.getElapsedTime().milliSeconds() + testDuration);
 
-			int frame = 0;
+			uint64 frame = 0;
 			while ( time.getElapsedTime() < endTime )
 			{
 				if ( m_customPerf )
@@ -106,7 +106,7 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 
 				vgd::basic::Time paintTime;
 				vgUI::BasicManipulator::paint(size, bUpdateBoundingBox);
-				uint paintDuration = paintTime.getElapsedTime().milliSeconds();
+				const uint64 paintDuration = paintTime.getElapsedTime().milliSeconds();
 
 				if (m_minDuration > paintDuration)
 				{
@@ -126,11 +126,11 @@ void TestManipulator::paint(const vgm::Vec2i size, const bool bUpdateBoundingBox
 					m_customPerf->postPaint();
 				}
 
-				frame++;
+				++frame;
 			}
 
 			// @todo num of triangles => MTS
-			uint duration = time.getElapsedTime().milliSeconds();
+			const uint64 duration = time.getElapsedTime().milliSeconds();
 			
 			float averageDuration = (float)m_averageDuration / frame;
 

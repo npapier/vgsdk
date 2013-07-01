@@ -5,8 +5,9 @@
 
 #include "vgTest/Logging.hpp"
 
-#include <gtest/gtest.h>
 #include <sstream>
+#include "vgTest/gtest.hpp"
+
 
 
 namespace vgTest

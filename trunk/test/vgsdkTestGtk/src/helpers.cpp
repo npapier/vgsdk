@@ -9,7 +9,7 @@
 #include <vgd/node/Material.hpp>
 #include <vgd/node/Sphere.hpp>
 #include <vgd/node/Transform.hpp>
-#include <vgm/Utilities.hpp>
+#include <vgm/operations.hpp>
 
 
 
@@ -45,6 +45,6 @@ void createQuadAndSpheresMatrix( vgd::Shp< vgsdkTestGtk::vgTest::myBase > base )
 	// Transform
 	using vgd::node::Transform;
 	vgd::Shp< Transform > transform = Transform::create("rotation");
-	transform->setRotation( vgm::Rotation( vgm::Vec3f(1.f, 0.f, 0.f), vgm::Utilities::deg2rad(-70.f) ) );
+	transform->setRotation( vgm::Rotation( vgm::Vec3f(1.f, 0.f, 0.f), vgm::deg2rad(-70.f) ) );
 	base->getCanvas()->getSetup()->insertChild( transform, 1 );
 }

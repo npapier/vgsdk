@@ -25,18 +25,18 @@ namespace vgTest
 /**
  * @brief Abstract base class which make link between test application, Gtk and vgsdk.
  */
-struct VGTEST_API Logging
+struct Logging
 {
 	/**
 	 * @brief Default constructor
 	 */
-	Logging();
+	VGTEST_API Logging();
 
 
 	/**
 	 * @brief Add a string to the logging map
 	 */
-	void add(std::string key, std::string value);
+	VGTEST_API void add(std::string key, std::string value);
 
 	/**
 	 * @brief Add something to the logging map
@@ -53,22 +53,22 @@ struct VGTEST_API Logging
 	/**
 	 * @brief Get value from the map
 	 */
-	const std::string get(std::string key);
+	VGTEST_API const std::string get(std::string key);
 
 	/**
 	 * @brief Remove value from the map
 	 */
-	void remove(std::string key);
+	VGTEST_API void remove(std::string key);
 
 	/**
 	 * @brief Get the log map
 	 */
-	const std::map<std::string, std::string>& getLog() const;
+	VGTEST_API const std::map<std::string, std::string>& getLog() const;
 
 	/**
 	 * @brief Add the whole map to googletest report
 	 */
-	void addToGtest();
+	VGTEST_API void addToGtest();
 
 
 private:

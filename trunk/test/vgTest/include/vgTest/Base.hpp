@@ -26,6 +26,11 @@ namespace vgTest
 struct VGTEST_API Base
 {
 	/**
+	 * @name Constructors and destructor
+	 */
+	//@{
+
+	/**
 	 * @brief Default constructor
 	 */
 	Base( const std::string filename = "test", const boost::shared_ptr< sbf::pkg::Module > module = sbf::pkg::Module::get() );
@@ -34,6 +39,7 @@ struct VGTEST_API Base
 	 * @brief Virtual destructor
 	 */
 	virtual ~Base();
+	//@}
 
 
 	/**
@@ -50,7 +56,6 @@ struct VGTEST_API Base
 	 * @brief Quit the GUI main loop and destroy the canvas and window
 	 */
 	virtual bool	quit()=0;
-
 	//@}
 
 
@@ -163,7 +168,7 @@ private:
 	 * @brief Prerun the Gtk application : create canvas and window
 	 * @param true to take screenshot in the paint function
 	 */
-	virtual void	prerun()=0;
+	virtual void prerun()=0;
 
 	vgd::Shp< vgTest::Logging > m_log;
 

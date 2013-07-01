@@ -6,7 +6,7 @@
 #ifndef _VGSDKTESTGTK_VGTEST_TESTENVIRONMENT_HPP
 #define _VGSDKTESTGTK_VGTEST_TESTENVIRONMENT_HPP
 
-#include <gtest/gtest.h>
+#include <vgTest/gtest.hpp>
 
 namespace Gtk
 {
