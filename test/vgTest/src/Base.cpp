@@ -8,8 +8,8 @@
 #include "vgTest/Base.hpp"
 
 #include <boost/filesystem/operations.hpp>
-#include <gtest/gtest.h>
 #include "vgTest/convenience.hpp"
+#include "vgTest/gtest.hpp"
 #include "vgTest/Logging.hpp"
 
 

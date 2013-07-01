@@ -18,7 +18,7 @@
 #include <vgd/node/Sphere.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Transform.hpp>
-#include <vgm/Utilities.hpp>
+#include <vgm/operations.hpp>
 #include <vgGTK/BasicManipulator.hpp>
 
 
@@ -114,7 +114,7 @@ TEST_P(VgTestShadow, ShadowMapping)
 	// Transform
 	using vgd::node::Transform;
 	vgd::Shp< Transform > transform = Transform::create("rotation");
-	transform->setRotation( vgm::Rotation( vgm::Vec3f(1.f, 0.f, 0.f), vgm::Utilities::deg2rad(-70.f) ) );
+	transform->setRotation( vgm::Rotation( vgm::Vec3f(1.f, 0.f, 0.f), vgm::deg2rad(-70.f) ) );
 	base->getCanvas()->getSetup()->insertChild( transform, 1 );
 
 	// @todo base->run() do a viewAll()

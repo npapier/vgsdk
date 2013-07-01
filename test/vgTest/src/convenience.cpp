@@ -11,13 +11,14 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 
-#include <gtest/gtest.h>
 #include <sbf/pkg/Module.hpp>
 #include <sstream>
 
 #include <vgd/Shp.hpp>
 #include <vgd/basic/Image.hpp>
 #include <vgio/FilenameCollector.hpp>
+#include "vgTest/gtest.hpp"
+
 
 
 namespace vgTest

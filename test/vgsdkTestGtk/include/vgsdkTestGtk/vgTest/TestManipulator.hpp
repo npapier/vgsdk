@@ -59,9 +59,9 @@ private :
 	bool													m_screenShot;
 	vgd::Shp<vgsdkTestGtk::vgTest::CustomPerformanceTest>	m_customPerf;
 
-	uint						m_minDuration;
-	uint						m_maxDuration;
-	uint						m_averageDuration;
+	uint64						m_minDuration;
+	uint64						m_maxDuration;
+	uint64						m_averageDuration;
 };
 
 
