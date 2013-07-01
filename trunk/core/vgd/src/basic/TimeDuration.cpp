@@ -22,7 +22,7 @@ TimeDuration::TimeDuration( const Time& t1, const Time& t2 )
 }
 
 
-TimeDuration::TimeDuration( const int milliSeconds )
+TimeDuration::TimeDuration( const uint64 milliSeconds )
 : m_duration( boost::posix_time::milliseconds( milliSeconds ) )
 {
 }
