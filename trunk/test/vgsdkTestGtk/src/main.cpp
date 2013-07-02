@@ -5,7 +5,7 @@
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
-#include <gtest/gtest.h>
+#include <gtest.hpp>
 #include "vgsdkTestGtk/vgTest/TestEnvironment.hpp"
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 
@@ -18,13 +18,12 @@
 #include <sbf/pkg/Module.hpp>
 
 
-// @todo accepts gtest command-line option.
 int main(int argc, char **argv) 
 {
 	// get application name (without the full path)
 	namespace bfs=boost::filesystem;
 	const bfs::path pathFilename( argv[0] );
-	const std::string appName = pathFilename.filename().string();
+	const std::string appName = "vgsdkTestGtk"; // pathFilename.filename().string();
 
 	const bfs::path bfsXmlPath = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / "googletest";
 	const std::string xmlPath = bfsXmlPath.string() + "\\";
@@ -33,19 +32,18 @@ int main(int argc, char **argv)
 	try
 	{
 		namespace po = boost::program_options;
-		po::options_description desc("Allowed options");
+		po::options_description desc("Allowed options (without enumerating googletest options. Use -h for that)");
 		desc.add_options()
 			("help", "Produce help message")
 			("saveRef", "Creates references for all tests")
 		;
 
 		po::variables_map vm;
-		po::store(po::parse_command_line(argc, argv, desc), vm);
-		po::notify(vm); 
+		po::store( po::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm );
 
 		if (vm.count("help")) 
 		{
-			std::cout << "Usage: vgSDK tests [options]\n";
+			std::cout << "Usage: vgsdkTestGtk*.exe [options]\n";
 			std::cout << desc;
 			return 0;
 		}
