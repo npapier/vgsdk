@@ -28,7 +28,7 @@ TimeDuration::TimeDuration( const uint64 milliSeconds )
 }
 
 
-TimeDuration::TimeDuration( const int hours, const int minutes, const int seconds, const int milliSeconds )
+TimeDuration::TimeDuration( const uint64 hours, const uint64 minutes, const uint64 seconds, const uint64 milliSeconds )
 : m_duration( hours, minutes, seconds )
 {
 	if ( milliSeconds != 0 )
