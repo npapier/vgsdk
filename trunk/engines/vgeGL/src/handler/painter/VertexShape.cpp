@@ -715,7 +715,7 @@ void VertexShape::setSamplers( vgeGL::engine::Engine * pGLEngine, glo::GLSLProgr
 		const bool hasTexCoord = texCoordDim > 0; // pVertexShape->getTexCoordDim(unit) || texGen;
 
 		//
-		const bool isUnitComplete = isTextureComplete && hasTexCoord;
+		const bool isUnitComplete = isTextureComplete /*&& hasTexCoord*/;
 
 		// SAMPLER
 		if ( isUnitComplete )
