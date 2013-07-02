@@ -23,10 +23,9 @@ int main(int argc, char **argv)
 	// get application name (without the full path)
 	namespace bfs=boost::filesystem;
 	const bfs::path pathFilename( argv[0] );
-	const std::string appName = "vgsdkTestGtk"; // pathFilename.filename().string();
+	const std::string appName = pathFilename.filename().string();
 
-	const std::string appVersion = sbf::pkg::Module::get()->getVersion();
-	const bfs::path bfsXmlPath = sbf::pkg::Module::get()->getRootPath() / sbf::pkg::toString(sbf::pkg::VarPath) / appName / appVersion / "googletest";
+	const bfs::path bfsXmlPath = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / "googletest";
 	const std::string xmlPath = bfsXmlPath.string() + "\\";
 	boost::filesystem::create_directories(xmlPath);
 
