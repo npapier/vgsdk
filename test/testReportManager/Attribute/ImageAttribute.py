@@ -51,7 +51,7 @@ class ImageAttribute(CustomAttribute):
 			for filename in filenames:
 				if filename != "":
 						
-					shutil.copyfile(externalPath + filename, internalPath + filename)
+					shutil.copyfile(os.path.join(externalPath, filename), internalPath + filename)
 					
 					self.resizeImg(filename, internalPath)
 					
