@@ -55,7 +55,7 @@ struct VGD_API TimeDuration
 	 * @param seconds		number of seconds
 	 * @param milliSeconds	number of milliseconds
 	 */
-	TimeDuration( const int hours, const int minutes, const int seconds, const int milliSeconds = 0 );
+	TimeDuration( const uint64 hours, const uint64 minutes, const uint64 seconds, const uint64 milliSeconds = 0 );
 
 	//@}
 
