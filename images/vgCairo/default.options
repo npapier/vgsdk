@@ -3,6 +3,6 @@ vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
 #uses		= [ 'cairomm' ]
-uses		= [ 'cairo' ]
+uses		= [ 'boost', 'cairo' ]
 libs		= [ 'vgd 0-5' ]
 deps		= [ '../../core' ]
