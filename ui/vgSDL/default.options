@@ -3,5 +3,5 @@ vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
 libs		= [ 'vgd 0-5' ]
-uses		= [ 'sdl' ]
+uses		= [ 'boost', 'sdl' ]
 deps		= [ '../../core/vgd' ]
