@@ -11,7 +11,7 @@
 #include <vgd/event/MouseWheelEvent.hpp>
 #include <vgd/node/TransformDragger.hpp>
 #include <vge/rc/ButtonStateSet.hpp>
-#include <vgm/Utilities.hpp>
+#include <vgm/operations.hpp>
 
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/technique/ProcessEvent.hpp"
@@ -163,7 +163,7 @@ void TransformDragger::apply( vgd::event::Location2Event *pLocation2Event )
 			pDragger->setTranslation( pDragger->getTranslation() + translation );
 
 			// Schedules a refresh
-			pLocation2Event->scheduleRefreshForced();			
+			pLocation2Event->scheduleRefreshForced();
 		}
 	}
 	else if ( pDragger->getCurrentState() == TransformDragger::ROTATION_Z_ACTIVE )
@@ -176,7 +176,7 @@ void TransformDragger::apply( vgd::event::Location2Event *pLocation2Event )
 		vgm::Vec3f	axis(0.f, 0.f, 1.f );
 		float		angle;
 
-		angle = vgm::Utilities::deg2rad( delta[0]/size[1] * 90.f );
+		angle = vgm::deg2rad( delta[0]/size[1] * 90.f );
 
 		// UPDATE THE ROTATION TO BEEING IN OBJECT SPACE
 		vgm::MatrixR&	currentGeometrical( m_pGLEngine->getGeometricalMatrix().getTop() );
