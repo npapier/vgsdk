@@ -10,6 +10,7 @@
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
 #include <vgd/basic/Image.hpp>
+#include <vgd/basic/TimeDuration.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/Texture2D.hpp>
 //#include <vgd/node/TextureCubeMap.hpp>

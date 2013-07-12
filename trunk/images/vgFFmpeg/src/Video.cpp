@@ -7,6 +7,7 @@
 #include "vgFFmpeg/Video.hpp"
 #include <iostream>
 
+#include <vgd/basic/TimeDuration.hpp>
 #include <vgDebug/helpers.hpp>
 
 extern "C" {
