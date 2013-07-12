@@ -7,6 +7,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <vgd/basic/Image.hpp>
+#include <vgd/basic/TimeDuration.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Noise.hpp>
 #include <vgd/node/OutputBufferProperty.hpp>

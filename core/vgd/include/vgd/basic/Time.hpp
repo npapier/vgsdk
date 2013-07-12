@@ -8,8 +8,8 @@
 #define _VGD_BASIC_TIME_HPP
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "vgd/basic/TimeDuration.hpp"
-
+#include "vgd/vgd.hpp"
+namespace vgd { namespace basic { struct TimeDuration; } }
 
 /**
  * @defgroup g_time Time
@@ -22,7 +22,6 @@ namespace vgd
 
 namespace basic
 {
-
 
 /**
  * @brief Interface for time point manipulation

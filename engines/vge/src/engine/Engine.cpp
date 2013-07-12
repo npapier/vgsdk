@@ -5,6 +5,7 @@
 
 #include "vge/engine/Engine.hpp"
 
+#include <vgd/basic/TimeDuration.hpp>
 #include <vgd/node/Camera.hpp>
 #include <vgd/node/EngineProperties.hpp>
 
