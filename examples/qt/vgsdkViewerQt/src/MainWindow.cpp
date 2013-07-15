@@ -458,7 +458,7 @@ void MainWindow::loadFile(bool clearScene)
 							this,
 							"Choose file(s)",
 							dir,
-							"All supported files (*.trian *.trian2 *.trian2.crypt *.dae *.dae.crypt *.obj *.vgarch);;Trian files (*.trian, *.trian2, *.trian2.crypt);;All collada files (*.dae, *.dae.crypt);;Wavefront objects (*.obj);;Vgsdk compressed files (*.vgarch)");
+							"All supported files (*.dae *.blend *.3ds *.obj *.trian *.trian2);;All collada files (*.dae);;Wavefront objects (*.obj);;Trian files (*.trian, *.trian2);;All files (*.*)" );
 
 	// Loads files selected by the user.
 	if( !files.empty() )
