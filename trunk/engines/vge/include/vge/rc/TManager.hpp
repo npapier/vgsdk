@@ -213,7 +213,7 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	/**
 	 * @brief Retrieves all values and store them using the given output iterator.
 	 * 
-	 * @param value		an STL compliant output iterator
+	 * @param values	an STL compliant output iterator
 	 */
 	template< typename OutputIterator >
 	void getValues( OutputIterator& values );

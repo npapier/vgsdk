@@ -124,7 +124,7 @@ struct VGOPENCOLLADA_API GeometryExporter : public COLLADASW::LibraryGeometries
 	}
 
 	/**
-	 * @brief export primitive face number (<vcount> COLLADA tag).
+	 * @brief export primitive face number (\<vcount\> COLLADA tag).
 	 *
 	 * @param numberOfFaces		number of face of the shape.
 	 *
@@ -133,7 +133,7 @@ struct VGOPENCOLLADA_API GeometryExporter : public COLLADASW::LibraryGeometries
 	void exportVCount(int numberOfFaces, COLLADASW::Polylist *primitive );
 
 	/**
-	 * @brief export primitive face number (<vcount> COLLADA tag). Useless for COLLADA triangle primitive tag.
+	 * @brief export primitive face number (\<vcount\> COLLADA tag). Useless for COLLADA triangle primitive tag.
 	 *
 	 * @param numberOfFaces		number of face of the shape.
 	 *

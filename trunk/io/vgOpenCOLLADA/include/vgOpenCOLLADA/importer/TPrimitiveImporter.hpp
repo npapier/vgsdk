@@ -30,7 +30,7 @@ namespace importer
 /**
  * @brief	The COLLADA primitive importer base.
  *			Works only for PrimitiveType == triangle ATM.
- *			Import triangle primitives. Each mesh/primitive (<triangles> tag) is a vertexShape.
+ *			Import triangle primitives. Each mesh/primitive (\<triangles\> tag) is a vertexShape.
  */
 template< typename PrimitiveType >
 struct VGOPENCOLLADA_API TPrimitiveImporter
@@ -208,7 +208,7 @@ protected:
 
 
 /**
-* @brief Import polylist primitives. Each primitives (<polylist> tag) is a vertexShape.
+* @brief Import polylist primitives. Each primitives (\<polylist\> tag) is a vertexShape.
 */
 struct VGOPENCOLLADA_API PrimitivePolygonsImporter : TPrimitiveImporter< COLLADAFW::Polygons >
 {

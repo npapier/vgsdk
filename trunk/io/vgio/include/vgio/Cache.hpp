@@ -57,7 +57,7 @@ struct VGIO_API ImageCache
 	/**
 	 * @brief Enables or disables the cache depending on the value of the parameter isEnabled.
 	 *
-	 * @param isEnabled		true when the cache must be enabled, false otherwise
+	 * @param enabled		true when the cache must be enabled, false otherwise
 	 */
 	void setEnabled( const bool enabled = true );
 

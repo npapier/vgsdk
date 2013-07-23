@@ -116,6 +116,8 @@ private:
 	 * @param matrix	geometrical matrix applied on the shape
 	 *
 	 * @param engine	current engine
+	 *
+	 * @param shapeType	the type of shape we want to create
 	 */	
 	void addShape( vgd::Shp< vgd::node::Shape > shape, vgm::MatrixR matrix, vge::engine::Engine * engine, SHAPE_TYPE shapeType );
 

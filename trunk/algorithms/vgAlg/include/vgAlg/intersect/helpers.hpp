@@ -30,7 +30,7 @@ namespace intersect
  *
  * @param P							point to seach in the shape
  * @param vertexShape				shape where to look for the triangle
- * @param oABCP						the triangle ABC, indices of points ABC and the hit point P with barycentric coordinates (u,v) in (A, AB, BC). A is a local origin.
+ * @param oABC						the triangle ABC, indices of points ABC and the hit point P with barycentric coordinates (u,v) in (A, AB, BC). A is a local origin.
  * @param oDistance					fabs( ABC.distance(P) )
  *
  * @return true if a triangle was found, false otherwise.

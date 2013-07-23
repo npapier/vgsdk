@@ -31,24 +31,24 @@ protected:
 	
 	/**
 	* create the acceleration grid (space subdivision)
-	* @param int32 _lWidth subdivision of BB
-	* @param std::vector<int32>& _VlIndicesGrid the table of indices of each point in the grid
-	* @param std::vector<int32>* _VlGrid the grid
+	* @param _lWidth subdivision of BB
+	* @param _VlIndicesGrid the table of indices of each point in the grid
+	* @param _VlGrid the grid
 	*/
 	void createGrid(int32 _lWidth, std::vector<int32>& _VlIndicesGrid, std::vector<int32>* _VlGrid ) const;
 
 
 	/**
 	* find the first edge which is not yet used
-	* @param std::vector<short>& _vectFlag the table of flag to store the CC
+	* @param _vectFlag the table of flag to store the CC
 	*/
 	int32 findFirstEdge(const std::vector<short>& _vectFlag) const;
 	
 	/**
 	* grow a connected component
-	* @param int32 _ltri index of initial triangle
-	* @param std::vector<short>& _vectFlag table of flag to store the CC
-	* @param short _sNum the number affected to CC
+	* @param _ltri index of initial triangle
+	* @param _vectFlag table of flag to store the CC
+	* @param _sNum the number affected to CC
 	* @return int32 the number of triangle in CC
 	*/
 	int32 grow( int32 _ltri, std::vector<short>& _vectFlag, short _sNum) const;
@@ -58,16 +58,16 @@ protected:
 	* create the new table of points whose are necessary for
 	* the new edges table, which is modify to link with the new
 	* table of points.
-	* @param const std::vector<int32>& _VlEdges the new edges table [IN/OUT]
-	* @param std::vector<vgm::Vec3f>& _VvNewPoints the new table [OUT]
+	* @param _VlEdges the new edges table [IN/OUT]
+	* @param _VvNewPoints the new table [OUT]
 	*/
 	void supressUnusedPoints(std::vector<int32>& _VlEdges, std::vector<vgm::Vec3f>& _VvNewPoints) const;
 	
 	/**
 	* create a table of meshes from this and a flag table obtain
 	* in ConnectedComponents.
-	* @param short _sNb number of CC
-	* @param std::vector<short>& _vectFlag a table of CC number (one entry per face)
+	* @param _sNb number of CC
+	* @param _vectFlag a table of CC number (one entry per face)
 	* @return the table of mesh
 	*/
 	MeshBase* createCCMeshes(short _sNb,std::vector<short>& _vectFlag)const ;
@@ -76,8 +76,8 @@ protected:
 
 	/**
 	* find the index of 3D vertex (in the table)
-	* @param GLdouble* _vertexData the vertex
-	* @param std::vector<int32>& _vlContour the table of index 
+	* @param _vertexData the vertex
+	* @param _vlContour the table of index 
 	* @return the found index
 	*/
 	//int32 findVertexIndex(GLdouble* _vertexData, std::vector<int32> *_vlContour);
@@ -102,7 +102,7 @@ public:
 
 	/**
 	* Default constructor
-	* @param TriSet used to initialize the MeshBase.
+	* @param pTriSet used to initialize the MeshBase.
 	* 
 	* @todo remove copy of data to improve speed.
 	*/
@@ -116,7 +116,7 @@ public:
 
 	/**
 	* compute the "edge neighbours"
-	* @param int32 _lWidth the subdivision of BB for acceleration grid
+	* @param _lWidth the subdivision of BB for acceleration grid
 	*/
 	bool computeNeighbour(int32 _lWidth);
 	
@@ -128,7 +128,7 @@ public:
 	
 	/**
 	* compute the connected components of the mesh
-	* @param int32& _lNbCC the number of CC
+	* @param _lNbCC the number of CC
 	* @return a table of allocated meshes
 	*/
 	MeshBase* ConnectedComponents(int32& _lNbCC) const;
@@ -189,9 +189,9 @@ public:
 
 
 	/**
-	* compute the topology (neighbours) on a limited range of edges
-	* @param int32 _lFirstEdge begin of range to treat
-	* @param int32 _lLastEdge end of range to treat
+	* @brief compute the topology (neighbours) on a limited range of edges
+	* @param _lFirstEdge begin of range to treat
+	* @param _lLastEdge end of range to treat
 	*/
 	void computeLocalTopology(int32 _lFirstEdge, int32 _lLastEdge);
 
