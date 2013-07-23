@@ -182,7 +182,7 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	 * @brief Evaluation of a node
 	 * 
 	 * @param	service		service to use during evaluation (Painter...)
-	 * @param	traverseElement	traverse element to evaluate
+	 * @param	element	traverse element to evaluate
 	 * @param	bTrace		true if the evaluation of the node must be stored in the engine state, false if not.
 	 */
 	void evaluate(	const vgd::Shp< vge::service::Service > service,

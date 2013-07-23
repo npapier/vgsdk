@@ -67,7 +67,7 @@ public:
 	ShadersEditor(QWidget *parent);
 
 	/**
-	 * @brief Check if the shader contain a #version
+	 * @brief Check if the shader contain a \#version
 	 *
 	 * @param shader	the current shader.
 	 */

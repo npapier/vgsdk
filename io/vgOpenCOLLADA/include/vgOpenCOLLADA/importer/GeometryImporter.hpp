@@ -32,17 +32,22 @@ struct Reader;
  */
 struct VGOPENCOLLADA_API GeometryImporter
 {
-	GeometryImporter( const COLLADAFW::Geometry* geometry, vgOpenCOLLADA::Settings settings, Reader *reader );
-	
 	/**
-	 * @brief Creates geometry.
+	 * @brief Creator
+	 *
 	 * 
 	 * @param geometry: the COLLADA geometry attribute.
 	 * 
 	 * @param mesh: the COLLADA mesh attribute of current geometry
+	 */
+	GeometryImporter( const COLLADAFW::Geometry* geometry, vgOpenCOLLADA::Settings settings, Reader *reader );
+	
+	/**
+	 * @brief Creates geometry.
 	 *
-	 * @return: a pair bool/group. Return false if the mesh don't create correctly.
-	 * the group contains one or more vertexShape. Each vertexShape is a <triangles> tag.
+	 * @return: a pair bool/group. Return false if the mesh doesn't
+	 * create correctly.  the group contains one or more
+	 * vertexShape. Each vertexShape is a \<triangles\> tag.
 	 */
 	std::pair< bool, vgd::Shp< vgd::node::Group > > loadMesh();
 
@@ -68,7 +73,7 @@ struct VGOPENCOLLADA_API GeometryImporter
 	void importMeshUVCoords();
 
 	/**
-	* @brief: Import primitives of the mesh considering the type. Each primitives (<triangles> tag) is a vertexShape.
+	* @brief: Import primitives of the mesh considering the type. Each primitives (\<triangles\> tag) is a vertexShape.
 	*
 	* @return: bool. True if everything is ok.
 	*/

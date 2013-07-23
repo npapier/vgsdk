@@ -28,13 +28,13 @@ namespace device
 /**
  * @brief	Implements a keyboard device that translates GTK key events into vgSDK events.
  *
- * @remark	This device will not handle the @code tab key since it can involve inconsistancy in the global
+ * @remark	This device will not handle the \c tab key since it can involve inconsistancy in the global
  *		button state set due to the focus lost.
  */
 struct VGGTK_API Keyboard : public vgd::event::device::Keyboard, public sigc::trackable
 {
 	/**
-	 * @name	Constructor
+	 * @brief	Constructor
 	 *
 	 * @param	widget	a pointer to a widget whose key events will be translated
 	 */

@@ -25,15 +25,15 @@ namespace device
 /**
  * @brief	Implements a keyboard event device for Qt widgets.
  *
- * @remark	This device will not handle the @code tab key since it can involve inconsistancy in the global
- *			button state set due to the focus lost.
+ * @remark	This device will not handle the \c tab key since it can involve inconsistancy in the global
+ *			button state set due to the lost of the focus.
  */
 struct VGQT_API Keyboard : public vgd::event::device::Keyboard, public IDevice
 {
     /**
      * @brief	Handles the givent Qt event in order to eventually translate it into a vgSDK keyboard event.
      *
-     * @remark	Will skip @code tab key events to avoid inconsistancy problems due to the focus lost.
+     * @remark	Will skip \c tab key events to avoid inconsistancy problems due to the lost of the focus.
      */
     void onEvent( QEvent * event );
 };

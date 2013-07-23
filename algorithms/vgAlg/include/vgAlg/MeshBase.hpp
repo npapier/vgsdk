@@ -107,7 +107,6 @@ public:
 
 	/**
 	* compute the bounding box
-	* @param BB& _BB the result
 	*/
 	void computeBB();
 		
@@ -141,29 +140,29 @@ public:
 
 	/**
 	* accessor to points
-	* @param int32 _lIndex index of point
+	* @param _lIndex index of point
 	* @return vgm::Vec3f&
 	*/
 	vgm::Vec3f& getPoint(int32 _lIndex) { return m_VvPoints[_lIndex];} 
 
 	/**
 	* modificator off points
-	* @param int32 _lIndex index of point
-	* @param vgm::Vec3f& _pos the position of point
+	* @param _lIndex index of point
+	* @param _pos the position of point
 	*/
 	void setPoint(int32 _lIndex, const vgm::Vec3f& _pos) { m_VvPoints[_lIndex] = _pos;}
 
 
 	/**
 	* accessor to edges
-	* @param int32 _lIndex index of edge
+	* @param _lIndex index of edge
 	* @return int32
 	*/
 	int32 getEdge(int32 _lIndex) { return m_VlEdges[_lIndex];} const
 
 	/**
 	* accessor to points from edge index
-	* @param int32 _lIndex index of edge
+	* @param _lIndex index of edge
 	* @return vgm::Vec3f&
 	*/
 	vgm::Vec3f& getPointEdge(int32 _lIndex) { return m_VvPoints[m_VlEdges[_lIndex]];} const
@@ -171,22 +170,22 @@ public:
 	
  	/**
 	* accessor to neighbours
-	* @param int32 _lIndex index of neighbour
+	* @param _lIndex index of neighbour
 	* @return vgm::Vec3f&
 	*/
 	int32 getNeighbour(int32 _lIndex) { return m_VlNeighbours[_lIndex];} const
 
 	/**
 	* modificator of edges
-	* @param int32 _lIndex index of edge
-	* @param int32 _lVal value
+	* @param _lIndex index of edge
+	* @param _lVal value
 	*/
 	void setEdge(int32 _lIndex, int32 _lVal) { m_VlEdges[_lIndex] = _lVal;}
 
 	/**
 	* modificator of neighbours
-	* @param int32 _lIndex index of edge
-	* @param int32 _lVal value
+	* @param _lIndex index of edge
+	* @param _lVal value
 	*/
 	void setNeighbour(int32 _lIndex, int32 _lVal) { m_VlNeighbours[_lIndex] = _lVal;}
 
@@ -202,57 +201,57 @@ public:
 	
 	/**
 	* load a a mesh from file
-	* @param const char* _cName the name of file to read
+	* @param _cName the name of file to read
 	*/
 	bool loadTrian(const char* _cName);
 	
 	/**
 	* save a a mesh into a file
-	* @param const char* _cName the name of file to write
+	* @param _cName the name of file to write
 	*/
 	bool saveTrian(const char* _cName) const;
 	
 	/**
 	* get the next edge of triangle
-	* @param const int32 _lEdge current edge
+	* @param _lEdge current edge
 	*/
 	int32 A1(const int32 _lEdge) const;
 	
 	/**
 	* get the previous edge of triangle
-	* @param const int32 _lEdge current edge
+	* @param _lEdge current edge
 	*/
 	int32 A11(const int32 _lEdge) const;
 	
 	/**
 	* get the neighbour of an edge
-	* @param const int32 _lEdge the edge
+	* @param _lEdge the edge
 	*/
 	int32 A2(const int32 _lEdge) const;
 
 	/**
 	* add a face to the mesh, with no neighbours (-1 affected)
-	* @param int32 _lV1 first vertex index
-	* @param int32 _lV2 second vertex index
-	* @param int32 _lV3 third vertex index
+	* @param _lV1 first vertex index
+	* @param _lV2 second vertex index
+	* @param _lV3 third vertex index
 	*/
 	int32 addFace(int32 _lV1, int32 _lV2, int32 _lV3);
 	
 	/**
 	* add a face to the mesh with neighbour
-	* @param int32 _lV1 first vertex index
-	* @param int32 _lV2 second vertex index
-	* @param int32 _lV3 third vertex index
-	* @param int32 _lN first edge neighbour
-	* @param int32 _lN second edge neighbour
-	* @param int32 _lN third edge neighbour
+	* @param _lV1 first vertex index
+	* @param _lV2 second vertex index
+	* @param _lV3 third vertex index
+	* @param _lN1 first edge neighbour
+	* @param _lN2 second edge neighbour
+	* @param _lN3 third edge neighbour
 	:q*/	
 	int32 addFace(int32 _lV1, int32 _lV2, int32 _lV3, int32 _lN1, int32 _lN2, int32 _lN3);
 
 	/**
 	* add a point in the mesh
 	*
-	* @param vgm::Vec3f _vPoint the point to add
+	* @param _vPoint the point to add
 	*/
 	int32 addPoint(vgm::Vec3f _vPoint);
 
@@ -260,14 +259,14 @@ public:
 	/**
 	* add a edge in the mesh (DANGEROUS, USE CAREFOULY)
 	*
-	* @param int32 _lVertex the vertex corresponding to the edge to add
+	* @param _lVertex the vertex corresponding to the edge to add
 	*/
 	void addEdge(int32 _lVertex);
 
 
 	/**
 	* append a mesh after this
-	* @param MeshBase& _mbGrowMesh mesh to append
+	* @param _mbGrowMesh mesh to append
 	*/
 	void append(MeshBase& _mbGrowMesh);
 	
