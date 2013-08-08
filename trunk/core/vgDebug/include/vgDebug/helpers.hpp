@@ -37,7 +37,7 @@ namespace sbf { namespace pkg { struct Module; } }
 
 
 #define vgAssert( expression )						sbf::log::get().logAssert( (expression), "", (#expression), __FILE__, __LINE__ )
-#define vgAssertN( expression, message, ... )		sbf::log::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, __VA_ARGS__ )
+#define vgAssertN( expression, message, ... ) (void)( (!!(expression)) || (sbf::log::get().logAssert( (expression), (message), (#expression), __FILE__, __LINE__, __VA_ARGS__ ), 0 ) )
 
 
 
