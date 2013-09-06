@@ -10,6 +10,7 @@
 #include <assimp/postprocess.h>		// Post processing flags
 
 #include <vgd/basic/Image.hpp>
+#include <vgd/basic/FilenameExtractor.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/Material.hpp>
 #include <vgd/node/MatrixTransform.hpp>
@@ -17,6 +18,8 @@
 #include <vgd/node/Texture2D.hpp>
 #include <vgd/node/TransformSeparator.hpp>
 #include <vgd/node/VertexShape.hpp>
+#include <vgio/Cache.hpp>
+#include <vgio/FileSystem.hpp>
 
 
 
@@ -124,7 +127,7 @@ vgd::node::Texture::WrapValueType toEnum( const aiTextureMapMode mapMode )
 
 
 // TEXTURE2D
-vgd::Shp< vgd::node::Texture2D > createTexture2D(	const boost::filesystem::path pathFilename, const int index, const aiString aiImagePath,
+vgd::Shp< vgd::node::Texture2D > createTexture2D(	const vgio::Media & media, const boost::filesystem::path pathFilename, const int index, const aiString aiImagePath,
 													const aiTextureMapMode mapU, const aiTextureMapMode mapV )
 {
 	// Compute image path
@@ -149,9 +152,9 @@ vgd::Shp< vgd::node::Texture2D > createTexture2D(	const boost::filesystem::path 
 	vgd::Shp< Texture2D > texture = Texture2D::create( imagePathFilename.filename().string(), (int8)index );
 
 	// IMAGE
+	// Gathers the image from the cache.
 	vgd::Shp< vgd::basic::IImage > image;
-
-	image.reset( new vgd::basic::Image(imagePathFilenameStr) );
+	image = vgio::ImageCache::load( media, imagePathFilenameStr );
 	texture->setImage( image );
 
 	// Default values
@@ -170,7 +173,7 @@ vgd::Shp< vgd::node::Texture2D > createTexture2D(	const boost::filesystem::path 
 
 
 // MATERIAL
-vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathFilename, const aiMaterial * aiMat )
+vgd::Shp< vgd::node::Group > createMaterial( const vgio::Media & media, const boost::filesystem::path pathFilename, const aiMaterial * aiMat )
 {
 	// Group node
 	using vgd::node::Group;
@@ -241,7 +244,7 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 		aiMat->Get( AI_MATKEY_MAPPINGMODE_U(aiTextureType_DIFFUSE, 0), mapU );
 		aiMat->Get( AI_MATKEY_MAPPINGMODE_V(aiTextureType_DIFFUSE, 0), mapV );
 
-		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( pathFilename, 0, str, mapU, mapV );
+		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( media, pathFilename, 0, str, mapU, mapV );
 		group->addChild( texture );
 	}
 
@@ -251,7 +254,7 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 		aiMat->Get( AI_MATKEY_MAPPINGMODE_U(aiTextureType_NORMALS, 0), mapU );
 		aiMat->Get( AI_MATKEY_MAPPINGMODE_V(aiTextureType_NORMALS, 0), mapV );
 
-		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( pathFilename, 1, str, mapU, mapV );
+		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( media, pathFilename, 1, str, mapU, mapV );
 		group->addChild( texture );
 	}
 
@@ -261,7 +264,7 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 		aiMat->Get( AI_MATKEY_MAPPINGMODE_U(aiTextureType_SPECULAR, 0), mapU );
 		aiMat->Get( AI_MATKEY_MAPPINGMODE_V(aiTextureType_SPECULAR, 0), mapV );
 
-		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( pathFilename, 2, str, mapU, mapV );
+		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( media, pathFilename, 2, str, mapU, mapV );
 		group->addChild( texture );
 	}*/
 
@@ -274,7 +277,7 @@ vgd::Shp< vgd::node::Group > createMaterial( const boost::filesystem::path pathF
 }
 
 
-// VERTEXSHAPE
+// VERTEXSHAPE <-> aiMesh
 vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 {
 	// Vertex shape
@@ -478,12 +481,20 @@ void Loader::addPostProcessing( unsigned int flags )
 
 std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW )
 {
+	return load( vgio::FileSystem(), filePath, bCCW );
+}
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, vgd::Shp< std::vector< char > > inputBuffer, const bool bCCW )
+{
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
 
 	// Analysis of filePath
-	namespace bfs = boost::filesystem;
-
 	m_pathFilename = filePath;
+
+	vgd::basic::FilenameExtractor	extractor( filePath );
+	const std::string				fileExtension( extractor.getLowerCaseExtension() );
 
 	// Default pp steps
 	unsigned int ppsteps = //aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
@@ -504,7 +515,8 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 
 	// Create an instance of the Importer class
 	Assimp::Importer importer;
-	const aiScene * scene = importer.ReadFile( filePath,
+
+	const aiScene * scene = importer.ReadFileFromMemory( &(*inputBuffer)[0], inputBuffer->size(),
 		m_flags |
 		ppsteps | /* configurable pp steps */
 		//aiProcess_GenSmoothNormals		   | // generate smooth normal vectors if not existing
@@ -512,7 +524,9 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 		aiProcess_Triangulate			   | // triangulate polygons with more than 3 edges
 		//aiProcess_ConvertToLeftHanded	   | // convert everything to D3D left handed space
 		//aiProcess_SortByPType              | // make 'clean' meshes which consist of a single typ of primitives
-		0 );
+		0,
+		fileExtension.c_str()
+		);
 
 	// If the import failed, report it
 	retVal.first = (scene != 0);
@@ -537,7 +551,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 
 		for( uint i = 0, iEnd = scene->mNumMaterials; i != iEnd; ++i )
 		{
-			vgd::Shp< Group > material = createMaterial( m_pathFilename, scene->mMaterials[i] );
+			vgd::Shp< Group > material = createMaterial( vgio::FileSystem(), m_pathFilename, scene->mMaterials[i] );
 			vgAssert( material );
 			materials->addChild( material );
 		}
@@ -570,19 +584,58 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 }
 
 
-std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, const bool bCCW )
-{
-	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
-	return retVal;
-}
 
-
+// @todo remove from interface
 std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW )
 {
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
 	vgAssert( false );
 	return retVal;
 }
+
+
+
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media & media, const std::string & filePath, const bool bCCW )
+{
+	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
+	retVal.first	= false;
+	retVal.second	= vgd::node::Group::create("");
+
+	// Checks the existance of the given file.
+	if( ! media.exists(filePath) )
+	{
+		vgLogDebug("vgio: File %s not found", filePath.c_str() );
+		return retVal;
+	}
+
+	// Loads the file data
+	vgd::Shp< std::vector< char > > 	buffer( new std::vector<char>() );
+	const bool			loadSuccess = media.load( filePath, *buffer );
+
+	if ( loadSuccess )
+	{
+		vgLogDebug("ILoader: load data from file %s", filePath.c_str() );
+	}
+	else
+	{
+		vgLogDebug("ILoader: Unable to load data from file %s", filePath.c_str() );
+
+		return retVal;
+	}
+
+	retVal = load( filePath, buffer, bCCW );
+
+	if( retVal.first )
+	{
+		vgLogDebug("ILoader: load %s done", filePath.c_str() );
+	}
+	else
+	{
+		vgLogDebug("ILoader: Unable to load %s", filePath.c_str() );
+	}
+	return retVal;
+}
+
 
 
 vgd::Shp< vgio::ILoader > Loader::clone()
