@@ -11,7 +11,7 @@
 #include <boost/filesystem.hpp>
 #include <vgio/ILoader.hpp>
 #include <vgio/LoaderRegistry.hpp>
-//#include <vgio/Media.hpp>
+#include <vgio/Media.hpp>
 
 
 
@@ -45,27 +45,14 @@ struct VGOPENASSETIMPORT_API Loader : public vgio::ILoader
 	void addPostProcessing( unsigned int flags );
 	//@}
 
-	/**
-	 * @brief Load a model from file.
-	 * 
-	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
-	 */	
+
 	virtual std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, const bool bCCW = false );
 
-	/**
-	 * @brief Load a model from a file in memory.
-	 * 
-	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
-	 */
-	virtual std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, const bool bCCW = false );
+	virtual std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > inputBuffer, const bool bCCW = false );
 
-	/**
-	 * @brief Load a model from a file in memory and the list of image already load in memory.
-	 * 
-	 * @return a pair bool/group. true if the scene succefully create. The group representing the whole scene graph.
-	 */
-	virtual std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW = false );
+	virtual std::pair< bool, vgd::Shp< vgd::node::Group > > vgDEPRECATED( load( const std::string filePath, vgd::Shp< std::vector< char > > outBuffer, std::map< std::string, vgd::Shp< vgd::basic::Image > > imageMap, const bool bCCW = false ) );
 
+	std::pair< bool, vgd::Shp< vgd::node::Group > > load( const vgio::Media & media, const std::string & filePath, const bool bCCW );
 
 	virtual vgd::Shp< ILoader > clone();
 
