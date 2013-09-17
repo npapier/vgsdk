@@ -329,6 +329,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( std::istr
 
 				ls >> token2;
 				if(token2!='/'){
+					if (ls.eof())	break;
 					ls.unget();
 					continue;
 				}
@@ -341,6 +342,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( std::istr
 					ls >> token2;
 				}
 				if(token2!='/'){
+					if (ls.eof())	break;
 					ls.unget();
 					continue;
 				}
