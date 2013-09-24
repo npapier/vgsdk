@@ -1,3 +1,8 @@
 vcsUse		= 'no'
 type		= 'none'
-deps		= [ 'vgio', 'vgOpenAssetImport', 'vgOpenCOLLADA', 'vgTrian', 'vgPhysfs' ]
+deps		= [ 'vgio', 'vgOpenAssetImport', 'vgTrian', 'vgPhysfs' ]
+from SCons.Script.SConscript import SConsEnvironment
+sbf = SConsEnvironment.sbf
+if sbf.myCC == 'cl' and sbf.myCCVersionNumber <= 10.0:
+	deps += ['vgOpenCOLLADA']
+
