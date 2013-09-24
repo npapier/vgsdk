@@ -7,6 +7,7 @@
 #ifndef _VGQT_NODE_COLLADASETTINGSDIALOG_HPP_
 #define _VGQT_NODE_COLLADASETTINGSDIALOG_HPP_
 
+#if _MSC_VER <= 1600
 #include <vgQt/node/ColladaSettings.hpp>
 
 #include <vgOpenCOLLADA/Settings.hpp>
@@ -44,5 +45,6 @@ private:
 } // namespace vgQt
 
 
+#endif // #if _MSC_VER <= 1600
 
 #endif // _VGQT_NODE_COLLADASETTINGSDIALOG_HPP_

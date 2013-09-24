@@ -6,7 +6,10 @@
 
 #include "vgQt/actions/alg/ExportNode.hpp"
 
+#if _MSC_VER <= 1600
 #include <vgOpenCOLLADA/actions/ExportNode.hpp>
+#endif
+
 #include <vgAlg/actions/SelectedNode.hpp>
 
 #include <vgQt/node/ColladaSettingsDialog.hpp>
@@ -38,11 +41,11 @@ ExportNode::~ExportNode()
 
 void ExportNode::execute()
 {
+#if _MSC_VER <= 1600
     vgd::Shp< vgd::node::Node > node = vgAlg::actions::SelectedNode::getSelectedNodeObject()->getSelectedNode();
     vgd::Shp< vgd::node::Group > parent = vgAlg::actions::SelectedNode::getSelectedNodeObject()->getParentSelectedNode();
 
     node::ColladaSettingsDialog dialog;
-
 	vgOpenCOLLADA::Settings  exportSettings;
     if( dialog.exec() == QDialog::Accepted)
 	{
@@ -70,6 +73,7 @@ void ExportNode::execute()
             exportNode.execute();
         }
     }
+#endif
 }
 
 

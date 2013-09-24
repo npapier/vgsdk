@@ -45,6 +45,8 @@ public:
         setAutoFillBackground(true); // for compatibility
 
         setContextMenuPolicy(Qt::CustomContextMenu);
+
+		setMouseTracking(true);
     }
 
     ~GenericCanvas()

@@ -1,8 +1,9 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Bryan Schuller
+// Author Nicolas Papier
 
 #include <vgQt/event/helpers.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
@@ -12,6 +13,8 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QWidget>
+#include <vgDebug/helpers.hpp>
+
 
 namespace vgQt
 {
@@ -28,6 +31,7 @@ const int getKeyboardButton( const QKeyEvent * event )
     case Qt::Key_Backspace: 	return KeyboardButtonEvent::KEY_BACK;
     case Qt::Key_Tab:           return KeyboardButtonEvent::KEY_TAB;
     case Qt::Key_Return:        return KeyboardButtonEvent::KEY_RETURN;
+    case Qt::Key_Enter:         return KeyboardButtonEvent::KEY_ENTER;
     case Qt::Key_Escape:        return KeyboardButtonEvent::KEY_ESCAPE;
     case Qt::Key_Space:			return KeyboardButtonEvent::KEY_SPACE;
     case Qt::Key_Delete:        return KeyboardButtonEvent::KEY_DELETE;
@@ -70,8 +74,11 @@ const int getKeyboardButton( const QKeyEvent * event )
     case Qt::Key_9:             return '9';
     case Qt::Key_multiply:		return KeyboardButtonEvent::KEY_MULTIPLY;
 
+	case Qt::Key_Asterisk:		return KeyboardButtonEvent::KEY_ASTERISK;
     case Qt::Key_Plus:          return KeyboardButtonEvent::KEY_ADD;
     case Qt::Key_Minus:     	return KeyboardButtonEvent::KEY_SUBTRACT;
+	case Qt::Key_Period:		return KeyboardButtonEvent::KEY_PERIOD;
+	case Qt::Key_Slash:			return KeyboardButtonEvent::KEY_SLASH;
 
     case Qt::Key_Colon:			return ',';
     case Qt::Key_Semicolon:		return ';';
@@ -142,7 +149,7 @@ const int getKeyboardButton( const QKeyEvent * event )
     case Qt::Key_ScrollLock:	return KeyboardButtonEvent::KEY_SCROLL;
 
     default:
-        // vgLogDebug( "Unsupported keyboard key %c (%x).", event->key(), event->key() );
+        vgLogDebug( "Unsupported keyboard key %i (%s).", event->key(), event->text().toStdString() );
         return 0;
     }
 }

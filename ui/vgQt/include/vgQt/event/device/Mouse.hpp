@@ -47,6 +47,8 @@ struct VGQT_API Mouse : public vgd::event::device::Mouse, public IDevice
      */
 	void onEvent( QEvent * event );
 
+	const ::vgd::event::Location2::Location getPreviousLocation() { return m_previousLocation; }
+
 private:
 
 	const QWidget						* m_widget;			///< Points to the widget where the mouse event occur.
