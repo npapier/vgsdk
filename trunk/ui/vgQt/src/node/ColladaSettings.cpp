@@ -4,6 +4,8 @@
 // Author Guillaume Brocker
 // Author Bryan Schuller
 
+#if _MSC_VER <= 1600
+
 #include "vgQt/node/ColladaSettings.hpp"
 
 #include <QPushButton>
@@ -123,3 +125,5 @@ vgOpenCOLLADA::Settings ColladaSettings::getSettings()
 } // namespace node
 
 } // namespace vgQt
+
+#endif // #if _MSC_VER <= 1600

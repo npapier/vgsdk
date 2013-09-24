@@ -7,6 +7,7 @@
 #ifndef _VGQT_NODE_COLLADASETTINGS_HPP_
 #define _VGQT_NODE_COLLADASETTINGS_HPP_
 
+#if _MSC_VER <= 1600
 #include <vgOpenCOLLADA/Settings.hpp>
 
 #include <QVBoxLayout>
@@ -77,5 +78,6 @@ private:
 
 } // namespace vgQt
 
+#endif // _MSC_VER <= 1600
 
 #endif // _VGQT_NODE_COLLADASETTINGS_HPP_
