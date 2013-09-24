@@ -324,6 +324,16 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 			m_image( image )
 		{}
 
+		Screenshot& operator=(const Screenshot& s)
+		{
+			if ( this != &s )
+			{
+				destroy();
+				copy( s );
+			}
+			return *this;
+		}
+
 		const uint getFrameNumber() const				{ return m_frameNumber; }
 		vgd::Shp< vgd::basic::Image > getImage() const	{ return m_image; }
 
@@ -354,9 +364,20 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 		}
 
 	private:
+		void copy( const Screenshot& s )
+		{
+			m_image = s.m_image;
+			m_frameNumber = s.m_frameNumber;
+		}
+
+		void destroy()
+		{
+			m_image.reset();
+		}
+
 		const std::string buildFilename( const std::string filePrefix );
 
-		const uint						m_frameNumber;	///< the frame number to identify a screenshot. This attribute could be used to order a sequence of screenshots.
+		uint							m_frameNumber;	///< the frame number to identify a screenshot. This attribute could be used to order a sequence of screenshots.
 		vgd::Shp< vgd::basic::Image >	m_image;		///< the screenshot is stored by this image
 	};
 
