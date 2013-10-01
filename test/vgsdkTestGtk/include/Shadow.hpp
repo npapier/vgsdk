@@ -6,9 +6,9 @@
 #ifndef _VGSDKTESTGTK_SHADOW_HPP
 #define _VGSDKTESTGTK_SHADOW_HPP
 
-#include "gtest.hpp"
 #include "helpers.hpp"
 #include <vgTest/convenience.hpp>
+#include <vgTest/gtest.hpp>
 
 #include "Fixtures.hpp"
 

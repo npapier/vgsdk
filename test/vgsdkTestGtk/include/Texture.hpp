@@ -6,9 +6,9 @@
 #ifndef _VGSDKTESTGTK_TEXTURE_HPP
 #define _VGSDKTESTGTK_TEXTURE_HPP
 
-#include "gtest.hpp"
 #include "helpers.hpp"
 #include <vgTest/convenience.hpp>
+#include <vgTest/gtest.hpp>
 
 #include "Fixtures.hpp"
 

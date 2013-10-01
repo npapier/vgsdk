@@ -9,9 +9,9 @@
 #include <vgd/node/Group.hpp>
 #include <vgd/ScopedPtr.hpp>
 #include <vgTest/convenience.hpp>
+#include <vgTest/gtest.hpp>
 
 #include "Fixtures.hpp"
-#include "gtest.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
