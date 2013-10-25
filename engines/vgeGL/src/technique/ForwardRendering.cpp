@@ -620,6 +620,7 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 		engine->setBufferUsagePolicy( vge::engine::BUP_COLOR_AND_DEPTH );
 
 		// CullFace is used internally. So disables it.
+		const bool cullFaceState = engine->isRegardedIfIsA<vgd::node::CullFace>();
 		engine->disregardIfIsA< vgd::node::CullFace >();
 
 		// For each light, updates shadow map
@@ -677,6 +678,9 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 
 		// Restores output buffers
 		engine->setOutputBuffers( outputBuffersBak );
+
+		// Restores cullface.
+		engine->regardIfIsA< vgd::node::CullFace >( cullFaceState );
 
 		// Restores engine state
 		unconfigureGeometryOnly( engine, geometryOnlyState );
@@ -880,9 +884,6 @@ void ForwardRendering::stageConfigureShadowMapping( vgeGL::engine::Engine * engi
 
 			engine->getTextureMatrix().setTop( textureMatrix, privateTexUnit1 );
 		}
-
-		// Disables CullFace
-		engine->disregardIfIsA< vgd::node::CullFace >();
 	}
 	//else nothing to do
 }
