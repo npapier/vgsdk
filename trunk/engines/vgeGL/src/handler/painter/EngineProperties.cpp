@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -90,8 +90,10 @@ void EngineProperties::setToDefaults()
 	if ( isGL_ARB_tessellation_shader() )
 	{
 		glPatchParameteri(GL_PATCH_VERTICES, 3);
-		glPatchParameteri(GL_PATCH_DEFAULT_INNER_LEVEL, 3);
-		glPatchParameteri(GL_PATCH_DEFAULT_OUTER_LEVEL, 3);
+
+		GLfloat level[] = { 3.f, 3.f, 3.f };
+		glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, level);
+		glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, level);
 	}
 }
 
