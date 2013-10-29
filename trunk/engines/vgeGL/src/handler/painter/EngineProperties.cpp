@@ -91,9 +91,10 @@ void EngineProperties::setToDefaults()
 	{
 		glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-		GLfloat level[] = { 3.f, 3.f, 3.f };
-		glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, level);
-		glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, level);
+		GLfloat innerLevel[] = { 3.f, 3.f };
+		GLfloat outerLevel[] = { 3.f, 3.f, 3.f, 3.f };
+		glPatchParameterfv( GL_PATCH_DEFAULT_INNER_LEVEL, innerLevel );
+		glPatchParameterfv( GL_PATCH_DEFAULT_OUTER_LEVEL, outerLevel );
 	}
 }
 
