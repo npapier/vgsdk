@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Alexandre Di Pino, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, Alexandre Di Pino, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Alexandre Di Pino
@@ -43,61 +43,57 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
 
-	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "in", "In[]", true );
+	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "in", "TexCoords", "inTexCoord[]", true );
 	//std::pair< std::string, std::string > code_samplers	= GLSLHelpers::generate_samplers( state );
 
 	//m_decl += code_samplers.first;
 
-	//
+	// INPUTS
 	std::string inputs;
 	std::string outputs;
-
+// @todo #define SHADEMODEL flat or
 	// declaration for lighting
 	if ( state.isLightingEnabled() )
 	{
-		if ( !state.isPerVertexLightingEnabled() )
-		{
-			if ( state.isEnabled( FLAT_SHADING ) )
-			{
-				inputs +=	"flat in vec3 ecNormal[];\n";
-				outputs +=	"flat out vec3 myNormal[3];\n";
-				if ( state.isBumpMappingEnabled() )
-				{
-					inputs += "flat in vec3 tsTangent[];\n";
-					outputs += "flat out vec3 myTangent[3];\n";
-				}
-			}
-			else
-			{
-				inputs +=	"in vec3 ecNormal[];\n";
-				outputs +=	"out vec3 myNormal[3];\n";
-				if ( state.isBumpMappingEnabled() )
-				{
-					inputs += "in vec3 tsTangent[];\n";
-					outputs += "out vec3 myTangent[3];\n";
-				}
-			}
-		}
-		// else nothing to do
+		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat";
+		inputs +=	"in vec3 ecNormal[];\n";
+		if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat";
+		outputs +=	"out vec3 myNormal[];\n";
 	}
 	// else nothing to do
 
-	// INPUTS
 	m_decl +=
 		"// INPUTS\n"
 		"\n"
-		"// gl_in\n"
+		"// gl_in[gl_MaxPatchVertices]\n"
 		"\n" +
 		inputs;
 
-	if ( has_ftexgen )	m_decl += "\n" + code_ftexgen.first;
+	if ( has_ftexgen )
+	{
+		m_decl += "\n" + code_ftexgen.first;
+
+		std::string tmp = boost::algorithm::replace_first_copy(code_ftexgen.first, "in ", "out ");
+		boost::algorithm::replace_first( tmp, "inTexCoord", "outTexCoord" );
+		outputs += "\n" + tmp;
+	}
+
+	// declarations for bumpmapping
+	if ( state.isBumpMappingEnabled() )
+	{
+		m_decl +=	"// Bumpmapping parameters\n"
+					"in vec3 ecTangent[];\n\n";
+		outputs += "out vec3 myTangent[];\n";
+	}
 
 	// OUTPUTS
 	m_decl +=
 		"// OUTPUTS\n"
 		"layout(vertices = 3) out;\n"
 		"\n"
-		"// gl_out\n"
+		"// patch out float gl_TessLevelOuter[4];\n"
+		"// patch out float gl_TessLevelInner[2];\n"
+		"// gl_out[]\n"
 		"\n"
 		"// User-defined per-vertex output variables\n"
 		"struct PhongPatch\n"
@@ -107,15 +103,10 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 		"	float termIK;\n"
 		"};\n"
 		"\n"
-		"out PhongPatch iPhongPatch[3];\n"
+		"out PhongPatch iPhongPatch[];\n"
 		"\n" +
 		outputs +
 		"\n";
-
-	if ( has_ftexgen )
-	{
-		m_decl += "out vec4 oMultiTexCoord0[];\n\n";
-	}
 
 	// LOCAL VARIABLES
 
@@ -123,7 +114,7 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 	m_code1 +=
 		"\n"
 		"// FUNCTIONS\n"
-		"float PIi(int i, vec3 q)\n"
+		"float PIi(int i, vec3 q)\n"		// @todo replace q by int j and with q = gl_in[j].gl_Position.xyz ?
 		"{\n"
 		"	vec3 q_minus_p = q - gl_in[i].gl_Position.xyz;\n"
 		"	return q[gl_InvocationID] - dot(q_minus_p, ecNormal[i]) * ecNormal[i][gl_InvocationID];\n"
@@ -142,22 +133,34 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 		"	gl_TessLevelOuter[2] = tessValue;\n"
 		"	gl_TessLevelInner[0] = tessValue;\n"
 		"\n"
-		"	// gl_out\n"
+		"	// gl_out[]\n"
 		"	gl_out[gl_InvocationID].gl_Position =  gl_in[gl_InvocationID].gl_Position;\n"
 		"\n"
-		"	// Out\n"
 		"	// iPhongPatch\n"
 		"	iPhongPatch[gl_InvocationID].termIJ = PIi(0,gl_in[1].gl_Position.xyz) + PIi(1,gl_in[0].gl_Position.xyz);\n"
 		"	iPhongPatch[gl_InvocationID].termJK = PIi(1,gl_in[2].gl_Position.xyz) + PIi(2,gl_in[1].gl_Position.xyz);\n"
 		"	iPhongPatch[gl_InvocationID].termIK = PIi(2,gl_in[0].gl_Position.xyz) + PIi(0,gl_in[2].gl_Position.xyz);\n"
 		"\n"
 		"	myNormal[gl_InvocationID] = ecNormal[gl_InvocationID];\n";
-	if ( state.isBumpMappingEnabled() )
+
+	if ( has_ftexgen )
 	{
-		m_code2 +=
-		"	myTangent[gl_InvocationID] = tsTangent[gl_InvocationID];\n";
+		// @todo array assign ?
+		m_code2 +=	"	// mgl_TexCoord\n"
+					"	int iMax = inTexCoord[gl_InvocationID].mgl_TexCoord.length();\n"
+					"	for( int i = 0; i < iMax; ++i )\n"
+					"	{\n"
+					"		outTexCoord[gl_InvocationID].mgl_TexCoord[i] = inTexCoord[gl_InvocationID].mgl_TexCoord[i];\n"
+					"	}\n";
+		m_code2 +=	"	// mgl_TexCoordShadow\n"
+					"	iMax = inTexCoord[gl_InvocationID].mgl_TexCoordShadow.length();\n"
+					"	for( int i = 0; i < iMax; ++i )\n"
+					"	{\n"
+					"		outTexCoord[gl_InvocationID].mgl_TexCoordShadow[i] = inTexCoord[gl_InvocationID].mgl_TexCoordShadow[i];\n"
+					"	}\n";
 	}
 
+	if ( state.isBumpMappingEnabled() ) m_code2 += "\n	myTangent[gl_InvocationID] = ecTangent[gl_InvocationID];\n";
 
 	m_code2 +=
 	"}\n";
@@ -171,9 +174,7 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 		if ( program->getTessellationUse() )
 		{
 			std::string	shaderStr = program->getTessellationControl();
-			m_decl.clear();
 			m_code1 = shaderStr;
-			m_code2.clear();
 			return true;
 		}
 	}

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -45,7 +45,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
 
-	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "in", "In", false ); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
+	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "in", "TexCoords", "inTexCoord", false, true ); // @todo FIXME: only to retrieve ftexgen declaration (mgl_TexCoord...)
 	std::pair< std::string, std::string > code_samplers	= GLSLHelpers::generate_samplers( state );
 
 	m_decl += code_samplers.first;
@@ -53,40 +53,35 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// INPUTS
 	m_decl += "// INPUTS\n";
 
-	if ( state.isPerPixelLightingEnabled() )
+	if ( state.isLightingEnabled() /*PerPixelLightingEnabled()*/ )
 	{
-		if ( state.isEnabled( FLAT_SHADING ) )
-		{
-			m_decl += 
-			"flat in vec4 ecPosition;\n"
-			"flat in vec3 ecNormal;\n";
-		}
-		else
-		{
-			m_decl += 
-			"in vec4 ecPosition;\n"
-			"in vec3 ecNormal;\n";
-		}
+		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat";
+		m_decl += "in vec4 ecPosition;\n";
 
-		if ( state.isBumpMappingEnabled() )
-		{
-			m_decl += GLSLHelpers::generate_declarationsForBumpmapping( false );
-		}
-		else
-		{
-			m_decl += "\n";
-		}
+		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat";
+		m_decl += "in vec3 ecNormal;\n\n"; // @todo not if bump
 	}
 
-	m_decl += code_ftexgen.first;
-	m_decl +=
-		"// for compatibility\n"
-		"#define mgl_TexCoord In.mgl_TexCoord\n"
-		"\n";
-	m_code1 += code_samplers.second;
+	if ( has_ftexgen )
+	{
+		m_decl += code_ftexgen.first;
+
+		m_code1 += code_samplers.second;
+	}
+
+	// DECLARATIONS for bumpmapping
+	if ( state.isBumpMappingEnabled() )
+	{
+		m_decl +=	"// Bumpmapping parameters\n"
+					"in vec3 ecTangent;\n";
+
+		m_decl += GLSLHelpers::generate_declarationsForBumpmapping();
+		m_decl += "in BumpMappingParameters bumpParams;\n";
+	}
 
 	// OUTPUT
-	m_decl += "// OUTPUTS\n";
+	m_decl +=	"\n"
+				"// OUTPUTS\n";
 
 	// FRAGMENT_DECLARATIONS
 	const std::string fragmentDeclaration = state.getShaderStage( GLSLState::FRAGMENT_DECLARATIONS );
@@ -125,31 +120,21 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		if ( program->getFragmentUse() )
 		{
 			m_code1 = program->getFragment();
-			//m_decl.clear();
-			//m_code2.clear();
 			return true;
 		}
 	}
-
 
 	// MAIN
 	m_code2 +=
 	"// MAIN function\n"
 	"void main( void )\n"
 	"{\n"
-	"	vec4 color;\n";
+	"	vec4 color;\n\n";
 
 	// texture lookup
 	std::string textureLookup;
 
-	if ( state.isTessellationEnabled() )
-	{
-
-	}
-	else
-	{
-		if ( has_ftexgen ) textureLookup += GLSLHelpers::generate_fragmentShader_texLookups( state );
-	}
+	if ( has_ftexgen ) textureLookup += GLSLHelpers::generate_fragmentShader_texLookups( state );
 
 	if ( state.isLightingEnabled() == false || state.isPerVertexLightingEnabled() )
 	{
@@ -193,18 +178,19 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 			"		color = accumBackColor ;\n" +
 					textureLookup +
 			"		color = vec4( (color + accumBackSecondaryColor).rgb, gl_FrontMaterial.diffuse.a );\n"
-			"	}\n";
+			"	}\n\n";
 		}
 		else
 		{
 			m_code2 +=
 			"	color = accumColor;\n"
 			"	" + textureLookup +
-			"	color = vec4( (color + accumSecondaryColor).rgb, gl_FrontMaterial.diffuse.a );\n"; // @todo FIXME gl_FrontMaterial.diffuse.a <=> gl_Color.a ? 
+			"	color = vec4( (color + accumSecondaryColor).rgb, gl_FrontMaterial.diffuse.a );\n\n";
 		}
 	}
 
 	const std::string& fragmentOutputStage = state.getShaderStage( GLSLState::FRAGMENT_OUTPUT );
+
 	if ( !fragmentOutputStage.empty() )
 	{
 		m_code2 += fragmentOutputStage;
@@ -238,9 +224,6 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}*/
 
 	m_code2 += "}\n";
-
-
-
 
 	return true;
 }

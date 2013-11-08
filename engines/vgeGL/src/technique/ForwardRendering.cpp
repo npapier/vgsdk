@@ -560,11 +560,11 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	hasOutputBufferProperties = glslStateFinal->outputBufferProperties.isNotEmpty();
 	m_lastCurrentScaleForVertex = 1.f;
 
-	if (	glslStateFinal->outputBufferProperties.getNum() > 1 &&
+	/*if (	glslStateFinal->outputBufferProperties.getNum() > 1 &&
 			glslStateFinal->postProcessing.isEmpty() )
 	{
 		vgLogDebug("At least one unused OutputBufferProperty (i.e. No PostProcessing node, but at least two OutputBufferProperty node)");
-	}
+	}*/
 
 	// Saves the outputBufferProperties state
 	m_outputBufferProperties = &(glslStateFinal->outputBufferProperties);
@@ -604,9 +604,11 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
  */
 void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
-	lightLookAt.clear();
-	if ( shadowType != vgd::node::LightModel::SHADOW_OFF )
+	if (	(shadowType != vgd::node::LightModel::SHADOW_OFF) &&
+			(m_shadowMappingInput->getNumLight() > 0)	)
 	{
+		lightLookAt.clear();
+
 		// Configures geometry only pass
 		vgd::Shp< GeometryOnlyState > geometryOnlyState = configureGeometryOnly( engine );
 		regardForGeometryOnly(engine);
@@ -616,8 +618,9 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 		engine->disregardIfIsA< vgd::node::MultipleInstances >();
 
 		// Writes only to depth buffer
-//		engine->setBufferUsagePolicy( vge::engine::BUP_ONLY_DEPTH );
-		engine->setBufferUsagePolicy( vge::engine::BUP_COLOR_AND_DEPTH );
+		const vge::engine::BufferUsagePolicy bupState = engine->getBufferUsagePolicy();
+		engine->setBufferUsagePolicy( vge::engine::BUP_ONLY_DEPTH );
+//		engine->setBufferUsagePolicy( vge::engine::BUP_COLOR_AND_DEPTH );
 
 		// CullFace is used internally. So disables it.
 		const bool cullFaceState = engine->isRegardedIfIsA<vgd::node::CullFace>();
@@ -634,8 +637,8 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 				++currentLightIndex )
 		{
 
-//			setPassDescription("Depth from light POV");
-			setPassDescription("Depth/alpha from light POV");
+			setPassDescription("Depth from light POV");
+//			setPassDescription("Depth/alpha from light POV");
 			beginPass( static_cast< PassIsolationMask >(RESET_MATRICES | PUSH_POP_STATE) );
 
 // @todo disabled
@@ -651,7 +654,7 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 			vgd::Shp< vgeGL::rc::FrameBufferObject > fbo = configureShadowMap( engine, currentLightIndex );
 			if ( !fbo )	continue;
 			engine->setOutputBuffers( fbo );
-			engine->setCurrentPrivateOutputBuffers( 0 );
+//			engine->setCurrentPrivateOutputBuffers( 0 );
 
 			// RENDER FROM LIGHT
 			using vgeGL::engine::LightState;
@@ -682,6 +685,9 @@ void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge
 		// Restores cullface.
 		engine->regardIfIsA< vgd::node::CullFace >( cullFaceState );
 
+		// Restores BUP
+		engine->setBufferUsagePolicy( bupState );
+
 		// Restores engine state
 		unconfigureGeometryOnly( engine, geometryOnlyState );
 	}
@@ -707,6 +713,7 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 	IImage::Type								imageType;
 	vgd::node::Texture::InternalFormatValueType internalFormat;
 	boost::tie( imageType, internalFormat ) = convertShadowMapType2IImageType( shadowMapType );
+
 	vgd::Shp< ImageInfo > depthImage(
 		new ImageInfo(	m_shadowMappingInput->getShadowMapSize()[0], m_shadowMappingInput->getShadowMapSize()[1], 1,
 						IImage::LUMINANCE, imageType ) );
@@ -719,7 +726,7 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 	const uint currentTexUnit = engine->getGLSLState().getPrivateTexUnitIndex(currentLightIndex);
 	if ( depthMap->getMultiAttributeIndex() != currentTexUnit )	depthMap->setMultiAttributeIndex( currentTexUnit );
 
-	// ALPHA MAP
+/*	// ALPHA MAP
 	// Updates Texture2D node
 	vgd::Shp< vgd::node::Texture2D > alphaMap = m_shadowMappingInput->getLightAlphaMap( currentLightIndex );
 
@@ -727,7 +734,7 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 	vgd::Shp< ImageInfo > alphaImage(
 		new ImageInfo(	m_shadowMappingInput->getShadowMapSize()[0], m_shadowMappingInput->getShadowMapSize()[1], 1, // @todo reduce size of texture
 						IImage::RGBA, IImage::UINT8 ) );
-	alphaMap->setImage( alphaImage ); // @todo OPTME only if modified
+	alphaMap->setImage( alphaImage ); // @todo OPTME only if modified*/
 
 	// alphaMap.multiAttributeIndex
 	//const uint currentTexUnit2 = engine->getGLSLState().getPrivateTexUnitIndex(currentLightIndex+1); // @todo currentLightIndex+1 not cute => improves getPrivateTexUnitIndex() => getPrivateTexUnitIndex( std::string uniqueName )
@@ -736,16 +743,14 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 
 	// paint
 	const bool textureMappingEnabledBak = engine->setTextureMappingEnabled(true);
-	const bool isTessellationEnabledBak = engine->getGLSLState().isTessellationEnabled();
+	const bool texture2DEnabledBak = engine->isRegardedIfIsA<vgd::node::Texture2D>();
 	engine->regardIfIsA<vgd::node::Texture2D>();
 
-	engine->paint( alphaMap );
+	//engine->paint( alphaMap );
 	engine->paint( depthMap );
 
-
+	engine->regardIfIsA<vgd::node::Texture2D>( texture2DEnabledBak );
 	engine->setTextureMappingEnabled(textureMappingEnabledBak);
-
-	engine->disregardIfIsA<vgd::node::Texture2D>();
 
 	// Updates FBO
 // @todo moves
@@ -764,12 +769,12 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 		fbo->bind();
 
 		vgd::Shp< vgeGL::rc::Texture2D > lightDepthMap = m_shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
-		vgd::Shp< vgeGL::rc::Texture2D > lightAlphaMap = m_shadowMappingInput->getLightAlphaMap( currentLightIndex, engine );
-		fbo->attachColor( lightAlphaMap );
+		//vgd::Shp< vgeGL::rc::Texture2D > lightAlphaMap = m_shadowMappingInput->getLightAlphaMap( currentLightIndex, engine );
+		//fbo->attachColor( lightAlphaMap );
 		fbo->attachDepth( lightDepthMap );
 
-		//fbo->renderDepthOnly();
-		fbo->setDrawBuffersToAll();
+		fbo->renderDepthOnly();
+		//fbo->setDrawBuffersToAll();
 
 		// Check framebuffer completeness at the end of initialization.
 		const std::string fboStatus = fbo->getStatusString();
@@ -833,7 +838,7 @@ void ForwardRendering::stageConfigureShadowMapping( vgeGL::engine::Engine * engi
 				++currentLightIndex )
 		{
 			const uint privateTexUnit0 = engine->getGLSLState().getPrivateTexUnitIndex( currentLightIndex );
-			const uint privateTexUnit1 = engine->getGLSLState().getPrivateTexUnitIndex( currentLightIndex + 1);
+			//const uint privateTexUnit1 = engine->getGLSLState().getPrivateTexUnitIndex( currentLightIndex + 1);
 
 	// @todo Improves vgd::node::Texture to be able to use it directly
 
@@ -844,10 +849,10 @@ void ForwardRendering::stageConfigureShadowMapping( vgeGL::engine::Engine * engi
 			engine->paint( depthMap );
 	// @todo setFunction()
 
-			// ALPHA MAP
+			/*// ALPHA MAP
 			vgd::Shp< vgd::node::Texture2D > alphaMap = m_shadowMappingInput->getLightAlphaMap( currentLightIndex );
 			if ( alphaMap->getMultiAttributeIndex() != privateTexUnit1 )	alphaMap->setMultiAttributeIndex( privateTexUnit1 );
-			engine->paint( alphaMap );
+			engine->paint( alphaMap );*/
 
 			// *** Updates TexGen ***
 // @todo two texGen
@@ -855,8 +860,8 @@ void ForwardRendering::stageConfigureShadowMapping( vgeGL::engine::Engine * engi
 			if ( texGen->getMultiAttributeIndex() != privateTexUnit0 )		texGen->setMultiAttributeIndex( privateTexUnit0 );
 			engine->paint( texGen );
 
-			if ( texGen->getMultiAttributeIndex() != privateTexUnit1 )		texGen->setMultiAttributeIndex( privateTexUnit1 );
-			engine->paint( texGen );
+			/*if ( texGen->getMultiAttributeIndex() != privateTexUnit1 )		texGen->setMultiAttributeIndex( privateTexUnit1 );
+			engine->paint( texGen );*/
 
 			// *** Updates Texture Matrix ***
 // @todo use TextureMatrix node
@@ -877,12 +882,12 @@ void ForwardRendering::stageConfigureShadowMapping( vgeGL::engine::Engine * engi
 
 			engine->getTextureMatrix().setTop( textureMatrix, privateTexUnit0 );
 
-			// tex gen for alpha map
+			/*// tex gen for alpha map
 			engine->activeTexture(privateTexUnit1);
 			glMatrixMode( GL_TEXTURE );
 			glLoadMatrixf( reinterpret_cast<const float*>( textureMatrix.getValue() ) );
 
-			engine->getTextureMatrix().setTop( textureMatrix, privateTexUnit1 );
+			engine->getTextureMatrix().setTop( textureMatrix, privateTexUnit1 );*/
 		}
 	}
 	//else nothing to do
@@ -2053,20 +2058,26 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 			if ( postProcessingNode->getInput2() != vgd::node::PostProcessing::INPUT2_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	Out.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
-																		"	Out.mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
-																		"	Out.mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
+//					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	outTexCoord.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+//																		"	outTexCoord.mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
+//																		"	outTexCoord.mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+																		"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n"
+																		"	mgl_TexCoord[2] = gl_TextureMatrix[2] * mgl_MultiTexCoord2;\n" );
 			}
 			else if ( postProcessingNode->getInput1() != vgd::node::PostProcessing::INPUT1_NONE )
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	Out.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
-																		"	Out.mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
+//					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	outTexCoord.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+//																		"	outTexCoord.mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n"
+																		"	mgl_TexCoord[1] = gl_TextureMatrix[1] * mgl_MultiTexCoord1;\n" );
 			}
 			else
 			{
 				vertexShader = boost::algorithm::replace_first_copy( 
-					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	Out.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
+//					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	outTexCoord.mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
+					getPostProcessingVertexProgram(), "INLINE_FTEXGEN",	"	mgl_TexCoord[0] = gl_TextureMatrix[0] * mgl_MultiTexCoord0;\n" );
 			}
 
 			currentScaleForVertex *= scale.second;

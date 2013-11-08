@@ -107,11 +107,11 @@ void updateArrayBuffer( GLOArrayBufferType& buffer, GLsizeiptr size, const GLvoi
 	buffer.bind();
 	if ( useBufferData )
 	{
-		buffer.bufferData( size, ptr, bufferUsage );
+		if (ptr)	buffer.bufferData( size, ptr, bufferUsage );
 	}
 	else
 	{
-		buffer.bufferSubData( 0, size, ptr );
+		if (ptr)	buffer.bufferSubData( 0, size, ptr );
 	}
 }
 
@@ -363,6 +363,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 	// GLSL
 	const bool tessellationIsEnabled = glslState.isTessellationEnabled();
+	bool aNewProgramHasBeenGenerated = false;
 	if ( pGLEngine->isGLSLEnabled() )
 	{
 		if ( glslState.isDirty() )
@@ -374,22 +375,12 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 			// CACHE
 			const std::string	fullCode	= pg->getCode();
+
 			const std::string&	vs			= pg->getVertexShaderGenerator()->getCode();
 			std::string			tcs;
 			std::string 		tes;
 			std::string			gs;
 			const std::string&	fs			= pg->getFragmentShaderGenerator()->getCode();
-
-/*#ifdef _DEBUG
-			static bool firstTime = true;
-			vgDebug::StdStreamsToFiles redirection(	"GLSL.cout.txt", "GLSL.cerr.txt", firstTime ? vgDebug::StdStreamsToFiles::TRUNCATE : vgDebug::StdStreamsToFiles::APPEND );
-			if ( firstTime ) firstTime = false;
-
-			std::cout << "Generates shaders\n" << std::endl;
-			std::cout << "Vertex shader\n" << std::endl << vs << std::endl;
-			std::cout << "Fragment shader\n" << std::endl << fs << std::endl;
-			std::cout << "\n\n\n";
-#endif*/
 
 			using glo::GLSLProgram;
 			GLSLProgram * program = pGLEngine->getGLSLManager().get< GLSLProgram >( fullCode );
@@ -400,16 +391,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				program = shpProgram.get();
 
 				// Compiles and links
-				std::string vsInfoLog;
-				std::string tcsInfoLog;
-				std::string tesInfoLog;
-				std::string gsInfoLog;
-				std::string fsInfoLog;
-
-				std::string linkInfoLog;
-
-				const bool compileVSRetVal = program->addShader( vs.c_str(), pg->getVertexShaderGenerator()->getShaderType(), false );
-				if ( !compileVSRetVal )	vsInfoLog = program->getLogError( GLSLProgram::VERTEX );
+				const bool compileVSRetVal = program->addShader( vs, pg->getVertexShaderGenerator()->getShaderType() );
 
 				bool compileTCSRetVal = true;
 				bool compileTESRetVal = true;
@@ -419,53 +401,36 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 					tcs = pg->getTessellationControlShaderGenerator()->getCode();
 					tes = pg->getTessellationEvaluationShaderGenerator()->getCode();
 
-					compileTCSRetVal = program->addShader( tcs.c_str(), pg->getTessellationControlShaderGenerator()->getShaderType(), false );
-					if ( !compileTCSRetVal )	tcsInfoLog = program->getLogError( GLSLProgram::TESSELLATION_CONTROL );
-
-					compileTESRetVal = program->addShader( tes.c_str(), pg->getTessellationEvaluationShaderGenerator()->getShaderType(), false );
-					if ( !compileTESRetVal )	tesInfoLog = program->getLogError( GLSLProgram::TESSELLATION_EVALUATION );
+					compileTCSRetVal = program->addShader( tcs, pg->getTessellationControlShaderGenerator()->getShaderType() );
+					compileTESRetVal = program->addShader( tes, pg->getTessellationEvaluationShaderGenerator()->getShaderType() );
 				}
 
-				const bool compileGSRetVal = true;/*program->addShader( gs.c_str(), pg->getGeometryShaderGenerator()->getShaderType(), false );
-				if ( !compileGSRetVal )	gsInfoLog = program->getLogError( GLSLProgram::GEOMETRY );*/
+				const bool compileGSRetVal = true;//program->addShader( gs, pg->getGeometryShaderGenerator()->getShaderType() );
 
-				const bool compileFSRetVal = program->addShader( fs.c_str(), pg->getFragmentShaderGenerator()->getShaderType(), false );
-				if ( !compileFSRetVal )	fsInfoLog = program->getLogError( GLSLProgram::FRAGMENT );
+				const bool compileFSRetVal = program->addShader( fs, pg->getFragmentShaderGenerator()->getShaderType() );
 
 				// no more needed
 				//namespace vgeGLPainter = vgeGL::handler::painter;
 				//vgeGLPainter::OutputBufferProperty::bindFragDataLocations( pGLEngine, program );
 
-				const bool linkRetVal = program->link();
-				if ( !linkRetVal )	linkInfoLog = program->getInfoLog();
+				const bool linkRetVal = program->link(false);
 
-				// Print informations if build and/or link fails
-				if ( !compileVSRetVal || !compileTCSRetVal || !compileTESRetVal || !compileGSRetVal || !compileFSRetVal || !linkRetVal )
-				{
-					std::cout << "=======================================================================================\n" << std::endl;
-
-					std::cout << "Link info log:" << std::endl << linkInfoLog << std::endl;
-					std::cout << "Vertex shader info log:" << std::endl << vsInfoLog << std::endl;
-					std::cout << "Fragment shader info log:" << std::endl << fsInfoLog << std::endl;
-
-					if ( tessellationIsEnabled )
-					{
-						std::cout << "Tessellation Control shader info log:" << std::endl << tcsInfoLog << std::endl;
-						std::cout << "Tessellation Evaluation shader info log:" << std::endl << tesInfoLog << std::endl;
-					}
-					std::cout << "Geometry shader info log:" << std::endl << gsInfoLog << std::endl;
-				}
-
-				//
+				// Register the new program
+				aNewProgramHasBeenGenerated = true;
 				const int programValue = static_cast<int>( program->getProgramObject() );
 				pGLEngine->getGLSLManagerExt().add( programValue , shpProgram );
 				pGLEngine->getGLSLManager().add( fullCode, shpProgram );
 
-				if ( !compileVSRetVal || !compileTCSRetVal || !compileTESRetVal || !compileGSRetVal || !compileFSRetVal || !linkRetVal )
+				if ( !compileVSRetVal || !compileTCSRetVal || !compileTESRetVal || !compileGSRetVal || !compileFSRetVal || !linkRetVal /*|| !validateRetVal*/ )
 				{
 					// Don't render this vertex shape
 					pGLEngine->setCurrentProgram();
+					vgLogDebug("Program %i generated for VertexShape named '%s' contains error(s).", programValue, pVertexShape->getName().c_str());
 					return;
+				}
+				else
+				{
+					pGLEngine->setCurrentProgram();
 				}
 			}
 			// else uses GLSL program found in cache
@@ -478,6 +443,26 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 				//	SAMPLERS
 				setSamplers( pGLEngine, program );
+
+				//	VALIDATION
+				if ( aNewProgramHasBeenGenerated )
+				{
+					const bool validateRetVal = program->validate();
+					if ( !validateRetVal )
+					{
+						const std::string activeUniforms = program->getActiveUniformsStr();
+						std::cout << "Active uniforms:" << std::endl;
+						std::cout << activeUniforms << std::endl;
+					}
+					else
+					{
+#ifdef _VGSDK_DEBUG
+					const std::string activeUniforms = program->getActiveUniformsStr();
+					std::cout << "Active uniforms:" << std::endl;
+					std::cout << activeUniforms << std::endl;
+#endif
+					}
+				}
 			}
 			// else nothing to do
 
@@ -503,7 +488,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			pg->generate( pGLEngine );
 
 			// CACHE
-			const std::string	fullCode	= pg->getCode();
+			const std::string fullCode = pg->getCode();
 
 			using glo::GLSLProgram;
 			GLSLProgram * program = pGLEngine->getGLSLManager().get< GLSLProgram >( fullCode );
@@ -1293,6 +1278,7 @@ void VertexShape::drawXfBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexS
 
 
 // move to handler/operations.hpp.cpp
+// @todo remove glBegin/glEnd
 void VertexShape::drawBox3f( const vgm::Box3f& box )
 {
 	float	width, height, depth;
@@ -1388,7 +1374,7 @@ void VertexShape::drawVectorsFromVertices(	vgd::node::VertexShape *vertexShape,
 	}
 
 	// Render all vectors from vertices for all primitives
-	glo::VertexArrayObject::bindToDefault();
+	glo::VertexArrayObject::staticBindToDefault();
 	glDisableVertexAttribArray( vgeGL::engine::VERTEX_INDEX );
 
 	updateArrayBuffer( buffer, vectors.size()*sizeof(vgm::Vec3f), &vectors.front(), GL_DYNAMIC_DRAW );
@@ -1473,7 +1459,7 @@ void VertexShape::drawTriangleOrientation( vgd::node::VertexShape *pVertexShape,
 	}
 
 	// Render calls
-	glo::VertexArrayObject::bindToDefault();
+	glo::VertexArrayObject::staticBindToDefault();
 	glDisableVertexAttribArray( vgeGL::engine::VERTEX_INDEX );
 
 	//	centers of triangles
