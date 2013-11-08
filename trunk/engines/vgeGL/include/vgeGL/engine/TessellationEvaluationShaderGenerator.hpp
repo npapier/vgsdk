@@ -19,7 +19,7 @@ namespace engine
 
 
 /**
- * @brief Tessellation Evaluation Shader code generator.
+ * @brief Tessellation Evaluation Shader code generator
  */
 struct VGEGL_API TessellationEvaluationShaderGenerator : public ShaderGenerator
 {

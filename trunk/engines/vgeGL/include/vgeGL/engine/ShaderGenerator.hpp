@@ -7,6 +7,7 @@
 #ifndef _VGEGL_ENGINE_SHADERGENERATOR_HPP
 #define _VGEGL_ENGINE_SHADERGENERATOR_HPP
 
+#include <algorithm>
 #include <boost/algorithm/string/replace.hpp>
 #include <glo/GLSLProgram.hpp>
 #include <vgd/Shp.hpp>
@@ -49,13 +50,14 @@ struct GLSLHelpers
 	{
 		if ( state.isTessellationEnabled() )
 		{
-			static const std::string retVal =	"#version 410 compatibility\n"
+			static const std::string retVal =	"#version 420 compatibility\n"
 												"\n";
 			return retVal;
 		}
 		else
 		{
 			static const std::string retVal =	"#version 330 compatibility\n"
+												"#extension GL_ARB_gpu_shader5 : require\n" // texMap2DShadow[ism] only on sm5 GPU
 												"\n";
 			return retVal;
 		}
@@ -73,7 +75,10 @@ struct GLSLHelpers
 
 		//
 		retVal += 
-			"#define NUM_LIGHT " + vgd::basic::toString( state.lights.getMax() ) + "\n\n";
+			"#define NUM_LIGHT				" + vgd::basic::toString( state.lights.getMax() ) + "\n" +
+			//"#define NUM_TEXMAP2DSHADOW		" + vgd::basic::toString( std::max( state.textures.getMax(), (uint)2 ) ) + "\n" +
+			"\n";
+
 		return retVal;
 	}
 
@@ -99,46 +104,28 @@ struct GLSLHelpers
 		return retVal;
 	}
 
-	// BUMP
-	static const std::string generate_declarationsForBumpmapping( const bool useOut = true )
+
+	static const std::string generate_declarationsForBumpmapping()
 	{
-		if ( useOut )
-		{
-			return std::string(
-				//"// LOCAL VARIABLE FOR BUMP MAPPING\n"
-				"out vec3 ecBinormal;\n"
-				"out vec3 ecTangent;\n"
-				"\n"
-				"out vec3 tsLightVector[NUM_LIGHT];\n"
-				"out vec3 tsLightDirection[NUM_LIGHT];\n"
-				"out vec3 tsHalfVector[NUM_LIGHT];\n"
-				"out vec3 tsEyeVector;\n"
-				);
-		}
-		else
-		{
-			return std::string(
-				//"// LOCAL VARIABLE FOR BUMP MAPPING\n"
-				"in vec3 ecBinormal;\n"
-				"in vec3 ecTangent;\n"
-				"\n"
-				"in vec3 tsLightVector[NUM_LIGHT];\n"
-				"in vec3 tsLightDirection[NUM_LIGHT];\n"
-				"in vec3 tsHalfVector[NUM_LIGHT];\n"
-				"in vec3 tsEyeVector;\n"
-				);
-		}
+		static const std::string declStruct = 
+			"struct BumpMappingParameters\n"
+			"{\n"
+			//"	vec3 ecTangent;\n"
+			"	vec3 ecBinormal;\n"
+			"\n"
+			"	vec3 tsEyeVector;\n"
+			"\n"
+			"	vec3 tsLightVector[NUM_LIGHT];\n"
+			"	vec3 tsLightDirection[NUM_LIGHT];\n"
+			"	vec3 tsHalfVector[NUM_LIGHT];\n"
+			"};\n"
+			"\n";
+		return declStruct;
 	}
 
 
 	static const std::string/*&*/ generate_bumpComputation( const GLSLState& state )
 	{
-		static const std::string noTess = 
-			"	ecTangent = ftangent();\n"
-			"	ecBinormal = normalize( cross(ecNormal, ecTangent) );\n"
-			"\n"
-			"	tsEyeVector = getTSEyeVector();\n";
-
 		// Generate computeTSLightsParameters()
 		std::string computeTSLightsParameters =
 			"\n"
@@ -168,13 +155,13 @@ struct GLSLHelpers
 									"	lightDirection = gl_LightSource[LIGHT_INDEX].position.xyz;\n"
 									"	\n"
 									"	// tsLightDirection\n"
-									"	tsLightDirection[LIGHT_INDEX] = es2ts( lightDirection );\n"
+									"	bumpParams.tsLightDirection[LIGHT_INDEX] = es2ts( lightDirection );\n"
 									"	\n"
 									"	// tsLightVector\n"
-									"	tsLightVector[LIGHT_INDEX] = vec3(0);\n"
+									"	bumpParams.tsLightVector[LIGHT_INDEX] = vec3(0);\n"
 									"	\n"
 									"	// tsHalfVector\n"
-									"	tsHalfVector[LIGHT_INDEX] = normalize( tsEyeVector + tsLightDirection[LIGHT_INDEX] );\n"
+									"	bumpParams.tsHalfVector[LIGHT_INDEX] = normalize( bumpParams.tsEyeVector + bumpParams.tsLightDirection[LIGHT_INDEX] );\n"
 									"\n";
 							boost::algorithm::replace_all( tmp, "LIGHT_INDEX", iStr );
 							break;
@@ -187,13 +174,13 @@ struct GLSLHelpers
 									"	lightDirection = normalize(gl_LightSource[LIGHT_INDEX].spotDirection);\n"
 									"	\n"
 									"	// tsLightDirection\n"
-									"	tsLightDirection[LIGHT_INDEX] = es2ts( lightDirection );\n"
+									"	bumpParams.tsLightDirection[LIGHT_INDEX] = es2ts( lightDirection );\n"
 									"\n"
 									"	// tsLightVector\n"
-									"	tsLightVector[LIGHT_INDEX] = es2ts( lightPosition );\n"
+									"	bumpParams.tsLightVector[LIGHT_INDEX] = es2ts( lightPosition );\n"
 									"\n"
 									"	// tsHalfVector\n"
-									"	tsHalfVector[LIGHT_INDEX] = normalize( tsEyeVector + tsLightVector[LIGHT_INDEX] );\n"
+									"	bumpParams.tsHalfVector[LIGHT_INDEX] = normalize( bumpParams.tsEyeVector + bumpParams.tsLightVector[LIGHT_INDEX] );\n"
 									"\n";
 							boost::algorithm::replace_all( tmp, "LIGHT_INDEX", iStr );
 							break;
@@ -215,15 +202,12 @@ struct GLSLHelpers
 			// else no light, nothing to do
 		}
 
-		if ( state.isTessellationEnabled() )
-		{
-			static const std::string tess = "	ecTangent = mgl_Tangent;\n";
-			return tess;
-		}
-		else
-		{
-			return noTess + computeTSLightsParameters;
-		}
+		static const std::string noTess = 
+			"	ecTangent = ftangent();\n"
+			"	bumpParams.ecBinormal = normalize( cross(ecNormal, ecTangent) );\n"
+			"\n"
+			"	bumpParams.tsEyeVector = getTSEyeVector();\n";
+		return noTess + computeTSLightsParameters;
 	}
 
 	// LIGHTING
@@ -274,35 +258,24 @@ struct GLSLHelpers
 		// DIRECTIONAL_LIGHT
 		if ( state.isEnabled( DIRECTIONAL_LIGHT ) )
 		{
-			const std::string& directionalLight = GLSLHelpers::generateFunction_directionalLight( state, false );
+			const std::string directionalLight = GLSLHelpers::generateFunction_directionalLight( state, false );
 			retVal += directionalLight + '\n';
 		}
 
 		// POINT_LIGHT
 		if ( state.isEnabled( POINT_LIGHT ) )
 		{
-			const std::string& pointLight = GLSLHelpers::generateFunction_pointLight( state, false );
+			const std::string pointLight = GLSLHelpers::generateFunction_pointLight( state, false );
 			retVal += pointLight + '\n';
 		}
 
-		// SPOT_LIGHT_CASTING_SHADOW
-		if (	state.isEnabled( SPOT_LIGHT_CASTING_SHADOW ) &&
-				state.getShadowType() != vgd::node::LightModel::SHADOW_OFF )
-		{
-			const std::string& spotLightFront	= GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, true /*castShadow*/);
-			// const std::string& spotLightBack	= GLSLHelpers::generateFunction_spotLight( state, true ); @todo
-			retVal += spotLightFront + '\n';
-			// retVal += spotLightBack; @todo
-		}
-		else if ( state.isEnabled( SPOT_LIGHT ) )
 		// SPOT_LIGHT
+		if ( state.isEnabled( SPOT_LIGHT ) || state.isEnabled( SPOT_LIGHT_CASTING_SHADOW ) )
 		{
-			const std::string& spotLightFront = GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/, false /*castShadow*/ );
-			// const std::string& spotLightBack	= GLSLHelpers::generateFunction_spotLight( state, true ); @todo
+			const std::string spotLightFront = GLSLHelpers::generateFunction_spotLight( state, false /*useBackMaterial*/ );
 			retVal += spotLightFront + '\n';
-			// retVal += spotLightBack; @todo
 		}
-		
+
 		return retVal;
 	}
 
@@ -321,7 +294,7 @@ struct GLSLHelpers
 			"{\n"
 			"	float nDotVP;			// normal . light direction\n"
 			"	#ifdef BUMPMAPPING\n"
-			"	 nDotVP = max(0.0, dot(normal, normalize(tsLightDirection[i])));\n"
+			"	 nDotVP = max(0.0, dot(normal, normalize(bumpParams.tsLightDirection[i])));\n"
 			"	#else\n"
 			"	 nDotVP = max(0.0, dot(normal, normalize(gl_LightSource[i].position.xyz)));\n"
 			"	#endif\n"
@@ -333,7 +306,7 @@ struct GLSLHelpers
 			"\n"
 			"		float nDotHV;			// normal . light half vector\n"
 			"		#ifdef BUMPMAPPING\n"
-			"		 nDotHV = max(0.0, dot(normal, normalize(tsHalfVector[i])) );\n"
+			"		 nDotHV = max(0.0, dot(normal, normalize(bumpParams.tsHalfVector[i])) );\n"
 			"		#else\n"
 			"		 nDotHV = max(0.0, dot(normal, normalize(/*normalize*/(gl_LightSource[i].position.xyz) + eye)));\n"
 			"		#endif\n"
@@ -359,18 +332,19 @@ struct GLSLHelpers
 	}
 
 
+	// Compute VP, d and halfVector (take care of BUMPMAPPING)
 	static const std::string getLightInternalParameters()
 	{
 		static std::string retVal = 
 			"	#ifdef BUMPMAPPING\n"
 			"	 // Compute vector from surface to light position\n"
-			"	 vec3 VP = tsLightVector[i];\n"
+			"	 vec3 VP = bumpParams.tsLightVector[i];\n"
 			"\n"
 			"	 // Compute distance between surface and light position\n"
 			"	 float d = length(VP);\n"
 			"\n"
 			"	 // direction of maximum highlights\n"
-			"	 vec3 halfVector = normalize( tsHalfVector[i] );\n"
+			"	 vec3 halfVector = normalize( bumpParams.tsHalfVector[i] );\n"
 			"\n"
 			"	#else\n"
 			"	 // Compute vector from surface to light position\n"
@@ -413,6 +387,7 @@ struct GLSLHelpers
 		return retVal;
 	}
 
+	// @todo share more code between pointLight and spotLight
 	static const std::string generateFunction_pointLight( const GLSLState& state, const bool useBackMaterial )
 	{
 		static std::string retValFront;
@@ -712,33 +687,28 @@ struct GLSLHelpers
 
 		const std::string shadowFiltering = generate_fshadowFiltering( state, shadowType );
 
-		std::string retVal =	"float computeShadowFactor( int ism )\n"
-								"{\n"
-//								"	vec4			texCoord			= mgl_TexCoordShadow[ism];\n";
-								"	vec4			texCoord			= In.mgl_TexCoordShadow[0];\n";
+		std::string retVal =	"// ism index of shadow map\n"
+								"float computeShadowFactor( int ism, in vec4 texCoord )\n"
+								"{\n";
 
 		// shadow caster
 // @todo if ( state.getOption2() == vgd::node::LightModel::CHOICE0 )
 // @todo OPTME only if a transparent object is rendered
 
 		// mapSize
-		// retVal +=				"	vec2 mapSize = vec2( textureSize( texMap2DShadow[ism], 0) );\n"; // @todo texMap2DShadow[ism] only on sm5 GPU
-		retVal +=				"	vec2 mapSize = vec2( textureSize( texMap2DShadow[0], 0) );\n";
+		retVal +=				"	vec2 mapSize = vec2( textureSize( texMap2DShadow[ism], 0) );\n";
 
 		// samplingSize
-		// @todo samplingSize must be an uniform
-//		retVal += 				"	const float samplingSize = " + boost::lexical_cast<std::string>( samplingSize ) + ";\n";
 		retVal += 				"	float samplingSize = u_samplingSize;\n";
 
 		//
 		retVal +=				"	// Computes shadow factor\n"
-//								"	float shadowFactor = shadowFiltering( texMap2DShadow[ism], mapSize, texCoord, samplingSize );\n" // @todo texMap2DShadow[ism] only on sm5 GPU
-								"	float shadowFactor = shadowFiltering( texMap2DShadow[0], mapSize, texCoord, samplingSize );\n"
+								"	float shadowFactor = shadowFiltering( texMap2DShadow[ism], mapSize, texCoord, samplingSize );\n"
 								"\n";
-
+/* disable shadow caster functionality
 		retVal +=				"	// Computes shadow caster opacity\n"
 								"	float shadowCasterAlpha = shadowFiltering( texMap2D[3], mapSize, texCoord, samplingSize );\n" // @todo texMap2D[0][0] => index ?
-								"\n";
+								"\n";*/
 
 		// illuminationInShadow
 //		const float illuminationInShadow = state.getIlluminationInShadow();
@@ -748,17 +718,19 @@ struct GLSLHelpers
 
 		if ( state.getOption0() == vgd::node::LightModel::CHOICE0 )
 		{
-			retVal +=			"	if ( shadowFactor < 1 )\n"
+			retVal +=			/* shadow caster functionality
+								"	if ( shadowFactor < 1 )\n"
 								"	{\n"
-								"		// Fade out shadow\n"
+								"	// Fade out shadow\n"
 								"		illuminationInShadow = mix(1.0, illuminationInShadow, shadowCasterAlpha);\n"
-								"\n"
-								"		shadowFactor = mix(illuminationInShadow, 1.0, shadowFactor);\n"
+								"\n"*/
+								"	shadowFactor = mix(illuminationInShadow, 1.0, shadowFactor);\n"
 // @todo use shadowSrcColor instead only alpha
 //								"		shadowFactor = mix( 1.0, shadowFactor, shadowCasterAlpha );\n"
-								"	}\n";
+								//"	}\n";
+								"\n";
 		}
-		else if ( state.getOption0() == vgd::node::LightModel::CHOICE1 )
+		else if ( state.isBumpMappingEnabled() == true )
 		{
 // @todo use mix()
 			retVal +=			"	shadowFactor = shadowFactor*(1-illuminationInShadow) + illuminationInShadow;\n";
@@ -774,38 +746,23 @@ struct GLSLHelpers
 	}
 
 	// @todo removes /*&*/
-	static const std::string /*&*/ generateFunction_spotLight( const GLSLState& state, const bool useBackMaterial, const bool castShadow )
+	static const std::string /*&*/ generateFunction_spotLight( const GLSLState& state, const bool useBackMaterial )
 	{
 		using vgd::node::LightModel;
 
-		static LightModel::ShadowValueType				shadowType				= LightModel::DEFAULT_SHADOW;
-		static vgd::node::LightModel::Option0ValueType	option0					= state.getOption0();
-
-		static std::string								shadowString			= generate_fcomputeShadowFactor( state, LightModel::DEFAULT_SHADOW );
 
 		static std::string					retValFront;
 		static std::string					retValBack;
 
-
-		// Updates shadow factor computation string
-		const LightModel::ShadowValueType				incomingShadowType	= state.getShadowType();
-		const vgd::node::LightModel::Option0ValueType	incomingOption0		= state.getOption0();
-
-		if (	(incomingShadowType != shadowType )	||
-				(incomingOption0 != option0 )			)
-		{
-			shadowType				= incomingShadowType;
-			option0					= incomingOption0;
-
-			shadowString = generate_fcomputeShadowFactor( state, shadowType );
-		}
+		static std::string shadowString;
+		shadowString = generate_fcomputeShadowFactor( state, state.getShadowType() );
 
 		retValFront.clear();
 		retValBack.clear();
 
 		retValFront =
-			"// i index of light, ism index of shadow map or -1 if shadow computation is disabled\n"
-			"void spotLightFront( int i, int ism, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
+			"// i index of light\n"
+			"void spotLightFront( int i, vec3 ecPosition3, vec3 normal, vec3 eye, float shadowFactor )\n"
 			"{\n"
 			"	float nDotVP;			// normal . light direction\n"
 			"	float nDotHV;			// normal . light half vector\n"
@@ -821,7 +778,7 @@ struct GLSLHelpers
 			"	spotDot = dot(-normalize(gl_LightSource[i].position.xyz - ecPosition3), normalize(gl_LightSource[i].spotDirection));\n"
 			"\n"
 			"	// Compute attenuation\n"
-	// @todo uncomments attenuation (when Light node specifies distance attenuation).
+// @todo uncomments attenuation (when Light node specifies distance attenuation).
 	//			"	attenuation =	1.0;\n"
 	//			"	attenuation =	1.0 / (gl_LightSource[i].constantAttenuation +\n"
 	//			"					gl_LightSource[i].linearAttenuation * d +\n"
@@ -834,34 +791,10 @@ struct GLSLHelpers
 			"\n"
 			"	spotAttenuation = 1.0 - smoothstep( cosInnerCone, cosOuterCone, spotDot );\n"
 			"\n"
-// @todo OPTME computeShadowFactor only if needed
-			"	// Compute shadow\n"
-			"	float shadowFactor;\n"
-			"	if ( (ism >= 0) && gl_FrontFacing )\n"
-			"	{\n"
-			"		shadowFactor = computeShadowFactor( ism );\n"
-			"	}\n"
-			"	else\n"
-			"	{\n"
-			"		// No shadow\n"
-			"		shadowFactor = 1.0;\n"
-			"	}\n"
-			"\n"
 			"	// Combine the spotlight, shadow factor and distance attenuation.\n"
 			"	attenuation = spotAttenuation * shadowFactor;\n"
 			"\n" +
 			getSpotPointLightComputation();
-
-		//if ( castShadow )
-		//{
-/*			std::string spotLightFrontShadow = 
-				"\n"
-				"void spotLightFrontShadow( int i, sampler2DShadow texMapShadow, vec4 texCoordShadow, vec3 ecPosition3, vec3 normal, vec3 eye )\n"
-				"{\n"
-				"	float shadowFactor = computeShadowFactor( texMapShadow, texCoordShadow );\n"
-				"\n"
-				"	spotLightFront( i, ecPosition3, normal, eye, shadowFactor );\n"
-				"}\n\n";*/
 
 			//std::string spotLightBackShadow = spotLightFrontShadow;
 			//boost::algorithm::replace_all( spotLightBackShadow, "Front", "Back" );
@@ -886,18 +819,17 @@ struct GLSLHelpers
 	//													std::string& flightFront, std::string& flightBack )
 	static void generateFunction_flightFront( const GLSLState& state, std::string& flightFront )
 	{
-		const std::string clearLightIntensityAccumulators =
-			"	// Clear the light intensity accumulators\n"
-			"	accumAmbient	= vec4(0.0);\n"
-			"	accumDiffuse	= vec4(0.0);\n"
-			"	accumSpecular	= vec4(0.0);\n"
-			"\n";
-
 			flightFront	=
 				"// Computes the light contributions for front face\n"
 				"void flightFront( in vec3 ecPosition3, in vec3 normal, in vec3 eye )\n"
-				"{\n" +
-				clearLightIntensityAccumulators;
+				"{\n"
+				"	// Clear the light intensity accumulators\n"
+				"	accumAmbient	= vec4(0.0);\n"
+				"	accumDiffuse	= vec4(0.0);\n"
+				"	accumSpecular	= vec4(0.0);\n"
+				"\n"
+				"	float shadowFactor;\n"
+				"\n";
 
 		/*flightBack	=
 			"// Computes the light contributions for back face\n"
@@ -951,7 +883,8 @@ struct GLSLHelpers
 //								const std::string&	texMapShadowIndexStr	= texCoordShadowIndexStr;
 								const std::string	ismStr					= vgd::basic::toString(lightCastingShadowCount);
 								++lightCastingShadowCount;
-								flightFront		+= "	spotLightFront( " + iStr + ", " + ismStr + ", ecPosition3, normal, eye );\n";
+								flightFront		+= "	shadowFactor = computeShadowFactor( " + ismStr + ", inTexCoord.mgl_TexCoordShadow[" + ismStr + "] );\n"; // @todo only on gl_FrontFacing
+								flightFront		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye, shadowFactor );\n";
 
 								
 //flightFront		+= "	spotLightFront( " + iStr + ", texMap2DShadow[" + texMapShadowIndexStr + "], mgl_TexCoordShadow[" + texCoordShadowIndexStr + "], ecPosition3, normal, eye );\n";
@@ -961,8 +894,7 @@ struct GLSLHelpers
 							}
 							else
 							{
-								flightFront		+= "	spotLightFront( " + iStr + ", -1, ecPosition3, normal, eye );\n";
-								//flightFront		+= "	spotLightFront( " + iStr + ", -1, ecPosition3, normal, eye );\n";
+								flightFront		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye, 1.0 );\n";
 								//flightBack		+= "	spotLightFront( " + iStr + ", ecPosition3, normal, eye, 1.0 );\n";
 								// currentLightBack	+= "	spotLightBack( " + iStr + ", ecPosition3, -normal, eye );\n";
 							}
@@ -1014,13 +946,13 @@ struct GLSLHelpers
 			if ( state.isEnabled(LOCAL_VIEWER) )
 			{
 				flight +=
-				"	vec3 eye			= -normalize(ecPosition3);\n"
+				"	vec3 eye		= -normalize(ecPosition3);\n"
 				"\n";
 			}
 			else
 			{
 				flight +=
-				"	vec3 eye			= vec3(0.0, 0.0, 1.0);\n"
+				"	vec3 eye		= vec3(0.0, 0.0, 1.0);\n"
 				"\n";
 			}
 			//
@@ -1148,10 +1080,9 @@ struct GLSLHelpers
 
 
 
-	//
 	static const std::string& generateFunction_ftangent( const GLSLState& state )
 	{
-		static const std::string retVal =
+		static const std::string retValInVertexShader =
 				"vec3 ftangent(void)\n"
 				"{\n"
 				"	//Compute the tangent\n"
@@ -1159,7 +1090,7 @@ struct GLSLHelpers
 				"	return normalize(tangent);\n"
 				"}\n\n";
 
-		return retVal;
+		return retValInVertexShader;
 	}
 
 	static const std::string& generateFunction_eyeVectorRelated( const GLSLState& state )
@@ -1169,7 +1100,7 @@ struct GLSLHelpers
 			"{\n"
 			"	vec3 retVal;\n"
 			"	retVal.x = dot(v, ecTangent);\n"
-			"	retVal.y = dot(v, ecBinormal);\n"
+			"	retVal.y = dot(v, bumpParams.ecBinormal);\n"
 			"	retVal.z = dot(v, ecNormal);\n"
 			"	return normalize( retVal );\n"
 			"}\n"
@@ -1199,12 +1130,12 @@ struct GLSLHelpers
 	}
 
 	// TEXTURE
-	// @todo class to store varying variables (vertex output, fragment input in glsl 1.3)
-	// @param storageQualifierDecl	'out' for vertex shader, 'in' for fragment shader.
+	// @param storageQualifier	'out' for vertex shader, 'in' for fragment shader
 	static std::pair< std::string, std::string > generateFunction_ftexgen(
 		const vgeGL::engine::GLSLState& state,
-		const std::string interfaceQualifier, const std::string instanceName, 
-		const bool isTessellationShader )
+		const std::string storageQualifier, const std::string blockName, const std::string instanceName, 
+		const bool isTessellationShader,
+		const bool addCompatibilityDefines = false )
 	{
 		std::string decl;
 		std::string code;
@@ -1212,6 +1143,8 @@ struct GLSLHelpers
 		uint mgl_TexCoordCount			= 0;
 		uint mgl_TexCoordShadowCount	= 0;
 
+// @todo same ftexgen() signature
+// @todo not used ftexgen() only called from vertex shader.
 		if ( isTessellationShader )
 		{
 			code =
@@ -1268,7 +1201,7 @@ struct GLSLHelpers
 					// In.mgl_TexCoord[0]
 					const std::string base = isTessellationShader ?
 						std::string( instanceName + "." + texCoordName + "[" + strIndex + "]") : // @todo gl_PatchVerticesIn 
-						std::string( instanceName + "." + texCoordName + "[" + strIndex + "]");
+						std::string( texCoordName + "[" + strIndex + "]");
 
 					code +=
 						"	" + base + ".s = dot( ecPosition, gl_EyePlaneS[" + strUnit + "] );\n" +
@@ -1300,7 +1233,7 @@ struct GLSLHelpers
 					// In.
 					const std::string base = isTessellationShader ?
 						std::string( instanceName + "." + texCoordName + "[" + strIndex + "]" ) : // @todo
-						std::string( instanceName + "." + texCoordName + "[" + strIndex + "]" );
+						std::string( texCoordName + "[" + strIndex + "]" );
 
 					code +=
 						"	" + base + " = gl_TextureMatrix[" + strUnit + "] * mgl_MultiTexCoord" + strUnit + ";\n\n";
@@ -1320,40 +1253,45 @@ struct GLSLHelpers
 		code  += 
 			"}\n\n";
 
-		decl += interfaceQualifier + " TexCoord\n" + "{\n";
+		/*// NO BLOCK USAGE
+		decl += storageQualifier + " vec4 mgl_TexCoord[" + vgd::basic::toString( std::max(mgl_TexCoordCount, (uint)1) ) + "];\n";
+		decl += storageQualifier + " vec4 mgl_TexCoordShadow[" + vgd::basic::toString( std::max(mgl_TexCoordShadowCount, (uint)1) ) + "];\n";*/
 
-		if ( mgl_TexCoordCount > 0 )
-		{
-			decl += "	vec4 mgl_TexCoord[" + vgd::basic::toString(mgl_TexCoordCount) + "];\n";
-		}
-		// else nothing to do
-		// for computeShadowFactor() function
-		else
-		{
-			decl += "	vec4 mgl_TexCoord[2]; // default size\n";
-		}
+		// defines
+		decl += "#define NUM_TEXCOORD		" + vgd::basic::toString( std::max(mgl_TexCoordCount, (uint)1) ) + "\n";
+		decl += "#define NUM_TEXCOORDSHADOW	" + vgd::basic::toString( std::max(mgl_TexCoordShadowCount, (uint)1) ) + "\n";
 
-		if ( mgl_TexCoordShadowCount > 0 )
+		// block declaration
+		decl += storageQualifier + " " + blockName + "\n{\n";
+		if ( true /*mgl_TexCoordShadowCount > 0*/ )
 		{
-			decl += "	vec4 mgl_TexCoordShadow[" + vgd::basic::toString(mgl_TexCoordShadowCount) + "];\n";
-		}
-		// else nothing to do
-		else
-		{
-			decl += "	vec4 mgl_TexCoordShadow[2]; // default size\n";
+			decl += "	vec4 mgl_TexCoordShadow[NUM_TEXCOORDSHADOW];\n";
 		}
 
+		if ( true /*mgl_TexCoordCount > 0*/ )
+		{
+			decl += "	vec4 mgl_TexCoord[NUM_TEXCOORD];\n";
+		}
 		decl += "} " + instanceName + ";\n\n";
+
+		if ( addCompatibilityDefines )
+		{
+			decl +=
+				"// for compatibility\n"
+				"#define mgl_TexCoord			" + instanceName + ".mgl_TexCoord\n"
+				"\n";
+		}
 
 		return std::make_pair( decl, code );
 	}
 
-//??getSampler2DCount???
-	static std::pair< std::string, std::string >  generate_samplers( const vgeGL::engine::GLSLState& state )
+// @todo refactoring
+	// @todo getSampler2DCount() and co
+	static std::pair< std::string, std::string > generate_samplers( const vgeGL::engine::GLSLState& state )
 	{
 		std::string decl;
 
-		/*//uint sampler2DCount						= 0;
+		uint sampler2DCount						= 0;
 		uint sampler2DShadowCount				= 0;
 
 		uint		i		= 0;
@@ -1379,7 +1317,7 @@ struct GLSLHelpers
 						break;
 
 					case vgd::node::Texture::IMAGE:
-					//	++sampler2DCount;
+						++sampler2DCount;
 						break;
 
 					default:
@@ -1395,23 +1333,28 @@ struct GLSLHelpers
 			{
 				break;
 			}
-		}*/
+		}
 
 		// Updates samplers declarations
+		decl +=	"#define NUM_TEXMAP2D			" + vgd::basic::toString( vgd::basic::toString(std::max(sampler2DCount, (uint)2)) ) + "\n" + // @todo 2 for bump !!!
+				"#define NUM_TEXMAP2DSHADOW	" + vgd::basic::toString( std::max(sampler2DShadowCount, (uint)1) ) + "\n\n";
+
+		decl +=	"uniform sampler2D		texMap2D[NUM_TEXMAP2D];\n"
+				"uniform sampler2DShadow	texMap2DShadow[NUM_TEXMAP2DSHADOW];\n";
 //		if ( sampler2DCount > 0 )
-		if ( state.textures.size() > 0 )
+/*		if ( state.textures.size() > 0 )
 		{
 			//decl += "uniform sampler2D texMap2D[];\n\n";
-			//decl += "uniform sampler2D texMap2D[" + vgd::basic::toString(sampler2DCount) + "];\n\n";
+			//decl += "uniform sampler2D texMap2D[" +  + "];\n\n";
 			decl += "uniform sampler2D		texMap2D[" + vgd::basic::toString(state.textures.size()) + "];\n";
 		}
 		else
 		{
 			decl += "uniform sampler2D		texMap2D[2];\n";
-		}
+		}*/
 
 		//if ( sampler2DShadowCount > 0 )
-		if ( state.textures.size() > 0 )
+/*		if ( state.textures.size() > 0 )
 		{
 			//decl += "uniform sampler2DShadow texMap2DShadow[1];\n\n";
 			//decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n\n";
@@ -1420,7 +1363,7 @@ struct GLSLHelpers
 		else
 		{
 			decl += "uniform sampler2DShadow	texMap2DShadow[2];\n";
-		}
+		}*/
 
 		return std::make_pair(decl + "\n", ""/*code*/);
 	}

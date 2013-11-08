@@ -72,8 +72,8 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 	m_lightDepthMap.swap( m_recycleLightDepthMap );
 	m_lightDepthMap.clear();
 
-	m_lightAlphaMap.swap( m_recycleLightAlphaMap );
-	m_lightAlphaMap.clear();
+/*	m_lightAlphaMap.swap( m_recycleLightAlphaMap );
+	m_lightAlphaMap.clear();*/
 
 	m_texGen.swap( m_recycleTexGen );
 	m_texGen.clear();
@@ -156,7 +156,7 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 
 				m_lightDepthMap.push_back( lightDepthMap );
 
-				// ALPHA MAP
+				/*// ALPHA MAP
 				vgd::Shp< vgd::node::Texture2D > lightAlphaMap;
 				if ( m_recycleLightAlphaMap.size() > 0 )
 				{
@@ -190,7 +190,7 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 						vgAssertN( false, "Unexpected value %i", shadowFiltering.value() );
 				}
 
-				m_lightAlphaMap.push_back( lightAlphaMap );
+				m_lightAlphaMap.push_back( lightAlphaMap );*/
 
 				//
 				if ( m_recycleFbo.size() > 0 )
@@ -265,7 +265,7 @@ vgd::Shp< vgeGL::rc::Texture2D > ShadowMappingInput::getLightDepthMap( const uin
 
 
 
-vgd::Shp< vgd::node::Texture2D > ShadowMappingInput::getLightAlphaMap( const uint index )
+/*vgd::Shp< vgd::node::Texture2D > ShadowMappingInput::getLightAlphaMap( const uint index )
 {
 	vgAssertN( index < getNumLight(), "ShadowMappingInput::getLightAlphaMap(): Out of range index." );
 
@@ -277,7 +277,7 @@ vgd::Shp< vgeGL::rc::Texture2D > ShadowMappingInput::getLightAlphaMap( const uin
 {
 	vgd::Shp< vgd::node::Texture2D > texture2DNode = getLightAlphaMap(index);
 	return engine->getRCShp< vgeGL::rc::Texture2D >( texture2DNode );
-}
+}*/
 
 
 

@@ -443,8 +443,8 @@ void ShadersEditor::compile(int notificationType, int position, int length, int 
 				if ( !linkRetVal )
 				{
 					//Construct the link log
-					InfoLog += m_managerSaved->getInfoLog();
-					checkErrorLine(m_managerSaved->getInfoLog());
+					InfoLog += m_managerSaved->getLinkLog();
+					checkErrorLine(m_managerSaved->getLinkLog());
 				}
 				else
 				{

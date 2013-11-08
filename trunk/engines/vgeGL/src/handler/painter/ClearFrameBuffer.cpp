@@ -175,7 +175,10 @@ void ClearFrameBuffer::applyBufferUsagePolicy( vgeGL::engine::Engine * engine, c
 	if ( fbo )
 	{
 		// Computes the current draw buffers (from OutputBufferProperty nodes).
-		updateCurrentDrawBuffers( outputBuffersProperties, currentDrawBuffers );
+		if ( engine->isRegardedIfIsA< vgd::node::OutputBufferProperty >() )
+		{
+			updateCurrentDrawBuffers( outputBuffersProperties, currentDrawBuffers );
+		}
 
 		// Updates the current draw buffers using private draw buffers
 		engine->updateFromCurrentPrivateDrawBuffers( currentDrawBuffers );
