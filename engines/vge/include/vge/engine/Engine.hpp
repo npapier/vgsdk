@@ -686,7 +686,9 @@ struct VGE_API Engine : public vgd::field::FieldManager
 	/**
 	 * @brief Resets completely all stacks for each matrix type.
 	 * 
-	 * @todo More documentation.
+	 * @post getProjectionMatrix().getTop().isIdentity()
+	 * @post getGeometricalMatrix().getTop().isIdentity()
+	 * @post getTextureMatrix().getTop( i ).isIdentity() with i from 0 to getMaxTexUnits().
 	 */
 	virtual void resetMatrices();
 
