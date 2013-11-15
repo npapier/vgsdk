@@ -78,9 +78,10 @@ void Engine::reset()
 		//return;
 	}
 
-	// Detects drivers provider
-	vgLogMessage( "%s driver found", gleGetCurrent()->getDriverProviderString().c_str() );	
-	const gle::OpenGLExtensions::DriverProviderType driverProvider = gleGetCurrent()->getDriverProvider();
+	// Enables advanced OpenGL errors management using GL_ARB_debug_output extension in debug configuration
+#ifdef _DEBUG
+	gleGetCurrent()->setDebugOutput( gle::OpenGLExtensions::SYNCHRONOUS );
+#endif
 
 	// Configures engine
 	setLightingEnabled();
