@@ -89,6 +89,9 @@ void Engine::reset()
 	setDisplayListEnabled();
 	setDepthPrePassEnabled( false );
 
+	// Detects drivers provider
+	vgLogMessage( "%s driver found", gleGetCurrent()->getDriverProviderString().c_str() );
+	const gle::OpenGLExtensions::DriverProviderType driverProvider = gleGetCurrent()->getDriverProvider();
 	switch ( driverProvider )
 	{
 		case gle::OpenGLExtensions::NVIDIA_DRIVERS:
