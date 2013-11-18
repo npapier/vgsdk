@@ -39,7 +39,7 @@ aiColor3D toAiColor3D( vgm::Vec3f source )
 }
 
 
-void fillAiFace( aiFace * face, uint numIndices, vgd::field::EditorRO< vgd::field::MFUInt >& vertexIndex, uint index )
+void fillAiFace( aiFace * face, uint numIndices, vgd::field::EditorRO< vgd::field::MFUInt32 >& vertexIndex, uint index )
 {
 	face->mNumIndices = numIndices;
 	vgAssertN( face->mIndices == 0, "Not the default aiFace. Already used ?" );
@@ -70,7 +70,7 @@ void fillAiMesh( vgd::node::VertexShape * vertexShape, aiMesh * aimesh )
 	aimesh->mName.Set( vertexShape->getName() );
 
 	// VERTICES
-	EditorRO< vgd::field::MFVec3f > vertices = vertexShape->getVertexRO();
+	EditorRO< vgd::field::MFVec3f > vertices = vertexShape->getFVertexRO();
 
 	const bool changedNumVertices = (aimesh->mNumVertices != vertices->size());
 	if ( changedNumVertices )
@@ -89,7 +89,7 @@ void fillAiMesh( vgd::node::VertexShape * vertexShape, aiMesh * aimesh )
 	}
 
 	// NORMALS
-	EditorRO< vgd::field::MFVec3f > normals = vertexShape->getNormalRO();
+	EditorRO< vgd::field::MFVec3f > normals = vertexShape->getFNormalRO();
 
 	const bool changedNumNormals =	(aimesh->mNormals && normals->size() == 0) ||
 									(!aimesh->mNormals && normals->size() > 0);
@@ -110,10 +110,10 @@ void fillAiMesh( vgd::node::VertexShape * vertexShape, aiMesh * aimesh )
 
 	// TEXCOORD0
 	const uint unit = 0;
-	if ( vertexShape->hasTexCoord(unit) && vertexShape->getTexCoordDim(unit) == 2 )
+	if ( vertexShape->hasFTexCoord(unit) && vertexShape->getTexCoordDim(unit) == 2 )
 	{
 		// unit 0 and dim(TEXCOORD0) == 2
-		EditorRO< vgd::field::MFVec2f > texCoord = vertexShape->getTexCoordRO<vgd::field::MFVec2f>(unit);
+		EditorRO< vgd::field::MFVec2f > texCoord = vertexShape->getFTexCoordRO<vgd::field::MFVec2f>(unit);
 
 		const bool changedNumTexCoords =	(aimesh->mTextureCoords[unit] && texCoord->size() == 0) ||
 											(!aimesh->mTextureCoords[unit] && texCoord->size() > 0);
@@ -139,7 +139,7 @@ void fillAiMesh( vgd::node::VertexShape * vertexShape, aiMesh * aimesh )
 	//	Compute numFaces and numIndices
 	uint numFaces	= 0;
 	uint numIndices	= 0;
-	EditorRO< vgd::field::MFPrimitive >		primitives	= vertexShape->getPrimitiveRO();
+	EditorRO< vgd::field::MFPrimitive >		primitives	= vertexShape->getFPrimitiveRO();
 	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
 													ie	= primitives->end();
 			i != ie;
@@ -184,7 +184,7 @@ void fillAiMesh( vgd::node::VertexShape * vertexShape, aiMesh * aimesh )
 	uint iFaceEnd = aimesh->mNumFaces;
 	aiFace * face = &aimesh->mFaces[iFace];
 
-	EditorRO< vgd::field::MFUInt > vertexIndex = vertexShape->getVertexIndexRO();
+	EditorRO< vgd::field::MFUInt32 > vertexIndex = vertexShape->getFVertexIndexRO();
 
 	for(	vgd::field::MFPrimitive::const_iterator	i	= primitives->begin(),
 													ie	= primitives->end();
