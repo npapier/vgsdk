@@ -32,7 +32,7 @@ void HiddenNode::hide()
 	vgd::Shp< vgd::node::VertexShape > node = m_node.lock();
 	if( node )
 	{
-		vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = node->getFPrimitiveRW();
+		vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = node->getPrimitiveRW();
 
 		for( uint i = 0; i < editPrimitive->size(); i++)
 		{
@@ -50,7 +50,7 @@ void HiddenNode::restorePrimitives()
 	vgd::Shp< vgd::node::VertexShape > node = m_node.lock();
 	if( node )
 	{		
-		vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = node->getFPrimitiveRW();
+		vgd::field::EditorRW< vgd::field::MFPrimitive >	editPrimitive = node->getPrimitiveRW();
 
 		editPrimitive->clear();
 		

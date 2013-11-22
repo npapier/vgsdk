@@ -55,10 +55,15 @@ enum
 	VERTEX_INDEX = 0,
 	NORMAL_INDEX,
 	TANGENT_INDEX,
-	VERTEXINDEX_INDEX,
+
 	TEXCOORD_INDEX,
 	TEXCOORD1_INDEX,
-	TEXCOORD_INDEX_MAX
+	TEXCOORD2_INDEX,
+
+	// for GeoMorph
+	VERTEX1_INDEX,
+	NORMAL1_INDEX,
+	TANGENT1_INDEX,
 };
 
 
@@ -517,6 +522,22 @@ public:
 
 
 	/**
+	 * @brief Determines whether the draw calls are enabled.
+	 *
+	 * @return true if draw calls are enabled, false otherwise
+	 */
+	const bool isDrawCallsEnabled() const;
+
+	/**
+	 * @brief Enables or disables the draw calls depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the draw calls must be enabled, false otherwise
+	 * @return the draw calls state before calling this method
+	 */
+	const bool setDrawCallsEnabled( const bool enabled = true );
+
+
+	/**
 	 * @brief Determines whether the display list caching mechanism is enabled.
 	 *
 	 * @return true if display list caching mechanism is enabled, false otherwise
@@ -894,6 +915,7 @@ private:
 
 	bool m_isLightingEnabled;				//< true if lighting is enabled, false otherwise
 	bool m_isTextureMappingEnabled;			//< true if texture mapping is enabled, false otherwise
+	bool m_isDrawCallsEnabled;				//< true if draw calls are enabled, false otherwise
 	bool m_isDisplayListEnabled;			//< true if engine must used display list, false otherwise
 	bool m_isDepthPrePassEnabled;			//< true if engine must do the depth pre-pass, false otherwise
 	bool m_isShadowEnabled;					//< true if engine must compute shadow, false otherwise

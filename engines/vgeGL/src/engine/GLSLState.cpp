@@ -56,7 +56,9 @@ const std::string GLSLState::m_indexString[] =
 
 		"BUMP_MAPPING",
 
-		"TESSELLATION"
+		"TESSELLATION",
+
+		"GEOMORPH"
 	};
 
 
@@ -76,8 +78,8 @@ GLSLState::GLSLState( const uint maxTexUnits )
 	textures(maxTexUnits),
 	//decals(),
 	//postProcessing(),
-	//overlays(),
 	//outputBufferProperties()
+	//overlays(),
 	m_dirtyFlag( "GLSLState" )
 {
 	init();
@@ -91,14 +93,13 @@ GLSLState::GLSLState( const GLSLState& src )
 	textures										(	src.textures				),
 	decals											(	src.decals					),
 	postProcessing									(	src.postProcessing			),
-	overlays										(	src.overlays				),
 	outputBufferProperties							(	src.outputBufferProperties	),
+	overlays										(	src.overlays				),
 
 	m_dirtyFlag										(	src.m_dirtyFlag				),
 
 	m_program										(	src.m_program				),
 	m_shaderStage									(	src.m_shaderStage			),
-	m_option0										(	src.m_option0				),
 	m_lightModelShadow								(	src.m_lightModelShadow		),
 	m_shadowMapType									(	src.m_shadowMapType			)
 {}
@@ -129,8 +130,8 @@ void GLSLState::resetToDefault()
 	textures.clear();
 	decals.clear();
 	postProcessing.clear();
-	overlays.clear();
 	outputBufferProperties.clear();
+	overlays.clear();
 
 	init();
 
@@ -309,6 +310,10 @@ void GLSLState::setProgram( vgd::node::Program * program )
 
 void GLSLState::setShaderStage( const ShaderStage shaderStage, const std::string& glslCode )
 {
+
+// @todo section marker // begin	VERTEX_ECNORMAL_COMPUTATION
+//						// end		VERTEX_ECNORMAL_COMPUTATION
+// in getShaderStage() only ?
 	if ( m_shaderStage[shaderStage] != glslCode )
 	{
 		m_shaderStage[shaderStage] = glslCode;
@@ -356,14 +361,13 @@ void GLSLState::copy( const GLSLState& src )
 	textures				= src.textures;
 	decals					= src.decals;
 	postProcessing			= src.postProcessing;
-	overlays				= src.overlays;
 	outputBufferProperties	= src.outputBufferProperties;
+	overlays				= src.overlays;
 
 	m_dirtyFlag				= src.m_dirtyFlag;
 
 	m_program					= src.m_program;
 	m_shaderStage				= src.m_shaderStage;
-	m_option0					= src.m_option0;
 	m_lightModelShadow			= src.m_lightModelShadow;
 	m_shadowMapType				= src.m_shadowMapType;
 }
@@ -376,8 +380,8 @@ void GLSLState::release()
 	textures.clear();
 	decals.clear();
 	postProcessing.clear();
-	overlays.clear();
 	outputBufferProperties.clear();
+	overlays.clear();
 
 	m_shaderStage.clear();
 }
@@ -391,7 +395,6 @@ void GLSLState::init()
 	resetShaderStages();
 
 	//
-	m_option0					= vgd::node::LightModel::DEFAULT_OPTION0;
 	m_lightModelShadow			= vgd::node::LightModel::DEFAULT_SHADOW;
 	m_shadowMapType				= vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE;
 }

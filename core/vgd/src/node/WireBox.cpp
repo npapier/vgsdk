@@ -49,7 +49,7 @@ void WireBox::initializeGeometry( const vgm::Box3f box )
 	// Initialize geometry.
 
 	// VERTEX
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = getFVertexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = getVertexRW();
 	const vgm::Vec3f min = box.getMin();
 	const vgm::Vec3f max = box.getMax();
 	vertex->clear();
@@ -68,7 +68,7 @@ void WireBox::initializeGeometry( const vgm::Box3f box )
 	vertex->push_back( vgm::Vec3f(min[0], max[1], max[2]) );
 
 	// VERTEX INDEX
-	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex = getFVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt >	vertexIndex = getVertexIndexRW();
 	vertexIndex->clear();
 	vertexIndex->reserve( 16 );
 
@@ -97,7 +97,7 @@ void WireBox::initializeGeometry( const vgm::Box3f box )
 	vertexIndex->push_back(6);
 
 	// PRIMITIVE
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = getFPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = getPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::LINE_STRIP, 0, vertexIndex->size() );
 	primitive->clear();
 	primitive->push_back( prim );

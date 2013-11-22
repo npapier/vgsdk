@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -28,6 +28,7 @@ static std::vector< std::string > insertNodeNames = boost::assign::list_of("Anti
 																			("EngineProperties")
 																			("Fluid")
 																			("FrontFace")
+																			("GeoMorph")
 																			("Group")
 																			("LightModel")
 																			("Material")
@@ -39,7 +40,8 @@ static std::vector< std::string > insertNodeNames = boost::assign::list_of("Anti
 																			("PostProcessing")
 																			("Separator")
 																			("SpotLight")
-																			("Transform");
+																			("Transform")
+																			("VertexShape");
 }
 
 

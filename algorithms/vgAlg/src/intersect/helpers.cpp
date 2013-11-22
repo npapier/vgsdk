@@ -38,8 +38,8 @@ const bool getTriangle( const vgm::Vec3f& P, const vgd::node::VertexShape * vert
 	}
 
 	// For each triangle,
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt >	vertexIndex	= vertexShape->getVertexIndexRO();
 
 	float distanceMin = std::numeric_limits< float >::max();
 
@@ -131,8 +131,8 @@ const bool getTriangles(	const vgd::node::VertexShape * vertexShape, const vgm::
 	}
 
 	// For each triangle,
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt >	vertexIndex	= vertexShape->getVertexIndexRO();
 
 	const uint	iEndTriangle	= vertexIndex->size()/3;
 	uint		iVI				= 0;						// (i)ndex in (V)ertex (I)ndex array
@@ -211,8 +211,8 @@ const bool getTriangles(	const vgd::node::VertexShape * vertexShape, const std::
 	}
 
 	// For each triangle,
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt >	vertexIndex	= vertexShape->getVertexIndexRO();
 
 	std::vector< uint32 >::const_iterator i;
 	std::vector< uint32 >::const_iterator iEnd;

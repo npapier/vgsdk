@@ -41,7 +41,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_decl += GLSLHelpers::getDefines( state );
 
 	// UNIFORMS
-	m_decl += GLSLHelpers::getVGSDKUniformDecl();
+	m_decl += GLSLHelpers::getVGSDKUniformDecl( state );
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
 
@@ -55,10 +55,10 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	if ( state.isLightingEnabled() /*PerPixelLightingEnabled()*/ )
 	{
-		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat";
+		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
 		m_decl += "in vec4 ecPosition;\n";
 
-		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat";
+		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
 		m_decl += "in vec3 ecNormal;\n\n"; // @todo not if bump
 	}
 

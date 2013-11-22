@@ -31,9 +31,9 @@ MeshBase::MeshBase()
 
 MeshBase::MeshBase( vgd::Shp< vgd::node::TriSet > pTriSet )
 {
-	vgd::field::EditorRO< vgd::field::MFVec3f >	vertices			= pTriSet->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex		= pTriSet->getFVertexIndexRO();
-	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives	= pTriSet->getFPrimitiveRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >	vertices			= pTriSet->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt >	vertexIndex		= pTriSet->getVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives	= pTriSet->getPrimitiveRO();
 	
 	// copy vertices
 	m_lNbPoints		= vertices->size();
@@ -73,9 +73,9 @@ MeshBase::MeshBase( vgd::Shp< vgd::node::TriSet > pTriSet )
 
 MeshBase::MeshBase( vgd::Shp< vgd::node::VertexShape > pVertexShape )
 {
-	vgd::field::EditorRO< vgd::field::MFVec3f >	vertices			= pVertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex		= pVertexShape->getFVertexIndexRO();
-	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives	= pVertexShape->getFPrimitiveRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >	vertices			= pVertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt >	vertexIndex		= pVertexShape->getVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives	= pVertexShape->getPrimitiveRO();
 	
 	// copy vertices
 	m_lNbPoints		= vertices->size();

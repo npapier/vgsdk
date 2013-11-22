@@ -78,8 +78,8 @@ void setOrthogonalize( const bool value )
 // ALGORITHMS ON VERTEX SHAPE
 void invertPrimitiveOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape )
 {
-	vgd::field::EditorRW< vgd::field::MFUInt32 > vertexIndexRW = vertexShape->getFVertexIndexRW();
-	vgd::field::EditorRO< vgd::field::TMultiField< vgd::node::Primitive > > primitiveRO = vertexShape->getFPrimitiveRO();
+	vgd::field::EditorRW< vgd::field::MFUInt > vertexIndexRW = vertexShape->getVertexIndexRW();
+	vgd::field::EditorRO< vgd::field::TMultiField< vgd::node::Primitive > > primitiveRO = vertexShape->getPrimitiveRO();
 
 	int32 j = 0;
 
@@ -138,7 +138,7 @@ void invertPrimitiveOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape 
 
 void invertNormalOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape )
 {
-	vgd::field::EditorRW< vgd::field::MFVec3f >	normals = vertexShape->getFNormalRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	normals = vertexShape->getNormalRW();
 
 	for( uint i = 0; i < normals->size(); ++i )
 	{
@@ -149,10 +149,10 @@ void invertNormalOrientation( vgd::Shp< vgd::node::VertexShape > vertexShape )
 
 void triangulate( vgd::Shp< vgd::node::VertexShape > vertexShape )
 {
-	vgd::field::EditorRW< vgd::field::MFUInt32 > vertexIndexRW = vertexShape->getFVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt > vertexIndexRW = vertexShape->getVertexIndexRW();
 	std::vector< uint32 > newVertexIndexRW;
 
-	vgd::field::EditorRW< vgd::field::TMultiField< vgd::node::Primitive > > primitiveRW = vertexShape->getFPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::TMultiField< vgd::node::Primitive > > primitiveRW = vertexShape->getPrimitiveRW();
 
 	int32 j = 0;
 	int32 k = 0;
@@ -228,9 +228,9 @@ void computeNormals( vgd::Shp< vgd::node::VertexShape > vertexShape )
 	if ( value == vgAlg::node::NO_COMPUTE_NORMAL )	return ;
 
 	//
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
-	vgd::field::EditorRW< vgd::field::MFVec3f >		normals		= vertexShape->getFNormalRW();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt >	vertexIndex	= vertexShape->getVertexIndexRO();
+	vgd::field::EditorRW< vgd::field::MFVec3f >		normals		= vertexShape->getNormalRW();
 
 	const uint numVertices	= vertices->size();
 	const uint numTris		= vertexIndex->size()/3;
@@ -293,11 +293,11 @@ void computeTangents( vgd::Shp< vgd::node::VertexShape > vertexShape )
 	}
 
 	//
-	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 >	vertexIndex	= vertexShape->getFVertexIndexRO();
-	vgd::field::EditorRW< vgd::field::MFVec3f >		tangents	= vertexShape->getFTangentRW();
-	vgd::field::EditorRO< vgd::field::MFVec3f >		normals		= vertexShape->getFNormalRO();
-	vgd::field::EditorRO< vgd::field::MFVec2f >		textCoords	= vertexShape->getFTexCoordRO< vgd::field::MFVec2f >();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		vertices	= vertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt >	vertexIndex	= vertexShape->getVertexIndexRO();
+	vgd::field::EditorRW< vgd::field::MFVec3f >		tangents	= vertexShape->getTangentRW();
+	vgd::field::EditorRO< vgd::field::MFVec3f >		normals		= vertexShape->getNormalRO();
+	vgd::field::EditorRO< vgd::field::MFVec2f >		textCoords	= vertexShape->getTexCoordRO< vgd::field::MFVec2f >();
 
 	const uint numVertices	= vertices->size();
 	const uint numTris		= vertexIndex->size()/3;
@@ -349,14 +349,14 @@ void computeTangents( vgd::Shp< vgd::node::VertexShape > vertexShape )
 
 void normalizeNormals( vgd::Shp< vgd::node::VertexShape > vertexShape/*, const vgAlg::node::COMPUTE_NORMAL_METHOD value todo */ )
 {
-	vgd::field::EditorRW< vgd::field::MFVec3f > field = vertexShape->getFNormalRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f > field = vertexShape->getNormalRW();
 	normalizeField( field );
 }
 
 
 void normalizeTangents( vgd::Shp< vgd::node::VertexShape > vertexShape/*, const vgAlg::node::COMPUTE_NORMAL_METHOD value todo */ )
 {
-	vgd::field::EditorRW< vgd::field::MFVec3f > field = vertexShape->getFTangentRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f > field = vertexShape->getTangentRW();
 	normalizeField( field );
 }
 
@@ -369,7 +369,7 @@ void normalizeField( vgd::field::EditorRW< vgd::field::MFVec3f >& field/*, const
 
 
 void computeNormalsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertices,
-								vgd::field::EditorRO< vgd::field::MFUInt32 >&	vertexIndex,
+								vgd::field::EditorRO< vgd::field::MFUInt >&	vertexIndex,
 								vgd::field::EditorRW< vgd::field::MFVec3f >&	normals,
 								const int32 numTris )
 {
@@ -402,7 +402,7 @@ void computeNormalsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertic
 // Code based on Terathon Software 3D Graphics Library, 2001. http://www.terathon.com/code/tangent.html
 // Lengyel, Eric. “Computing Tangent Space Basis Vectors for an Arbitrary Mesh”.
 void computeTangentsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertices,
-								vgd::field::EditorRO< vgd::field::MFUInt32 >&	vertexIndex,
+								vgd::field::EditorRO< vgd::field::MFUInt >&	vertexIndex,
 								vgd::field::EditorRW< vgd::field::MFVec3f >&	tangents,
 								vgd::field::EditorRO< vgd::field::MFVec3f >&	normals,
 								vgd::field::EditorRO< vgd::field::MFVec2f >&	texCoord,
