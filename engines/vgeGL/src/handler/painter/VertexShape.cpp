@@ -455,7 +455,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 			// Sets uniform(s)
 			// 	UNIFORM
-			engine->getUniformState().apply( pGLEngine );
+			engine->getUniformState().apply( engine );
 
 			glslState.validate();
 		}
