@@ -100,7 +100,7 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 
 		m_editVertexIndex = m_vertexShape->getFVertexIndexRW();
 
-		m_editPositions = m_vertexShape->getFVertexRW();
+		m_editPositions = m_vertexShape->getVertexRW();
 		m_editPositions->clear();
 		m_editPositions->reserve( m_primitivesNumber );
 
