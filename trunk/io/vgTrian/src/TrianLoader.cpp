@@ -38,8 +38,8 @@ const bool TrianLoader::loadTrian( std::istream & in, vgd::Shp< vgd::node::Group
 	int32 i32NumVertices;
 	in >> i32NumVertices;
 
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= vertexShape->getFVertexRW();
-	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex	= vertexShape->getFVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= vertexShape->getVertexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt>	vertexIndex	= vertexShape->getVertexIndexRW();
 
 	// setCounterClockWiseFlag( false ); FIXME
 
@@ -125,7 +125,7 @@ const bool TrianLoader::loadTrian( std::istream & in, vgd::Shp< vgd::node::Group
 	//m_i32NextEdge = vertexIndex->getNum();
 
 	// primitive
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getFPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getPrimitiveRW();
 	primitive->clear();
 
 	vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );
@@ -188,8 +188,8 @@ const bool TrianLoader::saveTrian( vgd::Shp< vgd::node::VertexShape > shape, con
 	}
 
 	// write nb of vertices
-	vgd::field::EditorRO< vgd::field::MFVec3f >	vertex		= shape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32>	vertexIndex	= shape->getFVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >	vertex		= shape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt>	vertexIndex	= shape->getVertexIndexRO();
 	
 	int32 i32NumVertices = vertex->size();
 	fp << i32NumVertices << std::endl;
@@ -260,7 +260,7 @@ const bool TrianLoader::saveTrian( vgd::Shp< vgd::node::VertexShape > shape, con
 	fp.close();
 
 	// primitive
-	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives = shape->getFPrimitiveRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives = shape->getPrimitiveRO();
 	assert( primitives->size() == 1 );
 	vgd::node::Primitive primitive = (*primitives)[0];
 	assert( primitive.getType() == vgd::node::Primitive::TRIANGLES );
