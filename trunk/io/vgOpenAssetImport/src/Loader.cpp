@@ -285,9 +285,9 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 	vgd::Shp< VertexShape > vertexShape = VertexShape::create( mesh->mName.C_Str() );
 
 	// Editors
-	vgd::field::EditorRW< vgd::field::MFVec3f >		vertex		= vertexShape->getFVertexRW();
-	vgd::field::EditorRW< vgd::field::MFUInt32>		vertexIndex	= vertexShape->getFVertexIndexRW();
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitives	= vertexShape->getFPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >		vertex		= vertexShape->getVertexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt>		vertexIndex	= vertexShape->getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitives	= vertexShape->getPrimitiveRW();
 
 	// VERTEX
 	vertex->reserve( mesh->mNumVertices );
@@ -351,7 +351,7 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 	// NORMALS
 	if ( mesh->HasNormals() )
 	{
-		vgd::field::EditorRW< vgd::field::MFVec3f > normals = vertexShape->getFNormalRW();
+		vgd::field::EditorRW< vgd::field::MFVec3f > normals = vertexShape->getNormalRW();
 
 		normals->reserve( mesh->mNumVertices );
 		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
@@ -369,7 +369,7 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 		vertexShape->createTexUnits( mesh->mNumUVComponents[j], j );
 		vertexShape->setTexCoordBinding( j, vgd::node::BIND_PER_VERTEX );
 
-		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord = vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( j );
+		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord = vertexShape->getTexCoordRW<vgd::field::MFVec2f>( j );
 		texCoord->reserve( mesh->mNumVertices );
 		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
 		{
@@ -380,7 +380,7 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 	// TANGENTS
 	if ( mesh->HasTangentsAndBitangents() )
 	{
-		vgd::field::EditorRW< vgd::field::MFVec3f > tangents = vertexShape->getFTangentRW();
+		vgd::field::EditorRW< vgd::field::MFVec3f > tangents = vertexShape->getTangentRW();
 
 		tangents->reserve( mesh->mNumVertices );
 		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
