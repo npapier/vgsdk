@@ -90,7 +90,7 @@ struct VGOPENCOLLADA_API GeometryExporter : public COLLADASW::LibraryGeometries
 	{
 		T primitive( mSW );
 
-		vgd::field::EditorRO< vgd::field::MFUInt32>	vertexIndex	= vertexShape->getFVertexIndexRO();	
+		vgd::field::EditorRO< vgd::field::MFUInt>	vertexIndex	= vertexShape->getVertexIndexRO();
 		int numberOfFaces = vertexIndex->size();
 		primitive.setCount( numberOfFaces );
 		
