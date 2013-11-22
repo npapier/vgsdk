@@ -1,10 +1,11 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vge/handler/cbb/Group.hpp"
 
+#include <vgd/node/GeoMorph.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/MultiSwitch.hpp>
 #include <vgd/node/Separator.hpp>
@@ -34,7 +35,8 @@ const Handler::TargetVector Group::getTargets()	const
 {
 	TargetVector targets;
 
-	targets.reserve( 4 );
+	targets.reserve( 5 );
+	targets.push_back( vgd::node::GeoMorph::getClassIndexStatic() );
 	targets.push_back( vgd::node::Group::getClassIndexStatic() );
 	targets.push_back( vgd::node::MultiSwitch::getClassIndexStatic() );
 	targets.push_back( vgd::node::Separator::getClassIndexStatic() );

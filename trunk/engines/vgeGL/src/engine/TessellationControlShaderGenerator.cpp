@@ -39,7 +39,7 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 	m_decl += GLSLHelpers::getDefines( state );
 
 	// UNIFORMS
-	m_decl += GLSLHelpers::getVGSDKUniformDecl();
+	m_decl += GLSLHelpers::getVGSDKUniformDecl( state );
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
 
@@ -55,9 +55,9 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 	// declaration for lighting
 	if ( state.isLightingEnabled() )
 	{
-		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat";
+		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat ";
 		inputs +=	"in vec3 ecNormal[];\n";
-		if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat";
+		if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat ";
 		outputs +=	"out vec3 myNormal[];\n";
 	}
 	// else nothing to do

@@ -20,19 +20,19 @@ namespace vertexShape
 vgd::Shp< vgd::node::VertexShape > createSubTriSet( const vgd::node::VertexShape * vertexShape, const std::vector< uint32 >& trianglesIndices, const bool ignoreNormals  )
 {
 	// inputs
-	vgd::field::EditorRO< vgd::field::MFVec3f >	inVertex	= vertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFVec3f >	inNormal	= vertexShape->getFNormalRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >	inVertex	= vertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >	inNormal	= vertexShape->getNormalRO();
 
 	// output
 	//	Create new vertex shape
 	using vgd::node::VertexShape;
 	vgd::Shp< VertexShape > outVertexShape = VertexShape::create("");
 
-	vgd::field::EditorRW< vgd::field::MFVec3f >		outVertex		= outVertexShape->getFVertexRW();
-	vgd::field::EditorRW< vgd::field::MFUInt32>		outVertexIndex	= outVertexShape->getFVertexIndexRW();
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	outPrimitive	= outVertexShape->getFPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >		outVertex		= outVertexShape->getVertexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt>		outVertexIndex	= outVertexShape->getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	outPrimitive	= outVertexShape->getPrimitiveRW();
 
-	vgd::field::EditorRW< vgd::field::MFVec3f >		outNormal		= outVertexShape->getFNormalRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >		outNormal		= outVertexShape->getNormalRW();
 
 	// Filter the given vertex shape using triangles indices
 	const bool hasNormals = ignoreNormals ? false : (vertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX);

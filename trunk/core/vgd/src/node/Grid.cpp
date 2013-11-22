@@ -57,7 +57,7 @@ void Grid::initializeGeometry( const float width, const float height, const int 
 	const float fStepY = height / static_cast<float>(heightSlices);
 
 	// VERTEX
-	vgd::field::EditorRW< vgd::field::MFVec3f > vertex = getFVertexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f > vertex = getVertexRW();
 
 	vertex->clear();
 
@@ -97,7 +97,7 @@ void Grid::initializeGeometry( const float width, const float height, const int 
 	}
 
 	// VERTEX INDEX
-	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex = getFVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt >	vertexIndex = getVertexIndexRW();
 	vertexIndex->clear();
 
 	vertexIndex->reserve( vertex->size() );
@@ -107,13 +107,13 @@ void Grid::initializeGeometry( const float width, const float height, const int 
 	}
 
 	// PRIMITIVE
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = getFPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = getPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::QUADS, 0, vertexIndex->size() );
 	primitive->clear();
 	primitive->push_back( prim );
 
 	// NORMAL
-	vgd::field::EditorRW< vgd::field::MFVec3f >	normal = getFNormalRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	normal = getNormalRW();
 	normal->clear();
 	normal->reserve( vertex->size() );
 	for( uint i=0; i < vertex->size(); ++i )
@@ -141,7 +141,7 @@ void Grid::resetTextureCoordinates( const int32 numTexUnits, const int widthSlic
 			i < numTexUnits;
 			++i )
 	{
-		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getFTexCoordRW<vgd::field::MFVec2f>( i ) );
+		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getTexCoordRW<vgd::field::MFVec2f>( i ) );
 
 		// TEX COORD
 		const float fSizeX = 1.f;

@@ -103,21 +103,21 @@ void Scale1Dragger::setBoundingBoxAndAxisFeedback()
 	// Initialize geometry.
 
 	// VERTEX
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = pLine->getFVertexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = pLine->getVertexRW();
 	vertex->reserve( 2 );
 
 	vertex->push_back( vgm::Vec3f(-0.5f - 0.2f, 0.f, 0.f));
 	vertex->push_back( vgm::Vec3f(0.5f + 0.2f, 0.f, 0.f) );
 
 	// VERTEX INDEX
-	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex		= pLine->getFVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt>	vertexIndex		= pLine->getVertexIndexRW();
 	vertexIndex->reserve( 2 );
 	
 	vertexIndex->push_back(0);
 	vertexIndex->push_back(1);
 
 	// PRIMITIVE
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= pLine->getFPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= pLine->getPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::LINE_STRIP, 0, vertexIndex->size() );
 	primitive->push_back( prim );
 	

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -8,6 +8,8 @@
 
 #include <vgd/Wkp.hpp>
 #include <vgd/node/Group.hpp>
+#include <vgd/node/Texture2D.hpp>
+#include <vgd/node/VertexShape.hpp>
 #include <vgm/operations.hpp>
 #include <vgm/Utilities.hpp>
 
@@ -57,11 +59,11 @@ std::ostream & operator << ( std::ostream & os, const vgd::node::VertexShape::Pr
 
 std::ostream & operator << ( std::ostream & os, const vgd::node::Binding & bindingValue )
 {
-	switch( bindingValue )
+	switch( bindingValue.value() )
 	{
 		case vgd::node::BIND_OFF:				os << "BIND_OFF"; break;
-		case vgd::node::BIND_OVERALL:			os << "BIND_OVERALL"; break;
-		case vgd::node::BIND_PER_PRIMITIVE:		os << "BIND_PER_PRIMITIVE"; break;
+		//case vgd::node::BIND_OVERALL:			os << "BIND_OVERALL"; break;
+		//case vgd::node::BIND_PER_PRIMITIVE:		os << "BIND_PER_PRIMITIVE"; break;
 		case vgd::node::BIND_PER_VERTEX:		os << "BIND_PER_VERTEX"; break;
 		default:								os << "unsupported"; break;
 	}
@@ -87,6 +89,13 @@ std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::basic::IIma
 
 
 
+std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group > & node )
+{
+	os << node->getName();
+
+	return os;
+}
+
 std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node > & node )
 {
 	os << node->getName();
@@ -94,7 +103,19 @@ std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node 
 	return os;
 }
 
+std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Texture2D > & node )
+{
+	os << node->getName();
 
+	return os;
+}
+
+std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::VertexShape > & node )
+{
+	os << node->getName();
+
+	return os;
+}
 
 std::ostream & operator << ( std::ostream & os, const vgd::Wkp< vgd::node::Node > & node )
 {

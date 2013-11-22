@@ -19,6 +19,7 @@
 #include <vgd/node/CullFace.hpp>
 #include <vgd/node/Decal.hpp>
 #include <vgd/node/Fluid.hpp>
+#include <vgd/node/GeoMorph.hpp>
 #include <vgd/node/Grid.hpp>
 #include <vgd/node/FrameBuffer.hpp>
 #include <vgd/node/FrontFace.hpp>
@@ -416,6 +417,7 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	// Saves texture mapping
 	// To remove texture matrices initialization @todo not very cute @todo do the same for CPU transformation
 	const bool isTextureMappingEnabledBak = engine->setTextureMappingEnabled(false); // @todo TransformSeparator TextureMatrix/ push/pop texture mapping disabled
+	const bool isDrawCallsEnabledBak = engine->setDrawCallsEnabled(false);
 	const bool isTessellationEnabledBak	 = engine->getGLSLState().isTessellationEnabled();
 
 	setPassDescription("Collects informations stage");
@@ -426,6 +428,7 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	engine->disregard();
 	engine->regardIfIsAKindOf<vgd::node::SingleTransformation>();
 	engine->regardIfIsAKindOf<vgd::node::Group>();
+	engine->disregardIfIsAKindOf<vgd::node::GeoMorph>();
 	engine->regardIfIsAKindOf<vgd::node::Dragger>();
 	engine->regardIfIsA<vgd::node::LightModel>();
 // for shadow
@@ -594,6 +597,7 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 	endPass();
 
 	// Restores texture mapping and lighting state
+	engine->setDrawCallsEnabled(isDrawCallsEnabledBak);
 	engine->setTextureMappingEnabled( isTextureMappingEnabledBak );
 }
 

@@ -55,7 +55,7 @@ void CollectNode::apply( vge::engine::Engine * engine, vge::visitor::TraverseEle
 			vgm::MatrixR matrix( engine->getGeometricalMatrix().getTop() );
 
 			//if empty shape.
-			if( vertexShape->getFVertexIndexRO()->size() > 0 )
+			if( vertexShape->getVertexIndexRO()->size() > 0 )
 			{
 				addShape( vertexShape, matrix, engine, VERTEXSHAPE );
 			}
@@ -71,7 +71,7 @@ void CollectNode::apply( vge::engine::Engine * engine, vge::visitor::TraverseEle
 				vgd::Shp< vgd::node::MultipleInstances > multipleInstances = vgd::dynamic_pointer_cast< vgd::node::MultipleInstances >( multipleInstance->shpFromThis() );
 
 				//if empty shape.
-				if( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( shape )->getFVertexIndexRO()->size() > 0 )
+				if( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( shape )->getVertexIndexRO()->size() > 0 )
 				{
 					vgm::MatrixR matrix = engine->getGeometricalMatrix().getTop();
 					addShape( multipleInstances, matrix, engine, MULTIPLEINSTANCES );				

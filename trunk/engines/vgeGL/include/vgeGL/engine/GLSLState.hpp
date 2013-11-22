@@ -52,6 +52,7 @@ struct TBitSet
 {
 	const bool isEnabled( const uint index ) const;
 	void setEnabled( const uint index, const bool enabled = true );
+	void setDisabled( const uint index );
 
 	void reset();
 protected:
@@ -75,6 +76,13 @@ void TBitSet<size>::setEnabled( const uint index, const bool enabled )
 	assert( index < size && "Out of range index." );
 
 	m_bitset[ index ] = enabled;
+}
+
+
+template< uint size >
+void TBitSet<size>::setDisabled( const uint index )
+{
+	setEnabled( index, false );
 }
 
 
@@ -123,7 +131,9 @@ enum GLSLStateIndex
 	//
 	BUMP_MAPPING,				///< see LightModel.bumpMapping
 
-	TESSELLATION,				///< see EngineProperties.tessellation 
+	TESSELLATION,				///< see EngineProperties.tessellation
+
+	GEOMORPH,					///< enable (during down traversing of scene graph)/disable (during up traversing) by GeoMorph node handler
 
 	//
 	MAX_BITSETINDEXTYPE
@@ -314,6 +324,7 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	void		validate( const bool setToValid = true );
 
 	//@}
+
 
 
 	/**
@@ -518,38 +529,6 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 
 	/**
-	 * @name Overlay units
-	 */
-	//@{
-	 
-	/**
-	 * @brief Overlay unit state structure
-	 */
-	struct OverlayState
-	{
-		/**
-		 * @brief Default constructor
-		 */
-		OverlayState( vgd::node::Overlay * node )
-		: m_node(node)
-		{}
-
-		vgd::node::Overlay * getNode() const { return m_node; }
-
-	private:
-		vgd::node::Overlay * m_node;
-	};
-
-	/**
-	 * @brief Overlay unit container
-	 */
-	typedef vge::basic::TUnitContainer< OverlayState > OverlayStateContainer;
-	OverlayStateContainer overlays;												///< array of overlay state. The zero-based index selects the overlay unit.
-
-	//@}
-
-
-	/**
 	 * @name OutputBufferProperty units
 	 */
 	//@{
@@ -582,6 +561,38 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 
 	/**
+	 * @name Overlay units
+	 */
+	//@{
+	 
+	/**
+	 * @brief Overlay unit state structure
+	 */
+	struct OverlayState
+	{
+		/**
+		 * @brief Default constructor
+		 */
+		OverlayState( vgd::node::Overlay * node )
+		: m_node(node)
+		{}
+
+		vgd::node::Overlay * getNode() const { return m_node; }
+
+	private:
+		vgd::node::Overlay * m_node;
+	};
+
+	/**
+	 * @brief Overlay unit container
+	 */
+	typedef vge::basic::TUnitContainer< OverlayState > OverlayStateContainer;
+	OverlayStateContainer overlays;												///< array of overlay state. The zero-based index selects the overlay unit.
+
+	//@}
+
+
+	/**
 	 * @brief Returns the last encountered Program node
 	 */
 	vgd::node::Program * getProgram() const;
@@ -602,7 +613,10 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 	enum ShaderStage
 	{
-		VERTEX_DECLARATIONS = 0,
+		UNIFORM_DECLARATIONS = 0,
+
+		VERTEX_DECLARATIONS,
+		VERTEX_POSITION_COMPUTATION,		///< vertex displacement (using a texture a procedurally)
 		VERTEX_GL_POSITION_COMPUTATION,
 		VERTEX_ECPOSITION_COMPUTATION,
 		VERTEX_ECNORMAL_COMPUTATION,
@@ -640,16 +654,6 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	//@}
 
 
-
-	/**
-	 * @name Light model accessors
-	 */
-	//@{
-	const vgd::node::LightModel::Option0ValueType getOption0() const			{ return m_option0; }
-	void setOption0( const vgd::node::LightModel::Option0ValueType value )	{ m_option0 = value; }
-	//@}
-
-
 	/**
 	 * @name Bump mapping accessors
 	 */
@@ -664,8 +668,8 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	//@{
 	const bool isTessellationEnabled() const;
 	void setTessellationEnabled( const bool enabled = true );
-
 	//@}
+
 
 	/**
 	 * @name Shadow accessors
@@ -700,10 +704,8 @@ private:
 	// @todo TUnitContainer m_shaderStage;
 	// @todo 
 	std::vector< std::string >							m_shaderStage;				///< container of glsl code for custom shader stage
-	vgd::node::LightModel::Option0ValueType				m_option0;					///< Last encountered value of LightModel.option0 field
 	vgd::node::LightModel::ShadowValueType				m_lightModelShadow;			///< Last encountered value of LightModel.shadow field
 	vgd::node::LightModel::ShadowMapTypeValueType		m_shadowMapType;			///< @todo doc
-	bool												m_isShadowSamplerEnabled;	///< true if engine must used shadow sampler, false otherwise
 	static const std::string							m_indexString[];			///< array containing the string representation for BitSetIndexType.
 };
 

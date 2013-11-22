@@ -21,7 +21,7 @@
 
 namespace
 {
-void computeTrianglesNormals( vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt32 > &vertexIndex, vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > &normals, int32 beginIndex, int32 numTris )
+void computeTrianglesNormals( vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt > &vertexIndex, vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > &normals, int32 beginIndex, int32 numTris )
 {
 	vgm::Vec3f faceNormal;
 	vgm::Vec3f v1, v2;	
@@ -48,7 +48,7 @@ void computeTrianglesNormals( vgd::field::EditorRO< vgd::field::MFVec3f > &verti
 }
 
 
-void computeQuadsNormals( vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt32 > &vertexIndex, vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > &normals, int32 beginIndex, int32 numQuads )
+void computeQuadsNormals( vgd::field::EditorRO< vgd::field::MFVec3f > &vertices, vgd::field::EditorRO< vgd::field::MFUInt > &vertexIndex, vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > &normals, int32 beginIndex, int32 numQuads )
 {
 	vgm::Vec3f faceNormal;
 	vgm::Vec3f v1, v2;	
@@ -78,10 +78,10 @@ void computeQuadsNormals( vgd::field::EditorRO< vgd::field::MFVec3f > &vertices,
 
 void computeNormals( vgd::Shp<vgd::node::VertexShape> vertexShape )
 {
-	vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > normals = vertexShape->getFNormalRW();
-	vgd::field::EditorRO< vgd::field::MFVec3f > verticesRO = vertexShape->getFVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt32 > vertexIndexRO = vertexShape->getFVertexIndexRO();
-	vgd::field::EditorRO< vgd::field::MFPrimitive > primitiveRO = vertexShape->getFPrimitiveRO();
+	vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > normals = vertexShape->getNormalRW();
+	vgd::field::EditorRO< vgd::field::MFVec3f > verticesRO = vertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt > vertexIndexRO = vertexShape->getVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive > primitiveRO = vertexShape->getPrimitiveRO();
 
 	vgm::Vec3f faceNormal;
 	vgm::Vec3f v1, v2;
@@ -249,9 +249,9 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( std::istr
 	retVal.first	= false;
 	retVal.second = vertexShape;
 
-	vgd::field::EditorRW<vgd::node::VertexShape::FVertexType> vertices=vertexShape->getFVertexRW();
-	vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> normals=vertexShape->getFNormalRW();
-	vgd::field::EditorRW<vgd::field::MFUInt32> vertexIndices =vertexShape->getFVertexIndexRW();
+	vgd::field::EditorRW<vgd::node::VertexShape::FVertexType> vertices=vertexShape->getVertexRW();
+	vgd::field::EditorRW<vgd::node::VertexShape::FNormalType> normals=vertexShape->getNormalRW();
+	vgd::field::EditorRW<vgd::field::MFUInt> vertexIndices =vertexShape->getVertexIndexRW();
 
 
 	vgm::Vec3f result;
@@ -356,7 +356,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadObj( std::istr
 				currentPrimitive = QUAD;
 			else
 				currentPrimitive = NONE;
-			vgd::field::EditorRW< vgd::field::MFPrimitive > primitive = vertexShape->getFPrimitiveRW();
+			vgd::field::EditorRW< vgd::field::MFPrimitive > primitive = vertexShape->getPrimitiveRW();
 			if(currentPrimitive==lastPrimitive)
 			{
 				vgd::node::Primitive& p = *primitive->rbegin();

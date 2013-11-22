@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -23,7 +23,7 @@
 #include "vge/service/Service.hpp"
 #include "vge/visitor/NodeCollectorExtended.hpp"
 
-namespace vgd { namespace node { struct Camera; } }
+namespace vgd { namespace node { struct GeoMorph; } }
 
 
 
@@ -793,9 +793,28 @@ struct VGE_API Engine : public vgd::field::FieldManager
 
 
 	/**
+	 * @brief Returns the last encountered GeoMorph node
+	 *
+	 * @return the last encountered GeoMorph node
+	 */
+	/*const*/ vgd::node::GeoMorph * getGeoMorph() /*const*/;
+
+	/**
+	 * @brief Sets the last encountered GeoMorph node
+	 *
+	 * @param geoMorph		the node to set
+	 *
+	 * @see vge::handler::GeoMorph (@todo vge::handler::GeoMorph actually work done in vgeGL::handler::painter)
+	 */
+	void setGeoMorph( /*const*/ vgd::node::GeoMorph * geoMorph );
+
+
+	/**
 	 * @brief Returns the geometrical matrix that is current when encountered the ClearFrameBuffer node.
 	 *
 	 * @return the geometrical matrix
+	 *
+	 * @todo rename Scene => World, @todo generic container map<string, MatrixR>
 	 */
 	const vgm::MatrixR& getSceneGeometricalMatrix();
 
@@ -1024,6 +1043,7 @@ protected:
 	const vgd::node::Camera *		m_camera;					///< the last encountered Camera node
 	vgm::Rectangle2i				m_viewport;					///< the value of \c viewport field for the last encountered Camera node with this field defined
 	vgm::Vec2f						m_nearFar;					///< a vector containing respectively the distances to the near and far depth clipping planes
+	/*const*/ vgd::node::GeoMorph *	m_geoMorph;					///< the last encountered GeoMorph node
 	vgm::MatrixR					m_sceneGeometricalMatrix;	///< the geometrical matrix that is current when encountered the ClearFrameBuffer node
 	BufferUsagePolicy				m_bufferUsagePolicy;		///< the current buffer usage policy
 	EyeUsagePolicy					m_eyeUsagePolicy;			///< the current eye usage policy

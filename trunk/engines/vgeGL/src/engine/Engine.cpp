@@ -34,6 +34,7 @@ namespace engine
 Engine::Engine()
 :	m_isLightingEnabled(true),
 	m_isTextureMappingEnabled(true),
+	m_isDrawCallsEnabled(true),
 	m_isDisplayListEnabled(true),
 	m_isDepthPrePassEnabled(false),
 	m_isShadowEnabled(true),
@@ -198,16 +199,6 @@ void Engine::setToDefaults()
 		(*i_handler)->setToDefaults();
 	}
 
-	//
-	vgLogDebug( "vgeGL.Engine: MAX VIEWPORT SIZE			= %i x %i", getMaxViewportSize()[0],  getMaxViewportSize()[1] );
-
-	vgLogDebug( "vgeGL.Engine: MAX_LIGHTS			= %i", getMaxLights() );
-
-	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
-
-	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
-	vgLogDebug( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
-	vgLogDebug( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
 
 	// MARKER
 	if ( isGL_GREMEDY_string_marker() )
@@ -446,6 +437,22 @@ const bool Engine::setTextureMappingEnabled( const bool enabled )
 {
 	const bool retVal = m_isTextureMappingEnabled;
 	m_isTextureMappingEnabled = enabled;
+	return retVal;
+}
+
+
+
+const bool Engine::isDrawCallsEnabled() const
+{
+	return m_isDrawCallsEnabled;
+}
+
+
+
+const bool Engine::setDrawCallsEnabled( const bool enabled )
+{
+	const bool retVal = m_isDrawCallsEnabled;
+	m_isDrawCallsEnabled = enabled;
 	return retVal;
 }
 
@@ -785,18 +792,20 @@ const int Engine::getMaxLights() const
 
 const int Engine::getMaxTexUnits() const
 {
+	const uint maxTexUnits = 5;
+
 	if ( m_maxTexUnits == 0 )
 	{
 		if ( isGLContextCurrent() )
 		{
 			// @todo
 			glGetIntegerv( GL_MAX_TEXTURE_UNITS, &m_maxTexUnits );
-			m_maxTexUnits = 5;
+			m_maxTexUnits = maxTexUnits;
 		}
 		else
 		{
-			vgLogDebug("Engine::getMaxTexUnits(): OpenGL context not current, so return arbitrary value 2.");
-			return 5;
+			vgLogDebug("Engine::getMaxTexUnits(): OpenGL context not current, so return arbitrary value %i.", maxTexUnits);
+			return maxTexUnits;
 		}
 	}
 

@@ -78,8 +78,8 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		CCW = 283,	///< (C)ounter-(C)lock(W)ise ordering
-		CW = 284,	///< (C)lock(W)ise ordering
+		CCW = 288,	///< (C)ounter-(C)lock(W)ise ordering
+		CW = 289,	///< (C)lock(W)ise ordering
 		DEFAULT_ORIENTATION = CCW	///< (C)ounter-(C)lock(W)ise ordering
 	};
 
@@ -107,8 +107,8 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 283 );
-			retVal.push_back( 284 );
+			retVal.push_back( 288 );
+			retVal.push_back( 289 );
 
 			return retVal;
 		}

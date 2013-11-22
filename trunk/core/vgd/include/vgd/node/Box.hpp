@@ -73,7 +73,7 @@ protected:
 
 	void	setToDefaults( void );
 	
-	void	setOptionalsToDefaults();	
+	void	setOptionalsToDefaults();
 
 	//@}
 };

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -28,7 +28,7 @@
 
 #include "vgio/vgio.hpp"
 
-namespace vgd { namespace node { struct Group; } }
+namespace vgd { namespace node { struct Group; struct Texture2D; struct VertexShape; } }
 
 
 
@@ -235,7 +235,10 @@ VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::ba
 /**
  * @brief	Writes into an output stream the given node.
  */
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Group > & node );
 VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Node > & node );
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::Texture2D > & node );
+VGIO_API std::ostream & operator << ( std::ostream & os, const vgd::Shp< vgd::node::VertexShape > & node );
 
 
 

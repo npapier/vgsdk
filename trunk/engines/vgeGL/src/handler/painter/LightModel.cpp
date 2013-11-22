@@ -145,9 +145,6 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	// BumpMapping
 	state.setBumpMappingEnabled( lightModel->getBumpMapping() );
 
-	// OPTION0
-	state.setOption0( lightModel->getOption0() );
-
 	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );
 }

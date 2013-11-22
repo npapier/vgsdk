@@ -43,7 +43,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_decl += GLSLHelpers::getDefines( state );
 
 	// UNIFORMS
-	m_decl += GLSLHelpers::getVGSDKUniformDecl();
+	m_decl += GLSLHelpers::getVGSDKUniformDecl( state );
 
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
 
@@ -59,17 +59,33 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	const std::string vertexIndexStr	= vgd::basic::toString( vgeGL::engine::VERTEX_INDEX );
 	const std::string normalIndexStr	= vgd::basic::toString( vgeGL::engine::NORMAL_INDEX );
 	const std::string tangentIndexStr	= vgd::basic::toString( vgeGL::engine::TANGENT_INDEX );
+
 	const std::string texCoord0IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX );
-	const std::string texCoord1IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX + 1 );
-	const std::string texCoord2IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX + 2 );
+	const std::string texCoord1IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD1_INDEX );
+	const std::string texCoord2IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD2_INDEX );
 
 	m_decl += "layout(location = " + vertexIndexStr + ") in vec4 mgl_Vertex;\n";
 	m_decl += "layout(location = " + normalIndexStr + ") in vec3 mgl_Normal;\n";
 	m_decl += "layout(location = " + tangentIndexStr + ") in vec3 mgl_Tangent;\n";
+	m_decl += "\n";
+
 	m_decl += "layout(location = " + texCoord0IndexStr + ") in vec4 mgl_MultiTexCoord0;\n";
 	m_decl += "layout(location = " + texCoord1IndexStr + ") in vec4 mgl_MultiTexCoord1;\n";
 	m_decl += "layout(location = " + texCoord2IndexStr + ") in vec4 mgl_MultiTexCoord2;\n\n";
 	m_decl += "\n";
+
+	if ( state.isEnabled( vgeGL::engine::GEOMORPH ) )
+	{
+		const std::string vertexIndexStr	= vgd::basic::toString( vgeGL::engine::VERTEX1_INDEX );
+		const std::string normalIndexStr	= vgd::basic::toString( vgeGL::engine::NORMAL1_INDEX );
+		const std::string tangentIndexStr	= vgd::basic::toString( vgeGL::engine::TANGENT1_INDEX );
+
+		m_decl += "layout(location = " + vertexIndexStr + ") in vec4 mgl_Vertex1;\n";
+		m_decl += "layout(location = " + normalIndexStr + ") in vec3 mgl_Normal1;\n";
+		m_decl += "layout(location = " + tangentIndexStr + ") in vec3 mgl_Tangent1;\n";
+		m_decl += "\n";
+	}
+
 	// END: VERTEX SHADER SPECIFIC
 
 	// OUTPUTS
@@ -94,10 +110,10 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	// declarations for lighting
 	if ( state.isLightingEnabled() )
 	{
-		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat";
+		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
 		m_decl += "out vec4 ecPosition;\n";
 
-		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat";
+		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
 		m_decl += "out vec3 ecNormal;\n\n"; // @todo not if bump
 	}
 	// else nothing to do
@@ -160,11 +176,13 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	"// MAIN function\n"
 	"void main( void )\n"
 	"{\n"
-	"	// position is a copy of mgl_Vertex for vertex texturing (mgl_Vertex is read-only).\n"
+	"	// position is a copy of mgl_Vertex for vertex displacement (mgl_Vertex is read-only).\n"
 	"	vec4 position = mgl_Vertex;\n"		// @todo rename position => vertex
 	"	// normal is a copy of mgl_Normal\n"
 	"	vec3 normal = mgl_Normal;\n"
 	"\n";
+
+	m_code2 += state.getShaderStage( GLSLState::VERTEX_POSITION_COMPUTATION ) + "\n";
 
 	if ( state.isLightingEnabled() == false /*|| state.isPerVertexLightingEnabled()*/ )
 	{
