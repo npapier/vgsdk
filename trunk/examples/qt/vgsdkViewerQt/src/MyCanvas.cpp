@@ -100,14 +100,14 @@ void MyCanvas::keyPressEvent(QKeyEvent * event)
 			++whichChild;
 		}
 		lightSwitcher->setWhichChild( whichChild );
-		doRefresh();
+		refresh( REFRESH_FORCE, SYNCHRONOUS );
 	}
 
 	// F : fps
 	if ( event->key() == Qt::Key_F )
 	{
 		setDebugOverlay( !isDebugOverlay() );
-		doRefresh();
+		refresh( REFRESH_FORCE, SYNCHRONOUS );
 	}
 }
 

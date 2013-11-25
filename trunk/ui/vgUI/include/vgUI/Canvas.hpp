@@ -10,7 +10,10 @@
 #include <boost/date_time/posix_time/posix_time.hpp> // @todo uses vgsdk time classes
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
+
+#include <glc/glc.hpp>
 #include <gle/OpenGLExtensionsGen.hpp>
+
 #include <sbf/pkg/Module.hpp>
 #include <vgd/event/Source.hpp>
 
@@ -18,22 +21,16 @@
 
 #include "vgUI/vgUI.hpp"
 
-namespace vgd 
-{ 
+namespace vgd { 
+	namespace basic {
+		struct Image; 
+	}
 
-namespace basic 
-{
-	struct Image; 
+	namespace node 	{
+		struct LayerPlan;
+		struct MultiSwitch;
+	} 
 }
-
-namespace node 
-{
-	struct LayerPlan;
-	struct MultiSwitch;
-} 
-
-}
-
 
 
 namespace vgUI
@@ -138,26 +135,26 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 *
 	 * @return true if the OpenGL context has been made current, false otherwise.
 	 */
-	virtual const bool setCurrent() = 0;
+	const bool setCurrent();
 
 	/**
 	 * @brief Unsets the current OpenGL context to this window.
 	 *
 	 * @return true if the OpenGL context has been unset current, false otherwise.
 	 */
-	virtual const bool unsetCurrent() = 0;
+	const bool unsetCurrent();
 
 	/**
 	 * @brief Tests if there is a current OpenGL context to this window.
 	 *
 	 * @return true if the OpenGL context has been made current, false otherwise.
 	 */
-	virtual const bool isCurrent() const = 0;
+	const bool isCurrent() const;
 
 	/**
 	 * @brief Performs an OpenGL swap buffer command.
 	 */
-	virtual void swapBuffer() = 0;
+	void swapBuffer();
 
 	//@}
 
@@ -213,14 +210,14 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 *
 	 * @param wantFullscreen	true to enable fullscreen mode, false to disable fullscreen mode.
 	 */
-	virtual const bool setFullscreen( const bool wantFullscreen = true ) = 0;
+	virtual const bool setFullscreen( const bool wantFullscreen = true );
 
 	/**
 	 * @brief Returns the fullscreen mode.
 	 *
 	 * @return true if in fullscreen mode, false otherwise.
 	 */
-	virtual const bool isFullscreen() = 0;
+	virtual const bool isFullscreen();
 
 	/**
 	 * @brief Enables or disables fullscreen mode depending on the current state.
@@ -305,10 +302,13 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	/**
 	 * @brief Force the repaints of the window even if no changes have been made in the scene graph.
 	 *
-	 * @param wait		SYNCHRONOUS to wait the end of the repaint before returning from this method, or
+	 * @param wait	SYNCHRONOUS to wait the end of the repaint before returning from this method, or
 	 * 				ASYNCHRONOUS to post a paint message to the window and returning without being blocked.
+	 *
+	 * Derived class must implement this method in order to perform relevant action to
+	 * trigger painting according to the wait parameter.
 	 */
-	void refreshForced( const WaitType wait = ASYNCHRONOUS );
+	virtual void refreshForced( const WaitType wait = ASYNCHRONOUS ) = 0;
 	//@}
 
 
@@ -592,31 +592,40 @@ protected:
 	 */
 	void doInitialize();
 
-
-
 	/**
-	 * @brief	Implementors must call the user interface toolkit dependent synchronious refresh method.
+	 * @brief	Creates the drawable that will be used by the canvas.
+	 *
+	 * @return	a pointer to a new drawable
+	 *
+	 * Subclasses must implement this method in order to create the drawable in a manner dedicated to the effective user interface toolkit.
 	 */
-	virtual void doRefresh() = 0;
+	virtual glc_drawable_t * createDrawable() = 0;
 
-	/**
-	 * @brief	Implementors must call the user interface toolkit dependent refresh method
-	 * 			based on event passing.
+	/** 
+	 * @brief	Destroys the given drawable.
+	 *
+	 * @param	drawable	a pointer to teh drawable to destroy
+ 	 *
+	 * Subclasses must implement this method in order to destroy the drawable in a manner dedicated to the effective user interface toolkit.
 	 */
-	virtual void sendRefresh() = 0;
-
+	virtual void destroyDrawable( glc_drawable_t * ) = 0;
 
 	/**
 	 * @brief Calls this method to creates the OpenGL context (if needed) and makes it current.
 	 *
 	 * This method must return true if the OpenGL context is current or have been made current, false otherwise.
 	 */
-	virtual const bool startOpenGLContext() = 0;
+	const bool startOpenGLContext();
 
 	/**
 	 * @brief Calls this method to delete the OpenGL context.
 	 */
-	virtual const bool shutdownOpenGLContext() = 0;
+	const bool shutdownOpenGLContext();
+
+	/**
+	 * @brief	Tells if there is an OpenGL context.
+	 */
+	const bool hasAnOpenGLContext() const;
 
 
 	// @todo documentation
@@ -658,6 +667,7 @@ protected:
 	const Canvas *		m_sharedCanvas;						///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 private:
 
+    glc_t *				m_glc;								///< The GL context.
 	bool				m_initialVerticalSynchronization;	///< the initial vertical synchronization state of this canvas
 
 	bool				m_scheduleScreenshot;				///< Boolean value telling if a screen capture should be done at the end of next rendering.

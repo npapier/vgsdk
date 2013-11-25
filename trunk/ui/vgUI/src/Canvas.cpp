@@ -125,6 +125,7 @@ Canvas::Canvas()
 :	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 	// m_gleLogSystem
 	// m_gleLogFile
+	m_glc							( 0								),
 	m_gleContext					( getGleOutputStream()			),
 	m_sharedCanvas					( 0								),
 	m_initialVerticalSynchronization( true							),
@@ -153,6 +154,7 @@ Canvas::Canvas( const Canvas *sharedCanvas )
 :	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
 	// m_gleLogSystem
 	// m_gleLogFile
+	m_glc							( 0								),
 	m_gleContext					( getGleOutputStream()			),
 	m_sharedCanvas					( sharedCanvas					),
 	m_initialVerticalSynchronization( true							),
@@ -220,6 +222,102 @@ Canvas::~Canvas()
 	gleSetCurrent(0);
 }
 
+
+const bool Canvas::setCurrent()
+{
+	// glc is made current
+    const bool retVal = (m_glc != 0) ? glc_set_current( m_glc ) : false;
+    if ( retVal == false )
+    {
+        vgLogDebug("glc_set_current returns false");
+    }
+
+    // gle must be made current
+    if ( retVal )
+    {
+        // glc context has been made current. gle must be current too.
+        if ( gleGetCurrent() != &getGleContext() )
+        {
+            gleSetCurrent( &getGleContext() );
+        }
+        //else nothing to do (already current)
+    }
+    else
+    {
+        // gle must be not current.
+        gleSetCurrent( 0 );
+    }
+    return retVal;
+}
+
+
+//#define USE_GDEBUGGER
+const bool Canvas::unsetCurrent()
+{
+#ifdef USE_GDEBUGGER
+	// code path to be able to modify/recompile GLSL shaders in gDEBugger.
+	const bool retVal = true;
+	gleSetCurrent( 0 );
+#else
+	// normal code path
+	const bool retVal = (m_glc != 0) ? glc_unset_current( m_glc ) : false;
+	gleSetCurrent( 0 );
+#endif
+
+	return retVal;
+}
+
+
+const bool Canvas::isCurrent() const
+{
+    return (m_glc != 0) ? glc_is_current( m_glc ) : false;
+}
+
+
+void Canvas::swapBuffer()
+{
+    if ( m_glc != 0 )
+    {
+        glc_swap( m_glc );
+    }
+    else
+    {
+        vgLogDebug("vgQt::Canvas::swapBuffer called without a glc context.");
+    }
+}
+
+
+const bool Canvas::setFullscreen( const bool wantFullscreen )
+{
+    if ( wantFullscreen == isFullscreen() )
+    {
+        // Nothing to do
+        return true;
+    }
+
+    // Updates the current state.
+    if ( m_glc )
+    {
+        return glc_drawable_set_fullscreen( m_glc, wantFullscreen, false /*no action on compositing window manager*/) != 0;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+const bool Canvas::isFullscreen()
+{
+	if ( m_glc )
+	{
+		return glc_drawable_is_fullscreen( m_glc ) != 0;
+	}
+	else
+	{
+		return false;
+	}
+}	
 
 
 void Canvas::setInitialVerticalSynchronization( const bool enabled )
@@ -627,20 +725,6 @@ void Canvas::refreshIfNeeded( const WaitType wait )
 
 
 
-void Canvas::refreshForced( const WaitType wait )
-{
-	if ( wait == ASYNCHRONOUS )
-	{
-		sendRefresh();
-	}
-	else
-	{
-		doRefresh();
-	}
-}
-
-
-
 void Canvas::scheduleScreenshot( const std::string filename, boost::shared_ptr< sbf::pkg::Module > module, const std::string subdir )
 {
 	m_scheduleScreenshot	= true;
@@ -732,6 +816,9 @@ void Canvas::setFrameTime( const int newFrameTime )
 }
 
 
+
+
+
 gle::OpenGLExtensionsGen& Canvas::getGleContext()
 {
 	return m_gleContext;
@@ -772,6 +859,109 @@ void Canvas::doInitialize()
 
 
 
+const bool Canvas::startOpenGLContext()
+{
+    // Tests if glc context is already created
+    if ( m_glc == 0 )
+    {
+        // glc context is not already created, creates a new one
+
+        // First creates the drawable from the canvas
+        glc_drawable_t * drawable = createDrawable();
+        if ( drawable == 0 )
+        {
+            vgLogWarning("Unable to create the drawable.");
+            return false;
+        }
+
+        // Sets the desired property for the context
+        const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
+        drawable->stereo = requestedProperties.enableQuadBufferStereo();
+
+        // Next, creates the glc context (shared or not)
+        m_glc = glc_create_shared( drawable, m_sharedCanvas ? m_sharedCanvas->m_glc : 0 );
+
+        if ( m_glc == 0 )
+        {
+            destroyDrawable( drawable );
+            vgLogWarning("Unable to create the glc context.");
+            return false;
+        }
+			
+        vgLogMessage("glc context successfully created.");
+
+        // Next, mades the glc context current
+        const bool isGLCCurrent = glc_set_current( m_glc );
+        assert( isGLCCurrent && "Unable to set glc context current. This is not expected !!!" );
+
+        vgLogMessage("glc context made current.");
+
+        // Analyses current OpenGL context
+        GLboolean glbool;
+        glGetBooleanv( GL_STEREO, &glbool );
+        if ( glbool )
+        {
+            vgLogMessage("OpenGL context with stereo support");
+            m_currentGLContextProperties = vgeGL::engine::GLContextProperties(true);
+        }
+        else
+        {
+            m_currentGLContextProperties = vgeGL::engine::GLContextProperties(false);
+            vgLogMessage("OpenGL context without stereo support");
+        }
+        m_hasCurrentGLContextProperties = true;
+
+        // Finally, initializes gle and sets it current
+        vgLogMessage("Start gle initialization...");
+        getGleContext().clear();
+        getGleContext().initialize();
+        vgLogMessage("gle initialization successfully completed.");
+
+        gleSetCurrent( &getGleContext() );
+
+        assert( isCurrent() && "Internal error." );
+
+        return true;
+    }
+    else
+    {
+        // glc context is already created
+        const bool retVal = setCurrent();
+
+        return retVal;
+    }
+}
+
+
+const bool Canvas::shutdownOpenGLContext()
+{
+	if ( m_glc != 0 )
+	{
+		// Cleans gle context
+		getGleContext().clear();
+		gleSetCurrent(0);
+		vgLogDebug("gle context cleaned.");
+
+		// Deletes glc context
+		glc_destroy( m_glc );
+		m_glc = 0;
+		vgLogDebug("glc context deleted.");
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+const bool Canvas::hasAnOpenGLContext() const
+{
+	return m_glc != 0;
+}
+
+	
 const bool Canvas::startVGSDK()
 {
 	if ( startOpenGLContext() == false )
