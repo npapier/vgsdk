@@ -26,11 +26,9 @@ namespace
 	static const std::string defaultVertexECNormalComputation	= "	ecNormal	= normalize( gl_NormalMatrix * normal );\n";
 
 	static const std::string defaultFragmentOutput				= "	gl_FragData[0] = color;\n";
-}
 
-
-
-const std::string GLSLState::m_indexString[] =
+	// array containing the string representation for GLSLStateIndex
+	static const std::string m_GLSLStateIndexString[] =
 	{
 		"LIGHTING",
 		"PER_PIXEL_LIGHTING",
@@ -61,6 +59,25 @@ const std::string GLSLState::m_indexString[] =
 		"GEOMORPH"
 	};
 
+	// array containing the string representation for ShaderStage
+	static const std::string g_ShaderStageString[] =
+	{
+		"UNIFORM_DECLARATIONS",
+
+		"VERTEX_DECLARATIONS",
+		"VERTEX_POSITION_COMPUTATION",
+		"VERTEX_GL_POSITION_COMPUTATION",
+		"VERTEX_ECPOSITION_COMPUTATION",
+		"VERTEX_NORMAL_COMPUTATION",
+		"VERTEX_ECNORMAL_COMPUTATION",
+
+		"FRAGMENT_DECLARATIONS",
+		"FRAGMENT_OUTPUT_DECLARATION",
+		"FRAGMENT_OUTPUT",
+
+		"MAX_SHADERSTAGE"
+	};
+}
 
 
 const std::string& GLSLState::toString( const GLSLStateIndex bitSetIndexType )
@@ -68,7 +85,7 @@ const std::string& GLSLState::toString( const GLSLStateIndex bitSetIndexType )
 	vgAssertN( bitSetIndexType >= 0, "Out of range index." );
 	vgAssertN( bitSetIndexType < MAX_BITSETINDEXTYPE, "Out of range index." );
 
-	return m_indexString[bitSetIndexType];
+	return m_GLSLStateIndexString[bitSetIndexType];
 }
 
 
@@ -310,10 +327,6 @@ void GLSLState::setProgram( vgd::node::Program * program )
 
 void GLSLState::setShaderStage( const ShaderStage shaderStage, const std::string& glslCode )
 {
-
-// @todo section marker // begin	VERTEX_ECNORMAL_COMPUTATION
-//						// end		VERTEX_ECNORMAL_COMPUTATION
-// in getShaderStage() only ?
 	if ( m_shaderStage[shaderStage] != glslCode )
 	{
 		m_shaderStage[shaderStage] = glslCode;
@@ -346,9 +359,20 @@ void GLSLState::resetShaderStages()
 
 
 
-const std::string& GLSLState::getShaderStage( const ShaderStage shaderStage ) const
+const std::string GLSLState::getShaderStage( const ShaderStage shaderStage, const bool withMarker ) const
 {
-	return m_shaderStage[shaderStage];
+	if ( withMarker )
+	{
+		const std::string shaderStageStr = g_ShaderStageString[shaderStage];
+		std::string retVal =	"// --- " + shaderStageStr + " ---\n" +
+								m_shaderStage[shaderStage] +
+								"// ---------------\n\n";
+		return retVal;
+	}
+	else
+	{
+		return m_shaderStage[shaderStage];
+	}
 }
 
 

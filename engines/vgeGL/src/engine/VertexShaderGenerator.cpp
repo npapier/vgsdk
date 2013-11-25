@@ -180,9 +180,12 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	"	vec4 position = mgl_Vertex;\n"		// @todo rename position => vertex
 	"	// normal is a copy of mgl_Normal\n"
 	"	vec3 normal = mgl_Normal;\n"
+	"	// tangent is a copy of mgl_Tangent\n"
+	"	vec3 tangent = mgl_Tangent;\n"
 	"\n";
 
 	m_code2 += state.getShaderStage( GLSLState::VERTEX_POSITION_COMPUTATION ) + "\n";
+	m_code2 += state.getShaderStage( GLSLState::VERTEX_NORMAL_COMPUTATION ) + "\n";
 
 	if ( state.isLightingEnabled() == false /*|| state.isPerVertexLightingEnabled()*/ )
 	{
@@ -199,7 +202,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	if ( state.isTessellationEnabled() )
 	{
 		m_code2 +=	"	gl_Position = position;\n"
-					"	ecPosition	= gl_ModelViewMatrix * position;;\n"
+					"	ecPosition	= gl_ModelViewMatrix * position;\n"
 					"	ecNormal	= normal;\n";
 	}
 	else
@@ -221,7 +224,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	{
 		if ( state.isTessellationEnabled() )
 		{
-			m_code2 += "	ecTangent = mgl_Tangent;\n\n";
+			m_code2 += "	ecTangent = tangent;\n\n";
 		}
 		else
 		{

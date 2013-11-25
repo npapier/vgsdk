@@ -1005,7 +1005,25 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * engine, vgd:
 
 void VertexShape::configureRenderingArraysForGeoMorph( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc )
 {
-	const GLvoid * pArray	= 0;
+	const GLvoid * pArray = 0;
+
+	// TANGENT1
+	if ( vertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX )
+	{
+		rc->tangent.bind();
+
+		glEnableVertexAttribArray( vgeGL::engine::TANGENT1_INDEX );
+		glVertexAttribPointer( vgeGL::engine::TANGENT1_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+	}
+
+	// NORMAL1
+	if ( vertexShape->getNormalBinding() == vgd::node::BIND_PER_VERTEX )
+	{
+		rc->normal.bind();
+
+		glEnableVertexAttribArray( vgeGL::engine::NORMAL1_INDEX );
+		glVertexAttribPointer( vgeGL::engine::NORMAL1_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+	}
 
 	// VERTEX1
 	rc->vertex.bind();
@@ -1018,7 +1036,9 @@ void VertexShape::configureRenderingArraysForGeoMorph( vgeGL::engine::Engine * e
 
 void VertexShape::unconfigureRenderingArraysForGeoMorph( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc )
 {
+	glDisableVertexAttribArray( vgeGL::engine::TANGENT1_INDEX );
 	glDisableVertexAttribArray( vgeGL::engine::VERTEX1_INDEX );
+	glDisableVertexAttribArray( vgeGL::engine::NORMAL1_INDEX );
 }
 
 
@@ -1043,10 +1063,9 @@ void VertexShape::renderArrays( vgeGL::engine::Engine * engine, vgd::node::Verte
 
 	// GeoMorph
 	vgd::node::GeoMorph * geoMorph = engine->getGeoMorph();
-	if ( geoMorph )
+	if ( geoMorph && engine->isGLSLEnabled() )
 	{
 		// GeoMorph is enabled
-		vgAssert( engine->getGLSLState().isEnabled( vgeGL::engine::GEOMORPH ) );
 
 		// Updates geoMorpg.__meshes__ field
 		using vgd::field::MFVertexShapePtr;

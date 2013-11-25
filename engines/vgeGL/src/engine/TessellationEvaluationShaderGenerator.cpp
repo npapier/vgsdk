@@ -127,7 +127,8 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 	// LOCAL VARIABLES
 
 	// FUNCTIONS
-	m_code1 +=	"vec3 emitNew( vec3 A, vec3 B, vec3 C )\n"
+	m_code1 +=	"\n"
+				"vec3 emitNew( vec3 A, vec3 B, vec3 C )\n"
 				"{\n"
 				"	vec3 retVal	=	gl_TessCoord[0] * A +\n"
 				"					gl_TessCoord[1] * B +\n"
@@ -141,7 +142,7 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 				"					gl_TessCoord[1] * B +\n"
 				"					gl_TessCoord[2] * C;\n"
 				"	return retVal;\n"
-				"}\n";
+				"}\n\n";
 
 	if ( state.isBumpMappingEnabled() )
 	{
@@ -149,7 +150,7 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 		"vec3 ftangent(void)\n"
 		"{\n"
 		"	//Compute the tangent\n"
-		"	vec3 tangent = 	emitNew( myTangent[0], myTangent[1], myTangent[2] );\n"
+		"	vec3 tangent = emitNew( myTangent[0], myTangent[1], myTangent[2] );\n"
 		"	tangent = gl_NormalMatrix * tangent;\n"
 		"	return normalize(tangent);\n"
 		"}\n\n";
