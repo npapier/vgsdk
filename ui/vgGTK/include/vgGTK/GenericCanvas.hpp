@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008-2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -16,6 +16,8 @@
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/window.h>
 
+#include <glc_gtkmm/glc_gtkmm.hpp>
+
 #include <vgAlg/actions/SelectedNode.hpp>
 
 #include <vgUI/Canvas.hpp>
@@ -30,28 +32,9 @@
 #include "vgGTK/event/device/Timer.hpp"
 #include "vgGTK/node/ActionsMenu.hpp"
 
-#ifdef WIN32
-	#define	USE_GLC
-	#undef	USE_GTKGLEXT
-
-	//#include <glc/glc.hpp>
-	#include <glc_gtkmm/glc_gtkmm.hpp>
-#else
-	#undef	USE_GLC
-	#define	USE_GTKGLEXT
-
-struct glc_t;
-
-	#include <gdk/gdkgl.h>
-	#include <gtk/gtkgl.h>
-#endif
-
-
 
 namespace vgGTK
 {
-
-
 
 namespace
 {
@@ -100,23 +83,16 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public bo
 {
 
 	/**
-	 * @brief	Constructor that builds a canvas with it own OpenGL context.
+	 * @brief	Constructor that builds a canvas with its own OpenGL context.
 	 */
 	GenericCanvas()
-//#ifdef USE_GLC
-	:	m_glc( 0 ),
-		m_showMenu( false )
-//#endif
+	:	m_showMenu( false )
 	{
 		// vgLogDebug("Creates vgGTK::Canvas.");
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
 		grab_focus();
 
-#ifdef USE_GTKGLEXT
-		setGlCapability( GTK_WIDGET(gobj()) );
-//#else
-#endif
 		//vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
 		vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( boost::bind( &GenericCanvas::onActionChanged, this, _1 ) );
 	}
@@ -129,23 +105,13 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public bo
 	 */
 	GenericCanvas( const vgUI::Canvas * sharedCanvas )
 	:	BaseCanvasType( sharedCanvas ),
-//#ifdef USE_GLC
-		m_glc( 0 ),
 		m_showMenu( false )
-//#endif
 	{
 		// vgLogDebug("Creates vgGTK::Canvas.");
 		set_events( Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK );
 		set_flags( Gtk::CAN_FOCUS );
 		grab_focus();
 
-#ifdef USE_GTKGLEXT
-		GdkGLContext * glContext = gtk_widget_get_gl_context( GTK_WIDGET(sharedCanvas->gobj()) );
-		vgAssertN( glContext != 0, "Shared canvas has no OpenGL capability." );
-
-		setGlCapability( GTK_WIDGET(gobj()), glContext );
-#else
-#endif
 		//vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( sigc::mem_fun(this, &GenericCanvas::onActionChanged) );
 		vgAlg::actions::SelectedNode::getSelectedNodeObject()->signal_action_changed.connect( boost::bind( &GenericCanvas::onActionChanged, this, _1 ) );
 	}
@@ -153,7 +119,10 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public bo
 	/**
 	 * @brief	Destructor
 	 */
-	virtual ~GenericCanvas();
+	virtual ~GenericCanvas()
+	{
+		BaseCanvasType::shutdownVGSDK();
+	}
 
 	/**
 	 * @name	Overrides
@@ -193,115 +162,6 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public bo
 		}
 	}
 
-	const bool setCurrent()
-	{
-		//vgLogDebug("vgGTK::Canvas::setCurrent");
-
-#ifdef USE_GTKGLEXT
-		GdkGLContext	* glContext  = gtk_widget_get_gl_context( GTK_WIDGET(gobj()) );
-		GdkGLDrawable	* glDrawable = gtk_widget_get_gl_drawable( GTK_WIDGET(gobj()) );
-
-		const bool retVal = gdk_gl_drawable_gl_begin( glDrawable, glContext );
-#else
-
-		const bool retVal = (m_glc != 0) ? glc_set_current( m_glc ) : false;
-		if ( retVal == false )
-		{
-			vgLogDebug("glc_set_current returns false");
-		}
-
-#endif
-		// gle must be made current
-		if ( retVal )
-		{
-			// glc context has been made current. gle must be current too.
-			if ( gleGetCurrent() != &BaseCanvasType::getGleContext() )
-			{
-				gleSetCurrent( &BaseCanvasType::getGleContext() );
-			}
-			//else nothing to do (already current)
-		}
-		else
-		{
-			// gle must be not current.
-			gleSetCurrent( 0 );
-		}
-
-		return retVal;
-	}
-
-//#define USE_GDEBUGGER
-	const bool unsetCurrent()
-	{
-		//vgLogDebug("vgGTK::Canvas::unsetCurrent");
-
-#ifdef USE_GTKGLEXT
-		GdkGLDrawable	* glDrawable = gtk_widget_get_gl_drawable( GTK_WIDGET(gobj()) );
-
-		gdk_gl_drawable_gl_end( glDrawable );
-
-		const bool retVal = true;
-#else
-
-	#ifdef USE_GDEBUGGER
-		// code path to be able to modify/recompile GLSL shaders in gDEBugger.
-		const bool retVal = true;
-		gleSetCurrent( 0 );
-	#else
-		// normal code path
-		const bool retVal = (m_glc != 0) ? glc_unset_current( m_glc ) : false;
-		gleSetCurrent( 0 );
-	#endif
-#endif
-		return retVal;
-	}
-
-
-	const bool isCurrent() const
-	{
-		//vgLogDebug("vgGTK::Canvas::isCurrent");
-
-#ifdef USE_GTKGLEXT
-		GdkGLContext	* glContext  = gtk_widget_get_gl_context( GTK_WIDGET(gobj()) );
-
-		return (gdk_gl_context_get_current() == glContext);
-#else
-/*		assert(		(m_glc == 0) ||
-					((m_glc != 0) && (glc_is_current(m_glc) == (gleGetCurrent()==&BaseCanvasType::getGleContext()))) );
-*/
-		return (m_glc != 0) ? glc_is_current( m_glc ) : false;
-#endif
-	}
-
-
-	void swapBuffer()
-	{
-		//vgLogDebug("vgGTK::Canvas::swapBuffer");
-
-#ifdef USE_GTKGLEXT
-		GdkGLDrawable	* glDrawable = gtk_widget_get_gl_drawable( GTK_WIDGET(gobj()) );
-
-		if( gdk_gl_drawable_is_double_buffered(glDrawable) )
-		{
-			gdk_gl_drawable_swap_buffers(glDrawable);
-		}
-		else
-		{
-			glFlush();
-		}
-#else
-		if ( m_glc != 0 )
-		{
-			glc_swap( m_glc );
-		}
-		else
-		{
-			vgLogDebug("vgGTK::Canvas::swapBuffer called without a glc context.");
-		}
-#endif
-	}
-
-
 
 	/**
 	 * @pre top level window must be a Gtk::Window.
@@ -320,6 +180,7 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public bo
 		if( !topLevel )
 		{
 			vgLogDebug("vgGTK::Canvas::setFullscreen called without a Gtk::Window as toplevel.");
+			return false;
 		}
 		else
 		{
@@ -360,38 +221,34 @@ struct GenericCanvas : public Gtk::DrawingArea, public BaseCanvasType, public bo
 
 			// Refresh the window again.
 			//topLevel->get_window()->thaw_updates();
-		}
 
-#ifdef USE_GTKGLEXT
-		return false;
-#else
-		// Updates the current state.
-		if ( m_glc )
-		{
-			return glc_drawable_set_fullscreen( m_glc, wantFullscreen, false /*no action on compositing window manager*/) != 0;
+			// Call base class.
+			return BaseCanvasType::setFullscreen( wantFullscreen );
 		}
-		else
-		{
-			return false;
-		}
-#endif
 	}
 
-	const bool isFullscreen()
+	void refreshForced( const vgUI::Canvas::WaitType wait = vgUI::Canvas::ASYNCHRONOUS )
 	{
-#ifdef USE_GTKGLEXT
-		return false;
-#else
-		if ( m_glc )
+		Glib::RefPtr< Gdk::Window >	window = get_window();
+		
+		if( window )
 		{
-			return glc_drawable_is_fullscreen( m_glc ) != 0;
+			if( !window->is_visible() )
+			{
+				window->show();
+			}
+
+			// Mark the window for painting. This will trigger an asynchronous refresh.
+			window->invalidate_region( get_window()->get_visible_region(), false );
+
+			// In the case of a synchronous refresh, we process all updates right now.
+			if( wait == SYNCHRONOUS )
+			{
+				gdk_window_process_all_updates();
+			}
 		}
-		else
-		{
-			return false;
-		}
-#endif
 	}
+
 	//@}
 
 	/**
@@ -428,153 +285,15 @@ protected:
 	 * @name	vgUI::Canvas overrides
 	 */
 	//@{
-
-	void doRefresh()
+	glc_drawable_t * createDrawable()
 	{
-		Glib::RefPtr< Gdk::Window >	window = get_window();
-		
-		if( window )
-		{
-			if( !window->is_visible() )
-			{
-				window->show();
-			}
-			window->invalidate_region( get_window()->get_visible_region(), false );
-			gdk_window_process_all_updates();
-		}
+		return glc_gtkmm_drawable_create( this );
 	}
 
-
-	void sendRefresh()
+	void destroyDrawable( glc_drawable_t * drawable )
 	{
-		Glib::RefPtr< Gdk::Window >	window = get_window();
-		
-		if( window )
-		{
-			if( !window->is_visible() )
-			{
-				window->show();
-			}
-			window->invalidate_region( get_window()->get_visible_region(), false );
-		}
+		glc_gtkmm_drawable_destroy( drawable );
 	}
-
-
-	const bool startOpenGLContext()
-	{
-		// Tests if glc context is already created
-		if ( m_glc == 0 )
-		{
-#ifdef USE_GLC
-			// glc context is not already created, creates a new one
-
-			// First creates the drawable from the canvas
-			glc_drawable_t * drawable	= glc_gtkmm_drawable_create( this );
-			if ( drawable == 0 )
-			{
-				vgLogWarning("Unable to create the drawable.");
-				return false;
-			}
-
-			// Sets the desired propetry for the context
-			const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
-			drawable->stereo = requestedProperties.enableQuadBufferStereo();
-
-			// Next, creates the glc context (shared or not)
-			m_glc = glc_create_shared( drawable, m_sharedCanvas ? dynamic_cast< const GenericCanvas * >(m_sharedCanvas)->m_glc : 0 );
-
-			if ( m_glc == 0 )
-			{
-				glc_gtkmm_drawable_destroy( drawable );
-				vgLogWarning("Unable to create the glc context.");
-				return false;
-			}
-
-			vgLogMessage("glc context successfully created.");
-
-			// Next, mades the glc context current
-			const bool isGLCCurrent = glc_set_current( m_glc );
-			assert( isGLCCurrent && "Unable to set glc context current. This is not expected !!!" );
-
-			vgLogMessage("glc context made current.");
-#else
-			setCurrent();
-
-			if ( isCurrent() )
-			{
-				m_glc = reinterpret_cast<glc_t*>(1);
-			}
-			else
-			{
-				vgLogMessage("Unable to set OpenGL context current using gtkglext.");
-				return false;
-			}
-#endif
-
-			// Analyses current OpenGL context
-			GLboolean glbool;
-			glGetBooleanv( GL_STEREO, &glbool );
-			if ( glbool )
-			{
-				vgLogMessage("OpenGL context with stereo support");
-				m_currentGLContextProperties = vgeGL::engine::GLContextProperties(true);
-			}
-			else
-			{
-				m_currentGLContextProperties = vgeGL::engine::GLContextProperties(false);
-				vgLogMessage("OpenGL context without stereo support");
-			}
-			m_hasCurrentGLContextProperties = true;
-
-			// Finally, initializes gle and sets it current
-			vgLogMessage("Start gle initialization...");
-			BaseCanvasType::getGleContext().clear();
-			BaseCanvasType::getGleContext().initialize();
-			vgLogMessage("gle initialization successfully completed.");
-
-			gleSetCurrent( &BaseCanvasType::getGleContext() );
-
-			assert( isCurrent() && "Internal error." );
-
-			return true;
-		}
-		else
-		{
-			// glc context is already created
-			const bool retVal = setCurrent();
-
-			return retVal;
-		}
-	}
-
-
-	const bool shutdownOpenGLContext()
-	{
-		if ( m_glc != 0 )
-		{
-			// Cleans gle context
-			BaseCanvasType::getGleContext().clear();
-			gleSetCurrent(0);
-			vgLogDebug("gle context cleaned.");
-
-#ifdef USE_GLC
-			// Deletes glc context
-			glc_destroy( m_glc );
-			m_glc = 0;
-			vgLogDebug("glc context deleted.");
-#else
-			m_glc = 0;
-#endif
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	const bool hasAnOpenGLContext() const { return m_glc != 0; }
 	//@}
 
 
@@ -723,51 +442,6 @@ private:
 		}
 	}
 
-#ifdef USE_GTKGLEXT
-	/**
-	 * @brief	Sets the OpenGL rendering capability for the given widget.
-	 *
-	 * @param	widget		a pointer to the widget that will get OpenGL rendering capability
-	 * @param	sharedContext	a pointer to a Gdk rendering context to use for sharing OpenGL objects, null if no sharing is desired
-	 *
-	 * @return	true on success or false otherwise
-	 */
-	static const bool setGlCapability( GtkWidget * widget, GdkGLContext * sharedContext = 0 )
-	{
-		GdkGLConfig * glconfig = 0;
-
-		// Tries to create a double-buffered OpenGL configuration
-		glconfig = gdk_gl_config_new_by_mode( (GdkGLConfigMode) (GDK_GL_MODE_RGB|GDK_GL_MODE_DEPTH|GDK_GL_MODE_DOUBLE) );
-		if( glconfig == 0 )
-		{
-			g_print( "Cannot find the double-buffered visual.\nTrying single-buffered visual." );
-
-			// Try single-buffered configuration
-			glconfig = gdk_gl_config_new_by_mode( (GdkGLConfigMode) (GDK_GL_MODE_RGB|GDK_GL_MODE_DEPTH) );
-			if( glconfig == 0 )
-			{
-				g_print( "No appropriate OpenGL-capable visual found.\n" );
-				return false;
-			}
-		}
-
-
-		// Enables OpenGL rendering on this widget
-		bool ok;
-
-		ok = gtk_widget_set_gl_capability( widget, glconfig, sharedContext, true, GDK_GL_RGBA_TYPE );
-		if( ! ok )
-		{
-			g_print( "Unable to set gl capability to widget." );
-			return false;
-		}
-
-		return true;
-	}
-#endif
-//#else
-	glc_t			*m_glc;
-//#endif
 
 	bool onCursorTimeout()
 	{
@@ -776,16 +450,6 @@ private:
 	}
 
 };
-
-
-template< typename BaseCanvasType >
-GenericCanvas< BaseCanvasType >::~GenericCanvas()
-{
-	// vgLogDebug("Deletes vgGTK::Canvas.");
-
-	BaseCanvasType::shutdownVGSDK();
-}
-
 
 
 } // namespace vgGTK

@@ -400,7 +400,7 @@ void MainWindow::onHistoryClicked()
 	addFileInHistory(action->text());
 
 	m_canvas->viewAll();
-	m_canvas->doRefresh();
+	m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::SYNCHRONOUS );
 }
 
 
@@ -432,7 +432,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 		}
 
 		m_canvas->viewAll();
-		m_canvas->doRefresh();
+		m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::SYNCHRONOUS );
 	}
 }
 

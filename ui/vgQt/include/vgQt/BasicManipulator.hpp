@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -27,12 +27,12 @@ template< typename T >
 struct TBasicManipulator : public GenericCanvas< T >
 {
 	/**
-     * @brief	Constructor
+     * @brief	Constructor that builds a canvas with its own OpenGL context.
 	 *
-	 * @param	parent	an optional pointer to the parent widget
+	 * @param	parent	a pointer to the parent widget (default is null)
 	 * @param	devices	a set of flags telling what devices to initialze (default is all)
      */
-	TBasicManipulator( QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick )
+	explicit TBasicManipulator( QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick )
 	:    GenericCanvas< T >(parent)
 	{
 		// Configures the focus policy.
@@ -46,6 +46,27 @@ struct TBasicManipulator : public GenericCanvas< T >
 		connect(this, SIGNAL(customContextMenuRequested(QPoint)), m_actionsMenu.get(), SLOT(onCanvasMenuRequested(QPoint)));
 	}
 
+	/**
+	 * @brief	Constructor that builds a canvas with an OpenGL context sharing resources with
+	 * 			the given canvas.
+	 *
+	 * @param	sharedCanvas	a pointer to the canvas for sharing
+	 * @param	parent			a pointer to the parent widget (default is null)
+	 * @param	devices			a set of flags telling what devices to initialze (default is all)
+	 */
+	explicit TBasicManipulator( const vgUI::Canvas * sharedCanvas, QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick )
+    :    GenericCanvas< T >( sharedCanvas, parent )
+	{
+		// Configures the focus policy.
+		setFocusPolicy( (Qt::FocusPolicy) (Qt::TabFocus|Qt::ClickFocus|Qt::WheelFocus) );
+		
+		// Initializes devices.
+		initDevices( devices );
+
+		// Initializes the contextual menu.
+		m_actionsMenu->setCanvas(this);
+		connect(this, SIGNAL(customContextMenuRequested(QPoint)), m_actionsMenu.get(), SLOT(onCanvasMenuRequested(QPoint)));
+	}
 
 protected:
 
@@ -98,12 +119,22 @@ private:
 struct VGQT_API BasicManipulator : public TBasicManipulator< vgUI::BasicManipulator >
 {
 	/**
-     * @brief	Constructor
+     * @brief	Constructor that builds a canvas with its own OpenGL context.
 	 *
-	 * @param	parent	an optional pointer to the parent widget
+	 * @param	parent	a pointer to the parent widget (default is null)
 	 * @param	devices	a set of flags telling what devices to initialze (default is all)
      */
-	BasicManipulator( QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick );
+	explicit BasicManipulator( QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick );
+
+	/**
+	 * @brief	Constructor that builds a canvas with an OpenGL context sharing resources with
+	 * 			the given canvas.
+	 *
+	 * @param	sharedCanvas	a pointer to the canvas for sharing
+	 * @param	parent			a pointer to the parent widget (default is null)
+	 * @param	devices			a set of flags telling what devices to initialze (default is all)
+	 */
+	explicit BasicManipulator( const vgUI::Canvas * sharedCanvas, QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick );
 };
 
 
