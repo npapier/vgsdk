@@ -608,6 +608,8 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 	/**
 	 * @name Shader generation accessors
+	 *
+	 * @todo prependShaderStage(), appendShaderStage()
 	 */
 	//@{
 
@@ -615,13 +617,19 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	{
 		UNIFORM_DECLARATIONS = 0,
 
+		// VERTEX SHADER
 		VERTEX_DECLARATIONS,
+
 		VERTEX_POSITION_COMPUTATION,		///< vertex displacement (using a texture a procedurally)
 		VERTEX_GL_POSITION_COMPUTATION,
 		VERTEX_ECPOSITION_COMPUTATION,
+
+		VERTEX_NORMAL_COMPUTATION,
 		VERTEX_ECNORMAL_COMPUTATION,
 
+		// FRAGMENT SHADER
 		FRAGMENT_DECLARATIONS,
+
 		FRAGMENT_OUTPUT_DECLARATION,		///< Declarations needed by FRAGMENT_OUTPUT
 		FRAGMENT_OUTPUT,					///< Fragment Shader Outputs stage (example: gl_FragData[1] = ...)
 
@@ -646,10 +654,15 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	 * @brief Returns the glsl code for a specific stage.
 	 *
 	 * @param shaderStage	selector of the stage
+	 * @param withMarker	true to add marker around the shader stage code, false to retrieve only the glsl code for the specified stage
 	 *
 	 * @return code to insert in the desired shader or an empty string.
 	 */
-	const std::string& getShaderStage( const ShaderStage shaderStage ) const;
+#ifdef _DEBUG
+	const std::string getShaderStage( const ShaderStage shaderStage, const bool withMarker = true ) const;
+#else
+	const std::string getShaderStage( const ShaderStage shaderStage, const bool withMarker = false ) const;
+#endif
 
 	//@}
 
@@ -706,7 +719,6 @@ private:
 	std::vector< std::string >							m_shaderStage;				///< container of glsl code for custom shader stage
 	vgd::node::LightModel::ShadowValueType				m_lightModelShadow;			///< Last encountered value of LightModel.shadow field
 	vgd::node::LightModel::ShadowMapTypeValueType		m_shadowMapType;			///< @todo doc
-	static const std::string							m_indexString[];			///< array containing the string representation for BitSetIndexType.
 };
 
 

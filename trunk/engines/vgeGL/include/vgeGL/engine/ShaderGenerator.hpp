@@ -203,12 +203,24 @@ struct GLSLHelpers
 			// else no light, nothing to do
 		}
 
-		static const std::string noTess = 
-			"	ecTangent = ftangent();\n"
-			"	bumpParams.ecBinormal = normalize( cross(ecNormal, ecTangent) );\n"
-			"\n"
-			"	bumpParams.tsEyeVector = getTSEyeVector();\n";
-		return noTess + computeTSLightsParameters;
+		if ( state.isEnabled( TESSELLATION ) )
+		{
+			static const std::string params =
+				"	ecTangent = ftangent();\n"
+				"	bumpParams.ecBinormal = normalize( cross(ecNormal, ecTangent) );\n"
+				"\n"
+				"	bumpParams.tsEyeVector = getTSEyeVector();\n";
+				return params + computeTSLightsParameters;
+		}
+		else
+		{
+				static const std::string params =
+				"	ecTangent = ftangent( tangent );\n"
+				"	bumpParams.ecBinormal = normalize( cross(ecNormal, ecTangent) );\n"
+				"\n"
+				"	bumpParams.tsEyeVector = getTSEyeVector();\n";
+				return params + computeTSLightsParameters;
+		}
 	}
 
 	// LIGHTING
@@ -1081,11 +1093,11 @@ struct GLSLHelpers
 	static const std::string& generateFunction_ftangent( const GLSLState& state )
 	{
 		static const std::string retValInVertexShader =
-				"vec3 ftangent(void)\n"
+				"vec3 ftangent( vec3 tangent )\n"
 				"{\n"
 				"	//Compute the tangent\n"
-				"	vec3 tangent = gl_NormalMatrix * mgl_Tangent;\n"
-				"	return normalize(tangent);\n"
+				"	vec3 ecTangent = gl_NormalMatrix * tangent;\n"
+				"	return normalize(ecTangent);\n"
 				"}\n\n";
 
 		return retValInVertexShader;
