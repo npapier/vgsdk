@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2013, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -14,7 +14,6 @@
 # @todo vgio ?
 # @todo generates enumRegistry for vgsdk see META_NODE_HPP, META_NODE_CPP, doc, annotation.
 
-from __future__ import with_statement
 import datetime
 import os
 
@@ -28,11 +27,59 @@ implementationsOutputDir	= "../" + implementationsOutputDir
 
 
 
-# Parses node description file and generates node database
-print ("Reads %s" % inputFile)
-domRoot = xml.dom.minidom.parse(inputFile)
-print ("\nAnalyses xml")
-dbNodes = handleRootDom( domRoot )
+# Generates vgd/node/Enum.[hpp,cpp]
+def generateEnumHeader( fd, dbNodeEnums ):
+	# copyright
+	generateCopyright( fd )
+
+	# ifndef
+	beginDefine = """#ifndef _VGD_NODE_ENUM_HPP
+#define _VGD_NODE_ENUM_HPP\n\n
+
+#include "vgd/field/Enum.hpp"
+
+"""
+
+	fd.write(beginDefine)
+
+	# begin namespace
+	generateBeginNamespace( fd )
+
+	for enum in dbNodeEnums:
+		str = enum.generateTYPEDEF()
+		fd.write( str + '\n' * 4 )
+
+	# end namespace
+	generateEndNamespace( fd )
+
+	#endif
+	endDefine = """#endif //#ifndef _VGD_NODE_ENUM_HPP\n"""
+	fd.write( endDefine )
+
+
+def generateEnumImpl( fd, dbNodeEnums ):
+	# copyright
+	generateCopyright( fd )
+
+	# includes
+	fd.write("#include \"vgd/node/Enum.hpp\"\n\n\n" )
+
+	# begin namespace
+	#generateBeginNamespace( fd )
+
+	# end namespace
+	#generateEndNamespace( fd )
+
+
+def generatesEnum( dbNodeEnums ):
+	print ("Generating vgd/node/Enum.hpp and Enum.cpp")
+	with open( os.path.join(headersOuputDir, "Enum.hpp"), 'w' ) as fh :
+		generateEnumHeader( fh, dbNodeEnums )
+	with open( os.path.join(implementationsOutputDir, "Enum.cpp"), 'w+' ) as fcpp :
+		generateEnumImpl( fcpp, dbNodeEnums )
+	print
+
+
 
 # Generates node code
 # @todo In 2009, adds 2008-2009 to copyright notice
@@ -311,7 +358,7 @@ def generateNodeHeader( fd, node ) :
 		fd.write( """	/**
 	 * @brief Returns name of dirty flag that is invalidate when \c {0} field is modified.
 	 */
-	static const std::string getDF{1}();\n""".format( df.name, df.name.capitalize() ) )
+	static const std::string getDF{1}();\n""".format( df.name, capitalize(df.name) ) )
 
 	fd.write( """\n	//@}\n""" )
 
@@ -361,7 +408,11 @@ def generateNodeImpl( fd, node ) :
 
 	# includes
 	fd.write( "#include \"vgd/node/NodeName.hpp\"\n\n".replace( "NodeName", node.name ) )
+	if node.name == 'VertexShape':
+		fd.write( "#include \"vgd/node/Group.hpp\"\n" )
+	# endtodo
 	fd.write( "#include \"vgd/node/detail/Node.hpp\"\n\n\n\n" )
+
 
 	# begin namespace
 	generateBeginNamespace( fd )
@@ -393,9 +444,9 @@ def generateNodeImpl( fd, node ) :
 	dfs = ""
 	links = ""
 	for df in node.dirtyFlags.itervalues():
-		dfs += "	addDirtyFlag(getDF{0}());\n".format( df.name.capitalize() )
+		dfs += "	addDirtyFlag(getDF{0}());\n".format( capitalize(df.name) )
 		for linkToField in df.linkToFields:
-			links += "	link( getF{0}(), getDF{1}() );\n".format( capitalize(linkToField), df.name.capitalize() )
+			links += "	link( getF{0}(), getDF{1}() );\n".format( capitalize(linkToField), capitalize(df.name) )
 
 	if len(dfs) > 0:
 		fd.write( """\n	// Adds dirty flag(s)\n""" )
@@ -460,7 +511,7 @@ def generateNodeImpl( fd, node ) :
 			str = """const std::string {0}::getDF{1}()
 {{
 	return \"df_{2}\";
-}}\n\n\n""".format(node.name, df.name.capitalize(), df.name.lower())
+}}\n\n\n""".format(node.name, capitalize(df.name), df.name.lower())
 
 			fd.write( str )
 
@@ -564,8 +615,10 @@ private:
 		iterItems = EnumRegistry.getIterItems()
 		includeSet = set()
 		for enumString, enumValue in iterItems:
+			# examples of enumString 'PostProcessing.input1.INPUT1_TEXTURE0' or 'vgd.node.BIND_OFF'
 			enumNode = enumString.split('.')[0]
-			includeSet.add(enumNode)
+			if enumNode != 'vgd':
+				includeSet.add(enumNode)
 		for include in sorted(includeSet):
 			fcpp.write( """#include <vgd/node/%s.hpp>\n""" % include )
 
@@ -639,20 +692,21 @@ void EnumRegistry::initialize()
 		# m_toString
 		iterItems = EnumRegistry.getIterItems()
 		for enumString, enumValue in iterItems:
-			print ("toString:	", enumString, enumValue)
-			enumString = enumString.split('.')[2]
+			tmp = enumString.split('.')
+			print ("toString({})={} extracted from {}".format(enumValue, tmp[-1], enumString))
+			enumString = tmp[-1]
 			fcpp.write( """
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( %s ) != m_toString.end() )
-	{
-		vgLogDebug("(%s, %s) already in m_toString enum registry");
-		assert( false && "(%s, %s) already in registry" );
-	}
+	if ( m_toString.find( {enumValue} ) != m_toString.end() )
+	{{
+		vgLogDebug("({enumValue}, {enumString}) already in m_toString enum registry");
+		assert( false && "({enumValue}, {enumString}) already in registry" );
+	}}
 	#endif
 
-	m_toString[ %s ] = std::string("%s");
-""" % ( enumValue, enumValue, enumString, enumValue, enumString, enumValue, enumString ) )
+	m_toString[ {enumValue} ] = std::string("{enumString}");
+""".format( enumValue=enumValue, enumString=enumString )	)
 
 		# m_toEnum
 		fcpp.write( """
@@ -660,27 +714,34 @@ void EnumRegistry::initialize()
 """)
 
 		print
-		iterItems = EnumRegistry.getIterItems()
-		for enumString, enumValue in iterItems:
-			print ("toEnum:", enumString, enumValue)
-			enumNode, enumField, enumString = enumString.split('.')
-			# Tests if the last part of field name is 'Parameter' (hack for PAF)
-			if enumField.rfind('Parameter') == -1:
-				enumValueType = enumField[0].upper() + enumField[1:] + 'ValueType'
+		for enumString, enumValue in EnumRegistry.getIterItems():
+			enum = EnumRegistry.getEnum(enumString)
+			if len(enum.nodeName) == 0:
+				# Enum not defined in a vgd::node::Node
+				enumConstructor = '{}::{}({})'.format( enum.namespace, enum.typename, enumValue )
+				print ("toEnum({})={}".format(enumValue, enumConstructor))
 			else:
-				enumValueType = enumField[0].upper() + enumField[1:] + 'Type'
+				enumNode, enumField, enumString = enumString.split('.')
+				# Tests if the last part of field name is 'Parameter' (hack for PAF)
+				if enumField.rfind('Parameter') == -1:
+					enumValueType = enumField[0].upper() + enumField[1:] + 'ValueType'
+				else:
+					enumValueType = enumField[0].upper() + enumField[1:] + 'Type'
+				enumConstructor = 'vgd::node::{}::{}({})'.format(enumNode, enumValueType, enumValue)
+				print ("toEnum({})={}".format(enumValue, enumConstructor))
 			fcpp.write( """
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( %s ) != m_toEnum.end() )
-	{
-		vgLogDebug("(%s, %s) already in m_toEnum enum registry");
-		assert( false && "(%s, %s) already in registry" );
-	}
+	if ( m_toEnum.find( {0} ) != m_toEnum.end() )
+	{{
+		vgLogDebug("({0}, {1}) already in m_toEnum enum registry");
+		assert( false && "({0}, {1}) already in registry" );
+	}}
 	#endif
 
-	m_toEnum[ %s ] = vgd::makeShp( new vgd::node::%s::%s(%s) );
-	""" % ( enumValue, enumValue, enumValueType, enumValue, enumValueType, enumValue, enumNode, enumValueType, enumValue ) )
+	m_toEnum[ {0} ] = vgd::makeShp( new {2} );
+""".format( enumValue, enumString, enumConstructor ) )
+
 
 		fcpp.write( """
 }
@@ -693,6 +754,14 @@ void EnumRegistry::initialize()
 """)
 
 
+### Main ###
+
+# Parses node description file and generates node database
+print ("Reading %s" % inputFile)
+domRoot = xml.dom.minidom.parse(inputFile)
+print ("\nAnalysing xml")
+(dbNodeEnums, dbNodes) = handleRootDom( domRoot )
+
 
 if os.path.isdir(headersOuputDir) is False :
 	os.makedirs(headersOuputDir)
@@ -700,9 +769,12 @@ if os.path.isdir(implementationsOutputDir) is False :
 	os.makedirs(implementationsOutputDir)
 
 print
-print ("Generates code for nodes")
+print ("Generating code for nodes")
 generatesNodes( dbNodes )
 
 print
 #EnumRegistry.generate()
 generateEnumerationRegistry()
+
+print
+generatesEnum( dbNodeEnums )

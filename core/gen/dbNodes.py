@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2013, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
@@ -19,37 +19,43 @@ class EnumRegistry :
 
 	_values	= {}	# enum_string, enum_id
 	_rvalues = {}	# enum_id, enum_string
+	_enum = {}		# enum_string, enum class
 
 	@classmethod
 	def nextID( self ):
 		self._id += 1
 		return self._id
 
-
 	@classmethod
-	def register( self, nodeName, fieldName, enumValue ):
-		newValue = nodeName + '.' + fieldName + '.' + enumValue
+	def _register_( self, enum, newValue ):
 		if newValue not in self._values:
 			newID = self.nextID()
 			self._values[newValue] = newID
 			self._rvalues[newID] = newValue
+			self._enum[newValue] = enum
 		else:
 			raise StandardError("Enum value %s already defined." % newValue)
 
 
 	@classmethod
-	def getID( self, nodeName, fieldName, enumValue ):
-		newValue = nodeName + '.' + fieldName + '.' + enumValue
-		if newValue in self._values :
-			return self._values[newValue]
-		else :
-			raise StandardError("Enum value %s not registered" % newValue )
+	def register( self, enum, enumValue ):
+		newValue = enum.buildStringID( enumValue )
+		self._register_( enum, newValue )
 
+
+	@classmethod
+	def getID( self, enum, enumValue ):
+		stringID = enum.buildStringID( enumValue )
+		if stringID in self._values :
+			return self._values[stringID]
+		else :
+			raise StandardError("Enum value %s not registered" % stringID )
 
 	@classmethod
 	def getString( self, id ):
 		if id in self._rvalues:
-			return self._rvalues[id].split('.')[2]
+			enumString = self._rvalues[id]
+			return enumString.split('.')[-1]
 		else:
 			raise StandardError("Enum value %i not registered" % id )
 
@@ -57,6 +63,10 @@ class EnumRegistry :
 	@classmethod
 	def getIterItems( self ):
 		return self._values.iteritems()
+
+	@classmethod
+	def getEnum( self, str ):
+		return self._enum[str]
 
 
 ########
@@ -76,14 +86,16 @@ class Type :
 		else:
 			self.FieldName = ""
 
+		self.isAnEnum = False	# True for type inheriting from vgd::field::Enum
+
 		# @todo range
 
 	def generateTYPEDEF( self ):
 		str = """\t/**
-\t * @brief Type definition of the value contained by field named \c %s.
+\t * @brief Type definition of the value contained by field named \c {fieldName}.
 \t */
-\ttypedef %s %sValueType;""" % (self.fieldName, self.generateTypeWithNamespace(), self.FieldName ) # @todo ValueType => Type
-		return str
+\ttypedef {type} {FieldName}ValueType;"""
+		return str.format( fieldName=self.fieldName, type=self.generateTypeWithNamespace(), FieldName=self.FieldName ) # @todo ValueType => Type
 
 	def generateTypeWithNamespace( self ):
 		if len(self.namespace) > 0 :
@@ -106,7 +118,16 @@ class Type :
 
 class Enum ( Type ):
 
-	def __init__( self, nodeName, fieldName ):
+	def buildStringID( self, enumValue ):
+		"""Returns, for examples, 'GeoMorph.method.NORMALIZED' for enum defined in a node field or in a node, otherwise returns
+			vgd.node.BIND_PER_VERTEX for enum defined in <nodes>"""
+		if len(self.nodeName) == 0:
+			return '{}.{}'.format( self.namespace.replace('::', '.'), enumValue )
+		else:
+			return self.nodeName + '.' + self.fieldName + '.' + enumValue
+
+	def __init__( self, nodeName = '', fieldName = ''):
+		"""Construct an enumeration not defined in a vgd::node::nodeName using Enum()"""
 		Type.__init__( self, 'enum', nodeName, fieldName )
 		self.typename = ''	# enum typename {...};
 		self.values = {}	# enum_string, enum_doc
@@ -117,7 +138,7 @@ class Enum ( Type ):
 	def addValue( self, value, docValue = "" ):
 		if value not in self.values :
 			self.values[value] = docValue
-			EnumRegistry.register( self.nodeName, self.fieldName, value )
+			EnumRegistry.register( self, value )
 
 	def setDefaultValue( self, defaultValue ):
 		if defaultValue in self.values :
@@ -182,17 +203,23 @@ class Enum ( Type ):
 		}
 	};""" % (strValues, strStrings)
 
-		str += definitionOfFieldNameType.replace( "FieldNameType", self.FieldName + "ValueType" )		# @todo ValueType => Type
+		if len(self.nodeName) == 0:
+			str += definitionOfFieldNameType.replace( "FieldNameType", self.typename )		# @todo ValueType => Type
+		else:
+			str += definitionOfFieldNameType.replace( "FieldNameType", self.FieldName + "ValueType" )		# @todo ValueType => Type
 
 		return str
 
 	#
 	def _generateDefinition( self ):
 		# begin definition
-		str = "enum %s \n\t{\n" % self.typename
+		if len(self.nodeName)==0:
+			str = "enum\n\t{\n"
+		else:
+			str = "enum %s \n\t{\n" % self.typename
 		# values
 		for (value, docValue) in self.values.iteritems() :
-			valueID = EnumRegistry.getID(self.nodeName, self.fieldName, value)
+			valueID = EnumRegistry.getID(self, value)
 			str += "\t\t%s = %i," % ( value, valueID )
 			str += "\t///< %s\n" % docValue
 		# default value
@@ -205,7 +232,7 @@ class Enum ( Type ):
 
 	def _getIds( self ):
 		keys = self.values.keys()
-		ids = [ EnumRegistry.getID(self.nodeName, self.fieldName, key) for key in keys ]
+		ids = [ EnumRegistry.getID(self, key) for key in keys ]
 		return sorted(ids)
 
 	def _getStrings( self ):
@@ -300,7 +327,7 @@ DECL_DEFAULT_FIELDNAME
 
 	//@}\n"""
 
-		if self.type.name == "enum":
+		if self.type.name == "enum" or self.type.isAnEnum:
 			str = str.replace( "InternalFieldNameValueType", "vgd::field::Enum" )
 			str = str.replace( 'DECL_DEFAULT_FIELDNAME', '' )
 		else:
@@ -331,7 +358,7 @@ void NewNode::setFieldName( const FieldNameValueType value )
 }
 \n\n\n"""
 
-		if self.type.name == "enum":
+		if self.type.name == "enum" or self.type.isAnEnum:
 			str = str.replace( 'DEF_DEFAULT_FIELDNAME', '' )
 		else:
 			str = str.replace( 'DEF_DEFAULT_FIELDNAME', defDefaultFieldname.format(defaultValue=self.type.generateDefaultValue()) )
@@ -396,7 +423,7 @@ DECL_DEFAULT_FIELDNAME
 	const bool hasFieldName() const;
 	//@}\n"""
 
-		if self.type.name == "enum":
+		if self.type.name == "enum" or self.type.isAnEnum:
 			str = str.replace( "InternalFieldNameValueType", "vgd::field::Enum" )
 			str = str.replace( 'DECL_DEFAULT_FIELDNAME', '' )
 		else:
@@ -440,7 +467,7 @@ const bool NewNode::hasFieldName() const
 }
 \n\n\n"""
 
-		if self.type.name == "enum":
+		if self.type.name == "enum" or self.type.isAnEnum:
 			str = str.replace( 'DEF_DEFAULT_FIELDNAME', '' )
 		else:
 			str = str.replace( 'DEF_DEFAULT_FIELDNAME', '\nconst NewNode::FieldNameValueType NewNode::DEFAULT_FIELDNAME = {defaultValue};\n\n\n'.format(defaultValue=self.type.generateDefaultValue()) )
@@ -613,7 +640,7 @@ TYPEDEF_FIELDNAMEVALUETYPE
 
 	//@}\n"""
 
-		if self.type.name == "enum":
+		if self.type.name == "enum" or self.type.isAnEnum:
 			str = str.replace( "InternalFieldNameValueType", "vgd::field::Enum" )
 		else:
 			str = str.replace( "InternalFieldNameValueType", "FieldNameValueType" )
