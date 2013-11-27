@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
-# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, Nicolas Papier.
+# VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2013, Nicolas Papier.
 # Distributed under the terms of the GNU Library General Public License (LGPL)
 # as published by the Free Software Foundation.
 # Author Nicolas Papier
 
-from __future__ import with_statement
 import os
 import xml.dom.minidom
 
@@ -26,7 +25,7 @@ def getText( nodeList ) :
 	return text
 
 
-def handleEnum( domEnum ) :
+def handleEnum( domEnum, inNodesTag = False ) :
 	# default
 	attrDefault = domEnum.getAttributeNode("default")
 	if attrDefault == None :
@@ -39,10 +38,19 @@ def handleEnum( domEnum ) :
 	global currentFieldName
 
 	if attrName == None:
+		# anonymous Enum() used by field of a vgd::node::Node
 		enum = Enum( currentNodeName, currentFieldName )
 	else:
-		enum = Enum( currentNodeName, attrName.value )
-		enum.setTypename( attrName.value )
+		# Named Enum()
+		if inNodesTag:
+			# direct child of <nodes>
+			enum = Enum()
+			enum.namespace = 'vgd::node'
+			enum.setTypename( attrName.value )
+		else:
+			# Named Enum() in vgd::node::Node
+			enum = Enum( currentNodeName, attrName.value )
+			enum.setTypename( attrName.value )
 
 	# value
 	domValues = domEnum.getElementsByTagName("value")
@@ -82,13 +90,18 @@ def handleType( domType ) :
 
 		# [namespace]
 		attrNamespace = domType.getAttributeNode("namespace")
-		if attrNamespace != None :
+		if attrNamespace:
 			type.namespace = attrNamespace.value
 
 		# [default]
 		attrDefault = domType.getAttributeNode("default")
-		if attrDefault != None :
+		if attrDefault:
 			type.defaultValue = attrDefault.value
+
+		# [enum]
+		attrEnum = domType.getAttributeNode("enum")
+		if attrEnum:
+			type.isAnEnum = attrEnum.value
 
 	# Returns the type
 	return type
@@ -96,19 +109,21 @@ def handleType( domType ) :
 
 
 def handleOneType( dom ) :
+	"""handle <type></type> to reuse an existing type or <enum></enum> to define a specialized vgSDK vgd::field::Enum"""
 
-	# Return value
-	type = None
-
-	#
+	# is there a <type> ?
 	domTypes = dom.getElementsByTagName("type")
 	if domTypes.length == 1 :
 		type = handleType( domTypes[0] )
-	else :
-		raise StandardError("One type expected, but encountered %s type(s) in a %s named %s." % (domTypes.length, dom.nodeName, dom.getAttributeNode("name").value) )
-
-	#
-	return type
+		return type
+	else:
+		# is there an <enum> ?
+		domEnums = dom.getElementsByTagName("enum")
+		if domEnums.length == 1 :
+			enum = handleEnum( domEnums[0] )
+			return enum
+		else:
+			raise StandardError("One type or enum expected, but encountered %s type(s) in a %s named %s." % (domTypes.length, dom.nodeName, dom.getAttributeNode("name").value) )
 
 
 def handleTwoTypes( dom ) :
@@ -277,6 +292,11 @@ def handleNode( domNode ) :
 	currentNodeName = attrName.value
 
 	node = Node(attrName.value)
+
+	# Prints a message
+	print "Found %s" % node.name
+
+	#
 	if attrInherits != None :
 		node.inherits = attrInherits.value.split()
 	else :
@@ -296,7 +316,7 @@ def handleNode( domNode ) :
 	domDFs = domNode.getElementsByTagName("df")
 	for domDF in domDFs:
 		df = handleDF( domDF )
-		print "DFDF", df.name, df.linkToFields
+		print ("link('{}', '{}')".format(df.name, df.linkToFields))
 		node.addDirtyFlag( df )
 
 	# Handles enumeration definition
@@ -360,11 +380,22 @@ def handleNode( domNode ) :
 		else:
 			print ('WARNING: %s in <includecpp> refers to a missing path !' % pathfilename )
 
-	# Prints a message
-	print "Found %s" % node.name
-
 	return node
 
+
+
+def handleListEnum( domEnums ):
+	dbNodeEnums = []
+	for domEnum in domEnums :
+		attrName = domEnum.getAttributeNode("name")
+		if attrName == None:
+			print ('No name in vgd::node enum')
+		else:
+			print ('Found vgd::node::{} enum'.format(attrName.value))
+		enum = handleEnum(domEnum, True)
+		dbNodeEnums.append( enum )
+
+	return dbNodeEnums
 
 
 def handleListNode( domNodes ) :
@@ -379,8 +410,21 @@ def handleListNode( domNodes ) :
 	return dbNodes
 
 
-def handleRootDom( domRoot ) :
+def handleRootDom( domRoot ):
+	# Process <enum> in <nodes>
+	print ('Process <enum> in <nodes>')
+	domEnums = []
+	nodesElement = domRoot.documentElement
+	for element in nodesElement.childNodes:
+		if element.nodeType == element.ELEMENT_NODE and element.tagName == 'enum':
+			domEnums.append( element )
+	dbNodeEnums = handleListEnum( domEnums )
+	print
+
+	# Process <node> in <nodes>
+	print ('Process <node> in <nodes>')
 	domNodes = domRoot.getElementsByTagName("node")
 	dbNodes = handleListNode( domNodes )
+	print
 
-	return dbNodes
+	return (dbNodeEnums, dbNodes)
