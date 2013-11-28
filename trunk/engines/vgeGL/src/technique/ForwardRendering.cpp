@@ -760,12 +760,12 @@ vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( v
 // @todo moves
 	// Lookups or creates fbo
 // @todo remove m_fbo
-	vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
-	vgd::Shp< vgeGL::rc::FrameBufferObject > fbo = rcManager.getShp< vgeGL::rc::FrameBufferObject >( m_shadowMappingInput->m_fbo[currentLightIndex].get() ); // @todo not very cute
+	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+	vgd::Shp< vgeGL::rc::FrameBufferObject > fbo = rcManager->getShp< vgeGL::rc::FrameBufferObject >( m_shadowMappingInput->m_fbo[currentLightIndex].get() ); // @todo not very cute
 	if ( !fbo )
 	{
 		fbo.reset( new vgeGL::rc::FrameBufferObject() );
-		rcManager.add( m_shadowMappingInput->m_fbo[currentLightIndex].get(), fbo );
+		rcManager->add( m_shadowMappingInput->m_fbo[currentLightIndex].get(), fbo );
 
 		fbo->generate();
 
@@ -905,9 +905,9 @@ void ForwardRendering::stageConfigureShadowMapping( vgeGL::engine::Engine * engi
 // @todo (framebuffer, fbo, textures) createsFBO(std::list< OutputBufferProperty >, [std::back_inserter<> textures]).
 vgd::Shp< vgeGL::rc::Fluid > ForwardRendering::getFluidRC( vgeGL::engine::Engine * engine )
 {
-	vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
+	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
 
-	vgd::Shp< vgeGL::rc::Fluid > fluidRC = rcManager.getShp< vgeGL::rc::Fluid >( fluid );
+	vgd::Shp< vgeGL::rc::Fluid > fluidRC = rcManager->getShp< vgeGL::rc::Fluid >( fluid );
 
 	return fluidRC;
 }
@@ -1345,8 +1345,8 @@ void ForwardRendering::stageInitializeFluid( vgeGL::engine::Engine * engine, vge
 			fluidRC.reset( new vgeGL::rc::Fluid );
 
 			// Register node and its resource into manager
-			vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
-			rcManager.add( fluid, fluidRC );
+			vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+			rcManager->add( fluid, fluidRC );
 		}
 		else
 		{

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -75,7 +75,7 @@ vge::engine::SceneManager * Technique::sceneManager() const
 void Technique::prepareEval( vge::engine::Engine * lengine, vge::visitor::TraverseElementVector* ltraverseElements )
 {
 	m_currentPass = 0;
-	assert( !m_inPass && "prepareEval() called inside a pass." );
+	vgAssertN( !m_inPass, "prepareEval() called inside a pass." );
 	m_passIsolationMask.resize(0);//	= PassIsolationMask(0);
 
 	vgAssert( engine() == lengine );
@@ -89,8 +89,8 @@ void Technique::prepareEval( vge::engine::Engine * lengine, vge::visitor::Traver
 
 void Technique::finishEval()
 {
-	assert( !m_inPass && "finishEval() called inside a pass." );
-	assert( m_currentPass > 0 && "No evaluation pass." );
+	vgAssertN( !m_inPass, "finishEval() called inside a pass." );
+	vgAssertN( m_currentPass > 0, "No evaluation pass." );
 
 	m_engine			= 0;
 	m_traverseElements	= 0;
@@ -107,7 +107,7 @@ void Technique::setPassDescription( const std::string description )
 
 void Technique::beginPass( const PassIsolationMask isolationMask )
 {
-	assert( !m_inPass && "beginPass() called inside a pass." );
+	vgAssertN( !m_inPass, "beginPass() called inside a pass." );
 
 	++m_currentPass;
 	m_inPass = true;
@@ -120,7 +120,7 @@ void Technique::beginPass( const PassIsolationMask isolationMask )
 
 void Technique::endPass()
 {
-	assert( m_inPass && "endPass() called outside a pass." );
+	vgAssertN( m_inPass, "endPass() called outside a pass." );
 
 	// Processes isolation mask
 	unapplyPassIsolation( m_engine );
@@ -186,9 +186,9 @@ void Technique::evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::s
 								vge::engine::Engine * engine,
 								const PassIsolationMask isolationMask, const bool nestedPass )
 {
-	assert( pass != 0 );
-	assert( service != 0 );
-	assert( engine != 0 );
+	vgAssert( pass != 0 );
+	vgAssert( service != 0 );
+	vgAssert( engine != 0 );
 
 	if ( nestedPass )
 	{
@@ -199,8 +199,8 @@ void Technique::evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::s
 		beginPass( isolationMask );
 	}
 
-	//assert( m_engine != 0 );
-	assert( getTraverseElements() != 0 );
+	//vgAssert( m_engine != 0 );
+	vgAssert( getTraverseElements() != 0 );
 
 	pass->apply( this, engine, getTraverseElements(), service );
 
@@ -218,7 +218,7 @@ void Technique::evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::s
 
 /*void Technique::push()
 {
-	assert( m_engine != 0 );
+	vgAssert( m_engine != 0 );
 
 	m_engine getEngine()->push();
 }
@@ -226,7 +226,7 @@ void Technique::evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::s
 
 void Technique::pop()
 {
-	assert( m_engine != 0 );
+	vgAssert( m_engine != 0 );
 
 	m_engine getEngine()->pop();
 }*/

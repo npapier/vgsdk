@@ -151,7 +151,7 @@ Canvas::Canvas()
 
 
 Canvas::Canvas( const Canvas *sharedCanvas )
-:	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
+:	vgeGL::engine::SceneManager( vgd::makeShp( new vgeGL::engine::Engine(sharedCanvas->getGLEngine().get()) ) ),
 	// m_gleLogSystem
 	// m_gleLogFile
 	m_glc							( 0								),
@@ -226,7 +226,7 @@ Canvas::~Canvas()
 const bool Canvas::setCurrent()
 {
 	// glc is made current
-    const bool retVal = (m_glc != 0) ? glc_set_current( m_glc ) : false;
+    const bool retVal = (m_glc != 0) ? (glc_set_current( m_glc ) != 0) : false;
     if ( retVal == false )
     {
         vgLogDebug("glc_set_current returns false");
@@ -260,7 +260,7 @@ const bool Canvas::unsetCurrent()
 	gleSetCurrent( 0 );
 #else
 	// normal code path
-	const bool retVal = (m_glc != 0) ? glc_unset_current( m_glc ) : false;
+	const bool retVal = (m_glc != 0) ? (glc_unset_current( m_glc ) != 0) : false;
 	gleSetCurrent( 0 );
 #endif
 
@@ -270,7 +270,7 @@ const bool Canvas::unsetCurrent()
 
 const bool Canvas::isCurrent() const
 {
-    return (m_glc != 0) ? glc_is_current( m_glc ) : false;
+    return (m_glc != 0) ? (glc_is_current( m_glc ) != 0) : false;
 }
 
 
@@ -891,7 +891,7 @@ const bool Canvas::startOpenGLContext()
         vgLogMessage("glc context successfully created.");
 
         // Next, mades the glc context current
-        const bool isGLCCurrent = glc_set_current( m_glc );
+        const bool isGLCCurrent = glc_set_current( m_glc ) != 0;
         assert( isGLCCurrent && "Unable to set glc context current. This is not expected !!!" );
 
         vgLogMessage("glc context made current.");
@@ -1130,10 +1130,10 @@ const bool Canvas::shutdownVGSDK()
 			// Try to destroy OpenGL objects
 			vgLogDebug/*logMessage*/("Releases managed OpenGL objects...\n");
 
-			getGLEngine()->getGLManager().clear();
+			getGLEngine()->getGLManager()->clear();
 
 			::glo::GLSLProgram::useFixedPaths();
-			getGLEngine()->getGLSLManager().clear();
+			getGLEngine()->getGLSLManager()->clear();
 
 			//
 			shutdownOpenGLContext();
@@ -1150,10 +1150,10 @@ const bool Canvas::shutdownVGSDK()
 			// Try to destroy OpenGL objects
 			vgLogDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
 
-			getGLEngine()->getGLManager().clear();
+			getGLEngine()->getGLManager()->clear();
 
 			//::glo::GLSLProgram::useFixedPaths();
-			getGLEngine()->getGLSLManager().clear();
+			getGLEngine()->getGLSLManager()->clear();
 
 			//
 			shutdownOpenGLContext();

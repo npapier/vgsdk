@@ -78,8 +78,8 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 {
 	using vgd::node::Texture;
 
-	vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
-	vgd::Shp< vgeGL::rc::Fluid > fluidRC = rcManager.getShp< vgeGL::rc::Fluid >( fluid );
+	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+	vgd::Shp< vgeGL::rc::Fluid > fluidRC = rcManager->getShp< vgeGL::rc::Fluid >( fluid );
 
 	if ( fluidRC )
 	{

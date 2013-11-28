@@ -155,6 +155,13 @@ struct VGEGL_API Engine : public vge::engine::Engine
 	Engine();
 
 	/**
+	 * @brief Constructor for ressource sharing
+	 *
+	 * @param	sharedEngine	a pointer to an engine with which ressources will be shared
+	 */
+	Engine( Engine * sharedEngine );
+
+	/**
 	 * @brief Destructor
 	 */
 	~Engine();
@@ -420,7 +427,7 @@ public:
 	/**
 	 * @brief Gets the OpenGL objects manager
 	 */
-	GLManagerType& getGLManager();
+	vgd::Shp< GLManagerType > getGLManager();
 	
 	/**
 	 * @brief Returns the resource associated to the given node in the OpenGL manager
@@ -433,10 +440,10 @@ public:
 	vgd::Shp< ResourceType > getRCShp( vgd::node::Node * node )
 	{
 		// Gets the resource manager
-		GLManagerType& manager = getGLManager();
+		vgd::Shp< GLManagerType > manager = getGLManager();
 
 		// Do the request
-		vgd::Shp< ResourceType > rc = manager.getShp< ResourceType >( node );
+		vgd::Shp< ResourceType > rc = manager->getShp< ResourceType >( node );
 		return rc;
 	}
 
@@ -464,7 +471,7 @@ public:
 	/**
 	 * @brief Gets the glsl program manager.
 	 */
-	GLSLProgramManagerType& getGLSLManager();
+	vgd::Shp< GLSLProgramManagerType > getGLSLManager();
 
 	/**
 	 * @brief Typedef for the glsl program manager
@@ -476,7 +483,7 @@ public:
 	/**
 	 * @brief Gets the glsl program manager.
 	 */
-	GLSLProgramManagerExtType& getGLSLManagerExt();
+	vgd::Shp< GLSLProgramManagerExtType > getGLSLManagerExt();
 	//@}
 
 
@@ -938,14 +945,14 @@ private:
 	/**
 	 * @brief Manager for all opengl objects.
 	 */
-	GLManagerType					m_glManager;
+	vgd::Shp< GLManagerType >		m_glManager;
 	boost::signals::connection		m_glManagerConnection;
 	
 	/**
 	 * @brief Manager for all glsl programs.
 	 */
-	GLSLProgramManagerType			m_glslManager;
-	GLSLProgramManagerExtType		m_glslManagerExt;
+	vgd::Shp< GLSLProgramManagerType >			m_glslManager;
+	vgd::Shp< GLSLProgramManagerExtType >		m_glslManagerExt;
 
 	/**
 	 * @brief Boolean value to indicate if glsl must be used by engine/handler

@@ -478,7 +478,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 	const bool addDepth )
 {
 	// Retrieves manager
-	vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
+	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
 
 	// Creates FBO node and GL rc
 	vgd::Shp< vgd::node::FrameBuffer >			framebuffer	= vgd::node::FrameBuffer::create("ForwardRendering.frameBuffer");
@@ -486,7 +486,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 
 	createsFBORetValType retVal = std::make_pair( framebuffer, fbo );
 
-	rcManager.add( framebuffer.get(), fbo );
+	rcManager->add( framebuffer.get(), fbo );
 
 	//
 	fbo->generate();
@@ -509,7 +509,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 		{
 			// Attaching images
 			engine->paint( textureNode );
-			vgd::Shp< vgeGL::rc::Texture2D > texture2D = rcManager.getShp< vgeGL::rc::Texture2D >( textureNode );
+			vgd::Shp< vgeGL::rc::Texture2D > texture2D = rcManager->getShp< vgeGL::rc::Texture2D >( textureNode );
 			vgAssertN( texture2D, "No texture2D" );
 
 			fbo->attachColor( texture2D, i );
@@ -533,7 +533,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 
 		// Attaching images
 		engine->paint( depthTextureNode );
-		vgd::Shp< vgeGL::rc::Texture2D > depthTexture = rcManager.getShp< vgeGL::rc::Texture2D >( depthTextureNode );
+		vgd::Shp< vgeGL::rc::Texture2D > depthTexture = rcManager->getShp< vgeGL::rc::Texture2D >( depthTextureNode );
 
 		fbo->attachDepth( depthTexture );
 	}
