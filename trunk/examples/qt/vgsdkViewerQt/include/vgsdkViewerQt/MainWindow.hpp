@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Nicolas Papier
+// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -8,12 +8,16 @@
 #ifndef _VGSDKVIEWERQT_MAINWINDOW_HPP
 #define _VGSDKVIEWERQT_MAINWINDOW_HPP
 
-#include <vgQt/graph/Browser.hpp>
-#include "vgsdkViewerQt/MyCanvas.hpp"
-#include "vgsdkViewerQt/DockProperties.hpp"
-#include <vgQt/engine/ShadersEditor.hpp>
 #include <QMainWindow>
 #include <QDockWidget>
+
+#include <vgQt/graph/Browser.hpp>
+#include <vgQt/engine/ShadersEditor.hpp>
+
+#include "vgsdkViewerQt/MyCanvas.hpp"
+#include "vgsdkViewerQt/DockProperties.hpp"
+#include "vgsdkViewerQt/WindowList.hpp"
+
 
 namespace vgQt {
 	namespace engine {
@@ -21,18 +25,35 @@ namespace vgQt {
 	}
 }
 
+
 namespace vgsdkViewerQt
 {
 
 
-// @todo adds support for multiple files in one history entry
-class MainWindow : public QMainWindow
+/**
+ * @brief	Main application window
+ *
+ * @todo adds support for multiple files in one history entry
+ */
+struct MainWindow : public QMainWindow
 {
     Q_OBJECT
-public:
-    explicit MainWindow(QWidget *parent = 0);
 
-    void showFullScreen();
+public:
+
+	/**
+	 * @brief	Default onstructor
+	 */
+    MainWindow();
+
+	/**
+	 * @brief	Constructor with a shared window
+	 *
+	 * @param	sharedWindow	a pointer to a previous window instance to share resources with
+	 */
+	MainWindow( MainWindow * sharedWindow );
+
+	void showFullScreen();
     void showNormal();
 
 	/**
@@ -67,6 +88,10 @@ public Q_SLOTS:
      */
     void fileReload();
 
+	/** 
+	 * @brief	Creates a new window.
+	 */
+	void newWindow();
 
     /**
      * @brief	Shows/hides the vgSdk properties widget.
@@ -88,10 +113,9 @@ public Q_SLOTS:
      */
     void setResolution();
 
-    void onSingleView();
-    void onLeftSidedViews();
-    void onFourViews();
-
+    void singleView();
+    void leftSidedViews();
+    void fourViews();
 
     /**
      * @brief	Updates the manipulation bindings of the canvas
@@ -108,18 +132,15 @@ public Q_SLOTS:
 	 */
 	void renderSettingsChanged();
 
-
     /**
      * @brief	Implements an action that show the about box on top of the top level window.
      */
     void helpAbout();
 
-
     /**
      * @brief	Implements an action that updates the properties button according to the visibility changes of the properties widget
      */
     void onPropertiesVisibilityChanged();
-
 
     /**
      * @brief	Implements an action that will load a file from the recent chooser menu.
@@ -127,15 +148,15 @@ public Q_SLOTS:
     void onHistoryClicked();
 
 protected:
+
     /**
-     * @name Drag&Drop handler
+     * @name Qt event handling
      */
     //@{
+	void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
-    //@}
-
-    void closeEvent(QCloseEvent *event);
+    //@}    
 
     /**
      * @brief	Replaces or append objects in the canvas
@@ -149,9 +170,12 @@ protected:
 	void writeSettings();
 
 private:
-    vgsdkViewerQt::DockProperties*  m_properties;
-    MyCanvas*                       m_canvas;
-    bool                            m_isFullScreen;
+	
+	static WindowList m_windows;	///< Registers all opended windows.
+
+    vgsdkViewerQt::DockProperties*	m_properties;
+    MyCanvas						m_canvas;
+    bool							m_isFullScreen;
 
     QToolBar*							m_toolBar;
     QAction*							m_actionProperties;
@@ -160,7 +184,9 @@ private:
 	static const int maxRecentScenes = 9;
 
     QMenu*								m_recentFileMenu;
-	vgQt::engine::UserSettingsDialog	* m_renderSettingsDialog;    
+	vgQt::engine::UserSettingsDialog	* m_renderSettingsDialog;
+
+	void initialize();
 };
 
 } // namespace vgsdkViewerQt

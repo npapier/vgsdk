@@ -37,10 +37,7 @@ int main(int argc, char *argv[])
     // Installs the GTK-based logging.
     sbf::log::set< sbf::log::Logging >();
 
-    vgsdkViewerQt::MainWindow mainWindow;
-	mainWindow.setWindowIcon( QIcon(":/images/vgsdkViewerQt.ico") );
-	mainWindow.setWindowIconText( "setWindowIconText" );
-
+    vgsdkViewerQt::MainWindow mainWindow;	
 	mainWindow.show();
 	mainWindow.getRenderSettingsDialog()->get()->setLevel(2);
 	mainWindow.renderSettingsChanged();
