@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -19,11 +19,19 @@ namespace vgsdkViewerQt
  */
 struct MyCanvas : public vgQt::BasicManipulator
 {
+	Q_OBJECT
+
 public:
+
     /**
-     * @brief	Constructor
+     * @brief	Default constructor
      */
-    MyCanvas();
+    explicit MyCanvas();
+	
+	/**
+	 * @brief	Constructor with a shared canvas
+	 */
+	explicit MyCanvas( const MyCanvas * sharedCanvas );
 
     /**
      * @name	View Mode Accessors
@@ -70,11 +78,31 @@ public:
      */
     const bool appendToScene( const QList<QString> filenames, const bool viewAllAfterLoading = true);
 
+	/**
+	 * @brief	Tells if the scene is empty.
+	 */
     const bool isEmpty() const;
+
+	/**
+	 * @brief	Reloads the while scene.
+	 */
     const bool reloadScene();
 
 private:
-    /**
+
+    typedef std::vector< vgd::Shp< vgeGL::technique::Technique > > TechniqueContainer;
+
+	TechniqueContainer	m_viewModeTechniques;	///< Contains all view mode techniques.
+	QList<QString>		m_filenames;			///< Contains the paths of the files currently loaded.
+
+	/**
+	 * @brief	Initialize the canvas.
+	 *
+	 * This will do light and other rendering configurations.
+	 */
+	void initialize();
+
+	/**
      * @name	View Mode Technique Factories
      */
     //@{
@@ -83,15 +111,12 @@ private:
     vgd::Shp< vgeGL::technique::Technique > createMultiViewSquaredTechnique();
     //@}
 
-    typedef std::vector< vgd::Shp< vgeGL::technique::Technique > > TechniqueContainer;
-    TechniqueContainer	m_viewModeTechniques;	///< Contains all view mode techniques.
-
-    QList<QString> m_filenames; ///< Contains the paths of the files currently loaded.
-
-    void keyPressEvent(QKeyEvent * event);
-
-Q_SIGNALS:
-    void keyPressed(QKeyEvent * event);
+    /**
+	 * @name	Qt event handling
+	 */
+	//@{
+    void keyPressEvent( QKeyEvent * );
+	//@}
 };
 
 } // namespace vgsdkViewerQt

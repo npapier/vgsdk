@@ -24,6 +24,19 @@ namespace vgsdkViewerQt
 
 MyCanvas::MyCanvas()
 {
+	initialize();
+}
+
+
+MyCanvas::MyCanvas( const MyCanvas * sharedCanvas )
+: vgQt::BasicManipulator( sharedCanvas, 0 )
+{
+	initialize();
+}
+
+
+void MyCanvas::initialize()
+{
 	// Scene graph initialization.
 	createOptionalNode( LIGHTS );
 
@@ -83,6 +96,7 @@ MyCanvas::MyCanvas()
 	refreshForced();
 }
 
+
 void MyCanvas::keyPressEvent(QKeyEvent * event)
 {
 	using vgd::node::Switch;
@@ -125,6 +139,7 @@ const bool MyCanvas::appendToScene( const QString filename, const bool viewAllAf
 	return retVal;
 }
 
+
 const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool viewAllAfterLoading)
 {
 	bool retVal = true;
@@ -146,10 +161,12 @@ const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool v
 	return retVal;
 }
 
+
 const bool MyCanvas::isEmpty() const
 {
 	return getScene()->getNumChildren() == 0;
 }
+
 
 const bool MyCanvas::reloadScene()
 {
@@ -158,6 +175,7 @@ const bool MyCanvas::reloadScene()
 	const bool retVal = appendToScene( filenames, false );
 	return retVal;
 }
+
 
 void MyCanvas::setViewMode( const ViewMode mode )
 {
@@ -172,6 +190,7 @@ void MyCanvas::setViewMode( const ViewMode mode )
 	}
 }
 
+
 vgd::Shp< vgeGL::technique::Technique > MyCanvas::createMultiViewSingleTechnique()
 {
 	// Multi-view rendering technique initialization.
@@ -184,6 +203,7 @@ vgd::Shp< vgeGL::technique::Technique > MyCanvas::createMultiViewSingleTechnique
 
 	return technique;
 }
+
 
 vgd::Shp< vgeGL::technique::Technique > MyCanvas::createMultiViewSidedTechnique()
 {
@@ -221,6 +241,7 @@ vgd::Shp< vgeGL::technique::Technique > MyCanvas::createMultiViewSidedTechnique(
 	return technique;
 }
 
+
 vgd::Shp< vgeGL::technique::Technique > MyCanvas::createMultiViewSquaredTechnique()
 {
 	// Multi-view rendering technique initialization.
@@ -253,10 +274,12 @@ vgd::Shp< vgeGL::technique::Technique > MyCanvas::createMultiViewSquaredTechniqu
 	return technique;
 }
 
+
 void MyCanvas::clearScene()
 {
 	m_filenames.clear();
 	getScene()->removeAllChildren();
 }
+
 
 } // namespace vgsdkViewerQt

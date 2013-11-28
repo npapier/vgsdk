@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -6,7 +6,6 @@
 // Author Nicolas Papier
 
 #include "vgsdkViewerQt/MainWindow.hpp"
-#include "vgsdkViewerQt/MyCanvas.hpp"
 
 #include <boost/lexical_cast.hpp>
 #include <vgd/node/LightModel.hpp>
@@ -29,13 +28,18 @@
 #include <QFileDialog>
 #include <QSettings>
 
+#include "vgsdkViewerQt/actions.hpp"
+
 
 namespace vgsdkViewerQt
 {
 
 
-MainWindow::MainWindow(QWidget *parent)
-:	QMainWindow(parent),
+WindowList MainWindow::m_windows;
+
+
+MainWindow::MainWindow()
+:	QMainWindow(),
 	m_isFullScreen(false),
 	m_toolBar(0),
 	m_actionProperties(0),
@@ -43,6 +47,29 @@ MainWindow::MainWindow(QWidget *parent)
 	m_recentFileMenu(0),
 	m_renderSettingsDialog(0)
 {
+	initialize();
+}
+
+
+MainWindow::MainWindow( MainWindow * sharedWindow )
+:	QMainWindow(),
+	m_isFullScreen(false),
+	m_toolBar(0),
+	m_actionProperties(0),
+	m_actionMouseAndKeyboard(0),
+	m_recentFileMenu(0),
+	m_renderSettingsDialog(0),
+	m_canvas( &sharedWindow->m_canvas )
+{
+	initialize();
+}
+
+
+void MainWindow::initialize()
+{
+	// Updates the window list.
+	m_windows.add( this );
+
 	// The style for the treeView
 	setStyleSheet("QTreeView::branch:has-siblings:!adjoins-item {border-image: url(:/images/stylesheet-vline.png) 0;}"
 				  "QTreeView::branch:has-siblings:adjoins-item {border-image: url(:/images/stylesheet-branch-more.png) 0;}"
@@ -53,7 +80,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 	// The window
 	resize(1024,768);
-	setWindowTitle(tr("vgsdkViewerQt"));
+	setWindowTitle( QString("vgsdkViewerQt - %1").arg(m_windows.counter()) );
+	setWindowIcon( QIcon(":/images/vgsdkViewerQt.ico") );
+	setWindowIconText( "setWindowIconText" );
 	setAcceptDrops(true);
 
 	// The Menu bar in the top of the window
@@ -79,18 +108,19 @@ MainWindow::MainWindow(QWidget *parent)
 	QAction *actionQuit = new QAction(QIcon(":/images/application-exit.png"), "&Quit", this);
 	QAction *actionViewAll = new QAction(QIcon(":/images/zoom-fit-best.png"), "View All", this);
 	QAction *actionFullScreen = new QAction(QIcon(":/images/view-fullscreen.png"), "Full Screen", this);
-	QAction *actionResolution = new QAction(QIcon(":/images/resolution-16.xpm"), "Set Resolution", this);
+	QAction *actionResolution = new QAction(QIcon(":/images/resolution.png"), "Set Resolution", this);
 	QAction *actionShadersEditor = new QAction("Shader Editor", this);
 	m_actionProperties = new QAction(QIcon(":/images/document-properties.png"), "&Properties", this);
 	m_actionProperties->setCheckable(true);
 	QAction *actionRenderSettings = new QAction(QIcon(":/images/document-properties.png"), "Render Settings", this);
+	QAction * actionNewWindow = newNewWindowAction(this);
 	QAction *actionAbout = new QAction(QIcon(":/images/help-about.png"), "&About", this);
-	QAction *actionSingleView = new QAction(QIcon(":/images/single-view-16.xpm"), "Single View", this);
+	QAction *actionSingleView = new QAction(QIcon(":/images/single-view.png"), "Single View", this);
 	actionSingleView->setCheckable(true);
 	actionSingleView->setChecked(true);
-	QAction *actionLeftSidedViews = new QAction(QIcon(":/images/multi-view-sided-16.xpm"), "Left-Sided Views", this);
+	QAction *actionLeftSidedViews = new QAction(QIcon(":/images/multi-view-sided.png"), "Left-Sided Views", this);
 	actionLeftSidedViews->setCheckable(true);
-	QAction *actionFourViews = new QAction(QIcon(":/images/multi-view-squared-16.xpm"), "Four Views", this);
+	QAction *actionFourViews = new QAction(QIcon(":/images/multi-view-squared.png"), "Four Views", this);
 	actionFourViews->setCheckable(true);
 	QAction *actionMouseOnly = new QAction("Mouse Only Manipulation", this);
 	actionMouseOnly->setCheckable(true);
@@ -142,7 +172,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 	menuHelp->addAction(actionAbout);
 
-	m_toolBar->setIconSize(QSize(16,16));
 	m_toolBar->addAction(actionNew);
 	m_toolBar->addAction(actionOpen);
 	m_toolBar->addAction(actionAdd);
@@ -157,6 +186,8 @@ MainWindow::MainWindow(QWidget *parent)
 	m_toolBar->addAction(actionSingleView);
 	m_toolBar->addAction(actionLeftSidedViews);
 	m_toolBar->addAction(actionFourViews);
+	m_toolBar->addSeparator();
+	m_toolBar->addAction(actionNewWindow);
 	m_toolBar->addSeparator();
 	m_toolBar->addAction(actionAbout);
 
@@ -177,30 +208,32 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionOpen, SIGNAL(triggered()), this, SLOT(fileOpen()));
 	connect(actionAdd, SIGNAL(triggered()), this, SLOT(addFile()));
 	connect(actionReload, SIGNAL(triggered()), this, SLOT(fileReload()));
-	connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+	connect(actionQuit, SIGNAL(triggered()), &m_windows, SLOT(closeAll()));
 
 	// View Menu
 	connect(m_actionProperties, SIGNAL(triggered()), this, SLOT(showHideProperties()));
 	connect(actionViewAll, SIGNAL(triggered()), this, SLOT(viewAll()));
 	connect(actionFullScreen, SIGNAL(triggered()), this, SLOT(fullscreen()));
 	connect(actionResolution, SIGNAL(triggered()), this, SLOT(setResolution()));
-	connect(actionSingleView, SIGNAL(triggered()), this, SLOT(onSingleView()));
-	connect(actionLeftSidedViews, SIGNAL(triggered()), this, SLOT(onLeftSidedViews()));
-	connect(actionFourViews, SIGNAL(triggered()), this, SLOT(onFourViews()));
+	connect(actionSingleView, SIGNAL(triggered()), this, SLOT(singleView()));
+	connect(actionLeftSidedViews, SIGNAL(triggered()), this, SLOT(leftSidedViews()));
+	connect(actionFourViews, SIGNAL(triggered()), this, SLOT(fourViews()));
 
 	// Settings Menu
 	connect(actionMouseOnly, SIGNAL(triggered()), this, SLOT(settingManipulationBinding()));
 	connect(m_actionMouseAndKeyboard, SIGNAL(triggered()), this, SLOT(settingManipulationBinding()));
 	connect(actionRenderSettings, SIGNAL(triggered()), this, SLOT(renderSettings()));
 
+	// Window Menu
+	connect(actionNewWindow, SIGNAL(triggered()), this, SLOT(newWindow()));
+
 	// Help Menu
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(helpAbout()));
 
-	m_canvas = new vgsdkViewerQt::MyCanvas();
-	setCentralWidget(m_canvas);
+	setCentralWidget(&m_canvas);
 
 	m_properties = new vgsdkViewerQt::DockProperties(this);
-	m_properties->setCanvas(m_canvas) ;
+	m_properties->setCanvas(&m_canvas) ;
 
 	connect(actionShadersEditor, 
 			SIGNAL(triggered()), 
@@ -215,12 +248,21 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 
+void MainWindow::newWindow()
+{
+	MainWindow * newWindow = new MainWindow( this );
+
+	newWindow->show();
+}
+
+
 void MainWindow::showFullScreen()
 {
 	menuBar()->setVisible(false);
 	m_toolBar->setVisible(false);
 	QMainWindow::showFullScreen();
 }
+
 
 void MainWindow::showNormal()
 {
@@ -235,7 +277,7 @@ vgQt::engine::UserSettingsDialog * MainWindow::getRenderSettingsDialog()
 	if( !m_renderSettingsDialog )
 	{
 		m_renderSettingsDialog = new vgQt::engine::UserSettingsDialog(this);
-		m_renderSettingsDialog->set( vgd::makeShp(new vge::engine::UserSettings(*m_canvas)) );
+		m_renderSettingsDialog->set( vgd::makeShp(new vge::engine::UserSettings(m_canvas)) );
 		connect( m_renderSettingsDialog, SIGNAL(changed()), this, SLOT(renderSettingsChanged()) );
 	}
 
@@ -253,8 +295,8 @@ void MainWindow::fileNew()
 
 	if(messageDialog->exec() == QMessageBox::Yes)
 	{
-		m_canvas->clearScene();
-		m_canvas->refresh();
+		m_canvas.clearScene();
+		m_canvas.refresh();
 	}
 }
 
@@ -273,10 +315,10 @@ void MainWindow::addFile()
 
 void MainWindow::fileReload()
 {
-	if ( !m_canvas->isEmpty() )
+	if ( !m_canvas.isEmpty() )
 	{
-		m_canvas->reloadScene();
-		m_canvas->refresh();
+		m_canvas.reloadScene();
+		m_canvas.refresh();
 	}
 }
 
@@ -289,16 +331,16 @@ void MainWindow::showHideProperties()
 
 void MainWindow::viewAll()
 {
-	m_canvas->viewAll();
-	m_canvas->refresh();
+	m_canvas.viewAll();
+	m_canvas.refresh();
 }
 
 
 void MainWindow::fullscreen()
 {
-	const bool isFullscreen = m_canvas->isFullscreen();
+	const bool isFullscreen = m_canvas.isFullscreen();
 	
-	m_canvas->switchFullscreen();
+	m_canvas.switchFullscreen();
 	// Configures the layout.
 	isFullscreen ? showNormal() : showFullScreen();
 }
@@ -306,24 +348,26 @@ void MainWindow::fullscreen()
 
 void MainWindow::setResolution()
 {
-	vgQt::ResolutionDialog*	dialog = new vgQt::ResolutionDialog( this );
-	dialog->exec();
+	vgQt::ResolutionDialog dialog( this );
+	dialog.exec();
 }
 
 
-void MainWindow::onSingleView()
+void MainWindow::singleView()
 {
-	m_canvas->setViewMode(MyCanvas::SINGLE_VIEW);
+	m_canvas.setViewMode(MyCanvas::SINGLE_VIEW);
 }
 
-void MainWindow::onLeftSidedViews()
+
+void MainWindow::leftSidedViews()
 {
-	m_canvas->setViewMode(MyCanvas::LEFT_SIDED_VIEWS);
+	m_canvas.setViewMode(MyCanvas::LEFT_SIDED_VIEWS);
 }
 
-void MainWindow::onFourViews()
+
+void MainWindow::fourViews()
 {
-	m_canvas->setViewMode(MyCanvas::SQUARED_VIEWS);
+	m_canvas.setViewMode(MyCanvas::SQUARED_VIEWS);
 }
 
 
@@ -334,11 +378,11 @@ void MainWindow::settingManipulationBinding()
 	switch( binding )
 	{
 		case 1:
-			m_canvas->getSceneTransformation()->setBindingsToDefaults();
+			m_canvas.getSceneTransformation()->setBindingsToDefaults();
 			break;
 
 		case 2:
-			m_canvas->getSceneTransformation()->setBindingsToDefaults2();
+			m_canvas.getSceneTransformation()->setBindingsToDefaults2();
 			break;
 
 		default:
@@ -349,21 +393,21 @@ void MainWindow::settingManipulationBinding()
 
 void MainWindow::renderSettings()
 {
-	getRenderSettingsDialog()->get()->setLevel( *m_canvas );
+	getRenderSettingsDialog()->get()->setLevel( m_canvas );
 	getRenderSettingsDialog()->getGUI()->refreshLevel();
 	getRenderSettingsDialog()->show();
 }
 
 void MainWindow::renderSettingsChanged()
 {
-	getRenderSettingsDialog()->get()->apply( *m_canvas );
-	m_canvas->refresh();
+	getRenderSettingsDialog()->get()->apply( m_canvas );
+	m_canvas.refresh();
 }
 
 
 void MainWindow::helpAbout()
 {
-	vgQt::AboutDialog* aboutDialog = new vgQt::AboutDialog(this);
+	vgQt::AboutDialog aboutDialog(this);
 
 	QList<QString>	authors;
 	authors.append( QString("Guillaume Brocker") );
@@ -371,15 +415,14 @@ void MainWindow::helpAbout()
 	authors.append( QString("Maxime Peresson") );
 	authors.append( QString("Bryan Schuller") );
 
+	aboutDialog.set_title( QString("vgsdkViewerQt") );
+	aboutDialog.set_authors( authors );
+	aboutDialog.set_comments( QString("This program is a simple demonstration of vgSDK capabilities.\n It allows you to load meshes (obj, trian, trian2 and dae),\n manipulate them and browse the rendering scene graph.") );
+	aboutDialog.set_copyright( QString("Copyright (C) 2008-2013, Guillaume Brocker, Nicolas Papier, Maxime Peresson, Bryan Schuller and Digital Trainers SAS.") );
+	aboutDialog.set_license( QString("Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation.") );
+	aboutDialog.set_website( QString("http://code.google.com/p/vgsdk") );
 
-	aboutDialog->set_title( QString("vgsdkViewerQt") );
-	aboutDialog->set_authors( authors );
-	aboutDialog->set_comments( QString("This program is a simple demonstration of vgSDK capabilities.\n It allows you to load meshes (obj, trian, trian2 and dae),\n manipulate them and browse the rendering scene graph.") );
-	aboutDialog->set_copyright( QString("Copyright (C) 2008-2012, Guillaume Brocker, Nicolas Papier, Maxime Peresson, Bryan Schuller and Digital Trainers SAS.") );
-	aboutDialog->set_license( QString("Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation.") );
-	aboutDialog->set_website( QString("http://code.google.com/p/vgsdk") );
-
-	aboutDialog->exec();
+	aboutDialog.exec();
 }
 
 
@@ -394,13 +437,13 @@ void MainWindow::onHistoryClicked()
 {
 	QAction* action = (QAction*) sender();
 
-	m_canvas->clearScene();
+	m_canvas.clearScene();
 
-	m_canvas->appendToScene(action->text(), false);
+	m_canvas.appendToScene(action->text(), false);
 	addFileInHistory(action->text());
 
-	m_canvas->viewAll();
-	m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::SYNCHRONOUS );
+	m_canvas.viewAll();
+	m_canvas.refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::SYNCHRONOUS );
 }
 
 
@@ -421,26 +464,26 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 		if(dialog->exec() == QMessageBox::Yes)
 		{
-			m_canvas->clearScene();
+			m_canvas.clearScene();
 		}
 
 		Q_FOREACH(QUrl url, event->mimeData()->urls())
 		{
 			QString path = url.path().remove(0,1);
-			m_canvas->appendToScene(path, false);
+			m_canvas.appendToScene(path, false);
 			addFileInHistory(path);
 		}
 
-		m_canvas->viewAll();
-		m_canvas->refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::SYNCHRONOUS );
+		m_canvas.viewAll();
+		m_canvas.refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::SYNCHRONOUS );
 	}
 }
 
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+	m_windows.remove( this );
 	writeSettings();
-
 	m_properties->getShaderEditor()->close();
 	QMainWindow::closeEvent(event);
 }
@@ -466,7 +509,7 @@ void MainWindow::loadFile(bool clearScene)
 		// Clears the canvas if requested.
 		if( clearScene )
 		{
-			m_canvas->clearScene();
+			m_canvas.clearScene();
 		}
 
 		// Keep track of the directory where the files are located,
@@ -477,7 +520,7 @@ void MainWindow::loadFile(bool clearScene)
 		Q_FOREACH(QString fileName, files)
 		{
 			bool success = false;
-			success = m_canvas->appendToScene( fileName );
+			success = m_canvas.appendToScene( fileName );
 			if (success)
 			{
 				// We add it in the recent file history
