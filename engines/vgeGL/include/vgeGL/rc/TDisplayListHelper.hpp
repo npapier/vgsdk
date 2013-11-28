@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -41,14 +41,14 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 	assert( dynamic_cast< nodeType* >(pNode) != 0 );
 	nodeType *pCastedNode = static_cast< nodeType* >(pNode);
 
-	vgeGL::engine::Engine::GLManagerType& rGLManager = pGLEngine->getGLManager();
+	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rGLManager = pGLEngine->getGLManager();
 
 	// ****** Render ******
 	// get dirty flag of node
 	vgd::field::DirtyFlag	*pDF			= pCastedNode->getDirtyFlag( pCastedNode->getDFNode() );
 
 	// lookup the resource.
-	::glo::IResource 		*pResource		= rGLManager.getAbstract( pNode );
+	::glo::IResource 		*pResource		= rGLManager->getAbstract( pNode );
 	::glo::DisplayList		*pDisplayList	= dynamic_cast< ::glo::DisplayList* >(pResource);
 
 	// @todo relax
@@ -72,7 +72,7 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 			{
 				// No resource (this is the first evaluation), creates a new one.
 				pDisplayList = new ::glo::DisplayList();
-				rGLManager.add( pNode, pDisplayList );
+				rGLManager->add( pNode, pDisplayList );
 			}
 
 			// Updates display lists.
@@ -125,14 +125,14 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 	assert( dynamic_cast< nodeType* >(pNode) != 0 );
 	nodeType *pCastedNode = static_cast< nodeType* >(pNode);
 
-	vgeGL::engine::Engine::GLManagerType& rGLManager = pGLEngine->getGLManager();
+	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rGLManager = pGLEngine->getGLManager();
 
 	// ****** Render ******
 	// get dirty flag of node
 	vgd::field::DirtyFlag	*pDF			= pCastedNode->getDirtyFlag( pCastedNode->getDFNode() );
 
 	// lookup the resource.
-	::glo::IResource 		*pResource		= rGLManager.getAbstract( pNode );
+	::glo::IResource 		*pResource		= rGLManager->getAbstract( pNode );
 	::glo::DisplayList		*pDisplayList	= dynamic_cast< ::glo::DisplayList* >(pResource);
 
 	assert(	(pResource==0 && pDisplayList==0) ||
@@ -154,7 +154,7 @@ void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode
 			{
 				// No resource (this is the first evaluation), create it.
 				pDisplayList = new ::glo::DisplayList();
-				rGLManager.add( pNode, pDisplayList );
+				rGLManager->add( pNode, pDisplayList );
 			}
 
 			// update display lists.

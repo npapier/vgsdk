@@ -85,9 +85,9 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	}
 
 	// Searchs resource
-	vgeGL::engine::Engine::GLManagerType&		rcManager	= pGLEngine->getGLManager();
+	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = pGLEngine->getGLManager();
 
-	::glo::IResource 							*resource	= rcManager.getAbstract( layerPlan );
+	::glo::IResource 							*resource	= rcManager->getAbstract( layerPlan );
 	vgeGL::rc::Root								*rcRoot		= dynamic_cast< vgeGL::rc::Root* >(resource);
 
 	using vgd::node::Quad;
@@ -109,7 +109,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 		// No resource (this is the first evaluation), create it.
 		rcRoot = new vgeGL::rc::Root;
-		rcManager.add( layerPlan, rcRoot );
+		rcManager->add( layerPlan, rcRoot );
 
 		texture2D = Texture2D::create("rootRC.LayerPlan.texture2D");
 		quad = Quad::create("rootRC.LayerPlan.quad");
@@ -177,7 +177,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	pGLEngine->paint( texture2D, true );
 
 	// Gets the resource manager
-	vgeGL::rc::Texture2D * gloTex2D = rcManager.get< vgeGL::rc::Texture2D >( texture2D.get() );
+	vgeGL::rc::Texture2D * gloTex2D = rcManager->get< vgeGL::rc::Texture2D >( texture2D.get() );
 	gloTex2D->env( GL_TEXTURE_ENV_MODE, GL_REPLACE );
 
 	// draw proxy geometry

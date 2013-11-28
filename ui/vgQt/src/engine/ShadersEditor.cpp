@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Alexandre Di Pino, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, Alexandre Di Pino, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Alexandre Di Pino
@@ -269,17 +269,18 @@ void ShadersEditor::selectItemInShaderList(QListWidgetItem *item)
 	m_versionList->setCurrentIndex( static_cast<int>(version) );
 
 	// If GLSL Manager extended is not empty
-	const uint numProgram = m_engine->getGLSLManagerExt().getNum();
+	vgd::Shp< vgeGL::engine::Engine::GLSLProgramManagerExtType > glslManagerExt = m_engine->getGLSLManagerExt();
+	const uint numProgram = glslManagerExt->getNum();
 	if ( numProgram > 0 )
 	{
 		m_currentShader = item->type() - 1000;
 
 		KeysContainer keys;
-		m_engine->getGLSLManagerExt().gethKeys( keys );
+		glslManagerExt->gethKeys( keys );
 
 		for ( KeysContainer::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
 		{
-			glo::GLSLProgram* glslProgram = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
+			glo::GLSLProgram* glslProgram = glslManagerExt->get< glo::GLSLProgram >(*pos);
 
 			// If the selected element is a program
 			if ( m_currentShader == glslProgram->getProgramObject() )
@@ -346,18 +347,19 @@ void ShadersEditor::refreshUI()
 	font.setBold(true);
 
 	// If GLSL Manager extended is not empty
-	const uint numProgram = m_engine->getGLSLManagerExt().getNum();
+	vgd::Shp< vgeGL::engine::Engine::GLSLProgramManagerExtType > glslManagerExt = m_engine->getGLSLManagerExt();
+	const uint numProgram = glslManagerExt->getNum();
 	if ( numProgram > 0 )
 	{
 		//Clear all the elements
 		m_shaderList->clear();
 
 		KeysContainer keys;
-		m_engine->getGLSLManagerExt().gethKeys( keys );
+		glslManagerExt->gethKeys( keys );
 
 		for ( KeysContainer::const_iterator pos = keys.begin(); pos != keys.end(); ++pos )
 		{
-			glo::GLSLProgram* glslProgram = m_engine->getGLSLManagerExt().get< glo::GLSLProgram >(*pos);
+			glo::GLSLProgram* glslProgram = glslManagerExt->get< glo::GLSLProgram >(*pos);
 
 			// Adds the program element on the shader list
 			const std::string progName =  "Program " + boost::lexical_cast<std::string>( glslProgram->getProgramObject() );

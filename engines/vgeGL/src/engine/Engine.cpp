@@ -39,9 +39,9 @@ Engine::Engine()
 	m_isDepthPrePassEnabled(false),
 	m_isShadowEnabled(true),
 
-	m_glManager("GL object manager"),
-	m_glslManager("GLSL Program Manager"),
-	m_glslManagerExt("GLSL Program ManagerExt"),
+	m_glManager( vgd::makeShp( new GLManagerType("GL object manager") ) ),
+	m_glslManager( vgd::makeShp( new GLSLProgramManagerType("GLSL Program Manager") ) ),
+	m_glslManagerExt( vgd::makeShp( new GLSLProgramManagerExtType("GLSL Program ManagerExt") ) ),
 
 	m_isGLSLEnabled(true),
 	m_currentProgram(0),
@@ -54,7 +54,39 @@ Engine::Engine()
 	m_glslProgramGenerator( new ProgramGenerator() )
 {
 	// Connects OpenGL manager to node destruction signal.
-	m_glManagerConnection = vgd::node::Node::connect( boost::bind(&GLManagerType::remove, &getGLManager(), _1) );
+	m_glManagerConnection = vgd::node::Node::connect( boost::bind(&GLManagerType::remove, getGLManager().get(), _1) );
+
+	// Reset cache
+	m_maxViewportSize.setInvalid();
+	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
+}
+
+
+
+Engine::Engine( Engine * sharedEngine )
+:	m_isLightingEnabled(true),
+	m_isTextureMappingEnabled(true),
+	m_isDrawCallsEnabled(true),
+	m_isDisplayListEnabled(true),
+	m_isDepthPrePassEnabled(false),
+	m_isShadowEnabled(true),
+
+	m_glManager( sharedEngine->m_glManager ),
+	m_glslManager( sharedEngine->m_glslManager ),
+	m_glslManagerExt( sharedEngine->m_glslManagerExt ),
+
+	m_isGLSLEnabled(true),
+	m_currentProgram(0),
+	// m_glStateStack()
+	//m_glslStateStack()
+	//m_uniformState
+	//m_globalGLSLState
+	//m_outputBuffers
+	//m_currentPrivateOutputBuffers
+	m_glslProgramGenerator( new ProgramGenerator() )
+{
+	// Connects OpenGL manager to node destruction signal.
+	m_glManagerConnection = vgd::node::Node::connect( boost::bind(&GLManagerType::remove, getGLManager().get(), _1) );
 
 	// Reset cache
 	m_maxViewportSize.setInvalid();
@@ -393,22 +425,23 @@ vgd::basic::IndexContainerConstIterators Engine::getCurrentPrivateOutputBuffersI
 
 
 // MANAGER
-Engine::GLManagerType& Engine::getGLManager()
+vgd::Shp< Engine::GLManagerType > Engine::getGLManager()
 {
 	return m_glManager;
 }
 
 
-
-Engine::GLSLProgramManagerType& Engine::getGLSLManager()
+vgd::Shp< Engine::GLSLProgramManagerType > Engine::getGLSLManager()
 {
 	return m_glslManager;
 }
 
-Engine::GLSLProgramManagerExtType&	Engine::getGLSLManagerExt()
+
+vgd::Shp< Engine::GLSLProgramManagerExtType > Engine::getGLSLManagerExt()
 {
 	return m_glslManagerExt;
 }
+
 
 const bool Engine::isLightingEnabled() const
 {
@@ -723,13 +756,13 @@ void Engine::setDefaultMaxAnisotropy( const float value )
 	vge::engine::Engine::setDefaultMaxAnisotropy( value );
 
 	// Invalidates Texture.parameters dirty flags.
-	GLManagerType& manager = getGLManager();
+	vgd::Shp< GLManagerType > manager = getGLManager();
 
 	typedef std::vector< vgd::node::Node * > ContainerType;
 	typedef ContainerType::iterator ContainerIterator;
 
 	ContainerType nodes;
-	manager.gethKeys( nodes );
+	manager->gethKeys( nodes );
 
 	for( ContainerIterator	i	= nodes.begin(),
 							iEnd= nodes.end();

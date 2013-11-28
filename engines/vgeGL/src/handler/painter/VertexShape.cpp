@@ -387,7 +387,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			const std::string&	fs			= pg->getFragmentShaderGenerator()->getCode();
 
 			using glo::GLSLProgram;
-			GLSLProgram * program = engine->getGLSLManager().get< GLSLProgram >( fullCode );
+			GLSLProgram * program = engine->getGLSLManager()->get< GLSLProgram >( fullCode );
 			if ( program == 0 )
 			{
 				// Not found in cache, so creates a new one
@@ -418,8 +418,8 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				// Register the new program
 				aNewProgramHasBeenGenerated = true;
 				const int programValue = static_cast<int>( program->getProgramObject() );
-				engine->getGLSLManagerExt().add( programValue , shpProgram );
-				engine->getGLSLManager().add( fullCode, shpProgram );
+				engine->getGLSLManagerExt()->add( programValue , shpProgram );
+				engine->getGLSLManager()->add( fullCode, shpProgram );
 
 				if ( !compileVSRetVal || !compileTCSRetVal || !compileTESRetVal || !compileGSRetVal || !compileFSRetVal || !linkRetVal /*|| !validateRetVal*/ )
 				{
@@ -509,7 +509,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	if ( additionalProperties )
 	{
 		// Gets resource associated to the given node
-		vgeGL::rc::VertexShape * vertexShapeRC = engine->getGLManager().get< vgeGL::rc::VertexShape >( pVertexShape );
+		vgeGL::rc::VertexShape * vertexShapeRC = engine->getGLManager()->get< vgeGL::rc::VertexShape >( pVertexShape );
 
 		// Makes a backup of GLSL activation state
 		using vgeGL::engine::Engine;
@@ -755,13 +755,13 @@ void VertexShape::paint( vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 
 	// RC
 	// Gets the resource manager
-	vgeGL::engine::Engine::GLManagerType& manager = engine->getGLManager();
+	vgd::Shp< vgeGL::engine::Engine::GLManagerType > manager = engine->getGLManager();
 
 	// Gets node dirty flag
 	vgd::field::DirtyFlag * nodeDF = node->getDirtyFlag( node->getDFNode() );
 
 	// Gets resource associated to the given node
-	::glo::IResource 	* resource			= manager.getAbstract( node );
+	::glo::IResource 	* resource			= manager->getAbstract( node );
 	GLResourceType		* castedResource	= dynamic_cast< GLResourceType * >(resource);
 
 	// STEP 1
@@ -773,7 +773,7 @@ void VertexShape::paint( vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 		// Dynamic change of handler ? or node that must be process differently (static, dynamic for VertexShape) ?
 
 		// Removes the resource from the manager
-		manager.remove( node );
+		manager->remove( node );
 		resource = 0;
 		vgAssertN( (resource == 0) && (castedResource==0), "Internal error." );
 	}
@@ -796,7 +796,7 @@ void VertexShape::paint( vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 		resource = castedResource;
 
 		// Adds the resource to the manager
-		manager.add( node, castedResource );
+		manager->add( node, castedResource );
 	}
 	// else reuses the resource => nothing to do
 
