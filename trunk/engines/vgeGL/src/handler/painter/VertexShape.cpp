@@ -832,8 +832,8 @@ void VertexShape::paint( vgeGL::engine::Engine * engine, vgd::node::VertexShape 
 		if ( geoMorph2 )
 		{
 			//	Gets resource associated to the geoMorph2 node
-			GLResourceType		* geoMorph2RC	= manager.get< GLResourceType >( geoMorph2 );
-			vgAssert( geoMorph2RC );
+			GLResourceType		* geoMorph2RC	= manager->get< GLResourceType >( geoMorph2 );
+			vgAssert( geoMorph2RC != 0 );
 
 			//	configureRenderingArrays
 			bindVAO(castedResource->vao);//.bind();
