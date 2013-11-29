@@ -151,7 +151,7 @@ void Engine::reset()
 
 	//
 	getGLStateStack().clear( vgd::makeShp(new GLState()) );
-	getGLSLStateStack().clear( vgd::makeShp(new GLSLState(getMaxTexUnits()) ) );
+	m_glslStateStack.clear( vgd::makeShp(new GLSLState(getMaxTexUnits()) ) );
 	getUniformState().clear();
 	m_globalGLSLState.reset();
 	setOutputBuffers();
@@ -255,14 +255,16 @@ Engine::GLStateStack& Engine::getGLStateStack()
 }
 
 
-const Engine::GLSLStateStack& Engine::getGLSLStateStack() const
+
+void Engine::pushGLSLState()
 {
-	return m_glslStateStack;
+	m_glslStateStack.push();
 }
 
-Engine::GLSLStateStack& Engine::getGLSLStateStack()
+void Engine::popGLSLState()
 {
-	return m_glslStateStack;
+	m_glslStateStack.pop();
+	m_glslStateStack.getTop()->validate(false);
 }
 
 
@@ -1134,7 +1136,7 @@ void Engine::end2DRendering( const bool popAttribs )
 
 void Engine::push()
 {
-	getGLSLStateStack().push();
+	m_glslStateStack.push();
 	getGLStateStack().push();
 
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -1152,7 +1154,7 @@ void Engine::pop()
 	glPopAttrib();
 
 	getGLStateStack().pop();
-	getGLSLStateStack().pop();
+	m_glslStateStack.pop();
 
 	getUniformState().clear(); // @todo push/pop too
 }
@@ -1183,6 +1185,18 @@ bool Engine::populateNodeRegistry()
 
 	// @todo remove this returned value
 	return true;
+}
+
+
+
+const Engine::GLSLStateStack& Engine::getGLSLStateStack() const
+{
+	return m_glslStateStack;
+}
+
+Engine::GLSLStateStack& Engine::getGLSLStateStack()
+{
+	return m_glslStateStack;
 }
 
 
