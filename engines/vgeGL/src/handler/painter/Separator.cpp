@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -67,7 +67,7 @@ void Separator::apply( vge::engine::Engine* engine, vgd::node::Node *node )
 	//
 	//vge::handler::Separator::apply( engine, separator );
 	glEngine->getGLStateStack().push();
-	glEngine->getGLSLStateStack().push();
+	glEngine->pushGLSLState();
 	// Push OpenGL part.
 	glPushAttrib( GL_ALL_ATTRIB_BITS );
 
@@ -87,7 +87,7 @@ void Separator::unapply ( vge::engine::Engine* engine, vgd::node::Node* node )
 
 	// Pop OpenGL part.
 	glPopAttrib();
-	glEngine->getGLSLStateStack().pop();
+	glEngine->popGLSLState();
 	glEngine->getGLStateStack().pop();
 	//vge::handler::Separator::unapply( glEngine, separator );
 }

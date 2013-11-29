@@ -118,7 +118,7 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 			// Updates engine glsl state
 			using vgeGL::engine::GLSLState;
 
-			engine->getGLSLStateStack().push();
+			engine->pushGLSLState();
 			GLSLState& glslState = engine->getGLSLState();
 
 			// Ask to generate new shaders
@@ -169,7 +169,7 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 
 			// Restores state
 			engine->getUniformState().removeUniform( "geoMorphWeights" );
-			engine->getGLSLStateStack().pop();
+			engine->popGLSLState();
 		}
 	}
 

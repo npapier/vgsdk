@@ -32,7 +32,8 @@ namespace vgd
 
 namespace vgeGL 
 { 
-	namespace engine { struct GLSLState; struct ProgramGenerator; } 
+	namespace engine { struct GLSLState; struct ProgramGenerator; }
+	namespace technique {struct Technique; }
 }
 
 
@@ -212,19 +213,14 @@ public:
 
 
 	/**
-	 * @brief Retrieves the GLSL state stack.
-	 *
-	 * @return the GLSL state stack
+	 * @brief Do a push on the GLSLState stack.
 	 */
-	const GLSLStateStack& getGLSLStateStack() const;
+	void pushGLSLState();
 
 	/**
-	 * @brief Retrieves the GLSL state stack.
-	 *
-	 * @return the GLSL state stack
+	 * @brief Do a pop on the GLSLState stack.
 	 */
-	GLSLStateStack& getGLSLStateStack();
-
+	void popGLSLState();
 
 
 	/**
@@ -917,6 +913,10 @@ protected:
 	bool populateNodeRegistry();
 
 
+	friend vgeGL::technique::Technique; ///< Technique have to use getGLSLStateStack()
+
+	const GLSLStateStack& getGLSLStateStack() const;	///< Retrieves the GLSL state stack
+	GLSLStateStack& getGLSLStateStack();				///< Retrieves the GLSL state stack
 
 private:
 
