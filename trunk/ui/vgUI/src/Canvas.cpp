@@ -12,7 +12,6 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
-
 #include <glo/GLSLProgram.hpp>
 
 #include <sbf/pkg/Module.hpp>
@@ -44,15 +43,20 @@ namespace vgUI
 namespace
 {
 
+static uint32					m_canvasCount	= 0;						///< Instance count of this class.
+static Canvas::GleLogSystem		m_gleLogSystem	= Canvas::GLE_FILE_IN_VAR;	///< A value from GleLogSystem enumeration to specify the log system used by gle library.
+static std::ofstream			m_gleLogFile;								///< The gle.txt file
+
+
 void logDebugVerticalSynchronizationState( Canvas * canvas )
 {
 	if ( canvas->isVerticalSynchronizationEnabled() )
 	{
-		vgLogDebug("Vertical synchronization is enabled");
+		vgLogMessage("Vertical synchronization is enabled");
 	}
 	else
 	{
-		vgLogDebug("Vertical synchronization is disabled");
+		vgLogMessage("Vertical synchronization is disabled");
 	}
 }
 
@@ -121,60 +125,29 @@ const Canvas::GleLogSystem Canvas::getGleLogSystem()
 
 
 
-Canvas::Canvas()
-:	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
-	// m_gleLogSystem
-	// m_gleLogFile
-	m_glc							( 0								),
-	m_gleContext					( getGleOutputStream()			),
-	m_sharedCanvas					( 0								),
-	m_initialVerticalSynchronization( true							),
-	m_scheduleScreenshot			( false							),
-	m_videoCapture					( false							),
-	m_debugEvents					( false							),
-	m_frameBase						( 0								),
-	m_frameTime						( -1							),
+Canvas::Canvas( const Canvas * sharedCanvas, const bool newOpenGLContextSharingObjects )
+:	vgeGL::engine::SceneManager( sharedCanvas ? sharedCanvas->getGLEngine(): vgd::makeShp(new vgeGL::engine::Engine()) ),
+	m_sharedCanvas					( sharedCanvas															),
+	//m_drawable						( 0																	),
+	m_glc							( 0																		),
+	m_gleContext					( sharedCanvas ?
+		sharedCanvas->m_gleContext : vgd::makeShp( new gle::OpenGLExtensionsGen(getGleOutputStream()) )		),
+	m_initialVerticalSynchronization( true																	),
+	m_scheduleScreenshot			( false																	),
+	m_videoCapture					( false																	),
+	m_debugEvents					( false																	),
+	m_frameBase						( 0																		),
 	// m_timeBase
-	m_fps							( -1							)
+	m_frameTime						( -1																	),
+	m_fps							( -1																	)
 {
+	vgAssertN( newOpenGLContextSharingObjects == false, "newOpenGLContextSharingObjects not yet supported" );
+
 	// Updates the number of canvas
-	vgAssertN( getCanvasCount() == 0, "Only the first canvas must be created with this constructor. Uses constructor with the following signature instead Canvas( const Canvas * )." );
 	++m_canvasCount;
 
 	// Resets the scene graph
 	privateResetSceneGraph();
-
-	// Fps
-	// setDebugOverlay( true );
-}
-
-
-
-Canvas::Canvas( const Canvas *sharedCanvas )
-:	vgeGL::engine::SceneManager( vgd::makeShp( new vgeGL::engine::Engine(sharedCanvas->getGLEngine().get()) ) ),
-	// m_gleLogSystem
-	// m_gleLogFile
-	m_glc							( 0								),
-	m_gleContext					( getGleOutputStream()			),
-	m_sharedCanvas					( sharedCanvas					),
-	m_initialVerticalSynchronization( true							),
-	m_scheduleScreenshot			( false							),
-	m_videoCapture					( false							),
-	m_debugEvents					( false							),
-	m_frameBase						( 0								),
-	m_frameTime						( -1							),
-	// m_timeBase
-	m_fps							( -1							)
-{
-	// Updates the number of canvas
-	vgAssertN( getCanvasCount() >= 1, "The first canvas must be created with the following constructor Canvas()." );
-	++m_canvasCount;
-
-	// Resets the scene graph
-	privateResetSceneGraph();
-
-	// Fps
-	// setDebugOverlay( true );
 }
 
 
@@ -216,38 +189,41 @@ void Canvas::privateResetSceneGraph()
 Canvas::~Canvas()
 {
 	// Updates the number of canvas
-	assert( m_canvasCount > 0 );
+	vgAssert( m_canvasCount > 0 );
 	--m_canvasCount;
 
-	gleSetCurrent(0);
+	uninitDevices();
+	shutdownOpenGLContext();
 }
+
 
 
 const bool Canvas::setCurrent()
 {
 	// glc is made current
-    const bool retVal = (m_glc != 0) ? (glc_set_current( m_glc ) != 0) : false;
-    if ( retVal == false )
-    {
-        vgLogDebug("glc_set_current returns false");
-    }
+	const bool retVal = (m_glc != 0) ? (glc_set_current( glc() ) != 0) : false;
+	if ( retVal == false )
+	{
+		vgLogDebug("glc_set_current returns false");
+	}
 
-    // gle must be made current
-    if ( retVal )
-    {
-        // glc context has been made current. gle must be current too.
-        if ( gleGetCurrent() != &getGleContext() )
-        {
-            gleSetCurrent( &getGleContext() );
-        }
-        //else nothing to do (already current)
-    }
-    else
-    {
-        // gle must be not current.
-        gleSetCurrent( 0 );
-    }
-    return retVal;
+	// gle must be made current
+	if ( retVal )
+	{
+		// glc context has been made current. gle must be current too.
+		if ( gleGetCurrent() != getGleContext() )
+		{
+			gleSetCurrent( getGleContext() );
+		}
+		//else nothing to do (already current)
+	}
+	else
+	{
+		// gle must be not current.
+		gleSetCurrent( 0 );
+	}
+
+	return retVal;
 }
 
 
@@ -260,7 +236,7 @@ const bool Canvas::unsetCurrent()
 	gleSetCurrent( 0 );
 #else
 	// normal code path
-	const bool retVal = (m_glc != 0) ? (glc_unset_current( m_glc ) != 0) : false;
+	const bool retVal = (m_glc != 0) ? (glc_unset_current( glc() ) != 0) : false;
 	gleSetCurrent( 0 );
 #endif
 
@@ -270,40 +246,47 @@ const bool Canvas::unsetCurrent()
 
 const bool Canvas::isCurrent() const
 {
-    return (m_glc != 0) ? (glc_is_current( m_glc ) != 0) : false;
+	if ( m_glc != 0 )
+	{
+		return glc_is_current( glc() ) != 0;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
 void Canvas::swapBuffer()
 {
-    if ( m_glc != 0 )
-    {
-        glc_swap( m_glc );
-    }
-    else
-    {
-        vgLogDebug("vgQt::Canvas::swapBuffer called without a glc context.");
-    }
+	if ( m_glc != 0 )
+	{
+		glc_swap( glc() );
+	}
+	else
+	{
+		vgLogDebug("vgQt::Canvas::swapBuffer called without a glc context.");
+	}
 }
 
 
 const bool Canvas::setFullscreen( const bool wantFullscreen )
 {
-    if ( wantFullscreen == isFullscreen() )
-    {
-        // Nothing to do
-        return true;
-    }
+	if ( wantFullscreen == isFullscreen() )
+	{
+		// Nothing to do
+		return true;
+	}
 
-    // Updates the current state.
-    if ( m_glc )
-    {
-        return glc_drawable_set_fullscreen( m_glc, wantFullscreen, false /*no action on compositing window manager*/) != 0;
-    }
-    else
-    {
-        return false;
-    }
+	// Updates the current state.
+	if ( m_glc )
+	{
+		return glc_drawable_set_fullscreen( glc(), wantFullscreen, false /*no action on compositing window manager*/) != 0;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
@@ -311,13 +294,13 @@ const bool Canvas::isFullscreen()
 {
 	if ( m_glc )
 	{
-		return glc_drawable_is_fullscreen( m_glc ) != 0;
+		return glc_drawable_is_fullscreen( glc() ) != 0;
 	}
 	else
 	{
 		return false;
 	}
-}	
+}
 
 
 void Canvas::setInitialVerticalSynchronization( const bool enabled )
@@ -329,7 +312,7 @@ void Canvas::setInitialVerticalSynchronization( const bool enabled )
 
 const bool Canvas::hasVerticalSynchronizationControl() const
 {
-	assert( isCurrent() && "OpenGL context not current" );
+	vgAssertN( isCurrent(), "OpenGL context not current" );
 
 #ifdef _WIN32
 	return isWGL_EXT_swap_control();
@@ -344,8 +327,8 @@ const bool Canvas::hasVerticalSynchronizationControl() const
 
 void Canvas::setVerticalSynchronization( const bool enabled )
 {
-	assert( hasVerticalSynchronizationControl() && "Vertical synchronization control is not available" );
-	assert( isCurrent() && "OpenGL context not current" );
+	vgAssertN( hasVerticalSynchronizationControl(), "Vertical synchronization control is not available" );
+	vgAssertN( isCurrent(), "OpenGL context not current" );
 
 #ifdef _WIN32
 	if ( isWGL_EXT_swap_control() )
@@ -354,7 +337,7 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 	}
 	else
 	{
-		vgLogDebug("WGL_EXT_swap_control not supported.");
+		vgLogMessage("WGL_EXT_swap_control not supported.");
 	}
 #elif __MACOSX__
 	#error "Platform not yet supported."
@@ -369,12 +352,12 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 		}
 		else
 		{
-			vgLogDebug("Unable to retrieve drawable");
+			vgLogMessage("Unable to retrieve drawable");
 		}
 	}
 	else
 	{
-		vgLogDebug("GLX_EXT_swap_control not supported.");
+		vgLogMessage("GLX_EXT_swap_control not supported.");
 	}
 #endif
 }
@@ -383,8 +366,8 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 
 const bool Canvas::isVerticalSynchronizationEnabled() const
 {
-	assert( hasVerticalSynchronizationControl() && "Vertical synchronization control is not available" );
-	assert( isCurrent() && "OpenGL context not current" );
+	vgAssertN( hasVerticalSynchronizationControl(), "Vertical synchronization control is not available" );
+	vgAssertN( isCurrent(), "OpenGL context not current" );
 
 #ifdef _WIN32
 	if ( isWGL_EXT_swap_control() )
@@ -394,7 +377,7 @@ const bool Canvas::isVerticalSynchronizationEnabled() const
 	}
 	else
 	{
-		vgLogDebug("WGL_EXT_swap_control not supported.");
+		vgLogMessage("WGL_EXT_swap_control not supported.");
 		return false;
 	}
 #elif __MACOSX__
@@ -412,13 +395,13 @@ const bool Canvas::isVerticalSynchronizationEnabled() const
 		}
 		else
 		{
-			vgLogDebug("Unable to retrieve drawable");
+			vgLogMessage("Unable to retrieve drawable");
 			return false;
 		}
 	}
 	else
 	{
-		vgLogDebug("GLX_EXT_swap_control not supported.");
+		vgLogMessage("GLX_EXT_swap_control not supported.");
 		return false;
 	}
 #endif
@@ -458,7 +441,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 
 		if( keyboardButtonEvent != 0 )
 		{
-			vgLogDebug(
+			vgLogMessage(
 					"KeyboardButtonEvent (%s, %s)",
 					toString( keyboardButtonEvent->getButtonID() ).c_str(),
 					toString( keyboardButtonEvent->getState() ).c_str()
@@ -466,7 +449,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( mouseButtonEvent != 0 )
 		{
-			vgLogDebug(
+			vgLogMessage(
 					"MouseButtonEvent (%s,%s)",
 					toString( mouseButtonEvent->getButtonID() ).c_str(),
 					toString( mouseButtonEvent->getState() ).c_str()
@@ -474,7 +457,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( location2Event != 0 )
 		{
-			vgLogDebug(
+			vgLogMessage(
 					"Location2Event ( previousLocation(%.2f,%.2f), location(%.2f,%.2f), size(%.2f,%.2f)",
 					location2Event->getPreviousLocation()[0],
 					location2Event->getPreviousLocation()[1],
@@ -486,7 +469,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( mouseWheelEvent != 0 )
 		{
-			vgLogDebug(
+			vgLogMessage(
 					"MouseWheelEvent (%s, %d)",
 					toString( mouseWheelEvent->getAxis() ).c_str(),
 					mouseWheelEvent->getDelta()
@@ -498,7 +481,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else
 		{
-			vgLogDebug("Unknown event");
+			vgLogMessage("Unknown event");
 		}
 	}
 }
@@ -508,7 +491,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 // @todo clean this method !!!
 void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
-	assert( isCurrent() && "OpenGL context must have been set current." );
+	vgAssertN( isCurrent(), "OpenGL context must have been set current." );
 
 	doInitialize();
 
@@ -631,7 +614,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 		bpt::ptime endPaint = bpt::microsec_clock::universal_time();
 
-		setFrameTime( (endPaint - beginPaint).total_milliseconds() );
+		setFrameTime( static_cast<int>( (endPaint - beginPaint).total_milliseconds()) );
 
 		// Computes fps
 		bpt::time_duration elapsedTimeBetweenFPSComputation = endPaint - m_timeBase;
@@ -645,12 +628,6 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			m_timeBase	= endPaint;
 		}
 
-
-/*
-		bpt::ptime endPaint = bpt::microsec_clock::universal_time();
-		m_paintDuration = endPaint - beginPaint;
-		std::cout << "paintDuration:" << m_paintDuration.total_milliseconds() << std::endl;
-*/
 		setNumberOfFrames( getNumberOfFrames()-1 );
 	}
 
@@ -670,7 +647,7 @@ void Canvas::resize( const vgm::Vec2i size )
 	vgeGL::engine::SceneManager::resize( size );
 
 	// Forward a resize notification event.
-	vgd::Shp< vgd::event::Event >	event( new vgd::event::SizeEvent(this, vgd::event::detail::GlobalButtonStateSet::get(), size) );
+	vgd::Shp< vgd::event::Event > event( new vgd::event::SizeEvent(this, vgd::event::detail::GlobalButtonStateSet::get(), size) );
 
 	fireEvent( event );
 }
@@ -716,7 +693,7 @@ void Canvas::refreshIfNeeded( const WaitType wait )
 		// Do the refresh
 
 		// Useful for debugging wrong dirty flags
-		//vgLogDebug("refreshIfNeeded(): because of node named %s\n", result->getName().c_str() );
+		//vgLogMessage("refreshIfNeeded(): because of node named %s\n", result->getName().c_str() );
 
 		refreshForced( wait );
 	}
@@ -819,9 +796,9 @@ void Canvas::setFrameTime( const int newFrameTime )
 
 
 
-gle::OpenGLExtensionsGen& Canvas::getGleContext()
+gle::OpenGLExtensionsGen * Canvas::getGleContext()
 {
-	return m_gleContext;
+	return m_gleContext ? m_gleContext.get() : 0;
 }
 
 
@@ -846,13 +823,8 @@ void Canvas::doInitialize()
 	if ( !m_bCallInitialize )
 	{
 		// First rendering, call initialize().
-		gleGetCurrent()->reportGLErrors();
-
 		initialize();
 
-		gleGetCurrent()->reportGLErrors();
-
-		//
 		m_bCallInitialize = true;
 	}
 }
@@ -861,75 +833,90 @@ void Canvas::doInitialize()
 
 const bool Canvas::startOpenGLContext()
 {
-    // Tests if glc context is already created
-    if ( m_glc == 0 )
-    {
-        // glc context is not already created, creates a new one
+	// Tests if glc context is already created
+	if ( m_glc == 0 )
+	{
+		// glc context is not already created, creates a new one
 
-        // First creates the drawable from the canvas
-        glc_drawable_t * drawable = createDrawable();
-        if ( drawable == 0 )
-        {
-            vgLogWarning("Unable to create the drawable.");
-            return false;
-        }
+		// First creates the drawable from the canvas
+		glc_drawable_t * drawable = createDrawable();
+		//m_drawable = drawable;
+		if ( drawable == 0 )
+		{
+			vgLogWarning("Unable to create the drawable.");
+			return false;
+		}
 
-        // Sets the desired property for the context
-        const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
-        drawable->stereo = requestedProperties.enableQuadBufferStereo();
+		// Sets the desired property for the context
+		const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
+		drawable->stereo = requestedProperties.enableQuadBufferStereo();
 
-        // Next, creates the glc context (shared or not)
-        m_glc = glc_create_shared( drawable, m_sharedCanvas ? m_sharedCanvas->m_glc : 0 );
+		// Next, creates the glc context (shared or not)
+		if ( m_sharedCanvas )
+		{
+			// Create a new glc sharing the given OpenGL rendering context
+			m_glc = glc_create( drawable, m_sharedCanvas->glc() );
+		}
+		else
+		{
+			m_glc = glc_create( drawable );
+		}
 
-        if ( m_glc == 0 )
-        {
-            destroyDrawable( drawable );
-            vgLogWarning("Unable to create the glc context.");
-            return false;
-        }
-			
-        vgLogMessage("glc context successfully created.");
+		if ( m_glc == 0 )
+		{
+			destroyDrawable( drawable );
+			//m_drawable = 0;
+			vgLogWarning("Unable to create the glc context.");
+			return false;
+		}
 
-        // Next, mades the glc context current
-        const bool isGLCCurrent = glc_set_current( m_glc ) != 0;
-        assert( isGLCCurrent && "Unable to set glc context current. This is not expected !!!" );
+		vgLogMessage("glc context successfully created.");
 
-        vgLogMessage("glc context made current.");
+		// Next, mades the glc context current
+		const bool isGLCCurrent = setCurrent();
+		if ( !isGLCCurrent )
+		{
+			vgLogWarning( "Unable to set glc context current. This is not expected !!!" );
+			return false;
+		}
 
-        // Analyses current OpenGL context
-        GLboolean glbool;
-        glGetBooleanv( GL_STEREO, &glbool );
-        if ( glbool )
-        {
-            vgLogMessage("OpenGL context with stereo support");
-            m_currentGLContextProperties = vgeGL::engine::GLContextProperties(true);
-        }
-        else
-        {
-            m_currentGLContextProperties = vgeGL::engine::GLContextProperties(false);
-            vgLogMessage("OpenGL context without stereo support");
-        }
-        m_hasCurrentGLContextProperties = true;
+		vgLogMessage("glc context made current.");
 
-        // Finally, initializes gle and sets it current
-        vgLogMessage("Start gle initialization...");
-        getGleContext().clear();
-        getGleContext().initialize();
-        vgLogMessage("gle initialization successfully completed.");
+		// Analyses current OpenGL context
+		GLboolean glbool;
+		glGetBooleanv( GL_STEREO, &glbool );
+		if ( glbool )
+		{
+			vgLogMessage("OpenGL context with stereo support");
+			m_currentGLContextProperties = vgeGL::engine::GLContextProperties(true);
+		}
+		else
+		{
+			m_currentGLContextProperties = vgeGL::engine::GLContextProperties(false);
+			vgLogMessage("OpenGL context without stereo support");
+		}
+		m_hasCurrentGLContextProperties = true;
 
-        gleSetCurrent( &getGleContext() );
+		// Finally, initializes gle and sets it current
+// @todo only if not already done
+		vgLogMessage("Start gle initialization...");
+		getGleContext()->clear();
+		getGleContext()->initialize();
+		vgLogMessage("gle initialization successfully completed.");
 
-        assert( isCurrent() && "Internal error." );
+		gleSetCurrent( getGleContext() );
 
-        return true;
-    }
-    else
-    {
-        // glc context is already created
-        const bool retVal = setCurrent();
+		vgAssertN( isCurrent(), "Internal error." );
 
-        return retVal;
-    }
+		return true;
+	}
+	else
+	{
+		// glc context is already created
+		const bool retVal = setCurrent();
+
+		return retVal;
+	}
 }
 
 
@@ -938,12 +925,11 @@ const bool Canvas::shutdownOpenGLContext()
 	if ( m_glc != 0 )
 	{
 		// Cleans gle context
-		getGleContext().clear();
 		gleSetCurrent(0);
-		vgLogDebug("gle context cleaned.");
+		vgLogDebug("gle context unset current.");
 
 		// Deletes glc context
-		glc_destroy( m_glc );
+		glc_destroy( glc() );
 		m_glc = 0;
 		vgLogDebug("glc context deleted.");
 
@@ -961,7 +947,7 @@ const bool Canvas::hasAnOpenGLContext() const
 	return m_glc != 0;
 }
 
-	
+
 const bool Canvas::startVGSDK()
 {
 	if ( startOpenGLContext() == false )
@@ -972,17 +958,15 @@ const bool Canvas::startVGSDK()
 		return false;
 	}
 
-	assert( isCurrent() && "OpenGL context must have been set current." );
+	vgAssertN( isCurrent(), "OpenGL context must have been set current." );
 
 	using boost::logic::indeterminate;
 	if ( indeterminate( hasVGSDK() ) )
 	{
 		vgLogMessage("Start vgSDK...");
 
-		// Checks OpenGL requirements for vgsdk
-		// Two modes :
-		// - "compatibility" mode requested by disabling GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 2.0
-		// - full mode requested by enabled GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 3.0).
+		// Checks OpenGL requirements for vgsdk, i.e
+		// full mode requested by enabled GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 4.2).
 
 		//vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 		//vgLogMessage3("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
@@ -1009,12 +993,12 @@ const bool Canvas::startVGSDK()
 		else
 		{
 			// Checks full mode
-			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 3.3, GLSL version >= 3.3)...");
+			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 4.2, GLSL version >= 4.2)...");
 			vgLogMessage("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 			vgLogMessage("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
 
-			if (	vgm::greaterThanEqual(gleGetOpenGLVersion(), 3.3f) &&
-					vgm::greaterThanEqual(gleGetGLSLVersion(), 3.3f) )
+			if (	vgm::greaterThanEqual(gleGetOpenGLVersion(), 4.2f) &&
+					vgm::greaterThanEqual(gleGetGLSLVersion(), 4.2f) )
 			{
 				vgLogMessage("You have the full requirements for vgsdk.");
 				m_hasVGSDK = true;
@@ -1028,10 +1012,12 @@ const bool Canvas::startVGSDK()
 		}
 
 		// Initializes vgeGL
+// @todo only for the first canvas
 		getGLEngine()->reset();
 
 		// FIXME
 		///@todo Remove setToDefaults().
+// @todo only for the first canvas
 		getGLEngine()->setToDefaults();
 
 		// Theses two lines must go in setToDefaults()
@@ -1055,25 +1041,25 @@ const bool Canvas::startVGSDK()
 				{
 					if ( m_initialVerticalSynchronization )
 					{
-						vgLogDebug("Enables vertical synchronization");
+						vgLogMessage("Enables vertical synchronization");
 					}
 					else
 					{
-						vgLogDebug("Disables vertical synchronization");
+						vgLogMessage("Disables vertical synchronization");
 					}
 				}
 				else
 				{
-					vgLogDebug("Unable to modify the vertical synchronization.");
-					vgLogDebug("Checks 'Wait for vertical refresh' or something similar in the settings of your graphic card.");
-					vgLogDebug("It is certainly set to 'Always off' or 'Always on'");
+					vgLogMessage("Unable to modify the vertical synchronization.");
+					vgLogMessage("Checks 'Wait for vertical refresh' or something similar in the settings of your graphic card.");
+					vgLogMessage("It is certainly set to 'Always off' or 'Always on'");
 				}
 			}
 			// else nothing to do
 		}
 		else
 		{
-			vgLogDebug("No control of the vertical synchronization (EXT_swap_control)");
+			vgLogMessage("No control of the vertical synchronization (EXT_swap_control)");
 		}
 
 		//
@@ -1097,78 +1083,85 @@ const bool Canvas::shutdownVGSDK()
 	}
 
 	//
+	uninitDevices();
+
+	//
 	if ( indeterminate(hasVGSDK()) )
 	{
 		// Nothing to do
 		vgLogDebug/*logMessage*/("vgSDK shutdown: nothing to do, because already shutdown or never started.\n");
+
+		//
+		shutdownOpenGLContext();
 
 		return false;
 	}
 	else if ( !hasVGSDK() )
 	{
 		// Nothing to do
-		shutdownOpenGLContext();
-
 		vgLogDebug/*logMessage*/("vgSDK shutdown: nothing to do, because vgSDK startup failed. Checks OpenGL requirements.\n");
+
+		//
+		shutdownOpenGLContext();
 
 		m_hasVGSDK = boost::logic::indeterminate;
 		return false;
 	}
-
-	m_hasVGSDK = boost::logic::indeterminate;
-
-	// Do the shutdown
-	vgLogDebug/*logMessage*/("Shutdown vgSDK...");
-
-	// Last canvas is about to be destroy
-	if ( m_canvasCount == 1 )
+	else
 	{
-		if ( startOpenGLContext() )
+		vgAssert( hasVGSDK() );
+		m_hasVGSDK = boost::logic::indeterminate;
+
+		// Do the shutdown
+		vgLogDebug/*logMessage*/("Shutdown vgSDK...");
+
+		if ( m_canvasCount >= 2 )
 		{
-			assert( isCurrent() && "OpenGL context must have been set current. So OpenGL objects could not be released properly." );
+			// There are at least two canvas
 
-			// Try to destroy OpenGL objects
-			vgLogDebug/*logMessage*/("Releases managed OpenGL objects...\n");
+			// gle context and OpenGL engine are shared.
 
-			getGLEngine()->getGLManager()->clear();
-
-			::glo::GLSLProgram::useFixedPaths();
-			getGLEngine()->getGLSLManager()->clear();
-
-			//
+			// Only shutdown OpenGL context (i.e drawable and OpenGL context if not shared, unset gle context).
 			shutdownOpenGLContext();
 
-			vgLogDebug("vgSDK shutdown completed.\n");
-			return true;
+			vgLogMessage("vgSDK shutdown completed (delayed to the last canvas).\n");
+			return false;
 		}
 		else
 		{
-			// No current OpenGL context
-			vgLogDebug/*logWarning*/("No current OpenGL context.");
-			vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+			vgAssert( m_canvasCount == 1 );
 
-			// Try to destroy OpenGL objects
-			vgLogDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
+			if ( startOpenGLContext() )
+			{
+				vgAssertN( isCurrent(), "OpenGL context must have been set current. So OpenGL objects could not be released properly." );
 
-			getGLEngine()->getGLManager()->clear();
+				// OpenGL engine
+				// Try to destroy OpenGL objects
+				vgLogDebug/*logMessage*/("Releases managed OpenGL objects...\n");
 
-			//::glo::GLSLProgram::useFixedPaths();
-			getGLEngine()->getGLSLManager()->clear();
+				getGLEngine()->getGLManager()->clear();
 
-			//
-			shutdownOpenGLContext();
+				::glo::GLSLProgram::useFixedPaths();
+				getGLEngine()->getGLSLManager()->clear();
 
-			vgLogDebug("vgSDK shutdown finished, but not completed.\n");
-			return false;
+				shutdownOpenGLContext();
+
+				vgLogMessage("vgSDK shutdown completed.\n");
+				return true;
+			}
+			else
+			{
+				// No current OpenGL context
+				vgLogDebug/*logWarning*/("No current OpenGL context.");
+				vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
+
+				//
+				shutdownOpenGLContext();
+
+				vgLogMessage("vgSDK shutdown finished, but not completed.\n");
+				return false;
+			}
 		}
-	}
-	else
-	{
-		// Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
-		shutdownOpenGLContext();
-
-		vgLogDebug("vgSDK shutdown completed (delayed to the last canvas).\n");
-		return false;
 	}
 }
 
@@ -1253,17 +1246,6 @@ void Canvas::updateFPSOverlay()
 
 
 
-uint32 Canvas::m_canvasCount = 0;
-
-
-Canvas::GleLogSystem Canvas::m_gleLogSystem = GLE_FILE_IN_VAR;
-
-
-
-std::ofstream Canvas::m_gleLogFile;
-
-
-
 std::ostream* Canvas::getGleOutputStream()
 {
 	const GleLogSystem currentGleLogSystem = getGleLogSystem();
@@ -1295,7 +1277,7 @@ std::ostream* Canvas::getGleOutputStream()
 	}
 	else
 	{
-		assert( false && "vgUI::Canvas: Unsupported gle log system." );
+		vgAssertN( false, "vgUI::Canvas: Unsupported gle log system." );
 		return &std::cout;
 	}
 }
@@ -1305,6 +1287,15 @@ boost::filesystem::path Canvas::getGlePath()
 {
 	return sbf::pkg::Module::get()->getPathSafe(sbf::pkg::VarPath);
 }
+
+
+
+glc_t * Canvas::glc() const
+{
+	vgAssert( m_glc != 0);
+	return m_glc;
+}
+
 
 
 } // namespace vgUI
