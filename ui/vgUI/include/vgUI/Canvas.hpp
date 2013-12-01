@@ -21,15 +21,14 @@
 
 #include "vgUI/vgUI.hpp"
 
-namespace vgd { 
-	namespace basic {
-		struct Image; 
-	}
-
-	namespace node 	{
+namespace vgd 
+{ 
+	namespace basic { struct Image; }
+	namespace node
+	{
 		struct LayerPlan;
 		struct MultiSwitch;
-	} 
+	}
 }
 
 
@@ -93,25 +92,19 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 
 
 	/**
-	 * @name	Constructors and destructor
+	 * @name Constructors and destructor
 	 */
 	//@{
-	/**
-	 * @brief	Construct a Canvas with its own OpenGL context.
-	 *
-	 * @pre		getCanvasCount() == 0
-	 * @post	getCanvasCount() == 1
-	 */
-	Canvas();
 
 	/**
-	 * @brief	Construct a Canvas with its own OpenGL context, but that share OpenGL objects with another(s) Canvas.
+	 * @brief Construct a Canvas
 	 *
-	 * @param	sharedCanvas	a pointer to another Canvas for OpenGL objects sharing
+	 * @param sharedCanvas						0 to construct a Canvas with its own engine and OpenGL context, otherwise construct a Canvas sharing resources. See newOpenGLContextSharingObjects parameter to control what resources are shared.
+	 * @param newOpenGLContextSharingObjects	true to create a new OpenGL context sharing objects with the given canvas, false to reuse the OpenGL context.
 	 *
-	 * @pre	getCanvasCount() >= 1
+	 * @remark The Engine is always shared.
 	 */
-	Canvas( const Canvas * sharedCanvas );
+	Canvas( const Canvas * sharedCanvas = 0, const bool newOpenGLContextSharingObjects = false );
 
 	/**
 	 * @brief	Virtual destructor
@@ -629,7 +622,7 @@ protected:
 
 
 	// @todo documentation
-	gle::OpenGLExtensionsGen& getGleContext();
+	gle::OpenGLExtensionsGen * getGleContext();
 
 
 	// Overridden
@@ -640,8 +633,6 @@ protected:
 
 private:
 
-	gle::OpenGLExtensionsGen	m_gleContext;	///< gle main object to be able to access OpenGL extensions.
-
 	/**
 	 * @brief Resets scene graph
 	 */
@@ -651,10 +642,6 @@ private:
 	 * @brief Updates the layer plan used by fps overlay.
 	 */
 	void updateFPSOverlay();
-
-	static uint32			m_canvasCount;	///< Instance count of this class.
-	static GleLogSystem		m_gleLogSystem;	///< A value from GleLogSystem enumeration to specify the log system used by gle library.
-	static std::ofstream	m_gleLogFile;	///< The gle.txt file
 
 	/**
 	 * @brief Returns the output stream associated to the gle log system.
@@ -667,14 +654,24 @@ protected:
 	const Canvas *		m_sharedCanvas;						///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 private:
 
-    glc_t *				m_glc;								///< The GL context.
+	//glc_drawable_t *						m_drawable;		///< The drawable associated to the canvas window
+	glc_t *									m_glc;			///< The GL context
+	vgd::Shp< gle::OpenGLExtensionsGen >	m_gleContext;	///< gle main object to be able to access OpenGL extensions
+
+	glc_t * glc() const;
+
+	// VSYNC
 	bool				m_initialVerticalSynchronization;	///< the initial vertical synchronization state of this canvas
 
+	// SCREENSHOT
 	bool				m_scheduleScreenshot;				///< Boolean value telling if a screen capture should be done at the end of next rendering.
 	std::string			m_screenshotPath;					///< path used for the screenshot
 	std::string			m_screenshotFilename;				///< name of file used for the screenshot
+
+	// VIDEO
 	bool				m_videoCapture;						///< Boolean value telling if the video capture is enabled.
 
+	//
 	bool				m_debugEvents;						///< Boolean value telling if events should be debugged or not.
 
 protected: // @todo FIXME
@@ -687,9 +684,9 @@ private:
 	 */
 	//@{
 	uint						m_frameBase;
-	int							m_frameTime;	///< the time taken to render the last frame
-
 	boost::posix_time::ptime	m_timeBase;
+
+	int							m_frameTime;	///< the time taken to render the last frame
 	int							m_fps;
 	//@}
 };
