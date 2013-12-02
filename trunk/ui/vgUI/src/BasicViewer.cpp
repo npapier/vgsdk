@@ -300,6 +300,12 @@ const vgd::Shp< vgd::node::Group > BasicViewer::getScene() const
 	return m_scene;
 }
 
+void BasicViewer::setScene( const vgd::Shp< vgd::node::Group > newScene )
+{
+	// Inserts the new scene group at the same place as the previous one.
+	getRoot()->replaceChild( m_scene, newScene );
+	m_scene = newScene;
+}
 
 
 vgd::Shp< vgd::node::MultiSwitch > BasicViewer::getOverlayContainer()
