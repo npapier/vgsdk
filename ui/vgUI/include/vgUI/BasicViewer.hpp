@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2008, 2009, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -152,6 +152,11 @@ struct VGUI_API BasicViewer : public Canvas
 	vgd::Shp< vgd::node::Group > getScene();
 
 	const vgd::Shp< vgd::node::Group > getScene() const;
+
+	/**
+	 * @brief	Assigns a new scene group, replacing the previous one.
+	 */
+	void setScene( const vgd::Shp< vgd::node::Group > );
 
 	/**
 	 * @brief Returns the overlay container node
