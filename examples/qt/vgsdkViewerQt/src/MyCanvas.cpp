@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, Guillaume Brocker, Nicolas Papier, Bryan Schuller.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Guillaume Brocker, Nicolas Papier, Bryan Schuller.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -8,14 +8,20 @@
 #include "vgsdkViewerQt/MyCanvas.hpp"
 
 #include <vgeGL/technique/MultiMain.hpp>
-
+#include <vgd/node/Antialiasing.hpp>
+#include <vgd/node/Box.hpp>
+//#include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/DrawStyle.hpp>
+#include <vgd/node/EngineProperties.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/ClearFrameBuffer.hpp>
+#include <vgeGL/event/RefresherCallback.hpp>
+#include <vgeGL/event/TimerEventProcessor.hpp>
 
 #ifdef MY_WORK
-#include "vgsdkViewerQt/my.hpp"
+//#include "vgsdkViewerQt/my.hpp"
 #endif
+
 
 
 namespace vgsdkViewerQt
@@ -24,21 +30,18 @@ namespace vgsdkViewerQt
 
 MyCanvas::MyCanvas()
 {
-	initialize();
 }
 
 
 MyCanvas::MyCanvas( const MyCanvas * sharedCanvas )
 : vgQt::BasicManipulator( sharedCanvas, 0 )
 {
-	initialize();
 }
 
 
 void MyCanvas::initialize()
 {
-	// Scene graph initialization.
-	createOptionalNode( LIGHTS );
+	// Scene graph initialization
 
 	// Draw style
 	using vgd::node::DrawStyle;
@@ -47,12 +50,21 @@ void MyCanvas::initialize()
 
 	using vgd::node::LightModel;
 	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( createOptionalNode( LIGHT_MODEL ) );
+	lightModel->setOptionalsToDefaults();
 	lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
 	lightModel->setViewer( LightModel::AT_EYE );
+	lightModel->setShadow( LightModel::SHADOW_OFF );
 
 	using vgd::node::ClearFrameBuffer;
 	vgd::Shp< ClearFrameBuffer > clear = createOptionalNodeAs< ClearFrameBuffer >( CLEAR_FRAME_BUFFER );
 	//clear->setClear( ClearFrameBuffer::COLOR, vgm::Vec4f(0.1f, 0.f, 0.f, 0.f) );
+
+	using vgd::node::EngineProperties;
+	vgd::Shp< EngineProperties > engineProperties = vgd::dynamic_pointer_cast< EngineProperties >( createOptionalNode( ENGINE_PROPERTIES ) );
+
+	using vgd::node::Antialiasing;
+	vgd::Shp< Antialiasing > antialiasing = Antialiasing::create("ANTIALIASING");
+	getSetup()->addChild( antialiasing );
 
 	// Get the reference of the default technique
 	m_viewModeTechniques.resize( VIEW_MODE_COUNT );
@@ -61,15 +73,6 @@ void MyCanvas::initialize()
 	m_viewModeTechniques[ SQUARED_VIEWS ]		= createMultiViewSquaredTechnique();
 
 	// setViewMode( SINGLE_VIEW );
-
-	// Default light configuration
-	using vgd::node::Switch;
-	vgd::Shp< Switch > lightSwitcher = vgd::dynamic_pointer_cast<Switch>( getOptionalNode(LIGHTS) );
-
-	if ( lightSwitcher )
-	{
-		lightSwitcher->setWhichChild( 0 );
-	}
 
 	// STEREO
 	//setRequestedGLContextProperties( vgeGL::engine::GLContextProperties(true) );
@@ -81,15 +84,24 @@ void MyCanvas::initialize()
 
 #ifdef MY_WORK
 	//
-	initializeShadowScene( this );
+	//initializeShadowScene( this );
 #endif
 
-	destroyOptionalNode( vgQt::BasicManipulator::LIGHTS );
+	// Default scene
+	vgd::Shp< vgd::node::Box > box = vgd::node::Box::create("Default scene");
+	getScene()->addChild( box );
+
+	//	Default light configuration
 	using vgd::node::Switch;
-	/*vgd::Shp< Switch >*/ lightSwitcher = createOptionalNodeAs<Switch>( vgQt::BasicManipulator::LIGHTS );
+	vgd::Shp< Switch > lightSwitcher = vgd::dynamic_pointer_cast<Switch>( createOptionalNode(LIGHTS) );
+
+	// LIGHTS node is the first child of the setup group			@todo menu to switch between LIGHTS located on the camera (set in the camera) or located in the scene (set in the scene)
+	getSetup()->removeChild( lightSwitcher );
+	getSetup()->insertChild( lightSwitcher );
+
 	if ( lightSwitcher )
 	{
-		lightSwitcher->setWhichChild( 1 );
+		lightSwitcher->setWhichChild( 0 );
 	}
 
 	viewAll();
@@ -100,20 +112,25 @@ void MyCanvas::initialize()
 void MyCanvas::keyPressEvent(QKeyEvent * event)
 {
 	using vgd::node::Switch;
+
 	// L : switch to next light(s) configuration
 	vgd::Shp< Switch > lightSwitcher = vgd::dynamic_pointer_cast<Switch>( getOptionalNode(LIGHTS) );
 	if ( lightSwitcher != 0 && event->key() == Qt::Key_L )
 	{
 		int whichChild = lightSwitcher->getWhichChild();
-		if ( whichChild == lightSwitcher->getNumChildren() - 1 )
+		const int incr = ( event->modifiers() == Qt::ShiftModifier ) ? -1 : 1;
+
+		whichChild += incr;
+		const int clampWhichChild = vgm::clamp(whichChild, 0, lightSwitcher->getNumChildren() - 1 );
+		if ( clampWhichChild == whichChild )
 		{
-			whichChild = 0;
+			destroyOptionalNode( vgQt::BasicManipulator::LIGHTS );
+			lightSwitcher = createOptionalNodeAs<Switch>( vgQt::BasicManipulator::LIGHTS );
+			getSetup()->removeChild( lightSwitcher );
+			getSetup()->insertChild( lightSwitcher );
 		}
-		else
-		{
-			++whichChild;
-		}
-		lightSwitcher->setWhichChild( whichChild );
+
+		lightSwitcher->setWhichChild( clampWhichChild );
 		refresh( REFRESH_FORCE, SYNCHRONOUS );
 	}
 
@@ -122,6 +139,107 @@ void MyCanvas::keyPressEvent(QKeyEvent * event)
 	{
 		setDebugOverlay( !isDebugOverlay() );
 		refresh( REFRESH_FORCE, SYNCHRONOUS );
+	}
+
+
+	// Rendering properties
+	using vgd::node::DrawStyle;
+	vgd::Shp< DrawStyle > drawStyle = findFirstByType<DrawStyle>();
+
+	using vgd::node::LightModel;
+	vgd::Shp< LightModel > lightModel = findFirstByType<LightModel>();
+
+	using vgd::node::EngineProperties;
+	vgd::Shp< EngineProperties > engineProperties = findFirstByType<EngineProperties>();
+
+	// W: smooth <=> wireframe
+	if ( event->key() == Qt::Key_W )
+	{
+		if ( drawStyle )
+		{
+			DrawStyle::ShapeValueType value = DrawStyle::DEFAULT_SHAPE;
+			drawStyle->getShape( value );
+			value = (value == DrawStyle::DEFAULT_SHAPE) ? DrawStyle::WIREFRAME : DrawStyle::DEFAULT_SHAPE;
+			drawStyle->setShape( value );
+			refresh( REFRESH_FORCE, SYNCHRONOUS );
+		}
+	}
+
+	// N: draw normals/tangents
+	if ( event->key() == Qt::Key_N )
+	{
+		if ( drawStyle )
+		{
+			DrawStyle::NormalLengthValueType nvalue = DrawStyle::DEFAULT_NORMALLENGTH;
+			drawStyle->getNormalLength( nvalue );
+			nvalue = (nvalue == DrawStyle::DEFAULT_NORMALLENGTH) ? 1.f : DrawStyle::DEFAULT_NORMALLENGTH;
+			drawStyle->setNormalLength( nvalue );
+
+			DrawStyle::TangentLengthValueType tvalue = DrawStyle::DEFAULT_TANGENTLENGTH;
+			drawStyle->getTangentLength( tvalue );
+			tvalue = (tvalue == DrawStyle::DEFAULT_TANGENTLENGTH) ? 1.f : DrawStyle::DEFAULT_TANGENTLENGTH;
+			drawStyle->setTangentLength( tvalue );
+
+			refresh( REFRESH_FORCE, SYNCHRONOUS );
+		}
+	}
+
+	// B: bumpmapping OFF <=> ON
+	if ( event->key() == Qt::Key_B )
+	{
+		if ( lightModel )
+		{
+			LightModel::BumpMappingValueType value = LightModel::DEFAULT_BUMPMAPPING;
+			value = lightModel->getBumpMapping();
+			value = (value == LightModel::DEFAULT_BUMPMAPPING) ? true : LightModel::DEFAULT_BUMPMAPPING;
+			lightModel->setBumpMapping( value );
+			refresh( REFRESH_FORCE, SYNCHRONOUS );
+		}
+	}
+
+	// T: tessellation OFF <=> ON
+	if ( event->key() == Qt::Key_T )
+	{
+		if ( engineProperties )
+		{
+			EngineProperties::TessellationValueType value = EngineProperties::DEFAULT_TESSELLATION;
+			value = engineProperties->getTessellation();
+			value = (value == EngineProperties::DEFAULT_TESSELLATION) ? true : EngineProperties::DEFAULT_TESSELLATION;
+			engineProperties->setTessellation( value );
+			refresh( REFRESH_FORCE, SYNCHRONOUS );
+		}
+	}
+
+
+	// S: shadow 9U <=> OFF
+	if ( event->key() == Qt::Key_S )
+	{
+		if ( lightModel )
+		{
+			LightModel::ShadowValueType value = LightModel::DEFAULT_SHADOW;
+			lightModel->getShadow( value );
+			value = (value == LightModel::DEFAULT_SHADOW) ? LightModel::SHADOW_MAPPING_9U : LightModel::DEFAULT_SHADOW;
+			lightModel->setShadow( value );
+			refresh( REFRESH_FORCE, SYNCHRONOUS );
+		}
+	}
+
+
+	// R: continuous refresh
+	if ( event->key() == Qt::Key_R )
+	{
+		using vgeGL::event::RefresherCallback;
+
+		vgd::Shp< vgeGL::event::RefresherCallback > refresher = getTimerEventProcessor()->find< RefresherCallback >();
+		if ( refresher )
+		{
+			getTimerEventProcessor()->remove( refresher );
+		}
+		else
+		{
+			vgd::Shp< RefresherCallback > refresher( new RefresherCallback() );
+			getTimerEventProcessor()->add( refresher );
+		}
 	}
 }
 
@@ -136,6 +254,7 @@ const bool MyCanvas::appendToScene( const QString filename, const bool viewAllAf
 		refresh( REFRESH_FORCE, SYNCHRONOUS );
 		m_filenames.append(filename);
 	}
+
 	return retVal;
 }
 
@@ -160,6 +279,8 @@ const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool v
 	}
 	return retVal;
 }
+
+
 
 
 const bool MyCanvas::isEmpty() const
