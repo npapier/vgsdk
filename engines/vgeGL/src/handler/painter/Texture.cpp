@@ -166,10 +166,6 @@ void Texture::paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *p
 
 		if ( isGL_SGIS_generate_mipmap() )
 		{
-			#ifdef _DEBUG
-			vgLogDebug("vgeGL.Texture: GL_SGIS_generate_mipmap detected and used.");
-			#endif
-
 			pResource->setAutomaticMipmapGenerationEnabled( bMipmap );
 		}
 		else
