@@ -177,6 +177,7 @@ struct VGUI_API BasicViewer : public Canvas
 	//@{
 	enum OptionalNodeType
 	{
+		ANTIALIASING,		///< Antialiasing optional node
 		CLEAR_FRAME_BUFFER,	///< ClearFrameBuffer optional node
 		DRAW_STYLE,			///< DrawStyle optional node
 		LIGHT_MODEL,		///< LightModel optional node

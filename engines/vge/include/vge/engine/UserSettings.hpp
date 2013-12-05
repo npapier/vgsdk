@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, 2013, Guillaume Brocker, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -34,7 +34,9 @@ struct SceneManager;
 struct VGE_API UserSettings
 {
 	/**
-	 * @brief	Constructor
+	 * @brief	Default constructor
+	 *
+	 * Using this constructor, the details level will be left unsed.
 	 */
 	UserSettings();
 
@@ -42,15 +44,49 @@ struct VGE_API UserSettings
 	 * @brief	Constructor
 	 *
 	 * @param	sm a scene manager used to initial the level
+	 *
+	 * Initializes the user settings level according to the configuration of the given scene manager.
 	 */
 	UserSettings( const vge::engine::SceneManager & sm );
 
+	/**
+	 * @brief	Constructor
+	 *
+	 * @param	sm a scene manager used to initial the level
+	 *
+	 * Initializes the user settings level according to the configuration of the given scene manager.
+	 */
+	UserSettings( const vgd::Shp< const vge::engine::SceneManager > sm );
+
+
+	/**
+	 * @name	Scene manager configuration
+	 */
+	//{@
+	/**
+	 * @brief	Apply the settings on the given scene manager.
+	 *
+	 * @param	sm	a scene manager to reconfigure
+	 *
+	 * @return	a reference to the user settings instance
+	 */
+	const UserSettings & apply( vge::engine::SceneManager & ) const;
 
 	/**
 	 * @brief	Apply the settings on the given scene manager.
+	 *
+	 * @param	sm	a scene manager to reconfigure
+	 *
+	 * @return	a reference to the user settings instance
 	 */
-	void apply( vge::engine::SceneManager & ) const;
+	const UserSettings & apply( vgd::Shp< vge::engine::SceneManager > ) const;
+	//@}
 
+
+	/**
+	 * @name	Properties retrieval
+	 */
+	//@{
 	/**
 	 * @brief	Retrieves the description of a given level.
 	 *
@@ -99,23 +135,56 @@ struct VGE_API UserSettings
 
 		return result;
 	}
+	//@}
 
+
+	/**
+	 * @name	Detail level assignment
+	 */
+	//@{
 	/**
 	 * @brief	Assigns a new detail level
 	 *
 	 * @remark if level >= getLevelCount() then the greatest level available is used (i.e. getLevelCount()-1).
 	 */
-	void setLevel( const int level );
+	UserSettings & setLevel( const int level );
 
 	/**
-	 * @brief	Assigns a new detail level based on the configuration of the given scene graph.
+	 * @brief	Assigns a new detail level based on the configuration of the given scene manager.
+	 *
+	 * @param	sm	a scene manager whose configuration will be used to determine the user settings level
+	 *
+	 * @return	a reference to the user settings instance
 	 */
-	void setLevel( const vge::engine::SceneManager & );
+	UserSettings & setLevel( const vge::engine::SceneManager & sm );
+
+	/**
+	 * @brief	Assigns a new detail level based on the configuration of the given scene manager.
+	 *
+	 * @param	sm	a scene manager whose configuration will be used to determine the user settings level
+	 *
+	 * @return	a reference to the user settings instance
+	 */
+	UserSettings & setLevel( const vgd::Shp< const vge::engine::SceneManager > sm );
+
+	/**
+	 * @brief	Assigns a new detail level to the maximum possible value.
+	 *
+	 * @return	a reference to the user settings instance
+	 */
+	UserSettings & setMaxLevel();
 
 	/**
 	 * @brief	Assigns a graphic card that will be used to determine the appropriate defailt level
+	 *
+	 * @param	card	a string containing a card name
+	 *
+	 * @return	a reference to the user settings instance
+	 *
+	 * @see		getGraphicCards
 	 */
-	void setGraphicCard( const std::string & card );
+	UserSettings & setGraphicCard( const std::string & card );
+	//@}
 
 private:
 

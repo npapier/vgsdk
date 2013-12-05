@@ -246,6 +246,9 @@ vgd::Shp< vgd::node::Group > createMaterial( const vgio::Media & media, const bo
 
 		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( media, pathFilename, 0, str, mapU, mapV );
 		group->addChild( texture );
+
+		// Forces the diffuse color to white.
+		material->setDiffuse( vgm::Vec3f(1.f,1.f,1.f) );
 	}
 
 	// NORMALMAP TEXTURE
