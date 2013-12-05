@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,6 +6,7 @@
 
 #include "vgUI/BasicViewer.hpp"
 
+#include <vgd/node/Antialiasing.hpp>
 #include <vgd/node/Camera.hpp>
 #include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/DirectionalLight.hpp>
@@ -331,6 +332,13 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 	{
 		switch( type )
 		{
+		case ANTIALIASING:
+		{
+			existingNode = vgd::node::Antialiasing::create("ANTIALIASING");
+			getSetup()->addChild( existingNode );
+		}
+		break;
+
 		case CLEAR_FRAME_BUFFER:
 		{
 			vgd::Shp< vgd::node::ClearFrameBuffer > clearFrameBuffer = vgd::node::ClearFrameBuffer::create("CLEAR_FRAME_BUFFER");
@@ -513,6 +521,10 @@ const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const Option
 	
 	switch( type )
 	{
+		case ANTIALIASING:
+			optionalNodeName = "ANTIALIASING";
+			break;
+
 		case CLEAR_FRAME_BUFFER:
 			optionalNodeName = "CLEAR_FRAME_BUFFER";
 			break;

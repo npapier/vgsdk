@@ -76,14 +76,23 @@ UserSettings::UserSettings( const vge::engine::SceneManager & sm )
 
 
 
-void UserSettings::apply( vge::engine::SceneManager & sm ) const
+UserSettings::UserSettings( const vgd::Shp< const vge::engine::SceneManager > sm )
+:	m_level( -1 )
+{
+	loadLevels();
+	setLevel( sm );
+}
+
+
+
+const UserSettings & UserSettings::apply( vge::engine::SceneManager & sm ) const
 {
 	namespace bpt = boost::property_tree;
 
 	// Skips when no level has been set.
 	if( m_level == -1 )
 	{
-		return;
+		return *this;
 	}
 
 	// Moves to the right sub-tree.
@@ -156,6 +165,16 @@ void UserSettings::apply( vge::engine::SceneManager & sm ) const
 	{
 		vgAssert( "No Antialiasing node in scene graph." );
 	}
+
+	// Job's done.
+	return *this;
+}
+
+
+
+const UserSettings & UserSettings::apply( vgd::Shp< vge::engine::SceneManager > sm ) const
+{
+	return apply( *(sm.get()) );
 }
 
 
@@ -257,7 +276,7 @@ void UserSettings::loadLevels()
 
 
 
-void UserSettings::setGraphicCard( const std::string & card )
+UserSettings & UserSettings::setGraphicCard( const std::string & card )
 {
 	CardContainer::iterator found = m_cards.find(card);
 
@@ -266,22 +285,24 @@ void UserSettings::setGraphicCard( const std::string & card )
 		m_level = std::distance( m_levels.begin(), found->second );
 		m_card  = card;
 	}
+	return *this;
 }
 
 
 
-void UserSettings::setLevel( const int level )
+UserSettings & UserSettings::setLevel( const int level )
 {
 	if( level >= -1 )
 	{
 		m_level = vgm::clamp(level, -1, static_cast< int >(m_levels.size())-1 );
 		m_card.clear();
 	}
+	return *this;
 }
 
 
 
-void UserSettings::setLevel( const vge::engine::SceneManager & sm )
+UserSettings & UserSettings::setLevel( const vge::engine::SceneManager & sm )
 {
 	using vgd::node::Antialiasing;
 	using vgd::node::EngineProperties;
@@ -295,7 +316,7 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 	if( !antialiasing || !engineProperties || !lightModel )
 	{
 		setLevel( -1 );
-		return;
+		return *this;
 	}
 
 	// Gathers node settings
@@ -323,7 +344,7 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 
 	if (!isDefined)
 	{
-		return;
+		return *this;
 	}
 
 	// Walks through levels.
@@ -372,6 +393,27 @@ void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 			break;
 		}
 	}
+
+	// Job's done.
+	return *this;
+}
+
+
+
+UserSettings & UserSettings::setLevel( const vgd::Shp< const vge::engine::SceneManager > sm )
+{
+	return setLevel( *(sm.get()) );
+}
+
+
+
+UserSettings & UserSettings::setMaxLevel()
+{
+	if( m_levels.size() > 0 )
+	{
+		m_level = m_levels.size() - 1;
+	}
+	return *this;
 }
 
 
