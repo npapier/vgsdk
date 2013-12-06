@@ -184,6 +184,19 @@ void MyCanvas::keyPressEvent(QKeyEvent * event)
 		}
 	}
 
+	// D: two sided OFF <=> ON
+	if ( event->key() == Qt::Key_D )
+	{
+		if ( lightModel )
+		{
+			LightModel::TwoSidedValueType value = LightModel::DEFAULT_TWOSIDED;
+			/*const bool hasValue = */lightModel->getTwoSided( value );
+			value = (value == LightModel::DEFAULT_TWOSIDED) ? true : LightModel::DEFAULT_TWOSIDED;
+			lightModel->setTwoSided( value );
+			refresh( REFRESH_FORCE, SYNCHRONOUS );
+		}
+	}
+
 	// B: bumpmapping OFF <=> ON
 	if ( event->key() == Qt::Key_B )
 	{
