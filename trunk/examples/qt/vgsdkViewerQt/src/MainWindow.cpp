@@ -67,6 +67,9 @@ MainWindow::MainWindow( MainWindow * sharedWindow )
 
 void MainWindow::initialize()
 {
+	// Positionnates a flag so that the window gets destroyed when closed.
+	setAttribute( Qt::WA_DeleteOnClose, true );
+
 	// Updates the window list.
 	m_windows.add( this );
 

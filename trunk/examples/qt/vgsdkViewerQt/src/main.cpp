@@ -37,10 +37,15 @@ int main(int argc, char *argv[])
     // Installs the GTK-based logging.
     sbf::log::set< sbf::log::Logging >();
 
-    vgsdkViewerQt::MainWindow mainWindow;	
-	mainWindow.show();
-	mainWindow.getRenderSettingsDialog()->get()->setLevel(2);
-	mainWindow.renderSettingsChanged();
+	// Creates the main window.
+	// This window is allocated on the heap and will be automatically destoyed by Qt 
+	// thanks to a window attribute reuqesting its destruction when closed.
+	vgsdkViewerQt::MainWindow * mainWindow = new vgsdkViewerQt::MainWindow();	
 
+	mainWindow->show();
+	mainWindow->getRenderSettingsDialog()->get()->setLevel(2);
+	mainWindow->renderSettingsChanged();
+
+	// Entering the main loop...
     return app.exec();
 }
