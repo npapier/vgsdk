@@ -80,7 +80,7 @@ Settings::Settings()
     connect(m_disableDepthPrePass, SIGNAL(clicked()), (Settings*) this, SLOT(onDisableDepthPrePass()));
     connect(m_showFPS, SIGNAL(clicked()), (Settings*) this, SLOT(onShowFPS()));
     connect(m_debugEvents, SIGNAL(clicked()), (Settings*) this, SLOT(onDebugEvents()));
-    connect(m_captureButton, SIGNAL(clicked()), (Settings*) this, SLOT(onDebugEvents()));
+    connect(m_captureButton, SIGNAL(clicked()), (Settings*) this, SLOT(onCaptureButton()));
     connect(m_benchButton, SIGNAL(clicked()), (Settings*) this, SLOT(onBench()));
     connect(m_clearGLResourcesButton, SIGNAL(clicked()), (Settings*) this, SLOT(onClearGLResources()));
 }

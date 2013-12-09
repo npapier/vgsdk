@@ -45,11 +45,11 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 	{
 		const uint							buttonID	= keyboardButtonEvent->getButtonID();
 		const KeyboardButtonEvent::State	buttonState	= keyboardButtonEvent->getState();
-		if ( buttonID == 's' && buttonState == KeyboardButtonEvent::DOWN )
+		if ( buttonID == 'S' && buttonState == KeyboardButtonEvent::DOWN )
 		{
 			getCanvas()->scheduleScreenshot();
 		}
-		else if ( buttonID == 'v' && buttonState == KeyboardButtonEvent::DOWN )
+		else if ( buttonID == 'V' && buttonState == KeyboardButtonEvent::DOWN )
 		{
 			if ( getCanvas()->isVideoCaptureEnabled() == false )
 			{
@@ -58,7 +58,7 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 				getCanvas()->setVideoCapture();
 			}
 		}
-		else if ( buttonID == 'b' && buttonState == KeyboardButtonEvent::DOWN )
+		else if ( buttonID == 'B' && buttonState == KeyboardButtonEvent::DOWN )
 		{
 			if ( getCanvas()->isVideoCaptureEnabled() )
 			{
@@ -88,7 +88,7 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 				getCanvas()->m_video.clear();
 			}
 		}
-		else if ( buttonID == 'c' && buttonState == KeyboardButtonEvent::DOWN )
+		else if ( buttonID == 'C' && buttonState == KeyboardButtonEvent::DOWN )
 		{
 			if ( getCanvas()->isVideoCaptureEnabled() )
 			{
