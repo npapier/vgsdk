@@ -280,75 +280,19 @@ vgd::Shp< vgd::node::Group > createMaterial( const vgio::Media & media, const bo
 }
 
 
-// VERTEXSHAPE <-> aiMesh
+// aiMesh => VertexShape
 vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 {
 	// Vertex shape
 	using vgd::node::VertexShape;
 	vgd::Shp< VertexShape > vertexShape = VertexShape::create( mesh->mName.C_Str() );
 
-	// Editors
-	vgd::field::EditorRW< vgd::field::MFVec3f >		vertex		= vertexShape->getVertexRW();
-	vgd::field::EditorRW< vgd::field::MFUInt>		vertexIndex	= vertexShape->getVertexIndexRW();
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitives	= vertexShape->getPrimitiveRW();
-
 	// VERTEX
+	vgd::field::EditorRW< vgd::field::MFVec3f > vertex = vertexShape->getVertexRW();
 	vertex->reserve( mesh->mNumVertices );
 	for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
 	{
 		vertex->push_back( toVec3f(mesh->mVertices[i]) );
-	}
-
-	// VERTEX INDEX
-	vertexIndex->reserve( mesh->mNumFaces );
-	for( uint i = 0, iEnd = mesh->mNumFaces; i != iEnd; ++i )
-	{
-		const aiFace * face = &mesh->mFaces[i];
-		for( uint j=0, jEnd=face->mNumIndices; j != jEnd; ++j )
-		{
-			const int index = face->mIndices[j];
-			vertexIndex->push_back( index );
-		}
-	}
-
-	// PRIMITIVES
-	using vgd::node::Primitive;
-	Primitive primitive(vgd::node::Primitive::NONE, 0, 0);
-	uint currentIndex = 0;
-	for( uint i = 0, iEnd = mesh->mNumFaces; i != iEnd; ++i )
-	{
-		const aiFace *			face		= &mesh->mFaces[i];
-		const Primitive::Type	primType	= numIndices2Primitive( face->mNumIndices );
-
-		if ( primitive.getNumIndices() == 0 )	// new primitive object
-		{
-			vgAssert( primitive.getType() == Primitive::NONE );
-			vgAssert( primitive.getIndex() == 0 );
-			//vgAssert( primitive.getNumIndices() == 0 );
-
-			primitive.setType( primType );
-			primitive.setIndex( currentIndex );
-			primitive.setNumIndices( face->mNumIndices );
-		}
-		else if ( primitive.getType() == primType ) // reuse current primitive object
-		{
-			primitive.addToNumIndices( face->mNumIndices );
-		}
-		else // new type of primitive
-		{
-			primitives->push_back( primitive );
-
-			primitive.setType( primType );
-			primitive.setIndex( currentIndex );
-			primitive.setNumIndices( face->mNumIndices );
-		}
-
-		currentIndex += face->mNumIndices;
-	}
-
-	if ( primitive.getNumIndices() > 0 )
-	{
-		primitives->push_back( primitive );
 	}
 
 	// NORMALS
@@ -365,21 +309,6 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 		vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
 	}
 
-	// TEX COORDS
-	for( uint j = 0, jEnd=mesh->GetNumUVChannels(); j != jEnd; ++j )
-	{
-		vgAssert( mesh->mNumUVComponents[j] == 2 ); // @todo support of 1 and 3
-		vertexShape->createTexUnits( mesh->mNumUVComponents[j], j );
-		vertexShape->setTexCoordBinding( j, vgd::node::BIND_PER_VERTEX );
-
-		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord = vertexShape->getTexCoordRW<vgd::field::MFVec2f>( j );
-		texCoord->reserve( mesh->mNumVertices );
-		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
-		{
-			texCoord->push_back( toVec2f(mesh->mTextureCoords[j][i]) );
-		}
-	}
-
 	// TANGENTS
 	if ( mesh->HasTangentsAndBitangents() )
 	{
@@ -394,7 +323,75 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 		vertexShape->setTangentBinding( vgd::node::BIND_PER_VERTEX );
 	}
 
-	// @todo bitangents
+	// bitangents ? not yet, because not used by vgSDK (generated in the shader).
+
+	// TEXCOORDSx
+	for( uint j = 0, jEnd=mesh->GetNumUVChannels(); j != jEnd; ++j )
+	{
+		vgAssertN( mesh->mNumUVComponents[j] == 2, "Only dim(texCoord)==2 is allowed." ); // @todo support of 1 and 3
+		vertexShape->createTexUnits( mesh->mNumUVComponents[j], j );
+		vertexShape->setTexCoordBinding( j, vgd::node::BIND_PER_VERTEX );
+
+		vgd::field::EditorRW< vgd::field::MFVec2f > texCoord = vertexShape->getTexCoordRW<vgd::field::MFVec2f>( j );
+		texCoord->reserve( mesh->mNumVertices );
+		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
+		{
+			texCoord->push_back( toVec2f(mesh->mTextureCoords[j][i]) );
+		}
+	}
+
+	// VERTEX INDEX and PRIMITIVES
+	using vgd::node::Primitive;
+
+	vgd::field::EditorRW< vgd::field::MFUInt>		vertexIndex	= vertexShape->getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitives	= vertexShape->getPrimitiveRW();
+
+	vertexIndex->reserve( mesh->mNumFaces );
+	Primitive primitive(vgd::node::Primitive::NONE, 0, 0);
+
+	uint currentIndex = 0;
+	for( uint i = 0, iEnd = mesh->mNumFaces; i != iEnd; ++i )
+	{
+		const aiFace * face = &mesh->mFaces[i];
+
+		// Fill vertexIndex field
+		for( uint j=0, jEnd=face->mNumIndices; j != jEnd; ++j )
+		{
+			const int index = face->mIndices[j];
+			vertexIndex->push_back( index );
+		}
+
+		// Fill primitive field
+		const Primitive::Type primType = numIndices2Primitive( face->mNumIndices );
+
+		if ( primitive.getNumIndices() == 0 )	// new primitive object
+		{
+			vgAssert( primitive.getType() == Primitive::NONE );
+			vgAssert( primitive.getIndex() == 0 );
+
+			primitive.setType( primType );
+			primitive.setIndex( currentIndex );
+			primitive.setNumIndices( face->mNumIndices );
+		}
+		else if (	(primitive.getType() == primType) &&		// same primitive type
+					(primType != Primitive::POLYGON)	)		// not a polygon @todo allow reuse of polygon primitive (by using NV_primitive_restart extension)
+		{
+			// reuse current primitive object
+			primitive.addToNumIndices( face->mNumIndices );
+		}
+		else // new type of primitive
+		{
+			primitives->push_back( primitive );
+
+			primitive.setType( primType );
+			primitive.setIndex( currentIndex );
+			primitive.setNumIndices( face->mNumIndices );
+		}
+
+		currentIndex += face->mNumIndices;
+	}
+
+	if ( primitive.getNumIndices() > 0 )	primitives->push_back( primitive );
 
 	return vertexShape;
 }
