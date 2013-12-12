@@ -134,13 +134,6 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	}
 
 	// LOCAL VARIABLES
-	if ( state.isLightingEnabled() && state.isPerVertexLightingEnabled() )
-	{
-		m_decl +=
-			"\n"
-			"// LOCAL VARIABLES\n";
-		m_decl += GLSLHelpers::generate_lightAccumulators( state ) + "\n";
-	}
 
 	// FUNCTIONS
 	m_code1 +=
@@ -184,6 +177,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	"	vec3 tangent = mgl_Tangent;\n"
 	"\n";
 
+	m_code2 += state.getShaderStage( GLSLState::VERTEX_POSITION_DISPLACEMENT ) + "\n";
 	m_code2 += state.getShaderStage( GLSLState::VERTEX_POSITION_COMPUTATION ) + "\n";
 	m_code2 += state.getShaderStage( GLSLState::VERTEX_NORMAL_COMPUTATION ) + "\n";
 

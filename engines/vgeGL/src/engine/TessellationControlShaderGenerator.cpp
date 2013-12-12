@@ -6,6 +6,7 @@
 
 #include "vgeGL/engine/TessellationControlShaderGenerator.hpp"
 
+#include <vgd/node/EngineProperties.hpp>
 #include <vgd/node/Program.hpp>
 #include "vgeGL/engine/Engine.hpp"
 
@@ -55,6 +56,8 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 	// declaration for lighting
 	if ( state.isLightingEnabled() )
 	{
+		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat ";
+		inputs +=	"in vec4 ecPosition[];\n";
 		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat ";
 		inputs +=	"in vec3 ecNormal[];\n";
 		if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat ";
@@ -108,9 +111,65 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 		outputs +
 		"\n";
 
+	// TCS_DECLARATIONS
+	m_decl += state.getShaderStage( GLSLState::TCS_DECLARATIONS ) + "\n";
+
 	// LOCAL VARIABLES
 
 	// FUNCTIONS
+	static std::string pixelsPerEdgeDeclarationsTCS =
+		"float computeScreenSphereSize( vec4 v1, vec4 v2, vec2 viewport )\n"
+		"{\n"
+		"	float d = distance(v1, v2);\n"
+		"	vec4 p1 = (v1 + v2) * 0.5;\n"
+		"	vec4 p2 = p1;\n"
+		"	p2.y += d;\n"
+		"\n"
+		"	// transformed to screen space\n"
+		"	p1 = p1 / p1.w;\n"
+		"	p2 = p2 / p2.w;\n"
+		"\n"
+		"	float sphereSizeInPixels = length( (p1.xy - p2.xy) * viewport * 0.5 );\n"
+		"	return sphereSizeInPixels;\n"
+		"}\n"
+		"\n"
+		"float computeTessLevel( float sphereSizeInPixels, float pixelsPerEdge )\n"
+		"{\n"
+		"	float numSubdivision = sphereSizeInPixels / pixelsPerEdge;\n"
+		"	return clamp( numSubdivision, TESS_RANGE_MIN, TESS_RANGE_MAX );\n"
+		"}\n"
+		"\n";
+
+	static std::string uniformMethodTCS = 
+		"void tessellationLevelMethodUNIFORM( out vec4 tessLevelOuter, out vec2 tessLevelInner )\n"
+		"{\n"
+		"	tessLevelOuter = vec4(TESS_RANGE_MAX);\n"
+		"	tessLevelInner = vec2(TESS_RANGE_MAX);\n"
+		"}\n";
+
+	static std::string pixelsPerEdgeMethodTCS =
+		"void tessellationLevelMethodPIXELS_PER_EDGE( out vec4 tessLevelOuter, out vec2 tessLevelInner )\n"
+		"{\n"
+		"	vec4 cpC0 = gl_ModelViewProjectionMatrix * gl_in[0].gl_Position;\n"
+		"	vec4 cpC1 = gl_ModelViewProjectionMatrix * gl_in[1].gl_Position;\n"
+		"	vec4 cpC2 = gl_ModelViewProjectionMatrix * gl_in[2].gl_Position;\n"
+		"\n"
+		"	vec2 viewport = vec2(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);\n"
+		"	float l0 = computeScreenSphereSize(cpC0, cpC1, viewport);\n"
+		"	float l1 = computeScreenSphereSize(cpC1, cpC2, viewport);\n"
+		"	float l2 = computeScreenSphereSize(cpC2, cpC0, viewport);\n"
+		"\n"
+		"	tessLevelOuter[0] = computeTessLevel( l1, tessPixelsPerEdge );\n"
+		"	tessLevelOuter[1] = computeTessLevel( l2, tessPixelsPerEdge );\n"
+		"	tessLevelOuter[2] = computeTessLevel( l0, tessPixelsPerEdge );\n"
+		"	tessLevelOuter[3] = 0;\n"
+		"	tessLevelInner[0] = max( max(tessLevelOuter[0], tessLevelOuter[1]) ,tessLevelOuter[2] );\n"
+		"	tessLevelInner[1] = 0;\n"
+		"}\n";
+
+	m_code1 += pixelsPerEdgeDeclarationsTCS + uniformMethodTCS + pixelsPerEdgeMethodTCS;
+
+	// Phong tessellation
 	m_code1 +=
 		"\n"
 		"// FUNCTIONS\n"
@@ -127,19 +186,31 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 		"// MAIN function\n"
 		"void main()\n"
 		"{\n"
-		"	// tessellation level\n"
-		"	gl_TessLevelOuter[0] = tessValue;\n"
-		"	gl_TessLevelOuter[1] = tessValue;\n"
-		"	gl_TessLevelOuter[2] = tessValue;\n"
-		"	gl_TessLevelInner[0] = tessValue;\n"
+		"	if (gl_InvocationID == 0 )\n"
+		"	{\n"
+		"		vec4 tessLevelOuter;\n"
+		"		vec2 tessLevelInner;\n" +
+				state.getShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION ) +
+		"		gl_TessLevelOuter[0] = tessLevelOuter[0];\n"
+		"		gl_TessLevelOuter[1] = tessLevelOuter[1];\n"
+		"		gl_TessLevelOuter[2] = tessLevelOuter[2];\n"
+		"		gl_TessLevelOuter[3] = tessLevelOuter[3];\n"
+		"		gl_TessLevelInner[0] = tessLevelInner[0];\n"
+		"		gl_TessLevelInner[1] = tessLevelInner[1];\n"
+		"	}\n"
 		"\n"
 		"	// gl_out[]\n"
-		"	gl_out[gl_InvocationID].gl_Position =  gl_in[gl_InvocationID].gl_Position;\n"
-		"\n"
+		"	gl_out[gl_InvocationID].gl_Position =  gl_in[gl_InvocationID].gl_Position;\n\n";
+
+	static std::string phongMainComputation =
 		"	// iPhongPatch\n"
 		"	iPhongPatch[gl_InvocationID].termIJ = PIi(0,gl_in[1].gl_Position.xyz) + PIi(1,gl_in[0].gl_Position.xyz);\n"
 		"	iPhongPatch[gl_InvocationID].termJK = PIi(1,gl_in[2].gl_Position.xyz) + PIi(2,gl_in[1].gl_Position.xyz);\n"
 		"	iPhongPatch[gl_InvocationID].termIK = PIi(2,gl_in[0].gl_Position.xyz) + PIi(0,gl_in[2].gl_Position.xyz);\n"
+		"\n";
+	m_code2 += phongMainComputation;
+
+	m_code2 +=
 		"\n"
 		"	myNormal[gl_InvocationID] = ecNormal[gl_InvocationID];\n";
 

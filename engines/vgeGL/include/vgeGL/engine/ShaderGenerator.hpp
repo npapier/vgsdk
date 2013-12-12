@@ -90,15 +90,23 @@ struct GLSLHelpers
 											"uniform vec4	random;\n"
 											"uniform int		time;\n"
 											"uniform vec2	nearFar;\n"
+											"uniform vec4	viewport;\n"
+											"#define VIEWPORT_WIDTH		viewport.z\n"
+											"#define VIEWPORT_HEIGHT	viewport.w\n"
 											"\n"
 											"// shadow\n"
 											"uniform float u_samplingSize;\n"
 											"uniform float u_illuminationInShadow;\n"
 											"\n"
-											"// tessellation\n"
+											"// tessellation\n"			// @todo add with appendShaderStage()
 											"#ifdef TESSELLATION\n"
-											"uniform float tessValue;\n"
-											"uniform float tessBias;\n"
+											"uniform vec2	tessRange			= vec2(1, 5);\n"
+											"uniform float	tessPhongBias		= 0.55;\n"
+											"uniform float	tessPixelsPerEdge	= 20;\n"
+											"#define TESS_RANGE_MIN		tessRange.x\n"		// @todo vec4 tessParameters; OPTME
+											"#define TESS_RANGE_MAX		tessRange.y\n"
+/*											"#define TESS_PHONGBIAS			tessPhongBias\n"
+											"#define TESS_PIXELS_PER_EDGE	tessPixelsPerEdge\n"*/
 											"#endif\n"
 											"\n";
 

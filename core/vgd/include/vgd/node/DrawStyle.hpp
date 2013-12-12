@@ -136,10 +136,10 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		AA_OBJECT_SPACE = 283,	///< 
-		NO_BOUNDING_BOX = 281,	///< 
-		OBJECT_AND_AA_OBJECT_SPACE = 284,	///< 
-		OBJECT_SPACE = 282,	///< 
+		AA_OBJECT_SPACE = 286,	///< 
+		NO_BOUNDING_BOX = 284,	///< 
+		OBJECT_AND_AA_OBJECT_SPACE = 287,	///< 
+		OBJECT_SPACE = 285,	///< 
 		DEFAULT_BOUNDINGBOX = NO_BOUNDING_BOX	///< 
 	};
 
@@ -167,10 +167,10 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 281 );
-			retVal.push_back( 282 );
-			retVal.push_back( 283 );
 			retVal.push_back( 284 );
+			retVal.push_back( 285 );
+			retVal.push_back( 286 );
+			retVal.push_back( 287 );
 
 			return retVal;
 		}
@@ -227,15 +227,15 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		SMOOTH_HIDDEN_LINE = 279,	///< 
-		FLAT = 274,	///< 
-		HIDDEN_LINE = 277,	///< 
-		POINT = 273,	///< 
-		FLAT_HIDDEN_LINE = 278,	///< 
-		WIREFRAME = 276,	///< 
-		SMOOTH = 275,	///< 
-		NO_SHAPE = 272,	///< 
-		NEIGHBOUR = 280,	///< 
+		SMOOTH_HIDDEN_LINE = 282,	///< 
+		FLAT = 277,	///< 
+		HIDDEN_LINE = 280,	///< 
+		POINT = 276,	///< 
+		FLAT_HIDDEN_LINE = 281,	///< 
+		WIREFRAME = 279,	///< 
+		SMOOTH = 278,	///< 
+		NO_SHAPE = 275,	///< 
+		NEIGHBOUR = 283,	///< 
 		DEFAULT_SHAPE = SMOOTH	///< 
 	};
 
@@ -263,15 +263,15 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 272 );
-			retVal.push_back( 273 );
-			retVal.push_back( 274 );
 			retVal.push_back( 275 );
 			retVal.push_back( 276 );
 			retVal.push_back( 277 );
 			retVal.push_back( 278 );
 			retVal.push_back( 279 );
 			retVal.push_back( 280 );
+			retVal.push_back( 281 );
+			retVal.push_back( 282 );
+			retVal.push_back( 283 );
 
 			return retVal;
 		}

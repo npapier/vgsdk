@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2009, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -15,6 +15,17 @@
  */
 
 #include <vgBase/Type.hpp>
+
+
+/**
+ * @defgroup g_glsl Shading language
+ *
+ * Uniforms :
+ * - vec4	random
+ * - int	time
+ * - vec2	nearFar
+ * - vec4	viewport with accessors VIEWPORT_WIDTH and VIEWPORT_HEIGHT
+ */
 
 
 #ifndef _VGEGL_DISABLED_GLE_

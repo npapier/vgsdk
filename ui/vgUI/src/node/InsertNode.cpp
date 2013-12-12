@@ -24,6 +24,7 @@ static std::vector< std::string > insertNodeNames = boost::assign::list_of("Anti
 																			("CullFace")
 																			("DepthOfField")
 																			("DirectionalLight")
+																			("Displacement")
 																			("DrawStyle")
 																			("EngineProperties")
 																			("Fluid")
@@ -40,6 +41,8 @@ static std::vector< std::string > insertNodeNames = boost::assign::list_of("Anti
 																			("PostProcessing")
 																			("Separator")
 																			("SpotLight")
+																			("TessellationLevel")
+																			("TessellationProperties")
 																			("Transform")
 																			("VertexShape");
 }

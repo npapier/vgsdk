@@ -290,11 +290,12 @@ public:
 	void setUniformTime();
 
 	/**
-	 * @brief Initializes 'nearFar' uniform with getNearFar()
+	 * @brief Initializes 'nearFar' uniform with getNearFar() and 'viewport' uniform with getViewport()
 	 *
 	 * @pre !getUniformState().isUniform( "nearFar" )
+	 * @pre !getUniformState().isUniform( "viewport" )
 	 */
-	void setUniformNearFar();
+	void setUniformNearFarAndViewport();
 
 	//@}
 
@@ -424,7 +425,7 @@ public:
 	 * @brief Gets the OpenGL objects manager
 	 */
 	vgd::Shp< GLManagerType > getGLManager();
-	
+
 	/**
 	 * @brief Returns the resource associated to the given node in the OpenGL manager
 	 *

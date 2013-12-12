@@ -2200,8 +2200,8 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		// time
 		if ( !engine->getUniformState().isUniform("time") )		engine->setUniformTime();
 
-		// nearFar
-		if ( !engine->getUniformState().isUniform("nearFar") )	engine->setUniformNearFar();
+		// nearFar and viewport
+		if ( !engine->getUniformState().isUniform("nearFar") )	engine->setUniformNearFarAndViewport();
 
 		// param1f0
 		const float param1f0 = params1f0[i];

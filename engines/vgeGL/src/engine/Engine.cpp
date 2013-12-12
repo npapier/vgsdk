@@ -328,13 +328,18 @@ void Engine::setUniformTime()
 }
 
 
-void Engine::setUniformNearFar()
+void Engine::setUniformNearFarAndViewport()
 {
 	const vgm::Vec2f nearFar = getNearFar();
 	vgAssert( nearFar.isValid() );
 
+	const vgm::Rectangle2i& viewport = getViewport();
+
 	vgAssertN( !getUniformState().isUniform( "nearFar"), "Uniform named 'nearFar' already used" );
 	getUniformState().addUniform( "nearFar", nearFar );
+
+	vgAssertN( !getUniformState().isUniform( "viewport"), "Uniform named 'viewport' already used" );
+	getUniformState().addUniform( "viewport", vgm::Vec4f(viewport) );
 }
 
 

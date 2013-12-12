@@ -10,11 +10,12 @@
 #include <vgeGL/technique/MultiMain.hpp>
 #include <vgd/node/Antialiasing.hpp>
 #include <vgd/node/Box.hpp>
-//#include <vgd/node/ClearFrameBuffer.hpp>
+#include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/EngineProperties.hpp>
 #include <vgd/node/LightModel.hpp>
-#include <vgd/node/ClearFrameBuffer.hpp>
+#include <vgd/node/TessellationLevel.hpp>
+#include <vgd/node/TessellationProperties.hpp>
 #include <vgeGL/event/RefresherCallback.hpp>
 #include <vgeGL/event/TimerEventProcessor.hpp>
 
@@ -51,20 +52,31 @@ void MyCanvas::initialize()
 	using vgd::node::LightModel;
 	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( createOptionalNode( LIGHT_MODEL ) );
 	lightModel->setOptionalsToDefaults();
-	lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
-	lightModel->setViewer( LightModel::AT_EYE );
+	//lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
+	//lightModel->setViewer( LightModel::AT_EYE );
 	lightModel->setShadow( LightModel::SHADOW_OFF );
 
 	using vgd::node::ClearFrameBuffer;
 	vgd::Shp< ClearFrameBuffer > clear = createOptionalNodeAs< ClearFrameBuffer >( CLEAR_FRAME_BUFFER );
-	//clear->setClear( ClearFrameBuffer::COLOR, vgm::Vec4f(0.1f, 0.f, 0.f, 0.f) );
+	//clear->setClearColor( vgm::Vec4f(0.1f, 0.f, 0.f, 0.f) );
 
 	using vgd::node::EngineProperties;
 	vgd::Shp< EngineProperties > engineProperties = vgd::dynamic_pointer_cast< EngineProperties >( createOptionalNode( ENGINE_PROPERTIES ) );
+	//engineProperties->setOptionalsToDefaults();
 
 	using vgd::node::Antialiasing;
 	vgd::Shp< Antialiasing > antialiasing = Antialiasing::create("ANTIALIASING");
 	getSetup()->addChild( antialiasing );
+
+	// TESSELLATION
+	using vgd::node::TessellationProperties;
+	vgd::Shp< TessellationProperties > tessProperties = TessellationProperties::create("TESS PROPERTIES");
+	getSetup()->addChild( tessProperties );
+	tessProperties->setTessellation( TessellationProperties::DISABLED );
+
+	using vgd::node::TessellationLevel;
+	vgd::Shp< TessellationLevel > tessLevel = TessellationLevel::create("TESS LEVEL");
+	getSetup()->addChild( tessLevel );
 
 	// Get the reference of the default technique
 	m_viewModeTechniques.resize( VIEW_MODE_COUNT );
@@ -152,6 +164,9 @@ void MyCanvas::keyPressEvent(QKeyEvent * event)
 	using vgd::node::EngineProperties;
 	vgd::Shp< EngineProperties > engineProperties = findFirstByType<EngineProperties>();
 
+	using vgd::node::TessellationProperties;
+	vgd::Shp< TessellationProperties > tessProperties = findFirstByType<TessellationProperties>();
+
 	// W: smooth <=> wireframe
 	if ( event->key() == Qt::Key_W )
 	{
@@ -210,15 +225,15 @@ void MyCanvas::keyPressEvent(QKeyEvent * event)
 		}
 	}
 
-	// T: tessellation OFF <=> ON
+	// T: tessellation DISABLED <=> PHONG
 	if ( event->key() == Qt::Key_T )
 	{
-		if ( engineProperties )
+		if ( tessProperties )
 		{
-			EngineProperties::TessellationValueType value = EngineProperties::DEFAULT_TESSELLATION;
-			value = engineProperties->getTessellation();
-			value = (value == EngineProperties::DEFAULT_TESSELLATION) ? true : EngineProperties::DEFAULT_TESSELLATION;
-			engineProperties->setTessellation( value );
+			TessellationProperties::TessellationValueType value = TessellationProperties::DEFAULT_TESSELLATION;
+			/*const bool hasValue = */tessProperties->getTessellation( value );
+			value = (value == TessellationProperties::DEFAULT_TESSELLATION) ? TessellationProperties::PHONG : TessellationProperties::DEFAULT_TESSELLATION;
+			tessProperties->setTessellation( value );
 			refresh( REFRESH_FORCE, SYNCHRONOUS );
 		}
 	}

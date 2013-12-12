@@ -155,10 +155,6 @@ void VertexShape::setTessellationLevel( const TessellationLevelValueType value )
 
 // TangentBinding
 
-const VertexShape::TangentBindingValueType VertexShape::DEFAULT_TANGENTBINDING = vgd::node::Binding(vgd::node::BIND_OFF);
-
-
-
 const VertexShape::TangentBindingValueType VertexShape::getTangentBinding() const
 {
 	return getFieldRO<FTangentBindingType>(getFTangentBinding())->getValue();
@@ -174,10 +170,6 @@ void VertexShape::setTangentBinding( const TangentBindingValueType value )
 
 
 // ColorBinding
-
-const VertexShape::ColorBindingValueType VertexShape::DEFAULT_COLORBINDING = vgd::node::Binding(vgd::node::BIND_OFF);
-
-
 
 const VertexShape::ColorBindingValueType VertexShape::getColorBinding() const
 {
@@ -301,10 +293,6 @@ vgd::field::EditorRW< VertexShape::FTangentType > VertexShape::getTangentRW()
 
 
 // NormalBinding
-
-const VertexShape::NormalBindingValueType VertexShape::DEFAULT_NORMALBINDING = vgd::node::Binding(vgd::node::BIND_OFF);
-
-
 
 const VertexShape::NormalBindingValueType VertexShape::getNormalBinding() const
 {
