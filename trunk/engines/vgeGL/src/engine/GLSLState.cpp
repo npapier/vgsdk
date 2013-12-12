@@ -21,11 +21,36 @@ namespace engine
 
 namespace
 {
-	static const std::string defaultVertexGLPositionComputation = "	gl_Position = gl_ModelViewProjectionMatrix * position;\n";
-	static const std::string defaultVertexECPositionComputation = "	ecPosition	= gl_ModelViewMatrix * position;\n";
-	static const std::string defaultVertexECNormalComputation	= "	ecNormal	= normalize( gl_NormalMatrix * normal );\n";
+	static const std::string defaultVertexGLPositionComputation				= "	gl_Position = gl_ModelViewProjectionMatrix * position;\n";
+	static const std::string defaultVertexECPositionComputation				= "	ecPosition	= gl_ModelViewMatrix * position;\n";
+	static const std::string defaultVertexECNormalComputation				= "	ecNormal	= normalize( gl_NormalMatrix * normal );\n";
 
-	static const std::string defaultFragmentOutput				= "	gl_FragData[0] = color;\n";
+	static const std::string defaultTessellationControlTessLevelComputation	=	"	tessellationLevelMethodUNIFORM(tessLevelOuter, tessLevelInner );\n";
+
+	static const std::string defaultFragmentOutput							= "	gl_FragData[0] = color;\n";
+
+	static std::vector< std::string >& getDefaultShaderStage()
+	{
+		static std::vector< std::string > defaultShaderStage;
+		if ( defaultShaderStage.size() == 0 )
+		{
+			// Construct default stader stage
+			defaultShaderStage.clear();
+			defaultShaderStage.resize( GLSLState::MAX_SHADERSTAGE );
+
+			defaultShaderStage[GLSLState::VERTEX_GL_POSITION_COMPUTATION]	= defaultVertexGLPositionComputation;
+
+			defaultShaderStage[GLSLState::VERTEX_ECPOSITION_COMPUTATION]	= defaultVertexECPositionComputation;
+
+			defaultShaderStage[GLSLState::VERTEX_ECNORMAL_COMPUTATION]		= defaultVertexECNormalComputation;
+
+			defaultShaderStage[GLSLState::TCS_TESSLEVEL_COMPUTATION]		= defaultTessellationControlTessLevelComputation;
+
+			defaultShaderStage[GLSLState::FRAGMENT_OUTPUT]					= defaultFragmentOutput;
+		}
+
+		return defaultShaderStage;
+	}
 
 	// array containing the string representation for GLSLStateIndex
 	static const std::string m_GLSLStateIndexString[] =
@@ -55,6 +80,9 @@ namespace
 		"BUMP_MAPPING",
 
 		"TESSELLATION",
+		"TESSELLATION_LEVEL",
+
+		"DISPLACEMENT",
 
 		"GEOMORPH"
 	};
@@ -65,11 +93,18 @@ namespace
 		"UNIFORM_DECLARATIONS",
 
 		"VERTEX_DECLARATIONS",
+		"VERTEX_POSITION_DISPLACEMENT",
 		"VERTEX_POSITION_COMPUTATION",
 		"VERTEX_GL_POSITION_COMPUTATION",
 		"VERTEX_ECPOSITION_COMPUTATION",
 		"VERTEX_NORMAL_COMPUTATION",
 		"VERTEX_ECNORMAL_COMPUTATION",
+
+		"TCS_DECLARATIONS",
+		"TCS_TESSLEVEL_COMPUTATION",
+
+		"TES_DECLARATIONS",
+		"TES_POSITION_DISPLACEMENT",
 
 		"FRAGMENT_DECLARATIONS",
 		"FRAGMENT_OUTPUT_DECLARATION",
@@ -117,6 +152,8 @@ GLSLState::GLSLState( const GLSLState& src )
 
 	m_program										(	src.m_program				),
 	m_shaderStage									(	src.m_shaderStage			),
+
+	m_tessellation									(	src.m_tessellation			),
 	m_lightModelShadow								(	src.m_lightModelShadow		),
 	m_shadowMapType									(	src.m_shadowMapType			)
 {}
@@ -239,6 +276,17 @@ void GLSLState::setTessellationEnabled( const bool enabled )
 }
 
 
+const GLSLState::TessellationValueType GLSLState::getTessellation() const
+{
+	return m_tessellation;
+}
+
+void GLSLState::setTessellation( const TessellationValueType value )
+{
+	m_tessellation = value;
+}
+
+
 const bool GLSLState::isDirty() const
 {
 	return	m_dirtyFlag.isDirty()				||
@@ -336,25 +384,33 @@ void GLSLState::setShaderStage( const ShaderStage shaderStage, const std::string
 
 
 
+void GLSLState::prependShaderStage( const ShaderStage shaderStage, const std::string& glslCode )
+{
+	m_shaderStage[shaderStage] = glslCode + m_shaderStage[shaderStage];
+	m_dirtyFlag.dirty();
+}
+
+
+void GLSLState::appendShaderStage( const ShaderStage shaderStage, const std::string& glslCode )
+{
+	m_shaderStage[shaderStage] += glslCode;
+	m_dirtyFlag.dirty();
+}
+
+
+void GLSLState::resetShaderStage( const ShaderStage shaderStage )
+{
+	const std::string& defaultShaderCode = getDefaultShaderStage()[shaderStage];
+	m_shaderStage[shaderStage] = defaultShaderCode;
+	m_dirtyFlag.dirty();
+}
+
+
 void GLSLState::resetShaderStages()
 {
-	// SHADER STAGE
 	m_shaderStage.clear();
 	m_shaderStage.resize( MAX_SHADERSTAGE );
-
-	//setShaderStage( VERTEX_GL_POSITION_COMPUTATION, defaultVertexGLPositionComputation );
-	m_shaderStage[VERTEX_GL_POSITION_COMPUTATION] = defaultVertexGLPositionComputation;
-
-	//setShaderStage( VERTEX_ECPOSITION_COMPUTATION, defaultVertexECPositionComputation );
-	m_shaderStage[VERTEX_ECPOSITION_COMPUTATION] = defaultVertexECPositionComputation;
-
-
-	//setShaderStage( VERTEX_ECNORMAL_COMPUTATION, defaultVertexECNormalComputation );
-	m_shaderStage[VERTEX_ECNORMAL_COMPUTATION] = defaultVertexECNormalComputation;
-
-
-	//setShaderStage( FRAGMENT_OUTPUT, defaultFragmentOutput );
-	m_shaderStage[FRAGMENT_OUTPUT] = defaultFragmentOutput;
+	m_shaderStage = getDefaultShaderStage();
 }
 
 
@@ -392,6 +448,8 @@ void GLSLState::copy( const GLSLState& src )
 
 	m_program					= src.m_program;
 	m_shaderStage				= src.m_shaderStage;
+
+	m_tessellation				= src.m_tessellation;
 	m_lightModelShadow			= src.m_lightModelShadow;
 	m_shadowMapType				= src.m_shadowMapType;
 }
@@ -419,6 +477,7 @@ void GLSLState::init()
 	resetShaderStages();
 
 	//
+	m_tessellation				= vgd::node::TessellationProperties::DEFAULT_TESSELLATION;
 	m_lightModelShadow			= vgd::node::LightModel::DEFAULT_SHADOW;
 	m_shadowMapType				= vgd::node::LightModel::DEFAULT_SHADOWMAPTYPE;
 }

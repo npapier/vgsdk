@@ -111,7 +111,7 @@ void LightModel::setOptionalsToDefaults()
 	setTwoSided( (false) );
 	setAmbient( vgm::Vec4f(0.2f, 0.2f, 0.2f, 0.0f) );
 	setViewer( (AT_INFINITY) );
-	setModel( (STANDARD_PER_VERTEX) );
+	setModel( (STANDARD_PER_PIXEL) );
 	setShadow( (SHADOW_OFF) );
 }
 

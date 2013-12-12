@@ -124,6 +124,9 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 		"\n" +
 		outputs;
 
+	// TES_DECLARATIONS
+	m_decl += state.getShaderStage( GLSLState::TES_DECLARATIONS ) + "\n";
+
 	// LOCAL VARIABLES
 
 	// FUNCTIONS
@@ -189,17 +192,19 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 	"				+ tc1[2] * gl_in[2].gl_Position.xyz;\n"
 	"\n"
 	"	// position is a 'copy of mgl_Vertex' for vertex texturing. mgl_Vertex is computed implicitly by the next line.\n"
-	"	vec4 position = vec4((1.0 - tessBias) * barPos + tessBias * phongPos, 1.0);\n"
+	"	vec4 position = vec4((1.0 - tessPhongBias) * barPos + tessPhongBias * phongPos, 1.0);\n"
+	"\n"
+	"	vec3 normal = emitNew( myNormal[0], myNormal[1], myNormal[2] );\n"
+	"	ecNormal = /*normalize*/( gl_NormalMatrix * normal );\n"
+	"\n" +
+	state.getShaderStage( GLSLState::TES_POSITION_DISPLACEMENT ) +
 	"\n"
 	"	// gl_out\n" +
 	//	gl_Position = gl_ModelViewProjectionMatrix * position;
 	state.getShaderStage( GLSLState::VERTEX_GL_POSITION_COMPUTATION ) +
 	"\n" +
 	// ecPosition	= gl_ModelViewMatrix * position;
-	state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION ) +
-	"\n"
-	"	vec3 normal = emitNew( myNormal[0], myNormal[1], myNormal[2] );\n"
-	"	ecNormal = /*normalize*/( gl_NormalMatrix * normal );\n";
+	state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION );
 
 	if ( has_ftexgen )
 	{

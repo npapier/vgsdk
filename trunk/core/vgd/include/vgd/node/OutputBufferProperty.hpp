@@ -104,8 +104,8 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		SCALE_FACTOR = 333,	///< The width of the output buffer is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component)
-		PIXEL_SIZE = 334,	///< The size field specifies the size of the output buffer in pixels.
+		SCALE_FACTOR = 336,	///< The width of the output buffer is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component)
+		PIXEL_SIZE = 337,	///< The size field specifies the size of the output buffer in pixels.
 		DEFAULT_SIZESEMANTIC = SCALE_FACTOR	///< The width of the output buffer is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component)
 	};
 
@@ -133,8 +133,8 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 333 );
-			retVal.push_back( 334 );
+			retVal.push_back( 336 );
+			retVal.push_back( 337 );
 
 			return retVal;
 		}
@@ -215,11 +215,11 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		LUMINANCE_ALPHA = 338,	///< todo
-		RGB = 335,	///< todo
-		LUMINANCE = 337,	///< todo
-		RGBA = 336,	///< todo
-		LUMINANCE_FOR_DEPTH = 339,	///< if type is INTEGER, then DEPTH_COMPONENT_24 is used.
+		LUMINANCE_ALPHA = 341,	///< todo
+		RGB = 338,	///< todo
+		LUMINANCE = 340,	///< todo
+		RGBA = 339,	///< todo
+		LUMINANCE_FOR_DEPTH = 342,	///< if type is INTEGER, then DEPTH_COMPONENT_24 is used.
 		DEFAULT_FORMAT = RGB	///< todo
 	};
 
@@ -247,11 +247,11 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 335 );
-			retVal.push_back( 336 );
-			retVal.push_back( 337 );
 			retVal.push_back( 338 );
 			retVal.push_back( 339 );
+			retVal.push_back( 340 );
+			retVal.push_back( 341 );
+			retVal.push_back( 342 );
 
 			return retVal;
 		}
@@ -335,12 +335,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		LINEAR_DEPTH = 347,	///< todo
-		NORMAL = 344,	///< todo
-		COLOR = 343,	///< todo
-		CUSTOM = 348,	///< todo
-		DEPTH = 346,	///< todo
-		POSITION = 345,	///< todo
+		LINEAR_DEPTH = 350,	///< todo
+		NORMAL = 347,	///< todo
+		COLOR = 346,	///< todo
+		CUSTOM = 351,	///< todo
+		DEPTH = 349,	///< todo
+		POSITION = 348,	///< todo
 		DEFAULT_COMMAND = COLOR	///< todo
 	};
 
@@ -368,12 +368,12 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 343 );
-			retVal.push_back( 344 );
-			retVal.push_back( 345 );
 			retVal.push_back( 346 );
 			retVal.push_back( 347 );
 			retVal.push_back( 348 );
+			retVal.push_back( 349 );
+			retVal.push_back( 350 );
+			retVal.push_back( 351 );
 
 			return retVal;
 		}
@@ -423,9 +423,9 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 */
 	enum  
 	{
-		FLOAT16 = 341,	///< todo
-		INTEGER = 340,	///< todo
-		FLOAT32 = 342,	///< todo
+		FLOAT16 = 344,	///< todo
+		INTEGER = 343,	///< todo
+		FLOAT32 = 345,	///< todo
 		DEFAULT_TYPE = INTEGER	///< todo
 	};
 
@@ -453,9 +453,9 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 340 );
-			retVal.push_back( 341 );
-			retVal.push_back( 342 );
+			retVal.push_back( 343 );
+			retVal.push_back( 344 );
+			retVal.push_back( 345 );
 
 			return retVal;
 		}

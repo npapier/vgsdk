@@ -63,10 +63,9 @@ EngineProperties::EngineProperties( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FTessellationBiasType(getFTessellationBias()) );
+	addField( new FOpenglDebugOutputType(getFOpenglDebugOutput()) );
+	addField( new FOpenglDirectStateAccessType(getFOpenglDirectStateAccess()) );
 	addField( new FMaxAnisotropyType(getFMaxAnisotropy()) );
-	addField( new FTessellationFactorType(getFTessellationFactor()) );
-	addField( new FTessellationType(getFTessellation()) );
 
 	// Sets link(s)
 
@@ -78,9 +77,6 @@ EngineProperties::EngineProperties( const std::string nodeName ) :
 void EngineProperties::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setTessellationBias( (0.55f) );
-	setTessellationFactor( (1.0f) );
-	setTessellation( (false) );
 }
 
 
@@ -88,27 +84,75 @@ void EngineProperties::setToDefaults( void )
 void EngineProperties::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setOpenglDebugOutput( (false) );
+	setOpenglDirectStateAccess( (false) );
 	setMaxAnisotropy( (1.f) );
 }
 
 
 
-// TessellationBias
+// OpenglDebugOutput
 
-const EngineProperties::TessellationBiasValueType EngineProperties::DEFAULT_TESSELLATIONBIAS = (0.55f);
+const EngineProperties::OpenglDebugOutputValueType EngineProperties::DEFAULT_OPENGLDEBUGOUTPUT = (false);
 
 
 
-const EngineProperties::TessellationBiasValueType EngineProperties::getTessellationBias() const
+const bool EngineProperties::getOpenglDebugOutput( OpenglDebugOutputValueType& value ) const
 {
-	return getFieldRO<FTessellationBiasType>(getFTessellationBias())->getValue();
+	return getFieldRO<FOpenglDebugOutputType>(getFOpenglDebugOutput())->getValue( value );
 }
 
 
 
-void EngineProperties::setTessellationBias( const TessellationBiasValueType value )
+void EngineProperties::setOpenglDebugOutput( const OpenglDebugOutputValueType& value )
 {
-	getFieldRW<FTessellationBiasType>(getFTessellationBias())->setValue( value );
+	getFieldRW<FOpenglDebugOutputType>(getFOpenglDebugOutput())->setValue( value );
+}
+
+
+
+void EngineProperties::eraseOpenglDebugOutput()
+{
+	getFieldRW<FOpenglDebugOutputType>(getFOpenglDebugOutput())->eraseValue();
+}
+
+
+const bool EngineProperties::hasOpenglDebugOutput() const
+{
+	return getFieldRO<FOpenglDebugOutputType>(getFOpenglDebugOutput())->hasValue();
+}
+
+
+
+// OpenglDirectStateAccess
+
+const EngineProperties::OpenglDirectStateAccessValueType EngineProperties::DEFAULT_OPENGLDIRECTSTATEACCESS = (false);
+
+
+
+const bool EngineProperties::getOpenglDirectStateAccess( OpenglDirectStateAccessValueType& value ) const
+{
+	return getFieldRO<FOpenglDirectStateAccessType>(getFOpenglDirectStateAccess())->getValue( value );
+}
+
+
+
+void EngineProperties::setOpenglDirectStateAccess( const OpenglDirectStateAccessValueType& value )
+{
+	getFieldRW<FOpenglDirectStateAccessType>(getFOpenglDirectStateAccess())->setValue( value );
+}
+
+
+
+void EngineProperties::eraseOpenglDirectStateAccess()
+{
+	getFieldRW<FOpenglDirectStateAccessType>(getFOpenglDirectStateAccess())->eraseValue();
+}
+
+
+const bool EngineProperties::hasOpenglDirectStateAccess() const
+{
+	return getFieldRO<FOpenglDirectStateAccessType>(getFOpenglDirectStateAccess())->hasValue();
 }
 
 
@@ -146,50 +190,17 @@ const bool EngineProperties::hasMaxAnisotropy() const
 
 
 
-// TessellationFactor
-
-const EngineProperties::TessellationFactorValueType EngineProperties::DEFAULT_TESSELLATIONFACTOR = (1.0f);
-
-
-
-const EngineProperties::TessellationFactorValueType EngineProperties::getTessellationFactor() const
-{
-	return getFieldRO<FTessellationFactorType>(getFTessellationFactor())->getValue();
-}
-
-
-
-void EngineProperties::setTessellationFactor( const TessellationFactorValueType value )
-{
-	getFieldRW<FTessellationFactorType>(getFTessellationFactor())->setValue( value );
-}
-
-
-
-// Tessellation
-
-const EngineProperties::TessellationValueType EngineProperties::DEFAULT_TESSELLATION = (false);
-
-
-
-const EngineProperties::TessellationValueType EngineProperties::getTessellation() const
-{
-	return getFieldRO<FTessellationType>(getFTessellation())->getValue();
-}
-
-
-
-void EngineProperties::setTessellation( const TessellationValueType value )
-{
-	getFieldRW<FTessellationType>(getFTessellation())->setValue( value );
-}
-
-
-
 // Field name accessor(s)
-const std::string EngineProperties::getFTessellationBias( void )
+const std::string EngineProperties::getFOpenglDebugOutput( void )
 {
-	return "f_tessellationBias";
+	return "f_openglDebugOutput";
+}
+
+
+
+const std::string EngineProperties::getFOpenglDirectStateAccess( void )
+{
+	return "f_openglDirectStateAccess";
 }
 
 
@@ -197,20 +208,6 @@ const std::string EngineProperties::getFTessellationBias( void )
 const std::string EngineProperties::getFMaxAnisotropy( void )
 {
 	return "f_maxAnisotropy";
-}
-
-
-
-const std::string EngineProperties::getFTessellationFactor( void )
-{
-	return "f_tessellationFactor";
-}
-
-
-
-const std::string EngineProperties::getFTessellation( void )
-{
-	return "f_tessellation";
 }
 
 

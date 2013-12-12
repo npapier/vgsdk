@@ -9,6 +9,7 @@
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/engine/GLSLState.hpp"
+#include <gle/OpenGLExtensionsGen.hpp>
 
 
 
@@ -50,6 +51,7 @@ const vge::service::List EngineProperties::getServices() const
 
 void EngineProperties::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
+	// TEXTURE
 	vge::handler::basic::EngineProperties::apply( engine, node );
 
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
@@ -58,21 +60,22 @@ void EngineProperties::apply( vge::engine::Engine * engine, vgd::node::Node * no
 	assert( dynamic_cast< vgd::node::EngineProperties* >(node) != 0 );
 	vgd::node::EngineProperties *engineProperties = dynamic_cast< vgd::node::EngineProperties* >(node);
 
+
 	// Retrieves GLSL state
 	using vgeGL::engine::GLSLState;
 	GLSLState& state = glEngine->getGLSLState();
 
-	// TESSELLATION
-	const bool hasTessellation = engineProperties->getTessellation();
-	state.setTessellationEnabled( hasTessellation );
-	if ( hasTessellation )
-	{
-		const vgd::node::EngineProperties::TessellationFactorValueType	tessellationValue	= engineProperties->getTessellationFactor();
-		glEngine->getUniformState().addUniform( "tessValue", tessellationValue );
 
-		const vgd::node::EngineProperties::TessellationBiasValueType	tessellationBias	= engineProperties->getTessellationBias();
-		glEngine->getUniformState().addUniform( "tessBias", tessellationBias );
+	// OPENGL API USAGE
+	bool bValue;
+
+	// OPENGL DEBUG OUTPUT
+	const bool hasDebugOutput = engineProperties->getOpenglDebugOutput( bValue );
+	if ( hasDebugOutput )
+	{
+		gleGetCurrent()->setDebugOutput( bValue ? gle::OpenGLExtensions::SYNCHRONOUS : gle::OpenGLExtensions::DISABLED );
 	}
+
 }
 
 
@@ -86,22 +89,13 @@ void EngineProperties::unapply( vge::engine::Engine *, vgd::node::Node * )
 
 void EngineProperties::setToDefaults()
 {
-	// TESSELLATION
-	if ( isGL_ARB_tessellation_shader() )
-	{
-		glPatchParameteri(GL_PATCH_VERTICES, 3);
-
-		GLfloat innerLevel[] = { 3.f, 3.f };
-		GLfloat outerLevel[] = { 3.f, 3.f, 3.f, 3.f };
-		glPatchParameterfv( GL_PATCH_DEFAULT_INNER_LEVEL, innerLevel );
-		glPatchParameterfv( GL_PATCH_DEFAULT_OUTER_LEVEL, outerLevel );
-	}
+	// nothing to do
 }
 
 
 
-} // namespace basic
+} // namespace painter
 
 } // namespace handler
 
-} // namespace vge
+} // namespace vgeGL

@@ -9,6 +9,7 @@
 #include <bitset>
 #include <vector>
 #include <vgd/Shp.hpp>
+#include <vgd/node/TessellationProperties.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vge/basic/TUnitContainer.hpp>
 #include <vgm/Matrix.hpp>
@@ -51,6 +52,7 @@ template< uint size >
 struct TBitSet
 {
 	const bool isEnabled( const uint index ) const;
+	const bool isDisabled( const uint index ) const;
 	void setEnabled( const uint index, const bool enabled = true );
 	void setDisabled( const uint index );
 
@@ -66,6 +68,16 @@ const bool TBitSet<size>::isEnabled( const uint index ) const
 	assert( index < size && "Out of range index." );
 
 	return m_bitset[ index ];
+}
+
+
+template< uint size >
+const bool TBitSet<size>::isDisabled( const uint index ) const
+{
+	assert( index >= 0 && "Out of range index." );
+	assert( index < size && "Out of range index." );
+
+	return !m_bitset[ index ];
 }
 
 
@@ -131,7 +143,10 @@ enum GLSLStateIndex
 	//
 	BUMP_MAPPING,				///< see LightModel.bumpMapping
 
-	TESSELLATION,				///< see EngineProperties.tessellation
+	TESSELLATION,				///< tessellation is enabled. Tessellation method ? see GLSLState::get/setTessellation()
+	TESSELLATION_LEVEL,			///< a tessellation level node has been encountered (useful to add only once uniform variables. See handler).
+
+	DISPLACEMENT,
 
 	GEOMORPH,					///< enable (during down traversing of scene graph)/disable (during up traversing) by GeoMorph node handler
 
@@ -608,11 +623,10 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 	/**
 	 * @name Shader generation accessors
-	 *
-	 * @todo prependShaderStage(), appendShaderStage()
 	 */
 	//@{
 
+// @todo rename VERTEX_ => VS_, TESSELLATIONCONTROL_ => TCS_ ...
 	enum ShaderStage
 	{
 		UNIFORM_DECLARATIONS = 0,
@@ -620,6 +634,7 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 		// VERTEX SHADER
 		VERTEX_DECLARATIONS,
 
+		VERTEX_POSITION_DISPLACEMENT,
 		VERTEX_POSITION_COMPUTATION,		///< vertex displacement (using a texture a procedurally)
 		VERTEX_GL_POSITION_COMPUTATION,
 		VERTEX_ECPOSITION_COMPUTATION,
@@ -627,13 +642,25 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 		VERTEX_NORMAL_COMPUTATION,
 		VERTEX_ECNORMAL_COMPUTATION,
 
+
+		// TESSELLATION CONTROL SHADER
+		TCS_DECLARATIONS,
+// @todo TCS_MAIN_COMPUTATION
+		TCS_TESSLEVEL_COMPUTATION,
+
+
+		// TESSELLATION EVALUATION SHADER
+		TES_DECLARATIONS,
+// @todo TES_MAIN_COMPUTATION
+		TES_POSITION_DISPLACEMENT,
+
+
 		// FRAGMENT SHADER
 		FRAGMENT_DECLARATIONS,
 
 		FRAGMENT_OUTPUT_DECLARATION,		///< Declarations needed by FRAGMENT_OUTPUT
 		FRAGMENT_OUTPUT,					///< Fragment Shader Outputs stage (example: gl_FragData[1] = ...)
 
-		//
 		MAX_SHADERSTAGE
 	};
 
@@ -644,6 +671,29 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	 * @param glslCode		code to insert in the desired shader
 	 */
 	void setShaderStage( const ShaderStage shaderStage, const std::string& glslCode );
+
+	/**
+	 * @brief Prepends the given glsl code for a specific stage.
+	 *
+	 * @param shaderStage	selector of the stage
+	 * @param glslCode		code to prepend in the desired shader
+	 */
+	void prependShaderStage( const ShaderStage shaderStage, const std::string& glslCode );
+
+	/**
+	 * @brief Appends the given glsl code for a specific stage.
+	 *
+	 * @param shaderStage	selector of the stage
+	 * @param glslCode		code to append in the desired shader
+	 */
+	void appendShaderStage( const ShaderStage shaderStage, const std::string& glslCode );
+
+	/**
+	 * @brief Sets the default glsl code for a specific stage.
+	 *
+	 * @param shaderStage	selector of the stage
+	 */
+	void resetShaderStage( const ShaderStage shaderStage );
 
 	/**
 	 * @brief Sets the default glsl code for all shader stages.
@@ -681,6 +731,11 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	//@{
 	const bool isTessellationEnabled() const;
 	void setTessellationEnabled( const bool enabled = true );
+
+
+	typedef vgd::node::TessellationProperties::TessellationValueType TessellationValueType;
+	const TessellationValueType getTessellation() const;
+	void setTessellation( const TessellationValueType value );
 	//@}
 
 
@@ -715,8 +770,9 @@ private:
 	void init();
 	vgd::node::Program *								m_program;					///< the last encountered Program node
 	// @todo TUnitContainer m_shaderStage;
-	// @todo 
 	std::vector< std::string >							m_shaderStage;				///< container of glsl code for custom shader stage
+
+	TessellationValueType								m_tessellation;				///< EngineProperties.tessellation
 	vgd::node::LightModel::ShadowValueType				m_lightModelShadow;			///< Last encountered value of LightModel.shadow field
 	vgd::node::LightModel::ShadowMapTypeValueType		m_shadowMapType;			///< @todo doc
 };
