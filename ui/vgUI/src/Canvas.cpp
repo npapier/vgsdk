@@ -126,7 +126,10 @@ const Canvas::GleLogSystem Canvas::getGleLogSystem()
 
 
 Canvas::Canvas( const Canvas * sharedCanvas, const bool newOpenGLContextSharingObjects )
-:	vgeGL::engine::SceneManager( sharedCanvas ? sharedCanvas->getGLEngine(): vgd::makeShp(new vgeGL::engine::Engine()) ),
+:	vgeGL::engine::SceneManager( sharedCanvas ?
+		vgd::makeShp(new vgeGL::engine::Engine(sharedCanvas->getGLEngine().get())) :
+		vgd::makeShp(new vgeGL::engine::Engine())
+		),
 	m_sharedCanvas					( sharedCanvas															),
 	//m_drawable						( 0																	),
 	m_glc							( 0																		),
