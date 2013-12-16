@@ -1,5 +1,4 @@
 description	= '(V)ersatile (G)raphical (U)ser (I)nterface'
-#Cross-platform interface to OpenGL windows
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
