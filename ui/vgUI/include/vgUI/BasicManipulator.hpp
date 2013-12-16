@@ -67,9 +67,13 @@ struct VGUI_API BasicManipulator : public BasicViewer
 
 
 	/**
-	 * @name Accessors to scene graph.
+	 * @name Accessors to scene graph
 	 */
 	//@{
+
+	// Overridden BasicViewer::setScene()
+	void setScene( const vgd::Shp< vgd::node::Group > );
+
 	/**
 	 * @brief Returns the transformation node applied to the whole scene.
 	 *

@@ -16,6 +16,7 @@
 #include <vgd/node/MatrixTransform.hpp>
 #include <vgd/node/MultiSwitch.hpp>
 #include <vgd/node/PointLight.hpp>
+#include <vgd/node/Program.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Switch.hpp>
 #include <vgd/node/TransformSeparator.hpp>
@@ -362,6 +363,7 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			getSetup()->addChild( existingNode );
 			break;
 
+
 		case LIGHTS:
 		{
 			//
@@ -371,14 +373,16 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			vgm::Vec3f	boxCenter;
 			float		boxMax;
 			computeSceneBoundingBox( box, boxCenter, boxMax );
+			if ( box.isEmpty() )	break;
+
 			m_camera->setLookAt( matrixBak );
 			vgm::Vec3f boxMin	= box.getMin(); 
 			vgm::Vec3f boxSize	= box.getSize();
 
 			//
 			const vgm::Vec3f positionSpot1( boxCenter + vgm::Vec3f(0.f, 0.f, boxSize[2])*3.f );
-			const vgm::Vec3f positionSpot2( boxMin + vgm::Vec3f(boxSize[0]/4.f, boxSize[1]/2.f, 0.f ) );
-			const vgm::Vec3f positionSpot3( boxMin + vgm::Vec3f(boxSize[0]/2.f, boxSize[1]/2.f, 0.f ) );
+			const vgm::Vec3f positionSpot2( boxCenter + vgm::Vec3f(-boxSize[0]/4.f, 0.f, boxSize[2])*3.f );
+			const vgm::Vec3f positionSpot3( boxCenter + vgm::Vec3f(boxSize[0]/4.f, 0.f, boxSize[2])*3.f );
 
 			using vgd::node::Group;
 
@@ -406,18 +410,15 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			vgd::Shp< SpotLight > spotLight2 = SpotLight::create("spotLight2");
 			spotLight2->setOn( true );
 			spotLight2->setPosition( positionSpot2 );
-			spotLight2->setDirection( boxCenter - positionSpot2 );
-			spotLight2->setCutOffAngle( 15.f );
-			spotLight2->setCutOffAngle( 45.f );
+			spotLight2->setDirection( vgm::Vec3f(0,0,-1) );
+			spotLight2->setCutOffAngle( 20.f );
 			spotLight2->setCastShadow( true );
 
-			vgd::Shp< SpotLight > spotLight3 = SpotLight::create("spotLight3");
-			spotLight3->setMultiAttributeIndex( 1 );
+			vgd::Shp< SpotLight > spotLight3 = SpotLight::create("spotLight3", 1);
 			spotLight3->setOn( true );
 			spotLight3->setPosition( positionSpot3 );
-			spotLight3->setDirection( boxCenter - positionSpot3 );
-			spotLight3->setCutOffAngle( 15.f );
-			spotLight3->setCutOffAngle( 45.f );
+			spotLight3->setDirection( vgm::Vec3f(0,0,-1) );
+			spotLight3->setCutOffAngle( 20.f );
 			spotLight3->setCastShadow( true );
 
 			// Creates and switches on the point light.
@@ -452,8 +453,8 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			lightSwitcher->setWhichChild(0);
 			lightSwitcher->addChild( directionalLights );
 			lightSwitcher->addChild( spotLight );
-			lightSwitcher->addChild( spotLights );
 			lightSwitcher->addChild( pointLights );
+			lightSwitcher->addChild( spotLights );
 
 			// Inserts the default lights before LightModel node.
 			using vgd::node::LightModel;
@@ -476,6 +477,10 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			getSetup()->addChild( existingNode );
 			break;
 
+		case PROGRAM:
+			existingNode = vgd::node::Program::createWhole("PROGRAM");
+			getSetup()->addChild( existingNode );
+			break;
 		default:
 			assert( false && "Optional node type not supported" );
 		}
@@ -549,6 +554,10 @@ const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const Option
 			optionalNodeName = "UNDERLAY_CONTAINER";
 			break;
 
+		case PROGRAM:
+			optionalNodeName = "PROGRAM";
+			break;
+
 		default:
 			assert( false && "Optional node type not supported" );
 	}
@@ -573,7 +582,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 
 	// Configures the camera.
 	configureCamera();
-}
+	}
 
 
 const bool BasicViewer::load( const std::string filePath )
@@ -618,10 +627,9 @@ void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCo
 	{
 		center	= box.getCenter();
 
-		float width, height, depth;
-		box.getSize( width, height, depth );
+		const vgm::Vec3f size = box.getSize();
 
-		max = vgm::max( width, height, depth );
+		max = vgm::max( size[0], size[1], size[2] );
 	}
 }
 

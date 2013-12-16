@@ -156,7 +156,7 @@ struct VGUI_API BasicViewer : public Canvas
 	/**
 	 * @brief	Assigns a new scene group, replacing the previous one.
 	 */
-	void setScene( const vgd::Shp< vgd::node::Group > );
+	virtual void setScene( const vgd::Shp< vgd::node::Group > );
 
 	/**
 	 * @brief Returns the overlay container node
@@ -183,7 +183,8 @@ struct VGUI_API BasicViewer : public Canvas
 		LIGHT_MODEL,		///< LightModel optional node
 		ENGINE_PROPERTIES,	///< EngineProperties optional node
 		LIGHTS,				///< Group optional node containing default lights
-		UNDERLAY_CONTAINER	///< Container node containing underlay (see LayerPlan node).
+		UNDERLAY_CONTAINER,	///< Container node containing underlay (see LayerPlan node).
+		PROGRAM				///< Program optional node
 	};
 	
 	/**

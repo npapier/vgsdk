@@ -42,6 +42,15 @@ BasicManipulator::BasicManipulator( const vgUI::Canvas * pSharedCanvas )
 
 
 
+void BasicManipulator::setScene( const vgd::Shp< vgd::node::Group > scene )
+{
+	BasicViewer::setScene( scene );
+
+	// Set surround field of Dragger
+	m_sceneTransform->setSurround( getScene() );
+}
+
+
 vgd::Shp< vgd::node::TransformDragger > BasicManipulator::getSceneTransformation()
 {
 	return m_sceneTransform;
