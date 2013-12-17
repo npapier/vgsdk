@@ -128,7 +128,7 @@ struct VGE_API UniformContainer
 	 * @param value		value of the uniform variable
 	 *
 	 * @pre isUniform(name)
-	 */	
+	 */
 	template< typename T >
 	const T setUniform( const std::string& name, const T& value )
 	{
