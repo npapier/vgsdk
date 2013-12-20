@@ -96,12 +96,12 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 
 		if ( meshesSize < 2 )
 		{
-			vgLogDebug( "GeoMorph(%s) have to be apply to at least 2 meshes", geoMorph->getName().c_str() );
+			vgLogDebug( "GeoMorph(%s) has to be applied to at least 2 meshes", geoMorph->getName().c_str() );
 			meshes->clear();
 		}
 		else
 		{
-			if ( meshesSize > 2 ) vgLogDebug( "GeoMorph(%s) have to be apply to exactly 2 meshes.", geoMorph->getName().c_str() );
+			if ( meshesSize > 2 ) vgLogDebug( "GeoMorph(%s) has to be applied to exactly 2 meshes.", geoMorph->getName().c_str() );
 
 			// Retrieves all meshes
 			vgd::node::VertexShape * mesh0 = (*meshes)[0];
@@ -128,7 +128,7 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 			//	uniform
 			const std::string uniformDecl =	"// add by geomorph\n"
 											"uniform vec2 geoMorphWeights;\n\n";
-			glslState.setShaderStage( GLSLState::UNIFORM_DECLARATIONS, uniformDecl );
+			glslState.appendShaderStage( GLSLState::UNIFORM_DECLARATIONS, uniformDecl );
 
 			engine->getUniformState().addUniform( "geoMorphWeights", geoMorph->getWeights() );
 
