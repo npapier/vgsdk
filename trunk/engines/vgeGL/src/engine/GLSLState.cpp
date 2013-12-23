@@ -91,6 +91,7 @@ namespace
 	static const std::string g_ShaderStageString[] =
 	{
 		"UNIFORM_DECLARATIONS",
+		"USER_DEFINED_UNIFORM_DECLARATIONS",
 
 		"VERTEX_DECLARATIONS",
 		"VERTEX_POSITION_DISPLACEMENT",

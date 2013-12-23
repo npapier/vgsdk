@@ -211,7 +211,7 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 				// bool_t
 				bool
 				> bool_t;
-				
+
 			typedef mpl::list<
 				vgd::field::Enum
 			> enum_t;

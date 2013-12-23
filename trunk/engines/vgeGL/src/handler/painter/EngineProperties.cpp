@@ -76,6 +76,12 @@ void EngineProperties::apply( vge::engine::Engine * engine, vgd::node::Node * no
 		gleGetCurrent()->setDebugOutput( bValue ? gle::OpenGLExtensions::SYNCHRONOUS : gle::OpenGLExtensions::DISABLED );
 	}
 
+	// OPENGL DSA
+	const bool hasDSA = engineProperties->getOpenglDirectStateAccess( bValue );
+	if ( hasDSA )
+	{
+		glEngine->setDSAEnabled( bValue );
+	}
 }
 
 

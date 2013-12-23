@@ -118,7 +118,7 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 			// SAMPLING SIZE
 			vgd::node::LightModel::SamplingSizeValueType samplingSize = lightModel->getSamplingSize();
-			glEngine->getUniformState().addUniform( "u_samplingSize", samplingSize );
+			glEngine->getBuiltinUniformState().sethUniform( "u_samplingSize", samplingSize );
 
 			// SHADOW QUALITY ?
 
@@ -128,7 +128,7 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 			// ILLUMINATION IN SHADOW
 			vgd::node::LightModel::IlluminationInShadowValueType illuminationInShadow = lightModel->getIlluminationInShadow();
-			glEngine->getUniformState().addUniform( "u_illuminationInShadow", illuminationInShadow );
+			glEngine->getBuiltinUniformState().sethUniform( "u_illuminationInShadow", illuminationInShadow );
 		}
 	}
 	else

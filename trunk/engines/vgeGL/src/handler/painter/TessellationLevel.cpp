@@ -100,7 +100,7 @@ void TessellationLevel::apply( vge::engine::Engine * engine, vgd::node::Node * n
 
 	if ( hasParameter4f0 )
 	{
-		glEngine->getUniformState().sethUniform( "uTessLevelParameter4f0", parameter4f0 );
+		glEngine->getBuiltinUniformState().sethUniform( "uTessLevelParameter4f0", parameter4f0 );
 	}
 
 	//	parameter4f1
@@ -109,7 +109,7 @@ void TessellationLevel::apply( vge::engine::Engine * engine, vgd::node::Node * n
 
 	if ( hasParameter4f1 )
 	{
-		glEngine->getUniformState().sethUniform( "uTessLevelParameter4f1", parameter4f1 );
+		glEngine->getBuiltinUniformState().sethUniform( "uTessLevelParameter4f1", parameter4f1 );
 	}
 }
 

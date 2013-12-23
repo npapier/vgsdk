@@ -23,6 +23,7 @@
 #include <vgd/node/TessellationLevel.hpp>
 #include <vgd/node/TessellationProperties.hpp>
 #include <vgd/node/Texture.hpp>
+#include <vgd/node/Uniforms.hpp>
 #include <vgd/node/VertexShape.hpp>
 
 
@@ -335,14 +336,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 460 ) != m_toString.end() )
+	if ( m_toString.find( 462 ) != m_toString.end() )
 	{
-		vgLogDebug("(460, AUTOMATIC) already in m_toString enum registry");
-		assert( false && "(460, AUTOMATIC) already in registry" );
+		vgLogDebug("(462, AUTOMATIC) already in m_toString enum registry");
+		assert( false && "(462, AUTOMATIC) already in registry" );
 	}
 	#endif
 
-	m_toString[ 460 ] = std::string("AUTOMATIC");
+	m_toString[ 462 ] = std::string("AUTOMATIC");
 
 	//
 	#ifdef _DEBUG
@@ -1105,14 +1106,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 464 ) != m_toString.end() )
+	if ( m_toString.find( 466 ) != m_toString.end() )
 	{
-		vgLogDebug("(464, STREAM) already in m_toString enum registry");
-		assert( false && "(464, STREAM) already in registry" );
+		vgLogDebug("(466, STREAM) already in m_toString enum registry");
+		assert( false && "(466, STREAM) already in registry" );
 	}
 	#endif
 
-	m_toString[ 464 ] = std::string("STREAM");
+	m_toString[ 466 ] = std::string("STREAM");
 
 	//
 	#ifdef _DEBUG
@@ -1193,14 +1194,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 463 ) != m_toString.end() )
+	if ( m_toString.find( 465 ) != m_toString.end() )
 	{
-		vgLogDebug("(463, DYNAMIC) already in m_toString enum registry");
-		assert( false && "(463, DYNAMIC) already in registry" );
+		vgLogDebug("(465, DYNAMIC) already in m_toString enum registry");
+		assert( false && "(465, DYNAMIC) already in registry" );
 	}
 	#endif
 
-	m_toString[ 463 ] = std::string("DYNAMIC");
+	m_toString[ 465 ] = std::string("DYNAMIC");
 
 	//
 	#ifdef _DEBUG
@@ -1245,6 +1246,17 @@ void EnumRegistry::initialize()
 	#endif
 
 	m_toString[ 453 ] = std::string("MAG_FILTER");
+
+	//
+	#ifdef _DEBUG
+	if ( m_toString.find( 461 ) != m_toString.end() )
+	{
+		vgLogDebug("(461, APPEND) already in m_toString enum registry");
+		assert( false && "(461, APPEND) already in registry" );
+	}
+	#endif
+
+	m_toString[ 461 ] = std::string("APPEND");
 
 	//
 	#ifdef _DEBUG
@@ -1457,14 +1469,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 462 ) != m_toString.end() )
+	if ( m_toString.find( 464 ) != m_toString.end() )
 	{
-		vgLogDebug("(462, STATIC) already in m_toString enum registry");
-		assert( false && "(462, STATIC) already in registry" );
+		vgLogDebug("(464, STATIC) already in m_toString enum registry");
+		assert( false && "(464, STATIC) already in registry" );
 	}
 	#endif
 
-	m_toString[ 462 ] = std::string("STATIC");
+	m_toString[ 464 ] = std::string("STATIC");
 
 	//
 	#ifdef _DEBUG
@@ -1952,6 +1964,17 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
+	if ( m_toString.find( 460 ) != m_toString.end() )
+	{
+		vgLogDebug("(460, REPLACE) already in m_toString enum registry");
+		assert( false && "(460, REPLACE) already in registry" );
+	}
+	#endif
+
+	m_toString[ 460 ] = std::string("REPLACE");
+
+	//
+	#ifdef _DEBUG
 	if ( m_toString.find( 455 ) != m_toString.end() )
 	{
 		vgLogDebug("(455, LINEAR) already in m_toString enum registry");
@@ -2183,14 +2206,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toString.find( 461 ) != m_toString.end() )
+	if ( m_toString.find( 463 ) != m_toString.end() )
 	{
-		vgLogDebug("(461, ONCE) already in m_toString enum registry");
-		assert( false && "(461, ONCE) already in registry" );
+		vgLogDebug("(463, ONCE) already in m_toString enum registry");
+		assert( false && "(463, ONCE) already in registry" );
 	}
 	#endif
 
-	m_toString[ 461 ] = std::string("ONCE");
+	m_toString[ 463 ] = std::string("ONCE");
 
 	//
 	#ifdef _DEBUG
@@ -2636,14 +2659,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 460 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 462 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(460, AUTOMATIC) already in m_toEnum enum registry");
-		assert( false && "(460, AUTOMATIC) already in registry" );
+		vgLogDebug("(462, AUTOMATIC) already in m_toEnum enum registry");
+		assert( false && "(462, AUTOMATIC) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 460 ] = vgd::makeShp( new vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType(460) );
+	m_toEnum[ 462 ] = vgd::makeShp( new vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType(462) );
 
 	//
 	#ifdef _DEBUG
@@ -3406,14 +3429,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 464 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 466 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(464, STREAM) already in m_toEnum enum registry");
-		assert( false && "(464, STREAM) already in registry" );
+		vgLogDebug("(466, STREAM) already in m_toEnum enum registry");
+		assert( false && "(466, STREAM) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 464 ] = vgd::makeShp( new vgd::node::VertexShape::DeformableHintValueType(464) );
+	m_toEnum[ 466 ] = vgd::makeShp( new vgd::node::VertexShape::DeformableHintValueType(466) );
 
 	//
 	#ifdef _DEBUG
@@ -3494,14 +3517,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 463 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 465 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(463, DYNAMIC) already in m_toEnum enum registry");
-		assert( false && "(463, DYNAMIC) already in registry" );
+		vgLogDebug("(465, DYNAMIC) already in m_toEnum enum registry");
+		assert( false && "(465, DYNAMIC) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 463 ] = vgd::makeShp( new vgd::node::VertexShape::DeformableHintValueType(463) );
+	m_toEnum[ 465 ] = vgd::makeShp( new vgd::node::VertexShape::DeformableHintValueType(465) );
 
 	//
 	#ifdef _DEBUG
@@ -3546,6 +3569,17 @@ void EnumRegistry::initialize()
 	#endif
 
 	m_toEnum[ 453 ] = vgd::makeShp( new vgd::node::Texture::FilterParameterType(453) );
+
+	//
+	#ifdef _DEBUG
+	if ( m_toEnum.find( 461 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(461, APPEND) already in m_toEnum enum registry");
+		assert( false && "(461, APPEND) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 461 ] = vgd::makeShp( new vgd::node::Uniforms::ComposeModeValueType(461) );
 
 	//
 	#ifdef _DEBUG
@@ -3758,14 +3792,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 462 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 464 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(462, STATIC) already in m_toEnum enum registry");
-		assert( false && "(462, STATIC) already in registry" );
+		vgLogDebug("(464, STATIC) already in m_toEnum enum registry");
+		assert( false && "(464, STATIC) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 462 ] = vgd::makeShp( new vgd::node::VertexShape::DeformableHintValueType(462) );
+	m_toEnum[ 464 ] = vgd::makeShp( new vgd::node::VertexShape::DeformableHintValueType(464) );
 
 	//
 	#ifdef _DEBUG
@@ -4253,6 +4287,17 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
+	if ( m_toEnum.find( 460 ) != m_toEnum.end() )
+	{
+		vgLogDebug("(460, REPLACE) already in m_toEnum enum registry");
+		assert( false && "(460, REPLACE) already in registry" );
+	}
+	#endif
+
+	m_toEnum[ 460 ] = vgd::makeShp( new vgd::node::Uniforms::ComposeModeValueType(460) );
+
+	//
+	#ifdef _DEBUG
 	if ( m_toEnum.find( 455 ) != m_toEnum.end() )
 	{
 		vgLogDebug("(455, LINEAR) already in m_toEnum enum registry");
@@ -4484,14 +4529,14 @@ void EnumRegistry::initialize()
 
 	//
 	#ifdef _DEBUG
-	if ( m_toEnum.find( 461 ) != m_toEnum.end() )
+	if ( m_toEnum.find( 463 ) != m_toEnum.end() )
 	{
-		vgLogDebug("(461, ONCE) already in m_toEnum enum registry");
-		assert( false && "(461, ONCE) already in registry" );
+		vgLogDebug("(463, ONCE) already in m_toEnum enum registry");
+		assert( false && "(463, ONCE) already in registry" );
 	}
 	#endif
 
-	m_toEnum[ 461 ] = vgd::makeShp( new vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType(461) );
+	m_toEnum[ 463 ] = vgd::makeShp( new vgd::node::VertexShape::BoundingBoxUpdatePolicyValueType(463) );
 
 	//
 	#ifdef _DEBUG

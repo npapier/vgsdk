@@ -236,27 +236,40 @@ def generateNodeHeader( fd, node ) :
 	fd.write( beginDefine.replace("NEWNODE", node.name.upper()) )
 
 	# includes
-	setIncludes = []
+	setIncludes = set()
 	for field in node.fields.itervalues() :
 		# type
 		incoming = field.type.getNormalizedName()
-		if incoming not in setIncludes :
-			setIncludes.append(incoming)
+		#	is type an enum ?
+		if field.type.isAnEnum:
+			# is an enum without a namespace ?
+			if not field.type.namespace:
+				# no, do nothing
+				setIncludes.add('Enum')
+				continue
+			# else yes, adds #include ...
+
+		setIncludes.add(incoming)
+
 		# keyType
 		if isinstance(field, PairAssociativeField ) :
 			incoming = field.keyType.getNormalizedName()
-			if incoming not in setIncludes :
-				setIncludes.append(incoming)
+			setIncludes.add(incoming)
 		#else nothing to do
 
-	setIncludes.sort()
-
-	for include in setIncludes :
+	listIncludes = list(setIncludes)
+	listIncludes.sort()
+	for include in listIncludes :
 		fd.write( "#include \"vgd/field/%s.hpp\"\n" % include )
 
 	for base in node.inherits :
 		fd.write( "#include \"vgd/node/BASECLASS.hpp\"\n".replace("BASECLASS", base ) )
 
+	# extra-include-hpp
+	if len(node.extraIncludeHpp) > 0:
+		fd.write( node.extraIncludeHpp )
+
+	#
 	fd.write( "\n\n\n" )
 
 	# begin namespace
@@ -408,11 +421,11 @@ def generateNodeImpl( fd, node ) :
 
 	# includes
 	fd.write( "#include \"vgd/node/NodeName.hpp\"\n\n".replace( "NodeName", node.name ) )
-	if node.name == 'VertexShape':
-		fd.write( "#include \"vgd/node/Group.hpp\"\n" )
-	# endtodo
 	fd.write( "#include \"vgd/node/detail/Node.hpp\"\n\n\n\n" )
 
+	# extra-include-cpp
+	if len(node.extraIncludeCpp) > 0:
+		fd.write( node.extraIncludeCpp )
 
 	# begin namespace
 	generateBeginNamespace( fd )

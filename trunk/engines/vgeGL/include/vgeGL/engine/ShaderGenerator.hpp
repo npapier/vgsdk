@@ -110,7 +110,7 @@ struct GLSLHelpers
 											"#endif\n"
 											"\n";
 
-		return retVal + state.getShaderStage( GLSLState::UNIFORM_DECLARATIONS );
+		return retVal + state.getShaderStage( GLSLState::UNIFORM_DECLARATIONS ) + state.getShaderStage( GLSLState::USER_DEFINED_UNIFORM_DECLARATIONS );
 	}
 
 

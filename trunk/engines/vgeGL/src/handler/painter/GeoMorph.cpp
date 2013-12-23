@@ -130,7 +130,7 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 											"uniform vec2 geoMorphWeights;\n\n";
 			glslState.appendShaderStage( GLSLState::UNIFORM_DECLARATIONS, uniformDecl );
 
-			engine->getUniformState().addUniform( "geoMorphWeights", geoMorph->getWeights() );
+			engine->getBuiltinUniformState().addUniform( "geoMorphWeights", geoMorph->getWeights() );
 
 			// Geomorphing computation in vertex shader
 			static const std::string templateMethodStr =	"// add by geomorph\n"
@@ -168,7 +168,7 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 			vsHandler.apply( engine, mesh0 );
 
 			// Restores state
-			engine->getUniformState().removeUniform( "geoMorphWeights" );
+			engine->getBuiltinUniformState().removeUniform( "geoMorphWeights" );
 			engine->popGLSLState();
 		}
 	}

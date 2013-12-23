@@ -5,11 +5,11 @@
 
 #include "vgd/node/VertexShape.hpp"
 
-#include "vgd/node/Group.hpp"
 #include "vgd/node/detail/Node.hpp"
 
 
 
+#include "vgd/node/Group.hpp"
 namespace vgd
 {
 
@@ -65,8 +65,7 @@ VertexShape::VertexShape( const std::string nodeName ) :
 	vgd::node::ITransformation()
 {
 	// Adds field(s)
-	addField( new FTessellationBiasType(getFTessellationBias()) );
-	addField( new FTessellationLevelType(getFTessellationLevel()) );
+	addField( new FPrimitiveType(getFPrimitive()) );
 	addField( new FTangentBindingType(getFTangentBinding()) );
 	addField( new FColorBindingType(getFColorBinding()) );
 	addField( new FNormalType(getFNormal()) );
@@ -77,7 +76,6 @@ VertexShape::VertexShape( const std::string nodeName ) :
 	addField( new FBoundingBoxUpdatePolicyType(getFBoundingBoxUpdatePolicy()) );
 	addField( new FTangentType(getFTangent()) );
 	addField( new FNormalBindingType(getFNormalBinding()) );
-	addField( new FPrimitiveType(getFPrimitive()) );
 
 	// Adds dirty flag(s)
 	addDirtyFlag(getDFBoundingBox());
@@ -94,8 +92,6 @@ void VertexShape::setToDefaults( void )
 {
 	Shape::setToDefaults();
 	ITransformation::setToDefaults();
-	setTessellationBias( (0.f) );
-	setTessellationLevel( (0.f) );
 	setTangentBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
 	setColorBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
 	setDeformableHint( (STATIC) );
@@ -113,42 +109,17 @@ void VertexShape::setOptionalsToDefaults()
 
 
 
-// TessellationBias
-
-const VertexShape::TessellationBiasValueType VertexShape::DEFAULT_TESSELLATIONBIAS = (0.f);
-
-
-
-const VertexShape::TessellationBiasValueType VertexShape::getTessellationBias() const
+// Primitive
+vgd::field::EditorRO< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRO() const
 {
-	return getFieldRO<FTessellationBiasType>(getFTessellationBias())->getValue();
+	return getFieldRO<FPrimitiveType>( getFPrimitive() );
 }
 
 
 
-void VertexShape::setTessellationBias( const TessellationBiasValueType value )
+vgd::field::EditorRW< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRW()
 {
-	getFieldRW<FTessellationBiasType>(getFTessellationBias())->setValue( value );
-}
-
-
-
-// TessellationLevel
-
-const VertexShape::TessellationLevelValueType VertexShape::DEFAULT_TESSELLATIONLEVEL = (0.f);
-
-
-
-const VertexShape::TessellationLevelValueType VertexShape::getTessellationLevel() const
-{
-	return getFieldRO<FTessellationLevelType>(getFTessellationLevel())->getValue();
-}
-
-
-
-void VertexShape::setTessellationLevel( const TessellationLevelValueType value )
-{
-	getFieldRW<FTessellationLevelType>(getFTessellationLevel())->setValue( value );
+	return getFieldRW<FPrimitiveType>( getFPrimitive() );
 }
 
 
@@ -308,32 +279,10 @@ void VertexShape::setNormalBinding( const NormalBindingValueType value )
 
 
 
-// Primitive
-vgd::field::EditorRO< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRO() const
-{
-	return getFieldRO<FPrimitiveType>( getFPrimitive() );
-}
-
-
-
-vgd::field::EditorRW< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRW()
-{
-	return getFieldRW<FPrimitiveType>( getFPrimitive() );
-}
-
-
-
 // Field name accessor(s)
-const std::string VertexShape::getFTessellationBias( void )
+const std::string VertexShape::getFPrimitive( void )
 {
-	return "f_tessellationBias";
-}
-
-
-
-const std::string VertexShape::getFTessellationLevel( void )
-{
-	return "f_tessellationLevel";
+	return "f_primitive";
 }
 
 
@@ -404,13 +353,6 @@ const std::string VertexShape::getFTangent( void )
 const std::string VertexShape::getFNormalBinding( void )
 {
 	return "f_normalBinding";
-}
-
-
-
-const std::string VertexShape::getFPrimitive( void )
-{
-	return "f_primitive";
 }
 
 

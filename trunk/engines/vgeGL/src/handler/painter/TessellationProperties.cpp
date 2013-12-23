@@ -66,19 +66,19 @@ void TessellationProperties::apply( vge::engine::Engine * engine, vgd::node::Nod
 	vgd::node::TessellationProperties::PhongBiasValueType phongBias;
 	const bool hasPhongBias = tessProperties->getPhongBias( phongBias );
 
-	if ( hasPhongBias )		glEngine->getUniformState().addUniform( "tessPhongBias", phongBias );
+	if ( hasPhongBias )		glEngine->getBuiltinUniformState().sethUniform( "tessPhongBias", phongBias );
 
 	//	tessellationRange
 	vgd::node::TessellationProperties::RangeValueType range;
 	const bool hasRange = tessProperties->getRange( range );
 
-	if ( hasRange )			glEngine->getUniformState().addUniform( "tessRange", range );
+	if ( hasRange )			glEngine->getBuiltinUniformState().sethUniform( "tessRange", range );
 
 	//	pixelsPerEdge
 	float pixelsPerEdge;
 	const bool hasPixelsPerEdge = tessProperties->getPixelsPerEdge( pixelsPerEdge );
 
-	if ( hasPixelsPerEdge )	glEngine->getUniformState().addUniform( "tessPixelsPerEdge", pixelsPerEdge );
+	if ( hasPixelsPerEdge )	glEngine->getBuiltinUniformState().sethUniform( "tessPixelsPerEdge", pixelsPerEdge );
 }
 
 
