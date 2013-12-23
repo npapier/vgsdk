@@ -1,72 +1,36 @@
-// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
-#ifndef _VGE_BASIC_UNIFORMCONTAINER_HPP
-#define _VGE_BASIC_UNIFORMCONTAINER_HPP
+#ifndef _VGD_BASIC_UNIFORMCONTAINER_HPP
+#define _VGD_BASIC_UNIFORMCONTAINER_HPP
 
-#include <boost/variant.hpp>
 #include <map>
 #include <string>
 #include <utility>
-#include <vge/vge.hpp>
-#include <vgm/Vector.hpp>
-#include <vgm/Matrix.hpp>
+#include "vgd/field/Uniform.hpp"
+#include "vgd/vgd.hpp"
 
 
 
-namespace vge
+namespace vgd
 {
 
 namespace basic
 {
 
 
-
 /**
- * @brief Specialized container to manage uniform variables.
+ * @brief Specialized container to manage uniform variables
  *
  * An uniform variable is a global variable whose value are the same across the entire primitive being processed.
+ *
+ * @todo simplify interface, see vgd::node::Uniforms.
+ * @todo dirty flags
  */
-struct VGE_API UniformContainer
+struct VGD_API UniformContainer
 {
-	/**
-	 * @name Constructors
-	 */
-	//@{
-
-
-	/**
-	 * brief Default constructor
-	 */
-	//UniformContainer();
-
-	/**
-	 * brief Copy constructor
-	 */
-	//TUnitContainer( const TUnitContainer& value )
-	//{
-	//	copy(value);
-	//}
-
-	/**
-	 * brief Assign operator
-	 */
-	//TUnitContainer& operator =( const TUnitContainer& value )
-	//{
-		//if ( this != &value )
-		//{
-			// remove() not needed
-			//copy( value );
-		//}
-		//return (*this);
-	//}
-
-	//@}
-
-
-
 	/**
 	 * @brief Clears content
 	 *
@@ -77,6 +41,8 @@ struct VGE_API UniformContainer
 
 	/**
 	 * @brief Adds a new uniform variable
+	 *
+	 * @pre isUniform(name) not true
 	 *
 	 * @param name		name of the uniform variable
 	 * @param value		value of the uniform variable
@@ -112,7 +78,7 @@ struct VGE_API UniformContainer
 	 *
 	 * @param name		name of the uniform variable
 	 *
-	 * @return true if the variable exists, false otherwise	
+	 * @return true if the variable exists, false otherwise
 	 */
 	const bool isUniform( const std::string& name ) const;
 
@@ -129,6 +95,7 @@ struct VGE_API UniformContainer
 	 *
 	 * @pre isUniform(name)
 	 */
+	// @todo remove me setUniform()/sethUniform() is enough
 	template< typename T >
 	const T setUniform( const std::string& name, const T& value )
 	{
@@ -158,7 +125,7 @@ struct VGE_API UniformContainer
 	 * @param name		name of the uniform variable
 	 * @param value		value of the uniform variable
 	 *
-	 * @post isDirty()
+	 * @todo post isDirty()
 	 */
 	template< typename T >
 	void sethUniform( const std::string& name, const T& value )
@@ -172,25 +139,18 @@ struct VGE_API UniformContainer
 		else
 		{
 			// Not found
-			addUniform(name,value);
+			addUniform(name, value);
 		}
 	}
 
 
-	// @todo getUniform()
-	// @todo dirty flags
-	//void destroy();							///< code for destructor
-	//void copy( const UniformContainer& src );	///< code for copy constructor
+protected:
+	typedef std::string						KeyType;
+	typedef vgd::field::UniformValue		ValueType;
+	typedef std::map< KeyType, ValueType >	ContainerType;
 
-	typedef std::string KeyType;
-	typedef boost::variant<
-		int,
-		float,
-		vgm::Vec2f, vgm::Vec3f, vgm::Vec4f,
-		vgm::MatrixR > ValueType;
-	typedef std::map< KeyType, ValueType > ContainerType;
-
-	typedef ContainerType::const_iterator	ConstIteratorType;
+	typedef ContainerType::const_iterator				ConstIteratorType;
+	typedef std::pair< ContainerType::iterator, bool >	RetValType;
 
 	/**
 	 * @brief Returns a pair (begin, end) containing iterators on ContainerType.
@@ -202,14 +162,12 @@ struct VGE_API UniformContainer
 
 private:
 	ContainerType m_container;			///< container of uniform variables a map< name,value >.
-
-	typedef std::pair< ContainerType::iterator, bool > RetValType;
 };
 
 
 
 } // namespace basic
 
-} // namespace vge
+} // namespace vgd
 
-#endif //#ifndef _VGE_BASIC_UNIFORMCONTAINER_HPP
+#endif //#ifndef _VGD_BASIC_UNIFORMCONTAINER_HPP

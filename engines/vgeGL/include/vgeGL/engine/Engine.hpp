@@ -152,15 +152,10 @@ struct VGEGL_API Engine : public vge::engine::Engine
 
 	/**
 	 * @brief Default constructor
-	 */
-	Engine();
-
-	/**
-	 * @brief Constructor for ressource sharing
 	 *
-	 * @param	sharedEngine	a pointer to an engine with which ressources will be shared
+	 * @param	sharedEngine	a pointer to an engine with which ressources will be shared or a null for not sharing resources.
 	 */
-	Engine( Engine * sharedEngine );
+	Engine( Engine * sharedEngine = 0 );
 
 	/**
 	 * @brief Destructor
@@ -254,17 +249,19 @@ public:
 
 
 	/**
-	 * @brief Retrieves the current state for Uniform
+	 * @brief Retrieves the current state for built-in uniform variables.
 	 *
-	 * @return the current state for Uniform
+	 * @return the current state for built-in uniform variables
 	 */
-	const UniformState& getUniformState() const;
+	const UniformState& getBuiltinUniformState() const;
+	UniformState& getBuiltinUniformState();
 
 	/**
-	 * @brief Retrieves the current state for Uniform
+	 * @brief Retrieves the current state for user-defined uniform variables.
 	 *
-	 * @return the current state for Uniform
+	 * @return the current state for user-defined uniform variables
 	 */
+	const UniformState& getUniformState() const;
 	UniformState& getUniformState();
 
 	//@}
@@ -278,22 +275,22 @@ public:
 	/**
 	 * @brief Initializes 'random' uniform with 4 random values between 0 and 1.
 	 *
-	 * @pre !getUniformState().isUniform( "random" )
+	 * @pre !getBuiltinUniformState().isUniform( "random" )
 	 */
 	void setUniformRandom();
 
 	/**
 	 * @brief Initializes 'time' uniform with getElapsedTime().ms()
 	 *
-	 * @pre !getUniformState().isUniform( "time" )
+	 * @pre !getBuiltinUniformState().isUniform( "time" )
 	 */
 	void setUniformTime();
 
 	/**
 	 * @brief Initializes 'nearFar' uniform with getNearFar() and 'viewport' uniform with getViewport()
 	 *
-	 * @pre !getUniformState().isUniform( "nearFar" )
-	 * @pre !getUniformState().isUniform( "viewport" )
+	 * @pre !getBuiltinUniformState().isUniform( "nearFar" )
+	 * @pre !getBuiltinUniformState().isUniform( "viewport" )
 	 */
 	void setUniformNearFarAndViewport();
 
@@ -425,6 +422,11 @@ public:
 	 * @brief Gets the OpenGL objects manager
 	 */
 	vgd::Shp< GLManagerType > getGLManager();
+
+	/**
+	 * brief Gets the OpenGL objects manager
+	 */
+	//vgd::Shp< GLManagerType > getNotShareableGLManager();
 
 	/**
 	 * @brief Returns the resource associated to the given node in the OpenGL manager
@@ -586,6 +588,20 @@ public:
 	 */
 	const bool setShadowEnabled( const bool enabled = true );
 
+	/**
+	 * @brief Determines whether DSA api usage is enabled or not.
+	 *
+	 * @return true if the DSA api usage is enabled, false otherwise.
+	 */
+	const bool isDSAEnabled() const;
+
+	/**
+	 * @brief Enables or disables the DSA api usage depending on the value of the parameter isEnabled.
+	 *
+	 * @param isEnabled		true when the DSA api usage must be enabled, false otherwise
+	 * @return the DSA api usage state before calling this method
+	 */
+	const bool setDSAEnabled( const bool enabled = true );
 	//@}
 
 
@@ -971,7 +987,8 @@ private:
 
 	GLSLStateStack							m_glslStateStack;				///< store the stack of GLSL rendering state
 
-	UniformState							m_uniformState;					///< store the current uniform state
+	UniformState							m_builtinUniformState;			///< store the current state for built-in uniform variables
+	UniformState							m_uniformState;					///< store the current state for user-defined uniform variables
 
 	vgd::Shp< vgeGL::engine::GLSLState >	m_globalGLSLState;				///< store the global GLSL state
 

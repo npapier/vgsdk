@@ -2195,52 +2195,52 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 // @todo a light version of begin2DRendering
 
 		// random
-		if ( !engine->getUniformState().isUniform("random") )	engine->setUniformRandom();
+		if ( !engine->getBuiltinUniformState().isUniform("random") )	engine->setUniformRandom();
 
 		// time
-		if ( !engine->getUniformState().isUniform("time") )		engine->setUniformTime();
+		if ( !engine->getBuiltinUniformState().isUniform("time") )		engine->setUniformTime();
 
 		// nearFar and viewport
-		if ( !engine->getUniformState().isUniform("nearFar") )	engine->setUniformNearFarAndViewport();
+		if ( !engine->getBuiltinUniformState().isUniform("nearFar") )	engine->setUniformNearFarAndViewport();
 
 		// param1f0
 		const float param1f0 = params1f0[i];
 		if ( param1f0 != std::numeric_limits<float>::max() )
 		{
-			vgAssertN( !engine->getUniformState().isUniform( "param1f0"), "Uniform param1f0 already used" );
-			engine->getUniformState().addUniform( "param1f0", param1f0 );
+			vgAssertN( !engine->getBuiltinUniformState().isUniform( "param1f0"), "Uniform param1f0 already used" );
+			engine->getBuiltinUniformState().addUniform( "param1f0", param1f0 );
 		}
 
 		// param1f1
 		const float param1f1 = params1f1[i];
 		if ( param1f1 != std::numeric_limits<float>::max() )
 		{
-			vgAssertN( !engine->getUniformState().isUniform( "param1f1"), "Uniform param1f1 already used" );
-			engine->getUniformState().addUniform( "param1f1", param1f1 );
+			vgAssertN( !engine->getBuiltinUniformState().isUniform( "param1f1"), "Uniform param1f1 already used" );
+			engine->getBuiltinUniformState().addUniform( "param1f1", param1f1 );
 		}
 
 		// param4f0
 		const vgm::Vec4f param4f0 = params4f0[i];
 		if ( param4f0.isValid() )
 		{
-			vgAssertN( !engine->getUniformState().isUniform( "param4f0"), "Uniform param4f0 already used" );
-			engine->getUniformState().addUniform( "param4f0", param4f0 );
+			vgAssertN( !engine->getBuiltinUniformState().isUniform( "param4f0"), "Uniform param4f0 already used" );
+			engine->getBuiltinUniformState().addUniform( "param4f0", param4f0 );
 		}
 
 		// param4f1
 		const vgm::Vec4f param4f1 = params4f1[i];
 		if ( param4f1.isValid() )
 		{
-			vgAssertN( !engine->getUniformState().isUniform( "param4f1"), "Uniform param4f1 already used" );
-			engine->getUniformState().addUniform( "param4f1", param4f1 );
+			vgAssertN( !engine->getBuiltinUniformState().isUniform( "param4f1"), "Uniform param4f1 already used" );
+			engine->getBuiltinUniformState().addUniform( "param4f1", param4f1 );
 		}
 
 		// param4x4f0
 		const vgm::MatrixR param4x4f0 = params4x4f0[i];
 		if ( param4x4f0.isValid() )
 		{
-			vgAssertN( !engine->getUniformState().isUniform( "param4x4f0"), "Uniform param4x4f0 already used" );
-			engine->getUniformState().addUniform( "param4x4f0", param4x4f0 );
+			vgAssertN( !engine->getBuiltinUniformState().isUniform( "param4x4f0"), "Uniform param4x4f0 already used" );
+			engine->getBuiltinUniformState().addUniform( "param4x4f0", param4x4f0 );
 		}
 
 		// input0
@@ -2354,6 +2354,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 
 		currentScaleForTexCoord *= scales[i];
 
+		engine->getBuiltinUniformState().clear();
 		engine->getUniformState().clear();
 	}
 

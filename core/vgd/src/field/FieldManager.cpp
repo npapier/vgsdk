@@ -1,10 +1,11 @@
-// VGSDK - Copyright (C) 2004, 2006, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/field/FieldManager.hpp"
 
+#include <utility>
 #include <typeinfo>
 #include <boost/tuple/tuple.hpp>
 
@@ -75,6 +76,8 @@ void FieldManager::lockFieldAccess()
 	g_lockedID = boost::this_thread::get_id();
 }
 
+
+
 const bool FieldManager::ensureFieldAccess(const std::string& strFieldName) const
 {
 	if( g_lockedID != boost::thread::id() && boost::this_thread::get_id() != g_lockedID )
@@ -111,7 +114,7 @@ const bool FieldManager::isField( const std::string strFieldName ) const
 {
 	MapField::const_iterator iField;
 	iField = m_fields.find( strFieldName );
-	
+
 	return ( iField != m_fields.end() );
 }
 
@@ -134,6 +137,16 @@ const std::type_info& FieldManager::getFieldType( const std::string strFieldName
 	}
 }
 
+
+
+void FieldManager::getFieldNames( std::vector< std::string >& oFieldNames ) const
+{
+	typedef std::vector< std::string > 						StringContainer;
+	typedef std::back_insert_iterator< StringContainer >	InsertIterator;
+
+	InsertIterator inserter( oFieldNames );
+	getFieldNames( inserter );
+}
 
 
 /*
@@ -163,36 +176,77 @@ std::pair< MapField::iterator, MapField::iterator >
 
 
 
-const bool FieldManager::addField( AbstractField* pField )
+const bool FieldManager::addField( vgd::Shp< AbstractField > newField )
 {
-	// STEP 1 : Add field to field container.
+	// STEP 1 : Add field to field container
 	std::pair< MapField::iterator, bool> retVal;
 
-	vgd::Shp<AbstractField> shpField(pField);
-
 	retVal = m_fields.insert(
-		std::pair< std::string, vgd::Shp<AbstractField> >( pField->name(), shpField )
+		std::make_pair( newField->name(), newField )
 		);
 
 	if ( retVal.second == false )
 	{
-		vgAssertN( false, "Unable to add this field. Field name must be unique." );
+		vgAssertN( false, "Unable to add this field named %s. Field name must be unique.", newField->name().c_str() );
 		return false;
 	}
 
 	// STEP 2 : Add link between field and field manager.
-	vgAssertN( pField->findObserver( this ) == false, "The added field is already observed by this manager of fields." );
+	vgAssertN( newField->findObserver( this ) == false, "The added field is already observed by this manager of fields." );
 
-	pField->attach( this );
+	newField->attach( this );
 
 	return retVal.second;
 }
 
-
-
-const bool FieldManager::removeField( const std::string strFieldName )
+const bool FieldManager::addField( AbstractField* pField )
 {
-	vgAssertN( checkField( strFieldName ), "Unknown field name." );
+	vgd::Shp<AbstractField> shpField(pField);
+	return addField(shpField);
+}
+
+
+
+const bool FieldManager::setField( vgd::Shp< AbstractField > field )
+{
+	const std::string& fieldName = field->name();
+
+	MapField::iterator iField = m_fields.find( fieldName );
+
+	if ( iField != m_fields.end() )
+	{
+		// Found the field named field name and replace it by the given field
+		iField->second = field;
+
+		// Add link between field and field manager.
+		vgAssertN( field->findObserver( this ) == false, "The added field is already observed by this manager of fields." );
+		field->attach( this );
+		return true;
+	}
+	else
+	{
+		// Not found the field named fieldName
+		vgAssertN( false, "Unable to find field named '%s'", fieldName.c_str() );
+		return false;
+	}
+}
+
+
+
+const bool FieldManager::setField( const FieldManager * fieldManager, const std::string& strFieldName )
+{
+	vgAssert( fieldManager->isField(strFieldName) );
+	vgAssert( isField(strFieldName) );
+
+	vgd::Shp< AbstractField > fieldToReplace = fieldManager->getField<AbstractField>(strFieldName);
+	return setField( fieldToReplace );
+}
+
+
+
+const bool FieldManager::removeField( const std::string& strFieldName )
+{
+	vgAssertN( checkField( strFieldName ), "Unknown field name '%s'.", strFieldName.c_str() );
 
 	// STEP 1 : Find the field.
 	vgd::Shp<AbstractField>	shpAField = getField<AbstractField>( strFieldName );
@@ -382,6 +436,17 @@ const DirtyFlag* FieldManager::getDirtyFlag( const std::string strDirtyFlagName 
 	{
 		return 0;
 	}
+}
+
+
+
+void FieldManager::getDirtyFlagNames( std::vector< std::string >& oDirtyFlagsNames ) const
+{
+	typedef std::vector< std::string > 						StringContainer;
+	typedef std::back_insert_iterator< StringContainer >	InsertIterator;
+
+	InsertIterator inserter( oDirtyFlagsNames );
+	getDirtyFlagNames( inserter );
 }
 
 

@@ -7,6 +7,7 @@
 
 #include <gle/OpenGLExtensionsGen.hpp>
 #include <glo/FrameBufferObject.hpp>
+#include <glo/helpers.hpp>
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
 #include <vgd/basic/Image.hpp>
@@ -30,39 +31,7 @@ namespace engine
 {
 
 
-// CONSTRUCTORS
-Engine::Engine()
-:	m_isLightingEnabled(true),
-	m_isTextureMappingEnabled(true),
-	m_isDrawCallsEnabled(true),
-	m_isDisplayListEnabled(true),
-	m_isDepthPrePassEnabled(false),
-	m_isShadowEnabled(true),
-
-	m_glManager( vgd::makeShp( new GLManagerType("GL object manager") ) ),
-	m_glslManager( vgd::makeShp( new GLSLProgramManagerType("GLSL Program Manager") ) ),
-	m_glslManagerExt( vgd::makeShp( new GLSLProgramManagerExtType("GLSL Program ManagerExt") ) ),
-
-	m_isGLSLEnabled(true),
-	m_currentProgram(0),
-	// m_glStateStack()
-	//m_glslStateStack()
-	//m_uniformState
-	//m_globalGLSLState
-	//m_outputBuffers
-	//m_currentPrivateOutputBuffers
-	m_glslProgramGenerator( new ProgramGenerator() )
-{
-	// Connects OpenGL manager to node destruction signal.
-	m_glManagerConnection = vgd::node::Node::connect( boost::bind(&GLManagerType::remove, getGLManager().get(), _1) );
-
-	// Reset cache
-	m_maxViewportSize.setInvalid();
-	m_maxLights = m_maxTexUnits = m_maxTexSize = m_max3DTexSize = m_maxCubeMapTexSize = 0;
-}
-
-
-
+// CONSTRUCTOR
 Engine::Engine( Engine * sharedEngine )
 :	m_isLightingEnabled(true),
 	m_isTextureMappingEnabled(true),
@@ -70,15 +39,17 @@ Engine::Engine( Engine * sharedEngine )
 	m_isDisplayListEnabled(true),
 	m_isDepthPrePassEnabled(false),
 	m_isShadowEnabled(true),
+	//m_isDSAEnabled(false),
 
-	m_glManager( sharedEngine->m_glManager ),
-	m_glslManager( sharedEngine->m_glslManager ),
-	m_glslManagerExt( sharedEngine->m_glslManagerExt ),
+	m_glManager(		sharedEngine != 0 ? sharedEngine->m_glManager		: vgd::makeShp( new GLManagerType("GL object manager") )					),
+	m_glslManager(		sharedEngine != 0 ? sharedEngine->m_glslManager		: vgd::makeShp( new GLSLProgramManagerType("GLSL Program Manager") )		),
+	m_glslManagerExt(	sharedEngine != 0  ? sharedEngine->m_glslManagerExt	: vgd::makeShp( new GLSLProgramManagerExtType("GLSL Program ManagerExt") )	),
 
 	m_isGLSLEnabled(true),
 	m_currentProgram(0),
 	// m_glStateStack()
 	//m_glslStateStack()
+	//m_builtinUniformState
 	//m_uniformState
 	//m_globalGLSLState
 	//m_outputBuffers
@@ -152,6 +123,7 @@ void Engine::reset()
 	//
 	getGLStateStack().clear( vgd::makeShp(new GLState()) );
 	m_glslStateStack.clear( vgd::makeShp(new GLSLState(getMaxTexUnits()) ) );
+	getBuiltinUniformState().clear();
 	getUniformState().clear();
 	m_globalGLSLState.reset();
 	setOutputBuffers();
@@ -295,6 +267,17 @@ GLSLState& Engine::getGLSLState()
 }
 
 
+const Engine::UniformState& Engine::getBuiltinUniformState() const
+{
+	return m_builtinUniformState;
+}
+
+Engine::UniformState& Engine::getBuiltinUniformState()
+{
+	return m_builtinUniformState;
+}
+
+
 const Engine::UniformState& Engine::getUniformState() const
 {
 	return m_uniformState;
@@ -306,7 +289,6 @@ Engine::UniformState& Engine::getUniformState()
 }
 
 
-
 void Engine::setUniformRandom()
 {
 	vgm::Vec4f random(
@@ -315,16 +297,16 @@ void Engine::setUniformRandom()
 		static_cast<float>(rand()) / 32767.f,
 		static_cast<float>(rand()) / 32767.f );
 
-	vgAssertN( !getUniformState().isUniform( "random" ), "Uniform named 'random' already used" );
-	getUniformState().addUniform( "random", random );
+	vgAssertN( !getBuiltinUniformState().isUniform( "random" ), "Uniform named 'random' already used" );
+	getBuiltinUniformState().addUniform( "random", random );
 }
 
 
 void Engine::setUniformTime()
 {
 	const vgd::basic::TimeDuration duration = getElapsedTime();
-	vgAssertN( !getUniformState().isUniform( "time" ), "Uniform named 'time' already used" );
-	getUniformState().addUniform( "time", static_cast<int>(duration.ms()) );
+	vgAssertN( !getBuiltinUniformState().isUniform( "time" ), "Uniform named 'time' already used" );
+	getBuiltinUniformState().addUniform( "time", static_cast<int>(duration.ms()) );
 }
 
 
@@ -335,11 +317,11 @@ void Engine::setUniformNearFarAndViewport()
 
 	const vgm::Rectangle2i& viewport = getViewport();
 
-	vgAssertN( !getUniformState().isUniform( "nearFar"), "Uniform named 'nearFar' already used" );
-	getUniformState().addUniform( "nearFar", nearFar );
+	vgAssertN( !getBuiltinUniformState().isUniform( "nearFar"), "Uniform named 'nearFar' already used" );
+	getBuiltinUniformState().addUniform( "nearFar", nearFar );
 
-	vgAssertN( !getUniformState().isUniform( "viewport"), "Uniform named 'viewport' already used" );
-	getUniformState().addUniform( "viewport", vgm::Vec4f(viewport) );
+	vgAssertN( !getBuiltinUniformState().isUniform( "viewport"), "Uniform named 'viewport' already used" );
+	getBuiltinUniformState().addUniform( "viewport", vgm::Vec4f(viewport) );
 }
 
 
@@ -538,6 +520,20 @@ const bool Engine::setShadowEnabled( const bool enabled )
 	const bool retVal = m_isShadowEnabled;
 	m_isShadowEnabled = enabled;
 	return retVal;
+}
+
+
+
+const bool Engine::isDSAEnabled() const
+{
+	return glo::isDSAEnabled();
+}
+
+
+
+const bool Engine::setDSAEnabled( const bool enabled )
+{
+	return glo::setDSAEnabled(enabled);
 }
 
 
@@ -1161,6 +1157,7 @@ void Engine::pop()
 	getGLStateStack().pop();
 	m_glslStateStack.pop();
 
+	getBuiltinUniformState().clear(); // @todo push/pop too
 	getUniformState().clear(); // @todo push/pop too
 }
 

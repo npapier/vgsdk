@@ -107,7 +107,7 @@ Graph::Graph()
 
 Graph::~Graph()
 {
-	assert( (num_edges(bglGraph())==0) && (m_freeVertexDescriptors.size()==num_vertices(bglGraph())) && "Graph not empty when destroyed. Check for static references on nodes" );
+	vgAssertN( (num_edges(bglGraph())==0) && (m_freeVertexDescriptors.size()==num_vertices(bglGraph())), "Graph not empty when destroyed. Check for static references on nodes" );
 	bglGraph().clear();
 }
 

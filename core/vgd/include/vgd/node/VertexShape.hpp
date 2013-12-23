@@ -8,13 +8,13 @@
 
 #include "vgd/field/Binding.hpp"
 #include "vgd/field/Enum.hpp"
-#include "vgd/field/Float.hpp"
 #include "vgd/field/Primitive.hpp"
 #include "vgd/field/Uint.hpp"
 #include "vgd/field/Vec3f.hpp"
 #include "vgd/field/Vec4f.hpp"
 #include "vgd/node/Shape.hpp"
 #include "vgd/node/ITransformation.hpp"
+#include "vgd/field/Float.hpp"
 
 
 
@@ -32,9 +32,7 @@ namespace node
  * Summary of capabilities :\n 	- encapsulation of geometry/material specification.\n 	- bounding box.\n 	- applying transformation (matrix, translation and rotation) on vertices and normals.\n Fields that defined the geometry :\n 	- MFVec3f \c		vertex 		= empty\n 	- MFUint32 \c		vertexIndex	= empty\n 	- MFPrimitive \c	primitive	= empty\n Fields used by the lighting equation and by materials : \n 	- MFVec3f \c normal				= empty\n 	- MFVec3f \c tangent			= empty\n 	- MFVec4f \c color				= empty\n 	- MFVec2f \c texCoord			= empty\n 		texCoord is a "dynamic field", see createTexUnits()...\n Fields for defining bindings :\n 	- SFBinding \c normalBinding 			= BIND_OFF\n 	- SFBinding \c tangentBinding 			= BIND_OFF\n 	- SFBinding \c colorBinding 			= BIND_OFF\n 	- SFBinding \c texCoordBinding			= BIND_OFF\n 		texCoordBinding is a "dynamic field", see createTexUnits()...\n getDFBoundingBox() returns dirty flag that is invalidate when bounding box is invalidate and must be recomputed 
  *
  * New fields defined by this node :
- * - SFFloat \c tessellationBias = (0.f)<br>
- *<br>
- * - SFFloat \c tessellationLevel = (0.f)<br>
+ * - MFPrimitive \c primitive = vgd::node::Primitive()<br>
  *<br>
  * - SFBinding \c tangentBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
  *<br>
@@ -56,8 +54,6 @@ namespace node
  * - MFVec3f \c tangent = vgm::Vec3f()<br>
  *<br>
  * - SFBinding \c normalBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
- *<br>
- * - MFPrimitive \c primitive = vgd::node::Primitive()<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -100,70 +96,32 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 
 
 	/**
-	 * @name Accessors to field tessellationBias
+	 * @name Accessors to field primitive
+	 *
+	 * @todo getPrimitive( const bool rw = false ) ?
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c tessellationBias.
+	 * @brief Type definition of the value contained by field named \c primitive.
 	 */
-	typedef float TessellationBiasValueType;
+	typedef vgd::node::Primitive PrimitiveValueType;
 
 	/**
-	 * @brief The default value of field named \c tessellationBias.
+	 * @brief Type definition of the field named \c primitive
 	 */
-	static const TessellationBiasValueType DEFAULT_TESSELLATIONBIAS;
-
-	/**
-	 * @brief Type definition of the field named \c tessellationBias
-	 */
-	typedef vgd::field::TSingleField< TessellationBiasValueType > FTessellationBiasType;
+	typedef vgd::field::TMultiField< PrimitiveValueType > FPrimitiveType;
 
 
 	/**
-	 * @brief Gets the value of field named \c tessellationBias.
+	 * @brief Gets a read-only editor on the multi field named \c primitive.
 	 */
-	const TessellationBiasValueType getTessellationBias() const;
+	vgd::field::EditorRO< FPrimitiveType > getPrimitiveRO() const;
 
 	/**
-	 * @brief Sets the value of field named \c tessellationBias.
+	 * @brief Gets a read-write editor on the multi field named \c primitive.
 	 */
-	void setTessellationBias( const TessellationBiasValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field tessellationLevel
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c tessellationLevel.
-	 */
-	typedef float TessellationLevelValueType;
-
-	/**
-	 * @brief The default value of field named \c tessellationLevel.
-	 */
-	static const TessellationLevelValueType DEFAULT_TESSELLATIONLEVEL;
-
-	/**
-	 * @brief Type definition of the field named \c tessellationLevel
-	 */
-	typedef vgd::field::TSingleField< TessellationLevelValueType > FTessellationLevelType;
-
-
-	/**
-	 * @brief Gets the value of field named \c tessellationLevel.
-	 */
-	const TessellationLevelValueType getTessellationLevel() const;
-
-	/**
-	 * @brief Sets the value of field named \c tessellationLevel.
-	 */
-	void setTessellationLevel( const TessellationLevelValueType value );
+	vgd::field::EditorRW< FPrimitiveType > getPrimitiveRW();
 
 	//@}
 
@@ -303,9 +261,9 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 */
 	enum  
 	{
-		DYNAMIC = 463,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
-		STATIC = 462,	///< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once.
-		STREAM = 464,	///< STREAM assumed to be a 1-to-1 update-to-draw. Means the geometry is specified for each frame.
+		DYNAMIC = 465,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
+		STATIC = 464,	///< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once.
+		STREAM = 466,	///< STREAM assumed to be a 1-to-1 update-to-draw. Means the geometry is specified for each frame.
 		DEFAULT_DEFORMABLEHINT = STATIC	///< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once.
 	};
 
@@ -333,9 +291,9 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 462 );
-			retVal.push_back( 463 );
 			retVal.push_back( 464 );
+			retVal.push_back( 465 );
+			retVal.push_back( 466 );
 
 			return retVal;
 		}
@@ -446,8 +404,8 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 */
 	enum  
 	{
-		AUTOMATIC = 460,	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
-		ONCE = 461,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
+		AUTOMATIC = 462,	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
+		ONCE = 463,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
 		DEFAULT_BOUNDINGBOXUPDATEPOLICY = AUTOMATIC	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
 	};
 
@@ -475,8 +433,8 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 460 );
-			retVal.push_back( 461 );
+			retVal.push_back( 462 );
+			retVal.push_back( 463 );
 
 			return retVal;
 		}
@@ -575,55 +533,16 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 
 
 	/**
-	 * @name Accessors to field primitive
-	 *
-	 * @todo getPrimitive( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c primitive.
-	 */
-	typedef vgd::node::Primitive PrimitiveValueType;
-
-	/**
-	 * @brief Type definition of the field named \c primitive
-	 */
-	typedef vgd::field::TMultiField< PrimitiveValueType > FPrimitiveType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c primitive.
-	 */
-	vgd::field::EditorRO< FPrimitiveType > getPrimitiveRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c primitive.
-	 */
-	vgd::field::EditorRW< FPrimitiveType > getPrimitiveRW();
-
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c tessellationBias.
+	 * @brief Returns the name of field \c primitive.
 	 *
-	 * @return the name of field \c tessellationBias.
+	 * @return the name of field \c primitive.
 	 */
-	static const std::string getFTessellationBias( void );
-
-	/**
-	 * @brief Returns the name of field \c tessellationLevel.
-	 *
-	 * @return the name of field \c tessellationLevel.
-	 */
-	static const std::string getFTessellationLevel( void );
+	static const std::string getFPrimitive( void );
 
 	/**
 	 * @brief Returns the name of field \c tangentBinding.
@@ -694,13 +613,6 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 * @return the name of field \c normalBinding.
 	 */
 	static const std::string getFNormalBinding( void );
-
-	/**
-	 * @brief Returns the name of field \c primitive.
-	 *
-	 * @return the name of field \c primitive.
-	 */
-	static const std::string getFPrimitive( void );
 
 	//@}
 

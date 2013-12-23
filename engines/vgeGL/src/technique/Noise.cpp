@@ -386,8 +386,8 @@ void Noise::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeG
 		rc->lastRandomUniformUpdate.restart();
 	}
 
-	engine->getUniformState().sethUniform( "random", rc->lastUsedRandomValue );
-	engine->getUniformState().sethUniform( "time", static_cast<int>(rc->lastUsedTimeValue) );
+	engine->getBuiltinUniformState().sethUniform( "random", rc->lastUsedRandomValue );
+	engine->getBuiltinUniformState().sethUniform( "time", static_cast<int>(rc->lastUsedTimeValue) );
 
 	// Apply post-processing
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, technique->m_textures, &(rc->postProcessing) );

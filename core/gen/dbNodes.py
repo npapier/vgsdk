@@ -706,6 +706,8 @@ class Node :
 		self.enums		= []
 		self.fields		= {}
 
+		self.extraIncludeHpp	= ''
+		self.extraIncludeCpp	= ''
 		self.codeDeclaration	= ''
 		self.codeImplementation	= ''
 
@@ -723,6 +725,12 @@ class Node :
 			self.fields[newField.name] = newField
 		else :
 			print "Unable to add field named %s." % newField.name
+
+	def addExtraIncludeHpp( self, code ):
+		self.extraIncludeHpp += code + "\n"
+
+	def addExtraIncludeCpp( self, code ):
+		self.extraIncludeCpp += code + "\n"
 
 	def addCodeDeclaration( self, code ):
 		self.codeDeclaration += code

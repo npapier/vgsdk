@@ -288,29 +288,6 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		}
 	}
 
-	//	Test if global tessellation level and/or bias have to be overridden by vertex shape value(s)
-	float tessLevelSaved	= 0.f;
-	float tessBiasSaved		= 0.f;
-
-	bool localVersionOfUniformState = false;
-
-	if ( glslState.isTessellationEnabled() )
-	{
-		const float vsTessLevel	= pVertexShape->getTessellationLevel();
-		if ( vgm::notEquals(vsTessLevel, 0.f) )
-		{
-			tessLevelSaved = engine->getUniformState().setUniform( "tessValue", vsTessLevel );
-			localVersionOfUniformState = true;
-		}
-
-		const float vsTessBias	= pVertexShape->getTessellationBias();
-		if ( vgm::notEquals(vsTessBias, 0.f) )
-		{
-			tessBiasSaved = engine->getUniformState().setUniform( "tessBias", vsTessBias);
-			localVersionOfUniformState = true;
-		}
-	}
-
 	// BUMPMAPPING (enabled if tangentBinding=PER_VERTEX and textures >= 2)
 	const bool bumpSaved = glslState.isBumpMappingEnabled();
 
@@ -455,6 +432,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 			// Sets uniform(s)
 			// 	UNIFORM
+			engine->getBuiltinUniformState().apply( engine );
 			engine->getUniformState().apply( engine );
 
 			glslState.validate();
@@ -465,7 +443,6 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 			// Sets uniform(s)
 			// 	UNIFORM
-			if ( localVersionOfUniformState ) engine->getUniformState().apply( engine );
 
 #ifdef _VGSDK_DEBUG
 			// Checks if glslState->isValid() is the correct value
@@ -619,22 +596,10 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 //	glPopAttrib();
 
 	// TESSELLATION
-	if ( vgm::notEquals(tessLevelSaved, 0.f) )
-	{
-		engine->getUniformState().setUniform( "tessValue", tessLevelSaved );
-	}
-
-	if ( vgm::notEquals(tessBiasSaved, 0.f) )
-	{
-		engine->getUniformState().setUniform( "tessBias", tessBiasSaved);
-	}
 	engine->getGLSLState().setTessellationEnabled(tessellationSaved);
 
 	// BUMP
 	engine->getGLSLState().setBumpMappingEnabled(bumpSaved);
-
-	// Restore uniforms
-	if ( localVersionOfUniformState ) engine->getUniformState().apply( engine );
 
 	// Validates node
 	pNode->getDirtyFlag(pNode->getDFNode())->validate();
@@ -716,6 +681,7 @@ void VertexShape::setSamplers( vgeGL::engine::Engine * engine, glo::GLSLProgram 
 				else if ( usage == vgd::node::Texture::IMAGE )
 				{
 					program->setUniform1i( "texMap2D[" + strUnit + "]", unit );
+
 					//configureTexCoord( pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */ );
 				}
 				else

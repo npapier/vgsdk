@@ -152,13 +152,13 @@ void Displacement::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 	vgd::node::Displacement::Parameter4f0ValueType parameter4f0;
 	const bool hasParameter4f0 = displacement->getParameter4f0( parameter4f0 );
 
-	if ( hasParameter4f0 )		glEngine->getUniformState().sethUniform( "uDisplacementParameter4f0", parameter4f0 );
+	if ( hasParameter4f0 )		glEngine->getBuiltinUniformState().sethUniform( "uDisplacementParameter4f0", parameter4f0 );
 
 	//	parameter4f1
 	vgd::node::Displacement::Parameter4f0ValueType parameter4f1;
 	const bool hasParameter4f1 = displacement->getParameter4f1( parameter4f1 );
 
-	if ( hasParameter4f1 )		glEngine->getUniformState().sethUniform( "uDisplacementParameter4f1", parameter4f1 );
+	if ( hasParameter4f1 )		glEngine->getBuiltinUniformState().sethUniform( "uDisplacementParameter4f1", parameter4f1 );
 }
 
 
