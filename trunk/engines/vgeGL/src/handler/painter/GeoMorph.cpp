@@ -94,15 +94,8 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 		vgd::field::EditorRW< MFVertexShapePtr > meshes = geoMorph->get__meshes__RW();	// @todo move meshes in a rc::GeoMorph.meshes
 		const uint meshesSize = meshes->size();
 
-		if ( meshesSize < 2 )
+		if ( meshesSize == 2 )
 		{
-			vgLogDebug( "GeoMorph(%s) has to be applied to at least 2 meshes", geoMorph->getName().c_str() );
-			meshes->clear();
-		}
-		else
-		{
-			if ( meshesSize > 2 ) vgLogDebug( "GeoMorph(%s) has to be applied to exactly 2 meshes.", geoMorph->getName().c_str() );
-
 			// Retrieves all meshes
 			vgd::node::VertexShape * mesh0 = (*meshes)[0];
 			vgd::node::VertexShape * mesh1 = (*meshes)[1];
@@ -170,6 +163,21 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 			// Restores state
 			engine->getBuiltinUniformState().removeUniform( "geoMorphWeights" );
 			engine->popGLSLState();
+		}
+		else
+		{
+			vgLogDebug( "GeoMorph(%s) has to be applied to exactly 2 meshes.", geoMorph->getName().c_str() );
+
+			for(	uint i = 0, iEnd = meshesSize;
+					i != iEnd;
+					++i )
+			{
+				vgLogDebug( "VertexShape %i named '%s' found", i, (*meshes)[i]->getName().c_str() );
+			}
+
+			// Clean and release
+			meshes->clear();
+			meshes.release();
 		}
 	}
 
