@@ -172,21 +172,21 @@ struct VGUI_API BasicViewer : public Canvas
 
 
 	/**
-	 * @name	Optional Nodes Control
+	 * @name	Optional nodes management
 	 */
 	//@{
 	enum OptionalNodeType
 	{
 		ANTIALIASING,		///< Antialiasing optional node
-		CLEAR_FRAME_BUFFER,	///< ClearFrameBuffer optional node
+		CLEAR_FRAME_BUFFER,	///< ClearFrameBuffer optional node			// @todo remove, this is not an optional node
 		DRAW_STYLE,			///< DrawStyle optional node
-		LIGHT_MODEL,		///< LightModel optional node
 		ENGINE_PROPERTIES,	///< EngineProperties optional node
+		LIGHT_MODEL,		///< LightModel optional node				// @todo remove, this is not an optional node
 		LIGHTS,				///< Group optional node containing default lights
+		TESSELLATION,		///< Group optional node containing TessellationProperties and TessellationLevel nodes
 		UNDERLAY_CONTAINER,	///< Container node containing underlay (see LayerPlan node).
 		PROGRAM				///< Program optional node
 	};
-	
 	/**
 	 * @brief	Creates the given optional node, if it does not already exist.
 	 * 
@@ -201,16 +201,6 @@ struct VGUI_API BasicViewer : public Canvas
 	 */
 	vgd::Shp< vgd::node::Node > createOptionalNode( const OptionalNodeType type );
 
-	/**
-	 * @brief	Creates the given optional node, if it does not already exist.
-	 * 
-	 * @param	type	an optional node type
-	 * 
-	 * @return	a shared pointer to the create node
-	 * 
-	 * @see		destroyOptionalNode
-	 * @see		getOptionalNode
-	 */
 	template< typename T >
 	vgd::Shp< T > createOptionalNodeAs( const OptionalNodeType type )
 	{
@@ -261,16 +251,6 @@ struct VGUI_API BasicViewer : public Canvas
 		return node ? vgd::dynamic_pointer_cast<NodeType>(node) : vgd::Shp<NodeType>();
 	}
 
-	/**
-	 * @brief	Retrieves an optional node for the given type, if any exists.
-	 * 
-	 * @param	type	an optional node type
-	 * 
-	 * @return	a share pointer to the found optional node, empty if none exists
-	 * 
-	 * @see		createOptionalNode
-	 * @see		destroyOptionalNode
-	 */
 	template< typename NodeType >
 	const vgd::Shp< NodeType > getOptionalNodeAs( const OptionalNodeType type ) const
 	{
@@ -278,6 +258,13 @@ struct VGUI_API BasicViewer : public Canvas
 		
 		return node ? vgd::dynamic_pointer_cast<NodeType>(node) : vgd::Shp<NodeType>();
 	}
+
+	/**
+	 * @brief Creates several optional nodes to populate the SETUP part of the scene graph.
+	 *
+	 * DrawStyle, EngineProperties, LightModel, TessellationProperties/TessellationLevel, Antialiasing and ClearFrameBuffer nodes are created and added to the SETUP group of the scene graph.
+	 **/
+	void createOptionalNodes();
 	//@}
 
 

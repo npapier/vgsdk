@@ -19,6 +19,8 @@
 #include <vgd/node/Program.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Switch.hpp>
+#include <vgd/node/TessellationProperties.hpp>
+#include <vgd/node/TessellationLevel.hpp>
 #include <vgd/node/TransformSeparator.hpp>
 #include <vgd/visitor/helpers.hpp>
 #include <vgio/helpers.hpp>
@@ -353,16 +355,15 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			getSetup()->addChild( existingNode );
 			break;
 
-		case LIGHT_MODEL:
-			existingNode = vgd::node::LightModel::create("LIGHT_MODEL");
-			getSetup()->addChild( existingNode );
-			break;
-
 		case ENGINE_PROPERTIES:
 			existingNode = vgd::node::EngineProperties::create("ENGINE_PROPERTIES");
 			getSetup()->addChild( existingNode );
 			break;
 
+		case LIGHT_MODEL:
+			existingNode = vgd::node::LightModel::create("LIGHT_MODEL");
+			getSetup()->addChild( existingNode );
+			break;
 
 		case LIGHTS:
 		{
@@ -472,6 +473,22 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			break;
 		}
 
+		case TESSELLATION:
+		{
+			using vgd::node::Group;
+			using vgd::node::TessellationProperties;
+			using vgd::node::TessellationLevel;
+
+			vgd::Shp< Group >					group		= Group::create("TESSELLATION");
+			vgd::Shp< TessellationProperties >	tessProp	= TessellationProperties::create("TESSELLATION_PROPERTIES");
+			vgd::Shp< TessellationLevel >		tessLevel	= TessellationLevel::create("TESSELLATION_LEVEL");
+			group->addChilds(tessProp, tessLevel);
+
+			existingNode = group;
+			getSetup()->addChild( existingNode );
+			break;
+		}
+
 		case UNDERLAY_CONTAINER:
 			existingNode = vgd::node::MultiSwitch::create("UNDERLAY_CONTAINER");
 			getSetup()->addChild( existingNode );
@@ -482,7 +499,7 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			getSetup()->addChild( existingNode );
 			break;
 		default:
-			assert( false && "Optional node type not supported" );
+			vgAssertN( false, "Optional node type not supported" );
 		}
 	}
 
@@ -523,7 +540,7 @@ const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const Option
 {
 	// Retrieves the optional node name.
 	std::string	optionalNodeName;
-	
+
 	switch( type )
 	{
 		case ANTIALIASING:
@@ -538,16 +555,20 @@ const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const Option
 			optionalNodeName = "DRAW_STYLE";
 			break;
 
-		case LIGHT_MODEL:
-			optionalNodeName = "LIGHT_MODEL";
-			break;
-
 		case ENGINE_PROPERTIES:
 			optionalNodeName = "ENGINE_PROPERTIES";
 			break;
 
+		case LIGHT_MODEL:
+			optionalNodeName = "LIGHT_MODEL";
+			break;
+
 		case LIGHTS:
 			optionalNodeName = "LIGHTS";
+			break;
+
+		case TESSELLATION:
+			optionalNodeName = "TESSELLATION";
 			break;
 
 		case UNDERLAY_CONTAINER:
@@ -559,11 +580,39 @@ const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const Option
 			break;
 
 		default:
-			assert( false && "Optional node type not supported" );
+			vgAssertN( false, "Optional node type not supported" );
 	}
 
 	// Searches for the node in the setup.
 	return vgd::visitor::findFirstByName< vgd::node::Node >( getSetup(), optionalNodeName );
+}
+
+
+
+void BasicViewer::createOptionalNodes()
+{
+	// Draw style
+	using vgd::node::DrawStyle;
+	vgd::Shp< DrawStyle > drawStyle = vgd::dynamic_pointer_cast< DrawStyle >(createOptionalNode( DRAW_STYLE ));
+	drawStyle->setShape( DrawStyle::SMOOTH );
+
+	// Engine properties
+	createOptionalNode( ENGINE_PROPERTIES );
+
+	// Light model
+	using vgd::node::LightModel;
+	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( createOptionalNode( LIGHT_MODEL ) );
+	lightModel->setOptionalsToDefaults();
+
+	// Tessellation
+	using vgd::node::Group;
+	vgd::Shp< Group > tessGroup = createOptionalNodeAs<Group>( TESSELLATION );
+
+	// Antialiasing
+	createOptionalNode( ANTIALIASING );
+
+	// ClearFrameBuffer
+	createOptionalNode( CLEAR_FRAME_BUFFER );
 }
 
 
