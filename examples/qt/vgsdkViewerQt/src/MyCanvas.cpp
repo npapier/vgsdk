@@ -20,7 +20,7 @@
 #include <vgeGL/event/TimerEventProcessor.hpp>
 
 #ifdef MY_WORK
-//#include "vgsdkViewerQt/my.hpp"
+#include "vgsdkViewerQt/my.hpp"
 #endif
 
 
@@ -43,40 +43,11 @@ MyCanvas::MyCanvas( const MyCanvas * sharedCanvas )
 void MyCanvas::initialize()
 {
 	// Scene graph initialization
-
-	// Draw style
-	using vgd::node::DrawStyle;
-	vgd::Shp< DrawStyle > drawStyle = vgd::dynamic_pointer_cast< DrawStyle >(createOptionalNode( DRAW_STYLE ));
-	drawStyle->setOptionalsToDefaults();
-
-	using vgd::node::LightModel;
-	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( createOptionalNode( LIGHT_MODEL ) );
-	lightModel->setOptionalsToDefaults();
-	//lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
-	//lightModel->setViewer( LightModel::AT_EYE );
-	lightModel->setShadow( LightModel::SHADOW_OFF );
+	createOptionalNodes();
 
 	using vgd::node::ClearFrameBuffer;
-	vgd::Shp< ClearFrameBuffer > clear = createOptionalNodeAs< ClearFrameBuffer >( CLEAR_FRAME_BUFFER );
+	vgd::Shp< ClearFrameBuffer > clear = getOptionalNodeAs< ClearFrameBuffer >( CLEAR_FRAME_BUFFER );
 	//clear->setClearColor( vgm::Vec4f(0.1f, 0.f, 0.f, 0.f) );
-
-	using vgd::node::EngineProperties;
-	vgd::Shp< EngineProperties > engineProperties = vgd::dynamic_pointer_cast< EngineProperties >( createOptionalNode( ENGINE_PROPERTIES ) );
-	//engineProperties->setOptionalsToDefaults();
-
-	using vgd::node::Antialiasing;
-	vgd::Shp< Antialiasing > antialiasing = Antialiasing::create("ANTIALIASING");
-	getSetup()->addChild( antialiasing );
-
-	// TESSELLATION
-	using vgd::node::TessellationProperties;
-	vgd::Shp< TessellationProperties > tessProperties = TessellationProperties::create("TESS PROPERTIES");
-	getSetup()->addChild( tessProperties );
-	tessProperties->setTessellation( TessellationProperties::DISABLED );
-
-	using vgd::node::TessellationLevel;
-	vgd::Shp< TessellationLevel > tessLevel = TessellationLevel::create("TESS LEVEL");
-	getSetup()->addChild( tessLevel );
 
 	// Get the reference of the default technique
 	m_viewModeTechniques.resize( VIEW_MODE_COUNT );
@@ -92,11 +63,12 @@ void MyCanvas::initialize()
 
 	// Configures engine
 	setDebugOverlay(true);
-	//lightModel->setOption0( LightModel::CHOICE0 );
 
 #ifdef MY_WORK
 	//
 	//initializeShadowScene( this );
+	initializeUniformsScene( this );
+	initializeSharedFieldScene( this );
 #endif
 
 	// Default scene
