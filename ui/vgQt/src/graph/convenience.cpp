@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -7,7 +7,7 @@
 #include "vgQt/graph/convenience.hpp"
 
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-#define BOOST_MPL_LIMIT_LIST_SIZE 40
+#define BOOST_MPL_LIMIT_LIST_SIZE 50
 #include <boost/mpl/copy.hpp>
 #include <boost/mpl/for_each.hpp>
 #include <boost/mpl/front_inserter.hpp>
@@ -31,6 +31,7 @@
 #include <vgd/field/String.hpp>
 #include <vgd/field/Vector.hpp>
 
+#include <vgd/node/Texture2D.hpp>
 #include <vgd/node/VertexShape.hpp>
 
 #include <vgio/operators.hpp>
@@ -264,10 +265,16 @@ const std::string getFieldAsString( const vgd::Shp< vgd::field::FieldManager > f
 			typedef mpl::list<
 				// vgd types
 				vgd::Shp< vgd::basic::IImage >,
-				vgd::Wkp< vgd::node::Node >,
-				vgd::Wkp< vgd::node::Group >,
+				vgd::Shp< vgd::node::Group >,
 				vgd::Shp< vgd::node::Node >,
-				vgd::Shp< vgd::node::Group >
+				vgd::Shp< vgd::node::Texture2D >,
+				vgd::node::VertexShape *,
+				vgd::Shp< vgd::node::VertexShape >/*,
+				vgd::Wkp< vgd::basic::IImage >,
+				vgd::Wkp< vgd::node::Group >,
+				vgd::Wkp< vgd::node::Node >,
+				vgd::Wkp< vgd::node::Texture2D >,
+				vgd::Wkp< vgd::node::VertexShape >*/
 			> vgd_t;
 
 			typedef mpl::copy< bool_t, mpl::front_inserter< enum_t > >::type	l2;
