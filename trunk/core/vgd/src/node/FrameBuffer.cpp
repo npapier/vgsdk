@@ -63,10 +63,6 @@ FrameBuffer::FrameBuffer( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-
-	// Sets link(s)
-
-	link( getDFNode() );
 }
 
 

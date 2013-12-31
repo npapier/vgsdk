@@ -63,10 +63,6 @@ Texture1D::Texture1D( const std::string nodeName ) :
 	vgd::node::Texture( nodeName )
 {
 	// Adds field(s)
-
-	// Sets link(s)
-
-	link( getDFNode() );
 }
 
 

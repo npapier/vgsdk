@@ -10,6 +10,7 @@
 #include "vgd/field/Vec2f.hpp"
 #include "vgd/field/VertexShapePtr.hpp"
 #include "vgd/node/Group.hpp"
+#include "vgd/node/IShape.hpp"
 
 
 
@@ -40,7 +41,7 @@ namespace node
  * @ingroup g_groupNodes
  * @ingroup g_shapeNodes
  */
-struct VGD_API GeoMorph : public vgd::node::Group
+struct VGD_API GeoMorph : public vgd::node::Group, public vgd::node::IShape
 {
 	/**
 	 * @name Factories

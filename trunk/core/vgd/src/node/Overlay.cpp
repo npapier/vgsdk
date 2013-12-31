@@ -63,10 +63,6 @@ Overlay::Overlay( const std::string nodeName ) :
 	vgd::node::LayerPlan( nodeName )
 {
 	// Adds field(s)
-
-	// Sets link(s)
-
-	link( getDFNode() );
 }
 
 

@@ -166,7 +166,9 @@ void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node
 		}
 		else
 		{
-			vgLogDebug( "GeoMorph(%s) has to be applied to exactly 2 meshes.", geoMorph->getName().c_str() );
+			vgLogDebug( "GeoMorph named '%s' has to be applied to exactly 2 meshes (and not %i).", geoMorph->getName().c_str(), meshesSize );
+			vgd::Shp< vgd::node::Node > parent = geoMorph->getParent();
+			if ( parent ) vgLogDebug( "Parent of GeoMorph node is '%s'", parent->getName().c_str() );
 
 			for(	uint i = 0, iEnd = meshesSize;
 					i != iEnd;

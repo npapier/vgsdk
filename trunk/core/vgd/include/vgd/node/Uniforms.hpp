@@ -245,6 +245,8 @@ struct VGD_API Uniforms : public vgd::node::SingleAttribute
 	/**
 	 * @brief Tests if an uniform variable exists
 	 *
+	 * Tests if a field with the given name contains an uniform variable.
+	 *
 	 * @param name		name of the uniform variable
 	 *
 	 * @return true if the variable exists, false otherwise
