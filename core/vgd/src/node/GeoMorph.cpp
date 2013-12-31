@@ -60,7 +60,8 @@ vgd::Shp< GeoMorph > GeoMorph::createWhole( const std::string nodeName )
 
 
 GeoMorph::GeoMorph( const std::string nodeName ) :
-	vgd::node::Group( nodeName )
+	vgd::node::Group( nodeName ),
+	vgd::node::IShape()
 {
 	// Adds field(s)
 	addField( new FWeightsType(getFWeights()) );
@@ -77,6 +78,7 @@ GeoMorph::GeoMorph( const std::string nodeName ) :
 void GeoMorph::setToDefaults( void )
 {
 	Group::setToDefaults();
+	IShape::setToDefaults();
 	setWeights( vgm::Vec2f(0.f, 0.f) );
 	setMethod( (NORMALIZED) );
 }
@@ -86,6 +88,7 @@ void GeoMorph::setToDefaults( void )
 void GeoMorph::setOptionalsToDefaults()
 {
 	Group::setOptionalsToDefaults();
+	IShape::setOptionalsToDefaults();
 }
 
 

@@ -10,6 +10,7 @@
 
 #include "vgd/node/IBoundingBox.hpp"
 
+#include "vgd/node/IShape.hpp"
 #include "vgd/node/Node.hpp"
 
 
@@ -27,7 +28,7 @@ namespace node
  * 
  * @ingroup g_abstractNodes
  */
-struct VGD_API Shape : public vgd::node::Node, public vgd::node::IBoundingBox
+struct VGD_API Shape : public vgd::node::Node, public vgd::node::IBoundingBox, public vgd::node::IShape
 {
 	//META_NODE_HPP( Shape ); abstract class.
 
@@ -47,7 +48,7 @@ protected:
 	
 	void	setToDefaults( void );
 
-	void	setOptionalsToDefaults();	
+	void	setOptionalsToDefaults();
 
 	//@}
 };
