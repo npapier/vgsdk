@@ -13,8 +13,8 @@ namespace vgTest
 
 Performance::Performance()
 :	m_level( 1 ),
-	m_deformableHint( vgd::node::VertexShape::DEFAULT_DEFORMABLE_HINT ),
-	m_boundingBox( vgd::node::VertexShape::DEFAULT_BOUNDINGBOX_UPDATE_POLICY )
+	m_deformableHint( vgd::node::VertexShape::DEFAULT_DEFORMABLEHINT ),
+	m_boundingBox( vgd::node::VertexShape::DEFAULT_BOUNDINGBOXUPDATEPOLICY )
 {
 }
 
