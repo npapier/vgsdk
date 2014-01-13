@@ -27,4 +27,9 @@ libs		=	[	'sbf 0-0',
 					'vgTest 0-5'
 				]
 deps		= [ '../../../vgsdk', '../../ui/vgGTK', '../vgTest' ]
+
+# uncomment for vgsdkTestGtk generating the reference images
+#vcsUse		= 'yes'
+#deps		= [ '../../../../vgsdk', '../../../ui/vgGTK', '../../vgTest' ]
+
 test		= 'gtest'
