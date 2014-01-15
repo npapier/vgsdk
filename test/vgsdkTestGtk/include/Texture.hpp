@@ -73,6 +73,9 @@ TEST(vgsdkNodeTestingSuite, TextureMappingPropagation)
 	base->addObject( mat2 );
 	base->addObject( quad2 );
 
+	// Lights
+	base->getCanvas()->createOptionalNode( vgGTK::BasicManipulator::LIGHTS );
+
 	// @todo base->run() do a viewAll()
 	base->getCanvas()->viewAll();
 
