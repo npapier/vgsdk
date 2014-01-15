@@ -40,7 +40,7 @@ TEST_P(VgTestShadow, ShadowMapping)
 	LightModel::ShadowValueType shadow = GetParam();
 	description += " (" + shadow.str() + ").";
 	base->getLog()->add( "Description", description );
-	base->getLog()->add("Parameters", shadow.str());
+	base->getLog()->add( "Parameters", shadow.str() );
 
 	// PREPARE SCENE
 	// LightModel
@@ -52,8 +52,6 @@ TEST_P(VgTestShadow, ShadowMapping)
 	lightModel->setShadowMapType( LightModel::INT32 );
 
 	// Lights
-	base->getCanvas()->destroyOptionalNode( vgGTK::BasicManipulator::LIGHTS );
-
 	using vgd::node::SpotLight;
 	vgd::Shp< SpotLight > spot = SpotLight::create("spot");
 	spot->setOn( true );

@@ -38,21 +38,8 @@ myCanvas::myCanvas()
 	//set_size_request( 1024, 768 );
 	set_size_request( 640, 480 );
 
-	// Configures engine
-	getGLEngine()->setGLSLEnabled();
-
-	// Scene graph initialization.
-	using vgd::node::LightModel;
-
+	// Scene graph initialization
 	createOptionalNodes();
-
-	//	Default light configuration
-	using vgd::node::DirectionalLight;
-	vgd::Shp< DirectionalLight > light1 = DirectionalLight::create("defaultLight1");
-	light1->setOn( true );
-	light1->setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
-	getSetup()->addChild( light1 );
-	//getSetup()->insertChild( light1 );
 }
 
 const bool myCanvas::appendToScene( const Glib::ustring & filename, const bool mustCallViewAll )
