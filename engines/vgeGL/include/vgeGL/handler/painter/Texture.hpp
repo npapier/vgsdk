@@ -209,10 +209,10 @@ protected:
 	const boost::tuple< GLint, GLenum > chooseFormats( vgd::Shp< vgd::basic::IImage >, vgd::node::Texture * );
 
 private:
-	static GLenum	m_wrapParameter[];
+	//static GLenum	m_wrapParameter[];
 	static GLint	m_wrapValue[];
 
-	static GLenum	m_filterParameter[];
+	//static GLenum	m_filterParameter[];
 	static GLint	m_filterValue[];
 
 	/*static GLint	m_functionValue[];

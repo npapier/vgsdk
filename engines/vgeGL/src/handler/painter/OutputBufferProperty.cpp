@@ -406,10 +406,10 @@ vgd::Shp< vgd::node::Texture2D > OutputBufferProperty::createTexture2D( vgeGL::e
 
 	// WRAP, FILTER
 // @todo sethDefault();
-	texture->setWrap( Texture::WRAP_S, Texture::CLAMP_TO_EDGE );
-	texture->setWrap( Texture::WRAP_T, Texture::CLAMP_TO_EDGE );
-	texture->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-	texture->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+	texture->setWrapS( Texture::CLAMP_TO_EDGE );
+	texture->setWrapT( Texture::CLAMP_TO_EDGE );
+	texture->setMinFilter( Texture::NEAREST );
+	texture->setMagFilter( Texture::NEAREST );
 	//texture->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
 	//texture->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
 

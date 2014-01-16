@@ -31,7 +31,7 @@
 			// Non existing uniform variable
 			addField( new vgd::field::TSingleField< T >(name) );
 
-			addDirtyFlag( name );
+			addDirtyFlag( "df_" + name );
 
 			link( name, name );
 			link( name, getDFNode() );

@@ -56,10 +56,10 @@ vgd::Shp< vgd::node::Group > VideoCallback::setVideoPlaybackInTexture2D()
 
 	group->addChilds( tex2D, quad );
 
-	tex2D->setWrap( Texture2D::WRAP_S, Texture2D::CLAMP_TO_EDGE );
-	tex2D->setWrap( Texture2D::WRAP_T, Texture2D::CLAMP_TO_EDGE );
-	tex2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
-	tex2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
+	tex2D->setWrapS( Texture2D::CLAMP_TO_EDGE );
+	tex2D->setWrapT( Texture2D::CLAMP_TO_EDGE );
+	tex2D->setMinFilter( Texture2D::LINEAR );
+	tex2D->setMagFilter( Texture2D::LINEAR );
 	tex2D->sethFunction( Texture2D::FUN_MODULATE );
 
 	quad->initializeTexUnits( 1, vgd::basic::TOP_LEFT, false /* cw */ );

@@ -21,7 +21,7 @@
 
 #include <vgUI/Canvas.hpp>
 
-#include <vgGTK/actions/alg/ExportNode.hpp>
+//#include <vgGTK/actions/alg/ExportNode.hpp>
 
 #include "vgGTK/graph/icons/expand.xpm"
 #include "vgGTK/graph/icons/synchronize.xpm"
@@ -470,9 +470,12 @@ void Browser::onRemoveNode()
 
 void Browser::onExportScene()
 {
+	vgAssert( false);
+
+/*
 	vgGTK::actions::alg::ExportNode exportNode;
 	exportNode.setNode( m_canvas->getRoot() );
-	exportNode.execute();
+	exportNode.execute();*/
 }
 
 

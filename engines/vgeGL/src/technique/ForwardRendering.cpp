@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, 2011, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -297,10 +297,10 @@ ForwardRendering::ForwardRendering()
 	if ( !m_blackTexture2D )
 	{
 		m_blackTexture2D = vgd::node::Texture2D::create( "black" );
-		m_blackTexture2D->setWrap( Texture::WRAP_S, Texture::REPEAT );
-		m_blackTexture2D->setWrap( Texture::WRAP_T, Texture::REPEAT );
-		m_blackTexture2D->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-		m_blackTexture2D->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+		m_blackTexture2D->setWrapS( Texture::REPEAT );
+		m_blackTexture2D->setWrapT( Texture::REPEAT );
+		m_blackTexture2D->setMinFilter( Texture::NEAREST );
+		m_blackTexture2D->setMagFilter( Texture::NEAREST );
 		using vgd::basic::Image;
 		uint8 imageData = 0;
 		vgd::Shp< Image > image( new Image( 1, 1, 1, Image::LUMINANCE, Image::UINT8, &imageData ) );
@@ -1702,6 +1702,8 @@ void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::Trav
 
 	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
 	{
+// @todo 	if ( subtechnique->isEnabled() ) => removes SubTechnique { if !isEnabled() return;
+
 		subtechnique->stageBeginPaint( this, engine );
 	}
 
@@ -2258,32 +2260,32 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 					// @todo test state of this sampling after using another one (like LINEAR_MAXANISOTROPY4)
 
 				case PostProcessing::NEAREST_MAXANISOTROPY1:
-					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+					inputTexture0->setMinFilter( Texture::NEAREST );
+					inputTexture0->setMagFilter( Texture::NEAREST );
 					inputTexture0->setMaxAnisotropy( 1.f );
 					break;
 
 				case PostProcessing::LINEAR_MAXANISOTROPY1:
-					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+					inputTexture0->setMinFilter( Texture::LINEAR );
+					inputTexture0->setMagFilter( Texture::LINEAR );
 					inputTexture0->setMaxAnisotropy( 1.f );
 					break;
 
 				case PostProcessing::LINEAR_MAXANISOTROPY4:
-					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+					inputTexture0->setMinFilter( Texture::LINEAR );
+					inputTexture0->setMagFilter( Texture::LINEAR );
 					inputTexture0->setMaxAnisotropy( 4.f );
 					break;
 
 				case PostProcessing::LINEAR_MAXANISOTROPY8:
-					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+					inputTexture0->setMinFilter( Texture::LINEAR );
+					inputTexture0->setMagFilter( Texture::LINEAR );
 					inputTexture0->setMaxAnisotropy( 8.f );
 					break;
 
 				case PostProcessing::LINEAR_MAXANISOTROPY16:
-					inputTexture0->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-					inputTexture0->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+					inputTexture0->setMinFilter( Texture::LINEAR );
+					inputTexture0->setMagFilter( Texture::LINEAR );
 					inputTexture0->setMaxAnisotropy( 16.f );
 					break;
 				default:

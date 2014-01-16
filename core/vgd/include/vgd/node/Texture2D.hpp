@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -26,32 +26,41 @@ namespace node
  * No new field defined by this node.
  *
  * Inherited fields from Texture:
+ * - OFWrappingValueType \c [wrapS] = (REPEAT)<br>
+ *   Set the wrap parameter for texture coordinate s<br>
+ *<br>
+ * - OFWrappingValueType \c [wrapR] = (REPEAT)<br>
+ *   Set the wrap parameter for texture coordinate r<br>
+ *<br>
+ * - OFWrappingValueType \c [wrapT] = (REPEAT)<br>
+ *   Set the wrap parameter for texture coordinate t<br>
+ *<br>
  * - OFFloat \c [maxAnisotropy] = (1.f)<br>
  *   Specifies the maximum degree of anisotropy. If not defined the value returned by Engine::getDefaultMaxAnisotropy() is used.<br>
- *<br>
- * - OFString \c [fragmentFunction] = std::string()<br>
- *   Fragment texturing function.<br>
- *<br>
- * - PAFEnum \c wrap = (REPEAT)<br>
- *   Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R.<br>
  *<br>
  * - OFIImageShp \c [image] = vgd::basic::IImageShp()<br>
  *   Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
  *<br>
+ * - OFString \c [fragmentFunction] = std::string()<br>
+ *   Fragment texturing function.<br>
+ *<br>
  * - OFBool \c [mipmap] = (false)<br>
  *   Specifies if all levels of a mipmap array should be automatically updated when any modification to the image field (the base level of mipmap) is done.<br>
  *<br>
- * - PAFEnum \c filter = (LINEAR)<br>
- *   The texture minifying function (MIN_FILTER) is used whenever the pixel being textured maps to an area greater than one texture element. The texture magnification function (MAG_FILTER) is used when the pixel being textured maps to an area less than or equal to one texture element.<br>
- *<br>
  * - OFString \c [vertexFunction] = std::string()<br>
  *   Vertex texturing function.<br>
+ *<br>
+ * - OFFilteringValueType \c [minFilter] = (LINEAR)<br>
+ *   The texture minifying function is used whenever the pixel being textured maps to an area greater than one texture element.<br>
  *<br>
  * - SFEnum \c internalFormat = (AUTOMATIC)<br>
  *   Specifies the desired internal format used by the GPU.<br>
  *<br>
  * - SFEnum \c usage = (IMAGE)<br>
  *   Indicating the expected usage pattern of the texture.<br>
+ *<br>
+ * - OFFilteringValueType \c [magFilter] = (LINEAR)<br>
+ *   The texture magnification function is used when the pixel being textured maps to an area less than or equal to one texture element.<br>
  *<br>
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes

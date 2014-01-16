@@ -791,14 +791,14 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		{
 			//vgLogDebug("vgTrian::loadTrian2: Automatic mipmap generation (GL_SGIS_generate_mipmap detected)." );
 			tex->setMipmap( true );
-			tex->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR_MIPMAP_LINEAR );
-			tex->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
+			tex->setMinFilter( Texture2D::LINEAR_MIPMAP_LINEAR );
+			tex->setMagFilter( Texture2D::LINEAR );
 		}
 		else
 		{
 			vgLogDebug("vgTrian::loadTrian2: No automatic mipmap generation (GL_SGIS_generate_mipmap not detected)." );
-			tex->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
-			tex->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
+			tex->setMinFilter( Texture2D::LINEAR );
+			tex->setMagFilter( Texture2D::LINEAR );
 		}
 
 		// uvtrans 1 0 0 0   0 1 0 0   0 0 1 0   0 0 0 0
@@ -838,15 +838,15 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		
 		if ( name == "uWrap" )
 		{
-			tex->setWrap( vgd::node::Texture2D::WRAP_S, vgd::node::Texture2D::REPEAT );
+			tex->setWrapS( vgd::node::Texture2D::REPEAT );
 		}
 		else if ( name == "uMirror" )
 		{
-			tex->setWrap( vgd::node::Texture2D::WRAP_S, vgd::node::Texture2D::MIRRORED_REPEAT );
+			tex->setWrapS( vgd::node::Texture2D::MIRRORED_REPEAT );
 		}
 		else if ( name == "uClamp" )
 		{
-			tex->setWrap( vgd::node::Texture2D::WRAP_S, vgd::node::Texture2D::CLAMP );
+			tex->setWrapS( vgd::node::Texture2D::CLAMP );
 		}
 		else
 		{
@@ -858,20 +858,20 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		
 		if ( name == "vWrap" )
 		{
-			tex->setWrap( vgd::node::Texture2D::WRAP_T, vgd::node::Texture2D::REPEAT );
+			tex->setWrapT( vgd::node::Texture2D::REPEAT );
 		}
 		else if ( name == "vMirror" )
 		{
-			tex->setWrap( vgd::node::Texture2D::WRAP_T, vgd::node::Texture2D::MIRRORED_REPEAT );
+			tex->setWrapT( vgd::node::Texture2D::MIRRORED_REPEAT );
 		}
 		else if ( name == "vClamp" )
 		{
-			tex->setWrap( vgd::node::Texture2D::WRAP_T, vgd::node::Texture2D::CLAMP );
+			tex->setWrapT( vgd::node::Texture2D::CLAMP );
 		}
 		else
 		{
 			assert( false );
-		}		
+		}
 
 		tex->sethFunction( vgd::node::Texture2D::FUN_MODULATE );
 	}

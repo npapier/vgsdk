@@ -26,7 +26,7 @@
 #include <vgeGL/engine/Engine.hpp>
 #include <vgUI/actions/State.hpp>
 
-#include <vgGTK/actions/ui/ExportNodeUI.hpp>
+//#include <vgGTK/actions/ui/ExportNodeUI.hpp>
 #include <vgGTK/actions/ui/RemoveNodeUI.hpp>
 
 

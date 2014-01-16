@@ -117,53 +117,49 @@ void Texture::paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *p
 	using vgd::node::Texture;
 
 	// WRAP
-	vgd::field::EditorRO< Texture::FWrapType > wrap = pNode->getFieldRO<Texture::FWrapType>(pNode->getFWrap());
+	bool hasValue;
 
-	Texture::FWrapType::const_iterator wrapIter;
-	Texture::FWrapType::const_iterator wrapEnd;
-	
-	for(	wrapIter = wrap->begin(),
-			wrapEnd	= wrap->end();
-
-			wrapIter != wrapEnd;
-
-			++wrapIter
-			)
+	Texture::WrapSValueType wrapS;
+	hasValue = pNode->getWrapS( wrapS );
+	if ( hasValue )
 	{
-		pResource->parameter(
-				m_wrapParameter[ wrapIter->first.value() - Texture::WRAP_S ],
-				m_wrapValue[ wrapIter->second.value() - Texture::REPEAT ]
-				);
+		pResource->parameter( GL_TEXTURE_WRAP_S, m_wrapValue[ wrapS.value() - Texture::REPEAT ] );
 	}
-	wrap.release();
+
+	Texture::WrapTValueType wrapT;
+	hasValue = pNode->getWrapT( wrapT );
+	if ( hasValue )
+	{
+		pResource->parameter( GL_TEXTURE_WRAP_T, m_wrapValue[ wrapT.value() - Texture::REPEAT ] );
+	}
+
+	Texture::WrapRValueType wrapR;
+	hasValue = pNode->getWrapR( wrapR );
+	if ( hasValue )
+	{
+		pResource->parameter( GL_TEXTURE_WRAP_R, m_wrapValue[ wrapR.value() - Texture::REPEAT ] );
+	}
 
 	// FILTER
-	vgd::field::EditorRO< Texture::FFilterType > filter = pNode->getFieldRO<Texture::FFilterType>(pNode->getFFilter());
-	
-	Texture::FFilterType::const_iterator filterIter;
-	Texture::FFilterType::const_iterator filterEnd;
-	
-	for(	filterIter = filter->begin(),
-			filterEnd	= filter->end();
-			
-			filterIter != filterEnd;
-			
-			++filterIter
-			)
+	Texture::MinFilterValueType minFilter;
+	hasValue = pNode->getMinFilter( minFilter );
+	if ( hasValue )
 	{
-		pResource->parameter(
-				m_filterParameter[ filterIter->first.value() - Texture::MIN_FILTER ],
-				m_filterValue[ filterIter->second.value() - Texture::NEAREST ]
-				);
+		pResource->parameter( GL_TEXTURE_MIN_FILTER, m_filterValue[ minFilter.value() - Texture::NEAREST ] );
 	}
-	filter.release();
+
+	Texture::MagFilterValueType magFilter;
+	hasValue = pNode->getMagFilter( magFilter );
+	if ( hasValue )
+	{
+		pResource->parameter( GL_TEXTURE_MAG_FILTER, m_filterValue[ magFilter.value() - Texture::NEAREST ] );
+	}
 
 	// MIPMAP
-	if ( pNode->hasMipmap() )
+	bool bMipmap;
+	hasValue = pNode->getMipmap( bMipmap );
+	if ( hasValue )
 	{
-		bool bMipmap;
-		pNode->getMipmap( bMipmap );
-
 		if ( isGL_SGIS_generate_mipmap() )
 		{
 			pResource->setAutomaticMipmapGenerationEnabled( bMipmap );
@@ -177,11 +173,10 @@ void Texture::paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *p
 	}
 
 	// MAXANISOTROPY
-	if ( pNode->hasMaxAnisotropy() )
+	float value;
+	hasValue = pNode->getMaxAnisotropy( value );
+	if ( hasValue )
 	{
-		float value;
-		pNode->getMaxAnisotropy( value );
-
 		vgAssert( isGL_EXT_texture_filter_anisotropic() );
 		pResource->setMaxAnisotropy( value );
 	}
@@ -506,19 +501,14 @@ void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture 
 								texInfo.texSize[0], texInfo.texSize[1], texInfo.texSize[2] );
 
 		// Creates a copy of the incoming image
+		// @todo OPTME remove copy and use several cores.
 		using vgd::basic::Image;
+		Image newImage( (*texInfo.iimage.get()) );
 
-//		Image newImage(	(*texInfo.iimage.get()) );
-// or
-		vgd::Shp< vgd::basic::IImage > iimage = texInfo.iimage;
-		Image newImage(	iimage->width(), iimage->height(), iimage->depth(),
-						iimage->format() == Image::COLOR_INDEX ? Image::LUMINANCE : iimage->format(),
-						iimage->type(),
-						iimage->pixels() );
-
-		newImage.scale( texInfo.texSize, Image::FILTER_SCALE_MITCHELL /*Image::FILTER_SCALE_BOX */ );
+		// Resizes the image
 		//@todo options for lower-quality filter during rescaling
 		//@todo use vgITK::Image to really support any image type
+		newImage.scale( texInfo.texSize, Image::FILTER_SCALE_LANCZOS3/*, 8 num cores*/);
 
 		const void * newPixels = newImage.pixels();
 
@@ -645,15 +635,14 @@ void Texture::computeTexImageParams( vgd::node::Texture *pNode, ::glo::Texture *
 
 		if ( isGL_ARB_texture_non_power_of_two() )
 		{
-			#ifdef _DEBUG
-			//vgLogDebug("vgeGL.Texture: GL_ARB_texture_non_power_of_two is supported and used.");
-			#endif
+
 			texInfo.texSize			= texInfo.imageSize;
 			texInfo.resizeForTex	= false;
 		}
 		else
 		{
 			#ifdef _DEBUG
+			vgLogDebug("vgeGL.Texture: GL_ARB_texture_non_power_of_two is not supported.");
 			vgLogDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
 									texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
 			vgLogDebug("vgeGL.Texture: Incoming image must be resized.");
@@ -856,11 +845,11 @@ const boost::tuple< GLint, GLenum > Texture::chooseFormats( vgd::Shp< vgd::basic
 
 
 
-GLenum Texture::m_wrapParameter[] = {
+/*GLenum Texture::m_wrapParameter[] = {
 	GL_TEXTURE_WRAP_S,
 	GL_TEXTURE_WRAP_T,
 	GL_TEXTURE_WRAP_R 
-};
+};*/
 
 
 
@@ -876,10 +865,10 @@ GLint Texture::m_wrapValue[] = {
 
 
 
-GLenum Texture::m_filterParameter[] = {
+/*GLenum Texture::m_filterParameter[] = {
 	GL_TEXTURE_MIN_FILTER,
 	GL_TEXTURE_MAG_FILTER
-};
+};*/
 
 
 

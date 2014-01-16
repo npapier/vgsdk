@@ -100,27 +100,27 @@ const vgd::node::Primitive::Type numIndices2Primitive( const uint numIndices )
 
 
 // @todo check wrapping modes
-vgd::node::Texture::WrapValueType toEnum( const aiTextureMapMode mapMode )
+vgd::node::Texture::WrappingValueType toEnum( const aiTextureMapMode mapMode )
 {
 	using vgd::node::Texture;
 
 	switch ( mapMode )
 	{
 		case aiTextureMapMode_Wrap:
-			return Texture::WrapValueType(Texture::REPEAT);
+			return Texture::WrappingValueType(Texture::REPEAT);
 
 		case aiTextureMapMode_Clamp:
-			return Texture::WrapValueType(Texture::CLAMP_TO_EDGE);
+			return Texture::WrappingValueType(Texture::CLAMP_TO_EDGE);
 
 		case aiTextureMapMode_Decal:
-			return Texture::WrapValueType(Texture::CLAMP_TO_BORDER); // @todo no decal in vgsdk
+			return Texture::WrappingValueType(Texture::CLAMP_TO_BORDER); // @todo no decal in vgsdk
 
 		case aiTextureMapMode_Mirror:
-			return Texture::WrapValueType(Texture::MIRRORED_REPEAT);
+			return Texture::WrappingValueType(Texture::MIRRORED_REPEAT);
 
 		default:
 			vgAssertN( false, "Unsupported wrapping mode." );
-			return Texture::WrapValueType(Texture::CLAMP_TO_EDGE);
+			return Texture::WrappingValueType(Texture::CLAMP_TO_EDGE);
 	}
 }
 //@}
@@ -159,12 +159,12 @@ vgd::Shp< vgd::node::Texture2D > createTexture2D(	const vgio::Media & media, con
 
 	// Default values
 	texture->setMipmap( true );
-	texture->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR_MIPMAP_LINEAR );
-	texture->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
+	texture->setMinFilter( Texture2D::LINEAR_MIPMAP_LINEAR );
+	texture->setMagFilter( Texture2D::LINEAR );
 
 	// WRAPPING
-	texture->setWrap( Texture2D::WRAP_S, toEnum(mapU) );
-	texture->setWrap( Texture2D::WRAP_T, toEnum(mapV) );
+	texture->setWrapS( toEnum(mapU) );
+	texture->setWrapT( toEnum(mapV) );
 
 	// FUNCTION
 	texture->sethFunction( vgd::node::Texture2D::FUN_MODULATE ); // @todo
