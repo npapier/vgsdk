@@ -99,11 +99,11 @@ void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::S
 		using vgd::node::Texture2D;
 		vgd::Shp< Texture2D > texture2D = Texture2D::create("vgsdk:noise:randomTexture");
 
-		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::NEAREST );
-		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::NEAREST );
+		texture2D->setMinFilter( Texture2D::NEAREST );
+		texture2D->setMagFilter( Texture2D::NEAREST );
 
-		texture2D->setWrap( Texture2D::WRAP_S, Texture2D::REPEAT );
-		texture2D->setWrap( Texture2D::WRAP_T, Texture2D::REPEAT );
+		texture2D->setWrapS( Texture2D::REPEAT );
+		texture2D->setWrapT( Texture2D::REPEAT );
 
 		rc->randomTexture = texture2D;
 	}

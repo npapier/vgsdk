@@ -129,8 +129,8 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 					// node part
 					lightDepthMap = vgd::node::Texture2D::create("depthMap.spotLight" + vgd::basic::toString(i));
 
-					lightDepthMap->setWrap( Texture::WRAP_S, Texture::CLAMP );
-					lightDepthMap->setWrap( Texture::WRAP_T, Texture::CLAMP );
+					lightDepthMap->setWrapS( Texture::CLAMP );
+					lightDepthMap->setWrapT( Texture::CLAMP );
 
 					lightDepthMap->setUsage( Texture::SHADOW );
 				}
@@ -141,13 +141,13 @@ void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
 				switch ( shadowFiltering.value() )
 				{
 					case LightModel::NEAREST:
-						lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::NEAREST );
-						lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::NEAREST );
+						lightDepthMap->setMinFilter( Texture::NEAREST );
+						lightDepthMap->setMagFilter( Texture::NEAREST );
 						break;
 
 					case LightModel::LINEAR:
-						lightDepthMap->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-						lightDepthMap->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+						lightDepthMap->setMinFilter( Texture::LINEAR );
+						lightDepthMap->setMagFilter( Texture::LINEAR );
 						break;
 
 					default:

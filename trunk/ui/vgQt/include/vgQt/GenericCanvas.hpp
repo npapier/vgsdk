@@ -129,6 +129,7 @@ public:
 		}
 	}
 
+
     QPaintEngine * paintEngine () const
     {
         return 0;

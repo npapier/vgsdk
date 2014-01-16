@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -21,15 +21,18 @@ Texture::Texture( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FWrapSType(getFWrapS()) );
+	addField( new FWrapRType(getFWrapR()) );
+	addField( new FWrapTType(getFWrapT()) );
 	addField( new FMaxAnisotropyType(getFMaxAnisotropy()) );
-	addField( new FFragmentFunctionType(getFFragmentFunction()) );
-	addField( new FWrapType(getFWrap()) );
 	addField( new FImageType(getFImage()) );
+	addField( new FFragmentFunctionType(getFFragmentFunction()) );
 	addField( new FMipmapType(getFMipmap()) );
-	addField( new FFilterType(getFFilter()) );
 	addField( new FVertexFunctionType(getFVertexFunction()) );
+	addField( new FMinFilterType(getFMinFilter()) );
 	addField( new FInternalFormatType(getFInternalFormat()) );
 	addField( new FUsageType(getFUsage()) );
+	addField( new FMagFilterType(getFMagFilter()) );
 
 	// Adds dirty flag(s)
 	addDirtyFlag(getDFImage());
@@ -37,8 +40,11 @@ Texture::Texture( const std::string nodeName ) :
 
 	// Sets link(s)
 	link( getFImage(), getDFImage() );
-	link( getFWrap(), getDFParameters() );
-	link( getFFilter(), getDFParameters() );
+	link( getFWrapS(), getDFParameters() );
+	link( getFWrapT(), getDFParameters() );
+	link( getFWrapR(), getDFParameters() );
+	link( getFMinFilter(), getDFParameters() );
+	link( getFMagFilter(), getDFParameters() );
 	link( getFMipmap(), getDFParameters() );
 	link( getFMaxAnisotropy(), getDFParameters() );
 	link( getFUsage(), getDFParameters() );
@@ -60,18 +66,103 @@ void Texture::setToDefaults( void )
 void Texture::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
+	setWrapS( (REPEAT) );
+	setWrapR( (REPEAT) );
+	setWrapT( (REPEAT) );
 	setMaxAnisotropy( (1.f) );
-	setFragmentFunction( std::string() );
-	setWrap( WRAP_T, (REPEAT) );
-	setWrap( WRAP_S, (REPEAT) );
-	setWrap( WRAP_R, (REPEAT) );
-
 	setImage( vgd::basic::IImageShp() );
+	setFragmentFunction( std::string() );
 	setMipmap( (false) );
-	setFilter( MIN_FILTER, (LINEAR) );
-	setFilter( MAG_FILTER, (LINEAR) );
-
 	setVertexFunction( std::string() );
+	setMinFilter( (LINEAR) );
+	setMagFilter( (LINEAR) );
+}
+
+
+
+// WrapS
+
+const bool Texture::getWrapS( WrapSValueType& value ) const
+{
+	return getFieldRO<FWrapSType>(getFWrapS())->getValue( value );
+}
+
+
+
+void Texture::setWrapS( const WrapSValueType& value )
+{
+	getFieldRW<FWrapSType>(getFWrapS())->setValue( value );
+}
+
+
+
+void Texture::eraseWrapS()
+{
+	getFieldRW<FWrapSType>(getFWrapS())->eraseValue();
+}
+
+
+const bool Texture::hasWrapS() const
+{
+	return getFieldRO<FWrapSType>(getFWrapS())->hasValue();
+}
+
+
+
+// WrapR
+
+const bool Texture::getWrapR( WrapRValueType& value ) const
+{
+	return getFieldRO<FWrapRType>(getFWrapR())->getValue( value );
+}
+
+
+
+void Texture::setWrapR( const WrapRValueType& value )
+{
+	getFieldRW<FWrapRType>(getFWrapR())->setValue( value );
+}
+
+
+
+void Texture::eraseWrapR()
+{
+	getFieldRW<FWrapRType>(getFWrapR())->eraseValue();
+}
+
+
+const bool Texture::hasWrapR() const
+{
+	return getFieldRO<FWrapRType>(getFWrapR())->hasValue();
+}
+
+
+
+// WrapT
+
+const bool Texture::getWrapT( WrapTValueType& value ) const
+{
+	return getFieldRO<FWrapTType>(getFWrapT())->getValue( value );
+}
+
+
+
+void Texture::setWrapT( const WrapTValueType& value )
+{
+	getFieldRW<FWrapTType>(getFWrapT())->setValue( value );
+}
+
+
+
+void Texture::eraseWrapT()
+{
+	getFieldRW<FWrapTType>(getFWrapT())->eraseValue();
+}
+
+
+const bool Texture::hasWrapT() const
+{
+	return getFieldRO<FWrapTType>(getFWrapT())->hasValue();
 }
 
 
@@ -109,63 +200,6 @@ const bool Texture::hasMaxAnisotropy() const
 
 
 
-// FragmentFunction
-
-const Texture::FragmentFunctionValueType Texture::DEFAULT_FRAGMENTFUNCTION = std::string();
-
-
-
-const bool Texture::getFragmentFunction( FragmentFunctionValueType& value ) const
-{
-	return getFieldRO<FFragmentFunctionType>(getFFragmentFunction())->getValue( value );
-}
-
-
-
-void Texture::setFragmentFunction( const FragmentFunctionValueType& value )
-{
-	getFieldRW<FFragmentFunctionType>(getFFragmentFunction())->setValue( value );
-}
-
-
-
-void Texture::eraseFragmentFunction()
-{
-	getFieldRW<FFragmentFunctionType>(getFFragmentFunction())->eraseValue();
-}
-
-
-const bool Texture::hasFragmentFunction() const
-{
-	return getFieldRO<FFragmentFunctionType>(getFFragmentFunction())->hasValue();
-}
-
-
-
-// Wrap
-const bool Texture::getWrap( const WrapParameterType param, WrapValueType& value ) const
-{
-	return (
-		vgd::field::getParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param), value )
-		);
-}
-
-
-
-void Texture::setWrap( const WrapParameterType param, WrapValueType value )
-{
-	vgd::field::setParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param), value );
-}
-
-
-
-void Texture::eraseWrap( const WrapParameterType param )
-{
-	vgd::field::eraseParameterValue< WrapParameterType, WrapValueType >( this, getFWrap(), static_cast<WrapParameterType>(param) );
-}
-
-
-
 // Image
 
 const Texture::ImageValueType Texture::DEFAULT_IMAGE = vgd::basic::IImageShp();
@@ -195,6 +229,39 @@ void Texture::eraseImage()
 const bool Texture::hasImage() const
 {
 	return getFieldRO<FImageType>(getFImage())->hasValue();
+}
+
+
+
+// FragmentFunction
+
+const Texture::FragmentFunctionValueType Texture::DEFAULT_FRAGMENTFUNCTION = std::string();
+
+
+
+const bool Texture::getFragmentFunction( FragmentFunctionValueType& value ) const
+{
+	return getFieldRO<FFragmentFunctionType>(getFFragmentFunction())->getValue( value );
+}
+
+
+
+void Texture::setFragmentFunction( const FragmentFunctionValueType& value )
+{
+	getFieldRW<FFragmentFunctionType>(getFFragmentFunction())->setValue( value );
+}
+
+
+
+void Texture::eraseFragmentFunction()
+{
+	getFieldRW<FFragmentFunctionType>(getFFragmentFunction())->eraseValue();
+}
+
+
+const bool Texture::hasFragmentFunction() const
+{
+	return getFieldRO<FFragmentFunctionType>(getFFragmentFunction())->hasValue();
 }
 
 
@@ -232,30 +299,6 @@ const bool Texture::hasMipmap() const
 
 
 
-// Filter
-const bool Texture::getFilter( const FilterParameterType param, FilterValueType& value ) const
-{
-	return (
-		vgd::field::getParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), static_cast<FilterParameterType>(param), value )
-		);
-}
-
-
-
-void Texture::setFilter( const FilterParameterType param, FilterValueType value )
-{
-	vgd::field::setParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), static_cast<FilterParameterType>(param), value );
-}
-
-
-
-void Texture::eraseFilter( const FilterParameterType param )
-{
-	vgd::field::eraseParameterValue< FilterParameterType, FilterValueType >( this, getFFilter(), static_cast<FilterParameterType>(param) );
-}
-
-
-
 // VertexFunction
 
 const Texture::VertexFunctionValueType Texture::DEFAULT_VERTEXFUNCTION = std::string();
@@ -285,6 +328,35 @@ void Texture::eraseVertexFunction()
 const bool Texture::hasVertexFunction() const
 {
 	return getFieldRO<FVertexFunctionType>(getFVertexFunction())->hasValue();
+}
+
+
+
+// MinFilter
+
+const bool Texture::getMinFilter( MinFilterValueType& value ) const
+{
+	return getFieldRO<FMinFilterType>(getFMinFilter())->getValue( value );
+}
+
+
+
+void Texture::setMinFilter( const MinFilterValueType& value )
+{
+	getFieldRW<FMinFilterType>(getFMinFilter())->setValue( value );
+}
+
+
+
+void Texture::eraseMinFilter()
+{
+	getFieldRW<FMinFilterType>(getFMinFilter())->eraseValue();
+}
+
+
+const bool Texture::hasMinFilter() const
+{
+	return getFieldRO<FMinFilterType>(getFMinFilter())->hasValue();
 }
 
 
@@ -321,24 +393,60 @@ void Texture::setUsage( const UsageValueType value )
 
 
 
+// MagFilter
+
+const bool Texture::getMagFilter( MagFilterValueType& value ) const
+{
+	return getFieldRO<FMagFilterType>(getFMagFilter())->getValue( value );
+}
+
+
+
+void Texture::setMagFilter( const MagFilterValueType& value )
+{
+	getFieldRW<FMagFilterType>(getFMagFilter())->setValue( value );
+}
+
+
+
+void Texture::eraseMagFilter()
+{
+	getFieldRW<FMagFilterType>(getFMagFilter())->eraseValue();
+}
+
+
+const bool Texture::hasMagFilter() const
+{
+	return getFieldRO<FMagFilterType>(getFMagFilter())->hasValue();
+}
+
+
+
 // Field name accessor(s)
+const std::string Texture::getFWrapS( void )
+{
+	return "f_wrapS";
+}
+
+
+
+const std::string Texture::getFWrapR( void )
+{
+	return "f_wrapR";
+}
+
+
+
+const std::string Texture::getFWrapT( void )
+{
+	return "f_wrapT";
+}
+
+
+
 const std::string Texture::getFMaxAnisotropy( void )
 {
 	return "f_maxAnisotropy";
-}
-
-
-
-const std::string Texture::getFFragmentFunction( void )
-{
-	return "f_fragmentFunction";
-}
-
-
-
-const std::string Texture::getFWrap( void )
-{
-	return "f_wrap";
 }
 
 
@@ -350,6 +458,13 @@ const std::string Texture::getFImage( void )
 
 
 
+const std::string Texture::getFFragmentFunction( void )
+{
+	return "f_fragmentFunction";
+}
+
+
+
 const std::string Texture::getFMipmap( void )
 {
 	return "f_mipmap";
@@ -357,16 +472,16 @@ const std::string Texture::getFMipmap( void )
 
 
 
-const std::string Texture::getFFilter( void )
+const std::string Texture::getFVertexFunction( void )
 {
-	return "f_filter";
+	return "f_vertexFunction";
 }
 
 
 
-const std::string Texture::getFVertexFunction( void )
+const std::string Texture::getFMinFilter( void )
 {
-	return "f_vertexFunction";
+	return "f_minFilter";
 }
 
 
@@ -381,6 +496,13 @@ const std::string Texture::getFInternalFormat( void )
 const std::string Texture::getFUsage( void )
 {
 	return "f_usage";
+}
+
+
+
+const std::string Texture::getFMagFilter( void )
+{
+	return "f_magFilter";
 }
 
 

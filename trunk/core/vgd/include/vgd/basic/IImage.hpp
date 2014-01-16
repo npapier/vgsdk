@@ -53,6 +53,7 @@ public:
 
 	/**
 	 * @brief Type of image.
+	 * @todo HALF
 	 */
 	typedef enum {
 		NO_TYPE = 0,

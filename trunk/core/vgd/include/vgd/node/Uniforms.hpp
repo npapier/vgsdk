@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -200,7 +200,7 @@ struct VGD_API Uniforms : public vgd::node::SingleAttribute
 			// Non existing uniform variable
 			addField( new vgd::field::TSingleField< T >(name) );
 
-			addDirtyFlag( name );
+			addDirtyFlag( "df_" + name );
 
 			link( name, name );
 			link( name, getDFNode() );
