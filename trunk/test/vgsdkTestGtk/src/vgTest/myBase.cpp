@@ -76,7 +76,7 @@ void myBase::prerun(const vgsdkTestGtk::vgTest::testType type)
 	hpaned->pack2( *m_canvas, true, true );
 
 	//
-#ifndef _VGSDK_DONT_KILL_VIEWER_AUTOMATICALLY
+#ifdef _VGSDK_DONT_KILL_VIEWER_AUTOMATICALLY
 	vbox1->pack_start( *notebook, true, true );
 #endif
 
@@ -100,8 +100,15 @@ void myBase::prerun(const vgsdkTestGtk::vgTest::testType type)
 }
 
 
-void myBase::run()
+void myBase::run( const bool callViewAll )
 {
+	// Call view all if desired
+	if ( callViewAll )
+	{
+		getCanvas()->viewAll();
+	}
+
+	// Start event loop
 	m_run = true;
 	Gtk::Main::run(*m_window);
 }

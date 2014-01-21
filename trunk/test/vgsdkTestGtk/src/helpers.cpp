@@ -1,11 +1,14 @@
-// VGSDK - Copyright (C) 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "helpers.hpp"
 
+#include <vgCairo/helpers.hpp>
+#include <vgCairo/ImageSurface.hpp>
 #include <vgd/node/Quad.hpp>
+#include <vgd/node/LayerPlan.hpp>
 #include <vgd/node/Material.hpp>
 #include <vgd/node/Sphere.hpp>
 #include <vgd/node/Transform.hpp>
@@ -47,4 +50,46 @@ void createQuadAndSpheresMatrix( vgd::Shp< vgsdkTestGtk::vgTest::myBase > base )
 	vgd::Shp< Transform > transform = Transform::create("rotation");
 	transform->setRotation( vgm::Rotation( vgm::Vec3f(1.f, 0.f, 0.f), vgm::deg2rad(-70.f) ) );
 	base->getCanvas()->getSetup()->insertChild( transform, 1 );
+}
+
+
+
+vgd::Shp< vgd::node::LayerPlan > createLayerPlan()
+{
+	using vgd::node::LayerPlan;
+
+	// LayerPlan
+	vgd::Shp< LayerPlan > layerPlan = LayerPlan::create("layerPlan");
+
+	layerPlan->setPosition( vgm::Vec2f(0.f, 0.f) );
+	layerPlan->setSize( vgm::Vec2f(1.f, 1.f) );
+
+	//	image used by LayerPlan
+	using vgCairo::ImageSurface;
+	vgm::Vec2i size(640/10, 480/10);
+	vgd::Shp< ImageSurface > imageSurface( new ImageSurface(size[0], size[1]) );
+
+	// Draws on image surface with cairo
+	cairo_t * cr = imageSurface->getContext();
+
+	// Clears image surface with cairo
+	cairo_save(cr);
+	cairo_set_source_rgba (cr, 0, 0, 0, 1);
+	cairo_paint(cr);
+	cairo_restore(cr);
+
+	// Draws a disk
+	cairo_save(cr);
+
+	cairo_set_source_rgba (cr, 0, 0, 1, 0.5);
+	vgCairo::ellipse( cr, 0.f, 0.f, static_cast<float>(size[0]), static_cast<float>(size[1]) );
+
+	cairo_set_operator( cr, CAIRO_OPERATOR_SOURCE );
+	cairo_fill( cr );
+
+	cairo_restore (cr);
+
+	layerPlan->setImage( imageSurface );
+
+	return layerPlan;
 }
