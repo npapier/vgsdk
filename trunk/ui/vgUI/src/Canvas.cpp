@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -12,6 +12,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
+#include <displayDriverConnector/displayDriverConnector.hpp>
 #include <glo/GLSLProgram.hpp>
 
 #include <sbf/pkg/Module.hpp>
@@ -899,6 +900,13 @@ const bool Canvas::startOpenGLContext()
 			vgLogMessage("OpenGL context without stereo support");
 		}
 		m_hasCurrentGLContextProperties = true;
+
+		// Retrieves and prints informations about primary display adapter
+		ddc_display_device_info_t displayDevice;
+		ddc_get_primary_display_device_informations( &displayDevice );
+
+		const std::string ddi = ddc_get_display_device_info(&displayDevice);
+		getGleContext()->logEndl(ddi);
 
 		// Finally, initializes gle and sets it current
 // @todo only if not already done
