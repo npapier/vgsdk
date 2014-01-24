@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2010, 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -63,14 +63,18 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 
 		if ( iimage == 0 )
 		{
+#ifdef _DEBUG
 			vgLogDebug("vgio: load image %s", pathFilename.c_str() );
+#endif
 			iimage = loadImage( media, pathFilename );
 
 			if ( iimage && !iimage->isEmpty() )
 			{
 				// Loading successes
 				const bool addingRetVal = getInstance()->add( pathFilename, iimage );
+#ifdef _DEBUG
 				vgLogDebug("vgio: image %s added to cache.", pathFilename.c_str() );
+#endif
 				assert( addingRetVal );
 
 				// Returns a copy of the image.
@@ -85,7 +89,9 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 		else
 		{
 			// A match is found for the key in cache. So returns a copy of it.
+#ifdef _DEBUG
 			vgLogDebug("vgio: image %s found in cache.", pathFilename.c_str() );
+#endif
 			retVal.reset( new vgd::basic::ImageInfo(*iimage) );
 		}
 
@@ -97,13 +103,17 @@ vgd::Shp< vgd::basic::IImage > ImageCache::load( const Media & media, const std:
 		vgd::Shp< vgd::basic::IImage >	retVal;
 		vgd::basic::IImage				* iimage;
 
+#ifdef _DEBUG
 		vgLogDebug("vgio: load image %s", pathFilename.c_str() );
+#endif
 		iimage = loadImage( media, pathFilename );
 
 		if ( iimage && !iimage->isEmpty() )
 		{
 			retVal.reset( iimage );
+#ifdef _DEBUG
 			vgLogDebug("vgio: load image %s done.", pathFilename.c_str() );
+#endif
 		}
 		else
 		{
