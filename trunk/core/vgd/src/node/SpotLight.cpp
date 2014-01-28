@@ -63,9 +63,9 @@ SpotLight::SpotLight( const std::string nodeName ) :
 	vgd::node::PointLight( nodeName )
 {
 	// Adds field(s)
-	addField( new FDropOffRateType(getFDropOffRate()) );
 	addField( new FDirectionType(getFDirection()) );
 	addField( new FCutOffAngleType(getFCutOffAngle()) );
+	addField( new FDropOffRateType(getFDropOffRate()) );
 
 	// Sets link(s)
 
@@ -84,42 +84,9 @@ void SpotLight::setToDefaults( void )
 void SpotLight::setOptionalsToDefaults()
 {
 	PointLight::setOptionalsToDefaults();
-	setDropOffRate( (0.f) );
 	setDirection( vgm::Vec3f(0.f, 0.f, -1.f) );
 	setCutOffAngle( (90.f) );
-}
-
-
-
-// DropOffRate
-
-const SpotLight::DropOffRateValueType SpotLight::DEFAULT_DROPOFFRATE = (0.f);
-
-
-
-const bool SpotLight::getDropOffRate( DropOffRateValueType& value ) const
-{
-	return getFieldRO<FDropOffRateType>(getFDropOffRate())->getValue( value );
-}
-
-
-
-void SpotLight::setDropOffRate( const DropOffRateValueType& value )
-{
-	getFieldRW<FDropOffRateType>(getFDropOffRate())->setValue( value );
-}
-
-
-
-void SpotLight::eraseDropOffRate()
-{
-	getFieldRW<FDropOffRateType>(getFDropOffRate())->eraseValue();
-}
-
-
-const bool SpotLight::hasDropOffRate() const
-{
-	return getFieldRO<FDropOffRateType>(getFDropOffRate())->hasValue();
+	setDropOffRate( (0.f) );
 }
 
 
@@ -190,14 +157,40 @@ const bool SpotLight::hasCutOffAngle() const
 
 
 
-// Field name accessor(s)
-const std::string SpotLight::getFDropOffRate( void )
+// DropOffRate
+
+const SpotLight::DropOffRateValueType SpotLight::DEFAULT_DROPOFFRATE = (0.f);
+
+
+
+const bool SpotLight::getDropOffRate( DropOffRateValueType& value ) const
 {
-	return "f_dropOffRate";
+	return getFieldRO<FDropOffRateType>(getFDropOffRate())->getValue( value );
 }
 
 
 
+void SpotLight::setDropOffRate( const DropOffRateValueType& value )
+{
+	getFieldRW<FDropOffRateType>(getFDropOffRate())->setValue( value );
+}
+
+
+
+void SpotLight::eraseDropOffRate()
+{
+	getFieldRW<FDropOffRateType>(getFDropOffRate())->eraseValue();
+}
+
+
+const bool SpotLight::hasDropOffRate() const
+{
+	return getFieldRO<FDropOffRateType>(getFDropOffRate())->hasValue();
+}
+
+
+
+// Field name accessor(s)
 const std::string SpotLight::getFDirection( void )
 {
 	return "f_direction";
@@ -208,6 +201,13 @@ const std::string SpotLight::getFDirection( void )
 const std::string SpotLight::getFCutOffAngle( void )
 {
 	return "f_cutOffAngle";
+}
+
+
+
+const std::string SpotLight::getFDropOffRate( void )
+{
+	return "f_dropOffRate";
 }
 
 

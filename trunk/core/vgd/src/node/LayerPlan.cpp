@@ -63,10 +63,10 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FAlphaScaleType(getFAlphaScale()) );
 	addField( new FPositionType(getFPosition()) );
-	addField( new FImageType(getFImage()) );
 	addField( new FSizeType(getFSize()) );
+	addField( new FImageType(getFImage()) );
+	addField( new FAlphaScaleType(getFAlphaScale()) );
 
 	// Adds dirty flag(s)
 	addDirtyFlag(getDFImage());
@@ -83,10 +83,10 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 void LayerPlan::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setAlphaScale( (1.f) );
 	setPosition( vgm::Vec2f(0.f, 0.f) );
-	setImage( vgd::basic::IImageShp() );
 	setSize( vgm::Vec2f(1.f, 1.f) );
+	setImage( vgd::basic::IImageShp() );
+	setAlphaScale( (1.f) );
 }
 
 
@@ -94,26 +94,6 @@ void LayerPlan::setToDefaults( void )
 void LayerPlan::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
-}
-
-
-
-// AlphaScale
-
-const LayerPlan::AlphaScaleValueType LayerPlan::DEFAULT_ALPHASCALE = (1.f);
-
-
-
-const LayerPlan::AlphaScaleValueType LayerPlan::getAlphaScale() const
-{
-	return getFieldRO<FAlphaScaleType>(getFAlphaScale())->getValue();
-}
-
-
-
-void LayerPlan::setAlphaScale( const AlphaScaleValueType value )
-{
-	getFieldRW<FAlphaScaleType>(getFAlphaScale())->setValue( value );
 }
 
 
@@ -138,26 +118,6 @@ void LayerPlan::setPosition( const PositionValueType value )
 
 
 
-// Image
-
-const LayerPlan::ImageValueType LayerPlan::DEFAULT_IMAGE = vgd::basic::IImageShp();
-
-
-
-const LayerPlan::ImageValueType LayerPlan::getImage() const
-{
-	return getFieldRO<FImageType>(getFImage())->getValue();
-}
-
-
-
-void LayerPlan::setImage( const ImageValueType value )
-{
-	getFieldRW<FImageType>(getFImage())->setValue( value );
-}
-
-
-
 // Size
 
 const LayerPlan::SizeValueType LayerPlan::DEFAULT_SIZE = vgm::Vec2f(1.f, 1.f);
@@ -178,17 +138,57 @@ void LayerPlan::setSize( const SizeValueType value )
 
 
 
-// Field name accessor(s)
-const std::string LayerPlan::getFAlphaScale( void )
+// Image
+
+const LayerPlan::ImageValueType LayerPlan::DEFAULT_IMAGE = vgd::basic::IImageShp();
+
+
+
+const LayerPlan::ImageValueType LayerPlan::getImage() const
 {
-	return "f_alphaScale";
+	return getFieldRO<FImageType>(getFImage())->getValue();
 }
 
 
 
+void LayerPlan::setImage( const ImageValueType value )
+{
+	getFieldRW<FImageType>(getFImage())->setValue( value );
+}
+
+
+
+// AlphaScale
+
+const LayerPlan::AlphaScaleValueType LayerPlan::DEFAULT_ALPHASCALE = (1.f);
+
+
+
+const LayerPlan::AlphaScaleValueType LayerPlan::getAlphaScale() const
+{
+	return getFieldRO<FAlphaScaleType>(getFAlphaScale())->getValue();
+}
+
+
+
+void LayerPlan::setAlphaScale( const AlphaScaleValueType value )
+{
+	getFieldRW<FAlphaScaleType>(getFAlphaScale())->setValue( value );
+}
+
+
+
+// Field name accessor(s)
 const std::string LayerPlan::getFPosition( void )
 {
 	return "f_position";
+}
+
+
+
+const std::string LayerPlan::getFSize( void )
+{
+	return "f_size";
 }
 
 
@@ -200,9 +200,9 @@ const std::string LayerPlan::getFImage( void )
 
 
 
-const std::string LayerPlan::getFSize( void )
+const std::string LayerPlan::getFAlphaScale( void )
 {
-	return "f_size";
+	return "f_alphaScale";
 }
 
 

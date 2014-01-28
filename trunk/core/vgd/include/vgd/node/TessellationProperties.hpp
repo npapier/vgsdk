@@ -27,17 +27,17 @@ namespace node
  * Specifies if the tessellation is enabled or disabled, which method to use and several parameters to adjust behavior of the tessellation. 
  *
  * New fields defined by this node :
- * - OFVec2f \c [range] = vgm::Vec2f(1.0f, 5.0f)<br>
- *   Specifies the minimum and maximum tessellation level used by the tessellation control shaders to tessellate the incoming primitive (only used if tessellation is enabled).<br>
+ * - OFEnum \c [tessellation] = (DISABLED)<br>
+ *   Specifies if the tessellation is enabled or disabled and which method to use.<br>
  *<br>
  * - OFFloat \c [phongBias] = (0.55f)<br>
  *   Specifies the tessellation bias used by the Phong Tessellation algorithm (only used if tessellation is enabled).<br>
  *<br>
+ * - OFVec2f \c [range] = vgm::Vec2f(1.0f, 5.0f)<br>
+ *   Specifies the minimum and maximum tessellation level used by the tessellation control shaders to tessellate the incoming primitive (only used if tessellation is enabled).<br>
+ *<br>
  * - OFFloat \c [pixelsPerEdge] = (20.f)<br>
  *   When tessellation method is set to PHONG and TessellationLevel.method==PIXELS_PER_EDGE, then this field specifies the desired number of pixels per edge (if tessellationRange[1] allows the needed subdivision level).<br>
- *<br>
- * - OFEnum \c [tessellation] = (DISABLED)<br>
- *   Specifies if the tessellation is enabled or disabled and which method to use.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -77,138 +77,6 @@ struct VGD_API TessellationProperties : public vgd::node::SingleAttribute
 	 */
 	static vgd::Shp< TessellationProperties > createWhole( const std::string nodeName = "DefaultWhole" );
 
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field range
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c range.
-	 */
-	typedef vgm::Vec2f RangeValueType;
-
-	/**
-	 * @brief The default value of field named \c range.
-	 */
-	static const RangeValueType DEFAULT_RANGE;
-
-	/**
-	 * @brief Type definition of the field named \c range
-	 */
-	typedef vgd::field::TOptionalField< RangeValueType > FRangeType;
-
-
-	/**
-	 * @brief Gets the value of field named \c range.
-	 */
-	const bool getRange( RangeValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c range.
- 	 */
-	void setRange( const RangeValueType& value );
-
-	/**
-	 * @brief Erases the field named \c range.
-	 */
-	void eraseRange();
-
-	/**
-	 * @brief Tests if the value of field named \c range has been initialized.
-	 */
-	const bool hasRange() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field phongBias
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c phongBias.
-	 */
-	typedef float PhongBiasValueType;
-
-	/**
-	 * @brief The default value of field named \c phongBias.
-	 */
-	static const PhongBiasValueType DEFAULT_PHONGBIAS;
-
-	/**
-	 * @brief Type definition of the field named \c phongBias
-	 */
-	typedef vgd::field::TOptionalField< PhongBiasValueType > FPhongBiasType;
-
-
-	/**
-	 * @brief Gets the value of field named \c phongBias.
-	 */
-	const bool getPhongBias( PhongBiasValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c phongBias.
- 	 */
-	void setPhongBias( const PhongBiasValueType& value );
-
-	/**
-	 * @brief Erases the field named \c phongBias.
-	 */
-	void erasePhongBias();
-
-	/**
-	 * @brief Tests if the value of field named \c phongBias has been initialized.
-	 */
-	const bool hasPhongBias() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field pixelsPerEdge
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c pixelsPerEdge.
-	 */
-	typedef float PixelsPerEdgeValueType;
-
-	/**
-	 * @brief The default value of field named \c pixelsPerEdge.
-	 */
-	static const PixelsPerEdgeValueType DEFAULT_PIXELSPEREDGE;
-
-	/**
-	 * @brief Type definition of the field named \c pixelsPerEdge
-	 */
-	typedef vgd::field::TOptionalField< PixelsPerEdgeValueType > FPixelsPerEdgeType;
-
-
-	/**
-	 * @brief Gets the value of field named \c pixelsPerEdge.
-	 */
-	const bool getPixelsPerEdge( PixelsPerEdgeValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c pixelsPerEdge.
- 	 */
-	void setPixelsPerEdge( const PixelsPerEdgeValueType& value );
-
-	/**
-	 * @brief Erases the field named \c pixelsPerEdge.
-	 */
-	void erasePixelsPerEdge();
-
-	/**
-	 * @brief Tests if the value of field named \c pixelsPerEdge has been initialized.
-	 */
-	const bool hasPixelsPerEdge() const;
 	//@}
 
 
@@ -299,16 +167,148 @@ struct VGD_API TessellationProperties : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field phongBias
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c phongBias.
+	 */
+	typedef float PhongBiasValueType;
+
+	/**
+	 * @brief The default value of field named \c phongBias.
+	 */
+	static const PhongBiasValueType DEFAULT_PHONGBIAS;
+
+	/**
+	 * @brief Type definition of the field named \c phongBias
+	 */
+	typedef vgd::field::TOptionalField< PhongBiasValueType > FPhongBiasType;
+
+
+	/**
+	 * @brief Gets the value of field named \c phongBias.
+	 */
+	const bool getPhongBias( PhongBiasValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c phongBias.
+ 	 */
+	void setPhongBias( const PhongBiasValueType& value );
+
+	/**
+	 * @brief Erases the field named \c phongBias.
+	 */
+	void erasePhongBias();
+
+	/**
+	 * @brief Tests if the value of field named \c phongBias has been initialized.
+	 */
+	const bool hasPhongBias() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field range
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c range.
+	 */
+	typedef vgm::Vec2f RangeValueType;
+
+	/**
+	 * @brief The default value of field named \c range.
+	 */
+	static const RangeValueType DEFAULT_RANGE;
+
+	/**
+	 * @brief Type definition of the field named \c range
+	 */
+	typedef vgd::field::TOptionalField< RangeValueType > FRangeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c range.
+	 */
+	const bool getRange( RangeValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c range.
+ 	 */
+	void setRange( const RangeValueType& value );
+
+	/**
+	 * @brief Erases the field named \c range.
+	 */
+	void eraseRange();
+
+	/**
+	 * @brief Tests if the value of field named \c range has been initialized.
+	 */
+	const bool hasRange() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field pixelsPerEdge
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c pixelsPerEdge.
+	 */
+	typedef float PixelsPerEdgeValueType;
+
+	/**
+	 * @brief The default value of field named \c pixelsPerEdge.
+	 */
+	static const PixelsPerEdgeValueType DEFAULT_PIXELSPEREDGE;
+
+	/**
+	 * @brief Type definition of the field named \c pixelsPerEdge
+	 */
+	typedef vgd::field::TOptionalField< PixelsPerEdgeValueType > FPixelsPerEdgeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c pixelsPerEdge.
+	 */
+	const bool getPixelsPerEdge( PixelsPerEdgeValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c pixelsPerEdge.
+ 	 */
+	void setPixelsPerEdge( const PixelsPerEdgeValueType& value );
+
+	/**
+	 * @brief Erases the field named \c pixelsPerEdge.
+	 */
+	void erasePixelsPerEdge();
+
+	/**
+	 * @brief Tests if the value of field named \c pixelsPerEdge has been initialized.
+	 */
+	const bool hasPixelsPerEdge() const;
+	//@}
+
+
+
+	/**
 	 * @name Field name accessors
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c range.
+	 * @brief Returns the name of field \c tessellation.
 	 *
-	 * @return the name of field \c range.
+	 * @return the name of field \c tessellation.
 	 */
-	static const std::string getFRange( void );
+	static const std::string getFTessellation( void );
 
 	/**
 	 * @brief Returns the name of field \c phongBias.
@@ -318,18 +318,18 @@ struct VGD_API TessellationProperties : public vgd::node::SingleAttribute
 	static const std::string getFPhongBias( void );
 
 	/**
+	 * @brief Returns the name of field \c range.
+	 *
+	 * @return the name of field \c range.
+	 */
+	static const std::string getFRange( void );
+
+	/**
 	 * @brief Returns the name of field \c pixelsPerEdge.
 	 *
 	 * @return the name of field \c pixelsPerEdge.
 	 */
 	static const std::string getFPixelsPerEdge( void );
-
-	/**
-	 * @brief Returns the name of field \c tessellation.
-	 *
-	 * @return the name of field \c tessellation.
-	 */
-	static const std::string getFTessellation( void );
 
 	//@}
 

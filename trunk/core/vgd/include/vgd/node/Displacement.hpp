@@ -27,25 +27,25 @@ namespace node
  * Vertices displacement is available at vertex shader level or/and at tessellation evaluation shader level. To combine several displacements, you have to compute each displacement and mixes them as you like in a custom displacement function (see customDisplacementVS and customDisplacementTES). CUSTOM displacement function has to modify the variable, named position, containing a copy of the current vertex given initially by variable mgl_Vertex. Type of position is vec4 (idem for the read-only variable mgl_Vertex). 
  *
  * New fields defined by this node :
+ * - SFString \c declarationsVS = std::string()<br>
+ *   Append this field to the vertex shader declarations section. Use case: to define function used by displacementVS field<br>
+ *<br>
  * - SFString \c displacementVS = std::string()<br>
  *   Example : position += uDisplacementParameter4f0.x * vec4(normal,0);<br>
- *<br>
- * - OFVec4f \c [parameter4f1] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
- *<br>
- * - OFVec4f \c [parameter4f0] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
- *<br>
- * - OFPredefinedDisplacementValueType \c [displacementFunctionVS] = (NONE)<br>
  *<br>
  * - SFString \c declarationsTES = std::string()<br>
  *   Append this field to the tessellation shader declarations section. Use case: to define function used by displacementTES field<br>
  *<br>
- * - SFString \c declarationsVS = std::string()<br>
- *   Append this field to the vertex shader declarations section. Use case: to define function used by displacementVS field<br>
- *<br>
- * - OFPredefinedDisplacementValueType \c [displacementFunctionTES] = (NONE)<br>
- *<br>
  * - SFString \c displacementTES = std::string()<br>
  *   Example : position += uDisplacementParameter4f0.y * vec4(ecNormal,0);<br>
+ *<br>
+ * - OFVec4f \c [parameter4f0] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
+ *<br>
+ * - OFVec4f \c [parameter4f1] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
+ *<br>
+ * - OFPredefinedDisplacementValueType \c [displacementFunctionVS] = (NONE)<br>
+ *<br>
+ * - OFPredefinedDisplacementValueType \c [displacementFunctionTES] = (NONE)<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -145,6 +145,41 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field declarationsVS
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c declarationsVS.
+	 */
+	typedef std::string DeclarationsVSValueType;
+
+	/**
+	 * @brief The default value of field named \c declarationsVS.
+	 */
+	static const DeclarationsVSValueType DEFAULT_DECLARATIONSVS;
+
+	/**
+	 * @brief Type definition of the field named \c declarationsVS
+	 */
+	typedef vgd::field::TSingleField< DeclarationsVSValueType > FDeclarationsVSType;
+
+
+	/**
+	 * @brief Gets the value of field named \c declarationsVS.
+	 */
+	const DeclarationsVSValueType getDeclarationsVS() const;
+
+	/**
+	 * @brief Sets the value of field named \c declarationsVS.
+	 */
+	void setDeclarationsVS( const DeclarationsVSValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field displacementVS
 	 */
 	//@{
@@ -180,45 +215,71 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field parameter4f1
+	 * @name Accessors to field declarationsTES
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c parameter4f1.
+	 * @brief Type definition of the value contained by field named \c declarationsTES.
 	 */
-	typedef vgm::Vec4f Parameter4f1ValueType;
+	typedef std::string DeclarationsTESValueType;
 
 	/**
-	 * @brief The default value of field named \c parameter4f1.
+	 * @brief The default value of field named \c declarationsTES.
 	 */
-	static const Parameter4f1ValueType DEFAULT_PARAMETER4F1;
+	static const DeclarationsTESValueType DEFAULT_DECLARATIONSTES;
 
 	/**
-	 * @brief Type definition of the field named \c parameter4f1
+	 * @brief Type definition of the field named \c declarationsTES
 	 */
-	typedef vgd::field::TOptionalField< Parameter4f1ValueType > FParameter4f1Type;
+	typedef vgd::field::TSingleField< DeclarationsTESValueType > FDeclarationsTESType;
 
 
 	/**
-	 * @brief Gets the value of field named \c parameter4f1.
+	 * @brief Gets the value of field named \c declarationsTES.
 	 */
-	const bool getParameter4f1( Parameter4f1ValueType& value ) const;
+	const DeclarationsTESValueType getDeclarationsTES() const;
 
 	/**
-	 * @brief Sets the value of field named \c parameter4f1.
- 	 */
-	void setParameter4f1( const Parameter4f1ValueType& value );
+	 * @brief Sets the value of field named \c declarationsTES.
+	 */
+	void setDeclarationsTES( const DeclarationsTESValueType value );
+
+	//@}
+
+
 
 	/**
-	 * @brief Erases the field named \c parameter4f1.
+	 * @name Accessors to field displacementTES
 	 */
-	void eraseParameter4f1();
+	//@{
 
 	/**
-	 * @brief Tests if the value of field named \c parameter4f1 has been initialized.
+	 * @brief Type definition of the value contained by field named \c displacementTES.
 	 */
-	const bool hasParameter4f1() const;
+	typedef std::string DisplacementTESValueType;
+
+	/**
+	 * @brief The default value of field named \c displacementTES.
+	 */
+	static const DisplacementTESValueType DEFAULT_DISPLACEMENTTES;
+
+	/**
+	 * @brief Type definition of the field named \c displacementTES
+	 */
+	typedef vgd::field::TSingleField< DisplacementTESValueType > FDisplacementTESType;
+
+
+	/**
+	 * @brief Gets the value of field named \c displacementTES.
+	 */
+	const DisplacementTESValueType getDisplacementTES() const;
+
+	/**
+	 * @brief Sets the value of field named \c displacementTES.
+	 */
+	void setDisplacementTES( const DisplacementTESValueType value );
+
 	//@}
 
 
@@ -268,6 +329,50 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field parameter4f1
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c parameter4f1.
+	 */
+	typedef vgm::Vec4f Parameter4f1ValueType;
+
+	/**
+	 * @brief The default value of field named \c parameter4f1.
+	 */
+	static const Parameter4f1ValueType DEFAULT_PARAMETER4F1;
+
+	/**
+	 * @brief Type definition of the field named \c parameter4f1
+	 */
+	typedef vgd::field::TOptionalField< Parameter4f1ValueType > FParameter4f1Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c parameter4f1.
+	 */
+	const bool getParameter4f1( Parameter4f1ValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c parameter4f1.
+ 	 */
+	void setParameter4f1( const Parameter4f1ValueType& value );
+
+	/**
+	 * @brief Erases the field named \c parameter4f1.
+	 */
+	void eraseParameter4f1();
+
+	/**
+	 * @brief Tests if the value of field named \c parameter4f1 has been initialized.
+	 */
+	const bool hasParameter4f1() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field displacementFunctionVS
 	 */
 	//@{
@@ -302,76 +407,6 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 	 * @brief Tests if the value of field named \c displacementFunctionVS has been initialized.
 	 */
 	const bool hasDisplacementFunctionVS() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field declarationsTES
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c declarationsTES.
-	 */
-	typedef std::string DeclarationsTESValueType;
-
-	/**
-	 * @brief The default value of field named \c declarationsTES.
-	 */
-	static const DeclarationsTESValueType DEFAULT_DECLARATIONSTES;
-
-	/**
-	 * @brief Type definition of the field named \c declarationsTES
-	 */
-	typedef vgd::field::TSingleField< DeclarationsTESValueType > FDeclarationsTESType;
-
-
-	/**
-	 * @brief Gets the value of field named \c declarationsTES.
-	 */
-	const DeclarationsTESValueType getDeclarationsTES() const;
-
-	/**
-	 * @brief Sets the value of field named \c declarationsTES.
-	 */
-	void setDeclarationsTES( const DeclarationsTESValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field declarationsVS
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c declarationsVS.
-	 */
-	typedef std::string DeclarationsVSValueType;
-
-	/**
-	 * @brief The default value of field named \c declarationsVS.
-	 */
-	static const DeclarationsVSValueType DEFAULT_DECLARATIONSVS;
-
-	/**
-	 * @brief Type definition of the field named \c declarationsVS
-	 */
-	typedef vgd::field::TSingleField< DeclarationsVSValueType > FDeclarationsVSType;
-
-
-	/**
-	 * @brief Gets the value of field named \c declarationsVS.
-	 */
-	const DeclarationsVSValueType getDeclarationsVS() const;
-
-	/**
-	 * @brief Sets the value of field named \c declarationsVS.
-	 */
-	void setDeclarationsVS( const DeclarationsVSValueType value );
-
 	//@}
 
 
@@ -416,79 +451,9 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field displacementTES
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c displacementTES.
-	 */
-	typedef std::string DisplacementTESValueType;
-
-	/**
-	 * @brief The default value of field named \c displacementTES.
-	 */
-	static const DisplacementTESValueType DEFAULT_DISPLACEMENTTES;
-
-	/**
-	 * @brief Type definition of the field named \c displacementTES
-	 */
-	typedef vgd::field::TSingleField< DisplacementTESValueType > FDisplacementTESType;
-
-
-	/**
-	 * @brief Gets the value of field named \c displacementTES.
-	 */
-	const DisplacementTESValueType getDisplacementTES() const;
-
-	/**
-	 * @brief Sets the value of field named \c displacementTES.
-	 */
-	void setDisplacementTES( const DisplacementTESValueType value );
-
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
-
-	/**
-	 * @brief Returns the name of field \c displacementVS.
-	 *
-	 * @return the name of field \c displacementVS.
-	 */
-	static const std::string getFDisplacementVS( void );
-
-	/**
-	 * @brief Returns the name of field \c parameter4f1.
-	 *
-	 * @return the name of field \c parameter4f1.
-	 */
-	static const std::string getFParameter4f1( void );
-
-	/**
-	 * @brief Returns the name of field \c parameter4f0.
-	 *
-	 * @return the name of field \c parameter4f0.
-	 */
-	static const std::string getFParameter4f0( void );
-
-	/**
-	 * @brief Returns the name of field \c displacementFunctionVS.
-	 *
-	 * @return the name of field \c displacementFunctionVS.
-	 */
-	static const std::string getFDisplacementFunctionVS( void );
-
-	/**
-	 * @brief Returns the name of field \c declarationsTES.
-	 *
-	 * @return the name of field \c declarationsTES.
-	 */
-	static const std::string getFDeclarationsTES( void );
 
 	/**
 	 * @brief Returns the name of field \c declarationsVS.
@@ -498,11 +463,18 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 	static const std::string getFDeclarationsVS( void );
 
 	/**
-	 * @brief Returns the name of field \c displacementFunctionTES.
+	 * @brief Returns the name of field \c displacementVS.
 	 *
-	 * @return the name of field \c displacementFunctionTES.
+	 * @return the name of field \c displacementVS.
 	 */
-	static const std::string getFDisplacementFunctionTES( void );
+	static const std::string getFDisplacementVS( void );
+
+	/**
+	 * @brief Returns the name of field \c declarationsTES.
+	 *
+	 * @return the name of field \c declarationsTES.
+	 */
+	static const std::string getFDeclarationsTES( void );
 
 	/**
 	 * @brief Returns the name of field \c displacementTES.
@@ -510,6 +482,34 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 	 * @return the name of field \c displacementTES.
 	 */
 	static const std::string getFDisplacementTES( void );
+
+	/**
+	 * @brief Returns the name of field \c parameter4f0.
+	 *
+	 * @return the name of field \c parameter4f0.
+	 */
+	static const std::string getFParameter4f0( void );
+
+	/**
+	 * @brief Returns the name of field \c parameter4f1.
+	 *
+	 * @return the name of field \c parameter4f1.
+	 */
+	static const std::string getFParameter4f1( void );
+
+	/**
+	 * @brief Returns the name of field \c displacementFunctionVS.
+	 *
+	 * @return the name of field \c displacementFunctionVS.
+	 */
+	static const std::string getFDisplacementFunctionVS( void );
+
+	/**
+	 * @brief Returns the name of field \c displacementFunctionTES.
+	 *
+	 * @return the name of field \c displacementFunctionTES.
+	 */
+	static const std::string getFDisplacementFunctionTES( void );
 
 	//@}
 

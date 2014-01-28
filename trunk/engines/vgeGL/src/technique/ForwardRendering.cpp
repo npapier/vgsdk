@@ -29,6 +29,7 @@
 #include <vgd/node/Program.hpp>
 #include <vgd/node/MultiTransformation.hpp>
 #include <vgd/node/MultipleInstances.hpp>
+#include <vgd/node/OffscreenRendering.hpp>
 #include <vgd/node/OutputBuffers.hpp>
 #include <vgd/node/OutputBufferProperty.hpp>
 #include <vgd/node/Overlay.hpp>
@@ -51,6 +52,7 @@
 #include "vgeGL/rc/Fluid.hpp"
 #include "vgeGL/rc/Texture2D.hpp"
 #include "vgeGL/rc/FrameBufferObject.hpp"
+#include "vgeGL/rc/OffscreenRendering.hpp"
 #include "vgeGL/technique/helpers.hpp"
 #include "vgeGL/technique/PostProcessing.hpp"
 #include "vgeGL/technique/ShadowMapping.hpp"
@@ -85,6 +87,23 @@ namespace
 
 
 
+void searchOffscreenRenderingNodes( const vge::visitor::TraverseElementVector * traverseElements, std::vector< vgd::node::OffscreenRendering * >& offscreenRenderingNodes )
+{
+	vge::visitor::TraverseElementVector::const_iterator i, iEnd;
+
+	for(	i = traverseElements->begin(), iEnd = traverseElements->end();
+			i != iEnd;
+			++i )
+	{
+		if ( (i->first)->isAKindOf< vgd::node::OffscreenRendering >() && i->second )
+		{
+			offscreenRenderingNodes.push_back( static_cast<vgd::node::OffscreenRendering*>(i->first) );
+		}
+		//else nothing to do
+	}
+}
+
+
 // @todo OPTME using new handler for Camera
 void passPaint(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 				const vgd::Shp< vgd::node::Camera > camera )
@@ -115,6 +134,7 @@ void passPaint(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVec
 
 
 
+// ignore OutputBufferProperty, OutputBuffers
 void passPaintWithGivenCamera(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 								const vgd::Shp< vgd::node::Camera > newCamera )
 {
@@ -264,7 +284,10 @@ void regardForGeometryOnly( vgeGL::engine::Engine * engine )
 
 
 ForwardRendering::ForwardRendering()
-:	m_shadowMappingInput( new ShadowMappingInput() )
+:	m_shadowMappingInput( new ShadowMappingInput() ),
+	m_textures( vgd::makeShp( new Texture2DVector ) ),
+	isBlitEnabled( true )
+	// @todo all others members
 {
 	// Initializes Quad for PostProcessing
 	if ( !m_quad1 )
@@ -318,32 +341,18 @@ ForwardRendering::ForwardRendering()
 void ForwardRendering::stageInitializeOutputBuffers( vgeGL::engine::Engine * engine )
 {
 	// OUTPUTBUFFERS
-	// Tests if output buffers of engine must be initialized/re-initialized (see Engine::getOutputBuffers())
+	// Tests if output buffers of engine must be initialized/updated
 	if ( hasOutputBufferProperties )
 	{
-		// drawingSurfaceSizeChanged: Computes if drawing surface size has changed
-		drawingSurfaceSizeChanged = false;
-
-		vgd::Shp< glo::FrameBufferObject > outputBuffersOfEngine = m_fbo; //engine->getOutputBuffers(); ??????????????????????
-		if ( outputBuffersOfEngine && (outputBuffersOfEngine->getNumOfColors() > 0) )
-		{
-			vgd::Shp< glo::Texture2D > texture2D = outputBuffersOfEngine->getColorAsTexture2D();
-			if ( texture2D )
-			{
-				// Retrieves size of OpenGL canvas
-				const vgm::Vec2i drawingSurfaceSize = engine->getDrawingSurfaceSize();
-
-				drawingSurfaceSizeChanged =	( texture2D->getWidth() != drawingSurfaceSize[0] ) ||
-											( texture2D->getHeight() != drawingSurfaceSize[1] );
-			}
-		}
+		vgd::Shp< glo::FrameBufferObject > outputBuffersOfEngine = m_fbo;
 
 		bool callInitializeEngineBuffers =
 			!outputBuffersOfEngine		||														// no output buffers
-			drawingSurfaceSizeChanged	||														// size changed
 			(outputBuffersOfEngine->getNumOfColors() != m_outputBufferProperties->getNum());	// number of buffers changed
 
-		// Tests if a change occurs in output buffers properties.
+		// Tests if a change occurs in an output buffers properties
+		// - directly because a field has been modified
+		// - indirectly if an output buffer size has to be modified because of the drawing surface size modification.
 		if ( !callInitializeEngineBuffers )
 		{
 			uint numFound = 0;
@@ -356,17 +365,56 @@ void ForwardRendering::stageInitializeOutputBuffers( vgeGL::engine::Engine * eng
 				{
 					++numFound;
 					vgd::node::OutputBufferProperty * outputBufferProperty = outputBufferPropertyState->getNode();
-					if (	outputBufferProperty &&
-							outputBufferProperty->getDirtyFlag(outputBufferProperty->getDFNode())->isDirty()	)
+					if ( outputBufferProperty )
 					{
-						callInitializeEngineBuffers = true;
-						// exit from the loop
-						numFound = m_outputBufferProperties->getNum();
+						// first criterion
+						const bool isDirty = outputBufferProperty->getDirtyFlag(outputBufferProperty->getDFNode())->isDirty();
+
+						// second criterion
+						namespace vgeGLPainter = vgeGL::handler::painter;
+
+						//	retrieves Texture2D node from OutputBufferProperty and its 'iimage'
+						vgd::Shp< vgd::node::Texture2D > textureNode;
+						const bool hasTextureNode = outputBufferProperty->getTextureNode( textureNode );
+						vgm::Vec2i currentTextureSize;
+						currentTextureSize.setInvalid();
+						if ( hasTextureNode )
+						{
+							vgd::Shp< vgd::basic::IImage > image;
+							const bool hasImage = textureNode->getImage( image );
+							if ( hasImage && image )
+							{
+								currentTextureSize.setValue( image->width(), image->height() );
+							}
+						}
+						// else nothing to do
+
+						/*vgd::Shp< glo::Texture2D > texture2D = outputBuffersOfEngine->getColorAsTexture2D(i);
+						const vgm::Vec2i currentTextureSize = vgm::Vec2i( texture2D->getWidth(), texture2D->getHeight() );*/
+
+						const vgm::Vec2i desiredTextureSize = vgeGLPainter::OutputBufferProperty::computeTextureSize( engine, outputBufferProperty );
+
+						const bool sizeChanged = currentTextureSize.isInvalid() || (currentTextureSize != desiredTextureSize);
+
+						//
+						if ( isDirty || sizeChanged )
+						{
+							callInitializeEngineBuffers = true;
+							// exit from the loop
+							numFound = m_outputBufferProperties->getNum();
+						}
+					}
+					else
+					{
+						vgAssert(false);
 					}
 				}
+				//else nothing to do
 			}
 		}
 
+		drawingSurfaceSizeChanged = callInitializeEngineBuffers;
+	
 		// Initializes OUTPUTBUFFERS
 		if ( callInitializeEngineBuffers )
 		{
@@ -389,8 +437,8 @@ void ForwardRendering::initializeEngineBuffers( vgeGL::engine::Engine * engine, 
 {
 	// *** Initializes FBO and creates textures ***
 	namespace vgeGLPainter = vgeGL::handler::painter;
-	m_textures.clear();
-	boost::tie( m_frameBuffer, m_fbo ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, outputBufferProperties, std::back_inserter(m_textures), true );
+	m_textures->clear();
+	boost::tie( m_frameBuffer, m_fbo ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, outputBufferProperties, std::back_inserter(*m_textures), true );
 }
 
 
@@ -544,54 +592,55 @@ void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine
 
 	if ( !lightModel )	vgLogDebug("You must have a LightModel node in the scene graph.");
 	if ( !camera )		vgLogDebug("You must have a Camera node in the scene graph.");
-	if ( !lightModel || !camera )	return;
-
-	// STEREO
-	isStereoEnabled = camera->getMode() != vgd::node::Camera::MONOSCOPIC;
-
-	// DECAL
-	// Checks decals
-	renderDecals = glslStateFinal->decals.isNotEmpty();
-
-	// Saves the decals state
-	m_decals = &(glslStateFinal->decals);
-
-
-	// POST-PROCESSING
-	// POST-PROCESSING.outputbuffers
-	// Checks outputBufferProperties
-	hasOutputBufferProperties = glslStateFinal->outputBufferProperties.isNotEmpty();
-	m_lastCurrentScaleForVertex = 1.f;
-
-	/*if (	glslStateFinal->outputBufferProperties.getNum() > 1 &&
-			glslStateFinal->postProcessing.isEmpty() )
+	if ( lightModel && camera )
 	{
-		vgLogDebug("At least one unused OutputBufferProperty (i.e. No PostProcessing node, but at least two OutputBufferProperty node)");
-	}*/
+		// STEREO
+		isStereoEnabled = camera->getMode() != vgd::node::Camera::MONOSCOPIC;
 
-	// Saves the outputBufferProperties state
-	m_outputBufferProperties = &(glslStateFinal->outputBufferProperties);
+		// DECAL
+		// Checks decals
+		renderDecals = glslStateFinal->decals.isNotEmpty();
+
+		// Saves the decals state
+		m_decals = &(glslStateFinal->decals);
 
 
-	// POST-PROCESSING.postprocessing
-	// Checks post-processing
-	isPostProcessingEnabled =
-		!lightModel->getIgnorePostProcessing() && glslStateFinal->outputBufferProperties.isNotEmpty() && glslStateFinal->postProcessing.isNotEmpty();
+		// POST-PROCESSING
+		// POST-PROCESSING.outputbuffers
+		// Checks outputBufferProperties
+		hasOutputBufferProperties = glslStateFinal->outputBufferProperties.isNotEmpty();
+		m_lastCurrentScaleForVertex = 1.f;
 
-	// Saves the post-processing state
-	m_postProcessing = &(glslStateFinal->postProcessing);
+		/*if (	glslStateFinal->outputBufferProperties.getNum() > 1 &&
+				glslStateFinal->postProcessing.isEmpty() )
+		{
+			vgLogDebug("At least one unused OutputBufferProperty (i.e. No PostProcessing node, but at least two OutputBufferProperty node)");
+		}*/
 
-	// OVERLAYS
-	// Checks overlays
-	renderOverlays = glslStateFinal->overlays.isNotEmpty();
+		// Saves the outputBufferProperties state
+		m_outputBufferProperties = &(glslStateFinal->outputBufferProperties);
 
-	// Saves the overlays state
-	m_overlays = &(glslStateFinal->overlays);
 
-	//
-	BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
-	{
-		subtechnique->stageCollectInformationsEnd( engine );
+		// POST-PROCESSING.postprocessing
+		// Checks post-processing
+		isPostProcessingEnabled =
+			!lightModel->getIgnorePostProcessing() && glslStateFinal->outputBufferProperties.isNotEmpty() && glslStateFinal->postProcessing.isNotEmpty();
+
+		// Saves the post-processing state
+		m_postProcessing = &(glslStateFinal->postProcessing);
+
+		// OVERLAYS
+		// Checks overlays
+		renderOverlays = glslStateFinal->overlays.isNotEmpty();
+
+		// Saves the overlays state
+		m_overlays = &(glslStateFinal->overlays);
+
+		//
+		BOOST_FOREACH( SubTechniqueShp subtechnique, m_subtechniques )
+		{
+			subtechnique->stageCollectInformationsEnd( engine );
+		}
 	}
 
 	endPass();
@@ -1548,6 +1597,94 @@ void ForwardRendering::stageFluidSimulation( vgeGL::engine::Engine * engine )
 // @todo Occlusion Queries
 void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 {
+	// OFFSCREEN RENDERING
+
+	//	Collects all OffscreenRendering nodes
+	std::vector< vgd::node::OffscreenRendering * > offscreenRenderingNodes;
+	searchOffscreenRenderingNodes( traverseElements, offscreenRenderingNodes );
+
+	//	Backups (1) several rc of ForwardRendering
+	vgd::Shp< vgd::node::FrameBuffer >			frameBufferBAK	= m_frameBuffer;
+	vgd::Shp< vgeGL::rc::FrameBufferObject >	fboBAK			= m_fbo;
+	vgd::Shp< Texture2DVector >					texturesBAK		= m_textures;
+
+	//	Do a rendering for each offscreen rendering nodes
+	for( auto	i		= offscreenRenderingNodes.begin(),
+				iEnd	= offscreenRenderingNodes.end();
+		i != iEnd;
+		++i )
+	{
+		vgd::node::OffscreenRendering * offscreenRenderingNode = *i;
+
+		// Retrieves associated RC
+		bool newRC;
+		vgd::Shp< vgeGL::rc::OffscreenRendering > orRC = engine->getGLManager()->gethShp<vgeGL::rc::OffscreenRendering>( offscreenRenderingNode, newRC );
+
+		// Installs RC in ForwardRendering from OffscreenRendering RC
+		m_frameBuffer	= orRC->frameBuffer;
+		m_fbo			= orRC->fbo;
+		m_textures		= orRC->textures;
+
+		vgd::Shp< vgd::node::Group > root = offscreenRenderingNode->getRoot();
+
+		// @todo an helper for string marker
+		if ( isGL_GREMEDY_string_marker() )
+		{
+			std::stringstream ss;
+			ss << "BEGIN: OffscreenRendering(" << offscreenRenderingNode->getName() << ")";
+			glStringMarkerGREMEDY( 0, ss.str().c_str() );
+		}
+		stageOffscreenRendering( engine, root );
+		if ( isGL_GREMEDY_string_marker() )
+		{
+			std::stringstream ss;
+			ss << "END: OffscreenRendering(" << offscreenRenderingNode->getName() << ")";
+			glStringMarkerGREMEDY( 0, ss.str().c_str() );
+		}
+
+		// Copies ForwardRendering RC in OffscreenRendering RC to reuse next time
+		orRC->frameBuffer	= m_frameBuffer;
+		orRC->fbo			= m_fbo;
+		orRC->textures		= m_textures;
+	}
+
+	//	Restores (1)
+	m_frameBuffer	= frameBufferBAK;
+	m_fbo			= fboBAK;
+	m_textures		= texturesBAK;
+
+	// RENDERING OF CANVAS SCENE GRAPH
+	setParameters( engine, traverseElements, sceneManager() );
+	renderScene( engine, traverseElements );
+}
+
+
+void ForwardRendering::stageOffscreenRendering( vgeGL::engine::Engine * engine, vgd::Shp< vgd::node::Group > root )
+{
+	if ( root )
+	{
+		vge::visitor::NodeCollectorExtended<> collector;
+		root->traverse( collector );
+
+		// Do the rendering
+		vge::visitor::TraverseElementVector* traverseElements = collector.getTraverseElements();
+
+		// Backups blit state and disables blit
+		const bool isBlitEnabledBAK = isBlitEnabled;
+		isBlitEnabled = false;
+
+		//
+		setParameters( engine, traverseElements, sceneManager() );
+		renderScene( engine, traverseElements );
+
+		// Restores blit state
+		isBlitEnabled = isBlitEnabledBAK;
+	}
+}
+
+
+void ForwardRendering::renderScene( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+{
 	using vgeGL::engine::GLSLState;
 
 	/////////////////////////////////////////////////////////
@@ -1817,8 +1954,26 @@ void ForwardRendering::stageInitializePostProcessingBuffers( vgeGL::engine::Engi
 	if ( isPostProcessingEnabled )
 	{
 		// Tests if initialization must be done
-		if (	!pppRC.frameBuffer0 || !pppRC.frameBuffer1 ||	// no fbo for ping-pong rendering
-				drawingSurfaceSizeChanged			)			// size changed @todo this is only valid if hasOutputBufferProperties==true => do like drawingSurfaceSizeChanged computation
+		bool sizeChanged = !pppRC.frameBuffer0 || !pppRC.frameBuffer1;	// no fbo for ping-pong rendering
+
+		// Computes the size of main output buffer
+		vgd::Shp< glo::Texture2D > tex2DOutputBuffer0 = m_fbo->getColorAsTexture2D(0);
+		vgAssert( tex2DOutputBuffer0 );
+		const vgm::Vec2i outputBuffer0Size = vgm::Vec2i( tex2DOutputBuffer0->getWidth(), tex2DOutputBuffer0->getHeight() );
+
+		if ( !sizeChanged )
+		{
+			// Ensures that size of ping-pong buffers used by post-processing have the same size as the main output buffer (i.e. output buffer at index 0).
+			namespace vgeGLPainter = vgeGL::handler::painter;
+
+			vgd::Shp< glo::Texture2D > texture2DPostProcessing	= pppRC.fbo0->getColorAsTexture2D(0);
+			vgAssert( texture2DPostProcessing );
+
+			const vgm::Vec2i postProcessingSize = vgm::Vec2i( texture2DPostProcessing->getWidth(), texture2DPostProcessing->getHeight() );
+			sizeChanged = (outputBuffer0Size != postProcessingSize);
+		}
+
+		if ( sizeChanged )
 		{
 			setPassDescription("PostProcessing initialization stage");
 			beginPass();
@@ -1833,7 +1988,8 @@ void ForwardRendering::stageInitializePostProcessingBuffers( vgeGL::engine::Engi
 				vgd::Shp< OutputBufferProperty > obufProperty = OutputBufferProperty::create("buf0");
 				obufProperty->setFormat( OutputBufferProperty::RGBA );
 				obufProperty->setType( OutputBufferProperty::FLOAT16 );
-
+				obufProperty->setSize( vgm::Vec2f(outputBuffer0Size) );
+				obufProperty->setSizeSemantic( OutputBufferProperty::PIXEL_SIZE );
 				myOutputBufferProperties->setState(0, vgd::makeShp( new GLSLState::OutputBufferPropertyState(obufProperty.get()) ) );
 
 				namespace vgeGLPainter = vgeGL::handler::painter;
@@ -1876,14 +2032,14 @@ void ForwardRendering::stagePostProcessing( vgeGL::engine::Engine * engine )
 {
 	if ( isPostProcessingEnabled && m_postProcessing->getNum()>0 )
 	{
-		const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = applyPostProcessing( engine, m_textures, m_postProcessing );
-		blit( engine, finalBuffers );
+		const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = applyPostProcessing( engine, *m_textures, m_postProcessing );
+		if ( isBlitEnabled )	blit( engine, finalBuffers );
 	}
 	else
 	{
 		if ( hasOutputBufferProperties )
 		{
-			blit( engine, m_fbo );
+			if ( isBlitEnabled )	blit( engine, m_fbo );
 		}
 		// else nothing to do
 	}

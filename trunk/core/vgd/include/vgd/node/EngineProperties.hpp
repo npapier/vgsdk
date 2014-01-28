@@ -26,14 +26,14 @@ namespace node
  * This node defines the default anisotropy used during texture filtering and OpenGL api usage hints (GL_ARB_debug_output extension and DSA). 
  *
  * New fields defined by this node :
+ * - OFFloat \c [maxAnisotropy] = (1.f)<br>
+ *   Specifies the engine default maximum degree of anisotropy (see vgd::node::Texture).<br>
+ *<br>
  * - OFBool \c [openglDebugOutput] = (false)<br>
  *   Specifies if the OpenGL debug output system is enabled or disabled (see setDebugOutput() in gle).<br>
  *<br>
  * - OFBool \c [openglDirectStateAccess] = (false)<br>
  *   Specifies if the OpenGL DSA functions have to be used or not (see GL_EXT_direct_state_access extension)<br>
- *<br>
- * - OFFloat \c [maxAnisotropy] = (1.f)<br>
- *   Specifies the engine default maximum degree of anisotropy (see vgd::node::Texture).<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -70,6 +70,50 @@ struct VGD_API EngineProperties : public vgd::node::SingleAttribute
 	 */
 	static vgd::Shp< EngineProperties > createWhole( const std::string nodeName = "DefaultWhole" );
 
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field maxAnisotropy
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c maxAnisotropy.
+	 */
+	typedef float MaxAnisotropyValueType;
+
+	/**
+	 * @brief The default value of field named \c maxAnisotropy.
+	 */
+	static const MaxAnisotropyValueType DEFAULT_MAXANISOTROPY;
+
+	/**
+	 * @brief Type definition of the field named \c maxAnisotropy
+	 */
+	typedef vgd::field::TOptionalField< MaxAnisotropyValueType > FMaxAnisotropyType;
+
+
+	/**
+	 * @brief Gets the value of field named \c maxAnisotropy.
+	 */
+	const bool getMaxAnisotropy( MaxAnisotropyValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c maxAnisotropy.
+ 	 */
+	void setMaxAnisotropy( const MaxAnisotropyValueType& value );
+
+	/**
+	 * @brief Erases the field named \c maxAnisotropy.
+	 */
+	void eraseMaxAnisotropy();
+
+	/**
+	 * @brief Tests if the value of field named \c maxAnisotropy has been initialized.
+	 */
+	const bool hasMaxAnisotropy() const;
 	//@}
 
 
@@ -163,53 +207,16 @@ struct VGD_API EngineProperties : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field maxAnisotropy
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c maxAnisotropy.
-	 */
-	typedef float MaxAnisotropyValueType;
-
-	/**
-	 * @brief The default value of field named \c maxAnisotropy.
-	 */
-	static const MaxAnisotropyValueType DEFAULT_MAXANISOTROPY;
-
-	/**
-	 * @brief Type definition of the field named \c maxAnisotropy
-	 */
-	typedef vgd::field::TOptionalField< MaxAnisotropyValueType > FMaxAnisotropyType;
-
-
-	/**
-	 * @brief Gets the value of field named \c maxAnisotropy.
-	 */
-	const bool getMaxAnisotropy( MaxAnisotropyValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c maxAnisotropy.
- 	 */
-	void setMaxAnisotropy( const MaxAnisotropyValueType& value );
-
-	/**
-	 * @brief Erases the field named \c maxAnisotropy.
-	 */
-	void eraseMaxAnisotropy();
-
-	/**
-	 * @brief Tests if the value of field named \c maxAnisotropy has been initialized.
-	 */
-	const bool hasMaxAnisotropy() const;
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c maxAnisotropy.
+	 *
+	 * @return the name of field \c maxAnisotropy.
+	 */
+	static const std::string getFMaxAnisotropy( void );
 
 	/**
 	 * @brief Returns the name of field \c openglDebugOutput.
@@ -224,13 +231,6 @@ struct VGD_API EngineProperties : public vgd::node::SingleAttribute
 	 * @return the name of field \c openglDirectStateAccess.
 	 */
 	static const std::string getFOpenglDirectStateAccess( void );
-
-	/**
-	 * @brief Returns the name of field \c maxAnisotropy.
-	 *
-	 * @return the name of field \c maxAnisotropy.
-	 */
-	static const std::string getFMaxAnisotropy( void );
 
 	//@}
 

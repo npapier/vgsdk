@@ -63,10 +63,10 @@ PointStyle::PointStyle( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FSmoothType(getFSmooth()) );
-	addField( new FDistanceAttenuationType(getFDistanceAttenuation()) );
-	addField( new FPointSpriteType(getFPointSprite()) );
 	addField( new FSizeType(getFSize()) );
+	addField( new FDistanceAttenuationType(getFDistanceAttenuation()) );
+	addField( new FSmoothType(getFSmooth()) );
+	addField( new FPointSpriteType(getFPointSprite()) );
 
 	// Sets link(s)
 
@@ -85,109 +85,10 @@ void PointStyle::setToDefaults( void )
 void PointStyle::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setSmooth( (false) );
-	setDistanceAttenuation( vgm::Vec3f(1.f, 0.f, 0.f) );
-	setPointSprite( (false) );
 	setSize( (1.f) );
-}
-
-
-
-// Smooth
-
-const PointStyle::SmoothValueType PointStyle::DEFAULT_SMOOTH = (false);
-
-
-
-const bool PointStyle::getSmooth( SmoothValueType& value ) const
-{
-	return getFieldRO<FSmoothType>(getFSmooth())->getValue( value );
-}
-
-
-
-void PointStyle::setSmooth( const SmoothValueType& value )
-{
-	getFieldRW<FSmoothType>(getFSmooth())->setValue( value );
-}
-
-
-
-void PointStyle::eraseSmooth()
-{
-	getFieldRW<FSmoothType>(getFSmooth())->eraseValue();
-}
-
-
-const bool PointStyle::hasSmooth() const
-{
-	return getFieldRO<FSmoothType>(getFSmooth())->hasValue();
-}
-
-
-
-// DistanceAttenuation
-
-const PointStyle::DistanceAttenuationValueType PointStyle::DEFAULT_DISTANCEATTENUATION = vgm::Vec3f(1.f, 0.f, 0.f);
-
-
-
-const bool PointStyle::getDistanceAttenuation( DistanceAttenuationValueType& value ) const
-{
-	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->getValue( value );
-}
-
-
-
-void PointStyle::setDistanceAttenuation( const DistanceAttenuationValueType& value )
-{
-	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->setValue( value );
-}
-
-
-
-void PointStyle::eraseDistanceAttenuation()
-{
-	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->eraseValue();
-}
-
-
-const bool PointStyle::hasDistanceAttenuation() const
-{
-	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->hasValue();
-}
-
-
-
-// PointSprite
-
-const PointStyle::PointSpriteValueType PointStyle::DEFAULT_POINTSPRITE = (false);
-
-
-
-const bool PointStyle::getPointSprite( PointSpriteValueType& value ) const
-{
-	return getFieldRO<FPointSpriteType>(getFPointSprite())->getValue( value );
-}
-
-
-
-void PointStyle::setPointSprite( const PointSpriteValueType& value )
-{
-	getFieldRW<FPointSpriteType>(getFPointSprite())->setValue( value );
-}
-
-
-
-void PointStyle::erasePointSprite()
-{
-	getFieldRW<FPointSpriteType>(getFPointSprite())->eraseValue();
-}
-
-
-const bool PointStyle::hasPointSprite() const
-{
-	return getFieldRO<FPointSpriteType>(getFPointSprite())->hasValue();
+	setDistanceAttenuation( vgm::Vec3f(1.f, 0.f, 0.f) );
+	setSmooth( (false) );
+	setPointSprite( (false) );
 }
 
 
@@ -225,10 +126,109 @@ const bool PointStyle::hasSize() const
 
 
 
-// Field name accessor(s)
-const std::string PointStyle::getFSmooth( void )
+// DistanceAttenuation
+
+const PointStyle::DistanceAttenuationValueType PointStyle::DEFAULT_DISTANCEATTENUATION = vgm::Vec3f(1.f, 0.f, 0.f);
+
+
+
+const bool PointStyle::getDistanceAttenuation( DistanceAttenuationValueType& value ) const
 {
-	return "f_smooth";
+	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->getValue( value );
+}
+
+
+
+void PointStyle::setDistanceAttenuation( const DistanceAttenuationValueType& value )
+{
+	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->setValue( value );
+}
+
+
+
+void PointStyle::eraseDistanceAttenuation()
+{
+	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->eraseValue();
+}
+
+
+const bool PointStyle::hasDistanceAttenuation() const
+{
+	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->hasValue();
+}
+
+
+
+// Smooth
+
+const PointStyle::SmoothValueType PointStyle::DEFAULT_SMOOTH = (false);
+
+
+
+const bool PointStyle::getSmooth( SmoothValueType& value ) const
+{
+	return getFieldRO<FSmoothType>(getFSmooth())->getValue( value );
+}
+
+
+
+void PointStyle::setSmooth( const SmoothValueType& value )
+{
+	getFieldRW<FSmoothType>(getFSmooth())->setValue( value );
+}
+
+
+
+void PointStyle::eraseSmooth()
+{
+	getFieldRW<FSmoothType>(getFSmooth())->eraseValue();
+}
+
+
+const bool PointStyle::hasSmooth() const
+{
+	return getFieldRO<FSmoothType>(getFSmooth())->hasValue();
+}
+
+
+
+// PointSprite
+
+const PointStyle::PointSpriteValueType PointStyle::DEFAULT_POINTSPRITE = (false);
+
+
+
+const bool PointStyle::getPointSprite( PointSpriteValueType& value ) const
+{
+	return getFieldRO<FPointSpriteType>(getFPointSprite())->getValue( value );
+}
+
+
+
+void PointStyle::setPointSprite( const PointSpriteValueType& value )
+{
+	getFieldRW<FPointSpriteType>(getFPointSprite())->setValue( value );
+}
+
+
+
+void PointStyle::erasePointSprite()
+{
+	getFieldRW<FPointSpriteType>(getFPointSprite())->eraseValue();
+}
+
+
+const bool PointStyle::hasPointSprite() const
+{
+	return getFieldRO<FPointSpriteType>(getFPointSprite())->hasValue();
+}
+
+
+
+// Field name accessor(s)
+const std::string PointStyle::getFSize( void )
+{
+	return "f_size";
 }
 
 
@@ -240,16 +240,16 @@ const std::string PointStyle::getFDistanceAttenuation( void )
 
 
 
-const std::string PointStyle::getFPointSprite( void )
+const std::string PointStyle::getFSmooth( void )
 {
-	return "f_pointSprite";
+	return "f_smooth";
 }
 
 
 
-const std::string PointStyle::getFSize( void )
+const std::string PointStyle::getFPointSprite( void )
 {
-	return "f_size";
+	return "f_pointSprite";
 }
 
 

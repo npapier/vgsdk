@@ -64,8 +64,8 @@ GeoMorph::GeoMorph( const std::string nodeName ) :
 	vgd::node::IShape()
 {
 	// Adds field(s)
-	addField( new FWeightsType(getFWeights()) );
 	addField( new FMethodType(getFMethod()) );
+	addField( new FWeightsType(getFWeights()) );
 	addField( new F__meshes__Type(getF__meshes__()) );
 
 	// Sets link(s)
@@ -79,8 +79,8 @@ void GeoMorph::setToDefaults( void )
 {
 	Group::setToDefaults();
 	IShape::setToDefaults();
-	setWeights( vgm::Vec2f(0.f, 0.f) );
 	setMethod( (NORMALIZED) );
+	setWeights( vgm::Vec2f(0.f, 0.f) );
 }
 
 
@@ -89,6 +89,22 @@ void GeoMorph::setOptionalsToDefaults()
 {
 	Group::setOptionalsToDefaults();
 	IShape::setOptionalsToDefaults();
+}
+
+
+
+// Method
+
+const GeoMorph::MethodValueType GeoMorph::getMethod() const
+{
+	return getFieldRO<FMethodType>(getFMethod())->getValue();
+}
+
+
+
+void GeoMorph::setMethod( const MethodValueType value )
+{
+	getFieldRW<FMethodType>(getFMethod())->setValue( value );
 }
 
 
@@ -113,22 +129,6 @@ void GeoMorph::setWeights( const WeightsValueType value )
 
 
 
-// Method
-
-const GeoMorph::MethodValueType GeoMorph::getMethod() const
-{
-	return getFieldRO<FMethodType>(getFMethod())->getValue();
-}
-
-
-
-void GeoMorph::setMethod( const MethodValueType value )
-{
-	getFieldRW<FMethodType>(getFMethod())->setValue( value );
-}
-
-
-
 // __meshes__
 vgd::field::EditorRO< GeoMorph::F__meshes__Type > GeoMorph::get__meshes__RO() const
 {
@@ -145,16 +145,16 @@ vgd::field::EditorRW< GeoMorph::F__meshes__Type > GeoMorph::get__meshes__RW()
 
 
 // Field name accessor(s)
-const std::string GeoMorph::getFWeights( void )
+const std::string GeoMorph::getFMethod( void )
 {
-	return "f_weights";
+	return "f_method";
 }
 
 
 
-const std::string GeoMorph::getFMethod( void )
+const std::string GeoMorph::getFWeights( void )
 {
-	return "f_method";
+	return "f_weights";
 }
 
 

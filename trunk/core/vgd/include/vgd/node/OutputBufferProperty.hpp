@@ -9,6 +9,7 @@
 #include "vgd/field/Bool.hpp"
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/String.hpp"
+#include "vgd/field/Texture2DShp.hpp"
 #include "vgd/field/Vec2f.hpp"
 #include "vgd/node/MultiAttribute.hpp"
 
@@ -23,19 +24,22 @@ namespace node
 
 
 /**
- * @brief Definition of the size, format, type and output command of an output buffer
+ * @brief Definition of the size, format, type, texture node, initial state and output command of an output buffer
  *
- * @todo 
+ * 
  *
  * New fields defined by this node :
  * - SFEnum \c sizeSemantic = (SCALE_FACTOR)<br>
  *   Specifies the semantic of the size field.<br>
  *<br>
- * - SFString \c customCommand = std::string()<br>
- *   Specifies the assign command execute by the fragment program. Example : color.rgba; or vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z ); or computeMyCustomValue( ecPosition );<br>
+ * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
+ *   Specifies the size of the output buffer (in pixel or scale factors). See sizeSemantic field for more informations.<br>
  *<br>
  * - SFEnum \c format = (RGB)<br>
  *   Specifies the format used by the buffer.<br>
+ *<br>
+ * - SFEnum \c type = (INTEGER)<br>
+ *   Specifies the type used by the buffer.<br>
  *<br>
  * - SFBool \c current = (true)<br>
  *   Specifies if this output buffer must be used for drawing by default. See vgd::node::OutputBuffer to alter this initial state.<br>
@@ -43,14 +47,14 @@ namespace node
  * - SFEnum \c command = (COLOR)<br>
  *   Specifies the pre-defined assign command execute by the fragment program.<br>
  *<br>
- * - SFEnum \c type = (INTEGER)<br>
- *   Specifies the type used by the buffer.<br>
- *<br>
  * - SFString \c customDeclaration = std::string()<br>
  *   Specifies the declaration to copy at the beginning of the fragment program when command field is CUSTOM.<br>
  *<br>
- * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
- *   Specifies the size of the output buffer (in pixel or scale factors). See sizeSemantic field for more informations.<br>
+ * - SFString \c customCommand = std::string()<br>
+ *   Specifies the assign command execute by the fragment program. Example : color.rgba; or vec4( clamp(color.rgb, 0.0, 1.0), ecPosition.z ); or computeMyCustomValue( ecPosition );<br>
+ *<br>
+ * - OFTexture2DShp \c [textureNode] = vgd::node::Texture2DShp()<br>
+ *   Specify a texture node to store the output buffer defined by this node. Use case: render to texture.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -171,35 +175,35 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field customCommand
+	 * @name Accessors to field size
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c customCommand.
+	 * @brief Type definition of the value contained by field named \c size.
 	 */
-	typedef std::string CustomCommandValueType;
+	typedef vgm::Vec2f SizeValueType;
 
 	/**
-	 * @brief The default value of field named \c customCommand.
+	 * @brief The default value of field named \c size.
 	 */
-	static const CustomCommandValueType DEFAULT_CUSTOMCOMMAND;
+	static const SizeValueType DEFAULT_SIZE;
 
 	/**
-	 * @brief Type definition of the field named \c customCommand
+	 * @brief Type definition of the field named \c size
 	 */
-	typedef vgd::field::TSingleField< CustomCommandValueType > FCustomCommandType;
+	typedef vgd::field::TSingleField< SizeValueType > FSizeType;
 
 
 	/**
-	 * @brief Gets the value of field named \c customCommand.
+	 * @brief Gets the value of field named \c size.
 	 */
-	const CustomCommandValueType getCustomCommand() const;
+	const SizeValueType getSize() const;
 
 	/**
-	 * @brief Sets the value of field named \c customCommand.
+	 * @brief Sets the value of field named \c size.
 	 */
-	void setCustomCommand( const CustomCommandValueType value );
+	void setSize( const SizeValueType value );
 
 	//@}
 
@@ -285,6 +289,85 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 * @brief Sets the value of field named \c format.
 	 */
 	void setFormat( const FormatValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field type
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		FLOAT16 = 344,	///< todo
+		INTEGER = 343,	///< todo
+		FLOAT32 = 345,	///< todo
+		DEFAULT_TYPE = INTEGER	///< todo
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct TypeValueType : public vgd::field::Enum
+	{
+		TypeValueType()
+		{}
+
+		TypeValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		TypeValueType( const TypeValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		TypeValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 343 );
+			retVal.push_back( 344 );
+			retVal.push_back( 345 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "INTEGER" );
+			retVal.push_back( "FLOAT16" );
+			retVal.push_back( "FLOAT32" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c type
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FTypeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c type.
+	 */
+	const TypeValueType getType() const;
+
+	/**
+	 * @brief Sets the value of field named \c type.
+	 */
+	void setType( const TypeValueType value );
 
 	//@}
 
@@ -414,85 +497,6 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field type
-	 */
-	//@{
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum  
-	{
-		FLOAT16 = 344,	///< todo
-		INTEGER = 343,	///< todo
-		FLOAT32 = 345,	///< todo
-		DEFAULT_TYPE = INTEGER	///< todo
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct TypeValueType : public vgd::field::Enum
-	{
-		TypeValueType()
-		{}
-
-		TypeValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		TypeValueType( const TypeValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		TypeValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 343 );
-			retVal.push_back( 344 );
-			retVal.push_back( 345 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "INTEGER" );
-			retVal.push_back( "FLOAT16" );
-			retVal.push_back( "FLOAT32" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c type
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FTypeType;
-
-
-	/**
-	 * @brief Gets the value of field named \c type.
-	 */
-	const TypeValueType getType() const;
-
-	/**
-	 * @brief Sets the value of field named \c type.
-	 */
-	void setType( const TypeValueType value );
-
-	//@}
-
-
-
-	/**
 	 * @name Accessors to field customDeclaration
 	 */
 	//@{
@@ -528,36 +532,80 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field size
+	 * @name Accessors to field customCommand
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c size.
+	 * @brief Type definition of the value contained by field named \c customCommand.
 	 */
-	typedef vgm::Vec2f SizeValueType;
+	typedef std::string CustomCommandValueType;
 
 	/**
-	 * @brief The default value of field named \c size.
+	 * @brief The default value of field named \c customCommand.
 	 */
-	static const SizeValueType DEFAULT_SIZE;
+	static const CustomCommandValueType DEFAULT_CUSTOMCOMMAND;
 
 	/**
-	 * @brief Type definition of the field named \c size
+	 * @brief Type definition of the field named \c customCommand
 	 */
-	typedef vgd::field::TSingleField< SizeValueType > FSizeType;
+	typedef vgd::field::TSingleField< CustomCommandValueType > FCustomCommandType;
 
 
 	/**
-	 * @brief Gets the value of field named \c size.
+	 * @brief Gets the value of field named \c customCommand.
 	 */
-	const SizeValueType getSize() const;
+	const CustomCommandValueType getCustomCommand() const;
 
 	/**
-	 * @brief Sets the value of field named \c size.
+	 * @brief Sets the value of field named \c customCommand.
 	 */
-	void setSize( const SizeValueType value );
+	void setCustomCommand( const CustomCommandValueType value );
 
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field textureNode
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c textureNode.
+	 */
+	typedef vgd::node::Texture2DShp TextureNodeValueType;
+
+	/**
+	 * @brief The default value of field named \c textureNode.
+	 */
+	static const TextureNodeValueType DEFAULT_TEXTURENODE;
+
+	/**
+	 * @brief Type definition of the field named \c textureNode
+	 */
+	typedef vgd::field::TOptionalField< TextureNodeValueType > FTextureNodeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c textureNode.
+	 */
+	const bool getTextureNode( TextureNodeValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c textureNode.
+ 	 */
+	void setTextureNode( const TextureNodeValueType& value );
+
+	/**
+	 * @brief Erases the field named \c textureNode.
+	 */
+	void eraseTextureNode();
+
+	/**
+	 * @brief Tests if the value of field named \c textureNode has been initialized.
+	 */
+	const bool hasTextureNode() const;
 	//@}
 
 
@@ -575,11 +623,11 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	static const std::string getFSizeSemantic( void );
 
 	/**
-	 * @brief Returns the name of field \c customCommand.
+	 * @brief Returns the name of field \c size.
 	 *
-	 * @return the name of field \c customCommand.
+	 * @return the name of field \c size.
 	 */
-	static const std::string getFCustomCommand( void );
+	static const std::string getFSize( void );
 
 	/**
 	 * @brief Returns the name of field \c format.
@@ -587,6 +635,13 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	 * @return the name of field \c format.
 	 */
 	static const std::string getFFormat( void );
+
+	/**
+	 * @brief Returns the name of field \c type.
+	 *
+	 * @return the name of field \c type.
+	 */
+	static const std::string getFType( void );
 
 	/**
 	 * @brief Returns the name of field \c current.
@@ -603,13 +658,6 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	static const std::string getFCommand( void );
 
 	/**
-	 * @brief Returns the name of field \c type.
-	 *
-	 * @return the name of field \c type.
-	 */
-	static const std::string getFType( void );
-
-	/**
 	 * @brief Returns the name of field \c customDeclaration.
 	 *
 	 * @return the name of field \c customDeclaration.
@@ -617,11 +665,18 @@ struct VGD_API OutputBufferProperty : public vgd::node::MultiAttribute
 	static const std::string getFCustomDeclaration( void );
 
 	/**
-	 * @brief Returns the name of field \c size.
+	 * @brief Returns the name of field \c customCommand.
 	 *
-	 * @return the name of field \c size.
+	 * @return the name of field \c customCommand.
 	 */
-	static const std::string getFSize( void );
+	static const std::string getFCustomCommand( void );
+
+	/**
+	 * @brief Returns the name of field \c textureNode.
+	 *
+	 * @return the name of field \c textureNode.
+	 */
+	static const std::string getFTextureNode( void );
 
 	//@}
 

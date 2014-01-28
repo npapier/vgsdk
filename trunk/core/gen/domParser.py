@@ -353,12 +353,16 @@ def handleNode( domNode ) :
 
 	#@todo handle method, attribute...
 
-	# Handles codehpp, includehpp, codecpp and includecpp
-	domCodeHpps = domNode.getElementsByTagName("codehpp")
-	for domCodeHpp in domCodeHpps :
-		node.addCodeDeclaration( getText( domCodeHpp.childNodes ) )
+	# Handles extra-include-hpp, extra-include-cpp, include-hpp, and include-cpp
+	domExtraIncludeHpps = domNode.getElementsByTagName("extra-include-hpp")
+	for domExtraIncludeHpp in domExtraIncludeHpps :
+		node.addExtraIncludeHpp( getText( domExtraIncludeHpp.childNodes ) )
 
-	domIncludeHpps = domNode.getElementsByTagName("includehpp")
+	domExtraIncludeCpps = domNode.getElementsByTagName("extra-include-cpp")
+	for domExtraIncludeCpp in domExtraIncludeCpps :
+		node.addExtraIncludeCpp( getText( domExtraIncludeCpp.childNodes ) )
+
+	domIncludeHpps = domNode.getElementsByTagName("include-hpp")
 	for domIncludeHpp in domIncludeHpps :
 		pathfilename = getText( domIncludeHpp.childNodes )
 		if os.path.exists(pathfilename):
@@ -367,11 +371,7 @@ def handleNode( domNode ) :
 		else:
 			print ('WARNING: %s in <includehpp> refers to a missing path !' % pathfilename )
 
-	domCodeCpps = domNode.getElementsByTagName("codecpp")
-	for domCodeCpp in domCodeCpps :
-		node.addCodeImplementation( getText( domCodeCpp.childNodes ) )
-
-	domIncludeCpps = domNode.getElementsByTagName("includecpp")
+	domIncludeCpps = domNode.getElementsByTagName("include-cpp")
 	for domIncludeCpp in domIncludeCpps :
 		pathfilename = getText( domIncludeCpp.childNodes )
 		if os.path.exists(pathfilename):

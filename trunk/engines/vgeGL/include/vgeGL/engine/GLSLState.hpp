@@ -478,19 +478,19 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 		/**
 		 * @brief Default constructor
 		 */
-		TNodeState( const NodeType * node )
+		TNodeState( NodeType * node )
 		: m_node(node)
 		{}
 
 		const NodeType * getNode() const { return m_node; }
-
+		NodeType * getNode() { return m_node; }
 	private:
-		const NodeType * m_node;
+		NodeType * m_node;
 	};
 
 	struct DecalState : public TNodeState< vgd::node::Decal >
 	{
-		DecalState( const vgd::node::Decal * node, const vgm::MatrixR& matrix )
+		DecalState( vgd::node::Decal * node, const vgm::MatrixR& matrix )
 		:	TNodeState(node),
 			m_matrix( matrix )
 		{}
@@ -551,19 +551,14 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	/**
 	 * @brief OutputBufferProperty unit state structure
 	 */
-	struct OutputBufferPropertyState
+	struct OutputBufferPropertyState : public TNodeState< vgd::node::OutputBufferProperty >
 	{
 		/**
 		 * @brief Default constructor
 		 */
 		OutputBufferPropertyState( vgd::node::OutputBufferProperty * node )
-		: m_node(node)
+		:	TNodeState(node)
 		{}
-
-		vgd::node::OutputBufferProperty * getNode() const { return m_node; }
-
-	private:
-		vgd::node::OutputBufferProperty * m_node;
 	};
 
 	/**

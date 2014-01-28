@@ -390,7 +390,7 @@ void Noise::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeG
 	engine->getBuiltinUniformState().sethUniform( "time", static_cast<int>(rc->lastUsedTimeValue) );
 
 	// Apply post-processing
-	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, technique->m_textures, &(rc->postProcessing) );
+	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
 
 	// Blit
 	technique->blit( engine, finalBuffers, technique->m_fbo );

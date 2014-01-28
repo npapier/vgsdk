@@ -360,7 +360,7 @@ void DepthOfField::stagePostPaint( vgeGL::technique::ForwardRendering * techniqu
 	vgd::Shp< vgeGL::rc::DepthOfField > rc = getRC< vgeGL::rc::DepthOfField >(engine);
 	vgAssert( rc );
 
-	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, technique->m_textures, &(rc->postProcessing) );
+	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
 	technique->blit( engine, finalBuffers, technique->m_fbo );
 }
 

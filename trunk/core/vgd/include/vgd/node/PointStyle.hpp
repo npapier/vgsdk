@@ -27,17 +27,17 @@ namespace node
  * 
  *
  * New fields defined by this node :
- * - OFBool \c [smooth] = (false)<br>
- *   If enabled, draw antialiased points, otherwise draw aliased points. Ignored when point sprite is enabled.<br>
+ * - OFFloat \c [size] = (1.f)<br>
+ *   Specifies the rasterized diameter of both aliased and antialiased points<br>
  *<br>
  * - OFVec3f \c [distanceAttenuation] = vgm::Vec3f(1.f, 0.f, 0.f)<br>
  *   a vector of three floating-point values that specify the coefficients used for scaling the computed point size. The default values are (1 0 0).<br>
  *<br>
+ * - OFBool \c [smooth] = (false)<br>
+ *   If enabled, draw antialiased points, otherwise draw aliased points. Ignored when point sprite is enabled.<br>
+ *<br>
  * - OFBool \c [pointSprite] = (false)<br>
  *   See GL_ARB_point_sprite extension for details (http://oss.sgi.com/projects/ogl-sample/registry/ARB/point_sprite.txt).<br>
- *<br>
- * - OFFloat \c [size] = (1.f)<br>
- *   Specifies the rasterized diameter of both aliased and antialiased points<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -75,138 +75,6 @@ struct VGD_API PointStyle : public vgd::node::SingleAttribute
 	 */
 	static vgd::Shp< PointStyle > createWhole( const std::string nodeName = "DefaultWhole" );
 
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field smooth
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c smooth.
-	 */
-	typedef bool SmoothValueType;
-
-	/**
-	 * @brief The default value of field named \c smooth.
-	 */
-	static const SmoothValueType DEFAULT_SMOOTH;
-
-	/**
-	 * @brief Type definition of the field named \c smooth
-	 */
-	typedef vgd::field::TOptionalField< SmoothValueType > FSmoothType;
-
-
-	/**
-	 * @brief Gets the value of field named \c smooth.
-	 */
-	const bool getSmooth( SmoothValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c smooth.
- 	 */
-	void setSmooth( const SmoothValueType& value );
-
-	/**
-	 * @brief Erases the field named \c smooth.
-	 */
-	void eraseSmooth();
-
-	/**
-	 * @brief Tests if the value of field named \c smooth has been initialized.
-	 */
-	const bool hasSmooth() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field distanceAttenuation
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c distanceAttenuation.
-	 */
-	typedef vgm::Vec3f DistanceAttenuationValueType;
-
-	/**
-	 * @brief The default value of field named \c distanceAttenuation.
-	 */
-	static const DistanceAttenuationValueType DEFAULT_DISTANCEATTENUATION;
-
-	/**
-	 * @brief Type definition of the field named \c distanceAttenuation
-	 */
-	typedef vgd::field::TOptionalField< DistanceAttenuationValueType > FDistanceAttenuationType;
-
-
-	/**
-	 * @brief Gets the value of field named \c distanceAttenuation.
-	 */
-	const bool getDistanceAttenuation( DistanceAttenuationValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c distanceAttenuation.
- 	 */
-	void setDistanceAttenuation( const DistanceAttenuationValueType& value );
-
-	/**
-	 * @brief Erases the field named \c distanceAttenuation.
-	 */
-	void eraseDistanceAttenuation();
-
-	/**
-	 * @brief Tests if the value of field named \c distanceAttenuation has been initialized.
-	 */
-	const bool hasDistanceAttenuation() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field pointSprite
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c pointSprite.
-	 */
-	typedef bool PointSpriteValueType;
-
-	/**
-	 * @brief The default value of field named \c pointSprite.
-	 */
-	static const PointSpriteValueType DEFAULT_POINTSPRITE;
-
-	/**
-	 * @brief Type definition of the field named \c pointSprite
-	 */
-	typedef vgd::field::TOptionalField< PointSpriteValueType > FPointSpriteType;
-
-
-	/**
-	 * @brief Gets the value of field named \c pointSprite.
-	 */
-	const bool getPointSprite( PointSpriteValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c pointSprite.
- 	 */
-	void setPointSprite( const PointSpriteValueType& value );
-
-	/**
-	 * @brief Erases the field named \c pointSprite.
-	 */
-	void erasePointSprite();
-
-	/**
-	 * @brief Tests if the value of field named \c pointSprite has been initialized.
-	 */
-	const bool hasPointSprite() const;
 	//@}
 
 
@@ -256,16 +124,148 @@ struct VGD_API PointStyle : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field distanceAttenuation
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c distanceAttenuation.
+	 */
+	typedef vgm::Vec3f DistanceAttenuationValueType;
+
+	/**
+	 * @brief The default value of field named \c distanceAttenuation.
+	 */
+	static const DistanceAttenuationValueType DEFAULT_DISTANCEATTENUATION;
+
+	/**
+	 * @brief Type definition of the field named \c distanceAttenuation
+	 */
+	typedef vgd::field::TOptionalField< DistanceAttenuationValueType > FDistanceAttenuationType;
+
+
+	/**
+	 * @brief Gets the value of field named \c distanceAttenuation.
+	 */
+	const bool getDistanceAttenuation( DistanceAttenuationValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c distanceAttenuation.
+ 	 */
+	void setDistanceAttenuation( const DistanceAttenuationValueType& value );
+
+	/**
+	 * @brief Erases the field named \c distanceAttenuation.
+	 */
+	void eraseDistanceAttenuation();
+
+	/**
+	 * @brief Tests if the value of field named \c distanceAttenuation has been initialized.
+	 */
+	const bool hasDistanceAttenuation() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field smooth
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c smooth.
+	 */
+	typedef bool SmoothValueType;
+
+	/**
+	 * @brief The default value of field named \c smooth.
+	 */
+	static const SmoothValueType DEFAULT_SMOOTH;
+
+	/**
+	 * @brief Type definition of the field named \c smooth
+	 */
+	typedef vgd::field::TOptionalField< SmoothValueType > FSmoothType;
+
+
+	/**
+	 * @brief Gets the value of field named \c smooth.
+	 */
+	const bool getSmooth( SmoothValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c smooth.
+ 	 */
+	void setSmooth( const SmoothValueType& value );
+
+	/**
+	 * @brief Erases the field named \c smooth.
+	 */
+	void eraseSmooth();
+
+	/**
+	 * @brief Tests if the value of field named \c smooth has been initialized.
+	 */
+	const bool hasSmooth() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field pointSprite
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c pointSprite.
+	 */
+	typedef bool PointSpriteValueType;
+
+	/**
+	 * @brief The default value of field named \c pointSprite.
+	 */
+	static const PointSpriteValueType DEFAULT_POINTSPRITE;
+
+	/**
+	 * @brief Type definition of the field named \c pointSprite
+	 */
+	typedef vgd::field::TOptionalField< PointSpriteValueType > FPointSpriteType;
+
+
+	/**
+	 * @brief Gets the value of field named \c pointSprite.
+	 */
+	const bool getPointSprite( PointSpriteValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c pointSprite.
+ 	 */
+	void setPointSprite( const PointSpriteValueType& value );
+
+	/**
+	 * @brief Erases the field named \c pointSprite.
+	 */
+	void erasePointSprite();
+
+	/**
+	 * @brief Tests if the value of field named \c pointSprite has been initialized.
+	 */
+	const bool hasPointSprite() const;
+	//@}
+
+
+
+	/**
 	 * @name Field name accessors
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c smooth.
+	 * @brief Returns the name of field \c size.
 	 *
-	 * @return the name of field \c smooth.
+	 * @return the name of field \c size.
 	 */
-	static const std::string getFSmooth( void );
+	static const std::string getFSize( void );
 
 	/**
 	 * @brief Returns the name of field \c distanceAttenuation.
@@ -275,18 +275,18 @@ struct VGD_API PointStyle : public vgd::node::SingleAttribute
 	static const std::string getFDistanceAttenuation( void );
 
 	/**
+	 * @brief Returns the name of field \c smooth.
+	 *
+	 * @return the name of field \c smooth.
+	 */
+	static const std::string getFSmooth( void );
+
+	/**
 	 * @brief Returns the name of field \c pointSprite.
 	 *
 	 * @return the name of field \c pointSprite.
 	 */
 	static const std::string getFPointSprite( void );
-
-	/**
-	 * @brief Returns the name of field \c size.
-	 *
-	 * @return the name of field \c size.
-	 */
-	static const std::string getFSize( void );
 
 	//@}
 

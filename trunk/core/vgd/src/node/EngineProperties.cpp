@@ -63,9 +63,9 @@ EngineProperties::EngineProperties( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FMaxAnisotropyType(getFMaxAnisotropy()) );
 	addField( new FOpenglDebugOutputType(getFOpenglDebugOutput()) );
 	addField( new FOpenglDirectStateAccessType(getFOpenglDirectStateAccess()) );
-	addField( new FMaxAnisotropyType(getFMaxAnisotropy()) );
 
 	// Sets link(s)
 
@@ -84,9 +84,42 @@ void EngineProperties::setToDefaults( void )
 void EngineProperties::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setMaxAnisotropy( (1.f) );
 	setOpenglDebugOutput( (false) );
 	setOpenglDirectStateAccess( (false) );
-	setMaxAnisotropy( (1.f) );
+}
+
+
+
+// MaxAnisotropy
+
+const EngineProperties::MaxAnisotropyValueType EngineProperties::DEFAULT_MAXANISOTROPY = (1.f);
+
+
+
+const bool EngineProperties::getMaxAnisotropy( MaxAnisotropyValueType& value ) const
+{
+	return getFieldRO<FMaxAnisotropyType>(getFMaxAnisotropy())->getValue( value );
+}
+
+
+
+void EngineProperties::setMaxAnisotropy( const MaxAnisotropyValueType& value )
+{
+	getFieldRW<FMaxAnisotropyType>(getFMaxAnisotropy())->setValue( value );
+}
+
+
+
+void EngineProperties::eraseMaxAnisotropy()
+{
+	getFieldRW<FMaxAnisotropyType>(getFMaxAnisotropy())->eraseValue();
+}
+
+
+const bool EngineProperties::hasMaxAnisotropy() const
+{
+	return getFieldRO<FMaxAnisotropyType>(getFMaxAnisotropy())->hasValue();
 }
 
 
@@ -157,40 +190,14 @@ const bool EngineProperties::hasOpenglDirectStateAccess() const
 
 
 
-// MaxAnisotropy
-
-const EngineProperties::MaxAnisotropyValueType EngineProperties::DEFAULT_MAXANISOTROPY = (1.f);
-
-
-
-const bool EngineProperties::getMaxAnisotropy( MaxAnisotropyValueType& value ) const
-{
-	return getFieldRO<FMaxAnisotropyType>(getFMaxAnisotropy())->getValue( value );
-}
-
-
-
-void EngineProperties::setMaxAnisotropy( const MaxAnisotropyValueType& value )
-{
-	getFieldRW<FMaxAnisotropyType>(getFMaxAnisotropy())->setValue( value );
-}
-
-
-
-void EngineProperties::eraseMaxAnisotropy()
-{
-	getFieldRW<FMaxAnisotropyType>(getFMaxAnisotropy())->eraseValue();
-}
-
-
-const bool EngineProperties::hasMaxAnisotropy() const
-{
-	return getFieldRO<FMaxAnisotropyType>(getFMaxAnisotropy())->hasValue();
-}
-
-
-
 // Field name accessor(s)
+const std::string EngineProperties::getFMaxAnisotropy( void )
+{
+	return "f_maxAnisotropy";
+}
+
+
+
 const std::string EngineProperties::getFOpenglDebugOutput( void )
 {
 	return "f_openglDebugOutput";
@@ -201,13 +208,6 @@ const std::string EngineProperties::getFOpenglDebugOutput( void )
 const std::string EngineProperties::getFOpenglDirectStateAccess( void )
 {
 	return "f_openglDirectStateAccess";
-}
-
-
-
-const std::string EngineProperties::getFMaxAnisotropy( void )
-{
-	return "f_maxAnisotropy";
 }
 
 

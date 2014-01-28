@@ -5,6 +5,16 @@
 	as published by the Free Software Foundation.
 	Author Nicolas Papier -->
 
+<!--
+tag documentation
+	<extra-include-hpp> add code after include section in hpp
+		<extra-include-hpp>#include &lt;string&gt;</extra-include-hpp>
+		<extra-include-hpp>#include "vgd/vgd.hpp"</extra-include-hpp>
+	<extra-include-cpp> add code after include section in cpp
+	<include-hpp> append a file in hpp
+	<include-cpp> append a file in cpp
+-->
+
 <nodes>
 
 	<node name = "Antialiasing" inherits = "SingleAttribute">
@@ -34,12 +44,10 @@
 		</doxygen>
 
 		<sf name="technique" doc="The antialiasing technique to be used.">
-			<type name="enum">
-				<enum default="FXAA1">
-					<value name="NONE" doc="No antialiasing"/>
-					<value name="FXAA1" doc="Fast Approximate Anti-Aliasing (FXAA) version 1"/>
-				</enum>
-			</type>
+			<enum default="FXAA1">
+				<value name="NONE" doc="No antialiasing"/>
+				<value name="FXAA1" doc="Fast Approximate Anti-Aliasing (FXAA) version 1"/>
+			</enum>
 		</sf>
 	</node>
 
@@ -130,8 +138,8 @@
 			<type name = "bool" default = "true"></type>
 		</sf>
 
-		<includehpp>vgd/include/vgd/node/Camera.hpp</includehpp>
-		<includecpp>vgd/src/node/Camera.cpp</includecpp>
+		<include-hpp>vgd/include/vgd/node/Camera.hpp</include-hpp>
+		<include-cpp>vgd/src/node/Camera.cpp</include-cpp>
 
 	</node>
 
@@ -272,6 +280,66 @@
 	</node>
 
 
+	<node name = "Displacement" inherits = "SingleAttribute">
+		<doxygen>
+			<docBrief>Control displacement of vertices</docBrief>
+			<doc>Vertices displacement is available at vertex shader level or/and at tessellation evaluation shader level.</doc>
+
+			<doc>To combine several displacements, you have to compute each displacement and mixes them as you like in a custom displacement function (see customDisplacementVS and customDisplacementTES).</doc>
+
+			<doc>CUSTOM displacement function has to modify the variable, named position, containing a copy of the current vertex given initially by variable mgl_Vertex.</doc>
+			<doc>Type of position is vec4 (idem for the read-only variable mgl_Vertex).</doc>
+
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+			<ingroup>g_shapeModifierNodes</ingroup>
+		</doxygen>
+
+		<of name="parameter4f0" doc="">
+			<type name = "Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"/>
+		</of>
+
+		<of name="parameter4f1" doc="">
+			<type name = "Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"/>
+		</of>
+
+
+-		<enum name ="PredefinedDisplacement" default="NONE">
+			<value name="NONE"			doc="No displacement add to the shader"/>
+			<value name="ALONG_NORMAL"	doc="Moves vertices along their normals based on among coming from parameter4f0.x (for VS) and from parameter4f0.y for (TES)."/>
+			<value name="CUSTOM"		doc="Uses custom displacement using fields declarationsVS and displacementVS for vertex shader (resp. declarationsTES/displacementTES for tessellation evaluation shader)"/>
+		</enum>
+
+
+		<of name="displacementFunctionVS" doc="">
+			<type name="PredefinedDisplacementValueType" default="NONE" enum="True"></type>
+		</of>
+
+		<sf name="declarationsVS" doc="Append this field to the vertex shader declarations section. Use case: to define function used by displacementVS field">
+			<type name = "string" namespace="std" default=""/>
+		</sf>
+
+		<sf name="displacementVS" doc="Example : position += uDisplacementParameter4f0.x * vec4(normal,0);">
+			<type name = "string" namespace="std" default=""/>
+		</sf>
+
+
+		<of name="displacementFunctionTES" doc="">
+			<type name="PredefinedDisplacementValueType" default="NONE" enum="True"></type>
+		</of>
+
+		<sf name="declarationsTES" doc="Append this field to the tessellation shader declarations section. Use case: to define function used by displacementTES field">
+			<type name = "string" namespace="std" default=""/>
+		</sf>
+
+		<sf name="displacementTES" doc="Example : position += uDisplacementParameter4f0.y * vec4(ecNormal,0);">
+			<type name = "string" namespace="std" default=""/>
+		</sf>
+
+	</node>
+
+
 	<node name = "DrawStyle" inherits = "SingleAttribute" >
 		<doxygen>
 			<docBrief>Drawing style definition node</docBrief>
@@ -325,27 +393,26 @@
 	<node name = "EngineProperties" inherits = "SingleAttribute" >
 		<doxygen>
 			<docBrief>Definition of several properties of vgsdk engine</docBrief>
-			<doc>This node defines the default anisotropy used during texture filtering, global tessellation properties.</doc>
+			<doc>This node defines the default anisotropy used during texture filtering and OpenGL api usage hints (GL_ARB_debug_output extension and DSA).</doc>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_singleAttributeNodes</ingroup>
 		</doxygen>
 
+		<!-- TEXTURE -->
 		<of name = "maxAnisotropy" doc="Specifies the engine default maximum degree of anisotropy (see vgd::node::Texture).">
 			<type name="float" default="1.f"/>
 		</of>
 
 
-		<sf name="tessellation" doc="Specifies if the tessellation is enabled or disabled.">
+		<!-- OPENGL API USAGE -->
+		<of name="openglDebugOutput" doc="Specifies if the OpenGL debug output system is enabled or disabled (see setDebugOutput() in gle).">
 			<type name="bool" default="false"/>
-		</sf>
+		</of>
 
-		<sf name="tessellationFactor" doc="Specifies the tessellation level used by the tessellation control shaders to tessellate the incoming primitive (only used if tessellation is enabled).">
-			<type name="float" default="1.0f"></type>
-		</sf>
+		<of name="openglDirectStateAccess" doc="Specifies if the OpenGL DSA functions have to be used or not (see GL_EXT_direct_state_access extension)">
+			<type name="bool" default="false"/>
+		</of>
 
-		<sf name="tessellationBias" doc="Specifies the tessellation bias used by the Phong Tessellation algorithm (only used if tessellation is enabled).">
-			<type name="float" default="0.55f"></type>
-		</sf>
 
 
 	</node>
@@ -424,10 +491,39 @@
 		</sf>
 
 
-		<includehpp>vgd/include/vgd/node/Fluid.hpp</includehpp>
-		<includecpp>vgd/src/node/Fluid.cpp</includecpp>
+		<include-hpp>vgd/include/vgd/node/Fluid.hpp</include-hpp>
+		<include-cpp>vgd/src/node/Fluid.cpp</include-cpp>
 	</node>
 
+
+	<node name = "GeoMorph" inherits = "Group IShape" >
+		<doxygen>
+			<docBrief>Blending between a set of meshes</docBrief>
+			<doc>Blending between two meshes are supported.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_groupNodes</ingroup>
+			<ingroup>g_shapeNodes</ingroup>
+		</doxygen>
+
+		<sf name="method" doc="Method used to combine the set of meshes">
+			<type name="enum">
+				<enum default="NORMALIZED">
+					<value name="DISABLED"		doc="Disable this node. So blending between meshes is not computed, but meshes are rendered as usual."/>
+					<value name="SKIP"			doc="Disable this node. So blending between meshes is not computed, but meshes are NOT rendered as usual."/>
+					<value name="NORMALIZED"	doc="(Mesh0, Mesh1, ...) * (weights[0], weights[1],...) = (1-weights[0]-weights[1]-...) * Mesh0 + weights[0] * Mesh1 + ... with 0 &lt;= weights[0] + weights[1] + ... &lt;= 1"/>
+<!--					<value name="RELATIVE" doc="Not yet implemented"/>-->
+				</enum>
+			</type>
+		</sf>
+
+		<sf name = "weights" doc="">
+			<type name="Vec2f" namespace="vgm" default = "0.f, 0.f"></type>
+		</sf>
+
+		<mf name = "__meshes__" doc="vgSDK internal field">
+			<type name="VertexShapePtr" namespace = "vgd::node"></type>
+		</mf>
+	</node>
 
 
 	<node name = "LayerPlan" inherits = "MultiAttribute" > <!-- @todo not a real MultiAttribute -->
@@ -459,6 +555,23 @@
 
 		<sf name = "alphaScale" doc="Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor. After this operation, the alpha component is clamped to the range [0, 1].">
 			<type name = "float" default = "1.f"></type>
+		</sf>
+	</node>
+
+
+	<node name = "OffscreenRendering" inherits = "SingleAttribute">
+		<doxygen>
+			<docBrief>Offscreen rendering of a scene graph</docBrief>
+			<doc>Requests the engine to do an offscreen rendering of the scene graph specified by the field root.</doc>
+			<doc>The offscreen rendering is computed before the rendering of the canvas root. So the result could be used by the canvas scene graph.</doc>
+			<doc>See OutputBufferProperty node documentation</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_groupNodes</ingroup> <!-- not a real group but it contains a scene graph -->
+		</doxygen>
+
+		<sf name = "root" doc = "Specify the root of the scene graph to render">
+			<type name="GroupShp" namespace = "vgd::node"></type>
 		</sf>
 	</node>
 
@@ -554,8 +667,8 @@
 			<type name="bool" default="false"></type>
 		</sf>
 
-		<includehpp>vgd/include/vgd/node/Light.hpp</includehpp>
-		<includecpp>vgd/src/node/Light.cpp</includecpp>
+		<include-hpp>vgd/include/vgd/node/Light.hpp</include-hpp>
+		<include-cpp>vgd/src/node/Light.cpp</include-cpp>
 	</node>
 
 
@@ -571,7 +684,7 @@
 
 		<of name="model" doc="Sets the lighting model to LIGHTING_OFF, STANDARD_PER_VERTEX or STANDARD_PER_PIXEL.">
 			<type name="enum">
-				<enum default="STANDARD_PER_VERTEX">
+				<enum default="STANDARD_PER_PIXEL">
 					<value name="LIGHTING_OFF"			doc="No lighting"/>
 					<value name="STANDARD_PER_VERTEX"	doc="Lighting is computed per vertex"/>
 					<value name="STANDARD_PER_PIXEL"	doc="Lighting is computed per pixel"/>
@@ -749,8 +862,8 @@
 			</type>
 		</of>-->
 
-		<includehpp>vgd/include/vgd/node/Material.hpp</includehpp>
-		<includecpp>vgd/src/node/Material.cpp</includecpp>
+		<include-hpp>vgd/include/vgd/node/Material.hpp</include-hpp>
+		<include-cpp>vgd/src/node/Material.cpp</include-cpp>
 <!--	<codehpp></codehpp> <codecpp></codecpp> -->
 	</node>
 
@@ -775,8 +888,8 @@
 			<type name = "MatrixR" namespace="vgm"></type>
 		</mf>
 
-		<includehpp>vgd/include/vgd/node/MultipleInstances.hpp</includehpp>
-		<includecpp>vgd/src/node/MultipleInstances.cpp</includecpp>
+		<include-hpp>vgd/include/vgd/node/MultipleInstances.hpp</include-hpp>
+		<include-cpp>vgd/src/node/MultipleInstances.cpp</include-cpp>
 	</node>
 
 
@@ -824,23 +937,19 @@
 <!--@todo debug blit when scaleDownUp -->
 	<node name = "OutputBufferProperty" inherits = "MultiAttribute">
 		<doxygen>
-			<docBrief>Definition of the size, format, type and output command of an output buffer</docBrief>
-			<doc>@todo</doc>
+			<docBrief>Definition of the size, format, type, texture node, initial state and output command of an output buffer</docBrief>
 			<ingroup>g_nodes</ingroup>
 			<ingroup>g_multiAttributeNodes</ingroup>
 			<ingroup>g_autoMultiAttributeNodes</ingroup>
 			<ingroup>g_frameBufferNodes</ingroup>
-
 			<ingroup>g_postProcessing</ingroup>
 		</doxygen>
 
 		<sf name = "sizeSemantic" doc = "Specifies the semantic of the size field.">
-			<type name = "enum">
-				<enum default="SCALE_FACTOR">
-					<value name= "SCALE_FACTOR"	doc="The width of the output buffer is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component)"/>
-					<value name= "PIXEL_SIZE"	doc="The size field specifies the size of the output buffer in pixels."/>
-				</enum>
-			</type>
+			<enum default="SCALE_FACTOR">
+				<value name= "SCALE_FACTOR"	doc="The width of the output buffer is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component)"/>
+				<value name= "PIXEL_SIZE"	doc="The size field specifies the size of the output buffer in pixels."/>
+			</enum>
 		</sf>
 
 		<sf name = "size" doc = "Specifies the size of the output buffer (in pixel or scale factors). See sizeSemantic field for more informations.">
@@ -848,27 +957,28 @@
 		</sf>
 
 		<sf name = "format" doc = "Specifies the format used by the buffer.">
-			<type name = "enum">
-				<enum default="RGB">
-					<value name="RGB" doc="todo"/>
-					<value name="RGBA" doc="todo"/>
-					<value name="LUMINANCE" doc="todo"/>
-					<value name="LUMINANCE_ALPHA" doc="todo"/>
-					<value name="LUMINANCE_FOR_DEPTH" doc="if type is INTEGER, then DEPTH_COMPONENT_24 is used."/>
-				</enum>
-			</type>
+			<enum default="RGB">
+				<value name="RGB" doc="todo"/>
+				<value name="RGBA" doc="todo"/>
+				<value name="LUMINANCE" doc="todo"/>
+				<value name="LUMINANCE_ALPHA" doc="todo"/>
+				<value name="LUMINANCE_FOR_DEPTH" doc="if type is INTEGER, then DEPTH_COMPONENT_24 is used."/>
+			</enum>
 		</sf>
 
 <!-- @todo INTEGER8, 16, 24, 32 -->
 		<sf name = "type" doc = "Specifies the type used by the buffer.">
-			<type name = "enum">
-				<enum default = "INTEGER">
-					<value name="INTEGER" doc="todo"/>
-					<value name="FLOAT16" doc="todo"/>
-					<value name="FLOAT32" doc="todo"/>
-				</enum>
-			</type>
+			<enum default = "INTEGER">
+				<value name="INTEGER" doc="todo"/>
+				<value name="FLOAT16" doc="todo"/>
+				<value name="FLOAT32" doc="todo"/>
+			</enum>
 		</sf>
+
+		<of name = "textureNode" doc = "Specify a texture node to store the output buffer defined by this node. Use case: render to texture.">
+			<type name = "Texture2DShp" namespace = "vgd::node"></type>
+		</of>
+
 
 		<sf name = "current" doc = "Specifies if this output buffer must be used for drawing by default. See vgd::node::OutputBuffer to alter this initial state.">
 			<type name = "bool" default = "true"></type>
@@ -915,8 +1025,8 @@
 			<type name="int"></type>
 		</mf>
 
-		<includehpp>vgd/include/vgd/node/OutputBuffers.hpp</includehpp>
-		<includecpp>vgd/src/node/OutputBuffers.cpp</includecpp>
+		<include-hpp>vgd/include/vgd/node/OutputBuffers.hpp</include-hpp>
+		<include-cpp>vgd/src/node/OutputBuffers.cpp</include-cpp>
 	</node>
 
 
@@ -1202,7 +1312,16 @@
 				<type name = "bool" default = "true"></type>
 			</sf>
 	</node>
-   
+
+
+<!--	<node name = "Shape" inherits = "Node IBoundingBox" abstract = "true">
+		<doxygen>
+			<docBrief>Abstract base class for all shape nodes</docBrief>
+			<ingroup>g_abstractNodes</ingroup>
+		</doxygen>
+	</node>-->
+
+
 	<node name = "SpotLight" inherits = "PointLight" >
 		<doxygen>
 			<docBrief>Node representing a spotlight source.</docBrief>
@@ -1232,7 +1351,82 @@
 	</node>
 
 
-<!--TEXTURE_GEN_MODE
+	<node name = "TessellationLevel" inherits = "SingleAttribute">
+		<doxygen>
+			<docBrief>Control the tessellation level computation</docBrief>
+			<doc>Specify the function used to compute the tessellation level in tessellation control shader.</doc>
+
+			<doc>To combine several methods computing the tessellation level, you have to compute tessellation level with each method separately and mixes them as you like using a CUSTOM function (see customDeclarations and customMethod).</doc>
+
+			<doc>CUSTOM method has to compute two variables, named tessLevelOuter (a vec4) and tessLevelInner (a vec2) that are similar to gl_TessLevelOuter[] and gl_TessLevelInner[] except their types (vector versus array).</doc>
+
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+			<ingroup>g_shapeModifierNodes</ingroup>
+			<ingroup>g_tessellationNodes</ingroup>
+		</doxygen>
+
+		<of name="parameter4f0" doc="">
+			<type name = "Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"/>
+		</of>
+
+		<of name="parameter4f1" doc="">
+			<type name = "Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"/>
+		</of>
+
+		<sf name="method" doc="Specify the method used to compute the tessellation level">
+			<enum default="UNIFORM">
+				<value name="UNIFORM"			doc="Use the same tessellation level given by the field tessellationRange[1]"/>
+				<value name="PIXELS_PER_EDGE"	doc="Adaptive tessellation using the number of pixels per edge desired as criterion. Tessellation level range is given by tessellationRange[]."/>
+				<value name="CUSTOM"			doc="Use custom function to compute the tessellation level. The function is defined by field customDeclarations and customCode"/>
+			</enum>
+		</sf>
+
+		<sf name="customDeclarations" doc="Append this field to the tessellation control shader declarations section. Use case: to define function used by customCode field">
+			<type name = "string" namespace="std" default=""/>
+		</sf>
+
+		<sf name="customCode" doc="Have to compute tessellation level in tessLevelOuter and tessLevelInner (resp. a vec4 and a vec2).">
+			<type name = "string" namespace="std" default=""/>
+		</sf>
+	</node>
+
+
+	<node name = "TessellationProperties" inherits = "SingleAttribute">
+		<doxygen>
+			<docBrief>Definition of several properties used by tessellation</docBrief>
+			<doc>Specifies if the tessellation is enabled or disabled, which method to use and several parameters to adjust behavior of the tessellation.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+			<ingroup>g_shapeModifierNodes</ingroup>
+			<ingroup>g_tessellationNodes</ingroup>
+		</doxygen>
+
+		<of name="tessellation" doc="Specifies if the tessellation is enabled or disabled and which method to use.">
+			<enum default = "DISABLED">
+				<value name="DISABLED"		doc="Tessellation is disabled"/>
+				<!--<value name="FLAT_DICING"	doc="Use case: mesh with displacement TODO"/>-->
+				<value name="PHONG"				doc="Phong tessellation is enabled and subdivision of triangles is uniform. The tessellation level used is given by tessellationRange[1]"/>
+			</enum>
+		</of>
+
+		<of name="phongBias" doc="Specifies the tessellation bias used by the Phong Tessellation algorithm (only used if tessellation is enabled).">
+			<type name="float" default="0.55f"></type>
+		</of>
+
+		<of name="range" doc="Specifies the minimum and maximum tessellation level used by the tessellation control shaders to tessellate the incoming primitive (only used if tessellation is enabled).">
+			<type name="Vec2f" namespace="vgm" default="1.0f, 5.0f"></type>
+		</of>
+
+		<of name="pixelsPerEdge" doc="When tessellation method is set to PHONG and TessellationLevel.method==PIXELS_PER_EDGE, then this field specifies the desired number of pixels per edge (if tessellationRange[1] allows the needed subdivision level).">
+			<type name="float" default="20.f"></type>
+		</of>
+	</node>
+
+
+	<!--TEXTURE_GEN_MODE
 	OBJECT_LINEAR, EYE_LINEAR, SPHERE_MAP, NORMAL_MAP, or REFLECTION_MAP -->
 
 	<node name = "TexGen" inherits = "MultiAttribute" abstract = "true" >
@@ -1260,7 +1454,6 @@
 		</of>
 	</node>
 
-<!-- improves doc tag -->
 	<node name = "Texture" inherits = "MultiAttribute" abstract = "true" >
 		<doxygen>
 			<docBrief>Abstract texture mapping node</docBrief>
@@ -1281,16 +1474,41 @@
 		</doxygen>
 
 		<df name = "image" linkToFields="image"></df>
-		<df name = "parameters" linkToFields="wrap filter mipmap maxAnisotropy usage"></df>
+		<df name = "parameters" linkToFields="wrapS wrapT wrapR minFilter magFilter mipmap maxAnisotropy usage"></df>
 
 		<of name = "image" doc = "Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.">
 			<type name = "IImageShp" namespace = "vgd::basic"></type>
 		</of>
 
-<!-- @todo Declare a new enum here to be shared by several fields -->
-<!-- @todo <of name = "wrapS" doc=""> </of> -->
 
-		<paf name = "wrap" doc = "Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R." >
+		<enum name="WrapSelector" default="WRAP_S">
+			<value name="WRAP_S" doc="Select wrapping for texture coordinate s"/>
+			<value name="WRAP_T" doc="Select wrapping for texture coordinate t"/>
+			<value name="WRAP_R" doc="Select wrapping for texture coordinate r"/>
+		</enum>
+
+		<enum name="Wrapping" default = "REPEAT">
+			<value name="REPEAT" doc=""/>
+			<value name="CLAMP" doc=""/>
+			<value name="CLAMP_TO_EDGE" doc=""/>
+			<value name="CLAMP_TO_BORDER" doc=""/>
+			<value name="MIRRORED_REPEAT" doc=""/>
+			<value name="ONCE" doc="Don't set texture coordinates outside the interval [0.f, 1.f]"/>
+		</enum>
+
+		<of name = "wrapS" doc="Set the wrap parameter for texture coordinate s">
+			<type name="WrappingValueType" default="REPEAT" enum="True"/>
+		</of>
+
+		<of name = "wrapT" doc="Set the wrap parameter for texture coordinate t">
+			<type name="WrappingValueType" default="REPEAT" enum="True"/>
+		</of>
+
+		<of name = "wrapR" doc="Set the wrap parameter for texture coordinate r">
+			<type name="WrappingValueType" default="REPEAT" enum="True"/>
+		</of>
+
+<!--		<paf name = "wrap" doc = "Sets the wrap parameter for texture coordinate S, T or R to either REPEAT, CLAMP, CLAMP_TO_EDGE, CLAMP_TO_BORDER, MIRRORED_REPEAT or ONCE. Initially, this field is set to REPEAT for S, T and R." >
 			<type name="enum">
 				<enum default="WRAP_S">
 					<value name="WRAP_S" doc=""/>
@@ -1308,9 +1526,30 @@
 					<value name="ONCE" doc="Don't set texture coordinates outside the interval [0.f, 1.f]"/>
 				</enum>
 			</type>
-		</paf>
+		</paf>-->
 
-		<paf name = "filter" doc ="The texture minifying function (MIN_FILTER) is used whenever the pixel being textured maps to an area greater than one texture element. The texture magnification function (MAG_FILTER) is used when the pixel being textured maps to an area less than or equal to one texture element." >
+		<enum name="Filter" default="MAG_FILTER">
+			<value name="MIN_FILTER" doc="Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR."/>
+			<value name="MAG_FILTER" doc="Choose one value among NEAREST or LINEAR (default)."/>
+		</enum>
+
+		<enum name="Filtering" default="LINEAR">
+			<value name="NEAREST" doc=""/>
+			<value name="LINEAR" doc=""/>
+			<value name="NEAREST_MIPMAP_NEAREST" doc=""/>
+			<value name="LINEAR_MIPMAP_NEAREST" doc=""/>
+			<value name="NEAREST_MIPMAP_LINEAR" doc=""/>
+			<value name="LINEAR_MIPMAP_LINEAR" doc=""/>
+		</enum>
+
+		<of name="minFilter" doc ="The texture minifying function is used whenever the pixel being textured maps to an area greater than one texture element.">
+			<type name="FilteringValueType" default="LINEAR" enum="True"/>
+		</of>
+
+		<of name="magFilter" doc ="The texture magnification function is used when the pixel being textured maps to an area less than or equal to one texture element.">
+			<type name="FilteringValueType" default="LINEAR" enum="True"/>
+		</of>
+		<!--<paf name = "filter" doc ="The texture minifying function (MIN_FILTER) is used whenever the pixel being textured maps to an area greater than one texture element. The texture magnification function (MAG_FILTER) is used when the pixel being textured maps to an area less than or equal to one texture element." >
 			<type name="enum">
 				<enum default="MAG_FILTER">
 					<value name="MIN_FILTER" doc="Choose one value among NEAREST, LINEAR (default), NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR."/>
@@ -1327,7 +1566,7 @@
 					<value name="LINEAR_MIPMAP_LINEAR" doc=""/>
 				</enum>
 			</type>
-		</paf>
+		</paf>-->
 
 		<of name = "mipmap" doc="Specifies if all levels of a mipmap array should be automatically updated when any modification to the image field (the base level of mipmap) is done." >
 			<type name="bool" default="false"/>
@@ -1381,8 +1620,8 @@
  GL_TEXTURE_COMPARE_FUNC
  usage SHADOWMAP -->
 
- 		<includehpp>vgd/include/vgd/node/Texture.hpp</includehpp>
- 		<includecpp>vgd/src/node/Texture.cpp</includecpp>
+ 		<include-hpp>vgd/include/vgd/node/Texture.hpp</include-hpp>
+ 		<include-cpp>vgd/src/node/Texture.cpp</include-cpp>
 	</node>
 
 	<node name = "Texture1D" inherits = "Texture" >
@@ -1394,8 +1633,8 @@
 			<ingroup>g_multiAttributeNodes</ingroup>
 			<ingroup>g_texturingNodes</ingroup>
 		</doxygen>
-		<includehpp>vgd/include/vgd/node/Texture1D.hpp</includehpp>
-		<includecpp>vgd/src/node/Texture1D.cpp</includecpp>
+		<include-hpp>vgd/include/vgd/node/Texture1D.hpp</include-hpp>
+		<include-cpp>vgd/src/node/Texture1D.cpp</include-cpp>
 	</node>
 
 	<node name = "Texture2D" inherits = "Texture" >
@@ -1406,14 +1645,38 @@
 			<ingroup>g_multiAttributeNodes</ingroup>
 			<ingroup>g_texturingNodes</ingroup>
 		</doxygen>
-		<includehpp>vgd/include/vgd/node/Texture2D.hpp</includehpp>
-		<includecpp>vgd/src/node/Texture2D.cpp</includecpp>
+		<include-hpp>vgd/include/vgd/node/Texture2D.hpp</include-hpp>
+		<include-cpp>vgd/src/node/Texture2D.cpp</include-cpp>
 	</node>
 
 
+	<node name = "Uniforms" inherits = "SingleAttribute">
+		<doxygen>
+			<docBrief>Defines uniform variable(s) available in all shaders</docBrief>
+			<doc>An uniform variable is a global variable used by shaders in read-only mode.</doc>
+			<doc>To add a new uniform variable, just call setUniform("uMyVariable", vgm::Vec3f(1.f, 2.f, 3.f))</doc>
+			<doc>To change the value of an uniform variable, just call setUniform("uMyVariable", vgm::Vec3f(1.f, 2.f, 3.f)) exactly as done to create the variable.</doc>
+			<doc>To change the type of a variable, the variable has to be removed using removeUniform() and add again using setUniform().</doc>
+			<doc>See Uniforms accessors section in the documentation for the whole interface to manage uniform variables.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_singleAttributeNodes</ingroup>
+			<ingroup>g_propertiesNodes</ingroup>
+		</doxygen>
+
+		<sf name="composeMode" doc="Specifies if uniforms defined by this node are added or are replacing the current uniforms">
+			<enum default = "REPLACE">
+				<value name="REPLACE"	doc="Uniforms defined by this node are replacing the current uniforms. So all previous uniform variables are removed."/>
+				<value name="APPEND"	doc="Uniforms defined by this node are added to the current uniforms"/>
+			</enum>
+		</sf>
+
+		<extra-include-hpp>#include "vgd/field/Uniform.hpp"</extra-include-hpp>
+		<include-hpp>vgd/include/vgd/node/Uniforms.hpp</include-hpp>
+		<include-cpp>vgd/src/node/Uniforms.cpp</include-cpp>
+	</node>
+
 
 <!-- @todo abstract class -->
-
 
 
 <!--	<node	name = "MaterialExt"
@@ -1432,6 +1695,107 @@
 <!-- todo
 	<node	name="SingleAttribute">
 	</node> -->
+
+	<!-- todo disable: static vgd::Shp< VertexShape > create( const std::string nodeName, const uint8 index ); for non multiattribute classes -->
+	<node name = "VertexShape" inherits = "Shape ITransformation">
+		<doxygen>
+			<docBrief>Base class for all vertex-based shape (geometry) nodes</docBrief>
+			<doc>Summary of capabilities :\n</doc>
+			<doc>	- encapsulation of geometry/material specification.\n</doc>
+			<doc>	- bounding box.\n</doc>
+			<doc>	- applying transformation (matrix, translation and rotation) on vertices and normals.\n</doc>
+			<doc>Fields that defined the geometry :\n</doc>
+			<doc>	- MFVec3f \c		vertex 		= empty\n</doc>
+			<doc>	- MFUint32 \c		vertexIndex	= empty\n</doc>
+			<doc>	- MFPrimitive \c	primitive	= empty\n</doc>
+			<doc>Fields used by the lighting equation and by materials : \n</doc>
+			<doc>	- MFVec3f \c normal				= empty\n</doc>
+			<doc>	- MFVec3f \c tangent			= empty\n</doc>
+			<doc>	- MFVec4f \c color				= empty\n</doc>
+			<doc>	- MFVec2f \c texCoord			= empty\n</doc>
+			<doc>		texCoord is a "dynamic field", see createTexUnits()...\n</doc>
+<!--			<doc>	- MFUint8 \c edgeFlag			= empty\n</doc>-->
+			<doc>Fields for defining bindings :\n</doc>
+			<doc>	- SFBinding \c normalBinding 			= BIND_OFF\n</doc>
+			<doc>	- SFBinding \c tangentBinding 			= BIND_OFF\n</doc>
+			<doc>	- SFBinding \c colorBinding 			= BIND_OFF\n</doc>
+			<doc>	- SFBinding \c texCoordBinding			= BIND_OFF\n</doc>
+			<doc>		texCoordBinding is a "dynamic field", see createTexUnits()...\n</doc>
+			<doc>getDFBoundingBox() returns dirty flag that is invalidate when bounding box is invalidate and must be recomputed</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_shapeNodes</ingroup>
+			<ingroup>g_texturingNodes</ingroup>
+		</doxygen>
+<!-- TODO texCoordBinding editable -->
+		<df name = "boundingBox" linkToFields="vertex"></df>
+<!--todo new df to track modifications accurately -->
+
+<!-- todo - MFVec3f \c vertex = vgm::Vec3f()<br> default value for MF field not accurate -->
+		<mf name="vertex" doc="">				<!-- TODO rename vertex0 and add an helper for compatibility>-->
+			<type name="Vec3f" namespace="vgm"></type>
+		</mf>
+
+		<mf name="vertexIndex" doc="">
+			<type name="uint"></type>
+		</mf>
+
+		<mf name="primitive" doc="">
+			<type name="Primitive" namespace="vgd::node"></type>
+		</mf>
+
+
+		<mf name="normal" doc="">
+			<type name="Vec3f" namespace="vgm"></type>
+		</mf>
+
+		<mf name="tangent" doc="">
+			<type name="Vec3f" namespace="vgm"></type>
+		</mf>
+
+		<mf name="color" doc="">
+			<type name="Vec4f" namespace="vgm"></type>
+		</mf>
+
+
+		<sf name="normalBinding" doc="">
+			<type name="Binding" namespace="vgd::node" default="vgd::node::BIND_OFF" enum="True"></type>
+		</sf>
+
+		<sf name="tangentBinding" doc="">
+			<type name="Binding" namespace="vgd::node" default="vgd::node::BIND_OFF" enum="True"></type>
+		</sf>
+
+		<sf name="colorBinding" doc="">
+			<type name="Binding" namespace="vgd::node" default="vgd::node::BIND_OFF" enum="True"></type>
+		</sf>
+
+
+		<sf name="boundingBoxUpdatePolicy" doc="">
+<!-- TODO remove all 			<type name="enum">-->
+				<enum default="AUTOMATIC">
+					<value name="AUTOMATIC"	doc="AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace)."/>
+					<value name="ONCE"		doc="DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames."/>
+				</enum>
+<!--			</type>-->
+		</sf>
+
+<!-- new value AUTO track modifications pattern to deduce STATIC, DYNAMIC or STREAM per field -->
+		<sf name="deformableHint" doc="Specifies a symbolic constant indicating the usage of this shape. Choose one value among STATIC, DYNAMIC and STREAM.">
+			<type name="enum">
+				<enum default="STATIC">
+					<value name="STATIC"	doc="STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once."/>
+					<value name="DYNAMIC"	doc="DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames."/>
+					<value name="STREAM"	doc="STREAM assumed to be a 1-to-1 update-to-draw. Means the geometry is specified for each frame."/>
+				</enum>
+			</type>
+		</sf>
+
+		<extra-include-hpp>#include "vgd/field/Float.hpp"</extra-include-hpp>
+		<extra-include-cpp>#include "vgd/node/Group.hpp"</extra-include-cpp>
+		<include-hpp>vgd/include/vgd/node/VertexShape.hpp</include-hpp>
+		<include-cpp>vgd/src/node/VertexShape.cpp</include-cpp>
+	</node>
+
 </nodes>
 
 <!-- test default value code generator

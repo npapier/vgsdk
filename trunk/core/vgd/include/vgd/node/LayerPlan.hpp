@@ -27,17 +27,17 @@ namespace node
  * This node defines a layer plan that could be displayed just before the rendering (UNDERLAY) or just after (OVERLAY). In fact, the behavior depends of its position in the scene graph. It could even be displayed at any time during the rendering. todo More advanced transformation (a field \c matrixTransform) todo Support multiple layer planes at the same time and do rendering in one pass. => This class should be a multiattribute. 
  *
  * New fields defined by this node :
- * - SFFloat \c alphaScale = (1.f)<br>
- *   Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor. After this operation, the alpha component is clamped to the range [0, 1].<br>
- *<br>
  * - SFVec2f \c position = vgm::Vec2f(0.f, 0.f)<br>
  *   Sets the position of the layer plan in normalized window coordinates system. @see g_coordinatesSystem<br>
+ *<br>
+ * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
+ *   Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n - A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.<br>
  *<br>
  * - SFIImageShp \c image = vgd::basic::IImageShp()<br>
  *   Determines the image to display in the layer plan. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
  *<br>
- * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
- *   Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n - A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.<br>
+ * - SFFloat \c alphaScale = (1.f)<br>
+ *   Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor. After this operation, the alpha component is clamped to the range [0, 1].<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -81,41 +81,6 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field alphaScale
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c alphaScale.
-	 */
-	typedef float AlphaScaleValueType;
-
-	/**
-	 * @brief The default value of field named \c alphaScale.
-	 */
-	static const AlphaScaleValueType DEFAULT_ALPHASCALE;
-
-	/**
-	 * @brief Type definition of the field named \c alphaScale
-	 */
-	typedef vgd::field::TSingleField< AlphaScaleValueType > FAlphaScaleType;
-
-
-	/**
-	 * @brief Gets the value of field named \c alphaScale.
-	 */
-	const AlphaScaleValueType getAlphaScale() const;
-
-	/**
-	 * @brief Sets the value of field named \c alphaScale.
-	 */
-	void setAlphaScale( const AlphaScaleValueType value );
-
-	//@}
-
-
-
-	/**
 	 * @name Accessors to field position
 	 */
 	//@{
@@ -145,41 +110,6 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	 * @brief Sets the value of field named \c position.
 	 */
 	void setPosition( const PositionValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field image
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c image.
-	 */
-	typedef vgd::basic::IImageShp ImageValueType;
-
-	/**
-	 * @brief The default value of field named \c image.
-	 */
-	static const ImageValueType DEFAULT_IMAGE;
-
-	/**
-	 * @brief Type definition of the field named \c image
-	 */
-	typedef vgd::field::TSingleField< ImageValueType > FImageType;
-
-
-	/**
-	 * @brief Gets the value of field named \c image.
-	 */
-	const ImageValueType getImage() const;
-
-	/**
-	 * @brief Sets the value of field named \c image.
-	 */
-	void setImage( const ImageValueType value );
 
 	//@}
 
@@ -221,16 +151,79 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Field name accessors
+	 * @name Accessors to field image
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c alphaScale.
-	 *
-	 * @return the name of field \c alphaScale.
+	 * @brief Type definition of the value contained by field named \c image.
 	 */
-	static const std::string getFAlphaScale( void );
+	typedef vgd::basic::IImageShp ImageValueType;
+
+	/**
+	 * @brief The default value of field named \c image.
+	 */
+	static const ImageValueType DEFAULT_IMAGE;
+
+	/**
+	 * @brief Type definition of the field named \c image
+	 */
+	typedef vgd::field::TSingleField< ImageValueType > FImageType;
+
+
+	/**
+	 * @brief Gets the value of field named \c image.
+	 */
+	const ImageValueType getImage() const;
+
+	/**
+	 * @brief Sets the value of field named \c image.
+	 */
+	void setImage( const ImageValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field alphaScale
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c alphaScale.
+	 */
+	typedef float AlphaScaleValueType;
+
+	/**
+	 * @brief The default value of field named \c alphaScale.
+	 */
+	static const AlphaScaleValueType DEFAULT_ALPHASCALE;
+
+	/**
+	 * @brief Type definition of the field named \c alphaScale
+	 */
+	typedef vgd::field::TSingleField< AlphaScaleValueType > FAlphaScaleType;
+
+
+	/**
+	 * @brief Gets the value of field named \c alphaScale.
+	 */
+	const AlphaScaleValueType getAlphaScale() const;
+
+	/**
+	 * @brief Sets the value of field named \c alphaScale.
+	 */
+	void setAlphaScale( const AlphaScaleValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Field name accessors
+	 */
+	//@{
 
 	/**
 	 * @brief Returns the name of field \c position.
@@ -240,6 +233,13 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	static const std::string getFPosition( void );
 
 	/**
+	 * @brief Returns the name of field \c size.
+	 *
+	 * @return the name of field \c size.
+	 */
+	static const std::string getFSize( void );
+
+	/**
 	 * @brief Returns the name of field \c image.
 	 *
 	 * @return the name of field \c image.
@@ -247,11 +247,11 @@ struct VGD_API LayerPlan : public vgd::node::MultiAttribute
 	static const std::string getFImage( void );
 
 	/**
-	 * @brief Returns the name of field \c size.
+	 * @brief Returns the name of field \c alphaScale.
 	 *
-	 * @return the name of field \c size.
+	 * @return the name of field \c alphaScale.
 	 */
-	static const std::string getFSize( void );
+	static const std::string getFAlphaScale( void );
 
 	//@}
 

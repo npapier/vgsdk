@@ -28,10 +28,10 @@ namespace node
  * Blending between two meshes are supported. 
  *
  * New fields defined by this node :
- * - SFVec2f \c weights = vgm::Vec2f(0.f, 0.f)<br>
- *<br>
  * - SFEnum \c method = (NORMALIZED)<br>
  *   Method used to combine the set of meshes<br>
+ *<br>
+ * - SFVec2f \c weights = vgm::Vec2f(0.f, 0.f)<br>
  *<br>
  * - MFVertexShapePtr \c __meshes__ = vgd::node::VertexShapePtr()<br>
  *   vgSDK internal field<br>
@@ -71,41 +71,6 @@ struct VGD_API GeoMorph : public vgd::node::Group, public vgd::node::IShape
 	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
 	static vgd::Shp< GeoMorph > createWhole( const std::string nodeName = "DefaultWhole" );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field weights
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c weights.
-	 */
-	typedef vgm::Vec2f WeightsValueType;
-
-	/**
-	 * @brief The default value of field named \c weights.
-	 */
-	static const WeightsValueType DEFAULT_WEIGHTS;
-
-	/**
-	 * @brief Type definition of the field named \c weights
-	 */
-	typedef vgd::field::TSingleField< WeightsValueType > FWeightsType;
-
-
-	/**
-	 * @brief Gets the value of field named \c weights.
-	 */
-	const WeightsValueType getWeights() const;
-
-	/**
-	 * @brief Sets the value of field named \c weights.
-	 */
-	void setWeights( const WeightsValueType value );
 
 	//@}
 
@@ -191,6 +156,41 @@ struct VGD_API GeoMorph : public vgd::node::Group, public vgd::node::IShape
 
 
 	/**
+	 * @name Accessors to field weights
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c weights.
+	 */
+	typedef vgm::Vec2f WeightsValueType;
+
+	/**
+	 * @brief The default value of field named \c weights.
+	 */
+	static const WeightsValueType DEFAULT_WEIGHTS;
+
+	/**
+	 * @brief Type definition of the field named \c weights
+	 */
+	typedef vgd::field::TSingleField< WeightsValueType > FWeightsType;
+
+
+	/**
+	 * @brief Gets the value of field named \c weights.
+	 */
+	const WeightsValueType getWeights() const;
+
+	/**
+	 * @brief Sets the value of field named \c weights.
+	 */
+	void setWeights( const WeightsValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field __meshes__
 	 *
 	 * @todo get__meshes__( const bool rw = false ) ?
@@ -228,18 +228,18 @@ struct VGD_API GeoMorph : public vgd::node::Group, public vgd::node::IShape
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c weights.
-	 *
-	 * @return the name of field \c weights.
-	 */
-	static const std::string getFWeights( void );
-
-	/**
 	 * @brief Returns the name of field \c method.
 	 *
 	 * @return the name of field \c method.
 	 */
 	static const std::string getFMethod( void );
+
+	/**
+	 * @brief Returns the name of field \c weights.
+	 *
+	 * @return the name of field \c weights.
+	 */
+	static const std::string getFWeights( void );
 
 	/**
 	 * @brief Returns the name of field \c __meshes__.

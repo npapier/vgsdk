@@ -107,7 +107,7 @@ void Material::paint( vgeGL::engine::Engine * engine, vgd::node::Material * mate
 	vgm::Vec4f	color4;
 
 	// OPACITY
-	const float opacity = material->getOpacity();
+	//const float opacity = material->getOpacity();
 
 	// AMBIENT
 	bDefined = material->getAmbient( color3 );
