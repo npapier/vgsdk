@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2009, 2010, 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -216,8 +216,9 @@ bool Image::load( std::string strFilename )
 	// Bind this image name.
 	bind();
 
+#ifdef _DEBUG
 	vgLogDebug("Image::load: Start reading image %s.", strFilename.c_str() );
-	
+#endif
 	// Loads the image specified by strFilename into the ImgId image.
 	if ( ilLoadImage( const_cast<char*>( strFilename.c_str() ) ) == IL_FALSE )
 	{
@@ -230,10 +231,12 @@ bool Image::load( std::string strFilename )
 	else
 	{
 		updateInformations();
-		
+
+#ifdef _DEBUG
 		vgLogDebug(	"Image::load: Finish reading image %s (%i x %i).",
 						strFilename.c_str(), 
 						width(), height() );
+#endif
 
 		return true;
 	}
@@ -253,7 +256,9 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	// Bind this image name.
 	bind();
 
+#ifdef _DEBUG
 	vgLogDebug("Image::load: Start reading image %s.", strFilename.c_str() );
+#endif
 
 	// Retrieves the extension of the given filename.
 	vgd::basic::FilenameExtractor	extractor( strFilename.c_str() );
@@ -273,9 +278,11 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	else
 	{
 		updateInformations();
-		
+
+#ifdef _DEBUG
 		vgLogDebug("Image::load: Finish reading image %s (%i x %i).",
 					strFilename.c_str(), width(), height() );
+#endif
 
 		return true;
 	}
