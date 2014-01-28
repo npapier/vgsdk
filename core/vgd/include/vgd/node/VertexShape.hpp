@@ -32,15 +32,13 @@ namespace node
  * Summary of capabilities :\n 	- encapsulation of geometry/material specification.\n 	- bounding box.\n 	- applying transformation (matrix, translation and rotation) on vertices and normals.\n Fields that defined the geometry :\n 	- MFVec3f \c		vertex 		= empty\n 	- MFUint32 \c		vertexIndex	= empty\n 	- MFPrimitive \c	primitive	= empty\n Fields used by the lighting equation and by materials : \n 	- MFVec3f \c normal				= empty\n 	- MFVec3f \c tangent			= empty\n 	- MFVec4f \c color				= empty\n 	- MFVec2f \c texCoord			= empty\n 		texCoord is a "dynamic field", see createTexUnits()...\n Fields for defining bindings :\n 	- SFBinding \c normalBinding 			= BIND_OFF\n 	- SFBinding \c tangentBinding 			= BIND_OFF\n 	- SFBinding \c colorBinding 			= BIND_OFF\n 	- SFBinding \c texCoordBinding			= BIND_OFF\n 		texCoordBinding is a "dynamic field", see createTexUnits()...\n getDFBoundingBox() returns dirty flag that is invalidate when bounding box is invalidate and must be recomputed 
  *
  * New fields defined by this node :
- * - MFPrimitive \c primitive = vgd::node::Primitive()<br>
+ * - SFBinding \c normalBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
  *<br>
  * - SFBinding \c tangentBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
  *<br>
  * - SFBinding \c colorBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
  *<br>
- * - MFVec3f \c normal = vgm::Vec3f()<br>
- *<br>
- * - MFVec4f \c color = vgm::Vec4f()<br>
+ * - SFEnum \c boundingBoxUpdatePolicy = (AUTOMATIC)<br>
  *<br>
  * - SFEnum \c deformableHint = (STATIC)<br>
  *   Specifies a symbolic constant indicating the usage of this shape. Choose one value among STATIC, DYNAMIC and STREAM.<br>
@@ -49,11 +47,13 @@ namespace node
  *<br>
  * - MFUint \c vertexIndex = empty<br>
  *<br>
- * - SFEnum \c boundingBoxUpdatePolicy = (AUTOMATIC)<br>
+ * - MFPrimitive \c primitive = vgd::node::Primitive()<br>
+ *<br>
+ * - MFVec3f \c normal = vgm::Vec3f()<br>
  *<br>
  * - MFVec3f \c tangent = vgm::Vec3f()<br>
  *<br>
- * - SFBinding \c normalBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
+ * - MFVec4f \c color = vgm::Vec4f()<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -96,32 +96,30 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 
 
 	/**
-	 * @name Accessors to field primitive
-	 *
-	 * @todo getPrimitive( const bool rw = false ) ?
+	 * @name Accessors to field normalBinding
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c primitive.
+	 * @brief Type definition of the value contained by field named \c normalBinding.
 	 */
-	typedef vgd::node::Primitive PrimitiveValueType;
+	typedef vgd::node::Binding NormalBindingValueType;
 
 	/**
-	 * @brief Type definition of the field named \c primitive
+	 * @brief Type definition of the field named \c normalBinding
 	 */
-	typedef vgd::field::TMultiField< PrimitiveValueType > FPrimitiveType;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FNormalBindingType;
 
 
 	/**
-	 * @brief Gets a read-only editor on the multi field named \c primitive.
+	 * @brief Gets the value of field named \c normalBinding.
 	 */
-	vgd::field::EditorRO< FPrimitiveType > getPrimitiveRO() const;
+	const NormalBindingValueType getNormalBinding() const;
 
 	/**
-	 * @brief Gets a read-write editor on the multi field named \c primitive.
+	 * @brief Sets the value of field named \c normalBinding.
 	 */
-	vgd::field::EditorRW< FPrimitiveType > getPrimitiveRW();
+	void setNormalBinding( const NormalBindingValueType value );
 
 	//@}
 
@@ -188,64 +186,76 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 
 
 	/**
-	 * @name Accessors to field normal
-	 *
-	 * @todo getNormal( const bool rw = false ) ?
+	 * @name Accessors to field boundingBoxUpdatePolicy
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c normal.
+	 * @brief Definition of symbolic values
 	 */
-	typedef vgm::Vec3f NormalValueType;
+	enum  
+	{
+		AUTOMATIC = 462,	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
+		ONCE = 463,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
+		DEFAULT_BOUNDINGBOXUPDATEPOLICY = AUTOMATIC	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
+	};
 
 	/**
-	 * @brief Type definition of the field named \c normal
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
-	typedef vgd::field::TMultiField< NormalValueType > FNormalType;
+	struct BoundingBoxUpdatePolicyValueType : public vgd::field::Enum
+	{
+		BoundingBoxUpdatePolicyValueType()
+		{}
+
+		BoundingBoxUpdatePolicyValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		BoundingBoxUpdatePolicyValueType( const BoundingBoxUpdatePolicyValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		BoundingBoxUpdatePolicyValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 462 );
+			retVal.push_back( 463 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "AUTOMATIC" );
+			retVal.push_back( "ONCE" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c boundingBoxUpdatePolicy
+	 */
+	typedef vgd::field::TSingleField< vgd::field::Enum > FBoundingBoxUpdatePolicyType;
 
 
 	/**
-	 * @brief Gets a read-only editor on the multi field named \c normal.
+	 * @brief Gets the value of field named \c boundingBoxUpdatePolicy.
 	 */
-	vgd::field::EditorRO< FNormalType > getNormalRO() const;
+	const BoundingBoxUpdatePolicyValueType getBoundingBoxUpdatePolicy() const;
 
 	/**
-	 * @brief Gets a read-write editor on the multi field named \c normal.
+	 * @brief Sets the value of field named \c boundingBoxUpdatePolicy.
 	 */
-	vgd::field::EditorRW< FNormalType > getNormalRW();
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field color
-	 *
-	 * @todo getColor( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c color.
-	 */
-	typedef vgm::Vec4f ColorValueType;
-
-	/**
-	 * @brief Type definition of the field named \c color
-	 */
-	typedef vgd::field::TMultiField< ColorValueType > FColorType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c color.
-	 */
-	vgd::field::EditorRO< FColorType > getColorRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c color.
-	 */
-	vgd::field::EditorRW< FColorType > getColorRW();
+	void setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value );
 
 	//@}
 
@@ -395,76 +405,64 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 
 
 	/**
-	 * @name Accessors to field boundingBoxUpdatePolicy
+	 * @name Accessors to field primitive
+	 *
+	 * @todo getPrimitive( const bool rw = false ) ?
 	 */
 	//@{
 
 	/**
-	 * @brief Definition of symbolic values
+	 * @brief Type definition of the value contained by field named \c primitive.
 	 */
-	enum  
-	{
-		AUTOMATIC = 462,	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
-		ONCE = 463,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
-		DEFAULT_BOUNDINGBOXUPDATEPOLICY = AUTOMATIC	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
-	};
+	typedef vgd::node::Primitive PrimitiveValueType;
 
 	/**
-	 * @brief Type definition of a container for the previous symbolic values
+	 * @brief Type definition of the field named \c primitive
 	 */
-	struct BoundingBoxUpdatePolicyValueType : public vgd::field::Enum
-	{
-		BoundingBoxUpdatePolicyValueType()
-		{}
-
-		BoundingBoxUpdatePolicyValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		BoundingBoxUpdatePolicyValueType( const BoundingBoxUpdatePolicyValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		BoundingBoxUpdatePolicyValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 462 );
-			retVal.push_back( 463 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "AUTOMATIC" );
-			retVal.push_back( "ONCE" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c boundingBoxUpdatePolicy
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FBoundingBoxUpdatePolicyType;
+	typedef vgd::field::TMultiField< PrimitiveValueType > FPrimitiveType;
 
 
 	/**
-	 * @brief Gets the value of field named \c boundingBoxUpdatePolicy.
+	 * @brief Gets a read-only editor on the multi field named \c primitive.
 	 */
-	const BoundingBoxUpdatePolicyValueType getBoundingBoxUpdatePolicy() const;
+	vgd::field::EditorRO< FPrimitiveType > getPrimitiveRO() const;
 
 	/**
-	 * @brief Sets the value of field named \c boundingBoxUpdatePolicy.
+	 * @brief Gets a read-write editor on the multi field named \c primitive.
 	 */
-	void setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value );
+	vgd::field::EditorRW< FPrimitiveType > getPrimitiveRW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field normal
+	 *
+	 * @todo getNormal( const bool rw = false ) ?
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c normal.
+	 */
+	typedef vgm::Vec3f NormalValueType;
+
+	/**
+	 * @brief Type definition of the field named \c normal
+	 */
+	typedef vgd::field::TMultiField< NormalValueType > FNormalType;
+
+
+	/**
+	 * @brief Gets a read-only editor on the multi field named \c normal.
+	 */
+	vgd::field::EditorRO< FNormalType > getNormalRO() const;
+
+	/**
+	 * @brief Gets a read-write editor on the multi field named \c normal.
+	 */
+	vgd::field::EditorRW< FNormalType > getNormalRW();
 
 	//@}
 
@@ -503,30 +501,32 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 
 
 	/**
-	 * @name Accessors to field normalBinding
+	 * @name Accessors to field color
+	 *
+	 * @todo getColor( const bool rw = false ) ?
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c normalBinding.
+	 * @brief Type definition of the value contained by field named \c color.
 	 */
-	typedef vgd::node::Binding NormalBindingValueType;
+	typedef vgm::Vec4f ColorValueType;
 
 	/**
-	 * @brief Type definition of the field named \c normalBinding
+	 * @brief Type definition of the field named \c color
 	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FNormalBindingType;
+	typedef vgd::field::TMultiField< ColorValueType > FColorType;
 
 
 	/**
-	 * @brief Gets the value of field named \c normalBinding.
+	 * @brief Gets a read-only editor on the multi field named \c color.
 	 */
-	const NormalBindingValueType getNormalBinding() const;
+	vgd::field::EditorRO< FColorType > getColorRO() const;
 
 	/**
-	 * @brief Sets the value of field named \c normalBinding.
+	 * @brief Gets a read-write editor on the multi field named \c color.
 	 */
-	void setNormalBinding( const NormalBindingValueType value );
+	vgd::field::EditorRW< FColorType > getColorRW();
 
 	//@}
 
@@ -538,11 +538,11 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c primitive.
+	 * @brief Returns the name of field \c normalBinding.
 	 *
-	 * @return the name of field \c primitive.
+	 * @return the name of field \c normalBinding.
 	 */
-	static const std::string getFPrimitive( void );
+	static const std::string getFNormalBinding( void );
 
 	/**
 	 * @brief Returns the name of field \c tangentBinding.
@@ -559,18 +559,11 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	static const std::string getFColorBinding( void );
 
 	/**
-	 * @brief Returns the name of field \c normal.
+	 * @brief Returns the name of field \c boundingBoxUpdatePolicy.
 	 *
-	 * @return the name of field \c normal.
+	 * @return the name of field \c boundingBoxUpdatePolicy.
 	 */
-	static const std::string getFNormal( void );
-
-	/**
-	 * @brief Returns the name of field \c color.
-	 *
-	 * @return the name of field \c color.
-	 */
-	static const std::string getFColor( void );
+	static const std::string getFBoundingBoxUpdatePolicy( void );
 
 	/**
 	 * @brief Returns the name of field \c deformableHint.
@@ -594,11 +587,18 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	static const std::string getFVertexIndex( void );
 
 	/**
-	 * @brief Returns the name of field \c boundingBoxUpdatePolicy.
+	 * @brief Returns the name of field \c primitive.
 	 *
-	 * @return the name of field \c boundingBoxUpdatePolicy.
+	 * @return the name of field \c primitive.
 	 */
-	static const std::string getFBoundingBoxUpdatePolicy( void );
+	static const std::string getFPrimitive( void );
+
+	/**
+	 * @brief Returns the name of field \c normal.
+	 *
+	 * @return the name of field \c normal.
+	 */
+	static const std::string getFNormal( void );
 
 	/**
 	 * @brief Returns the name of field \c tangent.
@@ -608,11 +608,11 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	static const std::string getFTangent( void );
 
 	/**
-	 * @brief Returns the name of field \c normalBinding.
+	 * @brief Returns the name of field \c color.
 	 *
-	 * @return the name of field \c normalBinding.
+	 * @return the name of field \c color.
 	 */
-	static const std::string getFNormalBinding( void );
+	static const std::string getFColor( void );
 
 	//@}
 

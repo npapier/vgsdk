@@ -29,41 +29,41 @@ namespace node
  * This node defines texture parameters (wrapping, filter for minifying and magnification, mipmapping and function). Be carefull, data referenced by image must be available when texture is update. This node creates a a texture from the iimage interface. So image could be an image stored in memory (with vgd::basic::ImageInfo) or from a file (with vgd::basic::Image) or a cairo image (with vgCairo::ImageSurface) and so on. @remarks When the scene graph is evaluated, there are size constraints on texture that you should keep in mind.\n When the image exceed the maximum allowable size for the texture, a temporary resized copy of the \c iimage (to the maximum of the texture size) is used for defining texture. This is not very fast. Be carefull.\n - Radeon 8500 could do 2048 x 2048 for 2D texturing, 512 x 512 x 512 for 3D texturing and 2048 for cube mapping.\n - GeForce 2 could do 2048 x 2048 for 2D texturing, 64 x 64 x 64 for 3D texturing and 512 for cube mapping.\n - GeForce 3 could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce FX could do 4096 x 4096 for 2D texturing, 512 x 512 x 512 for 3D texturing and 4096 for cube mapping.\n - GeForce 8 could do 8192 x 8192 for 2D texturing, 2048 x 2048 x 2048 for 3D texturing and 8192 for cube mapping.\n - Radeon 5xxx/6xxx could do 16384^2 for 2D texturing, 8192^3 for 3D texturing and 16384^2 for cube mapping.\n - GeForce 5xx/Quadro 4xxx could do 16384^2 for 2D texturing, 2048^3 for 3D texturing and 16384^2 for cube mapping.\n @remarks If your OpenGL implementation does'nt support advanced texturing not limited to images with power-of-two dimensions, a temporary resized copy of the \c iimage is used for all wrapping modes except \c ONCE.\n 
  *
  * New fields defined by this node :
- * - OFWrappingValueType \c [wrapS] = (REPEAT)<br>
- *   Set the wrap parameter for texture coordinate s<br>
- *<br>
- * - OFWrappingValueType \c [wrapR] = (REPEAT)<br>
- *   Set the wrap parameter for texture coordinate r<br>
- *<br>
- * - OFWrappingValueType \c [wrapT] = (REPEAT)<br>
- *   Set the wrap parameter for texture coordinate t<br>
- *<br>
- * - OFFloat \c [maxAnisotropy] = (1.f)<br>
- *   Specifies the maximum degree of anisotropy. If not defined the value returned by Engine::getDefaultMaxAnisotropy() is used.<br>
- *<br>
- * - OFIImageShp \c [image] = vgd::basic::IImageShp()<br>
- *   Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
- *<br>
- * - OFString \c [fragmentFunction] = std::string()<br>
- *   Fragment texturing function.<br>
- *<br>
- * - OFBool \c [mipmap] = (false)<br>
- *   Specifies if all levels of a mipmap array should be automatically updated when any modification to the image field (the base level of mipmap) is done.<br>
- *<br>
- * - OFString \c [vertexFunction] = std::string()<br>
- *   Vertex texturing function.<br>
- *<br>
- * - OFFilteringValueType \c [minFilter] = (LINEAR)<br>
- *   The texture minifying function is used whenever the pixel being textured maps to an area greater than one texture element.<br>
+ * - SFEnum \c usage = (IMAGE)<br>
+ *   Indicating the expected usage pattern of the texture.<br>
  *<br>
  * - SFEnum \c internalFormat = (AUTOMATIC)<br>
  *   Specifies the desired internal format used by the GPU.<br>
  *<br>
- * - SFEnum \c usage = (IMAGE)<br>
- *   Indicating the expected usage pattern of the texture.<br>
+ * - OFIImageShp \c [image] = vgd::basic::IImageShp()<br>
+ *   Determines the source of data used to created the texture. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
+ *<br>
+ * - OFWrappingValueType \c [wrapS] = (REPEAT)<br>
+ *   Set the wrap parameter for texture coordinate s<br>
+ *<br>
+ * - OFWrappingValueType \c [wrapT] = (REPEAT)<br>
+ *   Set the wrap parameter for texture coordinate t<br>
+ *<br>
+ * - OFWrappingValueType \c [wrapR] = (REPEAT)<br>
+ *   Set the wrap parameter for texture coordinate r<br>
+ *<br>
+ * - OFFilteringValueType \c [minFilter] = (LINEAR)<br>
+ *   The texture minifying function is used whenever the pixel being textured maps to an area greater than one texture element.<br>
  *<br>
  * - OFFilteringValueType \c [magFilter] = (LINEAR)<br>
  *   The texture magnification function is used when the pixel being textured maps to an area less than or equal to one texture element.<br>
+ *<br>
+ * - OFBool \c [mipmap] = (false)<br>
+ *   Specifies if all levels of a mipmap array should be automatically updated when any modification to the image field (the base level of mipmap) is done.<br>
+ *<br>
+ * - OFFloat \c [maxAnisotropy] = (1.f)<br>
+ *   Specifies the maximum degree of anisotropy. If not defined the value returned by Engine::getDefaultMaxAnisotropy() is used.<br>
+ *<br>
+ * - OFString \c [vertexFunction] = std::string()<br>
+ *   Vertex texturing function.<br>
+ *<br>
+ * - OFString \c [fragmentFunction] = std::string()<br>
+ *   Fragment texturing function.<br>
  *<br>
  *
  * @ingroup g_abstractNodes
@@ -313,377 +313,77 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field wrapS
+	 * @name Accessors to field usage
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c wrapS.
+	 * @brief Definition of symbolic values
 	 */
-	typedef WrappingValueType WrapSValueType;
+	enum  
+	{
+		IMAGE = 445,	///< Simple image mapping
+		SHADOW = 446,	///< Shadow mapping
+		DEFAULT_USAGE = IMAGE	///< Simple image mapping
+	};
 
 	/**
-	 * @brief Type definition of the field named \c wrapS
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
-	typedef vgd::field::TOptionalField< vgd::field::Enum > FWrapSType;
+	struct UsageValueType : public vgd::field::Enum
+	{
+		UsageValueType()
+		{}
 
+		UsageValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		UsageValueType( const UsageValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		UsageValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 445 );
+			retVal.push_back( 446 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "IMAGE" );
+			retVal.push_back( "SHADOW" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Gets the value of field named \c wrapS.
+	 * @brief Type definition of the field named \c usage
 	 */
-	const bool getWrapS( WrapSValueType& value ) const;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FUsageType;
+
 
 	/**
-	 * @brief Sets the value of field named \c wrapS.
- 	 */
-	void setWrapS( const WrapSValueType& value );
-
-	/**
-	 * @brief Erases the field named \c wrapS.
+	 * @brief Gets the value of field named \c usage.
 	 */
-	void eraseWrapS();
+	const UsageValueType getUsage() const;
 
 	/**
-	 * @brief Tests if the value of field named \c wrapS has been initialized.
+	 * @brief Sets the value of field named \c usage.
 	 */
-	const bool hasWrapS() const;
-	//@}
+	void setUsage( const UsageValueType value );
 
-
-
-	/**
-	 * @name Accessors to field wrapR
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c wrapR.
-	 */
-	typedef WrappingValueType WrapRValueType;
-
-	/**
-	 * @brief Type definition of the field named \c wrapR
-	 */
-	typedef vgd::field::TOptionalField< vgd::field::Enum > FWrapRType;
-
-
-	/**
-	 * @brief Gets the value of field named \c wrapR.
-	 */
-	const bool getWrapR( WrapRValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c wrapR.
- 	 */
-	void setWrapR( const WrapRValueType& value );
-
-	/**
-	 * @brief Erases the field named \c wrapR.
-	 */
-	void eraseWrapR();
-
-	/**
-	 * @brief Tests if the value of field named \c wrapR has been initialized.
-	 */
-	const bool hasWrapR() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field wrapT
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c wrapT.
-	 */
-	typedef WrappingValueType WrapTValueType;
-
-	/**
-	 * @brief Type definition of the field named \c wrapT
-	 */
-	typedef vgd::field::TOptionalField< vgd::field::Enum > FWrapTType;
-
-
-	/**
-	 * @brief Gets the value of field named \c wrapT.
-	 */
-	const bool getWrapT( WrapTValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c wrapT.
- 	 */
-	void setWrapT( const WrapTValueType& value );
-
-	/**
-	 * @brief Erases the field named \c wrapT.
-	 */
-	void eraseWrapT();
-
-	/**
-	 * @brief Tests if the value of field named \c wrapT has been initialized.
-	 */
-	const bool hasWrapT() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field maxAnisotropy
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c maxAnisotropy.
-	 */
-	typedef float MaxAnisotropyValueType;
-
-	/**
-	 * @brief The default value of field named \c maxAnisotropy.
-	 */
-	static const MaxAnisotropyValueType DEFAULT_MAXANISOTROPY;
-
-	/**
-	 * @brief Type definition of the field named \c maxAnisotropy
-	 */
-	typedef vgd::field::TOptionalField< MaxAnisotropyValueType > FMaxAnisotropyType;
-
-
-	/**
-	 * @brief Gets the value of field named \c maxAnisotropy.
-	 */
-	const bool getMaxAnisotropy( MaxAnisotropyValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c maxAnisotropy.
- 	 */
-	void setMaxAnisotropy( const MaxAnisotropyValueType& value );
-
-	/**
-	 * @brief Erases the field named \c maxAnisotropy.
-	 */
-	void eraseMaxAnisotropy();
-
-	/**
-	 * @brief Tests if the value of field named \c maxAnisotropy has been initialized.
-	 */
-	const bool hasMaxAnisotropy() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field image
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c image.
-	 */
-	typedef vgd::basic::IImageShp ImageValueType;
-
-	/**
-	 * @brief The default value of field named \c image.
-	 */
-	static const ImageValueType DEFAULT_IMAGE;
-
-	/**
-	 * @brief Type definition of the field named \c image
-	 */
-	typedef vgd::field::TOptionalField< ImageValueType > FImageType;
-
-
-	/**
-	 * @brief Gets the value of field named \c image.
-	 */
-	const bool getImage( ImageValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c image.
- 	 */
-	void setImage( const ImageValueType& value );
-
-	/**
-	 * @brief Erases the field named \c image.
-	 */
-	void eraseImage();
-
-	/**
-	 * @brief Tests if the value of field named \c image has been initialized.
-	 */
-	const bool hasImage() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field fragmentFunction
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c fragmentFunction.
-	 */
-	typedef std::string FragmentFunctionValueType;
-
-	/**
-	 * @brief The default value of field named \c fragmentFunction.
-	 */
-	static const FragmentFunctionValueType DEFAULT_FRAGMENTFUNCTION;
-
-	/**
-	 * @brief Type definition of the field named \c fragmentFunction
-	 */
-	typedef vgd::field::TOptionalField< FragmentFunctionValueType > FFragmentFunctionType;
-
-
-	/**
-	 * @brief Gets the value of field named \c fragmentFunction.
-	 */
-	const bool getFragmentFunction( FragmentFunctionValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c fragmentFunction.
- 	 */
-	void setFragmentFunction( const FragmentFunctionValueType& value );
-
-	/**
-	 * @brief Erases the field named \c fragmentFunction.
-	 */
-	void eraseFragmentFunction();
-
-	/**
-	 * @brief Tests if the value of field named \c fragmentFunction has been initialized.
-	 */
-	const bool hasFragmentFunction() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field mipmap
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c mipmap.
-	 */
-	typedef bool MipmapValueType;
-
-	/**
-	 * @brief The default value of field named \c mipmap.
-	 */
-	static const MipmapValueType DEFAULT_MIPMAP;
-
-	/**
-	 * @brief Type definition of the field named \c mipmap
-	 */
-	typedef vgd::field::TOptionalField< MipmapValueType > FMipmapType;
-
-
-	/**
-	 * @brief Gets the value of field named \c mipmap.
-	 */
-	const bool getMipmap( MipmapValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c mipmap.
- 	 */
-	void setMipmap( const MipmapValueType& value );
-
-	/**
-	 * @brief Erases the field named \c mipmap.
-	 */
-	void eraseMipmap();
-
-	/**
-	 * @brief Tests if the value of field named \c mipmap has been initialized.
-	 */
-	const bool hasMipmap() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field vertexFunction
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c vertexFunction.
-	 */
-	typedef std::string VertexFunctionValueType;
-
-	/**
-	 * @brief The default value of field named \c vertexFunction.
-	 */
-	static const VertexFunctionValueType DEFAULT_VERTEXFUNCTION;
-
-	/**
-	 * @brief Type definition of the field named \c vertexFunction
-	 */
-	typedef vgd::field::TOptionalField< VertexFunctionValueType > FVertexFunctionType;
-
-
-	/**
-	 * @brief Gets the value of field named \c vertexFunction.
-	 */
-	const bool getVertexFunction( VertexFunctionValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c vertexFunction.
- 	 */
-	void setVertexFunction( const VertexFunctionValueType& value );
-
-	/**
-	 * @brief Erases the field named \c vertexFunction.
-	 */
-	void eraseVertexFunction();
-
-	/**
-	 * @brief Tests if the value of field named \c vertexFunction has been initialized.
-	 */
-	const bool hasVertexFunction() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field minFilter
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c minFilter.
-	 */
-	typedef FilteringValueType MinFilterValueType;
-
-	/**
-	 * @brief Type definition of the field named \c minFilter
-	 */
-	typedef vgd::field::TOptionalField< vgd::field::Enum > FMinFilterType;
-
-
-	/**
-	 * @brief Gets the value of field named \c minFilter.
-	 */
-	const bool getMinFilter( MinFilterValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c minFilter.
- 	 */
-	void setMinFilter( const MinFilterValueType& value );
-
-	/**
-	 * @brief Erases the field named \c minFilter.
-	 */
-	void eraseMinFilter();
-
-	/**
-	 * @brief Tests if the value of field named \c minFilter has been initialized.
-	 */
-	const bool hasMinFilter() const;
 	//@}
 
 
@@ -798,77 +498,201 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field usage
+	 * @name Accessors to field image
 	 */
 	//@{
 
 	/**
-	 * @brief Definition of symbolic values
+	 * @brief Type definition of the value contained by field named \c image.
 	 */
-	enum  
-	{
-		IMAGE = 445,	///< Simple image mapping
-		SHADOW = 446,	///< Shadow mapping
-		DEFAULT_USAGE = IMAGE	///< Simple image mapping
-	};
+	typedef vgd::basic::IImageShp ImageValueType;
 
 	/**
-	 * @brief Type definition of a container for the previous symbolic values
+	 * @brief The default value of field named \c image.
 	 */
-	struct UsageValueType : public vgd::field::Enum
-	{
-		UsageValueType()
-		{}
-
-		UsageValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		UsageValueType( const UsageValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		UsageValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 445 );
-			retVal.push_back( 446 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "IMAGE" );
-			retVal.push_back( "SHADOW" );
-
-			return retVal;
-		}
-	};
+	static const ImageValueType DEFAULT_IMAGE;
 
 	/**
-	 * @brief Type definition of the field named \c usage
+	 * @brief Type definition of the field named \c image
 	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FUsageType;
+	typedef vgd::field::TOptionalField< ImageValueType > FImageType;
 
 
 	/**
-	 * @brief Gets the value of field named \c usage.
+	 * @brief Gets the value of field named \c image.
 	 */
-	const UsageValueType getUsage() const;
+	const bool getImage( ImageValueType& value ) const;
 
 	/**
-	 * @brief Sets the value of field named \c usage.
-	 */
-	void setUsage( const UsageValueType value );
+	 * @brief Sets the value of field named \c image.
+ 	 */
+	void setImage( const ImageValueType& value );
 
+	/**
+	 * @brief Erases the field named \c image.
+	 */
+	void eraseImage();
+
+	/**
+	 * @brief Tests if the value of field named \c image has been initialized.
+	 */
+	const bool hasImage() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field wrapS
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c wrapS.
+	 */
+	typedef WrappingValueType WrapSValueType;
+
+	/**
+	 * @brief Type definition of the field named \c wrapS
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FWrapSType;
+
+
+	/**
+	 * @brief Gets the value of field named \c wrapS.
+	 */
+	const bool getWrapS( WrapSValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c wrapS.
+ 	 */
+	void setWrapS( const WrapSValueType& value );
+
+	/**
+	 * @brief Erases the field named \c wrapS.
+	 */
+	void eraseWrapS();
+
+	/**
+	 * @brief Tests if the value of field named \c wrapS has been initialized.
+	 */
+	const bool hasWrapS() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field wrapT
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c wrapT.
+	 */
+	typedef WrappingValueType WrapTValueType;
+
+	/**
+	 * @brief Type definition of the field named \c wrapT
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FWrapTType;
+
+
+	/**
+	 * @brief Gets the value of field named \c wrapT.
+	 */
+	const bool getWrapT( WrapTValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c wrapT.
+ 	 */
+	void setWrapT( const WrapTValueType& value );
+
+	/**
+	 * @brief Erases the field named \c wrapT.
+	 */
+	void eraseWrapT();
+
+	/**
+	 * @brief Tests if the value of field named \c wrapT has been initialized.
+	 */
+	const bool hasWrapT() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field wrapR
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c wrapR.
+	 */
+	typedef WrappingValueType WrapRValueType;
+
+	/**
+	 * @brief Type definition of the field named \c wrapR
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FWrapRType;
+
+
+	/**
+	 * @brief Gets the value of field named \c wrapR.
+	 */
+	const bool getWrapR( WrapRValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c wrapR.
+ 	 */
+	void setWrapR( const WrapRValueType& value );
+
+	/**
+	 * @brief Erases the field named \c wrapR.
+	 */
+	void eraseWrapR();
+
+	/**
+	 * @brief Tests if the value of field named \c wrapR has been initialized.
+	 */
+	const bool hasWrapR() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field minFilter
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c minFilter.
+	 */
+	typedef FilteringValueType MinFilterValueType;
+
+	/**
+	 * @brief Type definition of the field named \c minFilter
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FMinFilterType;
+
+
+	/**
+	 * @brief Gets the value of field named \c minFilter.
+	 */
+	const bool getMinFilter( MinFilterValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c minFilter.
+ 	 */
+	void setMinFilter( const MinFilterValueType& value );
+
+	/**
+	 * @brief Erases the field named \c minFilter.
+	 */
+	void eraseMinFilter();
+
+	/**
+	 * @brief Tests if the value of field named \c minFilter has been initialized.
+	 */
+	const bool hasMinFilter() const;
 	//@}
 
 
@@ -913,79 +737,185 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Field name accessors
+	 * @name Accessors to field mipmap
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c wrapS.
-	 *
-	 * @return the name of field \c wrapS.
+	 * @brief Type definition of the value contained by field named \c mipmap.
 	 */
-	static const std::string getFWrapS( void );
+	typedef bool MipmapValueType;
 
 	/**
-	 * @brief Returns the name of field \c wrapR.
-	 *
-	 * @return the name of field \c wrapR.
+	 * @brief The default value of field named \c mipmap.
 	 */
-	static const std::string getFWrapR( void );
+	static const MipmapValueType DEFAULT_MIPMAP;
 
 	/**
-	 * @brief Returns the name of field \c wrapT.
-	 *
-	 * @return the name of field \c wrapT.
+	 * @brief Type definition of the field named \c mipmap
 	 */
-	static const std::string getFWrapT( void );
+	typedef vgd::field::TOptionalField< MipmapValueType > FMipmapType;
+
 
 	/**
-	 * @brief Returns the name of field \c maxAnisotropy.
-	 *
-	 * @return the name of field \c maxAnisotropy.
+	 * @brief Gets the value of field named \c mipmap.
 	 */
-	static const std::string getFMaxAnisotropy( void );
+	const bool getMipmap( MipmapValueType& value ) const;
 
 	/**
-	 * @brief Returns the name of field \c image.
-	 *
-	 * @return the name of field \c image.
-	 */
-	static const std::string getFImage( void );
+	 * @brief Sets the value of field named \c mipmap.
+ 	 */
+	void setMipmap( const MipmapValueType& value );
 
 	/**
-	 * @brief Returns the name of field \c fragmentFunction.
-	 *
-	 * @return the name of field \c fragmentFunction.
+	 * @brief Erases the field named \c mipmap.
 	 */
-	static const std::string getFFragmentFunction( void );
+	void eraseMipmap();
 
 	/**
-	 * @brief Returns the name of field \c mipmap.
-	 *
-	 * @return the name of field \c mipmap.
+	 * @brief Tests if the value of field named \c mipmap has been initialized.
 	 */
-	static const std::string getFMipmap( void );
+	const bool hasMipmap() const;
+	//@}
+
+
 
 	/**
-	 * @brief Returns the name of field \c vertexFunction.
-	 *
-	 * @return the name of field \c vertexFunction.
+	 * @name Accessors to field maxAnisotropy
 	 */
-	static const std::string getFVertexFunction( void );
+	//@{
 
 	/**
-	 * @brief Returns the name of field \c minFilter.
-	 *
-	 * @return the name of field \c minFilter.
+	 * @brief Type definition of the value contained by field named \c maxAnisotropy.
 	 */
-	static const std::string getFMinFilter( void );
+	typedef float MaxAnisotropyValueType;
 
 	/**
-	 * @brief Returns the name of field \c internalFormat.
-	 *
-	 * @return the name of field \c internalFormat.
+	 * @brief The default value of field named \c maxAnisotropy.
 	 */
-	static const std::string getFInternalFormat( void );
+	static const MaxAnisotropyValueType DEFAULT_MAXANISOTROPY;
+
+	/**
+	 * @brief Type definition of the field named \c maxAnisotropy
+	 */
+	typedef vgd::field::TOptionalField< MaxAnisotropyValueType > FMaxAnisotropyType;
+
+
+	/**
+	 * @brief Gets the value of field named \c maxAnisotropy.
+	 */
+	const bool getMaxAnisotropy( MaxAnisotropyValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c maxAnisotropy.
+ 	 */
+	void setMaxAnisotropy( const MaxAnisotropyValueType& value );
+
+	/**
+	 * @brief Erases the field named \c maxAnisotropy.
+	 */
+	void eraseMaxAnisotropy();
+
+	/**
+	 * @brief Tests if the value of field named \c maxAnisotropy has been initialized.
+	 */
+	const bool hasMaxAnisotropy() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field vertexFunction
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c vertexFunction.
+	 */
+	typedef std::string VertexFunctionValueType;
+
+	/**
+	 * @brief The default value of field named \c vertexFunction.
+	 */
+	static const VertexFunctionValueType DEFAULT_VERTEXFUNCTION;
+
+	/**
+	 * @brief Type definition of the field named \c vertexFunction
+	 */
+	typedef vgd::field::TOptionalField< VertexFunctionValueType > FVertexFunctionType;
+
+
+	/**
+	 * @brief Gets the value of field named \c vertexFunction.
+	 */
+	const bool getVertexFunction( VertexFunctionValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c vertexFunction.
+ 	 */
+	void setVertexFunction( const VertexFunctionValueType& value );
+
+	/**
+	 * @brief Erases the field named \c vertexFunction.
+	 */
+	void eraseVertexFunction();
+
+	/**
+	 * @brief Tests if the value of field named \c vertexFunction has been initialized.
+	 */
+	const bool hasVertexFunction() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field fragmentFunction
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c fragmentFunction.
+	 */
+	typedef std::string FragmentFunctionValueType;
+
+	/**
+	 * @brief The default value of field named \c fragmentFunction.
+	 */
+	static const FragmentFunctionValueType DEFAULT_FRAGMENTFUNCTION;
+
+	/**
+	 * @brief Type definition of the field named \c fragmentFunction
+	 */
+	typedef vgd::field::TOptionalField< FragmentFunctionValueType > FFragmentFunctionType;
+
+
+	/**
+	 * @brief Gets the value of field named \c fragmentFunction.
+	 */
+	const bool getFragmentFunction( FragmentFunctionValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c fragmentFunction.
+ 	 */
+	void setFragmentFunction( const FragmentFunctionValueType& value );
+
+	/**
+	 * @brief Erases the field named \c fragmentFunction.
+	 */
+	void eraseFragmentFunction();
+
+	/**
+	 * @brief Tests if the value of field named \c fragmentFunction has been initialized.
+	 */
+	const bool hasFragmentFunction() const;
+	//@}
+
+
+
+	/**
+	 * @name Field name accessors
+	 */
+	//@{
 
 	/**
 	 * @brief Returns the name of field \c usage.
@@ -995,11 +925,81 @@ struct VGD_API Texture : public vgd::node::MultiAttribute
 	static const std::string getFUsage( void );
 
 	/**
+	 * @brief Returns the name of field \c internalFormat.
+	 *
+	 * @return the name of field \c internalFormat.
+	 */
+	static const std::string getFInternalFormat( void );
+
+	/**
+	 * @brief Returns the name of field \c image.
+	 *
+	 * @return the name of field \c image.
+	 */
+	static const std::string getFImage( void );
+
+	/**
+	 * @brief Returns the name of field \c wrapS.
+	 *
+	 * @return the name of field \c wrapS.
+	 */
+	static const std::string getFWrapS( void );
+
+	/**
+	 * @brief Returns the name of field \c wrapT.
+	 *
+	 * @return the name of field \c wrapT.
+	 */
+	static const std::string getFWrapT( void );
+
+	/**
+	 * @brief Returns the name of field \c wrapR.
+	 *
+	 * @return the name of field \c wrapR.
+	 */
+	static const std::string getFWrapR( void );
+
+	/**
+	 * @brief Returns the name of field \c minFilter.
+	 *
+	 * @return the name of field \c minFilter.
+	 */
+	static const std::string getFMinFilter( void );
+
+	/**
 	 * @brief Returns the name of field \c magFilter.
 	 *
 	 * @return the name of field \c magFilter.
 	 */
 	static const std::string getFMagFilter( void );
+
+	/**
+	 * @brief Returns the name of field \c mipmap.
+	 *
+	 * @return the name of field \c mipmap.
+	 */
+	static const std::string getFMipmap( void );
+
+	/**
+	 * @brief Returns the name of field \c maxAnisotropy.
+	 *
+	 * @return the name of field \c maxAnisotropy.
+	 */
+	static const std::string getFMaxAnisotropy( void );
+
+	/**
+	 * @brief Returns the name of field \c vertexFunction.
+	 *
+	 * @return the name of field \c vertexFunction.
+	 */
+	static const std::string getFVertexFunction( void );
+
+	/**
+	 * @brief Returns the name of field \c fragmentFunction.
+	 *
+	 * @return the name of field \c fragmentFunction.
+	 */
+	static const std::string getFFragmentFunction( void );
 
 	//@}
 

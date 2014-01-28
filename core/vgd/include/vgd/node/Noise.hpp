@@ -29,23 +29,23 @@ namespace node
  * Most digital cameras acquired images with noise. This built-in post-processing effect simulates dominant source of noise, i.e. the photon noise. 
  *
  * New fields defined by this node :
- * - SFBool \c channelsSeparated = (false)<br>
- *   Sets to true to use a different random value for each channel, false to use the same random value.<br>
+ * - SFEnum \c noiseModel = (PHOTON)<br>
+ *   Sets the noise model.<br>
  *<br>
  * - SFVec4f \c factors = vgm::Vec4f(0.025f, 0.025f, 4.f, 1.f)<br>
  *   Sets the parameters of the noise function. color = (random0 * constantFactor) + color * ( vec4(1) + (random1 * modulateFactor * pow(1-luminance), powFactor)) ). First parameter is the constantFactor. Second parameter is the modulateFactor. Third parameter is the powFactor. Fourth parameter is used to raise random value(s) to the given power to modify the random function.<br>
+ *<br>
+ * - SFBool \c channelsSeparated = (false)<br>
+ *   Sets to true to use a different random value for each channel, false to use the same random value.<br>
+ *<br>
+ * - SFVec2f \c randomTextureScaleFactors = vgm::Vec2f(1.f, 1.f)<br>
+ *   The random texture is the 2d image containing random values used to compute noise (only if useTextureLessRandom is false). The width of the random texture is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component). The size of noise pixels can be modified using this field.<br>
  *<br>
  * - SFBool \c useTextureLessRandom = (false)<br>
  *   Sets to true to generate random values without using a texture, false to use a texture.<br>
  *<br>
  * - OFFloat \c [frequency] = (25)<br>
  *   If not defined, noise effect is applied on each new frame, otherwise noise effect is applied at the given frequency in Hz. But, if the rendering is not performed at a frequency equal of greater than the given one, the real frequency could be less.<br>
- *<br>
- * - SFVec2f \c randomTextureScaleFactors = vgm::Vec2f(1.f, 1.f)<br>
- *   The random texture is the 2d image containing random values used to compute noise (only if useTextureLessRandom is false). The width of the random texture is computed using the width of the drawing surface area scaled by the first component of size field (same for height and second component). The size of noise pixels can be modified using this field.<br>
- *<br>
- * - SFEnum \c noiseModel = (PHOTON)<br>
- *   Sets the noise model.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -88,35 +88,76 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field channelsSeparated
+	 * @name Accessors to field noiseModel
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c channelsSeparated.
+	 * @brief Definition of symbolic values
 	 */
-	typedef bool ChannelsSeparatedValueType;
+	enum  
+	{
+		PHOTON = 335,	///< Photon noise simulation
+		NO = 334,	///< No noise simulation
+		DEFAULT_NOISEMODEL = PHOTON	///< Photon noise simulation
+	};
 
 	/**
-	 * @brief The default value of field named \c channelsSeparated.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
-	static const ChannelsSeparatedValueType DEFAULT_CHANNELSSEPARATED;
+	struct NoiseModelValueType : public vgd::field::Enum
+	{
+		NoiseModelValueType()
+		{}
+
+		NoiseModelValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		NoiseModelValueType( const NoiseModelValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		NoiseModelValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 334 );
+			retVal.push_back( 335 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "NO" );
+			retVal.push_back( "PHOTON" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Type definition of the field named \c channelsSeparated
+	 * @brief Type definition of the field named \c noiseModel
 	 */
-	typedef vgd::field::TSingleField< ChannelsSeparatedValueType > FChannelsSeparatedType;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FNoiseModelType;
 
 
 	/**
-	 * @brief Gets the value of field named \c channelsSeparated.
+	 * @brief Gets the value of field named \c noiseModel.
 	 */
-	const ChannelsSeparatedValueType getChannelsSeparated() const;
+	const NoiseModelValueType getNoiseModel() const;
 
 	/**
-	 * @brief Sets the value of field named \c channelsSeparated.
+	 * @brief Sets the value of field named \c noiseModel.
 	 */
-	void setChannelsSeparated( const ChannelsSeparatedValueType value );
+	void setNoiseModel( const NoiseModelValueType value );
 
 	//@}
 
@@ -152,6 +193,76 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	 * @brief Sets the value of field named \c factors.
 	 */
 	void setFactors( const FactorsValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field channelsSeparated
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c channelsSeparated.
+	 */
+	typedef bool ChannelsSeparatedValueType;
+
+	/**
+	 * @brief The default value of field named \c channelsSeparated.
+	 */
+	static const ChannelsSeparatedValueType DEFAULT_CHANNELSSEPARATED;
+
+	/**
+	 * @brief Type definition of the field named \c channelsSeparated
+	 */
+	typedef vgd::field::TSingleField< ChannelsSeparatedValueType > FChannelsSeparatedType;
+
+
+	/**
+	 * @brief Gets the value of field named \c channelsSeparated.
+	 */
+	const ChannelsSeparatedValueType getChannelsSeparated() const;
+
+	/**
+	 * @brief Sets the value of field named \c channelsSeparated.
+	 */
+	void setChannelsSeparated( const ChannelsSeparatedValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field randomTextureScaleFactors
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c randomTextureScaleFactors.
+	 */
+	typedef vgm::Vec2f RandomTextureScaleFactorsValueType;
+
+	/**
+	 * @brief The default value of field named \c randomTextureScaleFactors.
+	 */
+	static const RandomTextureScaleFactorsValueType DEFAULT_RANDOMTEXTURESCALEFACTORS;
+
+	/**
+	 * @brief Type definition of the field named \c randomTextureScaleFactors
+	 */
+	typedef vgd::field::TSingleField< RandomTextureScaleFactorsValueType > FRandomTextureScaleFactorsType;
+
+
+	/**
+	 * @brief Gets the value of field named \c randomTextureScaleFactors.
+	 */
+	const RandomTextureScaleFactorsValueType getRandomTextureScaleFactors() const;
+
+	/**
+	 * @brief Sets the value of field named \c randomTextureScaleFactors.
+	 */
+	void setRandomTextureScaleFactors( const RandomTextureScaleFactorsValueType value );
 
 	//@}
 
@@ -237,120 +348,23 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field randomTextureScaleFactors
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c randomTextureScaleFactors.
-	 */
-	typedef vgm::Vec2f RandomTextureScaleFactorsValueType;
-
-	/**
-	 * @brief The default value of field named \c randomTextureScaleFactors.
-	 */
-	static const RandomTextureScaleFactorsValueType DEFAULT_RANDOMTEXTURESCALEFACTORS;
-
-	/**
-	 * @brief Type definition of the field named \c randomTextureScaleFactors
-	 */
-	typedef vgd::field::TSingleField< RandomTextureScaleFactorsValueType > FRandomTextureScaleFactorsType;
-
-
-	/**
-	 * @brief Gets the value of field named \c randomTextureScaleFactors.
-	 */
-	const RandomTextureScaleFactorsValueType getRandomTextureScaleFactors() const;
-
-	/**
-	 * @brief Sets the value of field named \c randomTextureScaleFactors.
-	 */
-	void setRandomTextureScaleFactors( const RandomTextureScaleFactorsValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field noiseModel
-	 */
-	//@{
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum  
-	{
-		PHOTON = 335,	///< Photon noise simulation
-		NO = 334,	///< No noise simulation
-		DEFAULT_NOISEMODEL = PHOTON	///< Photon noise simulation
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct NoiseModelValueType : public vgd::field::Enum
-	{
-		NoiseModelValueType()
-		{}
-
-		NoiseModelValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		NoiseModelValueType( const NoiseModelValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		NoiseModelValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 334 );
-			retVal.push_back( 335 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "NO" );
-			retVal.push_back( "PHOTON" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c noiseModel
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FNoiseModelType;
-
-
-	/**
-	 * @brief Gets the value of field named \c noiseModel.
-	 */
-	const NoiseModelValueType getNoiseModel() const;
-
-	/**
-	 * @brief Sets the value of field named \c noiseModel.
-	 */
-	void setNoiseModel( const NoiseModelValueType value );
-
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c noiseModel.
+	 *
+	 * @return the name of field \c noiseModel.
+	 */
+	static const std::string getFNoiseModel( void );
+
+	/**
+	 * @brief Returns the name of field \c factors.
+	 *
+	 * @return the name of field \c factors.
+	 */
+	static const std::string getFFactors( void );
 
 	/**
 	 * @brief Returns the name of field \c channelsSeparated.
@@ -360,11 +374,11 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	static const std::string getFChannelsSeparated( void );
 
 	/**
-	 * @brief Returns the name of field \c factors.
+	 * @brief Returns the name of field \c randomTextureScaleFactors.
 	 *
-	 * @return the name of field \c factors.
+	 * @return the name of field \c randomTextureScaleFactors.
 	 */
-	static const std::string getFFactors( void );
+	static const std::string getFRandomTextureScaleFactors( void );
 
 	/**
 	 * @brief Returns the name of field \c useTextureLessRandom.
@@ -379,20 +393,6 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	 * @return the name of field \c frequency.
 	 */
 	static const std::string getFFrequency( void );
-
-	/**
-	 * @brief Returns the name of field \c randomTextureScaleFactors.
-	 *
-	 * @return the name of field \c randomTextureScaleFactors.
-	 */
-	static const std::string getFRandomTextureScaleFactors( void );
-
-	/**
-	 * @brief Returns the name of field \c noiseModel.
-	 *
-	 * @return the name of field \c noiseModel.
-	 */
-	static const std::string getFNoiseModel( void );
 
 	//@}
 

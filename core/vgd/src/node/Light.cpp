@@ -21,11 +21,11 @@ Light::Light( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FSpecularType(getFSpecular()) );
+	addField( new FCastShadowType(getFCastShadow()) );
 	addField( new FOnType(getFOn()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FDiffuseType(getFDiffuse()) );
-	addField( new FCastShadowType(getFCastShadow()) );
+	addField( new FSpecularType(getFSpecular()) );
 
 	// Sets link(s)
 
@@ -45,43 +45,30 @@ void Light::setToDefaults( void )
 void Light::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
-	setSpecular( vgm::Vec4f(1.f, 1.f, 1.f, 0.f) );
 	setOn( (false) );
 	setAmbient( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
 	setDiffuse( vgm::Vec4f(1.f, 1.f, 1.f, 0.f) );
+	setSpecular( vgm::Vec4f(1.f, 1.f, 1.f, 0.f) );
 }
 
 
 
-// Specular
+// CastShadow
 
-const Light::SpecularValueType Light::DEFAULT_SPECULAR = vgm::Vec4f(1.f, 1.f, 1.f, 0.f);
+const Light::CastShadowValueType Light::DEFAULT_CASTSHADOW = (false);
 
 
 
-const bool Light::getSpecular( SpecularValueType& value ) const
+const Light::CastShadowValueType Light::getCastShadow() const
 {
-	return getFieldRO<FSpecularType>(getFSpecular())->getValue( value );
+	return getFieldRO<FCastShadowType>(getFCastShadow())->getValue();
 }
 
 
 
-void Light::setSpecular( const SpecularValueType& value )
+void Light::setCastShadow( const CastShadowValueType value )
 {
-	getFieldRW<FSpecularType>(getFSpecular())->setValue( value );
-}
-
-
-
-void Light::eraseSpecular()
-{
-	getFieldRW<FSpecularType>(getFSpecular())->eraseValue();
-}
-
-
-const bool Light::hasSpecular() const
-{
-	return getFieldRO<FSpecularType>(getFSpecular())->hasValue();
+	getFieldRW<FCastShadowType>(getFCastShadow())->setValue( value );
 }
 
 
@@ -185,30 +172,43 @@ const bool Light::hasDiffuse() const
 
 
 
-// CastShadow
+// Specular
 
-const Light::CastShadowValueType Light::DEFAULT_CASTSHADOW = (false);
+const Light::SpecularValueType Light::DEFAULT_SPECULAR = vgm::Vec4f(1.f, 1.f, 1.f, 0.f);
 
 
 
-const Light::CastShadowValueType Light::getCastShadow() const
+const bool Light::getSpecular( SpecularValueType& value ) const
 {
-	return getFieldRO<FCastShadowType>(getFCastShadow())->getValue();
+	return getFieldRO<FSpecularType>(getFSpecular())->getValue( value );
 }
 
 
 
-void Light::setCastShadow( const CastShadowValueType value )
+void Light::setSpecular( const SpecularValueType& value )
 {
-	getFieldRW<FCastShadowType>(getFCastShadow())->setValue( value );
+	getFieldRW<FSpecularType>(getFSpecular())->setValue( value );
+}
+
+
+
+void Light::eraseSpecular()
+{
+	getFieldRW<FSpecularType>(getFSpecular())->eraseValue();
+}
+
+
+const bool Light::hasSpecular() const
+{
+	return getFieldRO<FSpecularType>(getFSpecular())->hasValue();
 }
 
 
 
 // Field name accessor(s)
-const std::string Light::getFSpecular( void )
+const std::string Light::getFCastShadow( void )
 {
-	return "f_specular";
+	return "f_castShadow";
 }
 
 
@@ -234,9 +234,9 @@ const std::string Light::getFDiffuse( void )
 
 
 
-const std::string Light::getFCastShadow( void )
+const std::string Light::getFSpecular( void )
 {
-	return "f_castShadow";
+	return "f_specular";
 }
 
 

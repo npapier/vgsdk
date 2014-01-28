@@ -63,13 +63,13 @@ DepthOfField::DepthOfField( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FFocusToFarType(getFFocusToFar()) );
-	addField( new FFarMaximumBlurrinessType(getFFarMaximumBlurriness()) );
-	addField( new FFocusType(getFFocus()) );
-	addField( new FSamplingType(getFSampling()) );
-	addField( new FFocusToNearType(getFFocusToNear()) );
-	addField( new FNearMaximumBlurrinessType(getFNearMaximumBlurriness()) );
 	addField( new FCameraModelType(getFCameraModel()) );
+	addField( new FFocusType(getFFocus()) );
+	addField( new FFocusToFarType(getFFocusToFar()) );
+	addField( new FFocusToNearType(getFFocusToNear()) );
+	addField( new FFarMaximumBlurrinessType(getFFarMaximumBlurriness()) );
+	addField( new FNearMaximumBlurrinessType(getFNearMaximumBlurriness()) );
+	addField( new FSamplingType(getFSampling()) );
 
 	// Sets link(s)
 
@@ -81,13 +81,13 @@ DepthOfField::DepthOfField( const std::string nodeName ) :
 void DepthOfField::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setFocusToFar( (1.f) );
-	setFarMaximumBlurriness( (0.5f) );
-	setFocus( (0.f) );
-	setSampling( (8) );
-	setFocusToNear( (1.f) );
-	setNearMaximumBlurriness( (0.5f) );
 	setCameraModel( (THIN_LENS) );
+	setFocus( (0.f) );
+	setFocusToFar( (1.f) );
+	setFocusToNear( (1.f) );
+	setFarMaximumBlurriness( (0.5f) );
+	setNearMaximumBlurriness( (0.5f) );
+	setSampling( (8) );
 }
 
 
@@ -99,42 +99,18 @@ void DepthOfField::setOptionalsToDefaults()
 
 
 
-// FocusToFar
+// CameraModel
 
-const DepthOfField::FocusToFarValueType DepthOfField::DEFAULT_FOCUSTOFAR = (1.f);
-
-
-
-const DepthOfField::FocusToFarValueType DepthOfField::getFocusToFar() const
+const DepthOfField::CameraModelValueType DepthOfField::getCameraModel() const
 {
-	return getFieldRO<FFocusToFarType>(getFFocusToFar())->getValue();
+	return getFieldRO<FCameraModelType>(getFCameraModel())->getValue();
 }
 
 
 
-void DepthOfField::setFocusToFar( const FocusToFarValueType value )
+void DepthOfField::setCameraModel( const CameraModelValueType value )
 {
-	getFieldRW<FFocusToFarType>(getFFocusToFar())->setValue( value );
-}
-
-
-
-// FarMaximumBlurriness
-
-const DepthOfField::FarMaximumBlurrinessValueType DepthOfField::DEFAULT_FARMAXIMUMBLURRINESS = (0.5f);
-
-
-
-const DepthOfField::FarMaximumBlurrinessValueType DepthOfField::getFarMaximumBlurriness() const
-{
-	return getFieldRO<FFarMaximumBlurrinessType>(getFFarMaximumBlurriness())->getValue();
-}
-
-
-
-void DepthOfField::setFarMaximumBlurriness( const FarMaximumBlurrinessValueType value )
-{
-	getFieldRW<FFarMaximumBlurrinessType>(getFFarMaximumBlurriness())->setValue( value );
+	getFieldRW<FCameraModelType>(getFCameraModel())->setValue( value );
 }
 
 
@@ -159,22 +135,22 @@ void DepthOfField::setFocus( const FocusValueType value )
 
 
 
-// Sampling
+// FocusToFar
 
-const DepthOfField::SamplingValueType DepthOfField::DEFAULT_SAMPLING = (8);
+const DepthOfField::FocusToFarValueType DepthOfField::DEFAULT_FOCUSTOFAR = (1.f);
 
 
 
-const DepthOfField::SamplingValueType DepthOfField::getSampling() const
+const DepthOfField::FocusToFarValueType DepthOfField::getFocusToFar() const
 {
-	return getFieldRO<FSamplingType>(getFSampling())->getValue();
+	return getFieldRO<FFocusToFarType>(getFFocusToFar())->getValue();
 }
 
 
 
-void DepthOfField::setSampling( const SamplingValueType value )
+void DepthOfField::setFocusToFar( const FocusToFarValueType value )
 {
-	getFieldRW<FSamplingType>(getFSampling())->setValue( value );
+	getFieldRW<FFocusToFarType>(getFFocusToFar())->setValue( value );
 }
 
 
@@ -199,6 +175,26 @@ void DepthOfField::setFocusToNear( const FocusToNearValueType value )
 
 
 
+// FarMaximumBlurriness
+
+const DepthOfField::FarMaximumBlurrinessValueType DepthOfField::DEFAULT_FARMAXIMUMBLURRINESS = (0.5f);
+
+
+
+const DepthOfField::FarMaximumBlurrinessValueType DepthOfField::getFarMaximumBlurriness() const
+{
+	return getFieldRO<FFarMaximumBlurrinessType>(getFFarMaximumBlurriness())->getValue();
+}
+
+
+
+void DepthOfField::setFarMaximumBlurriness( const FarMaximumBlurrinessValueType value )
+{
+	getFieldRW<FFarMaximumBlurrinessType>(getFFarMaximumBlurriness())->setValue( value );
+}
+
+
+
 // NearMaximumBlurriness
 
 const DepthOfField::NearMaximumBlurrinessValueType DepthOfField::DEFAULT_NEARMAXIMUMBLURRINESS = (0.5f);
@@ -219,33 +215,30 @@ void DepthOfField::setNearMaximumBlurriness( const NearMaximumBlurrinessValueTyp
 
 
 
-// CameraModel
+// Sampling
 
-const DepthOfField::CameraModelValueType DepthOfField::getCameraModel() const
+const DepthOfField::SamplingValueType DepthOfField::DEFAULT_SAMPLING = (8);
+
+
+
+const DepthOfField::SamplingValueType DepthOfField::getSampling() const
 {
-	return getFieldRO<FCameraModelType>(getFCameraModel())->getValue();
+	return getFieldRO<FSamplingType>(getFSampling())->getValue();
 }
 
 
 
-void DepthOfField::setCameraModel( const CameraModelValueType value )
+void DepthOfField::setSampling( const SamplingValueType value )
 {
-	getFieldRW<FCameraModelType>(getFCameraModel())->setValue( value );
+	getFieldRW<FSamplingType>(getFSampling())->setValue( value );
 }
 
 
 
 // Field name accessor(s)
-const std::string DepthOfField::getFFocusToFar( void )
+const std::string DepthOfField::getFCameraModel( void )
 {
-	return "f_focusToFar";
-}
-
-
-
-const std::string DepthOfField::getFFarMaximumBlurriness( void )
-{
-	return "f_farMaximumBlurriness";
+	return "f_cameraModel";
 }
 
 
@@ -257,9 +250,9 @@ const std::string DepthOfField::getFFocus( void )
 
 
 
-const std::string DepthOfField::getFSampling( void )
+const std::string DepthOfField::getFFocusToFar( void )
 {
-	return "f_sampling";
+	return "f_focusToFar";
 }
 
 
@@ -271,6 +264,13 @@ const std::string DepthOfField::getFFocusToNear( void )
 
 
 
+const std::string DepthOfField::getFFarMaximumBlurriness( void )
+{
+	return "f_farMaximumBlurriness";
+}
+
+
+
 const std::string DepthOfField::getFNearMaximumBlurriness( void )
 {
 	return "f_nearMaximumBlurriness";
@@ -278,9 +278,9 @@ const std::string DepthOfField::getFNearMaximumBlurriness( void )
 
 
 
-const std::string DepthOfField::getFCameraModel( void )
+const std::string DepthOfField::getFSampling( void )
 {
-	return "f_cameraModel";
+	return "f_sampling";
 }
 
 

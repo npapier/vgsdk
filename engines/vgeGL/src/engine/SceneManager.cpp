@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2011, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -60,54 +60,37 @@ void SceneManager::initialize()
 
 void SceneManager::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
-//	vgLogDebug( "Begin SceneManager::paint:" );
-	vgd::basic::Time paintTime;
-	
 	// Calls paint() provided by vge
-	vgd::basic::Time time;
 	::vge::engine::SceneManager::paint( size, bUpdateBoundingBox );
-//	vgLogDebug( "::vge::engine::SceneManager::paint(): %i", time.getElapsedTime().ms() );
-//vgLogDebug( "pt1: %i", paintTime.getElapsedTime().ms() );
+
 	// Updates node collector if not done by vge
 	if ( bUpdateBoundingBox == false )
 	{
-		vgd::basic::Time time;
 		updateNodeCollector();
-//		vgLogDebug( "updateNodeCollector(): %i", time.getElapsedTime().ms() );
 	}
 
-	// Renders scene graph
-	time.restart();
+	// RENDERING
 	vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
+
+	//	Underlay
 	vgd::Shp< vgeGL::itf::IUnderlay > iunderlay = vgd::dynamic_pointer_cast< vgeGL::itf::IUnderlay >( paintTechnique );
 	if ( iunderlay )
 	{
-		// Transferts underlay to the rendering technique
+		// Underlay rendering is supported by the current paint technique
+		// So assigns the canvas underlay to the rendering technique
 		iunderlay->setUnderlay( getUnderlay() );
 	}
-//	vgLogDebug( "iunderlay: %i", time.getElapsedTime().ms() );
-//vgLogDebug( "pt2: %i", paintTime.getElapsedTime().ms() );
 
-	//time.restart();
-	//getGLEngine()->resetEval();
-//	vgLogDebug( "getGLEngine()->resetEval(): %i", time.getElapsedTime().ms() );
-//vgLogDebug( "pt3: %i", paintTime.getElapsedTime().ms() );
-
-	time.restart();
+	// Rendering of all OffscreenRendering nodes followed by the main rendering of the canvas scene graph (getRoot())
 	paintTechnique->setParameters( getGLEngine().get(), getNodeCollector().getTraverseElements(), this );
 	paintTechnique->apply( getGLEngine().get(), getNodeCollector().getTraverseElements() );
-//	vgLogDebug( "paintTechnique->apply(): %i", time.getElapsedTime().ms() );
-//vgLogDebug( "pt4: %i", paintTime.getElapsedTime().ms() );
-	// Renders overlay
+
+	//	Overlay
 	if ( getOverlay() )
 	{
-		time.restart();
 		vgd::Shp< vge::service::Service > paint = vge::service::Painter::create();
 		getGLEngine()->evaluate( paint, getOverlay().get(), true, false );
-//		vgLogDebug( "getGLEngine()->evaluate() for overlay: %i", time.getElapsedTime().ms() );
 	}
-//vgLogDebug( "pt5: %i", paintTime.getElapsedTime().ms() );
-//	vgLogDebug( "End SceneManager::paint: %i", paintTime.getElapsedTime().ms() );
 }
 
 

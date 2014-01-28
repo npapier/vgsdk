@@ -709,7 +709,7 @@ const float BasicViewer::compute( const CameraDistanceHints cameraDistance )
 
 		default:
 			retVal = 0.f;
-			assert( false && "Unexpected CameraDistanceHints." );
+			vgAssertN( false, "Unexpected CameraDistanceHints." );
 	}
 
 	return retVal;

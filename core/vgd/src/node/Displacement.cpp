@@ -63,14 +63,14 @@ Displacement::Displacement( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FDisplacementVSType(getFDisplacementVS()) );
-	addField( new FParameter4f1Type(getFParameter4f1()) );
-	addField( new FParameter4f0Type(getFParameter4f0()) );
-	addField( new FDisplacementFunctionVSType(getFDisplacementFunctionVS()) );
-	addField( new FDeclarationsTESType(getFDeclarationsTES()) );
 	addField( new FDeclarationsVSType(getFDeclarationsVS()) );
-	addField( new FDisplacementFunctionTESType(getFDisplacementFunctionTES()) );
+	addField( new FDisplacementVSType(getFDisplacementVS()) );
+	addField( new FDeclarationsTESType(getFDeclarationsTES()) );
 	addField( new FDisplacementTESType(getFDisplacementTES()) );
+	addField( new FParameter4f0Type(getFParameter4f0()) );
+	addField( new FParameter4f1Type(getFParameter4f1()) );
+	addField( new FDisplacementFunctionVSType(getFDisplacementFunctionVS()) );
+	addField( new FDisplacementFunctionTESType(getFDisplacementFunctionTES()) );
 
 	// Sets link(s)
 
@@ -82,9 +82,9 @@ Displacement::Displacement( const std::string nodeName ) :
 void Displacement::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
+	setDeclarationsVS( std::string() );
 	setDisplacementVS( std::string() );
 	setDeclarationsTES( std::string() );
-	setDeclarationsVS( std::string() );
 	setDisplacementTES( std::string() );
 }
 
@@ -93,10 +93,30 @@ void Displacement::setToDefaults( void )
 void Displacement::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setParameter4f1( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
 	setParameter4f0( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
+	setParameter4f1( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
 	setDisplacementFunctionVS( (NONE) );
 	setDisplacementFunctionTES( (NONE) );
+}
+
+
+
+// DeclarationsVS
+
+const Displacement::DeclarationsVSValueType Displacement::DEFAULT_DECLARATIONSVS = std::string();
+
+
+
+const Displacement::DeclarationsVSValueType Displacement::getDeclarationsVS() const
+{
+	return getFieldRO<FDeclarationsVSType>(getFDeclarationsVS())->getValue();
+}
+
+
+
+void Displacement::setDeclarationsVS( const DeclarationsVSValueType value )
+{
+	getFieldRW<FDeclarationsVSType>(getFDeclarationsVS())->setValue( value );
 }
 
 
@@ -121,35 +141,42 @@ void Displacement::setDisplacementVS( const DisplacementVSValueType value )
 
 
 
-// Parameter4f1
+// DeclarationsTES
 
-const Displacement::Parameter4f1ValueType Displacement::DEFAULT_PARAMETER4F1 = vgm::Vec4f(0.f, 0.f, 0.f, 0.f);
+const Displacement::DeclarationsTESValueType Displacement::DEFAULT_DECLARATIONSTES = std::string();
 
 
 
-const bool Displacement::getParameter4f1( Parameter4f1ValueType& value ) const
+const Displacement::DeclarationsTESValueType Displacement::getDeclarationsTES() const
 {
-	return getFieldRO<FParameter4f1Type>(getFParameter4f1())->getValue( value );
+	return getFieldRO<FDeclarationsTESType>(getFDeclarationsTES())->getValue();
 }
 
 
 
-void Displacement::setParameter4f1( const Parameter4f1ValueType& value )
+void Displacement::setDeclarationsTES( const DeclarationsTESValueType value )
 {
-	getFieldRW<FParameter4f1Type>(getFParameter4f1())->setValue( value );
+	getFieldRW<FDeclarationsTESType>(getFDeclarationsTES())->setValue( value );
 }
 
 
 
-void Displacement::eraseParameter4f1()
+// DisplacementTES
+
+const Displacement::DisplacementTESValueType Displacement::DEFAULT_DISPLACEMENTTES = std::string();
+
+
+
+const Displacement::DisplacementTESValueType Displacement::getDisplacementTES() const
 {
-	getFieldRW<FParameter4f1Type>(getFParameter4f1())->eraseValue();
+	return getFieldRO<FDisplacementTESType>(getFDisplacementTES())->getValue();
 }
 
 
-const bool Displacement::hasParameter4f1() const
+
+void Displacement::setDisplacementTES( const DisplacementTESValueType value )
 {
-	return getFieldRO<FParameter4f1Type>(getFParameter4f1())->hasValue();
+	getFieldRW<FDisplacementTESType>(getFDisplacementTES())->setValue( value );
 }
 
 
@@ -187,6 +214,39 @@ const bool Displacement::hasParameter4f0() const
 
 
 
+// Parameter4f1
+
+const Displacement::Parameter4f1ValueType Displacement::DEFAULT_PARAMETER4F1 = vgm::Vec4f(0.f, 0.f, 0.f, 0.f);
+
+
+
+const bool Displacement::getParameter4f1( Parameter4f1ValueType& value ) const
+{
+	return getFieldRO<FParameter4f1Type>(getFParameter4f1())->getValue( value );
+}
+
+
+
+void Displacement::setParameter4f1( const Parameter4f1ValueType& value )
+{
+	getFieldRW<FParameter4f1Type>(getFParameter4f1())->setValue( value );
+}
+
+
+
+void Displacement::eraseParameter4f1()
+{
+	getFieldRW<FParameter4f1Type>(getFParameter4f1())->eraseValue();
+}
+
+
+const bool Displacement::hasParameter4f1() const
+{
+	return getFieldRO<FParameter4f1Type>(getFParameter4f1())->hasValue();
+}
+
+
+
 // DisplacementFunctionVS
 
 const bool Displacement::getDisplacementFunctionVS( DisplacementFunctionVSValueType& value ) const
@@ -212,46 +272,6 @@ void Displacement::eraseDisplacementFunctionVS()
 const bool Displacement::hasDisplacementFunctionVS() const
 {
 	return getFieldRO<FDisplacementFunctionVSType>(getFDisplacementFunctionVS())->hasValue();
-}
-
-
-
-// DeclarationsTES
-
-const Displacement::DeclarationsTESValueType Displacement::DEFAULT_DECLARATIONSTES = std::string();
-
-
-
-const Displacement::DeclarationsTESValueType Displacement::getDeclarationsTES() const
-{
-	return getFieldRO<FDeclarationsTESType>(getFDeclarationsTES())->getValue();
-}
-
-
-
-void Displacement::setDeclarationsTES( const DeclarationsTESValueType value )
-{
-	getFieldRW<FDeclarationsTESType>(getFDeclarationsTES())->setValue( value );
-}
-
-
-
-// DeclarationsVS
-
-const Displacement::DeclarationsVSValueType Displacement::DEFAULT_DECLARATIONSVS = std::string();
-
-
-
-const Displacement::DeclarationsVSValueType Displacement::getDeclarationsVS() const
-{
-	return getFieldRO<FDeclarationsVSType>(getFDeclarationsVS())->getValue();
-}
-
-
-
-void Displacement::setDeclarationsVS( const DeclarationsVSValueType value )
-{
-	getFieldRW<FDeclarationsVSType>(getFDeclarationsVS())->setValue( value );
 }
 
 
@@ -285,51 +305,17 @@ const bool Displacement::hasDisplacementFunctionTES() const
 
 
 
-// DisplacementTES
-
-const Displacement::DisplacementTESValueType Displacement::DEFAULT_DISPLACEMENTTES = std::string();
-
-
-
-const Displacement::DisplacementTESValueType Displacement::getDisplacementTES() const
-{
-	return getFieldRO<FDisplacementTESType>(getFDisplacementTES())->getValue();
-}
-
-
-
-void Displacement::setDisplacementTES( const DisplacementTESValueType value )
-{
-	getFieldRW<FDisplacementTESType>(getFDisplacementTES())->setValue( value );
-}
-
-
-
 // Field name accessor(s)
+const std::string Displacement::getFDeclarationsVS( void )
+{
+	return "f_declarationsVS";
+}
+
+
+
 const std::string Displacement::getFDisplacementVS( void )
 {
 	return "f_displacementVS";
-}
-
-
-
-const std::string Displacement::getFParameter4f1( void )
-{
-	return "f_parameter4f1";
-}
-
-
-
-const std::string Displacement::getFParameter4f0( void )
-{
-	return "f_parameter4f0";
-}
-
-
-
-const std::string Displacement::getFDisplacementFunctionVS( void )
-{
-	return "f_displacementFunctionVS";
 }
 
 
@@ -341,9 +327,30 @@ const std::string Displacement::getFDeclarationsTES( void )
 
 
 
-const std::string Displacement::getFDeclarationsVS( void )
+const std::string Displacement::getFDisplacementTES( void )
 {
-	return "f_declarationsVS";
+	return "f_displacementTES";
+}
+
+
+
+const std::string Displacement::getFParameter4f0( void )
+{
+	return "f_parameter4f0";
+}
+
+
+
+const std::string Displacement::getFParameter4f1( void )
+{
+	return "f_parameter4f1";
+}
+
+
+
+const std::string Displacement::getFDisplacementFunctionVS( void )
+{
+	return "f_displacementFunctionVS";
 }
 
 
@@ -351,13 +358,6 @@ const std::string Displacement::getFDeclarationsVS( void )
 const std::string Displacement::getFDisplacementFunctionTES( void )
 {
 	return "f_displacementFunctionTES";
-}
-
-
-
-const std::string Displacement::getFDisplacementTES( void )
-{
-	return "f_displacementTES";
 }
 
 

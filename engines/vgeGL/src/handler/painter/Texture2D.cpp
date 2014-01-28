@@ -46,8 +46,7 @@ void Texture2D::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::Texture2D* >(pNode) != 0 );
 	vgd::node::Texture2D *pCastedNode = static_cast< vgd::node::Texture2D* >(pNode);
 
-	vgeGL::rc::applyUsingSynchronize< vgd::node::Texture2D, vgeGL::handler::painter::Texture2D, vgeGL::rc::Texture2D >(
-		pGLEngine, pCastedNode, this );
+	vgeGL::rc::applyUsingSynchronize< vgeGL::rc::Texture2D >( pGLEngine, pCastedNode, this );
 }
 
 

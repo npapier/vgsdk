@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -254,6 +254,7 @@ const vgd::node::Texture::InternalFormatValueType convertToInternalFormatValueTy
 }
 
 
+// @todo bug if not in RGBA (numberOfComponents have to be 4)
 const std::string getCommandString( vgd::node::OutputBufferProperty * outputBufferProperty )
 {
 	std::string retVal;
@@ -293,7 +294,7 @@ const std::string getCommandString( vgd::node::OutputBufferProperty * outputBuff
 
 		default:
 			retVal = "color";
-			assert( false && "Unexpected value" );
+			vgAssertN( false, "Unexpected value" );
 	}
 	return retVal;
 }
@@ -352,6 +353,32 @@ void OutputBufferProperty::setToDefaults()
 
 
 
+const vgm::Vec2i OutputBufferProperty::computeTextureSize( vgeGL::engine::Engine * engine, vgd::node::OutputBufferProperty * node )
+{
+	using vgd::node::OutputBufferProperty;
+
+	vgm::Vec2f size( engine->getDrawingSurfaceSize() );
+
+	const OutputBufferProperty::SizeSemanticValueType	sizeSemantic	= node->getSizeSemantic();
+	const vgm::Vec2f									sizeRequested	= node->getSize();
+
+	if ( sizeSemantic == OutputBufferProperty::SCALE_FACTOR )
+	{
+		size[0] *= sizeRequested[0];
+		size[1] *= sizeRequested[1];
+	}
+	else
+	{
+		vgAssert( sizeSemantic == OutputBufferProperty::PIXEL_SIZE );
+		size = sizeRequested;
+	}
+
+	const vgm::Vec2i retVal( size );
+	return retVal;
+}
+
+
+
 void OutputBufferProperty::paint(
 	vgeGL::engine::Engine * engine,
 	OutputBufferPropertyStateContainer * outputBufferProperties,
@@ -371,7 +398,7 @@ void OutputBufferProperty::paint(
 			vgd::node::OutputBufferProperty * outputBufferProperty = outputBufferPropertyState->getNode();
 			if ( outputBufferProperty )
 			{
-				vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( engine, outputBufferProperty );
+				vgd::Shp< vgd::node::Texture2D > texture = createOrGetTexture2D( engine, outputBufferProperty );
 				backInserter = texture;
 				++backInserter;
 
@@ -395,76 +422,81 @@ void OutputBufferProperty::paint(
 
 
 
-vgd::Shp< vgd::node::Texture2D > OutputBufferProperty::createTexture2D( vgeGL::engine::Engine * engine, vgd::node::OutputBufferProperty * node )
+vgd::Shp< vgd::node::Texture2D > OutputBufferProperty::createOrGetTexture2D( vgeGL::engine::Engine * engine, vgd::node::OutputBufferProperty * node )
 {
 	using vgd::node::OutputBufferProperty;
 	using vgd::node::Texture;
+	using vgd::node::Texture2D;
 
-	//
+	// Creates/retrieves Texture node
+	vgd::Shp< Texture2D > texture;
+
 	const std::string nodeIndexStr = vgd::basic::toString( node->getMultiAttributeIndex() );
-	vgd::Shp< vgd::node::Texture2D > texture = vgd::node::Texture2D::create( "attachment" + nodeIndexStr );
+	const std::string nodeName = node->getName() + ".attachement" + nodeIndexStr;
 
-	// WRAP, FILTER
-// @todo sethDefault();
-	texture->setWrapS( Texture::CLAMP_TO_EDGE );
-	texture->setWrapT( Texture::CLAMP_TO_EDGE );
-	texture->setMinFilter( Texture::NEAREST );
-	texture->setMagFilter( Texture::NEAREST );
-	//texture->setFilter( Texture::MIN_FILTER, Texture::LINEAR );
-	//texture->setFilter( Texture::MAG_FILTER, Texture::LINEAR );
+	if ( node->hasTextureNode() )
+	{
+		node->getTextureNode( texture );
+		// Checks name of node
+		if ( texture->getName() != nodeName )	texture->setName( nodeName );
+	}
+	else
+	{
+		texture = Texture2D::create( nodeName );
+		node->setTextureNode( texture );
 
-	// IMAGE
+		// WRAP, FILTER
+		texture->setWrapS( Texture::CLAMP_TO_EDGE );
+		texture->setWrapT( Texture::CLAMP_TO_EDGE );
+		texture->setMinFilter( Texture::NEAREST );
+		texture->setMagFilter( Texture::NEAREST );
+	}
+
+	// NEW IMAGE
+	// @todo should work with ImageInfo(0, 0, 0, ....) see Texture handlers
+	using vgd::basic::IImage;
 	using vgd::basic::ImageInfo;
 
-// @todo should work with ImageInfo(0, 0, 0, ....) see Texture handlers
+	//		IMAGE WIDTH / IMAGE HEIGHT
+	const vgm::Vec2i size = computeTextureSize( engine, node );
+	// 		Creates image for texture
+	vgd::Shp< ImageInfo > newImage( new ImageInfo( size[0], size[1], 1 ) );
 
-	// IMAGE WIDTH / IMAGE HEIGHT
-	float width		= static_cast< float >( engine->getDrawingSurfaceSize()[0] );
-	float height	= static_cast< float >( engine->getDrawingSurfaceSize()[1] );
-
-	const OutputBufferProperty::SizeSemanticValueType	sizeSemantic	= node->getSizeSemantic();
-	const vgm::Vec2f									sizeRequested	= node->getSize();
-
-	if ( sizeSemantic == OutputBufferProperty::SCALE_FACTOR )
-	{
-		width	*= sizeRequested[0];
-		height	*= sizeRequested[1];
-	}
-	else
-	{
-		vgAssert( sizeSemantic == OutputBufferProperty::PIXEL_SIZE );
-		width	= sizeRequested[0];
-		height	= sizeRequested[1];
-	}
-
-	// Creates image for texture
-	vgd::Shp< ImageInfo > image( new ImageInfo( (uint)width, (uint)height, 1 ) );
-	texture->setImage( image );
-
-	// IMAGE FORMAT / IMAGE TYPE / TEXTURE INTERNAL FORMAT
+	//		IMAGE FORMAT / IMAGE TYPE / TEXTURE INTERNAL FORMAT
 	const OutputBufferProperty::FormatValueType	format	= node->getFormat();
+	newImage->format()	= convertToIImageFormat( format );
+
 	const OutputBufferProperty::TypeValueType	type	= node->getType();
+	newImage->type()	= convertToIImageType( type );
 
-	// IMAGE FORMAT
-	image->format()	= convertToIImageFormat( format );
-
-	// IMAGE TYPE
-	image->type()	= convertToIImageType( type );
-
-	// TEXTURE INTERNAL FORMAT
 	Texture::InternalFormatValueType internalFormat = convertToInternalFormatValueType( format, type );
-	texture->setInternalFormat( internalFormat );
 
-	// TEXTURE USAGE
-	if ( format != OutputBufferProperty::LUMINANCE_FOR_DEPTH )
+	// PREVIOUS IMAGE
+	vgd::Shp< IImage > image;
+	const bool hasImage = texture->getImage( image );
+
+	// INSTALL NEW IMAGE (if needed)
+	if (	!hasImage										|| // no image in Texture node
+			hasImage && !image								|| // an empty Shp<> in Texture node
+			image->getSize3i()	!= newImage->getSize3i()	|| // new image size
+			image->format()		!= newImage->format()		|| // new image format
+			image->type()		!= newImage->type()			 // new image type
+		)
 	{
-		texture->setUsage( Texture::IMAGE );
-	}
-	else
-	{
-// @todo Adds DEPTH usage
-		image->type() = vgd::basic::IImage::INT32;
-		texture->setUsage( Texture::SHADOW );
+		texture->setImage( newImage );
+		texture->setInternalFormat( internalFormat );
+
+		// TEXTURE USAGE
+		if ( format != OutputBufferProperty::LUMINANCE_FOR_DEPTH )
+		{
+			texture->setUsage( Texture::IMAGE );
+		}
+		else
+		{
+	// @todo Adds DEPTH usage
+			newImage->type() = vgd::basic::IImage::INT32;
+			texture->setUsage( Texture::SHADOW );
+		}
 	}
 
 	return texture;
@@ -529,7 +561,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 		obuf->setSize( outputBufferProperties->getState(firstValidIndex)->getNode()->getSize() );
 
 		vgd::Shp< vgd::node::Texture2D > depthTextureNode;
-		depthTextureNode = vgeGL::handler::painter::OutputBufferProperty::createTexture2D( engine, obuf.get() );
+		depthTextureNode = vgeGL::handler::painter::OutputBufferProperty::createOrGetTexture2D( engine, obuf.get() );
 
 		// Attaching images
 		engine->paint( depthTextureNode );

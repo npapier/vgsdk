@@ -64,13 +64,14 @@ OutputBufferProperty::OutputBufferProperty( const std::string nodeName ) :
 {
 	// Adds field(s)
 	addField( new FSizeSemanticType(getFSizeSemantic()) );
-	addField( new FCustomCommandType(getFCustomCommand()) );
+	addField( new FSizeType(getFSize()) );
 	addField( new FFormatType(getFFormat()) );
+	addField( new FTypeType(getFType()) );
 	addField( new FCurrentType(getFCurrent()) );
 	addField( new FCommandType(getFCommand()) );
-	addField( new FTypeType(getFType()) );
 	addField( new FCustomDeclarationType(getFCustomDeclaration()) );
-	addField( new FSizeType(getFSize()) );
+	addField( new FCustomCommandType(getFCustomCommand()) );
+	addField( new FTextureNodeType(getFTextureNode()) );
 
 	// Sets link(s)
 
@@ -83,13 +84,13 @@ void OutputBufferProperty::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
 	setSizeSemantic( (SCALE_FACTOR) );
-	setCustomCommand( std::string() );
+	setSize( vgm::Vec2f(1.f, 1.f) );
 	setFormat( (RGB) );
+	setType( (INTEGER) );
 	setCurrent( (true) );
 	setCommand( (COLOR) );
-	setType( (INTEGER) );
 	setCustomDeclaration( std::string() );
-	setSize( vgm::Vec2f(1.f, 1.f) );
+	setCustomCommand( std::string() );
 }
 
 
@@ -97,6 +98,7 @@ void OutputBufferProperty::setToDefaults( void )
 void OutputBufferProperty::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
+	setTextureNode( vgd::node::Texture2DShp() );
 }
 
 
@@ -117,22 +119,22 @@ void OutputBufferProperty::setSizeSemantic( const SizeSemanticValueType value )
 
 
 
-// CustomCommand
+// Size
 
-const OutputBufferProperty::CustomCommandValueType OutputBufferProperty::DEFAULT_CUSTOMCOMMAND = std::string();
+const OutputBufferProperty::SizeValueType OutputBufferProperty::DEFAULT_SIZE = vgm::Vec2f(1.f, 1.f);
 
 
 
-const OutputBufferProperty::CustomCommandValueType OutputBufferProperty::getCustomCommand() const
+const OutputBufferProperty::SizeValueType OutputBufferProperty::getSize() const
 {
-	return getFieldRO<FCustomCommandType>(getFCustomCommand())->getValue();
+	return getFieldRO<FSizeType>(getFSize())->getValue();
 }
 
 
 
-void OutputBufferProperty::setCustomCommand( const CustomCommandValueType value )
+void OutputBufferProperty::setSize( const SizeValueType value )
 {
-	getFieldRW<FCustomCommandType>(getFCustomCommand())->setValue( value );
+	getFieldRW<FSizeType>(getFSize())->setValue( value );
 }
 
 
@@ -149,6 +151,22 @@ const OutputBufferProperty::FormatValueType OutputBufferProperty::getFormat() co
 void OutputBufferProperty::setFormat( const FormatValueType value )
 {
 	getFieldRW<FFormatType>(getFFormat())->setValue( value );
+}
+
+
+
+// Type
+
+const OutputBufferProperty::TypeValueType OutputBufferProperty::getType() const
+{
+	return getFieldRO<FTypeType>(getFType())->getValue();
+}
+
+
+
+void OutputBufferProperty::setType( const TypeValueType value )
+{
+	getFieldRW<FTypeType>(getFType())->setValue( value );
 }
 
 
@@ -189,22 +207,6 @@ void OutputBufferProperty::setCommand( const CommandValueType value )
 
 
 
-// Type
-
-const OutputBufferProperty::TypeValueType OutputBufferProperty::getType() const
-{
-	return getFieldRO<FTypeType>(getFType())->getValue();
-}
-
-
-
-void OutputBufferProperty::setType( const TypeValueType value )
-{
-	getFieldRW<FTypeType>(getFType())->setValue( value );
-}
-
-
-
 // CustomDeclaration
 
 const OutputBufferProperty::CustomDeclarationValueType OutputBufferProperty::DEFAULT_CUSTOMDECLARATION = std::string();
@@ -225,22 +227,55 @@ void OutputBufferProperty::setCustomDeclaration( const CustomDeclarationValueTyp
 
 
 
-// Size
+// CustomCommand
 
-const OutputBufferProperty::SizeValueType OutputBufferProperty::DEFAULT_SIZE = vgm::Vec2f(1.f, 1.f);
+const OutputBufferProperty::CustomCommandValueType OutputBufferProperty::DEFAULT_CUSTOMCOMMAND = std::string();
 
 
 
-const OutputBufferProperty::SizeValueType OutputBufferProperty::getSize() const
+const OutputBufferProperty::CustomCommandValueType OutputBufferProperty::getCustomCommand() const
 {
-	return getFieldRO<FSizeType>(getFSize())->getValue();
+	return getFieldRO<FCustomCommandType>(getFCustomCommand())->getValue();
 }
 
 
 
-void OutputBufferProperty::setSize( const SizeValueType value )
+void OutputBufferProperty::setCustomCommand( const CustomCommandValueType value )
 {
-	getFieldRW<FSizeType>(getFSize())->setValue( value );
+	getFieldRW<FCustomCommandType>(getFCustomCommand())->setValue( value );
+}
+
+
+
+// TextureNode
+
+const OutputBufferProperty::TextureNodeValueType OutputBufferProperty::DEFAULT_TEXTURENODE = vgd::node::Texture2DShp();
+
+
+
+const bool OutputBufferProperty::getTextureNode( TextureNodeValueType& value ) const
+{
+	return getFieldRO<FTextureNodeType>(getFTextureNode())->getValue( value );
+}
+
+
+
+void OutputBufferProperty::setTextureNode( const TextureNodeValueType& value )
+{
+	getFieldRW<FTextureNodeType>(getFTextureNode())->setValue( value );
+}
+
+
+
+void OutputBufferProperty::eraseTextureNode()
+{
+	getFieldRW<FTextureNodeType>(getFTextureNode())->eraseValue();
+}
+
+
+const bool OutputBufferProperty::hasTextureNode() const
+{
+	return getFieldRO<FTextureNodeType>(getFTextureNode())->hasValue();
 }
 
 
@@ -253,9 +288,9 @@ const std::string OutputBufferProperty::getFSizeSemantic( void )
 
 
 
-const std::string OutputBufferProperty::getFCustomCommand( void )
+const std::string OutputBufferProperty::getFSize( void )
 {
-	return "f_customCommand";
+	return "f_size";
 }
 
 
@@ -263,6 +298,13 @@ const std::string OutputBufferProperty::getFCustomCommand( void )
 const std::string OutputBufferProperty::getFFormat( void )
 {
 	return "f_format";
+}
+
+
+
+const std::string OutputBufferProperty::getFType( void )
+{
+	return "f_type";
 }
 
 
@@ -281,13 +323,6 @@ const std::string OutputBufferProperty::getFCommand( void )
 
 
 
-const std::string OutputBufferProperty::getFType( void )
-{
-	return "f_type";
-}
-
-
-
 const std::string OutputBufferProperty::getFCustomDeclaration( void )
 {
 	return "f_customDeclaration";
@@ -295,9 +330,16 @@ const std::string OutputBufferProperty::getFCustomDeclaration( void )
 
 
 
-const std::string OutputBufferProperty::getFSize( void )
+const std::string OutputBufferProperty::getFCustomCommand( void )
 {
-	return "f_size";
+	return "f_customCommand";
+}
+
+
+
+const std::string OutputBufferProperty::getFTextureNode( void )
+{
+	return "f_textureNode";
 }
 
 

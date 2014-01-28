@@ -63,9 +63,9 @@ Decal::Decal( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FAlphaTestType(getFAlphaTest()) );
-	addField( new FShapeType(getFShape()) );
 	addField( new FTextureType(getFTexture()) );
+	addField( new FShapeType(getFShape()) );
+	addField( new FAlphaTestType(getFAlphaTest()) );
 	addField( new FBlendingType(getFBlending()) );
 
 	// Sets link(s)
@@ -78,9 +78,9 @@ Decal::Decal( const std::string nodeName ) :
 void Decal::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setAlphaTest( (true) );
-	setShape( vgd::node::VertexShapeShp() );
 	setTexture( vgd::node::Texture2DShp() );
+	setShape( vgd::node::VertexShapeShp() );
+	setAlphaTest( (true) );
 	setBlending( (false) );
 }
 
@@ -93,22 +93,22 @@ void Decal::setOptionalsToDefaults()
 
 
 
-// AlphaTest
+// Texture
 
-const Decal::AlphaTestValueType Decal::DEFAULT_ALPHATEST = (true);
+const Decal::TextureValueType Decal::DEFAULT_TEXTURE = vgd::node::Texture2DShp();
 
 
 
-const Decal::AlphaTestValueType Decal::getAlphaTest() const
+const Decal::TextureValueType Decal::getTexture() const
 {
-	return getFieldRO<FAlphaTestType>(getFAlphaTest())->getValue();
+	return getFieldRO<FTextureType>(getFTexture())->getValue();
 }
 
 
 
-void Decal::setAlphaTest( const AlphaTestValueType value )
+void Decal::setTexture( const TextureValueType value )
 {
-	getFieldRW<FAlphaTestType>(getFAlphaTest())->setValue( value );
+	getFieldRW<FTextureType>(getFTexture())->setValue( value );
 }
 
 
@@ -133,22 +133,22 @@ void Decal::setShape( const ShapeValueType value )
 
 
 
-// Texture
+// AlphaTest
 
-const Decal::TextureValueType Decal::DEFAULT_TEXTURE = vgd::node::Texture2DShp();
+const Decal::AlphaTestValueType Decal::DEFAULT_ALPHATEST = (true);
 
 
 
-const Decal::TextureValueType Decal::getTexture() const
+const Decal::AlphaTestValueType Decal::getAlphaTest() const
 {
-	return getFieldRO<FTextureType>(getFTexture())->getValue();
+	return getFieldRO<FAlphaTestType>(getFAlphaTest())->getValue();
 }
 
 
 
-void Decal::setTexture( const TextureValueType value )
+void Decal::setAlphaTest( const AlphaTestValueType value )
 {
-	getFieldRW<FTextureType>(getFTexture())->setValue( value );
+	getFieldRW<FAlphaTestType>(getFAlphaTest())->setValue( value );
 }
 
 
@@ -174,9 +174,9 @@ void Decal::setBlending( const BlendingValueType value )
 
 
 // Field name accessor(s)
-const std::string Decal::getFAlphaTest( void )
+const std::string Decal::getFTexture( void )
 {
-	return "f_alphaTest";
+	return "f_texture";
 }
 
 
@@ -188,9 +188,9 @@ const std::string Decal::getFShape( void )
 
 
 
-const std::string Decal::getFTexture( void )
+const std::string Decal::getFAlphaTest( void )
 {
-	return "f_texture";
+	return "f_alphaTest";
 }
 
 

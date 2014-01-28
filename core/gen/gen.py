@@ -314,8 +314,9 @@ def generateNodeHeader( fd, node ) :
 	fd.write( " */\n" )
 
 	# begin class
-	fd.write( "struct VGD_API %s : " % node.name )
+	fd.write( "struct VGD_API %s" % node.name )
 
+	if len(node.inherits)>0:	fd.write(" : ")
 	for i, base in enumerate(node.inherits) :
 		fd.write( "public vgd::node::%s" % base )
 		if i != len(node.inherits)-1 :
@@ -435,9 +436,10 @@ def generateNodeImpl( fd, node ) :
 		generateFactoriesImpl( fd, node )
 
 	# Constructor
-	str = """NodeName::NodeName( const std::string nodeName ) :\n"""
+	str = """NodeName::NodeName( const std::string nodeName )"""
 	fd.write( str.replace( "NodeName", node.name ) )
 
+	if len(node.inherits)>0:	fd.write(" :\n")
 	for i, base in enumerate(node.inherits):
 		if i == 0:
 			fd.write( "\tvgd::node::%s( nodeName )" % base )
@@ -465,9 +467,11 @@ def generateNodeImpl( fd, node ) :
 		fd.write( """\n	// Adds dirty flag(s)\n""" )
 		fd.write( dfs )
 
-	fd.write("""\n	// Sets link(s)\n""")
-	fd.write( links )
-	fd.write("""\n	link( getDFNode() );\n}\n\n\n\n""")
+	if len(node.fields)>0:
+		fd.write("""\n	// Sets link(s)\n""")
+		fd.write( links )
+		fd.write("""\n	link( getDFNode() );\n""")
+	fd.write("""}\n\n\n\n""")
 
 	# setToDefaults
 	str = """void NodeName::setToDefaults( void )

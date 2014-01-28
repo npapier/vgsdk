@@ -44,7 +44,7 @@ void updateCurrentDrawBuffers(	const vgeGL::engine::Engine::OutputBufferProperty
 		{
 			++count;
 
-			vgd::node::OutputBufferProperty * node = state->getNode();
+			const vgd::node::OutputBufferProperty * node = state->getNode();
 			vgAssert( node );
 
 			if ( node->getCurrent() )

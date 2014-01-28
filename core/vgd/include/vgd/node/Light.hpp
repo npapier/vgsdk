@@ -26,8 +26,8 @@ namespace node
  * Light is the abstract base class for all light nodes. A light node defines an illumination source that may affect subsequent shapes in the scene graph, depending on the current lighting style. Light sources are affected by the current transformation. A light node under a separator does not affect any objects outside that separator. @remarks The maximum number of lights is equal at least to 8 in OpenGL and DirectX. Feel free to use up to 8 lights. @todo Removes this limits @todo Support for attenuation @todo High-level method for changing intensity of color. 
  *
  * New fields defined by this node :
- * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
- *   Specular intensity of the light.<br>
+ * - SFBool \c castShadow = (false)<br>
+ *   Indicating that this light casts a shadow.<br>
  *<br>
  * - OFBool \c [on] = (false)<br>
  *   Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.<br>
@@ -38,8 +38,8 @@ namespace node
  * - OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
  *   Diffuse intensity of the light.<br>
  *<br>
- * - SFBool \c castShadow = (false)<br>
- *   Indicating that this light casts a shadow.<br>
+ * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
+ *   Specular intensity of the light.<br>
  *<br>
  *
  * @ingroup g_abstractNodes
@@ -50,45 +50,36 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field specular
+	 * @name Accessors to field castShadow
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c specular.
+	 * @brief Type definition of the value contained by field named \c castShadow.
 	 */
-	typedef vgm::Vec4f SpecularValueType;
+	typedef bool CastShadowValueType;
 
 	/**
-	 * @brief The default value of field named \c specular.
+	 * @brief The default value of field named \c castShadow.
 	 */
-	static const SpecularValueType DEFAULT_SPECULAR;
+	static const CastShadowValueType DEFAULT_CASTSHADOW;
 
 	/**
-	 * @brief Type definition of the field named \c specular
+	 * @brief Type definition of the field named \c castShadow
 	 */
-	typedef vgd::field::TOptionalField< SpecularValueType > FSpecularType;
+	typedef vgd::field::TSingleField< CastShadowValueType > FCastShadowType;
 
 
 	/**
-	 * @brief Gets the value of field named \c specular.
+	 * @brief Gets the value of field named \c castShadow.
 	 */
-	const bool getSpecular( SpecularValueType& value ) const;
+	const CastShadowValueType getCastShadow() const;
 
 	/**
-	 * @brief Sets the value of field named \c specular.
- 	 */
-	void setSpecular( const SpecularValueType& value );
-
-	/**
-	 * @brief Erases the field named \c specular.
+	 * @brief Sets the value of field named \c castShadow.
 	 */
-	void eraseSpecular();
+	void setCastShadow( const CastShadowValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c specular has been initialized.
-	 */
-	const bool hasSpecular() const;
 	//@}
 
 
@@ -226,36 +217,45 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field castShadow
+	 * @name Accessors to field specular
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c castShadow.
+	 * @brief Type definition of the value contained by field named \c specular.
 	 */
-	typedef bool CastShadowValueType;
+	typedef vgm::Vec4f SpecularValueType;
 
 	/**
-	 * @brief The default value of field named \c castShadow.
+	 * @brief The default value of field named \c specular.
 	 */
-	static const CastShadowValueType DEFAULT_CASTSHADOW;
+	static const SpecularValueType DEFAULT_SPECULAR;
 
 	/**
-	 * @brief Type definition of the field named \c castShadow
+	 * @brief Type definition of the field named \c specular
 	 */
-	typedef vgd::field::TSingleField< CastShadowValueType > FCastShadowType;
+	typedef vgd::field::TOptionalField< SpecularValueType > FSpecularType;
 
 
 	/**
-	 * @brief Gets the value of field named \c castShadow.
+	 * @brief Gets the value of field named \c specular.
 	 */
-	const CastShadowValueType getCastShadow() const;
+	const bool getSpecular( SpecularValueType& value ) const;
 
 	/**
-	 * @brief Sets the value of field named \c castShadow.
-	 */
-	void setCastShadow( const CastShadowValueType value );
+	 * @brief Sets the value of field named \c specular.
+ 	 */
+	void setSpecular( const SpecularValueType& value );
 
+	/**
+	 * @brief Erases the field named \c specular.
+	 */
+	void eraseSpecular();
+
+	/**
+	 * @brief Tests if the value of field named \c specular has been initialized.
+	 */
+	const bool hasSpecular() const;
 	//@}
 
 
@@ -266,11 +266,11 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c specular.
+	 * @brief Returns the name of field \c castShadow.
 	 *
-	 * @return the name of field \c specular.
+	 * @return the name of field \c castShadow.
 	 */
-	static const std::string getFSpecular( void );
+	static const std::string getFCastShadow( void );
 
 	/**
 	 * @brief Returns the name of field \c on.
@@ -294,11 +294,11 @@ struct VGD_API Light : public vgd::node::MultiAttribute
 	static const std::string getFDiffuse( void );
 
 	/**
-	 * @brief Returns the name of field \c castShadow.
+	 * @brief Returns the name of field \c specular.
 	 *
-	 * @return the name of field \c castShadow.
+	 * @return the name of field \c specular.
 	 */
-	static const std::string getFCastShadow( void );
+	static const std::string getFSpecular( void );
 
 	//@}
 

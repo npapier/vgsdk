@@ -65,17 +65,17 @@ VertexShape::VertexShape( const std::string nodeName ) :
 	vgd::node::ITransformation()
 {
 	// Adds field(s)
-	addField( new FPrimitiveType(getFPrimitive()) );
+	addField( new FNormalBindingType(getFNormalBinding()) );
 	addField( new FTangentBindingType(getFTangentBinding()) );
 	addField( new FColorBindingType(getFColorBinding()) );
-	addField( new FNormalType(getFNormal()) );
-	addField( new FColorType(getFColor()) );
+	addField( new FBoundingBoxUpdatePolicyType(getFBoundingBoxUpdatePolicy()) );
 	addField( new FDeformableHintType(getFDeformableHint()) );
 	addField( new FVertexType(getFVertex()) );
 	addField( new FVertexIndexType(getFVertexIndex()) );
-	addField( new FBoundingBoxUpdatePolicyType(getFBoundingBoxUpdatePolicy()) );
+	addField( new FPrimitiveType(getFPrimitive()) );
+	addField( new FNormalType(getFNormal()) );
 	addField( new FTangentType(getFTangent()) );
-	addField( new FNormalBindingType(getFNormalBinding()) );
+	addField( new FColorType(getFColor()) );
 
 	// Adds dirty flag(s)
 	addDirtyFlag(getDFBoundingBox());
@@ -92,11 +92,11 @@ void VertexShape::setToDefaults( void )
 {
 	Shape::setToDefaults();
 	ITransformation::setToDefaults();
+	setNormalBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
 	setTangentBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
 	setColorBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
-	setDeformableHint( (STATIC) );
 	setBoundingBoxUpdatePolicy( (AUTOMATIC) );
-	setNormalBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
+	setDeformableHint( (STATIC) );
 }
 
 
@@ -109,17 +109,18 @@ void VertexShape::setOptionalsToDefaults()
 
 
 
-// Primitive
-vgd::field::EditorRO< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRO() const
+// NormalBinding
+
+const VertexShape::NormalBindingValueType VertexShape::getNormalBinding() const
 {
-	return getFieldRO<FPrimitiveType>( getFPrimitive() );
+	return getFieldRO<FNormalBindingType>(getFNormalBinding())->getValue();
 }
 
 
 
-vgd::field::EditorRW< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRW()
+void VertexShape::setNormalBinding( const NormalBindingValueType value )
 {
-	return getFieldRW<FPrimitiveType>( getFPrimitive() );
+	getFieldRW<FNormalBindingType>(getFNormalBinding())->setValue( value );
 }
 
 
@@ -156,32 +157,18 @@ void VertexShape::setColorBinding( const ColorBindingValueType value )
 
 
 
-// Normal
-vgd::field::EditorRO< VertexShape::FNormalType > VertexShape::getNormalRO() const
+// BoundingBoxUpdatePolicy
+
+const VertexShape::BoundingBoxUpdatePolicyValueType VertexShape::getBoundingBoxUpdatePolicy() const
 {
-	return getFieldRO<FNormalType>( getFNormal() );
+	return getFieldRO<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->getValue();
 }
 
 
 
-vgd::field::EditorRW< VertexShape::FNormalType > VertexShape::getNormalRW()
+void VertexShape::setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value )
 {
-	return getFieldRW<FNormalType>( getFNormal() );
-}
-
-
-
-// Color
-vgd::field::EditorRO< VertexShape::FColorType > VertexShape::getColorRO() const
-{
-	return getFieldRO<FColorType>( getFColor() );
-}
-
-
-
-vgd::field::EditorRW< VertexShape::FColorType > VertexShape::getColorRW()
-{
-	return getFieldRW<FColorType>( getFColor() );
+	getFieldRW<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->setValue( value );
 }
 
 
@@ -232,18 +219,32 @@ vgd::field::EditorRW< VertexShape::FVertexIndexType > VertexShape::getVertexInde
 
 
 
-// BoundingBoxUpdatePolicy
-
-const VertexShape::BoundingBoxUpdatePolicyValueType VertexShape::getBoundingBoxUpdatePolicy() const
+// Primitive
+vgd::field::EditorRO< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRO() const
 {
-	return getFieldRO<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->getValue();
+	return getFieldRO<FPrimitiveType>( getFPrimitive() );
 }
 
 
 
-void VertexShape::setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value )
+vgd::field::EditorRW< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRW()
 {
-	getFieldRW<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->setValue( value );
+	return getFieldRW<FPrimitiveType>( getFPrimitive() );
+}
+
+
+
+// Normal
+vgd::field::EditorRO< VertexShape::FNormalType > VertexShape::getNormalRO() const
+{
+	return getFieldRO<FNormalType>( getFNormal() );
+}
+
+
+
+vgd::field::EditorRW< VertexShape::FNormalType > VertexShape::getNormalRW()
+{
+	return getFieldRW<FNormalType>( getFNormal() );
 }
 
 
@@ -263,26 +264,25 @@ vgd::field::EditorRW< VertexShape::FTangentType > VertexShape::getTangentRW()
 
 
 
-// NormalBinding
-
-const VertexShape::NormalBindingValueType VertexShape::getNormalBinding() const
+// Color
+vgd::field::EditorRO< VertexShape::FColorType > VertexShape::getColorRO() const
 {
-	return getFieldRO<FNormalBindingType>(getFNormalBinding())->getValue();
+	return getFieldRO<FColorType>( getFColor() );
 }
 
 
 
-void VertexShape::setNormalBinding( const NormalBindingValueType value )
+vgd::field::EditorRW< VertexShape::FColorType > VertexShape::getColorRW()
 {
-	getFieldRW<FNormalBindingType>(getFNormalBinding())->setValue( value );
+	return getFieldRW<FColorType>( getFColor() );
 }
 
 
 
 // Field name accessor(s)
-const std::string VertexShape::getFPrimitive( void )
+const std::string VertexShape::getFNormalBinding( void )
 {
-	return "f_primitive";
+	return "f_normalBinding";
 }
 
 
@@ -301,16 +301,9 @@ const std::string VertexShape::getFColorBinding( void )
 
 
 
-const std::string VertexShape::getFNormal( void )
+const std::string VertexShape::getFBoundingBoxUpdatePolicy( void )
 {
-	return "f_normal";
-}
-
-
-
-const std::string VertexShape::getFColor( void )
-{
-	return "f_color";
+	return "f_boundingBoxUpdatePolicy";
 }
 
 
@@ -336,9 +329,16 @@ const std::string VertexShape::getFVertexIndex( void )
 
 
 
-const std::string VertexShape::getFBoundingBoxUpdatePolicy( void )
+const std::string VertexShape::getFPrimitive( void )
 {
-	return "f_boundingBoxUpdatePolicy";
+	return "f_primitive";
+}
+
+
+
+const std::string VertexShape::getFNormal( void )
+{
+	return "f_normal";
 }
 
 
@@ -350,9 +350,9 @@ const std::string VertexShape::getFTangent( void )
 
 
 
-const std::string VertexShape::getFNormalBinding( void )
+const std::string VertexShape::getFColor( void )
 {
-	return "f_normalBinding";
+	return "f_color";
 }
 
 

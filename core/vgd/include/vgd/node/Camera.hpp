@@ -33,29 +33,23 @@ namespace node
  * - SFMatrixR \c projectionLeft = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the projection matrix for monoscopic rendering or for the left eye if stereo is enabled.<br>
  *<br>
- * - OFFloat \c [zFar] = (3996.f)<br>
- *   Farest visible z for the camera<br>
- *<br>
  * - SFMatrixR \c lookAtLeft = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera for monoscopic rendering or for the left eye if stereo is enabled.\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
- *<br>
- * - SFMatrixR \c lookAtRight = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
- *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
  *<br>
  * - SFMatrixR \c projectionRight = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   Determines the projection matrix for the right eye (used only if stereo is enabled).<br>
  *<br>
- * - OFRectangle2i \c [scissor] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
- *   Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.<br>
+ * - SFMatrixR \c lookAtRight = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
+ *   Determines the 3D geometric transformation as a 4x4 matrix applied to camera for the right eye (used only if stereo is enabled).\n Note that this transformation is applied to engine like any GeometricalTransformation node with composeTransformation field sets to false.\n By default, the camera is situated at the origin, points down the negative z-axis, and has an up-vector of (0, 1, 0).<br>
  *<br>
  * - SFRectangle2i \c viewport = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
  *   Determines the viewport.<br>
  *<br>
- * - OFFloat \c [aspect] = (1)<br>
- *   Aspect ratio of the camera<br>
+ * - SFFloat \c fovy = (45.f)<br>
+ *   Field of view angle for the Y direction for the camera. In the case of a perspective camera.<br>
  *<br>
- * - SFBool \c rightEye = (true)<br>
- *   Sets to true to enabled the right eye in stereoscopic mode. Setting this field to false is helpful for debugging.<br>
+ * - SFEnum \c mode = (MONOSCOPIC)<br>
+ *   Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
  *<br>
  * - SFFloat \c eyeSeparation = (0.f)<br>
  *   Sets the distance between the left and right eye.<br>
@@ -63,14 +57,20 @@ namespace node
  * - SFFloat \c imageShift = (0.f)<br>
  *   Sets the additional horizontal shift between the left and right image. This value must be between 0 and 100. 0 means no shift at all. 100 corresponds to a shift of 1/8 of the drawing surface.<br>
  *<br>
+ * - SFBool \c rightEye = (true)<br>
+ *   Sets to true to enabled the right eye in stereoscopic mode. Setting this field to false is helpful for debugging.<br>
+ *<br>
+ * - OFRectangle2i \c [scissor] = vgm::Rectangle2i(0, 0, 1600, 1200)<br>
+ *   Determines the scissor box. It is automatically enabled if this field is defined, otherwise it is disabled. The default value is empty, i.e. scissor test is disabled.<br>
+ *<br>
+ * - OFFloat \c [aspect] = (1)<br>
+ *   Aspect ratio of the camera<br>
+ *<br>
  * - OFFloat \c [zNear] = (0.01f)<br>
  *   Nearest visible z for the camera.<br>
  *<br>
- * - SFFloat \c fovy = (45.f)<br>
- *   Field of view angle for the Y direction for the camera. In the case of a perspective camera.<br>
- *<br>
- * - SFEnum \c mode = (MONOSCOPIC)<br>
- *   Specifies the camera mode (monoscopic or stereoscopic mode).\n When you normally look at objects, your two eyes see slightly different images (because they are located at different viewpoints).\n Stereoscopic rendering is a technique for creating the illusion of depth in an image for the viewer. Two images are computed (one for each eye) and presented to the viewer using anaglyph (red/cyan) or quad buffer stereo (todo). The brain combined these images to given the perception of depth.<br>
+ * - OFFloat \c [zFar] = (3996.f)<br>
+ *   Farest visible z for the camera<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -204,50 +204,6 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
-	 * @name Accessors to field zFar
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c zFar.
-	 */
-	typedef float ZFarValueType;
-
-	/**
-	 * @brief The default value of field named \c zFar.
-	 */
-	static const ZFarValueType DEFAULT_ZFAR;
-
-	/**
-	 * @brief Type definition of the field named \c zFar
-	 */
-	typedef vgd::field::TOptionalField< ZFarValueType > FZFarType;
-
-
-	/**
-	 * @brief Gets the value of field named \c zFar.
-	 */
-	const bool getZFar( ZFarValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c zFar.
- 	 */
-	void setZFar( const ZFarValueType& value );
-
-	/**
-	 * @brief Erases the field named \c zFar.
-	 */
-	void eraseZFar();
-
-	/**
-	 * @brief Tests if the value of field named \c zFar has been initialized.
-	 */
-	const bool hasZFar() const;
-	//@}
-
-
-
-	/**
 	 * @name Accessors to field lookAtLeft
 	 */
 	//@{
@@ -277,41 +233,6 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 * @brief Sets the value of field named \c lookAtLeft.
 	 */
 	void setLookAtLeft( const LookAtLeftValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field lookAtRight
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c lookAtRight.
-	 */
-	typedef vgm::MatrixR LookAtRightValueType;
-
-	/**
-	 * @brief The default value of field named \c lookAtRight.
-	 */
-	static const LookAtRightValueType DEFAULT_LOOKATRIGHT;
-
-	/**
-	 * @brief Type definition of the field named \c lookAtRight
-	 */
-	typedef vgd::field::TSingleField< LookAtRightValueType > FLookAtRightType;
-
-
-	/**
-	 * @brief Gets the value of field named \c lookAtRight.
-	 */
-	const LookAtRightValueType getLookAtRight() const;
-
-	/**
-	 * @brief Sets the value of field named \c lookAtRight.
-	 */
-	void setLookAtRight( const LookAtRightValueType value );
 
 	//@}
 
@@ -353,45 +274,36 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
-	 * @name Accessors to field scissor
+	 * @name Accessors to field lookAtRight
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c scissor.
+	 * @brief Type definition of the value contained by field named \c lookAtRight.
 	 */
-	typedef vgm::Rectangle2i ScissorValueType;
+	typedef vgm::MatrixR LookAtRightValueType;
 
 	/**
-	 * @brief The default value of field named \c scissor.
+	 * @brief The default value of field named \c lookAtRight.
 	 */
-	static const ScissorValueType DEFAULT_SCISSOR;
+	static const LookAtRightValueType DEFAULT_LOOKATRIGHT;
 
 	/**
-	 * @brief Type definition of the field named \c scissor
+	 * @brief Type definition of the field named \c lookAtRight
 	 */
-	typedef vgd::field::TOptionalField< ScissorValueType > FScissorType;
+	typedef vgd::field::TSingleField< LookAtRightValueType > FLookAtRightType;
 
 
 	/**
-	 * @brief Gets the value of field named \c scissor.
+	 * @brief Gets the value of field named \c lookAtRight.
 	 */
-	const bool getScissor( ScissorValueType& value ) const;
+	const LookAtRightValueType getLookAtRight() const;
 
 	/**
-	 * @brief Sets the value of field named \c scissor.
- 	 */
-	void setScissor( const ScissorValueType& value );
-
-	/**
-	 * @brief Erases the field named \c scissor.
+	 * @brief Sets the value of field named \c lookAtRight.
 	 */
-	void eraseScissor();
+	void setLookAtRight( const LookAtRightValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c scissor has been initialized.
-	 */
-	const bool hasScissor() const;
 	//@}
 
 
@@ -427,199 +339,6 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	 */
 	void setViewport( const ViewportValueType value );
 
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field aspect
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c aspect.
-	 */
-	typedef float AspectValueType;
-
-	/**
-	 * @brief The default value of field named \c aspect.
-	 */
-	static const AspectValueType DEFAULT_ASPECT;
-
-	/**
-	 * @brief Type definition of the field named \c aspect
-	 */
-	typedef vgd::field::TOptionalField< AspectValueType > FAspectType;
-
-
-	/**
-	 * @brief Gets the value of field named \c aspect.
-	 */
-	const bool getAspect( AspectValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c aspect.
- 	 */
-	void setAspect( const AspectValueType& value );
-
-	/**
-	 * @brief Erases the field named \c aspect.
-	 */
-	void eraseAspect();
-
-	/**
-	 * @brief Tests if the value of field named \c aspect has been initialized.
-	 */
-	const bool hasAspect() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field rightEye
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c rightEye.
-	 */
-	typedef bool RightEyeValueType;
-
-	/**
-	 * @brief The default value of field named \c rightEye.
-	 */
-	static const RightEyeValueType DEFAULT_RIGHTEYE;
-
-	/**
-	 * @brief Type definition of the field named \c rightEye
-	 */
-	typedef vgd::field::TSingleField< RightEyeValueType > FRightEyeType;
-
-
-	/**
-	 * @brief Gets the value of field named \c rightEye.
-	 */
-	const RightEyeValueType getRightEye() const;
-
-	/**
-	 * @brief Sets the value of field named \c rightEye.
-	 */
-	void setRightEye( const RightEyeValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field eyeSeparation
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c eyeSeparation.
-	 */
-	typedef float EyeSeparationValueType;
-
-	/**
-	 * @brief The default value of field named \c eyeSeparation.
-	 */
-	static const EyeSeparationValueType DEFAULT_EYESEPARATION;
-
-	/**
-	 * @brief Type definition of the field named \c eyeSeparation
-	 */
-	typedef vgd::field::TSingleField< EyeSeparationValueType > FEyeSeparationType;
-
-
-	/**
-	 * @brief Gets the value of field named \c eyeSeparation.
-	 */
-	const EyeSeparationValueType getEyeSeparation() const;
-
-	/**
-	 * @brief Sets the value of field named \c eyeSeparation.
-	 */
-	void setEyeSeparation( const EyeSeparationValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field imageShift
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c imageShift.
-	 */
-	typedef float ImageShiftValueType;
-
-	/**
-	 * @brief The default value of field named \c imageShift.
-	 */
-	static const ImageShiftValueType DEFAULT_IMAGESHIFT;
-
-	/**
-	 * @brief Type definition of the field named \c imageShift
-	 */
-	typedef vgd::field::TSingleField< ImageShiftValueType > FImageShiftType;
-
-
-	/**
-	 * @brief Gets the value of field named \c imageShift.
-	 */
-	const ImageShiftValueType getImageShift() const;
-
-	/**
-	 * @brief Sets the value of field named \c imageShift.
-	 */
-	void setImageShift( const ImageShiftValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field zNear
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c zNear.
-	 */
-	typedef float ZNearValueType;
-
-	/**
-	 * @brief The default value of field named \c zNear.
-	 */
-	static const ZNearValueType DEFAULT_ZNEAR;
-
-	/**
-	 * @brief Type definition of the field named \c zNear
-	 */
-	typedef vgd::field::TOptionalField< ZNearValueType > FZNearType;
-
-
-	/**
-	 * @brief Gets the value of field named \c zNear.
-	 */
-	const bool getZNear( ZNearValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c zNear.
- 	 */
-	void setZNear( const ZNearValueType& value );
-
-	/**
-	 * @brief Erases the field named \c zNear.
-	 */
-	void eraseZNear();
-
-	/**
-	 * @brief Tests if the value of field named \c zNear has been initialized.
-	 */
-	const bool hasZNear() const;
 	//@}
 
 
@@ -739,6 +458,287 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 
 
 	/**
+	 * @name Accessors to field eyeSeparation
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c eyeSeparation.
+	 */
+	typedef float EyeSeparationValueType;
+
+	/**
+	 * @brief The default value of field named \c eyeSeparation.
+	 */
+	static const EyeSeparationValueType DEFAULT_EYESEPARATION;
+
+	/**
+	 * @brief Type definition of the field named \c eyeSeparation
+	 */
+	typedef vgd::field::TSingleField< EyeSeparationValueType > FEyeSeparationType;
+
+
+	/**
+	 * @brief Gets the value of field named \c eyeSeparation.
+	 */
+	const EyeSeparationValueType getEyeSeparation() const;
+
+	/**
+	 * @brief Sets the value of field named \c eyeSeparation.
+	 */
+	void setEyeSeparation( const EyeSeparationValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field imageShift
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c imageShift.
+	 */
+	typedef float ImageShiftValueType;
+
+	/**
+	 * @brief The default value of field named \c imageShift.
+	 */
+	static const ImageShiftValueType DEFAULT_IMAGESHIFT;
+
+	/**
+	 * @brief Type definition of the field named \c imageShift
+	 */
+	typedef vgd::field::TSingleField< ImageShiftValueType > FImageShiftType;
+
+
+	/**
+	 * @brief Gets the value of field named \c imageShift.
+	 */
+	const ImageShiftValueType getImageShift() const;
+
+	/**
+	 * @brief Sets the value of field named \c imageShift.
+	 */
+	void setImageShift( const ImageShiftValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field rightEye
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c rightEye.
+	 */
+	typedef bool RightEyeValueType;
+
+	/**
+	 * @brief The default value of field named \c rightEye.
+	 */
+	static const RightEyeValueType DEFAULT_RIGHTEYE;
+
+	/**
+	 * @brief Type definition of the field named \c rightEye
+	 */
+	typedef vgd::field::TSingleField< RightEyeValueType > FRightEyeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c rightEye.
+	 */
+	const RightEyeValueType getRightEye() const;
+
+	/**
+	 * @brief Sets the value of field named \c rightEye.
+	 */
+	void setRightEye( const RightEyeValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field scissor
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c scissor.
+	 */
+	typedef vgm::Rectangle2i ScissorValueType;
+
+	/**
+	 * @brief The default value of field named \c scissor.
+	 */
+	static const ScissorValueType DEFAULT_SCISSOR;
+
+	/**
+	 * @brief Type definition of the field named \c scissor
+	 */
+	typedef vgd::field::TOptionalField< ScissorValueType > FScissorType;
+
+
+	/**
+	 * @brief Gets the value of field named \c scissor.
+	 */
+	const bool getScissor( ScissorValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c scissor.
+ 	 */
+	void setScissor( const ScissorValueType& value );
+
+	/**
+	 * @brief Erases the field named \c scissor.
+	 */
+	void eraseScissor();
+
+	/**
+	 * @brief Tests if the value of field named \c scissor has been initialized.
+	 */
+	const bool hasScissor() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field aspect
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c aspect.
+	 */
+	typedef float AspectValueType;
+
+	/**
+	 * @brief The default value of field named \c aspect.
+	 */
+	static const AspectValueType DEFAULT_ASPECT;
+
+	/**
+	 * @brief Type definition of the field named \c aspect
+	 */
+	typedef vgd::field::TOptionalField< AspectValueType > FAspectType;
+
+
+	/**
+	 * @brief Gets the value of field named \c aspect.
+	 */
+	const bool getAspect( AspectValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c aspect.
+ 	 */
+	void setAspect( const AspectValueType& value );
+
+	/**
+	 * @brief Erases the field named \c aspect.
+	 */
+	void eraseAspect();
+
+	/**
+	 * @brief Tests if the value of field named \c aspect has been initialized.
+	 */
+	const bool hasAspect() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field zNear
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c zNear.
+	 */
+	typedef float ZNearValueType;
+
+	/**
+	 * @brief The default value of field named \c zNear.
+	 */
+	static const ZNearValueType DEFAULT_ZNEAR;
+
+	/**
+	 * @brief Type definition of the field named \c zNear
+	 */
+	typedef vgd::field::TOptionalField< ZNearValueType > FZNearType;
+
+
+	/**
+	 * @brief Gets the value of field named \c zNear.
+	 */
+	const bool getZNear( ZNearValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c zNear.
+ 	 */
+	void setZNear( const ZNearValueType& value );
+
+	/**
+	 * @brief Erases the field named \c zNear.
+	 */
+	void eraseZNear();
+
+	/**
+	 * @brief Tests if the value of field named \c zNear has been initialized.
+	 */
+	const bool hasZNear() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field zFar
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c zFar.
+	 */
+	typedef float ZFarValueType;
+
+	/**
+	 * @brief The default value of field named \c zFar.
+	 */
+	static const ZFarValueType DEFAULT_ZFAR;
+
+	/**
+	 * @brief Type definition of the field named \c zFar
+	 */
+	typedef vgd::field::TOptionalField< ZFarValueType > FZFarType;
+
+
+	/**
+	 * @brief Gets the value of field named \c zFar.
+	 */
+	const bool getZFar( ZFarValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c zFar.
+ 	 */
+	void setZFar( const ZFarValueType& value );
+
+	/**
+	 * @brief Erases the field named \c zFar.
+	 */
+	void eraseZFar();
+
+	/**
+	 * @brief Tests if the value of field named \c zFar has been initialized.
+	 */
+	const bool hasZFar() const;
+	//@}
+
+
+
+	/**
 	 * @name Field name accessors
 	 */
 	//@{
@@ -751,25 +751,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFProjectionLeft( void );
 
 	/**
-	 * @brief Returns the name of field \c zFar.
-	 *
-	 * @return the name of field \c zFar.
-	 */
-	static const std::string getFZFar( void );
-
-	/**
 	 * @brief Returns the name of field \c lookAtLeft.
 	 *
 	 * @return the name of field \c lookAtLeft.
 	 */
 	static const std::string getFLookAtLeft( void );
-
-	/**
-	 * @brief Returns the name of field \c lookAtRight.
-	 *
-	 * @return the name of field \c lookAtRight.
-	 */
-	static const std::string getFLookAtRight( void );
 
 	/**
 	 * @brief Returns the name of field \c projectionRight.
@@ -779,11 +765,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFProjectionRight( void );
 
 	/**
-	 * @brief Returns the name of field \c scissor.
+	 * @brief Returns the name of field \c lookAtRight.
 	 *
-	 * @return the name of field \c scissor.
+	 * @return the name of field \c lookAtRight.
 	 */
-	static const std::string getFScissor( void );
+	static const std::string getFLookAtRight( void );
 
 	/**
 	 * @brief Returns the name of field \c viewport.
@@ -793,18 +779,18 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFViewport( void );
 
 	/**
-	 * @brief Returns the name of field \c aspect.
+	 * @brief Returns the name of field \c fovy.
 	 *
-	 * @return the name of field \c aspect.
+	 * @return the name of field \c fovy.
 	 */
-	static const std::string getFAspect( void );
+	static const std::string getFFovy( void );
 
 	/**
-	 * @brief Returns the name of field \c rightEye.
+	 * @brief Returns the name of field \c mode.
 	 *
-	 * @return the name of field \c rightEye.
+	 * @return the name of field \c mode.
 	 */
-	static const std::string getFRightEye( void );
+	static const std::string getFMode( void );
 
 	/**
 	 * @brief Returns the name of field \c eyeSeparation.
@@ -821,6 +807,27 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFImageShift( void );
 
 	/**
+	 * @brief Returns the name of field \c rightEye.
+	 *
+	 * @return the name of field \c rightEye.
+	 */
+	static const std::string getFRightEye( void );
+
+	/**
+	 * @brief Returns the name of field \c scissor.
+	 *
+	 * @return the name of field \c scissor.
+	 */
+	static const std::string getFScissor( void );
+
+	/**
+	 * @brief Returns the name of field \c aspect.
+	 *
+	 * @return the name of field \c aspect.
+	 */
+	static const std::string getFAspect( void );
+
+	/**
 	 * @brief Returns the name of field \c zNear.
 	 *
 	 * @return the name of field \c zNear.
@@ -828,18 +835,11 @@ struct VGD_API Camera : public vgd::node::GeometricalTransformation, public vgd:
 	static const std::string getFZNear( void );
 
 	/**
-	 * @brief Returns the name of field \c fovy.
+	 * @brief Returns the name of field \c zFar.
 	 *
-	 * @return the name of field \c fovy.
+	 * @return the name of field \c zFar.
 	 */
-	static const std::string getFFovy( void );
-
-	/**
-	 * @brief Returns the name of field \c mode.
-	 *
-	 * @return the name of field \c mode.
-	 */
-	static const std::string getFMode( void );
+	static const std::string getFZFar( void );
 
 	//@}
 

@@ -63,10 +63,10 @@ TessellationProperties::TessellationProperties( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FRangeType(getFRange()) );
-	addField( new FPhongBiasType(getFPhongBias()) );
-	addField( new FPixelsPerEdgeType(getFPixelsPerEdge()) );
 	addField( new FTessellationType(getFTessellation()) );
+	addField( new FPhongBiasType(getFPhongBias()) );
+	addField( new FRangeType(getFRange()) );
+	addField( new FPixelsPerEdgeType(getFPixelsPerEdge()) );
 
 	// Sets link(s)
 
@@ -85,43 +85,39 @@ void TessellationProperties::setToDefaults( void )
 void TessellationProperties::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setRange( vgm::Vec2f(1.0f, 5.0f) );
-	setPhongBias( (0.55f) );
-	setPixelsPerEdge( (20.f) );
 	setTessellation( (DISABLED) );
+	setPhongBias( (0.55f) );
+	setRange( vgm::Vec2f(1.0f, 5.0f) );
+	setPixelsPerEdge( (20.f) );
 }
 
 
 
-// Range
+// Tessellation
 
-const TessellationProperties::RangeValueType TessellationProperties::DEFAULT_RANGE = vgm::Vec2f(1.0f, 5.0f);
-
-
-
-const bool TessellationProperties::getRange( RangeValueType& value ) const
+const bool TessellationProperties::getTessellation( TessellationValueType& value ) const
 {
-	return getFieldRO<FRangeType>(getFRange())->getValue( value );
+	return getFieldRO<FTessellationType>(getFTessellation())->getValue( value );
 }
 
 
 
-void TessellationProperties::setRange( const RangeValueType& value )
+void TessellationProperties::setTessellation( const TessellationValueType& value )
 {
-	getFieldRW<FRangeType>(getFRange())->setValue( value );
+	getFieldRW<FTessellationType>(getFTessellation())->setValue( value );
 }
 
 
 
-void TessellationProperties::eraseRange()
+void TessellationProperties::eraseTessellation()
 {
-	getFieldRW<FRangeType>(getFRange())->eraseValue();
+	getFieldRW<FTessellationType>(getFTessellation())->eraseValue();
 }
 
 
-const bool TessellationProperties::hasRange() const
+const bool TessellationProperties::hasTessellation() const
 {
-	return getFieldRO<FRangeType>(getFRange())->hasValue();
+	return getFieldRO<FTessellationType>(getFTessellation())->hasValue();
 }
 
 
@@ -159,6 +155,39 @@ const bool TessellationProperties::hasPhongBias() const
 
 
 
+// Range
+
+const TessellationProperties::RangeValueType TessellationProperties::DEFAULT_RANGE = vgm::Vec2f(1.0f, 5.0f);
+
+
+
+const bool TessellationProperties::getRange( RangeValueType& value ) const
+{
+	return getFieldRO<FRangeType>(getFRange())->getValue( value );
+}
+
+
+
+void TessellationProperties::setRange( const RangeValueType& value )
+{
+	getFieldRW<FRangeType>(getFRange())->setValue( value );
+}
+
+
+
+void TessellationProperties::eraseRange()
+{
+	getFieldRW<FRangeType>(getFRange())->eraseValue();
+}
+
+
+const bool TessellationProperties::hasRange() const
+{
+	return getFieldRO<FRangeType>(getFRange())->hasValue();
+}
+
+
+
 // PixelsPerEdge
 
 const TessellationProperties::PixelsPerEdgeValueType TessellationProperties::DEFAULT_PIXELSPEREDGE = (20.f);
@@ -192,39 +221,10 @@ const bool TessellationProperties::hasPixelsPerEdge() const
 
 
 
-// Tessellation
-
-const bool TessellationProperties::getTessellation( TessellationValueType& value ) const
-{
-	return getFieldRO<FTessellationType>(getFTessellation())->getValue( value );
-}
-
-
-
-void TessellationProperties::setTessellation( const TessellationValueType& value )
-{
-	getFieldRW<FTessellationType>(getFTessellation())->setValue( value );
-}
-
-
-
-void TessellationProperties::eraseTessellation()
-{
-	getFieldRW<FTessellationType>(getFTessellation())->eraseValue();
-}
-
-
-const bool TessellationProperties::hasTessellation() const
-{
-	return getFieldRO<FTessellationType>(getFTessellation())->hasValue();
-}
-
-
-
 // Field name accessor(s)
-const std::string TessellationProperties::getFRange( void )
+const std::string TessellationProperties::getFTessellation( void )
 {
-	return "f_range";
+	return "f_tessellation";
 }
 
 
@@ -236,16 +236,16 @@ const std::string TessellationProperties::getFPhongBias( void )
 
 
 
-const std::string TessellationProperties::getFPixelsPerEdge( void )
+const std::string TessellationProperties::getFRange( void )
 {
-	return "f_pixelsPerEdge";
+	return "f_range";
 }
 
 
 
-const std::string TessellationProperties::getFTessellation( void )
+const std::string TessellationProperties::getFPixelsPerEdge( void )
 {
-	return "f_tessellation";
+	return "f_pixelsPerEdge";
 }
 
 

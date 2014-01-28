@@ -47,8 +47,7 @@ void Texture1D::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 	assert( dynamic_cast< vgd::node::Texture1D* >(pNode) != 0 );
 	vgd::node::Texture1D *pCastedNode = static_cast< vgd::node::Texture1D* >(pNode);
 
-	vgeGL::rc::applyUsingSynchronize< vgd::node::Texture1D, vgeGL::handler::painter::Texture1D, vgeGL::rc::Texture1D >(
-		pGLEngine, pCastedNode, this );
+	vgeGL::rc::applyUsingSynchronize< vgeGL::rc::Texture1D >( pGLEngine, pCastedNode, this );
 }
 
 
