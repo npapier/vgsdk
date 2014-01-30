@@ -33,6 +33,7 @@ struct VGEGL_API VertexShape : public vge::rc::IResource, public glo::IResource
 	glo::ArrayBuffer					vertex;
 	glo::ArrayBuffer					normal;
 	glo::ArrayBuffer					tangent;
+	glo::ArrayBuffer					color;
 	std::vector< glo::ArrayBuffer >		texCoord;
 	glo::ElementArrayBuffer				vertexIndex;
 

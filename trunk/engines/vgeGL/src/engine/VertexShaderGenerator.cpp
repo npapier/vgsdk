@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -59,14 +59,16 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	const std::string vertexIndexStr	= vgd::basic::toString( vgeGL::engine::VERTEX_INDEX );
 	const std::string normalIndexStr	= vgd::basic::toString( vgeGL::engine::NORMAL_INDEX );
 	const std::string tangentIndexStr	= vgd::basic::toString( vgeGL::engine::TANGENT_INDEX );
+	const std::string colorIndexStr		= vgd::basic::toString( vgeGL::engine::COLOR_INDEX );
 
 	const std::string texCoord0IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX );
 	const std::string texCoord1IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD1_INDEX );
 	const std::string texCoord2IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD2_INDEX );
 
-	m_decl += "layout(location = " + vertexIndexStr + ") in vec4 mgl_Vertex;\n";
-	m_decl += "layout(location = " + normalIndexStr + ") in vec3 mgl_Normal;\n";
-	m_decl += "layout(location = " + tangentIndexStr + ") in vec3 mgl_Tangent;\n";
+	m_decl += "layout(location = " + vertexIndexStr +	") in vec4 mgl_Vertex;\n";
+	m_decl += "layout(location = " + normalIndexStr +	") in vec3 mgl_Normal;\n";
+	m_decl += "layout(location = " + tangentIndexStr +	") in vec3 mgl_Tangent;\n";
+	m_decl += "layout(location = " + colorIndexStr +	") in vec4 mgl_Color;\n";
 	m_decl += "\n";
 
 	m_decl += "layout(location = " + texCoord0IndexStr + ") in vec4 mgl_MultiTexCoord0;\n";
@@ -80,9 +82,9 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		const std::string normalIndexStr	= vgd::basic::toString( vgeGL::engine::NORMAL1_INDEX );
 		const std::string tangentIndexStr	= vgd::basic::toString( vgeGL::engine::TANGENT1_INDEX );
 
-		m_decl += "layout(location = " + vertexIndexStr + ") in vec4 mgl_Vertex1;\n";
-		m_decl += "layout(location = " + normalIndexStr + ") in vec3 mgl_Normal1;\n";
-		m_decl += "layout(location = " + tangentIndexStr + ") in vec3 mgl_Tangent1;\n";
+		m_decl += "layout(location = " + vertexIndexStr +	") in vec4 mgl_Vertex1;\n";
+		m_decl += "layout(location = " + normalIndexStr +	") in vec3 mgl_Normal1;\n";
+		m_decl += "layout(location = " + tangentIndexStr +	") in vec3 mgl_Tangent1;\n";
 		m_decl += "\n";
 	}
 
@@ -108,15 +110,18 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	if ( !vertexDeclaration.empty() )	m_decl += vertexDeclaration + "\n";
 
 	// declarations for lighting
-	if ( state.isLightingEnabled() )
+	if ( state.isLightingEnabled() || state.isTessellationEnabled() )
 	{
 		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
 		m_decl += "out vec4 ecPosition;\n";
 
 		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
-		m_decl += "out vec3 ecNormal;\n\n"; // @todo not if bump
+		m_decl += "out vec3 ecNormal;\n"; // @todo not if bump
 	}
 	// else nothing to do
+
+	if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
+	m_decl += "out vec4 vaColor;\n\n";
 
 	if ( has_ftexgen )
 	{
@@ -181,7 +186,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	m_code2 += state.getShaderStage( GLSLState::VERTEX_NORMAL_COMPUTATION ) + "\n";
 	m_code2 += state.getShaderStage( GLSLState::VERTEX_POSITION_DISPLACEMENT ) + "\n";
 
-	if ( state.isLightingEnabled() == false /*|| state.isPerVertexLightingEnabled()*/ )
+	if ( !state.isLightingEnabled() && !state.isTessellationEnabled() )
 	{
 		m_code2 +=
 		"	vec4	ecPosition;\n"		// Eye-coordinate position of vertex
@@ -205,6 +210,12 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		m_code2 += state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION ) + "\n";
 		m_code2 += state.getShaderStage( GLSLState::VERTEX_ECNORMAL_COMPUTATION ) + "\n";
 	}
+
+	m_code2 += "	#ifdef COLOR_BIND_PER_VERTEX\n"
+					"		vaColor = mgl_Color;\n"
+					"	#else\n"
+					"		vaColor = gl_FrontMaterial.diffuse;\n"
+					"	#endif\n\n";
 
 	// ftexgen() => mgl_TexCoord[...] = ...
 	if ( has_ftexgen )
@@ -273,7 +284,7 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 	m_code2 += "}\n";
 
-	/*if ( state.isEnabled( COLOR4_BIND_PER_VERTEX ) )
+	/*if ( state.isEnabled( COLOR_BIND_PER_VERTEX ) )
 	{
 		boost::algorithm::replace_all( m_code1, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"
 		boost::algorithm::replace_all( m_code2, "gl_FrontMaterial.diffuse", "gl_Color"  ); // "mglColor"

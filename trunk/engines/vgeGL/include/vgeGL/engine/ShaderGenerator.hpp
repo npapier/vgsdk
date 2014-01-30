@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier, Alexandre Di Pino.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -72,6 +72,8 @@ struct GLSLHelpers
 		//
 		if ( state.isBumpMappingEnabled() )	retVal += "#define BUMPMAPPING\n";
 		if ( state.isTessellationEnabled() )	retVal += "#define TESSELLATION\n";
+		if ( state.isEnabled( vgeGL::engine::COLOR_BIND_PER_VERTEX ) )	retVal += "#define COLOR_BIND_PER_VERTEX\n";
+
 
 		//
 		retVal += 
@@ -980,7 +982,7 @@ struct GLSLHelpers
 				"	// Sets the color accumulators\n"
 				"	accumColor	=	gl_FrontLightModelProduct.sceneColor + \n"
 				"					accumAmbient * gl_FrontMaterial.ambient +\n"
-				"					accumDiffuse * gl_FrontMaterial.diffuse;\n"
+				"					accumDiffuse * vaColor;\n"
 				"	accumSecondaryColor	= accumSpecular * gl_FrontMaterial.specular;\n" // GL_SEPARATE_SPECULAR_COLOR
 				"\n\n";
 
@@ -989,7 +991,7 @@ struct GLSLHelpers
 				"		// Sets the color accumulators\n"
 				"		accumColor	=	gl_FrontLightModelProduct.sceneColor + \n"
 				"						accumAmbient * gl_FrontMaterial.ambient +\n"
-				"						accumDiffuse * gl_FrontMaterial.diffuse;\n"
+				"						accumDiffuse * vaColor;\n"
 				"		accumSecondaryColor	= accumSpecular * gl_FrontMaterial.specular;\n"  // GL_SEPARATE_SPECULAR_COLOR
 				"\n\n";
 
@@ -998,7 +1000,7 @@ struct GLSLHelpers
 				"	// Sets the color accumulators\n"
 				"	accumBackColor			=	gl_BackLightModelProduct.sceneColor + \n"
 				"								accumAmbient * gl_FrontMaterial.ambient +\n"
-				"								accumDiffuse * gl_FrontMaterial.diffuse;\n"
+				"								accumDiffuse * vaColor;\n"
 				"	accumBackSecondaryColor	=	accumSpecular * gl_FrontMaterial.specular;\n" // GL_SEPARATE_SPECULAR_COLOR
 				"\n\n";
 
@@ -1007,7 +1009,7 @@ struct GLSLHelpers
 				"		// Sets the color accumulators\n"
 				"		accumBackColor			=	gl_BackLightModelProduct.sceneColor + \n"
 				"									accumAmbient * gl_FrontMaterial.ambient +\n"
-				"									accumDiffuse * gl_FrontMaterial.diffuse;\n"
+				"									accumDiffuse * vaColor;\n"
 				"		accumBackSecondaryColor	=	accumSpecular * gl_FrontMaterial.specular;\n" // GL_SEPARATE_SPECULAR_COLOR
 				"\n\n";
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Alexandre Di Pino, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, 2014, Alexandre Di Pino, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Alexandre Di Pino
@@ -54,16 +54,23 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 	std::string outputs;
 // @todo #define SHADEMODEL flat or
 	// declaration for lighting
-	if ( state.isLightingEnabled() )
+	if ( state.isLightingEnabled() || state.isTessellationEnabled() )
 	{
 		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat ";
 		inputs +=	"in vec4 ecPosition[];\n";
+
 		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat ";
 		inputs +=	"in vec3 ecNormal[];\n";
 		if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat ";
 		outputs +=	"out vec3 myNormal[];\n";
+
 	}
 	// else nothing to do
+
+	if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat ";
+	inputs +=	"in vec4 vaColor[];\n\n";
+	if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat ";
+	outputs +=	"out vec4 myColor[];\n";
 
 	m_decl +=
 		"// INPUTS\n"
@@ -212,7 +219,11 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 
 	m_code2 +=
 		"\n"
-		"	myNormal[gl_InvocationID] = ecNormal[gl_InvocationID];\n";
+		"	myNormal[gl_InvocationID] = ecNormal[gl_InvocationID];\n"
+		"#ifdef COLOR_BIND_PER_VERTEX\n"
+		"	myColor[gl_InvocationID] = vaColor[gl_InvocationID];\n"
+		"#endif\n"
+		"\n";
 
 	if ( has_ftexgen )
 	{

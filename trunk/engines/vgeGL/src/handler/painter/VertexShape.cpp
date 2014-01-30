@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008-2013, Nicolas Papier, Alexandre Di Pino.
+// VGSDK - Copyright (C) 2004-2006, 2008-2014, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,6 +47,7 @@
 /*
 supported field (VBO):
 TEXCOORDx
+COLOR
 TANGENT
 NORMAL
 VERTEX
@@ -300,6 +301,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 
 
 	// Updates GLSL state with vertex shape info
+	glslState.setEnabled( vgeGL::engine::COLOR_BIND_PER_VERTEX, pVertexShape->getColorBinding() == vgd::node::BIND_PER_VERTEX );
 
 	// setTexCoordDim for texUnitState of glslState => MUST BE DONE for pg->generate() using generateFunction_ftexgen(), generate_samplers() and generate_texLookups()
 	// engine->getGLSLStateStack().push();

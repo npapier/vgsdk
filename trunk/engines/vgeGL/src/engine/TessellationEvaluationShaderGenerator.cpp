@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Alexandre Di Pino, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, 2014, Alexandre Di Pino, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Alexandre Di Pino
@@ -53,15 +53,21 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 	std::string outputs;
 
 	// declarations for lighting
-	if ( state.isLightingEnabled() )
+	if ( state.isLightingEnabled() || state.isTessellationEnabled() )
 	{
 		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat ";
 		inputs +=	"in vec3 myNormal[];\n";
+		if ( state.isEnabled( FLAT_SHADING ) ) inputs +=  "flat ";
+		inputs +=	"in vec4 myColor[];\n";
+
 		if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat ";
 		outputs +=	"out vec4 ecPosition;\n";
 		if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat ";
 		outputs +=	"out vec3 ecNormal;\n";
 	}
+
+	if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
+	outputs += "out vec4 vaColor;\n\n";
 
 	// declarations for bumpmapping
 	if ( state.isBumpMappingEnabled() )
@@ -204,7 +210,10 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 	state.getShaderStage( GLSLState::VERTEX_GL_POSITION_COMPUTATION ) +
 	"\n" +
 	// ecPosition	= gl_ModelViewMatrix * position;
-	state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION );
+	state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION ) +
+	"#ifdef COLOR_BIND_PER_VERTEX\n"
+	"	vaColor = emitNew( myColor[0], myColor[1], myColor[2] );\n"
+	"#endif\n";
 
 	if ( has_ftexgen )
 	{

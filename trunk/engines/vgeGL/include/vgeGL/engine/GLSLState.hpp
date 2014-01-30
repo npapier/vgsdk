@@ -135,7 +135,7 @@ enum GLSLStateIndex
 	PROGRAM,					///< True when at least one Program node has been traversed
 
 	// VertexShape node
-	COLOR4_BIND_PER_VERTEX,
+	COLOR_BIND_PER_VERTEX,
 
 	// PostProcessing
 	IGNORE_POST_PROCESSING,		///< see LightModel.ignorePostProcessing

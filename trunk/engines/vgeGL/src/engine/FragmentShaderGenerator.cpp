@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -60,7 +60,11 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 
 		if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
 		m_decl += "in vec3 ecNormal;\n\n"; // @todo not if bump
+
 	}
+
+	if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
+	m_decl += "in vec4 vaColor;\n\n";
 
 	if ( has_ftexgen )
 	{
@@ -140,7 +144,7 @@ const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
 	{
 		m_code2 +=
 		"\n"
-		"	color = gl_FrontMaterial.diffuse;\n" +
+		"	color = vaColor;\n" +
 			textureLookup +
 		"	color += gl_SecondaryColor;\n"
 		"	color = vec4(color.rgb, gl_FrontMaterial.diffuse.a);\n";
