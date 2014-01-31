@@ -211,9 +211,7 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 	"\n" +
 	// ecPosition	= gl_ModelViewMatrix * position;
 	state.getShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION ) +
-	"#ifdef COLOR_BIND_PER_VERTEX\n"
-	"	vaColor = emitNew( myColor[0], myColor[1], myColor[2] );\n"
-	"#endif\n";
+	"	vaColor = emitNew( myColor[0], myColor[1], myColor[2] );\n";
 
 	if ( has_ftexgen )
 	{

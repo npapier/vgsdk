@@ -220,9 +220,7 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 	m_code2 +=
 		"\n"
 		"	myNormal[gl_InvocationID] = ecNormal[gl_InvocationID];\n"
-		"#ifdef COLOR_BIND_PER_VERTEX\n"
 		"	myColor[gl_InvocationID] = vaColor[gl_InvocationID];\n"
-		"#endif\n"
 		"\n";
 
 	if ( has_ftexgen )
