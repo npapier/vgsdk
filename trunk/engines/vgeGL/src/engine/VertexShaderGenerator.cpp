@@ -211,11 +211,11 @@ const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
 		m_code2 += state.getShaderStage( GLSLState::VERTEX_ECNORMAL_COMPUTATION ) + "\n";
 	}
 
-	m_code2 += "	#ifdef COLOR_BIND_PER_VERTEX\n"
-					"		vaColor = mgl_Color;\n"
-					"	#else\n"
-					"		vaColor = gl_FrontMaterial.diffuse;\n"
-					"	#endif\n\n";
+	m_code2 +=	"	#ifdef COLOR_BIND_PER_VERTEX\n"
+				"		vaColor = mgl_Color;\n"
+				"	#else\n"
+				"		vaColor = gl_FrontMaterial.diffuse;\n"
+				"	#endif\n\n";
 
 	// ftexgen() => mgl_TexCoord[...] = ...
 	if ( has_ftexgen )
