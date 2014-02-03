@@ -66,7 +66,7 @@ const bool TessellationEvaluationShaderGenerator::generate( vgeGL::engine::Engin
 		outputs +=	"out vec3 ecNormal;\n";
 	}
 
-	if ( state.isEnabled( FLAT_SHADING ) ) m_decl +=  "flat ";
+	if ( state.isEnabled( FLAT_SHADING ) ) outputs +=  "flat ";
 	outputs += "out vec4 vaColor;\n\n";
 
 	// declarations for bumpmapping
