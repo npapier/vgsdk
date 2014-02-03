@@ -45,9 +45,9 @@ const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine *
 	const bool has_ftexgen = engine->isTextureMappingEnabled() && state.textures.getNum() > 0;	// @todo Should be the number of texCoord in VertexShape
 
 	std::pair< std::string, std::string > code_ftexgen	= GLSLHelpers::generateFunction_ftexgen(state, "in", "TexCoords", "inTexCoord[]", true );
-	//std::pair< std::string, std::string > code_samplers	= GLSLHelpers::generate_samplers( state );
+	std::pair< std::string, std::string > code_samplers	= GLSLHelpers::generate_samplers( state );
 
-	//m_decl += code_samplers.first;
+	m_decl += code_samplers.first;
 
 	// INPUTS
 	std::string inputs;
