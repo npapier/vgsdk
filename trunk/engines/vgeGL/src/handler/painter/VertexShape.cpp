@@ -843,6 +843,13 @@ void VertexShape::update(	vgeGL::engine::Engine * engine, vgd::node::VertexShape
 		updateTexCoord( vertexShape, unit,  texCoordDim, rc );
 	}
 
+	// COLOR
+	if ( vertexShape->getColorBinding() == vgd::node::BIND_PER_VERTEX )
+	{
+		vgd::field::EditorRO< vgd::field::MFVec4f > color = vertexShape->getColorRO();
+		updateArrayBuffer( rc->color, color->size()*sizeof(vgm::Vec4f), color->ptr(), bufferUsage );
+	}
+
 	// TANGENT
 	if ( vertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX )
 	{
@@ -932,6 +939,19 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * engine, vgd:
 	}
 	// else nothing to do
 
+
+	// COLOR
+	if ( vertexShape->getColorBinding() == vgd::node::BIND_PER_VERTEX )
+	{
+		rc->color.bind();
+
+		glEnableVertexAttribArray( vgeGL::engine::COLOR_INDEX );
+		glVertexAttribPointer( vgeGL::engine::COLOR_INDEX, 4, GL_FLOAT, GL_FALSE, 0, pArray );
+	}
+	else
+	{
+		glDisableVertexAttribArray( vgeGL::engine::COLOR_INDEX );
+	}
 
 	// TANGENT
 	if ( vertexShape->getTangentBinding() == vgd::node::BIND_PER_VERTEX )
