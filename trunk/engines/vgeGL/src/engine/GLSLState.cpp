@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -128,7 +128,7 @@ const std::string& GLSLState::toString( const GLSLStateIndex bitSetIndexType )
 
 GLSLState::GLSLState( const uint maxTexUnits )
 :	//lights(),
-	textures(maxTexUnits),
+	textures(2/*maxTexUnits*/), // @todo remove maxTexUnits param to constructor ?
 	//decals(),
 	//postProcessing(),
 	//outputBufferProperties()
@@ -430,6 +430,14 @@ const std::string GLSLState::getShaderStage( const ShaderStage shaderStage, cons
 	{
 		return m_shaderStage[shaderStage];
 	}
+}
+
+
+
+const std::string& GLSLState::getShaderStageDefault( const ShaderStage shaderStage )
+{
+	const std::string& defaultShaderCode = getDefaultShaderStage()[shaderStage];
+	return defaultShaderCode;
 }
 
 

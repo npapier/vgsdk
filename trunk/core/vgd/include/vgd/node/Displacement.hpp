@@ -8,7 +8,6 @@
 
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/String.hpp"
-#include "vgd/field/Vec4f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
 
@@ -24,24 +23,23 @@ namespace node
 /**
  * @brief Control displacement of vertices
  *
- * Vertices displacement is available at vertex shader level or/and at tessellation evaluation shader level. To combine several displacements, you have to compute each displacement and mixes them as you like in a custom displacement function (see customDisplacementVS and customDisplacementTES). CUSTOM displacement function has to modify the variable, named position, containing a copy of the current vertex given initially by variable mgl_Vertex. Type of position is vec4 (idem for the read-only variable mgl_Vertex). 
+ * Vertices displacement is available at vertex shader level or/and at tessellation evaluation shader level. To combine several displacements, you have to compute each displacement and mixes them as you like in a custom displacement function (see customDisplacementVS, customDisplacementTES and composeMode). CUSTOM displacement function has to modify the variable, named position, containing a copy of the current vertex given initially by variable mgl_Vertex. Type of position is vec4 (idem for the read-only variable mgl_Vertex). 
  *
  * New fields defined by this node :
  * - SFString \c declarationsVS = std::string()<br>
  *   Append this field to the vertex shader declarations section. Use case: to define function used by displacementVS field<br>
  *<br>
  * - SFString \c displacementVS = std::string()<br>
- *   Example : position += uDisplacementParameter4f0.x * vec4(normal,0);<br>
+ *   Example : position += uDisplacementParameter4f0.x * vec4(normalize(normal),0);<br>
  *<br>
  * - SFString \c declarationsTES = std::string()<br>
  *   Append this field to the tessellation shader declarations section. Use case: to define function used by displacementTES field<br>
  *<br>
  * - SFString \c displacementTES = std::string()<br>
- *   Example : position += uDisplacementParameter4f0.y * vec4(ecNormal,0);<br>
+ *   Example : position += uDisplacementParameter4f0.y * vec4(normalize(normal),0);<br>
  *<br>
- * - OFVec4f \c [parameter4f0] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
- *<br>
- * - OFVec4f \c [parameter4f1] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
+ * - SFEnum \c composeMode = (REPLACE)<br>
+ *   Specifies how the displacement function(s) defined by this node are installed in shaders<br>
  *<br>
  * - OFPredefinedDisplacementValueType \c [displacementFunctionVS] = (NONE)<br>
  *<br>
@@ -61,7 +59,7 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 	enum PredefinedDisplacement 
 	{
 		NONE = 272,	///< No displacement add to the shader
-		ALONG_NORMAL = 273,	///< Moves vertices along their normals based on among coming from parameter4f0.x (for VS) and from parameter4f0.y for (TES).
+		ALONG_NORMAL = 273,	///< Moves vertices along their normals based on among coming from uDisplacementParameter4f0.x (for VS) and from uDisplacementParameter4f0.y for (TES).
 		CUSTOM = 274,	///< Uses custom displacement using fields declarationsVS and displacementVS for vertex shader (resp. declarationsTES/displacementTES for tessellation evaluation shader)
 		DEFAULT_PREDEFINEDDISPLACEMENT = NONE	///< No displacement add to the shader
 	};
@@ -285,89 +283,80 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field parameter4f0
+	 * @name Accessors to field composeMode
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c parameter4f0.
+	 * @brief Definition of symbolic values
 	 */
-	typedef vgm::Vec4f Parameter4f0ValueType;
+	enum  
+	{
+		PREPEND = 276,	///< Displacement function(s) defined by this node are added before the current one (if any).
+		APPEND = 277,	///< Displacement function(s) defined by this node are added after the current one (if any).
+		REPLACE = 275,	///< Displacement function(s) defined by this node are replacing the current one (if any). So all previous displacements are removed.
+		DEFAULT_COMPOSEMODE = REPLACE	///< Displacement function(s) defined by this node are replacing the current one (if any). So all previous displacements are removed.
+	};
 
 	/**
-	 * @brief The default value of field named \c parameter4f0.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
-	static const Parameter4f0ValueType DEFAULT_PARAMETER4F0;
+	struct ComposeModeValueType : public vgd::field::Enum
+	{
+		ComposeModeValueType()
+		{}
+
+		ComposeModeValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ComposeModeValueType( const ComposeModeValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		ComposeModeValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 275 );
+			retVal.push_back( 276 );
+			retVal.push_back( 277 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "REPLACE" );
+			retVal.push_back( "PREPEND" );
+			retVal.push_back( "APPEND" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Type definition of the field named \c parameter4f0
+	 * @brief Type definition of the field named \c composeMode
 	 */
-	typedef vgd::field::TOptionalField< Parameter4f0ValueType > FParameter4f0Type;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FComposeModeType;
 
 
 	/**
-	 * @brief Gets the value of field named \c parameter4f0.
+	 * @brief Gets the value of field named \c composeMode.
 	 */
-	const bool getParameter4f0( Parameter4f0ValueType& value ) const;
+	const ComposeModeValueType getComposeMode() const;
 
 	/**
-	 * @brief Sets the value of field named \c parameter4f0.
- 	 */
-	void setParameter4f0( const Parameter4f0ValueType& value );
-
-	/**
-	 * @brief Erases the field named \c parameter4f0.
+	 * @brief Sets the value of field named \c composeMode.
 	 */
-	void eraseParameter4f0();
+	void setComposeMode( const ComposeModeValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c parameter4f0 has been initialized.
-	 */
-	const bool hasParameter4f0() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field parameter4f1
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c parameter4f1.
-	 */
-	typedef vgm::Vec4f Parameter4f1ValueType;
-
-	/**
-	 * @brief The default value of field named \c parameter4f1.
-	 */
-	static const Parameter4f1ValueType DEFAULT_PARAMETER4F1;
-
-	/**
-	 * @brief Type definition of the field named \c parameter4f1
-	 */
-	typedef vgd::field::TOptionalField< Parameter4f1ValueType > FParameter4f1Type;
-
-
-	/**
-	 * @brief Gets the value of field named \c parameter4f1.
-	 */
-	const bool getParameter4f1( Parameter4f1ValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c parameter4f1.
- 	 */
-	void setParameter4f1( const Parameter4f1ValueType& value );
-
-	/**
-	 * @brief Erases the field named \c parameter4f1.
-	 */
-	void eraseParameter4f1();
-
-	/**
-	 * @brief Tests if the value of field named \c parameter4f1 has been initialized.
-	 */
-	const bool hasParameter4f1() const;
 	//@}
 
 
@@ -484,18 +473,11 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 	static const std::string getFDisplacementTES( void );
 
 	/**
-	 * @brief Returns the name of field \c parameter4f0.
+	 * @brief Returns the name of field \c composeMode.
 	 *
-	 * @return the name of field \c parameter4f0.
+	 * @return the name of field \c composeMode.
 	 */
-	static const std::string getFParameter4f0( void );
-
-	/**
-	 * @brief Returns the name of field \c parameter4f1.
-	 *
-	 * @return the name of field \c parameter4f1.
-	 */
-	static const std::string getFParameter4f1( void );
+	static const std::string getFComposeMode( void );
 
 	/**
 	 * @brief Returns the name of field \c displacementFunctionVS.

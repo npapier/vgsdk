@@ -285,7 +285,7 @@ tag documentation
 			<docBrief>Control displacement of vertices</docBrief>
 			<doc>Vertices displacement is available at vertex shader level or/and at tessellation evaluation shader level.</doc>
 
-			<doc>To combine several displacements, you have to compute each displacement and mixes them as you like in a custom displacement function (see customDisplacementVS and customDisplacementTES).</doc>
+			<doc>To combine several displacements, you have to compute each displacement and mixes them as you like in a custom displacement function (see customDisplacementVS, customDisplacementTES and composeMode).</doc>
 
 			<doc>CUSTOM displacement function has to modify the variable, named position, containing a copy of the current vertex given initially by variable mgl_Vertex.</doc>
 			<doc>Type of position is vec4 (idem for the read-only variable mgl_Vertex).</doc>
@@ -296,18 +296,9 @@ tag documentation
 			<ingroup>g_shapeModifierNodes</ingroup>
 		</doxygen>
 
-		<of name="parameter4f0" doc="">
-			<type name = "Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"/>
-		</of>
-
-		<of name="parameter4f1" doc="">
-			<type name = "Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"/>
-		</of>
-
-
 -		<enum name ="PredefinedDisplacement" default="NONE">
 			<value name="NONE"			doc="No displacement add to the shader"/>
-			<value name="ALONG_NORMAL"	doc="Moves vertices along their normals based on among coming from parameter4f0.x (for VS) and from parameter4f0.y for (TES)."/>
+			<value name="ALONG_NORMAL"	doc="Moves vertices along their normals based on among coming from uDisplacementParameter4f0.x (for VS) and from uDisplacementParameter4f0.y for (TES)."/>
 			<value name="CUSTOM"		doc="Uses custom displacement using fields declarationsVS and displacementVS for vertex shader (resp. declarationsTES/displacementTES for tessellation evaluation shader)"/>
 		</enum>
 
@@ -320,7 +311,7 @@ tag documentation
 			<type name = "string" namespace="std" default=""/>
 		</sf>
 
-		<sf name="displacementVS" doc="Example : position += uDisplacementParameter4f0.x * vec4(normal,0);">
+		<sf name="displacementVS" doc="Example : position += uDisplacementParameter4f0.x * vec4(normalize(normal),0);">
 			<type name = "string" namespace="std" default=""/>
 		</sf>
 
@@ -333,10 +324,18 @@ tag documentation
 			<type name = "string" namespace="std" default=""/>
 		</sf>
 
-		<sf name="displacementTES" doc="Example : position += uDisplacementParameter4f0.y * vec4(ecNormal,0);">
+		<sf name="displacementTES" doc="Example : position += uDisplacementParameter4f0.y * vec4(normalize(normal),0);">
 			<type name = "string" namespace="std" default=""/>
 		</sf>
 
+
+		<sf name="composeMode" doc="Specifies how the displacement function(s) defined by this node are installed in shaders">
+			<enum default = "REPLACE">
+				<value name="REPLACE"	doc="Displacement function(s) defined by this node are replacing the current one (if any). So all previous displacements are removed."/>
+				<value name="PREPEND"	doc="Displacement function(s) defined by this node are added before the current one (if any)."/>
+				<value name="APPEND"	doc="Displacement function(s) defined by this node are added after the current one (if any)."/>
+			</enum>
+		</sf>
 	</node>
 
 
@@ -1356,7 +1355,7 @@ tag documentation
 			<docBrief>Control the tessellation level computation</docBrief>
 			<doc>Specify the function used to compute the tessellation level in tessellation control shader.</doc>
 
-			<doc>To combine several methods computing the tessellation level, you have to compute tessellation level with each method separately and mixes them as you like using a CUSTOM function (see customDeclarations and customMethod).</doc>
+			<doc>To combine several methods computing the tessellation level, you have to compute tessellation level with each method separately and mixes them as you like using a CUSTOM function (see customDeclarations, customMethod and composeMode).</doc>
 
 			<doc>CUSTOM method has to compute two variables, named tessLevelOuter (a vec4) and tessLevelInner (a vec2) that are similar to gl_TessLevelOuter[] and gl_TessLevelInner[] except their types (vector versus array).</doc>
 
@@ -1367,13 +1366,13 @@ tag documentation
 			<ingroup>g_tessellationNodes</ingroup>
 		</doxygen>
 
-		<of name="parameter4f0" doc="">
+<!--		<of name="parameter4f0" doc="">
 			<type name = "Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"/>
 		</of>
 
 		<of name="parameter4f1" doc="">
 			<type name = "Vec4f" namespace="vgm" default="0.f, 0.f, 0.f, 0.f"/>
-		</of>
+		</of>-->
 
 		<sf name="method" doc="Specify the method used to compute the tessellation level">
 			<enum default="UNIFORM">
@@ -1389,6 +1388,15 @@ tag documentation
 
 		<sf name="customCode" doc="Have to compute tessellation level in tessLevelOuter and tessLevelInner (resp. a vec4 and a vec2).">
 			<type name = "string" namespace="std" default=""/>
+		</sf>
+
+
+		<sf name="composeMode" doc="Specifies how the tessellation level function defined by this node are installed in shaders">
+			<enum default = "REPLACE">
+				<value name="REPLACE"	doc="Tessellation level function defined by this node is replacing the current one (if any). So all previous tessellation level functions are removed."/>
+				<value name="PREPEND"	doc="Tessellation level function defined by this node is added before the current one (if any)."/>
+				<value name="APPEND"	doc="Tessellation level function defined by this node is added after the current one (if any)."/>
+			</enum>
 		</sf>
 	</node>
 

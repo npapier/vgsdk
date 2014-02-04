@@ -306,9 +306,43 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	// setTexCoordDim for texUnitState of glslState => MUST BE DONE for pg->generate() using generateFunction_ftexgen(), generate_samplers() and generate_texLookups()
 	// engine->getGLSLStateStack().push();
 
-
-	// Update glslState.textures[].texCoordDim from vertexShape->texCoordDim
+	// @todo OPTME: VertexShape::getTexUnitsIterators() or iterator for glslState.textures
 	if ( engine->isTextureMappingEnabled() )
+	{
+		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
+		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
+				i != iEnd;
+				++i )
+		{
+			const uint unit = *i;
+
+			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
+
+			if ( pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
+			{
+				const int32 dimTexCoord = pVertexShape->getTexCoordDim( unit ); // @todo OPT pVertexShape->getTexCoordDim()
+				if ( texUnitState->getTexCoordDim() != dimTexCoord )
+				{
+					// @toto glslState.setTexCoordDim( 0 Unit, 2  Dim ); that invalidate DF
+					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
+					glslState.textures.dirty();
+				}
+				//else nothing to do
+			}
+/*			else
+			{
+				texUnitState->setTexCoordDim( 0 );
+#ifdef _DEBUG
+				vgLogDebug(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
+								pVertexShape->getName().c_str(), unit );
+#endif
+			}*/
+		}
+	}
+
+	// // Update glslState.textures[].texCoordDim from vertexShape->texCoordDim
+// // @todo iterate on vertexShape.texCoord? instead of glslState.textures
+/*	if ( engine->isTextureMappingEnabled() )
 	{
 		//
 		uint		i		= 0;
@@ -322,27 +356,27 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 					texUnitState->getTexGenNode() == 0
 				)
 			{
-				const int32 dimTexCoord = pVertexShape->getTexCoordDim( i );
+				const int32 dimTexCoord = pVertexShape->getTexCoordDim( i );			// @todo OPT pVertexShape->getTexCoordDim()
 				if ( texUnitState->getTexCoordDim() != dimTexCoord )
 				{
-					// @toto glslState.setTexCoordDim( 0/*Unit*/, 2 /* Dim */ ); that invalidate DF
-					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
-					glslState.textures.dirty();
+					// @toto glslState.setTexCoordDim( 0 Unit, 2  Dim  ); that invalidate DF
+					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );								// no more used !!! @todo OPTME remove me
+					glslState.textures.dirty(); // @todo never validate and used to skip that work
 				}
 			}
 			// else no state for the texture unit or texCoordDim from texGen node, so nothing to do
 #ifdef _DEBUG
-			else
-			{
-				/*if ( !texUnitState && pVertexShape->getTexCoordDim( i ) > 0 )
-				{
-					vgAssertN(	false, "VertexShape(%s).texCoord%i is not empty, but there is no texture",
-										pVertexShape->getName().c_str(), i );
-				}*/
-			}
+			//else
+			//{
+				//if ( !texUnitState && pVertexShape->getTexCoordDim( i ) > 0 )
+				//{
+				//	vgAssertN(	false, "VertexShape(%s).texCoord%i is not empty, but there is no texture",
+				//						pVertexShape->getName().c_str(), i );
+				//}
+			//}
 #endif
 		}
-	}
+	}*/
 
 
 	// GLSL
@@ -577,7 +611,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	}
 
 	// Restores glslState
-	/*if ( engine->isTextureMappingEnabled() )
+	if ( engine->isTextureMappingEnabled() )
 	{
 		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
 		for(	boost::tie( i, iEnd ) = pVertexShape->getTexUnitsIterators();
@@ -587,14 +621,14 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 			const uint unit = *i;
 
 			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
-	
-			if (	(pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF) &&
-					texUnitState	)
+
+			if ( pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
 			{
 				texUnitState->setTexCoordDim( 0 );
+				glslState.textures.dirty();
 			}
 		}
-	}*/
+	}
 //	glPopAttrib();
 
 	// TESSELLATION
@@ -653,7 +687,7 @@ void VertexShape::setSamplers( vgeGL::engine::Engine * engine, glo::GLSLProgram 
 
 		const vgd::node::Texture *	textureNode	= current->getTextureNode();
 		glo::Texture *				texture		= current->getTexture();
-		const uint8					texCoordDim	= current->getTexCoordDim();
+		//const uint8				texCoordDim	= current->getTexCoordDim();
 		//const vgd::node::TexGen *	texGen		= current->getTexGenNode();
 
 		//
@@ -662,7 +696,7 @@ void VertexShape::setSamplers( vgeGL::engine::Engine * engine, glo::GLSLProgram 
 		const bool isTextureComplete = textureNode && textureNode->hasImage() && texture; // @todo not accurate
 
 		//
-		const bool hasTexCoord = texCoordDim > 0; // pVertexShape->getTexCoordDim(unit) || texGen;
+		//const bool hasTexCoord = texCoordDim > 0; // pVertexShape->getTexCoordDim(unit) || texGen;
 
 		//
 		const bool isUnitComplete = isTextureComplete /*&& hasTexCoord*/;
@@ -672,7 +706,12 @@ void VertexShape::setSamplers( vgeGL::engine::Engine * engine, glo::GLSLProgram 
 		{
 			if ( program )
 			{
-				vgAssert( program->isInUse() );
+#ifdef _DEBUG
+				if ( !engine->isDSAEnabled() )
+				{
+					vgAssert( program->isInUse() );
+				}
+#endif
 
 				const vgd::node::Texture::UsageValueType usage = textureNode->getUsage();
 
@@ -683,24 +722,13 @@ void VertexShape::setSamplers( vgeGL::engine::Engine * engine, glo::GLSLProgram 
 				else if ( usage == vgd::node::Texture::IMAGE )
 				{
 					program->setUniform1i( "texMap2D[" + strUnit + "]", unit );
-
-					//configureTexCoord( pVertexShape, unit, pVertexShape->getTexCoordDim(unit) /* @todo OPTME */ );
 				}
 				else
 				{
-					vgAssert( false );
+					vgAssertN( false, "Unexpected usage for Texture named, '%s'.", textureNode->getName().c_str() );
 				}
 			}
-			else
-			{
-				/*engine->activeTexture( unit );
-				const uint texCoordDim = pVertexShape->getTexCoordDim(unit);
-				if ( texCoordDim > 0 )
-				{
-					texture->enable();
-				}*/
-				//configureTexCoord( pVertexShape, unit,  texCoordDim );
-			}
+			// else nothing to do
 		}
 
 		//
@@ -877,7 +905,7 @@ void VertexShape::update(	vgeGL::engine::Engine * engine, vgd::node::VertexShape
 }
 
 
-void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc )
+void VertexShape::configureRenderingArrays( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc )
 {
 	glo::GLSLProgram *	program	= engine->gethCurrentProgram();
 	const GLvoid *		pArray	= 0;
@@ -893,48 +921,15 @@ void VertexShape::configureRenderingArrays(	vgeGL::engine::Engine * engine, vgd:
 				++i )
 		{
 			const uint unit = *i;
-			//const vgd::Shp< GLSLState::TexUnitState > current = glslState.textures.getState( unit );
-			// Empty texture unit, so do nothing
-			//if ( current == 0 ) continue;
 
-			//const vgd::node::Texture *	textureNode	= current->getTextureNode();
-			//glo::Texture *				texture		= current->getTexture();
-			//const uint8					texCoordDim	= current->getTexCoordDim();
-
-			// @todo hasImage() ? see handler Texture::preSynchronize() : idea boolean value in glo::Texture for "completeness" ?
-			// @todo case textureNode and texture, but textureNode with IImage containing no data (texInfo.iimage->pixels() == 0)
-			//const bool isTextureComplete	= textureNode && textureNode->hasImage() && texture; // @todo not accurate
-			//const bool hasTexCoord			= texCoordDim > 0;
-
-			//const bool isUnitComplete = isTextureComplete && hasTexCoord;
-
-			// TEXTURE COORDINATES
-			//if ( isUnitComplete )
-			//{
-				if ( program )
-				{
-					//switch ( textureNode->getUsage().value() )
-					//{
-						//case vgd::node::Texture::IMAGE:
-							configureTexCoord( engine, vertexShape, unit, vertexShape->getTexCoordDim(unit) /* @todo OPTME */, rc );
-							//break;
-
-						//case vgd::node::Texture::SHADOW:
-							// nothing to do, tex coords are generated
-							//break;
-
-						//default:
-							//vgAssertN( false, "Unknown usage %i", textureNode->getUsage().value() );
-					//}
-				}
-				else
-				{
-					engine->activeTexture( unit );
-					glEnable( GL_TEXTURE_2D );
-					configureTexCoord( engine, vertexShape, unit, vertexShape->getTexCoordDim(unit), rc );
-				}
-			//}
+			if ( !program )
+			{
+				engine->activeTexture( unit );
+				glEnable( GL_TEXTURE_2D );
+			}
 			// else nothing to do
+
+			configureTexCoord( engine, vertexShape, unit, vertexShape->getTexCoordDim(unit) /* @todo OPTME */, rc );
 		} // end for
 	}
 	// else nothing to do

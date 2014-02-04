@@ -86,9 +86,9 @@ struct VGD_API GeoMorph : public vgd::node::Group, public vgd::node::IShape
 	 */
 	enum  
 	{
-		DISABLED = 288,	///< Disable this node. So blending between meshes is not computed, but meshes are rendered as usual.
-		SKIP = 289,	///< Disable this node. So blending between meshes is not computed, but meshes are NOT rendered as usual.
-		NORMALIZED = 290,	///< (Mesh0, Mesh1, ...) * (weights[0], weights[1],...) = (1-weights[0]-weights[1]-...) * Mesh0 + weights[0] * Mesh1 + ... with 0 <= weights[0] + weights[1] + ... <= 1
+		DISABLED = 291,	///< Disable this node. So blending between meshes is not computed, but meshes are rendered as usual.
+		SKIP = 292,	///< Disable this node. So blending between meshes is not computed, but meshes are NOT rendered as usual.
+		NORMALIZED = 293,	///< (Mesh0, Mesh1, ...) * (weights[0], weights[1],...) = (1-weights[0]-weights[1]-...) * Mesh0 + weights[0] * Mesh1 + ... with 0 <= weights[0] + weights[1] + ... <= 1
 		DEFAULT_METHOD = NORMALIZED	///< (Mesh0, Mesh1, ...) * (weights[0], weights[1],...) = (1-weights[0]-weights[1]-...) * Mesh0 + weights[0] * Mesh1 + ... with 0 <= weights[0] + weights[1] + ... <= 1
 	};
 
@@ -116,9 +116,9 @@ struct VGD_API GeoMorph : public vgd::node::Group, public vgd::node::IShape
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 288 );
-			retVal.push_back( 289 );
-			retVal.push_back( 290 );
+			retVal.push_back( 291 );
+			retVal.push_back( 292 );
+			retVal.push_back( 293 );
 
 			return retVal;
 		}

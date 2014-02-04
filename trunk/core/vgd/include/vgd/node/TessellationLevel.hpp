@@ -8,7 +8,6 @@
 
 #include "vgd/field/Enum.hpp"
 #include "vgd/field/String.hpp"
-#include "vgd/field/Vec4f.hpp"
 #include "vgd/node/SingleAttribute.hpp"
 
 
@@ -24,7 +23,7 @@ namespace node
 /**
  * @brief Control the tessellation level computation
  *
- * Specify the function used to compute the tessellation level in tessellation control shader. To combine several methods computing the tessellation level, you have to compute tessellation level with each method separately and mixes them as you like using a CUSTOM function (see customDeclarations and customMethod). CUSTOM method has to compute two variables, named tessLevelOuter (a vec4) and tessLevelInner (a vec2) that are similar to gl_TessLevelOuter[] and gl_TessLevelInner[] except their types (vector versus array). 
+ * Specify the function used to compute the tessellation level in tessellation control shader. To combine several methods computing the tessellation level, you have to compute tessellation level with each method separately and mixes them as you like using a CUSTOM function (see customDeclarations, customMethod and composeMode). CUSTOM method has to compute two variables, named tessLevelOuter (a vec4) and tessLevelInner (a vec2) that are similar to gl_TessLevelOuter[] and gl_TessLevelInner[] except their types (vector versus array). 
  *
  * New fields defined by this node :
  * - SFEnum \c method = (UNIFORM)<br>
@@ -36,9 +35,8 @@ namespace node
  * - SFString \c customCode = std::string()<br>
  *   Have to compute tessellation level in tessLevelOuter and tessLevelInner (resp. a vec4 and a vec2).<br>
  *<br>
- * - OFVec4f \c [parameter4f0] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
- *<br>
- * - OFVec4f \c [parameter4f1] = vgm::Vec4f(0.f, 0.f, 0.f, 0.f)<br>
+ * - SFEnum \c composeMode = (REPLACE)<br>
+ *   Specifies how the tessellation level function defined by this node are installed in shaders<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -92,9 +90,9 @@ struct VGD_API TessellationLevel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		CUSTOM = 425,	///< Use custom function to compute the tessellation level. The function is defined by field customDeclarations and customCode
-		PIXELS_PER_EDGE = 424,	///< Adaptive tessellation using the number of pixels per edge desired as criterion. Tessellation level range is given by tessellationRange[].
-		UNIFORM = 423,	///< Use the same tessellation level given by the field tessellationRange[1]
+		CUSTOM = 428,	///< Use custom function to compute the tessellation level. The function is defined by field customDeclarations and customCode
+		PIXELS_PER_EDGE = 427,	///< Adaptive tessellation using the number of pixels per edge desired as criterion. Tessellation level range is given by tessellationRange[].
+		UNIFORM = 426,	///< Use the same tessellation level given by the field tessellationRange[1]
 		DEFAULT_METHOD = UNIFORM	///< Use the same tessellation level given by the field tessellationRange[1]
 	};
 
@@ -122,9 +120,9 @@ struct VGD_API TessellationLevel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 423 );
-			retVal.push_back( 424 );
-			retVal.push_back( 425 );
+			retVal.push_back( 426 );
+			retVal.push_back( 427 );
+			retVal.push_back( 428 );
 
 			return retVal;
 		}
@@ -232,89 +230,80 @@ struct VGD_API TessellationLevel : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field parameter4f0
+	 * @name Accessors to field composeMode
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c parameter4f0.
+	 * @brief Definition of symbolic values
 	 */
-	typedef vgm::Vec4f Parameter4f0ValueType;
+	enum  
+	{
+		PREPEND = 430,	///< Tessellation level function defined by this node is added before the current one (if any).
+		APPEND = 431,	///< Tessellation level function defined by this node is added after the current one (if any).
+		REPLACE = 429,	///< Tessellation level function defined by this node is replacing the current one (if any). So all previous tessellation level functions are removed.
+		DEFAULT_COMPOSEMODE = REPLACE	///< Tessellation level function defined by this node is replacing the current one (if any). So all previous tessellation level functions are removed.
+	};
 
 	/**
-	 * @brief The default value of field named \c parameter4f0.
+	 * @brief Type definition of a container for the previous symbolic values
 	 */
-	static const Parameter4f0ValueType DEFAULT_PARAMETER4F0;
+	struct ComposeModeValueType : public vgd::field::Enum
+	{
+		ComposeModeValueType()
+		{}
+
+		ComposeModeValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		ComposeModeValueType( const ComposeModeValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		ComposeModeValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 429 );
+			retVal.push_back( 430 );
+			retVal.push_back( 431 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "REPLACE" );
+			retVal.push_back( "PREPEND" );
+			retVal.push_back( "APPEND" );
+
+			return retVal;
+		}
+	};
 
 	/**
-	 * @brief Type definition of the field named \c parameter4f0
+	 * @brief Type definition of the field named \c composeMode
 	 */
-	typedef vgd::field::TOptionalField< Parameter4f0ValueType > FParameter4f0Type;
+	typedef vgd::field::TSingleField< vgd::field::Enum > FComposeModeType;
 
 
 	/**
-	 * @brief Gets the value of field named \c parameter4f0.
+	 * @brief Gets the value of field named \c composeMode.
 	 */
-	const bool getParameter4f0( Parameter4f0ValueType& value ) const;
+	const ComposeModeValueType getComposeMode() const;
 
 	/**
-	 * @brief Sets the value of field named \c parameter4f0.
- 	 */
-	void setParameter4f0( const Parameter4f0ValueType& value );
-
-	/**
-	 * @brief Erases the field named \c parameter4f0.
+	 * @brief Sets the value of field named \c composeMode.
 	 */
-	void eraseParameter4f0();
+	void setComposeMode( const ComposeModeValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c parameter4f0 has been initialized.
-	 */
-	const bool hasParameter4f0() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field parameter4f1
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c parameter4f1.
-	 */
-	typedef vgm::Vec4f Parameter4f1ValueType;
-
-	/**
-	 * @brief The default value of field named \c parameter4f1.
-	 */
-	static const Parameter4f1ValueType DEFAULT_PARAMETER4F1;
-
-	/**
-	 * @brief Type definition of the field named \c parameter4f1
-	 */
-	typedef vgd::field::TOptionalField< Parameter4f1ValueType > FParameter4f1Type;
-
-
-	/**
-	 * @brief Gets the value of field named \c parameter4f1.
-	 */
-	const bool getParameter4f1( Parameter4f1ValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c parameter4f1.
- 	 */
-	void setParameter4f1( const Parameter4f1ValueType& value );
-
-	/**
-	 * @brief Erases the field named \c parameter4f1.
-	 */
-	void eraseParameter4f1();
-
-	/**
-	 * @brief Tests if the value of field named \c parameter4f1 has been initialized.
-	 */
-	const bool hasParameter4f1() const;
 	//@}
 
 
@@ -346,18 +335,11 @@ struct VGD_API TessellationLevel : public vgd::node::SingleAttribute
 	static const std::string getFCustomCode( void );
 
 	/**
-	 * @brief Returns the name of field \c parameter4f0.
+	 * @brief Returns the name of field \c composeMode.
 	 *
-	 * @return the name of field \c parameter4f0.
+	 * @return the name of field \c composeMode.
 	 */
-	static const std::string getFParameter4f0( void );
-
-	/**
-	 * @brief Returns the name of field \c parameter4f1.
-	 *
-	 * @return the name of field \c parameter4f1.
-	 */
-	static const std::string getFParameter4f1( void );
+	static const std::string getFComposeMode( void );
 
 	//@}
 

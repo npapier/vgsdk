@@ -1323,18 +1323,17 @@ struct GLSLHelpers
 			const vgd::Shp< GLSLState::TexUnitState > current = state.textures.getState( i );
 
 			// Empty texture unit, so do nothing
-			if ( current == 0 )	continue;
+			if ( current == 0 )		continue;
 
-			if ( current->isComplete() )
+			vgd::node::Texture * textureNode = current->getTextureNode();
+			if ( textureNode )
 			{
-				vgd::node::Texture *				textureNode	= current->getTextureNode();
-				vgd::node::Texture::UsageValueType	usage		= textureNode->getUsage();
+				vgd::node::Texture::UsageValueType usage = textureNode->getUsage();
 
 				switch ( usage.value() )
 				{
 					case vgd::node::Texture::SHADOW:
 						++sampler2DShadowCount;
-						//shadowTextureNode = textureNode;
 						break;
 
 					case vgd::node::Texture::IMAGE:
@@ -1343,7 +1342,7 @@ struct GLSLHelpers
 
 					default:
 						++sampler2DCount;
-						assert( false && "Unexpected value for vgd::node::Texture.usage field" );
+						vgAssertN( false, "Unexpected value for vgd::node::Texture.usage field" );
 				}
 			}
 			// else nothing to do
@@ -1356,35 +1355,13 @@ struct GLSLHelpers
 			}
 		}
 
+// @todo OPTME use state.textures.size() ?
 		// Updates samplers declarations
-		decl +=	"#define NUM_TEXMAP2D			" + vgd::basic::toString( vgd::basic::toString(std::max(sampler2DCount, (uint)2)) ) + "\n" + // @todo 2 for bump !!!
-				"#define NUM_TEXMAP2DSHADOW	" + vgd::basic::toString( std::max(sampler2DShadowCount, (uint)1) ) + "\n\n";
+		decl +=	"#define NUM_TEXMAP2D			"	+ vgd::basic::toString( vgd::basic::toString(std::max(sampler2DCount, (uint)2)) ) + "\n" + // @todo 2 for bump !!!
+				"#define NUM_TEXMAP2DSHADOW	"		+ vgd::basic::toString( std::max(sampler2DShadowCount, (uint)1) ) + "\n\n";
 
 		decl +=	"uniform sampler2D		texMap2D[NUM_TEXMAP2D];\n"
 				"uniform sampler2DShadow	texMap2DShadow[NUM_TEXMAP2DSHADOW];\n";
-//		if ( sampler2DCount > 0 )
-/*		if ( state.textures.size() > 0 )
-		{
-			//decl += "uniform sampler2D texMap2D[];\n\n";
-			//decl += "uniform sampler2D texMap2D[" +  + "];\n\n";
-			decl += "uniform sampler2D		texMap2D[" + vgd::basic::toString(state.textures.size()) + "];\n";
-		}
-		else
-		{
-			decl += "uniform sampler2D		texMap2D[2];\n";
-		}*/
-
-		//if ( sampler2DShadowCount > 0 )
-/*		if ( state.textures.size() > 0 )
-		{
-			//decl += "uniform sampler2DShadow texMap2DShadow[1];\n\n";
-			//decl += "uniform sampler2DShadow texMap2DShadow[" + vgd::basic::toString(sampler2DShadowCount) + "];\n\n";
-			decl += "uniform sampler2DShadow	texMap2DShadow[" + vgd::basic::toString(state.textures.size()) + "];\n";
-		}
-		else
-		{
-			decl += "uniform sampler2DShadow	texMap2DShadow[2];\n";
-		}*/
 
 		return std::make_pair(decl + "\n", ""/*code*/);
 	}
@@ -1404,9 +1381,9 @@ struct GLSLHelpers
 			// Empty texture unit, so do nothing
 			if ( current == 0 ) continue;
 
-			if ( current->isComplete() )
+			if ( current->isComplete() )		// textureNode and texCoord != 0 (see VertexShape handler).
 			{
-				const vgd::node::Texture *		textureNode	= current->getTextureNode();
+				const vgd::node::Texture * textureNode	= current->getTextureNode();
 
 				if (	fragmentShader ? textureNode->hasFragmentFunction() : textureNode->hasVertexFunction() &&
 						textureNode->getUsage() == vgd::node::Texture::IMAGE )

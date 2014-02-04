@@ -66,8 +66,7 @@ TessellationLevel::TessellationLevel( const std::string nodeName ) :
 	addField( new FMethodType(getFMethod()) );
 	addField( new FCustomDeclarationsType(getFCustomDeclarations()) );
 	addField( new FCustomCodeType(getFCustomCode()) );
-	addField( new FParameter4f0Type(getFParameter4f0()) );
-	addField( new FParameter4f1Type(getFParameter4f1()) );
+	addField( new FComposeModeType(getFComposeMode()) );
 
 	// Sets link(s)
 
@@ -82,6 +81,7 @@ void TessellationLevel::setToDefaults( void )
 	setMethod( (UNIFORM) );
 	setCustomDeclarations( std::string() );
 	setCustomCode( std::string() );
+	setComposeMode( (REPLACE) );
 }
 
 
@@ -89,8 +89,6 @@ void TessellationLevel::setToDefaults( void )
 void TessellationLevel::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setParameter4f0( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
-	setParameter4f1( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
 }
 
 
@@ -151,68 +149,18 @@ void TessellationLevel::setCustomCode( const CustomCodeValueType value )
 
 
 
-// Parameter4f0
+// ComposeMode
 
-const TessellationLevel::Parameter4f0ValueType TessellationLevel::DEFAULT_PARAMETER4F0 = vgm::Vec4f(0.f, 0.f, 0.f, 0.f);
-
-
-
-const bool TessellationLevel::getParameter4f0( Parameter4f0ValueType& value ) const
+const TessellationLevel::ComposeModeValueType TessellationLevel::getComposeMode() const
 {
-	return getFieldRO<FParameter4f0Type>(getFParameter4f0())->getValue( value );
+	return getFieldRO<FComposeModeType>(getFComposeMode())->getValue();
 }
 
 
 
-void TessellationLevel::setParameter4f0( const Parameter4f0ValueType& value )
+void TessellationLevel::setComposeMode( const ComposeModeValueType value )
 {
-	getFieldRW<FParameter4f0Type>(getFParameter4f0())->setValue( value );
-}
-
-
-
-void TessellationLevel::eraseParameter4f0()
-{
-	getFieldRW<FParameter4f0Type>(getFParameter4f0())->eraseValue();
-}
-
-
-const bool TessellationLevel::hasParameter4f0() const
-{
-	return getFieldRO<FParameter4f0Type>(getFParameter4f0())->hasValue();
-}
-
-
-
-// Parameter4f1
-
-const TessellationLevel::Parameter4f1ValueType TessellationLevel::DEFAULT_PARAMETER4F1 = vgm::Vec4f(0.f, 0.f, 0.f, 0.f);
-
-
-
-const bool TessellationLevel::getParameter4f1( Parameter4f1ValueType& value ) const
-{
-	return getFieldRO<FParameter4f1Type>(getFParameter4f1())->getValue( value );
-}
-
-
-
-void TessellationLevel::setParameter4f1( const Parameter4f1ValueType& value )
-{
-	getFieldRW<FParameter4f1Type>(getFParameter4f1())->setValue( value );
-}
-
-
-
-void TessellationLevel::eraseParameter4f1()
-{
-	getFieldRW<FParameter4f1Type>(getFParameter4f1())->eraseValue();
-}
-
-
-const bool TessellationLevel::hasParameter4f1() const
-{
-	return getFieldRO<FParameter4f1Type>(getFParameter4f1())->hasValue();
+	getFieldRW<FComposeModeType>(getFComposeMode())->setValue( value );
 }
 
 
@@ -239,16 +187,9 @@ const std::string TessellationLevel::getFCustomCode( void )
 
 
 
-const std::string TessellationLevel::getFParameter4f0( void )
+const std::string TessellationLevel::getFComposeMode( void )
 {
-	return "f_parameter4f0";
-}
-
-
-
-const std::string TessellationLevel::getFParameter4f1( void )
-{
-	return "f_parameter4f1";
+	return "f_composeMode";
 }
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -617,7 +617,7 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 
 	/**
-	 * @name Shader generation accessors
+	 * @name Shaders generation accessors
 	 */
 	//@{
 
@@ -696,6 +696,7 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	 */
 	void resetShaderStages();
 
+
 	/**
 	 * @brief Returns the glsl code for a specific stage.
 	 *
@@ -704,12 +705,16 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	 *
 	 * @return code to insert in the desired shader or an empty string.
 	 */
-#ifdef _DEBUG
 	const std::string getShaderStage( const ShaderStage shaderStage, const bool withMarker = true ) const;
-#else
-	const std::string getShaderStage( const ShaderStage shaderStage, const bool withMarker = false ) const;
-#endif
 
+	/**
+	 * @brief Gets the default glsl code for a specific stage.
+	 *
+	 * @param shaderStage	selector of the stage
+	 *
+	 * @return the default glsl code for a desired stage
+	 */
+	const std::string& getShaderStageDefault( const ShaderStage shaderStage );
 	//@}
 
 
