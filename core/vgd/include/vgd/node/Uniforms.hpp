@@ -79,8 +79,8 @@ struct VGD_API Uniforms : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		APPEND = 461,	///< Uniforms defined by this node are added to the current uniforms
-		REPLACE = 460,	///< Uniforms defined by this node are replacing the current uniforms. So all previous uniform variables are removed.
+		APPEND = 467,	///< Uniforms defined by this node are added to the current uniforms
+		REPLACE = 466,	///< Uniforms defined by this node are replacing the current uniforms. So all previous uniform variables are removed.
 		DEFAULT_COMPOSEMODE = REPLACE	///< Uniforms defined by this node are replacing the current uniforms. So all previous uniform variables are removed.
 	};
 
@@ -108,8 +108,8 @@ struct VGD_API Uniforms : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 460 );
-			retVal.push_back( 461 );
+			retVal.push_back( 466 );
+			retVal.push_back( 467 );
 
 			return retVal;
 		}
@@ -200,9 +200,10 @@ struct VGD_API Uniforms : public vgd::node::SingleAttribute
 			// Non existing uniform variable
 			addField( new vgd::field::TSingleField< T >(name) );
 
-			addDirtyFlag( "df_" + name );
+			const std::string dfName = "df_" + name;
+			addDirtyFlag( dfName );
 
-			link( name, name );
+			link( name, dfName );
 			link( name, getDFNode() );
 		}
 

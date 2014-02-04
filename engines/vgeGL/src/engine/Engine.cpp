@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -828,7 +828,7 @@ const int Engine::getMaxLights() const
 
 const int Engine::getMaxTexUnits() const
 {
-	const uint maxTexUnits = 5;
+	const uint maxTexUnits = 6;
 
 	if ( m_maxTexUnits == 0 )
 	{

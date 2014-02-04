@@ -91,8 +91,8 @@ struct VGD_API TessellationProperties : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		DISABLED = 426,	///< Tessellation is disabled
-		PHONG = 427,	///< Phong tessellation is enabled and subdivision of triangles is uniform. The tessellation level used is given by tessellationRange[1]
+		DISABLED = 432,	///< Tessellation is disabled
+		PHONG = 433,	///< Phong tessellation is enabled and subdivision of triangles is uniform. The tessellation level used is given by tessellationRange[1]
 		DEFAULT_TESSELLATION = DISABLED	///< Tessellation is disabled
 	};
 
@@ -120,8 +120,8 @@ struct VGD_API TessellationProperties : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 426 );
-			retVal.push_back( 427 );
+			retVal.push_back( 432 );
+			retVal.push_back( 433 );
 
 			return retVal;
 		}

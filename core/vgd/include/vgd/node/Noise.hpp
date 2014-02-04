@@ -97,8 +97,8 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		PHOTON = 335,	///< Photon noise simulation
-		NO = 334,	///< No noise simulation
+		PHOTON = 338,	///< Photon noise simulation
+		NO = 337,	///< No noise simulation
 		DEFAULT_NOISEMODEL = PHOTON	///< Photon noise simulation
 	};
 
@@ -126,8 +126,8 @@ struct VGD_API Noise : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 334 );
-			retVal.push_back( 335 );
+			retVal.push_back( 337 );
+			retVal.push_back( 338 );
 
 			return retVal;
 		}

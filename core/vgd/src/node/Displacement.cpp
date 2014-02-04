@@ -67,8 +67,7 @@ Displacement::Displacement( const std::string nodeName ) :
 	addField( new FDisplacementVSType(getFDisplacementVS()) );
 	addField( new FDeclarationsTESType(getFDeclarationsTES()) );
 	addField( new FDisplacementTESType(getFDisplacementTES()) );
-	addField( new FParameter4f0Type(getFParameter4f0()) );
-	addField( new FParameter4f1Type(getFParameter4f1()) );
+	addField( new FComposeModeType(getFComposeMode()) );
 	addField( new FDisplacementFunctionVSType(getFDisplacementFunctionVS()) );
 	addField( new FDisplacementFunctionTESType(getFDisplacementFunctionTES()) );
 
@@ -86,6 +85,7 @@ void Displacement::setToDefaults( void )
 	setDisplacementVS( std::string() );
 	setDeclarationsTES( std::string() );
 	setDisplacementTES( std::string() );
+	setComposeMode( (REPLACE) );
 }
 
 
@@ -93,8 +93,6 @@ void Displacement::setToDefaults( void )
 void Displacement::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setParameter4f0( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
-	setParameter4f1( vgm::Vec4f(0.f, 0.f, 0.f, 0.f) );
 	setDisplacementFunctionVS( (NONE) );
 	setDisplacementFunctionTES( (NONE) );
 }
@@ -181,68 +179,18 @@ void Displacement::setDisplacementTES( const DisplacementTESValueType value )
 
 
 
-// Parameter4f0
+// ComposeMode
 
-const Displacement::Parameter4f0ValueType Displacement::DEFAULT_PARAMETER4F0 = vgm::Vec4f(0.f, 0.f, 0.f, 0.f);
-
-
-
-const bool Displacement::getParameter4f0( Parameter4f0ValueType& value ) const
+const Displacement::ComposeModeValueType Displacement::getComposeMode() const
 {
-	return getFieldRO<FParameter4f0Type>(getFParameter4f0())->getValue( value );
+	return getFieldRO<FComposeModeType>(getFComposeMode())->getValue();
 }
 
 
 
-void Displacement::setParameter4f0( const Parameter4f0ValueType& value )
+void Displacement::setComposeMode( const ComposeModeValueType value )
 {
-	getFieldRW<FParameter4f0Type>(getFParameter4f0())->setValue( value );
-}
-
-
-
-void Displacement::eraseParameter4f0()
-{
-	getFieldRW<FParameter4f0Type>(getFParameter4f0())->eraseValue();
-}
-
-
-const bool Displacement::hasParameter4f0() const
-{
-	return getFieldRO<FParameter4f0Type>(getFParameter4f0())->hasValue();
-}
-
-
-
-// Parameter4f1
-
-const Displacement::Parameter4f1ValueType Displacement::DEFAULT_PARAMETER4F1 = vgm::Vec4f(0.f, 0.f, 0.f, 0.f);
-
-
-
-const bool Displacement::getParameter4f1( Parameter4f1ValueType& value ) const
-{
-	return getFieldRO<FParameter4f1Type>(getFParameter4f1())->getValue( value );
-}
-
-
-
-void Displacement::setParameter4f1( const Parameter4f1ValueType& value )
-{
-	getFieldRW<FParameter4f1Type>(getFParameter4f1())->setValue( value );
-}
-
-
-
-void Displacement::eraseParameter4f1()
-{
-	getFieldRW<FParameter4f1Type>(getFParameter4f1())->eraseValue();
-}
-
-
-const bool Displacement::hasParameter4f1() const
-{
-	return getFieldRO<FParameter4f1Type>(getFParameter4f1())->hasValue();
+	getFieldRW<FComposeModeType>(getFComposeMode())->setValue( value );
 }
 
 
@@ -334,16 +282,9 @@ const std::string Displacement::getFDisplacementTES( void )
 
 
 
-const std::string Displacement::getFParameter4f0( void )
+const std::string Displacement::getFComposeMode( void )
 {
-	return "f_parameter4f0";
-}
-
-
-
-const std::string Displacement::getFParameter4f1( void )
-{
-	return "f_parameter4f1";
+	return "f_composeMode";
 }
 
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -54,62 +54,84 @@ void TessellationLevel::apply( vge::engine::Engine * engine, vgd::node::Node * n
 	if ( glslState.isDisabled(vgeGL::engine::TESSELLATION_LEVEL) )
 	{
 		glslState.setEnabled(vgeGL::engine::TESSELLATION_LEVEL);
-
-		static const std::string uniforms = "// tessellation level\n"
-											"uniform vec4 uTessLevelParameter4f0;\n"
-											"uniform vec4 uTessLevelParameter4f1;\n";
-		glslState.appendShaderStage( GLSLState::UNIFORM_DECLARATIONS, uniforms );
 	}
+
 
 	// TESSELLATION CONTROL SHADER PART
 	//	methods:
 	//		UNIFORM see TessellationControlShaderGenerator FUNCTIONS section
 	//		PIXELS_PER_EDGE see TessellationControlShaderGenerator FUNCTIONS section
+
+	const vgd::field::Enum composeMode = tessLevel->getComposeMode();
+
 	switch ( tessLevel->getMethod().value() )
 	{
+		// UNIFORM
 		case vgd::node::TessellationLevel::UNIFORM:
-			glslState.resetShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION );
+			switch ( composeMode.value() )
+			{
+				case vgd::node::TessellationLevel::REPLACE:
+					glslState.resetShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION );
+					break;
+				case vgd::node::TessellationLevel::PREPEND:
+					glslState.prependShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, glslState.getShaderStageDefault(GLSLState::TCS_TESSLEVEL_COMPUTATION) );
+					break;
+				case vgd::node::TessellationLevel::APPEND:
+					glslState.appendShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, glslState.getShaderStageDefault(GLSLState::TCS_TESSLEVEL_COMPUTATION) );
+					break;
+				default:
+					vgAssertN( false, "Unexpected value for TessellationLevel.composeMode" );
+			}
 			break;
 
+		// PIXELS_PER_EDGE
 		case vgd::node::TessellationLevel::PIXELS_PER_EDGE:
-			glslState.setShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, "	tessellationLevelMethodPIXELS_PER_EDGE(tessLevelOuter, tessLevelInner );\n" );
+			switch ( composeMode.value() )
+			{
+				case vgd::node::TessellationLevel::REPLACE:
+					glslState.setShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, "	tessellationLevelMethodPIXELS_PER_EDGE(tessLevelOuter, tessLevelInner );\n" );
+					break;
+				case vgd::node::TessellationLevel::PREPEND:
+					glslState.prependShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, "	tessellationLevelMethodPIXELS_PER_EDGE(tessLevelOuter, tessLevelInner );\n" );
+					break;
+				case vgd::node::TessellationLevel::APPEND:
+					glslState.appendShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, "	tessellationLevelMethodPIXELS_PER_EDGE(tessLevelOuter, tessLevelInner );\n" );
+					break;
+				default:
+					vgAssertN( false, "Unexpected value for TessellationLevel.composeMode" );
+			}
 			break;
 
+		// CUSTOM
 		case vgd::node::TessellationLevel::CUSTOM:
 		{
-			//	customDeclarations
-			const std::string& declarationsStr = tessLevel->getCustomDeclarations();
-			if ( declarationsStr.size() > 0 )	glslState.setShaderStage( GLSLState::TCS_DECLARATIONS, declarationsStr );
+			//	customDeclarations and customMethod
+			const std::string& declarationsStr	= tessLevel->getCustomDeclarations();
+			const std::string& customCodeStr	= tessLevel->getCustomCode();
 
-			//	customMethod
-			const std::string& customCodeStr = tessLevel->getCustomCode();
-			if ( customCodeStr.size() > 0 )	glslState.setShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, customCodeStr );
+			switch ( composeMode.value() )
+			{
+				case vgd::node::TessellationLevel::REPLACE:
+					if ( declarationsStr.size() > 0 )	glslState.setShaderStage( GLSLState::TCS_DECLARATIONS, declarationsStr );
+					if ( customCodeStr.size() > 0 )		glslState.setShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, customCodeStr );
+					break;
+				case vgd::node::TessellationLevel::PREPEND:
+					if ( declarationsStr.size() > 0 )	glslState.prependShaderStage( GLSLState::TCS_DECLARATIONS, declarationsStr );
+					if ( customCodeStr.size() > 0 )		glslState.prependShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, customCodeStr );
+					break;
+				case vgd::node::TessellationLevel::APPEND:
+					if ( declarationsStr.size() > 0 )	glslState.appendShaderStage( GLSLState::TCS_DECLARATIONS, declarationsStr );
+					if ( customCodeStr.size() > 0 )		glslState.appendShaderStage( GLSLState::TCS_TESSLEVEL_COMPUTATION, customCodeStr );
+					break;
+				default:
+					vgAssertN( false, "Unexpected value for TessellationLevel.composeMode" );
+			}
+			break;
 		}
 		break;
 
 		default:
 			vgAssertN( false, "Unknown value for tessellationLevel.method field %i", tessLevel->getMethod().value() );
-	}
-
-
-	// Updates uniforms
-
-	//	parameter4f0
-	vgd::node::TessellationLevel::Parameter4f0ValueType parameter4f0;
-	const bool hasParameter4f0 = tessLevel->getParameter4f0( parameter4f0 );
-
-	if ( hasParameter4f0 )
-	{
-		glEngine->getBuiltinUniformState().sethUniform( "uTessLevelParameter4f0", parameter4f0 );
-	}
-
-	//	parameter4f1
-	vgd::node::TessellationLevel::Parameter4f0ValueType parameter4f1;
-	const bool hasParameter4f1 = tessLevel->getParameter4f1( parameter4f1 );
-
-	if ( hasParameter4f1 )
-	{
-		glEngine->getBuiltinUniformState().sethUniform( "uTessLevelParameter4f1", parameter4f1 );
 	}
 }
 
