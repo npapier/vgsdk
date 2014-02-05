@@ -307,6 +307,7 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 	// engine->getGLSLStateStack().push();
 
 	// @todo OPTME: VertexShape::getTexUnitsIterators() or iterator for glslState.textures
+	// Update glslState.textures[].texCoordDim from vertexShape->texCoordDim
 	if ( engine->isTextureMappingEnabled() )
 	{
 		vgd::node::VertexShape::ConstIteratorIndexSet i, iEnd;
@@ -316,12 +317,15 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		{
 			const uint unit = *i;
 
-			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
-
-			if ( pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
+			if (	glslState.textures.hasState( unit )									&&
+					pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
 			{
-				const int32 dimTexCoord = pVertexShape->getTexCoordDim( unit ); // @todo OPT pVertexShape->getTexCoordDim()
-				if ( texUnitState->getTexCoordDim() != dimTexCoord )
+				vgd::Shp< GLSLState::TexUnitState >	texUnitState	= glslState.textures.getState( unit );
+
+				const int32		unitStateTexCoordDim	= texUnitState->getTexCoordDim();
+				const int32		dimTexCoord				= pVertexShape->getTexCoordDim( unit ); // @todo OPT pVertexShape->getTexCoordDim()
+
+				if ( unitStateTexCoordDim != dimTexCoord )
 				{
 					// @toto glslState.setTexCoordDim( 0 Unit, 2  Dim ); that invalidate DF
 					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );
@@ -329,54 +333,47 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 				}
 				//else nothing to do
 			}
-/*			else
-			{
-				texUnitState->setTexCoordDim( 0 );
-#ifdef _DEBUG
-				vgLogDebug(	"VertexShape(%s).texCoord%i is not empty, but there is no texture",
-								pVertexShape->getName().c_str(), unit );
-#endif
-			}*/
+			// else nothing to do
 		}
 	}
 
-	// // Update glslState.textures[].texCoordDim from vertexShape->texCoordDim
-// // @todo iterate on vertexShape.texCoord? instead of glslState.textures
-/*	if ( engine->isTextureMappingEnabled() )
-	{
-		//
-		uint		i		= 0;
-		const uint	iEnd	= glslState.textures.getMax();
+	// // // Update glslState.textures[].texCoordDim from vertexShape->texCoordDim
+// // // @todo iterate on vertexShape.texCoord? instead of glslState.textures
+	// if ( engine->isTextureMappingEnabled() )
+	// {
+		// //
+		// uint		i		= 0;
+		// const uint	iEnd	= glslState.textures.getMax();
 
-		for( uint foundTexture = 0; i != iEnd; ++i )
-		{
-			const vgd::Shp< GLSLState::TexUnitState >  texUnitState = glslState.textures.getState( i );
+		// for( uint foundTexture = 0; i != iEnd; ++i )
+		// {
+			// const vgd::Shp< GLSLState::TexUnitState >  texUnitState = glslState.textures.getState( i );
 
-			if (	texUnitState &&
-					texUnitState->getTexGenNode() == 0
-				)
-			{
-				const int32 dimTexCoord = pVertexShape->getTexCoordDim( i );			// @todo OPT pVertexShape->getTexCoordDim()
-				if ( texUnitState->getTexCoordDim() != dimTexCoord )
-				{
-					// @toto glslState.setTexCoordDim( 0 Unit, 2  Dim  ); that invalidate DF
-					texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );								// no more used !!! @todo OPTME remove me
-					glslState.textures.dirty(); // @todo never validate and used to skip that work
-				}
-			}
-			// else no state for the texture unit or texCoordDim from texGen node, so nothing to do
-#ifdef _DEBUG
-			//else
-			//{
-				//if ( !texUnitState && pVertexShape->getTexCoordDim( i ) > 0 )
-				//{
-				//	vgAssertN(	false, "VertexShape(%s).texCoord%i is not empty, but there is no texture",
-				//						pVertexShape->getName().c_str(), i );
-				//}
-			//}
-#endif
-		}
-	}*/
+			// if (	texUnitState &&
+					// texUnitState->getTexGenNode() == 0
+				// )
+			// {
+				// const int32 dimTexCoord = pVertexShape->getTexCoordDim( i );			// @todo OPT pVertexShape->getTexCoordDim()
+				// if ( texUnitState->getTexCoordDim() != dimTexCoord )
+				// {
+					// // @toto glslState.setTexCoordDim( 0/*Unit*/, 2 /* Dim */ ); that invalidate DF
+					// texUnitState->setTexCoordDim( static_cast< uint8 >(dimTexCoord) );								// no more used !!! @todo OPTME remove me
+					// glslState.textures.dirty(); // @todo never validate and used to skip that work
+				// }
+			// }
+			// // else no state for the texture unit or texCoordDim from texGen node, so nothing to do
+// #ifdef _DEBUG
+			// else
+			// {
+				// /*if ( !texUnitState && pVertexShape->getTexCoordDim( i ) > 0 )
+				// {
+					// vgAssertN(	false, "VertexShape(%s).texCoord%i is not empty, but there is no texture",
+										// pVertexShape->getName().c_str(), i );
+				// }*/
+			// }
+// #endif
+		// }
+	// }
 
 
 	// GLSL
@@ -620,11 +617,12 @@ void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 		{
 			const uint unit = *i;
 
-			vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
-
-			if ( pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
+			if (	glslState.textures.hasState(unit) &&
+					pVertexShape->getTexCoordBinding( unit ) != vgd::node::BIND_OFF )
 			{
+				vgd::Shp< GLSLState::TexUnitState > texUnitState = glslState.textures.getState( unit );
 				texUnitState->setTexCoordDim( 0 );
+
 				glslState.textures.dirty();
 			}
 		}

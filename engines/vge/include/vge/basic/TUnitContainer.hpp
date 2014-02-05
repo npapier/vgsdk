@@ -138,8 +138,8 @@ struct TUnitContainer : public vgd::field::DirtyFlag
 		{
 			m_num += ( state != 0 ) ? 1 : 0;
 		}
-		assert( m_num >= 0 );
-		assert( m_num <= m_unit.size() );
+		vgAssert( m_num >= 0 );
+		vgAssert( m_num <= m_unit.size() );
 
 		// Updates dirty flags
 		dirty();
