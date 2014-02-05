@@ -128,7 +128,7 @@ const std::string& GLSLState::toString( const GLSLStateIndex bitSetIndexType )
 
 GLSLState::GLSLState( const uint maxTexUnits )
 :	//lights(),
-	textures(2/*maxTexUnits*/), // @todo remove maxTexUnits param to constructor ?
+	textures(maxTexUnits), // @todo improves/separates user/private texture units ? shadow map in last could collide with user texture !!!
 	//decals(),
 	//postProcessing(),
 	//outputBufferProperties()
