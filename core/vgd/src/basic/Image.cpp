@@ -466,6 +466,41 @@ bool Image::save( const std::string filename ) const
 
 
 
+bool Image::save( const std::string & type, std::vector< char > & buffer ) const
+{
+	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
+
+	bind();
+
+	// Determines the target type.
+	ILenum	ilType;
+	if( type == "png" )	ilType = IL_PNG;
+	else				ilType = 0;
+
+	if( ilType == 0 )
+	{
+		vgLogDebug("Unable to save an image to a buffer. %1 is not a supported target type.", type);
+		buffer.clear();
+		return false;
+	}
+
+	// Determines the needed buffer size,
+	// allocates the buffer and
+	// saves the image.
+	//
+	// WARNING! This causes openIL to save the image twice.
+	// One time for dtermining the buffer size, and a second time 
+	// to do the effective image saving. But there is no other
+	// way to get the needed buffer size.
+	const ILint size = ilSaveL( ilType, 0, 0 );
+	buffer.resize( size, 0 );
+	ilSaveL( ilType, buffer.data(), buffer.size() );
+
+	return true;
+}
+
+
+
 const bool Image::convertTo( const Format format, const Type type )
 {
 	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
