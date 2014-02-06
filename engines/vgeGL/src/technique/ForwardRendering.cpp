@@ -1979,24 +1979,35 @@ void ForwardRendering::stageInitializePostProcessingBuffers( vgeGL::engine::Engi
 			beginPass();
 
 				// *** Initializes FBOs and creates textures ***
-				// fbo0 and fbo1
 				using vgd::node::OutputBufferProperty;
 				using vgeGL::engine::GLSLState;
 
-				vgd::Shp< OutputBufferPropertyStateContainer >	myOutputBufferProperties( new OutputBufferPropertyStateContainer() );
+				// Output buffer properties 0
+				vgd::Shp< OutputBufferPropertyStateContainer > myOutputBufferProperties0( new OutputBufferPropertyStateContainer() );
 
-				vgd::Shp< OutputBufferProperty > obufProperty = OutputBufferProperty::create("buf0");
-				obufProperty->setFormat( OutputBufferProperty::RGBA );
-				obufProperty->setType( OutputBufferProperty::FLOAT16 );
-				obufProperty->setSize( vgm::Vec2f(outputBuffer0Size) );
-				obufProperty->setSizeSemantic( OutputBufferProperty::PIXEL_SIZE );
-				myOutputBufferProperties->setState(0, vgd::makeShp( new GLSLState::OutputBufferPropertyState(obufProperty.get()) ) );
+				vgd::Shp< OutputBufferProperty > obufProperty0 = OutputBufferProperty::create("buf0");
+				obufProperty0->setFormat( OutputBufferProperty::RGBA );
+				obufProperty0->setType( OutputBufferProperty::FLOAT16 );
+				obufProperty0->setSize( vgm::Vec2f(outputBuffer0Size) );
+				obufProperty0->setSizeSemantic( OutputBufferProperty::PIXEL_SIZE );
+				myOutputBufferProperties0->setState(0, vgd::makeShp( new GLSLState::OutputBufferPropertyState(obufProperty0.get()) ) );
 
+				// Output buffer properties 1
+				vgd::Shp< OutputBufferPropertyStateContainer > myOutputBufferProperties1( new OutputBufferPropertyStateContainer() );
+
+				vgd::Shp< OutputBufferProperty > obufProperty1 = OutputBufferProperty::create("buf0");
+				obufProperty1->setFormat( OutputBufferProperty::RGBA );
+				obufProperty1->setType( OutputBufferProperty::FLOAT16 );
+				obufProperty1->setSize( vgm::Vec2f(outputBuffer0Size) );
+				obufProperty1->setSizeSemantic( OutputBufferProperty::PIXEL_SIZE );
+				myOutputBufferProperties1->setState(0, vgd::makeShp( new GLSLState::OutputBufferPropertyState(obufProperty1.get()) ) );
+
+				// fbo0 and fbo1
 				namespace vgeGLPainter = vgeGL::handler::painter;
 				pppRC.textures0.clear();
 				pppRC.textures1.clear();
-				boost::tie( pppRC.frameBuffer0, pppRC.fbo0 ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, myOutputBufferProperties.get(), std::back_inserter(pppRC.textures0) );
-				boost::tie( pppRC.frameBuffer1, pppRC.fbo1 ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, myOutputBufferProperties.get(), std::back_inserter(pppRC.textures1) );
+				boost::tie( pppRC.frameBuffer0, pppRC.fbo0 ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, myOutputBufferProperties0.get(), std::back_inserter(pppRC.textures0) );
+				boost::tie( pppRC.frameBuffer1, pppRC.fbo1 ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, myOutputBufferProperties1.get(), std::back_inserter(pppRC.textures1) );
 
 			endPass();
 		}
