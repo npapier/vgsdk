@@ -58,13 +58,13 @@ protected:
 
 static std::vector<vgd::node::LightModel::ShadowValueType> shadowType = list_of(vgd::field::Enum(vgd::node::LightModel::SHADOW_OFF ))
 	(vgd::node::LightModel::SHADOW_MAPPING)
-/*	(vgd::node::LightModel::SHADOW_MAPPING_4U)
+	(vgd::node::LightModel::SHADOW_MAPPING_4U)
 	(vgd::node::LightModel::SHADOW_MAPPING_4UM)
 	(vgd::node::LightModel::SHADOW_MAPPING_4DM)
 	(vgd::node::LightModel::SHADOW_MAPPING_9U)
 	(vgd::node::LightModel::SHADOW_MAPPING_9UM)
 	(vgd::node::LightModel::SHADOW_MAPPING_16U)
-	(vgd::node::LightModel::SHADOW_MAPPING_16UM)*/;
+	(vgd::node::LightModel::SHADOW_MAPPING_16UM);
 
 
 
