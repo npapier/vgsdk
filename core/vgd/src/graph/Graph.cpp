@@ -107,8 +107,7 @@ Graph::Graph()
 
 Graph::~Graph()
 {
-	// @todo uncomment the following vgAssert(). It has been temporary disabled for vgsdkTestGTK (assertion raised at program exit)
-	//vgAssertN( (num_edges(bglGraph())==0) && (m_freeVertexDescriptors.size()==num_vertices(bglGraph())), "Graph not empty when destroyed. Check for static references on nodes" );
+	vgAssertN( (num_edges(bglGraph())==0) && (m_freeVertexDescriptors.size()==num_vertices(bglGraph())), "Graph not empty when destroyed. Check for static references on nodes" );
 	bglGraph().clear();
 }
 
