@@ -479,7 +479,7 @@ bool Image::save( const std::string & type, std::vector< char > & buffer ) const
 
 	if( ilType == 0 )
 	{
-		vgLogDebug("Unable to save an image to a buffer. %1 is not a supported target type.", type);
+		vgLogDebug("Unable to save an image to a buffer. %s is not a supported target type.", type.c_str());
 		buffer.clear();
 		return false;
 	}
