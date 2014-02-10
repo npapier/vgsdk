@@ -310,7 +310,7 @@ void FieldManager::updateFrom( const std::string strFieldName )
 		}
 		else
 		{
-			vgAssertN( false, "Dirty flag not founded" );
+			vgAssertN( false, "Dirty flag not found" );
 		}
 
 		++iter;
