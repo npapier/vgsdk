@@ -52,7 +52,7 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 
 	// STEP 2: updates bounding box.
 	vgd::field::DirtyFlag *pDirtyFlag = getDirtyFlag( getDFBoundingBox() );
-	assert( pDirtyFlag != 0 );
+	vgAssert( pDirtyFlag != 0 );
 
 	const BoundingBoxUpdatePolicyValueType bbUpdatePolicy = getBoundingBoxUpdatePolicy();
 
@@ -63,20 +63,23 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 		bRetVal				= true;
 
 		// compute bb
-		vgd::field::EditorRO< FVertexType > vertex;
-		vertex = getVertexRO();
-
 		m_boundingBox.makeEmpty();
 
-		for(	FVertexType::const_iterator	i	= vertex->begin(),
-											ie	= vertex->end();
-				i != ie;
-				i++ )
+		auto primitive = getPrimitiveRO();
+		if ( primitive->size() > 0 )
 		{
-			m_boundingBox.extendBy( *i );
-		}
+			vgd::field::EditorRO< FVertexType > vertex = getVertexRO();
 
-		//
+			for(	FVertexType::const_iterator	i	= vertex->begin(),
+												ie	= vertex->end();
+					i != ie;
+					i++ )
+			{
+				m_boundingBox.extendBy( *i );
+			}
+		}
+		// else no primitive, so bounding box is empty
+
 		pDirtyFlag->validate();
 	}
 	else if ( bbUpdatePolicy == ONCE && pDirtyFlag->isDirty() )
@@ -88,7 +91,7 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 #ifdef DEBUG
 		if ( pDirtyFlag->isDirty() )
 		{
-			assert( false && "Internal error." );
+			vgAssertN( false, "Internal error." );
 			pDirtyFlag->validate();
 		}
 #endif
@@ -98,7 +101,7 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 	{
 		invalidateParentsBoundingBoxDirtyFlag();
 	}
-	
+
 	return bRetVal;
 }
 

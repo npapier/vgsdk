@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -14,31 +14,16 @@
 
 #include "vgeGL/vgeGL.hpp"
 
-namespace vgd
-{
-	namespace node
-	{
-		struct Dragger;
-	}
-}
 
-namespace vge
-{
-	namespace engine
-	{
-		struct Engine;
-	}
-}
+namespace vgd { namespace node { struct Dragger; } }
+namespace vge { namespace engine { struct Engine; } }
 
 
 
 namespace vgeGL
 {
-
-	namespace engine
-	{
-		struct Engine;
-	}
+	namespace basic { struct Hit; }
+	namespace engine { struct Engine; }
 
 namespace handler
 {
@@ -104,12 +89,9 @@ struct VGEGL_API Dragger : public vgd::event::EventVisitor
 	 * @param oLeftToRightO
 	 * @param oUpToDownO
 	 * @param oNearToFarO
-	 *
-	 * @todo comments
-	 * @todo Add more methods from ktvs/src/view/Abstract.cpp, move to another file/class
 	 */
 	const bool ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEngine, vgd::node::Dragger *pDragger,
-			vgm::Vec3f& oLeftToRightO, vgm::Vec3f& oUpToDownO, vgm::Vec3f& oNearToFarO );
+													vgm::Vec3f& oLeftToRightO, vgm::Vec3f& oUpToDownO, vgm::Vec3f& oNearToFarO );
 
 	/**
 	 * @brief Must be called by derived handler at the beginning of apply().
@@ -148,6 +130,15 @@ protected:
 	vgd::Shp< vgd::event::Event > getEvent( vge::engine::Engine *pEngine );
 
 	vgd::Shp< vgd::event::Event > m_pEvent;
+
+	/**
+	 * @brief Returns a reference on the hit stored in engine
+	 *
+	 * @param pEngine		engine that contains the current event
+	 *
+	 * @return a reference on the hit
+	 */
+	vgd::Shp< vgeGL::basic::Hit > getHit( vge::engine::Engine *pEngine );
 };
 
 

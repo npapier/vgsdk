@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2010, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -81,12 +81,14 @@ void TransformDragger::apply( vgd::event::Location2Event *pLocation2Event )
 	assert( dynamic_cast< TransformDragger* >(m_pDragger) != 0 );
 	TransformDragger *pDragger = static_cast< TransformDragger* >(m_pDragger);
 
+	vgd::Shp< vgeGL::basic::Hit > hit = getHit( m_pGLEngine );
+
 	if ( pDragger->getCurrentState() == TransformDragger::ROTATION_XY_ACTIVE )
 	{
 		// FIXME: Dragger computeRotationXY();
 
 		// COMPUTE NEW ROTATION IN WORLD SPACE
-		vgm::Vec2f		size		= pLocation2Event->getSize();
+		vgm::Vec2f		size	= pLocation2Event->getSize();
 		vgm::Vec2f		center	= size/2.f;
 
 		vgm::Rotation	newRotW;
@@ -119,7 +121,6 @@ void TransformDragger::apply( vgd::event::Location2Event *pLocation2Event )
 	}
 	else if ( pDragger->getCurrentState() == TransformDragger::TRANSLATION_XY_ACTIVE )
 	{
-		// FIXME: Dragger ComputeTranslationXY();	
 		vgm::Vec3f oLeftToRightO;
 		vgm::Vec3f oUpToDownO;
 		vgm::Vec3f oNearToFarO;
@@ -128,7 +129,7 @@ void TransformDragger::apply( vgd::event::Location2Event *pLocation2Event )
 
 		if ( bRetVal )
 		{
-			vgd::event::Location2Event::LocationDelta	delta = pLocation2Event->getDelta();
+			vgd::event::Location2Event::LocationDelta	delta	= pLocation2Event->getDelta();
 			vgd::event::Location2Event::Size			size	= pLocation2Event->getSize();
 
 			vgm::Vec3f translation;
