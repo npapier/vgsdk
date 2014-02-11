@@ -1321,6 +1321,33 @@ tag documentation
 	</node>-->
 
 
+	<node name = "Separator" inherits = "Group">
+		<doxygen>
+			<docBrief>Group node that saves and restores traversal state</docBrief>
+			<doc>This group node performs a push (i.e. save) of the traversal state before traversing its children and a pop (i.e. restore) after traversing them.</doc>
+			<doc>This isolates the separator's children from the rest of the scene graph.</doc>
+			<doc>By default, full traversal state is saved/restored. But this operation is relatively expensive and also limited to 10 nested Separator nodes. So try to avoid their use.</doc>
+			<doc>Contrariwise, the traversal state could be saved/restored partially. In this case, the operation is fast and not limited to 10 nested Separator nodes.</doc>
+			<doc>@remarks Transformations (projection, geometrical and texture) are NOT saved and restored by this node. See TransformSeparator node for that.</doc>
+			<doc>@todo A mask that indicates which attributes to save.</doc>
+			<ingroup>g_nodes</ingroup>
+			<ingroup>g_groupNodes</ingroup>
+		</doxygen>
+
+		<sf name = "fullSeparation" doc="True to save/restore the full traversal state, false to do nothing.">
+			<type name = "bool" default="true"></type>
+		</sf>
+
+		<sf name = "tessellationLevelSeparation" doc="True to save/restore the state associated to TessellationLevel node, false to do nothing.">
+			<type name = "bool" default="false"></type>
+		</sf>
+
+		<sf name = "displacementSeparation" doc="True to save/restore the state associated to Displacement node, false to do nothing.">
+			<type name = "bool" default="false"></type>
+		</sf>
+	</node>
+
+
 	<node name = "SpotLight" inherits = "PointLight" >
 		<doxygen>
 			<docBrief>Node representing a spotlight source.</docBrief>
@@ -1735,7 +1762,7 @@ tag documentation
 			<ingroup>g_texturingNodes</ingroup>
 		</doxygen>
 <!-- TODO texCoordBinding editable -->
-		<df name = "boundingBox" linkToFields="vertex"></df>
+		<df name = "boundingBox" linkToFields="vertex primitive"></df>
 <!--todo new df to track modifications accurately -->
 
 <!-- todo - MFVec3f \c vertex = vgm::Vec3f()<br> default value for MF field not accurate -->

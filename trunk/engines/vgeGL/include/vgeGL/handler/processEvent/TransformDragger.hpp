@@ -13,7 +13,7 @@
 
 namespace vgeGL
 {
-	
+
 namespace handler
 {
 
@@ -29,12 +29,12 @@ struct VGEGL_API TransformDragger :	public vgeGL::handler::processEvent::Process
 	META_HANDLER_HPP( TransformDragger );
 
 	const TargetVector	getTargets()	const;
-	
+
 	void	apply( vge::engine::Engine *, vgd::node::Node * );
 	void	unapply( vge::engine::Engine *, vgd::node::Node * );
 
 	void	setToDefaults();
-	
+
 	void	apply( vgd::event::Location2Event * );
 	void	apply( vgd::event::MouseWheelEvent * );
 };
