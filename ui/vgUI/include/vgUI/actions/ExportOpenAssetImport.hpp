@@ -1,7 +1,8 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, 2014 Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #ifndef _VGUI_ACTIONS_EXPORTOPENASSETIMPORT_HPP
 #define _VGUI_ACTIONS_EXPORTOPENASSETIMPORT_HPP
@@ -18,47 +19,21 @@ namespace vgUI
 namespace actions
 {
 
-// EXPORTOPENASSETIMPORTCOLLADA
-struct VGUI_API ExportOpenAssetImportCollada : public IActionUI
+
+/**
+ * @brief	Generic class for UI actions dedicated to the integration of vgOpenAssetImport::actions::aiExport specializations.
+ */
+template< typename aiExportT >
+struct ExportOpenAssetImport : public IActionUI
 {
-	META_ACTION_HPP( ExportOpenAssetImportCollada );
+	ExportOpenAssetImport()
+	: IActionUI( "Export", "Export", "ExportOpenAssetImport", EXPORT, "", new aiExportT() )
+	{}
 
-	ExportOpenAssetImportCollada();
-
-	virtual const bool isValide( State state );
-};
-
-
-// EXPORTOPENASSETIMPORTOBJ
-struct VGUI_API ExportOpenAssetImportObj : public IActionUI
-{
-	META_ACTION_HPP( ExportOpenAssetImportObj );
-
-	ExportOpenAssetImportObj();
-
-	virtual const bool isValide( State state );
-};
-
-
-// EXPORTOPENASSETIMPORTSTL
-struct VGUI_API ExportOpenAssetImportStl : public IActionUI
-{
-	META_ACTION_HPP( ExportOpenAssetImportStl );
-
-	ExportOpenAssetImportStl();
-
-	virtual const bool isValide( State state );
-};
-
-
-// EXPORTOPENASSETIMPORTPLY
-struct VGUI_API ExportOpenAssetImportPly : public IActionUI
-{
-	META_ACTION_HPP( ExportOpenAssetImportPly );
-
-	ExportOpenAssetImportPly();
-
-	virtual const bool isValide( State state );
+	const bool isValide( State state )
+	{
+		return state.isShape();
+	}
 };
 
 
@@ -67,3 +42,4 @@ struct VGUI_API ExportOpenAssetImportPly : public IActionUI
 } // namespace vgUI
 
 #endif //#ifndef _VGUI_ACTIONS_EXPORTOPENASSETIMPORT_HPP
+
