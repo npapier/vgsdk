@@ -54,6 +54,7 @@ Settings::Settings()
     m_showFPS = new QCheckBox("Show counters (fps and frame)");
     m_debugEvents = new QCheckBox("Log events");
     m_captureButton = new QCheckBox("Enable capture HotKeys");
+	m_captureButton->setToolTip( "Hotkeys\n---------\n\ns : captures a screenshot\n\nv : starts video capture\nb : stops and saves video capture\nc : cancels video capture");
     m_benchButton = new QPushButton("Bench");
     m_clearGLResourcesButton = new QPushButton("Clear OpenGL Resources");
 
