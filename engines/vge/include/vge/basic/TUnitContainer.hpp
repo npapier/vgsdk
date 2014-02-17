@@ -79,7 +79,9 @@ struct TUnitContainer : public vgd::field::DirtyFlag
 	 */
 	const bool hasState( const uint indexUnit = 0 ) const
 	{
-		return indexUnit < m_unit.size();
+		const bool retVal =	(indexUnit < m_unit.size()) &&
+							m_unit[indexUnit];
+		return retVal;
 	}
 
 	/**
