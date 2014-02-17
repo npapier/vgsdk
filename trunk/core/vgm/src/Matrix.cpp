@@ -444,7 +444,7 @@ void MatrixR::getTransposeValue( double * m ) const
 
 
 
-const vgm::Vec4f MatrixR::getRow( const int32 row )
+const vgm::Vec4f MatrixR::getRow( const int32 row ) const
 {
 	const vgm::Vec4f retVal( matrix[row][0], matrix[row][1], matrix[row][2], matrix[row][3] );
 	
@@ -453,7 +453,7 @@ const vgm::Vec4f MatrixR::getRow( const int32 row )
 
 
 
-const vgm::Vec4f MatrixR::getColumn( const int32 column )
+const vgm::Vec4f MatrixR::getColumn( const int32 column ) const
 {
 	const vgm::Vec4f retVal( matrix[0][column], matrix[1][column], matrix[2][column], matrix[3][column] );
 	
@@ -1219,6 +1219,7 @@ const bool MatrixR::unProject(
 	MatrixR finalMatrix = (modelMatrix * projMatrix);
 	finalMatrix.inverse();
 
+	// see XfBox3f::setTransform(const MatrixR&)
 	// @todo if (!__gluInvertMatrixd(finalMatrix, finalMatrix)) return(GL_FALSE);
 
 	vgm::Vec3f in( static_cast<float>(winx), static_cast<float>(winy), static_cast<float>(winz) );
@@ -2217,6 +2218,19 @@ bool MatrixR::equals( const MatrixR& m, const float tolerance ) const
 bool MatrixR::notEquals( const MatrixR& m, const float tolerance ) const
 {
 	return !equals(m, tolerance);
+}
+
+
+const std::string MatrixR::toString( const std::string separator ) const
+{
+	std::stringstream ss;
+
+	ss << getRow(0).toString() << separator;
+	ss << getRow(1).toString() << separator;
+	ss << getRow(2).toString() << separator;
+	ss << getRow(3).toString() << separator;
+
+	return ss.str();
 }
 
 
