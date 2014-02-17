@@ -21,6 +21,7 @@
 #include <vge/handler/HandlerRegistry.hpp>
 #include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/engine/ProgramGenerator.hpp"
+#include "vgeGL/technique/helpers.hpp"
 //#include <vgio/FilenameCollector.hpp>
 
 
@@ -829,6 +830,7 @@ const int Engine::getMaxLights() const
 const int Engine::getMaxTexUnits() const
 {
 	const uint maxTexUnits = 6;
+	//const uint maxTexUnits = 16 AMD; 32 NV
 
 	if ( m_maxTexUnits == 0 )
 	{
@@ -948,28 +950,35 @@ const GLenum Engine::getGLDepthTextureFormatFromDepthBits() /*const */
 
 
 
-// @todo use getImage()
-vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer() const
+vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer( const CaptureBufferType what ) const
 {
-	// Reads back the framebuffer color values
-	using vgd::basic::Image;
-
-	const vgm::Vec2i drawingSurfaceSize = getDrawingSurfaceSize();
-
-	vgd::Shp< Image > image( new Image() );
-	image->create(	3, drawingSurfaceSize[0], drawingSurfaceSize[1], 1,
-					Image::BGR, Image::UINT8 );	// @todo always BGR ? and UINT8 ?
-	uint8 *imageData = static_cast<uint8*>( image->editPixels() );
-
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	glReadPixels(	0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1], 
-					GL_BGR, GL_UNSIGNED_BYTE,
-					imageData );
-	image->editPixelsDone();
+	vgd::Shp< vgd::basic::Image > image;
+	void * imageData = 0;
+	captureGLFramebuffer( what, image, imageData );
 
 	return image;
 }
 
+
+void Engine::captureGLFramebuffer( const CaptureBufferType what, vgd::Shp< vgd::basic::Image >& oImage, void *& imageData ) const
+{
+	vgd::Shp< glo::FrameBufferObject > fbo = getOutputBuffers();
+	if ( fbo )
+	{
+		vgeGL::technique::getImage( fbo, what, oImage, imageData );
+	}
+	else
+	{
+		vgAssertN( false, "Capture no more supported with rendering to output buffers" );
+		oImage.reset( new vgd::basic::Image() );
+		imageData = 0;
+		/*const vgm::Vec2i imageSize = getDrawingSurfaceSize();
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(	0, 0, imageSize[0], imageSize[1], 
+						GL_BGR, GL_UNSIGNED_BYTE,
+						imageData );*/
+	}
+}
 
 
 // @todo move into gle ?

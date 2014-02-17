@@ -66,6 +66,7 @@ enum
 	VERTEX1_INDEX,
 	NORMAL1_INDEX,
 	TANGENT1_INDEX,
+	// @todo COLOR1_INDEX
 };
 
 
@@ -101,7 +102,7 @@ struct VGEGL_API GLState
 	const float getOpacity() const			{ return m_opacity; }
 
 	void setDiffuse( const vgm::Vec3f diffuse )	{ m_diffuse = diffuse; }
-	const vgm::Vec3f getDiffuse() const			{ return m_diffuse; }
+	const vgm::Vec3f getDiffuse() const			{ return m_diffuse; } // used by Material and WireShape painter
 
 	// DRAWSTYLE
 	void setShape( const vgd::node::DrawStyle::ShapeValueType& shape )										{ m_shape = shape; }
@@ -807,12 +808,47 @@ public:
 	 */
 	static const GLenum getGLDepthTextureFormatFromDepthBits() /*const*/;
 
+
+
 	/**
-	 * @brief Returns an image containing the framebuffer color values.
+	 * @brief Enumeration of capturable object types
+	 */
+	typedef enum
+	{
+		BUFFER0 = 0,
+		BUFFER1,
+		BUFFER2,
+		BUFFER3,
+		BUFFER4,
+		BUFFER5,
+		BUFFER6,
+		BUFFER7,
+		DEPTH	= BUFFER1,			// depth stored in buffer1 @todo capture real depth buffer
+		COLOR	= BUFFER0,
+	} CaptureBufferType;
+
+	/**
+	 * @brief Returns an image containing the desired captured buffer.
+	 *
+	 * @param what		the type of buffer to capture
+	 *
+	 * @remarks This method reads back the framebuffer values, be careful this is slow and stalled the OpenGL pipeline.
+	 */
+	vgd::Shp< vgd::basic::Image > captureGLFramebuffer( const CaptureBufferType what = COLOR ) const;
+
+	/**
+	 * @brief Capture the framebuffer color values in the given image.
+	 *
+	 * @param what			the type of buffer to capture (color or depth)
+	 * @param outputImage	image used to copy framebuffer. Be careful, the format have to be the good one. 
+	 * @param imageData		value returned by outputImage->editPixels(). Useful to avoid calling this method (lock on openil !!!).
 	 *
 	 * @remarks This method reads back the framebuffer color values, be careful this is slow and stalled the OpenGL pipeline.
+	 * @remarks This method is useful to recyle previous capture image by captureGLFramebuffer().
 	 */
-	/*static*/ vgd::Shp< vgd::basic::Image > captureGLFramebuffer() const;
+	void captureGLFramebuffer( const CaptureBufferType what, vgd::Shp< vgd::basic::Image >& outputImage, void *& imageData ) const;
+
+
 
 	/**
 	 * @brief Enables or disables the given OpenGL capability.

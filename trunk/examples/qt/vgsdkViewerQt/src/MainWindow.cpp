@@ -12,6 +12,8 @@
 #include <vgTrian/Loader.hpp>
 #include <vgObj/Loader.hpp>
 #include <vgOpenAssetImport/Loader.hpp>
+#include <vgQt/engine/RecordSettings.hpp>
+#include <vgQt/engine/RecordSettingsDialog.hpp>
 #include <vgQt/engine/UserSettingsDialog.hpp>
 #include <vgQt/node/EditMenu.hpp>
 #include <vgQt/ResolutionDialog.hpp>
@@ -38,19 +40,6 @@ namespace vgsdkViewerQt
 WindowList MainWindow::m_windows;
 
 
-MainWindow::MainWindow()
-:	QMainWindow(),
-	m_isFullScreen(false),
-	m_toolBar(0),
-	m_actionProperties(0),
-	m_actionMouseAndKeyboard(0),
-	m_recentFileMenu(0),
-	m_renderSettingsDialog(0)
-{
-	initialize();
-}
-
-
 MainWindow::MainWindow( MainWindow * sharedWindow )
 :	QMainWindow(),
 	m_isFullScreen(false),
@@ -59,10 +48,12 @@ MainWindow::MainWindow( MainWindow * sharedWindow )
 	m_actionMouseAndKeyboard(0),
 	m_recentFileMenu(0),
 	m_renderSettingsDialog(0),
-	m_canvas( &sharedWindow->m_canvas )
+	m_recordSettingsDialog(0),
+	m_canvas( sharedWindow ? &sharedWindow->m_canvas : 0 )
 {
 	initialize();
 }
+
 
 
 void MainWindow::initialize()
@@ -117,6 +108,9 @@ void MainWindow::initialize()
 	m_actionProperties->setCheckable(true);
 	QAction *actionRenderSettings = new QAction(QIcon(":/images/document-properties.png"), "Render Settings", this);
 	QAction * actionNewWindow = newNewWindowAction(this);
+	// @todo Tango Desktop Project advertising (http://tango.freedesktop.org/Tango_Icon_Library)
+	QAction *actionRecording = new QAction(QIcon(":/images/media-record.png"), "&Recording settings", this);
+
 	QAction *actionAbout = new QAction(QIcon(":/images/help-about.png"), "&About", this);
 	QAction *actionSingleView = new QAction(QIcon(":/images/single-view.png"), "Single View", this);
 	actionSingleView->setCheckable(true);
@@ -172,6 +166,8 @@ void MainWindow::initialize()
 	menuSettings->addAction(m_actionMouseAndKeyboard);
 	menuSettings->addSeparator();
 	menuSettings->addAction(actionRenderSettings);
+	menuSettings->addSeparator();
+	menuSettings->addAction(actionRecording);
 
 	menuHelp->addAction(actionAbout);
 
@@ -191,6 +187,8 @@ void MainWindow::initialize()
 	m_toolBar->addAction(actionFourViews);
 	m_toolBar->addSeparator();
 	m_toolBar->addAction(actionNewWindow);
+	m_toolBar->addSeparator();
+	m_toolBar->addAction(actionRecording);
 	m_toolBar->addSeparator();
 	m_toolBar->addAction(actionAbout);
 
@@ -226,6 +224,7 @@ void MainWindow::initialize()
 	connect(actionMouseOnly, SIGNAL(triggered()), this, SLOT(settingManipulationBinding()));
 	connect(m_actionMouseAndKeyboard, SIGNAL(triggered()), this, SLOT(settingManipulationBinding()));
 	connect(actionRenderSettings, SIGNAL(triggered()), this, SLOT(renderSettings()));
+	connect(actionRecording, SIGNAL(triggered()), this, SLOT(recordingSettings()));
 
 	// Window Menu
 	connect(actionNewWindow, SIGNAL(triggered()), this, SLOT(newWindow()));
@@ -255,6 +254,10 @@ void MainWindow::newWindow()
 {
 	MainWindow * newWindow = new MainWindow( this );
 
+	// Shared the scene
+	newWindow->m_canvas.setScene( m_canvas.getScene() );
+
+	//
 	newWindow->show();
 }
 
@@ -286,6 +289,19 @@ vgQt::engine::UserSettingsDialog * MainWindow::getRenderSettingsDialog()
 
 	return m_renderSettingsDialog;
 }
+
+
+vgQt::engine::RecordSettingsDialog * MainWindow::getRecordSettingsDialog()
+{
+	if( !m_recordSettingsDialog )
+	{
+		m_recordSettingsDialog = new vgQt::engine::RecordSettingsDialog(this);
+		m_recordSettingsDialog->getGUI()->setCanvas( &m_canvas );
+	}
+
+	return m_recordSettingsDialog;
+}
+
 
 
 void MainWindow::fileNew()
@@ -401,10 +417,17 @@ void MainWindow::renderSettings()
 	getRenderSettingsDialog()->show();
 }
 
+
 void MainWindow::renderSettingsChanged()
 {
 	getRenderSettingsDialog()->get()->apply( m_canvas );
 	m_canvas.refresh();
+}
+
+
+void MainWindow::recordingSettings()
+{
+	getRecordSettingsDialog()->setVisible( !getRecordSettingsDialog()->isVisible() );
 }
 
 

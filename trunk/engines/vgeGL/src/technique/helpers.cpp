@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -21,13 +21,9 @@ namespace technique
 
 
 // @todo read from (position, size)
-vgd::Shp< vgd::basic::Image > getImage( vgd::Shp< glo::FrameBufferObject > fbo, const int index )
+void getImage(	vgd::Shp< glo::Texture2D > texture2D,
+				vgd::Shp< vgd::basic::Image >& image, void *& imageData )
 {
-	fbo->bind();
-	fbo->setReadBuffer( index );
-
-	vgd::Shp< glo::Texture2D > texture2D = fbo->getColorAsTexture2D(index);
-
 	const GLint	width			= texture2D->getWidth();
 	const GLint	height			= texture2D->getHeight();
 	const GLint	internalFormat	= texture2D->getInternalFormat();
@@ -37,25 +33,42 @@ vgd::Shp< vgd::basic::Image > getImage( vgd::Shp< glo::FrameBufferObject > fbo, 
 	const bool convertRetVal = vgeGL::basic::convertGLInternalFormat2My( internalFormat, myFormat, myType );
 	vgAssert( convertRetVal );
 
-	// Reads back the buffer values
 	using vgd::basic::Image;
-	vgd::Shp< Image > image( new Image(
-		width, height, 1,
-		myFormat, myType ) );
+	const bool matchingImage =	image && imageData &&
+								(image->getSize3i() == vgm::Vec3i( width, height, 1 ))	&&
+								(image->format() == myFormat)							&&
+								(image->type() == myType);
 
-	uint8 *imageData = static_cast<uint8*>( image->editPixels() );
+	if ( !matchingImage )
+	{
+		// no image given or not matching (size, format or type)
+		image.reset( new Image( width, height, 1, myFormat, myType ) );
+		imageData = static_cast<uint8*>( image->editPixels() );
+		image->editPixelsDone();
+	}
+	// else use image and imageData
+
+	// Reads back the buffer values
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glReadPixels(	0, 0,
 					width, height,
 					vgeGL::basic::convertMyFormat2GL(myFormat), vgeGL::basic::convertMyType2GL(myType),
 					imageData );
-	image->editPixelsDone();
-
-	fbo->unbind();
-
-	return image;
 }
 
+
+void getImage(	vgd::Shp< glo::FrameBufferObject > fbo, const int index,
+				vgd::Shp< vgd::basic::Image >& image, void *& imageData )
+{
+	fbo->bind();
+	fbo->setReadBuffer( index );
+
+	vgd::Shp< glo::Texture2D > texture2D = fbo->getColorAsTexture2D(index);
+
+	getImage( texture2D, image, imageData );
+
+	fbo->unbind();
+}
 
 
 vgd::Shp< vgd::node::Camera > setupRenderFromCamera(

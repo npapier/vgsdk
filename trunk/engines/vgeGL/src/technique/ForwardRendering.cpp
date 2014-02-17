@@ -1570,7 +1570,9 @@ void ForwardRendering::stageFluidSimulation( vgeGL::engine::Engine * engine )
 	if ( fluid->getRequestFeedback() )
 	{
 		using vgd::basic::Image;
-		vgd::Shp< Image > image = getImage( fluidRC->postProcessingFBO, 4 );
+		vgd::Shp< Image > image;
+		void * imageData;
+		getImage( fluidRC->postProcessingFBO, 4, image, imageData );
 		/*namespace bfs = boost::filesystem;
 		image->convertTo( Image::RGB, Image::UINT8 );
 		bfs::remove( "D:\\fluid.png" );

@@ -45,7 +45,7 @@ void ProcessEvent::apply( vgeGL::engine::Engine * engine, vge::visitor::Traverse
 	{
 		engine->addField( new FProcessEventType( getFProcessEvent() ) );
 	}
-	
+
 	using vgd::field::EditorRW;
 	EditorRW< FProcessEventType > eventInEngine = engine->getFieldRW< FProcessEventType >( getFProcessEvent() );
 

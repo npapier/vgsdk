@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,16 +6,7 @@
 
 #include "vgUI/event/CaptureEventProcessor.hpp"
 
-#include <sstream>
-#include <locale>
-
-#include <boost/date_time/local_time/local_time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-
-#include <sbf/pkg/Module.hpp>
-
 #include <vgd/event/KeyboardButtonEvent.hpp>
-
 #include "vgUI/Canvas.hpp"
 
 
@@ -45,60 +36,18 @@ const bool CaptureEventProcessor::onEvent( vgd::Shp< vgd::event::Event > event )
 	{
 		const uint							buttonID	= keyboardButtonEvent->getButtonID();
 		const KeyboardButtonEvent::State	buttonState	= keyboardButtonEvent->getState();
+
+		// SCREENSHOT
 		if ( buttonID == 's' && buttonState == KeyboardButtonEvent::DOWN )
 		{
 			getCanvas()->scheduleScreenshot();
 		}
-		else if ( buttonID == 'v' && buttonState == KeyboardButtonEvent::DOWN )
+		// VIDEO CAPTURE
+		else if ( buttonID == ' ' && buttonState == KeyboardButtonEvent::DOWN )
 		{
-			if ( getCanvas()->isVideoCaptureEnabled() == false )
-			{
-				vgLogDebug( "Starts the video capture" );
-				vgLogStatus( "Starts the video capture" );
-				getCanvas()->setVideoCapture();
-			}
-		}
-		else if ( buttonID == 'b' && buttonState == KeyboardButtonEvent::DOWN )
-		{
-			if ( getCanvas()->isVideoCaptureEnabled() )
-			{
-				// Stops the capture
-				vgLogDebug( "Stops the video capture" );
-				vgLogStatus( "Stops the video capture" );
-				getCanvas()->setVideoCapture( false );
-
-				// Computes directory name
-				namespace bfs = boost::filesystem;
-				using namespace boost::local_time;
-				using namespace boost::posix_time;
-
-				std::stringstream ss;
-				time_facet * outputFacet = new time_facet(); 
-				ss.imbue( std::locale(std::locale::classic(), outputFacet) );
-				// Monday-29-02-2009_14h30m12s
-				outputFacet->format("%A-%d-%m-%Y_%Hh%Mm%Ss");
-				ss << second_clock::local_time();
-
-				const bfs::path path = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / bfs::path("videos") / ss.str();
-				const std::string strPath = path.string();
-
-				// Flushs the video
-				getCanvas()->m_video.mkdirs( strPath );
-				getCanvas()->m_video.save( strPath, "", true );
-				getCanvas()->m_video.clear();
-			}
-		}
-		else if ( buttonID == 'c' && buttonState == KeyboardButtonEvent::DOWN )
-		{
-			if ( getCanvas()->isVideoCaptureEnabled() )
-			{
-				vgLogDebug( "Cancels the video capture" );
-				vgLogStatus( "Cancels the video capture" );
-				getCanvas()->setVideoCapture( false );
-
-				// Removes the video
-				getCanvas()->m_video.clear();
-			}
+			const bool isVideoCaptureEnabled = getCanvas()->isVideoCaptureEnabled();
+			// Starts or stops the capture
+			getCanvas()->setVideoCapture( !isVideoCaptureEnabled );
 		}
 	}
 

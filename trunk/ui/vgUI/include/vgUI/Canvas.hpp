@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008-2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2008-2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,7 +9,6 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp> // @todo uses vgsdk time classes
 #include <boost/filesystem/convenience.hpp>
-#include <boost/filesystem/operations.hpp>
 
 #include <glc/glc.hpp>
 #include <gle/OpenGLExtensionsGen.hpp>
@@ -34,6 +33,9 @@ namespace vgd
 
 namespace vgUI
 {
+
+struct Screenshot;
+struct ScreenshotContainer;
 
 /**
  * @brief An abstract canvas for displaying vgsdk graphics.
@@ -180,6 +182,8 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 * @brief Sets the vertical synchronization state of the current OpenGL context
 	 *
 	 * @pre hasVerticalSynchronizationControl() and isCurrent()
+	 *
+	 * @todo use WGL_EXT_swap_control_tear
 	 */
 	void setVerticalSynchronization( const bool enabled = true );
 
@@ -305,154 +309,18 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	//@}
 
 
-	/**
-	 * @brief An image taken to record the 3d rendering
-	 *
-	 * @todo move this class
-	 */
-	struct Screenshot
-	{
-		Screenshot( const uint frameNumber, vgd::Shp< vgd::basic::Image > image )
-		:	m_frameNumber( frameNumber ),
-			m_image( image )
-		{}
-
-		Screenshot& operator=(const Screenshot& s)
-		{
-			if ( this != &s )
-			{
-				destroy();
-				copy( s );
-			}
-			return *this;
-		}
-
-		const uint getFrameNumber() const				{ return m_frameNumber; }
-		vgd::Shp< vgd::basic::Image > getImage() const	{ return m_image; }
-
-		/**
-		 * @brief Saves the screenshot to a file.
-		 *
-		 * @param filename	name of image file (with extension .png ) or 
-		 *				empty to automatically construct a filename using prefix 'frame' and appending frame counter.
-		 *
-		 * @pre path directory must exist
-		 *
-		 * @remark If image specified by given parameters already exists, then it is overridden. Otherwise the image file is simply created.
-		 */
-		void save( const std::string path, const std::string filename = "", const bool feedback = true );
-
-		void mkdirs( const std::string path )
-		{
-			namespace bfs = boost::filesystem;
-
-			if ( bfs::exists( path ) == false )
-			{
-				vgLogDebug( "Creates %s", path.c_str() );
-				vgLogStatus( "Creates %s", path.c_str() );
-
-				bfs::create_directories( path );
-			}
-			// else nothing to do
-		}
-
-	private:
-		void copy( const Screenshot& s )
-		{
-			m_image = s.m_image;
-			m_frameNumber = s.m_frameNumber;
-		}
-
-		void destroy()
-		{
-			m_image.reset();
-		}
-
-		const std::string buildFilename( const std::string filePrefix );
-
-		uint							m_frameNumber;	///< the frame number to identify a screenshot. This attribute could be used to order a sequence of screenshots.
-		vgd::Shp< vgd::basic::Image >	m_image;		///< the screenshot is stored by this image
-	};
-
-	struct ScreenshotContainer : public std::list< Screenshot >
-	{
-		//void append( vgd::Shp< Screenshot > screenshot );
-
-		/**
-		 * @pre path directory must exist
-		 */
-		void save( const std::string path, const std::string filePrefix, const bool feedback = false )
-		{
-			namespace bfs = boost::filesystem;
-			assert( bfs::exists( path ) && "Path not found" );
-
-			while( size() >= 1 )
-			{
-				saveAndPopFront( path, filePrefix, feedback );
-			}
-			/*// 
-			const_iterator	i		= begin(),
-							iEnd	= end();
-
-			while ( i != iEnd )
-			{
-				// Gets current screenshot
-				Screenshot shot = *i;
-
-				// Saves image
-				shot.save( path, filePrefix, feedback );
-
-				//
-				++i;
-			}*/
-		}
-
-		/**
-		 * @pre path directory must exist
-		 * @pre size() >= 1
-		 */
-		void saveAndPopFront( const std::string path, const std::string filePrefix, const bool feedback = false )
-		{
-			namespace bfs = boost::filesystem;
-			assert( bfs::exists( path ) && "Path not found" );
-
-			// Gets current screenshot
-			Screenshot& shot = *begin();
-
-			// Saves image
-			shot.save( path, filePrefix, feedback );
-
-			pop_front();
-		}
-
-
-		void mkdirs( const std::string path )
-		{
-			namespace bfs = boost::filesystem;
-
-			if ( bfs::exists( path ) == false )
-			{
-				vgLogDebug( "Creates %s", path.c_str() );
-				vgLogStatus( "Creates %s", path.c_str() );
-
-				bfs::create_directories( path );
-			}
-			// else nothing to do
-		}
-	};
-	//typedef std::list< Screenshot > ScreenshotContainerType;	///< a collection of screenshots
-
-public://private:
-	ScreenshotContainer 		m_video;
-	//std::list< ScreenshotContainerType >	m_videos;
+private:
+	vgd::Shp< ScreenshotContainer > m_video;
+	std::vector< uint >				m_whats;
+	uint							m_maxNumberOfCapturesPerSecond;
 public:
+	const uint getMaxNumberOfCapturesPerSecond() const { return m_maxNumberOfCapturesPerSecond; }
+	void setMaxNumberOfCapturesPerSecond(const uint value ) { m_maxNumberOfCapturesPerSecond = value; }
 
 
 
 	/**
 	 * @name Screenshot and video capture
-	 *
-	 * Screen and video capture occurs only on 3d frame buffer.
 	 */
 	//@{
 
@@ -474,15 +342,18 @@ public:
 	 */
 	const bool isScreenshotScheduled() const;
 
+
+
 	/**
 	 * @brief Enables or disables the video capture depending on the value of the parameter \c isEnabled.
 	 *
 	 * When this option is enabled, vgSDK captures the screen at the end of each rendering until this option is disabled.
 	 * To form a video file, captures the screen over an extended period of time.
 	 *
-	 * @param isEnabled		true when video capture is enables, false otherwise
+	 * @param isEnabled				true when video capture is enabled, false otherwise.
+	 * @param directoryNameFormat	specifies the directory named created to store the video. "Monday-29-02-2009_14h30m12s" is generated by the default value of this parameter. See time_facet in boost::posix_time for documentation.
 	 */
-	void setVideoCapture( const bool isEnabled = true );
+	void setVideoCapture( const bool isEnabled = true, const std::string directoryNameFormat = "%A-%d-%m-%Y_%Hh%Mm%Ss" );
 
 	/**
 	 * @brief Determines whether the video capture is enabled.
@@ -650,6 +521,9 @@ private:
 	 */
 	static std::ostream* getGleOutputStream();
 
+	void startVideoCapture();
+	void stopVideoCapture();
+
 protected:
 	const Canvas *		m_sharedCanvas;						///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 private:
@@ -669,6 +543,9 @@ private:
 	std::string			m_screenshotFilename;				///< name of file used for the screenshot
 
 	// VIDEO
+	bool				m_scheduleVideoCapture;				///< Boolean value telling if a video capture should be start at the end of the next rendering
+	std::string			m_videoCaptureDirectoryNameFormat;
+
 	bool				m_videoCapture;						///< Boolean value telling if the video capture is enabled.
 
 	//

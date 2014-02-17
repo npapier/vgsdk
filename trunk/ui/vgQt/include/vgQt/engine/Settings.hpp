@@ -1,8 +1,9 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Bryan Schuller
+// Author Nicolas Papier
 
 #ifndef _VGQT_ENGINE_SETTINGS_HPP_
 #define _VGQT_ENGINE_SETTINGS_HPP_
@@ -65,7 +66,6 @@ private Q_SLOTS:
     void onDebugEvents();
     void onClearGLResources();
 
-    void onCaptureButton();
     //@}
 
 private:
@@ -80,7 +80,6 @@ private:
 
     QCheckBox	* m_showFPS;			///< Widget to choose which debug overlay must be displayed
     QCheckBox	* m_debugEvents;		///< Button to enable/disable event logging
-    QCheckBox	* m_captureButton;		///< Widget to enable screenshot/video capture hotkey
 
     QPushButton * m_benchButton;
     QPushButton * m_clearGLResourcesButton;
