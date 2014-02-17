@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2012, Maxime Peresson, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2012, 2013, Maxime Peresson, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -152,11 +152,11 @@ vgd::Shp< std::vector< char > > readFile( const std::string filePath )
 	{
 		// Computes length
 		inFile.seekg (0, std::ios::end);
-		const int length = inFile.tellg();
+		const std::ifstream::streampos length = inFile.tellg();
 		inFile.seekg (0, std::ios::beg);
 
 		// Reads into retVal
-		retVal->resize( length );
+		retVal->resize( static_cast<uint>(length) );
 		inFile.read( &(*retVal)[0], length );
 
 		if ( inFile.fail() )
@@ -166,6 +166,55 @@ vgd::Shp< std::vector< char > > readFile( const std::string filePath )
 	}
 
 	return retVal;
+}
+
+
+
+const bool readFile( const std::string filePath, std::string& oData )
+{
+	std::ifstream inFile( filePath.c_str(), std::ifstream::in | std::ifstream::binary );
+	if( inFile.good() )
+	{
+		// Computes length
+		inFile.seekg (0, std::ios::end);
+		const std::ifstream::streampos length = inFile.tellg();
+		inFile.seekg (0, std::ios::beg);
+
+		// Reads into retVal
+		oData.resize( static_cast<uint>(length) );
+		inFile.read( &(*oData.begin()), length );
+
+		if ( inFile.fail() )
+		{
+			oData.resize(0);
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+void writeFile( const std::string filePath, const std::string& data )
+{
+	writeFile( filePath, data.c_str(), data.size() );
+}
+
+
+void writeFile( const std::string filePath, const char * data, const uint size )
+{
+	std::ofstream outFile( filePath.c_str(), std::ios::trunc | std::ios::binary );
+	if( outFile.good() )
+	{
+		// Writes
+		outFile.write( data, size );
+	}
 }
 
 
