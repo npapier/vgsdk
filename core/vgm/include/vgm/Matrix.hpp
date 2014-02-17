@@ -231,7 +231,7 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Returns an array of 16 elements.
 	 *
-	 * @remark Values in array are ordered from column0 to column3.	 	 
+	 * @remark Values in array are ordered from column0 to column3.
 	 */
 	void getTransposeValue( double *m ) const;
 
@@ -239,12 +239,12 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Returns the desired row
 	 */
-	const vgm::Vec4f getRow( const int32 row );
+	const vgm::Vec4f getRow( const int32 row ) const;
 
 	/**
 	 * @brief Returns the desired column
 	 */
-	const vgm::Vec4f getColumn( const int32 column );
+	const vgm::Vec4f getColumn( const int32 column ) const;
 
 	/**
 	 * @brief Returns 4x4 array of elements.
@@ -795,9 +795,9 @@ struct VGM_API MatrixR
 	void			multLineMatrix( const Line& src, Line& dst ) const;
 
 	/**
-	 * @brief Prints a formatted version of the matrix to the given file pointer.
+	 * brief Prints a formatted version of the matrix to the given file pointer.
 	 *
-	 * @todo same with std::string, idem for vectors, bb...
+	 * todo same with std::string, idem for vectors, bb...
 	 */
 	// FIXME void			print( FILE *fp ) const;
 	//@}
@@ -850,6 +850,15 @@ struct VGM_API MatrixR
 	 */
 	bool		notEquals( const MatrixR& m, const float tolerance = vgm::Epsilon<float>::value() ) const;
 	//@}
+
+
+
+	/**
+	 * @brief Returns a string containing each row of the matrix separated by the given separator.
+	 */
+	const std::string toString( const std::string separator = " " ) const;
+
+
 
 private:
 
