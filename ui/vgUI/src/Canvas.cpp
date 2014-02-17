@@ -9,7 +9,11 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <locale>
+#include <sstream>
 
+#include <boost/date_time/local_time/local_time.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
 #include <displayDriverConnector/displayDriverConnector.hpp>
@@ -33,6 +37,8 @@
 #include <vgd/visitor/helpers.hpp>
 #include <vgDebug/helpers.hpp>
 #include <vgeGL/engine/Engine.hpp>
+
+#include "vgUI/Screenshot.hpp"
 
 
 
@@ -65,53 +71,6 @@ void logDebugVerticalSynchronizationState( Canvas * canvas )
 
 
 
-void Canvas::Screenshot::save( const std::string path, const std::string filename, const bool feedback )
-{
-	namespace bfs = boost::filesystem;
-	assert( bfs::exists( path ) && "Path not found" );
-
-	const std::string lFilename = filename.size() > 0 ?
-		filename : buildFilename( "frame" );
-
-	// User feedback
-	if ( feedback )
-	{
-		vgLogDebug( "Screenshot done in file %s", lFilename.c_str() );
-		vgLogStatus( "Screenshot done in file %s", lFilename.c_str() );
-	}
-
-	// Output image
-	const std::string output = (bfs::path(path) / lFilename).string();
-
-	// Removes image if needed
-	if ( bfs::exists( output ) )
-	{
-		bfs::remove( output );
-	}
-
-	// Saves image
-	getImage()->save( output );
-}
-
-
-
-const std::string Canvas::Screenshot::buildFilename( const std::string filePrefix )
-{
-	// Constructs filename
-
-	// FIXME boost::format seems to SEGV with boost 1.38 on win32, so boost lexical cast is used
-	//const std::string strCount = (boost::format("%|07|") % getFrameNumber()).str();
-
-	const std::string strFrameCount = boost::lexical_cast< std::string >( getFrameNumber() );
-	const std::string strZero( (8 - strFrameCount.size()), '0' );
-
-	const std::string filename = filePrefix + strZero + strFrameCount + ".png";
-
-	return filename;
-}
-
-
-
 void Canvas::setGleLogSystem( const GleLogSystem logger )
 {
 	m_gleLogSystem = logger;
@@ -138,7 +97,11 @@ Canvas::Canvas( const Canvas * sharedCanvas, const bool newOpenGLContextSharingO
 		sharedCanvas->m_gleContext : vgd::makeShp( new gle::OpenGLExtensionsGen(getGleOutputStream()) )		),
 	m_initialVerticalSynchronization( true																	),
 	m_scheduleScreenshot			( false																	),
+	m_scheduleVideoCapture			( false																	),
 	m_videoCapture					( false																	),
+	m_video							( new ScreenshotContainer()												),
+	//m_whats
+	m_maxNumberOfCapturesPerSecond	( 25																	),
 	m_debugEvents					( false																	),
 	m_frameBase						( 0																		),
 	// m_timeBase
@@ -499,6 +462,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 	doInitialize();
 
+	//
 	boost::logic::tribool vsyncState = boost::logic::indeterminate;
 
 	// paint() must do several renderings => This is a bench
@@ -514,9 +478,6 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 	while( getNumberOfFrames() > 0 )
 	{
-		gleGetCurrent()->reportGLErrors();
-
-		//
 		namespace bpt = boost::posix_time;
 
 		// Initializes attributes used by fps computation
@@ -527,26 +488,16 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			m_timeBase	= beginPaint;
 		}
 
-		//bpt::ptime current = bpt::microsec_clock::universal_time();
-
-/*		m_elapsedTimeBetweenPaint = current - m_lastPaint;
-		std::cout << "elapsedTimeBetweenPaint:" << m_elapsedTimeBetweenPaint.total_milliseconds() << std::endl;
-		m_lastPaint = current;
-
-		//
-		bpt::ptime beginPaint = bpt::microsec_clock::universal_time();
-*/
-
 		::vgeGL::engine::SceneManager::paint( size, getBoundingBoxUpdate() );
 
 		// Capture screenshot or video
 		using vgd::basic::Image;
-		vgd::Shp< Image > capturedImage;
 
+		// SCREENSHOT
 		if ( isScreenshotScheduled() )
 		{
 			// Do the capture
-			capturedImage = getGLEngine()->captureGLFramebuffer();
+			vgd::Shp< Image > capturedImage = getGLEngine()->captureGLFramebuffer();
 
 			// Constructs the screenshot and saves the png image
 			Screenshot shot( getFrameCount(), capturedImage );
@@ -569,49 +520,72 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			m_screenshotFilename.clear();
 		}
 
+		// VIDEO
+		if ( m_scheduleVideoCapture )
+		{
+			startVideoCapture();
+			m_scheduleVideoCapture = false;
+		}
+
+		//
 		if ( isVideoCaptureEnabled() )
 		{
 			static bpt::ptime lastCapture;
 			if ( lastCapture.is_not_a_date_time() )
 			{
-				lastCapture = bpt::microsec_clock::universal_time();
+				lastCapture = bpt::microsec_clock::universal_time() - bpt::seconds(1);
 			}
 
-			const bpt::ptime currentCapture = bpt::microsec_clock::universal_time();
+			const bpt::ptime			currentCapture = bpt::microsec_clock::universal_time();
+			const bpt::time_duration	elapsedTimeBetweenTwoCaptures = currentCapture - lastCapture;
 
-			const bpt::time_duration elapsedTimeBetweenTwoCaptures = currentCapture - lastCapture;
-
-			const float maxNumberOfCapturesPerSecond = 20.f; // @todo parameter
-			const float desiredElapsedTimeBetween2Captures = 1000.f / maxNumberOfCapturesPerSecond;
+			const float desiredElapsedTimeBetween2Captures = 1000.f / m_maxNumberOfCapturesPerSecond;
 			if ( elapsedTimeBetweenTwoCaptures.total_milliseconds() >= desiredElapsedTimeBetween2Captures  )
 			{
-				if ( capturedImage == 0 )
+				// Do the capture
+				if ( m_video->sizeBuffering() > 0 )
 				{
-					capturedImage = getGLEngine()->captureGLFramebuffer();
-				}
+					// recycles a screenshot
+					vgd::Shp< Screenshot > recycledShot = m_video->popBuffering();
 
-				Screenshot screenshot( getFrameCount(), capturedImage );
-				m_video.push_back( screenshot );
+					//	updates image(s)
+					for( uint i=0; i != m_whats.size(); ++i )
+					{
+						const uint what = m_whats[i];
+
+						vgd::Shp< vgd::basic::Image > capturedImage = recycledShot->getImage( what );
+						void * captureImageData = recycledShot->getImageData( what );
+
+						// captures using a recycled image
+						using vgeGL::engine::Engine;
+						getGLEngine()->captureGLFramebuffer( static_cast<Engine::CaptureBufferType>(what), capturedImage, captureImageData );
+					}
+
+					//	updates frame count
+					recycledShot->setFrameNumber( getFrameCount() );
+
+					//	updates camera informations
+					const vgm::Vec2f nearFar			= getGLEngine()->getNearFar();
+
+					const vgm::Rectangle2i viewport2i	= getGLEngine()->getViewport();
+					const vgm::Vec4i viewport( viewport2i.x(), viewport2i.y(), viewport2i.width(), viewport2i.height() );
+					const vgm::MatrixR& modelview		= getGLEngine()->getSceneGeometricalMatrix();
+					const vgm::MatrixR& projection		= getGLEngine()->getCamera()->getProjectionLeft();
+					recycledShot->setCameraInformations( nearFar, viewport, modelview, projection );
+
+					//
+					m_video->push( recycledShot );
+				}
+				else
+				{
+					// buffer is empty. unable to recycle a screenshot.
+					vgLogMessage("Skip capturing frame %i. Waiting thread to serialize a screenshot (next frame ?).", getFrameCount() );
+				}
 
 				lastCapture = currentCapture;
 			}
-/*			else
-			// else save one image on disk
-			{
-				vgLogDebug("Time to save");
-// ???			
-			}*/
+			// else nothing to do
 		}
-
-/*
-		//glFlush();
-		//glFinish(); 
-		{
-			std::cout << "Skip\n";
-		}
-		// else nothing to do 
-*/
-		gleGetCurrent()->reportGLErrors();
 
 		// Exchanges back and front buffers
 		swapBuffer();
@@ -722,11 +696,24 @@ const bool Canvas::isScreenshotScheduled() const
 
 
 
-void Canvas::setVideoCapture( const bool isEnabled )
+void Canvas::setVideoCapture( const bool isEnabled, const std::string directoryNameFormat )
 {
-	m_videoCapture = isEnabled;
+	if ( isEnabled )
+	{
+		// request the start of video capture (startVideoCapture() have to be called in paint() for Engine.getOutputBuffers())
+		if ( !m_videoCapture ) // capture video is not currently done
+		{
+			m_scheduleVideoCapture				= isEnabled;
+			m_videoCaptureDirectoryNameFormat	= directoryNameFormat;
+		}
+		// else nothing to do
+	}
+	else
+	{
+		// request the stop of video capture
+		stopVideoCapture();
+	}
 }
-
 
 
 const bool Canvas::isVideoCaptureEnabled() const
@@ -978,6 +965,7 @@ const bool Canvas::startVGSDK()
 
 		// Checks OpenGL requirements for vgsdk, i.e
 		// full mode requested by enabled GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 4.2).
+		// @todo deprecated: "compatibility" mode requested by disabling GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 2.0
 
 		//vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 		//vgLogMessage3("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
@@ -1292,6 +1280,82 @@ std::ostream* Canvas::getGleOutputStream()
 		return &std::cout;
 	}
 }
+
+
+
+void Canvas::startVideoCapture()
+{
+	// Test if video capture is not enabled
+	if ( !m_videoCapture )
+	{
+		vgLogMessage("Starting video capture...");
+
+		// COMPUTE DIRECTORY NAME
+		using namespace boost::local_time;
+		using namespace boost::posix_time;
+
+		std::stringstream ss;
+		time_facet * outputFacet = new time_facet(); 
+		ss.imbue( std::locale(std::locale::classic(), outputFacet) );
+		outputFacet->format(m_videoCaptureDirectoryNameFormat.c_str()); // default format : Monday-29-02-2009_14h30m12s
+		ss << second_clock::local_time();
+		const std::string videoDirectoryName = ss.str();
+
+		// Computes full path for video
+		namespace bfs = boost::filesystem;
+		const bfs::path path = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / bfs::path("videos") / videoDirectoryName; // @todo improve sbf api
+
+		// Creates directory
+		m_video->createDirs( path.string() );
+
+		// Configures buffering
+		using vgd::basic::Image;
+		using vgeGL::engine::Engine;
+
+		// What to capture COLOR
+		m_whats.clear();
+		m_whats.push_back( 0 );
+		// m_whats.push_back( 1 ); @todo use vgQt::engine::RecordSettings to choose if DEPTH have to be captured
+
+		// creating a screenshot
+		std::vector< vgd::Shp< Image > > images;
+
+		for( uint i=0; i != m_whats.size(); ++i )
+		{
+			const uint what = m_whats[i];
+			vgd::Shp< Image > image = getGLEngine()->captureGLFramebuffer( static_cast<Engine::CaptureBufferType>(what) );
+			images.push_back( image );
+		}
+
+		// @todo use vgQt::engine::RecordSettings to choose the buffer size
+		const uint bufferSize = std::max( m_maxNumberOfCapturesPerSecond * 3, static_cast<uint>(10) );
+		m_video->setBufferingSize( bufferSize, vgd::makeShp( new Screenshot(0, images) ) );
+
+		// Launches thread to serialize captured images
+		vgLogMessage("Starting thread to serialize video capture.");
+		m_video->startThread();
+	}
+	//else nothing to do
+
+	m_videoCapture = true;
+}
+
+void Canvas::stopVideoCapture()
+{
+	// Test if video capture is enabled
+	if ( m_videoCapture )
+	{
+		// Disable video capture
+		vgLogMessage("Schedule interruption of thread to serialize video capture...");
+		m_video->scheduleThreadInterrupt();
+		m_video->getThread().join();
+		vgLogMessage("Video capture thread interrupted.\n");
+	}
+	//else nothing to do
+
+	m_videoCapture = false;
+}
+
 
 
 boost::filesystem::path Canvas::getGlePath()

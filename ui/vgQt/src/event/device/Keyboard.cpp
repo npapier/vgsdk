@@ -38,7 +38,7 @@ void Keyboard::onEvent( QEvent * event )
 
 
     // We ignore the tab key since it causes state update problem
-    // due to the focus lost of teh canvas.
+    // due to the focus lost of the canvas.
     if( keyEvent->key() == Qt::Key_Tab )
     {
         return;

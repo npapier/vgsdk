@@ -1,8 +1,9 @@
-// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
+// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Bryan Schuller
+// Author Nicolas Papier
 
 #include "vgQt/engine/Settings.hpp"
 
@@ -11,7 +12,7 @@
 #include <vector>
 #include <vgd/visitor/helpers.hpp>
 #include <vgd/visitor/predicate/True.hpp>
-#include <vgUI/event/CaptureEventProcessor.hpp>
+
 
 namespace vgQt
 {
@@ -53,8 +54,6 @@ Settings::Settings()
     m_disableDepthPrePass = new QCheckBox("Disable Depth pre-pass");
     m_showFPS = new QCheckBox("Show counters (fps and frame)");
     m_debugEvents = new QCheckBox("Log events");
-    m_captureButton = new QCheckBox("Enable capture HotKeys");
-	m_captureButton->setToolTip( "Hotkeys\n---------\n\ns : captures a screenshot\n\nv : starts video capture\nb : stops and saves video capture\nc : cancels video capture");
     m_benchButton = new QPushButton("Bench");
     m_clearGLResourcesButton = new QPushButton("Clear OpenGL Resources");
 
@@ -70,7 +69,6 @@ Settings::Settings()
     addWidget(m_benchButton);
     addWidget(m_clearGLResourcesButton);
 
-    addWidget(m_captureButton);
     addStretch();
 
     connect(m_glslButton, SIGNAL(clicked()), (Settings*) this, SLOT(onGLSL()));
@@ -81,7 +79,6 @@ Settings::Settings()
     connect(m_disableDepthPrePass, SIGNAL(clicked()), (Settings*) this, SLOT(onDisableDepthPrePass()));
     connect(m_showFPS, SIGNAL(clicked()), (Settings*) this, SLOT(onShowFPS()));
     connect(m_debugEvents, SIGNAL(clicked()), (Settings*) this, SLOT(onDebugEvents()));
-    connect(m_captureButton, SIGNAL(clicked()), (Settings*) this, SLOT(onCaptureButton()));
     connect(m_benchButton, SIGNAL(clicked()), (Settings*) this, SLOT(onBench()));
     connect(m_clearGLResourcesButton, SIGNAL(clicked()), (Settings*) this, SLOT(onClearGLResources()));
 }
@@ -165,6 +162,8 @@ void Settings::onDisableDepthPrePass()
     m_canvas->refreshForced();
 }
 
+
+
 void Settings::onBench()
 {
     assert( m_canvas != 0 );
@@ -207,32 +206,6 @@ void Settings::onClearGLResources()
     // @todo
 }
 
-void Settings::onCaptureButton()
-{
-    assert( m_canvas != 0 );
-
-    const bool enableCapture = m_captureButton->isChecked();
-
-    using vgUI::event::CaptureEventProcessor;
-
-    if ( enableCapture )
-    {
-        // Inserts capture event processor
-        vgd::Shp< CaptureEventProcessor > captureEventProcessor( new CaptureEventProcessor(m_canvas) );
-        m_canvas->insertEventProcessor( captureEventProcessor );
-    }
-    else
-    {
-        // Removes capture event processor
-        const int index = m_canvas->findEventProcessor< CaptureEventProcessor >();
-        if ( index != m_canvas->getNumEventProcessors() )
-        {
-            // Capture event processor found
-            m_canvas->removeEventProcessor( index );
-        }
-        // else nothing to do
-    }
-}
 
 } // namespace engine
 

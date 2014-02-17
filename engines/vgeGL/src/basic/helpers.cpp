@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -109,10 +109,26 @@ const bool convertGLInternalFormat2My( const GLenum internalFormat, vgd::basic::
 			type	= IImage::FLOAT;
 			return true;
 
+		case 4:
+#ifdef _WIN32
+			format	= IImage::BGRA;
+#else
+			format	= IImage::RGBA;
+#endif
+			type	= IImage::UINT8;
+			return true;
+		case 3:
+#ifdef _WIN32
+			format	= IImage::BGR;
+#else
+			format	= IImage::RGB;
+#endif
+			type	= IImage::UINT8;
+			return true;
+
 		case 1:
 		case 2:
-		case 3:
-		case 4:
+
 		default:
 			vgAssertN( false, "Unsupported OpenGL internal format" );
 			return false;
