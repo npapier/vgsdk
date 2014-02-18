@@ -965,18 +965,44 @@ void Engine::captureGLFramebuffer( const CaptureBufferType what, vgd::Shp< vgd::
 	vgd::Shp< glo::FrameBufferObject > fbo = getOutputBuffers();
 	if ( fbo )
 	{
+		// RENDERING IN A FBO
 		vgeGL::technique::getImage( fbo, what, oImage, imageData );
 	}
 	else
 	{
-		vgAssertN( false, "Capture no more supported with rendering to output buffers" );
-		oImage.reset( new vgd::basic::Image() );
-		imageData = 0;
-		/*const vgm::Vec2i imageSize = getDrawingSurfaceSize();
-		glPixelStorei(GL_PACK_ALIGNMENT, 1);
-		glReadPixels(	0, 0, imageSize[0], imageSize[1], 
-						GL_BGR, GL_UNSIGNED_BYTE,
-						imageData );*/
+		// RENDERING USING OPENGL DEFAULT FRAMEBUFFER
+		if ( what == COLOR )
+		{
+			const vgm::Vec2i imageSize = getDrawingSurfaceSize();
+
+			using vgd::basic::Image;
+#ifdef _WIN32
+			oImage.reset( new Image( imageSize[0], imageSize[1], 1, Image::BGR, Image::UINT8 ) );
+#else
+			oImage.reset( new Image( imageSize[0], imageSize[1], 1, Image::RGB, Image::UINT8 ) );
+#endif
+
+			imageData = static_cast<uint8*>( oImage->editPixels() );
+			oImage->editPixelsDone();
+
+			//
+			glPixelStorei(GL_PACK_ALIGNMENT, 1);
+#ifdef _WIN32
+			glReadPixels(	0, 0, imageSize[0], imageSize[1], 
+							GL_BGR, GL_UNSIGNED_BYTE,
+							imageData );
+#else
+			glReadPixels(	0, 0, imageSize[0], imageSize[1], 
+							GL_RGB, GL_UNSIGNED_BYTE,
+							imageData );
+#endif
+		}
+		else
+		{
+			vgAssertN( false, "Capture not supported for buffer other than COLOR buffer" );
+			oImage.reset( new vgd::basic::Image() );
+			imageData = 0;
+		}
 	}
 }
 
