@@ -238,9 +238,11 @@ void Screenshot::save( const uint index, const std::string path, const std::stri
 	if (image->isEmpty() )	return;
 
 	const bool isUINT8 = image->type() == Image::UINT8;
+	const bool isRGB = image->format() == Image::RGB;
 	const bool isBGR = image->format() == Image::BGR;
+	const bool isRGBA = image->format() == Image::RGBA;
 	const bool isBGRA = image->format() == Image::BGRA;
-	const bool isColorBuffer = (isBGR || isBGRA) && isUINT8;
+	const bool isColorBuffer = (isRGB || isBGR || isRGBA || isBGRA) && isUINT8;
 
 	std::string outFilename;
 	if ( isColorBuffer )
