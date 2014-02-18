@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -223,7 +223,10 @@ void Screenshot::save( const std::string path, const std::string filename, const
 		save( i, path, filename, feedback );
 	}
 
-	saveCameraInformations( path, filename );
+
+	namespace bfs = boost::filesystem;
+	bfs::path cameraFilename( filename );
+	saveCameraInformations( path, cameraFilename.stem().string());
 }
 
 
@@ -287,8 +290,7 @@ void Screenshot::saveCameraInformations( const std::string path, const std::stri
 	namespace bfs = boost::filesystem;
 	vgAssertN( bfs::exists( path ), "Path not found" );
 
-	const std::string lFilename = filename.size() > 0 ?
-		filename : "camera" + toString(getFrameNumber(), 8) + ".txt";
+	const std::string lFilename = filename.size() > 0 ? filename + ".txt" : "camera" + toString(getFrameNumber(), 8) + ".txt";
 
 	// Output file
 	const std::string output = (bfs::path(path) / lFilename).string();
@@ -534,6 +536,7 @@ void ScreenshotContainer::operator() ()
 	while ( !m_scheduleInterrupt )
 	{
 		saveAndPop("", false);
+		// @todo fine tuning (sleep()...)
 	}
 
 	//

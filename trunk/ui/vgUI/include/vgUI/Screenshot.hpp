@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -96,7 +96,7 @@ struct Screenshot
 	 * @brief Saves one image to a file
 	 *
 	 * @param index
-	 * @param filename	name of image file (with extension .png ) or 
+	 * @param filename	name of image file (with extension .png or .tga ) or
 	 *					empty to automatically construct a filename using prefix 'frame', appending frame counter, an '_' and image index.
 	 *
 	 * @pre path directory must exist
