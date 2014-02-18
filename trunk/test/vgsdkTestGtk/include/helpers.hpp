@@ -11,6 +11,18 @@
 
 namespace vgd { namespace node { struct LayerPlan; } }
 
+
+#define BEGIN_TEST(givenDescription)	/* prerun Gtk */																						\
+vgd::Shp< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(vgTest::getImageName(), vgsdkTestGtk::vgTest::SCREENSHOT) );	\
+std::string description( givenDescription );																									\
+base->getLog()->add( "Description", description );
+
+
+#define RUN_TEST()	/* run GTK */	\
+base->run();						\
+base->getLog()->addToGtest();
+
+
 /**
  * @brief Creates a scene composed of a quad and a matrix of spheres.
  */
