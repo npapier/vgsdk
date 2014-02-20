@@ -223,7 +223,8 @@ const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEn
 	vgm::RawMatrixd	transformSceneD;
 
 	vgd::Shp< vgeGL::basic::Hit > hit = getHit( m_pGLEngine );
-	if ( hit->modelviewS().isInvalid() )
+	if (	!hit ||											// no hit
+			(/*hit && */hit->modelviewS().isInvalid()) )	// invalid hit
 	{
 		// No hit, so scene bounding box is used
 		using vgd::node::IBoundingBox;
