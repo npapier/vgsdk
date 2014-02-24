@@ -22,6 +22,7 @@
 namespace vgQt {
 	namespace engine {
 		struct UserSettingsDialog;
+		struct RecordSettingsDialog;
 	}
 }
 
@@ -43,15 +44,9 @@ public:
 
 	/**
 	 * @brief	Default onstructor
-	 */
-    MainWindow();
-
-	/**
-	 * @brief	Constructor with a shared window
-	 *
 	 * @param	sharedWindow	a pointer to a previous window instance to share resources with
 	 */
-	MainWindow( MainWindow * sharedWindow );
+	MainWindow( MainWindow * sharedWindow = 0 );
 
 	void showFullScreen();
     void showNormal();
@@ -60,6 +55,13 @@ public:
 	 * @brief Retrieves the render settings dialog.
 	 */
 	vgQt::engine::UserSettingsDialog * getRenderSettingsDialog();
+
+	vgQt::engine::RecordSettingsDialog * getRecordSettingsDialog(); ///< Returns the record setting dialog
+
+	MyCanvas * getCanvas()
+	{
+		return &m_canvas;
+	}
 
 Q_SIGNALS:
 
@@ -133,6 +135,11 @@ public Q_SLOTS:
 	void renderSettingsChanged();
 
     /**
+     * @brief	Configure record engine's settings
+     */
+    void recordingSettings();
+
+    /**
      * @brief	Implements an action that show the about box on top of the top level window.
      */
     void helpAbout();
@@ -184,10 +191,12 @@ private:
 	static const int maxRecentScenes = 9;
 
     QMenu*								m_recentFileMenu;
-	vgQt::engine::UserSettingsDialog	* m_renderSettingsDialog;
 
 	void initialize();
+	vgQt::engine::UserSettingsDialog	* m_renderSettingsDialog;
+	vgQt::engine::RecordSettingsDialog	* m_recordSettingsDialog;
 };
+
 
 } // namespace vgsdkViewerQt
 
