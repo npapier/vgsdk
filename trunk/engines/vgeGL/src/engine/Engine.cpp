@@ -963,7 +963,7 @@ vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer( const CaptureBufferT
 void Engine::captureGLFramebuffer( const CaptureBufferType what, vgd::Shp< vgd::basic::Image >& oImage, void *& imageData ) const
 {
 	vgd::Shp< glo::FrameBufferObject > fbo = getOutputBuffers();
-	if ( fbo )
+	if ( fbo && (what != COLOR) )
 	{
 		// RENDERING IN A FBO
 		vgeGL::technique::getImage( fbo, what, oImage, imageData );
