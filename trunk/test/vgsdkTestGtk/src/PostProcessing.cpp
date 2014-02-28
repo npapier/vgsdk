@@ -7,4 +7,4 @@
 
 
 // Test Suite VgTestPostProcessing
-INSTANTIATE_TEST_CASE_P(PostProcessingList, VgTestPostProcessing, ::testing::Range(0, 5) );
+INSTANTIATE_TEST_CASE_P(PostProcessingList, VgTestPostProcessing, ::testing::Range(0, 20) );
