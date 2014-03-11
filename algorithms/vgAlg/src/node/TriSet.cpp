@@ -19,7 +19,7 @@ namespace node
 
 const bool isATriSet( const vgd::node::VertexShape * vertexShape )
 {
-	vgd::field::EditorRO< vgd::field::TMultiField< vgd::node::Primitive > > primitiveRO = vertexShape->getPrimitiveRO();
+	vgd::field::EditorRO< vgd::field::TMultiField< vgd::node::Primitive > > primitiveRO = vertexShape->getFPrimitiveRO();
 
 	// For each primitive, do
 	for (uint32 i = 0; i < primitiveRO->size(); ++i)
@@ -38,7 +38,7 @@ const bool isATriSet( const vgd::node::VertexShape * vertexShape )
 
 void invertTriangleOrientation( vgd::Shp< vgd::node::TriSet > triset )
 {
-	vgd::field::EditorRW< vgd::field::MFUInt >	vertexIndex	= triset->getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32 >	vertexIndex	= triset->getFVertexIndexRW();
 
 	const int32 numTris = vertexIndex->size()/3;	//< number of triangles
 

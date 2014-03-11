@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -29,20 +29,20 @@ namespace node
  * - SFFloat \c opacity = (1.f)<br>
  *   Sets opacity from 1.0 for being completely opaque until 0.0 for being completely transparent.<br>
  *<br>
+ * - OFFloat \c [shininess] = (0.f)<br>
+ *   Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).<br>
+ *<br>
+ * - OFVec3f \c [emission] = vgm::Vec3f(0.f, 0.f, 0.f)<br>
+ *   Emmissive color of the surface.<br>
+ *<br>
+ * - OFVec3f \c [specular] = vgm::Vec3f(0.f, 0.f, 0.f)<br>
+ *   Specular color of the surface.<br>
+ *<br>
  * - OFVec3f \c [ambient] = vgm::Vec3f(0.2f, 0.2f, 0.2f)<br>
  *   Ambient color of the surface.<br>
  *<br>
  * - OFVec3f \c [diffuse] = vgm::Vec3f(0.8f, 0.8f, 0.8f)<br>
  *   Diffuse color of the surface.<br>
- *<br>
- * - OFVec3f \c [specular] = vgm::Vec3f(0.f, 0.f, 0.f)<br>
- *   Specular color of the surface.<br>
- *<br>
- * - OFVec3f \c [emission] = vgm::Vec3f(0.f, 0.f, 0.f)<br>
- *   Emmissive color of the surface.<br>
- *<br>
- * - OFFloat \c [shininess] = (0.f)<br>
- *   Shininess coefficient of the surface. Values can range from 0.0 for no shininess (a diffuse surface) to 1.0 for maximum shininess (a highly polished surface).<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -115,6 +115,138 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 */
 	void setOpacity( const OpacityValueType value );
 
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field shininess
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c shininess.
+	 */
+	typedef float ShininessValueType;
+
+	/**
+	 * @brief The default value of field named \c shininess.
+	 */
+	static const ShininessValueType DEFAULT_SHININESS;
+
+	/**
+	 * @brief Type definition of the field named \c shininess
+	 */
+	typedef vgd::field::TOptionalField< ShininessValueType > FShininessType;
+
+
+	/**
+	 * @brief Gets the value of field named \c shininess.
+	 */
+	const bool getShininess( ShininessValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c shininess.
+ 	 */
+	void setShininess( const ShininessValueType& value );
+
+	/**
+	 * @brief Erases the field named \c shininess.
+	 */
+	void eraseShininess();
+
+	/**
+	 * @brief Tests if the value of field named \c shininess has been initialized.
+	 */
+	const bool hasShininess() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field emission
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c emission.
+	 */
+	typedef vgm::Vec3f EmissionValueType;
+
+	/**
+	 * @brief The default value of field named \c emission.
+	 */
+	static const EmissionValueType DEFAULT_EMISSION;
+
+	/**
+	 * @brief Type definition of the field named \c emission
+	 */
+	typedef vgd::field::TOptionalField< EmissionValueType > FEmissionType;
+
+
+	/**
+	 * @brief Gets the value of field named \c emission.
+	 */
+	const bool getEmission( EmissionValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c emission.
+ 	 */
+	void setEmission( const EmissionValueType& value );
+
+	/**
+	 * @brief Erases the field named \c emission.
+	 */
+	void eraseEmission();
+
+	/**
+	 * @brief Tests if the value of field named \c emission has been initialized.
+	 */
+	const bool hasEmission() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field specular
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c specular.
+	 */
+	typedef vgm::Vec3f SpecularValueType;
+
+	/**
+	 * @brief The default value of field named \c specular.
+	 */
+	static const SpecularValueType DEFAULT_SPECULAR;
+
+	/**
+	 * @brief Type definition of the field named \c specular
+	 */
+	typedef vgd::field::TOptionalField< SpecularValueType > FSpecularType;
+
+
+	/**
+	 * @brief Gets the value of field named \c specular.
+	 */
+	const bool getSpecular( SpecularValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c specular.
+ 	 */
+	void setSpecular( const SpecularValueType& value );
+
+	/**
+	 * @brief Erases the field named \c specular.
+	 */
+	void eraseSpecular();
+
+	/**
+	 * @brief Tests if the value of field named \c specular has been initialized.
+	 */
+	const bool hasSpecular() const;
 	//@}
 
 
@@ -208,138 +340,6 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field specular
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c specular.
-	 */
-	typedef vgm::Vec3f SpecularValueType;
-
-	/**
-	 * @brief The default value of field named \c specular.
-	 */
-	static const SpecularValueType DEFAULT_SPECULAR;
-
-	/**
-	 * @brief Type definition of the field named \c specular
-	 */
-	typedef vgd::field::TOptionalField< SpecularValueType > FSpecularType;
-
-
-	/**
-	 * @brief Gets the value of field named \c specular.
-	 */
-	const bool getSpecular( SpecularValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c specular.
- 	 */
-	void setSpecular( const SpecularValueType& value );
-
-	/**
-	 * @brief Erases the field named \c specular.
-	 */
-	void eraseSpecular();
-
-	/**
-	 * @brief Tests if the value of field named \c specular has been initialized.
-	 */
-	const bool hasSpecular() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field emission
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c emission.
-	 */
-	typedef vgm::Vec3f EmissionValueType;
-
-	/**
-	 * @brief The default value of field named \c emission.
-	 */
-	static const EmissionValueType DEFAULT_EMISSION;
-
-	/**
-	 * @brief Type definition of the field named \c emission
-	 */
-	typedef vgd::field::TOptionalField< EmissionValueType > FEmissionType;
-
-
-	/**
-	 * @brief Gets the value of field named \c emission.
-	 */
-	const bool getEmission( EmissionValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c emission.
- 	 */
-	void setEmission( const EmissionValueType& value );
-
-	/**
-	 * @brief Erases the field named \c emission.
-	 */
-	void eraseEmission();
-
-	/**
-	 * @brief Tests if the value of field named \c emission has been initialized.
-	 */
-	const bool hasEmission() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field shininess
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c shininess.
-	 */
-	typedef float ShininessValueType;
-
-	/**
-	 * @brief The default value of field named \c shininess.
-	 */
-	static const ShininessValueType DEFAULT_SHININESS;
-
-	/**
-	 * @brief Type definition of the field named \c shininess
-	 */
-	typedef vgd::field::TOptionalField< ShininessValueType > FShininessType;
-
-
-	/**
-	 * @brief Gets the value of field named \c shininess.
-	 */
-	const bool getShininess( ShininessValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c shininess.
- 	 */
-	void setShininess( const ShininessValueType& value );
-
-	/**
-	 * @brief Erases the field named \c shininess.
-	 */
-	void eraseShininess();
-
-	/**
-	 * @brief Tests if the value of field named \c shininess has been initialized.
-	 */
-	const bool hasShininess() const;
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
@@ -350,6 +350,27 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 * @return the name of field \c opacity.
 	 */
 	static const std::string getFOpacity( void );
+
+	/**
+	 * @brief Returns the name of field \c shininess.
+	 *
+	 * @return the name of field \c shininess.
+	 */
+	static const std::string getFShininess( void );
+
+	/**
+	 * @brief Returns the name of field \c emission.
+	 *
+	 * @return the name of field \c emission.
+	 */
+	static const std::string getFEmission( void );
+
+	/**
+	 * @brief Returns the name of field \c specular.
+	 *
+	 * @return the name of field \c specular.
+	 */
+	static const std::string getFSpecular( void );
 
 	/**
 	 * @brief Returns the name of field \c ambient.
@@ -364,27 +385,6 @@ struct VGD_API Material : public vgd::node::SingleAttribute
 	 * @return the name of field \c diffuse.
 	 */
 	static const std::string getFDiffuse( void );
-
-	/**
-	 * @brief Returns the name of field \c specular.
-	 *
-	 * @return the name of field \c specular.
-	 */
-	static const std::string getFSpecular( void );
-
-	/**
-	 * @brief Returns the name of field \c emission.
-	 *
-	 * @return the name of field \c emission.
-	 */
-	static const std::string getFEmission( void );
-
-	/**
-	 * @brief Returns the name of field \c shininess.
-	 *
-	 * @return the name of field \c shininess.
-	 */
-	static const std::string getFShininess( void );
 
 	//@}
 

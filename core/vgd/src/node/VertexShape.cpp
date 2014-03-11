@@ -1,15 +1,18 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, 2008, 2009, 2010, 2012 Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Alexandre Di Pino
 
 #include "vgd/node/VertexShape.hpp"
 
+#include <sstream>
+
+#include "vgd/node/Group.hpp"
 #include "vgd/node/detail/Node.hpp"
 
 
 
-#include "vgd/node/Group.hpp"
 namespace vgd
 {
 
@@ -18,351 +21,8 @@ namespace node
 
 
 
-vgd::Shp< VertexShape > VertexShape::create( const std::string nodeName )
-{
-	/* Creates a new node */
-	vgd::Shp< VertexShape > node( new VertexShape(nodeName) );
+META_NODE_CPP( VertexShape );
 
-	/* Adds a vertex (i.e. a node) to boost::graph */
-	graph().addNode( node );
-
-	/* Sets fields to their default values */
-	node->setToDefaults();
-
-	return node;
-}
-
-
-
-vgd::Shp< VertexShape > VertexShape::create( const std::string nodeName, const uint8 index )
-{
-	/* Creates a new node */
-	vgd::Shp< VertexShape > node = VertexShape::create(nodeName);
-
-	/* Sets index of multi-attributes */
-	node->setMultiAttributeIndex(index);
-
-	return node;
-}
-
-
-
-vgd::Shp< VertexShape > VertexShape::createWhole( const std::string nodeName )
-{
-	/* Creates a new node */
-	vgd::Shp< VertexShape > node = VertexShape::create(nodeName);
-
-	/* Sets optional fields to their default values */
-	node->setOptionalsToDefaults();
-
-	return node;
-}
-
-
-
-VertexShape::VertexShape( const std::string nodeName ) :
-	vgd::node::Shape( nodeName ),
-	vgd::node::ITransformation()
-{
-	// Adds field(s)
-	addField( new FNormalBindingType(getFNormalBinding()) );
-	addField( new FTangentBindingType(getFTangentBinding()) );
-	addField( new FColorBindingType(getFColorBinding()) );
-	addField( new FBoundingBoxUpdatePolicyType(getFBoundingBoxUpdatePolicy()) );
-	addField( new FDeformableHintType(getFDeformableHint()) );
-	addField( new FVertexType(getFVertex()) );
-	addField( new FVertexIndexType(getFVertexIndex()) );
-	addField( new FPrimitiveType(getFPrimitive()) );
-	addField( new FNormalType(getFNormal()) );
-	addField( new FTangentType(getFTangent()) );
-	addField( new FColorType(getFColor()) );
-
-	// Adds dirty flag(s)
-	addDirtyFlag(getDFBoundingBox());
-
-	// Sets link(s)
-	link( getFVertex(), getDFBoundingBox() );
-	link( getFPrimitive(), getDFBoundingBox() );
-
-	link( getDFNode() );
-}
-
-
-
-void VertexShape::setToDefaults( void )
-{
-	Shape::setToDefaults();
-	ITransformation::setToDefaults();
-	setNormalBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
-	setTangentBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
-	setColorBinding( vgd::node::Binding(vgd::node::BIND_OFF) );
-	setBoundingBoxUpdatePolicy( (AUTOMATIC) );
-	setDeformableHint( (STATIC) );
-}
-
-
-
-void VertexShape::setOptionalsToDefaults()
-{
-	Shape::setOptionalsToDefaults();
-	ITransformation::setOptionalsToDefaults();
-}
-
-
-
-// NormalBinding
-
-const VertexShape::NormalBindingValueType VertexShape::getNormalBinding() const
-{
-	return getFieldRO<FNormalBindingType>(getFNormalBinding())->getValue();
-}
-
-
-
-void VertexShape::setNormalBinding( const NormalBindingValueType value )
-{
-	getFieldRW<FNormalBindingType>(getFNormalBinding())->setValue( value );
-}
-
-
-
-// TangentBinding
-
-const VertexShape::TangentBindingValueType VertexShape::getTangentBinding() const
-{
-	return getFieldRO<FTangentBindingType>(getFTangentBinding())->getValue();
-}
-
-
-
-void VertexShape::setTangentBinding( const TangentBindingValueType value )
-{
-	getFieldRW<FTangentBindingType>(getFTangentBinding())->setValue( value );
-}
-
-
-
-// ColorBinding
-
-const VertexShape::ColorBindingValueType VertexShape::getColorBinding() const
-{
-	return getFieldRO<FColorBindingType>(getFColorBinding())->getValue();
-}
-
-
-
-void VertexShape::setColorBinding( const ColorBindingValueType value )
-{
-	getFieldRW<FColorBindingType>(getFColorBinding())->setValue( value );
-}
-
-
-
-// BoundingBoxUpdatePolicy
-
-const VertexShape::BoundingBoxUpdatePolicyValueType VertexShape::getBoundingBoxUpdatePolicy() const
-{
-	return getFieldRO<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->getValue();
-}
-
-
-
-void VertexShape::setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value )
-{
-	getFieldRW<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->setValue( value );
-}
-
-
-
-// DeformableHint
-
-const VertexShape::DeformableHintValueType VertexShape::getDeformableHint() const
-{
-	return getFieldRO<FDeformableHintType>(getFDeformableHint())->getValue();
-}
-
-
-
-void VertexShape::setDeformableHint( const DeformableHintValueType value )
-{
-	getFieldRW<FDeformableHintType>(getFDeformableHint())->setValue( value );
-}
-
-
-
-// Vertex
-vgd::field::EditorRO< VertexShape::FVertexType > VertexShape::getVertexRO() const
-{
-	return getFieldRO<FVertexType>( getFVertex() );
-}
-
-
-
-vgd::field::EditorRW< VertexShape::FVertexType > VertexShape::getVertexRW()
-{
-	return getFieldRW<FVertexType>( getFVertex() );
-}
-
-
-
-// VertexIndex
-vgd::field::EditorRO< VertexShape::FVertexIndexType > VertexShape::getVertexIndexRO() const
-{
-	return getFieldRO<FVertexIndexType>( getFVertexIndex() );
-}
-
-
-
-vgd::field::EditorRW< VertexShape::FVertexIndexType > VertexShape::getVertexIndexRW()
-{
-	return getFieldRW<FVertexIndexType>( getFVertexIndex() );
-}
-
-
-
-// Primitive
-vgd::field::EditorRO< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRO() const
-{
-	return getFieldRO<FPrimitiveType>( getFPrimitive() );
-}
-
-
-
-vgd::field::EditorRW< VertexShape::FPrimitiveType > VertexShape::getPrimitiveRW()
-{
-	return getFieldRW<FPrimitiveType>( getFPrimitive() );
-}
-
-
-
-// Normal
-vgd::field::EditorRO< VertexShape::FNormalType > VertexShape::getNormalRO() const
-{
-	return getFieldRO<FNormalType>( getFNormal() );
-}
-
-
-
-vgd::field::EditorRW< VertexShape::FNormalType > VertexShape::getNormalRW()
-{
-	return getFieldRW<FNormalType>( getFNormal() );
-}
-
-
-
-// Tangent
-vgd::field::EditorRO< VertexShape::FTangentType > VertexShape::getTangentRO() const
-{
-	return getFieldRO<FTangentType>( getFTangent() );
-}
-
-
-
-vgd::field::EditorRW< VertexShape::FTangentType > VertexShape::getTangentRW()
-{
-	return getFieldRW<FTangentType>( getFTangent() );
-}
-
-
-
-// Color
-vgd::field::EditorRO< VertexShape::FColorType > VertexShape::getColorRO() const
-{
-	return getFieldRO<FColorType>( getFColor() );
-}
-
-
-
-vgd::field::EditorRW< VertexShape::FColorType > VertexShape::getColorRW()
-{
-	return getFieldRW<FColorType>( getFColor() );
-}
-
-
-
-// Field name accessor(s)
-const std::string VertexShape::getFNormalBinding( void )
-{
-	return "f_normalBinding";
-}
-
-
-
-const std::string VertexShape::getFTangentBinding( void )
-{
-	return "f_tangentBinding";
-}
-
-
-
-const std::string VertexShape::getFColorBinding( void )
-{
-	return "f_colorBinding";
-}
-
-
-
-const std::string VertexShape::getFBoundingBoxUpdatePolicy( void )
-{
-	return "f_boundingBoxUpdatePolicy";
-}
-
-
-
-const std::string VertexShape::getFDeformableHint( void )
-{
-	return "f_deformableHint";
-}
-
-
-
-const std::string VertexShape::getFVertex( void )
-{
-	return "f_vertex";
-}
-
-
-
-const std::string VertexShape::getFVertexIndex( void )
-{
-	return "f_vertexIndex";
-}
-
-
-
-const std::string VertexShape::getFPrimitive( void )
-{
-	return "f_primitive";
-}
-
-
-
-const std::string VertexShape::getFNormal( void )
-{
-	return "f_normal";
-}
-
-
-
-const std::string VertexShape::getFTangent( void )
-{
-	return "f_tangent";
-}
-
-
-
-const std::string VertexShape::getFColor( void )
-{
-	return "f_color";
-}
-
-
-
-// DIRTY FLAG(S)
-const std::string VertexShape::getDFBoundingBox()
-{
-	return "df_boundingbox";
-}
 
 
 void VertexShape::invalidateParentsBoundingBoxDirtyFlag() 
@@ -388,6 +48,7 @@ void VertexShape::invalidateParentsBoundingBoxDirtyFlag()
 		group->invalidateBoundingBox();
 	}
 }
+
 
 
 /**
@@ -419,7 +80,7 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 
 	// STEP 2: updates bounding box.
 	vgd::field::DirtyFlag *pDirtyFlag = getDirtyFlag( getDFBoundingBox() );
-	vgAssert( pDirtyFlag != 0 );
+	assert( pDirtyFlag != 0 );
 
 	const BoundingBoxUpdatePolicyValueType bbUpdatePolicy = getBoundingBoxUpdatePolicy();
 
@@ -430,23 +91,20 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 		bRetVal				= true;
 
 		// compute bb
+		vgd::field::EditorRO< FVertexType > vertex;
+		vertex = getFVertexRO();
+
 		m_boundingBox.makeEmpty();
 
-		auto primitive = getPrimitiveRO();
-		if ( primitive->size() > 0 )
+		for(	FVertexType::const_iterator	i	= vertex->begin(),
+											ie	= vertex->end();
+				i != ie;
+				i++ )
 		{
-			vgd::field::EditorRO< FVertexType > vertex = getVertexRO();
-
-			for(	FVertexType::const_iterator	i	= vertex->begin(),
-												ie	= vertex->end();
-					i != ie;
-					i++ )
-			{
-				m_boundingBox.extendBy( *i );
-			}
+			m_boundingBox.extendBy( *i );
 		}
-		// else no primitive, so bounding box is empty
 
+		//
 		pDirtyFlag->validate();
 	}
 	else if ( bbUpdatePolicy == ONCE && pDirtyFlag->isDirty() )
@@ -458,7 +116,7 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 #ifdef DEBUG
 		if ( pDirtyFlag->isDirty() )
 		{
-			vgAssertN( false, "Internal error." );
+			assert( false && "Internal error." );
 			pDirtyFlag->validate();
 		}
 #endif
@@ -468,9 +126,10 @@ bool VertexShape::computeBoundingBox( const vgm::MatrixR& transformation )
 	{
 		invalidateParentsBoundingBoxDirtyFlag();
 	}
-
+	
 	return bRetVal;
 }
+
 
 
 bool VertexShape::isBoundingBoxValid() const
@@ -479,6 +138,7 @@ bool VertexShape::isBoundingBoxValid() const
 }
 
 
+	
 bool VertexShape::smartComputeBoundingBox( const vgm::MatrixR& transformation )
 {
 	// update transformation
@@ -492,10 +152,10 @@ bool VertexShape::smartComputeBoundingBox( const vgm::MatrixR& transformation )
 	{
 		//		
 		vgd::field::EditorRO< FVertexType > vertex;
-		vertex = getVertexRO();
+		vertex = getFVertexRO();
 
 		vgd::field::EditorRO< FVertexIndexType > index;
-		index = getVertexIndexRO();
+		index = getFVertexIndexRO();
 
 		m_boundingBox.makeEmpty();
 		
@@ -519,16 +179,21 @@ bool VertexShape::smartComputeBoundingBox( const vgm::MatrixR& transformation )
 }
 
 
+
 void VertexShape::invalidateBoundingBox( bool bInvalidate )
 {
 	getDirtyFlag( getDFBoundingBox() )->dirty( bInvalidate );
 }
 
 
+
+
+
+
 void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 {
 	// Transform each vertex.
-	vgd::field::EditorRW< FVertexType >		vertex		= getVertexRW();
+	vgd::field::EditorRW< FVertexType >		vertex		= getFVertexRW();
 	for(	FVertexType::iterator	i	= vertex->begin(),
 									ie	= vertex->end();
 			i != ie;
@@ -538,7 +203,7 @@ void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 	}
 
 	// Transform each normal.
-	vgd::field::EditorRW< FNormalType >		normals		= getNormalRW();
+	vgd::field::EditorRW< FNormalType >		normals		= getFNormalRW();
 	if ( normalize )
 	{
 		for(	FNormalType::iterator	i	= normals->begin(),
@@ -562,7 +227,7 @@ void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 	}
 
 	// Transform each tangent.
-	vgd::field::EditorRW< FTangentType >	tangents	= getTangentRW();
+	vgd::field::EditorRW< FTangentType >	tangents	= getFTangentRW();
 	if ( normalize )
 	{
 		for(	FTangentType::iterator	i	= tangents->begin(),
@@ -587,9 +252,10 @@ void VertexShape::transform( const vgm::MatrixR& matrix, const bool normalize )
 }
 
 
+
 void VertexShape::transform( const vgm::Vec3f translation )
 {
-	vgd::field::EditorRW< FVertexType > vertex	= getVertexRW();
+	vgd::field::EditorRW< FVertexType > vertex	= getFVertexRW();
 
 	// Transform each vertex.
 	for(	FVertexType::iterator	i	= vertex->begin(),
@@ -602,10 +268,11 @@ void VertexShape::transform( const vgm::Vec3f translation )
 }
 
 
+
 void VertexShape::transform( const vgm::Rotation rotation )
 {
-	vgd::field::EditorRW< FVertexType > vertex	= getVertexRW();
-	vgd::field::EditorRW< FNormalType > normal	= getNormalRW();
+	vgd::field::EditorRW< FVertexType > vertex	= getFVertexRW();
+	vgd::field::EditorRW< FNormalType > normal	= getFNormalRW();
 
 	// Transform each vertex.
 	for(	FVertexType::iterator	i	= vertex->begin(),
@@ -628,6 +295,7 @@ void VertexShape::transform( const vgm::Rotation rotation )
 }
 
 
+
 void VertexShape::scale( const vgm::Vec3f scale )
 {
 	vgm::MatrixR transformation;
@@ -637,11 +305,12 @@ void VertexShape::scale( const vgm::Vec3f scale )
 }
 
 
+
 void VertexShape::textureTransform( const vgm::MatrixR& matrix, const int texUnit )
 {
-	if( hasTexCoord( texUnit ) )
+	if( hasFTexCoord( texUnit ) )
 	{
-		int dim = getTexCoordDim( texUnit );
+		int dim = getTexCoordDim  ( texUnit );
 		switch( dim )
 		{
 			case 1:
@@ -671,8 +340,166 @@ void VertexShape::textureTransform( const vgm::MatrixR& matrix, const int texUni
 
 
 
-// TEXCOORD*
-const bool VertexShape::hasTexCoord( const uint index ) const
+VertexShape::VertexShape( const std::string nodeName ) :
+	vgd::node::Shape	( nodeName )
+{
+	// Add fields.
+
+	// data field.
+	addField( new FVertexType(getFVertex()) );
+	addField( new FNormalType(getFNormal()) );
+	addField( new FTangentType(getFTangent()) );
+	addField( new FColor4Type(getFColor4()) );
+	addField( new FSecondaryColor4Type(getFSecondaryColor4()) );
+	addField( new FEdgeFlagType(getFEdgeFlag()) );
+	
+	addField( new FPrimitiveType(getFPrimitive()) );
+	
+	// index field.
+	addField( new FVertexIndexType(getFVertexIndex()) );
+
+	// binding field.
+	addField( new FNormalBindingType(getFNormalBinding()) );
+	addField( new FTangentBindingType(getFTangentBinding()) );
+	addField( new FColor4BindingType(getFColor4Binding()) );
+	addField( new FSecondaryColor4BindingType(getFSecondaryColor4Binding()) );
+
+	addField( new FEdgeFlagBindingType(getFEdgeFlagBinding()) );
+	
+	// deformable field.
+	addField( new FDeformableHintType(getFDeformableHint()) );
+
+	// tessellation field
+	addField( new FTessellationLevelType(getFTessellationLevel()));
+	addField( new FTessellationBiasType(getFTessellationBias()));
+
+	// bb policy
+	addField( new FBoundingBoxUpdatePolicyType(getFBoundingBoxUpdatePolicy()) );
+
+	// Add dirty flags.
+	addDirtyFlag(getDFBoundingBox());
+
+	// Links.
+
+	// getDFBoundingBox()
+	link( getFVertex(), getDFBoundingBox() );
+
+	//
+	link( getDFNode() );
+}
+
+
+
+void VertexShape::setToDefaults( void )
+{
+	Shape::setToDefaults();
+
+	setNormalBinding( 			vgd::node::BIND_OFF );
+	setTangentBinding(			vgd::node::BIND_OFF );
+	setColor4Binding( 			vgd::node::BIND_OFF );
+	setSecondaryColor4Binding(	vgd::node::BIND_OFF );
+	setEdgeFlagBinding(			vgd::node::BIND_OFF );
+
+	setDeformableHint( DEFAULT_DEFORMABLE_HINT );
+
+	setBoundingBoxUpdatePolicy( DEFAULT_BOUNDINGBOX_UPDATE_POLICY );
+
+	setTessellationLevel(0.f);
+	setTessellationBias(0.f);
+
+	// Invalidates m_numTexUnits
+	//m_numTexUnits = -1;
+}
+
+
+
+void VertexShape::setOptionalsToDefaults( void )
+{
+	Shape::setOptionalsToDefaults();
+}
+
+
+
+
+
+
+// VERTEX
+vgd::field::EditorRO< vgd::node::VertexShape::FVertexType > VertexShape::getFVertexRO() const
+{
+	return ( getFieldRO< FVertexType >(getFVertex()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FVertexType > VertexShape::getFVertexRW()
+{
+	return ( getFieldRW< FVertexType >(getFVertex()) );
+}
+
+
+
+// NORMAL
+vgd::field::EditorRO< vgd::node::VertexShape::FNormalType > VertexShape::getFNormalRO() const
+{
+	return ( getFieldRO< FNormalType >(getFNormal()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FNormalType > VertexShape::getFNormalRW()
+{
+	return ( getFieldRW< FNormalType >(getFNormal()) );
+}
+
+
+
+//TANGENT
+vgd::field::EditorRO< vgd::node::VertexShape::FTangentType > VertexShape::getFTangentRO() const
+{
+	return ( getFieldRO< FTangentType >(getFTangent()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FTangentType > VertexShape::getFTangentRW()
+{
+	return ( getFieldRW< FTangentType >(getFTangent()) );
+}
+
+
+
+// COLOR
+vgd::field::EditorRO< vgd::node::VertexShape::FColor4Type > VertexShape::getFColor4RO() const
+{
+	return ( getFieldRO< FColor4Type >(getFColor4()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FColor4Type > VertexShape::getFColor4RW()
+{
+	return ( getFieldRW< FColor4Type >(getFColor4()) );
+}
+
+
+
+// SECONDARY_COLOR
+vgd::field::EditorRO< vgd::node::VertexShape::FSecondaryColor4Type > VertexShape::getFSecondaryColor4RO() const
+{
+	return ( getFieldRO< FSecondaryColor4Type >(getFSecondaryColor4()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FSecondaryColor4Type > VertexShape::getFSecondaryColor4RW()
+{
+	return ( getFieldRW< FSecondaryColor4Type >(getFSecondaryColor4()) );
+}
+
+
+
+// TEXCOORD
+const bool VertexShape::hasFTexCoord( const uint index ) const
 {
 	const std::type_info& fieldType(	getFieldType( getFTexCoord( index ) )	);
 
@@ -680,9 +507,10 @@ const bool VertexShape::hasTexCoord( const uint index ) const
 }
 
 
+
 const int8 VertexShape::getTexCoordDim( const int32 index ) const
 {
-	// @todo OPTME this could be optimize (see if (fieldType ... ) ).
+	// FIXME OPTME this could be optimize (see if (fieldType ... ) ).
 	int8 retVal;
 
 	const std::type_info& fieldType(	getFieldType( getFTexCoord( index ) )	);
@@ -714,6 +542,7 @@ const int8 VertexShape::getTexCoordDim( const int32 index ) const
 
 	return retVal;
 }
+
 
 
 void VertexShape::createTexUnits( const int8 texCoordDimension, const int32 index, const int32 num )
@@ -758,6 +587,47 @@ void VertexShape::createTexUnits( const int8 texCoordDimension, const int32 inde
 }
 
 
+
+template< typename fieldType >
+void VertexShape::createTexUnits( const int32 index, const int32 num )
+{
+	// Adds fields
+	int32	i32Max = index + num;
+
+	for(	int32 i32 = index;
+			i32 < i32Max;
+			++i32 )
+	{
+		addField( new fieldType(getFTexCoord(i32)) );
+		addField( new FTexCoordBindingType(getFTexCoordBinding(i32)) );
+
+		assert( m_texUnitsIndexSet.find( i32 ) == m_texUnitsIndexSet.end() );
+		m_texUnitsIndexSet.insert( i32 );
+	}
+	
+	// Links
+	for(	int32 i32 = index;
+			i32 < i32Max;
+			++i32 )
+	{
+		link( getFTexCoord(i32), getDFNode() );
+		link( getFTexCoordBinding(i32), getDFNode() );
+	}
+
+	// Defaults bindings
+	for(	int32 i32 = index;
+			i32 < i32Max;
+			++i32 )
+	{
+		setTexCoordBinding( i32, vgd::node::BIND_OFF );
+	}
+
+	// Invalidates m_numTexUnits
+	// m_numTexUnits = -1;
+}
+
+
+
 void VertexShape::removeTexUnits( const int32 index, const int32 num )
 {
 	assert( index >= 0 );
@@ -793,19 +663,152 @@ void VertexShape::removeTexUnits( const int32 index, const int32 num )
 
 	// Links are removed automatically by the fieldManager.
 
+	// Invalidates m_numTexUnits
+	//m_numTexUnits = -1;
 }
+
 
 
 const int32	VertexShape::getNumTexUnits() const
 {
 	return m_texUnitsIndexSet.size();
+/*
+	if ( m_numTexUnits == -1 )
+	{
+		// m_numTexUnits is invalid, computes it.
+		int32 i32 = 0;
+		while ( isField( getFTexCoord(i32) ) )
+		{
+			assert( isField( getFTexCoordBinding(i32) ) );
+			
+			++i32;
+		}
+		
+	 	// Validates m_numTexUnits.
+		m_numTexUnits = i32;
+	}
+	
+	return m_numTexUnits;*/
 }
+
 
 
 const std::pair< VertexShape::ConstIteratorIndexSet, VertexShape::ConstIteratorIndexSet > VertexShape::getTexUnitsIterators() const
 {
 	return std::make_pair( m_texUnitsIndexSet.begin(), m_texUnitsIndexSet.end() );
 }
+
+
+
+// EDGEFLAG
+vgd::field::EditorRO< vgd::node::VertexShape::FEdgeFlagType > VertexShape::getFEdgeFlagRO() const
+{
+	return ( getFieldRO< FEdgeFlagType >(getFEdgeFlag()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FEdgeFlagType > VertexShape::getFEdgeFlagRW()
+{
+	return ( getFieldRW< FEdgeFlagType >(getFEdgeFlag()) );
+}
+
+
+
+// PRIMITIVE
+vgd::field::EditorRO< vgd::node::VertexShape::FPrimitiveType > VertexShape::getFPrimitiveRO() const
+{
+	return ( getFieldRO< FPrimitiveType >(getFPrimitive()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FPrimitiveType > VertexShape::getFPrimitiveRW()
+{
+	return ( getFieldRW< FPrimitiveType >(getFPrimitive()) );
+}
+
+
+
+
+
+
+// VERTEX INDEX
+vgd::field::EditorRO< vgd::node::VertexShape::FVertexIndexType > VertexShape::getFVertexIndexRO() const
+{
+	return ( getFieldRO< FVertexIndexType >(getFVertexIndex()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FVertexIndexType > VertexShape::getFVertexIndexRW()
+{
+	return ( getFieldRW< FVertexIndexType >(getFVertexIndex()) );
+}
+
+
+
+
+
+
+// NORMAL BINDING
+const vgd::node::Binding VertexShape::getNormalBinding() const
+{
+	return ( getFieldRO< FNormalBindingType >(getFNormalBinding())->getValue() );
+}
+
+
+
+void VertexShape::setNormalBinding( const vgd::node::Binding binding )
+{
+	return ( getFieldRW< FNormalBindingType >(getFNormalBinding())->setValue( binding ) );
+}
+
+
+
+// TANGENT BINDING
+const vgd::node::Binding VertexShape::getTangentBinding() const
+{
+	return ( getFieldRO< FTangentBindingType >(getFTangentBinding())->getValue() );
+}
+
+
+
+void VertexShape::setTangentBinding( const vgd::node::Binding binding )
+{
+	return ( getFieldRW< FTangentBindingType >(getFTangentBinding())->setValue( binding ) );
+}
+
+
+
+// COLOR BINDING
+const vgd::node::Binding VertexShape::getColor4Binding() const
+{
+	return ( getFieldRO< FColor4BindingType >(getFColor4Binding())->getValue() );
+}
+
+
+
+void VertexShape::setColor4Binding( const vgd::node::Binding binding )
+{
+	return ( getFieldRW< FColor4BindingType >(getFColor4Binding())->setValue( binding ) );
+}
+
+
+
+// SECONDARY COLOR BINDING
+const vgd::node::Binding VertexShape::getSecondaryColor4Binding() const
+{
+	return ( getFieldRO< FSecondaryColor4BindingType >(getFSecondaryColor4Binding())->getValue() );
+}
+
+
+
+void VertexShape::setSecondaryColor4Binding( const vgd::node::Binding binding )
+{
+	return ( getFieldRW< FSecondaryColor4BindingType >(getFSecondaryColor4Binding())->setValue( binding ) );
+}
+
 
 
 // TEX COORD BINDING
@@ -815,13 +818,166 @@ const vgd::node::Binding VertexShape::getTexCoordBinding( const int32 texUnit ) 
 }
 
 
+
 void VertexShape::setTexCoordBinding( const int32 texUnit, const vgd::node::Binding binding )
 {
 	return ( getFieldRW< FTexCoordBindingType >(getFTexCoordBinding( texUnit ))->setValue( binding ) );
 }
 
 
-//
+
+// EDGE FLAG BINDING
+const vgd::node::Binding VertexShape::getEdgeFlagBinding() const
+{
+	return ( getFieldRO< FEdgeFlagBindingType >(getFEdgeFlagBinding())->getValue() );
+}
+
+
+
+void VertexShape::setEdgeFlagBinding( const vgd::node::Binding binding )
+{
+	return ( getFieldRW< FEdgeFlagBindingType >(getFEdgeFlagBinding())->setValue( binding ) );
+}
+
+
+
+// DEFORMABLE HINT
+const VertexShape::DeformableHintValueType VertexShape::getDeformableHint() const
+{
+	return ( getFieldRO<FDeformableHintType>(getFDeformableHint())->getValue() );
+}
+
+
+
+void VertexShape::setDeformableHint( const DeformableHintValueType value )
+{
+	getFieldRW<FDeformableHintType>(getFDeformableHint())->setValue( value );
+}
+
+
+
+// TESSELLATION LEVEL
+vgd::field::EditorRO< vgd::node::VertexShape::FTessellationLevelType >	VertexShape::getTessellationLevelRO() const
+{
+	return ( getFieldRO< FTessellationLevelType >(getFTessellationLevel()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FTessellationLevelType >	VertexShape::getTessellationLevelRW()
+{
+	return ( getFieldRW< FTessellationLevelType >(getFTessellationLevel()) );
+}
+
+
+
+void VertexShape::setTessellationLevel( const float level )
+{
+	return ( getFieldRW< FTessellationLevelType >(getFTessellationLevel())->setValue( level ) );
+}
+
+
+
+// TESSELLATION BIAS
+vgd::field::EditorRO< vgd::node::VertexShape::FTessellationBiasType >	VertexShape::getTessellationBiasRO() const
+{
+	return ( getFieldRO< FTessellationBiasType >(getFTessellationBias()) );
+}
+
+
+
+vgd::field::EditorRW< vgd::node::VertexShape::FTessellationBiasType >	VertexShape::getTessellationBiasRW()
+{
+	return ( getFieldRW< FTessellationBiasType >(getFTessellationBias()) );
+}
+
+
+
+void VertexShape::setTessellationBias( const float bias )
+{
+	return ( getFieldRW< FTessellationBiasType >(getFTessellationBias())->setValue( bias ) );
+}
+
+
+
+// BOUNDINGBOX UPDATE POLICY
+const VertexShape::BoundingBoxUpdatePolicyValueType VertexShape::getBoundingBoxUpdatePolicy() const
+{
+	return ( getFieldRO<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->getValue() );
+}
+
+
+
+void VertexShape::setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value )
+{
+	getFieldRW<FBoundingBoxUpdatePolicyType>(getFBoundingBoxUpdatePolicy())->setValue( value );
+}
+
+
+
+const std::string VertexShape::getFVertex( void )
+{
+	return "f_vertex";
+}
+
+
+
+const std::string VertexShape::getFNormal( void )
+{
+	return "f_normal";
+}
+
+
+
+const std::string VertexShape::getFTangent( void )
+{
+	return "f_tangent";
+}
+
+
+
+/*const std::string VertexShape::getFTangentHandidness( void )
+{
+	return "f_thandidness";
+}*/
+
+
+
+//const std::string VertexShape::getFColor3( void )
+//{
+//	return "f_color3";
+//}
+
+
+
+const std::string VertexShape::getFColor4( void )
+{
+	return "f_color4";
+}
+
+
+
+//const std::string VertexShape::getFSecondaryColor3( void )
+//{
+//	return "f_secondary_color3";
+//}
+
+
+
+const std::string VertexShape::getFSecondaryColor4( void )
+{
+	return "f_secondaryColor4";
+}
+
+
+
+//const std::string VertexShape::getFFogCoord( void )
+//{
+//	return "f_fog_coord";
+//}
+
+
+
 const std::string VertexShape::getFTexCoord( const int32 textureUnit )
 {
 	std::stringstream strStream;
@@ -832,20 +988,132 @@ const std::string VertexShape::getFTexCoord( const int32 textureUnit )
 }
 
 
+const std::string VertexShape::getFEdgeFlag( void )
+{
+	return "f_edgeFlag";
+}
+
+
+
+const std::string VertexShape::getFPrimitive( void )
+{
+	return "f_primitive";
+}
+
+
+
+
+
+
+const std::string VertexShape::getFVertexIndex( void )
+{
+	return "f_vertexIndex";
+}
+
+
+
+
+
+
+const std::string VertexShape::getFNormalBinding( void )
+{
+	return "f_normalBinding";
+}
+
+
+
+const std::string VertexShape::getFTangentBinding( void )
+{
+	return "f_tangentBinding";
+}
+
+
+
+//const std::string VertexShape::getFColor3Binding( void )
+//{
+//	return "f_color3Binding";
+//}
+
+
+
+const std::string VertexShape::getFColor4Binding( void )
+{
+	return "f_color4Binding";
+}
+
+
+
+//const std::string VertexShape::getFSecondaryColor3Binding( void )
+//{
+//	return "f_secondary_color3_binding";
+//}
+
+
+
+const std::string VertexShape::getFSecondaryColor4Binding( void )
+{
+	return "f_secondaryColor4Binding";
+}
+
+
+
+//const std::string VertexShape::getFFogCoordBinding( void )
+//{
+//	return "f_fog_coord_binding";
+//}
+
+
+
 const std::string VertexShape::getFTexCoordBinding( const int32 textureUnit )
 {
-
 	std::stringstream strStream;
 	
 	strStream << "f_texCoordBinding" << textureUnit << std::ends;
 	
 	return ( strStream.str() );
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , VertexShape );
 
 
 
-const vgd::basic::RegisterNode<VertexShape> VertexShape::m_registrationInstance;
+const std::string VertexShape::getFEdgeFlagBinding( void )
+{
+	return "f_edgeFlagBinding";
+}
+
+
+
+const std::string VertexShape::getFDeformableHint( void )
+{
+	return "f_deformableHint";
+}
+
+
+
+const std::string VertexShape::getFTessellationLevel( void )
+{
+	return "f_tessellationLevel";
+}
+
+
+
+const std::string VertexShape::getFTessellationBias( void )
+{
+	return "f_tessellationBias";
+}
+
+
+
+const std::string VertexShape::getFBoundingBoxUpdatePolicy( void )
+{
+	return "f_boundingBoxUpdatePolicy";
+}
+
+
+
+const std::string VertexShape::getDFBoundingBox( void )
+{
+	return "df_boundingBox";
+}
 
 
 

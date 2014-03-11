@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2008, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -71,8 +71,8 @@ void Camera::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 		// time
 		glEngine->setUniformTime();
 
-		// nearFar and viewport
-		glEngine->setUniformNearFarAndViewport();
+		// nearFar
+		glEngine->setUniformNearFar();
 	}
 
 	paint( glEngine, pCastedNode );

@@ -17,11 +17,11 @@
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
 #include <vgTest/convenience.hpp>
-#include <vgTest/gtest.hpp>
 
 #include <vector>
 
 #include "Fixtures.hpp"
+#include <gtest.hpp>
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -63,10 +63,10 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FPositionType(getFPosition()) );
-	addField( new FSizeType(getFSize()) );
-	addField( new FImageType(getFImage()) );
 	addField( new FAlphaScaleType(getFAlphaScale()) );
+	addField( new FPositionType(getFPosition()) );
+	addField( new FImageType(getFImage()) );
+	addField( new FSizeType(getFSize()) );
 
 	// Adds dirty flag(s)
 	addDirtyFlag(getDFImage());
@@ -83,10 +83,10 @@ LayerPlan::LayerPlan( const std::string nodeName ) :
 void LayerPlan::setToDefaults( void )
 {
 	MultiAttribute::setToDefaults();
-	setPosition( vgm::Vec2f(0.f, 0.f) );
-	setSize( vgm::Vec2f(1.f, 1.f) );
-	setImage( vgd::basic::IImageShp() );
 	setAlphaScale( (1.f) );
+	setPosition( vgm::Vec2f(0.f, 0.f) );
+	setImage( vgd::basic::IImageShp() );
+	setSize( vgm::Vec2f(1.f, 1.f) );
 }
 
 
@@ -94,66 +94,6 @@ void LayerPlan::setToDefaults( void )
 void LayerPlan::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
-}
-
-
-
-// Position
-
-const LayerPlan::PositionValueType LayerPlan::DEFAULT_POSITION = vgm::Vec2f(0.f, 0.f);
-
-
-
-const LayerPlan::PositionValueType LayerPlan::getPosition() const
-{
-	return getFieldRO<FPositionType>(getFPosition())->getValue();
-}
-
-
-
-void LayerPlan::setPosition( const PositionValueType value )
-{
-	getFieldRW<FPositionType>(getFPosition())->setValue( value );
-}
-
-
-
-// Size
-
-const LayerPlan::SizeValueType LayerPlan::DEFAULT_SIZE = vgm::Vec2f(1.f, 1.f);
-
-
-
-const LayerPlan::SizeValueType LayerPlan::getSize() const
-{
-	return getFieldRO<FSizeType>(getFSize())->getValue();
-}
-
-
-
-void LayerPlan::setSize( const SizeValueType value )
-{
-	getFieldRW<FSizeType>(getFSize())->setValue( value );
-}
-
-
-
-// Image
-
-const LayerPlan::ImageValueType LayerPlan::DEFAULT_IMAGE = vgd::basic::IImageShp();
-
-
-
-const LayerPlan::ImageValueType LayerPlan::getImage() const
-{
-	return getFieldRO<FImageType>(getFImage())->getValue();
-}
-
-
-
-void LayerPlan::setImage( const ImageValueType value )
-{
-	getFieldRW<FImageType>(getFImage())->setValue( value );
 }
 
 
@@ -178,17 +118,77 @@ void LayerPlan::setAlphaScale( const AlphaScaleValueType value )
 
 
 
-// Field name accessor(s)
-const std::string LayerPlan::getFPosition( void )
+// Position
+
+const LayerPlan::PositionValueType LayerPlan::DEFAULT_POSITION = vgm::Vec2f(0.f, 0.f);
+
+
+
+const LayerPlan::PositionValueType LayerPlan::getPosition() const
 {
-	return "f_position";
+	return getFieldRO<FPositionType>(getFPosition())->getValue();
 }
 
 
 
-const std::string LayerPlan::getFSize( void )
+void LayerPlan::setPosition( const PositionValueType value )
 {
-	return "f_size";
+	getFieldRW<FPositionType>(getFPosition())->setValue( value );
+}
+
+
+
+// Image
+
+const LayerPlan::ImageValueType LayerPlan::DEFAULT_IMAGE = vgd::basic::IImageShp();
+
+
+
+const LayerPlan::ImageValueType LayerPlan::getImage() const
+{
+	return getFieldRO<FImageType>(getFImage())->getValue();
+}
+
+
+
+void LayerPlan::setImage( const ImageValueType value )
+{
+	getFieldRW<FImageType>(getFImage())->setValue( value );
+}
+
+
+
+// Size
+
+const LayerPlan::SizeValueType LayerPlan::DEFAULT_SIZE = vgm::Vec2f(1.f, 1.f);
+
+
+
+const LayerPlan::SizeValueType LayerPlan::getSize() const
+{
+	return getFieldRO<FSizeType>(getFSize())->getValue();
+}
+
+
+
+void LayerPlan::setSize( const SizeValueType value )
+{
+	getFieldRW<FSizeType>(getFSize())->setValue( value );
+}
+
+
+
+// Field name accessor(s)
+const std::string LayerPlan::getFAlphaScale( void )
+{
+	return "f_alphaScale";
+}
+
+
+
+const std::string LayerPlan::getFPosition( void )
+{
+	return "f_position";
 }
 
 
@@ -200,9 +200,9 @@ const std::string LayerPlan::getFImage( void )
 
 
 
-const std::string LayerPlan::getFAlphaScale( void )
+const std::string LayerPlan::getFSize( void )
 {
-	return "f_alphaScale";
+	return "f_size";
 }
 
 

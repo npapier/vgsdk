@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2008, 2011, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2008, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -8,7 +8,6 @@
 #define _VGD_FIELD_FIELDMANAGER_HPP
 
 #include <map>
-#include <vector>
 
 #include "vgd/Shp.hpp"
 #include "vgd/field/AbstractField.hpp"
@@ -18,7 +17,15 @@
 #include "vgd/field/IFieldObserver.hpp"
 #include "vgd/field/detail/FieldsToDirtyFlags.hpp"
 
-namespace vgd { namespace field { struct DirtyFlag; } }
+namespace vgd
+{
+	//template<class T> struct Shp;	///< @todo FIXME
+
+	namespace field
+	{
+		struct DirtyFlag;
+	}
+}
 
 
 
@@ -168,13 +175,6 @@ struct VGD_API FieldManager : public IFieldObserver
 			*output++ = i->first;
 		}
 	}
-
-	/**
-	 * @brief	Retrieves all field names and store them in the given container.
-	 *
-	 * @param	oFieldNames		container where field names would be appended
-	 */
-	void getFieldNames( std::vector< std::string >& oFieldNames ) const;
 	//@}
 
 
@@ -220,12 +220,6 @@ struct VGD_API FieldManager : public IFieldObserver
 		}
 	}
 
-	/**
-	 * @brief	Retrieves all dirty flags names and store them in the given container.
-	 *
-	 * @param	oDirtyFlags	container where field names would be appended
-	 */
-	void getDirtyFlagNames( std::vector< std::string >& oDirtyFlagsNames ) const;
 	//@}
 
 
@@ -286,77 +280,41 @@ protected:
 
 
 
-public:
 	/**
 	 * @name Field management methods
 	 *
+	 * @todo clearField()
 	 * @todo cloneField()
 	 */
 	//@{
 
 	/**
-	 * @brief Add a new field
+	 * @brief Add a new field.
 	 *
-	 * @pre isField(newField->name()) == false, i.e. name of field must be unique in a field manager.
+	 * @pre Name of field must be unique in a field manager.
 	 *
-	 * @param newField		shared pointer on the field to add
-	 * @return true field has been added, false if not
+	 * @param pField		reference on the field to add.
 	 *
-	 * @remarks This instance of field manager is attach to the field (as an IFieldObserver).
-	 */
-	const bool addField( vgd::Shp< AbstractField > newField );
-
-	/**
-	 * @brief Add a new field
-	 *
-	 * @pre isField(newField->name()) == false, i.e. name of field must be unique in a field manager.
-	 *
-	 * @param pField		reference on the field to add
-	 * @return true field has been added, false if not
-	 *
-	 * @remarks After calling this method, the field passed in parameter is owned by the field manager.
+	 * @remarks After calling this method, the field passed in parameter is owned by the FieldManager.
 	 * So it is automatically deleted.
 	 *
-	 * @remarks This instance of field manager is attach to the field (as an IFieldObserver).
+	 * @remarks This instance of FieldManager is attach to the field(as an IFieldObserver).
 	 */
-	const bool addField( AbstractField* pField );
+	const bool	addField( AbstractField* pField );
 
 	/**
-	 * @brief Replace an existing field by the field given in parameter.
-	 *
-	 * Replace in this field manager the field named field->name() by the given field.
-	 *
-	 * @remarks This instance of field manager is attach to the given field (as an IFieldObserver).
-	 */
-	const bool setField( vgd::Shp< AbstractField > field );
-
-	/**
-	 * @brief Replace an existing field by the field named fieldName from the given field manager
-	 *
-	 * @pre fieldManager->isField(strFieldName)
-	 * @pre isField(strFieldName)
-	 *
-	 * @param fieldManager		field manager where to look for the new field
-	 * @param strFieldName		name of the new field to look for
-	 *
-	 * @remarks This instance of field manager is attach to the given field (as an IFieldObserver).
-	 */
-	const bool setField( const FieldManager * fieldManager, const std::string& strFieldName );
-
-	/**
-	 * @brief Remove a field
+	 * @brief Remove a field.
 	 *
 	 * @pre Field must be in field manager.
 	 *
-	 * @param strFieldName	name of field
+	 * @param strFieldName	name of field.
 	 */
-	const bool removeField( const std::string& strFieldName );
+	const bool	removeField( const std::string strFieldName );
 
 	//@}
 
 
 
-protected:
 	/**
 	 * @name Implementation of IFieldObserver
 	 */

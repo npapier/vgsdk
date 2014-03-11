@@ -19,8 +19,6 @@
 #include <vgd/node/Antialiasing.hpp>
 #include <vgd/node/EngineProperties.hpp>
 #include <vgd/node/LightModel.hpp>
-#include <vgd/node/TessellationLevel.hpp>
-#include <vgd/node/TessellationProperties.hpp>
 
 #include "vge/engine/SceneManager.hpp"
 #include "vgm/operations.hpp"
@@ -78,23 +76,14 @@ UserSettings::UserSettings( const vge::engine::SceneManager & sm )
 
 
 
-UserSettings::UserSettings( const vgd::Shp< const vge::engine::SceneManager > sm )
-:	m_level( -1 )
-{
-	loadLevels();
-	setLevel( sm );
-}
-
-
-
-const UserSettings & UserSettings::apply( vge::engine::SceneManager & sm ) const
+void UserSettings::apply( vge::engine::SceneManager & sm ) const
 {
 	namespace bpt = boost::property_tree;
 
 	// Skips when no level has been set.
 	if( m_level == -1 )
 	{
-		return *this;
+		return;
 	}
 
 	// Moves to the right sub-tree.
@@ -109,9 +98,6 @@ const UserSettings & UserSettings::apply( vge::engine::SceneManager & sm ) const
 	using vgd::node::Antialiasing;
 	using vgd::node::EngineProperties;
 	using vgd::node::LightModel;
-	using vgd::node::TessellationLevel;
-	using vgd::node::TessellationProperties;
-
 
 	//	shadow related values
 	const LightModel::ShadowValueType				shadow			( getTreeAttributeAsEnum< LightModel::ShadowValueType >(i->second, "shadow")					);
@@ -128,21 +114,10 @@ const UserSettings & UserSettings::apply( vge::engine::SceneManager & sm ) const
 	//	bumpmapping
 	const LightModel::BumpMappingValueType			bumpmapping		( getTreeAttributeAsBool(i->second, "bumpmapping") 												);
 
-	//	tessellation
-	//	tessellation properties
-	const TessellationProperties::TessellationValueType		tessellation				( getTreeAttributeAsEnum< TessellationProperties::TessellationValueType >(i->second, "tessellation")	);
-	const float												tessellationRangeMin		( getTreeAttributeAsFloat(i->second, "tessellationRangeMin")											);
-	const float												tessellationRangeMax		( getTreeAttributeAsFloat(i->second, "tessellationRangeMax")											);
-	const float												tessellationPixelsPerEdge	( getTreeAttributeAsFloat(i->second, "tessellationPixelsPerEdge")										);
-	//	tessellation level
-	const TessellationLevel::MethodValueType				tessellationMethod			( getTreeAttributeAsEnum< TessellationLevel::MethodValueType >(i->second, "tessellationMethod")			);
-
 	// Retrieves several nodes used to apply user settings to scene graph
-	vgd::Shp< Antialiasing >			antialiasing		= sm.findFirstByType< Antialiasing >();
-	vgd::Shp< EngineProperties >		engineProperties	= sm.findFirstByType< EngineProperties >();
-	vgd::Shp< LightModel >				lightModel			= sm.findFirstByType< LightModel >();
-	vgd::Shp< TessellationProperties >	tessProperties		= sm.findFirstByType< TessellationProperties >();
-	vgd::Shp< TessellationLevel >		tessLevel			= sm.findFirstByType< TessellationLevel >();
+	vgd::Shp< Antialiasing >		antialiasing		= sm.findFirstByType< Antialiasing >();
+	vgd::Shp< EngineProperties >	engineProperties	= sm.findFirstByType< EngineProperties >();
+	vgd::Shp< LightModel >			lightModel			= sm.findFirstByType< LightModel >();
 
 	//	shadow settings and bump mapping
 	if ( lightModel )
@@ -181,29 +156,6 @@ const UserSettings & UserSettings::apply( vge::engine::SceneManager & sm ) const
 	{
 		vgAssert( "No Antialiasing node in scene graph." );
 	}
-
-	//	tessellation
-	if ( tessProperties )
-	{
-		if ( tessellation.isValid() )		tessProperties->setTessellation( tessellation );
-		tessProperties->setRange( vgm::Vec2f(tessellationRangeMin, tessellationRangeMax) );
-		tessProperties->setPixelsPerEdge( tessellationPixelsPerEdge );
-	}
-
-	if ( tessLevel )
-	{
-		if ( tessellationMethod.isValid() )		tessLevel->setMethod( tessellationMethod );
-	}
-
-	// Job's done.
-	return *this;
-}
-
-
-
-const UserSettings & UserSettings::apply( vgd::Shp< vge::engine::SceneManager > sm ) const
-{
-	return apply( *(sm.get()) );
 }
 
 
@@ -305,7 +257,7 @@ void UserSettings::loadLevels()
 
 
 
-UserSettings & UserSettings::setGraphicCard( const std::string & card )
+void UserSettings::setGraphicCard( const std::string & card )
 {
 	CardContainer::iterator found = m_cards.find(card);
 
@@ -314,42 +266,36 @@ UserSettings & UserSettings::setGraphicCard( const std::string & card )
 		m_level = std::distance( m_levels.begin(), found->second );
 		m_card  = card;
 	}
-	return *this;
 }
 
 
 
-UserSettings & UserSettings::setLevel( const int level )
+void UserSettings::setLevel( const int level )
 {
 	if( level >= -1 )
 	{
 		m_level = vgm::clamp(level, -1, static_cast< int >(m_levels.size())-1 );
 		m_card.clear();
 	}
-	return *this;
 }
 
 
 
-UserSettings & UserSettings::setLevel( const vge::engine::SceneManager & sm )
+void UserSettings::setLevel( const vge::engine::SceneManager & sm )
 {
 	using vgd::node::Antialiasing;
 	using vgd::node::EngineProperties;
 	using vgd::node::LightModel;
-	using vgd::node::TessellationProperties;
-	using vgd::node::TessellationLevel;
 
 	// Retrieves several nodes
-	vgd::Shp< Antialiasing >			antialiasing		= sm.findFirstByType< Antialiasing >();
-	vgd::Shp< EngineProperties >		engineProperties	= sm.findFirstByType< EngineProperties >();
-	vgd::Shp< LightModel >				lightModel			= sm.findFirstByType< LightModel >();
-	vgd::Shp< TessellationProperties >	tessProperties		= sm.findFirstByType< TessellationProperties >();
-	vgd::Shp< TessellationLevel >		tessLevel			= sm.findFirstByType< TessellationLevel >();
+	vgd::Shp< Antialiasing >		antialiasing		= sm.findFirstByType< Antialiasing >();
+	vgd::Shp< EngineProperties >	engineProperties	= sm.findFirstByType< EngineProperties >();
+	vgd::Shp< LightModel >			lightModel			= sm.findFirstByType< LightModel >();
 
-	if( !antialiasing || !engineProperties || !lightModel || !tessProperties || !tessLevel )
+	if( !antialiasing || !engineProperties || !lightModel )
 	{
 		setLevel( -1 );
-		return *this;
+		return;
 	}
 
 	// Gathers node settings
@@ -366,33 +312,18 @@ UserSettings & UserSettings::setLevel( const vge::engine::SceneManager & sm )
 	isDefined = isDefined && lightModel->getShadowMapSize( nodeShadowMapSize );
 	nodeShadowMapType = lightModel->getShadowMapType();
 
+	LightModel::BumpMappingValueType		nodeBumpMapping = lightModel->getBumpMapping();
+
 	//	maximum anisotropy value
 	EngineProperties::MaxAnisotropyValueType	nodeMaxAnisotropy;
 	isDefined = isDefined && engineProperties->getMaxAnisotropy( nodeMaxAnisotropy );
 
 	//	antialiasing technique
-	const Antialiasing::TechniqueValueType	nodeAaTechnique = antialiasing->getTechnique();
-
-	//	bumpmapping
-	LightModel::BumpMappingValueType		nodeBumpMapping = lightModel->getBumpMapping();
-
-	//	tessellation
-	//	tessellation properties
-	TessellationProperties::TessellationValueType nodeTessellation;
-	isDefined = tessProperties->getTessellation( nodeTessellation );
-
-	vgm::Vec2f nodeTessellationRange;
-	isDefined = isDefined && tessProperties->getRange( nodeTessellationRange );
-
-	float nodeTessellationPixelsPerEdge;
-	isDefined = isDefined && tessProperties->getPixelsPerEdge( nodeTessellationPixelsPerEdge );
-
-	//	tessellation level
-	TessellationLevel::MethodValueType nodeTessellationMethod = tessLevel->getMethod();
+	const Antialiasing::TechniqueValueType nodeAaTechnique = antialiasing->getTechnique();
 
 	if (!isDefined)
 	{
-		return *this;
+		return;
 	}
 
 	// Walks through levels.
@@ -406,24 +337,13 @@ UserSettings & UserSettings::setLevel( const vge::engine::SceneManager & sm )
 		const LightModel::ShadowMapSizeValueType		levelShadowMapSize	( getTreeAttributeAsEnum< LightModel::ShadowMapSizeValueType >(i->second, "shadowMapSize")		);
 		const LightModel::ShadowMapTypeValueType		levelShadowMapType	( getTreeAttributeAsEnum< LightModel::ShadowMapTypeValueType >(i->second, "shadowMapType")		);
 
+		const LightModel::BumpMappingValueType			levelBumpMapping	( getTreeAttributeAsBool(i->second, "bumpmapping")												);
+
 		//	maximum anisotropy value
 		const EngineProperties::MaxAnisotropyValueType	levelMaxAnisotropy	( getTreeAttributeAsFloat(i->second, "maxAnisotropy") );
 
 		//	antialiasing technique
 		const Antialiasing::TechniqueValueType			levelAaTechnique	( getTreeAttributeAsEnum< Antialiasing::TechniqueValueType >(i->second, "antialiasing")	);
-
-		//	bumpmapping
-		const LightModel::BumpMappingValueType			levelBumpmapping	( getTreeAttributeAsBool(i->second, "bumpmapping") 												);
-
-		//	tessellation
-		//	tessellation properties
-		const TessellationProperties::TessellationValueType		levelTessellation				( getTreeAttributeAsEnum< TessellationProperties::TessellationValueType >(i->second, "tessellation")	);
-		const float												levelTessellationRangeMin		( getTreeAttributeAsFloat(i->second, "tessellationRangeMin")											);
-		const float												levelTessellationRangeMax		( getTreeAttributeAsFloat(i->second, "tessellationRangeMax")											);
-		const float												levelTessellationPixelsPerEdge	( getTreeAttributeAsFloat(i->second, "tessellationPixelsPerEdge")										);
-
-		//	tessellation level
-		const TessellationLevel::MethodValueType				levelTessellationMethod			( getTreeAttributeAsEnum< TessellationLevel::MethodValueType >(i->second, "tessellationMethod")			);
 
 		// Tests if the current level matches the nodes settings.
 		bool	matches = true;
@@ -434,23 +354,14 @@ UserSettings & UserSettings::setLevel( const vge::engine::SceneManager & sm )
 		if( levelShadowMapSize.isValid() )		matches = matches && levelShadowMapSize == nodeShadowMapSize;
 		if( levelShadowMapType.isValid() )		matches = matches && levelShadowMapType == nodeShadowMapType;
 
+		//	bump mapping
+		matches = matches && levelBumpMapping == nodeBumpMapping;
+
 		//	maximum anisotropy
 		matches = matches && levelMaxAnisotropy == nodeMaxAnisotropy;
 
 		//	antialiasing
 		if( levelAaTechnique.isValid() )		matches = matches && levelAaTechnique == nodeAaTechnique;
-
-		//	bump mapping
-		matches = matches && levelBumpmapping == nodeBumpMapping;
-
-		//	tessellation
-		//	tessellation properties
-		if( levelTessellation.isValid() )		matches = matches && levelTessellation == nodeTessellation;
-		matches = matches && vgm::Vec2f(levelTessellationRangeMin, levelTessellationRangeMax) == nodeTessellationRange;
-		matches = matches && levelTessellationPixelsPerEdge == nodeTessellationPixelsPerEdge;
-
-		//	tessellation level
-		if( levelTessellationMethod.isValid() )		matches = matches && levelTessellationMethod == nodeTessellationMethod;
 
 		// If the current level is matching, assignes it.
 		if( matches )
@@ -458,31 +369,9 @@ UserSettings & UserSettings::setLevel( const vge::engine::SceneManager & sm )
 			bpt::ptree::const_iterator	begin = m_levels.begin();
 
 			setLevel( std::distance(begin, i) );
-			return *this;
+			break;
 		}
 	}
-
-	// Job's done.
-	setLevel( -1 );
-	return *this;
-}
-
-
-
-UserSettings & UserSettings::setLevel( const vgd::Shp< const vge::engine::SceneManager > sm )
-{
-	return setLevel( *(sm.get()) );
-}
-
-
-
-UserSettings & UserSettings::setMaxLevel()
-{
-	if( m_levels.size() > 0 )
-	{
-		m_level = m_levels.size() - 1;
-	}
-	return *this;
 }
 
 

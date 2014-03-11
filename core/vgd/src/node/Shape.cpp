@@ -20,9 +20,7 @@ namespace node
 
 
 Shape::Shape( const std::string nodeName ) :
-	vgd::node::Node( nodeName ),
-	vgd::node::IBoundingBox(),
-	vgd::node::IShape()
+	vgd::node::Node( nodeName )
 {
 }
 

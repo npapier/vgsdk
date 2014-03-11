@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -27,14 +27,14 @@ namespace node
  * Decals are typically used to create hit effects or to add local details to a shape. TODO explain how the create the decal proxy geometry (the vertex shape) TODO explain how to apply the texture to the vertex shape TODO explain deferred rendering 
  *
  * New fields defined by this node :
- * - SFTexture2DShp \c texture = vgd::node::Texture2DShp()<br>
- *   Texture to apply to the shape defined by field 'shape'<br>
+ * - SFBool \c alphaTest = (true)<br>
+ *   True to enable alpha test passing if the incoming alpha value is greater than 0, false to disable alpha test<br>
  *<br>
  * - SFVertexShapeShp \c shape = vgd::node::VertexShapeShp()<br>
  *   Surface of the decal<br>
  *<br>
- * - SFBool \c alphaTest = (true)<br>
- *   True to enable alpha test passing if the incoming alpha value is greater than 0, false to disable alpha test<br>
+ * - SFTexture2DShp \c texture = vgd::node::Texture2DShp()<br>
+ *   Texture to apply to the shape defined by field 'shape'<br>
  *<br>
  * - SFBool \c blending = (false)<br>
  *   True to enable blending using function defined by glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), false to disable blending.<br>
@@ -82,35 +82,35 @@ struct VGD_API Decal : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field texture
+	 * @name Accessors to field alphaTest
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c texture.
+	 * @brief Type definition of the value contained by field named \c alphaTest.
 	 */
-	typedef vgd::node::Texture2DShp TextureValueType;
+	typedef bool AlphaTestValueType;
 
 	/**
-	 * @brief The default value of field named \c texture.
+	 * @brief The default value of field named \c alphaTest.
 	 */
-	static const TextureValueType DEFAULT_TEXTURE;
+	static const AlphaTestValueType DEFAULT_ALPHATEST;
 
 	/**
-	 * @brief Type definition of the field named \c texture
+	 * @brief Type definition of the field named \c alphaTest
 	 */
-	typedef vgd::field::TSingleField< TextureValueType > FTextureType;
+	typedef vgd::field::TSingleField< AlphaTestValueType > FAlphaTestType;
 
 
 	/**
-	 * @brief Gets the value of field named \c texture.
+	 * @brief Gets the value of field named \c alphaTest.
 	 */
-	const TextureValueType getTexture() const;
+	const AlphaTestValueType getAlphaTest() const;
 
 	/**
-	 * @brief Sets the value of field named \c texture.
+	 * @brief Sets the value of field named \c alphaTest.
 	 */
-	void setTexture( const TextureValueType value );
+	void setAlphaTest( const AlphaTestValueType value );
 
 	//@}
 
@@ -152,35 +152,35 @@ struct VGD_API Decal : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Accessors to field alphaTest
+	 * @name Accessors to field texture
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c alphaTest.
+	 * @brief Type definition of the value contained by field named \c texture.
 	 */
-	typedef bool AlphaTestValueType;
+	typedef vgd::node::Texture2DShp TextureValueType;
 
 	/**
-	 * @brief The default value of field named \c alphaTest.
+	 * @brief The default value of field named \c texture.
 	 */
-	static const AlphaTestValueType DEFAULT_ALPHATEST;
+	static const TextureValueType DEFAULT_TEXTURE;
 
 	/**
-	 * @brief Type definition of the field named \c alphaTest
+	 * @brief Type definition of the field named \c texture
 	 */
-	typedef vgd::field::TSingleField< AlphaTestValueType > FAlphaTestType;
+	typedef vgd::field::TSingleField< TextureValueType > FTextureType;
 
 
 	/**
-	 * @brief Gets the value of field named \c alphaTest.
+	 * @brief Gets the value of field named \c texture.
 	 */
-	const AlphaTestValueType getAlphaTest() const;
+	const TextureValueType getTexture() const;
 
 	/**
-	 * @brief Sets the value of field named \c alphaTest.
+	 * @brief Sets the value of field named \c texture.
 	 */
-	void setAlphaTest( const AlphaTestValueType value );
+	void setTexture( const TextureValueType value );
 
 	//@}
 
@@ -227,11 +227,11 @@ struct VGD_API Decal : public vgd::node::MultiAttribute
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c texture.
+	 * @brief Returns the name of field \c alphaTest.
 	 *
-	 * @return the name of field \c texture.
+	 * @return the name of field \c alphaTest.
 	 */
-	static const std::string getFTexture( void );
+	static const std::string getFAlphaTest( void );
 
 	/**
 	 * @brief Returns the name of field \c shape.
@@ -241,11 +241,11 @@ struct VGD_API Decal : public vgd::node::MultiAttribute
 	static const std::string getFShape( void );
 
 	/**
-	 * @brief Returns the name of field \c alphaTest.
+	 * @brief Returns the name of field \c texture.
 	 *
-	 * @return the name of field \c alphaTest.
+	 * @return the name of field \c texture.
 	 */
-	static const std::string getFAlphaTest( void );
+	static const std::string getFTexture( void );
 
 	/**
 	 * @brief Returns the name of field \c blending.

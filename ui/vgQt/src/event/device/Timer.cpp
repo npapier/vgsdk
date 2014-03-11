@@ -24,29 +24,29 @@ namespace device
 
 Timer::Timer()
 {
-	QTimer *timer = new QTimer(this);
-	connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
 
 #ifdef _DEBUG
-	timer->start(1000/15);
+    timer->start(1000/15);
 #else
-	timer->start(1000/30);
+    timer->start(1000/30);
 #endif
 }
 
 
 bool Timer::onTimeout()
 {
-	// Creates the event.
-	using namespace ::vgd::event;
+    // Creates the event.
+    using namespace ::vgd::event;
 
-	TimerEvent * timerEvent = new TimerEvent( this, vgd::event::detail::GlobalButtonStateSet::get() );
+    TimerEvent	* timerEvent = new TimerEvent( this, vgd::event::detail::GlobalButtonStateSet::get() );
 
-	// Fires the event to the listeners.
-	fireEvent( vgd::makeShp(timerEvent) );
+    // Fires the event to the listeners.
+    fireEvent( vgd::makeShp(timerEvent) );
 
-	// Job's done, but keep going (do not disconnect yet)
-	return true;
+    // Job's done, but keep going (do not disconnect yet)
+    return true;
 }
 
 

@@ -44,7 +44,7 @@ void updateCurrentDrawBuffers(	const vgeGL::engine::Engine::OutputBufferProperty
 		{
 			++count;
 
-			const vgd::node::OutputBufferProperty * node = state->getNode();
+			vgd::node::OutputBufferProperty * node = state->getNode();
 			vgAssert( node );
 
 			if ( node->getCurrent() )
@@ -175,10 +175,7 @@ void ClearFrameBuffer::applyBufferUsagePolicy( vgeGL::engine::Engine * engine, c
 	if ( fbo )
 	{
 		// Computes the current draw buffers (from OutputBufferProperty nodes).
-		if ( engine->isRegardedIfIsA< vgd::node::OutputBufferProperty >() )
-		{
-			updateCurrentDrawBuffers( outputBuffersProperties, currentDrawBuffers );
-		}
+		updateCurrentDrawBuffers( outputBuffersProperties, currentDrawBuffers );
 
 		// Updates the current draw buffers using private draw buffers
 		engine->updateFromCurrentPrivateDrawBuffers( currentDrawBuffers );

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -27,6 +27,12 @@ namespace node
  * The DrawStyle node specifies the current drawing style (flat, smooth, hidden-lines...) for all subsequent shape nodes in a scene graph and if normals, orientation or bounding box must be render. 
  *
  * New fields defined by this node :
+ * - OFBool \c [showOrientation] = (false)<br>
+ *   Sets the field to true to render an half-arrow on each edge of triangles in order to show the triangle orientation (CW or CCW). The center of each triangle is drawn with a big point. A red arrow is drawn on the first edge, a green arrow on the second and a blue arrow on the third.<br>
+ *<br>
+ * - OFEnum \c [boundingBox] = (NO_BOUNDING_BOX)<br>
+ *   Sets the bounding box drawing style. Choose one value among NO_BOUNDING_BOX, OBJECT_SPACE, AA_OBJECT_SPACE or OBJECT_AND_AA_OBJECT_SPACE.<br>
+ *<br>
  * - OFEnum \c [shape] = (SMOOTH)<br>
  *   Sets the drawing style of Shape. Choose one value among NONE, POINT, FLAT, SMOOTH, WIREFRAME, HIDDEN_LINE, FLAT_HIDDEN_LINE, SMOOTH_HIDDEN_LINE or NEIGHBOUR.<br>
  *<br>
@@ -35,12 +41,6 @@ namespace node
  *<br>
  * - OFFloat \c [tangentLength] = (0.f)<br>
  *   Sets this field to zero to disable tangents rendering (or a better way is to remove this field). Others values indicates the length of the rendered tangents.<br>
- *<br>
- * - OFBool \c [showOrientation] = (false)<br>
- *   Sets the field to true to render an half-arrow on each edge of triangles in order to show the triangle orientation (CW or CCW). The center of each triangle is drawn with a big point. A red arrow is drawn on the first edge, a green arrow on the second and a blue arrow on the third.<br>
- *<br>
- * - OFEnum \c [boundingBox] = (NO_BOUNDING_BOX)<br>
- *   Sets the bounding box drawing style. Choose one value among NO_BOUNDING_BOX, OBJECT_SPACE, AA_OBJECT_SPACE or OBJECT_AND_AA_OBJECT_SPACE.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -83,6 +83,141 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 
 
 	/**
+	 * @name Accessors to field showOrientation
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c showOrientation.
+	 */
+	typedef bool ShowOrientationValueType;
+
+	/**
+	 * @brief The default value of field named \c showOrientation.
+	 */
+	static const ShowOrientationValueType DEFAULT_SHOWORIENTATION;
+
+	/**
+	 * @brief Type definition of the field named \c showOrientation
+	 */
+	typedef vgd::field::TOptionalField< ShowOrientationValueType > FShowOrientationType;
+
+
+	/**
+	 * @brief Gets the value of field named \c showOrientation.
+	 */
+	const bool getShowOrientation( ShowOrientationValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c showOrientation.
+ 	 */
+	void setShowOrientation( const ShowOrientationValueType& value );
+
+	/**
+	 * @brief Erases the field named \c showOrientation.
+	 */
+	void eraseShowOrientation();
+
+	/**
+	 * @brief Tests if the value of field named \c showOrientation has been initialized.
+	 */
+	const bool hasShowOrientation() const;
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field boundingBox
+	 */
+	//@{
+
+	/**
+	 * @brief Definition of symbolic values
+	 */
+	enum  
+	{
+		AA_OBJECT_SPACE = 281,	///< 
+		NO_BOUNDING_BOX = 279,	///< 
+		OBJECT_AND_AA_OBJECT_SPACE = 282,	///< 
+		OBJECT_SPACE = 280,	///< 
+		DEFAULT_BOUNDINGBOX = NO_BOUNDING_BOX	///< 
+	};
+
+	/**
+	 * @brief Type definition of a container for the previous symbolic values
+	 */
+	struct BoundingBoxValueType : public vgd::field::Enum
+	{
+		BoundingBoxValueType()
+		{}
+
+		BoundingBoxValueType( const int v )
+		: vgd::field::Enum(v)
+		{}
+
+		BoundingBoxValueType( const BoundingBoxValueType& o )
+		: vgd::field::Enum(o)
+		{}
+
+		BoundingBoxValueType( const vgd::field::Enum& o )
+		: vgd::field::Enum(o)
+		{}
+
+		const std::vector< int > values() const
+		{
+			std::vector< int > retVal;
+
+			retVal.push_back( 279 );
+			retVal.push_back( 280 );
+			retVal.push_back( 281 );
+			retVal.push_back( 282 );
+
+			return retVal;
+		}
+
+		const std::vector< std::string > strings() const
+		{
+			std::vector< std::string > retVal;
+
+			retVal.push_back( "NO_BOUNDING_BOX" );
+			retVal.push_back( "OBJECT_SPACE" );
+			retVal.push_back( "AA_OBJECT_SPACE" );
+			retVal.push_back( "OBJECT_AND_AA_OBJECT_SPACE" );
+
+			return retVal;
+		}
+	};
+
+	/**
+	 * @brief Type definition of the field named \c boundingBox
+	 */
+	typedef vgd::field::TOptionalField< vgd::field::Enum > FBoundingBoxType;
+
+
+	/**
+	 * @brief Gets the value of field named \c boundingBox.
+	 */
+	const bool getBoundingBox( BoundingBoxValueType& value ) const;
+
+	/**
+	 * @brief Sets the value of field named \c boundingBox.
+ 	 */
+	void setBoundingBox( const BoundingBoxValueType& value );
+
+	/**
+	 * @brief Erases the field named \c boundingBox.
+	 */
+	void eraseBoundingBox();
+
+	/**
+	 * @brief Tests if the value of field named \c boundingBox has been initialized.
+	 */
+	const bool hasBoundingBox() const;
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field shape
 	 */
 	//@{
@@ -92,15 +227,15 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		SMOOTH_HIDDEN_LINE = 285,	///< 
-		FLAT = 280,	///< 
-		HIDDEN_LINE = 283,	///< 
-		POINT = 279,	///< 
-		FLAT_HIDDEN_LINE = 284,	///< 
-		WIREFRAME = 282,	///< 
-		SMOOTH = 281,	///< 
-		NO_SHAPE = 278,	///< 
-		NEIGHBOUR = 286,	///< 
+		SMOOTH_HIDDEN_LINE = 277,	///< 
+		FLAT = 272,	///< 
+		HIDDEN_LINE = 275,	///< 
+		POINT = 271,	///< 
+		FLAT_HIDDEN_LINE = 276,	///< 
+		WIREFRAME = 274,	///< 
+		SMOOTH = 273,	///< 
+		NO_SHAPE = 270,	///< 
+		NEIGHBOUR = 278,	///< 
 		DEFAULT_SHAPE = SMOOTH	///< 
 	};
 
@@ -128,15 +263,15 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
+			retVal.push_back( 270 );
+			retVal.push_back( 271 );
+			retVal.push_back( 272 );
+			retVal.push_back( 273 );
+			retVal.push_back( 274 );
+			retVal.push_back( 275 );
+			retVal.push_back( 276 );
+			retVal.push_back( 277 );
 			retVal.push_back( 278 );
-			retVal.push_back( 279 );
-			retVal.push_back( 280 );
-			retVal.push_back( 281 );
-			retVal.push_back( 282 );
-			retVal.push_back( 283 );
-			retVal.push_back( 284 );
-			retVal.push_back( 285 );
-			retVal.push_back( 286 );
 
 			return retVal;
 		}
@@ -277,144 +412,23 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field showOrientation
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c showOrientation.
-	 */
-	typedef bool ShowOrientationValueType;
-
-	/**
-	 * @brief The default value of field named \c showOrientation.
-	 */
-	static const ShowOrientationValueType DEFAULT_SHOWORIENTATION;
-
-	/**
-	 * @brief Type definition of the field named \c showOrientation
-	 */
-	typedef vgd::field::TOptionalField< ShowOrientationValueType > FShowOrientationType;
-
-
-	/**
-	 * @brief Gets the value of field named \c showOrientation.
-	 */
-	const bool getShowOrientation( ShowOrientationValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c showOrientation.
- 	 */
-	void setShowOrientation( const ShowOrientationValueType& value );
-
-	/**
-	 * @brief Erases the field named \c showOrientation.
-	 */
-	void eraseShowOrientation();
-
-	/**
-	 * @brief Tests if the value of field named \c showOrientation has been initialized.
-	 */
-	const bool hasShowOrientation() const;
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field boundingBox
-	 */
-	//@{
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum  
-	{
-		AA_OBJECT_SPACE = 289,	///< 
-		NO_BOUNDING_BOX = 287,	///< 
-		OBJECT_AND_AA_OBJECT_SPACE = 290,	///< 
-		OBJECT_SPACE = 288,	///< 
-		DEFAULT_BOUNDINGBOX = NO_BOUNDING_BOX	///< 
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct BoundingBoxValueType : public vgd::field::Enum
-	{
-		BoundingBoxValueType()
-		{}
-
-		BoundingBoxValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		BoundingBoxValueType( const BoundingBoxValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		BoundingBoxValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 287 );
-			retVal.push_back( 288 );
-			retVal.push_back( 289 );
-			retVal.push_back( 290 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "NO_BOUNDING_BOX" );
-			retVal.push_back( "OBJECT_SPACE" );
-			retVal.push_back( "AA_OBJECT_SPACE" );
-			retVal.push_back( "OBJECT_AND_AA_OBJECT_SPACE" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c boundingBox
-	 */
-	typedef vgd::field::TOptionalField< vgd::field::Enum > FBoundingBoxType;
-
-
-	/**
-	 * @brief Gets the value of field named \c boundingBox.
-	 */
-	const bool getBoundingBox( BoundingBoxValueType& value ) const;
-
-	/**
-	 * @brief Sets the value of field named \c boundingBox.
- 	 */
-	void setBoundingBox( const BoundingBoxValueType& value );
-
-	/**
-	 * @brief Erases the field named \c boundingBox.
-	 */
-	void eraseBoundingBox();
-
-	/**
-	 * @brief Tests if the value of field named \c boundingBox has been initialized.
-	 */
-	const bool hasBoundingBox() const;
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
+
+	/**
+	 * @brief Returns the name of field \c showOrientation.
+	 *
+	 * @return the name of field \c showOrientation.
+	 */
+	static const std::string getFShowOrientation( void );
+
+	/**
+	 * @brief Returns the name of field \c boundingBox.
+	 *
+	 * @return the name of field \c boundingBox.
+	 */
+	static const std::string getFBoundingBox( void );
 
 	/**
 	 * @brief Returns the name of field \c shape.
@@ -436,20 +450,6 @@ struct VGD_API DrawStyle : public vgd::node::SingleAttribute
 	 * @return the name of field \c tangentLength.
 	 */
 	static const std::string getFTangentLength( void );
-
-	/**
-	 * @brief Returns the name of field \c showOrientation.
-	 *
-	 * @return the name of field \c showOrientation.
-	 */
-	static const std::string getFShowOrientation( void );
-
-	/**
-	 * @brief Returns the name of field \c boundingBox.
-	 *
-	 * @return the name of field \c boundingBox.
-	 */
-	static const std::string getFBoundingBox( void );
 
 	//@}
 

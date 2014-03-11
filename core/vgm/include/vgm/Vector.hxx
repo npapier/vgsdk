@@ -563,26 +563,6 @@ bool Vector<T,N>::equals( const Vector& v, const float tolerance ) const
 }
 
 
-template< typename T, int N >
-const std::string Vector<T,N>::toString( const int precision, const std::string separator ) const
-{
-	//vgAssert( precision >= 0 );
-
-	std::stringstream ss;
-
-	ss << std::fixed << std::setprecision(precision);
-
-	int32 i = 0;
-	while( i != N )
-	{
-		ss << m_tCoord[i];
-		++i;
-		if ( i != N )	ss << separator;
-	}
-
-	return ss.str();
-}
-
 
 template< typename Out, typename In, int32 InSize >
 const std::vector< Out > vector_cast( const Vector< In, InSize > & in )

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -26,11 +26,11 @@ namespace node
  * All subsequent shapes in the scene graph will be clipped to the half-space defined by the \c plane field. The half-space is the side of the plane in the direction of the plane normal. Any number of clipping planes may be active simultaneously, although the graphics library may place a limit on this number during rendering (i.e. 6 for OpenGL). 
  *
  * New fields defined by this node :
- * - SFPlane \c plane = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f )<br>
- *   Specifies the clipping plane.<br>
- *<br>
  * - OFBool \c [on] = (true)<br>
  *   Specifies if the clipping plane is enabled or disabled.<br>
+ *<br>
+ * - SFPlane \c plane = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f )<br>
+ *   Specifies the clipping plane.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -67,41 +67,6 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
 	static vgd::Shp< ClipPlane > createWhole( const std::string nodeName = "DefaultWhole" );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field plane
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c plane.
-	 */
-	typedef vgm::Plane PlaneValueType;
-
-	/**
-	 * @brief The default value of field named \c plane.
-	 */
-	static const PlaneValueType DEFAULT_PLANE;
-
-	/**
-	 * @brief Type definition of the field named \c plane
-	 */
-	typedef vgd::field::TSingleField< PlaneValueType > FPlaneType;
-
-
-	/**
-	 * @brief Gets the value of field named \c plane.
-	 */
-	const PlaneValueType getPlane() const;
-
-	/**
-	 * @brief Sets the value of field named \c plane.
-	 */
-	void setPlane( const PlaneValueType value );
 
 	//@}
 
@@ -152,16 +117,44 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 
 
 	/**
-	 * @name Field name accessors
+	 * @name Accessors to field plane
 	 */
 	//@{
 
 	/**
-	 * @brief Returns the name of field \c plane.
-	 *
-	 * @return the name of field \c plane.
+	 * @brief Type definition of the value contained by field named \c plane.
 	 */
-	static const std::string getFPlane( void );
+	typedef vgm::Plane PlaneValueType;
+
+	/**
+	 * @brief The default value of field named \c plane.
+	 */
+	static const PlaneValueType DEFAULT_PLANE;
+
+	/**
+	 * @brief Type definition of the field named \c plane
+	 */
+	typedef vgd::field::TSingleField< PlaneValueType > FPlaneType;
+
+
+	/**
+	 * @brief Gets the value of field named \c plane.
+	 */
+	const PlaneValueType getPlane() const;
+
+	/**
+	 * @brief Sets the value of field named \c plane.
+	 */
+	void setPlane( const PlaneValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Field name accessors
+	 */
+	//@{
 
 	/**
 	 * @brief Returns the name of field \c on.
@@ -169,6 +162,13 @@ struct VGD_API ClipPlane : public vgd::node::MultiAttribute
 	 * @return the name of field \c on.
 	 */
 	static const std::string getFOn( void );
+
+	/**
+	 * @brief Returns the name of field \c plane.
+	 *
+	 * @return the name of field \c plane.
+	 */
+	static const std::string getFPlane( void );
 
 	//@}
 

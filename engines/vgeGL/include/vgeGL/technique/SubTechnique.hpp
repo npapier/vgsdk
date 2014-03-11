@@ -115,9 +115,9 @@ struct VGEGL_API SubTechnique
 	template< class rcType >
 	vgd::Shp< rcType > getRC( vgeGL::engine::Engine * engine )
 	{
-		vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+		vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
 
-		vgd::Shp< rcType > rc = rcManager->getShp< rcType >( getNode() );
+		vgd::Shp< rcType > rc = rcManager.getShp< rcType >( getNode() );
 
 		return rc;
 	}
@@ -142,8 +142,8 @@ struct VGEGL_API SubTechnique
 				rc.reset( new rcType );
 
 				// Register node and its resource into manager
-				vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
-				rcManager->add( getNode(), rc );
+				vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
+				rcManager.add( getNode(), rc );
 
 				// RC must be initialized
 				callUpdateRC = true;

@@ -29,6 +29,20 @@ typedef TSingleAssociativeField< vgd::Shp<vgd::node::Node> >		SAFNodeShp;
 
 //@}
 
+/**
+ * @name Typedefs for fields containing elements of vgd::Shp< vgd::node::Group > type.
+ */
+//@{
+
+typedef TSingleField< vgd::Shp<vgd::node::Group> >					SFGroupShp;
+typedef TOptionalField< vgd::Shp<vgd::node::Group> >				OFGroupShp;
+typedef TMultiField< vgd::Shp<vgd::node::Group>  >					MFGroupShp;
+typedef TSingleAssociativeField< vgd::Shp<vgd::node::Group> >		SAFGroupShp;
+
+//@}
+
+
+
 } // namespace field
 
 } // namespace vgd

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,7 +9,6 @@
 #include <bitset>
 #include <vector>
 #include <vgd/Shp.hpp>
-#include <vgd/node/TessellationProperties.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vge/basic/TUnitContainer.hpp>
 #include <vgm/Matrix.hpp>
@@ -52,9 +51,7 @@ template< uint size >
 struct TBitSet
 {
 	const bool isEnabled( const uint index ) const;
-	const bool isDisabled( const uint index ) const;
 	void setEnabled( const uint index, const bool enabled = true );
-	void setDisabled( const uint index );
 
 	void reset();
 protected:
@@ -72,29 +69,12 @@ const bool TBitSet<size>::isEnabled( const uint index ) const
 
 
 template< uint size >
-const bool TBitSet<size>::isDisabled( const uint index ) const
-{
-	assert( index >= 0 && "Out of range index." );
-	assert( index < size && "Out of range index." );
-
-	return !m_bitset[ index ];
-}
-
-
-template< uint size >
 void TBitSet<size>::setEnabled( const uint index, const bool enabled )
 {
 	assert( index >= 0 && "Out of range index." );
 	assert( index < size && "Out of range index." );
 
 	m_bitset[ index ] = enabled;
-}
-
-
-template< uint size >
-void TBitSet<size>::setDisabled( const uint index )
-{
-	setEnabled( index, false );
 }
 
 
@@ -135,7 +115,7 @@ enum GLSLStateIndex
 	PROGRAM,					///< True when at least one Program node has been traversed
 
 	// VertexShape node
-	COLOR_BIND_PER_VERTEX,
+	COLOR4_BIND_PER_VERTEX,
 
 	// PostProcessing
 	IGNORE_POST_PROCESSING,		///< see LightModel.ignorePostProcessing
@@ -143,12 +123,7 @@ enum GLSLStateIndex
 	//
 	BUMP_MAPPING,				///< see LightModel.bumpMapping
 
-	TESSELLATION,				///< tessellation is enabled. Tessellation method ? see GLSLState::get/setTessellation()
-	TESSELLATION_LEVEL,			///< a tessellation level node has been encountered (useful to add only once uniform variables. See handler).
-
-	DISPLACEMENT,
-
-	GEOMORPH,					///< enable (during down traversing of scene graph)/disable (during up traversing) by GeoMorph node handler
+	TESSELLATION,				///< see EngineProperties.tessellation 
 
 	//
 	MAX_BITSETINDEXTYPE
@@ -341,7 +316,6 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	//@}
 
 
-
 	/**
 	 * @name Light unit state
 	 */
@@ -478,19 +452,19 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 		/**
 		 * @brief Default constructor
 		 */
-		TNodeState( NodeType * node )
+		TNodeState( const NodeType * node )
 		: m_node(node)
 		{}
 
 		const NodeType * getNode() const { return m_node; }
-		NodeType * getNode() { return m_node; }
+
 	private:
-		NodeType * m_node;
+		const NodeType * m_node;
 	};
 
 	struct DecalState : public TNodeState< vgd::node::Decal >
 	{
-		DecalState( vgd::node::Decal * node, const vgm::MatrixR& matrix )
+		DecalState( const vgd::node::Decal * node, const vgm::MatrixR& matrix )
 		:	TNodeState(node),
 			m_matrix( matrix )
 		{}
@@ -544,33 +518,6 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 
 	/**
-	 * @name OutputBufferProperty units
-	 */
-	//@{
-	 
-	/**
-	 * @brief OutputBufferProperty unit state structure
-	 */
-	struct OutputBufferPropertyState : public TNodeState< vgd::node::OutputBufferProperty >
-	{
-		/**
-		 * @brief Default constructor
-		 */
-		OutputBufferPropertyState( vgd::node::OutputBufferProperty * node )
-		:	TNodeState(node)
-		{}
-	};
-
-	/**
-	 * @brief OutputBufferProperty unit container
-	 */
-	typedef vge::basic::TUnitContainer< OutputBufferPropertyState > OutputBufferPropertyStateContainer;
-	OutputBufferPropertyStateContainer outputBufferProperties;				///< array of output buffer state. The zero-based index selects the output buffer property unit.
-
-	//@}
-
-
-	/**
 	 * @name Overlay units
 	 */
 	//@{
@@ -603,6 +550,38 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 
 	/**
+	 * @name OutputBufferProperty units
+	 */
+	//@{
+	 
+	/**
+	 * @brief OutputBufferProperty unit state structure
+	 */
+	struct OutputBufferPropertyState
+	{
+		/**
+		 * @brief Default constructor
+		 */
+		OutputBufferPropertyState( vgd::node::OutputBufferProperty * node )
+		: m_node(node)
+		{}
+
+		vgd::node::OutputBufferProperty * getNode() const { return m_node; }
+
+	private:
+		vgd::node::OutputBufferProperty * m_node;
+	};
+
+	/**
+	 * @brief OutputBufferProperty unit container
+	 */
+	typedef vge::basic::TUnitContainer< OutputBufferPropertyState > OutputBufferPropertyStateContainer;
+	OutputBufferPropertyStateContainer outputBufferProperties;				///< array of output buffer state. The zero-based index selects the output buffer property unit.
+
+	//@}
+
+
+	/**
 	 * @brief Returns the last encountered Program node
 	 */
 	vgd::node::Program * getProgram() const;
@@ -617,46 +596,22 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 
 
 	/**
-	 * @name Shaders generation accessors
+	 * @name Shader generation accessors
 	 */
 	//@{
 
-// @todo rename VERTEX_ => VS_, TESSELLATIONCONTROL_ => TCS_ ...
 	enum ShaderStage
 	{
-		UNIFORM_DECLARATIONS = 0,
-		USER_DEFINED_UNIFORM_DECLARATIONS,
-
-		// VERTEX SHADER
-		VERTEX_DECLARATIONS,
-
-		VERTEX_POSITION_DISPLACEMENT,
-		VERTEX_POSITION_COMPUTATION,		///< vertex displacement (using a texture a procedurally)
+		VERTEX_DECLARATIONS = 0,
 		VERTEX_GL_POSITION_COMPUTATION,
 		VERTEX_ECPOSITION_COMPUTATION,
-
-		VERTEX_NORMAL_COMPUTATION,
 		VERTEX_ECNORMAL_COMPUTATION,
 
-
-		// TESSELLATION CONTROL SHADER
-		TCS_DECLARATIONS,
-// @todo TCS_MAIN_COMPUTATION
-		TCS_TESSLEVEL_COMPUTATION,
-
-
-		// TESSELLATION EVALUATION SHADER
-		TES_DECLARATIONS,
-// @todo TES_MAIN_COMPUTATION
-		TES_POSITION_DISPLACEMENT,
-
-
-		// FRAGMENT SHADER
 		FRAGMENT_DECLARATIONS,
-
 		FRAGMENT_OUTPUT_DECLARATION,		///< Declarations needed by FRAGMENT_OUTPUT
 		FRAGMENT_OUTPUT,					///< Fragment Shader Outputs stage (example: gl_FragData[1] = ...)
 
+		//
 		MAX_SHADERSTAGE
 	};
 
@@ -669,52 +624,29 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	void setShaderStage( const ShaderStage shaderStage, const std::string& glslCode );
 
 	/**
-	 * @brief Prepends the given glsl code for a specific stage.
-	 *
-	 * @param shaderStage	selector of the stage
-	 * @param glslCode		code to prepend in the desired shader
-	 */
-	void prependShaderStage( const ShaderStage shaderStage, const std::string& glslCode );
-
-	/**
-	 * @brief Appends the given glsl code for a specific stage.
-	 *
-	 * @param shaderStage	selector of the stage
-	 * @param glslCode		code to append in the desired shader
-	 */
-	void appendShaderStage( const ShaderStage shaderStage, const std::string& glslCode );
-
-	/**
-	 * @brief Sets the default glsl code for a specific stage.
-	 *
-	 * @param shaderStage	selector of the stage
-	 */
-	void resetShaderStage( const ShaderStage shaderStage );
-
-	/**
 	 * @brief Sets the default glsl code for all shader stages.
 	 */
 	void resetShaderStages();
-
 
 	/**
 	 * @brief Returns the glsl code for a specific stage.
 	 *
 	 * @param shaderStage	selector of the stage
-	 * @param withMarker	true to add marker around the shader stage code, false to retrieve only the glsl code for the specified stage
 	 *
 	 * @return code to insert in the desired shader or an empty string.
 	 */
-	const std::string getShaderStage( const ShaderStage shaderStage, const bool withMarker = true ) const;
+	const std::string& getShaderStage( const ShaderStage shaderStage ) const;
+
+	//@}
+
+
 
 	/**
-	 * @brief Gets the default glsl code for a specific stage.
-	 *
-	 * @param shaderStage	selector of the stage
-	 *
-	 * @return the default glsl code for a desired stage
+	 * @name Light model accessors
 	 */
-	const std::string& getShaderStageDefault( const ShaderStage shaderStage );
+	//@{
+	const vgd::node::LightModel::Option0ValueType getOption0() const			{ return m_option0; }
+	void setOption0( const vgd::node::LightModel::Option0ValueType value )	{ m_option0 = value; }
 	//@}
 
 
@@ -733,12 +665,7 @@ struct GLSLState : public TBitSet< MAX_BITSETINDEXTYPE >
 	const bool isTessellationEnabled() const;
 	void setTessellationEnabled( const bool enabled = true );
 
-
-	typedef vgd::node::TessellationProperties::TessellationValueType TessellationValueType;
-	const TessellationValueType getTessellation() const;
-	void setTessellation( const TessellationValueType value );
 	//@}
-
 
 	/**
 	 * @name Shadow accessors
@@ -771,11 +698,13 @@ private:
 	void init();
 	vgd::node::Program *								m_program;					///< the last encountered Program node
 	// @todo TUnitContainer m_shaderStage;
+	// @todo 
 	std::vector< std::string >							m_shaderStage;				///< container of glsl code for custom shader stage
-
-	TessellationValueType								m_tessellation;				///< EngineProperties.tessellation
+	vgd::node::LightModel::Option0ValueType				m_option0;					///< Last encountered value of LightModel.option0 field
 	vgd::node::LightModel::ShadowValueType				m_lightModelShadow;			///< Last encountered value of LightModel.shadow field
 	vgd::node::LightModel::ShadowMapTypeValueType		m_shadowMapType;			///< @todo doc
+	bool												m_isShadowSamplerEnabled;	///< true if engine must used shadow sampler, false otherwise
+	static const std::string							m_indexString[];			///< array containing the string representation for BitSetIndexType.
 };
 
 

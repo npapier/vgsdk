@@ -6,6 +6,7 @@
 #include "vge/engine/Engine.hpp"
 
 #include <vgd/basic/TimeDuration.hpp>
+#include <vgd/node/Camera.hpp>
 #include <vgd/node/EngineProperties.hpp>
 
 #include "vge/handler/Handler.hpp"
@@ -27,7 +28,6 @@ Engine::Engine()
 :	//m_constructorTime(),
 	m_drawingSurfaceSize(0, 0),
 	m_camera( 0 ),
-	m_geoMorph( 0 ),
 	m_paintService( new vge::service::Painter() ),
 	m_trace( false )
 {
@@ -68,7 +68,6 @@ void Engine::resetEval()
 	// Built-in state
 	// m_drawingSurfaceSize
 	m_camera = 0;
-	m_geoMorph = 0;
 	m_viewport.setInvalid();
 	m_nearFar.setInvalid();
 	m_sceneGeometricalMatrix.setInvalid();
@@ -549,17 +548,6 @@ const vgm::Vec2f Engine::getNearFar() const
 void Engine::setNearFar( const vgm::Vec2f nearFar )
 {
 	m_nearFar = nearFar;
-}
-
-
-/*const*/ vgd::node::GeoMorph * Engine::getGeoMorph()/* const*/
-{
-	return m_geoMorph;
-}
-
-void Engine::setGeoMorph( /*const*/ vgd::node::GeoMorph * geoMorph )
-{
-	m_geoMorph = geoMorph;
 }
 
 

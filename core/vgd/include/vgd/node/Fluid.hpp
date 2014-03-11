@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -33,53 +33,53 @@ namespace node
  * Liquids are simulated using several height maps (sceneHeightMap computed from \c scene, fluidHeightMap containing height of the fluid). A tessellated quad with displacement mapping is used for the rendering. 
  *
  * New fields defined by this node :
- * - SFNodeWkp \c scene = vgd::node::NodeWkp()<br>
- *   Specifies the root of the scene graph used by the fluid simulation.<br>
+ * - SFFloat \c opacity = (0.6)<br>
+ *   todo<br>
  *<br>
- * - SFVec4f \c gravity = vgm::Vec4f(0.f, -1.f, 0.f, 9.8f)<br>
- *   Specifies the direction of the gravity (the first three components) and the intensity (the last component).<br>
+ * - MFVec5f \c emittersOrDrainers = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
+ *   Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 4.<br>
  *<br>
  * - SFVec2i \c heightMapSize = vgm::Vec2i(256, 256)<br>
  *   Specifies the size of the textures used to store scene and fluid height map.<br>
  *<br>
- * - SFString \c simulationPass0 = std::string()<br>
- *   Specifies the first stage of the simulation.<br>
- *<br>
- * - SFString \c simulationPass1 = std::string()<br>
- *   Specifies the second stage of the simulation.<br>
- *<br>
- * - SFFloat \c cellSize = (1.0)<br>
- *   todo<br>
- *<br>
- * - SFFloat \c css = (1.0)<br>
- *   todo<br>
- *<br>
- * - SFFloat \c timeStep = (0.1)<br>
- *   todo<br>
- *<br>
- * - SFFloat \c damping = (0.8)<br>
- *   todo<br>
- *<br>
- * - SFFloat \c thickness = (1.0)<br>
- *   fluid thickness factor (only visual)<br>
- *<br>
- * - SFFloat \c opacity = (0.6)<br>
- *   todo<br>
+ * - SFNodeWkp \c scene = vgd::node::NodeWkp()<br>
+ *   Specifies the root of the scene graph used by the fluid simulation.<br>
  *<br>
  * - SFBool \c requestFeedback = (false)<br>
  *   True to request a feedback in field fluidPositionFeedback during the next rendering. This field is automatically reset to false after the completion of the feedback.<br>
  *<br>
- * - SFVec5f \c feedbackInformations = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
+ * - SFVec4f \c gravity = vgm::Vec4f(0.f, -1.f, 0.f, 9.8f)<br>
+ *   Specifies the direction of the gravity (the first three components) and the intensity (the last component).<br>
+ *<br>
+ * - SFString \c simulationPass1 = std::string()<br>
+ *   Specifies the second stage of the simulation.<br>
+ *<br>
+ * - SFString \c simulationPass0 = std::string()<br>
+ *   Specifies the first stage of the simulation.<br>
+ *<br>
+ * - SFFloat \c cellSize = (1.0)<br>
  *   todo<br>
  *<br>
  * - SFMatrixR \c feedbackInformationsBis = vgm::MatrixR(vgm::MatrixR::getIdentity())<br>
  *   todo<br>
  *<br>
- * - SFIImageShp \c fluidPositionFeedback = vgd::basic::IImageShp()<br>
+ * - SFFloat \c damping = (0.8)<br>
  *   todo<br>
  *<br>
- * - MFVec5f \c emittersOrDrainers = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
- *   Specifies the position (x, y, z), and properties (radius and intensity) of each fluid emitter/drainer. Actually, the maximum number of emitters/drainers is 4.<br>
+ * - SFFloat \c timeStep = (0.1)<br>
+ *   todo<br>
+ *<br>
+ * - SFFloat \c thickness = (1.0)<br>
+ *   fluid thickness factor (only visual)<br>
+ *<br>
+ * - SFVec5f \c feedbackInformations = vgm::Vec5f(0.f, 0.f, 0.f, 0.f, 0.f)<br>
+ *   todo<br>
+ *<br>
+ * - SFFloat \c css = (1.0)<br>
+ *   todo<br>
+ *<br>
+ * - SFIImageShp \c fluidPositionFeedback = vgd::basic::IImageShp()<br>
+ *   todo<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -122,70 +122,67 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
-	 * @name Accessors to field scene
+	 * @name Accessors to field opacity
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c scene.
+	 * @brief Type definition of the value contained by field named \c opacity.
 	 */
-	typedef vgd::node::NodeWkp SceneValueType;
+	typedef float OpacityValueType;
 
 	/**
-	 * @brief The default value of field named \c scene.
+	 * @brief The default value of field named \c opacity.
 	 */
-	static const SceneValueType DEFAULT_SCENE;
+	static const OpacityValueType DEFAULT_OPACITY;
 
 	/**
-	 * @brief Type definition of the field named \c scene
+	 * @brief Type definition of the field named \c opacity
 	 */
-	typedef vgd::field::TSingleField< SceneValueType > FSceneType;
+	typedef vgd::field::TSingleField< OpacityValueType > FOpacityType;
 
 
 	/**
-	 * @brief Gets the value of field named \c scene.
+	 * @brief Gets the value of field named \c opacity.
 	 */
-	const SceneValueType getScene() const;
+	const OpacityValueType getOpacity() const;
 
 	/**
-	 * @brief Sets the value of field named \c scene.
+	 * @brief Sets the value of field named \c opacity.
 	 */
-	void setScene( const SceneValueType value );
+	void setOpacity( const OpacityValueType value );
 
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field gravity
+	 * @name Accessors to field emittersOrDrainers
+	 *
+	 * @todo getEmittersOrDrainers( const bool rw = false ) ?
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c gravity.
+	 * @brief Type definition of the value contained by field named \c emittersOrDrainers.
 	 */
-	typedef vgm::Vec4f GravityValueType;
+	typedef vgm::Vec5f EmittersOrDrainersValueType;
 
 	/**
-	 * @brief The default value of field named \c gravity.
+	 * @brief Type definition of the field named \c emittersOrDrainers
 	 */
-	static const GravityValueType DEFAULT_GRAVITY;
-
-	/**
-	 * @brief Type definition of the field named \c gravity
-	 */
-	typedef vgd::field::TSingleField< GravityValueType > FGravityType;
+	typedef vgd::field::TMultiField< EmittersOrDrainersValueType > FEmittersOrDrainersType;
 
 
 	/**
-	 * @brief Gets the value of field named \c gravity.
+	 * @brief Gets a read-only editor on the multi field named \c emittersOrDrainers.
 	 */
-	const GravityValueType getGravity() const;
+	vgd::field::EditorRO< FEmittersOrDrainersType > getEmittersOrDrainersRO() const;
 
 	/**
-	 * @brief Sets the value of field named \c gravity.
+	 * @brief Gets a read-write editor on the multi field named \c emittersOrDrainers.
 	 */
-	void setGravity( const GravityValueType value );
+	vgd::field::EditorRW< FEmittersOrDrainersType > getEmittersOrDrainersRW();
 
 	//@}
 
@@ -227,280 +224,35 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
-	 * @name Accessors to field simulationPass0
+	 * @name Accessors to field scene
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c simulationPass0.
+	 * @brief Type definition of the value contained by field named \c scene.
 	 */
-	typedef std::string SimulationPass0ValueType;
+	typedef vgd::node::NodeWkp SceneValueType;
 
 	/**
-	 * @brief The default value of field named \c simulationPass0.
+	 * @brief The default value of field named \c scene.
 	 */
-	static const SimulationPass0ValueType DEFAULT_SIMULATIONPASS0;
+	static const SceneValueType DEFAULT_SCENE;
 
 	/**
-	 * @brief Type definition of the field named \c simulationPass0
+	 * @brief Type definition of the field named \c scene
 	 */
-	typedef vgd::field::TSingleField< SimulationPass0ValueType > FSimulationPass0Type;
-
-
-	/**
-	 * @brief Gets the value of field named \c simulationPass0.
-	 */
-	const SimulationPass0ValueType getSimulationPass0() const;
-
-	/**
-	 * @brief Sets the value of field named \c simulationPass0.
-	 */
-	void setSimulationPass0( const SimulationPass0ValueType value );
-
-	//@}
-
+	typedef vgd::field::TSingleField< SceneValueType > FSceneType;
 
 
 	/**
-	 * @name Accessors to field simulationPass1
+	 * @brief Gets the value of field named \c scene.
 	 */
-	//@{
+	const SceneValueType getScene() const;
 
 	/**
-	 * @brief Type definition of the value contained by field named \c simulationPass1.
+	 * @brief Sets the value of field named \c scene.
 	 */
-	typedef std::string SimulationPass1ValueType;
-
-	/**
-	 * @brief The default value of field named \c simulationPass1.
-	 */
-	static const SimulationPass1ValueType DEFAULT_SIMULATIONPASS1;
-
-	/**
-	 * @brief Type definition of the field named \c simulationPass1
-	 */
-	typedef vgd::field::TSingleField< SimulationPass1ValueType > FSimulationPass1Type;
-
-
-	/**
-	 * @brief Gets the value of field named \c simulationPass1.
-	 */
-	const SimulationPass1ValueType getSimulationPass1() const;
-
-	/**
-	 * @brief Sets the value of field named \c simulationPass1.
-	 */
-	void setSimulationPass1( const SimulationPass1ValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field cellSize
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c cellSize.
-	 */
-	typedef float CellSizeValueType;
-
-	/**
-	 * @brief The default value of field named \c cellSize.
-	 */
-	static const CellSizeValueType DEFAULT_CELLSIZE;
-
-	/**
-	 * @brief Type definition of the field named \c cellSize
-	 */
-	typedef vgd::field::TSingleField< CellSizeValueType > FCellSizeType;
-
-
-	/**
-	 * @brief Gets the value of field named \c cellSize.
-	 */
-	const CellSizeValueType getCellSize() const;
-
-	/**
-	 * @brief Sets the value of field named \c cellSize.
-	 */
-	void setCellSize( const CellSizeValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field css
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c css.
-	 */
-	typedef float CssValueType;
-
-	/**
-	 * @brief The default value of field named \c css.
-	 */
-	static const CssValueType DEFAULT_CSS;
-
-	/**
-	 * @brief Type definition of the field named \c css
-	 */
-	typedef vgd::field::TSingleField< CssValueType > FCssType;
-
-
-	/**
-	 * @brief Gets the value of field named \c css.
-	 */
-	const CssValueType getCss() const;
-
-	/**
-	 * @brief Sets the value of field named \c css.
-	 */
-	void setCss( const CssValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field timeStep
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c timeStep.
-	 */
-	typedef float TimeStepValueType;
-
-	/**
-	 * @brief The default value of field named \c timeStep.
-	 */
-	static const TimeStepValueType DEFAULT_TIMESTEP;
-
-	/**
-	 * @brief Type definition of the field named \c timeStep
-	 */
-	typedef vgd::field::TSingleField< TimeStepValueType > FTimeStepType;
-
-
-	/**
-	 * @brief Gets the value of field named \c timeStep.
-	 */
-	const TimeStepValueType getTimeStep() const;
-
-	/**
-	 * @brief Sets the value of field named \c timeStep.
-	 */
-	void setTimeStep( const TimeStepValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field damping
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c damping.
-	 */
-	typedef float DampingValueType;
-
-	/**
-	 * @brief The default value of field named \c damping.
-	 */
-	static const DampingValueType DEFAULT_DAMPING;
-
-	/**
-	 * @brief Type definition of the field named \c damping
-	 */
-	typedef vgd::field::TSingleField< DampingValueType > FDampingType;
-
-
-	/**
-	 * @brief Gets the value of field named \c damping.
-	 */
-	const DampingValueType getDamping() const;
-
-	/**
-	 * @brief Sets the value of field named \c damping.
-	 */
-	void setDamping( const DampingValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field thickness
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c thickness.
-	 */
-	typedef float ThicknessValueType;
-
-	/**
-	 * @brief The default value of field named \c thickness.
-	 */
-	static const ThicknessValueType DEFAULT_THICKNESS;
-
-	/**
-	 * @brief Type definition of the field named \c thickness
-	 */
-	typedef vgd::field::TSingleField< ThicknessValueType > FThicknessType;
-
-
-	/**
-	 * @brief Gets the value of field named \c thickness.
-	 */
-	const ThicknessValueType getThickness() const;
-
-	/**
-	 * @brief Sets the value of field named \c thickness.
-	 */
-	void setThickness( const ThicknessValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field opacity
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c opacity.
-	 */
-	typedef float OpacityValueType;
-
-	/**
-	 * @brief The default value of field named \c opacity.
-	 */
-	static const OpacityValueType DEFAULT_OPACITY;
-
-	/**
-	 * @brief Type definition of the field named \c opacity
-	 */
-	typedef vgd::field::TSingleField< OpacityValueType > FOpacityType;
-
-
-	/**
-	 * @brief Gets the value of field named \c opacity.
-	 */
-	const OpacityValueType getOpacity() const;
-
-	/**
-	 * @brief Sets the value of field named \c opacity.
-	 */
-	void setOpacity( const OpacityValueType value );
+	void setScene( const SceneValueType value );
 
 	//@}
 
@@ -542,35 +294,140 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
-	 * @name Accessors to field feedbackInformations
+	 * @name Accessors to field gravity
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c feedbackInformations.
+	 * @brief Type definition of the value contained by field named \c gravity.
 	 */
-	typedef vgm::Vec5f FeedbackInformationsValueType;
+	typedef vgm::Vec4f GravityValueType;
 
 	/**
-	 * @brief The default value of field named \c feedbackInformations.
+	 * @brief The default value of field named \c gravity.
 	 */
-	static const FeedbackInformationsValueType DEFAULT_FEEDBACKINFORMATIONS;
+	static const GravityValueType DEFAULT_GRAVITY;
 
 	/**
-	 * @brief Type definition of the field named \c feedbackInformations
+	 * @brief Type definition of the field named \c gravity
 	 */
-	typedef vgd::field::TSingleField< FeedbackInformationsValueType > FFeedbackInformationsType;
+	typedef vgd::field::TSingleField< GravityValueType > FGravityType;
 
 
 	/**
-	 * @brief Gets the value of field named \c feedbackInformations.
+	 * @brief Gets the value of field named \c gravity.
 	 */
-	const FeedbackInformationsValueType getFeedbackInformations() const;
+	const GravityValueType getGravity() const;
 
 	/**
-	 * @brief Sets the value of field named \c feedbackInformations.
+	 * @brief Sets the value of field named \c gravity.
 	 */
-	void setFeedbackInformations( const FeedbackInformationsValueType value );
+	void setGravity( const GravityValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field simulationPass1
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c simulationPass1.
+	 */
+	typedef std::string SimulationPass1ValueType;
+
+	/**
+	 * @brief The default value of field named \c simulationPass1.
+	 */
+	static const SimulationPass1ValueType DEFAULT_SIMULATIONPASS1;
+
+	/**
+	 * @brief Type definition of the field named \c simulationPass1
+	 */
+	typedef vgd::field::TSingleField< SimulationPass1ValueType > FSimulationPass1Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c simulationPass1.
+	 */
+	const SimulationPass1ValueType getSimulationPass1() const;
+
+	/**
+	 * @brief Sets the value of field named \c simulationPass1.
+	 */
+	void setSimulationPass1( const SimulationPass1ValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field simulationPass0
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c simulationPass0.
+	 */
+	typedef std::string SimulationPass0ValueType;
+
+	/**
+	 * @brief The default value of field named \c simulationPass0.
+	 */
+	static const SimulationPass0ValueType DEFAULT_SIMULATIONPASS0;
+
+	/**
+	 * @brief Type definition of the field named \c simulationPass0
+	 */
+	typedef vgd::field::TSingleField< SimulationPass0ValueType > FSimulationPass0Type;
+
+
+	/**
+	 * @brief Gets the value of field named \c simulationPass0.
+	 */
+	const SimulationPass0ValueType getSimulationPass0() const;
+
+	/**
+	 * @brief Sets the value of field named \c simulationPass0.
+	 */
+	void setSimulationPass0( const SimulationPass0ValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field cellSize
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c cellSize.
+	 */
+	typedef float CellSizeValueType;
+
+	/**
+	 * @brief The default value of field named \c cellSize.
+	 */
+	static const CellSizeValueType DEFAULT_CELLSIZE;
+
+	/**
+	 * @brief Type definition of the field named \c cellSize
+	 */
+	typedef vgd::field::TSingleField< CellSizeValueType > FCellSizeType;
+
+
+	/**
+	 * @brief Gets the value of field named \c cellSize.
+	 */
+	const CellSizeValueType getCellSize() const;
+
+	/**
+	 * @brief Sets the value of field named \c cellSize.
+	 */
+	void setCellSize( const CellSizeValueType value );
 
 	//@}
 
@@ -612,6 +469,181 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
+	 * @name Accessors to field damping
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c damping.
+	 */
+	typedef float DampingValueType;
+
+	/**
+	 * @brief The default value of field named \c damping.
+	 */
+	static const DampingValueType DEFAULT_DAMPING;
+
+	/**
+	 * @brief Type definition of the field named \c damping
+	 */
+	typedef vgd::field::TSingleField< DampingValueType > FDampingType;
+
+
+	/**
+	 * @brief Gets the value of field named \c damping.
+	 */
+	const DampingValueType getDamping() const;
+
+	/**
+	 * @brief Sets the value of field named \c damping.
+	 */
+	void setDamping( const DampingValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field timeStep
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c timeStep.
+	 */
+	typedef float TimeStepValueType;
+
+	/**
+	 * @brief The default value of field named \c timeStep.
+	 */
+	static const TimeStepValueType DEFAULT_TIMESTEP;
+
+	/**
+	 * @brief Type definition of the field named \c timeStep
+	 */
+	typedef vgd::field::TSingleField< TimeStepValueType > FTimeStepType;
+
+
+	/**
+	 * @brief Gets the value of field named \c timeStep.
+	 */
+	const TimeStepValueType getTimeStep() const;
+
+	/**
+	 * @brief Sets the value of field named \c timeStep.
+	 */
+	void setTimeStep( const TimeStepValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field thickness
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c thickness.
+	 */
+	typedef float ThicknessValueType;
+
+	/**
+	 * @brief The default value of field named \c thickness.
+	 */
+	static const ThicknessValueType DEFAULT_THICKNESS;
+
+	/**
+	 * @brief Type definition of the field named \c thickness
+	 */
+	typedef vgd::field::TSingleField< ThicknessValueType > FThicknessType;
+
+
+	/**
+	 * @brief Gets the value of field named \c thickness.
+	 */
+	const ThicknessValueType getThickness() const;
+
+	/**
+	 * @brief Sets the value of field named \c thickness.
+	 */
+	void setThickness( const ThicknessValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field feedbackInformations
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c feedbackInformations.
+	 */
+	typedef vgm::Vec5f FeedbackInformationsValueType;
+
+	/**
+	 * @brief The default value of field named \c feedbackInformations.
+	 */
+	static const FeedbackInformationsValueType DEFAULT_FEEDBACKINFORMATIONS;
+
+	/**
+	 * @brief Type definition of the field named \c feedbackInformations
+	 */
+	typedef vgd::field::TSingleField< FeedbackInformationsValueType > FFeedbackInformationsType;
+
+
+	/**
+	 * @brief Gets the value of field named \c feedbackInformations.
+	 */
+	const FeedbackInformationsValueType getFeedbackInformations() const;
+
+	/**
+	 * @brief Sets the value of field named \c feedbackInformations.
+	 */
+	void setFeedbackInformations( const FeedbackInformationsValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field css
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c css.
+	 */
+	typedef float CssValueType;
+
+	/**
+	 * @brief The default value of field named \c css.
+	 */
+	static const CssValueType DEFAULT_CSS;
+
+	/**
+	 * @brief Type definition of the field named \c css
+	 */
+	typedef vgd::field::TSingleField< CssValueType > FCssType;
+
+
+	/**
+	 * @brief Gets the value of field named \c css.
+	 */
+	const CssValueType getCss() const;
+
+	/**
+	 * @brief Sets the value of field named \c css.
+	 */
+	void setCss( const CssValueType value );
+
+	//@}
+
+
+
+	/**
 	 * @name Accessors to field fluidPositionFeedback
 	 */
 	//@{
@@ -647,111 +679,9 @@ struct VGD_API Fluid : public vgd::node::Shape
 
 
 	/**
-	 * @name Accessors to field emittersOrDrainers
-	 *
-	 * @todo getEmittersOrDrainers( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c emittersOrDrainers.
-	 */
-	typedef vgm::Vec5f EmittersOrDrainersValueType;
-
-	/**
-	 * @brief Type definition of the field named \c emittersOrDrainers
-	 */
-	typedef vgd::field::TMultiField< EmittersOrDrainersValueType > FEmittersOrDrainersType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c emittersOrDrainers.
-	 */
-	vgd::field::EditorRO< FEmittersOrDrainersType > getEmittersOrDrainersRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c emittersOrDrainers.
-	 */
-	vgd::field::EditorRW< FEmittersOrDrainersType > getEmittersOrDrainersRW();
-
-	//@}
-
-
-
-	/**
 	 * @name Field name accessors
 	 */
 	//@{
-
-	/**
-	 * @brief Returns the name of field \c scene.
-	 *
-	 * @return the name of field \c scene.
-	 */
-	static const std::string getFScene( void );
-
-	/**
-	 * @brief Returns the name of field \c gravity.
-	 *
-	 * @return the name of field \c gravity.
-	 */
-	static const std::string getFGravity( void );
-
-	/**
-	 * @brief Returns the name of field \c heightMapSize.
-	 *
-	 * @return the name of field \c heightMapSize.
-	 */
-	static const std::string getFHeightMapSize( void );
-
-	/**
-	 * @brief Returns the name of field \c simulationPass0.
-	 *
-	 * @return the name of field \c simulationPass0.
-	 */
-	static const std::string getFSimulationPass0( void );
-
-	/**
-	 * @brief Returns the name of field \c simulationPass1.
-	 *
-	 * @return the name of field \c simulationPass1.
-	 */
-	static const std::string getFSimulationPass1( void );
-
-	/**
-	 * @brief Returns the name of field \c cellSize.
-	 *
-	 * @return the name of field \c cellSize.
-	 */
-	static const std::string getFCellSize( void );
-
-	/**
-	 * @brief Returns the name of field \c css.
-	 *
-	 * @return the name of field \c css.
-	 */
-	static const std::string getFCss( void );
-
-	/**
-	 * @brief Returns the name of field \c timeStep.
-	 *
-	 * @return the name of field \c timeStep.
-	 */
-	static const std::string getFTimeStep( void );
-
-	/**
-	 * @brief Returns the name of field \c damping.
-	 *
-	 * @return the name of field \c damping.
-	 */
-	static const std::string getFDamping( void );
-
-	/**
-	 * @brief Returns the name of field \c thickness.
-	 *
-	 * @return the name of field \c thickness.
-	 */
-	static const std::string getFThickness( void );
 
 	/**
 	 * @brief Returns the name of field \c opacity.
@@ -761,6 +691,27 @@ struct VGD_API Fluid : public vgd::node::Shape
 	static const std::string getFOpacity( void );
 
 	/**
+	 * @brief Returns the name of field \c emittersOrDrainers.
+	 *
+	 * @return the name of field \c emittersOrDrainers.
+	 */
+	static const std::string getFEmittersOrDrainers( void );
+
+	/**
+	 * @brief Returns the name of field \c heightMapSize.
+	 *
+	 * @return the name of field \c heightMapSize.
+	 */
+	static const std::string getFHeightMapSize( void );
+
+	/**
+	 * @brief Returns the name of field \c scene.
+	 *
+	 * @return the name of field \c scene.
+	 */
+	static const std::string getFScene( void );
+
+	/**
 	 * @brief Returns the name of field \c requestFeedback.
 	 *
 	 * @return the name of field \c requestFeedback.
@@ -768,11 +719,32 @@ struct VGD_API Fluid : public vgd::node::Shape
 	static const std::string getFRequestFeedback( void );
 
 	/**
-	 * @brief Returns the name of field \c feedbackInformations.
+	 * @brief Returns the name of field \c gravity.
 	 *
-	 * @return the name of field \c feedbackInformations.
+	 * @return the name of field \c gravity.
 	 */
-	static const std::string getFFeedbackInformations( void );
+	static const std::string getFGravity( void );
+
+	/**
+	 * @brief Returns the name of field \c simulationPass1.
+	 *
+	 * @return the name of field \c simulationPass1.
+	 */
+	static const std::string getFSimulationPass1( void );
+
+	/**
+	 * @brief Returns the name of field \c simulationPass0.
+	 *
+	 * @return the name of field \c simulationPass0.
+	 */
+	static const std::string getFSimulationPass0( void );
+
+	/**
+	 * @brief Returns the name of field \c cellSize.
+	 *
+	 * @return the name of field \c cellSize.
+	 */
+	static const std::string getFCellSize( void );
 
 	/**
 	 * @brief Returns the name of field \c feedbackInformationsBis.
@@ -782,18 +754,46 @@ struct VGD_API Fluid : public vgd::node::Shape
 	static const std::string getFFeedbackInformationsBis( void );
 
 	/**
+	 * @brief Returns the name of field \c damping.
+	 *
+	 * @return the name of field \c damping.
+	 */
+	static const std::string getFDamping( void );
+
+	/**
+	 * @brief Returns the name of field \c timeStep.
+	 *
+	 * @return the name of field \c timeStep.
+	 */
+	static const std::string getFTimeStep( void );
+
+	/**
+	 * @brief Returns the name of field \c thickness.
+	 *
+	 * @return the name of field \c thickness.
+	 */
+	static const std::string getFThickness( void );
+
+	/**
+	 * @brief Returns the name of field \c feedbackInformations.
+	 *
+	 * @return the name of field \c feedbackInformations.
+	 */
+	static const std::string getFFeedbackInformations( void );
+
+	/**
+	 * @brief Returns the name of field \c css.
+	 *
+	 * @return the name of field \c css.
+	 */
+	static const std::string getFCss( void );
+
+	/**
 	 * @brief Returns the name of field \c fluidPositionFeedback.
 	 *
 	 * @return the name of field \c fluidPositionFeedback.
 	 */
 	static const std::string getFFluidPositionFeedback( void );
-
-	/**
-	 * @brief Returns the name of field \c emittersOrDrainers.
-	 *
-	 * @return the name of field \c emittersOrDrainers.
-	 */
-	static const std::string getFEmittersOrDrainers( void );
 
 	//@}
 

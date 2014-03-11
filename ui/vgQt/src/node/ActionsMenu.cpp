@@ -1,9 +1,8 @@
-// VGSDK - Copyright (C) 2012, 2014, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
 // Author Bryan Schuller
-// Author Nicolas Papier
 
 #include <vgAlg/actions/IAction.hpp>
 #include <vgAlg/actions/input/INodeInput.hpp>
@@ -16,7 +15,6 @@
 
 #include <vgd/node/TriSet.hpp>
 #include <vge/technique/ApplyGeometricalTransformations.hpp>
-#include <vgeGL/basic/Hit.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include <vgUI/actions/State.hpp>
 
@@ -28,8 +26,8 @@
 #include "vgQt/node/Action.hpp"
 #include "vgQt/node/InsertNode.hpp"
 
-//#include "vgQt/actions/ui/ExportNodeUI.hpp"
-//#include "vgQt/actions/alg/ExportNode.hpp"
+#include "vgQt/actions/ui/ExportNodeUI.hpp"
+#include "vgQt/actions/alg/ExportNode.hpp"
 
 #include "vgQt/actions/alg/EncryptFileAction.hpp"
 // #include "vgQt/actions/ui/EncryptFileUI.hpp"
@@ -59,7 +57,7 @@ ActionsMenu::ActionsMenu( QWidget* parent, POPUP_LOCATION location )
 void ActionsMenu::initActions()
 {
     // vgUI::actions::RegisterAction< actions::ui::EncryptFileUI > action1(16);
-    //vgUI::actions::RegisterAction< actions::ui::ExportNodeUI > action2(41);
+    vgUI::actions::RegisterAction< actions::ui::ExportNodeUI > action2(41);
     vgUI::actions::RegisterAction< actions::ui::RemoveNodeUI > action3(15);
 }
 
@@ -76,13 +74,6 @@ void ActionsMenu::onCanvasMenuRequested(QPoint point)
     if ( castNode )
     {
         vgd::Shp< vgd::node::Node > currentNode = castNode->shpFromThis();
-		const vgeGL::basic::Hit hit = m_canvas->getNearestHit();
-		const vgm::Vec3f vertexO = hit.nearestVertexO();
-		const vgm::Vec3f vertexS = hit.nearestVertexS();
-		vgLogMessage(	"Select node named '%s' at (%f,%f,%f) in world space and at (%f,%f,%f) in object space",
-						currentNode->getName().c_str(),
-						vertexS[0], vertexS[1], vertexS[2], 
-						vertexO[0], vertexO[1], vertexO[2] );
 
         vgAlg::actions::SelectedNode::getSelectedNodeObject()->setSelectedNode( currentNode, currentNode->getParent() );
         showPopup( widget->mapToGlobal(point), NODE );

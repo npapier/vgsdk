@@ -79,9 +79,7 @@ struct TUnitContainer : public vgd::field::DirtyFlag
 	 */
 	const bool hasState( const uint indexUnit = 0 ) const
 	{
-		const bool retVal =	(indexUnit < m_unit.size()) &&
-							m_unit[indexUnit];
-		return retVal;
+		return indexUnit < m_unit.size();
 	}
 
 	/**
@@ -140,8 +138,8 @@ struct TUnitContainer : public vgd::field::DirtyFlag
 		{
 			m_num += ( state != 0 ) ? 1 : 0;
 		}
-		vgAssert( m_num >= 0 );
-		vgAssert( m_num <= m_unit.size() );
+		assert( m_num >= 0 );
+		assert( m_num <= m_unit.size() );
 
 		// Updates dirty flags
 		dirty();

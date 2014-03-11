@@ -93,7 +93,7 @@ private:
 	 * @name Internal data
 	 */
 	//@{
-	vgeGL::engine::Engine * m_engine;
+	vgeGL::engine::Engine *	m_engine;
 	//@}
 };
 

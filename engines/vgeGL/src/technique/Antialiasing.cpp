@@ -983,7 +983,7 @@ void Antialiasing::stagePostPaint( vgeGL::technique::ForwardRendering * techniqu
 	vgd::Shp< vgeGL::rc::Antialiasing > rc = getRC< vgeGL::rc::Antialiasing >(engine);
 	vgAssert( rc );
 
-	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
+	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, technique->m_textures, &(rc->postProcessing) );
 	technique->blit( engine, finalBuffers, technique->m_fbo );
 }
 

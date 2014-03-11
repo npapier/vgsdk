@@ -7,6 +7,7 @@
 #define _VGEGL_HANDLER_PAINTER_PROGRAM_HPP
 
 #include <vge/handler/painter/SingleAttribute.hpp>
+
 #include "vgeGL/vgeGL.hpp"
 
 namespace vgd { namespace node { struct Program; } }

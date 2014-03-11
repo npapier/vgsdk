@@ -321,16 +321,6 @@ struct VGD_API Image : public IImage
 	 * @remarks All supported format of OpenIL. Main supported format are : bmp, dds, jpg, png, raw, tga, tif.
 	 */
 	bool save( const std::string filename ) const;
-
-	/**
-	 * @brief Saves the current image into a buffer that will be allocated during the call.
-	 *
-	 * @param	type		a string containing the target file type like "jpg", "png", ...
-	 * @param	buffer		will receive the saved data or left empty on error
-	 *
-	 * @return	true on success, false otherwise
-	 */
-	bool save( const std::string & type, std::vector< char > & buffer ) const;
 	
 	/**
 	 * @brief Destroy image.

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -64,11 +64,11 @@ Material::Material( const std::string nodeName ) :
 {
 	// Adds field(s)
 	addField( new FOpacityType(getFOpacity()) );
+	addField( new FShininessType(getFShininess()) );
+	addField( new FEmissionType(getFEmission()) );
+	addField( new FSpecularType(getFSpecular()) );
 	addField( new FAmbientType(getFAmbient()) );
 	addField( new FDiffuseType(getFDiffuse()) );
-	addField( new FSpecularType(getFSpecular()) );
-	addField( new FEmissionType(getFEmission()) );
-	addField( new FShininessType(getFShininess()) );
 
 	// Sets link(s)
 
@@ -88,11 +88,11 @@ void Material::setToDefaults( void )
 void Material::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setShininess( (0.f) );
+	setEmission( vgm::Vec3f(0.f, 0.f, 0.f) );
+	setSpecular( vgm::Vec3f(0.f, 0.f, 0.f) );
 	setAmbient( vgm::Vec3f(0.2f, 0.2f, 0.2f) );
 	setDiffuse( vgm::Vec3f(0.8f, 0.8f, 0.8f) );
-	setSpecular( vgm::Vec3f(0.f, 0.f, 0.f) );
-	setEmission( vgm::Vec3f(0.f, 0.f, 0.f) );
-	setShininess( (0.f) );
 }
 
 
@@ -113,6 +113,105 @@ const Material::OpacityValueType Material::getOpacity() const
 void Material::setOpacity( const OpacityValueType value )
 {
 	getFieldRW<FOpacityType>(getFOpacity())->setValue( value );
+}
+
+
+
+// Shininess
+
+const Material::ShininessValueType Material::DEFAULT_SHININESS = (0.f);
+
+
+
+const bool Material::getShininess( ShininessValueType& value ) const
+{
+	return getFieldRO<FShininessType>(getFShininess())->getValue( value );
+}
+
+
+
+void Material::setShininess( const ShininessValueType& value )
+{
+	getFieldRW<FShininessType>(getFShininess())->setValue( value );
+}
+
+
+
+void Material::eraseShininess()
+{
+	getFieldRW<FShininessType>(getFShininess())->eraseValue();
+}
+
+
+const bool Material::hasShininess() const
+{
+	return getFieldRO<FShininessType>(getFShininess())->hasValue();
+}
+
+
+
+// Emission
+
+const Material::EmissionValueType Material::DEFAULT_EMISSION = vgm::Vec3f(0.f, 0.f, 0.f);
+
+
+
+const bool Material::getEmission( EmissionValueType& value ) const
+{
+	return getFieldRO<FEmissionType>(getFEmission())->getValue( value );
+}
+
+
+
+void Material::setEmission( const EmissionValueType& value )
+{
+	getFieldRW<FEmissionType>(getFEmission())->setValue( value );
+}
+
+
+
+void Material::eraseEmission()
+{
+	getFieldRW<FEmissionType>(getFEmission())->eraseValue();
+}
+
+
+const bool Material::hasEmission() const
+{
+	return getFieldRO<FEmissionType>(getFEmission())->hasValue();
+}
+
+
+
+// Specular
+
+const Material::SpecularValueType Material::DEFAULT_SPECULAR = vgm::Vec3f(0.f, 0.f, 0.f);
+
+
+
+const bool Material::getSpecular( SpecularValueType& value ) const
+{
+	return getFieldRO<FSpecularType>(getFSpecular())->getValue( value );
+}
+
+
+
+void Material::setSpecular( const SpecularValueType& value )
+{
+	getFieldRW<FSpecularType>(getFSpecular())->setValue( value );
+}
+
+
+
+void Material::eraseSpecular()
+{
+	getFieldRW<FSpecularType>(getFSpecular())->eraseValue();
+}
+
+
+const bool Material::hasSpecular() const
+{
+	return getFieldRO<FSpecularType>(getFSpecular())->hasValue();
 }
 
 
@@ -183,109 +282,31 @@ const bool Material::hasDiffuse() const
 
 
 
-// Specular
-
-const Material::SpecularValueType Material::DEFAULT_SPECULAR = vgm::Vec3f(0.f, 0.f, 0.f);
-
-
-
-const bool Material::getSpecular( SpecularValueType& value ) const
-{
-	return getFieldRO<FSpecularType>(getFSpecular())->getValue( value );
-}
-
-
-
-void Material::setSpecular( const SpecularValueType& value )
-{
-	getFieldRW<FSpecularType>(getFSpecular())->setValue( value );
-}
-
-
-
-void Material::eraseSpecular()
-{
-	getFieldRW<FSpecularType>(getFSpecular())->eraseValue();
-}
-
-
-const bool Material::hasSpecular() const
-{
-	return getFieldRO<FSpecularType>(getFSpecular())->hasValue();
-}
-
-
-
-// Emission
-
-const Material::EmissionValueType Material::DEFAULT_EMISSION = vgm::Vec3f(0.f, 0.f, 0.f);
-
-
-
-const bool Material::getEmission( EmissionValueType& value ) const
-{
-	return getFieldRO<FEmissionType>(getFEmission())->getValue( value );
-}
-
-
-
-void Material::setEmission( const EmissionValueType& value )
-{
-	getFieldRW<FEmissionType>(getFEmission())->setValue( value );
-}
-
-
-
-void Material::eraseEmission()
-{
-	getFieldRW<FEmissionType>(getFEmission())->eraseValue();
-}
-
-
-const bool Material::hasEmission() const
-{
-	return getFieldRO<FEmissionType>(getFEmission())->hasValue();
-}
-
-
-
-// Shininess
-
-const Material::ShininessValueType Material::DEFAULT_SHININESS = (0.f);
-
-
-
-const bool Material::getShininess( ShininessValueType& value ) const
-{
-	return getFieldRO<FShininessType>(getFShininess())->getValue( value );
-}
-
-
-
-void Material::setShininess( const ShininessValueType& value )
-{
-	getFieldRW<FShininessType>(getFShininess())->setValue( value );
-}
-
-
-
-void Material::eraseShininess()
-{
-	getFieldRW<FShininessType>(getFShininess())->eraseValue();
-}
-
-
-const bool Material::hasShininess() const
-{
-	return getFieldRO<FShininessType>(getFShininess())->hasValue();
-}
-
-
-
 // Field name accessor(s)
 const std::string Material::getFOpacity( void )
 {
 	return "f_opacity";
+}
+
+
+
+const std::string Material::getFShininess( void )
+{
+	return "f_shininess";
+}
+
+
+
+const std::string Material::getFEmission( void )
+{
+	return "f_emission";
+}
+
+
+
+const std::string Material::getFSpecular( void )
+{
+	return "f_specular";
 }
 
 
@@ -300,27 +321,6 @@ const std::string Material::getFAmbient( void )
 const std::string Material::getFDiffuse( void )
 {
 	return "f_diffuse";
-}
-
-
-
-const std::string Material::getFSpecular( void )
-{
-	return "f_specular";
-}
-
-
-
-const std::string Material::getFEmission( void )
-{
-	return "f_emission";
-}
-
-
-
-const std::string Material::getFShininess( void )
-{
-	return "f_shininess";
 }
 
 

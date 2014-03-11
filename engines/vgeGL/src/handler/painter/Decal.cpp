@@ -136,8 +136,8 @@ void Decal::paint( vgeGL::engine::Engine * engine, DecalStateContainer * decals 
 				engine->paint( texture );
 
 				// Gets the resource manager
-				vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
-				vgeGL::rc::Texture2D * gloTex2D = rcManager->get< vgeGL::rc::Texture2D >( texture.get() );
+				vgeGL::engine::Engine::GLManagerType& rcManager	= engine->getGLManager();
+				vgeGL::rc::Texture2D * gloTex2D = rcManager.get< vgeGL::rc::Texture2D >( texture.get() );
 				gloTex2D->env( GL_TEXTURE_ENV_MODE, GL_REPLACE );
 
 				const vgm::MatrixR& geomMatrix = decalState->getGeometricalMatrix();

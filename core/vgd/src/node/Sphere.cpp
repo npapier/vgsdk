@@ -27,10 +27,10 @@ namespace
 	void subdivide( vgd::node::Sphere *sphere )
 	{
 		// Retrives field accessors
-		vgd::field::EditorRW< vgd::field::MFVec3f >		vertex		= sphere->getVertexRW();
-		vgd::field::EditorRW< vgd::field::MFUInt >		vertexIndex	= sphere->getVertexIndexRW();
-		vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= sphere->getPrimitiveRW();
-		vgd::field::EditorRW< vgd::field::MFVec3f >		normal		= sphere->getNormalRW();
+		vgd::field::EditorRW< vgd::field::MFVec3f >		vertex		= sphere->getFVertexRW();
+		vgd::field::EditorRW< vgd::field::MFUInt32>		vertexIndex	= sphere->getFVertexIndexRW();
+		vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= sphere->getFPrimitiveRW();
+		vgd::field::EditorRW< vgd::field::MFVec3f >		normal		= sphere->getFNormalRW();
 
 		// Copies vertex and vertexIndex fields
 		std::vector< vgm::Vec3f > vertexOri;
@@ -156,7 +156,7 @@ void Sphere::initializeGeometry( const uint32 levels )
 
 	// VERTEX field
 
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = getVertexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = getFVertexRW();
 
 	const float t	= (1.f + std::sqrt(5.f))/2.f;
 	const float s	= std::sqrt(1.f + t*t);
@@ -191,7 +191,7 @@ void Sphere::initializeGeometry( const uint32 levels )
 	vertex.release();
 
 	// VERTEX INDEX field
-	vgd::field::EditorRW< vgd::field::MFUInt >	vertexIndex = getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex = getFVertexIndexRW();
 
 	vertexIndex->clear();
 	vertexIndex->reserve( 60 );
@@ -225,7 +225,7 @@ void Sphere::initializeGeometry( const uint32 levels )
 	vertexIndex->push_back( vertexIndexTable );
 
 	// PRIMITIVE field
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getFPrimitiveRW();
 	
 	const vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );
 
@@ -236,7 +236,7 @@ void Sphere::initializeGeometry( const uint32 levels )
 	vertexIndex.release();
 
 	// NORMAL field
-	vgd::field::EditorRW< vgd::field::MFVec3f >	normal = getNormalRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	normal = getFNormalRW();
 	
 	normal->clear();
 	normal->reserve( 12 );
@@ -260,7 +260,7 @@ void Sphere::initializeGeometry( const uint32 levels )
 			i<numTexUnits;
 			i++ )
 	{
-		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getTexCoordRW( i ) );
+		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getFTexCoordRW( i ) );
 		
 		// TEX COORD
 		texCoord->clear();

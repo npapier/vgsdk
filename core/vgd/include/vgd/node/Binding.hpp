@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,42 +6,39 @@
 #ifndef _VGD_NODE_BINDING_HPP
 #define _VGD_NODE_BINDING_HPP
 
-#include "vgd/node/Enum.hpp"
+#include "vgd/vgd.hpp"
 
 
 
-//namespace vgd
-//{
-//
-//namespace node
-//{
-//
-//
-//
-///**
-// * @brief Enumeration of all bindings modes.
-// * 
-// * Binding is used to defined the type of association between attributes and vertices.
-// * Attributes could be :
-// * \li normals
-// * \li tangents
-// * \li colors
-// * \li textures coordinates
-// * @todo Generates (using script) vgd::node::Shape::Binding class in vgd::node namespace to remove the following code
-// */
-//typedef vgd::node::Shape::Binding Binding;
-//
-//enum
-//{
-//	BIND_OFF			= vgd::node::Shape::BIND_OFF, 
-////	BIND_PER_VERTEX		= vgd::node::Shape::BIND_PER_VERTEX
-//};
-//
-//const int BIND_PER_VERTEX		= vgd::node::Shape::BIND_PER_VERTEX;
-//
-//
-//} // namespace node
-//
-//} // namespace vgd
+namespace vgd
+{
+
+namespace node
+{
+
+
+
+/**
+ * @brief Enumeration of all bindings modes.
+ * 
+ * Binding is used to defined the type of association between attributes and vertices.
+ * Attributes could be :
+ * \li normals.
+ * \li colors or secondary colors.
+ * \li textures.
+ * \li and so on.
+ */
+typedef enum {
+	BIND_OFF = 0,				/*!< No attribute at all */
+	BIND_OVERALL,				/*!< One attribute for the entire shape */
+	BIND_PER_PRIMITIVE,		/*!< One attribute per primitive (a sequence of triangles, triangles-strip...) */
+	BIND_PER_VERTEX			/*!< One attribute per vertex */
+} Binding;
+
+
+
+} // namespace node
+
+} // namespace vgd
 
 #endif //#ifndef _VGD_NODE_BINDING_HPP

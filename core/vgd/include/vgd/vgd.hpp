@@ -88,18 +88,6 @@
  */
 
 /**
- * @defgroup g_shapeModifierNodes Shape modifiers nodes
- * 
- * @ingroup g_nodes
- */
- 
- /**
- * @defgroup g_tessellationNodes Tessellation related nodes
- * 
- * @ingroup g_nodes
- */
-
-/**
  * @defgroup g_attributeNodes Attribute nodes
  * 
  * @ingroup g_nodes

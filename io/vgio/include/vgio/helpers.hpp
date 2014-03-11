@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2012, 2013, Nicolas Papier, Maxime Peresson.
+// VGSDK - Copyright (C) 2010, 2012, Nicolas Papier, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -39,8 +39,6 @@ namespace vgio
 VGIO_API std::pair< bool, vgd::Shp< vgd::node::Group > > load( const std::string filePath, const std::string key = "vgsdkViewer" );
 
 
-// @todo loadImage() load image (encrypt or not).
-
 /**
  * @brief Read the given encrypted image.
  *
@@ -75,50 +73,6 @@ VGIO_API vgd::Shp< vgio::ILoader > getLoaderByFilename( const std::string filena
  */
 VGIO_API vgd::Shp< std::vector<char> > readFile( const std::string filePath );
 
-
-
-/**
- * @name Read/write raw data into file
- *
- * @todo compressRaw(), uncompressRaw()
- */
-//@{
-
-/**
- * @brief Reads the file and initializes the given string with it.
- *
- * @param filePath		name of file to load
- * @param oData			data read are assign to this string
- * @return true if successful, false otherwise.
- *
- * @todo append data to oData
- * @ingroup g_ioHelpers
- */
-const bool readFile( const std::string filePath, std::string& oData );
-
-
-/**
- * @brief Writes the given data into file filePath.
- *
- * @param filePath		name of file to create. If file already exists, then its contents is deleted.
- * @param data			data to be written
- *
- * @ingroup g_ioHelpers
- */
-VGIO_API void writeFile( const std::string filePath, const std::string& data );
-
-/**
- * @brief Writes the given data into file filePath.
- *
- * @param filePath		name of file to create. If file already exists, then its contents is deleted.
- * @param data			data to be written
- * @param dataSize		size of the buffer given by data parameter
- *
- * @ingroup g_ioHelpers
- */
-VGIO_API void writeFile( const std::string filePath, const char * data, const uint dataSize );
-
-//@}
 
 
 } // namespace vgio

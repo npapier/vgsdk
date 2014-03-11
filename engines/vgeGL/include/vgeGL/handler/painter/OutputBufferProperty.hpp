@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -44,15 +44,8 @@ struct VGEGL_API OutputBufferProperty : public vge::handler::painter::MultiAttri
 
 	void apply	( vge::engine::Engine*, vgd::node::Node* );
 	void unapply( vge::engine::Engine*, vgd::node::Node* );
-
+	
 	void setToDefaults();
-
-
-
-	/**
-	 * @brief Computes texture size needed to fullfil the OutputBufferProperty requirements (field size and sizeSemantic)
-	 */
-	static const vgm::Vec2i computeTextureSize( vgeGL::engine::Engine * engine, vgd::node::OutputBufferProperty * node );
 
 	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
 	typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;
@@ -63,7 +56,7 @@ struct VGEGL_API OutputBufferProperty : public vge::handler::painter::MultiAttri
 	/**
 	 * @param node	the node describing the desired Texture2D or null to retrieve a depth Texture2D.internalFormat=DEPTH_COMPONENT_24
 	 */
-	static vgd::Shp< vgd::node::Texture2D > createOrGetTexture2D( vgeGL::engine::Engine * engine, vgd::node::OutputBufferProperty * node );
+	static vgd::Shp< vgd::node::Texture2D > createTexture2D( vgeGL::engine::Engine * engine, vgd::node::OutputBufferProperty * node );
 
 	typedef std::pair< vgd::Shp< vgd::node::FrameBuffer >, vgd::Shp< vgeGL::rc::FrameBufferObject > > createsFBORetValType;
 	static createsFBORetValType createsFBO(	vgeGL::engine::Engine * engine,

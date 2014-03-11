@@ -50,12 +50,12 @@ struct VGTEST_API Base
 	/**
 	 * @brief Run the GUI main loop
 	 */
-	virtual void run( const bool callViewAll = true )=0;
+	virtual void	run()=0;
 
 	/**
 	 * @brief Quit the GUI main loop and destroy the canvas and window
 	 */
-	virtual bool quit()=0;
+	virtual bool	quit()=0;
 	//@}
 
 
@@ -63,13 +63,13 @@ struct VGTEST_API Base
 	 * @brief Set if the GUI main loop must quit next idle time
 	 * @param true to quit
 	 */
-	virtual void setQuit(const bool b);
+	virtual void	setQuit(const bool b);
 
 
 	/**
 	 * @brief Get logging class
 	 */
-	vgd::Shp< vgTest::Logging > getLog();
+	vgd::Shp< vgTest::Logging >	getLog();
 
 
 	/**

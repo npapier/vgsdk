@@ -70,8 +70,8 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 	int32 i32NumVertices;
 	fp >> i32NumVertices;
 	
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= vertexShape->getVertexRW();
-	vgd::field::EditorRW< vgd::field::MFUInt>	vertexIndex	= vertexShape->getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= vertexShape->getFVertexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex	= vertexShape->getFVertexIndexRW();
 
 	// setCounterClockWiseFlag( false ); FIXME
 
@@ -159,7 +159,7 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 	fp.close();
 
 	// primitive
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getFPrimitiveRW();
 	primitive->clear();
 
 	vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );
@@ -213,8 +213,8 @@ std::pair< bool, vgd::Shp< vgd::node::TriSet > > Loader::loadTrian( const std::s
 	int32 i32NumVertices;
 	fp >> i32NumVertices;
 	
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= triset->getVertexRW();
-	vgd::field::EditorRW< vgd::field::MFUInt>	vertexIndex	= triset->getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= triset->getFVertexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex	= triset->getFVertexIndexRW();
 
 	// setCounterClockWiseFlag( false ); FIXME
 
@@ -302,7 +302,7 @@ std::pair< bool, vgd::Shp< vgd::node::TriSet > > Loader::loadTrian( const std::s
 	fp.close();
 
 	// primitive
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = triset->getPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = triset->getFPrimitiveRW();
 	primitive->clear();
 
 	vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );
@@ -348,8 +348,8 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 	}
 
 	// write nb of vertices
-	vgd::field::EditorRO< vgd::field::MFVec3f >	vertex		= triset->getVertexRO();
-	vgd::field::EditorRO< vgd::field::MFUInt>	vertexIndex	= triset->getVertexIndexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >	vertex		= triset->getFVertexRO();
+	vgd::field::EditorRO< vgd::field::MFUInt32>	vertexIndex	= triset->getFVertexIndexRO();
 	
 	int32 i32NumVertices = vertex->size();
 	fp << i32NumVertices << std::endl;
@@ -421,7 +421,7 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 	fp.close();
 
 	// primitive
-	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives = triset->getPrimitiveRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive >	primitives = triset->getFPrimitiveRO();
 	assert( primitives->size() == 1 );
 	vgd::node::Primitive primitive = (*primitives)[0];
 	assert( primitive.getType() == vgd::node::Primitive::TRIANGLES );
@@ -791,14 +791,14 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		{
 			//vgLogDebug("vgTrian::loadTrian2: Automatic mipmap generation (GL_SGIS_generate_mipmap detected)." );
 			tex->setMipmap( true );
-			tex->setMinFilter( Texture2D::LINEAR_MIPMAP_LINEAR );
-			tex->setMagFilter( Texture2D::LINEAR );
+			tex->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR_MIPMAP_LINEAR );
+			tex->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
 		}
 		else
 		{
 			vgLogDebug("vgTrian::loadTrian2: No automatic mipmap generation (GL_SGIS_generate_mipmap not detected)." );
-			tex->setMinFilter( Texture2D::LINEAR );
-			tex->setMagFilter( Texture2D::LINEAR );
+			tex->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
+			tex->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
 		}
 
 		// uvtrans 1 0 0 0   0 1 0 0   0 0 1 0   0 0 0 0
@@ -838,15 +838,15 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		
 		if ( name == "uWrap" )
 		{
-			tex->setWrapS( vgd::node::Texture2D::REPEAT );
+			tex->setWrap( vgd::node::Texture2D::WRAP_S, vgd::node::Texture2D::REPEAT );
 		}
 		else if ( name == "uMirror" )
 		{
-			tex->setWrapS( vgd::node::Texture2D::MIRRORED_REPEAT );
+			tex->setWrap( vgd::node::Texture2D::WRAP_S, vgd::node::Texture2D::MIRRORED_REPEAT );
 		}
 		else if ( name == "uClamp" )
 		{
-			tex->setWrapS( vgd::node::Texture2D::CLAMP );
+			tex->setWrap( vgd::node::Texture2D::WRAP_S, vgd::node::Texture2D::CLAMP );
 		}
 		else
 		{
@@ -858,20 +858,20 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 		
 		if ( name == "vWrap" )
 		{
-			tex->setWrapT( vgd::node::Texture2D::REPEAT );
+			tex->setWrap( vgd::node::Texture2D::WRAP_T, vgd::node::Texture2D::REPEAT );
 		}
 		else if ( name == "vMirror" )
 		{
-			tex->setWrapT( vgd::node::Texture2D::MIRRORED_REPEAT );
+			tex->setWrap( vgd::node::Texture2D::WRAP_T, vgd::node::Texture2D::MIRRORED_REPEAT );
 		}
 		else if ( name == "vClamp" )
 		{
-			tex->setWrapT( vgd::node::Texture2D::CLAMP );
+			tex->setWrap( vgd::node::Texture2D::WRAP_T, vgd::node::Texture2D::CLAMP );
 		}
 		else
 		{
 			assert( false );
-		}
+		}		
 
 		tex->sethFunction( vgd::node::Texture2D::FUN_MODULATE );
 	}
@@ -896,7 +896,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::istream & in, const st
 		int32 vertexSize;
 		in >> vertexSize;
 
-		vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= vertexShape->getVertexRW();
+		vgd::field::EditorRW< vgd::field::MFVec3f >	vertex		= vertexShape->getFVertexRW();
 
 		// setCounterClockWiseFlag( false ); FIXME
 
@@ -926,7 +926,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::istream & in, const st
 		int32 normalSize;
 		in >> normalSize;
 		
-		vgd::field::EditorRW< vgd::field::MFVec3f >	normal = vertexShape->getNormalRW();
+		vgd::field::EditorRW< vgd::field::MFVec3f >	normal = vertexShape->getFNormalRW();
 
 		// read normals
 		normal->clear();
@@ -959,7 +959,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::istream & in, const st
 		vertexShape->createTexUnits( 2, 0, 1 );											// ??????????FIXME multitexture multiTexcoord
 		
 		// FIXME only for MFVec2f...
-		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord = vertexShape->getTexCoordRW<vgd::field::MFVec2f>( 0 );
+		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord = vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( 0 );
 
 		// read texCoords
 		texCoord->clear();
@@ -991,7 +991,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::istream & in, const st
 
 		// reserve memory for edges.
 		// and neighbours FIXME
-		vgd::field::EditorRW< vgd::field::MFUInt>	vertexIndex	= vertexShape->getVertexIndexRW();	
+		vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex	= vertexShape->getFVertexIndexRW();	
 		vertexIndex->clear();
 		vertexIndex->reserve( 3*i32NumTriangles );
 	
@@ -1015,7 +1015,7 @@ vgd::Shp< vgd::node::VertexShape > Loader::loadMesh( std::istream & in, const st
 		//m_i32NextEdge = vertexIndex->getNum();
 
 		// primitive
-		vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getPrimitiveRW();
+		vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive = vertexShape->getFPrimitiveRW();
 		primitive->clear();
 
 		vgd::node::Primitive prim( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() );

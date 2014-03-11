@@ -13,7 +13,8 @@ import TestReport
 import os
 import shutil
 import re
-import Image
+import PIL
+from PIL import Image
 
 class ImageAttribute(CustomAttribute):
 	'''
@@ -148,5 +149,5 @@ class ImageAttribute(CustomAttribute):
 		img = Image.open(original)
 		wpercent = (300/float(img.size[0]))
 		hsize = int((float(img.size[1])*float(wpercent)))
-		img = img.resize((300,hsize), Image.ANTIALIAS)
+		img = img.resize((300,hsize), PIL.Image.ANTIALIAS)
 		img.save(resize)

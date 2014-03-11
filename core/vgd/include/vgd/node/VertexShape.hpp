@@ -1,20 +1,24 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2007, 2010, 2012, 2013, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Alexandre Di Pino
 
 #ifndef _VGD_NODE_VERTEXSHAPE_HPP
 #define _VGD_NODE_VERTEXSHAPE_HPP
 
+#include "vgd/vgd.hpp"
+
+#include <vgm/Box.hpp>
+
 #include "vgd/field/Binding.hpp"
 #include "vgd/field/Enum.hpp"
-#include "vgd/field/Primitive.hpp"
-#include "vgd/field/Uint.hpp"
-#include "vgd/field/Vec3f.hpp"
-#include "vgd/field/Vec4f.hpp"
-#include "vgd/node/Shape.hpp"
-#include "vgd/node/ITransformation.hpp"
 #include "vgd/field/Float.hpp"
+#include "vgd/field/Integer.hpp"
+#include "vgd/field/Primitive.hpp"
+#include "vgd/field/Vector.hpp"
+#include "vgd/itf/ITransformation.hpp"
+#include "vgd/node/Shape.hpp"
 
 
 
@@ -27,614 +31,93 @@ namespace node
 
 
 /**
- * @brief Base class for all vertex-based shape (geometry) nodes
+ * @brief Base class for all vertex-based shape (geometry) nodes.
+ * 
+ * Summary of capabilities :
+ * - encapsulation of geometry/material specification.
+ * - bounding box.
+ * - applying transformation (matrix, translation and rotation) on vertices and normals.
  *
- * Summary of capabilities :\n 	- encapsulation of geometry/material specification.\n 	- bounding box.\n 	- applying transformation (matrix, translation and rotation) on vertices and normals.\n Fields that defined the geometry :\n 	- MFVec3f \c		vertex 		= empty\n 	- MFUint32 \c		vertexIndex	= empty\n 	- MFPrimitive \c	primitive	= empty\n Fields used by the lighting equation and by materials : \n 	- MFVec3f \c normal				= empty\n 	- MFVec3f \c tangent			= empty\n 	- MFVec4f \c color				= empty\n 	- MFVec2f \c texCoord			= empty\n 		texCoord is a "dynamic field", see createTexUnits()...\n Fields for defining bindings :\n 	- SFBinding \c normalBinding 			= BIND_OFF\n 	- SFBinding \c tangentBinding 			= BIND_OFF\n 	- SFBinding \c colorBinding 			= BIND_OFF\n 	- SFBinding \c texCoordBinding			= BIND_OFF\n 		texCoordBinding is a "dynamic field", see createTexUnits()...\n getDFBoundingBox() returns dirty flag that is invalidate when bounding box is invalidate and must be recomputed 
  *
- * New fields defined by this node :
- * - SFBinding \c normalBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
- *<br>
- * - SFBinding \c tangentBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
- *<br>
- * - SFBinding \c colorBinding = vgd::node::Binding(vgd::node::BIND_OFF)<br>
- *<br>
- * - SFEnum \c boundingBoxUpdatePolicy = (AUTOMATIC)<br>
- *<br>
- * - SFEnum \c deformableHint = (STATIC)<br>
- *   Specifies a symbolic constant indicating the usage of this shape. Choose one value among STATIC, DYNAMIC and STREAM.<br>
- *<br>
- * - MFVec3f \c vertex = vgm::Vec3f()<br>
- *<br>
- * - MFUint \c vertexIndex = empty<br>
- *<br>
- * - MFPrimitive \c primitive = vgd::node::Primitive()<br>
- *<br>
- * - MFVec3f \c normal = vgm::Vec3f()<br>
- *<br>
- * - MFVec3f \c tangent = vgm::Vec3f()<br>
- *<br>
- * - MFVec4f \c color = vgm::Vec4f()<br>
- *<br>
+ * New field added by this node :
+ * 
+ * - fields that defined the geometry :
+ * 	- MFVec3f \c		vertex 		= empty\n
+ * 	- MFPrimitive \c	primitive	= empty\n
+ * 	- MFUint32 \c		vertexIndex	= empty\n
+ * 
+ * - fields used by the lighting equation or by materials.
+ * 	- MFVec3f \c normal				= empty\n
+ * 	- MFVec3f \c tangent			= empty\n
+ * 	- MFVec4f \c color4				= empty\n
+ * 	- MFVec4f \c secondaryColor4	= empty\n
+ * 	- MFVec2f \c texCoord			= empty\n
+ * 		texCoord is a "dynamic field", see createTexUnits()...
+ * 	- MFUint8 \c edgeFlag			= empty\n
+ * 
+ * - fields for bindings :
+ * 	- SFBinding \c normalBinding 			= BIND_OFF\n
+ * 	- SFBinding \c tangentBinding 			= BIND_OFF\n
+ * 	- SFBinding \c color4Binding			= BIND_OFF\n
+ * 	- SFBinding \c secondaryColor4Binding	= BIND_OFF\n
+ * 	- SFBinding \c texCoordBinding			= BIND_OFF\n
+ * 		texCoordBinding is a "dynamic field", see createTexUnits()...
+ * 	- SFBinding \c edgeFlagBinding			= BIND_OFF\n
+ * 
+ * - SFEnum \c deformableHint = STATIC\n
+ * 		Specifies a symbolic constant indicating the usage of this shape. 
+ * 		Choose one value among STATIC, DYNAMIC and STREAM.
  *
+ * - SFFloat tessellationLevel = 0.f\n
+ * - SFFloat tessellationBias = 0.f\n
+ * - SFEnum \c boundingBoxUpdatePolicy = AUTOMATIC\n
+ * 		Choose one value among AUTOMATIC or ONCE.
+ * 
+ * @remarks BIND_OFF, BIND_PER_VERTEX could be used, other not.
+ * @remarks Depends on vgd::node::DrawStyle.hpp.
+ * 
+ * 
+ * Differents versions to gain read-only(RO) or read-write(RW) field access :
+ *
+ * \li read-only access		: vgd::field::EditorRO< vgd::field::MFVec3f > vertices = getFVertexRO();
+ * \li read-write access	: vgd::field::EditorRW< vgd::field::MFVec3f > vertices = getFVertexRW();
+ * 
+ * \li read-only access		: vgd::field::EditorRO< vgd::node::VertexShape::FVertexType > vertices = getFVertexRO();
+ * \li read-write access	: vgd::field::EditorRW< vgd::node::VertexShape::FVertexType > vertices = getFVertexRW();
+ * 
+ * \li read-only access		: vgd::field::EditorRO<vgd::field::MFVec3f> vertices = 
+ * getFieldRO<vgd::field::MFVec3f>(getFVertex());
+ * \li read-write access	: vgd::field::EditorRW<vgd::field::MFVec3f> vertices = 
+ * getFieldRW<vgd::field::MFVec3f>(getFVertex());
+ * @remarks Idem for all others fields(especially for bindings).
+ * 
+ * 
+ * @todo Color/SecondaryColor3, ColorIndex, FogCoordinates.
+ * @todo generateTexCoords that Calculates either spherical, cylindrical, or planar two-dimensional texture coordinates into texture unit tu.
+ * @todo SetToDefault() that call a FieldManager method that called clear() on each field(on multifield).
+ * @todo Add a lighter version of this class(with less field, or add field at run-time) and a templated one(for using int16...).
+ * 
  * @ingroup g_nodes
  * @ingroup g_shapeNodes
  * @ingroup g_texturingNodes
  */
-struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransformation
+
+struct VGD_API VertexShape : public vgd::itf::ITransformation, public vgd::node::Shape
 {
+	META_NODE_HPP( VertexShape );
+
+
+
 	/**
-	 * @name Factories
+	 * @name Algo/Trian support.
 	 */
 	//@{
 
-	/**
-	 * @brief Node factory
-	 *
-	 * Creates a node with all fields sets to defaults values
-	 */
-	static vgd::Shp< VertexShape > create( const std::string nodeName = "NoName" );
-
-	/**
-	 * @brief Node factory
-	 *
-	 * Creates a node with all fields sets to defaults values and
-	 * sets the \c multiAttributeIndex of the multi-attribute.
-	 *
-	 * @param index		zero-based index of the multi-attribute
-	 */
-	static vgd::Shp< VertexShape > create( const std::string nodeName, const uint8 index );
-	
-	/**
-	 *@brief Node factory
-	 *
-	 * Creates a node with all fields sets to defaults values (optionals fields too).
-	 */
-	static vgd::Shp< VertexShape > createWhole( const std::string nodeName = "DefaultWhole" );
-
+	// @todo vgm::Box3f computeAndRetrivesBoundingBox();
 	//@}
 
-
-
 	/**
-	 * @name Accessors to field normalBinding
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c normalBinding.
-	 */
-	typedef vgd::node::Binding NormalBindingValueType;
-
-	/**
-	 * @brief Type definition of the field named \c normalBinding
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FNormalBindingType;
-
-
-	/**
-	 * @brief Gets the value of field named \c normalBinding.
-	 */
-	const NormalBindingValueType getNormalBinding() const;
-
-	/**
-	 * @brief Sets the value of field named \c normalBinding.
-	 */
-	void setNormalBinding( const NormalBindingValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field tangentBinding
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c tangentBinding.
-	 */
-	typedef vgd::node::Binding TangentBindingValueType;
-
-	/**
-	 * @brief Type definition of the field named \c tangentBinding
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FTangentBindingType;
-
-
-	/**
-	 * @brief Gets the value of field named \c tangentBinding.
-	 */
-	const TangentBindingValueType getTangentBinding() const;
-
-	/**
-	 * @brief Sets the value of field named \c tangentBinding.
-	 */
-	void setTangentBinding( const TangentBindingValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field colorBinding
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c colorBinding.
-	 */
-	typedef vgd::node::Binding ColorBindingValueType;
-
-	/**
-	 * @brief Type definition of the field named \c colorBinding
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FColorBindingType;
-
-
-	/**
-	 * @brief Gets the value of field named \c colorBinding.
-	 */
-	const ColorBindingValueType getColorBinding() const;
-
-	/**
-	 * @brief Sets the value of field named \c colorBinding.
-	 */
-	void setColorBinding( const ColorBindingValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field boundingBoxUpdatePolicy
-	 */
-	//@{
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum  
-	{
-		AUTOMATIC = 468,	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
-		ONCE = 469,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
-		DEFAULT_BOUNDINGBOXUPDATEPOLICY = AUTOMATIC	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct BoundingBoxUpdatePolicyValueType : public vgd::field::Enum
-	{
-		BoundingBoxUpdatePolicyValueType()
-		{}
-
-		BoundingBoxUpdatePolicyValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		BoundingBoxUpdatePolicyValueType( const BoundingBoxUpdatePolicyValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		BoundingBoxUpdatePolicyValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 468 );
-			retVal.push_back( 469 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "AUTOMATIC" );
-			retVal.push_back( "ONCE" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c boundingBoxUpdatePolicy
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FBoundingBoxUpdatePolicyType;
-
-
-	/**
-	 * @brief Gets the value of field named \c boundingBoxUpdatePolicy.
-	 */
-	const BoundingBoxUpdatePolicyValueType getBoundingBoxUpdatePolicy() const;
-
-	/**
-	 * @brief Sets the value of field named \c boundingBoxUpdatePolicy.
-	 */
-	void setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field deformableHint
-	 */
-	//@{
-
-	/**
-	 * @brief Definition of symbolic values
-	 */
-	enum  
-	{
-		DYNAMIC = 471,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
-		STATIC = 470,	///< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once.
-		STREAM = 472,	///< STREAM assumed to be a 1-to-1 update-to-draw. Means the geometry is specified for each frame.
-		DEFAULT_DEFORMABLEHINT = STATIC	///< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once.
-	};
-
-	/**
-	 * @brief Type definition of a container for the previous symbolic values
-	 */
-	struct DeformableHintValueType : public vgd::field::Enum
-	{
-		DeformableHintValueType()
-		{}
-
-		DeformableHintValueType( const int v )
-		: vgd::field::Enum(v)
-		{}
-
-		DeformableHintValueType( const DeformableHintValueType& o )
-		: vgd::field::Enum(o)
-		{}
-
-		DeformableHintValueType( const vgd::field::Enum& o )
-		: vgd::field::Enum(o)
-		{}
-
-		const std::vector< int > values() const
-		{
-			std::vector< int > retVal;
-
-			retVal.push_back( 470 );
-			retVal.push_back( 471 );
-			retVal.push_back( 472 );
-
-			return retVal;
-		}
-
-		const std::vector< std::string > strings() const
-		{
-			std::vector< std::string > retVal;
-
-			retVal.push_back( "STATIC" );
-			retVal.push_back( "DYNAMIC" );
-			retVal.push_back( "STREAM" );
-
-			return retVal;
-		}
-	};
-
-	/**
-	 * @brief Type definition of the field named \c deformableHint
-	 */
-	typedef vgd::field::TSingleField< vgd::field::Enum > FDeformableHintType;
-
-
-	/**
-	 * @brief Gets the value of field named \c deformableHint.
-	 */
-	const DeformableHintValueType getDeformableHint() const;
-
-	/**
-	 * @brief Sets the value of field named \c deformableHint.
-	 */
-	void setDeformableHint( const DeformableHintValueType value );
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field vertex
-	 *
-	 * @todo getVertex( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c vertex.
-	 */
-	typedef vgm::Vec3f VertexValueType;
-
-	/**
-	 * @brief Type definition of the field named \c vertex
-	 */
-	typedef vgd::field::TMultiField< VertexValueType > FVertexType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c vertex.
-	 */
-	vgd::field::EditorRO< FVertexType > getVertexRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c vertex.
-	 */
-	vgd::field::EditorRW< FVertexType > getVertexRW();
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field vertexIndex
-	 *
-	 * @todo getVertexIndex( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c vertexIndex.
-	 */
-	typedef uint VertexIndexValueType;
-
-	/**
-	 * @brief Type definition of the field named \c vertexIndex
-	 */
-	typedef vgd::field::TMultiField< VertexIndexValueType > FVertexIndexType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c vertexIndex.
-	 */
-	vgd::field::EditorRO< FVertexIndexType > getVertexIndexRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c vertexIndex.
-	 */
-	vgd::field::EditorRW< FVertexIndexType > getVertexIndexRW();
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field primitive
-	 *
-	 * @todo getPrimitive( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c primitive.
-	 */
-	typedef vgd::node::Primitive PrimitiveValueType;
-
-	/**
-	 * @brief Type definition of the field named \c primitive
-	 */
-	typedef vgd::field::TMultiField< PrimitiveValueType > FPrimitiveType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c primitive.
-	 */
-	vgd::field::EditorRO< FPrimitiveType > getPrimitiveRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c primitive.
-	 */
-	vgd::field::EditorRW< FPrimitiveType > getPrimitiveRW();
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field normal
-	 *
-	 * @todo getNormal( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c normal.
-	 */
-	typedef vgm::Vec3f NormalValueType;
-
-	/**
-	 * @brief Type definition of the field named \c normal
-	 */
-	typedef vgd::field::TMultiField< NormalValueType > FNormalType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c normal.
-	 */
-	vgd::field::EditorRO< FNormalType > getNormalRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c normal.
-	 */
-	vgd::field::EditorRW< FNormalType > getNormalRW();
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field tangent
-	 *
-	 * @todo getTangent( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c tangent.
-	 */
-	typedef vgm::Vec3f TangentValueType;
-
-	/**
-	 * @brief Type definition of the field named \c tangent
-	 */
-	typedef vgd::field::TMultiField< TangentValueType > FTangentType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c tangent.
-	 */
-	vgd::field::EditorRO< FTangentType > getTangentRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c tangent.
-	 */
-	vgd::field::EditorRW< FTangentType > getTangentRW();
-
-	//@}
-
-
-
-	/**
-	 * @name Accessors to field color
-	 *
-	 * @todo getColor( const bool rw = false ) ?
-	 */
-	//@{
-
-	/**
-	 * @brief Type definition of the value contained by field named \c color.
-	 */
-	typedef vgm::Vec4f ColorValueType;
-
-	/**
-	 * @brief Type definition of the field named \c color
-	 */
-	typedef vgd::field::TMultiField< ColorValueType > FColorType;
-
-
-	/**
-	 * @brief Gets a read-only editor on the multi field named \c color.
-	 */
-	vgd::field::EditorRO< FColorType > getColorRO() const;
-
-	/**
-	 * @brief Gets a read-write editor on the multi field named \c color.
-	 */
-	vgd::field::EditorRW< FColorType > getColorRW();
-
-	//@}
-
-
-
-	/**
-	 * @name Field name accessors
-	 */
-	//@{
-
-	/**
-	 * @brief Returns the name of field \c normalBinding.
-	 *
-	 * @return the name of field \c normalBinding.
-	 */
-	static const std::string getFNormalBinding( void );
-
-	/**
-	 * @brief Returns the name of field \c tangentBinding.
-	 *
-	 * @return the name of field \c tangentBinding.
-	 */
-	static const std::string getFTangentBinding( void );
-
-	/**
-	 * @brief Returns the name of field \c colorBinding.
-	 *
-	 * @return the name of field \c colorBinding.
-	 */
-	static const std::string getFColorBinding( void );
-
-	/**
-	 * @brief Returns the name of field \c boundingBoxUpdatePolicy.
-	 *
-	 * @return the name of field \c boundingBoxUpdatePolicy.
-	 */
-	static const std::string getFBoundingBoxUpdatePolicy( void );
-
-	/**
-	 * @brief Returns the name of field \c deformableHint.
-	 *
-	 * @return the name of field \c deformableHint.
-	 */
-	static const std::string getFDeformableHint( void );
-
-	/**
-	 * @brief Returns the name of field \c vertex.
-	 *
-	 * @return the name of field \c vertex.
-	 */
-	static const std::string getFVertex( void );
-
-	/**
-	 * @brief Returns the name of field \c vertexIndex.
-	 *
-	 * @return the name of field \c vertexIndex.
-	 */
-	static const std::string getFVertexIndex( void );
-
-	/**
-	 * @brief Returns the name of field \c primitive.
-	 *
-	 * @return the name of field \c primitive.
-	 */
-	static const std::string getFPrimitive( void );
-
-	/**
-	 * @brief Returns the name of field \c normal.
-	 *
-	 * @return the name of field \c normal.
-	 */
-	static const std::string getFNormal( void );
-
-	/**
-	 * @brief Returns the name of field \c tangent.
-	 *
-	 * @return the name of field \c tangent.
-	 */
-	static const std::string getFTangent( void );
-
-	/**
-	 * @brief Returns the name of field \c color.
-	 *
-	 * @return the name of field \c color.
-	 */
-	static const std::string getFColor( void );
-
-	//@}
-
-
-	/**
-	 * @name Dirty flags enumeration
-	 */
-	//@{
-
-	/**
-	 * @brief Returns name of dirty flag that is invalidate when \c boundingBox field is modified.
-	 */
-	static const std::string getDFBoundingBox();
-
-	//@}
-	/**
-	 * @brief Invalidate bounding box dirty flag for each parents of this node.
-	 */
-	void invalidateParentsBoundingBoxDirtyFlag();
-
-	/**
-	 * @name Bounding box
+	 * @name Bounding box.
 	 */
 	//@{
 
@@ -670,7 +153,6 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	bool smartComputeBoundingBox( const vgm::MatrixR& transformation );
 	
 	void invalidateBoundingBox( bool bInvalidate = true );
-
 	//@}
 
 
@@ -708,7 +190,7 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	template< typename T >
 	void textureTransform( const vgm::MatrixR& matrix, const int texUnit )
 	{
-		vgd::field::EditorRW< T > texCoords	= getTexCoordRW< T >( texUnit );
+		vgd::field::EditorRW< T > texCoords	= getFTexCoordRW< T >( texUnit );
 
 		// Transform each texCoord
 		for(	T::iterator	i	= texCoords->begin(),
@@ -719,12 +201,122 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 			matrix.multVecMatrix( (*i), (*i) );
 		}
 	};
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field vertex
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c vertex field.
+	 */	
+	typedef vgd::field::MFVec3f	FVertexType;
+		
+	/**
+	 * @brief Typedef for the \c vertex value.
+	 */
+	typedef vgm::Vec3f			VertexValueType;
+
+	vgd::field::EditorRO< FVertexType >		getFVertexRO() const;
+	vgd::field::EditorRW< FVertexType >		getFVertexRW();
 
 	//@}
 
 
+
 	/**
-	 * @name Accessors to field \c texCoord*
+	 * @name Accessors to field normal.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c normal field.
+	 */	
+	typedef vgd::field::MFVec3f	FNormalType;
+		
+	/**
+	 * @brief Typedef for the \c normal value.
+	 */
+	typedef vgm::Vec3f			NormalValueType;
+
+	vgd::field::EditorRO< FNormalType >		getFNormalRO() const;
+	vgd::field::EditorRW< FNormalType >		getFNormalRW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field tangent.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c tangent field.
+	 */	
+	typedef vgd::field::MFVec3f	FTangentType;
+
+	/**
+	 * @brief Typedef for the \c tangent value.
+	 */
+	typedef vgm::Vec3f			TangentValueType;
+
+	vgd::field::EditorRO< FTangentType >		getFTangentRO() const;
+	vgd::field::EditorRW< FTangentType >		getFTangentRW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field color4.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c color4 field.
+	 */	
+	typedef vgd::field::MFVec4f	FColor4Type;
+		
+	/**
+	 * @brief Typedef for the \c color4 value.
+	 */
+	typedef vgm::Vec4f			Color4ValueType;
+
+	vgd::field::EditorRO< FColor4Type >		getFColor4RO() const;
+	vgd::field::EditorRW< FColor4Type >		getFColor4RW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field secondaryColor4.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c secondaryColor4 field.
+	 */	
+	typedef vgd::field::MFVec4f	FSecondaryColor4Type;
+		
+	/**
+	 * @brief Typedef for the \c secondaryColor4 value.
+	 */
+	typedef vgm::Vec4f			SecondaryColor4ValueType;
+
+	vgd::field::EditorRO< FSecondaryColor4Type >		getFSecondaryColor4RO() const;
+	vgd::field::EditorRW< FSecondaryColor4Type >		getFSecondaryColor4RW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field texCoord*.
 	 */
 	//@{
 
@@ -774,7 +366,7 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 *
 	 * @param index		zero-base index for the \c texCoord field.
 	 */
-	const bool hasTexCoord( const uint index ) const;
+	const bool hasFTexCoord( const uint index ) const;
 
 	/**
 	 * @brief Returns the dimension of the i-th \c texCoord field.
@@ -795,7 +387,7 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 * @param index		zero-base index for the \c texCoord field.
 	 */
 	template< typename FTexCoordType >
-	vgd::field::EditorRO< FTexCoordType > getTexCoordRO( const int32 index = 0 ) const
+	vgd::field::EditorRO< FTexCoordType > getFTexCoordRO( const int32 index = 0 ) const
 	{
 		return ( getFieldRO< FTexCoordType >(getFTexCoord( index )) );
 	}
@@ -806,7 +398,7 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 * @param index		zero-base index for the \c texCoord field.
 	 */
 	template< typename FTexCoordType >
-	vgd::field::EditorRW< FTexCoordType > getTexCoordRW( const int32 index = 0 )
+	vgd::field::EditorRW< FTexCoordType > getFTexCoordRW( const int32 index = 0 )
 	{
 		return ( getFieldRW< FTexCoordType >(getFTexCoord( index )) );
 	}
@@ -831,6 +423,29 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 */
 	void createTexUnits( const int8 texCoordDimension = 2, const int32 index = 0, const int32 num = 1 );
 
+
+private:
+
+	/**
+	 * @brief Call this method to create dynamically one or more \c texCoord and \c texCoordBinding fields with the 
+	 * specified \c fieldType and for all the desired textures units.
+	 * 
+	 * @param index					zero-base index for the \c texCoord field.
+	 * @param num					number of contiguous fields.
+	 */
+	template< typename fieldType >
+	void createTexUnits( const int32 index, const int32 num );
+
+public:
+	typedef std::set< uint > IndexSet;
+	typedef IndexSet::const_iterator ConstIteratorIndexSet;
+	typedef std::pair< ConstIteratorIndexSet, ConstIteratorIndexSet > PairConstIteratorIndexSet;
+private:
+	typedef IndexSet::iterator IteratorIndexSet;
+	IndexSet m_texUnitsIndexSet;
+
+public:
+
 	/**
 	 * @brief Call this method to remove dynamically one \c or more texCoord and \c texCoordBinding fields.
 	 * 
@@ -843,69 +458,177 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 
 	/**
 	 * @brief Returns the number of texture units actually used by this node.
-	 *
-	 * @return The number of texture units.
-	 */
-	const int32 getNumTexUnits() const;
-
-
-	// Iterators
-	typedef std::set< uint > IndexSet;
-	typedef IndexSet::const_iterator ConstIteratorIndexSet;
-	const std::pair< ConstIteratorIndexSet, ConstIteratorIndexSet > getTexUnitsIterators() const;
-
-private:
-	typedef std::pair< ConstIteratorIndexSet, ConstIteratorIndexSet > PairConstIteratorIndexSet;
-	typedef IndexSet::iterator IteratorIndexSet;
-	IndexSet m_texUnitsIndexSet;
-
-	/**
-	 * @brief Call this method to create dynamically one or more \c texCoord and \c texCoordBinding fields with the 
-	 * specified \c fieldType and for all the desired textures units.
 	 * 
-	 * @param index					zero-base index for the \c texCoord field.
-	 * @param num					number of contiguous fields.
+	 * Returns only the number of texture units of the first block (starting from index 0) of contiguous \c texCoord.
+	 * 
+	 * @return The number of texture units.
+	 * 
+	 * @remarks This method is relatively slow.
 	 */
-	template< typename fieldType >
-	void createTexUnits( const int32 index, const int32 num )
-	{
-		// Adds fields
-		int32	i32Max = index + num;
+	const int32	getNumTexUnits() const;
 
-		for(	int32 i32 = index;
-				i32 < i32Max;
-				++i32 )
-		{
-			addField( new fieldType(getFTexCoord(i32)) );
-			addField( new FTexCoordBindingType(getFTexCoordBinding(i32)) );
-
-			assert( m_texUnitsIndexSet.find( i32 ) == m_texUnitsIndexSet.end() );
-			m_texUnitsIndexSet.insert( i32 );
-		}
-		
-		// Links
-		for(	int32 i32 = index;
-				i32 < i32Max;
-				++i32 )
-		{
-			link( getFTexCoord(i32), getDFNode() );
-			link( getFTexCoordBinding(i32), getDFNode() );
-		}
-
-		// Defaults bindings
-		for(	int32 i32 = index;
-				i32 < i32Max;
-				++i32 )
-		{
-			setTexCoordBinding( i32, vgd::node::BIND_OFF );
-		}
-	}
-public:
+	const std::pair< ConstIteratorIndexSet, ConstIteratorIndexSet > getTexUnitsIterators() const;
 	//@}
 
 
+
 	/**
-	 * @name Accessors to field \c texCoordBinding*
+	 * @name Accessors to field edgeFlag.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c edgeFlag field.
+	 */	
+	typedef vgd::field::MFUInt8	FEdgeFlagType;
+		
+	/**
+	 * @brief Typedef for the \c edgeFlag value.
+	 */
+	typedef uint8				EdgeFlagValueType;
+
+	vgd::field::EditorRO< FEdgeFlagType >		getFEdgeFlagRO() const;
+	vgd::field::EditorRW< FEdgeFlagType >		getFEdgeFlagRW();
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field primitive.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c primitive field.
+	 */	
+	typedef vgd::field::MFPrimitive	FPrimitiveType;
+		
+	/**
+	 * @brief Typedef for the \c primitive value.
+	 */
+	typedef vgd::node::Primitive	PrimitiveValueType;
+
+	vgd::field::EditorRO< FPrimitiveType >		getFPrimitiveRO() const;
+	vgd::field::EditorRW< FPrimitiveType >		getFPrimitiveRW();
+
+	//@}
+
+
+
+
+	/**
+	 * @name Accessors to field vertexIndex.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c vertexIndex field.
+	 */	
+	typedef vgd::field::MFUInt32		FVertexIndexType;
+		
+	/**
+	 * @brief Typedef for the \c vertexIndex value.
+	 */
+	typedef uint32						VertexIndexValueType;
+
+	vgd::field::EditorRO< FVertexIndexType >		getFVertexIndexRO() const;
+	vgd::field::EditorRW< FVertexIndexType >		getFVertexIndexRW();
+
+	//@}
+
+
+
+
+
+
+	/**
+	 * @name Accessors to field normalBinding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c normalBinding field.
+	 */	
+	typedef vgd::field::SFBinding		FNormalBindingType;
+		
+	/**
+	 * @brief Typedef for the \c normalBinding value.
+	 */
+	typedef vgd::node::Binding			NormalBindingValueType;
+
+	const vgd::node::Binding	getNormalBinding() const;
+	void 						setNormalBinding( const vgd::node::Binding );
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field tangentBinding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c tangentBinding field.
+	 */	
+	typedef vgd::field::SFBinding		FTangentBindingType;
+
+	/**
+	 * @brief Typedef for the \c tangentBinding value.
+	 */
+	typedef vgd::node::Binding			TangentBindingValueType;
+
+	const vgd::node::Binding	getTangentBinding() const;
+	void 						setTangentBinding( const vgd::node::Binding );
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field color4Binding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c color4Binding field.
+	 */	
+	typedef vgd::field::SFBinding		FColor4BindingType;
+		
+	/**
+	 * @brief Typedef for the \c color4Binding value.
+	 */
+	typedef vgd::node::Binding			Color4BindingValueType;
+
+	const vgd::node::Binding	getColor4Binding() const;
+	void 						setColor4Binding( const vgd::node::Binding );
+	//@}
+	
+
+
+	/**
+	 * @name Accessors to field secondaryColor4Binding.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c secondaryColor4Binding field.
+	 */	
+	typedef vgd::field::SFBinding		FSecondaryColor4BindingType;
+		
+	/**
+	 * @brief Typedef for the \c secondaryColor4Binding value.
+	 */
+	typedef vgd::node::Binding			SecondaryColor4BindingValueType;
+
+	const vgd::node::Binding	getSecondaryColor4Binding() const;
+	void 						setSecondaryColor4Binding( const vgd::node::Binding );
+
+	//@}
+
+	
+	
+	/**
+	 * @name Accessors to field texCoordBinding.
 	 */
 	//@{
 
@@ -913,17 +636,258 @@ public:
 	 * @brief Typedef for the \c texCoordBinding field.
 	 */	
 	typedef vgd::field::SFBinding		FTexCoordBindingType;
-
+		
 	/**
 	 * @brief Typedef for the \c texCoordBinding value.
 	 */
-	typedef vgd::node::Binding	TexCoordBindingValueType;
+	typedef vgd::node::Binding			TexCoordBindingValueType;
 
 	const vgd::node::Binding	getTexCoordBinding( const int32 texUnit ) const;
 	void 						setTexCoordBinding( const int32 texUnit, const vgd::node::Binding );
 
 	//@}
+	
+	
+	
+	/**
+	 * @name Accessors to field edgeFlagBinding.
+	 */
+	//@{
 
+	/**
+	 * @brief Typedef for the \c edgeFlagBinding field.
+	 */	
+	typedef vgd::field::SFBinding		FEdgeFlagBindingType;
+		
+	/**
+	 * @brief Typedef for the \c edgeFlagBinding value.
+	 */
+	typedef vgd::node::Binding			EdgeFlagBindingValueType;
+
+	const vgd::node::Binding	getEdgeFlagBinding() const;
+	void 						setEdgeFlagBinding( const vgd::node::Binding );
+
+	//@}
+
+
+	/**
+	 * @name Accessors to field deformableHint
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c deformableHint field.
+	 */	
+	typedef vgd::field::SFEnum FDeformableHintType;
+
+	/**
+	 * @brief Typedef for the \c deformableHint value.
+	 */
+	enum
+	{
+		STATIC = 1,		/*!< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once. */
+		DYNAMIC,		/*!< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every 
+						few frames. */
+		STREAM,			/*!< STREAM assumed to be a 1-to-1 update-to-draw. Means the geometry is specified for each 
+						frame.	*/
+		DEFAULT_DEFORMABLE_HINT = STATIC
+	};
+	
+	typedef vgd::field::Enum DeformableHintValueType;
+
+	/**
+	 * @brief Gets the deformableHint of node.
+	 */
+	const DeformableHintValueType	getDeformableHint() const;
+
+	/**
+	 * @brief Sets the deformableHint of node.
+	 * 
+	 */
+	void setDeformableHint( const DeformableHintValueType value );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field tessellation level.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c tessellation level field.
+	 */	
+	typedef vgd::field::SFFloat	FTessellationLevelType;
+
+	/**
+	 * @brief Typedef for the \c tessellation level value.
+	 */	
+	typedef float				TessellationLevelValueType;
+
+	vgd::field::EditorRO< FTessellationLevelType >	getTessellationLevelRO() const;
+	vgd::field::EditorRW< FTessellationLevelType >	getTessellationLevelRW();
+
+	void											setTessellationLevel(const float level);
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field tessellation bias.
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c tessellation bias field.
+	 */	
+	typedef vgd::field::SFFloat	FTessellationBiasType;
+
+	/**
+	 * @brief Typedef for the \c tessellation bias value.
+	 */	
+	typedef float				TessellationBiasValueType;
+
+	vgd::field::EditorRO< FTessellationBiasType >	getTessellationBiasRO() const;
+	vgd::field::EditorRW< FTessellationBiasType >	getTessellationBiasRW();
+
+	void											setTessellationBias(const float bias);
+	//@}
+
+
+	/**
+	 * @name Accessors to field boundingBoxUpdatePolicy
+	 */
+	//@{
+
+	/**
+	 * @brief Typedef for the \c boundingBoxUpdatePolicy field.
+	 */	
+	typedef vgd::field::SFEnum FBoundingBoxUpdatePolicyType;
+
+	/**
+	 * @brief Typedef for the \c boundingBoxUpdatePolicy value.
+	 */
+	enum
+	{
+		AUTOMATIC = 1,	/*<! AUTOMATIC means that the bounding box of this vertex based shape would be automatically 
+						computed the first time and updated when field \c vertex is modified 
+						(see service ComputeBoundingBox in ::vge::service namespace). */
+		ONCE,			/*<! ONCE means the the bounding box of this vertex based shape would be automatically 
+						computed only the first time. After the responsibility of bounding box updating is yours. */
+		DEFAULT_BOUNDINGBOX_UPDATE_POLICY = AUTOMATIC
+	};
+
+	typedef vgd::field::Enum BoundingBoxUpdatePolicyValueType;
+
+	/**
+	 * @brief Gets the boundingBoxUpdatePolicy of node.
+	 */
+	const BoundingBoxUpdatePolicyValueType	getBoundingBoxUpdatePolicy() const;
+
+	/**
+	 * @brief Sets the boundingBoxUpdatePolicy of node.
+	 * 
+	 */
+	void setBoundingBoxUpdatePolicy( const BoundingBoxUpdatePolicyValueType value );
+
+	//@}
+
+
+
+protected:
+	/**
+	 * @name Constructor.
+	 */
+	//@{
+	
+	/**
+	 * @brief Default constructor.
+	 */
+	VertexShape( const std::string nodeName );
+
+	void	setToDefaults( void );
+	
+	void	setOptionalsToDefaults();
+
+	//@}
+
+
+	/**
+	 * @brief Invalidate bounding box dirty flag for each parents of this node.
+	 */
+	void invalidateParentsBoundingBoxDirtyFlag();
+
+
+
+public:
+	/**
+	 * @name Fields names enumeration.
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the name of field \c vertex.
+	 * 
+	 * @return the name of field \c vertex.
+	 */
+	static const std::string getFVertex( void );
+
+	/**
+	 * @brief Returns the name of field \c normal.
+	 * 
+	 * @return the name of field \c normal.
+	 */
+	static const std::string getFNormal( void );
+
+	/**
+	 * @brief Returns the name of field \c tangent.
+	 * 
+	 * @return the name of field \c tangent.
+	 */
+	static const std::string VertexShape::getFTangent( void );
+
+	///**
+	// * @brief Returns the name of field \c tangent handidness.
+	// * 
+	// * @return the name of field \c tangent handidness.
+	// */
+	//static const std::string VertexShape::getFTangentHandidness( void );
+
+//	/**
+//	 * @brief Returns the name of field \c color3.
+//	 * 
+//	 * @return the name of field \c color3.
+//	 */
+//	static const std::string getFColor3( void );
+
+	/**
+	 * @brief Returns the name of field \c color4.
+	 * 
+	 * @return the name of field \c color4.
+	 */
+	static const std::string getFColor4( void );
+
+//	/**
+//	 * @brief Returns the name of field \c secondary \c color3.
+//	 * 
+//	 * @return the name of field \c secondary \c color3.
+//	 */
+//	static const std::string getFSecondaryColor3( void );
+
+	/**
+	 * @brief Returns the name of field \c secondary \c colors4.
+	 * 
+	 * @return the name of field \c secondary \c colors4.
+	 */
+	static const std::string getFSecondaryColor4( void );
+
+//	/**
+//	 * @brief Returns the name of field \c fog coordinates.
+//	 * 
+//	 * @return the name of field \c fog \c coordinates.
+//	 */
+//	static const std::string getFFogCoord( void );
 
 	/**
 	 * @brief Returns the name of field \c texture \c coordinates \c of \c the \c specified \c texture \c unit.
@@ -933,35 +897,147 @@ public:
 	static const std::string getFTexCoord( const int32 textureUnit );
 
 	/**
+	 * @brief Returns the name of field \c edge \c flag.
+	 * 
+	 * @return the name of field \c edge \c flag.
+	 */
+	static const std::string getFEdgeFlag( void );
+	
+	/**
+	 * @brief Returns the name of field \c primitive.
+	 * 
+	 * @return the name of field \c primitive.
+	 */
+	static const std::string getFPrimitive( void );
+
+
+
+	/**
+	 * @brief Returns the name of field \c vertex \c index.
+	 * 
+	 * @return the name of field \c vertex \c index.
+	 */
+	static const std::string getFVertexIndex( void );
+
+
+
+	/**
+	 * @brief Returns the name of field \c normal \c binding.
+	 * 
+	 * @return the name of field \c normal \c binding.
+	 */
+	static const std::string getFNormalBinding( void );
+
+	/**
+	 * @brief Returns the name of field \c tangent \c binding.
+	 * 
+	 * @return the name of field \c tangent \c binding.
+	 */
+	static const std::string getFTangentBinding( void );
+
+//	/**
+//	 * @brief Returns the name of field \c color3 \c binding.
+//	 * 
+//	 * @return the name of field \c color3 \c binding.
+//	 */
+//	static const std::string getFColor3Binding( void );
+
+	/**
+	 * @brief Returns the name of field \c color4 \c binding.
+	 * 
+	 * @return the name of field \c color4 \c binding.
+	 */
+	static const std::string getFColor4Binding( void );
+
+//	/**
+//	 * @brief Returns the name of field \c secondary \c color3 \c binding.
+//	 * 
+//	 * @return the name of field \c \c secondary \c color3.
+//	 */
+//	static const std::string getFSecondaryColor3Binding( void );
+
+	/**
+	 * @brief Returns the name of field \c secondary \c colors4 \c binding.
+	 * 
+	 * @return the name of field \c secondary \c colors4 \c binding.
+	 */
+	static const std::string getFSecondaryColor4Binding( void );
+
+//	/**
+//	 * @brief Returns the name of field \c fog \c coordinates \c binding.
+//	 * 
+//	 * @return the name of field \c fog \c coordinates \c binding.
+//	 */
+//	static const std::string getFFogCoordBinding( void );
+
+	/**
 	 * @brief Returns the name of field \c texture \c coordinates \c of \c the \c specified \c texture \c unit \c binding.
 	 * 
 	 * @return the name of field \c texture \c coordinates \c of \c the \c specified \c texture \c unit \c binding.
 	 */
 	static const std::string getFTexCoordBinding( const int32 textureUnit );
 
+	/**
+	 * @brief Returns the name of field \c edge \c flag \c binding.
+	 * 
+	 * @return the name of field \c edge \c flag \c binding.
+	 */
+	static const std::string getFEdgeFlagBinding( void );
+	
+	/**
+	 * @brief Returns the name of field \c deformableHint.
+	 * 
+	 * @return the name of field \c deformableHint.
+	 */
+	static const std::string getFDeformableHint();
+
+	/**
+	 * @brief Returns the name of field \c tessellation level.
+	 * 
+	 * @return the name of field \c tessellation level.
+	 */
+	static const std::string getFTessellationLevel( void );
+
+	/**
+	 * @brief Returns the name of field \c tessellation bias.
+	 * 
+	 * @return the name of field \c tessellation bias.
+	 */
+	static const std::string getFTessellationBias( void );
+
+	/**
+	 * @brief Returns the name of field \c boundingBoxUpdatePolicy.
+	 * 
+	 * @return the name of field \c boundingBoxUpdatePolicy.
+	 */
+	static const std::string getFBoundingBoxUpdatePolicy();	
+	
+	//@}
+
 
 
 	/**
-	 * @name Constructor and initializer methods
+	 * @name Dirty flags enumeration.
 	 */
 	//@{
 
-	void	setToDefaults( void );
-
-	void	setOptionalsToDefaults();
-
+	/**
+	 * @brief Returns name of dirty flag that is invalidate when bounding box is invalidate and must be recomputed.
+	 */
+	static const std::string getDFBoundingBox( void );
+	
 	//@}
 
-protected:
-	/**
-	 * @brief Default constructor
-	 */
-	VertexShape( const std::string nodeName );
 
-public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , VertexShape );
+
 private:
-	static const vgd::basic::RegisterNode<VertexShape> m_registrationInstance;
+
+	/**
+	 * @brief Number of texture unit fields
+	 * 
+	 * @remarks Sets to -1 if the number of texture units fields must be computed.
+	 */
+	mutable int32	m_numTexUnits;
 };
 
 
@@ -970,4 +1046,5 @@ private:
 
 } // namespace vgd
 
-#endif //#ifndef _VGD_NODE_VERTEXSHAPE_HPP
+#endif // #ifndef _VGD_NODE_VERTEXSHAPE_HPP
+

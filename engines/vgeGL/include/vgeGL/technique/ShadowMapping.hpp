@@ -75,8 +75,8 @@ struct ShadowMappingInput
 	vgd::Shp< vgd::node::Texture2D > getLightDepthMap( const uint index );
 	vgd::Shp< vgeGL::rc::Texture2D > getLightDepthMap( const uint index, vgeGL::engine::Engine * engine );
 
-	/*vgd::Shp< vgd::node::Texture2D > getLightAlphaMap( const uint index );
-	vgd::Shp< vgeGL::rc::Texture2D > getLightAlphaMap( const uint index, vgeGL::engine::Engine * engine );*/
+	vgd::Shp< vgd::node::Texture2D > getLightAlphaMap( const uint index );
+	vgd::Shp< vgeGL::rc::Texture2D > getLightAlphaMap( const uint index, vgeGL::engine::Engine * engine );
 
 	vgd::Shp< vgd::node::TexGenEyeLinear > getTexGen( const uint index );
 
@@ -98,8 +98,8 @@ private:
 
 	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_recycleLightDepthMap;
 	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_lightDepthMap;
-	//std::vector< vgd::Shp< vgd::node::Texture2D > >			m_recycleLightAlphaMap;
-	//std::vector< vgd::Shp< vgd::node::Texture2D > >			m_lightAlphaMap;
+	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_recycleLightAlphaMap;
+	std::vector< vgd::Shp< vgd::node::Texture2D > >			m_lightAlphaMap;
 	std::vector< vgd::Shp< vgd::node::TexGenEyeLinear > >	m_recycleTexGen;
 	std::vector< vgd::Shp< vgd::node::TexGenEyeLinear > >	m_texGen;
 };

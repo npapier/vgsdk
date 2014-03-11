@@ -12,9 +12,9 @@
 #include <vgd/ScopedPtr.hpp>
 #include <vgd/Shp.hpp>
 #include <vgTest/convenience.hpp>
-#include <vgTest/gtest.hpp>
 
 #include "Fixtures.hpp"
+#include "gtest.hpp"
 #include "vgsdkTestGtk/vgTest/myBase.hpp"
 #include "vgsdkTestGtk/vgTest/myCanvas.hpp"
 
@@ -32,100 +32,100 @@
  * @brief Vertex coloring test
  * @todo Generalized => RenderingTest (others PerfTest... )
  */
-// TEST(vgsdkNodeTestingSuite, DISABLED_PerVertexColoring)
-// {
-	// const ::testing::TestInfo* const test_info =
-	  // ::testing::UnitTest::GetInstance()->current_test_info();
+TEST(vgsdkNodeTestingSuite, DISABLED_PerVertexColoring)
+{
+	const ::testing::TestInfo* const test_info =
+	  ::testing::UnitTest::GetInstance()->current_test_info();
 
-	// std::string filename = vgTest::getImageName(test_info->name());
+	std::string filename = vgTest::getImageName(test_info->name());
 
-	// // prerun Gtk
-	// vgd::Shp< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );
+	// prerun Gtk
+	vgd::Shp< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );
 
-	// base->getLog()->add("Description", "Test vertex coloring in VertexShape");
+	base->getLog()->add("Description", "Test vertex coloring in VertexShape");
 
-	// // prepare scene
-	// //base->getCanvas()->getGLEngine()->setGLSLEnabled(true);
+	// prepare scene
+	//base->getCanvas()->getGLEngine()->setGLSLEnabled(true);
 
-	// /*using vgd::node::LightModel;
-	// vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( base->getCanvas()->createOptionalNode(  vgUI::BasicViewer::LIGHT_MODEL ) );
-	// lightModel->setTwoSided(true);*/
+	/*using vgd::node::LightModel;
+	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( base->getCanvas()->createOptionalNode(  vgUI::BasicViewer::LIGHT_MODEL ) );
+	lightModel->setTwoSided(true);*/
 
-	// using vgd::node::VertexShape;
+	using vgd::node::VertexShape;
 
-	// // material
-	// using vgd::node::Material;
+	// material
+	using vgd::node::Material;
 
-	// vgd::Shp< Material > opaqueMat = Material::create("opaque");
-	// opaqueMat->setDiffuse( vgm::Vec3f( 0.2f, 0.f, 0.f ) );
-	// // @todo disable display list for debug in gdebugger
-	// // @todo core/vgd/gen : setDiffuse( x, y, z );
-	// opaqueMat->setShininess( 0.5f );
-	// opaqueMat->setSpecular( vgm::Vec3f( 1.f, 1.f, 1.f ) );
-	// opaqueMat->setOpacity(1.f);
+	vgd::Shp< Material > opaqueMat = Material::create("opaque");
+	opaqueMat->setDiffuse( vgm::Vec3f( 0.2f, 0.f, 0.f ) );
+	// @todo disable display list for debug in gdebugger
+	// @todo core/vgd/gen : setDiffuse( x, y, z );
+	opaqueMat->setShininess( 0.5f );
+	opaqueMat->setSpecular( vgm::Vec3f( 1.f, 1.f, 1.f ) );
+	opaqueMat->setOpacity(1.f);
 
-	// vgd::Shp< Material > transparentMat = Material::create("transparent");
-	// transparentMat->setDiffuse( vgm::Vec3f( 0.f, 1.f, 0.f ) );
-	// transparentMat->setShininess( 0.5f );
-	// transparentMat->setSpecular( vgm::Vec3f( 1.f, 1.f, 1.f ) );
-	// transparentMat->setOpacity(0.1f);
+	vgd::Shp< Material > transparentMat = Material::create("transparent");
+	transparentMat->setDiffuse( vgm::Vec3f( 0.f, 1.f, 0.f ) );
+	transparentMat->setShininess( 0.5f );
+	transparentMat->setSpecular( vgm::Vec3f( 1.f, 1.f, 1.f ) );
+	transparentMat->setOpacity(0.1f);
 
-	// // quad
-	// //using vgd::node::Quad;
+	// quad
+	//using vgd::node::Quad;
 
-	// //vgd::Shp< Quad > quad = Quad::create("quad.for.PerVertexColoring.test");
+	//vgd::Shp< Quad > quad = Quad::create("quad.for.PerVertexColoring.test");
 
-	// //quad->initializeGeometry( 2.f, 2.f );
+	//quad->initializeGeometry( 2.f, 2.f );
 
-	// // sphere
-	// using vgd::node::Sphere;
+	// sphere
+	using vgd::node::Sphere;
 
-	// vgd::Shp< Sphere > sphere = Sphere::create("Sphere");
-	// sphere->initializeGeometry(2);
-	// //sphere->initializeGeometry(0);
+	vgd::Shp< Sphere > sphere = Sphere::create("Sphere");
+	sphere->initializeGeometry(2);
+	//sphere->initializeGeometry(0);
 
-	// vgd::field::EditorRO< VertexShape::FNormalType > normals = sphere->getFNormalRO();
-	// vgd::field::EditorRW< VertexShape::FColor4Type > colors4 = sphere->getFColor4RW();
+	vgd::field::EditorRO< VertexShape::FNormalType > normals = sphere->getFNormalRO();
+	vgd::field::EditorRW< VertexShape::FColor4Type > colors4 = sphere->getFColor4RW();
 
-	// for( uint i=0; i < normals->size(); ++i )
-	// {
-		// vgm::Vec3f normal3 = (*normals)[i];
+	for( uint i=0; i < normals->size(); ++i )
+	{
+		vgm::Vec3f normal3 = (*normals)[i];
 
-		// vgm::Vec4f color4( normal3 );
-		// color4[3] = 1.f;
-		// colors4->push_back( color4 );
-	// }
-	// //(*colors4)[0].setValue( 1.f, 0.f, 0.f, 1.f );
-	// //(*colors4)[4].setValue( 0.f, 1.f, 0.f, 1.f );
-	// //(*colors4)[8].setValue( 0.f, 0.f, 1.f, 1.f );
-	// normals.release();
-	// colors4.release();
+		vgm::Vec4f color4( normal3 );
+		color4[3] = 1.f;
+		colors4->push_back( color4 );
+	}
+	//(*colors4)[0].setValue( 1.f, 0.f, 0.f, 1.f );
+	//(*colors4)[4].setValue( 0.f, 1.f, 0.f, 1.f );
+	//(*colors4)[8].setValue( 0.f, 0.f, 1.f, 1.f );
+	normals.release();
+	colors4.release();
 
-	// sphere->setColor4Binding( vgd::node::BIND_PER_VERTEX );
+	sphere->setColor4Binding( vgd::node::BIND_PER_VERTEX );
 
-	// base->addObject( opaqueMat );
-	// //base->addObject( quad );
-	// //base->addObject( transparentMat );
-	// base->addObject( sphere );
+	base->addObject( opaqueMat );
+	//base->addObject( quad );
+	//base->addObject( transparentMat );
+	base->addObject( sphere );
 
-	// base->getCanvas()->viewAll();
+	base->getCanvas()->viewAll();
 
-	// //run GTK
-	// base->run();
+	//run GTK
+	base->run();
 
-	// // Finalized test
-	// /*if (vgsdkTestGtk::vgTest::getCreateReference())
-	// {
-		// base->moveToReference();
-	// }
-	// else
-	// {
-		// // do the test
-		// base->compareScreenShots();
-	// }*/
+	// Finalized test
+	/*if (vgsdkTestGtk::vgTest::getCreateReference())
+	{
+		base->moveToReference();
+	}
+	else
+	{
+		// do the test
+		base->compareScreenShots();
+	}*/
 
-	// base->getLog()->addToGtest();
-// }
+	base->getLog()->addToGtest();
+}
 //
 
 /**

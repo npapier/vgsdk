@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2007, 2008, 2009, 2010, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2007, 2008, 2009, 2010, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -85,9 +85,9 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	}
 
 	// Searchs resource
-	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = pGLEngine->getGLManager();
+	vgeGL::engine::Engine::GLManagerType&		rcManager	= pGLEngine->getGLManager();
 
-	::glo::IResource 							*resource	= rcManager->getAbstract( layerPlan );
+	::glo::IResource 							*resource	= rcManager.getAbstract( layerPlan );
 	vgeGL::rc::Root								*rcRoot		= dynamic_cast< vgeGL::rc::Root* >(resource);
 
 	using vgd::node::Quad;
@@ -109,7 +109,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 
 		// No resource (this is the first evaluation), create it.
 		rcRoot = new vgeGL::rc::Root;
-		rcManager->add( layerPlan, rcRoot );
+		rcManager.add( layerPlan, rcRoot );
 
 		texture2D = Texture2D::create("rootRC.LayerPlan.texture2D");
 		quad = Quad::create("rootRC.LayerPlan.quad");
@@ -118,11 +118,11 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 		rcRoot->getRoot()->addChild( quad );
 
 		// setup rc
-		texture2D->setWrapS( Texture2D::CLAMP_TO_EDGE );
-		texture2D->setWrapT( Texture2D::CLAMP_TO_EDGE );
+		texture2D->setWrap( Texture2D::WRAP_S, Texture2D::CLAMP_TO_EDGE );
+		texture2D->setWrap( Texture2D::WRAP_T, Texture2D::CLAMP_TO_EDGE );
 
-		texture2D->setMinFilter( Texture2D::LINEAR );
-		texture2D->setMagFilter( Texture2D::LINEAR );
+		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR );
+		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
 
 		quad->initializeTexUnits( 1, vgd::basic::TOP_LEFT, false /* cw */ );
 		const vgm::Vec3f translateToOrigin( 0.5f, 0.5f, 0.f );
@@ -177,7 +177,7 @@ void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *l
 	pGLEngine->paint( texture2D, true );
 
 	// Gets the resource manager
-	vgeGL::rc::Texture2D * gloTex2D = rcManager->get< vgeGL::rc::Texture2D >( texture2D.get() );
+	vgeGL::rc::Texture2D * gloTex2D = rcManager.get< vgeGL::rc::Texture2D >( texture2D.get() );
 	gloTex2D->env( GL_TEXTURE_ENV_MODE, GL_REPLACE );
 
 	// draw proxy geometry

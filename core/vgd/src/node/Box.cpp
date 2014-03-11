@@ -52,7 +52,7 @@ void Box::initializeGeometry()
 	// Initialize geometry.
 
 	// VERTEX
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex			= getVertexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex			= getFVertexRW();
 	const float fSize= 0.5f;
 	vertex->clear();
 	vertex->reserve( 24 );
@@ -94,7 +94,7 @@ void Box::initializeGeometry()
 	vertex->push_back( vgm::Vec3f(-fSize, -fSize, fSize) );
 	
 	// VERTEX INDEX
-	vgd::field::EditorRW< vgd::field::MFUInt >	vertexIndex		= getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex		= getFVertexIndexRW();
 	vertexIndex->clear();
 	vertexIndex->reserve( 24 );
 
@@ -135,7 +135,7 @@ void Box::initializeGeometry()
 	vertexIndex->push_back(23);
 
 	// PRIMITIVE
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getFPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::QUADS, 0, vertexIndex->size() );
 	primitive->clear();
 	primitive->push_back( prim );
@@ -145,7 +145,7 @@ void Box::initializeGeometry()
 	primitive.release();
 		
 	// NORMAL
-	vgd::field::EditorRW< vgd::field::MFVec3f >	normal			= getNormalRW();	
+	vgd::field::EditorRW< vgd::field::MFVec3f >	normal			= getFNormalRW();	
 	normal->clear();
 	normal->reserve(24);
 	
@@ -159,19 +159,19 @@ void Box::initializeGeometry()
 	normal->push_back( vgm::Vec3f(0.f, 0.f, -1.f ) );
 	normal->push_back( vgm::Vec3f(0.f, 0.f, -1.f ) );
 	normal->push_back( vgm::Vec3f(0.f, 0.f, -1.f ) );
-	normal->push_back( vgm::Vec3f(0.f, 0.f, -1.f ) );
+	normal->push_back( vgm::Vec3f(0.f, 0.f, -1.f ) );	
 	
 	// right
 	normal->push_back( vgm::Vec3f(1.f, 0.f, 0.f ) );
 	normal->push_back( vgm::Vec3f(1.f, 0.f, 0.f ) );
 	normal->push_back( vgm::Vec3f(1.f, 0.f, 0.f ) );
-	normal->push_back( vgm::Vec3f(1.f, 0.f, 0.f ) );
+	normal->push_back( vgm::Vec3f(1.f, 0.f, 0.f ) );	
 
 	// left
 	normal->push_back( vgm::Vec3f(-1.f, 0.f, 0.f ) );
 	normal->push_back( vgm::Vec3f(-1.f, 0.f, 0.f ) );
 	normal->push_back( vgm::Vec3f(-1.f, 0.f, 0.f ) );
-	normal->push_back( vgm::Vec3f(-1.f, 0.f, 0.f ) );
+	normal->push_back( vgm::Vec3f(-1.f, 0.f, 0.f ) );	
 	
 	// up
 	normal->push_back( vgm::Vec3f(0.f, 1.f, 0.f ) );
@@ -199,7 +199,7 @@ void Box::initializeGeometry()
 			i<numTexUnits;
 			i++ )
 	{
-		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getTexCoordRW( i ) );
+		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getFTexCoordRW( i ) );
 		
 		// TEX COORD
 		texCoord->clear();

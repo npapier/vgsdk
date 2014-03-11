@@ -6,9 +6,9 @@
 #ifndef _VGSDKTESTGTK_TEXTURE_HPP
 #define _VGSDKTESTGTK_TEXTURE_HPP
 
+#include "gtest.hpp"
 #include "helpers.hpp"
 #include <vgTest/convenience.hpp>
-#include <vgTest/gtest.hpp>
 
 #include "Fixtures.hpp"
 
@@ -72,9 +72,6 @@ TEST(vgsdkNodeTestingSuite, TextureMappingPropagation)
 
 	base->addObject( mat2 );
 	base->addObject( quad2 );
-
-	// Lights
-	base->getCanvas()->createOptionalNode( vgGTK::BasicManipulator::LIGHTS );
 
 	// @todo base->run() do a viewAll()
 	base->getCanvas()->viewAll();

@@ -78,8 +78,8 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 {
 	using vgd::node::Texture;
 
-	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
-	vgd::Shp< vgeGL::rc::Fluid > fluidRC = rcManager->getShp< vgeGL::rc::Fluid >( fluid );
+	vgeGL::engine::Engine::GLManagerType& rcManager = engine->getGLManager();
+	vgd::Shp< vgeGL::rc::Fluid > fluidRC = rcManager.getShp< vgeGL::rc::Fluid >( fluid );
 
 	if ( fluidRC )
 	{
@@ -182,7 +182,7 @@ void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
 		{
 			fluidHeightMap->setMultiAttributeIndex( 2 );
 			fluidHeightMap->setVertexFunction(
-				"	fluidHeight = texture( texMap2D[2], mgl_TexCoord[0].xy ).x;\n" );
+				"	fluidHeight = texture( texMap2D[2], Out.mgl_TexCoord[0].xy ).x;\n" );
 		}
 
 // @todo done in FRAGMENT_OUTPUT but could be better done here => fluidHeightMap->setFragmentFunction( "	color = vec4( color.rgb, fluidHeight );\n" );

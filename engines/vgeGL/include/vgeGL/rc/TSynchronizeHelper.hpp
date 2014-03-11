@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2010, 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2010, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -15,7 +15,7 @@
 
 namespace vgeGL
 {
-
+	
 namespace rc
 {
 
@@ -24,66 +24,65 @@ namespace rc
  * Use dirty flag of the node (vgd::Node::getDFNode()).
  *
  * @remarks The handlerType must implements :
- * - void synchronize( vgeGL::engine::Engine* engine, nodeType* node, GLResourceType* rc );
+ * - void synchronize	( vgeGL::engine::Engine* pGLEngine, nodeType* pNode, GLResourceType* pGLResource );
  */
-template< typename GLResourceType, typename nodeType, typename handlerType >
-void applyUsingSynchronize(	vgeGL::engine::Engine*	engine, nodeType* node,
-							handlerType*			handler )
+template< typename nodeType, typename handlerType, typename GLResourceType >
+void applyUsingSynchronize(	vgeGL::engine::Engine*	pGLEngine, nodeType* pNode,
+							handlerType*			pHandler )
 {
-	// CREATE/RETRIEVE THE RESOURCE
-
 	// get the resource manager
-	using vgeGL::engine::Engine;
-	vgd::Shp< Engine::GLManagerType > rGLManager = engine->getGLManager();
+	vgeGL::engine::Engine::GLManagerType&		rGLManager	= pGLEngine->getGLManager();
+
+	// get dirty flag of node
+	vgd::field::DirtyFlag*	pDFNode				= pNode->getDirtyFlag( pNode->getDFNode() );
 
 	// get associated resource
-	::glo::IResource 	*pResource			= rGLManager->getAbstract( node );
-	GLResourceType		*pCastedResource	= dynamic_cast< GLResourceType* >(pResource);
-
-	/*if ( pResource && ( pCastedResource == 0 ) )
+	::glo::IResource 		*pResource			= rGLManager.getAbstract( pNode );
+	GLResourceType			*pCastedResource	= dynamic_cast< GLResourceType* >(pResource);
+	
+	if (	( pCastedResource == 0 ) &&
+			( pResource != 0) )
 	{
-		// There is a resource, but not of the expected type
+		// There is a resource, but not of the expected type.
 		// Dynamic change of handler ?
 		// or node that must be process differently (static, dynamic for VertexShape).
-		rGLManager->remove( node );
+		rGLManager.remove( pNode );
+
 		pResource			= 0;
-	}*/
-
-#ifdef _DEBUG
-	vgAssert(	(pResource==0 && pCastedResource==0) ||
-				(pResource!=0 && pCastedResource!=0)	);
-#endif
-
-	//bool callSynchronize;
-
-	if ( pCastedResource == 0 )		// No resource
-	{
-		// Creates the resource
-		pCastedResource = new GLResourceType();
-
-		// Registers node and its resource into manager
-		rGLManager->add( node, pCastedResource );
-
-		// RC must be initialized
-		//callSynchronize = true;
 	}
-	/*else
+
+	assert(	(pResource==0 && pCastedResource==0) ||
+			(pResource!=0 && pCastedResource!=0)	);
+
+	// What to do ?
+	if ( pDFNode->isDirty() )
 	{
-		// reuse the resource
+		// Node is invalidated.
+		if ( pCastedResource == 0 )
+		{
+			// No resource (this is the first evaluation), create it.
+			pCastedResource = new GLResourceType();
+			rGLManager.add( pNode, pCastedResource );
+		}
+		// else have founded an associated resource, recycle it in synchronize().
 
-		// Updates RC ?
-// @todo customization point
-		//vgd::field::DirtyFlag * pDFNode = node->getDirtyFlag( node->getDFNode() );
-		//callSynchronize = pDFNode->isDirty();
-		//callSynchronize = true;
-	}*/
-
-	// UPDATE RC ?
-	//if ( callSynchronize )
-	//{
-		handler->synchronize( engine, node, pCastedResource );
-	//}
-	// else nothing to do
+		// updates resource.
+		pHandler->synchronize( pGLEngine, pNode, pCastedResource );
+	}
+	else
+	{
+		// No change in node.
+		if ( pCastedResource != 0 )
+		{
+			// updates resource.
+			pHandler->synchronize( pGLEngine, pNode, pCastedResource );
+		}
+		else
+		{
+			// No resource, but already validate !!!
+			assert( false && "No resource, but already validate !!!" );
+		}
+	}
 }
 
 

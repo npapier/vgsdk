@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,7 +9,6 @@
 #include <vge/service/Painter.hpp>
 #include "vgeGL/engine/Engine.hpp"
 #include "vgeGL/engine/GLSLState.hpp"
-#include <gle/OpenGLExtensionsGen.hpp>
 
 
 
@@ -51,7 +50,6 @@ const vge::service::List EngineProperties::getServices() const
 
 void EngineProperties::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 {
-	// TEXTURE
 	vge::handler::basic::EngineProperties::apply( engine, node );
 
 	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
@@ -60,27 +58,20 @@ void EngineProperties::apply( vge::engine::Engine * engine, vgd::node::Node * no
 	assert( dynamic_cast< vgd::node::EngineProperties* >(node) != 0 );
 	vgd::node::EngineProperties *engineProperties = dynamic_cast< vgd::node::EngineProperties* >(node);
 
-
 	// Retrieves GLSL state
 	using vgeGL::engine::GLSLState;
 	GLSLState& state = glEngine->getGLSLState();
 
-
-	// OPENGL API USAGE
-	bool bValue;
-
-	// OPENGL DEBUG OUTPUT
-	const bool hasDebugOutput = engineProperties->getOpenglDebugOutput( bValue );
-	if ( hasDebugOutput )
+	// TESSELLATION
+	const bool hasTessellation = engineProperties->getTessellation();
+	state.setTessellationEnabled( hasTessellation );
+	if ( hasTessellation )
 	{
-		gleGetCurrent()->setDebugOutput( bValue ? gle::OpenGLExtensions::SYNCHRONOUS : gle::OpenGLExtensions::DISABLED );
-	}
+		const vgd::node::EngineProperties::TessellationFactorValueType	tessellationValue	= engineProperties->getTessellationFactor();
+		glEngine->getUniformState().addUniform( "tessValue", tessellationValue );
 
-	// OPENGL DSA
-	const bool hasDSA = engineProperties->getOpenglDirectStateAccess( bValue );
-	if ( hasDSA )
-	{
-		glEngine->setDSAEnabled( bValue );
+		const vgd::node::EngineProperties::TessellationBiasValueType	tessellationBias	= engineProperties->getTessellationBias();
+		glEngine->getUniformState().addUniform( "tessBias", tessellationBias );
 	}
 }
 
@@ -95,13 +86,19 @@ void EngineProperties::unapply( vge::engine::Engine *, vgd::node::Node * )
 
 void EngineProperties::setToDefaults()
 {
-	// nothing to do
+	// TESSELLATION
+	if ( isGL_ARB_tessellation_shader() )
+	{
+		glPatchParameteri(GL_PATCH_VERTICES, 3);
+		glPatchParameteri(GL_PATCH_DEFAULT_INNER_LEVEL, 3);
+		glPatchParameteri(GL_PATCH_DEFAULT_OUTER_LEVEL, 3);
+	}
 }
 
 
 
-} // namespace painter
+} // namespace basic
 
 } // namespace handler
 
-} // namespace vgeGL
+} // namespace vge

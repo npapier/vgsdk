@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -7,7 +7,6 @@
 
 #include <gle/OpenGLExtensionsGen.hpp>
 #include <glo/FrameBufferObject.hpp>
-#include <glo/helpers.hpp>
 #include <glo/GLSLProgram.hpp>
 #include <glo/Texture.hpp>
 #include <vgd/basic/Image.hpp>
@@ -21,7 +20,6 @@
 #include <vge/handler/HandlerRegistry.hpp>
 #include "vgeGL/engine/GLSLState.hpp"
 #include "vgeGL/engine/ProgramGenerator.hpp"
-#include "vgeGL/technique/helpers.hpp"
 //#include <vgio/FilenameCollector.hpp>
 
 
@@ -32,25 +30,22 @@ namespace engine
 {
 
 
-// CONSTRUCTOR
-Engine::Engine( Engine * sharedEngine )
+// CONSTRUCTORS
+Engine::Engine()
 :	m_isLightingEnabled(true),
 	m_isTextureMappingEnabled(true),
-	m_isDrawCallsEnabled(true),
 	m_isDisplayListEnabled(true),
 	m_isDepthPrePassEnabled(false),
 	m_isShadowEnabled(true),
-	//m_isDSAEnabled(false),
 
-	m_glManager(		sharedEngine != 0 ? sharedEngine->m_glManager		: vgd::makeShp( new GLManagerType("GL object manager") )					),
-	m_glslManager(		sharedEngine != 0 ? sharedEngine->m_glslManager		: vgd::makeShp( new GLSLProgramManagerType("GLSL Program Manager") )		),
-	m_glslManagerExt(	sharedEngine != 0  ? sharedEngine->m_glslManagerExt	: vgd::makeShp( new GLSLProgramManagerExtType("GLSL Program ManagerExt") )	),
+	m_glManager("GL object manager"),
+	m_glslManager("GLSL Program Manager"),
+	m_glslManagerExt("GLSL Program ManagerExt"),
 
 	m_isGLSLEnabled(true),
 	m_currentProgram(0),
 	// m_glStateStack()
 	//m_glslStateStack()
-	//m_builtinUniformState
 	//m_uniformState
 	//m_globalGLSLState
 	//m_outputBuffers
@@ -58,7 +53,7 @@ Engine::Engine( Engine * sharedEngine )
 	m_glslProgramGenerator( new ProgramGenerator() )
 {
 	// Connects OpenGL manager to node destruction signal.
-	m_glManagerConnection = vgd::node::Node::connect( boost::bind(&GLManagerType::remove, getGLManager().get(), _1) );
+	m_glManagerConnection = vgd::node::Node::connect( boost::bind(&GLManagerType::remove, &getGLManager(), _1) );
 
 	// Reset cache
 	m_maxViewportSize.setInvalid();
@@ -83,10 +78,9 @@ void Engine::reset()
 		//return;
 	}
 
-	// Enables advanced OpenGL errors management using GL_ARB_debug_output extension in debug configuration
-#ifdef _DEBUG
-	gleGetCurrent()->setDebugOutput( gle::OpenGLExtensions::SYNCHRONOUS );
-#endif
+	// Detects drivers provider
+	vgLogMessage( "%s driver found", gleGetCurrent()->getDriverProviderString().c_str() );	
+	const gle::OpenGLExtensions::DriverProviderType driverProvider = gleGetCurrent()->getDriverProvider();
 
 	// Configures engine
 	setLightingEnabled();
@@ -94,9 +88,6 @@ void Engine::reset()
 	setDisplayListEnabled();
 	setDepthPrePassEnabled( false );
 
-	// Detects drivers provider
-	vgLogMessage( "%s driver found", gleGetCurrent()->getDriverProviderString().c_str() );
-	const gle::OpenGLExtensions::DriverProviderType driverProvider = gleGetCurrent()->getDriverProvider();
 	switch ( driverProvider )
 	{
 		case gle::OpenGLExtensions::NVIDIA_DRIVERS:
@@ -123,8 +114,7 @@ void Engine::reset()
 
 	//
 	getGLStateStack().clear( vgd::makeShp(new GLState()) );
-	m_glslStateStack.clear( vgd::makeShp(new GLSLState(getMaxTexUnits()) ) );
-	getBuiltinUniformState().clear();
+	getGLSLStateStack().clear( vgd::makeShp(new GLSLState(getMaxTexUnits()) ) );
 	getUniformState().clear();
 	m_globalGLSLState.reset();
 	setOutputBuffers();
@@ -204,6 +194,16 @@ void Engine::setToDefaults()
 		(*i_handler)->setToDefaults();
 	}
 
+	//
+	vgLogDebug( "vgeGL.Engine: MAX VIEWPORT SIZE			= %i x %i", getMaxViewportSize()[0],  getMaxViewportSize()[1] );
+
+	vgLogDebug( "vgeGL.Engine: MAX_LIGHTS			= %i", getMaxLights() );
+
+	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_UNITS		= %i", getMaxTexUnits() );
+
+	vgLogDebug( "vgeGL.Engine: GL_MAX_TEXTURE_SIZE		= %i", getMaxTexSize() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_3D_TEXTURE_SIZE		= %i", getMax3DTexSize() );
+	vgLogDebug( "vgeGL.Engine: GL_MAX_CUBE_MAP_TEXTURE_SIZE	= %i", getMaxCubeMapTexSize() );
 
 	// MARKER
 	if ( isGL_GREMEDY_string_marker() )
@@ -228,16 +228,14 @@ Engine::GLStateStack& Engine::getGLStateStack()
 }
 
 
-
-void Engine::pushGLSLState()
+const Engine::GLSLStateStack& Engine::getGLSLStateStack() const
 {
-	m_glslStateStack.push();
+	return m_glslStateStack;
 }
 
-void Engine::popGLSLState()
+Engine::GLSLStateStack& Engine::getGLSLStateStack()
 {
-	m_glslStateStack.pop();
-	m_glslStateStack.getTop()->validate(false);
+	return m_glslStateStack;
 }
 
 
@@ -268,17 +266,6 @@ GLSLState& Engine::getGLSLState()
 }
 
 
-const Engine::UniformState& Engine::getBuiltinUniformState() const
-{
-	return m_builtinUniformState;
-}
-
-Engine::UniformState& Engine::getBuiltinUniformState()
-{
-	return m_builtinUniformState;
-}
-
-
 const Engine::UniformState& Engine::getUniformState() const
 {
 	return m_uniformState;
@@ -290,6 +277,7 @@ Engine::UniformState& Engine::getUniformState()
 }
 
 
+
 void Engine::setUniformRandom()
 {
 	vgm::Vec4f random(
@@ -298,31 +286,26 @@ void Engine::setUniformRandom()
 		static_cast<float>(rand()) / 32767.f,
 		static_cast<float>(rand()) / 32767.f );
 
-	vgAssertN( !getBuiltinUniformState().isUniform( "random" ), "Uniform named 'random' already used" );
-	getBuiltinUniformState().addUniform( "random", random );
+	vgAssertN( !getUniformState().isUniform( "random" ), "Uniform named 'random' already used" );
+	getUniformState().addUniform( "random", random );
 }
 
 
 void Engine::setUniformTime()
 {
 	const vgd::basic::TimeDuration duration = getElapsedTime();
-	vgAssertN( !getBuiltinUniformState().isUniform( "time" ), "Uniform named 'time' already used" );
-	getBuiltinUniformState().addUniform( "time", static_cast<int>(duration.ms()) );
+	vgAssertN( !getUniformState().isUniform( "time" ), "Uniform named 'time' already used" );
+	getUniformState().addUniform( "time", static_cast<int>(duration.ms()) );
 }
 
 
-void Engine::setUniformNearFarAndViewport()
+void Engine::setUniformNearFar()
 {
 	const vgm::Vec2f nearFar = getNearFar();
 	vgAssert( nearFar.isValid() );
 
-	const vgm::Rectangle2i& viewport = getViewport();
-
-	vgAssertN( !getBuiltinUniformState().isUniform( "nearFar"), "Uniform named 'nearFar' already used" );
-	getBuiltinUniformState().addUniform( "nearFar", nearFar );
-
-	vgAssertN( !getBuiltinUniformState().isUniform( "viewport"), "Uniform named 'viewport' already used" );
-	getBuiltinUniformState().addUniform( "viewport", vgm::Vec4f(viewport) );
+	vgAssertN( !getUniformState().isUniform( "nearFar"), "Uniform named 'nearFar' already used" );
+	getUniformState().addUniform( "nearFar", nearFar );
 }
 
 
@@ -415,23 +398,22 @@ vgd::basic::IndexContainerConstIterators Engine::getCurrentPrivateOutputBuffersI
 
 
 // MANAGER
-vgd::Shp< Engine::GLManagerType > Engine::getGLManager()
+Engine::GLManagerType& Engine::getGLManager()
 {
 	return m_glManager;
 }
 
 
-vgd::Shp< Engine::GLSLProgramManagerType > Engine::getGLSLManager()
+
+Engine::GLSLProgramManagerType& Engine::getGLSLManager()
 {
 	return m_glslManager;
 }
 
-
-vgd::Shp< Engine::GLSLProgramManagerExtType > Engine::getGLSLManagerExt()
+Engine::GLSLProgramManagerExtType&	Engine::getGLSLManagerExt()
 {
 	return m_glslManagerExt;
 }
-
 
 const bool Engine::isLightingEnabled() const
 {
@@ -460,22 +442,6 @@ const bool Engine::setTextureMappingEnabled( const bool enabled )
 {
 	const bool retVal = m_isTextureMappingEnabled;
 	m_isTextureMappingEnabled = enabled;
-	return retVal;
-}
-
-
-
-const bool Engine::isDrawCallsEnabled() const
-{
-	return m_isDrawCallsEnabled;
-}
-
-
-
-const bool Engine::setDrawCallsEnabled( const bool enabled )
-{
-	const bool retVal = m_isDrawCallsEnabled;
-	m_isDrawCallsEnabled = enabled;
 	return retVal;
 }
 
@@ -521,20 +487,6 @@ const bool Engine::setShadowEnabled( const bool enabled )
 	const bool retVal = m_isShadowEnabled;
 	m_isShadowEnabled = enabled;
 	return retVal;
-}
-
-
-
-const bool Engine::isDSAEnabled() const
-{
-	return glo::isDSAEnabled();
-}
-
-
-
-const bool Engine::setDSAEnabled( const bool enabled )
-{
-	return glo::setDSAEnabled(enabled);
 }
 
 
@@ -760,13 +712,13 @@ void Engine::setDefaultMaxAnisotropy( const float value )
 	vge::engine::Engine::setDefaultMaxAnisotropy( value );
 
 	// Invalidates Texture.parameters dirty flags.
-	vgd::Shp< GLManagerType > manager = getGLManager();
+	GLManagerType& manager = getGLManager();
 
 	typedef std::vector< vgd::node::Node * > ContainerType;
 	typedef ContainerType::iterator ContainerIterator;
 
 	ContainerType nodes;
-	manager->gethKeys( nodes );
+	manager.gethKeys( nodes );
 
 	for( ContainerIterator	i	= nodes.begin(),
 							iEnd= nodes.end();
@@ -829,21 +781,18 @@ const int Engine::getMaxLights() const
 
 const int Engine::getMaxTexUnits() const
 {
-	const uint maxTexUnits = 6;
-	//const uint maxTexUnits = 16 AMD; 32 NV
-
 	if ( m_maxTexUnits == 0 )
 	{
 		if ( isGLContextCurrent() )
 		{
 			// @todo
 			glGetIntegerv( GL_MAX_TEXTURE_UNITS, &m_maxTexUnits );
-			m_maxTexUnits = maxTexUnits;
+			m_maxTexUnits = 5;
 		}
 		else
 		{
-			vgLogDebug("Engine::getMaxTexUnits(): OpenGL context not current, so return arbitrary value %i.", maxTexUnits);
-			return maxTexUnits;
+			vgLogDebug("Engine::getMaxTexUnits(): OpenGL context not current, so return arbitrary value 2.");
+			return 5;
 		}
 	}
 
@@ -950,61 +899,28 @@ const GLenum Engine::getGLDepthTextureFormatFromDepthBits() /*const */
 
 
 
-vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer( const CaptureBufferType what ) const
+// @todo use getImage()
+vgd::Shp< vgd::basic::Image > Engine::captureGLFramebuffer() const
 {
-	vgd::Shp< vgd::basic::Image > image;
-	void * imageData = 0;
-	captureGLFramebuffer( what, image, imageData );
+	// Reads back the framebuffer color values
+	using vgd::basic::Image;
+
+	const vgm::Vec2i drawingSurfaceSize = getDrawingSurfaceSize();
+
+	vgd::Shp< Image > image( new Image() );
+	image->create(	3, drawingSurfaceSize[0], drawingSurfaceSize[1], 1,
+					Image::BGR, Image::UINT8 );	// @todo always BGR ? and UINT8 ?
+	uint8 *imageData = static_cast<uint8*>( image->editPixels() );
+
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(	0, 0, drawingSurfaceSize[0], drawingSurfaceSize[1], 
+					GL_BGR, GL_UNSIGNED_BYTE,
+					imageData );
+	image->editPixelsDone();
 
 	return image;
 }
 
-
-void Engine::captureGLFramebuffer( const CaptureBufferType what, vgd::Shp< vgd::basic::Image >& oImage, void *& imageData ) const
-{
-	vgd::Shp< glo::FrameBufferObject > fbo = getOutputBuffers();
-	if ( fbo && (what != COLOR) )
-	{
-		// RENDERING IN A FBO
-		vgeGL::technique::getImage( fbo, what, oImage, imageData );
-	}
-	else
-	{
-		// RENDERING USING OPENGL DEFAULT FRAMEBUFFER
-		if ( what == COLOR )
-		{
-			const vgm::Vec2i imageSize = getDrawingSurfaceSize();
-
-			using vgd::basic::Image;
-#ifdef _WIN32
-			oImage.reset( new Image( imageSize[0], imageSize[1], 1, Image::BGR, Image::UINT8 ) );
-#else
-			oImage.reset( new Image( imageSize[0], imageSize[1], 1, Image::RGB, Image::UINT8 ) );
-#endif
-
-			imageData = static_cast<uint8*>( oImage->editPixels() );
-			oImage->editPixelsDone();
-
-			//
-			glPixelStorei(GL_PACK_ALIGNMENT, 1);
-#ifdef _WIN32
-			glReadPixels(	0, 0, imageSize[0], imageSize[1], 
-							GL_BGR, GL_UNSIGNED_BYTE,
-							imageData );
-#else
-			glReadPixels(	0, 0, imageSize[0], imageSize[1], 
-							GL_RGB, GL_UNSIGNED_BYTE,
-							imageData );
-#endif
-		}
-		else
-		{
-			vgAssertN( false, "Capture not supported for buffer other than COLOR buffer" );
-			oImage.reset( new vgd::basic::Image() );
-			imageData = 0;
-		}
-	}
-}
 
 
 // @todo move into gle ?
@@ -1172,7 +1088,7 @@ void Engine::end2DRendering( const bool popAttribs )
 
 void Engine::push()
 {
-	m_glslStateStack.push();
+	getGLSLStateStack().push();
 	getGLStateStack().push();
 
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -1190,9 +1106,8 @@ void Engine::pop()
 	glPopAttrib();
 
 	getGLStateStack().pop();
-	m_glslStateStack.pop();
+	getGLSLStateStack().pop();
 
-	getBuiltinUniformState().clear(); // @todo push/pop too
 	getUniformState().clear(); // @todo push/pop too
 }
 
@@ -1222,18 +1137,6 @@ bool Engine::populateNodeRegistry()
 
 	// @todo remove this returned value
 	return true;
-}
-
-
-
-const Engine::GLSLStateStack& Engine::getGLSLStateStack() const
-{
-	return m_glslStateStack;
-}
-
-Engine::GLSLStateStack& Engine::getGLSLStateStack()
-{
-	return m_glslStateStack;
 }
 
 

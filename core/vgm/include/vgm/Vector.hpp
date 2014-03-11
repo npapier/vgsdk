@@ -53,10 +53,10 @@
 #include <algorithm>
 #include <cmath>
 #include <glm/glm.hpp>
-#include <iomanip>
 #include <limits>
-#include <sstream> 
 #include <vector>
+
+
 #include "vgm/operations.hpp"
 
 
@@ -684,16 +684,6 @@ vgm::Vec4f		out5b( in5 );
 	 */
 	bool			equals( const Vector& v, const float tolerance = vgm::Epsilon<T>::value() ) const;
 	//@}
-
-
-
-	/**
-	 * @brief Returns a string containing each value of this vector separated by the given separator.
-	 *
-	 * @param precision		see std::setprecision()
-	 * @param separator		separator used between each value of this vector
-	 */
-	const std::string toString( const int precision = 12, const std::string separator = " " ) const;
 
 
 

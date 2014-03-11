@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -63,11 +63,11 @@ DrawStyle::DrawStyle( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FShowOrientationType(getFShowOrientation()) );
+	addField( new FBoundingBoxType(getFBoundingBox()) );
 	addField( new FShapeType(getFShape()) );
 	addField( new FNormalLengthType(getFNormalLength()) );
 	addField( new FTangentLengthType(getFTangentLength()) );
-	addField( new FShowOrientationType(getFShowOrientation()) );
-	addField( new FBoundingBoxType(getFBoundingBox()) );
 
 	// Sets link(s)
 
@@ -86,11 +86,73 @@ void DrawStyle::setToDefaults( void )
 void DrawStyle::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+	setShowOrientation( (false) );
+	setBoundingBox( (NO_BOUNDING_BOX) );
 	setShape( (SMOOTH) );
 	setNormalLength( (0.f) );
 	setTangentLength( (0.f) );
-	setShowOrientation( (false) );
-	setBoundingBox( (NO_BOUNDING_BOX) );
+}
+
+
+
+// ShowOrientation
+
+const DrawStyle::ShowOrientationValueType DrawStyle::DEFAULT_SHOWORIENTATION = (false);
+
+
+
+const bool DrawStyle::getShowOrientation( ShowOrientationValueType& value ) const
+{
+	return getFieldRO<FShowOrientationType>(getFShowOrientation())->getValue( value );
+}
+
+
+
+void DrawStyle::setShowOrientation( const ShowOrientationValueType& value )
+{
+	getFieldRW<FShowOrientationType>(getFShowOrientation())->setValue( value );
+}
+
+
+
+void DrawStyle::eraseShowOrientation()
+{
+	getFieldRW<FShowOrientationType>(getFShowOrientation())->eraseValue();
+}
+
+
+const bool DrawStyle::hasShowOrientation() const
+{
+	return getFieldRO<FShowOrientationType>(getFShowOrientation())->hasValue();
+}
+
+
+
+// BoundingBox
+
+const bool DrawStyle::getBoundingBox( BoundingBoxValueType& value ) const
+{
+	return getFieldRO<FBoundingBoxType>(getFBoundingBox())->getValue( value );
+}
+
+
+
+void DrawStyle::setBoundingBox( const BoundingBoxValueType& value )
+{
+	getFieldRW<FBoundingBoxType>(getFBoundingBox())->setValue( value );
+}
+
+
+
+void DrawStyle::eraseBoundingBox()
+{
+	getFieldRW<FBoundingBoxType>(getFBoundingBox())->eraseValue();
+}
+
+
+const bool DrawStyle::hasBoundingBox() const
+{
+	return getFieldRO<FBoundingBoxType>(getFBoundingBox())->hasValue();
 }
 
 
@@ -190,69 +252,21 @@ const bool DrawStyle::hasTangentLength() const
 
 
 
-// ShowOrientation
-
-const DrawStyle::ShowOrientationValueType DrawStyle::DEFAULT_SHOWORIENTATION = (false);
-
-
-
-const bool DrawStyle::getShowOrientation( ShowOrientationValueType& value ) const
-{
-	return getFieldRO<FShowOrientationType>(getFShowOrientation())->getValue( value );
-}
-
-
-
-void DrawStyle::setShowOrientation( const ShowOrientationValueType& value )
-{
-	getFieldRW<FShowOrientationType>(getFShowOrientation())->setValue( value );
-}
-
-
-
-void DrawStyle::eraseShowOrientation()
-{
-	getFieldRW<FShowOrientationType>(getFShowOrientation())->eraseValue();
-}
-
-
-const bool DrawStyle::hasShowOrientation() const
-{
-	return getFieldRO<FShowOrientationType>(getFShowOrientation())->hasValue();
-}
-
-
-
-// BoundingBox
-
-const bool DrawStyle::getBoundingBox( BoundingBoxValueType& value ) const
-{
-	return getFieldRO<FBoundingBoxType>(getFBoundingBox())->getValue( value );
-}
-
-
-
-void DrawStyle::setBoundingBox( const BoundingBoxValueType& value )
-{
-	getFieldRW<FBoundingBoxType>(getFBoundingBox())->setValue( value );
-}
-
-
-
-void DrawStyle::eraseBoundingBox()
-{
-	getFieldRW<FBoundingBoxType>(getFBoundingBox())->eraseValue();
-}
-
-
-const bool DrawStyle::hasBoundingBox() const
-{
-	return getFieldRO<FBoundingBoxType>(getFBoundingBox())->hasValue();
-}
-
-
-
 // Field name accessor(s)
+const std::string DrawStyle::getFShowOrientation( void )
+{
+	return "f_showOrientation";
+}
+
+
+
+const std::string DrawStyle::getFBoundingBox( void )
+{
+	return "f_boundingBox";
+}
+
+
+
 const std::string DrawStyle::getFShape( void )
 {
 	return "f_shape";
@@ -270,20 +284,6 @@ const std::string DrawStyle::getFNormalLength( void )
 const std::string DrawStyle::getFTangentLength( void )
 {
 	return "f_tangentLength";
-}
-
-
-
-const std::string DrawStyle::getFShowOrientation( void )
-{
-	return "f_showOrientation";
-}
-
-
-
-const std::string DrawStyle::getFBoundingBox( void )
-{
-	return "f_boundingBox";
 }
 
 

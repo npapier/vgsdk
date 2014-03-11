@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2014, Guillaume Brocker, Nicolas Papier, Maxime Peresson.
+// VGSDK - Copyright (C) 2008, Guillaume Brocker, Nicolas Papier, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -11,7 +11,6 @@
 #include <vgAlg/actions/Decrypt.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgeGL/engine/Engine.hpp>
-#include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
 #include <vgd/node/TriSet.hpp>
@@ -22,6 +21,8 @@
 #include <vgSDL/event/device/joystick.hpp>
 
 #include <vgObj/Loader.hpp>
+#include <vgOpenCOLLADA/importer/Loader.hpp>
+#include <vgOpenCOLLADA/convenience.hpp>
 #include <vgTrian/Loader.hpp>
 #include <vgd/basic/Image.hpp>
 #include <vgio/helpers.hpp>
@@ -38,8 +39,19 @@ myCanvas::myCanvas()
 	//set_size_request( 1024, 768 );
 	set_size_request( 640, 480 );
 
-	// Scene graph initialization
-	createOptionalNodes();
+	// Configures engine
+	getGLEngine()->setGLSLEnabled();
+
+	// Scene graph initialization.
+	using vgd::node::LightModel;
+
+	createOptionalNode( LIGHTS );
+	createOptionalNode( CLEAR_FRAME_BUFFER );
+	createOptionalNode( DRAW_STYLE );
+
+	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( createOptionalNode( LIGHT_MODEL ) );
+	lightModel->setModel( LightModel::STANDARD_PER_PIXEL );
+	lightModel->setViewer( LightModel::AT_EYE );
 }
 
 const bool myCanvas::appendToScene( const Glib::ustring & filename, const bool mustCallViewAll )

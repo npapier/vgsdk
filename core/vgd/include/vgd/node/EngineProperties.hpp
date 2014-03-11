@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -23,17 +23,20 @@ namespace node
 /**
  * @brief Definition of several properties of vgsdk engine
  *
- * This node defines the default anisotropy used during texture filtering and OpenGL api usage hints (GL_ARB_debug_output extension and DSA). 
+ * This node defines the default anisotropy used during texture filtering, global tessellation properties. 
  *
  * New fields defined by this node :
+ * - SFFloat \c tessellationBias = (0.55f)<br>
+ *   Specifies the tessellation bias used by the Phong Tessellation algorithm (only used if tessellation is enabled).<br>
+ *<br>
  * - OFFloat \c [maxAnisotropy] = (1.f)<br>
  *   Specifies the engine default maximum degree of anisotropy (see vgd::node::Texture).<br>
  *<br>
- * - OFBool \c [openglDebugOutput] = (false)<br>
- *   Specifies if the OpenGL debug output system is enabled or disabled (see setDebugOutput() in gle).<br>
+ * - SFFloat \c tessellationFactor = (1.0f)<br>
+ *   Specifies the tessellation level used by the tessellation control shaders to tessellate the incoming primitive (only used if tessellation is enabled).<br>
  *<br>
- * - OFBool \c [openglDirectStateAccess] = (false)<br>
- *   Specifies if the OpenGL DSA functions have to be used or not (see GL_EXT_direct_state_access extension)<br>
+ * - SFBool \c tessellation = (false)<br>
+ *   Specifies if the tessellation is enabled or disabled.<br>
  *<br>
  *
  * @ingroup g_nodes
@@ -69,6 +72,41 @@ struct VGD_API EngineProperties : public vgd::node::SingleAttribute
 	 * Creates a node with all fields sets to defaults values (optionals fields too).
 	 */
 	static vgd::Shp< EngineProperties > createWhole( const std::string nodeName = "DefaultWhole" );
+
+	//@}
+
+
+
+	/**
+	 * @name Accessors to field tessellationBias
+	 */
+	//@{
+
+	/**
+	 * @brief Type definition of the value contained by field named \c tessellationBias.
+	 */
+	typedef float TessellationBiasValueType;
+
+	/**
+	 * @brief The default value of field named \c tessellationBias.
+	 */
+	static const TessellationBiasValueType DEFAULT_TESSELLATIONBIAS;
+
+	/**
+	 * @brief Type definition of the field named \c tessellationBias
+	 */
+	typedef vgd::field::TSingleField< TessellationBiasValueType > FTessellationBiasType;
+
+
+	/**
+	 * @brief Gets the value of field named \c tessellationBias.
+	 */
+	const TessellationBiasValueType getTessellationBias() const;
+
+	/**
+	 * @brief Sets the value of field named \c tessellationBias.
+	 */
+	void setTessellationBias( const TessellationBiasValueType value );
 
 	//@}
 
@@ -119,89 +157,71 @@ struct VGD_API EngineProperties : public vgd::node::SingleAttribute
 
 
 	/**
-	 * @name Accessors to field openglDebugOutput
+	 * @name Accessors to field tessellationFactor
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c openglDebugOutput.
+	 * @brief Type definition of the value contained by field named \c tessellationFactor.
 	 */
-	typedef bool OpenglDebugOutputValueType;
+	typedef float TessellationFactorValueType;
 
 	/**
-	 * @brief The default value of field named \c openglDebugOutput.
+	 * @brief The default value of field named \c tessellationFactor.
 	 */
-	static const OpenglDebugOutputValueType DEFAULT_OPENGLDEBUGOUTPUT;
+	static const TessellationFactorValueType DEFAULT_TESSELLATIONFACTOR;
 
 	/**
-	 * @brief Type definition of the field named \c openglDebugOutput
+	 * @brief Type definition of the field named \c tessellationFactor
 	 */
-	typedef vgd::field::TOptionalField< OpenglDebugOutputValueType > FOpenglDebugOutputType;
+	typedef vgd::field::TSingleField< TessellationFactorValueType > FTessellationFactorType;
 
 
 	/**
-	 * @brief Gets the value of field named \c openglDebugOutput.
+	 * @brief Gets the value of field named \c tessellationFactor.
 	 */
-	const bool getOpenglDebugOutput( OpenglDebugOutputValueType& value ) const;
+	const TessellationFactorValueType getTessellationFactor() const;
 
 	/**
-	 * @brief Sets the value of field named \c openglDebugOutput.
- 	 */
-	void setOpenglDebugOutput( const OpenglDebugOutputValueType& value );
-
-	/**
-	 * @brief Erases the field named \c openglDebugOutput.
+	 * @brief Sets the value of field named \c tessellationFactor.
 	 */
-	void eraseOpenglDebugOutput();
+	void setTessellationFactor( const TessellationFactorValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c openglDebugOutput has been initialized.
-	 */
-	const bool hasOpenglDebugOutput() const;
 	//@}
 
 
 
 	/**
-	 * @name Accessors to field openglDirectStateAccess
+	 * @name Accessors to field tessellation
 	 */
 	//@{
 
 	/**
-	 * @brief Type definition of the value contained by field named \c openglDirectStateAccess.
+	 * @brief Type definition of the value contained by field named \c tessellation.
 	 */
-	typedef bool OpenglDirectStateAccessValueType;
+	typedef bool TessellationValueType;
 
 	/**
-	 * @brief The default value of field named \c openglDirectStateAccess.
+	 * @brief The default value of field named \c tessellation.
 	 */
-	static const OpenglDirectStateAccessValueType DEFAULT_OPENGLDIRECTSTATEACCESS;
+	static const TessellationValueType DEFAULT_TESSELLATION;
 
 	/**
-	 * @brief Type definition of the field named \c openglDirectStateAccess
+	 * @brief Type definition of the field named \c tessellation
 	 */
-	typedef vgd::field::TOptionalField< OpenglDirectStateAccessValueType > FOpenglDirectStateAccessType;
+	typedef vgd::field::TSingleField< TessellationValueType > FTessellationType;
 
 
 	/**
-	 * @brief Gets the value of field named \c openglDirectStateAccess.
+	 * @brief Gets the value of field named \c tessellation.
 	 */
-	const bool getOpenglDirectStateAccess( OpenglDirectStateAccessValueType& value ) const;
+	const TessellationValueType getTessellation() const;
 
 	/**
-	 * @brief Sets the value of field named \c openglDirectStateAccess.
- 	 */
-	void setOpenglDirectStateAccess( const OpenglDirectStateAccessValueType& value );
-
-	/**
-	 * @brief Erases the field named \c openglDirectStateAccess.
+	 * @brief Sets the value of field named \c tessellation.
 	 */
-	void eraseOpenglDirectStateAccess();
+	void setTessellation( const TessellationValueType value );
 
-	/**
-	 * @brief Tests if the value of field named \c openglDirectStateAccess has been initialized.
-	 */
-	const bool hasOpenglDirectStateAccess() const;
 	//@}
 
 
@@ -212,6 +232,13 @@ struct VGD_API EngineProperties : public vgd::node::SingleAttribute
 	//@{
 
 	/**
+	 * @brief Returns the name of field \c tessellationBias.
+	 *
+	 * @return the name of field \c tessellationBias.
+	 */
+	static const std::string getFTessellationBias( void );
+
+	/**
 	 * @brief Returns the name of field \c maxAnisotropy.
 	 *
 	 * @return the name of field \c maxAnisotropy.
@@ -219,18 +246,18 @@ struct VGD_API EngineProperties : public vgd::node::SingleAttribute
 	static const std::string getFMaxAnisotropy( void );
 
 	/**
-	 * @brief Returns the name of field \c openglDebugOutput.
+	 * @brief Returns the name of field \c tessellationFactor.
 	 *
-	 * @return the name of field \c openglDebugOutput.
+	 * @return the name of field \c tessellationFactor.
 	 */
-	static const std::string getFOpenglDebugOutput( void );
+	static const std::string getFTessellationFactor( void );
 
 	/**
-	 * @brief Returns the name of field \c openglDirectStateAccess.
+	 * @brief Returns the name of field \c tessellation.
 	 *
-	 * @return the name of field \c openglDirectStateAccess.
+	 * @return the name of field \c tessellation.
 	 */
-	static const std::string getFOpenglDirectStateAccess( void );
+	static const std::string getFTessellation( void );
 
 	//@}
 

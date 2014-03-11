@@ -120,7 +120,7 @@ void GeometryExporter::exportMesh( vgd::Shp< vge::technique::CollectedShape > co
 	}
 	exportVerticies( m_currentGeometryName );
 
-	vgd::field::EditorRO< vgd::field::MFPrimitive > primitives = vertexShape->getPrimitiveRO();
+	vgd::field::EditorRO< vgd::field::MFPrimitive > primitives = vertexShape->getFPrimitiveRO();
 	for( uint i = 0; i < primitives->size(); ++i )
 	{
 		if( (*primitives)[i].getType() == vgd::node::Primitive::TRIANGLES )
@@ -153,7 +153,7 @@ void GeometryExporter::exportPositions( vgd::Shp< vgd::node::VertexShape > verte
 	source.getParameterNameList().push_back( "Y" );
 	source.getParameterNameList().push_back( "Z" );
 
-	vgd::field::EditorRO< vgd::field::MFVec3f >	vertex	= vertexShape->getVertexRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >	vertex	= vertexShape->getFVertexRO();
 	int vertexCount = vertex->size();
 	source.setAccessorCount( vertexCount );
 	source.prepareToAppendValues();
@@ -181,7 +181,7 @@ void GeometryExporter::exportNormals( vgd::Shp< vgd::node::VertexShape > vertexS
 	source.getParameterNameList().push_back( "Z" );
 
 
-	vgd::field::EditorRO< vgd::field::MFVec3f >	normals = vertexShape->getNormalRO();
+	vgd::field::EditorRO< vgd::field::MFVec3f >	normals = vertexShape->getFNormalRO();
 	int normalCount = normals->size();
 	source.setAccessorCount( normalCount );
 	source.prepareToAppendValues();
@@ -217,7 +217,7 @@ void GeometryExporter::exportTexCoords( vgd::Shp< vgd::node::VertexShape > verte
 		source.getParameterNameList().push_back( "P" );
 
 
-		vgd::field::EditorRO< vgd::field::MFVec2f >	texCoords = vertexShape->getTexCoordRO<vgd::field::MFVec2f>( i );
+		vgd::field::EditorRO< vgd::field::MFVec2f >	texCoords = vertexShape->getFTexCoordRO<vgd::field::MFVec2f>( i );
 		int texCoordsCount = texCoords->size();
 		source.setAccessorCount( texCoordsCount );
 		source.prepareToAppendValues();

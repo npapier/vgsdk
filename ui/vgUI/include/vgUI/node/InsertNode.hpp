@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -19,12 +19,10 @@
 #include <vgd/node/CullFace.hpp>
 #include <vgd/node/DepthOfField.hpp>
 #include <vgd/node/DirectionalLight.hpp>
-#include <vgd/node/Displacement.hpp>
 #include <vgd/node/DrawStyle.hpp>
 #include <vgd/node/EngineProperties.hpp>
 #include <vgd/node/Fluid.hpp>
 #include <vgd/node/FrontFace.hpp>
-#include <vgd/node/GeoMorph.hpp>
 #include <vgd/node/Group.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgd/node/Material.hpp>
@@ -36,10 +34,7 @@
 #include <vgd/node/PostProcessing.hpp>
 #include <vgd/node/Separator.hpp>
 #include <vgd/node/SpotLight.hpp>
-#include <vgd/node/TessellationLevel.hpp>
-#include <vgd/node/TessellationProperties.hpp>
 #include <vgd/node/Transform.hpp>
-#include <vgd/node/VertexShape.hpp>
 
 
 namespace vgUI
@@ -54,12 +49,10 @@ typedef boost::mpl::vector<	vgd::Shp< vgd::node::Antialiasing >,
                             vgd::Shp< vgd::node::CullFace >,
                             vgd::Shp< vgd::node::DepthOfField >,
                             vgd::Shp< vgd::node::DirectionalLight >,
-                            vgd::Shp< vgd::node::Displacement >,
                             vgd::Shp< vgd::node::DrawStyle >,
                             vgd::Shp< vgd::node::EngineProperties >,
                             vgd::Shp< vgd::node::Fluid >,
                             vgd::Shp< vgd::node::FrontFace >,
-                            vgd::Shp< vgd::node::GeoMorph >,
                             vgd::Shp< vgd::node::Group >,
                             vgd::Shp< vgd::node::LightModel >,
                             vgd::Shp< vgd::node::Material >,
@@ -71,10 +64,7 @@ typedef boost::mpl::vector<	vgd::Shp< vgd::node::Antialiasing >,
                             vgd::Shp< vgd::node::PostProcessing >,
                             vgd::Shp< vgd::node::Separator >,
                             vgd::Shp< vgd::node::SpotLight >,
-                            vgd::Shp< vgd::node::TessellationLevel >,
-                            vgd::Shp< vgd::node::TessellationProperties >,
-                            vgd::Shp< vgd::node::Transform >,
-                            vgd::Shp< vgd::node::VertexShape >
+                            vgd::Shp< vgd::node::Transform >
                                 > insertNodeShapes;
 
 

@@ -95,24 +95,24 @@ void Layers::createLayers( const int32 num )
 		// texture2D
 		pTex = Texture2D::create( "layers.subgraph.tex2D" );
 	
-		pTex->setWrapS( Texture2D::ONCE );
-		pTex->setWrapT( Texture2D::ONCE );
-
-		pTex->setMinFilter( Texture2D::NEAREST );
-		pTex->setMagFilter( Texture2D::NEAREST );
-
+		pTex->setWrap( Texture2D::WRAP_S, Texture2D::ONCE );
+		pTex->setWrap( Texture2D::WRAP_T, Texture2D::ONCE );
+	
+		pTex->setFilter( Texture2D::MIN_FILTER, Texture2D::NEAREST );
+		pTex->setFilter( Texture2D::MAG_FILTER, Texture2D::NEAREST );
+		
 		getSwitch()->addChild( pTex );
 		
 		// texture1D
 		pColorTable = Texture1D::create( "layers.subgraph.tex1D" );
 		pColorTable->setMultiAttributeIndex( 1 );
 	
-		pColorTable->setWrapS( Texture1D::ONCE );
-		pColorTable->setWrapT( Texture1D::ONCE );
+		pColorTable->setWrap( Texture1D::WRAP_S, Texture1D::ONCE );
+		pColorTable->setWrap( Texture1D::WRAP_T, Texture1D::ONCE );
 	
-		pColorTable->setMinFilter( Texture1D::NEAREST );
-		pColorTable->setMagFilter( Texture1D::NEAREST );
-
+		pColorTable->setFilter( Texture1D::MIN_FILTER, Texture1D::NEAREST );
+		pColorTable->setFilter( Texture1D::MAG_FILTER, Texture1D::NEAREST );
+		
 		getSwitch()->addChild( pColorTable );
 	}
 }

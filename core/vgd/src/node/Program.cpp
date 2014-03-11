@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -63,15 +63,15 @@ Program::Program( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FVertexType(getFVertex()) );
-	addField( new FVertexUseType(getFVertexUse()) );
-	addField( new FTessellationControlType(getFTessellationControl()) );
-	addField( new FTessellationEvaluationType(getFTessellationEvaluation()) );
 	addField( new FTessellationUseType(getFTessellationUse()) );
 	addField( new FGeometryType(getFGeometry()) );
 	addField( new FGeometryUseType(getFGeometryUse()) );
-	addField( new FFragmentType(getFFragment()) );
+	addField( new FTessellationEvaluationType(getFTessellationEvaluation()) );
+	addField( new FVertexType(getFVertex()) );
 	addField( new FFragmentUseType(getFFragmentUse()) );
+	addField( new FFragmentType(getFFragment()) );
+	addField( new FVertexUseType(getFVertexUse()) );
+	addField( new FTessellationControlType(getFTessellationControl()) );
 
 	// Sets link(s)
 
@@ -83,15 +83,15 @@ Program::Program( const std::string nodeName ) :
 void Program::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setVertex( std::string() );
-	setVertexUse( (true) );
-	setTessellationControl( std::string() );
-	setTessellationEvaluation( std::string() );
 	setTessellationUse( (false) );
 	setGeometry( std::string() );
 	setGeometryUse( (false) );
-	setFragment( std::string() );
+	setTessellationEvaluation( std::string() );
+	setVertex( std::string() );
 	setFragmentUse( (true) );
+	setFragment( std::string() );
+	setVertexUse( (true) );
+	setTessellationControl( std::string() );
 }
 
 
@@ -99,86 +99,6 @@ void Program::setToDefaults( void )
 void Program::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-}
-
-
-
-// Vertex
-
-const Program::VertexValueType Program::DEFAULT_VERTEX = std::string();
-
-
-
-const Program::VertexValueType Program::getVertex() const
-{
-	return getFieldRO<FVertexType>(getFVertex())->getValue();
-}
-
-
-
-void Program::setVertex( const VertexValueType value )
-{
-	getFieldRW<FVertexType>(getFVertex())->setValue( value );
-}
-
-
-
-// VertexUse
-
-const Program::VertexUseValueType Program::DEFAULT_VERTEXUSE = (true);
-
-
-
-const Program::VertexUseValueType Program::getVertexUse() const
-{
-	return getFieldRO<FVertexUseType>(getFVertexUse())->getValue();
-}
-
-
-
-void Program::setVertexUse( const VertexUseValueType value )
-{
-	getFieldRW<FVertexUseType>(getFVertexUse())->setValue( value );
-}
-
-
-
-// TessellationControl
-
-const Program::TessellationControlValueType Program::DEFAULT_TESSELLATIONCONTROL = std::string();
-
-
-
-const Program::TessellationControlValueType Program::getTessellationControl() const
-{
-	return getFieldRO<FTessellationControlType>(getFTessellationControl())->getValue();
-}
-
-
-
-void Program::setTessellationControl( const TessellationControlValueType value )
-{
-	getFieldRW<FTessellationControlType>(getFTessellationControl())->setValue( value );
-}
-
-
-
-// TessellationEvaluation
-
-const Program::TessellationEvaluationValueType Program::DEFAULT_TESSELLATIONEVALUATION = std::string();
-
-
-
-const Program::TessellationEvaluationValueType Program::getTessellationEvaluation() const
-{
-	return getFieldRO<FTessellationEvaluationType>(getFTessellationEvaluation())->getValue();
-}
-
-
-
-void Program::setTessellationEvaluation( const TessellationEvaluationValueType value )
-{
-	getFieldRW<FTessellationEvaluationType>(getFTessellationEvaluation())->setValue( value );
 }
 
 
@@ -243,22 +163,42 @@ void Program::setGeometryUse( const GeometryUseValueType value )
 
 
 
-// Fragment
+// TessellationEvaluation
 
-const Program::FragmentValueType Program::DEFAULT_FRAGMENT = std::string();
+const Program::TessellationEvaluationValueType Program::DEFAULT_TESSELLATIONEVALUATION = std::string();
 
 
 
-const Program::FragmentValueType Program::getFragment() const
+const Program::TessellationEvaluationValueType Program::getTessellationEvaluation() const
 {
-	return getFieldRO<FFragmentType>(getFFragment())->getValue();
+	return getFieldRO<FTessellationEvaluationType>(getFTessellationEvaluation())->getValue();
 }
 
 
 
-void Program::setFragment( const FragmentValueType value )
+void Program::setTessellationEvaluation( const TessellationEvaluationValueType value )
 {
-	getFieldRW<FFragmentType>(getFFragment())->setValue( value );
+	getFieldRW<FTessellationEvaluationType>(getFTessellationEvaluation())->setValue( value );
+}
+
+
+
+// Vertex
+
+const Program::VertexValueType Program::DEFAULT_VERTEX = std::string();
+
+
+
+const Program::VertexValueType Program::getVertex() const
+{
+	return getFieldRO<FVertexType>(getFVertex())->getValue();
+}
+
+
+
+void Program::setVertex( const VertexValueType value )
+{
+	getFieldRW<FVertexType>(getFVertex())->setValue( value );
 }
 
 
@@ -283,35 +223,67 @@ void Program::setFragmentUse( const FragmentUseValueType value )
 
 
 
+// Fragment
+
+const Program::FragmentValueType Program::DEFAULT_FRAGMENT = std::string();
+
+
+
+const Program::FragmentValueType Program::getFragment() const
+{
+	return getFieldRO<FFragmentType>(getFFragment())->getValue();
+}
+
+
+
+void Program::setFragment( const FragmentValueType value )
+{
+	getFieldRW<FFragmentType>(getFFragment())->setValue( value );
+}
+
+
+
+// VertexUse
+
+const Program::VertexUseValueType Program::DEFAULT_VERTEXUSE = (true);
+
+
+
+const Program::VertexUseValueType Program::getVertexUse() const
+{
+	return getFieldRO<FVertexUseType>(getFVertexUse())->getValue();
+}
+
+
+
+void Program::setVertexUse( const VertexUseValueType value )
+{
+	getFieldRW<FVertexUseType>(getFVertexUse())->setValue( value );
+}
+
+
+
+// TessellationControl
+
+const Program::TessellationControlValueType Program::DEFAULT_TESSELLATIONCONTROL = std::string();
+
+
+
+const Program::TessellationControlValueType Program::getTessellationControl() const
+{
+	return getFieldRO<FTessellationControlType>(getFTessellationControl())->getValue();
+}
+
+
+
+void Program::setTessellationControl( const TessellationControlValueType value )
+{
+	getFieldRW<FTessellationControlType>(getFTessellationControl())->setValue( value );
+}
+
+
+
 // Field name accessor(s)
-const std::string Program::getFVertex( void )
-{
-	return "f_vertex";
-}
-
-
-
-const std::string Program::getFVertexUse( void )
-{
-	return "f_vertexUse";
-}
-
-
-
-const std::string Program::getFTessellationControl( void )
-{
-	return "f_tessellationControl";
-}
-
-
-
-const std::string Program::getFTessellationEvaluation( void )
-{
-	return "f_tessellationEvaluation";
-}
-
-
-
 const std::string Program::getFTessellationUse( void )
 {
 	return "f_tessellationUse";
@@ -333,9 +305,16 @@ const std::string Program::getFGeometryUse( void )
 
 
 
-const std::string Program::getFFragment( void )
+const std::string Program::getFTessellationEvaluation( void )
 {
-	return "f_fragment";
+	return "f_tessellationEvaluation";
+}
+
+
+
+const std::string Program::getFVertex( void )
+{
+	return "f_vertex";
 }
 
 
@@ -343,6 +322,27 @@ const std::string Program::getFFragment( void )
 const std::string Program::getFFragmentUse( void )
 {
 	return "f_fragmentUse";
+}
+
+
+
+const std::string Program::getFFragment( void )
+{
+	return "f_fragment";
+}
+
+
+
+const std::string Program::getFVertexUse( void )
+{
+	return "f_vertexUse";
+}
+
+
+
+const std::string Program::getFTessellationControl( void )
+{
+	return "f_tessellationControl";
 }
 
 

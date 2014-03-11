@@ -194,51 +194,6 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 
 
 	/**
-	 * @brief Gets the resource associated to the given key.
-	 * 
-	 * @param key			the key value
-	 * @param newResource	sets to true by this method if a new resource has been allocated, false otherwise
-	 * 
-	 * @return a pointer on the desired resource
-	 */
-	template< typename OutResourceType >
-	vgd::Shp< OutResourceType > gethShp( const KeyType& key, bool& newResource )
-	{
-		vgd::Shp< OutResourceType > retVal;
-
-		vgd::Shp< ResourceType > abstractRC = getAbstractShp(key);
-		if ( abstractRC )
-		{
-			// Found a registered RC
-			retVal = vgd::dynamic_pointer_cast< OutResourceType >( abstractRC );
-			if ( retVal )		// Test type of RC
-			{
-				// Return the registered RC
-				newResource = false;
-				return retVal;
-			}
-			else
-			{
-				// Registered RC with a wrong type
-				remove( key );
-
-				newResource = true;
-				retVal.reset( new OutResourceType );
-				add( key, retVal );
-				return retVal;
-			}
-		}
-		else
-		{
-			// no RC
-			newResource = true;
-			retVal.reset( new OutResourceType );
-			add( key, retVal );
-			return retVal;
-		}
-	}
-
-	/**
 	 * @brief Retrieves all keys and store them using the given output iterator.
 	 * 
 	 * @param key	an STL compliant output iterator
@@ -264,7 +219,7 @@ struct TManager : /*public boost::signals::trackable,*/ public boost::noncopyabl
 	void getValues( OutputIterator& values );
 
 	/**
-	 * @brief Appends all values at the end of the given container.
+	 * @brief Appends all valus at the end of the given container.
 	 *
 	 * @remark Helper around template< typename OutputIterator > void getValues( OutputIterator& values )
 	 */

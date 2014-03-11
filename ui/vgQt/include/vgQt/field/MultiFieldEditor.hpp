@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2014, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -52,7 +52,6 @@ struct MultiFieldEditor : public FieldEditor
 
         m_treeView->setRootIsDecorated(false);
         m_treeView->setColumnCount( 2 );
-		m_treeView->setUniformRowHeights(true);
 
         m_adapter.addColumnsToView(m_treeView);
 
@@ -89,93 +88,83 @@ struct MultiFieldEditor : public FieldEditor
     void commit()
     {
         typedef vgd::field::TMultiField< typename MFAdapter::value_type > FieldType;
+
         vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName.toStdString() );
 
         fieldEditor->clear();
-		fieldEditor->push_back( m_backupValue );
 
-        for( unsigned int index = 0; index != m_treeView->topLevelItemCount(); ++index )
+        unsigned int index;
+        for( index = 0; index != m_treeView->topLevelItemCount(); ++index )
         {
-            typename MFAdapter::value_type value;
+            typename MFAdapter::value_type	value;
 
             m_adapter.updateFromRow( m_treeView->topLevelItem(index), value );
+            fieldEditor->push_back( value );
         }
     }
 
     void refresh()
     {
-		// Disables update/repaint
-		m_treeView->setUpdatesEnabled(false);
+        // Clears the view and the data backup copy.
+        m_treeView->clear();
+        m_backupValue.clear();
 
-        // Clears the view
-		m_treeView->clear();
 
         // Gets the editor of the field.
         typedef vgd::field::TMultiField< typename MFAdapter::value_type > FieldType;
-		vgd::field::EditorRO< FieldType > fieldEditor = m_fieldManager->getFieldRO< FieldType >( m_fieldName.toStdString() );
 
-		// Creates a copy of data.
-        m_backupValue.clear();
-		m_backupValue.insert( m_backupValue.begin(), fieldEditor->begin(), fieldEditor->end() );
+        vgd::field::EditorRO< FieldType > fieldEditor = m_fieldManager->getFieldRO< FieldType >( m_fieldName.toStdString() );
+
 
         // Copies values from the field into the local edition model and backup of the data.
-		QList<QTreeWidgetItem*> rows;
         for( unsigned int i = 0; i < fieldEditor->size(); ++i )
         {
-            QTreeWidgetItem* row = new QTreeWidgetItem;
+            QTreeWidgetItem* row = new QTreeWidgetItem( m_treeView );
             row->setText(0, QString::number(i));
             m_adapter.updateToRow( row, (*fieldEditor)[i]);
-			rows << row;
+            m_backupValue.push_back( (*fieldEditor)[i] );
         }
-		m_treeView->addTopLevelItems( rows );
+
 
         // Updates the status label to show the number of elements.
         updateLabel();
 
         // Releases field editor
         fieldEditor.release();
-
-		// Renables update/repaint
-		m_treeView->setUpdatesEnabled(true);
 
         // Sends a change notification.
         Q_EMIT signalChanged();
     }
 
-
     void rollback()
     {
-		// Disables update/repaint
-		m_treeView->setUpdatesEnabled(false);
-
         // Gets the editor of the field.
         typedef vgd::field::TMultiField< typename MFAdapter::value_type > FieldType;
+
         vgd::field::EditorRW< FieldType >	fieldEditor	= m_fieldManager->getFieldRW< FieldType >( m_fieldName.toStdString() );
+
 
         // Clears the view and the edited field.
         m_treeView->clear();
         fieldEditor->clear();
 
+
         // Copies values from the backup value into the local edition model and the field.
-		fieldEditor->push_back( m_backupValue );
-		QList<QTreeWidgetItem*> rows;
         for( unsigned int i = 0; i < m_backupValue.size(); ++i )
         {
-            QTreeWidgetItem* row = new QTreeWidgetItem;
+            QTreeWidgetItem* row = new QTreeWidgetItem( m_treeView );
             row->setText(0, QString::number(i));
+
             m_adapter.updateToRow( row, m_backupValue[i]);
-			rows << row;
+            fieldEditor->push_back( m_backupValue[i] );
         }
-		m_treeView->addTopLevelItems( rows );
+
 
         // Updates the status label to show the number of elements.
         updateLabel();
 
         // Releases field editor
         fieldEditor.release();
-
-		// Renables update/repaint
-		m_treeView->setUpdatesEnabled(true);
 
         // Sends a change notification.
         Q_EMIT signalChanged();

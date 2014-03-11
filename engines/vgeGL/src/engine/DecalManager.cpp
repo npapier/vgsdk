@@ -120,8 +120,8 @@ void DecalManager::synchronize( const vgm::XfBox3f& box, vgd::Shp< vgd::node::Wi
 		// Add a cross in front face
 		if ( addFrontFaceCross )
 		{
-			vgd::field::EditorRW< vgd::field::MFUInt>		vertexIndex	= wireBoxShape->getVertexIndexRW();
-			vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= wireBoxShape->getPrimitiveRW();
+			vgd::field::EditorRW< vgd::field::MFUInt32>		vertexIndex	= wireBoxShape->getFVertexIndexRW();
+			vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= wireBoxShape->getFPrimitiveRW();
 
 			vertexIndex->push_back( 4 );
 			vertexIndex->push_back( 7 );
@@ -132,7 +132,7 @@ void DecalManager::synchronize( const vgm::XfBox3f& box, vgd::Shp< vgd::node::Wi
 	}
 	else
 	{
-		vgd::field::EditorRW< vgd::field::MFPrimitive > primitives = wireBoxShape->getPrimitiveRW();
+		vgd::field::EditorRW< vgd::field::MFPrimitive > primitives = wireBoxShape->getFPrimitiveRW();
 		primitives->clear();
 	}
 }
@@ -155,7 +155,7 @@ vgd::Shp< vgd::node::VertexShape > DecalManager::spawnDecalShape(	const DecalInf
 		//vgLogDebug("N=(%f %f %f)", N[0], N[1], N[2] );
 
 		// T(angent) and B(inormal)
-		vgd::field::EditorRO< vgd::field::MFVec3f > tangents = decalInfos.hitShape->getTangentRO();
+		vgd::field::EditorRO< vgd::field::MFVec3f > tangents = decalInfos.hitShape->getFTangentRO();
 		const vgm::Vec3i indices = decalInfos.hitABC.indices();
 		const vgm::Vec3f tA = (*tangents)[indices[0]];
 		const vgm::Vec3f tB = (*tangents)[indices[1]];

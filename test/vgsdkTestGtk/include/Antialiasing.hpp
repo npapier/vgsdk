@@ -6,9 +6,9 @@
 #ifndef _VGSDKTESTGTK_ANTIALIASING_HPP
 #define _VGSDKTESTGTK_ANTIALIASING_HPP
 
+#include "gtest.hpp"
 #include "helpers.hpp"
 #include <vgTest/convenience.hpp>
-#include <vgTest/gtest.hpp>
 
 #include "Fixtures.hpp"
 
@@ -33,7 +33,7 @@ TEST_P(VgTestAntialiasing, Antialiasing)
 	std::string description("Rendering a matrix of spheres and a quad with antialiasing.");
 
 	using vgd::node::Antialiasing;
-	vgd::Shp< Antialiasing > aa = base->getCanvas()->getOptionalNodeAs<Antialiasing>( vgUI::BasicViewer::ANTIALIASING );
+	vgd::Shp< Antialiasing > aa = Antialiasing::create("AA");
 	Antialiasing::TechniqueValueType technique = GetParam();
 	aa->setTechnique( technique );
 
@@ -63,6 +63,10 @@ TEST_P(VgTestAntialiasing, Antialiasing)
 
 	//
 	createQuadAndSpheresMatrix( base );
+	base->getCanvas()->getSetup()->addChild( aa );
+
+	// @todo base->run() do a viewAll()
+	base->getCanvas()->viewAll();
 
 	//run GTK
 	base->run();

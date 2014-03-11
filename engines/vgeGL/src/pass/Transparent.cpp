@@ -9,7 +9,7 @@
 #include <vgd/node/CullFace.hpp>
 #include <vgd/node/Kit.hpp>
 #include <vgd/node/Material.hpp>
-#include <vgd/node/IShape.hpp>
+#include <vgd/node/Shape.hpp>
 #include <vgeGL/engine/Engine.hpp>
 #include "vgeGL/engine/GLSLState.hpp"
 #include <vgm/operations.hpp>
@@ -45,7 +45,7 @@ void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::eng
 			i != iEnd;
 			++i )
 	{
-		if ( (i->first)->isAKindOf< vgd::node::IShape >() )
+		if ( (i->first)->isAKindOf< vgd::node::Shape >() )
 		{
 			using vgd::node::Material;
 

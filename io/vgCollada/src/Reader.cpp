@@ -350,10 +350,10 @@ void Reader::processSinglePPrimitive(	T * group, SourceMap& sources,
 
 	domListOfUInts	pData		= prim->getValue();
 
-	vgd::field::EditorRW< vgd::field::MFVec3f>	vertex		= vertexShape->getVertexRW();
-	vgd::field::EditorRW< vgd::field::MFVec3f >	normal		= vertexShape->getNormalRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f>	vertex		= vertexShape->getFVertexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	normal		= vertexShape->getFNormalRW();
 	// @todo tex
-	vgd::field::EditorRW< vgd::field::MFUInt>	vertexIndex	= vertexShape->getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex	= vertexShape->getFVertexIndexRW();
 
 	vertex->clear();
 	//vertex->resize( primCount * 3 );
@@ -430,7 +430,7 @@ void Reader::processSinglePPrimitive(	T * group, SourceMap& sources,
 	//vertexShape->computeNormals();
 
 	// primitive
-	vgd::field::EditorRW< vgd::field::MFPrimitive > primitive = vertexShape->getPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive > primitive = vertexShape->getFPrimitiveRW();
 	//primitive->clear();
 	vgd::node::Primitive singlePrimitive( vgd::node::Primitive::TRIANGLES, 0, vertexIndex->size() ); // @todo removes vgd::node::Primitive::TRIANGLES
 	primitive->push_back( singlePrimitive );

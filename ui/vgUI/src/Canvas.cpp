@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,14 +9,10 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <locale>
-#include <sstream>
 
-#include <boost/date_time/local_time/local_time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
-#include <displayDriverConnector/displayDriverConnector.hpp>
+
 #include <glo/GLSLProgram.hpp>
 
 #include <sbf/pkg/Module.hpp>
@@ -38,8 +34,6 @@
 #include <vgDebug/helpers.hpp>
 #include <vgeGL/engine/Engine.hpp>
 
-#include "vgUI/Screenshot.hpp"
-
 
 
 namespace vgUI
@@ -50,23 +44,65 @@ namespace vgUI
 namespace
 {
 
-static uint32					m_canvasCount	= 0;						///< Instance count of this class.
-static Canvas::GleLogSystem		m_gleLogSystem	= Canvas::GLE_FILE_IN_VAR;	///< A value from GleLogSystem enumeration to specify the log system used by gle library.
-static std::ofstream			m_gleLogFile;								///< The gle.txt file
-
-
 void logDebugVerticalSynchronizationState( Canvas * canvas )
 {
 	if ( canvas->isVerticalSynchronizationEnabled() )
 	{
-		vgLogMessage("Vertical synchronization is enabled");
+		vgLogDebug("Vertical synchronization is enabled");
 	}
 	else
 	{
-		vgLogMessage("Vertical synchronization is disabled");
+		vgLogDebug("Vertical synchronization is disabled");
 	}
 }
 
+}
+
+
+
+void Canvas::Screenshot::save( const std::string path, const std::string filename, const bool feedback )
+{
+	namespace bfs = boost::filesystem;
+	assert( bfs::exists( path ) && "Path not found" );
+
+	const std::string lFilename = filename.size() > 0 ?
+		filename : buildFilename( "frame" );
+
+	// User feedback
+	if ( feedback )
+	{
+		vgLogDebug( "Screenshot done in file %s", lFilename.c_str() );
+		vgLogStatus( "Screenshot done in file %s", lFilename.c_str() );
+	}
+
+	// Output image
+	const std::string output = (bfs::path(path) / lFilename).string();
+
+	// Removes image if needed
+	if ( bfs::exists( output ) )
+	{
+		bfs::remove( output );
+	}
+
+	// Saves image
+	getImage()->save( output );
+}
+
+
+
+const std::string Canvas::Screenshot::buildFilename( const std::string filePrefix )
+{
+	// Constructs filename
+
+	// FIXME boost::format seems to SEGV with boost 1.38 on win32, so boost lexical cast is used
+	//const std::string strCount = (boost::format("%|07|") % getFrameNumber()).str();
+
+	const std::string strFrameCount = boost::lexical_cast< std::string >( getFrameNumber() );
+	const std::string strZero( (8 - strFrameCount.size()), '0' );
+
+	const std::string filename = filePrefix + strZero + strFrameCount + ".png";
+
+	return filename;
 }
 
 
@@ -85,36 +121,58 @@ const Canvas::GleLogSystem Canvas::getGleLogSystem()
 
 
 
-Canvas::Canvas( const Canvas * sharedCanvas, const bool newOpenGLContextSharingObjects )
-:	vgeGL::engine::SceneManager( sharedCanvas ?
-		vgd::makeShp(new vgeGL::engine::Engine(sharedCanvas->getGLEngine().get())) :
-		vgd::makeShp(new vgeGL::engine::Engine())
-		),
-	m_sharedCanvas					( sharedCanvas															),
-	//m_drawable						( 0																	),
-	m_glc							( 0																		),
-	m_gleContext					( sharedCanvas ?
-		sharedCanvas->m_gleContext : vgd::makeShp( new gle::OpenGLExtensionsGen(getGleOutputStream()) )		),
-	m_initialVerticalSynchronization( true																	),
-	m_scheduleScreenshot			( false																	),
-	m_scheduleVideoCapture			( false																	),
-	m_videoCapture					( false																	),
-	m_video							( new ScreenshotContainer()												),
-	//m_whats
-	m_maxNumberOfCapturesPerSecond	( 25																	),
-	m_debugEvents					( false																	),
-	m_frameBase						( 0																		),
+Canvas::Canvas()
+:	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
+	// m_gleLogSystem
+	// m_gleLogFile
+	m_gleContext					( getGleOutputStream()			),
+	m_sharedCanvas					( 0								),
+	m_initialVerticalSynchronization( true							),
+	m_scheduleScreenshot			( false							),
+	m_videoCapture					( false							),
+	m_debugEvents					( false							),
+	m_frameBase						( 0								),
+	m_frameTime						( -1							),
 	// m_timeBase
-	m_frameTime						( -1																	),
-	m_fps							( -1																	)
+	m_fps							( -1							)
 {
-	vgAssertN( newOpenGLContextSharingObjects == false, "newOpenGLContextSharingObjects not yet supported" );
-
 	// Updates the number of canvas
+	vgAssertN( getCanvasCount() == 0, "Only the first canvas must be created with this constructor. Uses constructor with the following signature instead Canvas( const Canvas * )." );
 	++m_canvasCount;
 
 	// Resets the scene graph
 	privateResetSceneGraph();
+
+	// Fps
+	// setDebugOverlay( true );
+}
+
+
+
+Canvas::Canvas( const Canvas *sharedCanvas )
+:	vgeGL::engine::SceneManager( vgd::Shp< vgeGL::engine::Engine >( new vgeGL::engine::Engine() ) ),
+	// m_gleLogSystem
+	// m_gleLogFile
+	m_gleContext					( getGleOutputStream()			),
+	m_sharedCanvas					( sharedCanvas					),
+	m_initialVerticalSynchronization( true							),
+	m_scheduleScreenshot			( false							),
+	m_videoCapture					( false							),
+	m_debugEvents					( false							),
+	m_frameBase						( 0								),
+	m_frameTime						( -1							),
+	// m_timeBase
+	m_fps							( -1							)
+{
+	// Updates the number of canvas
+	vgAssertN( getCanvasCount() >= 1, "The first canvas must be created with the following constructor Canvas()." );
+	++m_canvasCount;
+
+	// Resets the scene graph
+	privateResetSceneGraph();
+
+	// Fps
+	// setDebugOverlay( true );
 }
 
 
@@ -156,118 +214,12 @@ void Canvas::privateResetSceneGraph()
 Canvas::~Canvas()
 {
 	// Updates the number of canvas
-	vgAssert( m_canvasCount > 0 );
+	assert( m_canvasCount > 0 );
 	--m_canvasCount;
 
-	uninitDevices();
-	shutdownOpenGLContext();
+	gleSetCurrent(0);
 }
 
-
-
-const bool Canvas::setCurrent()
-{
-	// glc is made current
-	const bool retVal = (m_glc != 0) ? (glc_set_current( glc() ) != 0) : false;
-	if ( retVal == false )
-	{
-		vgLogDebug("glc_set_current returns false");
-	}
-
-	// gle must be made current
-	if ( retVal )
-	{
-		// glc context has been made current. gle must be current too.
-		if ( gleGetCurrent() != getGleContext() )
-		{
-			gleSetCurrent( getGleContext() );
-		}
-		//else nothing to do (already current)
-	}
-	else
-	{
-		// gle must be not current.
-		gleSetCurrent( 0 );
-	}
-
-	return retVal;
-}
-
-
-//#define USE_GDEBUGGER
-const bool Canvas::unsetCurrent()
-{
-#ifdef USE_GDEBUGGER
-	// code path to be able to modify/recompile GLSL shaders in gDEBugger.
-	const bool retVal = true;
-	gleSetCurrent( 0 );
-#else
-	// normal code path
-	const bool retVal = (m_glc != 0) ? (glc_unset_current( glc() ) != 0) : false;
-	gleSetCurrent( 0 );
-#endif
-
-	return retVal;
-}
-
-
-const bool Canvas::isCurrent() const
-{
-	if ( m_glc != 0 )
-	{
-		return glc_is_current( glc() ) != 0;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-
-void Canvas::swapBuffer()
-{
-	if ( m_glc != 0 )
-	{
-		glc_swap( glc() );
-	}
-	else
-	{
-		vgLogDebug("vgQt::Canvas::swapBuffer called without a glc context.");
-	}
-}
-
-
-const bool Canvas::setFullscreen( const bool wantFullscreen )
-{
-	if ( wantFullscreen == isFullscreen() )
-	{
-		// Nothing to do
-		return true;
-	}
-
-	// Updates the current state.
-	if ( m_glc )
-	{
-		return glc_drawable_set_fullscreen( glc(), wantFullscreen, false /*no action on compositing window manager*/) != 0;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-
-const bool Canvas::isFullscreen()
-{
-	if ( m_glc )
-	{
-		return glc_drawable_is_fullscreen( glc() ) != 0;
-	}
-	else
-	{
-		return false;
-	}
-}
 
 
 void Canvas::setInitialVerticalSynchronization( const bool enabled )
@@ -279,7 +231,7 @@ void Canvas::setInitialVerticalSynchronization( const bool enabled )
 
 const bool Canvas::hasVerticalSynchronizationControl() const
 {
-	vgAssertN( isCurrent(), "OpenGL context not current" );
+	assert( isCurrent() && "OpenGL context not current" );
 
 #ifdef _WIN32
 	return isWGL_EXT_swap_control();
@@ -294,8 +246,8 @@ const bool Canvas::hasVerticalSynchronizationControl() const
 
 void Canvas::setVerticalSynchronization( const bool enabled )
 {
-	vgAssertN( hasVerticalSynchronizationControl(), "Vertical synchronization control is not available" );
-	vgAssertN( isCurrent(), "OpenGL context not current" );
+	assert( hasVerticalSynchronizationControl() && "Vertical synchronization control is not available" );
+	assert( isCurrent() && "OpenGL context not current" );
 
 #ifdef _WIN32
 	if ( isWGL_EXT_swap_control() )
@@ -304,7 +256,7 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 	}
 	else
 	{
-		vgLogMessage("WGL_EXT_swap_control not supported.");
+		vgLogDebug("WGL_EXT_swap_control not supported.");
 	}
 #elif __MACOSX__
 	#error "Platform not yet supported."
@@ -319,12 +271,12 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 		}
 		else
 		{
-			vgLogMessage("Unable to retrieve drawable");
+			vgLogDebug("Unable to retrieve drawable");
 		}
 	}
 	else
 	{
-		vgLogMessage("GLX_EXT_swap_control not supported.");
+		vgLogDebug("GLX_EXT_swap_control not supported.");
 	}
 #endif
 }
@@ -333,8 +285,8 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 
 const bool Canvas::isVerticalSynchronizationEnabled() const
 {
-	vgAssertN( hasVerticalSynchronizationControl(), "Vertical synchronization control is not available" );
-	vgAssertN( isCurrent(), "OpenGL context not current" );
+	assert( hasVerticalSynchronizationControl() && "Vertical synchronization control is not available" );
+	assert( isCurrent() && "OpenGL context not current" );
 
 #ifdef _WIN32
 	if ( isWGL_EXT_swap_control() )
@@ -344,7 +296,7 @@ const bool Canvas::isVerticalSynchronizationEnabled() const
 	}
 	else
 	{
-		vgLogMessage("WGL_EXT_swap_control not supported.");
+		vgLogDebug("WGL_EXT_swap_control not supported.");
 		return false;
 	}
 #elif __MACOSX__
@@ -362,13 +314,13 @@ const bool Canvas::isVerticalSynchronizationEnabled() const
 		}
 		else
 		{
-			vgLogMessage("Unable to retrieve drawable");
+			vgLogDebug("Unable to retrieve drawable");
 			return false;
 		}
 	}
 	else
 	{
-		vgLogMessage("GLX_EXT_swap_control not supported.");
+		vgLogDebug("GLX_EXT_swap_control not supported.");
 		return false;
 	}
 #endif
@@ -408,7 +360,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 
 		if( keyboardButtonEvent != 0 )
 		{
-			vgLogMessage(
+			vgLogDebug(
 					"KeyboardButtonEvent (%s, %s)",
 					toString( keyboardButtonEvent->getButtonID() ).c_str(),
 					toString( keyboardButtonEvent->getState() ).c_str()
@@ -416,7 +368,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( mouseButtonEvent != 0 )
 		{
-			vgLogMessage(
+			vgLogDebug(
 					"MouseButtonEvent (%s,%s)",
 					toString( mouseButtonEvent->getButtonID() ).c_str(),
 					toString( mouseButtonEvent->getState() ).c_str()
@@ -424,7 +376,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( location2Event != 0 )
 		{
-			vgLogMessage(
+			vgLogDebug(
 					"Location2Event ( previousLocation(%.2f,%.2f), location(%.2f,%.2f), size(%.2f,%.2f)",
 					location2Event->getPreviousLocation()[0],
 					location2Event->getPreviousLocation()[1],
@@ -436,7 +388,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else if( mouseWheelEvent != 0 )
 		{
-			vgLogMessage(
+			vgLogDebug(
 					"MouseWheelEvent (%s, %d)",
 					toString( mouseWheelEvent->getAxis() ).c_str(),
 					mouseWheelEvent->getDelta()
@@ -448,7 +400,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 		}
 		else
 		{
-			vgLogMessage("Unknown event");
+			vgLogDebug("Unknown event");
 		}
 	}
 }
@@ -458,11 +410,10 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 // @todo clean this method !!!
 void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
-	vgAssertN( isCurrent(), "OpenGL context must have been set current." );
+	assert( isCurrent() && "OpenGL context must have been set current." );
 
 	doInitialize();
 
-	//
 	boost::logic::tribool vsyncState = boost::logic::indeterminate;
 
 	// paint() must do several renderings => This is a bench
@@ -478,6 +429,9 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 
 	while( getNumberOfFrames() > 0 )
 	{
+		gleGetCurrent()->reportGLErrors();
+
+		//
 		namespace bpt = boost::posix_time;
 
 		// Initializes attributes used by fps computation
@@ -488,16 +442,26 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			m_timeBase	= beginPaint;
 		}
 
+		//bpt::ptime current = bpt::microsec_clock::universal_time();
+
+/*		m_elapsedTimeBetweenPaint = current - m_lastPaint;
+		std::cout << "elapsedTimeBetweenPaint:" << m_elapsedTimeBetweenPaint.total_milliseconds() << std::endl;
+		m_lastPaint = current;
+
+		//
+		bpt::ptime beginPaint = bpt::microsec_clock::universal_time();
+*/
+
 		::vgeGL::engine::SceneManager::paint( size, getBoundingBoxUpdate() );
 
 		// Capture screenshot or video
 		using vgd::basic::Image;
+		vgd::Shp< Image > capturedImage;
 
-		// SCREENSHOT
 		if ( isScreenshotScheduled() )
 		{
 			// Do the capture
-			vgd::Shp< Image > capturedImage = getGLEngine()->captureGLFramebuffer();
+			capturedImage = getGLEngine()->captureGLFramebuffer();
 
 			// Constructs the screenshot and saves the png image
 			Screenshot shot( getFrameCount(), capturedImage );
@@ -520,79 +484,56 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			m_screenshotFilename.clear();
 		}
 
-		// VIDEO
-		if ( m_scheduleVideoCapture )
-		{
-			startVideoCapture();
-			m_scheduleVideoCapture = false;
-		}
-
-		//
 		if ( isVideoCaptureEnabled() )
 		{
 			static bpt::ptime lastCapture;
 			if ( lastCapture.is_not_a_date_time() )
 			{
-				lastCapture = bpt::microsec_clock::universal_time() - bpt::seconds(1);
+				lastCapture = bpt::microsec_clock::universal_time();
 			}
 
-			const bpt::ptime			currentCapture = bpt::microsec_clock::universal_time();
-			const bpt::time_duration	elapsedTimeBetweenTwoCaptures = currentCapture - lastCapture;
+			const bpt::ptime currentCapture = bpt::microsec_clock::universal_time();
 
-			const float desiredElapsedTimeBetween2Captures = 1000.f / m_maxNumberOfCapturesPerSecond;
+			const bpt::time_duration elapsedTimeBetweenTwoCaptures = currentCapture - lastCapture;
+
+			const float maxNumberOfCapturesPerSecond = 20.f; // @todo parameter
+			const float desiredElapsedTimeBetween2Captures = 1000.f / maxNumberOfCapturesPerSecond;
 			if ( elapsedTimeBetweenTwoCaptures.total_milliseconds() >= desiredElapsedTimeBetween2Captures  )
 			{
-				// Do the capture
-				if ( m_video->sizeBuffering() > 0 )
+				if ( capturedImage == 0 )
 				{
-					// recycles a screenshot
-					vgd::Shp< Screenshot > recycledShot = m_video->popBuffering();
-
-					//	updates image(s)
-					for( uint i=0; i != m_whats.size(); ++i )
-					{
-						const uint what = m_whats[i];
-
-						vgd::Shp< vgd::basic::Image > capturedImage = recycledShot->getImage( what );
-						void * captureImageData = recycledShot->getImageData( what );
-
-						// captures using a recycled image
-						using vgeGL::engine::Engine;
-						getGLEngine()->captureGLFramebuffer( static_cast<Engine::CaptureBufferType>(what), capturedImage, captureImageData );
-					}
-
-					//	updates frame count
-					recycledShot->setFrameNumber( getFrameCount() );
-
-					//	updates camera informations
-					const vgm::Vec2f nearFar			= getGLEngine()->getNearFar();
-
-					const vgm::Rectangle2i viewport2i	= getGLEngine()->getViewport();
-					const vgm::Vec4i viewport( viewport2i.x(), viewport2i.y(), viewport2i.width(), viewport2i.height() );
-					const vgm::MatrixR& modelview		= getGLEngine()->getSceneGeometricalMatrix();
-					const vgm::MatrixR& projection		= getGLEngine()->getCamera()->getProjectionLeft();
-					recycledShot->setCameraInformations( nearFar, viewport, modelview, projection );
-
-					//
-					m_video->push( recycledShot );
+					capturedImage = getGLEngine()->captureGLFramebuffer();
 				}
-				else
-				{
-					// buffer is empty. unable to recycle a screenshot.
-					vgLogMessage("Skip capturing frame %i. Waiting thread to serialize a screenshot (next frame ?).", getFrameCount() );
-				}
+
+				Screenshot screenshot( getFrameCount(), capturedImage );
+				m_video.push_back( screenshot );
 
 				lastCapture = currentCapture;
 			}
-			// else nothing to do
+/*			else
+			// else save one image on disk
+			{
+				vgLogDebug("Time to save");
+// ???			
+			}*/
 		}
+
+/*
+		//glFlush();
+		//glFinish(); 
+		{
+			std::cout << "Skip\n";
+		}
+		// else nothing to do 
+*/
+		gleGetCurrent()->reportGLErrors();
 
 		// Exchanges back and front buffers
 		swapBuffer();
 
 		bpt::ptime endPaint = bpt::microsec_clock::universal_time();
 
-		setFrameTime( static_cast<int>( (endPaint - beginPaint).total_milliseconds()) );
+		setFrameTime( (endPaint - beginPaint).total_milliseconds() );
 
 		// Computes fps
 		bpt::time_duration elapsedTimeBetweenFPSComputation = endPaint - m_timeBase;
@@ -606,6 +547,12 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 			m_timeBase	= endPaint;
 		}
 
+
+/*
+		bpt::ptime endPaint = bpt::microsec_clock::universal_time();
+		m_paintDuration = endPaint - beginPaint;
+		std::cout << "paintDuration:" << m_paintDuration.total_milliseconds() << std::endl;
+*/
 		setNumberOfFrames( getNumberOfFrames()-1 );
 	}
 
@@ -625,7 +572,7 @@ void Canvas::resize( const vgm::Vec2i size )
 	vgeGL::engine::SceneManager::resize( size );
 
 	// Forward a resize notification event.
-	vgd::Shp< vgd::event::Event > event( new vgd::event::SizeEvent(this, vgd::event::detail::GlobalButtonStateSet::get(), size) );
+	vgd::Shp< vgd::event::Event >	event( new vgd::event::SizeEvent(this, vgd::event::detail::GlobalButtonStateSet::get(), size) );
 
 	fireEvent( event );
 }
@@ -671,11 +618,25 @@ void Canvas::refreshIfNeeded( const WaitType wait )
 		// Do the refresh
 
 		// Useful for debugging wrong dirty flags
-		//vgLogMessage("refreshIfNeeded(): because of node named %s\n", result->getName().c_str() );
+		//vgLogDebug("refreshIfNeeded(): because of node named %s\n", result->getName().c_str() );
 
 		refreshForced( wait );
 	}
 	// else refresh not needed
+}
+
+
+
+void Canvas::refreshForced( const WaitType wait )
+{
+	if ( wait == ASYNCHRONOUS )
+	{
+		sendRefresh();
+	}
+	else
+	{
+		doRefresh();
+	}
 }
 
 
@@ -696,24 +657,11 @@ const bool Canvas::isScreenshotScheduled() const
 
 
 
-void Canvas::setVideoCapture( const bool isEnabled, const std::string directoryNameFormat )
+void Canvas::setVideoCapture( const bool isEnabled )
 {
-	if ( isEnabled )
-	{
-		// request the start of video capture (startVideoCapture() have to be called in paint() for Engine.getOutputBuffers())
-		if ( !m_videoCapture ) // capture video is not currently done
-		{
-			m_scheduleVideoCapture				= isEnabled;
-			m_videoCaptureDirectoryNameFormat	= directoryNameFormat;
-		}
-		// else nothing to do
-	}
-	else
-	{
-		// request the stop of video capture
-		stopVideoCapture();
-	}
+	m_videoCapture = isEnabled;
 }
+
 
 
 const bool Canvas::isVideoCaptureEnabled() const
@@ -784,12 +732,9 @@ void Canvas::setFrameTime( const int newFrameTime )
 }
 
 
-
-
-
-gle::OpenGLExtensionsGen * Canvas::getGleContext()
+gle::OpenGLExtensionsGen& Canvas::getGleContext()
 {
-	return m_gleContext ? m_gleContext.get() : 0;
+	return m_gleContext;
 }
 
 
@@ -814,136 +759,17 @@ void Canvas::doInitialize()
 	if ( !m_bCallInitialize )
 	{
 		// First rendering, call initialize().
+		gleGetCurrent()->reportGLErrors();
+
 		initialize();
 
+		gleGetCurrent()->reportGLErrors();
+
+		//
 		m_bCallInitialize = true;
 	}
 }
 
-
-
-const bool Canvas::startOpenGLContext()
-{
-	// Tests if glc context is already created
-	if ( m_glc == 0 )
-	{
-		// glc context is not already created, creates a new one
-
-		// First creates the drawable from the canvas
-		glc_drawable_t * drawable = createDrawable();
-		//m_drawable = drawable;
-		if ( drawable == 0 )
-		{
-			vgLogWarning("Unable to create the drawable.");
-			return false;
-		}
-
-		// Sets the desired property for the context
-		const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
-		drawable->stereo = requestedProperties.enableQuadBufferStereo();
-
-		// Next, creates the glc context (shared or not)
-		if ( m_sharedCanvas )
-		{
-			// Create a new glc sharing the given OpenGL rendering context
-			m_glc = glc_create( drawable, m_sharedCanvas->glc() );
-		}
-		else
-		{
-			m_glc = glc_create( drawable );
-		}
-
-		if ( m_glc == 0 )
-		{
-			destroyDrawable( drawable );
-			//m_drawable = 0;
-			vgLogWarning("Unable to create the glc context.");
-			return false;
-		}
-
-		vgLogMessage("glc context successfully created.");
-
-		// Next, mades the glc context current
-		const bool isGLCCurrent = setCurrent();
-		if ( !isGLCCurrent )
-		{
-			vgLogWarning( "Unable to set glc context current. This is not expected !!!" );
-			return false;
-		}
-
-		vgLogMessage("glc context made current.");
-
-		// Analyses current OpenGL context
-		GLboolean glbool;
-		glGetBooleanv( GL_STEREO, &glbool );
-		if ( glbool )
-		{
-			vgLogMessage("OpenGL context with stereo support");
-			m_currentGLContextProperties = vgeGL::engine::GLContextProperties(true);
-		}
-		else
-		{
-			m_currentGLContextProperties = vgeGL::engine::GLContextProperties(false);
-			vgLogMessage("OpenGL context without stereo support");
-		}
-		m_hasCurrentGLContextProperties = true;
-
-		// Retrieves and prints informations about primary display adapter
-		ddc_display_device_info_t displayDevice;
-		ddc_get_primary_display_device_informations( &displayDevice );
-
-		const std::string ddi = ddc_get_display_device_info(&displayDevice);
-		getGleContext()->logEndl(ddi);
-
-		// Finally, initializes gle and sets it current
-// @todo only if not already done
-		vgLogMessage("Start gle initialization...");
-		getGleContext()->clear();
-		getGleContext()->initialize();
-		vgLogMessage("gle initialization successfully completed.");
-
-		gleSetCurrent( getGleContext() );
-
-		vgAssertN( isCurrent(), "Internal error." );
-
-		return true;
-	}
-	else
-	{
-		// glc context is already created
-		const bool retVal = setCurrent();
-
-		return retVal;
-	}
-}
-
-
-const bool Canvas::shutdownOpenGLContext()
-{
-	if ( m_glc != 0 )
-	{
-		// Cleans gle context
-		gleSetCurrent(0);
-		vgLogDebug("gle context unset current.");
-
-		// Deletes glc context
-		glc_destroy( glc() );
-		m_glc = 0;
-		vgLogDebug("glc context deleted.");
-
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-
-const bool Canvas::hasAnOpenGLContext() const
-{
-	return m_glc != 0;
-}
 
 
 const bool Canvas::startVGSDK()
@@ -956,16 +782,17 @@ const bool Canvas::startVGSDK()
 		return false;
 	}
 
-	vgAssertN( isCurrent(), "OpenGL context must have been set current." );
+	assert( isCurrent() && "OpenGL context must have been set current." );
 
 	using boost::logic::indeterminate;
 	if ( indeterminate( hasVGSDK() ) )
 	{
 		vgLogMessage("Start vgSDK...");
 
-		// Checks OpenGL requirements for vgsdk, i.e
-		// full mode requested by enabled GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 4.2).
-		// @todo deprecated: "compatibility" mode requested by disabling GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 2.0
+		// Checks OpenGL requirements for vgsdk
+		// Two modes :
+		// - "compatibility" mode requested by disabling GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 2.0
+		// - full mode requested by enabled GLSL usage (engine->setGLSLEnabled(false)) => requirements OpenGL >= 3.0).
 
 		//vgLogMessage3("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 		//vgLogMessage3("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
@@ -992,12 +819,12 @@ const bool Canvas::startVGSDK()
 		else
 		{
 			// Checks full mode
-			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 4.2, GLSL version >= 4.2)...");
+			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 3.3, GLSL version >= 3.3)...");
 			vgLogMessage("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 			vgLogMessage("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
 
-			if (	vgm::greaterThanEqual(gleGetOpenGLVersion(), 4.2f) &&
-					vgm::greaterThanEqual(gleGetGLSLVersion(), 4.2f) )
+			if (	vgm::greaterThanEqual(gleGetOpenGLVersion(), 3.3f) &&
+					vgm::greaterThanEqual(gleGetGLSLVersion(), 3.3f) )
 			{
 				vgLogMessage("You have the full requirements for vgsdk.");
 				m_hasVGSDK = true;
@@ -1011,12 +838,10 @@ const bool Canvas::startVGSDK()
 		}
 
 		// Initializes vgeGL
-// @todo only for the first canvas
 		getGLEngine()->reset();
 
 		// FIXME
 		///@todo Remove setToDefaults().
-// @todo only for the first canvas
 		getGLEngine()->setToDefaults();
 
 		// Theses two lines must go in setToDefaults()
@@ -1040,25 +865,25 @@ const bool Canvas::startVGSDK()
 				{
 					if ( m_initialVerticalSynchronization )
 					{
-						vgLogMessage("Enables vertical synchronization");
+						vgLogDebug("Enables vertical synchronization");
 					}
 					else
 					{
-						vgLogMessage("Disables vertical synchronization");
+						vgLogDebug("Disables vertical synchronization");
 					}
 				}
 				else
 				{
-					vgLogMessage("Unable to modify the vertical synchronization.");
-					vgLogMessage("Checks 'Wait for vertical refresh' or something similar in the settings of your graphic card.");
-					vgLogMessage("It is certainly set to 'Always off' or 'Always on'");
+					vgLogDebug("Unable to modify the vertical synchronization.");
+					vgLogDebug("Checks 'Wait for vertical refresh' or something similar in the settings of your graphic card.");
+					vgLogDebug("It is certainly set to 'Always off' or 'Always on'");
 				}
 			}
 			// else nothing to do
 		}
 		else
 		{
-			vgLogMessage("No control of the vertical synchronization (EXT_swap_control)");
+			vgLogDebug("No control of the vertical synchronization (EXT_swap_control)");
 		}
 
 		//
@@ -1082,85 +907,78 @@ const bool Canvas::shutdownVGSDK()
 	}
 
 	//
-	uninitDevices();
-
-	//
 	if ( indeterminate(hasVGSDK()) )
 	{
 		// Nothing to do
 		vgLogDebug/*logMessage*/("vgSDK shutdown: nothing to do, because already shutdown or never started.\n");
-
-		//
-		shutdownOpenGLContext();
 
 		return false;
 	}
 	else if ( !hasVGSDK() )
 	{
 		// Nothing to do
-		vgLogDebug/*logMessage*/("vgSDK shutdown: nothing to do, because vgSDK startup failed. Checks OpenGL requirements.\n");
-
-		//
 		shutdownOpenGLContext();
+
+		vgLogDebug/*logMessage*/("vgSDK shutdown: nothing to do, because vgSDK startup failed. Checks OpenGL requirements.\n");
 
 		m_hasVGSDK = boost::logic::indeterminate;
 		return false;
 	}
-	else
+
+	m_hasVGSDK = boost::logic::indeterminate;
+
+	// Do the shutdown
+	vgLogDebug/*logMessage*/("Shutdown vgSDK...");
+
+	// Last canvas is about to be destroy
+	if ( m_canvasCount == 1 )
 	{
-		vgAssert( hasVGSDK() );
-		m_hasVGSDK = boost::logic::indeterminate;
-
-		// Do the shutdown
-		vgLogDebug/*logMessage*/("Shutdown vgSDK...");
-
-		if ( m_canvasCount >= 2 )
+		if ( startOpenGLContext() )
 		{
-			// There are at least two canvas
+			assert( isCurrent() && "OpenGL context must have been set current. So OpenGL objects could not be released properly." );
 
-			// gle context and OpenGL engine are shared.
+			// Try to destroy OpenGL objects
+			vgLogDebug/*logMessage*/("Releases managed OpenGL objects...\n");
 
-			// Only shutdown OpenGL context (i.e drawable and OpenGL context if not shared, unset gle context).
+			getGLEngine()->getGLManager().clear();
+
+			::glo::GLSLProgram::useFixedPaths();
+			getGLEngine()->getGLSLManager().clear();
+
+			//
 			shutdownOpenGLContext();
 
-			vgLogMessage("vgSDK shutdown completed (delayed to the last canvas).\n");
-			return false;
+			vgLogDebug("vgSDK shutdown completed.\n");
+			return true;
 		}
 		else
 		{
-			vgAssert( m_canvasCount == 1 );
+			// No current OpenGL context
+			vgLogDebug/*logWarning*/("No current OpenGL context.");
+			vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
 
-			if ( startOpenGLContext() )
-			{
-				vgAssertN( isCurrent(), "OpenGL context must have been set current. So OpenGL objects could not be released properly." );
+			// Try to destroy OpenGL objects
+			vgLogDebug/*logMessage*/("Releases managed OpenGL objects (but without a current OpenGL context)...\n");
 
-				// OpenGL engine
-				// Try to destroy OpenGL objects
-				vgLogDebug/*logMessage*/("Releases managed OpenGL objects...\n");
+			getGLEngine()->getGLManager().clear();
 
-				getGLEngine()->getGLManager()->clear();
+			//::glo::GLSLProgram::useFixedPaths();
+			getGLEngine()->getGLSLManager().clear();
 
-				::glo::GLSLProgram::useFixedPaths();
-				getGLEngine()->getGLSLManager()->clear();
+			//
+			shutdownOpenGLContext();
 
-				shutdownOpenGLContext();
-
-				vgLogMessage("vgSDK shutdown completed.\n");
-				return true;
-			}
-			else
-			{
-				// No current OpenGL context
-				vgLogDebug/*logWarning*/("No current OpenGL context.");
-				vgLogDebug/*logMessage*/("vgSDK shutdown aborted...\n");
-
-				//
-				shutdownOpenGLContext();
-
-				vgLogMessage("vgSDK shutdown finished, but not completed.\n");
-				return false;
-			}
+			vgLogDebug("vgSDK shutdown finished, but not completed.\n");
+			return false;
 		}
+	}
+	else
+	{
+		// Don't destroy OpenGL objects, because they could be shared between OpenGL contexts.
+		shutdownOpenGLContext();
+
+		vgLogDebug("vgSDK shutdown completed (delayed to the last canvas).\n");
+		return false;
 	}
 }
 
@@ -1245,6 +1063,17 @@ void Canvas::updateFPSOverlay()
 
 
 
+uint32 Canvas::m_canvasCount = 0;
+
+
+Canvas::GleLogSystem Canvas::m_gleLogSystem = GLE_FILE_IN_VAR;
+
+
+
+std::ofstream Canvas::m_gleLogFile;
+
+
+
 std::ostream* Canvas::getGleOutputStream()
 {
 	const GleLogSystem currentGleLogSystem = getGleLogSystem();
@@ -1276,101 +1105,16 @@ std::ostream* Canvas::getGleOutputStream()
 	}
 	else
 	{
-		vgAssertN( false, "vgUI::Canvas: Unsupported gle log system." );
+		assert( false && "vgUI::Canvas: Unsupported gle log system." );
 		return &std::cout;
 	}
 }
-
-
-
-void Canvas::startVideoCapture()
-{
-	// Test if video capture is not enabled
-	if ( !m_videoCapture )
-	{
-		vgLogMessage("Starting video capture...");
-
-		// COMPUTE DIRECTORY NAME
-		using namespace boost::local_time;
-		using namespace boost::posix_time;
-
-		std::stringstream ss;
-		time_facet * outputFacet = new time_facet(); 
-		ss.imbue( std::locale(std::locale::classic(), outputFacet) );
-		outputFacet->format(m_videoCaptureDirectoryNameFormat.c_str()); // default format : Monday-29-02-2009_14h30m12s
-		ss << second_clock::local_time();
-		const std::string videoDirectoryName = ss.str();
-
-		// Computes full path for video
-		namespace bfs = boost::filesystem;
-		const bfs::path path = sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) / bfs::path("videos") / videoDirectoryName; // @todo improve sbf api
-
-		// Creates directory
-		m_video->createDirs( path.string() );
-
-		// Configures buffering
-		using vgd::basic::Image;
-		using vgeGL::engine::Engine;
-
-		// What to capture COLOR
-		m_whats.clear();
-		m_whats.push_back( 0 );
-		// m_whats.push_back( 1 ); @todo use vgQt::engine::RecordSettings to choose if DEPTH have to be captured
-
-		// creating a screenshot
-		std::vector< vgd::Shp< Image > > images;
-
-		for( uint i=0; i != m_whats.size(); ++i )
-		{
-			const uint what = m_whats[i];
-			vgd::Shp< Image > image = getGLEngine()->captureGLFramebuffer( static_cast<Engine::CaptureBufferType>(what) );
-			images.push_back( image );
-		}
-
-		// @todo use vgQt::engine::RecordSettings to choose the buffer size
-		const uint bufferSize = std::max( m_maxNumberOfCapturesPerSecond * 3, static_cast<uint>(10) );
-		m_video->setBufferingSize( bufferSize, vgd::makeShp( new Screenshot(0, images) ) );
-
-		// Launches thread to serialize captured images
-		vgLogMessage("Starting thread to serialize video capture.");
-		m_video->startThread();
-	}
-	//else nothing to do
-
-	m_videoCapture = true;
-}
-
-void Canvas::stopVideoCapture()
-{
-	// Test if video capture is enabled
-	if ( m_videoCapture )
-	{
-		// Disable video capture
-		vgLogMessage("Schedule interruption of thread to serialize video capture...");
-		m_video->scheduleThreadInterrupt();
-		m_video->getThread().join();
-		vgLogMessage("Video capture thread interrupted.\n");
-	}
-	//else nothing to do
-
-	m_videoCapture = false;
-}
-
 
 
 boost::filesystem::path Canvas::getGlePath()
 {
 	return sbf::pkg::Module::get()->getPathSafe(sbf::pkg::VarPath);
 }
-
-
-
-glc_t * Canvas::glc() const
-{
-	vgAssert( m_glc != 0);
-	return m_glc;
-}
-
 
 
 } // namespace vgUI

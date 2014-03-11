@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,7 +6,6 @@
 
 #include "vgUI/BasicViewer.hpp"
 
-#include <vgd/node/Antialiasing.hpp>
 #include <vgd/node/Camera.hpp>
 #include <vgd/node/ClearFrameBuffer.hpp>
 #include <vgd/node/DirectionalLight.hpp>
@@ -16,11 +15,8 @@
 #include <vgd/node/MatrixTransform.hpp>
 #include <vgd/node/MultiSwitch.hpp>
 #include <vgd/node/PointLight.hpp>
-#include <vgd/node/Program.hpp>
 #include <vgd/node/SpotLight.hpp>
 #include <vgd/node/Switch.hpp>
-#include <vgd/node/TessellationProperties.hpp>
-#include <vgd/node/TessellationLevel.hpp>
 #include <vgd/node/TransformSeparator.hpp>
 #include <vgd/visitor/helpers.hpp>
 #include <vgio/helpers.hpp>
@@ -304,12 +300,6 @@ const vgd::Shp< vgd::node::Group > BasicViewer::getScene() const
 	return m_scene;
 }
 
-void BasicViewer::setScene( const vgd::Shp< vgd::node::Group > newScene )
-{
-	// Inserts the new scene group at the same place as the previous one.
-	getRoot()->replaceChild( m_scene, newScene );
-	m_scene = newScene;
-}
 
 
 vgd::Shp< vgd::node::MultiSwitch > BasicViewer::getOverlayContainer()
@@ -335,13 +325,6 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 	{
 		switch( type )
 		{
-		case ANTIALIASING:
-		{
-			existingNode = vgd::node::Antialiasing::create("ANTIALIASING");
-			getSetup()->addChild( existingNode );
-		}
-		break;
-
 		case CLEAR_FRAME_BUFFER:
 		{
 			vgd::Shp< vgd::node::ClearFrameBuffer > clearFrameBuffer = vgd::node::ClearFrameBuffer::create("CLEAR_FRAME_BUFFER");
@@ -355,13 +338,13 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			getSetup()->addChild( existingNode );
 			break;
 
-		case ENGINE_PROPERTIES:
-			existingNode = vgd::node::EngineProperties::create("ENGINE_PROPERTIES");
+		case LIGHT_MODEL:
+			existingNode = vgd::node::LightModel::create("LIGHT_MODEL");
 			getSetup()->addChild( existingNode );
 			break;
 
-		case LIGHT_MODEL:
-			existingNode = vgd::node::LightModel::create("LIGHT_MODEL");
+		case ENGINE_PROPERTIES:
+			existingNode = vgd::node::EngineProperties::create("ENGINE_PROPERTIES");
 			getSetup()->addChild( existingNode );
 			break;
 
@@ -374,16 +357,14 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			vgm::Vec3f	boxCenter;
 			float		boxMax;
 			computeSceneBoundingBox( box, boxCenter, boxMax );
-			if ( box.isEmpty() )	break;
-
 			m_camera->setLookAt( matrixBak );
 			vgm::Vec3f boxMin	= box.getMin(); 
 			vgm::Vec3f boxSize	= box.getSize();
 
 			//
 			const vgm::Vec3f positionSpot1( boxCenter + vgm::Vec3f(0.f, 0.f, boxSize[2])*3.f );
-			const vgm::Vec3f positionSpot2( boxCenter + vgm::Vec3f(-boxSize[0]/4.f, 0.f, boxSize[2])*3.f );
-			const vgm::Vec3f positionSpot3( boxCenter + vgm::Vec3f(boxSize[0]/4.f, 0.f, boxSize[2])*3.f );
+			const vgm::Vec3f positionSpot2( boxMin + vgm::Vec3f(boxSize[0]/4.f, boxSize[1]/2.f, 0.f ) );
+			const vgm::Vec3f positionSpot3( boxMin + vgm::Vec3f(boxSize[0]/2.f, boxSize[1]/2.f, 0.f ) );
 
 			using vgd::node::Group;
 
@@ -411,15 +392,18 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			vgd::Shp< SpotLight > spotLight2 = SpotLight::create("spotLight2");
 			spotLight2->setOn( true );
 			spotLight2->setPosition( positionSpot2 );
-			spotLight2->setDirection( vgm::Vec3f(0,0,-1) );
-			spotLight2->setCutOffAngle( 20.f );
+			spotLight2->setDirection( boxCenter - positionSpot2 );
+			spotLight2->setCutOffAngle( 15.f );
+			spotLight2->setCutOffAngle( 45.f );
 			spotLight2->setCastShadow( true );
 
-			vgd::Shp< SpotLight > spotLight3 = SpotLight::create("spotLight3", 1);
+			vgd::Shp< SpotLight > spotLight3 = SpotLight::create("spotLight3");
+			spotLight3->setMultiAttributeIndex( 1 );
 			spotLight3->setOn( true );
 			spotLight3->setPosition( positionSpot3 );
-			spotLight3->setDirection( vgm::Vec3f(0,0,-1) );
-			spotLight3->setCutOffAngle( 20.f );
+			spotLight3->setDirection( boxCenter - positionSpot3 );
+			spotLight3->setCutOffAngle( 15.f );
+			spotLight3->setCutOffAngle( 45.f );
 			spotLight3->setCastShadow( true );
 
 			// Creates and switches on the point light.
@@ -454,8 +438,8 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			lightSwitcher->setWhichChild(0);
 			lightSwitcher->addChild( directionalLights );
 			lightSwitcher->addChild( spotLight );
-			lightSwitcher->addChild( pointLights );
 			lightSwitcher->addChild( spotLights );
+			lightSwitcher->addChild( pointLights );
 
 			// Inserts the default lights before LightModel node.
 			using vgd::node::LightModel;
@@ -473,33 +457,13 @@ vgd::Shp< vgd::node::Node > BasicViewer::createOptionalNode( const OptionalNodeT
 			break;
 		}
 
-		case TESSELLATION:
-		{
-			using vgd::node::Group;
-			using vgd::node::TessellationProperties;
-			using vgd::node::TessellationLevel;
-
-			vgd::Shp< Group >					group		= Group::create("TESSELLATION");
-			vgd::Shp< TessellationProperties >	tessProp	= TessellationProperties::create("TESSELLATION_PROPERTIES");
-			vgd::Shp< TessellationLevel >		tessLevel	= TessellationLevel::create("TESSELLATION_LEVEL");
-			group->addChilds(tessProp, tessLevel);
-
-			existingNode = group;
-			getSetup()->addChild( existingNode );
-			break;
-		}
-
 		case UNDERLAY_CONTAINER:
 			existingNode = vgd::node::MultiSwitch::create("UNDERLAY_CONTAINER");
 			getSetup()->addChild( existingNode );
 			break;
 
-		case PROGRAM:
-			existingNode = vgd::node::Program::createWhole("PROGRAM");
-			getSetup()->addChild( existingNode );
-			break;
 		default:
-			vgAssertN( false, "Optional node type not supported" );
+			assert( false && "Optional node type not supported" );
 		}
 	}
 
@@ -540,13 +504,9 @@ const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const Option
 {
 	// Retrieves the optional node name.
 	std::string	optionalNodeName;
-
+	
 	switch( type )
 	{
-		case ANTIALIASING:
-			optionalNodeName = "ANTIALIASING";
-			break;
-
 		case CLEAR_FRAME_BUFFER:
 			optionalNodeName = "CLEAR_FRAME_BUFFER";
 			break;
@@ -555,64 +515,28 @@ const vgd::Shp< vgd::node::Node > BasicViewer::implGetOptionalNode( const Option
 			optionalNodeName = "DRAW_STYLE";
 			break;
 
-		case ENGINE_PROPERTIES:
-			optionalNodeName = "ENGINE_PROPERTIES";
-			break;
-
 		case LIGHT_MODEL:
 			optionalNodeName = "LIGHT_MODEL";
+			break;
+
+		case ENGINE_PROPERTIES:
+			optionalNodeName = "ENGINE_PROPERTIES";
 			break;
 
 		case LIGHTS:
 			optionalNodeName = "LIGHTS";
 			break;
 
-		case TESSELLATION:
-			optionalNodeName = "TESSELLATION";
-			break;
-
 		case UNDERLAY_CONTAINER:
 			optionalNodeName = "UNDERLAY_CONTAINER";
 			break;
 
-		case PROGRAM:
-			optionalNodeName = "PROGRAM";
-			break;
-
 		default:
-			vgAssertN( false, "Optional node type not supported" );
+			assert( false && "Optional node type not supported" );
 	}
 
 	// Searches for the node in the setup.
 	return vgd::visitor::findFirstByName< vgd::node::Node >( getSetup(), optionalNodeName );
-}
-
-
-
-void BasicViewer::createOptionalNodes()
-{
-	// Draw style
-	using vgd::node::DrawStyle;
-	vgd::Shp< DrawStyle > drawStyle = vgd::dynamic_pointer_cast< DrawStyle >(createOptionalNode( DRAW_STYLE ));
-	drawStyle->setShape( DrawStyle::SMOOTH );
-
-	// Engine properties
-	createOptionalNode( ENGINE_PROPERTIES );
-
-	// Light model
-	using vgd::node::LightModel;
-	vgd::Shp< LightModel > lightModel = vgd::dynamic_pointer_cast< LightModel >( createOptionalNode( LIGHT_MODEL ) );
-	lightModel->setOptionalsToDefaults();
-
-	// Tessellation
-	using vgd::node::Group;
-	vgd::Shp< Group > tessGroup = createOptionalNodeAs<Group>( TESSELLATION );
-
-	// Antialiasing
-	createOptionalNode( ANTIALIASING );
-
-	// ClearFrameBuffer
-	createOptionalNode( CLEAR_FRAME_BUFFER );
 }
 
 
@@ -631,7 +555,7 @@ void BasicViewer::resize( const vgm::Vec2i size )
 
 	// Configures the camera.
 	configureCamera();
-	}
+}
 
 
 const bool BasicViewer::load( const std::string filePath )
@@ -676,9 +600,10 @@ void BasicViewer::computeBoundingBox(	vge::visitor::NodeCollectorExtended<> *pCo
 	{
 		center	= box.getCenter();
 
-		const vgm::Vec3f size = box.getSize();
+		float width, height, depth;
+		box.getSize( width, height, depth );
 
-		max = vgm::max( size[0], size[1], size[2] );
+		max = vgm::max( width, height, depth );
 	}
 }
 
@@ -709,7 +634,7 @@ const float BasicViewer::compute( const CameraDistanceHints cameraDistance )
 
 		default:
 			retVal = 0.f;
-			vgAssertN( false, "Unexpected CameraDistanceHints." );
+			assert( false && "Unexpected CameraDistanceHints." );
 	}
 
 	return retVal;

@@ -5,6 +5,7 @@
 // Author Guillaume Brocker
 // Author Nicolas Papier
 
+#include <gtest.hpp>
 #include "vgsdkTestGtk/vgTest/TestEnvironment.hpp"
 #include "vgsdkTestGtk/vgTest/convenience.hpp"
 
@@ -15,8 +16,6 @@
 
 #include <sbf/pkg/Package.hpp>
 #include <sbf/pkg/Module.hpp>
-
-#include <vgTest/gtest.hpp>
 
 
 int main(int argc, char **argv) 

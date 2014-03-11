@@ -17,7 +17,7 @@ namespace event
 {
 
 /**
- * @brief Event processor to enable capture hotkeys
+ * @brief Event processor to enable capture hotkeys.
  */
 struct VGUI_API CaptureEventProcessor : public EventProcessor
 {

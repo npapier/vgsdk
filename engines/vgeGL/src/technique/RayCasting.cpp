@@ -211,8 +211,6 @@ void RayCasting::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseEl
 	setPassDescription("RayCasting::apply()");
 	beginPass();
 
-	engine->setBufferUsagePolicy( vge::engine::BUP_COLOR_AND_DEPTH );
-
 	engine->disregard();
 
 	engine->regardIfIsAKindOf<vgd::node::SingleTransformation>();

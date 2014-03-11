@@ -6,9 +6,9 @@
 #ifndef _VGSDKTESTGTK_TRANSPARENCY_HPP
 #define _VGSDKTESTGTK_TRANSPARENCY_HPP
 
+#include "gtest.hpp"
 #include "helpers.hpp"
 #include <vgTest/convenience.hpp>
-#include <vgTest/gtest.hpp>
 
 #include "Fixtures.hpp"
 
@@ -26,7 +26,7 @@ TEST_P(VgTestTransparency, Transparency)
 	// prerun Gtk
 	vgd::Shp< vgsdkTestGtk::vgTest::myBase > base( new vgsdkTestGtk::vgTest::myBase(filename, vgsdkTestGtk::vgTest::SCREENSHOT) );
 
-	// @todo log()->add()
+	// @todo log()-add()
 	std::string description("Rendering a red sphere with different transparency level and a green sphere placed behind.");
 
 	base->getLog()->add( "Description", description );
@@ -67,9 +67,6 @@ TEST_P(VgTestTransparency, Transparency)
 
 	base->addObject( material );
 	base->addObject( sphere );
-
-	// Lights
-	base->getCanvas()->createOptionalNode( vgGTK::BasicManipulator::LIGHTS );
 
 	// @todo base->run() do a viewAll()
 	base->getCanvas()->viewAll();

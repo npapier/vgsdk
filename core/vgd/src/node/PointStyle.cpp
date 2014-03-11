@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -63,10 +63,10 @@ PointStyle::PointStyle( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FSizeType(getFSize()) );
-	addField( new FDistanceAttenuationType(getFDistanceAttenuation()) );
 	addField( new FSmoothType(getFSmooth()) );
+	addField( new FDistanceAttenuationType(getFDistanceAttenuation()) );
 	addField( new FPointSpriteType(getFPointSprite()) );
+	addField( new FSizeType(getFSize()) );
 
 	// Sets link(s)
 
@@ -85,76 +85,10 @@ void PointStyle::setToDefaults( void )
 void PointStyle::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
-	setSize( (1.f) );
-	setDistanceAttenuation( vgm::Vec3f(1.f, 0.f, 0.f) );
 	setSmooth( (false) );
+	setDistanceAttenuation( vgm::Vec3f(1.f, 0.f, 0.f) );
 	setPointSprite( (false) );
-}
-
-
-
-// Size
-
-const PointStyle::SizeValueType PointStyle::DEFAULT_SIZE = (1.f);
-
-
-
-const bool PointStyle::getSize( SizeValueType& value ) const
-{
-	return getFieldRO<FSizeType>(getFSize())->getValue( value );
-}
-
-
-
-void PointStyle::setSize( const SizeValueType& value )
-{
-	getFieldRW<FSizeType>(getFSize())->setValue( value );
-}
-
-
-
-void PointStyle::eraseSize()
-{
-	getFieldRW<FSizeType>(getFSize())->eraseValue();
-}
-
-
-const bool PointStyle::hasSize() const
-{
-	return getFieldRO<FSizeType>(getFSize())->hasValue();
-}
-
-
-
-// DistanceAttenuation
-
-const PointStyle::DistanceAttenuationValueType PointStyle::DEFAULT_DISTANCEATTENUATION = vgm::Vec3f(1.f, 0.f, 0.f);
-
-
-
-const bool PointStyle::getDistanceAttenuation( DistanceAttenuationValueType& value ) const
-{
-	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->getValue( value );
-}
-
-
-
-void PointStyle::setDistanceAttenuation( const DistanceAttenuationValueType& value )
-{
-	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->setValue( value );
-}
-
-
-
-void PointStyle::eraseDistanceAttenuation()
-{
-	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->eraseValue();
-}
-
-
-const bool PointStyle::hasDistanceAttenuation() const
-{
-	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->hasValue();
+	setSize( (1.f) );
 }
 
 
@@ -192,6 +126,39 @@ const bool PointStyle::hasSmooth() const
 
 
 
+// DistanceAttenuation
+
+const PointStyle::DistanceAttenuationValueType PointStyle::DEFAULT_DISTANCEATTENUATION = vgm::Vec3f(1.f, 0.f, 0.f);
+
+
+
+const bool PointStyle::getDistanceAttenuation( DistanceAttenuationValueType& value ) const
+{
+	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->getValue( value );
+}
+
+
+
+void PointStyle::setDistanceAttenuation( const DistanceAttenuationValueType& value )
+{
+	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->setValue( value );
+}
+
+
+
+void PointStyle::eraseDistanceAttenuation()
+{
+	getFieldRW<FDistanceAttenuationType>(getFDistanceAttenuation())->eraseValue();
+}
+
+
+const bool PointStyle::hasDistanceAttenuation() const
+{
+	return getFieldRO<FDistanceAttenuationType>(getFDistanceAttenuation())->hasValue();
+}
+
+
+
 // PointSprite
 
 const PointStyle::PointSpriteValueType PointStyle::DEFAULT_POINTSPRITE = (false);
@@ -225,10 +192,43 @@ const bool PointStyle::hasPointSprite() const
 
 
 
-// Field name accessor(s)
-const std::string PointStyle::getFSize( void )
+// Size
+
+const PointStyle::SizeValueType PointStyle::DEFAULT_SIZE = (1.f);
+
+
+
+const bool PointStyle::getSize( SizeValueType& value ) const
 {
-	return "f_size";
+	return getFieldRO<FSizeType>(getFSize())->getValue( value );
+}
+
+
+
+void PointStyle::setSize( const SizeValueType& value )
+{
+	getFieldRW<FSizeType>(getFSize())->setValue( value );
+}
+
+
+
+void PointStyle::eraseSize()
+{
+	getFieldRW<FSizeType>(getFSize())->eraseValue();
+}
+
+
+const bool PointStyle::hasSize() const
+{
+	return getFieldRO<FSizeType>(getFSize())->hasValue();
+}
+
+
+
+// Field name accessor(s)
+const std::string PointStyle::getFSmooth( void )
+{
+	return "f_smooth";
 }
 
 
@@ -240,16 +240,16 @@ const std::string PointStyle::getFDistanceAttenuation( void )
 
 
 
-const std::string PointStyle::getFSmooth( void )
+const std::string PointStyle::getFPointSprite( void )
 {
-	return "f_smooth";
+	return "f_pointSprite";
 }
 
 
 
-const std::string PointStyle::getFPointSprite( void )
+const std::string PointStyle::getFSize( void )
 {
-	return "f_pointSprite";
+	return "f_size";
 }
 
 

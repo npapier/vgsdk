@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2012, 2013, Clément Forest, Nicolas Papier.
+// VGSDK - Copyright (C) 2008, 2012, Clément Forest, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -8,7 +8,6 @@
 
 #include <QDebug>
 #include <QtDebug>
-#include <QtGlobal>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -21,7 +20,6 @@ void qtLog( QtMsgType type, const char *szFormat, va_list args )
 {
 	QString result;
 	result.vsprintf( szFormat, args );
-
 	QDebug( type ) << result;
 }
 
@@ -74,7 +72,7 @@ void Logging::logMessage( const char *szFormat, ... ) const
 	va_list args;
 	va_start( args, szFormat );
 
-	qtLog( QtWarningMsg, szFormat, args );
+	qtLog( QtDebugMsg, szFormat, args );
 
 	va_end( args );
 }

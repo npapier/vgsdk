@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -26,17 +26,17 @@ namespace node
  * No new field defined by this node.
  *
  * Inherited fields from LayerPlan:
+ * - SFFloat \c alphaScale = (1.f)<br>
+ *   Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor. After this operation, the alpha component is clamped to the range [0, 1].<br>
+ *<br>
  * - SFVec2f \c position = vgm::Vec2f(0.f, 0.f)<br>
  *   Sets the position of the layer plan in normalized window coordinates system. @see g_coordinatesSystem<br>
- *<br>
- * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
- *   Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n - A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.<br>
  *<br>
  * - SFIImageShp \c image = vgd::basic::IImageShp()<br>
  *   Determines the image to display in the layer plan. You can set multiple times this field, but only if all successive images have the same format. The data and size of the image can changed, but that's all.<br>
  *<br>
- * - SFFloat \c alphaScale = (1.f)<br>
- *   Sets the alphaScale value used at each image update to multiply the alpha component of \c iimage by the scale factor. After this operation, the alpha component is clamped to the range [0, 1].<br>
+ * - SFVec2f \c size = vgm::Vec2f(1.f, 1.f)<br>
+ *   Sets the size of the layer plan in normalized windows coordinates system.@see g_coordinatesSystem\n - A size equal to (1, 1) means that the layer plan must fit the whole window. - A size equal to (0.5, 1) means that the layer plan fit in the half window width and fit in the whole height of the window.<br>
  *<br>
  * @ingroup g_nodes
  * @ingroup g_singleAttributeNodes

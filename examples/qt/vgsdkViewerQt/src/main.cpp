@@ -15,7 +15,6 @@
 #include <sbf/pkg/Module.hpp>
 
 #include <vgQt/engine/UserSettingsDialog.hpp>
-#include <vgQt/helpers.hpp>
 #include <QApplication>
 
 
@@ -32,29 +31,19 @@ int main(int argc, char *argv[])
 	//sbf::installToplevelExceptionHandler( sbf::CoreFull );
 	sbf::installToplevelExceptionHandler( sbf::CoreNormal, sbf::pkg::Module::get()->getPath(sbf::pkg::VarPath) );
 
-	// Init logs
-	vgQt::initLogging( argc, argv, sbf::pkg::Module::get(), 5 );
-
-	// Accesses to vgsdk graph must be done only by GUI thread
-	//vgd::node::Node::lockGraph();
-
 	//
     QApplication app(argc, argv);
 
     // Installs the GTK-based logging.
     sbf::log::set< sbf::log::Logging >();
 
-	// Creates the main window.
-	// This window is allocated on the heap and will be automatically destroyed by Qt 
-	// thanks to a window attribute requesting its destruction when closed.
-	vgsdkViewerQt::MainWindow * mainWindow = new vgsdkViewerQt::MainWindow();
+    vgsdkViewerQt::MainWindow mainWindow;
+	mainWindow.setWindowIcon( QIcon(":/images/vgsdkViewerQt.ico") );
+	mainWindow.setWindowIconText( "setWindowIconText" );
 
-	mainWindow->show();
-	mainWindow->getRenderSettingsDialog()->get()->setLevel(2);
-	mainWindow->renderSettingsChanged();
+	mainWindow.show();
+	mainWindow.getRenderSettingsDialog()->get()->setLevel(2);
+	mainWindow.renderSettingsChanged();
 
-	// Entering the main loop...
-	const int retVal = app.exec();
-
-	return retVal;
+    return app.exec();
 }

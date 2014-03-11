@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -63,8 +63,8 @@ ClipPlane::ClipPlane( const std::string nodeName ) :
 	vgd::node::MultiAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FPlaneType(getFPlane()) );
 	addField( new FOnType(getFOn()) );
+	addField( new FPlaneType(getFPlane()) );
 
 	// Sets link(s)
 
@@ -85,26 +85,6 @@ void ClipPlane::setOptionalsToDefaults()
 {
 	MultiAttribute::setOptionalsToDefaults();
 	setOn( (true) );
-}
-
-
-
-// Plane
-
-const ClipPlane::PlaneValueType ClipPlane::DEFAULT_PLANE = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f );
-
-
-
-const ClipPlane::PlaneValueType ClipPlane::getPlane() const
-{
-	return getFieldRO<FPlaneType>(getFPlane())->getValue();
-}
-
-
-
-void ClipPlane::setPlane( const PlaneValueType value )
-{
-	getFieldRW<FPlaneType>(getFPlane())->setValue( value );
 }
 
 
@@ -142,17 +122,37 @@ const bool ClipPlane::hasOn() const
 
 
 
-// Field name accessor(s)
-const std::string ClipPlane::getFPlane( void )
+// Plane
+
+const ClipPlane::PlaneValueType ClipPlane::DEFAULT_PLANE = vgm::Plane(vgm::Vec3f(1.f, 0.f, 0.f), 0.f );
+
+
+
+const ClipPlane::PlaneValueType ClipPlane::getPlane() const
 {
-	return "f_plane";
+	return getFieldRO<FPlaneType>(getFPlane())->getValue();
 }
 
 
 
+void ClipPlane::setPlane( const PlaneValueType value )
+{
+	getFieldRW<FPlaneType>(getFPlane())->setValue( value );
+}
+
+
+
+// Field name accessor(s)
 const std::string ClipPlane::getFOn( void )
 {
 	return "f_on";
+}
+
+
+
+const std::string ClipPlane::getFPlane( void )
+{
+	return "f_plane";
 }
 
 

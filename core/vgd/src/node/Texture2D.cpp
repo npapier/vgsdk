@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -63,6 +63,10 @@ Texture2D::Texture2D( const std::string nodeName ) :
 	vgd::node::Texture( nodeName )
 {
 	// Adds field(s)
+
+	// Sets link(s)
+
+	link( getDFNode() );
 }
 
 
@@ -91,10 +95,10 @@ const uint32 Texture2D::gethTextureDimension() const
 void Texture2D::sethDefaults()
 {
 	sethFunction( FUN_REPLACE );
-	setWrapS( CLAMP );
-	setWrapT( CLAMP );
-	setMinFilter( LINEAR );
-	setMagFilter( LINEAR );
+	setWrap( WRAP_S, CLAMP );
+	setWrap( WRAP_T, CLAMP );
+	setFilter( MIN_FILTER, LINEAR );
+	setFilter( MAG_FILTER, LINEAR );
 }
 IMPLEMENT_INDEXABLE_CLASS_CPP( , Texture2D );
 

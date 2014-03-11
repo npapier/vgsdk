@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, Guillaume Brocker, Bryan Schuller
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -11,6 +11,7 @@
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
 #include <vgd/Shp.hpp>
+
 #include "vgQt/event/helpers.hpp"
 
 
@@ -38,7 +39,7 @@ void Keyboard::onEvent( QEvent * event )
 
 
     // We ignore the tab key since it causes state update problem
-    // due to the focus lost of the canvas.
+    // due to the focus lost of teh canvas.
     if( keyEvent->key() == Qt::Key_Tab )
     {
         return;

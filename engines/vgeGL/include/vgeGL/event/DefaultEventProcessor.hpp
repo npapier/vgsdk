@@ -33,16 +33,7 @@ struct DefaultEventProcessor : public EventProcessor
 	 */
 	VGEGL_API DefaultEventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
 
-	/**
-	 * @brief Returns the name of the field in Engine containing a Hit computed by this event processor
-	 */
-	VGEGL_API static const std::string getFHit() { return std::string("DefaultEventProcessor.hit"); }
-	typedef vgd::Shp< vgeGL::basic::Hit > HitValueType;
-	typedef vgd::field::TSingleField< HitValueType > FHitType;
-
 protected:
-	// Do a picking if the incoming event is a mouse [or keyboard ] button event. The result of picking is stored in an engine field, named getFHit().
-	// Picking is used by Dragger computation
 	VGEGL_API const bool onEvent( vgd::Shp<vgd::event::Event> event ); ///< Overrides
 };
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -78,8 +78,8 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		CCW = 294,	///< (C)ounter-(C)lock(W)ise ordering
-		CW = 295,	///< (C)lock(W)ise ordering
+		CCW = 283,	///< (C)ounter-(C)lock(W)ise ordering
+		CW = 284,	///< (C)lock(W)ise ordering
 		DEFAULT_ORIENTATION = CCW	///< (C)ounter-(C)lock(W)ise ordering
 	};
 
@@ -107,8 +107,8 @@ struct VGD_API FrontFace : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 294 );
-			retVal.push_back( 295 );
+			retVal.push_back( 283 );
+			retVal.push_back( 284 );
 
 			return retVal;
 		}

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -63,12 +63,12 @@ Noise::Noise( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
-	addField( new FNoiseModelType(getFNoiseModel()) );
-	addField( new FFactorsType(getFFactors()) );
 	addField( new FChannelsSeparatedType(getFChannelsSeparated()) );
-	addField( new FRandomTextureScaleFactorsType(getFRandomTextureScaleFactors()) );
+	addField( new FFactorsType(getFFactors()) );
 	addField( new FUseTextureLessRandomType(getFUseTextureLessRandom()) );
 	addField( new FFrequencyType(getFFrequency()) );
+	addField( new FRandomTextureScaleFactorsType(getFRandomTextureScaleFactors()) );
+	addField( new FNoiseModelType(getFNoiseModel()) );
 
 	// Sets link(s)
 
@@ -80,11 +80,11 @@ Noise::Noise( const std::string nodeName ) :
 void Noise::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
-	setNoiseModel( (PHOTON) );
-	setFactors( vgm::Vec4f(0.025f, 0.025f, 4.f, 1.f) );
 	setChannelsSeparated( (false) );
-	setRandomTextureScaleFactors( vgm::Vec2f(1.f, 1.f) );
+	setFactors( vgm::Vec4f(0.025f, 0.025f, 4.f, 1.f) );
 	setUseTextureLessRandom( (false) );
+	setRandomTextureScaleFactors( vgm::Vec2f(1.f, 1.f) );
+	setNoiseModel( (PHOTON) );
 }
 
 
@@ -93,42 +93,6 @@ void Noise::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
 	setFrequency( (25) );
-}
-
-
-
-// NoiseModel
-
-const Noise::NoiseModelValueType Noise::getNoiseModel() const
-{
-	return getFieldRO<FNoiseModelType>(getFNoiseModel())->getValue();
-}
-
-
-
-void Noise::setNoiseModel( const NoiseModelValueType value )
-{
-	getFieldRW<FNoiseModelType>(getFNoiseModel())->setValue( value );
-}
-
-
-
-// Factors
-
-const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec4f(0.025f, 0.025f, 4.f, 1.f);
-
-
-
-const Noise::FactorsValueType Noise::getFactors() const
-{
-	return getFieldRO<FFactorsType>(getFFactors())->getValue();
-}
-
-
-
-void Noise::setFactors( const FactorsValueType value )
-{
-	getFieldRW<FFactorsType>(getFFactors())->setValue( value );
 }
 
 
@@ -153,22 +117,22 @@ void Noise::setChannelsSeparated( const ChannelsSeparatedValueType value )
 
 
 
-// RandomTextureScaleFactors
+// Factors
 
-const Noise::RandomTextureScaleFactorsValueType Noise::DEFAULT_RANDOMTEXTURESCALEFACTORS = vgm::Vec2f(1.f, 1.f);
+const Noise::FactorsValueType Noise::DEFAULT_FACTORS = vgm::Vec4f(0.025f, 0.025f, 4.f, 1.f);
 
 
 
-const Noise::RandomTextureScaleFactorsValueType Noise::getRandomTextureScaleFactors() const
+const Noise::FactorsValueType Noise::getFactors() const
 {
-	return getFieldRO<FRandomTextureScaleFactorsType>(getFRandomTextureScaleFactors())->getValue();
+	return getFieldRO<FFactorsType>(getFFactors())->getValue();
 }
 
 
 
-void Noise::setRandomTextureScaleFactors( const RandomTextureScaleFactorsValueType value )
+void Noise::setFactors( const FactorsValueType value )
 {
-	getFieldRW<FRandomTextureScaleFactorsType>(getFRandomTextureScaleFactors())->setValue( value );
+	getFieldRW<FFactorsType>(getFFactors())->setValue( value );
 }
 
 
@@ -226,21 +190,43 @@ const bool Noise::hasFrequency() const
 
 
 
+// RandomTextureScaleFactors
+
+const Noise::RandomTextureScaleFactorsValueType Noise::DEFAULT_RANDOMTEXTURESCALEFACTORS = vgm::Vec2f(1.f, 1.f);
+
+
+
+const Noise::RandomTextureScaleFactorsValueType Noise::getRandomTextureScaleFactors() const
+{
+	return getFieldRO<FRandomTextureScaleFactorsType>(getFRandomTextureScaleFactors())->getValue();
+}
+
+
+
+void Noise::setRandomTextureScaleFactors( const RandomTextureScaleFactorsValueType value )
+{
+	getFieldRW<FRandomTextureScaleFactorsType>(getFRandomTextureScaleFactors())->setValue( value );
+}
+
+
+
+// NoiseModel
+
+const Noise::NoiseModelValueType Noise::getNoiseModel() const
+{
+	return getFieldRO<FNoiseModelType>(getFNoiseModel())->getValue();
+}
+
+
+
+void Noise::setNoiseModel( const NoiseModelValueType value )
+{
+	getFieldRW<FNoiseModelType>(getFNoiseModel())->setValue( value );
+}
+
+
+
 // Field name accessor(s)
-const std::string Noise::getFNoiseModel( void )
-{
-	return "f_noiseModel";
-}
-
-
-
-const std::string Noise::getFFactors( void )
-{
-	return "f_factors";
-}
-
-
-
 const std::string Noise::getFChannelsSeparated( void )
 {
 	return "f_channelsSeparated";
@@ -248,9 +234,9 @@ const std::string Noise::getFChannelsSeparated( void )
 
 
 
-const std::string Noise::getFRandomTextureScaleFactors( void )
+const std::string Noise::getFFactors( void )
 {
-	return "f_randomTextureScaleFactors";
+	return "f_factors";
 }
 
 
@@ -265,6 +251,20 @@ const std::string Noise::getFUseTextureLessRandom( void )
 const std::string Noise::getFFrequency( void )
 {
 	return "f_frequency";
+}
+
+
+
+const std::string Noise::getFRandomTextureScaleFactors( void )
+{
+	return "f_randomTextureScaleFactors";
+}
+
+
+
+const std::string Noise::getFNoiseModel( void )
+{
+	return "f_noiseModel";
 }
 
 

@@ -98,13 +98,13 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 
 		(*m_mapShapeMaterial)[m_vertexShape] = m_primitives->getMaterialId();
 
-		m_editVertexIndex = m_vertexShape->getVertexIndexRW();
+		m_editVertexIndex = m_vertexShape->getFVertexIndexRW();
 
-		m_editPositions = m_vertexShape->getVertexRW();
+		m_editPositions = m_vertexShape->getFVertexRW();
 		m_editPositions->clear();
 		m_editPositions->reserve( m_primitivesNumber );
 
-		m_editNormals = m_vertexShape->getNormalRW();
+		m_editNormals = m_vertexShape->getFNormalRW();
 		m_editNormals->clear();
 		m_editNormals->reserve( m_primitivesNumber );
 		m_vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
@@ -115,13 +115,13 @@ struct VGOPENCOLLADA_API TPrimitiveImporter
 			{
 				m_vertexShape->createTexUnits( 2, i, 1 );
 				m_vertexShape->setTexCoordBinding( i, vgd::node::BIND_PER_VERTEX );
-				m_editTextCoords.push_back( m_vertexShape->getTexCoordRW<vgd::field::MFVec2f>( i ) );
+				m_editTextCoords.push_back( m_vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( i ) );
 				m_editTextCoords[i]->clear();
 				m_editTextCoords[i]->reserve( m_primitivesNumber );
 			}
 		}
 
-		m_editPrimitive = m_vertexShape->getPrimitiveRW();
+		m_editPrimitive = m_vertexShape->getFPrimitiveRW();
 		m_editPrimitive->clear();
 	}
 

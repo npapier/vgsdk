@@ -29,7 +29,7 @@ namespace vgio
 struct VGIO_API Media
 {
 	typedef std::vector< char >	CryptoKeyType;
-
+	
 	/**
 	 * @name	Cryptography
 	 */
@@ -40,7 +40,7 @@ struct VGIO_API Media
 	//@}
 
 	/**
-	 * @name	File accessors
+	 * @name	File access
 	 */
 	//@{
 	/**
@@ -93,7 +93,7 @@ protected:
 	typedef std::vector< CryptoKeyType >	CryptoKeyContainer;
 
 	static CryptoKeyContainer	m_cryptoKeys;	///< Holds all registered cryptographic keys.
-
+	
 };
 
 

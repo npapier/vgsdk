@@ -17,7 +17,7 @@ namespace vgeGL { namespace engine { struct Engine; } }
 
 namespace vgeGL
 {
-
+	
 namespace handler
 {
 
@@ -33,11 +33,11 @@ struct VGEGL_API Overlay : public vgeGL::handler::painter::LayerPlan
 {
 	META_HANDLER_HPP( Overlay  );
 
-	const TargetVector getTargets() const;
+	const TargetVector getTargets()	const;
 
 	void apply	( vge::engine::Engine*, vgd::node::Node* );
 	void unapply( vge::engine::Engine*, vgd::node::Node* );
-
+	
 	void setToDefaults();
 
 	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;

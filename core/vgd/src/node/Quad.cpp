@@ -49,7 +49,7 @@ void Quad::initializeGeometry( const float width, const float height )
 	// Initialize geometry.
 
 	// VERTEX
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex			= getVertexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex			= getFVertexRW();
 	const float fSizeX = 0.5f * width;
 	const float fSizeY = 0.5f * height;
 	
@@ -61,7 +61,7 @@ void Quad::initializeGeometry( const float width, const float height )
 	vertex->push_back( vgm::Vec3f(-fSizeX,	fSizeY, 0.f) );
 	
 	// VERTEX INDEX
-	vgd::field::EditorRW< vgd::field::MFUInt >	vertexIndex		= getVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex		= getFVertexIndexRW();	
 	vertexIndex->clear();
 	vertexIndex->reserve( 4 );
 	vertexIndex->push_back(0);
@@ -70,7 +70,7 @@ void Quad::initializeGeometry( const float width, const float height )
 	vertexIndex->push_back(3);
 	
 	// PRIMITIVE
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getFPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::QUADS, 0, vertexIndex->size() );
 	primitive->clear();
 	primitive->push_back( prim );
@@ -80,7 +80,7 @@ void Quad::initializeGeometry( const float width, const float height )
 	primitive.release();
 		
 	// NORMAL
-	vgd::field::EditorRW< vgd::field::MFVec3f >	normal			= getNormalRW();	
+	vgd::field::EditorRW< vgd::field::MFVec3f >	normal			= getFNormalRW();	
 	normal->clear();
 	normal->reserve(4);
 	normal->push_back( vgm::Vec3f(0.f, 0.f, 1.f ) );
@@ -108,7 +108,7 @@ void Quad::resetTextureCoordinates( const int32 numTexUnits, const vgd::basic::C
 			i < numTexUnits;
 			++i )
 	{
-		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getTexCoordRW<vgd::field::MFVec2f>( i ) );
+		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord( getFTexCoordRW<vgd::field::MFVec2f>( i ) );
 		
 		// TEX COORD
 		texCoord->clear();

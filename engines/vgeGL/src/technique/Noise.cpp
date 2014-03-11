@@ -99,11 +99,11 @@ void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::S
 		using vgd::node::Texture2D;
 		vgd::Shp< Texture2D > texture2D = Texture2D::create("vgsdk:noise:randomTexture");
 
-		texture2D->setMinFilter( Texture2D::NEAREST );
-		texture2D->setMagFilter( Texture2D::NEAREST );
+		texture2D->setFilter( Texture2D::MIN_FILTER, Texture2D::NEAREST );
+		texture2D->setFilter( Texture2D::MAG_FILTER, Texture2D::NEAREST );
 
-		texture2D->setWrapS( Texture2D::REPEAT );
-		texture2D->setWrapT( Texture2D::REPEAT );
+		texture2D->setWrap( Texture2D::WRAP_S, Texture2D::REPEAT );
+		texture2D->setWrap( Texture2D::WRAP_T, Texture2D::REPEAT );
 
 		rc->randomTexture = texture2D;
 	}
@@ -386,11 +386,11 @@ void Noise::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeG
 		rc->lastRandomUniformUpdate.restart();
 	}
 
-	engine->getBuiltinUniformState().sethUniform( "random", rc->lastUsedRandomValue );
-	engine->getBuiltinUniformState().sethUniform( "time", static_cast<int>(rc->lastUsedTimeValue) );
+	engine->getUniformState().sethUniform( "random", rc->lastUsedRandomValue );
+	engine->getUniformState().sethUniform( "time", static_cast<int>(rc->lastUsedTimeValue) );
 
 	// Apply post-processing
-	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
+	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, technique->m_textures, &(rc->postProcessing) );
 
 	// Blit
 	technique->blit( engine, finalBuffers, technique->m_fbo );

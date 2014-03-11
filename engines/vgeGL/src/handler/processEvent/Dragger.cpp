@@ -18,7 +18,6 @@
 #include <vgd/node/Dragger.hpp>
 #include <vgeGL/engine/Engine.hpp>
 
-#include "vgeGL/event/DefaultEventProcessor.hpp"
 #include "vgeGL/technique/ProcessEvent.hpp"
 
 
@@ -193,10 +192,13 @@ void Dragger::logDebug( vgd::Shp< vgd::event::Event > event )
 
 
 const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEngine, vgd::node::Dragger *pDragger,
-														vgm::Vec3f& oLeftToRightO, vgm::Vec3f& oUpToDownO, vgm::Vec3f& oNearToFarO )
+							vgm::Vec3f& oLeftToRightO, vgm::Vec3f& oUpToDownO, vgm::Vec3f& oNearToFarO )
 {
-	// MODELVIEW : Gets scene transformation
+	// MODELVIEW : Gets scene transformation.
 	vgm::MatrixR&		matrixTransformScene = pEngine->getGeometricalMatrix().getTop();
+
+	vgm::RawMatrixd	transformSceneD;
+	matrixTransformScene.getValue( transformSceneD );
 
 	// PROJECTION
 	vgm::MatrixR&	matrixProjectionScene = pEngine->getProjectionMatrix().getTop();
@@ -205,51 +207,39 @@ const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEn
 	matrixProjectionScene.getValue( transformProjectionD );
 
 	// VIEWPORT
-	const vgm::Rectangle2i viewport = pEngine->getViewport();
-	GLint viewportGL[4];
-	viewportGL[0] = viewport.x();
-	viewportGL[1] = viewport.y();
-	viewportGL[2] = viewport.width();
-	viewportGL[3] = viewport.height();
+	//vgm::Rectangle2i viewport;
+	//pEngine->getViewport( viewport );
+	//	GLint viewportGL[4];
+	//	viewportGL[0] = viewport.x();
+	//	viewportGL[1] = viewport.y();
+	//	viewportGL[2] = viewport.width();
+	//	viewportGL[3] = viewport.height();
+	// or
 
-	// Compute conversion
+	GLint viewportGL[4];
+	glGetIntegerv( GL_VIEWPORT, viewportGL );
+
+	// Compute convertion.
 
 	//
 	GLdouble x, y, z;
 	GLdouble dZCenterO;
 
 	// gluProject function maps object coordinates to window coordinates.
-	vgm::Vec3f		center;
-	vgm::RawMatrixd	transformSceneD;
+	using vgd::node::IBoundingBox;
+	vgd::Shp< IBoundingBox > pBoundingBox = vgd::dynamic_pointer_cast< IBoundingBox >( pDragger->getSurround() );
 
-	vgd::Shp< vgeGL::basic::Hit > hit = getHit( m_pGLEngine );
-	if (	!hit ||											// no hit
-			(/*hit && */hit->modelviewS().isInvalid()) )	// invalid hit
+	if ( pBoundingBox.get() == 0 )
 	{
-		// No hit, so scene bounding box is used
-		using vgd::node::IBoundingBox;
-		vgd::Shp< IBoundingBox > pBoundingBox = vgd::dynamic_pointer_cast< IBoundingBox >( pDragger->getSurround() );
-
-		if ( pBoundingBox.get() == 0 )
-		{
-			vgAssertN( false, "dragger.surround contains a reference to an object that don't implement IBoundingBox interface.");
-			return false;
-		}
-		else if ( pBoundingBox->getBoundingBox().isEmpty() )
-		{
-			return false;
-		}
-
-		// center and transformSceneD
-		center = pBoundingBox->getBoundingBox().getCenter();
-		matrixTransformScene.getValue( transformSceneD );
+		assert( false && "dragger.surround contains a reference to an object that don't implement IBoundingBox interface.");
+		return false;
 	}
-	else
+	else if ( pBoundingBox->getBoundingBox().isEmpty() )
 	{
-		// Hit
-		center = hit->nearestVertexS();
-		hit->modelviewS().getValue( transformSceneD );
+		return false;
 	}
+
+	const vgm::Vec3f center = pBoundingBox->getBoundingBox().getCenter();
 
 	bool bRetVal;
 	bRetVal = gluProject(
@@ -258,9 +248,6 @@ const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEn
 		&transformProjectionD[0][0],
 		viewportGL,
 		&x, &y, &dZCenterO ) == GL_TRUE;
-
-	// Restore transformSceneD from matrixTransformScene
-	matrixTransformScene.getValue( transformSceneD );
 
 	//
 	vgm::Vec3d	vec3dUpperLeftCornerO;
@@ -441,24 +428,6 @@ vgd::Shp< vgd::event::Event > Dragger::getEvent( vge::engine::Engine *pEngine )
 	vgd::Shp< vgd::event::Event > event = eventInEngine->getValue();
 
 	return event;
-}
-
-
-
-vgd::Shp< vgeGL::basic::Hit > Dragger::getHit( vge::engine::Engine * engine )
-{
-	using vgeGL::event::DefaultEventProcessor;
-	typedef DefaultEventProcessor::FHitType FHitType;
-
-	vgd::Shp< vgeGL::basic::Hit > hit;
-
-	if ( engine->isField( DefaultEventProcessor::getFHit() ) )
-	{
-		vgd::field::EditorRO< FHitType > hitInEngine = engine->getFieldRO< FHitType >( DefaultEventProcessor::getFHit() );
-		hit = hitInEngine->getValue();
-	}
-	// else nothing to do
-	return hit;
 }
 
 

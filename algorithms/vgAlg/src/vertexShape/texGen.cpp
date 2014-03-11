@@ -20,14 +20,14 @@ namespace vertexShape
 void computeTexGenObjectLinear( vgd::Shp< vgd::node::VertexShape > vertexShape, const vgm::Vec4f s, const vgm::Vec4f t, const uint texCoordIndex )
 {
 	// Create texCoord field if needed
-	if ( !vertexShape->hasTexCoord( texCoordIndex ) )
+	if ( !vertexShape->hasFTexCoord( texCoordIndex ) )
 	{
 		vertexShape->createTexUnits( 2/*dim*/, texCoordIndex, 1 /*num*/ );
 	}
 
 	// Edit texCoord field
-	vgd::field::EditorRO< vgd::field::MFVec3f >	vertices	= vertexShape->getVertexRO();
-	vgd::field::EditorRW< vgd::field::MFVec2f > texCoords	= vertexShape->getTexCoordRW<vgd::field::MFVec2f>( texCoordIndex );
+	vgd::field::EditorRO< vgd::field::MFVec3f >	vertices	= vertexShape->getFVertexRO();
+	vgd::field::EditorRW< vgd::field::MFVec2f > texCoords	= vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( texCoordIndex );
 
 	const uint iEnd = vertices->size();
 	for (	uint i=0; 

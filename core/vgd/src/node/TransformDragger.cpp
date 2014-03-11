@@ -65,18 +65,18 @@ void TransformDragger::setTransformationToDefaults()
 }
 
 
-
+	
 void TransformDragger::setBindingsToDefaults()
 {
 	// .bindings
 	using vgd::event::ButtonStateSet;
-	using vgd::event::KeyboardButtonEvent;
+	using vgd::event::KeyboardButtonEvent;	
 	using vgd::event::MouseButtonEvent;
-
+	
 	// rotation_xy*
 	ButtonStateSet bssRotationXY;
 	setBindings( ROTATION_XY, bssRotationXY );
-
+	
 	//
 	bssRotationXY.setDown( MouseButtonEvent::MOUSE_BUTTON_1 );
 	setBindings( ROTATION_XY_ACTIVE, bssRotationXY );
@@ -85,15 +85,15 @@ void TransformDragger::setBindingsToDefaults()
 	ButtonStateSet bssTranslationXY;
 	bssTranslationXY.setDown( KeyboardButtonEvent::KEY_CONTROL );
 	setBindings( TRANSLATION_XY, bssTranslationXY );
-
+	
 	bssTranslationXY.setDown( MouseButtonEvent::MOUSE_BUTTON_1 );
 	setBindings( TRANSLATION_XY_ACTIVE, bssTranslationXY );
-
+	
 	// translation_z*
 	ButtonStateSet bssTranslationZ;
 	bssTranslationZ.setDown( KeyboardButtonEvent::KEY_SHIFT );
 	setBindings( TRANSLATION_Z, bssTranslationZ );
-
+	
 	bssTranslationZ.setDown( MouseButtonEvent::MOUSE_BUTTON_1 );
 	setBindings( TRANSLATION_Z_ACTIVE, bssTranslationZ );
 
@@ -113,13 +113,13 @@ void TransformDragger::setBindingsToDefaults2()
 {
 	// .bindings
 	using vgd::event::ButtonStateSet;
-	using vgd::event::KeyboardButtonEvent;
+	using vgd::event::KeyboardButtonEvent;	
 	using vgd::event::MouseButtonEvent;
-
+	
 	// rotation_xy*
 	ButtonStateSet bssRotationXY;
 	setBindings( ROTATION_XY, bssRotationXY );
-
+	
 	//
 	bssRotationXY.setDown( MouseButtonEvent::MOUSE_BUTTON_1 );
 	setBindings( ROTATION_XY_ACTIVE, bssRotationXY );
@@ -129,7 +129,7 @@ void TransformDragger::setBindingsToDefaults2()
 	bssTranslationXY.setDown( MouseButtonEvent::MOUSE_BUTTON_2 );
 	//setBindings( TRANSLATION_XY, bssTranslationXY );
 	setBindings( TRANSLATION_XY_ACTIVE, bssTranslationXY );
-
+	
 	// translation_z*
 	ButtonStateSet bssTranslationZ;
 	bssTranslationZ.setDown( MouseButtonEvent::MOUSE_BUTTON_3 );
@@ -139,7 +139,7 @@ void TransformDragger::setBindingsToDefaults2()
 	// rotation_z*
 	ButtonStateSet bssRotationZ;
 	bssRotationZ.setDown( MouseButtonEvent::MOUSE_BUTTON_1 );
-	bssRotationZ.setDown( MouseButtonEvent::MOUSE_BUTTON_2 );
+	bssRotationZ.setDown( MouseButtonEvent::MOUSE_BUTTON_2 );	
 	//setBindings( ROTATION_Z, bssRotationZ );
 	setBindings( ROTATION_Z_ACTIVE, bssRotationZ );
 }

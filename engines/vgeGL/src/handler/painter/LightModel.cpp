@@ -118,7 +118,7 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 			// SAMPLING SIZE
 			vgd::node::LightModel::SamplingSizeValueType samplingSize = lightModel->getSamplingSize();
-			glEngine->getBuiltinUniformState().sethUniform( "u_samplingSize", samplingSize );
+			glEngine->getUniformState().addUniform( "u_samplingSize", samplingSize );
 
 			// SHADOW QUALITY ?
 
@@ -128,7 +128,7 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 			// ILLUMINATION IN SHADOW
 			vgd::node::LightModel::IlluminationInShadowValueType illuminationInShadow = lightModel->getIlluminationInShadow();
-			glEngine->getBuiltinUniformState().sethUniform( "u_illuminationInShadow", illuminationInShadow );
+			glEngine->getUniformState().addUniform( "u_illuminationInShadow", illuminationInShadow );
 		}
 	}
 	else
@@ -144,6 +144,9 @@ void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 
 	// BumpMapping
 	state.setBumpMappingEnabled( lightModel->getBumpMapping() );
+
+	// OPTION0
+	state.setOption0( lightModel->getOption0() );
 
 	//
 	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );

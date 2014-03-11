@@ -32,8 +32,7 @@ namespace vgd
 
 namespace vgeGL 
 { 
-	namespace engine { struct GLSLState; struct ProgramGenerator; }
-	namespace technique {struct Technique; }
+	namespace engine { struct GLSLState; struct ProgramGenerator; } 
 }
 
 
@@ -56,17 +55,10 @@ enum
 	VERTEX_INDEX = 0,
 	NORMAL_INDEX,
 	TANGENT_INDEX,
-	COLOR_INDEX,
-
+	VERTEXINDEX_INDEX,
 	TEXCOORD_INDEX,
 	TEXCOORD1_INDEX,
-	TEXCOORD2_INDEX,
-
-	// for GeoMorph
-	VERTEX1_INDEX,
-	NORMAL1_INDEX,
-	TANGENT1_INDEX,
-	// @todo COLOR1_INDEX
+	TEXCOORD_INDEX_MAX
 };
 
 
@@ -102,7 +94,7 @@ struct VGEGL_API GLState
 	const float getOpacity() const			{ return m_opacity; }
 
 	void setDiffuse( const vgm::Vec3f diffuse )	{ m_diffuse = diffuse; }
-	const vgm::Vec3f getDiffuse() const			{ return m_diffuse; } // used by Material and WireShape painter
+	const vgm::Vec3f getDiffuse() const			{ return m_diffuse; }
 
 	// DRAWSTYLE
 	void setShape( const vgd::node::DrawStyle::ShapeValueType& shape )										{ m_shape = shape; }
@@ -154,10 +146,8 @@ struct VGEGL_API Engine : public vge::engine::Engine
 
 	/**
 	 * @brief Default constructor
-	 *
-	 * @param	sharedEngine	a pointer to an engine with which ressources will be shared or a null for not sharing resources.
 	 */
-	Engine( Engine * sharedEngine = 0 );
+	Engine();
 
 	/**
 	 * @brief Destructor
@@ -210,14 +200,19 @@ public:
 
 
 	/**
-	 * @brief Do a push on the GLSLState stack.
+	 * @brief Retrieves the GLSL state stack.
+	 *
+	 * @return the GLSL state stack
 	 */
-	void pushGLSLState();
+	const GLSLStateStack& getGLSLStateStack() const;
 
 	/**
-	 * @brief Do a pop on the GLSLState stack.
+	 * @brief Retrieves the GLSL state stack.
+	 *
+	 * @return the GLSL state stack
 	 */
-	void popGLSLState();
+	GLSLStateStack& getGLSLStateStack();
+
 
 
 	/**
@@ -251,19 +246,17 @@ public:
 
 
 	/**
-	 * @brief Retrieves the current state for built-in uniform variables.
+	 * @brief Retrieves the current state for Uniform
 	 *
-	 * @return the current state for built-in uniform variables
-	 */
-	const UniformState& getBuiltinUniformState() const;
-	UniformState& getBuiltinUniformState();
-
-	/**
-	 * @brief Retrieves the current state for user-defined uniform variables.
-	 *
-	 * @return the current state for user-defined uniform variables
+	 * @return the current state for Uniform
 	 */
 	const UniformState& getUniformState() const;
+
+	/**
+	 * @brief Retrieves the current state for Uniform
+	 *
+	 * @return the current state for Uniform
+	 */
 	UniformState& getUniformState();
 
 	//@}
@@ -277,24 +270,23 @@ public:
 	/**
 	 * @brief Initializes 'random' uniform with 4 random values between 0 and 1.
 	 *
-	 * @pre !getBuiltinUniformState().isUniform( "random" )
+	 * @pre !getUniformState().isUniform( "random" )
 	 */
 	void setUniformRandom();
 
 	/**
 	 * @brief Initializes 'time' uniform with getElapsedTime().ms()
 	 *
-	 * @pre !getBuiltinUniformState().isUniform( "time" )
+	 * @pre !getUniformState().isUniform( "time" )
 	 */
 	void setUniformTime();
 
 	/**
-	 * @brief Initializes 'nearFar' uniform with getNearFar() and 'viewport' uniform with getViewport()
+	 * @brief Initializes 'nearFar' uniform with getNearFar()
 	 *
-	 * @pre !getBuiltinUniformState().isUniform( "nearFar" )
-	 * @pre !getBuiltinUniformState().isUniform( "viewport" )
+	 * @pre !getUniformState().isUniform( "nearFar" )
 	 */
-	void setUniformNearFarAndViewport();
+	void setUniformNearFar();
 
 	//@}
 
@@ -423,13 +415,8 @@ public:
 	/**
 	 * @brief Gets the OpenGL objects manager
 	 */
-	vgd::Shp< GLManagerType > getGLManager();
-
-	/**
-	 * brief Gets the OpenGL objects manager
-	 */
-	//vgd::Shp< GLManagerType > getNotShareableGLManager();
-
+	GLManagerType& getGLManager();
+	
 	/**
 	 * @brief Returns the resource associated to the given node in the OpenGL manager
 	 *
@@ -441,10 +428,10 @@ public:
 	vgd::Shp< ResourceType > getRCShp( vgd::node::Node * node )
 	{
 		// Gets the resource manager
-		vgd::Shp< GLManagerType > manager = getGLManager();
+		GLManagerType& manager = getGLManager();
 
 		// Do the request
-		vgd::Shp< ResourceType > rc = manager->getShp< ResourceType >( node );
+		vgd::Shp< ResourceType > rc = manager.getShp< ResourceType >( node );
 		return rc;
 	}
 
@@ -472,7 +459,7 @@ public:
 	/**
 	 * @brief Gets the glsl program manager.
 	 */
-	vgd::Shp< GLSLProgramManagerType > getGLSLManager();
+	GLSLProgramManagerType& getGLSLManager();
 
 	/**
 	 * @brief Typedef for the glsl program manager
@@ -484,7 +471,7 @@ public:
 	/**
 	 * @brief Gets the glsl program manager.
 	 */
-	vgd::Shp< GLSLProgramManagerExtType > getGLSLManagerExt();
+	GLSLProgramManagerExtType& getGLSLManagerExt();
 	//@}
 
 
@@ -527,22 +514,6 @@ public:
 	 * @return the texture mapping state before calling this method
 	 */
 	const bool setTextureMappingEnabled( const bool enabled = true );
-
-
-	/**
-	 * @brief Determines whether the draw calls are enabled.
-	 *
-	 * @return true if draw calls are enabled, false otherwise
-	 */
-	const bool isDrawCallsEnabled() const;
-
-	/**
-	 * @brief Enables or disables the draw calls depending on the value of the parameter isEnabled.
-	 *
-	 * @param isEnabled		true when the draw calls must be enabled, false otherwise
-	 * @return the draw calls state before calling this method
-	 */
-	const bool setDrawCallsEnabled( const bool enabled = true );
 
 
 	/**
@@ -590,20 +561,6 @@ public:
 	 */
 	const bool setShadowEnabled( const bool enabled = true );
 
-	/**
-	 * @brief Determines whether DSA api usage is enabled or not.
-	 *
-	 * @return true if the DSA api usage is enabled, false otherwise.
-	 */
-	const bool isDSAEnabled() const;
-
-	/**
-	 * @brief Enables or disables the DSA api usage depending on the value of the parameter isEnabled.
-	 *
-	 * @param isEnabled		true when the DSA api usage must be enabled, false otherwise
-	 * @return the DSA api usage state before calling this method
-	 */
-	const bool setDSAEnabled( const bool enabled = true );
 	//@}
 
 
@@ -808,47 +765,12 @@ public:
 	 */
 	static const GLenum getGLDepthTextureFormatFromDepthBits() /*const*/;
 
-
-
 	/**
-	 * @brief Enumeration of capturable object types
-	 */
-	typedef enum
-	{
-		BUFFER0 = 0,
-		BUFFER1,
-		BUFFER2,
-		BUFFER3,
-		BUFFER4,
-		BUFFER5,
-		BUFFER6,
-		BUFFER7,
-		DEPTH	= BUFFER1,			// depth stored in buffer1 @todo capture real depth buffer
-		COLOR	= BUFFER0,
-	} CaptureBufferType;
-
-	/**
-	 * @brief Returns an image containing the desired captured buffer.
-	 *
-	 * @param what		the type of buffer to capture
-	 *
-	 * @remarks This method reads back the framebuffer values, be careful this is slow and stalled the OpenGL pipeline.
-	 */
-	vgd::Shp< vgd::basic::Image > captureGLFramebuffer( const CaptureBufferType what = COLOR ) const;
-
-	/**
-	 * @brief Capture the framebuffer color values in the given image.
-	 *
-	 * @param what			the type of buffer to capture (color or depth)
-	 * @param outputImage	image used to copy framebuffer. Be careful, the format have to be the good one. 
-	 * @param imageData		value returned by outputImage->editPixels(). Useful to avoid calling this method (lock on openil !!!).
+	 * @brief Returns an image containing the framebuffer color values.
 	 *
 	 * @remarks This method reads back the framebuffer color values, be careful this is slow and stalled the OpenGL pipeline.
-	 * @remarks This method is useful to recyle previous capture image by captureGLFramebuffer().
 	 */
-	void captureGLFramebuffer( const CaptureBufferType what, vgd::Shp< vgd::basic::Image >& outputImage, void *& imageData ) const;
-
-
+	/*static*/ vgd::Shp< vgd::basic::Image > captureGLFramebuffer() const;
 
 	/**
 	 * @brief Enables or disables the given OpenGL capability.
@@ -967,16 +889,11 @@ protected:
 	bool populateNodeRegistry();
 
 
-	friend vgeGL::technique::Technique; ///< Technique have to use getGLSLStateStack()
-
-	const GLSLStateStack& getGLSLStateStack() const;	///< Retrieves the GLSL state stack
-	GLSLStateStack& getGLSLStateStack();				///< Retrieves the GLSL state stack
 
 private:
 
 	bool m_isLightingEnabled;				//< true if lighting is enabled, false otherwise
 	bool m_isTextureMappingEnabled;			//< true if texture mapping is enabled, false otherwise
-	bool m_isDrawCallsEnabled;				//< true if draw calls are enabled, false otherwise
 	bool m_isDisplayListEnabled;			//< true if engine must used display list, false otherwise
 	bool m_isDepthPrePassEnabled;			//< true if engine must do the depth pre-pass, false otherwise
 	bool m_isShadowEnabled;					//< true if engine must compute shadow, false otherwise
@@ -999,14 +916,14 @@ private:
 	/**
 	 * @brief Manager for all opengl objects.
 	 */
-	vgd::Shp< GLManagerType >		m_glManager;
+	GLManagerType					m_glManager;
 	boost::signals::connection		m_glManagerConnection;
 	
 	/**
 	 * @brief Manager for all glsl programs.
 	 */
-	vgd::Shp< GLSLProgramManagerType >			m_glslManager;
-	vgd::Shp< GLSLProgramManagerExtType >		m_glslManagerExt;
+	GLSLProgramManagerType			m_glslManager;
+	GLSLProgramManagerExtType		m_glslManagerExt;
 
 	/**
 	 * @brief Boolean value to indicate if glsl must be used by engine/handler
@@ -1024,8 +941,7 @@ private:
 
 	GLSLStateStack							m_glslStateStack;				///< store the stack of GLSL rendering state
 
-	UniformState							m_builtinUniformState;			///< store the current state for built-in uniform variables
-	UniformState							m_uniformState;					///< store the current state for user-defined uniform variables
+	UniformState							m_uniformState;					///< store the current uniform state
 
 	vgd::Shp< vgeGL::engine::GLSLState >	m_globalGLSLState;				///< store the global GLSL state
 

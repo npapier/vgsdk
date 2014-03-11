@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, 2011, 2013, 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -53,18 +53,15 @@ struct VGEGL_CLASS_API ForwardRendering : public Main
 	 */
 	VGEGL_API ForwardRendering();
 
+
 	/**
 	 * @brief Evaluates the technique
-	 *
-	 * Rendering of all OffscreenRendering nodes followed by the main rendering of the canvas scene graph (canvas->getRoot())
 	 *
 	 * @param engine			evaluation engine
 	 * @param traverseElements	the "flatten" scene graph to evaluate
 	 */
 	VGEGL_API void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
 
-	VGEGL_API void stageOffscreenRendering( vgeGL::engine::Engine * engine, vgd::Shp< vgd::node::Group > group );
-	VGEGL_API void renderScene( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 private:
 	void passInformationsCollector( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 	void passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
@@ -186,7 +183,6 @@ public: // for modification by technique::DepthOfField
 	{
 		return drawingSurfaceSizeChanged;
 	}
-
 private:
 	// input for post-processing
 	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
@@ -215,8 +211,6 @@ public: // for technique::DepthOfField
 		std::vector< vgd::Shp< vgd::node::Texture2D > >&	outputBuffers,
 		PostProcessingStateContainer *						postProcessingContainer );
 
-	bool isBlitEnabled;
-
 	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source );
 	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source, vgd::Shp< vgeGL::rc::FrameBufferObject > destination );
 private:
@@ -239,10 +233,13 @@ private:
 	void stageInitializeOutputBuffers( vgeGL::engine::Engine * engine );
 	void initializeEngineBuffers( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
 public: // for subtechniques (DepthOfField and co)
-		typedef std::vector< vgd::Shp< vgd::node::Texture2D > > Texture2DVector;
-		vgd::Shp< vgd::node::FrameBuffer >			m_frameBuffer;
-		vgd::Shp< vgeGL::rc::FrameBufferObject > 	m_fbo;
-		vgd::Shp< Texture2DVector >					m_textures;		///< textures for FBO
+		vgd::Shp< vgd::node::FrameBuffer >				m_frameBuffer;
+		vgd::Shp< vgeGL::rc::FrameBufferObject > 		m_fbo;
+		std::vector< vgd::Shp< vgd::node::Texture2D > >	m_textures;		///< textures for FBO
+
+
+
+
 
 
 

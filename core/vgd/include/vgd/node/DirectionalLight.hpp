@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -31,8 +31,8 @@ namespace node
  *
  *
  * Inherited fields from Light:
- * - SFBool \c castShadow = (false)<br>
- *   Indicating that this light casts a shadow.<br>
+ * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
+ *   Specular intensity of the light.<br>
  *<br>
  * - OFBool \c [on] = (false)<br>
  *   Determines whether the source is active or inactive. When inactive, the source does not illuminate at all. Set to true to switch on the light, false to switch off the light.<br>
@@ -43,8 +43,8 @@ namespace node
  * - OFVec4f \c [diffuse] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
  *   Diffuse intensity of the light.<br>
  *<br>
- * - OFVec4f \c [specular] = vgm::Vec4f(1.f, 1.f, 1.f, 0.f)<br>
- *   Specular intensity of the light.<br>
+ * - SFBool \c castShadow = (false)<br>
+ *   Indicating that this light casts a shadow.<br>
  *<br>
  * @ingroup g_nodes
  * @ingroup g_multiAttributeNodes

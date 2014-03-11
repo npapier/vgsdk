@@ -3,7 +3,7 @@ vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
 
-libs		= [ 'glc 0-0', 'glc_gtkmm 0-0', 'gle 0-3', 'sbf 0-0', 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgio 0-5', 'vgm 0-5', 'vgUI 0-5', 'vgSDL 0-5' ]
-uses		= [ 'boost', 'gtkmm', 'gtkmmext', 'opengl' ]
+libs		= [ 'glc 0-0', 'glc_gtkmm 0-0', 'gle 0-3', 'sbf 0-0', 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgio 0-5', 'vgm 0-5', 'vgOpenCOLLADA 0-5', 'vgUI 0-5', 'vgSDL 0-5' ]
+uses		= [ 'boost', 'gtkmm', 'gtkmmext', 'opengl', 'opencollada' ]
 
 deps		= [ '../../dependencies/glContext/glc_gtkmm', '../../dependencies/gle', '../../core', '../../engines', '../../io/vgio', '../vgUI', '../vgSDL' ]

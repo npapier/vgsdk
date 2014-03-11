@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2007, 2009, 2010, 2011, 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2009, 2010, 2011, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -216,9 +216,8 @@ bool Image::load( std::string strFilename )
 	// Bind this image name.
 	bind();
 
-#ifdef _DEBUG
 	vgLogDebug("Image::load: Start reading image %s.", strFilename.c_str() );
-#endif
+	
 	// Loads the image specified by strFilename into the ImgId image.
 	if ( ilLoadImage( const_cast<char*>( strFilename.c_str() ) ) == IL_FALSE )
 	{
@@ -231,12 +230,10 @@ bool Image::load( std::string strFilename )
 	else
 	{
 		updateInformations();
-
-#ifdef _DEBUG
+		
 		vgLogDebug(	"Image::load: Finish reading image %s (%i x %i).",
 						strFilename.c_str(), 
 						width(), height() );
-#endif
 
 		return true;
 	}
@@ -256,9 +253,7 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	// Bind this image name.
 	bind();
 
-#ifdef _DEBUG
 	vgLogDebug("Image::load: Start reading image %s.", strFilename.c_str() );
-#endif
 
 	// Retrieves the extension of the given filename.
 	vgd::basic::FilenameExtractor	extractor( strFilename.c_str() );
@@ -278,11 +273,9 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	else
 	{
 		updateInformations();
-
-#ifdef _DEBUG
+		
 		vgLogDebug("Image::load: Finish reading image %s (%i x %i).",
 					strFilename.c_str(), width(), height() );
-#endif
 
 		return true;
 	}
@@ -462,41 +455,6 @@ bool Image::save( const std::string filename ) const
 	{
 		return true;
 	}
-}
-
-
-
-bool Image::save( const std::string & type, std::vector< char > & buffer ) const
-{
-	boost::recursive_mutex::scoped_lock slock( globalOpenILMutex );
-
-	bind();
-
-	// Determines the target type.
-	ILenum	ilType;
-	if( type == "png" )	ilType = IL_PNG;
-	else				ilType = 0;
-
-	if( ilType == 0 )
-	{
-		vgLogDebug("Unable to save an image to a buffer. %s is not a supported target type.", type.c_str());
-		buffer.clear();
-		return false;
-	}
-
-	// Determines the needed buffer size,
-	// allocates the buffer and
-	// saves the image.
-	//
-	// WARNING! This causes openIL to save the image twice.
-	// One time for dtermining the buffer size, and a second time 
-	// to do the effective image saving. But there is no other
-	// way to get the needed buffer size.
-	const ILint size = ilSaveL( ilType, 0, 0 );
-	buffer.resize( size, 0 );
-	ilSaveL( ilType, buffer.data(), buffer.size() );
-
-	return true;
 }
 
 

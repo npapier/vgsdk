@@ -7,8 +7,8 @@ const uint32 Texture2D::gethTextureDimension() const
 void Texture2D::sethDefaults()
 {
 	sethFunction( FUN_REPLACE );
-	setWrapS( CLAMP );
-	setWrapT( CLAMP );
-	setMinFilter( LINEAR );
-	setMagFilter( LINEAR );
+	setWrap( WRAP_S, CLAMP );
+	setWrap( WRAP_T, CLAMP );
+	setFilter( MIN_FILTER, LINEAR );
+	setFilter( MAG_FILTER, LINEAR );
 }

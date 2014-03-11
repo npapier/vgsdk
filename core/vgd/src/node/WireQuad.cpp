@@ -49,7 +49,7 @@ void WireQuad::initializeGeometry( const float width, const float height )
 	// Initialize geometry.
 
 	// VERTEX
-	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = getVertexRW();
+	vgd::field::EditorRW< vgd::field::MFVec3f >	vertex = getFVertexRW();
 	const float fSizeX = 0.5f * width;
 	const float fSizeY = 0.5f * height;
 	
@@ -61,7 +61,7 @@ void WireQuad::initializeGeometry( const float width, const float height )
 	vertex->push_back( vgm::Vec3f(-fSizeX,	fSizeY, 0.f) );
 	
 	// VERTEX INDEX
-	vgd::field::EditorRW< vgd::field::MFUInt >	vertexIndex		= getVertexIndexRW();	
+	vgd::field::EditorRW< vgd::field::MFUInt32>	vertexIndex		= getFVertexIndexRW();	
 	vertexIndex->clear();
 	vertexIndex->reserve( 4 );
 	vertexIndex->push_back(0);
@@ -70,7 +70,7 @@ void WireQuad::initializeGeometry( const float width, const float height )
 	vertexIndex->push_back(3);
 	
 	// PRIMITIVE
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getPrimitiveRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitive	= getFPrimitiveRW();
 	vgd::node::Primitive prim( vgd::node::Primitive::LINE_LOOP, 0, vertexIndex->size() );
 	primitive->clear();
 	primitive->push_back( prim );

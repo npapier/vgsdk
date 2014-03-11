@@ -100,27 +100,27 @@ const vgd::node::Primitive::Type numIndices2Primitive( const uint numIndices )
 
 
 // @todo check wrapping modes
-vgd::node::Texture::WrappingValueType toEnum( const aiTextureMapMode mapMode )
+vgd::node::Texture::WrapValueType toEnum( const aiTextureMapMode mapMode )
 {
 	using vgd::node::Texture;
 
 	switch ( mapMode )
 	{
 		case aiTextureMapMode_Wrap:
-			return Texture::WrappingValueType(Texture::REPEAT);
+			return Texture::WrapValueType(Texture::REPEAT);
 
 		case aiTextureMapMode_Clamp:
-			return Texture::WrappingValueType(Texture::CLAMP_TO_EDGE);
+			return Texture::WrapValueType(Texture::CLAMP_TO_EDGE);
 
 		case aiTextureMapMode_Decal:
-			return Texture::WrappingValueType(Texture::CLAMP_TO_BORDER); // @todo no decal in vgsdk
+			return Texture::WrapValueType(Texture::CLAMP_TO_BORDER); // @todo no decal in vgsdk
 
 		case aiTextureMapMode_Mirror:
-			return Texture::WrappingValueType(Texture::MIRRORED_REPEAT);
+			return Texture::WrapValueType(Texture::MIRRORED_REPEAT);
 
 		default:
 			vgAssertN( false, "Unsupported wrapping mode." );
-			return Texture::WrappingValueType(Texture::CLAMP_TO_EDGE);
+			return Texture::WrapValueType(Texture::CLAMP_TO_EDGE);
 	}
 }
 //@}
@@ -159,12 +159,12 @@ vgd::Shp< vgd::node::Texture2D > createTexture2D(	const vgio::Media & media, con
 
 	// Default values
 	texture->setMipmap( true );
-	texture->setMinFilter( Texture2D::LINEAR_MIPMAP_LINEAR );
-	texture->setMagFilter( Texture2D::LINEAR );
+	texture->setFilter( Texture2D::MIN_FILTER, Texture2D::LINEAR_MIPMAP_LINEAR );
+	texture->setFilter( Texture2D::MAG_FILTER, Texture2D::LINEAR );
 
 	// WRAPPING
-	texture->setWrapS( toEnum(mapU) );
-	texture->setWrapT( toEnum(mapV) );
+	texture->setWrap( Texture2D::WRAP_S, toEnum(mapU) );
+	texture->setWrap( Texture2D::WRAP_T, toEnum(mapV) );
 
 	// FUNCTION
 	texture->sethFunction( vgd::node::Texture2D::FUN_MODULATE ); // @todo
@@ -246,9 +246,6 @@ vgd::Shp< vgd::node::Group > createMaterial( const vgio::Media & media, const bo
 
 		vgd::Shp< vgd::node::Texture2D > texture = createTexture2D( media, pathFilename, 0, str, mapU, mapV );
 		group->addChild( texture );
-
-		// Forces the diffuse color to white.
-		material->setDiffuse( vgm::Vec3f(1.f,1.f,1.f) );
 	}
 
 	// NORMALMAP TEXTURE
@@ -280,103 +277,58 @@ vgd::Shp< vgd::node::Group > createMaterial( const vgio::Media & media, const bo
 }
 
 
-// aiMesh => VertexShape
+// VERTEXSHAPE <-> aiMesh
 vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 {
 	// Vertex shape
 	using vgd::node::VertexShape;
 	vgd::Shp< VertexShape > vertexShape = VertexShape::create( mesh->mName.C_Str() );
 
+	// Editors
+	vgd::field::EditorRW< vgd::field::MFVec3f >		vertex		= vertexShape->getFVertexRW();
+	vgd::field::EditorRW< vgd::field::MFUInt32>		vertexIndex	= vertexShape->getFVertexIndexRW();
+	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitives	= vertexShape->getFPrimitiveRW();
+
 	// VERTEX
-	vgd::field::EditorRW< vgd::field::MFVec3f > vertex = vertexShape->getVertexRW();
 	vertex->reserve( mesh->mNumVertices );
 	for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
 	{
 		vertex->push_back( toVec3f(mesh->mVertices[i]) );
 	}
 
-	// NORMALS
-	if ( mesh->HasNormals() )
-	{
-		vgd::field::EditorRW< vgd::field::MFVec3f > normals = vertexShape->getNormalRW();
-
-		normals->reserve( mesh->mNumVertices );
-		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
-		{
-			normals->push_back( toVec3f(mesh->mNormals[i]) );
-		}
-
-		vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
-	}
-
-	// TANGENTS
-	if ( mesh->HasTangentsAndBitangents() )
-	{
-		vgd::field::EditorRW< vgd::field::MFVec3f > tangents = vertexShape->getTangentRW();
-
-		tangents->reserve( mesh->mNumVertices );
-		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
-		{
-			tangents->push_back( toVec3f(mesh->mTangents[i]) );
-		}
-
-		vertexShape->setTangentBinding( vgd::node::BIND_PER_VERTEX );
-	}
-
-	// bitangents ? not yet, because not used by vgSDK (generated in the shader).
-
-	// TEXCOORDSx
-	for( uint j = 0, jEnd=mesh->GetNumUVChannels(); j != jEnd; ++j )
-	{
-		vgAssertN( mesh->mNumUVComponents[j] == 2, "Only dim(texCoord)==2 is allowed." ); // @todo support of 1 and 3
-		vertexShape->createTexUnits( mesh->mNumUVComponents[j], j );
-		vertexShape->setTexCoordBinding( j, vgd::node::BIND_PER_VERTEX );
-
-		vgd::field::EditorRW< vgd::field::MFVec2f > texCoord = vertexShape->getTexCoordRW<vgd::field::MFVec2f>( j );
-		texCoord->reserve( mesh->mNumVertices );
-		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
-		{
-			texCoord->push_back( toVec2f(mesh->mTextureCoords[j][i]) );
-		}
-	}
-
-	// VERTEX INDEX and PRIMITIVES
-	using vgd::node::Primitive;
-
-	vgd::field::EditorRW< vgd::field::MFUInt>		vertexIndex	= vertexShape->getVertexIndexRW();
-	vgd::field::EditorRW< vgd::field::MFPrimitive >	primitives	= vertexShape->getPrimitiveRW();
-
+	// VERTEX INDEX
 	vertexIndex->reserve( mesh->mNumFaces );
-	Primitive primitive(vgd::node::Primitive::NONE, 0, 0);
-
-	uint currentIndex = 0;
 	for( uint i = 0, iEnd = mesh->mNumFaces; i != iEnd; ++i )
 	{
 		const aiFace * face = &mesh->mFaces[i];
-
-		// Fill vertexIndex field
 		for( uint j=0, jEnd=face->mNumIndices; j != jEnd; ++j )
 		{
 			const int index = face->mIndices[j];
 			vertexIndex->push_back( index );
 		}
+	}
 
-		// Fill primitive field
-		const Primitive::Type primType = numIndices2Primitive( face->mNumIndices );
+	// PRIMITIVES
+	using vgd::node::Primitive;
+	Primitive primitive(vgd::node::Primitive::NONE, 0, 0);
+	uint currentIndex = 0;
+	for( uint i = 0, iEnd = mesh->mNumFaces; i != iEnd; ++i )
+	{
+		const aiFace *			face		= &mesh->mFaces[i];
+		const Primitive::Type	primType	= numIndices2Primitive( face->mNumIndices );
 
 		if ( primitive.getNumIndices() == 0 )	// new primitive object
 		{
 			vgAssert( primitive.getType() == Primitive::NONE );
 			vgAssert( primitive.getIndex() == 0 );
+			//vgAssert( primitive.getNumIndices() == 0 );
 
 			primitive.setType( primType );
 			primitive.setIndex( currentIndex );
 			primitive.setNumIndices( face->mNumIndices );
 		}
-		else if (	(primitive.getType() == primType) &&		// same primitive type
-					(primType != Primitive::POLYGON)	)		// not a polygon @todo allow reuse of polygon primitive (by using NV_primitive_restart extension)
+		else if ( primitive.getType() == primType ) // reuse current primitive object
 		{
-			// reuse current primitive object
 			primitive.addToNumIndices( face->mNumIndices );
 		}
 		else // new type of primitive
@@ -391,7 +343,55 @@ vgd::Shp< vgd::node::VertexShape > createVertexShape( const aiMesh * mesh )
 		currentIndex += face->mNumIndices;
 	}
 
-	if ( primitive.getNumIndices() > 0 )	primitives->push_back( primitive );
+	if ( primitive.getNumIndices() > 0 )
+	{
+		primitives->push_back( primitive );
+	}
+
+	// NORMALS
+	if ( mesh->HasNormals() )
+	{
+		vgd::field::EditorRW< vgd::field::MFVec3f > normals = vertexShape->getFNormalRW();
+
+		normals->reserve( mesh->mNumVertices );
+		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
+		{
+			normals->push_back( toVec3f(mesh->mNormals[i]) );
+		}
+
+		vertexShape->setNormalBinding( vgd::node::BIND_PER_VERTEX );
+	}
+
+	// TEX COORDS
+	for( uint j = 0, jEnd=mesh->GetNumUVChannels(); j != jEnd; ++j )
+	{
+		vgAssert( mesh->mNumUVComponents[j] == 2 ); // @todo support of 1 and 3
+		vertexShape->createTexUnits( mesh->mNumUVComponents[j], j );
+		vertexShape->setTexCoordBinding( j, vgd::node::BIND_PER_VERTEX );
+
+		vgd::field::EditorRW< vgd::field::MFVec2f >	texCoord = vertexShape->getFTexCoordRW<vgd::field::MFVec2f>( j );
+		texCoord->reserve( mesh->mNumVertices );
+		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
+		{
+			texCoord->push_back( toVec2f(mesh->mTextureCoords[j][i]) );
+		}
+	}
+
+	// TANGENTS
+	if ( mesh->HasTangentsAndBitangents() )
+	{
+		vgd::field::EditorRW< vgd::field::MFVec3f > tangents = vertexShape->getFTangentRW();
+
+		tangents->reserve( mesh->mNumVertices );
+		for( uint i = 0, iEnd = mesh->mNumVertices; i != iEnd; ++i )
+		{
+			tangents->push_back( toVec3f(mesh->mTangents[i]) );
+		}
+
+		vertexShape->setTangentBinding( vgd::node::BIND_PER_VERTEX );
+	}
+
+	// @todo bitangents
 
 	return vertexShape;
 }

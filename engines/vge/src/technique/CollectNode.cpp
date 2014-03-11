@@ -55,7 +55,7 @@ void CollectNode::apply( vge::engine::Engine * engine, vge::visitor::TraverseEle
 			vgm::MatrixR matrix( engine->getGeometricalMatrix().getTop() );
 
 			//if empty shape.
-			if( vertexShape->getVertexIndexRO()->size() > 0 )
+			if( vertexShape->getFVertexIndexRO()->size() > 0 )
 			{
 				addShape( vertexShape, matrix, engine, VERTEXSHAPE );
 			}
@@ -71,7 +71,7 @@ void CollectNode::apply( vge::engine::Engine * engine, vge::visitor::TraverseEle
 				vgd::Shp< vgd::node::MultipleInstances > multipleInstances = vgd::dynamic_pointer_cast< vgd::node::MultipleInstances >( multipleInstance->shpFromThis() );
 
 				//if empty shape.
-				if( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( shape )->getVertexIndexRO()->size() > 0 )
+				if( vgd::dynamic_pointer_cast< vgd::node::VertexShape >( shape )->getFVertexIndexRO()->size() > 0 )
 				{
 					vgm::MatrixR matrix = engine->getGeometricalMatrix().getTop();
 					addShape( multipleInstances, matrix, engine, MULTIPLEINSTANCES );				
@@ -154,30 +154,17 @@ void CollectNode::addShape( vgd::Shp< vgd::node::Shape > shape, vgm::MatrixR mat
 				texture->setMipmap( mipmap );
 			}
 
-			vgd::node::Texture::WrapSValueType wrapValueS;
-			if( engine->getStateStackTopFromOptionalField< vgd::node::Texture2D, vgd::node::Texture::FWrapSType, vgd::node::Texture::WrapSValueType >( "f_wrapS", wrapValueS ) )
-			{
-				texture->setWrapS( wrapValueS );
-			}
+			vgd::node::Texture::WrapValueType wrap_s;
+			engine->getStateStackTop< vgd::node::Texture2D, vgd::node::Texture::WrapParameterType, vgd::node::Texture::WrapValueType >( "f_wrap", vgd::node::Texture::WRAP_S, wrap_s );
 
-			vgd::node::Texture::WrapTValueType wrapValueT;
-			if( engine->getStateStackTopFromOptionalField< vgd::node::Texture2D, vgd::node::Texture::FWrapTType, vgd::node::Texture::WrapTValueType >( "f_wrapT", wrapValueT ) )
-			{
-				texture->setWrapT( wrapValueT );
-			}
+			vgd::node::Texture::WrapValueType wrap_t;
+			engine->getStateStackTop< vgd::node::Texture2D, vgd::node::Texture::WrapParameterType, vgd::node::Texture::WrapValueType >( "f_wrap", vgd::node::Texture::WRAP_T, wrap_t );
 
-			//
-			vgd::node::Texture::MinFilterValueType minFilterValue;
-			if( engine->getStateStackTopFromOptionalField< vgd::node::Texture2D, vgd::node::Texture::FMinFilterType, vgd::node::Texture::MinFilterValueType >( "f_minFilter", minFilterValue ) )
-			{
-				texture->setMinFilter( minFilterValue );
-			}
+			vgd::node::Texture::FilterValueType min_filter;
+			engine->getStateStackTop< vgd::node::Texture2D, vgd::node::Texture::FilterParameterType, vgd::node::Texture::FilterValueType >( "f_filter", vgd::node::Texture::MIN_FILTER, min_filter );
 
-			vgd::node::Texture::MagFilterValueType magFilterValue;
-			if( engine->getStateStackTopFromOptionalField< vgd::node::Texture2D, vgd::node::Texture::FMagFilterType, vgd::node::Texture::MagFilterValueType >( "f_magFilter", magFilterValue ) )
-			{
-				texture->setMagFilter( magFilterValue );
-			}
+			vgd::node::Texture::FilterValueType mag_filter;
+			engine->getStateStackTop< vgd::node::Texture2D, vgd::node::Texture::FilterParameterType, vgd::node::Texture::FilterValueType >( "f_filter", vgd::node::Texture::MAG_FILTER, mag_filter );
 
 			std::string texName;
 			engine->getStateStackTopFromSingleField< vgd::node::Texture2D, vgd::field::TSingleField< std::string >, std::string >( "f_name", texName );
@@ -185,6 +172,10 @@ void CollectNode::addShape( vgd::Shp< vgd::node::Shape > shape, vgm::MatrixR mat
 			texture->setName( texName );
 			texture->setInternalFormat( internalFormat );
 			texture->setUsage( usage );
+			texture->setWrap( vgd::node::Texture::WRAP_S, wrap_s );
+			texture->setWrap( vgd::node::Texture::WRAP_T, wrap_t );
+			texture->setFilter( vgd::node::Texture::MIN_FILTER, min_filter );
+			texture->setFilter( vgd::node::Texture::MAG_FILTER, mag_filter );
 		}
 	}
 

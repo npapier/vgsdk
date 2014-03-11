@@ -31,7 +31,7 @@ void ShapePerformanceTest::end()
 
 void ShapePerformanceTest::prePaint()
 {
-	m_shape->getVertexRW();
+	m_shape->getFVertexRW();
 }
 
 void ShapePerformanceTest::postPaint()

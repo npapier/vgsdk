@@ -27,7 +27,6 @@ ResolutionDialog::ResolutionDialog( QMainWindow* widget )
     QVBoxLayout* layout = new QVBoxLayout();
     QLabel* label = new QLabel("Select, in the list bellow, a resolution to apply, \nor specify your own.");
     m_resolutions->addItem(resolutionToString(m_widget->width(), m_widget->height()));
-    m_resolutions->addItem("1920x1080");
     m_resolutions->addItem("1024x768");
     m_resolutions->addItem("800x600");
     m_resolutions->addItem("720x576");

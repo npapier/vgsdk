@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2014, Maxime Peresson.
+// VGSDK - Copyright (C) 2009, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
@@ -46,7 +46,7 @@ struct myBase : public ::vgTest::Base
 	 * @name Overridden methods
 	 */
 	//@{
-	void run( const bool callViewAll = true );
+	void run();
 	bool quit();
 	//@}
 

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2014, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -78,8 +78,8 @@ struct VGD_API Antialiasing : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		FXAA1 = 259,	///< Fast Approximate Anti-Aliasing (FXAA) version 1
-		NONE = 258,	///< No antialiasing
+		FXAA1 = 257,	///< Fast Approximate Anti-Aliasing (FXAA) version 1
+		NONE = 256,	///< No antialiasing
 		DEFAULT_TECHNIQUE = FXAA1	///< Fast Approximate Anti-Aliasing (FXAA) version 1
 	};
 
@@ -107,8 +107,8 @@ struct VGD_API Antialiasing : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 258 );
-			retVal.push_back( 259 );
+			retVal.push_back( 256 );
+			retVal.push_back( 257 );
 
 			return retVal;
 		}

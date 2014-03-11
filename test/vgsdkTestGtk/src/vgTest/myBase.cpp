@@ -62,6 +62,7 @@ void myBase::prerun(const vgsdkTestGtk::vgTest::testType type)
 
 	Gtk::VBox					*vbox1		= Gtk::manage( new Gtk::VBox );
 
+	vgGTK::Notebook				*notebook	= Gtk::manage( new vgGTK::Notebook );
 	m_canvas								= Gtk::manage( new myCanvas );
 
 	// Configures the main window.
@@ -75,14 +76,13 @@ void myBase::prerun(const vgsdkTestGtk::vgTest::testType type)
 	hpaned->pack2( *m_canvas, true, true );
 
 	//
-#ifdef _VGSDK_DONT_KILL_VIEWER_AUTOMATICALLY
-	vgGTK::Notebook *notebook	= Gtk::manage( new vgGTK::Notebook );
+#ifndef _VGSDK_DONT_KILL_VIEWER_AUTOMATICALLY
 	vbox1->pack_start( *notebook, true, true );
+#endif
 
 	notebook->set_border_width( 2 );
 	notebook->set_size_request( 384 /*333*/, 512/*768*/ ); // @todo should be able to resize detached notebook 
 	notebook->setCanvas( *m_canvas ); // Gives the canvas' root node to the notebook.
-#endif
 
 	// Canvas
 	m_canvas->setBase(this);
@@ -100,15 +100,8 @@ void myBase::prerun(const vgsdkTestGtk::vgTest::testType type)
 }
 
 
-void myBase::run( const bool callViewAll )
+void myBase::run()
 {
-	// Call view all if desired
-	if ( callViewAll )
-	{
-		getCanvas()->viewAll();
-	}
-
-	// Start event loop
 	m_run = true;
 	Gtk::Main::run(*m_window);
 }
