@@ -1,0 +1,7 @@
+description	= '(V)ersatile (G)raphical (FFmpeg)'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+uses		= [ 'boost', 'gstffmpeg', 'sdl' ]
+libs		= [ 'vgDebug 0-5', 'vgd 0-5', 'sbf 0-0' ]
+deps		= [ '../../core/vgDebug', '../../core/vgd' ]

@@ -1,0 +1,7 @@
+description	= '(V)ersatile (G)raphical (WX)widgets'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+uses		= [ 'boost', 'glu', 'opengl', 'wx', 'wxgl' ]
+libs		= [ 'gle 0-3', 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgm 0-5', 'vgTrian 0-5' ]
+deps		= [ '../../dependencies/gle', '../../core', '../../algorithms', '../../engines', '../../io' ]

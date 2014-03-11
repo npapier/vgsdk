@@ -1,0 +1,7 @@
+description	= '(V)ersatile (G)raphical (D)ata'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+uses		= [ 'boost', 'openil', 'swigShp' ]
+libs		= [ 'vgDebug 0-5', 'vgm 0-5', 'sbf 0-0' ]
+deps		= [ '../vgBase', '../vgDebug', '../vgm' ]

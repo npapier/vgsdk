@@ -1,0 +1,8 @@
+description			= 'Encrypts or decrypts files using the blowfish algorithm'
+vcsUse				= 'no'
+type				= 'exec'
+version				= '1-0'
+generateInfoFile	= True
+deps				= ['../../core/vgDebug', '../../io/vgPhysfs']
+uses				= ['boost']
+libs				= ['vgDebug 0-5', 'vgPhysfs 0-5', 'sbf 0-0']

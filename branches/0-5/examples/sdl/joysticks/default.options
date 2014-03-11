@@ -1,0 +1,5 @@
+vcsUse		= 'no'
+type		= 'exec'
+version		= '0-1'
+libs		= [ 'vgd 0-5', 'vgSDL 0-5' ]
+uses		= [ 'sdl' ]

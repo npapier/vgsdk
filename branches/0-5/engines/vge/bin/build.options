@@ -1,0 +1,10 @@
+LIB		=	['vgd_0-4','vgDebug_0-4','vgm_0-4']
+USE		=	['boost']
+TYPE	=	'shared'
+VERSION = '0-4'
+COMBINE = 'yes'
+import os
+import sys
+if os.name != 'nt' and sys.platform != 'darwin' :
+	USEVISIBILITY = 'no'
+

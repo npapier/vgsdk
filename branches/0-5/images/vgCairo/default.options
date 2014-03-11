@@ -1,0 +1,8 @@
+description	= '(V)ersatile (G)raphical (Cairo)'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+#uses		= [ 'cairomm' ]
+uses		= [ 'boost', 'cairo' ]
+libs		= [ 'vgd 0-5' ]
+deps		= [ '../../core' ]

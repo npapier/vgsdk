@@ -1,0 +1,7 @@
+description	= '(V)ersatile (G)raphical (E)valuation'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+uses		= [ 'boost' ]
+libs		= [ 'sbf 0-0', 'vgd 0-5', 'vgDebug 0-5', 'vgm 0-5' ]
+deps		= [ '../../core' ]

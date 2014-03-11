@@ -1,0 +1,7 @@
+description	= '(V)ersatile (G)raphical (S)imple (D)irectMedia (L)ayer'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+libs		= [ 'vgd 0-5' ]
+uses		= [ 'boost', 'sdl' ]
+deps		= [ '../../core/vgd' ]

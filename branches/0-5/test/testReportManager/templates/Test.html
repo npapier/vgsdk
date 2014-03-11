@@ -1,0 +1,91 @@
+<%!
+    import globals
+    import os
+%>
+
+<%page args="test, graphPath, filename"/>
+<%include file="header.html" args="title='Test '+test.getAttribute('name'), path='../../..'"/>
+
+<% col = len(test.getAttributes()) %>
+
+ 	<body>				
+		##Title and table declaration
+		<h2>${test.getAttribute('name')}</h2>
+		<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
+			<tr valign="top">				 
+		
+		##Table header
+		% for key in test.getAttributes():
+			% if key != 'failure' and key != 'failure_code':
+				<div id="${key}_tooltip" class="tooltip" style="display:none">${globals.description[key]}</div>
+				<th id="${key}">${key}</th>
+				<script type="text/javascript">
+					var my_tooltip = new Tooltip("${key}", "${key}_tooltip")
+				</script>
+			% endif
+		% endfor
+		
+		% for att in test.getCustomAttributes():
+			% if att.getDisplay() == True:
+				<th>${att.getName()}</th>
+			% endif
+			</tr>
+		% endfor
+		
+		##Value of each column
+			<tr valign="top">
+		% for key in test.getAttributes():
+			% if key != 'failure' and key != 'failure_code':
+				<td>${test.getAttribute(key)}</td>
+			% endif
+		% endfor
+		
+		% for att in test.getCustomAttributes():
+			% if att.getDisplay() == True:
+				<td>${att.getAttribute()}</td>			
+			% endif
+		% endfor
+			</tr>
+		
+		##Special line for failed test
+		% if test.getAttribute('failure') != None:
+			<tr class="error">
+				<td colspan="${str(col)}">
+					${test.getAttribute('failure')}
+					<code>
+					<br/><br/>
+					${test.getAttribute('failure_code')}
+					</code>   
+				</td>
+			</tr>
+		% endif
+		
+		##Special line for compare test (print screentshot/reference/difference image)
+		% for customAttribute in test.getCustomAttributes():
+			<tr>
+			${customAttribute.getHtml()}
+			</tr>
+		% endfor
+		
+		##Special line for graph (performance test)
+		% if os.path.isfile(graphPath + filename + '.xml'):   
+			<tr>
+				<table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
+				<tr class="screenshot">
+					<td colspan="' + str(col) + '">
+						<object type="application/x-shockwave-flash" width="600" height="550" data="../../../charts/charts.swf">
+						  <param name="movie" value="../../../charts/charts.swf" />
+						
+						  <param name="FlashVars" value="library_path=../../../charts/charts_library&amp;xml_source=graph/${filename}.xml" />
+						  <param name="wmode" value="transparent" />
+						</object>
+					</td>
+				</tr>					
+				</table>
+			</tr>
+		% endif
+		
+		</table>
+		<a href="index.html">Back</a>
+	</body>
+</html>

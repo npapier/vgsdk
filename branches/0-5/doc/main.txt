@@ -1,0 +1,97 @@
+/**
+ * @if vgsdk
+ * 		@mainpage Versatile Graphical Software Development Kit (vgSDK)
+ * @else
+ * 		@page vgsdk_main_page Versatile Graphical Software Development Kit (vgSDK)
+ * @endif
+ *
+ * \image html vgsdk.png
+ * 
+ * 
+ *
+ * @section about About vgSDK
+ * 
+ * Welcome to the (V)ersatile (G)raphical (S)oftware (D)evelopment (K)it. \c vgSDK provides a C++ programming interface to do 
+ * graphical jobs. Its main goal is to create real-time graphics applications and to obtain easily high-performance and reliable
+ * graphics applications.\n
+ * Typical applications are in the fields of virtual reality, augmented reality, research papers, games and graphical computation.
+ *
+ * \c vgSDK hides low-level details on graphics programming and reduces drastically the work required to start with a 
+ * graphical application. It provides a set of geometrical and mathematical classes that are needed in almost every graphics program.
+ * 
+ * 
+ * 
+ * @section Prerequisites
+ * 
+ * \c vgSDK is intended for users who are already familiar with C++ and have basic graphics programming skills (like 3d 
+ * transformation and coordinate system, mesh, texture...). Knowledges about OpenGL or Direct3D could help, but are not
+ * absolutely needed.
+ * 
+ * Hardware specification:
+ *
+ * An OpenGL 3.x graphics card :
+ *  - ATI: from R600 ( from Radeon HD 2400 ). R700 (Radeon HD 4850)
+ *  - NVIDIA: OpenGL 3.0, OpenGL 3.1 and OpenGL 3.2 require G80, or newer hardware, i.e. GeForce 8000 series or higher; Geforce G100, GT120, 130, 220, GTS 150, GTS 250, GeForce GTX 260 and higher, any ION based products. Quadro FX. Available on mobile version too.
+ *
+ *
+ * API Support from:
+ *  - AMD:
+ *    - The OpenGL ES2.0 is supported on all cards that are supported now (from HD2xxx and up).
+ *    - The OpenGL 4.1 is supported since HD5xxx and up.
+ * 
+ *  - NVIDIA:
+ *    - Supports OpenCL 1.0 (Open Computing Language) for all GeForce 8-series and later GPUs.
+ *    - Supports OpenGL 3.3 for GeForce 8-series and later GPUs.
+ *    - Supports OpenGL 4.1 on GeForce 400 series and later GPUs.
+ *
+ * @section project_page Project Page
+ * 
+ * The \c vgSDK project pages are hosted by GoogleCode (http://code.google.com/).
+ *
+ * For project home, updates, wiki, issues, bug tracking, feature requests, downloads, source from subversion, 
+ * mailing list information and more, visit
+ * - our GoogleCode project page at http://code.google.com/p/vgsdk
+ *
+ * Previously, the \c vgSDK project pages has been hosted by Gna! (https://gna.org/).
+ * - our old Gna! project page at http://gna.org/projects/vgsdk
+ * - our old website at http://home.gna.org/vgsdk/
+ *
+ * @if vgsdkNonFree
+ * @endif
+ * 
+ *
+ *
+ * \ref g_TOC Central point of the documentation
+ *
+ *
+ *
+ * \ref g_changeLog
+ *
+ * What's new
+ * 
+ * 
+ * 
+ * @section Licensing
+ * 
+ * All these libraries are distributed under GNU LGPL license, which can be found in files COPYING and COPYING.LESSER.
+ * This license allows you to use \c vgSDK freely in commercial programs as long as you link with the dynamic library.
+ * 
+ * See http://www.gnu.org/licenses/lgpl.html
+ *
+ * 
+ * 
+ * \b Powered \b by
+ *
+ * \image html gnu-head-sm.png
+ * \image html boost.png
+ * \image html glib.png
+ * \image html cairo.png
+ * \image html glm.png
+ * \image html itk.png
+ * \image html opengl.png
+ * \image html collada.png
+ * \image html sdl.png
+ * \image html gtk.png
+ * \image html openIL.png
+ * \image html wxWidgets.png
+ */

@@ -1,0 +1,7 @@
+description	= '(V)ersatile (G)raphical (Alg)orithms'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+uses		= [ 'boost' ]
+libs		= [ 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgm 0-5', 'vgPhysfs 0-5', 'sbf 0-0' ]
+deps		= [ '../../core', '../../engines/vge', '../../io/vgPhysfs' ]
