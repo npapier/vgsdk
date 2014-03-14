@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008-2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2008-2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -167,6 +167,12 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 */
 	//@{
 
+	typedef enum {
+		NO_VSYNC		= 0,		///< Buffer swaps are not synchronized to a video frame.
+		VSYNC			= 1,		///< Buffer swaps are synchronized to a video frame.
+		ADAPTIVE_VSYNC	= -1		///< Late swaps can occur without synchronization to the video frame (to reduce the visual stutter on late frames and reduces the stall on subsequent frames). Otherwise buffer swaps are synchronized to a video frame (see in VSYNC).
+	} SwapControlMode;
+
 	/**
 	 * @brief Sets the initial vertical synchronization state of this canvas
 	 *
@@ -174,11 +180,11 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 * given by this method. By default, vertical synchronization is enabled (if swap control is available and
 	 * not overridden by driver).
 	 */
-	void setInitialVerticalSynchronization( const bool enabled );
+	void setInitialVerticalSynchronization( const SwapControlMode mode );
 
 
 	/**
-	 * @brief Tests if vertical synchronization control is available
+	 * @brief Tests if vertical synchronization control is available (i.e. EXT_swap_control extension)
 	 *
 	 * @pre isCurrent()
 	 *
@@ -187,18 +193,29 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	const bool hasVerticalSynchronizationControl() const;
 
 	/**
-	 * @brief Sets the vertical synchronization state of the current OpenGL context
+	 * @brief Tests if adaptive vertical synchronization control is available (i.e. EXT_swap_control_tear extension)
 	 *
-	 * @pre hasVerticalSynchronizationControl() and isCurrent()
+	 * @pre isCurrent()
+	 *
+	 * @return true if available, false otherwise
 	 */
-	void setVerticalSynchronization( const bool enabled = true );
+	const bool hasAdaptiveVerticalSynchronizationControl() const;
 
 	/**
-	 * @brief Tests if the vertical synchronization is enabled
+	 * @brief Sets the vertical synchronization state of the current OpenGL context
 	 *
-	 * @pre hasVerticalSynchronizationControl() and isCurrent()
+	 * @pre isCurrent()
+	 *
+	 * @remark If hasAdaptiveVerticalSynchronizationControl() returns false and mode is ADAPTIVE_VSYNC, then VSYNC is used.
 	 */
-	const bool isVerticalSynchronizationEnabled() const;
+	void setVerticalSynchronization( const SwapControlMode mode = ADAPTIVE_VSYNC );
+
+	/**
+	 * @brief Returns the vertical synchronization state
+	 *
+	 * @pre isCurrent()
+	 */
+	const SwapControlMode getVerticalSynchronization() const;
 
 	//@}
 
@@ -637,7 +654,7 @@ protected:
 	const Canvas *		m_sharedCanvas;						///< a pointer to another Canvas for OpenGL objects sharing, or null if sharing is not desired.
 private:
 
-	bool				m_initialVerticalSynchronization;	///< the initial vertical synchronization state of this canvas
+	SwapControlMode		m_initialVerticalSynchronization;	///< the initial vertical synchronization state of this canvas
 
 	bool				m_scheduleScreenshot;				///< Boolean value telling if a screen capture should be done at the end of next rendering.
 	std::string			m_screenshotPath;					///< path used for the screenshot
