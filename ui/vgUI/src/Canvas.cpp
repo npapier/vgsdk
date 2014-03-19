@@ -57,13 +57,24 @@ static std::ofstream			m_gleLogFile;								///< The gle.txt file
 
 void logDebugVerticalSynchronizationState( Canvas * canvas )
 {
-	if ( canvas->isVerticalSynchronizationEnabled() )
+	const Canvas::SwapControlMode mode = canvas->getVerticalSynchronization();
+
+	switch ( mode )
 	{
-		vgLogMessage("Vertical synchronization is enabled");
-	}
-	else
-	{
-		vgLogMessage("Vertical synchronization is disabled");
+		case Canvas::NO_VSYNC:
+			vgLogDebug("Vertical synchronization is disabled");
+			break;
+
+		case Canvas::VSYNC:
+			vgLogDebug("Vertical synchronization is enabled");
+			break;
+
+		case Canvas::ADAPTIVE_VSYNC:
+			vgLogDebug("Adaptive synchronization is enabled");
+			break;
+
+		default:
+			vgAssert( false );
 	}
 }
 
@@ -95,7 +106,7 @@ Canvas::Canvas( const Canvas * sharedCanvas, const bool newOpenGLContextSharingO
 	m_glc							( 0																		),
 	m_gleContext					( sharedCanvas ?
 		sharedCanvas->m_gleContext : vgd::makeShp( new gle::OpenGLExtensionsGen(getGleOutputStream()) )		),
-	m_initialVerticalSynchronization( true																	),
+	m_initialVerticalSynchronization( ADAPTIVE_VSYNC														),
 	m_scheduleScreenshot			( false																	),
 	m_scheduleVideoCapture			( false																	),
 	m_videoCapture					( false																	),
@@ -270,9 +281,9 @@ const bool Canvas::isFullscreen()
 }
 
 
-void Canvas::setInitialVerticalSynchronization( const bool enabled )
+void Canvas::setInitialVerticalSynchronization( const SwapControlMode mode )
 {
-	m_initialVerticalSynchronization = enabled;
+	m_initialVerticalSynchronization = mode;
 }
 
 
@@ -292,19 +303,41 @@ const bool Canvas::hasVerticalSynchronizationControl() const
 
 
 
-void Canvas::setVerticalSynchronization( const bool enabled )
+const bool Canvas::hasAdaptiveVerticalSynchronizationControl() const
 {
-	vgAssertN( hasVerticalSynchronizationControl(), "Vertical synchronization control is not available" );
+	vgAssertN( isCurrent(), "OpenGL context not current" );
+
+#ifdef _WIN32
+	return isWGL_EXT_swap_control_tear();
+#elif __MACOSX__
+	#error "Platform not yet supported."
+#else
+	return isGLX_EXT_swap_control_tear();
+#endif
+}
+
+
+
+void Canvas::setVerticalSynchronization( const SwapControlMode mode )
+{
 	vgAssertN( isCurrent(), "OpenGL context not current" );
 
 #ifdef _WIN32
 	if ( isWGL_EXT_swap_control() )
 	{
-		wglSwapIntervalEXT( enabled ? 1 : 0 );
+		if ( isWGL_EXT_swap_control_tear() )
+		{
+			wglSwapIntervalEXT( mode );
+		}
+		else
+		{
+			vgLogDebug("WGL_EXT_swap_control_tear not supported.");
+			wglSwapIntervalEXT( (mode == ADAPTIVE_VSYNC) ? VSYNC : mode );
+		}
 	}
 	else
 	{
-		vgLogMessage("WGL_EXT_swap_control not supported.");
+		vgLogDebug("WGL_EXT_swap_control not supported.");
 	}
 #elif __MACOSX__
 	#error "Platform not yet supported."
@@ -315,37 +348,44 @@ void Canvas::setVerticalSynchronization( const bool enabled )
 		GLXDrawable drawable = getXGetCurrentDrawable();
 		if ( drawable )
 		{
-			glXSwapIntervalEXT(dpy, drawable, enabled ? 1 : 0 ); 
+			if ( isGLX_EXT_swap_control_tear() )
+			{
+				glXSwapIntervalEXT(dpy, drawable, mode ); 
+			}
+			else
+			{
+				vgLogDebug("GLX_EXT_swap_control_tear not supported.");
+				glXSwapIntervalEXT( dpy, drawable, (mode == ADAPTIVE_VSYNC) ? VSYNC : mode );
+			}
 		}
 		else
 		{
-			vgLogMessage("Unable to retrieve drawable");
+			vgLogDebug("Unable to retrieve drawable");
 		}
 	}
 	else
 	{
-		vgLogMessage("GLX_EXT_swap_control not supported.");
+		vgLogDebug("GLX_EXT_swap_control not supported.");
 	}
 #endif
 }
 
 
 
-const bool Canvas::isVerticalSynchronizationEnabled() const
+const Canvas::SwapControlMode Canvas::getVerticalSynchronization() const
 {
-	vgAssertN( hasVerticalSynchronizationControl(), "Vertical synchronization control is not available" );
 	vgAssertN( isCurrent(), "OpenGL context not current" );
 
 #ifdef _WIN32
 	if ( isWGL_EXT_swap_control() )
 	{
 		const int retVal = wglGetSwapIntervalEXT();
-		return (retVal != 0);
+		return static_cast<SwapControlMode>(retVal);
 	}
 	else
 	{
-		vgLogMessage("WGL_EXT_swap_control not supported.");
-		return false;
+		vgLogDebug("WGL_EXT_swap_control not supported.");
+		return VSYNC;
 	}
 #elif __MACOSX__
 	#error "Platform not yet supported."
@@ -358,22 +398,21 @@ const bool Canvas::isVerticalSynchronizationEnabled() const
 		{
 			uint swapInterval;
 			glXQueryDrawable( dpy, drawable, GLX_SWAP_INTERVAL_EXT, &swapInterval );
-			return (swapInterval != 0);
+			return static_cast<SwapControlMode>(retVal);
 		}
 		else
 		{
-			vgLogMessage("Unable to retrieve drawable");
-			return false;
+			vgLogDebug("Unable to retrieve drawable");
+			return VSYNC;
 		}
 	}
 	else
 	{
-		vgLogMessage("GLX_EXT_swap_control not supported.");
-		return false;
+		vgLogDebug("GLX_EXT_swap_control not supported.");
+		return VSYNC;
 	}
 #endif
 }
-
 
 
 void Canvas::switchFullscreen()
@@ -455,7 +494,6 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 
 
 
-// @todo clean this method !!!
 void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 {
 	vgAssertN( isCurrent(), "OpenGL context must have been set current." );
@@ -463,17 +501,19 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	doInitialize();
 
 	//
-	boost::logic::tribool vsyncState = boost::logic::indeterminate;
+	bool hasVSyncState = false;
+	SwapControlMode vsyncState;
 
 	// paint() must do several renderings => This is a bench
 	// So, disable V-SYNC
 	if ( getNumberOfFrames() > 1 )
 	{
 		// Saves vsync state
-		vsyncState = isVerticalSynchronizationEnabled();
+		vsyncState = getVerticalSynchronization();
+		hasVSyncState = true;
 
 		// Disables vsync
-		setVerticalSynchronization( false );
+		setVerticalSynchronization( NO_VSYNC );
 	}
 
 	while( getNumberOfFrames() > 0 )
@@ -610,7 +650,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 	}
 
 	// Restores previous state of vsync if needed
-	if ( !boost::logic::indeterminate(vsyncState) )
+	if ( hasVSyncState )
 	{
 		setVerticalSynchronization( vsyncState );
 	}
@@ -1031,34 +1071,27 @@ const bool Canvas::startVGSDK()
 			logDebugVerticalSynchronizationState( this );
 
 			// Sets initial V-Sync state
-			if ( isVerticalSynchronizationEnabled() != m_initialVerticalSynchronization )
+			if ( getVerticalSynchronization() != m_initialVerticalSynchronization )
 			{
 				setVerticalSynchronization( m_initialVerticalSynchronization );
 
 				// Success ?
-				if ( isVerticalSynchronizationEnabled() == m_initialVerticalSynchronization )
+				if ( getVerticalSynchronization() == m_initialVerticalSynchronization )
 				{
-					if ( m_initialVerticalSynchronization )
-					{
-						vgLogMessage("Enables vertical synchronization");
-					}
-					else
-					{
-						vgLogMessage("Disables vertical synchronization");
-					}
+					logDebugVerticalSynchronizationState( this );
 				}
 				else
 				{
-					vgLogMessage("Unable to modify the vertical synchronization.");
-					vgLogMessage("Checks 'Wait for vertical refresh' or something similar in the settings of your graphic card.");
-					vgLogMessage("It is certainly set to 'Always off' or 'Always on'");
+					vgLogDebug("Unable to modify the vertical synchronization.");
+					vgLogDebug("Checks 'Wait for vertical refresh' or something similar in the settings of your graphic card.");
+					vgLogDebug("It is certainly set to 'Always off' or 'Always on'");
 				}
 			}
 			// else nothing to do
 		}
 		else
 		{
-			vgLogMessage("No control of the vertical synchronization (EXT_swap_control)");
+			vgLogDebug("No control of the vertical synchronization (EXT_swap_control)");
 		}
 
 		//
