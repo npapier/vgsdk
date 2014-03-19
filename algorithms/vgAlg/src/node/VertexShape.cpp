@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, 2012, 2013, Pierre-Jean Bensoussan, Nicolas Papier, Alexandre Di Pino.
+// VGSDK - Copyright (C) 2008, 2012, 2013, 2014, Pierre-Jean Bensoussan, Nicolas Papier, Alexandre Di Pino.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Pierre-Jean Bensoussan
@@ -7,8 +7,36 @@
 
 #include "vgAlg/node/VertexShape.hpp"
 
+//#define GLM_MESSAGES
+#include <glm/glm.hpp>
+#include <glm/gtx/fast_square_root.hpp>
+#include <glm/gtx/simd_vec4.hpp>
+
 #include <vgd/basic/Time.hpp>
+#include <vgd/basic/TimeDuration.hpp>
 #include <vgd/node/VertexShape.hpp>
+
+// @todo change algo at runtime
+#define USE_GLM_SIMD	1
+
+
+
+// @todo move to vgm
+vgm::Vec4f Vec4f_cast( glm::simdVec4 const & x )
+{
+	vgm::Vec4f retVal;
+	_mm_storeu_ps(&retVal[0], x.Data);
+	return retVal;
+}
+
+
+vgm::Vec3f Vec3f_cast( glm::simdVec4 const & x )
+{
+	vgm::Vec4f retVal = Vec4f_cast(x);
+	return vgm::Vec3f( retVal );
+}
+
+
 
 namespace
 {
@@ -16,7 +44,7 @@ namespace
 	static vgAlg::node::COMPUTE_TANGENT_METHOD			m_tangent	= vgAlg::node::DEFAULT_COMPUTE_TANGENT;
 	static vgAlg::node::COMPUTE_NORMALIZATION_METHOD	m_normalize	= vgAlg::node::DEFAULT_COMPUTE_NORMALIZATION;
 
-	static bool											m_orthogonalize = true;
+	static bool											m_orthogonalize = true; // @todo use it in computeTangent...()
 }
 
 
@@ -236,21 +264,27 @@ void computeNormals( vgd::Shp< vgd::node::VertexShape > vertexShape )
 	const uint numTris		= vertexIndex->size()/3;
 
 	// Stage initialization of normals field
+#ifdef _VGSDK_PROFILE
 	vgd::basic::Time init;
-	normals->resize(0);
-	normals->reserve(numVertices);
+#endif
+
+	if ( normals->size() != numVertices )	normals->resize(numVertices);
+	/*if ( value == vgAlg::node::COMPUTE_NORMAL_METHOD::SIMPLE_SIMD)
+	{
+		tbb::task_scheduler_init tb(4);
+	}*/
 
 	// initialize normals to (0,0,0)
-	for( uint i = 0; i < numVertices; ++i )
-	{
-		normals->push_back( vgm::Vec3f( 0.f, 0.f, 0.f ) );
-	}
+	memset(&normals->front(), 0, numVertices * sizeof(vgm::Vec3f) );
+
 #ifdef _VGSDK_PROFILE
 	vgLogDebug("computeNormals(): Reset normals field: %i\n", init.getElapsedTime().ms());
 #endif
 
 	// Stage normals computation
+#ifdef _VGSDK_PROFILE
 	vgd::basic::Time compute;
+#endif
 
 	switch( value )
 	{
@@ -289,7 +323,7 @@ void computeTangents( vgd::Shp< vgd::node::VertexShape > vertexShape )
 
 	if ( value == vgAlg::node::NO_COMPUTE_TANGENT || (vertexShape->getNumTexUnits() == 0) )
 	{
-		return ;
+		return;
 	}
 
 	//
@@ -303,21 +337,22 @@ void computeTangents( vgd::Shp< vgd::node::VertexShape > vertexShape )
 	const uint numTris		= vertexIndex->size()/3;
 
 	// Stage initialization of tangents field
+#ifdef _VGSDK_PROFILE
 	vgd::basic::Time init;
-	tangents->resize(0);
-	tangents->reserve(numVertices);
+#endif
 
+	if ( tangents->size() != numVertices )	tangents->resize(numVertices);
 	// initialize tangents to (0,0,0)
-	for( uint i = 0; i < numVertices; ++i)
-	{
-		tangents->push_back( vgm::Vec3f( 0.f, 0.f, 0.f ) ); 
-	}
+	memset(&tangents->front(), 0, numVertices * sizeof(vgm::Vec3f) );
+
 #ifdef _VGSDK_PROFILE
 	vgLogDebug("computeTangents(): Reset tangents field: %i\n", init.getElapsedTime().ms());
 #endif
 
 	// Stage tangents computation
+#ifdef _VGSDK_PROFILE
 	vgd::basic::Time compute;
+#endif
 
 	switch ( value )
 	{
@@ -333,10 +368,11 @@ void computeTangents( vgd::Shp< vgd::node::VertexShape > vertexShape )
 	}
 
 	// Normalization stage
-	if ( vgAlg::node::getNormalizationMethod() != vgAlg::node::NO_COMPUTE_NORMALIZATION )
+	// normalization is not needed for rendering (but could be useful to show tangents with DrawStyle node).
+/*	if ( vgAlg::node::getNormalizationMethod() != vgAlg::node::NO_COMPUTE_NORMALIZATION )
 	{
 		normalizeField(tangents);
-	}
+	}*/
 
 	//
 	if ( vertexShape->getTangentBinding() != vgd::node::BIND_PER_VERTEX )
@@ -373,8 +409,38 @@ void computeNormalsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertic
 								vgd::field::EditorRW< vgd::field::MFVec3f >&	normals,
 								const int32 numTris )
 {
-	vgm::Vec3f faceNormal;		// a temp face normal
-	vgm::Vec3f v1, v2;
+#ifdef USE_GLM_SIMD
+	#pragma message("computeNormalsStandard() USE_GLM_SIMD implementation")
+	int32 indexA, indexB, indexC;
+	int32 j = 0;
+
+	for( int32 i = 0; i < numTris; ++i )
+	{
+		indexA = (*vertexIndex)[j];
+		indexB = (*vertexIndex)[j+1];
+		indexC = (*vertexIndex)[j+2];
+
+		glm::simdVec4	ma((*vertices)[indexA][0], (*vertices)[indexA][1], (*vertices)[indexA][2], 0);
+		glm::simdVec4	mb((*vertices)[indexB][0], (*vertices)[indexB][1], (*vertices)[indexB][2], 0);
+		glm::simdVec4	mc((*vertices)[indexC][0], (*vertices)[indexC][1], (*vertices)[indexC][2], 0);
+
+		// compute face normal
+		glm::simdVec4 faceNormal = glm::cross(mb - ma, mc - ma);
+
+		// add this face normal to each vertex normal
+		glm::simdVec4	oldNormal((*normals)[indexA][0], (*normals)[indexA][1], (*normals)[indexA][2], 0);
+		(*normals)[indexA]	= Vec3f_cast(oldNormal + faceNormal);
+
+		oldNormal = glm::simdVec4((*normals)[indexB][0], (*normals)[indexB][1], (*normals)[indexB][2], 0);
+		(*normals)[indexB]	= Vec3f_cast(oldNormal + faceNormal);
+
+		oldNormal = glm::simdVec4((*normals)[indexC][0], (*normals)[indexC][1], (*normals)[indexC][2], 0);
+		(*normals)[indexC]	= Vec3f_cast(oldNormal + faceNormal);
+
+		j += 3;
+	}
+#else
+	#pragma message("computeNormalsStandard() default implementation")
 
 	int32 indexA, indexB, indexC;
 	int32 j = 0;
@@ -385,17 +451,23 @@ void computeNormalsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertic
 		indexB = (*vertexIndex)[j+1];
 		indexC = (*vertexIndex)[j+2];
 
+		/*const*/ vgm::Vec3f A = (*vertices)[indexA];
+		/*const*/ vgm::Vec3f B = (*vertices)[indexB];
+		/*const*/ vgm::Vec3f C = (*vertices)[indexC];
+
 		// compute face normal
-		v1 = (*vertices)[indexB] - (*vertices)[indexA];
-		v2 = (*vertices)[indexC] - (*vertices)[indexA];
-		faceNormal = v1.cross(v2);
+		const vgm::Vec3f v1 = B - A;
+		const vgm::Vec3f v2 = C - A;
+		const vgm::Vec3f faceNormal = v1.cross( v2 );
 
 		// add this face normal to each vertex normal
 		(*normals)[indexA]	+= faceNormal;
 		(*normals)[indexB]	+= faceNormal;
 		(*normals)[indexC]	+= faceNormal;
+
 		j += 3;
 	}
+#endif
 }
 
 
@@ -403,14 +475,154 @@ void computeNormalsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertic
 // Lengyel, Eric. “Computing Tangent Space Basis Vectors for an Arbitrary Mesh”.
 void computeTangentsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	vertices,
 								vgd::field::EditorRO< vgd::field::MFUInt >&	vertexIndex,
-								vgd::field::EditorRW< vgd::field::MFVec3f >&	tangents,
+								vgd::field::EditorRW< vgd::field::MFVec3f >&	tangents,				// @todo move to last parameter
 								vgd::field::EditorRO< vgd::field::MFVec3f >&	normals,
 								vgd::field::EditorRO< vgd::field::MFVec2f >&	texCoord,
 								const int32 numTris )
 {
-	vgm::Vec3f * tan1 = new vgm::Vec3f[vertices->size()*2];
-	vgm::Vec3f * tan2 = tan1 + vertices->size();
-	memset(tan1, 0, vertices->size() * sizeof(vgm::Vec3f) * 2 );
+	//static std::vector< vgm::Vec3f > memory;
+	static std::vector< vgm::Vec4f > memory;
+	const uint desiredSized = vertices->size(); // * 2;
+	if ( memory.size() < desiredSized )
+	{
+		vgLogDebug("computeTangentsStandard(): memory resize(%i)", desiredSized);
+		memory.resize( desiredSized );
+	}
+
+	//vgm::Vec3f * tan1 = &memory.front();
+	vgm::Vec4f * tan1 = &memory.front();
+	//vgm::Vec3f * tan2 = tan1 + vertices->size();
+	//memset(tan1, 0, desiredSized * sizeof(vgm::Vec3f) );
+	memset(tan1, 0, desiredSized * sizeof(vgm::Vec4f) );
+
+	/*static int numElements		= 0;
+	static glm::simdVec4 * tan1	= 0;
+	//static glm::simdVec4 * tan2	= 0;
+
+	const int desiredSized = vertices->size();
+	if ( numElements < desiredSized )
+	{
+		if ( tan1 )		delete [] tan1;
+		//if ( tan2 )		delete [] tan2;
+		//if ( tan2 )		delete [] tan2;
+		tan1 = new glm::simdVec4[desiredSized];
+		numElements = desiredSized;
+		//tan2 = new glm::simdVec4[desiredSized];
+	}
+
+	for( uint i=0; i!=numElements; ++i )
+	{
+		tan1[i] = glm::simdVec4(0);
+		//tan2[i] = glm::simdVec4(0);
+	}*/
+	/*memset(tan1, 0, desiredSized * sizeof(glm::simdVec4) );
+	memset(tan2, 0, desiredSized * sizeof(glm::simdVec4) );*/
+
+#ifdef USE_GLM_SIMD
+	#pragma message("computeTangentsStandard() USE_GLM_SIMD implementation")
+
+	uint viI=0;	// (I)ndex in (v)ertex (i)ndex array
+	for( uint a=0; a < static_cast<uint>(numTris); ++a )
+	{
+		const uint i1 = (*vertexIndex)[viI++];
+		const uint i2 = (*vertexIndex)[viI++];
+		const uint i3 = (*vertexIndex)[viI++];
+
+		//const vgm::Vec3f v1 = (*vertices)[i1];
+		//const vgm::Vec3f v2 = (*vertices)[i2];
+		//const vgm::Vec3f v3 = (*vertices)[i3];
+		glm::simdVec4 v1( (*vertices)[i1][0], (*vertices)[i1][1], (*vertices)[i1][2], 0 );
+		glm::simdVec4 v2( (*vertices)[i2][0], (*vertices)[i2][1], (*vertices)[i2][2], 0 );
+		glm::simdVec4 v3( (*vertices)[i3][0], (*vertices)[i3][1], (*vertices)[i3][2], 0 );
+
+		//const vgm::Vec2f w1 = (*texCoord)[i1];
+		//const vgm::Vec2f w2 = (*texCoord)[i2];
+		//const vgm::Vec2f w3 = (*texCoord)[i3];
+		glm::simdVec4 w1( (*texCoord)[i1][0], (*texCoord)[i1][1], (*texCoord)[i1][0], (*texCoord)[i1][1] );
+		glm::simdVec4 w23( (*texCoord)[i2][0], (*texCoord)[i2][1], (*texCoord)[i3][0], (*texCoord)[i3][1] );
+
+		//const vgm::Vec3f p1 = v2 - v1;
+		//const vgm::Vec3f p2 = v3 - v1;
+		glm::simdVec4 p1 = v2 - v1;
+		glm::simdVec4 p2 = v3 - v1;
+
+		//const vgm::Vec2f u1 = w2 - w1;
+		//const vgm::Vec2f u2 = w3 - w1;
+		glm::simdVec4 u12 = w23 - w1;
+		const vgm::Vec4f u = Vec4f_cast( u12 );
+
+		//const float r = 1.0F / (u1[0] * u2[1] - u2[0] * u1[1]);
+		//const float r = 1.0F / (u[0] * u[3] - u[2] * u[1]);
+		const float diff = (u[0] * u[3]) - (u[2] * u[1]);	// @todo OPTME
+		const float r = 1.0F / diff;						// @todo OPTME
+
+		//const vgm::Vec3f sdir = (u2[1] * p1 - u1[1] * p2) * r;
+		/*const*/ glm::simdVec4 sdir = (u[3] * p1 - u[1] * p2) * r;
+
+		//const vgm::Vec3f tdir = (u1[0]*p2 - u2[0] * p1) * r;
+//		const gl::simdVec4 tdir = (u[0]*p2 - u[2] * p1) * r;
+
+		// Take care of texture mirroring
+		//const float area = (s2*t1) - (t2*s1);
+		//const float area = (u[2]*u[1]) - (u[3]*u[0]);
+		const float area = -diff;
+		if ( area < 0.f )
+		{
+			sdir *= -1.f;
+			//tdir *= -1.f;
+		}
+
+		//
+		//const vgm::Vec3f _sdir = glm::vec4_cast(sdir);
+
+		//tan1[i1] += _sdir;
+		glm::simdVec4 oldValue( tan1[i1][0], tan1[i1][1], tan1[i1][2], 0 );
+		tan1[i1] = Vec4f_cast(oldValue + sdir);
+
+		//tan1[i2] += _sdir;
+		oldValue = glm::simdVec4( tan1[i2][0], tan1[i2][1], tan1[i2][2], 0 );
+		tan1[i2] = Vec4f_cast(oldValue + sdir);
+
+		//tan1[i3] += _sdir;
+		oldValue = glm::simdVec4( tan1[i3][0], tan1[i3][1], tan1[i3][2], 0 );
+		tan1[i3] = Vec4f_cast(oldValue + sdir);
+
+		//vgm::Vec3f _tdir = glm::vec4_cast(tdir);
+		//oldValue = glm::simdVec4( tan2[i1][0], tan2[i1][1], tan2[i1][2], 0 );
+		//tan2[i1] = glm::vec4_cast(oldValue + tdir);
+		//tan2[i1] += _tdir;
+//		tan2[i1] += tdir;
+
+		//oldValue = glm::simdVec4( tan2[i2][0], tan2[i2][1], tan2[i2][2], 0 );
+		//tan2[i2] = glm::vec4_cast(oldValue + tdir);
+		//tan2[i2] += _tdir;
+//		tan2[i2] += tdir;
+
+		//oldValue = glm::simdVec4( tan2[i3][0], tan2[i3][1], tan2[i3][2], 0 );
+		//tan2[i3] = glm::vec4_cast(oldValue + tdir);
+		//tan2[i3] += _tdir;
+//		tan2[i3] += tdir;
+	}
+
+	for (uint a=0; a < vertices->size(); ++a)
+	{
+		glm::simdVec4 n( (*normals)[a][0], (*normals)[a][1], (*normals)[a][2], 0 );
+		//const vgm::Vec3f n = (*normals)[a];
+
+		glm::simdVec4 t( tan1[a][0], tan1[a][1], tan1[a][2], 0 );
+		//const vgm::Vec3f t = tan1[a];
+
+		// Gram-Schmidt orthogonalize
+		//(*tangents)[a] = (t - n * n.dot(t)); //.normalize() => Don't do normalization now.
+		(*tangents)[a] = Vec3f_cast( t - n * glm::dot( n, t ) );
+		//(*tangents)[a] = glm::vec4_cast( tan1[a] - n * glm::dot( n, tan1[a] ) );
+
+		// Calculate handedness
+		//const float handedness = ( (n.cross(t)).dot(tan2[a]) ) < 0.0F ? -1.0F : 1.0F;
+		//tangent[a].w = handedness;
+	}
+#else
+	#pragma message("computeTangentsStandard() default implementation")
 
 	uint viI=0;	// (I)ndex in (v)ertex (i)ndex array
 	for( uint a=0; a < static_cast<uint>(numTris); ++a )
@@ -473,8 +685,8 @@ void computeTangentsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	verti
 		//const float handedness = ( (n.cross(t)).dot(tan2[a]) ) < 0.0F ? -1.0F : 1.0F;
 		//tangent[a].w = handedness;
 	}
-
-	delete [] tan1;
+#endif
+	//delete [] tan1;
 }
 
 
@@ -483,9 +695,16 @@ void computeTangentsStandard(	vgd::field::EditorRO< vgd::field::MFVec3f >&	verti
 void normalizeFieldStandard( vgd::field::EditorRW< vgd::field::MFVec3f >& field )
 {
 	const int numElements = field->size();
-	for(int32 i = 0; i < numElements; ++i)
+	for(int i = 0; i < numElements; ++i)
 	{
+#ifdef USE_GLM_SIMD
+		glm::simdVec4 ret = glm::fastNormalize( glm::simdVec4((*field)[i][0], (*field)[i][1], (*field)[i][2], 0) );
+		(*field)[i] = Vec3f_cast( ret );
+#elif USE_GLM
+		(*field)[i] = vgm::Vec3f( glm::fastNormalize( glm::vec3((*field)[i][0], (*field)[i][1], (*field)[i][2]) ) );
+#else
 		(*field)[i].normalize();
+#endif
 	}
 }
 

@@ -94,44 +94,38 @@ struct Vector
 
 	/**
 	 * @brief Constructor from a glm vector
-	 *
- 	 * @remarks only if dimension is equal to 2.
  	 */
 	Vector( const glm::vec2 v )
 	{
-		assert( N==2 );
-
-		m_tCoord[0] = v[0];
-		m_tCoord[1] = v[1];
+		const uint minSize = std::min( N, 2 );
+		for( int i=0; i<minSize; ++i )
+		{
+			m_tCoord[i] = v[i];
+		}
 	}
 
 	/**
 	 * @brief Constructor from a glm vector
-	 *
- 	 * @remarks only if dimension is equal to 3.
  	 */
 	Vector( const glm::vec3 v )
 	{
-		assert(N==3);
-
-		m_tCoord[0] = v[0];
-		m_tCoord[1] = v[1];
-		m_tCoord[2] = v[2];
+		const uint minSize = std::min( N, 3 );
+		for( int i=0; i<minSize; ++i )
+		{
+			m_tCoord[i] = v[i];
+		}
 	}
 
 	/**
 	 * @brief Constructor from a glm vector
-	 *
- 	 * @remarks only if dimension is equal to 4.
  	 */
 	Vector( const glm::vec4 v )
 	{
-		assert(N==4);
-
-		m_tCoord[0] = v[0];
-		m_tCoord[1] = v[1];
-		m_tCoord[2] = v[2];
-		m_tCoord[3] = v[3];
+		const uint minSize = std::min( N, 4 );
+		for( int i=0; i<minSize; ++i )
+		{
+			m_tCoord[i] = v[i];
+		}
 	}
 
 
@@ -630,17 +624,16 @@ vgm::Vec4f		out5b( in5 );
 	 * 
 	 * @remarks only if dimension is equal to 3.
 	 */
-	Vector	cross( const Vector& rV ) const
+	Vector cross( const Vector& rV ) const
 	{
+#ifdef _DEBUG
 		assert( N == 3 );
-		
-		Vector v;
-		
-		v.m_tCoord[0] = m_tCoord[1]* rV.m_tCoord[2] -  m_tCoord[2]* rV.m_tCoord[1];
-		v.m_tCoord[1] = m_tCoord[2]* rV.m_tCoord[0] -  m_tCoord[0]* rV.m_tCoord[2];
-		v.m_tCoord[2] = m_tCoord[0]* rV.m_tCoord[1] -  m_tCoord[1]* rV.m_tCoord[0];
-		
-		return v;
+#endif
+
+		return Vector<T, 3>(
+			m_tCoord[1]* rV.m_tCoord[2] -  m_tCoord[2]* rV.m_tCoord[1],
+			m_tCoord[2]* rV.m_tCoord[0] -  m_tCoord[0]* rV.m_tCoord[2],
+			m_tCoord[0]* rV.m_tCoord[1] -  m_tCoord[1]* rV.m_tCoord[0] );
 	}
 
 
