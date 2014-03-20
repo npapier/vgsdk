@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Alexandre Di Pino, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, 2014, Alexandre Di Pino, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Alexandre Di Pino
@@ -6,6 +6,7 @@
 
 #include "vgQt/engine/ShadersEditor.hpp"
 
+#include <gle/OpenGLExtensionsGen.hpp>
 #include <vgd/field/FieldManager.hpp>
 
 #include <QBrush>
