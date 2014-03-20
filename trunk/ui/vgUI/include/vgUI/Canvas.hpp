@@ -11,7 +11,6 @@
 #include <boost/filesystem/convenience.hpp>
 
 #include <glc/glc.hpp>
-#include <gle/OpenGLExtensionsGen.hpp>
 
 #include <sbf/pkg/Module.hpp>
 #include <vgd/event/Source.hpp>
@@ -19,6 +18,8 @@
 #include <vgeGL/engine/SceneManager.hpp>
 
 #include "vgUI/vgUI.hpp"
+
+namespace gle { struct OpenGLExtensionsGen; }
 
 namespace vgd 
 { 

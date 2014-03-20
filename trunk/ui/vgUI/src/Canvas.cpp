@@ -17,6 +17,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
 #include <displayDriverConnector/displayDriverConnector.hpp>
+#include <gle/OpenGLExtensionsGen.hpp>
 #include <glo/GLSLProgram.hpp>
 
 #include <sbf/pkg/Module.hpp>
