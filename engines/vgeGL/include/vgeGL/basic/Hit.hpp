@@ -6,6 +6,7 @@
 #ifndef _VGEGL_BASIC_HIT_HPP
 #define _VGEGL_BASIC_HIT_HPP
 
+#include <gle/gl.h>
 #include <list>
 #include <vgd/node/Node.hpp>
 #include <vgm/Vector.hpp>
@@ -16,7 +17,7 @@
 
 namespace vgeGL
 {
-	
+
 namespace basic
 {
 
