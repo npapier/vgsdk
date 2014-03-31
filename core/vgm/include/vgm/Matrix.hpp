@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2010, 2011, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2010, 2011, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -190,12 +190,12 @@ struct VGM_API MatrixR
 	/**
 	 * @brief Sets the row from a vector of 4 elements
 	 */
-	void setRow( const int32 row, const vgm::Vec4f value );
+	void setRow( const int32 row, const vgm::Vec4f& value );
 	
 	/**
 	 * @brief Sets the column from a vector of 4 elements
 	 */
-	void setColumn( const int32 column, const vgm::Vec4f value );
+	void setColumn( const int32 column, const vgm::Vec4f& value );
 
 	/**
 	 * @brief Returns 4x4 array of elements.
@@ -568,7 +568,7 @@ struct VGM_API MatrixR
 	 * 
 	 * The matrix is exactly the same as the one sets by the GLU function \c gluLookAt.
 	 */
-	void setLookAt( const Vec3f eye, const Vec3f center, const Vec3f up );
+	void setLookAt( const Vec3f& eye, const Vec3f& center, const Vec3f& up );
 
 	/**
 	 * @brief Left multiply the current matrix by the given "lookAt" matrix.
@@ -584,7 +584,7 @@ struct VGM_API MatrixR
 	 * 
 	 * @sa lookAt()
 	 */
-	void lookAt( const Vec3f eye, const Vec3f center, const Vec3f up );
+	void lookAt( const Vec3f& eye, const Vec3f& center, const Vec3f& up );
 
 	/**
 	 * @brief Set matrix to a picking region.
@@ -597,14 +597,14 @@ struct VGM_API MatrixR
 	 * @param height		the height of the picking region in window coordinates
 	 * @param viewport	the viewport
 	 */
-	void setPick( float x, float y, float width, float height, vgm::Rectangle2i viewport );
+	void setPick( float x, float y, float width, float height, const vgm::Rectangle2i& viewport );
 	
 	/**
 	 * @brief Left multiply the current matrix by the given "picking region" matrix.
 	 * 
 	 * @sa setPick()
 	 */
-	void	pick( float x, float y, float width, float height, vgm::Rectangle2i viewport );
+	void	pick( float x, float y, float width, float height, const vgm::Rectangle2i& viewport );
 
 
 	/**
@@ -623,7 +623,7 @@ struct VGM_API MatrixR
 	 * @todo project()
 	 */
 	static const bool unProject(	const double winx, const double winy, const double winz,
-									const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i viewport,
+									const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
 									vgm::Vec3f& oObject );
 	//@}
 
@@ -745,7 +745,7 @@ struct VGM_API MatrixR
 	 * in proj.
 	 */
 	bool				factor(	MatrixR& r, Vec3f& s, MatrixR& u,
-									Vec3f& t, MatrixR& proj) const;
+								Vec3f& t, MatrixR& proj) const;
 	//@}
 
 	/**

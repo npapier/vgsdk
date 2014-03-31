@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -47,7 +47,7 @@ const Vec3f Segment::getDirection() const
 }
 
 
-const bool Segment::isIn( const Vec3f P ) const
+const bool Segment::isIn( const Vec3f& P ) const
 {
 	// SEGMENT AB
 	const vgm::Vec3f& A = getBegin();

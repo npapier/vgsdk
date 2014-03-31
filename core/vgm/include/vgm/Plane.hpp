@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -202,7 +202,7 @@ struct VGM_API Plane
 	 * @param P		the point to project
 	 * @return P projected onto the plane.
 	 */
-	const vgm::Vec3f project( const vgm::Vec3f p ) const;
+	const vgm::Vec3f project( const vgm::Vec3f& p ) const;
 
 	/**
 	 * @brief Returns the distance from the given point to the plane along its normal.

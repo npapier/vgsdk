@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, 2010, 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -247,8 +247,8 @@ struct VGM_API Rotation
 	 * @param viewport	viewport size to normalize p1, p2 and center.
 	 * @param radius		radius of virtual ball.
 	 */
-	void	setValue(	const vgm::Vec2f center, const vgm::Vec2f p1, const vgm::Vec2f p2, const vgm::Vec2f viewport,
-							const float radius = 1.0f );
+	void	setValue(	const vgm::Vec2f& center, const vgm::Vec2f& p1, const vgm::Vec2f& p2, const vgm::Vec2f& viewport,
+						const float radius = 1.0f );
 	//@}
 
 

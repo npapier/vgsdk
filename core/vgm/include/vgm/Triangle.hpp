@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -62,7 +62,7 @@ struct VGM_API Triangle
 	/**
 	 * @brief Sets the first point of the triangle
 	 */
-	void setA( const Vec3f A );
+	void setA( const Vec3f& A );
 
 	/**
 	 * @brief Get the second point of the triangle
@@ -73,7 +73,7 @@ struct VGM_API Triangle
 	/**
 	 * @brief Sets the second point of the triangle
 	 */
-	void setB( const Vec3f B );
+	void setB( const Vec3f& B );
 
 
 	/**
@@ -85,7 +85,7 @@ struct VGM_API Triangle
 	/**
 	 * @brief Sets the third point of the triangle
 	 */
-	void setC( const Vec3f C );
+	void setC( const Vec3f& C );
 
 	//@}
 
