@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2008, Clement Forest.
+// VGSDK - Copyright (C) 2008, 2014, Clement Forest.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Clement Forest
@@ -174,11 +174,15 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media 
 	}
 	else
 	{
+#ifdef _DEBUG
 		vgLogDebug("load %s", filePath.c_str() );
+#endif
 		retVal.first = loadObj( *in, group, bCCW ).first;
 		if ( retVal.first )
 		{
+#ifdef _DEBUG
 			vgLogDebug("load %s done", filePath.c_str() );
+#endif
 		}
 		else
 		{
@@ -207,11 +211,17 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 		path = ".";
 	}
 
+#ifdef _DEBUG
+		vgLogDebug("load %s", pathFilename.c_str() );
+#endif
+
 	retVal.first = loadObj( in, group, bCCW ).first;
 
 	if ( retVal.first )
 	{
+#ifdef _DEBUG
 		vgLogDebug("load %s done", pathFilename.c_str() );
+#endif
 	}
 	else
 	{
