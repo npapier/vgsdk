@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -614,7 +614,9 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media 
 
 	if ( loadSuccess )
 	{
+#ifdef _DEBUG
 		vgLogDebug("ILoader: load data from file %s", filePath.c_str() );
+#endif
 	}
 	else
 	{
@@ -627,7 +629,9 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media 
 
 	if( retVal.first )
 	{
+#ifdef _DEBUG
 		vgLogDebug("ILoader: load %s done", filePath.c_str() );
+#endif
 	}
 	else
 	{
