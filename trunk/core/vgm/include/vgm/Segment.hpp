@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -91,7 +91,7 @@ struct VGM_API Segment
 	 * 
 	 * @return true if the given point P is lying on the segment, false otherwise.
 	 */
-	const bool isIn( const Vec3f P ) const;
+	const bool isIn( const Vec3f& P ) const;
 	//@}
 
 private:

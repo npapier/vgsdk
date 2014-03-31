@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2008, 2010, 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -274,7 +274,7 @@ void MatrixR::setValue( const double* m )
 
 
 
-void MatrixR::setRow( const int32 row, const vgm::Vec4f value )
+void MatrixR::setRow( const int32 row, const vgm::Vec4f& value )
 {
 	matrix[row][0] = value[0];
 	matrix[row][1] = value[1];
@@ -284,7 +284,7 @@ void MatrixR::setRow( const int32 row, const vgm::Vec4f value )
 
 
 
-void MatrixR::setColumn( const int32 column, const vgm::Vec4f value )
+void MatrixR::setColumn( const int32 column, const vgm::Vec4f& value )
 {
 	matrix[0][column] = value[0];
 	matrix[1][column] = value[1];
@@ -1151,7 +1151,7 @@ void MatrixR::setLookAt(	float eyex, float eyey, float eyez,
 
 
 
-void MatrixR::setLookAt( const Vec3f eye, const Vec3f center, const Vec3f up )
+void MatrixR::setLookAt( const Vec3f& eye, const Vec3f& center, const Vec3f& up )
 {
 	setLookAt(	eye[0], eye[1], eye[2],
 				center[0], center[1], center[2],
@@ -1174,7 +1174,7 @@ void MatrixR::lookAt(	float eyex, float eyey, float eyez,
 
 
 
-void MatrixR::lookAt( const Vec3f eye, const Vec3f center, const Vec3f up )
+void MatrixR::lookAt( const Vec3f& eye, const Vec3f& center, const Vec3f& up )
 {
 	lookAt(	eye[0], eye[1], eye[2],
 			center[0], center[1], center[2],
@@ -1183,7 +1183,7 @@ void MatrixR::lookAt( const Vec3f eye, const Vec3f center, const Vec3f up )
 
 
 
-void MatrixR::setPick( float x, float y, float width, float height, vgm::Rectangle2i viewport )
+void MatrixR::setPick( float x, float y, float width, float height, const vgm::Rectangle2i& viewport )
 {
 	float sx, sy;
 	float tx, ty;
@@ -1201,7 +1201,7 @@ void MatrixR::setPick( float x, float y, float width, float height, vgm::Rectang
 
 
 
-void MatrixR::pick( float x, float y, float width, float height, vgm::Rectangle2i viewport )
+void MatrixR::pick( float x, float y, float width, float height, const vgm::Rectangle2i& viewport )
 {
 	MatrixR matrix;
 	matrix.setPick( x, y, width, height, viewport );
@@ -1213,7 +1213,7 @@ void MatrixR::pick( float x, float y, float width, float height, vgm::Rectangle2
 
 const bool MatrixR::unProject(
 	const double winx, const double winy, const double winz,
-	const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i viewport,
+	const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
 	vgm::Vec3f& oObject )
 {
 	MatrixR finalMatrix = (modelMatrix * projMatrix);

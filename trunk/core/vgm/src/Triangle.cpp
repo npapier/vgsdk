@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -41,7 +41,7 @@ const Vec3f& Triangle::getA() const
 	return A();
 }
 
-void Triangle::setA( const Vec3f A )
+void Triangle::setA( const Vec3f& A )
 {
 	m_abc[0] = A;
 }
@@ -57,7 +57,7 @@ const Vec3f& Triangle::getB() const
 	return B();
 }
 
-void Triangle::setB( const Vec3f B )
+void Triangle::setB( const Vec3f& B )
 {
 	m_abc[1] = B;
 }
@@ -73,7 +73,7 @@ const Vec3f& Triangle::getC() const
 	return m_abc[2];
 }
 
-void Triangle::setC( const Vec3f C )
+void Triangle::setC( const Vec3f& C )
 {
 	m_abc[2] = C;
 }
