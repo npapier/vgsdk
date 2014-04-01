@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -62,7 +62,9 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 	}
 	else
 	{
+#ifdef _DEBUG
 		vgLogDebug("vgTrian::loadTrian: load %s", pathFilename );
+#endif
 		//vgLogStatus("vgTrian::loadTrian: load %s", pathFilename );
 	}
 
@@ -168,8 +170,10 @@ std::pair< bool, vgd::Shp< vgd::node::VertexShape > > Loader::loadTrian( const c
 	//
 	retVal.first = true;
 
+#ifdef _DEBUG
 	vgLogDebug("vgTrian::loadTrian: load %s done.", pathFilename );
 	//vgLogStatus("vgTrian::loadTrian: load %s done.", pathFilename );
+#endif
 
 	return retVal;
 }
@@ -205,8 +209,10 @@ std::pair< bool, vgd::Shp< vgd::node::TriSet > > Loader::loadTrian( const std::s
 	}
 	else
 	{
+#ifdef _DEBUG
 		vgLogDebug("vgTrian::loadTrian: load %s", pathFilename.c_str() );
 		//vgLogStatus("vgTrian::loadTrian: load %s", pathFilename.c_str() );
+#endif
 	}
 
 	// read nb of vertices
@@ -311,8 +317,10 @@ std::pair< bool, vgd::Shp< vgd::node::TriSet > > Loader::loadTrian( const std::s
 	//
 	retVal.first = true;
 
+#ifdef _DEBUG
 	vgLogDebug("vgTrian::loadTrian: load %s done.", pathFilename.c_str() );
 	//vgLogStatus("vgTrian::loadTrian: load %s done.", pathFilename.c_str() );
+#endif
 
 	return retVal;
 }
@@ -343,8 +351,10 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 	}
 	else
 	{
+#ifdef _DEBUG
 		vgLogDebug("vgTrian::saveTrian: saved %s", pathFilename.c_str() );
 		//vgLogStatus("vgTrian::saveTrian: save %s", pathFilename.c_str() );
+#endif
 	}
 
 	// write nb of vertices
@@ -431,8 +441,10 @@ const bool Loader::saveTrian( vgd::Shp< vgd::node::TriSet > triset, const std::s
 	//
 	retVal = true;
 
+#ifdef _DEBUG
 	vgLogDebug("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
 	//vgLogStatus("vgTrian::saveTrian: save %s done.", pathFilename.c_str() );
+#endif
 
 	return retVal;
 }
@@ -480,16 +492,20 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const vgio::Media 
 	}
 	else
 	{
+#ifdef _DEBUG
 		vgLogDebug("vgTrian::loadTrian2: load %s", filePath.c_str() );
 		//vgLogStatus("vgTrian::loadTrian2: load %s", pathFilename );
+#endif
 	}
 
 	retVal.first = loadTrian2( media, *in, group );
 
 	if( retVal.first )
 	{
+#ifdef _DEBUG
 		vgLogDebug("vgTrian::loadTrian2: load %s done", filePath.c_str() );
 		//vgLogStatus("vgTrian::loadTrian2: load %s done", pathFilename );
+#endif
 	}
 	else
 	{
@@ -530,8 +546,10 @@ std::pair< bool, vgd::Shp< vgd::node::Group > >	Loader::load( const std::string 
 
 	if( retVal.first )
 	{
+#ifdef _DEBUG
 		vgLogDebug("vgTrian::loadTrian2: load %s done", pathFilename.c_str() );
 		//vgLogStatus("vgTrian::loadTrian2: load %s done", pathFilename );
+#endif
 	}
 	else
 	{
@@ -590,9 +608,11 @@ const bool Loader::loadTrian2( const vgio::Media & media, std::istream & in, vgd
 			std::string meshName;
 			
 			in >> meshName;
-			
+
+#ifdef _DEBUG
 			vgLogDebug("vgTrian::loadTrian2: load mesh %s", meshName.c_str() );
 			//vgLogStatus("vgTrian::loadTrian2: load mesh %s", meshName.c_str() );
+#endif
 			
 			in >> name;
 			if ( name == "materialIndex" )
@@ -670,9 +690,11 @@ vgd::Shp< vgd::node::Switch > Loader::loadMaterials( const vgio::Media & media, 
 		in >> matName;
 		vgd::Shp< vgd::node::Group > container = vgd::node::Group::create( matName );
 		switchGroup->addChild( container );
-		
+
+#ifdef _DEBUG
 		vgLogDebug("vgTrian::loadTrian2: load material %s", matName.c_str() );
 		//vgLogStatus("vgTrian::loadTrian2: load material %s", matName.c_str() );
+#endif
 
 		vgd::Shp< vgd::node::Material > material = vgd::node::Material::create( matName );
 		container->addChild( material );
@@ -756,8 +778,10 @@ void Loader::loadTextureMaps( const vgio::Media & media, std::istream & in, vgd:
 
 		vgd::Shp< vgd::node::Texture2D > tex = vgd::node::Texture2D::create( filename, (int8)i );
 
+#ifdef _DEBUG
 		vgLogDebug("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
 		//vgLogStatus("vgTrian::loadTrian2: load image %s/%s", m_path.c_str(), filename.c_str() );
+#endif
 
 		vgd::Shp< vgd::basic::IImage > image;
 
