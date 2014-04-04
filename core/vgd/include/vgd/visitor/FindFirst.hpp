@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -35,12 +35,10 @@ namespace visitor
  * vgd::Shp< vgd::node::Node > result = find.getShpNode();
  * 
  * // Usage with helper method vgd::visitor::findFirst()
- * std::pair< bool, vgd::Shp< vgd::node::Node > > result;
- * result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByName("lightSwitcher") );
- * if ( result.first )
+ * vgd::Shp< T > result = vgd::visitor::findFirst( m_root, vgd::visitor::predicate::ByName("lightSwitcher") );
+ * if ( result )
  * {
  * 	// Found
- * 	// use result.second
  * }
  * else
  * {
