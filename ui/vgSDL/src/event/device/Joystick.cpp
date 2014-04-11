@@ -50,6 +50,13 @@ Joystick::JoyCollection	Joystick::m_joyCache;
 
 
 
+bool Joystick::isSubsystemInitialized()
+{
+	return( SDL_WasInit(SDL_INIT_JOYSTICK) != 0 );
+}
+
+
+
 vgd::Shp< Joystick > Joystick::find( const int index )
 {
 	assert( index >= 0 );
@@ -63,7 +70,7 @@ vgd::Shp< Joystick > Joystick::get( const int index )
 {
 	assert( index >= 0 );
 
-	if( SDL_WasInit(SDL_INIT_JOYSTICK) != SDL_INIT_JOYSTICK )
+	if( !isSubsystemInitialized() )
 	{
 		std::cerr << "SDL joystick not initialized !" << std::endl;
 		return vgd::Shp< Joystick >();
@@ -171,7 +178,7 @@ void Joystick::handleEvent( const SDL_JoyHatEvent & event )
 
 vgd::Shp<Joystick> Joystick::create( const int index )
 {
-	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
+	assert( isSubsystemInitialized() && "SDL joystick not initialized !" );
 
 	// Opens the joytsick.
 	SDL_Joystick* joystick = SDL_JoystickOpen( index );
@@ -216,7 +223,7 @@ const int Joystick::getIndex() const
 
 const std::string Joystick::getName() const
 {
-	assert( SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK && "SDL joystick not initialized !" );
+	assert( isSubsystemInitialized() && "SDL joystick not initialized !" );
 
 	return std::string( SDL_JoystickName(getIndex()) );
 }

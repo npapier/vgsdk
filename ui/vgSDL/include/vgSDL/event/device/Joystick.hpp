@@ -82,6 +82,11 @@ struct VGSDL_API Joystick : public ::vgd::event::device::Joystick
 	}
 
 	/**
+	 * @brief Returns true if the joystick SDL subsytem is initialized.
+	 */
+	static bool isSubsystemInitialized();
+
+	/**
 	 * @brief	Searches for a joystick at the given index.
 	 *
 	 * @param	index	an index for a joystick
