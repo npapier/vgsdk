@@ -46,3 +46,12 @@
 
 
 %template (Vec3f)	vgm::Vector< float, 3 >;
+
+
+%extend vgm::Vector< float, 3 > 
+{
+    float __getitem__(unsigned int i) 
+	{
+        return (*($self))[i];
+    }
+}
