@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, 2014, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -13,6 +13,7 @@
 #include <sbf/log/GlobalLogger.hpp>
 #include <sbf/log/Logging.hpp>
 #include <sbf/pkg/Module.hpp>
+#include <sbf/simd/simd.hpp>
 
 #include <vgQt/engine/UserSettingsDialog.hpp>
 #include <vgQt/helpers.hpp>
@@ -22,6 +23,9 @@
 
 int main(int argc, char *argv[])
 {
+	// Retrieves and prints informations about CPU
+	std::cout << sbf::simd::getFullDescriptions() << std::endl;
+
 	// Retrieves and prints informations about primary display adapter
 	ddc_display_device_info_t displayDevice;
 	ddc_get_primary_display_device_informations( &displayDevice );
@@ -39,10 +43,10 @@ int main(int argc, char *argv[])
 	//vgd::node::Node::lockGraph();
 
 	//
-    QApplication app(argc, argv);
+	QApplication app(argc, argv);
 
-    // Installs the GTK-based logging.
-    sbf::log::set< sbf::log::Logging >();
+	// Installs the GTK-based logging.
+	sbf::log::set< sbf::log::Logging >();
 
 	// Creates the main window.
 	// This window is allocated on the heap and will be automatically destroyed by Qt 
