@@ -1,12 +1,13 @@
-// VGSDK - Copyright (C) 2010, Maxime Peresson.
+// VGSDK - Copyright (C) 2010, 2014, Maxime Peresson.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
+// Author Guillaume Brocker
 
 
 #include <vgAlg/actions/Encrypt.hpp>
 
-#include <vgPhysfs/BlowFish.hpp>
+#include <vgPhysfs/Blowfish.hpp>
 
 
 namespace vgAlg

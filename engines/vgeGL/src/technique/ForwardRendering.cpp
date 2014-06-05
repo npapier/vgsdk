@@ -425,7 +425,7 @@ void ForwardRendering::stageInitializeOutputBuffers( vgeGL::engine::Engine * eng
 		}
 
 		//
-		vgAssert( m_fbo );
+		vgAssert( m_fbo != 0 );
 		engine->setOutputBuffers( m_fbo );
 	}
 	// else nothing to do
@@ -1371,7 +1371,7 @@ void ForwardRendering::stageInitializeFluid( vgeGL::engine::Engine * engine, vge
 		vgd::Shp< Group > scene = vgd::dynamic_pointer_cast< Group >( fluid->getScene().lock() );
 		if ( !scene )
 		{
-			vgAssertN( scene, "'scene' field of fluid node %s is not a vgd::node::Group.", fluid->getName().c_str() );
+			vgAssertN( scene != 0, "'scene' field of fluid node %s is not a vgd::node::Group.", fluid->getName().c_str() );
 			//engine->getGLManager().remove( fluid );
 			return;
 		}
@@ -1399,7 +1399,7 @@ void ForwardRendering::stageInitializeFluid( vgeGL::engine::Engine * engine, vge
 		}
 		else
 		{
-			vgAssert( fluidRC->fbo );
+			vgAssert( fluidRC->fbo != 0 );
 
 			// Tests if the current output buffers size is the same as size specified by heightMapSize field.
 			vgd::Shp< glo::Texture2D > texture2D = fluidRC->fbo->getColorAsTexture2D(0);
@@ -1483,7 +1483,7 @@ engine->disregardIfIsA< vgd::node::Fluid >();
 	// Computes bounding box of 'scene'
 	using vgd::node::Group;
 	vgd::Shp< Group > scene = vgd::dynamic_pointer_cast< Group >( fluid->getScene().lock() );
-	vgAssertN( scene, "'scene' field of fluid node %s is not a vgd::node::Group.", fluid->getName().c_str() );
+	vgAssertN( scene != 0, "'scene' field of fluid node %s is not a vgd::node::Group.", fluid->getName().c_str() );
 
 	vge::visitor::NodeCollectorExtended<> collector;
 	scene->traverse( collector );
@@ -1960,7 +1960,7 @@ void ForwardRendering::stageInitializePostProcessingBuffers( vgeGL::engine::Engi
 
 		// Computes the size of main output buffer
 		vgd::Shp< glo::Texture2D > tex2DOutputBuffer0 = m_fbo->getColorAsTexture2D(0);
-		vgAssert( tex2DOutputBuffer0 );
+		vgAssert( tex2DOutputBuffer0 != 0 );
 		const vgm::Vec2i outputBuffer0Size = vgm::Vec2i( tex2DOutputBuffer0->getWidth(), tex2DOutputBuffer0->getHeight() );
 
 		if ( !sizeChanged )
@@ -1969,7 +1969,7 @@ void ForwardRendering::stageInitializePostProcessingBuffers( vgeGL::engine::Engi
 			namespace vgeGLPainter = vgeGL::handler::painter;
 
 			vgd::Shp< glo::Texture2D > texture2DPostProcessing	= pppRC.fbo0->getColorAsTexture2D(0);
-			vgAssert( texture2DPostProcessing );
+			vgAssert( texture2DPostProcessing != 0 );
 
 			const vgm::Vec2i postProcessingSize = vgm::Vec2i( texture2DPostProcessing->getWidth(), texture2DPostProcessing->getHeight() );
 			sizeChanged = (outputBuffer0Size != postProcessingSize);
@@ -2196,10 +2196,10 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 				postProcessingNode->getTexture0( value );
 
 				vgd::Shp< vgd::node::Node > node = value.lock();
-				vgAssert( node );
+				vgAssert( node != 0 );
 
 				vgd::Shp< Texture2D > texture = vgd::dynamic_pointer_cast< Texture2D >( node );
-				vgAssertN( texture, "Field texture0 of PostProcessing node named %s is invalid.", node->getName().c_str() );
+				vgAssertN( texture != 0, "Field texture0 of PostProcessing node named %s is invalid.", node->getName().c_str() );
 
 				textures0.push_back( texture );
 			}
@@ -2344,7 +2344,7 @@ const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProces
 		// output
 		vgd::Shp< vgd::node::Texture2D > outputTexture		= getOutputTexture( output[i], &outputBuffers, ltex1 );
 		vgd::Shp< vgeGL::rc::Texture2D > outputTextureGLO	= engine->getRCShp< vgeGL::rc::Texture2D >( outputTexture );
-		vgAssertN( outputTextureGLO, "Texture2D node named '%s' does not have its managed OpenGL texture", outputTexture->getName().c_str() );
+		vgAssertN( outputTextureGLO != 0, "Texture2D node named '%s' does not have its managed OpenGL texture", outputTexture->getName().c_str() );
 
 // @todo FIXME workaround a bug in glFramebufferTexture2D() ? or ?
 		//pppRC.outputFbo.reset( new vgeGL::rc::FrameBufferObject() );

@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -102,7 +102,7 @@ TStackShp< T >::TStackShp()
 template< typename T >
 void TStackShp< T >::push()
 {
-	const vgd::Shp< T > top = getTop();
+	const vgd::Shp< T > top = this->getTop();
 
-	m_container.push_back( vgd::makeShp( new T(*top) ) );
+	this->m_container.push_back( vgd::makeShp( new T(*top) ) );
 }

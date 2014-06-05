@@ -136,7 +136,7 @@ Loader::Loader()
 {}
 
 
-std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW ) throw ( std::runtime_error )
+std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string filePath, const bool bCCW )
 {
 	return load( vgio::FileSystem(), filePath, bCCW );
 }

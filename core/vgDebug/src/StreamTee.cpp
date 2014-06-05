@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Clement Forest.
+// VGSDK - Copyright (C) 2010, 2014, Clement Forest.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -6,6 +6,7 @@
 
 #include "vgDebug/StreamTee.hpp"
 
+#include <cstdio>
 #include <streambuf>
 
 namespace

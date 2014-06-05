@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, 2011, Guillaume Brocker.
+// VGSDK - Copyright (C) 2010, 2011, 2014, Guillaume Brocker.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -10,7 +10,7 @@
 
 #include <vgDebug/helpers.hpp>
 
-#include "vgPhysfs/BlowFish.hpp"
+#include "vgPhysfs/Blowfish.hpp"
 #include "vgPhysfs/operations.hpp"
 
 

@@ -1,3 +1,10 @@
+from SCons.Script.SConscript import SConsEnvironment
+platform	= SConsEnvironment.sbf.myPlatform
+
 vcsUse		= 'no'
 type		= 'none'
-deps		= [ 'vgCairo', 'vgFFmpeg' ]
+deps		= [ 'vgCairo' ]
+
+if platform == 'win32':
+	deps.append( 'vgFFmpeg' )
+	

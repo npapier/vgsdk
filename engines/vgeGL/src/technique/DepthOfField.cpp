@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -260,7 +260,7 @@ void DepthOfField::updateRC( vgeGL::technique::ForwardRendering * technique, vge
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::DepthOfField > rc = vgd::dynamic_pointer_cast< vgeGL::rc::DepthOfField >( genericRC );
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	if ( !rc->colorBuffer )
 	{
@@ -282,7 +282,7 @@ void DepthOfField::stagePrePaint( vgeGL::technique::ForwardRendering * technique
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::DepthOfField > rc = getRC< vgeGL::rc::DepthOfField >(engine);
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	stageInitializeOutputBuffers( technique, engine, rc );
 }
@@ -358,7 +358,7 @@ void DepthOfField::stagePostPaint( vgeGL::technique::ForwardRendering * techniqu
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::DepthOfField > rc = getRC< vgeGL::rc::DepthOfField >(engine);
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
 	technique->blit( engine, finalBuffers, technique->m_fbo );
