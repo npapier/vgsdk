@@ -600,7 +600,7 @@ const Camera::LookAtValueType Camera::getLookAt( const EyeUsagePolicyValueType e
 
 			//case DEFAULT_EYEUSAGEPOLICY: = EYE_BOTH
 			default:
-				vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
+				vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy.value() );
 				matrix.setIdentity();
 		}
 	}
@@ -637,7 +637,7 @@ const Camera::LookAtValueType Camera::getLookAt( const EyeUsagePolicyValueType e
 
 			//case DEFAULT_EYEUSAGEPOLICY: = EYE_BOTH
 			default:
-				vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
+				vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy.value() );
 				matrix.setIdentity();
 		}
 	}
@@ -682,7 +682,7 @@ const Camera::ProjectionValueType Camera::getProjection( const EyeUsagePolicyVal
 		}
 
 		default:
-			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
+			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy.value() );
 			matrix.setIdentity();
 	}
 
@@ -739,7 +739,7 @@ void Camera::gethViewport( ViewportValueType& viewport, const int drawingSurface
 			break;
 
 		default:
-			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy );
+			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy .value() );
 	}
 }
 

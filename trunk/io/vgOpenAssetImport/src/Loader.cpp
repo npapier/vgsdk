@@ -552,7 +552,7 @@ std::pair< bool, vgd::Shp< vgd::node::Group > > Loader::load( const std::string 
 		for( uint i = 0, iEnd = scene->mNumMaterials; i != iEnd; ++i )
 		{
 			vgd::Shp< Group > material = createMaterial( vgio::FileSystem(), m_pathFilename, scene->mMaterials[i] );
-			vgAssert( material );
+			vgAssert( material != 0 );
 			materials->addChild( material );
 		}
 

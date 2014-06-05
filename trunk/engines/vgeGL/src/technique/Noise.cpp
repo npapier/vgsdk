@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, 2012, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2012, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -290,7 +290,7 @@ void Noise::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::eng
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::Noise > rc = vgd::dynamic_pointer_cast< vgeGL::rc::Noise >( genericRC );
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	// color buffer
 	if ( !rc->colorBuffer )
@@ -329,7 +329,7 @@ void Noise::stagePrePaint( vgeGL::technique::ForwardRendering * technique, vgeGL
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::Noise > rc = getRC< vgeGL::rc::Noise >(engine);
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	stageInitializeOutputBuffers( technique, engine, rc );
 }
@@ -364,7 +364,7 @@ void Noise::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeG
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::Noise > rc = getRC< vgeGL::rc::Noise >(engine);
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	// Sets uniforms
 	//	Test if random values have to be updated

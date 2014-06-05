@@ -14,6 +14,20 @@
 #include <vgOpenAssetImport/helpers.hpp>
 
 
+#ifndef WIN32
+namespace
+{
+	void aiDeleteScene( aiScene * scene )
+	{
+		if ( scene )
+		{
+			delete scene;
+		}
+	}
+} 
+#endif
+
+
 namespace vgOpenAssetImport
 {
 namespace actions

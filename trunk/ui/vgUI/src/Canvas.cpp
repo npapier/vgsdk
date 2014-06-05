@@ -17,6 +17,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
 #include <displayDriverConnector/displayDriverConnector.hpp>
+#include <gle/gl.h>
 #include <gle/OpenGLExtensionsGen.hpp>
 #include <glo/GLSLProgram.hpp>
 
@@ -346,7 +347,7 @@ void Canvas::setVerticalSynchronization( const SwapControlMode mode )
 	if ( isGLX_EXT_swap_control() )
 	{
 		Display *dpy = glXGetCurrentDisplay();
-		GLXDrawable drawable = getXGetCurrentDrawable();
+		GLXDrawable drawable = glXGetCurrentDrawable();
 		if ( drawable )
 		{
 			if ( isGLX_EXT_swap_control_tear() )
@@ -391,15 +392,15 @@ const Canvas::SwapControlMode Canvas::getVerticalSynchronization() const
 #elif __MACOSX__
 	#error "Platform not yet supported."
 #else
-	if ( isGLX_EXT_swap_control )
+	if ( isGLX_EXT_swap_control() )
 	{
 		Display *dpy = glXGetCurrentDisplay();
-		GLXDrawable drawable = getXGetCurrentDrawable();
+		GLXDrawable drawable = glXGetCurrentDrawable();
 		if ( drawable )
 		{
 			uint swapInterval;
 			glXQueryDrawable( dpy, drawable, GLX_SWAP_INTERVAL_EXT, &swapInterval );
-			return static_cast<SwapControlMode>(retVal);
+			return static_cast<SwapControlMode>(swapInterval);
 		}
 		else
 		{

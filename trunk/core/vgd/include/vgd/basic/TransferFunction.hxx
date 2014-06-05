@@ -1,11 +1,12 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Guillaume Brocker
 
 #include <cmath>
 #include <limits>
-#include <vgm/Utilities.hpp>
+#include <vgm/operations.hpp>
 
 
 namespace vgd
@@ -69,11 +70,11 @@ void TransferFunction::getLookupTable( T& lutInputBegin, T& lutInputEnd, std::ve
 				const float output1	= iterCurrent->second;
 
 				float a, b;
-				vgm::Utilities::linearInterpolation( input0, output0, input1, output1, a, b );
+				vgm::linearInterpolation( input0, output0, input1, output1, a, b );
 
 				while ( inputCurrent <= input1 )
 				{
-					const float output = vgm::Utilities::linearInterpolation( a, b, inputCurrent );
+					const float output = vgm::linearInterpolation( a, b, inputCurrent );
 
 					lut.push_back( static_cast<T>(output) );
 					

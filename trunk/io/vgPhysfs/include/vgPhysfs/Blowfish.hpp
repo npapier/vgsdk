@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2010, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -23,7 +23,7 @@ namespace vgPhysfs
  */
 struct VGPHYSFS_API IEncrypt
 {
-	virtual ~IEncrypt()=0 {}
+	virtual ~IEncrypt() {}
 
 	virtual void encrypt( unsigned char* buf, const size_t n )=0;
 	virtual void encrypt( const unsigned char* in, unsigned char* out, const size_t n )=0;
@@ -36,7 +36,7 @@ struct VGPHYSFS_API IEncrypt
  */
 struct VGPHYSFS_API IDecrypt
 {
-	virtual ~IDecrypt()=0 {}
+	virtual ~IDecrypt() {}
 
 	virtual void decrypt( unsigned char* buf, const size_t n )=0;
 	virtual void decrypt( const unsigned char* in, unsigned char* out, const size_t n )=0;

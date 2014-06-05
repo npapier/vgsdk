@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -9,11 +9,11 @@
 #include <glo/IResource.hpp>
 #include <vge/visitor/NodeCollectorExtended.hpp>
 #include "vgeGL/vgeGL.hpp"
+#include "vgeGL/engine/Engine.hpp"
 
 namespace vgeGL
 { 
 
-namespace engine { struct Engine; }
 namespace technique { struct ForwardRendering; }
 
 }

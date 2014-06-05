@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -921,7 +921,7 @@ void Antialiasing::updateRC( vgeGL::technique::ForwardRendering * technique, vge
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::Antialiasing > rc = vgd::dynamic_pointer_cast< vgeGL::rc::Antialiasing >( genericRC );
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	// color buffer
 	if ( !rc->colorBuffer )
@@ -945,7 +945,7 @@ void Antialiasing::stagePrePaint( vgeGL::technique::ForwardRendering * technique
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::Antialiasing > rc = getRC< vgeGL::rc::Antialiasing >(engine);
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	stageInitializeOutputBuffers( technique, engine, rc );
 }
@@ -981,7 +981,7 @@ void Antialiasing::stagePostPaint( vgeGL::technique::ForwardRendering * techniqu
 	if ( !isEnabled() ) return;
 
 	vgd::Shp< vgeGL::rc::Antialiasing > rc = getRC< vgeGL::rc::Antialiasing >(engine);
-	vgAssert( rc );
+	vgAssert( rc != 0 );
 
 	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
 	technique->blit( engine, finalBuffers, technique->m_fbo );

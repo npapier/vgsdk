@@ -542,7 +542,7 @@ OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vge
 			// Attaching images
 			engine->paint( textureNode );
 			vgd::Shp< vgeGL::rc::Texture2D > texture2D = rcManager->getShp< vgeGL::rc::Texture2D >( textureNode );
-			vgAssertN( texture2D, "No texture2D" );
+			vgAssertN( texture2D != 0, "No texture2D" );
 
 			fbo->attachColor( texture2D, i );
 			if ( firstValidIndex == -1 )	firstValidIndex = i;

@@ -81,10 +81,10 @@
 		vgd::field::EditorRW< T > texCoords	= getTexCoordRW< T >( texUnit );
 
 		// Transform each texCoord
-		for(	T::iterator	i	= texCoords->begin(),
-							ie	= texCoords->end();
-				i != ie;
-				++i )
+		for( typename T::iterator	i  = texCoords->begin(),
+									ie = texCoords->end();
+									i != ie;
+									++i )
 		{
 			matrix.multVecMatrix( (*i), (*i) );
 		}
