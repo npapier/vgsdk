@@ -4,16 +4,15 @@
 // Author Guillaume Brocker
 // Author Bryan Schuller
 
-#include <vgUi/Canvas.hpp>
-#include "vgQt/graph/convenience.hpp"
 #include "vgQt/graph/FieldManagerEditor.hpp"
+
+#include <QMessageBox>
+
+#include <vgUI/Canvas.hpp>
+
+#include "vgQt/graph/convenience.hpp"
 #include "vgQt/graph/TreeModelColumnRecord.hpp"
 #include "vgQt/field/FieldEditorDialog.hpp"
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QMessageBox>
-#include <QApplication>
-
 
 
 namespace vgQt

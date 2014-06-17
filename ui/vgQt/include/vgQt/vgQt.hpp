@@ -15,10 +15,31 @@
 
 #include <vgBase/Type.hpp>
 
-#ifdef VGQT_EXPORTS
-    #define VGQT_API	__declspec(dllexport)
+#ifdef WIN32
+
+	#ifdef VGQT_EXPORTS
+	#define VGQT_API	__declspec(dllexport)
+	#else
+	#define VGQT_API	__declspec(dllimport)
+	#endif
+
+	#define VGQT_CLASS_API
+
+#elif defined(__GNUC__) && (__GNUC__>=4) && defined(__USE_DYLIB_VISIBILITY__)
+
+	#ifdef VGQT_EXPORTS
+	#define VGQT_API __attribute__ ((visibility("default")))
+	#define VGQT_CLASS_API __attribute__ ((visibility("default")))
+	#else
+	#define VGQT_API __attribute__ ((visibility("hidden")))
+	#define VGQT_CLASS_API __attribute__ ((visibility("hidden")))
+	#endif
+
 #else
-    #define VGQT_API	__declspec(dllimport)
+
+	#define VGQT_API
+	#define VGQT_CLASS_API
+
 #endif
 
 #define VGQT_CLASS_API

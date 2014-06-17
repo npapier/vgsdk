@@ -13,7 +13,7 @@
 #include <string>
 #include <gle/GLSLLanguage.hpp>
 
-class Editor : public ScintillaEdit
+class Editor : public Scintilla::ScintillaEdit
 {
     Q_OBJECT
 

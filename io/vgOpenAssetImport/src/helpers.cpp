@@ -11,17 +11,6 @@
 #include <vgd/node/VertexShape.hpp>
 
 
-#ifndef WIN32
-namespace
-{
-	aiScene * aiCreateScene(void)
-	{
-		return new aiScene();
-	}
-}
-#endif
-
-
 namespace vgOpenAssetImport
 {
 

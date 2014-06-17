@@ -6,17 +6,19 @@
 #ifndef _VGQT_TEXTEDITOR_HPP_
 #define _VGQT_TEXTEDITOR_HPP_
 
+#include <QMainWindow>
+
+#include <map>
+
 #include "vgQt/vgQt.hpp"
 #include "vgQt/Editor.hpp"
 
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QMainWindow>
-#include <QMenu>
-#include <QPushButton>
-#include <QWidget>
+class QComboBox;
+class QLineEdit;
+class QMenu;
+class QPushButton;
+class QWidget;
 
-#include <map>
 
 namespace vgQt
 {
@@ -124,7 +126,6 @@ protected:
 	//std::map<std::string, std::map<int, std::string> >	color_back;
 
 };
-
 
 }
 

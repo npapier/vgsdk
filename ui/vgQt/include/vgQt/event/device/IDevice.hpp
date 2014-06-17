@@ -7,9 +7,9 @@
 #ifndef _VGQT_EVENT_DEVICE_IDEVICE_HPP_
 #define _VGQT_EVENT_DEVICE_IDEVICE_HPP_
 
-#include <QEvent>
-
 #include "vgQt/vgQt.hpp"
+
+class QEvent;
 
 namespace vgQt
 {
@@ -37,4 +37,4 @@ struct VGQT_API IDevice
 } // namespace event
 } // namespace vgQt
 
-#endif _VGQT_EVENT_DEVICE_IDEVICE_HPP_
+#endif // _VGQT_EVENT_DEVICE_IDEVICE_HPP_

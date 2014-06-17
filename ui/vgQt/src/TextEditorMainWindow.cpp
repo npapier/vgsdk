@@ -5,15 +5,20 @@
 // Author Nicolas Papier
 
 #include "vgQt/TextEditorMainWindow.hpp"
-#include "vgQt/Theme.hpp"
+
 #include <QColor>
+#include <QComboBox>
 #include <QDialog>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMenuBar>
+#include <QPushButton>
 #include <QVBoxLayout>
- #include <QComboBox>
+
 #include <sstream>
 #include <vector>
+
+#include "vgQt/Theme.hpp"
 
 #ifdef WIN32
 	#include <windows.h>

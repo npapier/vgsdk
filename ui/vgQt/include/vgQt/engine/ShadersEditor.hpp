@@ -6,15 +6,6 @@
 #ifndef _VGQT_ENGINE_SHADERSEDITOR_HPP_
 #define _VGQT_ENGINE_SHADERSEDITOR_HPP_
 
-
-#include "vgQt/vgQt.hpp"
-#include "vgQt/TextEditorMainWindow.hpp"
-
-#include <glo/GLSLProgram.hpp>
-#include <vgeGL/engine/Engine.hpp>
-#include <vgUI/Canvas.hpp>
-#include <gle/GLSLLanguage.hpp>
-
 #include <QComboBox>
 #include <QDockWidget>
 #include <QGroupBox>
@@ -22,6 +13,15 @@
 #include <QListWidget>
 #include <QMainWindow>
 #include <QRadioButton>
+
+#include "vgQt/TextEditorMainWindow.hpp"
+
+#include "vgQt/vgQt.hpp"
+
+#include <glo/GLSLProgram.hpp>
+#include <vgeGL/engine/Engine.hpp>
+#include <vgUI/Canvas.hpp>
+#include <gle/GLSLLanguage.hpp>
 
 
 namespace vgUI

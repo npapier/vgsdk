@@ -163,7 +163,7 @@ const int getKeyboardButton( const QKeyEvent * event )
     case Qt::Key_ScrollLock:	return KeyboardButtonEvent::KEY_SCROLL;
 
     default:
-        vgLogDebug( "Unsupported keyboard key %i (%s).", event->key(), event->text().toStdString() );
+        vgLogDebug( "Unsupported keyboard key %i (%s).", event->key(), event->text().toStdString().c_str() );
         return 0;
     }
 }
