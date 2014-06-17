@@ -4,14 +4,18 @@
 // Author Guillaume Brocker
 // Author Bryan Schuller
 
+#include "vgQt/field/FieldEditorDialog.hpp"
+
+#include <QLabel>
+
 #include <vgUI/Canvas.hpp>
 
 #include "vgQt/graph/convenience.hpp"
 #include "vgQt/field/operations.hpp"
+#include "vgQt/field/FieldEditor.hpp"
+#include "vgQt/field/FieldEditorDock.hpp"
 
-#include "vgQt/field/FieldEditorDialog.hpp"
 
-#include <QLabel>
 
 namespace vgQt
 {

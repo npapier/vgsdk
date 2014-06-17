@@ -6,11 +6,12 @@
 
 #include "vgQt/engine/ShadersEditor.hpp"
 
-#include <gle/OpenGLExtensionsGen.hpp>
 #include <vgd/field/FieldManager.hpp>
 
 #include <QBrush>
+#include <QLineEdit>
 #include <QListWidgetItem>
+#include <QVBoxLayout>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -18,6 +19,10 @@
 #include <boost/regex.hpp>
 #include <boost/tokenizer.hpp>
 
+#ifdef POSIX
+	#include <GL/glx.h>
+#endif
+#include <gle/OpenGLExtensionsGen.hpp> // @todo remove this include, but refactoring needed in => if (gleGetCurrent()->getDriverProvider() == gle::OpenGLExtensions::ATI_DRIVERS)
 
 namespace vgQt
 {

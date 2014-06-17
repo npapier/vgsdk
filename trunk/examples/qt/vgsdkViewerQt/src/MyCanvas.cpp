@@ -7,6 +7,8 @@
 
 #include "vgsdkViewerQt/MyCanvas.hpp"
 
+#include <QKeyEvent>
+
 #include <vgeGL/technique/MultiMain.hpp>
 #include <vgd/node/Antialiasing.hpp>
 #include <vgd/node/Box.hpp>

@@ -19,6 +19,7 @@
 #include <displayDriverConnector/displayDriverConnector.hpp>
 #include <gle/gl.h>
 #include <gle/OpenGLExtensionsGen.hpp>
+#include <gle/WrapperGLXGen.hpp>
 #include <glo/GLSLProgram.hpp>
 
 #include <sbf/pkg/Module.hpp>
@@ -882,7 +883,7 @@ const bool Canvas::startOpenGLContext()
 
 		// Sets the desired property for the context
 		const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
-		drawable->stereo = requestedProperties.enableQuadBufferStereo();
+		glc_drawable_set_stereo( drawable, requestedProperties.enableQuadBufferStereo() );
 
 		// Next, creates the glc context (shared or not)
 		if ( m_sharedCanvas )

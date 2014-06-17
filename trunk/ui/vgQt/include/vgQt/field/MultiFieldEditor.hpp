@@ -7,23 +7,21 @@
 #ifndef _VGQT_FIELD_MULTIFIELDEDITOR_HPP_
 #define _VGQT_FIELD_MULTIFIELDEDITOR_HPP_
 
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+
 #include <vgd/field/TMultiField.hpp>
 
 #include "vgQt/field/FieldEditor.hpp"
 #include "vgQt/field/adapter/MFAdapter.hpp"
 #include "vgQt/field/MultiFieldLayout.hpp"
 
-#include <QGridLayout>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QLabel>
-#include <QTreeWidget>
-#include <QStringList>
-#include <QTreeWidgetItem>
 
 namespace vgQt
 {
-
 namespace field
 {
 

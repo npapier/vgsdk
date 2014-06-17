@@ -7,16 +7,17 @@
 #ifndef _VGQT_FIELD_FIELDEDITOR_HPP_
 #define _VGQT_FIELD_FIELDEDITOR_HPP_
 
+#include <QWidget>
+#include <QString>
+
 #include <vgUI/Canvas.hpp>
 
 #include <vgd/field/IFieldObserver.hpp>
 #include <vgd/field/FieldManager.hpp>
 #include "vgQt/field/widget/Widget.hpp"
 
-#include <QWidget>
-#include <QString>
-#include <QLayout>
-#include <QPushButton>
+
+class QLayout;
 
 namespace vgQt
 {

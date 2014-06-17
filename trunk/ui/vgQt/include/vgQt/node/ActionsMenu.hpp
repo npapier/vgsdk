@@ -7,6 +7,8 @@
 #ifndef _VGQT_NODE_ACTIONSMENU_HPP_
 #define _VGQT_NODE_ACTIONSMENU_HPP_
 
+#include <QMenu>
+
 #include <vgAlg/actions/HiddenNode.hpp>
 
 #include <vgd/Shp.hpp>
@@ -16,8 +18,6 @@
 
 #include <vgUI/actions/ActionsRegistry.hpp>
 #include <vgUI/Canvas.hpp>
-
-#include <QMenu>
 
 #include "vgQt/vgQt.hpp"
 

@@ -8,7 +8,7 @@
 #define _VGQT_BASICVIEWER_HPP_
 
 #include <vgUI/BasicViewer.hpp>
-#include "vgQt/Genericcanvas.hpp"
+#include "vgQt/GenericCanvas.hpp"
 
 #include "vgQt/vgQt.hpp"
 

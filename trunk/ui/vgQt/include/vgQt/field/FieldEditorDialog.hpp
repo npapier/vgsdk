@@ -7,25 +7,24 @@
 #ifndef _VGQT_FIELD_FIELDEDITORDIALOG_HPP_
 #define _VGQT_FIELD_FIELDEDITORDIALOG_HPP_
 
-#include <list>
-
-#include <vgd/Shp.hpp>
-
-#include "vgQt/graph/FieldManagerEditor.hpp"
-#include "vgQt/field/FieldEditor.hpp"
-#include "vgQt/field/FieldEditorDock.hpp"
-
 #include <QMainWindow>
 
-namespace vgUI {
-    struct Canvas;
-}
+#include <list>
+#include <vgd/Shp.hpp>
+
+
+namespace vgd {	namespace field { struct FieldManager; } }
+
+namespace vgUI { struct Canvas; }
+
 
 namespace vgQt
 {
-
 namespace field
 {
+
+
+struct FieldEditorDock;
 
 /**
  * @brief	Implements a Qt Dialog that is specilized in editing a given field.
@@ -83,8 +82,8 @@ public Q_SLOTS:
     void onTitleChanged(QString);                               ///< Handles title changes
 };
 
-} // namespace vgQt
 
+} // namespace vgQt
 } // namespace field
 
 #endif // _VGQT_FIELD_FIELDEDITORDIALOG_HPP_

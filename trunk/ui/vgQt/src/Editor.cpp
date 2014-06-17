@@ -5,12 +5,12 @@
 // Author Bryan Schuller
 // Author Alexandre Di Pino
 
-#include "vgQt/Editor.hpp"
-
 #include <QAction>
 #include <QDebug>
 #include <QPair>
 #include <QSignalMapper>
+
+#include "vgQt/Editor.hpp"
 
 #include <algorithm>
 #include <fstream>

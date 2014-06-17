@@ -7,16 +7,16 @@
 #ifndef _VGQT_GENERICCANVAS_HPP_
 #define _VGQT_GENERICCANVAS_HPP_
 
+#include <QWidget>
+
 #include <glc_qt/glc_qt.hpp>
 
 #include <vgd/Shp.hpp>
 
 #include "vgQt/node/ActionsMenu.hpp"
-#include "vgQT/event/device/Keyboard.hpp"
-#include "vgQT/event/device/Mouse.hpp"
-#include "vgQT/event/device/Timer.hpp"
-
-#include <QWidget>
+#include "vgQt/event/device/Keyboard.hpp"
+#include "vgQt/event/device/Mouse.hpp"
+#include "vgQt/event/device/Timer.hpp"
 
 namespace vgQt
 {
@@ -80,22 +80,22 @@ public:
 	void initDevices( const uint devices )
 	{
 		// Creates device instances so we will receive vgd events.
-		if ( devices & Keyboard )
+		if ( devices & vgd::event::DeviceManager::Keyboard )
 		{
 			addDevice( vgd::makeShp(new vgQt::event::device::Keyboard()) );
 		}
 
-		if ( devices & Mouse )
+		if ( devices & vgd::event::DeviceManager::Mouse )
 		{
 			addDevice( vgd::makeShp(new vgQt::event::device::Mouse(this)) );
 		}
 
-		if ( devices & Timer )
+		if ( devices & vgd::event::DeviceManager::Timer )
 		{
 			addDevice( vgd::makeShp(new vgQt::event::device::Timer()) );
 		}
 
-		//if ( devices & Joystick )
+		//if ( devices & vgd::event::DeviceManager::Joystick )
 		//{
 		//	vgd::Shp< vgSDL::event::device::Joystick >	joystick = vgSDL::event::device::Joystick::get(0);
 		//

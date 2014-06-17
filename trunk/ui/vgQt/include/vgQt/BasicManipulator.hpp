@@ -7,10 +7,12 @@
 #ifndef _VGQT_BASICMANIPULATOR_HPP_
 #define _VGQT_BASICMANIPULATOR_HPP_
 
+#include <QEvent>
+
 #include <vgUI/BasicManipulator.hpp>
 
 #include "vgQt/vgQt.hpp"
-#include "vgQt/Genericcanvas.hpp"
+#include "vgQt/GenericCanvas.hpp"
 #include "vgQt/event/device/Keyboard.hpp"
 #include "vgQt/event/device/Mouse.hpp"
 #include "vgQt/event/device/Timer.hpp"
@@ -32,18 +34,20 @@ struct TBasicManipulator : public GenericCanvas< T >
 	 * @param	parent	a pointer to the parent widget (default is null)
 	 * @param	devices	a set of flags telling what devices to initialze (default is all)
      */
-	explicit TBasicManipulator( QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick )
+	explicit TBasicManipulator( 
+		QWidget * parent = 0, 
+		const uint devices = vgd::event::DeviceManager::Keyboard|vgd::event::DeviceManager::Mouse|vgd::event::DeviceManager::Timer|vgd::event::DeviceManager::Joystick )
 	:    GenericCanvas< T >(parent)
 	{
 		// Configures the focus policy.
-		setFocusPolicy( (Qt::FocusPolicy) (Qt::TabFocus|Qt::ClickFocus|Qt::WheelFocus) );
+		this->setFocusPolicy( (Qt::FocusPolicy) (Qt::TabFocus|Qt::ClickFocus|Qt::WheelFocus) );
 		
 		// Initializes devices.
-		initDevices( devices );
+		this->initDevices( devices );
 
 		// Initializes the contextual menu.
-		m_actionsMenu->setCanvas(this);
-		connect(this, SIGNAL(customContextMenuRequested(QPoint)), m_actionsMenu.get(), SLOT(onCanvasMenuRequested(QPoint)));
+		this->m_actionsMenu->setCanvas(this);
+		this->connect(this, SIGNAL(customContextMenuRequested(QPoint)), this->m_actionsMenu.get(), SLOT(onCanvasMenuRequested(QPoint)));
 	}
 
 	/**
@@ -54,18 +58,21 @@ struct TBasicManipulator : public GenericCanvas< T >
 	 * @param	parent			a pointer to the parent widget (default is null)
 	 * @param	devices			a set of flags telling what devices to initialze (default is all)
 	 */
-	explicit TBasicManipulator( const vgUI::Canvas * sharedCanvas, QWidget * parent = 0, const uint devices = Keyboard|Mouse|Timer|Joystick )
+	explicit TBasicManipulator( 
+		const vgUI::Canvas * sharedCanvas, 
+		QWidget * parent = 0, 
+		const uint devices = vgd::event::DeviceManager::Keyboard|vgd::event::DeviceManager::Mouse|vgd::event::DeviceManager::Timer|vgd::event::DeviceManager::Joystick )
     :    GenericCanvas< T >( sharedCanvas, parent )
 	{
 		// Configures the focus policy.
-		setFocusPolicy( (Qt::FocusPolicy) (Qt::TabFocus|Qt::ClickFocus|Qt::WheelFocus) );
+		this->setFocusPolicy( (Qt::FocusPolicy) (Qt::TabFocus|Qt::ClickFocus|Qt::WheelFocus) );
 		
 		// Initializes devices.
-		initDevices( devices );
+		this->initDevices( devices );
 
 		// Initializes the contextual menu.
-		m_actionsMenu->setCanvas(this);
-		connect(this, SIGNAL(customContextMenuRequested(QPoint)), m_actionsMenu.get(), SLOT(onCanvasMenuRequested(QPoint)));
+		this->m_actionsMenu->setCanvas(this);
+		this->connect(this, SIGNAL(customContextMenuRequested(QPoint)), this->m_actionsMenu.get(), SLOT(onCanvasMenuRequested(QPoint)));
 	}
 
 protected:
@@ -90,7 +97,7 @@ protected:
 			break; // Nothing to do.
 		}
 
-		return GenericCanvas::event(event);
+		return GenericCanvas< T >::event(event);
 	}
 
 private:
@@ -100,7 +107,7 @@ private:
 	 */
 	void forwardEventToDevices( QEvent * event )
 	{
-		for( DeviceContainer::iterator device = m_devices.begin(); device != m_devices.end(); ++device )
+		for( vgd::event::DeviceManager::DeviceContainer::iterator device = vgd::event::DeviceManager::m_devices.begin(); device != vgd::event::DeviceManager::m_devices.end(); ++device )
 		{
 			vgd::Shp< vgQt::event::device::IDevice > qtDevice = vgd::dynamic_pointer_cast< vgQt::event::device::IDevice >( *device );
 

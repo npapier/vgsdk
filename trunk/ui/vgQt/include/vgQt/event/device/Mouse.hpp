@@ -7,16 +7,17 @@
 #ifndef _VGQT_EVENT_DEVICE_MOUSE_HPP_
 #define _VGQT_EVENT_DEVICE_MOUSE_HPP_
 
-#include <QMouseEvent>
-#include <QObject>
-#include <QWheelEvent>
-#include <QWidget>
-
 #include <vgd/event/device/Mouse.hpp>
 #include <vgd/event/Location2.hpp>
 
 #include "vgQt/vgQt.hpp"
 #include "vgQt/event/device/IDevice.hpp"
+
+
+class QWidget;
+class QEvent;
+class QMouseEvent;
+class QWheelEvent;
 
 
 namespace vgQt

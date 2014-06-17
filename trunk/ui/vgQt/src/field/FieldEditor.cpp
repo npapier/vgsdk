@@ -7,10 +7,11 @@
 #include "vgQt/field/operations.hpp"
 
 #include "vgQt/field/FieldEditor.hpp"
-
 #include "vgQt/graph/convenience.hpp"
 
 #include <QEvent>
+#include <QLayout>
+#include <QPushButton>
 
 namespace vgQt
 {
