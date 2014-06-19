@@ -57,6 +57,9 @@
 #include <limits>
 #include <sstream> 
 #include <vector>
+
+#include <vgDebug/helpers.hpp>
+
 #include "vgm/operations.hpp"
 
 
