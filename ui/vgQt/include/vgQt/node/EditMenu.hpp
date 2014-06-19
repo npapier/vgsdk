@@ -54,4 +54,4 @@ private:
 
 } // namespace vgQt
 
-#endif _VGQT_NODE_EDITMENU_HPP_
+#endif // _VGQT_NODE_EDITMENU_HPP_

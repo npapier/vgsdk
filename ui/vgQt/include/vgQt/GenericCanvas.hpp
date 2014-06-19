@@ -42,6 +42,7 @@ public:
     : QWidget(parent),
       m_actionsMenu( new vgQt::node::ActionsMenu( this, vgQt::node::CANVAS))
     {
+        setObjectName("Canvas");
         setAttribute(Qt::WA_PaintOnScreen);
         setAttribute(Qt::WA_NoSystemBackground);
         setAutoFillBackground(true); // for compatibility
@@ -63,6 +64,7 @@ public:
 	  CanvasT( sharedCanvas ),
       m_actionsMenu( new vgQt::node::ActionsMenu( this, vgQt::node::CANVAS))
     {
+        setObjectName("Canvas");
         setAttribute(Qt::WA_PaintOnScreen);
         setAttribute(Qt::WA_NoSystemBackground);
         setAutoFillBackground(true); // for compatibility

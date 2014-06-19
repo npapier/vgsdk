@@ -40,4 +40,4 @@ private:
 
 } // namespace vgQt
 
-#endif _VGQT_NODE_ACTION_HPP_
+#endif // _VGQT_NODE_ACTION_HPP_
