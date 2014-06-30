@@ -115,6 +115,7 @@ ShadersEditor::ShadersEditor(QWidget *parent)
 	m_versionList->addItem("OpenGL 4.1 / GLSL 4.1", "4.1");
 	m_versionList->addItem("OpenGL 4.2 / GLSL 4.2", "4.2");
 	m_versionList->addItem("OpenGL 4.3 / GLSL 4.3", "4.3");
+	m_versionList->addItem("OpenGL 4.4 / GLSL 4.4", "4.4");
 
 	// Attach widgets on the mainwindow
 	m_radioLayout->addWidget(m_core);
