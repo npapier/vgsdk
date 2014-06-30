@@ -1,10 +1,11 @@
 from SCons.Script.SConscript import SConsEnvironment
 platform	= SConsEnvironment.sbf.myPlatform
+arch		= SConsEnvironment.sbf.myArch
 
 vcsUse		= 'no'
 type		= 'none'
 deps		= [ 'vgCairo' ]
 
-if platform == 'win32':
+if platform == 'win' and arch == 'x86-32':
+	# @todo vgVLC
 	deps.append( 'vgFFmpeg' )
-	
