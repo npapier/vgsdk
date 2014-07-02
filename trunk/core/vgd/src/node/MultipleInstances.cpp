@@ -190,7 +190,8 @@ bool MultipleInstances::isBoundingBoxValid() const
 void MultipleInstances::invalidateBoundingBox( bool /*bInvalidate*/ )
 {
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , MultipleInstances );
+IMPLEMENT_INDEXABLE_CLASS_CPP( MultipleInstances );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , MultipleInstances );
 
 
 

@@ -546,7 +546,8 @@ const std::string PostProcessing::getFParam4x4f0( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , PostProcessing );
+IMPLEMENT_INDEXABLE_CLASS_CPP( PostProcessing );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , PostProcessing );
 
 
 

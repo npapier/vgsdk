@@ -709,7 +709,8 @@ protected:
 	OutputBufferProperty( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , OutputBufferProperty );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( OutputBufferProperty );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , OutputBufferProperty );
 private:
 	static const vgd::basic::RegisterNode<OutputBufferProperty> m_registrationInstance;
 };

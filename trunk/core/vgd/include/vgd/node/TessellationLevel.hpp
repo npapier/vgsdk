@@ -372,7 +372,8 @@ protected:
 	TessellationLevel( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , TessellationLevel );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( TessellationLevel );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , TessellationLevel );
 private:
 	static const vgd::basic::RegisterNode<TessellationLevel> m_registrationInstance;
 };

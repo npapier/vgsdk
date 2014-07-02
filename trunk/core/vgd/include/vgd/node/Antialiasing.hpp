@@ -187,7 +187,8 @@ protected:
 	Antialiasing( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Antialiasing );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Antialiasing );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Antialiasing );
 private:
 	static const vgd::basic::RegisterNode<Antialiasing> m_registrationInstance;
 };

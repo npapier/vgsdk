@@ -482,7 +482,8 @@ protected:
 	DrawStyle( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , DrawStyle );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( DrawStyle );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , DrawStyle );
 private:
 	static const vgd::basic::RegisterNode<DrawStyle> m_registrationInstance;
 };

@@ -128,7 +128,8 @@ const std::string TexGenEyeLinear::getFParameters( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , TexGenEyeLinear );
+IMPLEMENT_INDEXABLE_CLASS_CPP( TexGenEyeLinear );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , TexGenEyeLinear );
 
 
 

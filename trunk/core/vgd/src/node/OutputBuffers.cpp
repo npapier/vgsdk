@@ -141,7 +141,8 @@ void OutputBuffers::setCurrent( const int which0, const int which1 )
 	}
 	// else nothing to do
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , OutputBuffers );
+IMPLEMENT_INDEXABLE_CLASS_CPP( OutputBuffers );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , OutputBuffers );
 
 
 

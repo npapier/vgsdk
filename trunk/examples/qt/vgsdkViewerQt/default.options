@@ -10,6 +10,7 @@ uses 		=	[	'boost',
 					#'itk',
 					#'openil',
 					#'opengl',
+					'python',
 					'scintilla',
 					#'physx',
 					#'wx', 'wxgl'

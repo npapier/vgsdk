@@ -1216,7 +1216,8 @@ protected:
 	PostProcessing( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , PostProcessing );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( PostProcessing );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , PostProcessing );
 private:
 	static const vgd::basic::RegisterNode<PostProcessing> m_registrationInstance;
 };

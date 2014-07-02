@@ -998,7 +998,8 @@ protected:
 	Camera( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Camera );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Camera );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Camera );
 private:
 	static const vgd::basic::RegisterNode<Camera> m_registrationInstance;
 };

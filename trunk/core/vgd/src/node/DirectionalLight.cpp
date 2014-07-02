@@ -128,7 +128,8 @@ const std::string DirectionalLight::getFDirection( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , DirectionalLight );
+IMPLEMENT_INDEXABLE_CLASS_CPP( DirectionalLight );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , DirectionalLight );
 
 
 

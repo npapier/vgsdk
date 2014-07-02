@@ -841,7 +841,8 @@ const std::string VertexShape::getFTexCoordBinding( const int32 textureUnit )
 	
 	return ( strStream.str() );
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , VertexShape );
+IMPLEMENT_INDEXABLE_CLASS_CPP( VertexShape );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , VertexShape );
 
 
 

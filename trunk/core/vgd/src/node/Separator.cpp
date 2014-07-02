@@ -173,7 +173,8 @@ const std::string Separator::getFDisplacementSeparation( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Separator );
+IMPLEMENT_INDEXABLE_CLASS_CPP( Separator );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , Separator );
 
 
 

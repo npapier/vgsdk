@@ -111,7 +111,8 @@ const std::string CullFace::getFMode( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , CullFace );
+IMPLEMENT_INDEXABLE_CLASS_CPP( CullFace );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , CullFace );
 
 
 

@@ -100,7 +100,8 @@ protected:
 	FrameBuffer( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , FrameBuffer );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( FrameBuffer );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , FrameBuffer );
 private:
 	static const vgd::basic::RegisterNode<FrameBuffer> m_registrationInstance;
 };

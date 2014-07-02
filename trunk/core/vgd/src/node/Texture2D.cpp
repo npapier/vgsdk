@@ -96,7 +96,8 @@ void Texture2D::sethDefaults()
 	setMinFilter( LINEAR );
 	setMagFilter( LINEAR );
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Texture2D );
+IMPLEMENT_INDEXABLE_CLASS_CPP( Texture2D );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , Texture2D );
 
 
 

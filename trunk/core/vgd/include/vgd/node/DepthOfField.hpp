@@ -459,7 +459,8 @@ protected:
 	DepthOfField( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , DepthOfField );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( DepthOfField );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , DepthOfField );
 private:
 	static const vgd::basic::RegisterNode<DepthOfField> m_registrationInstance;
 };

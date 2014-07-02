@@ -425,7 +425,8 @@ protected:
 	Noise( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Noise );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Noise );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Noise );
 private:
 	static const vgd::basic::RegisterNode<Noise> m_registrationInstance;
 };

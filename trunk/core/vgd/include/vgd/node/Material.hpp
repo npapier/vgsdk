@@ -463,7 +463,8 @@ protected:
 	Material( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Material );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Material );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Material );
 private:
 	static const vgd::basic::RegisterNode<Material> m_registrationInstance;
 };

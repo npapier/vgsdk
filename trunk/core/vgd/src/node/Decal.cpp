@@ -202,7 +202,8 @@ const std::string Decal::getFBlending( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Decal );
+IMPLEMENT_INDEXABLE_CLASS_CPP( Decal );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , Decal );
 
 
 

@@ -763,7 +763,8 @@ void Camera::sethFovy( const FovyValueType fovy)
 		vgAssertN( false, "sethFovy() called before zNear, zFar and aspect have been initialized.");
 	}
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
+IMPLEMENT_INDEXABLE_CLASS_CPP( Camera );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
 
 
 

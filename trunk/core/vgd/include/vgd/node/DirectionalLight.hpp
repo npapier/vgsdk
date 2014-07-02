@@ -172,7 +172,8 @@ protected:
 	DirectionalLight( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , DirectionalLight );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( DirectionalLight );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , DirectionalLight );
 private:
 	static const vgd::basic::RegisterNode<DirectionalLight> m_registrationInstance;
 };
