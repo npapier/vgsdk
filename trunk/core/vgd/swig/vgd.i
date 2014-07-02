@@ -231,9 +231,9 @@
 #include "vgd/node/Transform.hpp"
 #include "vgd/node/Antialiasing.hpp"
 #include "vgd/node/ClearFrameBuffer.hpp"
-#include "D:/localExt_win32_cl10-0Exp/include/boost/smart_ptr/shared_ptr.hpp"
-#include "D:/localExt_win32_cl10-0Exp/include/boost/smart_ptr/enable_shared_from_this.hpp"
-#include "D:/localExt_win32_cl10-0Exp/include/boost/enable_shared_from_this.hpp"
+//#include "boost/smart_ptr/shared_ptr.hpp"
+//#include "boost/smart_ptr/enable_shared_from_this.hpp"
+//#include "boost/enable_shared_from_this.hpp"
 #include "vgd/EnableShpFromThis.hpp"
 
 %}
@@ -559,16 +559,18 @@ typedef unsigned char uint8;
 %include "vgd/node/ClearFrameBuffer.hpp"
 %include "vgd/node/Fluid.hpp"
 
-%include "D:/localExt_win32_cl10-0Exp/include/boost/smart_ptr/shared_ptr.hpp"
-%include "D:/localExt_win32_cl10-0Exp/include/boost/smart_ptr/enable_shared_from_this.hpp"
-%include "D:/localExt_win32_cl10-0Exp/include/boost/enable_shared_from_this.hpp"
+//%include "boost/smart_ptr/shared_ptr.hpp"
+//%include "boost/smart_ptr/enable_shared_from_this.hpp"
+//%include <boost/shared_ptr.hpp>
+//%include "boost/enable_shared_from_this.hpp"
 %include "vgd/EnableShpFromThis.hpp"
 
 %template( EditorROVertexShapeFNormalType ) vgd::field::EditorRO< vgd::node::VertexShape::FNormalType >;
 %template( EditorROVertexShapeFColorType ) vgd::field::EditorRO< vgd::node::VertexShape::FColorType >;
 %template( registryGroup )	vgd::basic::ClassRegistry<struct vgd::node::Group>;
 %template( registrationInstanceGoup )	vgd::basic::RegisterNode<struct vgd::node::Group>;
-%template( NodeBoostShpFromThis) boost::enable_shared_from_this< vgd::node::Node >;
+//%template( NodeBoostShpFromThis) boost::enable_shared_from_this< vgd::node::Node >;
+//%template( NodeBoostShpFromThis) boost::enable_shared_from_this< vgd::node::Node >;
 %template( NodeshpFromThis ) vgd::EnableShpFromThis<vgd::node::Node>;
 %template( findFirstByNameVertexShape ) vgd::visitor::findFirstByName< vgd::node::VertexShape >;
 
