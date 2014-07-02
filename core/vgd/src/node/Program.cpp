@@ -347,7 +347,8 @@ const std::string Program::getFFragmentUse( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Program );
+IMPLEMENT_INDEXABLE_CLASS_CPP( Program );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , Program );
 
 
 

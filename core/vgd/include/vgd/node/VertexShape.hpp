@@ -959,7 +959,8 @@ protected:
 	VertexShape( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , VertexShape );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( VertexShape );
+//	IMPLEMENT_INDEXABLE_CLASS_HPP( , VertexShape );
 private:
 	static const vgd::basic::RegisterNode<VertexShape> m_registrationInstance;
 };

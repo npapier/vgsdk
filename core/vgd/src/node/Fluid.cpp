@@ -777,7 +777,8 @@ void Fluid::sethSimulationPassToDefault()
 			"\n\n\n" );
 }
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Fluid );
+IMPLEMENT_INDEXABLE_CLASS_CPP( Fluid );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , Fluid );
 
 
 

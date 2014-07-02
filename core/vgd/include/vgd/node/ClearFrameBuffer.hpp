@@ -155,7 +155,8 @@ protected:
 	ClearFrameBuffer( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , ClearFrameBuffer );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( ClearFrameBuffer );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP_SWIG( ClearFrameBuffer );
 private:
 	static const vgd::basic::RegisterNode<ClearFrameBuffer> m_registrationInstance;
 };

@@ -235,7 +235,8 @@ protected:
 	Separator( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Separator );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Separator );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Separator );
 private:
 	static const vgd::basic::RegisterNode<Separator> m_registrationInstance;
 };

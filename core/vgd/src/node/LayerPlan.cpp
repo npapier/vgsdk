@@ -214,7 +214,8 @@ const std::string LayerPlan::getDFImage()
 }
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , LayerPlan );
+IMPLEMENT_INDEXABLE_CLASS_CPP( LayerPlan );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , LayerPlan );
 
 
 

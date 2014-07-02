@@ -254,7 +254,8 @@ const std::string PointStyle::getFPointSprite( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , PointStyle );
+IMPLEMENT_INDEXABLE_CLASS_CPP( PointStyle );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , PointStyle );
 
 
 

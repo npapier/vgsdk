@@ -194,7 +194,8 @@ const std::string TessellationLevel::getFComposeMode( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , TessellationLevel );
+IMPLEMENT_INDEXABLE_CLASS_CPP( TessellationLevel );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , TessellationLevel );
 
 
 

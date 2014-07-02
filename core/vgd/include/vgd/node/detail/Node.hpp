@@ -40,7 +40,7 @@ vgd::Shp< nodeType > nodeType::createWhole( const std::string nodeName )								
 	return node;																						\
 }																										\
 																										\
-IMPLEMENT_INDEXABLE_CLASS_CPP( , nodeType );															\
+IMPLEMENT_INDEXABLE_CLASS_CPP( nodeType );																\
 																										\
 const vgd::basic::RegisterNode<nodeType> nodeType::m_registrationInstance;
 

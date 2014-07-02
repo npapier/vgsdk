@@ -41,12 +41,14 @@ namespace basic
 
 
 // version with MACRO.
-#define IMPLEMENT_INDEXABLE_CLASS_HPP( lib_api, className )	lib_api static int32& getClassIndexStatic(); \
+#define IMPLEMENT_INDEXABLE_CLASS_HPP( className )	static int32& getClassIndexStatic(); \
+virtual int32& getClassIndex();
+
+#define IMPLEMENT_INDEXABLE_CLASS_EXPORTED_HPP( lib_api, className )	lib_api static int32& getClassIndexStatic(); \
 lib_api virtual int32& getClassIndex();
 
 
-
-#define IMPLEMENT_INDEXABLE_CLASS_CPP( lib_api, className )	int32& className::getClassIndexStatic() \
+#define IMPLEMENT_INDEXABLE_CLASS_CPP( className )	int32& className::getClassIndexStatic() \
 { \
 	static int32 index = -1; \
 	return index; \
@@ -56,7 +58,6 @@ int32& className::getClassIndex() \
 	assert(typeid(*this) == typeid(className)); \
 	return ( getClassIndexStatic() ); \
 }
-
 
 
 } // namespace basic

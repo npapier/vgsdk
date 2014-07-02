@@ -524,7 +524,8 @@ protected:
 	Displacement( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Displacement );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Displacement );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Displacement );
 private:
 	static const vgd::basic::RegisterNode<Displacement> m_registrationInstance;
 };

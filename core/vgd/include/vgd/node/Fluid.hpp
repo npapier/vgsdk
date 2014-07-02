@@ -846,7 +846,8 @@ protected:
 	Fluid( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Fluid );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Fluid );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Fluid );
 private:
 	static const vgd::basic::RegisterNode<Fluid> m_registrationInstance;
 };

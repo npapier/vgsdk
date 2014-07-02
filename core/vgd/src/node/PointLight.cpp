@@ -128,7 +128,8 @@ const std::string PointLight::getFPosition( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , PointLight );
+IMPLEMENT_INDEXABLE_CLASS_CPP( PointLight );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , PointLight );
 
 
 

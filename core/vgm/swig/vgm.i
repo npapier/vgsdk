@@ -15,8 +15,11 @@
 
 #define VGM_API
 #define vgDEPRECATED(x) x
+#ifdef _DEBUG
+		assert( N == 3 );
+#endif
 
-%rename (MatR)						vgm::MatrixR;
+//%rename (MatR)						vgm::MatrixR;
 %rename (operatorX)					vgm::MatrixR::operator*( const vgm::MatrixR& m1, const vgm::MatrixR& m2 );
 %rename (operatorEqRawMat)			vgm::MatrixR::operator=( const RawMatrix m );
 %rename (operatorEqMat)				vgm::MatrixR::operator=( const MatrixR& m );
@@ -29,23 +32,32 @@
 %rename (operatorBacketRotConst)	vgm::Rotation::operator[]( const uint );
 %rename (operatorBacketRotConst)	vgm::Rotation::operator[]( const uint ) const;
 
+%feature ("flatnested");
+
 %{
 
-#include "vgm/operations.hpp"
+
 #include "vgm/Rotation.hpp"
 #include "vgm/vgm.hpp"
+#include "vgm/operations.hpp"
 #include "vgm/Vector.hpp"
-#include "vgm/Matrix.hpp"					//Inclure Matrix.hpp sinon erreur à la compilation 
+#include "vgm/Matrix.hpp"					//Inclure Matrix.hpp sino erreur à la compilation 
 
 %}
 
+%ignore vgm::Vector::cross( const Vector& rV ) const;
+
+// %ignore dot( const vgm::Vector& v ) const;
+// %ignore getClosestAxis();
+%include "vgm/operations.hpp"
 %include "vgm/Vector.hpp"
 %include "vgm/Rotation.hpp"
 %include "vgm/Matrix.hpp"
 
-
-
+// %template (Vec2f)	vgm::Vector< float, 2 >;
 %template (Vec3f)	vgm::Vector< float, 3 >;
+//%template (Vec4f)	vgm::Vector< float, 4 >;
+// %template (Vec5f)	vgm::Vector< float, 5 >;
 
 
 %extend vgm::Vector< float, 3 > 

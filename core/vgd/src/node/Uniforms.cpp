@@ -162,7 +162,8 @@ const bool Uniforms::isUniform( const std::string& name ) const
 {
 	return isAnUniformName(name) && isField( name );
 }
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Uniforms );
+IMPLEMENT_INDEXABLE_CLASS_CPP( Uniforms );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , Uniforms );
 
 
 

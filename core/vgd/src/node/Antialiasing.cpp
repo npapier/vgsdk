@@ -111,7 +111,7 @@ const std::string Antialiasing::getFTechnique( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , Antialiasing );
+IMPLEMENT_INDEXABLE_CLASS_CPP( Antialiasing );
 
 
 

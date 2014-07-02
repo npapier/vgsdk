@@ -279,7 +279,8 @@ protected:
 	GeoMorph( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , GeoMorph );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( GeoMorph );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , GeoMorph );
 private:
 	static const vgd::basic::RegisterNode<GeoMorph> m_registrationInstance;
 };

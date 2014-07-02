@@ -275,7 +275,8 @@ protected:
 	Uniforms( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Uniforms );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Uniforms );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Uniforms );
 private:
 	static const vgd::basic::RegisterNode<Uniforms> m_registrationInstance;
 };

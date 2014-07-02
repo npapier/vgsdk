@@ -193,7 +193,8 @@ protected:
 	CullFace( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , CullFace );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( CullFace );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , CullFace );
 private:
 	static const vgd::basic::RegisterNode<CullFace> m_registrationInstance;
 };

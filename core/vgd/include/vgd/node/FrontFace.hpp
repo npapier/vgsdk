@@ -187,7 +187,8 @@ protected:
 	FrontFace( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , FrontFace );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( FrontFace );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , FrontFace );
 private:
 	static const vgd::basic::RegisterNode<FrontFace> m_registrationInstance;
 };

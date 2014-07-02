@@ -139,7 +139,8 @@ protected:
 	Texture2D( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Texture2D );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Texture2D );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Texture2D );
 private:
 	static const vgd::basic::RegisterNode<Texture2D> m_registrationInstance;
 };

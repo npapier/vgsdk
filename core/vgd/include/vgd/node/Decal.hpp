@@ -285,7 +285,8 @@ protected:
 	Decal( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , Decal );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( Decal );
+	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Decal );
 private:
 	static const vgd::basic::RegisterNode<Decal> m_registrationInstance;
 };

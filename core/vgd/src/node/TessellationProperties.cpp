@@ -250,7 +250,8 @@ const std::string TessellationProperties::getFPixelsPerEdge( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , TessellationProperties );
+IMPLEMENT_INDEXABLE_CLASS_CPP( TessellationProperties );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , TessellationProperties );
 
 
 

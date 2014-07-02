@@ -40,7 +40,7 @@ namespace service
 #define META_SERVICE_HPP( lib_api, serviceType )	/** @brief Service factory.*/ \
 static lib_api vgd::Shp< serviceType > create(); \
  \
-IMPLEMENT_INDEXABLE_CLASS_HPP( lib_api, serviceType ); \
+IMPLEMENT_INDEXABLE_CLASS_EXPORTED_HPP( lib_api, serviceType ); \
 private: \
  \
 static const vgd::basic::RegisterClass<serviceType> m_registrationInstance; \
@@ -56,7 +56,7 @@ public:
 	return ( vgd::Shp< serviceType >( new serviceType ) ); \
 } \
  \
-IMPLEMENT_INDEXABLE_CLASS_CPP( lib_api, serviceType ); \
+IMPLEMENT_INDEXABLE_CLASS_CPP( serviceType ); \
  \
 const vgd::basic::RegisterClass<serviceType> serviceType::m_registrationInstance;
 

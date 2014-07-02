@@ -1250,7 +1250,8 @@ protected:
 	LightModel( const std::string nodeName );
 
 public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , LightModel );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( LightModel );
+//	IMPLEMENT_INDEXABLE_CLASS_HPP( , LightModel );
 private:
 	static const vgd::basic::RegisterNode<LightModel> m_registrationInstance;
 };

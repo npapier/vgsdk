@@ -212,7 +212,8 @@ const std::string SpotLight::getFDropOffRate( void )
 
 
 
-IMPLEMENT_INDEXABLE_CLASS_CPP( , SpotLight );
+IMPLEMENT_INDEXABLE_CLASS_CPP( SpotLight );
+//IMPLEMENT_INDEXABLE_CLASS_CPP( , SpotLight );
 
 
 
