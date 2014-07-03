@@ -1,0 +1,84 @@
+1. Introduction
+---------------
+This document will guide you through the steps required to build vgsdk and its Qt viewer under Windows, using Visual Studio 2012 Express, and building in 32 bits.
+
+
+2. Installing requirements
+--------------------------
+This first step will install SConsBuildFramework on your computer. This is a complete SCons based building environment that is used by vgsdk. It is based on a complete bundle of softwares. During installation, SConsBuildFramework will also install:
+- 7zip 9.20
+- cmake 2.8
+- cygwin 1.7.29-2
+- doxygen 1.8.6 + graphviz 2.36
+- Git 1.9.0-preview20140217
+- Nullsoft Install System 2.46
+- python 2.7.6
+- pyreadline 2.0
+- pysvn 1.9.7-1572
+- pywin32 218
+- SCons 2.3.1
+- TortoiseGit 1.8.8.0
+- TortoiseSVN 1.8.4.24972
+- Visual Studio Express 2008/2010/2012/2013 setup launchers
+
+Proceed to SconsBuildFramework installation as described below :
+- In your favourite web browser, go to 'https://www.dropbox.com/sh/0pev1iueukjelqp/AACm_GuhL3ReSLlC_Ya4i089a'
+- Browse the 'windows' folder and download the SConsBuildFramework installer named 'SConsBuildFramework_0-14-3_setup.exe'
+- Launch the SConsBuldFramework installer (you may need to have administrator privileges) and choose:
+  - to run embedded installers silently silent embedded,
+  - then the full installation type.
+
+The installer will automatically run required embedded installers silently, excepted for python modules installers that still required some actions from you.
+
+Once installation has completed:
+- Open the windows menu to 'All Programs\SConsBuildFramework'.
+- Run the Visual C++ 2012 setup.
+- You will be asked later to register the installed version of Visual Studio C++. Simply follow the provided instructions (you will need to create an account on Windows Live).
+
+
+3. Customisation of the build
+-----------------------------
+
+By default, the installer will create a build environment located in 'C:\Dev'. If you may want to change this, open the windows menu to 'All Programs\SConsBuildFramework', and run 'Launch bootstrap' (this script will allow you to configure the build environment). 
+
+For convenience, <build_dir> will now designate the location of the build environment.
+
+The file '<build_dir>\bin\SConsBuildFrame\SConsBuildFramework.options' holds the configuration options. This file requires some attention :
+- check that 'installPath' is set to a relevant location ('C:\\local' by default).
+- check that 'buildPath' is set to a relevant location ('C:\\tmp\\sbf\\build' by default).
+
+
+4. Getting pre-compiled dependencies
+------------------------------------
+- Create the folder '<build_dir>\pak'.
+- Open the file '<build_dir>\bin\SConsBuildFrame\SConsBuildFramework.options' in a text editor.
+- Change the 'pakPaths', settings its value to '<build_dir>\\pak' and also remove the '#' from the line beginning.
+- In your favourite web browser, go to 'https://www.dropbox.com/sh/0pev1iueukjelqp/AACm_GuhL3ReSLlC_Ya4i089a', and browse into the folder named 'windows/x86-32'.
+- Download the package containing the pre-compiled dependencies (depending to your internet connection speed, this can take several minutes).
+- Extract its content to '<build_dir>\pak'.
+
+
+5. Getting the sources
+----------------------
+- Create the folder '<build_dir>\lib'
+- Open an explorer on that folder
+
+You are now about to retrieve the sources of vgsdk and SConsBuildFramework from remote svn repositories. Little hangs that may occur during the communication with the servers are normal. Using TortoiseSVN: 
+- checkout vgsdk from 'http://vgsdk.googlecode.com/svn/trunk' to 'vgsdk'
+- open a cygwin shell, go to '<build_dir>/lib/vgsdk', run the command 'scons svncheckout' to retrieve additional parts of the vgsdk library.
+
+
+6. Building
+-----------
+- In a cygwin command line interpreter, change the current directory for '<build_dir>\lib\vgsdk\examples\qt\vgsdkViewerQt'
+- Run 'scons pakupdate'
+- Run 'scons' or 'scons release' to launch the build in release. Use 'scons debug' to build the debug version.
+- Building results are stored in '<build_dir>\local_win_x86-32_cl11-0Exp'
+  - 'bin' contains all executable and shared libraries
+  - 'include' contains all C/C++ headers of vgsdk libraries
+  - 'share' contains all shared resources
+ 
+
+7. Running vgsdk's Qt viewer
+----------------------------
+- Simply run '<build_dir>\local_win_x86-32_cl11-0Exp\bin\vgsdkViewerQt_0-5_win_cl11-0Exp.exe'.
