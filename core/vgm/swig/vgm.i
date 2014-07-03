@@ -15,11 +15,11 @@
 
 #define VGM_API
 #define vgDEPRECATED(x) x
-#ifdef _DEBUG
-		assert( N == 3 );
-#endif
+//#ifdef _DEBUG
+//		assert( N == 3 );
+//#endif
 
-//%rename (MatR)						vgm::MatrixR;
+%rename (MatR)						vgm::MatrixR;
 %rename (operatorX)					vgm::MatrixR::operator*( const vgm::MatrixR& m1, const vgm::MatrixR& m2 );
 %rename (operatorEqRawMat)			vgm::MatrixR::operator=( const RawMatrix m );
 %rename (operatorEqMat)				vgm::MatrixR::operator=( const MatrixR& m );
@@ -37,30 +37,59 @@
 %{
 
 
-#include "vgm/Rotation.hpp"
 #include "vgm/vgm.hpp"
+#include "vgm/Rotation.hpp"
 #include "vgm/operations.hpp"
 #include "vgm/Vector.hpp"
-#include "vgm/Matrix.hpp"					//Inclure Matrix.hpp sino erreur à la compilation 
+#include "vgm/Matrix.hpp"
 
 %}
 
-%ignore vgm::Vector::cross( const Vector& rV ) const;
+//%ignore vgm::Vector<T,N>::Vector( const glm::vec2 v );
+//%ignore vgm::Vector<T,N>::Vector( const glm::vec3 v );
+//%ignore vgm::Vector<T,N>::Vector( const glm::vec4 v );
+//%ignore vgm::Vector::cross( const Vector& rV ) const;
+%ignore vgm::Vector::getClosestAxis() const;
+//%ignore vgm::Vector::dot( const vgm::Vector& v ) const;
 
-// %ignore dot( const vgm::Vector& v ) const;
-// %ignore getClosestAxis();
+
+
 %include "vgm/operations.hpp"
 %include "vgm/Vector.hpp"
 %include "vgm/Rotation.hpp"
 %include "vgm/Matrix.hpp"
 
-// %template (Vec2f)	vgm::Vector< float, 2 >;
+%template (Vec2f)	vgm::Vector< float, 2 >;
 %template (Vec3f)	vgm::Vector< float, 3 >;
-//%template (Vec4f)	vgm::Vector< float, 4 >;
-// %template (Vec5f)	vgm::Vector< float, 5 >;
+%template (Vec4f)	vgm::Vector< float, 4 >;
+%template (Vec5f)	vgm::Vector< float, 5 >;
 
+
+%extend vgm::Vector< float, 2 > 
+{
+    float __getitem__(unsigned int i) 
+	{
+        return (*($self))[i];
+    }
+}
 
 %extend vgm::Vector< float, 3 > 
+{
+    float __getitem__(unsigned int i) 
+	{
+        return (*($self))[i];
+    }
+}
+
+%extend vgm::Vector< float, 4 > 
+{
+    float __getitem__(unsigned int i) 
+	{
+        return (*($self))[i];
+    }
+}
+
+%extend vgm::Vector< float, 5 > 
 {
     float __getitem__(unsigned int i) 
 	{
