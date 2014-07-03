@@ -21,6 +21,8 @@
 #include <vgeGL/event/RefresherCallback.hpp>
 #include <vgeGL/event/TimerEventProcessor.hpp>
 
+#include "vgsdkViewerQt/PythonLoader.hpp"
+
 #ifdef MY_WORK
 #include "vgsdkViewerQt/my.hpp"
 #endif
@@ -248,16 +250,28 @@ void MyCanvas::keyPressEvent(QKeyEvent * event)
 
 const bool MyCanvas::appendToScene( const QString filename, const bool viewAllAfterLoading)
 {
-	const bool retVal = load(filename.toStdString());
-	if(retVal)
+	// begin: python loading
+	QString extension = filename.section(".", -1, -1, QString::SectionSkipEmpty);
+	if (extension.compare("py", Qt::CaseSensitive) == 0)
 	{
-		if (viewAllAfterLoading) viewAll();
-
-		refresh( REFRESH_FORCE, SYNCHRONOUS );
+		vgsdkViewerQt::PythonLoader pyld;
+		pyld.load(filename.toStdString());
 		m_filenames.append(filename);
+		return true; // @todo get a correct return value, catch loading failure
 	}
+	// end: python loading
+	else
+	{
+		const bool retVal = load(filename.toStdString());
+		if (retVal)
+		{
+			if (viewAllAfterLoading) viewAll();
 
-	return retVal;
+			refresh(REFRESH_FORCE, SYNCHRONOUS);
+			m_filenames.append(filename);
+		}
+		return retVal;
+	}
 }
 
 
@@ -266,17 +280,30 @@ const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool v
 	bool retVal = true;
 	Q_FOREACH(QString filename, filenames)
 	{
-		const bool lRetVal = load(filename.toStdString());
-		if(lRetVal)
+		// begin: python loading
+		QString extension = filename.section(".", -1, -1, QString::SectionSkipEmpty);
+		if (extension.compare("py", Qt::CaseSensitive) == 0)
 		{
+			vgsdkViewerQt::PythonLoader pyld;
+			pyld.load(filename.toStdString());
 			m_filenames.append(filename);
-			if(viewAllAfterLoading)
-				viewAll();
-			refresh( REFRESH_FORCE, SYNCHRONOUS );
+			retVal = true; // @todo get a correct return value, catch loading failure
 		}
+		// end: python loading
 		else
 		{
-			retVal = false;
+			const bool lRetVal = load(filename.toStdString());
+			if (lRetVal)
+			{
+				m_filenames.append(filename);
+				if (viewAllAfterLoading)
+					viewAll();
+				refresh(REFRESH_FORCE, SYNCHRONOUS);
+			}
+			else
+			{
+				retVal = false;
+			}
 		}
 	}
 	return retVal;

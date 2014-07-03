@@ -37,9 +37,14 @@ namespace vgsdkViewerQt
 		Py_Initialize();
 		
 		PyRun_SimpleString("import sys");
-		PyRun_SimpleString("sys.path.append(r\"D:\\local_win32_cl10-0Exp\\bin\")");
-		PyRun_SimpleString("sys.path.append(r\"D:\\Dev\\lib\\dtPython\\share\")");
-		PyRun_SimpleString("import CatchOutErr");
+		//PyRun_SimpleString("sys.path.append(r\"D:\\local_win32_cl10-0Exp\\bin\")");
+		PyRun_SimpleString(	"class CatchOutErr(object):	\n\t"
+							"def __init__(self) :\n\t\t"
+							"self.data = ''\n\t"
+							"def write(self, stuff) :\n\t\t"
+							"self.data += stuff\n\t"
+							"def reset(self) :\n\t\t"
+							"self.data = ''");
 		PyRun_SimpleString("import vgm");
 		PyRun_SimpleString("import vgd");
 		PyRun_SimpleString("import vge");
@@ -49,8 +54,13 @@ namespace vgsdkViewerQt
 		PyObject* m_pyModuleRedirect = PyImport_AddModule("__main__");	// Creation d'un module main pour la redirection des sorties
 
 		// création d'un objet Python qui va contenir les stdout et stderr de Python
-		PyRun_SimpleString("catchOutErr		= CatchOutErr.CatchOutErr()");
+		PyRun_SimpleString("catchOutErr		= CatchOutErr()");
 		PyRun_SimpleString("sys.stdout		= catchOutErr");
+
+		// Mise en place des contextes de base
+		PyRun_SimpleString("context = vgUI.Context.getInstance()");
+		PyRun_SimpleString("canvas = context.getBasicManipulator()");
+
 		PyRun_SimpleString("sys.stderr		= catchOutErr");	
 		//Execution du contenu du fichier
 		PyRun_SimpleString(fileContent.c_str());		

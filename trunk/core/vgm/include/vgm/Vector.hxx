@@ -458,6 +458,22 @@ const bool Vector<T,N>::isCollinear( const Vector& v, const float tolerance ) co
 
 
 template< typename T, int N >
+Vector<T,N> Vector<T,N>::cross(const Vector& rV) const
+{
+// @todo uncomment
+#ifdef _DEBUG
+	assert(N == 3);
+#endif
+
+	return Vector<T, N>(
+		m_tCoord[1] * rV.m_tCoord[2] - m_tCoord[2] * rV.m_tCoord[1],
+		m_tCoord[2] * rV.m_tCoord[0] - m_tCoord[0] * rV.m_tCoord[2],
+		m_tCoord[0] * rV.m_tCoord[1] - m_tCoord[1] * rV.m_tCoord[0]);
+}
+
+
+
+template< typename T, int N >
 Vector<T,N> Vector<T,N>::getClosestAxis() const
 {
 	Vec3f	axis(0.0, 0.0, 0.0), bestAxis;

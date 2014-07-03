@@ -315,7 +315,11 @@ void MainWindow::fileNew()
 
 	if(messageDialog->exec() == QMessageBox::Yes)
 	{
-		m_canvas.clearScene();
+		//m_canvas.clearScene();
+		m_canvas.resetSceneGraph();
+		m_canvas.createOptionalNodes();
+		m_properties->setCanvas(&m_canvas);
+
 		m_canvas.refresh();
 	}
 }
@@ -484,21 +488,6 @@ void MainWindow::dropEvent(QDropEvent *event)
 {
 	if (event->mimeData()->hasUrls())
 	{
-		// begin: python loading
-		QList<QUrl> urls = event->mimeData()->urls();
-		if(urls.count() == 1)
-		{
-			QString path = urls.at(0).path().remove(0,1);
-			QString extension = path.section(".", -1, -1, QString::SectionSkipEmpty);
-			if( extension.compare("py", Qt::CaseSensitive) == 0 )
-			{
-				vgsdkViewerQt::PythonLoader pyld;
-				pyld.load(path.toStdString());	
-				return;
-			}
-		}
-		// end: python loading
-
 		QMessageBox* dialog = new QMessageBox();
 		dialog->setText("Clear scene prior loading new files ?");
 		dialog->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -512,16 +501,8 @@ void MainWindow::dropEvent(QDropEvent *event)
 		Q_FOREACH(QUrl url, event->mimeData()->urls())
 		{
 			QString path = url.path().remove(0,1);
-			// begin: python loading
-			QString extension = path.section(".", -1, -1, QString::SectionSkipEmpty);
-			if( extension.compare("py", Qt::CaseSensitive) == 0 )
-			{
-				vgsdkViewerQt::PythonLoader pyld;
-				pyld.load(path.toStdString());	
-				continue;
-			}
-		// end: python loading
 			m_canvas.appendToScene(path, false);
+		
 			addFileInHistory(path);
 		}
 
@@ -570,16 +551,6 @@ void MainWindow::loadFile(bool clearScene)
 
 		Q_FOREACH(QString fileName, files)
 		{
-			// begin: python loading
-			QString extension = fileName.section(".", -1, -1, QString::SectionSkipEmpty);
-			if( extension.compare("py", Qt::CaseSensitive) == 0 )
-			{
-				vgsdkViewerQt::PythonLoader pyld;
-				pyld.load(fileName.toStdString());
-				continue;
-			}
-			// end: python loading
-
 			bool success = false;
 			success = m_canvas.appendToScene( fileName );
 			if (success)

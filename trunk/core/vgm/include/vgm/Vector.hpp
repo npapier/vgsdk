@@ -622,22 +622,13 @@ vgm::Vec4f		out5b( in5 );
 	const bool isCollinear( const Vector& v, const float tolerance = vgm::Epsilon<T>::value() ) const;
 
 
+
 	/**
 	 * @brief Returns the cross product of two vectors.
 	 * 
 	 * @remarks only if dimension is equal to 3.
 	 */
-	Vector cross( const Vector& rV ) const
-	{
-#ifdef _DEBUG
-		assert( N == 3 );
-#endif
-
-		return Vector<T, 3>(
-			m_tCoord[1]* rV.m_tCoord[2] -  m_tCoord[2]* rV.m_tCoord[1],
-			m_tCoord[2]* rV.m_tCoord[0] -  m_tCoord[0]* rV.m_tCoord[2],
-			m_tCoord[0]* rV.m_tCoord[1] -  m_tCoord[1]* rV.m_tCoord[0] );
-	}
+	Vector cross( const Vector& rV ) const;
 
 
 	
