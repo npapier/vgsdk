@@ -18,6 +18,7 @@
 #include <vgQt/node/EditMenu.hpp>
 #include <vgQt/ResolutionDialog.hpp>
 #include <vgQt/AboutDialog.hpp>
+
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
@@ -31,7 +32,6 @@
 #include <QSettings>
 
 #include "vgsdkViewerQt/actions.hpp"
-#include "vgsdkViewerQt/PythonLoader.hpp"
 
 
 namespace vgsdkViewerQt
