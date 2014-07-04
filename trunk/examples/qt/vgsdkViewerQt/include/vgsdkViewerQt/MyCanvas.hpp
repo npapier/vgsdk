@@ -13,6 +13,10 @@
 namespace vgsdkViewerQt
 {
 
+
+struct PythonScript;
+
+
 /**
  * @brief	Implements a BasicManipulator with some content loading features.
  *
@@ -92,8 +96,9 @@ private:
 
     typedef std::vector< vgd::Shp< vgeGL::technique::Technique > > TechniqueContainer;
 
-	TechniqueContainer	m_viewModeTechniques;	///< Contains all view mode techniques.
-	QList<QString>		m_filenames;			///< Contains the paths of the files currently loaded.
+	vgd::Shp< PythonScript >	m_pythonScript;			///< Contains the python script that manages the scene (empty if none).
+	TechniqueContainer			m_viewModeTechniques;	///< Contains all view mode techniques.
+	QList<QString>				m_filenames;			///< Contains the paths of the files currently loaded.
 
 	/**
 	 * @brief	Initialize the canvas.

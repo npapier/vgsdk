@@ -16,8 +16,8 @@
 #include <sbf/simd/simd.hpp>
 
 #include <vgQt/engine/UserSettingsDialog.hpp>
-#include <vgUI/Context.hpp>
 #include <vgQt/helpers.hpp>
+
 #include <QApplication>
 
 
@@ -58,10 +58,7 @@ int main(int argc, char *argv[])
 	mainWindow->getRenderSettingsDialog()->get()->setLevel(2);
 	mainWindow->renderSettingsChanged();
 
-	// Initialize python context
-	vgUI::Canvas * cv = mainWindow->getCanvas();
-	vgUI::Context::getInstance()->setCanvas(cv);
-
+	
 	// Entering the main loop...
 	const int retVal = app.exec();
 

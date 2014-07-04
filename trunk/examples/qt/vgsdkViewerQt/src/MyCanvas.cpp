@@ -21,7 +21,7 @@
 #include <vgeGL/event/RefresherCallback.hpp>
 #include <vgeGL/event/TimerEventProcessor.hpp>
 
-#include "vgsdkViewerQt/PythonLoader.hpp"
+#include "vgsdkViewerQt/PythonScript.hpp"
 
 #ifdef MY_WORK
 #include "vgsdkViewerQt/my.hpp"
@@ -254,8 +254,7 @@ const bool MyCanvas::appendToScene( const QString filename, const bool viewAllAf
 	QString extension = filename.section(".", -1, -1, QString::SectionSkipEmpty);
 	if (extension.compare("py", Qt::CaseSensitive) == 0)
 	{
-		vgsdkViewerQt::PythonLoader pyld;
-		pyld.load(filename.toStdString());
+		m_pythonScript.reset( new PythonScript(this, filename.toStdString()) );
 		m_filenames.append(filename);
 		return true; // @todo get a correct return value, catch loading failure
 	}
@@ -284,8 +283,7 @@ const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool v
 		QString extension = filename.section(".", -1, -1, QString::SectionSkipEmpty);
 		if (extension.compare("py", Qt::CaseSensitive) == 0)
 		{
-			vgsdkViewerQt::PythonLoader pyld;
-			pyld.load(filename.toStdString());
+			m_pythonScript.reset( new PythonScript(this, filename.toStdString()) );
 			m_filenames.append(filename);
 			retVal = true; // @todo get a correct return value, catch loading failure
 		}
@@ -314,7 +312,7 @@ const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool v
 
 const bool MyCanvas::isEmpty() const
 {
-	return getScene()->getNumChildren() == 0;
+	return getScene()->getNumChildren() == 0 && m_pythonScript == 0;
 }
 
 
@@ -427,6 +425,7 @@ vgd::Shp< vgeGL::technique::Technique > MyCanvas::createMultiViewSquaredTechniqu
 
 void MyCanvas::clearScene()
 {
+	m_pythonScript.reset();
 	m_filenames.clear();
 
 	resetSceneGraph();
