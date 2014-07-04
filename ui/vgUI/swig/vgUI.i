@@ -46,7 +46,7 @@
 %Shp( vge::engine::Engine )
 %Shp( vgd::node::Group )
 %Shp( vgd::node::Node )
-%Shp( vgUI::Context )
+%Shp( vgUI::python::Context )
 
 %feature ("flatnested");
 
@@ -78,7 +78,8 @@
 
 #include <vgUI/BasicViewer.hpp>
 #include <vgUI/BasicManipulator.hpp>
-#include <vgUI/Context.hpp>
+
+#include <vgUI/python/Context.hpp>
 
 %}
 
@@ -106,7 +107,8 @@
 %include <vgUI/Canvas.hpp>
 %include <vgUI/BasicViewer.hpp>
 %include <vgUI/BasicManipulator.hpp>
-%include <vgUI/Context.hpp>
+
+%include <vgUI/python/Context.hpp>
 
 %template( getOptionalNodeAsLightModel ) vgUI::BasicViewer::getOptionalNodeAs< vgd::node::LightModel >;
 %template( getOptionalNodeAsAntialising ) vgUI::BasicViewer::getOptionalNodeAs< vgd::node::Antialiasing >;

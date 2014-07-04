@@ -7,7 +7,6 @@
 #include "vgQt/Notebook.hpp"
 
 #include <vgUI/BasicManipulator.hpp>
-#include <vgUI/Context.hpp>
 
 
 
@@ -28,7 +27,6 @@ void Notebook::setCanvas( vgUI::BasicManipulator* canvas )
     m_graphBrowser->setCanvas( canvas );
     m_graphBrowser->setRoot( canvas->getRoot() );
     m_properties->setCanvas( canvas );
-	vgUI::Context::getInstance()->setBasicManipulator( canvas );
 }
 
 graph::Browser* Notebook::getBrowser()
