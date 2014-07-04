@@ -20,29 +20,30 @@ namespace vgUI
 
 
 BasicManipulator::BasicManipulator()
-:	m_sceneTransform( vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
 {
-	// init scene dragger.
-	m_sceneTransform->setSurround( getScene() );
-
-	getSetup()->addChild( m_sceneTransform );
+	// Resets the scene graph
+	privateResetSceneGraph();
 }
 
 
 
 BasicManipulator::BasicManipulator( const vgUI::Canvas * pSharedCanvas )
-:	BasicViewer( pSharedCanvas ),
-	m_sceneTransform( vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE") )
+:	BasicViewer( pSharedCanvas )
 {
-	// init scene dragger.
-	m_sceneTransform->setSurround( getScene() );
-
-	getSetup()->addChild( m_sceneTransform );
+	// Resets the scene graph
+	privateResetSceneGraph();
 }
 
 
 
-void BasicManipulator::setScene( const vgd::Shp< vgd::node::Group > scene )
+void BasicManipulator::resetSceneGraph()
+{
+	BasicViewer::resetSceneGraph();
+	privateResetSceneGraph();
+}
+
+
+void BasicManipulator::setScene(const vgd::Shp< vgd::node::Group > scene)
 {
 	BasicViewer::setScene( scene );
 
@@ -108,5 +109,15 @@ void BasicManipulator::onEvent( vgd::Shp<vgd::event::Event> event )
 
 
 
-} // namespace vgUI
+void BasicManipulator::privateResetSceneGraph()
+{
+	m_sceneTransform = vgd::node::TransformDragger::create("TRANSFORMDRAGGER_SCENE");
 
+	// init scene dragger.
+	m_sceneTransform->setSurround(getScene());
+
+	getSetup()->addChild(m_sceneTransform);
+}
+
+
+} // namespace vgUI

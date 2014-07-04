@@ -62,6 +62,8 @@ struct VGUI_API BasicManipulator : public BasicViewer
 	 * @param	parent	a pointer to the parent window.
 	 */
 	BasicManipulator( const vgUI::Canvas * pSharedCanvas );
+
+	virtual void resetSceneGraph();
 	//@}
 
 
@@ -102,6 +104,12 @@ struct VGUI_API BasicManipulator : public BasicViewer
 
 
 private:
+
+	/**
+	* @brief Resets scene graph
+	*/
+	void privateResetSceneGraph();
+
 	 vgd::Shp< vgd::node::TransformDragger > m_sceneTransform;	///< The transformation applyed to the whole scene.
 };
 

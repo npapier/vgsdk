@@ -19,7 +19,6 @@
 //		assert( N == 3 );
 //#endif
 
-%rename (MatR)						vgm::MatrixR;
 %rename (operatorX)					vgm::MatrixR::operator*( const vgm::MatrixR& m1, const vgm::MatrixR& m2 );
 %rename (operatorEqRawMat)			vgm::MatrixR::operator=( const RawMatrix m );
 %rename (operatorEqMat)				vgm::MatrixR::operator=( const MatrixR& m );

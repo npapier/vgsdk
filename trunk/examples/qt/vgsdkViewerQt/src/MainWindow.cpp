@@ -305,6 +305,14 @@ vgQt::engine::RecordSettingsDialog * MainWindow::getRecordSettingsDialog()
 
 
 
+void MainWindow::clearScene()
+{
+	m_canvas.clearScene();
+	m_properties->setCanvas(&m_canvas);
+	m_canvas.refresh();
+}
+
+
 void MainWindow::fileNew()
 {
 	QMessageBox* messageDialog = new QMessageBox(this);
@@ -315,12 +323,7 @@ void MainWindow::fileNew()
 
 	if(messageDialog->exec() == QMessageBox::Yes)
 	{
-		//m_canvas.clearScene();
-		m_canvas.resetSceneGraph();
-		m_canvas.createOptionalNodes();
-		m_properties->setCanvas(&m_canvas);
-
-		m_canvas.refresh();
+		clearScene();
 	}
 }
 
@@ -468,7 +471,7 @@ void MainWindow::onHistoryClicked()
 {
 	QAction* action = (QAction*) sender();
 
-	m_canvas.clearScene();
+	clearScene();
 
 	m_canvas.appendToScene(action->text(), false);
 	addFileInHistory(action->text());
@@ -495,7 +498,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 		if(dialog->exec() == QMessageBox::Yes)
 		{
-			m_canvas.clearScene();
+			clearScene();
 		}
 
 		Q_FOREACH(QUrl url, event->mimeData()->urls())
@@ -521,7 +524,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 }
 
 
-void MainWindow::loadFile(bool clearScene)
+void MainWindow::loadFile(bool clear)
 {
 	vgTrian::Loader				loader;		// @todo must be here to be registered in LoaderRegistry
 	vgObj::Loader				loader2;	// This is only to force the register of obj loader
@@ -539,9 +542,9 @@ void MainWindow::loadFile(bool clearScene)
 	if( !files.empty() )
 	{
 		// Clears the canvas if requested.
-		if( clearScene )
+		if( clear )
 		{
-			m_canvas.clearScene();
+			clearScene();
 		}
 
 		// Keep track of the directory where the files are located,
