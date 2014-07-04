@@ -3,12 +3,14 @@
 // as published by the Free Software Foundation.
 // Author Yakhouba Keita
 
-#include "vgUI/Context.hpp"
+#include "vgUI/python/Context.hpp"
 
 
 
 namespace vgUI
 {	
+namespace python
+{
 
 	vgd::Shp<Context> Context::m_instance;
 
@@ -50,5 +52,5 @@ namespace vgUI
 		return m_basicManipulator;
 	}
 
-
-}
+} // namespace python
+} // namespace vgUI

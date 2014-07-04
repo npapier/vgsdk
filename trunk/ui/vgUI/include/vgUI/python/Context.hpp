@@ -13,6 +13,9 @@
 
 namespace vgUI
 {
+namespace python
+{
+
 /**
  *@brief class Context : a singleton giving pointer to various object giving a (canvas) context to be used by the interpreter
  */
@@ -52,6 +55,7 @@ private:
 
 };
 
+} // namespace python
 } // namespace vgUI
 
 #endif
