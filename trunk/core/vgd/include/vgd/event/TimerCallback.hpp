@@ -23,6 +23,17 @@ namespace event
 
 
 
+struct TimerCallback;
+
+/**
+ * @brief Base functor to overload TimerCallback::apply() method
+ */
+struct VGD_API ApplyFunctor
+{
+	virtual void apply( const vgd::Shp< vgd::event::TimerEvent > event, vgd::event::TimerCallback * timerCallbackSource )=0;
+};
+
+
 /**
  * @brief Callback triggered by timer event.
  *
@@ -97,6 +108,28 @@ struct TimerCallback
 
 
 	/**
+	 * @name Methods to overload TimerCallback::apply()
+	 */
+	//@{
+
+	/**
+	 * @brief Retrieves the apply functor stored by this callback
+	 *
+	 * @return the apply functor stored by this callback
+	 */
+	VGD_API vgd::Shp< ApplyFunctor > getApplyFunctor();
+
+	/**
+	 * @brief Sets the apply functor stored by this callback
+	 *
+	 * @param applyFunctor	the apply functor to store
+	 */
+	VGD_API void setApplyFunctor( vgd::Shp< ApplyFunctor > applyFunctor );
+
+	//@}
+
+
+	/**
 	 * @name Callback implementation
 	 */
 	//@{
@@ -116,9 +149,9 @@ struct TimerCallback
 	 *
 	 * @param event		the event that has triggered the callback execution
 	 *
-	 * @remarks Overrides this method to customize this callback.
+	 * @remarks To customize this callback, use setApplyFunctor() or override this method
 	 */
-	VGD_API virtual void apply( const vgd::Shp< vgd::event::TimerEvent > event )=0;
+	VGD_API virtual void apply( const vgd::Shp< vgd::event::TimerEvent > event );
 
 	/**
 	 * @brief Implements the user part of the first execution of the timer callback
@@ -297,7 +330,7 @@ struct TimerCallback
 protected:
 
 	vgd::Shp< vgd::node::Node >	m_node;				///< the node reference stored by this callback.
-
+	vgd::Shp< ApplyFunctor >	m_applyFunctor;		///< a functor to overload apply()
 
 	/**
 	 * @name Callback parameterization
