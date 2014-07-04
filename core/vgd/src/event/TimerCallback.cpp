@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2009, 2010, 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2010, 2011, 2013, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -23,6 +23,7 @@ namespace event
 
 TimerCallback::TimerCallback()
 :	//m_node
+	//m_applyFunctor
 
 	m_executionDuration( 1000 ),
 	m_frequency( 25.f ),
@@ -43,6 +44,7 @@ TimerCallback::TimerCallback()
 
 TimerCallback::TimerCallback( vgd::Shp< vgd::node::Node > node )
 :	m_node( node ),
+	//m_applyFunctor
 
 	m_executionDuration( 1000 ),
 	m_frequency( 25.f ),
@@ -77,6 +79,19 @@ vgd::Shp< vgd::node::Node > TimerCallback::getNode()
 void TimerCallback::setNode( vgd::Shp< vgd::node::Node > node )
 {
 	m_node = node;
+}
+
+
+
+vgd::Shp< ApplyFunctor > TimerCallback::getApplyFunctor()
+{
+	return m_applyFunctor;
+}
+
+
+void TimerCallback::setApplyFunctor( vgd::Shp< ApplyFunctor > applyFunctor )
+{
+	m_applyFunctor = applyFunctor;
 }
 
 
@@ -120,6 +135,16 @@ const bool TimerCallback::operator() ( const vgd::Shp< vgd::event::TimerEvent > 
 	}
 
 	return retVal;
+}
+
+
+void TimerCallback::apply( const vgd::Shp< vgd::event::TimerEvent > event )
+{
+	vgd::Shp< ApplyFunctor > applyFunctor = getApplyFunctor();
+	if ( applyFunctor )
+	{
+		applyFunctor->apply( event, this );
+	}
 }
 
 
