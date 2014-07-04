@@ -170,6 +170,7 @@ protected:
      *
      * This will ask the user to chose one or more objects to load
      */
+	void clearScene();
     void loadFile( bool clearScene );
 
     void addFileInHistory( const QString filename, const bool addAtTheBeginning = true );

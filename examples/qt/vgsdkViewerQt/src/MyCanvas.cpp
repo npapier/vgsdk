@@ -428,6 +428,28 @@ vgd::Shp< vgeGL::technique::Technique > MyCanvas::createMultiViewSquaredTechniqu
 void MyCanvas::clearScene()
 {
 	m_filenames.clear();
+
+	resetSceneGraph();
+	createOptionalNodes();
+
+	// Default scene
+	vgd::Shp< vgd::node::Box > box = vgd::node::Box::create("Default scene");
+	getScene()->addChild(box);
+
+	//	Default light configuration
+	using vgd::node::Switch;
+	vgd::Shp< Switch > lightSwitcher = vgd::dynamic_pointer_cast<Switch>(createOptionalNode(LIGHTS));
+
+	//// LIGHTS node is the first child of the setup group			@todo menu to switch between LIGHTS located on the camera (set in the camera) or located in the scene (set in the scene)
+	getSetup()->removeChild(lightSwitcher);
+	getSetup()->insertChild(lightSwitcher);
+
+	if (lightSwitcher)
+	{
+		lightSwitcher->setWhichChild(0);
+	}
+
+	// Remove default scene
 	getScene()->removeAllChildren();
 }
 
