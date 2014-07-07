@@ -37,6 +37,7 @@
 #include "vgd/basic/TimeDuration.hpp"
 #include "vge/engine/Engine.hpp"
 #include "vge/engine/SceneManager.hpp"
+#include "vge/engine/UserSettings.hpp"
 
 %}
 
@@ -45,3 +46,4 @@
 %include "vge/engine/MultiMatrixStack.hpp"
 %include "vge/engine/Engine.hpp"
 %include "vge/engine/SceneManager.hpp"
+%include "vge/engine/UserSettings.hpp"
