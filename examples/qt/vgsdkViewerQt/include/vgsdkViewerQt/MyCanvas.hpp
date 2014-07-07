@@ -66,21 +66,19 @@ public:
      * @brief	Loads and appends an object to the scene.
      *
      * @param	filename	a string containing the path to the file to load
-     * @param	viewAllAfterLoading 	true to move the camera so every object is in the view field
      *
      * @return	true on success, false otherwise
      */
-    const bool appendToScene( const QString filename, const bool viewAllAfterLoading = true );
+    const bool appendToScene( const QString & filename );
 
     /**
      * @brief	Loads and appends a list of objects to the scene.
      *
      * @param	filenames	a string containing the path to the file to load
-     * @param	viewAllAfterLoading 	true to move the camera so every object is in the view field
      *
      * @return	true on success, false otherwise
      */
-    const bool appendToScene( const QList<QString> filenames, const bool viewAllAfterLoading = true);
+    const bool appendToScene( const QList<QString> & filenames );
 
 	/**
 	 * @brief	Tells if the scene is empty.
