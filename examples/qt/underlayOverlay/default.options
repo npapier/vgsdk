@@ -1,0 +1,32 @@
+description	= 'overlay, underlay and cairo text demo using vgSDK'
+vcsUse		= 'no'
+type		= 'exec'
+version		= '0-0'
+uses 		=	[	'boost',
+					'cairo',
+					'qt',
+				]
+libs		=	[
+					'displayDriverConnector 0-1', 
+					'sbf 0-0',
+					'vgBase 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgd 0-5',
+					'vge 0-5','vgeGL 0-5',
+					'vgUI 0-5',
+					'vgQt 0-5',
+					'vgCairo 0-5',
+					'vgEgg 0-5',
+				]
+deps		= [ '../../../../vgsdk', '../../../ui/vgQt' ]
+defines		= ['GLE_SKIP_GLX_INCLUDE']
+
+
+from SCons.Script.SConscript import SConsEnvironment
+sbf = SConsEnvironment.sbf
+if sbf.myPlatform == 'posix':
+	uses += [ 'blowfish', 'openassetimport' ]
+	libs += [ 'glc 0-0', 'glc_qt 0-0', 'gle 0-3', 'glo 0-3', 'vgCairo 0-5', 'vgUI 0-5' ]
+
+
+#if sbf.myCC == 'cl' and sbf.myCCVersionNumber <= 10.0:
+#	libs += ['vgOpenCOLLADA 0-5']
+#	uses += ['opencollada']
