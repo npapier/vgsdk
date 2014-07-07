@@ -248,7 +248,7 @@ void MyCanvas::keyPressEvent(QKeyEvent * event)
 }
 
 
-const bool MyCanvas::appendToScene( const QString filename, const bool viewAllAfterLoading)
+const bool MyCanvas::appendToScene( const QString & filename )
 {
 	// begin: python loading
 	QString extension = filename.section(".", -1, -1, QString::SectionSkipEmpty);
@@ -264,8 +264,7 @@ const bool MyCanvas::appendToScene( const QString filename, const bool viewAllAf
 		const bool retVal = load(filename.toStdString());
 		if (retVal)
 		{
-			if (viewAllAfterLoading) viewAll();
-
+			viewAll();
 			refresh(REFRESH_FORCE, SYNCHRONOUS);
 			m_filenames.append(filename);
 		}
@@ -274,7 +273,7 @@ const bool MyCanvas::appendToScene( const QString filename, const bool viewAllAf
 }
 
 
-const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool viewAllAfterLoading)
+const bool MyCanvas::appendToScene( const QList<QString> & filenames )
 {
 	bool retVal = true;
 	Q_FOREACH(QString filename, filenames)
@@ -293,10 +292,9 @@ const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool v
 			const bool lRetVal = load(filename.toStdString());
 			if (lRetVal)
 			{
-				m_filenames.append(filename);
-				if (viewAllAfterLoading)
-					viewAll();
+				viewAll();
 				refresh(REFRESH_FORCE, SYNCHRONOUS);
+				m_filenames.append(filename);
 			}
 			else
 			{
@@ -308,8 +306,6 @@ const bool MyCanvas::appendToScene( const QList<QString> filenames, const bool v
 }
 
 
-
-
 const bool MyCanvas::isEmpty() const
 {
 	return getScene()->getNumChildren() == 0 && m_pythonScript == 0;
@@ -318,9 +314,9 @@ const bool MyCanvas::isEmpty() const
 
 const bool MyCanvas::reloadScene()
 {
-	QList<QString> filenames = m_filenames;
+	const QList<QString> filenames = m_filenames;
 	clearScene();
-	const bool retVal = appendToScene( filenames, false );
+	const bool retVal = appendToScene( filenames );
 	return retVal;
 }
 

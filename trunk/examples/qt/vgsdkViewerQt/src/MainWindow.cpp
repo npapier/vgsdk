@@ -345,7 +345,6 @@ void MainWindow::fileReload()
 	if ( !m_canvas.isEmpty() )
 	{
 		m_canvas.reloadScene();
-		m_canvas.refresh();
 	}
 }
 
@@ -473,11 +472,8 @@ void MainWindow::onHistoryClicked()
 
 	clearScene();
 
-	m_canvas.appendToScene(action->text(), false);
+	m_canvas.appendToScene(action->text());
 	addFileInHistory(action->text());
-
-	m_canvas.viewAll();
-	m_canvas.refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::SYNCHRONOUS );
 }
 
 
@@ -491,6 +487,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 {
 	if (event->mimeData()->hasUrls())
 	{
+
 		QMessageBox* dialog = new QMessageBox();
 		dialog->setText("Clear scene prior loading new files ?");
 		dialog->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -504,13 +501,10 @@ void MainWindow::dropEvent(QDropEvent *event)
 		Q_FOREACH(QUrl url, event->mimeData()->urls())
 		{
 			QString path = url.path().remove(0,1);
-			m_canvas.appendToScene(path, false);
+			m_canvas.appendToScene(path);
 		
 			addFileInHistory(path);
 		}
-
-		m_canvas.viewAll();
-		m_canvas.refresh( vgUI::Canvas::REFRESH_FORCE, vgUI::Canvas::SYNCHRONOUS );
 	}
 }
 
