@@ -617,7 +617,7 @@ void BasicViewer::createOptionalNodes()
 
 
 
-void BasicViewer::resize( const vgm::Vec2i size )
+void BasicViewer::resize( const vgm::Vec2i& size )
 {
 	// Tests if window is degenerated
 	if (	(size[0] == 0) || (size[1] == 0)	)

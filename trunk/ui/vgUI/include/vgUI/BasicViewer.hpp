@@ -272,7 +272,7 @@ struct VGUI_API BasicViewer : public Canvas
 	 * @name Rendering methods
 	 */
 	//@{
-	void resize( const vgm::Vec2i size );
+	void resize( const vgm::Vec2i& size );
 	//@}
 
 
