@@ -16,7 +16,6 @@
 #include <QIODevice>
 #include <QDebug>
 #include <QMessageBox>
-#include <Python.h>
 
 namespace vgsdkViewerQt
 {
@@ -39,9 +38,30 @@ private:
 };
 
 
+struct CurWorkDir
+{
+	CurWorkDir( const boost::filesystem::path & cwd )
+	: m_cwdBackup( boost::filesystem::current_path() )
+	{
+		boost::filesystem::current_path( cwd );
+	}
+
+	~CurWorkDir()
+	{
+		boost::filesystem::current_path( m_cwdBackup );
+	}
+
+private:
+
+	const boost::filesystem::path m_cwdBackup;
+};
+
+
 
 PythonScript::PythonScript( MyCanvas * canvas, const std::string & filename )
-: m_canvas( canvas )
+:	m_canvas( canvas ),
+	m_filename( filename ),
+	m_moduleName( m_filename.stem().string() )
 {
 	// Initialize python context.
 	vgUI::python::Context::getInstance()->setCanvas( canvas );
@@ -50,99 +70,94 @@ PythonScript::PythonScript( MyCanvas * canvas, const std::string & filename )
 	// Initialize the python interpreter.
 	Py_Initialize();
 
-	// Loads the given script
-	load( filename );
+	// Import the script.
+	// If successfull, performs some initializations.
+	PyObject * module = import();
+	if( module )
+	{
+		PyRun_SimpleString( "import vgd" );
+		PyRun_SimpleString( "import vgm" );
+		PyRun_SimpleString( "import vgUI" );
 
-	// Calls the initialisation callback.
-	PyRun_SimpleString( "import vgd" );
-	PyRun_SimpleString( "import vgm" );
-	PyRun_SimpleString( "import vgUI" );
-	PyRun_SimpleString( "init(vgUI.Context.getInstance())" );
+		// Calls the initialisation callback, if present.
+		if( hasFunction(module, "init") )
+		{
+			CurWorkDir cwd( m_filename.parent_path() );
+			PyRun_SimpleString( (m_moduleName + ".init(vgUI.Context.getInstance())").c_str() );
+		}
 
-	// Installs the callback that will call the script.
-	m_refreshCallback.reset( new vgd::event::TimerCallback() );
-	m_refreshCallback->setFrequency( 25 );
-	m_refreshCallback->setExecutionDuration( vgd::basic::TimeDuration() );
-	m_refreshCallback->setApplyFunctor( vgd::makeShp( new Refresher(this) ) );
-	m_canvas->getTimerEventProcessor()->add( m_refreshCallback );
+		// Installs the refresh callback, if a refresh method has been defined..
+		if( hasFunction(module, "refresh") )
+		{
+			// Installs the callback that will call the script.
+			m_refreshCallback.reset( new vgd::event::TimerCallback() );
+			m_refreshCallback->setFrequency( 25 );
+			m_refreshCallback->setExecutionDuration( vgd::basic::TimeDuration() );
+			m_refreshCallback->setApplyFunctor( vgd::makeShp( new Refresher(this) ) );
+			m_canvas->getTimerEventProcessor()->add( m_refreshCallback );
+		}
+	}
+	Py_XDECREF(module);
 }
 
 
 PythonScript::~PythonScript()
 {
-	m_canvas->getTimerEventProcessor()->remove( m_refreshCallback );
+	if( m_refreshCallback )
+	{
+		m_canvas->getTimerEventProcessor()->remove( m_refreshCallback );
+	}
 	Py_Finalize();
 }
 
 
-void PythonScript::load( const std::string & filename )
+const bool PythonScript::hasFunction( PyObject * module, const std::string & name )
 {
-	QFile file(QString::fromStdString(filename));
-	std::string fileContent = ""; 
-	if(!file.open(QIODevice::ReadOnly))
+	PyObject *	fun = PyObject_GetAttrString(module, name.c_str() );
+	const bool	result = fun && PyCallable_Check(fun);
+
+	Py_XDECREF(fun);
+	return result;
+}
+
+
+PyObject * PythonScript::import()
+{
+	if( !boost::filesystem::exists(m_filename) )
 	{
-		qDebug() << "error opening file: " << file.error();
-		QMessageBox::information(0, "error while opening file", file.errorString());
-		return;
+		qDebug() << "Invalid script file: " << m_filename.string().c_str();
+		QMessageBox::information(0, "Python script error", m_filename.string().c_str());
+		return 0;
 	}
-	QTextStream in(&file);
-	while(!in.atEnd()) 
+
+#if defined(WIN32)
+#define PATH_SEP ";"
+#else
+#define PATH_SEP ":"
+#endif
+
+	// Inserts the directory containing the script file in the path used for the importation.
+	std::string pyPath( Py_GetPath() );
+	pyPath = m_filename.parent_path().string() + PATH_SEP + pyPath;
+	PySys_SetPath( const_cast< char* >(pyPath.c_str()) );
+
+	// Imports the script module.
+	PyObject * module = PyImport_ImportModule( m_moduleName.c_str() );
+	// Also appends the module to teh default interpreter's scope.
+	if( module )
 	{
-		QString line = in.readLine();   
-		if( !line.endsWith("\n") )
-		{				
-			fileContent += line.toStdString();
-			fileContent += "\n";
-		}
+		PyRun_SimpleString( ("import " + m_moduleName).c_str() );
 	}
-	
 
-	// Runs the script.
-	PyRun_SimpleString( fileContent.c_str() );
-			
-/*	PyRun_SimpleString("import sys");
-	//PyRun_SimpleString("sys.path.append(r\"D:\\local_win32_cl10-0Exp\\bin\")");
-	PyRun_SimpleString(	"class CatchOutErr(object):	\n\t"
-						"def __init__(self) :\n\t\t"
-						"self.data = ''\n\t"
-						"def write(self, stuff) :\n\t\t"
-						"self.data += stuff\n\t"
-						"def reset(self) :\n\t\t"
-						"self.data = ''");
-	PyRun_SimpleString("import vgm");
-	PyRun_SimpleString("import vgd");
-	PyRun_SimpleString("import vge");
-	PyRun_SimpleString("import vgUI");
-
-	//PyRun_SimpleString("mySearchPath.append(\"" + path + "\"");
-	PyObject* m_pyModuleRedirect = PyImport_AddModule("__main__");	// Creation d'un module main pour la redirection des sorties
-
-	// création d'un objet Python qui va contenir les stdout et stderr de Python
-	PyRun_SimpleString("catchOutErr		= CatchOutErr()");
-	PyRun_SimpleString("sys.stdout		= catchOutErr");
-
-	// Mise en place des contextes de base
-	PyRun_SimpleString("context = vgUI.Context.getInstance()");
-	PyRun_SimpleString("canvas = context.getBasicManipulator()");
-
-	PyRun_SimpleString("sys.stderr		= catchOutErr");	
-	//Execution du contenu du fichier
-	PyRun_SimpleString(fileContent.c_str());		
-	std::string str = "";
-	PyObject * catcher = PyObject_GetAttrString(m_pyModuleRedirect, "catchOutErr");		// on récupère l'objet catchOutErr
-	PyErr_Print();
-		
-	PyObject * stdoutCatcher = PyObject_GetAttrString(catcher, "data");					// on récupère les valeurs de l'objet catchOutErr
-	str = PyString_AsString(stdoutCatcher);		
-	// on retourne les messages dans le buffer de sortie				
-	std::cout << "=== Sortie python ===\n" << str << std::endl;	
-	PyRun_SimpleString("catchOutErr.reset()");*/
+	// Job's done.
+	return module;
 }
 
 
 void PythonScript::refresh()
 {
-	PyRun_SimpleString( "refresh(vgUI.Context.getInstance())" );
+	CurWorkDir cwd( m_filename.parent_path() );
+	PyRun_SimpleString( (m_moduleName+".refresh(vgUI.Context.getInstance())").c_str() );
 }
 
 

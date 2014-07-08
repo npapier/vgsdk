@@ -8,7 +8,10 @@
 
 #include <iostream>
 #include <string>
+#include <Python.h>
+#include <boost/filesystem/path.hpp>
 #include <vgd/Shp.hpp>
+
 
 namespace vgd { namespace event { struct TimerCallback; } }
 
@@ -40,10 +43,14 @@ struct PythonScript
 
 private:
 
-	MyCanvas *								m_canvas;
+	MyCanvas *						m_canvas;
+	const boost::filesystem::path	m_filename;
+	const std::string				m_moduleName;
 	vgd::Shp< vgd::event::TimerCallback >	m_refreshCallback;
+	
 
-	void load( const std::string & filename );
+	PyObject * import();
+	const bool hasFunction( PyObject * module, const std::string & name );
 };
 
 
