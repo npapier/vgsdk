@@ -248,8 +248,8 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	 */
 	//@{
 	void onEvent( vgd::Shp< vgd::event::Event > event );
-	void paint( const vgm::Vec2i size, const bool bUpdateBoundingBox );
-	void resize( const vgm::Vec2i size );
+	void paint( const vgm::Vec2i& size, const bool bUpdateBoundingBox );
+	void resize( const vgm::Vec2i& size );
 	//@}
 
 

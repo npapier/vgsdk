@@ -497,7 +497,7 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 
 
 
-void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
+void Canvas::paint( const vgm::Vec2i& size, const bool bUpdateBoundingBox )
 {
 	vgAssertN( isCurrent(), "OpenGL context must have been set current." );
 
@@ -596,8 +596,8 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 					{
 						const uint what = m_whats[i];
 
-						vgd::Shp< vgd::basic::Image > capturedImage = recycledShot->getImage( what );
-						void * captureImageData = recycledShot->getImageData( what );
+						vgd::Shp< vgd::basic::Image >& capturedImage = recycledShot->getImage( what );
+						void *& captureImageData = recycledShot->getImageData( what );
 
 						// captures using a recycled image
 						using vgeGL::engine::Engine;
@@ -663,7 +663,7 @@ void Canvas::paint( const vgm::Vec2i size, const bool bUpdateBoundingBox )
 }
 
 
-void Canvas::resize( const vgm::Vec2i size )
+void Canvas::resize( const vgm::Vec2i& size )
 {
 	vgeGL::engine::SceneManager::resize( size );
 
