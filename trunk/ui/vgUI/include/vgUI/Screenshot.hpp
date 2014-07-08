@@ -74,10 +74,10 @@ struct Screenshot
 	const uint getFrameNumber() const;
 	void setFrameNumber( const uint frameNumber );
 
-	vgd::Shp< vgd::basic::Image > getImage( const uint index ) const;
-	void * getImageData( const uint index ) const; ///< Returns a pointer to the image data in memory
+	vgd::Shp< vgd::basic::Image >& getImage( const uint index ) const;
+	void *& getImageData( const uint index ) const; ///< Returns a pointer to the image data in memory
 
-	void setCameraInformations( const vgm::Vec2f nearFar, const vgm::Vec4i viewport, const vgm::MatrixR& modelview, const vgm::MatrixR& projection );
+	void setCameraInformations( const vgm::Vec2f& nearFar, const vgm::Vec4i& viewport, const vgm::MatrixR& modelview, const vgm::MatrixR& projection );
 	const vgm::Vec2f& getNearFar() const;
 	const vgm::Vec4i& getViewport() const;
 	const vgm::MatrixR& getModelview() const;
