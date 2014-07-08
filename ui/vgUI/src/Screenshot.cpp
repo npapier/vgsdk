@@ -162,19 +162,19 @@ void Screenshot::setFrameNumber( const uint frameNumber )
 }
 
 
-vgd::Shp< vgd::basic::Image > Screenshot::getImage( const uint index ) const
+vgd::Shp< vgd::basic::Image >& Screenshot::getImage( const uint index ) const
 {
-	return m_images[index];
+	return const_cast<Screenshot*>(this)->m_images[index];
 }
 
 
-void * Screenshot::getImageData( const uint index ) const
+void *& Screenshot::getImageData( const uint index ) const
 {
-	return m_imagesData[index];
+	return const_cast<Screenshot*>(this)->m_imagesData[index];
 }
 
 
-void Screenshot::setCameraInformations( const vgm::Vec2f nearFar, const vgm::Vec4i viewport, const vgm::MatrixR& modelview, const vgm::MatrixR& projection )
+void Screenshot::setCameraInformations( const vgm::Vec2f& nearFar, const vgm::Vec4i& viewport, const vgm::MatrixR& modelview, const vgm::MatrixR& projection )
 {
 	m_nearFar		= nearFar;
 	m_viewport		= viewport;
@@ -451,7 +451,7 @@ const uint ScreenshotContainer::size() const
 {
 	boost::recursive_mutex::scoped_lock slock( m_mutex );
 
-	return m_container.size();
+	return static_cast<uint>(m_container.size());
 }
 
 
@@ -459,7 +459,7 @@ const uint ScreenshotContainer::sizeBuffering() const
 {
 	boost::recursive_mutex::scoped_lock slock( m_mutex );
 
-	return m_recycledContainer.size();
+	return static_cast<uint>(m_recycledContainer.size());
 }
 
 
@@ -470,7 +470,7 @@ void ScreenshotContainer::setBufferingSize( const uint bufferingSize, vgd::Shp< 
 	if ( bufferingSize > m_recycledContainer.size() )
 	{
 		// Adding new element(s)
-		for(	uint numElementsToAdd = bufferingSize - m_recycledContainer.size();
+		for(	auto numElementsToAdd = bufferingSize - m_recycledContainer.size();
 				numElementsToAdd > 0;
 				--numElementsToAdd )
 		{
