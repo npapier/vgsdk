@@ -973,26 +973,35 @@ void Engine::captureGLFramebuffer( const CaptureBufferType what, vgd::Shp< vgd::
 		// RENDERING USING OPENGL DEFAULT FRAMEBUFFER
 		if ( what == COLOR )
 		{
-			const vgm::Vec2i imageSize = getDrawingSurfaceSize();
+			const vgm::Vec3i imageSize3i( getDrawingSurfaceSize(), 1 );
 
 			using vgd::basic::Image;
-#ifdef _WIN32
-			oImage.reset( new Image( imageSize[0], imageSize[1], 1, Image::BGR, Image::UINT8 ) );
-#else
-			oImage.reset( new Image( imageSize[0], imageSize[1], 1, Image::RGB, Image::UINT8 ) );
-#endif
+			const bool matchingImage =	oImage && imageData &&
+										(oImage->getSize3i() == imageSize3i);/*	&&
+										/*(image->format() == myFormat)			&&
+										(image->type() == myType)*/
 
-			imageData = static_cast<uint8*>( oImage->editPixels() );
-			oImage->editPixelsDone();
+			if ( !matchingImage )
+			{
+				// no image given or not matching (size) // @todo format or type
+#ifdef _WIN32
+				oImage.reset( new Image( imageSize3i[0], imageSize3i[1], 1, Image::BGR, Image::UINT8 ) );
+#else
+				oImage.reset( new Image( imageSize3i[0], imageSize3i[1], 1, Image::RGB, Image::UINT8 ) );
+#endif
+				imageData = static_cast<uint8*>( oImage->editPixels() );
+				oImage->editPixelsDone();
+			}
+			// else use oImage and imageData
 
 			//
 			glPixelStorei(GL_PACK_ALIGNMENT, 1);
 #ifdef _WIN32
-			glReadPixels(	0, 0, imageSize[0], imageSize[1], 
+			glReadPixels(	0, 0, imageSize3i[0], imageSize3i[1], 
 							GL_BGR, GL_UNSIGNED_BYTE,
 							imageData );
 #else
-			glReadPixels(	0, 0, imageSize[0], imageSize[1], 
+			glReadPixels(	0, 0, imageSize3i[0], imageSize3i[1], 
 							GL_RGB, GL_UNSIGNED_BYTE,
 							imageData );
 #endif
