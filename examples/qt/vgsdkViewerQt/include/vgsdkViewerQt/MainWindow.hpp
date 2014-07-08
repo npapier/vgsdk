@@ -145,6 +145,11 @@ public Q_SLOTS:
     void helpAbout();
 
     /**
+     * @brief	Implements an action that show the shortcut's cheat sheet.
+     */
+    void helpCheatSheet();
+
+    /**
      * @brief	Implements an action that updates the properties button according to the visibility changes of the properties widget
      */
     void onPropertiesVisibilityChanged();

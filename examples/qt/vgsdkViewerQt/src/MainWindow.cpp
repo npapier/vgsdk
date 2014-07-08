@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2012, 2013, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
+// VGSDK - Copyright (C) 2012, 2013, 2014, Guillaume Brocker, Bryan Schuller, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Guillaume Brocker
@@ -30,6 +30,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QSettings>
+#include <QVBoxLayout>
 
 #include "vgsdkViewerQt/actions.hpp"
 
@@ -113,6 +114,7 @@ void MainWindow::initialize()
 	QAction *actionRecording = new QAction(QIcon(":/images/media-record.png"), "&Recording settings", this);
 
 	QAction *actionAbout = new QAction(QIcon(":/images/help-about.png"), "&About", this);
+	QAction * actionCheatSheet = new QAction("Cheat sheet...", this);
 	QAction *actionSingleView = new QAction(QIcon(":/images/single-view.png"), "Single View", this);
 	actionSingleView->setCheckable(true);
 	actionSingleView->setChecked(true);
@@ -171,6 +173,7 @@ void MainWindow::initialize()
 	menuSettings->addAction(actionRecording);
 
 	menuHelp->addAction(actionAbout);
+	menuHelp->addAction(actionCheatSheet);
 
 	m_toolBar->addAction(actionNew);
 	m_toolBar->addAction(actionOpen);
@@ -232,6 +235,7 @@ void MainWindow::initialize()
 
 	// Help Menu
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(helpAbout()));
+	connect(actionCheatSheet, SIGNAL(triggered()), this, SLOT(helpCheatSheet()));
 
 	setCentralWidget(&m_canvas);
 
@@ -451,11 +455,54 @@ void MainWindow::helpAbout()
 	aboutDialog.set_title( QString("vgsdkViewerQt") );
 	aboutDialog.set_authors( authors );
 	aboutDialog.set_comments( QString("This program is a simple demonstration of vgSDK capabilities.\n It allows you to load meshes (obj, trian, trian2 and dae),\n manipulate them and browse the rendering scene graph.") );
-	aboutDialog.set_copyright( QString("Copyright (C) 2008-2013, Guillaume Brocker, Nicolas Papier, Maxime Peresson, Bryan Schuller and Digital Trainers SAS.") );
+	aboutDialog.set_copyright( QString("Copyright (C) 2008-2014, Guillaume Brocker, Nicolas Papier, Maxime Peresson, Bryan Schuller and Digital Trainers SAS.") );
 	aboutDialog.set_license( QString("Distributed under the terms of the GNU Library General Public License (LGPL) as published by the Free Software Foundation.") );
 	aboutDialog.set_website( QString("http://code.google.com/p/vgsdk") );
 
 	aboutDialog.exec();
+}
+
+
+void MainWindow::helpCheatSheet()
+{
+	static vgd::Shp< QDialog > dialog;
+
+	if( !dialog )
+	{
+		QLabel *		label = new QLabel();
+		QVBoxLayout *	layout = new QVBoxLayout();
+
+		label->setText(
+			"<b><u>General:</u></b><br/>"
+			"<b>l/L</b> switch to next (resp. previous) lights configuration (directional/spot/point/2 spots)<br/>"
+			"<b>f</b>\tshows or hides counters (latest frame rendering time/number of rendered frames per second/total number of rendered frames)<br/>"
+			"<b>r</b>\tswitches the automatic refresh (at 30fps) on or off<br/>"
+			"<br/>"
+			"<b><u>Rendering properties:</u></b><br/>"
+			"<b>w</b> switches between wireframe smooth rendering<br/>"
+			"<b>n</b> draw normals/tangents<br/>"
+			"<b>d</b> switches two sided rendering on or off<br/>"
+			"<b>b</b> switches bumpmapping on or off (require tangents to be computed)<br/>"
+			"<b>t</b> switches phong tessellation on or off<br/>"
+			"<b>s</b> switches shadow mapping (9U) on or off<br/>"
+		);
+
+		layout->addWidget( label );
+		
+		dialog.reset( new QDialog(this) );
+		dialog->setLayout( layout );
+		dialog->setWindowTitle( "Cheat sheet" );
+		dialog->setWindowFlags( Qt::Tool|Qt::MSWindowsFixedSizeDialogHint|Qt::WindowStaysOnTopHint );
+	}
+
+	if( !dialog->isVisible() )
+	{
+		dialog->show();
+	}
+	else
+	{
+		dialog->hide();
+	}
 }
 
 
