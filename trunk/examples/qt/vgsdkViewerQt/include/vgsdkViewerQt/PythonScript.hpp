@@ -43,13 +43,12 @@ struct PythonScript
 
 private:
 
-	MyCanvas *						m_canvas;
-	const boost::filesystem::path	m_filename;
-	const std::string				m_moduleName;
+	MyCanvas *						m_canvas;		///< Points to the canvas used for rendering.
+	const boost::filesystem::path	m_filename;		///< Holds the filename of the script to run.
+	PyObject *						m_pyModule;		///< Points to the python module representing the script in the python interpreter.
 	vgd::Shp< vgd::event::TimerCallback >	m_refreshCallback;
-	
 
-	PyObject * import();
+	const bool import();
 	const bool hasFunction( PyObject * module, const std::string & name );
 };
 
