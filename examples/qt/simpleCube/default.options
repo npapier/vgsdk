@@ -1,9 +1,8 @@
-description	= 'overlay, underlay and cairo text demo using vgSDK'
+description	= 'minimalist project demo using vgSDK'
 vcsUse		= 'no'
 type		= 'exec'
 version		= '0-0'
 uses 		=	[	'boost',
-					'cairo',
 					'qt',
 				]
 libs		=	[
@@ -23,7 +22,7 @@ defines		= ['GLE_SKIP_GLX_INCLUDE']
 from SCons.Script.SConscript import SConsEnvironment
 sbf = SConsEnvironment.sbf
 if sbf.myPlatform == 'posix':
-	libs += [ 'glc 0-0', 'glc_qt 0-0', 'gle 0-3', 'glo 0-3', 'vgCairo 0-5', 'vgUI 0-5' ]
+	libs += [ 'glc 0-0', 'glc_qt 0-0', 'gle 0-3', 'glo 0-3', 'vgUI 0-5' ]
 
 
 #if sbf.myCC == 'cl' and sbf.myCCVersionNumber <= 10.0:
