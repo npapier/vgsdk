@@ -61,7 +61,7 @@ private:
 PythonScript::PythonScript( MyCanvas * canvas, const std::string & filename )
 :	m_canvas( canvas ),
 	m_filename( filename ),
-	m_moduleName( m_filename.stem().string() )
+	m_pyModule( 0 )
 {
 	// Initialize python context.
 	vgUI::python::Context::getInstance()->setCanvas( canvas );
@@ -70,24 +70,20 @@ PythonScript::PythonScript( MyCanvas * canvas, const std::string & filename )
 	// Initialize the python interpreter.
 	Py_Initialize();
 
-	// Import the script.
-	// If successfull, performs some initializations.
-	PyObject * module = import();
-	if( module )
+	// Import the script, and if successfull, performs some initializations.
+	if( import() )
 	{
-		PyRun_SimpleString( "import vgd" );
-		PyRun_SimpleString( "import vgm" );
-		PyRun_SimpleString( "import vgUI" );
+		PyRun_SimpleString("import vgUI");
 
 		// Calls the initialisation callback, if present.
-		if( hasFunction(module, "init") )
+		if( hasFunction(m_pyModule, "init") )
 		{
 			CurWorkDir cwd( m_filename.parent_path() );
-			PyRun_SimpleString( (m_moduleName + ".init(vgUI.Context.getInstance())").c_str() );
+			PyRun_SimpleString( "script.init(vgUI.Context.getInstance())" );
 		}
 
 		// Installs the refresh callback, if a refresh method has been defined..
-		if( hasFunction(module, "refresh") )
+		if( hasFunction(m_pyModule, "refresh") )
 		{
 			// Installs the callback that will call the script.
 			m_refreshCallback.reset( new vgd::event::TimerCallback() );
@@ -97,7 +93,6 @@ PythonScript::PythonScript( MyCanvas * canvas, const std::string & filename )
 			m_canvas->getTimerEventProcessor()->add( m_refreshCallback );
 		}
 	}
-	Py_XDECREF(module);
 }
 
 
@@ -107,6 +102,7 @@ PythonScript::~PythonScript()
 	{
 		m_canvas->getTimerEventProcessor()->remove( m_refreshCallback );
 	}
+	Py_XDECREF(m_pyModule);
 	Py_Finalize();
 }
 
@@ -121,43 +117,63 @@ const bool PythonScript::hasFunction( PyObject * module, const std::string & nam
 }
 
 
-PyObject * PythonScript::import()
+const bool PythonScript::import()
 {
-	if( !boost::filesystem::exists(m_filename) )
+	// Opens the script's source file.
+	QFile file( QString::fromStdString(m_filename.string()) );
+	if( !file.open(QIODevice::ReadOnly) )
 	{
-		qDebug() << "Invalid script file: " << m_filename.string().c_str();
-		QMessageBox::information(0, "Python script error", m_filename.string().c_str());
-		return 0;
+		qDebug() << "Error opening file: " << file.error();
+		QMessageBox::information( 0, "Script loading error", file.errorString() );
+		return false;
+	}
+	
+
+	// Loads the module's source code.
+	std::string source; 
+	QTextStream in(&file);
+	for(;;)
+	{
+		const QString line = in.readLine();   
+		if( !line.isEmpty() )
+		{				
+			source += line.toStdString();
+			source += "\n";
+		}
+		else
+		{
+			break;
+		}
 	}
 
-#if defined(WIN32)
-#define PATH_SEP ";"
-#else
-#define PATH_SEP ":"
-#endif
-
-	// Inserts the directory containing the script file in the path used for the importation.
-	std::string pyPath( Py_GetPath() );
-	pyPath = m_filename.parent_path().string() + PATH_SEP + pyPath;
-	PySys_SetPath( const_cast< char* >(pyPath.c_str()) );
-
-	// Imports the script module.
-	PyObject * module = PyImport_ImportModule( m_moduleName.c_str() );
-	// Also appends the module to teh default interpreter's scope.
-	if( module )
+	// Compiles the code from the given python source file and create the associated module.
+	PyObject * code = 0;
+	code = Py_CompileString( source.c_str(), m_filename.string().c_str(), Py_file_input );
+	if( !code )
 	{
-		PyRun_SimpleString( ("import " + m_moduleName).c_str() );
+		PyErr_Print();
+		QMessageBox::warning( 0, "Script error", "An error has occured while load the script. Please see the console for additional details." );
+		return false;
 	}
+	m_pyModule = PyImport_ExecCodeModule( "script", code ) ;
+	Py_DECREF(code);
+
+
+	// References the module of the script module in the __main___ module for later use.
+	PyObject * mainModule = PyImport_AddModule("__main__");
+	PyObject * mainDict = PyModule_GetDict(mainModule);
+	PyDict_SetItemString(mainDict, "script", m_pyModule);
+
 
 	// Job's done.
-	return module;
+	return true;
 }
 
 
 void PythonScript::refresh()
 {
 	CurWorkDir cwd( m_filename.parent_path() );
-	PyRun_SimpleString( (m_moduleName+".refresh(vgUI.Context.getInstance())").c_str() );
+	PyRun_SimpleString( "script.refresh(vgUI.Context.getInstance())" );
 }
 
 
