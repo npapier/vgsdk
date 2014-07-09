@@ -24,8 +24,8 @@ This first step will install SConsBuildFramework on your computer. This is a com
 Proceed to SconsBuildFramework installation as described below :
 - In your favourite web browser, go to 'https://www.dropbox.com/sh/0pev1iueukjelqp/AACm_GuhL3ReSLlC_Ya4i089a'
 - Browse the 'windows' folder and download the SConsBuildFramework installer named 'SConsBuildFramework_0-14-3_setup.exe'
-- Launch the SConsBuldFramework installer (you may need to have administrator privileges) and choose:
-  - to run embedded installers silently silent embedded,
+- Launch the SConsBuildFramework installer (you may need to have administrator privileges) and choose:
+  - to run embedded installers silently,
   - then the full installation type.
 
 The installer will automatically run required embedded installers silently, excepted for python modules installers that still required some actions from you.
