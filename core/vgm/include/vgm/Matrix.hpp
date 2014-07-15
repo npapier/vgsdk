@@ -77,7 +77,7 @@ typedef double	RawMatrixd[4][4];
 /**
  * @brief 4x4 matrix of floating-point elements.
  *
- * The matrices are stored in <b>row-major order</b> (unlike <b>column-major order</b> for OpenGL).
+ * Character 'R' at the end of MatrixR means row. This is a reminder, because the matrices are stored in <b>row-major order</b> (unlike <b>column-major order</b> for OpenGL).
  * But all matrices, created by this class, are the transposed of the OpenGL version.
  * So you can use it directly in OpenGL, but be careful with the order of composition (use left matrix multiplication
  * contrary to OpenGL).
