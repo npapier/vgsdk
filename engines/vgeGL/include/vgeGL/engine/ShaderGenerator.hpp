@@ -57,7 +57,7 @@ struct GLSLHelpers
 		else
 		{
 			static const std::string retVal =	"#version 330 compatibility\n"
-												"#extension GL_ARB_gpu_shader5 : require\n" // texMap2DShadow[ism] only on sm5 GPU
+												"#extension GL_ARB_gpu_shader5 : require\n" // support for indexing into arrays of samplers using non-constant indices (i.e. texMap2DShadow[ism] only on sm5 GPU)
 												"\n";
 			return retVal;
 		}
