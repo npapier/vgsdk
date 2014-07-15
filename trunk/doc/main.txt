@@ -27,22 +27,26 @@
  * transformation and coordinate system, mesh, texture...). Knowledges about OpenGL or Direct3D could help, but are not
  * absolutely needed.
  * 
- * Hardware specification:
+ * Hardware requirements :
  *
- * An OpenGL 3.x graphics card :
- *  - ATI: from R600 ( from Radeon HD 2400 ). R700 (Radeon HD 4850)
- *  - NVIDIA: OpenGL 3.0, OpenGL 3.1 and OpenGL 3.2 require G80, or newer hardware, i.e. GeForce 8000 series or higher; Geforce G100, GT120, 130, 220, GTS 150, GTS 250, GeForce GTX 260 and higher, any ION based products. Quadro FX. Available on mobile version too.
+ * An OpenGL 4.x graphics card (if tessellation is used) :
+ *  - AMD: since HD 5000 series and up.
+ *  - NVidia: on GeForce 400 series and later GPUs.
+ *
+ * An OpenGL 3.x graphics card (if tessellation is not used) :
+ *  - AMD: since Radeon HD 2400 and up.
+ *  - NVidia: GeForce 8000 series or higher. Any ION based products. Quadro FX. Available on mobile version too.
  *
  *
- * API Support from:
+ * Informations about API support from :
  *  - AMD:
- *    - The OpenGL ES2.0 is supported on all cards that are supported now (from HD2xxx and up).
- *    - The OpenGL 4.1 is supported since HD5xxx and up.
+ *    - OpenGL ES2.0 is supported on all cards that are supported now (from HD2xxx and up).
+ *    - OpenGL 4.x is supported since HD5xxx and up.
  * 
- *  - NVIDIA:
+ *  - NVidia:
  *    - Supports OpenCL 1.0 (Open Computing Language) for all GeForce 8-series and later GPUs.
  *    - Supports OpenGL 3.3 for GeForce 8-series and later GPUs.
- *    - Supports OpenGL 4.1 on GeForce 400 series and later GPUs.
+ *    - Supports OpenGL 4.x on GeForce 400 series and later GPUs.
  *
  * @section project_page Project Page
  * 
