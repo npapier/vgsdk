@@ -7,6 +7,7 @@
 
 #include <vgd/event/TimerCallback.hpp>
 #include <vgeGL/event/TimerEventProcessor.hpp>
+#include <vgio/helpers.hpp>
 #include <vgUI/python/Context.hpp>
 
 #include "vgsdkViewerQt/MyCanvas.hpp"
@@ -120,32 +121,15 @@ const bool PythonScript::hasFunction( PyObject * module, const std::string & nam
 const bool PythonScript::import()
 {
 	// Opens the script's source file.
-	QFile file( QString::fromStdString(m_filename.string()) );
-	if( !file.open(QIODevice::ReadOnly) )
+	std::string source;
+	bool result = vgio::readFile(m_filename.string(), source);
+	if( !result )
 	{
-		qDebug() << "Error opening file: " << file.error();
-		QMessageBox::information( 0, "Script loading error", file.errorString() );
+		qDebug() << "Error opening file: " << m_filename.c_str();
+		QMessageBox::information(0, "Script loading error", QString());
 		return false;
-	}
+	}	
 	
-
-	// Loads the module's source code.
-	std::string source; 
-	QTextStream in(&file);
-	for(;;)
-	{
-		const QString line = in.readLine();   
-		if( !line.isEmpty() )
-		{				
-			source += line.toStdString();
-			source += "\n";
-		}
-		else
-		{
-			break;
-		}
-	}
-
 	// Compiles the code from the given python source file and create the associated module.
 	PyObject * code = 0;
 	code = Py_CompileString( source.c_str(), m_filename.string().c_str(), Py_file_input );
@@ -158,12 +142,21 @@ const bool PythonScript::import()
 	m_pyModule = PyImport_ExecCodeModule( "script", code ) ;
 	Py_DECREF(code);
 
-
 	// References the module of the script module in the __main___ module for later use.
 	PyObject * mainModule = PyImport_AddModule("__main__");
 	PyObject * mainDict = PyModule_GetDict(mainModule);
 	PyDict_SetItemString(mainDict, "script", m_pyModule);
 
+	// Import vgsdk libraries 
+	PyObject * scriptDict = PyModule_GetDict(m_pyModule);
+	PyObject * vgdModule = PyImport_ImportModule("vgd");
+	PyDict_SetItemString(scriptDict, "vgd", vgdModule);
+	PyObject * vgmModule = PyImport_ImportModule("vgm");
+	PyDict_SetItemString(scriptDict, "vgm", vgmModule);
+	PyObject * vgeModule = PyImport_ImportModule("vge");
+	PyDict_SetItemString(scriptDict, "vge", vgeModule);
+	PyObject * vgUIModule = PyImport_ImportModule("vgUI");
+	PyDict_SetItemString(scriptDict, "vgUI", vgUIModule);
 
 	// Job's done.
 	return true;

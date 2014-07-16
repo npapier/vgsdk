@@ -110,6 +110,22 @@
 
 %include <vgUI/python/Context.hpp>
 
-%template( getOptionalNodeAsLightModel ) vgUI::BasicViewer::getOptionalNodeAs< vgd::node::LightModel >;
-%template( getOptionalNodeAsAntialising ) vgUI::BasicViewer::getOptionalNodeAs< vgd::node::Antialiasing >;
-%template ( createOptionalNodeAsLightModel )   vgUI::BasicViewer::createOptionalNodeAs< vgd::node::LightModel >;
+%template( getOptionalNodeAsAntialising ) 			vgUI::BasicViewer::getOptionalNodeAs< vgd::node::Antialiasing >;
+%template( getOptionalNodeAsClearFrameBuffer ) 		vgUI::BasicViewer::getOptionalNodeAs< vgd::node::ClearFrameBuffer >;
+%template( getOptionalNodeAsDrawStyle ) 			vgUI::BasicViewer::getOptionalNodeAs< vgd::node::DrawStyle >;
+%template( getOptionalNodeAsEngineProperties ) 		vgUI::BasicViewer::getOptionalNodeAs< vgd::node::EngineProperties >;
+%template( getOptionalNodeAsLightModel ) 			vgUI::BasicViewer::getOptionalNodeAs< vgd::node::LightModel >;
+%template( getOptionalNodeAsLights ) 				vgUI::BasicViewer::getOptionalNodeAs< vgd::node::Group >;
+%template( getOptionalNodeAsTessellation ) 			vgUI::BasicViewer::getOptionalNodeAs< vgd::node::Group >;
+%template( getOptionalNodeAsUnderlayContainer ) 	vgUI::BasicViewer::getOptionalNodeAs< vgd::node::LayerPlan >;
+%template( getOptionalNodeAsProgram ) 				vgUI::BasicViewer::getOptionalNodeAs< vgd::node::Program >;
+
+%template( createOptionalNodeAsAntialising ) 		vgUI::BasicViewer::createOptionalNodeAs< vgd::node::Antialiasing >;
+%template( createOptionalNodeAsClearFrameBuffer ) 	vgUI::BasicViewer::createOptionalNodeAs< vgd::node::ClearFrameBuffer >;
+%template( createOptionalNodeAsDrawStyle ) 			vgUI::BasicViewer::createOptionalNodeAs< vgd::node::DrawStyle >;
+%template( createOptionalNodeAsEngineProperties ) 	vgUI::BasicViewer::createOptionalNodeAs< vgd::node::EngineProperties >;
+%template( createOptionalNodeAsLightModel ) 		vgUI::BasicViewer::createOptionalNodeAs< vgd::node::LightModel >;
+%template( createOptionalNodeAsLights ) 			vgUI::BasicViewer::createOptionalNodeAs< vgd::node::Group >;
+%template( createOptionalNodeAsTessellation ) 		vgUI::BasicViewer::createOptionalNodeAs< vgd::node::Group >;
+%template( createOptionalNodeAsUnderlayContainer ) 	vgUI::BasicViewer::createOptionalNodeAs< vgd::node::LayerPlan >;
+%template( createOptionalNodeAsProgram ) 			vgUI::BasicViewer::createOptionalNodeAs< vgd::node::Program >;

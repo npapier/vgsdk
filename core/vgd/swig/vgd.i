@@ -170,6 +170,7 @@
 #include "vgd/node/FrameBuffer.hpp"
 #include "vgd/node/FrontFace.hpp"
 #include "vgd/node/LightModel.hpp"
+#include "vgd/node/Light.hpp"
 #include "vgd/node/Material.hpp"
 #include "vgd/node/Noise.hpp"
 #include "vgd/node/OutputBuffers.hpp"
@@ -451,6 +452,12 @@ typedef unsigned char uint8;
 %rename( ComposeModeValueTypeDisplacement) vgd::node::Displacement::ComposeModeValueType;
 %rename( ComposeModeValueTypeUniforms) vgd::node::Uniforms::ComposeModeValueType;
 
+%feature("flatnested") SizeSemanticValueType;
+%feature("flatnested") FormatValueType;
+%feature("flatnested") TypeValueType;
+%feature("flatnested") CommandValueType;;
+
+
 %include "vgd/visitor/helpers.hpp"
 %include "vgeGL/itf/IUnderlay.hpp"
 %include "vgd/event/Listener.hpp"
@@ -495,6 +502,7 @@ typedef unsigned char uint8;
 %include "vgd/node/FrameBuffer.hpp"
 %include "vgd/node/FrontFace.hpp"
 %include "vgd/node/LightModel.hpp"
+%include "vgd/node/Light.hpp"
 %include "vgd/node/Material.hpp"
 %include "vgd/node/Noise.hpp"
 %include "vgd/node/OutputBuffers.hpp"
@@ -573,7 +581,7 @@ typedef unsigned char uint8;
 //%template( NodeBoostShpFromThis) boost::enable_shared_from_this< vgd::node::Node >;
 %template( NodeshpFromThis ) vgd::EnableShpFromThis<vgd::node::Node>;
 %template( findFirstByNameVertexShape ) vgd::visitor::findFirstByName< vgd::node::VertexShape >;
-
+%template( setUniformVec4f ) vgd::node::Uniforms::setUniform<vgm::Vec4f>;
 
 
 /*
@@ -607,7 +615,7 @@ typedef vgd::node::OutputBufferProperty::FormatValueType FormatValueType;
 typedef vgd::node::OutputBufferProperty::TypeValueType TypeValueType;
 typedef vgd::node::OutputBufferProperty::CommandValueType CommandValueType;
 
-// typedef vgd::node::PostProcessing::FilterValueType FilterValueType;
+typedef vgd::node::PostProcessing::FilterValueType FilterValueType;
 typedef vgd::node::PostProcessing::Input0ValueType Input0ValueType;
 typedef vgd::node::PostProcessing::Input0SamplingValueType Input0SamplingValueType;
 typedef vgd::node::PostProcessing::Input1ValueType Input1ValueType;
