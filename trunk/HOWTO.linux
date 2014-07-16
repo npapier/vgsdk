@@ -14,7 +14,6 @@ Building vgsdk requires some tools and external libraries to be installed on you
 - python-svn 1.7.8
 - scons 2.3.0
 - subversion 1.8.8
-- swig 2.0.11
 - libboost-dev 1.54
 - libcairo2-dev 1.13
 - libdevil-dev 1.7.8
@@ -27,7 +26,7 @@ Building vgsdk requires some tools and external libraries to be installed on you
 Remark : to achieve this, you will need access to super user privileges, or you will need to contact your system administrator.
 
 As a super user, you can run the following command to install all of them :
-apt-get install cmake gcc-4.9 g++-4.8 p7zip-full python2.7 python-svn scons subversion swig libboost1.54-all-dev libcairo2-dev libdevil-dev libgl1-mesa-dev libglu1-mesa-dev libphysfs-dev libqt4-dev libsdl1.2-dev
+apt-get install cmake gcc-4.9 g++-4.8 p7zip-full python2.7 python-svn scons subversion libboost1.54-all-dev libcairo2-dev libdevil-dev libgl1-mesa-dev libglu1-mesa-dev libphysfs-dev libqt4-dev libsdl1.2-dev
 
 
 3. Creating the building location
@@ -75,6 +74,7 @@ numJobs = <a number>
   - 'mkpak glm.py'
   - 'mkpak openAssetImport.py'
   - 'mkpak scintilla.py'
+  - 'mkpak swig.py'
   - 'mkpak swigShp.py'
   - 'exit'
  
