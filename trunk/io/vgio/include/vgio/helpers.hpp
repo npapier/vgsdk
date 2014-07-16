@@ -94,7 +94,7 @@ VGIO_API vgd::Shp< std::vector<char> > readFile( const std::string filePath );
  * @todo append data to oData
  * @ingroup g_ioHelpers
  */
-const bool readFile( const std::string filePath, std::string& oData );
+VGIO_API const bool readFile(const std::string filePath, std::string& oData);
 
 
 /**

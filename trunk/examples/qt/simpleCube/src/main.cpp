@@ -2,6 +2,7 @@
 #include <QMainWindow>
 
 #include <vgd/node/Box.hpp>
+#include <vgd/node/Camera.hpp>
 #include <vgd/node/DirectionalLight.hpp>
 #include <vgd/node/LightModel.hpp>
 #include <vgQt/BasicManipulator.hpp>
@@ -45,9 +46,13 @@ int main( int argc, char ** argv )
 	box->transform( vgm::Rotation( vgm::Vec3f(1, 1, 1), vgm::PI / 4) ); // Rotate the cube using axis + angle
 	canvas.getScene()->addChild( box );
 
-
 	// Initializes the camera, shows the main window and runs the application loop.
 	canvas.viewAll();
+	vgd::Shp< vgd::node::Camera > camera = canvas.getCamera();
+	vgm::MatrixR lookAtMatrix = vgm::MatrixR();
+	lookAtMatrix.setLookAt(vgm::Vec3f(3, 3, 3), vgm::Vec3f(0, 0, 0), vgm::Vec3f(0, 0, 1));
+	camera->setLookAt(lookAtMatrix);
+
 	mainWindow.show();
 	return application.exec();
 }

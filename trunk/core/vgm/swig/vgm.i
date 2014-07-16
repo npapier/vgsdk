@@ -58,11 +58,19 @@
 %include "vgm/Rotation.hpp"
 %include "vgm/Matrix.hpp"
 
+%template (Vec2i)	vgm::Vector< int32, 2 >;
 %template (Vec2f)	vgm::Vector< float, 2 >;
 %template (Vec3f)	vgm::Vector< float, 3 >;
 %template (Vec4f)	vgm::Vector< float, 4 >;
 %template (Vec5f)	vgm::Vector< float, 5 >;
 
+%extend vgm::Vector< int32, 2 > 
+{
+    float __getitem__(unsigned int i) 
+	{
+        return (*($self))[i];
+    }
+}
 
 %extend vgm::Vector< float, 2 > 
 {
