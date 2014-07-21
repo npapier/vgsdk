@@ -25,8 +25,7 @@ def init(context):
 	canvas.getSetup().addChild( clear )
 
 	# Model load
-	import os
-	canvas.load(os.getcwd() + r"\mesh\cat.dae")
+	canvas.load('mesh/cat.dae')
 	canvas.viewAll()
 	
 	
