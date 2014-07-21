@@ -147,6 +147,13 @@ const bool PythonScript::import()
 	PyObject * mainDict = PyModule_GetDict(mainModule);
 	PyDict_SetItemString(mainDict, "script", m_pyModule);
 
+    // Adds . in sys.path on posix platform
+#ifndef WIN32
+    std::string path = Py_GetPath();
+    path = ":" + path;
+    PySys_SetPath( path.c_str() );
+#endif
+
 	// Import vgsdk libraries 
 	PyObject * scriptDict = PyModule_GetDict(m_pyModule);
 	PyObject * vgdModule = PyImport_ImportModule("vgd");
