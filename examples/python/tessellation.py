@@ -1,5 +1,5 @@
 def init(context):
-	print "Tessellation demo"
+	print "Advanced Tessellation demo"
 	import vge
 	canvas = context.getBasicManipulator()
 	tessellationLevel	= vgd.TessellationLevel.create("Tessellation level node")
@@ -59,7 +59,7 @@ def init(context):
 
 	# Model load
 	import os
-	canvas.load(os.getcwd() + r"\mesh\cat.dae")
+	canvas.load("mesh/cat.dae")
 
 	# high level detail settings
 	#settings = vge.UserSettings(canvas)
