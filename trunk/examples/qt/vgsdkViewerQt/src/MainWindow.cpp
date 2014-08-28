@@ -269,17 +269,25 @@ void MainWindow::newWindow()
 
 void MainWindow::showFullScreen()
 {
-	menuBar()->setVisible(false);
-	m_toolBar->setVisible(false);
-	QMainWindow::showFullScreen();
+	if( !m_isFullScreen )
+	{
+		menuBar()->setVisible(false);
+		m_toolBar->setVisible(false);
+		QMainWindow::showFullScreen();
+		m_isFullScreen = true;
+	}
 }
 
 
 void MainWindow::showNormal()
 {
-	menuBar()->setVisible(true);
-	m_toolBar->setVisible(true);
-	QMainWindow::showNormal();
+	if( m_isFullScreen )
+	{
+		menuBar()->setVisible(true);
+		m_toolBar->setVisible(true);
+		QMainWindow::showNormal();
+		m_isFullScreen = false;
+	}
 }
 
 
@@ -368,11 +376,18 @@ void MainWindow::viewAll()
 
 void MainWindow::fullscreen()
 {
-	const bool isFullscreen = m_canvas.isFullscreen();
-	
-	m_canvas.switchFullscreen();
-	// Configures the layout.
-	isFullscreen ? showNormal() : showFullScreen();
+	// Configures the layout and the canvas.
+	if( m_isFullScreen )
+	{
+		m_canvas.setFullscreen( false );
+		showNormal();
+	}
+	else
+	{
+		m_canvas.setFullscreen( true );
+		showFullScreen();
+		
+	}		
 }
 
 
