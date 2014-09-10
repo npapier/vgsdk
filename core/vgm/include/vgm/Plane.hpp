@@ -60,6 +60,7 @@ namespace vgm
 
 struct MatrixR;
 struct Line;
+struct Segment;
 
 /**
  * @brief Represents an oriented plane in 3D space. 
@@ -187,6 +188,14 @@ struct VGM_API Plane
 	 * false if line is parallel to plane.
 	 */
 	bool	intersect( const Line& l, Vec3f& intersection) const;
+
+
+	/**
+	* @brief Intersect segment and plane, returning true if there is an intersection
+	* false if segment doesn't intersect.
+	*/
+	bool intersect(const Segment& l, Vec3f& intersection) const;
+
 
 	/**
 	 * @brief Returns the vector from intersection of three planes.

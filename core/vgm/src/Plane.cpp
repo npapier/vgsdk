@@ -51,6 +51,7 @@
 
 #include "vgm/Line.hpp"
 #include "vgm/Matrix.hpp"
+#include "vgm/Segment.hpp"
 
 
 
@@ -184,6 +185,26 @@ bool Plane::intersect( const Line& l, Vec3f& intersection ) const
 	return true;
 }
 
+
+
+bool Plane::intersect(const Segment& l, Vec3f& intersection) const
+{
+	float t, denom;
+	Vec3f direction = l.getEnd() - l.getBegin();
+	// solve for t:
+	//  n . (l.p + t * l.d) - d == 0
+
+	denom = m_normalVec.dot(direction);
+	if (denom == 0.0)
+		return false;
+
+	//  t = - (n . l.p - d) / (n . l.d)
+	t = -(m_normalVec.dot(direction) - m_distance) / denom;
+
+	intersection = l.getBegin() + direction * t;
+
+	return t >= 0.0 && t <= 1.0;
+}
 
 
 const Vec3f Plane::intersect( Plane& p0, Plane& p1, Plane& p2) const
