@@ -277,6 +277,8 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	}
 	else
 	{
+		// Purge IL errors, as ilLoadL might log errors even on success.
+		while ( ilGetError() != IL_NO_ERROR );
 		updateInformations();
 
 #ifdef _DEBUG
