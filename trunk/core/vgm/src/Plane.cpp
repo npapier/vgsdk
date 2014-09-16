@@ -199,7 +199,7 @@ bool Plane::intersect(const Segment& l, Vec3f& intersection) const
 		return false;
 
 	//  t = - (n . l.p - d) / (n . l.d)
-	t = -(m_normalVec.dot(direction) - m_distance) / denom;
+	t = -(m_normalVec.dot(l.getBegin()) - m_distance) / denom;
 
 	intersection = l.getBegin() + direction * t;
 
