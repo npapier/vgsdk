@@ -43,19 +43,20 @@ vgd::Shp< T > findFirst( vgd::Shp< vgd::node::Group > root, const Predicate& pre
 
 	vgd::visitor::FindFirst< Predicate > find( predicate );
 
-	bool bFounded = false;
+	bool bFound = false;
 
 	try
 	{
+		vgAssertN( root, "Cannot traverse a null node." );
 		root->traverse( find );
 	}
 	catch ( vgd::visitor::DesiredStop )
 	{
 		// ok, found the first node.
-		bFounded = true;
+		bFound = true;
 	}
 
-	if ( bFounded )
+	if ( bFound )
 	{
 		retVal = vgd::dynamic_pointer_cast< T >( find.getShpNode() );
 		assert( retVal && "Found node, but dynamic cast fails. Wrong given type ?" );
@@ -82,6 +83,7 @@ vgd::Shp< vgd::node::NodeList > find( vgd::Shp< vgd::node::Group > root, const P
 {
 	vgd::visitor::Find< Predicate > find( predicate );
 
+	vgAssertN( root, "Cannot traverse a null node." );
 	root->traverse( find );
 
 	vgd::Shp< vgd::node::NodeList > retVal = find.getShpNodes();
