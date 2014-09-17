@@ -173,8 +173,10 @@ const bool VideoCallback::update()
 	// Retrieves texture node
 	using vgd::node::Texture2D;
 	using vgd::node::Group;
-	vgd::Shp< Group >		group	= vgd::dynamic_pointer_cast< Group >( getNode() );
-	vgd::Shp< Texture2D >	texture	= vgd::visitor::findFirstByName< Texture2D >( group, TEX2D_NODE_NAME );
+	vgd::Shp< Group > group = vgd::dynamic_pointer_cast< Group >( getNode() );
+	if ( !group ) return false;
+	
+	vgd::Shp< Texture2D > texture = vgd::visitor::findFirstByName< Texture2D >( group, TEX2D_NODE_NAME );
 	if ( !texture )
 	{
 		vgAssertN( false, "No texture for video" );
