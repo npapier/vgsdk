@@ -14,19 +14,13 @@ Building vgsdk requires some tools and external libraries to be installed on you
 - python-svn 1.7.8
 - scons 2.3.0
 - subversion 1.8.8
-- libboost-dev 1.54
-- libcairo2-dev 1.13
-- libdevil-dev 1.7.8
 - libgl1-mesa-dev 13.1.3
 - libglu1-mesa-dev 9.0.0
-- libphysfs-dev 2.0.3-2
-- libqt4-dev 4.8.5
-- libsdl1.2-dev 1.2.15
 
 Remark : to achieve this, you will need access to super user privileges, or you will need to contact your system administrator.
 
 As a super user, you can run the following command to install all of them :
-apt-get install cmake gcc-4.9 g++-4.8 p7zip-full python2.7 python-svn scons subversion libboost1.54-all-dev libcairo2-dev libdevil-dev libgl1-mesa-dev libglu1-mesa-dev libphysfs-dev libqt4-dev libsdl1.2-dev
+apt-get install cmake gcc-4.9 g++-4.8 p7zip-full python2.7 python-svn scons subversion libgl1-mesa-dev libglu1-mesa-dev
 
 
 3. Creating the building location
@@ -45,7 +39,7 @@ Create a directory of your choice that will be used in the later steps. It will 
 5. Configuring the building environment
 ---------------------------------------
 - In a command line interpreter, change the current directory for <build_dir>/SConsBuildFramework.
-- Copy the file 'SConsBuildFramework.options.sample' to 'SConsBuildFramework.options'. - OPen 'SConsBuildFramework.options' in a text editor and set configuration options as below :
+- Copy the file 'SConsBuildFramework.options.sample' to 'SConsBuildFramework.options'. - Open 'SConsBuildFramework.options' in a text editor and set configuration options as below :
 
 svnUrls = {     'displayDriverConnector'        : 'http://oglpp.googlecode.com/svn/displayDriverConnector/trunk',
                 'glContext'                     : 'http://oglpp.googlecode.com/svn/glContext/trunk',
@@ -65,17 +59,26 @@ numJobs = <a number>
 
 6. Downloading and building additional dependencies
 ---------------------------------------------------
+
+@todo Section about precompiled external dependencies
+
 - In a web browser, go to 'https://www.dropbox.com/sh/0pev1iueukjelqp/AACm_GuhL3ReSLlC_Ya4i089a'
-- On the displayed page, navigate into 'dependencies' and download the file named 'localExt_posix_gcc.zip'
+- On the displayed page, navigate into 'linux' and download the file named 'localExt_posix_gcc.zip'
 - Extract the content of that file to '<build_dir>/pak' (you may need to create that directory)
 - In command line interpreter, change the current directory for '<build_dir>/vgsdk'
 - Run 'scons sbfpak' in order to enter external dependencies packager, and run the following commands (some can take a while to complete) :
-  - 'mkpak blowfish.py'
-  - 'mkpak glm.py'
-  - 'mkpak openAssetImport.py'
-  - 'mkpak scintilla.py'
-  - 'mkpak swig.py'
-  - 'mkpak swigShp.py'
+  - 'mkpak blowfish'
+  - 'mkpak boost'
+  - 'mkpak cairo'
+  - 'mkpak glm'
+  - 'mkpak openAssetImport'
+  - 'mkpak openil'  
+  - 'mkpak physfs'
+  - 'mkpak qt'
+  - 'mkpak scintilla'
+  - 'mkpak sdl'
+  - 'mkpak swig'
+  - 'mkpak swigShp'
   - 'exit'
  
 
@@ -85,7 +88,7 @@ numJobs = <a number>
 - Run 'scons svncheckout' to complete the vgsdk sources.
 - Run 'scons pakupdate' in order to deploy additional dependencies that were built previously.
 - Run 'scons' or 'scons release' to launch the build in release. Use 'scons debug' to build the debug version.
-- Building results are stored in <build_dir>/local_posix_gcc4.x 
+- Building results are stored in <build_dir>/local_posix_x86-32_gcc4-8
   - 'bin' contains all executable and shared libraries
   - 'include' contains all C/C++ headers of vgsdk libraries
   - 'share' contains all shared resources
@@ -93,8 +96,7 @@ numJobs = <a number>
 
 8. Running vgsdk's Qt viewer
 ----------------------------
-- In a command line interpreter, change the current directory for <build_dir>/local_posix_gcc4.x/bin
-- Append or set the path to this directory in the environment variable LD_LIBRARY_PATH. For example, you can call: export LD_LIBRARY_PATH=`pwd`
+- In a command line interpreter, change the current directory for <build_dir>/local_posix_x86-32_gcc4-8/bin
 - Finally, run the vgsdk's Qt viewer with './vgsdkViewerQt_0-5_posix_gcc4-x'
 
 
