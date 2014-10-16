@@ -297,9 +297,9 @@ void UserSettings::loadLevels()
 			}
 		}
 	}
-	catch( bpt::ini_parser::ini_parser_error & )
+    catch( bpt::ini_parser::ini_parser_error & error )
 	{
-		vgLogError( "Error while reading detail level definitions file %s", path.string().c_str() );
+        vgLogError( "Error while reading detail level definitions file %s(%i): %s.", error.filename().c_str(), error.line(), error.message().c_str() );
 	}
 }
 
