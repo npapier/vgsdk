@@ -47,7 +47,7 @@ vgd::Shp< T > findFirst( vgd::Shp< vgd::node::Group > root, const Predicate& pre
 
 	try
 	{
-		vgAssertN( root, "Cannot traverse a null node." );
+        vgAssertN( root != 0, "Cannot traverse a null node." );
 		root->traverse( find );
 	}
 	catch ( vgd::visitor::DesiredStop )
@@ -83,7 +83,7 @@ vgd::Shp< vgd::node::NodeList > find( vgd::Shp< vgd::node::Group > root, const P
 {
 	vgd::visitor::Find< Predicate > find( predicate );
 
-	vgAssertN( root, "Cannot traverse a null node." );
+    vgAssertN( root != 0, "Cannot traverse a null node." );
 	root->traverse( find );
 
 	vgd::Shp< vgd::node::NodeList > retVal = find.getShpNodes();
