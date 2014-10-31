@@ -198,7 +198,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( MultipleInstances );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , MultipleInstances );
 private:
 	static const vgd::basic::RegisterNode<MultipleInstances> m_registrationInstance;
 };

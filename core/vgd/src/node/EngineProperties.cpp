@@ -213,7 +213,6 @@ const std::string EngineProperties::getFOpenglDirectStateAccess( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( EngineProperties );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , EngineProperties );
 
 
 

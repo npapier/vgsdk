@@ -90,9 +90,9 @@ struct VGD_API TessellationLevel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		CUSTOM = 428,	///< Use custom function to compute the tessellation level. The function is defined by field customDeclarations and customCode
-		PIXELS_PER_EDGE = 427,	///< Adaptive tessellation using the number of pixels per edge desired as criterion. Tessellation level range is given by tessellationRange[].
-		UNIFORM = 426,	///< Use the same tessellation level given by the field tessellationRange[1]
+		CUSTOM = 429,	///< Use custom function to compute the tessellation level. The function is defined by field customDeclarations and customCode
+		PIXELS_PER_EDGE = 428,	///< Adaptive tessellation using the number of pixels per edge desired as criterion. Tessellation level range is given by tessellationRange[].
+		UNIFORM = 427,	///< Use the same tessellation level given by the field tessellationRange[1]
 		DEFAULT_METHOD = UNIFORM	///< Use the same tessellation level given by the field tessellationRange[1]
 	};
 
@@ -120,9 +120,9 @@ struct VGD_API TessellationLevel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 426 );
 			retVal.push_back( 427 );
 			retVal.push_back( 428 );
+			retVal.push_back( 429 );
 
 			return retVal;
 		}
@@ -239,9 +239,9 @@ struct VGD_API TessellationLevel : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		PREPEND = 430,	///< Tessellation level function defined by this node is added before the current one (if any).
-		APPEND = 431,	///< Tessellation level function defined by this node is added after the current one (if any).
-		REPLACE = 429,	///< Tessellation level function defined by this node is replacing the current one (if any). So all previous tessellation level functions are removed.
+		PREPEND = 431,	///< Tessellation level function defined by this node is added before the current one (if any).
+		APPEND = 432,	///< Tessellation level function defined by this node is added after the current one (if any).
+		REPLACE = 430,	///< Tessellation level function defined by this node is replacing the current one (if any). So all previous tessellation level functions are removed.
 		DEFAULT_COMPOSEMODE = REPLACE	///< Tessellation level function defined by this node is replacing the current one (if any). So all previous tessellation level functions are removed.
 	};
 
@@ -269,9 +269,9 @@ struct VGD_API TessellationLevel : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 429 );
 			retVal.push_back( 430 );
 			retVal.push_back( 431 );
+			retVal.push_back( 432 );
 
 			return retVal;
 		}
@@ -373,7 +373,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( TessellationLevel );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , TessellationLevel );
 private:
 	static const vgd::basic::RegisterNode<TessellationLevel> m_registrationInstance;
 };

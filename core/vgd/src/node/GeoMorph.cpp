@@ -167,7 +167,6 @@ const std::string GeoMorph::getF__meshes__( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( GeoMorph );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , GeoMorph );
 
 
 

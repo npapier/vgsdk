@@ -304,7 +304,6 @@ const std::string Displacement::getFDisplacementFunctionTES( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( Displacement );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , Displacement );
 
 
 

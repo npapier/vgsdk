@@ -739,7 +739,7 @@ void Camera::gethViewport( ViewportValueType& viewport, const int drawingSurface
 			break;
 
 		default:
-			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy .value() );
+			vgAssertN( false, "Unexpected value for eye usage policy %i", eyeUsagePolicy.value() );
 	}
 }
 
@@ -764,7 +764,6 @@ void Camera::sethFovy( const FovyValueType fovy)
 	}
 }
 IMPLEMENT_INDEXABLE_CLASS_CPP( Camera );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , Camera );
 
 
 

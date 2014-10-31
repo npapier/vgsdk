@@ -160,7 +160,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( TexGenEyeLinear );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , TexGenEyeLinear );
 private:
 	static const vgd::basic::RegisterNode<TexGenEyeLinear> m_registrationInstance;
 };

@@ -79,8 +79,8 @@ struct VGD_API Uniforms : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		APPEND = 467,	///< Uniforms defined by this node are added to the current uniforms
-		REPLACE = 466,	///< Uniforms defined by this node are replacing the current uniforms. So all previous uniform variables are removed.
+		APPEND = 468,	///< Uniforms defined by this node are added to the current uniforms
+		REPLACE = 467,	///< Uniforms defined by this node are replacing the current uniforms. So all previous uniform variables are removed.
 		DEFAULT_COMPOSEMODE = REPLACE	///< Uniforms defined by this node are replacing the current uniforms. So all previous uniform variables are removed.
 	};
 
@@ -108,8 +108,8 @@ struct VGD_API Uniforms : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 466 );
 			retVal.push_back( 467 );
+			retVal.push_back( 468 );
 
 			return retVal;
 		}
@@ -276,7 +276,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( Uniforms );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Uniforms );
 private:
 	static const vgd::basic::RegisterNode<Uniforms> m_registrationInstance;
 };

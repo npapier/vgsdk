@@ -188,7 +188,7 @@ vgd::Shp< nodeType > nodeType::createWhole( const std::string nodeName )
 
 def generateMETA_NODE_HPP( fd, node ) :
 	str = """public:
-	IMPLEMENT_INDEXABLE_CLASS_HPP( , nodeType );
+	IMPLEMENT_INDEXABLE_CLASS_HPP( nodeType );
 private:
 	static const vgd::basic::RegisterNode<nodeType> m_registrationInstance;\n"""
 
@@ -196,7 +196,7 @@ private:
 
 def generateMETA_NODE_CPP( fd, node ) :
 
-	str = """IMPLEMENT_INDEXABLE_CLASS_CPP( , nodeType );
+	str = """IMPLEMENT_INDEXABLE_CLASS_CPP( nodeType );
 
 
 

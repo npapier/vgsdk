@@ -63,6 +63,7 @@ Antialiasing::Antialiasing( const std::string nodeName ) :
 	vgd::node::SingleAttribute( nodeName )
 {
 	// Adds field(s)
+	addField( new FQualityPresetType(getFQualityPreset()) );
 	addField( new FTechniqueType(getFTechnique()) );
 
 	// Sets link(s)
@@ -75,6 +76,7 @@ Antialiasing::Antialiasing( const std::string nodeName ) :
 void Antialiasing::setToDefaults( void )
 {
 	SingleAttribute::setToDefaults();
+	setQualityPreset( (3) );
 	setTechnique( (FXAA1) );
 }
 
@@ -83,6 +85,26 @@ void Antialiasing::setToDefaults( void )
 void Antialiasing::setOptionalsToDefaults()
 {
 	SingleAttribute::setOptionalsToDefaults();
+}
+
+
+
+// QualityPreset
+
+const Antialiasing::QualityPresetValueType Antialiasing::DEFAULT_QUALITYPRESET = (3);
+
+
+
+const Antialiasing::QualityPresetValueType Antialiasing::getQualityPreset() const
+{
+	return getFieldRO<FQualityPresetType>(getFQualityPreset())->getValue();
+}
+
+
+
+void Antialiasing::setQualityPreset( const QualityPresetValueType value )
+{
+	getFieldRW<FQualityPresetType>(getFQualityPreset())->setValue( value );
 }
 
 
@@ -104,6 +126,13 @@ void Antialiasing::setTechnique( const TechniqueValueType value )
 
 
 // Field name accessor(s)
+const std::string Antialiasing::getFQualityPreset( void )
+{
+	return "f_qualityPreset";
+}
+
+
+
 const std::string Antialiasing::getFTechnique( void )
 {
 	return "f_technique";

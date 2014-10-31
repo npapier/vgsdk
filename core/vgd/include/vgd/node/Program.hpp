@@ -508,7 +508,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( Program );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Program );
 private:
 	static const vgd::basic::RegisterNode<Program> m_registrationInstance;
 };

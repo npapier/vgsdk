@@ -289,7 +289,6 @@ const std::string DrawStyle::getFBoundingBox( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( DrawStyle );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , DrawStyle );
 
 
 

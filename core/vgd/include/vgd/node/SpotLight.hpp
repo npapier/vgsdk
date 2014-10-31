@@ -287,7 +287,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( SpotLight );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , SpotLight );
 private:
 	static const vgd::basic::RegisterNode<SpotLight> m_registrationInstance;
 };

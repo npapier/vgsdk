@@ -614,7 +614,6 @@ const std::string LightModel::getFShadowFiltering( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( LightModel );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , LightModel );
 
 
 

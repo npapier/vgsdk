@@ -158,7 +158,6 @@ const std::string ClipPlane::getFOn( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( ClipPlane );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , ClipPlane );
 
 
 

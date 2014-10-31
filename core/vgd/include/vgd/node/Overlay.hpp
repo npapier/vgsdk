@@ -118,7 +118,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( Overlay );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Overlay );
 private:
 	static const vgd::basic::RegisterNode<Overlay> m_registrationInstance;
 };

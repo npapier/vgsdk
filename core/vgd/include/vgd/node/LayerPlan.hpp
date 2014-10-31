@@ -289,7 +289,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( LayerPlan );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , LayerPlan );
 private:
 	static const vgd::basic::RegisterNode<LayerPlan> m_registrationInstance;
 };

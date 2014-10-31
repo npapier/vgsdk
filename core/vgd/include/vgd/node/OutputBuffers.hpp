@@ -166,7 +166,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( OutputBuffers );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , OutputBuffers );
 private:
 	static const vgd::basic::RegisterNode<OutputBuffers> m_registrationInstance;
 };

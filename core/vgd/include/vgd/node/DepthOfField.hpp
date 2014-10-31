@@ -98,8 +98,8 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		THIN_LENS = 271,	///< todo
-		PINHOLE = 270,	///< todo
+		THIN_LENS = 272,	///< todo
+		PINHOLE = 271,	///< todo
 		DEFAULT_CAMERAMODEL = THIN_LENS	///< todo
 	};
 
@@ -127,8 +127,8 @@ struct VGD_API DepthOfField : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 270 );
 			retVal.push_back( 271 );
+			retVal.push_back( 272 );
 
 			return retVal;
 		}
@@ -460,7 +460,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( DepthOfField );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , DepthOfField );
 private:
 	static const vgd::basic::RegisterNode<DepthOfField> m_registrationInstance;
 };

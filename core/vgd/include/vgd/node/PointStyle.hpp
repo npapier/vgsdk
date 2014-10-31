@@ -320,7 +320,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( PointStyle );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , PointStyle );
 private:
 	static const vgd::basic::RegisterNode<PointStyle> m_registrationInstance;
 };

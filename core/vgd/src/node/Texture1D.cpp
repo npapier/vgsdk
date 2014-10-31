@@ -96,7 +96,6 @@ void Texture1D::sethDefaults()
 	setMagFilter( LINEAR );
 }
 IMPLEMENT_INDEXABLE_CLASS_CPP( Texture1D );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , Texture1D );
 
 
 

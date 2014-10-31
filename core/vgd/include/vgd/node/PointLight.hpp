@@ -173,7 +173,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( PointLight );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , PointLight );
 private:
 	static const vgd::basic::RegisterNode<PointLight> m_registrationInstance;
 };
