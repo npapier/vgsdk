@@ -264,7 +264,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( EngineProperties );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , EngineProperties );
 private:
 	static const vgd::basic::RegisterNode<EngineProperties> m_registrationInstance;
 };

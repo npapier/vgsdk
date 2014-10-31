@@ -112,7 +112,6 @@ const std::string FrontFace::getFOrientation( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( FrontFace );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , FrontFace );
 
 
 

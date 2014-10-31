@@ -286,7 +286,6 @@ const std::string DepthOfField::getFSampling( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( DepthOfField );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , DepthOfField );
 
 
 

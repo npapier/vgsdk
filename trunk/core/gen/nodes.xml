@@ -17,11 +17,16 @@ tag documentation
 
 <nodes>
 
+	<enum name="Binding" default="BIND_OFF">
+		<value name="BIND_OFF"			doc="No attribute at all"/>
+		<value name="BIND_PER_VERTEX"	doc="One attribute per vertex"/>
+	</enum>
+
 	<node name = "Antialiasing" inherits = "SingleAttribute">
 		<doxygen>
 			<docBrief>Built-in antialiasing support</docBrief>
 			<doc>Antialiasing (AA) is the process of smoothing edges so they dont appear jagged.</doc>
-			<doc>The technique currently supported is FXAA version 1 designed by Timothy Lottes of NVIDIA.</doc>
+			<doc>The technique currently supported is FXAA version 1 and 3 designed by Timothy Lottes of NVIDIA.</doc>
 			<doc>FXAA is short for Fast Approximate Anti-Aliasing.</doc>
 			<doc>Below is a description of FXAA in much more detail from Timothy Lottes.</doc>
 			<doc>FXAA was designed to be a fast post-process shader based anti-aliasing method which can improve image quality</doc>
@@ -43,12 +48,18 @@ tag documentation
 			<ingroup>g_frameBufferNodes</ingroup>
 		</doxygen>
 
+		<sf name="qualityPreset" doc="Choose the quality preset. The allowed values are between 0(worst) and 4(best). 3 is the default value.">
+			<type name="int" default="3"></type>
+		</sf>
+
 		<sf name="technique" doc="The antialiasing technique to be used.">
 			<enum default="FXAA1">
 				<value name="NONE" doc="No antialiasing"/>
 				<value name="FXAA1" doc="Fast Approximate Anti-Aliasing (FXAA) version 1"/>
+				<value name="FXAA3" doc="Fast Approximate Anti-Aliasing (FXAA) version 3.11"/>
 			</enum>
 		</sf>
+
 	</node>
 
 

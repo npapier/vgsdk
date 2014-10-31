@@ -345,7 +345,6 @@ const std::string OutputBufferProperty::getFTextureNode( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( OutputBufferProperty );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , OutputBufferProperty );
 
 
 

@@ -83,7 +83,6 @@ void Overlay::setOptionalsToDefaults()
 
 // Field name accessor(s)
 IMPLEMENT_INDEXABLE_CLASS_CPP( Overlay );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , Overlay );
 
 
 

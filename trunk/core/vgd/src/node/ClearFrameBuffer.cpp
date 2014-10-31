@@ -129,7 +129,6 @@ const std::string ClearFrameBuffer::getFClearColor( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( ClearFrameBuffer );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , ClearFrameBuffer );
 
 
 

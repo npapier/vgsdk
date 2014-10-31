@@ -147,7 +147,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( OffscreenRendering );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , OffscreenRendering );
 private:
 	static const vgd::basic::RegisterNode<OffscreenRendering> m_registrationInstance;
 };

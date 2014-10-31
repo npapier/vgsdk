@@ -195,8 +195,8 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 */
 	enum  
 	{
-		AUTOMATIC = 468,	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
-		ONCE = 469,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
+		AUTOMATIC = 469,	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
+		ONCE = 470,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
 		DEFAULT_BOUNDINGBOXUPDATEPOLICY = AUTOMATIC	///< AUTOMATIC means that the bounding box of this vertex based shape would be automatically computed the first time and updated when field \c vertex is modified (see service ComputeBoundingBox in ::vge::service namespace).
 	};
 
@@ -224,8 +224,8 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 468 );
 			retVal.push_back( 469 );
+			retVal.push_back( 470 );
 
 			return retVal;
 		}
@@ -271,9 +271,9 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 	 */
 	enum  
 	{
-		DYNAMIC = 471,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
-		STATIC = 470,	///< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once.
-		STREAM = 472,	///< STREAM assumed to be a 1-to-1 update-to-draw. Means the geometry is specified for each frame.
+		DYNAMIC = 472,	///< DYNAMIC assumed to be a n-to-n update-to-draw. Means the geometry is specified every few frames.
+		STATIC = 471,	///< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once.
+		STREAM = 473,	///< STREAM assumed to be a 1-to-1 update-to-draw. Means the geometry is specified for each frame.
 		DEFAULT_DEFORMABLEHINT = STATIC	///< STATIC assumed to be a 1-to-n update-to-draw. Means the geometry is specified once.
 	};
 
@@ -301,9 +301,9 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 470 );
 			retVal.push_back( 471 );
 			retVal.push_back( 472 );
+			retVal.push_back( 473 );
 
 			return retVal;
 		}
@@ -711,9 +711,9 @@ struct VGD_API VertexShape : public vgd::node::Shape, public vgd::node::ITransfo
 		vgd::field::EditorRW< T > texCoords	= getTexCoordRW< T >( texUnit );
 
 		// Transform each texCoord
-		for( typename T::iterator	i	= texCoords->begin(),
-									ie	= texCoords->end();
-									i  != ie;
+		for( typename T::iterator	i  = texCoords->begin(),
+									ie = texCoords->end();
+									i != ie;
 									++i )
 		{
 			matrix.multVecMatrix( (*i), (*i) );
@@ -960,7 +960,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( VertexShape );
-//	IMPLEMENT_INDEXABLE_CLASS_HPP( , VertexShape );
 private:
 	static const vgd::basic::RegisterNode<VertexShape> m_registrationInstance;
 };

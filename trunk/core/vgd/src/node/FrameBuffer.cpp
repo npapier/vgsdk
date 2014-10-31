@@ -83,7 +83,6 @@ void FrameBuffer::setOptionalsToDefaults()
 
 // Field name accessor(s)
 IMPLEMENT_INDEXABLE_CLASS_CPP( FrameBuffer );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , FrameBuffer );
 
 
 

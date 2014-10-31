@@ -202,7 +202,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( ClipPlane );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , ClipPlane );
 private:
 	static const vgd::basic::RegisterNode<ClipPlane> m_registrationInstance;
 };

@@ -279,7 +279,9 @@ typedef unsigned char uint8;
 %ignore vgd::node::Callback::getstructIndex(void);
 %ignore vgd::node::Callback::setToDefaults(void);
 %ignore vgd::node::Callback::setOptionalsToDefaults(void);
- 
+
+%ignore vgd::node::Antialiasing::DEFAULT_QUALITYPRESET;
+
 %ignore vgd::node::DepthOfField::DEFAULT_FOCUS;
 %ignore vgd::node::DepthOfField::DEFAULT_FOCUSTOFAR;
 %ignore vgd::node::DepthOfField::DEFAULT_FOCUSTONEAR;

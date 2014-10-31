@@ -116,7 +116,6 @@ const std::string OffscreenRendering::getFRoot( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( OffscreenRendering );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , OffscreenRendering );
 
 
 

@@ -270,7 +270,6 @@ const std::string Noise::getFFrequency( void )
 
 
 IMPLEMENT_INDEXABLE_CLASS_CPP( Noise );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , Noise );
 
 
 

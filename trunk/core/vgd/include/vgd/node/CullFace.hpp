@@ -78,10 +78,10 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		DISABLED = 266,	///< Facet culling is disabled
-		FRONT = 268,	///< Front-facing facets are culled
-		BACK = 267,	///< Back-facing facets are culled
-		FRONT_AND_BACK = 269,	///< Front-facing and back-facing facets are culled
+		DISABLED = 267,	///< Facet culling is disabled
+		FRONT = 269,	///< Front-facing facets are culled
+		BACK = 268,	///< Back-facing facets are culled
+		FRONT_AND_BACK = 270,	///< Front-facing and back-facing facets are culled
 		DEFAULT_MODE = DISABLED	///< Facet culling is disabled
 	};
 
@@ -109,10 +109,10 @@ struct VGD_API CullFace : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 266 );
 			retVal.push_back( 267 );
 			retVal.push_back( 268 );
 			retVal.push_back( 269 );
+			retVal.push_back( 270 );
 
 			return retVal;
 		}
@@ -194,7 +194,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( CullFace );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , CullFace );
 private:
 	static const vgd::basic::RegisterNode<CullFace> m_registrationInstance;
 };

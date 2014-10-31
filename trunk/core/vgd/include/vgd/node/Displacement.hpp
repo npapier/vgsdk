@@ -58,9 +58,9 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 	 */
 	enum PredefinedDisplacement 
 	{
-		NONE = 272,	///< No displacement add to the shader
-		ALONG_NORMAL = 273,	///< Moves vertices along their normals based on among coming from uDisplacementParameter4f0.x (for VS) and from uDisplacementParameter4f0.y for (TES).
-		CUSTOM = 274,	///< Uses custom displacement using fields declarationsVS and displacementVS for vertex shader (resp. declarationsTES/displacementTES for tessellation evaluation shader)
+		NONE = 273,	///< No displacement add to the shader
+		ALONG_NORMAL = 274,	///< Moves vertices along their normals based on among coming from uDisplacementParameter4f0.x (for VS) and from uDisplacementParameter4f0.y for (TES).
+		CUSTOM = 275,	///< Uses custom displacement using fields declarationsVS and displacementVS for vertex shader (resp. declarationsTES/displacementTES for tessellation evaluation shader)
 		DEFAULT_PREDEFINEDDISPLACEMENT = NONE	///< No displacement add to the shader
 	};
 
@@ -88,9 +88,9 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 272 );
 			retVal.push_back( 273 );
 			retVal.push_back( 274 );
+			retVal.push_back( 275 );
 
 			return retVal;
 		}
@@ -292,9 +292,9 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 	 */
 	enum  
 	{
-		PREPEND = 276,	///< Displacement function(s) defined by this node are added before the current one (if any).
-		APPEND = 277,	///< Displacement function(s) defined by this node are added after the current one (if any).
-		REPLACE = 275,	///< Displacement function(s) defined by this node are replacing the current one (if any). So all previous displacements are removed.
+		PREPEND = 277,	///< Displacement function(s) defined by this node are added before the current one (if any).
+		APPEND = 278,	///< Displacement function(s) defined by this node are added after the current one (if any).
+		REPLACE = 276,	///< Displacement function(s) defined by this node are replacing the current one (if any). So all previous displacements are removed.
 		DEFAULT_COMPOSEMODE = REPLACE	///< Displacement function(s) defined by this node are replacing the current one (if any). So all previous displacements are removed.
 	};
 
@@ -322,9 +322,9 @@ struct VGD_API Displacement : public vgd::node::SingleAttribute
 		{
 			std::vector< int > retVal;
 
-			retVal.push_back( 275 );
 			retVal.push_back( 276 );
 			retVal.push_back( 277 );
+			retVal.push_back( 278 );
 
 			return retVal;
 		}
@@ -525,7 +525,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( Displacement );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Displacement );
 private:
 	static const vgd::basic::RegisterNode<Displacement> m_registrationInstance;
 };

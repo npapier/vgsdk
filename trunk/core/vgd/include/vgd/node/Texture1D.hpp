@@ -140,7 +140,6 @@ protected:
 
 public:
 	IMPLEMENT_INDEXABLE_CLASS_HPP( Texture1D );
-	//IMPLEMENT_INDEXABLE_CLASS_HPP( , Texture1D );
 private:
 	static const vgd::basic::RegisterNode<Texture1D> m_registrationInstance;
 };

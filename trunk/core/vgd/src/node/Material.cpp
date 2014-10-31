@@ -406,7 +406,6 @@ void Material::eraseColor( const ColorParameterType param )
 	}
 }
 IMPLEMENT_INDEXABLE_CLASS_CPP( Material );
-//IMPLEMENT_INDEXABLE_CLASS_CPP( , Material );
 
 
 
