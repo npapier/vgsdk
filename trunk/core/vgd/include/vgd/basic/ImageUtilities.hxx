@@ -90,6 +90,12 @@ const MinMax ImageUtilities::doComputeMinMax( const IImage* pImage )
 template< typename ComponentType >
 vgd::Shp< Image > ImageUtilities::doExtractSlice( const IImage*	pImage, const SliceType	slice, const uint32	position )
 {
+#ifdef __STBIMAGE__
+	#pragma message("ImageUtilities::doExtractSlice(): not yet implemented")
+	assert(false);
+	Shp< Image > dstImage;
+	return dstImage;
+#else
 	using vgd::basic::Image;
 	using vgd::basic::IImage;
 
@@ -235,8 +241,8 @@ vgd::Shp< Image > ImageUtilities::doExtractSlice( const IImage*	pImage, const Sl
 		default:
 			assert( false && "Unknown type of slice." );
 	}
-	
 	return pNewImage;
+#endif
 }
 
 

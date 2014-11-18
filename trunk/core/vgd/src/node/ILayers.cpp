@@ -511,6 +511,12 @@ vgd::Shp< vgd::basic::IImage > ILayers::extractSlice( const int32 layer, const v
 	assert( layer >= 0 );
 	assert( layer < getNumLayers() );
 
+#ifdef __STBIMAGE__
+	#pragma message("ILayers::extractSlice(): not yet implemented")
+	assert(false);
+	Shp< vgd::basic::IImage > image;
+	return image;
+#else
 	// Retrieves the image editor and composition operator.	
 	vgd::field::EditorRO< FIImageType >	editorImageNegatoRO( getFIImageRO(layer) );
 	const ComposeOperator			composeOperator( gethComposeOperator(layer) );
@@ -577,6 +583,7 @@ vgd::Shp< vgd::basic::IImage > ILayers::extractSlice( const int32 layer, const v
 	
 	// Job's done.
 	return output;
+#endif
 }
 
 

@@ -22,6 +22,12 @@ namespace basic
 template< typename InputType >
 vgd::Shp< vgd::basic::IImage > Windowing::doApply( const vgd::Shp< vgd::basic::IImage > input ) const
 {
+#ifdef __STBIMAGE__
+	#pragma message("Windowing::doApply(): not yet implemented")
+	assert(false);
+	Shp< vgd::basic::IImage > image;
+	return image;
+#else
 	using vgd::basic::Image;
 	
 	assert( m_min <= m_max );
@@ -81,6 +87,7 @@ vgd::Shp< vgd::basic::IImage > Windowing::doApply( const vgd::Shp< vgd::basic::I
 	
 	output->editPixelsDone();			
 	return output;
+#endif
 }
 
 

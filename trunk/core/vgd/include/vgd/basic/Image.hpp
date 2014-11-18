@@ -1,10 +1,462 @@
-// VGSDK - Copyright (C) 2004, 2007, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2007, 2010, 2014, Nicolas Papier, Philippe Sengchanpheng.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
+// Author Philippe Sengchanpheng
 
 #ifndef _VGD_BASIC_IMAGE_HPP
 #define _VGD_BASIC_IMAGE_HPP
+
+#ifdef __OPENGLES2__
+
+#include <utility>
+#include "vgd/basic/IImage.hpp"
+
+
+
+namespace vgd
+{
+
+namespace basic
+{
+
+
+
+/**
+ * @brief Store an Image
+ *
+ * @sa https://github.com/nothings/stb
+ *
+ * @todo Adds observation on pixel editor accesses (editPixels()/editPixelsDone()...)
+ * @todo use OpenImageIO::geterror(). Uses exception for error handling ?
+ * 
+ * @ingroup g_images
+ */
+struct VGD_API Image : public IImage
+{
+	/**
+	 * @name Constructors and destructor
+	 */
+	//@{
+
+	/**
+	 * @brief Default constructor
+	 * 
+	 * @post components()	== 0
+	 * @post isEmpty()		== true
+	 * @post format()		== NO_FORMAT
+	 * @post type()			== NO_TYPE
+	 * @post pixels()		== 0
+	 * @post editPixels()	== 0
+	 * 
+	 * @post paletteSize()			== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()			== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
+	 * 
+	 * @post voxelSize()		== vgm::Vec3f(1.f, 1.f, 1.f)
+	 */
+	Image();
+
+	/**
+	 * @brief Image constructor from a file
+	 * 
+	 * @param strFilename		filename of Image to load
+	 * 
+	 * @post voxelSize()	== vgm::Vec3f(1.f, 1.f, 1.f)
+	 */
+	Image( const std::string strFilename );
+
+	/**
+	 * @brief Image contructor from memory
+	 * 
+	 * If \c pixels parameter is not 0, then the Image data is copied from memory.
+	 * Otherwise the Image is not initialized.
+	 * 
+	 * @param width		width of the Image
+	 * @param height	height of the Image
+	 * @param depth		depth of the Image
+	 * @param format	format of the pixel data
+	 * @param type		type of the pixel data
+	 * @param pixels	pointer to the Image data in memory
+	 *
+	 * @pre	depth = 1
+	 *
+	 * @post paletteSize()			== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()			== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
+	 */
+/*	Image(		const uint32	width, const uint32 height, const uint32 depth,
+				const Format	format,
+				const Type		type,
+				const void*		pixels = 0 );
+*/
+
+	/**
+	 * @brief Image contructor from an IImage
+	 * 
+	 * The Image data is copied.
+	 * 
+	 * @param iimage			source Image to duplicated
+	 */
+	Image( const IImage& iimage );
+
+	/**
+	 * @brief Copy constructor
+	 * 
+	 * @param src		Image to be copied
+	 */
+	Image( const Image& src );
+
+	/**
+	 * @brief Assignment operator
+	 * 
+	 * @param src		Image to be copied
+	 * @return			copied Image
+	 */
+	Image&	operator = ( const Image& src );
+
+	/**
+	 * @brief Destructor
+	 */
+	~Image();
+
+	//@}
+
+
+	/**
+	 * @name Creation/destruction Image methods
+	 */
+	//@{
+
+	/**
+	 * @brief Create an Image from a file
+	 * 
+	 * @param strFilename		filename of Image to load
+	 * 
+	 * @remarks The type of file is based on the file extension for input operation on file.
+	 */
+	const bool load( const std::string strFilename );
+
+	// @todo to support crypto
+	/**
+	 * brief Create an Image from a file in memory.
+	 * 
+	 * param strFilename		filename of Image to load.
+	 *
+	 * param buffer			pointer to Image in memory
+	 *
+	 * param size				size of the buffer
+	 * 
+	 * remarks All supported format of OpenIL. Main supported format are : bmp, dds, ico, gif, jpg, png, psd, psp, raw, tga, tif.
+	 */
+	//bool	load( std::string strFilename, const void* buffer, int size );
+
+
+	/**
+	 * @brief Save the current Image to a file
+	 *
+	 * @param strFilename		filename of Image to load
+	 */
+	const bool save(const std::string filename) const;
+
+
+	/**
+	 * @brief Create an Image from memory
+	 * 
+	 * If \c pixels parameter is not 0, then the Image data is copied from memory.
+	 * Otherwise the Image is not initialized.
+	 * 
+	 * @param width		width of the Image
+	 * @param height	height of the Image
+	 * @param depth		depth of the Image
+	 * @param format	format of the pixel data
+	 * @param type		type of the pixel data
+	 * @param pixels	pointer to the Image data in memory
+	 * 
+	 * @pre	depth = 1
+	 *
+	 * @post paletteSize()			== 0
+	 * @post paletteFormat()		== NO_FORMAT
+	 * @post paletteType()			== NO_TYPE
+	 * @post palettePixels()		== 0
+	 * @post paletteEditPixels()	== 0
+	 */
+/*	const bool	create(	const uint32	width, const uint32 height, const uint32 depth,
+						const Format	format, const Type	type,
+						const void*		pixels = 0 );
+*/	
+
+	/**
+	 * @brief Create an Image from an IImage
+	 * 
+	 * The Image data is copied
+	 * 
+	 * @param iimage	source Image to duplicated
+	 */
+	//const bool create( const IImage& iimage );
+
+	/**
+	 * @brief Destroy Image
+	 */
+	void destroy();
+	//@}
+
+
+
+	/**
+	 * @name Actions on Image
+	 *
+	 * @todo copy_pixels() to changeType()
+	 * @todo Generic channel shuffling using ImageBufAlgo::channels() to changeFormat()
+	 *
+	 * @todo capture_image(webcam) (OpenCV in OpenImageIO)
+	 */
+	//@{
+
+	/**
+	 * brief Convert Image to another type/format of Image.
+	 * 
+	 * param format		desired format of the converted Image
+	 * param type		desired type of the converted Image
+	 * 
+	 * todo Documentation of what is done exactly by convert (see DevIL).
+	 */
+	//const bool convertTo( const Format format, const Type type );
+
+	/**
+	 * @brief Definition of filter available to resize an Image
+	 */
+	/*enum Filter
+	{
+		FILTER_SCALE_NEAREST,	//< lower-quality scaling filters
+		FILTER_SCALE_BILINEAR,	//< lower-quality scaling filters
+
+		FILTER_SCALE_BOX,			//< higher-quality scaling filters and take longer to perform
+		FILTER_SCALE_TRIANGLE,		//< higher-quality scaling filters and take longer to perform
+		FILTER_SCALE_LANCZOS3,		//< higher-quality scaling filters and take longer to perform
+		FILTER_SCALE_BSPLINE		//< higher-quality scaling filters and take longer to perform
+	};*/
+
+	/**
+	 * @brief Scales the Image to the new dimensions specified, shrinking or enlarging the Image, depending on the Image's original dimensions.
+	 *
+	 * @param size		the new dimension (width, height and depth) of the Image
+	 *
+	 * return true if rescale has been successful, false if not
+	 */
+	const bool scale(const vgm::Vec3i size);
+
+	/**
+	 * @brief Definition of different flip operations
+	 */
+/*	enum Flip
+	{
+		FLIP_X_AXIS,		//< scan-lines exchanged vertically
+		FLIP_Y_AXIS			//< columns exchanged horizontally
+	};
+*/
+
+	/**
+	 * @brief Inverts an Image over the specified axis.
+	 *
+	 * @param flipType		defines the flip axis
+	 * @param nbThreads	use nbThreads execution threads to speed up Image operations
+	 *
+	 * @return true if flip has been successful, false if not
+	 */
+	//const bool flip( const Flip flipType = FLIP_X_AXIS, const int nbThreads = 1);
+
+	//@}
+
+
+
+	/**
+	 * @name Image accessor methods
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the number of color components.
+	 * 
+	 * Typical values are 1, 2, 3, 4.
+	 * 
+	 * @return		number of color components
+	 */
+	const uint32	components() const;
+
+	/**
+	 * @brief Returns the width of the Image.
+	 * 
+	 * @return 		width of Image
+	 */
+	const uint32	width() const;
+
+	/**
+	 * @brief Returns the height of the Image.
+	 * 
+	 * @return		height of Image
+	 */
+	const uint32	height() const;
+
+	/**
+	 * @brief Returns the depth of the Image.
+	 * 
+	 * @return		depth of Image
+	 */
+	const uint32	depth() const;
+
+	/**
+	 * @brief Returns the format of the pixel data.
+	 * 
+	 * @return		format of the pixel data
+	 */
+	const Format	format() const;
+
+	/**
+	 * @brief Returns the type of the pixel data.
+	 * 
+	 * @return		type of the pixel data
+	 */
+	const Type		type() const;
+
+	/**
+	 * @brief Returns a pointer to the Image data in memory.
+	 * 
+	 * @return a pointer to the Image data in memory
+	 */
+	const void*		pixels() const;
+
+	/**
+	 * @brief Returns a pointer to the Image data in memory.
+	 * 
+	 * @return a pointer to the Image data in memory
+	 * 
+	 * @remarks Call editPixelsDone() when you have finished editing pixels.
+	 */
+	void*			editPixels();
+	
+	/**
+	 * @brief Commit all pixels modifications after calling editPixels().
+	 */
+	void 			editPixelsDone();
+	//@}
+
+
+
+	/**
+	 * @name Palette accessors
+	 *
+	 * Not supported
+	 */
+	//@{
+
+	const uint32	paletteSize() const;
+
+	const Format	paletteFormat() const;
+
+	const Type		paletteType() const;
+
+	const void*		palettePixels() const;
+	void*			paletteEditPixels();
+	void			paletteEditPixelsDone();
+	//@}
+
+	
+	
+	/**
+	 * @name Voxel size accessors
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	vgm::Vec3f&				voxelSize();
+
+	/**
+	 * @brief Returns the size of a voxel.
+	 * 
+	 * @return		a 3d vector with the voxel size for each dimension.
+	 */
+	const vgm::Vec3f		voxelSize() const;
+
+	/**
+	 * @brief Returns if voxelSize is supported.
+	 * 
+	 * @return		true if supported, false otherwise.
+	 */
+	const bool	isVoxelSizeSupported() const;
+
+	//@}
+
+
+
+	/**
+	 * @name Direct access to Image pixel data
+	 */
+	//@{
+
+	/**
+	 * @brief Returns the Image pixel data
+	 *
+	 */
+	//unsigned char * getImageBuf();
+	//const unsigned char * getImageBuf() const;
+
+	//@}
+
+
+
+private:
+
+	/**
+	 * @name OpenImageIO encapsulation methods
+	 */
+	//@{
+
+	/**
+	 * @brief Code of copy constructor
+	 */
+	void copy( const Image& src );
+ 
+	void resetInformations();
+	//@}
+
+
+	/**
+	 * @name Image data and informations
+	 */
+	//@{
+	unsigned char * m_image;		/// @< In-memory representation of a 2D Image
+
+	bool		m_edit;
+	//@}
+
+	/**
+	 * @brief Voxel size informations.
+	 */
+	vgm::Vec3f	m_voxelSize;
+
+	int m_width;	///< outputs image width in pixels
+	int m_height;	///< outputs image height in pixels
+	int m_comp;		///< outputs # of image components in image file
+};
+
+
+} // namespace basic
+
+} // namespace vgd
+
+#else // #ifdef __OPENGLES2__
+
+
+
 
 #include <IL/il.h>
 #include <IL/ilu.h>
@@ -648,10 +1100,10 @@ private:
 	vgm::Vec3f	m_voxelSize;
 };
 
-
-
 } // namespace basic
 
 } // namespace vgd
+
+#endif // #ifdef __OPENGLES2__
 
 #endif // #ifndef _VGD_BASIC_IMAGE_HPP

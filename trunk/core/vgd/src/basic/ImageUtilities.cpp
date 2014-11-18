@@ -83,6 +83,12 @@ vgd::Shp< Image > ImageUtilities::createImage(	const vgd::Shp< IImage> srcImage,
 												const IImage::Type dstType,
 												MinMax& minMax )
 {
+#ifdef __STBIMAGE__
+	#pragma message("ImageUtilities::createImage(): not yet implemented")
+	assert(false);
+	Shp< Image > dstImage;
+	return dstImage;
+#else
 	// srcImage
 	assert( srcImage->format() == IImage::LUMINANCE );
 	assert( srcImage->components() == 1 );
@@ -169,6 +175,7 @@ vgd::Shp< Image > ImageUtilities::createImage(	const vgd::Shp< IImage> srcImage,
 	}
 	
 	return dstImage;
+#endif
 }
 
 
