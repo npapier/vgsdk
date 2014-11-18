@@ -5,6 +5,474 @@
 
 #include "vgd/basic/Image.hpp"
 
+#ifdef __OPENGLES2__
+
+#include "vgd/basic/Image.hpp"
+#include "vgd/basic/FilenameExtractor.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb/stb_image.h>
+#include <stb/stb_image_write.h>
+#include <stb/stb_image_resize.h>
+#undef STB_IMAGE_IMPLEMENTATION
+#undef STB_IMAGE_RESIZE_IMPLEMENTATION
+#undef STB_IMAGE_WRITE_IMPLEMENTATION
+#include <sbf/operations.hpp>
+#include <vgDebug/helpers.hpp>
+
+
+
+namespace vgd
+{
+
+namespace basic
+{
+
+
+Image::Image()
+{
+	resetInformations();
+}
+
+
+
+Image::Image( const std::string strFilename )
+{
+	resetInformations();
+
+	load( strFilename );
+}
+
+
+/*
+Image::Image(	const uint32	width, const uint32 height, const uint32 depth,
+				const Format	format,
+				const Type		type,
+				const void*		pixels )
+{
+	resetInformations();
+
+	create(	width, height, depth,
+			format, type,
+			pixels );
+}*/
+
+
+/*
+Image::Image( const IImage& Image )
+{
+	resetInformations();
+
+	const bool retVal = create( Image );
+	vgAssertN( retVal, "Error during Image construction/copying." );
+}
+*/
+
+
+Image::Image( const Image& src )
+{
+	copy(src);
+}
+
+
+
+Image& Image::operator = ( const Image& src )
+{
+	if ( this != &src )
+	{
+		destroy();
+		copy( src );
+	}
+
+	return ( *this );
+}
+
+
+
+Image::~Image()
+{
+	destroy();
+}
+
+
+
+const bool Image::load( const std::string strFilename )
+{
+	destroy();
+
+	// Create a new Image name.
+	m_image = stbi_load(strFilename.c_str(), &m_width, &m_height, &m_comp, 0);
+
+	if (m_image)
+	{
+		vgLogDebug("Image::load: %s (%i x %i) loaded.", strFilename.c_str(), width(), height() );
+		return true;
+	}
+	else
+	{
+		vgLogDebug("Image::load: Unable to read Image %s.", strFilename.c_str() );
+		destroy();
+
+		return false;
+	}
+}
+
+
+
+const bool Image::save( const std::string strFilename ) const
+{
+	using vgd::basic::FilenameExtractor;
+	FilenameExtractor extractor(strFilename);
+	std::string extension = extractor.getLowerCaseExtension();
+
+	bool retVal = false;
+
+	if(extension == "png")	retVal = stbi_write_png(strFilename.c_str(), m_width, m_height, m_comp, m_image, 0);
+	if(extension == "bmp")	retVal = stbi_write_bmp(strFilename.c_str(), m_width, m_height, m_comp, m_image);
+	if(extension == "tga")	retVal = stbi_write_tga(strFilename.c_str(), m_width, m_height, m_comp, m_image);
+
+
+	if ( retVal )
+	{
+		vgLogDebug( "Image::save: %s", strFilename.c_str() );
+		return true;
+	}
+	else
+	{
+		vgLogDebug( "Image::save: Unable to write Image %s.", strFilename.c_str() );
+		return false;
+	}
+}
+
+
+/*
+const bool Image::create(	const uint32	width, const uint32 height, const uint32 depth,
+							const Format	format,	const Type	type,
+							const void*		pixels )
+{
+	vgAssert( depth == 1 );
+
+	// Create a new Image name
+	destroy();
+
+	const OpenImageIO::ImageSpec imageSpec( width, height, computeNumComponents(format), convertMyTypeToOIIO(type) );
+	m_image.reset( "NoName", imageSpec );
+
+	// Copy pixels
+	bool success = true;
+	if ( pixels )
+	{
+		OpenImageIO::ImageBuf incomingImage( "NoName", imageSpec, const_cast<void*>(pixels) );
+		success = m_image.copy_pixels( incomingImage );
+	}
+	// else nothing to do
+
+	if ( success )
+	{
+		m_voxelSize.setValue( 1.f, 1.f, 1.f );
+
+		m_width = width;
+		m_height = height;
+	}
+	else
+	{
+		vgAssertN( false, "Unable to copy pixels." );
+		destroy();
+	}
+
+	return success;
+}*/
+
+
+/*
+const bool Image::create( const IImage& Image )
+{
+	destroy();
+
+	const bool bRetVal = create(	Image.width(), Image.height(), Image.depth(),
+									Image.format(), Image.type(),
+									Image.pixels() );
+
+	if ( bRetVal && (Image.format() != COLOR_INDEX) )
+	{
+		voxelSize() = Image.voxelSize();
+		return true;
+	}
+	else
+	{
+		vgAssertN( Image.format() != COLOR_INDEX, "COLOR_INDEX format not supported" );
+		/*if (	(Image.format() == COLOR_INDEX) &&
+				(Image.paletteFormat() != NO_FORMAT) )
+		{
+			setPalette(	Image.palettePixels(),
+						Image.paletteSize(),
+						Image.paletteFormat() );
+		}*//*
+		return false;
+	}
+}
+*/
+
+
+void Image::destroy()
+{
+	stbi_image_free(m_image);
+	resetInformations();
+}
+
+
+const bool Image::scale( const vgm::Vec3i size)
+{
+	char unsigned * outputData = NULL;
+	bool retVal = false;
+	stbir_resize_uint8( m_image, m_width, m_height,  0,
+						outputData, size[0], size[1], 0, m_comp);
+
+	if (outputData)
+	{
+		m_image = outputData;
+		retVal = true;
+	}
+
+	return true;
+
+}
+
+
+/*
+const bool Image::flip( const Flip flipType, const int nbThreads )
+{
+	OpenImageIO::ImageBuf destination( "Image.flip.destination", m_image.spec() );
+
+	if ( flipType == FLIP_X_AXIS )
+	{
+		// Flip
+		const bool retVal = OpenImageIO::ImageBufAlgo::flip( destination, m_image, OpenImageIO::ROI::All(), nbThreads ); 
+
+		// Swap images
+		if (retVal)		m_image.swap( destination );
+
+		return retVal;
+	}
+	else
+	{
+		vgAssert( flipType == FLIP_Y_AXIS );
+
+		// Flip
+		const bool retVal = OpenImageIO::ImageBufAlgo::flop( destination, m_image, OpenImageIO::ROI::All(), nbThreads ); 
+
+		// Swap images
+		if (retVal)		m_image.swap( destination );
+
+		return retVal;
+	}
+}
+*/
+
+
+const uint32 Image::components() const
+{
+	return m_comp;
+}
+
+
+
+const uint32 Image::width() const
+{
+	return m_width;
+}
+
+
+
+const uint32 Image::height() const
+{
+	return m_height;
+}
+
+
+
+const uint32 Image::depth() const
+{
+	return 1; // ????? only depth supported
+}
+
+
+
+
+const Image::Format Image::format() const
+{
+	Format format;
+	
+	switch (m_comp)
+	{
+	case 0:
+		format = NO_FORMAT;
+		break;
+	
+	case 1:
+		format = LUMINANCE;
+		break;
+
+	case 2:
+		format = LUMINANCE_ALPHA;
+		break;
+	
+	case 3:
+		format = RGB;
+		break;
+	
+	case 4:
+		format = RGBA;
+		break;
+	
+	default:
+		assert(false && "Not a supported number of components.");
+		format = NO_FORMAT;
+	}
+	
+	return format;
+}
+
+
+
+const Image::Type Image::type() const
+{
+	return INT8; // ????? only type supported
+}
+
+
+
+const void* Image::pixels() const
+{
+	return static_cast<void *>(m_image);
+}
+
+
+
+void* Image::editPixels()
+{
+	vgAssertN( !m_edit, "Image already edited." );
+
+	m_edit = true;
+
+	return static_cast<void *>(m_image);
+}
+
+
+
+void Image::editPixelsDone()
+{
+	vgAssertN( m_edit, "Image not currently edited" );
+
+	m_edit = false;
+}
+
+
+
+// PALETTE
+const uint32 Image::paletteSize() const
+{
+	return 0;
+}
+
+
+
+const Image::Format Image::paletteFormat() const
+{
+	return NO_FORMAT;
+}
+
+
+
+const Image::Type Image::paletteType() const
+{
+	return NO_TYPE;
+}
+
+
+
+const void* Image::palettePixels() const
+{
+	return 0;
+}
+
+
+
+void* Image::paletteEditPixels()
+{
+	vgAssertN( !m_edit, "Image already edited." );
+
+	m_edit = true;
+
+	return 0;
+}
+
+
+
+void Image::paletteEditPixelsDone()
+{
+	vgAssertN( m_edit, "Image not currently edited" );
+
+	m_edit = false;
+}
+
+
+
+vgm::Vec3f& Image::voxelSize()
+{
+	return m_voxelSize;
+}
+
+
+
+const vgm::Vec3f Image::voxelSize() const
+{
+	return m_voxelSize;
+}
+
+
+
+const bool Image::isVoxelSizeSupported() const
+{
+	return true;
+}
+
+
+
+void Image::copy( const Image& src )
+{
+	unsigned char * srcChar = (unsigned char *)src.pixels();
+	m_image = NULL;
+	memcpy(m_image, srcChar, sizeof srcChar);
+
+	m_edit			= false;
+	m_voxelSize		= src.m_voxelSize;
+}
+
+
+
+void Image::resetInformations()
+{
+	m_edit			= false;
+	m_voxelSize		= vgm::Vec3f( 1.f, 1.f, 1.f );
+}
+
+
+
+} // namespace basic
+
+} // namespace vgd
+
+
+
+
+#else // #ifdef __OPENGLES2__
+
+
+
+
 #include <boost/thread.hpp>
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgDebug/helpers.hpp>
@@ -1133,3 +1601,5 @@ void Image::updateInformations()
 } // namespace basic
 
 } // namespace vgd
+
+#endif // #ifdef __OPENGLES2__
