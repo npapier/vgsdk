@@ -5,7 +5,7 @@
 
 #include "vgd/basic/Image.hpp"
 
-#ifdef __OPENGLES2__
+#ifdef __STBIMAGE__
 
 #include "vgd/basic/Image.hpp"
 #include "vgd/basic/FilenameExtractor.hpp"
@@ -468,7 +468,7 @@ void Image::resetInformations()
 
 
 
-#else // #ifdef __OPENGLES2__
+#else // #ifdef __STBIMAGE__
 
 
 
@@ -1602,4 +1602,4 @@ void Image::updateInformations()
 
 } // namespace vgd
 
-#endif // #ifdef __OPENGLES2__
+#endif // #ifdef __STBIMAGE__
