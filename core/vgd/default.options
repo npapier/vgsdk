@@ -5,12 +5,13 @@ version		= '0-5'
 
 from SCons.Script.SConscript import SConsEnvironment
 platform = SConsEnvironment.sbf.myPlatform
-configFlags = SConsEnvironment.sbf.myEnv['configFlags']
+env = SConsEnvironment.sbf.myEnv
+configFlags = env['configFlags']
 
-uses = [ 'boost', 'swigShp' ]
+uses = ['boost']
 
 if 'OPENGLES2' in configFlags:
-	defines = ['__OPENGLES2__', '__STBIMAGE__']
+	defines = ['__STBIMAGE__']
 	uses.extend(['stbImage', 'stbImageWrite', 'stbImageResize'])
 else:
 	if platform == 'win':
@@ -20,3 +21,5 @@ else:
 
 libs		= [ 'vgDebug 0-5', 'vgm 0-5', 'sbf 0-0' ]
 deps		= [ '../vgBase', '../vgDebug', '../vgm' ]
+
+if 'swig' in env['stages']:	uses.append('swigShp')

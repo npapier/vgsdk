@@ -7,7 +7,7 @@
 #ifndef _VGD_BASIC_IMAGE_HPP
 #define _VGD_BASIC_IMAGE_HPP
 
-#ifdef __OPENGLES2__
+#ifdef __STBIMAGE__
 
 #include <utility>
 #include "vgd/basic/IImage.hpp"
@@ -453,7 +453,7 @@ private:
 
 } // namespace vgd
 
-#else // #ifdef __OPENGLES2__
+#else // #ifdef __STBIMAGE__
 
 
 
@@ -1104,6 +1104,6 @@ private:
 
 } // namespace vgd
 
-#endif // #ifdef __OPENGLES2__
+#endif // #ifdef __STBIMAGE__
 
 #endif // #ifndef _VGD_BASIC_IMAGE_HPP
