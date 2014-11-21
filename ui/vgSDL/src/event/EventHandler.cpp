@@ -1,9 +1,10 @@
-// VGSDK - Copyright (C) 2009, 2011, Clement Forest and Nicolas Papier.
+// VGSDK - Copyright (C) 2009, 2011, 2014 Clement Forest, Nicolas Papier and Philippe Sengchanpheng.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Clement Forest
 // Author Nicolas Papier
 // Author Guillaume Brocker
+// Author Philippe Sengchanpheng
 
 #include "vgSDL/event/EventHandler.hpp"
 
@@ -11,6 +12,8 @@
 #include <SDL_version.h>
 #include "vgSDL/event/device/Mouse.hpp"
 #include "vgSDL/event/device/Joystick.hpp"
+#include "vgSDL/event/device/Keyboard.hpp"
+#include "vgSDL/event/device/Timer.hpp"
 
 
 
@@ -85,9 +88,11 @@ void EventHandler::dispatchEvents()
 			Joystick::handleEvent( g_instance->m_events[i].jhat );
 			break;
 		case SDL_MOUSEMOTION:
+			Mouse::handleEvent(g_instance->m_events[i].motion);
+			break;
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP:
-			Mouse::handleEvent(g_instance->m_events[i]);
+			Mouse::handleEvent(g_instance->m_events[i].button);
 			break;
 		}
 	}

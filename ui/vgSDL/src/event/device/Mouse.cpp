@@ -10,9 +10,12 @@
 #include <SDL_version.h>
 
 #include <vgd/event/detail/GlobalButtonStateSet.hpp>
+#include <vgd/event/MouseButtonEvent.hpp>
+#include <vgd/event/MouseWheelEvent.hpp>
 #include <vgd/event/Location2Event.hpp>
 
 #include <vgSDL/event/EventHandler.hpp>
+#include <vgSDL/event/helpers.hpp>
 
 
 
@@ -40,31 +43,76 @@ Mouse::~Mouse()
 }
 
 
-void Mouse::handleEvent( const SDL_Event & event )
+void Mouse::handleEvent( const SDL_MouseMotionEvent & event )
 {
-	vgd::Shp<Mouse> mouse = find(event.motion.which);
+	vgd::Shp<Mouse> mouse = find(event.which);
 
 	if ( !mouse )
 		return;
 
-	switch(event.type)
-	{
-		case SDL_MOUSEMOTION:
-		{
-			using ::vgd::event::Location2Event;
-			using ::vgd::event::Location2;
-			vgm::Vec2f location((float)event.motion.x,(float)event.motion.y);
-			vgd::Shp<Location2Event> locationEvent(
-				new vgd::event::Location2Event(
-					mouse.get(),
-					vgd::event::detail::GlobalButtonStateSet::get(),
-					location,
-					mouse->m_previousLocation,
-					vgm::Vec2f(0,0) ) );
+	using ::vgd::event::Location2Event;
+	using ::vgd::event::Location2;
+	const vgm::Vec2f location = getLocation(&event);
+	vgd::Shp<Location2Event> locationEvent(
+		new vgd::event::Location2Event(
+			mouse.get(),
+			vgd::event::detail::GlobalButtonStateSet::get(),
+			location,
+			mouse->m_previousLocation,
+			getSize() ) );
 
-			mouse->fireEvent(locationEvent);
-			break;
-		}
+	mouse->fireEvent(locationEvent);
+
+	// Update previous location
+	mouse->m_previousLocation = location;
+}
+
+void Mouse::handleEvent(const SDL_MouseButtonEvent & event)
+{
+	vgd::Shp<Mouse> mouse = find(event.which);
+
+	if (!mouse)
+	{
+		vgAssert(false);
+		return;
+	}
+
+	// Update global button states
+	updateGlobalButtonStates(&event);
+	// update the position
+	mouse->m_previousLocation = getLocation(&event);
+
+	// Processes normal buttons (left, middle and right).
+	if (event.button == SDL_BUTTON_LEFT || event.button == SDL_BUTTON_RIGHT || event.button == SDL_BUTTON_MIDDLE)
+	{
+		vgd::event::MouseButtonEvent	* mouseEvent = 0;
+		mouseEvent = new vgd::event::MouseButtonEvent(
+			mouse.get(),
+			vgd::event::detail::GlobalButtonStateSet::get(),
+			getButtonId(&event),
+			getButtonState(&event),
+			getLocation(&event),
+			getSize()
+			);
+		mouse->fireEvent(vgd::makeShp(mouseEvent));
+	}
+	// Processes mouse wheel events.
+	else if (event.button == SDL_BUTTON_WHEELDOWN || event.button == SDL_BUTTON_WHEELUP)
+	{
+		vgd::event::MouseWheelEvent * mouseWheelEvent = 0;
+		const int32		delta = (event.button == SDL_BUTTON_WHEELDOWN) ? -10 : +10;
+
+		mouseWheelEvent = new vgd::event::MouseWheelEvent(
+			mouse.get(),
+			vgd::event::detail::GlobalButtonStateSet::get(),
+			vgd::event::MouseWheelEvent::VERTICAL,
+			delta
+			);
+		mouse->fireEvent(vgd::makeShp(mouseWheelEvent));
+	}
+	else
+	{
+		assert(false && "Unsupported mouse button.");
 	}
 }
 

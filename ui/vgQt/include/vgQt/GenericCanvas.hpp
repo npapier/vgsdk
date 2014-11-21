@@ -30,9 +30,6 @@ namespace vgQt
 template< typename CanvasT >
 struct GenericCanvas : public QWidget, public CanvasT
 {
-
-public:
-
     /**
      * @brief	Constructor that builds a canvas with its own OpenGL context.
 	 *
@@ -160,6 +157,12 @@ public:
             unsetCurrent();
         }
     }
+
+	/*bool on_focus_in_event(GdkEventFocus * event)
+	{
+	vgd::event::detail::GlobalButtonStateSet::clear();
+	return Gtk::DrawingArea::on_focus_in_event(event);
+	}*/
 
 protected:
 
