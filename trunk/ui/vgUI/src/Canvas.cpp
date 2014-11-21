@@ -432,7 +432,8 @@ void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 {
 	vgeGL::engine::SceneManager::onEvent( event );
 
-	if( m_debugEvents )
+	if (true)
+	//if( m_debugEvents ) ?????????????????
 	{
 		using namespace vgd::event;
 		using namespace vgd::event::detail;

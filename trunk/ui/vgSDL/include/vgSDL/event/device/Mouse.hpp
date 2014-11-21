@@ -12,7 +12,8 @@
 
 #include "vgSDL/vgSDL.hpp"
 
-union SDL_Event;
+#include <SDL_events.h>
+#include <SDL_mouse.h>
 
 
 
@@ -40,7 +41,8 @@ struct VGSDL_API Mouse : public ::vgd::event::device::Mouse
 	 * @name	SDL Event Handling
 	 */
 	//@{
-	static void handleEvent( const SDL_Event & event );
+	static void handleEvent(const SDL_MouseMotionEvent & event);
+	static void handleEvent(const SDL_MouseButtonEvent & event);
 	//@}
 
 	/**

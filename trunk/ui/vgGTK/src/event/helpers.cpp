@@ -224,7 +224,8 @@ const int getKeyboardButton( const GdkEventKey * event )
 	case GDK_plus:	return KeyboardButtonEvent::KEY_ADD;
 	case GDK_minus:	return KeyboardButtonEvent::KEY_SUBTRACT;
 
-	case GDK_colon:			return ',';
+	case GDK_colon:			return ':';
+	case GDK_comma:			return ',';
 	case GDK_semicolon:		return ';';
 	case GDK_less:			return '<';
 	case GDK_equal:			return '=';

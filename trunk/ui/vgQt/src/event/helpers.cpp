@@ -80,7 +80,8 @@ const int getKeyboardButton( const QKeyEvent * event )
 	case Qt::Key_Period:		return KeyboardButtonEvent::KEY_PERIOD;
 	case Qt::Key_Slash:			return KeyboardButtonEvent::KEY_SLASH;
 
-    case Qt::Key_Colon:			return ',';
+	case Qt::Key_Colon:			return ':';
+	case Qt::Key_Comma:			return ',';
     case Qt::Key_Semicolon:		return ';';
     case Qt::Key_Less:			return '<';
     case Qt::Key_Equal:			return '=';
