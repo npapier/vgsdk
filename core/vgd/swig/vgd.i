@@ -18,8 +18,8 @@
 
 #define VGD_API
 #define VGE_API
-#define VGEGL_API
-#define VGEGL_CLASS_API
+//#define VGEGL_API
+//#define VGEGL_CLASS_API
 #define BOOST_NOEXCEPT
 #pragma SWIG nowarn=SWIGWARN_PARSE_NESTED_struct
 
@@ -127,10 +127,10 @@
 
 #include "vgd/vgd.hpp"
 #include "vge/vge.hpp"
-#include "vgeGL/vgeGL.hpp"
+//#include "vgeGL/vgeGL.hpp"
 
 #include "vgd/visitor/helpers.hpp"
-#include "vgeGL/itf/IUnderlay.hpp"
+//#include "vgeGL/itf/IUnderlay.hpp"
 // #include <vge/technique/Technique.hpp>
 // #include <vgeGL/technique/Technique.hpp>
 #include "vgd/field/EditorRO.hpp"
@@ -461,7 +461,7 @@ typedef unsigned char uint8;
 
 
 %include "vgd/visitor/helpers.hpp"
-%include "vgeGL/itf/IUnderlay.hpp"
+//%include "vgeGL/itf/IUnderlay.hpp"
 %include "vgd/event/Listener.hpp"
 %include "vgd/event/DeviceManager.hpp"
 // %include "vge/technique/Technique.hpp"
