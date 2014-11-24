@@ -22,7 +22,7 @@
 #include <sbf/operations.hpp>
 #include <vgDebug/helpers.hpp>
 
-
+#include <cassert>
 
 namespace vgd
 {
@@ -31,7 +31,13 @@ namespace basic
 {
 
 
-Image::Image()
+Image::Image() 
+	: m_image(NULL)
+	, m_edit(false)
+	, m_voxelSize(1.f, 1.f, 1.f)
+	, m_width(0)
+	, m_height(0)
+	, m_comp(0)
 {
 	resetInformations();
 }
@@ -39,6 +45,12 @@ Image::Image()
 
 
 Image::Image( const std::string strFilename )
+	: m_image(NULL)
+	, m_edit(false)
+	, m_voxelSize(1.f, 1.f, 1.f)
+	, m_width(0)
+	, m_height(0)
+	, m_comp(0)
 {
 	resetInformations();
 
@@ -105,7 +117,7 @@ const bool Image::load( const std::string strFilename )
 	// Create a new Image name.
 	m_image = stbi_load(strFilename.c_str(), &m_width, &m_height, &m_comp, 0);
 
-	if (m_image)
+	if (m_image != NULL)
 	{
 		vgLogDebug("Image::load: %s (%i x %i) loaded.", strFilename.c_str(), width(), height() );
 		return true;
@@ -129,9 +141,9 @@ const bool Image::save( const std::string strFilename ) const
 
 	bool retVal = false;
 
-	if(extension == "png")	retVal = stbi_write_png(strFilename.c_str(), m_width, m_height, m_comp, m_image, 0);
-	if(extension == "bmp")	retVal = stbi_write_bmp(strFilename.c_str(), m_width, m_height, m_comp, m_image);
-	if(extension == "tga")	retVal = stbi_write_tga(strFilename.c_str(), m_width, m_height, m_comp, m_image);
+	if(extension == ".png")	retVal = stbi_write_png(strFilename.c_str(), m_width, m_height, m_comp, m_image, 0);
+	if(extension == ".bmp")	retVal = stbi_write_bmp(strFilename.c_str(), m_width, m_height, m_comp, m_image);
+	if(extension == ".tga")	retVal = stbi_write_tga(strFilename.c_str(), m_width, m_height, m_comp, m_image);
 
 
 	if ( retVal )
@@ -218,26 +230,33 @@ const bool Image::create( const IImage& Image )
 
 void Image::destroy()
 {
-	stbi_image_free(m_image);
+	if(m_image != NULL)
+		stbi_image_free(m_image);
+
+	m_image = NULL;
 	resetInformations();
 }
 
 
 const bool Image::scale( const vgm::Vec3i size)
 {
-	char unsigned * outputData = NULL;
-	bool retVal = false;
-	stbir_resize_uint8( m_image, m_width, m_height,  0,
+	unsigned char * outputData = (unsigned char*) malloc(sizeof(unsigned char) * size[0] * size[1] * m_comp);
+	bool retVal = stbir_resize_uint8( m_image, m_width, m_height,  0,
 						outputData, size[0], size[1], 0, m_comp);
 
-	if (outputData)
+	if (retVal && outputData)
 	{
-		m_image = outputData;
-		retVal = true;
+		stbi_image_free(m_image);
+		m_image = (unsigned char *)malloc( sizeof(unsigned char) * size[0] * size[1] * m_comp );
+		memcpy(m_image, outputData, sizeof(outputData));
+		stbi_image_free(outputData);
+
+		//m_image = outputData;
+		m_width = size[0];
+		m_height = size[1];
 	}
 
-	return true;
-
+	return retVal;
 }
 
 
@@ -443,9 +462,14 @@ const bool Image::isVoxelSizeSupported() const
 
 void Image::copy( const Image& src )
 {
+	vgAssertN( m_image == NULL, "Pixel data pointer isn't null, memory leak" );
 	unsigned char * srcChar = (unsigned char *)src.pixels();
-	m_image = NULL;
-	memcpy(m_image, srcChar, sizeof srcChar);
+	m_image = (unsigned char *)malloc( sizeof(unsigned char) * src.width() * src.height() * src.components() );
+	memcpy(m_image, srcChar, sizeof(srcChar));
+
+	m_width = src.width();
+	m_height = src.height();
+	m_comp = src.components();
 
 	m_edit			= false;
 	m_voxelSize		= src.m_voxelSize;
