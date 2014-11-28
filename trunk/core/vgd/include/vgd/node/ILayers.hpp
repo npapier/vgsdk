@@ -6,7 +6,7 @@
 #ifndef _VGD_NODE_ILAYERS_HPP
 #define _VGD_NODE_ILAYERS_HPP
 
-#include "vgd/basic/ImageUtilities.hpp"
+#include "vgd/basic/SliceType.hpp"
 #include "vgd/basic/ITransferFunction.hpp"
 #include "vgd/field/IImageShp.hpp"
 #include "vgd/field/TSingleField.hpp"

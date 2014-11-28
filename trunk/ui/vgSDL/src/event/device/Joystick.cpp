@@ -180,7 +180,7 @@ vgd::Shp<Joystick> Joystick::create( const int index )
 {
 	assert( isSubsystemInitialized() && "SDL joystick not initialized !" );
 
-	// Opens the joytsick.
+	// Opens the joystick.
 	SDL_Joystick* joystick = SDL_JoystickOpen( index );
 	if(joystick != 0)
 	{

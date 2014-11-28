@@ -8,6 +8,7 @@
 
 #include <vgm/operations.hpp>
 #include "vgd/Shp.hpp"
+#include "vgd/basic/SliceType.hpp"
 #include "vgd/basic/Image.hpp"
 #include "vgd/basic/MinMax.hpp"
 
@@ -15,21 +16,9 @@
 
 namespace vgd
 {
-	
+
 namespace basic
 {
-
-/**
- * @brief Defines name of different slices in a 3D image.
- * 
- * @ingroup g_images
- */
-typedef enum {
-	AXIAL_SLICE = 0,
-	FRONTAL_SLICE,
-	SAGITTAL_SLICE
-} SliceType;
-
 
 /**
  * @brief Collection of methods to apply on images.
