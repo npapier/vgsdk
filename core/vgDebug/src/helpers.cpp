@@ -15,7 +15,6 @@
 #include <iostream>
 #include <sbf/pkg/Module.hpp>
 #include <set>
-#include <vgd/Shp.hpp>
 #include <vgDebug/StreamTee.hpp>
 
 
@@ -23,9 +22,9 @@
 namespace
 {
 
-vgd::Shp<vgDebug::StreamTee> outRedirection;
-vgd::Shp<vgDebug::StreamTee> errRedirection;
-vgd::Shp<vgDebug::StreamTee> logRedirection;
+boost::shared_ptr<vgDebug::StreamTee> outRedirection;
+boost::shared_ptr<vgDebug::StreamTee> errRedirection;
+boost::shared_ptr<vgDebug::StreamTee> logRedirection;
 
 std::string				g_logFilePrefix;
 std::string				g_logFileSuffix;
