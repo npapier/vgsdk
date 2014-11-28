@@ -476,6 +476,18 @@ RawMatrix& MatrixR::getValue()
 
 
 
+const float * MatrixR::getPtr() const
+{
+	return &matrix[0][0];
+}
+
+float * MatrixR::getPtr()
+{
+	return &matrix[0][0];
+}
+
+
+
 float *MatrixR::operator []( int32 i )
 {
 	return &matrix[i][0];

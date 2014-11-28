@@ -257,6 +257,16 @@ struct VGM_API MatrixR
 	RawMatrix&			getValue();
 
 	/**
+	 * @brief Returns a pointer to the matrix data.
+	 */
+	const float * getPtr() const;
+
+	/**
+	 * @brief Returns a pointer to the matrix data.
+	 */
+	float * getPtr();
+
+	/**
 	 * @brief Make it look like a usual matrix (so you can do m[3][2], returns element in 3th row and 2th column).
 	 * 
 	 * @remarks MatrixR m;   m[x][y] returns element in x th row and y th column.
