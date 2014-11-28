@@ -80,7 +80,7 @@ struct Rectangle : public vgm::Vector< T, 4 >
 	 */
 	Rectangle( const Rectangle& v )
 	{
-		setValue( v );
+		this->setValue( v );
 	}
 
 	/**
@@ -105,7 +105,7 @@ struct Rectangle : public vgm::Vector< T, 4 >
 	{
 		if ( this != &v )
 		{
-			setValue( v );
+			this->setValue( v );
 		}
 	
 		return *this;
@@ -119,7 +119,7 @@ struct Rectangle : public vgm::Vector< T, 4 >
 	//@{
 	void set( const T x, const T y, const T width, const T height )
 	{
-		setValue( x, y, width, height );
+		this->setValue( x, y, width, height );
 	}
 
 	T&			x()				{ return Vector<T,4>::m_tCoord[0]; }
