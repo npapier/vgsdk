@@ -2,15 +2,15 @@ description	= '(V)ersatile (G)raphical (D)ata'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
+uses = ['boost', 'glm']
 
 from SCons.Script.SConscript import SConsEnvironment
 platform = SConsEnvironment.sbf.myPlatform
 env = SConsEnvironment.sbf.myEnv
 configFlags = env['configFlags']
+emscriptenInStages = 'emcc' in env['stages']
 
-uses = ['boost']
-
-if 'OPENGLES2' in configFlags:
+if ('STBIMAGE' in configFlags) or emscriptenInStages:
 	defines = ['__STBIMAGE__']
 	uses.extend(['stbImage', 'stbImageWrite', 'stbImageResize'])
 else:
