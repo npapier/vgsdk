@@ -216,7 +216,7 @@ const int Joystick::getIndex() const
 {
 	assert( m_joystick != 0 );
 
-	return SDL_JoystickIndex( m_joystick );
+	return SDL_JoystickInstanceID(m_joystick);
 }
 
 
@@ -225,7 +225,7 @@ const std::string Joystick::getName() const
 {
 	assert( isSubsystemInitialized() && "SDL joystick not initialized !" );
 
-	return std::string( SDL_JoystickName(getIndex()) );
+	return std::string(SDL_JoystickNameForIndex(getIndex()));
 }
 
 

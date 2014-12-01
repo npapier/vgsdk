@@ -76,7 +76,7 @@ struct VGSDL_API Joystick : public ::vgd::event::device::Joystick
 
 		for( int index = 0; index != joyCount; ++index )
 		{
-			result.insert( result.end(), std::string(SDL_JoystickName(index)) );
+			result.insert(result.end(), std::string(SDL_JoystickNameForIndex(index)));
 		}
 
 		return result;

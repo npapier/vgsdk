@@ -12,6 +12,7 @@
 #include <vgd/event/ButtonEvent.hpp>
 #include <vgd/event/Location2.hpp>
 
+#include <SDL_events.h>
 struct SDL_KeyboardEvent;
 struct SDL_MouseButtonEvent;
 struct SDL_MouseMotionEvent;
@@ -32,7 +33,7 @@ namespace event
  *
  * @see		vgd::event::KeyboardButtonEvent.
  */
-	const int getKeyboardButton(const SDL_KeyboardEvent * event);
+	const int getKeyboardButton(const SDL_Event * event);
 
 /**
  * @brief	Helper that retrieves the vgSDK button state from the given SDL_KeyboardEvent.
@@ -41,7 +42,7 @@ namespace event
  *
  * @return	the vgSDK button state.
  */
-	const ::vgd::event::ButtonEvent::State getButtonState(const SDL_KeyboardEvent * event);
+	const ::vgd::event::ButtonEvent::State getButtonState(const SDL_Event * event);
 
 
 /**
@@ -49,7 +50,7 @@ namespace event
  *
  * @param	event	a pointer to an event.
  */
-	void updateGlobalButtonStates(const SDL_KeyboardEvent * event);
+	void updateGlobalButtonStates(const SDL_Event * event);
 
 /**
 * @brief	Helper that retrieves the vgSDK mouse button identifier from the given SDL button event

@@ -11,8 +11,6 @@
 #include <vgd/event/device/Keyboard.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/MouseButtonEvent.hpp>
-#include <SDL_events.h>
-#include <SDL_keysym.h>
 #include <vgDebug/helpers.hpp>
 
 #include <iostream>
@@ -23,12 +21,17 @@ namespace vgSDL
 namespace event
 {
 
-const int getKeyboardButton(const SDL_KeyboardEvent * event)
+const int getKeyboardButton(const SDL_Event * event)
 {
     using vgd::event::KeyboardButtonEvent;
-	SDL_EnableUNICODE(1);
+	SDL_KeyboardEvent keyboardEvent = event->key;
+	
+	//if (keyboardEvent.type == SDL_TEXTINPUT)
+	//{
+	//	return (int)event->text.text[0];
+	//}
 
-	switch (event->keysym.sym)
+	switch (keyboardEvent.keysym.sym)
     {
 	case SDLK_BACKSPACE: 	return KeyboardButtonEvent::KEY_BACK;
     case SDLK_TAB:          return KeyboardButtonEvent::KEY_TAB;
@@ -62,7 +65,7 @@ const int getKeyboardButton(const SDL_KeyboardEvent * event)
     case SDLK_DOWN:      	return KeyboardButtonEvent::KEY_DOWN;
 
 	//case SDLK_SELECT:    	return KeyboardButtonEvent::KEY_SELECT;
-	case SDLK_PRINT:     	return KeyboardButtonEvent::KEY_PRINT;
+	case SDLK_PRINTSCREEN:  return KeyboardButtonEvent::KEY_PRINT;
 	//case SDLK_EXECUTE:   	return KeyboardButtonEvent::KEY_EXEC;
 
     case SDLK_INSERT:       return KeyboardButtonEvent::KEY_INSERT;
@@ -127,8 +130,8 @@ const int getKeyboardButton(const SDL_KeyboardEvent * event)
 	case SDLK_x:
 	case SDLK_y:
 	case SDLK_z:
-	{
-		return event->keysym.unicode;
+	{	
+		return SDL_GetKeyName(event->key.keysym.sym)[0];
 	}
 
 	case SDLK_LEFTPAREN:	return '(';
@@ -164,19 +167,19 @@ const int getKeyboardButton(const SDL_KeyboardEvent * event)
     //case SDLK_F22:			return KeyboardButtonEvent::KEY_F22;
     //case SDLK_F23:			return KeyboardButtonEvent::KEY_F23;
     //case SDLK_F24:			return KeyboardButtonEvent::KEY_F24;
-    case SDLK_NUMLOCK:		return KeyboardButtonEvent::KEY_NUMLOCK;
-    case SDLK_SCROLLOCK:	return KeyboardButtonEvent::KEY_SCROLL;
+	case SDLK_NUMLOCKCLEAR:	return KeyboardButtonEvent::KEY_NUMLOCK;
+	case SDLK_SCROLLLOCK:	return KeyboardButtonEvent::KEY_SCROLL;
 
-	case SDLK_KP0:			return KeyboardButtonEvent::KEY_NUMPAD0;
-	case SDLK_KP1:			return KeyboardButtonEvent::KEY_NUMPAD1;
-	case SDLK_KP2:			return KeyboardButtonEvent::KEY_NUMPAD2;
-	case SDLK_KP3:			return KeyboardButtonEvent::KEY_NUMPAD3;
-	case SDLK_KP4:			return KeyboardButtonEvent::KEY_NUMPAD4;
-	case SDLK_KP5:			return KeyboardButtonEvent::KEY_NUMPAD5;
-	case SDLK_KP6:			return KeyboardButtonEvent::KEY_NUMPAD6;
-	case SDLK_KP7:			return KeyboardButtonEvent::KEY_NUMPAD7;
-	case SDLK_KP8:			return KeyboardButtonEvent::KEY_NUMPAD8;
-	case SDLK_KP9:			return KeyboardButtonEvent::KEY_NUMPAD9;
+	case SDLK_KP_0:			return KeyboardButtonEvent::KEY_NUMPAD0;
+	case SDLK_KP_1:			return KeyboardButtonEvent::KEY_NUMPAD1;
+	case SDLK_KP_2:			return KeyboardButtonEvent::KEY_NUMPAD2;
+	case SDLK_KP_3:			return KeyboardButtonEvent::KEY_NUMPAD3;
+	case SDLK_KP_4:			return KeyboardButtonEvent::KEY_NUMPAD4;
+	case SDLK_KP_5:			return KeyboardButtonEvent::KEY_NUMPAD5;
+	case SDLK_KP_6:			return KeyboardButtonEvent::KEY_NUMPAD6;
+	case SDLK_KP_7:			return KeyboardButtonEvent::KEY_NUMPAD7;
+	case SDLK_KP_8:			return KeyboardButtonEvent::KEY_NUMPAD8;
+	case SDLK_KP_9:			return KeyboardButtonEvent::KEY_NUMPAD9;
 	case SDLK_KP_PERIOD:	return KeyboardButtonEvent::KEY_NUMPAD_DELETE;
 	case SDLK_KP_DIVIDE:	return KeyboardButtonEvent::KEY_NUMPAD_DIVIDE;
 	case SDLK_KP_MULTIPLY:	return KeyboardButtonEvent::KEY_NUMPAD_MULTIPLY;
@@ -186,14 +189,14 @@ const int getKeyboardButton(const SDL_KeyboardEvent * event)
 	case SDLK_KP_EQUALS:	return KeyboardButtonEvent::KEY_NUMPAD_EQUAL;
 
     default:
-		vgLogDebug("Unsupported keyboard key %i (%s).", event->keysym, event->keysym);
+		vgLogDebug("Unsupported keyboard key %i (%s).", SDL_GetScancodeName(keyboardEvent.keysym.scancode), SDL_GetKeyName(keyboardEvent.keysym.sym));
         return 0;
     }
 }
 
-const ::vgd::event::ButtonEvent::State getButtonState(const SDL_KeyboardEvent * event)
+const ::vgd::event::ButtonEvent::State getButtonState(const SDL_Event * event)
 {
-    switch(event->state)
+    switch(event->key.state)
     {
 		case SDL_PRESSED : return ::vgd::event::ButtonEvent::DOWN;
 		case SDL_RELEASED: return ::vgd::event::ButtonEvent::UP;
@@ -202,7 +205,7 @@ const ::vgd::event::ButtonEvent::State getButtonState(const SDL_KeyboardEvent * 
     }
 }
 
-void updateGlobalButtonStates(const SDL_KeyboardEvent * event)
+void updateGlobalButtonStates(const SDL_Event * event)
 {
     using ::vgd::event::ButtonEvent;
     using ::vgd::event::detail::GlobalButtonStateSet;
@@ -254,6 +257,12 @@ const uint32 getButtonId(const SDL_MouseButtonEvent * event)
 	case SDL_BUTTON_MIDDLE:
 		return ::vgd::event::MouseButtonEvent::MOUSE_BUTTON_3;
 
+	case SDL_BUTTON_X1:
+		return ::vgd::event::MouseButtonEvent::MOUSE_BUTTON_4;
+
+	case SDL_BUTTON_X2:
+		return ::vgd::event::MouseButtonEvent::MOUSE_BUTTON_5;
+
 	default:
 		assert(false && "Unsupported mouse button number.");
 		return 0;
@@ -262,11 +271,13 @@ const uint32 getButtonId(const SDL_MouseButtonEvent * event)
 
 const ::vgd::event::Location2::Location getLocation(const SDL_MouseMotionEvent * event)
 {
-	SDL_Surface * surface = SDL_GetVideoSurface();
+	SDL_Window* window = SDL_GetMouseFocus();
+	int width, height;
+	SDL_GetWindowSize(window, &width, &height);
 
 	// Retrieves the location from the event.
 	float	locationX = static_cast< float >(event->x);
-	float	locationY = static_cast< float >(surface->h - event->y);
+	float	locationY = static_cast< float >(height - event->y);
 
 	// Job's done.
 	return ::vgd::event::Location2::Location(locationX, locationY);
@@ -274,11 +285,13 @@ const ::vgd::event::Location2::Location getLocation(const SDL_MouseMotionEvent *
 
 const ::vgd::event::Location2::Location getLocation(const SDL_MouseButtonEvent * event)
 {
-	SDL_Surface * surface = SDL_GetVideoSurface();
+	SDL_Window* window = SDL_GetMouseFocus();
+	int width, height;
+	SDL_GetWindowSize(window, &width, &height);
 
 	// Retrieves the location from the event.
 	float	locationX = static_cast< float >(event->x);
-	float	locationY = static_cast< float >(surface->h - event->y);
+	float	locationY = static_cast< float >(height - event->y);
 
 	// Job's done.
 	return ::vgd::event::Location2::Location(locationX, locationY);
@@ -286,9 +299,9 @@ const ::vgd::event::Location2::Location getLocation(const SDL_MouseButtonEvent *
 
 const ::vgd::event::Location2::Size getSize()
 {
-	SDL_Surface * surface = SDL_GetVideoSurface();
-	float width = surface->w;
-	float height = surface->h;
+	SDL_Window* window = SDL_GetMouseFocus();
+	int width, height;
+	SDL_GetWindowSize(window, &width, &height);
 
 	return ::vgd::event::Location2::Location(width, height);
 }

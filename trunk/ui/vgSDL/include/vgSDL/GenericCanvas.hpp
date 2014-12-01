@@ -8,7 +8,7 @@
 #ifndef _VGSDL_GENERICCANVAS_HPP_
 #define _VGSDL_GENERICCANVAS_HPP_
 
-#include <sdl.h>
+#include <SDL.h>
 
 #include <glc_sdl/glc_sdl.hpp>
 
@@ -79,13 +79,42 @@ struct GenericCanvas : public CanvasT
 
 		//Set up screen 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+#ifdef __OPENGLES2__
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#else
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+#endif
 
-		m_screen = SDL_SetVideoMode(800, 600, 16, SDL_OPENGL);
-		if (!m_screen)
+
+
+		// Create an application window with the following settings:
+		m_window = SDL_CreateWindow(
+			"An SDL2 window with OpenGL",	// window title
+			SDL_WINDOWPOS_UNDEFINED,		// initial x position
+			SDL_WINDOWPOS_UNDEFINED,		// initial y position
+			640,							// width, in pixels
+			480,							// height, in pixels
+			SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
+#ifdef __OPENGLES2__
+#else
+			//| SDL_GL_CONTEXT_DEBUG_FLAG
+#endif
+
+			);
+
+		// Check that the window was successfully made
+		if (!m_window)
 		{
-			vgLogDebug("Unable to set video mode: %s\n", SDL_GetError());
+			vgLogDebug("Unable to create window: %s\n", SDL_GetError());
 			return;
 		}
+
+		m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
 	}
 
     /**
@@ -113,12 +142,23 @@ struct GenericCanvas : public CanvasT
 
     ~GenericCanvas()
     {
-		if ( m_screen )	SDL_FreeSurface(m_screen);
-        CanvasT::shutdownVGSDK();
+		CanvasT::shutdownVGSDK();
+		if (m_window)	SDL_DestroyWindow(m_window);
     }
 
 	void mainLoop()
 	{
+		// Simulate a resize event
+		int width, height;
+		SDL_GetWindowSize(m_window, &width, &height);
+		const vgm::Vec2i v2iSize(width, height);
+		if (CanvasT::startVGSDK())
+		{
+			CanvasT::resize(v2iSize);
+			unsetCurrent();
+		}
+
+		// Main loop
 		bool haveToLoop = true;
 		SDL_Event event;
 		while ( haveToLoop )
@@ -128,24 +168,17 @@ struct GenericCanvas : public CanvasT
 			if (result == 0)
 				continue;
 
-			switch (event.type)
+			if (event.type == SDL_WINDOWEVENT)
 			{
-				case SDL_VIDEORESIZE:
+				switch (event.window.event)
 				{
-					SDL_ResizeEvent *r = &(event.resize);
-					const vgm::Vec2i v2iSize(r->w, r->h);
-					if (CanvasT::startVGSDK())
-					{
-						CanvasT::resize(v2iSize);
-						unsetCurrent();
-					}
-					break;
-				}
+				case SDL_WINDOWEVENT_SHOWN:
+				{
+					SDL_Log("Window %d shown", event.window.windowID);
 
-				case SDL_VIDEOEXPOSE:
-				{
-					SDL_ExposeEvent *e = &(event.expose);
-					const vgm::Vec2i v2iSize(m_screen->w, m_screen->h);
+					int width, height;
+					SDL_GetWindowSize(m_window, &width, &height);
+					const vgm::Vec2i v2iSize(width, height);
 
 					if (CanvasT::startVGSDK())
 					{
@@ -154,25 +187,94 @@ struct GenericCanvas : public CanvasT
 					}
 					break;
 				}
+				case SDL_WINDOWEVENT_HIDDEN:
+					SDL_Log("Window %d hidden", event.window.windowID);
+					break;
+				case SDL_WINDOWEVENT_EXPOSED:
+				{
+					int width, height;
+					SDL_GetWindowSize(m_window, &width, &height);
+					const vgm::Vec2i v2iSize(width, height);
 
+					if (CanvasT::startVGSDK())
+					{
+						CanvasT::paint(v2iSize, CanvasT::getBoundingBoxUpdate());
+						unsetCurrent();
+					}
+					break;
+				}
+				case SDL_WINDOWEVENT_MOVED:
+					SDL_Log("Window %d moved to %d,%d",
+						event.window.windowID, event.window.data1,
+						event.window.data2);
+					break;
+				case SDL_WINDOWEVENT_RESIZED:
+				{
+					SDL_Log("Window %d resized to %dx%d",
+						event.window.windowID, event.window.data1,
+						event.window.data2);
+					const vgm::Vec2i v2iSize(event.window.data1, event.window.data2);
+					if (CanvasT::startVGSDK())
+					{
+						CanvasT::resize(v2iSize);
+						unsetCurrent();
+					}
+					break;
+				}
+				case SDL_WINDOWEVENT_MINIMIZED:
+					SDL_Log("Window %d minimized", event.window.windowID);
+					break;
+				case SDL_WINDOWEVENT_MAXIMIZED:
+					SDL_Log("Window %d maximized", event.window.windowID);
+					break;
+				case SDL_WINDOWEVENT_RESTORED:
+					SDL_Log("Window %d restored", event.window.windowID);
+					break;
+				case SDL_WINDOWEVENT_ENTER:
+					SDL_Log("Mouse entered window %d",
+						event.window.windowID);
+					break;
+				case SDL_WINDOWEVENT_LEAVE:
+					SDL_Log("Mouse left window %d", event.window.windowID);
+					break;
+				case SDL_WINDOWEVENT_FOCUS_GAINED:
+					SDL_Log("Window %d gained keyboard focus",
+						event.window.windowID);
+					break;
+				case SDL_WINDOWEVENT_FOCUS_LOST:
+					SDL_Log("Window %d lost keyboard focus",
+						event.window.windowID);
+					break;
+				case SDL_WINDOWEVENT_CLOSE:
+					SDL_Log("Window %d closed", event.window.windowID);
+					break;
+				default:
+					SDL_Log("Window %d got unknown event %d",
+						event.window.windowID, event.window.event);
+					break;
+				}
+			}
+
+			switch (event.type)
+			{
 				case SDL_KEYDOWN:
 				case SDL_KEYUP:
+				//case SDL_TEXTINPUT:
 					event::device::Keyboard::handleEvent(event);
 					break;
 
 				case SDL_MOUSEMOTION:
 					event::device::Mouse::handleEvent(event.motion);
-					refreshForced(SYNCHRONOUS);
+					break;
+
+				case SDL_MOUSEWHEEL:
+					event::device::Mouse::handleEvent(event.wheel); 
 					break;
 
 				case SDL_MOUSEBUTTONDOWN:
 				case SDL_MOUSEBUTTONUP:
 					event::device::Mouse::handleEvent(event.button);
 					break;
-
-				//@todo mousebuttonup/down
-
-
 
 				case SDL_QUIT:
 					haveToLoop = false;
@@ -187,7 +289,7 @@ struct GenericCanvas : public CanvasT
 		// Creates device instances so we will receive vgd events.
 		if ( devices & vgd::event::DeviceManager::Keyboard )
 		{
-			addDevice( vgSDL::event::device::Keyboard::get(0) );
+			addDevice( vgSDL::event::device::Keyboard::get() );
 		}
 
 		if ( devices & vgd::event::DeviceManager::Mouse )
@@ -225,7 +327,9 @@ struct GenericCanvas : public CanvasT
 		{
 			if (startVGSDK())
 			{
-				const vgm::Vec2i v2iSize(m_screen->w, m_screen->h);
+				int width, height;
+				SDL_GetWindowSize(m_window, &width, &height);
+				const vgm::Vec2i v2iSize(width, height);
 				CanvasT::paint(v2iSize, CanvasT::getBoundingBoxUpdate());
 				unsetCurrent();
 			}
@@ -242,7 +346,10 @@ struct GenericCanvas : public CanvasT
 		}
 		else
 		{
-			SDL_UpdateRect(m_screen, 0, 0, 0, 0);
+			int width, height;
+			SDL_GetWindowSize(m_window, &width, &height);
+			SDL_Rect rect = { 0, 0, width, height };
+			SDL_UpdateWindowSurfaceRects(m_window, &rect, 1);
 		}
 	}
 
@@ -255,7 +362,8 @@ struct GenericCanvas : public CanvasT
 
 protected:
 
-	SDL_Surface * 	m_screen;
+	SDL_Window * 	m_window;
+	SDL_Renderer*	m_renderer;
 
 	/**
 	* @name	vgUI::Canvas specialization
@@ -263,7 +371,7 @@ protected:
 	//@{
 	glc_drawable_t * createDrawable()
 	{
-		return glc_sdl_drawable_create(0);
+		return glc_sdl_drawable_create(m_window);
 	}
 
 	void destroyDrawable(glc_drawable_t * drawable)

@@ -43,6 +43,7 @@ struct VGSDL_API Mouse : public ::vgd::event::device::Mouse
 	//@{
 	static void handleEvent(const SDL_MouseMotionEvent & event);
 	static void handleEvent(const SDL_MouseButtonEvent & event);
+	static void handleEvent(const SDL_MouseWheelEvent & event);
 	//@}
 
 	/**

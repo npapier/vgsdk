@@ -45,26 +45,14 @@ struct VGSDL_API Keyboard : public vgd::event::device::Keyboard
 	//@}
 
 	/**
-	* @brief	Searches for a keyboard at the given index.
-	*
-	* @param	index	an index for a keyboard
-	*
-	* @return	a shared pointer to a keyboard, empty if none
-	*/
-	static vgd::Shp< Keyboard > find(const int index);
-
-	/**
 	* @brief	Retrieves the keyboard with the given index, or create
 	* 			one if none exists.
 	*
 	*
-	* @param	index	an index for a keyboard
-	*
 	* @return	a shared pointer to a keyboard, empty on error
 	*
-	* @see		getNames, find
 	*/
-	static vgd::Shp< Keyboard > get(const int index);
+	static vgd::Shp< Keyboard > get();
 
 private:
 
@@ -75,12 +63,10 @@ private:
 	*/
 	Keyboard(const uint identifier = 0);
 
-	typedef std::vector< vgd::Wkp< Keyboard >  >	KeyboardCollection;
-
 	/**
-	* @brief The collection of keyboard already in use.
+	* @brief The keyboard in use.
 	*/
-	static KeyboardCollection	m_keyboardCache;
+	static vgd::Shp<Keyboard>	m_keyboard;
 
 };
 
