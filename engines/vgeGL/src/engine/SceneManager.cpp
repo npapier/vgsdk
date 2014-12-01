@@ -5,7 +5,10 @@
 
 #include "vgeGL/engine/SceneManager.hpp"
 
+#ifdef __USE_VGALG__
 #include <vgAlg/intersect/helpers.hpp>
+#endif
+
 #include <vgd/basic/Time.hpp>
 #include <vgd/basic/TimeDuration.hpp>
 #include <vgd/node/LayerPlan.hpp>
@@ -313,6 +316,11 @@ vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 vgd::node::VertexShape * SceneManager::castRay(	const int32 x, const int32 y,
 												vgm::TriangleExt& oABCP )
 {
+#ifndef __USE_VGALG__
+	#pragma message("SceneManager::castRay() disabled.")
+	vgAssert(false);
+	return 0;
+#else
 	// cast ray
 	vgd::node::VertexShape * hitShape = dynamic_cast< vgd::node::VertexShape *>(castRay(x, y));
 
@@ -339,11 +347,17 @@ vgd::node::VertexShape * SceneManager::castRay(	const int32 x, const int32 y,
 	{
 		return 0;
 	}
+#endif
 }
 
 
 vgd::node::VertexShape * SceneManager::castRay( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW, vgm::TriangleExt& oABCP )
 {
+#ifndef __USE_VGALG__
+	#pragma message("SceneManager::castRay() disabled.")
+	vgAssert(false);
+	return 0;
+#else
 	// cast ray
 	const vgeGL::basic::Hit * hit = castRayForHit(raySourceW, rayDirectionW);
 
@@ -371,6 +385,7 @@ vgd::node::VertexShape * SceneManager::castRay( const vgm::Vec3f raySourceW, con
 	{
 		return 0;
 	}
+#endif
 }
 
 

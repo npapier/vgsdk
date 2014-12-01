@@ -38,10 +38,16 @@ const GLenum convertMyFormat2GL( const vgd::basic::IImage::Format format )
 			break;
 
 		case IImage::BGR:
-			glformat = GL_BGR_EXT;
+			#ifdef __OPENGLES2__
+				glformat = 0;
+				vgAssertN( false, "IImage::BGR not support in GLES 2" );
+			#else
+				glformat = GL_BGR_EXT;
+			#endif
 			break;
 
 		case IImage::BGRA:
+			// GL_EXT_texture_format_BGRA8888
 			glformat = GL_BGRA_EXT;
 			break;
 

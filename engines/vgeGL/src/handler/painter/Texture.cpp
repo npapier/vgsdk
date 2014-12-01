@@ -32,6 +32,7 @@ namespace painter
 namespace
 {
 
+// @todo move into basic/helpers.hpp
 const GLenum convertInternalFormatToGLInternalFormat( const vgd::node::Texture::InternalFormatValueType internalFormat, const GLenum defaultGLInternalFormat )
 {
 	using vgd::node::Texture;
