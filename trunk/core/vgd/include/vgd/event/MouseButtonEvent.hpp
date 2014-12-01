@@ -29,7 +29,9 @@ struct VGD_API MouseButtonEvent : public Location2, public ButtonEvent
 	enum {
 		MOUSE_BUTTON_1 = 512, /*!< First mouse button */
 		MOUSE_BUTTON_2,
-		MOUSE_BUTTON_3
+		MOUSE_BUTTON_3,
+		MOUSE_BUTTON_4,
+		MOUSE_BUTTON_5
 	};
 
 	/**
