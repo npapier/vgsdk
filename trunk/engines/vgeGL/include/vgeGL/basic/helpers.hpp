@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2011, Nicolas Papier.
+// VGSDK - Copyright (C) 2011, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -6,7 +6,7 @@
 #ifndef _VGEGL_BASIC_HELPERS_HPP
 #define _VGEGL_BASIC_HELPERS_HPP
 
-#include <vgd/basic/Image.hpp>
+#include <vgd/basic/IImage.hpp>
 #include "vgeGL/vgeGL.hpp"
 
 

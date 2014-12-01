@@ -27,11 +27,16 @@
  * - vec4	viewport with accessors VIEWPORT_WIDTH and VIEWPORT_HEIGHT
  */
 
-
-#ifndef _VGEGL_DISABLED_GLE_
-
-#include <gle/gl.h>
-
+#if !defined(DONT_INCLUDE_GL_HEADERS_IN_VGEGL)
+	// See glo/glo.hpp
+	#if defined(__OPENGLES2__) || defined(__EMSCRIPTEN__)
+		// emscripten => WebGL 1.0 (i.e. almost OpenGLES2.0)
+		#include <GLES2/gl2.h>
+		#include <GLES2/gl2ext.h>
+	#else
+		// Desktop OpenGL (3.x and 4.x)
+		#include <gle/gl.h>
+	#endif
 #endif
 
 

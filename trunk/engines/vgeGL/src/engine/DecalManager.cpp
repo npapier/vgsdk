@@ -3,6 +3,10 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
+#ifndef __USE_VGALG__
+	#pragma message("vgeGL::engine::DecalManager is disabled")
+#else
+
 #include "vgeGL/engine/DecalManager.hpp"
 
 #include <vgAlg/intersect/helpers.hpp>
@@ -304,3 +308,5 @@ vgd::Shp< vgd::node::VertexShape > DecalManager::spawnDecalShape(	const DecalInf
 } // namespace engine
 
 } // namespace vgeGL
+
+#endif // #ifndef __USE_VGALG__
