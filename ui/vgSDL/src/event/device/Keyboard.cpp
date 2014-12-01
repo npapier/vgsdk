@@ -24,6 +24,8 @@ namespace event
 namespace device
 {
 
+vgd::Shp<Keyboard>	Keyboard::m_keyboard;
+
 Keyboard::Keyboard(const uint identifier)
 	: ::vgd::event::device::Keyboard(identifier)
 {
@@ -39,16 +41,19 @@ Keyboard::~Keyboard()
 
 void Keyboard::handleEvent(const SDL_Event & event)
 {
-	vgd::Shp<Keyboard> keyboard = find(event.key.which);
+	vgd::Shp<Keyboard> keyboard = get();
 
 	if (!keyboard)
 		return;
 
 	// Skips processing if the event is not related to the keyboard.
-	if (event.type != SDL_KEYDOWN && event.type != SDL_KEYUP)
+	if (event.type != SDL_KEYDOWN && event.type != SDL_KEYUP && event.type != SDL_TEXTINPUT)
 	{
 		return;
 	}
+
+	// Update global button states
+	updateGlobalButtonStates(&event);
 
 	// Retrieves the effective event object.
 	SDL_KeyboardEvent	 keyEvent = event.key;
@@ -57,6 +62,7 @@ void Keyboard::handleEvent(const SDL_Event & event)
 	{
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
+		//case SDL_TEXTINPUT:
 		{
 			using vgd::event::KeyboardButtonEvent;
 
@@ -65,8 +71,8 @@ void Keyboard::handleEvent(const SDL_Event & event)
 			keyboardEvent = new KeyboardButtonEvent(
 				keyboard.get(),
 				vgd::event::detail::GlobalButtonStateSet::get(),
-				getKeyboardButton(&keyEvent),
-				getButtonState(&keyEvent)
+				getKeyboardButton(&event),
+				getButtonState(&event)
 				);
 
 			keyboard->fireEvent(vgd::makeShp(keyboardEvent));
@@ -78,39 +84,15 @@ void Keyboard::handleEvent(const SDL_Event & event)
 }
 
 
-Keyboard::KeyboardCollection	Keyboard::m_keyboardCache;
 
 
-
-vgd::Shp< Keyboard > Keyboard::find(const int index)
+vgd::Shp< Keyboard > Keyboard::get()
 {
-	assert(index >= 0);
-
-	return (static_cast<size_t>(index) < m_keyboardCache.size()) ? m_keyboardCache[index].lock() : vgd::Shp< Keyboard >();
-}
-
-
-
-vgd::Shp< Keyboard > Keyboard::get(const int index)
-{
-	assert(index >= 0);
-
-	// Adjusts the cache size to the number of keyboards.
-	m_keyboardCache.resize(1);
-
-	// Let's look for a joystick in the cache.
-	vgd::Shp< Keyboard >	result = find(index);
-
-	if (!result && (index<(int)m_keyboardCache.size()))
+	if (!m_keyboard)
 	{
-		result = vgd::makeShp(new Keyboard(index));
-
-		if (result)
-		{
-			m_keyboardCache[index] = result;
-		}
+		m_keyboard = vgd::makeShp(new Keyboard());
 	}
-	return result;
+	return m_keyboard;
 }
 
 } // namespace device

@@ -83,7 +83,7 @@ void Mouse::handleEvent(const SDL_MouseButtonEvent & event)
 	mouse->m_previousLocation = getLocation(&event);
 
 	// Processes normal buttons (left, middle and right).
-	if (event.button == SDL_BUTTON_LEFT || event.button == SDL_BUTTON_RIGHT || event.button == SDL_BUTTON_MIDDLE)
+	if (event.button == SDL_BUTTON_LEFT || event.button == SDL_BUTTON_RIGHT || event.button == SDL_BUTTON_MIDDLE || event.button == SDL_BUTTON_X1 || event.button == SDL_BUTTON_X2)
 	{
 		vgd::event::MouseButtonEvent	* mouseEvent = 0;
 		mouseEvent = new vgd::event::MouseButtonEvent(
@@ -96,26 +96,50 @@ void Mouse::handleEvent(const SDL_MouseButtonEvent & event)
 			);
 		mouse->fireEvent(vgd::makeShp(mouseEvent));
 	}
-	// Processes mouse wheel events.
-	else if (event.button == SDL_BUTTON_WHEELDOWN || event.button == SDL_BUTTON_WHEELUP)
-	{
-		vgd::event::MouseWheelEvent * mouseWheelEvent = 0;
-		const int32		delta = (event.button == SDL_BUTTON_WHEELDOWN) ? -10 : +10;
-
-		mouseWheelEvent = new vgd::event::MouseWheelEvent(
-			mouse.get(),
-			vgd::event::detail::GlobalButtonStateSet::get(),
-			vgd::event::MouseWheelEvent::VERTICAL,
-			delta
-			);
-		mouse->fireEvent(vgd::makeShp(mouseWheelEvent));
-	}
 	else
 	{
 		assert(false && "Unsupported mouse button.");
 	}
 }
 
+void Mouse::handleEvent(const SDL_MouseWheelEvent & event)
+{
+	vgd::Shp<Mouse> mouse = find(event.which);
+
+	if (!mouse)
+	{
+		vgAssert(false);
+		return;
+	}
+
+	// update the position
+	//mouse->m_previousLocation = getLocation(&event);
+
+	// Processes mouse wheel events.
+	vgd::event::MouseWheelEvent * mouseWheelEvent = 0;
+
+	mouseWheelEvent = new vgd::event::MouseWheelEvent(
+		mouse.get(),
+		vgd::event::detail::GlobalButtonStateSet::get(),
+		vgd::event::MouseWheelEvent::VERTICAL,
+		event.y * 10
+		);
+	mouse->fireEvent(vgd::makeShp(mouseWheelEvent));
+
+	// support for horizontal mousewheel
+	if (event.x != 0)
+	{
+		vgd::event::MouseWheelEvent * mouseWheelEvent = 0;
+
+		mouseWheelEvent = new vgd::event::MouseWheelEvent(
+			mouse.get(),
+			vgd::event::detail::GlobalButtonStateSet::get(),
+			vgd::event::MouseWheelEvent::HORIZONTAL,
+			event.x * 10
+			);
+		mouse->fireEvent(vgd::makeShp(mouseWheelEvent));
+	}
+}
 
 
 Mouse::MiceCollection	Mouse::m_mouseCache;
