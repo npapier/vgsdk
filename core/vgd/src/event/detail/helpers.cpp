@@ -51,6 +51,8 @@ const std::string toString( const int32 button )
 		case MouseButtonEvent::MOUSE_BUTTON_1:	return "Mouse Button 1";
 		case MouseButtonEvent::MOUSE_BUTTON_2:	return "Mouse Button 2";
 		case MouseButtonEvent::MOUSE_BUTTON_3:	return "Mouse Button 3";
+		case MouseButtonEvent::MOUSE_BUTTON_4:	return "Mouse Button 4";
+		case MouseButtonEvent::MOUSE_BUTTON_5:	return "Mouse Button 5";
 
 		case KeyboardButtonEvent::KEY_BACK:		return "Keyboard Button Back";
 		case KeyboardButtonEvent::KEY_TAB:		return "Keyboard Button Tabulation";

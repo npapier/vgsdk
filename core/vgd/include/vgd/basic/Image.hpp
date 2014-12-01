@@ -89,11 +89,11 @@ struct VGD_API Image : public IImage
 	 * @post palettePixels()		== 0
 	 * @post paletteEditPixels()	== 0
 	 */
-/*	Image(		const uint32	width, const uint32 height, const uint32 depth,
+	Image(		const uint32	width, const uint32 height, const uint32 depth,
 				const Format	format,
 				const Type		type,
 				const void*		pixels = 0 );
-*/
+
 
 	/**
 	 * @brief Image contructor from an IImage
@@ -185,10 +185,10 @@ struct VGD_API Image : public IImage
 	 * @post palettePixels()		== 0
 	 * @post paletteEditPixels()	== 0
 	 */
-/*	const bool	create(	const uint32	width, const uint32 height, const uint32 depth,
+	const bool	create(	const uint32	width, const uint32 height, const uint32 depth,
 						const Format	format, const Type	type,
 						const void*		pixels = 0 );
-*/	
+	
 
 	/**
 	 * @brief Create an Image from an IImage
@@ -197,7 +197,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * @param iimage	source Image to duplicated
 	 */
-	//const bool create( const IImage& iimage );
+	const bool create( const IImage& iimage );
 
 	/**
 	 * @brief Destroy Image
@@ -244,6 +244,7 @@ struct VGD_API Image : public IImage
 	/**
 	 * @brief Scales the Image to the new dimensions specified, shrinking or enlarging the Image, depending on the Image's original dimensions.
 	 *
+	 * @pre				!isEmpty()
 	 * @param size		the new dimension (width, height and depth) of the Image
 	 *
 	 * return true if rescale has been successful, false if not

@@ -58,7 +58,7 @@ Image::Image( const std::string strFilename )
 }
 
 
-/*
+
 Image::Image(	const uint32	width, const uint32 height, const uint32 depth,
 				const Format	format,
 				const Type		type,
@@ -69,10 +69,10 @@ Image::Image(	const uint32	width, const uint32 height, const uint32 depth,
 	create(	width, height, depth,
 			format, type,
 			pixels );
-}*/
+}
 
 
-/*
+
 Image::Image( const IImage& Image )
 {
 	resetInformations();
@@ -80,7 +80,7 @@ Image::Image( const IImage& Image )
 	const bool retVal = create( Image );
 	vgAssertN( retVal, "Error during Image construction/copying." );
 }
-*/
+
 
 
 Image::Image( const Image& src )
@@ -159,7 +159,7 @@ const bool Image::save( const std::string strFilename ) const
 }
 
 
-/*
+
 const bool Image::create(	const uint32	width, const uint32 height, const uint32 depth,
 							const Format	format,	const Type	type,
 							const void*		pixels )
@@ -169,36 +169,24 @@ const bool Image::create(	const uint32	width, const uint32 height, const uint32 
 	// Create a new Image name
 	destroy();
 
-	const OpenImageIO::ImageSpec imageSpec( width, height, computeNumComponents(format), convertMyTypeToOIIO(type) );
-	m_image.reset( "NoName", imageSpec );
+	m_comp = computeNumComponents(format);
+	m_width = width;
+	m_height = height;
+	m_voxelSize.setValue( 1.f, 1.f, 1.f );
 
 	// Copy pixels
-	bool success = true;
 	if ( pixels )
 	{
-		OpenImageIO::ImageBuf incomingImage( "NoName", imageSpec, const_cast<void*>(pixels) );
-		success = m_image.copy_pixels( incomingImage );
-	}
-	// else nothing to do
-
-	if ( success )
-	{
-		m_voxelSize.setValue( 1.f, 1.f, 1.f );
-
-		m_width = width;
-		m_height = height;
-	}
-	else
-	{
-		vgAssertN( false, "Unable to copy pixels." );
-		destroy();
+		// Assign memory for pixel data
+		m_image = (unsigned char*) malloc(computeMaximumOffset());
+		memcpy(m_image, pixels, computeMaximumOffset());
 	}
 
-	return success;
-}*/
+	return true;
+}
 
 
-/*
+
 const bool Image::create( const IImage& Image )
 {
 	destroy();
@@ -221,11 +209,11 @@ const bool Image::create( const IImage& Image )
 			setPalette(	Image.palettePixels(),
 						Image.paletteSize(),
 						Image.paletteFormat() );
-		}*//*
+		}*/
 		return false;
 	}
 }
-*/
+
 
 
 void Image::destroy()
@@ -240,22 +228,25 @@ void Image::destroy()
 
 const bool Image::scale( const vgm::Vec3i size)
 {
+	vgAssertN(!isEmpty(), "No image set, can't scale.");
+
 	unsigned char * outputData = (unsigned char*) malloc(sizeof(unsigned char) * size[0] * size[1] * m_comp);
-	bool retVal = stbir_resize_uint8( m_image, m_width, m_height,  0,
-						outputData, size[0], size[1], 0, m_comp);
+	bool retVal = stbir_resize_uint8(	m_image, m_width, m_height,  0,
+										outputData, size[0], size[1], 0, m_comp);
 
 	if (retVal && outputData)
 	{
 		stbi_image_free(m_image);
-		m_image = (unsigned char *)malloc( sizeof(unsigned char) * size[0] * size[1] * m_comp );
-		memcpy(m_image, outputData, sizeof(outputData));
-		stbi_image_free(outputData);
-
-		//m_image = outputData;
+		m_image = outputData;
+		
 		m_width = size[0];
 		m_height = size[1];
 	}
-
+	else
+	{
+		stbi_image_free(outputData);
+	}
+	
 	return retVal;
 }
 
@@ -464,8 +455,8 @@ void Image::copy( const Image& src )
 {
 	vgAssertN( m_image == NULL, "Pixel data pointer isn't null, memory leak" );
 	unsigned char * srcChar = (unsigned char *)src.pixels();
-	m_image = (unsigned char *)malloc( sizeof(unsigned char) * src.width() * src.height() * src.components() );
-	memcpy(m_image, srcChar, sizeof(srcChar));
+	m_image = (unsigned char *)malloc(computeMaximumOffset());
+	memcpy(m_image, srcChar, computeMaximumOffset());
 
 	m_width = src.width();
 	m_height = src.height();
