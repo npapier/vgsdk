@@ -8,6 +8,7 @@
 #include <limits>
 #include <sstream>
 #include "vgd/basic/Image.hpp"
+#include "vgd/basic/ImageUtilities.hpp"
 #include "vgd/basic/ImageInfo.hpp"
 #include "vgd/field/TAccessors.hpp"
 

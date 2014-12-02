@@ -5,3 +5,11 @@ version		= '0-5'
 uses		= [ 'boost' ]
 libs		= [ 'vgAlg 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vgm 0-5', 'vgPhysfs 0-5', 'sbf 0-0' ]
 deps		= [ '../../core', '../../algorithms', '../vgPhysfs' ]
+
+from SCons.Script.SConscript import SConsEnvironment
+env = SConsEnvironment.sbf.myEnv
+configFlags = env['configFlags']
+emscriptenInStages = 'emcc' in env['stages']
+
+if ('STBIMAGE' in configFlags) or emscriptenInStages:
+	defines = ['__STBIMAGE__']
