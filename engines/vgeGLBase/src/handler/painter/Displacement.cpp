@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Displacement.hpp"
+//#include "vgeGLBase/handler/painter/Displacement.hpp"
 //
 //#include <vgd/node/Displacement.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -39,22 +39,22 @@
 //
 //void Displacement::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::Displacement* >(node) != 0 );
 //	vgd::node::Displacement *displacement = dynamic_cast< vgd::node::Displacement* >(node);
 //
 //
 //	// Retrieves GLSL state
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	GLSLState& glslState = glEngine->getGLSLState();
 //
 //
 //	// Updates GLSL state
-//	if ( glslState.isDisabled(vgeGL::engine::DISPLACEMENT) )
+//	if ( glslState.isDisabled(vgeGLBase::engine::DISPLACEMENT) )
 //	{
-//		glslState.setEnabled(vgeGL::engine::DISPLACEMENT);
+//		glslState.setEnabled(vgeGLBase::engine::DISPLACEMENT);
 //	}
 //
 //
@@ -236,5 +236,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

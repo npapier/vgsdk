@@ -8,7 +8,7 @@
 //
 //#include <vge/handler/painter/SingleAttribute.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace vgd
 //{
@@ -19,7 +19,7 @@
 //	}
 //}
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine
 //	{
@@ -29,7 +29,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -60,8 +60,8 @@
 //	 * @name Internal helpers
 //	 */
 //	//@{
-//	static void paintVertexShapeWithShapeProperty(	vgeGL::engine::Engine *, vgd::node::VertexShape *,
-//													vgeGL::handler::painter::VertexShape * );
+//	static void paintVertexShapeWithShapeProperty(	vgeGLBase::engine::Engine *, vgd::node::VertexShape *,
+//													vgeGLBase::handler::painter::VertexShape * );
 //
 //	//@}
 //};
@@ -72,7 +72,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_DRAWSTYLE_HPP
 //

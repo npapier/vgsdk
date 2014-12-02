@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/SceneManager.hpp"
+//#include "vgeGLBase/engine/SceneManager.hpp"
 //
 //#ifdef __USE_VGALG__
 //#include <vgAlg/intersect/helpers.hpp>
@@ -15,15 +15,15 @@
 //#include <vgd/node/VertexShape.hpp>
 //
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/event/DefaultEventProcessor.hpp"
-//#include "vgeGL/event/TimerEventProcessor.hpp"
-//#include "vgeGL/technique/ForwardRendering.hpp"
-//#include "vgeGL/technique/RayCasting.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/event/DefaultEventProcessor.hpp"
+//#include "vgeGLBase/event/TimerEventProcessor.hpp"
+//#include "vgeGLBase/technique/ForwardRendering.hpp"
+//#include "vgeGLBase/technique/RayCasting.hpp"
 //
 //
 // 
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -31,19 +31,19 @@
 //
 //
 //
-//SceneManager::SceneManager( vgd::Shp< vgeGL::engine::Engine > engine ) :
+//SceneManager::SceneManager( vgd::Shp< vgeGLBase::engine::Engine > engine ) :
 //	::vge::engine::SceneManager		(	engine										),
 //	m_GLEngine						(	engine										),
 //	//m_requestedGLContextProperties
 //	m_hasCurrentGLContextProperties	(	false										),
 //	//m_currentGLContextProperties
-//	m_paintTechnique			(	new vgeGL::technique::ForwardRendering()	),
+//	m_paintTechnique			(	new vgeGLBase::technique::ForwardRendering()	),
 //	m_bCallInitialize			(	false										)
 //{
 //	// Initializes event processor subsystem.
-//	using ::vgeGL::event::IEventProcessor;
-//	using ::vgeGL::event::DefaultEventProcessor;
-//	using ::vgeGL::event::TimerEventProcessor;
+//	using ::vgeGLBase::event::IEventProcessor;
+//	using ::vgeGLBase::event::DefaultEventProcessor;
+//	using ::vgeGLBase::event::TimerEventProcessor;
 //
 //	m_timerEventProcessor.reset( new TimerEventProcessor(this) );
 //	vgd::Shp< IEventProcessor > defaultEventProcessor( new DefaultEventProcessor(this) );
@@ -73,10 +73,10 @@
 //	}
 //
 //	// RENDERING
-//	vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
+//	vgd::Shp< vgeGLBase::technique::Technique > paintTechnique = getPaintTechnique();
 //
 //	//	Underlay
-//	vgd::Shp< vgeGL::itf::IUnderlay > iunderlay = vgd::dynamic_pointer_cast< vgeGL::itf::IUnderlay >( paintTechnique );
+//	vgd::Shp< vgeGLBase::itf::IUnderlay > iunderlay = vgd::dynamic_pointer_cast< vgeGLBase::itf::IUnderlay >( paintTechnique );
 //	if ( iunderlay )
 //	{
 //		// Underlay rendering is supported by the current paint technique
@@ -113,7 +113,7 @@
 //			i != iEnd;
 //			++i )
 //	{
-//		vgd::Shp< vgeGL::event::IEventProcessor > iEventProcessor = *i;
+//		vgd::Shp< vgeGLBase::event::IEventProcessor > iEventProcessor = *i;
 //		
 //		if ( iEventProcessor->isEnabled() )
 //		{
@@ -129,7 +129,7 @@
 //
 //
 //
-//void SceneManager::insertEventProcessor(	vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor,
+//void SceneManager::insertEventProcessor(	vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor,
 //											const int32 index )
 //{
 //	assert( 0 <= index && "Invalid index.");	
@@ -142,7 +142,7 @@
 //
 //
 //
-//void SceneManager::pushBackEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor )
+//void SceneManager::pushBackEventProcessor( vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor )
 //{
 //	m_eventProcessors.push_back( eventProcessor );
 //}
@@ -170,7 +170,7 @@
 //
 //
 //
-//const bool SceneManager::removeEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor )
+//const bool SceneManager::removeEventProcessor( vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor )
 //{
 //	const int32 index = findEventProcessor( eventProcessor );
 //	
@@ -189,7 +189,7 @@
 //
 //
 //
-//const int32 SceneManager::findEventProcessor( ::vgeGL::event::IEventProcessor *eventProcessor ) const
+//const int32 SceneManager::findEventProcessor( ::vgeGLBase::event::IEventProcessor *eventProcessor ) const
 //{
 //	int32 retVal = 0;
 //	
@@ -213,7 +213,7 @@
 //
 //
 //
-//const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const
+//const int32 SceneManager::findEventProcessor( vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor ) const
 //{
 //	const int32 retVal = findEventProcessor( eventProcessor.get() );
 //
@@ -222,7 +222,7 @@
 //
 //
 //
-//vgd::Shp< ::vgeGL::event::IEventProcessor > SceneManager::getEventProcessor( const int32 index  ) const
+//vgd::Shp< ::vgeGLBase::event::IEventProcessor > SceneManager::getEventProcessor( const int32 index  ) const
 //{
 //	assert( 0 <= index && "Invalid index.");
 //	assert( index < getNumEventProcessors() && "Invalid index.");
@@ -239,18 +239,18 @@
 //
 //
 //
-//vgd::Shp< ::vgeGL::event::TimerEventProcessor > SceneManager::getTimerEventProcessor()
+//vgd::Shp< ::vgeGLBase::event::TimerEventProcessor > SceneManager::getTimerEventProcessor()
 //{
 //	return m_timerEventProcessor;
 //}
 //
 //
 //
-//const vgeGL::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32 y )
+//const vgeGLBase::basic::Hit* SceneManager::castRayForHit( const int32 x, const int32 y )
 //{
 //	if ( !startVGSDK() )
 //	{
-//		vgLogDebug("vgeGL::engine::SceneManager::castRayForHit(): startVGSDK fails !");
+//		vgLogDebug("vgeGLBase::engine::SceneManager::castRayForHit(): startVGSDK fails !");
 //		return 0;
 //	}
 //
@@ -272,11 +272,11 @@
 //
 //
 //
-//const vgeGL::basic::Hit* SceneManager::castRayForHit( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW )
+//const vgeGLBase::basic::Hit* SceneManager::castRayForHit( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW )
 //{
 //	if ( !startVGSDK() )
 //	{
-//		vgLogDebug("vgeGL::engine::SceneManager::castRayForHit(): startVGSDK fails !");
+//		vgLogDebug("vgeGLBase::engine::SceneManager::castRayForHit(): startVGSDK fails !");
 //		return 0;
 //	}
 //
@@ -300,7 +300,7 @@
 //
 //vgd::node::Node* SceneManager::castRay( const int32 x, const int32 y )
 //{
-//	const vgeGL::basic::Hit* hit = castRayForHit( x, y );
+//	const vgeGLBase::basic::Hit* hit = castRayForHit( x, y );
 //
 //	if ( hit == 0 )
 //	{
@@ -327,7 +327,7 @@
 //	if ( hitShape )
 //	{
 //		// Hit
-//		const vgeGL::basic::Hit& hit = getRayCastingTechnique().getNearestHit();
+//		const vgeGLBase::basic::Hit& hit = getRayCastingTechnique().getNearestHit();
 //
 //		// Compute picked triangle
 //		float oDistance;
@@ -359,7 +359,7 @@
 //	return 0;
 //#else
 //	// cast ray
-//	const vgeGL::basic::Hit * hit = castRayForHit(raySourceW, rayDirectionW);
+//	const vgeGLBase::basic::Hit * hit = castRayForHit(raySourceW, rayDirectionW);
 //
 //	if ( hit )
 //	{
@@ -395,14 +395,14 @@
 //	return shape;
 //}
 //
-//const vgeGL::basic::Hit SceneManager::getNearestHit()
+//const vgeGLBase::basic::Hit SceneManager::getNearestHit()
 //{
-//	const vgeGL::basic::Hit& hit = getRayCastingTechnique().getNearestHit();
+//	const vgeGLBase::basic::Hit& hit = getRayCastingTechnique().getNearestHit();
 //	return hit;
 //}
 //
 //
-//vgeGL::technique::RayCasting& SceneManager::getRayCastingTechnique()
+//vgeGLBase::technique::RayCasting& SceneManager::getRayCastingTechnique()
 //{
 //	return m_rayCasting;
 //}
@@ -437,28 +437,28 @@
 //
 //
 //
-//vgd::Shp< vgeGL::engine::Engine > SceneManager::getGLEngine()
+//vgd::Shp< vgeGLBase::engine::Engine > SceneManager::getGLEngine()
 //{
 //	return m_GLEngine;
 //}
 //
 //
 //
-//vgd::Shp< vgeGL::engine::Engine > SceneManager::getGLEngine() const
+//vgd::Shp< vgeGLBase::engine::Engine > SceneManager::getGLEngine() const
 //{
 //	return m_GLEngine;
 //}
 //
 //
 //
-//vgd::Shp< vgeGL::technique::Technique > SceneManager::getPaintTechnique() const
+//vgd::Shp< vgeGLBase::technique::Technique > SceneManager::getPaintTechnique() const
 //{
 //	return m_paintTechnique;
 //}
 //
 //
 //
-//void SceneManager::setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique )
+//void SceneManager::setPaintTechnique( vgd::Shp< vgeGLBase::technique::Technique > technique )
 //{
 //	m_paintTechnique = technique;
 //}
@@ -495,5 +495,5 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

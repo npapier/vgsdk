@@ -8,13 +8,13 @@
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/Settings.hpp"
-//#include "vgeGL/rc/DisplayList.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Settings.hpp"
+//#include "vgeGLBase/rc/DisplayList.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace rc
@@ -23,10 +23,10 @@
 //
 //
 ///**
-// * @brief Helper used in vgeGL::handler::NodePainter::apply(...) in order to simplify compiling OpenGL calls 
+// * @brief Helper used in vgeGLBase::handler::NodePainter::apply(...) in order to simplify compiling OpenGL calls 
 // * (for a node) in a single display list.
 // *
-// * @remarks vgeGL::handler::NodePainter must implements void paint( vgeGL::engine::Engine*, nodeType* );
+// * @remarks vgeGLBase::handler::NodePainter must implements void paint( vgeGLBase::engine::Engine*, nodeType* );
 // * 
 // * @todo remove this assert(	(pResource==0 && pDisplayList==0) || (pResource!=0 && pDisplayList!=0)  ); for changing 
 // * handler at runtime.
@@ -35,13 +35,13 @@
 //void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode,
 //							handlerType	*pHandler )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< nodeType* >(pNode) != 0 );
 //	nodeType *pCastedNode = static_cast< nodeType* >(pNode);
 //
-//	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rGLManager = pGLEngine->getGLManager();
+//	vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rGLManager = pGLEngine->getGLManager();
 //
 //	// ****** Render ******
 //	// get dirty flag of node
@@ -119,13 +119,13 @@
 //void applyUsingDisplayList(	vge::engine::Engine* pEngine, vgd::node::Node *pNode,
 //							handlerType	*pHandler )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< nodeType* >(pNode) != 0 );
 //	nodeType *pCastedNode = static_cast< nodeType* >(pNode);
 //
-//	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rGLManager = pGLEngine->getGLManager();
+//	vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rGLManager = pGLEngine->getGLManager();
 //
 //	// ****** Render ******
 //	// get dirty flag of node
@@ -201,7 +201,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_TDISPLAYLISTHELPER_HPP
 //

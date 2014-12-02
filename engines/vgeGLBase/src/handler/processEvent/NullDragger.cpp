@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/processEvent/NullDragger.hpp"
+//#include "vgeGLBase/handler/processEvent/NullDragger.hpp"
 //
 //#include <vgd/node/NullDragger.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/technique/ProcessEvent.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/technique/ProcessEvent.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -45,8 +45,8 @@
 //	assert( dynamic_cast< NullDragger* >(pNode) != 0 );
 //	NullDragger *pDragger = static_cast< NullDragger* >(pNode);
 //	
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	//
 //	Dragger::preApply( pGLEngine, pDragger );

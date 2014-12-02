@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/RayCasting.hpp"
+//#include "vgeGLBase/technique/RayCasting.hpp"
 //
 //#include <vgd/node/Camera.hpp>
 //#include <vgd/node/ClearFrameBuffer.hpp>
@@ -16,12 +16,12 @@
 //#include <vge/engine/Engine.hpp>
 //#include <vge/service/Painter.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/technique/helpers.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/technique/helpers.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -75,7 +75,7 @@
 //
 //
 //
-//void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+//void RayCasting::apply(	vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 //						const int32 x, const int32 y )
 //{
 //	// store parameters
@@ -90,7 +90,7 @@
 //}
 //
 //
-//void RayCasting::apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+//void RayCasting::apply(	vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 //						const vgm::Vec3f raySource, const vgm::Vec3f rayDirection )
 //{
 //	// store parameters
@@ -124,7 +124,7 @@
 //
 //
 //
-//const vgd::Shp< vgeGL::basic::HitList > RayCasting::getHits() const
+//const vgd::Shp< vgeGLBase::basic::HitList > RayCasting::getHits() const
 //{
 //	vgAssert( getHitsSize() > 0 );
 //
@@ -133,7 +133,7 @@
 //
 //
 //
-//const vgeGL::basic::Hit& RayCasting::getNearestHit() const
+//const vgeGLBase::basic::Hit& RayCasting::getNearestHit() const
 //{
 //	vgAssert( getHitsSize() > 0 );
 //
@@ -142,7 +142,7 @@
 //
 //
 //
-//const vgeGL::basic::Hit& RayCasting::getFarthestHit() const
+//const vgeGLBase::basic::Hit& RayCasting::getFarthestHit() const
 //{
 //	vgAssert( getHitsSize() > 0 );
 //
@@ -157,7 +157,7 @@
 //
 //	if ( getHitsSize() > 0 )
 //	{
-//		const vgeGL::basic::Hit& hit( getNearestHit() );
+//		const vgeGLBase::basic::Hit& hit( getNearestHit() );
 //
 //		if ( hit.stackNode().size() >= 1 )
 //		{
@@ -179,7 +179,7 @@
 //
 //
 //
-//void RayCasting::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+//void RayCasting::apply( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 //{
 //	//
 //	if ( m_pSelectBuffer == 0 )
@@ -200,7 +200,7 @@
 //	// First pass : draw all shape.
 //
 //	// Makes a backup of GLSL activation state
-//	using vgeGL::engine::Engine;
+//	using vgeGLBase::engine::Engine;
 //	vgd::Shp< Engine::GLSLActivationState > glslActivationState = engine->getGLSLActivationState();
 //	engine->sethCurrentProgram();
 //
@@ -400,7 +400,7 @@
 //	vgAssert( m_pSelectBuffer != 0 );
 //
 //	// Reset hit list.
-//	m_pHits = vgd::Shp< vgeGL::basic::HitList >( new vgeGL::basic::HitList );
+//	m_pHits = vgd::Shp< vgeGLBase::basic::HitList >( new vgeGLBase::basic::HitList );
 //
 //	// Search the picking node in hits database
 //	GLuint gluintZMin				= ~0;
@@ -421,7 +421,7 @@
 //		ptr++;
 //
 //		// Construct class Hit for the current hit.
-//		vgeGL::basic::Hit hit;
+//		vgeGLBase::basic::Hit hit;
 //
 //		// min
 //		gluintZMin		= *ptr;
@@ -518,5 +518,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

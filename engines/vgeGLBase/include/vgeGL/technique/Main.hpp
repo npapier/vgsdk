@@ -6,11 +6,11 @@
 //#ifndef _VGEGLBASE_TECHNIQUE_MAIN_HPP
 //#define _VGEGLBASE_TECHNIQUE_MAIN_HPP
 //
-//#include "vgeGL/technique/Technique.hpp"
+//#include "vgeGLBase/technique/Technique.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -32,7 +32,7 @@
 //	 * @param engine			evaluation engine
 //	 * @param traverseElements	the "flatten" scene graph to evaluate
 //	 */
-//	VGEGLBASE_API void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
+//	VGEGLBASE_API void apply( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
 //
 //protected:
 //	/**
@@ -60,7 +60,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_MAIN_HPP
 //

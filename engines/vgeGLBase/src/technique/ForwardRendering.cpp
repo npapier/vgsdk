@@ -3,14 +3,14 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/ForwardRendering.hpp"
+//#include "vgeGLBase/technique/ForwardRendering.hpp"
 //
 //#include <algorithm>
 //#include <boost/assign/std/vector.hpp>
 //#include <boost/algorithm/string/replace.hpp>
 //#include <boost/foreach.hpp>
 //#include <boost/tuple/tuple.hpp>
-//#include <vgeGL/rc/GLSLProgram.hpp>
+//#include <vgeGLBase/rc/GLSLProgram.hpp>
 //#include <strstream>
 //#include <vgd/basic/Image.hpp>
 //#include <vgd/basic/ImageInfo.hpp>
@@ -42,25 +42,25 @@
 //#include <vge/engine/SceneManager.hpp>
 //#include <vge/service/Painter.hpp>
 //#include <vge/technique/ComputeBoundingBox.hpp>
-//#include <vgeGL/handler/painter/PostProcessing.hpp>
+//#include <vgeGLBase/handler/painter/PostProcessing.hpp>
 //#include <vgm/VectorOperations.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/handler/painter/Decal.hpp"
-//#include "vgeGL/handler/painter/OutputBufferProperty.hpp"
-//#include "vgeGL/handler/painter/Overlay.hpp"
-//#include "vgeGL/rc/Fluid.hpp"
-//#include "vgeGL/rc/Texture2D.hpp"
-//#include "vgeGL/rc/FrameBufferObject.hpp"
-//#include "vgeGL/rc/OffscreenRendering.hpp"
-//#include "vgeGL/technique/helpers.hpp"
-//#include "vgeGL/technique/PostProcessing.hpp"
-//#include "vgeGL/technique/ShadowMapping.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/handler/painter/Decal.hpp"
+//#include "vgeGLBase/handler/painter/OutputBufferProperty.hpp"
+//#include "vgeGLBase/handler/painter/Overlay.hpp"
+//#include "vgeGLBase/rc/Fluid.hpp"
+//#include "vgeGLBase/rc/Texture2D.hpp"
+//#include "vgeGLBase/rc/FrameBufferObject.hpp"
+//#include "vgeGLBase/rc/OffscreenRendering.hpp"
+//#include "vgeGLBase/technique/helpers.hpp"
+//#include "vgeGLBase/technique/PostProcessing.hpp"
+//#include "vgeGLBase/technique/ShadowMapping.hpp"
 //
 //// sub-techniques
-//#include "vgeGL/technique/Antialiasing.hpp"
-//#include "vgeGL/technique/Noise.hpp"
-//#include "vgeGL/technique/DepthOfField.hpp"
+//#include "vgeGLBase/technique/Antialiasing.hpp"
+//#include "vgeGLBase/technique/Noise.hpp"
+//#include "vgeGLBase/technique/DepthOfField.hpp"
 //
 //// ALL
 //// @todo installs new handler intead of doing test on node type
@@ -74,7 +74,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -105,7 +105,7 @@
 //
 //
 //// @todo OPTME using new handler for Camera
-//void passPaint(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+//void passPaint(	vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 //				const vgd::Shp< vgd::node::Camera > camera )
 //{
 //	// Camera
@@ -135,7 +135,7 @@
 //
 //
 //// ignore OutputBufferProperty, OutputBuffers
-//void passPaintWithGivenCamera(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+//void passPaintWithGivenCamera(	vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 //								const vgd::Shp< vgd::node::Camera > newCamera )
 //{
 //	using vgd::node::Camera;
@@ -162,7 +162,7 @@
 //
 //
 ////@todo handler to reuse pass::Opaque
-//void passOpaqueWithGivenCamera(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+//void passOpaqueWithGivenCamera(	vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 //								const vgd::Shp< vgd::node::Camera > newCamera )
 //{
 //	using vgd::node::Camera;
@@ -218,11 +218,11 @@
 //};
 //
 //
-//vgd::Shp< GeometryOnlyState > configureGeometryOnly( vgeGL::engine::Engine * engine )
+//vgd::Shp< GeometryOnlyState > configureGeometryOnly( vgeGLBase::engine::Engine * engine )
 //{
 //	// Makes a backup of GLSL activation state
 //	/* @todo Engine::GLSLActivationState deprecated
-//	using vgeGL::engine::Engine;
+//	using vgeGLBase::engine::Engine;
 //	vgd::Shp< Engine::GLSLActivationState > glslActivationState = engine->getGLSLActivationState();
 //	engine->sethCurrentProgram();
 //	glDisable( GL_LIGHTING );*/
@@ -239,7 +239,7 @@
 //	return vgd::makeShp( new GeometryOnlyState(isLightingEnabledBak, isTextureMappingEnabledBak, isBumpMappingEnabledBak, isTessellationEnabledBak) );
 //}
 //
-//void unconfigureGeometryOnly( vgeGL::engine::Engine * engine, vgd::Shp< GeometryOnlyState > state )
+//void unconfigureGeometryOnly( vgeGLBase::engine::Engine * engine, vgd::Shp< GeometryOnlyState > state )
 //{
 //	// @todo deprecated
 //	// Restores GLSL activation state
@@ -253,7 +253,7 @@
 //}
 //
 //
-//void regardForGeometryOnly( vgeGL::engine::Engine * engine )
+//void regardForGeometryOnly( vgeGLBase::engine::Engine * engine )
 //{
 //	engine->disregard();
 //
@@ -331,14 +331,14 @@
 //	}
 //
 //	// Initializes sub-techniques
-//	m_subtechniques.push_back( vgd::makeShp( new vgeGL::technique::Antialiasing() ) );
-//	m_subtechniques.push_back( vgd::makeShp( new vgeGL::technique::DepthOfField() ) );
-//	m_subtechniques.push_back( vgd::makeShp( new vgeGL::technique::Noise() ) );
+//	m_subtechniques.push_back( vgd::makeShp( new vgeGLBase::technique::Antialiasing() ) );
+//	m_subtechniques.push_back( vgd::makeShp( new vgeGLBase::technique::DepthOfField() ) );
+//	m_subtechniques.push_back( vgd::makeShp( new vgeGLBase::technique::Noise() ) );
 //}
 //
 //
 //
-//void ForwardRendering::stageInitializeOutputBuffers( vgeGL::engine::Engine * engine )
+//void ForwardRendering::stageInitializeOutputBuffers( vgeGLBase::engine::Engine * engine )
 //{
 //	// OUTPUTBUFFERS
 //	// Tests if output buffers of engine must be initialized/updated
@@ -358,7 +358,7 @@
 //			uint numFound = 0;
 //			for( uint i = 0; numFound < m_outputBufferProperties->getNum(); ++i )
 //			{
-//				using vgeGL::engine::GLSLState;
+//				using vgeGLBase::engine::GLSLState;
 //				vgd::Shp< GLSLState::OutputBufferPropertyState > outputBufferPropertyState = m_outputBufferProperties->getState(i);
 //
 //				if ( outputBufferPropertyState )
@@ -371,7 +371,7 @@
 //						const bool isDirty = outputBufferProperty->getDirtyFlag(outputBufferProperty->getDFNode())->isDirty();
 //
 //						// second criterion
-//						namespace vgeGLPainter = vgeGL::handler::painter;
+//						namespace vgeGLPainter = vgeGLBase::handler::painter;
 //
 //						//	retrieves Texture2D node from OutputBufferProperty and its 'iimage'
 //						vgd::Shp< vgd::node::Texture2D > textureNode;
@@ -433,10 +433,10 @@
 //
 //
 //
-//void ForwardRendering::initializeEngineBuffers( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties )
+//void ForwardRendering::initializeEngineBuffers( vgeGLBase::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties )
 //{
 //	// *** Initializes FBO and creates textures ***
-//	namespace vgeGLPainter = vgeGL::handler::painter;
+//	namespace vgeGLPainter = vgeGLBase::handler::painter;
 //	m_textures->clear();
 //	boost::tie( m_frameBuffer, m_fbo ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, outputBufferProperties, std::back_inserter(*m_textures), true );
 //}
@@ -446,7 +446,7 @@
 /////////////////////////////////////
 ////// passInformationsCollector ////
 /////////////////////////////////////
-//void ForwardRendering::passInformationsCollector( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+//void ForwardRendering::passInformationsCollector( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 //{
 //	// LIGHTMODEL
 //	lightModel = 0;
@@ -586,7 +586,7 @@
 //	invViewMatrix = viewMatrix.getInverse();
 //
 //	// Copy the glsl state at the end of the pass
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	engine->setGlobalGLSLState( engine->getGLSLState() );
 //	glslStateFinal = engine->getGlobalGLSLState();
 //
@@ -655,7 +655,7 @@
 ///**
 // * Computes shadow map(s), i.e. renders scene depth and alpha from light POV
 // */
-//void ForwardRendering::passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+//void ForwardRendering::passUpdateShadowMaps( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 //{
 //	if (	(shadowType != vgd::node::LightModel::SHADOW_OFF) &&
 //			(m_shadowMappingInput->getNumLight() > 0)	)
@@ -704,13 +704,13 @@
 //			glPolygonOffset( shadowPolygonOffset[0], shadowPolygonOffset[1] );
 //			glEnable( GL_POLYGON_OFFSET_FILL );
 //
-//			vgd::Shp< vgeGL::rc::FrameBufferObject > fbo = configureShadowMap( engine, currentLightIndex );
+//			vgd::Shp< vgeGLBase::rc::FrameBufferObject > fbo = configureShadowMap( engine, currentLightIndex );
 //			if ( !fbo )	continue;
 //			engine->setOutputBuffers( fbo );
 ////			engine->setCurrentPrivateOutputBuffers( 0 );
 //
 //			// RENDER FROM LIGHT
-//			using vgeGL::engine::LightState;
+//			using vgeGLBase::engine::LightState;
 //			const vgd::Shp< LightState > lightState = m_shadowMappingInput->getLight( currentLightIndex ).m_lightState;
 //
 //			const vgm::Rectangle2i viewport( 0, 0, m_shadowMappingInput->getShadowMapSize()[0], m_shadowMappingInput->getShadowMapSize()[1] );
@@ -751,7 +751,7 @@
 //// node, rc and fbo for shadow map
 //// @todo clean api
 //// @todo optme
-//vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::configureShadowMap( vgeGL::engine::Engine * engine, const uint currentLightIndex )
+//vgd::Shp< vgeGLBase::rc::FrameBufferObject > ForwardRendering::configureShadowMap( vgeGLBase::engine::Engine * engine, const uint currentLightIndex )
 //{
 //	// Texture2D(node and rc) for shadow map and alpha map
 //
@@ -809,11 +809,11 @@
 //// @todo moves
 //	// Lookups or creates fbo
 //// @todo remove m_fbo
-//	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
-//	vgd::Shp< vgeGL::rc::FrameBufferObject > fbo = rcManager->getShp< vgeGL::rc::FrameBufferObject >( m_shadowMappingInput->m_fbo[currentLightIndex].get() ); // @todo not very cute
+//	vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject > fbo = rcManager->getShp< vgeGLBase::rc::FrameBufferObject >( m_shadowMappingInput->m_fbo[currentLightIndex].get() ); // @todo not very cute
 //	if ( !fbo )
 //	{
-//		fbo.reset( new vgeGL::rc::FrameBufferObject() );
+//		fbo.reset( new vgeGLBase::rc::FrameBufferObject() );
 //		rcManager->add( m_shadowMappingInput->m_fbo[currentLightIndex].get(), fbo );
 //
 //		fbo->generate();
@@ -821,8 +821,8 @@
 //		// Enables render to depth texture
 //		fbo->bind();
 //
-//		vgd::Shp< vgeGL::rc::Texture2D > lightDepthMap = m_shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
-//		//vgd::Shp< vgeGL::rc::Texture2D > lightAlphaMap = m_shadowMappingInput->getLightAlphaMap( currentLightIndex, engine );
+//		vgd::Shp< vgeGLBase::rc::Texture2D > lightDepthMap = m_shadowMappingInput->getLightDepthMap( currentLightIndex, engine );
+//		//vgd::Shp< vgeGLBase::rc::Texture2D > lightAlphaMap = m_shadowMappingInput->getLightAlphaMap( currentLightIndex, engine );
 //		//fbo->attachColor( lightAlphaMap );
 //		fbo->attachDepth( lightDepthMap );
 //
@@ -847,7 +847,7 @@
 //
 //
 //
-//void ForwardRendering::passDepthOnly( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+//void ForwardRendering::passDepthOnly( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 //{
 //	// Writes only to depth buffer
 //	engine->setBufferUsagePolicy( vge::engine::BUP_ONLY_DEPTH );
@@ -865,7 +865,7 @@
 //	regardForGeometryOnly(engine);
 //
 //	// @todo OPTME discard more (i.e. computation done in vertex/fragment program except gl_Position = gl_ModelViewProjectionMatrix * mgl_Vertex;)
-//	engine->getGLSLState().setShaderStage( vgeGL::engine::GLSLState::FRAGMENT_OUTPUT, "" );
+//	engine->getGLSLState().setShaderStage( vgeGLBase::engine::GLSLState::FRAGMENT_OUTPUT, "" );
 //
 //	/*const bool mustDoTransparencyPass = */evaluateOpaquePass( paintService(), PassIsolationMask(0), true );
 //
@@ -881,7 +881,7 @@
 //
 //
 //// SHADOW MAPPING
-//void ForwardRendering::stageConfigureShadowMapping( vgeGL::engine::Engine * engine )
+//void ForwardRendering::stageConfigureShadowMapping( vgeGLBase::engine::Engine * engine )
 //{
 //	if ( isShadowEnabled )
 //	{
@@ -952,24 +952,24 @@
 //// @todo creates fbo and texture2d using glo
 //// or
 //// @todo (framebuffer, fbo, textures) createsFBO(std::list< OutputBufferProperty >, [std::back_inserter<> textures]).
-//vgd::Shp< vgeGL::rc::Fluid > ForwardRendering::getFluidRC( vgeGL::engine::Engine * engine )
+//vgd::Shp< vgeGLBase::rc::Fluid > ForwardRendering::getFluidRC( vgeGLBase::engine::Engine * engine )
 //{
-//	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+//	vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
 //
-//	vgd::Shp< vgeGL::rc::Fluid > fluidRC = rcManager->getShp< vgeGL::rc::Fluid >( fluid );
+//	vgd::Shp< vgeGLBase::rc::Fluid > fluidRC = rcManager->getShp< vgeGLBase::rc::Fluid >( fluid );
 //
 //	return fluidRC;
 //}
 //
 //
-//void ForwardRendering::stageInitializeFluidPostProcessing( vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC )
+//void ForwardRendering::stageInitializeFluidPostProcessing( vgd::node::Fluid * fluid, vgd::Shp< vgeGLBase::rc::Fluid > fluidRC )
 //{
 //	//if ( fluidRC->postProcessing.isEmpty() )
 //	{
 //		// Creates nodes
 //		using vgd::node::Group;
 //		using vgd::node::PostProcessing;
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //
 //		vgd::Shp< Group > group = Group::create("fluid.postProcessing");
 //		fluidRC->postProcessingGroup = group;
@@ -1144,10 +1144,10 @@
 //}
 //
 //
-//void ForwardRendering::stageInitializeFluidRC( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC )
+//void ForwardRendering::stageInitializeFluidRC( vgeGLBase::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGLBase::rc::Fluid > fluidRC )
 //{
 //	using vgd::node::OutputBufferProperty;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	typedef GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
 //
 //	const vgm::Vec2f heightMapSize(
@@ -1253,11 +1253,11 @@
 //	fluidRC->heightMaps.clear();
 //
 //	// Creates new fbo and textures
-//	namespace vgeGLPainter = vgeGL::handler::painter;
+//	namespace vgeGLPainter = vgeGLBase::handler::painter;
 //	boost::tie( fluidRC->frameBuffer, fluidRC->fbo ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, myOutputBufferProperties.get(), std::back_inserter(fluidRC->heightMaps), true );
 //
 //	//
-//	fluidRC->postProcessingFBO.reset( new vgeGL::rc::FrameBufferObject() );
+//	fluidRC->postProcessingFBO.reset( new vgeGLBase::rc::FrameBufferObject() );
 //	fluidRC->postProcessingFBO->generate();
 //	fluidRC->postProcessingFBO->bind();
 //	fluidRC->postProcessingFBO->attachColor( fluidRC->fbo->getColor(0), 0 );
@@ -1310,7 +1310,7 @@
 //}
 //
 //
-//void ForwardRendering::stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC )
+//void ForwardRendering::stageUpdateFluidEmittersAndDrainers( vgeGLBase::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGLBase::rc::Fluid > fluidRC )
 //{
 //	// Retrieves emittersOrDrainers multi-field.
 //	using vgd::field::EditorRO;
@@ -1344,7 +1344,7 @@
 //}
 //
 //
-//void ForwardRendering::stageUpdateFluidSimulationParameters( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC )
+//void ForwardRendering::stageUpdateFluidSimulationParameters( vgeGLBase::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGLBase::rc::Fluid > fluidRC )
 //{
 //	// Retrieves fluid.pass0
 //	using vgd::node::PostProcessing;
@@ -1362,7 +1362,7 @@
 //}
 //
 //
-//void ForwardRendering::stageInitializeFluid( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements )
+//void ForwardRendering::stageInitializeFluid( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements )
 //{
 //	if ( isFluidEnabled )
 //	{
@@ -1383,7 +1383,7 @@
 //		// Tests if output buffers used by fluid must be initialized/re-initialized
 //		bool callInitialize = false;
 //
-//		vgd::Shp< vgeGL::rc::Fluid > fluidRC = getFluidRC( engine );
+//		vgd::Shp< vgeGLBase::rc::Fluid > fluidRC = getFluidRC( engine );
 //
 //		if ( !fluidRC )
 //		{
@@ -1391,10 +1391,10 @@
 //			callInitialize = true;
 //
 //			// Creates fluid resource
-//			fluidRC.reset( new vgeGL::rc::Fluid );
+//			fluidRC.reset( new vgeGLBase::rc::Fluid );
 //
 //			// Register node and its resource into manager
-//			vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+//			vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
 //			rcManager->add( fluid, fluidRC );
 //		}
 //		else
@@ -1434,9 +1434,9 @@
 //}
 //
 //
-//void ForwardRendering::stageFluidUpdateSceneHeightMap( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements )
+//void ForwardRendering::stageFluidUpdateSceneHeightMap( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements )
 //{
-//	vgd::Shp< vgeGL::rc::Fluid > fluidRC = getFluidRC( engine );
+//	vgd::Shp< vgeGLBase::rc::Fluid > fluidRC = getFluidRC( engine );
 //	if ( !isFluidEnabled || !fluidRC )	return;
 //
 //	// RENDERING
@@ -1469,7 +1469,7 @@
 //	engine->setCurrentPrivateOutputBuffers( 0 );
 //	
 //
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	engine->getGLSLState().setShaderStage( GLSLState::VERTEX_ECPOSITION_COMPUTATION,
 //		"	ecPosition	= position;\n" );
 //	engine->getGLSLState().setShaderStage( GLSLState::FRAGMENT_OUTPUT,
@@ -1559,9 +1559,9 @@
 //}
 //
 //
-//void ForwardRendering::stageFluidSimulation( vgeGL::engine::Engine * engine )
+//void ForwardRendering::stageFluidSimulation( vgeGLBase::engine::Engine * engine )
 //{
-//	vgd::Shp< vgeGL::rc::Fluid > fluidRC = getFluidRC( engine );
+//	vgd::Shp< vgeGLBase::rc::Fluid > fluidRC = getFluidRC( engine );
 //	if ( !isFluidEnabled || !fluidRC )	return;
 //
 //	applyPostProcessing( engine, fluidRC->heightMaps, &(fluidRC->postProcessing) );
@@ -1597,7 +1597,7 @@
 //// @todo be able to disable kit (reminder: sub-scene graph of kit are expended in main TraverseElementVector !!!)
 ////
 //// @todo Occlusion Queries
-//void ForwardRendering::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+//void ForwardRendering::apply( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 //{
 //	// OFFSCREEN RENDERING
 //
@@ -1607,7 +1607,7 @@
 //
 //	//	Backups (1) several rc of ForwardRendering
 //	vgd::Shp< vgd::node::FrameBuffer >			frameBufferBAK	= m_frameBuffer;
-//	vgd::Shp< vgeGL::rc::FrameBufferObject >	fboBAK			= m_fbo;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject >	fboBAK			= m_fbo;
 //	vgd::Shp< Texture2DVector >					texturesBAK		= m_textures;
 //
 //	//	Do a rendering for each offscreen rendering nodes
@@ -1620,7 +1620,7 @@
 //
 //		// Retrieves associated RC
 //		bool newRC;
-//		vgd::Shp< vgeGL::rc::OffscreenRendering > orRC = engine->getGLManager()->gethShp<vgeGL::rc::OffscreenRendering>( offscreenRenderingNode, newRC );
+//		vgd::Shp< vgeGLBase::rc::OffscreenRendering > orRC = engine->getGLManager()->gethShp<vgeGLBase::rc::OffscreenRendering>( offscreenRenderingNode, newRC );
 //
 //		// Installs RC in ForwardRendering from OffscreenRendering RC
 //		m_frameBuffer	= orRC->frameBuffer;
@@ -1661,7 +1661,7 @@
 //}
 //
 //
-//void ForwardRendering::stageOffscreenRendering( vgeGL::engine::Engine * engine, vgd::Shp< vgd::node::Group > root )
+//void ForwardRendering::stageOffscreenRendering( vgeGLBase::engine::Engine * engine, vgd::Shp< vgd::node::Group > root )
 //{
 //	if ( root )
 //	{
@@ -1685,9 +1685,9 @@
 //}
 //
 //
-//void ForwardRendering::renderScene( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+//void ForwardRendering::renderScene( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 //{
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	/////////////////////////////////////////////////////////
 //	// STEP 1 : Computes additionnal informations
@@ -1749,7 +1749,7 @@
 //		finishEval();
 //		return;
 //	}
-//	// @todo vgeGL::SceneManager * sceneManager();
+//	// @todo vgeGLBase::SceneManager * sceneManager();
 //
 //	/*if ( isStereoEnabled )
 //	{
@@ -1807,7 +1807,7 @@
 //
 ///*	@todo
 //	passMain( engine, traverseElements );
-//	passMain( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )*/
+//	passMain( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )*/
 //	//////////////////////////////////////////////////////////////////////////
 //	// STEP 3: Rendering (opaque and transparent pass ) with/without shadow //
 //	//////////////////////////////////////////////////////////////////////////
@@ -1950,7 +1950,7 @@
 //
 //
 ///// POST PROCESSING
-//void ForwardRendering::stageInitializePostProcessingBuffers( vgeGL::engine::Engine * engine )
+//void ForwardRendering::stageInitializePostProcessingBuffers( vgeGLBase::engine::Engine * engine )
 //{
 //	// Post-processing buffers initialization
 //	if ( isPostProcessingEnabled )
@@ -1966,7 +1966,7 @@
 //		if ( !sizeChanged )
 //		{
 //			// Ensures that size of ping-pong buffers used by post-processing have the same size as the main output buffer (i.e. output buffer at index 0).
-//			namespace vgeGLPainter = vgeGL::handler::painter;
+//			namespace vgeGLPainter = vgeGLBase::handler::painter;
 //
 //			vgd::Shp< glo::Texture2D > texture2DPostProcessing	= pppRC.fbo0->getColorAsTexture2D(0);
 //			vgAssert( texture2DPostProcessing != 0 );
@@ -1982,7 +1982,7 @@
 //
 //				// *** Initializes FBOs and creates textures ***
 //				using vgd::node::OutputBufferProperty;
-//				using vgeGL::engine::GLSLState;
+//				using vgeGLBase::engine::GLSLState;
 //
 //				// Output buffer properties 0
 //				vgd::Shp< OutputBufferPropertyStateContainer > myOutputBufferProperties0( new OutputBufferPropertyStateContainer() );
@@ -2005,7 +2005,7 @@
 //				myOutputBufferProperties1->setState(0, vgd::makeShp( new GLSLState::OutputBufferPropertyState(obufProperty1.get()) ) );
 //
 //				// fbo0 and fbo1
-//				namespace vgeGLPainter = vgeGL::handler::painter;
+//				namespace vgeGLPainter = vgeGLBase::handler::painter;
 //				pppRC.textures0.clear();
 //				pppRC.textures1.clear();
 //				boost::tie( pppRC.frameBuffer0, pppRC.fbo0 ) = vgeGLPainter::OutputBufferProperty::createsFBO( engine, myOutputBufferProperties0.get(), std::back_inserter(pppRC.textures0) );
@@ -2018,12 +2018,12 @@
 //
 //
 //
-//void ForwardRendering::stageConfigurePostProcessing( vgeGL::engine::Engine * engine )
+//void ForwardRendering::stageConfigurePostProcessing( vgeGLBase::engine::Engine * engine )
 //{
 //	if ( hasOutputBufferProperties || isPostProcessingEnabled )
 //	{
-//		namespace vgeGLPainter = vgeGL::handler::painter;
-//		using vgeGL::engine::GLSLState;
+//		namespace vgeGLPainter = vgeGLBase::handler::painter;
+//		using vgeGLBase::engine::GLSLState;
 //
 //		const std::string fragmentOutputDeclarationStage(
 //			vgeGLPainter::OutputBufferProperty::getFragmentOutputDeclarationStageString(engine, m_outputBufferProperties )
@@ -2041,11 +2041,11 @@
 //
 //
 //
-//void ForwardRendering::stagePostProcessing( vgeGL::engine::Engine * engine )
+//void ForwardRendering::stagePostProcessing( vgeGLBase::engine::Engine * engine )
 //{
 //	if ( isPostProcessingEnabled && m_postProcessing->getNum()>0 )
 //	{
-//		const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = applyPostProcessing( engine, *m_textures, m_postProcessing );
+//		const vgd::Shp< vgeGLBase::rc::FrameBufferObject > finalBuffers = applyPostProcessing( engine, *m_textures, m_postProcessing );
 //		if ( isBlitEnabled )	blit( engine, finalBuffers );
 //	}
 //	else
@@ -2064,8 +2064,8 @@
 //// @todo glCopyTexImage2D() and co in glo
 //// @todo moves applyPostProcessing and blit() in PostProcessing handler.
 //// @todo Composite for glo::Resource/std::string
-//const vgd::Shp< vgeGL::rc::FrameBufferObject > ForwardRendering::applyPostProcessing(
-//	vgeGL::engine::Engine *								engine,
+//const vgd::Shp< vgeGLBase::rc::FrameBufferObject > ForwardRendering::applyPostProcessing(
+//	vgeGLBase::engine::Engine *								engine,
 //
 //	std::vector< vgd::Shp< vgd::node::Texture2D > >&	outputBuffers,
 //	PostProcessingStateContainer *						postProcessingContainer )
@@ -2077,11 +2077,11 @@
 //	using vgd::node::Program;
 //	using vgd::node::Texture;
 //	using vgd::node::Texture2D;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	if ( !pppRC.outputFbo )
 //	{
-//		pppRC.outputFbo.reset( new vgeGL::rc::FrameBufferObject() );
+//		pppRC.outputFbo.reset( new vgeGLBase::rc::FrameBufferObject() );
 //		pppRC.outputFbo->generate();
 //	}
 //
@@ -2222,8 +2222,8 @@
 //			programs.push_back( program );
 //
 //			// Initializes Program node
-//			std::pair< std::string, std::string > filter = vgeGL::handler::painter::PostProcessing::getFilter( postProcessingNode, postProcessingNode->getFilter() );
-//			std::pair< float, float > scale = vgeGL::handler::painter::PostProcessing::getScale( postProcessingNode->getFilter() );
+//			std::pair< std::string, std::string > filter = vgeGLBase::handler::painter::PostProcessing::getFilter( postProcessingNode, postProcessingNode->getFilter() );
+//			std::pair< float, float > scale = vgeGLBase::handler::painter::PostProcessing::getScale( postProcessingNode->getFilter() );
 //
 //			// Scales
 //			scales.push_back(scale.second);
@@ -2319,8 +2319,8 @@
 //	beginPass();
 //	engine->begin2DRendering( &viewport, false );
 //
-//	vgd::Shp< vgeGL::rc::FrameBufferObject >			lfbo0		= pppRC.fbo0;
-//	vgd::Shp< vgeGL::rc::FrameBufferObject >			lfbo1		= pppRC.fbo1;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject >			lfbo0		= pppRC.fbo0;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject >			lfbo1		= pppRC.fbo1;
 //	std::vector< vgd::Shp< vgd::node::Texture2D > >*	ltex0		= &pppRC.textures0;
 //	std::vector< vgd::Shp< vgd::node::Texture2D > >*	ltex1		= &pppRC.textures1;
 //
@@ -2343,11 +2343,11 @@
 //
 //		// output
 //		vgd::Shp< vgd::node::Texture2D > outputTexture		= getOutputTexture( output[i], &outputBuffers, ltex1 );
-//		vgd::Shp< vgeGL::rc::Texture2D > outputTextureGLO	= engine->getRCShp< vgeGL::rc::Texture2D >( outputTexture );
+//		vgd::Shp< vgeGLBase::rc::Texture2D > outputTextureGLO	= engine->getRCShp< vgeGLBase::rc::Texture2D >( outputTexture );
 //		vgAssertN( outputTextureGLO != 0, "Texture2D node named '%s' does not have its managed OpenGL texture", outputTexture->getName().c_str() );
 //
 //// @todo FIXME workaround a bug in glFramebufferTexture2D() ? or ?
-//		//pppRC.outputFbo.reset( new vgeGL::rc::FrameBufferObject() );
+//		//pppRC.outputFbo.reset( new vgeGLBase::rc::FrameBufferObject() );
 //		//pppRC.outputFbo->release();
 //		//pppRC.outputFbo->generate();
 //
@@ -2545,7 +2545,7 @@
 //
 //
 //// @todo glo api : blit( fboSrc, fboDst, COLOR:DEPTH:STENCIL ) LINEAR or NEAREST,  blit( ..., srcRect, ..., dstRext... ).
-//void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source )
+//void ForwardRendering::blit( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::FrameBufferObject > source )
 //{
 //	source->bind();
 //	source->setReadBuffer();
@@ -2560,7 +2560,7 @@
 //}
 //
 //
-//void ForwardRendering::blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source, vgd::Shp< vgeGL::rc::FrameBufferObject > destination )
+//void ForwardRendering::blit( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::FrameBufferObject > source, vgd::Shp< vgeGLBase::rc::FrameBufferObject > destination )
 //{
 //	source->bindToRead();
 //	source->setReadBuffer();
@@ -2581,27 +2581,27 @@
 //}
 //
 //
-//void ForwardRendering::stageDecals( vgeGL::engine::Engine * engine )
+//void ForwardRendering::stageDecals( vgeGLBase::engine::Engine * engine )
 //{
 //	// Renders decals
 //	if ( renderDecals )
 //	{
 //		//setPassDescription("DECALS stage");
 //		//beginPass();
-//		vgeGL::handler::painter::Decal::paint( engine, m_decals );
+//		vgeGLBase::handler::painter::Decal::paint( engine, m_decals );
 //		//endPass();
 //	}
 //}
 //
 //
-//void ForwardRendering::stageOverlays( vgeGL::engine::Engine * engine )
+//void ForwardRendering::stageOverlays( vgeGLBase::engine::Engine * engine )
 //{
 //	// Renders overlays
 //	if ( renderOverlays )
 //	{
 //		setPassDescription("OVERLAYS stage");
 //		beginPass();
-//		vgeGL::handler::painter::Overlay::paint( engine, m_overlays );
+//		vgeGLBase::handler::painter::Overlay::paint( engine, m_overlays );
 //		endPass();
 //	}
 //}
@@ -2610,6 +2610,6 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //

@@ -6,11 +6,11 @@
 //#ifndef _VGEGLBASE_EVENT_REFRESHERCALLBACK_HPP
 //#define _VGEGLBASE_EVENT_REFRESHERCALLBACK_HPP
 //
-//#include <vgeGL/event/TimerCallback.hpp>
+//#include <vgeGLBase/event/TimerCallback.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -22,7 +22,7 @@
 // *
 // * @ingroup g_time
 // */
-//struct VGEGLBASE_API RefresherCallback : public vgeGL::event::TimerCallback
+//struct VGEGLBASE_API RefresherCallback : public vgeGLBase::event::TimerCallback
 //{
 //	/**
 //	 * @name Constructors
@@ -37,12 +37,12 @@
 //	/**
 //	 * @brief Constructor
 //	 */
-//	RefresherCallback( vgeGL::engine::SceneManager * sceneManager );
+//	RefresherCallback( vgeGLBase::engine::SceneManager * sceneManager );
 //
 //	/**
 //	 * @brief Constructor
 //	 */
-//	RefresherCallback( vgd::Shp< vgd::node::Node > node, vgeGL::engine::SceneManager * sceneManager );
+//	RefresherCallback( vgd::Shp< vgd::node::Node > node, vgeGLBase::engine::SceneManager * sceneManager );
 //
 //	//@}
 //
@@ -53,7 +53,7 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_EVENT_REFRESHERCALLBACK_HPP
 //

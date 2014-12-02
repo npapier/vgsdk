@@ -6,17 +6,17 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_LAYERPLAN_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_LAYERPLAN_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //#include <vge/handler/painter/MultiAttribute.hpp>
 //
 //namespace vgd { namespace node { struct LayerPlan; } }
 //
-//namespace vgeGL {  namespace engine { struct Engine; } }
+//namespace vgeGLBase {  namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace handler
@@ -42,7 +42,7 @@
 //	
 //	void setToDefaults();
 //	
-//	static void	paint( vgeGL::engine::Engine*, vgd::node::LayerPlan* );
+//	static void	paint( vgeGLBase::engine::Engine*, vgd::node::LayerPlan* );
 //};
 //
 //
@@ -51,7 +51,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_LAYERPLAN_HPP
 //

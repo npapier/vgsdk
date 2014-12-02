@@ -4,15 +4,15 @@
 //// Author Alexandre Di Pino
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/TessellationControlShaderGenerator.hpp"
+//#include "vgeGLBase/engine/TessellationControlShaderGenerator.hpp"
 //
 //#include <vgd/node/EngineProperties.hpp>
 //#include <vgd/node/Program.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -25,7 +25,7 @@
 //
 //
 //
-//const bool TessellationControlShaderGenerator::generate( vgeGL::engine::Engine * engine )
+//const bool TessellationControlShaderGenerator::generate( vgeGLBase::engine::Engine * engine )
 //{
 //	// Retrieves the GLSL state
 //	GLSLState& state = engine->getGLSLState();
@@ -265,5 +265,5 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

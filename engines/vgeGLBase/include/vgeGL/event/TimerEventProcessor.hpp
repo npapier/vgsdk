@@ -8,13 +8,13 @@
 //
 //#include <set>
 //
-//#include "vgeGL/event/EventProcessor.hpp"
+//#include "vgeGLBase/event/EventProcessor.hpp"
 //
 //namespace vgd { namespace event { struct TimerCallback; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -37,7 +37,7 @@
 //	 * 
 //	 * @pre sceneManager != 0
 //	 */
-//	TimerEventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
+//	TimerEventProcessor( ::vgeGLBase::engine::SceneManager *sceneManager );
 //
 //	/**
 //	 * @name Timer callback management
@@ -118,7 +118,7 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_EVENT_TIMEREVENTPROCESSOR_HPP
 //

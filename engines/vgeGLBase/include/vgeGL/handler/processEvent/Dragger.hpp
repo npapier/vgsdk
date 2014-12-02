@@ -12,7 +12,7 @@
 //#include <vgd/event/EventVisitor.hpp>
 //#include <vgm/Vector.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //
 //namespace vgd { namespace node { struct Dragger; } }
@@ -20,7 +20,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace basic { struct Hit; }
 //	namespace engine { struct Engine; }
@@ -90,7 +90,7 @@
 //	 * @param oUpToDownO
 //	 * @param oNearToFarO
 //	 */
-//	const bool ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEngine, vgd::node::Dragger *pDragger,
+//	const bool ConvertVectorsFromWindowToObject(	vgeGLBase::engine::Engine *pEngine, vgd::node::Dragger *pDragger,
 //													vgm::Vec3f& oLeftToRightO, vgm::Vec3f& oUpToDownO, vgm::Vec3f& oNearToFarO );
 //
 //	/**
@@ -98,7 +98,7 @@
 //	 *
 //	 * Update m_pGLEngine, m_pDragger, m_pEvent and update Dragger.currentState field.
 //	 */
-//	void preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pDragger );
+//	void preApply( vgeGLBase::engine::Engine *pGLEngine, vgd::node::Dragger *pDragger );
 //
 //	/**
 //	 * @brief Must be called by derived handler after preApply() and before postApply()
@@ -117,7 +117,7 @@
 //
 //
 //protected:
-//	vgeGL::engine::Engine	*m_pGLEngine;
+//	vgeGLBase::engine::Engine	*m_pGLEngine;
 //	vgd::node::Dragger		*m_pDragger;
 //
 //	/**
@@ -138,7 +138,7 @@
 //	 *
 //	 * @return a reference on the hit
 //	 */
-//	vgd::Shp< vgeGL::basic::Hit > getHit( vge::engine::Engine *pEngine );
+//	vgd::Shp< vgeGLBase::basic::Hit > getHit( vge::engine::Engine *pEngine );
 //};
 //
 //
@@ -147,7 +147,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PROCESSEVENT_DRAGGER_HPP
 //

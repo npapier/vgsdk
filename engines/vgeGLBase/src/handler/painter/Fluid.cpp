@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Fluid.hpp"
+//#include "vgeGLBase/handler/painter/Fluid.hpp"
 //
 //#include <boost/algorithm/string/replace.hpp>
 //#include <boost/lexical_cast.hpp>
@@ -17,14 +17,14 @@
 //#include <vgd/node/Texture2D.hpp>
 //#include <vge/rc/Manager.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/Texture2D.hpp"
-//#include "vgeGL/rc/Fluid.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/Texture2D.hpp"
+//#include "vgeGLBase/rc/Fluid.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -53,8 +53,8 @@
 //
 //void Fluid::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< vgd::node::Fluid* >(pNode) != 0 );
 //	vgd::node::Fluid *pCastedNode = static_cast< vgd::node::Fluid* >(pNode);
@@ -74,16 +74,16 @@
 //
 //
 //
-//void Fluid::paint( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid )
+//void Fluid::paint( vgeGLBase::engine::Engine * engine, vgd::node::Fluid * fluid )
 //{
 //	using vgd::node::Texture;
 //
-//	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
-//	vgd::Shp< vgeGL::rc::Fluid > fluidRC = rcManager->getShp< vgeGL::rc::Fluid >( fluid );
+//	vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+//	vgd::Shp< vgeGLBase::rc::Fluid > fluidRC = rcManager->getShp< vgeGLBase::rc::Fluid >( fluid );
 //
 //	if ( fluidRC )
 //	{
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //
 //		// Saves texture mapping state
 //		const bool isTextureMappingEnabledBak	= engine->setTextureMappingEnabled(true);
@@ -222,5 +222,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

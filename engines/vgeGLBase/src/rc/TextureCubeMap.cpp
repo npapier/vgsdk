@@ -3,5 +3,5 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/rc/TextureCubeMap.hpp"
+//#include "vgeGLBase/rc/TextureCubeMap.hpp"
 //

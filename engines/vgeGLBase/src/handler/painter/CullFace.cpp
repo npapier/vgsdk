@@ -3,15 +3,15 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/CullFace.hpp"
+//#include "vgeGLBase/handler/painter/CullFace.hpp"
 //
 //#include <vgd/node/CullFace.hpp>
 //
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -40,13 +40,13 @@
 //
 //void CullFace::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-////	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-////	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(engine);
+////	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+////	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 ////	assert( dynamic_cast< vgd::node::CullFace* >(node) != 0 );
 ////	vgd::node::CullFace *pCastedNode = static_cast< vgd::node::CullFace* >(node);
 //
-//	vgeGL::rc::applyUsingDisplayList< vgd::node::CullFace, CullFace >( engine, node, this );
+//	vgeGLBase::rc::applyUsingDisplayList< vgd::node::CullFace, CullFace >( engine, node, this );
 //}
 //
 //
@@ -64,7 +64,7 @@
 //
 //
 //
-//void CullFace::paint( vgeGL::engine::Engine *, vgd::node::CullFace * node )
+//void CullFace::paint( vgeGLBase::engine::Engine *, vgd::node::CullFace * node )
 //{
 //	// MODE
 //	vgd::node::CullFace::ModeValueType value = node->getMode();
@@ -105,5 +105,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

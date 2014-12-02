@@ -11,8 +11,8 @@
 //#include <vgd/node/VertexShape.hpp>
 //#include <vgm/Vector.hpp>
 //
-//#include "vgeGL/engine/Settings.hpp"
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/engine/Settings.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace glo { struct GLSLProgram; }
 //
@@ -23,7 +23,7 @@
 //
 //namespace vgm { struct Box3f; }
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine { struct Engine; }
 //
@@ -32,7 +32,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -71,33 +71,33 @@
 //	void unapply( vge::engine::Engine*, vgd::node::Node* );
 //	void setToDefaults();
 //
-//	void setSamplers( vgeGL::engine::Engine * pGLEngine, glo::GLSLProgram * program );
+//	void setSamplers( vgeGLBase::engine::Engine * pGLEngine, glo::GLSLProgram * program );
 //
 //	// create rc
 //	// 	update, configure, render
 //	// or
 //	// 	render
-//	void paint( vgeGL::engine::Engine*, vgd::node::VertexShape* );
+//	void paint( vgeGLBase::engine::Engine*, vgd::node::VertexShape* );
 //
 //
 //	// creates opengl buffer and upload data
-//	void update(	vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc );
+//	void update(	vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGLBase::rc::VertexShape * rc );
 //
 //	// glEnableVertexAttribArray, glVertexAttribPointer
 //	//	or
 //	// glDisableVertexAttribArray
-//	void configureRenderingArrays( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc );
+//	void configureRenderingArrays( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGLBase::rc::VertexShape * rc );
 //
 //	// @todo doc
 //	// @todo NORMAL1_INDEX,
 //	// @todo TANGENT1_INDEX,
-//	void configureRenderingArraysForGeoMorph( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc );
-//	void unconfigureRenderingArraysForGeoMorph( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc );
+//	void configureRenderingArraysForGeoMorph( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGLBase::rc::VertexShape * rc );
+//	void unconfigureRenderingArraysForGeoMorph( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGLBase::rc::VertexShape * rc );
 //
 //	// return if GLSL program is not linked
 //	// geomorph work
 //	// @todo doc
-//	void renderArrays(	vgeGL::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, vgeGL::rc::VertexShape * rc );
+//	void renderArrays(	vgeGLBase::engine::Engine * pGLEngine, vgd::node::VertexShape *pVertexShape, vgeGLBase::rc::VertexShape * rc );
 //
 //
 //	/**
@@ -113,8 +113,8 @@
 //	 */
 //	//@{
 //
-//	void 	drawBoundingBox		( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
-//	void 	drawXfBoundingBox	( vgeGL::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
+//	void 	drawBoundingBox		( vgeGLBase::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
+//	void 	drawXfBoundingBox	( vgeGLBase::engine::Engine *pGLEngine, vgd::node::VertexShape *pCastedNode );
 //
 //	void	drawBox3f	( const vgm::Box3f& box );
 //	void	drawVectorsFromVertices(	vgd::node::VertexShape *vertexShape,
@@ -127,7 +127,7 @@
 //	 * 
 //	 * @remarks Useful to know if triangles are in CCW or CW
 //	 */
-//	void 	drawTriangleOrientation( vgd::node::VertexShape *pVertexShape, vgeGL::rc::VertexShape * rc );
+//	void 	drawTriangleOrientation( vgd::node::VertexShape *pVertexShape, vgeGLBase::rc::VertexShape * rc );
 //	//@}
 //
 //protected:
@@ -143,7 +143,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_VERTEXSHAPE_HPP
 //

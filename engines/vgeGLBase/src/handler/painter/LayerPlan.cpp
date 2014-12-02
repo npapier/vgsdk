@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/LayerPlan.hpp"
+//#include "vgeGLBase/handler/painter/LayerPlan.hpp"
 //
 //
 //#include <vgd/field/DirtyFlag.hpp>
@@ -12,15 +12,15 @@
 //#include <vgd/node/Texture2D.hpp>
 //#include <vge/rc/Manager.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include <vgeGL/rc/Root.hpp>
-////#include "vgeGL/rc/TDisplayListHelper.hpp"
-//#include "vgeGL/rc/Texture2D.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include <vgeGLBase/rc/Root.hpp>
+////#include "vgeGLBase/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/rc/Texture2D.hpp"
 //#include <vgm/operations.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -49,15 +49,15 @@
 //
 //void LayerPlan::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-//	vgAssert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	vgAssert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	vgAssert( dynamic_cast< vgd::node::LayerPlan* >(pNode) != 0 );
 //	vgd::node::LayerPlan *pCastedNode = static_cast< vgd::node::LayerPlan* >(pNode);
 //
 //	paint( pGLEngine, pCastedNode );
 //	// @todo conflict in manager between display list and vge::rc::Root for the same node (the LayerPlan)
-//	// vgeGL::rc::applyUsingDisplayList< vgd::node::LayerPlan, LayerPlan >( pEngine, pNode, this );
+//	// vgeGLBase::rc::applyUsingDisplayList< vgd::node::LayerPlan, LayerPlan >( pEngine, pNode, this );
 //}
 //
 //
@@ -74,7 +74,7 @@
 //
 //
 //// @todo Uses glsl for LayerPlan
-//void LayerPlan::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::LayerPlan *layerPlan )
+//void LayerPlan::paint( vgeGLBase::engine::Engine *pGLEngine, vgd::node::LayerPlan *layerPlan )
 //{
 //	if (	(layerPlan->getImage() == 0) ||													// no image
 //			(	(layerPlan->getImage() != 0) && layerPlan->getImage()->isEmpty()	)		// empty image
@@ -85,10 +85,10 @@
 //	}
 //
 //	// Searchs resource
-//	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = pGLEngine->getGLManager();
+//	vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = pGLEngine->getGLManager();
 //
 //	::glo::IResource 							*resource	= rcManager->getAbstract( layerPlan );
-//	vgeGL::rc::Root								*rcRoot		= dynamic_cast< vgeGL::rc::Root* >(resource);
+//	vgeGLBase::rc::Root								*rcRoot		= dynamic_cast< vgeGLBase::rc::Root* >(resource);
 //
 //	using vgd::node::Quad;
 //	using vgd::node::Texture2D;
@@ -108,7 +108,7 @@
 //		vgAssert( rcRoot == 0 );
 //
 //		// No resource (this is the first evaluation), create it.
-//		rcRoot = new vgeGL::rc::Root;
+//		rcRoot = new vgeGLBase::rc::Root;
 //		rcManager->add( layerPlan, rcRoot );
 //
 //		texture2D = Texture2D::create("rootRC.LayerPlan.texture2D");
@@ -147,7 +147,7 @@
 //	// render overlay
 //
 //	// Makes a backup of GLSL activation state
-//	using vgeGL::engine::Engine;
+//	using vgeGLBase::engine::Engine;
 //	vgd::Shp< Engine::GLSLActivationState > glslActivationState = pGLEngine->getGLSLActivationState();
 //	pGLEngine->sethCurrentProgram();
 //
@@ -177,7 +177,7 @@
 //	pGLEngine->paint( texture2D, true );
 //
 //	// Gets the resource manager
-//	vgeGL::rc::Texture2D * gloTex2D = rcManager->get< vgeGL::rc::Texture2D >( texture2D.get() );
+//	vgeGLBase::rc::Texture2D * gloTex2D = rcManager->get< vgeGLBase::rc::Texture2D >( texture2D.get() );
 //	gloTex2D->env( GL_TEXTURE_ENV_MODE, GL_REPLACE );
 //
 //	// draw proxy geometry
@@ -210,5 +210,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

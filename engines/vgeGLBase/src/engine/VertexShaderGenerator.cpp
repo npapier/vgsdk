@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/VertexShaderGenerator.hpp"
+//#include "vgeGLBase/engine/VertexShaderGenerator.hpp"
 //
 //#include <vgd/node/Program.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //// @todo generates all shaders from one function to avoid multiple if
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -28,7 +28,7 @@
 //
 //
 //
-//const bool VertexShaderGenerator::generate( vgeGL::engine::Engine * engine )
+//const bool VertexShaderGenerator::generate( vgeGLBase::engine::Engine * engine )
 //{
 //	// Retrieves the GLSL state
 //	GLSLState& state = engine->getGLSLState();
@@ -56,14 +56,14 @@
 //	m_decl += "// INPUTS\n";
 //
 //	// BEGIN: VERTEX SHADER SPECIFIC
-//	const std::string vertexIndexStr	= vgd::basic::toString( vgeGL::engine::VERTEX_INDEX );
-//	const std::string normalIndexStr	= vgd::basic::toString( vgeGL::engine::NORMAL_INDEX );
-//	const std::string tangentIndexStr	= vgd::basic::toString( vgeGL::engine::TANGENT_INDEX );
-//	const std::string colorIndexStr		= vgd::basic::toString( vgeGL::engine::COLOR_INDEX );
+//	const std::string vertexIndexStr	= vgd::basic::toString( vgeGLBase::engine::VERTEX_INDEX );
+//	const std::string normalIndexStr	= vgd::basic::toString( vgeGLBase::engine::NORMAL_INDEX );
+//	const std::string tangentIndexStr	= vgd::basic::toString( vgeGLBase::engine::TANGENT_INDEX );
+//	const std::string colorIndexStr		= vgd::basic::toString( vgeGLBase::engine::COLOR_INDEX );
 //
-//	const std::string texCoord0IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD_INDEX );
-//	const std::string texCoord1IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD1_INDEX );
-//	const std::string texCoord2IndexStr	= vgd::basic::toString( vgeGL::engine::TEXCOORD2_INDEX );
+//	const std::string texCoord0IndexStr	= vgd::basic::toString( vgeGLBase::engine::TEXCOORD_INDEX );
+//	const std::string texCoord1IndexStr	= vgd::basic::toString( vgeGLBase::engine::TEXCOORD1_INDEX );
+//	const std::string texCoord2IndexStr	= vgd::basic::toString( vgeGLBase::engine::TEXCOORD2_INDEX );
 //
 //	m_decl += "layout(location = " + vertexIndexStr +	") in vec4 mgl_Vertex;\n";
 //	m_decl += "layout(location = " + normalIndexStr +	") in vec3 mgl_Normal;\n";
@@ -76,11 +76,11 @@
 //	m_decl += "layout(location = " + texCoord2IndexStr + ") in vec4 mgl_MultiTexCoord2;\n\n";
 //	m_decl += "\n";
 //
-//	if ( state.isEnabled( vgeGL::engine::GEOMORPH ) )
+//	if ( state.isEnabled( vgeGLBase::engine::GEOMORPH ) )
 //	{
-//		const std::string vertexIndexStr	= vgd::basic::toString( vgeGL::engine::VERTEX1_INDEX );
-//		const std::string normalIndexStr	= vgd::basic::toString( vgeGL::engine::NORMAL1_INDEX );
-//		const std::string tangentIndexStr	= vgd::basic::toString( vgeGL::engine::TANGENT1_INDEX );
+//		const std::string vertexIndexStr	= vgd::basic::toString( vgeGLBase::engine::VERTEX1_INDEX );
+//		const std::string normalIndexStr	= vgd::basic::toString( vgeGLBase::engine::NORMAL1_INDEX );
+//		const std::string tangentIndexStr	= vgd::basic::toString( vgeGLBase::engine::TANGENT1_INDEX );
 //
 //		m_decl += "layout(location = " + vertexIndexStr +	") in vec4 mgl_Vertex1;\n";
 //		m_decl += "layout(location = " + normalIndexStr +	") in vec3 mgl_Normal1;\n";
@@ -297,5 +297,5 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

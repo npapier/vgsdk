@@ -3,12 +3,12 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/event/RefresherCallback.hpp"
+//#include "vgeGLBase/event/RefresherCallback.hpp"
 //
 //#include <vgd/event/TimerEvent.hpp>
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -23,7 +23,7 @@
 //}
 //
 //
-//RefresherCallback::RefresherCallback( vgeGL::engine::SceneManager * sceneManager )
+//RefresherCallback::RefresherCallback( vgeGLBase::engine::SceneManager * sceneManager )
 //:	TimerCallback( sceneManager )
 //{
 //	setExecutionDuration( 0 );
@@ -31,7 +31,7 @@
 //}
 //
 //
-//RefresherCallback::RefresherCallback( vgd::Shp< vgd::node::Node > node, vgeGL::engine::SceneManager * sceneManager )
+//RefresherCallback::RefresherCallback( vgd::Shp< vgd::node::Node > node, vgeGLBase::engine::SceneManager * sceneManager )
 //:	TimerCallback( node, sceneManager )
 //{
 //	setExecutionDuration( 0 );
@@ -47,4 +47,4 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase

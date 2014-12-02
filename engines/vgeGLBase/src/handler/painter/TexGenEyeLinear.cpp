@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/TexGenEyeLinear.hpp"
+//#include "vgeGLBase/handler/painter/TexGenEyeLinear.hpp"
 //
 //#include <vgd/node/TexGenEyeLinear.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -42,8 +42,8 @@
 //
 //void TexGenEyeLinear::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::TexGenEyeLinear* >(node) != 0 );
 //	vgd::node::TexGenEyeLinear *texGen = static_cast< vgd::node::TexGenEyeLinear* >(node);
@@ -52,7 +52,7 @@
 //
 //	if ( glEngine->isTextureMappingEnabled() )
 //	{
-//		vgeGL::rc::applyUsingDisplayList< vgd::node::TexGenEyeLinear, TexGenEyeLinear >( engine, node, this );
+//		vgeGLBase::rc::applyUsingDisplayList< vgd::node::TexGenEyeLinear, TexGenEyeLinear >( engine, node, this );
 //	}
 //}
 //
@@ -70,7 +70,7 @@
 //
 //
 //
-//void TexGenEyeLinear::paint( vgeGL::engine::Engine * engine, vgd::node::TexGenEyeLinear * node )
+//void TexGenEyeLinear::paint( vgeGLBase::engine::Engine * engine, vgd::node::TexGenEyeLinear * node )
 //{
 //	// PARAMETERS
 //	if ( node->hasParameters() )
@@ -96,5 +96,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

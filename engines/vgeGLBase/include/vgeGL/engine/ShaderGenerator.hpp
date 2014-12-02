@@ -16,16 +16,16 @@
 //#include <vgd/node/Light.hpp>
 //#include <vgd/node/Texture.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 ////// @todo gl_Color only in vertexShader and if color4 ?
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -72,7 +72,7 @@
 //		//
 //		if ( state.isBumpMappingEnabled() )	retVal += "#define BUMPMAPPING\n";
 //		if ( state.isTessellationEnabled() )	retVal += "#define TESSELLATION\n";
-//		if ( state.isEnabled( vgeGL::engine::COLOR_BIND_PER_VERTEX ) )	retVal += "#define COLOR_BIND_PER_VERTEX\n";
+//		if ( state.isEnabled( vgeGLBase::engine::COLOR_BIND_PER_VERTEX ) )	retVal += "#define COLOR_BIND_PER_VERTEX\n";
 //
 //
 //		//
@@ -1152,7 +1152,7 @@
 //	// TEXTURE
 //	// @param storageQualifier	'out' for vertex shader, 'in' for fragment shader
 //	static std::pair< std::string, std::string > generateFunction_ftexgen(
-//		const vgeGL::engine::GLSLState& state,
+//		const vgeGLBase::engine::GLSLState& state,
 //		const std::string storageQualifier, const std::string blockName, const std::string instanceName, 
 //		const bool isTessellationShader,
 //		const bool addCompatibilityDefines = false )
@@ -1308,7 +1308,7 @@
 //
 //// @todo refactoring
 //	// @todo getSampler2DCount() and co
-//	static std::pair< std::string, std::string > generate_samplers( const vgeGL::engine::GLSLState& state )
+//	static std::pair< std::string, std::string > generate_samplers( const vgeGLBase::engine::GLSLState& state )
 //	{
 //		std::string decl;
 //
@@ -1367,7 +1367,7 @@
 //	}
 //
 //
-//	static const std::string generate_texLookups( const vgeGL::engine::GLSLState& state, const bool fragmentShader )
+//	static const std::string generate_texLookups( const vgeGLBase::engine::GLSLState& state, const bool fragmentShader )
 //	{
 //		std::string retVal;
 //
@@ -1420,18 +1420,18 @@
 //		return retVal;
 //	}
 //
-//	static const std::string generate_vertexShader_texLookups( const vgeGL::engine::GLSLState& state )
+//	static const std::string generate_vertexShader_texLookups( const vgeGLBase::engine::GLSLState& state )
 //	{
 //		return generate_texLookups( state, false );
 //	}
 //
-//	static const std::string generate_fragmentShader_texLookups( const vgeGL::engine::GLSLState& state )
+//	static const std::string generate_fragmentShader_texLookups( const vgeGLBase::engine::GLSLState& state )
 //	{
 //		return generate_texLookups( state, true );
 //	}
 //
 //
-//	static const std::string generate_fpoint( const vgeGL::engine::GLSLState& state )
+//	static const std::string generate_fpoint( const vgeGLBase::engine::GLSLState& state )
 //	{
 //		std::string retVal;
 //
@@ -1617,7 +1617,7 @@
 //	/**
 //	 * @param engine	used to lookup the rendering state (light(s) , texture(s) and so on).
 //	 */
-//	virtual const bool generate( vgeGL::engine::Engine * engine ) = 0;
+//	virtual const bool generate( vgeGLBase::engine::Engine * engine ) = 0;
 //
 //
 //	/**
@@ -1679,7 +1679,7 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_ENGINE_SHADERGENERATOR_HPP
 //

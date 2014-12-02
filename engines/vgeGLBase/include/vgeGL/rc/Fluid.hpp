@@ -9,8 +9,8 @@
 //#include <vector>
 //#include <vgd/Shp.hpp>
 //#include <vge/rc/IResource.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/FrameBufferObject.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/FrameBufferObject.hpp"
 //
 //namespace vgd
 //{
@@ -25,7 +25,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace rc
@@ -39,17 +39,17 @@
 //struct VGEGLBASE_API Fluid : public vge::rc::IResource, public glo::IResource
 //{
 //// for simu pp
-//	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
 //	vgd::Shp< OutputBufferPropertyStateContainer >	outputBufferProperties;
 //
 //	// HEIGHT MAPS
 //	vgd::Shp< vgd::node::FrameBuffer >				frameBuffer;
-//	vgd::Shp< vgeGL::rc::FrameBufferObject > 		fbo;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject > 		fbo;
 //	// 0 scene height map
 //	// 1 blood height map
 //	std::vector< vgd::Shp< vgd::node::Texture2D > >	heightMaps;
 //
-//	vgd::Shp< vgeGL::rc::FrameBufferObject > 		postProcessingFBO;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject > 		postProcessingFBO;
 //
 //	// GRID
 //	vgd::Shp< vgd::node::Grid >			grid;
@@ -60,7 +60,7 @@
 //	// SIMULATION using post-processing
 //	vgd::Shp< vgd::node::Group >	postProcessingGroup;
 //
-//	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 //	PostProcessingStateContainer					postProcessing;
 //};
 //
@@ -68,7 +68,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_FLUID_HPP
 //

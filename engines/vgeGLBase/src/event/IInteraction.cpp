@@ -3,13 +3,13 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/event/IInteraction.hpp"
+//#include "vgeGLBase/event/IInteraction.hpp"
 //
-//#include "vgeGL/engine/SceneManager.hpp"
+//#include "vgeGLBase/engine/SceneManager.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace event
@@ -17,7 +17,7 @@
 //
 //
 //
-//IInteraction::IInteraction( ::vgeGL::engine::SceneManager *sceneManager )
+//IInteraction::IInteraction( ::vgeGLBase::engine::SceneManager *sceneManager )
 //:	EventProcessor( sceneManager )
 //{
 //}
@@ -38,5 +38,5 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

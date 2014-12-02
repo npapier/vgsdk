@@ -3,5 +3,5 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/rc/TSyncAndBindHelper.hpp"
+//#include "vgeGLBase/rc/TSyncAndBindHelper.hpp"
 //

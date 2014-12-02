@@ -10,11 +10,11 @@
 //#include <vgd/Shp.hpp>
 //#include <vgd/field/DirtyFlag.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //
 //
-//namespace vgeGL { namespace engine 
+//namespace vgeGLBase { namespace engine 
 //{ 
 //	struct Engine;
 //	struct FragmentShaderGenerator;
@@ -27,7 +27,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -44,7 +44,7 @@
 //
 //
 //	// @todo returns list< ShaderType > containing modified shader
-//	void generate( vgeGL::engine::Engine * engine );
+//	void generate( vgeGLBase::engine::Engine * engine );
 //
 //	/**
 //	 * @brief Retrieves the full GLSL program.
@@ -83,7 +83,7 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_ENGINE_PROGRAMGENERATOR_HPP
 //

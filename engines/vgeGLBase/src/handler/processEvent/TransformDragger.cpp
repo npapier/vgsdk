@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/processEvent/TransformDragger.hpp"
+//#include "vgeGLBase/handler/processEvent/TransformDragger.hpp"
 //
 //#include <vgd/event/KeyboardButtonEvent.hpp>
 //#include <vgd/event/Location2Event.hpp>
@@ -13,12 +13,12 @@
 //#include <vge/rc/ButtonStateSet.hpp>
 //#include <vgm/operations.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/technique/ProcessEvent.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/technique/ProcessEvent.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -51,8 +51,8 @@
 //	assert( dynamic_cast< TransformDragger* >(pNode) != 0 );
 //	TransformDragger *pDragger = static_cast< TransformDragger* >(pNode);
 //
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	//
 //	Dragger::preApply( pGLEngine, pDragger );
@@ -81,7 +81,7 @@
 //	assert( dynamic_cast< TransformDragger* >(m_pDragger) != 0 );
 //	TransformDragger *pDragger = static_cast< TransformDragger* >(m_pDragger);
 //
-//	vgd::Shp< vgeGL::basic::Hit > hit = getHit( m_pGLEngine );
+//	vgd::Shp< vgeGLBase::basic::Hit > hit = getHit( m_pGLEngine );
 //
 //	if ( pDragger->getCurrentState() == TransformDragger::ROTATION_XY_ACTIVE )
 //	{

@@ -11,13 +11,13 @@
 //#include <vgd/Shp.hpp>
 //#include <vge/rc/IResource.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace vgd { namespace node { struct FrameBuffer; struct Texture2D; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace rc
@@ -37,7 +37,7 @@
 //	{}
 //
 //	vgd::Shp< vgd::node::FrameBuffer >			frameBuffer;
-//	vgd::Shp< vgeGL::rc::FrameBufferObject >	fbo;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject >	fbo;
 //	vgd::Shp< Texture2DVector >					textures;
 //};
 //
@@ -45,7 +45,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_OFFSCREENRENDERING_HPP
 //

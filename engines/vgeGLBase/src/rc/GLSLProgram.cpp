@@ -3,5 +3,5 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/rc/GLSLProgram.hpp"
+//#include "vgeGLBase/rc/GLSLProgram.hpp"
 //

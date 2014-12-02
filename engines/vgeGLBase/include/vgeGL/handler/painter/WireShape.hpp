@@ -6,13 +6,13 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_WIRESHAPE_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_WIRESHAPE_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
-//#include "vgeGL/handler/painter/VertexShape.hpp"
+//#include "vgeGLBase/handler/painter/VertexShape.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace handler
@@ -44,7 +44,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_WIRESHAPE_HPP
 //

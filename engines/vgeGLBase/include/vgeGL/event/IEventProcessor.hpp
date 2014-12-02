@@ -9,11 +9,11 @@
 //#include <vgd/Shp.hpp>
 //#include <vgd/event/Event.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace event
@@ -88,7 +88,7 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_EVENT_IEVENTPROCESSOR_HPP
 //

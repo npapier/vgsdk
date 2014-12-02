@@ -3,14 +3,14 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/pass/Pass.hpp"
+//#include "vgeGLBase/pass/Pass.hpp"
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/technique/Technique.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/technique/Technique.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace pass
@@ -24,10 +24,10 @@
 //{
 //	// @todo remove this
 //
-//	vgeGL::technique::Technique *	castedTechnique	= dynamic_cast< vgeGL::technique::Technique * >( technique );
+//	vgeGLBase::technique::Technique *	castedTechnique	= dynamic_cast< vgeGLBase::technique::Technique * >( technique );
 //	assert( castedTechnique != 0 );
 //
-//	vgeGL::engine::Engine *			castedEngine	= dynamic_cast< vgeGL::engine::Engine * >( engine );
+//	vgeGLBase::engine::Engine *			castedEngine	= dynamic_cast< vgeGLBase::engine::Engine * >( engine );
 //	assert( castedEngine != 0 );
 //
 //	apply( castedTechnique, castedEngine, traverseElements, service );
@@ -37,5 +37,5 @@
 //
 //} // namespace pass
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

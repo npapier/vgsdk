@@ -3,11 +3,11 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/basic/Hit.hpp"
+//#include "vgeGLBase/basic/Hit.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace basic
@@ -131,5 +131,5 @@
 //
 //} // namespace basic
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

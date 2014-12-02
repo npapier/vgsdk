@@ -8,11 +8,11 @@
 //
 //#include <vge/pass/Pass.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine { 	struct Engine; 	}
@@ -20,7 +20,7 @@
 //namespace technique { struct Technique; }
 //
 ///**
-// * @namespace vgeGL::pass
+// * @namespace vgeGLBase::pass
 // * 
 // * @brief Provides a framework to describe a single pass of a technique evaluation strategy.
 // */
@@ -42,7 +42,7 @@
 //	 * @param traverseElements	elements to evaluate
 //	 * @param service			service to evaluate
 //	 */
-//	VGEGLBASE_API virtual void apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engine *engine, 
+//	VGEGLBASE_API virtual void apply(	vgeGLBase::technique::Technique * technique, vgeGLBase::engine::Engine *engine, 
 //									vge::visitor::TraverseElementVector* traverseElements,
 //									vgd::Shp< vge::service::Service > service ) = 0;
 //private:
@@ -55,7 +55,7 @@
 //
 //} // namespace pass
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_PASS_PASS_HPP
 //

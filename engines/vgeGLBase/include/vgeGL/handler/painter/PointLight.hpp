@@ -6,7 +6,7 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_POINTLIGHT_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_POINTLIGHT_HPP
 //
-//#include "vgeGL/handler/painter/Light.hpp"
+//#include "vgeGLBase/handler/painter/Light.hpp"
 //
 //namespace vgd
 //{
@@ -16,7 +16,7 @@
 //	}
 //}
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine
 //	{
@@ -28,7 +28,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -41,7 +41,7 @@
 ///**
 // * @brief Send render commands for the PointLight node.
 // */
-//struct VGEGLBASE_API PointLight : public vgeGL::handler::painter::Light
+//struct VGEGLBASE_API PointLight : public vgeGLBase::handler::painter::Light
 //{
 //	META_HANDLER_HPP( PointLight );
 //
@@ -52,9 +52,9 @@
 //
 //	void	setToDefaults();
 //
-//	void	updateGLSLState( vgeGL::engine::Engine * engine, vgd::node::PointLight * light, vgeGL::engine::GLSLState& glslState );
-//	void	updateUnitState( vgeGL::engine::Engine * engine, vgd::node::PointLight * light, vgd::Shp< vgeGL::engine::LightState > lightState );
-//	void	paint( vgeGL::engine::Engine *pEngine, vgd::node::PointLight *pPointLight );
+//	void	updateGLSLState( vgeGLBase::engine::Engine * engine, vgd::node::PointLight * light, vgeGLBase::engine::GLSLState& glslState );
+//	void	updateUnitState( vgeGLBase::engine::Engine * engine, vgd::node::PointLight * light, vgd::Shp< vgeGLBase::engine::LightState > lightState );
+//	void	paint( vgeGLBase::engine::Engine *pEngine, vgd::node::PointLight *pPointLight );
 //};
 //
 //
@@ -63,7 +63,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_POINTLIGHT_HPP
 //

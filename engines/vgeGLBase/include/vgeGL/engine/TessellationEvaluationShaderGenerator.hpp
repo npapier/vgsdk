@@ -6,11 +6,11 @@
 //#ifndef _VGEGLBASE_ENGINE_TESSELLATIONEVALUATIONSHADERGENERATOR_HPP
 //#define _VGEGLBASE_ENGINE_TESSELLATIONEVALUATIONSHADERGENERATOR_HPP
 //
-//#include "vgeGL/engine/ShaderGenerator.hpp"
+//#include "vgeGLBase/engine/ShaderGenerator.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -29,13 +29,13 @@
 //	TessellationEvaluationShaderGenerator();
 //
 //	// Overridden
-//	const bool generate( vgeGL::engine::Engine * engine );
+//	const bool generate( vgeGLBase::engine::Engine * engine );
 //};
 //
 //
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_ENGINE_TESSELLATIONEVALUATIONSHADERGENERATOR_HPP

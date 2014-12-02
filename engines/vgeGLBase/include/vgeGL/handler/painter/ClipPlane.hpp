@@ -7,15 +7,15 @@
 //#define _VGEGLBASE_HANDLER_PAINTER_CLIPPLANE_HPP
 //
 //#include <vge/handler/painter/MultiAttribute.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace vgd { namespace node { struct ClipPlane; } }
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -40,7 +40,7 @@
 //
 //	void setToDefaults();
 //
-//	void paint( vgeGL::engine::Engine*, vgd::node::ClipPlane* );
+//	void paint( vgeGLBase::engine::Engine*, vgd::node::ClipPlane* );
 //};
 //
 //
@@ -49,7 +49,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_CLIPPLANE_HPP
 //

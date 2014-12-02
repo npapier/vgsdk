@@ -6,17 +6,17 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_FLUID_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_FLUID_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //#include <vge/handler/painter/Shape.hpp>
 //
 //namespace vgd { namespace node { struct Fluid; } }
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
-//namespace vgeGL { namespace rc { struct Fluid; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace rc { struct Fluid; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -41,7 +41,7 @@
 //
 //	void setToDefaults();
 //
-//	void paint( vgeGL::engine::Engine*, vgd::node::Fluid* );
+//	void paint( vgeGLBase::engine::Engine*, vgd::node::Fluid* );
 //};
 //
 //
@@ -50,7 +50,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_FLUID_HPP
 //

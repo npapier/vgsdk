@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/ClipPlane.hpp"
+//#include "vgeGLBase/handler/painter/ClipPlane.hpp"
 //
 //#include <vgd/node/ClipPlane.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -42,19 +42,19 @@
 //
 //void ClipPlane::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 ////	assert( dynamic_cast< vgd::node::ClipPlane* >(node) != 0 );
 ////	vgd::node::ClipPlane *pCastedNode = static_cast< vgd::node::ClipPlane* >(node);
 //
 //	if ( glEngine->isGLSLEnabled() )
 //	{
-//		using vgeGL::engine::GLSLState;
-//		glEngine->getGLSLState().setEnabled( vgeGL::engine::CLIPPING_PLANE );
+//		using vgeGLBase::engine::GLSLState;
+//		glEngine->getGLSLState().setEnabled( vgeGLBase::engine::CLIPPING_PLANE );
 //	}
 //
-//	vgeGL::rc::applyUsingDisplayList< vgd::node::ClipPlane, ClipPlane >( engine, node, this );
+//	vgeGLBase::rc::applyUsingDisplayList< vgd::node::ClipPlane, ClipPlane >( engine, node, this );
 //}
 //
 //
@@ -71,7 +71,7 @@
 //
 //
 //
-//void ClipPlane::paint( vgeGL::engine::Engine * engine, vgd::node::ClipPlane * node )
+//void ClipPlane::paint( vgeGLBase::engine::Engine * engine, vgd::node::ClipPlane * node )
 //{
 //	const int index = GL_CLIP_PLANE0 + node->getMultiAttributeIndex();
 //
@@ -111,5 +111,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

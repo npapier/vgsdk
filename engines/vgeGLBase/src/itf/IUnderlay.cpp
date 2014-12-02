@@ -3,5 +3,5 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/itf/IUnderlay.hpp"
+//#include "vgeGLBase/itf/IUnderlay.hpp"
 //

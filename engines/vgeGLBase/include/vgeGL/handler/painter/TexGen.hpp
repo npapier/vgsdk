@@ -8,15 +8,15 @@
 //
 //#include <vge/handler/painter/MultiAttribute.hpp>
 //#include <vgm/Matrix.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace vgd { namespace node { struct TexGen; } }
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -32,9 +32,9 @@
 // */
 //struct VGEGLBASE_API TexGen : public vge::handler::painter::MultiAttribute
 //{
-//	void apply( vgeGL::engine::Engine *, vgd::node::TexGen * );
+//	void apply( vgeGLBase::engine::Engine *, vgd::node::TexGen * );
 //
-//	void paint( vgeGL::engine::Engine*, vgd::node::TexGen* );
+//	void paint( vgeGLBase::engine::Engine*, vgd::node::TexGen* );
 //
 //	/**
 //	 * @param textureGenModeValue	a symbolic constant specifying a single-valued texture generation parameter GL_OBJECT_LINEAR,
@@ -51,7 +51,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_TEXGEN_HPP
 //

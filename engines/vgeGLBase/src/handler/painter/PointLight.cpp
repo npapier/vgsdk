@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/PointLight.hpp"
+//#include "vgeGLBase/handler/painter/PointLight.hpp"
 //
 //#include <vgd/node/PointLight.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -40,8 +40,8 @@
 //
 //void PointLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::PointLight* >(node) != 0 );
 //	vgd::node::PointLight *pointLight = static_cast< vgd::node::PointLight* >(node);
@@ -50,7 +50,7 @@
 //	updateGLSLState( glEngine, pointLight, glEngine->getGLSLState() );
 //
 //	//
-//	vgeGL::rc::applyUsingDisplayList<vgd::node::PointLight, PointLight>( engine, node, this );
+//	vgeGLBase::rc::applyUsingDisplayList<vgd::node::PointLight, PointLight>( engine, node, this );
 //}
 //
 //
@@ -67,19 +67,19 @@
 //
 //
 //
-//void PointLight::updateGLSLState( vgeGL::engine::Engine * engine, vgd::node::PointLight * light, vgeGL::engine::GLSLState& glslState )
+//void PointLight::updateGLSLState( vgeGLBase::engine::Engine * engine, vgd::node::PointLight * light, vgeGLBase::engine::GLSLState& glslState )
 //{
-//	using vgeGL::engine::GLSLState;
-//	typedef vgeGL::engine::LightState LightState;
+//	using vgeGLBase::engine::GLSLState;
+//	typedef vgeGLBase::engine::LightState LightState;
 //
 //	// Updates GLSL state
-//	glslState.setEnabled( vgeGL::engine::POINT_LIGHT );
+//	glslState.setEnabled( vgeGLBase::engine::POINT_LIGHT );
 //
 ///* @todo
-//	if ( !glslState.isEnabled( vgeGL::engine::POINT_LIGHT_CASTING_SHADOW ) )
+//	if ( !glslState.isEnabled( vgeGLBase::engine::POINT_LIGHT_CASTING_SHADOW ) )
 //	{
 //		const bool castShadow = light->getCastShadow();
-//		if ( castShadow )	glslState.setEnabled( vgeGL::engine::POINT_LIGHT_CASTING_SHADOW );
+//		if ( castShadow )	glslState.setEnabled( vgeGLBase::engine::POINT_LIGHT_CASTING_SHADOW );
 //	}
 //*/
 //
@@ -92,13 +92,13 @@
 //	{
 //		// Creates a new unit state
 //		// type
-//		lightState.reset( new LightState(vgeGL::engine::POINT_LIGHT) );
+//		lightState.reset( new LightState(vgeGLBase::engine::POINT_LIGHT) );
 //		glslState.lights.setState( unit, lightState );
 //	}
 //	else
 //	{
 //		// type
-//		lightState->setLightType( vgeGL::engine::POINT_LIGHT );
+//		lightState->setLightType( vgeGLBase::engine::POINT_LIGHT );
 //		glslState.lights.dirty();
 //	}
 //
@@ -107,7 +107,7 @@
 //
 //
 //
-//void PointLight::updateUnitState( vgeGL::engine::Engine * engine, vgd::node::PointLight * light, vgd::Shp< vgeGL::engine::LightState > lightState )
+//void PointLight::updateUnitState( vgeGLBase::engine::Engine * engine, vgd::node::PointLight * light, vgd::Shp< vgeGLBase::engine::LightState > lightState )
 //{
 //	Light::updateUnitState( engine, light, lightState );
 //
@@ -118,7 +118,7 @@
 //}
 //
 //
-//void PointLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::PointLight *pPointLight )
+//void PointLight::paint( vgeGLBase::engine::Engine *pGLEngine, vgd::node::PointLight *pPointLight )
 //{
 //	// render Light fields.
 //	Light::paint( pGLEngine, pPointLight );
@@ -153,5 +153,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

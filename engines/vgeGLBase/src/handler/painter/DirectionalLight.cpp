@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/DirectionalLight.hpp"
+//#include "vgeGLBase/handler/painter/DirectionalLight.hpp"
 //
 //#include <vgd/node/DirectionalLight.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -40,8 +40,8 @@
 //
 //void DirectionalLight::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::DirectionalLight* >(node) != 0 );
 //	vgd::node::DirectionalLight *directionalLight = static_cast< vgd::node::DirectionalLight* >(node);
@@ -50,7 +50,7 @@
 //	updateGLSLState( glEngine, directionalLight, glEngine->getGLSLState() );
 //
 //	//
-//	vgeGL::rc::applyUsingDisplayList<vgd::node::DirectionalLight, DirectionalLight>( engine, node, this );
+//	vgeGLBase::rc::applyUsingDisplayList<vgd::node::DirectionalLight, DirectionalLight>( engine, node, this );
 //}
 //
 //
@@ -67,19 +67,19 @@
 //
 //
 //
-//void DirectionalLight::updateGLSLState( vgeGL::engine::Engine * engine, vgd::node::DirectionalLight * light, vgeGL::engine::GLSLState& glslState )
+//void DirectionalLight::updateGLSLState( vgeGLBase::engine::Engine * engine, vgd::node::DirectionalLight * light, vgeGLBase::engine::GLSLState& glslState )
 //{
-//	using vgeGL::engine::GLSLState;
-//	typedef vgeGL::engine::LightState LightState;
+//	using vgeGLBase::engine::GLSLState;
+//	typedef vgeGLBase::engine::LightState LightState;
 //
 //	// Updates GLSL state
-//	glslState.setEnabled( vgeGL::engine::DIRECTIONAL_LIGHT );
+//	glslState.setEnabled( vgeGLBase::engine::DIRECTIONAL_LIGHT );
 //
 //	/* @todo
-//	if ( !glslState.isEnabled( vgeGL::engine::DIRECTIONAL_LIGHT_CASTING_SHADOW ) )
+//	if ( !glslState.isEnabled( vgeGLBase::engine::DIRECTIONAL_LIGHT_CASTING_SHADOW ) )
 //	{
 //		const bool castShadow = light->getCastShadow();
-//		if ( castShadow )	glslState.setEnabled( vgeGL::engine::DIRECTIONAL_LIGHT_CASTING_SHADOW );
+//		if ( castShadow )	glslState.setEnabled( vgeGLBase::engine::DIRECTIONAL_LIGHT_CASTING_SHADOW );
 //	}
 //	*/
 //
@@ -92,13 +92,13 @@
 //	{
 //		// Creates a new unit state
 //		// type
-//		lightState.reset( new LightState(vgeGL::engine::DIRECTIONAL_LIGHT) );
+//		lightState.reset( new LightState(vgeGLBase::engine::DIRECTIONAL_LIGHT) );
 //		glslState.lights.setState( unit, lightState );
 //	}
 //	else
 //	{
 //		// type
-//		lightState->setLightType( vgeGL::engine::DIRECTIONAL_LIGHT );
+//		lightState->setLightType( vgeGLBase::engine::DIRECTIONAL_LIGHT );
 //		glslState.lights.dirty();
 //	}
 //
@@ -106,7 +106,7 @@
 //}
 //
 //
-//void DirectionalLight::updateUnitState( vgeGL::engine::Engine * engine, vgd::node::DirectionalLight * light, vgd::Shp< vgeGL::engine::LightState > lightState )
+//void DirectionalLight::updateUnitState( vgeGLBase::engine::Engine * engine, vgd::node::DirectionalLight * light, vgd::Shp< vgeGLBase::engine::LightState > lightState )
 //{
 //	Light::updateUnitState( engine, light, lightState );
 //
@@ -118,7 +118,7 @@
 //}
 //
 //
-//void DirectionalLight::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::DirectionalLight *pDirectionalLight )
+//void DirectionalLight::paint( vgeGLBase::engine::Engine *pGLEngine, vgd::node::DirectionalLight *pDirectionalLight )
 //{
 //	// render Light fields.
 //	Light::paint( pGLEngine, pDirectionalLight );
@@ -154,5 +154,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

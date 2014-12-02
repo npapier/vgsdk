@@ -3,12 +3,12 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/PostProcessing.hpp"
+//#include "vgeGLBase/handler/painter/PostProcessing.hpp"
 //
 //
 //#include <vgd/node/PostProcessing.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //
 //
@@ -529,7 +529,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -558,8 +558,8 @@
 //
 //void PostProcessing::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::PostProcessing* >(node) != 0 );
 //	vgd::node::PostProcessing *postProcessingNode = static_cast< vgd::node::PostProcessing* >(node);
@@ -567,7 +567,7 @@
 //	// Updates engine state
 //	if ( glEngine->isGLSLEnabled() /*&& glEngine->isTextureMappingEnabled() */)
 //	{
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //		GLSLState& glslState = glEngine->getGLSLState();
 //
 //		vgd::Shp< GLSLState::PostProcessingState > postProcessingState( new GLSLState::PostProcessingState(postProcessingNode) );
@@ -738,5 +738,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

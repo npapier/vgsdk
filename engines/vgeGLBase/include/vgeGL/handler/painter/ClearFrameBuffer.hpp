@@ -7,7 +7,7 @@
 //#define _VGEGLBASE_HANDLER_PAINTER_CLEARFRAMEBUFFER_HPP
 //
 //#include <vge/handler/painter/SingleAttribute.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //namespace vgd
 //{
@@ -17,7 +17,7 @@
 //	}
 //}
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine
 //	{
@@ -32,7 +32,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -57,9 +57,9 @@
 //
 //	void setToDefaults();
 //
-//	void paint( vgeGL::engine::Engine*, vgd::node::ClearFrameBuffer* );
+//	void paint( vgeGLBase::engine::Engine*, vgd::node::ClearFrameBuffer* );
 //
-//	static void applyBufferUsagePolicy( vgeGL::engine::Engine * engine, const vge::engine::BufferUsagePolicy policy, const vge::engine::EyeUsagePolicy eyePolicy );
+//	static void applyBufferUsagePolicy( vgeGLBase::engine::Engine * engine, const vge::engine::BufferUsagePolicy policy, const vge::engine::EyeUsagePolicy eyePolicy );
 //};
 //
 //
@@ -68,7 +68,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_CLEARFRAMEBUFFER_HPP
 //

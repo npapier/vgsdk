@@ -3,11 +3,11 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/event/EventProcessor.hpp"
+//#include "vgeGLBase/event/EventProcessor.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace event
@@ -15,7 +15,7 @@
 //
 //
 //
-//EventProcessor::EventProcessor( ::vgeGL::engine::SceneManager *sceneManager ) :
+//EventProcessor::EventProcessor( ::vgeGLBase::engine::SceneManager *sceneManager ) :
 //	m_sceneManager( sceneManager )
 //{
 //	assert( sceneManager != 0 );
@@ -25,5 +25,5 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

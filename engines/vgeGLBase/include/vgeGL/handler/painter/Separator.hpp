@@ -8,11 +8,11 @@
 //
 ////#include <vge/handler/Separator.hpp>
 //
-//#include "vgeGL/handler/painter/TransformSeparator.hpp"
+//#include "vgeGLBase/handler/painter/TransformSeparator.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -27,7 +27,7 @@
 // * brief Send OpenGL commands to push/pop attributes and matrices.
 // */
 //struct VGEGLBASE_API Separator : 
-//	public vgeGL::handler::painter::TransformSeparator
+//	public vgeGLBase::handler::painter::TransformSeparator
 //	//,public vge::handler::Separator
 //{
 //	META_HANDLER_HPP( Separator );
@@ -47,7 +47,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_SEPARATOR_HPP
 //

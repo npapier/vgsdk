@@ -7,15 +7,15 @@
 //#define _VGEGLBASE_HANDLER_PAINTER_DECAL_HPP
 //
 //#include <vge/handler/painter/MultiAttribute.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //namespace vgd { namespace node { struct Decal; } }
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -40,8 +40,8 @@
 //	
 //	void setToDefaults();
 //
-//	typedef vgeGL::engine::GLSLState::DecalStateContainer DecalStateContainer;
-//	static void paint( vgeGL::engine::Engine *, DecalStateContainer * decals );
+//	typedef vgeGLBase::engine::GLSLState::DecalStateContainer DecalStateContainer;
+//	static void paint( vgeGLBase::engine::Engine *, DecalStateContainer * decals );
 //};
 //
 //
@@ -50,7 +50,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_DECAL_HPP
 //

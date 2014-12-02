@@ -7,11 +7,11 @@
 //#define _VGEGLBASE_VGEGLBASE_HPP
 
 /** 
-* @namespace vgeGL
+* @namespace vgeGLBase
 * 
 * @brief (V)ersatile (G)raphical (E)valuation with Open(GL) (Base)
 * 
-* \b vgeGL is open source (LGPL).
+* \b vgeGLBase is open source (LGPL).
 */
 
 #include <vgBase/Type.hpp>

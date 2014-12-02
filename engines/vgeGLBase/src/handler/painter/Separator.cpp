@@ -3,19 +3,19 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Separator.hpp"
+//#include "vgeGLBase/handler/painter/Separator.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/Separator.hpp>
 //#include <vge/service/Painter.hpp>
 //#include <vge/service/ProcessEvent.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -58,8 +58,8 @@
 // */
 //void Separator::apply( vge::engine::Engine* engine, vgd::node::Node *node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	//assert( dynamic_cast< vgd::node::Separator* >(node) != 0 );
 //	//vgd::node::Separator *separator = static_cast< vgd::node::Separator* >(node);
@@ -79,8 +79,8 @@
 //
 //void Separator::unapply ( vge::engine::Engine* engine, vgd::node::Node* node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	//assert( dynamic_cast< vgd::node::Separator* >(node) != 0 );
 //	//vgd::node::Separator *separator = static_cast< vgd::node::Separator* >(node);
@@ -105,5 +105,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

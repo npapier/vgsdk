@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Layers.hpp"
+//#include "vgeGLBase/handler/painter/Layers.hpp"
 //
 //#include <vgd/basic/ImageInfo.hpp>
 //#include <vgd/node/Quad.hpp>
@@ -13,11 +13,11 @@
 //#include <vgd/node/TextureMatrixTransform.hpp>
 //#include <vge/service/Painter.hpp>
 //
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -45,8 +45,8 @@
 //
 //void Layers::apply( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< vgd::node::Layers* >(pNode) != 0 );
 //	vgd::node::Layers *pLayers = static_cast< vgd::node::Layers* >(pNode);
@@ -56,7 +56,7 @@
 //	paint( pGLEngine, pLayers );
 //
 //	// at this time, it could not be compiled in a display list.
-//	//vgeGL::rc::applyUsingDisplayList< vgd::node::Layers, Layers >( pEngine, pNode, this );	
+//	//vgeGLBase::rc::applyUsingDisplayList< vgd::node::Layers, Layers >( pEngine, pNode, this );	
 //}
 //
 //
@@ -73,7 +73,7 @@
 //
 //
 //
-//void Layers::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Layers *pLayers )
+//void Layers::paint( vgeGLBase::engine::Engine *pGLEngine, vgd::node::Layers *pLayers )
 //{
 //	using vgd::basic::IImage;
 //	using vgd::basic::ImageInfo;
@@ -91,10 +91,10 @@
 //
 //	// get nodes.
 //	vgd::Shp< vgd::node::Switch >	pSwitch( vgd::dynamic_pointer_cast<vgd::node::Switch>(pLayers->getRoot()) );
-//	assert( pSwitch != 0 && "vgeGL::handler::painter::Layers internal error" );
+//	assert( pSwitch != 0 && "vgeGLBase::handler::painter::Layers internal error" );
 //
 //	vgd::Shp< vgd::node::Quad >		pQuad(	pSwitch->getChild< vgd::node::Quad >(0) );
-//	assert( pQuad && "vgeGL::handler::painter::Layers internal error" );
+//	assert( pQuad && "vgeGLBase::handler::painter::Layers internal error" );
 //
 //	const int32 numLayers = (pSwitch->getNumChildren() - 2) / 2;
 //	assert( numLayers == pLayers->getNumLayers() );
@@ -737,5 +737,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

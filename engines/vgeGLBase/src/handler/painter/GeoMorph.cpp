@@ -3,18 +3,18 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/GeoMorph.hpp"
+//#include "vgeGLBase/handler/painter/GeoMorph.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/GeoMorph.hpp>
 //#include <vgd/node/VertexShape.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/handler/painter/VertexShape.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/handler/painter/VertexShape.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -42,8 +42,8 @@
 //
 //void GeoMorph::apply( vge::engine::Engine * baseEngine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(baseEngine) != 0 );
-//	vgeGL::engine::Engine *engine = static_cast< vgeGL::engine::Engine* >(baseEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(baseEngine) != 0 );
+//	vgeGLBase::engine::Engine *engine = static_cast< vgeGLBase::engine::Engine* >(baseEngine);
 //
 //	assert( dynamic_cast< vgd::node::GeoMorph* >(node) != 0 );
 //	vgd::node::GeoMorph *geoMorph = static_cast< vgd::node::GeoMorph* >(node);
@@ -74,8 +74,8 @@
 //
 //void GeoMorph::unapply( vge::engine::Engine * baseEngine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(baseEngine) != 0 );
-//	vgeGL::engine::Engine *engine = static_cast< vgeGL::engine::Engine* >(baseEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(baseEngine) != 0 );
+//	vgeGLBase::engine::Engine *engine = static_cast< vgeGLBase::engine::Engine* >(baseEngine);
 //
 //	assert( dynamic_cast< vgd::node::GeoMorph* >(node) != 0 );
 //	vgd::node::GeoMorph *geoMorph = static_cast< vgd::node::GeoMorph* >(node);
@@ -105,17 +105,17 @@
 //			meshes.release();
 //
 //			// Paint GeoMorph using a private vertex shape handler
-//			vgeGL::handler::painter::VertexShape vsHandler;
+//			vgeGLBase::handler::painter::VertexShape vsHandler;
 //			vsHandler.geoMorph2 = mesh1;
 //
 //			// Updates engine glsl state
-//			using vgeGL::engine::GLSLState;
+//			using vgeGLBase::engine::GLSLState;
 //
 //			engine->pushGLSLState();
 //			GLSLState& glslState = engine->getGLSLState();
 //
 //			// Ask to generate new shaders
-//			glslState.setEnabled( vgeGL::engine::GEOMORPH );
+//			glslState.setEnabled( vgeGLBase::engine::GEOMORPH );
 //
 //			// Customize shaders
 //			//	uniform
@@ -198,5 +198,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

@@ -3,15 +3,15 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/event/TimerEventProcessor.hpp"
+//#include "vgeGLBase/event/TimerEventProcessor.hpp"
 //
 //#include <vgd/event/TimerCallback.hpp>
 //#include <vgd/event/TimerEvent.hpp>
-//#include "vgeGL/engine/SceneManager.hpp"
+//#include "vgeGLBase/engine/SceneManager.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -19,7 +19,7 @@
 //
 //
 //
-//TimerEventProcessor::TimerEventProcessor( ::vgeGL::engine::SceneManager *sceneManager ) 
+//TimerEventProcessor::TimerEventProcessor( ::vgeGLBase::engine::SceneManager *sceneManager ) 
 //:	EventProcessor( sceneManager )
 //{}
 //
@@ -131,5 +131,5 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

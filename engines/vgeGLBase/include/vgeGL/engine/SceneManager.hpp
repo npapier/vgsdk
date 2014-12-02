@@ -12,16 +12,16 @@
 //#include <vge/engine/SceneManager.hpp>
 //#include <vgm/Triangle.hpp>
 //
-//#include "vgeGL/event/IEventProcessor.hpp"
-//#include "vgeGL/itf/IUnderlay.hpp"
-//#include "vgeGL/technique/RayCasting.hpp"
+//#include "vgeGLBase/event/IEventProcessor.hpp"
+//#include "vgeGLBase/itf/IUnderlay.hpp"
+//#include "vgeGLBase/technique/RayCasting.hpp"
 //
 //namespace vgd { namespace node { struct LayerPlan; struct VertexShape; } }
-//namespace vgeGL { namespace event { struct TimerEventProcessor; } }
+//namespace vgeGLBase { namespace event { struct TimerEventProcessor; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -72,7 +72,7 @@
 // * @ingroup g_layerplan
 // * @ingroup g_rayCasting
 // */
-//struct VGEGLBASE_API SceneManager : public vge::engine::SceneManager, public vgd::event::DeviceManager, public vgeGL::itf::IUnderlay
+//struct VGEGLBASE_API SceneManager : public vge::engine::SceneManager, public vgd::event::DeviceManager, public vgeGLBase::itf::IUnderlay
 //{
 //	/**
 //	 * @name Constructors/Destructor
@@ -84,7 +84,7 @@
 //	 * 
 //	 * @param engine		reference on the engine that must be used by the scene manager.
 //	 */
-//	SceneManager( vgd::Shp< vgeGL::engine::Engine > engine );
+//	SceneManager( vgd::Shp< vgeGLBase::engine::Engine > engine );
 //
 //	//@}
 //
@@ -165,7 +165,7 @@
 //	 * 
 //	 * @pre 0 <= index <= getNumEventProcessors()
 //	 */
-//	void insertEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor, const int32 index = 0 );
+//	void insertEventProcessor( vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor, const int32 index = 0 );
 //
 //	/**
 //	 * @brief Installs a new event processor at a position relative to the the first encountered event processor of the 
@@ -180,7 +180,7 @@
 //	 * @param offset				the relative position
 //	 */
 //	template< typename typeOfEventProcessor >
-//	void insertRelativeEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor, const int32 offset = 0 )
+//	void insertRelativeEventProcessor( vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor, const int32 offset = 0 )
 //	{
 //		const int32 index = findEventProcessor< typeOfEventProcessor >();
 //		
@@ -201,7 +201,7 @@
 //	 * 
 //	 * @param eventProcessor		event processor to install.
 //	 */
-//	void pushBackEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor );
+//	void pushBackEventProcessor( vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor );
 //
 //	/**
 //	 * @brief Removes an event processor.
@@ -256,8 +256,8 @@
 //	 * 
 //	 * @return true if event processor has been founded and removed, otherwise false.
 //	 */
-//	const bool removeEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor );
-//	//const bool removeEventProcessor( ::vgeGL::event::IEventProcessor * eventProcessor ); ///< @todo
+//	const bool removeEventProcessor( vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor );
+//	//const bool removeEventProcessor( ::vgeGLBase::event::IEventProcessor * eventProcessor ); ///< @todo
 //
 //	/**
 //	 * @brief Finds index of given event processor.
@@ -265,12 +265,12 @@
 //	 * @return returns getNumEventProcessors() if not found, otherwise returns a value 
 //	 * between 0 and getNumEventProcessor()-1.
 //	 */
-//	const int32 findEventProcessor( ::vgeGL::event::IEventProcessor * eventProcessor ) const;
+//	const int32 findEventProcessor( ::vgeGLBase::event::IEventProcessor * eventProcessor ) const;
 //
 //	/**
-//	 * @copydoc findEventProcessor(::vgeGL::event::IEventProcessor*)const
+//	 * @copydoc findEventProcessor(::vgeGLBase::event::IEventProcessor*)const
 //	 */
-//	const int32 findEventProcessor( vgd::Shp< ::vgeGL::event::IEventProcessor > eventProcessor ) const;
+//	const int32 findEventProcessor( vgd::Shp< ::vgeGLBase::event::IEventProcessor > eventProcessor ) const;
 //
 //	/**
 //	 * @brief Finds index for the first event processor of the given type or that inherits of the given type.
@@ -308,7 +308,7 @@
 //	 * 
 //	 * @pre 0 <= index < getNumEventProcessors()
 //	 */
-//	vgd::Shp< ::vgeGL::event::IEventProcessor > getEventProcessor( const int32 index = 0 ) const;
+//	vgd::Shp< ::vgeGLBase::event::IEventProcessor > getEventProcessor( const int32 index = 0 ) const;
 //	
 //	/**
 //	 * @brief Retrives an event processor.
@@ -344,7 +344,7 @@
 //	 *
 //	 * @return the timer event processor.
 //	 */
-//	vgd::Shp< ::vgeGL::event::TimerEventProcessor > getTimerEventProcessor();
+//	vgd::Shp< ::vgeGLBase::event::TimerEventProcessor > getTimerEventProcessor();
 //	//@}
 //
 //
@@ -364,7 +364,7 @@
 //	 * 
 //	 * @remarks The returned hit reference is valid until the next ray casting.
 //	 */
-//	const vgeGL::basic::Hit* castRayForHit( const int32 x, const int32 y );
+//	const vgeGLBase::basic::Hit* castRayForHit( const int32 x, const int32 y );
 //
 //	/**
 //	 * @brief Cast a ray in the scene
@@ -376,7 +376,7 @@
 //	 * 
 //	 * @remarks The returned hit reference is valid until the next ray casting.
 //	 */
-//	const vgeGL::basic::Hit* castRayForHit( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW );
+//	const vgeGLBase::basic::Hit* castRayForHit( const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW );
 //
 //
 //
@@ -430,15 +430,15 @@
 //	/**
 //	 * @brief Returns getRayCastingTechnique).getNearestHit()
 //	 */
-//	const vgeGL::basic::Hit getNearestHit();
+//	const vgeGLBase::basic::Hit getNearestHit();
 //
 //	/**
 //	 * @brief Returns a reference on the ray casting technique.
 //	 * 
 //	 * This reference could be used to access to the result of the last ray casting.
 //	 */
-//	const vgeGL::technique::RayCasting& getRayCastingTechnique() const;
-//	vgeGL::technique::RayCasting& getRayCastingTechnique();
+//	const vgeGLBase::technique::RayCasting& getRayCastingTechnique() const;
+//	vgeGLBase::technique::RayCasting& getRayCastingTechnique();
 //
 //	//@}
 //
@@ -491,16 +491,16 @@
 //	/**
 //	 * @brief Returns the main evaluation engine.
 //	 * 
-//	 * @return the vgeGL engine.
+//	 * @return the vgeGLBase engine.
 //	 */
-//	vgd::Shp< vgeGL::engine::Engine > getGLEngine();
+//	vgd::Shp< vgeGLBase::engine::Engine > getGLEngine();
 //	
 //	/**
 //	 * @brief Returns the main evaluation engine.
 //	 * 
-//	 * @return the vgeGL engine.
+//	 * @return the vgeGLBase engine.
 //	 */
-//	vgd::Shp< vgeGL::engine::Engine > getGLEngine() const;
+//	vgd::Shp< vgeGLBase::engine::Engine > getGLEngine() const;
 //	
 //	//@}
 //	
@@ -514,18 +514,18 @@
 //	//@{
 //
 //	/**
-//	 * @brief Returns the current vgeGL technique used by paint method.
+//	 * @brief Returns the current vgeGLBase technique used by paint method.
 //	 * 
-//	 * @return the current vgeGL technique used by paint method
+//	 * @return the current vgeGLBase technique used by paint method
 //	 */
-//	vgd::Shp< vgeGL::technique::Technique > getPaintTechnique() const;
+//	vgd::Shp< vgeGLBase::technique::Technique > getPaintTechnique() const;
 //	
 //	/**
-//	 * @brief Sets the current vgeGL technique used by paint method.
+//	 * @brief Sets the current vgeGLBase technique used by paint method.
 //	 * 
-//	 * @param technique		the current vgeGL technique that must be used by paint method.
+//	 * @param technique		the current vgeGLBase technique that must be used by paint method.
 //	 */
-//	void setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique );
+//	void setPaintTechnique( vgd::Shp< vgeGLBase::technique::Technique > technique );
 //
 //	//@}
 //
@@ -557,7 +557,7 @@
 //	 * @brief Sets the current underlay.
 //	 * @param underlay	the layer plan to use for underlay
 //	 *
-//	 * @see vgeGL::technique::MultiMain
+//	 * @see vgeGLBase::technique::MultiMain
 //	 *
 //	 * @ingroup g_layerplan	 
 //	 */
@@ -568,7 +568,7 @@
 //	 *
 //	 * @return the installed underlay
 //	 *
-//	 * @see vgeGL::technique::MultiMain
+//	 * @see vgeGLBase::technique::MultiMain
 //	 *
 //	 * @ingroup g_layerplan	 
 //	 */
@@ -586,7 +586,7 @@
 //	/**
 //	 * @brief Main evaluation engine.
 //	 */
-//	vgd::Shp< vgeGL::engine::Engine >		m_GLEngine;
+//	vgd::Shp< vgeGLBase::engine::Engine >		m_GLEngine;
 //
 //
 //	GLContextProperties						m_requestedGLContextProperties;
@@ -597,14 +597,14 @@
 //
 //
 //	/**
-//	 * @brief The current vgeGL technique that must be used by paint method.
+//	 * @brief The current vgeGLBase technique that must be used by paint method.
 //	 */
-//	vgd::Shp< vgeGL::technique::Technique >	m_paintTechnique;
+//	vgd::Shp< vgeGLBase::technique::Technique >	m_paintTechnique;
 //
 //	/**
 //	 * @brief An instance of raycasting technique.
 //	 */
-//	vgeGL::technique::RayCasting			m_rayCasting;
+//	vgeGLBase::technique::RayCasting			m_rayCasting;
 //
 //
 //	/**
@@ -616,12 +616,12 @@
 //	/**
 //	 * @brief Typedef for event processor container.
 //	 */
-//	typedef vgd::Shp< ::vgeGL::event::IEventProcessor >		ElementOfEventProcessorContainer;
+//	typedef vgd::Shp< ::vgeGLBase::event::IEventProcessor >		ElementOfEventProcessorContainer;
 //	typedef std::vector< ElementOfEventProcessorContainer >	EventProcessorContainer;
 //	
 //	EventProcessorContainer	m_eventProcessors;		///< event processor container
 //
-//	vgd::Shp< ::vgeGL::event::TimerEventProcessor > m_timerEventProcessor;
+//	vgd::Shp< ::vgeGLBase::event::TimerEventProcessor > m_timerEventProcessor;
 //	//@}
 //
 //	vgd::Shp< vgd::node::LayerPlan > m_overlay;		///< reference to the current overlay
@@ -632,7 +632,7 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_ENGINE_SCENEMANAGER_HPP
 //

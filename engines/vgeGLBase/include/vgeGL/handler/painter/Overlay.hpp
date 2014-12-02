@@ -6,16 +6,16 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_OVERLAY_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_OVERLAY_HPP
 //
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/handler/painter/LayerPlan.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/handler/painter/LayerPlan.hpp"
 //
 //namespace vgd { namespace node { struct Overlay; } }
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -29,7 +29,7 @@
 ///**
 // * @brief Send render commands for the overlay node
 // */
-//struct VGEGLBASE_API Overlay : public vgeGL::handler::painter::LayerPlan
+//struct VGEGLBASE_API Overlay : public vgeGLBase::handler::painter::LayerPlan
 //{
 //	META_HANDLER_HPP( Overlay  );
 //
@@ -40,8 +40,8 @@
 //
 //	void setToDefaults();
 //
-//	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
-//	static void paint( vgeGL::engine::Engine *, OverlayStateContainer * overlays );
+//	typedef vgeGLBase::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
+//	static void paint( vgeGLBase::engine::Engine *, OverlayStateContainer * overlays );
 //};
 //
 //
@@ -50,7 +50,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_OVERLAY_HPP
 //

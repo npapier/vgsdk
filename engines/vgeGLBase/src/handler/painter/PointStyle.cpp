@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/PointStyle.hpp"
+//#include "vgeGLBase/handler/painter/PointStyle.hpp"
 //
 //#include <vgd/node/PointStyle.hpp>
 //
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -41,8 +41,8 @@
 //
 //void PointStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine * glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine * glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::PointStyle* >(node) != 0 );
 //	vgd::node::PointStyle *pCastedNode = static_cast< vgd::node::PointStyle* >(node);
@@ -50,18 +50,18 @@
 //	if ( glEngine->isGLSLEnabled() )
 //	{
 //		// Retrieves GLSL state
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //		GLSLState& state = glEngine->getGLSLState();
 //
 //		// Updates GLSLState
-//		state.setEnabled( vgeGL::engine::POINT_STYLE, true );
+//		state.setEnabled( vgeGLBase::engine::POINT_STYLE, true );
 //
 //		//
 //		glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
 //	}
 //
 //	//paint( glEngine, pCastedNode );
-//	vgeGL::rc::applyUsingDisplayList< vgd::node::PointStyle, PointStyle >( engine, node, this );
+//	vgeGLBase::rc::applyUsingDisplayList< vgd::node::PointStyle, PointStyle >( engine, node, this );
 //}
 //
 //
@@ -86,9 +86,9 @@
 //
 //
 //
-//void PointStyle::paint( vgeGL::engine::Engine *, vgd::node::PointStyle * node )
+//void PointStyle::paint( vgeGLBase::engine::Engine *, vgd::node::PointStyle * node )
 //{
-//	using vgeGL::engine::Engine;
+//	using vgeGLBase::engine::Engine;
 //
 //	// SIZE
 //	if ( node->hasSize() )
@@ -149,5 +149,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

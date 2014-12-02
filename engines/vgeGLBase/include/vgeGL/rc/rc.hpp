@@ -6,10 +6,10 @@
 //#ifndef _VGEGLBASE_RC_RC_HPP
 //#define _VGEGLBASE_RC_RC_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 ///** 
-// * @namespace vgeGL::rc
+// * @namespace vgeGLBase::rc
 // * 
 // * @brief Encapsulation of some OpenGL objects/resources.
 // */

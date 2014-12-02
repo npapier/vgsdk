@@ -6,7 +6,7 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_MATERIAL_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_MATERIAL_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //#include <vge/handler/painter/SingleAttribute.hpp>
 //
@@ -18,7 +18,7 @@
 //	}
 //}
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine
 //	{
@@ -33,7 +33,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -60,7 +60,7 @@
 //	
 //	void	setToDefaults();
 //
-//	void	paint( vgeGL::engine::Engine*, vgd::node::Material* );
+//	void	paint( vgeGLBase::engine::Engine*, vgd::node::Material* );
 //};
 //
 //
@@ -69,7 +69,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_MATERIAL_HPP
 //

@@ -3,14 +3,14 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/event/SlideWindow.hpp"
+//#include "vgeGLBase/event/SlideWindow.hpp"
 //
 //#include <vgd/event/TimerEvent.hpp>
 ////#include <glm/glm.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -18,7 +18,7 @@
 //
 //
 //
-//SlideWindow::SlideWindow( vgeGL::engine::SceneManager * sceneManager )
+//SlideWindow::SlideWindow( vgeGLBase::engine::SceneManager * sceneManager )
 //:	TimerCallback( vgd::makeShp<vgd::node::Node>(0), sceneManager )
 //{
 //	setTDuration( static_cast<uint>(1000.f * 0.5f) );
@@ -36,7 +36,7 @@
 //}
 //
 //
-//void SlideWindow::add(	vgd::Shp< vgeGL::technique::MultiMain::Window > window,
+//void SlideWindow::add(	vgd::Shp< vgeGLBase::technique::MultiMain::Window > window,
 //						const vgm::Rectangle2f	destination,
 //						const bool visible )
 //{
@@ -100,5 +100,5 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

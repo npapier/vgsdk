@@ -6,12 +6,12 @@
 //#ifndef _VGEGLBASE_HANDLER_PROCESSEVENT_NULLDRAGGER_HPP
 //#define _VGEGLBASE_HANDLER_PROCESSEVENT_NULLDRAGGER_HPP
 //
-//#include "vgeGL/handler/processEvent/Dragger.hpp"
-//#include "vgeGL/handler/processEvent/ProcessEvent.hpp"
+//#include "vgeGLBase/handler/processEvent/Dragger.hpp"
+//#include "vgeGLBase/handler/processEvent/ProcessEvent.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace handler
@@ -23,8 +23,8 @@
 ///**
 // * @brief Process event for a vgd::node::NullDragger
 // */
-//struct VGEGLBASE_API NullDragger :	public vgeGL::handler::processEvent::ProcessEvent,
-//								public vgeGL::handler::processEvent::Dragger
+//struct VGEGLBASE_API NullDragger :	public vgeGLBase::handler::processEvent::ProcessEvent,
+//								public vgeGLBase::handler::processEvent::Dragger
 //{
 //	META_HANDLER_HPP( NullDragger );
 //
@@ -42,7 +42,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PROCESSEVENT_NULLDRAGGER_HPP
 //

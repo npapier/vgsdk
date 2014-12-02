@@ -3,15 +3,15 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/event/DefaultEventProcessor.hpp"
+//#include "vgeGLBase/event/DefaultEventProcessor.hpp"
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/SceneManager.hpp"
-//#include "vgeGL/technique/ProcessEvent.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/SceneManager.hpp"
+//#include "vgeGLBase/technique/ProcessEvent.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -19,7 +19,7 @@
 //
 //
 //
-//DefaultEventProcessor::DefaultEventProcessor( ::vgeGL::engine::SceneManager *sceneManager ) 
+//DefaultEventProcessor::DefaultEventProcessor( ::vgeGLBase::engine::SceneManager *sceneManager ) 
 //:	EventProcessor( sceneManager )
 //{}
 //
@@ -42,20 +42,20 @@
 //	if ( doAPicking )
 //	{
 //		const vgm::Vec2i location( mouseButtonEvent->getLocation() );
-//		const vgeGL::basic::Hit * hit = getSceneManager()->castRayForHit( location[0], location[1] );
+//		const vgeGLBase::basic::Hit * hit = getSceneManager()->castRayForHit( location[0], location[1] );
 //
 //		// Initialize engine with picking informations.
-//		vgd::Shp< vgeGL::engine::Engine > glEngine = getSceneManager()->getGLEngine();
+//		vgd::Shp< vgeGLBase::engine::Engine > glEngine = getSceneManager()->getGLEngine();
 //		if ( !glEngine->isField( "DefaultEventProcessor.hit" ) )	glEngine->addField( new FHitType( getFHit() ) );
 //
 //		vgd::field::EditorRW< FHitType > hitInEngine = glEngine->getFieldRW< FHitType >( getFHit() );
 //		if ( hit )
 //		{
-//			hitInEngine->setValue( vgd::makeShp(new vgeGL::basic::Hit(*hit)) );
+//			hitInEngine->setValue( vgd::makeShp(new vgeGLBase::basic::Hit(*hit)) );
 //		}
 //		else
 //		{
-//			hitInEngine->setValue( vgd::makeShp(new vgeGL::basic::Hit()) );
+//			hitInEngine->setValue( vgd::makeShp(new vgeGLBase::basic::Hit()) );
 //		}
 //	}
 //	else
@@ -65,7 +65,7 @@
 //	}
 //
 //	// Propagate the incoming event into scene graph for processing
-//	vgeGL::technique::ProcessEvent processEvent;
+//	vgeGLBase::technique::ProcessEvent processEvent;
 //	processEvent.setEvent( event );
 //
 //	processEvent.setParameters(
@@ -85,5 +85,5 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

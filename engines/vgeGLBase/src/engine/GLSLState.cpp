@@ -3,15 +3,15 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //#include <vgd/basic/toString.hpp>
 //#include <vgd/node/LightModel.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -140,7 +140,7 @@
 //
 //
 //GLSLState::GLSLState( const GLSLState& src )
-//:	vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >	(	src							),
+//:	vgeGLBase::engine::TBitSet< MAX_BITSETINDEXTYPE >	(	src							),
 //
 //	lights											(	src.lights					),
 //	textures										(	src.textures				),
@@ -178,7 +178,7 @@
 //void GLSLState::resetToDefault()
 //{
 //	// TBitSet
-//	vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >::reset();
+//	vgeGLBase::engine::TBitSet< MAX_BITSETINDEXTYPE >::reset();
 //
 //	// LIGHT / TEXTURE /DECALS / POST PROCESSING / OVERLAY / OUTPUT BUFFER PROPERTY
 //	lights.clear();
@@ -199,7 +199,7 @@
 //{
 //	if ( isEnabled(index) != enabled )
 //	{
-//		vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >::setEnabled( index, enabled );
+//		vgeGLBase::engine::TBitSet< MAX_BITSETINDEXTYPE >::setEnabled( index, enabled );
 //		m_dirtyFlag.dirty();
 //	}
 //	//else nothing to do
@@ -209,7 +209,7 @@
 //
 //void GLSLState::reset()
 //{
-//	vgeGL::engine::TBitSet< MAX_BITSETINDEXTYPE >::reset();
+//	vgeGLBase::engine::TBitSet< MAX_BITSETINDEXTYPE >::reset();
 //	m_dirtyFlag.dirty();
 //}
 //
@@ -494,5 +494,5 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

@@ -3,18 +3,18 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Decal.hpp"
+//#include "vgeGLBase/handler/painter/Decal.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/Decal.hpp>
 //#include <vgd/node/Texture2D.hpp>
 //#include <vgd/node/VertexShape.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/rc/Texture2D.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/rc/Texture2D.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -43,8 +43,8 @@
 //
 //void Decal::apply( vge::engine::Engine* baseEngine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(baseEngine) != 0 );
-//	vgeGL::engine::Engine * engine = static_cast< vgeGL::engine::Engine* >(baseEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(baseEngine) != 0 );
+//	vgeGLBase::engine::Engine * engine = static_cast< vgeGLBase::engine::Engine* >(baseEngine);
 //
 //	assert( dynamic_cast< vgd::node::Decal* >(node) != 0 );
 //	vgd::node::Decal * decal = static_cast< vgd::node::Decal* >(node);
@@ -52,7 +52,7 @@
 //	// Updates engine state
 //	if ( engine->isGLSLEnabled() )
 //	{
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //		GLSLState& glslState = engine->getGLSLState();
 //
 //		// Gets the transformation applied to the shape
@@ -81,12 +81,12 @@
 //
 //
 //
-//void Decal::paint( vgeGL::engine::Engine * engine, DecalStateContainer * decals )
+//void Decal::paint( vgeGLBase::engine::Engine * engine, DecalStateContainer * decals )
 //{
-//	typedef vgeGL::engine::GLSLState::DecalState DecalState;
+//	typedef vgeGLBase::engine::GLSLState::DecalState DecalState;
 //
 //	// Makes a backup of GLSL activation state
-//	using vgeGL::engine::Engine;
+//	using vgeGLBase::engine::Engine;
 //	vgd::Shp< Engine::GLSLActivationState > glslActivationState = engine->getGLSLActivationState();
 //	engine->sethCurrentProgram();
 //
@@ -136,8 +136,8 @@
 //				engine->paint( texture );
 //
 //				// Gets the resource manager
-//				vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
-//				vgeGL::rc::Texture2D * gloTex2D = rcManager->get< vgeGL::rc::Texture2D >( texture.get() );
+//				vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+//				vgeGLBase::rc::Texture2D * gloTex2D = rcManager->get< vgeGLBase::rc::Texture2D >( texture.get() );
 //				gloTex2D->env( GL_TEXTURE_ENV_MODE, GL_REPLACE );
 //
 //				const vgm::MatrixR& geomMatrix = decalState->getGeometricalMatrix();
@@ -186,5 +186,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

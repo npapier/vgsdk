@@ -4,7 +4,7 @@
 //// Author Nicolas Papier
 //// Author Guillaume Brocker
 //
-//#include "vgeGL/handler/processEvent/Dragger.hpp"
+//#include "vgeGLBase/handler/processEvent/Dragger.hpp"
 //
 //#include <GL/glu.h>
 //
@@ -16,14 +16,14 @@
 //#include <vgd/event/MouseWheelEvent.hpp>
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/Dragger.hpp>
-//#include <vgeGL/engine/Engine.hpp>
+//#include <vgeGLBase/engine/Engine.hpp>
 //
-//#include "vgeGL/event/DefaultEventProcessor.hpp"
-//#include "vgeGL/technique/ProcessEvent.hpp"
+//#include "vgeGLBase/event/DefaultEventProcessor.hpp"
+//#include "vgeGLBase/technique/ProcessEvent.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -192,7 +192,7 @@
 //
 //
 //
-//const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGL::engine::Engine *pEngine, vgd::node::Dragger *pDragger,
+//const bool Dragger::ConvertVectorsFromWindowToObject(	vgeGLBase::engine::Engine *pEngine, vgd::node::Dragger *pDragger,
 //														vgm::Vec3f& oLeftToRightO, vgm::Vec3f& oUpToDownO, vgm::Vec3f& oNearToFarO )
 //{
 //	// MODELVIEW : Gets scene transformation
@@ -222,7 +222,7 @@
 //	vgm::Vec3f		center;
 //	vgm::RawMatrixd	transformSceneD;
 //
-//	vgd::Shp< vgeGL::basic::Hit > hit = getHit( m_pGLEngine );
+//	vgd::Shp< vgeGLBase::basic::Hit > hit = getHit( m_pGLEngine );
 //	if (	!hit ||											// no hit
 //			(/*hit && */hit->modelviewS().isInvalid()) )	// invalid hit
 //	{
@@ -340,7 +340,7 @@
 //
 //
 //
-//void Dragger::preApply( vgeGL::engine::Engine *pGLEngine, vgd::node::Dragger *pDragger )
+//void Dragger::preApply( vgeGLBase::engine::Engine *pGLEngine, vgd::node::Dragger *pDragger )
 //{
 //	// Update internal attribute (to give access to them from EventVisitor methods).
 //	m_pGLEngine = pGLEngine;
@@ -431,7 +431,7 @@
 //
 //vgd::Shp< vgd::event::Event > Dragger::getEvent( vge::engine::Engine *pEngine )
 //{
-//	using vgeGL::technique::ProcessEvent;
+//	using vgeGLBase::technique::ProcessEvent;
 //
 //	assert( pEngine->isField( ProcessEvent::getFProcessEvent() ) );
 //
@@ -445,12 +445,12 @@
 //
 //
 //
-//vgd::Shp< vgeGL::basic::Hit > Dragger::getHit( vge::engine::Engine * engine )
+//vgd::Shp< vgeGLBase::basic::Hit > Dragger::getHit( vge::engine::Engine * engine )
 //{
-//	using vgeGL::event::DefaultEventProcessor;
+//	using vgeGLBase::event::DefaultEventProcessor;
 //	typedef DefaultEventProcessor::FHitType FHitType;
 //
-//	vgd::Shp< vgeGL::basic::Hit > hit;
+//	vgd::Shp< vgeGLBase::basic::Hit > hit;
 //
 //	if ( engine->isField( DefaultEventProcessor::getFHit() ) )
 //	{

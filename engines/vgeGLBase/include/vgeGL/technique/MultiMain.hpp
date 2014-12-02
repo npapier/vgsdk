@@ -7,13 +7,13 @@
 //#define _VGEGLBASE_TECHNIQUE_MULTIMAIN_HPP
 //
 //#include <vgd/node/TransformDragger.hpp>
-//#include "vgeGL/itf/IUnderlay.hpp"
-//#include "vgeGL/technique/Technique.hpp"
+//#include "vgeGLBase/itf/IUnderlay.hpp"
+//#include "vgeGLBase/technique/Technique.hpp"
 //#include <map>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -35,7 +35,7 @@
 // * @ingroup g_techniques_vgeGL
 // * @ingroup g_techniques
 // */
-//struct VGEGLBASE_API MultiMain : public vgeGL::technique::Technique, public vgeGL::itf::IUnderlay
+//struct VGEGLBASE_API MultiMain : public vgeGLBase::technique::Technique, public vgeGLBase::itf::IUnderlay
 //{
 //	// *********************************************************************************************************
 //	/**
@@ -165,7 +165,7 @@
 //	/**
 //	 * @brief Change the view point of a multi-main window using its dragger.
 //	 */
-//	struct ViewPointConfigurator : public vgeGL::technique::MultiMain::SceneGraphConfigurator
+//	struct ViewPointConfigurator : public vgeGLBase::technique::MultiMain::SceneGraphConfigurator
 //	{
 //		/**
 //		 * @brief Constructor
@@ -614,7 +614,7 @@
 //
 //
 //
-//	/*VGEGLBASE_API */void apply( vgeGL::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector * /*traverseElements*/ );
+//	/*VGEGLBASE_API */void apply( vgeGLBase::engine::Engine * /*engine*/, vge::visitor::TraverseElementVector * /*traverseElements*/ );
 //
 //
 //
@@ -630,14 +630,14 @@
 //	 * 
 //	 * @return the current technique used to paint a window
 //	 */
-//	vgd::Shp< vgeGL::technique::Technique > getPaintTechnique() const;
+//	vgd::Shp< vgeGLBase::technique::Technique > getPaintTechnique() const;
 //	
 //	/**
 //	 * @brief Sets the current technique used to paint a window
 //	 * 
 //	 * @param technique		the current technique used to paint a window
 //	 */
-//	void setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique );
+//	void setPaintTechnique( vgd::Shp< vgeGLBase::technique::Technique > technique );
 //
 //	//@}
 //
@@ -647,7 +647,7 @@
 //	/**
 //	 * @brief Draws the border for the given window
 //	 */
-//	void drawBorder( vgeGL::engine::Engine * engine, const vgd::Shp< MultiMain::Window > window, const vgm::Rectangle2i newViewport2i );
+//	void drawBorder( vgeGLBase::engine::Engine * engine, const vgd::Shp< MultiMain::Window > window, const vgm::Rectangle2i newViewport2i );
 //
 //	typedef std::map< std::string, vgd::Shp< Window > > WindowContainer;	///< Definition of window container
 //	WindowContainer							m_windows;		///< The container of windows
@@ -656,14 +656,14 @@
 //	
 //	vgd::Shp< vgd::node::LayerPlan >		m_underlay;		///< Underlay from SceneManager
 //
-//	vgd::Shp< vgeGL::technique::Technique >	m_paintTechnique; ///< technique used by MultiMain to paint a window
+//	vgd::Shp< vgeGLBase::technique::Technique >	m_paintTechnique; ///< technique used by MultiMain to paint a window
 //};
 //
 //
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_MULTIMAIN_HPP
 //

@@ -6,13 +6,13 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_POINTSTYLE_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_POINTSTYLE_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //#include <vge/handler/painter/SingleAttribute.hpp>
 //
 //namespace vgd { namespace node { struct PointStyle; } }
 //
-//namespace vgeGL 
+//namespace vgeGLBase 
 //{
 //	namespace engine	{ struct Engine;		}
 //	namespace rc		{ struct DisplayList;	}
@@ -20,7 +20,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -45,7 +45,7 @@
 //
 //	void setToDefaults();
 //
-//	void paint( vgeGL::engine::Engine*, vgd::node::PointStyle* );
+//	void paint( vgeGLBase::engine::Engine*, vgd::node::PointStyle* );
 //};
 //
 //
@@ -54,7 +54,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_POINTSTYLE_HPP
 //

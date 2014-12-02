@@ -4,10 +4,10 @@
 //// Author Nicolas Papier
 //
 //#ifndef __USE_VGALG__
-//	#pragma message("vgeGL::engine::DecalManager is disabled")
+//	#pragma message("vgeGLBase::engine::DecalManager is disabled")
 //#else
 //
-//#include "vgeGL/engine/DecalManager.hpp"
+//#include "vgeGLBase/engine/DecalManager.hpp"
 //
 //#include <vgAlg/intersect/helpers.hpp>
 //#include <vgAlg/vertexShape/operations.hpp>
@@ -18,11 +18,11 @@
 //#include <vgd/node/VertexShape.hpp>
 //#include <vgd/node/WireBox.hpp>
 //#include <vgm/Plane.hpp>
-//#include "vgeGL/engine/SceneManager.hpp"
+//#include "vgeGLBase/engine/SceneManager.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -30,7 +30,7 @@
 //
 //
 //
-//const bool DecalManager::spawnDecalPrecomputation(	vgeGL::engine::SceneManager * sceneManager, const vgm::Vec2i mouseLocation,
+//const bool DecalManager::spawnDecalPrecomputation(	vgeGLBase::engine::SceneManager * sceneManager, const vgm::Vec2i mouseLocation,
 //													vgm::Vec3f& outRaySourceW, vgm::Vec3f& outRayDirectionW )
 //{
 //	// Cast ray under the mouse
@@ -40,7 +40,7 @@
 //	if ( hitShape )
 //	{
 //		// Hit point in world space
-//		const vgeGL::basic::Hit	hit			= sceneManager->getNearestHit();
+//		const vgeGLBase::basic::Hit	hit			= sceneManager->getNearestHit();
 //		const vgm::Vec3f		hitPointW	= hit.nearestVertexS();
 //
 //		// Compute normal in world space
@@ -51,7 +51,7 @@
 //		ABCNormalW.normalize();
 //
 //		// Cast ray using hitPointW and ABCNormalW (to find a good source of ray casting for the decal).
-//		const vgeGL::basic::Hit * hit2 = sceneManager->castRayForHit( hitPointW, ABCNormalW );
+//		const vgeGLBase::basic::Hit * hit2 = sceneManager->castRayForHit( hitPointW, ABCNormalW );
 //		const float averageLength = (ABC.AB().getLength() + ABC.BC().getLength() + ABC.CA().getLength())/3.f;
 //
 //		// outputs
@@ -69,7 +69,7 @@
 //}
 //
 //
-//vgd::Shp< vgd::node::VertexShape > DecalManager::spawnDecalShape( vgeGL::engine::SceneManager * sceneManager, const vgm::Vec3f& raySourceW, const vgm::Vec3f& rayDirectionW,
+//vgd::Shp< vgd::node::VertexShape > DecalManager::spawnDecalShape( vgeGLBase::engine::SceneManager * sceneManager, const vgm::Vec3f& raySourceW, const vgm::Vec3f& rayDirectionW,
 //	DecalInformations& oDecalInfos, DecalProperties& oDecalModifiers, vgm::XfBox3f& oDecalBox )
 //{
 //	vgd::Shp< vgd::node::VertexShape > retVal;
@@ -307,7 +307,7 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif // #ifndef __USE_VGALG__
 //

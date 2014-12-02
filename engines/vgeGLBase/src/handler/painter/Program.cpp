@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Program.hpp"
+//#include "vgeGLBase/handler/painter/Program.hpp"
 //
 //#include <vgd/node/Program.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/engine/Engine.hpp"
-////#include "vgeGL/rc/GLSLProgram.hpp"
-////#include "vgeGL/rc/TSyncAndBindHelper.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+////#include "vgeGLBase/rc/GLSLProgram.hpp"
+////#include "vgeGLBase/rc/TSyncAndBindHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -41,25 +41,25 @@
 //
 //void Program::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::Program* >(node) != 0 );
 //	vgd::node::Program *castedNode = static_cast< vgd::node::Program* >(node);
 //
 //	// Retrieves GLSL state
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	GLSLState& state = glEngine->getGLSLState();
 //
-//	state.setEnabled( vgeGL::engine::PROGRAM );
+//	state.setEnabled( vgeGLBase::engine::PROGRAM );
 //	state.setProgram( castedNode );
 //
 //	// Validates node
 //	node->getDirtyFlag(node->getDFNode())->validate();
 //
 ///* This code installs immediately the program.
-//	using vgeGL::rc::applyUsingSyncAndBind;
-//	applyUsingSyncAndBind< vgd::node::Program, vgeGL::handler::painter::Program, vgeGL::rc::GLSLProgram >( 
+//	using vgeGLBase::rc::applyUsingSyncAndBind;
+//	applyUsingSyncAndBind< vgd::node::Program, vgeGLBase::handler::painter::Program, vgeGLBase::rc::GLSLProgram >( 
 //			glEngine, castedNode, this );*/
 //
 //	// Validates node
@@ -81,7 +81,7 @@
 //
 //
 //
-//void Program::bind( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGL::rc::GLSLProgram * /*resource*/ )
+//void Program::bind( vgeGLBase::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGLBase::rc::GLSLProgram * /*resource*/ )
 //{
 //	/*assert( resource != 0 );
 //	// assert( !resource->isEmpty() );
@@ -91,7 +91,7 @@
 //
 //
 //
-//void Program::synchronize( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGL::rc::GLSLProgram * /*resource*/ )
+//void Program::synchronize( vgeGLBase::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGLBase::rc::GLSLProgram * /*resource*/ )
 //{/*
 //	bool defined;
 //	vgd::node::Program::ShaderValueType value;
@@ -140,5 +140,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

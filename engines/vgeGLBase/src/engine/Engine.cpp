@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //#include <gle/OpenGLExtensionsGen.hpp>
 //#include <glo/FrameBufferObject.hpp>
@@ -19,13 +19,13 @@
 //
 //#include <vge/handler/Handler.hpp>
 //#include <vge/handler/HandlerRegistry.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/engine/ProgramGenerator.hpp"
-//#include "vgeGL/technique/helpers.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/ProgramGenerator.hpp"
+//#include "vgeGLBase/technique/helpers.hpp"
 ////#include <vgio/FilenameCollector.hpp>
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -169,7 +169,7 @@
 //
 //	if ( false /*isGL_EXT_rescale_normal() */)		// @todo uncomment and test with GLSL
 //	{
-//		vgLogDebug( "vgeGL.Engine: GL_EXT_rescale_normal extension detected and used." );
+//		vgLogDebug( "vgeGLBase.Engine: GL_EXT_rescale_normal extension detected and used." );
 //		glEnable( GL_RESCALE_NORMAL );  // gle: GL_EXT_rescale_normal
 //	}
 //	else
@@ -179,15 +179,15 @@
 //
 //	if ( isGL_EXT_separate_specular_color() )
 //	{
-//		vgLogDebug( "vgeGL.Engine: GL_EXT_separate_specular_color extension detected." );
-//		vgLogDebug( "vgeGL.Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SEPARATE_SPECULAR_COLOR" );
+//		vgLogDebug( "vgeGLBase.Engine: GL_EXT_separate_specular_color extension detected." );
+//		vgLogDebug( "vgeGLBase.Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SEPARATE_SPECULAR_COLOR" );
 //		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR );
 //	}
 //	else
 //	{
-//		vgLogDebug( "vgeGL.Engine: Warning : GL_EXT_separate_specular_color extension is detected" );
-//		vgLogDebug( "vgeGL.Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SINGLE_COLOR" );
-//		vgLogDebug( "vgeGL.Engine: Using both texture mapping and specular highlights would not be well supported." );
+//		vgLogDebug( "vgeGLBase.Engine: Warning : GL_EXT_separate_specular_color extension is detected" );
+//		vgLogDebug( "vgeGLBase.Engine: GL_LIGHT_MODEL_COLOR_CONTROL=GL_SINGLE_COLOR" );
+//		vgLogDebug( "vgeGLBase.Engine: Using both texture mapping and specular highlights would not be well supported." );
 //		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR );
 //	}
 //
@@ -327,15 +327,15 @@
 //
 //
 //
-//const vgd::Shp< vgeGL::engine::GLSLState > Engine::getGlobalGLSLState() const
+//const vgd::Shp< vgeGLBase::engine::GLSLState > Engine::getGlobalGLSLState() const
 //{
 //	return m_globalGLSLState;
 //}
 //
 //
-//void Engine::setGlobalGLSLState( vgeGL::engine::GLSLState& state )
+//void Engine::setGlobalGLSLState( vgeGLBase::engine::GLSLState& state )
 //{
-//	m_globalGLSLState.reset( new vgeGL::engine::GLSLState( state ) );
+//	m_globalGLSLState.reset( new vgeGLBase::engine::GLSLState( state ) );
 //}
 //
 //
@@ -655,7 +655,7 @@
 //	//	if ( !shaderString.empty() )
 //	//	{
 //	//		// File not empty, creates the shader
-//	//		vgLogDebug( "vgeGL.Engine: Loads shader %s", filename.c_str() );
+//	//		vgLogDebug( "vgeGLBase.Engine: Loads shader %s", filename.c_str() );
 //
 //	//		///@todo Creates glo::GLSLShader
 //	//		GLSLProgram *program = new GLSLProgram;
@@ -671,11 +671,11 @@
 //	//		{
 //	//			// Adds it to the GLSL manager
 //	//			getGLSLManager().add( filename, program );
-//	//			vgLogDebug( "vgeGL.Engine: Shader %s successfully registered in GLSLManager", filename.c_str() );
+//	//			vgLogDebug( "vgeGLBase.Engine: Shader %s successfully registered in GLSLManager", filename.c_str() );
 //	//		}
 //	//		else
 //	//		{
-//	//			vgLogDebug( "vgeGL.Engine: Fails to registered shader %s", filename.c_str() );
+//	//			vgLogDebug( "vgeGLBase.Engine: Fails to registered shader %s", filename.c_str() );
 //
 //	//			//const std::string infoLog = program->getInfoLog( program->getProgramObject() );??????????????????????? FIXME
 //	//			//vgLogDebug( "Engine:\n%s\n", infoLog.c_str() );
@@ -685,7 +685,7 @@
 //	//	}
 //	//	else
 //	//	{
-//	//		vgLogDebug( "vgeGL.Engine: Empty shader %s", filename.c_str() );
+//	//		vgLogDebug( "vgeGLBase.Engine: Empty shader %s", filename.c_str() );
 //	//	}
 //	//}
 ////}
@@ -928,8 +928,8 @@
 //			break;
 //
 //		default:
-//			vgLogDebug( "vgeGL.Engine:getGLDepthTextureFormat(): Performance warning : No matching between given depth buffer bits and depth texture format." );
-//			vgLogDebug( "vgeGL.Engine:getGLDepthTextureFormat(): Performance warning : Use GL_DEPTH_COMPONENT16_ARB" );
+//			vgLogDebug( "vgeGLBase.Engine:getGLDepthTextureFormat(): Performance warning : No matching between given depth buffer bits and depth texture format." );
+//			vgLogDebug( "vgeGLBase.Engine:getGLDepthTextureFormat(): Performance warning : Use GL_DEPTH_COMPONENT16_ARB" );
 //			retVal = GL_DEPTH_COMPONENT16_ARB;
 //			break;
 //	}
@@ -966,7 +966,7 @@
 //	if ( fbo && (what != COLOR) )
 //	{
 //		// RENDERING IN A FBO
-//		vgeGL::technique::getImage( fbo, what, oImage, imageData );
+//		vgeGLBase::technique::getImage( fbo, what, oImage, imageData );
 //	}
 //	else
 //	{
@@ -1257,5 +1257,5 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Overlay.hpp"
+//#include "vgeGLBase/handler/painter/Overlay.hpp"
 //
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/Overlay.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -41,8 +41,8 @@
 //
 //void Overlay::apply( vge::engine::Engine* baseEngine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(baseEngine) != 0 );
-//	vgeGL::engine::Engine *engine = static_cast< vgeGL::engine::Engine* >(baseEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(baseEngine) != 0 );
+//	vgeGLBase::engine::Engine *engine = static_cast< vgeGLBase::engine::Engine* >(baseEngine);
 //
 //	assert( dynamic_cast< vgd::node::Overlay* >(node) != 0 );
 //	vgd::node::Overlay *overlay = static_cast< vgd::node::Overlay* >(node);
@@ -50,7 +50,7 @@
 //	// Updates engine state
 //	if ( engine->isGLSLEnabled() )
 //	{
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //		GLSLState& glslState = engine->getGLSLState();
 //
 //		vgd::Shp< GLSLState::OverlayState > overlayState( new GLSLState::OverlayState(overlay) );
@@ -76,9 +76,9 @@
 //
 //
 //// @todo Uses glsl for Overlay
-//void Overlay::paint( vgeGL::engine::Engine * engine, OverlayStateContainer * overlays )
+//void Overlay::paint( vgeGLBase::engine::Engine * engine, OverlayStateContainer * overlays )
 //{
-//	typedef vgeGL::engine::GLSLState::OverlayState OverlayState;
+//	typedef vgeGLBase::engine::GLSLState::OverlayState OverlayState;
 //
 //	uint numFound = 0;
 //	for( uint i = 0; numFound < overlays->getNum(); ++i )
@@ -103,6 +103,6 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //

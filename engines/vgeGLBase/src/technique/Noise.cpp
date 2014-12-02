@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/Noise.hpp"
+//#include "vgeGLBase/technique/Noise.hpp"
 //
 //#include <boost/algorithm/string/replace.hpp>
 //#include <vgd/basic/Image.hpp>
@@ -13,15 +13,15 @@
 //#include <vgd/node/OutputBufferProperty.hpp>
 //#include <vgd/node/PostProcessing.hpp>
 //#include <vgd/node/Texture2D.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/ShaderGenerator.hpp"
-//#include "vgeGL/handler/painter/OutputBuffers.hpp"
-//#include "vgeGL/rc/Noise.hpp"
-//#include "vgeGL/technique/ForwardRendering.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/ShaderGenerator.hpp"
+//#include "vgeGLBase/handler/painter/OutputBuffers.hpp"
+//#include "vgeGLBase/rc/Noise.hpp"
+//#include "vgeGLBase/technique/ForwardRendering.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -29,7 +29,7 @@
 //
 //
 //
-//void Noise::stageCollectInformationsBegin( vgeGL::engine::Engine * engine )
+//void Noise::stageCollectInformationsBegin( vgeGLBase::engine::Engine * engine )
 //{
 //	engine->regardIfIsA< vgd::node::Noise >();
 //}
@@ -53,7 +53,7 @@
 //}
 //
 //
-//void Noise::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::Noise > rc )
+//void Noise::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGLBase::rc::Noise > rc )
 //{
 //	// OutputBufferProperty : COLOR RGBA
 //	using vgd::node::OutputBufferProperty;
@@ -67,7 +67,7 @@
 //}
 //
 //
-//void Noise::stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc, vgd::node::Noise * noise )
+//void Noise::stageInitializeRandomTexture( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::Noise > rc, vgd::node::Noise * noise )
 //{
 //	// noise image
 //	const vgm::Vec2f randomTextureScaleFactors	( noise->getRandomTextureScaleFactors() );
@@ -112,12 +112,12 @@
 //}
 //
 //
-//void Noise::stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vgeGL::rc::Noise > rc )
+//void Noise::stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vgeGLBase::rc::Noise > rc )
 //{
 //	// POST-PROCESSING
 //	using vgd::node::Group;
 //	using vgd::node::PostProcessing;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	// Creates post processing nodes and pipeline
 //	if ( !rc->rootPostProcessing )
@@ -169,7 +169,7 @@
 //	std::string customFilterApply;
 //	if ( getNoiseNode()->getUseTextureLessRandom() )
 //	{
-//		customFilterDefinition	= vgeGL::engine::GLSLHelpers::get_pnoise_cnoise() + customFilterDefinitionWithTextureLessNoise;
+//		customFilterDefinition	= vgeGLBase::engine::GLSLHelpers::get_pnoise_cnoise() + customFilterDefinitionWithTextureLessNoise;
 //		customFilterApply		= "	color = apply( texMap2D[0], mgl_TexCoord[0].xy, param4f0 );\n";
 //	}
 //	else
@@ -250,7 +250,7 @@
 //}
 //
 //
-//void Noise::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc )
+//void Noise::stageUpdatePostProcessingParameters( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::Noise > rc )
 //{
 //	if ( !isEnabled() )	return;
 //
@@ -261,13 +261,13 @@
 //	noisePP->setParam4f0( factors );
 //}
 //
-//void Noise::stageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void Noise::stageInitializeRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
-//	templateStageInitializeRC<vgeGL::rc::Noise>( technique, engine );
+//	templateStageInitializeRC<vgeGLBase::rc::Noise>( technique, engine );
 //}
 //
 //
-//const bool Noise::isRCUpdated( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
+//const bool Noise::isRCUpdated( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
 //{
 //	if ( !isEnabled() )
 //	{
@@ -285,11 +285,11 @@
 //}
 //
 //
-//void Noise::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
+//void Noise::updateRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::Noise > rc = vgd::dynamic_pointer_cast< vgeGL::rc::Noise >( genericRC );
+//	vgd::Shp< vgeGLBase::rc::Noise > rc = vgd::dynamic_pointer_cast< vgeGLBase::rc::Noise >( genericRC );
 //	vgAssert( rc != 0 );
 //
 //	// color buffer
@@ -324,21 +324,21 @@
 //}
 //
 //
-//void Noise::stagePrePaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void Noise::stagePrePaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::Noise > rc = getRC< vgeGL::rc::Noise >(engine);
+//	vgd::Shp< vgeGLBase::rc::Noise > rc = getRC< vgeGLBase::rc::Noise >(engine);
 //	vgAssert( rc != 0 );
 //
 //	stageInitializeOutputBuffers( technique, engine, rc );
 //}
 //
 //
-//void Noise::stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc )
+//void Noise::stageInitializeOutputBuffers( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::Noise > rc )
 //{
 //	using vgd::node::OutputBufferProperty;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	if ( !isEnabled() ) return;
 //
@@ -359,11 +359,11 @@
 //}
 //
 //
-//void Noise::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void Noise::stagePostPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::Noise > rc = getRC< vgeGL::rc::Noise >(engine);
+//	vgd::Shp< vgeGLBase::rc::Noise > rc = getRC< vgeGLBase::rc::Noise >(engine);
 //	vgAssert( rc != 0 );
 //
 //	// Sets uniforms
@@ -390,7 +390,7 @@
 //	engine->getBuiltinUniformState().sethUniform( "time", static_cast<int>(rc->lastUsedTimeValue) );
 //
 //	// Apply post-processing
-//	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
+//	const vgd::Shp< vgeGLBase::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
 //
 //	// Blit
 //	technique->blit( engine, finalBuffers, technique->m_fbo );
@@ -405,5 +405,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

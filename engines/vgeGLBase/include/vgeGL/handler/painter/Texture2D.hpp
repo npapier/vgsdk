@@ -6,15 +6,15 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_TEXTURE2D_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_TEXTURE2D_HPP
 //
-//#include "vgeGL/handler/painter/Texture.hpp"
+//#include "vgeGLBase/handler/painter/Texture.hpp"
 //
 //namespace vgd { namespace node { struct Texture2D; } }
 //
-//namespace vgeGL { namespace rc { struct Texture2D; } }
+//namespace vgeGLBase { namespace rc { struct Texture2D; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace handler
@@ -28,7 +28,7 @@
 ///**
 // * @brief Send render commands for the Texture2D node
 // */
-//struct VGEGLBASE_API Texture2D : public vgeGL::handler::painter::Texture
+//struct VGEGLBASE_API Texture2D : public vgeGLBase::handler::painter::Texture
 //{
 //	META_HANDLER_HPP( Texture2D );
 //
@@ -42,7 +42,7 @@
 //	/**
 //	 * @brief Creates/updates the 2D texture and updates parameters.
 //	 */
-//	void	synchronize	( vgeGL::engine::Engine*, vgd::node::Texture2D*, vgeGL::rc::Texture2D* );
+//	void	synchronize	( vgeGLBase::engine::Engine*, vgd::node::Texture2D*, vgeGLBase::rc::Texture2D* );
 //};
 //
 //
@@ -51,7 +51,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_TEXTURE2D_HPP
 //

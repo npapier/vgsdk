@@ -3,5 +3,5 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/rc/Texture1D.hpp"
+//#include "vgeGLBase/rc/Texture1D.hpp"
 //

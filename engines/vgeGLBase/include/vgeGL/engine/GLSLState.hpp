@@ -13,7 +13,7 @@
 //#include <vgd/node/LightModel.hpp>
 //#include <vge/basic/TUnitContainer.hpp>
 //#include <vgm/Matrix.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace glo
 //{
@@ -36,11 +36,11 @@
 //	}
 //}
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -782,7 +782,7 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_ENGINE_GLSLSTATE_HPP
 //

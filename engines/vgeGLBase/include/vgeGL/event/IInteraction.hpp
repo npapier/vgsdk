@@ -8,12 +8,12 @@
 //#define _VGEGLBASE_EVENT_IINTERACTION_HPP
 //
 //#include <vgd/event/EventVisitor.hpp>
-//#include "vgeGL/event/EventProcessor.hpp"
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/event/EventProcessor.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -32,7 +32,7 @@
 //	 * 
 //	 * @pre sceneManager != 0
 //	 */
-//	IInteraction( ::vgeGL::engine::SceneManager *sceneManager );
+//	IInteraction( ::vgeGLBase::engine::SceneManager *sceneManager );
 //
 //	/**
 //	 * @name Interface of EventVisitor
@@ -60,7 +60,7 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_EVENT_IINTERACTION_HPP
 //

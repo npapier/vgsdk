@@ -8,11 +8,11 @@
 //
 //#include <glo/DisplayList.hpp>
 //#include <vge/rc/IResource.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace rc
@@ -30,7 +30,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_DISPLAYLIST_HPP
 //

@@ -3,14 +3,14 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/FragmentShaderGenerator.hpp"
+//#include "vgeGLBase/engine/FragmentShaderGenerator.hpp"
 //
 //#include <vgd/node/Program.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -26,7 +26,7 @@
 //
 //
 //
-//const bool FragmentShaderGenerator::generate( vgeGL::engine::Engine * engine )
+//const bool FragmentShaderGenerator::generate( vgeGLBase::engine::Engine * engine )
 //{
 //	// Retrieves the GLSL state
 //	GLSLState& state = engine->getGLSLState();
@@ -236,5 +236,5 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

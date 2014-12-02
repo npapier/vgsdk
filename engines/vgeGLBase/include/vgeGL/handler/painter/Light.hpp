@@ -7,11 +7,11 @@
 //#define _VGEGLBASE_HANDLER_PAINTER_LIGHT_HPP
 //
 //#include <vge/handler/painter/MultiAttribute.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace vgd { namespace node { struct Light; } }
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine
 //	{
@@ -23,7 +23,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -44,8 +44,8 @@
 //	void	setToDefaults();
 //
 //protected:
-//	void	updateUnitState( vgeGL::engine::Engine * engine, vgd::node::Light * light, vgd::Shp< vgeGL::engine::LightState > lightState );
-//	void	paint		( vgeGL::engine::Engine*, vgd::node::Light* );
+//	void	updateUnitState( vgeGLBase::engine::Engine * engine, vgd::node::Light * light, vgd::Shp< vgeGLBase::engine::LightState > lightState );
+//	void	paint		( vgeGLBase::engine::Engine*, vgd::node::Light* );
 //};
 //
 //
@@ -54,7 +54,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_LIGHT_HPP
 //

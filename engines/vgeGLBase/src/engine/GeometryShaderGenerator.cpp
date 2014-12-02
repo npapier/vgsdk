@@ -3,14 +3,14 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/GeometryShaderGenerator.hpp"
+//#include "vgeGLBase/engine/GeometryShaderGenerator.hpp"
 //
 //#include <vgd/node/Program.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -26,7 +26,7 @@
 //
 //
 //
-//const bool GeometryShaderGenerator::generate( vgeGL::engine::Engine * engine )
+//const bool GeometryShaderGenerator::generate( vgeGLBase::engine::Engine * engine )
 //{
 //	// Retrieves the GLSL state
 //	GLSLState& state = engine->getGLSLState();
@@ -141,5 +141,5 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

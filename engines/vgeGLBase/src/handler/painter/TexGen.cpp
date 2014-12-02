@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/TexGen.hpp"
+//#include "vgeGLBase/handler/painter/TexGen.hpp"
 //
 //#include <vgd/node/TexGen.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-////#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+////#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -24,12 +24,12 @@
 //
 //
 //
-//void TexGen::apply( vgeGL::engine::Engine * engine, vgd::node::TexGen * texGen )
+//void TexGen::apply( vgeGLBase::engine::Engine * engine, vgd::node::TexGen * texGen )
 //{
 //	const uint texUnit = texGen->getMultiAttributeIndex();
 //
 //	// Updates engine state
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	typedef GLSLState::TexUnitState TexUnitState;
 //
 //	GLSLState& glslState = engine->getGLSLState();
@@ -52,7 +52,7 @@
 //
 //
 //
-//void TexGen::paint( vgeGL::engine::Engine * engine, vgd::node::TexGen * texGen )
+//void TexGen::paint( vgeGLBase::engine::Engine * engine, vgd::node::TexGen * texGen )
 //{
 //	if ( !engine->isGLSLEnabled() )
 //	{
@@ -97,5 +97,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

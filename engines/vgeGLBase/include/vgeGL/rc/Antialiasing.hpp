@@ -9,11 +9,11 @@
 //#include <glo/IResource.hpp>
 //#include <vgd/Shp.hpp>
 //#include <vge/rc/IResource.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace rc
@@ -30,7 +30,7 @@
 //	vgd::Shp< vgd::node::OutputBufferProperty >	colorBuffer;
 //
 //	// Post-processing
-//	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 //
 //	vgd::Shp< vgd::node::Group >					rootPostProcessing;
 //	PostProcessingStateContainer					postProcessing;
@@ -40,7 +40,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_ANTIALIASING_HPP
 //

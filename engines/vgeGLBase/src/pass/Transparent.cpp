@@ -3,20 +3,20 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/pass/Transparent.hpp"
+//#include "vgeGLBase/pass/Transparent.hpp"
 //
 //#include <vgd/node/ClearFrameBuffer.hpp>
 //#include <vgd/node/CullFace.hpp>
 //#include <vgd/node/Kit.hpp>
 //#include <vgd/node/Material.hpp>
 //#include <vgd/node/IShape.hpp>
-//#include <vgeGL/engine/Engine.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include <vgeGLBase/engine/Engine.hpp>
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //#include <vgm/operations.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace pass
@@ -24,7 +24,7 @@
 //
 //
 //
-//void Transparent::apply(	vgeGL::technique::Technique * /*technique*/, vgeGL::engine::Engine *engine, 
+//void Transparent::apply(	vgeGLBase::technique::Technique * /*technique*/, vgeGLBase::engine::Engine *engine, 
 //							vge::visitor::TraverseElementVector* traverseElements,
 //							vgd::Shp< vge::service::Service > service )
 //{
@@ -84,5 +84,5 @@
 //
 //} // namespace pass
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

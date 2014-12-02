@@ -3,11 +3,11 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/SubTechnique.hpp"
+//#include "vgeGLBase/technique/SubTechnique.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -41,7 +41,7 @@
 //}
 //
 //
-//const bool SubTechnique::isRCUpdated( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
+//const bool SubTechnique::isRCUpdated( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
 //{
 //	if ( !isEnabled() )
 //	{
@@ -69,5 +69,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

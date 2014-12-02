@@ -3,13 +3,13 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/basic/helpers.hpp"
+//#include "vgeGLBase/basic/helpers.hpp"
 //
 //#include <vgDebug/helpers.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace basic
@@ -198,5 +198,5 @@
 //
 //} // namespace basic
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
