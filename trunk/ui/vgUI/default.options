@@ -1,7 +1,70 @@
 description	= '(V)ersatile (G)raphical (U)ser (I)nterface'
+defines		= []
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'
-libs		= [ 'displayDriverConnector 0-1', 'glc 0-0', 'gle 0-3', 'glo 0-3', 'sbf 0-0', 'vgAlg 0-5', 'vgCairo 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'vgeGL 0-5', 'vgio 0-5', 'vgOpenAssetImport 0-5', 'vgm 0-5' ]
-uses		= [ 'boost', 'cairo', 'opengl' ]
-deps		= [ '../../dependencies/displayDriverConnector', '../../dependencies/glContext/glc', '../../dependencies/gle', '../../dependencies/glo', '../../core', '../../engines', '../../io/vgio', '../../io/vgOpenAssetImport', '../../images/vgCairo' ]
+uses = ['boost']
+libs = [ 'glc 0-0', 'glo 0-3', 'sbf 0-0', 'vgm 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5' ]
+deps = [ '../../dependencies/glContext/glc', '../../dependencies/glo', '../../core', '../../engines/vge' ]
+
+from SCons.Script.SConscript import SConsEnvironment
+env = SConsEnvironment.sbf.myEnv
+configFlags = env['configFlags']
+
+options = []
+
+emscriptenInStages = 'emcc' in env['stages']
+
+if ('STBIMAGE' in configFlags) or emscriptenInStages:
+	defines = ['__STBIMAGE__']
+
+# OpenGL related stuff
+if	'OPENGLES2' in configFlags or emscriptenInStages:
+	defines.append( '__OPENGLES2__' )
+	if not emscriptenInStages:	uses.append( 'angle' )
+
+	libs.append( 'vgeGLBase 0-5' )
+	deps.append( '../../engines/vgeGLBase' )
+else:
+	uses.append( 'opengl' )
+
+	libs.append( 'vgeGL 0-5' )
+	deps.append( '../../engines/vgeGL' )
+
+	options.extend( ['USE_GLE', 'USE_DDC', 'USE_VGIO', 'USE_VGOPENASSETIMPORT', 'USE_VGALG', 'USE_VGCAIRO'] )
+
+
+
+
+if 'USE_GLE' in options:
+	defines.append('__USE_GLE__')
+	libs.append( 'gle 0-3' )
+	deps.append( '../../dependencies/gle' )
+
+if 'USE_DDC' in options:
+	defines.append('__USE_DDC__')
+	libs.append( 'displayDriverConnector 0-1' )
+	deps.append( '../../dependencies/displayDriverConnector' )
+	
+if 'USE_VGIO' in options:
+	defines.append('__USE_VGIO__')
+	libs.append( 'vgio 0-5' )
+	deps.append( '../../io/vgio' )
+
+if 'USE_VGOPENASSETIMPORT' in options:
+	defines.append('__USE_VGOPENASSETIMPORT__')
+	libs.append( 'vgOpenAssetImport 0-5' )
+	deps.append( '../../io/vgOpenAssetImport' )
+
+if 'USE_VGALG' in options:
+	defines.append('__USE_VGALG__')
+	libs.append( 'vgAlg 0-5' )
+	deps.append( '../../algorithms/vgAlg' )
+
+if 'USE_VGCAIRO' in options:
+	defines.append('__USE_VGCAIRO__')
+	uses.append( 'cairo' )
+	libs.append( 'vgCairo 0-5' )
+	deps.append( '../../images/vgCairo' )
+
+# @todo remove glo usage ?

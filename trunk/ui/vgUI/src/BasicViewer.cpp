@@ -636,6 +636,7 @@ void BasicViewer::resize( const vgm::Vec2i& size )
 
 const bool BasicViewer::load( const std::string filePath )
 {
+#ifdef __USE_VGIO__
 	std::pair< bool, vgd::Shp< vgd::node::Group > > retVal;
 
 	retVal = vgio::load( filePath );
@@ -655,6 +656,11 @@ const bool BasicViewer::load( const std::string filePath )
 	}
 
 	return retVal.first;
+#else
+	#pragma message("BasicViewer::load(): disabled")
+	vgAssertN( false, "BasicViewer::load(): disabled" );
+	return false;
+#endif
 }
 
 

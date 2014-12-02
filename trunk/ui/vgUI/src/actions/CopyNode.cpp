@@ -3,6 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
+#ifdef __USE_VGALG__
 
 #include "vgUI/actions/CopyNode.hpp"
 
@@ -36,3 +37,4 @@ const bool CopyNode::isValide( State state )
 
 } // namespace vgUI
 
+#endif // #ifdef __USE_VGALG__

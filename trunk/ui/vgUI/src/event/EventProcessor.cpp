@@ -18,7 +18,7 @@ namespace event
 
 
 EventProcessor::EventProcessor( ::vgUI::Canvas *canvas )
-:	::vgeGL::event::EventProcessor(canvas)
+:	::vgeGLBase::event::EventProcessor(canvas)
 {}
 
 
