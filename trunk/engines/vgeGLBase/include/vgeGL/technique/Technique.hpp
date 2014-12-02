@@ -8,9 +8,9 @@
 //
 //#include <vge/technique/Technique.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine { struct Engine; }
 //}
@@ -18,11 +18,11 @@
 //
 //
 ///**
-// * @namespace vgeGL::technique
+// * @namespace vgeGLBase::technique
 // * 
 // * @brief Describes multi-pass strategy used by engine to evaluate a scene graph using OpenGL.
 // *
-// * @defgroup g_techniques_vgeGL	Technique from vgeGL
+// * @defgroup g_techniques_vgeGL	Technique from vgeGLBase
 // *
 // * @brief Specialized techniques using OpenGL
 // *
@@ -31,7 +31,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -57,7 +57,7 @@
 //	 * @param engine			engine used during evaluation
 //	 * @param traverseElements	elements to evaluate
 //	 */
-//	VGEGLBASE_API virtual void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
+//	VGEGLBASE_API virtual void apply( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements ) = 0;
 //
 //	/**
 //	 * This description specified by calling setPassDescription() is used to insert textual markers into the OpenGL stream (with GREMEDY_string_marker).
@@ -69,13 +69,13 @@
 //	 */
 //	/*virtual */void endPass();
 //
-//	VGEGLBASE_API vgeGL::engine::Engine * glEngine() const;
+//	VGEGLBASE_API vgeGLBase::engine::Engine * glEngine() const;
 //
 //protected:
 //	/**
 //	 * @copydoc ::vge::technique::Technique::prepareEval(vge::engine::Engine*, vge::visitor::TraverseElementVector*)
 //	 */
-//	VGEGLBASE_API void prepareEval( vgeGL::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements );
+//	VGEGLBASE_API void prepareEval( vgeGLBase::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements );
 //
 //	/**
 //	 * @copydoc ::vge::technique::Technique::evaluatePass(vgd::Shp<vge::pass::Pass>, vgd::Shp<vge::service::Service>,const PassIsolationMask)
@@ -93,7 +93,7 @@
 //	 * @name Internal data
 //	 */
 //	//@{
-//	vgeGL::engine::Engine * m_engine;
+//	vgeGLBase::engine::Engine * m_engine;
 //	//@}
 //};
 //
@@ -101,7 +101,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_TECHNIQUE_HPP
 //

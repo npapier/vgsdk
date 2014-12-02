@@ -6,10 +6,10 @@
 //#ifndef _VGEGLBASE_HANDLER_HANDLER_HPP
 //#define _VGEGLBASE_HANDLER_HANDLER_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 ///** 
-// * @namespace vgeGL::handler
+// * @namespace vgeGLBase::handler
 // * 
 // * @brief Handlers implements services for evaluating node using OpenGL.
 // */

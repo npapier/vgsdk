@@ -3,20 +3,20 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/DrawStyle.hpp"
+//#include "vgeGLBase/handler/painter/DrawStyle.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/DrawStyle.hpp>
 //#include <vgd/node/VertexShape.hpp>
 //#include <vge/service/Painter.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/handler/painter/VertexShape.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/handler/painter/VertexShape.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -44,8 +44,8 @@
 //
 //void DrawStyle::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	vgAssert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	vgAssert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	vgAssert( dynamic_cast< vgd::node::DrawStyle* >(node) != 0 );
 //	vgd::node::DrawStyle *drawStyle = static_cast< vgd::node::DrawStyle* >(node);
@@ -67,7 +67,7 @@
 //		if ( glEngine->isGLSLEnabled() )
 //		{
 //			// Retrieves GLSL state
-//			using vgeGL::engine::GLSLState;
+//			using vgeGLBase::engine::GLSLState;
 //			GLSLState& state = glEngine->getGLSLState();
 //
 //			switch ( shapeValue.value() )
@@ -80,18 +80,18 @@
 //				case DrawStyle::SMOOTH_HIDDEN_LINE:
 //				case DrawStyle::NEIGHBOUR:
 //					// Updates GLSL state
-//					if ( state.isEnabled(vgeGL::engine::FLAT_SHADING) )
+//					if ( state.isEnabled(vgeGLBase::engine::FLAT_SHADING) )
 //					{
-//						state.setEnabled(vgeGL::engine::FLAT_SHADING, false);
+//						state.setEnabled(vgeGLBase::engine::FLAT_SHADING, false);
 //					}
 //					break;
 //
 //				case DrawStyle::FLAT:
 //				case DrawStyle::FLAT_HIDDEN_LINE:
 //					// Updates GLSL state
-//					if ( !state.isEnabled(vgeGL::engine::FLAT_SHADING) )
+//					if ( !state.isEnabled(vgeGLBase::engine::FLAT_SHADING) )
 //					{
-//						state.setEnabled(vgeGL::engine::FLAT_SHADING);
+//						state.setEnabled(vgeGLBase::engine::FLAT_SHADING);
 //					}
 //					break;
 //
@@ -161,8 +161,8 @@
 // * @todo Splits this method into smaller one
 // */
 //void DrawStyle::paintVertexShapeWithShapeProperty(
-//	vgeGL::engine::Engine *glEngine, vgd::node::VertexShape *pVertexShape,
-//	vgeGL::handler::painter::VertexShape *pVertexShapeHandler )
+//	vgeGLBase::engine::Engine *glEngine, vgd::node::VertexShape *pVertexShape,
+//	vgeGLBase::handler::painter::VertexShape *pVertexShapeHandler )
 //{
 //	using vgd::node::DrawStyle;
 //
@@ -383,5 +383,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

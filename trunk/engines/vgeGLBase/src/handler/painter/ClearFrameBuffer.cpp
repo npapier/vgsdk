@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/ClearFrameBuffer.hpp"
+//#include "vgeGLBase/handler/painter/ClearFrameBuffer.hpp"
 //
 //#include <glo/FrameBufferObject.hpp>
 //#include <vgd/node/ClearFrameBuffer.hpp>
 //#include <vgd/node/OutputBufferProperty.hpp>
 //
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -25,7 +25,7 @@
 //
 //
 //// @todo move in helpers.hpp
-//void updateCurrentDrawBuffers(	const vgeGL::engine::Engine::OutputBufferPropertyStateContainer& outputBuffersProperties,
+//void updateCurrentDrawBuffers(	const vgeGLBase::engine::Engine::OutputBufferPropertyStateContainer& outputBuffersProperties,
 //								std::vector< int >& currentDrawBuffers )
 //{
 //	uint		count	= 0;
@@ -35,7 +35,7 @@
 //
 //	while( i != iEnd )
 //	{
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //		typedef GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
 //
 //		const vgd::Shp< OutputBufferPropertyState > state = outputBuffersProperties.getState(i);
@@ -94,8 +94,8 @@
 //// @todo move into vge::handler::ClearFrameBuffer
 //void ClearFrameBuffer::apply( vge::engine::Engine *engine, vgd::node::Node *node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	// Updates engine state
 //
@@ -105,7 +105,7 @@
 //	//
 //	const vge::engine::BufferUsagePolicy	bup = engine->getBufferUsagePolicy();
 //	const vge::engine::EyeUsagePolicy		eup = engine->getEyeUsagePolicy();
-//	vgeGL::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
+//	vgeGLBase::rc::applyUsingDisplayList<vgd::node::ClearFrameBuffer, ClearFrameBuffer>( engine, node, this );
 //
 //	applyBufferUsagePolicy( glEngine, bup, eup );
 //}
@@ -132,7 +132,7 @@
 //
 //
 //
-//void ClearFrameBuffer::paint( vgeGL::engine::Engine * engine, vgd::node::ClearFrameBuffer * framebuffer )
+//void ClearFrameBuffer::paint( vgeGLBase::engine::Engine * engine, vgd::node::ClearFrameBuffer * framebuffer )
 //{
 //	// CLEAR COLOR
 //	vgm::Vec4f	clearValue;
@@ -157,7 +157,7 @@
 //
 //
 //// @todo cache in DL
-//void ClearFrameBuffer::applyBufferUsagePolicy( vgeGL::engine::Engine * engine, const vge::engine::BufferUsagePolicy bufferPolicy, const vge::engine::EyeUsagePolicy eyePolicy )
+//void ClearFrameBuffer::applyBufferUsagePolicy( vgeGLBase::engine::Engine * engine, const vge::engine::BufferUsagePolicy bufferPolicy, const vge::engine::EyeUsagePolicy eyePolicy )
 //{
 //	// Binds engine output buffers
 //	vgd::Shp< glo::FrameBufferObject > fbo = engine->getOutputBuffers();
@@ -166,7 +166,7 @@
 //		fbo->bind();
 //	}
 //
-//	typedef vgeGL::engine::Engine::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer; // <=> vge::basic::TUnitContainer< OutputBufferPropertyState >
+//	typedef vgeGLBase::engine::Engine::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer; // <=> vge::basic::TUnitContainer< OutputBufferPropertyState >
 //	const OutputBufferPropertyStateContainer& outputBuffersProperties = engine->getOutputBufferProperties();
 //
 //	// By default, all drawing operations into color buffers are disabled
@@ -330,5 +330,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

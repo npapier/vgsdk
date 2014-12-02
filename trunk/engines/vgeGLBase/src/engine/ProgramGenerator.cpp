@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/ProgramGenerator.hpp"
+//#include "vgeGLBase/engine/ProgramGenerator.hpp"
 //
-//#include "vgeGL/engine/FragmentShaderGenerator.hpp"
-//#include "vgeGL/engine/GeometryShaderGenerator.hpp"
-//#include "vgeGL/engine/VertexShaderGenerator.hpp"
-//#include "vgeGL/engine/TessellationControlShaderGenerator.hpp"
-//#include "vgeGL/engine/TessellationEvaluationShaderGenerator.hpp"
+//#include "vgeGLBase/engine/FragmentShaderGenerator.hpp"
+//#include "vgeGLBase/engine/GeometryShaderGenerator.hpp"
+//#include "vgeGLBase/engine/VertexShaderGenerator.hpp"
+//#include "vgeGLBase/engine/TessellationControlShaderGenerator.hpp"
+//#include "vgeGLBase/engine/TessellationEvaluationShaderGenerator.hpp"
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -38,7 +38,7 @@
 //
 //
 //
-//void ProgramGenerator::generate( vgeGL::engine::Engine * engine )
+//void ProgramGenerator::generate( vgeGLBase::engine::Engine * engine )
 //{
 //	if ( isDirty() )
 //	{
@@ -153,5 +153,5 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

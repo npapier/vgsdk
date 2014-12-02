@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/MultiMain.hpp"
+//#include "vgeGLBase/technique/MultiMain.hpp"
 //
 //#include <vgd/node/Camera.hpp>
 //#include <vgd/node/ClearFrameBuffer.hpp>
@@ -11,14 +11,14 @@
 //
 //#include <vge/pass/ForEach.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/pass/Opaque.hpp"
-//#include "vgeGL/pass/Transparent.hpp"
-//#include "vgeGL/technique/ForwardRendering.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/pass/Opaque.hpp"
+//#include "vgeGLBase/pass/Transparent.hpp"
+//#include "vgeGLBase/technique/ForwardRendering.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -27,7 +27,7 @@
 //
 //
 //MultiMain::MultiMain()
-//:	m_paintTechnique( vgd::makeShp( new vgeGL::technique::ForwardRendering() ) )
+//:	m_paintTechnique( vgd::makeShp( new vgeGLBase::technique::ForwardRendering() ) )
 //{
 //}
 //
@@ -128,7 +128,7 @@
 //
 //
 //
-//void MultiMain::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements )
+//void MultiMain::apply( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements )
 //{
 //	// Searches clear framebuffer and camera node
 //	vgd::node::Camera *				camera				= 0;
@@ -290,7 +290,7 @@
 //		camera->setScissor( newViewport2i );		
 //
 //		// Paints the window
-//		vgd::Shp< vgeGL::technique::Technique > paintTechnique = getPaintTechnique();
+//		vgd::Shp< vgeGLBase::technique::Technique > paintTechnique = getPaintTechnique();
 //		paintTechnique->setParameters( this->engine(), currentTraverseElements, sceneManager() );
 //		paintTechnique->apply( engine, currentTraverseElements );
 //
@@ -331,30 +331,30 @@
 //
 //
 //
-//vgd::Shp< vgeGL::technique::Technique > MultiMain::getPaintTechnique() const
+//vgd::Shp< vgeGLBase::technique::Technique > MultiMain::getPaintTechnique() const
 //{
 //	return m_paintTechnique;
 //}
 //
 //
 //
-//void MultiMain::setPaintTechnique( vgd::Shp< vgeGL::technique::Technique > technique )
+//void MultiMain::setPaintTechnique( vgd::Shp< vgeGLBase::technique::Technique > technique )
 //{
 //	m_paintTechnique = technique;
 //}
 //
 //
 //
-//void MultiMain::drawBorder( vgeGL::engine::Engine * engine, const vgd::Shp< MultiMain::Window > window, const vgm::Rectangle2i newViewport2i )
+//void MultiMain::drawBorder( vgeGLBase::engine::Engine * engine, const vgd::Shp< MultiMain::Window > window, const vgm::Rectangle2i newViewport2i )
 //{
 //	// Makes a backup of GLSL activation state
-//	using vgeGL::engine::Engine;
+//	using vgeGLBase::engine::Engine;
 //	vgd::Shp< Engine::GLSLActivationState > glslActivationState = engine->getGLSLActivationState();
 //
 //	//
 //	engine->sethCurrentProgram();
 //
-//	vgeGL::engine::Engine::begin2DRendering( &newViewport2i, true );
+//	vgeGLBase::engine::Engine::begin2DRendering( &newViewport2i, true );
 //
 //	//glEnable(GL_LINE_SMOOTH);
 //	glColor4fv( window->getBorderColor().getValue() );
@@ -367,7 +367,7 @@
 //	glVertex2f( 0.f, 1.f );
 //	glEnd();
 //
-//	vgeGL::engine::Engine::end2DRendering( true );
+//	vgeGLBase::engine::Engine::end2DRendering( true );
 //
 //	// Restores GLSL activation state
 //	engine->setGLSLActivationState( glslActivationState );
@@ -377,5 +377,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

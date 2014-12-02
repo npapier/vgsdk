@@ -10,8 +10,8 @@
 //#include <vge/engine/Engine.hpp>
 //#include <vge/engine/TStack.hpp>
 //#include <vge/rc/TManager.hpp>
-//#include "vgeGL/basic/UniformContainer.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/basic/UniformContainer.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //// for GLState
 //#include <vgd/node/DrawStyle.hpp>
@@ -30,7 +30,7 @@
 //	namespace node { struct MultipleInstances; struct Texture; }
 //}
 //
-//namespace vgeGL 
+//namespace vgeGLBase 
 //{ 
 //	namespace engine { struct GLSLState; struct ProgramGenerator; }
 //	namespace technique {struct Technique; }
@@ -39,11 +39,11 @@
 //
 //
 ///**
-// * @namespace vgeGL::engine
+// * @namespace vgeGLBase::engine
 // * 
 // * @brief Engine evaluate scene graph with handlers and take care of OpenGL resources and states.
 // */
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -73,7 +73,7 @@
 ///**
 // * @brief GL rendering state
 // *
-// * This class is a specialized container for GL rendering state used by vgeGL to take care of the rendering state given by the scene graph. 
+// * This class is a specialized container for GL rendering state used by vgeGLBase to take care of the rendering state given by the scene graph. 
 // *
 // * @todo Moves this class in its own file
 // * @todo Renames GraphicalState or GState
@@ -192,7 +192,7 @@
 //	typedef vge::engine::TStackShp< GLState >		GLStateStack;	///< Type definition for the stack of GLState
 //	typedef vge::engine::TStackShp< GLSLState  >	GLSLStateStack; ///< Type definition for the stack of GLSLState
 //
-//	typedef vgeGL::basic::UniformContainer			UniformState;	///< Type definition for the uniform variables state
+//	typedef vgeGLBase::basic::UniformContainer			UniformState;	///< Type definition for the uniform variables state
 //
 //	/**
 //	 * @brief Retrieves the OpenGL state stack.
@@ -313,18 +313,18 @@
 //	 *
 //	 * @return the global GLSL state owned by the engine
 //	 */
-//	const vgd::Shp< vgeGL::engine::GLSLState > getGlobalGLSLState() const;
+//	const vgd::Shp< vgeGLBase::engine::GLSLState > getGlobalGLSLState() const;
 //
 //	/**
 //	 * @brief Sets the global GLSL state
 //	 *
 //	 * @param state		a reference on the GLSL state that must be copy to become the global GLSL state.
 //	 */
-//	void setGlobalGLSLState( vgeGL::engine::GLSLState& state );
+//	void setGlobalGLSLState( vgeGLBase::engine::GLSLState& state );
 //
 //
 //	// typedef vge::basic::TUnitContainer< OutputBufferPropertyState > OutputBufferPropertyStateContainer;
-//	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
 //
 //	/**
 //	 * @brief Retrieves the array of output buffer property state.
@@ -967,7 +967,7 @@
 //	bool populateNodeRegistry();
 //
 //
-//	friend vgeGL::technique::Technique; ///< Technique have to use getGLSLStateStack()
+//	friend vgeGLBase::technique::Technique; ///< Technique have to use getGLSLStateStack()
 //
 //	const GLSLStateStack& getGLSLStateStack() const;	///< Retrieves the GLSL state stack
 //	GLSLStateStack& getGLSLStateStack();				///< Retrieves the GLSL state stack
@@ -1027,7 +1027,7 @@
 //	UniformState							m_builtinUniformState;			///< store the current state for built-in uniform variables
 //	UniformState							m_uniformState;					///< store the current state for user-defined uniform variables
 //
-//	vgd::Shp< vgeGL::engine::GLSLState >	m_globalGLSLState;				///< store the global GLSL state
+//	vgd::Shp< vgeGLBase::engine::GLSLState >	m_globalGLSLState;				///< store the global GLSL state
 //
 //	vgd::Shp< glo::FrameBufferObject >		m_outputBuffers;				///< store the output buffers (see OutputBuffers, ForwardRendering and PostProcessing nodes).
 //
@@ -1044,7 +1044,7 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_ENGINE_ENGINE_HPP
 //

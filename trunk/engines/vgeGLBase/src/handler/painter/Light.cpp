@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Light.hpp"
+//#include "vgeGLBase/handler/painter/Light.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/Light.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -28,7 +28,7 @@
 //
 //
 //
-//void Light::updateUnitState( vgeGL::engine::Engine * engine, vgd::node::Light * light, vgd::Shp< vgeGL::engine::LightState > lightState )
+//void Light::updateUnitState( vgeGLBase::engine::Engine * engine, vgd::node::Light * light, vgd::Shp< vgeGLBase::engine::LightState > lightState )
 //{
 //	// ON
 //	vgd::node::Light::OnValueType on;
@@ -44,7 +44,7 @@
 //
 //
 //
-//void Light::paint( vgeGL::engine::Engine *, vgd::node::Light * light )
+//void Light::paint( vgeGLBase::engine::Engine *, vgd::node::Light * light )
 //{
 //	// Computes the light index
 //	const GLenum lightIndex = GL_LIGHT0 + light->getMultiAttributeIndex();
@@ -135,5 +135,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

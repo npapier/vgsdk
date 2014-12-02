@@ -3,19 +3,19 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/ShadowMapping.hpp"
+//#include "vgeGLBase/technique/ShadowMapping.hpp"
 //
 ////#include <vgd/node/Texture2D.hpp>
 //#include <vgd/node/FrameBuffer.hpp>
 //#include <vgd/node/TexGenEyeLinear.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/rc/Texture2D.hpp"
-//#include "vgeGL/rc/FrameBufferObject.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/rc/Texture2D.hpp"
+//#include "vgeGLBase/rc/FrameBufferObject.hpp"
 //#include <vgm/VectorOperations.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -23,14 +23,14 @@
 //
 //
 //
-//void ShadowMappingInput::reset(	const vgeGL::engine::Engine * engine,
+//void ShadowMappingInput::reset(	const vgeGLBase::engine::Engine * engine,
 //								const vgd::node::LightModel::ShadowValueType shadowType )
 //{
 //	using vgd::node::LightModel;
 //
 //	// Retrieves GLSLState from engine
-//	using vgeGL::engine::GLSLState;
-//	using vgeGL::engine::LightState;
+//	using vgeGLBase::engine::GLSLState;
+//	using vgeGLBase::engine::LightState;
 //	const GLSLState& state = engine->getGLSLState();
 //
 //	// Computes shadow map size
@@ -92,7 +92,7 @@
 //			continue;
 //		}
 //
-//		if ( current->getLightType() == vgeGL::engine::SPOT_LIGHT )
+//		if ( current->getLightType() == vgeGLBase::engine::SPOT_LIGHT )
 //		{
 //			// Computes light informations
 //			const bool castShadow = current->getCastShadow();
@@ -257,10 +257,10 @@
 //}
 //
 //
-//vgd::Shp< vgeGL::rc::Texture2D > ShadowMappingInput::getLightDepthMap( const uint index, vgeGL::engine::Engine * engine )
+//vgd::Shp< vgeGLBase::rc::Texture2D > ShadowMappingInput::getLightDepthMap( const uint index, vgeGLBase::engine::Engine * engine )
 //{
 //	vgd::Shp< vgd::node::Texture2D > texture2DNode = getLightDepthMap(index);
-//	return engine->getRCShp< vgeGL::rc::Texture2D >( texture2DNode );
+//	return engine->getRCShp< vgeGLBase::rc::Texture2D >( texture2DNode );
 //}
 //
 //
@@ -273,10 +273,10 @@
 //}
 //
 //
-//vgd::Shp< vgeGL::rc::Texture2D > ShadowMappingInput::getLightAlphaMap( const uint index, vgeGL::engine::Engine * engine )
+//vgd::Shp< vgeGLBase::rc::Texture2D > ShadowMappingInput::getLightAlphaMap( const uint index, vgeGLBase::engine::Engine * engine )
 //{
 //	vgd::Shp< vgd::node::Texture2D > texture2DNode = getLightAlphaMap(index);
-//	return engine->getRCShp< vgeGL::rc::Texture2D >( texture2DNode );
+//	return engine->getRCShp< vgeGLBase::rc::Texture2D >( texture2DNode );
 //}*/
 //
 //
@@ -339,5 +339,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

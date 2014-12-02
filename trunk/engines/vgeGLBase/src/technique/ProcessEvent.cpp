@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/ProcessEvent.hpp"
+//#include "vgeGLBase/technique/ProcessEvent.hpp"
 //
 //#include <vge/pass/ForEach.hpp>
 //#include <vge/service/ProcessEvent.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -34,7 +34,7 @@
 //
 //
 //
-//void ProcessEvent::apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
+//void ProcessEvent::apply( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements )
 //{
 //	vgd::Shp< vge::service::Service > processEvent = vge::service::ProcessEvent::create();
 //
@@ -72,5 +72,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

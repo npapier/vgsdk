@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/TessellationProperties.hpp"
+//#include "vgeGLBase/handler/painter/TessellationProperties.hpp"
 //
 //#include <vgd/node/TessellationProperties.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //#include <gle/OpenGLExtensionsGen.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -40,15 +40,15 @@
 //
 //void TessellationProperties::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::TessellationProperties* >(node) != 0 );
 //	vgd::node::TessellationProperties *tessProperties = dynamic_cast< vgd::node::TessellationProperties* >(node);
 //
 //
 //	// Retrieves GLSL state
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	GLSLState& state = glEngine->getGLSLState();
 //
 //
@@ -110,5 +110,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

@@ -6,16 +6,16 @@
 //#ifndef _VGEGLBASE_TECHNIQUE_DEPTHOFFIELD_HPP
 //#define _VGEGLBASE_TECHNIQUE_DEPTHOFFIELD_HPP
 //
-//#include "vgeGL/technique/SubTechnique.hpp"
+//#include "vgeGLBase/technique/SubTechnique.hpp"
 //
 //namespace glo { struct IResource; }
 //namespace vgd { namespace node { struct DepthOfField; } }
-//namespace vgeGL { namespace rc { struct DepthOfField; } }
-//namespace vgeGL { namespace technique { struct ForwardRendering; } }
+//namespace vgeGLBase { namespace rc { struct DepthOfField; } }
+//namespace vgeGLBase { namespace technique { struct ForwardRendering; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -29,7 +29,7 @@
 //	 * @name Stage 1
 //	 */
 //	//@{
-//	virtual void stageCollectInformationsBegin( vgeGL::engine::Engine * engine );
+//	virtual void stageCollectInformationsBegin( vgeGLBase::engine::Engine * engine );
 //	virtual const bool collectInformationsCallback( vge::visitor::TraverseElementVector::const_iterator iterator );
 //	//@}
 //
@@ -40,18 +40,18 @@
 //	//@{
 //
 //	// colorBuffer and blurFactorBuffer of rc
-//	void stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::DepthOfField > rc );
+//	void stageInitializeOutputBuffersNodes( vgd::Shp< vgeGLBase::rc::DepthOfField > rc );
 //
 //	// rootPostProcessing and postProcessing of rc
-//	void stageInitializePostProcessing( vgd::node::DepthOfField * node, vgd::Shp< vgeGL::rc::DepthOfField > rc );
+//	void stageInitializePostProcessing( vgd::node::DepthOfField * node, vgd::Shp< vgeGLBase::rc::DepthOfField > rc );
 //
 //	// updates parameters of post-processing : final.numberOfTaps
-//	void stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::DepthOfField > rc );
+//	void stageUpdatePostProcessingParameters( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::DepthOfField > rc );
 //
 //
-//	void stageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
+//	void stageInitializeRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine );
 //
-//	void updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
+//	void updateRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
 //
 //	//@}
 //
@@ -61,10 +61,10 @@
 //	 */
 //	//@{
 //
-//	void stagePrePaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
+//	void stagePrePaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine );
 //
 //	// hasOutputBufferProperties and m_outputBufferProperties of technique
-//	void stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::DepthOfField > rc );
+//	void stageInitializeOutputBuffers( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::DepthOfField > rc );
 //
 //	//@}
 //
@@ -73,7 +73,7 @@
 //	 * @name Stage 4 : Paint pass
 //	 */
 //	//@{
-//	void stageBeginPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
+//	void stageBeginPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine );
 //	//@}
 //
 //
@@ -82,7 +82,7 @@
 //	 */
 //	//@{
 //
-//	void stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
+//	void stagePostPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine );
 //
 //	//@}
 //
@@ -95,7 +95,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_DEPTHOFFIELD_HPP
 //

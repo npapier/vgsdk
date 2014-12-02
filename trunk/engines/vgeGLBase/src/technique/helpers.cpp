@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/helpers.hpp"
+//#include "vgeGLBase/technique/helpers.hpp"
 //
 //#include <glo/FrameBufferObject.hpp>
 //#include <glo/Texture2D.hpp>
 //#include <vgd/basic/Image.hpp>
 //#include <vgd/node/Camera.hpp>
-//#include "vgeGL/basic/helpers.hpp"
+//#include "vgeGLBase/basic/helpers.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -30,7 +30,7 @@
 //
 //	vgd::basic::IImage::Format	myFormat;
 //	vgd::basic::IImage::Type	myType;
-//	const bool convertRetVal = vgeGL::basic::convertGLInternalFormat2My( internalFormat, myFormat, myType );
+//	const bool convertRetVal = vgeGLBase::basic::convertGLInternalFormat2My( internalFormat, myFormat, myType );
 //	vgAssert( convertRetVal );
 //
 //	using vgd::basic::Image;
@@ -52,7 +52,7 @@
 //	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 //	glReadPixels(	0, 0,
 //					width, height,
-//					vgeGL::basic::convertMyFormat2GL(myFormat), vgeGL::basic::convertMyType2GL(myType),
+//					vgeGLBase::basic::convertMyFormat2GL(myFormat), vgeGLBase::basic::convertMyType2GL(myType),
 //					imageData );
 //}
 //
@@ -113,5 +113,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

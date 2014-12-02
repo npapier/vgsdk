@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/processEvent/Scale1Dragger.hpp"
+//#include "vgeGLBase/handler/processEvent/Scale1Dragger.hpp"
 //
 //#include <vgd/event/KeyboardButtonEvent.hpp>
 //#include <vgd/event/Location2Event.hpp>
@@ -13,12 +13,12 @@
 //#include <vge/rc/ButtonStateSet.hpp>
 //#include <vgm/Utilities.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/technique/ProcessEvent.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/technique/ProcessEvent.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -51,8 +51,8 @@
 //	assert( dynamic_cast< Scale1Dragger* >(pNode) != 0 );
 //	Scale1Dragger *pDragger = static_cast< Scale1Dragger* >(pNode);
 //	
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	//
 //	Dragger::preApply( pGLEngine, pDragger );

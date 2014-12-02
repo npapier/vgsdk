@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Texture.hpp"
+//#include "vgeGLBase/handler/painter/Texture.hpp"
 //
 //#include <glo/Texture.hpp>
 //#include <vgd/basic/Image.hpp>
@@ -12,13 +12,13 @@
 //
 //#include <vgm/VectorOperations.hpp>
 //
-//#include "vgeGL/basic/helpers.hpp"
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/basic/helpers.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -105,7 +105,7 @@
 //
 //
 //
-//void Texture::paint(vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
+//void Texture::paint(vgeGLBase::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
 //{
 //	paintParams(	pEngine, pNode, pResource );
 //	//paintEnv(		pEngine, pNode, pResource );
@@ -113,7 +113,7 @@
 //
 //
 //
-//void Texture::paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
+//void Texture::paintParams( vgeGLBase::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
 //{
 //	using vgd::node::Texture;
 //
@@ -168,7 +168,7 @@
 //		else
 //		{
 //			#ifdef _DEBUG
-//			vgLogDebug("vgeGL.Texture: GL_SGIS_generate_mipmap not detected, try software mipmap later.");
+//			vgLogDebug("vgeGLBase.Texture: GL_SGIS_generate_mipmap not detected, try software mipmap later.");
 //			#endif
 //		}
 //	}
@@ -210,7 +210,7 @@
 //
 //
 //
-///*void Texture::paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
+///*void Texture::paintEnv( vgeGLBase::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource )
 //{
 //	using vgd::node::Texture;
 //
@@ -334,7 +334,7 @@
 //
 //
 //
-//void Texture::synchronize(	vgeGL::engine::Engine * engine, vgd::node::Texture * node,
+//void Texture::synchronize(	vgeGLBase::engine::Engine * engine, vgd::node::Texture * node,
 //							::glo::Texture * texture )
 //{
 //	if ( engine->isTextureMappingEnabled() == false )
@@ -374,7 +374,7 @@
 //
 //// @todo share with else
 //		// Updates engine state
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //		typedef GLSLState::TexUnitState TexUnitState;
 //
 //		GLSLState& glslState = engine->getGLSLState();
@@ -422,7 +422,7 @@
 //
 //// @todo share with if (IIMAGE_VALIDATED)
 //		// Updates engine state
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //		typedef GLSLState::TexUnitState TexUnitState;
 //
 //		GLSLState& glslState = engine->getGLSLState();
@@ -482,7 +482,7 @@
 //
 //
 //
-//void Texture::texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+//void Texture::texSubImage(	vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
 //							glo::Texture *pTexture,
 //							TexInfo& texInfo )
 //{
@@ -497,7 +497,7 @@
 //	if ( texInfo.resizeForTex )
 //	{
 //		// RESCALE IMAGE
-//		vgLogDebug("vgeGL.Texture: Performance warning : Incoming image size %i %i %i used as texture is resized %i %i %i.",
+//		vgLogDebug("vgeGLBase.Texture: Performance warning : Incoming image size %i %i %i used as texture is resized %i %i %i.",
 //								texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2],
 //								texInfo.texSize[0], texInfo.texSize[1], texInfo.texSize[2] );
 //
@@ -535,7 +535,7 @@
 //
 //
 //
-//Texture::State Texture::preSynchronize(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture *pTexture,
+//Texture::State Texture::preSynchronize(	vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture *pTexture,
 //										TexInfo& texInfo )
 //{
 //	// Creates the return value
@@ -585,7 +585,7 @@
 //
 //
 //
-//void Texture::computeTexInfo( vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo )
+//void Texture::computeTexInfo( vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo )
 //{
 //	vgAssert( texInfo.iimage != 0 );
 //
@@ -622,7 +622,7 @@
 //	assert( texInfo.texDimension == 1 || texInfo.texDimension == 2 || texInfo.texDimension == 3 );
 //
 //	boost::tie(texInfo.internalFormat, texInfo.format ) = chooseFormats( image, pNode );
-//	texInfo.type										= vgeGL::basic::convertMyType2GL( image->type() );
+//	texInfo.type										= vgeGLBase::basic::convertMyType2GL( image->type() );
 //
 //	// Takes care of POT/NPOT image (by using GL_ARB_texture_non_power_of_two or by resizing incoming image)
 //	// @todo Support of GL_ARB_texture_rectangle
@@ -630,7 +630,7 @@
 //	{
 //		// NPOT image
 //		#ifdef _DEBUG
-//		//vgLogDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
+//		//vgLogDebug("vgeGLBase.Texture: Incoming image size %i %i %i (npot)", 
 //		//						texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
 //		#endif
 //
@@ -643,10 +643,10 @@
 //		else
 //		{
 //			#ifdef _DEBUG
-//			vgLogDebug("vgeGL.Texture: GL_ARB_texture_non_power_of_two is not supported.");
-//			vgLogDebug("vgeGL.Texture: Incoming image size %i %i %i (npot)", 
+//			vgLogDebug("vgeGLBase.Texture: GL_ARB_texture_non_power_of_two is not supported.");
+//			vgLogDebug("vgeGLBase.Texture: Incoming image size %i %i %i (npot)", 
 //									texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
-//			vgLogDebug("vgeGL.Texture: Incoming image must be resized.");
+//			vgLogDebug("vgeGLBase.Texture: Incoming image must be resized.");
 //			#endif
 //
 //			texInfo.texSize			= texInfo.imageSizePOT;
@@ -657,7 +657,7 @@
 //	{
 //		// POT image
 //		#ifdef _DEBUG
-//		//vgLogDebug("vgeGL.Texture: Incoming image size %i %i %i (pot)",
+//		//vgLogDebug("vgeGLBase.Texture: Incoming image size %i %i %i (pot)",
 //		//						texInfo.imageSize[0], texInfo.imageSize[1], texInfo.imageSize[2] );
 //		#endif
 //
@@ -668,7 +668,7 @@
 //
 //
 //
-//void Texture::clampTexImageSize( vgeGL::engine::Engine *pGLEngine, ::glo::Texture * pTexture, TexInfo& texInfo )
+//void Texture::clampTexImageSize( vgeGLBase::engine::Engine *pGLEngine, ::glo::Texture * pTexture, TexInfo& texInfo )
 //{
 //	// Computes texture size limit
 //	GLint maxTexSize;
@@ -725,7 +725,7 @@
 //
 //
 //
-//const bool Texture::isTextureCompatible(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture,
+//const bool Texture::isTextureCompatible(	vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture,
 //											const TexInfo& texInfo )
 //{
 //	const bool isTexSizeCompatible = isTextureSizeCompatible( pTexture, texInfo );
@@ -755,7 +755,7 @@
 //
 //
 //
-//void Texture::synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+//void Texture::synchronizeParametersAndEnv(	vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
 //											::glo::Texture *pTexture )
 //{
 //	// TEXTURE PARAMETERS
@@ -803,7 +803,7 @@
 //
 //		textureMatrix.scale( scaleFactors );
 //
-//		// applies scale to vgeGL
+//		// applies scale to vgeGLBase
 //		texInfo.activeTexture( pNode );
 //
 //		glMatrixMode( GL_TEXTURE );
@@ -834,7 +834,7 @@
 //		assert( usage.value() == vgd::node::Texture::IMAGE && "Unexpected value for usage field." );
 //
 //		const GLint		components	= iimage->components();
-//		const GLenum	format		= vgeGL::basic::convertMyFormat2GL( iimage->format() );
+//		const GLenum	format		= vgeGLBase::basic::convertMyFormat2GL( iimage->format() );
 //
 //		const vgd::node::Texture::InternalFormatValueType internalFormat = texture->getInternalFormat();
 //
@@ -1068,5 +1068,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

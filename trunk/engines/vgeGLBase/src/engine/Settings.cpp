@@ -3,5 +3,5 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/engine/Settings.hpp"
+//#include "vgeGLBase/engine/Settings.hpp"
 //

@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/LightModel.hpp"
+//#include "vgeGLBase/handler/painter/LightModel.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/LightModel.hpp>
@@ -11,13 +11,13 @@
 //#include <vge/rc/Manager.hpp>
 //#include <vge/service/Painter.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -43,14 +43,14 @@
 //
 //void LightModel::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::LightModel* >(node) != 0 );
 //	vgd::node::LightModel *lightModel = static_cast< vgd::node::LightModel* >(node);
 //
 //	// Retrieves GLSL state
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	GLSLState& state = glEngine->getGLSLState();
 //
 //	bool isDefined;
@@ -85,7 +85,7 @@
 //		if ( isDefined )
 //		{
 //			// Updates GLSLState
-//			state.setEnabled( vgeGL::engine::LOCAL_VIEWER, viewerValue == vgd::node::LightModel::AT_EYE );
+//			state.setEnabled( vgeGLBase::engine::LOCAL_VIEWER, viewerValue == vgd::node::LightModel::AT_EYE );
 //		}
 //
 //		// TWO_SIDED_LIGHTING
@@ -139,14 +139,14 @@
 //	// POSTPROCESSING
 //	if ( lightModel->getIgnorePostProcessing() )
 //	{
-//		state.setEnabled( vgeGL::engine::IGNORE_POST_PROCESSING );
+//		state.setEnabled( vgeGLBase::engine::IGNORE_POST_PROCESSING );
 //	}
 //
 //	// BumpMapping
 //	state.setBumpMappingEnabled( lightModel->getBumpMapping() );
 //
 //	//
-//	vgeGL::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );
+//	vgeGLBase::rc::applyUsingDisplayList< vgd::node::LightModel, LightModel >( engine, node, this );
 //}
 //
 //
@@ -164,7 +164,7 @@
 //
 //
 //
-//void LightModel::paint( vgeGL::engine::Engine * engine, vgd::node::LightModel *node )
+//void LightModel::paint( vgeGLBase::engine::Engine * engine, vgd::node::LightModel *node )
 //{
 //	bool bDefined;
 //
@@ -254,5 +254,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

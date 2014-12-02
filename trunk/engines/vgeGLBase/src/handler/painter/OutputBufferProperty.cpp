@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/OutputBufferProperty.hpp"
+//#include "vgeGLBase/handler/painter/OutputBufferProperty.hpp"
 //
 //#include <glo/GLSLProgram.hpp>
 //
@@ -14,13 +14,13 @@
 //#include <vgd/node/FrameBuffer.hpp>
 //#include <vgd/node/OutputBufferProperty.hpp>
 //#include <vgd/node/Texture2D.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/rc/FrameBufferObject.hpp"
-//#include "vgeGL/rc/Texture2D.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/rc/FrameBufferObject.hpp"
+//#include "vgeGLBase/rc/Texture2D.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -322,8 +322,8 @@
 //
 //void OutputBufferProperty::apply( vge::engine::Engine* baseEngine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(baseEngine) != 0 );
-//	vgeGL::engine::Engine *engine = static_cast< vgeGL::engine::Engine* >(baseEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(baseEngine) != 0 );
+//	vgeGLBase::engine::Engine *engine = static_cast< vgeGLBase::engine::Engine* >(baseEngine);
 //
 //	assert( dynamic_cast< vgd::node::OutputBufferProperty* >(node) != 0 );
 //	vgd::node::OutputBufferProperty *outputBufferProperty = static_cast< vgd::node::OutputBufferProperty* >(node);
@@ -331,7 +331,7 @@
 //	// Updates engine state
 //	if ( engine->isGLSLEnabled() )
 //	{
-//		using vgeGL::engine::GLSLState;
+//		using vgeGLBase::engine::GLSLState;
 //		GLSLState& glslState = engine->getGLSLState();
 //
 //		vgd::Shp< GLSLState::OutputBufferPropertyState > outputBufferPropertyState( new GLSLState::OutputBufferPropertyState(outputBufferProperty) );
@@ -353,7 +353,7 @@
 //
 //
 //
-//const vgm::Vec2i OutputBufferProperty::computeTextureSize( vgeGL::engine::Engine * engine, vgd::node::OutputBufferProperty * node )
+//const vgm::Vec2i OutputBufferProperty::computeTextureSize( vgeGLBase::engine::Engine * engine, vgd::node::OutputBufferProperty * node )
 //{
 //	using vgd::node::OutputBufferProperty;
 //
@@ -380,11 +380,11 @@
 //
 //
 //void OutputBufferProperty::paint(
-//	vgeGL::engine::Engine * engine,
+//	vgeGLBase::engine::Engine * engine,
 //	OutputBufferPropertyStateContainer * outputBufferProperties,
 //	std::back_insert_iterator< TextureContainer > backInserter )
 //{
-//	typedef vgeGL::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
+//	typedef vgeGLBase::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
 //	using vgd::node::Texture;
 //
 //	uint numFound = 0;
@@ -422,7 +422,7 @@
 //
 //
 //
-//vgd::Shp< vgd::node::Texture2D > OutputBufferProperty::createOrGetTexture2D( vgeGL::engine::Engine * engine, vgd::node::OutputBufferProperty * node )
+//vgd::Shp< vgd::node::Texture2D > OutputBufferProperty::createOrGetTexture2D( vgeGLBase::engine::Engine * engine, vgd::node::OutputBufferProperty * node )
 //{
 //	using vgd::node::OutputBufferProperty;
 //	using vgd::node::Texture;
@@ -504,17 +504,17 @@
 //
 //
 //
-//OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vgeGL::engine::Engine * engine,
+//OutputBufferProperty::createsFBORetValType OutputBufferProperty::createsFBO( vgeGLBase::engine::Engine * engine,
 //	OutputBufferPropertyStateContainer * outputBufferProperties,
 //	std::back_insert_iterator< TextureContainer > backInserter,
 //	const bool addDepth )
 //{
 //	// Retrieves manager
-//	vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+//	vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
 //
 //	// Creates FBO node and GL rc
 //	vgd::Shp< vgd::node::FrameBuffer >			framebuffer	= vgd::node::FrameBuffer::create("ForwardRendering.frameBuffer");
-//	vgd::Shp< vgeGL::rc::FrameBufferObject >	fbo( new vgeGL::rc::FrameBufferObject() );
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject >	fbo( new vgeGLBase::rc::FrameBufferObject() );
 //
 //	createsFBORetValType retVal = std::make_pair( framebuffer, fbo );
 //
@@ -526,7 +526,7 @@
 //
 //	// Creates texture(s)
 //	std::vector< vgd::Shp< vgd::node::Texture2D > > textureContainer;
-//	vgeGL::handler::painter::OutputBufferProperty::paint( engine, outputBufferProperties, std::back_inserter(textureContainer) );
+//	vgeGLBase::handler::painter::OutputBufferProperty::paint( engine, outputBufferProperties, std::back_inserter(textureContainer) );
 //
 //	// For each texture, do attachment
 //	int firstValidIndex = -1;
@@ -541,7 +541,7 @@
 //		{
 //			// Attaching images
 //			engine->paint( textureNode );
-//			vgd::Shp< vgeGL::rc::Texture2D > texture2D = rcManager->getShp< vgeGL::rc::Texture2D >( textureNode );
+//			vgd::Shp< vgeGLBase::rc::Texture2D > texture2D = rcManager->getShp< vgeGLBase::rc::Texture2D >( textureNode );
 //			vgAssertN( texture2D != 0, "No texture2D" );
 //
 //			fbo->attachColor( texture2D, i );
@@ -561,11 +561,11 @@
 //		obuf->setSize( outputBufferProperties->getState(firstValidIndex)->getNode()->getSize() );
 //
 //		vgd::Shp< vgd::node::Texture2D > depthTextureNode;
-//		depthTextureNode = vgeGL::handler::painter::OutputBufferProperty::createOrGetTexture2D( engine, obuf.get() );
+//		depthTextureNode = vgeGLBase::handler::painter::OutputBufferProperty::createOrGetTexture2D( engine, obuf.get() );
 //
 //		// Attaching images
 //		engine->paint( depthTextureNode );
-//		vgd::Shp< vgeGL::rc::Texture2D > depthTexture = rcManager->getShp< vgeGL::rc::Texture2D >( depthTextureNode );
+//		vgd::Shp< vgeGLBase::rc::Texture2D > depthTexture = rcManager->getShp< vgeGLBase::rc::Texture2D >( depthTextureNode );
 //
 //		fbo->attachDepth( depthTexture );
 //	}
@@ -588,10 +588,10 @@
 //
 //
 //const std::string OutputBufferProperty::getFragmentOutputDeclarationStageString(
-//	vgeGL::engine::Engine * engine,
+//	vgeGLBase::engine::Engine * engine,
 //	OutputBufferPropertyStateContainer * outputBufferProperties )
 //{
-//	typedef vgeGL::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
+//	typedef vgeGLBase::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
 //
 //	std::string retVal("// FragmentOutputDeclarationStage\n");
 //
@@ -631,10 +631,10 @@
 //
 //
 //const std::string OutputBufferProperty::getFragmentOutputStageString(
-//	vgeGL::engine::Engine * engine,
+//	vgeGLBase::engine::Engine * engine,
 //	OutputBufferPropertyStateContainer * outputBufferProperties )
 //{
-//	typedef vgeGL::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
+//	typedef vgeGLBase::engine::GLSLState::OutputBufferPropertyState OutputBufferPropertyState;
 //
 //	std::string retVal;
 //
@@ -671,5 +671,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

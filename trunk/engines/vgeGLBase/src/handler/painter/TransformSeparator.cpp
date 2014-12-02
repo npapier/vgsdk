@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/TransformSeparator.hpp"
+//#include "vgeGLBase/handler/painter/TransformSeparator.hpp"
 //
 //#include <glo/Texture.hpp>
 //#include <vgd/field/DirtyFlag.hpp>
@@ -11,11 +11,11 @@
 //#include <vge/service/Painter.hpp>
 //#include <vge/service/ProcessEvent.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -54,8 +54,8 @@
 //
 //void TransformSeparator::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-//	//assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	//vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	//assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	//vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< vgd::node::TransformSeparator* >(pNode) != 0 );
 //	vgd::node::TransformSeparator *pCastedNode = static_cast< vgd::node::TransformSeparator* >(pNode);
@@ -71,8 +71,8 @@
 //
 //void TransformSeparator::unapply ( vge::engine::Engine* pEngine, vgd::node::Node* pNode )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< vgd::node::TransformSeparator* >(pNode) != 0 );
 //	vgd::node::TransformSeparator *pCastedNode = static_cast< vgd::node::TransformSeparator* >(pNode);
@@ -140,5 +140,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

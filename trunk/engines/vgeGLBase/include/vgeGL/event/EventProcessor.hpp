@@ -6,14 +6,14 @@
 //#ifndef _VGEGLBASE_EVENT_EVENTPROCESSOR_HPP
 //#define _VGEGLBASE_EVENT_EVENTPROCESSOR_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
-//#include "vgeGL/engine/SceneManager.hpp"
-//#include "vgeGL/event/IEventProcessor.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
+//#include "vgeGLBase/engine/SceneManager.hpp"
+//#include "vgeGLBase/event/IEventProcessor.hpp"
 //
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -36,7 +36,7 @@
 //	 * 
 //	 * @pre sceneManager != 0
 //	 */
-//	EventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
+//	EventProcessor( ::vgeGLBase::engine::SceneManager *sceneManager );
 //	
 //	//@}
 //
@@ -50,7 +50,7 @@
 //	 * 
 //	 * @return a shared pointer on the searched object or an empty shared pointer if it was not found.
 //	 * 
-//	 * @todo move this method to vgeGL::engine::SceneManager ?
+//	 * @todo move this method to vgeGLBase::engine::SceneManager ?
 //	 */
 //	template < typename typeOfEventProcessorToSearch >
 //	vgd::Shp< typeOfEventProcessorToSearch > findPreviousEventProcessor()
@@ -78,19 +78,19 @@
 //	 * 
 //	 * @return the reference on the linked scene manager.
 //	 */
-//	::vgeGL::engine::SceneManager *getSceneManager() const { return m_sceneManager; }
+//	::vgeGLBase::engine::SceneManager *getSceneManager() const { return m_sceneManager; }
 //
 //private:
 //	/**
 //	 * @brief The reference on the scene manager.
 //	 */
-//	::vgeGL::engine::SceneManager *m_sceneManager;
+//	::vgeGLBase::engine::SceneManager *m_sceneManager;
 //};
 //
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_EVENT_EVENTPROCESSOR_HPP
 //

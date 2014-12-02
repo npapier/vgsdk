@@ -3,15 +3,15 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/MultipleInstances.hpp"
+//#include "vgeGLBase/handler/painter/MultipleInstances.hpp"
 //
 //#include <vgd/node/MultipleInstances.hpp>
 //
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -40,8 +40,8 @@
 //
 //void MultipleInstances::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::MultipleInstances* >(node) != 0 );
 //	vgd::node::MultipleInstances *pCastedNode = static_cast< vgd::node::MultipleInstances* >(node);
@@ -50,7 +50,7 @@
 //	pGLEngine->getGLState().setMultipleInstances( pCastedNode );
 //
 //	//
-//	//vgeGL::rc::applyUsingDisplayList< vgd::node::MultipleInstances, MultipleInstances >( engine, node, this );
+//	//vgeGLBase::rc::applyUsingDisplayList< vgd::node::MultipleInstances, MultipleInstances >( engine, node, this );
 //	paint( pGLEngine, pCastedNode );
 //}
 //
@@ -68,7 +68,7 @@
 //
 //
 //
-//void MultipleInstances::paint( vgeGL::engine::Engine * engine, vgd::node::MultipleInstances * multipleInstances )
+//void MultipleInstances::paint( vgeGLBase::engine::Engine * engine, vgd::node::MultipleInstances * multipleInstances )
 //{
 //	// SHAPE
 //	const vgd::Shp< vgd::node::Shape > shape = vgd::dynamic_pointer_cast< vgd::node::Shape >( multipleInstances->getShape() );
@@ -85,5 +85,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

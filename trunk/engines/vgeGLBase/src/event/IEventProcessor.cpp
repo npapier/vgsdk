@@ -3,11 +3,11 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/event/IEventProcessor.hpp"
+//#include "vgeGLBase/event/IEventProcessor.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace event
@@ -29,5 +29,5 @@
 //
 //} //namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

@@ -6,17 +6,17 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_GEOMORPH_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_GEOMORPH_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //#include <vge/handler/painter/Painter.hpp>
 //
 //namespace vgd { namespace node { struct Node; } }
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -48,7 +48,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_GEOMORPH_HPP
 //

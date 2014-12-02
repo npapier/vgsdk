@@ -4,7 +4,7 @@
 //// Author Nicolas Papier
 //// Author Alexandre Di Pino
 //
-//#include "vgeGL/handler/painter/VertexShape.hpp"
+//#include "vgeGLBase/handler/painter/VertexShape.hpp"
 //
 //#include <glo/GLSLProgram.hpp>
 //#include <glo/Texture.hpp>
@@ -27,20 +27,20 @@
 ////#include <vgDebug/StdStreamsToFiles.hpp>
 //#include <vgm/Box.hpp>
 //
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/engine/FragmentShaderGenerator.hpp"
-//#include "vgeGL/engine/GeometryShaderGenerator.hpp"
-//#include "vgeGL/engine/TessellationControlShaderGenerator.hpp"
-//#include "vgeGL/engine/TessellationEvaluationShaderGenerator.hpp"
-//#include "vgeGL/engine/ProgramGenerator.hpp"
-//#include "vgeGL/engine/VertexShaderGenerator.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/FragmentShaderGenerator.hpp"
+//#include "vgeGLBase/engine/GeometryShaderGenerator.hpp"
+//#include "vgeGLBase/engine/TessellationControlShaderGenerator.hpp"
+//#include "vgeGLBase/engine/TessellationEvaluationShaderGenerator.hpp"
+//#include "vgeGLBase/engine/ProgramGenerator.hpp"
+//#include "vgeGLBase/engine/VertexShaderGenerator.hpp"
 //
-//#include "vgeGL/handler/painter/DrawStyle.hpp"
-//#include "vgeGL/handler/painter/OutputBufferProperty.hpp"
+//#include "vgeGLBase/handler/painter/DrawStyle.hpp"
+//#include "vgeGLBase/handler/painter/OutputBufferProperty.hpp"
 //
-//#include "vgeGL/rc/GLSLProgram.hpp"
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
-//#include "vgeGL/rc/VertexShape.hpp"
+//#include "vgeGLBase/rc/GLSLProgram.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/rc/VertexShape.hpp"
 //
 //#include <sstream>
 //
@@ -124,7 +124,7 @@
 //namespace
 //{
 //	template< typename ValueType >
-//	void updateTexCoordArrayBuffer( vgd::node::VertexShape * vertexShape, const uint unit, vgeGL::rc::VertexShape * rc, const GLenum bufferUsage )
+//	void updateTexCoordArrayBuffer( vgd::node::VertexShape * vertexShape, const uint unit, vgeGLBase::rc::VertexShape * rc, const GLenum bufferUsage )
 //	{
 //		typedef vgd::field::TMultiField< ValueType > ValueContainerType;
 //
@@ -135,7 +135,7 @@
 //
 //
 //
-//void updateTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc )
+//void updateTexCoord( vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGLBase::rc::VertexShape * rc )
 //{
 //	if (	texCoordDim > 0 /*&&
 //			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX*/ )
@@ -173,7 +173,7 @@
 //
 //
 //// Configure arrays
-//void configureTexCoord( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGL::rc::VertexShape * rc )
+//void configureTexCoord( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, const uint unit, const uint texCoordDim, vgeGLBase::rc::VertexShape * rc )
 //{
 //	if (	texCoordDim > 0 &&
 //			vertexShape->getTexCoordBinding( unit ) == vgd::node::BIND_PER_VERTEX )
@@ -187,8 +187,8 @@
 //		// Configure vertex attrib array
 //		if ( engine->isGLSLEnabled() )
 //		{
-//			glEnableVertexAttribArray( vgeGL::engine::TEXCOORD_INDEX + unit );
-//			glVertexAttribPointer( vgeGL::engine::TEXCOORD_INDEX + unit, texCoordDim, GL_FLOAT, GL_FALSE, 0, pArray );
+//			glEnableVertexAttribArray( vgeGLBase::engine::TEXCOORD_INDEX + unit );
+//			glVertexAttribPointer( vgeGLBase::engine::TEXCOORD_INDEX + unit, texCoordDim, GL_FLOAT, GL_FALSE, 0, pArray );
 //		}
 //		else
 //		{
@@ -200,7 +200,7 @@
 //	{
 //		if ( engine->isGLSLEnabled() )
 //		{
-//			glDisableVertexAttribArray( vgeGL::engine::TEXCOORD_INDEX + unit );
+//			glDisableVertexAttribArray( vgeGLBase::engine::TEXCOORD_INDEX + unit );
 //		}
 //		else
 //		{
@@ -215,7 +215,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -256,14 +256,14 @@
 // */
 //void VertexShape::apply( vge::engine::Engine *pEngine, vgd::node::Node *pNode )
 //{
-//	vgAssert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *engine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	vgAssert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *engine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	vgAssert( dynamic_cast< vgd::node::VertexShape* >(pNode) != 0 );
 //	vgd::node::VertexShape *pVertexShape = static_cast< vgd::node::VertexShape* >(pNode);
 //
 //	// GLSL STATE UPDATE
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	GLSLState& glslState = engine->getGLSLState();
 //
 //	// TESSELLATION (enabled if only TRIANGLES primitives)
@@ -301,7 +301,7 @@
 //
 //
 //	// Updates GLSL state with vertex shape info
-//	glslState.setEnabled( vgeGL::engine::COLOR_BIND_PER_VERTEX, pVertexShape->getColorBinding() == vgd::node::BIND_PER_VERTEX );
+//	glslState.setEnabled( vgeGLBase::engine::COLOR_BIND_PER_VERTEX, pVertexShape->getColorBinding() == vgd::node::BIND_PER_VERTEX );
 //
 //	// setTexCoordDim for texUnitState of glslState => MUST BE DONE for pg->generate() using generateFunction_ftexgen(), generate_samplers() and generate_texLookups()
 //	// engine->getGLSLStateStack().push();
@@ -384,7 +384,7 @@
 //		if ( glslState.isDirty() )
 //		{
 //			// GENERATION
-//			vgd::Shp< vgeGL::engine::ProgramGenerator > pg = engine->getGLSLProgramGenerator();
+//			vgd::Shp< vgeGLBase::engine::ProgramGenerator > pg = engine->getGLSLProgramGenerator();
 //			pg->generate( engine );
 //
 //			// CACHE
@@ -481,7 +481,7 @@
 //			// Checks if glslState->isValid() is the correct value
 //
 //			// GENERATION
-//			vgd::Shp< vgeGL::engine::ProgramGenerator > pg = engine->getGLSLProgramGenerator();
+//			vgd::Shp< vgeGLBase::engine::ProgramGenerator > pg = engine->getGLSLProgramGenerator();
 //			pg->generate( engine );
 //
 //			// CACHE
@@ -499,11 +499,11 @@
 //	}
 //	else // if ( engine->isGLSLEnabled() )
 //	{
-//		vgeGL::rc::GLSLProgram::useFixedPaths();
+//		vgeGLBase::rc::GLSLProgram::useFixedPaths();
 //	}
 //
 //	// Renders the VertexShape
-//	::vgeGL::handler::painter::DrawStyle::paintVertexShapeWithShapeProperty( engine, pVertexShape, this );
+//	::vgeGLBase::handler::painter::DrawStyle::paintVertexShapeWithShapeProperty( engine, pVertexShape, this );
 //
 //	// Renders additional properties of VertexShape
 //	using vgd::node::DrawStyle;
@@ -519,10 +519,10 @@
 //	if ( additionalProperties )
 //	{
 //		// Gets resource associated to the given node
-//		vgeGL::rc::VertexShape * vertexShapeRC = engine->getGLManager()->get< vgeGL::rc::VertexShape >( pVertexShape );
+//		vgeGLBase::rc::VertexShape * vertexShapeRC = engine->getGLManager()->get< vgeGLBase::rc::VertexShape >( pVertexShape );
 //
 //		// Makes a backup of GLSL activation state
-//		using vgeGL::engine::Engine;
+//		using vgeGLBase::engine::Engine;
 //
 //		vgd::Shp< Engine::GLSLActivationState > glslActivationState = engine->getGLSLActivationState();
 //		engine->sethCurrentProgram();
@@ -653,7 +653,7 @@
 //
 //
 //
-//void VertexShape::setSamplers( vgeGL::engine::Engine * engine, glo::GLSLProgram * program )
+//void VertexShape::setSamplers( vgeGLBase::engine::Engine * engine, glo::GLSLProgram * program )
 //{
 //	// TEX COORD and uniform sampler (from VertexShape.texCoord*/TexGen and Texture)
 //	// Texture |	VertexShape.texCoord |	TexGen	=> action (sampler(S), vertex array(VA), warning (W) )
@@ -667,7 +667,7 @@
 //	// n		 ?				?		=> none, W(print warning if needed).
 //// @todo not texture, but VertexShape.texCoord | TexGen
 //
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	GLSLState& glslState = engine->getGLSLState();
 //
 //	uint		i		= 0;
@@ -739,17 +739,17 @@
 //}
 //
 //
-//void VertexShape::paint( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape )
+//void VertexShape::paint( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape )
 //{
 //	vgd::node::VertexShape * node = vertexShape;
 //
 //	// using VertexArray stored in buffer objects
-//	typedef vgeGL::rc::VertexShape GLResourceType;
+//	typedef vgeGLBase::rc::VertexShape GLResourceType;
 //
 //
 //	// RC
 //	// Gets the resource manager
-//	vgd::Shp< vgeGL::engine::Engine::GLManagerType > manager = engine->getGLManager();
+//	vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > manager = engine->getGLManager();
 //
 //	// Gets node dirty flag
 //	vgd::field::DirtyFlag * nodeDF = node->getDirtyFlag( node->getDFNode() );
@@ -848,8 +848,8 @@
 //
 //
 //// @todo take care of deformable hint modification
-//void VertexShape::update(	vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape,
-//							vgeGL::rc::VertexShape * rc )
+//void VertexShape::update(	vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape,
+//							vgeGLBase::rc::VertexShape * rc )
 //{
 //	// VAO
 //	bindVAO( rc->vao ); // move this call ?
@@ -903,7 +903,7 @@
 //}
 //
 //
-//void VertexShape::configureRenderingArrays( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc )
+//void VertexShape::configureRenderingArrays( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGLBase::rc::VertexShape * rc )
 //{
 //	glo::GLSLProgram *	program	= engine->gethCurrentProgram();
 //	const GLvoid *		pArray	= 0;
@@ -938,12 +938,12 @@
 //	{
 //		rc->color.bind();
 //
-//		glEnableVertexAttribArray( vgeGL::engine::COLOR_INDEX );
-//		glVertexAttribPointer( vgeGL::engine::COLOR_INDEX, 4, GL_FLOAT, GL_FALSE, 0, pArray );
+//		glEnableVertexAttribArray( vgeGLBase::engine::COLOR_INDEX );
+//		glVertexAttribPointer( vgeGLBase::engine::COLOR_INDEX, 4, GL_FLOAT, GL_FALSE, 0, pArray );
 //	}
 //	else
 //	{
-//		glDisableVertexAttribArray( vgeGL::engine::COLOR_INDEX );
+//		glDisableVertexAttribArray( vgeGLBase::engine::COLOR_INDEX );
 //	}
 //
 //	// TANGENT
@@ -951,12 +951,12 @@
 //	{
 //		rc->tangent.bind();
 //
-//		glEnableVertexAttribArray( vgeGL::engine::TANGENT_INDEX );
-//		glVertexAttribPointer( vgeGL::engine::TANGENT_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+//		glEnableVertexAttribArray( vgeGLBase::engine::TANGENT_INDEX );
+//		glVertexAttribPointer( vgeGLBase::engine::TANGENT_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
 //	}
 //	else
 //	{
-//		glDisableVertexAttribArray( vgeGL::engine::TANGENT_INDEX );
+//		glDisableVertexAttribArray( vgeGLBase::engine::TANGENT_INDEX );
 //	}
 //
 //	// NORMAL
@@ -964,19 +964,19 @@
 //	{
 //		rc->normal.bind();
 //
-//		glEnableVertexAttribArray( vgeGL::engine::NORMAL_INDEX );
-//		glVertexAttribPointer( vgeGL::engine::NORMAL_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+//		glEnableVertexAttribArray( vgeGLBase::engine::NORMAL_INDEX );
+//		glVertexAttribPointer( vgeGLBase::engine::NORMAL_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
 //	}
 //	else
 //	{
-//		glDisableVertexAttribArray( vgeGL::engine::NORMAL_INDEX );
+//		glDisableVertexAttribArray( vgeGLBase::engine::NORMAL_INDEX );
 //	}
 //
 //	// VERTEX
 //	rc->vertex.bind();
 //
-//	glEnableVertexAttribArray( vgeGL::engine::VERTEX_INDEX );
-//	glVertexAttribPointer( vgeGL::engine::VERTEX_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+//	glEnableVertexAttribArray( vgeGLBase::engine::VERTEX_INDEX );
+//	glVertexAttribPointer( vgeGLBase::engine::VERTEX_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
 //
 //	// VERTEX INDEX
 //	vgd::field::EditorRO< vgd::field::MFUInt > vertexIndex;
@@ -984,7 +984,7 @@
 //}
 //
 //
-//void VertexShape::configureRenderingArraysForGeoMorph( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc )
+//void VertexShape::configureRenderingArraysForGeoMorph( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGLBase::rc::VertexShape * rc )
 //{
 //	const GLvoid * pArray = 0;
 //
@@ -993,8 +993,8 @@
 //	{
 //		rc->tangent.bind();
 //
-//		glEnableVertexAttribArray( vgeGL::engine::TANGENT1_INDEX );
-//		glVertexAttribPointer( vgeGL::engine::TANGENT1_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+//		glEnableVertexAttribArray( vgeGLBase::engine::TANGENT1_INDEX );
+//		glVertexAttribPointer( vgeGLBase::engine::TANGENT1_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
 //	}
 //
 //	// NORMAL1
@@ -1002,31 +1002,31 @@
 //	{
 //		rc->normal.bind();
 //
-//		glEnableVertexAttribArray( vgeGL::engine::NORMAL1_INDEX );
-//		glVertexAttribPointer( vgeGL::engine::NORMAL1_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+//		glEnableVertexAttribArray( vgeGLBase::engine::NORMAL1_INDEX );
+//		glVertexAttribPointer( vgeGLBase::engine::NORMAL1_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
 //	}
 //
 //	// VERTEX1
 //	rc->vertex.bind();
 //
-//	glEnableVertexAttribArray( vgeGL::engine::VERTEX1_INDEX );
-//	glVertexAttribPointer( vgeGL::engine::VERTEX1_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
+//	glEnableVertexAttribArray( vgeGLBase::engine::VERTEX1_INDEX );
+//	glVertexAttribPointer( vgeGLBase::engine::VERTEX1_INDEX, 3, GL_FLOAT, GL_FALSE, 0, pArray );
 //}
 //
 //
 //
-//void VertexShape::unconfigureRenderingArraysForGeoMorph( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc )
+//void VertexShape::unconfigureRenderingArraysForGeoMorph( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGLBase::rc::VertexShape * rc )
 //{
-//	glDisableVertexAttribArray( vgeGL::engine::TANGENT1_INDEX );
-//	glDisableVertexAttribArray( vgeGL::engine::VERTEX1_INDEX );
-//	glDisableVertexAttribArray( vgeGL::engine::NORMAL1_INDEX );
+//	glDisableVertexAttribArray( vgeGLBase::engine::TANGENT1_INDEX );
+//	glDisableVertexAttribArray( vgeGLBase::engine::VERTEX1_INDEX );
+//	glDisableVertexAttribArray( vgeGLBase::engine::NORMAL1_INDEX );
 //}
 //
 //
 //
 //// @todo improves support of primitives
 //// @todo improve support of instancing
-//void VertexShape::renderArrays( vgeGL::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGL::rc::VertexShape * rc )
+//void VertexShape::renderArrays( vgeGLBase::engine::Engine * engine, vgd::node::VertexShape * vertexShape, vgeGLBase::rc::VertexShape * rc )
 //{
 //	// *** Step 1: Precondition: GLSL program in a good state to be able to render something ***
 //	if ( engine->isGLSLEnabled() )
@@ -1140,14 +1140,14 @@
 //}
 //
 //
-//void VertexShape::drawBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexShape *vertexShape )
+//void VertexShape::drawBoundingBox( vgeGLBase::engine::Engine *, vgd::node::VertexShape *vertexShape )
 //{
 //	drawBox3f( vertexShape->getBoundingBox() );
 //}
 //
 //
 //
-//void VertexShape::drawXfBoundingBox( vgeGL::engine::Engine *, vgd::node::VertexShape *vertexShape )
+//void VertexShape::drawXfBoundingBox( vgeGLBase::engine::Engine *, vgd::node::VertexShape *vertexShape )
 //{
 //	glMatrixMode( GL_MODELVIEW );
 //	glPushMatrix();
@@ -1258,7 +1258,7 @@
 //
 //	// Render all vectors from vertices for all primitives
 //	glo::VertexArrayObject::staticBindToDefault();
-//	glDisableVertexAttribArray( vgeGL::engine::VERTEX_INDEX );
+//	glDisableVertexAttribArray( vgeGLBase::engine::VERTEX_INDEX );
 //
 //	updateArrayBuffer( buffer, vectors.size()*sizeof(vgm::Vec3f), &vectors.front(), GL_DYNAMIC_DRAW );
 //	glVertexPointer( 3, GL_FLOAT, 0, 0 );
@@ -1268,7 +1268,7 @@
 //}
 //
 //
-//void VertexShape::drawTriangleOrientation( vgd::node::VertexShape *vertexShape, vgeGL::rc::VertexShape * rc )
+//void VertexShape::drawTriangleOrientation( vgd::node::VertexShape *vertexShape, vgeGLBase::rc::VertexShape * rc )
 //{
 //	std::vector< vgm::Vec3f >& drawCentersOfTrianglesVectors	= rc->drawCentersOfTrianglesVectors;
 //	std::vector< vgm::Vec3f >& drawRedArrowVectors				= rc->drawRedArrowVectors;
@@ -1343,7 +1343,7 @@
 //
 //	// Render calls
 //	glo::VertexArrayObject::staticBindToDefault();
-//	glDisableVertexAttribArray( vgeGL::engine::VERTEX_INDEX );
+//	glDisableVertexAttribArray( vgeGLBase::engine::VERTEX_INDEX );
 //
 //	//	centers of triangles
 //	updateArrayBuffer(	rc->drawCentersOfTrianglesBuffer,
@@ -1412,5 +1412,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

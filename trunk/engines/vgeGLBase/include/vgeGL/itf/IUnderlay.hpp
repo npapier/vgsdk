@@ -12,7 +12,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace itf
@@ -43,7 +43,7 @@
 //
 //} // namespace itf
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_ITF_IUNDERLAY_HPP
 //

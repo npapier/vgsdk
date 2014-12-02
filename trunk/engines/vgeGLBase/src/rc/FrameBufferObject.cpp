@@ -3,5 +3,5 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/rc/FrameBufferObject.hpp"
+//#include "vgeGLBase/rc/FrameBufferObject.hpp"
 //

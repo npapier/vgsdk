@@ -6,7 +6,7 @@
 //#ifndef _VGEGLBASE_ENGINE_DECALMANAGER_HPP
 //#define _VGEGLBASE_ENGINE_DECALMANAGER_HPP
 //
-//#include "vgeGL/basic/Hit.hpp"
+//#include "vgeGLBase/basic/Hit.hpp"
 //#include <vgm/Box.hpp>
 //#include <vgm/Triangle.hpp>
 //
@@ -19,7 +19,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace engine
@@ -46,7 +46,7 @@
 //	//@{
 //	vgd::node::VertexShape *	hitShape;
 //	vgm::TriangleExt			hitABC;
-//	vgeGL::basic::Hit			hit;
+//	vgeGLBase::basic::Hit			hit;
 //	//@}
 //};
 //
@@ -118,7 +118,7 @@
 //	 * @param	outRaySourceW			starting point of the ray (in world space) or invalid
 //	 * @param	outRayDirectionW		direction of the ray (in world space) or invalid
 //	 */
-//	VGEGLBASE_API static const bool spawnDecalPrecomputation(	vgeGL::engine::SceneManager * sceneManager, const vgm::Vec2i mouseLocation,
+//	VGEGLBASE_API static const bool spawnDecalPrecomputation(	vgeGLBase::engine::SceneManager * sceneManager, const vgm::Vec2i mouseLocation,
 //															vgm::Vec3f& outRaySourceW, vgm::Vec3f& outRayDirectionW );
 //
 //	/**
@@ -130,9 +130,9 @@
 //	 *
 //	 * @return The shape that have to be used by decal node
 //	 *
-//	 * @todo vgd::Shp< vgd::node::VertexShape > spawnDecalShape( vgeGL::engine::SceneManager * sceneManager, mouseLocation )
+//	 * @todo vgd::Shp< vgd::node::VertexShape > spawnDecalShape( vgeGLBase::engine::SceneManager * sceneManager, mouseLocation )
 //	 */
-//	VGEGLBASE_API static vgd::Shp< vgd::node::VertexShape > spawnDecalShape(	vgeGL::engine::SceneManager * sceneManager, const vgm::Vec3f& raySourceW, const vgm::Vec3f& rayDirectionW,
+//	VGEGLBASE_API static vgd::Shp< vgd::node::VertexShape > spawnDecalShape(	vgeGLBase::engine::SceneManager * sceneManager, const vgm::Vec3f& raySourceW, const vgm::Vec3f& rayDirectionW,
 //																			DecalInformations& oDecalInfos, DecalProperties& oDecalModifiers, vgm::XfBox3f& oDecalBox );
 //
 //
@@ -164,7 +164,7 @@
 //
 //} // namespace engine
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_ENGINE_DECALMANAGER_HPP
 //

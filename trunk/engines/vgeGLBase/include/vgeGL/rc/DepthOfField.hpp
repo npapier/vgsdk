@@ -9,8 +9,8 @@
 //#include <vector>
 //#include <vgd/Shp.hpp>
 //#include <vge/rc/IResource.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/rc/FrameBufferObject.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/rc/FrameBufferObject.hpp"
 //
 //namespace vgd
 //{
@@ -23,7 +23,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace rc
@@ -41,7 +41,7 @@
 //	vgd::Shp< vgd::node::OutputBufferProperty >	blurFactorBuffer;
 //
 //	// Post-processing
-//	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 //
 //	vgd::Shp< vgd::node::Group >					rootPostProcessing;
 //	PostProcessingStateContainer					postProcessing;
@@ -51,7 +51,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_DEPTHOFFIELD_HPP
 //

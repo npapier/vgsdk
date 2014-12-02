@@ -8,10 +8,10 @@
 //
 //#include <glo/IResource.hpp>
 //#include <vge/visitor/NodeCollectorExtended.hpp>
-//#include "vgeGL/vgeGL.hpp"
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{ 
 //
 //namespace technique { struct ForwardRendering; }
@@ -20,7 +20,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -91,13 +91,13 @@
 //	 */
 //	//@{
 //
-//	virtual void stageCollectInformationsBegin( vgeGL::engine::Engine * engine )
+//	virtual void stageCollectInformationsBegin( vgeGLBase::engine::Engine * engine )
 //	{}
 //
 //	virtual const bool collectInformationsCallback( vge::visitor::TraverseElementVector::const_iterator iterator )
 //	{ return false; }
 //
-//	virtual void stageCollectInformationsEnd( vgeGL::engine::Engine * engine )
+//	virtual void stageCollectInformationsEnd( vgeGLBase::engine::Engine * engine )
 //	{}
 //	//@}
 //
@@ -113,9 +113,9 @@
 //	 * @return the desired resource
 //	 */
 //	template< class rcType >
-//	vgd::Shp< rcType > getRC( vgeGL::engine::Engine * engine )
+//	vgd::Shp< rcType > getRC( vgeGLBase::engine::Engine * engine )
 //	{
-//		vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+//		vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
 //
 //		vgd::Shp< rcType > rc = rcManager->getShp< rcType >( getNode() );
 //
@@ -127,7 +127,7 @@
 //	 * @brief Helper method
 //	 */
 //	template< class rcType >
-//	void templateStageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//	void templateStageInitializeRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //	{
 //		if ( isEnabled() )
 //		{
@@ -142,7 +142,7 @@
 //				rc.reset( new rcType );
 //
 //				// Register node and its resource into manager
-//				vgd::Shp< vgeGL::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
+//				vgd::Shp< vgeGLBase::engine::Engine::GLManagerType > rcManager = engine->getGLManager();
 //				rcManager->add( getNode(), rc );
 //
 //				// RC must be initialized
@@ -169,7 +169,7 @@
 //	/**
 //	 * @brief This method should call stageInitializeRC<rcType>() if it needs resource, thus method isRCUpdated() and updateRC() must be defined.
 //	 */
-//	virtual void stageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )=0;
+//	virtual void stageInitializeRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )=0;
 //
 //	/**
 //	 * @brief Returns true if rc must be update be calling updateRC(), false otherwise.
@@ -177,12 +177,12 @@
 //	 * Returns always true, if this technique is disabled.
 //	 * Otherwise returns the validity of dirty flag for the node of this technique (see getNode()).
 //	 */
-//	virtual const bool isRCUpdated( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
+//	virtual const bool isRCUpdated( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
 //
 //	/**
 //	 * @brief
 //	 */
-//	virtual void updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > rc )=0;
+//	virtual void updateRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > rc )=0;
 //
 //	//@}
 //
@@ -192,7 +192,7 @@
 //	 */
 //	//@{
 //
-//	virtual void stagePrePaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//	virtual void stagePrePaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //	{}
 //
 //	//@}
@@ -206,13 +206,13 @@
 //	// @todo think about opaque and transparent pass
 //	// called after beginPass() of paint pass
 //	// useful to initialize uniform(s)
-//	virtual void stageBeginPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//	virtual void stageBeginPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //	{}
 //
-//	virtual void stagePaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//	virtual void stagePaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //	{}
 //
-//	virtual void stageEndPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//	virtual void stageEndPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //	{}
 //
 //	//@}
@@ -223,7 +223,7 @@
 //	 */
 //	//@{
 //
-//	virtual void stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//	virtual void stagePostPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //	{}
 //
 //	//@}
@@ -261,7 +261,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_SUBTECHNIQUE_HPP
 //

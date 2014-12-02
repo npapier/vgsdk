@@ -6,11 +6,11 @@
 //#ifndef _VGEGLBASE_PASS_OPAQUE_HPP
 //#define _VGEGLBASE_PASS_OPAQUE_HPP
 //
-//#include "vgeGL/pass/Pass.hpp"
+//#include "vgeGLBase/pass/Pass.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace pass
@@ -21,14 +21,14 @@
 ///**
 // * @brief Opaque pass
 // */
-//struct Opaque : public ::vgeGL::pass::Pass
+//struct Opaque : public ::vgeGLBase::pass::Pass
 //{
 //	/**
 //	 * @brief Default constructor
 //	 */
 //	VGEGLBASE_API Opaque();
 //
-//	VGEGLBASE_API void apply(	vgeGL::technique::Technique * technique, vgeGL::engine::Engine *engine, 
+//	VGEGLBASE_API void apply(	vgeGLBase::technique::Technique * technique, vgeGLBase::engine::Engine *engine, 
 //							vge::visitor::TraverseElementVector* traverseElements,
 //							vgd::Shp< vge::service::Service > service );
 //
@@ -54,7 +54,7 @@
 //
 //} // namespace pass
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_PASS_OPAQUE_HPP
 //

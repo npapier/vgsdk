@@ -6,14 +6,14 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_TRANSFORMSEPARATOR_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_TRANSFORMSEPARATOR_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //#include <vge/handler/TransformSeparator.hpp>
 //#include <vge/handler/painter/Group.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace handler
@@ -48,7 +48,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_TRANSFORMSEPARATOR_HPP
 //

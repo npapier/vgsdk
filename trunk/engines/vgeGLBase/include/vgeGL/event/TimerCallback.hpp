@@ -7,13 +7,13 @@
 //#define _VGEGLBASE_EVENT_TIMERCALLBACK_HPP
 //
 //#include <vgd/event/TimerCallback.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
-//namespace vgeGL { namespace engine { struct SceneManager; } }
+//namespace vgeGLBase { namespace engine { struct SceneManager; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -47,7 +47,7 @@
 //	 * @param sceneManager		a reference on a scene manager
 //	 * @post getSceneManager() == sceneManager
 //	 */
-//	TimerCallback( vgeGL::engine::SceneManager * sceneManager );
+//	TimerCallback( vgeGLBase::engine::SceneManager * sceneManager );
 //
 //	/**
 //	 * @brief Constructor storing a node reference and a scene manager reference for future usage in apply method.
@@ -58,7 +58,7 @@
 //	 * @param sceneManager		a reference on a scene manager
 //	 * @post getSceneManager() == sceneManager
 //	 */
-//	TimerCallback( vgd::Shp< vgd::node::Node > node, vgeGL::engine::SceneManager * sceneManager );
+//	TimerCallback( vgd::Shp< vgd::node::Node > node, vgeGLBase::engine::SceneManager * sceneManager );
 //
 //	//@}
 //
@@ -68,17 +68,17 @@
 //	 *
 //	 * @return the scene manager reference stored by this callback
 //	 */
-//	vgeGL::engine::SceneManager * getSceneManager();
+//	vgeGLBase::engine::SceneManager * getSceneManager();
 //
 //
 //protected:
-//	vgeGL::engine::SceneManager	*m_sceneManager;	///< the scene manager reference stored by this callback.	
+//	vgeGLBase::engine::SceneManager	*m_sceneManager;	///< the scene manager reference stored by this callback.	
 //};
 //
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_EVENT_TIMERCALLBACK_HPP
 //

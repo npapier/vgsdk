@@ -6,16 +6,16 @@
 //#ifndef _VGEGLBASE_TECHNIQUE_NOISE_HPP
 //#define _VGEGLBASE_TECHNIQUE_NOISE_HPP
 //
-//#include "vgeGL/technique/SubTechnique.hpp"
+//#include "vgeGLBase/technique/SubTechnique.hpp"
 //
 //namespace glo { struct IResource; }
 //namespace vgd { namespace node { struct Noise; } }
-//namespace vgeGL { namespace rc { struct Noise; } }
-//namespace vgeGL { namespace technique { struct ForwardRendering; } }
+//namespace vgeGLBase { namespace rc { struct Noise; } }
+//namespace vgeGLBase { namespace technique { struct ForwardRendering; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -34,7 +34,7 @@
 //	 * @name Stage 1
 //	 */
 //	//@{
-//	virtual void stageCollectInformationsBegin( vgeGL::engine::Engine * engine );
+//	virtual void stageCollectInformationsBegin( vgeGLBase::engine::Engine * engine );
 //	virtual const bool collectInformationsCallback( vge::visitor::TraverseElementVector::const_iterator iterator );
 //	//@}
 //
@@ -45,21 +45,21 @@
 //	//@{
 //
 //	// colorBuffer of rc
-//	void stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::Noise > rc );
+//	void stageInitializeOutputBuffersNodes( vgd::Shp< vgeGLBase::rc::Noise > rc );
 //
 //	// randomTexture
-//	void stageInitializeRandomTexture( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc, vgd::node::Noise * noise );
+//	void stageInitializeRandomTexture( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::Noise > rc, vgd::node::Noise * noise );
 //
 //	// rootPostProcessing and postProcessing of rc
-//	void stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vgeGL::rc::Noise > rc );
+//	void stageInitializePostProcessing( vgd::node::Noise * node, vgd::Shp< vgeGLBase::rc::Noise > rc );
 //
 //	// updates parameters of post-processing : factors
-//	void stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc );
+//	void stageUpdatePostProcessingParameters( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::Noise > rc );
 //
 //
-//	void stageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
-//	const bool isRCUpdated( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
-//	void updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
+//	void stageInitializeRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine );
+//	const bool isRCUpdated( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
+//	void updateRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > rc );
 //
 //	//@}
 //
@@ -69,10 +69,10 @@
 //	 */
 //	//@{
 //
-//	void stagePrePaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
+//	void stagePrePaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine );
 //
 //	// hasOutputBufferProperties and m_outputBufferProperties of technique
-//	void stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Noise > rc );
+//	void stageInitializeOutputBuffers( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::Noise > rc );
 //
 //	//@}
 //
@@ -83,7 +83,7 @@
 //	 */
 //	//@{
 //
-//	void stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine );
+//	void stagePostPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine );
 //
 //	//@}
 //
@@ -96,7 +96,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_NOISE_HPP
 //

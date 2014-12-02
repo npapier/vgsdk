@@ -7,11 +7,11 @@
 //#define _VGEGLBASE_HANDLER_PAINTER_PROGRAM_HPP
 //
 //#include <vge/handler/painter/SingleAttribute.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace vgd { namespace node { struct Program; } }
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine { struct Engine; } 
 //	namespace rc { struct GLSLProgram; }
@@ -19,7 +19,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -42,8 +42,8 @@
 //
 //	void setToDefaults();
 //
-//	void bind			( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGL::rc::GLSLProgram * /*resource*/ );
-//	void synchronize	( vgeGL::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGL::rc::GLSLProgram * /*resource*/ );
+//	void bind			( vgeGLBase::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGLBase::rc::GLSLProgram * /*resource*/ );
+//	void synchronize	( vgeGLBase::engine::Engine * /*engine*/, vgd::node::Program * /*node*/, vgeGLBase::rc::GLSLProgram * /*resource*/ );
 //};
 //
 //
@@ -52,7 +52,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_PROGRAM_HPP
 //

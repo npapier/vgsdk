@@ -3,15 +3,15 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/basic/UniformContainer.hpp"
+//#include "vgeGLBase/basic/UniformContainer.hpp"
 //
 //#include <boost/tuple/tuple.hpp>
 //#include <glo/GLSLProgram.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace basic
@@ -32,7 +32,7 @@
 //	 *
 //	 * @param engine	engine used for rendering
 //	 */
-//	SetUniformVisitor( vgeGL::engine::Engine * engine )
+//	SetUniformVisitor( vgeGLBase::engine::Engine * engine )
 //	:	m_engine	( engine	)
 //	{}
 //
@@ -83,7 +83,7 @@
 //	//@}
 //
 //private:
-//	vgeGL::engine::Engine * m_engine;	///< engine used for rendering
+//	vgeGLBase::engine::Engine * m_engine;	///< engine used for rendering
 //	std::string				m_name;		///< name of uniform
 //};
 //
@@ -169,7 +169,7 @@
 //}
 //
 //
-//void UniformContainer::apply( vgeGL::engine::Engine * engine )
+//void UniformContainer::apply( vgeGLBase::engine::Engine * engine )
 //{
 //	SetUniformVisitor visitor( engine );
 //	ConstIteratorType i, iEnd;
@@ -186,5 +186,5 @@
 //
 //} // namespace basic
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

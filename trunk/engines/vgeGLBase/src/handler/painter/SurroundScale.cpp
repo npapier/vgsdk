@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/SurroundScale.hpp"
+//#include "vgeGLBase/handler/painter/SurroundScale.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/SurroundScale.hpp>
@@ -12,11 +12,11 @@
 //#include <vge/service/ProcessEvent.hpp>
 //#include <vgm/Utilities.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -56,8 +56,8 @@
 //
 //void SurroundScale::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< vgd::node::SurroundScale* >(pNode) != 0 );
 //	vgd::node::SurroundScale *pCastedNode = dynamic_cast< vgd::node::SurroundScale* >(pNode);
@@ -84,7 +84,7 @@
 //
 //
 //
-//void SurroundScale::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::SurroundScale *pNode )
+//void SurroundScale::paint( vgeGLBase::engine::Engine *pGLEngine, vgd::node::SurroundScale *pNode )
 //{
 //	// GEOMETRICAL MATRIX
 //	// Gets the transformation
@@ -107,5 +107,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

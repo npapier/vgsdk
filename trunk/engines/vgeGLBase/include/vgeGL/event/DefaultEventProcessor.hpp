@@ -6,11 +6,11 @@
 //#ifndef _VGEGLBASE_EVENT_DEFAULTEVENTPROCESSOR_HPP
 //#define _VGEGLBASE_EVENT_DEFAULTEVENTPROCESSOR_HPP
 //
-//#include "vgeGL/event/EventProcessor.hpp"
+//#include "vgeGLBase/event/EventProcessor.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -31,13 +31,13 @@
 //	 * 
 //	 * @pre sceneManager != 0
 //	 */
-//	VGEGLBASE_API DefaultEventProcessor( ::vgeGL::engine::SceneManager *sceneManager );
+//	VGEGLBASE_API DefaultEventProcessor( ::vgeGLBase::engine::SceneManager *sceneManager );
 //
 //	/**
 //	 * @brief Returns the name of the field in Engine containing a Hit computed by this event processor
 //	 */
 //	VGEGLBASE_API static const std::string getFHit() { return std::string("DefaultEventProcessor.hit"); }
-//	typedef vgd::Shp< vgeGL::basic::Hit > HitValueType;
+//	typedef vgd::Shp< vgeGLBase::basic::Hit > HitValueType;
 //	typedef vgd::field::TSingleField< HitValueType > FHitType;
 //
 //protected:
@@ -49,7 +49,7 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_EVENT_DEFAULTEVENTPROCESSOR_HPP
 //

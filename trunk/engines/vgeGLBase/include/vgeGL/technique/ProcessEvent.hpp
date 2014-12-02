@@ -9,11 +9,11 @@
 //#include <vgd/event/Event.hpp>
 //#include <vgd/field/TSingleField.hpp>
 //
-//#include "vgeGL/technique/Technique.hpp"
+//#include "vgeGLBase/technique/Technique.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -57,7 +57,7 @@
 //	 * @param engine			engine used during evaluation
 //	 * @param traverseElements	elements to evaluate
 //	 */
-//	void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+//	void apply(	vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 //
 //
 //
@@ -90,7 +90,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_PROCESSEVENT_HPP
 //

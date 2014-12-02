@@ -3,7 +3,7 @@
 ////// as published by the Free Software Foundation.
 ////// Author Nicolas Papier
 ////
-////#include "vgeGL/technique/Outlining.hpp"
+////#include "vgeGLBase/technique/Outlining.hpp"
 ////
 ////#include <vgd/node/ClearFrameBuffer.hpp>
 ////#include <vgd/node/DrawStyle.hpp>
@@ -15,7 +15,7 @@
 ////
 ////
 ////
-////namespace vgeGL
+////namespace vgeGLBase
 ////{
 ////
 ////namespace technique
@@ -211,7 +211,7 @@
 ////}
 ////
 ////
-//////// vgeGL::OutliningTechnique
+//////// vgeGLBase::OutliningTechnique
 //////
 ///////*
 //////resetEngine();
@@ -257,5 +257,5 @@
 ////
 ////} // namespace technique
 ////
-////} // namespace vgeGL
+////} // namespace vgeGLBase
 //

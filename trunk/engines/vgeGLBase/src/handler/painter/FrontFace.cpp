@@ -3,14 +3,14 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/FrontFace.hpp"
+//#include "vgeGLBase/handler/painter/FrontFace.hpp"
 //
 //#include <vgd/node/FrontFace.hpp>
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -39,13 +39,13 @@
 //
 //void FrontFace::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-////	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-////	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+////	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+////	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 ////	assert( dynamic_cast< vgd::node::FrontFace* >(pNode) != 0 );
 ////	vgd::node::FrontFace *pCastedNode = static_cast< vgd::node::FrontFace* >(pNode);
 //
-//	vgeGL::rc::applyUsingDisplayList< vgd::node::FrontFace, FrontFace >( pEngine, pNode, this );
+//	vgeGLBase::rc::applyUsingDisplayList< vgd::node::FrontFace, FrontFace >( pEngine, pNode, this );
 //}
 //
 //
@@ -62,7 +62,7 @@
 //
 //
 //
-//void FrontFace::paint( vgeGL::engine::Engine *, vgd::node::FrontFace * node )
+//void FrontFace::paint( vgeGLBase::engine::Engine *, vgd::node::FrontFace * node )
 //{
 //	// ORIENTATION
 //	vgd::node::FrontFace::OrientationValueType value = node->getOrientation();
@@ -79,5 +79,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

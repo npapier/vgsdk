@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Transform.hpp"
+//#include "vgeGLBase/handler/painter/Transform.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/Transform.hpp>
@@ -12,11 +12,11 @@
 //#include <vge/service/ProcessEvent.hpp>
 //#include <vgm/Utilities.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -56,8 +56,8 @@
 //
 //void Transform::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< vgd::node::Transform* >(pNode) != 0 );
 //	vgd::node::Transform *pCastedNode = dynamic_cast< vgd::node::Transform* >(pNode);
@@ -84,7 +84,7 @@
 //
 //
 //
-//void Transform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::Transform *pNode )
+//void Transform::paint( vgeGLBase::engine::Engine *pGLEngine, vgd::node::Transform *pNode )
 //{
 //	// GEOMETRICAL MATRIX
 //	// Gets the transformation
@@ -139,5 +139,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

@@ -7,11 +7,11 @@
 //#define _VGEGLBASE_BASIC_HELPERS_HPP
 //
 //#include <vgd/basic/IImage.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace basic
@@ -45,7 +45,7 @@
 //
 //} // namespace basic
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_BASIC_HELPERS_HPP
 //

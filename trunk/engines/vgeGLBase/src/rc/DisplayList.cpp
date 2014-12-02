@@ -3,5 +3,5 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/rc/DisplayList.hpp"
+//#include "vgeGLBase/rc/DisplayList.hpp"
 //

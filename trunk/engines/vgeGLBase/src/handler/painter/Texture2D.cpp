@@ -3,16 +3,16 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Texture2D.hpp"
+//#include "vgeGLBase/handler/painter/Texture2D.hpp"
 //
 //#include <vgd/node/Texture2D.hpp>
 //#include <vge/service/Painter.hpp>
 //
-//#include "vgeGL/rc/TSynchronizeHelper.hpp"
-//#include "vgeGL/rc/Texture2D.hpp"
+//#include "vgeGLBase/rc/TSynchronizeHelper.hpp"
+//#include "vgeGLBase/rc/Texture2D.hpp"
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -40,13 +40,13 @@
 //
 //void Texture2D::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< vgd::node::Texture2D* >(pNode) != 0 );
 //	vgd::node::Texture2D *pCastedNode = static_cast< vgd::node::Texture2D* >(pNode);
 //
-//	vgeGL::rc::applyUsingSynchronize< vgeGL::rc::Texture2D >( pGLEngine, pCastedNode, this );
+//	vgeGLBase::rc::applyUsingSynchronize< vgeGLBase::rc::Texture2D >( pGLEngine, pCastedNode, this );
 //}
 //
 //
@@ -63,8 +63,8 @@
 //
 //
 //
-//void Texture2D::synchronize(	vgeGL::engine::Engine*	pGLEngine, vgd::node::Texture2D* pNode,
-//								vgeGL::rc::Texture2D*	pResource )
+//void Texture2D::synchronize(	vgeGLBase::engine::Engine*	pGLEngine, vgd::node::Texture2D* pNode,
+//								vgeGLBase::rc::Texture2D*	pResource )
 //{
 //	Texture::synchronize( pGLEngine, pNode, pResource );
 //}
@@ -75,5 +75,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

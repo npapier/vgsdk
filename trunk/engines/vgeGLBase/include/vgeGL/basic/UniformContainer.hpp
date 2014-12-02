@@ -7,13 +7,13 @@
 //#define _VGEGLBASE_BASIC_UNIFORMCONTAINER_HPP
 //
 //#include <vgd/basic/UniformContainer.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace basic
@@ -31,14 +31,14 @@
 //	/**
 //	 * @brief Sends all uniform variables to OpenGL
 //	 */
-//	void apply( vgeGL::engine::Engine * engine );
+//	void apply( vgeGLBase::engine::Engine * engine );
 //};
 //
 //
 //
 //} // namespace basic
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_BASIC_UNIFORMCONTAINER_HPP
 //

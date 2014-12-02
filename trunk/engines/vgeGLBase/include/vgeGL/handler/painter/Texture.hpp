@@ -10,7 +10,7 @@
 //#include <vgd/basic/IImage.hpp>
 //#include <vge/handler/painter/MultiAttribute.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace glo { struct Texture; }
 //
@@ -20,7 +20,7 @@
 //	namespace node { struct Texture; }
 //}
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine { struct Engine; }
 //	namespace rc { struct Texture; }
@@ -28,7 +28,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -53,29 +53,29 @@
 //
 //	void setToDefaults();
 //
-//	void paint( vgeGL::engine::Engine*, vgd::node::Texture*, glo::Texture* );
+//	void paint( vgeGLBase::engine::Engine*, vgd::node::Texture*, glo::Texture* );
 //
 //	/**
 //	 * @brief Sends glTexParameter commands for the Texture node.
 //	 */
-//	void paintParams( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource );
+//	void paintParams( vgeGLBase::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource );
 //
 //	/**
 //	 * brief Sends glTexEnv commands for the Texture node.
 //	 *
 //	 * Only for non GLSL pipeline (LayerPlan)
 //	 */
-//	//void paintEnv( vgeGL::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource );
+//	//void paintEnv( vgeGLBase::engine::Engine *pEngine, vgd::node::Texture *pNode, glo::Texture *pResource );
 //
 //	/**
 //	 * @brief
 //	 */
-//	void synchronize( vgeGL::engine::Engine* pGLEngine, vgd::node::Texture *pNode, glo::Texture * pResource );
+//	void synchronize( vgeGLBase::engine::Engine* pGLEngine, vgd::node::Texture *pNode, glo::Texture * pResource );
 //
 //	/**
 //	 * @brief
 //	 */
-//	void texSubImage(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+//	void texSubImage(	vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
 //						glo::Texture *pTexture,
 //						TexInfo& texInfo );
 //
@@ -97,7 +97,7 @@
 //	 *
 //	 * @return the state of the Texture.image field (one value among NOIIMAGE_VALIDATED,  IIMAGE_VALIDATED, NOIIMAGE_DIRTY or IIMAGE_DIRTY).
 //	 */
-//	State preSynchronize(	vgeGL::engine::Engine *, vgd::node::Texture *, ::glo::Texture *,
+//	State preSynchronize(	vgeGLBase::engine::Engine *, vgd::node::Texture *, ::glo::Texture *,
 //							TexInfo& );
 //
 //
@@ -162,7 +162,7 @@
 //	/**
 //	 * @brief Computes all texture informations needed for glTexImage function.
 //	 */
-//	void computeTexInfo( vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo );
+//	void computeTexInfo( vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, TexInfo& texInfo );
 //
 //	/**
 //	 * @brief Computes texture image parameters and fills TexInfo structure with theses parameters.
@@ -178,14 +178,14 @@
 //	 *
 //	 * @todo Uses texture proxies.
 //	 */
-//	void clampTexImageSize( vgeGL::engine::Engine *pGLEngine, ::glo::Texture * pTexture, TexInfo& texInfo );
+//	void clampTexImageSize( vgeGLBase::engine::Engine *pGLEngine, ::glo::Texture * pTexture, TexInfo& texInfo );
 //
 //	/**
 //	 * @brief Tests if the computed texture parameters are compatblies with the currrent real texture.
 //	 * 
 //	 * @return true if compatible, false if not.
 //	 */
-//	const bool isTextureCompatible( vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, const TexInfo& texInfo );
+//	const bool isTextureCompatible( vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode, ::glo::Texture * pTexture, const TexInfo& texInfo );
 //
 //	/**
 //	 * @brief Tests if computed texture size is compatible with the real texture size
@@ -197,7 +197,7 @@
 //	/**
 //	 * @brief
 //	 */
-//	void synchronizeParametersAndEnv(	vgeGL::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
+//	void synchronizeParametersAndEnv(	vgeGLBase::engine::Engine *pGLEngine, vgd::node::Texture *pNode,
 //										::glo::Texture *pTexture );
 //
 //
@@ -235,7 +235,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_TEXTURE_HPP
 //

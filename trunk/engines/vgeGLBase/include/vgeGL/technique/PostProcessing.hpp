@@ -10,7 +10,7 @@
 //
 //namespace vgd { namespace node { struct Texture2D; } }
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -38,7 +38,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_POSTPROCESSING_HPP
 //

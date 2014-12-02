@@ -9,31 +9,31 @@
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vge/rc/TManager.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace rc
 //{
 //
 ///**
-// * @brief Helper used in vgeGL::handler::painter::Node::apply(...) in order to simplify the code of this method.
+// * @brief Helper used in vgeGLBase::handler::painter::Node::apply(...) in order to simplify the code of this method.
 // *
 // * @todo Comments
 // *
 // * Use dirty flag of the node (vgd::Node::getDFNode()).
 // * @remarks The handlerType must implements :
-// * - void synchronize	( vgeGL::engine::Engine* engine, nodeType* node, GLResourceType* pGLResource );
+// * - void synchronize	( vgeGLBase::engine::Engine* engine, nodeType* node, GLResourceType* pGLResource );
 // */
 //template< typename nodeType, typename handlerType, typename GLResourceType >
-//void applyUsingSyncAndBind(	vgeGL::engine::Engine * engine, nodeType * node,
+//void applyUsingSyncAndBind(	vgeGLBase::engine::Engine * engine, nodeType * node,
 //							handlerType * handler )
 //{
 //	// Gets the resource manager
-//	vgeGL::engine::Engine::GLManagerType& manager = engine->getGLManager();
+//	vgeGLBase::engine::Engine::GLManagerType& manager = engine->getGLManager();
 //
 //	// Gets node dirty flag
 //	vgd::field::DirtyFlag * nodeDF = node->getDirtyFlag( node->getDFNode() );
@@ -104,7 +104,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_TSYNCANDBINDHELPER_HPP
 //

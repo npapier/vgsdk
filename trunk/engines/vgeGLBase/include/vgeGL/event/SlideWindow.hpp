@@ -6,12 +6,12 @@
 //#ifndef _VGEGLBASE_EVENT_SLIDEWINDOW_HPP
 //#define _VGEGLBASE_EVENT_SLIDEWINDOW_HPP
 //
-//#include "vgeGL/event/TimerCallback.hpp"
-//#include "vgeGL/technique/MultiMain.hpp"
+//#include "vgeGLBase/event/TimerCallback.hpp"
+//#include "vgeGLBase/technique/MultiMain.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -23,12 +23,12 @@
 // *
 // * @todo path, multi-path =>TransfertFunc ?
 // */
-//struct SlideWindow : public vgeGL::event::TimerCallback
+//struct SlideWindow : public vgeGLBase::event::TimerCallback
 //{
 //	/**
 //	 * @brief Default constructor
 //	 */
-//	VGEGLBASE_API SlideWindow( vgeGL::engine::SceneManager * sceneManager );
+//	VGEGLBASE_API SlideWindow( vgeGLBase::engine::SceneManager * sceneManager );
 //
 //	/**
 //	 * @brief Resets window movements.
@@ -44,7 +44,7 @@
 //	 *
 //	 * @pre window != 0
 //	 */
-//	VGEGLBASE_API void add(	vgd::Shp< vgeGL::technique::MultiMain::Window > window,
+//	VGEGLBASE_API void add(	vgd::Shp< vgeGLBase::technique::MultiMain::Window > window,
 //						const vgm::Rectangle2f	destination, const bool visible );
 //
 //	/**
@@ -59,7 +59,7 @@
 //protected:
 //	struct WindowInfo
 //	{
-//		vgd::Shp< vgeGL::technique::MultiMain::Window > window;
+//		vgd::Shp< vgeGLBase::technique::MultiMain::Window > window;
 //		vgm::Vec4f										destination;
 //		bool											visible;
 //
@@ -73,7 +73,7 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_EVENT_SLIDEWINDOW_HPP
 //

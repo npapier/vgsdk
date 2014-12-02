@@ -3,11 +3,11 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/event/TimerCallback.hpp"
+//#include "vgeGLBase/event/TimerCallback.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace event
@@ -22,21 +22,21 @@
 //}
 //
 //
-//TimerCallback::TimerCallback( vgeGL::engine::SceneManager * sceneManager )
+//TimerCallback::TimerCallback( vgeGLBase::engine::SceneManager * sceneManager )
 //:	//vgd::event::TimerCallback(),
 //	m_sceneManager( sceneManager )
 //{
 //}
 //
 //
-//TimerCallback::TimerCallback( vgd::Shp< vgd::node::Node > node, vgeGL::engine::SceneManager * sceneManager )
+//TimerCallback::TimerCallback( vgd::Shp< vgd::node::Node > node, vgeGLBase::engine::SceneManager * sceneManager )
 //:	vgd::event::TimerCallback( node ),
 //	m_sceneManager( sceneManager )
 //{
 //}
 //
 //
-//vgeGL::engine::SceneManager * TimerCallback::getSceneManager()
+//vgeGLBase::engine::SceneManager * TimerCallback::getSceneManager()
 //{
 //	return m_sceneManager;
 //}
@@ -44,5 +44,5 @@
 //
 //} // namespace event
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

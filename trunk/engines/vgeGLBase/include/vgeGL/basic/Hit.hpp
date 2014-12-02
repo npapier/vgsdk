@@ -10,11 +10,11 @@
 //#include <vgd/node/Node.hpp>
 //#include <vgm/Vector.hpp>
 //#include <vgm/Matrix.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace basic
@@ -210,7 +210,7 @@
 //
 //} // namespace basic
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_BASIC_HIT_HPP
 //

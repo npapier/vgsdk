@@ -6,11 +6,11 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_DIRECTIONALLIGHT_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_DIRECTIONALLIGHT_HPP
 //
-//#include "vgeGL/handler/painter/Light.hpp"
+//#include "vgeGLBase/handler/painter/Light.hpp"
 //
 //namespace vgd { namespace node { struct DirectionalLight; } }
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine
 //	{
@@ -22,7 +22,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -35,7 +35,7 @@
 ///**
 // * @brief Send render commands for the directional light.
 // */
-//struct VGEGLBASE_API DirectionalLight : public vgeGL::handler::painter::Light
+//struct VGEGLBASE_API DirectionalLight : public vgeGLBase::handler::painter::Light
 //{
 //	META_HANDLER_HPP( DirectionalLight );
 //
@@ -46,9 +46,9 @@
 //
 //	void	setToDefaults();
 //
-//	void	updateGLSLState( vgeGL::engine::Engine * engine, vgd::node::DirectionalLight * light, vgeGL::engine::GLSLState& glslState );
-//	void	updateUnitState( vgeGL::engine::Engine * engine, vgd::node::DirectionalLight * light, vgd::Shp< vgeGL::engine::LightState > lightState );
-//	void	paint( vgeGL::engine::Engine *pEngine, vgd::node::DirectionalLight *pDirectionalLight );
+//	void	updateGLSLState( vgeGLBase::engine::Engine * engine, vgd::node::DirectionalLight * light, vgeGLBase::engine::GLSLState& glslState );
+//	void	updateUnitState( vgeGLBase::engine::Engine * engine, vgd::node::DirectionalLight * light, vgd::Shp< vgeGLBase::engine::LightState > lightState );
+//	void	paint( vgeGLBase::engine::Engine *pEngine, vgd::node::DirectionalLight *pDirectionalLight );
 //};
 //
 //
@@ -57,7 +57,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_DIRECTIONALLIGHT_HPP
 //

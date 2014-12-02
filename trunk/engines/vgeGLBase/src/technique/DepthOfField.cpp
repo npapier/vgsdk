@@ -3,19 +3,19 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/DepthOfField.hpp"
+//#include "vgeGLBase/technique/DepthOfField.hpp"
 //
 //#include <vgd/node/DepthOfField.hpp>
 //#include <vgd/node/Group.hpp>
 //#include <vgd/node/OutputBufferProperty.hpp>
 //#include <vgd/node/PostProcessing.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/handler/painter/OutputBuffers.hpp"
-//#include "vgeGL/rc/DepthOfField.hpp"
-//#include "vgeGL/technique/ForwardRendering.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/handler/painter/OutputBuffers.hpp"
+//#include "vgeGLBase/rc/DepthOfField.hpp"
+//#include "vgeGLBase/technique/ForwardRendering.hpp"
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -31,7 +31,7 @@
 //
 //
 //
-//void DepthOfField::stageCollectInformationsBegin( vgeGL::engine::Engine * engine )
+//void DepthOfField::stageCollectInformationsBegin( vgeGLBase::engine::Engine * engine )
 //{
 //	engine->regardIfIsA< vgd::node::DepthOfField >();
 //}
@@ -56,7 +56,7 @@
 //
 //
 //
-//void DepthOfField::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::DepthOfField > rc )
+//void DepthOfField::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGLBase::rc::DepthOfField > rc )
 //{
 //	// OutputBufferProperty : COLOR RGBA
 //	using vgd::node::OutputBufferProperty;
@@ -118,12 +118,12 @@
 //
 //
 //
-//void DepthOfField::stageInitializePostProcessing( vgd::node::DepthOfField * node, vgd::Shp< vgeGL::rc::DepthOfField > rc )
+//void DepthOfField::stageInitializePostProcessing( vgd::node::DepthOfField * node, vgd::Shp< vgeGLBase::rc::DepthOfField > rc )
 //{
 //	// POST-PROCESSING
 //	using vgd::node::Group;
 //	using vgd::node::PostProcessing;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	vgd::Shp< Group > ppGroup = Group::create( "vgsdk:dof:postProcessing" );
 //
@@ -236,7 +236,7 @@
 //}
 //
 //
-//void DepthOfField::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::DepthOfField > rc )
+//void DepthOfField::stageUpdatePostProcessingParameters( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::DepthOfField > rc )
 //{
 //	if ( !isEnabled() )	return;
 //
@@ -249,17 +249,17 @@
 //}
 //
 //
-//void DepthOfField::stageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void DepthOfField::stageInitializeRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
-//	templateStageInitializeRC<vgeGL::rc::DepthOfField>( technique, engine );
+//	templateStageInitializeRC<vgeGLBase::rc::DepthOfField>( technique, engine );
 //}
 //
 //
-//void DepthOfField::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
+//void DepthOfField::updateRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::DepthOfField > rc = vgd::dynamic_pointer_cast< vgeGL::rc::DepthOfField >( genericRC );
+//	vgd::Shp< vgeGLBase::rc::DepthOfField > rc = vgd::dynamic_pointer_cast< vgeGLBase::rc::DepthOfField >( genericRC );
 //	vgAssert( rc != 0 );
 //
 //	if ( !rc->colorBuffer )
@@ -277,21 +277,21 @@
 //
 //
 //
-//void DepthOfField::stagePrePaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void DepthOfField::stagePrePaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::DepthOfField > rc = getRC< vgeGL::rc::DepthOfField >(engine);
+//	vgd::Shp< vgeGLBase::rc::DepthOfField > rc = getRC< vgeGLBase::rc::DepthOfField >(engine);
 //	vgAssert( rc != 0 );
 //
 //	stageInitializeOutputBuffers( technique, engine, rc );
 //}
 //
 //
-//void DepthOfField::stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::DepthOfField > rc )
+//void DepthOfField::stageInitializeOutputBuffers( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::DepthOfField > rc )
 //{
 //	using vgd::node::OutputBufferProperty;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	if ( !isEnabled() ) return;
 //
@@ -325,7 +325,7 @@
 //
 //
 //
-//void DepthOfField::stageBeginPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void DepthOfField::stageBeginPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
 //	if ( !isEnabled() ) return;
 //
@@ -353,14 +353,14 @@
 //}
 //
 //
-//void DepthOfField::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void DepthOfField::stagePostPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::DepthOfField > rc = getRC< vgeGL::rc::DepthOfField >(engine);
+//	vgd::Shp< vgeGLBase::rc::DepthOfField > rc = getRC< vgeGLBase::rc::DepthOfField >(engine);
 //	vgAssert( rc != 0 );
 //
-//	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
+//	const vgd::Shp< vgeGLBase::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
 //	technique->blit( engine, finalBuffers, technique->m_fbo );
 //}
 //
@@ -373,5 +373,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

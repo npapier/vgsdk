@@ -3,18 +3,18 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Camera.hpp"
+//#include "vgeGLBase/handler/painter/Camera.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/Camera.hpp>
 //#include "vge/service/ComputeBoundingBox.hpp"
 //#include <vge/service/Painter.hpp>
 //#include <vge/service/ProcessEvent.hpp>
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -54,8 +54,8 @@
 //
 //void Camera::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::Camera* >(node) != 0 );
 //	vgd::node::Camera *pCastedNode = dynamic_cast< vgd::node::Camera* >(node);
@@ -98,7 +98,7 @@
 //
 //
 //
-//void Camera::paint( vgeGL::engine::Engine *engine, vgd::node::Camera *node )
+//void Camera::paint( vgeGLBase::engine::Engine *engine, vgd::node::Camera *node )
 //{
 //	const vge::engine::EyeUsagePolicy eyePolicy = engine->getEyeUsagePolicy();
 //
@@ -162,5 +162,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

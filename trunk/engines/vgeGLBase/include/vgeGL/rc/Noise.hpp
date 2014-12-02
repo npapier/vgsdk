@@ -10,13 +10,13 @@
 //#include <vgd/basic/Time.hpp>
 //#include <vgd/Shp.hpp>
 //#include <vge/rc/IResource.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //namespace vgd { namespace node { struct Texture2D; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace rc
@@ -45,7 +45,7 @@
 //	vgd::Shp< vgd::node::Texture2D >			randomTexture;
 //
 //	// Post-processing
-//	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 //
 //	vgd::Shp< vgd::node::Group >					rootPostProcessing;
 //	PostProcessingStateContainer					postProcessing;
@@ -60,7 +60,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_NOISE_HPP
 //

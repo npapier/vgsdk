@@ -7,14 +7,14 @@
 //#define _VGEGLBASE_TECHNIQUE_RAYCASTING_HPP
 //
 //#include <set>
-//#include "vgeGL/basic/Hit.hpp"
-//#include "vgeGL/technique/Technique.hpp"
+//#include "vgeGLBase/basic/Hit.hpp"
+//#include "vgeGLBase/technique/Technique.hpp"
 //
 //namespace vgd { namespace node { struct Shape; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -93,7 +93,7 @@
 //	 * @param x							x-coordinate of the mouse pointer
 //	 * @param y							y-coordinate of the mouse pointer
 //	 */
-//	void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+//	void apply(	vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 //				const int32 x, const int32 y );
 //
 //	/**
@@ -104,7 +104,7 @@
 //	 * @param raySourceW				starting point of the ray (in world space)
 //	 * @param rayDirectionW				direction of the ray (in world space)
 //	 */
-//	void apply(	vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
+//	void apply(	vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements,
 //				const vgm::Vec3f raySourceW, const vgm::Vec3f rayDirectionW );
 //	//@}
 //
@@ -129,7 +129,7 @@
 //	 * 
 //	 * @return the hits.
 //	 */
-//	const vgd::Shp< vgeGL::basic::HitList >	getHits() const;
+//	const vgd::Shp< vgeGLBase::basic::HitList >	getHits() const;
 //
 //	/**
 //	 * @brief Returns the nearest hit.
@@ -138,7 +138,7 @@
 //	 * 
 //	 * @return the hit.
 //	 */
-//	const vgeGL::basic::Hit&	getNearestHit() const;
+//	const vgeGLBase::basic::Hit&	getNearestHit() const;
 //	
 //	/**
 //	 * @brief Returns the farthest hit.
@@ -147,7 +147,7 @@
 //	 * 
 //	 * @return the hit.
 //	 */
-//	const vgeGL::basic::Hit&	getFarthestHit() const;
+//	const vgeGLBase::basic::Hit&	getFarthestHit() const;
 //
 //	/**
 //	 * @brief Returns the first node from the nearest hit.
@@ -161,7 +161,7 @@
 //
 //
 //protected:
-//	void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+//	void apply( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 //
 //	/**
 //	 * @brief Copy constructor.
@@ -215,10 +215,10 @@
 //	typedef std::vector< ShapeInformations > ShapeInformationsContainer;
 //	ShapeInformationsContainer				m_shapes;
 //
-//	vgd::Shp< vgeGL::basic::HitList >		m_pHits;
+//	vgd::Shp< vgeGLBase::basic::HitList >		m_pHits;
 //
-//	vgeGL::basic::HitList::const_iterator	m_iterNearestHit;
-//	vgeGL::basic::HitList::const_iterator	m_iterFarthestHit;
+//	vgeGLBase::basic::HitList::const_iterator	m_iterNearestHit;
+//	vgeGLBase::basic::HitList::const_iterator	m_iterFarthestHit;
 //
 //	//@}
 //	
@@ -229,7 +229,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_RAYCASTING_HPP
 //

@@ -3,22 +3,22 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/Antialiasing.hpp"
+//#include "vgeGLBase/technique/Antialiasing.hpp"
 //
 //#include <vgd/basic/toString.hpp>
 //#include <vgd/node/Group.hpp>
 //#include <vgd/node/Antialiasing.hpp>
 //#include <vgd/node/OutputBufferProperty.hpp>
 //#include <vgd/node/PostProcessing.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/handler/painter/OutputBuffers.hpp"
-//#include "vgeGL/rc/Antialiasing.hpp"
-//#include "vgeGL/technique/ForwardRendering.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/handler/painter/OutputBuffers.hpp"
+//#include "vgeGLBase/rc/Antialiasing.hpp"
+//#include "vgeGLBase/technique/ForwardRendering.hpp"
 //#include <vgm/operations.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -26,7 +26,7 @@
 //
 //
 //
-//void Antialiasing::stageCollectInformationsBegin( vgeGL::engine::Engine * engine )
+//void Antialiasing::stageCollectInformationsBegin( vgeGLBase::engine::Engine * engine )
 //{
 //	engine->regardIfIsA< vgd::node::Antialiasing >();
 //}
@@ -50,7 +50,7 @@
 //}
 //
 //
-//void Antialiasing::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGL::rc::Antialiasing > rc )
+//void Antialiasing::stageInitializeOutputBuffersNodes( vgd::Shp< vgeGLBase::rc::Antialiasing > rc )
 //{
 //	// OutputBufferProperty : COLOR RGBA
 //	using vgd::node::OutputBufferProperty;
@@ -64,12 +64,12 @@
 //}
 //
 //
-//void Antialiasing::stageInitializePostProcessing( vgd::node::Antialiasing * node, vgd::Shp< vgeGL::rc::Antialiasing > rc )
+//void Antialiasing::stageInitializePostProcessing( vgd::node::Antialiasing * node, vgd::Shp< vgeGLBase::rc::Antialiasing > rc )
 //{
 //	// POST-PROCESSING
 //	using vgd::node::Group;
 //	using vgd::node::PostProcessing;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	vgd::Shp< Group > ppGroup = Group::create( "vgsdk:aa:postProcessing" );
 //
@@ -87,7 +87,7 @@
 //}
 //
 //
-//void Antialiasing::stageUpdatePostProcessingParameters( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Antialiasing > rc )
+//void Antialiasing::stageUpdatePostProcessingParameters( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::Antialiasing > rc )
 //{
 //	if ( !isEnabled() )	return;
 //
@@ -2997,13 +2997,13 @@
 //}
 //
 //
-//void Antialiasing::stageInitializeRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void Antialiasing::stageInitializeRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
-//	templateStageInitializeRC<vgeGL::rc::Antialiasing>( technique, engine );
+//	templateStageInitializeRC<vgeGLBase::rc::Antialiasing>( technique, engine );
 //}
 //
 //
-//const bool Antialiasing::isRCUpdated( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
+//const bool Antialiasing::isRCUpdated( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
 //{
 //	if ( !isEnabled() )
 //	{
@@ -3019,11 +3019,11 @@
 //}
 //
 //
-//void Antialiasing::updateRC( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
+//void Antialiasing::updateRC( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< glo::IResource > genericRC )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::Antialiasing > rc = vgd::dynamic_pointer_cast< vgeGL::rc::Antialiasing >( genericRC );
+//	vgd::Shp< vgeGLBase::rc::Antialiasing > rc = vgd::dynamic_pointer_cast< vgeGLBase::rc::Antialiasing >( genericRC );
 //	vgAssert( rc != 0 );
 //
 //	// color buffer
@@ -3043,21 +3043,21 @@
 //}
 //
 //
-//void Antialiasing::stagePrePaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void Antialiasing::stagePrePaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::Antialiasing > rc = getRC< vgeGL::rc::Antialiasing >(engine);
+//	vgd::Shp< vgeGLBase::rc::Antialiasing > rc = getRC< vgeGLBase::rc::Antialiasing >(engine);
 //	vgAssert( rc != 0 );
 //
 //	stageInitializeOutputBuffers( technique, engine, rc );
 //}
 //
 //
-//void Antialiasing::stageInitializeOutputBuffers( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::Antialiasing > rc )
+//void Antialiasing::stageInitializeOutputBuffers( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::Antialiasing > rc )
 //{
 //	using vgd::node::OutputBufferProperty;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	if ( !isEnabled() ) return;
 //
@@ -3079,14 +3079,14 @@
 //
 //
 //
-//void Antialiasing::stagePostPaint( vgeGL::technique::ForwardRendering * technique, vgeGL::engine::Engine * engine )
+//void Antialiasing::stagePostPaint( vgeGLBase::technique::ForwardRendering * technique, vgeGLBase::engine::Engine * engine )
 //{
 //	if ( !isEnabled() ) return;
 //
-//	vgd::Shp< vgeGL::rc::Antialiasing > rc = getRC< vgeGL::rc::Antialiasing >(engine);
+//	vgd::Shp< vgeGLBase::rc::Antialiasing > rc = getRC< vgeGLBase::rc::Antialiasing >(engine);
 //	vgAssert( rc != 0 );
 //
-//	const vgd::Shp< vgeGL::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
+//	const vgd::Shp< vgeGLBase::rc::FrameBufferObject > finalBuffers = technique->applyPostProcessing( engine, *technique->m_textures, &(rc->postProcessing) );
 //	technique->blit( engine, finalBuffers, technique->m_fbo );
 //}
 //
@@ -3099,5 +3099,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

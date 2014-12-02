@@ -6,7 +6,7 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_LAYERS_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_LAYERS_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //#include <glo/GLSLProgram.hpp>
 //#include <vgd/node/Layers.hpp>
@@ -21,7 +21,7 @@
 //	}
 //}
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine
 //	{
@@ -36,7 +36,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace handler
@@ -61,7 +61,7 @@
 //	
 //	void	setToDefaults	();
 //	
-//	void	paint			( vgeGL::engine::Engine*, vgd::node::Layers* );
+//	void	paint			( vgeGLBase::engine::Engine*, vgd::node::Layers* );
 //
 //	/**
 //	 * @brief Configures/updates dirtyFlagImage, pTex*
@@ -120,7 +120,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_LAYERS_HPP
 //

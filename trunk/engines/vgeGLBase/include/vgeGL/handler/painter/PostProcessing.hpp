@@ -6,7 +6,7 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_POSTPROCESSING_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_POSTPROCESSING_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //#include <utility>
 //#include <vgd/node/PostProcessing.hpp>
@@ -14,7 +14,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -59,7 +59,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_POSTPROCESSING_HPP
 //

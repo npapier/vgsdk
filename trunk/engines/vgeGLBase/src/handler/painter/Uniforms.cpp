@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Uniforms.hpp"
+//#include "vgeGLBase/handler/painter/Uniforms.hpp"
 //
 //#include <iterator>
 //#include <vgd/node/Uniforms.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -27,7 +27,7 @@
 //namespace
 //{
 //
-//void setUniformStateFromField( vgd::node::Uniforms *uniformsNode, const std::string& fieldname, vgeGL::engine::Engine::UniformState& uniformState )
+//void setUniformStateFromField( vgd::node::Uniforms *uniformsNode, const std::string& fieldname, vgeGLBase::engine::Engine::UniformState& uniformState )
 //{
 //	const std::type_info& typeinfo = uniformsNode->getFieldType( fieldname );
 //
@@ -90,18 +90,18 @@
 //
 //void Uniforms::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::Uniforms* >(node) != 0 );
 //	vgd::node::Uniforms *uniforms = dynamic_cast< vgd::node::Uniforms* >(node);
 //
 //
 //	// Retrieves GLSL state and state of uniforms
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	GLSLState& glslState = glEngine->getGLSLState();
 //
-//	typedef vgeGL::engine::Engine::UniformState UniformState;
+//	typedef vgeGLBase::engine::Engine::UniformState UniformState;
 //	UniformState& uniformState = glEngine->getUniformState();
 //
 //
@@ -160,5 +160,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

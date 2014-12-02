@@ -3,7 +3,7 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/MatrixTransform.hpp"
+//#include "vgeGLBase/handler/painter/MatrixTransform.hpp"
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //#include <vgd/node/MatrixTransform.hpp>
@@ -11,11 +11,11 @@
 //#include <vge/service/Painter.hpp>
 //#include <vge/service/ProcessEvent.hpp>
 //
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -55,8 +55,8 @@
 //
 //void MatrixTransform::apply ( vge::engine::Engine* pEngine, vgd::node::Node *pNode )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(pEngine) != 0 );
-//	vgeGL::engine::Engine *pGLEngine = static_cast< vgeGL::engine::Engine* >(pEngine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(pEngine) != 0 );
+//	vgeGLBase::engine::Engine *pGLEngine = static_cast< vgeGLBase::engine::Engine* >(pEngine);
 //
 //	assert( dynamic_cast< vgd::node::MatrixTransform* >(pNode) != 0 );
 //	vgd::node::MatrixTransform *pCastedNode = dynamic_cast< vgd::node::MatrixTransform* >(pNode);
@@ -82,7 +82,7 @@
 //
 //
 //
-//void MatrixTransform::paint( vgeGL::engine::Engine *pGLEngine, vgd::node::MatrixTransform *pNode )
+//void MatrixTransform::paint( vgeGLBase::engine::Engine *pGLEngine, vgd::node::MatrixTransform *pNode )
 //{
 //	// GEOMETRICAL MATRIX
 //	// Gets the transformation.
@@ -103,5 +103,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

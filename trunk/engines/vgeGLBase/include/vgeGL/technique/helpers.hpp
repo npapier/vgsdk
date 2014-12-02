@@ -7,7 +7,7 @@
 //#define _VGEGLBASE_TECHNIQUE_HELPERS_HPP
 //
 //#include <vgd/Shp.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //#include <vgm/Matrix.hpp>
 //
 //
@@ -15,11 +15,11 @@
 //namespace vgd { namespace basic { struct Image; } }
 //namespace vgd { namespace node { struct Camera; } }
 //
-//namespace vgeGL { namespace engine { struct Engine; } }
+//namespace vgeGLBase { namespace engine { struct Engine; } }
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -56,7 +56,7 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_HELPERS_HPP
 //

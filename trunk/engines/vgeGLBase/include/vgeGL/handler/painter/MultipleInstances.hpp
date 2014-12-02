@@ -7,11 +7,11 @@
 //#define _VGEGLBASE_HANDLER_PAINTER_MULTIPLEINSTANCES_HPP
 //
 //#include <vge/handler/painter/Shape.hpp>
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //namespace vgd { namespace node { struct MultipleInstances; } }
 //
-//namespace vgeGL 
+//namespace vgeGLBase 
 //{
 //namespace engine	{ struct Engine;		}
 //namespace rc		{ struct DisplayList;	}
@@ -19,7 +19,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -44,7 +44,7 @@
 //
 //	void setToDefaults();
 //
-//	void paint( vgeGL::engine::Engine*, vgd::node::MultipleInstances* );
+//	void paint( vgeGLBase::engine::Engine*, vgd::node::MultipleInstances* );
 //};
 //
 //
@@ -53,7 +53,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_MULTIPLEINSTANCES_HPP
 //

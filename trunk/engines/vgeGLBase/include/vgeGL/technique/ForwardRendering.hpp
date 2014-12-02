@@ -9,16 +9,16 @@
 //#include <vgd/node/Camera.hpp>
 //#include <vgd/node/LightModel.hpp>
 //#include <vgd/node/TransformDragger.hpp>
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/technique/Main.hpp"
-//#include "vgeGL/technique/SubTechnique.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/technique/Main.hpp"
+//#include "vgeGLBase/technique/SubTechnique.hpp"
 //
 //namespace glo { struct FrameBufferObject; struct Texture2D; }
 //namespace vgd { namespace node { struct Fluid; struct Grid; struct FrameBuffer; struct Quad; struct Texture2D; } }
-//namespace vgeGL { namespace rc { struct Fluid; struct FrameBufferObject; } }
+//namespace vgeGLBase { namespace rc { struct Fluid; struct FrameBufferObject; } }
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -61,15 +61,15 @@
 //	 * @param engine			evaluation engine
 //	 * @param traverseElements	the "flatten" scene graph to evaluate
 //	 */
-//	VGEGLBASE_API void apply( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
+//	VGEGLBASE_API void apply( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
 //
-//	VGEGLBASE_API void stageOffscreenRendering( vgeGL::engine::Engine * engine, vgd::Shp< vgd::node::Group > group );
-//	VGEGLBASE_API void renderScene( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+//	VGEGLBASE_API void stageOffscreenRendering( vgeGLBase::engine::Engine * engine, vgd::Shp< vgd::node::Group > group );
+//	VGEGLBASE_API void renderScene( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 //private:
-//	void passInformationsCollector( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
-//	void passUpdateShadowMaps( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
-//		vgd::Shp< vgeGL::rc::FrameBufferObject > configureShadowMap( vgeGL::engine::Engine * engine, const uint currentLightIndex );
-//	void passDepthOnly( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+//	void passInformationsCollector( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+//	void passUpdateShadowMaps( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
+//		vgd::Shp< vgeGLBase::rc::FrameBufferObject > configureShadowMap( vgeGLBase::engine::Engine * engine, const uint currentLightIndex );
+//	void passDepthOnly( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector* traverseElements );
 //
 //	// LightModel
 //	vgd::node::LightModel *							lightModel;
@@ -86,7 +86,7 @@
 //	vgm::MatrixR	viewMatrix;
 //	vgm::MatrixR	invViewMatrix;
 //
-//	vgd::Shp< vgeGL::engine::GLSLState > glslStateFinal;
+//	vgd::Shp< vgeGLBase::engine::GLSLState > glslStateFinal;
 //
 //	// STEREO
 //	bool isStereoEnabled;
@@ -98,7 +98,7 @@
 //	std::vector< vgm::MatrixR >					lightLookAt;
 //
 //
-//	void stageConfigureShadowMapping( vgeGL::engine::Engine * engine );
+//	void stageConfigureShadowMapping( vgeGLBase::engine::Engine * engine );
 //
 //
 //	// FLUID
@@ -109,27 +109,27 @@
 //
 //	// helpers
 //	float positionMapScaleFactor;
-//	vgd::Shp< vgeGL::rc::Fluid > getFluidRC( vgeGL::engine::Engine * engine );
-//	void stageInitializeFluidPostProcessing( vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
-//	void stageInitializeFluidRC( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
-//	void stageUpdateFluidEmittersAndDrainers( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
-//	void stageUpdateFluidSimulationParameters( vgeGL::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGL::rc::Fluid > fluidRC );
+//	vgd::Shp< vgeGLBase::rc::Fluid > getFluidRC( vgeGLBase::engine::Engine * engine );
+//	void stageInitializeFluidPostProcessing( vgd::node::Fluid * fluid, vgd::Shp< vgeGLBase::rc::Fluid > fluidRC );
+//	void stageInitializeFluidRC( vgeGLBase::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGLBase::rc::Fluid > fluidRC );
+//	void stageUpdateFluidEmittersAndDrainers( vgeGLBase::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGLBase::rc::Fluid > fluidRC );
+//	void stageUpdateFluidSimulationParameters( vgeGLBase::engine::Engine * engine, vgd::node::Fluid * fluid, vgd::Shp< vgeGLBase::rc::Fluid > fluidRC );
 //
 //	//
-//	void stageInitializeFluid( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
+//	void stageInitializeFluid( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
 //
-//	void stageFluidUpdateSceneHeightMap( vgeGL::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
+//	void stageFluidUpdateSceneHeightMap( vgeGLBase::engine::Engine * engine, vge::visitor::TraverseElementVector * traverseElements );
 //
-//	void stageFluidSimulation( vgeGL::engine::Engine * engine );
+//	void stageFluidSimulation( vgeGLBase::engine::Engine * engine );
 //
 //
 //	// DECAL
 //	bool renderDecals;
 //
-//	typedef vgeGL::engine::GLSLState::DecalStateContainer DecalStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::DecalStateContainer DecalStateContainer;
 //	DecalStateContainer * m_decals;
 //
-//	void stageDecals( vgeGL::engine::Engine * engine );
+//	void stageDecals( vgeGLBase::engine::Engine * engine );
 //
 //
 //// @todo separate outputbuffers and post-processing
@@ -138,14 +138,14 @@
 //{
 //	// FBO 0 and 1 for TMP|PREVIOUS buffers
 //	vgd::Shp< vgd::node::FrameBuffer >				frameBuffer0;
-//	vgd::Shp< vgeGL::rc::FrameBufferObject > 		fbo0;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject > 		fbo0;
 //	std::vector< vgd::Shp< vgd::node::Texture2D > >	textures0;	///< textures for FBO 0
 //
 //	vgd::Shp< vgd::node::FrameBuffer >				frameBuffer1;
-//	vgd::Shp< vgeGL::rc::FrameBufferObject >		fbo1;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject >		fbo1;
 //	std::vector< vgd::Shp< vgd::node::Texture2D > >	textures1;	///< textures for FBO 1
 //
-//	vgd::Shp< vgeGL::rc::FrameBufferObject >		outputFbo;
+//	vgd::Shp< vgeGLBase::rc::FrameBufferObject >		outputFbo;
 //};
 //
 ///*struct PostProcessingRC
@@ -176,7 +176,7 @@
 //public: // for modification by technique::DepthOfField
 //	bool hasOutputBufferProperties;
 //		// input for post-processing
-//	typedef vgeGL::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::OutputBufferPropertyStateContainer OutputBufferPropertyStateContainer;
 //	OutputBufferPropertyStateContainer * m_outputBufferProperties;
 //
 //	bool isPostProcessingEnabled;
@@ -189,7 +189,7 @@
 //
 //private:
 //	// input for post-processing
-//	typedef vgeGL::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::PostProcessingStateContainer PostProcessingStateContainer;
 //	PostProcessingStateContainer * m_postProcessing;
 //
 //	// OutputBuffers/PostProcessing
@@ -199,35 +199,35 @@
 //	float m_lastCurrentScaleForVertex;
 //
 //	// Initializes fbo 0 and 1 internal buffers for ping-pong rendering (i.e. PREVIOUS0, OUTPUT_TMP0)
-//	void stageInitializePostProcessingBuffers( vgeGL::engine::Engine * engine );
+//	void stageInitializePostProcessingBuffers( vgeGLBase::engine::Engine * engine );
 //
 //
 //	// Configures fragment shader stages FRAGMENT_OUTPUT_DECLARATION and FRAGMENT_OUTPUT
-//	void stageConfigurePostProcessing( vgeGL::engine::Engine * engine );
+//	void stageConfigurePostProcessing( vgeGLBase::engine::Engine * engine );
 //
 //	// Apply the post-processing and blits the result.
-//	void stagePostProcessing( vgeGL::engine::Engine * engine );
+//	void stagePostProcessing( vgeGLBase::engine::Engine * engine );
 //
 //public: // for technique::DepthOfField
 //	// post-processing core details
-//	const vgd::Shp< vgeGL::rc::FrameBufferObject > applyPostProcessing(
-//		vgeGL::engine::Engine * engine,
+//	const vgd::Shp< vgeGLBase::rc::FrameBufferObject > applyPostProcessing(
+//		vgeGLBase::engine::Engine * engine,
 //		std::vector< vgd::Shp< vgd::node::Texture2D > >&	outputBuffers,
 //		PostProcessingStateContainer *						postProcessingContainer );
 //
 //	bool isBlitEnabled;
 //
-//	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source );
-//	void blit( vgeGL::engine::Engine * engine, vgd::Shp< vgeGL::rc::FrameBufferObject > source, vgd::Shp< vgeGL::rc::FrameBufferObject > destination );
+//	void blit( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::FrameBufferObject > source );
+//	void blit( vgeGLBase::engine::Engine * engine, vgd::Shp< vgeGLBase::rc::FrameBufferObject > source, vgd::Shp< vgeGLBase::rc::FrameBufferObject > destination );
 //private:
 //
 //	// OVERLAY
 //	bool renderOverlays;
 //
-//	typedef vgeGL::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
+//	typedef vgeGLBase::engine::GLSLState::OverlayStateContainer OverlayStateContainer;
 //	OverlayStateContainer * m_overlays;
 //
-//	void stageOverlays( vgeGL::engine::Engine * engine );
+//	void stageOverlays( vgeGLBase::engine::Engine * engine );
 //
 //
 ////
@@ -236,12 +236,12 @@
 //	 */
 //	//@{
 //
-//	void stageInitializeOutputBuffers( vgeGL::engine::Engine * engine );
-//	void initializeEngineBuffers( vgeGL::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
+//	void stageInitializeOutputBuffers( vgeGLBase::engine::Engine * engine );
+//	void initializeEngineBuffers( vgeGLBase::engine::Engine * engine, OutputBufferPropertyStateContainer * outputBufferProperties );
 //public: // for subtechniques (DepthOfField and co)
 //		typedef std::vector< vgd::Shp< vgd::node::Texture2D > > Texture2DVector;
 //		vgd::Shp< vgd::node::FrameBuffer >			m_frameBuffer;
-//		vgd::Shp< vgeGL::rc::FrameBufferObject > 	m_fbo;
+//		vgd::Shp< vgeGLBase::rc::FrameBufferObject > 	m_fbo;
 //		vgd::Shp< Texture2DVector >					m_textures;		///< textures for FBO
 //
 //
@@ -253,7 +253,7 @@
 //	vgd::Shp< vgd::node::Texture2D >				m_blackTexture2D; // @todo moves in Engine or in a repository ?
 //	//@}
 //
-//	typedef vgd::Shp< vgeGL::technique::SubTechnique > SubTechniqueShp;
+//	typedef vgd::Shp< vgeGLBase::technique::SubTechnique > SubTechniqueShp;
 //	typedef std::vector< SubTechniqueShp > TechniqueContainer;
 //	typedef TechniqueContainer::const_iterator TechniqueContainerConstIterator;
 //	typedef TechniqueContainer::iterator TechniqueContainerIterator;
@@ -261,14 +261,14 @@
 //
 //// @todo only glo FBO
 //	//typedef std::vector< vgd::Shp< vgd::node::Texture2D > > TextureContainer;
-//	//createsFBORetValType createsFBO( vgeGL::engine::Engine * engine, std::vector< AttachmentType > attachments, std::back_insert_iterator< TextureContainer > backInserter );
+//	//createsFBORetValType createsFBO( vgeGLBase::engine::Engine * engine, std::vector< AttachmentType > attachments, std::back_insert_iterator< TextureContainer > backInserter );
 //};
 //
 //
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_TECHNIQUE_FORWARDRENDERING_HPP
 //

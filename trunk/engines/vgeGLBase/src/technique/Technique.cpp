@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/technique/Technique.hpp"
+//#include "vgeGLBase/technique/Technique.hpp"
 //
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
-//#include "vgeGL/engine/ProgramGenerator.hpp"
-////#include "vgeGL/engine/ShaderGenerator.hpp"
-//#include "vgeGL/pass/Pass.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/ProgramGenerator.hpp"
+////#include "vgeGLBase/engine/ShaderGenerator.hpp"
+//#include "vgeGLBase/pass/Pass.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace technique
@@ -37,8 +37,8 @@
 //	}
 //
 //	//
-//	using vgeGL::engine::GLState;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	vgAssert( m_engine->getGLStateStack().getSize() == 1 );
 //	vgAssert( m_engine->getGLSLStateStack().getSize() == 1 );
@@ -76,7 +76,7 @@
 //	vge::technique::Technique::endPass();
 //
 //	// @todo doc
-//	//dynamic_cast<vgeGL::engine::Engine*>(getEngine())->setOutputBuffers();
+//	//dynamic_cast<vgeGLBase::engine::Engine*>(getEngine())->setOutputBuffers();
 //
 //	if ( isGL_GREMEDY_string_marker() )
 //	{
@@ -87,14 +87,14 @@
 //
 //
 //
-//vgeGL::engine::Engine * Technique::glEngine() const
+//vgeGLBase::engine::Engine * Technique::glEngine() const
 //{
 //	return m_engine;
 //}
 //
 //
 //
-//void Technique::prepareEval( vgeGL::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements )
+//void Technique::prepareEval( vgeGLBase::engine::Engine *engine, vge::visitor::TraverseElementVector* traverseElements )
 //{
 //	//
 //	::vge::technique::Technique::prepareEval( engine, traverseElements );
@@ -103,8 +103,8 @@
 //	m_engine = engine;
 //
 //	//
-//	using vgeGL::engine::GLState;
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLState;
+//	using vgeGLBase::engine::GLSLState;
 //
 //	engine->getGLStateStack().clear( vgd::makeShp(new GLState()) );
 //	engine->getGLSLStateStack().clear( vgd::makeShp(new GLSLState(engine->getMaxTexUnits())) );
@@ -169,5 +169,5 @@
 //
 //} // namespace technique
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

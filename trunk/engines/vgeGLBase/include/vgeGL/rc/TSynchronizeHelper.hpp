@@ -8,32 +8,32 @@
 //
 //#include <vgd/field/DirtyFlag.hpp>
 //
-//#include "vgeGL/vgeGL.hpp"
-//#include "vgeGL/engine/Engine.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace rc
 //{
 //
 ///**
-// * @brief Helper used in vgeGL::handler::painter::Node::apply(...) in order to simplify the code of this method.
+// * @brief Helper used in vgeGLBase::handler::painter::Node::apply(...) in order to simplify the code of this method.
 // * Use dirty flag of the node (vgd::Node::getDFNode()).
 // *
 // * @remarks The handlerType must implements :
-// * - void synchronize( vgeGL::engine::Engine* engine, nodeType* node, GLResourceType* rc );
+// * - void synchronize( vgeGLBase::engine::Engine* engine, nodeType* node, GLResourceType* rc );
 // */
 //template< typename GLResourceType, typename nodeType, typename handlerType >
-//void applyUsingSynchronize(	vgeGL::engine::Engine*	engine, nodeType* node,
+//void applyUsingSynchronize(	vgeGLBase::engine::Engine*	engine, nodeType* node,
 //							handlerType*			handler )
 //{
 //	// CREATE/RETRIEVE THE RESOURCE
 //
 //	// get the resource manager
-//	using vgeGL::engine::Engine;
+//	using vgeGLBase::engine::Engine;
 //	vgd::Shp< Engine::GLManagerType > rGLManager = engine->getGLManager();
 //
 //	// get associated resource
@@ -90,7 +90,7 @@
 //
 //} // namespace rc
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_RC_TSYNCHRONIZEHELPER_HPP
 //

@@ -3,17 +3,17 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/EngineProperties.hpp"
+//#include "vgeGLBase/handler/painter/EngineProperties.hpp"
 //
 //#include <vgd/node/EngineProperties.hpp>
 //#include <vge/service/Painter.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/engine/GLSLState.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/engine/GLSLState.hpp"
 //#include <gle/OpenGLExtensionsGen.hpp>
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -54,15 +54,15 @@
 //	// TEXTURE
 //	vge::handler::basic::EngineProperties::apply( engine, node );
 //
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::EngineProperties* >(node) != 0 );
 //	vgd::node::EngineProperties *engineProperties = dynamic_cast< vgd::node::EngineProperties* >(node);
 //
 //
 //	// Retrieves GLSL state
-//	using vgeGL::engine::GLSLState;
+//	using vgeGLBase::engine::GLSLState;
 //	GLSLState& state = glEngine->getGLSLState();
 //
 //
@@ -104,5 +104,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

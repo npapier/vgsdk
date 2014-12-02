@@ -6,7 +6,7 @@
 //#ifndef _VGEGLBASE_HANDLER_PAINTER_SURROUNDSCALE_HPP
 //#define _VGEGLBASE_HANDLER_PAINTER_SURROUNDSCALE_HPP
 //
-//#include "vgeGL/vgeGL.hpp"
+//#include "vgeGLBase/vgeGLBase.hpp"
 //
 //#include <vge/handler/painter/SingleAttribute.hpp>
 //#include <vge/handler/SurroundScale.hpp>
@@ -19,7 +19,7 @@
 //	}
 //}
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	namespace engine
 //	{
@@ -29,7 +29,7 @@
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //	
 //namespace handler
@@ -57,7 +57,7 @@
 //	
 //	void	setToDefaults	();
 //	
-//	void	paint				( vgeGL::engine::Engine*, vgd::node::SurroundScale* );
+//	void	paint				( vgeGLBase::engine::Engine*, vgd::node::SurroundScale* );
 //};
 //
 //
@@ -66,7 +66,7 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //
 //#endif //#ifndef _VGEGLBASE_HANDLER_PAINTER_SURROUNDSCALE_HPP
 //

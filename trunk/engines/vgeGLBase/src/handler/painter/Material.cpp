@@ -3,15 +3,15 @@
 //// as published by the Free Software Foundation.
 //// Author Nicolas Papier
 //
-//#include "vgeGL/handler/painter/Material.hpp"
+//#include "vgeGLBase/handler/painter/Material.hpp"
 //
 //#include <vgd/node/Material.hpp>
-//#include "vgeGL/engine/Engine.hpp"
-//#include "vgeGL/rc/TDisplayListHelper.hpp"
+//#include "vgeGLBase/engine/Engine.hpp"
+//#include "vgeGLBase/rc/TDisplayListHelper.hpp"
 //
 //
 //
-//namespace vgeGL
+//namespace vgeGLBase
 //{
 //
 //namespace handler
@@ -39,8 +39,8 @@
 //
 //void Material::apply( vge::engine::Engine * engine, vgd::node::Node * node )
 //{
-//	assert( dynamic_cast< vgeGL::engine::Engine* >(engine) != 0 );
-//	vgeGL::engine::Engine *glEngine = static_cast< vgeGL::engine::Engine* >(engine);
+//	assert( dynamic_cast< vgeGLBase::engine::Engine* >(engine) != 0 );
+//	vgeGLBase::engine::Engine *glEngine = static_cast< vgeGLBase::engine::Engine* >(engine);
 //
 //	assert( dynamic_cast< vgd::node::Material* >(node) != 0 );
 //	vgd::node::Material *material = static_cast< vgd::node::Material* >(node);
@@ -62,7 +62,7 @@
 //	}
 //
 //	//
-//	vgeGL::rc::applyUsingDisplayList< vgd::node::Material, Material >( engine, node, this );
+//	vgeGLBase::rc::applyUsingDisplayList< vgd::node::Material, Material >( engine, node, this );
 //
 //	// DIFFUSE/OPACITY
 //	const vgm::Vec3f& color3 = glEngine->getGLState().getDiffuse();
@@ -99,7 +99,7 @@
 //
 //
 //
-//void Material::paint( vgeGL::engine::Engine * engine, vgd::node::Material * material )
+//void Material::paint( vgeGLBase::engine::Engine * engine, vgd::node::Material * material )
 //{
 //	//
 //	bool		bDefined;
@@ -163,5 +163,5 @@
 //
 //} // namespace handler
 //
-//} // namespace vgeGL
+//} // namespace vgeGLBase
 //

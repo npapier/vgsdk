@@ -6,12 +6,12 @@
 ////#ifndef _VGEGLBASE_TECHNIQUE_OUTLINING_H
 ////#define _VGEGLBASE_TECHNIQUE_OUTLINING_H
 ////
-////#include "vgeGL/vgeGL.hpp"
-////#include "vgeGL/technique/Technique.hpp"
+////#include "vgeGLBase/vgeGLBase.hpp"
+////#include "vgeGLBase/technique/Technique.hpp"
 ////
 ////
 ////
-////namespace vgeGL
+////namespace vgeGLBase
 ////{
 ////	
 ////namespace technique
@@ -93,7 +93,7 @@
 ////
 ////} // namespace technique
 ////
-////} // namespace vgeGL
+////} // namespace vgeGLBase
 ////
 ////#endif //#ifndef _VGEGLBASE_TECHNIQUE_OUTLINING_H
 //
