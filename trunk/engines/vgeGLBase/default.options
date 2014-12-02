@@ -1,0 +1,33 @@
+description	= '(V)ersatile (G)raphical (E)valuation with Open(GL)'
+vcsUse		= 'no'
+type		= 'shared'
+version		= '0-5'
+uses		= [ 'boost', 'glu', 'opengl' ]
+libs		= [ 'glo 0-3', 'vgm 0-5', 'vgd 0-5', 'vgDebug 0-5', 'vge 0-5', 'sbf 0-0' ]
+deps		= [ '../../dependencies/glo', '../../core', '../vge' ]
+
+options = []
+
+from SCons.Script.SConscript import SConsEnvironment
+env = SConsEnvironment.sbf.myEnv
+
+emscriptenInStages = 'emcc' in env['stages']
+
+# OpenGL related stuff
+if	'OPENGLES2' in env['configFlags'] or emscriptenInStages:
+	defines = ['__OPENGLES2__']
+	if not emscriptenInStages:	uses.append( 'angle' )
+else:
+	defines = ['__OPENGL3__']
+	libs.append( 'gle 0-3' )
+	deps.append( '../../dependencies/gle' )
+
+	options.append( 'USE_VGALG' )
+
+if 'USE_VGALG' in options:
+	defines.append( '__USE_VGALG__' )
+	libs.append( 'vgAlg 0-5' )
+	deps.append( '../../algorithms/vgAlg' )
+
+#defines.append('__EMSCRIPTEN__') to simulate emscripten build with cl (DEBUG)
+# @todo uses=opengl, glu
