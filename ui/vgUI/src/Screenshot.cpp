@@ -36,7 +36,7 @@
 #include <vgd/visitor/helpers.hpp>
 #include <vgDebug/helpers.hpp>
 #include <vgio/helpers.hpp>
-#include <vgeGL/engine/Engine.hpp>
+#include <vgeGLBase/engine/Engine.hpp>
 
 
 #include <vgd/basic/ImageUtilities.hpp>

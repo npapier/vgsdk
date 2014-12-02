@@ -6,7 +6,7 @@
 #ifndef _VGUI_EVENT_EVENTPROCESSOR_HPP
 #define _VGUI_EVENT_EVENTPROCESSOR_HPP
 
-#include <vgeGL/event/EventProcessor.hpp>
+#include <vgeGLBase/event/EventProcessor.hpp>
 #include "vgUI/vgUI.hpp"
 
 namespace vgUI
@@ -27,7 +27,7 @@ namespace event
 /**
  * @brief Event processor with a reference on a canvas.
  */
-struct VGUI_API EventProcessor : public ::vgeGL::event::EventProcessor
+struct VGUI_API EventProcessor : public ::vgeGLBase::event::EventProcessor
 {
 	/**
 	 * @name Constructor

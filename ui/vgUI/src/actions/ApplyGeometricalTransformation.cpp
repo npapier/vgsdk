@@ -3,7 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-
+#ifdef __USE_VGALG__
 #include "vgUI/actions/ApplyGeometricalTransformation.hpp"
 
 #include <vgAlg/actions/ApplyGeometricalTransformation.hpp>
@@ -35,3 +35,5 @@ const bool ApplyGeometricalTransformation::isValide( State state )
 } // namespace actions
 
 } // namespace vgUI
+
+#endif // __USE_VGALG__

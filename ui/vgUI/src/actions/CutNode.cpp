@@ -3,6 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
+#ifdef __USE_VGALG__
 
 #include "vgUI/actions/CutNode.hpp"
 
@@ -42,3 +43,5 @@ const bool CutNode::isValide( State state )
 } // namespace actions
 
 } // namespace vgUI
+
+#endif // #ifdef __USE_VGALG__

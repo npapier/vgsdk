@@ -16,16 +16,26 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
+
+#ifdef __USE_DDC__
 #include <displayDriverConnector/displayDriverConnector.hpp>
+#endif
+
+#ifdef __USE_GLE__
 #include <gle/gl.h>
 #include <gle/OpenGLExtensionsGen.hpp>
 #include <gle/WrapperGLXGen.hpp>
+#endif
+
 #include <glo/GLSLProgram.hpp>
 
 #include <sbf/pkg/Module.hpp>
 
+#ifdef __USE_VGCAIRO__
 #include <vgCairo/helpers.hpp>
 #include <vgCairo/ImageSurface.hpp>
+#endif
+
 #include <vgd/basic/Image.hpp>
 #include <vgd/event/KeyboardButtonEvent.hpp>
 #include <vgd/event/Location2Event.hpp>
@@ -39,7 +49,7 @@
 #include <vgd/node/Overlay.hpp>
 #include <vgd/visitor/helpers.hpp>
 #include <vgDebug/helpers.hpp>
-#include <vgeGL/engine/Engine.hpp>
+#include <vgeGLBase/engine/Engine.hpp>
 
 #include "vgUI/Screenshot.hpp"
 
@@ -54,8 +64,11 @@ namespace
 {
 
 static uint32					m_canvasCount	= 0;						///< Instance count of this class.
+
+#ifdef __USE_GLE__
 static Canvas::GleLogSystem		m_gleLogSystem	= Canvas::GLE_FILE_IN_VAR;	///< A value from GleLogSystem enumeration to specify the log system used by gle library.
 static std::ofstream			m_gleLogFile;								///< The gle.txt file
+#endif
 
 
 void logDebugVerticalSynchronizationState( Canvas * canvas )
@@ -84,7 +97,7 @@ void logDebugVerticalSynchronizationState( Canvas * canvas )
 }
 
 
-
+#ifdef __USE_GLE__
 void Canvas::setGleLogSystem( const GleLogSystem logger )
 {
 	m_gleLogSystem = logger;
@@ -96,19 +109,21 @@ const Canvas::GleLogSystem Canvas::getGleLogSystem()
 {
 	return m_gleLogSystem;
 }
-
+#endif
 
 
 Canvas::Canvas( const Canvas * sharedCanvas, const bool newOpenGLContextSharingObjects )
-:	vgeGL::engine::SceneManager( sharedCanvas ?
-		vgd::makeShp(new vgeGL::engine::Engine(sharedCanvas->getGLEngine().get())) :
-		vgd::makeShp(new vgeGL::engine::Engine())
+:	vgeGLBase::engine::SceneManager( sharedCanvas ?
+		vgd::makeShp(new vgeGLBase::engine::Engine(sharedCanvas->getGLEngine().get())) :
+		vgd::makeShp(new vgeGLBase::engine::Engine())
 		),
 	m_sharedCanvas					( sharedCanvas															),
 	//m_drawable						( 0																	),
 	m_glc							( 0																		),
+#ifdef __USE_GLE__
 	m_gleContext					( sharedCanvas ?
 		sharedCanvas->m_gleContext : vgd::makeShp( new gle::OpenGLExtensionsGen(getGleOutputStream()) )		),
+#endif
 	m_initialVerticalSynchronization( ADAPTIVE_VSYNC														),
 	m_scheduleScreenshot			( false																	),
 	m_scheduleVideoCapture			( false																	),
@@ -150,6 +165,7 @@ void Canvas::privateResetSceneGraph()
 	using vgd::node::Overlay;
 
 	m_debugOverlayContainer	= vgd::node::MultiSwitch::create(	"DEBUG_OVERLAY_CONTAINER"	);
+
 	m_overlayForFPS = Overlay::create( "FPS" );
 	m_overlayForFPS->setMultiAttributeIndex(-1);
 	m_debugOverlayContainer->addChild( m_overlayForFPS );
@@ -159,10 +175,12 @@ void Canvas::privateResetSceneGraph()
 	m_overlayForFPS->setPosition( vgm::Vec2f(1.f - width, 0.0f) );
 	m_overlayForFPS->setSize( vgm::Vec2f(width, width * 32.f / 128.f) );
 
+#ifdef __USE_VGCAIRO__
 	//
 	using vgCairo::ImageSurface;
 	vgd::Shp< ImageSurface > imageSurface( new ImageSurface(128, 32) );
 	m_overlayForFPS->setImage( imageSurface );
+#endif
 }
 
 
@@ -188,6 +206,7 @@ const bool Canvas::setCurrent()
 		vgLogDebug("glc_set_current returns false");
 	}
 
+#ifdef __USE_GLE__
 	// gle must be made current
 	if ( retVal )
 	{
@@ -203,6 +222,7 @@ const bool Canvas::setCurrent()
 		// gle must be not current.
 		gleSetCurrent( 0 );
 	}
+#endif
 
 	return retVal;
 }
@@ -211,16 +231,11 @@ const bool Canvas::setCurrent()
 //#define USE_GDEBUGGER
 const bool Canvas::unsetCurrent()
 {
-#ifdef USE_GDEBUGGER
-	// code path to be able to modify/recompile GLSL shaders in gDEBugger.
-	const bool retVal = true;
-	gleSetCurrent( 0 );
-#else
 	// normal code path
 	const bool retVal = (m_glc != 0) ? (glc_unset_current( glc() ) != 0) : false;
+#ifdef __USE_GLE__
 	gleSetCurrent( 0 );
 #endif
-
 	return retVal;
 }
 
@@ -294,13 +309,18 @@ void Canvas::setInitialVerticalSynchronization( const SwapControlMode mode )
 const bool Canvas::hasVerticalSynchronizationControl() const
 {
 	vgAssertN( isCurrent(), "OpenGL context not current" );
-
-#ifdef _WIN32
-	return isWGL_EXT_swap_control();
-#elif __MACOSX__
-	#error "Platform not yet supported."
+#ifdef __USE_GLE__
+	#ifdef _WIN32
+		return isWGL_EXT_swap_control();
+	#elif __MACOSX__
+		#error "Platform not yet supported."
+	#else
+		return isGLX_EXT_swap_control();
+	#endif
 #else
-	return isGLX_EXT_swap_control();
+	#pragma message ("Canvas::hasVerticalSynchronizationControl(): not supported")
+	vgAssertN(false, "Canvas::hasVerticalSynchronizationControl() : not supported");
+	return false;
 #endif
 }
 
@@ -309,13 +329,18 @@ const bool Canvas::hasVerticalSynchronizationControl() const
 const bool Canvas::hasAdaptiveVerticalSynchronizationControl() const
 {
 	vgAssertN( isCurrent(), "OpenGL context not current" );
-
-#ifdef _WIN32
-	return isWGL_EXT_swap_control_tear();
-#elif __MACOSX__
-	#error "Platform not yet supported."
+#ifdef __USE_GLE__
+	#ifdef _WIN32
+		return isWGL_EXT_swap_control_tear();
+	#elif __MACOSX__
+		#error "Platform not yet supported."
+	#else
+		return isGLX_EXT_swap_control_tear();
+	#endif
 #else
-	return isGLX_EXT_swap_control_tear();
+	#pragma message ("Canvas::hasAdaptiveVerticalSynchronizationControl(): not supported")
+	vgAssertN(false, "Canvas::hasAdaptiveVerticalSynchronizationControl() : not supported");
+	return false;
 #endif
 }
 
@@ -324,52 +349,57 @@ const bool Canvas::hasAdaptiveVerticalSynchronizationControl() const
 void Canvas::setVerticalSynchronization( const SwapControlMode mode )
 {
 	vgAssertN( isCurrent(), "OpenGL context not current" );
-
-#ifdef _WIN32
-	if ( isWGL_EXT_swap_control() )
-	{
-		if ( isWGL_EXT_swap_control_tear() )
+#ifdef __USE_GLE__
+	#ifdef _WIN32
+		if ( isWGL_EXT_swap_control() )
 		{
-			wglSwapIntervalEXT( mode );
-		}
-		else
-		{
-			vgLogDebug("WGL_EXT_swap_control_tear not supported.");
-			wglSwapIntervalEXT( (mode == ADAPTIVE_VSYNC) ? VSYNC : mode );
-		}
-	}
-	else
-	{
-		vgLogDebug("WGL_EXT_swap_control not supported.");
-	}
-#elif __MACOSX__
-	#error "Platform not yet supported."
-#else
-	if ( isGLX_EXT_swap_control() )
-	{
-		Display *dpy = glXGetCurrentDisplay();
-		GLXDrawable drawable = glXGetCurrentDrawable();
-		if ( drawable )
-		{
-			if ( isGLX_EXT_swap_control_tear() )
+			if ( isWGL_EXT_swap_control_tear() )
 			{
-				glXSwapIntervalEXT(dpy, drawable, mode ); 
+				wglSwapIntervalEXT( mode );
 			}
 			else
 			{
-				vgLogDebug("GLX_EXT_swap_control_tear not supported.");
-				glXSwapIntervalEXT( dpy, drawable, (mode == ADAPTIVE_VSYNC) ? VSYNC : mode );
+				vgLogDebug("WGL_EXT_swap_control_tear not supported.");
+				wglSwapIntervalEXT( (mode == ADAPTIVE_VSYNC) ? VSYNC : mode );
 			}
 		}
 		else
 		{
-			vgLogDebug("Unable to retrieve drawable");
+			vgLogDebug("WGL_EXT_swap_control not supported.");
 		}
-	}
-	else
-	{
-		vgLogDebug("GLX_EXT_swap_control not supported.");
-	}
+	#elif __MACOSX__
+		#error "Platform not yet supported."
+	#else
+		if ( isGLX_EXT_swap_control() )
+		{
+			Display *dpy = glXGetCurrentDisplay();
+			GLXDrawable drawable = glXGetCurrentDrawable();
+			if ( drawable )
+			{
+				if ( isGLX_EXT_swap_control_tear() )
+				{
+					glXSwapIntervalEXT(dpy, drawable, mode ); 
+				}
+				else
+				{
+					vgLogDebug("GLX_EXT_swap_control_tear not supported.");
+					glXSwapIntervalEXT( dpy, drawable, (mode == ADAPTIVE_VSYNC) ? VSYNC : mode );
+				}
+			}
+			else
+			{
+				vgLogDebug("Unable to retrieve drawable");
+			}
+		}
+		else
+		{
+			vgLogDebug("GLX_EXT_swap_control not supported.");
+		}
+	#endif
+#else
+	#pragma message ("Canvas::setVerticalSynchronization(): not supported")
+	vgAssertN(false, "Canvas::setVerticalSynchronization() : not supported");
+	return false;
 #endif
 }
 
@@ -378,42 +408,47 @@ void Canvas::setVerticalSynchronization( const SwapControlMode mode )
 const Canvas::SwapControlMode Canvas::getVerticalSynchronization() const
 {
 	vgAssertN( isCurrent(), "OpenGL context not current" );
-
-#ifdef _WIN32
-	if ( isWGL_EXT_swap_control() )
-	{
-		const int retVal = wglGetSwapIntervalEXT();
-		return static_cast<SwapControlMode>(retVal);
-	}
-	else
-	{
-		vgLogDebug("WGL_EXT_swap_control not supported.");
-		return VSYNC;
-	}
-#elif __MACOSX__
-	#error "Platform not yet supported."
-#else
-	if ( isGLX_EXT_swap_control() )
-	{
-		Display *dpy = glXGetCurrentDisplay();
-		GLXDrawable drawable = glXGetCurrentDrawable();
-		if ( drawable )
+#ifdef __USE_GLE__
+	#ifdef _WIN32
+		if ( isWGL_EXT_swap_control() )
 		{
-			uint swapInterval;
-			glXQueryDrawable( dpy, drawable, GLX_SWAP_INTERVAL_EXT, &swapInterval );
-			return static_cast<SwapControlMode>(swapInterval);
+			const int retVal = wglGetSwapIntervalEXT();
+			return static_cast<SwapControlMode>(retVal);
 		}
 		else
 		{
-			vgLogDebug("Unable to retrieve drawable");
+			vgLogDebug("WGL_EXT_swap_control not supported.");
 			return VSYNC;
 		}
-	}
-	else
-	{
-		vgLogDebug("GLX_EXT_swap_control not supported.");
-		return VSYNC;
-	}
+	#elif __MACOSX__
+		#error "Platform not yet supported."
+	#else
+		if ( isGLX_EXT_swap_control() )
+		{
+			Display *dpy = glXGetCurrentDisplay();
+			GLXDrawable drawable = glXGetCurrentDrawable();
+			if ( drawable )
+			{
+				uint swapInterval;
+				glXQueryDrawable( dpy, drawable, GLX_SWAP_INTERVAL_EXT, &swapInterval );
+				return static_cast<SwapControlMode>(swapInterval);
+			}
+			else
+			{
+				vgLogDebug("Unable to retrieve drawable");
+				return VSYNC;
+			}
+		}
+		else
+		{
+			vgLogDebug("GLX_EXT_swap_control not supported.");
+			return VSYNC;
+		}
+	#endif
+#else
+	#pragma message ("Canvas::getVerticalSynchronization(): not supported")
+	vgAssertN(false, "Canvas::getVerticalSynchronization() : not supported");
+	return false;
 #endif
 }
 
@@ -430,7 +465,7 @@ void Canvas::switchFullscreen()
  */
 void Canvas::onEvent( vgd::Shp< vgd::event::Event > event )
 {
-	vgeGL::engine::SceneManager::onEvent( event );
+	vgeGLBase::engine::SceneManager::onEvent( event );
 
 	if( m_debugEvents )
 	{
@@ -531,7 +566,7 @@ void Canvas::paint( const vgm::Vec2i& size, const bool bUpdateBoundingBox )
 			m_timeBase	= beginPaint;
 		}
 
-		::vgeGL::engine::SceneManager::paint( size, getBoundingBoxUpdate() );
+		::vgeGLBase::engine::SceneManager::paint( size, getBoundingBoxUpdate() );
 
 		// Capture screenshot or video
 		using vgd::basic::Image;
@@ -600,7 +635,7 @@ void Canvas::paint( const vgm::Vec2i& size, const bool bUpdateBoundingBox )
 						void *& captureImageData = recycledShot->getImageData( what );
 
 						// captures using a recycled image
-						using vgeGL::engine::Engine;
+						using vgeGLBase::engine::Engine;
 						getGLEngine()->captureGLFramebuffer( static_cast<Engine::CaptureBufferType>(what), capturedImage, captureImageData );
 					}
 
@@ -665,7 +700,7 @@ void Canvas::paint( const vgm::Vec2i& size, const bool bUpdateBoundingBox )
 
 void Canvas::resize( const vgm::Vec2i& size )
 {
-	vgeGL::engine::SceneManager::resize( size );
+	vgeGLBase::engine::SceneManager::resize( size );
 
 	// Forward a resize notification event.
 	vgd::Shp< vgd::event::Event > event( new vgd::event::SizeEvent(this, vgd::event::detail::GlobalButtonStateSet::get(), size) );
@@ -829,17 +864,17 @@ void Canvas::setFrameTime( const int newFrameTime )
 
 
 
-
+#ifdef __USE_GLE__
 gle::OpenGLExtensionsGen * Canvas::getGleContext()
 {
 	return m_gleContext ? m_gleContext.get() : 0;
 }
-
+#endif
 
 
 const uint Canvas::increaseFrameCount()
 {
-	const uint count = vgeGL::engine::SceneManager::increaseFrameCount();
+	const uint count = vgeGLBase::engine::SceneManager::increaseFrameCount();
 
 	if ( isDebugOverlay() )
 	{
@@ -882,7 +917,7 @@ const bool Canvas::startOpenGLContext()
 		}
 
 		// Sets the desired property for the context
-		const vgeGL::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
+		const vgeGLBase::engine::GLContextProperties& requestedProperties = m_requestedGLContextProperties;
 		glc_drawable_set_stereo( drawable, requestedProperties.enableQuadBufferStereo() );
 
 		// Next, creates the glc context (shared or not)
@@ -922,22 +957,25 @@ const bool Canvas::startOpenGLContext()
 		if ( glbool )
 		{
 			vgLogMessage("OpenGL context with stereo support");
-			m_currentGLContextProperties = vgeGL::engine::GLContextProperties(true);
+			m_currentGLContextProperties = vgeGLBase::engine::GLContextProperties(true);
 		}
 		else
 		{
-			m_currentGLContextProperties = vgeGL::engine::GLContextProperties(false);
+			m_currentGLContextProperties = vgeGLBase::engine::GLContextProperties(false);
 			vgLogMessage("OpenGL context without stereo support");
 		}
 		m_hasCurrentGLContextProperties = true;
 
+#ifdef __USE_DDC__
 		// Retrieves and prints informations about primary display adapter
 		ddc_display_device_info_t displayDevice;
 		ddc_get_primary_display_device_informations( &displayDevice );
 
 		const std::string ddi = ddc_get_display_device_info(&displayDevice);
 		getGleContext()->logEndl(ddi);
+#endif
 
+#ifdef __USE_GLE__
 		// Finally, initializes gle and sets it current
 // @todo only if not already done
 		vgLogMessage("Start gle initialization...");
@@ -946,7 +984,7 @@ const bool Canvas::startOpenGLContext()
 		vgLogMessage("gle initialization successfully completed.");
 
 		gleSetCurrent( getGleContext() );
-
+#endif
 		vgAssertN( isCurrent(), "Internal error." );
 
 		return true;
@@ -965,9 +1003,11 @@ const bool Canvas::shutdownOpenGLContext()
 {
 	if ( m_glc != 0 )
 	{
+#ifdef __USE_GLE__
 		// Cleans gle context
 		gleSetCurrent(0);
 		vgLogDebug("gle context unset current.");
+#endif
 
 		// Deletes glc context
 		glc_destroy( glc() );
@@ -987,6 +1027,91 @@ const bool Canvas::hasAnOpenGLContext() const
 {
 	return m_glc != 0;
 }
+
+
+#ifndef __USE_GLE__
+// @todo
+// Duplicated code from gle/glHelpers.hpp
+namespace
+{
+	// OpenGL
+	const int gleGetOpenGLMajorVersion()
+	{
+		assert(gleIsOpenGLCurrent());
+
+		// version = "4.0.10151 Compatibility Profile Context"
+		const char * version = (char*)glGetString(GL_VERSION);
+
+		const int major = version[0] - '0';
+		return major;
+	}
+
+
+	const int gleGetOpenGLMinorVersion()
+	{
+		assert(gleIsOpenGLCurrent());
+
+		const char * version = (char*)glGetString(GL_VERSION);
+
+		const int minor = version[2] - '0';
+		return minor;
+	}
+
+
+	const float gleGetOpenGLVersion()
+	{
+		assert(gleIsOpenGLCurrent());
+
+		const char * version = (char*)glGetString(GL_VERSION);
+
+		const float major = static_cast<float>(version[0] - '0');
+		const float minor = static_cast<float>(version[2] - '0');
+
+		float versionNumber = major + minor / 10.f;
+		return versionNumber;
+	}
+
+
+
+	// GLSL
+	const int gleGetGLSLMajorVersion()
+	{
+		assert(gleIsOpenGLCurrent());
+
+		// version = "4.00"
+		const char * version = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+		const int major = version[0] - '0';
+		return major;
+	}
+
+
+	const int gleGetGLSLMinorVersion()
+	{
+		assert(gleIsOpenGLCurrent());
+
+		const char * version = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+		const int minor = version[2] - '0';
+		return minor;
+	}
+
+
+	const float gleGetGLSLVersion()
+	{
+		assert(gleIsOpenGLCurrent());
+
+		const char * version = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+		const float major = static_cast<float>(version[0] - '0');
+		const float minor = static_cast<float>(version[2] - '0');
+
+		float versionNumber = major + minor / 10.f;
+		return versionNumber;
+	}
+
+}
+#endif // #ifndef __USE_GLE__
 
 
 const bool Canvas::startVGSDK()
@@ -1034,13 +1159,20 @@ const bool Canvas::startVGSDK()
 		}
 		else
 		{
+#ifdef __OPENGLES2__
+			const float requiredOpenGLVersion = 2.f;
+			const float requiredGLSLVersion = 1.f;
+#else
+			const float requiredOpenGLVersion = 4.2f;
+			const float requiredGLSLVersion = 4.2f;
+#endif
 			// Checks full mode
-			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= 4.2, GLSL version >= 4.2)...");
+			vgLogMessage("Checks OpenGL requirements for vgsdk (i.e. OpenGL version >= %f, GLSL version >= %f)...", requiredOpenGLVersion, requiredGLSLVersion);
 			vgLogMessage("OpenGL %i.%i found", gleGetOpenGLMajorVersion(), gleGetOpenGLMinorVersion() );
 			vgLogMessage("GLSL %i.%i found", gleGetGLSLMajorVersion(), gleGetGLSLMinorVersion() );
 
-			if (	vgm::greaterThanEqual(gleGetOpenGLVersion(), 4.2f) &&
-					vgm::greaterThanEqual(gleGetGLSLVersion(), 4.2f) )
+			if (vgm::greaterThanEqual(gleGetOpenGLVersion(), requiredOpenGLVersion) &&
+				vgm::greaterThanEqual(gleGetGLSLVersion(), requiredGLSLVersion))
 			{
 				vgLogMessage("You have the full requirements for vgsdk.");
 				m_hasVGSDK = true;
@@ -1051,9 +1183,10 @@ const bool Canvas::startVGSDK()
 				m_hasVGSDK = false;
 				return m_hasVGSDK;
 			}
+
 		}
 
-		// Initializes vgeGL
+		// Initializes vgeGLBase
 // @todo only for the first canvas
 		getGLEngine()->reset();
 
@@ -1203,6 +1336,7 @@ const bool Canvas::shutdownVGSDK()
 
 void Canvas::updateFPSOverlay()
 {
+#ifdef __USE_VGCAIRO__
 	// Updates fps overlay overlay
 	using vgCairo::ImageSurface;
 	vgd::Shp< ImageSurface > imageSurface = vgd::dynamic_pointer_cast< ImageSurface >( m_overlayForFPS->getImage() );
@@ -1277,10 +1411,14 @@ void Canvas::updateFPSOverlay()
 
 	// Updates the image (invalidates the image).
 	m_overlayForFPS->setImage( m_overlayForFPS->getImage() );
+#else
+	#pragma message ("Canvas::updateFPSOverlay(): not supported")
+	vgAssertN(false, "Canvas::updateFPSOverlay() : not supported");
+#endif
 }
 
 
-
+#ifdef __USE_GLE__
 std::ostream* Canvas::getGleOutputStream()
 {
 	const GleLogSystem currentGleLogSystem = getGleLogSystem();
@@ -1316,7 +1454,7 @@ std::ostream* Canvas::getGleOutputStream()
 		return &std::cout;
 	}
 }
-
+#endif
 
 
 void Canvas::startVideoCapture()
@@ -1346,7 +1484,7 @@ void Canvas::startVideoCapture()
 
 		// Configures buffering
 		using vgd::basic::Image;
-		using vgeGL::engine::Engine;
+		using vgeGLBase::engine::Engine;
 
 		// What to capture COLOR
 		m_whats.clear();
@@ -1394,11 +1532,12 @@ void Canvas::stopVideoCapture()
 
 
 
+#ifdef __USE_GLE__
 boost::filesystem::path Canvas::getGlePath()
 {
 	return sbf::pkg::Module::get()->getPathSafe(sbf::pkg::VarPath);
 }
-
+#endif
 
 
 glc_t * Canvas::glc() const

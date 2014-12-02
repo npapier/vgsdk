@@ -3,6 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
+#ifdef __USE_VGALG__
+
 #include "vgUI/actions/ComputeTangents.hpp"
 
 #include <vgAlg/actions/ComputeTangents.hpp>
@@ -35,3 +37,5 @@ const bool ComputeTangents::isValide( State state )
 } // namespace actions
 
 } // namespace vgUI
+
+#endif // #ifdef __USE_VGALG__

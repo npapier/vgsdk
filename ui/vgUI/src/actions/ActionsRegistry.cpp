@@ -3,7 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
-
+#ifdef __USE_VGALG__
 #include "vgUI/actions/ActionsRegistry.hpp"
 
 #include <vgAlg/actions/SelectedNode.hpp>
@@ -109,3 +109,5 @@ std::map< int, vgd::Shp< vgUI::actions::IActionUI > > ActionsRegistry::getHidden
 } // namespace actions
 
 } // namespace vgUI
+
+#endif // #ifdef __USE_VGALG__

@@ -3,6 +3,8 @@
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
+#ifdef __USE_VGALG__
+
 #include "vgUI/actions/ComputeNormals.hpp"
 
 #include <vgAlg/actions/ComputeNormals.hpp>
@@ -35,3 +37,5 @@ const bool ComputeNormals::isValide( State state )
 } // namespace actions
 
 } // namespace vgUI
+
+#endif // #ifdef __USE_VGALG__

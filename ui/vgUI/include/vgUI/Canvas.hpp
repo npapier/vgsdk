@@ -15,11 +15,13 @@
 #include <sbf/pkg/Module.hpp>
 #include <vgd/event/Source.hpp>
 
-#include <vgeGL/engine/SceneManager.hpp>
+#include <vgeGLBase/engine/SceneManager.hpp>
 
 #include "vgUI/vgUI.hpp"
 
+#ifdef __USE_GLE__
 namespace gle { struct OpenGLExtensionsGen; }
+#endif
 
 namespace vgd 
 { 
@@ -43,7 +45,7 @@ struct ScreenshotContainer;
  *
  * This class do some cool things internally :
  *
- * - Use the vgeGL::engine::SceneManager to link GUI and the scene graph.
+ * - Use the vgeGLBase::engine::SceneManager to link GUI and the scene graph.
  * - Initialize OpenGL and its extensions (with gle) to being used by vgsdk.
  * - Report OpenGL errors before and after rendering (paint and resize methods).
  * - switch to/from fullscreen mode
@@ -54,8 +56,9 @@ struct ScreenshotContainer;
  * @ingroup g_vgUIGroup
  * @ingroup g_layerplan
  */
-struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::Source
+struct VGUI_API Canvas : public vgeGLBase::engine::SceneManager, public vgd::event::Source
 {
+#ifdef __USE_GLE__
 	/**
 	 * @name gle log accessors
 	 */
@@ -92,6 +95,7 @@ struct VGUI_API Canvas : public vgeGL::engine::SceneManager, public vgd::event::
 	static boost::filesystem::path getGlePath();
 
 	//@}
+#endif
 
 
 	/**
@@ -507,10 +511,10 @@ protected:
 	 */
 	const bool hasAnOpenGLContext() const;
 
-
+#ifdef __USE_GLE__
 	// @todo documentation
 	gle::OpenGLExtensionsGen * getGleContext();
-
+#endif
 
 	// Overridden
 	const bool startVGSDK();
@@ -530,12 +534,14 @@ private:
 	 */
 	void updateFPSOverlay();
 
+#ifdef __USE_GLE__
 	/**
 	 * @brief Returns the output stream associated to the gle log system.
 	 *
 	 * @return the output stream
 	 */
 	static std::ostream* getGleOutputStream();
+#endif
 
 	void startVideoCapture();
 	void stopVideoCapture();
@@ -546,7 +552,10 @@ private:
 
 	//glc_drawable_t *						m_drawable;		///< The drawable associated to the canvas window
 	glc_t *									m_glc;			///< The GL context
+
+#ifdef __USE_GLE__
 	vgd::Shp< gle::OpenGLExtensionsGen >	m_gleContext;	///< gle main object to be able to access OpenGL extensions
+#endif
 
 	glc_t * glc() const;
 

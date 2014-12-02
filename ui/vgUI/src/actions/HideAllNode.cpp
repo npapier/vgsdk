@@ -3,6 +3,7 @@
 // as published by the Free Software Foundation.
 // Author Maxime Peresson
 
+#ifdef __USE_VGALG__
 
 #include "vgUI/actions/HideAllNode.hpp"
 
@@ -42,3 +43,5 @@ const bool HideAllNode::isValide( State state )
 } // namespace actions
 
 } // namespace vgUI
+
+#endif // #ifdef __USE_VGALG__
