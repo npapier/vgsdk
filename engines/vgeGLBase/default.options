@@ -1,4 +1,4 @@
-description	= '(V)ersatile (G)raphical (E)valuation with Open(GL)'
+description	= '(V)ersatile (G)raphical (E)valuation with Open(GL) (Base)'
 vcsUse		= 'no'
 type		= 'shared'
 version		= '0-5'

@@ -1,35 +1,36 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
-// Distributed under the terms of the GNU Library General Public License (LGPL)
-// as published by the Free Software Foundation.
-// Author Nicolas Papier
-
-#ifndef _VGEGL_RC_TEXTURE_HPP
-#define _VGEGL_RC_TEXTURE_HPP
-
-//#include <glo/Texture.hpp>
-//#include <vge/rc/IResource.hpp>
+//// VGSDK - Copyright (C) 2004, Nicolas Papier.
+//// Distributed under the terms of the GNU Library General Public License (LGPL)
+//// as published by the Free Software Foundation.
+//// Author Nicolas Papier
 //
-//#include "vgeGL/vgeGL.hpp"
+//#ifndef _VGEGLBASE_RC_TEXTURE_HPP
+//#define _VGEGLBASE_RC_TEXTURE_HPP
 //
+////#include <glo/Texture.hpp>
+////#include <vge/rc/IResource.hpp>
+////
+////#include "vgeGL/vgeGL.hpp"
+////
+////
+////
+////namespace vgeGL
+////{
+////	
+////namespace rc
+////{
+////
+/////**
+//// * @brief Encapsulation of a texture object.
+//// */
+////struct VGEGLBASE_API Texture : public vge::rc::IResource, public glo::Texture
+////{
+////};
+////
+////
+////	
+////} // namespace rc
+////
+////} // namespace vgeGL
 //
+//#endif //#ifndef _VGEGLBASE_RC_TEXTURE_HPP
 //
-//namespace vgeGL
-//{
-//	
-//namespace rc
-//{
-//
-///**
-// * @brief Encapsulation of a texture object.
-// */
-//struct VGEGL_API Texture : public vge::rc::IResource, public glo::Texture
-//{
-//};
-//
-//
-//	
-//} // namespace rc
-//
-//} // namespace vgeGL
-
-#endif //#ifndef _VGEGL_RC_TEXTURE_HPP
