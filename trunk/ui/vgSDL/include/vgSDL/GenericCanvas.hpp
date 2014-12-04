@@ -149,11 +149,11 @@ struct GenericCanvas : public CanvasT
 	void mainLoop()
 	{
 		// Simulate a resize event
-		int width, height;
-		SDL_GetWindowSize(m_window, &width, &height);
-		const vgm::Vec2i v2iSize(width, height);
 		if (CanvasT::startVGSDK())
-		{
+		{		
+			int width, height;
+			SDL_GetWindowSize(m_window, &width, &height);
+			const vgm::Vec2i v2iSize(width, height);
 			CanvasT::resize(v2iSize);
 			unsetCurrent();
 		}
