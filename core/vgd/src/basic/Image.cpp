@@ -143,7 +143,7 @@ bool Image::load( std::string strFilename, const void* buffer, int size )
 	std::string						extension = extractor.getLowerCaseExtension();
 
 
-	m_image = stbi_load_from_memory(buffer, size, &m_width, &m_height, &m_comp, STBI_default);
+	m_image = stbi_load_from_memory((unsigned char *)buffer, size, &m_width, &m_height, &m_comp, STBI_default);
 
 	if ( m_image == NULL )
 	{
@@ -189,10 +189,25 @@ const bool Image::save( const std::string strFilename ) const
 
 bool Image::save( const std::string & type, std::vector< char > & buffer ) const
 {
-	buffer::size_type size = strlen((const char*)m_image);
-	buffer = vec(m_image, m_image + size);
-
-	return true;
+	if( type == "png" )
+	{
+		int outputLen;
+		unsigned char * output;
+		output = stbi_write_png_to_mem(m_image, 0, m_width, m_height, m_comp, &outputLen);
+		
+		if(output)
+		{
+			buffer.resize(outputLen);
+			memcpy(&buffer, output, outputLen);
+		}
+		return true;
+	}
+	else
+	{
+		vgLogDebug("Unable to save an image to a buffer. %s is not a supported target type.", type.c_str());
+		buffer.clear();
+		return false;
+	}
 }
 
 
