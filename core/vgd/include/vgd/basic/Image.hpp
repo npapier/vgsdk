@@ -153,7 +153,7 @@ struct VGD_API Image : public IImage
 	 * 
 	 * remarks All supported format of OpenIL. Main supported format are : bmp, dds, ico, gif, jpg, png, psd, psp, raw, tga, tif.
 	 */
-	//bool	load( std::string strFilename, const void* buffer, int size );
+	bool	load( std::string strFilename, const void* buffer, int size );
 
 
 	/**
@@ -162,6 +162,17 @@ struct VGD_API Image : public IImage
 	 * @param strFilename		filename of Image to load
 	 */
 	const bool save(const std::string filename) const;
+
+
+	/**
+	* @brief Saves the current image into a buffer that will be allocated during the call.
+	*
+	* @param	type		a string containing the target file type like "jpg", "png", ...
+	* @param	buffer		will receive the saved data or left empty on error
+	*
+	* @return	true on success, false otherwise
+	*/
+	bool save( const std::string & type, std::vector< char > & buffer ) const;
 
 
 	/**
@@ -230,7 +241,7 @@ struct VGD_API Image : public IImage
 	/**
 	 * @brief Definition of filter available to resize an Image
 	 */
-	/*enum Filter
+	enum Filter
 	{
 		FILTER_SCALE_NEAREST,	//< lower-quality scaling filters
 		FILTER_SCALE_BILINEAR,	//< lower-quality scaling filters
@@ -239,17 +250,20 @@ struct VGD_API Image : public IImage
 		FILTER_SCALE_TRIANGLE,		//< higher-quality scaling filters and take longer to perform
 		FILTER_SCALE_LANCZOS3,		//< higher-quality scaling filters and take longer to perform
 		FILTER_SCALE_BSPLINE		//< higher-quality scaling filters and take longer to perform
-	};*/
+	};
 
 	/**
 	 * @brief Scales the Image to the new dimensions specified, shrinking or enlarging the Image, depending on the Image's original dimensions.
 	 *
 	 * @pre				!isEmpty()
 	 * @param size		the new dimension (width, height and depth) of the Image
+	 * @param filter	the filter to use during scaling (not uses actually)
 	 *
-	 * return true if rescale has been successful, false if not
+	 * @return true if rescale has been successful, false if not
+	 *
+	 * @todo take care of filter parameter
 	 */
-	const bool scale(const vgm::Vec3i size);
+	const bool scale( const vgm::Vec3i size, const Filter filter = FILTER_SCALE_BOX );
 
 	/**
 	 * @brief Definition of different flip operations
@@ -671,7 +685,7 @@ struct VGD_API Image : public IImage
 	/**
 	 * @brief Create an image from a file in memory.
 	 * 
-	 * @param strFilename		filename of image to load.
+	 * @param strFilename		filename of image to load. Not used right now.
 	 *
 	 * @param buffer			pointer to image in memory
 	 *

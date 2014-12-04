@@ -160,129 +160,139 @@ struct GenericCanvas : public CanvasT
 
 		// Main loop
 		bool haveToLoop = true;
-		SDL_Event event;
+		
 		while ( haveToLoop )
 		{
-			// @todo SDL_WaitEvent
-			const int result = SDL_PollEvent(&event);
-			if (result == 0)
-				continue;
-
-			if (event.type == SDL_WINDOWEVENT)
-			{
-				switch (event.window.event)
-				{
-				case SDL_WINDOWEVENT_SHOWN:
-				{
-					SDL_Log("Window %d shown", event.window.windowID);
-
-					int width, height;
-					SDL_GetWindowSize(m_window, &width, &height);
-					const vgm::Vec2i v2iSize(width, height);
-
-					if (CanvasT::startVGSDK())
-					{
-						CanvasT::paint(v2iSize, CanvasT::getBoundingBoxUpdate());
-						unsetCurrent();
-					}
-					break;
-				}
-				case SDL_WINDOWEVENT_HIDDEN:
-					SDL_Log("Window %d hidden", event.window.windowID);
-					break;
-				case SDL_WINDOWEVENT_EXPOSED:
-				{
-					int width, height;
-					SDL_GetWindowSize(m_window, &width, &height);
-					const vgm::Vec2i v2iSize(width, height);
-
-					if (CanvasT::startVGSDK())
-					{
-						CanvasT::paint(v2iSize, CanvasT::getBoundingBoxUpdate());
-						unsetCurrent();
-					}
-					break;
-				}
-				case SDL_WINDOWEVENT_MOVED:
-					SDL_Log("Window %d moved to %d,%d",
-						event.window.windowID, event.window.data1,
-						event.window.data2);
-					break;
-				case SDL_WINDOWEVENT_RESIZED:
-				{
-					SDL_Log("Window %d resized to %dx%d",
-						event.window.windowID, event.window.data1,
-						event.window.data2);
-					const vgm::Vec2i v2iSize(event.window.data1, event.window.data2);
-					if (CanvasT::startVGSDK())
-					{
-						CanvasT::resize(v2iSize);
-						unsetCurrent();
-					}
-					break;
-				}
-				case SDL_WINDOWEVENT_MINIMIZED:
-					SDL_Log("Window %d minimized", event.window.windowID);
-					break;
-				case SDL_WINDOWEVENT_MAXIMIZED:
-					SDL_Log("Window %d maximized", event.window.windowID);
-					break;
-				case SDL_WINDOWEVENT_RESTORED:
-					SDL_Log("Window %d restored", event.window.windowID);
-					break;
-				case SDL_WINDOWEVENT_ENTER:
-					SDL_Log("Mouse entered window %d",
-						event.window.windowID);
-					break;
-				case SDL_WINDOWEVENT_LEAVE:
-					SDL_Log("Mouse left window %d", event.window.windowID);
-					break;
-				case SDL_WINDOWEVENT_FOCUS_GAINED:
-					SDL_Log("Window %d gained keyboard focus",
-						event.window.windowID);
-					break;
-				case SDL_WINDOWEVENT_FOCUS_LOST:
-					SDL_Log("Window %d lost keyboard focus",
-						event.window.windowID);
-					break;
-				case SDL_WINDOWEVENT_CLOSE:
-					SDL_Log("Window %d closed", event.window.windowID);
-					break;
-				default:
-					SDL_Log("Window %d got unknown event %d",
-						event.window.windowID, event.window.event);
-					break;
-				}
-			}
-
-			switch (event.type)
-			{
-				case SDL_KEYDOWN:
-				case SDL_KEYUP:
-				//case SDL_TEXTINPUT:
-					event::device::Keyboard::handleEvent(event);
-					break;
-
-				case SDL_MOUSEMOTION:
-					event::device::Mouse::handleEvent(event.motion);
-					break;
-
-				case SDL_MOUSEWHEEL:
-					event::device::Mouse::handleEvent(event.wheel); 
-					break;
-
-				case SDL_MOUSEBUTTONDOWN:
-				case SDL_MOUSEBUTTONUP:
-					event::device::Mouse::handleEvent(event.button);
-					break;
-
-				case SDL_QUIT:
-					haveToLoop = false;
-					break;
-			}
+			haveToLoop = step();
 		}
 	}
 
+
+	bool step()
+	{
+		bool haveToLoop = true;
+
+		SDL_Event event;
+		// @todo SDL_WaitEvent
+		const int result = SDL_PollEvent(&event);
+		if (result == 0)
+			continue;
+
+		if (event.type == SDL_WINDOWEVENT)
+		{
+			switch (event.window.event)
+			{
+			case SDL_WINDOWEVENT_SHOWN:
+			{
+				SDL_Log("Window %d shown", event.window.windowID);
+
+				int width, height;
+				SDL_GetWindowSize(m_window, &width, &height);
+				const vgm::Vec2i v2iSize(width, height);
+
+				if (CanvasT::startVGSDK())
+				{
+					CanvasT::paint(v2iSize, CanvasT::getBoundingBoxUpdate());
+					unsetCurrent();
+				}
+				break;
+			}
+			case SDL_WINDOWEVENT_HIDDEN:
+				SDL_Log("Window %d hidden", event.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_EXPOSED:
+			{
+				int width, height;
+				SDL_GetWindowSize(m_window, &width, &height);
+				const vgm::Vec2i v2iSize(width, height);
+
+				if (CanvasT::startVGSDK())
+				{
+					CanvasT::paint(v2iSize, CanvasT::getBoundingBoxUpdate());
+					unsetCurrent();
+				}
+				break;
+			}
+			case SDL_WINDOWEVENT_MOVED:
+				SDL_Log("Window %d moved to %d,%d",
+					event.window.windowID, event.window.data1,
+					event.window.data2);
+				break;
+			case SDL_WINDOWEVENT_RESIZED:
+			{
+				SDL_Log("Window %d resized to %dx%d",
+					event.window.windowID, event.window.data1,
+					event.window.data2);
+				const vgm::Vec2i v2iSize(event.window.data1, event.window.data2);
+				if (CanvasT::startVGSDK())
+				{
+					CanvasT::resize(v2iSize);
+					unsetCurrent();
+				}
+				break;
+			}
+			case SDL_WINDOWEVENT_MINIMIZED:
+				SDL_Log("Window %d minimized", event.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_MAXIMIZED:
+				SDL_Log("Window %d maximized", event.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_RESTORED:
+				SDL_Log("Window %d restored", event.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_ENTER:
+				SDL_Log("Mouse entered window %d",
+					event.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_LEAVE:
+				SDL_Log("Mouse left window %d", event.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_FOCUS_GAINED:
+				SDL_Log("Window %d gained keyboard focus",
+					event.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_FOCUS_LOST:
+				SDL_Log("Window %d lost keyboard focus",
+					event.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_CLOSE:
+				SDL_Log("Window %d closed", event.window.windowID);
+				break;
+			default:
+				SDL_Log("Window %d got unknown event %d",
+					event.window.windowID, event.window.event);
+				break;
+			}
+		}
+
+		switch (event.type)
+		{
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+			//case SDL_TEXTINPUT:
+			event::device::Keyboard::handleEvent(event);
+			break;
+
+		case SDL_MOUSEMOTION:
+			event::device::Mouse::handleEvent(event.motion);
+			break;
+
+		case SDL_MOUSEWHEEL:
+			event::device::Mouse::handleEvent(event.wheel);
+			break;
+
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+			event::device::Mouse::handleEvent(event.button);
+			break;
+
+		case SDL_QUIT:
+			haveToLoop = false;
+			break;
+		}
+
+		return haveToLoop;
+	}
 
 	void initDevices( const uint devices )
 	{

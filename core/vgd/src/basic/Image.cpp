@@ -72,7 +72,6 @@ Image::Image(	const uint32	width, const uint32 height, const uint32 depth,
 }
 
 
-
 Image::Image( const IImage& Image )
 {
 	resetInformations();
@@ -132,6 +131,35 @@ const bool Image::load( const std::string strFilename )
 }
 
 
+bool Image::load( std::string strFilename, const void* buffer, int size )
+{
+
+#ifdef _DEBUG
+	vgLogDebug("Image::load: Start reading image %s.", strFilename.c_str() );
+#endif
+
+	// Retrieves the extension of the given filename.
+	vgd::basic::FilenameExtractor	extractor( strFilename.c_str() );
+	std::string						extension = extractor.getLowerCaseExtension();
+
+
+	m_image = stbi_load_from_memory(buffer, size, &m_width, &m_height, &m_comp, STBI_default);
+
+	if ( m_image == NULL )
+	{
+		destroy();
+		return false;
+	}
+	else
+	{
+#ifdef _DEBUG
+		vgLogDebug("Image::load: Finish reading image %s (%i x %i).",
+			strFilename.c_str(), width(), height() );
+#endif
+		return true;
+	}
+}
+
 
 const bool Image::save( const std::string strFilename ) const
 {
@@ -158,6 +186,14 @@ const bool Image::save( const std::string strFilename ) const
 	}
 }
 
+
+bool Image::save( const std::string & type, std::vector< char > & buffer ) const
+{
+	buffer::size_type size = strlen((const char*)m_image);
+	buffer = vec(m_image, m_image + size);
+
+	return true;
+}
 
 
 const bool Image::create(	const uint32	width, const uint32 height, const uint32 depth,
@@ -226,7 +262,7 @@ void Image::destroy()
 }
 
 
-const bool Image::scale( const vgm::Vec3i size)
+const bool Image::scale( const vgm::Vec3i size, const Filter filter )
 {
 	vgAssertN(!isEmpty(), "No image set, can't scale.");
 
