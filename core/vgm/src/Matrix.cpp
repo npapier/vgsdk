@@ -1223,6 +1223,38 @@ void MatrixR::pick( float x, float y, float width, float height, const vgm::Rect
 
 
 
+const bool MatrixR::project( const double objx, const double objy, const double objz,
+	const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
+	vgm::Vec3f& oWin )
+{
+	vgm::Vec3f in( static_cast<float>(objx), static_cast<float>(objy), static_cast<float>(objz) );
+	vgm::Vec3f out;
+
+	modelMatrix.multVecMatrix( in, out );
+	projMatrix.multVecMatrix( out, in );
+	//if (in[3] == 0.0) return(GL_FALSE);
+
+	/* Map x, y and z to range 0-1 */
+	in = in * 0.5f + vgm::Vec3f(0.5f, 0.5f, 0.5f);
+
+	/* Map x,y to viewport */
+ 	in[0] = in[0] * viewport[2] + viewport[0];
+	in[1] = in[1] * viewport[3] + viewport[1];
+
+	oWin.setValue( in );
+
+	return true;
+}
+
+
+const bool MatrixR::project(	const vgm::Vec3f obj,
+								const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
+								vgm::Vec3f& oWin )
+{
+	return project( obj[0], obj[1], obj[2], modelMatrix, projMatrix, viewport, oWin );
+}
+
+
 const bool MatrixR::unProject(
 	const double winx, const double winy, const double winz,
 	const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
@@ -1245,9 +1277,18 @@ const bool MatrixR::unProject(
 
 	finalMatrix.multVecMatrix( in, oObject );
 
-	return (oObject[3] != 0.0);
+	//return (oObject[3] != 0.0);
+	return true;
 }
 
+
+const bool MatrixR::unProject(
+	const vgm::Vec3f win,
+	const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
+	vgm::Vec3f& oObject )
+{
+	return unProject( win[0], win[1], win[2], modelMatrix, projMatrix, viewport, oObject );
+}
 
 
 float MatrixR::det3(	const int32 r1, const int32 r2, const int32 r3,
