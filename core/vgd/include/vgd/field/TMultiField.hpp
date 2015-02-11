@@ -704,7 +704,7 @@ private:
 	{
 		vgAssert( checkRO() );
 
-		return (	( 0 <= index		) &&
+		return (	//( 0 <= index		) &&
 					( index < size()	)
 				);
 	}
