@@ -39,7 +39,7 @@ struct VGD_API Primitive
 	 */
 	typedef enum {
 		
-		NONE	=0,
+		NONE = 0,
 
 		POINTS,
 
