@@ -79,8 +79,7 @@ typedef double	RawMatrixd[4][4];
  *
  * Character 'R' at the end of MatrixR means row. This is a reminder, because the matrices are stored in <b>row-major order</b> (unlike <b>column-major order</b> for OpenGL).
  * But all matrices, created by this class, are the transposed of the OpenGL version.
- * So you can use it directly in OpenGL, but be careful with the order of composition (use left matrix multiplication
- * contrary to OpenGL).
+ * So you can use it directly in OpenGL, but be careful with the order of composition (use left matrix multiplication contrary to OpenGL that use right matrix multiplication).
  *
  * OpenGL convention is : vertexTransformed = M0 * M1 * ... * vertex
  * vgm convention is : vertexTransformed = vertex * ... * M1 * M0
@@ -608,7 +607,7 @@ struct VGM_API MatrixR
 	 * @param viewport	the viewport
 	 */
 	void setPick( float x, float y, float width, float height, const vgm::Rectangle2i& viewport );
-	
+
 	/**
 	 * @brief Left multiply the current matrix by the given "picking region" matrix.
 	 * 
@@ -617,6 +616,26 @@ struct VGM_API MatrixR
 	void	pick( float x, float y, float width, float height, const vgm::Rectangle2i& viewport );
 
 
+	/**
+	 * @brief Map object coordinates to window coordinates
+	 *
+	 * @param objx			specify the object coordinates to be mapped
+	 * @param objy			specify the object coordinates to be mapped
+	 * @param objz			specify the object coordinates to be mapped
+	 * @param modelMatrix	specifies the modelview matrix
+	 * @param projMatrix	specifies the projection matrix
+	 * @param viewport		specifies the viewport
+	 * @param oWin			return the computed window coordinates
+	 *
+	 * @remark see gluProject
+	 */
+	static const bool project(	const double objx, const double objy, const double objz,
+								const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
+								vgm::Vec3f& oWin );
+
+	static const bool project(	const vgm::Vec3f obj,
+								const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
+								vgm::Vec3f& oWin );
 	/**
 	 * @brief Map window coordinates to object coordinates
 	 *
@@ -629,10 +648,11 @@ struct VGM_API MatrixR
 	 * @param oObject		returned computed object coordinates
 	 *
 	 * @remark see gluUnProject
-	 *
-	 * @todo project()
 	 */
 	static const bool unProject(	const double winx, const double winy, const double winz,
+									const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
+									vgm::Vec3f& oObject );
+	static const bool unProject(	const vgm::Vec3f win,
 									const vgm::MatrixR& modelMatrix, const vgm::MatrixR& projMatrix, const vgm::Vec4i& viewport,
 									vgm::Vec3f& oObject );
 	//@}
