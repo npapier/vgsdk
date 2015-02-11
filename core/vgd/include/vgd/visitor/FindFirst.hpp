@@ -95,7 +95,7 @@ struct FindFirst : public Traverse<Visitors>
 	template< typename Vertex , typename Graph >
 	void discover_vertex( Vertex u, const Graph& /*g*/ ) /*const*/
 	{
-		vgd::Shp< vgd::node::Node > node = getNode(u);
+		vgd::Shp< vgd::node::Node > node = this->getNode(u);
 
 		for( uint i = 0; i < m_vPredicate.size(); i++)
 		{

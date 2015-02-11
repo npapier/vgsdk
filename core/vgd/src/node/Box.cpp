@@ -145,7 +145,7 @@ void Box::initializeGeometry()
 	primitive.release();
 		
 	// NORMAL
-	vgd::field::EditorRW< vgd::field::MFVec3f >	normal			= getNormalRW();	
+	vgd::field::EditorRW< vgd::field::MFVec3f >	normal			= getNormalRW();
 	normal->clear();
 	normal->reserve(24);
 	

@@ -1,11 +1,13 @@
-// VGSDK - Copyright (C) 2004-2006, 2009, 2010, Nicolas Papier.
+// VGSDK - Copyright (C) 2004-2006, 2009, 2010, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/node/Node.hpp"
 
+#ifndef __EMSCRIPTEN__
 #include <boost/thread/thread.hpp>
+#endif
 #include "vgd/node/Group.hpp"
 #include "vgd/node/detail/Node.hpp"
 
@@ -15,10 +17,13 @@
 
 
 
+#ifndef __EMSCRIPTEN__
 namespace
 {
 boost::thread::id g_lockedID = boost::thread::id();
 }
+#endif
+
 
 
 namespace vgd
@@ -216,6 +221,7 @@ Node::ConnectionType Node::connect( DestructorSignalType::slot_function_type slo
 
 vgd::graph::Graph& Node::graph()
 {
+#ifndef __EMSCRIPTEN__
 	if( g_lockedID != boost::thread::id() && boost::this_thread::get_id() != g_lockedID )
 	{
 		std::cerr << "Access to vgsdk graph from wrong thread" << std::endl;
@@ -228,6 +234,7 @@ vgd::graph::Graph& Node::graph()
 		//else nothing to do
 #endif*/
 	}
+#endif
 
 	// Graph data
 	static vgd::graph::Graph m_graph;
@@ -239,7 +246,9 @@ vgd::graph::Graph& Node::graph()
 
 void Node::lockGraph()
 {
+#ifndef __EMSCRIPTEN__
 	g_lockedID = boost::this_thread::get_id();
+#endif
 	field::FieldManager::lockFieldAccess();
 }
 

@@ -543,7 +543,12 @@ void Image::resetInformations()
 
 
 
+#ifndef __EMSCRIPTEN__
 #include <boost/thread.hpp>
+#else
+	#error "Try tu use Image version OpenIL with emscripten"
+#endif
+
 #include <vgd/basic/FilenameExtractor.hpp>
 #include <vgDebug/helpers.hpp>
 

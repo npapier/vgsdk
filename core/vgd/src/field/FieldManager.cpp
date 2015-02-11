@@ -1,29 +1,35 @@
-// VGSDK - Copyright (C) 2004, 2006, 2011, 2013, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2006, 2011, 2013, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
 
 #include "vgd/field/FieldManager.hpp"
 
-#include <utility>
-#include <typeinfo>
+#ifndef __EMSCRIPTEN__
+#include <boost/thread/thread.hpp>
+#endif
+
 #include <boost/tuple/tuple.hpp>
+#include <iostream>
+#include <typeinfo>
+#include <utility>
 
 #include "vgd/Shp.hpp"
 #include "vgd/field/Types.hpp"
 
-#include <boost/thread/thread.hpp>
-#include <iostream>
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
 
 
+#ifndef __EMSCRIPTEN__
 namespace
 {
 	boost::thread::id g_lockedID = boost::thread::id();
 }
+#endif
+
 
 
 namespace vgd
@@ -73,13 +79,16 @@ void FieldManager::destroy()
 
 void FieldManager::lockFieldAccess()
 {
+#ifndef __EMSCRIPTEN__
 	g_lockedID = boost::this_thread::get_id();
+#endif
 }
 
 
 
 const bool FieldManager::ensureFieldAccess(const std::string& strFieldName) const
 {
+#ifndef __EMSCRIPTEN__
 	if( g_lockedID != boost::thread::id() && boost::this_thread::get_id() != g_lockedID )
 	{
 		std::cerr << "Access to field " << strFieldName << " from wrong thread" << std::endl;
@@ -97,6 +106,9 @@ const bool FieldManager::ensureFieldAccess(const std::string& strFieldName) cons
 	{
 		return true;
 	}
+#else
+	return true; // No thread under emscripten
+#endif
 }
 
 
