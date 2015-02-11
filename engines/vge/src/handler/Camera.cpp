@@ -22,12 +22,12 @@ namespace handler
 void Camera::apply( vge::engine::Engine * engine, vgd::node::Camera * camera )
 {
 	// Updates engine
-	const vge::engine::EyeUsagePolicy eyePolicy = engine->getEyeUsagePolicy();
 
 	//	CAMERA node
 	engine->setCamera( camera );
 
 	//	VIEWPORT field
+	const vge::engine::EyeUsagePolicy eyePolicy = engine->getEyeUsagePolicy();
 	vgm::Rectangle2i viewportValue;
 	camera->gethViewport( viewportValue, engine->getDrawingSurfaceSize()[0], eyePolicy );
 
