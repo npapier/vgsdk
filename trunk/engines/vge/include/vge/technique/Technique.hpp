@@ -120,6 +120,7 @@ struct VGE_API Technique
 	 * @brief Returns the engine
 	 *
 	 * @return a reference on the engine
+	 * @todo remove me
 	 */
 	vge::engine::Engine * engine() const;
 
@@ -127,6 +128,7 @@ struct VGE_API Technique
 	 * @brief Returns collected nodes
 	 *
 	 * @return the traverse element vector
+	 * @todo remove me
 	 */
 	vge::visitor::TraverseElementVector * traverseElements() const;
 
@@ -134,6 +136,7 @@ struct VGE_API Technique
 	 * @brief Returns the scene manager
 	 *
 	 * @return a reference on the scene manager
+	 * @todo remove me
 	 */
 	vge::engine::SceneManager * sceneManager() const;
 
@@ -183,6 +186,11 @@ protected:
 	virtual void finishEval();
 
 
+
+	/**
+	 * @name Pass interface
+	 */
+	//@{
 
 	/**
 	 * @brief Isolation policy for a pass
@@ -253,12 +261,14 @@ protected:
 	 * @param engine		
 	 * @param isolationMask	isolation policy for the pass
 	 * @param nestedPass
+	 *
+	 * @todo take care of pass description given by setPassDescription()
 	 */
 	void evaluatePass(	vgd::Shp< vge::pass::Pass > pass, vgd::Shp< vge::service::Service > service,
 						vge::engine::Engine * engine,
 						const PassIsolationMask isolationMask = PassIsolationMask(DEFAULT_PASS_ISOLATION_MASK),
 						const bool nestedPass = false );
-
+	//@}
 
 
 

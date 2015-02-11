@@ -6,6 +6,7 @@
 #include "vgd/event/TimerCallback.hpp"
 
 #include <algorithm>
+#include <glm/glm.hpp>
 #include <glm/gtx/compatibility.hpp>
 #include <limits>
 #include "vgd/event/TimerEvent.hpp"
@@ -211,7 +212,7 @@ const double TimerCallback::getTd()
 				getTDuration().ms(),	static_cast< float >(endT),
 				static_cast< float >( m_elapsedTimeFrom0.ms() ) );
 
-			value = glm::saturate( value );
+			value = glm::saturate<double, glm::highp>( value );
 		}
 	}
 	else if ( getTLoopMode() == LOOP || getTLoopMode() == SWING )
@@ -247,7 +248,7 @@ const double TimerCallback::getTd()
 					loopDuration,	endT,
 					moduloTInMS );
 			}
-			value = glm::saturate( value );
+			value = glm::saturate<double, glm::highp>( value );
 		}
 		else
 		{

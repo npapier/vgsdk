@@ -32,12 +32,10 @@ namespace basic
 
 
 Image::Image() 
-	: m_image(NULL)
-	, m_edit(false)
-	, m_voxelSize(1.f, 1.f, 1.f)
-	, m_width(0)
-	, m_height(0)
-	, m_comp(0)
+:	m_image	(NULL	),
+	m_width	(0		),
+	m_height(0		),
+	m_comp	(0		)
 {
 	resetInformations();
 }
@@ -45,12 +43,10 @@ Image::Image()
 
 
 Image::Image( const std::string strFilename )
-	: m_image(NULL)
-	, m_edit(false)
-	, m_voxelSize(1.f, 1.f, 1.f)
-	, m_width(0)
-	, m_height(0)
-	, m_comp(0)
+:	m_image	(NULL	),
+	m_width	(0		),
+	m_height(0		),
+	m_comp	(0		)
 {
 	resetInformations();
 
@@ -63,6 +59,10 @@ Image::Image(	const uint32	width, const uint32 height, const uint32 depth,
 				const Format	format,
 				const Type		type,
 				const void*		pixels )
+:	m_image	(NULL	),
+	m_width	(0		),
+	m_height(0		),
+	m_comp	(0		)
 {
 	resetInformations();
 
@@ -192,15 +192,19 @@ bool Image::save( const std::string & type, std::vector< char > & buffer ) const
 	if( type == "png" )
 	{
 		int outputLen;
-		unsigned char * output;
-		output = stbi_write_png_to_mem(m_image, 0, m_width, m_height, m_comp, &outputLen);
-		
-		if(output)
+		unsigned char * output = stbi_write_png_to_mem(m_image, 0, m_width, m_height, m_comp, &outputLen);
+
+		if( output )
 		{
 			buffer.resize(outputLen);
-			memcpy(&buffer, output, outputLen);
+			memcpy(&buffer[0], output, outputLen);
+			free( output );
+			return true;
 		}
-		return true;
+		else
+		{
+			return false;
+		}
 	}
 	else
 	{

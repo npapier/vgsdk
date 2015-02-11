@@ -448,19 +448,18 @@ private:
 	 * @name Image data and informations
 	 */
 	//@{
-	unsigned char * m_image;		/// @< In-memory representation of a 2D Image
+	unsigned char *	m_image;	///< In-memory representation of a 2D Image
+	int				m_width;	///< outputs image width in pixels
+	int				m_height;	///< outputs image height in pixels
+	int				m_comp;		///< outputs # of image components in image file
 
-	bool		m_edit;
+	bool			m_edit;
+
+	vgm::Vec3f		m_voxelSize; ///< Voxel size informations
 	//@}
 
-	/**
-	 * @brief Voxel size informations.
-	 */
-	vgm::Vec3f	m_voxelSize;
 
-	int m_width;	///< outputs image width in pixels
-	int m_height;	///< outputs image height in pixels
-	int m_comp;		///< outputs # of image components in image file
+
 };
 
 

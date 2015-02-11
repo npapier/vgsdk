@@ -1,4 +1,4 @@
-// VGSDK - Copyright (C) 2004, Nicolas Papier.
+// VGSDK - Copyright (C) 2004, 2014, Nicolas Papier.
 // Distributed under the terms of the GNU Library General Public License (LGPL)
 // as published by the Free Software Foundation.
 // Author Nicolas Papier
@@ -14,7 +14,7 @@
 
 namespace vgd
 {
-	
+
 namespace visitor
 {
 
@@ -103,7 +103,7 @@ struct Find : public Traverse<Visitors>
 	template< typename Vertex , typename Graph >
 	void discover_vertex( Vertex u, const Graph& /*g*/ ) /*const*/
 	{
-		vgd::Shp< vgd::node::Node > node = getNode(u);
+		vgd::Shp< vgd::node::Node > node = this->getNode(u);
 
 		for( uint i = 0; i < m_vPredicate.size(); i++)
 		{
@@ -147,7 +147,7 @@ vgd::Shp< vgd::node::NodeList > findDEPRECATED( vgd::Shp< vgd::node::Group > gro
 	vgd::visitor::Find< Predicate >	find( predicate );
 
 	group->traverse( find );
-	
+
 	return ( find.getShpNodes() );
 }
 

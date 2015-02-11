@@ -33,7 +33,7 @@ namespace basic
 
 
 /**
- * @brief Registry of classes.
+ * @brief Registry of classes
  * 
  * Register a class consists to :
  * 
